@@ -24,9 +24,8 @@ import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
   let user;
-  let firstFieldId = null;
-  let secondFieldId = null;
   let instanceHrid = null;
+  const marcFieldProtectionId = [];
   const quantityOfItems = '1';
 
   // unique profile names
@@ -67,7 +66,7 @@ describe('ui-data-import', () => {
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
-  before('create test data', () => {
+  before('create test user', () => {
     cy.createTempUser([
       permissions.moduleDataImportEnabled.gui,
       permissions.settingsDataImportEnabled.gui,
@@ -92,8 +91,7 @@ describe('ui-data-import', () => {
     // delete created files
     FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
     Users.deleteViaApi(user.userId);
-    MarcFieldProtection.deleteMarcFieldProtectionViaApi(firstFieldId);
-    MarcFieldProtection.deleteMarcFieldProtectionViaApi(secondFieldId);
+    marcFieldProtectionId.forEach(field => MarcFieldProtection.deleteMarcFieldProtectionViaApi(field));
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
       .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
@@ -111,7 +109,8 @@ describe('ui-data-import', () => {
         field: protectedFields.firstField
       })
         .then((resp) => {
-          firstFieldId = resp.id;
+          const id = resp.id;
+          marcFieldProtectionId.push = id;
         });
       MarcFieldProtection.createMarcFieldProtectionViaApi({
         indicator1: '*',
@@ -122,7 +121,8 @@ describe('ui-data-import', () => {
         field: protectedFields.secondField
       })
         .then((resp) => {
-          secondFieldId = resp.id;
+          const id = resp.id;
+          marcFieldProtectionId.push = id;
         });
 
       // create match profile
@@ -154,6 +154,8 @@ describe('ui-data-import', () => {
 
       // upload a marc file for creating of the new instance
       cy.visit(TopMenu.dataImportPath);
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
       DataImport.uploadFile('marcFileForC356830.mrc', nameMarcFileForCreate);
       JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
       JobProfiles.runImportFile();
@@ -186,6 +188,8 @@ describe('ui-data-import', () => {
 
       // upload .mrc file
       cy.visit(TopMenu.dataImportPath);
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
       DataImport.checkIsLandingPageOpened();
       DataImport.uploadFile(editedMarcFileName);
       JobProfiles.searchJobProfileForImport(jobProfileName);

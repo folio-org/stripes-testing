@@ -7,19 +7,21 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import DevTeams from '../../../support/dictionary/devTeams';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 
-describe('ui-data-import: Search the "View all" log screen', () => {
+describe('ui-data-import', () => {
   let id;
   // Create unique file name with given type to upload
   const fileType = 'mrc';
   const uniqueFileName = `C11112test${getRandomPostfix()}.${fileType}`;
 
-  before(() => {
+  before('create test data', () => {
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     cy.getAdminToken();
 
     // create dynamically file with given name in fixtures
     FileManager.createFile(`cypress/fixtures/${uniqueFileName}`);
 
+    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+    cy.reload();
     // remove generated test file from fixtures after uploading
     cy.uploadFileWithDefaultJobProfile(uniqueFileName);
     FileManager.deleteFile(`cypress/fixtures/${uniqueFileName}`);
@@ -30,12 +32,6 @@ describe('ui-data-import: Search the "View all" log screen', () => {
     LogsViewAll.getSingleJobProfile().then(({ hrId }) => {
       id = hrId;
     });
-
-    DataImport.checkUploadState();
-  });
-
-  afterEach(() => {
-    DataImport.checkUploadState();
   });
 
   it('C11112 Search the "View all" log screen (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
