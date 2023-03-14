@@ -19,8 +19,18 @@ export default {
           this.checkUpdateTLRCalloutAppeared();
         } else if (checked && status === 'forbid') {
           cy.expect(Checkbox({ name: 'titleLevelRequestsFeatureEnabled', disabled: false }).exists());
-          cy.do([TLRCheckbox.click(), SaveButton.click()]);
-          this.checkUpdateTLRCalloutAppeared();
+          cy.do(TLRCheckbox.click());
+          // need to wait if the popup module appears
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
+          cy.wait(7000);
+          cy.get('#OverlayContainer').then((body) => {
+            if (body.find('div[label*="Cannot change"]').length) {
+              cy.do(Button('Close').click());
+            } else {
+              cy.do(SaveButton.click());
+              this.checkUpdateTLRCalloutAppeared();
+            }
+          });
         }
       });
   },
