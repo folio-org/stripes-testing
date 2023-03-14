@@ -60,7 +60,7 @@ export default {
     ]);
     this.selectVendorOnUi(invoice.vendorName);
     cy.do([
-      Selection('Accounting code').open(),
+      Selection('Accounting code*').open(),
       SelectionList().select(`Default (${invoice.accountingCode})`),
       Selection('Batch group*').open(),
       SelectionList().select(invoice.batchGroup),

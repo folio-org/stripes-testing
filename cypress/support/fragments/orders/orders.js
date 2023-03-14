@@ -142,7 +142,7 @@ export default {
     InteractorsTools.checkCalloutMessage('Order was closed');
   },
 
-  unOpenOrderDeleteHoldingsItems: (orderNumber) => {
+  unOpenOrderDeleteHoldingsItems: () => {
     cy.do([
       orderDetailsPane
         .find(PaneHeader({ id: 'paneHeaderorder-details' })
