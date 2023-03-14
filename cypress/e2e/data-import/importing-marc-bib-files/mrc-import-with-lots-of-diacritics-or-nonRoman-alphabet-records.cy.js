@@ -6,10 +6,15 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
 describe('ui-data-import', () => {
   const quantityOfItems = '1';
-  const nameMarcFileForCreate = `C356830 autotestFile.${getRandomPostfix()}.mrc`;
+  const rowNumbers = [3, 6, 9, 10];
+  const instanceSource = 'MARC';
+  const instanceHrids = [];
+  const nameMarcFileForCreate = `C6709 autotestFile.${getRandomPostfix()}.mrc`;
 
   beforeEach(() => {
     cy.loginAsAdmin();
@@ -20,16 +25,31 @@ describe('ui-data-import', () => {
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     // upload a marc file for creating of the new instance
       cy.visit(TopMenu.dataImportPath);
-      DataImport.uploadFile('**.mrc', nameMarcFileForCreate);
+      DataImport.uploadFile('mrcFileForC6709.mrc', nameMarcFileForCreate);
       JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(nameMarcFileForCreate);
+      Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(nameMarcFileForCreate);
-      [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {
-        FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+      rowNumbers.forEach(rowNumber => {
+        cy.wait(1000);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc, rowNumber);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.instance, rowNumber);
       });
-      FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems, 0);
-      FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 0);
-      FileDetails.openInstanceInInventory('Created');
+      FileDetails.checkSrsRecordQuantityInSummaryTable('15');
+      FileDetails.checkInstanceQuantityInSummaryTable('15');
+
+
+      rowNumbers.forEach(rowNumber => {
+        // need to wait until page will be opened in loop
+        cy.wait(1500);
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(nameMarcFileForCreate);
+        FileDetails.openInstanceInInventory('Created', rowNumber);
+        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+          instanceHrids.push(initialInstanceHrId);
+        });
+        InstanceRecordView.verifyInstanceSource(instanceSource);
+      });
     });
 });

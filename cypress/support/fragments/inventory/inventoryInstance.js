@@ -152,7 +152,6 @@ const verifyInstanceTitle = (title) => {
   cy.wait(3000);
   cy.expect(Pane({ titleLabel: including(title) }).exists());
 };
-const verifyInstanceSource = (sourceValue) => cy.expect(source.has({ value: sourceValue }));
 
 const verifyLastUpdatedDate = () => {
   const updatedDate = DateTools.getFormattedDateWithSlashes({ date: new Date() });
@@ -198,7 +197,6 @@ export default {
   waitLoading,
   openHoldings,
   verifyInstanceTitle,
-  verifyInstanceSource,
   verifyLastUpdatedDate,
   verifyInstancePublisher,
   verifyInstanceSubject,
@@ -500,7 +498,7 @@ export default {
     cy.do(actionsButton.click());
     cy.do(moveHoldingsToAnotherInstanceButton.click());
     InventoryInstanceSelectInstanceModal.waitLoading();
-    InventoryInstanceSelectInstanceModal.searchByTitle(title)
+    InventoryInstanceSelectInstanceModal.searchByTitle(title);
     InventoryInstanceSelectInstanceModal.selectInstance();
     InventoryInstancesMovement.moveFromMultiple(holdingName, title);
   },
