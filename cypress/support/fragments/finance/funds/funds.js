@@ -181,7 +181,7 @@ export default {
     ]);
   },
 
-  checkTransactionDetails: (indexNumber = 2, fiscalYear, amount, source, type, fund) => {
+  checkTransactionDetails: (indexNumber, fiscalYear, amount, source, type, fund) => {
     cy.do(
       transactionList
         .find(MultiColumnListRow({ index: indexNumber }))
