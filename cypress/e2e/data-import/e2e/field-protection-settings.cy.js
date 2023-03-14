@@ -21,7 +21,7 @@ import InventoryViewSource from '../../../support/fragments/inventory/inventoryV
 import FileManager from '../../../support/utils/fileManager';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
-describe('ui-data-import: Check that field protection settings work properly during data import', () => {
+describe('ui-data-import', () => {
   const marcFieldProtected = ['507', '920'];
   const marcFieldProtectionId = [];
   let instanceHrid = null;
@@ -88,7 +88,7 @@ describe('ui-data-import: Check that field protection settings work properly dur
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
-  beforeEach(() => {
+  beforeEach('create test data', () => {
     cy.loginAsAdmin();
     cy.getAdminToken()
       .then(() => {
@@ -109,12 +109,8 @@ describe('ui-data-import: Check that field protection settings work properly dur
       });
   });
 
-  afterEach(() => {
+  after('delete test data', () => {
     marcFieldProtectionId.forEach(field => MarcFieldProtection.deleteMarcFieldProtectionViaApi(field));
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-      .then((instance) => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
     // delete profiles
     JobProfiles.deleteJobProfile(jobProfileName);
     JobProfiles.deleteJobProfile(jobProfileUpdateName);
@@ -126,6 +122,10 @@ describe('ui-data-import: Check that field protection settings work properly dur
     // delete created files
     FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
     FileManager.deleteFile(`cypress/fixtures/${fileNameForUpdate}`);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
   });
 
   const createInstanceMappingProfileForCreate = (instanceMappingProfile) => {
@@ -162,8 +162,8 @@ describe('ui-data-import: Check that field protection settings work properly dur
 
     // upload a marc file for creating of the new instance
     cy.visit(TopMenu.dataImportPath);
-    // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-    DataImport.clickDataImportNavButton();
+    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+    cy.reload();
     DataImport.uploadFile('marcFileForC17017.mrc', nameMarcFileForCreate);
     JobProfiles.searchJobProfileForImport(jobProfileName);
     JobProfiles.runImportFile();
@@ -215,8 +215,8 @@ describe('ui-data-import: Check that field protection settings work properly dur
 
     // upload a marc file for updating already created instance
     cy.visit(TopMenu.dataImportPath);
-    // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-    DataImport.clickDataImportNavButton();
+    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+    cy.reload();
     DataImport.uploadFile(editedMarcFileName, fileNameForUpdate);
     JobProfiles.searchJobProfileForImport(jobProfileUpdateName);
     JobProfiles.runImportFile();

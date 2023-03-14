@@ -261,9 +261,7 @@ export default {
   waitContentLoading,
   waitLoadingTags,
 
-  waitLoading() {
-    cy.expect(Pane('Requests').exists());
-  },
+  waitLoading:() => cy.expect(Pane({ title: 'Requests' }).exists()),
   resetAllFilters:() => cy.do(Button('Reset all').click()),
   selectAwaitingDeliveryRequest:() => cy.do(Checkbox({ name: 'Open - Awaiting delivery' }).click()),
   selectAwaitingPickupRequest:() => cy.do(Checkbox({ name: 'Open - Awaiting pickup' }).click()),

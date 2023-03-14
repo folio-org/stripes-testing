@@ -26,7 +26,7 @@ import FileManager from '../../../support/utils/fileManager';
 import StatisticalCodes from '../../../support/fragments/settings/inventory/statisticalCodes';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import: Item update via match by status', () => {
+describe('ui-data-import', () => {
   let user;
   let statisticalCode;
   const titlesItemsStatusChanged = [
@@ -237,8 +237,8 @@ describe('ui-data-import: Item update via match by status', () => {
 
       // upload a marc file for creating of the new instance, holding and item
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.clickDataImportNavButton();
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
       DataImport.uploadFile('marcFileForC357552.mrc', nameMarcFileForImportCreate);
       JobProfiles.searchJobProfileForImport(jobProfileNameForCreate);
       JobProfiles.runImportFile();

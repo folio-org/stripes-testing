@@ -15,6 +15,7 @@ import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import DevTeams from '../../support/dictionary/devTeams';
+import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 
 describe('Check Out', () => {
   let user = {};
@@ -75,7 +76,7 @@ describe('Check Out', () => {
           testInstanceIds = specialInstanceIds;
         });
     });
-
+    OtherSettings.setOtherSettingsViaApi({ prefPatronIdentifier: 'barcode,username' });
     cy.createTempUser([
       permissions.checkoutCirculatingItems.gui,
     ])

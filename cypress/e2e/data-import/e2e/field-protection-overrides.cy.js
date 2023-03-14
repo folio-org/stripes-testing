@@ -22,7 +22,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 
-describe('ui-data-import: Check that field protection overrides work properly during data import', () => {
+describe('ui-data-import', () => {
   let firstFieldId = null;
   let secondFieldId = null;
   let instanceHrid = null;
@@ -72,7 +72,7 @@ describe('ui-data-import: Check that field protection overrides work properly du
     { type: 'ISBN', value: '4934691323219 (paperback)' }
   ];
 
-  beforeEach(() => {
+  beforeEach('create test data', () => {
     cy.loginAsAdmin();
     cy.getAdminToken()
       .then(() => {
@@ -101,13 +101,9 @@ describe('ui-data-import: Check that field protection overrides work properly du
       });
   });
 
-  afterEach(() => {
+  after('delete test data', () => {
     MarcFieldProtection.deleteMarcFieldProtectionViaApi(firstFieldId);
     MarcFieldProtection.deleteMarcFieldProtectionViaApi(secondFieldId);
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-      .then((instance) => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
     // delete profiles
     JobProfiles.deleteJobProfile(jobProfileNameForUpdate);
     JobProfiles.deleteJobProfile(jobProfileNameForOverride);
@@ -120,10 +116,13 @@ describe('ui-data-import: Check that field protection overrides work properly du
     FieldMappingProfiles.deleteFieldMappingProfile(instanceMapProfileNameForUpdate);
     FieldMappingProfiles.deleteFieldMappingProfile(marcBibMapProfileNameForUpdateAndOverride);
     FieldMappingProfiles.deleteFieldMappingProfile(instanceMapProfileNameForUpdateAndOverride);
-
     // delete created files
     FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev1}`);
     FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
   });
 
   it('C17018 Check that field protection overrides work properly during data import (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
@@ -244,8 +243,8 @@ describe('ui-data-import: Check that field protection overrides work properly du
 
     cy.visit(TopMenu.dataImportPath);
     // upload a marc file
-    // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-    DataImport.clickDataImportNavButton();
+    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+    cy.reload();
     DataImport.uploadFile('marcFileForC17018-BeforeOverride.mrc', fileNameForCreatingInstance);
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
     JobProfiles.runImportFile();
@@ -267,8 +266,8 @@ describe('ui-data-import: Check that field protection overrides work properly du
 
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.clickDataImportNavButton();
+        // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+        cy.reload();
         DataImport.uploadFile(editedFileNameRev1, fileNameForProtect);
         JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
@@ -297,8 +296,8 @@ describe('ui-data-import: Check that field protection overrides work properly du
 
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.clickDataImportNavButton();
+        // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+        cy.reload();
         DataImport.uploadFile(editedFileNameRev2, fileNameForOverride);
         JobProfiles.searchJobProfileForImport(jobProfileForOverride.profileName);
         JobProfiles.runImportFile();

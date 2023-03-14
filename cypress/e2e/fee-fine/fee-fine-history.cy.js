@@ -127,8 +127,9 @@ describe('Fee/Fine history ', { retries: 1 }, () => {
     AddNewStaffInfo.checkStaffInfoModalClosed();
     FeeFinesDetails.waitLoading();
     FeeFinesDetails.checkNewStaffInfo(newStaffInfoMessage);
-    FeeFinesDetails.openActions();
-    FeeFinesDetails.openPayModal();
+    FeeFinesDetails.openActions().then(() => {
+      FeeFinesDetails.openPayModal();
+    });
     PayFeeFaine.checkAmount(2);
     PayFeeFaine.setPaymentMethod(paymentMethod);
     PayFeeFaine.setAmount(2);

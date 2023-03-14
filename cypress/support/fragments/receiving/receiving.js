@@ -161,6 +161,14 @@ export default {
     ]);
   },
 
+  receiveFromExpectedSectionWithClosePOL:() => {
+    cy.do([
+      Section({ id: 'expected' }).find(actionsButton).click(),
+      receiveButton.click(),
+      Button('Continue').click()
+    ]);
+  },
+
   unreceiveFromReceivedSection:() => {
     cy.do([
       Section({ id: 'received' }).find(actionsButton).click(),

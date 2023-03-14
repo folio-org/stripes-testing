@@ -25,6 +25,7 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import getRandomPostfix from '../../support/utils/stringTools';
+import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 
 describe('Triggers: Check Out, Loan due date change, Check in', () => {
   let addedCirculationRule;
@@ -162,6 +163,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
         cy.wrap(itemsData.itemsWithSeparateInstance).as('items');
       });
 
+    OtherSettings.setOtherSettingsViaApi({ prefPatronIdentifier: 'barcode,username' });
     cy.createLoanPolicy({
       loanable: true,
       loansPolicy: {

@@ -48,7 +48,6 @@ const viewHoldingButton = Button('View holdings');
 const statisticalCodeAccordion = Accordion({ id:'itemsStatisticalCodeIds' });
 
 const searchInstanceByHRID = (id) => {
-  InventoryInstances.waitContentLoading();
   cy.do([
     Select({ id: 'input-inventory-search-qindex' }).choose('Instance HRID'),
     TextField({ id: 'input-inventory-search' }).fillIn(id),
@@ -106,8 +105,6 @@ const checkInstanceDetails = () => {
   // in inventory, this will be "batch" for status code and "Batch Loaded" for status term
   const expectedStatusTerm = 'Batch Loaded';
   const expectedStatusCode = 'batch';
-
-  cy.do(MultiColumnListCell({ row: 0, columnIndex: 1 }).click());
   const catalogedDate = KeyValue('Cataloged date');
   const instanceStatusTerm = KeyValue('Instance status term');
   const instanceStatusCode = KeyValue('Instance status code');
