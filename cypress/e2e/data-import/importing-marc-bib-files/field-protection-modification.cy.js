@@ -19,7 +19,7 @@ import InventoryViewSource from '../../../support/fragments/inventory/inventoryV
 import Users from '../../../support/fragments/users/users';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 
-describe('ui-data-import: MARC field protections apply to MARC modifications of incoming records when they should not: Scenario 1', () => {
+describe('ui-data-import', () => {
   let user = null;
   const fieldsForDelete = ['977', '978', '979'];
   const fieldsForDeleteIds = [];
@@ -48,7 +48,7 @@ describe('ui-data-import: MARC field protections apply to MARC modifications of 
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
-  before(() => {
+  before('login', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
       permissions.moduleDataImportEnabled.gui,
@@ -62,17 +62,17 @@ describe('ui-data-import: MARC field protections apply to MARC modifications of 
       });
   });
 
-  after(() => {
+  after('delete test data', () => {
     fieldsForDeleteIds.forEach(fieldId => MarcFieldProtection.deleteMarcFieldProtectionViaApi(fieldId));
     // delete profiles
     JobProfiles.deleteJobProfile(jobProfileName);
     ActionProfiles.deleteActionProfile(actionProfileName);
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    Users.deleteViaApi(user.userId);
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
       .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
-    Users.deleteViaApi(user.userId);
   });
 
   it('C350678 MARC field protections apply to MARC modifications of incoming records when they should not: Scenario 1 (folijet)',
@@ -131,8 +131,8 @@ describe('ui-data-import: MARC field protections apply to MARC modifications of 
 
       // upload a marc file for creating of the new instance, holding and item
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.clickDataImportNavButton();
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
       DataImport.uploadFile('marcFileForC350678.mrc', fileName);
       JobProfiles.searchJobProfileForImport(jobProfileName);
       JobProfiles.runImportFile();

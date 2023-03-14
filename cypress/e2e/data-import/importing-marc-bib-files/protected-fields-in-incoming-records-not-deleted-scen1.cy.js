@@ -16,7 +16,7 @@ import InventoryEditMarcRecord from '../../../support/fragments/inventory/invent
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import: Check that protected fields in incoming records are not deleted during import: Scenario 1', () => {
+describe('ui-data-import', () => {
   let user = null;
   let instanceHrid = null;
   const protectedField = '856';
@@ -24,7 +24,7 @@ describe('ui-data-import: Check that protected fields in incoming records are no
   const oclcForChanging = '466478385';
   const imported856Field = 'Notice et cote du catalogue de la Bibliothèque nationale de France ‡u http://catalogue.bnf.fr/ark:/12148/cb371881758';
 
-  before(() => {
+  before('create test data', () => {
     cy.createTempUser([
       permissions.moduleDataImportEnabled.gui,
       permissions.settingsDataImportEnabled.gui,
@@ -45,6 +45,8 @@ describe('ui-data-import: Check that protected fields in incoming records are no
         const fileName = `C358968autotestFile.${getRandomPostfix()}.mrc`;
 
         Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
+        // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+        cy.reload();
         DataImport.uploadFile('marcFileForC358968.mrc', fileName);
         JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
         JobProfiles.runImportFile();
@@ -66,17 +68,17 @@ describe('ui-data-import: Check that protected fields in incoming records are no
       });
   });
 
-  after(() => {
+  after('delete test data', () => {
     MarcFieldProtection.getListOfMarcFieldProtectionViaApi({ query: `"field"=="${protectedField}"` })
       .then(list => {
         list.forEach(({ id }) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(id));
       });
     Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
+    Users.deleteViaApi(user.userId);
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
       .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
-    Users.deleteViaApi(user.userId);
   });
 
   it('C358968 Check that protected fields in incoming records are not deleted during import: Scenario 1 (folijet)',

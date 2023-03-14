@@ -21,7 +21,7 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import Users from '../../../support/fragments/users/users';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 
-describe('ui-data-import: Matching on newly-created 035 does not work (regression)', () => {
+describe('ui-data-import', () => {
   let user = null;
   const note = 'This instance was updated, plus a new subject heading was added';
   const resourceIdentifierForFirstInstance = { type: 'System control number', value: '(NhFolYBP)2304396' };
@@ -70,20 +70,20 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
-  before(() => {
+  before('create test data', () => {
     cy.getAdminToken().then(() => {
       InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifierForFirstInstance.value)
-        .then(instances => {
-          if (instances) {
-            instances.forEach(({ id }) => {
+        .then(listOfInstancesWithFirstIdentifiers => {
+          if (listOfInstancesWithFirstIdentifiers) {
+            listOfInstancesWithFirstIdentifiers.forEach(({ id }) => {
               InventoryInstance.deleteInstanceViaApi(id);
             });
           }
         });
       InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifierForSecondInstance.value)
-        .then(instances => {
-          if (instances) {
-            instances.forEach(({ id }) => {
+        .then(listOfInstancesWithSecondIdentifiers => {
+          if (listOfInstancesWithSecondIdentifiers) {
+            listOfInstancesWithSecondIdentifiers.forEach(({ id }) => {
               InventoryInstance.deleteInstanceViaApi(id);
             });
           }
@@ -104,13 +104,13 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
       });
   });
 
-  after(() => {
+  after('delete test data', () => {
   // delete profiles
     JobProfiles.deleteJobProfile(jobProfileName);
     MatchProfiles.deleteMatchProfile(matchProfileName);
     ActionProfiles.deleteActionProfile(actionProfileName);
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
-
+    Users.deleteViaApi(user.userId);
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${firstInstanceHrid}"` })
       .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
@@ -119,12 +119,13 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
       .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
-    Users.deleteViaApi(user.userId);
   });
 
   it('C358138 Matching on newly-created 035 does not work (regression) (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-    // upload a marc file for creating of the new instance
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
+      // upload a marc file for creating of the new instance
       DataImport.uploadFile('marcFileForC358138.mrc', fileForCreateFirstName);
       JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
       JobProfiles.runImportFile();
@@ -176,8 +177,8 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
 
       // upload a marc file for updating already created instance
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.clickDataImportNavButton();
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
       DataImport.uploadFile('marcFileForC358138_rev.mrc', fileForUpdateFirstName);
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
@@ -199,8 +200,8 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
 
       // upload a marc file for creating of the new instance
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.clickDataImportNavButton();
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
       DataImport.uploadFile('marcFileForC358138_with_035.mrc', fileForCreateSecondName);
       JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
       JobProfiles.runImportFile();
@@ -228,8 +229,8 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
 
       // upload a marc file for updating already created instance
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.clickDataImportNavButton();
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
       DataImport.uploadFile('marcFileForC358138_with_035_rev.mrc', fileForUpdateSecondName);
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();

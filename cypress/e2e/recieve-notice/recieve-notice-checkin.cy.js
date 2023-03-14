@@ -22,6 +22,7 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import getRandomPostfix from '../../support/utils/stringTools';
+import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 
 describe('Recieving notice: Checkout', () => {
   let addedCirculationRule;
@@ -113,6 +114,7 @@ describe('Recieving notice: Checkout', () => {
         });
         cy.wrap(itemsData.itemsWithSeparateInstance).as('items');
       });
+    OtherSettings.setOtherSettingsViaApi({ prefPatronIdentifier: 'barcode,username' });
     PatronGroups.createViaApi(patronGroup.name)
       .then(res => {
         patronGroup.id = res;

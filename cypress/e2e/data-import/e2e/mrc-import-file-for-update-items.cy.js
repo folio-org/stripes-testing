@@ -22,7 +22,7 @@ import SettingsJobProfiles from '../../../support/fragments/settings/dataImport/
 import DevTeams from '../../../support/dictionary/devTeams';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
-describe('ui-data-import: MARC file upload with the update of instance, holding, and items', () => {
+describe('ui-data-import', () => {
   let instanceHRID = null;
   // profile names for creating
   const nameMarcBibMappingProfile = `autotest_marcBib_mapping_profile_${getRandomPostfix()}`;
@@ -280,7 +280,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
-  beforeEach(() => {
+  beforeEach('create test data', () => {
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     cy.getAdminToken();
 
@@ -332,7 +332,6 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     FieldMappingProfiles.deleteFieldMappingProfile(nameInstanceMappingProfile);
     FieldMappingProfiles.deleteFieldMappingProfile(nameHoldingsMappingProfile);
     FieldMappingProfiles.deleteFieldMappingProfile(nameItemMappingProfile);
-
     // delete downloads folder and created files in fixtures
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
     FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
@@ -372,6 +371,8 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   };
 
   it('C343335 MARC file upload with the update of instance, holding, and items (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+    cy.reload();
     // upload a marc file for creating of the new instance, holding and item
     DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);
     JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);

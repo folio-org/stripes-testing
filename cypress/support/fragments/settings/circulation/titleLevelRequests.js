@@ -1,4 +1,5 @@
 import { Pane, Button, Checkbox } from '../../../../../interactors';
+import InteractorsTools from '../../../utils/interactorsTools';
 
 const SaveButton = Button('Save');
 const TLRCheckbox = Checkbox({ name: 'titleLevelRequestsFeatureEnabled' });
@@ -15,10 +16,26 @@ export default {
         if (!checked && status === 'allow') {
           cy.expect(Checkbox({ name: 'titleLevelRequestsFeatureEnabled', disabled: false }).exists());
           cy.do([TLRCheckbox.click(), SaveButton.click()]);
+          this.checkUpdateTLRCalloutAppeared();
         } else if (checked && status === 'forbid') {
           cy.expect(Checkbox({ name: 'titleLevelRequestsFeatureEnabled', disabled: false }).exists());
-          cy.do([TLRCheckbox.click(), SaveButton.click()]);
+          cy.do(TLRCheckbox.click());
+          // need to wait if the popup module appears
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
+          cy.wait(7000);
+          cy.get('#OverlayContainer').then((body) => {
+            if (body.find('div[label*="Cannot change"]').length) {
+              cy.do(Button('Close').click());
+            } else {
+              cy.do(SaveButton.click());
+              this.checkUpdateTLRCalloutAppeared();
+            }
+          });
         }
       });
+  },
+
+  checkUpdateTLRCalloutAppeared() {
+    InteractorsTools.checkCalloutMessage('Setting was successfully updated.');
   },
 };
