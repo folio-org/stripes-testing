@@ -64,7 +64,7 @@ describe('circulation-log', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C17001 Filter circulation log by marked as missing', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+  it('C17001 Filter circulation log by marked as missing (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     UsersSearchPane.searchByKeywords(user.userId);
     UsersSearchPane.openUser(user.userId);
     UsersCard.openLoans();
