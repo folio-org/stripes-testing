@@ -10,7 +10,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
 describe('ui-data-import', () => {
-  const quantityOfItems = '1';
+  const quantityOfItems = '15';
   const rowNumbers = [3, 6, 9, 10];
   const instanceSource = 'MARC';
   const instanceHrids = [];
@@ -36,8 +36,8 @@ describe('ui-data-import', () => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc, rowNumber);
         FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.instance, rowNumber);
       });
-      FileDetails.checkSrsRecordQuantityInSummaryTable('15');
-      FileDetails.checkInstanceQuantityInSummaryTable('15');
+      FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
+      FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems);
 
 
       rowNumbers.forEach(rowNumber => {
