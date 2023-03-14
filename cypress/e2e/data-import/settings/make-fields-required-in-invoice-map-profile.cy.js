@@ -8,11 +8,11 @@ import Users from '../../../support/fragments/users/users';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 
-describe('ui-data-import: Make some of the fields on the Invoice field mapping profile required', () => {
+describe('ui-data-import', () => {
   let user = null;
   const mappingProfileName = `C343284 invoice mapping profile ${Helper.getRandomBarcode()}`;
 
-  before(() => {
+  before('login', () => {
     cy.createTempUser([
       permissions.moduleDataImportEnabled.gui,
       permissions.settingsDataImportEnabled.gui,
@@ -25,7 +25,7 @@ describe('ui-data-import: Make some of the fields on the Invoice field mapping p
       });
   });
 
-  after(() => {
+  after('delete user', () => {
     Users.deleteViaApi(user.userId);
   });
 

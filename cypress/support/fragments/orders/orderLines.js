@@ -603,5 +603,17 @@ export default {
         Button('Cancel order line').click()
     ]);
   },
+
+  changeFundInPOL:(fund) => {
+    cy.do([
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      saveAndClose.click()
+    ]);
+  },
+
+  checkFundInPOL:(fund) => {
+    cy.expect(Section({ id: 'FundDistribution'}).find(Link(`${fund.name}(${fund.code})`)).exists());
+  },
 };
 
