@@ -13,7 +13,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import: Inventory single record import is not delayed when large data import jobs are running', () => {
+describe('ui-data-import', () => {
   let user = {};
   const authentication = '100473910/PAOLF';
   const fileName = `C356824autotestFile.${getRandomPostfix()}.mrc`;
@@ -31,7 +31,7 @@ describe('ui-data-import: Inventory single record import is not delayed when lar
     notes: { noteType: 'Bibliography note', noteContent: 'Includes bibliographical references and index' }
   };
 
-  before(() => {
+  before('create test data', () => {
     cy.getAdminToken();
     cy.createTempUser([
       permissions.moduleDataImportEnabled.gui,
@@ -47,14 +47,14 @@ describe('ui-data-import: Inventory single record import is not delayed when lar
     });
   });
 
-  after(() => {
+  after('delete test data', () => {
     Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
     Users.deleteViaApi(user.userId);
     // TODO delete all instances
   });
 
   it('C356824 Inventory single record import is not delayed when large data import jobs are running (folijet)',
-    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+    { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       cy.visit(SettingsMenu.targetProfilesPath);
       Z3950TargetProfiles.openOclcWorldCat();
       Z3950TargetProfiles.editOclcWorldCat(authentication);
@@ -63,6 +63,8 @@ describe('ui-data-import: Inventory single record import is not delayed when lar
       // import a file
       cy.visit(TopMenu.dataImportPath);
       DataImport.checkIsLandingPageOpened();
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
       DataImport.uploadFile('marcFileForC356824.mrc', fileName);
       // wait until file will be uploaded
       cy.wait(10000);

@@ -48,7 +48,6 @@ const viewHoldingButton = Button('View holdings');
 const statisticalCodeAccordion = Accordion({ id:'itemsStatisticalCodeIds' });
 
 const searchInstanceByHRID = (id) => {
-  InventoryInstances.waitContentLoading();
   cy.do([
     Select({ id: 'input-inventory-search-qindex' }).choose('Instance HRID'),
     TextField({ id: 'input-inventory-search' }).fillIn(id),
@@ -106,8 +105,6 @@ const checkInstanceDetails = () => {
   // in inventory, this will be "batch" for status code and "Batch Loaded" for status term
   const expectedStatusTerm = 'Batch Loaded';
   const expectedStatusCode = 'batch';
-
-  cy.do(MultiColumnListCell({ row: 0, columnIndex: 1 }).click());
   const catalogedDate = KeyValue('Cataloged date');
   const instanceStatusTerm = KeyValue('Instance status term');
   const instanceStatusCode = KeyValue('Instance status code');
@@ -125,8 +122,8 @@ export default {
   getAllSearchResults: () => MultiColumnList(),
   getSearchResult: (row = 0, col = 0) => MultiColumnListCell({ 'row': row, 'columnIndex': col }),
   waitLoading: () => cy.expect([Form().find(inventorySearchAndFilter).exists()]),
-  browseCallNumberIsAbsent:() => cy.expect(HTML('Browse call numbers').absent()),
-  browseSubjectIsAbsent:() => cy.expect(HTML('Browse subjects').absent()),
+  browseCallNumberIsAbsent: () => cy.expect(HTML('Browse call numbers').absent()),
+  browseSubjectIsAbsent: () => cy.expect(HTML('Browse subjects').absent()),
 
   effectiveLocation: {
     mainLibrary: { id: 'clickable-filter-effectiveLocation-main-library' }
@@ -297,7 +294,7 @@ export default {
     cy.expect(Pane({ id: 'browse-inventory-results-pane' }).find(MultiColumnListHeader()).exists());
   },
 
-  verifySearchResult:(cellContent) => cy.expect(MultiColumnListCell({ content: cellContent }).exists()),
+  verifySearchResult: (cellContent) => cy.expect(MultiColumnListCell({ content: cellContent }).exists()),
 
   getInstancesByIdentifierViaApi(identifier, limit = 100) {
     return cy

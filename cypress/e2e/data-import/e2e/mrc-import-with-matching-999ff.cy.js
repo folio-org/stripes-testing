@@ -17,7 +17,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import TopMenu from '../../../support/fragments/topMenu';
 import DevTeams from '../../../support/dictionary/devTeams';
 
-describe('ui-data-import: MARC file import with matching for 999 ff field', () => {
+describe('ui-data-import', () => {
   // unique file name to upload
   const nameForMarcFile = `C343343autotestFile${getRandomPostfix()}.mrc`;
   const nameForExportedMarcFile = `C343343autotestFile${getRandomPostfix()}.mrc`;
@@ -30,15 +30,9 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
   const actionProfileNameForExport = `autotestActionProf${getRandomPostfix()}`;
   const jobProfileNameForExport = `autotestJobProf${getRandomPostfix()}`;
 
-  beforeEach(() => {
+  beforeEach('login', () => {
     cy.loginAsAdmin();
     cy.getAdminToken();
-
-    DataImport.checkUploadState();
-  });
-
-  afterEach(() => {
-    DataImport.checkUploadState();
   });
 
   it('C343343 MARC file import with matching for 999 ff field (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
@@ -72,6 +66,8 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
 
     // upload a marc file for export
     cy.visit(TopMenu.dataImportPath);
+    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+    cy.reload();
     DataImport.uploadFile('oneMarcBib.mrc', nameForMarcFile);
     JobProfiles.searchJobProfileForImport(jobProfileNameForExport);
     JobProfiles.runImportFile();
@@ -152,6 +148,8 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
 
         // upload the exported marc file with 999.f.f.s fields
         cy.visit(TopMenu.dataImportPath);
+        // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.clickDataImportNavButton();
         DataImport.uploadExportedFile(nameForExportedMarcFile);
         JobProfiles.searchJobProfileForImport(jobProfileName);
         JobProfiles.runImportFile();

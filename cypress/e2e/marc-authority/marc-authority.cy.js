@@ -32,7 +32,7 @@ describe('Importing MARC Authority files', () => {
     profileName: `Update MARC authority records - 010 $a ${getRandomPostfix()}`,
     acceptedType: 'MARC',
   };
-  let fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
+  const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
   let createdAuthorityID;
 
   before('Creating data', () => {
@@ -52,7 +52,7 @@ describe('Importing MARC Authority files', () => {
       NewJobProfile.linkActionProfileByName('Default - Create MARC Authority');
       NewJobProfile.saveAndClose();
 
-      cy.visit(TopMenu.dataImportPath)
+      cy.visit(TopMenu.dataImportPath);
       DataImport.uploadFile('oneMarcAuthority.mrc', fileName);
       JobProfiles.waitLoadingList();
       JobProfiles.searchJobProfileForImport(jobProfileToRun);
@@ -98,7 +98,7 @@ describe('Importing MARC Authority files', () => {
     MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
     MarcAuthorities.selectFirst(testData.authority.title);
     MarcAuthority.edit();
-    MarcAuthority.checkNotDeletableTags('008')
+    MarcAuthority.checkNotDeletableTags('008');
   });
 
   it('C350576 Update 008 of Authority record (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
@@ -128,7 +128,7 @@ describe('Importing MARC Authority files', () => {
     MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
     MarcAuthorities.selectFirst(testData.authority.title);
     MarcAuthority.edit();
-    MarcAuthority.checkLDRValue(testData.authority.ldr)
+    MarcAuthority.checkLDRValue(testData.authority.ldr);
     MarcAuthority.check008Field();
     MarcAuthority.checkRemovedTag(9);
   });

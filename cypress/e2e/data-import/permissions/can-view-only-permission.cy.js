@@ -11,7 +11,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import Users from '../../../support/fragments/users/users';
 import Helper from '../../../support/fragments/finance/financeHelper';
 
-describe('ui-data-import:', () => {
+describe('ui-data-import', () => {
   let user;
   let instanceHrid;
 
@@ -36,15 +36,15 @@ describe('ui-data-import:', () => {
   });
 
   after('delete test data', () => {
+    Users.deleteViaApi(user.userId);
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
       .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
-    Users.deleteViaApi(user.userId);
   });
 
   it('C356780 A user can view logs but can not import files with "Data import: Can view only" permission (folijet)',
-    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+    { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       DataImport.verifyChooseFileButtonState({ isDisabled: true });
       Logs.openFileDetails(fileName);
       FileDetails.openInstanceInInventory('Created');

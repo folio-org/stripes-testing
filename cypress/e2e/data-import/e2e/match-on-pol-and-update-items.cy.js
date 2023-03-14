@@ -33,7 +33,7 @@ import NewLocation from '../../../support/fragments/settings/tenant/locations/ne
 import FileManager from '../../../support/utils/fileManager';
 import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
 
-describe('ui-data-import: Match on POL and update related Instance, Holdings, Item', () => {
+describe('ui-data-import', () => {
   const firstItem = {
     title: 'Agrarianism and capitalism in early Georgia, 1732-1743 / Jay Jordan Butler.',
     productId: '9782266111560',
@@ -140,7 +140,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     profileName: jobProfileName,
     acceptedType: NewJobProfile.acceptedDataType.marc };
 
-  before(() => {
+  before('create test data', () => {
     cy.createTempUser([
       permissions.uiOrdersCreate.gui,
       permissions.uiOrdersView.gui,
@@ -192,8 +192,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
       });
   });
 
-  after(() => {
-    let itemId;
+  after('delete test data', () => {
     const itemBarcode = Helper.getRandomBarcode();
 
     // delete created files
@@ -222,10 +221,9 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
-
     cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${secondItem.title}"` })
       .then((instance) => {
-        itemId = instance.items[0].id;
+        const itemId = instance.items[0].id;
 
         cy.getItems({ query: `"id"=="${itemId}"` })
           .then((item) => {
@@ -356,6 +354,8 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
 
       // upload .mrc file
       cy.visit(TopMenu.dataImportPath);
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
       DataImport.checkIsLandingPageOpened();
       DataImport.uploadFile(editedMarcFileName);
       JobProfiles.searchJobProfileForImport(jobProfileName);

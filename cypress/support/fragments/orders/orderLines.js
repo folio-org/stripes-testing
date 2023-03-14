@@ -275,12 +275,12 @@ export default {
       acquisitionMethodButton.click(),
       SelectionOption('Depository').click(),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
-      quantityPhysicalTextField.fillIn(quantityPhysical),
+      quantityPhysicalTextField.fillIn('2'),
       materialTypeSelect.choose('book'),
       addLocationButton.click(),
       locationSelect.click(),
       SelectionOption('Main Library (KU/CC/DI/M)').click(),
-      quantityPhysicalLocationField.fillIn(quantityPhysical),
+      quantityPhysicalLocationField.fillIn('2'),
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
@@ -389,7 +389,7 @@ export default {
     });
   },
 
-  fillInPOLineInfoForExportWithLocationForPhisicalResource(accountNumber, AUMethod, institutionName) {
+  fillInPOLineInfoForExportWithLocationForPhisicalResource(accountNumber, AUMethod, institutionName, quantity) {
     cy.do([
       orderFormatSelect.choose('Physical resource'),
       acquisitionMethodButton.click(),
@@ -399,7 +399,7 @@ export default {
     ]);
     cy.do([
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
-      quantityPhysicalTextField.fillIn(quantityPhysical),
+      quantityPhysicalTextField.fillIn(quantity),
       materialTypeSelect.choose('book'),
       addLocationButton.click(),
       Button('Create new holdings for location').click(),
@@ -407,11 +407,11 @@ export default {
     cy.get('form[id=location-form] select[name=institutionId]').select(institutionName);
     cy.do([
       Modal('Select permanent location').find(Button('Save and close')).click(),
-      quantityPhysicalLocationField.fillIn(quantityPhysical),
+      quantityPhysicalLocationField.fillIn(quantity),
     ]);
     cy.expect([
       physicalUnitPriceTextField.has({ value: physicalUnitPrice }),
-      quantityPhysicalLocationField.has({ value: quantityPhysical }),
+      quantityPhysicalLocationField.has({ value: quantity }),
     ]);
     cy.do(saveAndClose.click());
     // If purchase order line will be dublicate, Modal with button 'Submit' will be activated 
@@ -588,6 +588,32 @@ export default {
 
   clickNotConnectionInfoButton:() => {
     cy.do(Section({ id: 'itemDetails' }).find(Button({ icon: 'info' })).click());
-  }
+  },
+
+  selectCurrentEncumbrance:(currentEncumbrance) => {
+    cy.do(Section({ id: 'FundDistribution' }).find(Link(currentEncumbrance)).click());
+  },
+
+  cancelPOL:() => {
+    cy.do([
+      Pane({ id: 'order-lines-details' })
+      .find(PaneHeader({ id: 'paneHeaderorder-lines-details' })
+        .find(actionsButton)).click(),
+        Button('Cancel').click(),
+        Button('Cancel order line').click()
+    ]);
+  },
+
+  changeFundInPOL:(fund) => {
+    cy.do([
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      saveAndClose.click()
+    ]);
+  },
+
+  checkFundInPOL:(fund) => {
+    cy.expect(Section({ id: 'FundDistribution'}).find(Link(`${fund.name}(${fund.code})`)).exists());
+  },
 };
 

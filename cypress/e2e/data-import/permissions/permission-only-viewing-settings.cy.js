@@ -21,7 +21,7 @@ import FileExtensions from '../../../support/fragments/settings/dataImport/fileE
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import:', () => {
+describe('ui-data-import', () => {
   let user;
 
   // profile names for creating
@@ -61,7 +61,7 @@ describe('ui-data-import:', () => {
       });
   });
 
-  after(() => {
+  after('delete test data', () => {
     // delete generated profiles
     JobProfiles.deleteJobProfile(jobProfileName);
     MatchProfiles.deleteMatchProfile(matchProfileName);
@@ -75,6 +75,7 @@ describe('ui-data-import:', () => {
       cy.visit(SettingsMenu.jobProfilePath);
       JobProfiles.checkListOfExistingProfilesIsDisplayed();
       JobProfiles.verifyActionMenuAbsent();
+      JobProfiles.searchJobProfileForImport(jobProfileName);
       JobProfiles.selectJobProfile(jobProfileName);
       JobProfileView.verifyJobProfileOpened();
       JobProfileView.verifyActionMenuAbsent();
@@ -82,6 +83,7 @@ describe('ui-data-import:', () => {
       cy.visit(SettingsMenu.matchProfilePath);
       MatchProfiles.checkListOfExistingProfilesIsDisplayed();
       MatchProfiles.verifyActionMenuAbsent();
+      MatchProfiles.search(matchProfileName);
       MatchProfiles.selectMatchProfileFromList(matchProfileName);
       MatchProfileView.verifyMatchProfileOpened();
       MatchProfiles.verifyActionMenuAbsent(matchProfileName);
@@ -89,6 +91,7 @@ describe('ui-data-import:', () => {
       cy.visit(SettingsMenu.actionProfilePath);
       ActionProfiles.checkListOfExistingProfilesIsDisplayed();
       ActionProfiles.verifyActionMenuAbsent();
+      ActionProfiles.search(actionProfileName);
       ActionProfiles.selectActionProfileFromList(actionProfileName);
       ActionProfileView.verifyActionProfileOpened();
       ActionProfileView.verifyActionMenuAbsent();
@@ -96,6 +99,7 @@ describe('ui-data-import:', () => {
       cy.visit(SettingsMenu.mappingProfilePath);
       FieldMappingProfiles.checkListOfExistingProfilesIsDisplayed();
       FieldMappingProfiles.verifyActionMenuAbsent();
+      FieldMappingProfiles.search(mappingProfileName);
       FieldMappingProfiles.selectMappingProfileFromList(mappingProfileName);
       FieldMappingProfileView.verifyMappingProfileOpened();
       FieldMappingProfileView.verifyActionMenuAbsent();

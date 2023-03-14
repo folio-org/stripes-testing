@@ -18,7 +18,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import: Match on Instance identifier match meets both the Identifier type and Data requirements (Scenario 1)', () => {
+describe('ui-data-import', () => {
   let userId;
   const fileNameForCreateInstance = `C347828autotestFile.${getRandomPostfix()}.mrc`;
   const fileNameForUpdateInstance = `C347828autotestFile.${getRandomPostfix()}.mrc`;
@@ -64,7 +64,7 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
-  before(() => {
+  before('create test data', () => {
     cy.createTempUser([
       permissions.moduleDataImportEnabled.gui,
       permissions.dataImportDeleteLogs.gui,
@@ -91,7 +91,7 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
       });
   });
 
-  after(() => {
+  after('delete test data', () => {
     Users.deleteViaApi(userId);
     // delete profiles
     JobProfiles.deleteJobProfile(jobProfileName);
@@ -102,6 +102,8 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
 
   it('C347828 Match on Instance identifier match meets both the Identifier type and Data requirements (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
       DataImport.uploadFile('marcFileForMatchOnIdentifierForCreate.mrc', fileNameForCreateInstance);
       JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();
@@ -139,6 +141,8 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
       JobProfiles.checkJobProfilePresented(jobProfileName);
 
       cy.visit(TopMenu.dataImportPath);
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
       DataImport.uploadFile('marcFileForMatchOnIdentifierForUpdate.mrc', fileNameForUpdateInstance);
       JobProfiles.searchJobProfileForImport(jobProfileName);
       JobProfiles.runImportFile();

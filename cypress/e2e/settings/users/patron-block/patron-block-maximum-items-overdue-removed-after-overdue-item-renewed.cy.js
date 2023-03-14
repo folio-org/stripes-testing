@@ -28,6 +28,7 @@ import UserLoans from '../../../../support/fragments/users/loans/userLoans';
 import Renewals from '../../../../support/fragments/loans/renewals';
 
 describe('Patron Block: Maximum number of overdue items', () => {
+  let addedCirculationRule;
   let originalCirculationRules;
   const renewComment = `AutotestText${getRandomPostfix()}`;
   const blockMessage = 'You have reached maximum number of overdue items as set by patron group';
@@ -149,6 +150,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
       originalCirculationRules = response.rulesAsText;
       const ruleProps = CirculationRules.getRuleProps(response.rulesAsText);
       ruleProps.l = loanPolicyBody.id;
+      addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + ruleProps.i + ' l ' + ruleProps.l + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
       CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
     });
 
@@ -215,7 +217,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id
     );
-    CirculationRules.deleteRuleViaApi(originalCirculationRules);
+    CirculationRules.deleteRuleViaApi(addedCirculationRule);
     cy.deleteLoanType(testData.loanTypeId);
   });
   it(

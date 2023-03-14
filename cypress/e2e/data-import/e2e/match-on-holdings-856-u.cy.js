@@ -18,7 +18,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 
-describe('ui-data-import: Match on Holdings 856 $u', () => {
+describe('ui-data-import', () => {
   const matchProfileName = `autotestMatchProf${getRandomPostfix()}`;
   const nameForCreateMarcFile = `createFile${getRandomPostfix()}.mrc`;
   const nameForUpdateCreateMarcFile = `updateFile${getRandomPostfix()}.mrc`;
@@ -78,18 +78,12 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
     profileName: updateEHoldingsJobProfileName,
   };
 
-  before(() => {
+  before('login', () => {
     cy.loginAsAdmin({ path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
     cy.getAdminToken();
   });
 
-  after(() => {
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
-      .then((instance) => {
-        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
-
+  after('delete test data', () => {
     JobProfiles.deleteJobProfile(createInstanceAndEHoldingsJobProfileName);
     JobProfiles.deleteJobProfile(updateEHoldingsJobProfileName);
     MatchProfiles.deleteMatchProfile(matchProfileName);
@@ -99,6 +93,11 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
     FieldMappingProfiles.deleteFieldMappingProfile(createInstanceMappingProfileName);
     FieldMappingProfiles.deleteFieldMappingProfile(createEHoldingsMappingProfileName);
     FieldMappingProfiles.deleteFieldMappingProfile(updateEHoldingsMappingProfileName);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
+      .then((instance) => {
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
   });
 
   const createInstanceMappingProfile = (instanceMappingProfile) => {
@@ -113,7 +112,7 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
     NewFieldMappingProfile.fillPermanentLocation('"Online (E)"');
-    NewFieldMappingProfile.addElectronicAccess('"Resource"', '856$u', '856$z');
+    NewFieldMappingProfile.addElectronicAccess('Resource', '856$u', '856$z');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
   };
@@ -122,7 +121,7 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
     NewFieldMappingProfile.addSuppressFromDiscovery('Mark for all affected records');
-    NewFieldMappingProfile.fillCallNumberType('"Other scheme"');
+    NewFieldMappingProfile.fillCallNumberType('Other scheme');
     NewFieldMappingProfile.fillCallNumber('"ONLINE"');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
@@ -161,6 +160,8 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
     JobProfiles.checkJobProfilePresented(updateEHoldingsJobProfileName);
 
     cy.visit(TopMenu.dataImportPath);
+    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+    cy.reload();
     DataImport.uploadFile('marcFileForC17025.mrc', nameForCreateMarcFile);
     JobProfiles.searchJobProfileForImport(createInstanceAndEHoldingsJobProfileName);
     JobProfiles.runImportFile();
@@ -176,6 +177,8 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
       });
 
     cy.visit(TopMenu.dataImportPath);
+    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+    cy.reload();
     DataImport.uploadFile('marcFileForC17025.mrc', nameForUpdateCreateMarcFile);
     JobProfiles.searchJobProfileForImport(updateEHoldingsJobProfileName);
     JobProfiles.runImportFile();

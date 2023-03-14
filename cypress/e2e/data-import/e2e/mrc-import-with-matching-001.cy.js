@@ -19,10 +19,10 @@ import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
 import DevTeams from '../../../support/dictionary/devTeams';
 
-describe('ui-data-import: MARC-MARC matching for 001 field', () => {
+describe('ui-data-import', () => {
   let user = {};
 
-  before(() => {
+  before('login', () => {
     cy.createTempUser([
       permissions.dataImportUploadAll.gui,
       permissions.moduleDataImportEnabled.gui,
@@ -34,12 +34,9 @@ describe('ui-data-import: MARC-MARC matching for 001 field', () => {
         user = userProperties;
         cy.login(userProperties.username, userProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
       });
-    DataImport.checkUploadState();
   });
 
-
-  after(() => {
-    DataImport.checkUploadState();
+  after('delete test data', () => {
     Users.deleteViaApi(user.userId);
   });
 
@@ -55,6 +52,8 @@ describe('ui-data-import: MARC-MARC matching for 001 field', () => {
     const actionProfileName = `autoTestActionProf.${getRandomPostfix()}`;
     const jobProfileName = `autoTestJobProf.${getRandomPostfix()}`;
 
+    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+    cy.reload();
     // upload a marc file for export
     DataImport.uploadFile('oneMarcBib.mrc', nameForMarcFile);
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
@@ -129,6 +128,8 @@ describe('ui-data-import: MARC-MARC matching for 001 field', () => {
 
         // upload the exported marc file with 001 field
         cy.visit(TopMenu.dataImportPath);
+        // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.clickDataImportNavButton();
         DataImport.uploadExportedFile(nameForExportedMarcFile);
         JobProfiles.searchJobProfileForImport(jobProfileName);
         JobProfiles.runImportFile();

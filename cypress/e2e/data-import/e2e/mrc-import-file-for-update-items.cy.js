@@ -20,8 +20,9 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import SettingsJobProfiles from '../../../support/fragments/settings/dataImport/settingsJobProfiles';
 import DevTeams from '../../../support/dictionary/devTeams';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
-describe('ui-data-import: MARC file upload with the update of instance, holding, and items', () => {
+describe('ui-data-import', () => {
   let instanceHRID = null;
   // profile names for creating
   const nameMarcBibMappingProfile = `autotest_marcBib_mapping_profile_${getRandomPostfix()}`;
@@ -279,7 +280,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
-  beforeEach(() => {
+  beforeEach('create test data', () => {
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     cy.getAdminToken();
 
@@ -305,9 +306,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
       });
   });
 
-  afterEach(() => {
-    DataImport.checkUploadState();
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` });
+  after('delete test data', () => {
     // delete generated profiles
     JobProfiles.deleteJobProfile(jobProfileNameUpdate);
     collectionOfMatchProfiles.forEach(profile => {
@@ -326,11 +325,16 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     FieldMappingProfiles.deleteFieldMappingProfile(nameInstanceMappingProfile);
     FieldMappingProfiles.deleteFieldMappingProfile(nameHoldingsMappingProfile);
     FieldMappingProfiles.deleteFieldMappingProfile(nameItemMappingProfile);
-
     // delete downloads folder and created files in fixtures
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
     FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
     FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
+      .then((instance) => {
+        cy.deleteItemViaApi(instance.items[0].id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
   });
 
   const createInstanceMappingProfile = (profile) => {
@@ -345,11 +349,11 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   const createHoldingsMappingProfile = (profile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
-    NewFieldMappingProfile.fillHoldingsType('"Electronic"');
+    NewFieldMappingProfile.fillHoldingsType('Electronic');
     NewFieldMappingProfile.fillPermanentLocation('"Online (E)"');
-    NewFieldMappingProfile.fillCallNumberType('"Library of Congress classification"');
+    NewFieldMappingProfile.fillCallNumberType('Library of Congress classification');
     NewFieldMappingProfile.fillCallNumber('050$a " " 050$b');
-    NewFieldMappingProfile.addElectronicAccess('"Resource"', '856$u');
+    NewFieldMappingProfile.addElectronicAccess('Resource', '856$u');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
   };
@@ -366,19 +370,22 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   };
 
   it('C343335 MARC file upload with the update of instance, holding, and items (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+    cy.reload();
     // upload a marc file for creating of the new instance, holding and item
     DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);
     JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(nameMarcFileForImportCreate);
     Logs.openFileDetails(nameMarcFileForImportCreate);
-    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
-    [FileDetails.columnName.instance,
+    [FileDetails.columnName.srsMarc,
+      FileDetails.columnName.instance,
       FileDetails.columnName.holdings,
       FileDetails.columnName.item].forEach(columnName => {
       FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
     });
     FileDetails.checkItemsQuantityInSummaryTable(0, '1');
+    FileDetails.checkItemsQuantityInSummaryTable(1, '0');
 
     // get Instance HRID through API
     InventorySearchAndFilter.getInstanceHRID()
@@ -441,6 +448,8 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
 
     // upload the exported marc file
     cy.visit(TopMenu.dataImportPath);
+    // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.clickDataImportNavButton();
     DataImport.uploadExportedFile(nameMarcFileForImportUpdate);
     JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
     JobProfiles.runImportFile();

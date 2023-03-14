@@ -192,20 +192,6 @@ export default {
 
   getLinkToAuthority: (title) => cy.then(() => Button(title).href()),
 
-  // delete file if it hangs unimported before test
-  checkUploadState: () => {
-    cy.allure().startStep('Delete files before upload file');
-    cy.visit(TopMenu.dataImportPath);
-    waitLoading();
-    cy.then(() => DataImportUploadFile().isDeleteFilesButtonExists()).then(isDeleteFilesButtonExists => {
-      if (isDeleteFilesButtonExists) {
-        cy.do(Button('Delete files').click());
-        cy.expect(orChooseFilesButton.exists());
-        cy.allure().endStep();
-      }
-    });
-  },
-
   checkIsLandingPageOpened: () => {
     cy.expect(jobsPane.find(orChooseFilesButton).exists());
     cy.expect(logsPaneHeader.find(actionsButton).exists());
@@ -345,5 +331,10 @@ export default {
 
   verifyChooseFileButtonState: ({ isDisabled }) => {
     cy.expect(orChooseFilesButton.has({ disabled: isDisabled }));
+  },
+
+  clickDataImportNavButton:() => {
+    // TODO delete this function after fix https://issues.folio.org/browse/MODDATAIMP-691
+    cy.do(Button({ id:'app-list-item-clickable-data-import-module' }).click());
   }
 };

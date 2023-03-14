@@ -90,7 +90,7 @@ const paneResultsSection = Section({ id: 'pane-results' });
 const actionsBtn = Button('Actions');
 const actionsMenuSection = Section({ id: 'actions-menu-section' });
 const importRecord = Button({ id: 'dropdown-clickable-import-record' });
-const importRecordModal = Modal({id: 'import-record-modal'});
+const importRecordModal = Modal({ id: 'import-record-modal' });
 const importButton = Button('Import');
 const closeSourceFile = Button({ icon: 'times-circle-solid' });
 const authoritySearchResults = Section({ id: 'authority-search-results-pane' });
@@ -271,7 +271,7 @@ export default {
   verifySelectMarcAuthorityModal() {
     cy.expect([
       findAuthorityModal.exists(),
-      findAuthorityModal.has({title: 'Select MARC authority'}),
+      findAuthorityModal.has({ title: 'Select MARC authority' }),
       closeModalFindAuthority.exists(),
     ]);
   },
@@ -317,19 +317,19 @@ export default {
 
   fillInAndSearchResults(value) {
     cy.do(searchInput.fillIn(value));
-    cy.expect(searchInput.has({ value: value }));
+    cy.expect(searchInput.has({ value }));
     cy.expect(enabledSearchBtn.exists());
     cy.do(searchButton.click());
     cy.expect(authoritySearchResults.exists());
   },
 
   checkResultsListPaneHeader() {
-      cy.expect(PaneHeader('MARC authority').exists()),
-      cy.intercept('GET', '/search/authorities?*').as('getItems');
-      cy.wait('@getItems', { timeout: 10000 }).then(item => {
-        cy.expect(Pane({ subtitle: `${item.response.body.totalRecords} results found` }).exists());
-        expect(item.response.body.totalRecords < 100).to.be.true;
-      });
+    cy.expect(PaneHeader('MARC authority').exists());
+    cy.intercept('GET', '/search/authorities?*').as('getItems');
+    cy.wait('@getItems', { timeout: 10000 }).then(item => {
+      cy.expect(Pane({ subtitle: `${item.response.body.totalRecords} results found` }).exists());
+      expect(item.response.body.totalRecords < 100).to.be.true;
+    });
   },
 
   checkSearchResultsTable() {
@@ -338,8 +338,8 @@ export default {
       mclAuthRefTypeHeader.has({ content: 'Authorized' }),
       mclHeadingRef.has({ content: 'Heading/Reference' }),
       mclHeadingType.has({ content: 'Type of heading' }),
-      MultiColumnListRow({index: 0}).find(Button({ ariaLabel: 'Link' })).exists(),
-      MultiColumnListCell({row: 0, innerHTML: including('<b>Authorized</b>') }).exists(),
+      MultiColumnListRow({ index: 0 }).find(Button({ ariaLabel: 'Link' })).exists(),
+      MultiColumnListCell({ row: 0, innerHTML: including('<b>Authorized</b>') }).exists(),
     ]);
     cy.expect([
       buttonPrevPageDisabled.exists(),
@@ -351,7 +351,7 @@ export default {
   },
 
   selectRecord() {
-    cy.do(MultiColumnListRow({index: 0}).find(MultiColumnListCell({ columnIndex: 2 })).find(Button()).click());
+    cy.do(MultiColumnListRow({ index: 0 }).find(MultiColumnListCell({ columnIndex: 2 })).find(Button()).click());
   },
 
   checkRecordDetailPage() {
@@ -496,9 +496,18 @@ export default {
     InventoryInstanceSelectInstanceModal.selectInstance();
     InventoryInstancesMovement.move();
   },
-
-  checkAddItem:(holdingsRecrodId) => {
-    cy.expect(section.find(Button({ id: `clickable-new-item-${holdingsRecrodId}` })).exists());
+  moveHoldingsToAnotherInstanceByItemTitle: (holdingName, title) => {
+    cy.do(actionsButton.click());
+    cy.do(moveHoldingsToAnotherInstanceButton.click());
+    InventoryInstanceSelectInstanceModal.waitLoading();
+    InventoryInstanceSelectInstanceModal.searchByTitle(title)
+    InventoryInstanceSelectInstanceModal.selectInstance();
+    InventoryInstancesMovement.moveFromMultiple(holdingName, title);
+  },
+  checkAddItem:(holdingsRecordId) => {
+    cy.expect(section.find(Section({ id:holdingsRecordId }))
+      .find(Button({ id: `clickable-new-item-${holdingsRecordId}` }))
+      .exists());
   },
 
   checkInstanceIdentifier: (identifier) => {
@@ -598,6 +607,10 @@ export default {
     cy.do(Button(including(location)).click());
   },
 
+  verifyHoldingLocation(content) {
+    cy.expect(MultiColumnListCell({ content }).exists());
+  },
+
   checkIsItemCreated:(itemBarcode) => {
     cy.expect(Link(itemBarcode).exists());
   },
@@ -615,9 +628,7 @@ export default {
     cy.expect(HTML('MARC bibliographic record').exists());
   },
 
-  singleOverlaySourceBibRecordModalIsPresented:() => {
-    cy.expect(singleRecordImportModal.exists());
-  },
+  singleOverlaySourceBibRecordModalIsPresented:() => cy.expect(singleRecordImportModal.exists()),
 
   importWithOclc:(oclc) => {
     cy.do(singleRecordImportModal.find(TextField({ name:'externalIdentifier' })).fillIn(oclc));
@@ -635,9 +646,7 @@ export default {
       .find(MultiColumnListCell(including(text))).exists());
   },
 
-  verifyLoan(content) {
-    cy.expect(MultiColumnListCell({ content }).exists());
-  },
+  verifyLoan: (content) => cy.expect(MultiColumnListCell({ content }).exists()),
 
   verifyLoanInItemPage(barcode, value) {
     cy.do(MultiColumnListCell({ content: barcode }).find(Link()).click());
@@ -647,5 +656,15 @@ export default {
 
   verifyItemBarcode(barcode) {
     cy.expect(MultiColumnListCell({ content: barcode }).exists());
+  },
+
+  openItemByBarcodeAndIndex: (barcode, indexRowNumber, rowCountInList) => {
+    cy.do([
+      Button('Collapse all').click(),
+      Button('Acquisition').click(),
+      MultiColumnList({ columnCount: rowCountInList })
+        .find(MultiColumnListRow({ indexRow: indexRowNumber }))
+        .find(Link(barcode)).click()
+    ]);
   },
 };

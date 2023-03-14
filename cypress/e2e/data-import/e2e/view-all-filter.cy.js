@@ -8,7 +8,7 @@ import DevTeams from '../../../support/dictionary/devTeams';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 
-describe('ui-data-import: Filter the "View all" log screen', () => {
+describe('ui-data-import', () => {
   // Path to static file in fixtures
   const pathToStaticFile = 'oneMarcBib.mrc';
   // Create unique names for MARC files
@@ -18,7 +18,7 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
   let jobProfileName;
   let userFilterValue;
 
-  before(() => {
+  before('create test data', () => {
     cy.loginAsAdmin();
     cy.getAdminToken();
 
@@ -31,6 +31,8 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
     });
 
     cy.visit(TopMenu.dataImportPath);
+    // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.clickDataImportNavButton();
     // Upload files
     // runs with errors
     cy.uploadFileWithDefaultJobProfile(fileNameForFailedImport);
@@ -44,7 +46,6 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
   });
 
   beforeEach(() => {
-    DataImport.checkUploadState();
     LogsViewAll.getSingleJobProfile().then(({ jobProfileInfo, runBy }) => {
       const {
         firstName,

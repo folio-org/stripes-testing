@@ -32,11 +32,10 @@ export default {
   openNewRequestPane,
 
   fillRequiredFields(newRequest) {
-    if (newRequest.instanceHRID !== undefined) {
-      cy.do([
-        titleLevelRequest.click(),
-        instanceHridInput.fillIn(newRequest.instanceHRID),
-      ]);
+    if ('instanceHRID' in newRequest) {
+      cy.expect(Checkbox({ name: 'createTitleLevelRequest', disabled: false }).exists());
+      cy.do(titleLevelRequest.click());
+      cy.do(instanceHridInput.fillIn(newRequest.instanceHRID));
       cy.intercept('/inventory/instances?*').as('getLoans');
       cy.do(Section({ id: 'new-item-info' }).find(Button('Enter')).click());
     } else {

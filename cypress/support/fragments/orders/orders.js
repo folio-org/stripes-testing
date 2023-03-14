@@ -142,7 +142,7 @@ export default {
     InteractorsTools.checkCalloutMessage('Order was closed');
   },
 
-  unOpenOrder: (orderNumber) => {
+  unOpenOrder: () => {
     cy.do([
       orderDetailsPane
         .find(PaneHeader({ id: 'paneHeaderorder-details' })
@@ -150,7 +150,6 @@ export default {
       Button('Unopen').click(),
       Button({ id:'clickable-order-unopen-confirmation-confirm-delete-holdings' }).click()
     ]);
-    InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully unopened`);
   },
 
   receiveOrderViaActions: () => {
@@ -416,8 +415,9 @@ export default {
     cy.do([
       buttonLocationFilter.click(),
       Button('Location look-up').click(),
+      Select({ name: 'institutionId' }).choose('Københavns Universitet'),
       Select({ name: 'campusId' }).choose('City Campus'),
-      Button('Location look-up').click(),
+      Button({ id: 'locationId' }).click(),
       SelectionOption('Main Library (KU/CC/DI/M) ').click(),
       Button('Save and close').click(),
       buttonLocationFilter.click(),

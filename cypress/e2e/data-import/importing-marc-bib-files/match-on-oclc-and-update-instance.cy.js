@@ -18,7 +18,7 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
-describe('ui-data-import:', () => {
+describe('ui-data-import', () => {
   let instanceHrid;
   const itemsForCreateInstance = {
     catalogedDate: '###TODAY###',
@@ -107,10 +107,6 @@ describe('ui-data-import:', () => {
   });
 
   after('delete test data', () => {
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-      .then((instance) => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
     JobProfiles.deleteJobProfile(jobProfileForCreateName);
     JobProfiles.deleteJobProfile(jobProfileForUpdateName);
     MatchProfiles.deleteMatchProfile(matchProfileName);
@@ -118,10 +114,14 @@ describe('ui-data-import:', () => {
       ActionProfiles.deleteActionProfile(profile.actionProfile.name);
       FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
     });
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
   });
 
   it('C11109 Update an instance based on an OCLC number match (folijet)',
-    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+    { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       // create mapping profile for creating instance
       cy.visit(SettingsMenu.mappingProfilePath);
       FieldMappingProfiles.openNewMappingProfileForm();
@@ -149,6 +149,8 @@ describe('ui-data-import:', () => {
 
       // upload a marc file for creating of the new instance
       cy.visit(TopMenu.dataImportPath);
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
       DataImport.uploadFile('marcFileForC11109.mrc', nameMarcFileForCreate);
       JobProfiles.searchJobProfileForImport(jobProfileForCreateName);
       JobProfiles.runImportFile();
@@ -205,6 +207,8 @@ describe('ui-data-import:', () => {
 
           // upload a marc file for updating instance
           cy.visit(TopMenu.dataImportPath);
+          // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+          cy.reload();
           DataImport.uploadFile('marcFileForC11109.mrc', nameMarcFileForUpdate);
           JobProfiles.searchJobProfileForImport(jobProfileForUpdateName);
           JobProfiles.runImportFile();

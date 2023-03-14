@@ -1,4 +1,4 @@
-import { Section, NavListItem, Checkbox, TextArea, Button } from '../../../../../interactors';
+import { Section, NavListItem, TextArea, Button } from '../../../../../interactors';
 import Condition from './condition';
 
 const rootPaneset = Section({ id:'app-settings-nav-pane' });
@@ -8,9 +8,6 @@ const conditionsValues = ['Maximum number of items charged out',
   'Maximum number of overdue recalls',
   'Maximum outstanding fee/fine balance',
   'Recall overdue by maximum number of days'];
-const borrowingBox = Checkbox({ id:'blockBorrowing' });
-const renewalsBox = Checkbox({ id:'blockRenewals' });
-const requestsBox = Checkbox({ id:'blockRequests' });
 const messageToBeDisplayed = TextArea({ id:'message' });
 
 const resetCondition = (conditionValue) => {
@@ -61,13 +58,21 @@ export default {
     isDefaultSearchParamsRequired : false,
   }).then(response => response.body.patronBlockConditions),
 
-  setConditionState: (message, borrowing = true, renewals = true, request = true) => {
-    cy.do([
-      borrowing && borrowingBox.click(),
-      renewals && renewalsBox.click(),
-      request && requestsBox.click(),
-      messageToBeDisplayed.fillIn(message),
-      Button('Save').click(),
-    ]);
-  }
+  setConditionState: (message, blockCheckboxes = [true, true, true]) => {
+    cy.get('[class*="partonBlockForm"] input')
+      .each((item, index) => {
+        cy.get(Cypress.$(item))
+          .invoke('is', ':checked')
+          .then((checked) => {
+            if (!checked && blockCheckboxes[index]) {
+              cy.get(Cypress.$(item)).click();
+            } else if (checked && !blockCheckboxes[index]) {
+              cy.get(Cypress.$(item)).click();
+            }
+          });
+      })
+      .then(() => {
+        cy.do([messageToBeDisplayed.fillIn(message), Button('Save').click()]);
+      });
+  },
 };
