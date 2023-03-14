@@ -66,7 +66,7 @@ describe('eHoldings titles management', () => {
       eHoldingsTitlesSearch.byTitle(selectedResource.title);
       eHoldingsTitlesSearch.byPublicationType(selectedResource.publicationType);
       eHoldingsTitlesSearch.bySelectionStatus(eHoldingsTitle.filterStatuses.selected);
-      eHoldingsTitles.openTitle();
+      eHoldingsTitles.openTitleFromDropDown();
       eHoldingsTitle.waitPackagesLoading();
       eHoldingsTitle.filterPackages(eHoldingsPackage.filterStatuses.selected, selectedResource.package);
       eHoldingsTitle.waitPackagesLoading();

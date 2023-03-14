@@ -13,7 +13,18 @@ export default {
       .find(ListItem({ className: including('list-item-'), index: 1 })
         .find(Button())).exists());
   },
-  openTitle: (rowNumber = 0) => {
+  openTitle: (rowNumber = 1) => {
+    const specialRow = resultSection.find(ListItem({ className: including('list-item-'), index: rowNumber }));
+
+    cy.then(() => specialRow.h3Value())
+      .then(title => {
+        cy.do(resultSection
+          .find(ListItem({ className: including('list-item-'), index: rowNumber })
+            .find(Button())).click());
+        eHoldingsTitle.waitLoading(title);
+      });
+  },
+  openTitleFromDropDown: (rowNumber = 0) => {
     const specialRow = resultSection.find(ListItem({ className: including('list-item-'), index: rowNumber }));
 
     cy.then(() => specialRow.h3Value())
@@ -37,7 +48,7 @@ export default {
       isDefaultSearchParamsRequired : false }).then(({ body }) => {
       const initialTitles = body.data.filter(specialTitle => specialTitle?.attributes?.name)
         .map(title => ({ id: title.id, name: title.attributes.name }));
-      cy.wrap([...new Set(initialTitles)][0]).as('title');
+      cy.wrap([...new Set(initialTitles)][1]).as('title');
     });
     return cy.get('@title');
   }
