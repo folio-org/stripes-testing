@@ -18,7 +18,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 
-describe('ui-data-import: Match on Holdings 856 $u', () => {
+describe('ui-data-import', () => {
   const matchProfileName = `autotestMatchProf${getRandomPostfix()}`;
   const nameForCreateMarcFile = `createFile${getRandomPostfix()}.mrc`;
   const nameForUpdateCreateMarcFile = `updateFile${getRandomPostfix()}.mrc`;

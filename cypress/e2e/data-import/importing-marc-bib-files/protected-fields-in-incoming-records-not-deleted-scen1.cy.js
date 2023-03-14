@@ -16,7 +16,7 @@ import InventoryEditMarcRecord from '../../../support/fragments/inventory/invent
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import: Check that protected fields in incoming records are not deleted during import: Scenario 1', () => {
+describe('ui-data-import', () => {
   let user = null;
   let instanceHrid = null;
   const protectedField = '856';

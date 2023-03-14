@@ -13,7 +13,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import: Inventory single record import is not delayed when large data import jobs are running', () => {
+describe('ui-data-import', () => {
   let user = {};
   const authentication = '100473910/PAOLF';
   const fileName = `C356824autotestFile.${getRandomPostfix()}.mrc`;

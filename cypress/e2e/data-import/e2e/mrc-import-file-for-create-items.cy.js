@@ -15,7 +15,7 @@ import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
 import DevTeams from '../../../support/dictionary/devTeams';
 
-describe('ui-data-import: MARC file import with creating of the new instance, holding and item', () => {
+describe('ui-data-import', () => {
   let user = {};
 
   // unique file name to upload

@@ -8,7 +8,7 @@ import DevTeams from '../../../support/dictionary/devTeams';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 
-describe('ui-data-import: Filter the "View all" log screen', () => {
+describe('ui-data-import', () => {
   // Path to static file in fixtures
   const pathToStaticFile = 'oneMarcBib.mrc';
   // Create unique names for MARC files

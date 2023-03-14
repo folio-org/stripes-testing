@@ -12,7 +12,7 @@ import NewFieldMappingProfile from '../../../support/fragments/data_import/mappi
 import InvoiceView from '../../../support/fragments/invoices/invoiceView';
 import DevTeams from '../../../support/dictionary/devTeams';
 
-describe('ui-data-import: Import a large EDIFACT invoice file', () => {
+describe('ui-data-import', () => {
 // unique name for profiles
   const mappingProfileName = `autoTestMappingProf.${getRandomPostfix()}`;
   const actionProfileName = `autoTestActionProf.${getRandomPostfix()}`;

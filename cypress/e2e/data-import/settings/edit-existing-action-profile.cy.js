@@ -10,7 +10,7 @@ import Users from '../../../support/fragments/users/users';
 import ActionProfileEdit from '../../../support/fragments/data_import/action_profiles/actionProfileEdit';
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
 
-describe('ui-data-import: Edit an existing action profile without associated job profile', () => {
+describe('ui-data-import', () => {
   const actionProfileName = `C2348 autotest action profile ${Helper.getRandomBarcode()}`;
   let user;
   const actionProfile = {

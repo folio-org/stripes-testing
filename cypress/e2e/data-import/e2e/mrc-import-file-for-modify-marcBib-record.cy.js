@@ -19,7 +19,7 @@ import Users from '../../../support/fragments/users/users';
 import DevTeams from '../../../support/dictionary/devTeams';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
-describe('ui-data-import: Verify the possibility to modify MARC Bibliographic record', () => {
+describe('ui-data-import', () => {
   let user = {};
   let instanceHRID;
 
