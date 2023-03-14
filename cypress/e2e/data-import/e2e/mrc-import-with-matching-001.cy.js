@@ -19,7 +19,7 @@ import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
 import DevTeams from '../../../support/dictionary/devTeams';
 
-describe('ui-data-import: MARC-MARC matching for 001 field', () => {
+describe('ui-data-import', () => {
   let user = {};
   // unique file name to upload
   const nameForMarcFile = `C17044autoTestFile${getRandomPostfix()}.mrc`;

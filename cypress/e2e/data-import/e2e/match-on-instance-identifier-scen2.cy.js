@@ -18,7 +18,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import: Match on Instance identifier match meets both the Identifier type and Data requirements (Scenario 2)', () => {
+describe('ui-data-import', () => {
   let userId;
   const filePathForCreateInstance = 'marcFileForMatchOnIdentifierForCreate.mrc';
   const filePathForUpdateInstance = 'marcFileForMatchOnIdentifierForUpdate_2.mrc';

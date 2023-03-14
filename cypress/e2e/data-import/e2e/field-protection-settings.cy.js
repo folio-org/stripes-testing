@@ -21,7 +21,7 @@ import InventoryViewSource from '../../../support/fragments/inventory/inventoryV
 import FileManager from '../../../support/utils/fileManager';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
-describe('ui-data-import: Check that field protection settings work properly during data import', () => {
+describe('ui-data-import', () => {
   const marcFieldProtected = ['507', '920'];
   const marcFieldProtectionId = [];
   let instanceHrid = null;
@@ -103,7 +103,7 @@ describe('ui-data-import: Check that field protection settings work properly dur
           })
             .then((resp) => {
               const id = resp.id;
-              marcFieldProtectionId.push = id;
+              marcFieldProtectionId.push(id);
             });
         });
       });
