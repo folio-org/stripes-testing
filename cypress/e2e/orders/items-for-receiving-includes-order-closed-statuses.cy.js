@@ -164,7 +164,7 @@ describe('orders: Receiving and Check-in', () => {
     cy.visit(TopMenu.ordersPath);
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList();
-    Orders.unOpenOrder(orderNumber);
+    Orders.unOpenOrderDeleteHoldingsItems();
     OrderLines.selectPOLInOrder();
     OrderLines.deleteOrderLine();
     // Need to wait until the order is opened before deleting it

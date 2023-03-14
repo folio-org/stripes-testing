@@ -90,7 +90,7 @@ describe('invoices: add adjustment', () => {
         OrderLines.backToEditingOrder();
         Orders.openOrder();
         cy.visit(TopMenu.invoicesPath);
-        Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
+        Invoices.createAdjustmentInvoice(invoice, vendorPrimaryAddress);
         Invoices.createInvoiceLinePOLLookUp(orderNumber);
       });
 
