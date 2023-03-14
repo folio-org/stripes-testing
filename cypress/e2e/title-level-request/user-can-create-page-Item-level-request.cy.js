@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import TestTypes from '../../support/dictionary/testTypes';
+import testTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -100,7 +100,6 @@ describe('Create Item or Title level request', () => {
       [
         permissions.uiUsersfeefinesCRUD.gui,
         permissions.uiUsersfeefinesView.gui,
-        permissions.loansRenew.gui,
         permissions.requestsAll.gui,
       ],
       patronGroup.name
@@ -145,13 +144,13 @@ describe('Create Item or Title level request', () => {
   });
   it(
     'C350422 Check that user can create "Page" Item level request (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    { tags: [testTypes.criticalPath, devTeams.vega] },
     () => {
       cy.intercept('POST', 'circulation/requests').as('createRequest');
       NewRequest.openNewRequestPane();
       NewRequest.waitLoadingNewRequestPage(true);
       NewRequest.enterItemInfo('wrongBarcode');
-      NewRequest.checkErrorMessage('Item with this barcode does not exist');
+      NewRequest.verifyErrorMessage('Item with this barcode does not exist');
       NewRequest.enterItemInfo(testData.itemBarcode);
       NewRequest.verifyItemInformation([testData.itemBarcode, instanceData.title]);
       NewRequest.verifyRequestInformation('Available');
