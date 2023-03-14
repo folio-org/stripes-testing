@@ -268,7 +268,10 @@ export default {
   selectNotYetFilledRequest:() => cy.do(Checkbox({ name: 'Open - Not yet filled' }).click()),
   selectClosedCancelledRequest:() => cy.do((Checkbox({ name: 'Closed - Cancelled' }).click())),
   selectFirstRequest:(title) => cy.do(requestsPane.find(MultiColumnListCell({ row: 0, content: title })).click()),
-  openTagsPane:() => cy.do(showTagsButton.click()),
+  openTagsPane:() => {
+    cy.do(showTagsButton.click());
+    cy.wait(1000);
+  },
   closePane:(title) => cy.do(Pane({ title }).find(IconButton({ ariaLabel: 'Close ' })).click()),
   selectHoldsRequestType:() => cy.do(holdCheckbox.click()),
   selectPagesRequestType:() => cy.do(pageCheckbox.click()),
@@ -299,10 +302,10 @@ export default {
   },
 
   addTag(tag) {
-    waitLoadingTags();
+    cy.wait(1000);
     cy.do(tagsPane.find(MultiSelect({ ariaLabelledby:'accordion-toggle-button-tag-accordion' })).choose(tag));
     // TODO investigate what to wait
-    cy.wait(2000);
+    cy.wait(1000);
   },
 
   deleteTag:() => {
