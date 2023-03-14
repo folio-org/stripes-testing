@@ -72,7 +72,7 @@ export default {
     cy.wait(1500);
     cy.do(Button({ id: 'clickable-add-item' }).click());
     // waiters needs for check out item in loop
-    cy.wait(1500);
+    cy.wait(2000);
   },
 
   endCheckOutSession:() => {
