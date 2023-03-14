@@ -103,7 +103,7 @@ describe('ui-data-import: Check that field protection settings work properly dur
           })
             .then((resp) => {
               const id = resp.id;
-              marcFieldProtectionId.push = id;
+              marcFieldProtectionId.push(id);
             });
         });
       });
