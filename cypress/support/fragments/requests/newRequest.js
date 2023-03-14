@@ -105,11 +105,13 @@ export default {
   },
 
   enterItemInfo(barcode) {
-    cy.do(itemBarcodeInput.fillIn(barcode));
-    cy.do(enterItemBarcodeButton.click());
+    cy.do([
+      itemBarcodeInput.fillIn(barcode),
+      enterItemBarcodeButton.click()
+    ]);
   },
 
-  checkErrorMessage(message) {
+  verifyErrorMessage(message) {
     cy.expect(HTML(including(message)).exists());
   },
 

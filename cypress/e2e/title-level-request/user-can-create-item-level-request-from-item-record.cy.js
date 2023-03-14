@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import TestTypes from '../../support/dictionary/testTypes';
+import testTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -107,7 +107,6 @@ describe('Create Item or Title level request', () => {
         permissions.uiUsersfeefinesCRUD.gui,
         permissions.uiUsersfeefinesView.gui,
         permissions.inventoryAll.gui,
-        permissions.loansRenew.gui,
         permissions.requestsAll.gui,
       ],
       patronGroup.name
@@ -152,7 +151,7 @@ describe('Create Item or Title level request', () => {
   });
   it(
     'C350421 Check that user can create Item level request from Item record (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    { tags: [testTypes.criticalPath, devTeams.vega] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(instanceData.title);
       FilterItems.toggleAccordionItemsButton(testData.holdingId);
