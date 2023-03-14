@@ -28,7 +28,7 @@ describe('bulk-edit', () => {
   });
 
 
-  it('C350929 Verify Bulk Edit app - landing page (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C380424 Verify Bulk Edit app - landing page (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     // verify panes
     BulkEditSearchPane.verifyPanesBeforeImport();
     BulkEditSearchPane.verifyBulkEditPaneItems();
