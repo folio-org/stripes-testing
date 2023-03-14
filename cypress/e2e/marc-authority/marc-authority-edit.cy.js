@@ -113,6 +113,27 @@ describe('MARC Authority -> Edit Authority record', () => {
     MarcAuthority.contains(testData.authority.title);
   });
 
+  it('C375120 User cannot delete "1XX" field of "MARC authority" record (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    let rowIndexTag1XX = 14;
+    MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
+    MarcAuthorities.selectTitle(testData.authority.title);
+    MarcAuthority.edit();
+
+    tagsC375120.forEach(tag => {
+      MarcAuthority.changeTag(rowIndexTag1XX, tag);
+      QuickMarcEditor.clickSaveAndKeepEditing();
+      QuickMarcEditor.checkDeleteButtonNotExist(rowIndexTag1XX);
+    });
+
+    MarcAuthority.changeTag(rowIndexTag1XX, '110');
+    QuickMarcEditor.pressSaveAndClose();
+    MarcAuthority.edit();
+
+    MarcAuthority.addNewField(rowIndexTag1XX, '100', '$a test');
+    MarcAuthority.changeTag(rowIndexTag1XX + 1, '400');
+    QuickMarcEditor.checkDeleteButtonExist(rowIndexTag1XX + 1);
+  });
+
   it('C353536 Add multiple 001s when editing "MARC Authority" record (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
     MarcAuthorities.selectTitle(testData.authority.title);
@@ -258,26 +279,5 @@ describe('MARC Authority -> Edit Authority record', () => {
     QuickMarcEditor.clickSaveAndCloseThenCheck(2);
     QuickMarcEditor.constinueWithSaveAndCheck();
     QuickMarcEditor.checkFieldAbsense('382');
-  });
-
-  it('C375120 User cannot delete "1XX" field of "MARC authority" record (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
-    let rowIndexTag1XX = 21;
-    MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
-    MarcAuthorities.selectTitle(testData.authority.title);
-    MarcAuthority.edit();
-
-    tagsC375120.forEach(tag => {
-      MarcAuthority.changeTag(rowIndexTag1XX, tag);
-      QuickMarcEditor.clickSaveAndKeepEditing();
-      QuickMarcEditor.checkDeleteButtonNotExist(rowIndexTag1XX);
-    });
-
-    MarcAuthority.changeTag(rowIndexTag1XX, '155');
-    QuickMarcEditor.pressSaveAndClose();
-    MarcAuthority.edit();
-
-    MarcAuthority.addNewField(rowIndexTag1XX, '100', '$a test');
-    MarcAuthority.changeTag(rowIndexTag1XX + 1, '400');
-    QuickMarcEditor.checkDeleteButtonExist(rowIndexTag1XX + 1);
   });
 });
