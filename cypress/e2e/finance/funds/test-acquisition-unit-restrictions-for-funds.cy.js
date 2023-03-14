@@ -64,8 +64,9 @@ describe('ui-finance: Funds', () => {
     cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
     FinanceHelp.searchByName(defaultfund.name);
     Funds.selectFund(defaultfund.name);
-    cy.reload();
     Funds.deleteFundViaActions();
+    FinanceHelp.searchByName(defaultfund.name);
+    Funds.checkZeroSearchResultsHeader();
     Ledgers.deleteledgerViaApi(defaultLedger.id);
 
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);

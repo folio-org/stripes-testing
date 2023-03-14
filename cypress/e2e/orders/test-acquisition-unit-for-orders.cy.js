@@ -51,8 +51,10 @@ describe('ui-finance: Orders', () => {
 
   after(() => {
     cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
+    cy.wait(5000);
     Orders.deleteOrderApi(orderId);
     Organizations.deleteOrganizationViaApi(organization.id);
+    cy.visit(SettingsMenu.acquisitionUnitsPath);
     AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
     AcquisitionUnits.delete(defaultAcquisitionUnit.name);
 
