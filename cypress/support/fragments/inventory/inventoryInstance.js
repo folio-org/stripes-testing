@@ -58,6 +58,8 @@ const closeTag = Button({ icon: 'times' });
 const tagsPane = Pane('Tags');
 const textFieldTagInput = MultiSelect({ ariaLabelledby:'accordion-toggle-button-tag-accordion' });
 const descriptiveDataAccordion = Accordion('Descriptive data');
+const titleDataAccordion = Accordion('Title data');
+const contributorAccordion = Accordion('Contributor');
 const callNumberTextField = TextArea('Call number');
 const copyNumberTextField = TextField('Copy number');
 const callNumSuffixTextField = TextArea('Call number suffix');
@@ -164,6 +166,18 @@ const verifyInstancePublisher = (indexRow, indexColumn, type) => {
     .has({ content: type }));
 };
 
+const verifyAlternativeTitle = (indexRow, indexColumn, value) => {
+  cy.expect(titleDataAccordion.find(MultiColumnList({ id: 'list-alternative-titles' }))
+    .find(MultiColumnListRow({ index: indexRow })).find(MultiColumnListCell({ columnIndex: indexColumn }))
+    .has({ content: value }));
+};
+
+const verifyContributor = (indexRow, indexColumn, value) => {
+  cy.expect(contributorAccordion.find(MultiColumnList({ id: 'list-contributors' }))
+    .find(MultiColumnListRow({ index: indexRow })).find(MultiColumnListCell({ columnIndex: indexColumn }))
+    .has({ content: value }));
+};
+
 const verifyInstanceSubject = (indexRow, indexColumn, value) => {
   cy.expect(Accordion('Subject')
     .find(MultiColumnList({ id: 'list-subject' }))
@@ -204,6 +218,8 @@ export default {
   checkInstanceNotes,
   waitInstanceRecordViewOpened,
   openItemByBarcode,
+  verifyAlternativeTitle,
+  verifyContributor,
 
   checkExpectedOCLCPresence: (OCLCNumber = validOCLC.id) => {
     cy.expect(identifiers.find(HTML(including(OCLCNumber))).exists());

@@ -11,9 +11,45 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 
 describe('ui-data-import', () => {
   const quantityOfItems = '15';
-  const rowNumbers = [3, 6, 9, 10];
+  const rowNumbers = [1, 4, 7, 14];
   const instanceSource = 'MARC';
-  const instanceHrids = [];
+  const firstRecord = {
+    title: 'ha-Maʻaśim li-vene Erets-Yiśraʼel : halakhah ṿe-hisṭoryah be-Erets-Yiśraʼel ha-Bizanṭit / Hilel Nyuman.',
+    firstAlternativeTitle: 'Maʻasim of the people of the land of Israel : halakhah and history in Byzantine Palestine',
+    secondAlternativeTitle: 'המעשים לבני ארץ־ישראל : הלכה והיסטוריה בארץ־ישראל הביזנטית',
+    firstContributerName: 'Newman, Hillel',
+    secondContributerName: 'ניומן, הלל',
+    firstPublisher: 'Yad Yitsḥaḳ Ben-Tsevi',
+    secondPublisher: 'יד יצחק בן-צבי',
+    language: 'Hebrew'
+  };
+  const secondRecord = {
+    title: '8-15 shi ji zhong xi bu Xizang de li shi, wen hua yu yi shu / Airuika Fute [and four others] zhu bian = Tibet in dialogue with its neighbours : history, culture and art of central and western Tibet, 8th to 15th century / Erika Forte [and four others] eds.',
+    firstAlternativeTitle: 'Tibet in dialogue with its neighbour : history, culture and art of central and western Tibet, 8th to 15th century',
+    secondAlternativeTitle: '8-15世纪中西部西藏的历史, 文化与艺术',
+    contributerName: 'Forte, Erika,',
+    firstPublisher: 'Zhongguo Zang xue chu ban she',
+    secondPublisher: '中国藏学出版社',
+    language: 'Chinese, English'
+  };
+  const thirdRecord = {
+    title: '3-il man e ingnŭn Ilbonsa / Tʻakʻemissŭ Makʻotʻo chiŭm ; Ko Sŏn-yun omgim.',
+    firstAlternativeTitle: 'Mikka de wakaru Nihonshi. Korean',
+    secondAlternativeTitle: '3日でわかる日本史. Korean',
+    firstContributerName: 'Takemitsu, Makoto, 1950-',
+    secondContributerName: '武光誠, 1950-',
+    firstPublisher: 'Sŏul Munhwasa',
+    secondPublisher: '서울문화사',
+    language: 'Korean'
+  };
+  const fourthRecord = {
+    title: 'Istorii︠a︡ ukraïnsʹkoho kooperatyvnoho rukhu : Iz pratsʹ Istorychno-filosofichnoï sektsiï HTSH.',
+    firstAlternativeTitle: 'History of Ukrainian co-operative movement',
+    secondAlternativeTitle: 'Історія українського кооперативного руху : Із пратсь Історично-філософічної сектсії ГТШ.',
+    contributerName: 'Vytanovych, Illi︠a︡',
+    publisher: 'T-vo ukr. kooperatsiï',
+    language: 'Ukrainian'
+  };
   const nameMarcFileForCreate = `C6709 autotestFile.${getRandomPostfix()}.mrc`;
 
   beforeEach(() => {
@@ -32,24 +68,57 @@ describe('ui-data-import', () => {
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(nameMarcFileForCreate);
       rowNumbers.forEach(rowNumber => {
-        cy.wait(1000);
         FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc, rowNumber);
         FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.instance, rowNumber);
       });
       FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
       FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems);
 
+      FileDetails.openInstanceInInventory('Created', rowNumbers[0]);
+      InstanceRecordView.verifyInstanceSource(instanceSource);
+      InventoryInstance.verifyInstanceTitle(firstRecord.title);
+      InventoryInstance.verifyAlternativeTitle(0, 1, firstRecord.firstAlternativeTitle);
+      InventoryInstance.verifyAlternativeTitle(1, 1, firstRecord.secondAlternativeTitle);
+      InventoryInstance.verifyContributor(0, 1, firstRecord.firstContributerName);
+      InventoryInstance.verifyContributor(1, 1, firstRecord.secondContributerName);
+      InventoryInstance.verifyInstancePublisher(0, 0, firstRecord.firstPublisher);
+      InventoryInstance.verifyInstancePublisher(1, 0, firstRecord.secondPublisher);
+      InventoryInstance.verifyInstanceLanguage(firstRecord.language);
 
-      rowNumbers.forEach(rowNumber => {
-        // need to wait until page will be opened in loop
-        cy.wait(1500);
-        cy.visit(TopMenu.dataImportPath);
-        Logs.openFileDetails(nameMarcFileForCreate);
-        FileDetails.openInstanceInInventory('Created', rowNumber);
-        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
-          instanceHrids.push(initialInstanceHrId);
-        });
-        InstanceRecordView.verifyInstanceSource(instanceSource);
-      });
+      cy.visit(TopMenu.dataImportPath);
+      Logs.openFileDetails(nameMarcFileForCreate);
+      FileDetails.openInstanceInInventory('Created', rowNumbers[1]);
+      InstanceRecordView.verifyInstanceSource(instanceSource);
+      InventoryInstance.verifyInstanceTitle(secondRecord.title);
+      InventoryInstance.verifyAlternativeTitle(0, 1, secondRecord.firstAlternativeTitle);
+      InventoryInstance.verifyAlternativeTitle(1, 1, secondRecord.secondAlternativeTitle);
+      InventoryInstance.verifyContributor(0, 1, secondRecord.contributerName);
+      InventoryInstance.verifyInstancePublisher(0, 0, secondRecord.firstPublisher);
+      InventoryInstance.verifyInstancePublisher(1, 0, secondRecord.secondPublisher);
+      InventoryInstance.verifyInstanceLanguage(secondRecord.language);
+
+      cy.visit(TopMenu.dataImportPath);
+      Logs.openFileDetails(nameMarcFileForCreate);
+      FileDetails.openInstanceInInventory('Created', rowNumbers[2]);
+      InstanceRecordView.verifyInstanceSource(instanceSource);
+      InventoryInstance.verifyInstanceTitle(thirdRecord.title);
+      InventoryInstance.verifyAlternativeTitle(0, 1, thirdRecord.firstAlternativeTitle);
+      InventoryInstance.verifyAlternativeTitle(3, 1, thirdRecord.secondAlternativeTitle);
+      InventoryInstance.verifyContributor(0, 1, thirdRecord.firstContributerName);
+      InventoryInstance.verifyContributor(2, 1, thirdRecord.secondContributerName);
+      InventoryInstance.verifyInstancePublisher(0, 0, thirdRecord.firstPublisher);
+      InventoryInstance.verifyInstancePublisher(1, 0, thirdRecord.secondPublisher);
+      InventoryInstance.verifyInstanceLanguage(thirdRecord.language);
+
+      cy.visit(TopMenu.dataImportPath);
+      Logs.openFileDetails(nameMarcFileForCreate);
+      FileDetails.openInstanceInInventory('Created', rowNumbers[3]);
+      InstanceRecordView.verifyInstanceSource(instanceSource);
+      InventoryInstance.verifyInstanceTitle(fourthRecord.title);
+      InventoryInstance.verifyAlternativeTitle(0, 1, fourthRecord.firstAlternativeTitle);
+      InventoryInstance.verifyAlternativeTitle(1, 1, fourthRecord.secondAlternativeTitle);
+      InventoryInstance.verifyContributor(0, 1, fourthRecord.contributerName);
+      InventoryInstance.verifyInstancePublisher(0, 0, fourthRecord.publisher);
+      InventoryInstance.verifyInstanceLanguage(fourthRecord.language);
     });
 });
