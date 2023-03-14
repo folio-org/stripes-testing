@@ -141,11 +141,6 @@ describe('TLR: Item renew', () => {
           instanceData.instanceId = specialInstanceIds.instanceId;
           instanceData.holdingId = specialInstanceIds.holdingIds[0].id;
           instanceData.itemIds = specialInstanceIds.holdingIds[0].itemIds;
-          cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${specialInstanceIds.instanceId}"` }).then(
-            (instance) => {
-              instanceHRID = instance.hrid;
-            }
-          );
         });
       });
     LoanPolicy.createViaApi(loanPolicyBody.renewable);
@@ -194,6 +189,11 @@ describe('TLR: Item renew', () => {
   });
 
   beforeEach('Checkout items', () => {
+    cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceData.instanceId}"` }).then(
+      (instance) => {
+        instanceHRID = instance.hrid;
+      }
+    );
     cy.wrap(instanceData.itemsData).as('items');
     cy.get('@items').each((item) => {
       Checkout.checkoutItemViaApi({
