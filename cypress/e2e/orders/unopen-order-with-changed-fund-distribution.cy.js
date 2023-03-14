@@ -109,7 +109,7 @@ describe('orders: Unopen order', () => {
         OrderLines.backToEditingOrder();
         Orders.openOrder();
         cy.visit(TopMenu.invoicesPath);
-        Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
+        Invoices.createAdjustmentInvoice(invoice, vendorPrimaryAddress);
         Invoices.createInvoiceLinePOLLookUp(orderNumber);
         Invoices.approveInvoice();
         Invoices.payInvoice();
