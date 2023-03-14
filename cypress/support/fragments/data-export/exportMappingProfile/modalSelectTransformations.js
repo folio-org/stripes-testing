@@ -1,5 +1,5 @@
-import { Checkbox, Button, Modal, TextField, MultiColumnListRow, MultiColumnListCell, Pane, MultiColumnListHeader } from '../../../../../interactors';
 import { including } from '@interactors/html';
+import { Checkbox, Button, Modal, TextField, MultiColumnListRow, MultiColumnListCell, Pane, MultiColumnListHeader } from '../../../../../interactors';
 
 const ModalTransformation = Modal('Select transformations');
 const instanceRecordTypeChechbox = Checkbox({ value: 'INSTANCE', name: 'filters.recordTypes' });
@@ -48,14 +48,14 @@ export default {
       itemRecordTypeChechbox.has({ checked: true }),
       selectedStatusChechbox.has({ checked: true }),
       unSelectedStatusChechbox.has({ checked: true }),
-    ])
+    ]);
   },
   verifyTransformationsPaneColumns() {
     cy.expect([
       Checkbox({ id: 'select-all-checkbox', checked: false }).exists(),
       MultiColumnListHeader('Field name').exists(),
       MultiColumnListHeader('Transformation').exists(),
-    ])
+    ]);
   },
   verifySearchAndFilterPane() {
     this.verifyAllSearchAndFilterCheckboxesChecked();

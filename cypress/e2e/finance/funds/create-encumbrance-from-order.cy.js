@@ -104,6 +104,6 @@ describe('ui-finance: Transactions', () => {
     Funds.selectFund(defaultFund.name);
     Funds.selectBudgetDetails();
     Funds.viewTransactions();
-    Funds.checkOrderInTransactionList(defaultFund.code);
+    Funds.checkOrderInTransactionList(defaultFund.code, '($20.00)');
   });
 });

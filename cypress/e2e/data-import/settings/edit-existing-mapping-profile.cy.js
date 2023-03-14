@@ -10,7 +10,7 @@ import FieldMappingProfileEdit from '../../../support/fragments/data_import/mapp
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import: Edit an existing field mapping profile', () => {
+describe('ui-data-import', () => {
   const mappingProfileName = `C2351 autotest mapping profile ${Helper.getRandomBarcode()}`;
   let user;
   const mappingProfile = {
@@ -42,7 +42,7 @@ describe('ui-data-import: Edit an existing field mapping profile', () => {
   });
 
   it('C2351 Edit an existing field mapping profile (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-    FieldMappingProfiles.searchMappingProfile(mappingProfileName);
+    FieldMappingProfiles.search(mappingProfileName);
     FieldMappingProfileView.editMappingProfile();
     FieldMappingProfileEdit.verifyScreenName(mappingProfileName);
     FieldMappingProfileEdit.fillInstanceStatusTerm(instanceStatusTerm);

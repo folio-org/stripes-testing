@@ -10,7 +10,7 @@ import Users from '../../../support/fragments/users/users';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import DevTeams from '../../../support/dictionary/devTeams';
 
-describe('ui-data-import: A user can delete import logs with "Data import: Can delete import logs" permission on Landing page', () => {
+describe('ui-data-import', () => {
   let userId = null;
   let fileNameToUpload = '';
   const filePathToUpload = 'oneMarcBib.mrc';
@@ -20,7 +20,7 @@ describe('ui-data-import: A user can delete import logs with "Data import: Can d
   const numberOfLogsToUpload = 30;
   const getCalloutSuccessMessage = logsCount => `${logsCount} data import logs have been successfully deleted.`;
 
-  before(() => {
+  before('create test data', () => {
     cy.createTempUser([
       permissions.moduleDataImportEnabled.gui,
       permissions.dataImportDeleteLogs.gui
@@ -40,6 +40,8 @@ describe('ui-data-import: A user can delete import logs with "Data import: Can d
           // we are uploading 29 empty files and 1 file with content to speed up uploading process
           const filePath = numberOfLogsToUpload - 1 === index ? filePathToUpload : emptyFilePathToUpload;
           fileNameToUpload = `C358137autotestFile.${getRandomPostfix()}.mrc`;
+          // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+          DataImport.clickDataImportNavButton();
           DataImport.uploadFile(filePath, fileNameToUpload);
           // need to wait until file will be uploaded in loop
           cy.wait(8000);
@@ -50,7 +52,7 @@ describe('ui-data-import: A user can delete import logs with "Data import: Can d
       });
   });
 
-  after(() => {
+  after('delete test data', () => {
     Logs.selectAllLogs();
     Logs.actionsButtonClick();
     Logs.deleteLogsButtonClick();
