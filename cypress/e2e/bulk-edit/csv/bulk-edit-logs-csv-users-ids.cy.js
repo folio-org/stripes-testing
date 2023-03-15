@@ -37,16 +37,16 @@ describe('Bulk Edit - Logs', () => {
         });
     });
 
+    afterEach('reload bulk-edit page', () => {
+      cy.visit(TopMenu.bulkEditPath);
+      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    });
+
     after('delete test data', () => {
       FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${importFileNameC375214}`);
       FileManager.deleteFile(`cypress/fixtures/${importFileNameC375217}`);
       Users.deleteViaApi(user.userId);
-    });
-
-    afterEach('reload bulk-edit page', () => {
-      cy.visit(TopMenu.bulkEditPath);
-      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
     });
 
     it('C375214 Verify generated Logs files for Users CSV -- only valid (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
