@@ -32,7 +32,7 @@ describe('eHoldings titles management', () => {
       eHoldingsTitlesSearch.bySubject('chemical engineering');
       eHoldingsTitlesSearch.byPublicationType('Journal');
       eHoldingsTitlesSearch.bySelectionStatus(eHoldingsTitle.filterStatuses.notSelected);
-      eHoldingsTitles.openTitle();
+      eHoldingsTitles.openTitle(1);
       eHoldingsTitle.waitPackagesLoading();
       eHoldingsTitle.filterPackages();
       eHoldingsTitle.waitPackagesLoading();
@@ -66,7 +66,7 @@ describe('eHoldings titles management', () => {
       eHoldingsTitlesSearch.byTitle(selectedResource.title);
       eHoldingsTitlesSearch.byPublicationType(selectedResource.publicationType);
       eHoldingsTitlesSearch.bySelectionStatus(eHoldingsTitle.filterStatuses.selected);
-      eHoldingsTitles.openTitleFromDropDown();
+      eHoldingsTitles.openTitle(0);
       eHoldingsTitle.waitPackagesLoading();
       eHoldingsTitle.filterPackages(eHoldingsPackage.filterStatuses.selected, selectedResource.package);
       eHoldingsTitle.waitPackagesLoading();
