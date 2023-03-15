@@ -14,7 +14,11 @@ export default {
     const currentDate = new Date();
     return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(currentDate.getDate())}`;
   },
-
+  
+  getRandomFiscalYearCodeForRollover: (min, max) => {
+    // returns random 4 digit code for the Fiscal Year
+    return 'FYTA' + Math.floor((Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.ceil(min))).toString();
+  },
 
   getPreviousDayDate: () => {
     const today = new Date();
@@ -71,7 +75,7 @@ export default {
 
   getRandomFiscalYearCode: (min, max) => {
     // returns random 4 digit code for the Fiscal Year
-    return 'FYTA' + (Math.floor((Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.ceil(min))).toString());
+    return (getRandomStringCode(4)) + Math.floor((Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.ceil(min))).toString();
   },
 
   getDateRanges: (rangesCount = 1, isInDifferentYears = false) => {
