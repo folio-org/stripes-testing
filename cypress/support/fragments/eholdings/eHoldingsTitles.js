@@ -24,17 +24,6 @@ export default {
         eHoldingsTitle.waitLoading(title);
       });
   },
-  openTitleFromDropDown: (rowNumber = 0) => {
-    const specialRow = resultSection.find(ListItem({ className: including('list-item-'), index: rowNumber }));
-
-    cy.then(() => specialRow.h3Value())
-      .then(title => {
-        cy.do(resultSection
-          .find(ListItem({ className: including('list-item-'), index: rowNumber })
-            .find(Button())).click());
-        eHoldingsTitle.waitLoading(title);
-      });
-  },
   create: (packageName, titleName = `title_${getRandomPostfix()}`) => {
     cy.do(resultSection.find(Button('New')).click());
     eHoldingsNewCustomTitle.waitLoading();
