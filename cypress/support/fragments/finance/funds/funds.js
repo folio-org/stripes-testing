@@ -531,4 +531,14 @@ export default {
   selectFund:(FundName) => {
     cy.do(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).click());
   },
+
+  selectPlannedBudgetDetails:(rowNumber = 0) => {
+    cy.do([
+      Section({ id: 'plannedBudget' }).find(MultiColumnListRow({ index: rowNumber })).click()
+    ]);
+  },
+  
+  closeMenu:() => {
+    cy.do(Button({ icon: 'times' }).click());
+  },
 };

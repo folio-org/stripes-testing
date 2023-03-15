@@ -8,7 +8,8 @@ import { Button,
   Section,
   Select,
   Pane,
-  Link } from '../../../../../interactors';
+  Link, 
+  MultiColumnListCell} from '../../../../../interactors';
 import FinanceHelper from '../financeHelper';
 import getRandomPostfix from '../../../utils/stringTools';
 
@@ -47,8 +48,8 @@ export default {
       Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
       Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
       rolloverButton.click(),
+      Button({ id: 'clickable-rollover-confirmation-confirm' }).click(),
       Button('Continue').click(),
-      Button('Confirm').click(),
     ]);
   },
 
@@ -158,5 +159,15 @@ export default {
 
   selectLedger:(ledgerName) => {
     cy.do(Pane({ id: 'ledger-results-pane' }).find(Link(ledgerName)).click());
-  }
+  },
+
+  closeRolloverInfo : () => {
+    cy.do(Button('Close & view ledger details').click());
+  },
+
+  selectFundInLedger : (fund) => {
+    cy.do([
+      Section({ id: 'fund' }).find(MultiColumnListCell({content: fund})).click(),
+    ]);
+  },
 };
