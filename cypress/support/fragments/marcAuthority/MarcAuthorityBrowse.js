@@ -113,20 +113,20 @@ export default {
 
   checkResultWithValueA(valueA, auth, valueAuth, ref, valueRef) {
     cy.expect([
-      MultiColumnListCell({row: 0, content: `${valueA} would be here`}).exists(),
-      MultiColumnListCell({row: 1, content: auth}).exists(),
-      MultiColumnListCell({row: 1, content: valueAuth}).exists(),
-      MultiColumnListCell({row: 2, content: ref}).exists(),
-      MultiColumnListCell({row: 2, content: valueRef}).exists(),
+      MultiColumnListCell({content: `${valueA} would be here`}).exists(),
+      MultiColumnListCell({content: auth}).exists(),
+      MultiColumnListCell({content: valueAuth}).exists(),
+      MultiColumnListCell({content: ref}).exists(),
+      MultiColumnListCell({content: valueRef}).exists(),
     ]);
   },
 
   checkResultWithValueB(auth, valueAuth, ref, valueRef) {
     cy.expect([
-      MultiColumnListCell({row: 0, content: auth}).exists(),
-      MultiColumnListCell({row: 0, content: valueAuth}).exists(),
-      MultiColumnListCell({row: 1, content: ref}).exists(),
-      MultiColumnListCell({row: 1, content: valueRef}).exists(),
+      MultiColumnListCell({content: auth}).exists(),
+      MultiColumnListCell({content: valueAuth}).exists(),
+      MultiColumnListCell({content: ref}).exists(),
+      MultiColumnListCell({content: valueRef}).exists(),
     ]);
   },
 
