@@ -51,6 +51,11 @@ export default {
     return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(currentDate.getDate() + 2)}`;
   },
 
+  getDayTomorrowDateForFiscalYear: () => {
+    const currentDate = new Date();
+    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(currentDate.getDate() + 1)}`;
+  },
+
   getPreviousDayDateForFiscalYear: () => {
     const currentDate = new Date();
     return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(currentDate.getDate() - 1)}`;

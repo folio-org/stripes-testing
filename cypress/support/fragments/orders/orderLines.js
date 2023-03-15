@@ -199,27 +199,28 @@ export default {
     ]);
   },
 
-  rolloverPOLineInfoforPhysicalMaterialWithFund: (orderLineTitleName, fund, unitPrice, quantity, value) => {
+  rolloverPOLineInfoforPhysicalMaterialWithFund: ( fund, unitPrice, quantity, value,institutionId) => {
     cy.do([
-      orderLineTitleField.fillIn(orderLineTitleName),
       orderFormatSelect.choose('Physical resource'),
       acquisitionMethodButton.click(),
     ]);
     cy.wait(2000);
     cy.do([
       SelectionOption('Depository').click(),
-      receivingWorkflowSelect.choose('Independent order and receipt quantity'),
+      receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
       physicalUnitPriceTextField.fillIn(unitPrice),
       quantityPhysicalTextField.fillIn(quantity),
-      materialTypeSelect.choose('book'),
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
       Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
       fundDistributionField.fillIn(value),
       addLocationButton.click(),
-      locationSelect.click(),
-      onlineLocationOption.click(),
+      Button('Create new holdings for location').click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+        cy.do([
+      Modal('Select permanent location').find(Button('Save and close')).click(),
       quantityPhysicalLocationField.fillIn(quantity),
       saveAndClose.click()
     ]);

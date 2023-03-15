@@ -16,6 +16,8 @@ import Organizations from '../../../support/fragments/organizations/organization
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import NewInvoice from '../../../support/fragments/invoices/newInvoice';
 import Invoices from '../../../support/fragments/invoices/invoices';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 
 describe('ui-finance: Fiscal Year', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -23,7 +25,7 @@ describe('ui-finance: Fiscal Year', () => {
     name: `autotest_year_${getRandomPostfix()}`,
     code: DateTools.getRandomFiscalYearCode(2000, 9999),
     periodStart: `${DateTools.getPreviousDayDateForFiscalYear()}T00:00:00.000+00:00`,
-    periodEnd: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
+    periodEnd: `${DateTools.getDayAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
     series: 'FY',
   };
@@ -38,10 +40,12 @@ describe('ui-finance: Fiscal Year', () => {
   };
   const firstOrder = { ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',
-    reEncumber: true };
+    ongoing: {isSubscription: false, manualRenewal: false},
+    approved: true,  reEncumber: true,};
   const secondOrder = {
     orderType: 'Ongoing',
-    vendor: '',
+    ongoing: {isSubscription: false, manualRenewal: false},
+    approved: true,
     reEncumber: true,
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
@@ -51,6 +55,8 @@ describe('ui-finance: Fiscal Year', () => {
   const allocatedQuantity = '1000';
   let user;
   let orderNumber;
+  let servicePointId;
+  let location;
 
   before(() => {
     cy.getAdminToken();
@@ -86,6 +92,14 @@ describe('ui-finance: Fiscal Year', () => {
               });
           });
       });
+      ServicePoints.getViaApi()
+    .then((servicePoint) => {
+      servicePointId = servicePoint[0].id;
+      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
+        .then(res => {
+          location = res;
+        });
+    });
     // Create second Fiscal Year for Rollover
     FiscalYears.createViaApi(secondFiscalYear)
       .then(secondFiscalYearResponse => {
@@ -106,7 +120,8 @@ describe('ui-finance: Fiscal Year', () => {
       orderNumber = firstOrderResponse.poNumber;
       Orders.checkCreatedOrder(firstOrder);
       OrderLines.addPOLine();
-      OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(firstOrderLineTitle, firstFund, '100', '1', '100');
+      OrderLines.selectRandomInstanceInTitleLookUP('*',5),
+      OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund( firstFund, '100', '1', '100',location.institutionId);
       OrderLines.backToEditingOrder();
       Orders.openOrder();
       cy.visit(TopMenu.ordersPath);
@@ -139,14 +154,15 @@ describe('ui-finance: Fiscal Year', () => {
       });
   });
 
-  after(() => {
-    Users.deleteViaApi(user.userId);
-  });
+  // after(() => {
+  //   Users.deleteViaApi(user.userId);
+  // });
 
   it('C186156 Rollover Fiscal Year (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     FinanceHelp.searchByName(defaultLedger.name);
     Ledgers.selectLedger(defaultLedger.name);
     Ledgers.rollover();
+    cy.pause();
     Ledgers.fillInRolloverInfo(secondFiscalYear.name);
   });
 });
