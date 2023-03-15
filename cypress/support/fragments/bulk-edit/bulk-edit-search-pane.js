@@ -533,7 +533,7 @@ export default {
       actions.click(),
       Button('Download errors (CSV)').click(),
     ]);
-    //Need to wait for the file to download
+    // Need to wait for the file to download
     cy.wait(5000);
   },
 
