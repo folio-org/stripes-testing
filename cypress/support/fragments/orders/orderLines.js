@@ -199,7 +199,7 @@ export default {
     ]);
   },
 
-  rolloverPOLineInfoforPhysicalMaterialWithFund: ( fund, unitPrice, quantity, value,institutionId) => {
+  rolloverPOLineInfoforPhysicalMaterialWithFund( fund, unitPrice, quantity, value,institutionId) {
     cy.do([
       orderFormatSelect.choose('Physical resource'),
       acquisitionMethodButton.click(),
@@ -215,6 +215,7 @@ export default {
       SelectionOption(`${fund.name} (${fund.code})`).click(),
       Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
       fundDistributionField.fillIn(value),
+      materialTypeSelect.choose('book'),
       addLocationButton.click(),
       Button('Create new holdings for location').click(),
     ]);
@@ -224,6 +225,8 @@ export default {
       quantityPhysicalLocationField.fillIn(quantity),
       saveAndClose.click()
     ]);
+    cy.wait(2000);
+    this.submitOrderLine();
   },
 
   rolloverPOLineInfoforElectronicResourceWithFund: (orderLineTitleName, fund, unitPrice, quantity, value) => {

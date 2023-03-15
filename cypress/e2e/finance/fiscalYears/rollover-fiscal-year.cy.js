@@ -24,7 +24,7 @@ describe('ui-finance: Fiscal Year', () => {
   const secondFiscalYear = {
     name: `autotest_year_${getRandomPostfix()}`,
     code: DateTools.getRandomFiscalYearCode(2000, 9999),
-    periodStart: `${DateTools.getPreviousDayDateForFiscalYear()}T00:00:00.000+00:00`,
+    periodStart: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
     periodEnd: `${DateTools.getDayAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
     series: 'FY',
@@ -43,8 +43,6 @@ describe('ui-finance: Fiscal Year', () => {
     ongoing: {isSubscription: false, manualRenewal: false},
     approved: true,  reEncumber: true,};
   const secondOrder = {
-    orderType: 'Ongoing',
-    ongoing: {isSubscription: false, manualRenewal: false},
     approved: true,
     reEncumber: true,
   };
@@ -111,6 +109,7 @@ describe('ui-finance: Fiscal Year', () => {
       .then(responseOrganizations => {
         organization.id = responseOrganizations;
         invoice.accountingCode = organization.erpCode;
+        secondOrder.orderType = 'One-time'
       });
     firstOrder.vendor = organization.name;
     secondOrder.vendor = organization.name;
@@ -129,7 +128,8 @@ describe('ui-finance: Fiscal Year', () => {
         secondOrder.id = secondOrderResponse.id;
         Orders.checkCreatedOrder(secondOrder);
         OrderLines.addPOLine();
-        OrderLines.rolloverPOLineInfoforElectronicResourceWithFund(secondOrderLineTitle, secondFund, '200', '1', '200');
+        OrderLines.selectRandomInstanceInTitleLookUP('*',15),
+        OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund( secondFund, '200', '1', '200',location.institutionId);
         OrderLines.backToEditingOrder();
         Orders.openOrder();
       });
@@ -154,15 +154,38 @@ describe('ui-finance: Fiscal Year', () => {
       });
   });
 
-  // after(() => {
-  //   Users.deleteViaApi(user.userId);
-  // });
+  after(() => {
+    Users.deleteViaApi(user.userId);
+  });
 
   it('C186156 Rollover Fiscal Year (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     FinanceHelp.searchByName(defaultLedger.name);
     Ledgers.selectLedger(defaultLedger.name);
     Ledgers.rollover();
+    Ledgers.fillInRolloverInfo(secondFiscalYear.code);
+    Ledgers.closeRolloverInfo();
+    Ledgers.selectFundInLedger(firstFund.name);
+    Funds.selectPlannedBudgetDetails();
+    Funds.viewTransactions();
+    Funds.checkOrderInTransactionList(firstFund.code, '($100.00)');
+    Funds.closeMenu();
+    cy.wait(1000);
+    Funds.closeMenu();
+    Funds.selectBudgetDetails();
+    Funds.viewTransactions();
+    Funds.checkOrderInTransactionList(firstFund.code, '$0.00');
+    cy.visit(TopMenu.fundPath);
+    FinanceHelp.searchByName(secondFund.name);
+    Funds.selectFund(secondFund.name);
+    Funds.selectPlannedBudgetDetails();
+    Funds.viewTransactions();
+    Funds.checkOrderInTransactionList(secondFund.code, '($200.00)');
+    Funds.closeMenu();
+    cy.wait(1000);
+    Funds.closeMenu();
+    Funds.selectBudgetDetails();
+    Funds.viewTransactions();
+    Funds.checkOrderInTransactionList(secondFund.code, '($200.00)');
     cy.pause();
-    Ledgers.fillInRolloverInfo(secondFiscalYear.name);
   });
 });
