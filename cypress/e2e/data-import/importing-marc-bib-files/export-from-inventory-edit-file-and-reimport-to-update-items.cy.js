@@ -16,21 +16,42 @@ import NewActionProfile from '../../../support/fragments/data_import/action_prof
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import FileManager from '../../../support/utils/fileManager';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
+import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
 
 describe('ui-data-import', () => {
   let instanceHrid;
+  const quantityOfItems = '1';
+  const instance = {
+    instanceTitle: 'Love enough / Dionne Brand.',
+    instanceSubject: '35678123678',
+    holdingsLocation: 'Main Library >',
+    itemStatus: 'Available'
+  };
   const permanentLocation = 'Main Library (KU/CC/DI/M)';
   const recordType = 'MARC_BIBLIOGRAPHIC';
+  const note = 'Test administrative note for item';
   // unique file name
   const marcFileForCreate = `C11123 autoTestFile.${getRandomPostfix()}.mrc`;
+  const nameForCSVFile = `C11123 autotestFile${getRandomPostfix()}.csv`;
+  const nameMarcFileForUpload = `C11123 autotestFile.${getRandomPostfix()}.mrc`;
+  const editedMarcFileName = `C11123 fileWithItemHrid.${getRandomPostfix()}.mrc`;
+  const nameMarcFileForUpdate = `C11123 autotestFileForUpdateItem.${getRandomPostfix()}.mrc`;
   // unique profile names for creating
-  const instanceMappingProfileNameForCreate = `autotest_instance_mapping_profile_${getRandomPostfix()}`;
-  const holdingsMappingProfileNameForCreate = `autotest_holdings_mapping_profile_${getRandomPostfix()}`;
-  const itemMappingProfileNameForCreate = `autotest_item_mapping_profile_${getRandomPostfix()}`;
-  const instanceActionProfileNameForCreate = `autotest_instance_action_profile_${getRandomPostfix()}`;
-  const holdingsActionProfileNameForCreate = `autotest_holdings_action_profile_${getRandomPostfix()}`;
-  const itemActionProfileNameForCreate = `autotest_item_action_profile_${getRandomPostfix()}`;
-  const jobProfileNameForCreate = `autotest_job_profile_${getRandomPostfix()}`;
+  const instanceMappingProfileNameForCreate = `C11123 autotest_instance_mapping_profile_${getRandomPostfix()}`;
+  const holdingsMappingProfileNameForCreate = `C11123 autotest_holdings_mapping_profile_${getRandomPostfix()}`;
+  const itemMappingProfileNameForCreate = `C11123 autotest_item_mapping_profile_${getRandomPostfix()}`;
+  const instanceActionProfileNameForCreate = `C11123 autotest_instance_action_profile_${getRandomPostfix()}`;
+  const holdingsActionProfileNameForCreate = `C11123 autotest_holdings_action_profile_${getRandomPostfix()}`;
+  const itemActionProfileNameForCreate = `C11123 autotest_item_action_profile_${getRandomPostfix()}`;
+  const jobProfileNameForCreate = `C11123 autotest_job_profile_${getRandomPostfix()}`;
+  // unique profile names for updating
+  const itemMappingProfileNameForUpdate = `C11123 mapping profile update item.${getRandomPostfix()}`;
+  const matchProfileName = `C11123 match profile.${getRandomPostfix()}`;
+  const itemActionProfileNameForUpdate = `C11123 action profile update item.${getRandomPostfix()}`;
+  const jobProfileNameForUpdate = `C11123 job profile.${getRandomPostfix()}`;
   // profiles for creating instance, holdings, item
   const instanceMappingProfileForCreate = {
     profile:{
@@ -146,25 +167,19 @@ describe('ui-data-import', () => {
     addedRelations: [],
     deletedRelations: []
   };
-  // unique profile names for updating
-  const itemMappingProfileNameForUpdate = `C11123 mapping profile update item.${getRandomPostfix()}`;
-  const matchProfileName = `C11123 match profile.${getRandomPostfix()}`;
-  const itemActionProfileNameForUpdate = `C11123 action profile update item.${getRandomPostfix()}`;
-  const jobProfileNameForUpdate = `C11123 job profile.${getRandomPostfix()}`;
-  // profiles for updating instance, holdings, item
-  const matchProfile =
-    {
-      matchProfile: {
-        profileName: matchProfileName,
-        incomingRecordFields: {
-          field: '001',
-          subfield: 'a'
-        },
-        matchCriterion: 'Exactly matches',
-        existingRecordType: 'ITEM',
-        itemOption: NewMatchProfile.optionsList.itemHrid
-      }
-    };
+  // profiles for updating item
+  const matchProfile = {
+    profileName: matchProfileName,
+    incomingRecordFields: {
+      field: '945',
+      in1: '*',
+      in2: '*',
+      subfield: 'a'
+    },
+    matchCriterion: 'Exactly matches',
+    existingRecordType: 'ITEM',
+    itemOption: NewMatchProfile.optionsList.itemHrid
+  };
   const itemMappingProfileForUpdate = {
     name: itemMappingProfileNameForUpdate,
     typeValue : NewFieldMappingProfile.folioRecordTypeValue.item
@@ -184,6 +199,17 @@ describe('ui-data-import', () => {
     cy.loginAsAdmin();
     cy.getAdminToken()
       .then(() => {
+        InventorySearchAndFilter.getInstancesBySubjectViaApi(instance.instanceSubject)
+          .then(instances => {
+            if (instances) {
+              instances.forEach(({ id }) => {
+                cy.deleteItemViaApi(instance.items[0].id);
+                cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+                InventoryInstance.deleteInstanceViaApi(id);
+              });
+            }
+          });
+
         testData.jobProfileForCreate = jobProfileForCreate;
 
         testData.forEach(specialPair => {
@@ -199,7 +225,7 @@ describe('ui-data-import', () => {
         cy.visit(TopMenu.dataImportPath);
         // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.clickDataImportNavButton();
-        DataImport.uploadFile('***.mrc', marcFileForCreate);
+        DataImport.uploadFile('mrcFileForC11123.mrc', marcFileForCreate);
         JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileForCreate);
@@ -211,43 +237,105 @@ describe('ui-data-import', () => {
         ].forEach(columnName => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
         });
-        FileDetails.checkItemsQuantityInSummaryTable(0, '1');
-        // get Instance HRID through API for delete instance
-        InventorySearchAndFilter.getInstanceHRID()
-          .then(hrId => {
-            instanceHrid = hrId[0];
-          });
+        FileDetails.checkItemsQuantityInSummaryTable(0, quantityOfItems);
+      });
+  });
+
+  after('delete test data', () => {
+    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpload}`);
+    FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
+    JobProfiles.deleteJobProfile(jobProfileNameForCreate);
+    JobProfiles.deleteJobProfile(jobProfileNameForUpdate);
+    MatchProfiles.deleteMatchProfile(matchProfileName);
+    ActionProfiles.deleteActionProfile(instanceActionProfileNameForCreate);
+    ActionProfiles.deleteActionProfile(holdingsActionProfileNameForCreate);
+    ActionProfiles.deleteActionProfile(itemActionProfileNameForCreate);
+    ActionProfiles.deleteActionProfile(itemActionProfileNameForUpdate);
+    FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileNameForCreate);
+    FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileNameForCreate);
+    FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileNameForCreate);
+    FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileNameForUpdate);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((initialInstance) => {
+        cy.deleteItemViaApi(initialInstance.items[0].id);
+        cy.deleteHoldingRecordViaApi(initialInstance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(initialInstance.id);
       });
   });
 
   it('C11123 Export from Inventory, edit file, and re-import to update items (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       FileDetails.openInstanceInInventory('Created');
-      // step 4-10
+      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        instanceHrid = initialInstanceHrId;
 
-      // create mapping profiles
-      cy.visit(SettingsMenu.mappingProfilePath);
-      FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfileForUpdate);
-      NewFieldMappingProfile.addAdministrativeNote(note, 9);
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfileNameForUpdate);
-      FieldMappingProfiles.checkMappingProfilePresented(itemMappingProfileNameForUpdate);
+        InventoryInstance.checkIsInstancePresented(instance.instanceTitle, instance.holdingsLocation, instance.itemStatus);
+        InventoryInstance.openItemByBarcode('No barcode');
+        ItemRecordView.getAssignedHRID().then(initialItemHrId => {
+          const itemHrid = initialItemHrId;
 
-      // create Action profiles
-      cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.create(itemActionProfileForUpdate, itemMappingProfileNameForUpdate);
-      ActionProfiles.checkActionProfilePresented(itemActionProfileNameForUpdate);
+          ItemRecordView.closeDetailView();
+          InventorySearchAndFilter.searchByParameter('Subject', instance.instanceSubject);
+          InventorySearchAndFilter.saveUUIDs();
+          ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
 
-      cy.visit(SettingsMenu.matchProfilePath);
-      MatchProfiles.createMatchProfile(matchProfile);
-      MatchProfiles.checkMatchProfilePresented(matchProfileName);
+          // download exported marc file
+          cy.visit(TopMenu.dataExportPath);
+          ExportFile.uploadFile(nameForCSVFile);
+          ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
+          ExportFile.downloadExportedMarcFile(nameMarcFileForUpload);
 
-      // create job profile for update
-      cy.visit(SettingsMenu.jobProfilePath);
-      JobProfiles.createJobProfileWithLinkingProfiles(jobProfileForUpdate, itemActionProfileNameForUpdate, matchProfileName);
-      JobProfiles.checkJobProfilePresented(jobProfileNameForUpdate);
+          // change file using item hrid for 945 field
+          DataImport.editMarcFile(
+            nameMarcFileForUpload,
+            editedMarcFileName,
+            ['testHrid'],
+            [itemHrid]
+          );
+        });
 
-      // step 16-24
+        // create mapping profile for update
+        cy.visit(SettingsMenu.mappingProfilePath);
+        FieldMappingProfiles.openNewMappingProfileForm();
+        NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfileForUpdate);
+        NewFieldMappingProfile.addAdministrativeNote(note, 7);
+        FieldMappingProfiles.saveProfile();
+        FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfileNameForUpdate);
+        FieldMappingProfiles.checkMappingProfilePresented(itemMappingProfileNameForUpdate);
+
+        // create action profile for update
+        cy.visit(SettingsMenu.actionProfilePath);
+        ActionProfiles.create(itemActionProfileForUpdate, itemMappingProfileNameForUpdate);
+        ActionProfiles.checkActionProfilePresented(itemActionProfileNameForUpdate);
+
+        // create match profile for update
+        cy.visit(SettingsMenu.matchProfilePath);
+        MatchProfiles.createMatchProfile(matchProfile);
+        MatchProfiles.checkMatchProfilePresented(matchProfileName);
+
+        // create job profile for update
+        cy.visit(SettingsMenu.jobProfilePath);
+        JobProfiles.createJobProfileWithLinkingProfiles(jobProfileForUpdate, itemActionProfileNameForUpdate, matchProfileName);
+        JobProfiles.checkJobProfilePresented(jobProfileNameForUpdate);
+
+        // upload a marc file for creating of the new instance, holding and item
+        cy.visit(TopMenu.dataImportPath);
+        // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.clickDataImportNavButton();
+        DataImport.uploadFile(editedMarcFileName, nameMarcFileForUpdate);
+        JobProfiles.searchJobProfileForImport(jobProfileNameForUpdate);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(nameMarcFileForUpdate);
+        Logs.openFileDetails(nameMarcFileForUpdate);
+        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.item);
+        FileDetails.checkItemQuantityInSummaryTable(quantityOfItems, 1);
+
+        cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+        InventoryInstance.openHoldingsAccordion('Main Library >');
+        InventoryInstance.openItemByBarcode('No barcode');
+        ItemRecordView.checkItemAdministrativeNote(note);
+      });
     });
 });
