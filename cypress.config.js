@@ -6,7 +6,6 @@ module.exports = defineConfig({
   video: false,
   defaultCommandTimeout: 101000,
   pageLoadTimeout: 120000,
-  numTestsKeptInMemory: 0,
   env: {
     OKAPI_HOST: 'https://okapi-bugfest-orchid-aqa.int.aws.folio.org',
     OKAPI_TENANT: 'fs09000003',
