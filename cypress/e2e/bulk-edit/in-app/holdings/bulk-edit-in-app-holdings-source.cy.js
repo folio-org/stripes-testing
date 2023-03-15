@@ -1,13 +1,13 @@
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
-import permissions from '../../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import TopMenu from '../../../support/fragments/topMenu';
-import FileManager from '../../../support/utils/fileManager';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import Users from '../../../support/fragments/users/users';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import testTypes from '../../../../support/dictionary/testTypes';
+import devTeams from '../../../../support/dictionary/devTeams';
+import permissions from '../../../../support/dictionary/permissions';
+import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
+import TopMenu from '../../../../support/fragments/topMenu';
+import FileManager from '../../../../support/utils/fileManager';
+import getRandomPostfix from '../../../../support/utils/stringTools';
+import Users from '../../../../support/fragments/users/users';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 
 let user;
 let uuid;

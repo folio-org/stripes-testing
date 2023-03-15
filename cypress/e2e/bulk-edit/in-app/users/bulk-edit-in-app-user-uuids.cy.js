@@ -1,15 +1,15 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
-import permissions from '../../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import FileManager from '../../../support/utils/fileManager';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import devTeams from '../../../support/dictionary/devTeams';
-import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import Users from '../../../support/fragments/users/users';
-import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../../support/fragments/users/usersCard';
-import DateTools from '../../../support/utils/dateTools';
+import TopMenu from '../../../../support/fragments/topMenu';
+import testTypes from '../../../../support/dictionary/testTypes';
+import permissions from '../../../../support/dictionary/permissions';
+import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import FileManager from '../../../../support/utils/fileManager';
+import getRandomPostfix from '../../../../support/utils/stringTools';
+import devTeams from '../../../../support/dictionary/devTeams';
+import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
+import Users from '../../../../support/fragments/users/users';
+import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
+import UsersCard from '../../../../support/fragments/users/usersCard';
+import DateTools from '../../../../support/utils/dateTools';
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;

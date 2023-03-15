@@ -2,12 +2,12 @@ import FileManager from '../../utils/fileManager';
 
 export default {
   verifyMatchedResultFileContent(fileName, expectedResult, resultType = 'barcode', validFile = true) {
-    const verifyFunc = resultType === 'barcode' ? this.verifyMatchedResultByItemBarcode 
-    : resultType === 'firstElement' ? this.verifyMatchedResultFirstElement 
-    : this.verifyMatchedResultByHRID;
-    
-    const getValuesFromCSVFile = validFile === true ? this.getValuesFromValidCSVFile 
-    : this.getValuesFromInvalidCSVFile;
+    const verifyFunc = resultType === 'barcode' ? this.verifyMatchedResultByItemBarcode
+      : resultType === 'firstElement' ? this.verifyMatchedResultFirstElement
+        : this.verifyMatchedResultByHRID;
+
+    const getValuesFromCSVFile = validFile === true ? this.getValuesFromValidCSVFile
+      : this.getValuesFromInvalidCSVFile;
     // expectedResult is list of expected values
     FileManager.findDownloadedFilesByMask(fileName)
       .then((downloadedFilenames) => {

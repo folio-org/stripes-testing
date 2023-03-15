@@ -26,6 +26,7 @@ const radioItems = RadioButton('Inventory - items');
 const fileButton = Button('or choose file');
 const bulkEditPane = Pane(including('Bulk edit'));
 const usersRadio = RadioButton('Users');
+const usersCheckbox = Checkbox('Users');
 const itemsRadio = RadioButton('Inventory - items');
 const holdingsRadio = RadioButton('Inventory - holdings');
 const holdingsCheckbox = Checkbox('Inventory - holdings');
@@ -421,6 +422,10 @@ export default {
     cy.do(holdingsCheckbox.click());
   },
 
+  checkUsersCheckbox() {
+    cy.do(usersCheckbox.click());
+  },
+
   itemsHoldingsIsDisabled(isDisabled) {
     cy.expect(holdingsRadio.has({ disabled: isDisabled }));
   },
@@ -434,6 +439,11 @@ export default {
     // it is needed to avoid triggering for previous page list
     cy.wait(3000);
     cy.expect(MultiColumnList().exists());
+  },
+
+  waitFileDownloading() {
+    // TODO: Need to wait for the file to download
+    cy.wait(3000);
   },
 
   verifyModalName(name) {
@@ -688,22 +698,42 @@ export default {
     cy.do(MultiColumnListRow({ indexRow: `row-${row}` }).find(Button({ icon: 'ellipsis' })).click());
   },
 
-  verifyLogsRowAction() {
+  verifyErrorsInLogsRowAction() {
     cy.expect([
       HTML('File that was used to trigger the bulk edit').exists(),
       HTML('File with errors encountered during the record matching').exists()
     ]);
   },
 
+  verifySuccessInLogsRowAction() {
+    cy.expect([
+      HTML('File that was used to trigger the bulk edit').exists(),
+      HTML('File with the matching records').exists()
+    ]);
+  },
+
   downloadFileUsedToTrigger() {
     cy.do(Button('File that was used to trigger the bulk edit').click());
-    //Need to wait for the file to download
-    cy.wait(5000);
+    this.waitFileDownloading();
   },
 
   downloadFileWithErrorsEncountered() {
     cy.do(Button('File with errors encountered during the record matching').click());
-    //Need to wait for the file to download
-    cy.wait(5000);
+    this.waitFileDownloading();
+  },
+
+  downloadFileWithTheMatchingRecords() {
+    cy.do(Button('File with the matching records').click());
+    this.waitFileDownloading();
+  },
+
+  downloadFileWithThePreviewOfProposedChanges() {
+    cy.do(Button('File with the preview of proposed changes').click());
+    this.waitFileDownloading();
+  },
+
+  downloadFileWithUpdatedRecords() {
+    cy.do(Button('File with updated records').click());
+    this.waitFileDownloading();
   },
 };
