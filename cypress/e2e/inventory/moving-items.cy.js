@@ -17,14 +17,23 @@ import InventoryInstancesMovement from '../../support/fragments/inventory/holdin
 import users from '../../support/fragments/users/users';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
+import Z3950TargetProfiles from '../../support/fragments/settings/inventory/z39.50TargetProfiles';
 
-const successCalloutMessage = '1 item has been successfully moved.';
-let userId;
-let firstHolding = '';
-let secondHolding = '';
-let ITEM_BARCODE;
+
 
 describe('ui-inventory: moving items', { retries: 2 }, () => {
+  const successCalloutMessage = '1 item has been successfully moved.';
+  let userId;
+  let firstHolding = '';
+  let secondHolding = '';
+  let ITEM_BARCODE;
+
+  before(() => {
+    cy.getAdminToken().then(() => {
+      Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF');
+    });
+  });
+
   beforeEach('navigates to Inventory', () => {
     let source;
 
@@ -36,7 +45,8 @@ describe('ui-inventory: moving items', { retries: 2 }, () => {
       permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
       permissions.uiInventoryHoldingsMove.gui,
       permissions.uiQuickMarcQuickMarcHoldingsEditorView.gui,
-      permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui
+      permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+      permissions.converterStorageAll.gui,
     ])
       .then(userProperties => {
         userId = userProperties.userId;
