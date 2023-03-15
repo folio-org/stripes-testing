@@ -21,6 +21,7 @@ import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
 import devTeams from '../../support/dictionary/devTeams';
+import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 
 describe('Fee/fine management', () => {
   const testData = {
@@ -66,6 +67,7 @@ describe('Fee/fine management', () => {
             cy.getInstanceTypes({ limit: 1 }).then((res) => { testData.instanceType = res[0].id; });
             cy.getLoanTypes({ limit: 1 }).then((res) => { testData.loanType = res[0].id; });
           }).then(() => {
+            OtherSettings.setOtherSettingsViaApi({ prefPatronIdentifier: 'barcode,username' });
             cy.createInstance({
               instance: {
                 instanceTypeId: testData.instanceType,

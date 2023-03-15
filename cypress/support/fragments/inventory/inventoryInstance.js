@@ -324,7 +324,7 @@ export default {
   },
 
   checkResultsListPaneHeader() {
-    cy.expect(PaneHeader('MARC authority').exists()),
+    cy.expect(PaneHeader('MARC authority').exists());
     cy.intercept('GET', '/search/authorities?*').as('getItems');
     cy.wait('@getItems', { timeout: 10000 }).then(item => {
       cy.expect(Pane({ subtitle: `${item.response.body.totalRecords} results found` }).exists());
@@ -607,6 +607,10 @@ export default {
     cy.do(Button(including(location)).click());
   },
 
+  verifyHoldingLocation(content) {
+    cy.expect(MultiColumnListCell({ content }).exists());
+  },
+
   checkIsItemCreated:(itemBarcode) => {
     cy.expect(Link(itemBarcode).exists());
   },
@@ -654,13 +658,13 @@ export default {
     cy.expect(MultiColumnListCell({ content: barcode }).exists());
   },
 
-  openItemByBarcodeAndIndex: (barcode,indexRowNumber,rowCountInList) => {
+  openItemByBarcodeAndIndex: (barcode, indexRowNumber, rowCountInList) => {
     cy.do([
       Button('Collapse all').click(),
       Button('Acquisition').click(),
-      MultiColumnList({ columnCount: rowCountInList})
-      .find(MultiColumnListRow({ indexRow: indexRowNumber }))
-      .find(Link(barcode)).click()
+      MultiColumnList({ columnCount: rowCountInList })
+        .find(MultiColumnListRow({ indexRow: indexRowNumber }))
+        .find(Link(barcode)).click()
     ]);
   },
 };

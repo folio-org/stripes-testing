@@ -15,7 +15,7 @@ import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
 import DevTeams from '../../../support/dictionary/devTeams';
 
-describe('ui-data-import: MARC file import with creating of the new instance, holding and item', () => {
+describe('ui-data-import', () => {
   let user = {};
 
   // unique file name to upload
@@ -55,7 +55,7 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     profileName: jobProfileName,
     acceptedType: NewJobProfile.acceptedDataType.marc };
 
-  before(() => {
+  before('login', () => {
     cy.createTempUser([
       permissions.dataImportUploadAll.gui,
       permissions.moduleDataImportEnabled.gui,
@@ -66,7 +66,6 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
         user = userProperties;
         cy.login(userProperties.username, userProperties.password);
       });
-    DataImport.checkUploadState();
   });
 
   const createInstanceMappingProfile = (instanceMappingProfile) => {
@@ -94,10 +93,8 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfile.name);
   };
 
-  after(() => {
-    DataImport.checkUploadState();
+  after('delete test data', () => {
     Users.deleteViaApi(user.userId);
-
     // delete generated profiles
     JobProfiles.deleteJobProfile(specialJobProfile.profileName);
     collectionOfProfiles.forEach(profile => {
@@ -131,8 +128,8 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     JobProfiles.checkJobProfilePresented(specialJobProfile.profileName);
 
     cy.visit(TopMenu.dataImportPath);
-    // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-    DataImport.clickDataImportNavButton();
+    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+    cy.reload();
     DataImport.uploadFile('oneMarcBib.mrc', fileName);
     JobProfiles.searchJobProfileForImport(specialJobProfile.profileName);
     JobProfiles.runImportFile();

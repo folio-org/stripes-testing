@@ -21,7 +21,7 @@ import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import FileManager from '../../../support/utils/fileManager';
 
-describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS records', () => {
+describe('ui-data-import', () => {
   let instanceHrid = null;
   let instanceHridForReimport = null;
   let exportedFileName = null;
@@ -73,15 +73,15 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
-  before(() => {
+  before('create test data', () => {
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     cy.getAdminToken()
       .then(() => {
         const fileName = `C17039autotestFile.${getRandomPostfix()}.mrc`;
 
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.clickDataImportNavButton();
+        // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+        cy.reload();
         DataImport.uploadFile('oneMarcBib.mrc', fileName);
         JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
         JobProfiles.runImportFile();
@@ -96,11 +96,15 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
       });
   });
 
-  after(() => {
+  after('delete test data', () => {
     JobProfiles.deleteJobProfile(jobProfileName);
     MatchProfiles.deleteMatchProfile(matchProfileName);
     ActionProfiles.deleteActionProfile(actionProfileName);
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    // delete downloads folder and created files in fixtures
+    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+    FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
       .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
@@ -109,17 +113,13 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
       .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
-    // delete downloads folder and created files in fixtures
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-    FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-    FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
   });
 
   it('C17039 Test 001/003/035 handling for New and Updated SRS records (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     // upload a marc file
     cy.visit(TopMenu.dataImportPath);
-    // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-    DataImport.clickDataImportNavButton();
+    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+    cy.reload();
     DataImport.uploadFile('marcFilrForC17039.mrc', nameMarcFileForCreate);
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
     JobProfiles.runImportFile();
@@ -186,8 +186,8 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
 
         // upload a marc file for updating already created instance
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.clickDataImportNavButton();
+        // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+        cy.reload();
         DataImport.uploadFile(editedMarcFileName, fileNameAfterUpload);
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
         JobProfiles.runImportFile();
