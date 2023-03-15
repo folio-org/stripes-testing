@@ -186,6 +186,5 @@ describe('ui-finance: Fiscal Year', () => {
     Funds.selectBudgetDetails();
     Funds.viewTransactions();
     Funds.checkOrderInTransactionList(secondFund.code, '($200.00)');
-    cy.pause();
   });
 });
