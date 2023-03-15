@@ -728,25 +728,21 @@ export default {
 
   downloadFileWithErrorsEncountered() {
     cy.do(Button('File with errors encountered during the record matching').click());
-    //Need to wait for the file to download
-    cy.wait(5000);
+    this.waitFileDownloading();
   },
 
   downloadFileWithMatchingRecords() {
     cy.do(Button('File with the matching records').click());
-    //Need to wait for the file to download
-    cy.wait(5000);
+    this.waitFileDownloading();
   },
 
   downloadFileWithProposedChanges() {
     cy.do(Button('File with the preview of proposed changes').click());
-    //Need to wait for the file to download
-    cy.wait(5000);
+    this.waitFileDownloading();
   },
 
   downloadFileWithUpdatedRecords() {
     cy.do(Button('File with updated records').click());
-    //Need to wait for the file to download
-    cy.wait(5000);
+    this.waitFileDownloading();
   },
 };

@@ -3,13 +3,13 @@ import FileManager from '../../utils/fileManager';
 export default {
   verifyMatchedResultFileContent(fileName, expectedResult, resultType = 'barcode', validFile = true) {
     const verifyFunc = resultType === 'barcode' ? this.verifyMatchedResultByItemBarcode
-    : resultType === 'firstName' ? this.verifyMatchedResultByFirstName
-    : resultType === 'userId' ? this.verifyMatchedResultByUserId
-    : resultType === 'firstElement' ? this.verifyMatchedResultFirstElement
-    : this.verifyMatchedResultByHRID;
+      : resultType === 'firstName' ? this.verifyMatchedResultByFirstName
+        : resultType === 'userId' ? this.verifyMatchedResultByUserId
+          : resultType === 'firstElement' ? this.verifyMatchedResultFirstElement
+            : this.verifyMatchedResultByHRID;
 
     const getValuesFromCSVFile = validFile === true ? this.getValuesFromValidCSVFile
-    : this.getValuesFromInvalidCSVFile;
+      : this.getValuesFromInvalidCSVFile;
     // expectedResult is list of expected values
     FileManager.findDownloadedFilesByMask(fileName)
       .then((downloadedFilenames) => {
@@ -59,7 +59,7 @@ export default {
   },
 
   verifyMatchedResultFirstElement(actualResult, expectedResult) {
-    const actualFirstElement= actualResult.split(',')[0];
+    const actualFirstElement = actualResult.split(',')[0];
     expect(actualFirstElement).to.eq(expectedResult);
   },
 };
