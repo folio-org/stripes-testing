@@ -14,7 +14,7 @@ let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const matchRecordsFileName = `Matched-Records-${userUUIDsFileName}`;
 const importFileName = `bulkEditImport_${getRandomPostfix()}.csv`;
-const updatedRecordsFileName = `result`
+const updatedRecordsFileName = 'result';
 const newName = `testName_${getRandomPostfix()}`;
 
 describe('Bulk Edit - Logs', () => {
@@ -32,7 +32,7 @@ describe('Bulk Edit - Logs', () => {
           waiter: BulkEditSearchPane.waitLoading,
         });
         FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, `${user.userId}`);
-      })
+      });
   });
 
   after('delete test data', () => {
@@ -76,7 +76,7 @@ describe('Bulk Edit - Logs', () => {
     // Download File with the matching records and verify unique user UUID is in the file
     BulkEditSearchPane.downloadFileWithMatchingRecords();
     BulkEditFiles.verifyMatchedResultFileContent(`*${matchRecordsFileName}*`, [user.userId], 'userId', true);
-    
+
     // Download File with the preview of proposed changes and verify changes to the user's first name made in line 53
     BulkEditSearchPane.downloadFileWithProposedChanges();
     BulkEditFiles.verifyMatchedResultFileContent(`*${importFileName}*`, [newName], 'firstName', true);
