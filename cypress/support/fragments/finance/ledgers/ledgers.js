@@ -48,8 +48,8 @@ export default {
       Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
       Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
       rolloverButton.click(),
-      Button({ id: 'clickable-rollover-confirmation-confirm' }).click(),
       Button('Continue').click(),
+      Button({ id: 'clickable-rollover-confirmation-confirm' }).click(),
     ]);
   },
 

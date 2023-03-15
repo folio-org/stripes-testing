@@ -20,10 +20,10 @@ import ServicePoints from '../../../support/fragments/settings/tenant/servicePoi
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 
 describe('ui-finance: Fiscal Year', () => {
-  const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
+  const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const secondFiscalYear = {
     name: `autotest_year_${getRandomPostfix()}`,
-    code: DateTools.getRandomFiscalYearCode(2000, 9999),
+    code: DateTools.getRandomFiscalYearCodeForRollover(2000, 9999),
     periodStart: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
     periodEnd: `${DateTools.getDayAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
