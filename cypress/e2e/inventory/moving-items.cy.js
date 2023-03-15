@@ -19,8 +19,6 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
 import Z3950TargetProfiles from '../../support/fragments/settings/inventory/z39.50TargetProfiles';
 
-
-
 describe('ui-inventory: moving items', { retries: 2 }, () => {
   const successCalloutMessage = '1 item has been successfully moved.';
   let userId;
