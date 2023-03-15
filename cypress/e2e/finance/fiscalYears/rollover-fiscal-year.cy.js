@@ -88,14 +88,14 @@ describe('ui-finance: Fiscal Year', () => {
               });
           });
       });
-      ServicePoints.getViaApi()
-    .then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
-        .then(res => {
-          location = res;
-        });
-    });
+    ServicePoints.getViaApi()
+      .then((servicePoint) => {
+        servicePointId = servicePoint[0].id;
+        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
+          .then(res => {
+            location = res;
+          });
+      });
     // Create second Fiscal Year for Rollover
     FiscalYears.createViaApi(secondFiscalYear)
       .then(secondFiscalYearResponse => {
