@@ -112,7 +112,7 @@ describe('eHoldings titles management', () => {
         eHoldingsTitle.openResource();
         eHoldingsResourceView.checkHoldingStatus(eHoldingsTitle.filterStatuses.selected);
         eHoldingsResourceView.removeTitleFromHolding();
-       eHoldingsResourceView.checkHoldingStatus(eHoldingsTitle.filterStatuses.notSelected);
+        eHoldingsResourceView.checkHoldingStatus(eHoldingsTitle.filterStatuses.notSelected);
       });
     });
   });
