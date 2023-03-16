@@ -28,6 +28,7 @@ const bulkEditPane = Pane(including('Bulk edit'));
 const usersRadio = RadioButton('Users');
 const itemsRadio = RadioButton('Inventory - items');
 const holdingsRadio = RadioButton('Inventory - holdings');
+const usersCheckbox = Checkbox('Users');
 const holdingsCheckbox = Checkbox('Inventory - holdings');
 const identifierToggle = Button('Identifier');
 const queryToggle = Button('Query');
@@ -346,7 +347,7 @@ export default {
       Accordion('Start date').has({ open: false }),
       Accordion('End date').has({ open: false }),
       bulkEditPane.find(HTML('Enter search criteria to start search')).exists(),
-      bulkEditPane.find(HTML('Choose a filter or enter a search query to show results.')).exists(),
+      bulkEditPane.find(HTML('Choose a filter to show results.')).exists(),
     ]);
   },
 
@@ -419,6 +420,10 @@ export default {
 
   checkHoldingsCheckbox() {
     cy.do(holdingsCheckbox.click());
+  },
+
+  checkUsersCheckbox() {
+    cy.do(usersCheckbox.click());
   },
 
   itemsHoldingsIsDisabled(isDisabled) {
@@ -695,6 +700,15 @@ export default {
     ]);
   },
 
+  verifyLogsRowActionWhenCompleted() {
+    cy.expect([
+      HTML('File that was used to trigger the bulk edit').exists(),
+      HTML('File with the matching records').exists(),
+      HTML('File with the preview of proposed changes').exists(),
+      HTML('File with updated records').exists()
+    ]);
+  },
+
   downloadFileUsedToTrigger() {
     cy.do(Button('File that was used to trigger the bulk edit').click());
     //Need to wait for the file to download
@@ -703,6 +717,24 @@ export default {
 
   downloadFileWithErrorsEncountered() {
     cy.do(Button('File with errors encountered during the record matching').click());
+    //Need to wait for the file to download
+    cy.wait(5000);
+  },
+
+  downloadFileWithMatchingRecords() {
+    cy.do(Button('File with the matching records').click());
+    //Need to wait for the file to download
+    cy.wait(5000);
+  },
+
+  downloadFileWithProposedChanges() {
+    cy.do(Button('File with the preview of proposed changes').click());
+    //Need to wait for the file to download
+    cy.wait(5000);
+  },
+
+  downloadFileWithUpdatedRecords() {
+    cy.do(Button('File with updated records').click());
     //Need to wait for the file to download
     cy.wait(5000);
   },

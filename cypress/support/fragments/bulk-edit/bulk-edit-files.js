@@ -2,12 +2,14 @@ import FileManager from '../../utils/fileManager';
 
 export default {
   verifyMatchedResultFileContent(fileName, expectedResult, resultType = 'barcode', validFile = true) {
-    const verifyFunc = resultType === 'barcode' ? this.verifyMatchedResultByItemBarcode 
-    : resultType === 'firstElement' ? this.verifyMatchedResultFirstElement 
-    : this.verifyMatchedResultByHRID;
-    
-    const getValuesFromCSVFile = validFile === true ? this.getValuesFromValidCSVFile 
-    : this.getValuesFromInvalidCSVFile;
+    const verifyFunc = resultType === 'barcode' ? this.verifyMatchedResultByItemBarcode
+      : resultType === 'firstName' ? this.verifyMatchedResultByFirstName
+        : resultType === 'userId' ? this.verifyMatchedResultByUserId
+          : resultType === 'firstElement' ? this.verifyMatchedResultFirstElement
+            : this.verifyMatchedResultByHRID;
+
+    const getValuesFromCSVFile = validFile === true ? this.getValuesFromValidCSVFile
+      : this.getValuesFromInvalidCSVFile;
     // expectedResult is list of expected values
     FileManager.findDownloadedFilesByMask(fileName)
       .then((downloadedFilenames) => {
@@ -46,8 +48,18 @@ export default {
     expect(actualHRID).to.eq(expectedResult);
   },
 
+  verifyMatchedResultByFirstName(actualResult, expectedResult) {
+    const actualFirstName = actualResult.split(',')[10];
+    expect(actualFirstName).to.eq(expectedResult);
+  },
+
+  verifyMatchedResultByUserId(actualResult, expectedResult) {
+    const actualUserId = actualResult.split(',')[1];
+    expect(actualUserId).to.eq(expectedResult);
+  },
+
   verifyMatchedResultFirstElement(actualResult, expectedResult) {
-    const actualHRID = actualResult.split(',')[0];
-    expect(actualHRID).to.eq(expectedResult);
+    const actualFirstElement = actualResult.split(',')[0];
+    expect(actualFirstElement).to.eq(expectedResult);
   },
 };

@@ -7,7 +7,8 @@ import {
   Link,
   PaneHeader,
   Pane,
-  MultiColumnListCell
+  MultiColumnListCell,
+  Select,
 } from '../../../../interactors';
 
 export default {
@@ -20,6 +21,14 @@ export default {
   searchByKeywords(keywords) {
     return cy.do([
       TextField({ id: 'input-user-search' }).fillIn(keywords),
+      Button({ id: 'submit-user-search' }).click()
+    ]);
+  },
+
+  searchByUsername(username) {
+    return cy.do([
+      Select({ id: 'input-user-search-qindex' }).choose('Username'),
+      TextField({ id: 'input-user-search' }).fillIn(username),
       Button({ id: 'submit-user-search' }).click()
     ]);
   },
