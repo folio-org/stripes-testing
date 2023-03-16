@@ -17,7 +17,7 @@ describe('eHoldings packages management', () => {
   afterEach(() => {
     users.deleteViaApi(userId);
   });
-  
+
   it('C688 Add all titles in a package to your holdings (spitfire)', { tags: [testType.smoke, devTeams.spitfire, features.eHoldings] }, () => {
     cy.createTempUser([
       permissions.uieHoldingsRecordsEdit.gui,
