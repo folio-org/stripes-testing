@@ -114,7 +114,7 @@ describe('MARC Authority -> Edit Authority record', () => {
   });
 
   it('C375120 User cannot delete "1XX" field of "MARC authority" record (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
-    let rowIndexTag1XX = 21;
+    let rowIndexTag1XX = 14;
     MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
     MarcAuthorities.selectTitle(testData.authority.title);
     MarcAuthority.edit();
@@ -125,7 +125,7 @@ describe('MARC Authority -> Edit Authority record', () => {
       QuickMarcEditor.checkDeleteButtonNotExist(rowIndexTag1XX);
     });
 
-    MarcAuthority.changeTag(rowIndexTag1XX, '155');
+    MarcAuthority.changeTag(rowIndexTag1XX, '110');
     QuickMarcEditor.pressSaveAndClose();
     MarcAuthority.edit();
 
