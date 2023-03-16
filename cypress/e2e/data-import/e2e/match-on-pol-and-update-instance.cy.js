@@ -24,7 +24,7 @@ import InventoryViewSource from '../../../support/fragments/inventory/inventoryV
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 
-describe('ui-data-import: Match on POL and update related Instance with source MARC, create Holdings, Item records.', () => {
+describe('ui-data-import', () => {
   let user = null;
   let orderNumber;
   let instanceHrid;
@@ -139,7 +139,6 @@ describe('ui-data-import: Match on POL and update related Instance with source M
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
-
     cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` })
       .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
@@ -222,8 +221,8 @@ describe('ui-data-import: Match on POL and update related Instance with source M
 
       // upload a marc file for creating of the new instance, holding and item
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.clickDataImportNavButton();
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
       DataImport.uploadFile('marcFileForC350944.mrc', nameMarcFileForCreate);
       JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
       JobProfiles.runImportFile();
@@ -251,8 +250,8 @@ describe('ui-data-import: Match on POL and update related Instance with source M
       // upload .mrc file
       cy.visit(TopMenu.dataImportPath);
       DataImport.checkIsLandingPageOpened();
-      // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.clickDataImportNavButton();
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
       DataImport.uploadFile(editedMarcFileName, marcFileName);
       JobProfiles.searchJobProfileForImport(jobProfileName);
       JobProfiles.runImportFile();

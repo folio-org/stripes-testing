@@ -11,7 +11,7 @@ import FieldMappingProfileView from '../../../support/fragments/data_import/mapp
 import ActionProfileEdit from '../../../support/fragments/data_import/action_profiles/actionProfileEdit';
 import ConfirmRemoval from '../../../support/fragments/data_import/action_profiles/modals/confirmRemoval';
 
-describe('ui-data-import: Attach/Remove a field mapping profile to an action profile', () => {
+describe('ui-data-import', () => {
   // unique profile names
   const mappingProfileName = `C11115 autotest mapping profile ${Helper.getRandomBarcode()}`;
   const actionProfileName = `C11115 autotest action profile ${Helper.getRandomBarcode()}`;

@@ -26,7 +26,7 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 
-describe('ui-data-import: Match on VRN and update related Instance, Holdings, Item', () => {
+describe('ui-data-import', () => {
   const item = {
     title: 'Agrarianism and capitalism in early Georgia, 1732-1743 / Jay Jordan Butler.',
     productId: `xyz${getRandomPostfix()}`,
@@ -138,15 +138,6 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
   });
 
   after(() => {
-    let itemId;
-
-    cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${item.title}"` })
-      .then((instance) => {
-        itemId = instance.items[0].id;
-        cy.deleteItemViaApi(itemId);
-        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
     Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
       .then(order => {
         Orders.deleteOrderApi(order[0].id);
@@ -164,6 +155,13 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
     FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileName);
     FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileName);
     FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileName);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${item.title}"` })
+      .then((instance) => {
+        const itemId = instance.items[0].id;
+        cy.deleteItemViaApi(itemId);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
   });
 
   it('C350591 Match on VRN and update related Instance, Holdings, Item (folijet)',
@@ -237,8 +235,8 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
 
       // import a file
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.clickDataImportNavButton();
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
       DataImport.checkIsLandingPageOpened();
       DataImport.uploadFile(editedMarcFileName);
       JobProfiles.searchJobProfileForImport(jobProfilesData.name);

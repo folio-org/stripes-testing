@@ -6,8 +6,10 @@ import {
   Pane,
   Dropdown,
   MultiColumnListCell,
+  KeyValue
 } from '../../../../interactors';
 
+const userDetailsPane = Pane({ id: 'pane-userdetails' });
 const defaultUserName = `AutotestUser${getRandomPostfix()}`;
 const defaultUser = {
   username: defaultUserName,
@@ -79,5 +81,9 @@ export default {
       cy.wrap(xhr.response.body.automatedPatronBlocks.length).should('eq', 0);
       cy.expect(TextField({ value:'Patron has block(s) in place' }).absent());
     });
+  },
+
+  verifyFirstNameOnUserDetailsPane(firstName) {
+    cy.expect(userDetailsPane.find(KeyValue('First name')).has({ value: `${firstName}` }));
   }
 };

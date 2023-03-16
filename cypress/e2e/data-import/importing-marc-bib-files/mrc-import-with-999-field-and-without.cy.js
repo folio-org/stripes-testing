@@ -27,15 +27,17 @@ describe('ui-data-import', () => {
   });
 
   after('delete test data', () => {
+    Users.deleteViaApi(user.userId);
     cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` })
       .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
-    Users.deleteViaApi(user.userId);
   });
 
   it('C359012 Checking the import of the MARC Bib file, that has records with 999 ff and without the 999 ff field (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
       DataImport.uploadFile('marcFileForC359012.mrc', nameMarcFileForCreate);
       JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
       JobProfiles.runImportFile();

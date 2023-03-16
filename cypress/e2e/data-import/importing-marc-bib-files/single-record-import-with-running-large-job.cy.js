@@ -13,7 +13,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import: Inventory single record import is not delayed when large data import jobs are running', () => {
+describe('ui-data-import', () => {
   let user = {};
   const authentication = '100473910/PAOLF';
   const fileName = `C356824autotestFile.${getRandomPostfix()}.mrc`;
@@ -63,8 +63,8 @@ describe('ui-data-import: Inventory single record import is not delayed when lar
       // import a file
       cy.visit(TopMenu.dataImportPath);
       DataImport.checkIsLandingPageOpened();
-      // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.clickDataImportNavButton();
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
       DataImport.uploadFile('marcFileForC356824.mrc', fileName);
       // wait until file will be uploaded
       cy.wait(10000);

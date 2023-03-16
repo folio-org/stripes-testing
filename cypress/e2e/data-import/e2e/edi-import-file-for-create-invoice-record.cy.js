@@ -15,7 +15,7 @@ import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
 import DevTeams from '../../../support/dictionary/devTeams';
 
-describe('ui-data-import: EDIFACT file import with creating of new invoice record', () => {
+describe('ui-data-import', () => {
   // unique name for profiles
   const mappingProfileName = `autoTestMappingProf.${getRandomPostfix()}`;
   const actionProfileName = `autoTestActionProf.${getRandomPostfix()}`;
@@ -34,19 +34,16 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
         user = userProperties;
         cy.login(userProperties.username, userProperties.password);
       });
-    DataImport.checkUploadState();
   });
 
   after(() => {
-    cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${FileDetails.invoiceNumberFromEdifactFile}"` })
-      .then(id => cy.deleteInvoiceFromStorageApi(id));
-    DataImport.checkUploadState();
-    Users.deleteViaApi(user.userId);
-
     // clean up generated profiles
     JobProfiles.deleteJobProfile(jobProfileName);
     ActionProfiles.deleteActionProfile(actionProfileName);
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    Users.deleteViaApi(user.userId);
+    cy.getInvoiceIdViaApi({ query: `vendorInvoiceNo="${FileDetails.invoiceNumberFromEdifactFile}"` })
+      .then(id => cy.deleteInvoiceFromStorageViaApi(id));
   });
 
   it('C343338 EDIFACT file import with creating of new invoice record (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
@@ -84,8 +81,8 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
 
     // upload a marc file for creating of the new instance, holding and item
     cy.visit(TopMenu.dataImportPath);
-    // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-    DataImport.clickDataImportNavButton();
+    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+    cy.reload();
     DataImport.uploadFile('ediFileForC343338.edi', fileName);
     JobProfiles.searchJobProfileForImport(jobProfile.profileName);
     JobProfiles.selectJobProfile();

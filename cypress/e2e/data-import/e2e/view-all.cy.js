@@ -7,7 +7,7 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import DevTeams from '../../../support/dictionary/devTeams';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 
-describe('ui-data-import: Search the "View all" log screen', () => {
+describe('ui-data-import', () => {
   let id;
   // Create unique file name with given type to upload
   const fileType = 'mrc';
@@ -30,12 +30,6 @@ describe('ui-data-import: Search the "View all" log screen', () => {
     LogsViewAll.getSingleJobProfile().then(({ hrId }) => {
       id = hrId;
     });
-
-    DataImport.checkUploadState();
-  });
-
-  afterEach(() => {
-    DataImport.checkUploadState();
   });
 
   it('C11112 Search the "View all" log screen (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {

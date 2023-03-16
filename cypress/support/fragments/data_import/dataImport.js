@@ -192,20 +192,6 @@ export default {
 
   getLinkToAuthority: (title) => cy.then(() => Button(title).href()),
 
-  // delete file if it hangs unimported before test
-  checkUploadState: () => {
-    cy.allure().startStep('Delete files before upload file');
-    cy.visit(TopMenu.dataImportPath);
-    waitLoading();
-    cy.then(() => DataImportUploadFile().isDeleteFilesButtonExists()).then(isDeleteFilesButtonExists => {
-      if (isDeleteFilesButtonExists) {
-        cy.do(Button('Delete files').click());
-        cy.expect(orChooseFilesButton.exists());
-        cy.allure().endStep();
-      }
-    });
-  },
-
   checkIsLandingPageOpened: () => {
     cy.expect(jobsPane.find(orChooseFilesButton).exists());
     cy.expect(logsPaneHeader.find(actionsButton).exists());
