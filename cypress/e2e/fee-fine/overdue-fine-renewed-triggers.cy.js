@@ -33,6 +33,8 @@ import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
 import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
+import NewFeeFine from '../../support/fragments/users/newFeeFine';
+
 
 describe('Overdue fine', () => {
   let addedCirculationRule;
@@ -292,6 +294,12 @@ describe('Overdue fine', () => {
       itemBarcode: itemData.barcode,
       servicePointId: testData.userServicePoint.id,
       checkInDate: new Date().toISOString(),
+    });
+    NewFeeFine.getUserFeesFines(userData.userId).then((userFeesFines) => {
+      const feesFinesData = userFeesFines.accounts;
+      feesFinesData.forEach(({ id }) => {
+        cy.deleteFeesFinesApi(id);
+      });
     });
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
