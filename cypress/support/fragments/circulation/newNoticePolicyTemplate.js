@@ -80,7 +80,9 @@ export default {
   },
 
   saveAndClose() {
-    return cy.do(saveButton.click());
+    return cy.do([saveButton.has({ disabled: false }),
+      saveButton.click(),
+    ]);
   },
 
   checkNewButton() {
