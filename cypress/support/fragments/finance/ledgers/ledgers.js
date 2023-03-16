@@ -8,7 +8,8 @@ import { Button,
   Section,
   Select,
   Pane,
-  Link } from '../../../../../interactors';
+  Link, 
+  MultiColumnListCell} from '../../../../../interactors';
 import FinanceHelper from '../financeHelper';
 import getRandomPostfix from '../../../utils/stringTools';
 
@@ -38,6 +39,16 @@ export default {
     ]);
   },
 
+  closeRolloverInfo : () => {
+    cy.do(Button('Close & view ledger details').click());
+  },
+
+  selectFundInLedger : (fund) => {
+    cy.do([
+      Section({ id: 'fund' }).find(MultiColumnListCell({content: fund})).click(),
+    ]);
+  },
+
   fillInRolloverInfo : (fiscalYear) => {
     cy.do([
       Select({ name: 'toFiscalYearId' }).choose(fiscalYear),
@@ -47,8 +58,11 @@ export default {
       Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
       Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
       rolloverButton.click(),
-      Button('Continue').click(),
-      Button('Confirm').click(),
+      // Button('Continue').click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      Button({ id: 'clickable-rollover-confirmation-confirm' }).click(),
     ]);
   },
 
