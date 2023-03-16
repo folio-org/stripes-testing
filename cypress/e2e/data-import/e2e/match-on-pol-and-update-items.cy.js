@@ -33,7 +33,7 @@ import NewLocation from '../../../support/fragments/settings/tenant/locations/ne
 import FileManager from '../../../support/utils/fileManager';
 import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
 
-describe('ui-data-import: Match on POL and update related Instance, Holdings, Item', () => {
+describe('ui-data-import', () => {
   const firstItem = {
     title: 'Agrarianism and capitalism in early Georgia, 1732-1743 / Jay Jordan Butler.',
     productId: '9782266111560',

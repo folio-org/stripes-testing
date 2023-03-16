@@ -21,7 +21,7 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import Users from '../../../support/fragments/users/users';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 
-describe('ui-data-import: Matching on newly-created 035 does not work (regression)', () => {
+describe('ui-data-import', () => {
   let user = null;
   const note = 'This instance was updated, plus a new subject heading was added';
   const resourceIdentifierForFirstInstance = { type: 'System control number', value: '(NhFolYBP)2304396' };

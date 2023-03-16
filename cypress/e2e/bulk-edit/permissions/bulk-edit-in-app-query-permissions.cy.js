@@ -25,7 +25,7 @@ describe('bulk-edit', () => {
       users.deleteViaApi(user.userId);
     });
 
-    it('C366073 Verify Bulk edit elements in the left pane --In app (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+    it('C380426 Verify Bulk edit elements in the left pane --In app (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
       BulkEditSearchPane.usersRadioIsDisabled(true);
       BulkEditSearchPane.itemsRadioIsDisabled(false);
       BulkEditSearchPane.itemsHoldingsIsDisabled(false);

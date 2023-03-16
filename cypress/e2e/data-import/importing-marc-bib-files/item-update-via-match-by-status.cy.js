@@ -26,7 +26,7 @@ import FileManager from '../../../support/utils/fileManager';
 import StatisticalCodes from '../../../support/fragments/settings/inventory/statisticalCodes';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import: Item update via match by status', () => {
+describe('ui-data-import', () => {
   let user;
   let statisticalCode;
   const titlesItemsStatusChanged = [

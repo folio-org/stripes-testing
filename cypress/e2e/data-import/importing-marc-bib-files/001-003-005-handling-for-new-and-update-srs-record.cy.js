@@ -21,7 +21,7 @@ import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import FileManager from '../../../support/utils/fileManager';
 
-describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS records', () => {
+describe('ui-data-import', () => {
   let instanceHrid = null;
   let instanceHridForReimport = null;
   let exportedFileName = null;

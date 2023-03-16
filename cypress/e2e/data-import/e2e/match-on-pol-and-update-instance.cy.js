@@ -24,7 +24,7 @@ import InventoryViewSource from '../../../support/fragments/inventory/inventoryV
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 
-describe('ui-data-import: Match on POL and update related Instance with source MARC, create Holdings, Item records.', () => {
+describe('ui-data-import', () => {
   let user = null;
   let orderNumber;
   let instanceHrid;

@@ -26,7 +26,7 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 
-describe('ui-data-import: Match on VRN and update related Instance, Holdings, Item', () => {
+describe('ui-data-import', () => {
   const item = {
     title: 'Agrarianism and capitalism in early Georgia, 1732-1743 / Jay Jordan Butler.',
     productId: `xyz${getRandomPostfix()}`,

@@ -18,7 +18,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import: Match on Instance identifier match meets both the Identifier type and Data requirements (Scenario 1)', () => {
+describe('ui-data-import', () => {
   let userId;
   const fileNameForCreateInstance = `C347828autotestFile.${getRandomPostfix()}.mrc`;
   const fileNameForUpdateInstance = `C347828autotestFile.${getRandomPostfix()}.mrc`;

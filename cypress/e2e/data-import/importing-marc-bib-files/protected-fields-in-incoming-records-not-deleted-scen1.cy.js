@@ -16,7 +16,7 @@ import InventoryEditMarcRecord from '../../../support/fragments/inventory/invent
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import: Check that protected fields in incoming records are not deleted during import: Scenario 1', () => {
+describe('ui-data-import', () => {
   let user = null;
   let instanceHrid = null;
   const protectedField = '856';
@@ -97,7 +97,9 @@ describe('ui-data-import: Check that protected fields in incoming records are no
       cy.visit(TopMenu.inventoryPath);
       InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
       InventoryInstance.editMarcBibliographicRecord();
-      InventoryEditMarcRecord.deleteField();
+      InventoryEditMarcRecord.deleteField(29);
+      InventoryEditMarcRecord.saveAndClose();
+      InventoryEditMarcRecord.confirmDeletingField();
       InventoryInstance.checkElectronicAccess();
       InventoryInstance.startOverlaySourceBibRecord();
       InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();
