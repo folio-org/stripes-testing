@@ -152,6 +152,15 @@ export default {
     ]);
   },
 
+  reOpenOrder: () => {
+    cy.do([
+      orderDetailsPane
+        .find(PaneHeader({ id: 'paneHeaderorder-details' })
+          .find(actionsButton)).click(),
+      Button('Reopen').click(),
+    ]);
+  },
+  
   receiveOrderViaActions: () => {
     cy.do([
       orderDetailsPane
