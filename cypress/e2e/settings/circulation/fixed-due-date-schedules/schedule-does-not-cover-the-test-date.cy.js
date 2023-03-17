@@ -25,6 +25,7 @@ import Users from '../../../../support/fragments/users/users';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import CirculationRules from '../../../../support/fragments/circulation/circulation-rules';
 
 let userData = {};
 let createdLoanPolicy;
@@ -33,6 +34,7 @@ let mySchedule;
 let rulesDefaultString;
 let patronGroupId;
 let servicePointId;
+let newRule;
 const USER_BARCODE = uuid();
 const ITEM_BARCODE = generateItemBarcode();
 const fromDate = moment.utc().subtract(2, 'days');
@@ -139,7 +141,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
                     const noticePolicyId = Cypress.env(CY_ENV.NOTICE_POLICY)[0].id;
                     const overdueFinePolicyId = Cypress.env(CY_ENV.OVERDUE_FINE_POLICY)[0].id;
                     const lostItemFeesPolicyId = Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY)[0].id;
-                    const newRule = `\ng ${patronGroupId} + m ${materialTypeId}: l ${createdLoanPolicy.id} r ${requestPolicyId} n ${noticePolicyId} o ${overdueFinePolicyId} i ${lostItemFeesPolicyId}`;
+                    newRule = `\ng ${patronGroupId} + m ${materialTypeId}: l ${createdLoanPolicy.id} r ${requestPolicyId} n ${noticePolicyId} o ${overdueFinePolicyId} i ${lostItemFeesPolicyId}`;
 
                     cy.updateCirculationRules({
                       rulesAsText: rulesDefaultString + newRule,
@@ -171,9 +173,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
             cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
             InventoryInstance.deleteInstanceViaApi(instance.id);
           });
-        cy.updateCirculationRules({
-          rulesAsText: rulesDefaultString,
-        });
+        CirculationRules.deleteRuleViaApi(newRule);
         cy.deleteLoanPolicy(createdLoanPolicy.id)
           .then(() => {
             cy.deleteFixedDueDateSchedule(mySchedule.id);

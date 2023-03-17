@@ -47,4 +47,29 @@ export default {
       timeoutDurationTextField.fillIn(checkoutTimeoutDuration),
       saveButton.click()]));
   },
+
+  setOtherSettingsViaApi(params) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'configurations/entries?query=(module==CHECKOUT%20and%20configName==other_settings)',
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((otherSetingsResp) => {
+        const configs = otherSetingsResp.body.configs[0];
+        const newValue = { ...JSON.parse(configs.value), ...params };
+        cy.okapiRequest({
+          method: 'PUT',
+          path: `configurations/entries/${configs.id}`,
+          body: {
+            id: configs.id,
+            module: configs.module,
+            configName: configs.configName,
+            enabled: configs.enabled,
+            value: JSON.stringify(newValue),
+          },
+          isDefaultSearchParamsRequired: false,
+        });
+      });
+  },
 };

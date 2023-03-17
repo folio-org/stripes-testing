@@ -181,7 +181,7 @@ export default {
     ]);
   },
 
-  checkTransactionDetails: (indexNumber = 2, fiscalYear, amount, source, type, fund) => {
+  checkTransactionDetails: (indexNumber, fiscalYear, amount, source, type, fund) => {
     cy.do(
       transactionList
         .find(MultiColumnListRow({ index: indexNumber }))
@@ -416,6 +416,12 @@ export default {
     ]);
   },
 
+  selectPlannedBudgetDetails:(rowNumber = 0) => {
+    cy.do([
+      Section({ id: 'plannedBudget' }).find(MultiColumnListRow({ index: rowNumber })).click()
+    ]);
+  },
+
   checkIsBudgetDeleted:(rowNumber = 0) => {
     cy.expect([
       currentBudgetSection.find(MultiColumnListRow({ index: rowNumber })).absent()
@@ -528,5 +534,9 @@ export default {
 
   selectFund:(FundName) => {
     cy.do(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).click());
+  },
+
+  closeMenu:() => {
+    cy.do(Button({ icon: 'times' }).click());
   },
 };

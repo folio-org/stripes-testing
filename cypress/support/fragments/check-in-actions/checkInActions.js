@@ -60,6 +60,7 @@ export default {
     cy.do(itemBarcodeField.fillIn(barcode));
     cy.do(addItemButton.click());
     cy.wait('@getItems', getLongDelay());
+    cy.wait(1000);
   },
   checkInItemGui:(barcode) => {
     return cy.do([itemBarcodeField.exists(),
