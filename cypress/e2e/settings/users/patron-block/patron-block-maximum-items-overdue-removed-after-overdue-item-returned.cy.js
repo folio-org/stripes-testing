@@ -28,7 +28,7 @@ import UsersCard from '../../../../support/fragments/users/usersCard';
 describe('Patron Block: Maximum number of overdue items', () => {
   let addedCirculationRule;
   let originalCirculationRules;
-  const checkedOutBlockMessage = 'You have reached maximum number of overdue items as set by patron group';
+  const checkedOutBlockMessage = `You have reached maximum number of overdue items as set by patron group${getRandomPostfix()}`;
   const patronGroup = {
     name: 'groupToPatronBlock' + getRandomPostfix(),
   };
