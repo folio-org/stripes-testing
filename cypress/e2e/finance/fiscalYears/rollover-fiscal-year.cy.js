@@ -16,14 +16,16 @@ import Organizations from '../../../support/fragments/organizations/organization
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import NewInvoice from '../../../support/fragments/invoices/newInvoice';
 import Invoices from '../../../support/fragments/invoices/invoices';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 
 describe('ui-finance: Fiscal Year', () => {
-  const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
+  const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const secondFiscalYear = {
     name: `autotest_year_${getRandomPostfix()}`,
-    code: DateTools.getRandomFiscalYearCode(2000, 9999),
-    periodStart: `${DateTools.getPreviousDayDateForFiscalYear()}T00:00:00.000+00:00`,
-    periodEnd: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
+    code: DateTools.getRandomFiscalYearCodeForRollover(2000, 9999),
+    periodStart: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
+    periodEnd: `${DateTools.getDayAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
     series: 'FY',
   };
@@ -38,19 +40,21 @@ describe('ui-finance: Fiscal Year', () => {
   };
   const firstOrder = { ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',
-    reEncumber: true };
+    ongoing: {isSubscription: false, manualRenewal: false},
+    approved: true,
+    reEncumber: true,
+  };
   const secondOrder = {
-    orderType: 'Ongoing',
-    vendor: '',
+    approved: true,
     reEncumber: true,
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const invoice = { ...NewInvoice.defaultUiInvoice };
-  const firstOrderLineTitle = `autotest_POL_title_${getRandomPostfix()}`;
-  const secondOrderLineTitle = `autotest_POL_title_${getRandomPostfix()}`;
   const allocatedQuantity = '1000';
   let user;
   let orderNumber;
+  let servicePointId;
+  let location;
 
   before(() => {
     cy.getAdminToken();
@@ -86,6 +90,14 @@ describe('ui-finance: Fiscal Year', () => {
               });
           });
       });
+      ServicePoints.getViaApi()
+    .then((servicePoint) => {
+      servicePointId = servicePoint[0].id;
+      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
+        .then(res => {
+          location = res;
+        });
+    });
     // Create second Fiscal Year for Rollover
     FiscalYears.createViaApi(secondFiscalYear)
       .then(secondFiscalYearResponse => {
@@ -97,6 +109,7 @@ describe('ui-finance: Fiscal Year', () => {
       .then(responseOrganizations => {
         organization.id = responseOrganizations;
         invoice.accountingCode = organization.erpCode;
+        secondOrder.orderType = 'One-time'
       });
     firstOrder.vendor = organization.name;
     secondOrder.vendor = organization.name;
@@ -106,7 +119,8 @@ describe('ui-finance: Fiscal Year', () => {
       orderNumber = firstOrderResponse.poNumber;
       Orders.checkCreatedOrder(firstOrder);
       OrderLines.addPOLine();
-      OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(firstOrderLineTitle, firstFund, '100', '1', '100');
+      OrderLines.selectRandomInstanceInTitleLookUP('*',5),
+      OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund( firstFund, '100', '1', '100',location.institutionId);
       OrderLines.backToEditingOrder();
       Orders.openOrder();
       cy.visit(TopMenu.ordersPath);
@@ -114,7 +128,8 @@ describe('ui-finance: Fiscal Year', () => {
         secondOrder.id = secondOrderResponse.id;
         Orders.checkCreatedOrder(secondOrder);
         OrderLines.addPOLine();
-        OrderLines.rolloverPOLineInfoforElectronicResourceWithFund(secondOrderLineTitle, secondFund, '200', '1', '200');
+        OrderLines.selectRandomInstanceInTitleLookUP('*',15),
+        OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund( secondFund, '200', '1', '200',location.institutionId);
         OrderLines.backToEditingOrder();
         Orders.openOrder();
       });
@@ -147,6 +162,29 @@ describe('ui-finance: Fiscal Year', () => {
     FinanceHelp.searchByName(defaultLedger.name);
     Ledgers.selectLedger(defaultLedger.name);
     Ledgers.rollover();
-    Ledgers.fillInRolloverInfo(secondFiscalYear.name);
+    Ledgers.fillInRolloverInfo(secondFiscalYear.code);
+    Ledgers.closeRolloverInfo();
+    Ledgers.selectFundInLedger(firstFund.name);
+    Funds.selectPlannedBudgetDetails();
+    Funds.viewTransactions();
+    Funds.checkOrderInTransactionList(firstFund.code, '($100.00)');
+    Funds.closeMenu();
+    cy.wait(1000);
+    Funds.closeMenu();
+    Funds.selectBudgetDetails();
+    Funds.viewTransactions();
+    Funds.checkOrderInTransactionList(firstFund.code, '$0.00');
+    cy.visit(TopMenu.fundPath);
+    FinanceHelp.searchByName(secondFund.name);
+    Funds.selectFund(secondFund.name);
+    Funds.selectPlannedBudgetDetails();
+    Funds.viewTransactions();
+    Funds.checkOrderInTransactionList(secondFund.code, '($200.00)');
+    Funds.closeMenu();
+    cy.wait(1000);
+    Funds.closeMenu();
+    Funds.selectBudgetDetails();
+    Funds.viewTransactions();
+    Funds.checkOrderInTransactionList(secondFund.code, '($200.00)');
   });
 });

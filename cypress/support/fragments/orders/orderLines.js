@@ -199,30 +199,34 @@ export default {
     ]);
   },
 
-  rolloverPOLineInfoforPhysicalMaterialWithFund: (orderLineTitleName, fund, unitPrice, quantity, value) => {
+  rolloverPOLineInfoforPhysicalMaterialWithFund( fund, unitPrice, quantity, value,institutionId) {
     cy.do([
-      orderLineTitleField.fillIn(orderLineTitleName),
       orderFormatSelect.choose('Physical resource'),
       acquisitionMethodButton.click(),
     ]);
     cy.wait(2000);
     cy.do([
       SelectionOption('Depository').click(),
-      receivingWorkflowSelect.choose('Independent order and receipt quantity'),
+      receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
       physicalUnitPriceTextField.fillIn(unitPrice),
       quantityPhysicalTextField.fillIn(quantity),
-      materialTypeSelect.choose('book'),
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
       Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
       fundDistributionField.fillIn(value),
+      materialTypeSelect.choose('book'),
       addLocationButton.click(),
-      locationSelect.click(),
-      onlineLocationOption.click(),
+      Button('Create new holdings for location').click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+        cy.do([
+      Modal('Select permanent location').find(Button('Save and close')).click(),
       quantityPhysicalLocationField.fillIn(quantity),
       saveAndClose.click()
     ]);
+    cy.wait(2000);
+    this.submitOrderLine();
   },
 
   rolloverPOLineInfoforElectronicResourceWithFund: (orderLineTitleName, fund, unitPrice, quantity, value) => {
@@ -588,6 +592,32 @@ export default {
 
   clickNotConnectionInfoButton:() => {
     cy.do(Section({ id: 'itemDetails' }).find(Button({ icon: 'info' })).click());
-  }
+  },
+  
+  selectCurrentEncumbrance:(currentEncumbrance) => {
+    cy.do(Section({ id: 'FundDistribution' }).find(Link(currentEncumbrance)).click());
+  },
+
+  cancelPOL:() => {
+    cy.do([
+      Pane({ id: 'order-lines-details' })
+      .find(PaneHeader({ id: 'paneHeaderorder-lines-details' })
+        .find(actionsButton)).click(),
+        Button('Cancel').click(),
+        Button('Cancel order line').click()
+    ]);
+  },
+
+  changeFundInPOL:(fund) => {
+    cy.do([
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      saveAndClose.click()
+    ]);
+  },
+
+  checkFundInPOL:(fund) => {
+    cy.expect(Section({ id: 'FundDistribution'}).find(Link(`${fund.name}(${fund.code})`)).exists());
+  },
 };
 

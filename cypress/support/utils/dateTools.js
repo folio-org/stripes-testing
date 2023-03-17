@@ -69,6 +69,11 @@ export default {
     return (getRandomStringCode(4)) + Math.floor((Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.ceil(min))).toString();
   },
 
+  getRandomFiscalYearCodeForRollover: (min, max) => {
+    // returns random 4 digit code for the Fiscal Year
+    return 'FYTA' + Math.floor((Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.ceil(min))).toString();
+  },
+
   getDateRanges: (rangesCount = 1, isInDifferentYears = false) => {
     const resultRanges = [];
     const currentDate = new Date();

@@ -78,7 +78,7 @@ describe('orders: Receiving and Check-in', () => {
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList();
         Orders.createPOLineViaActions();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 99);
+        OrderLines.selectRandomInstanceInTitleLookUP('*', 9);
         OrderLines.fillInPOLineInfoForExportWithLocationForPhisicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', locationResponse.institutionId, '4');
         OrderLines.backToEditingOrder();
         Orders.openOrder();
@@ -164,7 +164,7 @@ describe('orders: Receiving and Check-in', () => {
     cy.visit(TopMenu.ordersPath);
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList();
-    Orders.unOpenOrder(orderNumber);
+    Orders.unOpenOrderDeleteHoldingsItems();
     OrderLines.selectPOLInOrder();
     OrderLines.deleteOrderLine();
     // Need to wait until the order is opened before deleting it
