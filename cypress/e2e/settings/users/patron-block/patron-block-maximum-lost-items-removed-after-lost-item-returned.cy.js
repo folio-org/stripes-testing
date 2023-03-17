@@ -31,7 +31,7 @@ import NewFeeFine from '../../../../support/fragments/users/newFeeFine';
 describe('Patron Block: Maximum number of lost items', () => {
   let addedCirculationRule;
   let originalCirculationRules;
-  const blockMessage = 'You have reached maximum number of lost items as set by patron group';
+  const blockMessage = `You have reached maximum number of lost items as set by patron group${getRandomPostfix()}`;
   const patronGroup = {
     name: 'groupToPatronBlock' + getRandomPostfix(),
   };
@@ -192,7 +192,6 @@ describe('Patron Block: Maximum number of lost items', () => {
         permissions.checkinAll.gui,
         permissions.checkoutAll.gui,
         permissions.uiUsersView.gui,
-        permissions.okapiTimersPatch.gui,
       ],
       patronGroup.name
     )
@@ -202,9 +201,7 @@ describe('Patron Block: Maximum number of lost items', () => {
         userData.userId = userProperties.userId;
         userData.barcode = userProperties.barcode;
         UserEdit.addServicePointViaApi(testData.userServicePoint.id, userData.userId, testData.userServicePoint.id);
-        cy.getToken(userData.username, userData.password);
         UserLoans.updateTimerForAgedToLost('minute');
-        cy.getAdminToken();
       })
       .then(() => {
         cy.get('@items').each((item) => {
@@ -234,9 +231,7 @@ describe('Patron Block: Maximum number of lost items', () => {
   });
 
   after('Deleting created entities', () => {
-    cy.getToken(userData.username, userData.password);
     UserLoans.updateTimerForAgedToLost('reset');
-    cy.getAdminToken();
     cy.get('@items').each((item) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,

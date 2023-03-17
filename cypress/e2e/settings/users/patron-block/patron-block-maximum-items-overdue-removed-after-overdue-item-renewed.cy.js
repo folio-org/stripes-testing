@@ -31,7 +31,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
   let addedCirculationRule;
   let originalCirculationRules;
   const renewComment = `AutotestText${getRandomPostfix()}`;
-  const blockMessage = 'You have reached maximum number of overdue items as set by patron group';
+  const blockMessage = `You have reached maximum number of overdue items as set by patron group${getRandomPostfix()}`;
   const patronGroup = {
     name: 'groupToPatronBlock' + getRandomPostfix(),
   };
