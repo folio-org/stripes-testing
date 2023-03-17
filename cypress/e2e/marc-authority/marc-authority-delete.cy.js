@@ -11,8 +11,10 @@ import Users from '../../support/fragments/users/users';
 import MarcAuthoritiesDelete from '../../support/fragments/marcAuthority/marcAuthoritiesDelete';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthorityBrowse from '../../support/fragments/marcAuthority/MarcAuthorityBrowse';
+import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../support/fragments/data_import/logs/logs';
 
-describe('MARC Authority management', () => {
+describe('MARC Authority Delete', () => {
   const testData = {
     uniqueFileName: `C350643autotestFile.${getRandomPostfix()}.mrc`,
     fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
@@ -47,14 +49,25 @@ describe('MARC Authority management', () => {
   });
 
   it('C350643 Delete a "MARC Authority" record via "MARC Authority" app (spitfire)', { tags: [TestTypes.criticalPath, Features.authority, DevTeams.spitfire] }, () => {
-    DataImport.importFile(MarcAuthority.defaultCreateJobProfile, testData.uniqueFileName);
+    DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName);
+    JobProfiles.waitLoadingList();
+    JobProfiles.searchJobProfileForImport('Default - Create SRS MARC Authority');
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(testData.fileName);
+    Logs.checkStatusOfJobProfile('Completed');
+
+    cy.visit(TopMenu.marcAuthorities);
+    MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.record);
+    MarcAuthorities.selectItem(testData.record);
+    MarcAuthority.waitLoading();
+
     MarcAuthoritiesDelete.clickDeleteButton();
     MarcAuthoritiesDelete.checkDeleteModal();
     MarcAuthoritiesDelete.confirmDelete();
-    MarcAuthoritiesDelete.checkDelete(MarcAuthority.defaultAuthority.headingReference);
+    MarcAuthoritiesDelete.checkDelete(testData.record);
     cy.visit(TopMenu.marcAuthorities);
-    MarcAuthoritiesSearch.searchBy('Uniform title', MarcAuthority.defaultAuthority.headingReference);
-    MarcAuthoritiesDelete.checkEmptySearchResults(MarcAuthority.defaultAuthority.headingReference);
+    MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.record);
+    MarcAuthoritiesDelete.checkEmptySearchResults(testData.record);
   });
 
   it('C357549 Delete a "MARC Authority" record (from browse result list) (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
