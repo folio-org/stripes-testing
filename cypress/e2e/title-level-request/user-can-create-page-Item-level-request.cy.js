@@ -158,6 +158,9 @@ describe('Create Item or Title level request', () => {
         requesterBarcode: userData.barcode,
         pickupServicePoint: testData.userServicePoint.name,
       });
+      // needed to prevent from error "Cannot create a request without Instance ID"
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(3000);
       NewRequest.saveRequestAndClose();
       NewRequest.waitLoading();
       cy.wait('@createRequest').then((intercept) => {
