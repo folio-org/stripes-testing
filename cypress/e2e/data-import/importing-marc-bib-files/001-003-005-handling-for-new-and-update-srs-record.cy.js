@@ -213,6 +213,7 @@ describe('ui-data-import', () => {
     // export instance
     cy.visit(TopMenu.inventoryPath);
     InventorySearchAndFilter.searchInstanceByHRID(instanceHridForReimport);
+    InventorySearchAndFilter.closeInstanceDetailPane();
     InventorySearchAndFilter.selectResultCheckboxes(1);
     InventorySearchAndFilter.exportInstanceAsMarc();
 

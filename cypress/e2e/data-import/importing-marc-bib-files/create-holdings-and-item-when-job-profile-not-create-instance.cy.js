@@ -21,6 +21,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import Users from '../../../support/fragments/users/users';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import FileManager from '../../../support/utils/fileManager';
 
 describe('ui-data-import', () => {
   let user;
@@ -98,14 +99,25 @@ describe('ui-data-import', () => {
       });
   });
 
-  //   after('delete test data', () => {
-  //     // delete generated profiles
-  //     JobProfiles.deleteJobProfile(jobProfileName);
-  //     MatchProfiles.deleteMatchProfile(matchProfileName);
-  //     ActionProfiles.deleteActionProfile(actionProfileName);
-  //     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
-  //     Users.deleteViaApi(user.userId);
-  //   });
+  after('delete test data', () => {
+    // delete generated profiles
+    JobProfiles.deleteJobProfile(jobProfileName);
+    MatchProfiles.deleteMatchProfile(matchProfileName);
+    ActionProfiles.deleteActionProfile(holdingsActionProfileName);
+    ActionProfiles.deleteActionProfile(itemActionProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileName);
+    Users.deleteViaApi(user.userId);
+    // delete downloads folder and created files in fixtures
+    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        cy.deleteItemViaApi(instance.items[0].id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+  });
 
   const createItemMappingProfile = (itemMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
@@ -159,9 +171,8 @@ describe('ui-data-import', () => {
       cy.visit(TopMenu.inventoryPath);
       InventorySearchAndFilter.bySource('MARC');
       InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+      InventorySearchAndFilter.closeInstanceDetailPane();
       InventorySearchAndFilter.selectResultCheckboxes(selectedRecords);
-      //InventorySearchAndFilter.selectAllCheckbox();
-      cy.pause();
       InventorySearchAndFilter.exportInstanceAsMarc();
 
       // download exported marc file
@@ -188,6 +199,7 @@ describe('ui-data-import', () => {
           FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems, 0);
           FileDetails.checkItemQuantityInSummaryTable(quantityOfItems, 0);
 
+          // check created items
           FileDetails.openHoldingsInInventory('Created');
           HoldingsRecordView.checkPermanentLocation('Annex');
           cy.go('back');

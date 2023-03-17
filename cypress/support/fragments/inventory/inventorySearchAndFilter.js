@@ -142,10 +142,6 @@ export default {
     return cy.do(clickActions);
   },
 
-  selectAllCheckbox() {
-    cy.do(Pane({ id:'pane-results-content' }).find(Checkbox({ ariaLabel: 'Select instance' })).click());
-  },
-
   selectSearchResultItem(indexRow = 0) {
     return cy.do(this.getSearchResult(indexRow, 0).click());
   },
@@ -376,7 +372,7 @@ export default {
     cy.expect(paneResultsSection.find(HTML(including(emptyResultsMessage))).exists());
   },
 
-  closeTagsAndInstanceDetailPane() {
+  closeInstanceDetailPane() {
     cy.do(instanceDetailsSection.find(Button({ icon: 'times' })).click());
     cy.expect(instanceDetailsSection.absent());
     cy.expect(tagsPane.absent());
