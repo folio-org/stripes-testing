@@ -709,6 +709,13 @@ export default {
     ]);
   },
 
+  verifyLogsRowActionWhenCompletedWithErrorsWithoutModification() {
+    cy.expect([
+      HTML('File that was used to trigger the bulk edit').exists(),
+      HTML('File with errors encountered during the record matching').exists(),
+    ]);
+  },
+
   downloadFileUsedToTrigger() {
     cy.do(Button('File that was used to trigger the bulk edit').click());
     //Need to wait for the file to download
