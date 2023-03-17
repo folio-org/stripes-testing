@@ -69,40 +69,33 @@ describe('Bulk Edit - Logs', () => {
     BulkEditActions.commitChanges();
 
     // Verify changes on the page, download changes and errors
-    // BulkEditSearchPane.verifyChangedResults(newUsername);
-    cy.wait(2000)
+    BulkEditSearchPane.verifyChangedResults(newUsername);
     BulkEditActions.openActions();
     BulkEditActions.downloadChangedCSV();
-    // BulkEditActions.downloadErrors();
+    BulkEditActions.downloadErrors();
 
     // Go to logs pane and verify elements
     BulkEditSearchPane.openLogsSearch();
     BulkEditSearchPane.verifyLogsPane();
     BulkEditSearchPane.checkUsersCheckbox();
     BulkEditSearchPane.clickActionsOnTheRow();
-    // BulkEditSearchPane.verifyLogsRowActionWhenCompletedWithErrors();
+    BulkEditSearchPane.verifyLogsRowActionWhenCompletedWithErrors();
 
-    // Download File that was used to trigger the bulk edit and compare with original file with UUIDs from line 49
     BulkEditSearchPane.downloadFileUsedToTrigger();
     BulkEditFiles.verifyCSVFileRows(`${invalidAndValidUserBarcodesFileName}*`, [user.barcode, userWithoutPermissions.barcode, invalidUserBarcode]);
 
-    // Download File with the matching records and verify valid user barcodes are in the file
     BulkEditSearchPane.downloadFileWithMatchingRecords();
     BulkEditFiles.verifyMatchedResultFileContent(`*${matchRecordsFileNameInvalidAndValid}*`, [user.barcode, userWithoutPermissions.barcode], 'userBarcode', true);
 
-    // Download File with the errors and verify invalid barcode is there
     BulkEditSearchPane.downloadFileWithErrorsEncountered();
     BulkEditFiles.verifyMatchedResultFileContent(errorsFromMatchingFileName, [invalidUserBarcode], 'firstElement', false);
 
-    // Download File with the preview of proposed changes and verify changes to the user's first name made in line 53
-    BulkEditSearchPane.downloadFileWithProposedChanges();
+     BulkEditSearchPane.downloadFileWithProposedChanges();
     BulkEditFiles.verifyMatchedResultFileContent(importFileName, [newFirstName, userWithoutPermissions.firstName], 'firstName', true);
 
-    // Download File with the preview of proposed changes and verify changes to the user's first name made in line 53
     BulkEditSearchPane.downloadFileWithUpdatedRecords();
     BulkEditFiles.verifyMatchedResultFileContent(updatesPreviewFileName, [newFirstName, userWithoutPermissions.firstName], 'firstName', true);
 
-    // Download File with the preview of proposed changes and verify changes to the user's first name made in line 53
     BulkEditSearchPane.downloadFileWithCommitErrors();
     BulkEditFiles.verifyMatchedResultFileContent(errorsFromMatchingFileName, [userWithoutPermissions.barcode], 'firstElement', false);
   });
