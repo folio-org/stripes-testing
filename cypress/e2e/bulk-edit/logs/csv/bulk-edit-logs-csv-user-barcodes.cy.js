@@ -14,7 +14,7 @@ let userWithoutPermissions;
 const invalidUserBarcode = getRandomPostfix();
 const invalidAndValidUserBarcodesFileName = `invalidAndValidUserBarcodess_${getRandomPostfix()}.csv`;
 const matchRecordsFileNameInvalidAndValid = `Matched-Records-${invalidAndValidUserBarcodesFileName}`;
-const errorsFromMatchingFileName = `*Errors-${invalidAndValidUserBarcodesFileName}*`
+const errorsFromMatchingFileName = `*Errors-${invalidAndValidUserBarcodesFileName}*`;
 const importFileName = `bulkEditImport_${getRandomPostfix()}.csv`;
 const updatesPreviewFileName = `*Updates-Preview-${importFileName}`;
 const newFirstName = `testNewFirstNameame_${getRandomPostfix()}`;
@@ -69,7 +69,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditActions.commitChanges();
 
     // Verify changes on the page, download changes and errors
-    BulkEditSearchPane.verifyChangedResults(newUsername);
+    BulkEditSearchPane.verifyChangedResults(newFirstName);
     BulkEditActions.openActions();
     BulkEditActions.downloadChangedCSV();
     BulkEditActions.downloadErrors();
@@ -90,7 +90,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.downloadFileWithErrorsEncountered();
     BulkEditFiles.verifyMatchedResultFileContent(errorsFromMatchingFileName, [invalidUserBarcode], 'firstElement', false);
 
-     BulkEditSearchPane.downloadFileWithProposedChanges();
+    BulkEditSearchPane.downloadFileWithProposedChanges();
     BulkEditFiles.verifyMatchedResultFileContent(importFileName, [newFirstName, userWithoutPermissions.firstName], 'firstName', true);
 
     BulkEditSearchPane.downloadFileWithUpdatedRecords();
