@@ -26,6 +26,7 @@ import DateTools from '../../utils/dateTools';
 import Helper from '../finance/financeHelper';
 
 const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
+const sourceAccordion = Accordion('Source');
 const languageInput = Accordion({ id: 'language' });
 const keywordInput = TextField({ id: 'input-inventory-search' });
 const searchButton = Button({ type: 'submit' });
@@ -141,6 +142,10 @@ export default {
     return cy.do(clickActions);
   },
 
+  selectAllCheckbox() {
+    cy.do(Pane({ id:'pane-results-content' }).find(Checkbox({ ariaLabel: 'Select instance' })).click());
+  },
+
   selectSearchResultItem(indexRow = 0) {
     return cy.do(this.getSearchResult(indexRow, 0).click());
   },
@@ -158,6 +163,13 @@ export default {
       languageInput.clickHeader(),
       languageInput.find(Checkbox(lang ?? this.language.eng)).click()
     ]);
+  },
+
+  bySource(source) {
+    cy.do([
+      sourceAccordion.clickHeader(),
+      sourceAccordion.find(Checkbox(source)).click()]);
+    cy.expect(MultiColumnListRow().exists());
   },
 
   byKeywords(kw = '*') {

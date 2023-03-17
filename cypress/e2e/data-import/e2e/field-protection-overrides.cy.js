@@ -71,6 +71,72 @@ describe('ui-data-import', () => {
     { type: 'ISBN', value: '9782617632537' },
     { type: 'ISBN', value: '4934691323219 (paperback)' }
   ];
+  const marcBibMappingProfile = {
+    name: marcBibMapProfileNameForUpdate,
+    typeValue : NewFieldMappingProfile.folioRecordTypeValue.marcBib
+  };
+
+  const instanceMappingProfile = {
+    name: instanceMapProfileNameForUpdate,
+    typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance
+  };
+
+  const marcBibMappingProfileOverride = {
+    name: marcBibMapProfileNameForUpdateAndOverride,
+    typeValue : NewFieldMappingProfile.folioRecordTypeValue.marcBib
+  };
+
+  const instanceMappingProfileOverride = {
+    name: instanceMapProfileNameForUpdateAndOverride,
+    typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance
+  };
+
+  const marcBibActionProfile = {
+    typeValue: NewActionProfile.folioRecordTypeValue.marcBib,
+    name: marcBibActionProfileNameForUpdate,
+    action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+  };
+
+  const instanceActionProfile = {
+    typeValue: NewActionProfile.folioRecordTypeValue.instance,
+    name: instanceActionProfileNameForUpdate,
+    action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+  };
+
+  const marcBibActionProfileOverride = {
+    typeValue: NewActionProfile.folioRecordTypeValue.marcBib,
+    name: marcBibActionProfileNameForUpdateAndOverride,
+    action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+  };
+
+  const instanceActionProfileOverride = {
+    typeValue: NewActionProfile.folioRecordTypeValue.instance,
+    name: instanceActionProfileNameForUpdateAndOverride,
+    action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+  };
+
+  const matchProfile = { profileName: matchProfileName,
+    incomingRecordFields: {
+      field: '001'
+    },
+    existingRecordFields: {
+      field: '001'
+    },
+    matchCriterion: 'Exactly matches',
+    existingRecordType: 'MARC_BIBLIOGRAPHIC' };
+
+  const jobProfileForUpdate = {
+    ...NewJobProfile.defaultJobProfile,
+    profileName: jobProfileNameForUpdate,
+    acceptedType: NewJobProfile.acceptedDataType.marc
+  };
+
+  const jobProfileForOverride = {
+    ...NewJobProfile.defaultJobProfile,
+    profileName: jobProfileNameForOverride,
+    acceptedType: NewJobProfile.acceptedDataType.marc
+  };
+
 
   beforeEach('create test data', () => {
     cy.loginAsAdmin();
@@ -126,72 +192,6 @@ describe('ui-data-import', () => {
   });
 
   it('C17018 Check that field protection overrides work properly during data import (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-    const marcBibMappingProfile = {
-      name: marcBibMapProfileNameForUpdate,
-      typeValue : NewFieldMappingProfile.folioRecordTypeValue.marcBib
-    };
-
-    const instanceMappingProfile = {
-      name: instanceMapProfileNameForUpdate,
-      typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance
-    };
-
-    const marcBibMappingProfileOverride = {
-      name: marcBibMapProfileNameForUpdateAndOverride,
-      typeValue : NewFieldMappingProfile.folioRecordTypeValue.marcBib
-    };
-
-    const instanceMappingProfileOverride = {
-      name: instanceMapProfileNameForUpdateAndOverride,
-      typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance
-    };
-
-    const marcBibActionProfile = {
-      typeValue: NewActionProfile.folioRecordTypeValue.marcBib,
-      name: marcBibActionProfileNameForUpdate,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
-    };
-
-    const instanceActionProfile = {
-      typeValue: NewActionProfile.folioRecordTypeValue.instance,
-      name: instanceActionProfileNameForUpdate,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
-    };
-
-    const marcBibActionProfileOverride = {
-      typeValue: NewActionProfile.folioRecordTypeValue.marcBib,
-      name: marcBibActionProfileNameForUpdateAndOverride,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
-    };
-
-    const instanceActionProfileOverride = {
-      typeValue: NewActionProfile.folioRecordTypeValue.instance,
-      name: instanceActionProfileNameForUpdateAndOverride,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
-    };
-
-    const matchProfile = { profileName: matchProfileName,
-      incomingRecordFields: {
-        field: '001'
-      },
-      existingRecordFields: {
-        field: '001'
-      },
-      matchCriterion: 'Exactly matches',
-      existingRecordType: 'MARC_BIBLIOGRAPHIC' };
-
-    const jobProfileForUpdate = {
-      ...NewJobProfile.defaultJobProfile,
-      profileName: jobProfileNameForUpdate,
-      acceptedType: NewJobProfile.acceptedDataType.marc
-    };
-
-    const jobProfileForOverride = {
-      ...NewJobProfile.defaultJobProfile,
-      profileName: jobProfileNameForOverride,
-      acceptedType: NewJobProfile.acceptedDataType.marc
-    };
-
     // create Field mapping profiles
     cy.visit(SettingsMenu.mappingProfilePath);
     FieldMappingProfiles.createMappingProfileForUpdatesMarc(marcBibMappingProfile);
