@@ -1,5 +1,3 @@
-/// <reference types="cypress" />
-
 import testType from '../../support/dictionary/testTypes';
 import TopMenu from '../../support/fragments/topMenu';
 import eHoldingsPackages from '../../support/fragments/eholdings/eHoldingsPackages';
@@ -12,9 +10,12 @@ import features from '../../support/dictionary/features';
 import users from '../../support/fragments/users/users';
 import devTeams from '../../support/dictionary/devTeams';
 
-
 describe('eHoldings packages management', () => {
   let userId;
+
+  afterEach(() => {
+    users.deleteViaApi(userId);
+  });
 
   it('C688 Add all titles in a package to your holdings (spitfire)', { tags: [testType.smoke, devTeams.spitfire, features.eHoldings] }, () => {
     cy.createTempUser([
@@ -80,7 +81,7 @@ describe('eHoldings packages management', () => {
 
   it('C756 Remove a tag from a package record (spitfire)', { tags: [testType.extendedPath, devTeams.spitfire, features.eHoldings, features.tags] }, () => {
     cy.createTempUser([
-      permissions.uieHoldingsRecordsEdit.gui, 
+      permissions.uieHoldingsRecordsEdit.gui,
       permissions.uiTagsPermissionAll.gui,
       permissions.uieHoldingsTitlesPackagesCreateDelete.gui
     ]).then(userProperties => {
@@ -98,16 +99,9 @@ describe('eHoldings packages management', () => {
           eHoldingsPackages.openPackage();
           eHoldingsPackage.verifyExistingTags(addedTag);
           eHoldingsPackage.removeExistingTags();
-          eHoldingsPackage.close(selectedPackageName);
-          eHoldingsPackagesSearch.resetTagFilter();
-          eHoldingsPackagesSearch.byName(selectedPackageName);
-          eHoldingsPackages.openPackage();
+          cy.reload();
           eHoldingsPackage.verifyExistingTags();
         });
     });
-  });
-
-  afterEach(() => {
-    users.deleteViaApi(userId);
   });
 });

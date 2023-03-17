@@ -169,6 +169,8 @@ describe('MARC Authority -> Edit Authority record', () => {
     MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
     MarcAuthorities.selectTitle(testData.authority.title);
     MarcAuthority.edit();
+    // Waiter needed for the whole page to be loaded.
+    cy.wait(2000)
     MarcAuthority.addNewField(7, '555', '$a test');
     QuickMarcEditor.checkButtonSaveAndCloseEnable();
     MarcAuthority.addNewField(7, '555', '$a test');
