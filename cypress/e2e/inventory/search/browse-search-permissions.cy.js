@@ -6,22 +6,41 @@ import Users from '../../../support/fragments/users/users';
 import permissions from '../../../support/dictionary/permissions';
 
 describe('permissions: inventory', () => {
-    let user;
+    let firstUser;
+    let secondUser;
 
-  beforeEach(() => {
+  before(() => {
     cy.createTempUser([
         permissions.uiInventoryViewInstances.gui,
       ]).then(userProperties => {
-        user = userProperties;
-        cy.login(userProperties.username, userProperties.password);
+        firstUser = userProperties;
+      });
+    cy.createTempUser([
+        permissions.uiInventoryViewInstances.gui,
+      ]).then(userProperties => {
+        secondUser = userProperties;
       });
   });
 
-  afterEach('Deleting data', () => {
-    Users.deleteViaApi(user.userId);
+  after('Deleting data', () => {
+    Users.deleteViaApi(firstUser.userId);
+    Users.deleteViaApi(secondUser.userId);
   });
 
   it('C375072 User with "Inventory: View instances, holdings, and items" permission can see browse call numbers and subjects without assigning specific browse permissions (Orchid+) (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
+    cy.login(firstUser.username, firstUser.password);
+    cy.visit(TopMenu.inventoryPath);
+    InventorySearchAndFilter.switchToBrowseTab();
+    InventorySearchAndFilter.selectBrowseCallNumbers();
+    InventorySearchAndFilter.browseSearch('K1');
+    InventorySearchAndFilter.verifyCallNumberBrowsePane();
+    InventorySearchAndFilter.selectBrowseSubjects();
+    InventorySearchAndFilter.browseSearch('art');
+    InventorySearchAndFilter.verifyCallNumberBrowsePane();
+  });
+
+  it('C375077 User with "Inventory: All permissions" permission can see browse call numbers and subjects without assigning specific browse permissions (Orchid+) (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
+    cy.login(secondUser.username, secondUser.password);
     cy.visit(TopMenu.inventoryPath);
     InventorySearchAndFilter.switchToBrowseTab();
     InventorySearchAndFilter.selectBrowseCallNumbers();
