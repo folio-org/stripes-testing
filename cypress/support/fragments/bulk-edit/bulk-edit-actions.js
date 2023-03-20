@@ -9,9 +9,9 @@ import {
   MultiColumnListHeader,
   MultiColumnListCell,
   TextField,
-  RepeatableFieldItem, Calendar,
+  RepeatableFieldItem,
 } from '../../../../interactors';
-import DateTools from "../../utils/dateTools";
+import DateTools from '../../utils/dateTools';
 
 const actionsBtn = Button('Actions');
 const dropdownMenu = DropdownMenu();
