@@ -16,7 +16,7 @@ describe('permissions: inventory', () => {
         firstUser = userProperties;
       });
     cy.createTempUser([
-        permissions.uiInventoryViewInstances.gui,
+        permissions.inventoryAll.gui,
       ]).then(userProperties => {
         secondUser = userProperties;
       });
