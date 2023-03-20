@@ -6,29 +6,29 @@ import Users from '../../../support/fragments/users/users';
 import permissions from '../../../support/dictionary/permissions';
 
 describe('permissions: inventory', () => {
-    let userWithAllPermissions;
     let userWithOnlyViewPermissions;
+    let userWithAllPermissions;
 
   before(() => {
     cy.createTempUser([
-        permissions.uiInventoryViewInstances.gui,
+        permissions.uiInventoryViewInstances.gui,inventoryAll
       ]).then(userProperties => {
-        userWithAllPermissions = userProperties;
+        userWithOnlyViewPermissions = userProperties;
       });
     cy.createTempUser([
         permissions.inventoryAll.gui,
       ]).then(userProperties => {
-        userWithOnlyViewPermissions = userProperties;
+        userWithAllPermissions = userProperties;
       });
   });
 
   after('Deleting data', () => {
-    Users.deleteViaApi(userWithAllPermissions.userId);
     Users.deleteViaApi(userWithOnlyViewPermissions.userId);
+    Users.deleteViaApi(userWithAllPermissions.userId);
   });
 
   it('C375072 User with "Inventory: View instances, holdings, and items" permission can see browse call numbers and subjects without assigning specific browse permissions (Orchid+) (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
-    cy.login(userWithAllPermissions.username, userWithAllPermissions.password);
+    cy.login(userWithOnlyViewPermissions.username, userWithOnlyViewPermissions.password);
     cy.visit(TopMenu.inventoryPath);
     InventorySearchAndFilter.switchToBrowseTab();
     InventorySearchAndFilter.selectBrowseCallNumbers();
@@ -40,7 +40,7 @@ describe('permissions: inventory', () => {
   });
 
   it('C375077 User with "Inventory: All permissions" permission can see browse call numbers and subjects without assigning specific browse permissions (Orchid+) (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
-    cy.login(userWithOnlyViewPermissions.username, userWithOnlyViewPermissions.password);
+    cy.login(userWithAllPermissions.username, userWithAllPermissions.password);
     cy.visit(TopMenu.inventoryPath);
     InventorySearchAndFilter.switchToBrowseTab();
     InventorySearchAndFilter.selectBrowseCallNumbers();
