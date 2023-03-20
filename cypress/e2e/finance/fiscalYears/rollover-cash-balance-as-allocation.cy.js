@@ -49,7 +49,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const invoice = { ...NewInvoice.defaultUiInvoice };
-  const allocatedQuantity = '1000';
+  const allocatedQuantity = '100';
   let user;
   let orderNumber;
   let servicePointId;
@@ -157,7 +157,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C186156 Rollover Fiscal Year (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
+  it('C376601 Rollover cash balance as allocation ("Allocation" option is active) (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     FinanceHelp.searchByName(defaultLedger.name);
     Ledgers.selectLedger(defaultLedger.name);
     Ledgers.rollover();
