@@ -6,29 +6,29 @@ import Users from '../../../support/fragments/users/users';
 import permissions from '../../../support/dictionary/permissions';
 
 describe('permissions: inventory', () => {
-    let firstUser;
-    let secondUser;
+    let userWithAllPermissions;
+    let userWithOnlyViewPermissions;
 
   before(() => {
     cy.createTempUser([
         permissions.uiInventoryViewInstances.gui,
       ]).then(userProperties => {
-        firstUser = userProperties;
+        userWithAllPermissions = userProperties;
       });
     cy.createTempUser([
         permissions.inventoryAll.gui,
       ]).then(userProperties => {
-        secondUser = userProperties;
+        userWithOnlyViewPermissions = userProperties;
       });
   });
 
   after('Deleting data', () => {
-    Users.deleteViaApi(firstUser.userId);
-    Users.deleteViaApi(secondUser.userId);
+    Users.deleteViaApi(userWithAllPermissions.userId);
+    Users.deleteViaApi(userWithOnlyViewPermissions.userId);
   });
 
   it('C375072 User with "Inventory: View instances, holdings, and items" permission can see browse call numbers and subjects without assigning specific browse permissions (Orchid+) (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
-    cy.login(firstUser.username, firstUser.password);
+    cy.login(userWithAllPermissions.username, userWithAllPermissions.password);
     cy.visit(TopMenu.inventoryPath);
     InventorySearchAndFilter.switchToBrowseTab();
     InventorySearchAndFilter.selectBrowseCallNumbers();
@@ -40,7 +40,7 @@ describe('permissions: inventory', () => {
   });
 
   it('C375077 User with "Inventory: All permissions" permission can see browse call numbers and subjects without assigning specific browse permissions (Orchid+) (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
-    cy.login(secondUser.username, secondUser.password);
+    cy.login(userWithOnlyViewPermissions.username, userWithOnlyViewPermissions.password);
     cy.visit(TopMenu.inventoryPath);
     InventorySearchAndFilter.switchToBrowseTab();
     InventorySearchAndFilter.selectBrowseCallNumbers();
