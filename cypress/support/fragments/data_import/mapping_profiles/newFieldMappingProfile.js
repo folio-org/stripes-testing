@@ -9,7 +9,8 @@ import {
   including,
   MultiColumnListCell,
   MultiColumnListRow,
-  SearchField
+  SearchField,
+  Accordion
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
@@ -18,6 +19,7 @@ const organizationModal = Modal('Select Organization');
 const staffSuppressSelect = Select('Staff suppress');
 const suppressFromDiscoverySelect = Select('Suppress from discovery');
 const previouslyHeldSelect = Select('Previously held');
+const loanAndAvailabilityAccordion = Accordion('Loan and availability');
 
 const incomingRecordType = {
   marcBib: 'MARC Bibliographic',
@@ -394,6 +396,23 @@ export default {
       Button('Add item note').click(),
       TextField('Note type').fillIn(noteType),
       TextField('Note').fillIn(note),
+      Select({ name:selectName }).focus(),
+      Select({ name:selectName })
+        .choose(staffOnly)
+    ]);
+    waitLoading();
+  },
+
+  addCheckInCheckOutNote:(noteType, note, staffOnly) => {
+    const noteFieldName = 'profile.mappingDetails.mappingFields[29].repeatableFieldAction';
+    const selectName = 'profile.mappingDetails.mappingFields[29].subfields[0].fields[2].booleanFieldAction';
+
+    cy.do([
+      Select({ name:noteFieldName }).focus(),
+      Select({ name:noteFieldName }).choose(actions.addTheseToExisting),
+      Button('Add check in / check out note').click(),
+      loanAndAvailabilityAccordion.find(TextField('Note type')).fillIn(noteType),
+      loanAndAvailabilityAccordion.find(TextField('Note')).fillIn(note),
       Select({ name:selectName }).focus(),
       Select({ name:selectName })
         .choose(staffOnly)
