@@ -9,7 +9,6 @@ import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-acti
 import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../../support/fragments/users/usersCard';
-import DateTools from '../../../support/utils/dateTools';
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
@@ -110,7 +109,7 @@ describe('bulk-edit', () => {
     });
 
     it('C359214 Verify expiration date updates in In-app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      const todayDate = DateTools.getFormattedDateWithSlashes({ date: new Date() });
+      const todayDate = new Date();
 
       BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
