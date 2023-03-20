@@ -22,11 +22,13 @@ import UserLoans from '../../support/fragments/users/loans/userLoans';
 import UsersCard from '../../support/fragments/users/usersCard';
 import Renewals from '../../support/fragments/loans/renewals';
 import NewRequest from '../../support/fragments/requests/newRequest';
-import RequestPolicy from '../../support/fragments/circulation/request-policy';
+import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
+import Requests from '../../support/fragments/requests/requests';
 
 describe('TLR: Item renew', () => {
+  let instanceHRID;
   let addedCirculationRule;
   let originalCirculationRules;
   let userForRenew = {};
@@ -40,32 +42,55 @@ describe('TLR: Item renew', () => {
   const testData = {
     userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestRenew', uuid()),
   };
-  const requestPolicyBody = {
-    requestTypes: ['Recall'],
-    name: `recall_${getRandomPostfix()}`,
-    id: uuid(),
-  };
   const loanPolicyBody = {
-    id: uuid(),
-    name: `renewable_${getRandomPostfix()}`,
-    loanable: true,
-    loansPolicy: {
-      closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE_TIME',
-      period: {
-        duration: 1,
-        intervalId: 'Minutes',
+    renewable: {
+      id: uuid(),
+      name: `renewable_${getRandomPostfix()}`,
+      loanable: true,
+      loansPolicy: {
+        closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE_TIME',
+        period: {
+          duration: 1,
+          intervalId: 'Minutes',
+        },
+        profileId: 'Rolling',
       },
-      profileId: 'Rolling',
+      renewable: true,
+      renewalsPolicy: {
+        unlimited: true,
+        renewFromId: 'CURRENT_DUE_DATE',
+      },
+      requestManagement: { holds: { renewItemsWithRequest: true } },
     },
-    renewable: true,
-    renewalsPolicy: {
-      unlimited: true,
-      renewFromId: 'CURRENT_DUE_DATE',
+    nonRenewable: {
+      id: uuid(),
+      name: `nonRenewable_${getRandomPostfix()}`,
+      loanable: true,
+      loansPolicy: {
+        closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE_TIME',
+        period: {
+          duration: 1,
+          intervalId: 'Minutes',
+        },
+        profileId: 'Rolling',
+      },
+      renewable: true,
+      renewalsPolicy: {
+        unlimited: false,
+        numberAllowed: 2,
+        renewFromId: 'SYSTEM_DATE',
+      },
+      requestManagement: { holds: { renewItemsWithRequest: false } },
     },
   };
+
   before('Preconditions', () => {
     cy.getAdminToken()
       .then(() => {
+        cy.loginAsAdmin({
+          path: SettingsMenu.circulationTitleLevelRequestsPath,
+          waiter: TitleLevelRequests.waitLoading,
+        });
         ServicePoints.createViaApi(testData.userServicePoint);
         testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
         Location.createViaApi(testData.defaultLocation);
@@ -75,13 +100,14 @@ describe('TLR: Item renew', () => {
         cy.getHoldingTypes({ limit: 1 }).then((holdingTypes) => {
           testData.holdingTypeId = holdingTypes[0].id;
         });
-        cy.createLoanType({
-          name: `type_${getRandomPostfix()}`,
-        }).then((loanType) => {
-          testData.loanTypeId = loanType.id;
+        cy.getLoanTypes({ limit: 1 }).then((loanTypes) => {
+          testData.loanTypeId = loanTypes[0].id;
         });
-        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
-          testData.materialTypeId = materialTypes.id;
+        cy.getMaterialTypes({ query: 'name="book"' }).then((materialTypes) => {
+          testData.materialBookId = materialTypes.id;
+        });
+        cy.getMaterialTypes({ query: 'name="dvd"' }).then((materialTypes) => {
+          testData.materialDvdId = materialTypes.id;
         });
       })
       .then(() => {
@@ -90,16 +116,15 @@ describe('TLR: Item renew', () => {
             barcode: generateUniqueItemBarcodeWithShift(),
             status: { name: 'Available' },
             permanentLoanType: { id: testData.loanTypeId },
-            materialType: { id: testData.materialTypeId },
+            materialType: { id: testData.materialBookId },
           },
           {
             barcode: generateUniqueItemBarcodeWithShift(),
             status: { name: 'Available' },
             permanentLoanType: { id: testData.loanTypeId },
-            materialType: { id: testData.materialTypeId },
+            materialType: { id: testData.materialDvdId },
           },
         ];
-        cy.wrap(instanceData.itemsData).as('items');
         InventoryInstances.createFolioInstanceViaApi({
           instance: {
             instanceTypeId: testData.instanceTypeId,
@@ -116,25 +141,19 @@ describe('TLR: Item renew', () => {
           instanceData.instanceId = specialInstanceIds.instanceId;
           instanceData.holdingId = specialInstanceIds.holdingIds[0].id;
           instanceData.itemIds = specialInstanceIds.holdingIds[0].itemIds;
-          cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceData.instanceId}"` }).then(
-            (instance) => {
-              instanceData.instanceHRID = instance.hrid;
-            }
-          );
         });
       });
-    LoanPolicy.createViaApi(loanPolicyBody);
+    LoanPolicy.createViaApi(loanPolicyBody.renewable);
+    LoanPolicy.createViaApi(loanPolicyBody.nonRenewable);
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
-    RequestPolicy.createViaApi(requestPolicyBody);
     CirculationRules.getViaApi().then((circulationRule) => {
       originalCirculationRules = circulationRule.rulesAsText;
       const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-      ruleProps.l = loanPolicyBody.id;
-      ruleProps.r = requestPolicyBody.id;
-      addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + ruleProps.i + ' l ' + ruleProps.l + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
-      CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
+      const defaultProps = ` i ${ruleProps.i} r ${ruleProps.r} o ${ruleProps.o} n ${ruleProps.n}`;
+      addedCirculationRule = ` \nm ${testData.materialBookId} + g ${patronGroup.id}: l ${loanPolicyBody.renewable.id} ${defaultProps} \nm ${testData.materialDvdId} + g ${patronGroup.id}: l ${loanPolicyBody.nonRenewable.id} ${defaultProps}`;
+      cy.updateCirculationRules({ rulesAsText: `${originalCirculationRules}${addedCirculationRule}` });
     });
 
     cy.createTempUser(
@@ -164,26 +183,58 @@ describe('TLR: Item renew', () => {
         );
       })
       .then(() => {
-        cy.get('@items').each((item) => {
-          Checkout.checkoutItemViaApi({
-            id: uuid(),
-            itemBarcode: item.barcode,
-            loanDate: moment.utc().format(),
-            servicePointId: testData.userServicePoint.id,
-            userBarcode: userForCheckOut.barcode,
-          });
-        });
-        cy.loginAsAdmin({
-          path: SettingsMenu.circulationTitleLevelRequestsPath,
-          waiter: TitleLevelRequests.waitLoading,
-        }).then(() => {
-          TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
-        });
+        TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
         cy.login(userForRenew.username, userForRenew.password);
       });
   });
 
+  beforeEach('Checkout items', () => {
+    cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceData.instanceId}"` }).then(
+      (instance) => {
+        instanceHRID = instance.hrid;
+      }
+    );
+    cy.wrap(instanceData.itemsData).as('items');
+    cy.get('@items').each((item) => {
+      Checkout.checkoutItemViaApi({
+        id: uuid(),
+        itemBarcode: item.barcode,
+        loanDate: moment.utc().format(),
+        servicePointId: testData.userServicePoint.id,
+        userBarcode: userForCheckOut.barcode,
+      });
+    });
+  });
+
   after('Deleting created entities', () => {
+    cy.loginAsAdmin({
+      path: SettingsMenu.circulationTitleLevelRequestsPath,
+      waiter: TitleLevelRequests.waitLoading,
+    });
+    cy.wrap(instanceData.itemIds).each((item) => {
+      cy.deleteItemViaApi(item);
+    });
+    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    cy.deleteHoldingRecordViaApi(instanceData.holdingId);
+    InventoryInstance.deleteInstanceViaApi(instanceData.instanceId);
+    cy.deleteLoanPolicy(loanPolicyBody.renewable.id);
+    cy.deleteLoanPolicy(loanPolicyBody.nonRenewable.id);
+    UserEdit.changeServicePointPreferenceViaApi(userForRenew.userId, [testData.userServicePoint.id]);
+    UserEdit.changeServicePointPreferenceViaApi(userForCheckOut.userId, [testData.userServicePoint.id]);
+    ServicePoints.deleteViaApi(testData.userServicePoint.id);
+    Users.deleteViaApi(userForRenew.userId);
+    Users.deleteViaApi(userForCheckOut.userId);
+    PatronGroups.deleteViaApi(patronGroup.id);
+    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+      testData.defaultLocation.institutionId,
+      testData.defaultLocation.campusId,
+      testData.defaultLocation.libraryId,
+      testData.defaultLocation.id
+    );
+    TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
+  });
+
+  afterEach('Deleting created entities', () => {
     cy.get('@items').each((item) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,
@@ -203,41 +254,52 @@ describe('TLR: Item renew', () => {
         checkInDate: new Date().toISOString(),
       });
     });
-    cy.wrap(instanceData.itemIds).each((item) => {
-      cy.deleteItemViaApi(item);
-    });
-    cy.deleteHoldingRecordViaApi(instanceData.holdingId);
-    InventoryInstance.deleteInstanceViaApi(instanceData.instanceId);
-    cy.deleteLoanPolicy(loanPolicyBody.id);
-    RequestPolicy.deleteViaApi(requestPolicyBody.id);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
-    cy.deleteLoanType(testData.loanTypeId);
-    UserEdit.changeServicePointPreferenceViaApi(userForRenew.userId, [testData.userServicePoint.id]);
-    UserEdit.changeServicePointPreferenceViaApi(userForCheckOut.userId, [testData.userServicePoint.id]);
-    ServicePoints.deleteViaApi(testData.userServicePoint.id);
-    Users.deleteViaApi(userForRenew.userId);
-    Users.deleteViaApi(userForCheckOut.userId);
-    PatronGroups.deleteViaApi(patronGroup.id);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
-      testData.defaultLocation.institutionId,
-      testData.defaultLocation.campusId,
-      testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
-    );
-    cy.loginAsAdmin();
-    cy.visit(SettingsMenu.circulationTitleLevelRequestsPath);
-    TitleLevelRequests.waitLoading();
-    TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
+
+  it(
+    'C360533: TLR: Check that Item assigned to hold is renewable/non renewable depends Loan policy (vega)',
+    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    () => {
+      cy.visit(TopMenu.requestsPath);
+      Requests.waitLoading();
+      NewRequest.createNewRequest({
+        requesterBarcode: userForRenew.barcode,
+        instanceHRID,
+        pickupServicePoint: testData.userServicePoint.name,
+        requestType: 'Hold',
+      });
+
+      cy.visit(TopMenu.usersPath);
+      UsersSearchPane.waitLoading();
+      UsersSearchPane.searchByKeywords(userForCheckOut.barcode);
+      UsersCard.waitLoading();
+      UsersCard.openLoans();
+      UsersCard.showOpenedLoans();
+      UserLoans.openLoan(instanceData.itemsData[0].barcode);
+      UserLoans.renewItem(instanceData.itemsData[0].barcode, true);
+      LoanDetails.checkAction(0, 'Renewed');
+
+      cy.visit(TopMenu.usersPath);
+      UsersSearchPane.waitLoading();
+      UsersSearchPane.searchByKeywords(userForCheckOut.barcode);
+      UsersCard.waitLoading();
+      UsersCard.openLoans();
+      UsersCard.showOpenedLoans();
+      UserLoans.openLoan(instanceData.itemsData[1].barcode);
+      Renewals.checkLoansPage();
+    }
+  );
+
   it(
     'C360534 TLR: Check that Item assigned to recall is not renewable (vega)',
     { tags: [TestTypes.criticalPath, devTeams.vega] },
     () => {
       cy.visit(TopMenu.requestsPath);
+      Requests.waitLoading();
       cy.intercept('POST', 'circulation/requests').as('createRequest');
       NewRequest.createNewRequest({
         requesterBarcode: userForRenew.barcode,
-        instanceHRID: instanceData.instanceHRID,
+        instanceHRID,
         pickupServicePoint: testData.userServicePoint.name,
         requestType: 'Recall',
       });

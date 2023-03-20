@@ -58,7 +58,7 @@ export default {
       organizationCodeField.fillIn(organization.code),
     ]);
     // Need to wait while Acquisition Unit data will be loaded
-    cy.wait(4000);
+    cy.wait(6000);
       cy.do([
       MultiSelect({ id: 'org-acq-units' }).find(Button({ ariaLabel: 'open menu' })).click(),
       MultiSelectOption(AcquisitionUnit).click(),

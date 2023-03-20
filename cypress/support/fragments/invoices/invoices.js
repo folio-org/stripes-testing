@@ -48,6 +48,30 @@ export default {
       .and('have.text', zeroResultsFoundText);
   },
 
+  createAdjustmentInvoice(invoice, vendorPrimaryAddress) {
+    cy.do(actionsButton.click());
+    cy.expect(buttonNew.exists());
+    cy.do([
+      buttonNew.click(),
+      Selection('Status*').open(),
+      SelectionList().select(invoice.status),
+      TextField('Invoice date*').fillIn(invoice.invoiceDate),
+      TextField('Vendor invoice number*').fillIn(invoice.invoiceNumber),
+    ]);
+    this.selectVendorOnUi(invoice.vendorName);
+    cy.do([
+      Selection('Accounting code').open(),
+      SelectionList().select(`Default (${invoice.accountingCode})`),
+      Selection('Batch group*').open(),
+      SelectionList().select(invoice.batchGroup),
+      Select({ id: 'invoice-payment-method' }).choose('Cash'),
+      Checkbox('Export to accounting').click()
+    ]);
+    this.checkVendorPrimaryAddress(vendorPrimaryAddress);
+    cy.do(saveAndClose.click());
+    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceCreatedMessage);
+  },
+
   createDefaultInvoice(invoice, vendorPrimaryAddress) {
     cy.do(actionsButton.click());
     cy.expect(buttonNew.exists());
@@ -167,6 +191,19 @@ export default {
       TextField('Quantity*').fillIn(invoiceLine.quantity.toString()),
       saveAndClose.click()
     ]);
+    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage);
+  },
+
+  createInvoiceLinePOLLookUp: (orderNumber) => {
+    cy.do(Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click());
+    cy.do(Button('New blank line').click());
+    cy.do([
+      Button('POL look-up').click(),
+      Modal('Select order lines').find(SearchField({ id: searhInputId })).fillIn(orderNumber),
+      searchButton.click()
+    ]);
+    Helper.selectFromResultsList();
+    cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage);
   },
 
@@ -364,5 +401,23 @@ export default {
 
   selectInvoice:(invoiceNumber) => {
     cy.do(Pane({ id: 'invoice-results-pane' }).find(Link(invoiceNumber)).click());
+  },
+  
+  editInvoiceLine:() => {
+    cy.do([
+      Section({ id: 'pane-invoiceLineDetails' }).find(actionsButton).click(),
+      Button('Edit').click(),
+    ]);
+  },
+
+  addAdjustment:(descriptionInput , valueInput, typeToggle, realtioToTotal) => {
+    cy.do([
+      Button({ id: 'adjustments-add-button' }).click(),
+      TextField({ name: 'adjustments[0].description' }).fillIn(descriptionInput),
+      TextField({ name: 'adjustments[0].value' }).fillIn(valueInput),
+      Section({ id: 'invoiceLineForm-adjustments' }).find(Button(typeToggle)).click(),
+      Select({ name: 'adjustments[0].relationToTotal' }).choose(realtioToTotal),
+      saveAndClose.click(),
+    ]);
   },
 };

@@ -42,7 +42,7 @@ export default {
     cy.do(MultiColumnListCell({ content: expenseClass.name }).perform(
       element => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
-        const createdByAdmin = `${DateTools.getFormattedDateWithSlashes({ date: new Date() })} by folio-aqa`;
+        const createdByAdmin = `${DateTools.getFormattedDateWithSlashes({ date: new Date() })} by folio-aqa, folio-aqa`;
         cy.expect(getEditableListRow(rowNumber)
           .find(MultiColumnListCell({ columnIndex: 0 }))
           .has({ content: expenseClass.name }));

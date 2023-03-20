@@ -28,7 +28,7 @@ import RequestPolicy from '../../../../support/fragments/circulation/request-pol
 describe('Patron Block: Maximum number of overdue recalls', () => {
   let addedCirculationRule;
   let originalCirculationRules;
-  const checkedOutBlockMessage = 'You have reached maximum number of overdue recalls as set by patron group';
+  const checkedOutBlockMessage = `You have reached maximum number of overdue recalls as set by patron group${getRandomPostfix()}`;
   const patronGroup = {
     name: 'groupToPatronBlock' + getRandomPostfix(),
   };

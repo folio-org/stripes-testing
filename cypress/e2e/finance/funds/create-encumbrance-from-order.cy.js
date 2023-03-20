@@ -74,7 +74,7 @@ describe('ui-finance: Transactions', () => {
     cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
-    Orders.unOpenOrder(orderNumber);
+    Orders.unOpenOrderDeleteHoldingsItems();
     OrderLines.selectPOLInOrder();
     OrderLines.deleteOrderLine();
     // Need to wait few seconds, that data will be deleted
@@ -104,6 +104,6 @@ describe('ui-finance: Transactions', () => {
     Funds.selectFund(defaultFund.name);
     Funds.selectBudgetDetails();
     Funds.viewTransactions();
-    Funds.checkOrderInTransactionList(defaultFund.code);
+    Funds.checkOrderInTransactionList(defaultFund.code, '($50.00)');
   });
 });
