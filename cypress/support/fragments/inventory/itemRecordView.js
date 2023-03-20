@@ -3,6 +3,7 @@ import { Accordion, KeyValue, Pane, Button, TextField, MultiColumnList, Callout,
 import dateTools from '../../utils/dateTools';
 
 const loanAccordion = Accordion('Loan and availability');
+const itemNotesAccordion = Accordion('Item notes');
 
 const verifyItemBarcode = value => { cy.expect(KeyValue('Item barcode').has({ value })); };
 const verifyPermanentLoanType = value => { cy.expect(KeyValue('Permanent loan type').has({ value })); };
@@ -76,12 +77,27 @@ export default {
     cy.expect(Accordion('Item data').find(HTML(including(type))).exists());
   },
 
-  checkNoteInItem:(note) => {
-    cy.expect(Accordion('Item notes').find(KeyValue('Electronic bookplate')).has({ value: note }));
+  checkItemNote:(note, staffValue = 'Yes') => {
+    cy.expect(itemNotesAccordion.find(KeyValue('Note')).has({ value: note }));
+    cy.expect(itemNotesAccordion.find(KeyValue('Staff only')).has({ value: staffValue }));
   },
 
-  checkItemNote:(note) => {
-    cy.expect(Accordion('Item notes').find(KeyValue('Note')).has({ value: note }));
+  checkCheckInNote:(note, staffValue = 'Yes') => {
+    cy.expect(loanAccordion.find(KeyValue('Check in note')).has({ value: note }));
+    cy.expect(HTML(staffValue).exists());
+  },
+
+  checkCheckOutNote:(note, staffValue = 'Yes') => {
+    cy.expect(loanAccordion.find(KeyValue('Check out note')).has({ value: note }));
+    cy.expect(HTML(staffValue).exists());
+  },
+
+  checkElectronicBookplateNote:(note) => {
+    cy.expect(itemNotesAccordion.find(KeyValue('Electronic bookplate')).has({ value: note }));
+  },
+
+  checkBindingNote:(note) => {
+    cy.expect(itemNotesAccordion.find(KeyValue('Binding')).has({ value: note }));
   },
 
   checkBarcode:(barcode) => {
@@ -94,7 +110,7 @@ export default {
   },
 
   checkStatus:(status) => {
-    cy.expect(Accordion('Loan and availability').find(KeyValue('Item status')).has({ value: status }));
+    cy.expect(loanAccordion.find(KeyValue('Item status')).has({ value: status }));
   },
 
   checkItemDetails(location, barcode, status) {

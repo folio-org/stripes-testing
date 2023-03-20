@@ -13,10 +13,15 @@ import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
   let user;
+  const rowNumbers = [0, 1];
+  const instanceHrids = [];
+  const marcFileName = `C368005 autotestFile.${Helper.getRandomBarcode()}.mrc`;
   const itemNotes = {
     note: 'This is a plain note',
     checkInNoteForFirstItem: 'This is a check in note',
@@ -34,8 +39,6 @@ describe('ui-data-import', () => {
   const mappingProfileNameForInstance = `C368005 Create instance for mapping notes ${Helper.getRandomBarcode()}`;
   const mappingProfileNameForHoldings = `C368005 Create holdings for mapping notes ${Helper.getRandomBarcode()}`;
   const mappingProfileNameForItem = `C368005 Create item for mapping notes ${Helper.getRandomBarcode()}`;
-  // unique file name
-  const marcFileName = `C368005 autotestFile.${Helper.getRandomBarcode()}.mrc`;
   const collectionOfProfiles = [
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance,
@@ -84,7 +87,23 @@ describe('ui-data-import', () => {
       });
   });
 
-
+  after('delete test data', () => {
+    Users.deleteViaApi(user.userId);
+    // delete generated profiles
+    JobProfiles.deleteJobProfile(jobProfileName);
+    collectionOfProfiles.forEach(profile => {
+      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+    });
+    instanceHrids.forEach(hrid => {
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` })
+        .then((instance) => {
+          cy.deleteItemViaApi(instance.items[0].id);
+          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
+    });
+  });
 
   it('C368005 Verify the mapping for item record notes and check in/out notes from MARC field (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
@@ -150,12 +169,24 @@ describe('ui-data-import', () => {
       });
       FileDetails.checkItemsQuantityInSummaryTable(0, '2');
 
-      FileDetails.openItemInInventory('Created');
-      ItemRecordView.checkItemNote(itemNote);
-      staffOnlyValue;
+      // get instance hrids
+      rowNumbers.forEach(row => {
+        FileDetails.openInstanceInInventory('Created', row);
+        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+          instanceHrids.push(initialInstanceHrId);
+        });
+        cy.go('back');
+      });
 
+      // check item notes in Inventory
+      FileDetails.openItemInInventory('Created');
+      ItemRecordView.checkItemNote(itemNotes.note, itemNotes.staffOnly);
+      ItemRecordView.checkCheckInNote(itemNotes.checkInNoteForFirstItem);
       cy.go('back');
       FileDetails.openItemInInventory('Created', 1);
-      ItemRecordView.checkItemNote(itemNote);
+      ItemRecordView.checkBindingNote(itemNotes.blindingNote);
+      ItemRecordView.checkElectronicBookplateNote(itemNotes.electronicBookplate);
+      ItemRecordView.checkCheckOutNote(itemNotes.checkOutNote);
+      ItemRecordView.checkCheckInNote(itemNotes.checkInNoteForSecondItem);
     });
 });
