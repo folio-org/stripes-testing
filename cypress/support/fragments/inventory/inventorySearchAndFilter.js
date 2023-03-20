@@ -454,5 +454,12 @@ export default {
       statisticalCodeAccordion.find(TextField()).fillIn(code),
     ]);
     cy.do(statisticalCodeAccordion.find(Checkbox(code)).click());
-  }
+  },
+
+  browseSearch(searchValue) {
+    cy.do([
+      TextField({ id: 'input-record-search' }).fillIn(searchValue),
+      searchButton.click()
+    ]);
+  },
 };
