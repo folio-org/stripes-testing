@@ -49,16 +49,33 @@ export default {
     ]);
   },
 
-  fillInRolloverInfo : (fiscalYear) => {
+  fillInRolloverInfo : (fiscalYear, rolloverBudgetValue, rolloverValueAs, ongoingEncumbrancesBasedOn, oneTimeEncumbrancesBasedOn) => {
     cy.do([
       Select({ name: 'toFiscalYearId' }).choose(fiscalYear),
       Checkbox({ name: 'budgetsRollover[0].rolloverAllocation' }).click(),
+      Select({ name: 'budgetsRollover[0].rolloverBudgetValue' }).choose(rolloverBudgetValue),
+      Select({ name: 'budgetsRollover[0].addAvailableTo' }).choose(rolloverValueAs),
       Checkbox({ name: 'encumbrancesRollover[0].rollover' }).click(),
-      Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Expended'),
+      Select({ name: 'encumbrancesRollover[0].basedOn' }).choose(ongoingEncumbrancesBasedOn),
       Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
-      Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
+      Select({ name: 'encumbrancesRollover[2].basedOn' }).choose(oneTimeEncumbrancesBasedOn),
       rolloverButton.click(),
       // Button('Continue').click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      Button({ id: 'clickable-rollover-confirmation-confirm' }).click(),
+    ]);
+  },
+
+  fillInTestRolloverInfoCashBalance : (fiscalYear, rolloverBudgetValue, rolloverValueAs) => {
+    cy.do([
+      Select({ name: 'toFiscalYearId' }).choose(fiscalYear),
+      Checkbox({ name: 'budgetsRollover[0].rolloverAllocation' }).click(),
+      Select({ name: 'budgetsRollover[0].rolloverBudgetValue' }).choose(rolloverBudgetValue),
+      Select({ name: 'budgetsRollover[0].addAvailableTo' }).choose(rolloverValueAs),
+      Button('Test rollover').click(),
+      Button('Continue').click(),
     ]);
     cy.wait(2000);
     cy.do([
