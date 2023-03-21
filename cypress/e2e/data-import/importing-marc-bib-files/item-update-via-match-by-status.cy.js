@@ -93,7 +93,7 @@ describe('ui-data-import', () => {
     },
     matchCriterion: 'Exactly matches',
     existingRecordType: 'ITEM',
-    itemOption: NewMatchProfile.optionsList.itemHrid,
+    itemOption: NewMatchProfile.optionsList.itemHrid
   };
 
   const matchProfileItemStatus = {
