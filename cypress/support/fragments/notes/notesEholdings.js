@@ -33,13 +33,7 @@ export default {
   },
   verifyNoteDeletion: (title, details) => cy.expect(MultiColumnListCell({ content: `Title: ${title}Details: ${details}Edit` }).absent()),
   verifyNoteVisibilityWithViewPermission: (title, details) => cy.expect(MultiColumnListCell({ content: `Title: ${title}Details: ${details}` }).exists()),
-  verifyActionButtonVisibilityWithViewPermission: () => {
-    cy.do(actionsButton.click());
-    cy.expect([
-      createButton.absent(),
-      editButton.absent(),
-    ]);
-  },
+  verifyActionButtonVisibilityWithViewPermission: () => { cy.expect(actionsButton.absent()); },
   verifyDefaultSort: (firstTitle, secondTitle, details) => { 
     cy.expect([
       MultiColumnListCell({ content: `Title: ${secondTitle}Details: ${details}Edit`, row: 0 }).exists(),
