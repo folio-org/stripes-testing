@@ -25,6 +25,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 
 describe('ui-data-import', () => {
   const item = {
@@ -36,6 +37,7 @@ describe('ui-data-import', () => {
     quantityPhysical: '1',
     createInventory: 'Instance, holdings, item'
   };
+  const itemBarcode = 'xyzt124245271818912626262';
   let vendorId;
   let locationId;
   let acquisitionMethodId;
@@ -132,6 +134,7 @@ describe('ui-data-import', () => {
               });
           })
           .then(() => {
+            InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
             cy.login(user.username, user.password, { path: TopMenu.ordersPath, waiter: Orders.waitLoading });
           });
       });
@@ -155,13 +158,6 @@ describe('ui-data-import', () => {
     FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileName);
     FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileName);
     FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileName);
-    cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${item.title}"` })
-      .then((instance) => {
-        const itemId = instance.items[0].id;
-        cy.deleteItemViaApi(itemId);
-        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
   });
 
   it('C350591 Match on VRN and update related Instance, Holdings, Item (folijet)',

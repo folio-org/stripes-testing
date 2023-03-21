@@ -23,11 +23,12 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 
 describe('ui-data-import', () => {
   let user = null;
   let orderNumber;
-  let instanceHrid;
+  const itemBarcode = '242451241241';
   const instanceTitle = 'South Asian texts in history : critical engagements with Sheldon Pollock. edited by Yigal Bronner, Whitney Cox, and Lawrence McCrea.';
 
   // unique profile names
@@ -113,6 +114,7 @@ describe('ui-data-import', () => {
       .then(userProperties => {
         user = userProperties;
 
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
         cy.login(user.username, user.password);
         cy.getAdminToken();
       });
@@ -133,15 +135,11 @@ describe('ui-data-import', () => {
         Orders.deleteOrderApi(orderId[0].id);
       });
     Users.deleteViaApi(user.userId);
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-      .then((instance) => {
-        cy.deleteItemViaApi(instance.items[0].id);
-        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
     cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` })
-      .then((instance) => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
+      .then(instance => {
+        if (instance) {
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        }
       });
   });
 
@@ -262,12 +260,11 @@ describe('ui-data-import', () => {
       FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded]);
 
       FileDetails.openInstanceInInventory('Updated');
-      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => { instanceHrid = initialInstanceHrId; });
       InventoryInstance.checkIsInstanceUpdated();
       InventoryInstance.checkIsHoldingsCreated(['Main Library >']);
       InventoryInstance.openHoldingsAccordion('Main Library >');
-      InventoryInstance.checkIsItemCreated('242451241241');
+      InventoryInstance.checkIsItemCreated(itemBarcode);
       InventoryInstance.viewSource();
-      InventoryViewSource.verifyBarcodeInMARCBibSource('242451241241');
+      InventoryViewSource.verifyBarcodeInMARCBibSource(itemBarcode);
     });
 });
