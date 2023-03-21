@@ -312,6 +312,22 @@ export default {
       });
   },
 
+  getInstancesBySubjectViaApi(subject, limit = 100) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'search/instances',
+        searchParams: {
+          limit,
+          highlightMatch: true,
+          query: `(subjects="${subject}") sortby title`
+        },
+        isDefaultSearchParamsRequired: false,
+      }).then(({ body: { instances } }) => {
+        return instances;
+      });
+  },
+
   selectSearchOptions(searchOption, text) {
     cy.do([
       inventorySearchAndFilterInput.choose(searchOption),
