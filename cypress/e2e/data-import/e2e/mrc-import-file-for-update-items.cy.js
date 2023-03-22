@@ -307,7 +307,6 @@ describe('ui-data-import', () => {
   });
 
   afterEach(() => {
-    DataImport.checkUploadState();
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
       .then((instance) => {
         cy.deleteItemViaApi(instance.items[0].id);
