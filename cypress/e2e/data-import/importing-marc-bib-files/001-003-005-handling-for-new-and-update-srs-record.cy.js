@@ -23,6 +23,7 @@ import FileManager from '../../../support/utils/fileManager';
 
 describe('ui-data-import', () => {
   let instanceHrid = null;
+  let instanceHridForReimport = null;
   let exportedFileName = null;
   // resource identifiers
   const resourceIdentifiers = [
@@ -74,7 +75,24 @@ describe('ui-data-import', () => {
 
   before(() => {
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    cy.getAdminToken();
+    cy.getAdminToken()
+      .then(() => {
+        const fileName = `C17039autotestFileForReimport.${getRandomPostfix()}.mrc`;
+
+        cy.visit(TopMenu.dataImportPath);
+        // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+        cy.reload();
+        DataImport.uploadFile('oneMarcBib.mrc', fileName);
+        JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+        JobProfiles.runImportFile(fileName);
+        Logs.openFileDetails(fileName);
+
+        // get Instance HRID through API
+        InventorySearchAndFilter.getInstanceHRID()
+          .then(hrId => {
+            instanceHridForReimport = hrId[0];
+          });
+      });
   });
 
   after(() => {
@@ -87,6 +105,10 @@ describe('ui-data-import', () => {
     FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
     FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHridForReimport}"` })
       .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
@@ -188,7 +210,7 @@ describe('ui-data-import', () => {
 
         // export instance
         cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+        InventorySearchAndFilter.searchInstanceByHRID(instanceHridForReimport);
         InventorySearchAndFilter.selectResultCheckboxes(1);
         InventorySearchAndFilter.exportInstanceAsMarc();
 
@@ -201,8 +223,8 @@ describe('ui-data-import', () => {
             ExportFile.downloadExportedMarcFile(exportedFileName);
             // upload the exported marc file
             cy.visit(TopMenu.dataImportPath);
-            // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-            DataImport.clickDataImportNavButton();
+            // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+            cy.reload();
             DataImport.uploadExportedFile(exportedFileName);
             JobProfiles.searchJobProfileForImport(jobProfile.profileName);
             JobProfiles.runImportFile();
@@ -219,13 +241,13 @@ describe('ui-data-import', () => {
 
         // check instance is updated
         cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+        InventorySearchAndFilter.searchInstanceByHRID(instanceHridForReimport);
         InventoryInstance.checkIsInstanceUpdated();
 
         // verify table data in marc bibliographic source
         InventoryInstance.viewSource();
-        InventoryViewSource.verifyFieldInMARCBibSource('001\t', instanceHrid);
-        InventoryViewSource.notContains(`\\$a${instanceHrid}`);
+        InventoryViewSource.verifyFieldInMARCBibSource('001\t', instanceHridForReimport);
+        InventoryViewSource.notContains(`\\$a${instanceHridForReimport}`);
       });
   });
 });
