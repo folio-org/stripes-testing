@@ -7,7 +7,7 @@ const readonlyFields = [holdingsHrId, sourceSelect];
 
 export default {
   saveAndClose : () => {
-    cy.do(rootForm.find(Button('Save and close')).click());
+    cy.do(rootForm.find(Button('Save & close')).click());
     cy.expect(rootForm.absent());
   },
   waitLoading: () => {

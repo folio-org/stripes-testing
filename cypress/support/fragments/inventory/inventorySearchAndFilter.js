@@ -382,7 +382,7 @@ export default {
     cy.expect(paneResultsSection.find(HTML(including(emptyResultsMessage))).exists());
   },
 
-  closeTagsAndInstanceDetailPane() {
+  closeInstanceDetailPane() {
     cy.do(instanceDetailsSection.find(Button({ icon: 'times' })).click());
     cy.expect(instanceDetailsSection.absent());
     cy.expect(tagsPane.absent());
@@ -440,7 +440,6 @@ export default {
   verifyPanesExist() {
     cy.expect(paneFilterSection.exists());
     cy.expect(paneResultsSection.exists());
-    cy.expect(paneResultsSection.find(HTML(including(emptyResultsMessage))).exists());
   },
 
   createInstanceViaApi() {

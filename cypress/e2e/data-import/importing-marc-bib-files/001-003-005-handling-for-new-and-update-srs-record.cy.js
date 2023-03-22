@@ -73,7 +73,7 @@ describe('ui-data-import', () => {
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
-  before(() => {
+  before('create test data', () => {
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     cy.getAdminToken()
       .then(() => {
@@ -96,7 +96,7 @@ describe('ui-data-import', () => {
       });
   });
 
-  after(() => {
+  after('delete test data', () => {
     JobProfiles.deleteJobProfile(jobProfileName);
     MatchProfiles.deleteMatchProfile(matchProfileName);
     ActionProfiles.deleteActionProfile(actionProfileName);
@@ -213,6 +213,7 @@ describe('ui-data-import', () => {
     // export instance
     cy.visit(TopMenu.inventoryPath);
     InventorySearchAndFilter.searchInstanceByHRID(instanceHridForReimport);
+    InventorySearchAndFilter.closeInstanceDetailPane();
     InventorySearchAndFilter.selectResultCheckboxes(1);
     InventorySearchAndFilter.exportInstanceAsMarc();
 
