@@ -424,7 +424,6 @@ export default {
   verifyPanesExist() {
     cy.expect(paneFilterSection.exists());
     cy.expect(paneResultsSection.exists());
-    //cy.expect(paneResultsSection.find(HTML(including(emptyResultsMessage))).exists());
   },
 
   createInstanceViaApi() {

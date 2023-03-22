@@ -32,9 +32,9 @@ describe('ui-inventory: Enter different type of identifiers', () => {
       });
   });
 
-  afterEach(() => {
-    InventoryInstance.deleteInstanceViaApi(instanceId);
-  });
+  // afterEach(() => {
+  //   InventoryInstance.deleteInstanceViaApi(instanceId);
+  // });
 
   const searchAndOpenInstance = (parametr, title) => {
     cy.visit(TopMenu.inventoryPath);
