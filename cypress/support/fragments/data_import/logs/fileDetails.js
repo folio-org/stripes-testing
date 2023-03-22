@@ -125,6 +125,12 @@ export default {
       .click());
   },
 
+  openItemInInventory:(itemStatus, rowNumber = 0) => {
+    cy.do(resultsList.find(MultiColumnListCell({ row: rowNumber, columnIndex: 5 }))
+      .find(Link(itemStatus))
+      .click());
+  },
+
   openItemInInventoryByTitle:(title, itemStatus = 'Updated') => {
     cy.do(MultiColumnListCell({ content: title }).perform(
       element => {
