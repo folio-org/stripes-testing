@@ -41,9 +41,6 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
 
       cy.getAdminToken();
 
-      CirculationRules.getViaApi().then((circulationRules) => {
-        originalCirculationRules = circulationRules;
-      });
       NewMaterialType.createViaApi(NewMaterialType.getDefaultMaterialType());
       NoticePolicy.createApi();
       LoanPolicy.createLoanableNotRenewableLoanPolicyApi(defaultLoanPolicy);
