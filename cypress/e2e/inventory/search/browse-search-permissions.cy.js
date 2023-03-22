@@ -11,7 +11,7 @@ describe('permissions: inventory', () => {
 
   before(() => {
     cy.createTempUser([
-        permissions.uiInventoryViewInstances.gui,inventoryAll
+        permissions.uiInventoryViewInstances.gui,
       ]).then(userProperties => {
         userWithOnlyViewPermissions = userProperties;
       });
@@ -33,10 +33,10 @@ describe('permissions: inventory', () => {
     InventorySearchAndFilter.switchToBrowseTab();
     InventorySearchAndFilter.selectBrowseCallNumbers();
     InventorySearchAndFilter.browseSearch('K1');
-    InventorySearchAndFilter.verifyCallNumberBrowsePane();
+    InventorySearchAndFilter.verifyCallNumbersResultsInBrowsePane();
     InventorySearchAndFilter.selectBrowseSubjects();
     InventorySearchAndFilter.browseSearch('art');
-    InventorySearchAndFilter.verifyCallNumberBrowsePane();
+    InventorySearchAndFilter.verifySubjectsResultsInBrowsePane();
   });
 
   it('C375077 User with "Inventory: All permissions" permission can see browse call numbers and subjects without assigning specific browse permissions (Orchid+) (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
@@ -45,9 +45,9 @@ describe('permissions: inventory', () => {
     InventorySearchAndFilter.switchToBrowseTab();
     InventorySearchAndFilter.selectBrowseCallNumbers();
     InventorySearchAndFilter.browseSearch('K1');
-    InventorySearchAndFilter.verifyCallNumberBrowsePane();
+    InventorySearchAndFilter.verifyCallNumbersResultsInBrowsePane();
     InventorySearchAndFilter.selectBrowseSubjects();
     InventorySearchAndFilter.browseSearch('art');
-    InventorySearchAndFilter.verifyCallNumberBrowsePane();
+    InventorySearchAndFilter.verifySubjectsResultsInBrowsePane();
   });
 });
