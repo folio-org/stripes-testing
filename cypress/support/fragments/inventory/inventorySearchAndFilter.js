@@ -48,7 +48,6 @@ const viewHoldingButton = Button('View holdings');
 const statisticalCodeAccordion = Accordion({ id:'itemsStatisticalCodeIds' });
 
 const searchInstanceByHRID = (id) => {
-  InventoryInstances.waitContentLoading();
   cy.do([
     Select({ id: 'input-inventory-search-qindex' }).choose('Instance HRID'),
     TextField({ id: 'input-inventory-search' }).fillIn(id),
@@ -308,6 +307,22 @@ export default {
           limit,
           highlightMatch: true,
           query: `(identifiers.value="${identifier}" or isbn="${identifier}") sortby title`,
+        },
+        isDefaultSearchParamsRequired: false,
+      }).then(({ body: { instances } }) => {
+        return instances;
+      });
+  },
+
+  getInstancesBySubjectViaApi(subject, limit = 100) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'search/instances',
+        searchParams: {
+          limit,
+          highlightMatch: true,
+          query: `(subjects="${subject}") sortby title`
         },
         isDefaultSearchParamsRequired: false,
       }).then(({ body: { instances } }) => {
