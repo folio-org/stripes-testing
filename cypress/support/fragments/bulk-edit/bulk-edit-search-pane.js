@@ -347,7 +347,7 @@ export default {
       Accordion('Start date').has({ open: false }),
       Accordion('End date').has({ open: false }),
       bulkEditPane.find(HTML('Enter search criteria to start search')).exists(),
-      bulkEditPane.find(HTML('Choose a filter to show results.')).exists(),
+      bulkEditPane.find(HTML('Choose a filter or enter a search query to show results.')).exists(),
     ]);
   },
 
