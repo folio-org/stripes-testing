@@ -50,6 +50,8 @@ export default {
     cy.expect(rootSection.find(HTML(including('Loading…'))).absent());
     cy.expect(or(inventoriesList.exists()),
       rootSection.find(HTML(including('No results found'))).exists());
+    // need to wait until list to be formed
+    cy.wait(2000);
   },
 
   selectInstance: (rowNumber = 0) => {
