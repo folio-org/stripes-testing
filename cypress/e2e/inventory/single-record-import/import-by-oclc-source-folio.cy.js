@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import TopMenu from '../../../support/fragments/topMenu';
 import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
@@ -7,6 +8,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/z39.50TargetProfiles';
 import DevTeams from '../../../support/dictionary/devTeams';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
 let user;
 let instanceRecord;
@@ -68,7 +70,7 @@ describe('ui-inventory: import by OCLC', () => {
     cy.wait(10000);
     InventoryInstance.waitInstanceRecordViewOpened(oclcRecordData.title);
     InventoryInstance.verifyLastUpdatedDate();
-    InventoryInstance.verifyInstanceSource('MARC');
+    InstanceRecordView.verifyInstanceSource('MARC');
     InventoryInstance.verifyInstanceTitle(oclcRecordData.title);
     InventoryInstance.verifyInstanceLanguage(oclcRecordData.language);
     InventoryInstance.verifyInstancePublisher(0, 0, oclcRecordData.publisher);
