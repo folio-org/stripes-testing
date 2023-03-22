@@ -15,7 +15,6 @@ import getRandomPostfix from '../../utils/stringTools';
 import JobProfiles from './job_profiles/jobProfiles';
 import InventorySearchAndFilter from '../inventory/inventorySearchAndFilter';
 import TopMenu from '../topMenu';
-import DataImportUploadFile from '../../../../interactors/dataImportUploadFile';
 import MarcAuthority from '../marcAuthority/marcAuthority';
 import MarcAuthoritiesSearch from '../marcAuthority/marcAuthoritiesSearch';
 import MarcAuthorities from '../marcAuthority/marcAuthorities';

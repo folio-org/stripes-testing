@@ -41,7 +41,8 @@ describe('ui-finance: Fiscal Year', () => {
   const firstOrder = { ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',
     ongoing: { isSubscription: false, manualRenewal: false },
-    approved: true,  reEncumber: true,};
+    approved: true,
+    reEncumber: true };
   const secondOrder = {
     approved: true,
     reEncumber: true,
@@ -107,7 +108,7 @@ describe('ui-finance: Fiscal Year', () => {
       .then(responseOrganizations => {
         organization.id = responseOrganizations;
         invoice.accountingCode = organization.erpCode;
-        secondOrder.orderType = 'One-time'
+        secondOrder.orderType = 'One-time';
       });
     firstOrder.vendor = organization.name;
     secondOrder.vendor = organization.name;
@@ -117,8 +118,8 @@ describe('ui-finance: Fiscal Year', () => {
       orderNumber = firstOrderResponse.poNumber;
       Orders.checkCreatedOrder(firstOrder);
       OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*',5),
-      OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund( firstFund, '100', '1', '100',location.institutionId);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
+      OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(firstFund, '100', '1', '100', location.institutionId);
       OrderLines.backToEditingOrder();
       Orders.openOrder();
       cy.visit(TopMenu.ordersPath);
@@ -126,8 +127,8 @@ describe('ui-finance: Fiscal Year', () => {
         secondOrder.id = secondOrderResponse.id;
         Orders.checkCreatedOrder(secondOrder);
         OrderLines.addPOLine();
-        OrderLines.selectRandomInstanceInTitleLookUP('*',15),
-        OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund( secondFund, '200', '1', '200',location.institutionId);
+        OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
+        OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(secondFund, '200', '1', '200', location.institutionId);
         OrderLines.backToEditingOrder();
         Orders.openOrder();
       });
