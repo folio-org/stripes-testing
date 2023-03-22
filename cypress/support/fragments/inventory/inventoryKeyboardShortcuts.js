@@ -28,7 +28,7 @@ export default {
     cy.do([
       TextArea({ name: 'title' }).fillIn(instanceTitle),
       Select({ name: 'instanceTypeId' }).choose('other'),
-      Button('Save and close').click(),
+      Button('Save & close').click(),
     ]);
   },
   checkInstance:(instanceTitle) => {
