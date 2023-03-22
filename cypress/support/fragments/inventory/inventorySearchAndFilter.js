@@ -26,6 +26,7 @@ import DateTools from '../../utils/dateTools';
 import Helper from '../finance/financeHelper';
 
 const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
+const sourceAccordion = Accordion('Source');
 const languageInput = Accordion({ id: 'language' });
 const keywordInput = TextField({ id: 'input-inventory-search' });
 const searchButton = Button({ type: 'submit' });
@@ -158,6 +159,13 @@ export default {
       languageInput.clickHeader(),
       languageInput.find(Checkbox(lang ?? this.language.eng)).click()
     ]);
+  },
+
+  bySource(source) {
+    cy.do([
+      sourceAccordion.clickHeader(),
+      sourceAccordion.find(Checkbox(source)).click()]);
+    cy.expect(MultiColumnListRow().exists());
   },
 
   byKeywords(kw = '*') {
@@ -380,7 +388,7 @@ export default {
     cy.expect(paneResultsSection.find(HTML(including(emptyResultsMessage))).exists());
   },
 
-  closeTagsAndInstanceDetailPane() {
+  closeInstanceDetailPane() {
     cy.do(instanceDetailsSection.find(Button({ icon: 'times' })).click());
     cy.expect(instanceDetailsSection.absent());
     cy.expect(tagsPane.absent());
