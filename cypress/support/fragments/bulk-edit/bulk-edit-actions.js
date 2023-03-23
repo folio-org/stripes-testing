@@ -217,6 +217,12 @@ export default {
     cy.wait(5000);
   },
 
+  downloadErrors() {
+    cy.do('Download Errors(CSV)')
+    // need to wait downloading
+    cy.wait(5000);
+  },
+
   prepareBulkEditFileWithDuplicates(fileMask, finalFileName, stringToBeReplaced, replaceString) {
     FileManager.findDownloadedFilesByMask(`*${fileMask}*`).then((downloadedFilenames) => {
       const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
