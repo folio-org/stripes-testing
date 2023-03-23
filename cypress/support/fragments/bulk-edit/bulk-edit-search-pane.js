@@ -700,6 +700,17 @@ export default {
     ]);
   },
 
+  verifyLogsRowActionWhenCompletedWithErrors() {
+    cy.expect([
+      HTML('File that was used to trigger the bulk edit').exists(),
+      HTML('File with the matching records').exists(),
+      HTML('File with errors encountered during the record matching').exists(),
+      HTML('File with the preview of proposed changes').exists(),
+      HTML('File with updated records').exists(),
+      HTML('File with errors encountered when committing the changes').exists()
+    ]);
+  },
+
   verifyLogsRowActionWhenCompleted() {
     cy.expect([
       HTML('File that was used to trigger the bulk edit').exists(),
@@ -735,6 +746,12 @@ export default {
 
   downloadFileWithUpdatedRecords() {
     cy.do(Button('File with updated records').click());
+    //Need to wait for the file to download
+    cy.wait(5000);
+  },
+
+  downloadFileWithCommitErrors() {
+    cy.do(Button('File with errors encountered when committing the changes').click());
     //Need to wait for the file to download
     cy.wait(5000);
   },
