@@ -18,12 +18,13 @@ import InventoryHoldings from '../../support/fragments/inventory/holdings/invent
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import Checkout from '../../support/fragments/checkout/checkout';
+import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 
 describe('Renewal', () => {
   let materialTypeId;
   let loanId;
   let servicePointId;
-  let initialCircRules;
+  let addedCirculationRule;
   let sourceId;
   const firstName = 'testPermFirst';
   const renewUserData = {
@@ -60,14 +61,7 @@ describe('Renewal', () => {
           .then(materilaTypes => {
             materialTypeId = materilaTypes.id;
           });
-        cy.getRequestPolicy();
-        cy.getNoticePolicy();
-        cy.getOverdueFinePolicy();
-        cy.getLostItemFeesPolicy();
-        cy.getCirculationRules()
-          .then(rules => {
-            initialCircRules = rules.rulesAsText;
-          });
+
         ServicePoints.getViaApi({ pickupLocation: true })
           .then((servicePoints) => {
             servicePointId = servicePoints[0].id;
@@ -124,16 +118,12 @@ describe('Renewal', () => {
       })
       // create circulation rules
       .then(() => {
-        const requestPolicyId = Cypress.env(CY_ENV.REQUEST_POLICY)[0].id;
-        const noticePolicyId = Cypress.env(CY_ENV.NOTICE_POLICY)[0].id;
-        const overdueFinePolicyId = Cypress.env(CY_ENV.OVERDUE_FINE_POLICY)[0].id;
-        const lostItemFeesPolicyId = Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY)[0].id;
-        const policy = `l ${loanPolicyData.id} r ${requestPolicyId} n ${noticePolicyId} o ${overdueFinePolicyId} i ${lostItemFeesPolicyId}`;
-        const priority = 'priority: number-of-criteria, criterium (t, s, c, b, a, m, g), last-line';
-        const newRule = `${priority}\nfallback-policy: ${policy}\nm ${materialTypeId}: ${policy}`;
-
-        cy.updateCirculationRules({
-          rulesAsText: newRule,
+        CirculationRules.getViaApi().then((circulationRule) => {
+          const originalCirculationRules = circulationRule.rulesAsText;
+          const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
+          ruleProps.l = loanPolicyData.id;
+          addedCirculationRule = 'm ' + materialTypeId + ': i ' + ruleProps.i + ' l ' + ruleProps.l + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
+          CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 'm ', materialTypeId);
         });
       })
       // checkout item
@@ -164,9 +154,7 @@ describe('Renewal', () => {
             cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
             InventoryInstance.deleteInstanceViaApi(instance.id);
           });
-        cy.updateCirculationRules({
-          rulesAsText: initialCircRules,
-        });
+        CirculationRules.deleteRuleViaApi(addedCirculationRule);
         cy.deleteLoanPolicy(LOAN_POLICY_ID);
       });
   });
