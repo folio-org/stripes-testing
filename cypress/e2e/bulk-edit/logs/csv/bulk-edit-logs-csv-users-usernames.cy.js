@@ -7,9 +7,10 @@ import testTypes from '../../../../support/dictionary/testTypes';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import FileManager from '../../../../support/utils/fileManager';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
+import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
 
 let user;
-const invalidUsername = `username${getRandomPostfix()}.csv`;
+const invalidUsername = `username${getRandomPostfix()}`;
 const invalidUsernamesFileName = `invalidUserUUIDs_${getRandomPostfix()}.csv`;
 const errorsFromMatchingFileName = `*Errors-${invalidUsernamesFileName}*`;
 
@@ -41,7 +42,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.verifyDragNDropUsernamesArea();
     BulkEditSearchPane.uploadFile(invalidUsernamesFileName);
     BulkEditSearchPane.waitFileUploading();
-    BulkEditSearchPane.downloadErrors();
+    BulkEditActions.downloadErrors();
 
     BulkEditSearchPane.openLogsSearch();
     BulkEditSearchPane.verifyLogsPane();
@@ -50,7 +51,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.verifyLogsRowActionWhenCompletedWithErrorsWithoutModification();
 
     BulkEditSearchPane.downloadFileUsedToTrigger();
-    BulkEditFiles.verifyMatchedResultFileContent(`*${invalidUsernamesFileName}*`, [invalidUsername], 'firstElement', false);
+    BulkEditFiles.verifyCSVFileRows(invalidUsernamesFileName, [invalidUsername]);
 
     BulkEditSearchPane.downloadFileWithErrorsEncountered();
     BulkEditFiles.verifyMatchedResultFileContent(errorsFromMatchingFileName, [invalidUsername], 'firstElement', false);
