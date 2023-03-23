@@ -47,7 +47,10 @@ const codeField = TextField('Code*');
 const externalAccountField = TextField('External account*');
 const ledgerSelection = Selection('Ledger*');
 const transactionDetailSection = Section({ id: 'pane-transaction-details' });
-const transactionList = MultiColumnList({ id: 'transactions-list' })
+const transactionList = MultiColumnList({ id: 'transactions-list' });
+const budgetSummaryAcordion = Accordion('Budget summary');
+const budgetInformationAcordion = Accordion('Budget information');
+
 export default {
 
   defaultUiFund: {
@@ -244,16 +247,16 @@ export default {
 
 
   checkCreatedBudget: (fundCode, fiscalYear) => {
-    cy.expect(Accordion('Budget summary').exists());
-    cy.expect(Accordion('Budget information').exists());
+    cy.expect(budgetSummaryAcordion.exists());
+    cy.expect(budgetInformationAcordion.exists());
     cy.xpath(budgetTitleXpath)
       .should('be.visible')
       .and('have.text', fundCode.concat('-', fiscalYear));
   },
 
   checkFundingInformation: (amountInitialAllocation, amountIncreaseInAllocation, amountDecreaseInAllocation, amountTotalAllocated, amountNetTransfers, amountTotalFunding) => {
-    cy.expect(Accordion('Budget summary').exists());
-    cy.expect(Accordion('Budget information').exists());
+    cy.expect(budgetSummaryAcordion.exists());
+    cy.expect(budgetInformationAcordion.exists());
     cy.expect([
       MultiColumnList({ ariaRowCount: 7 }).find(MultiColumnListRow({ indexRow: `row-0` })).find(MultiColumnListCell({ content: 'Initial allocation' })).exists(),
       MultiColumnList({ ariaRowCount: 7 }).find(MultiColumnListRow({ indexRow: `row-0` })).find(MultiColumnListCell({ content: amountInitialAllocation })).exists(),
@@ -270,9 +273,9 @@ export default {
   ]);
   },
 
-  checkFinancialActivityAndOverages: ( encumbered, amountEncumbered, awaitingPayment, amountAwaitingPayment, expended, amountExpended, unavailable, amountUnavailable) => {
-    cy.expect(Accordion('Budget summary').exists());
-    cy.expect(Accordion('Budget information').exists());
+  checkFinancialActivityAndOverages: (amountEncumbered, amountAwaitingPayment, amountExpended, amountUnavailable) => {
+    cy.expect(budgetSummaryAcordion.exists());
+    cy.expect(budgetInformationAcordion.exists());
     cy.expect([
       MultiColumnList({ ariaRowCount: 5 }).find(MultiColumnListRow({ indexRow: `row-0` })).find(MultiColumnListCell({ content: 'Encumbered' })).exists(),
       MultiColumnList({ ariaRowCount: 5 }).find(MultiColumnListRow({ indexRow: `row-0` })).find(MultiColumnListCell({ content: amountEncumbered })).exists(),

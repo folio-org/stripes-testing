@@ -145,7 +145,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
     FinanceHelp.searchByName(defaultLedger.name);
     Ledgers.selectLedger(defaultLedger.name);
     Ledgers.rollover();
-    Ledgers.fillInTestRolloverInfoCashBalance(secondFiscalYear.code, 'Cash balance', 'Allocation', );
+    Ledgers.fillInTestRolloverInfoCashBalance(secondFiscalYear.code, 'Cash balance', 'Allocation');
     Ledgers.rolloverLogs();
     Ledgers.exportRollover(todayDate);
     Ledgers.checkDownloadedFile(`${fileNameDate}-result.csv`, defaultFund, secondFiscalYear, '100', '100', '160', '160', '160', '160', '160');
@@ -157,6 +157,6 @@ describe('ui-finance: Fiscal Year Rollover', () => {
     Ledgers.selectFundInLedger(defaultFund.name);
     Funds.selectPlannedBudgetDetails();
     Funds.checkFundingInformation('$160.00','$0.00','$0.00','$160.00','$0.00','$160.00');
-    Funds.checkFinancialActivityAndOverages('$0.00','$0.00','$0.00','$0.00','$0.00');
+    Funds.checkFinancialActivityAndOverages('$0.00','$0.00','$0.00','$0.00');
   });
 });
