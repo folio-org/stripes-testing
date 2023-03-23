@@ -8,7 +8,7 @@ export default {
   waitLoading:() => {
     cy.expect(rootModal.exists());
   },
-  checkAmount:(amount) => cy.expect(amountTextfield.has({ value: amount.toFixed(2) })),
+  checkAmount:(amount) => cy.expect(amountTextfield.has({ value: including(amount) })),
   setPaymentMethod: ({ name: paymentMethodName }) => cy.get('div[class^=modal-] select[name=method]').select(paymentMethodName),
   submitAndConfirm: () => {
     cy.do(rootModal.find(Button({ id:'submit-button' })).click());
