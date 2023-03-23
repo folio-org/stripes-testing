@@ -7,6 +7,7 @@ import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edi
 import Users from '../../../../support/fragments/users/users';
 import FileManager from '../../../../support/utils/fileManager';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
+import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
 
 let user;
 const invalidHoldingHRID = getRandomPostfix();

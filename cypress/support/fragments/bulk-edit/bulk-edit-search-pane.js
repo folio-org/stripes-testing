@@ -523,15 +523,6 @@ export default {
     }
   },
 
-  downloadErrors() {
-    cy.do([
-      actions.click(),
-      Button('Download errors (CSV)').click(),
-    ]);
-    //Need to wait for the file to download
-    cy.wait(5000);
-  },
-
   verifyUsersActionShowColumns() {
     cy.expect([
       DropdownMenu().find(Checkbox('Username')).has({ checked: true }),
