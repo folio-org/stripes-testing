@@ -46,7 +46,7 @@ describe('Bulk Edit - Logs', () => {
     FileManager.deleteFile(`cypress/fixtures/${invalidAndValidUserBarcodesFileName}`);
     FileManager.deleteFile(`cypress/fixtures/${importFileName}`);
     Users.deleteViaApi(user.userId);
-    // FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
   it('C375215 Verify generated Logs files for Users CSV - with errors (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
