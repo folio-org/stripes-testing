@@ -152,7 +152,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
     Ledgers.deleteDownloadedFile(`${fileNameDate}-result.csv`);
     Ledgers.closeOpenedPage();
     Ledgers.rollover();
-    Ledgers.fillInRolloverForCashBalance(secondFiscalYear.code, 'Cash balance', 'Allocation', );
+    Ledgers.fillInRolloverForCashBalance(secondFiscalYear.code, 'Cash balance', 'Allocation');
     Ledgers.closeRolloverInfo();
     Ledgers.selectFundInLedger(defaultFund.name);
     Funds.selectPlannedBudgetDetails();

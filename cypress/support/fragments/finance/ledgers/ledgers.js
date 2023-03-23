@@ -19,7 +19,11 @@ const numberOfSearchResultsHeader = '//*[@id="paneHeaderledger-results-pane-subt
 const rolloverButton = Button('Rollover');
 const zeroResultsFoundText = '0 records found';
 const fiscalYearCss = 'select[name^="fiscalYearOneId"]';
-
+const rolloverConfirmButton = Button({ id: 'clickable-rollover-confirmation-confirm' });
+const fiscalYearSelect = Select({ name: 'toFiscalYearId' });
+const rolloverAllocationCheckbox = Checkbox({ name: 'budgetsRollover[0].rolloverAllocation' });
+const rolloverBudgetVelue = Select({ name: 'budgetsRollover[0].rolloverBudgetValue' });
+const aaddAvailableToSelect = Select({ name: 'budgetsRollover[0].addAvailableTo' });
 
 export default {
   defaultUiLedger: {
@@ -56,8 +60,8 @@ export default {
 
   fillInRolloverInfo : (fiscalYear) => {
     cy.do([
-      Select({ name: 'toFiscalYearId' }).choose(fiscalYear),
-      Checkbox({ name: 'budgetsRollover[0].rolloverAllocation' }).click(),
+      fiscalYearSelect.choose(fiscalYear),
+      rolloverAllocationCheckbox.click(),
       Checkbox({ name: 'encumbrancesRollover[0].rollover' }).click(),
       Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Expended'),
       Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
@@ -66,21 +70,21 @@ export default {
     ]);
     cy.wait(2000);
     cy.do([
-      Button({ id: 'clickable-rollover-confirmation-confirm' }).click(),
+      rolloverConfirmButton.click(),
     ]);
   },
 
   fillInRolloverForCashBalance : (fiscalYear, rolloverBudgetValue, rolloverValueAs) => {
     cy.do([
-      Select({ name: 'toFiscalYearId' }).choose(fiscalYear),
-      Checkbox({ name: 'budgetsRollover[0].rolloverAllocation' }).click(),
-      Select({ name: 'budgetsRollover[0].rolloverBudgetValue' }).choose(rolloverBudgetValue),
-      Select({ name: 'budgetsRollover[0].addAvailableTo' }).choose(rolloverValueAs),
+      fiscalYearSelect.choose(fiscalYear),
+      rolloverAllocationCheckbox.click(),
+      rolloverBudgetVelue.choose(rolloverBudgetValue),
+      aaddAvailableToSelect.choose(rolloverValueAs),
       rolloverButton.click(),
     ]);
     cy.wait(2000);
     cy.do([
-      Button({ id: 'clickable-rollover-confirmation-confirm' }).click(),
+      rolloverConfirmButton.click(),
     ]);
   },
 
@@ -88,8 +92,8 @@ export default {
     cy.do([
       Select({ name: 'toFiscalYearId' }).choose(fiscalYear),
       Checkbox({ name: 'budgetsRollover[0].rolloverAllocation' }).click(),
-      Select({ name: 'budgetsRollover[0].rolloverBudgetValue' }).choose(rolloverBudgetValue),
-      Select({ name: 'budgetsRollover[0].addAvailableTo' }).choose(rolloverValueAs),
+      rolloverBudgetVelue.choose(rolloverBudgetValue),
+      aaddAvailableToSelect.choose(rolloverValueAs),
       Button('Test rollover').click(),
     ]);
     cy.wait(2000);
