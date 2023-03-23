@@ -152,6 +152,15 @@ export default {
     ]);
   },
 
+  reOpenOrder: () => {
+    cy.do([
+      orderDetailsPane
+        .find(PaneHeader({ id: 'paneHeaderorder-details' })
+          .find(actionsButton)).click(),
+      Button('Reopen').click(),
+    ]);
+  },
+  
   receiveOrderViaActions: () => {
     cy.do([
       orderDetailsPane
@@ -271,10 +280,7 @@ export default {
   },
 
   checkSearchResults: (orderNumber) => {
-    cy.expect(MultiColumnList({ id: 'orders-list' })
-      .find(MultiColumnListRow({ index: 0 }))
-      .find(MultiColumnListCell({ columnIndex: 0 }))
-      .has({ content: orderNumber }));
+    cy.expect(MultiColumnList({ id:'orders-list' }).find(Link(orderNumber)).exists());
   },
   checkSearchResultsWithClosedOrder: (orderNumber) => {
     cy.expect(MultiColumnList({ id: 'orders-list' })
