@@ -123,7 +123,7 @@ export default {
   getInstanceHRID,
   checkInstanceDetails,
   getAllSearchResults: () => MultiColumnList(),
-  getSearchResult: (row = 0, col = 0) => MultiColumnListCell({ 'row': row, 'columnIndex': col }),
+  getSearchResult: (row = 0, col = 0) => paneResultsSection.find(MultiColumnListCell({ 'row': row, 'columnIndex': col })),
   waitLoading: () => cy.expect([Form().find(inventorySearchAndFilter).exists()]),
   browseCallNumberIsAbsent: () => cy.expect(HTML('Browse call numbers').absent()),
   browseSubjectIsAbsent: () => cy.expect(HTML('Browse subjects').absent()),
