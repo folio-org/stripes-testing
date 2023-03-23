@@ -43,7 +43,7 @@ describe('ui-inventory: Filter instances by tags', () => {
     InventorySearchAndFilter.verifyTagsView();
     InventorySearchAndFilter.addTag(testTag);
     InventorySearchAndFilter.verifyTagCount(tagsCount);
-    InventorySearchAndFilter.closeTagsAndInstanceDetailPane();
+    InventorySearchAndFilter.closeInstanceDetailPane();
     InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
     InventorySearchAndFilter.filterByTag(testTag);
     InventorySearchAndFilter.verifyIsFilteredByTag(instanceRecord.instanceTitle);

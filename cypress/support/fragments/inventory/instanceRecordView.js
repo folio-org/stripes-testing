@@ -4,6 +4,7 @@ import { KeyValue, MultiColumnList, Section, MultiColumnListCell, Button } from 
 
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
 const catalogedDateKeyValue = KeyValue('Cataloged date');
+const sourceKeyValue = KeyValue('Source');
 const instanceStatusTermKeyValue = KeyValue('Instance status term');
 const instanceDetailsNotesSection = Section({ id: 'instance-details-notes' });
 const marcViewSection = Section({ id: 'marc-view-pane' });
@@ -15,6 +16,8 @@ const instanceNote = MultiColumnList({ id: 'list-instance-notes-0' });
 const verifyResourceTitle = value => {
   cy.expect(KeyValue('Resource title').has({ value }));
 };
+
+const verifyInstanceSource = (sourceValue) => cy.expect(sourceKeyValue.has({ value: sourceValue }));
 
 const verifyInstanceStatusCode = value => {
   cy.expect(KeyValue('Instance status code').has({ value }));
@@ -94,6 +97,7 @@ export default {
   verifyInstanceNote,
   verifyStatisticalCode,
   verifyNatureOfContent,
+  verifyInstanceSource,
 
   openHoldingView: () => {
     cy.do(Button('View holdings').click());
