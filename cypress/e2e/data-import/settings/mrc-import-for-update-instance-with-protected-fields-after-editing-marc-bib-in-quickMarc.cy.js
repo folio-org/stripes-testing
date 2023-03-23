@@ -192,13 +192,14 @@ describe('ui-data-import', () => {
         // export instance
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+        InventorySearchAndFilter.closeInstanceDetailPane();
         InventorySearchAndFilter.selectResultCheckboxes(1);
         InventorySearchAndFilter.exportInstanceAsMarc();
 
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.clickDataImportNavButton();
+        // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+        cy.reload();
         DataImport.uploadFile(editedMarcFileName, nameMarcFileForUpload);
         JobProfiles.searchJobProfileForImport(jobProfileName);
         JobProfiles.runImportFile();

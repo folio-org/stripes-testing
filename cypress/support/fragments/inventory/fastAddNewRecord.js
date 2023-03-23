@@ -6,7 +6,9 @@ import {
   SelectionList,
   TextField,
   KeyValue,
-  Section, PaneHeader,
+  Section,
+  PaneHeader,
+  Pane
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 import TopMenu from '../topMenu';
@@ -73,7 +75,7 @@ const waitLoading = () => {
 };
 
 const openRecordDetails = (row = 0) => {
-  cy.do(MultiColumnListCell({ row, columnIndex: 1 }).click());
+  cy.do(Pane({ id:'pane-results' }).find(MultiColumnListCell({ row, columnIndex: 1 })).click());
 
   cy.expect(Section({ id: 'pane-instancedetails' }).exists());
 };

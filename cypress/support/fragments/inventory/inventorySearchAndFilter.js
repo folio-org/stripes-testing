@@ -26,6 +26,7 @@ import DateTools from '../../utils/dateTools';
 import Helper from '../finance/financeHelper';
 
 const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
+const sourceAccordion = Accordion('Source');
 const languageInput = Accordion({ id: 'language' });
 const keywordInput = TextField({ id: 'input-inventory-search' });
 const searchButton = Button({ type: 'submit' });
@@ -106,7 +107,7 @@ const checkInstanceDetails = () => {
   const expectedStatusTerm = 'Batch Loaded';
   const expectedStatusCode = 'batch';
 
-  cy.do(MultiColumnListCell({ row: 0, columnIndex: 1 }).click());
+  cy.do(Pane({ id:'pane-results' }).find(MultiColumnListCell({ row: 0, columnIndex: 1 })).click());
   const catalogedDate = KeyValue('Cataloged date');
   const instanceStatusTerm = KeyValue('Instance status term');
   const instanceStatusCode = KeyValue('Instance status code');
@@ -160,6 +161,13 @@ export default {
       languageInput.clickHeader(),
       languageInput.find(Checkbox(lang ?? this.language.eng)).click()
     ]);
+  },
+
+  bySource(source) {
+    cy.do([
+      sourceAccordion.clickHeader(),
+      sourceAccordion.find(Checkbox(source)).click()]);
+    cy.expect(MultiColumnListRow().exists());
   },
 
   byKeywords(kw = '*') {
