@@ -11,6 +11,7 @@ import {
   TextField,
   RepeatableFieldItem,
 } from '../../../../interactors';
+import DateTools from '../../utils/dateTools';
 
 const actionsBtn = Button('Actions');
 const dropdownMenu = DropdownMenu();
@@ -152,12 +153,15 @@ export default {
   },
 
   fillExpirationDate(date) {
-    // date format MM/DD/YYYY
+    // js date object
+    const formattedDate = DateTools.getFormattedDate({ date }, 'MM/DD/YYYY');
     getBulkEditSelectType().select('Expiration date');
     cy.do([
       Button({ icon: 'calendar' }).click(),
-      TextField().fillIn(date)
+      TextField().fillIn(formattedDate),
     ]);
+    // we don't have interactor for this element
+    cy.get(`[aria-label="calendar"] [data-date="${formattedDate}"]`).click();
   },
 
   verifyCalendarItem() {
@@ -209,6 +213,12 @@ export default {
   downloadMatchedResults() {
     cy.do(actionsBtn.click());
     cy.get('[class^="ActionMenuGroup-"] button', { timeout: 15000 }).first().click();
+    // need to wait downloading
+    cy.wait(5000);
+  },
+
+  downloadErrors() {
+    cy.do('Download Errors(CSV)')
     // need to wait downloading
     cy.wait(5000);
   },
