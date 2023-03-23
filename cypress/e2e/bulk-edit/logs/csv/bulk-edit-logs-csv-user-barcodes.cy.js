@@ -17,6 +17,7 @@ const matchRecordsFileNameInvalidAndValid = `Matched-Records-${invalidAndValidUs
 const errorsFromMatchingFileName = `*Errors-${invalidAndValidUserBarcodesFileName}*`;
 const importFileName = `bulkEditImport_${getRandomPostfix()}.csv`;
 const updatesPreviewFileName = `*Updates-Preview-${importFileName}`;
+const errorsFromCommittingFileName = `*Errors-*-${matchRecordsFileNameInvalidAndValid}*`;
 const newFirstName = `testNewFirstNameame_${getRandomPostfix()}`;
 
 describe('Bulk Edit - Logs', () => {
@@ -45,10 +46,9 @@ describe('Bulk Edit - Logs', () => {
     FileManager.deleteFile(`cypress/fixtures/${invalidAndValidUserBarcodesFileName}`);
     FileManager.deleteFile(`cypress/fixtures/${importFileName}`);
     Users.deleteViaApi(user.userId);
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    // FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
-  // C375215 fails because of bug MODBULKOPS-74
   it('C375215 Verify generated Logs files for Users CSV - with errors (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     // Upload file with invalid and valid user UUIDs
     BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
@@ -97,6 +97,6 @@ describe('Bulk Edit - Logs', () => {
     BulkEditFiles.verifyMatchedResultFileContent(updatesPreviewFileName, [newFirstName, userWithoutPermissions.firstName], 'firstName', true);
 
     BulkEditSearchPane.downloadFileWithCommitErrors();
-    BulkEditFiles.verifyMatchedResultFileContent(errorsFromMatchingFileName, [userWithoutPermissions.barcode], 'firstElement', false);
+    BulkEditFiles.verifyMatchedResultFileContent(errorsFromCommittingFileName, [userWithoutPermissions.barcode], 'firstElement', false);
   });
 });
