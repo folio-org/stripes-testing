@@ -10,6 +10,11 @@ export default {
     return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(currentDate.getDate())}/${currentDate.getFullYear()}`;
   },
 
+  getCurrentDateForFileNaming: () => {
+    const currentDate = new Date();
+    return `${padWithZero(currentDate.getMonth() + 1)}_${padWithZero(currentDate.getDate())}_${currentDate.getFullYear()}`;
+  },
+
   getCurrentDateForFiscalYear: () => {
     const currentDate = new Date();
     return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(currentDate.getDate())}`;
