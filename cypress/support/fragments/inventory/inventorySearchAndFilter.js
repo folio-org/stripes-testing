@@ -26,6 +26,7 @@ import DateTools from '../../utils/dateTools';
 import Helper from '../finance/financeHelper';
 
 const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
+const sourceAccordion = Accordion('Source');
 const languageInput = Accordion({ id: 'language' });
 const keywordInput = TextField({ id: 'input-inventory-search' });
 const searchButton = Button({ type: 'submit' });
@@ -48,7 +49,6 @@ const viewHoldingButton = Button('View holdings');
 const statisticalCodeAccordion = Accordion({ id:'itemsStatisticalCodeIds' });
 
 const searchInstanceByHRID = (id) => {
-  InventoryInstances.waitContentLoading();
   cy.do([
     Select({ id: 'input-inventory-search-qindex' }).choose('Instance HRID'),
     TextField({ id: 'input-inventory-search' }).fillIn(id),
@@ -107,7 +107,7 @@ const checkInstanceDetails = () => {
   const expectedStatusTerm = 'Batch Loaded';
   const expectedStatusCode = 'batch';
 
-  cy.do(MultiColumnListCell({ row: 0, columnIndex: 1 }).click());
+  cy.do(Pane({ id:'pane-results' }).find(MultiColumnListCell({ row: 0, columnIndex: 1 })).click());
   const catalogedDate = KeyValue('Cataloged date');
   const instanceStatusTerm = KeyValue('Instance status term');
   const instanceStatusCode = KeyValue('Instance status code');
@@ -123,7 +123,7 @@ export default {
   getInstanceHRID,
   checkInstanceDetails,
   getAllSearchResults: () => MultiColumnList(),
-  getSearchResult: (row = 0, col = 0) => MultiColumnListCell({ 'row': row, 'columnIndex': col }),
+  getSearchResult: (row = 0, col = 0) => paneResultsSection.find(MultiColumnListCell({ 'row': row, 'columnIndex': col })),
   waitLoading: () => cy.expect([Form().find(inventorySearchAndFilter).exists()]),
   browseCallNumberIsAbsent: () => cy.expect(HTML('Browse call numbers').absent()),
   browseSubjectIsAbsent: () => cy.expect(HTML('Browse subjects').absent()),
@@ -161,6 +161,13 @@ export default {
       languageInput.clickHeader(),
       languageInput.find(Checkbox(lang ?? this.language.eng)).click()
     ]);
+  },
+
+  bySource(source) {
+    cy.do([
+      sourceAccordion.clickHeader(),
+      sourceAccordion.find(Checkbox(source)).click()]);
+    cy.expect(MultiColumnListRow().exists());
   },
 
   byKeywords(kw = '*') {
@@ -315,6 +322,22 @@ export default {
       });
   },
 
+  getInstancesBySubjectViaApi(subject, limit = 100) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'search/instances',
+        searchParams: {
+          limit,
+          highlightMatch: true,
+          query: `(subjects="${subject}") sortby title`
+        },
+        isDefaultSearchParamsRequired: false,
+      }).then(({ body: { instances } }) => {
+        return instances;
+      });
+  },
+
   selectSearchOptions(searchOption, text) {
     cy.do([
       inventorySearchAndFilterInput.choose(searchOption),
@@ -367,7 +390,7 @@ export default {
     cy.expect(paneResultsSection.find(HTML(including(emptyResultsMessage))).exists());
   },
 
-  closeTagsAndInstanceDetailPane() {
+  closeInstanceDetailPane() {
     cy.do(instanceDetailsSection.find(Button({ icon: 'times' })).click());
     cy.expect(instanceDetailsSection.absent());
     cy.expect(tagsPane.absent());
@@ -425,7 +448,6 @@ export default {
   verifyPanesExist() {
     cy.expect(paneFilterSection.exists());
     cy.expect(paneResultsSection.exists());
-    cy.expect(paneResultsSection.find(HTML(including(emptyResultsMessage))).exists());
   },
 
   createInstanceViaApi() {

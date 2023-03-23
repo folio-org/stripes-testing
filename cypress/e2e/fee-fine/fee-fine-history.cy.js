@@ -18,7 +18,7 @@ import FeeFinesDetails from '../../support/fragments/users/feeFineDetails';
 import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
 import AddNewStaffInfo from '../../support/fragments/users/addNewStaffInfo';
 
-describe('Fee/Fine history ', { retries: 3 }, () => {
+describe('Fee/Fine history ', { retries: 1 }, () => {
   const userData = {};
   const ownerData = {};
   const feeFineType = {};
@@ -77,8 +77,7 @@ describe('Fee/Fine history ', { retries: 3 }, () => {
               id: uuid(),
               ownerId: ownerData.id,
               feeFineId: feeFineType.id,
-              // this test will be failed if the amount has two or more digits. Issue https://issues.folio.org/browse/UIU-2812
-              amount: 9,
+              amount: feeFineType.amount,
               userId: userData.userId,
               feeFineType: feeFineType.name,
               createdAt: servicePointId,
@@ -107,16 +106,16 @@ describe('Fee/Fine history ', { retries: 3 }, () => {
   });
 
   it('C347919 Check that the user can add "Additional information" on the fee/fine history (vega)', { tags: [TestTypes.smoke, devTeams.vega] }, () => {
-    // the bug for this flaky issue is created FAT-2442. As temporary fix for this bug we need a waiter to be sure that the fee-fine is created before opening its page.
-    cy.wait(30000);
+    // the bug for this flaky issue is created FAT-2442
     cy.visit(AppPaths.getFeeFineDetailsPath(userData.userId, feeFineAccount.id));
     FeeFinesDetails.waitLoading();
     FeeFinesDetails.openActions();
     FeeFinesDetails.openPayModal();
     PayFeeFaine.checkAmount(feeFineAccount.amount);
     PayFeeFaine.setAmount(feeFineAccount.amount - 1);
-    PayFeeFaine.checkRestOfPay(1);
     PayFeeFaine.setPaymentMethod(paymentMethod);
+    PayFeeFaine.checkRestOfPay(1);
+    PayFeeFaine.checkAmount(feeFineAccount.amount - 1);
     PayFeeFaine.submitAndConfirm();
     PayFeeFaine.checkConfirmModalClosed();
     FeeFinesDetails.waitLoading();
@@ -127,8 +126,7 @@ describe('Fee/Fine history ', { retries: 3 }, () => {
     AddNewStaffInfo.checkStaffInfoModalClosed();
     FeeFinesDetails.waitLoading();
     FeeFinesDetails.checkNewStaffInfo(newStaffInfoMessage);
-    FeeFinesDetails.openActions();
-    FeeFinesDetails.openPayModal();
+    FeeFinesDetails.openPayModalUsingActionsMenu();
     PayFeeFaine.checkAmount(1);
     PayFeeFaine.setPaymentMethod(paymentMethod);
     PayFeeFaine.setAmount(1);

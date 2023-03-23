@@ -73,7 +73,7 @@ describe('ui-data-import', () => {
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
-  before(() => {
+  before('create test data', () => {
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     cy.getAdminToken()
       .then(() => {
@@ -96,7 +96,7 @@ describe('ui-data-import', () => {
       });
   });
 
-  after(() => {
+  after('delete test data', () => {
     JobProfiles.deleteJobProfile(jobProfileName);
     MatchProfiles.deleteMatchProfile(matchProfileName);
     ActionProfiles.deleteActionProfile(actionProfileName);
@@ -213,6 +213,7 @@ describe('ui-data-import', () => {
     // export instance
     cy.visit(TopMenu.inventoryPath);
     InventorySearchAndFilter.searchInstanceByHRID(instanceHridForReimport);
+    InventorySearchAndFilter.closeInstanceDetailPane();
     InventorySearchAndFilter.selectResultCheckboxes(1);
     InventorySearchAndFilter.exportInstanceAsMarc();
 
@@ -225,8 +226,8 @@ describe('ui-data-import', () => {
         ExportFile.downloadExportedMarcFile(exportedFileName);
         // upload the exported marc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.clickDataImportNavButton();
+        // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+        cy.reload();
         DataImport.uploadExportedFile(exportedFileName);
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
         JobProfiles.runImportFile();

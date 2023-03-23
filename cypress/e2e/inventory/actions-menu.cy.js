@@ -39,6 +39,7 @@ describe('ui-inventory: actions', () => {
 
   it('C196753 Verify Action menu options - search results pane populated (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     InventorySearchAndFilter.byKeywords(item.instanceName);
+    InventorySearchAndFilter.closeInstanceDetailPane();
     InventorySearchAndFilter.selectResultCheckboxes(1);
     InventoryActions.open();
 

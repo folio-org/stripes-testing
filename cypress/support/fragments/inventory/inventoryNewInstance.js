@@ -20,7 +20,7 @@ export default {
     cy.do(Select('Resource type*').choose(resourceType));
   },
   save:() => {
-    cy.do(Button('Save and close').click());
+    cy.do(Button('Save & close').click());
     inventoryInstance.waitLoading();
   }
 };

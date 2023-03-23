@@ -347,7 +347,7 @@ export default {
       Accordion('Start date').has({ open: false }),
       Accordion('End date').has({ open: false }),
       bulkEditPane.find(HTML('Enter search criteria to start search')).exists(),
-      bulkEditPane.find(HTML('Choose a filter to show results.')).exists(),
+      bulkEditPane.find(HTML('Choose a filter or enter a search query to show results.')).exists(),
     ]);
   },
 
@@ -523,15 +523,6 @@ export default {
     }
   },
 
-  downloadErrors() {
-    cy.do([
-      actions.click(),
-      Button('Download errors (CSV)').click(),
-    ]);
-    //Need to wait for the file to download
-    cy.wait(5000);
-  },
-
   verifyUsersActionShowColumns() {
     cy.expect([
       DropdownMenu().find(Checkbox('Username')).has({ checked: true }),
@@ -700,6 +691,17 @@ export default {
     ]);
   },
 
+  verifyLogsRowActionWhenCompletedWithErrors() {
+    cy.expect([
+      HTML('File that was used to trigger the bulk edit').exists(),
+      HTML('File with the matching records').exists(),
+      HTML('File with errors encountered during the record matching').exists(),
+      HTML('File with the preview of proposed changes').exists(),
+      HTML('File with updated records').exists(),
+      HTML('File with errors encountered when committing the changes').exists()
+    ]);
+  },
+
   verifyLogsRowActionWhenCompleted() {
     cy.expect([
       HTML('File that was used to trigger the bulk edit').exists(),
@@ -735,6 +737,12 @@ export default {
 
   downloadFileWithUpdatedRecords() {
     cy.do(Button('File with updated records').click());
+    //Need to wait for the file to download
+    cy.wait(5000);
+  },
+
+  downloadFileWithCommitErrors() {
+    cy.do(Button('File with errors encountered when committing the changes').click());
     //Need to wait for the file to download
     cy.wait(5000);
   },
