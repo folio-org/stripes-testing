@@ -28,7 +28,7 @@ describe('Bulk Edit - Logs', () => {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
         });
-        FileManager.createFile(`cypress/fixtures/${invalidUsernamesFileName}`,  invalidUsername);
+        FileManager.createFile(`cypress/fixtures/${invalidUsernamesFileName}`, invalidUsername);
       });
   });
 
