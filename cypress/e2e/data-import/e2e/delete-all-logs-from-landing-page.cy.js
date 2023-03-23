@@ -41,8 +41,8 @@ describe('ui-data-import', () => {
           const filePath = numberOfLogsToUpload - 1 === index ? filePathToUpload : emptyFilePathToUpload;
           fileNameToUpload = `C358137autotestFile.${getRandomPostfix()}.mrc`;
 
-          // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-          DataImport.clickDataImportNavButton();
+          // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+          cy.reload();
           DataImport.uploadFile(filePath, fileNameToUpload);
           // need to wait until file will be uploaded in loop
           cy.wait(8000);
