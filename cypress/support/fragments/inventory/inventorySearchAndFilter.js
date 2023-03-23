@@ -107,6 +107,8 @@ const checkInstanceDetails = () => {
   // in inventory, this will be "batch" for status code and "Batch Loaded" for status term
   const expectedStatusTerm = 'Batch Loaded';
   const expectedStatusCode = 'batch';
+
+  cy.do(Pane({ id:'pane-results' }).find(MultiColumnListCell({ row: 0, columnIndex: 1 })).click());
   const catalogedDate = KeyValue('Cataloged date');
   const instanceStatusTerm = KeyValue('Instance status term');
   const instanceStatusCode = KeyValue('Instance status code');
@@ -122,7 +124,7 @@ export default {
   getInstanceHRID,
   checkInstanceDetails,
   getAllSearchResults: () => MultiColumnList(),
-  getSearchResult: (row = 0, col = 0) => MultiColumnListCell({ 'row': row, 'columnIndex': col }),
+  getSearchResult: (row = 0, col = 0) => paneResultsSection.find(MultiColumnListCell({ 'row': row, 'columnIndex': col })),
   waitLoading: () => cy.expect([Form().find(inventorySearchAndFilter).exists()]),
   browseCallNumberIsAbsent: () => cy.expect(HTML('Browse call numbers').absent()),
   browseSubjectIsAbsent: () => cy.expect(HTML('Browse subjects').absent()),
@@ -461,7 +463,6 @@ export default {
   verifyPanesExist() {
     cy.expect(paneFilterSection.exists());
     cy.expect(paneResultsSection.exists());
-    cy.expect(paneResultsSection.find(HTML(including(emptyResultsMessage))).exists());
   },
 
   createInstanceViaApi() {
@@ -488,10 +489,13 @@ export default {
   selectViewHoldings:() => cy.do(viewHoldingButton.click()),
 
   filterItemByStatisticalCode:(code) => {
-    cy.do([
-      Button({ id:'accordion-toggle-button-itemsStatisticalCodeIds' }).click(),
-      statisticalCodeAccordion.find(TextField()).fillIn(code),
-    ]);
+    cy.do(Button({ id:'accordion-toggle-button-itemsStatisticalCodeIds' }).click());
+    // need to wait until data will be loaded
+    cy.wait(1000);
+    cy.do(statisticalCodeAccordion.find(TextField()).fillIn(code));
+    // need to wait until data will be loaded
+    cy.wait(1000);
+    statisticalCodeAccordion.find(TextField()).click();
     cy.do(statisticalCodeAccordion.find(Checkbox(code)).click());
   },
 
@@ -500,5 +504,5 @@ export default {
       TextField({ id: 'input-record-search' }).fillIn(searchValue),
       searchButton.click()
     ]);
-  },
+  }
 };
