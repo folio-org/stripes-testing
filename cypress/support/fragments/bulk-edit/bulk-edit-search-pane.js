@@ -30,6 +30,7 @@ const itemsRadio = RadioButton('Inventory - items');
 const holdingsRadio = RadioButton('Inventory - holdings');
 const usersCheckbox = Checkbox('Users');
 const holdingsCheckbox = Checkbox('Inventory - holdings');
+const itemsCheckbox = Checkbox('Inventory - items');
 const identifierToggle = Button('Identifier');
 const queryToggle = Button('Query');
 const logsToggle = Button('Logs');
@@ -424,6 +425,10 @@ export default {
 
   checkUsersCheckbox() {
     cy.do(usersCheckbox.click());
+  },
+
+  checkItemsCheckbox() {
+    cy.do(itemsCheckbox.click());
   },
 
   itemsHoldingsIsDisabled(isDisabled) {
