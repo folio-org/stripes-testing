@@ -30,6 +30,7 @@ const itemsRadio = RadioButton('Inventory - items');
 const holdingsRadio = RadioButton('Inventory - holdings');
 const usersCheckbox = Checkbox('Users');
 const holdingsCheckbox = Checkbox('Inventory - holdings');
+const itemsCheckbox = Checkbox('Inventory - items');
 const identifierToggle = Button('Identifier');
 const queryToggle = Button('Query');
 const logsToggle = Button('Logs');
@@ -422,6 +423,10 @@ export default {
     cy.do(holdingsCheckbox.click());
   },
 
+  checkItemsCheckbox() {
+    cy.do(itemsCheckbox.click());
+  },
+
   checkUsersCheckbox() {
     cy.do(usersCheckbox.click());
   },
@@ -521,15 +526,6 @@ export default {
     if (errors) {
       cy.expect(Button('Download errors (CSV)').exists());
     }
-  },
-
-  downloadErrors() {
-    cy.do([
-      actions.click(),
-      Button('Download errors (CSV)').click(),
-    ]);
-    //Need to wait for the file to download
-    cy.wait(5000);
   },
 
   verifyUsersActionShowColumns() {
@@ -709,6 +705,24 @@ export default {
     ]);
   },
 
+  verifyLogsRowActionWhenCompletedWithErrors() {
+    cy.expect([
+      HTML('File that was used to trigger the bulk edit').exists(),
+      HTML('File with the matching records').exists(),
+      HTML('File with errors encountered during the record matching').exists(),
+      HTML('File with the preview of proposed changes').exists(),
+      HTML('File with updated records').exists(),
+      HTML('File with errors encountered when committing the changes').exists()
+    ]);
+  },
+
+  verifyLogsRowActionWhenCompletedWithErrorsWithoutModification() {
+    cy.expect([
+      HTML('File that was used to trigger the bulk edit').exists(),
+      HTML('File with errors encountered during the record matching').exists(),
+    ]);
+  },
+
   downloadFileUsedToTrigger() {
     cy.do(Button('File that was used to trigger the bulk edit').click());
     //Need to wait for the file to download
@@ -720,7 +734,7 @@ export default {
     //Need to wait for the file to download
     cy.wait(5000);
   },
-  
+
   downloadFileWithMatchingRecords() {
     cy.do(Button('File with the matching records').click());
     //Need to wait for the file to download
@@ -735,6 +749,12 @@ export default {
 
   downloadFileWithUpdatedRecords() {
     cy.do(Button('File with updated records').click());
+    //Need to wait for the file to download
+    cy.wait(5000);
+  },
+
+  downloadFileWithCommitErrors() {
+    cy.do(Button('File with errors encountered when committing the changes').click());
     //Need to wait for the file to download
     cy.wait(5000);
   },
