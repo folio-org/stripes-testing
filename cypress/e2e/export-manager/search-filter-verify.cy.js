@@ -48,7 +48,8 @@ describe('export manager', () => {
       permissions.exportManagerAll.gui,
       permissions.circulationLogAll.gui,
       permissions.checkoutAll.gui,
-      permissions.bulkEditUpdateRecords.gui
+      permissions.bulkEditUpdateRecords.gui,
+      permissions.uiUsersView.gui,
     ])
       .then(userProperties => {
         userData = { ...userProperties };
@@ -100,6 +101,7 @@ describe('export manager', () => {
 
   it('C350727 Verify search filter options Export Manager (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     ExportManagerSearchPane.waitLoading();
+    ExportManagerSearchPane.searchByScheduled();
     cy.do(ExportManagerSearchPane.getSearchResult(0, 0).perform(element => {
       ExportManagerSearchPane.searchById(element.innerText);
     }));
