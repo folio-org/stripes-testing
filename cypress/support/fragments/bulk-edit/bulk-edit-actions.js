@@ -154,14 +154,14 @@ export default {
 
   fillExpirationDate(date) {
     // js date object
-    const formattedDate = DateTools.getFormattedDateWithSlashes({ date });
+    const formattedDate = DateTools.getFormattedDate({ date }, 'MM/DD/YYYY');
     getBulkEditSelectType().select('Expiration date');
     cy.do([
       Button({ icon: 'calendar' }).click(),
       TextField().fillIn(formattedDate),
     ]);
     // we don't have interactor for this element
-    cy.get('[aria-label="calendar"]').contains(`${date.getDate()}`).click();
+    cy.get(`[aria-label="calendar"] [data-date="${formattedDate}"]`).click();
   },
 
   verifyCalendarItem() {
