@@ -14,6 +14,7 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import LoansPage from '../../support/fragments/loans/loansPage';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
+import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
 
 let user;
 let servicePointId;
@@ -60,8 +61,15 @@ describe('circulation-log', () => {
   });
 
   after('cleaning up test data', () => {
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
-    Users.deleteViaApi(user.userId);
+    CheckinActions.checkinItemViaApi({
+      itemBarcode: item.barcode,
+      servicePointId,
+      checkInDate: new Date().toISOString(),
+    })
+      .then(() => {
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
+        Users.deleteViaApi(user.userId);
+      });
   });
 
   it('C17001 Filter circulation log by marked as missing (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
