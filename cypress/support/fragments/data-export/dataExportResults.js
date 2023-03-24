@@ -1,14 +1,14 @@
-import InventorySearchAndFilter from '../inventory/inventorySearchAndFilter';
-import { MultiColumnListCell } from '../../../../interactors';
+import { MultiColumnListCell, Pane } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
 const quickExportFileNameMask = /quick-export-\d{1,3}.mrc/gm;
+const searchResultsPane = Pane('Logs');
 
 export default {
   defaultJobProfile: 'Default instances export job profile',
-  verifyQuickExportResult() {
+  verifyQuickExportResult(row = 0, col = 0) {
     cy.do([
-      InventorySearchAndFilter.getSearchResult(0, 0).perform(element => {
+      searchResultsPane.find(MultiColumnListCell({ 'row': row, 'columnIndex': col })).perform(element => {
         expect(element.innerText).to.match(quickExportFileNameMask);
       }),
       MultiColumnListCell({ row: 0, content: this.defaultJobProfile }).exists(),

@@ -69,7 +69,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditActions.commitChanges();
 
     // Verify changes on the page, download changes and errors
-    BulkEditSearchPane.verifyChangedResults(newFirstName);
+    BulkEditSearchPane.verifyChangedResults(newFirstName, userWithoutPermissions.firstName);
     BulkEditActions.openActions();
     BulkEditActions.downloadChangedCSV();
     BulkEditActions.downloadErrors();
@@ -95,8 +95,5 @@ describe('Bulk Edit - Logs', () => {
 
     BulkEditSearchPane.downloadFileWithUpdatedRecords();
     BulkEditFiles.verifyMatchedResultFileContent(updatesPreviewFileName, [newFirstName, userWithoutPermissions.firstName], 'firstName', true);
-
-    BulkEditSearchPane.downloadFileWithCommitErrors();
-    BulkEditFiles.verifyMatchedResultFileContent(errorsFromCommittingFileName, [userWithoutPermissions.barcode], 'firstElement', false);
   });
 });

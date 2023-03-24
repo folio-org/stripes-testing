@@ -103,6 +103,8 @@ describe('bulk-edit', () => {
       items.forEach(item => {
         InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', item.instanceName);
         InventorySearchAndFilter.selectSearchResultItem();
+        // must wait while page will be re-rendered
+        cy.wait(2000);
         InventoryInstance.openHoldings(['']);
         InventoryInstance.verifyLoan('Selected');
       });
@@ -123,6 +125,8 @@ describe('bulk-edit', () => {
       items.forEach(item => {
         InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', item.instanceName);
         InventorySearchAndFilter.selectSearchResultItem();
+        // must wait while page will be re-rendered
+        cy.wait(2000);
         InventoryInstance.openHoldings(['']);
         InventoryInstance.verifyLoan('Selected');
       });

@@ -145,7 +145,7 @@ export default {
   },
 
   selectSearchResultItem(indexRow = 0) {
-    return cy.do(this.getSearchResult(indexRow, 0).click());
+    cy.do(this.getSearchResult(indexRow, 0).click());
   },
 
   byEffectiveLocation(values) {
