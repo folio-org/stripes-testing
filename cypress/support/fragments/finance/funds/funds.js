@@ -50,6 +50,8 @@ const transactionDetailSection = Section({ id: 'pane-transaction-details' });
 const transactionList = MultiColumnList({ id: 'transactions-list' });
 const budgetSummaryAcordion = Accordion('Budget summary');
 const budgetInformationAcordion = Accordion('Budget information');
+const fundingInformationMCList = MultiColumnList({ ariaRowCount: 7 });
+const FinancialActivityAndOveragesMCList = MultiColumnList({ ariaRowCount: 5 });
 
 export default {
 
@@ -258,18 +260,18 @@ export default {
     cy.expect(budgetSummaryAcordion.exists());
     cy.expect(budgetInformationAcordion.exists());
     cy.expect([
-      MultiColumnList({ ariaRowCount: 7 }).find(MultiColumnListRow({ indexRow: `row-0` })).find(MultiColumnListCell({ content: 'Initial allocation' })).exists(),
-      MultiColumnList({ ariaRowCount: 7 }).find(MultiColumnListRow({ indexRow: `row-0` })).find(MultiColumnListCell({ content: amountInitialAllocation })).exists(),
-      MultiColumnList({ ariaRowCount: 7 }).find(MultiColumnListRow({ indexRow: `row-1` })).find(MultiColumnListCell({ content: 'Increase in allocation' })).exists(),
-      MultiColumnList({ ariaRowCount: 7 }).find(MultiColumnListRow({ indexRow: `row-1` })).find(MultiColumnListCell({ content: amountIncreaseInAllocation })).exists(),
-      MultiColumnList({ ariaRowCount: 7 }).find(MultiColumnListRow({ indexRow: `row-2` })).find(MultiColumnListCell({ content: 'Decrease in allocation' })).exists(),
-      MultiColumnList({ ariaRowCount: 7 }).find(MultiColumnListRow({ indexRow: `row-2` })).find(MultiColumnListCell({ content: amountDecreaseInAllocation })).exists(),
-      MultiColumnList({ ariaRowCount: 7 }).find(MultiColumnListRow({ indexRow: `row-3` })).find(MultiColumnListCell({ content: 'Total allocated' })).exists(),
-      MultiColumnList({ ariaRowCount: 7 }).find(MultiColumnListRow({ indexRow: `row-3` })).find(MultiColumnListCell({ content: amountTotalAllocated })).exists(),
-      MultiColumnList({ ariaRowCount: 7 }).find(MultiColumnListRow({ indexRow: `row-4` })).find(MultiColumnListCell({ content: 'Net transfers' })).exists(),
-      MultiColumnList({ ariaRowCount: 7 }).find(MultiColumnListRow({ indexRow: `row-4` })).find(MultiColumnListCell({ content: amountNetTransfers })).exists(),
-      MultiColumnList({ ariaRowCount: 7 }).find(MultiColumnListRow({ indexRow: `row-5` })).find(MultiColumnListCell({ content: 'Total funding' })).exists(),
-      MultiColumnList({ ariaRowCount: 7 }).find(MultiColumnListRow({ indexRow: `row-5` })).find(MultiColumnListCell({ content: amountTotalFunding })).exists(),
+      fundingInformationMCList.find(MultiColumnListRow({ indexRow: `row-0` })).find(MultiColumnListCell({ content: 'Initial allocation' })).exists(),
+      fundingInformationMCList.find(MultiColumnListRow({ indexRow: `row-0` })).find(MultiColumnListCell({ content: amountInitialAllocation })).exists(),
+      fundingInformationMCList.find(MultiColumnListRow({ indexRow: `row-1` })).find(MultiColumnListCell({ content: 'Increase in allocation' })).exists(),
+      fundingInformationMCList.find(MultiColumnListRow({ indexRow: `row-1` })).find(MultiColumnListCell({ content: amountIncreaseInAllocation })).exists(),
+      fundingInformationMCList.find(MultiColumnListRow({ indexRow: `row-2` })).find(MultiColumnListCell({ content: 'Decrease in allocation' })).exists(),
+      fundingInformationMCList.find(MultiColumnListRow({ indexRow: `row-2` })).find(MultiColumnListCell({ content: amountDecreaseInAllocation })).exists(),
+      fundingInformationMCList.find(MultiColumnListRow({ indexRow: `row-3` })).find(MultiColumnListCell({ content: 'Total allocated' })).exists(),
+      fundingInformationMCList.find(MultiColumnListRow({ indexRow: `row-3` })).find(MultiColumnListCell({ content: amountTotalAllocated })).exists(),
+      fundingInformationMCList.find(MultiColumnListRow({ indexRow: `row-4` })).find(MultiColumnListCell({ content: 'Net transfers' })).exists(),
+      fundingInformationMCList.find(MultiColumnListRow({ indexRow: `row-4` })).find(MultiColumnListCell({ content: amountNetTransfers })).exists(),
+      fundingInformationMCList.find(MultiColumnListRow({ indexRow: `row-5` })).find(MultiColumnListCell({ content: 'Total funding' })).exists(),
+      fundingInformationMCList.find(MultiColumnListRow({ indexRow: `row-5` })).find(MultiColumnListCell({ content: amountTotalFunding })).exists(),
   ]);
   },
 
@@ -277,14 +279,14 @@ export default {
     cy.expect(budgetSummaryAcordion.exists());
     cy.expect(budgetInformationAcordion.exists());
     cy.expect([
-      MultiColumnList({ ariaRowCount: 5 }).find(MultiColumnListRow({ indexRow: `row-0` })).find(MultiColumnListCell({ content: 'Encumbered' })).exists(),
-      MultiColumnList({ ariaRowCount: 5 }).find(MultiColumnListRow({ indexRow: `row-0` })).find(MultiColumnListCell({ content: amountEncumbered })).exists(),
-      MultiColumnList({ ariaRowCount: 5 }).find(MultiColumnListRow({ indexRow: `row-1` })).find(MultiColumnListCell({ content: 'Awaiting payment' })).exists(),
-      MultiColumnList({ ariaRowCount: 5 }).find(MultiColumnListRow({ indexRow: `row-1` })).find(MultiColumnListCell({ content: amountAwaitingPayment })).exists(),
-      MultiColumnList({ ariaRowCount: 5 }).find(MultiColumnListRow({ indexRow: `row-2` })).find(MultiColumnListCell({ content: 'Expended' })).exists(),
-      MultiColumnList({ ariaRowCount: 5 }).find(MultiColumnListRow({ indexRow: `row-2` })).find(MultiColumnListCell({ content: amountExpended })).exists(),
-      MultiColumnList({ ariaRowCount: 5 }).find(MultiColumnListRow({ indexRow: `row-3` })).find(MultiColumnListCell({ content: 'Unavailable' })).exists(),
-      MultiColumnList({ ariaRowCount: 5 }).find(MultiColumnListRow({ indexRow: `row-3` })).find(MultiColumnListCell({ content: amountUnavailable })).exists(),
+      FinancialActivityAndOveragesMCList.find(MultiColumnListRow({ indexRow: `row-0` })).find(MultiColumnListCell({ content: 'Encumbered' })).exists(),
+      FinancialActivityAndOveragesMCList.find(MultiColumnListRow({ indexRow: `row-0` })).find(MultiColumnListCell({ content: amountEncumbered })).exists(),
+      FinancialActivityAndOveragesMCList.find(MultiColumnListRow({ indexRow: `row-1` })).find(MultiColumnListCell({ content: 'Awaiting payment' })).exists(),
+      FinancialActivityAndOveragesMCList.find(MultiColumnListRow({ indexRow: `row-1` })).find(MultiColumnListCell({ content: amountAwaitingPayment })).exists(),
+      FinancialActivityAndOveragesMCList.find(MultiColumnListRow({ indexRow: `row-2` })).find(MultiColumnListCell({ content: 'Expended' })).exists(),
+      FinancialActivityAndOveragesMCList.find(MultiColumnListRow({ indexRow: `row-2` })).find(MultiColumnListCell({ content: amountExpended })).exists(),
+      FinancialActivityAndOveragesMCList.find(MultiColumnListRow({ indexRow: `row-3` })).find(MultiColumnListCell({ content: 'Unavailable' })).exists(),
+      FinancialActivityAndOveragesMCList.find(MultiColumnListRow({ indexRow: `row-3` })).find(MultiColumnListCell({ content: amountUnavailable })).exists(),
   ]);
   },
 
