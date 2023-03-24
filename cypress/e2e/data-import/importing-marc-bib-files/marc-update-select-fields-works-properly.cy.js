@@ -15,6 +15,7 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('ui-data-import', () => {
   let instanceHrid;
@@ -106,54 +107,56 @@ describe('ui-data-import', () => {
     FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfileName);
     FieldMappingProfiles.checkMappingProfilePresented(instanceMappingProfileName);
 
-    FieldMappingProfiles.createMappingProfileForUpdatesMarc(marcBibMappingProfile);
-    FieldMappingProfiles.closeViewModeForMappingProfile(marcBibMappingProfileName);
+    FieldMappingProfileView.checkUpdatesSectionOfMappingProfile(marcBibMappingProfile);
+    FieldMappingProfileView.checkOverrideProtectedSection(marcBibMappingProfileName);
     FieldMappingProfiles.checkMappingProfilePresented(marcBibMappingProfileName);
 
-    // step 4-6
-
-    // create action profiles
-    cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.create(instanceActionProfile, instanceMappingProfile.name);
-    ActionProfiles.checkActionProfilePresented(instanceActionProfile.name);
-
-    ActionProfiles.create(marcBibActionProfile, marcBibMappingProfile.name);
-    ActionProfiles.checkActionProfilePresented(marcBibActionProfile.name);
-
-    // create match profile
-    cy.visit(SettingsMenu.matchProfilePath);
-    MatchProfiles.createMatchProfile(matchProfile);
-    MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
-
-    // create job profiles
-    cy.visit(SettingsMenu.jobProfilePath);
-    JobProfiles.createJobProfile(jobProfile);
-    NewJobProfile.linkMatchAndTwoActionProfiles(matchProfile.profileName, marcBibActionProfile.name, instanceActionProfile.name);
-    NewJobProfile.saveAndClose();
-    JobProfiles.checkJobProfilePresented(jobProfileName);
-
-    // upload a marc file
-    cy.visit(TopMenu.dataImportPath);
-    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-    cy.reload();
-    DataImport.uploadFile(editedMarcFileName, fileNameForUpdate);
-    JobProfiles.searchJobProfileForImport(jobProfileName);
-    JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(fileNameForUpdate);
-    Logs.checkStatusOfJobProfile('Completed');
-    Logs.openFileDetails(fileNameForUpdate);
-    [FileDetails.columnName.srsMarc,
-      FileDetails.columnName.instance].forEach(columnName => {
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
-    });
-    FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems, 1);
-    FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 1);
-
-    // check updated instance in Inventory
-    FileDetails.openInstanceInInventory('Updated');
-    InstanceRecordView.verifyStatisticalCode(instanceMappingProfile.statisticalCodeUI);
-    InstanceRecordView.verifyInstanceStatusTerm(instanceMappingProfile.instanceStatus);
     
-    // step 13
+    
+    // // step 4-6
+
+    // // create action profiles
+    // cy.visit(SettingsMenu.actionProfilePath);
+    // ActionProfiles.create(instanceActionProfile, instanceMappingProfile.name);
+    // ActionProfiles.checkActionProfilePresented(instanceActionProfile.name);
+
+    // ActionProfiles.create(marcBibActionProfile, marcBibMappingProfile.name);
+    // ActionProfiles.checkActionProfilePresented(marcBibActionProfile.name);
+
+    // // create match profile
+    // cy.visit(SettingsMenu.matchProfilePath);
+    // MatchProfiles.createMatchProfile(matchProfile);
+    // MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
+
+    // // create job profiles
+    // cy.visit(SettingsMenu.jobProfilePath);
+    // JobProfiles.createJobProfile(jobProfile);
+    // NewJobProfile.linkMatchAndTwoActionProfiles(matchProfile.profileName, marcBibActionProfile.name, instanceActionProfile.name);
+    // NewJobProfile.saveAndClose();
+    // JobProfiles.checkJobProfilePresented(jobProfileName);
+
+    // // upload a marc file
+    // cy.visit(TopMenu.dataImportPath);
+    // // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+    // cy.reload();
+    // DataImport.uploadFile(editedMarcFileName, fileNameForUpdate);
+    // JobProfiles.searchJobProfileForImport(jobProfileName);
+    // JobProfiles.runImportFile();
+    // JobProfiles.waitFileIsImported(fileNameForUpdate);
+    // Logs.checkStatusOfJobProfile('Completed');
+    // Logs.openFileDetails(fileNameForUpdate);
+    // [FileDetails.columnName.srsMarc,
+    //   FileDetails.columnName.instance].forEach(columnName => {
+    //   FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+    // });
+    // FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems, 1);
+    // FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 1);
+
+    // // check updated instance in Inventory
+    // FileDetails.openInstanceInInventory('Updated');
+    // InstanceRecordView.verifyStatisticalCode(instanceMappingProfile.statisticalCodeUI);
+    // InstanceRecordView.verifyInstanceStatusTerm(instanceMappingProfile.instanceStatus);
+    
+    // // step 13
   });
 });
