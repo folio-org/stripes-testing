@@ -218,8 +218,8 @@ export default {
   },
 
   downloadErrors() {
-    cy.do('Download Errors(CSV)')
-    // need to wait downloading
+    cy.do(Button('Download errors (CSV)').click());
+    //Need to wait for the file to download
     cy.wait(5000);
   },
 

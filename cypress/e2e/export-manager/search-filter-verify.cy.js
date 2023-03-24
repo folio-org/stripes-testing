@@ -101,7 +101,7 @@ describe('export manager', () => {
 
   it('C350727 Verify search filter options Export Manager (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     ExportManagerSearchPane.waitLoading();
-    ExportManagerSearchPane.searchByScheduled();
+    ExportManagerSearchPane.searchBySuccessful();
     cy.do(ExportManagerSearchPane.getSearchResult(0, 0).perform(element => {
       ExportManagerSearchPane.searchById(element.innerText);
     }));
