@@ -1,5 +1,4 @@
-import InventorySearchAndFilter from '../inventory/inventorySearchAndFilter';
-import { MultiColumnListCell, Pane } from '../../../../interactors';
+import { MultiColumnListCell } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
 const getSearchResult = (row = 0, col = 0) => MultiColumnListCell({ 'row': row, 'columnIndex': col });
