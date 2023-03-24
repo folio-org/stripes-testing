@@ -102,7 +102,7 @@ describe('bulk-edit', () => {
 
       cy.loginAsAdmin({ path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
       items.forEach(item => {
-        InventorySearchAndFilter.switchToItem()
+        InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
         ItemRecordView.waitLoading();
         ItemRecordView.closeDetailView();
@@ -124,7 +124,7 @@ describe('bulk-edit', () => {
 
       cy.loginAsAdmin({ path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
       items.forEach(item => {
-        InventorySearchAndFilter.switchToItem()
+        InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
         ItemRecordView.waitLoading();
         ItemRecordView.closeDetailView();
