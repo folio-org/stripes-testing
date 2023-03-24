@@ -42,6 +42,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.verifyDragNDropUsernamesArea();
     BulkEditSearchPane.uploadFile(invalidUsernamesFileName);
     BulkEditSearchPane.waitFileUploading();
+    BulkEditActions.openActions();
     BulkEditActions.downloadErrors();
 
     BulkEditSearchPane.openLogsSearch();

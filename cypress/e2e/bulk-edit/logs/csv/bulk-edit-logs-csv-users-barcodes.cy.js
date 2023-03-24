@@ -46,6 +46,7 @@ describe('Bulk Edit - Logs', () => {
     FileManager.deleteFile(`cypress/fixtures/${invalidAndValidUserBarcodesFileName}`);
     FileManager.deleteFile(`cypress/fixtures/${importFileName}`);
     Users.deleteViaApi(user.userId);
+    Users.deleteViaApi(userWithoutPermissions.userId);
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
