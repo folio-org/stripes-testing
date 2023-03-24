@@ -40,7 +40,7 @@ describe('ui-finance: Fiscal Year', () => {
   };
   const firstOrder = { ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',
-    ongoing: {isSubscription: false, manualRenewal: false},
+    ongoing: { isSubscription: false, manualRenewal: false },
     approved: true,
     reEncumber: true,
   };
