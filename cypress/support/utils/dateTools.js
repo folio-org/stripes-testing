@@ -10,11 +10,16 @@ export default {
     return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(currentDate.getDate())}/${currentDate.getFullYear()}`;
   },
 
+  getCurrentDateForFileNaming: () => {
+    const currentDate = new Date();
+    return `${padWithZero(currentDate.getMonth() + 1)}_${padWithZero(currentDate.getDate())}_${currentDate.getFullYear()}`;
+  },
+
   getCurrentDateForFiscalYear: () => {
     const currentDate = new Date();
     return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(currentDate.getDate())}`;
   },
-  
+
   getRandomFiscalYearCodeForRollover: (min, max) => {
     // returns random 4 digit code for the Fiscal Year
     return 'FYTA' + Math.floor((Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.ceil(min))).toString();
@@ -28,7 +33,7 @@ export default {
     if (today.getMonth() !== yesterday.getMonth()) {
       yesterday.setMonth(yesterday.getMonth());
     }
-  
+
     const month = yesterday.getMonth() + 1;
     const day = yesterday.getDate();
     const year = yesterday.getFullYear();
@@ -39,11 +44,11 @@ export default {
     const today = new Date();
     let tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
-  
+
     if (today.getMonth() !== tomorrow.getMonth()) {
       tomorrow.setMonth(tomorrow.getMonth());
     }
-  
+
     const month = tomorrow.getMonth() + 1;
     const day = tomorrow.getDate();
     const year = tomorrow.getFullYear();
@@ -113,6 +118,9 @@ export default {
   getFormattedDate({ date }, type = 'YYYY-MM-DD') {
     if (type === 'MM/DD/YYYY') {
       return `${padWithZero(date.getMonth() + 1)}/${padWithZero(date.getDate())}/${date.getFullYear()}`;
+    }
+    if (type === 'DD/MM/YYYY') {
+      return `${padWithZero(date.getDate())}/${padWithZero(date.getMonth() + 1)}/${date.getFullYear()}`;
     }
     return `${date.getFullYear()}-${padWithZero(date.getMonth() + 1)}-${padWithZero(date.getDate())}`;
   },

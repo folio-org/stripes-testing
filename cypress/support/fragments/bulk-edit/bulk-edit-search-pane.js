@@ -13,9 +13,13 @@ import {
   Pane,
   TextArea,
   including,
-  MultiColumnListRow
+  MultiColumnListRow, TextField
 } from '../../../../interactors';
 
+const logsStartDateAccordion = Accordion('Start date');
+const logsEndDateAccordion = Accordion('End date');
+const applyBtn = Button('Apply');
+const logsResultPane = Pane({ id: 'bulk-edit-logs-pane' });
 const resultsAccordion = Accordion('Preview of record matched');
 const changesAccordion = Accordion('Preview of record changed');
 const errorsAccordion = Accordion('Errors');
@@ -30,6 +34,7 @@ const itemsRadio = RadioButton('Inventory - items');
 const holdingsRadio = RadioButton('Inventory - holdings');
 const usersCheckbox = Checkbox('Users');
 const holdingsCheckbox = Checkbox('Inventory - holdings');
+const itemsCheckbox = Checkbox('Inventory - items');
 const identifierToggle = Button('Identifier');
 const queryToggle = Button('Query');
 const logsToggle = Button('Logs');
@@ -37,6 +42,8 @@ const setCriteriaPane = Pane('Set criteria');
 const searchButton = Button('Search');
 const resetAllButton = Button('Reset all');
 const logsStatusesAccordion = Accordion('Statuses');
+const textFildTo = TextField('To');
+const textFildFrom = TextField('From');
 
 export default {
   waitLoading() {
@@ -422,6 +429,10 @@ export default {
     cy.do(holdingsCheckbox.click());
   },
 
+  checkItemsCheckbox() {
+    cy.do(itemsCheckbox.click());
+  },
+
   checkUsersCheckbox() {
     cy.do(usersCheckbox.click());
   },
@@ -521,15 +532,6 @@ export default {
     if (errors) {
       cy.expect(Button('Download errors (CSV)').exists());
     }
-  },
-
-  downloadErrors() {
-    cy.do([
-      actions.click(),
-      Button('Download errors (CSV)').click(),
-    ]);
-    //Need to wait for the file to download
-    cy.wait(5000);
   },
 
   verifyUsersActionShowColumns() {
@@ -709,33 +711,100 @@ export default {
     ]);
   },
 
+  verifyLogsRowActionWhenCompletedWithErrors() {
+    cy.expect([
+      HTML('File that was used to trigger the bulk edit').exists(),
+      HTML('File with the matching records').exists(),
+      HTML('File with errors encountered during the record matching').exists(),
+      HTML('File with the preview of proposed changes').exists(),
+      HTML('File with updated records').exists(),
+      HTML('File with errors encountered when committing the changes').exists()
+    ]);
+  },
+
+  verifyLogsRowActionWhenCompletedWithErrorsWithoutModification() {
+    cy.expect([
+      HTML('File that was used to trigger the bulk edit').exists(),
+      HTML('File with errors encountered during the record matching').exists(),
+    ]);
+  },
+
   downloadFileUsedToTrigger() {
     cy.do(Button('File that was used to trigger the bulk edit').click());
-    //Need to wait for the file to download
+    // Need to wait for the file to download
     cy.wait(5000);
   },
 
   downloadFileWithErrorsEncountered() {
     cy.do(Button('File with errors encountered during the record matching').click());
-    //Need to wait for the file to download
+    // Need to wait for the file to download
     cy.wait(5000);
   },
-  
+
   downloadFileWithMatchingRecords() {
     cy.do(Button('File with the matching records').click());
-    //Need to wait for the file to download
+    // Need to wait for the file to download
     cy.wait(5000);
   },
 
   downloadFileWithProposedChanges() {
     cy.do(Button('File with the preview of proposed changes').click());
-    //Need to wait for the file to download
+    // Need to wait for the file to download
     cy.wait(5000);
   },
 
   downloadFileWithUpdatedRecords() {
     cy.do(Button('File with updated records').click());
-    //Need to wait for the file to download
+    // Need to wait for the file to download
     cy.wait(5000);
   },
+
+  downloadFileWithCommitErrors() {
+    cy.do(Button('File with errors encountered when committing the changes').click());
+    // Need to wait for the file to download
+    cy.wait(5000);
+  },
+
+  verifyLogsTableHeaders() {
+    cy.expect([
+      MultiColumnListHeader('ID').exists(),
+      MultiColumnListHeader('Record type').exists(),
+      MultiColumnListHeader('Status').exists(),
+      MultiColumnListHeader('Run by').exists(),
+      MultiColumnListHeader('Started running').exists(),
+      MultiColumnListHeader('Ended running').exists(),
+      MultiColumnListHeader('# of records').exists(),
+      MultiColumnListHeader('Processed').exists(),
+      MultiColumnListHeader('Editing').exists(),
+      MultiColumnListHeader('Actions').exists(),
+    ]);
+  },
+
+  fillLogsStartDate(fromDate, toDate) {
+    cy.do([
+      logsStartDateAccordion.clickHeader(),
+      logsStartDateAccordion.find(textFildFrom).fillIn(fromDate),
+      logsStartDateAccordion.find(textFildTo).fillIn(toDate),
+    ]);
+  },
+
+  fillLogsEndDate(fromDate, toDate) {
+    cy.do([
+      logsEndDateAccordion.clickHeader(),
+      logsEndDateAccordion.find(textFildFrom).fillIn(fromDate),
+      logsEndDateAccordion.find(textFildTo).fillIn(toDate),
+    ]);
+  },
+
+  applyStartDateFilters() {
+    cy.do(logsStartDateAccordion.find(applyBtn).click());
+  },
+
+  applyEndDateFilters() {
+    cy.do(logsEndDateAccordion.find(applyBtn).click());
+  },
+
+  noLogResultsFound() {
+    cy.expect(logsResultPane.find(HTML('No results found. Please check your filters.')).exists());
+  }
 };

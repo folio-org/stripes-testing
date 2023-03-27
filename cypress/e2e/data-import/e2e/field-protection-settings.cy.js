@@ -103,7 +103,7 @@ describe('ui-data-import', () => {
           })
             .then((resp) => {
               const id = resp.id;
-              marcFieldProtectionId.push = id;
+              marcFieldProtectionId.push(id);
             });
         });
       });
