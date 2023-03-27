@@ -8,7 +8,9 @@ import { Button,
   Section,
   Select,
   Pane,
-  Link } from '../../../../../interactors';
+  Link, 
+  MultiColumnListCell,
+  } from '../../../../../interactors';
 import FinanceHelper from '../financeHelper';
 import getRandomPostfix from '../../../utils/stringTools';
 
@@ -17,7 +19,11 @@ const numberOfSearchResultsHeader = '//*[@id="paneHeaderledger-results-pane-subt
 const rolloverButton = Button('Rollover');
 const zeroResultsFoundText = '0 records found';
 const fiscalYearCss = 'select[name^="fiscalYearOneId"]';
-
+const rolloverConfirmButton = Button({ id: 'clickable-rollover-confirmation-confirm' });
+const fiscalYearSelect = Select({ name: 'toFiscalYearId' });
+const rolloverAllocationCheckbox = Checkbox({ name: 'budgetsRollover[0].rolloverAllocation' });
+const rolloverBudgetVelue = Select({ name: 'budgetsRollover[0].rolloverBudgetValue' });
+const aaddAvailableToSelect = Select({ name: 'budgetsRollover[0].addAvailableTo' });
 
 export default {
   defaultUiLedger: {
@@ -38,17 +44,61 @@ export default {
     ]);
   },
 
+  closeRolloverInfo : () => {
+    cy.do(Button('Close & view ledger details').click());
+  },
+
+  closeOpenedPage : () => {
+    cy.do(Button({ icon: 'times'}).click());
+  },
+
+  selectFundInLedger : (fund) => {
+    cy.do([
+      Section({ id: 'fund' }).find(MultiColumnListCell({content: fund})).click(),
+    ]);
+  },
+
   fillInRolloverInfo : (fiscalYear) => {
     cy.do([
-      Select({ name: 'toFiscalYearId' }).choose(fiscalYear),
-      Checkbox({ name: 'budgetsRollover[0].rolloverAllocation' }).click(),
+      fiscalYearSelect.choose(fiscalYear),
+      rolloverAllocationCheckbox.click(),
       Checkbox({ name: 'encumbrancesRollover[0].rollover' }).click(),
       Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Expended'),
       Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
       Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
       rolloverButton.click(),
-      Button('Continue').click(),
-      Button('Confirm').click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      rolloverConfirmButton.click(),
+    ]);
+  },
+
+  fillInRolloverForCashBalance : (fiscalYear, rolloverBudgetValue, rolloverValueAs) => {
+    cy.do([
+      fiscalYearSelect.choose(fiscalYear),
+      rolloverAllocationCheckbox.click(),
+      rolloverBudgetVelue.choose(rolloverBudgetValue),
+      aaddAvailableToSelect.choose(rolloverValueAs),
+      rolloverButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      rolloverConfirmButton.click(),
+    ]);
+  },
+
+  fillInTestRolloverInfoCashBalance : (fiscalYear, rolloverBudgetValue, rolloverValueAs) => {
+    cy.do([
+      Select({ name: 'toFiscalYearId' }).choose(fiscalYear),
+      Checkbox({ name: 'budgetsRollover[0].rolloverAllocation' }).click(),
+      rolloverBudgetVelue.choose(rolloverBudgetValue),
+      aaddAvailableToSelect.choose(rolloverValueAs),
+      Button('Test rollover').click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      Button({ id: 'clickable-test-rollover-confirmation-confirm' }).click(),
     ]);
   },
 
@@ -154,5 +204,49 @@ export default {
 
   selectLedger:(ledgerName) => {
     cy.do(Pane({ id: 'ledger-results-pane' }).find(Link(ledgerName)).click());
-  }
+  },
+
+  rolloverLogs:() => {
+    cy.do([
+      Button('Actions').click(),
+      Button('Rollover logs').click()
+    ]);
+  },
+
+  exportRollover:(dataFile) => {
+    cy.get('#rollover-logs-list') 
+      .find('div[role="gridcell"]') 
+      .contains('a', `${dataFile}-result`)
+      .click();
+  },
+
+
+checkDownloadedFile(fileName, fund, secondFiscalYear, allowableEncumbrance, allowableExpenditure, initialAllocation, totalAllocation, totalFunding, cashBalance, available ) {
+  cy.wait(3000); // wait for the file to load
+  cy.readFile(`cypress/downloads/${fileName}`).then(fileContent => {
+    // Split the contents of a file into lines
+    const fileRows = fileContent.split('\n');
+
+    expect(fileRows[0].trim()).to.equal('"Name (Fund)","Code (Fund)","Status (Fund)","Type","Group (Code)","Acquisition unit","Transfer from","Transfer to","External account number","Description","Name (Budget)","Status (Budget)","Allowable encumbrance","Allowable expenditure","Initial allocation","Increase","Decrease","Total allocation","Transfers","Total Funding","Encumbered (Budget)","Awaiting payment (Budget)","Expended (Budget)","Unavailable","Over encumbered","Over expended","Cash balance","Available","Name (Exp Class)","Code (Exp Class)","Status (Exp Class)","Encumbered (Exp Class)","Awaiting payment (Exp Class)","Expended (Exp Class)","Percentage of total expended"');
+
+    const actualData = fileRows[1].trim().split(',');
+    expect(actualData[0]).to.equal(`"${fund.name}"`);
+    expect(actualData[1]).to.equal(`"${fund.code}"`);
+    expect(actualData[9]).to.equal(`"${fund.description}"`);
+    expect(actualData[10]).to.equal(`"${fund.code}-${secondFiscalYear.code}"`);
+    expect(actualData[12]).to.equal(allowableEncumbrance);
+    expect(actualData[13]).to.equal(allowableExpenditure);
+    expect(actualData[14]).to.equal(initialAllocation);
+    expect(actualData[17]).to.equal(totalAllocation);
+    expect(actualData[19]).to.equal(totalFunding);
+    expect(actualData[26]).to.equal(cashBalance);
+    expect(actualData[27]).to.equal(available);
+  });
+},
+
+deleteDownloadedFile(fileName) {
+  const filePath = `cypress\\downloads\\${fileName}`;
+  cy.exec(`del "${filePath}"`, { failOnNonZeroExit: false });
+},
+
 };

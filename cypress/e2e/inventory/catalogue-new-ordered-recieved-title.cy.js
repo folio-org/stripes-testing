@@ -161,7 +161,6 @@ describe('orders: Receive piece from Order', () => {
       CheckInActions.checkInItem(barcode);
       ConfirmItemInModal.confirmInTransitModal();
       cy.visit(TopMenu.inventoryPath);
-      InventorySearchAndFilter.instanceTabIsDefault();
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', instanceTitle);
       InventoryInstances.selectInstance();

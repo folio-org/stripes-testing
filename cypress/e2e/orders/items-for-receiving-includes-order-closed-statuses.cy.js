@@ -1,8 +1,8 @@
+import moment from 'moment';
+import uuid from 'uuid';
 import permissions from '../../support/dictionary/permissions';
 import devTeams from '../../support/dictionary/devTeams';
 import testType from '../../support/dictionary/testTypes';
-import moment from 'moment';
-import uuid from 'uuid';
 import getRandomPostfix from '../../support/utils/stringTools';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
@@ -25,7 +25,7 @@ import Checkout from '../../support/fragments/checkout/checkout';
 // import Users from '../../support/fragments/users/users';
 
 describe('orders: Receiving and Check-in', () => {
-  const order = { 
+  const order = {
     ...NewOrder.defaultOneTimeOrder,
     approved: true,
   };
@@ -54,83 +54,83 @@ describe('orders: Receiving and Check-in', () => {
   let orderNumber;
   let user;
   let effectiveLocationServicePoint;
-  let location
+  let location;
 
   before(() => {
     cy.getAdminToken();
 
     ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' })
-        .then((servicePoints) => {
+      .then((servicePoints) => {
         effectiveLocationServicePoint = servicePoints[0];
         NewLocation.createViaApi(NewLocation.getDefaultLocation(effectiveLocationServicePoint.id))
-            .then((locationResponse) => {
+          .then((locationResponse) => {
             location = locationResponse;
             Organizations.createOrganizationViaApi(organization)
-                .then(organizationsResponse => {
+              .then(organizationsResponse => {
                 organization.id = organizationsResponse;
                 order.vendor = organizationsResponse;
-            });   
-    
-    cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-    cy.createOrderApi(order)
-        .then((response) => {
-        orderNumber = response.body.poNumber;
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList();
-        Orders.createPOLineViaActions();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 25);
-        OrderLines.fillInPOLineInfoForExportWithLocationForPhisicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', locationResponse.institutionId, '4');
-        OrderLines.backToEditingOrder();
-        Orders.openOrder();
-        OrderLines.selectPOLInOrder();
-        OrderLines.cancelPOL();
-        OrderLines.openInstance();
-        InventoryInstance.openHoldingsAccordion(location.name);
-        // Need to wait,while instance will be loaded
-        cy.wait(3000);
-        InventoryInstance.openItemByBarcodeAndIndex('No barcode','row-0', 10);
-        ItemActions.edit();
-        ItemRecordEdit.addBarcode(barcodeForFirstItem);
-        ItemRecordEdit.save();
-        // Need to wait,while instance will be saved
-        cy.wait(3000);
-        ItemActions.closeItem();
-        InventoryInstance.openHoldingsAccordion(location.name);
-        InventoryInstance.openItemByBarcodeAndIndex('No barcode','row-1', 10);
-        ItemActions.edit();
-        ItemRecordEdit.addBarcode(barcodeForSecondItem);
-        ItemRecordEdit.save();
-        // Need to wait,while instance will be saved
-        cy.wait(3000);
-        ItemActions.closeItem();
-        InventoryInstance.openHoldingsAccordion(location.name);
-        InventoryInstance.openItemByBarcodeAndIndex('No barcode','row-2', 10);
-        ItemActions.edit();
-        ItemRecordEdit.addBarcode(barcodeForThirdItem);
-        ItemRecordEdit.save();
-        // Need to wait,while instance will be saved
-        cy.wait(3000);
-        ItemActions.closeItem();
-        InventoryInstance.openHoldingsAccordion(location.name);
-        InventoryInstance.openItemByBarcodeAndIndex('No barcode','row-3', 10);
-        ItemActions.edit();
-        ItemRecordEdit.addBarcode(barcodeForFourItem);
-        ItemRecordEdit.save();
-        // Need to wait,while instance will be saved
-        cy.wait(3000);
-        ItemActions.closeItem();
-    });
+              });
 
-    cy.visit(TopMenu.checkInPath);
-    SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
-    SwitchServicePoint.checkIsServicePointSwitched(effectiveLocationServicePoint.name);
-    // Need to wait,while Checkin page will be loaded in same location
-    cy.wait(2000);
-    CheckInActions.checkInItemGui(barcodeForFirstItem);
-    cy.wait(2000);
-    CheckInActions.checkInItemGui(barcodeForSecondItem);
+            cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+            cy.createOrderApi(order)
+              .then((response) => {
+                orderNumber = response.body.poNumber;
+                Orders.searchByParameter('PO number', orderNumber);
+                Orders.selectFromResultsList();
+                Orders.createPOLineViaActions();
+                OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
+                OrderLines.fillInPOLineInfoForExportWithLocationForPhisicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', locationResponse.institutionId, '4');
+                OrderLines.backToEditingOrder();
+                Orders.openOrder();
+                OrderLines.selectPOLInOrder();
+                OrderLines.cancelPOL();
+                OrderLines.openInstance();
+                InventoryInstance.openHoldingsAccordion(location.name);
+                // Need to wait,while instance will be loaded
+                cy.wait(3000);
+                InventoryInstance.openItemByBarcodeAndIndex('No barcode', 'row-0', 10);
+                ItemActions.edit();
+                ItemRecordEdit.addBarcode(barcodeForFirstItem);
+                ItemRecordEdit.save();
+                // Need to wait,while instance will be saved
+                cy.wait(3000);
+                ItemActions.closeItem();
+                InventoryInstance.openHoldingsAccordion(location.name);
+                InventoryInstance.openItemByBarcodeAndIndex('No barcode', 'row-1', 10);
+                ItemActions.edit();
+                ItemRecordEdit.addBarcode(barcodeForSecondItem);
+                ItemRecordEdit.save();
+                // Need to wait,while instance will be saved
+                cy.wait(3000);
+                ItemActions.closeItem();
+                InventoryInstance.openHoldingsAccordion(location.name);
+                InventoryInstance.openItemByBarcodeAndIndex('No barcode', 'row-2', 10);
+                ItemActions.edit();
+                ItemRecordEdit.addBarcode(barcodeForThirdItem);
+                ItemRecordEdit.save();
+                // Need to wait,while instance will be saved
+                cy.wait(3000);
+                ItemActions.closeItem();
+                InventoryInstance.openHoldingsAccordion(location.name);
+                InventoryInstance.openItemByBarcodeAndIndex('No barcode', 'row-3', 10);
+                ItemActions.edit();
+                ItemRecordEdit.addBarcode(barcodeForFourItem);
+                ItemRecordEdit.save();
+                // Need to wait,while instance will be saved
+                cy.wait(3000);
+                ItemActions.closeItem();
+              });
+
+            cy.visit(TopMenu.checkInPath);
+            SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
+            SwitchServicePoint.checkIsServicePointSwitched(effectiveLocationServicePoint.name);
+            // Need to wait,while Checkin page will be loaded in same location
+            cy.wait(2000);
+            CheckInActions.checkInItemGui(barcodeForFirstItem);
+            cy.wait(2000);
+            CheckInActions.checkInItemGui(barcodeForSecondItem);
+          });
       });
-    });
 
     cy.createTempUser([
       permissions.uiInventoryViewInstances.gui,
@@ -145,19 +145,19 @@ describe('orders: Receiving and Check-in', () => {
 
   after(() => {
     Checkout.checkoutItemViaApi({
-        id: uuid(),
-        itemBarcode: barcodeForFirstItem,
-        loanDate: moment.utc().format(),
-        servicePointId: effectiveLocationServicePoint.id,
-        userBarcode: user.barcode,
-      });
-      Checkout.checkoutItemViaApi({
-        id: uuid(),
-        itemBarcode: barcodeForSecondItem,
-        loanDate: moment.utc().format(),
-        servicePointId: effectiveLocationServicePoint.id,
-        userBarcode: user.barcode,
-      });
+      id: uuid(),
+      itemBarcode: barcodeForFirstItem,
+      loanDate: moment.utc().format(),
+      servicePointId: effectiveLocationServicePoint.id,
+      userBarcode: user.barcode,
+    });
+    Checkout.checkoutItemViaApi({
+      id: uuid(),
+      itemBarcode: barcodeForSecondItem,
+      loanDate: moment.utc().format(),
+      servicePointId: effectiveLocationServicePoint.id,
+      userBarcode: user.barcode,
+    });
     cy.loginAsAdmin({ path:TopMenu.receivingPath, waiter: Receiving.waitLoading });
     Orders.searchByParameter('PO number', orderNumber);
     Receiving.selectFromResultsList();
@@ -165,6 +165,7 @@ describe('orders: Receiving and Check-in', () => {
     cy.visit(TopMenu.ordersPath);
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList();
+    Orders.reOpenOrder();
     Orders.unOpenOrder(orderNumber);
     OrderLines.selectPOLInOrder();
     OrderLines.deleteOrderLine();
