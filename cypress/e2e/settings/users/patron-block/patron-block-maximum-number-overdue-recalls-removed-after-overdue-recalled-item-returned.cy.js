@@ -24,6 +24,7 @@ import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane
 import UsersCard from '../../../../support/fragments/users/usersCard';
 import Requests from '../../../../support/fragments/requests/requests';
 import RequestPolicy from '../../../../support/fragments/circulation/request-policy';
+import UserLoans from '../../../../support/fragments/users/loans/userLoans';
 
 describe('Patron Block: Maximum number of overdue recalls', () => {
   let addedCirculationRule;
@@ -69,6 +70,12 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
     requestTypes: ['Recall'],
     name: `recall_${getRandomPostfix()}`,
     id: uuid(),
+  };
+
+  const findPatron = () => {
+    cy.visit(TopMenu.usersPath);
+    UsersSearchPane.waitLoading();
+    UsersSearchPane.searchByKeywords(userData.barcode);
   };
 
   before('Preconditions', () => {
@@ -197,6 +204,19 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
           });
         });
 
+        UserLoans.getUserLoansIdViaApi(userData.userId).then((userLoans) => {
+          const loansData = userLoans.loans;
+          const newDueDate = new Date(loansData[0].loanDate);
+          newDueDate.setDate(newDueDate.getDate() - 1);
+          loansData.forEach((loan) => {
+            UserLoans.changeDueDateViaApi({
+              ...loan,
+              dueDate: newDueDate,
+              action: 'dueDateChanged',
+            }, loan.id);
+          });
+        });
+
         cy.login(userData.username, userData.password);
       });
   });
@@ -246,12 +266,10 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
       cy.visit(SettingsMenu.limitsPath);
       Limits.selectGroup(patronGroup.name);
       Limits.setLimit('Maximum number of overdue recalls', '4');
-      // needed for the "Loan Policy" so recall can get overdue status
-      cy.wait(120000);
+      // // needed for the "Loan Policy" so recall can get overdue status
+      // cy.wait(120000);
 
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.waitLoading();
-      UsersSearchPane.searchByKeywords(userData.barcode);
+      findPatron();
       UsersCard.waitLoading();
       Users.checkIsPatronBlocked(checkedOutBlockMessage, 'Borrowing, Renewals, Requests');
 
@@ -260,9 +278,7 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
       CheckInActions.checkInItemGui(itemForCheckIn.barcode);
       CheckInActions.verifyLastCheckInItem(itemForCheckIn.barcode);
 
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.waitLoading();
-      UsersSearchPane.searchByKeywords(userData.barcode);
+      findPatron();
       Users.checkPatronIsNotBlocked(userData.userId);
     }
   );

@@ -31,11 +31,11 @@ import Renewals from '../../../../support/fragments/loans/renewals';
 import OverrideAndRenewModal from '../../../../support/fragments/users/loans/overrideAndRenewModal';
 import RenewConfirmationModal from '../../../../support/fragments/users/loans/renewConfirmationModal';
 
-describe('Patron Block: Maximum outstanding fee/fine balance', () => {
+describe('Patron Block: Maximum number of lost items', () => {
   let addedCirculationRule;
   let originalCirculationRules;
   const renewComment = `AutotestText${getRandomPostfix()}`;
-  const blockMessage = `You have reached maximum outstanding fee/fine balance as set by patron group${getRandomPostfix()}`;
+  const blockMessage = `You have reached maximum number of lost items as set by patron group${getRandomPostfix()}`;
   const patronGroup = {
     name: 'groupToPatronBlock' + getRandomPostfix(),
   };
@@ -50,7 +50,7 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
     ],
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest fee/fine limit', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest lost items limit', uuid()),
   };
   const ownerBody = {
     owner: 'AutotestOwner' + getRandomPostfix(),
@@ -113,6 +113,12 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
     },
   };
 
+  const findPatron = () => {
+    cy.visit(TopMenu.usersPath);
+    UsersSearchPane.waitLoading();
+    UsersSearchPane.searchByKeywords(userData.barcode);
+  };
+
   before('Preconditions', () => {
     itemsData.itemsWithSeparateInstance.forEach(function (item, index) {
       item.barcode = generateUniqueItemBarcodeWithShift(index);
@@ -165,7 +171,6 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
             itemsData.itemsWithSeparateInstance[index].itemId = specialInstanceIds.holdingIds[0].itemIds;
           });
         });
-        cy.wrap(itemsData.itemsWithSeparateInstance).as('items');
       });
 
     UsersOwners.createViaApi(ownerBody).then((ownerResponse) => {
@@ -200,6 +205,7 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
         permissions.checkinAll.gui,
         permissions.checkoutAll.gui,
         permissions.uiUsersView.gui,
+        permissions.okapiTimersPatch.gui,
       ],
       patronGroup.name
     )
@@ -209,37 +215,57 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
         userData.userId = userProperties.userId;
         userData.barcode = userProperties.barcode;
         UserEdit.addServicePointViaApi(testData.userServicePoint.id, userData.userId, testData.userServicePoint.id);
+        cy.getToken(userData.username, userData.password);
         UserLoans.updateTimerForAgedToLost('minute');
+        cy.getAdminToken();
       })
       .then(() => {
-        cy.get('@items').each((item) => {
-          Checkout.checkoutItemViaApi({
-            id: uuid(),
-            itemBarcode: item.barcode,
-            loanDate: moment.utc().format(),
-            servicePointId: testData.userServicePoint.id,
-            userBarcode: userData.barcode,
-          });
-        });
-
-        UserLoans.getUserLoansIdViaApi(userData.userId).then((userLoans) => {
-          const loansData = userLoans.loans;
-          loansData.forEach(({ id, item }) => {
-            if (item.title.includes('InstanceForDeclareLost')) {
-              UserLoans.declareLoanLostViaApi({
-                servicePointId: testData.userServicePoint.id,
-                declaredLostDateTime: moment.utc().format(),
-              }, id);
-            }
-          });
-        });
-
         cy.login(userData.username, userData.password);
+        cy.visit(SettingsMenu.conditionsPath);
+        Conditions.waitLoading();
+        Conditions.select('Maximum number of lost items');
+        Conditions.setConditionState(blockMessage);
+        cy.visit(SettingsMenu.limitsPath);
+        Limits.selectGroup(patronGroup.name);
+        Limits.setLimit('Maximum number of lost items', '4');
       });
   });
 
-  after('Deleting created entities', () => {
-    UserLoans.updateTimerForAgedToLost('reset');
+  beforeEach('Assign lost status to items', () => {
+    cy.wrap(itemsData.itemsWithSeparateInstance).as('items');
+    cy.get('@items').each((item) => {
+      Checkout.checkoutItemViaApi({
+        id: uuid(),
+        itemBarcode: item.barcode,
+        loanDate: moment.utc().format(),
+        servicePointId: testData.userServicePoint.id,
+        userBarcode: userData.barcode,
+      });
+    });
+
+    UserLoans.getUserLoansIdViaApi(userData.userId).then((userLoans) => {
+      const loansData = userLoans.loans;
+      const newDueDate = new Date(loansData[0].loanDate);
+      newDueDate.setDate(newDueDate.getDate() - 1);
+      loansData.forEach((loan) => {
+        if (loan.item.title.includes('InstanceForDeclareLost')) {
+          UserLoans.declareLoanLostViaApi({
+            servicePointId: testData.userServicePoint.id,
+            declaredLostDateTime: moment.utc().format(),
+          }, loan.id);
+        } else if (loan.item.title.includes('InstanceForAgedToLost')) {
+          UserLoans.changeDueDateViaApi({
+            ...loan, dueDate: newDueDate, action: 'dueDateChanged'
+          }, loan.id);
+        }
+      });
+    });
+    // needed for the "Lost Item Fee Policy" so patron can recieve fee/fine
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(100000);
+  });
+
+  afterEach('Returning items to original state', () => {
     cy.get('@items').each((item) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,
@@ -253,6 +279,12 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
         cy.deleteFeesFinesApi(id);
       });
     });
+  });
+
+  after('Deleting created entities', () => {
+    cy.getToken(userData.username, userData.password);
+    UserLoans.updateTimerForAgedToLost('reset');
+    cy.getAdminToken();
     cy.get('@items').each((item, index) => {
       cy.deleteItemViaApi(item.itemId);
       cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
@@ -268,7 +300,7 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    Conditions.resetConditionViaApi('cf7a0d5f-a327-4ca1-aa9e-dc55ec006b8a', 'Maximum outstanding fee/fine balance');
+    Conditions.resetConditionViaApi('72b67965-5b73-4840-bc0b-be8f3f6e047e', 'Maximum number of lost items');
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
@@ -277,22 +309,10 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
     );
   });
   it(
-    'C350655 Verify automated patron block "Maximum outstanding fee/fine balance" removed after lost item renewed (vega)',
+    'C350653 Verify automated patron block "Maximum number of lost items" removed after lost item renewed (vega)',
     { tags: [TestTypes.criticalPath, devTeams.vega] },
     () => {
-      cy.visit(SettingsMenu.conditionsPath);
-      Conditions.waitLoading();
-      Conditions.select('Maximum outstanding fee/fine balance');
-      Conditions.setConditionState(blockMessage);
-      cy.visit(SettingsMenu.limitsPath);
-      Limits.selectGroup(patronGroup.name);
-      Limits.setLimit('Maximum outstanding fee/fine balance', '624');
-      // needed for the "Lost Item Fee Policy" so items can get "aged to lost" status
-      cy.wait(230000);
-
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.waitLoading();
-      UsersSearchPane.searchByKeywords(userData.barcode);
+      findPatron();
       UsersCard.waitLoading();
       Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
 
@@ -305,9 +325,26 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
       RenewConfirmationModal.confirmRenewOverrideItem();
       OverrideAndRenewModal.confirmOverrideItem();
 
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.waitLoading();
-      UsersSearchPane.searchByKeywords(userData.barcode);
+      findPatron();
+      Users.checkPatronIsNotBlocked(userData.userId);
+    }
+  );
+
+  it(
+    'C350648 Verify automated patron block "Maximum number of lost items" removed after lost item returned (vega)',
+    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    () => {
+      findPatron();
+      UsersCard.waitLoading();
+      Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
+
+      cy.visit(TopMenu.checkInPath);
+      const itemForCheckIn = itemsData.itemsWithSeparateInstance[Math.floor(Math.random() * 5)];
+      CheckInActions.checkInItemGui(itemForCheckIn.barcode);
+      CheckInActions.confirmCheckInLostItem();
+      CheckInActions.verifyLastCheckInItem(itemForCheckIn.barcode);
+
+      findPatron();
       Users.checkPatronIsNotBlocked(userData.userId);
     }
   );
