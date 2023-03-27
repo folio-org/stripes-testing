@@ -499,5 +499,12 @@ export default {
     cy.wait(1000);
     statisticalCodeAccordion.find(TextField()).click();
     cy.do(statisticalCodeAccordion.find(Checkbox(code)).click());
-  }
+  },
+
+  browseSearch(searchValue) {
+    cy.do([
+      TextField({ id: 'input-record-search' }).fillIn(searchValue),
+      searchButton.click()
+    ]);
+  },
 };
