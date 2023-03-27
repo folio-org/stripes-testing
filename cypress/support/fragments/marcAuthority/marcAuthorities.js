@@ -10,6 +10,12 @@ const enabledSearchButton = Button({ id: 'submit-authorities-search', disabled: 
 const browseSearchAndFilterInput = Select('Search field index');
 const marcViewSection = Section({ id: 'marc-view-pane' });
 const editorSection = Section({ id: 'quick-marc-editor-pane' });
+const actionsButton = Button('Actions');
+const marcAuthUpdatesCsvBtn = Button('MARC authority headings updates (CSV)');
+const authReportModal = Modal({ id: 'authorities-report-modal' });
+const fromDate = TextField({ name: 'fromDate' });
+const toDate = TextField({ name: 'toDate' });
+const exportButton = Button('Export');
 
 export default {
   waitLoading: () => cy.expect(rootSection.exists()),
@@ -17,22 +23,22 @@ export default {
   waitRows: () => cy.expect(rootSection.find(PaneHeader()).find(HTML(including('found')))),
 
   clickActionsAndReportsButtons: () => {
-    cy.do(rootSection.find(PaneHeader()).find(Button('Actions')).click());
-    cy.expect(Button('MARC authority headings updates (CSV)').exists());
-    cy.do(Button('MARC authority headings updates (CSV)').click());
-    cy.expect(Modal({ id: 'authorities-report-modal' }).exists());
+    cy.do(rootSection.find(PaneHeader()).find(actionsButton).click());
+    cy.expect(marcAuthUpdatesCsvBtn.exists());
+    cy.do(marcAuthUpdatesCsvBtn.click());
+    cy.expect(authReportModal.exists());
   },
 
   fillReportModal: (today, tomorrow) => {
     cy.do([
-      TextField({ name: 'fromDate' }).fillIn(today),
-      TextField({ name: 'toDate' }).fillIn(tomorrow),
+      fromDate.fillIn(today),
+      toDate.fillIn(tomorrow),
     ]);
-    cy.expect(Modal({ id: 'authorities-report-modal' }).find(Button('Export')).exists());
+    cy.expect(authReportModal.find(exportButton).exists());
   },
 
   clickExportButton: () => {
-    cy.do(Modal({ id: 'authorities-report-modal' }).find(Button('Export')).click());
+    cy.do(authReportModal.find(exportButton).click());
   },
 
   checkCalloutAfterExport: (jobId) => {
