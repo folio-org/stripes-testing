@@ -19,10 +19,13 @@ const saveAndKeepEditingBtnDisabled = Button({ id: 'quick-marc-record-save-edit'
 const confirmationModal = Modal({ id: 'quick-marc-confirm-modal' });
 const cancelEditConformModel = Modal({ id: 'cancel-editing-confirmation' });
 const cancelEditConfirmBtn = Button('Keep editing');
+const updateLinkedBibFieldsModal = Modal({ id: 'quick-marc-update-linked-bib-fields' });
+const saveButton = Modal().find(Button({ id: 'clickable-quick-marc-update-linked-bib-fields-confirm' }));
 const continueWithSaveButton = Modal().find(Button({ id: 'clickable-quick-marc-confirm-modal-confirm' }));
 const restoreDeletedFieldsBtn = Modal().find(Button({ id: 'clickable-quick-marc-confirm-modal-cancel' }));
 const quickMarcEditorRowContent = HTML({ className: including('quickMarcEditorRowContent') });
 const calloutUpdatedRecord = Callout('Record has been updated.');
+const calloutUpdatedLinkedBibRecord = Callout('Record has been updated. 2 linked bibliographic record(s) updates have begun.');
 const validRecord = InventoryInstance.validOCLC;
 const specRetInputNamesHoldings008 = ['records[3].content.Spec ret[0]',
   'records[3].content.Spec ret[1]',
@@ -152,6 +155,23 @@ export default {
     cy.do(continueWithSaveButton.click());
     cy.expect([
       calloutUpdatedRecord.exists(),
+      rootSection.absent(),
+      viewMarcSection.exists(),
+    ]);
+  },
+
+  saveAndCloseUpdatedLinkedBibField() {
+    cy.do(saveAndCloseButton.click());
+    cy.expect([
+      updateLinkedBibFieldsModal.exists(),
+      saveButton.exists(),
+    ]);
+  },
+
+  saveAndCheck() {
+    cy.do(saveButton.click());
+    cy.expect([
+      calloutUpdatedLinkedBibRecord.exists(),
       rootSection.absent(),
       viewMarcSection.exists(),
     ]);
