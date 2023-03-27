@@ -32,11 +32,13 @@ describe('permissions: inventory', () => {
     cy.visit(TopMenu.inventoryPath);
     InventorySearchAndFilter.switchToBrowseTab();
     InventorySearchAndFilter.selectBrowseCallNumbers();
-    InventorySearchAndFilter.browseSearch('K1');
+    InventorySearchAndFilter.browseSearch('Holdings magazine');
+    cy.reload();
     InventorySearchAndFilter.verifyCallNumbersResultsInBrowsePane();
     InventorySearchAndFilter.selectBrowseSubjects();
     InventorySearchAndFilter.browseSearch('art');
     InventorySearchAndFilter.verifySubjectsResultsInBrowsePane();
+    cy.logout();
   });
 
   it('C375077 User with "Inventory: All permissions" permission can see browse call numbers and subjects without assigning specific browse permissions (Orchid+) (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {

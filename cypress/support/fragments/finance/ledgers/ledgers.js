@@ -57,6 +57,7 @@ export default {
       Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
       Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
       rolloverButton.click(),
+      Button('Continue').click(),
     ]);
     cy.wait(2000);
     cy.do([
@@ -71,6 +72,7 @@ export default {
       rolloverBudgetVelue.choose(rolloverBudgetValue),
       aaddAvailableToSelect.choose(rolloverValueAs),
       rolloverButton.click(),
+      Button('Continue').click(),
     ]);
     cy.wait(2000);
     cy.do([
@@ -80,11 +82,12 @@ export default {
 
   fillInTestRolloverInfoCashBalance : (fiscalYear, rolloverBudgetValue, rolloverValueAs) => {
     cy.do([
-      Select({ name: 'toFiscalYearId' }).choose(fiscalYear),
-      Checkbox({ name: 'budgetsRollover[0].rolloverAllocation' }).click(),
+      fiscalYearSelect.choose(fiscalYear),
+      rolloverAllocationCheckbox.click(),
       rolloverBudgetVelue.choose(rolloverBudgetValue),
       aaddAvailableToSelect.choose(rolloverValueAs),
       Button('Test rollover').click(),
+      Button('Continue').click(),
     ]);
     cy.wait(2000);
     cy.do([
