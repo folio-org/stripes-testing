@@ -17,6 +17,7 @@ const matchRecordsFileNameInvalidAndValid = `Matched-Records-${invalidAndValidUs
 const errorsFromMatchingFileName = `*Errors-${invalidAndValidUserBarcodesFileName}*`;
 const importFileName = `bulkEditImport_${getRandomPostfix()}.csv`;
 const updatesPreviewFileName = `*Updates-Preview-${importFileName}`;
+const errorsFromCommittingFileName = `*Errors-*-${matchRecordsFileNameInvalidAndValid}*`;
 const newFirstName = `testNewFirstNameame_${getRandomPostfix()}`;
 
 describe('Bulk Edit - Logs', () => {
@@ -68,7 +69,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditActions.commitChanges();
 
     // Verify changes on the page, download changes and errors
-    BulkEditSearchPane.verifyChangedResults(newFirstName, userWithoutPermissions.firstName);
+    BulkEditSearchPane.verifyChangedResults(newFirstName);
     BulkEditActions.openActions();
     BulkEditActions.downloadChangedCSV();
     BulkEditActions.downloadErrors();
@@ -78,7 +79,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.verifyLogsPane();
     BulkEditSearchPane.checkUsersCheckbox();
     BulkEditSearchPane.clickActionsOnTheRow();
-    BulkEditSearchPane.verifyLogsRowActionWhenCompleted();
+    BulkEditSearchPane.verifyLogsRowActionWhenCompletedWithErrors();
 
     BulkEditSearchPane.downloadFileUsedToTrigger();
     BulkEditFiles.verifyCSVFileRows(`${invalidAndValidUserBarcodesFileName}*`, [user.barcode, userWithoutPermissions.barcode, invalidUserBarcode]);
@@ -94,5 +95,8 @@ describe('Bulk Edit - Logs', () => {
 
     BulkEditSearchPane.downloadFileWithUpdatedRecords();
     BulkEditFiles.verifyMatchedResultFileContent(updatesPreviewFileName, [newFirstName, userWithoutPermissions.firstName], 'firstName', true);
+
+    BulkEditSearchPane.downloadFileWithCommitErrors();
+    BulkEditFiles.verifyMatchedResultFileContent(errorsFromCommittingFileName, [userWithoutPermissions.barcode], 'firstElement', false);
   });
 });
