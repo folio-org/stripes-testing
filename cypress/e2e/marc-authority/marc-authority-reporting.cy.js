@@ -16,7 +16,7 @@ import DateTools from '../../support/utils/dateTools';
 import ExportManagerSearchPane from '../../support/fragments/exportManager/exportManagerSearchPane';
 import FileManager from '../../support/utils/fileManager';
 
-describe('MARC Authority -> Edit Authority record', () => {
+describe('MARC Authority -> Reporting | MARC authority', () => {
   const testData = {
     searchOption: 'Keyword',
     title: 'Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
@@ -42,7 +42,7 @@ describe('MARC Authority -> Edit Authority record', () => {
 
   let createdAuthorityID = [];
 
-  before('', () => {
+  before('Creating user and uploading files', () => {
     cy.createTempUser([
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
@@ -72,11 +72,11 @@ describe('MARC Authority -> Edit Authority record', () => {
     });
   });
 
-  beforeEach('', () => {
+  beforeEach('Login to the application', () => {
     cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.marcAuthorities, waiter: MarcAuthorities.waitLoading });
   });
 
-  after('', () => {
+  after('Deleting user and data', () => {
     InventoryInstance.deleteInstanceViaApi(createdAuthorityID[0]);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityID[1]);
     MarcAuthority.deleteViaAPI(createdAuthorityID[2]);
