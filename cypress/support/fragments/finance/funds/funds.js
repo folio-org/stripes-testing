@@ -48,7 +48,6 @@ const externalAccountField = TextField('External account*');
 const ledgerSelection = Selection('Ledger*');
 const transactionDetailSection = Section({ id: 'pane-transaction-details' });
 const transactionList = MultiColumnList({ id: 'transactions-list' });
-const transactionList = MultiColumnList({ id: 'transactions-list' });
 const budgetSummaryAcordion = Accordion('Budget summary');
 const budgetInformationAcordion = Accordion('Budget information');
 const fundingInformationMCList = MultiColumnList({ ariaRowCount: 7 });
