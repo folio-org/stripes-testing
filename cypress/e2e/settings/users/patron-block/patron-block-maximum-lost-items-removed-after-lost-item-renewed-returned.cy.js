@@ -215,9 +215,7 @@ describe('Patron Block: Maximum number of lost items', () => {
         userData.userId = userProperties.userId;
         userData.barcode = userProperties.barcode;
         UserEdit.addServicePointViaApi(testData.userServicePoint.id, userData.userId, testData.userServicePoint.id);
-        cy.getToken(userData.username, userData.password);
         UserLoans.updateTimerForAgedToLost('minute');
-        cy.getAdminToken();
       })
       .then(() => {
         cy.login(userData.username, userData.password);
@@ -282,9 +280,7 @@ describe('Patron Block: Maximum number of lost items', () => {
   });
 
   after('Deleting created entities', () => {
-    cy.getToken(userData.username, userData.password);
     UserLoans.updateTimerForAgedToLost('reset');
-    cy.getAdminToken();
     cy.get('@items').each((item, index) => {
       cy.deleteItemViaApi(item.itemId);
       cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
