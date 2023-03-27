@@ -261,11 +261,11 @@ export default {
     cy.expect(MultiColumnListRow({ index: 0 }).exists());
   },
 
-  verifyAndClickLinkIcon() {
+  verifyAndClickLinkIcon(tag) {
     // Waiter needed for the link to be loaded properly.
     cy.wait(1000);
-    cy.expect(QuickMarcEditorRow({ tagValue: '700' }).find(linkIconButton).exists());
-    cy.do(QuickMarcEditorRow({ tagValue: '700' }).find(linkIconButton).click());
+    cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(linkIconButton).exists());
+    cy.do(QuickMarcEditorRow({ tagValue: tag }).find(linkIconButton).click());
   },
 
   verifySelectMarcAuthorityModal() {
@@ -315,6 +315,15 @@ export default {
     ]);
   },
 
+  searchResults(value) {
+    cy.do(selectField.choose(including('Keyword')));
+    cy.do(searchInput.fillIn(value));
+    cy.expect(searchInput.has({ value }));
+    cy.expect(enabledSearchBtn.exists());
+    cy.do(searchButton.click());
+    cy.expect(authoritySearchResults.exists());
+  },
+
   fillInAndSearchResults(value) {
     cy.do(searchInput.fillIn(value));
     cy.expect(searchInput.has({ value }));
@@ -335,7 +344,7 @@ export default {
   checkSearchResultsTable() {
     cy.expect([
       mclLinkHeader.has({ content: 'Link' }),
-      mclAuthRefTypeHeader.has({ content: 'Authorized' }),
+      mclAuthRefTypeHeader.has({ content: 'Authorized/Reference' }),
       mclHeadingRef.has({ content: 'Heading/Reference' }),
       mclHeadingType.has({ content: 'Type of heading' }),
       MultiColumnListRow({ index: 0 }).find(Button({ ariaLabel: 'Link' })).exists(),
@@ -360,6 +369,11 @@ export default {
       marcViewPane.find(buttonLink).exists(),
       marcViewPane.has({ mark: 'Starr, Lisa' }),
     ]);
+  },
+
+  clickLinkButton() {
+    cy.expect(marcViewPane.find(buttonLink).exists());
+    cy.do(marcViewPane.find(buttonLink).click());
   },
 
   closeDetailsView() {
