@@ -45,7 +45,7 @@ describe('plug-in MARC authority | Search', () => {
     InventoryInstances.selectInstance();
     InventoryInstance.getId().then(id => { instanceID = id; });
     InventoryInstance.editMarcBibliographicRecord();
-    InventoryInstance.verifyAndClickLinkIcon();
+    InventoryInstance.verifyAndClickLinkIcon('700');
     InventoryInstance.verifySelectMarcAuthorityModal();
     InventoryInstance.verifySearchAndFilterDisplay();
     InventoryInstance.closeAuthoritySource();
