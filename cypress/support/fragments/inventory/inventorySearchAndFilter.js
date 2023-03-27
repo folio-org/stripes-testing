@@ -47,6 +47,7 @@ const emptyResultsMessage = 'Choose a filter or enter a search query to show res
 const browseButton = Button({ id: 'mode-navigation-browse' });
 const viewHoldingButton = Button('View holdings');
 const statisticalCodeAccordion = Accordion({ id:'itemsStatisticalCodeIds' });
+const callNumberBrowsePane = Pane({ title: 'Browse inventory' });
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -247,6 +248,22 @@ export default {
   verifyCallNumberBrowsePane() {
     const callNumberBrowsePane = Pane({ title: 'Browse inventory' });
     cy.expect(callNumberBrowsePane.exists());
+  },
+  
+  verifySubjectsResultsInBrowsePane() {
+    cy.expect(
+      callNumberBrowsePane
+      .find(MultiColumnList({ id: 'browse-results-list-browseSubjects'}))
+      .find(MultiColumnListRow({ indexRow: 'row-0' })).exists()
+      );
+  },
+
+  verifyCallNumbersResultsInBrowsePane() {
+    cy.expect(
+      callNumberBrowsePane
+      .find(MultiColumnList({ id: 'browse-results-list-callNumbers'}))
+      .find(MultiColumnListRow({ indexRow: 'row-0' })).exists()
+      );
   },
 
   saveUUIDs() {
