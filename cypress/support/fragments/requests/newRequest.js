@@ -111,12 +111,22 @@ export default {
     ]);
   },
 
+  enterHridInfo(hrid) {
+    cy.do(titleLevelRequest.click());
+    cy.do(instanceHridInput.fillIn(hrid));
+    cy.do(Section({ id: 'new-item-info' }).find(Button('Enter')).click());
+  },
+
   verifyErrorMessage(message) {
     cy.expect(HTML(including(message)).exists());
   },
 
   verifyItemInformation: (allContentToCheck) => {
     return allContentToCheck.forEach(contentToCheck => cy.expect(Section({ id: 'section-item-info' }, including(contentToCheck)).exists));
+  },
+
+  verifyHridInformation: (allContentToCheck) => {
+    return allContentToCheck.forEach(contentToCheck => cy.expect(Section({ id: 'section-instance-info' }, including(contentToCheck)).exists));
   },
 
   verifyRequestInformation: (itemStatus) => {
@@ -129,6 +139,10 @@ export default {
       TextField({ id: 'requestExpirationDate' }).exists(),
       TextArea({ id: 'patronComments' }).exists(),
     ]);
+  },
+
+  chooseRequestType(requestType) {
+    cy.do(selectRequestType.choose(requestType));
   },
 
   enterRequesterInfo(newRequest) {
