@@ -21,7 +21,7 @@ describe('MARC Authority -> Edit Authority record', () => {
     searchOption: 'Keyword',
     title: 'Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
   };
-  const changesSavedCallout = 'Record has been updated.';
+  
   const marcFiles = [
     {
         marc: 'marcBibFileForC375231_1.mrc', 
