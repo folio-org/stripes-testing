@@ -17,7 +17,6 @@ const matchRecordsFileNameInvalidAndValid = `Matched-Records-${invalidAndValidUs
 const errorsFromMatchingFileName = `*Errors-${invalidAndValidUserBarcodesFileName}*`;
 const importFileName = `bulkEditImport_${getRandomPostfix()}.csv`;
 const updatesPreviewFileName = `*Updates-Preview-${importFileName}`;
-const errorsFromCommittingFileName = `*Errors-*-${matchRecordsFileNameInvalidAndValid}*`;
 const newFirstName = `testNewFirstNameame_${getRandomPostfix()}`;
 
 describe('Bulk Edit - Logs', () => {
