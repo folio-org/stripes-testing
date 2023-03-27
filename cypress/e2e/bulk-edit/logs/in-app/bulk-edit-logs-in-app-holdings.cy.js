@@ -50,7 +50,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.verifyLogsRowAction();
 
     BulkEditSearchPane.downloadFileUsedToTrigger();
-    BulkEditFiles.verifyMatchedResultFileContent(`*${invalidHoldingHRIDsFileName}*`, [invalidHoldingHRID], 'firstElement', false);
+    BulkEditFiles.verifyCSVFileRows(`${invalidHoldingHRIDsFileName}*`, [invalidHoldingHRID]);
 
     BulkEditSearchPane.downloadFileWithErrorsEncountered();
     BulkEditFiles.verifyMatchedResultFileContent(errorsEncounteredFileName, [invalidHoldingHRID], 'firstElement', false);
