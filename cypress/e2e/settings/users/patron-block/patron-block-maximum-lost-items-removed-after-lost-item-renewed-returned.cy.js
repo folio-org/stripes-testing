@@ -262,7 +262,7 @@ describe('Patron Block: Maximum number of lost items', () => {
     });
     // needed for the "Lost Item Fee Policy" so patron can recieve fee/fine
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(100000);
+    cy.wait(120000);
   });
 
   afterEach('Returning items to original state', () => {
