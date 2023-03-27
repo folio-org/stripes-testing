@@ -143,7 +143,7 @@ describe('orders: export', () => {
     ExportManagerSearchPane.rerunJob();
     cy.reload();
     ExportManagerSearchPane.verifyResult('Successful');
-    ExportManagerSearchPane.selectSearchResultItem();
+    ExportManagerSearchPane.selectJob('Successful');
     ExportManagerSearchPane.downloadJob();
     ExportManagerSearchPane.resetAll();
     ExportManagerSearchPane.selectOrganizationsSearch();

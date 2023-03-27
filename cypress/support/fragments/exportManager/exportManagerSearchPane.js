@@ -31,6 +31,9 @@ export default {
   selectSearchResultItem(indexRow = 0) {
     return cy.do(this.getSearchResult(indexRow, 0).click());
   },
+  selectJob(content) {
+    return cy.do(MultiColumnListCell(including(content)).click());
+  },
   closeExportJobPane() {
     cy.do(Button({ ariaLabel: 'Close Export job ' }).click());
   },

@@ -46,7 +46,7 @@ describe('permissions: inventory', () => {
     cy.visit(TopMenu.inventoryPath);
     InventorySearchAndFilter.switchToBrowseTab();
     InventorySearchAndFilter.selectBrowseCallNumbers();
-    InventorySearchAndFilter.browseSearch('K1');
+    InventorySearchAndFilter.browseSearch('Holdings magazine');
     InventorySearchAndFilter.verifyCallNumbersResultsInBrowsePane();
     InventorySearchAndFilter.selectBrowseSubjects();
     InventorySearchAndFilter.browseSearch('art');
