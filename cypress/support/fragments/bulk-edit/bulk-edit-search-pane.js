@@ -42,6 +42,8 @@ const setCriteriaPane = Pane('Set criteria');
 const searchButton = Button('Search');
 const resetAllButton = Button('Reset all');
 const logsStatusesAccordion = Accordion('Statuses');
+const textFildTo = TextField('To');
+const textFildFrom = TextField('From');
 
 export default {
   waitLoading() {
@@ -781,16 +783,16 @@ export default {
   fillLogsStartDate(fromDate, toDate) {
     cy.do([
       logsStartDateAccordion.clickHeader(),
-      logsStartDateAccordion.find(TextField('From')).fillIn(fromDate),
-      logsStartDateAccordion.find(TextField('To')).fillIn(toDate),
+      logsStartDateAccordion.find(textFildFrom).fillIn(fromDate),
+      logsStartDateAccordion.find(textFildTo).fillIn(toDate),
     ]);
   },
 
   fillLogsEndDate(fromDate, toDate) {
     cy.do([
       logsEndDateAccordion.clickHeader(),
-      logsEndDateAccordion.find(TextField('From')).fillIn(fromDate),
-      logsEndDateAccordion.find(TextField('To')).fillIn(toDate),
+      logsEndDateAccordion.find(textFildFrom).fillIn(fromDate),
+      logsEndDateAccordion.find(textFildTo).fillIn(toDate),
     ]);
   },
 
