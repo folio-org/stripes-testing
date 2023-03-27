@@ -314,6 +314,7 @@ describe('Overdue fine', () => {
         NoticePolicyTemplateApi.deleteViaApi(templateId);
       }
     );
+    cy.deleteLoanType(testData.loanTypeId);
   });
 
   it(
