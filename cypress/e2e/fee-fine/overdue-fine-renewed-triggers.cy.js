@@ -208,8 +208,8 @@ describe('Overdue fine', () => {
         }).then((loanType) => {
           testData.loanTypeId = loanType.id;
         });
-        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
-          testData.materialTypeId = materialTypes.id;
+        cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
+          testData.materialTypeId = materialType.id;
         });
       })
       .then(() => {
