@@ -110,6 +110,7 @@ export default {
     cy.do(jobTypeAccordion.find(Checkbox({ id: 'clickable-filter-type-auth-headings-updates' })).click());
   },
   downloadLastCreatedJob(jobId) {
+    // TODO: redesign to interactors
     cy.get(`a:contains(${jobId})`).first().click()
   },
   verifyUserSearchResult(username) {
