@@ -133,7 +133,7 @@ describe('orders: export', () => {
 
   it('C350402: Verify that an Order is exported to a definite Vendors Account specified in one of several Integration configurations (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet], retries: 2 }, () => {
     //Need to wait while first job will be runing
-    cy.wait(5000);
+    cy.wait(10000);
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList();
     Orders.createPOLineViaActions();
