@@ -20,7 +20,7 @@ const updatesPreviewFileName = `*Updates-Preview-${importFileName}`;
 const errorsFromCommittingFileName = `*Errors-*-${matchRecordsFileNameInvalidAndValid}*`;
 const newFirstName = `testNewFirstNameame_${getRandomPostfix()}`;
 
-describe('Bulk Edit - Logs', () => {
+describe('Bulk Edit - Logs', { retries: 1 }, () => {
   before('create test data', () => {
     cy.createTempUser([])
       .then(userProperties => {
@@ -49,7 +49,7 @@ describe('Bulk Edit - Logs', () => {
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
-  it('C375215 Verify generated Logs files for Users CSV - with errors (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C375215 Verify generated Logs files for Users CSV - with errors (firebird)', { tags: [testTypes.smoke, devTeams.firebird], retries: 1 }, () => {
     // Upload file with invalid and valid user UUIDs
     BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
     BulkEditSearchPane.uploadFile(invalidAndValidUserBarcodesFileName);

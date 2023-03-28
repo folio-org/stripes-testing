@@ -189,8 +189,9 @@ export default {
   },
 
   verifyExpirationDate(date) {
-    // date format MM/DD/YYYY
-    cy.expect(KeyValue('Expiration date').has({ value: date }));
+    // js date object
+    const formattedDate = DateTools.getFormattedDateWithSlashes({ date });
+    cy.expect(KeyValue('Expiration date').has({ value: formattedDate }));
   },
 
   openContactInfo() {
