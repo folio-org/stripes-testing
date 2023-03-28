@@ -9,7 +9,7 @@ import {
   MultiColumnListHeader,
   MultiColumnListCell,
   TextField,
-  RepeatableFieldItem,
+  RepeatableFieldItem, Select,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
@@ -21,6 +21,7 @@ const plusBtn = Button({ icon: 'plus-sign' });
 const deleteBtn = Button({ icon: 'trash' });
 const keepEditingBtn = Button('Keep editing');
 const areYouSureForm = Modal('Are you sure?');
+const downloadPreviewBtn = Button('Download preview');
 // interactor doesn't allow to pick second the same select
 function getEmailField() {
   return cy.get('[class^=textField]');
@@ -40,6 +41,12 @@ function getBulkEditSelectType() {
 function getPatronGroupTypeSelect() {
   return cy.get('select').eq(3);
 }
+
+const bulkPageItemSelections = {
+  valueType: Select({ content: including('Select option') }),
+  action: Select({ content: including('Select action') }),
+  status: Select({ content: including('Select item status') }),
+};
 
 
 export default {
@@ -61,10 +68,14 @@ export default {
     cy.expect([
       areYouSureForm.find(HTML(including(`${count} records will be changed`))).exists(),
       areYouSureForm.find(keepEditingBtn).exists(),
-      areYouSureForm.find(Button('Download preview')).exists(),
+      areYouSureForm.find(downloadPreviewBtn).exists(),
       areYouSureForm.find(Button('Commit changes')).exists(),
       areYouSureForm.find(MultiColumnListCell(cellContent)).exists()
     ]);
+  },
+
+  downloadPreview() {
+    cy.do(downloadPreviewBtn.click());
   },
 
   clickKeepEditingBtn() {
@@ -111,20 +122,28 @@ export default {
     getEmailField().eq(2).type(newEmailDomain);
   },
 
-  replaceTemporaryLocation(location = 'Annex', type = 'item') {
-    getBulkEditSelectType().select(`Temporary ${type} location`);
-    getLocationSelect().select('Replace with');
+  replaceTemporaryLocation(location = 'Annex', type = 'item', rowIndex = 0) {
     cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageItemSelections.valueType).choose(`Temporary ${type} location`),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageItemSelections.action).choose('Replace with'),
       Button('Select control\nSelect location').click(),
       SelectionOption(including(location)).click(),
     ]);
   },
 
-  replacePermanentLocation(location, type) {
-    getBulkEditSelectType().select(`Permanent ${type} location`);
+  replacePermanentLocation(location, type = 'item', rowIndex = 0) {
     cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageItemSelections.valueType).choose(`Permanent ${type} location`),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageItemSelections.action).choose('Replace with'),
       Button('Select control\nSelect location').click(),
       SelectionOption(including(location)).click(),
+    ]);
+  },
+
+  replaceItemStatus(status, rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageItemSelections.valueType).choose('Item status'),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageItemSelections.status).choose(status),
     ]);
   },
 
@@ -171,19 +190,19 @@ export default {
     cy.get('[id^="datepicker-calendar-container"]').should('be.visible');
   },
 
-  fillLoanType(type = 'Selected') {
-    getBulkEditSelectType().select('Permanent loan type');
+  fillPermanentLoanType(type = 'Selected', rowIndex = 0) {
     cy.do([
-      Button({ id: 'loanType' }).click(),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageItemSelections.valueType).choose('Permanent loan type'),
+      RepeatableFieldItem({ index: rowIndex }).find(Button({ id: 'loanType' })).click(),
       SelectionOption(including(type)).click(),
     ]);
   },
 
-  fillTemporaryLoanType(type = 'Selected') {
-    getBulkEditSelectType().select('Temporary loan type');
-    getActionSelect().select('Replace with');
+  fillTemporaryLoanType(type = 'Selected', rowIndex = 0) {
     cy.do([
-      Button({ id: 'loanType' }).click(),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageItemSelections.valueType).choose('Temporary loan type'),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageItemSelections.action).choose('Replace with'),
+      RepeatableFieldItem({ index: rowIndex }).find(Button({ id: 'loanType' })).click(),
       SelectionOption(including(type)).click(),
     ]);
   },
@@ -219,7 +238,7 @@ export default {
 
   downloadErrors() {
     cy.do(Button('Download errors (CSV)').click());
-    //Need to wait for the file to download
+    // Need to wait for the file to download
     cy.wait(5000);
   },
 

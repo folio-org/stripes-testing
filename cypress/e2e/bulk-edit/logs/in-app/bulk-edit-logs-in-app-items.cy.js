@@ -14,7 +14,9 @@ const validItemUUIDsFileName = `validItemBarcodes_${getRandomPostfix()}.csv`;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
-  accessionNumber: getRandomPostfix()
+  accessionNumber: getRandomPostfix(),
+  instanceId: '',
+  itemId: '',
 };
 
 describe('bulk-edit', () => {
@@ -33,8 +35,12 @@ describe('bulk-edit', () => {
             waiter: BulkEditSearchPane.waitLoading
           });
 
-          InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-          FileManager.createFile(`cypress/fixtures/${validItemUUIDsFileName}`, item.itemBarcode);
+          item.instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+          cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${item.itemBarcode}"` })
+            .then((instance) => {
+              item.itemId = instance.items[0].id;
+              FileManager.createFile(`cypress/fixtures/${validItemUUIDsFileName}`, item.itemId);
+            });
         });
     });
 
@@ -47,6 +53,7 @@ describe('bulk-edit', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${validItemUUIDsFileName}`);
+      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
     });
 
     it('C375273 Verify generated Logs files for Items In app -- only valid Item UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -58,17 +65,27 @@ describe('bulk-edit', () => {
 
       const newLocation = 'Online';
 
-      BulkEditActions.openActions();
       BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.replaceTemporaryLocation(newLocation);
+      BulkEditActions.replaceTemporaryLocation(newLocation, 'item', 0);
       BulkEditActions.addNewBulkEditFilterString();
-      BulkEditActions.replacePermanentLocation(newLocation);
-      // 14
+      BulkEditActions.replacePermanentLocation(newLocation, 'item', 1);
       BulkEditActions.addNewBulkEditFilterString();
-
+      BulkEditActions.replaceItemStatus('Available', 2);
+      BulkEditActions.addNewBulkEditFilterString();
+      BulkEditActions.fillTemporaryLoanType('Reading room', 3);
+      BulkEditActions.addNewBulkEditFilterString();
+      BulkEditActions.fillPermanentLoanType('Selected', 4);
       BulkEditActions.confirmChanges();
+      BulkEditActions.downloadPreview();
       BulkEditActions.commitChanges();
       BulkEditSearchPane.waitFileUploading();
+      BulkEditActions.openActions();
+      BulkEditActions.downloadChangedCSV();
+
+      BulkEditSearchPane.openLogsSearch();
+      BulkEditSearchPane.checkItemsCheckbox();
+      BulkEditSearchPane.clickActionsOnTheRow();
+      cy.pause();
     });
   });
 });
