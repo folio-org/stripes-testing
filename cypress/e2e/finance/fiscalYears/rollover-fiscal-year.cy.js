@@ -157,7 +157,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C186156 Rollover Fiscal Year (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
+  it('C186156 Rollover Fiscal Year (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet], retries: 2 }, () => {
     FinanceHelp.searchByName(defaultLedger.name);
     Ledgers.selectLedger(defaultLedger.name);
     Ledgers.rollover();

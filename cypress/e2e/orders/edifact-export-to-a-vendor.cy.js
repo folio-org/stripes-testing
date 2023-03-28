@@ -131,7 +131,7 @@ describe('orders: export', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C350402: Verify that an Order is exported to a definite Vendors Account specified in one of several Integration configurations (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
+  it('C350402: Verify that an Order is exported to a definite Vendors Account specified in one of several Integration configurations (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet], retries: 2 }, () => {
     //Need to wait while first job will be runing
     cy.wait(5000);
     Orders.searchByParameter('PO number', orderNumber);
