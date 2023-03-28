@@ -132,7 +132,6 @@ describe('Overdue fine', () => {
     NewNoticePolicyTemplate.startAdding();
     NewNoticePolicyTemplate.checkInitialState();
     NewNoticePolicyTemplate.addToken('item.title');
-    cy.wait(3000)
     NewNoticePolicyTemplate.create(template, false);
     NewNoticePolicyTemplate.chooseCategory(template.category);
     NewNoticePolicyTemplate.checkPreview();
