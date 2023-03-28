@@ -215,7 +215,9 @@ describe('Patron Block: Maximum number of lost items', () => {
         userData.userId = userProperties.userId;
         userData.barcode = userProperties.barcode;
         UserEdit.addServicePointViaApi(testData.userServicePoint.id, userData.userId, testData.userServicePoint.id);
+        cy.getToken(userData.username, userData.password);
         UserLoans.updateTimerForAgedToLost('minute');
+        cy.getAdminToken();
       })
       .then(() => {
         cy.login(userData.username, userData.password);
@@ -260,7 +262,7 @@ describe('Patron Block: Maximum number of lost items', () => {
     });
     // needed for the "Lost Item Fee Policy" so patron can recieve fee/fine
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(150000);
+    cy.wait(120000);
   });
 
   afterEach('Returning items to original state', () => {
@@ -280,7 +282,9 @@ describe('Patron Block: Maximum number of lost items', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getToken(userData.username, userData.password);
     UserLoans.updateTimerForAgedToLost('reset');
+    cy.getAdminToken();
     cy.get('@items').each((item, index) => {
       cy.deleteItemViaApi(item.itemId);
       cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
