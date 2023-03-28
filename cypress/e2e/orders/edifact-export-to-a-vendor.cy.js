@@ -133,7 +133,7 @@ describe('orders: export', () => {
 
   it('C350402: Verify that an Order is exported to a definite Vendors Account specified in one of several Integration configurations (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
     //Need to wait while first job will be runing
-    cy.wait(30000);
+    cy.wait(5000);
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList();
     Orders.createPOLineViaActions();
@@ -141,7 +141,6 @@ describe('orders: export', () => {
     OrderLines.fillInPOLineInfoForExportWithLocation(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId);
     OrderLines.backToEditingOrder();
     Orders.openOrder();
-    cy.wait(30000);
     cy.visit(TopMenu.exportManagerOrganizationsPath);
     ExportManagerSearchPane.selectOrganizationsSearch();
     ExportManagerSearchPane.selectExportMethod(integrationName1);
@@ -149,7 +148,7 @@ describe('orders: export', () => {
     ExportManagerSearchPane.rerunJob();
     cy.reload();
     ExportManagerSearchPane.verifyResult('Successful');
-    ExportManagerSearchPane.selectSearchResultItem();
+    ExportManagerSearchPane.selectJob('Successful');
     ExportManagerSearchPane.downloadJob();
     ExportManagerSearchPane.resetAll();
     ExportManagerSearchPane.selectOrganizationsSearch();
