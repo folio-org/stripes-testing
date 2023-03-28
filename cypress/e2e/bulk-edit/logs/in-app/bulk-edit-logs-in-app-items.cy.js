@@ -85,7 +85,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.openLogsSearch();
       BulkEditSearchPane.checkItemsCheckbox();
       BulkEditSearchPane.clickActionsOnTheRow();
-      cy.pause();
+      BulkEditSearchPane.verifyLogsRowActionWhenCompleted();
     });
   });
 });
