@@ -108,9 +108,9 @@ describe('bulk-edit', () => {
       BulkEditActions.openActions();
       BulkEditActions.openInAppStartBulkEditFrom();
 
-      BulkEditActions.replaceTemporaryLocation(tempLocation, 'holdings');
+      BulkEditActions.replaceTemporaryLocation(tempLocation, 'holdings', 0);
       BulkEditActions.addNewBulkEditFilterString();
-      BulkEditActions.replaceSecondPermanentLocation(permLocation, 'holdings');
+      BulkEditActions.replacePermanentLocation(permLocation, 'holdings', 1);
 
       BulkEditActions.confirmChanges();
       BulkEditActions.clickKeepEditingBtn();
