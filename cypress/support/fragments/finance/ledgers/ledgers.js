@@ -85,7 +85,6 @@ export default {
       rolloverBudgetVelue.choose(rolloverBudgetValue),
       aaddAvailableToSelect.choose(rolloverValueAs),
       Button('Test rollover').click(),
-      Button('Continue').click(),
     ]);
     cy.wait(2000);
     cy.do([
