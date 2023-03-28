@@ -57,7 +57,6 @@ export default {
       Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
       Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
       rolloverButton.click(),
-      Button('Continue').click(),
     ]);
     cy.wait(2000);
     cy.do([
@@ -72,7 +71,6 @@ export default {
       rolloverBudgetVelue.choose(rolloverBudgetValue),
       aaddAvailableToSelect.choose(rolloverValueAs),
       rolloverButton.click(),
-      Button('Continue').click(),
     ]);
     cy.wait(2000);
     cy.do([

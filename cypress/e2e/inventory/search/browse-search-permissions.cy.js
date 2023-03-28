@@ -32,7 +32,7 @@ describe('permissions: inventory', () => {
     cy.visit(TopMenu.inventoryPath);
     InventorySearchAndFilter.switchToBrowseTab();
     InventorySearchAndFilter.selectBrowseCallNumbers();
-    InventorySearchAndFilter.browseSearch('Holdings magazine');
+    InventorySearchAndFilter.browseSearch('k1');
     cy.reload();
     InventorySearchAndFilter.verifyCallNumbersResultsInBrowsePane();
     InventorySearchAndFilter.selectBrowseSubjects();
@@ -46,7 +46,7 @@ describe('permissions: inventory', () => {
     cy.visit(TopMenu.inventoryPath);
     InventorySearchAndFilter.switchToBrowseTab();
     InventorySearchAndFilter.selectBrowseCallNumbers();
-    InventorySearchAndFilter.browseSearch('Holdings magazine');
+    InventorySearchAndFilter.browseSearch('k1');
     InventorySearchAndFilter.verifyCallNumbersResultsInBrowsePane();
     InventorySearchAndFilter.selectBrowseSubjects();
     InventorySearchAndFilter.browseSearch('art');
