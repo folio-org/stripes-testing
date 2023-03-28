@@ -14,7 +14,7 @@ const invalidUsername = `username${getRandomPostfix()}`;
 const invalidUsernamesFileName = `invalidUserUUIDs_${getRandomPostfix()}.csv`;
 const errorsFromMatchingFileName = `*Errors-${invalidUsernamesFileName}*`;
 
-describe('Bulk Edit - Logs', () => {
+describe('Bulk Edit - Logs', { retries: 1 }, () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.bulkEditLogsView.gui,
@@ -38,7 +38,7 @@ describe('Bulk Edit - Logs', () => {
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
-  it('C375216 Verify generated Logs files for Users CSV -- only errors (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C375216 Verify generated Logs files for Users CSV -- only errors (firebird)', { tags: [testTypes.smoke, devTeams.firebird], retries: 1 }, () => {
     BulkEditSearchPane.verifyDragNDropUsernamesArea();
     BulkEditSearchPane.uploadFile(invalidUsernamesFileName);
     BulkEditSearchPane.waitFileUploading();

@@ -44,6 +44,12 @@ const resetAllButton = Button('Reset all');
 const logsStatusesAccordion = Accordion('Statuses');
 const textFildTo = TextField('To');
 const textFildFrom = TextField('From');
+const triggerBtn = DropdownMenu().find(Button('File that was used to trigger the bulk edit'));
+const errorsEncounteredBtn = DropdownMenu().find(Button('File with errors encountered during the record matching'));
+const matchingRecordsBtn = DropdownMenu().find(Button('File with the matching records'));
+const previewPorposedChangesBtn = DropdownMenu().find(Button('File with the preview of proposed changes'));
+const updatedRecordBtn = DropdownMenu().find(Button('File with updated records'));
+const errorsCommittingBtn = DropdownMenu().find(Button('File with errors encountered when committing the changes'));
 
 export default {
   waitLoading() {
@@ -695,74 +701,76 @@ export default {
     cy.do(MultiColumnListRow({ indexRow: `row-${row}` }).find(Button({ icon: 'ellipsis' })).click());
   },
 
+  verifyTriggerLogsAction() {
+    cy.expect(triggerBtn.exists());
+  },
+
   verifyLogsRowAction() {
     cy.expect([
-      HTML('File that was used to trigger the bulk edit').exists(),
-      HTML('File with errors encountered during the record matching').exists()
+      triggerBtn.exists(),
+      errorsEncounteredBtn.exists()
     ]);
   },
 
   verifyLogsRowActionWhenCompleted() {
     cy.expect([
-      HTML('File that was used to trigger the bulk edit').exists(),
-      HTML('File with the matching records').exists(),
-      HTML('File with the preview of proposed changes').exists(),
-      HTML('File with updated records').exists()
+      triggerBtn.exists(),
+      matchingRecordsBtn.exists(),
+      previewPorposedChangesBtn.exists(),
+      updatedRecordBtn.exists()
     ]);
   },
 
   verifyLogsRowActionWhenCompletedWithErrors() {
     cy.expect([
-      HTML('File that was used to trigger the bulk edit').exists(),
-      HTML('File with the matching records').exists(),
-      HTML('File with errors encountered during the record matching').exists(),
-      HTML('File with the preview of proposed changes').exists(),
-      HTML('File with updated records').exists(),
-      HTML('File with errors encountered when committing the changes').exists()
+      triggerBtn.exists(),
+      matchingRecordsBtn.exists(),
+      errorsEncounteredBtn.exists(),
+      previewPorposedChangesBtn.exists(),
+      updatedRecordBtn.exists(),
+      errorsCommittingBtn.exists()
     ]);
   },
 
   verifyLogsRowActionWhenCompletedWithErrorsWithoutModification() {
     cy.expect([
-      HTML('File that was used to trigger the bulk edit').exists(),
-      HTML('File with errors encountered during the record matching').exists(),
+      triggerBtn.exists(),
+      errorsEncounteredBtn.exists(),
     ]);
   },
 
+  waitingFileDownload() {
+    cy.wait(3000);
+  },
+
   downloadFileUsedToTrigger() {
-    cy.do(Button('File that was used to trigger the bulk edit').click());
-    // Need to wait for the file to download
-    cy.wait(5000);
+    cy.do(triggerBtn.click());
+    this.waitingFileDownload();
   },
 
   downloadFileWithErrorsEncountered() {
-    cy.do(Button('File with errors encountered during the record matching').click());
-    // Need to wait for the file to download
-    cy.wait(5000);
+    cy.do(errorsEncounteredBtn.click());
+    this.waitingFileDownload();
   },
 
   downloadFileWithMatchingRecords() {
-    cy.do(Button('File with the matching records').click());
-    // Need to wait for the file to download
-    cy.wait(5000);
+    cy.do(matchingRecordsBtn.click());
+    this.waitingFileDownload();
   },
 
   downloadFileWithProposedChanges() {
-    cy.do(Button('File with the preview of proposed changes').click());
-    // Need to wait for the file to download
-    cy.wait(5000);
+    cy.do(previewPorposedChangesBtn.click());
+    this.waitingFileDownload();
   },
 
   downloadFileWithUpdatedRecords() {
-    cy.do(Button('File with updated records').click());
-    // Need to wait for the file to download
-    cy.wait(5000);
+    cy.do(updatedRecordBtn.click());
+    this.waitingFileDownload();
   },
 
   downloadFileWithCommitErrors() {
-    cy.do(Button('File with errors encountered when committing the changes').click());
-    // Need to wait for the file to download
-    cy.wait(5000);
+    cy.do(errorsCommittingBtn.click());
+    this.waitingFileDownload();
   },
 
   verifyLogsTableHeaders() {
