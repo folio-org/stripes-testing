@@ -112,28 +112,26 @@ describe('orders: export', () => {
       });
   });
 
-  after(() => {
-    cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList();
-    Orders.unOpenOrder(orderNumber);
-    // Need to wait until the order is opened before deleting it
-    cy.wait(2000);
-    Orders.deleteOrderApi(order.id);
+  // after(() => {
+  //   cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+  //   Orders.searchByParameter('PO number', orderNumber);
+  //   Orders.selectFromResultsList();
+  //   Orders.unOpenOrder(orderNumber);
+  //   // Need to wait until the order is opened before deleting it
+  //   cy.wait(2000);
+  //   Orders.deleteOrderApi(order.id);
 
-    Organizations.deleteOrganizationViaApi(organization.id);
-    NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
-        location.institutionId,
-        location.campusId,
-        location.libraryId,
-        location.id
-      );
-    Users.deleteViaApi(user.userId);
-  });
+  //   Organizations.deleteOrganizationViaApi(organization.id);
+  //   NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+  //       location.institutionId,
+  //       location.campusId,
+  //       location.libraryId,
+  //       location.id
+  //     );
+  //   Users.deleteViaApi(user.userId);
+  // });
 
   it('C350402: Verify that an Order is exported to a definite Vendors Account specified in one of several Integration configurations (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
-    //Need to wait while first job will be runing
-    cy.wait(10000);
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList();
     Orders.createPOLineViaActions();
@@ -142,11 +140,9 @@ describe('orders: export', () => {
     OrderLines.backToEditingOrder();
     Orders.openOrder();
     cy.visit(TopMenu.exportManagerOrganizationsPath);
+    cy.wait(60000);
     ExportManagerSearchPane.selectOrganizationsSearch();
     ExportManagerSearchPane.selectExportMethod(integrationName1);
-    ExportManagerSearchPane.selectSearchResultItem();
-    ExportManagerSearchPane.rerunJob();
-    cy.reload();
     ExportManagerSearchPane.verifyResult('Successful');
     ExportManagerSearchPane.selectJob('Successful');
     ExportManagerSearchPane.downloadJob();

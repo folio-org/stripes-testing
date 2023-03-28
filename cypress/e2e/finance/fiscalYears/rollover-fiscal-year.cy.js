@@ -27,7 +27,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
     periodStart: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
     periodEnd: `${DateTools.getDayAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
-    series: 'FY',
+    series: 'FYTA',
   };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };
