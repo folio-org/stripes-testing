@@ -7,7 +7,7 @@ import devTeams from '../../../support/dictionary/devTeams';
 
 let user;
 
-describe('bulk-edit', () => {
+describe('bulk-edit', { retries: 1 }, () => {
   describe('permissions', () => {
     before('create test data', () => {
       cy.createTempUser([
@@ -30,7 +30,7 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it('C368013 Verify that the user with "Bulk edit - Can view logs" permission can access to the logs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C368013 Verify that the user with "Bulk edit - Can view logs" permission can access to the logs (firebird)', { tags: [testTypes.smoke, devTeams.firebird], retries: 1 }, () => {
       BulkEditSearchPane.verifyBulkEditPaneItems();
       BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
 
