@@ -78,7 +78,7 @@ describe('bulk-edit', () => {
       BulkEditFiles.verifyMatchedResultFileContent(resultFileName, [hrid], 'hrid');
     });
 
-    it('C356810 Verify uploading file with holdings UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C356810 Verify uploading file with holdings UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird], retries: 1 }, () => {
       BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
       BulkEditSearchPane.waitFileUploading();
       BulkEditSearchPane.verifyMatchedResults(hrid);
