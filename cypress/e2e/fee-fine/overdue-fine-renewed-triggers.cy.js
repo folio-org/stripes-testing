@@ -335,6 +335,7 @@ describe('Overdue fine', () => {
         NoticePolicyTemplateApi.deleteViaApi(templateId);
       }
     );
+    cy.deleteLoanType(testData.loanTypeId);
   });
 
   it(
@@ -372,9 +373,19 @@ describe('Overdue fine', () => {
       Checkout.verifyResultsInTheRow([itemData.barcode]);
       CheckOutActions.endCheckOutSession();
 
-      // need to wait so item can get overdue status
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(120000);
+      UserLoans.getUserLoansIdViaApi(userData.userId).then((userLoans) => {
+        const loansData = userLoans.loans;
+        const newDueDate = new Date(loansData[0].loanDate);
+        newDueDate.setDate(newDueDate.getDate() - 1);
+        loansData.forEach((loan) => {
+          UserLoans.changeDueDateViaApi({
+            ...loan,
+            dueDate: newDueDate,
+            action: 'dueDateChanged',
+          }, loan.id);
+        });
+      });
+
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userData.barcode);
