@@ -18,7 +18,7 @@ describe('orders: export', () => {
   
   const order = { ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',
-    ongoing: {isSubscription: false, manualRenewal: false},
+    ongoing: { isSubscription: false, manualRenewal: false },
     approved: true,
    };
   const organization = {
@@ -112,24 +112,24 @@ describe('orders: export', () => {
       });
   });
 
-  // after(() => {
-  //   cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-  //   Orders.searchByParameter('PO number', orderNumber);
-  //   Orders.selectFromResultsList();
-  //   Orders.unOpenOrder(orderNumber);
-  //   // Need to wait until the order is opened before deleting it
-  //   cy.wait(2000);
-  //   Orders.deleteOrderApi(order.id);
+  after(() => {
+    cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    Orders.searchByParameter('PO number', orderNumber);
+    Orders.selectFromResultsList();
+    Orders.unOpenOrder(orderNumber);
+    // Need to wait until the order is opened before deleting it
+    cy.wait(2000);
+    Orders.deleteOrderApi(order.id);
 
-  //   Organizations.deleteOrganizationViaApi(organization.id);
-  //   NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
-  //       location.institutionId,
-  //       location.campusId,
-  //       location.libraryId,
-  //       location.id
-  //     );
-  //   Users.deleteViaApi(user.userId);
-  // });
+    Organizations.deleteOrganizationViaApi(organization.id);
+    NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+        location.institutionId,
+        location.campusId,
+        location.libraryId,
+        location.id
+      );
+    Users.deleteViaApi(user.userId);
+  });
 
   it('C350402: Verify that an Order is exported to a definite Vendors Account specified in one of several Integration configurations (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
@@ -147,6 +147,7 @@ describe('orders: export', () => {
     ExportManagerSearchPane.selectJob('Successful');
     ExportManagerSearchPane.downloadJob();
     ExportManagerSearchPane.resetAll();
+    cy.reload();
     ExportManagerSearchPane.selectOrganizationsSearch();
     ExportManagerSearchPane.selectExportMethod(integrationName2);
     ExportManagerSearchPane.selectSearchResultItem();
