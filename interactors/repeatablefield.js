@@ -44,7 +44,7 @@ export const RepeatableField = HTML.extend('repeatable field')
 
 
 export const RepeatableFieldItem = HTML.extend('repeatable field item')
-  .selector('[class^=repeatableFieldItem]')
+  .selector('[class^=repeatableFieldItem-]')
   .filters({
     index: el => [...el.parentElement.children].indexOf(el)
   });

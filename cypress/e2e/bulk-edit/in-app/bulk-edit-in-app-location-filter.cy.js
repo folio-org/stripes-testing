@@ -52,7 +52,7 @@ describe('bulk-edit', () => {
       BulkEditActions.openActions();
       BulkEditActions.openInAppStartBulkEditFrom();
 
-      BulkEditActions.fillTemporaryLocationFilter(`test_location_${getRandomPostfix()}`);
+      BulkEditActions.typeInTemporaryLocationFilter(`test_location_${getRandomPostfix()}`);
       BulkEditActions.verifyNoMatchingOptionsForLocationFilter();
 
       BulkEditActions.cancel();
@@ -69,7 +69,7 @@ describe('bulk-edit', () => {
       BulkEditActions.openInAppStartBulkEditFrom();
 
       const location = 'Annex';
-      BulkEditActions.fillTemporaryLocationFilter(location);
+      BulkEditActions.typeInTemporaryLocationFilter(location);
       BulkEditActions.verifyMatchingOptionsForLocationFilter(location);
 
       BulkEditActions.cancel();
