@@ -72,6 +72,23 @@ export default {
     ]);
   },
 
+  createOrderByTemplate(templateName) {
+    cy.do([
+      actionsButton.click(),
+      newButton.click(),
+      Button({ id: 'order-template' }).click(),
+      SelectionOption(templateName).click(),
+      saveAndClose.click()
+    ]);
+  },
+
+  checkCreatedOrderFromTemplate: (organization) => {
+    cy.expect(Pane({ id: 'order-details' }).exists());
+    cy.expect(Accordion({ id: orderDetailsAccordionId })
+      .find(KeyValue({ value: organization }))
+      .exists());
+  },
+
   createOrderWithOrderLineViaApi(order, orderLine) {
     cy.createOrderApi(order)
       .then((response) => {

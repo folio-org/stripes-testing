@@ -1,4 +1,4 @@
-import { Button, Modal, NavListItem, Pane, PaneContent, SearchField, SelectionOption, TextField } from '../../../../../interactors';
+import { Button, Modal, NavListItem, Pane, PaneContent, SearchField, Select, SelectionOption, TextField } from '../../../../../interactors';
 import SearchHelper from '../../finance/financeHelper';
 
 export default {
@@ -24,6 +24,7 @@ export default {
       Button({ id: 'accordion-toggle-button-lineDetails' }).click(),
       Button({ id: 'acquisition-method' }).click(),
       SelectionOption(acquisitionMethod).click(),
+      Select({ name: 'orderType' }).choose('One-time')
     ]);
   },
 
@@ -33,5 +34,15 @@ export default {
 
   checkTemplateCreated: (templateName) => {
     cy.expect(PaneContent({ id: 'order-settings-order-templates-list-content' }).find(NavListItem(templateName)).exists());
-  }
+  },
+
+  deleteTemplate : (templateName) => {
+    cy.do([
+      NavListItem(templateName).click(),
+      Button('Actions').click(),
+      Button('Delete').click(),
+      Button({ id: 'clickable-delete-order-template-modal-confirm' }).click(),
+    ]);
+    InteractorsTools.checkCalloutMessage('The template was deleted');
+  },
 };
