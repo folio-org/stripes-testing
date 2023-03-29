@@ -94,7 +94,7 @@ describe('bulk-edit', () => {
       BulkEditActions.verifyItemActionDropdownItems();
       BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.verifyModifyLandingPageBeforeModifying();
-      BulkEditActions.fillLoanType('Selected');
+      BulkEditActions.fillPermanentLoanType('Selected');
       BulkEditActions.verifyModifyLandingPageAfterModifying();
       BulkEditActions.confirmChanges();
       BulkEditActions.commitChanges();
@@ -159,7 +159,7 @@ describe('bulk-edit', () => {
 
       BulkEditActions.openActions();
       BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.fillLoanType();
+      BulkEditActions.fillPermanentLoanType();
       BulkEditActions.replaceWithIsDisabled();
     });
 
