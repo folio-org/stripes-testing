@@ -25,6 +25,10 @@ describe('Importing MARC Authority files', () => {
         tag: '901',
         content: 'venn'
       }
+    },
+    forC350641: {
+      lcControlNumber: 'n  42008104',
+      searchOption: 'Identifier (all)',
     }
   };
   const jobProfileToRun = 'Default - Create SRS MARC Authority';
@@ -146,5 +150,13 @@ describe('Importing MARC Authority files', () => {
 
     MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.newField.title);
     MarcAuthorities.checkRow(testData.authority.newField.title);
+  });
+
+  it('C350641 Search MARC: support exact match searching Library of Congress Control Number - 010 field $a subfield (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    MarcAuthorities.checkSearchOptions();
+    MarcAuthorities.searchBy(testData.forC350641.searchOption, testData.forC350641.lcControlNumber);
+    MarcAuthorities.checkAfterSearch();
+    MarcAuthorities.selectFirst(testData.authority.title);
+    MarcAuthorities.checkFieldAndContentExistence('010', testData.forC350641.lcControlNumber);
   });
 });
