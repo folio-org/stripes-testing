@@ -56,7 +56,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditActions.verifyBulkEditForm();
     BulkEditActions.fillExpirationDate(newExpirationDate.date);
     BulkEditActions.addNewBulkEditFilterString();
-    BulkEditActions.fillPatronGroup('staff (Staff Member)', 1);
+    BulkEditActions.fillPatronGroup('graduate (Graduate Student)', 1);
     BulkEditActions.confirmChanges();
     BulkEditActions.downloadPreview();
     BulkEditActions.commitChanges();
@@ -77,17 +77,16 @@ describe('Bulk Edit - Logs', () => {
     BulkEditFiles.verifyMatchedResultFileContent(matchRecordsFileNameValid, [user.barcode], 'userBarcode', true);
 
     BulkEditSearchPane.downloadFileWithProposedChanges();
-    BulkEditFiles.verifyMatchedResultFileContent(updatesPreviewFileName, ['staff'], 'patronGroup', true);
+    BulkEditFiles.verifyMatchedResultFileContent(updatesPreviewFileName, ['graduate'], 'patronGroup', true);
     BulkEditFiles.verifyMatchedResultFileContent(updatesPreviewFileName, [newExpirationDate.dateWithDashes], 'expirationDate', true);
 
     BulkEditSearchPane.downloadFileWithUpdatedRecords();
-    BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, ['staff'], 'patronGroup', true);
+    BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, ['graduate'], 'patronGroup', true);
     BulkEditFiles.verifyMatchedResultFileContent(updatesPreviewFileName, [newExpirationDate.dateWithDashes], 'expirationDate', true);
 
-    // Go to users app and verify changes
     cy.visit(TopMenu.usersPath);
     UsersSearchPane.searchByUsername(user.username);
-    Users.verifyPatronGroupOnUserDetailsPane('staff');
+    Users.verifyPatronGroupOnUserDetailsPane('graduate');
     Users.verifyExpirationDateOnUserDetailsPane(newExpirationDate.dateWithSlashes);
   });
 });
