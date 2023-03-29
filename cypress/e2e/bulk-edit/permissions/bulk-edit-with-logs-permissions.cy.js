@@ -40,7 +40,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.checkUsersCheckbox();
       BulkEditSearchPane.checkItemsCheckbox();
       BulkEditSearchPane.clickActionsOnTheRow();
-      BulkEditSearchPane.verifyLogsRowAction();
+      BulkEditSearchPane.verifyTriggerLogsAction();
     });
   });
 });
