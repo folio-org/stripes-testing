@@ -49,6 +49,9 @@ export default {
   },
 
   fillInRolloverInfo : (fiscalYear) => {
+    cy.do(fiscalYearSelect.click());
+    // Need to wait,while date of fiscal year will be loaded
+    cy.wait(2000);
     cy.do([
       fiscalYearSelect.choose(fiscalYear),
       rolloverAllocationCheckbox.click(),
@@ -65,6 +68,9 @@ export default {
   },
 
   fillInRolloverForCashBalance : (fiscalYear, rolloverBudgetValue, rolloverValueAs) => {
+    cy.do(fiscalYearSelect.click());
+    // Need to wait,while date of fiscal year will be loaded
+    cy.wait(2000);
     cy.do([
       fiscalYearSelect.choose(fiscalYear),
       rolloverAllocationCheckbox.click(),
@@ -79,6 +85,9 @@ export default {
   },
 
   fillInTestRolloverInfoCashBalance : (fiscalYear, rolloverBudgetValue, rolloverValueAs) => {
+    cy.do(fiscalYearSelect.click());
+    // Need to wait,while date of fiscal year will be loaded
+    cy.wait(2000);
     cy.do([
       fiscalYearSelect.choose(fiscalYear),
       rolloverAllocationCheckbox.click(),
