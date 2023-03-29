@@ -156,7 +156,7 @@ describe('Importing MARC Authority files', () => {
     MarcAuthorities.checkSearchOptions();
     MarcAuthorities.searchBy(testData.forC350641.searchOption, testData.forC350641.lcControlNumber);
     MarcAuthorities.checkAfterSearch();
-    MarcAuthorities.selectFirst(testData.authority.title);
+    MarcAuthorities.selectFirstRecord();
     MarcAuthorities.checkFieldAndContentExistence('010', testData.forC350641.lcControlNumber);
   });
 });

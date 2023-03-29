@@ -130,6 +130,7 @@ export default {
 
   checkFieldAndContentExistence(tag, value) {
     cy.expect([
+      marcViewSection.exists(),
       marcViewSectionContent.has({ text: including(tag) }),
       marcViewSectionContent.has({ text: including(value) }),
     ]);
