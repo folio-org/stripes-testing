@@ -1,6 +1,7 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../../utils/stringTools';
 import { Button, EditableListRow, MultiColumnListCell, Pane, TextField } from '../../../../../interactors';
+import InteractorsTools from '../../../utils/interactorsTools';
 
 const acquisitionMethodPane = Pane({ id: 'controlled-vocab-pane' });
 const saveButton = Button('Save');
