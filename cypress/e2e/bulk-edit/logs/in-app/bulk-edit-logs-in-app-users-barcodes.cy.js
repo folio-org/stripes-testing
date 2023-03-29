@@ -16,7 +16,7 @@ const afterThreeMonthsDate = DateTools.getAfterThreeMonthsDateObj();
 const validUserBarcodesFileName = `validUserBarcodess_${getRandomPostfix()}.csv`;
 const matchRecordsFileNameValid = `*Matched-Records-${validUserBarcodesFileName}`;
 const updatesPreviewFileName = `*Updates-Preview-${validUserBarcodesFileName}`;
-const updatedRecordsFileName = `modified-*-${matchRecordsFileNameValid}`
+const updatedRecordsFileName = `modified-*-${matchRecordsFileNameValid}`;
 const newExpirationDate = {
   date: afterThreeMonthsDate,
   dateWithSlashes: DateTools.getFormattedDateWithSlashes({ date: afterThreeMonthsDate }),
@@ -38,7 +38,6 @@ describe('Bulk Edit - Logs', () => {
         });
         FileManager.createFile(`cypress/fixtures/${validUserBarcodesFileName}`, user.barcode);
       });
-
   });
 
   after('delete test data', () => {
@@ -91,4 +90,4 @@ describe('Bulk Edit - Logs', () => {
     Users.verifyPatronGroupOnUserDetailsPane('staff');
     Users.verifyExpirationDateOnUserDetailsPane(newExpirationDate.dateWithSlashes);
   });
-})
+});
