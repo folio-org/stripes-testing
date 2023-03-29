@@ -25,7 +25,6 @@ import NewFeeFine from '../../../support/fragments/users/newFeeFine';
 import Users from '../../../support/fragments/users/users';
 
 describe('ui-users-loans: Manual anonymization in closed loans', () => {
-  // const loanTypeName = `autotest_loan_type${getRandomPostfix()}`;
   const newOwnerData = UsersOwners.getDefaultNewOwner(uuid());
   const newFirstItemData = getNewItem();
   const newSecondItemData = getNewItem();
@@ -43,16 +42,13 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
 
     cy.getAdminToken()
       .then(() => {
-        // ServicePoints.createViaApi(testData.userServicePoint);
         ServicePoints.getViaApi().then((res) => {
           servicePointId = res[0].id;
           servicePoints = res;
         });
-        // testData.defaultLocation = Location.getDefaultLocation(servicePointId);
         cy.getLocations({ limit: 1 }).then((locations) => {
           testData.locationsId = locations.id;
         });
-        // Location.createViaApi(testData.defaultLocation);
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
           testData.instanceTypeId = instanceTypes[0].id;
         });
@@ -67,19 +63,8 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
         cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
           testData.materialTypeId = materialTypes.id;
         });
-        // cy.getMaterialTypes({ limit: 1 });
-        // cy.getInstanceTypes({ limit: 1 });
-        // cy.getLocations({ limit: 1 });
-        // cy.getHoldingTypes({ limit: 1 });
       })
       .then(() => {
-        // ServicePoints.getViaApi().then((res) => {
-        //   servicePointId = res[0].id;
-        //   servicePoints = res;
-        // });
-
-        // cy.createLoanType({ name: loanTypeName });
-
         RequestPolicy.createViaApi();
         LostItemFeePolicy.createViaApi();
         OverdueFinePolicy.createViaApi();
@@ -105,12 +90,6 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
           policyIds.notice = Cypress.env(CY_ENV.NOTICE_POLICY).id;
           policyIds.overdueFine = Cypress.env(CY_ENV.OVERDUE_FINE_POLICY).id;
           policyIds.lostItemFee = Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY).id;
-
-          // const materialTypeId = Cypress.env('materialTypes').id;
-          // addedCirculationRule = `l ${policyIds.loan} r ${policyIds.request} n ${policyIds.notice} o ${policyIds.overdueFine} i ${policyIds.lostItemFee}`;
-          // const priority = 'priority: number-of-criteria, criterium (t, s, c, b, a, m, g), last-line';
-          // const newRule = `${priority}\nfallback-policy: ${policy}\nm ${materialTypeId}: ${policy}`;
-
           CirculationRules.getViaApi().then((circulationRule) => {
             originalCirculationRules = circulationRule.rulesAsText;
             const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
