@@ -16,6 +16,7 @@ const authReportModal = Modal({ id: 'authorities-report-modal' });
 const fromDate = TextField({ name: 'fromDate' });
 const toDate = TextField({ name: 'toDate' });
 const exportButton = Button('Export');
+const selectField = Select({ id: 'textarea-authorities-search-qindex' });
 
 export default {
   waitLoading: () => cy.expect(rootSection.exists()),
@@ -102,6 +103,37 @@ export default {
     cy.do(searchButton.click());
     cy.expect(MultiColumnListRow({ index: 0 }).find(Button({ text: including('Beethoven, Ludwig van (no 010)') })).exists());
     cy.expect(marcViewSection.exists());
+  },
+
+  checkSearchOptions() {
+    cy.do(selectField.click());
+    cy.expect([
+      selectField.has({ content: including('Keyword') }),
+      selectField.has({ content: including('Identifier (all)') }),
+      selectField.has({ content: including('Personal name') }),
+      selectField.has({ content: including('Corporate/Conference name') }),
+      selectField.has({ content: including('Geographic name') }),
+      selectField.has({ content: including('Name-title') }),
+      selectField.has({ content: including('Uniform title') }),
+      selectField.has({ content: including('Subject') }),
+      selectField.has({ content: including('Children\'s subject heading') }),
+      selectField.has({ content: including('Genre') }),
+      selectField.has({ content: including('Advanced search') }),
+    ]);
+  },
+
+  checkAfterSearch() {
+    cy.expect([
+      MultiColumnListCell({ columnIndex: 1, content: 'Authorized' }).exists(),
+    ]);
+  },
+
+  checkFieldAndContentExistence(tag, value) {
+    cy.expect([
+      marcViewSection.exists(),
+      marcViewSectionContent.has({ text: including(tag) }),
+      marcViewSectionContent.has({ text: including(value) }),
+    ]);
   },
 
   check010FieldAbsence: () => {
