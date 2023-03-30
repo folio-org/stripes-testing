@@ -45,138 +45,136 @@ const item2 = {
   id: '',
 };
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
-    before('create test data', () => {
-      cy.createTempUser([
-        permissions.bulkEditView.gui,
-        permissions.bulkEditEdit.gui,
-        permissions.bulkEditLogsView.gui,
-        permissions.inventoryAll.gui,
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading
-          });
-
-          cy.getAdminToken()
-            .then(() => {
-              cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => { instance.instanceTypeId = instanceTypes[0].id; });
-              cy.getHoldingTypes({ limit: 1 }).then((res) => { instance.holdingTypeId = res[0].id; });
-              cy.getLocations({ limit: 1 }).then((res) => { instance.locationId = res.id; });
-              cy.getLoanTypes({ limit: 1 }).then((res) => { instance.loanTypeId = res[0].id; });
-              cy.getMaterialTypes({ limit: 1 }).then((res) => { instance.materialTypeId = res.id; });
-              const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation('S', uuid());
-              instance.defaultLocation = Location.getDefaultLocation(servicePoint.id);
-              Location.createViaApi(instance.defaultLocation);
-              ServicePoints.getViaApi({ limit: 1 }).then((servicePoints) => { instance.servicepointId = servicePoints[0].id; });
-            })
-            .then(() => {
-              InventoryInstances.createFolioInstanceViaApi({
-                instance: {
-                  instanceTypeId: instance.instanceTypeId,
-                  title: instance.title,
-                },
-                holdings: [
-                  {
-                    holdingsTypeId: instance.holdingTypeId,
-                    permanentLocationId: instance.defaultLocation.id,
-                  },
-                ],
-                items: [
-                  {
-                    barcode: item1.barcode,
-                    status: { name: 'Available' },
-                    permanentLoanType: { id: instance.loanTypeId },
-                    materialType: { id: instance.materialTypeId },
-                  },
-                  {
-                    barcode: item2.barcode,
-                    status: { name: 'Missing' },
-                    permanentLoanType: { id: instance.loanTypeId },
-                    materialType: { id: instance.materialTypeId },
-                  },
-                ],
-              }).then((specialInstanceIds) => {
-                instance.id = specialInstanceIds.instanceId;
-              });
-            });
-          cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item1.barcode}"` })
-            .then((res) => {
-              item1.hrid = res.hrid;
-              item1.id = res.id;
-            });
-          cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item2.barcode}"` })
-            .then((res) => {
-              item2.hrid = res.hrid;
-              item2.id = res.id;
-              FileManager.createFile(`cypress/fixtures/${itemHRIDsFileName}`, `${item1.hrid}\r\n${item2.hrid}\r\n${invalidItemHRID}`);
-            });
+describe('Bulk Edit - Logs', () => {
+  before('create test data', () => {
+    cy.createTempUser([
+      permissions.bulkEditView.gui,
+      permissions.bulkEditEdit.gui,
+      permissions.bulkEditLogsView.gui,
+      permissions.inventoryAll.gui,
+    ])
+      .then(userProperties => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading
         });
-    });
 
-    after('delete test data', () => {
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item1.barcode);
-      Users.deleteViaApi(user.userId);
-      FileManager.deleteFile(`cypress/fixtures/${itemHRIDsFileName}`);
-      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-    });
+        cy.getAdminToken()
+          .then(() => {
+            cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => { instance.instanceTypeId = instanceTypes[0].id; });
+            cy.getHoldingTypes({ limit: 1 }).then((res) => { instance.holdingTypeId = res[0].id; });
+            cy.getLocations({ limit: 1 }).then((res) => { instance.locationId = res.id; });
+            cy.getLoanTypes({ limit: 1 }).then((res) => { instance.loanTypeId = res[0].id; });
+            cy.getMaterialTypes({ limit: 1 }).then((res) => { instance.materialTypeId = res.id; });
+            const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation('S', uuid());
+            instance.defaultLocation = Location.getDefaultLocation(servicePoint.id);
+            Location.createViaApi(instance.defaultLocation);
+            ServicePoints.getViaApi({ limit: 1 }).then((servicePoints) => { instance.servicepointId = servicePoints[0].id; });
+          })
+          .then(() => {
+            InventoryInstances.createFolioInstanceViaApi({
+              instance: {
+                instanceTypeId: instance.instanceTypeId,
+                title: instance.title,
+              },
+              holdings: [
+                {
+                  holdingsTypeId: instance.holdingTypeId,
+                  permanentLocationId: instance.defaultLocation.id,
+                },
+              ],
+              items: [
+                {
+                  barcode: item1.barcode,
+                  status: { name: 'Available' },
+                  permanentLoanType: { id: instance.loanTypeId },
+                  materialType: { id: instance.materialTypeId },
+                },
+                {
+                  barcode: item2.barcode,
+                  status: { name: 'Missing' },
+                  permanentLoanType: { id: instance.loanTypeId },
+                  materialType: { id: instance.materialTypeId },
+                },
+              ],
+            }).then((specialInstanceIds) => {
+              instance.id = specialInstanceIds.instanceId;
+            });
+          });
+        cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item1.barcode}"` })
+          .then((res) => {
+            item1.hrid = res.hrid;
+            item1.id = res.id;
+          });
+        cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item2.barcode}"` })
+          .then((res) => {
+            item2.hrid = res.hrid;
+            item2.id = res.id;
+            FileManager.createFile(`cypress/fixtures/${itemHRIDsFileName}`, `${item1.hrid}\r\n${item2.hrid}\r\n${invalidItemHRID}`);
+          });
+      });
+  });
 
-    it('C375273 Verify generated Logs files for Items In app -- only valid Item UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.checkItemsRadio();
-      BulkEditSearchPane.selectRecordIdentifier('Item HRIDs');
+  after('delete test data', () => {
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item1.barcode);
+    Users.deleteViaApi(user.userId);
+    FileManager.deleteFile(`cypress/fixtures/${itemHRIDsFileName}`);
+    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+  });
 
-      BulkEditSearchPane.uploadFile(itemHRIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditActions.downloadMatchedResults();
-      BulkEditActions.downloadErrors();
+  it('C375273 Verify generated Logs files for Items In app -- only valid Item UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    BulkEditSearchPane.checkItemsRadio();
+    BulkEditSearchPane.selectRecordIdentifier('Item HRIDs');
 
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.clearPermanentLocation('item', 0);
-      BulkEditActions.addNewBulkEditFilterString();
-      BulkEditActions.replaceItemStatus('Missing', 1);
-      BulkEditActions.addNewBulkEditFilterString();
-      BulkEditActions.clearTemporaryLoanType(2);
-      BulkEditActions.confirmChanges();
-      BulkEditActions.downloadPreview();
-      BulkEditActions.commitChanges();
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditActions.openActions();
-      BulkEditActions.downloadChangedCSV();
-      BulkEditActions.downloadErrors();
+    BulkEditSearchPane.uploadFile(itemHRIDsFileName);
+    BulkEditSearchPane.waitFileUploading();
+    BulkEditActions.downloadMatchedResults();
+    BulkEditActions.downloadErrors();
 
-      BulkEditSearchPane.openLogsSearch();
-      BulkEditSearchPane.checkItemsCheckbox();
-      BulkEditSearchPane.clickActionsOnTheRow();
-      BulkEditSearchPane.verifyLogsRowActionWhenCompletedWithErrors();
+    BulkEditActions.openInAppStartBulkEditFrom();
+    BulkEditActions.clearPermanentLocation('item', 0);
+    BulkEditActions.addNewBulkEditFilterString();
+    BulkEditActions.replaceItemStatus('Missing', 1);
+    BulkEditActions.addNewBulkEditFilterString();
+    BulkEditActions.clearTemporaryLoanType(2);
+    BulkEditActions.confirmChanges();
+    BulkEditActions.downloadPreview();
+    BulkEditActions.commitChanges();
+    BulkEditSearchPane.waitFileUploading();
+    BulkEditActions.openActions();
+    BulkEditActions.downloadChangedCSV();
+    BulkEditActions.downloadErrors();
 
-      BulkEditSearchPane.downloadFileUsedToTrigger();
-      BulkEditFiles.verifyCSVFileRows(`${itemHRIDsFileName}*`, [item1.hrid, item2.hrid, invalidItemHRID]);
+    BulkEditSearchPane.openLogsSearch();
+    BulkEditSearchPane.checkItemsCheckbox();
+    BulkEditSearchPane.clickActionsOnTheRow();
+    BulkEditSearchPane.verifyLogsRowActionWhenCompletedWithErrors();
 
-      BulkEditSearchPane.downloadFileWithMatchingRecords();
-      BulkEditFiles.verifyMatchedResultFileContent(`*${matchRecordsFileNameInvalidAndValid}*`, [item1.hrid, item2.hrid], 'hrid', true);
+    BulkEditSearchPane.downloadFileUsedToTrigger();
+    BulkEditFiles.verifyCSVFileRows(`${itemHRIDsFileName}*`, [item1.hrid, item2.hrid, invalidItemHRID]);
 
-      BulkEditSearchPane.downloadFileWithErrorsEncountered();
-      BulkEditFiles.verifyMatchedResultFileContent(errorsFromMatchingFileName, [invalidItemHRID], 'firstElement', false);
+    BulkEditSearchPane.downloadFileWithMatchingRecords();
+    BulkEditFiles.verifyMatchedResultFileContent(`*${matchRecordsFileNameInvalidAndValid}*`, [item1.hrid, item2.hrid], 'hrid', true);
 
-      BulkEditSearchPane.downloadFileWithProposedChanges();
-      BulkEditFiles.verifyMatchedResultFileContent('modified*', [item1.id, item2.id], 'firstElement', true);
+    BulkEditSearchPane.downloadFileWithErrorsEncountered();
+    BulkEditFiles.verifyMatchedResultFileContent(errorsFromMatchingFileName, [invalidItemHRID], 'firstElement', false);
 
-      BulkEditSearchPane.downloadFileWithUpdatedRecords();
-      BulkEditFiles.verifyMatchedResultFileContent('result-*', [item1.id, item2.id], 'firstElement', true);
+    BulkEditSearchPane.downloadFileWithProposedChanges();
+    BulkEditFiles.verifyMatchedResultFileContent('modified*', [item1.id, item2.id], 'firstElement', true);
 
-      BulkEditSearchPane.downloadFileWithCommitErrors();
-      BulkEditFiles.verifyMatchedResultFileContent(errorsFromCommittingFileName, [item2.hrid], 'firstElement', false);
+    BulkEditSearchPane.downloadFileWithUpdatedRecords();
+    BulkEditFiles.verifyMatchedResultFileContent('result-*', [item1.id, item2.id], 'firstElement', true);
 
-      cy.visit(TopMenu.inventoryPath);
-      InventorySearchAndFilter.switchToItem();
-      InventorySearchAndFilter.searchByParameter('Barcode', item1.barcode);
-      ItemRecordView.waitLoading();
-      ItemRecordView.closeDetailView();
-      InventoryInstance.openHoldings(['']);
-      InventoryInstance.verifyCellsContent('Missing');
-    });
+    BulkEditSearchPane.downloadFileWithCommitErrors();
+    BulkEditFiles.verifyMatchedResultFileContent(errorsFromCommittingFileName, [item2.hrid], 'firstElement', false);
+
+    cy.visit(TopMenu.inventoryPath);
+    InventorySearchAndFilter.switchToItem();
+    InventorySearchAndFilter.searchByParameter('Barcode', item1.barcode);
+    ItemRecordView.waitLoading();
+    ItemRecordView.closeDetailView();
+    InventoryInstance.openHoldings(['']);
+    InventoryInstance.verifyCellsContent('Missing');
   });
 });
