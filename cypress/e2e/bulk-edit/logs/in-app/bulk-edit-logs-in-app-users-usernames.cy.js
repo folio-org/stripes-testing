@@ -1,13 +1,13 @@
-import testTypes from "../../../../support/dictionary/testTypes";
-import devTeams from "../../../../support/dictionary/devTeams";
-import permissions from "../../../../support/dictionary/permissions";
+import testTypes from '../../../../support/dictionary/testTypes';
+import devTeams from '../../../../support/dictionary/devTeams';
+import permissions from '../../../../support/dictionary/permissions';
 import TopMenu from '../../../../support/fragments/topMenu';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import FileManager from "../../../../support/utils/fileManager";
-import getRandomPostfix from "../../../../support/utils/stringTools";
-import Users from "../../../../support/fragments/users/users";
-import BulkEditActions from "../../../../support/fragments/bulk-edit/bulk-edit-actions";
-import BulkEditFiles from "../../../../support/fragments/bulk-edit/bulk-edit-files";
+import FileManager from '../../../../support/utils/fileManager';
+import getRandomPostfix from '../../../../support/utils/stringTools';
+import Users from '../../../../support/fragments/users/users';
+import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 
 let user;
 const invalidUsername = `invalidUsername_${getRandomPostfix()}`;
@@ -22,7 +22,7 @@ describe('Bulk Edit - Logs', () => {
       permissions.uiUsersView.gui,
     ])
       .then(userProperties => {
-        user = userProperties
+        user = userProperties;
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
@@ -58,4 +58,4 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.downloadFileWithErrorsEncountered();
     BulkEditFiles.verifyMatchedResultFileContent(errorsFromMatchingFileName, [invalidUsername], 'firstElement', false);
   });
-})
+});
