@@ -50,7 +50,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.itemsHoldingsIsDisabled(true);
       BulkEditSearchPane.isDragAndDropAreaDisabled(true);
 
-      BulkEditSearchPane.openQuerySearch();      
+      BulkEditSearchPane.openQuerySearch();
       BulkEditSearchPane.verifySpecificTabHighlighted('Query');
       BulkEditSearchPane.usersRadioIsDisabled(true);
       BulkEditSearchPane.itemsRadioIsDisabled(true);
@@ -58,7 +58,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.isBuildQueryButtonDisabled(true);
 
       // Need to wait for verification to complete
-      cy.wait(2000)
+      cy.wait(2000);
       cy.login(userWithProfileView.username, userWithProfileView.password, {
         path: TopMenu.bulkEditPath,
         waiter: BulkEditSearchPane.waitLoading
@@ -71,7 +71,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.itemsHoldingsIsDisabled(true);
       BulkEditSearchPane.isDragAndDropAreaDisabled(true);
 
-      BulkEditSearchPane.openQuerySearch();      
+      BulkEditSearchPane.openQuerySearch();
       BulkEditSearchPane.verifySpecificTabHighlighted('Query');
       BulkEditSearchPane.usersRadioIsDisabled(true);
       BulkEditSearchPane.itemsRadioIsDisabled(true);
