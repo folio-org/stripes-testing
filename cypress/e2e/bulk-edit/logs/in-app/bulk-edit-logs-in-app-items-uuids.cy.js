@@ -8,9 +8,16 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import FileManager from '../../../../support/utils/fileManager';
 import Users from '../../../../support/fragments/users/users';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import ItemRecordView from '../../../../support/fragments/inventory/itemRecordView';
 
 let user;
 const validItemUUIDsFileName = `validItemBarcodes_${getRandomPostfix()}.csv`;
+const matchRecordsFileNameValid = `*Matched-Records-${validItemUUIDsFileName}`;
+const updatesPreviewFileName = `*Updates-Preview-${validItemUUIDsFileName}`;
+const updatedRecordsFileName = `modified-*-${matchRecordsFileNameValid}`;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
@@ -86,6 +93,26 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.checkItemsCheckbox();
       BulkEditSearchPane.clickActionsOnTheRow();
       BulkEditSearchPane.verifyLogsRowActionWhenCompleted();
+
+      BulkEditSearchPane.downloadFileUsedToTrigger();
+      BulkEditFiles.verifyCSVFileRows(validItemUUIDsFileName, [item.itemId]);
+
+      BulkEditSearchPane.downloadFileWithMatchingRecords();
+      BulkEditFiles.verifyMatchedResultFileContent(matchRecordsFileNameValid, [item.itemId], 'firstElement', true);
+
+      BulkEditSearchPane.downloadFileWithProposedChanges();
+      BulkEditFiles.verifyMatchedResultFileContent(updatesPreviewFileName, [item.itemId], 'firstElement', true);
+
+      BulkEditSearchPane.downloadFileWithUpdatedRecords();
+      BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, [item.itemId], 'firstElement', true);
+
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.switchToItem();
+      InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
+      ItemRecordView.waitLoading();
+      ItemRecordView.closeDetailView();
+      InventoryInstance.openHoldings(['']);
+      InventoryInstance.verifyCellsContent(newLocation, 'Available', 'Reading room');
     });
   });
 });
