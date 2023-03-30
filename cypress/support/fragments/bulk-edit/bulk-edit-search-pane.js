@@ -12,7 +12,7 @@ import {
   MultiColumnList,
   Pane,
   including,
-  MultiColumnListRow, 
+  MultiColumnListRow,
   TextField
 } from '../../../../interactors';
 
@@ -51,6 +51,7 @@ const previewPorposedChangesBtn = DropdownMenu().find(Button('File with the prev
 const updatedRecordBtn = DropdownMenu().find(Button('File with updated records'));
 const errorsCommittingBtn = DropdownMenu().find(Button('File with errors encountered when committing the changes'));
 const buildQueryButton = Button('Build query');
+const buildQueryModal = Modal('Build query');
 
 export default {
   waitLoading() {
@@ -337,9 +338,9 @@ export default {
       recordTypesAccordion.find(holdingsRadio).exists(),
       setCriteriaPane.find(buildQueryButton).has({ disabled: false }),
     ]);
-    selectedRadio === 'Items' ? this.isItemsRadioChecked() 
-    : selectedRadio === 'Holdings' ? this.isHoldingsRadioChecked() 
-    : this.isUsersRadioChecked();
+    selectedRadio === 'Items' ? this.isItemsRadioChecked()
+      : selectedRadio === 'Holdings' ? this.isHoldingsRadioChecked()
+        : this.isUsersRadioChecked();
     this.verifyBulkEditPaneItems();
   },
 
@@ -828,5 +829,21 @@ export default {
 
   noLogResultsFound() {
     cy.expect(logsResultPane.find(HTML('No results found. Please check your filters.')).exists());
+  },
+
+  isDragAndDropAreaDisabled(isDisabled) {
+    cy.expect((fileButton).has({ disabled: isDisabled }));
+  },
+
+  isBuildQueryButtonDisabled(isDisabled) {
+    cy.expect((buildQueryButton).has({ disabled: isDisabled }));
+  },
+
+  clickBuildQueryButton() {
+    cy.do(buildQueryButton.click());
+  },
+
+  verifyBuildQueryModal() {
+    cy.expect(buildQueryModal.exists());
   }
 };
