@@ -13,7 +13,7 @@ describe('bulk-edit', () => {
   describe('permissions', () => {
     before('create test users', () => {
       cy.createTempUser([
-        permissions.uiUsersEditProfile.gui,
+        permissions.uiUserEdit.gui,
         permissions.uiUsersView.gui,
         permissions.uiUsersPermissions.gui,
       ])
