@@ -93,8 +93,8 @@ export default {
 
   checkSearchResults: (fiscalYear) => {
     cy.expect(MultiColumnList({ id: 'fiscal-years-list' })
-      .find(MultiColumnListCell())
-      .has({ content: fiscalYear }));
+      .find(MultiColumnListCell(fiscalYear))
+      .exists());
   },
 
   fiscalYearsDisplay: () => {
