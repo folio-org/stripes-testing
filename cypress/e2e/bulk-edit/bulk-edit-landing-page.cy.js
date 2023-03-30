@@ -10,16 +10,27 @@ let user;
 describe('bulk-edit', () => {
   before('create user', () => {
     cy.createTempUser([
-      permissions.bulkEditView.gui,
-      permissions.bulkEditEdit.gui,
-      permissions.bulkEditCsvView.gui,
-      permissions.bulkEditCsvEdit.gui,
-      permissions.bulkEditQueryView.gui,
       permissions.bulkEditLogsView.gui,
+      permissions.bulkEditCsvEdit.gui,
+      permissions.bulkEditCsvView.gui,
+      permissions.bulkEditEdit.gui,
+      permissions.bulkEditUpdateRecords.gui,
+      permissions.bulkEditView.gui,
+      permissions.bulkEditQueryView.gui,
+      permissions.uiInventoryViewInstances.gui,
+      permissions.uiInventoryViewCreateEditHoldings.gui,
+      permissions.uiInventoryViewCreateEditItems.gui,
+      permissions.uiUsersPermissions.gui,
+      permissions.uiUserEdit.gui,
+      permissions.uiUsersPermissionsView.gui,
+      permissions.uiUsersView.gui,
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading
+        });
       });
   });
 
@@ -61,10 +72,11 @@ describe('bulk-edit', () => {
 
     // verify query items
     BulkEditSearchPane.openQuerySearch();
-    BulkEditSearchPane.verifyQueryPane();
+    BulkEditSearchPane.verifyQueryPane('Holdings');
     BulkEditSearchPane.clickRecordTypesAccordion();
     BulkEditSearchPane.verifyRecordTypesAccordionCollapsed();
     BulkEditSearchPane.clickRecordTypesAccordion();
+    BulkEditSearchPane.verifyQueryPane('Holdings');
 
     // verify logs items
     BulkEditSearchPane.openLogsSearch();
