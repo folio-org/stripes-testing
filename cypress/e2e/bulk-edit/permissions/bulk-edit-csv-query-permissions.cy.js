@@ -77,6 +77,9 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.itemsRadioIsDisabled(true);
       BulkEditSearchPane.itemsHoldingsIsDisabled(true);
       BulkEditSearchPane.isBuildQueryButtonDisabled(false);
+
+      BulkEditSearchPane.clickBuildQueryButton();
+      BulkEditSearchPane.verifyBuildQueryModal();
     });
   });
 });
