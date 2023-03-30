@@ -111,9 +111,8 @@ describe('ui-data-import', () => {
     FieldMappingProfileView.checkOverrideProtectedSection(marcBibMappingProfileName);
     FieldMappingProfiles.checkMappingProfilePresented(marcBibMappingProfileName);
 
+    // added protection for field
     
-    
-    // // step 4-6
 
     // // create action profiles
     // cy.visit(SettingsMenu.actionProfilePath);
