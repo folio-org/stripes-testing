@@ -327,6 +327,7 @@ describe('Patron Block: Lost items', () => {
       UserLoans.openLoan(itemForRenew.barcode);
       UserLoans.renewItem(itemForRenew.barcode, true);
       Renewals.renewBlockedPatron(renewComment);
+      RenewConfirmationModal.waitLoading();
       RenewConfirmationModal.confirmRenewOverrideItem();
       OverrideAndRenewModal.confirmOverrideItem();
 
@@ -372,6 +373,7 @@ describe('Patron Block: Lost items', () => {
       UserLoans.openLoan(itemForRenew.barcode);
       UserLoans.renewItem(itemForRenew.barcode, true);
       Renewals.renewBlockedPatron(renewComment);
+      RenewConfirmationModal.waitLoading();
       RenewConfirmationModal.confirmRenewOverrideItem();
       OverrideAndRenewModal.confirmOverrideItem();
 
