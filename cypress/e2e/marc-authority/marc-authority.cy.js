@@ -133,6 +133,14 @@ describe('Importing MARC Authority files', () => {
     MarcAuthority.checkRemovedTag(9);
   });
 
+  it('C350680 Duplicate records do not return when searching by Identifier (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    let searchOption = 'Identifier (all)', identifier = 'n  42008104';
+
+    MarcAuthorities.searchBy(searchOption, identifier);
+    MarcAuthorities.selectFirst(testData.authority.title);
+    MarcAuthority.contains(identifier);
+  });
+
   it('C350572 Edit an Authority record (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
     MarcAuthorities.selectFirst(testData.authority.title);
