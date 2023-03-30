@@ -150,7 +150,7 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
                 testData.itemIds = specialInstanceIds.holdingIds[0].itemIds;
               })
               .then(() => {
-                [newFirstItemData.barcode, newSecondItemData.barcode].forEach((itemBarcode) => {
+                cy.wrap([newFirstItemData.barcode, newSecondItemData.barcode]).each((itemBarcode) => {
                   Checkout.checkoutItemViaApi({
                     itemBarcode,
                     userBarcode,
@@ -158,7 +158,7 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
                   });
                 });
 
-                [newFirstItemData.barcode, newSecondItemData.barcode].forEach((itemBarcode) => {
+                cy.wrap([newFirstItemData.barcode, newSecondItemData.barcode]).each((itemBarcode) => {
                   checkInActions.checkinItemViaApi({
                     itemBarcode,
                     servicePointId,
@@ -204,7 +204,7 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
     cy.deleteLoanType(testData.loanTypeId);
     NewFeeFine.getUserFeesFines(userData.userId).then((userFeesFines) => {
       const feesFinesData = userFeesFines.accounts;
-      feesFinesData.forEach(({ id }) => {
+      cy.wrap(feesFinesData).each(({ id }) => {
         cy.deleteFeesFinesApi(id);
       });
     });

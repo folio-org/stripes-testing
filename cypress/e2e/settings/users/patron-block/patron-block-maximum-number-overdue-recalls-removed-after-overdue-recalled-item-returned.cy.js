@@ -266,8 +266,6 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
       cy.visit(SettingsMenu.limitsPath);
       Limits.selectGroup(patronGroup.name);
       Limits.setLimit('Maximum number of overdue recalls', '4');
-      // // needed for the "Loan Policy" so recall can get overdue status
-      // cy.wait(120000);
 
       findPatron();
       UsersCard.waitLoading();

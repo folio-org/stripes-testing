@@ -31,11 +31,10 @@ import Renewals from '../../../../support/fragments/loans/renewals';
 import OverrideAndRenewModal from '../../../../support/fragments/users/loans/overrideAndRenewModal';
 import RenewConfirmationModal from '../../../../support/fragments/users/loans/renewConfirmationModal';
 
-describe('Patron Block: Maximum outstanding fee/fine balance', () => {
+describe('Patron Block: Lost items', () => {
   let addedCirculationRule;
   let originalCirculationRules;
   const renewComment = `AutotestText${getRandomPostfix()}`;
-  const blockMessage = `You have reached maximum outstanding fee/fine balance as set by patron group${getRandomPostfix()}`;
   const patronGroup = {
     name: 'groupToPatronBlock' + getRandomPostfix(),
   };
@@ -50,7 +49,7 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
     ],
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest fee/fine limit', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest lost items', uuid()),
   };
   const ownerBody = {
     owner: 'AutotestOwner' + getRandomPostfix(),
@@ -117,6 +116,14 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
     cy.visit(TopMenu.usersPath);
     UsersSearchPane.waitLoading();
     UsersSearchPane.searchByKeywords(userData.barcode);
+  };
+  const setConditionAndLimit = (message, type, limit) => {
+    Conditions.waitLoading();
+    Conditions.select(type);
+    Conditions.setConditionState(message);
+    cy.visit(SettingsMenu.limitsPath);
+    Limits.selectGroup(patronGroup.name);
+    Limits.setLimit(type, limit);
   };
 
   before('Preconditions', () => {
@@ -221,13 +228,6 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
       })
       .then(() => {
         cy.login(userData.username, userData.password);
-        cy.visit(SettingsMenu.conditionsPath);
-        Conditions.waitLoading();
-        Conditions.select('Maximum outstanding fee/fine balance');
-        Conditions.setConditionState(blockMessage);
-        cy.visit(SettingsMenu.limitsPath);
-        Limits.selectGroup(patronGroup.name);
-        Limits.setLimit('Maximum outstanding fee/fine balance', '624');
       });
   });
 
@@ -263,6 +263,7 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
     // needed for the "Lost Item Fee Policy" so patron can recieve fee/fine
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(120000);
+    cy.visit(SettingsMenu.conditionsPath);
   });
 
   afterEach('Returning items to original state', () => {
@@ -301,6 +302,7 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
     Conditions.resetConditionViaApi('cf7a0d5f-a327-4ca1-aa9e-dc55ec006b8a', 'Maximum outstanding fee/fine balance');
+    Conditions.resetConditionViaApi('72b67965-5b73-4840-bc0b-be8f3f6e047e', 'Maximum number of lost items');
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
@@ -308,10 +310,13 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
       testData.defaultLocation.id
     );
   });
+
   it(
     'C350655 Verify automated patron block "Maximum outstanding fee/fine balance" removed after lost item renewed (vega)',
     { tags: [TestTypes.criticalPath, devTeams.vega] },
     () => {
+      const blockMessage = `You have reached maximum outstanding fee/fine balance as set by patron group${getRandomPostfix()}`;
+      setConditionAndLimit(blockMessage, 'Maximum outstanding fee/fine balance', '624');
       findPatron();
       UsersCard.waitLoading();
       Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
@@ -334,6 +339,53 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
     'C350651 Verify automated patron block "Maximum outstanding fee/fine balance" removed after lost item returned (vega)',
     { tags: [TestTypes.criticalPath, devTeams.vega] },
     () => {
+      const blockMessage = `You have reached maximum outstanding fee/fine balance as set by patron group${getRandomPostfix()}`;
+      setConditionAndLimit(blockMessage, 'Maximum outstanding fee/fine balance', '624');
+      findPatron();
+      UsersCard.waitLoading();
+      Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
+
+      cy.visit(TopMenu.checkInPath);
+      const itemForCheckIn = itemsData.itemsWithSeparateInstance[Math.floor(Math.random() * 5)];
+      CheckInActions.checkInItemGui(itemForCheckIn.barcode);
+      CheckInActions.confirmCheckInLostItem();
+      CheckInActions.verifyLastCheckInItem(itemForCheckIn.barcode);
+
+      findPatron();
+      Users.checkPatronIsNotBlocked(userData.userId);
+    }
+  );
+
+  it(
+    'C350653 Verify automated patron block "Maximum number of lost items" removed after lost item renewed (vega)',
+    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    () => {
+      const blockMessage = `You have reached maximum number of lost items as set by patron group${getRandomPostfix()}`;
+      setConditionAndLimit(blockMessage, 'Maximum number of lost items', '4');
+      findPatron();
+      UsersCard.waitLoading();
+      Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
+
+      const itemForRenew = itemsData.itemsWithSeparateInstance[Math.floor(Math.random() * 5)];
+      UsersCard.openLoans();
+      UsersCard.showOpenedLoans();
+      UserLoans.openLoan(itemForRenew.barcode);
+      UserLoans.renewItem(itemForRenew.barcode, true);
+      Renewals.renewBlockedPatron(renewComment);
+      RenewConfirmationModal.confirmRenewOverrideItem();
+      OverrideAndRenewModal.confirmOverrideItem();
+
+      findPatron();
+      Users.checkPatronIsNotBlocked(userData.userId);
+    }
+  );
+
+  it(
+    'C350648 Verify automated patron block "Maximum number of lost items" removed after lost item returned (vega)',
+    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    () => {
+      const blockMessage = `You have reached maximum number of lost items as set by patron group${getRandomPostfix()}`;
+      setConditionAndLimit(blockMessage, 'Maximum number of lost items', 'a4');
       findPatron();
       UsersCard.waitLoading();
       Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
