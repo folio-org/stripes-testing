@@ -108,6 +108,7 @@ const closeDetailsView = Button({ icon: 'times' });
 const quickMarcEditorPane = Section({ id: 'quick-marc-editor-pane' });
 const filterPane = Section({ id: 'pane-filter' });
 const inputSearchField = TextField({ id: 'input-inventory-search' });
+const authSearchResultsPane = Section({ id: 'authority-search-results-pane' });
 
 const validOCLC = { id:'176116217',
   // TODO: hardcoded count related with interactors getters issue. Redesign to cy.then(QuickMarkEditor().rowsCount()).then(rowsCount => {...}
@@ -309,7 +310,10 @@ export default {
 
   closeAuthoritySource() {
     cy.do(sourceFileAccordion.find(closeSourceFile).click());
-    cy.expect(sourceFileAccordion.find(MultiSelect({ selected: including('LC Name Authority file (LCNAF)') })).absent());
+    cy.expect([
+      sourceFileAccordion.find(MultiSelect({ selected: including('LC Name Authority file (LCNAF)') })).absent(),
+      authSearchResultsPane.find(HTML(including('Choose a filter or enter a search query to show results.'))).exists(),
+    ]);
   },
 
   verifySearchOptions() {
@@ -358,7 +362,7 @@ export default {
   checkSearchResultsTable() {
     cy.expect([
       mclLinkHeader.has({ content: 'Link' }),
-      mclAuthRefTypeHeader.has({ content: 'Authorized' }),
+      mclAuthRefTypeHeader.has({ content: 'Authorized/Reference' }),
       mclHeadingRef.has({ content: 'Heading/Reference' }),
       mclHeadingType.has({ content: 'Type of heading' }),
       MultiColumnListRow({ index: 0 }).find(Button({ ariaLabel: 'Link' })).exists(),
@@ -377,11 +381,11 @@ export default {
     cy.do(MultiColumnListRow({ index: 0 }).find(MultiColumnListCell({ columnIndex: 2 })).find(Button()).click());
   },
 
-  checkRecordDetailPage() {
+  checkRecordDetailPage(markedValue) {
     cy.expect([
       marcViewPane.exists(),
       marcViewPane.find(buttonLink).exists(),
-      marcViewPane.has({ mark: 'Starr, Lisa' }),
+      marcViewPane.has({ mark: markedValue }),
     ]);
   },
 
