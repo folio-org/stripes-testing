@@ -16,6 +16,8 @@ const authReportModal = Modal({ id: 'authorities-report-modal' });
 const fromDate = TextField({ name: 'fromDate' });
 const toDate = TextField({ name: 'toDate' });
 const exportButton = Button('Export');
+const resetButton = Button('Reset all');
+const selectField = Select({ id: 'textarea-authorities-search-qindex' });
 
 export default {
   waitLoading: () => cy.expect(rootSection.exists()),
@@ -104,10 +106,28 @@ export default {
     cy.expect(marcViewSection.exists());
   },
 
+  checkFieldAndContentExistence(tag, value) {
+    cy.expect([
+      marcViewSection.exists(),
+      marcViewSectionContent.has({ text: including(tag) }),
+      marcViewSectionContent.has({ text: including(value) }),
+    ]);
+  },
+
   check010FieldAbsence: () => {
     cy.expect([
       editorSection.exists(),
       QuickMarcEditorRow({ tagValue: '010' }).absent()
+    ]);
+  },
+
+  clickResetAndCheck: (searchValue) => {
+    cy.do(filtersSection.find(resetButton).click());
+    cy.expect([
+      marcViewSection.absent(),
+      SearchField({ id:'textarea-authorities-search', value: searchValue }).absent(),
+      selectField.has({ content: including('Keyword') }),
+      rootSection.find(HTML(including('Choose a filter or enter a search query to show results.'))).exists(),
     ]);
   }
 };
