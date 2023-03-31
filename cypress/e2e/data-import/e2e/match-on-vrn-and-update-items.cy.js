@@ -37,7 +37,7 @@ describe('ui-data-import', () => {
     quantityPhysical: '1',
     createInventory: 'Instance, holdings, item'
   };
-  const itemBarcode = 'xyzt124245271818912626262';
+  const itemBarcode = uuid();
   let vendorId;
   let locationId;
   let acquisitionMethodId;
@@ -134,7 +134,6 @@ describe('ui-data-import', () => {
               });
           })
           .then(() => {
-            InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
             cy.login(user.username, user.password, { path: TopMenu.ordersPath, waiter: Orders.waitLoading });
           });
       });
@@ -158,6 +157,7 @@ describe('ui-data-import', () => {
     FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileName);
     FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileName);
     FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileName);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
   });
 
   it('C350591 Match on VRN and update related Instance, Holdings, Item (folijet)',
@@ -201,7 +201,7 @@ describe('ui-data-import', () => {
           Receiving.checkIsPiecesCreated(item.title);
         });
 
-      DataImport.editMarcFile('marcFileForC350591.mrc', editedMarcFileName, ['14567-1'], [item.vrn]);
+      DataImport.editMarcFile('marcFileForC350591.mrc', editedMarcFileName, ['14567-1', 'xyzt124245271818912626262'], [item.vrn, itemBarcode]);
 
       // create field mapping profiles
       cy.visit(SettingsMenu.mappingProfilePath);
@@ -248,7 +248,7 @@ describe('ui-data-import', () => {
       InventoryInstance.waitInstanceRecordViewOpened(item.title);
       MatchOnVRN.verifyInstanceUpdated();
       MatchOnVRN.verifyHoldingsUpdated();
-      MatchOnVRN.verifyItemUpdated();
-      MatchOnVRN.verifyMARCBibSource();
+      MatchOnVRN.verifyItemUpdated(itemBarcode);
+      MatchOnVRN.verifyMARCBibSource(itemBarcode);
     });
 });
