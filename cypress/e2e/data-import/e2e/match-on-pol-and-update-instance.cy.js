@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
@@ -28,7 +29,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 describe('ui-data-import', () => {
   let user = null;
   let orderNumber;
-  const itemBarcode = '242451241241';
+  const itemBarcode = uuid();
   const instanceTitle = 'South Asian texts in history : critical engagements with Sheldon Pollock. edited by Yigal Bronner, Whitney Cox, and Lawrence McCrea.';
 
   // unique profile names
@@ -114,7 +115,6 @@ describe('ui-data-import', () => {
       .then(userProperties => {
         user = userProperties;
 
-        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
         cy.login(user.username, user.password);
         cy.getAdminToken();
       });
@@ -135,6 +135,7 @@ describe('ui-data-import', () => {
         Orders.deleteOrderApi(orderId[0].id);
       });
     Users.deleteViaApi(user.userId);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
     cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` })
       .then(instance => {
         if (instance) {
@@ -241,7 +242,7 @@ describe('ui-data-import', () => {
             Orders.openOrder();
 
             // change file using order number
-            DataImport.editMarcFile('marcFileForC350944.mrc', editedMarcFileName, ['test'], [orderNumber]);
+            DataImport.editMarcFile('marcFileForC350944.mrc', editedMarcFileName, ['test', '242451241241'], [orderNumber, itemBarcode]);
           });
       });
 

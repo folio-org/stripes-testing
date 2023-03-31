@@ -60,7 +60,6 @@ describe('ui-data-import', () => {
   let materialTypeId;
   let user = {};
   let servicePointId;
-  let instanceHrid;
 
   // unique profile names
   const jobProfileName = `C350590 autotestJobProf${Helper.getRandomBarcode()}`;
@@ -369,7 +368,6 @@ describe('ui-data-import', () => {
 
       // check is items updated
       FileDetails.openInstanceInInventory('Updated');
-      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => { instanceHrid = initialInstanceHrId; });
       InventoryInstance.checkIsInstanceUpdated();
       InventoryInstance.openHoldingView();
       HoldingsRecordView.checkHoldingsType('Monograph');
