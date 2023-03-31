@@ -133,6 +133,11 @@ export default {
     ]);
   },
 
+  clearPermanentLocation(type = 'item', rowIndex = 0) {
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(`Permanent ${type} location`));
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Clear field'));
+  },
+
   replaceItemStatus(status, rowIndex = 0) {
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Item status'),
