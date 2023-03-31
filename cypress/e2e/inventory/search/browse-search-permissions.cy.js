@@ -1,15 +1,33 @@
+import getRandomPostfix from '../../../support/utils/stringTools';
+import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import TestTypes from '../../../support/dictionary/testTypes';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import devTeams from '../../../support/dictionary/devTeams';
 import Users from '../../../support/fragments/users/users';
-import permissions from '../../../support/dictionary/permissions';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 
 describe('permissions: inventory', () => {
-    let userWithOnlyViewPermissions;
-    let userWithAllPermissions;
+  const item = {
+    instanceName: `instanceForRecord_${getRandomPostfix()}`,
+    itemBarcode: getRandomPostfix(),
+    publisher: null,
+    holdingCallNumber: '1',
+    itemCallNumber: 'RR 718',
+    callNumber: 'PRT 718',
+    copyNumber: 'c.4',
+    callNumberSuffix: 'suf',
+    volume: 'v.1',
+    enumeration: 'e.2',
+    chronology: 'ch.3',
+  };
+  let userWithOnlyViewPermissions;
+  let userWithAllPermissions;
 
   before(() => {
+    cy.getAdminToken();
+    InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode, item.publisher, item.holdingCallNumber, item.itemCallNumber);
+
     cy.createTempUser([
         permissions.uiInventoryViewInstances.gui,
       ]).then(userProperties => {
@@ -23,6 +41,7 @@ describe('permissions: inventory', () => {
   });
 
   after('Deleting data', () => {
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     Users.deleteViaApi(userWithOnlyViewPermissions.userId);
     Users.deleteViaApi(userWithAllPermissions.userId);
   });
@@ -32,8 +51,10 @@ describe('permissions: inventory', () => {
     cy.visit(TopMenu.inventoryPath);
     InventorySearchAndFilter.switchToBrowseTab();
     InventorySearchAndFilter.selectBrowseCallNumbers();
-    InventorySearchAndFilter.browseSearch('K1');
-    InventorySearchAndFilter.verifyCallNumbersResultsInBrowsePane();
+    InventorySearchAndFilter.browseSearch(item.itemCallNumber);
+    InventorySearchAndFilter.verifyCallNumbersResultsInBrowsePane(item.itemCallNumber);
+    cy.visit(TopMenu.inventoryPath);
+    InventorySearchAndFilter.switchToBrowseTab();
     InventorySearchAndFilter.selectBrowseSubjects();
     InventorySearchAndFilter.browseSearch('art');
     InventorySearchAndFilter.verifySubjectsResultsInBrowsePane();
@@ -44,8 +65,10 @@ describe('permissions: inventory', () => {
     cy.visit(TopMenu.inventoryPath);
     InventorySearchAndFilter.switchToBrowseTab();
     InventorySearchAndFilter.selectBrowseCallNumbers();
-    InventorySearchAndFilter.browseSearch('K1');
-    InventorySearchAndFilter.verifyCallNumbersResultsInBrowsePane();
+    InventorySearchAndFilter.browseSearch(item.itemCallNumber);
+    InventorySearchAndFilter.verifyCallNumbersResultsInBrowsePane(item.itemCallNumber);
+    cy.visit(TopMenu.inventoryPath);
+    InventorySearchAndFilter.switchToBrowseTab();
     InventorySearchAndFilter.selectBrowseSubjects();
     InventorySearchAndFilter.browseSearch('art');
     InventorySearchAndFilter.verifySubjectsResultsInBrowsePane();

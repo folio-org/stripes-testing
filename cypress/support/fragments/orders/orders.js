@@ -188,6 +188,16 @@ export default {
       });
   },
 
+  createOrderByTemplate(templateName) {
+    cy.do([
+      actionsButton.click(),
+      newButton.click(),
+      Button({ id: 'order-template' }).click(),
+      SelectionOption(templateName).click(),
+      saveAndClose.click()
+    ]);
+  },
+
   createOrderForRollover(order, isApproved = false) {
     cy.do([
       actionsButton.click(),
@@ -243,6 +253,13 @@ export default {
       .exists());
     cy.expect(Accordion({ id: orderDetailsAccordionId })
       .find(KeyValue({ value: createdByAdmin }))
+      .exists());
+  },
+
+  checkCreatedOrderFromTemplate: (organization) => {
+    cy.expect(Pane({ id: 'order-details' }).exists());
+    cy.expect(Accordion({ id: orderDetailsAccordionId })
+      .find(KeyValue({ value: organization }))
       .exists());
   },
 
