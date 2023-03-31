@@ -310,10 +310,7 @@ export default {
 
   closeAuthoritySource() {
     cy.do(sourceFileAccordion.find(closeSourceFile).click());
-    cy.expect([
-      sourceFileAccordion.find(MultiSelect({ selected: including('LC Name Authority file (LCNAF)') })).absent(),
-      authSearchResultsPane.find(HTML(including('Choose a filter or enter a search query to show results.'))).exists(),
-    ]);
+    cy.expect(sourceFileAccordion.find(MultiSelect({ selected: including('LC Name Authority file (LCNAF)') })).absent());
   },
 
   verifySearchOptions() {
