@@ -256,11 +256,11 @@ export default {
       );
   },
 
-  verifyCallNumbersResultsInBrowsePane() {
+  verifyCallNumbersResultsInBrowsePane(item) {
     cy.expect(
       callNumberBrowsePane
       .find(MultiColumnList({ id: 'browse-results-list-callNumbers'}))
-      .find(MultiColumnListRow({ indexRow: 'row-0' })).exists()
+      .find(MultiColumnListCell(item)).exists()
       );
   },
 
