@@ -112,7 +112,6 @@ const itemStatusKeyValue = KeyValue('Item status');
 const itemBarcodeKeyValue = KeyValue('Item barcode');
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
 const viewSourceButton = Button('View source');
-// const itemBarcodeLink = Link(itemBarcode);
 const orderDetailsAccordion = Accordion({ id: 'purchaseOrder' });
 
 function verifyCreatedOrder(order) {
