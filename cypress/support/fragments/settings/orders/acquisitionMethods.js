@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { Button, EditableListRow, MultiColumnList, MultiColumnListCell, Pane, TextField } from '../../../../../interactors';
+import { Button, EditableListRow, MultiColumnListCell, Pane, TextField } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 import InteractorsTools from '../../../utils/interactorsTools';
 
