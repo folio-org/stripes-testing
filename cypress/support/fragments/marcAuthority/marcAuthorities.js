@@ -122,9 +122,10 @@ export default {
     ]);
   },
 
-  checkAfterSearch() {
+  checkAfterSearch(type, record) {
     cy.expect([
-      MultiColumnListCell({ columnIndex: 1, content: 'Authorized' }).exists(),
+      MultiColumnListCell({ columnIndex: 1, content: type }).exists(),
+      MultiColumnListCell({ columnIndex: 2, content: record }).exists(),
     ]);
   },
 
