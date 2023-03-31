@@ -6,8 +6,10 @@ export default {
       : resultType === 'firstName' ? this.verifyMatchedResultByFirstName
         : resultType === 'userId' ? this.verifyMatchedResultByUserId
           : resultType === 'userBarcode' ? this.verifyMatchedResultByUserBarcode
-            : resultType === 'firstElement' ? this.verifyMatchedResultFirstElement
-              : this.verifyMatchedResultByHRID;
+            : resultType === 'patronGroup' ? this.verifyMatchedResultPatronGroup
+              : resultType === 'expirationDate' ? this.verifyMatchedResultExpirationDate
+                : resultType === 'firstElement' ? this.verifyMatchedResultFirstElement
+                  : this.verifyMatchedResultByHRID;
 
     const getValuesFromCSVFile = validFile === true ? this.getValuesFromValidCSVFile
       : this.getValuesFromInvalidCSVFile;
@@ -88,9 +90,19 @@ export default {
   verifyChangedResultByUserId(actualResult, expectedResult) {
     expect(actualResult).to.eq(expectedResult);
   },
-  
+
   verifyMatchedResultFirstElement(actualResult, expectedResult) {
     const actualFirstElement = actualResult.split(',')[0];
     expect(actualFirstElement).to.eq(expectedResult);
+  },
+
+  verifyMatchedResultPatronGroup(actualResult, expectedResult) {
+    const actualPatronGroup = actualResult.split(',')[6];
+    expect(actualPatronGroup).to.eq(expectedResult);
+  },
+
+  verifyMatchedResultExpirationDate(actualResult, expectedResult) {
+    const actualExpirationDate = actualResult.split(',')[20];
+    expect(actualExpirationDate).to.include(expectedResult);
   },
 };
