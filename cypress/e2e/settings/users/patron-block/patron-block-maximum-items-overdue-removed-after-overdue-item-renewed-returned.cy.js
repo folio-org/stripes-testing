@@ -24,11 +24,14 @@ import Conditions from '../../../../support/fragments/settings/users/conditions'
 import Limits from '../../../../support/fragments/settings/users/limits';
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../../../support/fragments/users/usersCard';
+import UserLoans from '../../../../support/fragments/users/loans/userLoans';
+import Renewals from '../../../../support/fragments/loans/renewals';
 
 describe('Patron Block: Maximum number of overdue items', () => {
   let addedCirculationRule;
   let originalCirculationRules;
-  const checkedOutBlockMessage = 'You have reached maximum number of overdue items as set by patron group';
+  const renewComment = `AutotestText${getRandomPostfix()}`;
+  const blockMessage = `You have reached maximum number of overdue items as set by patron group${getRandomPostfix()}`;
   const patronGroup = {
     name: 'groupToPatronBlock' + getRandomPostfix(),
   };
@@ -72,8 +75,14 @@ describe('Patron Block: Maximum number of overdue items', () => {
     renewable: true,
     renewalsPolicy: {
       unlimited: true,
-      renewFromId: 'CURRENT_DUE_DATE',
+      renewFromId: 'SYSTEM_DATE',
     },
+  };
+
+  const findPatron = () => {
+    cy.visit(TopMenu.usersPath);
+    UsersSearchPane.waitLoading();
+    UsersSearchPane.searchByKeywords(userData.barcode);
   };
 
   before('Preconditions', () => {
@@ -128,7 +137,6 @@ describe('Patron Block: Maximum number of overdue items', () => {
             itemsData.itemsWithSeparateInstance[index].itemId = specialInstanceIds.holdingIds[0].itemIds;
           });
         });
-        cy.wrap(itemsData.itemsWithSeparateInstance).as('items');
       });
 
     UsersOwners.createViaApi(owner.body).then((response) => {
@@ -152,6 +160,8 @@ describe('Patron Block: Maximum number of overdue items', () => {
     cy.createTempUser(
       [
         permissions.uiUsersSettingsOwners.gui,
+        permissions.loansAll.gui,
+        permissions.overridePatronBlock.gui,
         permissions.uiUsersCreatePatronConditions.gui,
         permissions.uiUsersCreatePatronLimits.gui,
         permissions.checkinAll.gui,
@@ -168,22 +178,44 @@ describe('Patron Block: Maximum number of overdue items', () => {
       })
       .then(() => {
         UserEdit.addServicePointViaApi(testData.userServicePoint.id, userData.userId, testData.userServicePoint.id);
-
-        cy.get('@items').each((item) => {
-          Checkout.checkoutItemViaApi({
-            id: uuid(),
-            itemBarcode: item.barcode,
-            loanDate: moment.utc().format(),
-            servicePointId: testData.userServicePoint.id,
-            userBarcode: userData.barcode,
-          });
-        });
-
         cy.login(userData.username, userData.password);
+        cy.visit(SettingsMenu.conditionsPath);
+        Conditions.waitLoading();
+        Conditions.select('Maximum number of overdue items');
+        Conditions.setConditionState(blockMessage);
+        cy.visit(SettingsMenu.limitsPath);
+        Limits.selectGroup(patronGroup.name);
+        Limits.setLimit('Maximum number of overdue items', '4');
       });
   });
 
-  after('Deleting created entities', () => {
+  beforeEach('Assign lost status to items', () => {
+    cy.wrap(itemsData.itemsWithSeparateInstance).as('items');
+    cy.get('@items').each((item) => {
+      Checkout.checkoutItemViaApi({
+        id: uuid(),
+        itemBarcode: item.barcode,
+        loanDate: moment.utc().format(),
+        servicePointId: testData.userServicePoint.id,
+        userBarcode: userData.barcode,
+      });
+    });
+
+    UserLoans.getUserLoansIdViaApi(userData.userId).then((userLoans) => {
+      const loansData = userLoans.loans;
+      const newDueDate = new Date(loansData[0].loanDate);
+      newDueDate.setDate(newDueDate.getDate() - 1);
+      loansData.forEach((loan) => {
+        UserLoans.changeDueDateViaApi({
+          ...loan,
+          dueDate: newDueDate,
+          action: 'dueDateChanged',
+        }, loan.id);
+      });
+    });
+  });
+
+  afterEach('Returning items to original state', () => {
     cy.get('@items').each((item) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,
@@ -191,6 +223,9 @@ describe('Patron Block: Maximum number of overdue items', () => {
         checkInDate: new Date().toISOString(),
       });
     });
+  });
+
+  after('Deleting created entities', () => {
     PaymentMethods.deleteViaApi(testData.paymentMethodId);
     UsersOwners.deleteViaApi(owner.data.id);
     cy.deleteLoanPolicy(loanPolicyBody.id);
@@ -214,33 +249,39 @@ describe('Patron Block: Maximum number of overdue items', () => {
     cy.deleteLoanType(testData.loanTypeId);
   });
   it(
+    'C350654 Verify automated patron block "Maximum number of overdue items" removed after overdue item renewed (vega)',
+    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    () => {
+      findPatron();
+      UsersCard.waitLoading();
+      Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
+
+      const itemForRenew = itemsData.itemsWithSeparateInstance[0];
+      UsersCard.openLoans();
+      UsersCard.showOpenedLoans();
+      UserLoans.openLoan(itemForRenew.barcode);
+      UserLoans.renewItem(itemForRenew.barcode, true);
+      Renewals.renewBlockedPatron(renewComment);
+
+      findPatron();
+      Users.checkPatronIsNotBlocked(userData.userId);
+    }
+  );
+
+  it(
     'C350649 Verify automated patron block "Maximum number of overdue items" removed after overdue item returned (vega)',
     { tags: [TestTypes.criticalPath, devTeams.vega] },
     () => {
-      cy.visit(SettingsMenu.conditionsPath);
-      Conditions.waitLoading();
-      Conditions.select('Maximum number of overdue items');
-      Conditions.setConditionState(checkedOutBlockMessage);
-      cy.visit(SettingsMenu.limitsPath);
-      Limits.selectGroup(patronGroup.name);
-      Limits.setLimit('Maximum number of overdue items', '4');
-      // needed for the "Loan Policy" so item can get overdue status
-      cy.wait(120000);
-
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.waitLoading();
-      UsersSearchPane.searchByKeywords(userData.barcode);
+      findPatron();
       UsersCard.waitLoading();
-      Users.checkIsPatronBlocked(checkedOutBlockMessage, 'Borrowing, Renewals, Requests');
+      Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
 
       cy.visit(TopMenu.checkInPath);
       const itemForCheckIn = itemsData.itemsWithSeparateInstance[0];
       CheckInActions.checkInItemGui(itemForCheckIn.barcode);
       CheckInActions.verifyLastCheckInItem(itemForCheckIn.barcode);
 
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.waitLoading();
-      UsersSearchPane.searchByKeywords(userData.barcode);
+      findPatron();
       Users.checkPatronIsNotBlocked(userData.userId);
     }
   );
