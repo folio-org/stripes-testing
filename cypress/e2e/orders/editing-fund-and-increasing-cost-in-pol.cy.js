@@ -1,23 +1,21 @@
-import permissions from '../../../support/dictionary/permissions';
-import testType from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
-import TopMenu from '../../../support/fragments/topMenu';
-import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
-import Users from '../../../support/fragments/users/users';
-import Funds from '../../../support/fragments/finance/funds/funds';
-import FinanceHelp from '../../../support/fragments/finance/financeHelper';
-import DateTools from '../../../support/utils/dateTools';
-import NewOrder from '../../../support/fragments/orders/newOrder';
-import Orders from '../../../support/fragments/orders/orders';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import Organizations from '../../../support/fragments/organizations/organizations';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import NewInvoice from '../../../support/fragments/invoices/newInvoice';
-import Invoices from '../../../support/fragments/invoices/invoices';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
+import permissions from '../../support/dictionary/permissions';
+import testType from '../../support/dictionary/testTypes';
+import devTeams from '../../support/dictionary/devTeams';
+import getRandomPostfix from '../../support/utils/stringTools';
+import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
+import TopMenu from '../../support/fragments/topMenu';
+import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
+import Users from '../../support/fragments/users/users';
+import Funds from '../../support/fragments/finance/funds/funds';
+import FinanceHelp from '../../support/fragments/finance/financeHelper';
+import Orders from '../../support/fragments/orders/orders';
+import OrderLines from '../../support/fragments/orders/orderLines';
+import Organizations from '../../support/fragments/organizations/organizations';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import NewInvoice from '../../support/fragments/invoices/newInvoice';
+import Invoices from '../../support/fragments/invoices/invoices';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 
 describe('ui-orders: Orders', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
@@ -36,11 +34,9 @@ describe('ui-orders: Orders', () => {
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const invoice = { ...NewInvoice.defaultUiInvoice };
-  const allocatedQuantity = '100';
-  const todayDate = DateTools.getCurrentDate();
-  const fileNameDate = DateTools.getCurrentDateForFileNaming();
+  const allocatedQuantity = '1000';
   let user;
-  let firstOrderNumber;
+  let orderNumber;
   let servicePointId;
   let location;
 
@@ -96,42 +92,30 @@ describe('ui-orders: Orders', () => {
         invoice.accountingCode = organization.erpCode;
         defaultOrder.orderType = 'One-time';
       });
-    secondOrder.vendor = organization.name;
+    defaultOrder.vendor = organization.name;
     defaultOrder.vendor = organization.name;
     cy.visit(TopMenu.ordersPath);
-    Orders.createOrderForRollover(secondOrder).then(firstOrderResponse => {
-      secondOrder.id = firstOrderResponse.id;
-      firstOrderNumber = firstOrderResponse.poNumber;
-      Orders.checkCreatedOrder(secondOrder);
+    Orders.createOrderForRollover(defaultOrder).then(orderResponse => {
+      defaultOrder.id = orderResponse.id;
+      orderNumber = orderResponse.poNumber;
+      Orders.checkCreatedOrder(defaultOrder);
       OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
       OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(defaultFund, '40', '1', '40', location.institutionId);
       OrderLines.backToEditingOrder();
       Orders.openOrder();
-      cy.visit(TopMenu.ordersPath);
-      Orders.createOrderForRollover(defaultOrder).then(secondOrderResponse => {
-        defaultOrder.id = secondOrderResponse.id;
-        Orders.checkCreatedOrder(defaultOrder);
-        OrderLines.addPOLine();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
-        OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(defaultFund, '10', '1', '10', location.institutionId);
-        OrderLines.backToEditingOrder();
-        Orders.openOrder();
-      });
       cy.visit(TopMenu.invoicesPath);
       Invoices.createRolloverInvoice(invoice, organization.name);
-      Invoices.createInvoiceLineFromPol(firstOrderNumber);
+      Invoices.createInvoiceLineFromPol(orderNumber);
       // Need to wait, while data will be loaded
       cy.wait(4000);
       Invoices.approveInvoice();
       Invoices.payInvoice();
     });
     cy.createTempUser([
-      permissions.uiFinanceExecuteFiscalYearRollover.gui,
-      permissions.uiFinanceViewFiscalYear.gui,
       permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiFinanceViewLedger.gui,
-      permissions.uiOrdersView.gui
+      permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
+      permissions.uiOrdersEdit.gui,
     ])
       .then(userProperties => {
         user = userProperties;
@@ -144,21 +128,13 @@ describe('ui-orders: Orders', () => {
   });
 
   it('C375290 Editing fund distribution and increasing cost in PO line when related Paid invoice exists (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    FinanceHelp.searchByName(defaultLedger.name);
-    Ledgers.selectLedger(defaultLedger.name);
-    Ledgers.rollover();
-    Ledgers.fillInTestRolloverInfoCashBalance(secondFiscalYear.code, 'Cash balance', 'Allocation');
-    Ledgers.rolloverLogs();
-    Ledgers.exportRollover(todayDate);
-    Ledgers.checkDownloadedFile(`${fileNameDate}-result.csv`, defaultFund, secondFiscalYear, '100', '100', '160', '160', '160', '160', '160');
-    Ledgers.deleteDownloadedFile(`${fileNameDate}-result.csv`);
-    Ledgers.closeOpenedPage();
-    Ledgers.rollover();
-    Ledgers.fillInRolloverForCashBalance(secondFiscalYear.code, 'Cash balance', 'Allocation');
-    Ledgers.closeRolloverInfo();
-    Ledgers.selectFundInLedger(defaultFund.name);
-    Funds.selectPlannedBudgetDetails();
-    Funds.checkFundingInformation('$160.00','$0.00','$0.00','$160.00','$0.00','$160.00');
-    Funds.checkFinancialActivityAndOverages('$0.00','$0.00','$0.00','$0.00');
+    Orders.searchByParameter('PO number', orderNumber);
+    Orders.selectPendingStatusFilter();
+    Orders.selectFromResultsList(orderNumber);
+    Orders.editOrder();
+    Orders.selectOngoingOrderTypeInPOForm();
+    Orders.saveEditingOrder();
+    InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully saved`);
+    Orders.checkEditedOngoingOrder(orderNumber, organization.name);
   });
 });
