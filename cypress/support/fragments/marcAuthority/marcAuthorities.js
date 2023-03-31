@@ -105,6 +105,30 @@ export default {
     cy.expect(MultiColumnListRow({ index: 0 }).find(Button({ text: including('Beethoven, Ludwig van (no 010)') })).exists());
     cy.expect(marcViewSection.exists());
   },
+  
+  checkSearchOptions() {
+    cy.do(selectField.click());
+    cy.expect([
+      selectField.has({ content: including('Keyword') }),
+      selectField.has({ content: including('Identifier (all)') }),
+      selectField.has({ content: including('Personal name') }),
+      selectField.has({ content: including('Corporate/Conference name') }),
+      selectField.has({ content: including('Geographic name') }),
+      selectField.has({ content: including('Name-title') }),
+      selectField.has({ content: including('Uniform title') }),
+      selectField.has({ content: including('Subject') }),
+      selectField.has({ content: including('Children\'s subject heading') }),
+      selectField.has({ content: including('Genre') }),
+      selectField.has({ content: including('Advanced search') }),
+    ]);
+  },
+
+  checkAfterSearch(type, record) {
+    cy.expect([
+      MultiColumnListCell({ columnIndex: 1, content: type }).exists(),
+      MultiColumnListCell({ columnIndex: 2, content: record }).exists(),
+    ]);
+  },
 
   checkFieldAndContentExistence(tag, value) {
     cy.expect([
