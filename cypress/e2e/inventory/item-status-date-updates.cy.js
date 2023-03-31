@@ -286,6 +286,7 @@ describe('ui-inventory: Item status date updates', () => {
       itemBarcode,
       itemTitle: null,
       requesterBarcode: userForDeliveryRequest.barcode,
+      requestType: 'Hold'
     });
     cy.visit(TopMenu.checkInPath);
     CheckInActions.checkInItem(itemBarcode);
