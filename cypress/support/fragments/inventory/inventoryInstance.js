@@ -699,4 +699,10 @@ export default {
         .find(Link(barcode)).click()
     ]);
   },
+
+  verifyCellsContent: (...content) => {
+    content.forEach(itemContent => {
+      cy.expect(MultiColumnListCell({ content: itemContent }).exists());
+    });
+  },
 };

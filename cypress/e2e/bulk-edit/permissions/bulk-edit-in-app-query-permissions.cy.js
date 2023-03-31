@@ -6,6 +6,7 @@ import users from '../../../support/fragments/users/users';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 
 let user;
+let userWithInventoryView;
 
 describe('bulk-edit', () => {
   describe('permissions', () => {
@@ -14,10 +15,22 @@ describe('bulk-edit', () => {
         permissions.bulkEditView.gui,
         permissions.bulkEditEdit.gui,
         permissions.bulkEditQueryView.gui,
+        permissions.uiInventoryViewInstances.gui,
+      ])
+        .then(userProperties => {
+          userWithInventoryView = userProperties;
+        });
+      cy.createTempUser([
+        permissions.bulkEditView.gui,
+        permissions.bulkEditEdit.gui,
+        permissions.bulkEditQueryView.gui,
       ])
         .then(userProperties => {
           user = userProperties;
-          cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading
+          });
         });
     });
 
@@ -26,11 +39,44 @@ describe('bulk-edit', () => {
     });
 
     it('C366073 Verify Bulk edit elements in the left pane --In app (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+      BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
+      BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
       BulkEditSearchPane.usersRadioIsDisabled(true);
       BulkEditSearchPane.itemsRadioIsDisabled(false);
+      BulkEditSearchPane.isItemsRadioChecked();
       BulkEditSearchPane.itemsHoldingsIsDisabled(false);
+      BulkEditSearchPane.isDragAndDropAreaDisabled(true);
+
       BulkEditSearchPane.openQuerySearch();
-      BulkEditSearchPane.verifyQueryPane();
+      BulkEditSearchPane.verifySpecificTabHighlighted('Query');
+      BulkEditSearchPane.usersRadioIsDisabled(true);
+      BulkEditSearchPane.itemsRadioIsDisabled(true);
+      BulkEditSearchPane.itemsHoldingsIsDisabled(true);
+      BulkEditSearchPane.isBuildQueryButtonDisabled(true);
+
+      // Need to wait for verification to complete
+      cy.wait(2000);
+      cy.login(userWithInventoryView.username, userWithInventoryView.password, {
+        path: TopMenu.bulkEditPath,
+        waiter: BulkEditSearchPane.waitLoading
+      });
+      BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
+      BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
+      BulkEditSearchPane.usersRadioIsDisabled(true);
+      BulkEditSearchPane.itemsRadioIsDisabled(false);
+      BulkEditSearchPane.isItemsRadioChecked();
+      BulkEditSearchPane.itemsHoldingsIsDisabled(false);
+      BulkEditSearchPane.isDragAndDropAreaDisabled(true);
+
+      BulkEditSearchPane.openQuerySearch();
+      BulkEditSearchPane.verifySpecificTabHighlighted('Query');
+      BulkEditSearchPane.usersRadioIsDisabled(true);
+      BulkEditSearchPane.itemsRadioIsDisabled(true);
+      BulkEditSearchPane.itemsHoldingsIsDisabled(true);
+      BulkEditSearchPane.isBuildQueryButtonDisabled(false);
+
+      BulkEditSearchPane.clickBuildQueryButton();
+      BulkEditSearchPane.verifyBuildQueryModal();
     });
   });
 });
