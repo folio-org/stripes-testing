@@ -362,7 +362,7 @@ export default {
   checkSearchResultsTable() {
     cy.expect([
       mclLinkHeader.has({ content: 'Link' }),
-      mclAuthRefTypeHeader.has({ content: 'Authorized/Reference' }),
+      mclAuthRefTypeHeader.has({ content: 'Authorized' }),
       mclHeadingRef.has({ content: 'Heading/Reference' }),
       mclHeadingType.has({ content: 'Type of heading' }),
       MultiColumnListRow({ index: 0 }).find(Button({ ariaLabel: 'Link' })).exists(),
