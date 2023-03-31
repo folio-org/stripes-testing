@@ -127,12 +127,12 @@ describe('orders: export', () => {
   });
 
   it('C350402: Verify that an Order is exported to a definite Vendors Account specified in one of several Integration configurations (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
-    //Need to wait while first job will be runing
-    cy.wait(5000);
+    //Need to wait 2 minutes while first job will be runing
+    cy.wait(120000);
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList();
     Orders.createPOLineViaActions();
-    OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
+    OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
     OrderLines.fillInPOLineInfoForExportWithLocation(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId);
     OrderLines.backToEditingOrder();
     Orders.openOrder();
