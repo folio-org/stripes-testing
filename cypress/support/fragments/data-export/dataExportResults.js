@@ -1,14 +1,15 @@
-import InventorySearchAndFilter from '../inventory/inventorySearchAndFilter';
 import { MultiColumnListCell } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
+const getSearchResult = (row = 0, col = 0) => MultiColumnListCell({ 'row': row, 'columnIndex': col });
 const quickExportFileNameMask = /quick-export-\d{1,3}.mrc/gm;
 
 export default {
   defaultJobProfile: 'Default instances export job profile',
+  getSearchResult,
   verifyQuickExportResult() {
     cy.do([
-      InventorySearchAndFilter.getSearchResult(0, 0).perform(element => {
+      this.getSearchResult(0, 0).perform(element => {
         expect(element.innerText).to.match(quickExportFileNameMask);
       }),
       MultiColumnListCell({ row: 0, content: this.defaultJobProfile }).exists(),

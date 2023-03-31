@@ -31,6 +31,9 @@ export default {
   selectSearchResultItem(indexRow = 0) {
     return cy.do(this.getSearchResult(indexRow, 0).click());
   },
+  selectJob(content) {
+    return cy.do(MultiColumnListCell(including(content)).click());
+  },
   closeExportJobPane() {
     cy.do(Button({ ariaLabel: 'Close Export job ' }).click());
   },
@@ -104,6 +107,14 @@ export default {
       Modal('Select User').find(TextField()).fillIn(username),
       searchButton.click(),
     ]);
+  },
+  searchByAuthorityControl() {
+    waitClick();
+    cy.do(jobTypeAccordion.find(Checkbox({ id: 'clickable-filter-type-auth-headings-updates' })).click());
+  },
+  downloadLastCreatedJob(jobId) {
+    // TODO: redesign to interactors
+    cy.get(`a:contains(${jobId})`).first().click()
   },
   verifyUserSearchResult(username) {
     cy.expect(userSearchResults.has({ text: including(username) }));

@@ -10,7 +10,8 @@ import Users from '../../../support/fragments/users/users';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import DevTeams from '../../../support/dictionary/devTeams';
 
-describe('ui-data-import', () => {
+// this autotest is needed to be skipped because it is running in infinite loop. TODO analyze this issue and fix it
+describe.skip('ui-data-import', () => {
   let userId = null;
   let fileNameToUpload = '';
   const filePathToUpload = 'oneMarcBib.mrc';

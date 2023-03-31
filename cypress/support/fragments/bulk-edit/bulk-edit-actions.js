@@ -10,7 +10,9 @@ import {
   MultiColumnListCell,
   TextField,
   RepeatableFieldItem,
+  Select
 } from '../../../../interactors';
+import DateTools from "../../utils/dateTools";
 
 const actionsBtn = Button('Actions');
 const dropdownMenu = DropdownMenu();
@@ -20,10 +22,20 @@ const plusBtn = Button({ icon: 'plus-sign' });
 const deleteBtn = Button({ icon: 'trash' });
 const keepEditingBtn = Button('Keep editing');
 const areYouSureForm = Modal('Are you sure?');
+const downloadPreviewBtn = Button('Download preview');
+
 // interactor doesn't allow to pick second the same select
 function getEmailField() {
   return cy.get('[class^=textField]');
 }
+
+const bulkPageSelections = {
+  valueType: Select({ content: including('Select option') }),
+  action: Select({ content: including('Select action') }),
+  itemStatus: Select({ content: including('Select item status') }),
+  patronGroup: Select({ content: including('Select patron group') }),
+};
+
 function getLocationSelect() {
   return cy.get('select').eq(2);
 }
@@ -35,11 +47,6 @@ function getActionSelect() {
 function getBulkEditSelectType() {
   return cy.get('select').eq(1);
 }
-
-function getPatronGroupTypeSelect() {
-  return cy.get('select').eq(3);
-}
-
 
 export default {
   openStartBulkEditForm() {
@@ -60,10 +67,14 @@ export default {
     cy.expect([
       areYouSureForm.find(HTML(including(`${count} records will be changed`))).exists(),
       areYouSureForm.find(keepEditingBtn).exists(),
-      areYouSureForm.find(Button('Download preview')).exists(),
+      areYouSureForm.find(Button(downloadPreviewBtn)).exists(),
       areYouSureForm.find(Button('Commit changes')).exists(),
       areYouSureForm.find(MultiColumnListCell(cellContent)).exists()
     ]);
+  },
+
+  downloadPreview() {
+    cy.do(downloadPreviewBtn.click());
   },
 
   clickKeepEditingBtn() {
@@ -146,18 +157,23 @@ export default {
     ]);
   },
 
-  fillPatronGroup(group = 'staff (Staff Member)') {
-    getBulkEditSelectType().select('Patron group');
-    getPatronGroupTypeSelect().select(group);
+  fillPatronGroup(group = 'staff (Staff Member)', rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Patron group'),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.patronGroup).choose(group),
+    ]);
   },
 
   fillExpirationDate(date) {
-    // date format MM/DD/YYYY
+    // js date object
+    const formattedDate = DateTools.getFormattedDate({ date }, 'MM/DD/YYYY');
     getBulkEditSelectType().select('Expiration date');
     cy.do([
       Button({ icon: 'calendar' }).click(),
-      TextField().fillIn(date)
+      TextField().fillIn(formattedDate)
     ]);
+    // we don't have interactor for this element
+    cy.get(`[aria-label="calendar"] [data-date="${formattedDate}"]`).click();
   },
 
   verifyCalendarItem() {
@@ -218,7 +234,7 @@ export default {
     // need to wait downloading
     cy.wait(5000);
   },
-  
+
   prepareBulkEditFileWithDuplicates(fileMask, finalFileName, stringToBeReplaced, replaceString) {
     FileManager.findDownloadedFilesByMask(`*${fileMask}*`).then((downloadedFilenames) => {
       const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
