@@ -280,6 +280,8 @@ describe('Patron Block: Lost items', () => {
         cy.deleteFeesFinesApi(id);
       });
     });
+    Conditions.resetConditionViaApi('cf7a0d5f-a327-4ca1-aa9e-dc55ec006b8a', 'Maximum outstanding fee/fine balance');
+    Conditions.resetConditionViaApi('72b67965-5b73-4840-bc0b-be8f3f6e047e', 'Maximum number of lost items');
   });
 
   after('Deleting created entities', () => {
@@ -301,8 +303,6 @@ describe('Patron Block: Lost items', () => {
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    Conditions.resetConditionViaApi('cf7a0d5f-a327-4ca1-aa9e-dc55ec006b8a', 'Maximum outstanding fee/fine balance');
-    Conditions.resetConditionViaApi('72b67965-5b73-4840-bc0b-be8f3f6e047e', 'Maximum number of lost items');
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
@@ -387,7 +387,7 @@ describe('Patron Block: Lost items', () => {
     { tags: [TestTypes.criticalPath, devTeams.vega] },
     () => {
       const blockMessage = `You have reached maximum number of lost items as set by patron group${getRandomPostfix()}`;
-      setConditionAndLimit(blockMessage, 'Maximum number of lost items', 'a4');
+      setConditionAndLimit(blockMessage, 'Maximum number of lost items', '4');
       findPatron();
       UsersCard.waitLoading();
       Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
