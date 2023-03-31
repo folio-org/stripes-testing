@@ -72,6 +72,12 @@ export default {
     body: apiBody,
     isDefaultSearchParamsRequired: false
   }),
+  changeDueDateViaApi: (apiBody, loanId) => cy.okapiRequest({
+    method: 'PUT',
+    path: `circulation/loans/${loanId}`,
+    body: apiBody,
+    isDefaultSearchParamsRequired: false
+  }),
   openActionsMenuOfLoanByBarcode,
   declareLoanLostByBarcode:(itemBarcode) => {
     openActionsMenuOfLoanByBarcode(itemBarcode);
