@@ -24,7 +24,6 @@ import InventoryViewSource from '../inventory/inventoryViewSource';
 import DateTools from '../../utils/dateTools';
 import getRandomPostfix from '../../utils/stringTools';
 
-const itemBarcode = 'xyzt124245271818912626262';
 const poLineData = {
   title: 'Agrarianism and capitalism in early Georgia, 1732-1743 / Jay Jordan Butler.',
   productId: `xyz${getRandomPostfix()}`,
@@ -113,7 +112,6 @@ const itemStatusKeyValue = KeyValue('Item status');
 const itemBarcodeKeyValue = KeyValue('Item barcode');
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
 const viewSourceButton = Button('View source');
-const itemBarcodeLink = Link(itemBarcode);
 const orderDetailsAccordion = Accordion({ id: 'purchaseOrder' });
 
 function verifyCreatedOrder(order) {
@@ -354,10 +352,10 @@ function verifyHoldingsUpdated() {
 }
 
 
-function verifyItemUpdated() {
+function verifyItemUpdated(itemBarcode) {
   cy.do([
     holdingsAccordionButton.click(),
-    itemBarcodeLink.click(),
+    Link(itemBarcode).click(),
   ]);
   cy.expect(itemStatusKeyValue.has({ value: 'Available' }));
   cy.expect(itemBarcodeKeyValue.has({ value: itemBarcode }));
@@ -365,7 +363,7 @@ function verifyItemUpdated() {
   closeDetailView();
 }
 
-function verifyMARCBibSource() {
+function verifyMARCBibSource(itemBarcode) {
   cy.do([
     instanceDetailsSection.find(actionButton).click(),
     viewSourceButton.click(),
@@ -398,25 +396,9 @@ function deletePOLineViaAPI(title) {
     });
 }
 
-function deleteItemViaAPI(barcode = itemBarcode) {
-  return cy.okapiRequest({
-    method: 'GET',
-    path: 'inventory/items',
-    searchParams: {
-      query: `barcode=="${barcode}"`,
-      limit: 1000,
-    },
-    isDefaultSearchParamsRequired: false,
-  })
-    .then(({ body: { items } }) => {
-      return cy.deleteItemViaApi(items[0].id);
-    });
-}
-
 export default {
   poLineData,
   deletePOLineViaAPI,
-  deleteItemViaAPI,
   verifyCreatedOrder,
   fillPOLineInfo,
   goBackToPO,
