@@ -28,7 +28,11 @@ describe('Importing MARC Authority files', () => {
     },
     forC350641: {
       lcControlNumber: 'n  42008104',
-      searchOption: 'Identifier (all)',
+      lcControlNumberUsingAllBefore: '*2008104',
+      lcControlNumberUsingAllAfter: 'n  420081*',
+      searchOptionA: 'Identifier (all)',
+      searchOptionB: 'Keyword',
+      type: 'Authorized',
     }
   };
   const jobProfileToRun = 'Default - Create SRS MARC Authority';
@@ -137,6 +141,26 @@ describe('Importing MARC Authority files', () => {
     MarcAuthority.checkRemovedTag(9);
   });
 
+  it('C350641 Search MARC: support exact match searching Library of Congress Control Number - 010 field $a subfield (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    MarcAuthorities.checkSearchOptions();
+    MarcAuthorities.searchBy(testData.forC350641.searchOptionA, testData.forC350641.lcControlNumber);
+    MarcAuthorities.checkAfterSearch(testData.forC350641.type, testData.authority.title);
+    MarcAuthorities.selectFirstRecord();
+    MarcAuthorities.checkFieldAndContentExistence('010', testData.forC350641.lcControlNumber);
+
+    MarcAuthorities.searchBy(testData.forC350641.searchOptionA, testData.forC350641.lcControlNumberUsingAllBefore);
+    MarcAuthorities.checkAfterSearch(testData.forC350641.type, testData.authority.title);
+    MarcAuthorities.searchBy(testData.forC350641.searchOptionA, testData.forC350641.lcControlNumberUsingAllAfter);
+    MarcAuthorities.checkAfterSearch(testData.forC350641.type, testData.authority.title);
+
+    MarcAuthorities.searchBy(testData.forC350641.searchOptionB, testData.forC350641.lcControlNumber);
+    MarcAuthorities.checkAfterSearch(testData.forC350641.type, testData.authority.title);
+    MarcAuthorities.searchBy(testData.forC350641.searchOptionB, testData.forC350641.lcControlNumberUsingAllBefore);
+    MarcAuthorities.checkAfterSearch(testData.forC350641.type, testData.authority.title);
+    MarcAuthorities.searchBy(testData.forC350641.searchOptionB, testData.forC350641.lcControlNumberUsingAllAfter);
+    MarcAuthorities.checkAfterSearch(testData.forC350641.type, testData.authority.title);
+  });
+
   it('C350572 Edit an Authority record (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
     MarcAuthorities.selectFirst(testData.authority.title);
@@ -150,13 +174,5 @@ describe('Importing MARC Authority files', () => {
 
     MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.newField.title);
     MarcAuthorities.checkRow(testData.authority.newField.title);
-  });
-
-  it('C350641 Search MARC: support exact match searching Library of Congress Control Number - 010 field $a subfield (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
-    MarcAuthorities.checkSearchOptions();
-    MarcAuthorities.searchBy(testData.forC350641.searchOption, testData.forC350641.lcControlNumber);
-    MarcAuthorities.checkAfterSearch();
-    MarcAuthorities.selectFirstRecord();
-    MarcAuthorities.checkFieldAndContentExistence('010', testData.forC350641.lcControlNumber);
   });
 });
