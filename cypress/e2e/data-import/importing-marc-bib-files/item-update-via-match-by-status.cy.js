@@ -23,7 +23,7 @@ import ItemActions from '../../../support/fragments/inventory/inventoryItem/item
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import FileManager from '../../../support/utils/fileManager';
-import StatisticalCodes from '../../../support/fragments/settings/inventory/statisticalCodes';
+import StatisticalCodes from '../../../support/fragments/settings/inventory/instance-holdings-item/statisticalCodes';
 import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
