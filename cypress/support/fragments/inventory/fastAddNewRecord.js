@@ -6,7 +6,9 @@ import {
   SelectionList,
   TextField,
   KeyValue,
-  Section, PaneHeader,
+  Section,
+  PaneHeader,
+  Pane
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 import TopMenu from '../topMenu';
@@ -63,7 +65,7 @@ const fillFastAddNewRecordForm = ({
 };
 
 const saveAndClose = () => {
-  cy.do(Button('Save and close').click());
+  cy.do(Button('Save & close').click());
 
   cy.expect(Section({ id: 'pane-results' }).find(Button('Actions')).exists());
 };
@@ -73,7 +75,7 @@ const waitLoading = () => {
 };
 
 const openRecordDetails = (row = 0) => {
-  cy.do(MultiColumnListCell({ row, columnIndex: 1 }).click());
+  cy.do(Pane({ id:'pane-results' }).find(MultiColumnListCell({ row, columnIndex: 1 })).click());
 
   cy.expect(Section({ id: 'pane-instancedetails' }).exists());
 };

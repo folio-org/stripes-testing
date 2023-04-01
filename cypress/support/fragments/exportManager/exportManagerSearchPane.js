@@ -22,6 +22,9 @@ export default {
   waitLoading() {
     cy.expect(Pane('Export jobs').exists());
   },
+  selectJob(content) {
+    return cy.do(MultiColumnListCell(including(content)).click());
+  },
   searchById(id) {
     cy.do([
       TextField().fillIn(id),
@@ -104,6 +107,14 @@ export default {
       Modal('Select User').find(TextField()).fillIn(username),
       searchButton.click(),
     ]);
+  },
+  searchByAuthorityControl() {
+    waitClick();
+    cy.do(jobTypeAccordion.find(Checkbox({ id: 'clickable-filter-type-auth-headings-updates' })).click());
+  },
+  downloadLastCreatedJob(jobId) {
+    // TODO: redesign to interactors
+    cy.get(`a:contains(${jobId})`).first().click()
   },
   verifyUserSearchResult(username) {
     cy.expect(userSearchResults.has({ text: including(username) }));

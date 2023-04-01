@@ -188,6 +188,16 @@ export default {
       });
   },
 
+  createOrderByTemplate(templateName) {
+    cy.do([
+      actionsButton.click(),
+      newButton.click(),
+      Button({ id: 'order-template' }).click(),
+      SelectionOption(templateName).click(),
+      saveAndClose.click()
+    ]);
+  },
+
   createOrderForRollover(order, isApproved = false) {
     cy.do([
       actionsButton.click(),
@@ -246,6 +256,13 @@ export default {
       .exists());
   },
 
+  checkCreatedOrderFromTemplate: (organization) => {
+    cy.expect(Pane({ id: 'order-details' }).exists());
+    cy.expect(Accordion({ id: orderDetailsAccordionId })
+      .find(KeyValue({ value: organization }))
+      .exists());
+  },
+
   selectFromResultsList: (number) => {
     cy.do(MultiColumnList({ id:'orders-list' }).find(Link(number)).click());
   },
@@ -280,10 +297,7 @@ export default {
   },
 
   checkSearchResults: (orderNumber) => {
-    cy.expect(MultiColumnList({ id: 'orders-list' })
-      .find(MultiColumnListRow({ index: 0 }))
-      .find(MultiColumnListCell({ columnIndex: 0 }))
-      .has({ content: orderNumber }));
+    cy.expect(MultiColumnList({ id:'orders-list' }).find(Link(orderNumber)).exists());
   },
   checkSearchResultsWithClosedOrder: (orderNumber) => {
     cy.expect(MultiColumnList({ id: 'orders-list' })

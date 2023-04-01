@@ -11,11 +11,15 @@ import {
   Select,
   MultiColumnList,
   Pane,
-  TextArea,
   including,
-  MultiColumnListRow
+  MultiColumnListRow,
+  TextField
 } from '../../../../interactors';
 
+const logsStartDateAccordion = Accordion('Start date');
+const logsEndDateAccordion = Accordion('End date');
+const applyBtn = Button('Apply');
+const logsResultPane = Pane({ id: 'bulk-edit-logs-pane' });
 const resultsAccordion = Accordion('Preview of record matched');
 const changesAccordion = Accordion('Preview of record changed');
 const errorsAccordion = Accordion('Errors');
@@ -30,6 +34,7 @@ const itemsRadio = RadioButton('Inventory - items');
 const holdingsRadio = RadioButton('Inventory - holdings');
 const usersCheckbox = Checkbox('Users');
 const holdingsCheckbox = Checkbox('Inventory - holdings');
+const itemsCheckbox = Checkbox('Inventory - items');
 const identifierToggle = Button('Identifier');
 const queryToggle = Button('Query');
 const logsToggle = Button('Logs');
@@ -37,6 +42,16 @@ const setCriteriaPane = Pane('Set criteria');
 const searchButton = Button('Search');
 const resetAllButton = Button('Reset all');
 const logsStatusesAccordion = Accordion('Statuses');
+const textFildTo = TextField('To');
+const textFildFrom = TextField('From');
+const triggerBtn = DropdownMenu().find(Button('File that was used to trigger the bulk edit'));
+const errorsEncounteredBtn = DropdownMenu().find(Button('File with errors encountered during the record matching'));
+const matchingRecordsBtn = DropdownMenu().find(Button('File with the matching records'));
+const previewPorposedChangesBtn = DropdownMenu().find(Button('File with the preview of proposed changes'));
+const updatedRecordBtn = DropdownMenu().find(Button('File with updated records'));
+const errorsCommittingBtn = DropdownMenu().find(Button('File with errors encountered when committing the changes'));
+const buildQueryButton = Button('Build query');
+const buildQueryModal = Modal('Build query');
 
 export default {
   waitLoading() {
@@ -314,17 +329,18 @@ export default {
     cy.do(logsToggle.click());
   },
 
-  verifyQueryPane() {
+  verifyQueryPane(selectedRadio = 'Users') {
     cy.expect([
       queryToggle.has({ default: false }),
-      TextArea().has({ disabled: true }),
-      searchButton.has({ disabled: true }),
-      resetAllButton.has({ disabled: true }),
       recordTypesAccordion.has({ open: true }),
-      recordTypesAccordion.find(usersRadio).has({ disabled: true }),
-      recordTypesAccordion.find(itemsRadio).has({ disabled: true }),
-      recordTypesAccordion.find(holdingsRadio).has({ disabled: true }),
+      recordTypesAccordion.find(usersRadio).exists(),
+      recordTypesAccordion.find(itemsRadio).exists(),
+      recordTypesAccordion.find(holdingsRadio).exists(),
+      setCriteriaPane.find(buildQueryButton).has({ disabled: false }),
     ]);
+    selectedRadio === 'Items' ? this.isItemsRadioChecked()
+      : selectedRadio === 'Holdings' ? this.isHoldingsRadioChecked()
+        : this.isUsersRadioChecked();
     this.verifyBulkEditPaneItems();
   },
 
@@ -406,12 +422,20 @@ export default {
     cy.expect(usersRadio.has({ disabled: isDisabled }));
   },
 
+  isUsersRadioChecked() {
+    cy.expect(usersRadio.has({ checked: true }));
+  },
+
   checkItemsRadio() {
     cy.do(itemsRadio.click());
   },
 
   itemsRadioIsDisabled(isDisabled) {
     cy.expect(itemsRadio.has({ disabled: isDisabled }));
+  },
+
+  isItemsRadioChecked() {
+    cy.expect(itemsRadio.has({ checked: true }));
   },
 
   checkHoldingsRadio() {
@@ -422,12 +446,20 @@ export default {
     cy.do(holdingsCheckbox.click());
   },
 
+  checkItemsCheckbox() {
+    cy.do(itemsCheckbox.click());
+  },
+
   checkUsersCheckbox() {
     cy.do(usersCheckbox.click());
   },
 
   itemsHoldingsIsDisabled(isDisabled) {
     cy.expect(holdingsRadio.has({ disabled: isDisabled }));
+  },
+
+  isHoldingsRadioChecked() {
+    cy.expect(holdingsRadio.has({ checked: true }));
   },
 
   uploadFile(fileName) {
@@ -521,15 +553,6 @@ export default {
     if (errors) {
       cy.expect(Button('Download errors (CSV)').exists());
     }
-  },
-
-  downloadErrors() {
-    cy.do([
-      actions.click(),
-      Button('Download errors (CSV)').click(),
-    ]);
-    //Need to wait for the file to download
-    cy.wait(5000);
   },
 
   verifyUsersActionShowColumns() {
@@ -693,49 +716,134 @@ export default {
     cy.do(MultiColumnListRow({ indexRow: `row-${row}` }).find(Button({ icon: 'ellipsis' })).click());
   },
 
+  verifyTriggerLogsAction() {
+    cy.expect(triggerBtn.exists());
+  },
+
   verifyLogsRowAction() {
     cy.expect([
-      HTML('File that was used to trigger the bulk edit').exists(),
-      HTML('File with errors encountered during the record matching').exists()
+      triggerBtn.exists(),
+      errorsEncounteredBtn.exists()
     ]);
   },
 
   verifyLogsRowActionWhenCompleted() {
     cy.expect([
-      HTML('File that was used to trigger the bulk edit').exists(),
-      HTML('File with the matching records').exists(),
-      HTML('File with the preview of proposed changes').exists(),
-      HTML('File with updated records').exists()
+      triggerBtn.exists(),
+      matchingRecordsBtn.exists(),
+      previewPorposedChangesBtn.exists(),
+      updatedRecordBtn.exists()
     ]);
   },
 
+  verifyLogsRowActionWhenCompletedWithErrors() {
+    cy.expect([
+      triggerBtn.exists(),
+      matchingRecordsBtn.exists(),
+      errorsEncounteredBtn.exists(),
+      previewPorposedChangesBtn.exists(),
+      updatedRecordBtn.exists(),
+      errorsCommittingBtn.exists()
+    ]);
+  },
+
+  verifyLogsRowActionWhenCompletedWithErrorsWithoutModification() {
+    cy.expect([
+      triggerBtn.exists(),
+      errorsEncounteredBtn.exists(),
+    ]);
+  },
+
+  waitingFileDownload() {
+    cy.wait(3000);
+  },
+
   downloadFileUsedToTrigger() {
-    cy.do(Button('File that was used to trigger the bulk edit').click());
-    //Need to wait for the file to download
-    cy.wait(5000);
+    cy.do(triggerBtn.click());
+    this.waitingFileDownload();
   },
 
   downloadFileWithErrorsEncountered() {
-    cy.do(Button('File with errors encountered during the record matching').click());
-    //Need to wait for the file to download
-    cy.wait(5000);
+    cy.do(errorsEncounteredBtn.click());
+    this.waitingFileDownload();
   },
-  
+
   downloadFileWithMatchingRecords() {
-    cy.do(Button('File with the matching records').click());
-    //Need to wait for the file to download
-    cy.wait(5000);
+    cy.do(matchingRecordsBtn.click());
+    this.waitingFileDownload();
   },
 
   downloadFileWithProposedChanges() {
-    cy.do(Button('File with the preview of proposed changes').click());
-    //Need to wait for the file to download
-    cy.wait(5000);
+    cy.do(previewPorposedChangesBtn.click());
+    this.waitingFileDownload();
   },
 
   downloadFileWithUpdatedRecords() {
-    cy.do(Button('File with updated records').click());
-    //Need to wait for the file to download
-    cy.wait(5000);
+    cy.do(updatedRecordBtn.click());
+    this.waitingFileDownload();
   },
+
+  downloadFileWithCommitErrors() {
+    cy.do(errorsCommittingBtn.click());
+    this.waitingFileDownload();
+  },
+
+  verifyLogsTableHeaders() {
+    cy.expect([
+      MultiColumnListHeader('ID').exists(),
+      MultiColumnListHeader('Record type').exists(),
+      MultiColumnListHeader('Status').exists(),
+      MultiColumnListHeader('Run by').exists(),
+      MultiColumnListHeader('Started running').exists(),
+      MultiColumnListHeader('Ended running').exists(),
+      MultiColumnListHeader('# of records').exists(),
+      MultiColumnListHeader('Processed').exists(),
+      MultiColumnListHeader('Editing').exists(),
+      MultiColumnListHeader('Actions').exists(),
+    ]);
+  },
+
+  fillLogsStartDate(fromDate, toDate) {
+    cy.do([
+      logsStartDateAccordion.clickHeader(),
+      logsStartDateAccordion.find(textFildFrom).fillIn(fromDate),
+      logsStartDateAccordion.find(textFildTo).fillIn(toDate),
+    ]);
+  },
+
+  fillLogsEndDate(fromDate, toDate) {
+    cy.do([
+      logsEndDateAccordion.clickHeader(),
+      logsEndDateAccordion.find(textFildFrom).fillIn(fromDate),
+      logsEndDateAccordion.find(textFildTo).fillIn(toDate),
+    ]);
+  },
+
+  applyStartDateFilters() {
+    cy.do(logsStartDateAccordion.find(applyBtn).click());
+  },
+
+  applyEndDateFilters() {
+    cy.do(logsEndDateAccordion.find(applyBtn).click());
+  },
+
+  noLogResultsFound() {
+    cy.expect(logsResultPane.find(HTML('No results found. Please check your filters.')).exists());
+  },
+
+  isDragAndDropAreaDisabled(isDisabled) {
+    cy.expect((fileButton).has({ disabled: isDisabled }));
+  },
+
+  isBuildQueryButtonDisabled(isDisabled) {
+    cy.expect((buildQueryButton).has({ disabled: isDisabled }));
+  },
+
+  clickBuildQueryButton() {
+    cy.do(buildQueryButton.click());
+  },
+
+  verifyBuildQueryModal() {
+    cy.expect(buildQueryModal.exists());
+  }
 };

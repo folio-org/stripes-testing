@@ -85,5 +85,13 @@ export default {
 
   verifyFirstNameOnUserDetailsPane(firstName) {
     cy.expect(userDetailsPane.find(KeyValue('First name')).has({ value: `${firstName}` }));
-  }
+  },
+
+  verifyPatronGroupOnUserDetailsPane(patronGroup) {
+    cy.expect(userDetailsPane.find(KeyValue('Patron group')).has({ value: `${patronGroup}` }));
+  },
+
+  verifyExpirationDateOnUserDetailsPane(expirationDate) {
+    cy.expect(userDetailsPane.find(KeyValue('Expiration date')).has({ value: `${expirationDate}` }));
+  },
 };

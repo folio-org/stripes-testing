@@ -58,6 +58,8 @@ const closeTag = Button({ icon: 'times' });
 const tagsPane = Pane('Tags');
 const textFieldTagInput = MultiSelect({ ariaLabelledby:'accordion-toggle-button-tag-accordion' });
 const descriptiveDataAccordion = Accordion('Descriptive data');
+const titleDataAccordion = Accordion('Title data');
+const contributorAccordion = Accordion('Contributor');
 const callNumberTextField = TextArea('Call number');
 const copyNumberTextField = TextField('Copy number');
 const callNumSuffixTextField = TextArea('Call number suffix');
@@ -152,7 +154,6 @@ const verifyInstanceTitle = (title) => {
   cy.wait(3000);
   cy.expect(Pane({ titleLabel: including(title) }).exists());
 };
-const verifyInstanceSource = (sourceValue) => cy.expect(source.has({ value: sourceValue }));
 
 const verifyLastUpdatedDate = () => {
   const updatedDate = DateTools.getFormattedDateWithSlashes({ date: new Date() });
@@ -163,6 +164,18 @@ const verifyInstancePublisher = (indexRow, indexColumn, type) => {
   cy.expect(descriptiveDataAccordion.find(MultiColumnList({ id: 'list-publication' }))
     .find(MultiColumnListRow({ index: indexRow })).find(MultiColumnListCell({ columnIndex: indexColumn }))
     .has({ content: type }));
+};
+
+const verifyAlternativeTitle = (indexRow, indexColumn, value) => {
+  cy.expect(titleDataAccordion.find(MultiColumnList({ id: 'list-alternative-titles' }))
+    .find(MultiColumnListRow({ index: indexRow })).find(MultiColumnListCell({ columnIndex: indexColumn }))
+    .has({ content: value }));
+};
+
+const verifyContributor = (indexRow, indexColumn, value) => {
+  cy.expect(contributorAccordion.find(MultiColumnList({ id: 'list-contributors' }))
+    .find(MultiColumnListRow({ index: indexRow })).find(MultiColumnListCell({ columnIndex: indexColumn }))
+    .has({ content: value }));
 };
 
 const verifyInstanceSubject = (indexRow, indexColumn, value) => {
@@ -198,7 +211,6 @@ export default {
   waitLoading,
   openHoldings,
   verifyInstanceTitle,
-  verifyInstanceSource,
   verifyLastUpdatedDate,
   verifyInstancePublisher,
   verifyInstanceSubject,
@@ -206,6 +218,8 @@ export default {
   checkInstanceNotes,
   waitInstanceRecordViewOpened,
   openItemByBarcode,
+  verifyAlternativeTitle,
+  verifyContributor,
 
   checkExpectedOCLCPresence: (OCLCNumber = validOCLC.id) => {
     cy.expect(identifiers.find(HTML(including(OCLCNumber))).exists());
@@ -261,11 +275,11 @@ export default {
     cy.expect(MultiColumnListRow({ index: 0 }).exists());
   },
 
-  verifyAndClickLinkIcon() {
+  verifyAndClickLinkIcon(tag) {
     // Waiter needed for the link to be loaded properly.
     cy.wait(1000);
-    cy.expect(QuickMarcEditorRow({ tagValue: '700' }).find(linkIconButton).exists());
-    cy.do(QuickMarcEditorRow({ tagValue: '700' }).find(linkIconButton).click());
+    cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(linkIconButton).exists());
+    cy.do(QuickMarcEditorRow({ tagValue: tag }).find(linkIconButton).click());
   },
 
   verifySelectMarcAuthorityModal() {
@@ -315,6 +329,15 @@ export default {
     ]);
   },
 
+  searchResults(value) {
+    cy.do(selectField.choose(including('Keyword')));
+    cy.do(searchInput.fillIn(value));
+    cy.expect(searchInput.has({ value }));
+    cy.expect(enabledSearchBtn.exists());
+    cy.do(searchButton.click());
+    cy.expect(authoritySearchResults.exists());
+  },
+
   fillInAndSearchResults(value) {
     cy.do(searchInput.fillIn(value));
     cy.expect(searchInput.has({ value }));
@@ -335,7 +358,7 @@ export default {
   checkSearchResultsTable() {
     cy.expect([
       mclLinkHeader.has({ content: 'Link' }),
-      mclAuthRefTypeHeader.has({ content: 'Authorized' }),
+      mclAuthRefTypeHeader.has({ content: 'Authorized/Reference' }),
       mclHeadingRef.has({ content: 'Heading/Reference' }),
       mclHeadingType.has({ content: 'Type of heading' }),
       MultiColumnListRow({ index: 0 }).find(Button({ ariaLabel: 'Link' })).exists(),
@@ -360,6 +383,11 @@ export default {
       marcViewPane.find(buttonLink).exists(),
       marcViewPane.has({ mark: 'Starr, Lisa' }),
     ]);
+  },
+
+  clickLinkButton() {
+    cy.expect(marcViewPane.find(buttonLink).exists());
+    cy.do(marcViewPane.find(buttonLink).click());
   },
 
   closeDetailsView() {
@@ -500,7 +528,7 @@ export default {
     cy.do(actionsButton.click());
     cy.do(moveHoldingsToAnotherInstanceButton.click());
     InventoryInstanceSelectInstanceModal.waitLoading();
-    InventoryInstanceSelectInstanceModal.searchByTitle(title)
+    InventoryInstanceSelectInstanceModal.searchByTitle(title);
     InventoryInstanceSelectInstanceModal.selectInstance();
     InventoryInstancesMovement.moveFromMultiple(holdingName, title);
   },
@@ -666,5 +694,11 @@ export default {
         .find(MultiColumnListRow({ indexRow: indexRowNumber }))
         .find(Link(barcode)).click()
     ]);
+  },
+
+  verifyCellsContent: (...content) => {
+    content.forEach(itemContent => {
+      cy.expect(MultiColumnListCell({ content: itemContent }).exists());
+    });
   },
 };

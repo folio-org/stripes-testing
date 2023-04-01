@@ -25,6 +25,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 
 describe('ui-data-import', () => {
   const item = {
@@ -36,6 +37,7 @@ describe('ui-data-import', () => {
     quantityPhysical: '1',
     createInventory: 'Instance, holdings, item'
   };
+  const itemBarcode = uuid();
   let vendorId;
   let locationId;
   let acquisitionMethodId;
@@ -155,13 +157,7 @@ describe('ui-data-import', () => {
     FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileName);
     FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileName);
     FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileName);
-    cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${item.title}"` })
-      .then((instance) => {
-        const itemId = instance.items[0].id;
-        cy.deleteItemViaApi(itemId);
-        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
   });
 
   it('C350591 Match on VRN and update related Instance, Holdings, Item (folijet)',
@@ -205,7 +201,7 @@ describe('ui-data-import', () => {
           Receiving.checkIsPiecesCreated(item.title);
         });
 
-      DataImport.editMarcFile('marcFileForC350591.mrc', editedMarcFileName, ['14567-1'], [item.vrn]);
+      DataImport.editMarcFile('marcFileForC350591.mrc', editedMarcFileName, ['14567-1', 'xyzt124245271818912626262'], [item.vrn, itemBarcode]);
 
       // create field mapping profiles
       cy.visit(SettingsMenu.mappingProfilePath);
@@ -252,7 +248,7 @@ describe('ui-data-import', () => {
       InventoryInstance.waitInstanceRecordViewOpened(item.title);
       MatchOnVRN.verifyInstanceUpdated();
       MatchOnVRN.verifyHoldingsUpdated();
-      MatchOnVRN.verifyItemUpdated();
-      MatchOnVRN.verifyMARCBibSource();
+      MatchOnVRN.verifyItemUpdated(itemBarcode);
+      MatchOnVRN.verifyMARCBibSource(itemBarcode);
     });
 });
