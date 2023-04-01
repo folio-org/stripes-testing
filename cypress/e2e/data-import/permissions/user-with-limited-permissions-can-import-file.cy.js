@@ -15,10 +15,14 @@ import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Users from '../../../support/fragments/users/users';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('ui-data-import', () => {
   let firstUser;
   let secondUser;
+  let instanceHrid;
   const quantityOfItems = '1';
   // unique profile names
   const itemMappingProfileName = `C356841 item mapping profile ${Helper.getRandomBarcode()}`;
@@ -70,10 +74,22 @@ describe('ui-data-import', () => {
       });
   });
 
-  //   after(() => {
-  //     Users.deleteViaApi(firstUser.userId);
-  //     Users.deleteViaApi(secondUser.userId);
-  //   });
+  after(() => {
+    Users.deleteViaApi(firstUser.userId);
+    Users.deleteViaApi(secondUser.userId);
+    // delete generated profiles
+    JobProfiles.deleteJobProfile(jobProfileName);
+    ActionProfiles.deleteActionProfile(itemActionProfileName);
+    ActionProfiles.deleteActionProfile(holdingsActionProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileName);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        cy.deleteItemViaApi(instance.items[0].id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+  });
 
   it('C356841 Confirm a user with limited Data Import permissions can import a file (folijet)',
     { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
@@ -143,5 +159,11 @@ describe('ui-data-import', () => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
       });
       FileDetails.checkItemQuantityInSummaryTable(quantityOfItems);
+
+      // get Instance HRID through API
+      InventorySearchAndFilter.getInstanceHRID()
+        .then(hrId => {
+          instanceHrid = hrId[0];
+        });
     });
 });
