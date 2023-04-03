@@ -16,9 +16,10 @@ import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import Invoices from '../../support/fragments/invoices/invoices';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
+import NewOrder from '../../support/fragments/orders/newOrder';
 
 describe('ui-orders: Orders', () => {
-  const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
+  const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };
   const secondFund = {
@@ -28,9 +29,10 @@ describe('ui-orders: Orders', () => {
     fundStatus: 'Active',
     description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
   };
-  const defaultOrder = {
+  const defaultOrder = { ...NewOrder.defaultOneTimeOrder ,
     approved: true,
     reEncumber: true,
+    orderType: 'One-time',
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -90,18 +92,17 @@ describe('ui-orders: Orders', () => {
       .then(responseOrganizations => {
         organization.id = responseOrganizations;
         invoice.accountingCode = organization.erpCode;
-        defaultOrder.orderType = 'One-time';
+        defaultOrder.vendor = organization.name;
       });
     defaultOrder.vendor = organization.name;
-    defaultOrder.vendor = organization.name;
     cy.visit(TopMenu.ordersPath);
-    Orders.createOrderForRollover(defaultOrder).then(orderResponse => {
+    Orders.createOrderForRollover(defaultOrder, true, false).then(orderResponse => {
       defaultOrder.id = orderResponse.id;
       orderNumber = orderResponse.poNumber;
       Orders.checkCreatedOrder(defaultOrder);
       OrderLines.addPOLine();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
-      OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(defaultFund, '40', '1', '40', location.institutionId);
+      OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(firstFund, '50', '1', '50', location.institutionId);
       OrderLines.backToEditingOrder();
       Orders.openOrder();
       cy.visit(TopMenu.invoicesPath);
@@ -119,22 +120,37 @@ describe('ui-orders: Orders', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path:TopMenu.ledgerPath, waiter: Ledgers.waitForLedgerDetailsLoading });
+        cy.login(userProperties.username, userProperties.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
       });
   });
 
-  after(() => {
-    Users.deleteViaApi(user.userId);
-  });
+  // after(() => {
+  //   Users.deleteViaApi(user.userId);
+  // });
 
   it('C375290 Editing fund distribution and increasing cost in PO line when related Paid invoice exists (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectPendingStatusFilter();
-    Orders.selectFromResultsList(orderNumber);
-    Orders.editOrder();
-    Orders.selectOngoingOrderTypeInPOForm();
-    Orders.saveEditingOrder();
-    InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully saved`);
-    Orders.checkEditedOngoingOrder(orderNumber, organization.name);
+    Orders.selectFromResultsList();
+    OrderLines.selectPOLInOrder();
+    OrderLines.editPOLInOrder();
+    OrderLines.editFundInPOL(secondFund, '70', '70');
+    OrderLines.checkFundInPOL(secondFund);
+    cy.visit(TopMenu.fundPath);
+    FinanceHelp.searchByName(secondFund.name);
+    Funds.selectFund(secondFund.name);
+    Funds.selectBudgetDetails();
+    Funds.viewTransactions();
+    Funds.checkOrderInTransactionList(`${secondFund.code}`, '($20.00)');
+    cy.visit(TopMenu.invoicesPath);
+    Invoices.searchByNumber(invoice.invoiceNumber);
+    Invoices.selectInvoice(invoice.invoiceNumber);
+    Invoices.selectInvoiceLine();
+    Invoices.checkFundInInvoiceLine(firstFund);
+    cy.visit(TopMenu.fundPath);
+    FinanceHelp.searchByName(firstFund.name);
+    Funds.selectFund(firstFund.name);
+    Funds.selectBudgetDetails();
+    Funds.viewTransactions();
+    Funds.checkTransactionDetails(1, defaultFiscalYear.code,'($50.00)', invoice.invoiceNumber, 'Payment', `${firstFund.name} (${firstFund.code})`);
   });
 });
