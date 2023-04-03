@@ -67,7 +67,7 @@ export default {
     cy.expect([
       areYouSureForm.find(HTML(including(`${count} records will be changed`))).exists(),
       areYouSureForm.find(keepEditingBtn).exists(),
-      areYouSureForm.find(Button(downloadPreviewBtn)).exists(),
+      areYouSureForm.find(downloadPreviewBtn).exists(),
       areYouSureForm.find(Button('Commit changes')).exists(),
       areYouSureForm.find(MultiColumnListCell(cellContent)).exists()
     ]);

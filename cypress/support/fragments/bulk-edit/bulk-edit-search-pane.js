@@ -696,6 +696,10 @@ export default {
     ]);
   },
 
+  verifyTriggerRowAction() {
+    cy.expect(HTML('File that was used to trigger the bulk edit').exists());
+  },
+
   verifyLogsRowActionWhenCompletedWithErrors() {
     cy.expect([
       HTML('File that was used to trigger the bulk edit').exists(),
