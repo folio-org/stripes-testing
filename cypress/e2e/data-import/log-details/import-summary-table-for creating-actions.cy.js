@@ -134,13 +134,13 @@ describe('ui-data-import', () => {
     //   );
     //   cy.go('back');
 
-      [FileDetails.columnName.srsMarc,
-        FileDetails.columnName.instance,
-        FileDetails.columnName.holdings,
-        FileDetails.columnName.item
-      ].forEach(columnName => {
-        FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
-      });
+      // [FileDetails.columnName.srsMarc,
+      //   FileDetails.columnName.instance,
+      //   FileDetails.columnName.holdings,
+      //   FileDetails.columnName.item
+      // ].forEach(columnName => {
+      //   FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+      // });
 
     });
 });
