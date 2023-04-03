@@ -69,7 +69,7 @@ describe('Bulk Edit - Logs', { retries: 1 }, () => {
     BulkEditActions.commitChanges();
 
     // Verify changes on the page, download changes and errors
-    BulkEditSearchPane.verifyChangedResults(newFirstName);
+    BulkEditSearchPane.verifyChangedResults(newFirstName, userWithoutPermissions.firstName);
     BulkEditActions.openActions();
     BulkEditActions.downloadChangedCSV();
     BulkEditActions.downloadErrors();
