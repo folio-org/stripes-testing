@@ -176,7 +176,6 @@ describe('ui-users: Verify that maximum number of items borrowed for loan type (
     cy.deleteLoanPolicy(loanPolicyForCourseReserves.id);
     cy.deleteLoanPolicy(loanPolicyForReadingRoom.id);
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
     UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.id])
       .then(() => {
         ServicePoint.deleteViaApi(servicePoint.id);
