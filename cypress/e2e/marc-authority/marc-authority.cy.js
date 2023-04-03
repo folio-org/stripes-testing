@@ -141,6 +141,14 @@ describe('Importing MARC Authority files', () => {
     MarcAuthority.checkRemovedTag(9);
   });
 
+  it('C350680 Duplicate records do not return when searching by Identifier (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    let searchOption = 'Identifier (all)', identifier = 'n  42008104';
+
+    MarcAuthorities.searchBy(searchOption, identifier);
+    MarcAuthorities.selectFirst(testData.authority.title);
+    MarcAuthority.contains(identifier);
+  });
+
   it('C350641 Search MARC: support exact match searching Library of Congress Control Number - 010 field $a subfield (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     MarcAuthorities.checkSearchOptions();
     MarcAuthorities.searchBy(testData.forC350641.searchOptionA, testData.forC350641.lcControlNumber);

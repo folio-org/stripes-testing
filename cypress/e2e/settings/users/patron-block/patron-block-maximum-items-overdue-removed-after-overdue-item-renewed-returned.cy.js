@@ -23,79 +23,46 @@ import LoanPolicy from '../../../../support/fragments/circulation/loan-policy';
 import Conditions from '../../../../support/fragments/settings/users/conditions';
 import Limits from '../../../../support/fragments/settings/users/limits';
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
-import UserLoans from '../../../../support/fragments/users/loans/userLoans';
-import LostItemFeePolicy from '../../../../support/fragments/circulation/lost-item-fee-policy';
 import UsersCard from '../../../../support/fragments/users/usersCard';
-import NewFeeFine from '../../../../support/fragments/users/newFeeFine';
+import UserLoans from '../../../../support/fragments/users/loans/userLoans';
 import Renewals from '../../../../support/fragments/loans/renewals';
-import OverrideAndRenewModal from '../../../../support/fragments/users/loans/overrideAndRenewModal';
-import RenewConfirmationModal from '../../../../support/fragments/users/loans/renewConfirmationModal';
 
-describe('Patron Block: Maximum number of lost items', () => {
+describe('Patron Block: Maximum number of overdue items', () => {
   let addedCirculationRule;
   let originalCirculationRules;
   const renewComment = `AutotestText${getRandomPostfix()}`;
-  const blockMessage = `You have reached maximum number of lost items as set by patron group${getRandomPostfix()}`;
+  const blockMessage = `You have reached maximum number of overdue items as set by patron group${getRandomPostfix()}`;
   const patronGroup = {
     name: 'groupToPatronBlock' + getRandomPostfix(),
   };
   const userData = {};
   const itemsData = {
     itemsWithSeparateInstance: [
-      { instanceTitle: `InstanceForDeclareLost ${getRandomPostfix()}` },
-      { instanceTitle: `InstanceForDeclareLost ${getRandomPostfix()}` },
-      { instanceTitle: `InstanceForDeclareLost ${getRandomPostfix()}` },
-      { instanceTitle: `InstanceForAgedToLost ${getRandomPostfix()}` },
-      { instanceTitle: `InstanceForAgedToLost ${getRandomPostfix()}` },
+      { instanceTitle: `Instance ${getRandomPostfix()}` },
+      { instanceTitle: `Instance ${getRandomPostfix()}` },
+      { instanceTitle: `Instance ${getRandomPostfix()}` },
+      { instanceTitle: `Instance ${getRandomPostfix()}` },
+      { instanceTitle: `Instance ${getRandomPostfix()}` },
     ],
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest lost items limit', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest fee/fine limit', uuid()),
   };
-  const ownerBody = {
-    owner: 'AutotestOwner' + getRandomPostfix(),
-    servicePointOwner: [
-      {
-        value: testData.userServicePoint.id,
-        label: testData.userServicePoint.name,
-      },
-    ],
-  };
-  const lostItemFeePolicyBody = {
-    name: '1_lost' + getRandomPostfix(),
-    itemAgedLostOverdue: {
-      duration: 1,
-      intervalId: 'Minutes',
+  const owner = {
+    body: {
+      owner: 'AutotestOwner' + getRandomPostfix(),
+      servicePointOwner: [
+        {
+          value: testData.userServicePoint.id,
+          label: testData.userServicePoint.name,
+        },
+      ],
     },
-    patronBilledAfterAgedLost: {
-      duration: 1,
-      intervalId: 'Minutes',
-    },
-    chargeAmountItem: {
-      chargeType: 'anotherCost',
-      amount: '100.00',
-    },
-    lostItemProcessingFee: '25.00',
-    chargeAmountItemPatron: true,
-    chargeAmountItemSystem: true,
-    lostItemChargeFeeFine: {
-      duration: 6,
-      intervalId: 'Weeks',
-    },
-    returnedLostItemProcessingFee: false,
-    replacedLostItemProcessingFee: false,
-    replacementProcessingFee: '0.00',
-    replacementAllowed: false,
-    feesFinesShallRefunded: {
-      duration: 6,
-      intervalId: 'Months',
-    },
-    lostItemReturned: 'Charge',
-    id: uuid(),
+    data: {},
   };
   const loanPolicyBody = {
     id: uuid(),
-    name: `1_minute_${getRandomPostfix()}`,
+    name: `1_loan_${getRandomPostfix()}`,
     loanable: true,
     loansPolicy: {
       closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE_TIME',
@@ -107,10 +74,15 @@ describe('Patron Block: Maximum number of lost items', () => {
     },
     renewable: true,
     renewalsPolicy: {
-      unlimited: false,
-      numberAllowed: 2,
+      unlimited: true,
       renewFromId: 'SYSTEM_DATE',
     },
+  };
+
+  const findPatron = () => {
+    cy.visit(TopMenu.usersPath);
+    UsersSearchPane.waitLoading();
+    UsersSearchPane.searchByKeywords(userData.barcode);
   };
 
   before('Preconditions', () => {
@@ -126,16 +98,16 @@ describe('Patron Block: Maximum number of lost items', () => {
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
           testData.instanceTypeId = instanceTypes[0].id;
         });
-        cy.getHoldingTypes({ limit: 1 }).then((holdingTypes) => {
-          testData.holdingTypeId = holdingTypes[0].id;
+        cy.getHoldingTypes({ limit: 1 }).then((res) => {
+          testData.holdingTypeId = res[0].id;
         });
         cy.createLoanType({
           name: `type_${getRandomPostfix()}`,
-        }).then((loanType) => {
-          testData.loanTypeId = loanType.id;
+        }).then((res) => {
+          testData.loanTypeId = res.id;
         });
-        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
-          testData.materialTypeId = materialTypes.id;
+        cy.getMaterialTypes({ limit: 1 }).then((res) => {
+          testData.materialTypeId = res.id;
         });
       })
       .then(() => {
@@ -165,25 +137,22 @@ describe('Patron Block: Maximum number of lost items', () => {
             itemsData.itemsWithSeparateInstance[index].itemId = specialInstanceIds.holdingIds[0].itemIds;
           });
         });
-        cy.wrap(itemsData.itemsWithSeparateInstance).as('items');
       });
 
-    UsersOwners.createViaApi(ownerBody).then((ownerResponse) => {
-      testData.ownerId = ownerResponse.id;
-      PaymentMethods.createViaApi(testData.ownerId).then((paymentMethod) => {
-        testData.paymentMethodId = paymentMethod.id;
+    UsersOwners.createViaApi(owner.body).then((response) => {
+      owner.data = response;
+      PaymentMethods.createViaApi(response.id).then(resp => {
+        testData.paymentMethodId = resp.id;
       });
     });
-    LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
     LoanPolicy.createViaApi(loanPolicyBody);
-    PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
-      patronGroup.id = patronGroupResponse;
+    PatronGroups.createViaApi(patronGroup.name).then((res) => {
+      patronGroup.id = res;
     });
-    CirculationRules.getViaApi().then((circulationRule) => {
-      originalCirculationRules = circulationRule.rulesAsText;
-      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
+    CirculationRules.getViaApi().then((response) => {
+      originalCirculationRules = response.rulesAsText;
+      const ruleProps = CirculationRules.getRuleProps(response.rulesAsText);
       ruleProps.l = loanPolicyBody.id;
-      ruleProps.i = lostItemFeePolicyBody.id;
       addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + ruleProps.i + ' l ' + ruleProps.l + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
       CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
     });
@@ -193,8 +162,6 @@ describe('Patron Block: Maximum number of lost items', () => {
         permissions.uiUsersSettingsOwners.gui,
         permissions.loansAll.gui,
         permissions.overridePatronBlock.gui,
-        permissions.loansRenewOverride.gui,
-        permissions.uiUsersfeefinesCRUD.gui,
         permissions.uiUsersCreatePatronConditions.gui,
         permissions.uiUsersCreatePatronLimits.gui,
         permissions.checkinAll.gui,
@@ -208,38 +175,47 @@ describe('Patron Block: Maximum number of lost items', () => {
         userData.password = userProperties.password;
         userData.userId = userProperties.userId;
         userData.barcode = userProperties.barcode;
-        UserEdit.addServicePointViaApi(testData.userServicePoint.id, userData.userId, testData.userServicePoint.id);
-        UserLoans.updateTimerForAgedToLost('minute');
       })
       .then(() => {
-        cy.get('@items').each((item) => {
-          Checkout.checkoutItemViaApi({
-            id: uuid(),
-            itemBarcode: item.barcode,
-            loanDate: moment.utc().format(),
-            servicePointId: testData.userServicePoint.id,
-            userBarcode: userData.barcode,
-          });
-        });
-
-        UserLoans.getUserLoansIdViaApi(userData.userId).then((userLoans) => {
-          const loansData = userLoans.loans;
-          loansData.forEach(({ id, item }) => {
-            if (item.title.includes('InstanceForDeclareLost')) {
-              UserLoans.declareLoanLostViaApi({
-                servicePointId: testData.userServicePoint.id,
-                declaredLostDateTime: moment.utc().format(),
-              }, id);
-            }
-          });
-        });
-
+        UserEdit.addServicePointViaApi(testData.userServicePoint.id, userData.userId, testData.userServicePoint.id);
         cy.login(userData.username, userData.password);
+        cy.visit(SettingsMenu.conditionsPath);
+        Conditions.waitLoading();
+        Conditions.select('Maximum number of overdue items');
+        Conditions.setConditionState(blockMessage);
+        cy.visit(SettingsMenu.limitsPath);
+        Limits.selectGroup(patronGroup.name);
+        Limits.setLimit('Maximum number of overdue items', '4');
       });
   });
 
-  after('Deleting created entities', () => {
-    UserLoans.updateTimerForAgedToLost('reset');
+  beforeEach('Assign lost status to items', () => {
+    cy.wrap(itemsData.itemsWithSeparateInstance).as('items');
+    cy.get('@items').each((item) => {
+      Checkout.checkoutItemViaApi({
+        id: uuid(),
+        itemBarcode: item.barcode,
+        loanDate: moment.utc().format(),
+        servicePointId: testData.userServicePoint.id,
+        userBarcode: userData.barcode,
+      });
+    });
+
+    UserLoans.getUserLoansIdViaApi(userData.userId).then((userLoans) => {
+      const loansData = userLoans.loans;
+      const newDueDate = new Date(loansData[0].loanDate);
+      newDueDate.setDate(newDueDate.getDate() - 1);
+      loansData.forEach((loan) => {
+        UserLoans.changeDueDateViaApi({
+          ...loan,
+          dueDate: newDueDate,
+          action: 'dueDateChanged',
+        }, loan.id);
+      });
+    });
+  });
+
+  afterEach('Returning items to original state', () => {
     cy.get('@items').each((item) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,
@@ -247,67 +223,65 @@ describe('Patron Block: Maximum number of lost items', () => {
         checkInDate: new Date().toISOString(),
       });
     });
-    NewFeeFine.getUserFeesFines(userData.userId).then((userFeesFines) => {
-      const feesFinesData = userFeesFines.accounts;
-      feesFinesData.forEach(({ id }) => {
-        cy.deleteFeesFinesApi(id);
-      });
-    });
+  });
+
+  after('Deleting created entities', () => {
+    PaymentMethods.deleteViaApi(testData.paymentMethodId);
+    UsersOwners.deleteViaApi(owner.data.id);
+    cy.deleteLoanPolicy(loanPolicyBody.id);
+    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
+    ServicePoints.deleteViaApi(testData.userServicePoint.id);
+    Users.deleteViaApi(userData.userId);
+    PatronGroups.deleteViaApi(patronGroup.id);
     cy.get('@items').each((item, index) => {
       cy.deleteItemViaApi(item.itemId);
       cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
       InventoryInstance.deleteInstanceViaApi(itemsData.itemsWithSeparateInstance[index].instanceId);
     });
-    PaymentMethods.deleteViaApi(testData.paymentMethodId);
-    UsersOwners.deleteViaApi(testData.ownerId);
-    cy.deleteLoanPolicy(loanPolicyBody.id);
-    LostItemFeePolicy.deleteViaApi(lostItemFeePolicyBody.id);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
-    cy.deleteLoanType(testData.loanTypeId);
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
-    ServicePoints.deleteViaApi(testData.userServicePoint.id);
-    Users.deleteViaApi(userData.userId);
-    PatronGroups.deleteViaApi(patronGroup.id);
-    Conditions.resetConditionViaApi('72b67965-5b73-4840-bc0b-be8f3f6e047e', 'Maximum number of lost items');
+    Conditions.resetConditionViaApi('584fbd4f-6a34-4730-a6ca-73a6a6a9d845', 'Maximum number of overdue items');
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id
     );
+    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    cy.deleteLoanType(testData.loanTypeId);
   });
   it(
-    'C350653 Verify automated patron block "Maximum number of lost items" removed after lost item renewed (vega)',
+    'C350654 Verify automated patron block "Maximum number of overdue items" removed after overdue item renewed (vega)',
     { tags: [TestTypes.criticalPath, devTeams.vega] },
     () => {
-      cy.visit(SettingsMenu.conditionsPath);
-      Conditions.waitLoading();
-      Conditions.select('Maximum number of lost items');
-      Conditions.setConditionState(blockMessage);
-      cy.visit(SettingsMenu.limitsPath);
-      Limits.selectGroup(patronGroup.name);
-      Limits.setLimit('Maximum number of lost items', '4');
-      // needed for the "Lost Item Fee Policy" so items can get "aged to lost" status
-      cy.wait(230000);
-
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.waitLoading();
-      UsersSearchPane.searchByKeywords(userData.barcode);
+      findPatron();
       UsersCard.waitLoading();
       Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
 
-      const itemForRenew = itemsData.itemsWithSeparateInstance[Math.floor(Math.random() * 5)];
+      const itemForRenew = itemsData.itemsWithSeparateInstance[0];
       UsersCard.openLoans();
       UsersCard.showOpenedLoans();
       UserLoans.openLoan(itemForRenew.barcode);
       UserLoans.renewItem(itemForRenew.barcode, true);
       Renewals.renewBlockedPatron(renewComment);
-      RenewConfirmationModal.confirmRenewOverrideItem();
-      OverrideAndRenewModal.confirmOverrideItem();
 
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.waitLoading();
-      UsersSearchPane.searchByKeywords(userData.barcode);
+      findPatron();
+      Users.checkPatronIsNotBlocked(userData.userId);
+    }
+  );
+
+  it(
+    'C350649 Verify automated patron block "Maximum number of overdue items" removed after overdue item returned (vega)',
+    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    () => {
+      findPatron();
+      UsersCard.waitLoading();
+      Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
+
+      cy.visit(TopMenu.checkInPath);
+      const itemForCheckIn = itemsData.itemsWithSeparateInstance[0];
+      CheckInActions.checkInItemGui(itemForCheckIn.barcode);
+      CheckInActions.verifyLastCheckInItem(itemForCheckIn.barcode);
+
+      findPatron();
       Users.checkPatronIsNotBlocked(userData.userId);
     }
   );

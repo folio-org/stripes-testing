@@ -146,7 +146,9 @@ export default {
   },
 
   selectSearchResultItem(indexRow = 0) {
-    return cy.do(this.getSearchResult(indexRow, 0).click());
+    cy.do(this.getSearchResult(indexRow, 0).click());
+    // time to wait for render page
+    cy.wait(2000);
   },
 
   byEffectiveLocation(values) {
@@ -249,7 +251,7 @@ export default {
     const callNumberBrowsePane = Pane({ title: 'Browse inventory' });
     cy.expect(callNumberBrowsePane.exists());
   },
-  
+
   verifySubjectsResultsInBrowsePane() {
     cy.expect(
       callNumberBrowsePane
@@ -258,11 +260,11 @@ export default {
       );
   },
 
-  verifyCallNumbersResultsInBrowsePane() {
+  verifyCallNumbersResultsInBrowsePane(item) {
     cy.expect(
       callNumberBrowsePane
       .find(MultiColumnList({ id: 'browse-results-list-callNumbers'}))
-      .find(MultiColumnListRow({ indexRow: 'row-0' })).exists()
+      .find(MultiColumnListCell(item)).exists()
       );
   },
 

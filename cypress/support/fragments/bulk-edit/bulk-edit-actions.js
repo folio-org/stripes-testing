@@ -55,8 +55,8 @@ export default {
   openInAppStartBulkEditFrom() {
     cy.do(Button('Start bulk edit').click());
   },
-  verifyBulkEditForm() {
-    getBulkEditSelectType().select('Email');
+  verifyBulkEditForm(rowIndex = 0) {
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'));
     cy.expect([
       Button({ icon: 'plus-sign' }).exists(),
       Button({ icon: 'trash', disabled: true }).exists(),
@@ -67,7 +67,7 @@ export default {
     cy.expect([
       areYouSureForm.find(HTML(including(`${count} records will be changed`))).exists(),
       areYouSureForm.find(keepEditingBtn).exists(),
-      areYouSureForm.find(Button(downloadPreviewBtn)).exists(),
+      areYouSureForm.find(downloadPreviewBtn).exists(),
       areYouSureForm.find(Button('Commit changes')).exists(),
       areYouSureForm.find(MultiColumnListCell(cellContent)).exists()
     ]);

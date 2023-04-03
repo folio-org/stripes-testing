@@ -49,6 +49,9 @@ export default {
   },
 
   fillInRolloverInfo : (fiscalYear) => {
+    cy.do(fiscalYearSelect.click());
+    // Need to wait,while date of fiscal year will be loaded
+    cy.wait(2000);
     cy.do([
       fiscalYearSelect.choose(fiscalYear),
       rolloverAllocationCheckbox.click(),
@@ -57,7 +60,6 @@ export default {
       Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
       Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
       rolloverButton.click(),
-      Button('Continue').click(),
     ]);
     cy.wait(2000);
     cy.do([
@@ -66,13 +68,15 @@ export default {
   },
 
   fillInRolloverForCashBalance : (fiscalYear, rolloverBudgetValue, rolloverValueAs) => {
+    cy.do(fiscalYearSelect.click());
+    // Need to wait,while date of fiscal year will be loaded
+    cy.wait(2000);
     cy.do([
       fiscalYearSelect.choose(fiscalYear),
       rolloverAllocationCheckbox.click(),
       rolloverBudgetVelue.choose(rolloverBudgetValue),
       aaddAvailableToSelect.choose(rolloverValueAs),
       rolloverButton.click(),
-      Button('Continue').click(),
     ]);
     cy.wait(2000);
     cy.do([
@@ -81,13 +85,15 @@ export default {
   },
 
   fillInTestRolloverInfoCashBalance : (fiscalYear, rolloverBudgetValue, rolloverValueAs) => {
+    cy.do(fiscalYearSelect.click());
+    // Need to wait,while date of fiscal year will be loaded
+    cy.wait(2000);
     cy.do([
       fiscalYearSelect.choose(fiscalYear),
       rolloverAllocationCheckbox.click(),
       rolloverBudgetVelue.choose(rolloverBudgetValue),
       aaddAvailableToSelect.choose(rolloverValueAs),
       Button('Test rollover').click(),
-      Button('Continue').click(),
     ]);
     cy.wait(2000);
     cy.do([

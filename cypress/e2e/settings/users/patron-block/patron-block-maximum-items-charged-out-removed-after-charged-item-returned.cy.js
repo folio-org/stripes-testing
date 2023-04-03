@@ -168,6 +168,9 @@ describe('Patron Block: Maximum number of items charged out', () => {
       Limits.selectGroup(patronGroup.name);
       Limits.setLimit('Maximum number of items charged out', '4');
 
+      // TODO: Replace to an API check that the patron gets the block so we don't go to user details page prematurely
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(10000);
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userData.barcode);
