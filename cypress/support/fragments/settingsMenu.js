@@ -56,6 +56,7 @@ export default {
   tenantPath: 'settings/tenant-settings',
   tenantLocationsPath: 'settings/tenant-settings/location-locations',
   // Orders
+  acquisitionMethodsPath: 'settings/orders/acquisition-methods',
   ordersOrderTemplatesPath: 'settings/orders/order-templates',
   ordersPONumberEditPath: 'settings/orders/po-number',
   ordersOpeningPurchaseOrdersPath: 'settings/orders/open-order',

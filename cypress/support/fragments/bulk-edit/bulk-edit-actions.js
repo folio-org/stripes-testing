@@ -9,9 +9,10 @@ import {
   MultiColumnListHeader,
   MultiColumnListCell,
   TextField,
-  RepeatableFieldItem,
+  RepeatableFieldItem, Select,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
+import BulkEditSearchPane from './bulk-edit-search-pane';
 
 const actionsBtn = Button('Actions');
 const dropdownMenu = DropdownMenu();
@@ -21,25 +22,19 @@ const plusBtn = Button({ icon: 'plus-sign' });
 const deleteBtn = Button({ icon: 'trash' });
 const keepEditingBtn = Button('Keep editing');
 const areYouSureForm = Modal('Are you sure?');
-// interactor doesn't allow to pick second the same select
+const downloadPreviewBtn = Button('Download preview');
+
 function getEmailField() {
+  // 2 the same selects without class, id or someone different attr
   return cy.get('[class^=textField]');
 }
-function getLocationSelect() {
-  return cy.get('select').eq(2);
-}
 
-function getActionSelect() {
-  return cy.get('select').eq(2);
-}
-
-function getBulkEditSelectType() {
-  return cy.get('select').eq(1);
-}
-
-function getPatronGroupTypeSelect() {
-  return cy.get('select').eq(3);
-}
+const bulkPageSelections = {
+  valueType: Select({ content: including('Select option') }),
+  action: Select({ content: including('Select action') }),
+  itemStatus: Select({ content: including('Select item status') }),
+  patronGroup: Select({ content: including('Select patron group') }),
+};
 
 
 export default {
@@ -49,8 +44,8 @@ export default {
   openInAppStartBulkEditFrom() {
     cy.do(Button('Start bulk edit').click());
   },
-  verifyBulkEditForm() {
-    getBulkEditSelectType().select('Email');
+  verifyBulkEditForm(rowIndex = 0) {
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'));
     cy.expect([
       Button({ icon: 'plus-sign' }).exists(),
       Button({ icon: 'trash', disabled: true }).exists(),
@@ -61,10 +56,14 @@ export default {
     cy.expect([
       areYouSureForm.find(HTML(including(`${count} records will be changed`))).exists(),
       areYouSureForm.find(keepEditingBtn).exists(),
-      areYouSureForm.find(Button('Download preview')).exists(),
+      areYouSureForm.find(downloadPreviewBtn).exists(),
       areYouSureForm.find(Button('Commit changes')).exists(),
       areYouSureForm.find(MultiColumnListCell(cellContent)).exists()
     ]);
+  },
+
+  downloadPreview() {
+    cy.do(downloadPreviewBtn.click());
   },
 
   clickKeepEditingBtn() {
@@ -105,32 +104,52 @@ export default {
     cy.xpath('(//div[contains(@class, "select--")]//select[contains(@class, "selectControl--")])[3]').should('be.disabled');
   },
 
-  replaceEmail(oldEmailDomain, newEmailDomain) {
-    getBulkEditSelectType().select('Email');
+  replaceEmail(oldEmailDomain, newEmailDomain, rowIndex = 0) {
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'));
     getEmailField().first().type(oldEmailDomain);
     getEmailField().eq(2).type(newEmailDomain);
   },
 
-  replaceTemporaryLocation(location = 'Annex', type = 'item') {
-    getBulkEditSelectType().select(`Temporary ${type} location`);
-    getLocationSelect().select('Replace with');
+  replaceTemporaryLocation(location = 'Annex', type = 'item', rowIndex = 0) {
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(`Temporary ${type} location`));
+    if (type === 'item') {
+      cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Replace with'));
+    }
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Replace with'),
+      Button('Select control\nSelect location').click(),
+      SelectionOption(including(location)).click(),
+    ]);
+  },
+
+  replacePermanentLocation(location, type = 'item', rowIndex = 0) {
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(`Permanent ${type} location`));
+    if (type === 'item') {
+      cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Replace with'));
+    }
     cy.do([
       Button('Select control\nSelect location').click(),
       SelectionOption(including(location)).click(),
     ]);
   },
 
-  replacePermanentLocation(location, type) {
-    getBulkEditSelectType().select(`Permanent ${type} location`);
+  clearPermanentLocation(type = 'item', rowIndex = 0) {
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(`Permanent ${type} location`));
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Clear field'));
+  },
+
+  replaceItemStatus(status, rowIndex = 0) {
     cy.do([
-      Button('Select control\nSelect location').click(),
-      SelectionOption(including(location)).click(),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Item status'),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.itemStatus).choose(status),
     ]);
   },
 
-  fillTemporaryLocationFilter(location = 'Annex') {
-    getBulkEditSelectType().select('Temporary item location');
-    getLocationSelect().select('Replace with');
+  typeInTemporaryLocationFilter(location = 'Annex', type = 'item', rowIndex = 0) {
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(`Temporary ${type} location`));
+    if (type === 'item') {
+      cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Replace with'));
+    }
     cy.do(Button('Select control\nSelect location').click());
     cy.get('[class^=selectionFilter-]').type(location);
   },
@@ -139,24 +158,18 @@ export default {
     cy.do(plusBtn.click());
   },
 
-  replaceSecondPermanentLocation(location = 'Annex', type = 'item') {
-    cy.get('select').eq(3).select(`Permanent ${type} location`);
+  fillPatronGroup(group = 'staff (Staff Member)', rowIndex = 0) {
     cy.do([
-      RepeatableFieldItem({ index: 1 }).find(Button('Select control\nSelect location')).click(),
-      SelectionOption(including(location)).click(),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Patron group'),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.patronGroup).choose(group),
     ]);
   },
 
-  fillPatronGroup(group = 'staff (Staff Member)') {
-    getBulkEditSelectType().select('Patron group');
-    getPatronGroupTypeSelect().select(group);
-  },
-
-  fillExpirationDate(date) {
+  fillExpirationDate(date, rowIndex = 0) {
     // js date object
     const formattedDate = DateTools.getFormattedDate({ date }, 'MM/DD/YYYY');
-    getBulkEditSelectType().select('Expiration date');
     cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Expiration date'),
       Button({ icon: 'calendar' }).click(),
       TextField().fillIn(formattedDate),
     ]);
@@ -164,33 +177,37 @@ export default {
     cy.get(`[aria-label="calendar"] [data-date="${formattedDate}"]`).click();
   },
 
-  verifyCalendarItem() {
-    getBulkEditSelectType().select('Expiration date');
-    cy.do(Button({ icon: 'calendar' }).click());
+  verifyCalendarItem(rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Expiration date'),
+      Button({ icon: 'calendar' }).click()
+    ]);
     // TODO: bulk edit calendar is not common datepicker like our interactor
     cy.get('[id^="datepicker-calendar-container"]').should('be.visible');
   },
 
-  fillLoanType(type = 'Selected') {
-    getBulkEditSelectType().select('Permanent loan type');
+  fillPermanentLoanType(type = 'Selected', rowIndex = 0) {
     cy.do([
-      Button({ id: 'loanType' }).click(),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Permanent loan type'),
+      RepeatableFieldItem({ index: rowIndex }).find(Button({ id: 'loanType' })).click(),
       SelectionOption(including(type)).click(),
     ]);
   },
 
-  fillTemporaryLoanType(type = 'Selected') {
-    getBulkEditSelectType().select('Temporary loan type');
-    getActionSelect().select('Replace with');
+  fillTemporaryLoanType(type = 'Selected', rowIndex = 0) {
     cy.do([
-      Button({ id: 'loanType' }).click(),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Temporary loan type'),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Replace with'),
+      RepeatableFieldItem({ index: rowIndex }).find(Button({ id: 'loanType' })).click(),
       SelectionOption(including(type)).click(),
     ]);
   },
 
-  clearTemporaryLoanType() {
-    getBulkEditSelectType().select('Temporary loan type');
-    getActionSelect().select('Clear field');
+  clearTemporaryLoanType(rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Temporary loan type'),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Clear field'),
+    ]);
   },
 
   verifyNoMatchingOptionsForLocationFilter() {
@@ -213,14 +230,12 @@ export default {
   downloadMatchedResults() {
     cy.do(actionsBtn.click());
     cy.get('[class^="ActionMenuGroup-"] button', { timeout: 15000 }).first().click();
-    // need to wait downloading
-    cy.wait(5000);
+    BulkEditSearchPane.waitingFileDownload();
   },
 
   downloadErrors() {
     cy.do(Button('Download errors (CSV)').click());
-    //Need to wait for the file to download
-    cy.wait(5000);
+    BulkEditSearchPane.waitingFileDownload();
   },
 
   prepareBulkEditFileWithDuplicates(fileMask, finalFileName, stringToBeReplaced, replaceString) {
@@ -352,8 +367,7 @@ export default {
 
   downloadChangedCSV() {
     cy.do(Button('Download changed records (CSV)').click());
-    // need to wait downloading
-    cy.wait(5000);
+    BulkEditSearchPane.waitingFileDownload();
   },
 
   verifyPossibleActions(actions) {

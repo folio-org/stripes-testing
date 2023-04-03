@@ -61,7 +61,7 @@ export default {
   addPieceToItem:(numberOfPieces) => {
     cy.do([
       TextField({ name:'numberOfPieces' }).fillIn(numberOfPieces),
-      Button('Save and close').click()
+      Button('Save & close').click()
     ]);
   },
 

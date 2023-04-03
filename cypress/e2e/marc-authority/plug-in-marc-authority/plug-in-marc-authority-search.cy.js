@@ -6,10 +6,39 @@ import Users from '../../../support/fragments/users/users';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import DataImport from '../../../support/fragments/data_import/dataImport';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
+import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 
 describe('plug-in MARC authority | Search', () => {
-    const testData = {};
-    let instanceID;
+    const testData = {
+      forC359206: {
+        lcControlNumberA: 'n  00000911',
+        lcControlNumberB: 'n  79125030',
+        searchOption: 'Identifier (all)',
+        valueA: 'Erbil, H. Yıldırım',
+        valueB: 'Twain, Mark,',
+      }
+    };
+    
+    const marcFiles = [
+      {
+          marc: 'oneMarcBib.mrc', 
+          fileName: `testMarcFile.${getRandomPostfix()}.mrc`, 
+          jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          numOfRecords: 1,
+      }, 
+      {
+          marc: 'marcFileForC359206.mrc', 
+          fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+          jobProfileToRun: 'Default - Create SRS MARC Authority',
+          numOfRecords: 2,
+      }
+    ]
+
+    let createdAuthorityIDs = [];
 
   before('Creating user', () => {
     cy.createTempUser([
@@ -21,8 +50,22 @@ describe('plug-in MARC authority | Search', () => {
     ]).then(createdUserProperties => {
       testData.userProperties = createdUserProperties;
 
-      cy.loginAsAdmin();
-      DataImport.uploadMarcBib();
+      marcFiles.forEach(marcFile => {
+        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
+          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+          JobProfiles.waitLoadingList();
+          JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(marcFile.fileName);
+          Logs.checkStatusOfJobProfile('Completed');
+          Logs.openFileDetails(marcFile.fileName);
+          for (let i = 0; i < marcFile.numOfRecords; i++) {
+            Logs.getCreatedItemsID(i).then(link => {
+              createdAuthorityIDs.push(link.split('/')[5]);
+            });
+          }
+        });
+      });
     });
   });
 
@@ -32,7 +75,10 @@ describe('plug-in MARC authority | Search', () => {
 
   after('Deleting created user', () => {
     Users.deleteViaApi(testData.userProperties.userId);
-    InventoryInstance.deleteInstanceViaApi(instanceID);
+    InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
+    for (let i = 1; i < 3; i++) {
+      MarcAuthority.deleteViaAPI(createdAuthorityIDs[i]);
+    }
 
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     DataImport.selectLog();
@@ -41,11 +87,10 @@ describe('plug-in MARC authority | Search', () => {
   });
 
   it('C359015 MARC Authority plug-in | Search for MARC authority records when the user clicks on the "Link" icon (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
-    InventoryInstance.searchByTitle('Anglo-Saxon manuscripts');
+    InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
     InventoryInstances.selectInstance();
-    InventoryInstance.getId().then(id => { instanceID = id; });
     InventoryInstance.editMarcBibliographicRecord();
-    InventoryInstance.verifyAndClickLinkIcon();
+    InventoryInstance.verifyAndClickLinkIcon('700');
     InventoryInstance.verifySelectMarcAuthorityModal();
     InventoryInstance.verifySearchAndFilterDisplay();
     InventoryInstance.closeAuthoritySource();
@@ -54,8 +99,24 @@ describe('plug-in MARC authority | Search', () => {
     InventoryInstance.checkResultsListPaneHeader();
     InventoryInstance.checkSearchResultsTable();
     InventoryInstance.selectRecord();
-    InventoryInstance.checkRecordDetailPage();
+    InventoryInstance.checkRecordDetailPage('Starr, Lisa');
     InventoryInstance.closeDetailsView();
     InventoryInstance.closeFindAuthorityModal();
+  });
+
+  it('C359206 MARC Authority plug-in | Search using "Identifier (all)" option (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+    InventoryInstances.selectInstance();
+    InventoryInstance.editMarcBibliographicRecord();
+    InventoryInstance.verifyAndClickLinkIcon('700');
+    InventoryInstance.closeAuthoritySource();
+    InventoryInstance.verifySearchOptions();
+    MarcAuthorities.searchBy(testData.forC359206.searchOption, testData.forC359206.lcControlNumberA);
+    MarcAuthorities.checkFieldAndContentExistence('010', testData.forC359206.lcControlNumberA);
+    InventoryInstance.checkRecordDetailPage(testData.forC359206.valueA);
+    MarcAuthorities.searchBy(testData.forC359206.searchOption, testData.forC359206.lcControlNumberB);
+    MarcAuthorities.checkFieldAndContentExistence('010', testData.forC359206.lcControlNumberB);
+    InventoryInstance.checkRecordDetailPage(testData.forC359206.valueB);
+    MarcAuthorities.clickResetAndCheck();
   });
 });

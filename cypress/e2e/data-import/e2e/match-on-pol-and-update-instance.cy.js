@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
@@ -23,11 +24,12 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 
 describe('ui-data-import', () => {
   let user = null;
   let orderNumber;
-  let instanceHrid;
+  const itemBarcode = uuid();
   const instanceTitle = 'South Asian texts in history : critical engagements with Sheldon Pollock. edited by Yigal Bronner, Whitney Cox, and Lawrence McCrea.';
 
   // unique profile names
@@ -133,15 +135,12 @@ describe('ui-data-import', () => {
         Orders.deleteOrderApi(orderId[0].id);
       });
     Users.deleteViaApi(user.userId);
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-      .then((instance) => {
-        cy.deleteItemViaApi(instance.items[0].id);
-        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
     cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` })
-      .then((instance) => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
+      .then(instance => {
+        if (instance) {
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        }
       });
   });
 
@@ -243,7 +242,7 @@ describe('ui-data-import', () => {
             Orders.openOrder();
 
             // change file using order number
-            DataImport.editMarcFile('marcFileForC350944.mrc', editedMarcFileName, ['test'], [orderNumber]);
+            DataImport.editMarcFile('marcFileForC350944.mrc', editedMarcFileName, ['test', '242451241241'], [orderNumber, itemBarcode]);
           });
       });
 
@@ -262,12 +261,11 @@ describe('ui-data-import', () => {
       FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded]);
 
       FileDetails.openInstanceInInventory('Updated');
-      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => { instanceHrid = initialInstanceHrId; });
       InventoryInstance.checkIsInstanceUpdated();
       InventoryInstance.checkIsHoldingsCreated(['Main Library >']);
       InventoryInstance.openHoldingsAccordion('Main Library >');
-      InventoryInstance.checkIsItemCreated('242451241241');
+      InventoryInstance.checkIsItemCreated(itemBarcode);
       InventoryInstance.viewSource();
-      InventoryViewSource.verifyBarcodeInMARCBibSource('242451241241');
+      InventoryViewSource.verifyBarcodeInMARCBibSource(itemBarcode);
     });
 });

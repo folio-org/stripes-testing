@@ -11,9 +11,9 @@ import {
   Select,
   MultiColumnList,
   Pane,
-  TextArea,
   including,
-  MultiColumnListRow, TextField
+  MultiColumnListRow,
+  TextField
 } from '../../../../interactors';
 
 const logsStartDateAccordion = Accordion('Start date');
@@ -44,6 +44,14 @@ const resetAllButton = Button('Reset all');
 const logsStatusesAccordion = Accordion('Statuses');
 const textFildTo = TextField('To');
 const textFildFrom = TextField('From');
+const triggerBtn = DropdownMenu().find(Button('File that was used to trigger the bulk edit'));
+const errorsEncounteredBtn = DropdownMenu().find(Button('File with errors encountered during the record matching'));
+const matchingRecordsBtn = DropdownMenu().find(Button('File with the matching records'));
+const previewPorposedChangesBtn = DropdownMenu().find(Button('File with the preview of proposed changes'));
+const updatedRecordBtn = DropdownMenu().find(Button('File with updated records'));
+const errorsCommittingBtn = DropdownMenu().find(Button('File with errors encountered when committing the changes'));
+const buildQueryButton = Button('Build query');
+const buildQueryModal = Modal('Build query');
 
 export default {
   waitLoading() {
@@ -321,17 +329,18 @@ export default {
     cy.do(logsToggle.click());
   },
 
-  verifyQueryPane() {
+  verifyQueryPane(selectedRadio = 'Users') {
     cy.expect([
       queryToggle.has({ default: false }),
-      TextArea().has({ disabled: true }),
-      searchButton.has({ disabled: true }),
-      resetAllButton.has({ disabled: true }),
       recordTypesAccordion.has({ open: true }),
-      recordTypesAccordion.find(usersRadio).has({ disabled: true }),
-      recordTypesAccordion.find(itemsRadio).has({ disabled: true }),
-      recordTypesAccordion.find(holdingsRadio).has({ disabled: true }),
+      recordTypesAccordion.find(usersRadio).exists(),
+      recordTypesAccordion.find(itemsRadio).exists(),
+      recordTypesAccordion.find(holdingsRadio).exists(),
+      setCriteriaPane.find(buildQueryButton).has({ disabled: false }),
     ]);
+    selectedRadio === 'Items' ? this.isItemsRadioChecked()
+      : selectedRadio === 'Holdings' ? this.isHoldingsRadioChecked()
+        : this.isUsersRadioChecked();
     this.verifyBulkEditPaneItems();
   },
 
@@ -413,12 +422,20 @@ export default {
     cy.expect(usersRadio.has({ disabled: isDisabled }));
   },
 
+  isUsersRadioChecked() {
+    cy.expect(usersRadio.has({ checked: true }));
+  },
+
   checkItemsRadio() {
     cy.do(itemsRadio.click());
   },
 
   itemsRadioIsDisabled(isDisabled) {
     cy.expect(itemsRadio.has({ disabled: isDisabled }));
+  },
+
+  isItemsRadioChecked() {
+    cy.expect(itemsRadio.has({ checked: true }));
   },
 
   checkHoldingsRadio() {
@@ -439,6 +456,10 @@ export default {
 
   itemsHoldingsIsDisabled(isDisabled) {
     cy.expect(holdingsRadio.has({ disabled: isDisabled }));
+  },
+
+  isHoldingsRadioChecked() {
+    cy.expect(holdingsRadio.has({ checked: true }));
   },
 
   uploadFile(fileName) {
@@ -695,74 +716,76 @@ export default {
     cy.do(MultiColumnListRow({ indexRow: `row-${row}` }).find(Button({ icon: 'ellipsis' })).click());
   },
 
+  verifyTriggerLogsAction() {
+    cy.expect(triggerBtn.exists());
+  },
+
   verifyLogsRowAction() {
     cy.expect([
-      HTML('File that was used to trigger the bulk edit').exists(),
-      HTML('File with errors encountered during the record matching').exists()
+      triggerBtn.exists(),
+      errorsEncounteredBtn.exists()
     ]);
   },
 
   verifyLogsRowActionWhenCompleted() {
     cy.expect([
-      HTML('File that was used to trigger the bulk edit').exists(),
-      HTML('File with the matching records').exists(),
-      HTML('File with the preview of proposed changes').exists(),
-      HTML('File with updated records').exists()
+      triggerBtn.exists(),
+      matchingRecordsBtn.exists(),
+      previewPorposedChangesBtn.exists(),
+      updatedRecordBtn.exists()
     ]);
   },
 
   verifyLogsRowActionWhenCompletedWithErrors() {
     cy.expect([
-      HTML('File that was used to trigger the bulk edit').exists(),
-      HTML('File with the matching records').exists(),
-      HTML('File with errors encountered during the record matching').exists(),
-      HTML('File with the preview of proposed changes').exists(),
-      HTML('File with updated records').exists(),
-      HTML('File with errors encountered when committing the changes').exists()
+      triggerBtn.exists(),
+      matchingRecordsBtn.exists(),
+      errorsEncounteredBtn.exists(),
+      previewPorposedChangesBtn.exists(),
+      updatedRecordBtn.exists(),
+      errorsCommittingBtn.exists()
     ]);
   },
 
   verifyLogsRowActionWhenCompletedWithErrorsWithoutModification() {
     cy.expect([
-      HTML('File that was used to trigger the bulk edit').exists(),
-      HTML('File with errors encountered during the record matching').exists(),
+      triggerBtn.exists(),
+      errorsEncounteredBtn.exists(),
     ]);
   },
 
+  waitingFileDownload() {
+    cy.wait(3000);
+  },
+
   downloadFileUsedToTrigger() {
-    cy.do(Button('File that was used to trigger the bulk edit').click());
-    // Need to wait for the file to download
-    cy.wait(5000);
+    cy.do(triggerBtn.click());
+    this.waitingFileDownload();
   },
 
   downloadFileWithErrorsEncountered() {
-    cy.do(Button('File with errors encountered during the record matching').click());
-    // Need to wait for the file to download
-    cy.wait(5000);
+    cy.do(errorsEncounteredBtn.click());
+    this.waitingFileDownload();
   },
 
   downloadFileWithMatchingRecords() {
-    cy.do(Button('File with the matching records').click());
-    // Need to wait for the file to download
-    cy.wait(5000);
+    cy.do(matchingRecordsBtn.click());
+    this.waitingFileDownload();
   },
 
   downloadFileWithProposedChanges() {
-    cy.do(Button('File with the preview of proposed changes').click());
-    // Need to wait for the file to download
-    cy.wait(5000);
+    cy.do(previewPorposedChangesBtn.click());
+    this.waitingFileDownload();
   },
 
   downloadFileWithUpdatedRecords() {
-    cy.do(Button('File with updated records').click());
-    // Need to wait for the file to download
-    cy.wait(5000);
+    cy.do(updatedRecordBtn.click());
+    this.waitingFileDownload();
   },
 
   downloadFileWithCommitErrors() {
-    cy.do(Button('File with errors encountered when committing the changes').click());
-    // Need to wait for the file to download
-    cy.wait(5000);
+    cy.do(errorsCommittingBtn.click());
+    this.waitingFileDownload();
   },
 
   verifyLogsTableHeaders() {
@@ -806,5 +829,21 @@ export default {
 
   noLogResultsFound() {
     cy.expect(logsResultPane.find(HTML('No results found. Please check your filters.')).exists());
+  },
+
+  isDragAndDropAreaDisabled(isDisabled) {
+    cy.expect((fileButton).has({ disabled: isDisabled }));
+  },
+
+  isBuildQueryButtonDisabled(isDisabled) {
+    cy.expect((buildQueryButton).has({ disabled: isDisabled }));
+  },
+
+  clickBuildQueryButton() {
+    cy.do(buildQueryButton.click());
+  },
+
+  verifyBuildQueryModal() {
+    cy.expect(buildQueryModal.exists());
   }
 };

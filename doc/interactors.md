@@ -43,7 +43,7 @@ The simplest answer to this question is that in the vast majority of
 cases, you should not need to write your own interactors for your
 application.
 
-One of the goals of the `@stripes/testing` library is that if your
+One of the goals of the `@folio/stripes-testing` library is that if your
 application is built with stripes components, then the ability to
 simulate any user interaction is baked in for free. Even though your
 application is built out of many complex components, your user still

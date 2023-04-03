@@ -1,25 +1,24 @@
+import testTypes from '../../../../support/dictionary/testTypes';
+import devTeams from '../../../../support/dictionary/devTeams';
 import permissions from '../../../../support/dictionary/permissions';
-import Users from '../../../../support/fragments/users/users';
 import TopMenu from '../../../../support/fragments/topMenu';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import devTeams from '../../../../support/dictionary/devTeams';
-import testTypes from '../../../../support/dictionary/testTypes';
-import getRandomPostfix from '../../../../support/utils/stringTools';
 import FileManager from '../../../../support/utils/fileManager';
-import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
+import getRandomPostfix from '../../../../support/utils/stringTools';
+import Users from '../../../../support/fragments/users/users';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 
 let user;
-const invalidUsername = `username${getRandomPostfix()}`;
-const invalidUsernamesFileName = `invalidUserUUIDs_${getRandomPostfix()}.csv`;
-const errorsFromMatchingFileName = `*Errors-${invalidUsernamesFileName}*`;
+const invalidUsername = `invalidUsername_${getRandomPostfix()}`;
+const invalidUsernamesFilename = `invalidUsername_${getRandomPostfix()}.csv`;
+const errorsFromMatchingFileName = `*Errors-${invalidUsernamesFilename}*`;
 
-describe('Bulk Edit - Logs', { retries: 1 }, () => {
+describe('Bulk Edit - Logs', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.bulkEditLogsView.gui,
-      permissions.bulkEditCsvView.gui,
-      permissions.bulkEditCsvEdit.gui,
+      permissions.bulkEditUpdateRecords.gui,
       permissions.uiUsersView.gui,
     ])
       .then(userProperties => {
@@ -28,20 +27,22 @@ describe('Bulk Edit - Logs', { retries: 1 }, () => {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
         });
-        FileManager.createFile(`cypress/fixtures/${invalidUsernamesFileName}`, invalidUsername);
+        FileManager.createFile(`cypress/fixtures/${invalidUsernamesFilename}`, invalidUsername);
       });
   });
 
   after('delete test data', () => {
-    FileManager.deleteFile(`cypress/fixtures/${invalidUsernamesFileName}`);
+    FileManager.deleteFile(`cypress/fixtures/${invalidUsernamesFilename}`);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
-  it('C375216 Verify generated Logs files for Users CSV -- only errors (firebird)', { tags: [testTypes.smoke, devTeams.firebird], retries: 1 }, () => {
+  it('C375246 Verify genetated Logs files for Users In app -- only invalid records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.verifyDragNDropUsernamesArea();
-    BulkEditSearchPane.uploadFile(invalidUsernamesFileName);
+    BulkEditSearchPane.uploadFile(invalidUsernamesFilename);
     BulkEditSearchPane.waitFileUploading();
+    BulkEditSearchPane.verifyErrorLabel(invalidUsernamesFilename, 0, 1);
+    BulkEditSearchPane.verifyNonMatchedResults(invalidUsername);
     BulkEditActions.openActions();
     BulkEditActions.downloadErrors();
 
@@ -52,7 +53,7 @@ describe('Bulk Edit - Logs', { retries: 1 }, () => {
     BulkEditSearchPane.verifyLogsRowActionWhenCompletedWithErrorsWithoutModification();
 
     BulkEditSearchPane.downloadFileUsedToTrigger();
-    BulkEditFiles.verifyCSVFileRows(invalidUsernamesFileName, [invalidUsername]);
+    BulkEditFiles.verifyCSVFileRows(invalidUsernamesFilename, [invalidUsername]);
 
     BulkEditSearchPane.downloadFileWithErrorsEncountered();
     BulkEditFiles.verifyMatchedResultFileContent(errorsFromMatchingFileName, [invalidUsername], 'firstElement', false);

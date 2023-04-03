@@ -1,4 +1,4 @@
-import { MultiColumnList, Callout, QuickMarcEditorRow, PaneContent, PaneHeader, Select, Section, HTML, including, Button, MultiColumnListCell, MultiColumnListRow, SearchField } from '../../../../interactors';
+import { MultiColumnList, Modal, TextField, Callout, QuickMarcEditorRow, PaneContent, PaneHeader, Select, Section, HTML, including, Button, MultiColumnListCell, MultiColumnListRow, SearchField } from '../../../../interactors';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const authoritiesList = rootSection.find(MultiColumnList({ id: 'authority-result-list' }));
@@ -10,11 +10,52 @@ const enabledSearchButton = Button({ id: 'submit-authorities-search', disabled: 
 const browseSearchAndFilterInput = Select('Search field index');
 const marcViewSection = Section({ id: 'marc-view-pane' });
 const editorSection = Section({ id: 'quick-marc-editor-pane' });
+const actionsButton = Button('Actions');
+const marcAuthUpdatesCsvBtn = Button('MARC authority headings updates (CSV)');
+const authReportModal = Modal({ id: 'authorities-report-modal' });
+const fromDate = TextField({ name: 'fromDate' });
+const toDate = TextField({ name: 'toDate' });
+const exportButton = Button('Export');
+const resetButton = Button('Reset all');
+const selectField = Select({ id: 'textarea-authorities-search-qindex' });
 
 export default {
   waitLoading: () => cy.expect(rootSection.exists()),
 
   waitRows: () => cy.expect(rootSection.find(PaneHeader()).find(HTML(including('found')))),
+
+  clickActionsAndReportsButtons: () => {
+    cy.do(rootSection.find(PaneHeader()).find(actionsButton).click());
+    cy.expect(marcAuthUpdatesCsvBtn.exists());
+    cy.do(marcAuthUpdatesCsvBtn.click());
+    cy.expect(authReportModal.exists());
+  },
+
+  fillReportModal: (today, tomorrow) => {
+    cy.do([
+      fromDate.fillIn(today),
+      toDate.fillIn(tomorrow),
+    ]);
+    cy.expect(authReportModal.find(exportButton).exists());
+  },
+
+  clickExportButton: () => {
+    cy.do(authReportModal.find(exportButton).click());
+  },
+
+  checkCalloutAfterExport: (jobId) => {
+     cy.expect(Callout(including(`Authority headings updates report (Job ID ${jobId}) is being generated. Go to the Export manager app to download report. It may take a few minutes for the report to complete.`)).exists());
+  },
+
+  verifyMARCAuthorityFileName(actualName) {
+    // valid name example: 2023-03-26_09-51-07_7642_auth_headings_updates.csv
+    const fileNameMask = /\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}_\d{4}_auth_headings_updates\.csv/gm;
+    expect(actualName).to.match(fileNameMask);
+  },
+
+  verifyContentOfExportFile(actual, ...expectedArray) {
+    expectedArray.forEach(expectedItem => (expect(actual).to.include(expectedItem)));
+  },
 
   select:(specialInternalId) => cy.do(authoritiesList.find(Button({ href : including(specialInternalId) })).click()),
 
@@ -64,11 +105,53 @@ export default {
     cy.expect(MultiColumnListRow({ index: 0 }).find(Button({ text: including('Beethoven, Ludwig van (no 010)') })).exists());
     cy.expect(marcViewSection.exists());
   },
+  
+  checkSearchOptions() {
+    cy.do(selectField.click());
+    cy.expect([
+      selectField.has({ content: including('Keyword') }),
+      selectField.has({ content: including('Identifier (all)') }),
+      selectField.has({ content: including('Personal name') }),
+      selectField.has({ content: including('Corporate/Conference name') }),
+      selectField.has({ content: including('Geographic name') }),
+      selectField.has({ content: including('Name-title') }),
+      selectField.has({ content: including('Uniform title') }),
+      selectField.has({ content: including('Subject') }),
+      selectField.has({ content: including('Children\'s subject heading') }),
+      selectField.has({ content: including('Genre') }),
+      selectField.has({ content: including('Advanced search') }),
+    ]);
+  },
+
+  checkAfterSearch(type, record) {
+    cy.expect([
+      MultiColumnListCell({ columnIndex: 1, content: type }).exists(),
+      MultiColumnListCell({ columnIndex: 2, content: record }).exists(),
+    ]);
+  },
+
+  checkFieldAndContentExistence(tag, value) {
+    cy.expect([
+      marcViewSection.exists(),
+      marcViewSectionContent.has({ text: including(tag) }),
+      marcViewSectionContent.has({ text: including(value) }),
+    ]);
+  },
 
   check010FieldAbsence: () => {
     cy.expect([
       editorSection.exists(),
       QuickMarcEditorRow({ tagValue: '010' }).absent()
+    ]);
+  },
+
+  clickResetAndCheck: (searchValue) => {
+    cy.do(filtersSection.find(resetButton).click());
+    cy.expect([
+      marcViewSection.absent(),
+      SearchField({ id:'textarea-authorities-search', value: searchValue }).absent(),
+      selectField.has({ content: including('Keyword') }),
+      rootSection.find(HTML(including('Choose a filter or enter a search query to show results.'))).exists(),
     ]);
   }
 };
