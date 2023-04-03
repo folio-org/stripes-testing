@@ -28,15 +28,17 @@ describe('plug-in MARC authority | Search', () => {
           marc: 'oneMarcBib.mrc', 
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`, 
           jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+          numOfRecords: 1,
       }, 
       {
           marc: 'marcFileForC359206.mrc', 
           fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
           jobProfileToRun: 'Default - Create SRS MARC Authority',
+          numOfRecords: 2,
       }
     ]
 
-    let createdAuthorityID = [];
+    let createdAuthorityIDs = [];
 
   before('Creating user', () => {
     cy.createTempUser([
@@ -57,9 +59,11 @@ describe('plug-in MARC authority | Search', () => {
           JobProfiles.waitFileIsImported(marcFile.fileName);
           Logs.checkStatusOfJobProfile('Completed');
           Logs.openFileDetails(marcFile.fileName);
-          Logs.getCreatedItemsID().then(link => {
-            createdAuthorityID.push(link.split('/')[5]);
-          });
+          for (let i = 0; i < marcFile.numOfRecords; i++) {
+            Logs.getCreatedItemsID(i).then(link => {
+              createdAuthorityIDs.push(link.split('/')[5]);
+            });
+          }
         });
       });
     });
@@ -71,9 +75,10 @@ describe('plug-in MARC authority | Search', () => {
 
   after('Deleting created user', () => {
     Users.deleteViaApi(testData.userProperties.userId);
-    InventoryInstance.deleteInstanceViaApi(createdAuthorityID[0]);
-    MarcAuthority.deleteViaAPI(createdAuthorityID[1]);
-    MarcAuthority.deleteViaAPI(createdAuthorityID[2]);
+    InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
+    for (let i = 1; i < 3; i++) {
+      MarcAuthority.deleteViaAPI(createdAuthorityIDs[i]);
+    }
 
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     DataImport.selectLog();
@@ -82,7 +87,7 @@ describe('plug-in MARC authority | Search', () => {
   });
 
   it('C359015 MARC Authority plug-in | Search for MARC authority records when the user clicks on the "Link" icon (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
-    InventoryInstance.searchByTitle(createdAuthorityID[0]);
+    InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
     InventoryInstance.verifyAndClickLinkIcon('700');
@@ -100,7 +105,7 @@ describe('plug-in MARC authority | Search', () => {
   });
 
   it('C359206 MARC Authority plug-in | Search using "Identifier (all)" option (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
-    InventoryInstance.searchByTitle(createdAuthorityID[0]);
+    InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
     InventoryInstance.verifyAndClickLinkIcon('700');
@@ -113,9 +118,5 @@ describe('plug-in MARC authority | Search', () => {
     MarcAuthorities.checkFieldAndContentExistence('010', testData.forC359206.lcControlNumberB);
     InventoryInstance.checkRecordDetailPage(testData.forC359206.valueB);
     MarcAuthorities.clickResetAndCheck();
-    cy.visit(TopMenu.marcAuthorities);
-    MarcAuthorities.searchBy(testData.forC359206.searchOption, testData.forC359206.lcControlNumberB);
-    MarcAuthorities.selectFirstRecord();
-    InventoryInstance.getId().then(id => { createdAuthorityID.push(id) });
   });
 });
