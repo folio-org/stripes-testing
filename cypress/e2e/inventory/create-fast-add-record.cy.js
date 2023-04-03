@@ -12,12 +12,14 @@ import Users from '../../support/fragments/users/users';
 import DevTeams from '../../support/dictionary/devTeams';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import FastAdd from '../../support/fragments/settings/inventory/instance-holdings-item/fastAdd';
 
 describe('ui-inventory: Create fast add record', () => {
   const timeStamp = {
     start: null,
     end: null,
   };
+  const instanceStatusCodeValue = 'uncat';
   let userId;
 
   beforeEach(() => {
@@ -28,25 +30,22 @@ describe('ui-inventory: Create fast add record', () => {
       ])
       .then(userProperties => {
         userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password);
+        cy.login(userProperties.username, userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
 
         cy.intercept('POST', '/inventory/instances').as('createInstance');
         cy.intercept('POST', '/holdings-storage/holdings').as('createHolding');
         cy.intercept('POST', '/inventory/items').as('createItem');
 
-        FastAddNewRecord.updateInventoryFastAddSetting(
-          FastAddNewRecord.fastAddNewRecordFormDetails.instanceStatusCodeOption
-        );
-        cy.visit(TopMenu.inventoryPath);
+        FastAdd.updateViaApi(instanceStatusCodeValue);
       });
   });
 
   afterEach('reset "Fast add" setting', () => {
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode);
     FastAddNewRecord.updateInventoryFastAddSetting(
       FastAddNewRecord.fastAddNewRecordFormDetails.defaultInstanceStatusCodeOption
     );
     Users.deleteViaApi(userId);
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode);
   });
 
   it('C15850 Create a fast add record from Inventory. Monograph. (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {

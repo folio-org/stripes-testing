@@ -16,5 +16,3 @@ export default {
     }).then(response => { return response.body; });
   }
 };
-
-
