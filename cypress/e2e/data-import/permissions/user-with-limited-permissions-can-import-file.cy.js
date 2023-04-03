@@ -33,21 +33,19 @@ describe('ui-data-import', () => {
   const nameMarcFile = `C356841autotestFile.${Helper.getRandomBarcode()}.mrc`;
   const collectionOfMappingAndActionProfiles = [
     {
+      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
+        name: holdingsMappingProfileName,
+        pernanentLocation: '"Online (E)"' },
+      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
+        name: holdingsActionProfileName }
+    },
+    {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
         name: itemMappingProfileName,
         permanentLoanType: '"Can circulate"',
         status: '"Available"' },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
-        name: itemActionProfileName,
-        action: 'Create (all record types except MARC Authority or MARC Holdings)' }
-    },
-    {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
-        name: holdingsMappingProfileName,
-        pernanentLocation: '"Online (E)"' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
-        name: holdingsActionProfileName,
-        action: 'Create (all record types except MARC Authority or MARC Holdings)' }
+        name: itemActionProfileName }
     }
   ];
   const jobProfile = {
@@ -96,16 +94,16 @@ describe('ui-data-import', () => {
       cy.login(firstUser.username, firstUser.password, { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
       // create mapping profiles
       FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
+      NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
       NewFieldMappingProfile.fillMaterialType();
-      NewFieldMappingProfile.fillPermanentLoanType(collectionOfMappingAndActionProfiles[0].mappingProfile.permanentLoanType);
-      NewFieldMappingProfile.fillStatus(collectionOfMappingAndActionProfiles[0].mappingProfile.status);
+      NewFieldMappingProfile.fillPermanentLoanType(collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLoanType);
+      NewFieldMappingProfile.fillStatus(collectionOfMappingAndActionProfiles[1].mappingProfile.status);
       FieldMappingProfiles.saveProfile();
       FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfileName);
 
       FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
-      NewFieldMappingProfile.fillPermanentLocation(collectionOfMappingAndActionProfiles[1].mappingProfile.pernanentLocation);
+      NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
+      NewFieldMappingProfile.fillPermanentLocation(collectionOfMappingAndActionProfiles[0].mappingProfile.pernanentLocation);
       FieldMappingProfiles.saveProfile();
       FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfileName);
 
