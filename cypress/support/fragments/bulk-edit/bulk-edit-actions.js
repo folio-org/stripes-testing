@@ -55,8 +55,8 @@ export default {
   openInAppStartBulkEditFrom() {
     cy.do(Button('Start bulk edit').click());
   },
-  verifyBulkEditForm() {
-    getBulkEditSelectType().select('Email');
+  verifyBulkEditForm(rowIndex = 0) {
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'));
     cy.expect([
       Button({ icon: 'plus-sign' }).exists(),
       Button({ icon: 'trash', disabled: true }).exists(),
