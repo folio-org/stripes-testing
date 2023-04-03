@@ -87,7 +87,6 @@ describe('ui-orders: Orders', () => {
           });
       });
 
-    // Prepare 2 Open Orders for Rollover
     Organizations.createOrganizationViaApi(organization)
       .then(responseOrganizations => {
         organization.id = responseOrganizations;
