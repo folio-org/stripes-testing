@@ -22,6 +22,9 @@ export default {
   waitLoading() {
     cy.expect(Pane('Export jobs').exists());
   },
+  selectJob(content) {
+    return cy.do(MultiColumnListCell(including(content)).click());
+  },
   searchById(id) {
     cy.do([
       TextField().fillIn(id),
