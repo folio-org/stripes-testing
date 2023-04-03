@@ -16,6 +16,7 @@ const authReportModal = Modal({ id: 'authorities-report-modal' });
 const fromDate = TextField({ name: 'fromDate' });
 const toDate = TextField({ name: 'toDate' });
 const exportButton = Button('Export');
+const resetButton = Button('Reset all');
 const selectField = Select({ id: 'textarea-authorities-search-qindex' });
 
 export default {
@@ -104,7 +105,7 @@ export default {
     cy.expect(MultiColumnListRow({ index: 0 }).find(Button({ text: including('Beethoven, Ludwig van (no 010)') })).exists());
     cy.expect(marcViewSection.exists());
   },
-
+  
   checkSearchOptions() {
     cy.do(selectField.click());
     cy.expect([
@@ -141,6 +142,16 @@ export default {
     cy.expect([
       editorSection.exists(),
       QuickMarcEditorRow({ tagValue: '010' }).absent()
+    ]);
+  },
+
+  clickResetAndCheck: (searchValue) => {
+    cy.do(filtersSection.find(resetButton).click());
+    cy.expect([
+      marcViewSection.absent(),
+      SearchField({ id:'textarea-authorities-search', value: searchValue }).absent(),
+      selectField.has({ content: including('Keyword') }),
+      rootSection.find(HTML(including('Choose a filter or enter a search query to show results.'))).exists(),
     ]);
   }
 };

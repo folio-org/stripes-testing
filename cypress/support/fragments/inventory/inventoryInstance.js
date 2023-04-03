@@ -377,11 +377,11 @@ export default {
     cy.do(MultiColumnListRow({ index: 0 }).find(MultiColumnListCell({ columnIndex: 2 })).find(Button()).click());
   },
 
-  checkRecordDetailPage() {
+  checkRecordDetailPage(markedValue) {
     cy.expect([
       marcViewPane.exists(),
       marcViewPane.find(buttonLink).exists(),
-      marcViewPane.has({ mark: 'Starr, Lisa' }),
+      marcViewPane.has({ mark: markedValue }),
     ]);
   },
 
