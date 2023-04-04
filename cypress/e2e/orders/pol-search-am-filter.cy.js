@@ -55,14 +55,14 @@ describe('orders: export', () => {
     Organizations.fillIntegrationInformationWithoutScheduling(integrationName, integartionDescription, vendorEDICodeFor1Integration, libraryEDICodeFor1Integration, organization.accounts[0].accountNo, 'Purchase');
     InteractorsTools.checkCalloutMessage('Integration was saved');
     cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
-    SettingsOrders.waitLoadingOpeningPurchaseOrders;
+    SettingsOrders.waitLoadingOpeningPurchaseOrders();
     SettingsOrders.setPurchaseOrderLinesLimit(3);
     cy.createTempUser([
       permissions.uiOrdersView.gui,
-      permissions.uiOrdersCreate.gui, 
+      permissions.uiOrdersCreate.gui,
       permissions.uiOrdersEdit.gui,
       permissions.uiOrdersApprovePurchaseOrders.gui,
-      permissions.viewEditCreateOrganization.gui, 
+      permissions.viewEditCreateOrganization.gui,
       permissions.viewOrganization.gui,
       permissions.uiExportOrders.gui,
       permissions.exportManagerAll.gui,
@@ -86,7 +86,7 @@ describe('orders: export', () => {
     Orders.createOrder(order, true, false).then(orderId => {
       order.id = orderId;
       Orders.createPOLineViaActions();
-      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase');      
+      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase');
       OrderLines.backToEditingOrder();
       Orders.createPOLineViaActions();
       OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase at vendor system');
@@ -96,7 +96,7 @@ describe('orders: export', () => {
       Orders.getOrdersApi({ limit: 1, query: `"id"=="${orderId}"` })
         .then(response => {
           orderNumber = response[0].poNumber;
-         
+
           cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
           Orders.selectOrderLines();
           Orders.selectFilterAcquisitionMethod('Purchase');
