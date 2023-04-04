@@ -152,8 +152,9 @@ export default {
   },
 
   byEffectiveLocation(values) {
-    return cy.do([
+    cy.do([
       effectiveLocationInput.clickHeader(),
+      effectiveLocationInput.find(TextField()).fillIn(values ?? 'Main'),
       effectiveLocationInput.find(Checkbox(values ?? this.effectiveLocation.mainLibrary)).click()
     ]);
   },
