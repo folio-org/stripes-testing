@@ -96,17 +96,6 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
     SearchPane.checkResultSearch(checkParams);
   };
 
-  const createPatronNoticeTemplate = (template) => {
-    NewNoticePolicyTemplate.startAdding();
-    NewNoticePolicyTemplate.checkInitialState();
-    NewNoticePolicyTemplate.addToken('item.title');
-    NewNoticePolicyTemplate.create(template, false);
-    NewNoticePolicyTemplate.checkPreview();
-    NewNoticePolicyTemplate.saveAndClose();
-    NewNoticePolicyTemplate.waitLoading();
-    NewNoticePolicyTemplate.checkAfterSaving(template);
-  };
-
   before('Preconditions', () => {
     itemsData.itemsWithSeparateInstance.forEach(function (item, index) {
       item.barcode = generateUniqueItemBarcodeWithShift(index);
@@ -162,6 +151,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
         });
         cy.wrap(itemsData.itemsWithSeparateInstance).as('items');
       });
+
     OtherSettings.setOtherSettingsViaApi({ prefPatronIdentifier: 'barcode,username' });
     cy.createLoanPolicy({
       loanable: true,
@@ -254,9 +244,9 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
     'C347862 Check out + Loan due date change + Check in triggers (vega)',
     { tags: [TestTypes.smoke, devTeams.vega] },
     () => {
-      createPatronNoticeTemplate(checkOutTemplate);
-      createPatronNoticeTemplate(loanDueDateChangeTemplate);
-      createPatronNoticeTemplate(checkInTemplate);
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(checkOutTemplate);
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(loanDueDateChangeTemplate);
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(checkInTemplate);
 
       cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
       NewNoticePolicy.waitLoading();

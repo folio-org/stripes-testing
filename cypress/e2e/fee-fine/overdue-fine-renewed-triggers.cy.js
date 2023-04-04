@@ -128,28 +128,6 @@ describe('Overdue fine', () => {
       SearchPane.checkResultSearch(checkParams, rowIndex);
     });
   };
-  const createPatronNoticeTemplate = (template) => {
-    NewNoticePolicyTemplate.startAdding();
-    NewNoticePolicyTemplate.checkInitialState();
-    NewNoticePolicyTemplate.addToken('item.title');
-    NewNoticePolicyTemplate.create(template, false);
-    NewNoticePolicyTemplate.chooseCategory(template.category);
-    NewNoticePolicyTemplate.checkPreview();
-    NewNoticePolicyTemplate.saveAndClose();
-    NewNoticePolicyTemplate.waitLoading();
-    template.category = 'AutomatedFeeFineCharge';
-    NewNoticePolicyTemplate.checkAfterSaving(template);
-  };
-  const duplicatePatronNoticeTemplate = (template) => {
-    NewNoticePolicyTemplate.duplicateTemplate();
-    NewNoticePolicyTemplate.typeTemplateName(template.name);
-    NewNoticePolicyTemplate.typeTemplateSubject(template.subject);
-    NewNoticePolicyTemplate.checkPreview();
-    NewNoticePolicyTemplate.saveAndClose();
-    NewNoticePolicyTemplate.waitLoading();
-    template.category = 'AutomatedFeeFineCharge';
-    NewNoticePolicyTemplate.checkAfterSaving(template);
-  };
   const noticePolicy = {
     name: `Autotest ${getRandomPostfix()} Overdue fine, returned`,
     description: 'Created by autotest team',
@@ -342,9 +320,21 @@ describe('Overdue fine', () => {
     'C347875 Overdue fine, renewed triggers (vega)',
     { tags: [TestTypes.criticalPath, devTeams.vega] },
     () => {
-      createPatronNoticeTemplate(noticeTemplates.returnedUponAt);
-      duplicatePatronNoticeTemplate(noticeTemplates.returnedAfterOnce);
-      duplicatePatronNoticeTemplate(noticeTemplates.returnedAfterRecurring);
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.returnedUponAt);
+      NewNoticePolicyTemplate.checkAfterSaving({
+        ...noticeTemplates.returnedUponAt,
+        category: 'AutomatedFeeFineCharge',
+      });
+      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.returnedAfterOnce);
+      NewNoticePolicyTemplate.checkAfterSaving({
+        ...noticeTemplates.returnedAfterOnce,
+        category: 'AutomatedFeeFineCharge',
+      });
+      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.returnedAfterRecurring);
+      NewNoticePolicyTemplate.checkAfterSaving({
+        ...noticeTemplates.returnedAfterRecurring,
+        category: 'AutomatedFeeFineCharge',
+      });
 
       cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
       NewNoticePolicy.waitLoading();
