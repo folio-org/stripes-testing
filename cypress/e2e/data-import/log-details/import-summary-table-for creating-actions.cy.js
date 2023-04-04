@@ -63,7 +63,8 @@ describe('ui-data-import', () => {
 
   before('create test data', () => {
     cy.createTempUser([
-      permissions.dataImportUploadAll.gui
+      permissions.moduleDataImportEnabled.gui,
+      permissions.settingsDataImportEnabled.gui
     ])
       .then(userProperties => {
         user = userProperties;
