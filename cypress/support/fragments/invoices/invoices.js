@@ -420,4 +420,8 @@ export default {
       saveAndClose.click(),
     ]);
   },
+
+  checkFundInInvoiceLine:(fund) => {
+    cy.expect(Section({ id: 'invoiceLineFundDistribution'}).find(Link(`${fund.name}(${fund.code})`)).exists());
+  },
 };
