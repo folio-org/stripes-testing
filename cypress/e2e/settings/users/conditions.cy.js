@@ -1,3 +1,8 @@
+/*
+Due to test parallelization, it was decided to check only 'Recall overdue by maximum number of days' condition.
+If this test checks all conditions, it may cause other tests that use conditions to fail.
+'Recall overdue by maximum number of days' was chosen because it is not used by other tests.
+*/
 import TestType from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import Features from '../../../support/dictionary/features';
