@@ -125,28 +125,6 @@ describe('Overdue fine', () => {
       SearchPane.checkResultSearch(checkParams, rowIndex);
     });
   };
-  const createPatronNoticeTemplate = (template) => {
-    NewNoticePolicyTemplate.startAdding();
-    NewNoticePolicyTemplate.checkInitialState();
-    NewNoticePolicyTemplate.addToken('item.title');
-    NewNoticePolicyTemplate.create(template, false);
-    NewNoticePolicyTemplate.chooseCategory(template.category);
-    NewNoticePolicyTemplate.checkPreview();
-    NewNoticePolicyTemplate.saveAndClose();
-    NewNoticePolicyTemplate.waitLoading();
-    template.category = 'AutomatedFeeFineCharge';
-    NewNoticePolicyTemplate.checkAfterSaving(template);
-  };
-  const duplicatePatronNoticeTemplate = (template) => {
-    NewNoticePolicyTemplate.duplicateTemplate();
-    NewNoticePolicyTemplate.typeTemplateName(template.name);
-    NewNoticePolicyTemplate.typeTemplateSubject(template.subject);
-    NewNoticePolicyTemplate.checkPreview();
-    NewNoticePolicyTemplate.saveAndClose();
-    NewNoticePolicyTemplate.waitLoading();
-    template.category = 'AutomatedFeeFineCharge';
-    NewNoticePolicyTemplate.checkAfterSaving(template);
-  };
   const noticePolicy = {
     name: `Autotest ${getRandomPostfix()} Overdue fine, returned`,
     description: 'Created by autotest team',
@@ -322,9 +300,9 @@ describe('Overdue fine', () => {
     'C347874 Overdue fine, returned triggers (vega)',
     { tags: [TestTypes.criticalPath, devTeams.vega] },
     () => {
-      createPatronNoticeTemplate(noticeTemplates.returnedUponAt);
-      duplicatePatronNoticeTemplate(noticeTemplates.returnedAfterOnce);
-      duplicatePatronNoticeTemplate(noticeTemplates.returnedAfterRecurring);
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.returnedUponAt);
+      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.returnedAfterOnce);
+      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.returnedAfterRecurring);
 
       cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
       NewNoticePolicy.waitLoading();
