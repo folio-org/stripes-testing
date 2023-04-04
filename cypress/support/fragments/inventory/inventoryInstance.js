@@ -358,7 +358,7 @@ export default {
   checkSearchResultsTable() {
     cy.expect([
       mclLinkHeader.has({ content: 'Link' }),
-      mclAuthRefTypeHeader.has({ content: 'Authorized' }),
+      mclAuthRefTypeHeader.has({ content: 'Authorized/Reference' }),
       mclHeadingRef.has({ content: 'Heading/Reference' }),
       mclHeadingType.has({ content: 'Type of heading' }),
       MultiColumnListRow({ index: 0 }).find(Button({ ariaLabel: 'Link' })).exists(),
@@ -377,11 +377,11 @@ export default {
     cy.do(MultiColumnListRow({ index: 0 }).find(MultiColumnListCell({ columnIndex: 2 })).find(Button()).click());
   },
 
-  checkRecordDetailPage() {
+  checkRecordDetailPage(markedValue) {
     cy.expect([
       marcViewPane.exists(),
       marcViewPane.find(buttonLink).exists(),
-      marcViewPane.has({ mark: 'Starr, Lisa' }),
+      marcViewPane.has({ mark: markedValue }),
     ]);
   },
 
@@ -694,5 +694,11 @@ export default {
         .find(MultiColumnListRow({ indexRow: indexRowNumber }))
         .find(Link(barcode)).click()
     ]);
+  },
+
+  verifyCellsContent: (...content) => {
+    content.forEach(itemContent => {
+      cy.expect(MultiColumnListCell({ content: itemContent }).exists());
+    });
   },
 };

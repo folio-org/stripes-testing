@@ -1,4 +1,4 @@
-import getRandomPostfix from '../../../utils/stringTools';
+import getRandomPostfix from '../../../../utils/stringTools';
 
 const defaultStatisticalCode = {
   source: 'local',

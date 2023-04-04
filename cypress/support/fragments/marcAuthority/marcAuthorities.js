@@ -16,6 +16,8 @@ const authReportModal = Modal({ id: 'authorities-report-modal' });
 const fromDate = TextField({ name: 'fromDate' });
 const toDate = TextField({ name: 'toDate' });
 const exportButton = Button('Export');
+const resetButton = Button('Reset all');
+const selectField = Select({ id: 'textarea-authorities-search-qindex' });
 
 export default {
   waitLoading: () => cy.expect(rootSection.exists()),
@@ -103,11 +105,53 @@ export default {
     cy.expect(MultiColumnListRow({ index: 0 }).find(Button({ text: including('Beethoven, Ludwig van (no 010)') })).exists());
     cy.expect(marcViewSection.exists());
   },
+  
+  checkSearchOptions() {
+    cy.do(selectField.click());
+    cy.expect([
+      selectField.has({ content: including('Keyword') }),
+      selectField.has({ content: including('Identifier (all)') }),
+      selectField.has({ content: including('Personal name') }),
+      selectField.has({ content: including('Corporate/Conference name') }),
+      selectField.has({ content: including('Geographic name') }),
+      selectField.has({ content: including('Name-title') }),
+      selectField.has({ content: including('Uniform title') }),
+      selectField.has({ content: including('Subject') }),
+      selectField.has({ content: including('Children\'s subject heading') }),
+      selectField.has({ content: including('Genre') }),
+      selectField.has({ content: including('Advanced search') }),
+    ]);
+  },
+
+  checkAfterSearch(type, record) {
+    cy.expect([
+      MultiColumnListCell({ columnIndex: 1, content: type }).exists(),
+      MultiColumnListCell({ columnIndex: 2, content: record }).exists(),
+    ]);
+  },
+
+  checkFieldAndContentExistence(tag, value) {
+    cy.expect([
+      marcViewSection.exists(),
+      marcViewSectionContent.has({ text: including(tag) }),
+      marcViewSectionContent.has({ text: including(value) }),
+    ]);
+  },
 
   check010FieldAbsence: () => {
     cy.expect([
       editorSection.exists(),
       QuickMarcEditorRow({ tagValue: '010' }).absent()
+    ]);
+  },
+
+  clickResetAndCheck: (searchValue) => {
+    cy.do(filtersSection.find(resetButton).click());
+    cy.expect([
+      marcViewSection.absent(),
+      SearchField({ id:'textarea-authorities-search', value: searchValue }).absent(),
+      selectField.has({ content: including('Keyword') }),
+      rootSection.find(HTML(including('Choose a filter or enter a search query to show results.'))).exists(),
     ]);
   }
 };

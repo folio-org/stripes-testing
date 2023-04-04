@@ -11,9 +11,9 @@ import {
   Select,
   MultiColumnList,
   Pane,
-  TextArea,
   including,
-  MultiColumnListRow, TextField
+  MultiColumnListRow,
+  TextField
 } from '../../../../interactors';
 
 const logsStartDateAccordion = Accordion('Start date');
@@ -50,6 +50,8 @@ const matchingRecordsBtn = DropdownMenu().find(Button('File with the matching re
 const previewPorposedChangesBtn = DropdownMenu().find(Button('File with the preview of proposed changes'));
 const updatedRecordBtn = DropdownMenu().find(Button('File with updated records'));
 const errorsCommittingBtn = DropdownMenu().find(Button('File with errors encountered when committing the changes'));
+const buildQueryButton = Button('Build query');
+const buildQueryModal = Modal('Build query');
 
 export default {
   waitLoading() {
@@ -327,17 +329,18 @@ export default {
     cy.do(logsToggle.click());
   },
 
-  verifyQueryPane() {
+  verifyQueryPane(selectedRadio = 'Users') {
     cy.expect([
       queryToggle.has({ default: false }),
-      TextArea().has({ disabled: true }),
-      searchButton.has({ disabled: true }),
-      resetAllButton.has({ disabled: true }),
       recordTypesAccordion.has({ open: true }),
-      recordTypesAccordion.find(usersRadio).has({ disabled: true }),
-      recordTypesAccordion.find(itemsRadio).has({ disabled: true }),
-      recordTypesAccordion.find(holdingsRadio).has({ disabled: true }),
+      recordTypesAccordion.find(usersRadio).exists(),
+      recordTypesAccordion.find(itemsRadio).exists(),
+      recordTypesAccordion.find(holdingsRadio).exists(),
+      setCriteriaPane.find(buildQueryButton).has({ disabled: false }),
     ]);
+    selectedRadio === 'Items' ? this.isItemsRadioChecked()
+      : selectedRadio === 'Holdings' ? this.isHoldingsRadioChecked()
+        : this.isUsersRadioChecked();
     this.verifyBulkEditPaneItems();
   },
 
@@ -419,12 +422,20 @@ export default {
     cy.expect(usersRadio.has({ disabled: isDisabled }));
   },
 
+  isUsersRadioChecked() {
+    cy.expect(usersRadio.has({ checked: true }));
+  },
+
   checkItemsRadio() {
     cy.do(itemsRadio.click());
   },
 
   itemsRadioIsDisabled(isDisabled) {
     cy.expect(itemsRadio.has({ disabled: isDisabled }));
+  },
+
+  isItemsRadioChecked() {
+    cy.expect(itemsRadio.has({ checked: true }));
   },
 
   checkHoldingsRadio() {
@@ -445,6 +456,10 @@ export default {
 
   itemsHoldingsIsDisabled(isDisabled) {
     cy.expect(holdingsRadio.has({ disabled: isDisabled }));
+  },
+
+  isHoldingsRadioChecked() {
+    cy.expect(holdingsRadio.has({ checked: true }));
   },
 
   uploadFile(fileName) {
@@ -814,5 +829,21 @@ export default {
 
   noLogResultsFound() {
     cy.expect(logsResultPane.find(HTML('No results found. Please check your filters.')).exists());
+  },
+
+  isDragAndDropAreaDisabled(isDisabled) {
+    cy.expect((fileButton).has({ disabled: isDisabled }));
+  },
+
+  isBuildQueryButtonDisabled(isDisabled) {
+    cy.expect((buildQueryButton).has({ disabled: isDisabled }));
+  },
+
+  clickBuildQueryButton() {
+    cy.do(buildQueryButton.click());
+  },
+
+  verifyBuildQueryModal() {
+    cy.expect(buildQueryModal.exists());
   }
 };
