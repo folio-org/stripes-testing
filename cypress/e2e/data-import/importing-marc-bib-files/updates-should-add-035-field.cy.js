@@ -174,10 +174,7 @@ describe('ui-data-import', () => {
         FileDetails.checkInstanceQuantityInSummaryTable('8');
         cy.wrap(
           rowNumbers.forEach(rowNumber => {
-            // need to wait until page will be opened in loop
-            cy.wait(8000);
-            cy.visit(TopMenu.dataImportPath);
-            Logs.openFileDetails(secondMarcFileNameForCreate);
+            cy.wait(2000);
             FileDetails.openInstanceInInventory('Created', rowNumber);
             InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
               instanceHridsFromSecondFile.push(initialInstanceHrId);
@@ -188,6 +185,10 @@ describe('ui-data-import', () => {
               .then(uuid => {
                 arrayOf999Fields.push(uuid[0], uuid[1]);
               });
+            // need to wait until page will be opened in loop
+            cy.wait(2000);
+            cy.visit(TopMenu.dataImportPath);
+            Logs.openFileDetails(secondMarcFileNameForCreate);
           })
         ).then(() => {
           // change file using uuid for 999 field
@@ -272,10 +273,7 @@ describe('ui-data-import', () => {
 
       // open the second Instance in the Inventory and check 001, 003, 035 fields
       fields035.forEach(element => {
-        // need to wait until page will be opened in loop
-        cy.wait(8000);
-        cy.visit(TopMenu.dataImportPath);
-        Logs.openFileDetails(secondFileNameAfterUpload);
+        cy.wait(2000);
         FileDetails.openInstanceInInventory('Updated', element.instanceNumber);
         InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
         InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
@@ -289,6 +287,10 @@ describe('ui-data-import', () => {
         InventoryViewSource.notContains('003\t');
         InventoryViewSource.contains('035\t');
         InventoryViewSource.contains(element.field035contains);
+        // need to wait until page will be opened in loop
+        cy.wait(2000);
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(secondFileNameAfterUpload);
       });
     });
 });
