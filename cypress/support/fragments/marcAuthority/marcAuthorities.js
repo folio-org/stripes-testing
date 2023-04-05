@@ -1,4 +1,4 @@
-import { MultiColumnList, Modal, Link, TextField, Callout, MultiSelect, QuickMarcEditorRow, PaneContent, PaneHeader, Select, Section, HTML, including, Button, MultiColumnListCell, MultiColumnListRow, SearchField, Accordion } from '../../../../interactors';
+import { MultiColumnList, Modal, TextField, Callout, MultiSelect, QuickMarcEditorRow, PaneContent, PaneHeader, Select, Section, HTML, including, Button, MultiColumnListCell, MultiColumnListRow, SearchField, Accordion } from '../../../../interactors';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const authoritiesList = rootSection.find(MultiColumnList({ id: 'authority-result-list' }));
