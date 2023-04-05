@@ -274,17 +274,17 @@ describe('ui-data-import', () => {
         InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
         InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
           const instanceHrid = initialInstanceHrId;
-
+          cy.wait(2000);
           InventoryInstance.viewSource();
           InventoryViewSource.contains('001\t');
           InventoryViewSource.contains(instanceHrid);
+          InventoryViewSource.notContains('003\t');
+          InventoryViewSource.contains('035\t');
+          // need to wait until page will be opened in loop
+          cy.wait(2000);
+          cy.visit(TopMenu.dataImportPath);
+          Logs.openFileDetails(secondFileNameAfterUpload);
         });
-        InventoryViewSource.notContains('003\t');
-        InventoryViewSource.contains('035\t');
-        // need to wait until page will be opened in loop
-        cy.wait(2000);
-        cy.visit(TopMenu.dataImportPath);
-        Logs.openFileDetails(secondFileNameAfterUpload);
       });
 
 
