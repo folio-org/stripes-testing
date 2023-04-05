@@ -114,12 +114,12 @@ describe('ui-data-import', () => {
       .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
-    instanceHridsFromSecondFile.forEach(hrid => {
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` })
-        .then((instance) => {
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
-    });
+    // instanceHridsFromSecondFile.forEach(hrid => {
+    //   cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` })
+    //     .then((instance) => {
+    //       InventoryInstance.deleteInstanceViaApi(instance.id);
+    //     });
+    // });
   });
 
   it('C358998 Data Import Updates should add 035 field from 001/003, if it is not HRID or already exists (folijet)',
