@@ -11,6 +11,7 @@ export default {
       case 'patronGroup': verifyFunc = this.verifyMatchedResultPatronGroup; break;
       case 'expirationDate': verifyFunc = this.verifyMatchedResultExpirationDate; break;
       case 'firstElement': verifyFunc = this.verifyMatchedResultFirstElement; break;
+      case 'emailDomain': verifyFunc = this.verifyMatchedResultByEmailDomain; break;
       default: verifyFunc = this.verifyMatchedResultByHRID;
     }
 
@@ -106,5 +107,10 @@ export default {
   verifyMatchedResultExpirationDate(actualResult, expectedResult) {
     const actualExpirationDate = actualResult.split(',')[20];
     expect(actualExpirationDate).to.include(expectedResult);
+  },
+  
+  verifyMatchedResultByEmailDomain(actualResult, expectedResult) {
+    const actualEmailDomain = actualResult.split(',')[13];
+    expect(actualEmailDomain).to.include('@' + expectedResult);
   },
 };
