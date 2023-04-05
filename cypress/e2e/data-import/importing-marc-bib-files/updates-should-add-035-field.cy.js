@@ -114,12 +114,13 @@ describe('ui-data-import', () => {
       .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
-    // instanceHridsFromSecondFile.forEach(hrid => {
-    //   cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` })
-    //     .then((instance) => {
-    //       InventoryInstance.deleteInstanceViaApi(instance.id);
-    //     });
-    // });
+    instanceHridsFromSecondFile.forEach(hrid => {
+      cy.wait(2000);
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` })
+        .then((instance) => {
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
+    });
   });
 
   it('C358998 Data Import Updates should add 035 field from 001/003, if it is not HRID or already exists (folijet)',
@@ -167,7 +168,9 @@ describe('ui-data-import', () => {
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(secondMarcFileNameForCreate);
         rowNumbers.forEach(rowNumber => {
+          cy.wait(2000);
           FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc, rowNumber);
+          cy.wait(2000);
           FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.instance, rowNumber);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable('8');
