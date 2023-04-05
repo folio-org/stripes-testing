@@ -206,56 +206,56 @@ describe('ui-data-import', () => {
           );
         });
 
-        //   // create mapping profile
-        //   cy.visit(SettingsMenu.mappingProfilePath);
-        //   FieldMappingProfiles.openNewMappingProfileForm();
-        //   NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
-        //   NewFieldMappingProfile.fillInstanceStatusTerm(instanceStatusTerm);
-        //   NewFieldMappingProfile.addStatisticalCode(statisticalCode, 8);
-        //   FieldMappingProfiles.saveProfile();
-        //   FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
-        //   FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
+          // create mapping profile
+          cy.visit(SettingsMenu.mappingProfilePath);
+          FieldMappingProfiles.openNewMappingProfileForm();
+          NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
+          NewFieldMappingProfile.fillInstanceStatusTerm(instanceStatusTerm);
+          NewFieldMappingProfile.addStatisticalCode(statisticalCode, 8);
+          FieldMappingProfiles.saveProfile();
+          FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+          FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
-        //   // create action profile
-        //   cy.visit(SettingsMenu.actionProfilePath);
-        //   ActionProfiles.create(actionProfile, mappingProfile.name);
-        //   ActionProfiles.checkActionProfilePresented(actionProfile.name);
+          // create action profile
+          cy.visit(SettingsMenu.actionProfilePath);
+          ActionProfiles.create(actionProfile, mappingProfile.name);
+          ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
-        //   // create match profile
-        //   cy.visit(SettingsMenu.matchProfilePath);
-        //   MatchProfiles.createMatchProfileWithExistingPart(matchProfile);
-        //   MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
+          // create match profile
+          cy.visit(SettingsMenu.matchProfilePath);
+          MatchProfiles.createMatchProfileWithExistingPart(matchProfile);
+          MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
 
-        //   // create job profile for update
-        //   cy.visit(SettingsMenu.jobProfilePath);
-        //   JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);
-        //   JobProfiles.checkJobProfilePresented(jobProfile.profileName);
+          // create job profile for update
+          cy.visit(SettingsMenu.jobProfilePath);
+          JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);
+          JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
-        //   // upload a marc file for updating already created first instance
-        //   cy.visit(TopMenu.dataImportPath);
-        //   // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-        //   cy.reload();
-        //   DataImport.uploadFile(firstMarcFileNameForUpdate, firstFileNameAfterUpload);
-        //   JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-        //   JobProfiles.runImportFile();
-        //   JobProfiles.waitFileIsImported(firstFileNameAfterUpload);
-        //   Logs.checkStatusOfJobProfile('Completed');
-        //   Logs.openFileDetails(firstFileNameAfterUpload);
-        //   FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
-        //   FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
-        //   FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
-        //   FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
-        //   // open the first Instance in the Inventory and check 001, 003, 035 fields
-        //   FileDetails.openInstanceInInventory('Updated');
-        //   InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
-        //   InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
-        //   InventoryInstance.viewSource();
-        //   InventoryViewSource.contains('001\t');
-        //   InventoryViewSource.contains(instanceHridFromFirstFile);
-        //   InventoryViewSource.notContains('003\t');
-        //   InventoryViewSource.contains('035\t');
-        //   InventoryViewSource.contains('(LTSCA)303845');
-        // });
+          // upload a marc file for updating already created first instance
+          cy.visit(TopMenu.dataImportPath);
+          // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+          cy.reload();
+          DataImport.uploadFile(firstMarcFileNameForUpdate, firstFileNameAfterUpload);
+          JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(firstFileNameAfterUpload);
+          Logs.checkStatusOfJobProfile('Completed');
+          Logs.openFileDetails(firstFileNameAfterUpload);
+          FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
+          FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
+          FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
+          FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
+          // open the first Instance in the Inventory and check 001, 003, 035 fields
+          FileDetails.openInstanceInInventory('Updated');
+          InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
+          InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
+          InventoryInstance.viewSource();
+          InventoryViewSource.contains('001\t');
+          InventoryViewSource.contains(instanceHridFromFirstFile);
+          InventoryViewSource.notContains('003\t');
+          InventoryViewSource.contains('035\t');
+          InventoryViewSource.contains('(LTSCA)303845');
+        });
 
         // // upload a marc file for updating already created second instance
         // cy.visit(TopMenu.dataImportPath);
@@ -294,6 +294,6 @@ describe('ui-data-import', () => {
       //   cy.wait(2000);
       //   cy.visit(TopMenu.dataImportPath);
       //   Logs.openFileDetails(secondFileNameAfterUpload);
-      });
+      //});
     });
 });
