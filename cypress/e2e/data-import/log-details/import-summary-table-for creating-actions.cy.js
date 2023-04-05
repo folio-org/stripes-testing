@@ -11,18 +11,15 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-
-
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
   let user;
   let instanceHrid;
+  const quantityOfItems = '1';
+  const instanceTitle = 'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)';
   const nameMarcFile = `C356801autotestFile.${Helper.getRandomBarcode()}.mrc`;
   // unique profile names
   const instanceMappingProfileName = `C356801 instance mapping profile ${Helper.getRandomBarcode()}`;
@@ -37,21 +34,22 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance,
         name: instanceMappingProfileName },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
+      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
         name: instanceActionProfileName }
     },
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
         name: holdingsMappingProfileName,
-        pernanentLocation: '"Online (E)"' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
+        pernanentLocation: '"Online (E)"',
+        pernanentLocationUI:'Online' },
+      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
         name: holdingsActionProfileName }
     },
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
         name: itemMappingProfileName,
         permanentLoanType: '"Can circulate"',
-        status: '"Available"' },
+        status: 'Available' },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: itemActionProfileName }
     }
@@ -64,7 +62,8 @@ describe('ui-data-import', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.moduleDataImportEnabled.gui,
-      permissions.settingsDataImportEnabled.gui
+      permissions.settingsDataImportEnabled.gui,
+      permissions.uiInventoryViewInstances.gui
     ])
       .then(userProperties => {
         user = userProperties;
@@ -115,7 +114,7 @@ describe('ui-data-import', () => {
       cy.visit(TopMenu.dataImportPath);
       // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
       cy.reload();
-      DataImport.uploadFile('marcFileForC356801.mrc', nameMarcFile);
+      DataImport.uploadFile('oneMarcBib.mrc', nameMarcFile);
       JobProfiles.searchJobProfileForImport(jobProfileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(nameMarcFile);
@@ -123,25 +122,31 @@ describe('ui-data-import', () => {
       Logs.openFileDetails(nameMarcFile);
 
       // check the instance is created
-      //all instances will be checked?
-    //   FileDetails.openInstanceInInventory('Created');
-    //   InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
-    //     instanceHrid = initialInstanceHrId;
-    //   });
-    //   InventoryInstance.checkIsInstancePresented(
-    //     instanceTitle,
-    //     collectionOfMappingAndActionProfiles[1].mappingProfile.pernanentLocation,
-    //     collectionOfMappingAndActionProfiles[2].mappingProfile.status
-    //   );
-    //   cy.go('back');
+      FileDetails.openInstanceInInventory('Created');
+      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        instanceHrid = initialInstanceHrId;
+      });
+      InventoryInstance.checkIsInstancePresented(
+        instanceTitle,
+        collectionOfMappingAndActionProfiles[1].mappingProfile.pernanentLocationUI,
+        collectionOfMappingAndActionProfiles[2].mappingProfile.status
+      );
+      cy.go('back');
 
-      // [FileDetails.columnName.srsMarc,
-      //   FileDetails.columnName.instance,
-      //   FileDetails.columnName.holdings,
-      //   FileDetails.columnName.item
-      // ].forEach(columnName => {
-      //   FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
-      // });
-
+      [FileDetails.columnName.srsMarc,
+        FileDetails.columnName.instance,
+        FileDetails.columnName.holdings,
+        FileDetails.columnName.item
+      ].forEach(columnName => {
+        FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+      });
+      // check created counter in the Summary table
+      FileDetails.checkItemsQuantityInSummaryTable(0, quantityOfItems);
+      // check Updated counter in the Summary table
+      FileDetails.checkItemsQuantityInSummaryTable(1, '0');
+      // check Discarded counter in the Summary table
+      FileDetails.checkItemsQuantityInSummaryTable(2, '0');
+      // check Error counter in the Summary table
+      FileDetails.checkItemsQuantityInSummaryTable(3, '0');
     });
 });
