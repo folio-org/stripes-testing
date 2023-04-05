@@ -104,7 +104,7 @@ describe('ui-data-import', () => {
       InventoryInstance.startOverlaySourceBibRecord();
       InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();
       InventoryInstance.importWithOclc(oclcForChanging);
-      InventoryInstance.checkCalloutMessage(`Updated record ${oclcForChanging}`);
+      InventoryInstance.checkCalloutMessage(`Record ${oclcForChanging} updated. Results may take a few moments to become visible in Inventory`);
       InventoryInstance.viewSource();
       InventoryViewSource.contains(`${protectedField}\t`);
       InventoryViewSource.contains(imported856Field);
