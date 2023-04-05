@@ -20,7 +20,7 @@ describe('ui-inventory: Create fast add record', () => {
     end: null,
   };
   let userId;
-  const instanceStatusCodeValue = 'uncat';
+  const instanceStatusCodeValue = 'Uncataloged';
 
   beforeEach(() => {
     cy
@@ -30,26 +30,26 @@ describe('ui-inventory: Create fast add record', () => {
       ])
       .then(userProperties => {
         userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+        cy.login(userProperties.username, userProperties.password);
 
         cy.intercept('POST', '/inventory/instances').as('createInstance');
         cy.intercept('POST', '/holdings-storage/holdings').as('createHolding');
         cy.intercept('POST', '/inventory/items').as('createItem');
 
-        FastAdd.updateViaApi(instanceStatusCodeValue);
-        cy.visit(TopMenu.inventoryPath);
+        cy.visit(TopMenu.inventorySettingsFastAddPath);
+        FastAdd.changeDefaultInstanceStatus(instanceStatusCodeValue);
       });
   });
 
   afterEach('reset "Fast add" setting', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode);
-    FastAddNewRecord.updateInventoryFastAddSetting(
-      FastAddNewRecord.fastAddNewRecordFormDetails.defaultInstanceStatusCodeOption
-    );
+    cy.visit(TopMenu.inventorySettingsFastAddPath);
+    FastAdd.changeDefaultInstanceStatus('Select instance status');
     Users.deleteViaApi(userId);
   });
 
   it('C15850 Create a fast add record from Inventory. Monograph. (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+    cy.visit(TopMenu.inventoryPath);
     InventoryActions.openNewFastAddRecordForm();
     FastAddNewRecord.waitLoading();
     FastAddNewRecord.fillFastAddNewRecordForm(FastAddNewRecord.fastAddNewRecordFormDetails);
@@ -64,7 +64,7 @@ describe('ui-inventory: Create fast add record', () => {
         timeStamp.end = new Date();
 
         InteractorsTools.checkCalloutMessage(
-          FastAddNewRecord.calloutMessages.INVENTORY_RECORDS_CREATE_SUCCESS
+          FastAdd.calloutMessages.INVENTORY_RECORDS_CREATE_SUCCESS
         );
         InventorySearchAndFilter.searchInstanceByTitle(FastAddNewRecord.fastAddNewRecordFormDetails.resourceTitle);
         FastAddNewRecord.openRecordDetails();
