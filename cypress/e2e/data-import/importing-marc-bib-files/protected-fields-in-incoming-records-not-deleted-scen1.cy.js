@@ -68,18 +68,18 @@ describe('ui-data-import', () => {
       });
   });
 
-  after(() => {
-    MarcFieldProtection.getListOfMarcFieldProtectionViaApi({ query: `"field"=="${protectedField}"` })
-      .then(list => {
-        list.forEach(({ id }) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(id));
-      });
-    Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
-    Users.deleteViaApi(user.userId);
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-      .then((instance) => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
-  });
+  // after(() => {
+  //   MarcFieldProtection.getListOfMarcFieldProtectionViaApi({ query: `"field"=="${protectedField}"` })
+  //     .then(list => {
+  //       list.forEach(({ id }) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(id));
+  //     });
+  //   Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
+  //   Users.deleteViaApi(user.userId);
+  //   cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+  //     .then((instance) => {
+  //       InventoryInstance.deleteInstanceViaApi(instance.id);
+  //     });
+  // });
 
   it('C358968 Check that protected fields in incoming records are not deleted during import: Scenario 1 (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
@@ -104,7 +104,7 @@ describe('ui-data-import', () => {
       InventoryInstance.startOverlaySourceBibRecord();
       InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();
       InventoryInstance.importWithOclc(oclcForChanging);
-      InventoryInstance.checkCalloutMessage(`Updated record ${oclcForChanging}`);
+      InventoryInstance.checkCalloutMessage(`Record ${oclcForChanging} updated. Results may take a few moments to become visible in Inventory`);
       InventoryInstance.viewSource();
       InventoryViewSource.contains(`${protectedField}\t`);
       InventoryViewSource.contains(imported856Field);
