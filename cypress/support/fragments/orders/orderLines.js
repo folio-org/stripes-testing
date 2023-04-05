@@ -199,7 +199,7 @@ export default {
     ]);
   },
 
-  rolloverPOLineInfoforPhysicalMaterialWithFund( fund, unitPrice, quantity, value,institutionId) {
+  rolloverPOLineInfoforPhysicalMaterialWithFund( fund, unitPrice, quantity, value, institutionId) {
     cy.do([
       orderFormatSelect.choose('Physical resource'),
       acquisitionMethodButton.click(),
@@ -225,7 +225,19 @@ export default {
       quantityPhysicalLocationField.fillIn(quantity),
       saveAndClose.click()
     ]);
-    cy.wait(2000);
+    cy.wait(4000);
+    this.submitOrderLine();
+  },
+
+  editFundInPOL( fund, unitPrice, value) {
+    cy.do([
+      physicalUnitPriceTextField.fillIn(unitPrice),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      fundDistributionField.fillIn(value),
+      saveAndClose.click()
+    ]);
+    cy.wait(6000);
     this.submitOrderLine();
   },
 
@@ -386,7 +398,8 @@ export default {
     const submitButton = Button('Submit');
     cy.get('body').then($body => {
       if ($body.find('[id=line-is-not-unique-confirmation]').length) {   
-        cy.do(submitButton.click());
+        cy.wait(4000);
+        cy.do(Modal({ id: 'line-is-not-unique-confirmation' }).find(submitButton).click());
       } else {
         // do nothing if modal is not displayed
       }
