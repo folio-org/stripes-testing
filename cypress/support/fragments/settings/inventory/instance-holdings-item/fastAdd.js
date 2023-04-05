@@ -1,26 +1,20 @@
-export default {
-  updateViaApi: (value) => {
-    return cy
-      .okapiRequest({
-        method: 'GET',
-        path: 'configurations/entries?query=(module==FAST_ADD%20and%20configName==fastAddSettings)',
-        isDefaultSearchParamsRequired: false
-      })
-      .then((fastAddResp) => {
-        const id = fastAddResp.body.configs[0].id;
+import { Select, Button } from '../../../../../../interactors';
+import InteractorsTools from '../../../../utils/interactorsTools';
 
-        cy.okapiRequest({
-          method: 'PUT',
-          path: `configurations/entries/${id}`,
-          body: {
-            module:'FAST_ADD',
-            configName:'fastAddSettings',
-            enabled: true,
-            value:
-              `{"instanceStatusCode":"${value}","defaultDiscoverySuppress":"true"}`
-          },
-          isDefaultSearchParamsRequired: false,
-        });
-      });
+const calloutMessages = {
+  INVENTORY_RECORDS_CREATE_SUCCESS: 'Inventory records have been created successfully',
+  SETTING_UPDATE_SUCCESS: 'Setting was successfully updated.'
+};
+
+export default {
+  calloutMessages,
+  changeDefaultInstanceStatus:(statusCode) => {
+    cy.do(Select({ name:'instanceStatusCode' }).choose(statusCode));
+    cy.get('button[type="submit"]').then(element => {
+      if (!element.attr('disabled')) {
+        cy.do(Button('Save').click());
+        InteractorsTools.checkCalloutMessage(calloutMessages.SETTING_UPDATE_SUCCESS);
+      }
+    });
   }
 };
