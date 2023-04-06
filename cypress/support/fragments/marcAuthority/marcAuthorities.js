@@ -19,6 +19,7 @@ const exportButton = Button('Export');
 const resetButton = Button('Reset all');
 const selectField = Select({ id: 'textarea-authorities-search-qindex' });
 const headinfTypeAccordion = Accordion('Type of heading');
+const authoritySearchResults = Section({ id: 'authority-search-results-pane' });
 
 export default {
   waitLoading: () => cy.expect(rootSection.exists()),
@@ -46,6 +47,13 @@ export default {
 
   checkCalloutAfterExport: (jobId) => {
      cy.expect(Callout(including(`Authority headings updates report (Job ID ${jobId}) is being generated. Go to the Export manager app to download report. It may take a few minutes for the report to complete.`)).exists());
+  },
+
+  checkResultsExistance: (type) => {
+    cy.expect([
+      authoritySearchResults.exists(),
+      MultiColumnListCell({ columnIndex: 1, content: type }).exists(),
+    ]);
   },
 
   verifyMARCAuthorityFileName(actualName) {
