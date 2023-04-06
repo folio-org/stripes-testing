@@ -82,7 +82,7 @@ describe('Bulk Edit - Logs', () => {
 
     BulkEditSearchPane.downloadFileWithUpdatedRecords();
     BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, ['graduate'], 'patronGroup', true);
-    BulkEditFiles.verifyMatchedResultFileContent(updatesPreviewFileName, [newExpirationDate.dateWithDashes], 'expirationDate', true);
+    BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, [newExpirationDate.dateWithDashes], 'expirationDate', true);
 
     cy.visit(TopMenu.usersPath);
     UsersSearchPane.searchByUsername(user.username);
