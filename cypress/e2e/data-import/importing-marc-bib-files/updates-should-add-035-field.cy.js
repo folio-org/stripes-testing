@@ -85,7 +85,7 @@ describe('ui-data-import', () => {
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
-  before(() => {
+  before('create test data', () => {
     cy.createTempUser([
       permissions.moduleDataImportEnabled.gui,
       permissions.settingsDataImportEnabled.gui,
@@ -101,7 +101,7 @@ describe('ui-data-import', () => {
       });
   });
 
-  after(() => {
+  after('delete test data', () => {
     JobProfiles.deleteJobProfile(jobProfileName);
     MatchProfiles.deleteMatchProfile(matchProfileName);
     ActionProfiles.deleteActionProfile(actionProfileName);
@@ -114,7 +114,7 @@ describe('ui-data-import', () => {
       .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
-    cy.wrap(instanceHridsFromSecondFile).each(hrid => {
+    instanceHridsFromSecondFile.forEach(hrid => {
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` })
         .then((instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);
@@ -166,7 +166,7 @@ describe('ui-data-import', () => {
         JobProfiles.waitFileIsImported(secondMarcFileNameForCreate);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(secondMarcFileNameForCreate);
-        cy.wrap(rowNumbers).each(rowNumber => {
+        rowNumbers.forEach(rowNumber => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc, rowNumber);
           FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.instance, rowNumber);
         });
@@ -263,7 +263,7 @@ describe('ui-data-import', () => {
       JobProfiles.waitFileIsImported(secondFileNameAfterUpload);
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(secondFileNameAfterUpload);
-      cy.wrap(rowNumbers).each(rowNumber => {
+      rowNumbers.forEach(rowNumber => {
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc, rowNumber);
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance, rowNumber);
       });
