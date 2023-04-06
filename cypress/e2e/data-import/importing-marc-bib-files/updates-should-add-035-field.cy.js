@@ -31,8 +31,16 @@ describe('ui-data-import', () => {
   const statisticalCodeUI = 'Book, print (books)';
   const rowNumbers = [0, 1, 2, 3, 4, 5, 6, 7];
   const arrayOf999Fields = [];
-  const fields035 = ['(LTSCA)303845', '(LTSCA)2300089', '(NhCcYBP)yb1104243', '289717', '(OCoLC)1144093654',
-    '(OCoLC)1201684651', '(OCoLC)1195818788', '(OCoLC)ocn991553174'];
+  const fields035 = [
+    { instanceNumber: 0, field035contains:'(LTSCA)303845' },
+    { instanceNumber: 1, field035contains:'(LTSCA)2300089' },
+    { instanceNumber: 2, field035contains:'(NhCcYBP)yb1104243' },
+    { instanceNumber: 3, field035contains:'289717' },
+    { instanceNumber: 4, field035contains:'(OCoLC)1144093654' },
+    { instanceNumber: 5, field035contains:'(OCoLC)1201684651' },
+    { instanceNumber: 6, field035contains:'(OCoLC)1195818788' },
+    { instanceNumber: 7, field035contains:'(OCoLC)ocn991553174' }
+  ];
 
   // unique file names
   const firstMarcFileNameForCreate = `C358998 firstCreateAutotestFile.${getRandomPostfix()}.mrc`;
@@ -77,7 +85,7 @@ describe('ui-data-import', () => {
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
-  before('create test data', () => {
+  before(() => {
     cy.createTempUser([
       permissions.moduleDataImportEnabled.gui,
       permissions.settingsDataImportEnabled.gui,
@@ -93,7 +101,7 @@ describe('ui-data-import', () => {
       });
   });
 
-  after('delete test data', () => {
+  after(() => {
     JobProfiles.deleteJobProfile(jobProfileName);
     MatchProfiles.deleteMatchProfile(matchProfileName);
     ActionProfiles.deleteActionProfile(actionProfileName);
@@ -106,8 +114,7 @@ describe('ui-data-import', () => {
       .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
-    instanceHridsFromSecondFile.forEach(hrid => {
-      cy.wait(2000);
+    cy.wrap(instanceHridsFromSecondFile).each(hrid => {
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` })
         .then((instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);
@@ -159,17 +166,18 @@ describe('ui-data-import', () => {
         JobProfiles.waitFileIsImported(secondMarcFileNameForCreate);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(secondMarcFileNameForCreate);
-        rowNumbers.forEach(rowNumber => {
-          cy.wait(2000);
+        cy.wrap(rowNumbers).each(rowNumber => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc, rowNumber);
-          cy.wait(2000);
           FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.instance, rowNumber);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable('8');
         FileDetails.checkInstanceQuantityInSummaryTable('8');
         cy.wrap(
           rowNumbers.forEach(rowNumber => {
-            cy.wait(2000);
+            // // need to wait until page will be opened in loop
+            // cy.wait(8000);
+            cy.visit(TopMenu.dataImportPath);
+            Logs.openFileDetails(secondMarcFileNameForCreate);
             FileDetails.openInstanceInInventory('Created', rowNumber);
             InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
               instanceHridsFromSecondFile.push(initialInstanceHrId);
@@ -180,10 +188,6 @@ describe('ui-data-import', () => {
               .then(uuid => {
                 arrayOf999Fields.push(uuid[0], uuid[1]);
               });
-            // need to wait until page will be opened in loop
-            cy.wait(2000);
-            cy.visit(TopMenu.dataImportPath);
-            Logs.openFileDetails(secondMarcFileNameForCreate);
           })
         ).then(() => {
           // change file using uuid for 999 field
@@ -259,7 +263,7 @@ describe('ui-data-import', () => {
       JobProfiles.waitFileIsImported(secondFileNameAfterUpload);
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(secondFileNameAfterUpload);
-      rowNumbers.forEach(rowNumber => {
+      cy.wrap(rowNumbers).each(rowNumber => {
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc, rowNumber);
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance, rowNumber);
       });
@@ -267,30 +271,24 @@ describe('ui-data-import', () => {
       FileDetails.checkInstanceQuantityInSummaryTable('8', 1);
 
       // open the second Instance in the Inventory and check 001, 003, 035 fields
-      rowNumbers.forEach(rowNumber => {
-        cy.wait(2000);
-        FileDetails.openInstanceInInventory('Updated', rowNumber);
+      cy.wrap(fields035).each(element => {
+        // need to wait until page will be opened in loop
+        cy.wait(8000);
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(secondFileNameAfterUpload);
+        FileDetails.openInstanceInInventory('Updated', element.instanceNumber);
         InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
         InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
         InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
           const instanceHrid = initialInstanceHrId;
-          cy.wait(2000);
+
           InventoryInstance.viewSource();
           InventoryViewSource.contains('001\t');
           InventoryViewSource.contains(instanceHrid);
-          InventoryViewSource.notContains('003\t');
-          InventoryViewSource.contains('035\t');
-          // need to wait until page will be opened in loop
-          cy.wait(2000);
-          cy.visit(TopMenu.dataImportPath);
-          Logs.openFileDetails(secondFileNameAfterUpload);
         });
+        InventoryViewSource.notContains('003\t');
+        InventoryViewSource.contains('035\t');
+        InventoryViewSource.contains(element.field035contains);
       });
-
-
-
-      // fields035.forEach(element => {
-      //   InventoryViewSource.contains(element.field035contains);
-      // });
     });
 });
