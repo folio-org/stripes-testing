@@ -1,4 +1,4 @@
-import { MultiColumnList, Modal, TextField, Callout, QuickMarcEditorRow, PaneContent, PaneHeader, Select, Section, HTML, including, Button, MultiColumnListCell, MultiColumnListRow, SearchField } from '../../../../interactors';
+import { MultiColumnList, Modal, TextField, Callout, MultiSelect, QuickMarcEditorRow, PaneContent, PaneHeader, Select, Section, HTML, including, Button, MultiColumnListCell, MultiColumnListRow, SearchField, Accordion } from '../../../../interactors';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const authoritiesList = rootSection.find(MultiColumnList({ id: 'authority-result-list' }));
@@ -16,7 +16,9 @@ const authReportModal = Modal({ id: 'authorities-report-modal' });
 const fromDate = TextField({ name: 'fromDate' });
 const toDate = TextField({ name: 'toDate' });
 const exportButton = Button('Export');
+const resetButton = Button('Reset all');
 const selectField = Select({ id: 'textarea-authorities-search-qindex' });
+const headinfTypeAccordion = Accordion('Type of heading');
 
 export default {
   waitLoading: () => cy.expect(rootSection.exists()),
@@ -95,6 +97,14 @@ export default {
     cy.do(filtersSection.find(Button({ id: 'submit-authorities-search' })).click());
   },
 
+  searchByParameter(searchOption, value) {
+    cy.do(searchInput.fillIn(value));
+    cy.expect(searchInput.has({ value: value }));
+    cy.do(browseSearchAndFilterInput.choose(searchOption));
+    cy.expect(enabledSearchButton.exists());
+    cy.do(searchButton.click());
+  },
+
   searchAndVerify: (searchOption, value) => {
     cy.do(searchInput.fillIn(value));
     cy.expect(searchInput.has({ value: value }));
@@ -105,6 +115,13 @@ export default {
     cy.expect(marcViewSection.exists());
   },
 
+   checkRecordDetailPageMarkedValue(markedValue) {
+    cy.expect([
+      marcViewSection.exists(),
+      marcViewSection.has({ mark: markedValue }),
+    ]);
+  },
+  
   checkSearchOptions() {
     cy.do(selectField.click());
     cy.expect([
@@ -129,6 +146,14 @@ export default {
     ]);
   },
 
+  checkAfterSearchHeadingType(type, headingTypeA, headingTypeB) {
+    cy.expect([
+      MultiColumnListCell({ columnIndex: 1, content: type }).exists(),
+      MultiColumnListCell({ columnIndex: 3, content: headingTypeA }).exists(),
+      MultiColumnListCell({ columnIndex: 3, content: headingTypeB }).exists(),
+    ]);
+  },
+
   checkFieldAndContentExistence(tag, value) {
     cy.expect([
       marcViewSection.exists(),
@@ -142,5 +167,27 @@ export default {
       editorSection.exists(),
       QuickMarcEditorRow({ tagValue: '010' }).absent()
     ]);
-  }
+  },
+
+  clickResetAndCheck: (searchValue) => {
+    cy.do(filtersSection.find(resetButton).click());
+    cy.expect([
+      marcViewSection.absent(),
+      SearchField({ id:'textarea-authorities-search', value: searchValue }).absent(),
+      selectField.has({ content: including('Keyword') }),
+      rootSection.find(HTML(including('Choose a filter or enter a search query to show results.'))).exists(),
+    ]);
+  },
+
+  chooseTypeOfHeadingAndCheck(headingType, headingTypeA, headingTypeB) {
+    cy.do([
+      headinfTypeAccordion.clickHeader(),
+      MultiSelect({ ariaLabelledby: 'headingType-multiselect-label' }).select([including(headingType)]),
+    ]);
+    cy.expect([
+      MultiSelect({ selected: including(headingType) }).exists(),
+      MultiColumnListCell({ columnIndex: 3, content: headingTypeA }).absent(),
+      MultiColumnListCell({ columnIndex: 3, content: headingTypeB }).exists(),
+    ]);
+  },
 };
