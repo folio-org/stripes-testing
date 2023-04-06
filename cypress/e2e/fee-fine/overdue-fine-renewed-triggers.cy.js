@@ -363,18 +363,7 @@ describe('Overdue fine', () => {
       Checkout.verifyResultsInTheRow([itemData.barcode]);
       CheckOutActions.endCheckOutSession();
 
-      UserLoans.getUserLoansIdViaApi(userData.userId).then((userLoans) => {
-        const loansData = userLoans.loans;
-        const newDueDate = new Date(loansData[0].loanDate);
-        newDueDate.setDate(newDueDate.getDate() - 1);
-        loansData.forEach((loan) => {
-          UserLoans.changeDueDateViaApi({
-            ...loan,
-            dueDate: newDueDate,
-            action: 'dueDateChanged',
-          }, loan.id);
-        });
-      });
+      UserLoans.changeDueDateForAllOpenPatronLoans(userData.userId, -1);
 
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();
