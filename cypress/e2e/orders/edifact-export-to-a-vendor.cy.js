@@ -140,6 +140,8 @@ describe('orders: export', () => {
     ExportManagerSearchPane.selectOrganizationsSearch();
     ExportManagerSearchPane.selectExportMethod(integrationName1);
     ExportManagerSearchPane.selectSearchResultItem();
+    // Need to wait while data will be loaded
+    cy.wait(4000);
     ExportManagerSearchPane.rerunJob();
     cy.reload();
     ExportManagerSearchPane.verifyResult('Successful');
