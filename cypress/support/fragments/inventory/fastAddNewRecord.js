@@ -11,18 +11,8 @@ import {
   Pane
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
-import TopMenu from '../topMenu';
-import InteractorsTools from '../../utils/interactorsTools';
-
-
-const calloutMessages = {
-  INVENTORY_RECORDS_CREATE_SUCCESS: 'Inventory records have been created successfully',
-  SETTING_UPDATE_SUCCESS: 'Setting was successfully updated.'
-};
 
 const fastAddNewRecordFormDetails = {
-  defaultInstanceStatusCodeOption: 'Select instance status',
-  instanceStatusCodeOption: 'Uncataloged',
   instanceStatusCodeValue: 'uncat',
   resourceTitle: 'Monograph',
   resourceType: 'text',
@@ -32,14 +22,6 @@ const fastAddNewRecordFormDetails = {
   materialType: 'text',
   permanentLoanType: 'Course reserves',
   note: 'note for monograph',
-};
-
-const updateInventoryFastAddSetting = (statusCode) => {
-  cy.visit(TopMenu.inventorySettingsFastAddPath);
-  cy.do(Select({ name: 'instanceStatusCode' }).choose(statusCode));
-  cy.do(Button('Save').click());
-
-  InteractorsTools.checkCalloutMessage(calloutMessages.SETTING_UPDATE_SUCCESS);
 };
 
 const fillFastAddNewRecordForm = ({
@@ -117,9 +99,7 @@ const closeHoldingsRecordView = () => {
 };
 
 export default {
-  calloutMessages,
   fastAddNewRecordFormDetails,
-  updateInventoryFastAddSetting,
   fillFastAddNewRecordForm,
   saveAndClose,
   waitLoading,
