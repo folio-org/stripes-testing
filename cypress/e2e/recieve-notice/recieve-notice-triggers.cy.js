@@ -33,6 +33,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
     name: `TestName${getRandomPostfix()}`,
     description: 'Created by autotest team',
     body: 'Test_email_body',
+    category: 'Loan',
   };
   const checkOutTemplate = { ...defaultTemplate };
   checkOutTemplate.name += ' Check out';
@@ -245,8 +246,11 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
     { tags: [TestTypes.smoke, devTeams.vega] },
     () => {
       NewNoticePolicyTemplate.createPatronNoticeTemplate(checkOutTemplate);
+      NewNoticePolicyTemplate.checkAfterSaving(checkOutTemplate);
       NewNoticePolicyTemplate.createPatronNoticeTemplate(loanDueDateChangeTemplate);
+      NewNoticePolicyTemplate.checkAfterSaving(loanDueDateChangeTemplate);
       NewNoticePolicyTemplate.createPatronNoticeTemplate(checkInTemplate);
+      NewNoticePolicyTemplate.checkAfterSaving(checkInTemplate);
 
       cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
       NewNoticePolicy.waitLoading();
