@@ -15,6 +15,11 @@ import defaultUser from './userDefaultObjects/defaultUser';
 
 const userSearch = TextField('User search');
 const saveAndCloseBtn = Button('Save & close');
+const actionsButton = Button('Actions');
+const userDetailsPane = Pane({ id: 'pane-userdetails' });
+const editButton = Button('Edit');
+const extendedInformationAccordion = Accordion('Extended information');
+const externalSystemIdTextfield = TextField('External system ID');
 
 // servicePointIds is array of ids
 const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) => cy.okapiRequest({
@@ -33,8 +38,8 @@ export default {
 
   addPermissions(permissions) {
     cy.do([
-      Pane({ id: 'pane-userdetails' }).find(Button('Actions')).click(),
-      Button('Edit').click(),
+      userDetailsPane.find(actionsButton).click(),
+      editButton.click(),
       Accordion({ id: 'permissions' }).clickHeader(),
       Button({ id: 'clickable-add-permission' }).click()
     ]);
@@ -75,14 +80,14 @@ export default {
     cy.do(TextField({ id: 'input-user-search' }).fillIn(userName));
     cy.do(Button('Search').click());
     cy.do(MultiColumnList().click({ row: 0, column: 'Active' }));
-    cy.do(Pane({ id: 'pane-userdetails' }).find(Button('Actions')).click());
+    cy.do(userDetailsPane.find(actionsButton).click());
     cy.do(Button({ id: 'clickable-edituser' }).click());
     cy.do(Button({ id: 'accordion-toggle-button-servicePoints' }).click());
     cy.do(Select({ id: 'servicePointPreference' }).choose('None'));
     cy.do(Button({ id: 'clickable-save' }).click());
   },
 
-  changeServicePointPreferenceViaApi:(userId, servicePointIds, defaultServicePointId = null) => cy.okapiRequest({
+  changeServicePointPreferenceViaApi: (userId, servicePointIds, defaultServicePointId = null) => cy.okapiRequest({
     method: 'GET',
     path: `service-points-users?query="userId"="${userId}"`,
     isDefaultSearchParamsRequired: false,
@@ -100,10 +105,20 @@ export default {
       });
     }),
 
-  updateExternalId(user, externalSystemId) {
+  updateExternalIdViaApi(user, externalSystemId) {
     cy.updateUser({
       ...user,
       externalSystemId
     });
-  }
+  },
+
+  addExternalId(externalId) {
+    cy.do([
+      userDetailsPane.find(actionsButton).click(),
+      editButton.click(),
+      extendedInformationAccordion.click(),
+      extendedInformationAccordion.find(externalSystemIdTextfield).fillIn(externalId),
+    ]);
+    this.saveAndClose();
+  },
 };
