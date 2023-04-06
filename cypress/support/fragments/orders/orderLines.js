@@ -73,6 +73,13 @@ export default {
     ]);
   },
 
+  waitLoading() {
+    cy.expect([
+      Pane({ id: 'order-lines-filters-pane' }).exists(),
+      Pane({ id: 'order-lines-results-pane' }).exists(),
+    ]);
+  },
+
   resetFilters: () => {
     cy.do(Button('Reset all').click());
   },
