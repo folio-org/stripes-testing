@@ -65,7 +65,10 @@ describe('ui-data-import', () => {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
         name: mappingProfileNameForItem },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
-        name: actionProfileNameForItem }
+        name: actionProfileNameForItem,
+        status:'Available',
+        permanentLoanType:'"Can circulate"',
+        materialType:'"book"' }
     }
   ];
 
@@ -169,9 +172,9 @@ describe('ui-data-import', () => {
     NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfile);
     NewFieldMappingProfile.fillBarcode('981$b');
     NewFieldMappingProfile.fillCopyNumber('981$a');
-    NewFieldMappingProfile.fillStatus('"Available"');
-    NewFieldMappingProfile.fillPermanentLoanType('"Can circulate"');
-    NewFieldMappingProfile.fillMaterialType('"book"');
+    NewFieldMappingProfile.fillStatus(itemMappingProfile.status);
+    NewFieldMappingProfile.fillPermanentLoanType(itemMappingProfile.permanentLoanType);
+    NewFieldMappingProfile.fillMaterialType(itemMappingProfile.materialType);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfile.name);
   };
