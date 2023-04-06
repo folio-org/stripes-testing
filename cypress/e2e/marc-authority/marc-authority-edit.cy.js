@@ -280,4 +280,20 @@ describe('MARC Authority -> Edit Authority record', () => {
     QuickMarcEditor.constinueWithSaveAndCheck();
     QuickMarcEditor.checkFieldAbsense('382');
   });
+
+  it('C375172 Save "MARC authority" record with deleted field and updated fields (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
+    MarcAuthorities.selectTitle(testData.authority.title);
+    MarcAuthority.edit();
+    // Waiter needed for the whole page to be loaded.
+    cy.wait(2000)
+    MarcAuthority.deleteTag(5);
+    MarcAuthority.changeTag(6, '100');
+    QuickMarcEditor.pressSaveAndClose();
+    MarcAuthority.changeTag(6, '040');
+    QuickMarcEditor.pressSaveAndClose();
+    QuickMarcEditor.verifyConfirmModal();
+    QuickMarcEditor.clickRestoreDeletedField();
+    QuickMarcEditor.checkButtonsEnabled();
+  });
 });
