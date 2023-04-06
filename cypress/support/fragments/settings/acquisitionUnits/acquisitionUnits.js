@@ -86,6 +86,9 @@ export default {
     cy.do([
       auListPane.find(Button(AUName)).click(),
       actionsButton.click(),
+    ]);
+    cy.wait(4000);
+      cy.do([
       Button('Delete').click(),
       Button('Confirm').click()
     ]);
@@ -95,10 +98,10 @@ export default {
     cy.do(auListPane.find(Button(AUName)).click());
     cy.expect(auPaneDetails.find(assignedUsersSection).exists());
     // //Need to wait,while data of Acquisition Unit will be loaded
-    cy.wait(5000);
+    cy.wait(7000);
     cy.do(actionsButton.click());
     // //Need to wait,while wright link of Edit button will be loaded
-    cy.wait(5000);
+    cy.wait(7000);
     cy.do(Button('Edit').click());
   },
 

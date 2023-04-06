@@ -131,18 +131,18 @@ export default {
   },
   downloadJob() {
     // Need to wait while Button will be loaded for click
-    cy.wait(5000);
+    cy.wait(7000);
     cy.do(Button('Actions').click());
     // Need to wait while Button will be loaded for click
-    cy.wait(5000);
+    cy.wait(7000);
     cy.do(Button('Download').click());
   },
   rerunJob() {
     // Need to wait while Button will be loaded for click
-    cy.wait(5000);
+    cy.wait(7000);
     cy.do(Button('Actions').click());
     // Need to wait while Button will be loaded for click
-    cy.wait(5000);
+    cy.wait(7000);
     cy.do(Button('Rerun').click());
   },
 };
