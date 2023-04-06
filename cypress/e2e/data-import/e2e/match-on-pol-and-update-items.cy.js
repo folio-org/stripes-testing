@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -32,6 +33,7 @@ import OrderLines from '../../../support/fragments/orders/orderLines';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import FileManager from '../../../support/utils/fileManager';
 import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 
 describe('ui-data-import', () => {
   const firstItem = {
@@ -39,7 +41,7 @@ describe('ui-data-import', () => {
     productId: '9782266111560',
     quantity: '1',
     price: '20',
-    barcode: '242451241247'
+    barcode: uuid()
   };
 
   const secondItem = {
@@ -58,7 +60,6 @@ describe('ui-data-import', () => {
   let materialTypeId;
   let user = {};
   let servicePointId;
-  let instanceHrid;
 
   // unique profile names
   const jobProfileName = `C350590 autotestJobProf${Helper.getRandomBarcode()}`;
@@ -192,8 +193,7 @@ describe('ui-data-import', () => {
       });
   });
 
-  after(() => {
-    let itemId;
+  after('delete test data', () => {
     const itemBarcode = Helper.getRandomBarcode();
 
     // delete created files
@@ -216,16 +216,10 @@ describe('ui-data-import', () => {
       ActionProfiles.deleteActionProfile(profile.actionProfile.name);
       FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
     });
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-      .then((instance) => {
-        cy.deleteItemViaApi(instance.items[0].id);
-        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
-
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(firstItem.barcode);
     cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${secondItem.title}"` })
       .then((instance) => {
-        itemId = instance.items[0].id;
+        const itemId = instance.items[0].id;
 
         cy.getItems({ query: `"id"=="${itemId}"` })
           .then((item) => {
@@ -326,7 +320,7 @@ describe('ui-data-import', () => {
               checkReceivedPiece(secondOrderNumber, secondItem.title);
             });
 
-          DataImport.editMarcFile('marcFileForC350590.mrc', editedMarcFileName, ['test'], [firstOrderNumber]);
+          DataImport.editMarcFile('marcFileForC350590.mrc', editedMarcFileName, ['test', '242451241247'], [firstOrderNumber, firstItem.barcode]);
         });
 
       // create mapping and action profiles
@@ -374,7 +368,6 @@ describe('ui-data-import', () => {
 
       // check is items updated
       FileDetails.openInstanceInInventory('Updated');
-      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => { instanceHrid = initialInstanceHrId; });
       InventoryInstance.checkIsInstanceUpdated();
       InventoryInstance.openHoldingView();
       HoldingsRecordView.checkHoldingsType('Monograph');

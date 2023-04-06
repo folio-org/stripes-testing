@@ -13,7 +13,7 @@ import InteractorsTools from '../../utils/interactorsTools';
 import InventoryInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
 
 const closeButton = Button({ icon: 'times' });
-const saveAndCloseButton = Button('Save and close');
+const saveAndCloseButton = Button('Save & close');
 const rootSection = Section({ id: 'instance-form' });
 const actionsButton = Button('Actions');
 const identifierAccordion = Accordion('Identifier');

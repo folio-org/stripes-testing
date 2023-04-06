@@ -39,6 +39,7 @@ const createItemViaAPI = (itemWithIds) => cy.okapiRequest({
   path: 'inventory/items',
   body: itemWithIds
 });
+
 const waitContentLoading = () => {
   cy.expect(rootSection.find(HTML(including('Choose a filter or enter a search query to show results.'))).exists());
 };
@@ -50,6 +51,8 @@ export default {
     cy.expect(rootSection.find(HTML(including('Loading…'))).absent());
     cy.expect(or(inventoriesList.exists()),
       rootSection.find(HTML(including('No results found'))).exists());
+    // TODO robot does click quikly
+    cy.wait(2500);
   },
 
   selectInstance: (rowNumber = 0) => {
@@ -95,7 +98,7 @@ export default {
         cy.getMaterialTypes({ limit: 1 });
         cy.getLocations({ limit: 50 });
         cy.getHoldingTypes({ limit: 1 });
-        InventoryHoldings.getHoldingSources({ limit: 1 }).then(holdingSources => {
+        InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(holdingSources => {
           holdingSourceId = holdingSources[0].id;
           cy.getInstanceTypes({ limit: 1 });
           cy.getAlternativeTitlesTypes({ limit: 1, query: 'name="Uniform title"' }).then(titleTypes => {

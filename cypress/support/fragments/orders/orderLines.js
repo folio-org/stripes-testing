@@ -229,6 +229,18 @@ export default {
     this.submitOrderLine();
   },
 
+  editFundInPOL( fund, unitPrice, value) {
+    cy.do([
+      physicalUnitPriceTextField.fillIn(unitPrice),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      fundDistributionField.fillIn(value),
+      saveAndClose.click()
+    ]);
+    cy.wait(6000);
+    this.submitOrderLine();
+  },
+
   rolloverPOLineInfoforElectronicResourceWithFund: (orderLineTitleName, fund, unitPrice, quantity, value) => {
     cy.do([
       orderLineTitleField.fillIn(orderLineTitleName),

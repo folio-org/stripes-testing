@@ -19,7 +19,7 @@ import Invoices from '../../../support/fragments/invoices/invoices';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 
-describe('ui-finance: Fiscal Year', () => {
+describe('ui-finance: Fiscal Year Rollover', () => {
   const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const secondFiscalYear = {
     name: `autotest_year_${getRandomPostfix()}`,
@@ -27,7 +27,7 @@ describe('ui-finance: Fiscal Year', () => {
     periodStart: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
     periodEnd: `${DateTools.getDayAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
-    series: 'FY',
+    series: 'FYTA',
   };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };
@@ -40,7 +40,7 @@ describe('ui-finance: Fiscal Year', () => {
   };
   const firstOrder = { ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',
-    ongoing: {isSubscription: false, manualRenewal: false},
+    ongoing: { isSubscription: false, manualRenewal: false },
     approved: true,
     reEncumber: true,
   };

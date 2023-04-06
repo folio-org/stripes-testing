@@ -5,8 +5,11 @@ export default {
     const verifyFunc = resultType === 'barcode' ? this.verifyMatchedResultByItemBarcode
       : resultType === 'firstName' ? this.verifyMatchedResultByFirstName
         : resultType === 'userId' ? this.verifyMatchedResultByUserId
-          : resultType === 'firstElement' ? this.verifyMatchedResultFirstElement
-            : this.verifyMatchedResultByHRID;
+          : resultType === 'userBarcode' ? this.verifyMatchedResultByUserBarcode
+            : resultType === 'patronGroup' ? this.verifyMatchedResultPatronGroup
+              : resultType === 'expirationDate' ? this.verifyMatchedResultExpirationDate
+                : resultType === 'firstElement' ? this.verifyMatchedResultFirstElement
+                  : this.verifyMatchedResultByHRID;
 
     const getValuesFromCSVFile = validFile === true ? this.getValuesFromValidCSVFile
       : this.getValuesFromInvalidCSVFile;
@@ -22,6 +25,27 @@ export default {
             });
           });
       });
+  },
+
+  verifyCSVFileRows(fileName, expectedResult) {
+    // expectedResult is list of expected values
+    FileManager.findDownloadedFilesByMask(fileName)
+      .then((downloadedFilenames) => {
+        FileManager.readFile(downloadedFilenames[0])
+          .then((actualContent) => {
+            const values = this.getValuesFromCSVFile(actualContent);
+            // verify each row in csv file
+            values.forEach((elem, index) => {
+              expect(elem).to.eq(expectedResult[index]);
+            });
+          });
+      });
+  },
+
+  getValuesFromCSVFile(content) {
+    // parse csv
+    const valuesList = content.split('\n');
+    return valuesList;
   },
 
   getValuesFromValidCSVFile(content) {
@@ -43,6 +67,11 @@ export default {
     expect(actualBarcode).to.eq(expectedBarcode);
   },
 
+  verifyMatchedResultByUserBarcode(actualResult, expectedBarcode) {
+    const actualBarcode = actualResult.split(',')[3];
+    expect(actualBarcode).to.eq(expectedBarcode);
+  },
+
   verifyMatchedResultByHRID(actualResult, expectedResult) {
     const actualHRID = actualResult.split(',')[2];
     expect(actualHRID).to.eq(expectedResult);
@@ -58,8 +87,22 @@ export default {
     expect(actualUserId).to.eq(expectedResult);
   },
 
+  verifyChangedResultByUserId(actualResult, expectedResult) {
+    expect(actualResult).to.eq(expectedResult);
+  },
+
   verifyMatchedResultFirstElement(actualResult, expectedResult) {
     const actualFirstElement = actualResult.split(',')[0];
     expect(actualFirstElement).to.eq(expectedResult);
+  },
+
+  verifyMatchedResultPatronGroup(actualResult, expectedResult) {
+    const actualPatronGroup = actualResult.split(',')[6];
+    expect(actualPatronGroup).to.eq(expectedResult);
+  },
+
+  verifyMatchedResultExpirationDate(actualResult, expectedResult) {
+    const actualExpirationDate = actualResult.split(',')[20];
+    expect(actualExpirationDate).to.include(expectedResult);
   },
 };

@@ -7,6 +7,7 @@ import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edi
 import Users from '../../../../support/fragments/users/users';
 import FileManager from '../../../../support/utils/fileManager';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
+import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
 
 let user;
 const invalidHoldingHRID = getRandomPostfix();
@@ -39,7 +40,8 @@ describe('Bulk Edit - Logs', () => {
   it('C375299 Verify generated Logs files for Holdings In app -- only invalid records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.verifyDragNDropHoldingsHRIDsArea();
     BulkEditSearchPane.uploadFile(invalidHoldingHRIDsFileName);
-    BulkEditSearchPane.downloadErrors();
+    BulkEditActions.openActions();
+    BulkEditActions.downloadErrors();
 
     BulkEditSearchPane.openLogsSearch();
     BulkEditSearchPane.verifyLogsPane();
@@ -48,7 +50,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.verifyLogsRowAction();
 
     BulkEditSearchPane.downloadFileUsedToTrigger();
-    BulkEditFiles.verifyMatchedResultFileContent(`*${invalidHoldingHRIDsFileName}*`, [invalidHoldingHRID], 'firstElement', false);
+    BulkEditFiles.verifyCSVFileRows(`*${invalidHoldingHRIDsFileName}*`, [invalidHoldingHRID]);
 
     BulkEditSearchPane.downloadFileWithErrorsEncountered();
     BulkEditFiles.verifyMatchedResultFileContent(errorsEncounteredFileName, [invalidHoldingHRID], 'firstElement', false);
