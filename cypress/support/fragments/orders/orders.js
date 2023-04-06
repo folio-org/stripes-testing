@@ -238,6 +238,7 @@ export default {
     this.selectVendorOnUi(order.vendor);
     cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
     cy.do(Select('Order type*').choose(order.orderType));
+    //Need to wait,while data of Acquisition Unit will be loaded
     cy.wait(4000);
     cy.do([
       MultiSelect({ id: 'order-acq-units' }).find(Button({ ariaLabel: 'open menu' })).click(),
