@@ -13,32 +13,46 @@ import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAutho
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 
 describe('plug-in MARC authority | Search', () => {
-  const testData = {
-    forC359206: {
-      lcControlNumberA: 'n  00000911',
-      lcControlNumberB: 'n  79125030',
-      searchOption: 'Identifier (all)',
-      valueA: 'Erbil, H. Yıldırım',
-      valueB: 'Twain, Mark,',
-    }
-  };
+    const testData = {
+      forC359206: {
+        lcControlNumberA: 'n  00000911',
+        lcControlNumberB: 'n  79125030',
+        searchOption: 'Identifier (all)',
+        valueA: 'Erbil, H. Yıldırım',
+        valueB: 'Twain, Mark,',
+      },
+      forC359228: {
+        searchOption: 'Corporate/Conference name',
+        type: 'Authorized',
+        typeOfHeadingA: 'Corporate Name',
+        typeOfHeadingB: 'Conference Name',
+        all: '*',
+        title: 'Apple Academic Press',
+      }
+    };
+    
+    const marcFiles = [
+      {
+        marc: 'oneMarcBib.mrc', 
+        fileName: `testMarcFile.${getRandomPostfix()}.mrc`, 
+        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        numOfRecords: 1,
+      }, 
+      {
+        marc: 'marcFileForC359206.mrc', 
+        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        numOfRecords: 2,
+      },
+      {
+        marc: 'marcFileForC359228.mrc', 
+        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        numOfRecords: 5,
+      }
+    ]
 
-  const marcFiles = [
-    {
-      marc: 'oneMarcBib.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-      numOfRecords: 1,
-    },
-    {
-      marc: 'marcFileForC359206.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create SRS MARC Authority',
-      numOfRecords: 2,
-    }
-  ];
-
-  const createdAuthorityIDs = [];
+    let createdAuthorityIDs = [];
 
   before('Creating user', () => {
     cy.createTempUser([
@@ -76,7 +90,7 @@ describe('plug-in MARC authority | Search', () => {
   after('Deleting created user', () => {
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
-    for (let i = 1; i < 3; i++) {
+    for (let i = 1; i < 8; i++) {
       MarcAuthority.deleteViaAPI(createdAuthorityIDs[i]);
     }
 
@@ -118,5 +132,20 @@ describe('plug-in MARC authority | Search', () => {
     MarcAuthorities.checkFieldAndContentExistence('010', testData.forC359206.lcControlNumberB);
     InventoryInstance.checkRecordDetailPage(testData.forC359206.valueB);
     MarcAuthorities.clickResetAndCheck();
+  });
+
+  it('C359228 MARC Authority plug-in | Search using "Corporate/Conference name" option (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+    InventoryInstances.selectInstance();
+    InventoryInstance.editMarcBibliographicRecord();
+    InventoryInstance.verifyAndClickLinkIcon('700');
+    InventoryInstance.verifySearchOptions();
+    MarcAuthorities.searchByParameter(testData.forC359228.searchOption, testData.forC359228.all);
+    // wait for the results to be loaded.
+    cy.wait(1000);
+    MarcAuthorities.checkAfterSearchHeadingType(testData.forC359228.type, testData.forC359228.typeOfHeadingA, testData.forC359228.typeOfHeadingB);
+    MarcAuthorities.selectTitle(testData.forC359228.title);
+    MarcAuthorities.checkRecordDetailPageMarkedValue(testData.forC359228.title);
+    MarcAuthorities.chooseTypeOfHeadingAndCheck(testData.forC359228.typeOfHeadingB, testData.forC359228.typeOfHeadingA, testData.forC359228.typeOfHeadingB);
   });
 });
