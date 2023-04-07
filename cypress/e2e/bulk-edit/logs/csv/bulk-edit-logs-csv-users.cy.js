@@ -14,7 +14,6 @@ const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const matchRecordsFileName = `Matched-Records-${userUUIDsFileName}`;
 const importFileName = `bulkEditImport_${getRandomPostfix()}.csv`;
 const updatedRecordsFileName = 'result';
-const newName = `testName_${getRandomPostfix()}`;
 
 describe('Bulk Edit - Logs', () => {
   before('create test data', () => {
