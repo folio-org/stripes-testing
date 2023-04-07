@@ -153,5 +153,25 @@ export default {
 
   typeTemplateSubject: (noticePolicytemplateSubject) => {
     cy.do(subjectField.fillIn(noticePolicytemplateSubject));
-  }
+  },
+
+  createPatronNoticeTemplate(template) {
+    this.startAdding();
+    this.checkInitialState();
+    this.addToken('item.title');
+    this.create(template, false);
+    this.chooseCategory(template.category);
+    this.checkPreview();
+    this.saveAndClose();
+    this.waitLoading();
+  },
+
+  duplicatePatronNoticeTemplate(template) {
+    this.duplicateTemplate();
+    this.typeTemplateName(template.name);
+    this.typeTemplateSubject(template.subject);
+    this.checkPreview();
+    this.saveAndClose();
+    this.waitLoading();
+  },
 };
