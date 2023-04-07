@@ -145,7 +145,7 @@ describe('ui-data-import', () => {
       createHoldingsMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
       FieldMappingProfiles.checkMappingProfilePresented(holdingsMappingProfileName);
 
-      // create mapping profiles
+      // create action profiles
       collectionOfMappingAndActionProfiles.forEach(profile => {
         cy.visit(SettingsMenu.actionProfilePath);
         ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
@@ -205,7 +205,7 @@ describe('ui-data-import', () => {
           FileDetails.openItemInInventory('Created');
           ItemRecordView.verifyMaterialType(itemMaterialType);
           ItemRecordView.verifyPermanentLoanType(itemPermanentLoanType);
-          ItemRecordView.verifyItemStatus(itemStatus);
+          ItemRecordView.verifyItemStatus(collectionOfMappingAndActionProfiles[0].mappingProfile.status);
         });
     });
 });
