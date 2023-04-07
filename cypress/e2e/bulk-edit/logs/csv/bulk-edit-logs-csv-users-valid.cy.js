@@ -7,6 +7,7 @@ import testTypes from '../../../../support/dictionary/testTypes';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import FileManager from '../../../../support/utils/fileManager';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
+import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 
 let user;
@@ -41,43 +42,56 @@ describe('Bulk Edit - Logs', () => {
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
-  it('C375217 Verify generated Logs files for Users CSV (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+  afterEach('reload bulk page', () => {
+    cy.visit(TopMenu.bulkEditPath);
+  });
+
+  it('C375214 Verify generated Logs files for Users CSV -- only valid (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    // Upload file with user UUIDs
+    BulkEditSearchPane.verifyDragNDropUsersUIIDsArea();
     BulkEditSearchPane.uploadFile(userUUIDsFileName);
-    BulkEditSearchPane.waitLoading();
+    BulkEditSearchPane.waitFileUploading();
 
-    // Prepare file for bulk edit
-    const nameToUpdate = `testNameToUpdate_${getRandomPostfix()}`;
+    // Download matched results and modify them
     BulkEditActions.downloadMatchedResults();
-    BulkEditActions.prepareValidBulkEditFile(matchRecordsFileName, importFileName, 'testPermFirst', nameToUpdate);
+    BulkEditActions.prepareValidBulkEditFile(matchRecordsFileName, importFileName, 'testPermFirst', newName);
 
-    // Upload bulk edit file
+    // Upload modified file and commit changes
     BulkEditActions.openStartBulkEditForm();
     BulkEditSearchPane.uploadFile(importFileName);
     BulkEditSearchPane.waitFileUploading();
     BulkEditActions.clickNext();
     BulkEditActions.commitChanges();
-    BulkEditSearchPane.verifyChangedResults(nameToUpdate);
 
-    // Open logs by users
+    // Go to logs pane and verify elements
+    BulkEditSearchPane.verifyChangedResults(newName);
     BulkEditActions.openActions();
     BulkEditActions.downloadChangedCSV();
     BulkEditSearchPane.openLogsSearch();
     BulkEditSearchPane.verifyLogsPane();
     BulkEditSearchPane.checkUsersCheckbox();
-
     BulkEditSearchPane.clickActionsRunBy(user.username);
     BulkEditSearchPane.verifyLogsRowActionWhenCompleted();
+
+    // Download File that was used to trigger the bulk edit and compare with original file with UUIDs from line 34
     BulkEditSearchPane.downloadFileUsedToTrigger();
     BulkEditFiles.verifyMatchedResultFileContent(`*${userUUIDsFileName}*`, [user.userId], 'userId', true);
 
+    // Download File with the matching records and verify unique user UUID is in the file
     BulkEditSearchPane.downloadFileWithMatchingRecords();
     BulkEditFiles.verifyMatchedResultFileContent(`*${matchRecordsFileName}*`, [user.userId], 'userId', true);
 
+    // Download File with the preview of proposed changes and verify changes to the user's first name made in line 53
     BulkEditSearchPane.downloadFileWithProposedChanges();
-    BulkEditFiles.verifyMatchedResultFileContent(`*${importFileName}*`, [nameToUpdate], 'firstName', true);
+    BulkEditFiles.verifyMatchedResultFileContent(`*${importFileName}*`, [newName], 'firstName', true);
 
+    // Download File with the updated records and verify user's first name is updated
     BulkEditSearchPane.downloadFileWithUpdatedRecords();
-    BulkEditFiles.verifyMatchedResultFileContent(`*${updatedRecordsFileName}*`, [nameToUpdate], 'firstName', true);
+    BulkEditFiles.verifyMatchedResultFileContent(`*${updatedRecordsFileName}*`, [newName], 'firstName', true);
+
+    // Go to users app and verify changes
+    cy.visit(TopMenu.usersPath);
+    UsersSearchPane.searchByUsername(user.username);
+    Users.verifyFirstNameOnUserDetailsPane(newName);
   });
 });
