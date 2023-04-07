@@ -191,7 +191,7 @@ export default {
   },
 
   actionsSortBy(value) {
-    cy.do(Select({ dataTestID: 'sort-by-selection' }).choose(value));
+    cy.do(Select({ id: including('select') }).choose(value));
     // need to wait until content will be sorted
     cy.wait(1000);
   },
