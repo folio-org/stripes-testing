@@ -65,7 +65,7 @@ describe('ui-data-import', () => {
         noteForCheckIn: '878$a',
         staffOnlyForCheckIn: 'Mark for all affected records',
         permanentLoanType: '"Can circulate"',
-        status: '"Available"' },
+        status: 'Available' },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: actionProfileNameForItem }
     }
