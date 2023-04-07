@@ -46,6 +46,12 @@ describe('plug-in MARC authority | Search', () => {
         numOfRecords: 1,
       }, 
       {
+        marc: 'marcFileForC359015.mrc', 
+        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        numOfRecords: 1,
+      },
+      {
         marc: 'marcFileForC359206.mrc', 
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
@@ -103,7 +109,7 @@ describe('plug-in MARC authority | Search', () => {
   after('Deleting created user', () => {
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
-    for (let i = 1; i < 10; i++) {
+    for (let i = 1; i < 11; i++) {
       MarcAuthority.deleteViaAPI(createdAuthorityIDs[i]);
     }
 
