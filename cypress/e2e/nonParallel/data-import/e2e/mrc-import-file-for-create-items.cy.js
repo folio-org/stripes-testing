@@ -88,7 +88,7 @@ describe('ui-data-import', () => {
     NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfile);
     NewFieldMappingProfile.fillMaterialType('"book"');
     NewFieldMappingProfile.fillPermanentLoanType('"Can circulate"');
-    NewFieldMappingProfile.fillStatus('"Available"');
+    NewFieldMappingProfile.fillStatus('Available');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfile.name);
   };
