@@ -1,4 +1,5 @@
 import getRandomPostfix from '../../utils/stringTools';
+import { including } from '@interactors/html';
 import {
   Button,
   Select,
@@ -6,10 +7,12 @@ import {
   Pane,
   Dropdown,
   MultiColumnListCell,
-  KeyValue
+  KeyValue,
+  Accordion,
 } from '../../../../interactors';
 
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
+const contactInformationAccordion = Accordion('Contact information');
 const defaultUserName = `AutotestUser${getRandomPostfix()}`;
 const defaultUser = {
   username: defaultUserName,
@@ -89,6 +92,11 @@ export default {
 
   verifyPatronGroupOnUserDetailsPane(patronGroup) {
     cy.expect(userDetailsPane.find(KeyValue('Patron group')).has({ value: `${patronGroup}` }));
+  },
+
+  verifyEmailDomainOnUserDetailsPane(emailDomain) {
+    cy.do(contactInformationAccordion.clickHeader());
+    cy.expect(userDetailsPane.find(KeyValue('Email')).has({ value: including(`@${emailDomain}`) }));
   },
 
   verifyExpirationDateOnUserDetailsPane(expirationDate) {
