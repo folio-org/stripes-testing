@@ -387,7 +387,7 @@ describe('Patron Block: Lost items', () => {
     { tags: [TestTypes.criticalPath, devTeams.vega] },
     () => {
       const blockMessage = `You have reached maximum number of lost items as set by patron group${getRandomPostfix()}`;
-      setConditionAndLimit(blockMessage, 'Maximum number of lost items', 'a4');
+      setConditionAndLimit(blockMessage, 'Maximum number of lost items', '4');
       findPatron();
       UsersCard.waitLoading();
       Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');

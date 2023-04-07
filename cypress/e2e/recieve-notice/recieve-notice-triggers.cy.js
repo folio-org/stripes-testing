@@ -33,6 +33,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
     name: `TestName${getRandomPostfix()}`,
     description: 'Created by autotest team',
     body: 'Test_email_body',
+    category: 'Loan',
   };
   const checkOutTemplate = { ...defaultTemplate };
   checkOutTemplate.name += ' Check out';
@@ -94,17 +95,6 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
     cy.visit(TopMenu.circulationLogPath);
     SearchPane.searchByUserBarcode(userData.barcode);
     SearchPane.checkResultSearch(checkParams);
-  };
-
-  const createPatronNoticeTemplate = (template) => {
-    NewNoticePolicyTemplate.startAdding();
-    NewNoticePolicyTemplate.checkInitialState();
-    NewNoticePolicyTemplate.addToken('item.title');
-    NewNoticePolicyTemplate.create(template, false);
-    NewNoticePolicyTemplate.checkPreview();
-    NewNoticePolicyTemplate.saveAndClose();
-    NewNoticePolicyTemplate.waitLoading();
-    NewNoticePolicyTemplate.checkAfterSaving(template);
   };
 
   before('Preconditions', () => {
@@ -255,9 +245,12 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
     'C347862 Check out + Loan due date change + Check in triggers (vega)',
     { tags: [TestTypes.smoke, devTeams.vega] },
     () => {
-      createPatronNoticeTemplate(checkOutTemplate);
-      createPatronNoticeTemplate(loanDueDateChangeTemplate);
-      createPatronNoticeTemplate(checkInTemplate);
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(checkOutTemplate);
+      NewNoticePolicyTemplate.checkAfterSaving(checkOutTemplate);
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(loanDueDateChangeTemplate);
+      NewNoticePolicyTemplate.checkAfterSaving(loanDueDateChangeTemplate);
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(checkInTemplate);
+      NewNoticePolicyTemplate.checkAfterSaving(checkInTemplate);
 
       cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
       NewNoticePolicy.waitLoading();
