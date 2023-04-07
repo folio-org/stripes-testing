@@ -1,4 +1,4 @@
-import { Pane, Button, Checkbox } from '../../../../../interactors';
+import { Pane, Button, Checkbox, NavList, NavListItem } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 
 const SaveButton = Button('Save');
@@ -7,6 +7,10 @@ const TLRCheckbox = Checkbox({ name: 'titleLevelRequestsFeatureEnabled' });
 export default {
   waitLoading() {
     cy.expect(Pane('Title level requests').exists());
+  },
+
+  checkCirculationHasTLR() {
+    cy.expect(Pane({ id: 'app-settings-nav-pane' }).find(NavListItem('Title level requests')).exists());
   },
 
   changeTitleLevelRequestsStatus(status) {
