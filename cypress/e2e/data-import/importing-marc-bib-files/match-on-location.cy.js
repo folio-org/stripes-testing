@@ -254,10 +254,10 @@ describe('ui-data-import', () => {
         JobProfiles.waitFileIsImported(marcFileForCreate);
         Logs.openFileDetails(marcFileForCreate);
         rowNumbers.forEach(rowNumber => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc, rowNumber);
-          FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.instance, rowNumber);
-          FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.holdings, rowNumber);
-          FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.item, rowNumber);
+          FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumber);
+          FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumber);
+          FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.holdings, rowNumber);
+          FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.item, rowNumber);
         });
         FileDetails.checkItemsQuantityInSummaryTable(0, '3');
         // collect instance hrids
@@ -364,8 +364,8 @@ describe('ui-data-import', () => {
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileNameAfterUpdate);
     rowNumbers.forEach(rowNumber => {
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.holdings, rowNumber);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.item, rowNumber);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.holdings, rowNumber);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.item, rowNumber);
     });
     FileDetails.checkHoldingsQuantityInSummaryTable('3', 1);
     FileDetails.checkItemQuantityInSummaryTable('3', 1);

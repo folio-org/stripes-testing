@@ -126,8 +126,8 @@ describe('ui-data-import', () => {
     JobProfiles.waitFileIsImported(nameMarcFileForCreate);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(nameMarcFileForCreate);
-    [FileDetails.columnName.srsMarc,
-      FileDetails.columnName.instance].forEach(columnName => {
+    [FileDetails.columnNameInResultList.srsMarc,
+      FileDetails.columnNameInResultList.instance].forEach(columnName => {
       FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
     });
     FileDetails.checkSrsRecordQuantityInSummaryTable('1');
@@ -194,8 +194,8 @@ describe('ui-data-import', () => {
         JobProfiles.waitFileIsImported(fileNameAfterUpload);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(fileNameAfterUpload);
-        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
-        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
+        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc);
+        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance);
         FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
         FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
 
@@ -234,8 +234,8 @@ describe('ui-data-import', () => {
         JobProfiles.waitFileIsImported(exportedFileName);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(exportedFileName);
-        [FileDetails.columnName.srsMarc,
-          FileDetails.columnName.instance].forEach(columnName => {
+        [FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.instance].forEach(columnName => {
           FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');

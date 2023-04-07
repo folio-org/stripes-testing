@@ -133,8 +133,8 @@ describe('ui-data-import', () => {
       JobProfiles.waitFileIsImported(firstMarcFileNameForCreate);
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(firstMarcFileNameForCreate);
-      [FileDetails.columnName.srsMarc,
-        FileDetails.columnName.instance].forEach(columnName => {
+      [FileDetails.columnNameInResultList.srsMarc,
+        FileDetails.columnNameInResultList.instance].forEach(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
       });
       FileDetails.checkSrsRecordQuantityInSummaryTable('1');
@@ -167,8 +167,8 @@ describe('ui-data-import', () => {
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(secondMarcFileNameForCreate);
         rowNumbers.forEach(rowNumber => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc, rowNumber);
-          FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.instance, rowNumber);
+          FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumber);
+          FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumber);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable('8');
         FileDetails.checkInstanceQuantityInSummaryTable('8');
@@ -237,8 +237,8 @@ describe('ui-data-import', () => {
         JobProfiles.waitFileIsImported(firstFileNameAfterUpload);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(firstFileNameAfterUpload);
-        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
-        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
+        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc);
+        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance);
         FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
         FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
         // open the first Instance in the Inventory and check 001, 003, 035 fields
@@ -264,8 +264,8 @@ describe('ui-data-import', () => {
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(secondFileNameAfterUpload);
       rowNumbers.forEach(rowNumber => {
-        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc, rowNumber);
-        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance, rowNumber);
+        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, rowNumber);
+        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, rowNumber);
       });
       FileDetails.checkSrsRecordQuantityInSummaryTable('8', 1);
       FileDetails.checkInstanceQuantityInSummaryTable('8', 1);

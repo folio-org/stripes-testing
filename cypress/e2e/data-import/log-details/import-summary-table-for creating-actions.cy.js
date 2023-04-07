@@ -149,10 +149,10 @@ describe('ui-data-import', () => {
       );
       cy.go('back');
 
-      [FileDetails.columnName.srsMarc,
-        FileDetails.columnName.instance,
-        FileDetails.columnName.holdings,
-        FileDetails.columnName.item
+      [FileDetails.columnNameInResultList.srsMarc,
+        FileDetails.columnNameInResultList.instance,
+        FileDetails.columnNameInResultList.holdings,
+        FileDetails.columnNameInResultList.item
       ].forEach(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
       });
@@ -164,5 +164,12 @@ describe('ui-data-import', () => {
       FileDetails.checkItemsQuantityInSummaryTable(2, '0');
       // check Error counter in the Summary table
       FileDetails.checkItemsQuantityInSummaryTable(3, '0');
+      // check other combinations of rows and columns
+      [FileDetails.columnNameInSummuryTable.authority,
+        FileDetails.columnNameInSummuryTable.order,
+        FileDetails.columnNameInSummuryTable.invoice
+      ].forEach(columnName => {
+        FileDetails.checkColumnsInSummaryTable('-', columnName);
+      });
     });
 });

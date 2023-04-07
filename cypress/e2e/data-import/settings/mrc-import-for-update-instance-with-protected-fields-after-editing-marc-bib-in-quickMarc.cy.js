@@ -205,7 +205,7 @@ describe('ui-data-import', () => {
         JobProfiles.waitFileIsImported(nameMarcFileForUpload);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(nameMarcFileForUpload);
-        [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {
+        [FileDetails.columnNameInResultList.srsMarc, FileDetails.columnNameInResultList.instance].forEach(columnName => {
           FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems, 1);

@@ -251,7 +251,7 @@ describe('ui-data-import', () => {
     JobProfiles.waitFileIsImported(fileNameForCreatingInstance);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileNameForCreatingInstance);
-    [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {
+    [FileDetails.columnNameInResultList.srsMarc, FileDetails.columnNameInResultList.instance].forEach(columnName => {
       FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
     });
     FileDetails.checkSrsRecordQuantityInSummaryTable('1', 0);
@@ -274,7 +274,7 @@ describe('ui-data-import', () => {
         JobProfiles.waitFileIsImported(fileNameForProtect);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(fileNameForProtect);
-        [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {
+        [FileDetails.columnNameInResultList.srsMarc, FileDetails.columnNameInResultList.instance].forEach(columnName => {
           FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable('1', 1);
@@ -304,7 +304,7 @@ describe('ui-data-import', () => {
         JobProfiles.waitFileIsImported(fileNameForOverride);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(fileNameForOverride);
-        [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {
+        [FileDetails.columnNameInResultList.srsMarc, FileDetails.columnNameInResultList.instance].forEach(columnName => {
           FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable('1', 1);

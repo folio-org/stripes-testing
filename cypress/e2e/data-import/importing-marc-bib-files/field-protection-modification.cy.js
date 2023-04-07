@@ -138,8 +138,8 @@ describe('ui-data-import', () => {
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileName);
       Logs.openFileDetails(fileName);
-      [FileDetails.columnName.srsMarc,
-        FileDetails.columnName.instance].forEach(columnName => {
+      [FileDetails.columnNameInResultList.srsMarc,
+        FileDetails.columnNameInResultList.instance].forEach(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
       });
       FileDetails.checkSrsRecordQuantityInSummaryTable('1', 0);

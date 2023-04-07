@@ -99,8 +99,8 @@ describe('ui-data-import', () => {
     JobProfiles.waitFileIsImported(marcFileForCreate);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(marcFileForCreate);
-    [FileDetails.columnName.srsMarc,
-      FileDetails.columnName.instance,
+    [FileDetails.columnNameInResultList.srsMarc,
+      FileDetails.columnNameInResultList.instance,
     ].forEach(columnName => {
       FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
     });
