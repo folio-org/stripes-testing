@@ -11,10 +11,14 @@ import {
   Select,
 } from '../../../../interactors';
 
+// Cypress clicks before the UI loads, use when there is no way to attach waiter to element
+const waitClick = () => { cy.wait(1000); };
+
 export default {
   waitLoading:() => cy.expect(PaneHeader('User search').exists()),
 
   searchByStatus(status) {
+    waitClick();
     cy.do(Accordion({ id: 'users-filter-accordion-status' }).find(Checkbox(status)).click());
   },
 
