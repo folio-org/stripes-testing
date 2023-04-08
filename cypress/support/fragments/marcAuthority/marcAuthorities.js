@@ -1,4 +1,4 @@
-import { MultiColumnList, Modal, TextField, Callout, MultiSelect, QuickMarcEditorRow, PaneContent, PaneHeader, Select, Section, HTML, including, Button, MultiColumnListCell, MultiColumnListRow, SearchField, Accordion } from '../../../../interactors';
+import { MultiColumnList, Modal, TextField, Callout, MultiSelect, QuickMarcEditorRow, PaneContent, PaneHeader, Select, Section, HTML, including, Button, MultiColumnListCell, MultiColumnListRow, SearchField, Accordion, Checkbox, ColumnHeader } from '../../../../interactors';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const authoritiesList = rootSection.find(MultiColumnList({ id: 'authority-result-list' }));
@@ -177,6 +177,41 @@ export default {
       selectField.has({ content: including('Keyword') }),
       rootSection.find(HTML(including('Choose a filter or enter a search query to show results.'))).exists(),
     ]);
+  },
+  
+  chooseTypeOfHeading: (headingTypes) => {
+    cy.do(headinfTypeAccordion.clickHeader());
+    headingTypes.forEach(headingType => {
+      cy.do(MultiSelect({ ariaLabelledby: 'headingType-multiselect-label' }).select([including(headingType)]));
+    });
+  },
+
+  clickActionsButton() {
+    cy.do(rootSection.find(PaneHeader()).find(actionsButton).click());
+  },
+
+  actionsSortBy(value) {
+    cy.do(Select({ id: including('select') }).choose(value));
+    // need to wait until content will be sorted
+    cy.wait(1000);
+  },
+
+  actionsSelectCheckbox(value) {
+    cy.do(Checkbox(value).click());
+  },
+
+  checkRowsContent(contents) {
+    contents.forEach((content, rowIndex) => {
+      cy.expect(MultiColumnListCell({ row: rowIndex, content: content }).exists())
+    });
+  },
+
+  checkColumnAbsent(content) {
+    cy.expect(ColumnHeader(content).absent())
+  },
+
+  checkColumnExists(content) {
+    cy.expect(ColumnHeader(content).exists())
   },
 
   chooseTypeOfHeadingAndCheck(headingType, headingTypeA, headingTypeB) {
