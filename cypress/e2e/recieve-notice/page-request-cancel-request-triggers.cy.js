@@ -47,7 +47,7 @@ describe('Request notice triggers', () => {
   };
   const noticeTemplates = {
     pageRequest: createNoticeTemplate('Page_request'),
-    cancelRequest: createNoticeTemplate('Cancel request'),
+    cancelRequest: createNoticeTemplate('Cancel_request'),
   };
   const searchResultsData = (description) => {
     return {
