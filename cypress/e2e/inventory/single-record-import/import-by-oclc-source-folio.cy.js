@@ -63,7 +63,7 @@ describe('ui-inventory: import by OCLC', () => {
     InventorySearchAndFilter.selectSearchResultItem();
     InventoryInstance.startOverlaySourceBibRecord();
     InventoryInstance.importWithOclc(oclcRecordData.oclc);
-    InventoryInstance.checkCalloutMessage(`Updated record ${oclcRecordData.oclc}`);
+    InventoryInstance.checkCalloutMessage(`Record ${oclcRecordData.oclc} updated. Results may take a few moments to become visible in Inventory`);
 
     // need to wait because after the import the data in the instance is displayed for a long time
     // https://issues.folio.org/browse/MODCPCT-73
