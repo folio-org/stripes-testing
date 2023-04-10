@@ -147,11 +147,6 @@ describe('Request notice triggers', () => {
             testData.userServicePoint.id
           );
 
-          cy.getCirculationRules().then((response) => {
-            testData.baseRules = response.rulesAsText;
-            testData.ruleProps = CirculationRules.getRuleProps(response.rulesAsText);
-          });
-
           cy.login(userData.username, userData.password, {
             path: SettingsMenu.circulationPatronNoticeTemplatesPath,
             waiter: NewNoticePolicyTemplate.waitLoading,
@@ -220,11 +215,15 @@ describe('Request notice triggers', () => {
       NewNoticePolicy.waitLoading();
       NewNoticePolicy.checkPolicyName(noticePolicy);
 
-      cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
-        testData.ruleProps.n = noticePolicyRes[0].id;
-        testData.ruleProps.r = requestPolicyBody.id;
-        addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + testData.ruleProps.i + ' l ' + testData.ruleProps.l + ' r ' + testData.ruleProps.r + ' o ' + testData.ruleProps.o + ' n ' + testData.ruleProps.n;
-        CirculationRules.addRuleViaApi(testData.baseRules, testData.ruleProps, 't ', testData.loanTypeId);
+      CirculationRules.getViaApi().then((response) => {
+        testData.baseRules = response.rulesAsText;
+        testData.ruleProps = CirculationRules.getRuleProps(response.rulesAsText);
+        cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
+          testData.ruleProps.n = noticePolicyRes[0].id;
+          testData.ruleProps.r = requestPolicyBody.id;
+          addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + testData.ruleProps.i + ' l ' + testData.ruleProps.l + ' r ' + testData.ruleProps.r + ' o ' + testData.ruleProps.o + ' n ' + testData.ruleProps.n;
+          CirculationRules.addRuleViaApi(testData.baseRules, testData.ruleProps, 't ', testData.loanTypeId);
+        });
       });
 
       cy.visit(TopMenu.requestsPath);
