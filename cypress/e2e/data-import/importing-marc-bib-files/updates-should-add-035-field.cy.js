@@ -173,7 +173,7 @@ describe('ui-data-import', () => {
         FileDetails.checkSrsRecordQuantityInSummaryTable('8');
         FileDetails.checkInstanceQuantityInSummaryTable('8');
         cy.wrap(
-          rowNumbers.forEach(rowNumber => {
+          cy.wrap(rowNumbers).forEach(rowNumber => {
             cy.visit(TopMenu.dataImportPath);
             Logs.openFileDetails(secondMarcFileNameForCreate);
             FileDetails.openInstanceInInventory('Created', rowNumber);
