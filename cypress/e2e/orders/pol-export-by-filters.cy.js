@@ -1,14 +1,12 @@
 import permissions from '../../support/dictionary/permissions';
 import testType from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
-import getRandomPostfix from '../../support/utils/stringTools';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import TopMenu from '../../support/fragments/topMenu';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
 import Users from '../../support/fragments/users/users';
 import Funds from '../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
-import DateTools from '../../support/utils/dateTools';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
 import OrderLines from '../../support/fragments/orders/orderLines';
@@ -21,14 +19,6 @@ import NewLocation from '../../support/fragments/settings/tenant/locations/newLo
 
 describe('Orders: Export', () => {
   const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
-  const secondFiscalYear = {
-    name: `autotest_year_${getRandomPostfix()}`,
-    code: DateTools.getRandomFiscalYearCodeForRollover(2000, 9999),
-    periodStart: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
-    periodEnd: `${DateTools.getDayAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
-    description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
-    series: 'FY',
-  };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
   const defaultOrder = { ...NewOrder.defaultOneTimeOrder,
@@ -39,8 +29,6 @@ describe('Orders: Export', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const allocatedQuantity = '100';
-  const todayDate = DateTools.getCurrentDate();
-  const fileNameDate = DateTools.getCurrentDateForFileNaming();
   let user;
   let firstOrderNumber;
   let servicePointId;
@@ -92,7 +80,6 @@ describe('Orders: Export', () => {
       OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(defaultFund, '40', '1', '40', location.institutionId);
       OrderLines.backToEditingOrder();
       Orders.openOrder();
-      });
       cy.visit(TopMenu.invoicesPath);
       Invoices.createRolloverInvoice(invoice, organization.name);
       Invoices.createInvoiceLineFromPol(firstOrderNumber);
@@ -100,6 +87,8 @@ describe('Orders: Export', () => {
       cy.wait(4000);
       Invoices.approveInvoice();
       Invoices.payInvoice();
+      });
+
     cy.createTempUser([
       permissions.uiExportOrders.gui,
       permissions.uiOrdersView.gui,
@@ -117,21 +106,14 @@ describe('Orders: Export', () => {
   });
 
   it('C196751 Export orders based on orders lines search (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    FinanceHelp.searchByName(defaultLedger.name);
-    Ledgers.selectLedger(defaultLedger.name);
-    Ledgers.rollover();
-    Ledgers.fillInTestRolloverInfoCashBalance(secondFiscalYear.code, 'Cash balance', 'Allocation');
-    Ledgers.rolloverLogs();
-    Ledgers.exportRollover(todayDate);
-    Ledgers.checkDownloadedFile(`${fileNameDate}-result.csv`, defaultFund, secondFiscalYear, '100', '100', '160', '160', '160', '160', '160');
-    Ledgers.deleteDownloadedFile(`${fileNameDate}-result.csv`);
-    Ledgers.closeOpenedPage();
-    Ledgers.rollover();
-    Ledgers.fillInRolloverForCashBalance(secondFiscalYear.code, 'Cash balance', 'Allocation');
-    Ledgers.closeRolloverInfo();
-    Ledgers.selectFundInLedger(defaultFund.name);
-    Funds.selectPlannedBudgetDetails();
-    Funds.checkFundingInformation('$160.00', '$0.00', '$0.00', '$160.00', '$0.00', '$160.00');
-    Funds.checkFinancialActivityAndOverages('$0.00', '$0.00', '$0.00', '$0.00');
+    OrderLines.selectFilterVendorPOL(invoice);
+    Orders.exportResoultsCSV();
+    OrderLines.checkDownloadedFile();
+    OrderLines.resetFilters();
+    cy.reload();
+    OrderLines.selectFilterOngoingPaymentStatus();
+    Orders.exportResoultsCSV();
+    OrderLines.checkDownloadedFile();
+    OrderLines.deleteAllDownloadedFiles();
   });
 });

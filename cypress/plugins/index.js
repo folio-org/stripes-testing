@@ -5,6 +5,8 @@ const { rmdir, unlink } = require('fs');
 const cypressGrep = require('cypress-grep/src/plugin');
 const { downloadFile } = require('cypress-downloadfile/lib/addPlugin');
 const allureWriter = require('@shelex/cypress-allure-plugin/writer');
+const fs = require('fs');
+const path = require('path');
 // import allureWriter from "@shelex/cypress-allure-plugin/writer";
 
 // eslint-disable-next-line no-unused-vars
@@ -52,6 +54,11 @@ module.exports = async (on, config) => {
           resolve(null);
         });
       });
+    },
+    readFileFromDownloads(filename) {
+      const downloadsFolder = config.downloadsFolder || path.join(__dirname, '..', '..', 'Downloads')
+      const filePath = path.join(downloadsFolder, filename)
+      return fs.readFileSync(filePath, 'utf-8')
     },
   });
   allureWriter(on, config);
