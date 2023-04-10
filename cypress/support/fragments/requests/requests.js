@@ -268,6 +268,7 @@ export default {
   selectInTransitRequest:() => cy.do(Checkbox({ name: 'Open - In transit' }).click()),
   selectNotYetFilledRequest:() => cy.do(Checkbox({ name: 'Open - Not yet filled' }).click()),
   selectClosedCancelledRequest:() => cy.do((Checkbox({ name: 'Closed - Cancelled' }).click())),
+  selectItemRequestLevel:() => cy.do((Checkbox({ name: 'Item' }).click())),
   selectFirstRequest:(title) => cy.do(requestsPane.find(MultiColumnListCell({ row: 0, content: title })).click()),
   openTagsPane:() => {
     cy.do(showTagsButton.click());
