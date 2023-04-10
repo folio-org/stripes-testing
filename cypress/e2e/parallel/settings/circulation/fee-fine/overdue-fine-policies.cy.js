@@ -208,6 +208,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id
     );
+    cy.deleteLoanType(testData.loanTypeId);
   });
 
   it(
