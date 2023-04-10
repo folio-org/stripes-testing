@@ -19,13 +19,14 @@ import ItemRecordView from '../../../support/fragments/inventory/itemRecordView'
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import FileManager from '../../../support/utils/fileManager';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 
 describe('ui-data-import', () => {
-  let instanceHrid;
   const itemBarcode = uuid();
   const quantityOfItems = '1';
   // unique profile names
-  const instanceMapProfileNameForCreate = `C17033 instance create mapping profile_${getRandomPostfix()}`;
+  const instanceMappingProfileNameForCreate = `C17033 instance create mapping profile_${getRandomPostfix()}`;
   const holdingsMappingProfileNameForCreate = `C17033 holdings create mapping profile_${getRandomPostfix()}`;
   const itemMappingProfileNameForCreate = `C17033 item create mapping profile_${getRandomPostfix()}`;
   const instanceActionProfileNameForCreate = `C17033 instance create action profile_${getRandomPostfix()}`;
@@ -45,7 +46,7 @@ describe('ui-data-import', () => {
   // profiles for creating
   const collectionOfMappingAndActionProfilesForCreate = [
     {
-      mappingProfile: { name: instanceMapProfileNameForCreate,
+      mappingProfile: { name: instanceMappingProfileNameForCreate,
         typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
         name: instanceActionProfileNameForCreate }
@@ -55,11 +56,13 @@ describe('ui-data-import', () => {
         typeValue : NewFieldMappingProfile.folioRecordTypeValue.holdings,
         permanentLocation: '"Main Library (KU/CC/DI/M)"',
         permanentLocationUI:'Main Library',
-        temporaryLocation: 'Online (E) ',
+        permanentLocationInHoldingsAccordion: 'Main Library >',
+        temporaryLocation: '"Online (E)"',
         temporaryLocationUI: 'Online',
         illPolicy: 'Unknown lending policy',
-        digitizationPolicy: 'Digitization policy' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
+        digitizationPolicy: '"Digitization policy"',
+        digitizationPolicyUI: 'Digitization policy' },
+      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
         name: holdingsActionProfileNameForCreate }
     },
     {
@@ -70,9 +73,10 @@ describe('ui-data-import', () => {
         materialType:'book',
         numberOfPieces: '25',
         permanentLoanType: 'Can circulate',
-        temporaryLoanType:'Course reserves',
+        temporaryLoanType:'"Course reserves"',
+        temporaryLoanTypeUI:'Course reserves',
         status: 'Available' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
+      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: itemActionProfileNameForCreate }
     },
   ];
@@ -101,7 +105,7 @@ describe('ui-data-import', () => {
         },
         matchCriterion: 'Exactly matches',
         existingRecordType: 'ITEM',
-        itemOption: NewMatchProfile.optionsList.itemBarcode
+        itemOption: NewMatchProfile.optionsList.barcode
       }
     }
   ];
@@ -136,13 +140,35 @@ describe('ui-data-import', () => {
     cy.loginAsAdmin({ path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
   });
 
+  after('delete test data', () => {
+    // delete profiles
+    JobProfiles.deleteJobProfile(jobProfileNameForUpdate);
+    JobProfiles.deleteJobProfile(jobProfileNameForCreate);
+    MatchProfiles.deleteMatchProfile(matchProfileNameForHoldings);
+    MatchProfiles.deleteMatchProfile(matchProfileNameForItem);
+    ActionProfiles.deleteActionProfile(instanceActionProfileNameForCreate);
+    ActionProfiles.deleteActionProfile(holdingsActionProfileNameForCreate);
+    ActionProfiles.deleteActionProfile(itemActionProfileNameForCreate);
+    ActionProfiles.deleteActionProfile(holdingsActionProfileNameForUpdate);
+    ActionProfiles.deleteActionProfile(itemActionProfileNameForUpdate);
+    FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileNameForCreate);
+    FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileNameForCreate);
+    FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileNameForCreate);
+    FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileNameForUpdate);
+    FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileNameForUpdate);
+    // delete created files
+    FileManager.deleteFile(`cypress/fixtures/${marcFileNameForCreate}`);
+    FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
+  });
+
   it('C17033 Test ###REMOVE### field mapping option (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       // create mapping profiles
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfilesForCreate[0].mappingProfile);
       FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(instanceMapProfileNameForCreate);
+      FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfileNameForCreate);
 
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile);
@@ -175,9 +201,9 @@ describe('ui-data-import', () => {
       // create job profile
       cy.visit(SettingsMenu.jobProfilePath);
       JobProfiles.createJobProfile(jobProfileForCreate);
-      NewJobProfile.linkActionProfile(instanceActionProfileNameForCreate);
-      NewJobProfile.linkActionProfile(holdingsActionProfileNameForCreate);
-      NewJobProfile.linkActionProfile(itemActionProfileNameForCreate);
+      NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfilesForCreate[0].actionProfile);
+      NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfilesForCreate[1].actionProfile);
+      NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfilesForCreate[2].actionProfile);
       NewJobProfile.saveAndClose();
       JobProfiles.checkJobProfilePresented(jobProfileNameForCreate);
 
@@ -196,31 +222,31 @@ describe('ui-data-import', () => {
       Logs.openFileDetails(marcFileNameForCreate);
       [FileDetails.columnName.srsMarc,
         FileDetails.columnName.instance,
-        FileDetails.columnName.holdings
+        FileDetails.columnName.holdings,
+        FileDetails.columnName.item
       ].forEach(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
       });
-      FileDetails.checkItemsQuantityInSummaryTable(quantityOfItems);
+      FileDetails.checkItemsQuantityInSummaryTable(0, quantityOfItems);
 
       // check created instance
       FileDetails.openInstanceInInventory('Created');
       InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
-        instanceHrid = initialInstanceHrId;
-
         InventoryInstance.openHoldingView();
         HoldingsRecordView.getHoldingsHrId().then(holdingsHrId => {
           HoldingsRecordView.checkPermanentLocation(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.permanentLocationUI);
           HoldingsRecordView.checkTemporaryLocation(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.temporaryLocationUI);
           HoldingsRecordView.checkIllPolicy(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.illPolicy);
-          HoldingsRecordView.checkDigitizationPolicy(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.illPolicy);
+          HoldingsRecordView.checkDigitizationPolicy(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.digitizationPolicyUI);
           HoldingsRecordView.close();
+          InventoryInstance.openHoldingsAccordion(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.permanentLocationInHoldingsAccordion);
           InventoryInstance.openItemByBarcode(itemBarcode);
           ItemRecordView.checkBarcode(itemBarcode);
           ItemRecordView.verifyMaterialType(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.materialType);
           ItemRecordView.checkAccessionNumber(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.accessionNumber);
           ItemRecordView.checkNumberOfPieces(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.numberOfPieces);
           ItemRecordView.verifyPermanentLoanType(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.permanentLoanType);
-          ItemRecordView.verifyTemporaryLoanType(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.temporaryLoanType);
+          ItemRecordView.verifyTemporaryLoanType(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.temporaryLoanTypeUI);
           ItemRecordView.checkStatus(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.status);
 
           // change file for adding random barcode and holdings hrid
@@ -247,6 +273,8 @@ describe('ui-data-import', () => {
           NewFieldMappingProfile.fillAccessionNumber(collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.accessionNumber);
           NewFieldMappingProfile.fillNumberOfPieces(collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.numberOfPieces);
           NewFieldMappingProfile.fillTemporaryLoanType(collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.temporaryLoanType);
+          FieldMappingProfiles.saveProfile();
+          FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfileNameForUpdate);
 
           // create action profiles
           collectionOfMappingAndActionProfilesForUpdate.forEach(profile => {
@@ -273,20 +301,21 @@ describe('ui-data-import', () => {
           JobProfiles.waitFileIsImported(editedMarcFileName);
           Logs.checkStatusOfJobProfile('Completed');
           Logs.openFileDetails(editedMarcFileName);
-          [FileDetails.columnName.srsMarc,
-            FileDetails.columnName.instance,
-            FileDetails.columnName.holdings
+          [FileDetails.columnName.holdings,
+            FileDetails.columnName.item
           ].forEach(columnName => {
             FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
           });
-          FileDetails.checkItemsQuantityInSummaryTable(quantityOfItems);
+          FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems, 1);
+          FileDetails.checkItemQuantityInSummaryTable(quantityOfItems, 1);
 
           cy.visit(TopMenu.inventoryPath);
-          InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+          InventorySearchAndFilter.searchInstanceByHRID(initialInstanceHrId);
           InventoryInstance.openHoldingView();
           HoldingsRecordView.checkTemporaryLocation('-');
           HoldingsRecordView.checkDigitizationPolicy('-');
           HoldingsRecordView.close();
+          InventoryInstance.openHoldingsAccordion(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.permanentLocationInHoldingsAccordion);
           InventoryInstance.openItemByBarcode(itemBarcode);
           ItemRecordView.checkAccessionNumber('-');
           ItemRecordView.checkNumberOfPieces('-');
