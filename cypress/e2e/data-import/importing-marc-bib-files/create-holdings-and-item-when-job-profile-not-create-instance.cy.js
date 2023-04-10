@@ -32,7 +32,6 @@ describe('ui-data-import', () => {
   const holdingsPermanentLocation = 'Annex (KU/CC/DI/A)';
   const itemMaterialType = 'electronic resource';
   const itemPermanentLoanType = 'Can circulate';
-  const itemStatus = 'Available';
   // unique profile names
   const jobProfileName = `C368009 Testing SRS MARC bib ${Helper.getRandomBarcode()}`;
   const matchProfileName = `C368009 001 to Instance HRID ${Helper.getRandomBarcode()}`;
@@ -46,7 +45,7 @@ describe('ui-data-import', () => {
         name: itemMappingProfileName,
         materialType: `"${itemMaterialType}"`,
         permanentLoanType: `"${itemPermanentLoanType}"`,
-        status: `"${itemStatus}"` },
+        status: 'Available' },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: itemActionProfileName,
         action: 'Create (all record types except MARC Authority or MARC Holdings)' }
@@ -146,7 +145,7 @@ describe('ui-data-import', () => {
       createHoldingsMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
       FieldMappingProfiles.checkMappingProfilePresented(holdingsMappingProfileName);
 
-      // create mapping profiles
+      // create action profiles
       collectionOfMappingAndActionProfiles.forEach(profile => {
         cy.visit(SettingsMenu.actionProfilePath);
         ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
@@ -206,7 +205,7 @@ describe('ui-data-import', () => {
           FileDetails.openItemInInventory('Created');
           ItemRecordView.verifyMaterialType(itemMaterialType);
           ItemRecordView.verifyPermanentLoanType(itemPermanentLoanType);
-          ItemRecordView.verifyItemStatus(itemStatus);
+          ItemRecordView.verifyItemStatus(collectionOfMappingAndActionProfiles[0].mappingProfile.status);
         });
     });
 });
