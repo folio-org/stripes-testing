@@ -69,9 +69,11 @@ describe('ui-data-import', () => {
       mappingProfile: { name: itemMappingProfileNameForCreate,
         typeValue : NewFieldMappingProfile.folioRecordTypeValue.item,
         barcode: '945$a',
-        accessionNumber: '12345',
+        accessionNumber: '"12345"',
+        accessionNumberUI: '12345',
         materialType:'book',
-        numberOfPieces: '25',
+        numberOfPieces: '"25"',
+        numberOfPiecesUI: '25',
         permanentLoanType: 'Can circulate',
         temporaryLoanType:'"Course reserves"',
         temporaryLoanTypeUI:'Course reserves',
@@ -243,8 +245,8 @@ describe('ui-data-import', () => {
           InventoryInstance.openItemByBarcode(itemBarcode);
           ItemRecordView.checkBarcode(itemBarcode);
           ItemRecordView.verifyMaterialType(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.materialType);
-          ItemRecordView.checkAccessionNumber(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.accessionNumber);
-          ItemRecordView.checkNumberOfPieces(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.numberOfPieces);
+          ItemRecordView.checkAccessionNumber(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.accessionNumberUI);
+          ItemRecordView.checkNumberOfPieces(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.numberOfPiecesUI);
           ItemRecordView.verifyPermanentLoanType(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.permanentLoanType);
           ItemRecordView.verifyTemporaryLoanType(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.temporaryLoanTypeUI);
           ItemRecordView.checkStatus(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.status);
