@@ -17,7 +17,7 @@ import NoticePolicyTemplateApi from '../../support/fragments/circulation/notice-
 import NewNoticePolicy from '../../support/fragments/circulation/newNoticePolicy';
 import NewNoticePolicyTemplate from '../../support/fragments/circulation/newNoticePolicyTemplate';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import getRandomPostfix from '../../support/utils/stringTools';
+import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
 import RequestPolicy from '../../support/fragments/circulation/request-policy';
 import NewRequest from '../../support/fragments/requests/newRequest';
 import Requests from '../../support/fragments/requests/requests';
@@ -38,10 +38,10 @@ describe('Request notice triggers', () => {
   };
   const createNoticeTemplate = (noticeName) => {
     return {
-      name: `Autotest_${getRandomPostfix()}_${noticeName}`,
+      name: getTestEntityValue(noticeName),
       description: 'Created by autotest team',
       category: 'Request',
-      subject: `Autotest_${getRandomPostfix()}_${noticeName}`,
+      subject: getTestEntityValue(noticeName),
       body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
     };
   };
@@ -68,7 +68,7 @@ describe('Request notice triggers', () => {
     });
   };
   const noticePolicy = {
-    name: `Autotest ${getRandomPostfix()} Overdue fine, returned`,
+    name: getTestEntityValue('Overdue fine, returned'),
     description: 'Created by autotest team',
   };
   const requestPolicyBody = {
