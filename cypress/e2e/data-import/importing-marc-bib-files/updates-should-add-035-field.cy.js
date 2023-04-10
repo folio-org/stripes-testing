@@ -174,8 +174,6 @@ describe('ui-data-import', () => {
         FileDetails.checkInstanceQuantityInSummaryTable('8');
         cy.wrap(
           rowNumbers.forEach(rowNumber => {
-            // // need to wait until page will be opened in loop
-            // cy.wait(8000);
             cy.visit(TopMenu.dataImportPath);
             Logs.openFileDetails(secondMarcFileNameForCreate);
             FileDetails.openInstanceInInventory('Created', rowNumber);
@@ -188,6 +186,8 @@ describe('ui-data-import', () => {
               .then(uuid => {
                 arrayOf999Fields.push(uuid[0], uuid[1]);
               });
+            // need to wait until page will be opened in loop
+            cy.wait(2000);
           })
         ).then(() => {
           // change file using uuid for 999 field
@@ -272,8 +272,6 @@ describe('ui-data-import', () => {
 
       // open the second Instance in the Inventory and check 001, 003, 035 fields
       cy.wrap(fields035).each(element => {
-        // need to wait until page will be opened in loop
-        cy.wait(8000);
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(secondFileNameAfterUpload);
         FileDetails.openInstanceInInventory('Updated', element.instanceNumber);
