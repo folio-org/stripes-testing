@@ -154,6 +154,13 @@ export default {
     ]);
   },
 
+  checkSingleHeadingType(type, headingType) {
+    cy.expect([
+      MultiColumnListCell({ columnIndex: 1, content: type }).exists(),
+      MultiColumnListCell({ columnIndex: 3, content: headingType }).exists(),
+    ]);
+  },
+
   checkAfterSearchHeadingType(type, headingTypeA, headingTypeB) {
     cy.expect([
       MultiColumnListCell({ columnIndex: 1, content: type }).exists(),

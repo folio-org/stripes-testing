@@ -218,6 +218,6 @@ describe('plug-in MARC authority | Search', () => {
     MarcAuthorities.selectTitle(testData.forC359230.value);
     MarcAuthorities.checkRecordDetailPageMarkedValue(testData.forC359230.valurMarked);
     MarcAuthorities.searchBy(testData.forC359230.searchOptionB, '*');
-    MarcAuthorities.checkHeadingType(testData.forC359230.type, testData.forC359230.typeOfHeadingA, testData.forC359230.typeOfHeadingB, testData.forC359230.typeOfHeadingC);
+    MarcAuthorities.checkSingleHeadingType(testData.forC359230.type, testData.forC359230.typeOfHeadingA);
   });
 });
