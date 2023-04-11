@@ -162,6 +162,15 @@ export default {
     ]);
   },
 
+  checkHeadingType(type, headingTypeA, headingTypeB, headingTypeC) {
+    cy.expect([
+      MultiColumnListCell({ columnIndex: 1, content: type }).exists(),
+      MultiColumnListCell({ columnIndex: 3, content: headingTypeA }).exists(),
+      MultiColumnListCell({ columnIndex: 3, content: headingTypeB }).exists(),
+      MultiColumnListCell({ columnIndex: 3, content: headingTypeC }).exists(),
+    ]);
+  },
+
   checkFieldAndContentExistence(tag, value) {
     cy.expect([
       marcViewSection.exists(),
