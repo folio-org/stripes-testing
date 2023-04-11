@@ -42,7 +42,7 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
         name: itemMappingProfileName,
-        permanentLoanType: '"Can circulate"',
+        permanentLoanType: 'Can circulate',
         status: 'Available' },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: itemActionProfileName }
