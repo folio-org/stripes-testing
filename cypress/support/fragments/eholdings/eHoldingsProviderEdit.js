@@ -3,9 +3,9 @@ import { getLongDelay } from '../../utils/cypressTools';
 import eHoldingsProviderView from './eHoldingsProviderView';
 
 const availableProxies = [
-  'chalmers',
-  'MJProxy',
-  'TestingFolio'
+  'guestaccess',
+  'Hosted EZproxy',
+  'perma'
 ];
 const proxySelect = Select('Proxy');
 
