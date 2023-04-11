@@ -102,7 +102,7 @@ describe('eHoldings titles management', () => {
     ]).then(userProperties => {
       userId = userProperties.userId;
 
-      eHoldingsTitles.getSelectedNotCustomTitleViaApi('chemical engineering').then(specialTitle => {
+      eHoldingsTitles.getSelectedNotCustomTitleViaApi('test').then(specialTitle => {
         cy.login(userProperties.username, userProperties.password,
           { path: `${TopMenu.eholdingsPath}/titles/${specialTitle.id}`, waiter: () => eHoldingsTitle.waitLoading(specialTitle.name) });
         eHoldingsTitle.waitPackagesLoading();

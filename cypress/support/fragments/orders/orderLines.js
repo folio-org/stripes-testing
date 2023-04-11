@@ -21,7 +21,7 @@ import {
 import SearchHelper from '../finance/financeHelper';
 import getRandomPostfix from '../../utils/stringTools';
 import SelectInstanceModal from './selectInstanceModal';
-
+const path = require('path');
 const saveAndClose = Button('Save & close');
 const actionsButton = Button('Actions');
 const searhInputId = 'input-record-search';
@@ -70,6 +70,13 @@ export default {
       searchForm.selectIndex(parameter),
       searchForm.fillIn(value),
       Button('Search').click(),
+    ]);
+  },
+
+  waitLoading() {
+    cy.expect([
+      Pane({ id: 'order-lines-filters-pane' }).exists(),
+      Pane({ id: 'order-lines-results-pane' }).exists(),
     ]);
   },
 
@@ -484,6 +491,10 @@ export default {
     ]);
   },
 
+  selectFilterOngoingPaymentStatus: () => {
+    cy.do(Checkbox({ id: 'clickable-filter-paymentStatus-ongoing' }).click());
+  },
+
   selectFilterSubscriptionFromPOL: (newDate) => {
     cy.do([
       buttonSubscriptionFromFilter.click(),
@@ -632,5 +643,34 @@ export default {
   checkFundInPOL:(fund) => {
     cy.expect(Section({ id: 'FundDistribution'}).find(Link(`${fund.name}(${fund.code})`)).exists());
   },
+
+  checkDownloadedFile() {
+    cy.wait(10000);
+    // Get the path to the Downloads folder
+    const downloadsFolder = Cypress.config('downloadsFolder') || Cypress.env('downloadsFolder') || 'Downloads';
+
+    // Find the most recently downloaded file
+    cy.task('findFiles', `${downloadsFolder}/*.csv`, {
+      sortBy: 'modified',
+      sortOrder: 'desc',
+      recursive: true,
+      timeout: 15000
+    }).then((files) => {
+      if (files.length === 0) {
+          throw new Error(`No files found in ${downloadsFolder}`);
+      }
+      const fileName = path.basename(files[0]);
+      const filePath = `${downloadsFolder}\\${fileName}`;
+      cy.readFile(filePath).then(fileContent => {
+          const fileRows = fileContent.split('\n');
+          expect(fileRows[0].trim()).to.equal('"PO number prefix","PO number","PO number suffix","Vendor","Organization type","Order type","Acquisitions units","Approval date","Assigned to","Bill to","Ship to","Manual","Re-encumber","Created by","Created on","Note","Workflow status","Approved","Renewal interval","Subscription","Manual renewal","Ongoing notes","Review period","Renewal date","Review date","PO tags","POLine number","Title","Instance UUID","Subscription from","Subscription to","Subscription interval","Receiving note","Publisher","Edition","Linked package","Contributor, Contributor type","Product ID, Qualifier, Product ID type","Internal note","Acquisition method","Order format","Created on (PO Line)","Receipt date","Receipt status","Payment status","Source","Donor","Selector","Requester","Cancellation restriction","Cancellation description","Rush","Collection","Line description","Vendor reference number, reference type","Instructions to vendor","Account number","Physical unit price","Quantity physical","Electronic unit price","Quantity electronic","Discount","Estimated price","Currency","Fund code, Expense class, Value, Amount","Location, Quantity P, Quantity E","Material supplier","Receipt due","Expected receipt date","Volumes","Create inventory","Material type","Access provider","Activation status","Activation due","Create inventory E","Material type E","Trial","Expected activation","User limit","URL","POLine tags","Renewal note"');
+      });
+    });
+  },
+
+  deleteAllDownloadedFiles() {
+    cy.exec('del cypress\\downloads\\*.csv', { failOnNonZeroExit: false });
+  },
+  
 };
 
