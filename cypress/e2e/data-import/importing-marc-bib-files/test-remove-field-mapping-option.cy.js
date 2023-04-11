@@ -146,18 +146,17 @@ describe('ui-data-import', () => {
     // delete profiles
     JobProfiles.deleteJobProfile(jobProfileNameForUpdate);
     JobProfiles.deleteJobProfile(jobProfileNameForCreate);
-    MatchProfiles.deleteMatchProfile(matchProfileNameForHoldings);
-    MatchProfiles.deleteMatchProfile(matchProfileNameForItem);
-    ActionProfiles.deleteActionProfile(instanceActionProfileNameForCreate);
-    ActionProfiles.deleteActionProfile(holdingsActionProfileNameForCreate);
-    ActionProfiles.deleteActionProfile(itemActionProfileNameForCreate);
-    ActionProfiles.deleteActionProfile(holdingsActionProfileNameForUpdate);
-    ActionProfiles.deleteActionProfile(itemActionProfileNameForUpdate);
-    FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileNameForCreate);
-    FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileNameForCreate);
-    FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileNameForCreate);
-    FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileNameForUpdate);
-    FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileNameForUpdate);
+    collectionOfMatchProfiles.forEach(profile => {
+      MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+    });
+    collectionOfMappingAndActionProfilesForCreate.forEach(profile => {
+      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+    });
+    collectionOfMappingAndActionProfilesForUpdate.forEach(profile => {
+      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+    });
     // delete created files
     FileManager.deleteFile(`cypress/fixtures/${marcFileNameForCreate}`);
     FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
