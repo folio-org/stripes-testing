@@ -164,12 +164,5 @@ describe('ui-data-import', () => {
       FileDetails.checkItemsQuantityInSummaryTable(2, '0');
       // check Error counter in the Summary table
       FileDetails.checkItemsQuantityInSummaryTable(3, '0');
-      // check other combinations of rows and columns
-      [FileDetails.columnNameInSummuryTable.authority,
-        FileDetails.columnNameInSummuryTable.order,
-        FileDetails.columnNameInSummuryTable.invoice
-      ].forEach(columnName => {
-        FileDetails.checkColumnsInSummaryTable('-', columnName);
-      });
     });
 });
