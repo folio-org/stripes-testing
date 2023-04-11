@@ -13,6 +13,7 @@ export default {
   eholdingsPath : '/eholdings',
   dataExportPath : '/data-export',
   ordersPath : '/orders',
+  orderLinesPath : '/orders/lines',
   invoicesPath : '/invoice',
   circulationLogPath : '/circulation-log',
   remoteStorageConfigurationPath : 'settings/remote-storage/configurations',
