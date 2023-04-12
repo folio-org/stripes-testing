@@ -14,6 +14,7 @@ export default {
       case 'emailDomain': verifyFunc = this.verifyMatchedResultByEmailDomain; break;
       case 'permanentLocation': verifyFunc = this.verifyMatchedResultByPermanentLocation; break;
       case 'temporaryLocation': verifyFunc = this.verifyMatchedResultByTemporaryLocation; break;
+      case 'instanceHrid': verifyFunc = this.verifyMatchedResultByInstanceHrid; break;
       default: verifyFunc = this.verifyMatchedResultByHRID;
     }
 
@@ -124,5 +125,10 @@ export default {
   verifyMatchedResultByTemporaryLocation(actualResult, expectedResult) {
     const actualTemporaryLocation = actualResult.split(',')[7];
     expect(actualTemporaryLocation).to.eq(expectedResult);
+  },
+
+  verifyMatchedResultByInstanceHrid(actualResult, expectedResult) {
+    const actualInstanceHrid = actualResult.split(',')[33];
+    expect(actualInstanceHrid).to.eq(expectedResult);
   },
 };
