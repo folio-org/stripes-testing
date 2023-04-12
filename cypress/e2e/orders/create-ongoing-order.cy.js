@@ -1,0 +1,59 @@
+import permissions from '../../support/dictionary/permissions';
+import TopMenu from '../../support/fragments/topMenu';
+import NewOrder from '../../support/fragments/orders/newOrder';
+import Orders from '../../support/fragments/orders/orders';
+import TestType from '../../support/dictionary/testTypes';
+import devTeams from '../../support/dictionary/devTeams';
+import Organizations from '../../support/fragments/organizations/organizations';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import OrderLines from '../../support/fragments/orders/orderLines';
+import InteractorsTools from '../../support/utils/interactorsTools';
+import Users from '../../support/fragments/users/users';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
+
+describe('orders: create an order', () => {
+    
+    const order = { ...NewOrder.defaultOneTimeOrder,
+        orderType: 'Ongoing',
+        ongoing: { isSubscription: false, manualRenewal: false },
+        approved: true,
+        reEncumber: true 
+        };
+    const orderLineTitle = BasicOrderLine.defaultOrderLine.titleOrPackage;
+    let user;
+    const organization = { ...NewOrganization.defaultUiOrganizations };
+    
+    before(() => {
+        cy.getAdminToken();
+        Organizations.createOrganizationViaApi(organization)
+        .then(response => {
+            organization.id = response;
+        });
+        order.vendor = organization.name;
+        order.orderType = 'One-time';
+        cy.createTempUser([
+            permissions.uiOrdersView.gui,
+            permissions.uiOrdersCreate.gui,
+        ])
+            .then(userProperties => {
+            user = userProperties;
+            cy.login(userProperties.username, userProperties.password, { path:TopMenu.ledgerPath, waiter: Ledgers.waitForLedgerDetailsLoading });
+            });
+    });
+
+    afterEach(() => {
+        Orders.deleteOrderApi(order.id);
+        Organizations.deleteOrganizationViaApi(organization.id);
+        Users.deleteViaApi(user.userId);
+    });
+
+  it('C663 Create an order and at least one order line for an ongoing order (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
+    Orders.createOrder(order);
+    Orders.checkCreatedOrder(order);
+    OrderLines.addPOLine();
+    OrderLines.POLineInfoforElectronicResource(orderLineTitle, defaultFund);
+    InteractorsTools.checkCalloutMessage('The purchase order line was successfully created');
+    OrderLines.checkCreatedPOLineElectronicResource(orderLineTitle, defaultFund);
+    OrderLines.backToEditingOrder();
+  });
+});
