@@ -639,6 +639,14 @@ export default {
     cy.expect(MultiColumnListCell({ content }).exists());
   },
 
+  verifyHoldingsPermanentLocation(permanentLocation) {
+    cy.expect(Pane(including('Holdings')).find(KeyValue('Permanent')).has({ value: `${permanentLocation}` }));
+  },
+
+  verifyHoldingsTemporaryLocation(temporaryLocation) {
+    cy.expect(Pane(including('Holdings')).find(KeyValue('Temporary')).has({ value: `${temporaryLocation}` }));
+  },
+
   checkIsItemCreated:(itemBarcode) => {
     cy.expect(Link(itemBarcode).exists());
   },
