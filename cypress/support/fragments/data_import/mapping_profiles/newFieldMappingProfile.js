@@ -219,9 +219,11 @@ export default {
   saveProfile:() => cy.do(saveButton.click()),
   fillPermanentLocation:(location) => cy.do(TextField('Permanent').fillIn(location)),
   fillTemporaryLocation:(location) => cy.do(TextField('Temporary').fillIn(location)),
-  fillIllPolicy:(policy) => cy.do(TextField('ILL policy').fillIn(`"${policy}"`)),
+  fillDigitizationPolicy:(policy) => cy.do(TextField('Digitization policy').fillIn(policy)),
   fillCallNumber:(number) => cy.do(TextField('Call number').fillIn(number)),
+  fillNumberOfPieces:(number) => cy.do(TextField('Number of pieces').fillIn(number)),
   fillBarcode:(barcode) => cy.do(TextField('Barcode').fillIn(barcode)),
+  fillAccessionNumber:(number) => cy.do(TextField('Accession number').fillIn(number)),
   fillCopyNumber:(number) => cy.do(TextField('Copy number').fillIn(number)),
   fillVendorInvoiceNumber:(number) => cy.do(TextField('Vendor invoice number*').fillIn(number)),
   fillDescription:(text) => cy.do(TextField('Description*').fillIn(text)),
@@ -351,12 +353,22 @@ export default {
   },
 
   fillPermanentLoanType:(loanType) => {
-    cy.do(TextField('Permanent loan type').fillIn(loanType));
+    cy.do(TextField('Permanent loan type').fillIn(`"${loanType}"`));
     waitLoading();
   },
 
-  fillMaterialType:(type = materialType) => {
-    cy.do(TextField('Material type').fillIn(type));
+  fillTemporaryLoanType:(loanType) => {
+    cy.do(TextField('Temporary loan type').fillIn(loanType));
+    waitLoading();
+  },
+
+  fillMaterialType:(type = 'book') => {
+    cy.do(TextField('Material type').fillIn(`"${type}"`));
+    waitLoading();
+  },
+
+  fillIllPolicy:(policy) => {
+    cy.do(TextField('ILL policy').fillIn(`"${policy}"`));
     waitLoading();
   },
 

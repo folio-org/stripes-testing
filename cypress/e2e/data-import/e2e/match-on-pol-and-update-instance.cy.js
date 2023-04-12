@@ -63,12 +63,12 @@ describe('ui-data-import', () => {
     },
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
-        name: mappingProfileNameForItem },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
-        name: actionProfileNameForItem,
+        name: mappingProfileNameForItem,
         status:'Available',
-        permanentLoanType:'"Can circulate"',
-        materialType:'"book"' }
+        permanentLoanType:'Can circulate',
+        materialType:'book' },
+      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
+        name: actionProfileNameForItem }
     }
   ];
 
