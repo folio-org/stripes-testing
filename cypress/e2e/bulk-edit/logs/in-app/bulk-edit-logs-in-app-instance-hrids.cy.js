@@ -18,11 +18,11 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 let user;
 const invalidInstanceHRID = `123-${getRandomPostfix()}`;
 const validAndInvalidInstanceHRIDsFileName = `validAndInvalidInstanceHRIDS-${getRandomPostfix()}.csv`;
-const matchRecordsFileNameInvalidAndValid = `*Matched-Records-${validAndInvalidInstanceHRIDsFileName}`
-const errorsFromMatchingFileName = `*-Errors-${validAndInvalidInstanceHRIDsFileName}`
-const updatesPreviewFileName = `*-Updates-Preview-${validAndInvalidInstanceHRIDsFileName}`
-const updatedRecordsFilename = `*-Changed-Records-${validAndInvalidInstanceHRIDsFileName}`
-const errorsFromCommittingFileName = `*-Errors-${matchRecordsFileNameInvalidAndValid}`
+const matchRecordsFileNameInvalidAndValid = `*Matched-Records-${validAndInvalidInstanceHRIDsFileName}`;
+const errorsFromMatchingFileName = `*-Errors-${validAndInvalidInstanceHRIDsFileName}`;
+const updatesPreviewFileName = `*-Updates-Preview-${validAndInvalidInstanceHRIDsFileName}`;
+const updatedRecordsFilename = `*-Changed-Records-${validAndInvalidInstanceHRIDsFileName}`;
+const errorsFromCommittingFileName = `*-Errors-${matchRecordsFileNameInvalidAndValid}`;
 
 const item = {
   barcode: `456-${getRandomPostfix()}`,
@@ -68,7 +68,7 @@ describe('Bulk Edit - Logs', () => {
       permissions.inventoryAll.gui,
     ])
       .then(userProperties => {
-        user = userProperties
+        user = userProperties;
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
@@ -185,7 +185,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditActions.openInAppStartBulkEditFrom();
     BulkEditActions.clearTemporaryLocation('holdings', 0);
     BulkEditActions.addNewBulkEditFilterString();
-    BulkEditActions.replacePermanentLocation(instance.defaultLocation.name, 'holdings', 1)
+    BulkEditActions.replacePermanentLocation(instance.defaultLocation.name, 'holdings', 1);
 
     BulkEditActions.confirmChanges();
     BulkEditActions.downloadPreview();
@@ -228,7 +228,7 @@ describe('Bulk Edit - Logs', () => {
     InventoryInstance.verifyHoldingsPermanentLocation(instance.defaultLocation.name);
     InventoryInstance.verifyHoldingsTemporaryLocation('-');
     InventoryInstance.closeHoldingsView();
-    
+
     InventorySearchAndFilter.searchByParameter('Instance HRID', item2.instanceHrid);
     InventorySearchAndFilter.selectSearchResultItem();
     InventorySearchAndFilter.selectViewHoldings();
