@@ -124,6 +124,14 @@ export default {
   checkMarkAsSuppressedFromDiscovery:() => cy.expect(root
     .find(HTML(including('Warning: Holdings is marked suppressed from discovery')))
     .exists()),
+  checkElectronicAccess:(relationshipValue, uriValue) => {
+    cy.expect(Accordion('Electronic access')
+      .find(MultiColumnListCell({ row: 0, columnIndex: 0, content: relationshipValue }))
+      .exists());
+    cy.expect(Accordion('Electronic access')
+      .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: uriValue }))
+      .exists());
+  },
 
   getHoldingsHrId: () => cy.then(() => holdingHrIdKeyValue.value()),
   getId:() => {
