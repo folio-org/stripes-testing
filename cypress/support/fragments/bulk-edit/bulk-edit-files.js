@@ -12,6 +12,8 @@ export default {
       case 'expirationDate': verifyFunc = this.verifyMatchedResultExpirationDate; break;
       case 'firstElement': verifyFunc = this.verifyMatchedResultFirstElement; break;
       case 'emailDomain': verifyFunc = this.verifyMatchedResultByEmailDomain; break;
+      case 'permanentLocation': verifyFunc = this.verifyMatchedResultByPermanentLocation; break;
+      case 'temporaryLocation': verifyFunc = this.verifyMatchedResultByTemporaryLocation; break;
       default: verifyFunc = this.verifyMatchedResultByHRID;
     }
 
@@ -112,5 +114,15 @@ export default {
   verifyMatchedResultByEmailDomain(actualResult, expectedResult) {
     const actualEmailDomain = actualResult.split(',')[13];
     expect(actualEmailDomain).to.include('@' + expectedResult);
+  },
+
+  verifyMatchedResultByPermanentLocation(actualResult, expectedResult) {
+    const actualPermanentLocation = actualResult.split(',')[6];
+    expect(actualPermanentLocation).to.eq(expectedResult);
+  },
+
+  verifyMatchedResultByTemporaryLocation(actualResult, expectedResult) {
+    const actualTemporaryLocation = actualResult.split(',')[7];
+    expect(actualTemporaryLocation).to.eq(expectedResult);
   },
 };
