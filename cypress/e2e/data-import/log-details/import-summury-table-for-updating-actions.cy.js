@@ -244,11 +244,11 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
         name: holdingsMappingProfileNameForUpdate,
-        holdingsType: 'electronic',
+        holdingsType: 'Electronic',
         permanentLocation: '"Online (E)"',
         callNumberType: 'Library of Congress classification',
         callNumber: '050$a " " 050$b',
-        relationship: '"Resource"',
+        relationship: 'Resource',
         uri: '856$u' },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
         name: holdingsActionProfileNameForUpdate,
@@ -257,11 +257,11 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue : NewFieldMappingProfile.folioRecordTypeValue.item,
         name: itemMappingProfileNameForUpdate,
-        materialType: '"electronic resource"',
+        materialType: 'electronic resource',
         noteType: '"Electronic bookplate"',
         note: '"Smith Family Foundation"',
-        staffOnly: '"Mark for all affected records"',
-        permanentLoanType: '"Can circulate"',
+        staffOnly: 'Mark for all affected records',
+        permanentLoanType: 'Can circulate',
         status: 'Available' },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: itemActionProfileNameForUpdate,
@@ -358,6 +358,12 @@ describe('ui-data-import', () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InventorySearchAndFilter.saveUUIDs();
         ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+
+        // download exported marc file
+        cy.visit(TopMenu.dataExportPath);
+        ExportFile.uploadFile(nameForCSVFile);
+        ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
+        ExportFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
 
         // create mapping profiles
