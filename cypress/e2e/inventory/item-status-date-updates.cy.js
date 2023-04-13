@@ -115,27 +115,27 @@ describe('ui-inventory: Item status date updates', () => {
       });
   });
 
-  afterEach(() => {
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
-    Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
-      .then(order => Orders.deleteOrderApi(order[0].id));
-    UserEdit.changeServicePointPreferenceViaApi(
-      userForDeliveryRequest.userId,
-      [effectiveLocationServicePoint.id, notEffectiveLocationServicePoint.id]
-    )
-      .then(() => {
-        ServicePoint.deleteViaApi(effectiveLocationServicePoint.id);
-        ServicePoint.deleteViaApi(notEffectiveLocationServicePoint.id);
-        Users.deleteViaApi(userForDeliveryRequest.userId);
-      });
+  // afterEach(() => {
+  //   InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
+  //   Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
+  //     .then(order => Orders.deleteOrderApi(order[0].id));
+  //   UserEdit.changeServicePointPreferenceViaApi(
+  //     userForDeliveryRequest.userId,
+  //     [effectiveLocationServicePoint.id, notEffectiveLocationServicePoint.id]
+  //   )
+  //     .then(() => {
+  //       ServicePoint.deleteViaApi(effectiveLocationServicePoint.id);
+  //       ServicePoint.deleteViaApi(notEffectiveLocationServicePoint.id);
+  //       Users.deleteViaApi(userForDeliveryRequest.userId);
+  //     });
 
-    NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
-      effectiveLocation.institutionId,
-      effectiveLocation.campusId,
-      effectiveLocation.libraryId,
-      effectiveLocation.id
-    );
-  });
+  //   NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+  //     effectiveLocation.institutionId,
+  //     effectiveLocation.campusId,
+  //     effectiveLocation.libraryId,
+  //     effectiveLocation.id
+  //   );
+  // });
 
   const openItem = (title, itemLocation, barcode) => {
     cy.visit(TopMenu.inventoryPath);
@@ -192,7 +192,6 @@ describe('ui-inventory: Item status date updates', () => {
     UsersCard.showOpenedLoans();
   };
 
-  // test is looping
   it('C9200 Item status date updates (folijet) (prokopovych)', () => {
     const caption = `autotest_caption_${getRandomPostfix()}`;
     const numberOfPieces = '3';
@@ -282,12 +281,14 @@ describe('ui-inventory: Item status date updates', () => {
 
     // create delivery request (hold or recall) on item
     cy.visit(TopMenu.requestsPath);
-    NewRequest.createDeliveryRequest({
-      itemBarcode,
-      itemTitle: null,
-      requesterBarcode: userForDeliveryRequest.barcode,
-      requestType: 'Hold'
-    });
+    cy.wrap(
+      NewRequest.createDeliveryRequest({
+        itemBarcode,
+        itemTitle: null,
+        requesterBarcode: userForDeliveryRequest.barcode,
+        requestType: 'Hold'
+      })
+    );
     cy.visit(TopMenu.checkInPath);
     CheckInActions.checkInItem(itemBarcode);
     ConfirmItemInModal.confirmMultipieceCheckInModal();
