@@ -13,10 +13,15 @@ import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane
 
 let user;
 const afterThreeMonthsDate = DateTools.getAfterThreeMonthsDateObj();
-const validUserBarcodesFileName = `validUserBarcodess_${getRandomPostfix()}.csv`;
-const matchRecordsFileNameValid = `*Matched-Records-${validUserBarcodesFileName}`;
-const updatesPreviewFileName = `*Updates-Preview-${validUserBarcodesFileName}`;
-const updatedRecordsFileName = `modified-*-${matchRecordsFileNameValid}`;
+const validUserBarcodesFileName = `validUserBarcodes_${getRandomPostfix()}.csv`;
+const matchedRecordsFileName = `Matched-Records-${validUserBarcodesFileName}`;
+const changedRecordsFileName = `*-Changed-Records*-${validUserBarcodesFileName}`
+// It downloads 2 files in one click, both with same content
+const previewOfProposedChangesFileName = {
+  first: `*-Updates-Preview-${validUserBarcodesFileName}`,
+  second: `modified-*-${matchedRecordsFileName}`
+};
+const updatedRecordsFileName = `result-*-${matchedRecordsFileName}`;
 const newExpirationDate = {
   date: afterThreeMonthsDate,
   dateWithSlashes: DateTools.getFormattedDateWithSlashes({ date: afterThreeMonthsDate }),
@@ -43,7 +48,7 @@ describe('Bulk Edit - Logs', () => {
   after('delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${validUserBarcodesFileName}`);
     Users.deleteViaApi(user.userId);
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    FileManager.deleteFileFromDownloadsByMask(validUserBarcodesFileName, `*${matchedRecordsFileName}`, changedRecordsFileName, previewOfProposedChangesFileName.first, previewOfProposedChangesFileName.second, updatedRecordsFileName);
   });
 
   it('C375244 Verify genetated Logs files for Users In app -- only valid (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -74,11 +79,11 @@ describe('Bulk Edit - Logs', () => {
     BulkEditFiles.verifyCSVFileRows(validUserBarcodesFileName, [user.barcode]);
 
     BulkEditSearchPane.downloadFileWithMatchingRecords();
-    BulkEditFiles.verifyMatchedResultFileContent(matchRecordsFileNameValid, [user.barcode], 'userBarcode', true);
+    BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileName}`, [user.barcode], 'userBarcode', true);
 
     BulkEditSearchPane.downloadFileWithProposedChanges();
-    BulkEditFiles.verifyMatchedResultFileContent(updatesPreviewFileName, ['graduate'], 'patronGroup', true);
-    BulkEditFiles.verifyMatchedResultFileContent(updatesPreviewFileName, [newExpirationDate.dateWithDashes], 'expirationDate', true);
+    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, ['graduate'], 'patronGroup', true);
+    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, [newExpirationDate.dateWithDashes], 'expirationDate', true);
 
     BulkEditSearchPane.downloadFileWithUpdatedRecords();
     BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, ['graduate'], 'patronGroup', true);

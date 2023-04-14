@@ -14,11 +14,16 @@ let user;
 let userWithoutPermissions;
 const invalidUserUUID = `invalidUserUUID_${getRandomPostfix()}`;
 const invalidAndValidUserUUIDsFileName = `invalidAndValidUserUUIDS_${getRandomPostfix()}.csv`;
-const matchRecordsFileNameInvalidAndValid = `Matched-Records-${invalidAndValidUserUUIDsFileName}`;
-const errorsFromMatchingFileName = `*Errors-${invalidAndValidUserUUIDsFileName}*`;
-const updatesPreviewFileName = `modified-*-${matchRecordsFileNameInvalidAndValid}`;
-const changedRecordsFileName = `result-*-${matchRecordsFileNameInvalidAndValid}`;
-const errorsFromCommittingFileName = `*Errors-*-${matchRecordsFileNameInvalidAndValid}*`;
+const matchedRecordsFileNameInvalidAndValid = `Matched-Records-${invalidAndValidUserUUIDsFileName}`;
+const errorsFromMatchingFileName = `*Errors-${invalidAndValidUserUUIDsFileName}`;
+const changedRecordsFileName = `*-Changed-Records-${invalidAndValidUserUUIDsFileName}`;
+// It downloads 2 files in one click, both with same content
+const previewOfProposedChangesFileName = {
+  first: `*-Updates-Preview-${invalidAndValidUserUUIDsFileName}`,
+  second: `modified-*-${matchedRecordsFileNameInvalidAndValid}`
+};
+const updatedRecordsFileName = `result-*-${matchedRecordsFileNameInvalidAndValid}`;
+const errorsFromCommittingFileName = `*Errors-*-${matchedRecordsFileNameInvalidAndValid}`;
 
 describe('Bulk Edit - Logs', () => {
   before('create test data', () => {
@@ -44,8 +49,8 @@ describe('Bulk Edit - Logs', () => {
   after('delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${invalidAndValidUserUUIDsFileName}`);
     Users.deleteViaApi(user.userId);
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-  });
+    FileManager.deleteFileFromDownloadsByMask(invalidAndValidUserUUIDsFileName, errorsFromCommittingFileName, `*${matchedRecordsFileNameInvalidAndValid}`, changedRecordsFileName, previewOfProposedChangesFileName.first, previewOfProposedChangesFileName.second, updatedRecordsFileName, errorsFromMatchingFileName);
+ });
 
   it('C375245 Verify genetated Logs files for Users In app -- valid and invalid records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.verifyDragNDropUsersUIIDsArea();
@@ -74,16 +79,16 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.verifyLogsRowActionWhenCompletedWithErrors();
 
     BulkEditSearchPane.downloadFileUsedToTrigger();
-    BulkEditFiles.verifyCSVFileRows(`${invalidAndValidUserUUIDsFileName}*`, [user.userId, userWithoutPermissions.userId, invalidUserUUID]);
+    BulkEditFiles.verifyCSVFileRows(invalidAndValidUserUUIDsFileName, [user.userId, userWithoutPermissions.userId, invalidUserUUID]);
 
     BulkEditSearchPane.downloadFileWithMatchingRecords();
-    BulkEditFiles.verifyMatchedResultFileContent(`*${matchRecordsFileNameInvalidAndValid}*`, [user.userId, userWithoutPermissions.userId], 'userId', true);
+    BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileNameInvalidAndValid}`, [user.userId, userWithoutPermissions.userId], 'userId', true);
 
     BulkEditSearchPane.downloadFileWithErrorsEncountered();
     BulkEditFiles.verifyMatchedResultFileContent(errorsFromMatchingFileName, [invalidUserUUID], 'firstElement', false);
 
     BulkEditSearchPane.downloadFileWithProposedChanges();
-    BulkEditFiles.verifyMatchedResultFileContent(updatesPreviewFileName, ['staff', 'staff'], 'patronGroup', true);
+    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, ['staff', 'staff'], 'patronGroup', true);
 
     BulkEditSearchPane.downloadFileWithUpdatedRecords();
     BulkEditFiles.verifyMatchedResultFileContent(changedRecordsFileName, ['staff'], 'patronGroup', true);

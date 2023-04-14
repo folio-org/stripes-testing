@@ -11,11 +11,17 @@ import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 
 let user;
-const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
-const matchRecordsFileName = `Matched-Records-${userUUIDsFileName}`;
-const importFileName = `bulkEditImport_${getRandomPostfix()}.csv`;
-const updatedRecordsFileName = 'result';
 const newName = `testName_${getRandomPostfix()}`;
+const userUUIDsFileName = `userUUIDs-${getRandomPostfix()}.csv`;
+const matchedRecordsFileName = `Matched-Records-${userUUIDsFileName}`;
+const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
+const changedRecordsFileName = `*-Changed-Records*-${editedFileName}`
+// It downloads 2 files in one click, both with same content
+const previewOfProposedChangesFileName = {
+  first: `*-Updates-Preview-${editedFileName}`,
+  second: editedFileName
+};
+const updatedRecordsFileName = `result-*-${matchedRecordsFileName}`;
 
 describe('Bulk Edit - Logs', () => {
   before('create test data', () => {
@@ -37,34 +43,26 @@ describe('Bulk Edit - Logs', () => {
 
   after('delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
-    FileManager.deleteFile(`cypress/fixtures/${importFileName}`);
+    FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
     Users.deleteViaApi(user.userId);
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-  });
-
-  afterEach('reload bulk page', () => {
-    cy.visit(TopMenu.bulkEditPath);
+    FileManager.deleteFileFromDownloadsByMask(userUUIDsFileName, `*${matchedRecordsFileName}`, changedRecordsFileName, previewOfProposedChangesFileName.first, previewOfProposedChangesFileName.second, updatedRecordsFileName);
   });
 
   it('C375214 Verify generated Logs files for Users CSV -- only valid (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    // Upload file with user UUIDs
     BulkEditSearchPane.verifyDragNDropUsersUIIDsArea();
     BulkEditSearchPane.uploadFile(userUUIDsFileName);
     BulkEditSearchPane.waitFileUploading();
 
-    // Download matched results and modify them
     BulkEditActions.downloadMatchedResults();
-    BulkEditActions.prepareValidBulkEditFile(matchRecordsFileName, importFileName, 'testPermFirst', newName);
+    BulkEditActions.prepareValidBulkEditFile(matchedRecordsFileName, editedFileName, 'testPermFirst', newName);
 
-    // Upload modified file and commit changes
     BulkEditActions.openStartBulkEditForm();
-    BulkEditSearchPane.uploadFile(importFileName);
+    BulkEditSearchPane.uploadFile(editedFileName);
     BulkEditSearchPane.waitFileUploading();
     BulkEditActions.clickNext();
     BulkEditActions.commitChanges();
-
-    // Go to logs pane and verify elements
     BulkEditSearchPane.verifyChangedResults(newName);
+
     BulkEditActions.openActions();
     BulkEditActions.downloadChangedCSV();
     BulkEditSearchPane.openLogsSearch();
@@ -73,21 +71,17 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.clickActionsRunBy(user.username);
     BulkEditSearchPane.verifyLogsRowActionWhenCompleted();
 
-    // Download File that was used to trigger the bulk edit and compare with original file with UUIDs from line 34
     BulkEditSearchPane.downloadFileUsedToTrigger();
-    BulkEditFiles.verifyMatchedResultFileContent(`*${userUUIDsFileName}*`, [user.userId], 'userId', true);
+    BulkEditFiles.verifyMatchedResultFileContent(userUUIDsFileName, [user.userId], 'userId', true);
 
-    // Download File with the matching records and verify unique user UUID is in the file
     BulkEditSearchPane.downloadFileWithMatchingRecords();
-    BulkEditFiles.verifyMatchedResultFileContent(`*${matchRecordsFileName}*`, [user.userId], 'userId', true);
+    BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileName}`, [user.userId], 'userId', true);
 
-    // Download File with the preview of proposed changes and verify changes to the user's first name made in line 53
     BulkEditSearchPane.downloadFileWithProposedChanges();
-    BulkEditFiles.verifyMatchedResultFileContent(`*${importFileName}*`, [newName], 'firstName', true);
+    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, [newName], 'firstName', true);
 
-    // Download File with the updated records and verify user's first name is updated
     BulkEditSearchPane.downloadFileWithUpdatedRecords();
-    BulkEditFiles.verifyMatchedResultFileContent(`*${updatedRecordsFileName}*`, [newName], 'firstName', true);
+    BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, [newName], 'firstName', true);
 
     // Go to users app and verify changes
     cy.visit(TopMenu.usersPath);

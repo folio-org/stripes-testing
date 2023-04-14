@@ -11,9 +11,15 @@ import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-fil
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
-const matchRecordsFileName = `Matched-Records-${userUUIDsFileName}`;
-const importFileName = `bulkEditImport_${getRandomPostfix()}.csv`;
-const updatedRecordsFileName = 'result';
+const matchedRecordsFileName = `Matched-Records-${userUUIDsFileName}`;
+const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
+const changedRecordsFileName = `*-Changed-Records*-${editedFileName}`
+// It downloads 2 files in one click, both with same content
+const previewOfProposedChangesFileName = {
+  first: `*-Updates-Preview-${editedFileName}`,
+  second: editedFileName
+};
+const updatedRecordsFileName = `result-*-${matchedRecordsFileName}`;
 
 describe('Bulk Edit - Logs', () => {
   before('create test data', () => {
@@ -35,9 +41,9 @@ describe('Bulk Edit - Logs', () => {
 
   after('delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
-    FileManager.deleteFile(`cypress/fixtures/${importFileName}`);
+    FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
     Users.deleteViaApi(user.userId);
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    FileManager.deleteFileFromDownloadsByMask(userUUIDsFileName, `*${matchedRecordsFileName}`, changedRecordsFileName, previewOfProposedChangesFileName.first, previewOfProposedChangesFileName.second, updatedRecordsFileName);
   });
 
   it('C375217 Verify generated Logs files for Users CSV (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -48,11 +54,11 @@ describe('Bulk Edit - Logs', () => {
     // Prepare file for bulk edit
     const nameToUpdate = `testNameToUpdate_${getRandomPostfix()}`;
     BulkEditActions.downloadMatchedResults();
-    BulkEditActions.prepareValidBulkEditFile(matchRecordsFileName, importFileName, 'testPermFirst', nameToUpdate);
+    BulkEditActions.prepareValidBulkEditFile(matchedRecordsFileName, editedFileName, 'testPermFirst', nameToUpdate);
 
     // Upload bulk edit file
     BulkEditActions.openStartBulkEditForm();
-    BulkEditSearchPane.uploadFile(importFileName);
+    BulkEditSearchPane.uploadFile(editedFileName);
     BulkEditSearchPane.waitFileUploading();
     BulkEditActions.clickNext();
     BulkEditActions.commitChanges();
@@ -68,15 +74,15 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.clickActionsRunBy(user.username);
     BulkEditSearchPane.verifyLogsRowActionWhenCompleted();
     BulkEditSearchPane.downloadFileUsedToTrigger();
-    BulkEditFiles.verifyMatchedResultFileContent(`*${userUUIDsFileName}*`, [user.userId], 'userId', true);
+    BulkEditFiles.verifyMatchedResultFileContent(userUUIDsFileName, [user.userId], 'userId', true);
 
     BulkEditSearchPane.downloadFileWithMatchingRecords();
-    BulkEditFiles.verifyMatchedResultFileContent(`*${matchRecordsFileName}*`, [user.userId], 'userId', true);
+    BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileName}`, [user.userId], 'userId', true);
 
     BulkEditSearchPane.downloadFileWithProposedChanges();
-    BulkEditFiles.verifyMatchedResultFileContent(`*${importFileName}*`, [nameToUpdate], 'firstName', true);
+    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, [nameToUpdate], 'firstName', true);
 
     BulkEditSearchPane.downloadFileWithUpdatedRecords();
-    BulkEditFiles.verifyMatchedResultFileContent(`*${updatedRecordsFileName}*`, [nameToUpdate], 'firstName', true);
+    BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, [nameToUpdate], 'firstName', true);
   });
 });
