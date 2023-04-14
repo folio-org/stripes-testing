@@ -16,7 +16,7 @@ import ItemRecordView from '../../../../support/fragments/inventory/itemRecordVi
 let user;
 const validItemUUIDsFileName = `validItemUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `Matched-Records-${validItemUUIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records*-${validItemUUIDsFileName}`
+const changedRecordsFileName = `*-Changed-Records*-${validItemUUIDsFileName}`;
 // It downloads 2 files in one click, both with same content
 const previewOfProposedChangesFileName = {
   first: `*-Updates-Preview-${validItemUUIDsFileName}`,

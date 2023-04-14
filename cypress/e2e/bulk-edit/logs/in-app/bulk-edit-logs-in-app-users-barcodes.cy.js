@@ -15,7 +15,7 @@ let user;
 const afterThreeMonthsDate = DateTools.getAfterThreeMonthsDateObj();
 const validUserBarcodesFileName = `validUserBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `Matched-Records-${validUserBarcodesFileName}`;
-const changedRecordsFileName = `*-Changed-Records*-${validUserBarcodesFileName}`
+const changedRecordsFileName = `*-Changed-Records*-${validUserBarcodesFileName}`;
 // It downloads 2 files in one click, both with same content
 const previewOfProposedChangesFileName = {
   first: `*-Updates-Preview-${validUserBarcodesFileName}`,

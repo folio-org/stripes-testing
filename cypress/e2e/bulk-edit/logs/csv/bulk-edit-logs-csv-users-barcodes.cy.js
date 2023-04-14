@@ -17,8 +17,8 @@ const invalidAndValidUserBarcodesFileName = `invalidAndValidUserBarcodes_${getRa
 const matchedRecordsFileName = `Matched-Records-${invalidAndValidUserBarcodesFileName}`;
 const errorsFromMatchingFileName = `*Errors-${invalidAndValidUserBarcodesFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
-const changedRecordsFileName = `*-Changed-Records-${editedFileName}`
-const errorsInChangedRecordsFileName = `*-Errors-${editedFileName}`
+const changedRecordsFileName = `*-Changed-Records-${editedFileName}`;
+const errorsInChangedRecordsFileName = `*-Errors-${editedFileName}`;
 // It downloads 2 files in one click, both with same content
 const previewOfProposedChangesFileName = {
   first: `*-Updates-Preview-${editedFileName}`,
