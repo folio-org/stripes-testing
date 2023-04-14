@@ -10,9 +10,9 @@ const sourceCheckbox = Checkbox('Source record storage (entire record)');
 const itemCheckbox = Checkbox('Item');
 
 export default {
-  fillMappingProfile:(profileName, holdingsMarcField = '901', itemMarcField = '902', subfieldForHoldings = '$a', subfieldForItem = '$a') => {
+  fillMappingProfile:(profile) => {
     cy.do([
-      fieldName.fillIn(profileName),
+      fieldName.fillIn(profile.name),
       outputFormatSelect.choose(outputFormat),
       sourceCheckbox.click(),
       Checkbox('Holdings').click(),
@@ -20,11 +20,11 @@ export default {
       addTransformationsButton.click()
     ]);
     modalSelectTransformations.searchItemTransformationsByName('Holdings - HRID');
-    modalSelectTransformations.selectTransformations(holdingsMarcField, subfieldForHoldings);
+    modalSelectTransformations.selectTransformations(profile.holdingsMarcField, profile.subfieldForHoldings);
     cy.do(addTransformationsButton.click());
     cy.expect(Modal('Select transformations').absent());
     modalSelectTransformations.searchItemTransformationsByName('Item - HRID');
-    modalSelectTransformations.selectTransformations(itemMarcField, subfieldForItem);
+    modalSelectTransformations.selectTransformations(profile.itemMarcField, profile.subfieldForItem);
   },
 
   fillMappingProfileForItemHrid:(profileName, itemMarcField = '902', subfield = '$a') => {

@@ -1,6 +1,6 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import DateTools from '../../../support/utils/dateTools';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import Helper from '../../../support/fragments/finance/financeHelper';
@@ -24,7 +24,7 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import itemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
 
 describe('ui-data-import', () => {
   let instanceHrid;
@@ -34,9 +34,9 @@ describe('ui-data-import', () => {
   const quantityOfItems = '1';
   const instanceTitle = 'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)';
   // file names
-  const nameMarcFileForImportCreate = `C356802autotestFile.${getRandomPostfix()}.mrc`;
-  const nameForCSVFile = `C356802autotestFile${getRandomPostfix()}.csv`;
-  const nameMarcFileForImportUpdate = `C356802autotestFile${getRandomPostfix()}.mrc`;
+  const nameMarcFileForImportCreate = `C356802autotestFile.${Helper.getRandomBarcode()}.mrc`;
+  const nameForCSVFile = `C356802autotestFile${Helper.getRandomBarcode()}.csv`;
+  const nameMarcFileForImportUpdate = `C356802autotestFile${Helper.getRandomBarcode()}.mrc`;
   // unique profile names
   const marcBibMappingProfileNameForCreate = `C356802 create marcBib mapping profile ${Helper.getRandomBarcode()}`;
   const instanceMappingProfileNameForCreate = `C356802 create instance mapping profile ${Helper.getRandomBarcode()}`;
@@ -48,7 +48,7 @@ describe('ui-data-import', () => {
   const itemActionProfileNameForCreate = `C356802 create item action profile ${Helper.getRandomBarcode()}`;
   const jobProfileNameForCreate = `C356802 create job profile ${Helper.getRandomBarcode()}`;
   const mappingProfileNameForExport = `C356802 mapping profile ${Helper.getRandomBarcode()}`;
-  const jobProfileNameForExport = `C356802 job profile.${getRandomPostfix()}`;
+  const jobProfileNameForExport = `C356802 job profile.${Helper.getRandomBarcode()}`;
   const instanceMappingProfileNameForUpdate = `C356802 update instance mapping profile ${Helper.getRandomBarcode()}`;
   const holdingsMappingProfileNameForUpdate = `C356802 update holdings mapping profile ${Helper.getRandomBarcode()}`;
   const itemMappingProfileNameForUpdate = `C356802 update item mapping profile ${Helper.getRandomBarcode()}`;
@@ -234,6 +234,7 @@ describe('ui-data-import', () => {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance,
         name: instanceMappingProfileNameForUpdate,
         catalogedDate: '###TODAY###',
+        catalogedDateUi: DateTools.getFormattedDate({ date: new Date() }),
         instanceStatus: 'Batch Loaded',
         statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
         statisticalCodeUI: 'Book, print (books)' },
@@ -246,6 +247,7 @@ describe('ui-data-import', () => {
         name: holdingsMappingProfileNameForUpdate,
         holdingsType: 'Electronic',
         permanentLocation: '"Online (E)"',
+        permanentLocationUI: 'Online',
         callNumberType: 'Library of Congress classification',
         callNumber: '050$a " " 050$b',
         relationship: 'Resource',
@@ -260,6 +262,7 @@ describe('ui-data-import', () => {
         materialType: 'electronic resource',
         noteType: '"Electronic bookplate"',
         note: '"Smith Family Foundation"',
+        noteUI: 'Smith Family Foundation',
         staffOnly: 'Mark for all affected records',
         permanentLoanType: 'Can circulate',
         status: 'Available' },
@@ -314,6 +317,35 @@ describe('ui-data-import', () => {
     cy.loginAsAdmin({ path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
   });
 
+  after('delete test data', () => {
+    JobProfiles.deleteJobProfile(jobProfileNameForCreate);
+    JobProfiles.deleteJobProfile(jobProfileNameForUpdate);
+    collectionOfMatchProfiles.forEach(profile => {
+      MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+    });
+    ActionProfiles.deleteActionProfile(marcBibActionProfileNameForCreate);
+    ActionProfiles.deleteActionProfile(instanceActionProfileNameForCreate);
+    ActionProfiles.deleteActionProfile(holdingsActionProfileNameForCreate);
+    ActionProfiles.deleteActionProfile(itemActionProfileNameForCreate);
+    FieldMappingProfiles.deleteFieldMappingProfile(marcBibMappingProfileNameForCreate);
+    FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileNameForCreate);
+    FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileNameForCreate);
+    FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileNameForCreate);
+    collectionOfMappingAndActionProfiles.forEach(profile => {
+      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+    });
+    // delete created files in fixtures
+    FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
+    FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        cy.deleteItemViaApi(instance.items[0].id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+  });
+
   it('C356802 Check import summary table with "Updated" actions for instance, holding and item (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       // create profiles via API
@@ -339,8 +371,9 @@ describe('ui-data-import', () => {
       JobProfiles.waitFileIsImported(nameMarcFileForImportCreate);
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(nameMarcFileForImportCreate);
+
       // check the instance is created
-      FileDetails.openInstanceInInventory('Created');
+      FileDetails.openInstanceInInventory(FileDetails.status.created);
       InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
         instanceHrid = initialInstanceHrId;
 
@@ -348,7 +381,7 @@ describe('ui-data-import', () => {
         cy.go('back');
 
         cy.visit(SettingsMenu.exportMappingProfilePath);
-        ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile.name);
+        ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
 
         cy.visit(SettingsMenu.exportJobProfilePath);
         ExportJobProfiles.createJobProfile(jobProfileNameForExport, mappingProfileNameForExport);
@@ -358,34 +391,34 @@ describe('ui-data-import', () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InventorySearchAndFilter.saveUUIDs();
         ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
-
-        // download exported marc file
-        cy.visit(TopMenu.dataExportPath);
-        ExportFile.uploadFile(nameForCSVFile);
-        ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
-        ExportFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
-        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-
-        // create mapping profiles
-        cy.visit(SettingsMenu.mappingProfilePath);
-        FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
-        NewFieldMappingProfile.fillCatalogedDate(collectionOfMappingAndActionProfiles[0].mappingProfile.catalogedDate);
-        NewFieldMappingProfile.fillInstanceStatusTerm(collectionOfMappingAndActionProfiles[0].mappingProfile.instanceStatus);
-        NewFieldMappingProfile.addStatisticalCode(collectionOfMappingAndActionProfiles[0].mappingProfile.statisticalCode, 8);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfileNameForUpdate);
-
-        FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
-        NewFieldMappingProfile.fillHoldingsType(collectionOfMappingAndActionProfiles[1].mappingProfile.holdingsType);
-        NewFieldMappingProfile.fillPermanentLocation(collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocation);
-        NewFieldMappingProfile.fillCallNumberType(collectionOfMappingAndActionProfiles[1].mappingProfile.callNumberType);
-        NewFieldMappingProfile.fillCallNumber(collectionOfMappingAndActionProfiles[1].mappingProfile.callNumber);
-        NewFieldMappingProfile.addElectronicAccess(collectionOfMappingAndActionProfiles[1].mappingProfile.relationship, collectionOfMappingAndActionProfiles[1].mappingProfile.uri);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfileNameForUpdate);
       });
+
+      // download exported marc file
+      cy.visit(TopMenu.dataExportPath);
+      ExportFile.uploadFile(nameForCSVFile);
+      ExportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
+      ExportFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
+      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+
+      // create mapping profiles
+      cy.visit(SettingsMenu.mappingProfilePath);
+      FieldMappingProfiles.openNewMappingProfileForm();
+      NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
+      NewFieldMappingProfile.fillCatalogedDate(collectionOfMappingAndActionProfiles[0].mappingProfile.catalogedDate);
+      NewFieldMappingProfile.fillInstanceStatusTerm(collectionOfMappingAndActionProfiles[0].mappingProfile.instanceStatus);
+      NewFieldMappingProfile.addStatisticalCode(collectionOfMappingAndActionProfiles[0].mappingProfile.statisticalCode, 8);
+      FieldMappingProfiles.saveProfile();
+      FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfileNameForUpdate);
+
+      FieldMappingProfiles.openNewMappingProfileForm();
+      NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
+      NewFieldMappingProfile.fillHoldingsType(collectionOfMappingAndActionProfiles[1].mappingProfile.holdingsType);
+      NewFieldMappingProfile.fillPermanentLocation(collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocation);
+      NewFieldMappingProfile.fillCallNumberType(collectionOfMappingAndActionProfiles[1].mappingProfile.callNumberType);
+      NewFieldMappingProfile.fillCallNumber(collectionOfMappingAndActionProfiles[1].mappingProfile.callNumber);
+      NewFieldMappingProfile.addElectronicAccess(collectionOfMappingAndActionProfiles[1].mappingProfile.relationship, collectionOfMappingAndActionProfiles[1].mappingProfile.uri);
+      FieldMappingProfiles.saveProfile();
+      FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfileNameForUpdate);
 
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile);
@@ -431,6 +464,7 @@ describe('ui-data-import', () => {
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(nameMarcFileForImportUpdate);
       Logs.openFileDetails(nameMarcFileForImportUpdate);
+
       [FileDetails.columnName.srsMarc,
         FileDetails.columnName.instance,
         FileDetails.columnName.holdings,
@@ -447,23 +481,23 @@ describe('ui-data-import', () => {
       FileDetails.checkItemsQuantityInSummaryTable(3, '0');
 
       // check instance, holdings, item are updated
-      FileDetails.openInstanceInInventory('Updated');
-      InstanceRecordView.verifyCatalogedDate(new Date().toISOString());
+      FileDetails.openInstanceInInventory(FileDetails.status.updated);
+      InstanceRecordView.verifyCatalogedDate(collectionOfMappingAndActionProfiles[0].mappingProfile.catalogedDateUi);
       InstanceRecordView.verifyInstanceStatusTerm(collectionOfMappingAndActionProfiles[0].mappingProfile.instanceStatus);
       InstanceRecordView.verifyStatisticalCode(collectionOfMappingAndActionProfiles[0].mappingProfile.statisticalCodeUI);
-      InstanceRecordView.openHoldingView();
+      cy.go('back');
+      FileDetails.openHoldingsInInventory(FileDetails.status.updated);
       HoldingsRecordView.checkHoldingsType(collectionOfMappingAndActionProfiles[1].mappingProfile.holdingsType);
-      HoldingsRecordView.checkPermanentLocation(collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocation);
+      HoldingsRecordView.checkPermanentLocation(collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocationUI);
       HoldingsRecordView.checkCallNumberType(collectionOfMappingAndActionProfiles[1].mappingProfile.callNumberType);
-      HoldingsRecordView.checkCallNumber(collectionOfMappingAndActionProfiles[1].mappingProfile.callNumber);
-      HoldingsRecordView.checkElectronicAccess(collectionOfMappingAndActionProfiles[1].mappingProfile.relationship, collectionOfMappingAndActionProfiles[1].mappingProfile.uri);
-      HoldingsRecordView.close();
-      InventoryInstance.openHoldingsAccordion(collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocation);
-      itemRecordView.verifyMaterialType(collectionOfMappingAndActionProfiles[2].mappingProfile.materialType);
-      itemRecordView.verifyNote(collectionOfMappingAndActionProfiles[2].mappingProfile.note, collectionOfMappingAndActionProfiles[2].mappingProfile.staffOnly);
-      itemRecordView.verifyPermanentLoanType(collectionOfMappingAndActionProfiles[2].mappingProfile.permanentLoanType);
-      itemRecordView.verifyItemStatus(collectionOfMappingAndActionProfiles[2].mappingProfile.status);
-
-      // noteType: '"Electronic bookplate"',
+      HoldingsRecordView.checkCallNumber('-');
+      HoldingsRecordView.openAccordion('Electronic access');
+      HoldingsRecordView.checkElectronicAccess(collectionOfMappingAndActionProfiles[1].mappingProfile.relationship, 'https://www.test.org/bro/10.230');
+      cy.go('back');
+      FileDetails.openItemInInventory(FileDetails.status.updated);
+      ItemRecordView.verifyMaterialType(collectionOfMappingAndActionProfiles[2].mappingProfile.materialType);
+      ItemRecordView.checkElectronicBookplateNote(collectionOfMappingAndActionProfiles[2].mappingProfile.noteUI);
+      ItemRecordView.verifyPermanentLoanType(collectionOfMappingAndActionProfiles[2].mappingProfile.permanentLoanType);
+      ItemRecordView.verifyItemStatus(collectionOfMappingAndActionProfiles[2].mappingProfile.status);
     });
 });
