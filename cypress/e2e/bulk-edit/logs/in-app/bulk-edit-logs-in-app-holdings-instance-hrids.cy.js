@@ -25,19 +25,14 @@ const updatedRecordsFilename = `*-Changed-Records-${validAndInvalidInstanceHRIDs
 const errorsFromCommittingFileName = `*-Errors-${matchRecordsFileNameInvalidAndValid}`;
 
 const item = {
-  barcode: `456-${getRandomPostfix()}`,
-  instanceName: `testBulkEdit_${getRandomPostfix()}`,
-  instanceId: '',
-  instanceHrid: ''
+  barcode: `456-${getRandomPostfix()}`
 };
 const item2 = {
-  barcode: `789-${getRandomPostfix()}`,
-  instanceName: `testBulkEdit_${getRandomPostfix()}`,
-  instanceId: '',
-  instanceHrid: ''
+  barcode: `789-${getRandomPostfix()}`
 };
 const instance = {
   id: '',
+  hrid: '',
   title: `autotestName_${getRandomPostfix()}`,
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   instanceTypeId: '',
@@ -49,6 +44,7 @@ const instance = {
 };
 const instance2 = {
   id: '',
+  hrid: '',
   title: `autotestName2_${getRandomPostfix()}`,
   instanceName: `testBulkEdit2_${getRandomPostfix()}`,
   instanceTypeId: '',
@@ -151,14 +147,14 @@ describe('Bulk Edit - Logs', () => {
                     // Getting both instance hrids and putting them into a file alongside with invalid one
                     cy.getInstanceById(instance.id)
                       .then((res) => {
-                        item.instanceHrid = res.hrid;
+                        instance.hrid = res.hrid;
                       });
                     cy.getInstanceById(instance2.id)
                       .then((res) => {
-                        item2.instanceHrid = res.hrid;
+                        instance2.hrid = res.hrid;
                       })
                       .then(() => {
-                        FileManager.createFile(`cypress/fixtures/${validAndInvalidInstanceHRIDsFileName}`, `${item.instanceHrid}\n${item2.instanceHrid}\n${invalidInstanceHRID}`);
+                        FileManager.createFile(`cypress/fixtures/${validAndInvalidInstanceHRIDsFileName}`, `${instance.hrid}\n${instance2.hrid}\n${invalidInstanceHRID}`);
                       });
                   });
               });
@@ -201,10 +197,10 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.verifyLogsRowActionWhenCompletedWithErrors();
 
     BulkEditSearchPane.downloadFileUsedToTrigger();
-    BulkEditFiles.verifyCSVFileRows(validAndInvalidInstanceHRIDsFileName, [item.instanceHrid, item2.instanceHrid, invalidInstanceHRID]);
+    BulkEditFiles.verifyCSVFileRows(validAndInvalidInstanceHRIDsFileName, [instance.hrid, instance2.hrid, invalidInstanceHRID]);
 
     BulkEditSearchPane.downloadFileWithMatchingRecords();
-    BulkEditFiles.verifyMatchedResultFileContent(matchRecordsFileNameInvalidAndValid, [item.instanceHrid, item2.instanceHrid], 'instanceHrid', true);
+    BulkEditFiles.verifyMatchedResultFileContent(matchRecordsFileNameInvalidAndValid, [instance.hrid, instance2.hrid], 'instanceHrid', true);
 
     BulkEditSearchPane.downloadFileWithErrorsEncountered();
     BulkEditFiles.verifyMatchedResultFileContent(errorsFromMatchingFileName, [invalidInstanceHRID], 'firstElement', false);
@@ -218,18 +214,18 @@ describe('Bulk Edit - Logs', () => {
     BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFilename, [instance.defaultLocation.name], 'permanentLocation', true);
 
     BulkEditSearchPane.downloadFileWithCommitErrors();
-    BulkEditFiles.verifyMatchedResultFileContent(errorsFromCommittingFileName, [item.instanceHrid], 'firstElement', false);
+    BulkEditFiles.verifyMatchedResultFileContent(errorsFromCommittingFileName, [instance.hrid], 'firstElement', false);
 
     // Go to inventory app and verify changes
     cy.visit(TopMenu.inventoryPath);
-    InventorySearchAndFilter.searchByParameter('Instance HRID', item.instanceHrid);
+    InventorySearchAndFilter.searchByParameter('Instance HRID', instance.hrid);
     InventorySearchAndFilter.selectSearchResultItem();
     InventorySearchAndFilter.selectViewHoldings();
     InventoryInstance.verifyHoldingsPermanentLocation(instance.defaultLocation.name);
     InventoryInstance.verifyHoldingsTemporaryLocation('-');
     InventoryInstance.closeHoldingsView();
 
-    InventorySearchAndFilter.searchByParameter('Instance HRID', item2.instanceHrid);
+    InventorySearchAndFilter.searchByParameter('Instance HRID', instance2.hrid);
     InventorySearchAndFilter.selectSearchResultItem();
     InventorySearchAndFilter.selectViewHoldings();
     InventoryInstance.verifyHoldingsPermanentLocation(instance.defaultLocation.name);
