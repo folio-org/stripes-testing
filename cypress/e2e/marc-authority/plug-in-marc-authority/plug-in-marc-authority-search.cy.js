@@ -46,6 +46,14 @@ describe('plug-in MARC authority | Search', () => {
         valurMarked: 'Twain, Mark,',
         type: 'Authorized',
       },
+      forC359232: {
+        searchOption: 'Subject',
+        typeOfHeading: 'Topical',
+        value: 'Chicken industry',
+        typeA: 'Authorized',
+        typeB: 'Reference',
+        typeC: 'Auth/Ref',
+      },
     };
     
     const marcFiles = [
@@ -90,6 +98,12 @@ describe('plug-in MARC authority | Search', () => {
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 1,
+      },
+      {
+        marc: 'marcFileForC359232.mrc', 
+        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        numOfRecords: 56,
       }
     ]
 
@@ -131,7 +145,7 @@ describe('plug-in MARC authority | Search', () => {
   after('Deleting created user', () => {
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
-    for (let i = 1; i < 13; i++) {
+    for (let i = 1; i < 69; i++) {
       MarcAuthority.deleteViaAPI(createdAuthorityIDs[i]);
     }
 
@@ -219,5 +233,25 @@ describe('plug-in MARC authority | Search', () => {
     MarcAuthorities.checkRecordDetailPageMarkedValue(testData.forC359230.valurMarked);
     MarcAuthorities.searchBy(testData.forC359230.searchOptionB, '*');
     MarcAuthorities.checkSingleHeadingType(testData.forC359230.type, testData.forC359230.typeOfHeadingA);
+  });
+
+  it('C359232 MARC Authority plug-in | Search using "Subject" option (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+    InventoryInstances.selectInstance();
+    InventoryInstance.editMarcBibliographicRecord();
+    InventoryInstance.verifyAndClickLinkIcon('700');
+    MarcAuthorities.switchToSearch();
+    InventoryInstance.verifySearchOptions();
+    MarcAuthorities.searchByParameter(testData.forC359232.searchOption, '*');
+    // wait for the results to be loaded.
+    cy.wait(1000);
+    MarcAuthorities.checkSingleHeadingType(testData.forC359232.typeA, testData.forC359232.typeOfHeading);
+    MarcAuthorities.checkType(testData.forC359232.typeA, testData.forC359232.typeB, testData.forC359232.typeC);
+    MarcAuthorities.clickNextPagination();
+    // wait for the next page to be loaded
+    cy.wait(1000);
+    MarcAuthorities.selectTitle(testData.forC359232.value);
+    MarcAuthorities.checkRecordDetailPageMarkedValue(testData.forC359232.value);
+    InventoryInstance.closeDetailsView();
   });
 });
