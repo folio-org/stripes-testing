@@ -259,10 +259,9 @@ describe('plug-in MARC authority | Search', () => {
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
     InventoryInstance.verifyAndClickLinkIcon('700');
-    InventoryInstance.closeAuthoritySource();
+    MarcAuthorities.switchToSearch();
     InventoryInstance.verifySearchOptions();
     MarcAuthorities.searchByParameter('Personal name', 'Erbil, H. Yıldırım');
-    MarcAuthorities.selectTitle('Erbil, H. Yıldırım');
     MarcAuthorities.checkRecordDetailPageMarkedValue('Erbil, H. Yıldırım');
   });
 });
