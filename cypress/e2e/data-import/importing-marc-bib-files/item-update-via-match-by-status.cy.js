@@ -176,8 +176,8 @@ describe('ui-data-import', () => {
     NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfile);
     NewFieldMappingProfile.fillMaterialType();
     NewFieldMappingProfile.addStatisticalCode(statisticalCode, 6);
-    NewFieldMappingProfile.fillPermanentLoanType('"Can circulate"');
-    NewFieldMappingProfile.fillStatus('"Available"');
+    NewFieldMappingProfile.fillPermanentLoanType('Can circulate');
+    NewFieldMappingProfile.fillStatus('Available');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfile.name);
   };

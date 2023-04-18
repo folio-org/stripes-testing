@@ -37,7 +37,7 @@ describe('Bulk Edit - Logs', () => {
     FileManager.deleteFileFromDownloadsByMask(invalidUsernamesFilename, errorsFromMatchingFileName);
   });
 
-  it('C375246 Verify genetated Logs files for Users In app -- only invalid records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C375246 Verify generated Logs files for Users In app -- only invalid records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.verifyDragNDropUsernamesArea();
     BulkEditSearchPane.uploadFile(invalidUsernamesFilename);
     BulkEditSearchPane.waitFileUploading();

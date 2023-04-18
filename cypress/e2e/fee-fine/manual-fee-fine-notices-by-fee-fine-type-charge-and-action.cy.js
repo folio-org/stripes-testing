@@ -66,16 +66,6 @@ describe('Overdue fine', () => {
       });
     });
   };
-  const createPatronNoticeTemplate = (template) => {
-    NewNoticePolicyTemplate.startAdding();
-    NewNoticePolicyTemplate.checkInitialState();
-    NewNoticePolicyTemplate.addToken('item.title');
-    NewNoticePolicyTemplate.create(template, false);
-    NewNoticePolicyTemplate.chooseCategory(template.category);
-    NewNoticePolicyTemplate.checkPreview();
-    NewNoticePolicyTemplate.saveAndClose();
-    NewNoticePolicyTemplate.waitLoading();
-  };
   const userOwnerBody = {
     id: uuid(),
     owner: 'AutotestOwner' + getRandomPostfix(),
@@ -193,12 +183,16 @@ describe('Overdue fine', () => {
         UsersSearchPane.waitLoading();
       };
 
-      createPatronNoticeTemplate(noticeTemplates.manualFeeFineCharge);
-      noticeTemplates.manualFeeFineCharge.category = 'FeeFineCharge';
-      NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.manualFeeFineCharge);
-      createPatronNoticeTemplate(noticeTemplates.manualFeeFineAction);
-      noticeTemplates.manualFeeFineAction.category = 'FeeFineAction';
-      NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.manualFeeFineAction);
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.manualFeeFineCharge);
+      NewNoticePolicyTemplate.checkAfterSaving({
+        ...noticeTemplates.manualFeeFineCharge,
+        category: 'FeeFineCharge',
+      });
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.manualFeeFineAction);
+      NewNoticePolicyTemplate.checkAfterSaving({
+        ...noticeTemplates.manualFeeFineAction,
+        category: 'FeeFineAction',
+      });
 
       cy.visit(SettingsMenu.manualCharges);
       ManualCharges.waitLoading();
