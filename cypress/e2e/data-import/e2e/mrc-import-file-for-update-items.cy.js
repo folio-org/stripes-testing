@@ -361,9 +361,9 @@ describe('ui-data-import', () => {
   const createItemMappingProfile = (profile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
-    NewFieldMappingProfile.fillMaterialType('"electronic resource"');
+    NewFieldMappingProfile.fillMaterialType('electronic resource');
     NewFieldMappingProfile.addItemNotes('"Electronic bookplate"', '"Smith Family Foundation"', 'Mark for all affected records');
-    NewFieldMappingProfile.fillPermanentLoanType('"Can circulate"');
+    NewFieldMappingProfile.fillPermanentLoanType('Can circulate');
     NewFieldMappingProfile.fillStatus('Available');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);

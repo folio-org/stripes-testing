@@ -106,6 +106,7 @@ export default {
   checkCallNumber:callNumber => cy.expect(KeyValue('Call number').has({ value: callNumber })),
   checkFormerHoldingsId: value => cy.expect(KeyValue('Former holdings ID', { value }).exists()),
   checkIllPolicy: value => cy.expect(KeyValue('ILL policy', { value }).exists()),
+  checkDigitizationPolicy: expectedPolicy => cy.expect(KeyValue('Digitization policy', { value: expectedPolicy }).exists()),
   checkURIIsNotEmpty:() => cy.expect(Accordion('Electronic access')
     .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: '-' }))
     .absent()),
