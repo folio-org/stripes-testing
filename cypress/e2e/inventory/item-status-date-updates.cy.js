@@ -60,9 +60,11 @@ describe('ui-inventory: Item status date updates', () => {
     CirculationRules.getViaApi().then((circulationRule) => {
       originalCirculationRules = circulationRule.rulesAsText;
       const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-      ruleProps.r = requestPolicyBody.id;
-      addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + ruleProps.i + ' l ' + ruleProps.l + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
-      CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
+      const defaultProps = ` i ${ruleProps.i} r ${ruleProps.r} o ${ruleProps.o} n ${ruleProps.n}`;
+
+      addedCirculationRule = `\nl ${loanPolicyForCourseReserves.id} ${defaultProps}`;
+      cy.updateCirculationRules({ rulesAsText: `${originalCirculationRules}${addedCirculationRule}` });
+    });
 
       ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' })
         .then((servicePoints) => {
