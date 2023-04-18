@@ -18,6 +18,7 @@ import {
   MultiSelect,
   MultiSelectOption,
   Link,
+  Section,
 } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -48,6 +49,7 @@ const searchForm = SearchField({ id: 'input-record-search' });
 const ordersFiltersPane = Pane({ id: 'orders-filters-pane' });
 const ordersResultsPane = Pane({ id: 'orders-results-pane' });
 const buttonAcquisitionMethodFilter = Button({ id: 'accordion-toggle-button-acquisitionMethod' });
+const purchaseOrderSection = Section({ id: 'purchaseOrder' });
 const searchByParameter = (parameter, value) => {
   cy.do([
     searchForm.selectIndex(parameter),
@@ -102,6 +104,16 @@ export default {
         .find(PaneHeader({ id: 'paneHeaderorder-details' })
           .find(actionsButton)).click(),
       Button('Edit').click(),
+    ]);
+  },
+
+  duplicateOrder() {
+    cy.do([
+      orderDetailsPane
+        .find(PaneHeader({ id: 'paneHeaderorder-details' })
+          .find(actionsButton)).click(),
+      Button('Duplicate').click(),
+      Button({ id: 'clickable-order-clone-confirmation-confirm' }).click(),
     ]);
   },
 
@@ -253,6 +265,29 @@ export default {
       .exists());
     cy.expect(Accordion({ id: orderDetailsAccordionId })
       .find(KeyValue({ value: createdByAdmin }))
+      .exists());
+  },
+
+  checkCreatedOngoingOrder: (order) => {
+    cy.expect(Pane({ id: 'order-details' }).exists());
+    cy.expect(Accordion({ id: orderDetailsAccordionId })
+      .find(KeyValue({ value: order.vendor }))
+      .exists());
+    cy.expect(Accordion({ id: orderDetailsAccordionId })
+      .find(KeyValue({ value: order.orderType }))
+      .exists());
+  },
+
+  checkDuplicatedOrder: (organization, user) => {
+    cy.expect(Pane({ id: 'order-details' }).exists());
+    cy.expect(Section({ id: 'POSummary' })
+      .find(KeyValue({ value: 'Pending' }))
+      .exists());
+    cy.expect(purchaseOrderSection
+      .find(KeyValue({ value: organization }))
+      .exists());
+    cy.expect(purchaseOrderSection
+      .find(KeyValue({ value: user }))
       .exists());
   },
 

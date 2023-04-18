@@ -253,17 +253,17 @@ export default {
   verifySubjectsResultsInBrowsePane() {
     cy.expect(
       callNumberBrowsePane
-      .find(MultiColumnList({ id: 'browse-results-list-browseSubjects'}))
-      .find(MultiColumnListRow({ indexRow: 'row-0' })).exists()
-      );
+        .find(MultiColumnList({ id: 'browse-results-list-browseSubjects' }))
+        .find(MultiColumnListRow({ indexRow: 'row-0' })).exists()
+    );
   },
 
   verifyCallNumbersResultsInBrowsePane(item) {
     cy.expect(
       callNumberBrowsePane
-      .find(MultiColumnList({ id: 'browse-results-list-callNumbers'}))
-      .find(MultiColumnListCell(item)).exists()
-      );
+        .find(MultiColumnList({ id: 'browse-results-list-callNumbers' }))
+        .find(MultiColumnListCell(item)).exists()
+    );
   },
 
   saveUUIDs() {

@@ -14,6 +14,7 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
   let user;
@@ -48,7 +49,7 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
         name: itemMappingProfileName,
-        permanentLoanType: '"Can circulate"',
+        permanentLoanType: 'Can circulate',
         status: 'Available' },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: itemActionProfileName }
@@ -69,6 +70,21 @@ describe('ui-data-import', () => {
         user = userProperties;
         cy.login(user.username, user.password,
           { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+      });
+  });
+
+  after('delete test data', () => {
+    JobProfiles.deleteJobProfile(jobProfileName);
+    collectionOfMappingAndActionProfiles.forEach(profile => {
+      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+    });
+    Users.deleteViaApi(user.userId);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        cy.deleteItemViaApi(instance.items[0].id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
       });
   });
 
@@ -121,7 +137,7 @@ describe('ui-data-import', () => {
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(nameMarcFile);
 
-      // check the instance is created
+      // check created instance
       FileDetails.openInstanceInInventory('Created');
       InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
         instanceHrid = initialInstanceHrId;
