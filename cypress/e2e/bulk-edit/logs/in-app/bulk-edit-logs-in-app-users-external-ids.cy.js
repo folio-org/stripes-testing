@@ -17,9 +17,14 @@ Cypress.on('uncaught:exception', () => false);
 let user;
 const externalId = getRandomPostfix();
 const userExternalIDsFileName = `userExternalIDs_${getRandomPostfix()}.csv`;
-const matchRecordsFileNameValid = `*Matched-Records-${userExternalIDsFileName}`;
-const updatesPreviewFileName = `*Updates-Preview-${userExternalIDsFileName}`;
-const updatedRecordsFileName = `modified-*-${matchRecordsFileNameValid}`;
+const matchedRecordsFileName = `Matched-Records-${userExternalIDsFileName}`;
+const changedRecordsFileName = `*-Changed-Records*-${userExternalIDsFileName}`;
+// It downloads 2 files in one click, both with same content
+const previewOfProposedChangesFileName = {
+  first: `*-Updates-Preview-${userExternalIDsFileName}`,
+  second: `modified-*-${matchedRecordsFileName}`
+};
+const updatedRecordsFileName = `result-*-${matchedRecordsFileName}`;
 
 describe('Bulk Edit - Logs', () => {
   before('create test data', () => {
@@ -38,8 +43,8 @@ describe('Bulk Edit - Logs', () => {
 
   after('delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${userExternalIDsFileName}`);
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
     Users.deleteViaApi(user.userId);
+    FileManager.deleteFileFromDownloadsByMask(userExternalIDsFileName, `*${matchedRecordsFileName}`, changedRecordsFileName, previewOfProposedChangesFileName.first, previewOfProposedChangesFileName.second, updatedRecordsFileName);
   });
 
   it('C375247 Verify genetated Logs files for Users In app -- only valid External IDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -70,17 +75,17 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.openLogsSearch();
     BulkEditSearchPane.verifyLogsPane();
     BulkEditSearchPane.checkUsersCheckbox();
-    BulkEditSearchPane.clickActionsOnTheRow();
+    BulkEditSearchPane.clickActionsRunBy(user.username);
     BulkEditSearchPane.verifyLogsRowActionWhenCompleted();
 
     BulkEditSearchPane.downloadFileUsedToTrigger();
     BulkEditFiles.verifyCSVFileRows(userExternalIDsFileName, [externalId]);
 
     BulkEditSearchPane.downloadFileWithMatchingRecords();
-    BulkEditFiles.verifyMatchedResultFileContent(matchRecordsFileNameValid, [user.barcode], 'userBarcode', true);
+    BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileName}`, [user.barcode], 'userBarcode', true);
 
     BulkEditSearchPane.downloadFileWithProposedChanges();
-    BulkEditFiles.verifyMatchedResultFileContent(updatesPreviewFileName, [newEmailDomain], 'emailDomain', true);
+    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, [newEmailDomain], 'emailDomain', true);
 
     BulkEditSearchPane.downloadFileWithUpdatedRecords();
     BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, [newEmailDomain], 'emailDomain', true);

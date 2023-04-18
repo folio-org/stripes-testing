@@ -14,10 +14,15 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import ItemRecordView from '../../../../support/fragments/inventory/itemRecordView';
 
 let user;
-const validItemUUIDsFileName = `validItemBarcodes_${getRandomPostfix()}.csv`;
-const matchRecordsFileNameValid = `*Matched-Records-${validItemUUIDsFileName}`;
-const updatesPreviewFileName = `*Updates-Preview-${validItemUUIDsFileName}`;
-const updatedRecordsFileName = `modified-*-${matchRecordsFileNameValid}`;
+const validItemUUIDsFileName = `validItemUUIDs_${getRandomPostfix()}.csv`;
+const matchedRecordsFileName = `Matched-Records-${validItemUUIDsFileName}`;
+const changedRecordsFileName = `*-Changed-Records*-${validItemUUIDsFileName}`;
+// It downloads 2 files in one click, both with same content
+const previewOfProposedChangesFileName = {
+  first: `*-Updates-Preview-${validItemUUIDsFileName}`,
+  second: `modified-*-${matchedRecordsFileName}`
+};
+const updatedRecordsFileName = `result-*-${matchedRecordsFileName}`;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
@@ -50,19 +55,15 @@ describe('Bulk Edit - Logs', () => {
       });
   });
 
-  beforeEach('select item tab', () => {
-    cy.visit(TopMenu.bulkEditPath);
-    BulkEditSearchPane.checkItemsRadio();
-  });
-
   after('delete test data', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${validItemUUIDsFileName}`);
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    FileManager.deleteFileFromDownloadsByMask(validItemUUIDsFileName, `*${matchedRecordsFileName}`, changedRecordsFileName, previewOfProposedChangesFileName.first, previewOfProposedChangesFileName.second, updatedRecordsFileName);
   });
 
   it('C375273 Verify generated Logs files for Items In app -- only valid Item UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    BulkEditSearchPane.checkItemsRadio();
     BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');
 
     BulkEditSearchPane.uploadFile(validItemUUIDsFileName);
@@ -90,17 +91,17 @@ describe('Bulk Edit - Logs', () => {
 
     BulkEditSearchPane.openLogsSearch();
     BulkEditSearchPane.checkItemsCheckbox();
-    BulkEditSearchPane.clickActionsOnTheRow();
+    BulkEditSearchPane.clickActionsRunBy(user.username);
     BulkEditSearchPane.verifyLogsRowActionWhenCompleted();
 
     BulkEditSearchPane.downloadFileUsedToTrigger();
     BulkEditFiles.verifyCSVFileRows(validItemUUIDsFileName, [item.itemId]);
 
     BulkEditSearchPane.downloadFileWithMatchingRecords();
-    BulkEditFiles.verifyMatchedResultFileContent(matchRecordsFileNameValid, [item.itemId], 'firstElement', true);
+    BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileName}`, [item.itemId], 'firstElement', true);
 
     BulkEditSearchPane.downloadFileWithProposedChanges();
-    BulkEditFiles.verifyMatchedResultFileContent(updatesPreviewFileName, [item.itemId], 'firstElement', true);
+    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, [item.itemId], 'firstElement', true);
 
     BulkEditSearchPane.downloadFileWithUpdatedRecords();
     BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, [item.itemId], 'firstElement', true);

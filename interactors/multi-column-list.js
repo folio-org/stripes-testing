@@ -21,6 +21,10 @@ export const MultiColumnListRow = HTML.extend('multi column list row')
     ariaRowIndex: el => +el.getAttribute('aria-rowindex'),
   });
 
+export const ListRow = HTML.extend('list row')
+  .selector('[class^=mclRowFormatterContainer-]')
+  .locator(content)
+
 export const MultiColumnListCell = HTML.extend('multi column list cell')
   .selector('div[class*=mclCell-]')
   .locator(content)
