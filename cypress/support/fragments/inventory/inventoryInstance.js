@@ -56,7 +56,7 @@ const source = KeyValue('Source');
 const tagButton = Button({ icon: 'tag' });
 const closeTag = Button({ icon: 'times' });
 const tagsPane = Pane('Tags');
-const textFieldTagInput = MultiSelect({ ariaLabelledby:'accordion-toggle-button-tag-accordion' });
+const textFieldTagInput = MultiSelect({ ariaLabelledby:'input-tag-label' });
 const descriptiveDataAccordion = Accordion('Descriptive data');
 const titleDataAccordion = Accordion('Title data');
 const contributorAccordion = Accordion('Contributor');
@@ -574,11 +574,9 @@ export default {
   },
 
   addTag:(tagName) => {
-    cy.intercept('/tags?limit=10000').as('getTags');
     cy.do(tagButton.click());
-    cy.wait(['@getTags']);
     // TODO: clarify with developers what should be waited
-    cy.wait(1000);
+    cy.wait(1500);
     cy.do(tagsPane.find(textFieldTagInput).choose(tagName));
   },
 
