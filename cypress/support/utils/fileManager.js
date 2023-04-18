@@ -32,7 +32,6 @@ export default {
     fileNameMasks.forEach(fileNameMask => {
       this.findDownloadedFilesByMask(fileNameMask)
         .then((fileName) => {
-          console.log(fileName[0])
           cy.task('deleteFile', fileName[0]);
         });
     });
