@@ -85,7 +85,6 @@ const searchTextArea = TextArea({ id: 'textarea-authorities-search' });
 const marcViewPane = Section({ id: 'marc-view-pane' });
 const searchButton = Button({ type: 'submit' });
 const enabledSearchBtn = Button({ type: 'submit', disabled: false });
-const resetAllButton = Button('Reset all');
 const disabledResetAllBtn = Button({ id: 'clickable-reset-all', disabled: true });
 const searchButtonDisabled = Button({ type: 'submit', disabled: true });
 const instanceHRID = 'Instance HRID';
