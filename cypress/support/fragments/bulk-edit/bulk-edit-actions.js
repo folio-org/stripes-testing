@@ -138,6 +138,11 @@ export default {
     cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Clear field'));
   },
 
+  clearTemporaryLocation(type = 'item', rowIndex = 0) {
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(`Temporary ${type} location`));
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Clear field'));
+  },
+
   replaceItemStatus(status, rowIndex = 0) {
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Item status'),
