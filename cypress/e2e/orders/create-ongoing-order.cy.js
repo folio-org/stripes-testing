@@ -18,9 +18,8 @@ describe('orders: create an order', () => {
         approved: true,
         reEncumber: true 
         };
-    let user;
-    let orderId;
     const organization = { ...NewOrganization.defaultUiOrganizations };
+    let user;
     
     before(() => {
         cy.getAdminToken();
@@ -41,7 +40,7 @@ describe('orders: create an order', () => {
     });
 
     afterEach(() => {
-        Orders.deleteOrderApi(orderId);
+        Orders.deleteOrderApi(order.id);
         Organizations.deleteOrganizationViaApi(organization.id);
         Users.deleteViaApi(user.userId);
     });
