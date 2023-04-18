@@ -9,7 +9,6 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import OrderLines from '../../support/fragments/orders/orderLines';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import Users from '../../support/fragments/users/users';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 
 describe('orders: create an order', () => {
     
@@ -19,8 +18,8 @@ describe('orders: create an order', () => {
         approved: true,
         reEncumber: true 
         };
-    const orderLineTitle = BasicOrderLine.defaultOrderLine.titleOrPackage;
     let user;
+    let orderId;
     const organization = { ...NewOrganization.defaultUiOrganizations };
     
     before(() => {
@@ -30,30 +29,31 @@ describe('orders: create an order', () => {
             organization.id = response;
         });
         order.vendor = organization.name;
-        order.orderType = 'One-time';
         cy.createTempUser([
             permissions.uiOrdersView.gui,
             permissions.uiOrdersCreate.gui,
+            permissions.uiOrdersApprovePurchaseOrders.gui,
         ])
             .then(userProperties => {
             user = userProperties;
-            cy.login(userProperties.username, userProperties.password, { path:TopMenu.ledgerPath, waiter: Ledgers.waitForLedgerDetailsLoading });
+            cy.login(userProperties.username, userProperties.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
             });
     });
 
     afterEach(() => {
-        Orders.deleteOrderApi(order.id);
+        Orders.deleteOrderApi(orderId);
         Organizations.deleteOrganizationViaApi(organization.id);
         Users.deleteViaApi(user.userId);
     });
 
   it('C663 Create an order and at least one order line for an ongoing order (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
-    Orders.createOrder(order);
-    Orders.checkCreatedOrder(order);
-    OrderLines.addPOLine();
-    OrderLines.POLineInfoforElectronicResource(orderLineTitle, defaultFund);
-    InteractorsTools.checkCalloutMessage('The purchase order line was successfully created');
-    OrderLines.checkCreatedPOLineElectronicResource(orderLineTitle, defaultFund);
-    OrderLines.backToEditingOrder();
-  });
+    Orders.createOrder(order, true, false).then(orderId => {
+        order.id = orderId;
+        OrderLines.addPOLine();
+        OrderLines.fillInPOLineInfoViaUi();
+        InteractorsTools.checkCalloutMessage('The purchase order line was successfully created');
+        OrderLines.backToEditingOrder();
+        Orders.checkCreatedOngoingOrder(order);
+        });
+    });
 });
