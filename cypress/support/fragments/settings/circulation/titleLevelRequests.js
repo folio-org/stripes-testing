@@ -1,4 +1,4 @@
-import { Pane, Button, Checkbox, NavList, NavListItem } from '../../../../../interactors';
+import { Pane, Button, Checkbox, NavListItem } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 
 const SaveButton = Button('Save');
