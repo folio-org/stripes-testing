@@ -39,60 +39,51 @@ import DateTools from '../../support/utils/dateTools';
 import UserEdit from '../../support/fragments/users/userEdit';
 import ServicePoint from '../../support/fragments/servicePoint/servicePoint';
 import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
+import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 
 describe('ui-inventory: Item status date updates', () => {
   const instanceTitle = `autotestTitle ${Helper.getRandomBarcode()}`;
   const itemQuantity = '1';
+  const itemBarcode = Helper.getRandomBarcode();
+  const userName = Cypress.env('diku_login');
   let orderNumber;
   let effectiveLocationServicePoint;
   let notEffectiveLocationServicePoint;
   let effectiveLocation;
+  let addedCirculationRule;
+  let originalCirculationRules;
   let userForDeliveryRequest = {};
-  const itemBarcode = Helper.getRandomBarcode();
-  const userName = Cypress.env('diku_login');
 
   before(() => {
     cy.loginAsAdmin();
-    cy.getAdminToken()
-      .then(() => {
-        cy.getLoanPolicy({ query: `name=="${LOAN_POLICY_NAMES.EXAMPLE_LOAN}"` });
-        cy.getRequestPolicy({ query: `name=="${REQUEST_POLICY_NAMES.ALLOW_ALL}"` });
-        cy.getNoticePolicy({ query: `name=="${NOTICE_POLICY_NAMES.SEND_NO_NOTICES}"` });
-        cy.getOverdueFinePolicy({ query: `name=="${OVERDUE_FINE_POLICY_NAMES.OVERDUE_FINE_POLICY}"` });
-        cy.getLostItemFeesPolicy({ query: `name=="${LOST_ITEM_FEES_POLICY_NAMES.LOST_ITEM_FEES_POLICY}"` });
-      }).then(() => {
-        const loanPolicy = Cypress.env(CY_ENV.LOAN_POLICY).id;
-        const requestPolicyId = Cypress.env(CY_ENV.REQUEST_POLICY)[0].id;
-        const noticePolicyId = Cypress.env(CY_ENV.NOTICE_POLICY)[0].id;
-        const overdueFinePolicyId = Cypress.env(CY_ENV.OVERDUE_FINE_POLICY)[0].id;
-        const lostItemFeesPolicyId = Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY)[0].id;
-        const policy = `l ${loanPolicy} r ${requestPolicyId} n ${noticePolicyId} o ${overdueFinePolicyId} i ${lostItemFeesPolicyId}`;
-        const priority = 'priority: number-of-criteria, criterium (t, s, c, b, a, m, g), last-line';
-        const newRule = `${priority}\nfallback-policy: ${policy}`;
+    cy.getAdminToken();
+    CirculationRules.getViaApi().then((circulationRule) => {
+      originalCirculationRules = circulationRule.rulesAsText;
+      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
+      ruleProps.r = requestPolicyBody.id;
+      addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + ruleProps.i + ' l ' + ruleProps.l + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
+      CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
 
-        cy.updateCirculationRules({
-          rulesAsText: newRule,
+      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' })
+        .then((servicePoints) => {
+          effectiveLocationServicePoint = servicePoints[0];
+          NewLocation.createViaApi(NewLocation.getDefaultLocation(effectiveLocationServicePoint.id))
+            .then((location) => {
+              effectiveLocation = location;
+              Orders.createOrderWithOrderLineViaApi(
+                NewOrder.getDefaultOrder(),
+                BasicOrderLine.getDefaultOrderLine(itemQuantity, instanceTitle, effectiveLocation.id)
+              )
+                .then(order => {
+                  orderNumber = order;
+                });
+            });
         });
-        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' })
-          .then((servicePoints) => {
-            effectiveLocationServicePoint = servicePoints[0];
-            NewLocation.createViaApi(NewLocation.getDefaultLocation(effectiveLocationServicePoint.id))
-              .then((location) => {
-                effectiveLocation = location;
-                Orders.createOrderWithOrderLineViaApi(
-                  NewOrder.getDefaultOrder(),
-                  BasicOrderLine.getDefaultOrderLine(itemQuantity, instanceTitle, effectiveLocation.id)
-                )
-                  .then(order => {
-                    orderNumber = order;
-                  });
-              });
-          });
-        ServicePoints.getViaApi({ limit: 1, query: 'name=="Online"' })
-          .then((servicePoints) => {
-            notEffectiveLocationServicePoint = servicePoints[0];
-          });
-      });
+      ServicePoints.getViaApi({ limit: 1, query: 'name=="Online"' })
+        .then((servicePoints) => {
+          notEffectiveLocationServicePoint = servicePoints[0];
+        });
+    });
 
     cy.createTempUser([
       permissions.checkoutAll.gui,
