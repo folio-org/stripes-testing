@@ -20,6 +20,8 @@ const resetButton = Button('Reset all');
 const selectField = Select({ id: 'textarea-authorities-search-qindex' });
 const headinfTypeAccordion = Accordion('Type of heading');
 const authoritySearchResults = Section({ id: 'authority-search-results-pane' });
+const nextButton = Button({ id: 'authority-result-list-next-paging-button' });
+const searchNav = Button({ id: 'segment-navigation-search' });
 
 export default {
   waitLoading: () => cy.expect(rootSection.exists()),
@@ -31,6 +33,10 @@ export default {
     cy.expect(marcAuthUpdatesCsvBtn.exists());
     cy.do(marcAuthUpdatesCsvBtn.click());
     cy.expect(authReportModal.exists());
+  },
+
+  switchToSearch: () => {
+    cy.do(searchNav.click());
   },
 
   fillReportModal: (today, tomorrow) => {
@@ -176,6 +182,18 @@ export default {
       MultiColumnListCell({ columnIndex: 3, content: headingTypeB }).exists(),
       MultiColumnListCell({ columnIndex: 3, content: headingTypeC }).exists(),
     ]);
+  },
+
+  checkType(typeA, typeB, typeC) {
+    cy.expect([
+      MultiColumnListCell({ columnIndex: 1, content: typeA }).exists(),
+      MultiColumnListCell({ columnIndex: 1, content: typeB }).exists(),
+      MultiColumnListCell({ columnIndex: 1, content: typeC }).exists(),
+    ]);
+  },
+
+  clickNextPagination() {
+    cy.do(authoritySearchResults.find(nextButton).click());
   },
 
   checkFieldAndContentExistence(tag, value) {
