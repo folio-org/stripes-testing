@@ -248,6 +248,19 @@ export default {
     this.submitOrderLine();
   },
 
+  addFundToPOL( fund, value) {
+    cy.do([
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      fundDistributionField.fillIn(value),
+      Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
+      saveAndClose.click()
+    ]);
+    cy.wait(6000);
+    this.submitOrderLine();
+  },
+
   rolloverPOLineInfoforElectronicResourceWithFund: (orderLineTitleName, fund, unitPrice, quantity, value) => {
     cy.do([
       orderLineTitleField.fillIn(orderLineTitleName),
