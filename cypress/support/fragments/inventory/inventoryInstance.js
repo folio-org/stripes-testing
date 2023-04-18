@@ -86,6 +86,7 @@ const marcViewPane = Section({ id: 'marc-view-pane' });
 const searchButton = Button({ type: 'submit' });
 const enabledSearchBtn = Button({ type: 'submit', disabled: false });
 const resetAllButton = Button('Reset all');
+const disabledResetAllBtn = Button({ id: 'clickable-reset-all', disabled: true });
 const searchButtonDisabled = Button({ type: 'submit', disabled: true });
 const instanceHRID = 'Instance HRID';
 const paneResultsSection = Section({ id: 'pane-results' });
@@ -297,9 +298,9 @@ export default {
       browseOptionBtn.exists(),
       searchTextArea.exists(),
       searchButtonDisabled.exists(),
-      resetAllButton.exists(),
+      disabledResetAllBtn.exists(),
       sourceFileAccordion.find(MultiSelect({ label: including('Authority source') })).exists(),
-      sourceFileAccordion.find(MultiSelect({ selected: including('LC Name Authority file (LCNAF)') })).exists(),
+      sourceFileAccordion.find(MultiSelect({ selectedCount: 0 })).exists(),
       subjectHeadingAccordion.find(Button('Thesaurus')).has({ ariaExpanded: 'false' }),
       headingTypeAccordion.find(Button('Type of heading')).has({ ariaExpanded: 'false' }),
       createdDateAccordion.find(Button('Date created')).has({ ariaExpanded: 'false' }),

@@ -49,7 +49,7 @@ describe('plug-in MARC authority | Search', () => {
       forC359232: {
         searchOption: 'Subject',
         typeOfHeading: 'Topical',
-        value: 'Chicken industry',
+        value: 'Inventors',
         typeA: 'Authorized',
         typeB: 'Reference',
         typeC: 'Auth/Ref',
@@ -103,7 +103,7 @@ describe('plug-in MARC authority | Search', () => {
         marc: 'marcFileForC359232.mrc', 
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
-        numOfRecords: 56,
+        numOfRecords: 64,
       }
     ]
 
@@ -145,7 +145,7 @@ describe('plug-in MARC authority | Search', () => {
   after('Deleting created user', () => {
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
-    for (let i = 1; i < 69; i++) {
+    for (let i = 1; i < 77; i++) {
       MarcAuthority.deleteViaAPI(createdAuthorityIDs[i]);
     }
 
@@ -160,9 +160,9 @@ describe('plug-in MARC authority | Search', () => {
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
     InventoryInstance.verifyAndClickLinkIcon('700');
+    MarcAuthorities.switchToSearch();
     InventoryInstance.verifySelectMarcAuthorityModal();
     InventoryInstance.verifySearchAndFilterDisplay();
-    InventoryInstance.closeAuthoritySource();
     InventoryInstance.verifySearchOptions();
     InventoryInstance.fillInAndSearchResults('Starr, Lisa');
     InventoryInstance.checkResultsListPaneHeader();
@@ -178,7 +178,7 @@ describe('plug-in MARC authority | Search', () => {
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
     InventoryInstance.verifyAndClickLinkIcon('700');
-    InventoryInstance.closeAuthoritySource();
+    MarcAuthorities.switchToSearch();
     InventoryInstance.verifySearchOptions();
     MarcAuthorities.searchBy(testData.forC359206.searchOption, testData.forC359206.lcControlNumberA);
     MarcAuthorities.checkFieldAndContentExistence('010', testData.forC359206.lcControlNumberA);
@@ -194,6 +194,7 @@ describe('plug-in MARC authority | Search', () => {
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
     InventoryInstance.verifyAndClickLinkIcon('700');
+    MarcAuthorities.switchToSearch();
     InventoryInstance.verifySearchOptions();
     MarcAuthorities.searchByParameter(testData.forC359228.searchOption, testData.forC359228.all);
     // wait for the results to be loaded.
@@ -209,7 +210,7 @@ describe('plug-in MARC authority | Search', () => {
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
     InventoryInstance.verifyAndClickLinkIcon('700');
-    InventoryInstance.closeAuthoritySource();
+    MarcAuthorities.switchToSearch();
     InventoryInstance.verifySearchOptions();
     MarcAuthorities.searchBy(testData.forC359229.searchOptionA, testData.forC359229.valueA);
     MarcAuthorities.checkFieldAndContentExistence('151', testData.forC359229.valueA);
@@ -223,7 +224,7 @@ describe('plug-in MARC authority | Search', () => {
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
     InventoryInstance.verifyAndClickLinkIcon('700');
-    InventoryInstance.closeAuthoritySource();
+    MarcAuthorities.switchToSearch();
     InventoryInstance.verifySearchOptions();
     MarcAuthorities.searchByParameter(testData.forC359230.searchOptionA, '*');
     // wait for the results to be loaded.
@@ -248,8 +249,6 @@ describe('plug-in MARC authority | Search', () => {
     MarcAuthorities.checkSingleHeadingType(testData.forC359232.typeA, testData.forC359232.typeOfHeading);
     MarcAuthorities.checkType(testData.forC359232.typeA, testData.forC359232.typeB, testData.forC359232.typeC);
     MarcAuthorities.clickNextPagination();
-    // wait for the next page to be loaded
-    cy.wait(1000);
     MarcAuthorities.selectTitle(testData.forC359232.value);
     MarcAuthorities.checkRecordDetailPageMarkedValue(testData.forC359232.value);
     InventoryInstance.closeDetailsView();
