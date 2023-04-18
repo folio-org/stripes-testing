@@ -108,6 +108,7 @@ const closeDetailsView = Button({ icon: 'times' });
 const quickMarcEditorPane = Section({ id: 'quick-marc-editor-pane' });
 const filterPane = Section({ id: 'pane-filter' });
 const inputSearchField = TextField({ id: 'input-inventory-search' });
+const holdingsPane = Pane(including('Holdings'));
 
 const validOCLC = { id:'176116217',
   // TODO: hardcoded count related with interactors getters issue. Redesign to cy.then(QuickMarkEditor().rowsCount()).then(rowsCount => {...}
@@ -640,11 +641,16 @@ export default {
   },
 
   verifyHoldingsPermanentLocation(permanentLocation) {
-    cy.expect(Pane(including('Holdings')).find(KeyValue('Permanent')).has({ value: `${permanentLocation}` }));
+    cy.expect(holdingsPane.find(KeyValue('Permanent')).has({ value: `${permanentLocation}` }));
   },
 
   verifyHoldingsTemporaryLocation(temporaryLocation) {
-    cy.expect(Pane(including('Holdings')).find(KeyValue('Temporary')).has({ value: `${temporaryLocation}` }));
+    cy.expect(holdingsPane.find(KeyValue('Temporary')).has({ value: `${temporaryLocation}` }));
+  },
+
+  closeHoldingsView() {
+    cy.expect(holdingsPane.exists());
+    cy.do(Button({ icon: 'times' }).click());
   },
 
   checkIsItemCreated:(itemBarcode) => {
