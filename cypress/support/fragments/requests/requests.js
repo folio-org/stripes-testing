@@ -302,13 +302,9 @@ export default {
 
   addTag(tag) {
     waitLoadingTags();
-    cy.do(tagsPane.find(MultiSelect({ ariaLabelledby:'accordion-toggle-button-tag-accordion' })).choose(tag));
+    cy.do(tagsPane.find(MultiSelect({ ariaLabelledby:'input-tag-label' })).choose(tag));
     // TODO investigate what to wait
     cy.wait(2000);
-  },
-
-  deleteTag:() => {
-
   },
 
   verifyAssignedTags(tag) {
