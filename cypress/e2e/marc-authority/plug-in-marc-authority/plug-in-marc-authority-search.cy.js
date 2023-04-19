@@ -151,7 +151,7 @@ describe('plug-in MARC authority | Search', () => {
     DataImport.confirmDeleteImportLogs();
   });
 
-  it('C359015 MARC Authority plug-in | Search for MARC authority records when the user clicks on the "Link" icon (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
+  it('C380565 MARC Authority plug-in | Search for MARC authority records when the user clicks on the "Link" icon (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
     InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
@@ -185,7 +185,7 @@ describe('plug-in MARC authority | Search', () => {
     MarcAuthorities.clickResetAndCheck();
   });
 
-  it('C359228 MARC Authority plug-in | Search using "Corporate/Conference name" option (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+  it('C380567 MARC Authority plug-in | Search using "Corporate/Conference name" option (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
@@ -201,7 +201,7 @@ describe('plug-in MARC authority | Search', () => {
     MarcAuthorities.chooseTypeOfHeadingAndCheck(testData.forC359228.typeOfHeadingB, testData.forC359228.typeOfHeadingA, testData.forC359228.typeOfHeadingB);
   });
 
-  it('C359229 MARC Authority plug-in | Search using "Geographic name" option (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+  it('C380568 MARC Authority plug-in | Search using "Geographic name" option (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
@@ -215,7 +215,7 @@ describe('plug-in MARC authority | Search', () => {
     MarcAuthorities.checkResultsExistance(testData.forC359229.type);
   });
 
-  it('C359230 MARC Authority plug-in | Search using "Name-title" option (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+  it('C380569 MARC Authority plug-in | Search using "Name-title" option (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
@@ -232,7 +232,7 @@ describe('plug-in MARC authority | Search', () => {
     MarcAuthorities.checkSingleHeadingType(testData.forC359230.type, testData.forC359230.typeOfHeadingA);
   });
   
-  it('C359227 MARC Authority plug-in | Search using "Personal name" option (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+  it('C380566 MARC Authority plug-in | Search using "Personal name" option (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
@@ -243,7 +243,7 @@ describe('plug-in MARC authority | Search', () => {
     MarcAuthorities.checkRecordDetailPageMarkedValue('Erbil, H. Yıldırım');
   });
 
-  it('C359231 MARC Authority plug-in | Search using "Uniform title" option (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+  it('C380570 MARC Authority plug-in | Search using "Uniform title" option (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
