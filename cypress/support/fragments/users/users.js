@@ -1,5 +1,5 @@
-import getRandomPostfix from '../../utils/stringTools';
 import { including } from '@interactors/html';
+import getRandomPostfix from '../../utils/stringTools';
 import {
   Button,
   Select,

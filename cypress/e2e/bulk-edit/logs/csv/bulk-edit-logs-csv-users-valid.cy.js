@@ -7,10 +7,12 @@ import testTypes from '../../../../support/dictionary/testTypes';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import FileManager from '../../../../support/utils/fileManager';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
+import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 
 let user;
-const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
+const newName = `testName_${getRandomPostfix()}`;
+const userUUIDsFileName = `userUUIDs-${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `Matched-Records-${userUUIDsFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 const changedRecordsFileName = `*-Changed-Records*-${editedFileName}`;
@@ -46,33 +48,29 @@ describe('Bulk Edit - Logs', () => {
     FileManager.deleteFileFromDownloadsByMask(userUUIDsFileName, `*${matchedRecordsFileName}`, changedRecordsFileName, previewOfProposedChangesFileName.first, previewOfProposedChangesFileName.second, updatedRecordsFileName);
   });
 
-  it('C375217 Verify generated Logs files for Users CSV (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+  it('C375214 Verify generated Logs files for Users CSV -- only valid (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    BulkEditSearchPane.verifyDragNDropUsersUIIDsArea();
     BulkEditSearchPane.uploadFile(userUUIDsFileName);
-    BulkEditSearchPane.waitLoading();
+    BulkEditSearchPane.waitFileUploading();
 
-    // Prepare file for bulk edit
-    const nameToUpdate = `testNameToUpdate_${getRandomPostfix()}`;
     BulkEditActions.downloadMatchedResults();
-    BulkEditActions.prepareValidBulkEditFile(matchedRecordsFileName, editedFileName, 'testPermFirst', nameToUpdate);
+    BulkEditActions.prepareValidBulkEditFile(matchedRecordsFileName, editedFileName, 'testPermFirst', newName);
 
-    // Upload bulk edit file
     BulkEditActions.openStartBulkEditForm();
     BulkEditSearchPane.uploadFile(editedFileName);
     BulkEditSearchPane.waitFileUploading();
     BulkEditActions.clickNext();
     BulkEditActions.commitChanges();
-    BulkEditSearchPane.verifyChangedResults(nameToUpdate);
+    BulkEditSearchPane.verifyChangedResults(newName);
 
-    // Open logs by users
     BulkEditActions.openActions();
     BulkEditActions.downloadChangedCSV();
     BulkEditSearchPane.openLogsSearch();
     BulkEditSearchPane.verifyLogsPane();
     BulkEditSearchPane.checkUsersCheckbox();
-
     BulkEditSearchPane.clickActionsRunBy(user.username);
     BulkEditSearchPane.verifyLogsRowActionWhenCompleted();
+
     BulkEditSearchPane.downloadFileUsedToTrigger();
     BulkEditFiles.verifyMatchedResultFileContent(userUUIDsFileName, [user.userId], 'userId', true);
 
@@ -80,9 +78,14 @@ describe('Bulk Edit - Logs', () => {
     BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileName}`, [user.userId], 'userId', true);
 
     BulkEditSearchPane.downloadFileWithProposedChanges();
-    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, [nameToUpdate], 'firstName', true);
+    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, [newName], 'firstName', true);
 
     BulkEditSearchPane.downloadFileWithUpdatedRecords();
-    BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, [nameToUpdate], 'firstName', true);
+    BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, [newName], 'firstName', true);
+
+    // Go to users app and verify changes
+    cy.visit(TopMenu.usersPath);
+    UsersSearchPane.searchByUsername(user.username);
+    Users.verifyFirstNameOnUserDetailsPane(newName);
   });
 });
