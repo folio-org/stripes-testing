@@ -172,6 +172,34 @@ describe('MARC Authority -> Edit Authority record', () => {
     MarcAuthority.checkInfoButton('999');
   });
 
+  it('C353585 Verify LDR validation rules with invalid data (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    const wrongPositionError = 'Record cannot be saved. Please check the Leader. Only positions 5, 17, 18 can be edited in the Leader.';
+    const positions5Error = 'Record cannot be saved. Wrong value "w" on position 5 of the Leader. Allowed only: [a, c, d, n, o, s, x]';
+    const position17Error = 'Record cannot be saved. Wrong value "p" on position 17 of the Leader. Allowed only: [n, o]';
+    const positions18Error = 'Record cannot be saved. Wrong value "q" on position 18 of the Leader. Allowed only: [\\,  , c, i, u]';
+
+    const changedLDRs = [
+      { newContent: replaceByIndex(initialLDRValue, 4, 3), errorMessage: wrongPositionError },
+      { newContent: replaceByIndex(initialLDRValue, 6, 'a'), errorMessage: wrongPositionError },
+      { newContent: replaceByIndex(initialLDRValue, 16, 2), errorMessage: wrongPositionError },
+      { newContent: replaceByIndex(initialLDRValue, 19, 't'), errorMessage: wrongPositionError },
+      { newContent: replaceByIndex(initialLDRValue, 5, 'w'), errorMessage: positions5Error },
+      { newContent: replaceByIndex(initialLDRValue, 17, 'p'), errorMessage: position17Error },
+      { newContent: replaceByIndex(initialLDRValue, 18, 'q'), errorMessage: positions18Error },
+    ];
+    
+    MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
+    MarcAuthorities.selectTitle(testData.authority.title);
+    MarcAuthority.edit();
+    // Waiter needed for the whole page to be loaded.
+    cy.wait(2000)
+    changedLDRs.forEach(changeLDR => {
+      QuickMarcEditor.updateExistingField('LDR', changeLDR.newContent);
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.checkCallout(changeLDR.errorMessage);
+    });    
+  });
+
   it('C353583 Verify LDR validation rules with valid data (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
     MarcAuthorities.selectTitle(testData.authority.title);
