@@ -1,33 +1,33 @@
 import uuid from 'uuid';
-import permissions from '../../../../support/dictionary/permissions';
-import testTypes from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
-import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import TopMenu from '../../../../support/fragments/topMenu';
-import FileManager from '../../../../support/utils/fileManager';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+import permissions from '../../../../support/dictionary/permissions';
+import TopMenu from '../../../../support/fragments/topMenu';
+import devTeams from '../../../../support/dictionary/devTeams';
+import testTypes from '../../../../support/dictionary/testTypes';
+import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import Users from '../../../../support/fragments/users/users';
-import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import FileManager from '../../../../support/utils/fileManager';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
+import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+import ItemRecordView from '../../../../support/fragments/inventory/itemRecordView';
 
 let user;
-const invalidInstanceHRID = `123-${getRandomPostfix()}`;
-const validAndInvalidInstanceHRIDsFileName = `validAndInvalidInstanceHRIDS-${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `Matched-Records-${validAndInvalidInstanceHRIDsFileName}`;
-const errorsFromMatchingFileName = `*Errors-${validAndInvalidInstanceHRIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${validAndInvalidInstanceHRIDsFileName}`;
+let tempLocation;
+let tempLocation2;
+const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
+const matchedRecordsFileName = `*Matched-Records-${itemBarcodesFileName}`;
+const changedRecordsFileName = `*-Changed-Records-${itemBarcodesFileName}`;
 // It downloads 2 files in one click, both with same content
 const previewOfProposedChangesFileName = {
-  first: `*-Updates-Preview-${validAndInvalidInstanceHRIDsFileName}`,
+  first: `*-Updates-Preview-${itemBarcodesFileName}`,
   second: `modified-*-${matchedRecordsFileName}`
 };
 const updatedRecordsFileName = `result-*-${matchedRecordsFileName}`;
-const errorsFromCommittingFileName = `*Errors-*-${matchedRecordsFileName}`;
 
 const item = {
   barcode: `456-${getRandomPostfix()}`
@@ -99,14 +99,19 @@ describe('Bulk Edit - Logs', () => {
             });
             const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation(`servicePoint-${getRandomPostfix}`, uuid());
             const servicePoint2 = ServicePoints.getDefaultServicePointWithPickUpLocation(`servicePoint2-${getRandomPostfix}`, uuid());
+            tempLocation = ServicePoints.getDefaultServicePointWithPickUpLocation(`tempLocation-${getRandomPostfix}`, uuid());
+            tempLocation2 = ServicePoints.getDefaultServicePointWithPickUpLocation(`tempLocation2-${getRandomPostfix}`, uuid());
             instance.defaultLocation = Location.getDefaultLocation(servicePoint.id);
             instance2.defaultLocation = Location.getDefaultLocation(servicePoint2.id);
-            Location.createViaApi(instance.defaultLocation);
-            Location.createViaApi(instance2.defaultLocation);
-            ServicePoints.getViaApi({ limit: 2 }).then((servicePoints) => {
-              instance.servicepointId = servicePoints[0].id;
-              instance2.servicepointId = servicePoints[1].id;
-            });
+            tempLocation = Location.getDefaultLocation(tempLocation.id);
+            tempLocation2 = Location.getDefaultLocation(tempLocation2.id);
+            [
+              instance.defaultLocation,
+              instance2.defaultLocation,
+              tempLocation,
+              tempLocation2
+            ]
+              .forEach(location => Location.createViaApi(location))
           })
           .then(() => {
             // Creating first instance
@@ -118,6 +123,7 @@ describe('Bulk Edit - Logs', () => {
               holdings: [{
                 holdingsTypeId: instance.holdingTypeId,
                 permanentLocationId: instance.defaultLocation.id,
+                temporaryLocationId: tempLocation.id,
               }],
               items: [{
                 barcode: item.barcode,
@@ -128,7 +134,7 @@ describe('Bulk Edit - Logs', () => {
             }).then((specialInstanceIds) => {
               instance.id = specialInstanceIds.instanceId;
             })
-            // Creating second instance
+              // Creating second instance
               .then(() => {
                 InventoryInstances.createFolioInstanceViaApi({
                   instance: {
@@ -138,6 +144,7 @@ describe('Bulk Edit - Logs', () => {
                   holdings: [{
                     holdingsTypeId: instance2.holdingTypeId,
                     permanentLocationId: instance2.defaultLocation.id,
+                    temporaryLocationId: tempLocation2.id,
                   }],
                   items: [{
                     barcode: item2.barcode,
@@ -149,18 +156,7 @@ describe('Bulk Edit - Logs', () => {
                   instance2.id = specialInstanceIds.instanceId;
                 })
                   .then(() => {
-                    // Getting both instance hrids and putting them into a file alongside with invalid one
-                    cy.getInstanceById(instance.id)
-                      .then((res) => {
-                        instance.hrid = res.hrid;
-                      });
-                    cy.getInstanceById(instance2.id)
-                      .then((res) => {
-                        instance2.hrid = res.hrid;
-                      })
-                      .then(() => {
-                        FileManager.createFile(`cypress/fixtures/${validAndInvalidInstanceHRIDsFileName}`, `${instance.hrid}\n${instance2.hrid}\n${invalidInstanceHRID}`);
-                      });
+                    FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, `${item.barcode}\n${item2.barcode}`);
                   });
               });
           });
@@ -171,22 +167,23 @@ describe('Bulk Edit - Logs', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item2.barcode);
     Users.deleteViaApi(user.userId);
-    FileManager.deleteFile(`cypress/fixtures/${validAndInvalidInstanceHRIDsFileName}`);
-    FileManager.deleteFileFromDownloadsByMask(validAndInvalidInstanceHRIDsFileName, errorsFromCommittingFileName, `*${matchedRecordsFileName}`, changedRecordsFileName, previewOfProposedChangesFileName.first, previewOfProposedChangesFileName.second, updatedRecordsFileName, errorsFromMatchingFileName);
+    FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
+    FileManager.deleteFileFromDownloadsByMask(itemBarcodesFileName, `*${matchedRecordsFileName}`, changedRecordsFileName, previewOfProposedChangesFileName.first, previewOfProposedChangesFileName.second, updatedRecordsFileName);
   });
 
-  it('C375298 Verify generated Logs files for Holdings In app -- valid and invalid records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    BulkEditSearchPane.checkHoldingsRadio();
-    BulkEditSearchPane.selectRecordIdentifier('Instance HRIDs');
-
-    BulkEditSearchPane.uploadFile(validAndInvalidInstanceHRIDsFileName);
+  it('C375300 Verify generated Logs files for Holdings In app -- only valid Item barcodes (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    BulkEditSearchPane.verifyDragNDropHoldingsItemBarcodesArea();
+    BulkEditSearchPane.uploadFile(itemBarcodesFileName);
     BulkEditSearchPane.waitFileUploading();
+
     BulkEditActions.downloadMatchedResults();
-    BulkEditActions.downloadErrors();
+    BulkEditSearchPane.changeShowColumnCheckbox('Instance');
+    BulkEditSearchPane.verifyResultColumTitles('Instance');
+
     BulkEditActions.openInAppStartBulkEditFrom();
-    BulkEditActions.clearTemporaryLocation('holdings', 0);
+    BulkEditActions.replaceTemporaryLocation(tempLocation.name, 'holdings', 0);
     BulkEditActions.addNewBulkEditFilterString();
-    BulkEditActions.replacePermanentLocation(instance.defaultLocation.name, 'holdings', 1);
+    BulkEditActions.replacePermanentLocation('Online (E)', 'holdings', 1);
 
     BulkEditActions.confirmChanges();
     BulkEditActions.downloadPreview();
@@ -194,46 +191,42 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.waitFileUploading();
     BulkEditActions.openActions();
     BulkEditActions.downloadChangedCSV();
-    BulkEditActions.downloadErrors();
 
     BulkEditSearchPane.openLogsSearch();
     BulkEditSearchPane.checkHoldingsCheckbox();
     BulkEditSearchPane.clickActionsRunBy(user.username);
-    BulkEditSearchPane.verifyLogsRowActionWhenCompletedWithErrors();
+    BulkEditSearchPane.verifyLogsRowActionWhenCompleted();
 
     BulkEditSearchPane.downloadFileUsedToTrigger();
-    BulkEditFiles.verifyCSVFileRows(validAndInvalidInstanceHRIDsFileName, [instance.hrid, instance2.hrid, invalidInstanceHRID]);
+    BulkEditFiles.verifyCSVFileRows(itemBarcodesFileName, [item.barcode, item2.barcode]);
 
     BulkEditSearchPane.downloadFileWithMatchingRecords();
-    BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileName}`, [instance.hrid, instance2.hrid], 'instanceHrid', true);
-
-    BulkEditSearchPane.downloadFileWithErrorsEncountered();
-    BulkEditFiles.verifyMatchedResultFileContent(errorsFromMatchingFileName, [invalidInstanceHRID], 'firstElement', false);
+    BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileName}`, [item.barcode, item2.barcode], 'holdingsItemBarcode', true);
 
     BulkEditSearchPane.downloadFileWithProposedChanges();
-    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, ['', ''], 'temporaryLocation', true);
-    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, [instance.defaultLocation.name, instance.defaultLocation.name], 'permanentLocation', true);
+    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, [tempLocation.name, tempLocation.name], 'temporaryLocation', true);
+    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, ['Online', 'Online'], 'permanentLocation', true);
 
     BulkEditSearchPane.downloadFileWithUpdatedRecords();
-    BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, ['', ''], 'temporaryLocation', true);
-    BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, [instance.defaultLocation.name], 'permanentLocation', true);
-
-    BulkEditSearchPane.downloadFileWithCommitErrors();
-    BulkEditFiles.verifyMatchedResultFileContent(errorsFromCommittingFileName, [instance.hrid], 'firstElement', false);
+    BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, [tempLocation.name, tempLocation.name], 'temporaryLocation', true);
+    BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, ['Online', 'Online'], 'permanentLocation', true);
 
     // Go to inventory app and verify changes
     cy.visit(TopMenu.inventoryPath);
-    InventorySearchAndFilter.searchByParameter('Instance HRID', instance.hrid);
+    InventorySearchAndFilter.switchToItem();
+    InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
+    ItemRecordView.closeDetailView();
     InventorySearchAndFilter.selectSearchResultItem();
     InventorySearchAndFilter.selectViewHoldings();
-    InventoryInstance.verifyHoldingsPermanentLocation(instance.defaultLocation.name);
-    InventoryInstance.verifyHoldingsTemporaryLocation('-');
+    InventoryInstance.verifyHoldingsPermanentLocation('Online');
+    InventoryInstance.verifyHoldingsTemporaryLocation(tempLocation.name);
     InventoryInstance.closeHoldingsView();
 
-    InventorySearchAndFilter.searchByParameter('Instance HRID', instance2.hrid);
+    InventorySearchAndFilter.searchByParameter('Barcode', item2.barcode);
+    ItemRecordView.closeDetailView();
     InventorySearchAndFilter.selectSearchResultItem();
     InventorySearchAndFilter.selectViewHoldings();
-    InventoryInstance.verifyHoldingsPermanentLocation(instance.defaultLocation.name);
-    InventoryInstance.verifyHoldingsTemporaryLocation('-');
+    InventoryInstance.verifyHoldingsPermanentLocation('Online');
+    InventoryInstance.verifyHoldingsTemporaryLocation(tempLocation.name);
   });
 });
