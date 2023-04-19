@@ -105,6 +105,15 @@ export default {
 
   switchToBrowse:() => cy.do(Button({ id:'segment-navigation-browse' }).click()),
 
+  checkDefaultBrowseOptions: (searchValue) => {
+    cy.expect([
+      marcViewSection.absent(),
+      SearchField({ id: 'textarea-authorities-search', value: searchValue }).absent(),
+      selectField.has({ content: including('Select a browse option') }),
+      rootSection.find(HTML(including('Choose a filter or enter a search query to show results.'))).exists(),
+    ]);
+  },
+
   searchBy: (parameter, value) => {
     cy.do(filtersSection.find(SearchField({ id: 'textarea-authorities-search' })).selectIndex(parameter));
     cy.do(filtersSection.find(SearchField({ id: 'textarea-authorities-search' })).fillIn(value));
@@ -209,6 +218,10 @@ export default {
       editorSection.exists(),
       QuickMarcEditorRow({ tagValue: '010' }).absent()
     ]);
+  },
+
+  clickReset: () => {
+    cy.do(filtersSection.find(resetButton).click());
   },
 
   clickResetAndCheck: (searchValue) => {
