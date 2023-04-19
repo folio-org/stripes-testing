@@ -217,7 +217,6 @@ export default {
   addIncomingRecordType:(type) => cy.do(Select({ name:'profile.incomingRecordType' }).choose(type)),
   addFolioRecordType:(folioType) => cy.do(Select({ name:'profile.existingRecordType' }).choose(folioType)),
   saveProfile:() => cy.do(saveButton.click()),
-  fillPermanentLocation:(location) => cy.do(TextField('Permanent').fillIn(location)),
   fillTemporaryLocation:(location) => cy.do(TextField('Temporary').fillIn(location)),
   fillDigitizationPolicy:(policy) => cy.do(TextField('Digitization policy').fillIn(policy)),
   fillCallNumber:(number) => cy.do(TextField('Call number').fillIn(number)),
@@ -324,6 +323,11 @@ export default {
       Button('Add nature of content term').click(),
       TextField('Nature of content term').fillIn(`"${value}"`)
     ]);
+    waitLoading();
+  },
+
+  fillPermanentLocation:(location) => {
+    cy.do(TextField('Permanent').fillIn(location));
     waitLoading();
   },
 

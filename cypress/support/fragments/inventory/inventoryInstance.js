@@ -56,7 +56,7 @@ const source = KeyValue('Source');
 const tagButton = Button({ icon: 'tag' });
 const closeTag = Button({ icon: 'times' });
 const tagsPane = Pane('Tags');
-const textFieldTagInput = MultiSelect({ ariaLabelledby:'accordion-toggle-button-tag-accordion' });
+const textFieldTagInput = MultiSelect({ ariaLabelledby:'input-tag-label' });
 const descriptiveDataAccordion = Accordion('Descriptive data');
 const titleDataAccordion = Accordion('Title data');
 const contributorAccordion = Accordion('Contributor');
@@ -85,7 +85,7 @@ const searchTextArea = TextArea({ id: 'textarea-authorities-search' });
 const marcViewPane = Section({ id: 'marc-view-pane' });
 const searchButton = Button({ type: 'submit' });
 const enabledSearchBtn = Button({ type: 'submit', disabled: false });
-const resetAllButton = Button('Reset all');
+const disabledResetAllBtn = Button({ id: 'clickable-reset-all', disabled: true });
 const searchButtonDisabled = Button({ type: 'submit', disabled: true });
 const instanceHRID = 'Instance HRID';
 const paneResultsSection = Section({ id: 'pane-results' });
@@ -108,6 +108,7 @@ const closeDetailsView = Button({ icon: 'times' });
 const quickMarcEditorPane = Section({ id: 'quick-marc-editor-pane' });
 const filterPane = Section({ id: 'pane-filter' });
 const inputSearchField = TextField({ id: 'input-inventory-search' });
+const holdingsPane = Pane(including('Holdings'));
 
 const validOCLC = { id:'176116217',
   // TODO: hardcoded count related with interactors getters issue. Redesign to cy.then(QuickMarkEditor().rowsCount()).then(rowsCount => {...}
@@ -297,9 +298,9 @@ export default {
       browseOptionBtn.exists(),
       searchTextArea.exists(),
       searchButtonDisabled.exists(),
-      resetAllButton.exists(),
+      disabledResetAllBtn.exists(),
       sourceFileAccordion.find(MultiSelect({ label: including('Authority source') })).exists(),
-      sourceFileAccordion.find(MultiSelect({ selected: including('LC Name Authority file (LCNAF)') })).exists(),
+      sourceFileAccordion.find(MultiSelect({ selectedCount: 0 })).exists(),
       subjectHeadingAccordion.find(Button('Thesaurus')).has({ ariaExpanded: 'false' }),
       headingTypeAccordion.find(Button('Type of heading')).has({ ariaExpanded: 'false' }),
       createdDateAccordion.find(Button('Date created')).has({ ariaExpanded: 'false' }),
@@ -573,11 +574,9 @@ export default {
   },
 
   addTag:(tagName) => {
-    cy.intercept('/tags?limit=10000').as('getTags');
     cy.do(tagButton.click());
-    cy.wait(['@getTags']);
     // TODO: clarify with developers what should be waited
-    cy.wait(1000);
+    cy.wait(1500);
     cy.do(tagsPane.find(textFieldTagInput).choose(tagName));
   },
 
@@ -637,6 +636,19 @@ export default {
 
   verifyHoldingLocation(content) {
     cy.expect(MultiColumnListCell({ content }).exists());
+  },
+
+  verifyHoldingsPermanentLocation(permanentLocation) {
+    cy.expect(holdingsPane.find(KeyValue('Permanent')).has({ value: `${permanentLocation}` }));
+  },
+
+  verifyHoldingsTemporaryLocation(temporaryLocation) {
+    cy.expect(holdingsPane.find(KeyValue('Temporary')).has({ value: `${temporaryLocation}` }));
+  },
+
+  closeHoldingsView() {
+    cy.expect(holdingsPane.exists());
+    cy.do(Button({ icon: 'times' }).click());
   },
 
   checkIsItemCreated:(itemBarcode) => {
