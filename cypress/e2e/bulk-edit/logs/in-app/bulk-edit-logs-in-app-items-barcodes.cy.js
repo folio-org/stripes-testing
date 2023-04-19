@@ -37,7 +37,7 @@ describe('Bulk Edit - Logs', () => {
   after('delete test data', () => {
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    FileManager.deleteFileFromDownloadsByMask(errorsFromMatchingFileName, itemBarcodesFileName);
   });
 
   it('C375284 Verify generated Logs files for Items In app -- only invalid records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
