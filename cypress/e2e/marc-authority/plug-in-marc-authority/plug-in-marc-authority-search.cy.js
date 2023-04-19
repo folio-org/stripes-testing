@@ -221,4 +221,15 @@ describe('plug-in MARC authority | Search', () => {
     MarcAuthorities.searchBy(testData.forC359230.searchOptionB, '*');
     MarcAuthorities.checkSingleHeadingType(testData.forC359230.type, testData.forC359230.typeOfHeadingA);
   });
+  
+  it('C359227 MARC Authority plug-in | Search using "Personal name" option (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+    InventoryInstances.selectInstance();
+    InventoryInstance.editMarcBibliographicRecord();
+    InventoryInstance.verifyAndClickLinkIcon('700');
+    MarcAuthorities.switchToSearch();
+    InventoryInstance.verifySearchOptions();
+    MarcAuthorities.searchByParameter('Personal name', 'Erbil, H. Yıldırım');
+    MarcAuthorities.checkRecordDetailPageMarkedValue('Erbil, H. Yıldırım');
+  });
 });
