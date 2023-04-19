@@ -253,8 +253,8 @@ export default {
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
-      fundDistributionField.fillIn(value),
       Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
+      fundDistributionField.fillIn(value),
       saveAndClose.click()
     ]);
     cy.wait(6000);
@@ -534,6 +534,15 @@ export default {
     ]);
   },
 
+  deleteFundInPOL() {
+    cy.do([
+      Section({ id: 'fundDistributionAccordion' }).find(Button({ icon: 'trash' })).click(),
+      saveAndClose.click()
+    ]);
+    cy.wait(6000);
+    this.submitOrderLine();
+  },
+
   addContributorToPOL: () => {
     cy.do([
       Button('Add contributor').click(),
@@ -547,7 +556,7 @@ export default {
   },
 
   openInstance:() => {
-    cy.do(PaneContent({ id:'order-lines-details-content' }).find(Link({ href: including('/inventory/view/') })).click());
+    cy.do(Section({ id:'ItemDetails' }).find(Link({ href: including('/inventory/view/') })).click());
   },
 
   openReceiving:() => {

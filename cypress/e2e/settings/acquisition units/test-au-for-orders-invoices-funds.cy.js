@@ -22,15 +22,7 @@ import AcquisitionUnits from '../../../support/fragments/settings/acquisitionUni
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 
 describe('ui-organizations: Organizations', () => {
-    const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
-    const secondFiscalYear = {
-      name: `autotest_year_${getRandomPostfix()}`,
-      code: DateTools.getRandomFiscalYearCodeForRollover(2000, 9999),
-      periodStart: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
-      periodEnd: `${DateTools.getDayAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
-      description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
-      series: 'FY',
-    };
+    const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
     const defaultLedger = { ...Ledgers.defaultUiLedger };
     const defaultFund = { ...Funds.defaultUiFund };
     const defaultOrder = { ...NewOrder.defaultOneTimeOrder,
@@ -68,10 +60,10 @@ describe('ui-organizations: Organizations', () => {
   
   before(() => {
     cy.getAdminToken();
-    FiscalYears.createViaApi(firstFiscalYear)
+    FiscalYears.createViaApi(defaultFiscalYear)
       .then(firstFiscalYearResponse => {
-        firstFiscalYear.id = firstFiscalYearResponse.id;
-        defaultLedger.fiscalYearOneId = firstFiscalYear.id;
+        defaultFiscalYear.id = firstFiscalYearResponse.id;
+        defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
         Ledgers.createViaApi(defaultLedger)
           .then(ledgerResponse => {
             defaultLedger.id = ledgerResponse.id;
@@ -147,26 +139,38 @@ describe('ui-organizations: Organizations', () => {
         permissions.uiInvoicesDownloadBatchFileFromInvoiceRecord.gui,
         permissions.uiInvoicesExportSearchResults.gui,
         permissions.uiInvoicesManageAcquisitionUnits.gui,
-        permissions.uiInvoicesVoucherExport.gui
+        permissions.uiInvoicesVoucherExport.gui,
+        permissions.uiFinanceViewFundAndBudget.gui
     ])
       .then(userProperties => {
         user = userProperties;
       });
   });
 
-//   after(() => {
-//     cy.loginAsAdmin({ path:TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-//     Organizations.searchByParameters('Name', organization.name);
-//     Organizations.selectOrganization(organization.name);
-//     Organizations.deleteOrganization();
+  // after(() => {
+  //   cy.loginAsAdmin({ path:TopMenu.invoicesPath, waiter: Invoices.waitLoading });
+  //   cy.visit(TopMenu.invoicesPath);
+  //   Invoices.searchByNumber(invoice.invoiceNumber);
+  //   Invoices.selectInvoice(invoice.invoiceNumber);
+  //   Invoices.deleteInvoiceViaActions();
+  //   Organizations.deleteOrganizationViaApi(organization.id);
+  //   Orders.deleteOrderApi(defaultOrder.id);
 
-//     cy.visit(SettingsMenu.acquisitionUnitsPath);
+  //   cy.visit(TopMenu.fundPath);
+  //   FinanceHelp.searchByName(defaultFund.name);
+  //   Funds.selectFund(defaultFund.name);
+  //   Funds.deleteFundViaActions();
+  //   FinanceHelp.searchByName(defaultFund.name);
+  //   Funds.checkZeroSearchResultsHeader();
+  //   Ledgers.deleteledgerViaApi(defaultLedger.id);
+  //   FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
 
-//     AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
-//     AcquisitionUnits.delete(defaultAcquisitionUnit.name);
+  //   cy.visit(SettingsMenu.acquisitionUnitsPath);
+  //   AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
+  //   AcquisitionUnits.delete(defaultAcquisitionUnit.name);
 
-//     Users.deleteViaApi(user.userId);
-//   });
+  //   Users.deleteViaApi(user.userId);
+  // });
 
   it('C163931 Test acquisition unit restrictions for apply Funds to orders or Invoices (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
@@ -187,20 +191,24 @@ describe('ui-organizations: Organizations', () => {
     OrderLines.editPOLInOrder();
     OrderLines.addFundToPOL(defaultFund, '40');
     OrderLines.editPOLInOrder();
+    OrderLines.deleteFundInPOL();
+    OrderLines.backToEditingOrder();
+
+    cy.visit(TopMenu.invoicesPath);
+    Invoices.searchByNumber(invoice.invoiceNumber);
+    Invoices.selectInvoice(invoice.invoiceNumber);
+    Invoices.selectInvoiceLine();
+    Invoices.editInvoiceLine();
+    Invoices.addFundToLine(defaultFund);
+    Invoices.selectInvoiceLine();
+    Invoices.editInvoiceLine();
+    Invoices.deleteFundInInvoiceLine();
 
     cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
     AcquisitionUnits.unAssignUser(defaultAcquisitionUnit.name);
 
-    // cy.login(user.username, user.password, { path:TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-    // Organizations.searchByParameters('Name', organization.name);
-    // Organizations.checkZeroSearchResultsHeader();
-
-    // cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
-    // AcquisitionUnits.edit(defaultAcquisitionUnit.name);
-    // AcquisitionUnits.selectViewCheckbox();
-
-    // cy.login(user.username, user.password, { path:TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-    // Organizations.searchByParameters('Name', organization.name);
-    // Organizations.selectOrganization(organization.name);
+    cy.login(user.username, user.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
+    FinanceHelp.searchByName(defaultFund.name);
+    Funds.checkZeroSearchResultsHeader();
   });
 });
