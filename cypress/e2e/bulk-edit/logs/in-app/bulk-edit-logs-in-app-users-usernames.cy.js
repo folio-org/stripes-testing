@@ -12,7 +12,7 @@ import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-fil
 let user;
 const invalidUsername = `invalidUsername_${getRandomPostfix()}`;
 const invalidUsernamesFilename = `invalidUsername_${getRandomPostfix()}.csv`;
-const errorsFromMatchingFileName = `*Errors-${invalidUsernamesFilename}*`;
+const errorsFromMatchingFileName = `*Errors-${invalidUsernamesFilename}`;
 
 describe('Bulk Edit - Logs', () => {
   before('create test data', () => {
@@ -34,7 +34,7 @@ describe('Bulk Edit - Logs', () => {
   after('delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${invalidUsernamesFilename}`);
     Users.deleteViaApi(user.userId);
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    FileManager.deleteFileFromDownloadsByMask(invalidUsernamesFilename, errorsFromMatchingFileName);
   });
 
   it('C375246 Verify generated Logs files for Users In app -- only invalid records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -49,7 +49,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.openLogsSearch();
     BulkEditSearchPane.verifyLogsPane();
     BulkEditSearchPane.checkUsersCheckbox();
-    BulkEditSearchPane.clickActionsOnTheRow();
+    BulkEditSearchPane.clickActionsRunBy(user.username);
     BulkEditSearchPane.verifyLogsRowActionWhenCompletedWithErrorsWithoutModification();
 
     BulkEditSearchPane.downloadFileUsedToTrigger();
