@@ -27,53 +27,58 @@ function openNewRequestPane() {
   ]);
 }
 
+function fillRequiredFields(newRequest) {
+  if ('instanceHRID' in newRequest) {
+    cy.expect(Checkbox({ name: 'createTitleLevelRequest', disabled: false }).exists());
+    cy.do(titleLevelRequest.click());
+    cy.do(instanceHridInput.fillIn(newRequest.instanceHRID));
+    cy.intercept('/inventory/instances?*').as('getLoans');
+    cy.do(Section({ id: 'new-item-info' }).find(Button('Enter')).click());
+  } else {
+    cy.do(itemBarcodeInput.fillIn(newRequest.itemBarcode));
+    cy.intercept('/circulation/loans?*').as('getLoans');
+    cy.do(enterItemBarcodeButton.click());
+  }
+  cy.do(selectRequestType.choose(newRequest.requestType));
+  cy.wait('@getLoans');
+  cy.do(requesterBarcodeInput.fillIn(newRequest.requesterBarcode));
+  cy.intercept('/proxiesfor?*').as('getUsers');
+  cy.do(enterRequesterBarcodeButton.click());
+  cy.expect(selectServicePoint.exists);
+  cy.wait('@getUsers');
+}
+
+function saveRequestAndClose() { cy.do(saveAndCloseButton.click()); }
+
+function choosepickupServicePoint(pickupServicePoint) {
+  cy.do(selectServicePoint.choose(pickupServicePoint));
+  cy.expect(HTML(including(pickupServicePoint)).exists());
+}
+
+function waitLoading() { cy.expect(Pane({ title: 'Request Detail' }).exists()); }
+
 export default {
   addRequester,
   openNewRequestPane,
-
-  fillRequiredFields(newRequest) {
-    if ('instanceHRID' in newRequest) {
-      cy.expect(Checkbox({ name: 'createTitleLevelRequest', disabled: false }).exists());
-      cy.do(titleLevelRequest.click());
-      cy.do(instanceHridInput.fillIn(newRequest.instanceHRID));
-      cy.intercept('/inventory/instances?*').as('getLoans');
-      cy.do(Section({ id: 'new-item-info' }).find(Button('Enter')).click());
-    } else {
-      cy.do(itemBarcodeInput.fillIn(newRequest.itemBarcode));
-      cy.intercept('/circulation/loans?*').as('getLoans');
-      cy.do(enterItemBarcodeButton.click());
-    }
-    cy.do(selectRequestType.choose(newRequest.requestType));
-    cy.wait('@getLoans');
-    cy.do(requesterBarcodeInput.fillIn(newRequest.requesterBarcode));
-    cy.intercept('/proxiesfor?*').as('getUsers');
-    cy.do(enterRequesterBarcodeButton.click());
-    cy.expect(selectServicePoint.exists);
-    cy.wait('@getUsers');
-  },
-
-  choosepickupServicePoint(pickupServicePoint) {
-    cy.do(selectServicePoint.choose(pickupServicePoint));
-    cy.expect(HTML(including(pickupServicePoint)).exists());
-  },
-
-  saveRequestAndClose:() => cy.do(saveAndCloseButton.click()),
-  waitLoading:() => cy.expect(Pane({ title: 'Request Detail' }).exists()),
+  fillRequiredFields,
+  saveRequestAndClose,
+  choosepickupServicePoint,
+  waitLoading,
 
   createNewRequest(newRequest) {
     openNewRequestPane();
-    this.fillRequiredFields(newRequest);
-    this.choosepickupServicePoint(newRequest.pickupServicePoint);
-    this.saveRequestAndClose();
-    this.waitLoading();
+    fillRequiredFields(newRequest);
+    choosepickupServicePoint(newRequest.pickupServicePoint);
+    saveRequestAndClose();
+    waitLoading();
   },
 
   createDeliveryRequest(newRequest) {
-    this.openNewRequestPane();
-    this.fillRequiredFields(newRequest);
+    openNewRequestPane();
+    fillRequiredFields(newRequest);
     // need to wait until instanceId is uploaded
     cy.wait(2500);
-    this.saveRequestAndClose();
+    saveRequestAndClose();
   },
 
   createWithUserName(newRequest) {
@@ -89,9 +94,9 @@ export default {
     cy.wait('@getLoans');
     // need to wait until instanceId is uploaded
     cy.wait(2500);
-    this.choosepickupServicePoint(newRequest.pickupServicePoint);
-    this.saveRequestAndClose();
-    this.waitLoading();
+    choosepickupServicePoint(newRequest.pickupServicePoint);
+    saveRequestAndClose();
+    waitLoading();
   },
 
   waitLoadingNewRequestPage(TLR = false) {
@@ -151,6 +156,6 @@ export default {
     cy.do(enterRequesterBarcodeButton.click());
     cy.expect(selectServicePoint.exists);
     cy.wait('@getUsers');
-    this.choosepickupServicePoint(newRequest.pickupServicePoint);
+    choosepickupServicePoint(newRequest.pickupServicePoint);
   }
 };
