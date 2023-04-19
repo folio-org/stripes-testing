@@ -20,7 +20,7 @@ import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
 import ItemRecordEdit from '../../support/fragments/inventory/itemRecordEdit';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import SwitchServicePoint from '../../support/fragments/servicePoint/switchServicePoint';
-import ConfirmItemInModal from '../../support/fragments/check-in-actions/confirmItemInModal';
+import CheckInModals from '../../support/fragments/check-in-actions/checkInModals';
 import Users from '../../support/fragments/users/users';
 import ServicePoint from '../../support/fragments/servicePoint/servicePoint';
 import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
@@ -159,7 +159,7 @@ describe('orders: Receive piece from Order', () => {
       SwitchServicePoint.switchServicePoint(secondServicePoint.name);
       cy.visit(TopMenu.checkInPath);
       CheckInActions.checkInItem(barcode);
-      ConfirmItemInModal.confirmInTransitModal();
+      CheckInModals.confirmInTransit();
       cy.visit(TopMenu.inventoryPath);
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', instanceTitle);

@@ -10,15 +10,12 @@ import {
   MultiColumnListCell,
   HTML,
   including,
-  PaneContent,
-  Checkbox
+  PaneContent
 } from '../../../../interactors';
 import SelectUser from './selectUser';
 
-const modal = Modal('Confirm multipiece check out');
 const endSessionButton = Button('End session');
 const userPane = PaneContent({ id: 'patron-details-content' });
-const modalForDeliveryRequest = Modal('Route for delivery request');
 
 function addPatron(userName) {
   cy.do(Button({ id:'clickable-find-user' }).click());
@@ -27,7 +24,6 @@ function addPatron(userName) {
 }
 
 export default {
-  modal,
   addPatron,
   checkOutUser(userBarcode, otherParameter) {
     return cy.do([
@@ -103,16 +99,6 @@ export default {
     cy.expect(MultiColumnList({ id:'list-items-checked-out' }).find(HTML(including(barcode))).absent());
   },
 
-  confirmMultipieceCheckOut(barcode) {
-    cy.do(modal.find(Button('Check out')).click());
-    cy.expect(MultiColumnList({ id: 'list-items-checked-out' }).find(HTML(including(barcode))).exists());
-  },
-
-  cancelMultipleCheckOutModal:() => {
-    cy.do(modal.find(Button('Cancel')).click());
-    cy.expect(modal.absent());
-  },
-
   openLoanDetails() {
     cy.do(Button({ id: 'available-item-actions-button' }).click());
     cy.do(Button('Loan details').click());
@@ -149,10 +135,5 @@ export default {
     cy.do(Button({ id: 'clickable-add-item' }).click());
     // waiters needs for check out item in loop
     cy.wait(1000);
-  },
-
-  closeForDeliveryRequestModal:() => {
-    cy.do(modalForDeliveryRequest.find(Checkbox('Print slip')).click());
-    cy.do(modalForDeliveryRequest.find(Button('Close and check out')).click());
   }
 };

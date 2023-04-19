@@ -7,7 +7,7 @@ import { MultiColumnListCell } from '../../../interactors';
 import DevTeams from '../../support/dictionary/devTeams';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
-describe('ui-inventory: Create new instance with add "New"', () => {
+describe('inventory', () => {
   const instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
 
   before('navigate to Inventory', () => {

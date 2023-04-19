@@ -12,7 +12,7 @@ import DevTeams from '../../../support/dictionary/devTeams';
 let user;
 const oclc = '1007797324';
 
-describe('ui-inventory: import by OCLC', () => {
+describe('inventory', () => {
   before('create user', () => {
     cy.createTempUser([
       permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,

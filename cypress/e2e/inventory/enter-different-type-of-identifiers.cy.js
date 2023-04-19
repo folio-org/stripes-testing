@@ -8,7 +8,7 @@ import Helper from '../../support/fragments/finance/financeHelper';
 import TopMenu from '../../support/fragments/topMenu';
 import DevTeams from '../../support/dictionary/devTeams';
 
-describe('ui-inventory: Enter different type of identifiers', () => {
+describe('inventory', () => {
   let instanceTitle;
   let instanceId;
   let resourceIdentifier;

@@ -8,7 +8,7 @@ import Helper from '../../support/fragments/finance/financeHelper';
 import TestTypes from '../../support/dictionary/testTypes';
 import DevTeams from '../../support/dictionary/devTeams';
 
-describe('ui-inventory: Assign a Preceding title for an instance', () => {
+describe('inventory', () => {
   const instanceIds = [];
   const instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
   const instanceTitle2 = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;

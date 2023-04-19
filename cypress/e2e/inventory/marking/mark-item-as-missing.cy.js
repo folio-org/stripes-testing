@@ -11,7 +11,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
 import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
 
-describe('ui-inventory: Mark an item as Missing', () => {
+describe('inventory', () => {
   let user = {};
   let defaultServicePointId = '';
   const requesterIds = [];

@@ -1,13 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
+import uuid from 'uuid';
 import getRandomPostfix from '../../support/utils/stringTools';
-import {
-  REQUEST_POLICY_NAMES,
-  NOTICE_POLICY_NAMES,
-  OVERDUE_FINE_POLICY_NAMES,
-  CY_ENV,
-  LOST_ITEM_FEES_POLICY_NAMES,
-  LOAN_POLICY_NAMES,
-} from '../../support/constants';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import TopMenu from '../../support/fragments/topMenu';
@@ -22,7 +15,7 @@ import NewRequest from '../../support/fragments/requests/newRequest';
 import CheckOut from '../../support/fragments/checkout/checkout';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
-import ConfirmItemInModal from '../../support/fragments/check-in-actions/confirmItemInModal';
+import CheckInModals from '../../support/fragments/check-in-actions/checkInModals';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
 import ConfirmItemStatusModal from '../../support/fragments/users/loans/confirmItemStatusModal';
 import RenewConfirmationModal from '../../support/fragments/users/loans/renewConfirmationModal';
@@ -36,16 +29,19 @@ import Users from '../../support/fragments/users/users';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import DateTools from '../../support/utils/dateTools';
-import UserEdit from '../../support/fragments/users/userEdit';
-import ServicePoint from '../../support/fragments/servicePoint/servicePoint';
 import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import NewMaterialType from '../../support/fragments/settings/inventory/newMaterialType';
+import UsersOwners from '../../support/fragments/settings/users/usersOwners';
+import CheckOutModals from '../../support/fragments/check-out-actions/checkOutModals';
+import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
 
-describe('ui-inventory: Item status date updates', () => {
+describe('inventory', () => {
   const instanceTitle = `autotestTitle ${Helper.getRandomBarcode()}`;
   const itemQuantity = '1';
   const itemBarcode = Helper.getRandomBarcode();
   const userName = Cypress.env('diku_login');
+  const ownerId = uuid();
   let orderNumber;
   let effectiveLocationServicePoint;
   let notEffectiveLocationServicePoint;
@@ -53,43 +49,57 @@ describe('ui-inventory: Item status date updates', () => {
   let addedCirculationRule;
   let originalCirculationRules;
   let userForDeliveryRequest = {};
+  let materialTypeId;
 
-  before(() => {
+  before('create test data', () => {
     cy.loginAsAdmin();
     cy.getAdminToken();
-    CirculationRules.getViaApi().then((circulationRule) => {
-      originalCirculationRules = circulationRule.rulesAsText;
-      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-      const defaultProps = ` i ${ruleProps.i} r ${ruleProps.r} o ${ruleProps.o} n ${ruleProps.n}`;
+    NewMaterialType.createViaApi(NewMaterialType.getDefaultMaterialType())
+      .then(mtypes => {
+        materialTypeId = mtypes.body.id;
 
-      addedCirculationRule = `\nl ${loanPolicyForCourseReserves.id} ${defaultProps}`;
-      cy.updateCirculationRules({ rulesAsText: `${originalCirculationRules}${addedCirculationRule}` });
-    });
+        CirculationRules.getViaApi().then((circulationRule) => {
+          originalCirculationRules = circulationRule.rulesAsText;
+          const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
+          const defaultProps = ` i ${ruleProps.i} r ${ruleProps.r} o ${ruleProps.o} n ${ruleProps.n} l ${ruleProps.l}`;
 
-      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' })
-        .then((servicePoints) => {
-          effectiveLocationServicePoint = servicePoints[0];
-          NewLocation.createViaApi(NewLocation.getDefaultLocation(effectiveLocationServicePoint.id))
-            .then((location) => {
-              effectiveLocation = location;
-              Orders.createOrderWithOrderLineViaApi(
-                NewOrder.getDefaultOrder(),
-                BasicOrderLine.getDefaultOrderLine(itemQuantity, instanceTitle, effectiveLocation.id)
-              )
-                .then(order => {
-                  orderNumber = order;
-                });
+          addedCirculationRule = ` \nm ${materialTypeId}:${defaultProps}`;
+          cy.updateCirculationRules({ rulesAsText: `${originalCirculationRules}${addedCirculationRule}` });
+        });
+        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' })
+          .then((servicePoints) => {
+            effectiveLocationServicePoint = servicePoints[0];
+            NewLocation.createViaApi(NewLocation.getDefaultLocation(effectiveLocationServicePoint.id))
+              .then((location) => {
+                effectiveLocation = location;
+                Orders.createOrderWithOrderLineViaApi(
+                  NewOrder.getDefaultOrder(),
+                  BasicOrderLine.getDefaultOrderLine(itemQuantity, instanceTitle, effectiveLocation.id, materialTypeId)
+                )
+                  .then(order => {
+                    orderNumber = order;
+                  });
+              });
+            UsersOwners.createViaApi({
+              id: ownerId,
+              owner: 'AutotestOwner' + getRandomPostfix(),
+              servicePointOwner: [
+                {
+                  value: effectiveLocationServicePoint.id,
+                  label: effectiveLocationServicePoint.name,
+                },
+              ],
             });
-        });
-      ServicePoints.getViaApi({ limit: 1, query: 'name=="Online"' })
-        .then((servicePoints) => {
-          notEffectiveLocationServicePoint = servicePoints[0];
-        });
-    });
+          });
+      });
+    ServicePoints.getViaApi({ limit: 1, query: 'name=="Online"' })
+      .then((servicePoints) => {
+        notEffectiveLocationServicePoint = servicePoints[0];
+      });
 
     cy.createTempUser([
       permissions.checkoutAll.gui,
-      permissions.requestsAll.gui,
+      permissions.requestsAll.gui
     ])
       .then(userProperties => {
         userForDeliveryRequest = userProperties;
@@ -108,27 +118,20 @@ describe('ui-inventory: Item status date updates', () => {
       });
   });
 
-  // afterEach(() => {
-  //   InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
-  //   Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
-  //     .then(order => Orders.deleteOrderApi(order[0].id));
-  //   UserEdit.changeServicePointPreferenceViaApi(
-  //     userForDeliveryRequest.userId,
-  //     [effectiveLocationServicePoint.id, notEffectiveLocationServicePoint.id]
-  //   )
-  //     .then(() => {
-  //       ServicePoint.deleteViaApi(effectiveLocationServicePoint.id);
-  //       ServicePoint.deleteViaApi(notEffectiveLocationServicePoint.id);
-  //       Users.deleteViaApi(userForDeliveryRequest.userId);
-  //     });
-
-  //   NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
-  //     effectiveLocation.institutionId,
-  //     effectiveLocation.campusId,
-  //     effectiveLocation.libraryId,
-  //     effectiveLocation.id
-  //   );
-  // });
+  afterEach('delete test data', () => {
+    Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
+      .then(order => Orders.deleteOrderApi(order[0].id));
+    UsersOwners.deleteViaApi(ownerId);
+    Users.deleteViaApi(userForDeliveryRequest.userId);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
+    MaterialTypes.deleteApi(materialTypeId);
+    NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+      effectiveLocation.institutionId,
+      effectiveLocation.campusId,
+      effectiveLocation.libraryId,
+      effectiveLocation.id
+    );
+  });
 
   const openItem = (title, itemLocation, barcode) => {
     cy.visit(TopMenu.inventoryPath);
@@ -159,11 +162,10 @@ describe('ui-inventory: Item status date updates', () => {
 
   const checkIn = (barcode, status, confirmModal) => {
     cy.visit(TopMenu.checkInPath);
-    // TODO investigate why need 1 min wait before each step
-    // it's enough to wait 15000 before and after check in
-    cy.wait(15000);
     CheckInActions.checkInItem(barcode);
-    cy.wait(15000);
+    // TODO investigate why need 1 min wait before each step
+    // it's enough to wait 10000 before and after check in
+    cy.wait(10000);
     checkOpenItem(barcode, status, confirmModal);
   };
 
@@ -215,17 +217,17 @@ describe('ui-inventory: Item status date updates', () => {
     fullCheck(ItemRecordView.itemStatuses.missing);
 
     // check in item at service point assigned to its effective location
-    checkIn(itemBarcode, ItemRecordView.itemStatuses.available, ConfirmItemInModal.confirmMissingModal);
+    checkIn(itemBarcode, ItemRecordView.itemStatuses.available, CheckInModals.confirmMissing);
 
     // check in item at service point assigned to its effective location
     checkIn(itemBarcode, ItemRecordView.itemStatuses.available);
 
     // check in item at service point not assigned to its effective location
     SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePoint.name);
-    checkIn(itemBarcode, ItemRecordView.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
+    checkIn(itemBarcode, ItemRecordView.itemStatuses.inTransit, CheckInModals.confirmInTransit);
 
     // check in item at service point not assigned to its effective location
-    checkIn(itemBarcode, ItemRecordView.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
+    checkIn(itemBarcode, ItemRecordView.itemStatuses.inTransit, CheckInModals.confirmInTransit);
 
     // check in item at service point assigned to its effective location
     SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
@@ -243,14 +245,14 @@ describe('ui-inventory: Item status date updates', () => {
 
     // check in item at a service point other than the pickup service point for the request
     SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePoint.name);
-    checkIn(itemBarcode, ItemRecordView.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
+    checkIn(itemBarcode, ItemRecordView.itemStatuses.inTransit, CheckInModals.confirmInTransit);
 
     // check in item at the pickup service point for the page request
     SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
-    checkIn(itemBarcode, ItemRecordView.itemStatuses.awaitingPickup, ConfirmItemInModal.confirmAvaitingPickUpModal);
+    checkIn(itemBarcode, ItemRecordView.itemStatuses.awaitingPickup, CheckInModals.confirmAvaitingPickUp);
 
     // check out item to user for whom page request was created
-    checkOut(userName, itemBarcode, ItemRecordView.itemStatuses.checkedOut, ConfirmItemInModal.confirmAvaitingPickupCheckInModal);
+    checkOut(userName, itemBarcode, ItemRecordView.itemStatuses.checkedOut, CheckInModals.confirmAvaitingPickupCheckIn);
 
     // declare item lost
     openUser(userName);
@@ -274,30 +276,31 @@ describe('ui-inventory: Item status date updates', () => {
 
     // create delivery request (hold or recall) on item
     cy.visit(TopMenu.requestsPath);
-    cy.wrap(
-      NewRequest.createDeliveryRequest({
-        itemBarcode,
-        itemTitle: null,
-        requesterBarcode: userForDeliveryRequest.barcode,
-        requestType: 'Hold'
-      })
-    );
+    NewRequest.createDeliveryRequest({
+      itemBarcode,
+      itemTitle: null,
+      requesterBarcode: userForDeliveryRequest.barcode,
+      requestType: 'Hold'
+    });
     cy.visit(TopMenu.checkInPath);
     CheckInActions.checkInItem(itemBarcode);
-    ConfirmItemInModal.confirmMultipieceCheckInModal();
+    CheckInModals.confirmMultipieceCheckIn();
     cy.visit(TopMenu.checkOutPath);
     CheckOutActions.checkOutItemWithUserName(userName, itemBarcode);
-    CheckOutActions.cancelMultipleCheckOutModal();
+    CheckOutModals.cancelMultipleCheckOut();
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
     fullCheck(ItemRecordView.itemStatuses.awaitingDelivery);
 
     // check out item to user with delivery request
-    checkOut(userForDeliveryRequest.username, itemBarcode, ItemRecordView.itemStatuses.checkedOut);
+    checkOut(userForDeliveryRequest.username, itemBarcode, ItemRecordView.itemStatuses.checkedOut, CheckOutModals.confirmMultipieceCheckOut);
 
     // check in item at service point assigned to its effective location
-    SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
     cy.visit(TopMenu.checkInPath);
     CheckInActions.backdateCheckInItem(DateTools.getPreviousDayDate(), itemBarcode);
+    CheckInModals.confirmMultipieceCheckIn();
+    // TODO investigate why need 1 min wait before each step
+    // it's enough to wait 10000 before and after check in
+    cy.wait(10000);
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
     fullCheck(ItemRecordView.itemStatuses.available);
   });

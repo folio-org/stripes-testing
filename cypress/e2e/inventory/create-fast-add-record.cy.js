@@ -14,7 +14,7 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import FastAdd from '../../support/fragments/settings/inventory/instance-holdings-item/fastAdd';
 
-describe('ui-inventory: Create fast add record', () => {
+describe('inventory', () => {
   const timeStamp = {
     start: null,
     end: null,

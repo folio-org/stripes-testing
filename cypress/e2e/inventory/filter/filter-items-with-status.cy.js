@@ -18,7 +18,7 @@ const holdingId = uuid();
 const title = `Filter items with status test ${Number(new Date())}`;
 let source;
 
-describe('ui-inventory: items with status', () => {
+describe('inventory', () => {
   before('create inventory instance', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,

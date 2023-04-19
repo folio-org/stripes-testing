@@ -6,25 +6,25 @@ const closeButton = Button('Close');
 const printSlipCheckbox = Checkbox('Print slip');
 
 export default {
-  confirmMissingModal:() => {
+  confirmMissing:() => {
     cy.do(Modal('Check in missing item?').find(Button('Confirm')).click());
   },
 
-  confirmInTransitModal:() => {
+  confirmInTransit:() => {
     cy.do(inTransitModal.find(printSlipCheckbox).click());
     cy.do(inTransitModal.find(closeButton).click());
   },
 
-  confirmAvaitingPickUpModal:() => {
+  confirmAvaitingPickUp:() => {
     cy.do(awaitingPickupModal.find(printSlipCheckbox).click());
     cy.do(awaitingPickupModal.find(closeButton).click());
   },
 
-  confirmAvaitingPickupCheckInModal:() => {
+  confirmAvaitingPickupCheckIn:() => {
     cy.do(Modal('Items awaiting pickup').find(closeButton).click());
   },
 
-  confirmMultipieceCheckInModal:() => {
+  confirmMultipieceCheckIn:() => {
     cy.do(Modal('Confirm multipiece check in').find(Button('Check in')).click());
   }
 };
