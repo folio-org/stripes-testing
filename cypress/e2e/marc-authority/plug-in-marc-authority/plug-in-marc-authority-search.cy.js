@@ -90,7 +90,7 @@ describe('plug-in MARC authority | Search', () => {
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 1,
-      }
+      },
     ]
 
     let createdAuthorityIDs = [];
@@ -146,9 +146,9 @@ describe('plug-in MARC authority | Search', () => {
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
     InventoryInstance.verifyAndClickLinkIcon('700');
+    MarcAuthorities.switchToSearch();
     InventoryInstance.verifySelectMarcAuthorityModal();
     InventoryInstance.verifySearchAndFilterDisplay();
-    InventoryInstance.closeAuthoritySource();
     InventoryInstance.verifySearchOptions();
     InventoryInstance.fillInAndSearchResults('Starr, Lisa');
     InventoryInstance.checkResultsListPaneHeader();
@@ -164,7 +164,7 @@ describe('plug-in MARC authority | Search', () => {
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
     InventoryInstance.verifyAndClickLinkIcon('700');
-    InventoryInstance.closeAuthoritySource();
+    MarcAuthorities.switchToSearch();
     InventoryInstance.verifySearchOptions();
     MarcAuthorities.searchBy(testData.forC359206.searchOption, testData.forC359206.lcControlNumberA);
     MarcAuthorities.checkFieldAndContentExistence('010', testData.forC359206.lcControlNumberA);
@@ -180,6 +180,7 @@ describe('plug-in MARC authority | Search', () => {
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
     InventoryInstance.verifyAndClickLinkIcon('700');
+    MarcAuthorities.switchToSearch();
     InventoryInstance.verifySearchOptions();
     MarcAuthorities.searchByParameter(testData.forC359228.searchOption, testData.forC359228.all);
     // wait for the results to be loaded.
@@ -195,7 +196,7 @@ describe('plug-in MARC authority | Search', () => {
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
     InventoryInstance.verifyAndClickLinkIcon('700');
-    InventoryInstance.closeAuthoritySource();
+    MarcAuthorities.switchToSearch();
     InventoryInstance.verifySearchOptions();
     MarcAuthorities.searchBy(testData.forC359229.searchOptionA, testData.forC359229.valueA);
     MarcAuthorities.checkFieldAndContentExistence('151', testData.forC359229.valueA);
@@ -209,7 +210,7 @@ describe('plug-in MARC authority | Search', () => {
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
     InventoryInstance.verifyAndClickLinkIcon('700');
-    InventoryInstance.closeAuthoritySource();
+    MarcAuthorities.switchToSearch();
     InventoryInstance.verifySearchOptions();
     MarcAuthorities.searchByParameter(testData.forC359230.searchOptionA, '*');
     // wait for the results to be loaded.

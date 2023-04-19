@@ -402,10 +402,14 @@ describe('ui-data-import', () => {
     // create Field mapping profile for export
     const exportMappingProfile = {
       name: mappingProfileNameForExport,
+      holdingsMarcField: '901',
+      subfieldForHoldings:'$a',
+      itemMarcField:'902',
+      subfieldForItem:'$a'
     };
 
     cy.visit(SettingsMenu.exportMappingProfilePath);
-    ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile.name);
+    ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
 
     cy.visit(SettingsMenu.exportJobProfilePath);
     ExportJobProfiles.createJobProfile(jobProfileNameForExport, mappingProfileNameForExport);
@@ -448,8 +452,8 @@ describe('ui-data-import', () => {
 
     // upload the exported marc file
     cy.visit(TopMenu.dataImportPath);
-    // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-    DataImport.clickDataImportNavButton();
+    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+    cy.reload();
     DataImport.uploadExportedFile(nameMarcFileForImportUpdate);
     JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
     JobProfiles.runImportFile();
