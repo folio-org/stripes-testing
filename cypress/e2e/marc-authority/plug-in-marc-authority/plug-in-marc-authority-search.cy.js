@@ -46,6 +46,10 @@ describe('plug-in MARC authority | Search', () => {
         valurMarked: 'Twain, Mark,',
         type: 'Authorized',
       },
+      forC359231: {
+        searchOption: 'Uniform title',
+        value: 'Marvel comics',
+      },
     };
     
     const marcFiles = [
@@ -91,6 +95,12 @@ describe('plug-in MARC authority | Search', () => {
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 1,
       },
+      {
+        marc: 'marcFileForC359231.mrc', 
+        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        numOfRecords: 1,
+      },
     ]
 
     let createdAuthorityIDs = [];
@@ -131,7 +141,7 @@ describe('plug-in MARC authority | Search', () => {
   after('Deleting created user', () => {
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
-    for (let i = 1; i < 13; i++) {
+    for (let i = 1; i < 14; i++) {
       MarcAuthority.deleteViaAPI(createdAuthorityIDs[i]);
     }
 
@@ -231,5 +241,19 @@ describe('plug-in MARC authority | Search', () => {
     InventoryInstance.verifySearchOptions();
     MarcAuthorities.searchByParameter('Personal name', 'Erbil, H. Yıldırım');
     MarcAuthorities.checkRecordDetailPageMarkedValue('Erbil, H. Yıldırım');
+  });
+
+  it('C359231 MARC Authority plug-in | Search using "Uniform title" option (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+    InventoryInstances.selectInstance();
+    InventoryInstance.editMarcBibliographicRecord();
+    InventoryInstance.verifyAndClickLinkIcon('700');
+    MarcAuthorities.clickReset();
+    MarcAuthorities.switchToSearch();
+    InventoryInstance.verifySearchOptions();
+    MarcAuthorities.searchByParameter(testData.forC359231.searchOption, testData.forC359231.value);
+    MarcAuthorities.checkRecordDetailPageMarkedValue(testData.forC359231.value);
+    MarcAuthorities.switchToBrowse();
+    MarcAuthorities.checkDefaultBrowseOptions(testData.forC359231.value);
   });
 });
