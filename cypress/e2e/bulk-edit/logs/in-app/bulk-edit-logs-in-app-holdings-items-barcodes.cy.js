@@ -111,7 +111,7 @@ describe('Bulk Edit - Logs', () => {
               tempLocation,
               tempLocation2
             ]
-              .forEach(location => Location.createViaApi(location))
+              .forEach(location => Location.createViaApi(location));
           })
           .then(() => {
             // Creating first instance
