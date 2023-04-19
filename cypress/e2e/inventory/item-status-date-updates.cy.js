@@ -276,20 +276,23 @@ describe('inventory', () => {
 
     // create delivery request (hold or recall) on item
     cy.visit(TopMenu.requestsPath);
-    NewRequest.createDeliveryRequest({
-      itemBarcode,
-      itemTitle: null,
-      requesterBarcode: userForDeliveryRequest.barcode,
-      requestType: 'Hold'
+    cy.wrap(
+      NewRequest.createDeliveryRequest({
+        itemBarcode,
+        itemTitle: null,
+        requesterBarcode: userForDeliveryRequest.barcode,
+        requestType: 'Hold'
+      })
+    ).then(() => {
+      cy.visit(TopMenu.checkInPath);
+      CheckInActions.checkInItem(itemBarcode);
+      CheckInModals.confirmMultipieceCheckIn();
+      cy.visit(TopMenu.checkOutPath);
+      CheckOutActions.checkOutItemWithUserName(userName, itemBarcode);
+      CheckOutModals.cancelMultipleCheckOut();
+      openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+      fullCheck(ItemRecordView.itemStatuses.awaitingDelivery);
     });
-    cy.visit(TopMenu.checkInPath);
-    CheckInActions.checkInItem(itemBarcode);
-    CheckInModals.confirmMultipieceCheckIn();
-    cy.visit(TopMenu.checkOutPath);
-    CheckOutActions.checkOutItemWithUserName(userName, itemBarcode);
-    CheckOutModals.cancelMultipleCheckOut();
-    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    fullCheck(ItemRecordView.itemStatuses.awaitingDelivery);
 
     // check out item to user with delivery request
     checkOut(userForDeliveryRequest.username, itemBarcode, ItemRecordView.itemStatuses.checkedOut, CheckOutModals.confirmMultipieceCheckOut);
