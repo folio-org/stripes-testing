@@ -28,6 +28,15 @@ export default {
     return cy.task('deleteFile', pathToFile);
   },
 
+  deleteFileFromDownloadsByMask(...fileNameMasks) {
+    fileNameMasks.forEach(fileNameMask => {
+      this.findDownloadedFilesByMask(fileNameMask)
+        .then((fileName) => {
+          cy.task('deleteFile', fileName[0]);
+        });
+    });
+  },
+
   verifyFile(verifyNameFunc, fileNameMask, verifyContentFunc, verifyContentFuncArgs = []) {
     /*
     verifyNameFunc: function for verifying file name

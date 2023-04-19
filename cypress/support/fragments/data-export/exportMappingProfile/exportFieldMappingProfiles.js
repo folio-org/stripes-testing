@@ -1,5 +1,5 @@
-import { Button, Pane, NavListItem, TextField, MultiColumnListHeader, MultiColumnListRow } from '../../../../../interactors';
 import { including } from 'bigtest';
+import { Button, Pane, NavListItem, TextField, MultiColumnListHeader, MultiColumnListRow } from '../../../../../interactors';
 import exportNewFieldMappingProfile from './exportNewFieldMappingProfile';
 
 const saveAndCloseButton = Button('Save & close');
@@ -55,8 +55,8 @@ export default {
       newButton.has({ disabled: false }),
       TextField('Search Field mapping profiles').exists(),
       searchButton.has({ disabled: true }),
-    ])
-    cy.do(cy.get('[class^=mclEndOfListContainer--]').should('have.text', 'End of list'))
+    ]);
+    cy.do(cy.get('[class^=mclEndOfListContainer--]').should('have.text', 'End of list'));
     this.verifyFieldMappingProfilesCount();
     this.verifyColumnTitles();
   },
@@ -64,7 +64,7 @@ export default {
   verifyFieldMappingProfilesCount() {
     cy.do(cy.get('#search-results-list').then(elem => {
       cy.expect(cy.get('#paneHeaderpane-results-subtitle').should('have.text', `${elem.attr('data-total-count')} field mapping profiles`));
-    }))
+    }));
   },
 
   verifyColumnTitles() {
@@ -76,7 +76,7 @@ export default {
       'Updated by'
     ].forEach(title => {
       cy.expect(fieldMappingProfilesPane.find(MultiColumnListHeader(title)).exists());
-    })
+    });
   },
 
   verifyDefaultProfiles() {
@@ -84,6 +84,6 @@ export default {
       MultiColumnListRow(including('Default authority mapping profileAuthority')).exists(),
       MultiColumnListRow(including('Default holdings mapping profileHoldings')).exists(),
       MultiColumnListRow(including('Default instance mapping profileInstance')).exists(),
-    ])
+    ]);
   }
 };

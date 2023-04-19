@@ -28,7 +28,24 @@ describe('plug-in MARC authority | Search', () => {
         typeOfHeadingB: 'Conference Name',
         all: '*',
         title: 'Apple Academic Press',
-      }
+      },
+      forC359229: {
+        searchOptionA: 'Geographic name',
+        searchOptionB: 'Keyword',
+        valueA: 'Gulf Stream',
+        valueB: 'North',
+        type: 'Authorized',
+      },
+      forC359230: {
+        searchOptionA: 'Name-title',
+        searchOptionB: 'Personal name',
+        typeOfHeadingA: 'Personal Name',
+        typeOfHeadingB: 'Corporate Name',
+        typeOfHeadingC: 'Conference Name',
+        value: 'Twain, Mark, 1835-1910. Adventures of Huckleberry Finn',
+        valurMarked: 'Twain, Mark,',
+        type: 'Authorized',
+      },
     };
     
     const marcFiles = [
@@ -38,6 +55,12 @@ describe('plug-in MARC authority | Search', () => {
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         numOfRecords: 1,
       }, 
+      {
+        marc: 'marcFileForC359015.mrc', 
+        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        numOfRecords: 1,
+      },
       {
         marc: 'marcFileForC359206.mrc', 
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
@@ -49,7 +72,25 @@ describe('plug-in MARC authority | Search', () => {
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 5,
-      }
+      },
+      {
+        marc: 'marcFileForC359229.mrc', 
+        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        numOfRecords: 2,
+      },
+      {
+        marc: 'marcFileForC359230_2.mrc', 
+        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        numOfRecords: 1,
+      },
+      {
+        marc: 'marcFileForC359230_3.mrc', 
+        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        numOfRecords: 1,
+      },
     ]
 
     let createdAuthorityIDs = [];
@@ -90,7 +131,7 @@ describe('plug-in MARC authority | Search', () => {
   after('Deleting created user', () => {
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
-    for (let i = 1; i < 8; i++) {
+    for (let i = 1; i < 13; i++) {
       MarcAuthority.deleteViaAPI(createdAuthorityIDs[i]);
     }
 
@@ -105,9 +146,9 @@ describe('plug-in MARC authority | Search', () => {
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
     InventoryInstance.verifyAndClickLinkIcon('700');
+    MarcAuthorities.switchToSearch();
     InventoryInstance.verifySelectMarcAuthorityModal();
     InventoryInstance.verifySearchAndFilterDisplay();
-    InventoryInstance.closeAuthoritySource();
     InventoryInstance.verifySearchOptions();
     InventoryInstance.fillInAndSearchResults('Starr, Lisa');
     InventoryInstance.checkResultsListPaneHeader();
@@ -123,7 +164,7 @@ describe('plug-in MARC authority | Search', () => {
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
     InventoryInstance.verifyAndClickLinkIcon('700');
-    InventoryInstance.closeAuthoritySource();
+    MarcAuthorities.switchToSearch();
     InventoryInstance.verifySearchOptions();
     MarcAuthorities.searchBy(testData.forC359206.searchOption, testData.forC359206.lcControlNumberA);
     MarcAuthorities.checkFieldAndContentExistence('010', testData.forC359206.lcControlNumberA);
@@ -139,6 +180,7 @@ describe('plug-in MARC authority | Search', () => {
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
     InventoryInstance.verifyAndClickLinkIcon('700');
+    MarcAuthorities.switchToSearch();
     InventoryInstance.verifySearchOptions();
     MarcAuthorities.searchByParameter(testData.forC359228.searchOption, testData.forC359228.all);
     // wait for the results to be loaded.
@@ -147,5 +189,36 @@ describe('plug-in MARC authority | Search', () => {
     MarcAuthorities.selectTitle(testData.forC359228.title);
     MarcAuthorities.checkRecordDetailPageMarkedValue(testData.forC359228.title);
     MarcAuthorities.chooseTypeOfHeadingAndCheck(testData.forC359228.typeOfHeadingB, testData.forC359228.typeOfHeadingA, testData.forC359228.typeOfHeadingB);
+  });
+
+  it('C359229 MARC Authority plug-in | Search using "Geographic name" option (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+    InventoryInstances.selectInstance();
+    InventoryInstance.editMarcBibliographicRecord();
+    InventoryInstance.verifyAndClickLinkIcon('700');
+    MarcAuthorities.switchToSearch();
+    InventoryInstance.verifySearchOptions();
+    MarcAuthorities.searchBy(testData.forC359229.searchOptionA, testData.forC359229.valueA);
+    MarcAuthorities.checkFieldAndContentExistence('151', testData.forC359229.valueA);
+    InventoryInstance.checkRecordDetailPage(testData.forC359229.valueA);
+    MarcAuthorities.searchBy(testData.forC359229.searchOptionB, testData.forC359229.valueB);
+    MarcAuthorities.checkResultsExistance(testData.forC359229.type);
+  });
+
+  it('C359230 MARC Authority plug-in | Search using "Name-title" option (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+    InventoryInstances.selectInstance();
+    InventoryInstance.editMarcBibliographicRecord();
+    InventoryInstance.verifyAndClickLinkIcon('700');
+    MarcAuthorities.switchToSearch();
+    InventoryInstance.verifySearchOptions();
+    MarcAuthorities.searchByParameter(testData.forC359230.searchOptionA, '*');
+    // wait for the results to be loaded.
+    cy.wait(1000);
+    MarcAuthorities.checkHeadingType(testData.forC359230.type, testData.forC359230.typeOfHeadingA, testData.forC359230.typeOfHeadingB, testData.forC359230.typeOfHeadingC);
+    MarcAuthorities.selectTitle(testData.forC359230.value);
+    MarcAuthorities.checkRecordDetailPageMarkedValue(testData.forC359230.valurMarked);
+    MarcAuthorities.searchBy(testData.forC359230.searchOptionB, '*');
+    MarcAuthorities.checkSingleHeadingType(testData.forC359230.type, testData.forC359230.typeOfHeadingA);
   });
 });
