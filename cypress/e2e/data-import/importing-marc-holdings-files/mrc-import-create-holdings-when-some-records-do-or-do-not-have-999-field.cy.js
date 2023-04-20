@@ -40,10 +40,6 @@ describe('ui-data-import', () => {
   after('delete test data', () => {
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-      .then((instance) => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
   });
 
   it('C359209 Checking the import to Create MARC Holdings records, when some incoming records do or do not have 999 ff fields (folijet)',
