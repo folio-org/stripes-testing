@@ -631,6 +631,10 @@ export default {
     cy.wait(2000);
   },
 
+  checkConnectedInstance:() => {
+    cy.expect(Section({ id: 'itemDetails'}).find(Link('Connected')).exists());
+  },
+
   fillInInvalidDataForPublicationDate:() => {
     cy.do(TextField({ text: 'Publication date' }).fillIn('Invalid date'));
   },

@@ -143,7 +143,7 @@ describe('ui-acquisition units: Acquisition Units', () => {
     Invoices.selectInvoice(invoice.invoiceNumber);
     Invoices.deleteInvoiceViaActions();
     Invoices.confirmInvoiceDeletion();
-    Orders.deleteOrderApi(defaultOrder.id);
+    Orders.deleteOrderViaApi(defaultOrder.id);
     Organizations.deleteOrganizationViaApi(organization.id);
 
     cy.visit(TopMenu.fundPath);
