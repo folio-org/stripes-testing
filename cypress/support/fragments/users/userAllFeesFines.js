@@ -51,7 +51,10 @@ export default {
   },
   goToOpenFeeFines:() => cy.do(Button({ id: 'open-accounts' }).click()),
   goToAllFeeFines:() => cy.do(Button({ id: 'all-accounts' }).click()),
-  createFeeFine: () => cy.do(Button({ id: 'open-closed-all-charge-button' }).click()),
+  createFeeFine: () => {
+    cy.do(Button('Actions').click());
+    cy.do(Button({ id: 'open-closed-all-charge-button' }).click());
+  },
   waitLoading:() => cy.expect(HTML('All fees/fines for ').exists()),
   checkRowsAreChecked:(areRowsChecked) => {
     const beChecked = areRowsChecked ? 'be.checked' : 'not.be.checked';
