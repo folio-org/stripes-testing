@@ -15,7 +15,7 @@ import ItemRecordView from '../../../../support/fragments/inventory/itemRecordVi
 let user;
 const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileNameValid = `Matched-Records-${validHoldingUUIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${validHoldingUUIDsFileName}`;
+const changedRecordsFileName = `Changed-Records-${validHoldingUUIDsFileName}`;
 // It downloads 2 files in one click, both with same content
 const previewOfProposedChangesFileName = {
   first: `*-Updates-Preview-${validHoldingUUIDsFileName}`,
@@ -76,12 +76,12 @@ describe('Bulk Edit - Logs', () => {
       });
   });
 
-  // after('delete test data', () => {
-  //   Users.deleteViaApi(user.userId);
-  //   InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-  //   FileManager.deleteFile(`cypress/fixtures/${validHoldingUUIDsFileName}`);
-  //   // FileManager.deleteFileFromDownloadsByMask(validHoldingUUIDsFileName, `*${matchedRecordsFileNameValid}`, changedRecordsFileName, previewOfProposedChangesFileName.first, previewOfProposedChangesFileName.second, updatedRecordsFileName);
-  // });
+  after('delete test data', () => {
+    Users.deleteViaApi(user.userId);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(inventoryEntity.item.barcode);
+    FileManager.deleteFile(`cypress/fixtures/${validHoldingUUIDsFileName}`);
+    FileManager.deleteFileFromDownloadsByMask(validHoldingUUIDsFileName, `*${changedRecordsFileName}`, `*${matchedRecordsFileNameValid}`, previewOfProposedChangesFileName.first, previewOfProposedChangesFileName.second, updatedRecordsFileName);
+  });
 
   it('C375288 Verify generated Logs files for Items In app -- only valid Holdings UUIDs (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     BulkEditSearchPane.checkItemsRadio();
