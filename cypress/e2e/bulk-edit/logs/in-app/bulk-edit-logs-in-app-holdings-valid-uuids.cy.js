@@ -5,15 +5,12 @@ import Users from '../../../../support/fragments/users/users';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../../support/fragments/topMenu';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import ItemActions from "../../../../support/fragments/inventory/inventoryItem/itemActions";
-import inventorySearchAndFilter from "../../../../support/fragments/inventory/inventorySearchAndFilter";
-import ItemRecordView from "../../../../support/fragments/inventory/itemRecordView";
+import ItemRecordView from '../../../../support/fragments/inventory/itemRecordView';
 
 let user;
 const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
