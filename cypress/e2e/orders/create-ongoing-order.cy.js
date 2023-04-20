@@ -40,7 +40,7 @@ describe('orders: create an order', () => {
     });
 
     afterEach(() => {
-        Orders.deleteOrderApi(order.id);
+        Orders.deleteOrderViaApi(order.id);
         Organizations.deleteOrganizationViaApi(organization.id);
         Users.deleteViaApi(user.userId);
     });

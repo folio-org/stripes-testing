@@ -119,7 +119,7 @@ describe('orders: export', () => {
     Orders.unOpenOrder(orderNumber);
     // Need to wait until the order is opened before deleting it
     cy.wait(2000);
-    Orders.deleteOrderApi(order.id);
+    Orders.deleteOrderViaApi(order.id);
 
     Organizations.deleteOrganizationViaApi(organization.id);
     NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
