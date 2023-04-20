@@ -158,6 +158,7 @@ export default {
       deleteButton.click(),
       Button('Delete', { id:'clickable-fund-remove-confirmation-confirm' }).click()
     ]);
+    cy.wait(4000);
   },
 
   addBudget: (allocatedQuantity) => {
@@ -590,5 +591,6 @@ export default {
       MultiSelectOption(AUName).click(),
       saveAndCloseButton.click()
     ]);
+    cy.wait(4000);
   },
 };

@@ -8,7 +8,6 @@ import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import Users from '../../../support/fragments/users/users';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
-import DateTools from '../../../support/utils/dateTools';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import Orders from '../../../support/fragments/orders/orders';
 import OrderLines from '../../../support/fragments/orders/orderLines';
@@ -30,33 +29,28 @@ describe('ui-organizations: Organizations', () => {
       ongoing: { isSubscription: false, manualRenewal: false },
       approved: true,
       reEncumber: true };
-    const organization = {
-        ...NewOrganization.defaultUiOrganizations,
-        accounts: [
-          {
-            accountNo: getRandomPostfix(),
-            accountStatus: 'Active',
-            acqUnitIds: [],
-            appSystemNo: '',
-            description: 'Main library account',
-            libraryCode: 'COB',
-            libraryEdiCode: getRandomPostfix(),
-            name: 'TestAccout1',
-            notes: '',
-            paymentMethod: 'Cash',
-          }
-        ]
-      };
+    const organization = {...NewOrganization.defaultUiOrganizations,
+      accounts: [
+        {
+          accountNo: getRandomPostfix(),
+          accountStatus: 'Active',
+          acqUnitIds: [],
+          appSystemNo: '',
+          description: 'Main library account',
+          libraryCode: 'COB',
+          libraryEdiCode: getRandomPostfix(),
+          name: 'TestAccout1',
+          notes: '',
+          paymentMethod: 'Cash',
+        }
+      ]
+    };
     const invoice = { ...NewInvoice.defaultUiInvoice };
     const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
     const allocatedQuantity = '100';
-    const todayDate = DateTools.getCurrentDate();
-    const fileNameDate = DateTools.getCurrentDateForFileNaming();
     let effectiveLocationServicePoint;
     let user;
     let orderNumber;
-    let servicePointId;
-    let location;
   
   before(() => {
     cy.getAdminToken();
@@ -101,14 +95,9 @@ describe('ui-organizations: Organizations', () => {
       OrderLines.addPOLine();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
       OrderLines.fillInPOLineInfoForExportWithLocationForPhisicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', locationResponse.institutionId, '4');      OrderLines.backToEditingOrder();
-    //   Orders.openOrder();
       cy.visit(TopMenu.invoicesPath);
       Invoices.createRolloverInvoice(invoice, organization.name);
       Invoices.createInvoiceLineFromPol(orderNumber);
-      // Need to wait, while data will be loaded
-      cy.wait(4000);
-    //   Invoices.approveInvoice();
-    //   Invoices.payInvoice();
     });
 });
 });
@@ -147,30 +136,30 @@ describe('ui-organizations: Organizations', () => {
       });
   });
 
-  // after(() => {
-  //   cy.loginAsAdmin({ path:TopMenu.invoicesPath, waiter: Invoices.waitLoading });
-  //   cy.visit(TopMenu.invoicesPath);
-  //   Invoices.searchByNumber(invoice.invoiceNumber);
-  //   Invoices.selectInvoice(invoice.invoiceNumber);
-  //   Invoices.deleteInvoiceViaActions();
-  //   Organizations.deleteOrganizationViaApi(organization.id);
-  //   Orders.deleteOrderApi(defaultOrder.id);
+  after(() => {
+    cy.loginAsAdmin({ path:TopMenu.invoicesPath, waiter: Invoices.waitLoading });
+    Invoices.searchByNumber(invoice.invoiceNumber);
+    Invoices.selectInvoice(invoice.invoiceNumber);
+    Invoices.deleteInvoiceViaActions();
+    Invoices.confirmInvoiceDeletion();
+    Orders.deleteOrderApi(defaultOrder.id);
+    Organizations.deleteOrganizationViaApi(organization.id);
 
-  //   cy.visit(TopMenu.fundPath);
-  //   FinanceHelp.searchByName(defaultFund.name);
-  //   Funds.selectFund(defaultFund.name);
-  //   Funds.deleteFundViaActions();
-  //   FinanceHelp.searchByName(defaultFund.name);
-  //   Funds.checkZeroSearchResultsHeader();
-  //   Ledgers.deleteledgerViaApi(defaultLedger.id);
-  //   FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
+    cy.visit(TopMenu.fundPath);
+    FinanceHelp.searchByName(defaultFund.name);
+    Funds.selectFund(defaultFund.name);
+    Funds.selectBudgetDetails();
+    Funds.deleteBudgetViaActions();
+    Funds.deleteFundViaActions();
+    Ledgers.deleteledgerViaApi(defaultLedger.id);
+    FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
 
-  //   cy.visit(SettingsMenu.acquisitionUnitsPath);
-  //   AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
-  //   AcquisitionUnits.delete(defaultAcquisitionUnit.name);
+    cy.visit(SettingsMenu.acquisitionUnitsPath);
+    AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
+    AcquisitionUnits.delete(defaultAcquisitionUnit.name);
 
-  //   Users.deleteViaApi(user.userId);
-  // });
+    Users.deleteViaApi(user.userId);
+  });
 
   it('C163931 Test acquisition unit restrictions for apply Funds to orders or Invoices (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
