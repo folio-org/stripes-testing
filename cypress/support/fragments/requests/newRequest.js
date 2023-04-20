@@ -28,24 +28,24 @@ function openNewRequestPane() {
 }
 
 function fillRequiredFields(newRequest) {
-  // if ('instanceHRID' in newRequest) {
-  //   cy.expect(Checkbox({ name: 'createTitleLevelRequest', disabled: false }).exists());
-  //   cy.do(titleLevelRequest.click());
-  //   cy.do(instanceHridInput.fillIn(newRequest.instanceHRID));
-  //   cy.intercept('/inventory/instances?*').as('getLoans');
-  //   cy.do(Section({ id: 'new-item-info' }).find(Button('Enter')).click());
-  // } else {
+  if ('instanceHRID' in newRequest) {
+    cy.expect(Checkbox({ name: 'createTitleLevelRequest', disabled: false }).exists());
+    cy.do(titleLevelRequest.click());
+    cy.do(instanceHridInput.fillIn(newRequest.instanceHRID));
+    cy.intercept('/inventory/instances?*').as('getLoans');
+    cy.do(Section({ id: 'new-item-info' }).find(Button('Enter')).click());
+  } else {
     cy.do(itemBarcodeInput.fillIn(newRequest.itemBarcode));
     cy.intercept('/circulation/loans?*').as('getLoans');
     cy.do(enterItemBarcodeButton.click());
-  // }
+  }
   cy.do(selectRequestType.choose(newRequest.requestType));
-  // cy.wait('@getLoans');
+  cy.wait('@getLoans');
   cy.do(requesterBarcodeInput.fillIn(newRequest.requesterBarcode));
   cy.intercept('/proxiesfor?*').as('getUsers');
   cy.do(enterRequesterBarcodeButton.click());
   cy.expect(selectServicePoint.exists);
-  // cy.wait('@getUsers');
+  cy.wait('@getUsers');
 }
 
 function saveRequestAndClose() { cy.do(saveAndCloseButton.click()); }
@@ -75,7 +75,13 @@ export default {
 
   createDeliveryRequest(newRequest) {
     openNewRequestPane();
-    fillRequiredFields(newRequest);
+    cy.do(itemBarcodeInput.fillIn(newRequest.itemBarcode));
+    cy.intercept('/circulation/loans?*').as('getLoans');
+    cy.do(enterItemBarcodeButton.click());
+    cy.do(selectRequestType.choose(newRequest.requestType));
+    cy.do(requesterBarcodeInput.fillIn(newRequest.requesterBarcode));
+    cy.do(enterRequesterBarcodeButton.click());
+    cy.expect(selectServicePoint.exists);
     // need to wait until instanceId is uploaded
     cy.wait(2500);
     saveRequestAndClose();

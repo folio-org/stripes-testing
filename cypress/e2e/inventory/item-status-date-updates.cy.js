@@ -281,20 +281,18 @@ describe('inventory', () => {
       requesterBarcode: userForDeliveryRequest.barcode,
       requestType: 'Hold'
     });
-    cy.wait(2000);
     cy.visit(TopMenu.checkInPath);
     CheckInActions.checkInItem(itemBarcode);
     CheckInModals.confirmMultipieceCheckIn();
-    cy.wait(2000);
     cy.visit(TopMenu.checkOutPath);
     CheckOutActions.checkOutItemWithUserName(userName, itemBarcode);
     CheckOutModals.cancelMultipleCheckOut();
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
     fullCheck(ItemRecordView.itemStatuses.awaitingDelivery);
-    cy.wait(2000);
+
     // check out item to user with delivery request
     checkOut(userForDeliveryRequest.username, itemBarcode, ItemRecordView.itemStatuses.checkedOut, CheckOutModals.confirmMultipieceCheckOut);
-    cy.wait(2000);
+
     // check in item at service point assigned to its effective location
     cy.visit(TopMenu.checkInPath);
     CheckInActions.backdateCheckInItem(DateTools.getPreviousDayDate(), itemBarcode);
