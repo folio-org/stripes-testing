@@ -229,7 +229,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
   });
 
   it('C9267: Verify that overdue fines calculated properly based on "Overdue fine" amount and interval setting (spitfire)', { tags: [devTeams.spitfire, testTypes.smoke, testTypes.broken] }, () => {
-    cy.login(userData.username, userData.password, { path: TopMenu.checkOutPath, waiter: Checkout.waitLoading(), });
+    cy.login(userData.username, userData.password, { path: TopMenu.checkOutPath, waiter: Checkout.waitLoading });
     CheckOutActions.checkOutUser(userData.barcode);
     CheckOutActions.checkOutItem(instanceData.itemBarcode);
     CheckOutActions.openLoanDetails();
