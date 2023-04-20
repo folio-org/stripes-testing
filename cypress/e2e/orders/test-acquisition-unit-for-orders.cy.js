@@ -49,7 +49,7 @@ describe('ui-finance: Orders', () => {
   });
 
   after(() => {
-    Orders.deleteOrderApi(orderId);
+    Orders.deleteOrderViaApi(orderId);
     Organizations.deleteOrganizationViaApi(organization.id);
     cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
 
