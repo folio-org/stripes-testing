@@ -268,6 +268,7 @@ export default {
   selectInTransitRequest:() => cy.do(Checkbox({ name: 'Open - In transit' }).click()),
   selectNotYetFilledRequest:() => cy.do(Checkbox({ name: 'Open - Not yet filled' }).click()),
   selectClosedCancelledRequest:() => cy.do((Checkbox({ name: 'Closed - Cancelled' }).click())),
+  selectItemRequestLevel:() => cy.do((Checkbox({ name: 'Item' }).click())),
   selectFirstRequest:(title) => cy.do(requestsPane.find(MultiColumnListCell({ row: 0, content: title })).click()),
   openTagsPane:() => cy.do(showTagsButton.click()),
   closePane:(title) => cy.do(Pane({ title }).find(IconButton({ ariaLabel: 'Close ' })).click()),
@@ -301,13 +302,9 @@ export default {
 
   addTag(tag) {
     waitLoadingTags();
-    cy.do(tagsPane.find(MultiSelect({ ariaLabelledby:'accordion-toggle-button-tag-accordion' })).choose(tag));
+    cy.do(tagsPane.find(MultiSelect({ ariaLabelledby:'input-tag-label' })).choose(tag));
     // TODO investigate what to wait
     cy.wait(2000);
-  },
-
-  deleteTag:() => {
-
   },
 
   verifyAssignedTags(tag) {

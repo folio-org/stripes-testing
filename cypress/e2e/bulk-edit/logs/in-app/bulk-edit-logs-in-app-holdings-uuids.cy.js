@@ -15,9 +15,14 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 let user;
 let uuid;
 const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
-const matchRecordsFileNameValid = `*Matched-Records-${validHoldingUUIDsFileName}`;
-const updatesPreviewFileName = `*-Updates-Preview-${validHoldingUUIDsFileName}`;
-const updatedRecordsFileName = `result-${matchRecordsFileNameValid}`;
+const matchedRecordsFileNameValid = `Matched-Records-${validHoldingUUIDsFileName}`;
+const changedRecordsFileName = `*-Changed-Records-${validHoldingUUIDsFileName}`;
+// It downloads 2 files in one click, both with same content
+const previewOfProposedChangesFileName = {
+  first: `*-Updates-Preview-${validHoldingUUIDsFileName}`,
+  second: `modified-*-${matchedRecordsFileNameValid}`
+};
+const updatedRecordsFileName = `result-*-${matchedRecordsFileNameValid}`;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
@@ -54,7 +59,7 @@ describe('Bulk Edit - Logs', () => {
     Users.deleteViaApi(user.userId);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     FileManager.deleteFile(`cypress/fixtures/${validHoldingUUIDsFileName}`);
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    FileManager.deleteFileFromDownloadsByMask(validHoldingUUIDsFileName, `*${matchedRecordsFileNameValid}`, changedRecordsFileName, previewOfProposedChangesFileName.first, previewOfProposedChangesFileName.second, updatedRecordsFileName);
   });
 
   it('C375289 Verify generated Logs files for Holdings In app -- only valid Holdings UUIDs (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
@@ -82,18 +87,18 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.openLogsSearch();
     BulkEditSearchPane.verifyLogsPane();
     BulkEditSearchPane.checkHoldingsCheckbox();
-    BulkEditSearchPane.clickActionsOnTheRow();
+    BulkEditSearchPane.clickActionsRunBy(user.username);
     BulkEditSearchPane.verifyLogsRowActionWhenCompleted();
 
     BulkEditSearchPane.downloadFileUsedToTrigger();
     BulkEditFiles.verifyCSVFileRows(validHoldingUUIDsFileName, [uuid]);
 
     BulkEditSearchPane.downloadFileWithMatchingRecords();
-    BulkEditFiles.verifyMatchedResultFileContent(matchRecordsFileNameValid, [uuid], 'firstElement', true);
+    BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileNameValid}`, [uuid], 'firstElement', true);
 
     BulkEditSearchPane.downloadFileWithProposedChanges();
-    BulkEditFiles.verifyMatchedResultFileContent(updatesPreviewFileName, [tempLocation], 'temporaryLocation', true);
-    BulkEditFiles.verifyMatchedResultFileContent(updatesPreviewFileName, [permLocation], 'permanentLocation', true);
+    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, [tempLocation], 'temporaryLocation', true);
+    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, [permLocation], 'permanentLocation', true);
 
     BulkEditSearchPane.downloadFileWithUpdatedRecords();
     BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, [tempLocation], 'temporaryLocation', true);

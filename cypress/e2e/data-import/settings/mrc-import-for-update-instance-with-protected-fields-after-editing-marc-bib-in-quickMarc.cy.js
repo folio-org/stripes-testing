@@ -197,8 +197,8 @@ describe('ui-data-import', () => {
 
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.clickDataImportNavButton();
+        // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+        cy.reload();
         DataImport.uploadFile(editedMarcFileName, nameMarcFileForUpload);
         JobProfiles.searchJobProfileForImport(jobProfileName);
         JobProfiles.runImportFile();
