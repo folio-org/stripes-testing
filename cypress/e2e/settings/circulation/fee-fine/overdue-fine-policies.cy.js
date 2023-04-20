@@ -93,61 +93,53 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
   const userOwnerBody = {
     id: uuid(),
     owner: 'AutotestOwner' + getRandomPostfix(),
-    servicePointOwner: [
-      {
-        value: testData.userServicePoint.id,
-        label: testData.userServicePoint.name,
-      },
-    ],
+    servicePointOwner: [{
+      value: testData.userServicePoint.id,
+      label: testData.userServicePoint.name,
+    }],
   };
 
   before('Preconditions', () => {
-    cy.getAdminToken()
-      .then(() => {
-        ServicePoints.createViaApi(testData.userServicePoint);
-        testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
-        Location.createViaApi(testData.defaultLocation);
-        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
-          testData.instanceTypeId = instanceTypes[0].id;
-        });
-        cy.getHoldingTypes({ limit: 1 }).then((holdingTypes) => {
-          testData.holdingTypeId = holdingTypes[0].id;
-        });
-        cy.createLoanType({
-          name: `type_${getRandomPostfix()}`,
-        }).then((loanType) => {
-          testData.loanTypeId = loanType.id;
-        });
-        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
-          testData.materialTypeId = materialTypes.id;
-        });
-      })
-      .then(() => {
-        InventoryInstances.createFolioInstanceViaApi({
-          instance: {
-            instanceTypeId: testData.instanceTypeId,
-            title: instanceData.title,
-          },
-          holdings: [
-            {
-              holdingsTypeId: testData.holdingTypeId,
-              permanentLocationId: testData.defaultLocation.id,
-            },
-          ],
-          items: [
-            {
-              barcode: instanceData.itemBarcode,
-              status: { name: 'Available' },
-              permanentLoanType: { id: testData.loanTypeId },
-              materialType: { id: testData.materialTypeId },
-            },
-          ],
-        }).then((specialInstanceIds) => {
-          instanceData.instanceId = specialInstanceIds.instanceId;
-          instanceData.holdingId = specialInstanceIds.holdingIds[0].id;
-          instanceData.itemId = specialInstanceIds.holdingIds[0].itemIds;
-        });
+    cy.getAdminToken().then(() => {
+      ServicePoints.createViaApi(testData.userServicePoint);
+      testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
+      Location.createViaApi(testData.defaultLocation);
+      cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+        testData.instanceTypeId = instanceTypes[0].id;
       });
+      cy.getHoldingTypes({ limit: 1 }).then((holdingTypes) => {
+        testData.holdingTypeId = holdingTypes[0].id;
+      });
+      cy.createLoanType({
+        name: `type_${getRandomPostfix()}`,
+      }).then((loanType) => {
+        testData.loanTypeId = loanType.id;
+      });
+      cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
+        testData.materialTypeId = materialTypes.id;
+      });
+    }).then(() => {
+      InventoryInstances.createFolioInstanceViaApi({
+        instance: {
+          instanceTypeId: testData.instanceTypeId,
+          title: instanceData.title,
+        },
+        holdings: [{
+          holdingsTypeId: testData.holdingTypeId,
+          permanentLocationId: testData.defaultLocation.id,
+        }],
+        items: [{
+          barcode: instanceData.itemBarcode,
+          status: { name: 'Available' },
+          permanentLoanType: { id: testData.loanTypeId },
+          materialType: { id: testData.materialTypeId },
+        }],
+      }).then((specialInstanceIds) => {
+        instanceData.instanceId = specialInstanceIds.instanceId;
+        instanceData.holdingId = specialInstanceIds.holdingIds[0].id;
+        instanceData.itemId = specialInstanceIds.holdingIds[0].itemIds;
+      });
+    });
     OtherSettings.setOtherSettingsViaApi({ prefPatronIdentifier: 'barcode,username' });
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
@@ -165,13 +157,12 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
       addedCirculationRule = `t ${testData.loanTypeId}: i ${ruleProps.i} l ${ruleProps.l} r ${ruleProps.r} o ${ruleProps.o} n ${ruleProps.n}`;
       CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
     });
-    cy.createTempUser(
-      [
-        permissions.checkoutAll.gui,
-        permissions.checkinAll.gui,
-        permissions.loansAll.gui,
-        permissions.uiUsersfeefinesView.gui,
-      ],
+    cy.createTempUser([
+      permissions.checkoutAll.gui,
+      permissions.checkinAll.gui,
+      permissions.loansAll.gui,
+      permissions.uiUsersfeefinesView.gui,
+    ],
       patronGroup.name
     ).then((userProperties) => {
       userData = userProperties;
@@ -211,57 +202,40 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
     cy.deleteLoanType(testData.loanTypeId);
   });
 
-  it(
-    'C5557: Verify that you can create/edit/delete overdue fine policies (spitfire)',
-    { tags: [devTeams.spitfire, testTypes.smoke] },
-    () => {
-      cy.loginAsAdmin();
-      // TODO add check that name is unique
-      cy.visit(SettingsMenu.circulationoVerdueFinePoliciesPath);
+  it('C5557: Verify that you can create/edit/delete overdue fine policies (spitfire)', { tags: [devTeams.spitfire, testTypes.smoke] }, () => {
+    cy.loginAsAdmin();
+    // TODO add check that name is unique
+    cy.visit(SettingsMenu.circulationoVerdueFinePoliciesPath);
 
-      const overduePolicyProps = ['1.00', '2.00', '3.00', '4.00'];
-      const editedOverduePolicyProps = ['5.00', '6.00', '7.00', '8.00'];
+    const overduePolicyProps = ['1.00', '2.00', '3.00', '4.00'];
+    const editedOverduePolicyProps = ['5.00', '6.00', '7.00', '8.00'];
 
-      OverdueFinePolicies.openCreatingForm();
-      OverdueFinePolicies.checkCreatingForm();
-      // TODO remove force option (Do not use force on click and type calls)
-      OverdueFinePolicies.checkOverDueFineInCreating();
-      OverdueFinePolicies.fillGeneralInformation(overduePolicyProps);
-      OverdueFinePolicies.save();
-      OverdueFinePolicies.verifyCreatedFines(overduePolicyProps);
+    OverdueFinePolicies.openCreatingForm();
+    OverdueFinePolicies.checkCreatingForm();
+    // TODO remove force option (Do not use force on click and type calls)
+    OverdueFinePolicies.checkOverDueFineInCreating();
+    OverdueFinePolicies.fillGeneralInformation(overduePolicyProps);
+    OverdueFinePolicies.save();
+    OverdueFinePolicies.verifyCreatedFines(overduePolicyProps);
 
-      OverdueFinePolicies.openEditingForm();
-      OverdueFinePolicies.checkEditingForm(overduePolicyProps);
-      OverdueFinePolicies.fillGeneralInformation(editedOverduePolicyProps);
-      OverdueFinePolicies.save();
-      OverdueFinePolicies.verifyCreatedFines(editedOverduePolicyProps);
+    OverdueFinePolicies.openEditingForm();
+    OverdueFinePolicies.checkEditingForm(overduePolicyProps);
+    OverdueFinePolicies.fillGeneralInformation(editedOverduePolicyProps);
+    OverdueFinePolicies.save();
+    OverdueFinePolicies.verifyCreatedFines(editedOverduePolicyProps);
 
-      OverdueFinePolicies.delete();
-      OverdueFinePolicies.linkIsAbsent();
-    }
-  );
+    OverdueFinePolicies.delete();
+    OverdueFinePolicies.linkIsAbsent();
+  });
 
-  it(
-    'C9267: Verify that overdue fines calculated properly based on "Overdue fine" amount and interval setting (spitfire)',
-    { tags: [devTeams.spitfire, testTypes.smoke, testTypes.broken] },
-    () => {
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.checkOutPath,
-        waiter: Checkout.waitLoading,
-      });
-      CheckOutActions.checkOutUser(userData.barcode);
-      CheckOutActions.checkOutItem(instanceData.itemBarcode);
-      CheckOutActions.openLoanDetails();
-      CheckOutActions.changeDueDateToPast(minutes);
-      cy.visit(TopMenu.checkInPath);
-      CheckInActions.checkInItem(instanceData.itemBarcode);
-      CheckInActions.checkFeeFinesDetails(
-        minutes,
-        instanceData.itemBarcode,
-        loanPolicyBody.name,
-        overdueFinePolicyBody.name,
-        lostItemFeePolicyBody.name
-      );
-    }
-  );
+  it('C9267: Verify that overdue fines calculated properly based on "Overdue fine" amount and interval setting (spitfire)', { tags: [devTeams.spitfire, testTypes.smoke, testTypes.broken] }, () => {
+    cy.login(userData.username, userData.password, { path: TopMenu.checkOutPath, waiter: Checkout.waitLoading(), });
+    CheckOutActions.checkOutUser(userData.barcode);
+    CheckOutActions.checkOutItem(instanceData.itemBarcode);
+    CheckOutActions.openLoanDetails();
+    CheckOutActions.changeDueDateToPast(minutes);
+    cy.visit(TopMenu.checkInPath);
+    CheckInActions.checkInItem(instanceData.itemBarcode);
+    CheckInActions.checkFeeFinesDetails(minutes, instanceData.itemBarcode, loanPolicyBody.name, overdueFinePolicyBody.name, lostItemFeePolicyBody.name);
+  });
 });
