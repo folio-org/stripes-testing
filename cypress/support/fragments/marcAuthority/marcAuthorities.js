@@ -280,4 +280,8 @@ export default {
       MultiColumnListCell({ columnIndex: 3, content: headingTypeB }).exists(),
     ]);
   },
+
+  checkRecordAbsence(absenceMessage) {
+    cy.expect(rootSection.find(HTML(including(absenceMessage))).exists());
+  },
 };
