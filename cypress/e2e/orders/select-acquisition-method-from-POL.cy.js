@@ -52,7 +52,7 @@ describe('orders: Export', () => {
   });
 
   after(() => {
-    Orders.deleteOrderApi(orderID);
+    Orders.deleteOrderViaApi(orderID);
     Organizations.deleteOrganizationViaApi(organization.id);
     Users.deleteViaApi(user.userId);
   });

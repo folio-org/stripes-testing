@@ -66,7 +66,7 @@ describe('ui-orders: Orders and Order lines', () => {
 
   afterEach(() => {
     cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
-    Orders.deleteOrderApi(order.id);
+    Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
     FinanceHelp.searchByName(defaultFund.name);
     Funds.selectFund(defaultFund.name);

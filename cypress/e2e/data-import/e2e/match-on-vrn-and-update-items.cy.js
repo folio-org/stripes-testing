@@ -142,7 +142,7 @@ describe('ui-data-import', () => {
   after('delete test data', () => {
     Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
       .then(order => {
-        Orders.deleteOrderApi(order[0].id);
+        Orders.deleteOrderViaApi(order[0].id);
       });
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);

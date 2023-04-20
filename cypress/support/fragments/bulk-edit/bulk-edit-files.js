@@ -5,6 +5,7 @@ export default {
     let verifyFunc;
     switch (resultType) {
       case 'barcode': verifyFunc = this.verifyMatchedResultByItemBarcode; break;
+      case 'holdingsItemBarcode': verifyFunc = this.verifyMatchedResultByHoldingsItemBarcode; break;
       case 'firstName': verifyFunc = this.verifyMatchedResultByFirstName; break;
       case 'userId': verifyFunc = this.verifyMatchedResultByUserId; break;
       case 'userBarcode': verifyFunc = this.verifyMatchedResultByUserBarcode; break;
@@ -71,6 +72,11 @@ export default {
   verifyMatchedResultByItemBarcode(actualResult, expectedBarcode) {
     const actualBarcode = actualResult.split(',')[9];
     expect(actualBarcode).to.eq(expectedBarcode);
+  },
+
+  verifyMatchedResultByHoldingsItemBarcode(actualResult, expectedResult) {
+    const actualBarcode = actualResult.split(',')[34];
+    expect(actualBarcode).to.eq(expectedResult);
   },
 
   verifyMatchedResultByUserBarcode(actualResult, expectedBarcode) {
