@@ -281,7 +281,7 @@ export default {
     ]);
   },
 
-  checkRecordAbsence(record) {
-    cy.expect(rootSection.find(HTML(including(record))).exists());
+  checkRecordAbsence(absenceMessage) {
+    cy.expect(rootSection.find(HTML(including(absenceMessage))).exists());
   },
 };
