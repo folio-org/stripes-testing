@@ -137,30 +137,30 @@ describe('ui-acquisition units: Acquisition Units', () => {
       });
   });
 
-  // after(() => {
-  //   cy.loginAsAdmin({ path:TopMenu.invoicesPath, waiter: Invoices.waitLoading });
-  //   Invoices.searchByNumber(invoice.invoiceNumber);
-  //   Invoices.selectInvoice(invoice.invoiceNumber);
-  //   Invoices.deleteInvoiceViaActions();
-  //   Invoices.confirmInvoiceDeletion();
-  //   Orders.deleteOrderApi(defaultOrder.id);
-  //   Organizations.deleteOrganizationViaApi(organization.id);
+  after(() => {
+    cy.loginAsAdmin({ path:TopMenu.invoicesPath, waiter: Invoices.waitLoading });
+    Invoices.searchByNumber(invoice.invoiceNumber);
+    Invoices.selectInvoice(invoice.invoiceNumber);
+    Invoices.deleteInvoiceViaActions();
+    Invoices.confirmInvoiceDeletion();
+    Orders.deleteOrderApi(defaultOrder.id);
+    Organizations.deleteOrganizationViaApi(organization.id);
 
-  //   cy.visit(TopMenu.fundPath);
-  //   FinanceHelp.searchByName(defaultFund.name);
-  //   Funds.selectFund(defaultFund.name);
-  //   Funds.selectBudgetDetails();
-  //   Funds.deleteBudgetViaActions();
-  //   Funds.deleteFundViaActions();
-  //   Ledgers.deleteledgerViaApi(defaultLedger.id);
-  //   FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
+    cy.visit(TopMenu.fundPath);
+    FinanceHelp.searchByName(defaultFund.name);
+    Funds.selectFund(defaultFund.name);
+    Funds.selectBudgetDetails();
+    Funds.deleteBudgetViaActions();
+    Funds.deleteFundViaActions();
+    Ledgers.deleteledgerViaApi(defaultLedger.id);
+    FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
 
-  //   cy.visit(SettingsMenu.acquisitionUnitsPath);
-  //   AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
-  //   AcquisitionUnits.delete(defaultAcquisitionUnit.name);
+    cy.visit(SettingsMenu.acquisitionUnitsPath);
+    AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
+    AcquisitionUnits.delete(defaultAcquisitionUnit.name);
 
-  //   Users.deleteViaApi(user.userId);
-  // });
+    Users.deleteViaApi(user.userId);
+  });
 
   it('C163931 Test acquisition unit restrictions for apply Funds to orders or Invoices (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
