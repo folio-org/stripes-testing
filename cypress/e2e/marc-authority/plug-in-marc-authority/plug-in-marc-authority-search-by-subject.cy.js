@@ -87,7 +87,7 @@ describe('plug-in MARC authority | Search', () => {
     DataImport.confirmDeleteImportLogs();
   });
 
-  it('C359232 MARC Authority plug-in | Search using "Subject" option (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+  it('C380571 MARC Authority plug-in | Search using "Subject" option (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
