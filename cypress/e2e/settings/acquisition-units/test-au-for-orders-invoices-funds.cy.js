@@ -20,7 +20,7 @@ import NewLocation from '../../../support/fragments/settings/tenant/locations/ne
 import AcquisitionUnits from '../../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 
-describe('ui-organizations: Organizations', () => {
+describe('ui-acquisition units: Acquisition Units', () => {
     const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
     const defaultLedger = { ...Ledgers.defaultUiLedger };
     const defaultFund = { ...Funds.defaultUiFund };

@@ -14,7 +14,6 @@ import {
   Pane,
   Link,
   including,
-  PaneContent,
   Section,
   KeyValue
 } from '../../../../interactors';
