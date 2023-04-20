@@ -14,7 +14,6 @@ import {
   Pane,
   Link,
   including,
-  PaneContent,
   Section,
   KeyValue
 } from '../../../../interactors';
@@ -241,6 +240,19 @@ export default {
       physicalUnitPriceTextField.fillIn(unitPrice),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
+      fundDistributionField.fillIn(value),
+      saveAndClose.click()
+    ]);
+    cy.wait(6000);
+    this.submitOrderLine();
+  },
+
+  addFundToPOL( fund, value) {
+    cy.do([
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
       fundDistributionField.fillIn(value),
       saveAndClose.click()
     ]);
@@ -521,6 +533,15 @@ export default {
     ]);
   },
 
+  deleteFundInPOL() {
+    cy.do([
+      Section({ id: 'fundDistributionAccordion' }).find(Button({ icon: 'trash' })).click(),
+      saveAndClose.click()
+    ]);
+    cy.wait(6000);
+    this.submitOrderLine();
+  },
+
   addContributorToPOL: () => {
     cy.do([
       Button('Add contributor').click(),
@@ -534,7 +555,7 @@ export default {
   },
 
   openInstance:() => {
-    cy.do(PaneContent({ id:'order-lines-details-content' }).find(Link({ href: including('/inventory/view/') })).click());
+    cy.do(Section({ id:'ItemDetails' }).find(Link({ href: including('/inventory/view/') })).click());
   },
 
   openReceiving:() => {
@@ -608,6 +629,10 @@ export default {
     ]);
     // Need to wait,while entering data loading on page
     cy.wait(2000);
+  },
+
+  checkConnectedInstance:() => {
+    cy.expect(Section({ id: 'itemDetails'}).find(Link('Connected')).exists());
   },
 
   fillInInvalidDataForPublicationDate:() => {
