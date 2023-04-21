@@ -71,7 +71,7 @@ describe('Bulk Edit - Logs', () => {
             cy.getItems({ query: `"barcode"=="${inventoryEntity.item.barcode}"` })
               .then(inventoryItem => { inventoryEntity.item.id = inventoryItem.id; });
             cy.getItems({ query: `"barcode"=="secondBarcode_${inventoryEntity.item.barcode}"` })
-              .then(inventoryItem => { inventoryEntity.item.id2 = inventoryItem.id; console.log(inventoryEntity); console.log(inventoryItem); });
+              .then(inventoryItem => { inventoryEntity.item.id2 = inventoryItem.id; console.log(inventoryEntity); });
           });
       });
   });
@@ -83,7 +83,7 @@ describe('Bulk Edit - Logs', () => {
     FileManager.deleteFileFromDownloadsByMask(validHoldingUUIDsFileName, `*${changedRecordsFileName}`, `*${matchedRecordsFileNameValid}`, previewOfProposedChangesFileName.first, previewOfProposedChangesFileName.second, updatedRecordsFileName);
   });
 
-  it('C375288 Verify generated Logs files for Items In app -- only valid Holdings UUIDs (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+  it('C375288 Verify generated Logs files for Items In app -- only valid Holdings UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.checkItemsRadio();
     BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
 
