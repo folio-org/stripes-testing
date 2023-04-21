@@ -200,11 +200,11 @@ describe('ui-data-import', () => {
     FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
     Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${firstOrderNumber}"` })
       .then(order => {
-        Orders.deleteOrderApi(order[0].id);
+        Orders.deleteOrderViaApi(order[0].id);
       });
     Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${secondOrderNumber}"` })
       .then(order => {
-        Orders.deleteOrderApi(order[0].id);
+        Orders.deleteOrderViaApi(order[0].id);
       });
     Users.deleteViaApi(user.userId);
     // delete generated profiles

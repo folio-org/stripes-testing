@@ -81,6 +81,10 @@ export default {
     ]);
   },
 
+  openAccordion:(name) => {
+    cy.do(Accordion(name).click());
+  },
+
   // checks
   checkActionsMenuOptionsInFolioSource:() => {
     cy.do(actionsButton.click());
