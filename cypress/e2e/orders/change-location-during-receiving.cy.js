@@ -75,7 +75,7 @@ describe('orders: Receive piece from Order', () => {
   });
 
   after(() => {
-    Orders.deleteOrderApi(orderID);
+    Orders.deleteOrderViaApi(orderID);
     Organizations.deleteOrganizationViaApi(organization.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
