@@ -1,6 +1,14 @@
-import { HTML } from '@interactors/html';
-import { including } from 'bigtest';
-import { KeyValue, MultiColumnList, Section, MultiColumnListCell, Button } from '../../../../interactors';
+import { HTML, including } from '@interactors/html';
+import {
+  KeyValue,
+  MultiColumnList,
+  Section,
+  MultiColumnListCell,
+  Button,
+  Accordion,
+  Link,
+  Pane
+} from '../../../../interactors';
 
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
 const catalogedDateKeyValue = KeyValue('Cataloged date');
@@ -80,6 +88,10 @@ const verifyNatureOfContent = (value) => {
   cy.expect(KeyValue('Nature of content').has({ value }));
 };
 
+const verifyInstanceRecordViewOpened = () => {
+  cy.expect(Pane({ id:'pane-instancedetails' }).exists());
+};
+
 export default {
   verifyResourceTitle,
   verifyInstanceStatusCode,
@@ -98,6 +110,13 @@ export default {
   verifyStatisticalCode,
   verifyNatureOfContent,
   verifyInstanceSource,
+  verifyInstanceRecordViewOpened,
+  verifyLinkedPOL:() => {
+    cy.expect(Accordion('Acquisition').find(Link({ href: including('/inventory/view') })).exists());
+  },
+  verifyIsHoldingsCreated:(...holdingToBeOpened) => {
+    cy.expect(Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) }).exists());
+  },
 
   openHoldingView: () => {
     cy.do(Button('View holdings').click());
