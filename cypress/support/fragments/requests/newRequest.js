@@ -75,12 +75,11 @@ export default {
 
   createDeliveryRequest(newRequest) {
     openNewRequestPane();
-    cy.do(itemBarcodeInput.fillIn(newRequest.itemBarcode));
-    cy.intercept('/circulation/loans?*').as('getLoans');
-    cy.do(enterItemBarcodeButton.click());
-    cy.do(selectRequestType.choose(newRequest.requestType));
-    cy.do(requesterBarcodeInput.fillIn(newRequest.requesterBarcode));
-    cy.do(enterRequesterBarcodeButton.click());
+    cy.do([itemBarcodeInput.fillIn(newRequest.itemBarcode),
+      enterItemBarcodeButton.click(),
+      selectRequestType.choose(newRequest.requestType),
+      requesterBarcodeInput.fillIn(newRequest.requesterBarcode),
+      enterRequesterBarcodeButton.click()]);
     cy.expect(selectServicePoint.exists);
     // need to wait until instanceId is uploaded
     cy.wait(2500);
