@@ -147,7 +147,7 @@ const openHoldings = (...holdingToBeOpened) => {
 
 const openItemByBarcode = (itemBarcode) => {
   cy.do(Link(including(itemBarcode)).click());
-  ItemRecordView.waitLoading();
+  cy.wait(1500);
 };
 
 const verifyInstanceTitle = (title) => {

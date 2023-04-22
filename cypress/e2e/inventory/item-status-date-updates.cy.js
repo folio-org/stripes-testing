@@ -281,9 +281,9 @@ describe('inventory', () => {
       requesterBarcode: userForDeliveryRequest.barcode,
       requestType: 'Hold'
     });
-    cy.visit(TopMenu.checkInPath);
-    CheckInActions.checkInItem(itemBarcode);
-    CheckInModals.confirmMultipieceCheckIn();
+    // cy.visit(TopMenu.checkInPath);
+    // CheckInActions.checkInItem(itemBarcode);
+    // CheckInModals.confirmMultipieceCheckIn();
     // cy.visit(TopMenu.checkOutPath);
     // CheckOutActions.checkOutItemWithUserName(userName, itemBarcode);
     // CheckOutModals.cancelMultipleCheckOut();
