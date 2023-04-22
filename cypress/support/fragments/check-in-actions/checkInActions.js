@@ -63,7 +63,8 @@ export default {
     cy.wait(1000);
   },
   checkInItemGui:(barcode) => {
-    return cy.do([itemBarcodeField.exists(),
+    return cy.do([
+      itemBarcodeField.exists(),
       itemBarcodeField.fillIn(barcode),
       addItemButton.click()
     ]);
