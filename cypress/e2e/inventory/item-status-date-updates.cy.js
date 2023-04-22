@@ -118,7 +118,7 @@ describe('ui-inventory: Item status date updates', () => {
   afterEach(() => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
     Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
-      .then(order => Orders.deleteOrderApi(order[0].id));
+      .then(order => Orders.deleteOrderViaApi(order[0].id));
     UserEdit.changeServicePointPreferenceViaApi(
       userForDeliveryRequest.userId,
       [effectiveLocationServicePoint.id, notEffectiveLocationServicePoint.id]
@@ -286,6 +286,7 @@ describe('ui-inventory: Item status date updates', () => {
       itemBarcode,
       itemTitle: null,
       requesterBarcode: userForDeliveryRequest.barcode,
+      requestType: 'Hold'
     });
     cy.visit(TopMenu.checkInPath);
     CheckInActions.checkInItem(itemBarcode);

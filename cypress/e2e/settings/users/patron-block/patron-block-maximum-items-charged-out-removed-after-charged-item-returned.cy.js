@@ -22,7 +22,7 @@ import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane
 
 describe('Patron Block: Maximum number of items charged out', () => {
   const checkedOutBlockMessage =
-    'You have reached the maximum number of items you can check out as set by patron group';
+    `You have reached the maximum number of items you can check out as set by patron group${getRandomPostfix()}`;
   const patronGroup = {
     name: 'groupToPatronBlock' + getRandomPostfix(),
   };

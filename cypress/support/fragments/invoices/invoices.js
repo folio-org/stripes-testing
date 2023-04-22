@@ -227,6 +227,24 @@ export default {
     InteractorsTools.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage);
   },
 
+  addFundToLine: (fund) => {
+    cy.do([
+      Button({ id: 'fundDistributions-add-button' }).click(),
+      Selection('Fund ID*').open(),
+      SelectionList().select((fund.name).concat(' ', '(', fund.code, ')')),
+      saveAndClose.click()
+    ]);
+    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage);
+  },
+
+  deleteFundInInvoiceLine: () => {
+    cy.do([
+      Section({ id: 'invoiceLineForm-fundDistribution' }).find(Button({ icon: 'trash' })).click(),
+      saveAndClose.click()
+    ]);
+    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage);
+  },
+
   approveInvoice: () => {
     cy.do([
       PaneHeader({ id: invoiceDetailsPaneId })
@@ -395,5 +413,9 @@ export default {
       Select({ name: 'adjustments[0].relationToTotal' }).choose(realtioToTotal),
       saveAndClose.click(),
     ]);
+  },
+
+  checkFundInInvoiceLine:(fund) => {
+    cy.expect(Section({ id: 'invoiceLineFundDistribution'}).find(Link(`${fund.name}(${fund.code})`)).exists());
   },
 };

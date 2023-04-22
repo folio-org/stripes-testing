@@ -18,7 +18,7 @@ describe('orders: export', () => {
   
   const order = { ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',
-    ongoing: {isSubscription: false, manualRenewal: false},
+    ongoing: { isSubscription: false, manualRenewal: false },
     approved: true,
    };
   const organization = {
@@ -119,7 +119,7 @@ describe('orders: export', () => {
     Orders.unOpenOrder(orderNumber);
     // Need to wait until the order is opened before deleting it
     cy.wait(2000);
-    Orders.deleteOrderApi(order.id);
+    Orders.deleteOrderViaApi(order.id);
 
     Organizations.deleteOrganizationViaApi(organization.id);
     NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
@@ -133,15 +133,14 @@ describe('orders: export', () => {
 
   it('C350402: Verify that an Order is exported to a definite Vendors Account specified in one of several Integration configurations (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
     //Need to wait while first job will be runing
-    cy.wait(30000);
+    cy.wait(60000);
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList();
     Orders.createPOLineViaActions();
-    OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
+    OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
     OrderLines.fillInPOLineInfoForExportWithLocation(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId);
     OrderLines.backToEditingOrder();
     Orders.openOrder();
-    cy.wait(30000);
     cy.visit(TopMenu.exportManagerOrganizationsPath);
     ExportManagerSearchPane.selectOrganizationsSearch();
     ExportManagerSearchPane.selectExportMethod(integrationName1);
@@ -149,7 +148,7 @@ describe('orders: export', () => {
     ExportManagerSearchPane.rerunJob();
     cy.reload();
     ExportManagerSearchPane.verifyResult('Successful');
-    ExportManagerSearchPane.selectSearchResultItem();
+    ExportManagerSearchPane.selectJob('Successful');
     ExportManagerSearchPane.downloadJob();
     ExportManagerSearchPane.resetAll();
     ExportManagerSearchPane.selectOrganizationsSearch();

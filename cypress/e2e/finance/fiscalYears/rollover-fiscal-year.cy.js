@@ -19,7 +19,7 @@ import Invoices from '../../../support/fragments/invoices/invoices';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 
-describe('ui-finance: Fiscal Year', () => {
+describe('ui-finance: Fiscal Year Rollover', () => {
   const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const secondFiscalYear = {
     name: `autotest_year_${getRandomPostfix()}`,
@@ -27,7 +27,7 @@ describe('ui-finance: Fiscal Year', () => {
     periodStart: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
     periodEnd: `${DateTools.getDayAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
-    series: 'FY',
+    series: 'FYTA',
   };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };
@@ -118,7 +118,7 @@ describe('ui-finance: Fiscal Year', () => {
       orderNumber = firstOrderResponse.poNumber;
       Orders.checkCreatedOrder(firstOrder);
       OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
       OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(firstFund, '100', '1', '100', location.institutionId);
       OrderLines.backToEditingOrder();
       Orders.openOrder();
@@ -127,7 +127,7 @@ describe('ui-finance: Fiscal Year', () => {
         secondOrder.id = secondOrderResponse.id;
         Orders.checkCreatedOrder(secondOrder);
         OrderLines.addPOLine();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
+        OrderLines.selectRandomInstanceInTitleLookUP('*', 2);
         OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(secondFund, '200', '1', '200', location.institutionId);
         OrderLines.backToEditingOrder();
         Orders.openOrder();

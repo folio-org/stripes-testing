@@ -28,7 +28,7 @@ export default {
     periodStart: `${DateTools.getPreviousDayDateForFiscalYear()}T00:00:00.000+00:00`,
     periodEnd: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
-    series: 'FY'
+    series: 'FYTA'
   },
 
   waitForFiscalYearDetailsLoading : () => {
@@ -40,8 +40,8 @@ export default {
       buttonNew.click(),
       TextField('Name*').fillIn(fiscalYear.name),
       TextField('Code*').fillIn(fiscalYear.code),
-      TextField('Period Begin Date*').fillIn(fiscalYear.periodBeginDate),
-      TextField('Period End Date*').fillIn(fiscalYear.periodEndDate),
+      TextField({ name: 'periodStart' }).fillIn(fiscalYear.periodBeginDate),
+      TextField({ name: 'periodEnd' }).fillIn(fiscalYear.periodEndDate),
       saveAndClose.click()
     ]);
     this.waitForFiscalYearDetailsLoading();
@@ -75,7 +75,7 @@ export default {
       saveAndClose.click(),
       TextField('Code*').fillIn('some code'),
       saveAndClose.click(),
-      TextField('Period Begin Date*').fillIn('05/05/2021'),
+      TextField({ name: 'periodStart' }).fillIn('05/05/2021'),
       saveAndClose.click(),
       // try to navigate without saving
       agreements.click(),
@@ -93,9 +93,8 @@ export default {
 
   checkSearchResults: (fiscalYear) => {
     cy.expect(MultiColumnList({ id: 'fiscal-years-list' })
-      .find(MultiColumnListRow({ index: 0 }))
-      .find(MultiColumnListCell({ columnIndex: 0 }))
-      .has({ content: fiscalYear }));
+      .find(MultiColumnListCell(fiscalYear))
+      .exists());
   },
 
   fiscalYearsDisplay: () => {

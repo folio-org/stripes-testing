@@ -21,6 +21,10 @@ export const MultiColumnListRow = HTML.extend('multi column list row')
     ariaRowIndex: el => +el.getAttribute('aria-rowindex'),
   });
 
+export const ListRow = HTML.extend('list row')
+  .selector('[class^=mclRowFormatterContainer-]')
+  .locator(content)
+
 export const MultiColumnListCell = HTML.extend('multi column list cell')
   .selector('div[class*=mclCell-]')
   .locator(content)
@@ -66,7 +70,8 @@ export const MultiColumnList = HTML.extend('multi column list')
     width: el => el.offsetWidth,
     scrollTop: el => el.querySelector('div[class^=mclScrollable-]').scrollTop,
     headerInteractivity: (el) => [...el.querySelectorAll('div[class*=mclHeader-]')].map((d) => !!d.querySelector('[data-test-clickable-header]')),
-    visible: (el) => isVisible(el)
+    visible: (el) => isVisible(el),
+    ariaRowCount: el => +el.getAttribute('aria-rowcount'),
   })
   .actions({
     clickHeader: (interactor, header) => interactor.find(MultiColumnListHeader(header)).click(),

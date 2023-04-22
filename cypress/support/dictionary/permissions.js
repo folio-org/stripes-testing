@@ -82,6 +82,7 @@ export default {
   // Users
   usersViewRequests: { internal: 'ui-users.requests.all', gui: 'Users: View requests' },
   uiUsersView: { internal: 'ui-users.view', gui: 'Users: Can view user profile' },
+  uiUsersPermissionsView: { internal: 'ui-users.viewperms', gui: 'Users: Can view permissions assigned to users' },
   uiUserCreate: { internal: 'ui-users.create', gui: 'Users: Create users' },
   uiUsersCreate: { internal: 'ui-users.create', gui: 'Users: Can create new user' },
   uiUserEdit: { internal: 'ui-users.edit', gui: 'Users: Can edit user profile' },
@@ -92,7 +93,6 @@ export default {
   uiUsersLoansClaimReturned: { internal: 'ui-users.loans.claim-item-returned', gui: 'Users: User loans claim returned' },
   uiUsersDeclareItemLost: { internal: 'ui-users.loans.declare-item-lost', gui: 'Users: User loans declare lost' },
   usersLoansRenewThroughOverride: { internal: 'ui-users.loans.renew-override', gui: 'Users: User loans renew through override' },
-  uiUsersEditProfile: { internal: 'ui-users.edit', gui: 'Users: Can edit user profile' },
   uiUsersPermissions: { internal: 'ui-users.editperms', gui: 'Users: Can assign and unassign permissions to users' },
   uiUsersfeefinesView: { internal: 'ui-users.feesfines.view', gui: 'Users: Can view fees/fines and loans' },
   uiUsersManualCharge: { internal: 'ui-users.manual_charge', gui: 'Fees/Fines: Can charge' },
@@ -110,6 +110,7 @@ export default {
   // Requests
   uiRequestsCreate: { internal: 'ui-requests.create', gui: 'Requests: View, create' },
   uiRequestsView: { internal: 'ui-requests.view', gui: 'Requests: View' },
+  uiRequestsEdit: { internal: 'ui-requests.edit', gui: 'Requests: View, edit, cancel' },
   requestsAll: { internal: 'ui-requests.all', gui: 'Requests: All permissions' },
   // Calendar
   calendarEdit: { internal: 'ui-calendar.edit', gui: 'Settings (Calendar): Can create, view, and edit calendar events' },
@@ -221,6 +222,7 @@ export default {
   settingsDataImportView:{ internal: 'ui-data-import.settings.readOnly', gui:'Data import: Can view only' },
   settingsDataImportEnabled:{ internal: 'settings.data-import.enabled', gui:'Settings (Data import): Can view, create, edit, and remove' },
   settingsDataImportCanViewOnly:{ internal:'ui-data-import.settings.readOnly', gui:'Settings (Data import): Can view only' },
+  settingsTenantViewLocation:{ internal:'ui - tenant - settings.settings.location.view', gui:'Settings (Tenant): View locations' },
   // Timers
   okapiTimersPatch: { internal: 'okapi.proxy.self.timers.patch', gui: 'Okapi - patch timer for current tenant' },
   // Export manager

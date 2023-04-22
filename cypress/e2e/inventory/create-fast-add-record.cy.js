@@ -12,12 +12,14 @@ import Users from '../../support/fragments/users/users';
 import DevTeams from '../../support/dictionary/devTeams';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import FastAdd from '../../support/fragments/settings/inventory/instance-holdings-item/fastAdd';
 
 describe('ui-inventory: Create fast add record', () => {
   const timeStamp = {
     start: null,
     end: null,
   };
+  const instanceStatusCodeValue = 'Uncataloged';
   let userId;
 
   beforeEach(() => {
@@ -34,22 +36,20 @@ describe('ui-inventory: Create fast add record', () => {
         cy.intercept('POST', '/holdings-storage/holdings').as('createHolding');
         cy.intercept('POST', '/inventory/items').as('createItem');
 
-        FastAddNewRecord.updateInventoryFastAddSetting(
-          FastAddNewRecord.fastAddNewRecordFormDetails.instanceStatusCodeOption
-        );
-        cy.visit(TopMenu.inventoryPath);
+        cy.visit(TopMenu.inventorySettingsFastAddPath);
+        FastAdd.changeDefaultInstanceStatus(instanceStatusCodeValue);
       });
   });
 
   afterEach('reset "Fast add" setting', () => {
-    FastAddNewRecord.updateInventoryFastAddSetting(
-      FastAddNewRecord.fastAddNewRecordFormDetails.defaultInstanceStatusCodeOption
-    );
-    Users.deleteViaApi(userId);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode);
+    cy.visit(TopMenu.inventorySettingsFastAddPath);
+    FastAdd.changeDefaultInstanceStatus('Select instance status');
+    Users.deleteViaApi(userId);
   });
 
   it('C15850 Create a fast add record from Inventory. Monograph. (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+    cy.visit(TopMenu.inventoryPath);
     InventoryActions.openNewFastAddRecordForm();
     FastAddNewRecord.waitLoading();
     FastAddNewRecord.fillFastAddNewRecordForm(FastAddNewRecord.fastAddNewRecordFormDetails);
@@ -64,7 +64,7 @@ describe('ui-inventory: Create fast add record', () => {
         timeStamp.end = new Date();
 
         InteractorsTools.checkCalloutMessage(
-          FastAddNewRecord.calloutMessages.INVENTORY_RECORDS_CREATE_SUCCESS
+          FastAdd.calloutMessages.INVENTORY_RECORDS_CREATE_SUCCESS
         );
         InventorySearchAndFilter.searchInstanceByTitle(FastAddNewRecord.fastAddNewRecordFormDetails.resourceTitle);
         FastAddNewRecord.openRecordDetails();

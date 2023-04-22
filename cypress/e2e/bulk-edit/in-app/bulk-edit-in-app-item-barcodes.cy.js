@@ -10,6 +10,7 @@ import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
 
 let user;
 const items = [];
@@ -93,7 +94,7 @@ describe('bulk-edit', () => {
       BulkEditActions.verifyItemActionDropdownItems();
       BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.verifyModifyLandingPageBeforeModifying();
-      BulkEditActions.fillLoanType('Selected');
+      BulkEditActions.fillPermanentLoanType('Selected');
       BulkEditActions.verifyModifyLandingPageAfterModifying();
       BulkEditActions.confirmChanges();
       BulkEditActions.commitChanges();
@@ -101,8 +102,10 @@ describe('bulk-edit', () => {
 
       cy.loginAsAdmin({ path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
       items.forEach(item => {
-        InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', item.instanceName);
-        InventorySearchAndFilter.selectSearchResultItem();
+        InventorySearchAndFilter.switchToItem();
+        InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
+        ItemRecordView.waitLoading();
+        ItemRecordView.closeDetailView();
         InventoryInstance.openHoldings(['']);
         InventoryInstance.verifyLoan('Selected');
       });
@@ -121,8 +124,10 @@ describe('bulk-edit', () => {
 
       cy.loginAsAdmin({ path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
       items.forEach(item => {
-        InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', item.instanceName);
-        InventorySearchAndFilter.selectSearchResultItem();
+        InventorySearchAndFilter.switchToItem();
+        InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
+        ItemRecordView.waitLoading();
+        ItemRecordView.closeDetailView();
         InventoryInstance.openHoldings(['']);
         InventoryInstance.verifyLoan('Selected');
       });
@@ -154,7 +159,7 @@ describe('bulk-edit', () => {
 
       BulkEditActions.openActions();
       BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.fillLoanType();
+      BulkEditActions.fillPermanentLoanType();
       BulkEditActions.replaceWithIsDisabled();
     });
 

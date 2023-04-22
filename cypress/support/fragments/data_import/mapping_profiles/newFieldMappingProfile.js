@@ -9,7 +9,8 @@ import {
   including,
   MultiColumnListCell,
   MultiColumnListRow,
-  SearchField
+  SearchField,
+  Accordion
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
@@ -18,6 +19,7 @@ const organizationModal = Modal('Select Organization');
 const staffSuppressSelect = Select('Staff suppress');
 const suppressFromDiscoverySelect = Select('Suppress from discovery');
 const previouslyHeldSelect = Select('Previously held');
+const loanAndAvailabilityAccordion = Accordion('Loan and availability');
 
 const incomingRecordType = {
   marcBib: 'MARC Bibliographic',
@@ -215,11 +217,12 @@ export default {
   addIncomingRecordType:(type) => cy.do(Select({ name:'profile.incomingRecordType' }).choose(type)),
   addFolioRecordType:(folioType) => cy.do(Select({ name:'profile.existingRecordType' }).choose(folioType)),
   saveProfile:() => cy.do(saveButton.click()),
-  fillPermanentLocation:(location) => cy.do(TextField('Permanent').fillIn(location)),
   fillTemporaryLocation:(location) => cy.do(TextField('Temporary').fillIn(location)),
-  fillIllPolicy:(policy) => cy.do(TextField('ILL policy').fillIn(`"${policy}"`)),
+  fillDigitizationPolicy:(policy) => cy.do(TextField('Digitization policy').fillIn(policy)),
   fillCallNumber:(number) => cy.do(TextField('Call number').fillIn(number)),
+  fillNumberOfPieces:(number) => cy.do(TextField('Number of pieces').fillIn(number)),
   fillBarcode:(barcode) => cy.do(TextField('Barcode').fillIn(barcode)),
+  fillAccessionNumber:(number) => cy.do(TextField('Accession number').fillIn(number)),
   fillCopyNumber:(number) => cy.do(TextField('Copy number').fillIn(number)),
   fillVendorInvoiceNumber:(number) => cy.do(TextField('Vendor invoice number*').fillIn(number)),
   fillDescription:(text) => cy.do(TextField('Description*').fillIn(text)),
@@ -323,6 +326,11 @@ export default {
     waitLoading();
   },
 
+  fillPermanentLocation:(location) => {
+    cy.do(TextField('Permanent').fillIn(location));
+    waitLoading();
+  },
+
   fillCatalogedDate:(date = catalogedDate) => {
     cy.do(TextField('Cataloged date').fillIn(date));
     waitLoading();
@@ -344,17 +352,27 @@ export default {
   },
 
   fillStatus:(itemStatus) => {
-    cy.do(TextField('Status').fillIn(itemStatus));
+    cy.do(TextField('Status').fillIn(`"${itemStatus}"`));
     waitLoading();
   },
 
   fillPermanentLoanType:(loanType) => {
-    cy.do(TextField('Permanent loan type').fillIn(loanType));
+    cy.do(TextField('Permanent loan type').fillIn(`"${loanType}"`));
     waitLoading();
   },
 
-  fillMaterialType:(type = materialType) => {
-    cy.do(TextField('Material type').fillIn(type));
+  fillTemporaryLoanType:(loanType) => {
+    cy.do(TextField('Temporary loan type').fillIn(loanType));
+    waitLoading();
+  },
+
+  fillMaterialType:(type = 'book') => {
+    cy.do(TextField('Material type').fillIn(`"${type}"`));
+    waitLoading();
+  },
+
+  fillIllPolicy:(policy) => {
+    cy.do(TextField('ILL policy').fillIn(`"${policy}"`));
     waitLoading();
   },
 
@@ -394,6 +412,23 @@ export default {
       Button('Add item note').click(),
       TextField('Note type').fillIn(noteType),
       TextField('Note').fillIn(note),
+      Select({ name:selectName }).focus(),
+      Select({ name:selectName })
+        .choose(staffOnly)
+    ]);
+    waitLoading();
+  },
+
+  addCheckInCheckOutNote:(noteType, note, staffOnly) => {
+    const noteFieldName = 'profile.mappingDetails.mappingFields[29].repeatableFieldAction';
+    const selectName = 'profile.mappingDetails.mappingFields[29].subfields[0].fields[2].booleanFieldAction';
+
+    cy.do([
+      Select({ name:noteFieldName }).focus(),
+      Select({ name:noteFieldName }).choose(actions.addTheseToExisting),
+      Button('Add check in / check out note').click(),
+      loanAndAvailabilityAccordion.find(TextField('Note type')).fillIn(noteType),
+      loanAndAvailabilityAccordion.find(TextField('Note')).fillIn(note),
       Select({ name:selectName }).focus(),
       Select({ name:selectName })
         .choose(staffOnly)

@@ -22,7 +22,8 @@ const optionsList = {
   holdingsPermLoc: 'Location: Permanent',
   itemPermLoc: 'Location: Permanent',
   systemControlNumber: 'Identifier: System control number',
-  status: 'Loan and availability: Status'
+  status: 'Loan and availability: Status',
+  barcode: 'Admin data: Barcode'
 };
 
 function fillExistingRecordFields(value = '', selector) {

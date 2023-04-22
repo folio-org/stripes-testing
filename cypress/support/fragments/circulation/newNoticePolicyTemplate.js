@@ -1,6 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import getRandomPostfix from '../../utils/stringTools';
-import { Button, TextField, TextArea, KeyValue, Checkbox, Link, Heading, Select, Pane, Modal, Section } from '../../../../interactors';
+import { Button, TextField, TextArea, KeyValue, Checkbox, Link, Heading, Select, Pane, Modal, PaneContent } from '../../../../interactors';
 import richTextEditor from '../../../../interactors/rich-text-editor';
 import { NOTICE_CATEGORIES } from './notice-policy';
 import { actionsButtons } from './newNoticePolicy';
@@ -57,7 +57,7 @@ export default {
   },
 
   checkPreview: () => {
-    cy.do(Section({ id: 'email-template-form' }).find(Button('Preview')).click());
+    cy.do(PaneContent({ id: 'patron-notice-template-pane-content' }).find(Button('Preview')).click());
     cy.expect(Modal('Preview of patron notice template').exists());
     cy.do(Button('Close').click());
   },
@@ -153,5 +153,25 @@ export default {
 
   typeTemplateSubject: (noticePolicytemplateSubject) => {
     cy.do(subjectField.fillIn(noticePolicytemplateSubject));
-  }
+  },
+
+  createPatronNoticeTemplate(template) {
+    this.startAdding();
+    this.checkInitialState();
+    this.addToken('item.title');
+    this.create(template, false);
+    this.chooseCategory(template.category);
+    this.checkPreview();
+    this.saveAndClose();
+    this.waitLoading();
+  },
+
+  duplicatePatronNoticeTemplate(template) {
+    this.duplicateTemplate();
+    this.typeTemplateName(template.name);
+    this.typeTemplateSubject(template.subject);
+    this.checkPreview();
+    this.saveAndClose();
+    this.waitLoading();
+  },
 };

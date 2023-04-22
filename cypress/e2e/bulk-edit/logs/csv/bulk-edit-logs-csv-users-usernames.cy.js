@@ -14,7 +14,7 @@ const invalidUsername = `username${getRandomPostfix()}`;
 const invalidUsernamesFileName = `invalidUserUUIDs_${getRandomPostfix()}.csv`;
 const errorsFromMatchingFileName = `*Errors-${invalidUsernamesFileName}*`;
 
-describe('Bulk Edit - Logs', () => {
+describe('Bulk Edit - Logs', { retries: 1 }, () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.bulkEditLogsView.gui,
@@ -35,19 +35,20 @@ describe('Bulk Edit - Logs', () => {
   after('delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${invalidUsernamesFileName}`);
     Users.deleteViaApi(user.userId);
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    FileManager.deleteFileFromDownloadsByMask(invalidUsernamesFileName, errorsFromMatchingFileName);
   });
 
-  it('C375216 Verify generated Logs files for Users CSV -- only errors (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C375216 Verify generated Logs files for Users CSV -- only errors (firebird)', { tags: [testTypes.smoke, devTeams.firebird], retries: 1 }, () => {
     BulkEditSearchPane.verifyDragNDropUsernamesArea();
     BulkEditSearchPane.uploadFile(invalidUsernamesFileName);
     BulkEditSearchPane.waitFileUploading();
+    BulkEditActions.openActions();
     BulkEditActions.downloadErrors();
 
     BulkEditSearchPane.openLogsSearch();
     BulkEditSearchPane.verifyLogsPane();
     BulkEditSearchPane.checkUsersCheckbox();
-    BulkEditSearchPane.clickActionsOnTheRow();
+    BulkEditSearchPane.clickActionsRunBy(user.username);
     BulkEditSearchPane.verifyLogsRowActionWhenCompletedWithErrorsWithoutModification();
 
     BulkEditSearchPane.downloadFileUsedToTrigger();

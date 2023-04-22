@@ -72,6 +72,26 @@ export default {
     body: apiBody,
     isDefaultSearchParamsRequired: false
   }),
+  changeDueDateViaApi: (apiBody, loanId) => cy.okapiRequest({
+    method: 'PUT',
+    path: `circulation/loans/${loanId}`,
+    body: apiBody,
+    isDefaultSearchParamsRequired: false
+  }),
+  changeDueDateForAllOpenPatronLoans(userId, day) {
+    this.getUserLoansIdViaApi(userId).then((userLoans) => {
+      const loansData = userLoans.loans;
+      const newDueDate = new Date(loansData[0].loanDate);
+      newDueDate.setDate(newDueDate.getDate() + day);
+      loansData.forEach((loan) => {
+        this.changeDueDateViaApi({
+          ...loan,
+          dueDate: newDueDate,
+          action: 'dueDateChanged',
+        }, loan.id);
+      });
+    });
+  },
   openActionsMenuOfLoanByBarcode,
   declareLoanLostByBarcode:(itemBarcode) => {
     openActionsMenuOfLoanByBarcode(itemBarcode);
