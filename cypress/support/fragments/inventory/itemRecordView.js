@@ -3,9 +3,13 @@ import { Accordion, KeyValue, Pane, Button, TextField, MultiColumnList, Callout,
 import dateTools from '../../utils/dateTools';
 
 const loanAccordion = Accordion('Loan and availability');
+const administrativeDataAccordion = Accordion('Administrative data');
+const itemDataAccordion = Accordion('Item data');
+const itemNotesAccordion = Accordion('Item notes');
 
 const verifyItemBarcode = value => { cy.expect(KeyValue('Item barcode').has({ value })); };
 const verifyPermanentLoanType = value => { cy.expect(KeyValue('Permanent loan type').has({ value })); };
+const verifyTemporaryLoanType = value => { cy.expect(KeyValue('Temporary loan type').has({ value })); };
 const verifyNote = value => { cy.expect(KeyValue('Check in note').has({ value })); };
 const waitLoading = () => { cy.expect(Pane(including('Item')).exists()); };
 const verifyItemStatus = (itemStatus) => { cy.expect(loanAccordion.find(HTML(including(itemStatus))).exists()); };
@@ -39,6 +43,7 @@ export default {
   waitLoading,
   verifyItemBarcode,
   verifyPermanentLoanType,
+  verifyTemporaryLoanType,
   verifyNote,
   verifyPermanentLocation,
   closeDetailView,
@@ -60,7 +65,7 @@ export default {
   addPieceToItem:(numberOfPieces) => {
     cy.do([
       TextField({ name:'numberOfPieces' }).fillIn(numberOfPieces),
-      Button('Save and close').click()
+      Button('Save & close').click()
     ]);
   },
 
@@ -73,19 +78,34 @@ export default {
   },
 
   verifyMaterialType:(type) => {
-    cy.expect(Accordion('Item data').find(HTML(including(type))).exists());
+    cy.expect(itemDataAccordion.find(HTML(including(type))).exists());
   },
 
-  checkNoteInItem:(note) => {
-    cy.expect(Accordion('Item notes').find(KeyValue('Electronic bookplate')).has({ value: note }));
+  checkItemNote:(note, staffValue = 'Yes') => {
+    cy.expect(itemNotesAccordion.find(KeyValue('Note')).has({ value: note }));
+    cy.expect(itemNotesAccordion.find(KeyValue('Staff only')).has({ value: staffValue }));
   },
 
-  checkItemNote:(note) => {
-    cy.expect(Accordion('Item notes').find(KeyValue('Note')).has({ value: note }));
+  checkCheckInNote:(note, staffValue = 'Yes') => {
+    cy.expect(loanAccordion.find(KeyValue('Check in note')).has({ value: note }));
+    cy.expect(HTML(staffValue).exists());
+  },
+
+  checkCheckOutNote:(note, staffValue = 'Yes') => {
+    cy.expect(loanAccordion.find(KeyValue('Check out note')).has({ value: note }));
+    cy.expect(HTML(staffValue).exists());
+  },
+
+  checkElectronicBookplateNote:(note) => {
+    cy.expect(itemNotesAccordion.find(KeyValue('Electronic bookplate')).has({ value: note }));
+  },
+
+  checkBindingNote:(note) => {
+    cy.expect(itemNotesAccordion.find(KeyValue('Binding')).has({ value: note }));
   },
 
   checkBarcode:(barcode) => {
-    cy.expect(Accordion('Administrative data').find(KeyValue('Item barcode')).has({ value: barcode }));
+    cy.expect(administrativeDataAccordion.find(KeyValue('Item barcode')).has({ value: barcode }));
   },
 
   checkCalloutMessage: () => {
@@ -94,12 +114,20 @@ export default {
   },
 
   checkStatus:(status) => {
-    cy.expect(Accordion('Loan and availability').find(KeyValue('Item status')).has({ value: status }));
+    cy.expect(loanAccordion.find(KeyValue('Item status')).has({ value: status }));
   },
 
   checkItemDetails(location, barcode, status) {
     this.checkEffectiveLocation(location);
     this.checkBarcode(barcode);
     this.checkStatus(status);
+  },
+
+  checkAccessionNumber:(number) => {
+    cy.expect(administrativeDataAccordion.find(KeyValue('Accession number')).has({ value: number }));
+  },
+
+  checkNumberOfPieces:(number) => {
+    cy.expect(itemDataAccordion.find(KeyValue('Number of pieces')).has({ value: number }));
   }
 };

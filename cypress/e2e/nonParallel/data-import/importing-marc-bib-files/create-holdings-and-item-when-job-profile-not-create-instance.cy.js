@@ -43,8 +43,8 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
         name: itemMappingProfileName,
-        materialType: `"${itemMaterialType}"`,
-        permanentLoanType: `"${itemPermanentLoanType}"`,
+        materialType: itemMaterialType,
+        permanentLoanType: itemPermanentLoanType,
         status: 'Available' },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: itemActionProfileName,
@@ -205,7 +205,7 @@ describe('ui-data-import', () => {
           FileDetails.openItemInInventory('Created');
           ItemRecordView.verifyMaterialType(itemMaterialType);
           ItemRecordView.verifyPermanentLoanType(itemPermanentLoanType);
-          ItemRecordView.verifyItemStatus(collectionOfMappingAndActionProfiles[1].mappingProfile.status);
+          ItemRecordView.verifyItemStatus(collectionOfMappingAndActionProfiles[0].mappingProfile.status);
         });
     });
 });
