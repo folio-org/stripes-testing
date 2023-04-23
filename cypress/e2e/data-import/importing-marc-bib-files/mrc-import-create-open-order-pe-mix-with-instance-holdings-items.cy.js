@@ -15,24 +15,20 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
 
 describe('ui-data-import', () => {
   let user;
+  let instanceHrid;
   const quantityOfItems = '1';
-  // unique profile names
-  const instanceMappingProfileName = `C380446 Test P/E mix open order with instance, holdings, item ${getRandomPostfix()}`;
-  const holdingsMappingProfileName = `C380446 Create simple holdings for open order ${getRandomPostfix()}`;
-  const itemMappingProfileName = `C380446 Create simple item for open order ${getRandomPostfix()}`;
-  const instanceActionProfileName = `C380446 Test P/E mix open order with instance, holdings, item ${getRandomPostfix()}`;
-  const holdingsActionProfileName = `C380446 Create simple holdings for open order ${getRandomPostfix()}`;
-  const itemActionProfileName = `C380446 Create simple item for open order ${getRandomPostfix()}`;
-  const jobProfileName = `C380446 Test P/E mix open order with instance, holdings, item ${getRandomPostfix()}`;
   const marcFileName = `C380446 autotest file ${getRandomPostfix()}`;
 
   const collectionOfMappingAndActionProfiles = [
     {
-      mappingProfile: { name: instanceMappingProfileName,
+      mappingProfile: { name: `C380446 Test P/E mix open order with instance, holdings, item ${getRandomPostfix()}`,
         typeValue : NewFieldMappingProfile.folioRecordTypeValue.order,
         orderStatus: 'Open',
         approved: true,
@@ -50,29 +46,29 @@ describe('ui-data-import', () => {
         locationQuantityPhysical: '1',
         locationQuantityElectronic: '1' },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.order,
-        name: instanceActionProfileName }
+        name: `C380446 Test P/E mix open order with instance, holdings, item ${getRandomPostfix()}` }
     },
     {
-      mappingProfile: { name: holdingsMappingProfileName,
+      mappingProfile: { name: `C380446 Create simple holdings for open order ${getRandomPostfix()}`,
         typeValue : NewFieldMappingProfile.folioRecordTypeValue.holdings,
         permanentLocation: '"Main Library (KU/CC/DI/M)"',
         permanentLocationUI:'Main Library' },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
-        name: holdingsActionProfileName }
+        name: `C380446 Create simple holdings for open order ${getRandomPostfix()}` }
     },
     {
-      mappingProfile: { name: itemMappingProfileName,
+      mappingProfile: { name: `C380446 Create simple item for open order ${getRandomPostfix()}`,
         typeValue : NewFieldMappingProfile.folioRecordTypeValue.item,
         materialType:'book',
         permanentLoanType: 'Course reserves',
         status: 'On order' },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
-        name: itemActionProfileName }
+        name: `C380446 Create simple item for open order ${getRandomPostfix()}` }
     },
   ];
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: jobProfileName,
+    profileName: `C380446 Test P/E mix open order with instance, holdings, item ${getRandomPostfix()}`,
   };
 
   before('create test data', () => {
@@ -85,13 +81,25 @@ describe('ui-data-import', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(user.username, user.password, { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+        cy.login(user.username, user.password,
+          { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
       });
   });
 
-  //   after('delete test data', () => {
-
-  //   });
+  after('delete test data', () => {
+    Users.deleteViaApi(user.userId);
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
+    collectionOfMappingAndActionProfiles.forEach(profile => {
+      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+    });
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        cy.deleteItemViaApi(instance.items[0].id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+  });
 
   it('C380446 Import to create open orders: P/E mix with Instances, Holdings, Items (folijet)',
     { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
@@ -153,10 +161,23 @@ describe('ui-data-import', () => {
 
       OrderLines.waitLoading();
       OrderLines.checkCreateInventory();
-      OrderLines.openLinkedInstance();
-      InstanceRecordView.verifyInstanceRecordViewOpened();
-      InstanceRecordView.verifyLinkedPOL();
-      InstanceRecordView.verifyIsHoldingsCreated(['Main Library >']);
-      // step 29-31
+      OrderLines.getAssignedPOLNumber().then(initialNumber => {
+        const polNumber = initialNumber;
+
+        OrderLines.openLinkedInstance();
+        InstanceRecordView.verifyInstanceRecordViewOpened();
+        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+          instanceHrid = initialInstanceHrId;
+        });
+        InstanceRecordView.verifyHotlinkToPOL(polNumber);
+        InstanceRecordView.verifyIsHoldingsCreated(['Main Library >']);
+        InventoryInstance.openHoldingView();
+        HoldingsRecordView.checkHoldingRecordViewOpened();
+        HoldingsRecordView.close();
+        InventoryInstance.openHoldingsAccordion('Main Library >');
+        InventoryInstance.openItemByBarcode('No barcode');
+        ItemRecordView.waitLoading();
+        ItemRecordView.checkHotlinksToCreatedPOL(polNumber);
+      });
     });
 });

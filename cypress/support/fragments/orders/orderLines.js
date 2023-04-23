@@ -710,6 +710,8 @@ export default {
     cy.do(Accordion('Linked instance')
       .find(Link({ href: including('/inventory/view') }))
       .click());
-  }
+  },
+
+  getAssignedPOLNumber:() => cy.then(() => Accordion('Purchase order line').find(KeyValue('POL number')).value()),
 };
 

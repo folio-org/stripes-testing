@@ -111,8 +111,9 @@ export default {
   verifyNatureOfContent,
   verifyInstanceSource,
   verifyInstanceRecordViewOpened,
-  verifyLinkedPOL:() => {
-    cy.expect(Accordion('Acquisition').find(Link({ href: including('/inventory/view') })).exists());
+  verifyHotlinkToPOL:(number) => {
+    cy.expect(Accordion('Acquisition').find(MultiColumnListCell({ row: 0, content: number })).exists());
+    cy.expect(Accordion('Acquisition').find(Link({ href: including('/orders/lines/view') })).exists());
   },
   verifyIsHoldingsCreated:(...holdingToBeOpened) => {
     cy.expect(Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) }).exists());
