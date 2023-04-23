@@ -57,14 +57,14 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
         name: mappingProfileNameForItem,
-        materialType: '"book"',
+        materialType: 'book',
         noteType: '876$t',
         note: '876$n',
         staffOnly: 'Mark for all affected records',
         noteTypeForCheckIn: '878$t',
         noteForCheckIn: '878$a',
         staffOnlyForCheckIn: 'Mark for all affected records',
-        permanentLoanType: '"Can circulate"',
+        permanentLoanType: 'Can circulate',
         status: 'Available' },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: actionProfileNameForItem }

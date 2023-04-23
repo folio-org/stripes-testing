@@ -171,7 +171,7 @@ describe('orders: Receiving and Check-in', () => {
     OrderLines.deleteOrderLine();
     // Need to wait until the order is opened before deleting it
     cy.wait(2000);
-    Orders.deleteOrderApi(order.id);
+    Orders.deleteOrderViaApi(order.id);
 
     Organizations.deleteOrganizationViaApi(organization.id);
     // TODO: Need to find solution to delete all data, becouse now i cant delete location and user

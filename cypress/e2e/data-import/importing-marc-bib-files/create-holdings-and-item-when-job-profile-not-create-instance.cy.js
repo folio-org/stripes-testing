@@ -43,8 +43,8 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
         name: itemMappingProfileName,
-        materialType: `"${itemMaterialType}"`,
-        permanentLoanType: `"${itemPermanentLoanType}"`,
+        materialType: itemMaterialType,
+        permanentLoanType:itemPermanentLoanType,
         status: 'Available' },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: itemActionProfileName,

@@ -62,7 +62,7 @@ describe('ui-invoices: test POL search plugin', () => {
   });
 
   afterEach(() => {
-    Orders.deleteOrderApi(order.id);
+    Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 

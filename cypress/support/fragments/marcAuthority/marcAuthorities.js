@@ -20,6 +20,8 @@ const resetButton = Button('Reset all');
 const selectField = Select({ id: 'textarea-authorities-search-qindex' });
 const headinfTypeAccordion = Accordion('Type of heading');
 const authoritySearchResults = Section({ id: 'authority-search-results-pane' });
+const nextButton = Button({ id: 'authority-result-list-next-paging-button' });
+const searchNav = Button({ id: 'segment-navigation-search' });
 
 export default {
   waitLoading: () => cy.expect(rootSection.exists()),
@@ -31,6 +33,10 @@ export default {
     cy.expect(marcAuthUpdatesCsvBtn.exists());
     cy.do(marcAuthUpdatesCsvBtn.click());
     cy.expect(authReportModal.exists());
+  },
+
+  switchToSearch: () => {
+    cy.do(searchNav.click());
   },
 
   fillReportModal: (today, tomorrow) => {
@@ -99,6 +105,15 @@ export default {
 
   switchToBrowse:() => cy.do(Button({ id:'segment-navigation-browse' }).click()),
 
+  checkDefaultBrowseOptions: (searchValue) => {
+    cy.expect([
+      marcViewSection.absent(),
+      SearchField({ id: 'textarea-authorities-search', value: searchValue }).absent(),
+      selectField.has({ content: including('Select a browse option') }),
+      rootSection.find(HTML(including('Choose a filter or enter a search query to show results.'))).exists(),
+    ]);
+  },
+
   searchBy: (parameter, value) => {
     cy.do(filtersSection.find(SearchField({ id: 'textarea-authorities-search' })).selectIndex(parameter));
     cy.do(filtersSection.find(SearchField({ id: 'textarea-authorities-search' })).fillIn(value));
@@ -154,12 +169,40 @@ export default {
     ]);
   },
 
+  checkSingleHeadingType(type, headingType) {
+    cy.expect([
+      MultiColumnListCell({ columnIndex: 1, content: type }).exists(),
+      MultiColumnListCell({ columnIndex: 3, content: headingType }).exists(),
+    ]);
+  },
+
   checkAfterSearchHeadingType(type, headingTypeA, headingTypeB) {
     cy.expect([
       MultiColumnListCell({ columnIndex: 1, content: type }).exists(),
       MultiColumnListCell({ columnIndex: 3, content: headingTypeA }).exists(),
       MultiColumnListCell({ columnIndex: 3, content: headingTypeB }).exists(),
     ]);
+  },
+
+  checkHeadingType(type, headingTypeA, headingTypeB, headingTypeC) {
+    cy.expect([
+      MultiColumnListCell({ columnIndex: 1, content: type }).exists(),
+      MultiColumnListCell({ columnIndex: 3, content: headingTypeA }).exists(),
+      MultiColumnListCell({ columnIndex: 3, content: headingTypeB }).exists(),
+      MultiColumnListCell({ columnIndex: 3, content: headingTypeC }).exists(),
+    ]);
+  },
+
+  checkType(typeA, typeB, typeC) {
+    cy.expect([
+      MultiColumnListCell({ columnIndex: 1, content: typeA }).exists(),
+      MultiColumnListCell({ columnIndex: 1, content: typeB }).exists(),
+      MultiColumnListCell({ columnIndex: 1, content: typeC }).exists(),
+    ]);
+  },
+
+  clickNextPagination() {
+    cy.do(authoritySearchResults.find(nextButton).click());
   },
 
   checkFieldAndContentExistence(tag, value) {
@@ -175,6 +218,10 @@ export default {
       editorSection.exists(),
       QuickMarcEditorRow({ tagValue: '010' }).absent()
     ]);
+  },
+
+  clickReset: () => {
+    cy.do(filtersSection.find(resetButton).click());
   },
 
   clickResetAndCheck: (searchValue) => {
@@ -232,5 +279,9 @@ export default {
       MultiColumnListCell({ columnIndex: 3, content: headingTypeA }).absent(),
       MultiColumnListCell({ columnIndex: 3, content: headingTypeB }).exists(),
     ]);
+  },
+
+  checkRecordAbsence(absenceMessage) {
+    cy.expect(rootSection.find(HTML(including(absenceMessage))).exists());
   },
 };

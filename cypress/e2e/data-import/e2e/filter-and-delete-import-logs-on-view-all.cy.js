@@ -60,8 +60,8 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
         for (let i = 0; i < 8; i++) {
           const nameMarcFileForCreate = `C358136autotestFile.${getRandomPostfix()}.mrc`;
 
-          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-          DataImport.clickDataImportNavButton();
+          // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+          cy.reload();
           DataImport.uploadFile('oneMarcAuthority.mrc', nameMarcFileForCreate);
           // need to wait until file will be uploaded in loop
           cy.wait(8000);

@@ -45,7 +45,7 @@ describe('ui-finance: Orders', () => {
   });
 
   after(() => {
-    Orders.deleteOrderApi(orderId);
+    Orders.deleteOrderViaApi(orderId);
     Organizations.deleteOrganizationViaApi(organization.id);
     Users.deleteViaApi(user.userId);
   });

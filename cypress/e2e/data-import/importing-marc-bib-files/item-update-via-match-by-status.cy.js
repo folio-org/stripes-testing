@@ -176,7 +176,7 @@ describe('ui-data-import', () => {
     NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfile);
     NewFieldMappingProfile.fillMaterialType();
     NewFieldMappingProfile.addStatisticalCode(statisticalCode, 6);
-    NewFieldMappingProfile.fillPermanentLoanType('"Can circulate"');
+    NewFieldMappingProfile.fillPermanentLoanType('Can circulate');
     NewFieldMappingProfile.fillStatus('Available');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfile.name);
@@ -291,8 +291,8 @@ describe('ui-data-import', () => {
 
       // upload the exported marc file
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.clickDataImportNavButton();
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
       DataImport.uploadExportedFile(nameMarcFileForUpdate);
       JobProfiles.searchJobProfileForImport(jobProfileNameForUpdate);
       JobProfiles.runImportFile();

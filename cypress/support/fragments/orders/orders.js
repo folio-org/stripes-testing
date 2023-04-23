@@ -268,6 +268,16 @@ export default {
       .exists());
   },
 
+  checkCreatedOngoingOrder: (order) => {
+    cy.expect(Pane({ id: 'order-details' }).exists());
+    cy.expect(Accordion({ id: orderDetailsAccordionId })
+      .find(KeyValue({ value: order.vendor }))
+      .exists());
+    cy.expect(Accordion({ id: orderDetailsAccordionId })
+      .find(KeyValue({ value: order.orderType }))
+      .exists());
+  },
+
   checkDuplicatedOrder: (organization, user) => {
     cy.expect(Pane({ id: 'order-details' }).exists());
     cy.expect(Section({ id: 'POSummary' })
@@ -531,7 +541,7 @@ export default {
       });
   },
 
-  deleteOrderApi: (id) => cy.okapiRequest({
+  deleteOrderViaApi: (id) => cy.okapiRequest({
     method: 'DELETE',
     path: `orders/composite-orders/${id}`,
     isDefaultSearchParamsRequired: false,

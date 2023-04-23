@@ -45,7 +45,10 @@ describe('ui-data-import', () => {
     },
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
-        name: mappingProfileNameForItem },
+        name: mappingProfileNameForItem,
+        materialType:'book',
+        permanentLoanType:'Can circulate',
+        status:'Available' },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: actionProfileNameForItem }
     }
@@ -86,9 +89,9 @@ describe('ui-data-import', () => {
   const createItemMappingProfile = (itemMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfile);
-    NewFieldMappingProfile.fillMaterialType('"book"');
-    NewFieldMappingProfile.fillPermanentLoanType('"Can circulate"');
-    NewFieldMappingProfile.fillStatus('Available');
+    NewFieldMappingProfile.fillMaterialType(itemMappingProfile.materialType);
+    NewFieldMappingProfile.fillPermanentLoanType(itemMappingProfile.permanentLoanType);
+    NewFieldMappingProfile.fillStatus(itemMappingProfile.status);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfile.name);
   };

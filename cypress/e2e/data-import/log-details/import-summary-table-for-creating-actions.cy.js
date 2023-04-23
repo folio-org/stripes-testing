@@ -49,7 +49,7 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
         name: itemMappingProfileName,
-        permanentLoanType: '"Can circulate"',
+        permanentLoanType: 'Can circulate',
         status: 'Available' },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: itemActionProfileName }
@@ -137,7 +137,7 @@ describe('ui-data-import', () => {
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(nameMarcFile);
 
-      // check the instance is created
+      // check created instance
       FileDetails.openInstanceInInventory('Created');
       InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
         instanceHrid = initialInstanceHrId;

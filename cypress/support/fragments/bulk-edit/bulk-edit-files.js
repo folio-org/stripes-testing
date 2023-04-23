@@ -5,6 +5,7 @@ export default {
     let verifyFunc;
     switch (resultType) {
       case 'barcode': verifyFunc = this.verifyMatchedResultByItemBarcode; break;
+      case 'holdingsItemBarcode': verifyFunc = this.verifyMatchedResultByHoldingsItemBarcode; break;
       case 'firstName': verifyFunc = this.verifyMatchedResultByFirstName; break;
       case 'userId': verifyFunc = this.verifyMatchedResultByUserId; break;
       case 'userBarcode': verifyFunc = this.verifyMatchedResultByUserBarcode; break;
@@ -12,6 +13,9 @@ export default {
       case 'expirationDate': verifyFunc = this.verifyMatchedResultExpirationDate; break;
       case 'firstElement': verifyFunc = this.verifyMatchedResultFirstElement; break;
       case 'emailDomain': verifyFunc = this.verifyMatchedResultByEmailDomain; break;
+      case 'permanentLocation': verifyFunc = this.verifyMatchedResultByPermanentLocation; break;
+      case 'temporaryLocation': verifyFunc = this.verifyMatchedResultByTemporaryLocation; break;
+      case 'instanceHrid': verifyFunc = this.verifyMatchedResultByInstanceHrid; break;
       default: verifyFunc = this.verifyMatchedResultByHRID;
     }
 
@@ -70,6 +74,11 @@ export default {
     expect(actualBarcode).to.eq(expectedBarcode);
   },
 
+  verifyMatchedResultByHoldingsItemBarcode(actualResult, expectedResult) {
+    const actualBarcode = actualResult.split(',')[34];
+    expect(actualBarcode).to.eq(expectedResult);
+  },
+
   verifyMatchedResultByUserBarcode(actualResult, expectedBarcode) {
     const actualBarcode = actualResult.split(',')[3];
     expect(actualBarcode).to.eq(expectedBarcode);
@@ -112,5 +121,20 @@ export default {
   verifyMatchedResultByEmailDomain(actualResult, expectedResult) {
     const actualEmailDomain = actualResult.split(',')[13];
     expect(actualEmailDomain).to.include('@' + expectedResult);
+  },
+
+  verifyMatchedResultByPermanentLocation(actualResult, expectedResult) {
+    const actualPermanentLocation = actualResult.split(',')[6];
+    expect(actualPermanentLocation).to.eq(expectedResult);
+  },
+
+  verifyMatchedResultByTemporaryLocation(actualResult, expectedResult) {
+    const actualTemporaryLocation = actualResult.split(',')[7];
+    expect(actualTemporaryLocation).to.eq(expectedResult);
+  },
+
+  verifyMatchedResultByInstanceHrid(actualResult, expectedResult) {
+    const actualInstanceHrid = actualResult.split(',')[33];
+    expect(actualInstanceHrid).to.eq(expectedResult);
   },
 };

@@ -79,7 +79,7 @@ describe('ui-finance: Transactions', () => {
     OrderLines.deleteOrderLine();
     // Need to wait few seconds, that data will be deleted
     cy.wait(2000);
-    Orders.deleteOrderApi(order.id);
+    Orders.deleteOrderViaApi(order.id);
     cy.visit(TopMenu.fundPath);
     FinanceHelp.searchByName(defaultFund.name);
     Funds.selectFund(defaultFund.name);
