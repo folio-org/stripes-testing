@@ -116,7 +116,7 @@ describe('orders: Unopen order', () => {
         cy.visit(TopMenu.ordersPath);
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
-        OrderLines.selectPOLInOrder();
+        OrderLines.selectPOLInOrder(0);
         OrderLines.editPOLInOrder();
         OrderLines.changeFundInPOL(secondFund);
       });
@@ -144,12 +144,12 @@ describe('orders: Unopen order', () => {
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder();
-    OrderLines.selectPOLInOrder();
+    OrderLines.selectPOLInOrder(0);
     cy.wait(5000);
     OrderLines.checkFundInPOL(secondFund);
     OrderLines.backToEditingOrder();
     Orders.openOrder();
-    OrderLines.selectPOLInOrder();
+    OrderLines.selectPOLInOrder(0);
     OrderLines.checkFundInPOL(secondFund);
     cy.visit(TopMenu.fundPath);
     FinanceHelp.searchByName(secondFund.name);

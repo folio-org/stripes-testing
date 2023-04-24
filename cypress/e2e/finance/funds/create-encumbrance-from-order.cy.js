@@ -75,7 +75,7 @@ describe('ui-finance: Transactions', () => {
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder(orderNumber);
-    OrderLines.selectPOLInOrder();
+    OrderLines.selectPOLInOrder(0);
     OrderLines.deleteOrderLine();
     // Need to wait few seconds, that data will be deleted
     cy.wait(2000);
