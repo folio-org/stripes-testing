@@ -1,9 +1,8 @@
+import { HTML, including } from '@interactors/html';
 import {
   Button,
   Modal,
   TextField,
-  HTML,
-  including,
   MultiColumnListCell,
   MultiColumnListRow
 } from '../../../../../../interactors';
