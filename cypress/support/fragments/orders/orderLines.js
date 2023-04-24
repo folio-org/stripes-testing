@@ -326,6 +326,68 @@ export default {
     ]);
   },
 
+  fillPolWithEuroCurrency( fund, unitPrice, quantity, institutionId) {
+    cy.do([
+      orderFormatSelect.choose('Physical resource'),
+      acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      SelectionOption('Depository').click(),
+      receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
+      physicalUnitPriceTextField.fillIn(unitPrice),
+      quantityPhysicalTextField.fillIn(quantity),
+      Button({ id: 'currency' }).click(),
+      SelectionOption('Euro (EUR)').click(),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      fundDistributionField.fillIn('100'),
+      materialTypeSelect.choose('book'),
+      addLocationButton.click(),
+      Button('Create new holdings for location').click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+        cy.do([
+      Modal('Select permanent location').find(Button('Save and close')).click(),
+      quantityPhysicalLocationField.fillIn(quantity),
+      saveAndClose.click()
+    ]);
+    cy.wait(4000);
+    this.submitOrderLine();
+  },
+
+  fillPolWithPLNCurrency(fund, unitPrice, quantity, institutionId) {
+    cy.do([
+      orderFormatSelect.choose('Physical resource'),
+      acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      SelectionOption('Depository').click(),
+      receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
+      physicalUnitPriceTextField.fillIn(unitPrice),
+      quantityPhysicalTextField.fillIn(quantity),
+      Button({ id: 'currency' }).click(),
+      SelectionOption('Polish Zloty (PLN)').click(),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      fundDistributionField.fillIn('100'),
+      materialTypeSelect.choose('book'),
+      addLocationButton.click(),
+      Button('Create new holdings for location').click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+        cy.do([
+      Modal('Select permanent location').find(Button('Save and close')).click(),
+      quantityPhysicalLocationField.fillIn(quantity),
+      saveAndClose.click()
+    ]);
+    cy.wait(4000);
+    this.submitOrderLine();
+  },
+
   fillInPOLineInfoViaUi: () => {
     cy.do([
       orderLineTitleField.fillIn(orderLineTitle),
@@ -519,9 +581,9 @@ export default {
     ]);
   },
 
-  selectPOLInOrder: () => {
+  selectPOLInOrder: (indexNumber) => {
     cy.do(Accordion({ id: 'POListing' })
-      .find(MultiColumnListRow({ index: 0 }))
+      .find(MultiColumnListRow({ index: indexNumber }))
       .find(MultiColumnListCell({ columnIndex: 0 }))
       .click());
   },
@@ -669,6 +731,10 @@ export default {
 
   checkFundInPOL:(fund) => {
     cy.expect(Section({ id: 'FundDistribution' }).find(Link(`${fund.name}(${fund.code})`)).exists());
+  },
+
+  checkCurrencyInPOL:(currentEncumbrance) => {
+    cy.expect(Section({ id: 'FundDistribution'}).find(Link(`$${currentEncumbrance}`)).exists());
   },
 
   checkDownloadedFile() {
