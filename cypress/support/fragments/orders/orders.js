@@ -200,6 +200,23 @@ export default {
       });
   },
 
+  createOrderWithPONumber(poNumber, order, isManual = false) {
+    cy.do([
+      actionsButton.click(),
+      newButton.click(),
+      TextField({ name: 'poNumber'}).fillIn(poNumber),
+    ]);
+    this.selectVendorOnUi(order.vendor);
+    cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
+    cy.do(Select('Order type*').choose(order.orderType));
+    if (isManual) cy.do(Checkbox({ name:'manualPo' }).click());
+    cy.do(saveAndClose.click());
+    return cy.wait('@newOrderID', getLongDelay())
+      .then(({ response }) => {
+        return response.body.id;
+      });
+  },
+
   createOrderByTemplate(templateName) {
     cy.do([
       actionsButton.click(),
@@ -296,6 +313,18 @@ export default {
     cy.expect(Accordion({ id: orderDetailsAccordionId })
       .find(KeyValue({ value: organization }))
       .exists());
+  },
+
+  checkCreatedOrderWithOrderNumber: (organization, orderNumber) => {
+    cy.expect(Pane({ id: 'order-details' }).exists());
+    cy.expect([
+      Accordion({ id: orderDetailsAccordionId })
+      .find(KeyValue({ value: organization }))
+      .exists(),
+      Accordion({ id: orderDetailsAccordionId })
+      .find(KeyValue({ value: orderNumber }))
+      .exists(),
+    ]);
   },
 
   selectFromResultsList: (number) => {
