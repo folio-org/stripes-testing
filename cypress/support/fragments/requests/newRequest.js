@@ -79,7 +79,8 @@ export default {
       enterItemBarcodeButton.click(),
       selectRequestType.choose(newRequest.requestType),
       requesterBarcodeInput.fillIn(newRequest.requesterBarcode),
-      enterRequesterBarcodeButton.click()]);
+      enterRequesterBarcodeButton.click()
+    ]);
     cy.expect(selectServicePoint.exists);
     // need to wait until instanceId is uploaded
     cy.wait(2500);

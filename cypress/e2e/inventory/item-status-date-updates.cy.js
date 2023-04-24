@@ -120,7 +120,7 @@ describe('inventory', () => {
 
   afterEach('delete test data', () => {
     Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
-      .then(order => Orders.deleteOrderApi(order[0].id));
+      .then(order => Orders.deleteOrderViaApi(order[0].id));
     UsersOwners.deleteViaApi(ownerId);
     Users.deleteViaApi(userForDeliveryRequest.userId);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
