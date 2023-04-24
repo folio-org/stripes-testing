@@ -58,9 +58,9 @@ describe('ui-finance: Transactions', () => {
       });
     cy.createTempUser([
       permissions.uiFinanceViewEditDeletFundBudget.gui,
-      permissions.uiCreateOrderAndOrderLine.gui,
-      permissions.uiEditOrderAndOrderLine.gui,
-      permissions.uiCanViewOrderAndOrderLine.gui,
+      permissions.uiOrdersCreate.gui,
+      permissions.uiOrdersEdit.gui,
+      permissions.uiOrdersView.gui
     ])
       .then(userProperties => {
         user = userProperties;
