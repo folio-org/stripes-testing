@@ -35,7 +35,7 @@ const searhInputId = 'input-record-search';
 const searchButton = Button('Search');
 const newButton = Button('New');
 const saveAndClose = Button('Save & close');
-const orderDetailsAccordionId = 'purchaseOrder';
+const orderDetailsAccordion = Accordion({ id: 'purchaseOrder' });
 const createdByAdmin = 'ADMINISTRATOR, DIKU ';
 const searchField = SearchField({ id: 'input-record-search' });
 const admin = 'administrator';
@@ -277,20 +277,20 @@ export default {
 
   checkCreatedOrder: (order) => {
     cy.expect(Pane({ id: 'order-details' }).exists());
-    cy.expect(Accordion({ id: orderDetailsAccordionId })
+    cy.expect(orderDetailsAccordion
       .find(KeyValue({ value: order.vendor }))
       .exists());
-    cy.expect(Accordion({ id: orderDetailsAccordionId })
+    cy.expect(orderDetailsAccordion
       .find(KeyValue({ value: createdByAdmin }))
       .exists());
   },
 
   checkCreatedOngoingOrder: (order) => {
     cy.expect(Pane({ id: 'order-details' }).exists());
-    cy.expect(Accordion({ id: orderDetailsAccordionId })
+    cy.expect(orderDetailsAccordion
       .find(KeyValue({ value: order.vendor }))
       .exists());
-    cy.expect(Accordion({ id: orderDetailsAccordionId })
+    cy.expect(orderDetailsAccordion
       .find(KeyValue({ value: order.orderType }))
       .exists());
   },
@@ -310,7 +310,7 @@ export default {
 
   checkCreatedOrderFromTemplate: (organization) => {
     cy.expect(Pane({ id: 'order-details' }).exists());
-    cy.expect(Accordion({ id: orderDetailsAccordionId })
+    cy.expect(orderDetailsAccordion
       .find(KeyValue({ value: organization }))
       .exists());
   },
@@ -318,10 +318,10 @@ export default {
   checkCreatedOrderWithOrderNumber: (organization, orderNumber) => {
     cy.expect(Pane({ id: 'order-details' }).exists());
     cy.expect([
-      Accordion({ id: orderDetailsAccordionId })
+      orderDetailsAccordion
       .find(KeyValue({ value: organization }))
       .exists(),
-      Accordion({ id: orderDetailsAccordionId })
+      orderDetailsAccordion
       .find(KeyValue({ value: orderNumber }))
       .exists(),
     ]);
@@ -619,9 +619,9 @@ export default {
 
   checkEditedOngoingOrder: (orderNumber, organizationName) => {
     cy.expect(Pane({ id: 'order-details' }).exists());
-    cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: orderNumber })).exists());
-    cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: organizationName })).exists());
-    cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: 'Ongoing' })).exists());
+    cy.expect(orderDetailsAccordion.find(KeyValue({ value: orderNumber })).exists());
+    cy.expect(orderDetailsAccordion.find(KeyValue({ value: organizationName })).exists());
+    cy.expect(orderDetailsAccordion.find(KeyValue({ value: 'Ongoing' })).exists());
   },
 
  errorMessage:(modalName, errorContent) => {
