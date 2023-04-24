@@ -24,6 +24,8 @@ describe('orders: create an order', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const allocatedQuantity = '1000';
+  const euroPrice = '109.78';
+  const plnPrice = '23.81';
   let servicePointId;
   let location;
   let user;
@@ -99,10 +101,10 @@ describe('orders: create an order', () => {
         OrderLines.backToEditingOrder();
         Orders.openOrder();
         OrderLines.selectPOLInOrder(0);
-        OrderLines.checkCurrencyInPOL('109.78');
+        OrderLines.checkCurrencyInPOL(euroPrice);
         OrderLines.backToEditingOrder();
         OrderLines.selectPOLInOrder(1);
-        OrderLines.checkCurrencyInPOL('23.81');
+        OrderLines.checkCurrencyInPOL(plnPrice);
       });
   });
 });
