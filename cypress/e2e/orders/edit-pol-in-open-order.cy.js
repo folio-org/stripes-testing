@@ -40,13 +40,10 @@ describe('ui-orders: Orders', () => {
       .then(response => {
         defaultFiscalYear.id = response.id;
         defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-
         Ledgers.createViaApi(defaultLedger)
           .then(ledgerResponse => {
             defaultLedger.id = ledgerResponse.id;
             defaultFund.ledgerId = defaultLedger.id;
-            secondFund.ledgerId = defaultLedger.id;
-
             Funds.createViaApi(defaultFund)
               .then(fundResponse => {
                 defaultFund.id = fundResponse.fund.id;
