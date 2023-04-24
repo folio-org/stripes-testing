@@ -1,4 +1,4 @@
-import { Button, Checkbox, PaneHeader } from '../../../../../interactors';
+import { Button, Checkbox, PaneHeader, TextField } from '../../../../../interactors';
 
 export default {
 
@@ -21,5 +21,51 @@ export default {
     cy.wait(2000);
     cy.get('input[name=value]').click().type(`{selectall}{backspace}${polNumbers}`);
     cy.do(Button({ id: 'set-polines-limit-submit-btn' }).click());
-  }
+  },
+
+  fillRequiredFields: (info) => {
+    cy.do([
+      TextField({ placeholder: 'name' }).fillIn(info.name),
+      TextField({ placeholder: 'description' }).fillIn(info.description),
+      saveButton.click()
+    ]);
+  },
+
+  createPreffix(preffixInfo) {
+    cy.do(Button({ id: 'clickable-add-prefixes' }).click());
+    this.fillRequiredFields(preffixInfo);
+  },
+
+  createSuffix(suffixInfo) {
+    cy.do(Button({ id: 'clickable-add-prefixes' }).click());
+    this.fillRequiredFields(suffixInfo);
+  },
+
+  deletePrefix: (preffixInfo) => {
+    cy.do(MultiColumnListCell({ content: preffixInfo.name }).perform(
+      element => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        cy.do([
+          getEditableListRow(rowNumber)
+            .find(trashIconButton).click(),
+          deleteButton.click()
+        ]);
+      }
+    ));
+    InteractorsTools.checkCalloutMessage(`The prefix ${preffixInfo.name} was successfully deleted`);
+  },
+
+  deleteSuffix: (suffixInfo) => {
+    cy.do(MultiColumnListCell({ content: suffixInfo.name }).perform(
+      element => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        cy.do([
+          getEditableListRow(rowNumber)
+            .find(trashIconButton).click(),
+          deleteButton.click()
+        ]);
+      }
+    ));
+    InteractorsTools.checkCalloutMessage(`The prefix ${suffixInfo.name} was successfully deleted`);
+  },
 };
