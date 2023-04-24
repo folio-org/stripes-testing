@@ -1,9 +1,8 @@
+import { HTML, including } from '@interactors/html';
 import {
   Button,
   Checkbox,
   Section,
-  HTML,
-  including,
   PaneHeader,
   Pane,
   Modal,

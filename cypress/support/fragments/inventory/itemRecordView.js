@@ -1,5 +1,5 @@
 import { HTML, including } from '@interactors/html';
-import { Accordion, KeyValue, Pane, Button, TextField, MultiColumnList, Callout, PaneHeader } from '../../../../interactors';
+import { Accordion, KeyValue, Pane, Button, TextField, MultiColumnList, Callout, PaneHeader, Link } from '../../../../interactors';
 import dateTools from '../../utils/dateTools';
 
 const loanAccordion = Accordion('Loan and availability');
@@ -129,5 +129,10 @@ export default {
 
   checkNumberOfPieces:(number) => {
     cy.expect(itemDataAccordion.find(KeyValue('Number of pieces')).has({ value: number }));
+  },
+
+  checkHotlinksToCreatedPOL:(number) => {
+    cy.expect(Accordion('Acquisition').find(KeyValue('POL number')).has({ value: number }));
+    cy.expect(Accordion('Acquisition').find(Link({ href: including('/orders/lines/view') })).exists());
   }
 };

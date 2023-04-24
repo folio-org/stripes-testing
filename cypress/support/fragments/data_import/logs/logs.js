@@ -1,4 +1,4 @@
-import { HTML, including, Link } from '@interactors/html';
+import { HTML, including } from '@interactors/html';
 import {
   Button,
   MultiColumnListCell,
@@ -7,7 +7,8 @@ import {
   SelectionList,
   MultiColumnList,
   MultiColumnListRow,
-  Checkbox
+  Checkbox,
+  Link
 } from '../../../../../interactors';
 
 const anyProfileAccordion = Accordion({ id: 'profileIdAny' });
