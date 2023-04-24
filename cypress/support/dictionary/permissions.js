@@ -112,6 +112,7 @@ export default {
   uiRequestsView: { internal: 'ui-requests.view', gui: 'Requests: View' },
   uiRequestsEdit: { internal: 'ui-requests.edit', gui: 'Requests: View, edit, cancel' },
   requestsAll: { internal: 'ui-requests.all', gui: 'Requests: All permissions' },
+  tlrEdit: { internal: 'ui-circulation.settings.titleLevelRequests', gui: 'Settings (Circulation): Title level request edit' },
   // Calendar
   calendarEdit: { internal: 'ui-calendar.edit', gui: 'Settings (Calendar): Can create, view, and edit calendar events' },
   calendarAll: { internal: 'ui-calendar.all', gui: 'Settings (Calendar): Can create, view, edit, and remove calendar events' },
@@ -131,11 +132,6 @@ export default {
   checkoutCirculatingItems: { internal: 'ui-checkout.circulation', gui: 'Check out: Check out circulating items' },
   // Checkin
   checkinAll: { internal: 'ui-checkin.all', gui: 'Check in: All permissions' },
-  // Orders
-  uiCreateOrderAndOrderLine:{ internal:'ui-orders.orders.create', gui: 'Orders: Can create new Orders and Order lines' },
-  uiEditOrderAndOrderLine:{ internal:'ui-orders.orders.edit', gui: 'Orders: Can edit Orders and Order lines' },
-  uiCanViewOrderAndOrderLine:{ internal:'ui-orders.orders.view', gui: 'Orders: Can view Orders and Order lines' },
-  uiApproveOrder:{ internal:'ui-orders.order.approve', gui: 'Orders: Approve purchase orders' },
   // Receiving
   uiReceivingViewEditCreate:{ internal:'ui-receiving.create', gui:'Receiving: View, edit, create' },
   // Organization
@@ -222,6 +218,7 @@ export default {
   settingsDataImportView:{ internal: 'ui-data-import.settings.readOnly', gui:'Data import: Can view only' },
   settingsDataImportEnabled:{ internal: 'settings.data-import.enabled', gui:'Settings (Data import): Can view, create, edit, and remove' },
   settingsDataImportCanViewOnly:{ internal:'ui-data-import.settings.readOnly', gui:'Settings (Data import): Can view only' },
+  settingsTenantViewLocation:{ internal:'ui - tenant - settings.settings.location.view', gui:'Settings (Tenant): View locations' },
   // Timers
   okapiTimersPatch: { internal: 'okapi.proxy.self.timers.patch', gui: 'Okapi - patch timer for current tenant' },
   // Export manager

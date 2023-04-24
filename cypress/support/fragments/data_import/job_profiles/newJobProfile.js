@@ -1,4 +1,5 @@
-import { Accordion, Button, HTML, including, Select, TextField, Pane } from '../../../../../interactors';
+import { HTML, including } from '@interactors/html';
+import { Accordion, Button, Select, TextField, Pane } from '../../../../../interactors';
 import ModalSelectProfile from './modalSelectProfile';
 
 const acceptedDataType = {

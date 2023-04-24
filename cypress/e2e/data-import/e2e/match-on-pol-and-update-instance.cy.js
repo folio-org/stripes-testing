@@ -108,7 +108,7 @@ describe('ui-data-import', () => {
       permissions.uiOrdersCreate.gui,
       permissions.uiOrdersView.gui,
       permissions.uiOrdersEdit.gui,
-      permissions.uiApproveOrder.gui,
+      permissions.uiOrdersApprovePurchaseOrders.gui,
       permissions.uiInventoryViewCreateEditHoldings.gui,
       permissions.uiInventoryViewCreateEditInstances.gui,
       permissions.uiInventoryViewCreateEditItems,

@@ -83,7 +83,7 @@ export default {
     cy.expect(identifierAccordion.exists());
     cy.do(Button('Add identifier').click());
     cy.expect(Select('Type*').exists());
-    cy.expect(TextField('Identifier*').exists());
+    cy.expect(TextField('Identifier').exists());
     cy.do(identifierAccordion.find(Select({ name:'identifiers[0].identifierTypeId' })).choose(identifier));
     cy.do(TextField({ name:'identifiers[0].value' }).fillIn(value));
     cy.do(saveAndCloseButton.click());

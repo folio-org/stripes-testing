@@ -131,6 +131,12 @@ export default {
       .click());
   },
 
+  openOrderInInventory:(itemStatus, rowNumber = 0) => {
+    cy.do(resultsList.find(MultiColumnListCell({ row: rowNumber, columnIndex: 7 }))
+      .find(Link(itemStatus))
+      .click());
+  },
+
   openItemInInventoryByTitle:(title, itemStatus = 'Updated') => {
     cy.do(MultiColumnListCell({ content: title }).perform(
       element => {
