@@ -1,13 +1,12 @@
-import getRandomPostfix from '../../../utils/stringTools';
-
+import FinanceHelper from '../../finance/financeHelper';
 export default {
   defaultPreffix : {
-    name: `test_preff${getRandomPostfix()}`,
+    name: `TP${FinanceHelper.getRandomPreffixSuffix()}`,
     description: 'Automation_Test_Preffix',
   },
 
   defaultSuffix : {
-    name: `test_suff${getRandomPostfix()}`,
+    name: `TS${FinanceHelper.getRandomPreffixSuffix()}`,
     description: 'Automation_Test_Suffix',
   }
 };

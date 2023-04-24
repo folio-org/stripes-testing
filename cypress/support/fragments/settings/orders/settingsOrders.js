@@ -1,7 +1,11 @@
-import { Button, Checkbox, PaneHeader, TextField } from '../../../../../interactors';
+import { Button, Checkbox, EditableListRow, MultiColumnListCell, PaneHeader, TextField } from '../../../../../interactors';
+import InteractorsTools from '../../../utils/interactorsTools';
 
 const editPoNumberCheckbox = Checkbox('User can edit');
-const saveButton = Button({ id: 'clickable-save-config' });
+const saveButton = Button('Save');
+const trashIconButton = Button({ icon: 'trash' });
+const deleteButton = Button('Delete');
+function getEditableListRow(rowNumber) { return EditableListRow({ index: +rowNumber.split('-')[1] }); }
 
 export default {
 
@@ -45,6 +49,7 @@ export default {
   },
 
   fillRequiredFields: (info) => {
+    cy.wait(6000);
     cy.do([
       TextField({ placeholder: 'name' }).fillIn(info.name),
       TextField({ placeholder: 'description' }).fillIn(info.description),
@@ -53,16 +58,19 @@ export default {
   },
 
   createPreffix(preffixInfo) {
+    cy.wait(6000);
     cy.do(Button({ id: 'clickable-add-prefixes' }).click());
     this.fillRequiredFields(preffixInfo);
   },
 
   createSuffix(suffixInfo) {
-    cy.do(Button({ id: 'clickable-add-prefixes' }).click());
+    cy.wait(6000);
+    cy.do(Button({ id: 'clickable-add-suffixes' }).click());
     this.fillRequiredFields(suffixInfo);
   },
 
   deletePrefix: (preffixInfo) => {
+    cy.wait(6000);
     cy.do(MultiColumnListCell({ content: preffixInfo.name }).perform(
       element => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
@@ -77,6 +85,7 @@ export default {
   },
 
   deleteSuffix: (suffixInfo) => {
+    cy.wait(6000);
     cy.do(MultiColumnListCell({ content: suffixInfo.name }).perform(
       element => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
@@ -87,6 +96,6 @@ export default {
         ]);
       }
     ));
-    InteractorsTools.checkCalloutMessage(`The prefix ${suffixInfo.name} was successfully deleted`);
+    InteractorsTools.checkCalloutMessage(`The suffix ${suffixInfo.name} was successfully deleted`);
   },
 };

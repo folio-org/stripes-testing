@@ -217,6 +217,25 @@ export default {
       });
   },
 
+  createOrderWithPONumberPreffixSuffix(poPreffix, poSuffix, poNumber, order, isManual = false) {
+    cy.do([
+      actionsButton.click(),
+      newButton.click(),
+      TextField({ name: 'poNumber'}).fillIn(poNumber),
+      Select({ name: 'poNumberPrefix' }).choose(poPreffix),
+      Select({ name: 'poNumberSuffix' }).choose(poSuffix),
+    ]);
+    this.selectVendorOnUi(order.vendor);
+    cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
+    cy.do(Select('Order type*').choose(order.orderType));
+    if (isManual) cy.do(Checkbox({ name:'manualPo' }).click());
+    cy.do(saveAndClose.click());
+    return cy.wait('@newOrderID', getLongDelay())
+      .then(({ response }) => {
+        return response.body.id;
+      });
+  },
+
   createOrderByTemplate(templateName) {
     cy.do([
       actionsButton.click(),
