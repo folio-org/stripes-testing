@@ -318,6 +318,9 @@ describe('ui-data-import', () => {
   });
 
   after('delete test data', () => {
+    // delete created files in fixtures
+    FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
+    FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
     JobProfiles.deleteJobProfile(jobProfileNameForCreate);
     JobProfiles.deleteJobProfile(jobProfileNameForUpdate);
     collectionOfMatchProfiles.forEach(profile => {
@@ -335,9 +338,6 @@ describe('ui-data-import', () => {
       ActionProfiles.deleteActionProfile(profile.actionProfile.name);
       FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
     });
-    // delete created files in fixtures
-    FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
-    FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
       .then((instance) => {
         cy.deleteItemViaApi(instance.items[0].id);

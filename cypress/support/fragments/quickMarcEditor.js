@@ -487,4 +487,8 @@ export default {
   checkDeleteButtonNotExist(rowIndex) {
     cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).absent());
   },
+
+  checkCallout(callout) {
+    cy.expect(Callout(callout).exists());
+  }
 };
