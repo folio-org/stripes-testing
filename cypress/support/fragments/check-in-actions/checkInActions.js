@@ -1,12 +1,11 @@
 import uuid from 'uuid';
+import { HTML, including } from '@interactors/html';
 import {
   Button,
-  including,
   TextField,
   MultiColumnListRow,
   MultiColumnList,
   MultiColumnListCell,
-  HTML,
   Pane,
   Modal,
   PaneContent,

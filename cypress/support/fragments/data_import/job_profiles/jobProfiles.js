@@ -1,11 +1,10 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
+import { HTML, including } from '@interactors/html';
 import {
   Button,
   TextField,
   MultiColumnListCell,
   Modal,
-  HTML,
-  including,
   Section,
   PaneHeader,
   MultiColumnList,

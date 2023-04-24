@@ -1,3 +1,4 @@
+import { HTML, including } from '@interactors/html';
 import {
   TextField,
   Button,
@@ -8,8 +9,6 @@ import {
   Modal,
   MultiColumnList,
   MultiColumnListCell,
-  HTML,
-  including,
   PaneContent,
   Checkbox
 } from '../../../../interactors';

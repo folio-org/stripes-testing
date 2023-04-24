@@ -124,7 +124,7 @@ describe('orders: Unopen order', () => {
     cy.createTempUser([
       permissions.uiFinanceViewFundAndBudget.gui,
       permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
-      permissions.uiApproveOrder.gui,
+      permissions.uiOrdersApprovePurchaseOrders.gui,
       permissions.uiOrdersEdit.gui,
       permissions.uiOrdersReopenPurchaseOrders.gui,
       permissions.uiOrdersUnopenpurchaseorders.gui,
