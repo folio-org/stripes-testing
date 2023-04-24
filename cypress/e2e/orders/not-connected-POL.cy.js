@@ -55,7 +55,7 @@ describe('orders: Test POL', () => {
   });
 
   after(() => {
-    Orders.deleteOrderApi(orderID);
+    Orders.deleteOrderViaApi(orderID);
     Organizations.deleteOrganizationViaApi(organization.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     Users.deleteViaApi(user.userId);

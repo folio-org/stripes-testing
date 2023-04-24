@@ -14,13 +14,13 @@ import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthor
 
 describe('plug-in MARC authority | Search', () => {
     const testData = {
-      forC359232: {
-        searchOption: 'Subject',
-        typeOfHeading: 'Topical',
-        value: 'Inventors',
-        typeA: 'Authorized',
-        typeB: 'Reference',
-        typeC: 'Auth/Ref',
+      forC359233: {
+        searchOptionA: 'Children\'s subject heading',
+        searchOptionB: 'Name-title',
+        value: 'María de Jesús, de Agreda, sister, 1602-1665',
+        valueInDetailView: '‡a María de Jesús, ‡c de Agreda, sister, ‡d 1602-1665',
+        markedValue: 'María de Jesús,',
+        noResults: 'No results found for "María de Jesús, de Agreda, sister, 1602-1665". Please check your spelling and filters.'
       },
     };
     
@@ -32,10 +32,10 @@ describe('plug-in MARC authority | Search', () => {
         numOfRecords: 1,
       }, 
       {
-        marc: 'marcFileForC359232.mrc', 
+        marc: 'marcFileForC359233.mrc', 
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
-        numOfRecords: 64,
+        numOfRecords: 1,
       }
     ]
 
@@ -77,7 +77,7 @@ describe('plug-in MARC authority | Search', () => {
   after('Deleting created user', () => {
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
-    for (let i = 1; i < 65; i++) {
+    for (let i = 1; i < 2; i++) {
       MarcAuthority.deleteViaAPI(createdAuthorityIDs[i]);
     }
 
@@ -87,21 +87,17 @@ describe('plug-in MARC authority | Search', () => {
     DataImport.confirmDeleteImportLogs();
   });
 
-  it('C380571 MARC Authority plug-in | Search using "Subject" option (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+  it('C359233 MARC Authority plug-in | Search using "Children\'s subject heading" option (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
     InventoryInstance.verifyAndClickLinkIcon('700');
     MarcAuthorities.switchToSearch();
     InventoryInstance.verifySearchOptions();
-    MarcAuthorities.searchByParameter(testData.forC359232.searchOption, '*');
-    // wait for the results to be loaded.
-    cy.wait(1000);
-    MarcAuthorities.checkSingleHeadingType(testData.forC359232.typeA, testData.forC359232.typeOfHeading);
-    MarcAuthorities.checkType(testData.forC359232.typeA, testData.forC359232.typeB, testData.forC359232.typeC);
-    MarcAuthorities.clickNextPagination();
-    MarcAuthorities.selectTitle(testData.forC359232.value);
-    MarcAuthorities.checkRecordDetailPageMarkedValue(testData.forC359232.value);
-    InventoryInstance.closeDetailsView();
+    MarcAuthorities.searchBy(testData.forC359233.searchOptionA, testData.forC359233.value);
+    MarcAuthorities.checkFieldAndContentExistence('100', testData.forC359233.valueInDetailView);
+    MarcAuthorities.checkRecordDetailPageMarkedValue(testData.forC359233.markedValue);
+    MarcAuthorities.searchBy(testData.forC359233.searchOptionB, testData.forC359233.value);
+    MarcAuthorities.checkRecordAbsence(testData.forC359233.noResults);
   });
 });

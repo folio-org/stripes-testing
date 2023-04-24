@@ -14,7 +14,6 @@ import Helper from '../../../support/fragments/finance/financeHelper';
 describe('ui-data-import', () => {
   let user;
   let instanceHrid;
-
   const fileName = `oneMarcBib.mrc${Helper.getRandomBarcode()}`;
 
   before('create test data', () => {

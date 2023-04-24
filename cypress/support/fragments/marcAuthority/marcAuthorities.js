@@ -105,6 +105,15 @@ export default {
 
   switchToBrowse:() => cy.do(Button({ id:'segment-navigation-browse' }).click()),
 
+  checkDefaultBrowseOptions: (searchValue) => {
+    cy.expect([
+      marcViewSection.absent(),
+      SearchField({ id: 'textarea-authorities-search', value: searchValue }).absent(),
+      selectField.has({ content: including('Select a browse option') }),
+      rootSection.find(HTML(including('Choose a filter or enter a search query to show results.'))).exists(),
+    ]);
+  },
+
   searchBy: (parameter, value) => {
     cy.do(filtersSection.find(SearchField({ id: 'textarea-authorities-search' })).selectIndex(parameter));
     cy.do(filtersSection.find(SearchField({ id: 'textarea-authorities-search' })).fillIn(value));
@@ -211,6 +220,10 @@ export default {
     ]);
   },
 
+  clickReset: () => {
+    cy.do(filtersSection.find(resetButton).click());
+  },
+
   clickResetAndCheck: (searchValue) => {
     cy.do(filtersSection.find(resetButton).click());
     cy.expect([
@@ -266,5 +279,9 @@ export default {
       MultiColumnListCell({ columnIndex: 3, content: headingTypeA }).absent(),
       MultiColumnListCell({ columnIndex: 3, content: headingTypeB }).exists(),
     ]);
+  },
+
+  checkRecordAbsence(absenceMessage) {
+    cy.expect(rootSection.find(HTML(including(absenceMessage))).exists());
   },
 };
