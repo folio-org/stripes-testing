@@ -28,8 +28,9 @@ const closeViewModeForMappingProfile = (profileName) => cy.do(Pane({ title: prof
 const saveProfile = () => cy.do(saveProfileButton.click());
 
 const mappingProfileForDuplicate = {
-  gobi: 'GOBI monograph invoice',
-  harrassowitz: 'Default - Harrassowitz serials invoice',
+  gobi:'GOBI monograph invoice',
+  harrassowitz:'Default - Harrassowitz serials invoice',
+  ebsco:'Default - EBSCO serials invoice'
 };
 
 const deleteFieldMappingProfile = (profileName) => {
@@ -90,13 +91,13 @@ export default {
     cy.expect(MultiColumnListCell(mappingProfileName).exists());
   },
 
-  createInvoiceMappingProfile:(mappingProfileName, defaultProfile, organizationName) => {
+  createInvoiceMappingProfile:(mappingProfile, defaultProfile) => {
     cy.intercept('/tags?*').as('getTag');
     search(defaultProfile);
     cy.wait('@getTag');
     duplicateMappingProfile();
-    NewFieldMappingProfile.fillMappingProfileForInvoice(mappingProfileName, organizationName);
-    closeViewModeForMappingProfile(mappingProfileName);
+    NewFieldMappingProfile.fillMappingProfileForInvoice(mappingProfile);
+    closeViewModeForMappingProfile(mappingProfile.name);
     cy.expect(actionsButton.exists());
   },
 

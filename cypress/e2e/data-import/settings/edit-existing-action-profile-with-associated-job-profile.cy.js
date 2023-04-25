@@ -14,7 +14,7 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import ConfirmChanges from '../../../support/fragments/data_import/action_profiles/modals/confirmChanges';
 
-describe('ui-data-import: Edit an existing action profile with associated job profile', () => {
+describe('ui-data-import', () => {
   const mappingProfileName = `C367994 autotest mapping profile ${Helper.getRandomBarcode()}`;
   const actionProfileName = `C367994 autotest action profile ${Helper.getRandomBarcode()}`;
   const jobProfileName = `C367994 autotest job profile${Helper.getRandomBarcode()}`;

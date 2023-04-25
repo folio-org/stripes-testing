@@ -7,7 +7,7 @@ Cypress.Commands.add('getInvoiceIdApi', (searchParams) => {
     .then(response => response.body.invoices.at(-1).id);
 });
 
-Cypress.Commands.add('deleteInvoiceFromStorageApi', (id) => {
+Cypress.Commands.add('deleteInvoiceFromStorageViaApi', (id) => {
   cy.okapiRequest({
     method: 'DELETE',
     path: `invoice/invoices/${id}`,

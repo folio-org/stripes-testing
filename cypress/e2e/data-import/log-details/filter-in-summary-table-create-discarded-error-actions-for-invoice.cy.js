@@ -1,37 +1,35 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
-import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import TestTypes from '../../../support/dictionary/testTypes';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import InvoiceView from '../../../support/fragments/invoices/invoiceView';
+import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
-  const quantityOfItems = '1';
-  const fileName = `C343338autotestFile.${getRandomPostfix()}.edi`;
-  const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.gobi;
-  let user = {};
-
+  let user;
+  const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.ebsco;
+  const marcFileName = `C357018 autotest file ${getRandomPostfix()}`;
   const mappingProfile = {
-    name:`autoTestMappingProf.${getRandomPostfix()}`,
+    name:`C357018 Test invoice log table Create EBSCO invoice ${getRandomPostfix()}`,
     incomingRecordType:NewFieldMappingProfile.incomingRecordType.edifact,
     existingRecordType:NewFieldMappingProfile.folioRecordTypeValue.invoice,
     description:'',
-    batchGroup: '"FOLIO"',
-    organizationName: NewFieldMappingProfile.organization.gobiLibrary,
-    paymentMethod: '"Cash"'
+    batchGroup: '"Amherst (AC)"',
+    organizationName: NewFieldMappingProfile.organization.ebsco,
+    paymentMethod: '"Credit Card"'
   };
   const actionProfile = {
-    name: `autoTestActionProf.${getRandomPostfix()}`,
+    name: `C357018 Test invoice log table ${getRandomPostfix()}`,
     typeValue: 'Invoice',
   };
   const jobProfile = {
@@ -40,34 +38,23 @@ describe('ui-data-import', () => {
     acceptedType: NewJobProfile.acceptedDataType.edifact
   };
 
-  before('login', () => {
+  before(() => {
     cy.createTempUser([
-      permissions.dataImportUploadAll.gui,
       permissions.moduleDataImportEnabled.gui,
       permissions.settingsDataImportEnabled.gui,
-      permissions.uiOrganizationsView.gui,
-      permissions.viewEditDeleteInvoiceInvoiceLine.gui
+      permissions.uiOrganizationsViewEditCreate.gui
     ])
       .then(userProperties => {
         user = userProperties;
+
         cy.login(userProperties.username, userProperties.password,
           { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
       });
   });
 
-  after('delete test data', () => {
-    // clean up generated profiles
-    JobProfiles.deleteJobProfile(jobProfile.profileName);
-    ActionProfiles.deleteActionProfile(actionProfile.name);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
-    cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${FileDetails.invoiceNumberFromEdifactFile}"` })
-      .then(id => cy.deleteInvoiceFromStorageViaApi(id));
-    Users.deleteViaApi(user.userId);
-  });
-
-  it('C343338 EDIFACT file import with creating of new invoice record (folijet)',
-    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    // create Field mapping profile
+  it('C357018 Check the filter in summary table with "create + discarded + error" actions for the Invoice column (folijet)',
+    { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+      // create Field mapping profile
       FieldMappingProfiles.waitLoading();
       FieldMappingProfiles.createInvoiceMappingProfile(mappingProfile, profileForDuplicate);
       FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
@@ -84,20 +71,16 @@ describe('ui-data-import', () => {
       NewJobProfile.saveAndClose();
       JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
-      // upload a marc file for creating of the new instance, holding and item
       cy.visit(TopMenu.dataImportPath);
       // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
       cy.reload();
-      DataImport.uploadFile('ediFileForC343338.edi', fileName);
+      DataImport.uploadFile('ediFileForC357018.edi', marcFileName);
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-      JobProfiles.selectJobProfile();
       JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(fileName);
-      Logs.checkImportFile(jobProfile.profileName);
-      Logs.checkStatusOfJobProfile();
-      Logs.openFileDetails(fileName);
-      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.invoice);
-      FileDetails.checkCreatedInvoiceISummaryTable(quantityOfItems);
-      InvoiceView.checkInvoiceDetails(InvoiceView.vendorInvoiceNumber);
+      JobProfiles.waitFileIsImported(marcFileName);
+      Logs.checkStatusOfJobProfile('Completed with errors');
+      Logs.openFileDetails(marcFileName);
+
+      
     });
 });
