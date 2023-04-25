@@ -1,5 +1,10 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import {
+  LOAN_TYPE_NAMES,
+  MATERIAL_TYPE_NAMES,
+  ITEM_STATUS_NAMES
+} from '../../../../support/constants';
 import TestTypes from '../../../../support/dictionary/testTypes';
 import DevTeams from '../../../../support/dictionary/devTeams';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
@@ -71,13 +76,13 @@ describe('ui-data-import', () => {
         barcode: '945$a',
         accessionNumber: '"12345"',
         accessionNumberUI: '12345',
-        materialType:'book',
+        materialType:MATERIAL_TYPE_NAMES.BOOK,
         numberOfPieces: '"25"',
         numberOfPiecesUI: '25',
-        permanentLoanType: 'Can circulate',
+        permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
         temporaryLoanType:'"Course reserves"',
-        temporaryLoanTypeUI:'Course reserves',
-        status: 'Available' },
+        temporaryLoanTypeUI:LOAN_TYPE_NAMES.COURSE_RESERVES,
+        status: ITEM_STATUS_NAMES.AVAILABLE },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: itemActionProfileNameForCreate }
     },

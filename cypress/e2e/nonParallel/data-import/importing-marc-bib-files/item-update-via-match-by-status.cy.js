@@ -2,6 +2,10 @@
 import TestTypes from '../../../../support/dictionary/testTypes';
 import DevTeams from '../../../../support/dictionary/devTeams';
 import permissions from '../../../../support/dictionary/permissions';
+import {
+  LOAN_TYPE_NAMES,
+  ITEM_STATUS_NAMES
+} from '../../../../support/constants';
 import Helper from '../../../../support/fragments/finance/financeHelper';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
@@ -176,12 +180,11 @@ describe('ui-data-import', () => {
     NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfile);
     NewFieldMappingProfile.fillMaterialType();
     NewFieldMappingProfile.addStatisticalCode(statisticalCode, 6);
-    NewFieldMappingProfile.fillPermanentLoanType('Can circulate');
-    NewFieldMappingProfile.fillStatus('Available');
+    NewFieldMappingProfile.fillPermanentLoanType(LOAN_TYPE_NAMES.CAN_CIRCULATE);
+    NewFieldMappingProfile.fillStatus(ITEM_STATUS_NAMES.AVAILABLE);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfile.name);
   };
-
   const mappingProfileForUpdateItem = (itemMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfile);

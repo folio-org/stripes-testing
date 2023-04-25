@@ -1,6 +1,10 @@
 import permissions from '../../../../support/dictionary/permissions';
 import TestTypes from '../../../../support/dictionary/testTypes';
 import DevTeams from '../../../../support/dictionary/devTeams';
+import {
+  LOAN_TYPE_NAMES,
+  ITEM_STATUS_NAMES
+} from '../../../../support/constants';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import Helper from '../../../../support/fragments/finance/financeHelper';
@@ -49,8 +53,8 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
         name: itemMappingProfileName,
-        permanentLoanType: 'Can circulate',
-        status: 'Available' },
+        permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
+        status: ITEM_STATUS_NAMES.AVAILABLE },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: itemActionProfileName }
     }
