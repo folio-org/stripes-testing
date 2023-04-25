@@ -20,7 +20,7 @@ describe('Permissions Bulk Edit', () => {
       permissions.uiUserEdit.gui,
     ])
       .then(userProperties => {
-        user = userProperties
+        user = userProperties;
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading
