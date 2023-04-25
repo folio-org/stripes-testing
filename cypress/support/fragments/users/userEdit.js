@@ -47,9 +47,9 @@ export default {
     permissions.forEach(permission => {
       cy.do(userSearch.fillIn(permission));
       cy.expect(userSearch.is({ value: permission }));
-      cy.do(Button('Search').click());
       // wait is needed to avoid so fast robot clicks
       cy.wait(1000);
+      cy.do(Button('Search').click());
       cy.do(MultiColumnListRow({ index: 0 }).find(Checkbox()).click());
     });
     cy.do(saveAndCloseBtn.click());
