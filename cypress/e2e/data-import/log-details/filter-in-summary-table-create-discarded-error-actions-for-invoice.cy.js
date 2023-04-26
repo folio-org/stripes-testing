@@ -16,6 +16,7 @@ import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
   let user;
+  const invoiceNumber = '1024200';
   const quantityOfItems = '1';
   const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.ebsco;
   const marcFileName = `C357018 autotest file ${getRandomPostfix()}`;
@@ -52,6 +53,15 @@ describe('ui-data-import', () => {
       });
   });
 
+  after('delete test data', () => {
+    Users.deleteViaApi(user.userId);
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
+    ActionProfiles.deleteActionProfile(actionProfile.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+    cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${invoiceNumber}"` })
+      .then(id => cy.deleteInvoiceFromStorageViaApi(id));
+  });
+
   it('C357018 Check the filter in summary table with "create + discarded + error" actions for the Invoice column (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       // create Field mapping profile
@@ -82,11 +92,14 @@ describe('ui-data-import', () => {
       Logs.openFileDetails(marcFileName);
 
       // check created counter in the Summary table
-      FileDetails.checkInvoiceISummaryTable(quantityOfItems, 0);
+      FileDetails.checkInvoiceInSummaryTable(quantityOfItems, 0);
       // check Discarded counter in the Summary table
-      FileDetails.checkInvoiceISummaryTable(quantityOfItems, 2);
+      FileDetails.checkInvoiceInSummaryTable(quantityOfItems, 2);
       // check Error counter in the Summary table
-      FileDetails.checkInvoiceISummaryTable(quantityOfItems, 3);
+      FileDetails.checkInvoiceInSummaryTable(quantityOfItems, 3);
       FileDetails.filterRecordsWithError(quantityOfItems);
+      FileDetails.verifyQuantityOfRecordsWithError(3);
+      FileDetails.verifyLogSummaryTableIsHidden();
+      FileDetails.verifyRecordsSortingOrder();
     });
 });
