@@ -39,19 +39,6 @@ describe('ui-data-import', () => {
     'Language, borders and identity / edited by Dominic Watt and Carmen Llamas.'
   ];
   const itemNote = 'THIS WAS UPDATED!';
-
-  // unique profile names
-  const jobProfileNameForCreate = `C357552 Create simple instance, holdings, items ${Helper.getRandomBarcode()}`;
-  const jobProfileNameForUpdate = `C357552 Update item based on HRID and Status ${Helper.getRandomBarcode()}`;
-  const matchProfileNameForMatchOnItemHrid = `C357552 Match 902$a to Item HRID ${Helper.getRandomBarcode()}`;
-  const matchProfileNameForMatchOnItemStatus = `C357552 Item status = Available ${Helper.getRandomBarcode()}`;
-  const actionProfileNameForHoldings = `C357552 Create simple holdings ${Helper.getRandomBarcode()}`;
-  const actionProfileNameForCreateItem = `C357552 Create simple items ${Helper.getRandomBarcode()}`;
-  const actionProfileNameForUpdateItem = `C357552 Update simple items ${Helper.getRandomBarcode()}`;
-  const mappingProfileNameForHoldings = `C357552 Create simple holdings ${Helper.getRandomBarcode()}`;
-  const mappingProfileNameForCreateItem = `C357552 Create simple items ${Helper.getRandomBarcode()}`;
-  const mappingProfileNameForUpdateItem = `C357552 Update Item by POL match ${Helper.getRandomBarcode()}`;
-  const mappingProfileNameForExport = `C357552 Item HRID ${Helper.getRandomBarcode()}`;
   const jobProfileNameForExport = `C357552 Bibs with Item HRIDs ${Helper.getRandomBarcode()}`;
 
   // file names
@@ -62,29 +49,27 @@ describe('ui-data-import', () => {
   const collectionOfMappingAndActionProfiles = [
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
-        name: mappingProfileNameForHoldings },
+        name: `C357552 Create simple holdings ${Helper.getRandomBarcode()}` },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
-        name: actionProfileNameForHoldings,
-        action: 'Create (all record types except MARC Authority or MARC Holdings)' }
+        name: `C357552 Create simple holdings ${Helper.getRandomBarcode()}` }
     },
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
-        name: mappingProfileNameForCreateItem },
+        name: `C357552 Create simple items ${Helper.getRandomBarcode()}` },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
-        name: actionProfileNameForCreateItem,
-        action: 'Create (all record types except MARC Authority or MARC Holdings)' }
+        name: `C357552 Create simple items ${Helper.getRandomBarcode()}` }
     },
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
-        name: mappingProfileNameForUpdateItem },
+        name: `C357552 Update Item by POL match ${Helper.getRandomBarcode()}` },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
-        name: actionProfileNameForUpdateItem,
+        name: `C357552 Update simple items ${Helper.getRandomBarcode()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     }
   ];
 
   const matchProfileItemHrid = {
-    profileName: matchProfileNameForMatchOnItemHrid,
+    profileName: `C357552 Match 902$a to Item HRID ${Helper.getRandomBarcode()}`,
     incomingRecordFields: {
       field: '902',
       in1: '*',
@@ -97,7 +82,7 @@ describe('ui-data-import', () => {
   };
 
   const matchProfileItemStatus = {
-    profileName: matchProfileNameForMatchOnItemStatus,
+    profileName: `C357552 Item status = Available ${Helper.getRandomBarcode()}`,
     incomingStaticValue: 'Available',
     matchCriterion: 'Exactly matches',
     existingRecordType: 'ITEM',
@@ -106,16 +91,16 @@ describe('ui-data-import', () => {
 
   const createJobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: jobProfileNameForCreate,
+    profileName: `C357552 Create simple instance, holdings, items ${Helper.getRandomBarcode()}`,
   };
 
   const updateJobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: jobProfileNameForUpdate,
+    profileName: `C357552 Update item based on HRID and Status ${Helper.getRandomBarcode()}`,
   };
 
   const exportMappingProfile = {
-    name: mappingProfileNameForExport,
+    name: `C357552 Item HRID ${Helper.getRandomBarcode()}`,
   };
 
   before('create test data', () => {
@@ -148,10 +133,10 @@ describe('ui-data-import', () => {
   after('delete test data', () => {
     Users.deleteViaApi(user.userId);
     // delete generated profiles
-    JobProfiles.deleteJobProfile(jobProfileNameForCreate);
-    JobProfiles.deleteJobProfile(jobProfileNameForUpdate);
-    MatchProfiles.deleteMatchProfile(matchProfileNameForMatchOnItemHrid);
-    MatchProfiles.deleteMatchProfile(matchProfileNameForMatchOnItemStatus);
+    JobProfiles.deleteJobProfile(createJobProfile.profileName);
+    JobProfiles.deleteJobProfile(updateJobProfile.profileName);
+    MatchProfiles.deleteMatchProfile(matchProfileItemHrid.profileName);
+    MatchProfiles.deleteMatchProfile(matchProfileItemStatus.profileName);
     collectionOfMappingAndActionProfiles.forEach(profile => {
       ActionProfiles.deleteActionProfile(profile.actionProfile.name);
       FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
@@ -217,30 +202,30 @@ describe('ui-data-import', () => {
       NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[0].actionProfile);
       NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[1].actionProfile);
       NewJobProfile.saveAndClose();
-      JobProfiles.checkJobProfilePresented(jobProfileNameForCreate);
+      JobProfiles.checkJobProfilePresented(createJobProfile.profileName);
 
       // need to wait until the first job profile will be created
       cy.wait(2500);
       JobProfiles.createJobProfile(updateJobProfile);
-      NewJobProfile.linkMatchProfile(matchProfileNameForMatchOnItemHrid);
-      NewJobProfile.linkMatchProfileForMatches(matchProfileNameForMatchOnItemStatus);
-      NewJobProfile.linkActionProfileForMatches(actionProfileNameForUpdateItem);
+      NewJobProfile.linkMatchProfile(matchProfileItemHrid.profileName);
+      NewJobProfile.linkMatchProfileForMatches(matchProfileItemStatus.profileName);
+      NewJobProfile.linkActionProfileForMatches(collectionOfMappingAndActionProfiles[2].actionProfile);
       NewJobProfile.saveAndClose();
-      JobProfiles.checkJobProfilePresented(jobProfileNameForUpdate);
+      JobProfiles.checkJobProfilePresented(updateJobProfile.profileName);
 
       // create Field mapping profile for export
       cy.visit(SettingsMenu.exportMappingProfilePath);
       ExportFieldMappingProfiles.createMappingProfileForItemHrid(exportMappingProfile.name);
 
       cy.visit(SettingsMenu.exportJobProfilePath);
-      ExportJobProfiles.createJobProfile(jobProfileNameForExport, mappingProfileNameForExport);
+      ExportJobProfiles.createJobProfile(jobProfileNameForExport, exportMappingProfile.name);
 
       // upload a marc file for creating of the new instance, holding and item
       cy.visit(TopMenu.dataImportPath);
       // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
       cy.reload();
       DataImport.uploadFile('marcFileForC357552.mrc', nameMarcFileForImportCreate);
-      JobProfiles.searchJobProfileForImport(jobProfileNameForCreate);
+      JobProfiles.searchJobProfileForImport(createJobProfile.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(nameMarcFileForImportCreate);
       Logs.openFileDetails(nameMarcFileForImportCreate);
@@ -294,7 +279,7 @@ describe('ui-data-import', () => {
       // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
       cy.reload();
       DataImport.uploadExportedFile(nameMarcFileForUpdate);
-      JobProfiles.searchJobProfileForImport(jobProfileNameForUpdate);
+      JobProfiles.searchJobProfileForImport(updateJobProfile.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(nameMarcFileForUpdate);
       Logs.openFileDetails(nameMarcFileForUpdate);

@@ -19,6 +19,7 @@ describe('ui-data-import', () => {
   const numberOfLogsPerPage = 25;
   const numberOfLogsToUpload = 30;
   const getCalloutSuccessMessage = logsCount => `${logsCount} data import logs have been successfully deleted.`;
+  const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
 
   before('create test data', () => {
     cy.createTempUser([
@@ -45,7 +46,7 @@ describe('ui-data-import', () => {
           DataImport.uploadFile(filePath, fileNameToUpload);
           // need to wait until file will be uploaded in loop
           cy.wait(8000);
-          JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+          JobProfiles.searchJobProfileForImport(jobProfileToRun);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(fileNameToUpload);
         });

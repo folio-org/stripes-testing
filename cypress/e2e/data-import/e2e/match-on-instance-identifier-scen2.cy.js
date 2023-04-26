@@ -25,10 +25,6 @@ describe('ui-data-import', () => {
   const fileNameForCreateInstance = `C347829autotestFile.${getRandomPostfix()}.mrc`;
   const fileNameForUpdateInstance = `C347829autotestFile.${getRandomPostfix()}.mrc`;
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-  const matchProfileName = `C347829autotestMatchProf${getRandomPostfix()}`;
-  const mappingProfileName = `C347829autotestMappingProf${getRandomPostfix()}`;
-  const actionProfileName = `C347829autotestActionProf${getRandomPostfix()}`;
-  const jobProfileName = `C347829autotestActionProf${getRandomPostfix()}`;
   const instanceGeneralNote = 'IDENTIFIER UPDATE 2';
   const resourceIdentifiers = [
     { type: 'UPC', value: 'ORD32671387-4' },
@@ -37,7 +33,7 @@ describe('ui-data-import', () => {
     { type: 'System control number', value: '(AMB)84714376518561876438' },
   ];
   const matchProfile = {
-    profileName: matchProfileName,
+    profileName: `C347829autotestMatchProf${getRandomPostfix()}`,
     incomingRecordFields: {
       field: '024',
       in1: '1',
@@ -48,7 +44,7 @@ describe('ui-data-import', () => {
     instanceOption: 'Identifier: Invalid UPC',
   };
   const mappingProfile = {
-    name: mappingProfileName,
+    name: `C347829autotestMappingProf${getRandomPostfix()}`,
     typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
     staffSuppress: 'Mark for all affected records',
     catalogedDate: '"2021-12-02"',
@@ -57,12 +53,12 @@ describe('ui-data-import', () => {
   };
   const actionProfile = {
     typeValue : NewActionProfile.folioRecordTypeValue.instance,
-    name: actionProfileName,
+    name: `C347829autotestActionProf${getRandomPostfix()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: jobProfileName,
+    profileName: `C347829autotestActionProf${getRandomPostfix()}`,
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
@@ -96,10 +92,10 @@ describe('ui-data-import', () => {
 
   after('delete test data', () => {
     // delete profiles
-    JobProfiles.deleteJobProfile(jobProfileName);
-    MatchProfiles.deleteMatchProfile(matchProfileName);
-    ActionProfiles.deleteActionProfile(actionProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
+    MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+    ActionProfiles.deleteActionProfile(actionProfile.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
     Users.deleteViaApi(userId);
   });
 
@@ -134,18 +130,18 @@ describe('ui-data-import', () => {
     FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
     cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.create(actionProfile, mappingProfileName);
-    ActionProfiles.checkActionProfilePresented(actionProfileName);
+    ActionProfiles.create(actionProfile, mappingProfile.name);
+    ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
     cy.visit(SettingsMenu.jobProfilePath);
-    JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);
-    JobProfiles.checkJobProfilePresented(jobProfileName);
+    JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfile.name, matchProfile.profileName);
+    JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
     cy.visit(TopMenu.dataImportPath);
     // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
     cy.reload();
     DataImport.uploadFile(filePathForUpdateInstance, fileNameForUpdateInstance);
-    JobProfiles.searchJobProfileForImport(jobProfileName);
+    JobProfiles.searchJobProfileForImport(jobProfile.profileName);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(fileNameForUpdateInstance);
     Logs.checkStatusOfJobProfile('Completed');
