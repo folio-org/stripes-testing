@@ -58,7 +58,7 @@ const checkItemQuantityInSummaryTable = (quantity, row = 0) => {
     .exists());
 };
 
-const checkCreatedInvoiceISummaryTable = (quantity, row = 0) => {
+const checkInvoiceISummaryTable = (quantity, row = 0) => {
   cy.expect(jobSummaryTable
     .find(MultiColumnListRow({ indexRow: `row-${row}` }))
     .find(MultiColumnListCell({ columnIndex: 7, content: quantity }))
@@ -106,7 +106,7 @@ export default {
   checkStatusInColumn,
   checkItemsStatusesInResultList,
   checkItemsQuantityInSummaryTable,
-  checkCreatedInvoiceISummaryTable,
+  checkInvoiceISummaryTable,
   checkSrsRecordQuantityInSummaryTable,
   checkInstanceQuantityInSummaryTable,
   checkHoldingsQuantityInSummaryTable,
@@ -147,6 +147,13 @@ export default {
           .click());
       }
     ));
+  },
+
+  filterRecordsWithError:(quantity) => {
+    cy.do(jobSummaryTable
+      .find(MultiColumnListRow({ indexRow: 'row-3' }))
+      .find(MultiColumnListCell({ columnIndex: 7, content: quantity }))
+      .click());
   },
 
   checkStatusByTitle:(title, itemStatus) => {

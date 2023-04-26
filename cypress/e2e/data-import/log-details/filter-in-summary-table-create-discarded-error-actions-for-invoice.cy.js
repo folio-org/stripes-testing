@@ -8,15 +8,15 @@ import NewFieldMappingProfile from '../../../support/fragments/data_import/mappi
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import TopMenu from '../../../support/fragments/topMenu';
-import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import Logs from '../../../support/fragments/data_import/logs/logs';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
   let user;
+  const quantityOfItems = '1';
   const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.ebsco;
   const marcFileName = `C357018 autotest file ${getRandomPostfix()}`;
   const mappingProfile = {
@@ -81,6 +81,12 @@ describe('ui-data-import', () => {
       Logs.checkStatusOfJobProfile('Completed with errors');
       Logs.openFileDetails(marcFileName);
 
-      
+      // check created counter in the Summary table
+      FileDetails.checkInvoiceISummaryTable(quantityOfItems, 0);
+      // check Discarded counter in the Summary table
+      FileDetails.checkInvoiceISummaryTable(quantityOfItems, 2);
+      // check Error counter in the Summary table
+      FileDetails.checkInvoiceISummaryTable(quantityOfItems, 3);
+      FileDetails.filterRecordsWithError(quantityOfItems);
     });
 });
