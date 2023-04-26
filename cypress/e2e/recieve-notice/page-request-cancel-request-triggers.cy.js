@@ -184,8 +184,8 @@ describe('Request notice triggers', () => {
   });
 
   it(
-    'C347866 Page request + Cancel request triggers (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    'C347866 Page request + Cancel request triggers (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.pageRequest);
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.pageRequest);

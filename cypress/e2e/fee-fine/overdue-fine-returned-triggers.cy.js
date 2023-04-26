@@ -297,8 +297,8 @@ describe('Overdue fine', () => {
   });
 
   it(
-    'C347874 Overdue fine, returned triggers (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    'C347874 Overdue fine, returned triggers (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.returnedUponAt);
       NewNoticePolicyTemplate.checkAfterSaving({

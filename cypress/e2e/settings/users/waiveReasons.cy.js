@@ -10,8 +10,8 @@ describe('Management of waive reasons', () => {
     cy.loginAsAdmin({ path: SettingsMenu.waiveReasons, waiter: WaiveReasons.waitLoading });
   });
 
-  it('C446 Verify that you can create/edit/delete waive reasons (prokopovych)',
-    { tags: [TestType.smoke, Features.waiveReasons, DevTeams.prokopovych] }, () => {
+  it('C446 Verify that you can create/edit/delete waive reasons (volaris)',
+    { tags: [TestType.smoke, Features.waiveReasons, DevTeams.volaris] }, () => {
       WaiveReasons.startAdding();
       WaiveReasons.checkSaveButtonState({ isDisabled: true });
       let testReason = { reason:'', description: 'test description' };
