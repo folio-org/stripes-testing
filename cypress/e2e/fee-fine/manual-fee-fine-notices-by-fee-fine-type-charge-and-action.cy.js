@@ -162,8 +162,8 @@ describe('Overdue fine', () => {
   });
 
   it(
-    'C347877 Manual fee/fine notices by fee/fine type: charge and action (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    'C347877 Manual fee/fine notices by fee/fine type: charge and action (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       const feeFineCreate = (feeFineName) => {
         cy.visit(TopMenu.usersPath);
