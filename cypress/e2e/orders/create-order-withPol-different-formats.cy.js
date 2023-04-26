@@ -55,8 +55,8 @@ describe('ui-orders: Orders and Order lines', () => {
           });
       });
     cy.createTempUser([
-      permissions.uiCreateOrderAndOrderLine.gui,
-      permissions.uiEditOrderAndOrderLine.gui,
+      permissions.uiOrdersCreate.gui,
+      permissions.uiOrdersEdit.gui,
     ])
       .then(userProperties => {
         user = userProperties;
