@@ -48,7 +48,7 @@ describe('bulk-edit', () => {
       TopMenuNavigation.navigateToApp('Users');
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByUsername(user.username);
-      
+
       TopMenuNavigation.navigateToApp('Bulk edit');
       BulkEditSearchPane.verifyMatchedResults(user.barcode);
       cy.reload();
