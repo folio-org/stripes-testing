@@ -207,6 +207,28 @@ export default {
     ]);
   },
 
+  POLineInfodorOtherMaterialWithFund: (orderLineTitleName, fund) => {
+    cy.do([
+      orderLineTitleField.fillIn(orderLineTitleName),
+      orderFormatSelect.choose('Other'),
+      acquisitionMethodButton.click(),
+      SelectionOption('Depository').click(),
+      receivingWorkflowSelect.choose('Independent order and receipt quantity'),
+      physicalUnitPriceTextField.fillIn(physicalUnitPrice),
+      quantityPhysicalTextField.fillIn(quantityPhysical),
+      materialTypeSelect.choose('book'),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      fundDistributionField.fillIn('100'),
+      addLocationButton.click(),
+      locationSelect.click(),
+      onlineLocationOption.click(),
+      quantityPhysicalLocationField.fillIn(quantityPhysical),
+      saveAndClose.click()
+    ]);
+  },
+
   rolloverPOLineInfoforPhysicalMaterialWithFund(fund, unitPrice, quantity, value, institutionId) {
     cy.do([
       orderFormatSelect.choose('Physical resource'),

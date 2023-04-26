@@ -92,11 +92,23 @@ describe('ui-orders: Orders and Order lines', () => {
       OrderLines.backToEditingOrder();
     });
   });
+
   it('C659 Create an order and at least one order line for format = physical resource with multiple copies  (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     Orders.createOrder(order).then(orderId => {
       order.id = orderId;
       OrderLines.addPOLine();
       OrderLines.POLineInfodorPhysicalMaterialWithFund(orderLineTitle, defaultFund);
+      InteractorsTools.checkCalloutMessage('The purchase order line was successfully created');
+      OrderLines.checkCreatedPOLinePhysicalResource(orderLineTitle, defaultFund);
+      OrderLines.backToEditingOrder();
+    });
+  });
+
+  it('C661 Create an order and at least one order line for format = other  (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
+    Orders.createOrder(order).then(orderId => {
+      order.id = orderId;
+      OrderLines.addPOLine();
+      OrderLines.POLineInfodorOtherMaterialWithFund(orderLineTitle, defaultFund);
       InteractorsTools.checkCalloutMessage('The purchase order line was successfully created');
       OrderLines.checkCreatedPOLinePhysicalResource(orderLineTitle, defaultFund);
       OrderLines.backToEditingOrder();
