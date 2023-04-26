@@ -18,6 +18,7 @@ const addFieldButton = Button({ ariaLabel : 'plus-sign' });
 const deleteFieldButton = Button({ ariaLabel : 'trash' });
 const infoButton = Button({ ariaLabel : 'info' });
 const saveAndCloseButton = Button({ id:'quick-marc-record-save' });
+const buttonLink = Button({ icon: 'unlink' });
 
 // related with cypress\fixtures\oneMarcAuthority.mrc
 const defaultAuthority = { id:'176116217',
@@ -176,5 +177,10 @@ export default {
     // wait until all the saved and updated values will be loaded.
     cy.wait(2000);
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].tag` })).fillIn(tag));
+  },
+
+  checkLinkingAuthority: () => {
+    cy.expect(buttonLink.exists());
+    cy.expect(Callout('Field 655 has been linked to a MARC authority record.').exists());
   },
 };
