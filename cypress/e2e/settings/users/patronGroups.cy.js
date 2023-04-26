@@ -16,8 +16,8 @@ import UserAllFeesFines from '../../../support/fragments/users/userAllFeesFines'
 
 describe('Patron blocks relations with users, conditions', () => {
   const testData = {};
-  it("C11020 Verify user information display when automated patron block 'Maximum outstanding fee/fine balance' exists for patron (prokopovych)",
-    { tags: [TestType.smoke, Features.patronBlocks, TestType.broken, DevTeams.prokopovych] }, () => {
+  it("C11020 Verify user information display when automated patron block 'Maximum outstanding fee/fine balance' exists for patron (vega)",
+    { tags: [TestType.smoke, Features.patronBlocks, DevTeams.vega] }, () => {
       testData.chargeAmount = 100;
 
       cy.getAdminToken();

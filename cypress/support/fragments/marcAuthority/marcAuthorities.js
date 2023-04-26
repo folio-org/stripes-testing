@@ -22,6 +22,7 @@ const headinfTypeAccordion = Accordion('Type of heading');
 const authoritySearchResults = Section({ id: 'authority-search-results-pane' });
 const nextButton = Button({ id: 'authority-result-list-next-paging-button' });
 const searchNav = Button({ id: 'segment-navigation-search' });
+const buttonLink = Button('Link');
 
 export default {
   waitLoading: () => cy.expect(rootSection.exists()),
@@ -203,6 +204,10 @@ export default {
 
   clickNextPagination() {
     cy.do(authoritySearchResults.find(nextButton).click());
+  },
+
+  clickLinkButton() {
+    cy.do(buttonLink.click());
   },
 
   checkFieldAndContentExistence(tag, value) {
