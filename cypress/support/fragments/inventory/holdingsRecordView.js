@@ -1,3 +1,4 @@
+import { including, HTML } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -6,8 +7,7 @@ import {
   MultiColumnListCell,
   Section,
   MultiColumnList,
-  HTML,
-  including
+  Pane
 } from '../../../../interactors';
 import InventoryViewSource from './inventoryViewSource';
 import InventoryNewHoldings from './inventoryNewHoldings';
@@ -81,6 +81,10 @@ export default {
     ]);
   },
 
+  openAccordion:(name) => {
+    cy.do(Accordion(name).click());
+  },
+
   // checks
   checkActionsMenuOptionsInFolioSource:() => {
     cy.do(actionsButton.click());
@@ -133,6 +137,9 @@ export default {
     cy.expect(electronicAccessAccordion
       .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: uriValue }))
       .exists());
+  },
+  checkHoldingRecordViewOpened: () => {
+    cy.expect(Pane({ id:'ui-inventory.holdingsRecordView' }).exists());
   },
 
   getHoldingsHrId: () => cy.then(() => holdingHrIdKeyValue.value()),

@@ -48,6 +48,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.waitFileUploading();
 
       BulkEditActions.downloadMatchedResults(matchRecordsFileName);
+      BulkEditSearchPane.verifyUserBarcodesResultAccordion();
 
       BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.verifyBulkEditForm();

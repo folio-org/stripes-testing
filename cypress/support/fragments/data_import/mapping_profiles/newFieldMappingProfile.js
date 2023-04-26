@@ -10,7 +10,8 @@ import {
   MultiColumnListCell,
   MultiColumnListRow,
   SearchField,
-  Accordion
+  Accordion,
+  Checkbox
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
@@ -30,7 +31,8 @@ const folioRecordTypeValue = {
   holdings: 'Holdings',
   item: 'Item',
   invoice: 'Invoice',
-  marcBib: 'MARC Bibliographic'
+  marcBib: 'MARC Bibliographic',
+  order: 'Order'
 };
 const organization = {
   gobiLibrary: 'GOBI Library Solutions',
@@ -211,6 +213,35 @@ export default {
       }
     }
     cy.do(saveButton.click());
+  },
+
+  fillOrderMappingProfile:(profile) => {
+    cy.do([
+      TextField({ name:'profile.name' }).fillIn(profile.name),
+      Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.marcBib),
+      Select({ name:'profile.existingRecordType' }).choose(profile.typeValue),
+      TextField('Purchase order status*').fillIn(`"${profile.orderStatus}"`),
+      Accordion('Order information').find(Checkbox({ name:'profile.mappingDetails.mappingFields[1].booleanFieldAction' })).click(),
+      Accordion('Order information').find(Button('Organization look-up')).click(),
+      organizationModal.find(TextField({ id: 'input-record-search' })).fillIn(profile.vendor),
+      organizationModal.find(Button('Search')).click(),
+      organizationModal.find(HTML(including('1 record found'))).exists(),
+      MultiColumnListCell(profile.vendor).click({ row: 0, columnIndex: 0 }),
+      TextField('Title*').fillIn(profile.title),
+      TextField('Acquisition method*').fillIn(`"${profile.acquisitionMethod}"`),
+      TextField('Order format*').fillIn(`"${profile.orderFormat}"`),
+      TextField('Receiving workflow*').fillIn(`"${profile.receivingWorkflow}"`),
+      TextField('Physical unit price').fillIn(`"${profile.physicalUnitPrice}"`),
+      TextField('Quantity physical').fillIn(`"${profile.quantityPhysical}"`),
+      TextField('Currency*').fillIn(`"${profile.currency}"`),
+      TextField('Electronic unit price').fillIn(`"${profile.electronicUnitPrice}"`),
+      TextField('Quantity electronic').fillIn(`"${profile.quantityElectronic}"`),
+      Accordion('Location').find(Button('Add location')).click(),
+      TextField('Name (code)').fillIn(`"${profile.locationName}"`),
+      Accordion('Location').find(TextField('Quantity physical')).fillIn(`"${profile.locationQuantityPhysical}"`),
+      Accordion('Location').find(TextField('Quantity electronic')).fillIn(`"${profile.locationQuantityElectronic}"`)
+    ]);
+    waitLoading();
   },
 
   addName:(name) => cy.do(TextField({ name:'profile.name' }).fillIn(name)),

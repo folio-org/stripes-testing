@@ -107,7 +107,7 @@ describe('orders: Receive piece from Order', () => {
   after('delete test data', () => {
     Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
       .then(res => {
-        Orders.deleteOrderApi(res[0].id);
+        Orders.deleteOrderViaApi(res[0].id);
       });
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(barcode);
     UserEdit.changeServicePointPreferenceViaApi(userId, [firstServicePoint.id, secondServicePoint.id]).then(() => {

@@ -82,7 +82,7 @@ describe('orders: Receiving and Check-in', () => {
                 OrderLines.fillInPOLineInfoForExportWithLocationForPhisicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', locationResponse.institutionId, '4');
                 OrderLines.backToEditingOrder();
                 Orders.openOrder();
-                OrderLines.selectPOLInOrder();
+                OrderLines.selectPOLInOrder(0);
                 OrderLines.cancelPOL();
                 OrderLines.openInstance();
                 InventoryInstance.openHoldingsAccordion(location.name);
@@ -167,11 +167,11 @@ describe('orders: Receiving and Check-in', () => {
     Orders.selectFromResultsList();
     Orders.reOpenOrder();
     Orders.unOpenOrder(orderNumber);
-    OrderLines.selectPOLInOrder();
+    OrderLines.selectPOLInOrder(0);
     OrderLines.deleteOrderLine();
     // Need to wait until the order is opened before deleting it
     cy.wait(2000);
-    Orders.deleteOrderApi(order.id);
+    Orders.deleteOrderViaApi(order.id);
 
     Organizations.deleteOrganizationViaApi(organization.id);
     // TODO: Need to find solution to delete all data, becouse now i cant delete location and user

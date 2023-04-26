@@ -29,7 +29,7 @@ describe('orders: Test PO search', () => {
   });
 
   afterEach(() => {
-    Orders.deleteOrderApi(order.id);
+    Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 

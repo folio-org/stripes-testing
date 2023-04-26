@@ -108,7 +108,7 @@ describe('ui-data-import', () => {
       permissions.uiOrdersCreate.gui,
       permissions.uiOrdersView.gui,
       permissions.uiOrdersEdit.gui,
-      permissions.uiApproveOrder.gui,
+      permissions.uiOrdersApprovePurchaseOrders.gui,
       permissions.uiInventoryViewCreateEditHoldings.gui,
       permissions.uiInventoryViewCreateEditInstances.gui,
       permissions.uiInventoryViewCreateEditItems,
@@ -135,7 +135,7 @@ describe('ui-data-import', () => {
     FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
     Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
       .then(orderId => {
-        Orders.deleteOrderApi(orderId[0].id);
+        Orders.deleteOrderViaApi(orderId[0].id);
       });
     Users.deleteViaApi(user.userId);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);

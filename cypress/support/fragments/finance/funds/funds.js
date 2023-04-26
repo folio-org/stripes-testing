@@ -158,6 +158,7 @@ export default {
       deleteButton.click(),
       Button('Delete', { id:'clickable-fund-remove-confirmation-confirm' }).click()
     ]);
+    cy.wait(4000);
   },
 
   addBudget: (allocatedQuantity) => {
@@ -577,5 +578,19 @@ export default {
 
   closeMenu:() => {
     cy.do(Button({ icon: 'times' }).click());
+  },
+
+  addAUToFund: (AUName) => {
+    cy.do([
+      actionsButton.click(),
+      Button('Edit').click(),
+    ]);
+    cy.wait(4000);
+    cy.do([
+      MultiSelect({ id: 'fund-acq-units' }).find(Button({ ariaLabel: 'open menu' })).click(),
+      MultiSelectOption(AUName).click(),
+      saveAndCloseButton.click()
+    ]);
+    cy.wait(4000);
   },
 };
