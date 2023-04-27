@@ -147,8 +147,9 @@ describe('orders: export', () => {
     ExportManagerSearchPane.selectJobByIntegrationInList(firstIntegrationName);
     ExportManagerSearchPane.verifyThirdPaneExportJobExist();
     ExportManagerSearchPane.rerunJob();
-    cy.reload();
+    ExportManagerSearchPane.closeExportJobPane();
     ExportManagerSearchPane.resetAll();
+    cy.reload();
     ExportManagerSearchPane.selectSuccessfulStatusCheckbox();
     ExportManagerSearchPane.selectJobByIntegrationInList(firstIntegrationName);
     ExportManagerSearchPane.verifyThirdPaneExportJobExist();
