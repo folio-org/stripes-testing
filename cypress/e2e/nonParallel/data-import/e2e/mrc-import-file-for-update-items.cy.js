@@ -1,5 +1,11 @@
-import TestTypes from '../../../../support/dictionary/testTypes';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import TestTypes from '../../../../support/dictionary/testTypes';
+import DevTeams from '../../../../support/dictionary/devTeams';
+import {
+  LOAN_TYPE_NAMES,
+  MATERIAL_TYPE_NAMES,
+  ITEM_STATUS_NAMES
+} from '../../../../support/constants';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
@@ -19,7 +25,6 @@ import ExportJobProfiles from '../../../../support/fragments/data-export/exportJ
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import FileDetails from '../../../../support/fragments/data_import/logs/fileDetails';
 import SettingsJobProfiles from '../../../../support/fragments/settings/dataImport/settingsJobProfiles';
-import DevTeams from '../../../../support/dictionary/devTeams';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 
 describe('ui-data-import', () => {
@@ -280,7 +285,7 @@ describe('ui-data-import', () => {
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
-  beforeEach('create test data', () => {
+  before('create test data', () => {
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     cy.getAdminToken();
 
@@ -361,10 +366,10 @@ describe('ui-data-import', () => {
   const createItemMappingProfile = (profile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
-    NewFieldMappingProfile.fillMaterialType('"electronic resource"');
+    NewFieldMappingProfile.fillMaterialType(MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE);
     NewFieldMappingProfile.addItemNotes('"Electronic bookplate"', '"Smith Family Foundation"', 'Mark for all affected records');
-    NewFieldMappingProfile.fillPermanentLoanType('"Can circulate"');
-    NewFieldMappingProfile.fillStatus('"Available"');
+    NewFieldMappingProfile.fillPermanentLoanType(LOAN_TYPE_NAMES.CAN_CIRCULATE);
+    NewFieldMappingProfile.fillStatus(ITEM_STATUS_NAMES.AVAILABLE);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
   };

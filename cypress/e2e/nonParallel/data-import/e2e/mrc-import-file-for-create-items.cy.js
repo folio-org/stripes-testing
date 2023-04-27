@@ -1,3 +1,11 @@
+import permissions from '../../../../support/dictionary/permissions';
+import {
+  LOAN_TYPE_NAMES,
+  MATERIAL_TYPE_NAMES,
+  ITEM_STATUS_NAMES
+} from '../../../../support/constants';
+import TestTypes from '../../../../support/dictionary/testTypes';
+import DevTeams from '../../../../support/dictionary/devTeams';
 import FieldMappingProfiles from '../../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewActionProfile from '../../../../support/fragments/data_import/action_profiles/newActionProfile';
 import NewFieldMappingProfile from '../../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -7,13 +15,10 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import TestTypes from '../../../../support/dictionary/testTypes';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import FileDetails from '../../../../support/fragments/data_import/logs/fileDetails';
 import TopMenu from '../../../../support/fragments/topMenu';
-import permissions from '../../../../support/dictionary/permissions';
 import Users from '../../../../support/fragments/users/users';
-import DevTeams from '../../../../support/dictionary/devTeams';
 
 describe('ui-data-import', () => {
   let user = {};
@@ -86,9 +91,9 @@ describe('ui-data-import', () => {
   const createItemMappingProfile = (itemMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfile);
-    NewFieldMappingProfile.fillMaterialType('"book"');
-    NewFieldMappingProfile.fillPermanentLoanType('"Can circulate"');
-    NewFieldMappingProfile.fillStatus('"Available"');
+    NewFieldMappingProfile.fillMaterialType(MATERIAL_TYPE_NAMES.BOOK);
+    NewFieldMappingProfile.fillPermanentLoanType(LOAN_TYPE_NAMES.CAN_CIRCULATE);
+    NewFieldMappingProfile.fillStatus(ITEM_STATUS_NAMES.AVAILABLE);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfile.name);
   };

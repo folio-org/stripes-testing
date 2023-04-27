@@ -109,7 +109,7 @@ describe('ui-data-import', () => {
       InventoryInstance.startOverlaySourceBibRecord();
       InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();
       InventoryInstance.importWithOclc(oclcForImport);
-      InventoryInstance.checkCalloutMessage(`Updated record ${oclcForImport}`);
+      InventoryInstance.checkCalloutMessage(`Record ${oclcForImport} updated. Results may take a few moments to become visible in Inventory`);
 
       // need to wait because after the import the data in the instance is displayed for a long time
       // https://issues.folio.org/browse/MODCPCT-73

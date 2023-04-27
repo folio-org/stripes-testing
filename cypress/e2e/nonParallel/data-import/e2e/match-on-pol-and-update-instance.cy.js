@@ -1,5 +1,10 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import {
+  LOAN_TYPE_NAMES,
+  MATERIAL_TYPE_NAMES,
+  ITEM_STATUS_NAMES
+} from '../../../../support/constants';
 import TestTypes from '../../../../support/dictionary/testTypes';
 import DevTeams from '../../../../support/dictionary/devTeams';
 import permissions from '../../../../support/dictionary/permissions';
@@ -63,7 +68,10 @@ describe('ui-data-import', () => {
     },
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
-        name: mappingProfileNameForItem },
+        name: mappingProfileNameForItem,
+        status:ITEM_STATUS_NAMES.AVAILABLE,
+        permanentLoanType:LOAN_TYPE_NAMES.CAN_CIRCULATE,
+        materialType:MATERIAL_TYPE_NAMES.BOOK },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: actionProfileNameForItem }
     }
@@ -94,7 +102,7 @@ describe('ui-data-import', () => {
     orderFormat: 'Physical resource',
     quantity: '1',
     price: '20',
-    materialType: 'book',
+    materialType: MATERIAL_TYPE_NAMES.BOOK,
     createInventory: 'None'
   };
 
@@ -169,9 +177,9 @@ describe('ui-data-import', () => {
     NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfile);
     NewFieldMappingProfile.fillBarcode('981$b');
     NewFieldMappingProfile.fillCopyNumber('981$a');
-    NewFieldMappingProfile.fillStatus('"Available"');
-    NewFieldMappingProfile.fillPermanentLoanType('"Can circulate"');
-    NewFieldMappingProfile.fillMaterialType('"book"');
+    NewFieldMappingProfile.fillStatus(itemMappingProfile.status);
+    NewFieldMappingProfile.fillPermanentLoanType(itemMappingProfile.permanentLoanType);
+    NewFieldMappingProfile.fillMaterialType(itemMappingProfile.materialType);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfile.name);
   };

@@ -35,11 +35,26 @@ export const LOST_ITEM_FEES_POLICY_NAMES = {
 
 export const LOAN_TYPE_NAMES = {
   CAN_CIRCULATE: 'Can circulate',
+  COURSE_RESERVES:'Course reserves'
 };
 
 export const MATERIAL_TYPE_NAMES = {
   MICROFORM: 'microform',
   BOOK: 'book',
+  ELECTRONIC_RESOURCE: 'electronic resource'
+};
+
+export const ITEM_STATUS_NAMES = {
+  ON_ORDER: 'On order',
+  IN_PROCESS: 'In process',
+  AVAILABLE: 'Available',
+  MISSING: 'Missing',
+  IN_TRANSIT: 'In transit',
+  PAGED: 'Paged',
+  AWAITING_PICKUP: 'Awaiting pickup',
+  CHECKED_OUT: 'Checked out',
+  DECLARED_LOST: 'Declared lost',
+  AWAITING_DALIVERY: 'Awaiting delivery'
 };
 
 export const CY_ENV = {

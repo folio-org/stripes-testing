@@ -1,4 +1,9 @@
 import permissions from '../../../../support/dictionary/permissions';
+import {
+  LOAN_TYPE_NAMES,
+  MATERIAL_TYPE_NAMES,
+  ITEM_STATUS_NAMES
+} from '../../../../support/constants';
 import TestTypes from '../../../../support/dictionary/testTypes';
 import DevTeams from '../../../../support/dictionary/devTeams';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -30,9 +35,6 @@ describe('ui-data-import', () => {
   const quantityOfItems = '1';
   const fileName = `oneMarcBib.mrc${Helper.getRandomBarcode()}`;
   const holdingsPermanentLocation = 'Annex (KU/CC/DI/A)';
-  const itemMaterialType = 'electronic resource';
-  const itemPermanentLoanType = 'Can circulate';
-  const itemStatus = 'Available';
   // unique profile names
   const jobProfileName = `C368009 Testing SRS MARC bib ${Helper.getRandomBarcode()}`;
   const matchProfileName = `C368009 001 to Instance HRID ${Helper.getRandomBarcode()}`;
@@ -44,20 +46,18 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
         name: itemMappingProfileName,
-        materialType: `"${itemMaterialType}"`,
-        permanentLoanType: `"${itemPermanentLoanType}"`,
-        status: `"${itemStatus}"` },
+        materialType: MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE,
+        permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
+        status: ITEM_STATUS_NAMES.AVAILABLE },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
-        name: itemActionProfileName,
-        action: 'Create (all record types except MARC Authority or MARC Holdings)' }
+        name: itemActionProfileName }
     },
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
         name: holdingsMappingProfileName,
         permanentLocation: `"${holdingsPermanentLocation}"` },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
-        name: holdingsActionProfileName,
-        action: 'Create (all record types except MARC Authority or MARC Holdings)' }
+        name: holdingsActionProfileName }
     }
   ];
   const matchProfile = {
@@ -146,7 +146,7 @@ describe('ui-data-import', () => {
       createHoldingsMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
       FieldMappingProfiles.checkMappingProfilePresented(holdingsMappingProfileName);
 
-      // create mapping profiles
+      // create action profiles
       collectionOfMappingAndActionProfiles.forEach(profile => {
         cy.visit(SettingsMenu.actionProfilePath);
         ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
@@ -204,9 +204,9 @@ describe('ui-data-import', () => {
           HoldingsRecordView.checkPermanentLocation('Annex');
           cy.go('back');
           FileDetails.openItemInInventory('Created');
-          ItemRecordView.verifyMaterialType(itemMaterialType);
-          ItemRecordView.verifyPermanentLoanType(itemPermanentLoanType);
-          ItemRecordView.verifyItemStatus(itemStatus);
+          ItemRecordView.verifyMaterialType(collectionOfMappingAndActionProfiles[0].mappingProfile.materialType);
+          ItemRecordView.verifyPermanentLoanType(collectionOfMappingAndActionProfiles[0].mappingProfile.permanentLoanType);
+          ItemRecordView.verifyItemStatus(collectionOfMappingAndActionProfiles[0].mappingProfile.status);
         });
     });
 });
