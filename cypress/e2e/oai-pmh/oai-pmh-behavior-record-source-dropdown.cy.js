@@ -37,7 +37,7 @@ describe('OAI-PMH', () => {
     BehaviorPane.clickSave();
     InteractorsTools.checkCalloutMessage(calloutMessageText);
 
-    // Re-login and verify the settings are saved
+    // Re-login and verify the settings are correctly saved
     cy.login(user.username, user.password, {
       path: SettingsMenu.oaiPmhPath,
       waiter: OaipmhPane.waitLoading
@@ -48,7 +48,7 @@ describe('OAI-PMH', () => {
     BehaviorPane.clickSave();
     InteractorsTools.checkCalloutMessage(calloutMessageText);
 
-    // Re-login and verify the settings are saved
+    // Re-login and verify the settings are correctly saved
     cy.login(user.username, user.password, {
       path: SettingsMenu.oaiPmhPath,
       waiter: OaipmhPane.waitLoading
