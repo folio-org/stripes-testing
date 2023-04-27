@@ -39,6 +39,7 @@ export default {
   },
 
   selectJobByIntegrationInList(integrationName) {
+    cy.wait(6000);
     cy.do(MultiColumnList({ id: 'export-edi-jobs-list' }).find(MultiColumnListCell(integrationName)).click());
   },
 
