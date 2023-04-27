@@ -33,6 +33,17 @@ describe('OAI-PMH', () => {
     OaipmhPane.clickBehaviorItem();
     BehaviorPane.verifyBehaviorPane();
     BehaviorPane.verifyRecordSourceDropdownDefaultValue('Source record storage');
+    BehaviorPane.pickFromRecordSourceDropdown('Inventory');
+    BehaviorPane.clickSave();
+    InteractorsTools.checkCalloutMessage(calloutMessageText);
+
+    // Re-login and verify the settings are saved
+    cy.login(user.username, user.password, {
+      path: SettingsMenu.oaiPmhPath,
+      waiter: OaipmhPane.waitLoading
+    });
+    OaipmhPane.clickBehaviorItem();
+    BehaviorPane.verifyRecordSourceDropdownDefaultValue('Inventory');
     BehaviorPane.pickFromRecordSourceDropdown('Source records storage and Inventory');
     BehaviorPane.clickSave();
     InteractorsTools.checkCalloutMessage(calloutMessageText);
