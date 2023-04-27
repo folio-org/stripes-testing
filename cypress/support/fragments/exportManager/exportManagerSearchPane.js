@@ -1,5 +1,5 @@
 import { including } from 'bigtest';
-import { Pane, Button, TextField, MultiColumnListCell, Accordion, Checkbox, Modal, SelectionOption } from '../../../../interactors';
+import { Pane, Button, TextField, MultiColumnListCell, Accordion, Checkbox, Modal, SelectionOption, MultiColumnList, PaneHeader } from '../../../../interactors';
 
 const searchButton = Button({ type: 'submit' });
 const userSearchResults = Pane('User Search Results');
@@ -22,56 +22,86 @@ export default {
   waitLoading() {
     cy.expect(Pane('Export jobs').exists());
   },
+
   selectJob(content) {
     return cy.do(MultiColumnListCell(including(content)).click());
   },
+  
   searchById(id) {
     cy.do([
       TextField().fillIn(id),
       searchButton.click(),
     ]);
   },
+
   selectSearchResultItem(indexRow = 0) {
     return cy.do(this.getSearchResult(indexRow, 0).click());
   },
+
+  selectJobByIntegrationInList(integrationName) {
+    cy.do(MultiColumnList({ id: 'export-edi-jobs-list' }).find(MultiColumnListCell(integrationName)).click());
+  },
+
+  selectFailedStatusCheckbox() {
+    cy.do(Checkbox({ id: 'clickable-filter-status-failed' }).click());
+  },
+
+  selectSuccessfulStatusCheckbox() {
+    cy.do(Checkbox({ id: 'clickable-filter-status-successful' }).click());
+  },
+
   closeExportJobPane() {
     cy.do(Button({ ariaLabel: 'Close Export job ' }).click());
   },
+
   resetAll() {
     cy.do(Button('Reset all').click());
     waitClick();
   },
+
   resetJobType() {
     cy.do(jobTypeAccordion.find(Button({ icon: 'times-circle-solid' })).click());
     waitClick();
   },
+
   searchByScheduled() {
     waitClick();
     cy.do(statusAccordion.find(Checkbox({ id: 'clickable-filter-status-scheduled' })).click());
   },
+
   searchByInProgress() {
     waitClick();
     cy.do(statusAccordion.find(Checkbox({ id: 'clickable-filter-status-in-progress' })).click());
   },
+
   searchBySuccessful() {
     waitClick();
     cy.do(statusAccordion.find(Checkbox({ id: 'clickable-filter-status-successful' })).click());
   },
+
   searchByFailed() {
     waitClick();
     cy.do(statusAccordion.find(Checkbox({ id: 'clickable-filter-status-failed' })).click());
   },
+
   verifyResult(content) {
     cy.expect(MultiColumnListCell(including(content)).exists());
   },
+
+  verifyThirdPaneExportJobExist() {
+    cy.expect(PaneHeader('Export job ').exists());
+  },
+
   searchByBulkEdit() {
     waitClick();
     cy.do(jobTypeAccordion.find(Checkbox({ id: 'clickable-filter-type-bulk-edit' })).click());
   },
+
   searchByCirculationLog() {
     waitClick();
     cy.do(jobTypeAccordion.find(Checkbox({ id: 'clickable-filter-type-circulation-log' })).click());
   },
+
   enterStartTime(fromDate, toDate) {
     cy.do([
       startTimeAccordion.clickHeader(),
@@ -80,9 +110,11 @@ export default {
       startTimeAccordion.find(applyButton).click(),
     ]);
   },
+
   resetStartTime() {
     cy.do(startTimeAccordion.find(Button({ ariaLabel: 'Clear selected filters for "[object Object]"' })).click());
   },
+
   enterEndTime(fromDate, toDate) {
     cy.do([
       endTimeAccordion.clickHeader(),
@@ -91,15 +123,18 @@ export default {
       endTimeAccordion.find(applyButton).click(),
     ]);
   },
+
   resetEndTime() {
     cy.do(endTimeAccordion.find(Button({ ariaLabel: 'Clear selected filters for "[object Object]"' })).click());
   },
+
   searchBySystemNo() {
     cy.do([
       systemAccordion.clickHeader(),
       systemAccordion.find(Checkbox({ label: 'No' })).click(),
     ]);
   },
+
   searchBySourceUserName(username) {
     cy.do([
       sourceAccordion.clickHeader(),
@@ -108,20 +143,25 @@ export default {
       searchButton.click(),
     ]);
   },
+
   searchByAuthorityControl() {
     waitClick();
     cy.do(jobTypeAccordion.find(Checkbox({ id: 'clickable-filter-type-auth-headings-updates' })).click());
   },
+
   downloadLastCreatedJob(jobId) {
     // TODO: redesign to interactors
     cy.get(`a:contains(${jobId})`).first().click()
   },
+
   verifyUserSearchResult(username) {
     cy.expect(userSearchResults.has({ text: including(username) }));
   },
+
   selectOrganizationsSearch() {
     Button('Organizations').click();
   },
+
   selectExportMethod(integarationName) {
     cy.do([
       Button({ id: 'accordion-toggle-button-exportConfigId' }).click(),
@@ -129,20 +169,22 @@ export default {
       SelectionOption(integarationName).click(),
     ]);
   },
+
   downloadJob() {
     // Need to wait while Button will be loaded for click
-    cy.wait(5000);
+    cy.wait(7000);
     cy.do(Button('Actions').click());
     // Need to wait while Button will be loaded for click
-    cy.wait(5000);
+    cy.wait(7000);
     cy.do(Button('Download').click());
   },
+
   rerunJob() {
     // Need to wait while Button will be loaded for click
-    cy.wait(5000);
+    cy.wait(7000);
     cy.do(Button('Actions').click());
     // Need to wait while Button will be loaded for click
-    cy.wait(5000);
+    cy.wait(7000);
     cy.do(Button('Rerun').click());
   },
 };
