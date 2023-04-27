@@ -1,14 +1,14 @@
-import devTeams from "../../../support/dictionary/devTeams";
-import permissions from "../../../support/dictionary/permissions"
-import testTypes from "../../../support/dictionary/testTypes";
-import BulkEditSearchPane from "../../../support/fragments/bulk-edit/bulk-edit-search-pane";
-import TopMenu from "../../../support/fragments/topMenu";
-import Users from "../../../support/fragments/users/users";
-import getRandomPostfix from "../../../support/utils/stringTools";
-import InventoryInstances from "../../../support/fragments/inventory/inventoryInstances";
-import FileManager from "../../../support/utils/fileManager";
-import BulkEditActions from "../../../support/fragments/bulk-edit/bulk-edit-actions";
-import { getLongDelay } from "../../../support/utils/cypressTools";
+import devTeams from './../../support/dictionary/devTeams';
+import permissions from '../../../support/dictionary/permissions;';
+import testTypes from '../../../support/dictionary/testTypes';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import FileManager from '../../../support/utils/fileManager';
+import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 
 let user1, user2;
 const validItemUUIDsFileName = `validItemUUIDs_${getRandomPostfix()}.csv`;
