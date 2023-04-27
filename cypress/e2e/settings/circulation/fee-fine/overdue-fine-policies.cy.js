@@ -202,10 +202,13 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
     cy.deleteLoanType(testData.loanTypeId);
   });
 
-  it('C5557: Verify that you can create/edit/delete overdue fine policies (spitfire)', { tags: [devTeams.spitfire, testTypes.smoke] }, () => {
-    cy.loginAsAdmin();
-    // TODO add check that name is unique
-    cy.visit(SettingsMenu.circulationoVerdueFinePoliciesPath);
+  it(
+    'C5557: Verify that you can create/edit/delete overdue fine policies (vega)',
+    { tags: [devTeams.vega, testTypes.smoke] },
+    () => {
+      cy.loginAsAdmin();
+      // TODO add check that name is unique
+      cy.visit(SettingsMenu.circulationoVerdueFinePoliciesPath);
 
     const overduePolicyProps = ['1.00', '2.00', '3.00', '4.00'];
     const editedOverduePolicyProps = ['5.00', '6.00', '7.00', '8.00'];
