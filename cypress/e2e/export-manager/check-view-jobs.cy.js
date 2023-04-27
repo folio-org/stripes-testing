@@ -152,6 +152,5 @@ describe('orders: export', () => {
     ExportManagerSearchPane.selectSuccessfulStatusCheckbox();
     ExportManagerSearchPane.selectJobByIntegrationInList(firstIntegrationName);
     ExportManagerSearchPane.verifyThirdPaneExportJobExist();
-    cy.pause();
   });
 });

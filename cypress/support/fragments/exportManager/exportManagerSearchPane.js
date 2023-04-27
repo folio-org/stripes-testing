@@ -90,6 +90,7 @@ export default {
   },
 
   verifyThirdPaneExportJobExist() {
+    cy.wait(6000);
     cy.expect(PaneHeader('Export job ').exists());
   },
 
