@@ -179,6 +179,7 @@ describe('ui-data-import', () => {
             cy.visit(TopMenu.dataImportPath);
             Logs.openFileDetails(secondMarcFileNameForCreate);
             FileDetails.openInstanceInInventory('Created', rowNumber);
+            cy.wait(5000);
             InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
               instanceHridsFromSecondFile.push(initialInstanceHrId);
             });
@@ -186,11 +187,11 @@ describe('ui-data-import', () => {
             // changing the second file
             InventoryViewSource.extructDataFrom999Field()
               .then(uuid => {
-                cy.wait(1500);
+                cy.wait(3000);
                 arrayOf999Fields.push(uuid[0], uuid[1]);
               });
             // need to wait until page will be opened in loop
-            cy.wait(1500);
+            cy.wait(5000);
           })
         ).then(() => {
           // change file using uuid for 999 field
@@ -260,6 +261,7 @@ describe('ui-data-import', () => {
       cy.visit(TopMenu.dataImportPath);
       // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
       cy.reload();
+      DataImport.waitLoading();
       DataImport.uploadFile(secondMarcFileNameForUpdate, secondFileNameAfterUpload);
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
