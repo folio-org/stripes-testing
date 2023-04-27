@@ -37,6 +37,7 @@ const folioRecordTypeValue = {
 const organization = {
   gobiLibrary: 'GOBI Library Solutions',
   harrassowitz: 'Otto Harrassowitz GmbH & Co. KG',
+  ebsco:'EBSCO SUBSCRIPTION SERVICES'
 };
 const actions = {
   addTheseToExisting: 'Add these to existing',
@@ -84,6 +85,7 @@ const waitLoading = () => {
 const selectFromResultsList = (rowNumber = 0) => cy.do(organizationModal.find(MultiColumnListRow({ index: rowNumber })).click());
 
 export default {
+  incomingRecordType,
   folioRecordTypeValue,
   permanentLocation,
   materialType,
@@ -166,18 +168,18 @@ export default {
     cy.expect(saveButton.absent());
   },
 
-  fillMappingProfileForInvoice:(specialMappingProfileName = defaultMappingProfile.name, organizationName) => {
+  fillMappingProfileForInvoice:(profile) => {
     cy.do([
-      TextField({ name:'profile.name' }).fillIn(specialMappingProfileName),
+      TextField({ name:'profile.name' }).fillIn(profile.name),
       Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.edifact),
       Select({ name:'profile.existingRecordType' }).choose(folioRecordTypeValue.invoice),
       TextArea({ name:'profile.description' }).fillIn(''),
-      TextField('Batch group*').fillIn('"FOLIO"'),
+      TextField('Batch group*').fillIn(profile.batchGroup),
       Button('Organization look-up').click()
     ]);
-    selectOrganizationByName(organizationName);
+    selectOrganizationByName(profile.organizationName);
     cy.do([
-      TextField('Payment method*').fillIn('"Cash"'),
+      TextField('Payment method*').fillIn(profile.paymentMethod),
       saveButton.click(),
     ]);
   },
