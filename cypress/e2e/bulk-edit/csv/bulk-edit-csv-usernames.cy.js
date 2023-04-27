@@ -10,8 +10,8 @@ import Users from '../../../support/fragments/users/users';
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
-const matchRecordsFileName = '*Matched-Records*';
-const importFileName = `bulkEditImport_${getRandomPostfix()}.csv`;
+const matchedRecordsFileName = `Matched-Records-${userUUIDsFileName}`;
+const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 
 describe('bulk-edit', () => {
   describe('csv approach', () => {
@@ -32,8 +32,8 @@ describe('bulk-edit', () => {
 
     after('delete test data', () => {
       FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
-      FileManager.deleteFile(`cypress/fixtures/${importFileName}`);
-      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+      FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
+      FileManager.deleteFileFromDownloadsByMask(`*${matchedRecordsFileName}`);
       Users.deleteViaApi(user.userId);
     });
 
@@ -47,12 +47,12 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyMatchedResults(user.username);
       BulkEditSearchPane.verifyPaneRecordsCount(1);
 
-      BulkEditActions.downloadMatchedResults(matchRecordsFileName);
+      BulkEditActions.downloadMatchedResults();
       const newUserName = `testName_${getRandomPostfix()}`;
-      BulkEditActions.prepareValidBulkEditFile(matchRecordsFileName, importFileName, user.username, newUserName);
+      BulkEditActions.prepareValidBulkEditFile(matchedRecordsFileName, editedFileName, user.username, newUserName);
 
       BulkEditActions.openStartBulkEditForm();
-      BulkEditSearchPane.uploadFile(importFileName);
+      BulkEditSearchPane.uploadFile(editedFileName);
       BulkEditSearchPane.waitFileUploading();
       BulkEditActions.clickNext();
       BulkEditActions.commitChanges();

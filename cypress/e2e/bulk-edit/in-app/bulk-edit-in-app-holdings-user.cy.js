@@ -49,7 +49,6 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(user.userId);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       FileManager.deleteFile(`cypress/fixtures/${validHoldingUUIDsFileName}`);
-      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
     });
 
     it('C360114 Verify that User can upload file with Holdings UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {

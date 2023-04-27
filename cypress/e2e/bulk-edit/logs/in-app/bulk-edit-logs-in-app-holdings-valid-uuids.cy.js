@@ -71,7 +71,7 @@ describe('Bulk Edit - Logs', () => {
             cy.getItems({ query: `"barcode"=="${inventoryEntity.item.barcode}"` })
               .then(inventoryItem => { inventoryEntity.item.id = inventoryItem.id; });
             cy.getItems({ query: `"barcode"=="secondBarcode_${inventoryEntity.item.barcode}"` })
-              .then(inventoryItem => { inventoryEntity.item.id2 = inventoryItem.id; console.log(inventoryEntity); });
+              .then(inventoryItem => { inventoryEntity.item.id2 = inventoryItem.id; });
           });
       });
   });
