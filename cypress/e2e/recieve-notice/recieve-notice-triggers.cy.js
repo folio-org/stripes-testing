@@ -242,8 +242,8 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
   });
 
   it(
-    'C347862 Check out + Loan due date change + Check in triggers (vega)',
-    { tags: [TestTypes.smoke, devTeams.vega] },
+    'C347862 Check out + Loan due date change + Check in triggers (volaris)',
+    { tags: [TestTypes.smoke, devTeams.volaris] },
     () => {
       NewNoticePolicyTemplate.createPatronNoticeTemplate(checkOutTemplate);
       NewNoticePolicyTemplate.checkAfterSaving(checkOutTemplate);
