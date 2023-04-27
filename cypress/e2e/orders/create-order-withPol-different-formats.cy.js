@@ -110,7 +110,7 @@ describe('ui-orders: Orders and Order lines', () => {
       OrderLines.addPOLine();
       OrderLines.POLineInfodorOtherMaterialWithFund(orderLineTitle, defaultFund);
       InteractorsTools.checkCalloutMessage('The purchase order line was successfully created');
-      OrderLines.checkCreatedPOLinePhysicalResource(orderLineTitle, defaultFund);
+      OrderLines.checkCreatedPOLineOtherResource(orderLineTitle, defaultFund);
       OrderLines.backToEditingOrder();
     });
   });

@@ -106,6 +106,18 @@ export default {
     ]);
   },
 
+  checkCreatedPOLineOtherResource: (orderLineTitleName, fund) => {
+    cy.expect([
+      orderLineInfoPage.exists(),
+      itemDetailsSection.find(KeyValue({ value: orderLineTitleName })).exists(),
+      poLineInfoSection.find(KeyValue({ value: 'Other' })).exists(),
+      fundDistributionSection
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .has({ content: `${fund.name}(${fund.code})` }),
+    ]);
+  },
+
   checkCreatedPOLineElectronicResource: (orderLineTitleName, fund) => {
     cy.expect([
       orderLineInfoPage.exists(),
@@ -157,6 +169,7 @@ export default {
 
   backToEditingOrder: () => {
     cy.do(Button({ id: 'clickable-backToPO' }).click());
+    cy.wait(4000);
   },
 
   deleteOrderLine: () => {
