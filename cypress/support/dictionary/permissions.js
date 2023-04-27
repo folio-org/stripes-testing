@@ -221,4 +221,6 @@ export default {
   // Export manager
   exportManagerAll: { internal: 'ui-export-manager.export-manager.all', gui: 'Export manager: All' },
   exportManagerDownloadAndResendFiles: { internal: 'ui-export-manager.jobs.downloadAndResend', gui: 'Export manager: Download and re-send files' },
+  // OAI-PMH
+  oaipmhSettingsEdit: { internal: 'ui-oai-pmh.edit', gui: 'Settings (OAI-PMH): Can view and edit settings' },
 };
