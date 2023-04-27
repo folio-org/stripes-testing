@@ -112,6 +112,7 @@ export default {
   uiRequestsView: { internal: 'ui-requests.view', gui: 'Requests: View' },
   uiRequestsEdit: { internal: 'ui-requests.edit', gui: 'Requests: View, edit, cancel' },
   requestsAll: { internal: 'ui-requests.all', gui: 'Requests: All permissions' },
+  tlrEdit: { internal: 'ui-circulation.settings.titleLevelRequests', gui: 'Settings (Circulation): Title level request edit' },
   // Calendar
   calendarEdit: { internal: 'ui-calendar.edit', gui: 'Settings (Calendar): Can create, view, and edit calendar events' },
   calendarAll: { internal: 'ui-calendar.all', gui: 'Settings (Calendar): Can create, view, edit, and remove calendar events' },
@@ -131,16 +132,8 @@ export default {
   checkoutCirculatingItems: { internal: 'ui-checkout.circulation', gui: 'Check out: Check out circulating items' },
   // Checkin
   checkinAll: { internal: 'ui-checkin.all', gui: 'Check in: All permissions' },
-  // Orders
-  uiCreateOrderAndOrderLine:{ internal:'ui-orders.orders.create', gui: 'Orders: Can create new Orders and Order lines' },
-  uiEditOrderAndOrderLine:{ internal:'ui-orders.orders.edit', gui: 'Orders: Can edit Orders and Order lines' },
-  uiCanViewOrderAndOrderLine:{ internal:'ui-orders.orders.view', gui: 'Orders: Can view Orders and Order lines' },
-  uiApproveOrder:{ internal:'ui-orders.order.approve', gui: 'Orders: Approve purchase orders' },
   // Receiving
   uiReceivingViewEditCreate:{ internal:'ui-receiving.create', gui:'Receiving: View, edit, create' },
-  // Organization
-  viewOrganization:{ internal:'ui-organizations.view', gui:'Organizations: View' },
-  viewEditCreateOrganization:{ internal:'ui-organizations.create', gui:'Organizations: View, edit, create' },
   // Invoice
   viewEditDeleteInvoiceInvoiceLine:{ internal:'ui-invoice.invoice.delete', gui:'Invoice: Can view, edit and delete Invoices and Invoice lines' },
   viewEditCreateInvoiceInvoiceLine: { internal: 'ui-invoice.invoice.create', gui: 'Invoice: Can view, edit and create new Invoices and Invoice lines' },
@@ -228,4 +221,6 @@ export default {
   // Export manager
   exportManagerAll: { internal: 'ui-export-manager.export-manager.all', gui: 'Export manager: All' },
   exportManagerDownloadAndResendFiles: { internal: 'ui-export-manager.jobs.downloadAndResend', gui: 'Export manager: Download and re-send files' },
+  // OAI-PMH
+  oaipmhSettingsEdit: { internal: 'ui-oai-pmh.edit', gui: 'Settings (OAI-PMH): Can view and edit settings' },
 };

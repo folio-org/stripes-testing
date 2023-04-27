@@ -1,9 +1,11 @@
+import { HTML, including } from '@interactors/html';
 import {
   MultiColumnListCell,
   MultiColumnList,
   MultiColumnListHeader,
   MultiColumnListRow,
-  Link
+  Link,
+  PaneHeader
 } from '../../../../../interactors';
 import LogsViewAll from './logsViewAll';
 
@@ -65,7 +67,7 @@ const checkItemQuantityInSummaryTable = (quantity, row = 0) => {
     .exists());
 };
 
-const checkCreatedInvoiceISummaryTable = (quantity, row = 0) => {
+const checkInvoiceInSummaryTable = (quantity, row = 0) => {
   cy.expect(jobSummaryTable
     .find(MultiColumnListRow({ indexRow: `row-${row}` }))
     .find(MultiColumnListCell({ columnIndex: 7, content: quantity }))
@@ -113,15 +115,38 @@ function checkItemsStatusesInResultList(rowIndex, itemStatuses) {
   });
 }
 
+function getMultiColumnListCellsValues() {
+  const cells = [];
+  // get MultiColumnList rows and loop over
+  return cy.get('[data-row-index]').each($row => {
+    // from each row, choose specific cell
+    cy.get('[class*="mclCell-"]:nth-child(1)', { withinSubject: $row })
+    // extract its text content
+      .invoke('text')
+      .then(cellValue => {
+        cells.push(cellValue);
+      });
+  })
+    .then(() => cells);
+}
+
+function validateNumsAscendingOrder(prev) {
+  const itemsClone = [...prev];
+  itemsClone.sort((a, b) => a - b);
+  cy.expect(itemsClone).to.deep.equal(prev);
+}
+
 export default {
   columnNameInResultList,
   columnNameInSummuryTable,
   status,
   invoiceNumberFromEdifactFile,
+  validateNumsAscendingOrder,
+  getMultiColumnListCellsValues,
   checkStatusInColumn,
   checkItemsStatusesInResultList,
   checkItemsQuantityInSummaryTable,
-  checkCreatedInvoiceISummaryTable,
+  checkInvoiceInSummaryTable,
   checkSrsRecordQuantityInSummaryTable,
   checkInstanceQuantityInSummaryTable,
   checkHoldingsQuantityInSummaryTable,
@@ -147,6 +172,12 @@ export default {
       .click());
   },
 
+  openOrderInInventory:(itemStatus, rowNumber = 0) => {
+    cy.do(resultsList.find(MultiColumnListCell({ row: rowNumber, columnIndex: 7 }))
+      .find(Link(itemStatus))
+      .click());
+  },
+
   openItemInInventoryByTitle:(title, itemStatus = 'Updated') => {
     cy.do(MultiColumnListCell({ content: title }).perform(
       element => {
@@ -157,6 +188,14 @@ export default {
           .click());
       }
     ));
+  },
+
+  filterRecordsWithError:(quantity) => {
+    cy.do(jobSummaryTable
+      .find(MultiColumnListRow({ indexRow: 'row-3' }))
+      .find(MultiColumnListCell({ columnIndex: 7, content: quantity }))
+      .find(Link({ href: including('/data-import/job-summary') }))
+      .click());
   },
 
   checkStatusByTitle:(title, itemStatus) => {
@@ -196,5 +235,20 @@ export default {
       .then((index) => cy.expect(resultsList.find(MultiColumnListRow({ index: rowIndex }))
         .find(MultiColumnListCell({ columnIndex: index }))
         .has({ content: title })));
+  },
+
+  verifyQuantityOfRecordsWithError:(number) => {
+    cy.expect(PaneHeader({ id:'paneHeaderpane-results' }).find(HTML(including(`${number} records found`))).exists());
+  },
+
+  verifyLogSummaryTableIsHidden:() => {
+    cy.expect(jobSummaryTable.absent());
+  },
+
+  verifyRecordsSortingOrder() {
+    getMultiColumnListCellsValues(1).then(cells => {
+      const dates = cells.map(cell => new Date(cell));
+      validateNumsAscendingOrder(dates);
+    });
   }
 };

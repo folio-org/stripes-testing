@@ -20,7 +20,9 @@ import {
 import SearchHelper from '../finance/financeHelper';
 import getRandomPostfix from '../../utils/stringTools';
 import SelectInstanceModal from './selectInstanceModal';
+
 const path = require('path');
+
 const saveAndClose = Button('Save & close');
 const actionsButton = Button('Actions');
 const searhInputId = 'input-record-search';
@@ -104,6 +106,18 @@ export default {
     ]);
   },
 
+  checkCreatedPOLineOtherResource: (orderLineTitleName, fund) => {
+    cy.expect([
+      orderLineInfoPage.exists(),
+      itemDetailsSection.find(KeyValue({ value: orderLineTitleName })).exists(),
+      poLineInfoSection.find(KeyValue({ value: 'Other' })).exists(),
+      fundDistributionSection
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .has({ content: `${fund.name}(${fund.code})` }),
+    ]);
+  },
+
   checkCreatedPOLineElectronicResource: (orderLineTitleName, fund) => {
     cy.expect([
       orderLineInfoPage.exists(),
@@ -155,6 +169,7 @@ export default {
 
   backToEditingOrder: () => {
     cy.do(Button({ id: 'clickable-backToPO' }).click());
+    cy.wait(4000);
   },
 
   deleteOrderLine: () => {
@@ -205,7 +220,29 @@ export default {
     ]);
   },
 
-  rolloverPOLineInfoforPhysicalMaterialWithFund( fund, unitPrice, quantity, value, institutionId) {
+  POLineInfodorOtherMaterialWithFund: (orderLineTitleName, fund) => {
+    cy.do([
+      orderLineTitleField.fillIn(orderLineTitleName),
+      orderFormatSelect.choose('Other'),
+      acquisitionMethodButton.click(),
+      SelectionOption('Depository').click(),
+      receivingWorkflowSelect.choose('Independent order and receipt quantity'),
+      physicalUnitPriceTextField.fillIn(physicalUnitPrice),
+      quantityPhysicalTextField.fillIn(quantityPhysical),
+      materialTypeSelect.choose('book'),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      fundDistributionField.fillIn('100'),
+      addLocationButton.click(),
+      locationSelect.click(),
+      onlineLocationOption.click(),
+      quantityPhysicalLocationField.fillIn(quantityPhysical),
+      saveAndClose.click()
+    ]);
+  },
+
+  rolloverPOLineInfoforPhysicalMaterialWithFund(fund, unitPrice, quantity, value, institutionId) {
     cy.do([
       orderFormatSelect.choose('Physical resource'),
       acquisitionMethodButton.click(),
@@ -226,7 +263,7 @@ export default {
       Button('Create new holdings for location').click(),
     ]);
     cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
-        cy.do([
+    cy.do([
       Modal('Select permanent location').find(Button('Save and close')).click(),
       quantityPhysicalLocationField.fillIn(quantity),
       saveAndClose.click()
@@ -235,7 +272,7 @@ export default {
     this.submitOrderLine();
   },
 
-  editFundInPOL( fund, unitPrice, value) {
+  editFundInPOL(fund, unitPrice, value) {
     cy.do([
       physicalUnitPriceTextField.fillIn(unitPrice),
       fundDistributionSelect.click(),
@@ -247,7 +284,7 @@ export default {
     this.submitOrderLine();
   },
 
-  addFundToPOL( fund, value) {
+  addFundToPOL(fund, value) {
     cy.do([
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
@@ -322,6 +359,68 @@ export default {
       fundDistributionField.fillIn('100'),
       saveAndClose.click()
     ]);
+  },
+
+  fillPolWithEuroCurrency( fund, unitPrice, quantity, institutionId) {
+    cy.do([
+      orderFormatSelect.choose('Physical resource'),
+      acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      SelectionOption('Depository').click(),
+      receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
+      physicalUnitPriceTextField.fillIn(unitPrice),
+      quantityPhysicalTextField.fillIn(quantity),
+      Button({ id: 'currency' }).click(),
+      SelectionOption('Euro (EUR)').click(),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      fundDistributionField.fillIn('100'),
+      materialTypeSelect.choose('book'),
+      addLocationButton.click(),
+      Button('Create new holdings for location').click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+        cy.do([
+      Modal('Select permanent location').find(Button('Save and close')).click(),
+      quantityPhysicalLocationField.fillIn(quantity),
+      saveAndClose.click()
+    ]);
+    cy.wait(4000);
+    this.submitOrderLine();
+  },
+
+  fillPolWithPLNCurrency(fund, unitPrice, quantity, institutionId) {
+    cy.do([
+      orderFormatSelect.choose('Physical resource'),
+      acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      SelectionOption('Depository').click(),
+      receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
+      physicalUnitPriceTextField.fillIn(unitPrice),
+      quantityPhysicalTextField.fillIn(quantity),
+      Button({ id: 'currency' }).click(),
+      SelectionOption('Polish Zloty (PLN)').click(),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      fundDistributionField.fillIn('100'),
+      materialTypeSelect.choose('book'),
+      addLocationButton.click(),
+      Button('Create new holdings for location').click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+        cy.do([
+      Modal('Select permanent location').find(Button('Save and close')).click(),
+      quantityPhysicalLocationField.fillIn(quantity),
+      saveAndClose.click()
+    ]);
+    cy.wait(4000);
+    this.submitOrderLine();
   },
 
   fillInPOLineInfoViaUi: () => {
@@ -399,7 +498,7 @@ export default {
       Button('Create new holdings for location').click(),
     ]);
     cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
-        cy.do([
+    cy.do([
       Modal('Select permanent location').find(Button('Save and close')).click(),
       TextField({ name: 'locations[0].quantityElectronic' }).fillIn(quantityElectronic),
     ]);
@@ -408,7 +507,7 @@ export default {
       quantityElectronicTextField.has({ value: quantityElectronic }),
     ]);
     cy.do(saveAndClose.click());
-    // If purchase order line will be dublicate, Modal with button 'Submit' will be activated 
+    // If purchase order line will be dublicate, Modal with button 'Submit' will be activated
     cy.wait(2000);
     this.submitOrderLine();
   },
@@ -416,7 +515,7 @@ export default {
   submitOrderLine:() => {
     const submitButton = Button('Submit');
     cy.get('body').then($body => {
-      if ($body.find('[id=line-is-not-unique-confirmation]').length) {   
+      if ($body.find('[id=line-is-not-unique-confirmation]').length) {
         cy.wait(4000);
         cy.do(Modal({ id: 'line-is-not-unique-confirmation' }).find(submitButton).click());
       } else {
@@ -450,7 +549,7 @@ export default {
       quantityPhysicalLocationField.has({ value: quantity }),
     ]);
     cy.do(saveAndClose.click());
-    // If purchase order line will be dublicate, Modal with button 'Submit' will be activated 
+    // If purchase order line will be dublicate, Modal with button 'Submit' will be activated
     cy.wait(2000);
     this.submitOrderLine();
   },
@@ -517,9 +616,9 @@ export default {
     ]);
   },
 
-  selectPOLInOrder: () => {
+  selectPOLInOrder: (indexNumber) => {
     cy.do(Accordion({ id: 'POListing' })
-      .find(MultiColumnListRow({ index: 0 }))
+      .find(MultiColumnListRow({ index: indexNumber }))
       .find(MultiColumnListCell({ columnIndex: 0 }))
       .click());
   },
@@ -632,7 +731,7 @@ export default {
   },
 
   checkConnectedInstance:() => {
-    cy.expect(Section({ id: 'itemDetails'}).find(Link('Connected')).exists());
+    cy.expect(Section({ id: 'itemDetails' }).find(Link('Connected')).exists());
   },
 
   fillInInvalidDataForPublicationDate:() => {
@@ -650,10 +749,10 @@ export default {
   cancelPOL:() => {
     cy.do([
       Pane({ id: 'order-lines-details' })
-      .find(PaneHeader({ id: 'paneHeaderorder-lines-details' })
-        .find(actionsButton)).click(),
-        Button('Cancel').click(),
-        Button('Cancel order line').click()
+        .find(PaneHeader({ id: 'paneHeaderorder-lines-details' })
+          .find(actionsButton)).click(),
+      Button('Cancel').click(),
+      Button('Cancel order line').click()
     ]);
   },
 
@@ -666,7 +765,11 @@ export default {
   },
 
   checkFundInPOL:(fund) => {
-    cy.expect(Section({ id: 'FundDistribution'}).find(Link(`${fund.name}(${fund.code})`)).exists());
+    cy.expect(Section({ id: 'FundDistribution' }).find(Link(`${fund.name}(${fund.code})`)).exists());
+  },
+
+  checkCurrencyInPOL:(currentEncumbrance) => {
+    cy.expect(Section({ id: 'FundDistribution'}).find(Link(`$${currentEncumbrance}`)).exists());
   },
 
   checkDownloadedFile() {
@@ -682,13 +785,13 @@ export default {
       timeout: 15000
     }).then((files) => {
       if (files.length === 0) {
-          throw new Error(`No files found in ${downloadsFolder}`);
+        throw new Error(`No files found in ${downloadsFolder}`);
       }
       const fileName = path.basename(files[0]);
       const filePath = `${downloadsFolder}\\${fileName}`;
       cy.readFile(filePath).then(fileContent => {
-          const fileRows = fileContent.split('\n');
-          expect(fileRows[0].trim()).to.equal('"PO number prefix","PO number","PO number suffix","Vendor","Organization type","Order type","Acquisitions units","Approval date","Assigned to","Bill to","Ship to","Manual","Re-encumber","Created by","Created on","Note","Workflow status","Approved","Renewal interval","Subscription","Manual renewal","Ongoing notes","Review period","Renewal date","Review date","PO tags","POLine number","Title","Instance UUID","Subscription from","Subscription to","Subscription interval","Receiving note","Publisher","Edition","Linked package","Contributor, Contributor type","Product ID, Qualifier, Product ID type","Internal note","Acquisition method","Order format","Created on (PO Line)","Receipt date","Receipt status","Payment status","Source","Donor","Selector","Requester","Cancellation restriction","Cancellation description","Rush","Collection","Line description","Vendor reference number, reference type","Instructions to vendor","Account number","Physical unit price","Quantity physical","Electronic unit price","Quantity electronic","Discount","Estimated price","Currency","Fund code, Expense class, Value, Amount","Location, Quantity P, Quantity E","Material supplier","Receipt due","Expected receipt date","Volumes","Create inventory","Material type","Access provider","Activation status","Activation due","Create inventory E","Material type E","Trial","Expected activation","User limit","URL","POLine tags","Renewal note"');
+        const fileRows = fileContent.split('\n');
+        expect(fileRows[0].trim()).to.equal('"PO number prefix","PO number","PO number suffix","Vendor","Organization type","Order type","Acquisitions units","Approval date","Assigned to","Bill to","Ship to","Manual","Re-encumber","Created by","Created on","Note","Workflow status","Approved","Renewal interval","Subscription","Manual renewal","Ongoing notes","Review period","Renewal date","Review date","PO tags","POLine number","Title","Instance UUID","Subscription from","Subscription to","Subscription interval","Receiving note","Publisher","Edition","Linked package","Contributor, Contributor type","Product ID, Qualifier, Product ID type","Internal note","Acquisition method","Order format","Created on (PO Line)","Receipt date","Receipt status","Payment status","Source","Donor","Selector","Requester","Cancellation restriction","Cancellation description","Rush","Collection","Line description","Vendor reference number, reference type","Instructions to vendor","Account number","Physical unit price","Quantity physical","Electronic unit price","Quantity electronic","Discount","Estimated price","Currency","Fund code, Expense class, Value, Amount","Location, Quantity P, Quantity E","Material supplier","Receipt due","Expected receipt date","Volumes","Create inventory","Material type","Access provider","Activation status","Activation due","Create inventory E","Material type E","Trial","Expected activation","User limit","URL","POLine tags","Renewal note"');
       });
     });
   },
@@ -696,6 +799,20 @@ export default {
   deleteAllDownloadedFiles() {
     cy.exec('del cypress\\downloads\\*.csv', { failOnNonZeroExit: false });
   },
-  
+
+  checkCreateInventory() {
+    cy.expect([
+      Accordion('Physical resource details').find(KeyValue({ value: 'Instance, Holding, Item' })).exists(),
+      Accordion('E-resources details').find(KeyValue({ value: 'Instance, Holding, Item' })).exists()
+    ]);
+  },
+
+  openLinkedInstance() {
+    cy.do(Accordion('Linked instance')
+      .find(Link({ href: including('/inventory/view') }))
+      .click());
+  },
+
+  getAssignedPOLNumber:() => cy.then(() => Accordion('Purchase order line').find(KeyValue('POL number')).value()),
 };
 

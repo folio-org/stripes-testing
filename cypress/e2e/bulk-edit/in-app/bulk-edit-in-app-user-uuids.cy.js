@@ -12,7 +12,7 @@ import UsersCard from '../../../support/fragments/users/usersCard';
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
-const matchRecordsFileName = `matchedRecords_${getRandomPostfix()}.csv`;
+const matchedRecordsFileName = `Matched-Records-${userUUIDsFileName}`;
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
@@ -33,7 +33,7 @@ describe('bulk-edit', () => {
 
     after('delete test data', () => {
       FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
-      FileManager.deleteFile(`cypress/downloads/${matchRecordsFileName}`);
+      FileManager.deleteFileFromDownloadsByMask(`*${matchedRecordsFileName}`);
       Users.deleteViaApi(user.userId);
     });
 
@@ -47,7 +47,8 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.uploadFile(userUUIDsFileName);
       BulkEditSearchPane.waitFileUploading();
 
-      BulkEditActions.downloadMatchedResults(matchRecordsFileName);
+      BulkEditActions.downloadMatchedResults();
+      BulkEditSearchPane.verifyUserBarcodesResultAccordion();
 
       BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.verifyBulkEditForm();

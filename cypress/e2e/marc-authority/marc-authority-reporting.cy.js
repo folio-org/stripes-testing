@@ -103,8 +103,8 @@ describe('MARC Authority -> Reporting | MARC authority', () => {
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         InventoryInstance.verifyAndClickLinkIcon(value.tagValue);
+        MarcAuthorities.switchToSearch();
         InventoryInstance.verifySelectMarcAuthorityModal();
-        InventoryInstance.closeAuthoritySource();
         InventoryInstance.searchResults(value.marcValue);
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.pressSaveAndClose();

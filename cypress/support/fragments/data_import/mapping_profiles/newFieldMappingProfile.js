@@ -10,7 +10,8 @@ import {
   MultiColumnListCell,
   MultiColumnListRow,
   SearchField,
-  Accordion
+  Accordion,
+  Checkbox
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
@@ -30,11 +31,13 @@ const folioRecordTypeValue = {
   holdings: 'Holdings',
   item: 'Item',
   invoice: 'Invoice',
-  marcBib: 'MARC Bibliographic'
+  marcBib: 'MARC Bibliographic',
+  order: 'Order'
 };
 const organization = {
   gobiLibrary: 'GOBI Library Solutions',
   harrassowitz: 'Otto Harrassowitz GmbH & Co. KG',
+  ebsco:'EBSCO SUBSCRIPTION SERVICES'
 };
 const actions = {
   addTheseToExisting: 'Add these to existing',
@@ -82,6 +85,7 @@ const waitLoading = () => {
 const selectFromResultsList = (rowNumber = 0) => cy.do(organizationModal.find(MultiColumnListRow({ index: rowNumber })).click());
 
 export default {
+  incomingRecordType,
   folioRecordTypeValue,
   permanentLocation,
   materialType,
@@ -164,18 +168,18 @@ export default {
     cy.expect(saveButton.absent());
   },
 
-  fillMappingProfileForInvoice:(specialMappingProfileName = defaultMappingProfile.name, organizationName) => {
+  fillMappingProfileForInvoice:(profile) => {
     cy.do([
-      TextField({ name:'profile.name' }).fillIn(specialMappingProfileName),
+      TextField({ name:'profile.name' }).fillIn(profile.name),
       Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.edifact),
       Select({ name:'profile.existingRecordType' }).choose(folioRecordTypeValue.invoice),
       TextArea({ name:'profile.description' }).fillIn(''),
-      TextField('Batch group*').fillIn('"FOLIO"'),
+      TextField('Batch group*').fillIn(profile.batchGroup),
       Button('Organization look-up').click()
     ]);
-    selectOrganizationByName(organizationName);
+    selectOrganizationByName(profile.organizationName);
     cy.do([
-      TextField('Payment method*').fillIn('"Cash"'),
+      TextField('Payment method*').fillIn(profile.paymentMethod),
       saveButton.click(),
     ]);
   },
@@ -211,6 +215,35 @@ export default {
       }
     }
     cy.do(saveButton.click());
+  },
+
+  fillOrderMappingProfile:(profile) => {
+    cy.do([
+      TextField({ name:'profile.name' }).fillIn(profile.name),
+      Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.marcBib),
+      Select({ name:'profile.existingRecordType' }).choose(profile.typeValue),
+      TextField('Purchase order status*').fillIn(`"${profile.orderStatus}"`),
+      Accordion('Order information').find(Checkbox({ name:'profile.mappingDetails.mappingFields[1].booleanFieldAction' })).click(),
+      Accordion('Order information').find(Button('Organization look-up')).click(),
+      organizationModal.find(TextField({ id: 'input-record-search' })).fillIn(profile.vendor),
+      organizationModal.find(Button('Search')).click(),
+      organizationModal.find(HTML(including('1 record found'))).exists(),
+      MultiColumnListCell(profile.vendor).click({ row: 0, columnIndex: 0 }),
+      TextField('Title*').fillIn(profile.title),
+      TextField('Acquisition method*').fillIn(`"${profile.acquisitionMethod}"`),
+      TextField('Order format*').fillIn(`"${profile.orderFormat}"`),
+      TextField('Receiving workflow*').fillIn(`"${profile.receivingWorkflow}"`),
+      TextField('Physical unit price').fillIn(`"${profile.physicalUnitPrice}"`),
+      TextField('Quantity physical').fillIn(`"${profile.quantityPhysical}"`),
+      TextField('Currency*').fillIn(`"${profile.currency}"`),
+      TextField('Electronic unit price').fillIn(`"${profile.electronicUnitPrice}"`),
+      TextField('Quantity electronic').fillIn(`"${profile.quantityElectronic}"`),
+      Accordion('Location').find(Button('Add location')).click(),
+      TextField('Name (code)').fillIn(`"${profile.locationName}"`),
+      Accordion('Location').find(TextField('Quantity physical')).fillIn(`"${profile.locationQuantityPhysical}"`),
+      Accordion('Location').find(TextField('Quantity electronic')).fillIn(`"${profile.locationQuantityElectronic}"`)
+    ]);
+    waitLoading();
   },
 
   addName:(name) => cy.do(TextField({ name:'profile.name' }).fillIn(name)),

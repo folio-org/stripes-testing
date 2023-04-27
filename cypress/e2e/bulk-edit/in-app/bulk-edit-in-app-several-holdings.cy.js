@@ -41,7 +41,6 @@ describe('bulk-edit', { retries: 2 }, () => {
             waiter: BulkEditSearchPane.waitLoading
           });
 
-          // Create file with valid holdings UUIDs
           const instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
           cy.getHoldings({
             limit: 1,

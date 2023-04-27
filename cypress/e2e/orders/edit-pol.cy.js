@@ -93,7 +93,7 @@ describe('orders: create', () => {
   it('C665: Edit an existing PO Line on a "Pending" order (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
     Orders.selectPendingStatusFilter();
     Orders.selectFromResultsList(orderNumber);
-    OrderLines.selectPOLInOrder();
+    OrderLines.selectPOLInOrder(0);
     OrderLines.editPOLInOrder();
     OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
     OrderLines.fillInPOLineInfoForExportWithLocation(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId);

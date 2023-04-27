@@ -177,7 +177,7 @@ describe('ui-acquisition units: Acquisition Units', () => {
     cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
-    OrderLines.selectPOLInOrder();
+    OrderLines.selectPOLInOrder(0);
     OrderLines.editPOLInOrder();
     OrderLines.addFundToPOL(defaultFund, '40');
     OrderLines.editPOLInOrder();
