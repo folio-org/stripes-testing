@@ -178,15 +178,11 @@ describe('ui-data-import', () => {
           rowNumbers.forEach(rowNumber => {
             cy.visit(TopMenu.dataImportPath);
             Logs.openFileDetails(secondMarcFileNameForCreate);
-            cy.wait(1500);
             FileDetails.openInstanceInInventory('Created', rowNumber);
-            cy.wait(1500);
             InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
               instanceHridsFromSecondFile.push(initialInstanceHrId);
             });
-            cy.wait(1500);
             InventoryInstance.viewSource();
-            cy.wait(1500);
             // changing the second file
             InventoryViewSource.extructDataFrom999Field()
               .then(uuid => {
@@ -197,7 +193,6 @@ describe('ui-data-import', () => {
             cy.wait(1500);
           })
         ).then(() => {
-          cy.wait(1500);
           // change file using uuid for 999 field
           DataImport.editMarcFile(
             'marcFileForC358998ForUpdate_2.mrc',
@@ -279,18 +274,15 @@ describe('ui-data-import', () => {
       FileDetails.checkInstanceQuantityInSummaryTable('8', 1);
 
       // open the second Instance in the Inventory and check 001, 003, 035 fields
-      cy.wrap(fields035).each(element => {
+      cy.wrap(fields035.each(element => {
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(secondFileNameAfterUpload);
-        cy.wait(1500);
         FileDetails.openInstanceInInventory('Updated', element.instanceNumber);
-        cy.wait(1500);
         InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
         InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
         InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
           const instanceHrid = initialInstanceHrId;
 
-          cy.wait(1500);
           InventoryInstance.viewSource();
           InventoryViewSource.contains('001\t');
           InventoryViewSource.contains(instanceHrid);
@@ -298,7 +290,6 @@ describe('ui-data-import', () => {
         InventoryViewSource.notContains('003\t');
         InventoryViewSource.contains('035\t');
         InventoryViewSource.contains(element.field035contains);
-        cy.wait(1500);
-      });
+      }));
     });
 });
