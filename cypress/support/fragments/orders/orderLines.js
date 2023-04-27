@@ -106,6 +106,18 @@ export default {
     ]);
   },
 
+  checkCreatedPOLineOtherResource: (orderLineTitleName, fund) => {
+    cy.expect([
+      orderLineInfoPage.exists(),
+      itemDetailsSection.find(KeyValue({ value: orderLineTitleName })).exists(),
+      poLineInfoSection.find(KeyValue({ value: 'Other' })).exists(),
+      fundDistributionSection
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .has({ content: `${fund.name}(${fund.code})` }),
+    ]);
+  },
+
   checkCreatedPOLineElectronicResource: (orderLineTitleName, fund) => {
     cy.expect([
       orderLineInfoPage.exists(),
@@ -157,6 +169,7 @@ export default {
 
   backToEditingOrder: () => {
     cy.do(Button({ id: 'clickable-backToPO' }).click());
+    cy.wait(4000);
   },
 
   deleteOrderLine: () => {
@@ -189,6 +202,28 @@ export default {
     cy.do([
       orderLineTitleField.fillIn(orderLineTitleName),
       orderFormatSelect.choose('Physical resource'),
+      acquisitionMethodButton.click(),
+      SelectionOption('Depository').click(),
+      receivingWorkflowSelect.choose('Independent order and receipt quantity'),
+      physicalUnitPriceTextField.fillIn(physicalUnitPrice),
+      quantityPhysicalTextField.fillIn(quantityPhysical),
+      materialTypeSelect.choose('book'),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      fundDistributionField.fillIn('100'),
+      addLocationButton.click(),
+      locationSelect.click(),
+      onlineLocationOption.click(),
+      quantityPhysicalLocationField.fillIn(quantityPhysical),
+      saveAndClose.click()
+    ]);
+  },
+
+  POLineInfodorOtherMaterialWithFund: (orderLineTitleName, fund) => {
+    cy.do([
+      orderLineTitleField.fillIn(orderLineTitleName),
+      orderFormatSelect.choose('Other'),
       acquisitionMethodButton.click(),
       SelectionOption('Depository').click(),
       receivingWorkflowSelect.choose('Independent order and receipt quantity'),
