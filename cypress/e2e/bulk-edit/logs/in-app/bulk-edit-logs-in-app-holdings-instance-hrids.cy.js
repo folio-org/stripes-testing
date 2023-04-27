@@ -2,6 +2,7 @@ import uuid from 'uuid';
 import permissions from '../../../../support/dictionary/permissions';
 import testTypes from '../../../../support/dictionary/testTypes';
 import devTeams from '../../../../support/dictionary/devTeams';
+import { ITEM_STATUSES } from '../../../../support/constants';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../../support/fragments/topMenu';
 import FileManager from '../../../../support/utils/fileManager';
@@ -121,7 +122,7 @@ describe('Bulk Edit - Logs', () => {
               }],
               items: [{
                 barcode: item.barcode,
-                status: { name: 'Available' },
+                status: { name: ITEM_STATUSES.AVAILABLE },
                 permanentLoanType: { id: instance.loanTypeId },
                 materialType: { id: instance.materialTypeId },
               }],
@@ -141,7 +142,7 @@ describe('Bulk Edit - Logs', () => {
                   }],
                   items: [{
                     barcode: item2.barcode,
-                    status: { name: 'Available' },
+                    status: { name: ITEM_STATUSES.AVAILABLE },
                     permanentLoanType: { id: instance2.loanTypeId },
                     materialType: { id: instance2.materialTypeId },
                   }],

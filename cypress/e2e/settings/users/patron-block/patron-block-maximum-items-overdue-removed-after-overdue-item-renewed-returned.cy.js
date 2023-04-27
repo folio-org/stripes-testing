@@ -26,6 +26,7 @@ import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane
 import UsersCard from '../../../../support/fragments/users/usersCard';
 import UserLoans from '../../../../support/fragments/users/loans/userLoans';
 import Renewals from '../../../../support/fragments/loans/renewals';
+import { ITEM_STATUSES } from '../../../../support/constants';
 
 describe('Patron Block: Maximum number of overdue items', () => {
   let addedCirculationRule;
@@ -126,7 +127,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
             items: [
               {
                 barcode: item.barcode,
-                status: { name: 'Available' },
+                status: { name: ITEM_STATUSES.AVAILABLE },
                 permanentLoanType: { id: testData.loanTypeId },
                 materialType: { id: testData.materialTypeId },
               },

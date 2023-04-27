@@ -25,6 +25,7 @@ import ExportFile from '../../../support/fragments/data-export/exportFile';
 import FileManager from '../../../support/utils/fileManager';
 import StatisticalCodes from '../../../support/fragments/settings/inventory/instance-holdings-item/statisticalCodes';
 import Users from '../../../support/fragments/users/users';
+import { ITEM_STATUSES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let user;
@@ -98,7 +99,7 @@ describe('ui-data-import', () => {
 
   const matchProfileItemStatus = {
     profileName: matchProfileNameForMatchOnItemStatus,
-    incomingStaticValue: 'Available',
+    incomingStaticValue: ITEM_STATUSES.AVAILABLE,
     matchCriterion: 'Exactly matches',
     existingRecordType: 'ITEM',
     itemOption: NewMatchProfile.optionsList.status,
@@ -177,7 +178,7 @@ describe('ui-data-import', () => {
     NewFieldMappingProfile.fillMaterialType();
     NewFieldMappingProfile.addStatisticalCode(statisticalCode, 6);
     NewFieldMappingProfile.fillPermanentLoanType('Can circulate');
-    NewFieldMappingProfile.fillStatus('Available');
+    NewFieldMappingProfile.fillStatus(ITEM_STATUSES.AVAILABLE);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfile.name);
   };

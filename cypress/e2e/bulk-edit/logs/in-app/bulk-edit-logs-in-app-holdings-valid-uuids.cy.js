@@ -11,6 +11,7 @@ import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-a
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../../support/fragments/inventory/itemRecordView';
+import { ITEM_STATUSES } from '../../../../support/constants';
 
 let user;
 const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
@@ -96,7 +97,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditActions.addNewBulkEditFilterString();
     BulkEditActions.replacePermanentLocation(inventoryEntity.locations.permanent.name, 'item', 1);
     BulkEditActions.addNewBulkEditFilterString();
-    BulkEditActions.replaceItemStatus('Available', 2);
+    BulkEditActions.replaceItemStatus(ITEM_STATUSES.AVAILABLE, 2);
 
     BulkEditActions.confirmChanges();
     BulkEditActions.downloadPreview();
@@ -126,6 +127,6 @@ describe('Bulk Edit - Logs', () => {
     cy.visit(TopMenu.inventoryPath);
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', inventoryEntity.item.barcode);
-    ItemRecordView.checkItemDetails(inventoryEntity.locations.permanent.name, inventoryEntity.item.barcode, 'Available');
+    ItemRecordView.checkItemDetails(inventoryEntity.locations.permanent.name, inventoryEntity.item.barcode, ITEM_STATUSES.AVAILABLE);
   });
 });

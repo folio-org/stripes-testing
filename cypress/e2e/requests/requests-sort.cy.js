@@ -1,6 +1,7 @@
 import TopMenu from '../../support/fragments/topMenu';
 import Requests from '../../support/fragments/requests/requests';
 import { MultiColumnListHeader } from '../../../interactors';
+import { ITEM_STATUSES, REQUEST_TYPES } from '../../support/constants';
 import Users from '../../support/fragments/users/users';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import DevTeams from '../../support/dictionary/devTeams';
@@ -23,7 +24,7 @@ describe('ui-requests: Sort requests', () => {
     });
 
     Object.values(Requests.requestTypes).forEach((requestType) => {
-      const itemStatus = requestType === 'Page' ? 'Available' : 'Checked out';
+      const itemStatus = requestType === REQUEST_TYPES.PAGE ? ITEM_STATUSES.AVAILABLE : ITEM_STATUSES.CHECKED_OUT;
       Requests.createRequestApi(itemStatus, requestType).then(({
         instanceRecordData,
         createdRequest,

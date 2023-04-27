@@ -20,6 +20,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import FileManager from '../../../support/utils/fileManager';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import { ITEM_STATUSES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let instanceHrid;
@@ -28,7 +29,7 @@ describe('ui-data-import', () => {
     instanceTitle: 'Love enough / Dionne Brand.',
     instanceSubject: '35678123678',
     holdingsLocation: 'Main Library >',
-    itemStatus: 'Available'
+    itemStatus: ITEM_STATUSES.AVAILABLE
   };
   const permanentLocation = 'Main Library (KU/CC/DI/M)';
   const recordType = 'MARC_BIBLIOGRAPHIC';

@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import { ITEM_STATUSES, REQUEST_TYPES } from '../../support/constants';
 import TestTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
@@ -72,8 +73,8 @@ describe('Request notice triggers', () => {
     description: 'Created by autotest team',
   };
   const requestPolicyBody = {
-    requestTypes: ['Page'],
-    name: `hold${getRandomPostfix()}`,
+    requestTypes: [REQUEST_TYPES.PAGE],
+    name: `page${getRandomPostfix()}`,
     id: uuid(),
   };
 
@@ -113,7 +114,7 @@ describe('Request notice triggers', () => {
           items: [
             {
               barcode: itemData.barcode,
-              status: { name: 'Available' },
+              status: { name: ITEM_STATUSES.AVAILABLE },
               permanentLoanType: { id: testData.loanTypeId },
               materialType: { id: testData.materialTypeId },
             },
@@ -232,7 +233,7 @@ describe('Request notice triggers', () => {
       NewRequest.waitLoadingNewRequestPage();
       NewRequest.enterItemInfo(itemData.barcode);
       NewRequest.verifyItemInformation([itemData.barcode, itemData.title]);
-      NewRequest.verifyRequestInformation('Available');
+      NewRequest.verifyRequestInformation(ITEM_STATUSES.AVAILABLE);
       NewRequest.enterRequesterInfo({
         requesterBarcode: userData.barcode,
         pickupServicePoint: testData.userServicePoint.name,

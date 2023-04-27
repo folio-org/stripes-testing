@@ -32,6 +32,7 @@ import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
 import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
+import { ITEM_STATUSES } from '../../support/constants';
 
 describe('Overdue fine', () => {
   let addedCirculationRule;
@@ -197,7 +198,7 @@ describe('Overdue fine', () => {
           items: [
             {
               barcode: itemData.barcode,
-              status: { name: 'Available' },
+              status: { name: ITEM_STATUSES.AVAILABLE },
               permanentLoanType: { id: testData.loanTypeId },
               materialType: { id: testData.materialTypeId },
             },

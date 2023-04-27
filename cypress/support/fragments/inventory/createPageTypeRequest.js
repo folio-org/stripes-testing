@@ -14,6 +14,7 @@ import {
 import MarkItemAsMissing from './markItemAsMissing';
 import Requests from '../requests/requests';
 import newRequest from '../requests/newRequest';
+import { ITEM_STATUSES } from '../../constants';
 
 const actionsButton = Button('Actions');
 const newRequestButton = Button('New Request');
@@ -23,7 +24,7 @@ const itemInfoSection = Section({ id: 'item-info' });
 const requestInfoSection = Section({ id: 'new-requester-info' });
 
 export default {
-  itemStatusesToCreate() { return ['Available']; },
+  itemStatusesToCreate() { return [ITEM_STATUSES.AVAILABLE]; },
 
   filterRequesterLookup() {
     cy.do([

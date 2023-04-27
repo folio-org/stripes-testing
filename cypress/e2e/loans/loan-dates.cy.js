@@ -3,6 +3,7 @@ import TestTypes from '../../support/dictionary/testTypes';
 import DevTeams from '../../support/dictionary/devTeams';
 import getRandomPostfix from '../../support/utils/stringTools';
 import permissions from '../../support/dictionary/permissions';
+import { ITEM_STATUSES, REQUEST_TYPES } from '../../support/constants';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
 import LoansPage from '../../support/fragments/loans/loansPage';
@@ -73,7 +74,7 @@ describe('loan dates', () => {
                   barcode: item.barcode,
                   missingPieces: '3',
                   numberOfMissingPieces: '3',
-                  status: { name: 'Available' },
+                  status: { name: ITEM_STATUSES.AVAILABLE },
                   permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
                   materialType: { id: Cypress.env('materialTypes')[0].id },
                 }],
@@ -141,7 +142,7 @@ describe('loan dates', () => {
       itemTitle: item.title,
       requesterBarcode: checkInUser.barcode,
       pickupServicePoint: 'Circ Desk 1',
-      requestType: 'Recall',
+      requestType: REQUEST_TYPES.RECALL,
     });
 
     // go to changing due date and verify warning

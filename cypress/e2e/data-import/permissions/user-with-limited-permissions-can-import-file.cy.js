@@ -18,6 +18,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import Users from '../../../support/fragments/users/users';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import { ITEM_STATUSES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let firstUser;
@@ -43,7 +44,7 @@ describe('ui-data-import', () => {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
         name: itemMappingProfileName,
         permanentLoanType: 'Can circulate',
-        status: 'Available' },
+        status: ITEM_STATUSES.AVAILABLE },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: itemActionProfileName }
     }

@@ -16,6 +16,7 @@ import {
   Heading,
   Spinner
 } from '../../../../interactors';
+import { REQUEST_TYPES, REQUEST_LEVELS, ITEM_STATUSES, FULFILMENT_PREFERENCES } from '../../constants';
 import users from '../users/users';
 import inventoryHoldings from '../inventory/holdings/inventoryHoldings';
 import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
@@ -45,9 +46,9 @@ const waitContentLoading = () => {
  * @returns {Object}
  */
 function createRequestApi(
-  itemStatus = 'Available',
-  requestType = 'Page',
-  requestLevel = 'Item',
+  itemStatus = ITEM_STATUSES.AVAILABLE,
+  requestType = REQUEST_TYPES.PAGE,
+  requestLevel = REQUEST_LEVELS.ITEM,
 ) {
   const userData = {
     active: true,
@@ -63,7 +64,7 @@ function createRequestApi(
   };
   const userRequestPreferences = {
     id: uuid(),
-    fulfillment: 'Delivery',
+    fulfillment: FULFILMENT_PREFERENCES.DELIVERY,
     defaultDeliveryAddressTypeId: null,
     defaultServicePointId: null,
     delivery: true,
@@ -92,7 +93,7 @@ function createRequestApi(
     requestLevel,
     itemId: instanceRecordData.itemId,
     requestDate: new Date().toISOString(),
-    fulfilmentPreference: 'Hold Shelf',
+    fulfilmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
     pickupServicePointId: null,
   };
   let createdUser;
@@ -206,7 +207,7 @@ function updateCirculationRulesApi(ruleText) {
   });
 }
 
-function setRequestPolicyApi(requestTypes = ['Page', 'Hold', 'Recall']) {
+function setRequestPolicyApi(requestTypes = Object.values(REQUEST_TYPES)) {
   /**
    * rule comes in bespoke text format, and we need to update 'r <someId>' part.
    * rulesAsText: "priority: number-of-criteria, criterium (t, s, c, b, a, m, g), last-line\n
@@ -248,6 +249,7 @@ function waitLoadingTags() {
     url: '/tags?limit=10000',
   }).as('getTags');
   cy.wait('@getTags');
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(1000);
 }
 
@@ -304,18 +306,18 @@ export default {
     waitLoadingTags();
     cy.do(tagsPane.find(MultiSelect({ ariaLabelledby:'input-tag-label' })).choose(tag));
     // TODO investigate what to wait
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
   },
 
   verifyAssignedTags(tag) {
     cy.expect(Spinner().absent());
     // need to wait until number of tags is displayed
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000);
     cy.expect(showTagsButton.find(Badge()).has({ value: '1' }));
     cy.expect(tagsPane.find(ValueChipRoot(tag)).exists());
   },
-
-  requestTypes: { PAGE: 'Page', HOLD: 'Hold', RECALL: 'Recall' },
 
   REQUEST_TYPE_CELL: { columnIndex: 5 },
   verifyIsFilteredByRequestType(requestType) {
@@ -339,21 +341,21 @@ export default {
   },
 
   checkRequestType(requestType) {
-    if (requestType === this.requestTypes.PAGE) {
+    if (requestType === REQUEST_TYPES.PAGE) {
       this.selectPagesRequestType();
-    } else if (requestType === this.requestTypes.HOLD) {
+    } else if (requestType === REQUEST_TYPES.HOLD) {
       this.selectHoldsRequestType();
-    } else if (requestType === this.requestTypes.RECALL) {
+    } else if (requestType === REQUEST_TYPES.RECALL) {
       this.selectRecallsRequestType();
     }
   },
 
   verifyRequestTypeChecked(requestType) {
-    if (requestType === this.requestTypes.PAGE) {
+    if (requestType === REQUEST_TYPES.PAGE) {
       cy.expect(pageCheckbox.has({ checked: true }));
-    } else if (requestType === this.requestTypes.HOLD) {
+    } else if (requestType === REQUEST_TYPES.HOLD) {
       cy.expect(holdCheckbox.has({ checked: true }));
-    } else if (requestType === this.requestTypes.RECALL) {
+    } else if (requestType === REQUEST_TYPES.RECALL) {
       cy.expect(recallCheckbox.has({ checked: true }));
     }
   },
@@ -387,7 +389,7 @@ export default {
   ],
 
   checkAllRequestTypes() {
-    Object.values(this.requestTypes).forEach(requestType => {
+    Object.values(REQUEST_TYPES).forEach(requestType => {
       cy.do(Checkbox({ name: requestType }).click());
       cy.wait('@getRequests');
     });
@@ -482,7 +484,7 @@ export default {
   },
 
   verifyFulfillmentPreference() {
-    cy.expect(cy.get('[name="fulfilmentPreference"]').find('option:selected').should('have.text', 'Hold Shelf'));
+    cy.expect(cy.get('[name="fulfilmentPreference"]').find('option:selected').should('have.text', FULFILMENT_PREFERENCES.HOLD_SHELF));
   },
 
   waitLoadingRequests() {

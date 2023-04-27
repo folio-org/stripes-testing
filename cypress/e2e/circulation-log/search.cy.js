@@ -17,6 +17,7 @@ import LoansPage from '../../support/fragments/loans/loansPage';
 import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
 import SearchResults from '../../support/fragments/circulation-log/searchResults';
 import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
+import { ITEM_STATUSES } from '../../support/constants';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
@@ -69,7 +70,7 @@ describe('circulation-log', () => {
                   barcode: ITEM_BARCODE,
                   missingPieces: '3',
                   numberOfMissingPieces: '3',
-                  status: { name: 'Available' },
+                  status: { name: ITEM_STATUSES.AVAILABLE },
                   permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
                   materialType: { id: Cypress.env('materialTypes')[0].id },
                 }],

@@ -24,6 +24,7 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
 import NewFeeFine from '../../../../support/fragments/users/newFeeFine';
 import OtherSettings from '../../../../support/fragments/settings/circulation/otherSettings';
+import { ITEM_STATUSES } from '../../../../support/constants';
 
 // TO DO remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => {
@@ -130,7 +131,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
         }],
         items: [{
           barcode: instanceData.itemBarcode,
-          status: { name: 'Available' },
+          status: { name: ITEM_STATUSES.AVAILABLE },
           permanentLoanType: { id: testData.loanTypeId },
           materialType: { id: testData.materialTypeId },
         }],

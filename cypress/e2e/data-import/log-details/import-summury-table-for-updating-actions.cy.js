@@ -25,12 +25,13 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import { ITEM_STATUSES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let instanceHrid;
   const recordType = 'MARC_BIBLIOGRAPHIC';
   const holdingsPermanentLocation = 'Annex';
-  const itemStatus = 'Available';
+  const itemStatus = ITEM_STATUSES.AVAILABLE;
   const quantityOfItems = '1';
   const instanceTitle = 'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)';
   // file names
@@ -265,7 +266,7 @@ describe('ui-data-import', () => {
         noteUI: 'Smith Family Foundation',
         staffOnly: 'Mark for all affected records',
         permanentLoanType: 'Can circulate',
-        status: 'Available' },
+        status: ITEM_STATUSES.AVAILABLE },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: itemActionProfileNameForUpdate,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }

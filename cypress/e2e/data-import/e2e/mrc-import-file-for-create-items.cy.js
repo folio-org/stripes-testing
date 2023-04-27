@@ -14,6 +14,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { ITEM_STATUSES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let user = {};
@@ -48,7 +49,7 @@ describe('ui-data-import', () => {
         name: mappingProfileNameForItem,
         materialType:'book',
         permanentLoanType:'Can circulate',
-        status:'Available' },
+        status:ITEM_STATUSES.AVAILABLE },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: actionProfileNameForItem }
     }

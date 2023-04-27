@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import { FULFILMENT_PREFERENCES, ITEM_STATUSES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
 import TestTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
@@ -58,19 +59,19 @@ describe('Title Level Request', () => {
         instanceData.itemsData = [
           {
             barcode: generateUniqueItemBarcodeWithShift(),
-            status: { name: 'Available' },
+            status: { name: ITEM_STATUSES.AVAILABLE },
             permanentLoanType: { id: testData.loanTypeId },
             materialType: { id: testData.materialTypeId },
           },
           {
             barcode: generateUniqueItemBarcodeWithShift(),
-            status: { name: 'Available' },
+            status: { name: ITEM_STATUSES.AVAILABLE },
             permanentLoanType: { id: testData.loanTypeId },
             materialType: { id: testData.materialTypeId },
           },
           {
             barcode: generateUniqueItemBarcodeWithShift(),
-            status: { name: 'Available' },
+            status: { name: ITEM_STATUSES.AVAILABLE },
             permanentLoanType: { id: testData.loanTypeId },
             materialType: { id: testData.materialTypeId },
           },
@@ -110,12 +111,12 @@ describe('Title Level Request', () => {
       .then(() => {
         TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
         Requests.createNewRequestViaApi({
-          fulfilmentPreference: 'Hold Shelf',
+          fulfilmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
           instanceId: instanceData.instanceId,
           pickupServicePointId: testData.userServicePoint.id,
           requestDate: new Date(),
-          requestLevel: 'Title',
-          requestType: 'Page',
+          requestLevel: REQUEST_LEVELS.TITLE,
+          requestType: REQUEST_TYPES.PAGE,
           requesterId: userData.userId,
         }).then((request) => {
           testData.requestId = request.body.id;

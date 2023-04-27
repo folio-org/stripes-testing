@@ -15,6 +15,7 @@ import Location from '../../../../support/fragments/settings/tenant/locations/ne
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../../support/fragments/inventory/itemRecordView';
+import { ITEM_STATUSES } from '../../../../support/constants';
 
 let user;
 let tempLocation;
@@ -127,7 +128,7 @@ describe('Bulk Edit - Logs', () => {
               }],
               items: [{
                 barcode: item.barcode,
-                status: { name: 'Available' },
+                status: { name: ITEM_STATUSES.AVAILABLE },
                 permanentLoanType: { id: instance.loanTypeId },
                 materialType: { id: instance.materialTypeId },
               }],
@@ -148,7 +149,7 @@ describe('Bulk Edit - Logs', () => {
                   }],
                   items: [{
                     barcode: item2.barcode,
-                    status: { name: 'Available' },
+                    status: { name: ITEM_STATUSES.AVAILABLE },
                     permanentLoanType: { id: instance2.loanTypeId },
                     materialType: { id: instance2.materialTypeId },
                   }],

@@ -16,6 +16,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
 import Users from '../../../support/fragments/users/users';
+import { ITEM_STATUSES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let user;
@@ -65,7 +66,7 @@ describe('ui-data-import', () => {
         noteForCheckIn: '878$a',
         staffOnlyForCheckIn: 'Mark for all affected records',
         permanentLoanType: 'Can circulate',
-        status: 'Available' },
+        status: ITEM_STATUSES.AVAILABLE },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: actionProfileNameForItem }
     }

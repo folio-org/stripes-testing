@@ -19,6 +19,7 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import Conditions from '../../../../support/fragments/settings/users/conditions';
 import Limits from '../../../../support/fragments/settings/users/limits';
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
+import { ITEM_STATUSES } from '../../../../support/constants';
 
 describe('Patron Block: Maximum number of items charged out', () => {
   const checkedOutBlockMessage =
@@ -79,7 +80,7 @@ describe('Patron Block: Maximum number of items charged out', () => {
             items: [
               {
                 barcode: item.barcode,
-                status: { name: 'Available' },
+                status: { name: ITEM_STATUSES.AVAILABLE },
                 permanentLoanType: { id: testData.loanTypeId },
                 materialType: { id: testData.materialTypeId },
               },

@@ -2,6 +2,7 @@ import uuid from 'uuid';
 import testTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
+import { ITEM_STATUSES, REQUEST_TYPES } from '../../support/constants';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
@@ -33,8 +34,8 @@ describe('Create Item or Title level request', () => {
     itemBarcode: generateItemBarcode(),
   };
   const requestPolicyBody = {
-    requestTypes: ['Page'],
-    name: `recall_${getRandomPostfix()}`,
+    requestTypes: [REQUEST_TYPES.PAGE],
+    name: `page${getRandomPostfix()}`,
     id: uuid(),
   };
   before('Preconditions', () => {
@@ -77,7 +78,7 @@ describe('Create Item or Title level request', () => {
           items: [
             {
               barcode: testData.itemBarcode,
-              status: { name: 'Available' },
+              status: { name: ITEM_STATUSES.AVAILABLE },
               permanentLoanType: { id: testData.loanTypeId },
               materialType: { id: testData.materialTypeId },
             },
@@ -153,7 +154,7 @@ describe('Create Item or Title level request', () => {
       NewRequest.verifyErrorMessage('Item with this barcode does not exist');
       NewRequest.enterItemInfo(testData.itemBarcode);
       NewRequest.verifyItemInformation([testData.itemBarcode, instanceData.title]);
-      NewRequest.verifyRequestInformation('Available');
+      NewRequest.verifyRequestInformation(ITEM_STATUSES.AVAILABLE);
       NewRequest.enterRequesterInfo({
         requesterBarcode: userData.barcode,
         pickupServicePoint: testData.userServicePoint.name,

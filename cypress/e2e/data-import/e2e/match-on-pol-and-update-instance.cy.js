@@ -25,6 +25,7 @@ import InventoryViewSource from '../../../support/fragments/inventory/inventoryV
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import { ITEM_STATUSES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let user = null;
@@ -64,7 +65,7 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
         name: mappingProfileNameForItem,
-        status:'Available',
+        status:ITEM_STATUSES.AVAILABLE,
         permanentLoanType:'Can circulate',
         materialType:'book' },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,

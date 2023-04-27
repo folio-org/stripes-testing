@@ -24,6 +24,7 @@ import ConfirmItemInModal from '../../support/fragments/check-in-actions/confirm
 import Users from '../../support/fragments/users/users';
 import ServicePoint from '../../support/fragments/servicePoint/servicePoint';
 import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
+import { ITEM_STATUSES } from '../../support/constants';
 
 describe('orders: Receive piece from Order', () => {
   let effectiveLocation;
@@ -150,7 +151,7 @@ describe('orders: Receive piece from Order', () => {
       InventoryInstances.selectInstance();
       InventoryInstances.verifyInstanceDetailsView();
       InventoryInstance.openHoldings(effectiveLocation.name);
-      InventoryInstance.checkHoldingsTable(effectiveLocation.name, 0, '-', barcode, 'Available');
+      InventoryInstance.checkHoldingsTable(effectiveLocation.name, 0, '-', barcode, ITEM_STATUSES.AVAILABLE);
       InventoryInstance.verifyLoan('Can circulate');
       InventoryInstance.openItemByBarcode(barcode);
       ItemRecordView.waitLoading();

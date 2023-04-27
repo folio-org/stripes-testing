@@ -26,6 +26,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import getRandomPostfix from '../../support/utils/stringTools';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
+import { ITEM_STATUSES } from '../../support/constants';
 
 describe('Triggers: Check Out, Loan due date change, Check in', () => {
   let addedCirculationRule;
@@ -139,7 +140,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
             items: [
               {
                 barcode: item.barcode,
-                status: { name: 'Available' },
+                status: { name: ITEM_STATUSES.AVAILABLE },
                 permanentLoanType: { id: testData.loanTypeId },
                 materialType: { id: testData.materialTypeId },
               },

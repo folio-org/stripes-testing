@@ -8,6 +8,7 @@ import {
   Section,
   TextField
 } from '../../../../interactors';
+import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
 import users from '../users/users';
 import InventoryHoldings from './holdings/inventoryHoldings';
@@ -134,14 +135,14 @@ export default {
     };
     const requestData = {
       id: uuid(),
-      requestType: 'Hold',
+      requestType: REQUEST_TYPES.HOLD,
       requesterId: null,
       holdingsRecordId: holdingId,
       instanceId,
-      requestLevel: 'Item',
+      requestLevel: REQUEST_LEVELS.ITEM,
       itemId: item.itemId,
       requestDate: new Date().toISOString(),
-      fulfilmentPreference: 'Hold Shelf',
+      fulfilmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
       pickupServicePointId: null,
       status: requestStatus,
     };

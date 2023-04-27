@@ -22,6 +22,7 @@ import Users from '../../../support/fragments/users/users';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
 import FileManager from '../../../support/utils/fileManager';
+import { ITEM_STATUSES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let user;
@@ -45,7 +46,7 @@ describe('ui-data-import', () => {
         name: itemMappingProfileName,
         materialType: itemMaterialType,
         permanentLoanType:itemPermanentLoanType,
-        status: 'Available' },
+        status: ITEM_STATUSES.AVAILABLE },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: itemActionProfileName,
         action: 'Create (all record types except MARC Authority or MARC Holdings)' }

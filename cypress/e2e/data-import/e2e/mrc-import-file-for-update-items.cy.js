@@ -21,6 +21,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import SettingsJobProfiles from '../../../support/fragments/settings/dataImport/settingsJobProfiles';
 import DevTeams from '../../../support/dictionary/devTeams';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import { ITEM_STATUSES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let instanceHRID = null;
@@ -364,7 +365,7 @@ describe('ui-data-import', () => {
     NewFieldMappingProfile.fillMaterialType('electronic resource');
     NewFieldMappingProfile.addItemNotes('"Electronic bookplate"', '"Smith Family Foundation"', 'Mark for all affected records');
     NewFieldMappingProfile.fillPermanentLoanType('Can circulate');
-    NewFieldMappingProfile.fillStatus('Available');
+    NewFieldMappingProfile.fillStatus(ITEM_STATUSES.AVAILABLE);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
   };

@@ -20,6 +20,7 @@ import ClaimedReturned from '../../support/fragments/checkin/modals/checkInClaim
 import Loans from '../../support/fragments/users/userDefaultObjects/loans';
 import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
 import UsersCard from '../../support/fragments/users/usersCard';
+import { ITEM_STATUSES } from '../../support/constants';
 
 describe('Check In - Actions', () => {
   const userData = {};
@@ -78,7 +79,7 @@ describe('Check In - Actions', () => {
             items: [
               {
                 barcode: item.barcode,
-                status: { name: 'Available' },
+                status: { name: ITEM_STATUSES.AVAILABLE },
                 permanentLoanType: { id: testData.loanTypeId },
                 materialType: { id: testData.materialTypeId },
               },
@@ -170,7 +171,7 @@ describe('Check In - Actions', () => {
           cy.getLoanHistory(foundByLibraryLoan.id).then(([loanHistoryFirstAction]) => {
             LoanDetails.checkAction('Checked in (found by library)');
             LoanDetails.checkLoansActionsHaveSameDueDate(0, 1, loanHistoryFirstAction.loan.dueDate);
-            LoanDetails.checkStatusInList(0, 'Available');
+            LoanDetails.checkStatusInList(0, ITEM_STATUSES.AVAILABLE);
             LoanDetails.checkSource(0, user);
           });
         });
@@ -187,7 +188,7 @@ describe('Check In - Actions', () => {
           cy.getLoanHistory(returnedByPatron.id).then(([loanHistoryFirstAction]) => {
             LoanDetails.checkAction('Checked in (returned by patron)');
             LoanDetails.checkLoansActionsHaveSameDueDate(0, 1, loanHistoryFirstAction.loan.dueDate);
-            LoanDetails.checkStatusInList(0, 'Available');
+            LoanDetails.checkStatusInList(0, ITEM_STATUSES.AVAILABLE);
             LoanDetails.checkSource(0, user);
           });
         });

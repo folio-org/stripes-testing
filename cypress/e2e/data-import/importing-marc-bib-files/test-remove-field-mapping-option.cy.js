@@ -21,6 +21,7 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import FileManager from '../../../support/utils/fileManager';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import { ITEM_STATUSES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   const itemBarcode = uuid();
@@ -77,7 +78,7 @@ describe('ui-data-import', () => {
         permanentLoanType: 'Can circulate',
         temporaryLoanType:'"Course reserves"',
         temporaryLoanTypeUI:'Course reserves',
-        status: 'Available' },
+        status: ITEM_STATUSES.AVAILABLE },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: itemActionProfileNameForCreate }
     },

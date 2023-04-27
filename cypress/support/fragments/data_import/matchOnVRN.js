@@ -23,6 +23,7 @@ import NewJobProfile from './job_profiles/newJobProfile';
 import InventoryViewSource from '../inventory/inventoryViewSource';
 import DateTools from '../../utils/dateTools';
 import getRandomPostfix from '../../utils/stringTools';
+import { ITEM_STATUSES } from '../../constants';
 
 const poLineData = {
   title: 'Agrarianism and capitalism in early Georgia, 1732-1743 / Jay Jordan Butler.',
@@ -357,7 +358,7 @@ function verifyItemUpdated(itemBarcode) {
     holdingsAccordionButton.click(),
     Link(itemBarcode).click(),
   ]);
-  cy.expect(itemStatusKeyValue.has({ value: 'Available' }));
+  cy.expect(itemStatusKeyValue.has({ value: ITEM_STATUSES.AVAILABLE }));
   cy.expect(itemBarcodeKeyValue.has({ value: itemBarcode }));
 
   closeDetailView();

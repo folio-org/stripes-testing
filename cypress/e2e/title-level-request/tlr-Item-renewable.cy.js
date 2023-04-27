@@ -3,6 +3,7 @@ import moment from 'moment';
 import TestTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
+import { ITEM_STATUSES, REQUEST_TYPES } from '../../support/constants';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
 import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
@@ -114,13 +115,13 @@ describe('TLR: Item renew', () => {
         instanceData.itemsData = [
           {
             barcode: generateUniqueItemBarcodeWithShift(),
-            status: { name: 'Available' },
+            status: { name: ITEM_STATUSES.AVAILABLE },
             permanentLoanType: { id: testData.loanTypeId },
             materialType: { id: testData.materialBookId },
           },
           {
             barcode: generateUniqueItemBarcodeWithShift(),
-            status: { name: 'Available' },
+            status: { name: ITEM_STATUSES.AVAILABLE },
             permanentLoanType: { id: testData.loanTypeId },
             materialType: { id: testData.materialDvdId },
           },
@@ -266,7 +267,7 @@ describe('TLR: Item renew', () => {
         requesterBarcode: userForRenew.barcode,
         instanceHRID,
         pickupServicePoint: testData.userServicePoint.name,
-        requestType: 'Hold',
+        requestType: REQUEST_TYPES.HOLD,
       });
 
       cy.visit(TopMenu.usersPath);
@@ -301,7 +302,7 @@ describe('TLR: Item renew', () => {
         requesterBarcode: userForRenew.barcode,
         instanceHRID,
         pickupServicePoint: testData.userServicePoint.name,
-        requestType: 'Recall',
+        requestType: REQUEST_TYPES.RECALL,
       });
       cy.wait('@createRequest').then((intercept) => {
         cy.wrap(intercept.response.body.item.barcode).as('itemBarcode');

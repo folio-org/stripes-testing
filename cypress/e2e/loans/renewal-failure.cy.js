@@ -8,6 +8,7 @@ import permissions from '../../support/dictionary/permissions';
 import RenewalActions from '../../support/fragments/loans/renewals';
 import {
   CY_ENV,
+  ITEM_STATUSES,
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
 } from '../../support/constants';
@@ -112,7 +113,7 @@ describe('Renewal', () => {
           }],
           items: [[{
             barcode: itemData.barcode,
-            status: { name: 'Available' },
+            status: { name: ITEM_STATUSES.AVAILABLE },
             permanentLoanType: { id: Cypress.env(CY_ENV.LOAN_TYPES)[0].id },
             materialType: { id: materialTypeId },
           }]],

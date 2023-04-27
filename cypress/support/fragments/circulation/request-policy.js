@@ -1,9 +1,10 @@
 import uuid from 'uuid';
 import { getTestEntityValue } from '../../utils/stringTools';
+import { REQUEST_TYPES } from '../../constants';
 
 export const defaultRequestPolicy = {
   requestTypes: [
-    'Hold',
+    REQUEST_TYPES.HOLD,
   ],
   name: getTestEntityValue(),
   description: 'description',
