@@ -171,7 +171,7 @@ describe('Renewal', () => {
       });
   });
 
-  it('C568 Renewal: failure because loan is not renewable (prokopovych)', { tags: [TestType.smoke, DevTeams.prokopovych] }, () => {
+  it('C568 Renewal: failure because loan is not renewable (vega)', { tags: [TestType.smoke, DevTeams.vega] }, () => {
     RenewalActions.renewWithoutOverrideAccess(loanId, renewUserData.id, itemData);
     cy.login(renewOverrideUserData.lastName, renewOverrideUserData.password);
     RenewalActions.renewWithOverrideAccess(
