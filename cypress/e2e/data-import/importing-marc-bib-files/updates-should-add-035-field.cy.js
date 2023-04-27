@@ -274,7 +274,7 @@ describe('ui-data-import', () => {
       FileDetails.checkInstanceQuantityInSummaryTable('8', 1);
 
       // open the second Instance in the Inventory and check 001, 003, 035 fields
-      cy.wrap(fields035.each(element => {
+      cy.wrap(fields035.forEach(element => {
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(secondFileNameAfterUpload);
         FileDetails.openInstanceInInventory('Updated', element.instanceNumber);
