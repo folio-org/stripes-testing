@@ -30,11 +30,12 @@ export default {
   },
 
   searchByUsername(username) {
-    return cy.do([
+    cy.do([
       Select({ id: 'input-user-search-qindex' }).choose('Username'),
       TextField({ id: 'input-user-search' }).fillIn(username),
       Button({ id: 'submit-user-search' }).click()
     ]);
+    waitClick();
   },
 
   selectUserFromList: (userName) => {

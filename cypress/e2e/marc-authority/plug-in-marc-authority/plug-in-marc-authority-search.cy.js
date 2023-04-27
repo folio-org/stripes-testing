@@ -141,10 +141,9 @@ describe('plug-in MARC authority | Search', () => {
   after('Deleting created user', () => {
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
-    for (let i = 1; i < 14; i++) {
-      MarcAuthority.deleteViaAPI(createdAuthorityIDs[i]);
-    }
-
+    createdAuthorityIDs.forEach((id, index) => {
+      if (index) MarcAuthority.deleteViaAPI(id);
+    });
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     DataImport.selectLog();
     DataImport.openDeleteImportLogsModal();

@@ -228,7 +228,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
     ServicePoints.deleteViaApi(servicePoint.id);
   });
 
-  it('C569: renewal failure because loan has reached maximum renewalsv (folijet) (prokopovych)', { tags: [testTypes.smoke, DevTeams.folijet] }, () => {
+  it('C569: renewal failure because loan has reached maximum renewals (vega)', { tags: [testTypes.smoke, DevTeams.vega] }, () => {
     cy.login(
       firstUser.username,
       firstUser.password,

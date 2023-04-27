@@ -123,8 +123,8 @@ describe('orders: Receive piece from Order', () => {
     );
   });
 
-  it('C3506 Catalog a new title which has been ordered and received in Orders (prokopovych)',
-    { tags: [TestTypes.smoke, DevTeams.prokopovych] }, () => {
+  it('C3506 Catalog a new title which has been ordered and received in Orders (folijet)',
+    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
       InventoryInstances.selectInstance();
       InventoryInstances.verifyInstanceDetailsView();
       InventoryInstance.openHoldings(effectiveLocation.name);
