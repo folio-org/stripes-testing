@@ -278,11 +278,13 @@ describe('ui-data-import', () => {
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(secondFileNameAfterUpload);
         FileDetails.openInstanceInInventory('Updated', element.instanceNumber);
+        cy.wait(5000);
         InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
         InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
         InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
           const instanceHrid = initialInstanceHrId;
 
+          cy.wait(5000);
           InventoryInstance.viewSource();
           InventoryViewSource.contains('001\t');
           InventoryViewSource.contains(instanceHrid);
@@ -290,6 +292,7 @@ describe('ui-data-import', () => {
         InventoryViewSource.notContains('003\t');
         InventoryViewSource.contains('035\t');
         InventoryViewSource.contains(element.field035contains);
+        cy.wait(5000);
       }));
     });
 });
