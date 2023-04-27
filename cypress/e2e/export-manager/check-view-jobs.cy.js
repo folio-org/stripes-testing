@@ -131,7 +131,7 @@ describe('orders: export', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('347885: Check view for jobs on Export Manager page (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
+  it('C347885: Check view for jobs on Export Manager page (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
     //Need to wait while first job will be runing
     cy.wait(60000);
     Orders.searchByParameter('PO number', orderNumber);
