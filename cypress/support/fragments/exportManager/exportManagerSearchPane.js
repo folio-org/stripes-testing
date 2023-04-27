@@ -49,6 +49,7 @@ export default {
 
   selectSuccessfulStatusCheckbox() {
     cy.do(Checkbox({ id: 'clickable-filter-status-successful' }).click());
+    cy.wait(4000);
   },
 
   closeExportJobPane() {
@@ -90,7 +91,7 @@ export default {
   },
 
   verifyThirdPaneExportJobExist() {
-    cy.wait(6000);
+    cy.wait(10000);
     cy.expect(PaneHeader('Export job ').exists());
   },
 
