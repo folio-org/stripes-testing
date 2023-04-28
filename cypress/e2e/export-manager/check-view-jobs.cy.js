@@ -15,12 +15,12 @@ import NewLocation from '../../support/fragments/settings/tenant/locations/newLo
 import DateTools from '../../support/utils/dateTools';
 
 describe('orders: export', () => {
-const order = { ...NewOrder.defaultOneTimeOrder,
+  const order = { ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',
     ongoing: { isSubscription: false, manualRenewal: false },
     approved: true,
-};
-const organization = {
+  };
+  const organization = {
     ...NewOrganization.defaultUiOrganizations,
     accounts: [{
         accountNo: getRandomPostfix(),
@@ -46,19 +46,19 @@ const organization = {
         notes: '',
         paymentMethod: 'Cash',
     }]};
-const firstIntegrationName = `FirstIntegrationName${getRandomPostfix()}`;
-const secondIntegrationName = `SecondIntegrationName${getRandomPostfix()}`;
-const integartionDescription1 = 'Test Integation descripton1';
-const integartionDescription2 = 'Test Integation descripton2';
-const vendorEDICodeFor1Integration = getRandomPostfix();
-const libraryEDICodeFor1Integration = getRandomPostfix();
-const vendorEDICodeFor2Integration = getRandomPostfix();
-const libraryEDICodeFor2Integration = getRandomPostfix();
-let user;
-let location;
-let servicePointId;
-let orderNumber;
-const UTCTime = DateTools.getUTCDateForScheduling();
+  const firstIntegrationName = `FirstIntegrationName${getRandomPostfix()}`;
+  const secondIntegrationName = `SecondIntegrationName${getRandomPostfix()}`;
+  const integartionDescription1 = 'Test Integation descripton1';
+  const integartionDescription2 = 'Test Integation descripton2';
+  const vendorEDICodeFor1Integration = getRandomPostfix();
+  const libraryEDICodeFor1Integration = getRandomPostfix();
+  const vendorEDICodeFor2Integration = getRandomPostfix();
+  const libraryEDICodeFor2Integration = getRandomPostfix();
+  const UTCTime = DateTools.getUTCDateForScheduling();
+  let user;
+  let location;
+  let servicePointId;
+  let orderNumber;
 
   before(() => {
     cy.getAdminToken();
