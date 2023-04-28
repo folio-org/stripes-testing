@@ -141,155 +141,156 @@ describe('ui-data-import', () => {
               [uuid[0], uuid[1], instanceHridFromFirstFile]
             );
           });
-      });
-      // upload the second .mrc file
-      cy.visit(TopMenu.dataImportPath);
-      DataImport.uploadFile('marcFileForC358998ForCreate_2.mrc', secondMarcFileNameForCreate);
-      JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-      JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(secondMarcFileNameForCreate);
-      Logs.checkStatusOfJobProfile('Completed');
-      Logs.openFileDetails(secondMarcFileNameForCreate);
-      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[0]);
-      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[0]);
-      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[1]);
-      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[1]);
-      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[2]);
-      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[2]);
-      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[3]);
-      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[3]);
-      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[4]);
-      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[4]);
-      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[5]);
-      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[5]);
-      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[6]);
-      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[6]);
-      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[7]);
-      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[7]);
-      FileDetails.checkSrsRecordQuantityInSummaryTable('8');
-      FileDetails.checkInstanceQuantityInSummaryTable('8');
 
-      FileDetails.openInstanceInInventory('Created', rowNumbers[0]);
-      InventoryInstance.viewSource();
-      // changing the second file
-      InventoryViewSource.extructDataFrom999Field()
-        .then(uuid => { arrayOf999Fields.push(uuid[0], uuid[1]); });
+        // upload the second .mrc file
+        cy.visit(TopMenu.dataImportPath);
+        DataImport.uploadFile('marcFileForC358998ForCreate_2.mrc', secondMarcFileNameForCreate);
+        JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(secondMarcFileNameForCreate);
+        Logs.checkStatusOfJobProfile('Completed');
+        Logs.openFileDetails(secondMarcFileNameForCreate);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[0]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[0]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[1]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[1]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[2]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[2]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[3]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[3]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[4]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[4]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[5]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[5]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[6]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[6]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[7]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[7]);
+        FileDetails.checkSrsRecordQuantityInSummaryTable('8');
+        FileDetails.checkInstanceQuantityInSummaryTable('8');
 
-      cy.visit(TopMenu.dataImportPath);
-      Logs.openFileDetails(secondMarcFileNameForCreate);
-      FileDetails.openInstanceInInventory('Created', rowNumbers[1]);
-      InventoryInstance.viewSource();
-      // changing the second file
-      InventoryViewSource.extructDataFrom999Field()
-        .then(uuid => { arrayOf999Fields.push(uuid[0], uuid[1]); });
+        FileDetails.openInstanceInInventory('Created', rowNumbers[0]);
+        InventoryInstance.viewSource();
+        // changing the second file
+        InventoryViewSource.extructDataFrom999Field()
+          .then(uuid => { arrayOf999Fields.push(uuid[0], uuid[1]); });
 
-      cy.visit(TopMenu.dataImportPath);
-      Logs.openFileDetails(secondMarcFileNameForCreate);
-      FileDetails.openInstanceInInventory('Created', rowNumbers[2]);
-      InventoryInstance.viewSource();
-      // changing the second file
-      InventoryViewSource.extructDataFrom999Field()
-        .then(uuid => { arrayOf999Fields.push(uuid[0], uuid[1]); });
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(secondMarcFileNameForCreate);
+        FileDetails.openInstanceInInventory('Created', rowNumbers[1]);
+        InventoryInstance.viewSource();
+        // changing the second file
+        InventoryViewSource.extructDataFrom999Field()
+          .then(uuid => { arrayOf999Fields.push(uuid[0], uuid[1]); });
 
-      cy.visit(TopMenu.dataImportPath);
-      Logs.openFileDetails(secondMarcFileNameForCreate);
-      FileDetails.openInstanceInInventory('Created', rowNumbers[3]);
-      InventoryInstance.viewSource();
-      // changing the second file
-      InventoryViewSource.extructDataFrom999Field()
-        .then(uuid => { arrayOf999Fields.push(uuid[0], uuid[1]); });
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(secondMarcFileNameForCreate);
+        FileDetails.openInstanceInInventory('Created', rowNumbers[2]);
+        InventoryInstance.viewSource();
+        // changing the second file
+        InventoryViewSource.extructDataFrom999Field()
+          .then(uuid => { arrayOf999Fields.push(uuid[0], uuid[1]); });
 
-      cy.visit(TopMenu.dataImportPath);
-      Logs.openFileDetails(secondMarcFileNameForCreate);
-      FileDetails.openInstanceInInventory('Created', rowNumbers[4]);
-      InventoryInstance.viewSource();
-      // changing the second file
-      InventoryViewSource.extructDataFrom999Field()
-        .then(uuid => { arrayOf999Fields.push(uuid[0], uuid[1]); });
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(secondMarcFileNameForCreate);
+        FileDetails.openInstanceInInventory('Created', rowNumbers[3]);
+        InventoryInstance.viewSource();
+        // changing the second file
+        InventoryViewSource.extructDataFrom999Field()
+          .then(uuid => { arrayOf999Fields.push(uuid[0], uuid[1]); });
 
-      cy.visit(TopMenu.dataImportPath);
-      Logs.openFileDetails(secondMarcFileNameForCreate);
-      FileDetails.openInstanceInInventory('Created', rowNumbers[5]);
-      InventoryInstance.viewSource();
-      // changing the second file
-      InventoryViewSource.extructDataFrom999Field()
-        .then(uuid => { arrayOf999Fields.push(uuid[0], uuid[1]); });
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(secondMarcFileNameForCreate);
+        FileDetails.openInstanceInInventory('Created', rowNumbers[4]);
+        InventoryInstance.viewSource();
+        // changing the second file
+        InventoryViewSource.extructDataFrom999Field()
+          .then(uuid => { arrayOf999Fields.push(uuid[0], uuid[1]); });
 
-      cy.visit(TopMenu.dataImportPath);
-      Logs.openFileDetails(secondMarcFileNameForCreate);
-      FileDetails.openInstanceInInventory('Created', rowNumbers[6]);
-      InventoryInstance.viewSource();
-      // changing the second file
-      InventoryViewSource.extructDataFrom999Field()
-        .then(uuid => { arrayOf999Fields.push(uuid[0], uuid[1]); });
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(secondMarcFileNameForCreate);
+        FileDetails.openInstanceInInventory('Created', rowNumbers[5]);
+        InventoryInstance.viewSource();
+        // changing the second file
+        InventoryViewSource.extructDataFrom999Field()
+          .then(uuid => { arrayOf999Fields.push(uuid[0], uuid[1]); });
 
-      cy.visit(TopMenu.dataImportPath);
-      Logs.openFileDetails(secondMarcFileNameForCreate);
-      FileDetails.openInstanceInInventory('Created', rowNumbers[7]);
-      InventoryInstance.viewSource();
-      // changing the second file
-      InventoryViewSource.extructDataFrom999Field()
-        .then(uuid => { arrayOf999Fields.push(uuid[0], uuid[1]); })
-        .then(() => {
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(secondMarcFileNameForCreate);
+        FileDetails.openInstanceInInventory('Created', rowNumbers[6]);
+        InventoryInstance.viewSource();
+        // changing the second file
+        InventoryViewSource.extructDataFrom999Field()
+          .then(uuid => { arrayOf999Fields.push(uuid[0], uuid[1]); });
+
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(secondMarcFileNameForCreate);
+        FileDetails.openInstanceInInventory('Created', rowNumbers[7]);
+        InventoryInstance.viewSource();
+        // changing the second file
+        InventoryViewSource.extructDataFrom999Field()
+          .then(uuid => { arrayOf999Fields.push(uuid[0], uuid[1]); })
+          .then(() => {
           // change file using uuid for 999 field
-          DataImport.editMarcFile(
-            'marcFileForC358998ForUpdate_2.mrc',
-            secondMarcFileNameForUpdate,
-            ['firstSrsUuid', 'firstInstanceUuid', 'secondSrsUuid', 'secondInstanceUuid',
-              'thirdSrsUuid', 'thirdInstanceUuid', 'forthSrsUuid', 'forthInstanceUuid',
-              'fifthSrsUuid', 'fifthInstanceUuid', 'sixthSrsUuid', 'sixthInstanceUuid',
-              'seventhSrsUuid', 'seventhInstanceUuid', 'eighthSrsUuid', 'eighthInstanceUuid'],
-            [...arrayOf999Fields]
-          );
-        });
+            DataImport.editMarcFile(
+              'marcFileForC358998ForUpdate_2.mrc',
+              secondMarcFileNameForUpdate,
+              ['firstSrsUuid', 'firstInstanceUuid', 'secondSrsUuid', 'secondInstanceUuid',
+                'thirdSrsUuid', 'thirdInstanceUuid', 'forthSrsUuid', 'forthInstanceUuid',
+                'fifthSrsUuid', 'fifthInstanceUuid', 'sixthSrsUuid', 'sixthInstanceUuid',
+                'seventhSrsUuid', 'seventhInstanceUuid', 'eighthSrsUuid', 'eighthInstanceUuid'],
+              [...arrayOf999Fields]
+            );
+          });
 
-      // create mapping profile
-      cy.visit(SettingsMenu.mappingProfilePath);
-      FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
-      NewFieldMappingProfile.fillInstanceStatusTerm(instanceStatusTerm);
-      NewFieldMappingProfile.addStatisticalCode(statisticalCode, 8);
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
-      FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
+        // create mapping profile
+        cy.visit(SettingsMenu.mappingProfilePath);
+        FieldMappingProfiles.openNewMappingProfileForm();
+        NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
+        NewFieldMappingProfile.fillInstanceStatusTerm(instanceStatusTerm);
+        NewFieldMappingProfile.addStatisticalCode(statisticalCode, 8);
+        FieldMappingProfiles.saveProfile();
+        FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+        FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
-      // create action profile
-      cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.create(actionProfile, mappingProfile.name);
-      ActionProfiles.checkActionProfilePresented(actionProfile.name);
+        // create action profile
+        cy.visit(SettingsMenu.actionProfilePath);
+        ActionProfiles.create(actionProfile, mappingProfile.name);
+        ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
-      // create match profile
-      cy.visit(SettingsMenu.matchProfilePath);
-      MatchProfiles.createMatchProfileWithExistingPart(matchProfile);
-      MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
+        // create match profile
+        cy.visit(SettingsMenu.matchProfilePath);
+        MatchProfiles.createMatchProfileWithExistingPart(matchProfile);
+        MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
 
-      // create job profile for update
-      cy.visit(SettingsMenu.jobProfilePath);
-      JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);
-      JobProfiles.checkJobProfilePresented(jobProfile.profileName);
+        // create job profile for update
+        cy.visit(SettingsMenu.jobProfilePath);
+        JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);
+        JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
-      // upload a marc file for updating already created first instance
-      cy.visit(TopMenu.dataImportPath);
-      DataImport.uploadFile(firstMarcFileNameForUpdate, firstFileNameAfterUpload);
-      JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-      JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(firstFileNameAfterUpload);
-      Logs.checkStatusOfJobProfile('Completed');
-      Logs.openFileDetails(firstFileNameAfterUpload);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance);
-      FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
-      FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
-      // open the first Instance in the Inventory and check 001, 003, 035 fields
-      FileDetails.openInstanceInInventory('Updated');
-      InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
-      InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
-      InventoryInstance.viewSource();
-      InventoryViewSource.contains('001\t');
-      InventoryViewSource.contains(instanceHridFromFirstFile);
-      InventoryViewSource.notContains('003\t');
-      InventoryViewSource.contains('035\t');
-      InventoryViewSource.contains('(LTSCA)303845');
+        // upload a marc file for updating already created first instance
+        cy.visit(TopMenu.dataImportPath);
+        DataImport.uploadFile(firstMarcFileNameForUpdate, firstFileNameAfterUpload);
+        JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(firstFileNameAfterUpload);
+        Logs.checkStatusOfJobProfile('Completed');
+        Logs.openFileDetails(firstFileNameAfterUpload);
+        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc);
+        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance);
+        FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
+        FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
+        // open the first Instance in the Inventory and check 001, 003, 035 fields
+        FileDetails.openInstanceInInventory('Updated');
+        InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
+        InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
+        InventoryInstance.viewSource();
+        InventoryViewSource.contains('001\t');
+        InventoryViewSource.contains(instanceHridFromFirstFile);
+        InventoryViewSource.notContains('003\t');
+        InventoryViewSource.contains('035\t');
+        InventoryViewSource.contains('(LTSCA)303845');
+      });
 
       // upload a marc file for updating already created second instance
       cy.visit(TopMenu.dataImportPath);
