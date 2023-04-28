@@ -22,7 +22,6 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 
-// this autotest is needed to be skipped because it is running in infinite loop. TODO analyze this issue and fix it
 describe('ui-data-import', () => {
   let user = null;
   let instanceHridFromFirstFile;
@@ -125,8 +124,6 @@ describe('ui-data-import', () => {
 
   it('C358998 Data Import Updates should add 035 field from 001/003, if it is not HRID or already exists (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-      cy.reload();
       // upload the first .mrc file
       DataImport.uploadFile('marcFileForC358998ForCreate_1.mrc', firstMarcFileNameForCreate);
       JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
@@ -254,8 +251,6 @@ describe('ui-data-import', () => {
 
       // upload a marc file for updating already created second instance
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-      cy.reload();
       DataImport.waitLoading();
       DataImport.uploadFile(secondMarcFileNameForUpdate, secondFileNameAfterUpload);
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
