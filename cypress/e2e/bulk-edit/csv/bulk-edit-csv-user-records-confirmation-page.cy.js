@@ -11,8 +11,9 @@ import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
-const matchRecordsFileName = '*Matched-Records*';
-const importFileName = `bulkEditImport_${getRandomPostfix()}.csv`;
+const matchedRecordsFileName = `Matched-Records-${userUUIDsFileName}`;
+const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
+const changedRecordsFileName = `*-Changed-Records-${editedFileName}`;
 
 describe('bulk-edit', () => {
   describe('csv approach', () => {
@@ -33,8 +34,8 @@ describe('bulk-edit', () => {
 
     after('delete test data', () => {
       FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
-      FileManager.deleteFile(`cypress/fixtures/${importFileName}`);
-      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+      FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
+      FileManager.deleteFileFromDownloadsByMask(`*${matchedRecordsFileName}`, changedRecordsFileName);
       Users.deleteViaApi(user.userId);
     });
 
@@ -45,11 +46,11 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.waitFileUploading();
 
       const changedFirstName = `testedNameChanged_${getRandomPostfix()}`;
-      BulkEditActions.downloadMatchedResults(matchRecordsFileName);
-      BulkEditActions.prepareValidBulkEditFile(matchRecordsFileName, importFileName, 'testPermFirst', changedFirstName);
+      BulkEditActions.downloadMatchedResults();
+      BulkEditActions.prepareValidBulkEditFile(matchedRecordsFileName, editedFileName, 'testPermFirst', changedFirstName);
 
       BulkEditActions.openStartBulkEditForm();
-      BulkEditSearchPane.uploadFile(importFileName);
+      BulkEditSearchPane.uploadFile(editedFileName);
       BulkEditSearchPane.waitFileUploading();
       BulkEditActions.clickNext();
 
@@ -57,7 +58,7 @@ describe('bulk-edit', () => {
 
       BulkEditSearchPane.verifyChangedResults(user.username);
       BulkEditSearchPane.verifyChangedResults(changedFirstName);
-      BulkEditSearchPane.verifyPaneTitleFileName(importFileName);
+      BulkEditSearchPane.verifyPaneTitleFileName(editedFileName);
       BulkEditSearchPane.verifyUserBarcodesResultAccordion();
       BulkEditActions.openActions();
       BulkEditSearchPane.verifyUsersActionShowColumns();
