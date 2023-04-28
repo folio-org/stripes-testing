@@ -11,7 +11,24 @@ import Logs from '../../support/fragments/data_import/logs/logs';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 
 describe('MARC Authority - Advanced Search', () => {
-  const testData = {};
+  const testData = {
+    titles: {
+      titlePersonalName: 'TestPersonalName',
+      titleCorporateName: 'TestCorporate/ConferenceName',
+      titleUniform: 'TestUniformTitle',
+      titleDefault: '',
+    },
+    searchOptions: {
+      personalName: 'Personal name',
+      corporateName: 'Corporate/Conference name',
+      uniformTitle: 'Uniform title',
+      keyword: 'Keyword',
+    },
+    booleanOptions: {
+      or: 'OR',
+      and: 'AND',
+    },
+  };
   const jobProfileToRun = 'Default - Create SRS MARC Authority';
   const marcFile = {
     marc: 'MarcAuthorities(Personal,Uniform,Corporate).mrc', fileName: `testMarcFile.${getRandomPostfix()}.mrc`
@@ -59,24 +76,24 @@ describe('MARC Authority - Advanced Search', () => {
   it('C350684 Updating Advanced Search query from modal window (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     MarcAuthorities.clickActionsButton();
     MarcAuthorities.actionsSortBy('Type of heading');
-   
-    MarcAuthorities.clickAdvancedSearchButton();
-    MarcAuthorities.fillAdvancedSearchField(0, 'TestPersonalName', 'Personal name');
-    MarcAuthorities.fillAdvancedSearchField(1, 'TestCorporate/ConferenceName', 'Corporate/Conference name', 'OR');
-    MarcAuthorities.clickSearchButton();
-    MarcAuthorities.checkSearchInput('personalNameTitle==TestPersonalName or corporateNameTitle==TestCorporate/ConferenceName');
-    MarcAuthorities.checkRowsContent(['TestCorporate/ConferenceName', 'TestPersonalName']);
 
     MarcAuthorities.clickAdvancedSearchButton();
-    MarcAuthorities.fillAdvancedSearchField(2, 'TestUniformTitle', 'Uniform title', 'OR');
+    MarcAuthorities.fillAdvancedSearchField(0, testData.titles.titlePersonalName, testData.searchOptions.personalName);
+    MarcAuthorities.fillAdvancedSearchField(1, testData.titles.titleCorporateName, testData.searchOptions.corporateName, testData.booleanOptions.or);
     MarcAuthorities.clickSearchButton();
-    MarcAuthorities.checkSearchInput('personalNameTitle==TestPersonalName or corporateNameTitle==TestCorporate/ConferenceName or uniformTitle==TestUniformTitle');
-    MarcAuthorities.checkRowsContent(['TestCorporate/ConferenceName', 'TestPersonalName', 'TestUniformTitle']);
+    MarcAuthorities.checkSearchInput(`personalNameTitle==${testData.titles.titlePersonalName} or corporateNameTitle==${testData.titles.titleCorporateName}`);
+    MarcAuthorities.checkRowsContent([testData.titles.titleCorporateName, testData.titles.titlePersonalName]);
 
     MarcAuthorities.clickAdvancedSearchButton();
-    MarcAuthorities.fillAdvancedSearchField(1, '', 'Keyword', 'AND');
+    MarcAuthorities.fillAdvancedSearchField(2, testData.titles.titleUniform, testData.searchOptions.uniformTitle, testData.booleanOptions.or);
     MarcAuthorities.clickSearchButton();
-    MarcAuthorities.checkSearchInput('personalNameTitle==TestPersonalName or uniformTitle==TestUniformTitle');
-    MarcAuthorities.checkRowsContent(['TestPersonalName', 'TestUniformTitle']);
+    MarcAuthorities.checkSearchInput(`personalNameTitle==${testData.titles.titlePersonalName} or corporateNameTitle==${testData.titles.titleCorporateName} or uniformTitle==${testData.titles.titleUniform}`);
+    MarcAuthorities.checkRowsContent([testData.titles.titleCorporateName, testData.titles.titlePersonalName, testData.titles.titleUniform]);
+
+    MarcAuthorities.clickAdvancedSearchButton();
+    MarcAuthorities.fillAdvancedSearchField(1, testData.titles.titleDefault, testData.searchOptions.keyword, testData.booleanOptions.and);
+    MarcAuthorities.clickSearchButton();
+    MarcAuthorities.checkSearchInput(`personalNameTitle==${testData.titles.titlePersonalName} or uniformTitle==${testData.titles.titleUniform}`);
+    MarcAuthorities.checkRowsContent([testData.titles.titlePersonalName, testData.titles.titleUniform]);
   });
 });
