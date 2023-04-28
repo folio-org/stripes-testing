@@ -23,7 +23,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 
 // this autotest is needed to be skipped because it is running in infinite loop. TODO analyze this issue and fix it
-describe.skip('ui-data-import', () => {
+describe('ui-data-import', () => {
   let user = null;
   let instanceHridFromFirstFile;
   const instanceHridsFromSecondFile = [];
@@ -168,9 +168,7 @@ describe.skip('ui-data-import', () => {
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(secondMarcFileNameForCreate);
         cy.wrap(rowNumbers).each(rowNumber => {
-          cy.wait(1500);
           FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumber);
-          cy.wait(1500);
           FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumber);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable('8');
@@ -187,11 +185,8 @@ describe.skip('ui-data-import', () => {
           // changing the second file
           InventoryViewSource.extructDataFrom999Field()
             .then(uuid => {
-              cy.wait(3000);
               arrayOf999Fields.push(uuid[0], uuid[1]);
             });
-          // need to wait until page will be opened in loop
-          cy.wait(5000);
         })
           .then(() => {
           // change file using uuid for 999 field
@@ -286,7 +281,6 @@ describe.skip('ui-data-import', () => {
         InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
           const instanceHrid = initialInstanceHrId;
 
-          cy.wait(5000);
           InventoryInstance.viewSource();
           InventoryViewSource.contains('001\t');
           InventoryViewSource.contains(instanceHrid);
@@ -294,7 +288,6 @@ describe.skip('ui-data-import', () => {
         InventoryViewSource.notContains('003\t');
         InventoryViewSource.contains('035\t');
         InventoryViewSource.contains(element.field035contains);
-        cy.wait(5000);
       });
     });
 });
