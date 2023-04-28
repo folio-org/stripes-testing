@@ -10,7 +10,8 @@ import FileManager from '../../../support/utils/fileManager';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import { getLongDelay } from '../../../support/utils/cypressTools';
 
-let user1, user2;
+let user1;
+let user2;
 const validItemUUIDsFileName = `validItemUUIDs_${getRandomPostfix()}.csv`;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const item = {
@@ -32,7 +33,7 @@ describe('Bulk Edit - Items', () => {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading
         });
-      })
+      });
     cy.createTempUser([
       permissions.bulkEditUpdateRecords.gui,
       permissions.uiUsersView.gui,
@@ -69,7 +70,7 @@ describe('Bulk Edit - Items', () => {
         expect(res.response.body.userId).to.eq(user1.userId);
       });
     BulkEditSearchPane.waitFileUploading();
-    
+
     const newLocation = 'Online';
     BulkEditActions.openActions();
     BulkEditActions.openInAppStartBulkEditFrom();
