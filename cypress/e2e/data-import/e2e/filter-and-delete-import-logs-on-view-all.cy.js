@@ -13,7 +13,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import TestTypes from '../../../support/dictionary/testTypes';
 import Helper from '../../../support/fragments/finance/financeHelper';
 
-describe('ui-data-import: A user can filter and delete import logs from the "View all" page', () => {
+describe('ui-data-import', () => {
   const startedDate = new Date();
   const completedDate = startedDate;
   // format date as YYYY-MM-DD

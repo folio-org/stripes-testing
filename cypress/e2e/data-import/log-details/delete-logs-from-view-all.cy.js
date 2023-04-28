@@ -12,7 +12,7 @@ import Helper from '../../../support/fragments/finance/financeHelper';
 let user;
 const maxLogsQuantityOnPage = 100;
 
-describe('ui-data-import: delete logs from "View all" page', () => {
+describe('ui-data-import', () => {
   before(() => {
     cy.createTempUser([
       permissions.dataImportDeleteLogs.gui
