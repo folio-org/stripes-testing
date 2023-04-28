@@ -60,7 +60,7 @@ describe('Fee/fine management', () => {
               });
             });
 
-            cy.getMaterialTypes({ limit: 1 }).then((res) => { testData.materialType = res.id; });
+            cy.getMaterialTypes({ query: 'name="book"' }).then((res) => { testData.materialType = res.id; });
             cy.getLocations({ limit: 1 }).then((res) => { testData.location = res.id; });
             cy.getHoldingTypes({ limit: 1 }).then((res) => { testData.holdingType = res[0].id; });
             InventoryHoldings.getHoldingSources({ limit: 1 }).then((res) => { testData.holdingSource = res[0].id; });
