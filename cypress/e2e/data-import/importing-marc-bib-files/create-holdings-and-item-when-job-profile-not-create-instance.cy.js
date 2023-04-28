@@ -1,11 +1,11 @@
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -41,20 +41,20 @@ describe('ui-data-import', () => {
   const itemMappingProfileName = `C368009 Testing item for SRS MARC bib ${Helper.getRandomBarcode()}`;
   const collectionOfMappingAndActionProfiles = [
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: itemMappingProfileName,
         materialType: itemMaterialType,
         permanentLoanType:itemPermanentLoanType,
         status: 'Available' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: itemActionProfileName,
         action: 'Create (all record types except MARC Authority or MARC Holdings)' }
     },
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: holdingsMappingProfileName,
         permanentLocation: `"${holdingsPermanentLocation}"` },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: holdingsActionProfileName,
         action: 'Create (all record types except MARC Authority or MARC Holdings)' }
     }

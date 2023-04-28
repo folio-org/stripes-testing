@@ -1,11 +1,11 @@
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -34,10 +34,10 @@ describe('ui-data-import', () => {
   const fileName = `C350678autotestFileProtection.${Helper.getRandomBarcode()}.mrc`;
 
   const mappingProfile = { name: mappingProfileName,
-    typeValue : NewFieldMappingProfile.folioRecordTypeValue.marcBib };
+    typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC };
 
   const actionProfile = {
-    typeValue: NewActionProfile.folioRecordTypeValue.marcBib,
+    typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
     name: actionProfileName,
     action: 'Modify (MARC Bibliographic record type only)'
   };

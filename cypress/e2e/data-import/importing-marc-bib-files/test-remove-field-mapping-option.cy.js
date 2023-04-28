@@ -2,10 +2,10 @@ import uuid from 'uuid';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -47,13 +47,13 @@ describe('ui-data-import', () => {
   const collectionOfMappingAndActionProfilesForCreate = [
     {
       mappingProfile: { name: instanceMappingProfileNameForCreate,
-        typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
+        typeValue: FOLIO_RECORD_TYPE.INSTANCE },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         name: instanceActionProfileNameForCreate }
     },
     {
       mappingProfile: { name: holdingsMappingProfileNameForCreate,
-        typeValue : NewFieldMappingProfile.folioRecordTypeValue.holdings,
+        typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         permanentLocation: '"Main Library (KU/CC/DI/M)"',
         permanentLocationUI:'Main Library',
         permanentLocationInHoldingsAccordion: 'Main Library >',
@@ -62,12 +62,12 @@ describe('ui-data-import', () => {
         illPolicy: 'Unknown lending policy',
         digitizationPolicy: '"Digitization policy"',
         digitizationPolicyUI: 'Digitization policy' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: holdingsActionProfileNameForCreate }
     },
     {
       mappingProfile: { name: itemMappingProfileNameForCreate,
-        typeValue : NewFieldMappingProfile.folioRecordTypeValue.item,
+        typeValue: FOLIO_RECORD_TYPE.ITEM,
         barcode: '945$a',
         accessionNumber: '"12345"',
         accessionNumberUI: '12345',
@@ -78,7 +78,7 @@ describe('ui-data-import', () => {
         temporaryLoanType:'"Course reserves"',
         temporaryLoanTypeUI:'Course reserves',
         status: 'Available' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: itemActionProfileNameForCreate }
     },
   ];
@@ -114,20 +114,20 @@ describe('ui-data-import', () => {
   const collectionOfMappingAndActionProfilesForUpdate = [
     {
       mappingProfile: { name: holdingsMappingProfileNameForUpdate,
-        typeValue : NewFieldMappingProfile.folioRecordTypeValue.holdings,
+        typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         temporaryLocation: '###REMOVE###',
         digitizationPolicy: '###REMOVE###' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: holdingsActionProfileNameForUpdate,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
       mappingProfile: { name: itemMappingProfileNameForUpdate,
-        typeValue : NewFieldMappingProfile.folioRecordTypeValue.item,
+        typeValue: FOLIO_RECORD_TYPE.ITEM,
         accessionNumber: '###REMOVE###',
         numberOfPieces: '###REMOVE###',
         temporaryLoanType:'###REMOVE###' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: itemActionProfileNameForUpdate,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },

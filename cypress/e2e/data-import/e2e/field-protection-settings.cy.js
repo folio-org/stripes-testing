@@ -1,10 +1,10 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -53,10 +53,10 @@ describe('ui-data-import', () => {
 
   // profiles for create
   const mappingProfile = { name: mappingProfileName,
-    typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance };
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE };
 
   const actionProfile = { name: actionProfileName,
-    typeValue : NewActionProfile.folioRecordTypeValue.instance };
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE };
 
   const jobProfile = {
     profileName: jobProfileName,
@@ -65,11 +65,11 @@ describe('ui-data-import', () => {
 
   // profiles for update
   const mappingProfileUpdate = { name: mappingProfileUpdateName,
-    typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance };
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE };
 
   const actionProfileUpdate = {
     name: actionProfileUpdateName,
-    typeValue : NewActionProfile.folioRecordTypeValue.instance,
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
   };
 

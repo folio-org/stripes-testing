@@ -1,5 +1,6 @@
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import DateTools from '../../../support/utils/dateTools';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
@@ -17,7 +18,6 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import FileManager from '../../../support/utils/fileManager';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
@@ -231,19 +231,19 @@ describe('ui-data-import', () => {
   // profiles for updating instance, holdings, item
   const collectionOfMappingAndActionProfiles = [
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         name: instanceMappingProfileNameForUpdate,
         catalogedDate: '###TODAY###',
         catalogedDateUi: DateTools.getFormattedDate({ date: new Date() }),
         instanceStatus: 'Batch Loaded',
         statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
         statisticalCodeUI: 'Book, print (books)' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         name: instanceActionProfileNameForUpdate,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: holdingsMappingProfileNameForUpdate,
         holdingsType: 'Electronic',
         permanentLocation: '"Online (E)"',
@@ -252,12 +252,12 @@ describe('ui-data-import', () => {
         callNumber: '050$a " " 050$b',
         relationship: 'Resource',
         uri: '856$u' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: holdingsActionProfileNameForUpdate,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
-      mappingProfile: { typeValue : NewFieldMappingProfile.folioRecordTypeValue.item,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: itemMappingProfileNameForUpdate,
         materialType: 'electronic resource',
         noteType: '"Electronic bookplate"',
@@ -266,7 +266,7 @@ describe('ui-data-import', () => {
         staffOnly: 'Mark for all affected records',
         permanentLoanType: 'Can circulate',
         status: 'Available' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: itemActionProfileNameForUpdate,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     }

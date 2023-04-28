@@ -1,5 +1,6 @@
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { FOLIO_RECORD_TYPE, PAYMENT_METHOD } from '../../../support/constants';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -18,15 +19,15 @@ describe('ui-data-import', () => {
   const mappingProfile = {
     name:`Import Large Harrassowitz Serials Invoice ${getRandomPostfix()}`,
     incomingRecordType:NewFieldMappingProfile.incomingRecordType.edifact,
-    existingRecordType:NewFieldMappingProfile.folioRecordTypeValue.invoice,
+    existingRecordType:FOLIO_RECORD_TYPE.INVOICE,
     description:'',
     batchGroup: '"FOLIO"',
     organizationName: NewFieldMappingProfile.organization.harrassowitz,
-    paymentMethod: '"Cash"'
+    paymentMethod: PAYMENT_METHOD.CASH
   };
   const actionProfile = {
     name: `Create Large Harrassowitz serials invoice ${getRandomPostfix()}`,
-    typeValue: 'Invoice',
+    typeValue: FOLIO_RECORD_TYPE.INVOICE,
   };
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,

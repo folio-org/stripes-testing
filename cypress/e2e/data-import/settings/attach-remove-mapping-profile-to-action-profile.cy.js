@@ -1,11 +1,11 @@
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import ActionProfileEdit from '../../../support/fragments/data_import/action_profiles/actionProfileEdit';
@@ -18,12 +18,12 @@ describe('ui-data-import', () => {
 
   const mappingProfile = {
     name: mappingProfileName,
-    typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE
   };
 
   const actionProfile = {
     name: actionProfileName,
-    typeValue : NewActionProfile.folioRecordTypeValue.instance
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE
   };
 
   before('login', () => {

@@ -2,6 +2,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TestTypes from '../../../support/dictionary/testTypes';
+import { FOLIO_RECORD_TYPE, PAYMENT_METHOD } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -23,15 +24,15 @@ describe('ui-data-import', () => {
   const mappingProfile = {
     name:`C357018 Test invoice log table Create EBSCO invoice ${getRandomPostfix()}`,
     incomingRecordType:NewFieldMappingProfile.incomingRecordType.edifact,
-    existingRecordType:NewFieldMappingProfile.folioRecordTypeValue.invoice,
+    existingRecordType:FOLIO_RECORD_TYPE.INVOICE,
     description:'',
     batchGroup: '"Amherst (AC)"',
     organizationName: NewFieldMappingProfile.organization.ebsco,
-    paymentMethod: '"Credit Card"'
+    paymentMethod: PAYMENT_METHOD.CREDIT_CARD
   };
   const actionProfile = {
     name: `C357018 Test invoice log table ${getRandomPostfix()}`,
-    typeValue: 'Invoice',
+    typeValue: FOLIO_RECORD_TYPE.INVOICE,
   };
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,

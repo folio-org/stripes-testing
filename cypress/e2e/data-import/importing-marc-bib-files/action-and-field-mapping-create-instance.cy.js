@@ -1,4 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -9,7 +10,6 @@ import NewFieldMappingProfile from '../../../support/fragments/data_import/mappi
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -26,7 +26,7 @@ describe('ui-data-import', () => {
 
   const mappingProfile = {
     name: mappingProfileName,
-    typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     actionForSuppress: 'Mark for all affected records',
     catalogedDate: '"2021-02-24"',
     catalogedDateUI: '2021-02-24',
@@ -37,7 +37,7 @@ describe('ui-data-import', () => {
   };
 
   const actionProfile = {
-    typeValue: NewActionProfile.folioRecordTypeValue.instance,
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     name: actionProfileName,
     action: 'Create (all record types except MARC Authority or MARC Holdings)'
   };

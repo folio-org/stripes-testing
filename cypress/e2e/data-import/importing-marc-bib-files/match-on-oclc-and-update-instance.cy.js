@@ -2,10 +2,10 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import DateTools from '../../../support/utils/dateTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -53,15 +53,15 @@ describe('ui-data-import', () => {
   const collectionOfMappingAndActionProfiles = [
     {
       mappingProfile: { name: instanceCreateMapProfileName,
-        typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
+        typeValue: FOLIO_RECORD_TYPE.INSTANCE },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         name: instanceCreateActionProfileName,
         action: 'Create (all record types except MARC Authority or MARC Holdings)' }
     },
     {
       mappingProfile: { name: instanceUpdateMapProfileName,
-        typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
+        typeValue: FOLIO_RECORD_TYPE.INSTANCE },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         name: instanceUpdateActionProfileName,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     }

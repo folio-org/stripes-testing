@@ -74,3 +74,18 @@ export const LOAN_PROFILE = {
   FIXED: 'Fixed',
   ROLLING: 'Rolling',
 };
+
+export const FOLIO_RECORD_TYPE = {
+  INSTANCE:'Instance',
+  HOLDINGS:'Holdings',
+  ITEM:'Item',
+  ORDER:'Order',
+  INVOICE:'Invoice',
+  MARCBIBLIOGRAPHIC:'MARC Bibliographic'
+};
+
+export const PAYMENT_METHOD = {
+  CASH:'"Cash"',
+  CREDIT_CARD:'"Credit Card"'
+};
+

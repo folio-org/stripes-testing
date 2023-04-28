@@ -2,10 +2,10 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -29,7 +29,7 @@ describe('ui-data-import', () => {
   const collectionOfMappingAndActionProfiles = [
     {
       mappingProfile: { name: `C380446 Test P/E mix open order with instance, holdings, item ${getRandomPostfix()}`,
-        typeValue : NewFieldMappingProfile.folioRecordTypeValue.order,
+        typeValue: FOLIO_RECORD_TYPE.ORDER,
         orderStatus: 'Open',
         approved: true,
         vendor: 'GOBI Library Solutions',
@@ -45,24 +45,24 @@ describe('ui-data-import', () => {
         locationName: 'Annex (KU/CC/DI/A)',
         locationQuantityPhysical: '1',
         locationQuantityElectronic: '1' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.order,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.ORDER,
         name: `C380446 Test P/E mix open order with instance, holdings, item ${getRandomPostfix()}` }
     },
     {
       mappingProfile: { name: `C380446 Create simple holdings for open order ${getRandomPostfix()}`,
-        typeValue : NewFieldMappingProfile.folioRecordTypeValue.holdings,
+        typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         permanentLocation: '"Main Library (KU/CC/DI/M)"',
         permanentLocationUI:'Main Library' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C380446 Create simple holdings for open order ${getRandomPostfix()}` }
     },
     {
       mappingProfile: { name: `C380446 Create simple item for open order ${getRandomPostfix()}`,
-        typeValue : NewFieldMappingProfile.folioRecordTypeValue.item,
+        typeValue: FOLIO_RECORD_TYPE.ITEM,
         materialType:'book',
         permanentLoanType: 'Course reserves',
         status: 'On order' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C380446 Create simple item for open order ${getRandomPostfix()}` }
     },
   ];

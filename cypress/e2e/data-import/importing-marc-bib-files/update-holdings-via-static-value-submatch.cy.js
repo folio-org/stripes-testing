@@ -1,6 +1,7 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -9,7 +10,6 @@ import NewFieldMappingProfile from '../../../support/fragments/data_import/mappi
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
@@ -41,7 +41,7 @@ describe('ui-data-import', () => {
 
   const instanceMappingProfileForCreate = {
     name: instanceMappingProfileNameForCreate,
-    typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     actionForSuppress: 'Mark for all affected records',
     catalogedDate: '"2021-02-24"',
     catalogedDateUI: '2021-02-24',
@@ -52,7 +52,7 @@ describe('ui-data-import', () => {
   };
   const holdingsMappingProfileForCreate = {
     name: holdingsMappingProfileNameForCreate,
-    typeValue : NewFieldMappingProfile.folioRecordTypeValue.holdings,
+    typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
     formerHoldingsId: `autotestFormerHoldingsId.${getRandomPostfix()}`,
     holdingsType: 'Monograph',
     statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
@@ -73,7 +73,7 @@ describe('ui-data-import', () => {
   };
   const holdingsMappingProfileForUpdate = {
     name: holdingsMappingProfileNameForUpdate,
-    typeValue : NewFieldMappingProfile.folioRecordTypeValue.holdings,
+    typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
     formerHoldingsId: `autotestFormerHoldingsId.${getRandomPostfix()}`,
     holdingsType: 'Physical',
     statisticalCode: 'ARL (Collection stats): emusic - Music scores, electronic',
@@ -86,17 +86,17 @@ describe('ui-data-import', () => {
     illPolicy: 'Will lend'
   };
   const instanceActionProfileForCreate = {
-    typeValue: NewActionProfile.folioRecordTypeValue.instance,
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     name: instanceActionProfileNameForCreate,
     action: 'Create (all record types except MARC Authority or MARC Holdings)'
   };
   const holdingsActionProfileForCreate = {
-    typeValue: NewActionProfile.folioRecordTypeValue.holdings,
+    typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
     name: holdingsActionProfileNameForCreate,
     action: 'Create (all record types except MARC Authority or MARC Holdings)'
   };
   const holdingsActionProfileForUpdate = {
-    typeValue: NewActionProfile.folioRecordTypeValue.holdings,
+    typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
     name: holdingsActionProfileNameForUpdate,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
