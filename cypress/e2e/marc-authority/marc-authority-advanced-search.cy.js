@@ -57,23 +57,26 @@ describe('MARC Authority - Advanced Search', () => {
   });
 
   it('C350684 Updating Advanced Search query from modal window (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    MarcAuthorities.clickActionsButton();
+    MarcAuthorities.actionsSortBy('Type of heading');
+   
     MarcAuthorities.clickAdvancedSearchButton();
     MarcAuthorities.fillAdvancedSearchField(0, 'TestPersonalName', 'Personal name');
     MarcAuthorities.fillAdvancedSearchField(1, 'TestCorporate/ConferenceName', 'Corporate/Conference name', 'OR');
     MarcAuthorities.clickSearchButton();
     MarcAuthorities.checkSearchInput('personalNameTitle==TestPersonalName or corporateNameTitle==TestCorporate/ConferenceName');
-    MarcAuthorities.checkRowsContent(['TestPersonalName', 'TestCorporate/ConferenceName']);
+    MarcAuthorities.checkRowsContent(['TestCorporate/ConferenceName', 'TestPersonalName']);
 
     MarcAuthorities.clickAdvancedSearchButton();
     MarcAuthorities.fillAdvancedSearchField(2, 'TestUniformTitle', 'Uniform title', 'OR');
     MarcAuthorities.clickSearchButton();
     MarcAuthorities.checkSearchInput('personalNameTitle==TestPersonalName or corporateNameTitle==TestCorporate/ConferenceName or uniformTitle==TestUniformTitle');
-    MarcAuthorities.checkRowsContent(['TestUniformTitle', 'TestPersonalName', 'TestCorporate/ConferenceName']);
+    MarcAuthorities.checkRowsContent(['TestCorporate/ConferenceName', 'TestPersonalName', 'TestUniformTitle']);
 
     MarcAuthorities.clickAdvancedSearchButton();
     MarcAuthorities.fillAdvancedSearchField(1, '', 'Keyword', 'AND');
     MarcAuthorities.clickSearchButton();
     MarcAuthorities.checkSearchInput('personalNameTitle==TestPersonalName or uniformTitle==TestUniformTitle');
-    MarcAuthorities.checkRowsContent(['TestUniformTitle', 'TestPersonalName']);
+    MarcAuthorities.checkRowsContent(['TestPersonalName', 'TestUniformTitle']);
   });
 });
