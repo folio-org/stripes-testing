@@ -1,5 +1,5 @@
-import devTeams from './../../support/dictionary/devTeams';
-import permissions from '../../../support/dictionary/permissions;';
+import devTeams from '../../../support/dictionary/devTeams';
+import permissions from '../../../support/dictionary/permissions';
 import testTypes from '../../../support/dictionary/testTypes';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -62,28 +62,28 @@ describe('Bulk Edit - Items', () => {
     BulkEditSearchPane.checkItemsRadio();
     BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');
 
+    cy.intercept('/bulk-operations/*').as('fileUpload');
     BulkEditSearchPane.uploadFile(validItemUUIDsFileName);
-    BulkEditSearchPane.waitFileUploading();
-    cy.intercept('/bulk-operations/*').as('getData0');
-    cy.wait('@getData0', getLongDelay())
+    cy.wait('@fileUpload', getLongDelay())
       .then((res) => {
         expect(res.response.body.userId).to.eq(user1.userId);
       });
+    BulkEditSearchPane.waitFileUploading();
+    
     const newLocation = 'Online';
-
     BulkEditActions.openActions();
     BulkEditActions.openInAppStartBulkEditFrom();
     BulkEditActions.replaceTemporaryLocation(newLocation, 'item', 0);
-    cy.intercept('/bulk-operations/*').as('getData1');
+    cy.intercept('/bulk-operations/*').as('confirmChanges');
     BulkEditActions.confirmChanges();
-    cy.wait('@getData1', getLongDelay())
+    cy.wait('@confirmChanges', getLongDelay())
       .then((res) => {
         expect(res.response.body.userId).to.eq(user1.userId);
       });
-    cy.intercept('/bulk-operations/*').as('getData2');
+    cy.intercept('/bulk-operations/*').as('commitChanges');
     BulkEditActions.commitChanges();
     BulkEditSearchPane.waitFileUploading();
-    cy.wait('@getData2', getLongDelay())
+    cy.wait('@commitChanges', getLongDelay())
       .then((res) => {
         expect(res.response.body.userId).to.eq(user1.userId);
       });
@@ -94,27 +94,27 @@ describe('Bulk Edit - Items', () => {
     });
     BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
 
+    cy.intercept('/bulk-operations/*').as('fileUpload2');
     BulkEditSearchPane.uploadFile(userBarcodesFileName);
-    BulkEditSearchPane.waitFileUploading();
-    cy.intercept('/bulk-operations/*').as('getData3');
-    cy.wait('@getData3', getLongDelay())
+    cy.wait('@fileUpload2', getLongDelay())
       .then((res) => {
         expect(res.response.body.userId).to.eq(user2.userId);
       });
+    BulkEditSearchPane.waitFileUploading();
 
     BulkEditActions.openActions();
     BulkEditActions.openInAppStartBulkEditFrom();
     BulkEditActions.fillPatronGroup('staff (Staff Member)');
-    cy.intercept('/bulk-operations/*').as('getData4');
+    cy.intercept('/bulk-operations/*').as('confirmChanges2');
     BulkEditActions.confirmChanges();
-    cy.wait('@getData4', getLongDelay())
+    cy.wait('@confirmChanges2', getLongDelay())
       .then((res) => {
         expect(res.response.body.userId).to.eq(user2.userId);
       });
     BulkEditActions.commitChanges();
-    cy.intercept('/bulk-operations/*').as('getData5');
+    cy.intercept('/bulk-operations/*').as('commitChanges2');
     BulkEditSearchPane.waitFileUploading();
-    cy.wait('@getData5', getLongDelay())
+    cy.wait('@commitChanges2', getLongDelay())
       .then((res) => {
         expect(res.response.body.userId).to.eq(user2.userId);
       });
