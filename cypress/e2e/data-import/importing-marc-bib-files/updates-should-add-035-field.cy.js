@@ -115,7 +115,7 @@ describe.skip('ui-data-import', () => {
       .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
-    instanceHridsFromSecondFile.forEach(hrid => {
+    cy.wrap(instanceHridsFromSecondFile).each(hrid => {
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` })
         .then((instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);
@@ -134,8 +134,8 @@ describe.skip('ui-data-import', () => {
       JobProfiles.waitFileIsImported(firstMarcFileNameForCreate);
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(firstMarcFileNameForCreate);
-      [FileDetails.columnNameInResultList.srsMarc,
-        FileDetails.columnNameInResultList.instance].forEach(columnName => {
+      cy.wrap([FileDetails.columnNameInResultList.srsMarc,
+        FileDetails.columnNameInResultList.instance]).each(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
       });
       FileDetails.checkSrsRecordQuantityInSummaryTable('1');
@@ -167,7 +167,7 @@ describe.skip('ui-data-import', () => {
         JobProfiles.waitFileIsImported(secondMarcFileNameForCreate);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(secondMarcFileNameForCreate);
-        rowNumbers.forEach(rowNumber => {
+        cy.wrap(rowNumbers).each(rowNumber => {
           cy.wait(1500);
           FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumber);
           cy.wait(1500);
@@ -175,37 +175,36 @@ describe.skip('ui-data-import', () => {
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable('8');
         FileDetails.checkInstanceQuantityInSummaryTable('8');
-        cy.wrap(
-          rowNumbers.forEach(rowNumber => {
-            cy.visit(TopMenu.dataImportPath);
-            Logs.openFileDetails(secondMarcFileNameForCreate);
-            FileDetails.openInstanceInInventory('Created', rowNumber);
-            cy.wait(5000);
-            InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
-              instanceHridsFromSecondFile.push(initialInstanceHrId);
+        cy.wrap(rowNumbers).each(rowNumber => {
+          cy.visit(TopMenu.dataImportPath);
+          Logs.openFileDetails(secondMarcFileNameForCreate);
+          FileDetails.openInstanceInInventory('Created', rowNumber);
+          cy.wait(5000);
+          InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+            instanceHridsFromSecondFile.push(initialInstanceHrId);
+          });
+          InventoryInstance.viewSource();
+          // changing the second file
+          InventoryViewSource.extructDataFrom999Field()
+            .then(uuid => {
+              cy.wait(3000);
+              arrayOf999Fields.push(uuid[0], uuid[1]);
             });
-            InventoryInstance.viewSource();
-            // changing the second file
-            InventoryViewSource.extructDataFrom999Field()
-              .then(uuid => {
-                cy.wait(3000);
-                arrayOf999Fields.push(uuid[0], uuid[1]);
-              });
-            // need to wait until page will be opened in loop
-            cy.wait(5000);
-          })
-        ).then(() => {
+          // need to wait until page will be opened in loop
+          cy.wait(5000);
+        })
+          .then(() => {
           // change file using uuid for 999 field
-          DataImport.editMarcFile(
-            'marcFileForC358998ForUpdate_2.mrc',
-            secondMarcFileNameForUpdate,
-            ['firstSrsUuid', 'firstInstanceUuid', 'secondSrsUuid', 'secondInstanceUuid',
-              'thirdSrsUuid', 'thirdInstanceUuid', 'forthSrsUuid', 'forthInstanceUuid',
-              'fifthSrsUuid', 'fifthInstanceUuid', 'sixthSrsUuid', 'sixthInstanceUuid',
-              'seventhSrsUuid', 'seventhInstanceUuid', 'eighthSrsUuid', 'eighthInstanceUuid'],
-            [...arrayOf999Fields]
-          );
-        });
+            DataImport.editMarcFile(
+              'marcFileForC358998ForUpdate_2.mrc',
+              secondMarcFileNameForUpdate,
+              ['firstSrsUuid', 'firstInstanceUuid', 'secondSrsUuid', 'secondInstanceUuid',
+                'thirdSrsUuid', 'thirdInstanceUuid', 'forthSrsUuid', 'forthInstanceUuid',
+                'fifthSrsUuid', 'fifthInstanceUuid', 'sixthSrsUuid', 'sixthInstanceUuid',
+                'seventhSrsUuid', 'seventhInstanceUuid', 'eighthSrsUuid', 'eighthInstanceUuid'],
+              [...arrayOf999Fields]
+            );
+          });
 
         // create mapping profile
         cy.visit(SettingsMenu.mappingProfilePath);
@@ -269,7 +268,7 @@ describe.skip('ui-data-import', () => {
       JobProfiles.waitFileIsImported(secondFileNameAfterUpload);
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(secondFileNameAfterUpload);
-      rowNumbers.forEach(rowNumber => {
+      cy.wrap(rowNumbers).each(rowNumber => {
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, rowNumber);
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, rowNumber);
       });
@@ -277,7 +276,7 @@ describe.skip('ui-data-import', () => {
       FileDetails.checkInstanceQuantityInSummaryTable('8', 1);
 
       // open the second Instance in the Inventory and check 001, 003, 035 fields
-      cy.wrap(fields035.forEach(element => {
+      cy.wrap(fields035).each(element => {
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(secondFileNameAfterUpload);
         FileDetails.openInstanceInInventory('Updated', element.instanceNumber);
@@ -296,6 +295,6 @@ describe.skip('ui-data-import', () => {
         InventoryViewSource.contains('035\t');
         InventoryViewSource.contains(element.field035contains);
         cy.wait(5000);
-      }));
+      });
     });
 });
