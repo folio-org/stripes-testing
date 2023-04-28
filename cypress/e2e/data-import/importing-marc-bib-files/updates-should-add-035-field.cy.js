@@ -30,16 +30,16 @@ describe('ui-data-import', () => {
   const statisticalCodeUI = 'Book, print (books)';
   const rowNumbers = [0, 1, 2, 3, 4, 5, 6, 7];
   const arrayOf999Fields = [];
-  const fields035 = [
-    { instanceNumber: 0, field035contains:'(LTSCA)303845' },
-    { instanceNumber: 1, field035contains:'(LTSCA)2300089' },
-    { instanceNumber: 2, field035contains:'(NhCcYBP)yb1104243' },
-    { instanceNumber: 3, field035contains:'289717' },
-    { instanceNumber: 4, field035contains:'(OCoLC)1144093654' },
-    { instanceNumber: 5, field035contains:'(OCoLC)1201684651' },
-    { instanceNumber: 6, field035contains:'(OCoLC)1195818788' },
-    { instanceNumber: 7, field035contains:'(OCoLC)ocn991553174' }
-  ];
+  const fields035 = {
+    firstRow: '(LTSCA)303845',
+    secondRow: '(LTSCA)2300089',
+    thirdRow: '(NhCcYBP)yb1104243',
+    forthRow: '289717',
+    fifthRow: '(OCoLC)1144093654',
+    sixthRow: '(OCoLC)1201684651',
+    seventhRow: '(OCoLC)1195818788',
+    eigthRow: '(OCoLC)ocn991553174'
+  };
 
   // unique file names
   const firstMarcFileNameForCreate = `C358998 firstCreateAutotestFile.${getRandomPostfix()}.mrc`;
@@ -282,6 +282,7 @@ describe('ui-data-import', () => {
         FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
         // open the first Instance in the Inventory and check 001, 003, 035 fields
         FileDetails.openInstanceInInventory('Updated');
+        cy.wait(2000);
         InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
         InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
         InventoryInstance.viewSource();
@@ -321,144 +322,129 @@ describe('ui-data-import', () => {
       FileDetails.checkInstanceQuantityInSummaryTable('8', 1);
 
       // open the second Instance in the Inventory and check 001, 003, 035 fields
-      FileDetails.openInstanceInInventory('Updated', fields035[0].instanceNumber);
+      FileDetails.openInstanceInInventory('Updated', rowNumbers[0]);
+      cy.wait(2000);
       InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
       InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
       InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
-        const instanceHrid = initialInstanceHrId;
-
         InventoryInstance.viewSource();
         InventoryViewSource.contains('001\t');
-        InventoryViewSource.contains(instanceHrid);
+        InventoryViewSource.contains(initialInstanceHrId);
       });
       InventoryViewSource.notContains('003\t');
       InventoryViewSource.contains('035\t');
-      InventoryViewSource.contains(fields035[0].field035contains);
+      InventoryViewSource.contains(fields035.firstRow);
 
       cy.visit(TopMenu.dataImportPath);
       DataImport.waitLoading();
       Logs.openFileDetails(secondFileNameAfterUpload);
-      FileDetails.openInstanceInInventory('Updated', fields035[1].instanceNumber);
-      cy.wait(5000);
+      FileDetails.openInstanceInInventory('Updated', rowNumbers[1]);
+      cy.wait(2000);
       InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
       InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
       InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
-        const instanceHrid = initialInstanceHrId;
-
         InventoryInstance.viewSource();
         InventoryViewSource.contains('001\t');
-        InventoryViewSource.contains(instanceHrid);
+        InventoryViewSource.contains(initialInstanceHrId);
       });
       InventoryViewSource.notContains('003\t');
       InventoryViewSource.contains('035\t');
-      InventoryViewSource.contains(fields035[1].field035contains);
+      InventoryViewSource.contains(fields035.secondRow);
 
       cy.visit(TopMenu.dataImportPath);
       DataImport.waitLoading();
       Logs.openFileDetails(secondFileNameAfterUpload);
-      FileDetails.openInstanceInInventory('Updated', fields035[2].instanceNumber);
-      cy.wait(5000);
+      FileDetails.openInstanceInInventory('Updated', rowNumbers[2]);
+      cy.wait(2000);
       InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
       InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
       InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
-        const instanceHrid = initialInstanceHrId;
-
         InventoryInstance.viewSource();
         InventoryViewSource.contains('001\t');
-        InventoryViewSource.contains(instanceHrid);
+        InventoryViewSource.contains(initialInstanceHrId);
       });
       InventoryViewSource.notContains('003\t');
       InventoryViewSource.contains('035\t');
-      InventoryViewSource.contains(fields035[2].field035contains);
+      InventoryViewSource.contains(fields035.thirdRow);
 
       cy.visit(TopMenu.dataImportPath);
       DataImport.waitLoading();
       Logs.openFileDetails(secondFileNameAfterUpload);
-      FileDetails.openInstanceInInventory('Updated', fields035[3].instanceNumber);
-      cy.wait(5000);
+      FileDetails.openInstanceInInventory('Updated', rowNumbers[3]);
+      cy.wait(2000);
       InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
       InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
       InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
-        const instanceHrid = initialInstanceHrId;
-
         InventoryInstance.viewSource();
         InventoryViewSource.contains('001\t');
-        InventoryViewSource.contains(instanceHrid);
+        InventoryViewSource.contains(initialInstanceHrId);
       });
       InventoryViewSource.notContains('003\t');
       InventoryViewSource.contains('035\t');
-      InventoryViewSource.contains(fields035[3].field035contains);
+      InventoryViewSource.contains(fields035.forthRow);
 
       cy.visit(TopMenu.dataImportPath);
       DataImport.waitLoading();
       Logs.openFileDetails(secondFileNameAfterUpload);
-      FileDetails.openInstanceInInventory('Updated', fields035[4].instanceNumber);
-      cy.wait(5000);
+      FileDetails.openInstanceInInventory('Updated', rowNumbers[4]);
+      cy.wait(2000);
       InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
       InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
       InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
-        const instanceHrid = initialInstanceHrId;
-
         InventoryInstance.viewSource();
         InventoryViewSource.contains('001\t');
-        InventoryViewSource.contains(instanceHrid);
+        InventoryViewSource.contains(initialInstanceHrId);
       });
       InventoryViewSource.notContains('003\t');
       InventoryViewSource.contains('035\t');
-      InventoryViewSource.contains(fields035[4].field035contains);
+      InventoryViewSource.contains(fields035.fifthRow);
 
       cy.visit(TopMenu.dataImportPath);
       DataImport.waitLoading();
       Logs.openFileDetails(secondFileNameAfterUpload);
-      FileDetails.openInstanceInInventory('Updated', fields035[5].instanceNumber);
-      cy.wait(5000);
+      FileDetails.openInstanceInInventory('Updated', rowNumbers[5]);
+      cy.wait(2000);
       InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
       InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
       InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
-        const instanceHrid = initialInstanceHrId;
-
         InventoryInstance.viewSource();
         InventoryViewSource.contains('001\t');
-        InventoryViewSource.contains(instanceHrid);
+        InventoryViewSource.contains(initialInstanceHrId);
       });
       InventoryViewSource.notContains('003\t');
       InventoryViewSource.contains('035\t');
-      InventoryViewSource.contains(fields035[5].field035contains);
+      InventoryViewSource.contains(fields035.sixthRow);
 
       cy.visit(TopMenu.dataImportPath);
       DataImport.waitLoading();
       Logs.openFileDetails(secondFileNameAfterUpload);
-      FileDetails.openInstanceInInventory('Updated', fields035[6].instanceNumber);
-      cy.wait(5000);
+      FileDetails.openInstanceInInventory('Updated', rowNumbers[6]);
+      cy.wait(2000);
       InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
       InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
       InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
-        const instanceHrid = initialInstanceHrId;
-
         InventoryInstance.viewSource();
         InventoryViewSource.contains('001\t');
-        InventoryViewSource.contains(instanceHrid);
+        InventoryViewSource.contains(initialInstanceHrId);
       });
       InventoryViewSource.notContains('003\t');
       InventoryViewSource.contains('035\t');
-      InventoryViewSource.contains(fields035[6].field035contains);
+      InventoryViewSource.contains(fields035.seventhRow);
 
       cy.visit(TopMenu.dataImportPath);
       DataImport.waitLoading();
       Logs.openFileDetails(secondFileNameAfterUpload);
-      FileDetails.openInstanceInInventory('Updated', fields035[7].instanceNumber);
-      cy.wait(5000);
+      FileDetails.openInstanceInInventory('Updated', rowNumbers[7]);
+      cy.wait(2000);
       InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
       InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
       InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
-        const instanceHrid = initialInstanceHrId;
-
         InventoryInstance.viewSource();
         InventoryViewSource.contains('001\t');
-        InventoryViewSource.contains(instanceHrid);
+        InventoryViewSource.contains(initialInstanceHrId);
       });
       InventoryViewSource.notContains('003\t');
       InventoryViewSource.contains('035\t');
-      InventoryViewSource.contains(fields035[7].field035contains);
+      InventoryViewSource.contains(fields035.eigthRow);
     });
 });
