@@ -139,6 +139,7 @@ describe('ui-data-import', () => {
       FileDetails.checkInstanceQuantityInSummaryTable('1');
 
       FileDetails.openInstanceInInventory('Created');
+      cy.wait(2000);
       InventoryInstance.getAssignedHRID().then(instanceHrId => {
         instanceHridFromFirstFile = instanceHrId;
 
@@ -156,8 +157,6 @@ describe('ui-data-import', () => {
           });
         // upload the second .mrc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-        cy.reload();
         DataImport.uploadFile('marcFileForC358998ForCreate_2.mrc', secondMarcFileNameForCreate);
         JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
         JobProfiles.runImportFile();
@@ -184,6 +183,7 @@ describe('ui-data-import', () => {
             .then(uuid => {
               arrayOf999Fields.push(uuid[0], uuid[1]);
             });
+          cy.wait(2000);
         })
           .then(() => {
           // change file using uuid for 999 field
@@ -225,8 +225,6 @@ describe('ui-data-import', () => {
 
         // upload a marc file for updating already created first instance
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-        cy.reload();
         DataImport.uploadFile(firstMarcFileNameForUpdate, firstFileNameAfterUpload);
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
         JobProfiles.runImportFile();
@@ -239,6 +237,7 @@ describe('ui-data-import', () => {
         FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
         // open the first Instance in the Inventory and check 001, 003, 035 fields
         FileDetails.openInstanceInInventory('Updated');
+        cy.wait(2000);
         InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
         InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
         InventoryInstance.viewSource();
