@@ -36,6 +36,7 @@ describe('ui-data-import', () => {
 
   beforeEach('login', () => {
     cy.loginAsAdmin();
+    cy.getAdminToken();
   });
 
   after('delete test data', () => {
