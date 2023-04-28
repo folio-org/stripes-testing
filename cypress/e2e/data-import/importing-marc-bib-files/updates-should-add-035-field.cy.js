@@ -28,17 +28,16 @@ describe('ui-data-import', () => {
   const instanceStatusTerm = 'Batch Loaded';
   const statisticalCode = 'ARL (Collection stats): books - Book, print (books)';
   const statisticalCodeUI = 'Book, print (books)';
-  const rowNumbers = [0, 1, 2, 3, 4, 5, 6, 7];
   const arrayOf999Fields = [];
   const fields035 = {
-    firstRow: '(LTSCA)303845',
-    secondRow: '(LTSCA)2300089',
-    thirdRow: '(NhCcYBP)yb1104243',
-    forthRow: '289717',
-    fifthRow: '(OCoLC)1144093654',
-    sixthRow: '(OCoLC)1201684651',
-    seventhRow: '(OCoLC)1195818788',
-    eigthRow: '(OCoLC)ocn991553174'
+    firstRecord: { row: 0, content: '(LTSCA)303845' },
+    secondRecord: { row: 1, content: '(LTSCA)2300089' },
+    thirdRecord: { row: 2, content: '(NhCcYBP)yb1104243' },
+    forthRecord: { row: 3, content: '289717' },
+    fifthRecord: { row: 4, content: '(OCoLC)1144093654' },
+    sixthRecord: { row: 5, content: '(OCoLC)1201684651' },
+    seventhRecord: { row: 6, content: '(OCoLC)1195818788' },
+    eighthRecord: { row: 7, content: '(OCoLC)ocn991553174' }
   };
 
   // unique file names
@@ -150,26 +149,26 @@ describe('ui-data-import', () => {
         JobProfiles.waitFileIsImported(secondMarcFileNameForCreate);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(secondMarcFileNameForCreate);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[0]);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[0]);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[1]);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[1]);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[2]);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[2]);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[3]);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[3]);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[4]);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[4]);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[5]);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[5]);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[6]);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[6]);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[7]);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[7]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, fields035.firstRecord.row);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, fields035.firstRecord.row);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, fields035.secondRecord.row);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, fields035.secondRecord.row);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, fields035.thirdRecord.row);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, fields035.thirdRecord.row);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, fields035.forthRecord.row);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, fields035.forthRecord.row);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, fields035.fifthRecord.row);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, fields035.fifthRecord.row);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, fields035.sixthRecord.row);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, fields035.sixthRecord.row);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, fields035.seventhRecord.row);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, fields035.seventhRecord.row);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, fields035.eighthRecord.row);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, fields035.eighthRecord.row);
         FileDetails.checkSrsRecordQuantityInSummaryTable('8');
         FileDetails.checkInstanceQuantityInSummaryTable('8');
 
-        FileDetails.openInstanceInInventory('Created', rowNumbers[0]);
+        FileDetails.openInstanceInInventory('Created', fields035.firstRecord.row);
         InventoryInstance.viewSource();
         // changing the second file
         InventoryViewSource.extructDataFrom999Field()
@@ -177,7 +176,7 @@ describe('ui-data-import', () => {
 
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(secondMarcFileNameForCreate);
-        FileDetails.openInstanceInInventory('Created', rowNumbers[1]);
+        FileDetails.openInstanceInInventory('Created', fields035.secondRecord.row);
         InventoryInstance.viewSource();
         // changing the second file
         InventoryViewSource.extructDataFrom999Field()
@@ -185,7 +184,7 @@ describe('ui-data-import', () => {
 
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(secondMarcFileNameForCreate);
-        FileDetails.openInstanceInInventory('Created', rowNumbers[2]);
+        FileDetails.openInstanceInInventory('Created', fields035.thirdRecord.row);
         InventoryInstance.viewSource();
         // changing the second file
         InventoryViewSource.extructDataFrom999Field()
@@ -193,7 +192,7 @@ describe('ui-data-import', () => {
 
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(secondMarcFileNameForCreate);
-        FileDetails.openInstanceInInventory('Created', rowNumbers[3]);
+        FileDetails.openInstanceInInventory('Created', fields035.forthRecord.row);
         InventoryInstance.viewSource();
         // changing the second file
         InventoryViewSource.extructDataFrom999Field()
@@ -201,7 +200,7 @@ describe('ui-data-import', () => {
 
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(secondMarcFileNameForCreate);
-        FileDetails.openInstanceInInventory('Created', rowNumbers[4]);
+        FileDetails.openInstanceInInventory('Created', fields035.fifthRecord.row);
         InventoryInstance.viewSource();
         // changing the second file
         InventoryViewSource.extructDataFrom999Field()
@@ -209,7 +208,7 @@ describe('ui-data-import', () => {
 
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(secondMarcFileNameForCreate);
-        FileDetails.openInstanceInInventory('Created', rowNumbers[5]);
+        FileDetails.openInstanceInInventory('Created', fields035.sixthRecord.row);
         InventoryInstance.viewSource();
         // changing the second file
         InventoryViewSource.extructDataFrom999Field()
@@ -217,7 +216,7 @@ describe('ui-data-import', () => {
 
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(secondMarcFileNameForCreate);
-        FileDetails.openInstanceInInventory('Created', rowNumbers[6]);
+        FileDetails.openInstanceInInventory('Created', fields035.seventhRecord.row);
         InventoryInstance.viewSource();
         // changing the second file
         InventoryViewSource.extructDataFrom999Field()
@@ -225,7 +224,7 @@ describe('ui-data-import', () => {
 
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(secondMarcFileNameForCreate);
-        FileDetails.openInstanceInInventory('Created', rowNumbers[7]);
+        FileDetails.openInstanceInInventory('Created', fields035.eighthRecord.row);
         InventoryInstance.viewSource();
         // changing the second file
         InventoryViewSource.extructDataFrom999Field()
@@ -302,27 +301,27 @@ describe('ui-data-import', () => {
       JobProfiles.waitFileIsImported(secondFileNameAfterUpload);
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(secondFileNameAfterUpload);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, rowNumbers[0]);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, rowNumbers[0]);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, rowNumbers[1]);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, rowNumbers[1]);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, rowNumbers[2]);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, rowNumbers[2]);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, rowNumbers[3]);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, rowNumbers[3]);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, rowNumbers[4]);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, rowNumbers[4]);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, rowNumbers[5]);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, rowNumbers[5]);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, rowNumbers[6]);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, rowNumbers[6]);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, rowNumbers[7]);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, rowNumbers[7]);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, fields035.firstRecord.row);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, fields035.firstRecord.row);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, fields035.secondRecord.row);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, fields035.secondRecord.row);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, fields035.thirdRecord.row);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, fields035.thirdRecord.row);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, fields035.forthRecord.row);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, fields035.forthRecord.row);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, fields035.fifthRecord.row);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, fields035.fifthRecord.row);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, fields035.sixthRecord.row);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, fields035.sixthRecord.row);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, fields035.seventhRecord.row);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, fields035.seventhRecord.row);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, fields035.eighthRecord.row);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, fields035.eighthRecord.row);
       FileDetails.checkSrsRecordQuantityInSummaryTable('8', 1);
       FileDetails.checkInstanceQuantityInSummaryTable('8', 1);
 
       // open the second Instance in the Inventory and check 001, 003, 035 fields
-      FileDetails.openInstanceInInventory('Updated', rowNumbers[0]);
+      FileDetails.openInstanceInInventory('Updated', fields035.firstRecord.row);
       cy.wait(2000);
       InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
       InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
@@ -333,12 +332,12 @@ describe('ui-data-import', () => {
       });
       InventoryViewSource.notContains('003\t');
       InventoryViewSource.contains('035\t');
-      InventoryViewSource.contains(fields035.firstRow);
+      InventoryViewSource.contains(fields035.firstRecord.content);
 
       cy.visit(TopMenu.dataImportPath);
       DataImport.waitLoading();
       Logs.openFileDetails(secondFileNameAfterUpload);
-      FileDetails.openInstanceInInventory('Updated', rowNumbers[1]);
+      FileDetails.openInstanceInInventory('Updated', fields035.secondRecord.row);
       cy.wait(2000);
       InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
       InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
@@ -349,12 +348,12 @@ describe('ui-data-import', () => {
       });
       InventoryViewSource.notContains('003\t');
       InventoryViewSource.contains('035\t');
-      InventoryViewSource.contains(fields035.secondRow);
+      InventoryViewSource.contains(fields035.secondRecord.content);
 
       cy.visit(TopMenu.dataImportPath);
       DataImport.waitLoading();
       Logs.openFileDetails(secondFileNameAfterUpload);
-      FileDetails.openInstanceInInventory('Updated', rowNumbers[2]);
+      FileDetails.openInstanceInInventory('Updated', fields035.thirdRecord.row);
       cy.wait(2000);
       InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
       InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
@@ -365,12 +364,12 @@ describe('ui-data-import', () => {
       });
       InventoryViewSource.notContains('003\t');
       InventoryViewSource.contains('035\t');
-      InventoryViewSource.contains(fields035.thirdRow);
+      InventoryViewSource.contains(fields035.thirdRecord.content);
 
       cy.visit(TopMenu.dataImportPath);
       DataImport.waitLoading();
       Logs.openFileDetails(secondFileNameAfterUpload);
-      FileDetails.openInstanceInInventory('Updated', rowNumbers[3]);
+      FileDetails.openInstanceInInventory('Updated', fields035.forthRecord.row);
       cy.wait(2000);
       InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
       InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
@@ -381,12 +380,12 @@ describe('ui-data-import', () => {
       });
       InventoryViewSource.notContains('003\t');
       InventoryViewSource.contains('035\t');
-      InventoryViewSource.contains(fields035.forthRow);
+      InventoryViewSource.contains(fields035.forthRecord.content);
 
       cy.visit(TopMenu.dataImportPath);
       DataImport.waitLoading();
       Logs.openFileDetails(secondFileNameAfterUpload);
-      FileDetails.openInstanceInInventory('Updated', rowNumbers[4]);
+      FileDetails.openInstanceInInventory('Updated', fields035.fifthRecord.row);
       cy.wait(2000);
       InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
       InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
@@ -397,12 +396,12 @@ describe('ui-data-import', () => {
       });
       InventoryViewSource.notContains('003\t');
       InventoryViewSource.contains('035\t');
-      InventoryViewSource.contains(fields035.fifthRow);
+      InventoryViewSource.contains(fields035.fifthRecord.content);
 
       cy.visit(TopMenu.dataImportPath);
       DataImport.waitLoading();
       Logs.openFileDetails(secondFileNameAfterUpload);
-      FileDetails.openInstanceInInventory('Updated', rowNumbers[5]);
+      FileDetails.openInstanceInInventory('Updated', fields035.sixthRecord.row);
       cy.wait(2000);
       InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
       InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
@@ -413,12 +412,12 @@ describe('ui-data-import', () => {
       });
       InventoryViewSource.notContains('003\t');
       InventoryViewSource.contains('035\t');
-      InventoryViewSource.contains(fields035.sixthRow);
+      InventoryViewSource.contains(fields035.sixthRecord.content);
 
       cy.visit(TopMenu.dataImportPath);
       DataImport.waitLoading();
       Logs.openFileDetails(secondFileNameAfterUpload);
-      FileDetails.openInstanceInInventory('Updated', rowNumbers[6]);
+      FileDetails.openInstanceInInventory('Updated', fields035.seventhRecord.row);
       cy.wait(2000);
       InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
       InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
@@ -434,7 +433,7 @@ describe('ui-data-import', () => {
       cy.visit(TopMenu.dataImportPath);
       DataImport.waitLoading();
       Logs.openFileDetails(secondFileNameAfterUpload);
-      FileDetails.openInstanceInInventory('Updated', rowNumbers[7]);
+      FileDetails.openInstanceInInventory('Updated', fields035.eighthRecord.row);
       cy.wait(2000);
       InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
       InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
@@ -445,6 +444,6 @@ describe('ui-data-import', () => {
       });
       InventoryViewSource.notContains('003\t');
       InventoryViewSource.contains('035\t');
-      InventoryViewSource.contains(fields035.eigthRow);
+      InventoryViewSource.contains(fields035.eighthRecord.content);
     });
 });
