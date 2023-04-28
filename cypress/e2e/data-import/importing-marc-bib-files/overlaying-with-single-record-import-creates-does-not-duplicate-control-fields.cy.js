@@ -70,7 +70,7 @@ describe('ui-data-import', () => {
         InventoryInstance.viewSource();
         InventoryViewSource.verifyRecordNotContainsDuplicatedContent(field035, 2);
         // check fields 006-008 are not duplicated
-        Object.values(notDuplicatedFieldsContent).forEach(content => InventoryViewSource.verifyRecordNotContainsDuplicatedContent(content));
+        cy.wrap(Object.values(notDuplicatedFieldsContent)).each(content => InventoryViewSource.verifyRecordNotContainsDuplicatedContent(content));
         InventoryViewSource.contains('005\t');
         InventoryViewSource.notContains(field005);
       });
