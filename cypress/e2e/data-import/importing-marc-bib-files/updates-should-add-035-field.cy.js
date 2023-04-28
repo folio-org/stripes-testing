@@ -101,26 +101,16 @@ describe('ui-data-import', () => {
       });
   });
 
-  // after('delete test data', () => {
-  //   JobProfiles.deleteJobProfile(jobProfileName);
-  //   MatchProfiles.deleteMatchProfile(matchProfileName);
-  //   ActionProfiles.deleteActionProfile(actionProfileName);
-  //   FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
-  //   Users.deleteViaApi(user.userId);
-  //   // delete downloads folder and created files in fixtures
-  //   FileManager.deleteFile(`cypress/fixtures/${firstMarcFileNameForUpdate}`);
-  //   FileManager.deleteFile(`cypress/fixtures/${secondMarcFileNameForUpdate}`);
-  //   cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHridFromFirstFile}"` })
-  //     .then((instance) => {
-  //       InventoryInstance.deleteInstanceViaApi(instance.id);
-  //     });
-  //   cy.wrap(instanceHridsFromSecondFile).each(hrid => {
-  //     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` })
-  //       .then((instance) => {
-  //         InventoryInstance.deleteInstanceViaApi(instance.id);
-  //       });
-  //   });
-  // });
+  after('delete test data', () => {
+    JobProfiles.deleteJobProfile(jobProfileName);
+    MatchProfiles.deleteMatchProfile(matchProfileName);
+    ActionProfiles.deleteActionProfile(actionProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    Users.deleteViaApi(user.userId);
+    // delete downloads folder and created files in fixtures
+    FileManager.deleteFile(`cypress/fixtures/${firstMarcFileNameForUpdate}`);
+    FileManager.deleteFile(`cypress/fixtures/${secondMarcFileNameForUpdate}`);
+  });
 
   it('C358998 Data Import Updates should add 035 field from 001/003, if it is not HRID or already exists (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
@@ -131,15 +121,12 @@ describe('ui-data-import', () => {
       JobProfiles.waitFileIsImported(firstMarcFileNameForCreate);
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(firstMarcFileNameForCreate);
-      cy.wrap([FileDetails.columnNameInResultList.srsMarc,
-        FileDetails.columnNameInResultList.instance]).each(columnName => {
-        FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
-      });
+      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc);
+      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance);
       FileDetails.checkSrsRecordQuantityInSummaryTable('1');
       FileDetails.checkInstanceQuantityInSummaryTable('1');
 
       FileDetails.openInstanceInInventory('Created');
-      cy.wait(2000);
       InventoryInstance.getAssignedHRID().then(instanceHrId => {
         instanceHridFromFirstFile = instanceHrId;
 
@@ -169,6 +156,7 @@ describe('ui-data-import', () => {
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable('8');
         FileDetails.checkInstanceQuantityInSummaryTable('8');
+
         cy.wrap(rowNumbers).each(rowNumber => {
           cy.visit(TopMenu.dataImportPath);
           Logs.openFileDetails(secondMarcFileNameForCreate);
@@ -267,6 +255,7 @@ describe('ui-data-import', () => {
       // open the second Instance in the Inventory and check 001, 003, 035 fields
       cy.wrap(fields035).each(element => {
         cy.visit(TopMenu.dataImportPath);
+        DataImport.waitLoading();
         Logs.openFileDetails(secondFileNameAfterUpload);
         FileDetails.openInstanceInInventory('Updated', element.instanceNumber);
         cy.wait(5000);
