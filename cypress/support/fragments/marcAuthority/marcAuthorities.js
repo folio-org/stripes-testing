@@ -1,4 +1,4 @@
-import { MultiColumnList, Modal, TextField, Callout, MultiSelect, QuickMarcEditorRow, PaneContent, PaneHeader, Select, Section, HTML, including, Button, MultiColumnListCell, MultiColumnListRow, SearchField, Accordion, Checkbox, ColumnHeader } from '../../../../interactors';
+import { MultiColumnList, Modal, TextField, Callout, MultiSelect, QuickMarcEditorRow, PaneContent, PaneHeader, Select, Section, HTML, including, Button, MultiColumnListCell, MultiColumnListRow, SearchField, Accordion, Checkbox, ColumnHeader, AdvancedSearchRow } from '../../../../interactors';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const authoritiesList = rootSection.find(MultiColumnList({ id: 'authority-result-list' }));
@@ -23,6 +23,9 @@ const authoritySearchResults = Section({ id: 'authority-search-results-pane' });
 const nextButton = Button({ id: 'authority-result-list-next-paging-button' });
 const searchNav = Button({ id: 'segment-navigation-search' });
 const buttonLink = Button('Link');
+const buttonAdvancedSearch = Button('Advanced search');
+const modalAdvancedSearch = Modal('Advanced search');
+const buttonSearchInAdvancedModal = Button({ariaLabel: 'Search'});
 
 export default {
   waitLoading: () => cy.expect(rootSection.exists()),
@@ -288,5 +291,24 @@ export default {
 
   checkRecordAbsence(absenceMessage) {
     cy.expect(rootSection.find(HTML(including(absenceMessage))).exists());
+  },
+
+  clickAdvancedSearchButton() {
+    cy.do(buttonAdvancedSearch.click());
+    cy.expect(modalAdvancedSearch.exists());
+  },
+
+  fillAdvancedSearchField(rowIndex, value, searchOption, booleanOption) {
+    cy.do(AdvancedSearchRow({ index: rowIndex }).fillQuery(value));
+    cy.do(AdvancedSearchRow({ index: rowIndex }).selectSearchOption(rowIndex, searchOption));
+    if (booleanOption) cy.do(AdvancedSearchRow({ index: rowIndex }).selectBoolean(rowIndex, booleanOption));
+  },
+
+  clickSearchButton() {
+    cy.do(buttonSearchInAdvancedModal.click());
+  },
+
+  checkSearchInput(value) {
+    cy.expect(searchInput.has({ value: value }));
   },
 };
