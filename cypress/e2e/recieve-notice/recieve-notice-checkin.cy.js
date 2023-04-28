@@ -172,8 +172,8 @@ describe('Recieving notice: Checkout', () => {
     });
   });
 
-  it('C347623 Check that user can receive notice with multiple items after finishing the session "Check in" by clicking the End Session button (vega)',
-    { tags: [testTypes.smoke, devTeams.vega] }, () => {
+  it('C347623 Check that user can receive notice with multiple items after finishing the session "Check in" by clicking the End Session button (volaris)',
+    { tags: [testTypes.smoke, devTeams.volaris] }, () => {
       NewNoticePolicyTemplate.startAdding();
       NewNoticePolicyTemplate.checkInitialState();
       NewNoticePolicyTemplate.addToken(testData.noticePolicyTemplateToken);

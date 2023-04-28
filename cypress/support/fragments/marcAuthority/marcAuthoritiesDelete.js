@@ -29,11 +29,11 @@ export default {
   },
 
   checkAfterDeletion(record) {
-    cy.expect ([
+    cy.expect([
       deleteConfirmModal.absent(),
       Callout().find(HTML(`MARC authority record ${record} has been deleted`)).exists(),
       searchResultPane.absent(),
-      MultiColumnListCell({content: record}).absent(),
+      MultiColumnListCell({ content: record }).absent(),
       MultiColumnListCell(including(`${record} would be here`)).exists(),
     ]);
   },
@@ -41,7 +41,7 @@ export default {
   checkDelete(headingReference) {
     cy.expect(Callout().find(HTML(`MARC authority record ${headingReference} has been deleted`)).exists());
   },
-  
+
   checkEmptySearchResults(headingReference) {
     cy.expect(searchResults.find(HTML(`No results found for "${headingReference}". Please check your spelling and filters.`)).exists());
   },

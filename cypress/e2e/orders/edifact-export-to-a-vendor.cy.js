@@ -15,12 +15,10 @@ import NewLocation from '../../support/fragments/settings/tenant/locations/newLo
 import DateTools from '../../support/utils/dateTools';
 
 describe('orders: export', () => {
-  
   const order = { ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',
     ongoing: { isSubscription: false, manualRenewal: false },
-    approved: true,
-   };
+    approved: true };
   const organization = {
     ...NewOrganization.defaultUiOrganizations,
     accounts: [
@@ -68,13 +66,13 @@ describe('orders: export', () => {
     cy.getAdminToken();
 
     ServicePoints.getViaApi()
-    .then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
-        .then(res => {
-          location = res;
-        });
-    });
+      .then((servicePoint) => {
+        servicePointId = servicePoint[0].id;
+        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
+          .then(res => {
+            location = res;
+          });
+      });
     Organizations.createOrganizationViaApi(organization)
       .then(organizationsResponse => {
         organization.id = organizationsResponse;
@@ -92,16 +90,16 @@ describe('orders: export', () => {
 
     cy.createOrderApi(order)
       .then((response) => {
-      orderNumber = response.body.poNumber;
-    });
+        orderNumber = response.body.poNumber;
+      });
 
     cy.createTempUser([
       permissions.uiOrdersView.gui,
-      permissions.uiOrdersCreate.gui, 
+      permissions.uiOrdersCreate.gui,
       permissions.uiOrdersEdit.gui,
       permissions.uiOrdersApprovePurchaseOrders.gui,
-      permissions.viewEditCreateOrganization.gui, 
-      permissions.viewOrganization.gui,
+      permissions.uiOrganizationsViewEditCreate.gui,
+      permissions.uiOrganizationsView.gui,
       permissions.uiExportOrders.gui,
       permissions.exportManagerAll.gui,
       permissions.exportManagerDownloadAndResendFiles.gui,
@@ -123,16 +121,16 @@ describe('orders: export', () => {
 
     Organizations.deleteOrganizationViaApi(organization.id);
     NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
-        location.institutionId,
-        location.campusId,
-        location.libraryId,
-        location.id
-      );
+      location.institutionId,
+      location.campusId,
+      location.libraryId,
+      location.id
+    );
     Users.deleteViaApi(user.userId);
   });
 
   it('C350402: Verify that an Order is exported to a definite Vendors Account specified in one of several Integration configurations (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
-    //Need to wait while first job will be runing
+    // Need to wait while first job will be runing
     cy.wait(60000);
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList();

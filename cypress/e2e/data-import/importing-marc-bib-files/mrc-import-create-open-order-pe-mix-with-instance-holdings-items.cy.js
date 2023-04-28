@@ -75,7 +75,7 @@ describe('ui-data-import', () => {
     cy.createTempUser([
       permissions.settingsDataImportEnabled.gui,
       permissions.moduleDataImportEnabled.gui,
-      permissions.viewOrganization.gui,
+      permissions.uiOrganizationsView.gui,
       permissions.inventoryAll.gui,
       permissions.uiOrdersView.gui
     ])

@@ -34,7 +34,7 @@ describe('ui-inventory: keyboard shortcut', () => {
     Users.deleteViaApi(userId);
   });
 
-  it('C345297 Keyboard Shortcut. Access to drop down menu (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C345297 Keyboard Shortcut. Access to drop down menu (folijet)', { tags: [testTypes.smoke, devTeams.folijet] }, () => {
     InventoryKeyboardShortcuts.verifyInventoryDropdownIsShown('false');
 
     InventoryKeyboardShortcuts.openInventoryMenu();
