@@ -29,16 +29,6 @@ describe('ui-data-import', () => {
   const statisticalCode = 'ARL (Collection stats): books - Book, print (books)';
   const statisticalCodeUI = 'Book, print (books)';
   const arrayOf999Fields = [];
-  const fields035 = {
-    firstRecord: { row: 0, content: '(LTSCA)303845' },
-    secondRecord: { row: 1, content: '(LTSCA)2300089' },
-    thirdRecord: { row: 2, content: '(NhCcYBP)yb1104243' },
-    forthRecord: { row: 3, content: '289717' },
-    fifthRecord: { row: 4, content: '(OCoLC)1144093654' },
-    sixthRecord: { row: 5, content: '(OCoLC)1201684651' },
-    seventhRecord: { row: 6, content: '(OCoLC)1195818788' },
-    eighthRecord: { row: 7, content: '(OCoLC)ocn991553174' }
-  };
 
   // unique file names
   const firstMarcFileNameForCreate = `C358998 firstCreateAutotestFile.${getRandomPostfix()}.mrc`;
@@ -149,26 +139,26 @@ describe('ui-data-import', () => {
         JobProfiles.waitFileIsImported(secondMarcFileNameForCreate);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(secondMarcFileNameForCreate);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, fields035.firstRecord.row);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, fields035.firstRecord.row);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, fields035.secondRecord.row);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, fields035.secondRecord.row);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, fields035.thirdRecord.row);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, fields035.thirdRecord.row);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, fields035.forthRecord.row);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, fields035.forthRecord.row);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, fields035.fifthRecord.row);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, fields035.fifthRecord.row);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, fields035.sixthRecord.row);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, fields035.sixthRecord.row);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, fields035.seventhRecord.row);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, fields035.seventhRecord.row);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, fields035.eighthRecord.row);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, fields035.eighthRecord.row);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, 0);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, 0);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, 1);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, 1);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, 2);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, 2);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, 3);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, 3);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, 4);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, 4);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, 5);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, 5);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, 6);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, 6);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, 7);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, 7);
         FileDetails.checkSrsRecordQuantityInSummaryTable('8');
         FileDetails.checkInstanceQuantityInSummaryTable('8');
 
-        FileDetails.openInstanceInInventory('Created', fields035.firstRecord.row);
+        FileDetails.openInstanceInInventory('Created', 0);
         InventoryInstance.viewSource();
         // changing the second file
         InventoryViewSource.extructDataFrom999Field()
@@ -176,7 +166,7 @@ describe('ui-data-import', () => {
 
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(secondMarcFileNameForCreate);
-        FileDetails.openInstanceInInventory('Created', fields035.secondRecord.row);
+        FileDetails.openInstanceInInventory('Created', 1);
         InventoryInstance.viewSource();
         // changing the second file
         InventoryViewSource.extructDataFrom999Field()
@@ -184,7 +174,7 @@ describe('ui-data-import', () => {
 
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(secondMarcFileNameForCreate);
-        FileDetails.openInstanceInInventory('Created', fields035.thirdRecord.row);
+        FileDetails.openInstanceInInventory('Created', 2);
         InventoryInstance.viewSource();
         // changing the second file
         InventoryViewSource.extructDataFrom999Field()
@@ -192,7 +182,7 @@ describe('ui-data-import', () => {
 
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(secondMarcFileNameForCreate);
-        FileDetails.openInstanceInInventory('Created', fields035.forthRecord.row);
+        FileDetails.openInstanceInInventory('Created', 3);
         InventoryInstance.viewSource();
         // changing the second file
         InventoryViewSource.extructDataFrom999Field()
@@ -200,7 +190,7 @@ describe('ui-data-import', () => {
 
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(secondMarcFileNameForCreate);
-        FileDetails.openInstanceInInventory('Created', fields035.fifthRecord.row);
+        FileDetails.openInstanceInInventory('Created', 4);
         InventoryInstance.viewSource();
         // changing the second file
         InventoryViewSource.extructDataFrom999Field()
@@ -208,7 +198,7 @@ describe('ui-data-import', () => {
 
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(secondMarcFileNameForCreate);
-        FileDetails.openInstanceInInventory('Created', fields035.sixthRecord.row);
+        FileDetails.openInstanceInInventory('Created', 5);
         InventoryInstance.viewSource();
         // changing the second file
         InventoryViewSource.extructDataFrom999Field()
@@ -216,7 +206,7 @@ describe('ui-data-import', () => {
 
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(secondMarcFileNameForCreate);
-        FileDetails.openInstanceInInventory('Created', fields035.seventhRecord.row);
+        FileDetails.openInstanceInInventory('Created', 6);
         InventoryInstance.viewSource();
         // changing the second file
         InventoryViewSource.extructDataFrom999Field()
@@ -224,7 +214,7 @@ describe('ui-data-import', () => {
 
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(secondMarcFileNameForCreate);
-        FileDetails.openInstanceInInventory('Created', fields035.eighthRecord.row);
+        FileDetails.openInstanceInInventory('Created', 7);
         InventoryInstance.viewSource();
         // changing the second file
         InventoryViewSource.extructDataFrom999Field()
@@ -301,27 +291,27 @@ describe('ui-data-import', () => {
       JobProfiles.waitFileIsImported(secondFileNameAfterUpload);
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(secondFileNameAfterUpload);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, fields035.firstRecord.row);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, fields035.firstRecord.row);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, fields035.secondRecord.row);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, fields035.secondRecord.row);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, fields035.thirdRecord.row);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, fields035.thirdRecord.row);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, fields035.forthRecord.row);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, fields035.forthRecord.row);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, fields035.fifthRecord.row);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, fields035.fifthRecord.row);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, fields035.sixthRecord.row);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, fields035.sixthRecord.row);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, fields035.seventhRecord.row);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, fields035.seventhRecord.row);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, fields035.eighthRecord.row);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, fields035.eighthRecord.row);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, 0);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, 0);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, 1);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, 1);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, 2);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, 2);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, 3);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, 3);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, 4);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, 4);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, 5);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, 5);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, 6);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, 6);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, 7);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, 7);
       FileDetails.checkSrsRecordQuantityInSummaryTable('8', 1);
       FileDetails.checkInstanceQuantityInSummaryTable('8', 1);
 
       // open the second Instance in the Inventory and check 001, 003, 035 fields
-      FileDetails.openInstanceInInventory('Updated', fields035.firstRecord.row);
+      FileDetails.openInstanceInInventory('Updated');
       cy.wait(2000);
       InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
       InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
@@ -332,12 +322,12 @@ describe('ui-data-import', () => {
       });
       InventoryViewSource.notContains('003\t');
       InventoryViewSource.contains('035\t');
-      InventoryViewSource.contains(fields035.firstRecord.content);
+      InventoryViewSource.contains('(LTSCA)303845');
 
       cy.visit(TopMenu.dataImportPath);
       DataImport.waitLoading();
       Logs.openFileDetails(secondFileNameAfterUpload);
-      FileDetails.openInstanceInInventory('Updated', fields035.secondRecord.row);
+      FileDetails.openInstanceInInventory('Updated', 1);
       cy.wait(2000);
       InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
       InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
@@ -348,12 +338,12 @@ describe('ui-data-import', () => {
       });
       InventoryViewSource.notContains('003\t');
       InventoryViewSource.contains('035\t');
-      InventoryViewSource.contains(fields035.secondRecord.content);
+      InventoryViewSource.contains('(LTSCA)2300089');
 
       cy.visit(TopMenu.dataImportPath);
       DataImport.waitLoading();
       Logs.openFileDetails(secondFileNameAfterUpload);
-      FileDetails.openInstanceInInventory('Updated', fields035.thirdRecord.row);
+      FileDetails.openInstanceInInventory('Updated', 2);
       cy.wait(2000);
       InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
       InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
@@ -364,12 +354,12 @@ describe('ui-data-import', () => {
       });
       InventoryViewSource.notContains('003\t');
       InventoryViewSource.contains('035\t');
-      InventoryViewSource.contains(fields035.thirdRecord.content);
+      InventoryViewSource.contains('(NhCcYBP)yb1104243');
 
       cy.visit(TopMenu.dataImportPath);
       DataImport.waitLoading();
       Logs.openFileDetails(secondFileNameAfterUpload);
-      FileDetails.openInstanceInInventory('Updated', fields035.forthRecord.row);
+      FileDetails.openInstanceInInventory('Updated', 3);
       cy.wait(2000);
       InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
       InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
@@ -380,12 +370,12 @@ describe('ui-data-import', () => {
       });
       InventoryViewSource.notContains('003\t');
       InventoryViewSource.contains('035\t');
-      InventoryViewSource.contains(fields035.forthRecord.content);
+      InventoryViewSource.contains('289717');
 
       cy.visit(TopMenu.dataImportPath);
       DataImport.waitLoading();
       Logs.openFileDetails(secondFileNameAfterUpload);
-      FileDetails.openInstanceInInventory('Updated', fields035.fifthRecord.row);
+      FileDetails.openInstanceInInventory('Updated', 4);
       cy.wait(2000);
       InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
       InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
@@ -396,12 +386,12 @@ describe('ui-data-import', () => {
       });
       InventoryViewSource.notContains('003\t');
       InventoryViewSource.contains('035\t');
-      InventoryViewSource.contains(fields035.fifthRecord.content);
+      InventoryViewSource.contains('(OCoLC)1144093654');
 
       cy.visit(TopMenu.dataImportPath);
       DataImport.waitLoading();
       Logs.openFileDetails(secondFileNameAfterUpload);
-      FileDetails.openInstanceInInventory('Updated', fields035.sixthRecord.row);
+      FileDetails.openInstanceInInventory('Updated', 5);
       cy.wait(2000);
       InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
       InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
@@ -412,12 +402,12 @@ describe('ui-data-import', () => {
       });
       InventoryViewSource.notContains('003\t');
       InventoryViewSource.contains('035\t');
-      InventoryViewSource.contains(fields035.sixthRecord.content);
+      InventoryViewSource.contains('(OCoLC)1201684651');
 
       cy.visit(TopMenu.dataImportPath);
       DataImport.waitLoading();
       Logs.openFileDetails(secondFileNameAfterUpload);
-      FileDetails.openInstanceInInventory('Updated', fields035.seventhRecord.row);
+      FileDetails.openInstanceInInventory('Updated', 6);
       cy.wait(2000);
       InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
       InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
@@ -428,12 +418,12 @@ describe('ui-data-import', () => {
       });
       InventoryViewSource.notContains('003\t');
       InventoryViewSource.contains('035\t');
-      InventoryViewSource.contains(fields035.seventhRow);
+      InventoryViewSource.contains('(OCoLC)1195818788');
 
       cy.visit(TopMenu.dataImportPath);
       DataImport.waitLoading();
       Logs.openFileDetails(secondFileNameAfterUpload);
-      FileDetails.openInstanceInInventory('Updated', fields035.eighthRecord.row);
+      FileDetails.openInstanceInInventory('Updated', 7);
       cy.wait(2000);
       InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
       InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
@@ -444,6 +434,6 @@ describe('ui-data-import', () => {
       });
       InventoryViewSource.notContains('003\t');
       InventoryViewSource.contains('035\t');
-      InventoryViewSource.contains(fields035.eighthRecord.content);
+      InventoryViewSource.contains('(OCoLC)ocn991553174');
     });
 });
