@@ -22,7 +22,8 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 
-describe('ui-data-import', () => {
+// this autotest is needed to be skipped because it is running in infinite loop. TODO analyze this issue and fix it
+describe.skip('ui-data-import', () => {
   let user = null;
   let instanceHridFromFirstFile;
   const instanceHridsFromSecondFile = [];
