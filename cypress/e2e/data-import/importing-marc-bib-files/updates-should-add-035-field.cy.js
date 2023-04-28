@@ -25,7 +25,6 @@ import FileManager from '../../../support/utils/fileManager';
 describe('ui-data-import', () => {
   let user = null;
   let instanceHridFromFirstFile;
-  const instanceHridsFromSecondFile = [];
   const instanceStatusTerm = 'Batch Loaded';
   const statisticalCode = 'ARL (Collection stats): books - Book, print (books)';
   const statisticalCodeUI = 'Book, print (books)';
@@ -107,7 +106,7 @@ describe('ui-data-import', () => {
     ActionProfiles.deleteActionProfile(actionProfileName);
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
     Users.deleteViaApi(user.userId);
-    // delete downloads folder and created files in fixtures
+    // delete created files in fixtures
     FileManager.deleteFile(`cypress/fixtures/${firstMarcFileNameForUpdate}`);
     FileManager.deleteFile(`cypress/fixtures/${secondMarcFileNameForUpdate}`);
   });
@@ -150,31 +149,89 @@ describe('ui-data-import', () => {
         JobProfiles.waitFileIsImported(secondMarcFileNameForCreate);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(secondMarcFileNameForCreate);
-        cy.wrap(rowNumbers).each(rowNumber => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumber);
-          FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumber);
-        });
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[0]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[0]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[1]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[1]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[2]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[2]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[3]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[3]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[4]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[4]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[5]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[5]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[6]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[6]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumbers[7]);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumbers[7]);
         FileDetails.checkSrsRecordQuantityInSummaryTable('8');
         FileDetails.checkInstanceQuantityInSummaryTable('8');
 
-        cy.wrap(rowNumbers).each(rowNumber => {
-          cy.visit(TopMenu.dataImportPath);
-          Logs.openFileDetails(secondMarcFileNameForCreate);
-          FileDetails.openInstanceInInventory('Created', rowNumber);
-          cy.wait(5000);
-          InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
-            instanceHridsFromSecondFile.push(initialInstanceHrId);
+        FileDetails.openInstanceInInventory('Created', rowNumbers[0]);
+        InventoryInstance.viewSource();
+        // changing the second file
+        InventoryViewSource.extructDataFrom999Field()
+          .then(uuid => { arrayOf999Fields.push(uuid[0], uuid[1]); });
+
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(secondMarcFileNameForCreate);
+        FileDetails.openInstanceInInventory('Created', rowNumbers[1]);
+        InventoryInstance.viewSource();
+        // changing the second file
+        InventoryViewSource.extructDataFrom999Field()
+          .then(uuid => { arrayOf999Fields.push(uuid[0], uuid[1]); });
+
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(secondMarcFileNameForCreate);
+        FileDetails.openInstanceInInventory('Created', rowNumbers[2]);
+        InventoryInstance.viewSource();
+        // changing the second file
+        InventoryViewSource.extructDataFrom999Field()
+          .then(uuid => { arrayOf999Fields.push(uuid[0], uuid[1]); });
+
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(secondMarcFileNameForCreate);
+        FileDetails.openInstanceInInventory('Created', rowNumbers[3]);
+        InventoryInstance.viewSource();
+        // changing the second file
+        InventoryViewSource.extructDataFrom999Field()
+          .then(uuid => { arrayOf999Fields.push(uuid[0], uuid[1]); });
+
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(secondMarcFileNameForCreate);
+        FileDetails.openInstanceInInventory('Created', rowNumbers[4]);
+        InventoryInstance.viewSource();
+        // changing the second file
+        InventoryViewSource.extructDataFrom999Field()
+          .then(uuid => { arrayOf999Fields.push(uuid[0], uuid[1]); });
+
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(secondMarcFileNameForCreate);
+        FileDetails.openInstanceInInventory('Created', rowNumbers[5]);
+        InventoryInstance.viewSource();
+        // changing the second file
+        InventoryViewSource.extructDataFrom999Field()
+          .then(uuid => { arrayOf999Fields.push(uuid[0], uuid[1]); });
+
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(secondMarcFileNameForCreate);
+        FileDetails.openInstanceInInventory('Created', rowNumbers[6]);
+        InventoryInstance.viewSource();
+        // changing the second file
+        InventoryViewSource.extructDataFrom999Field()
+          .then(uuid => {
+            arrayOf999Fields.push(uuid[0], uuid[1]);
           });
-          InventoryInstance.viewSource();
-          // changing the second file
-          InventoryViewSource.extructDataFrom999Field()
-            .then(uuid => {
-              arrayOf999Fields.push(uuid[0], uuid[1]);
-            });
-          cy.wait(2000);
-        })
-          .then(() => {
-          // change file using uuid for 999 field
+
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(secondMarcFileNameForCreate);
+        FileDetails.openInstanceInInventory('Created', rowNumbers[7]);
+        InventoryInstance.viewSource();
+        // changing the second file
+        InventoryViewSource.extructDataFrom999Field()
+          .then(uuid => { arrayOf999Fields.push(uuid[0], uuid[1]); }).then(() => {
+            // change file using uuid for 999 field
             DataImport.editMarcFile(
               'marcFileForC358998ForUpdate_2.mrc',
               secondMarcFileNameForUpdate,
@@ -245,32 +302,164 @@ describe('ui-data-import', () => {
       JobProfiles.waitFileIsImported(secondFileNameAfterUpload);
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(secondFileNameAfterUpload);
-      cy.wrap(rowNumbers).each(rowNumber => {
-        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, rowNumber);
-        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, rowNumber);
-      });
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, rowNumbers[0]);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, rowNumbers[0]);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, rowNumbers[1]);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, rowNumbers[1]);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, rowNumbers[2]);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, rowNumbers[2]);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, rowNumbers[3]);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, rowNumbers[3]);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, rowNumbers[4]);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, rowNumbers[4]);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, rowNumbers[5]);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, rowNumbers[5]);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, rowNumbers[6]);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, rowNumbers[6]);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, rowNumbers[7]);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, rowNumbers[7]);
       FileDetails.checkSrsRecordQuantityInSummaryTable('8', 1);
       FileDetails.checkInstanceQuantityInSummaryTable('8', 1);
 
       // open the second Instance in the Inventory and check 001, 003, 035 fields
-      cy.wrap(fields035).each(element => {
-        cy.visit(TopMenu.dataImportPath);
-        DataImport.waitLoading();
-        Logs.openFileDetails(secondFileNameAfterUpload);
-        FileDetails.openInstanceInInventory('Updated', element.instanceNumber);
-        cy.wait(5000);
-        InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
-        InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
-        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
-          const instanceHrid = initialInstanceHrId;
+      FileDetails.openInstanceInInventory('Updated', fields035[0].instanceNumber);
+      InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
+      InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
+      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        const instanceHrid = initialInstanceHrId;
 
-          InventoryInstance.viewSource();
-          InventoryViewSource.contains('001\t');
-          InventoryViewSource.contains(instanceHrid);
-        });
-        InventoryViewSource.notContains('003\t');
-        InventoryViewSource.contains('035\t');
-        InventoryViewSource.contains(element.field035contains);
+        InventoryInstance.viewSource();
+        InventoryViewSource.contains('001\t');
+        InventoryViewSource.contains(instanceHrid);
       });
+      InventoryViewSource.notContains('003\t');
+      InventoryViewSource.contains('035\t');
+      InventoryViewSource.contains(fields035[0].field035contains);
+
+      cy.visit(TopMenu.dataImportPath);
+      DataImport.waitLoading();
+      Logs.openFileDetails(secondFileNameAfterUpload);
+      FileDetails.openInstanceInInventory('Updated', fields035[1].instanceNumber);
+      cy.wait(5000);
+      InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
+      InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
+      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        const instanceHrid = initialInstanceHrId;
+
+        InventoryInstance.viewSource();
+        InventoryViewSource.contains('001\t');
+        InventoryViewSource.contains(instanceHrid);
+      });
+      InventoryViewSource.notContains('003\t');
+      InventoryViewSource.contains('035\t');
+      InventoryViewSource.contains(fields035[1].field035contains);
+
+      cy.visit(TopMenu.dataImportPath);
+      DataImport.waitLoading();
+      Logs.openFileDetails(secondFileNameAfterUpload);
+      FileDetails.openInstanceInInventory('Updated', fields035[2].instanceNumber);
+      cy.wait(5000);
+      InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
+      InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
+      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        const instanceHrid = initialInstanceHrId;
+
+        InventoryInstance.viewSource();
+        InventoryViewSource.contains('001\t');
+        InventoryViewSource.contains(instanceHrid);
+      });
+      InventoryViewSource.notContains('003\t');
+      InventoryViewSource.contains('035\t');
+      InventoryViewSource.contains(fields035[2].field035contains);
+
+      cy.visit(TopMenu.dataImportPath);
+      DataImport.waitLoading();
+      Logs.openFileDetails(secondFileNameAfterUpload);
+      FileDetails.openInstanceInInventory('Updated', fields035[3].instanceNumber);
+      cy.wait(5000);
+      InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
+      InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
+      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        const instanceHrid = initialInstanceHrId;
+
+        InventoryInstance.viewSource();
+        InventoryViewSource.contains('001\t');
+        InventoryViewSource.contains(instanceHrid);
+      });
+      InventoryViewSource.notContains('003\t');
+      InventoryViewSource.contains('035\t');
+      InventoryViewSource.contains(fields035[3].field035contains);
+
+      cy.visit(TopMenu.dataImportPath);
+      DataImport.waitLoading();
+      Logs.openFileDetails(secondFileNameAfterUpload);
+      FileDetails.openInstanceInInventory('Updated', fields035[4].instanceNumber);
+      cy.wait(5000);
+      InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
+      InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
+      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        const instanceHrid = initialInstanceHrId;
+
+        InventoryInstance.viewSource();
+        InventoryViewSource.contains('001\t');
+        InventoryViewSource.contains(instanceHrid);
+      });
+      InventoryViewSource.notContains('003\t');
+      InventoryViewSource.contains('035\t');
+      InventoryViewSource.contains(fields035[4].field035contains);
+
+      cy.visit(TopMenu.dataImportPath);
+      DataImport.waitLoading();
+      Logs.openFileDetails(secondFileNameAfterUpload);
+      FileDetails.openInstanceInInventory('Updated', fields035[5].instanceNumber);
+      cy.wait(5000);
+      InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
+      InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
+      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        const instanceHrid = initialInstanceHrId;
+
+        InventoryInstance.viewSource();
+        InventoryViewSource.contains('001\t');
+        InventoryViewSource.contains(instanceHrid);
+      });
+      InventoryViewSource.notContains('003\t');
+      InventoryViewSource.contains('035\t');
+      InventoryViewSource.contains(fields035[5].field035contains);
+
+      cy.visit(TopMenu.dataImportPath);
+      DataImport.waitLoading();
+      Logs.openFileDetails(secondFileNameAfterUpload);
+      FileDetails.openInstanceInInventory('Updated', fields035[6].instanceNumber);
+      cy.wait(5000);
+      InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
+      InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
+      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        const instanceHrid = initialInstanceHrId;
+
+        InventoryInstance.viewSource();
+        InventoryViewSource.contains('001\t');
+        InventoryViewSource.contains(instanceHrid);
+      });
+      InventoryViewSource.notContains('003\t');
+      InventoryViewSource.contains('035\t');
+      InventoryViewSource.contains(fields035[6].field035contains);
+
+      cy.visit(TopMenu.dataImportPath);
+      DataImport.waitLoading();
+      Logs.openFileDetails(secondFileNameAfterUpload);
+      FileDetails.openInstanceInInventory('Updated', fields035[7].instanceNumber);
+      cy.wait(5000);
+      InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
+      InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
+      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        const instanceHrid = initialInstanceHrId;
+
+        InventoryInstance.viewSource();
+        InventoryViewSource.contains('001\t');
+        InventoryViewSource.contains(instanceHrid);
+      });
+      InventoryViewSource.notContains('003\t');
+      InventoryViewSource.contains('035\t');
+      InventoryViewSource.contains(fields035[7].field035contains);
     });
 });
