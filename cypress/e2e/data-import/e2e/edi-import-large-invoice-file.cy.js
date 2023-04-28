@@ -1,6 +1,6 @@
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE, PAYMENT_METHOD } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE, PAYMENT_METHOD, BATCH_GROUP } from '../../../support/constants';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -21,7 +21,7 @@ describe('ui-data-import', () => {
     incomingRecordType:NewFieldMappingProfile.incomingRecordType.edifact,
     existingRecordType:FOLIO_RECORD_TYPE.INVOICE,
     description:'',
-    batchGroup: '"FOLIO"',
+    batchGroup: BATCH_GROUP.FOLIO,
     organizationName: NewFieldMappingProfile.organization.harrassowitz,
     paymentMethod: PAYMENT_METHOD.CASH
   };

@@ -2,7 +2,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TestTypes from '../../../support/dictionary/testTypes';
-import { FOLIO_RECORD_TYPE, PAYMENT_METHOD } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE, PAYMENT_METHOD, BATCH_GROUP } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -26,7 +26,7 @@ describe('ui-data-import', () => {
     incomingRecordType:NewFieldMappingProfile.incomingRecordType.edifact,
     existingRecordType:FOLIO_RECORD_TYPE.INVOICE,
     description:'',
-    batchGroup: '"Amherst (AC)"',
+    batchGroup: BATCH_GROUP.AMHERST,
     organizationName: NewFieldMappingProfile.organization.ebsco,
     paymentMethod: PAYMENT_METHOD.CREDIT_CARD
   };

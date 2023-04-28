@@ -89,3 +89,7 @@ export const PAYMENT_METHOD = {
   CREDIT_CARD:'"Credit Card"'
 };
 
+export const BATCH_GROUP = {
+  FOLIO:'"FOLIO"',
+  AMHERST:'"Amherst (AC)"'
+};
