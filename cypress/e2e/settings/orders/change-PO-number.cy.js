@@ -15,9 +15,10 @@ describe('orders: Settings', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const order = { ...NewOrder.defaultOneTimeOrder };
   const orderNumber = Helper.getRandomOrderNumber();
+  const editedOrderNumber = Helper.getRandomOrderNumber();
   let user;
 
-  before(() => {
+  beforeEach(() => {
     cy.getAdminToken();
 
     Organizations.createOrganizationViaApi(organization)
@@ -32,13 +33,14 @@ describe('orders: Settings', () => {
     cy.createTempUser([
       permissions.uiSettingsOrdersCanViewAllSettings.gui,
       permissions.uiOrdersCreate.gui,
+      permissions.uiOrdersEdit.gui,
     ]).then(userProperties => {
       user = userProperties;
       cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
     });
   });
 
-  after(() => {
+  afterEach(() => {
     cy.loginAsAdmin({ path:SettingsMenu.ordersPONumberEditPath, waiter: SettingsOrders.waitLoadingEditPONumber });
     SettingsOrders.userCanNotEditPONumber();
     Orders.deleteOrderViaApi(order.id);
@@ -50,6 +52,15 @@ describe('orders: Settings', () => {
     Orders.createOrderWithPONumber(orderNumber, order, false).then(orderId => {
       order.id = orderId;
       Orders.checkCreatedOrderWithOrderNumber(organization.name, orderNumber);
+    });
+  });
+  it('C15493 Allow users to edit PO number (thunderjet)', { tags: [TestType.criticalPath, devTeams.thunderjet] }, () => {
+    Orders.createOrderWithPONumber(orderNumber, order, false).then(orderId => {
+      order.id = orderId;
+      Orders.checkCreatedOrderWithOrderNumber(organization.name, orderNumber);
+      Orders.editOrder();
+      Orders.editOrderNumber(editedOrderNumber);
+      Orders.checkCreatedOrderWithOrderNumber(organization.name, editedOrderNumber);
     });
   });
 });
