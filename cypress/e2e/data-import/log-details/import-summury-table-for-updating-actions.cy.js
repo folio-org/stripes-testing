@@ -1,10 +1,9 @@
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import {
-  LOAN_TYPE_NAMES,
+import { LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
-  ITEM_STATUS_NAMES
-} from '../../../support/constants';
+  ITEM_STATUS_NAMES,
+  LOCALION_NAMES } from '../../../support/constants';
 import DateTools from '../../../support/utils/dateTools';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
@@ -35,7 +34,7 @@ describe('ui-data-import', () => {
   let instanceHrid;
   const recordType = 'MARC_BIBLIOGRAPHIC';
   const holdingsPermanentLocation = 'Annex';
-  const itemStatus = 'Available';
+  const itemStatus = ITEM_STATUS_NAMES.AVAILABLE;
   const quantityOfItems = '1';
   const instanceTitle = 'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)';
   // file names
@@ -229,8 +228,8 @@ describe('ui-data-import', () => {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
         name: `C356802 update holdings mapping profile ${Helper.getRandomBarcode()}`,
         holdingsType: 'Electronic',
-        permanentLocation: '"Online (E)"',
-        permanentLocationUI: 'Online',
+        permanentLocation: `"${LOCALION_NAMES.ONLINE}"`,
+        permanentLocationUI: LOCALION_NAMES.ONLINE_UI,
         callNumberType: 'Library of Congress classification',
         callNumber: '050$a " " 050$b',
         relationship: 'Resource',

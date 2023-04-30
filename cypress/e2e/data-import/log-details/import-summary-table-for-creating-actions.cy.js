@@ -15,6 +15,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
+import { LOCALION_NAMES, LOAN_TYPE_NAMES, ITEM_STATUS_NAMES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let user;
@@ -41,16 +42,16 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
         name: holdingsMappingProfileName,
-        pernanentLocation: '"Online (E)"',
-        pernanentLocationUI:'Online' },
+        pernanentLocation: `"${LOCALION_NAMES.ONLINE}"`,
+        pernanentLocationUI: LOCALION_NAMES.ONLINE_UI },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
         name: holdingsActionProfileName }
     },
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
         name: itemMappingProfileName,
-        permanentLoanType: 'Can circulate',
-        status: 'Available' },
+        permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
+        status: ITEM_STATUS_NAMES.AVAILABLE },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: itemActionProfileName }
     }

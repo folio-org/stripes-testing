@@ -4,7 +4,8 @@ import DevTeams from '../../../support/dictionary/devTeams';
 import {
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
-  ITEM_STATUS_NAMES
+  ITEM_STATUS_NAMES,
+  LOCALION_NAMES
 } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -34,13 +35,12 @@ describe('ui-data-import', () => {
   let exportedFileName;
   const quantityOfItems = '1';
   const fileName = `oneMarcBib.mrc${Helper.getRandomBarcode()}`;
-  const holdingsPermanentLocation = 'Annex (KU/CC/DI/A)';
   const collectionOfMappingAndActionProfiles = [
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
         name: `C368009 Testing item for SRS MARC bib ${Helper.getRandomBarcode()}`,
         materialType: MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE,
-        permanentLoanType:LOAN_TYPE_NAMES.CAN_CIRCULATE,
+        permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
         status: ITEM_STATUS_NAMES.AVAILABLE },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: `C368009 Testing holding for SRS MARC bib ${Helper.getRandomBarcode()}` }
@@ -48,7 +48,7 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
         name: `C368009 Testing holding for SRS MARC bib ${Helper.getRandomBarcode()}`,
-        permanentLocation: `"${holdingsPermanentLocation}"` },
+        permanentLocation: `"${LOCALION_NAMES.ANNEX}"` },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
         name: `C368009 Testing holding for SRS MARC bib ${Helper.getRandomBarcode()}` }
     }
@@ -139,6 +139,7 @@ describe('ui-data-import', () => {
       createHoldingsMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
       FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[1].mappingProfile.name);
 
+      // create action profiles
       collectionOfMappingAndActionProfiles.forEach(profile => {
         cy.visit(SettingsMenu.actionProfilePath);
         ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
@@ -154,8 +155,8 @@ describe('ui-data-import', () => {
       cy.visit(SettingsMenu.jobProfilePath);
       JobProfiles.createJobProfile(jobProfile);
       NewJobProfile.linkMatchProfile(matchProfile.profileName);
-      NewJobProfile.linkActionProfileForMatches(collectionOfMappingAndActionProfiles[1].mappingProfile.name);
-      NewJobProfile.linkActionProfileForMatches(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
+      NewJobProfile.linkActionProfileForMatches(collectionOfMappingAndActionProfiles[1].actionProfile.name);
+      NewJobProfile.linkActionProfileForMatches(collectionOfMappingAndActionProfiles[0].actionProfile.name);
       NewJobProfile.saveAndClose();
       JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
@@ -193,7 +194,7 @@ describe('ui-data-import', () => {
 
           // check created items
           FileDetails.openHoldingsInInventory('Created');
-          HoldingsRecordView.checkPermanentLocation('Annex');
+          HoldingsRecordView.checkPermanentLocation(LOCALION_NAMES.ANNEX_UI);
           cy.go('back');
           FileDetails.openItemInInventory('Created');
           ItemRecordView.verifyMaterialType(MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE);

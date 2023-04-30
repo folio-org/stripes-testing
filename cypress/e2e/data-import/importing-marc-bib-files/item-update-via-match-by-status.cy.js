@@ -2,6 +2,11 @@
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
+import {
+  LOAN_TYPE_NAMES,
+  ITEM_STATUS_NAMES,
+  LOCALION_NAMES
+} from '../../../support/constants';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
@@ -48,19 +53,24 @@ describe('ui-data-import', () => {
   const collectionOfMappingAndActionProfiles = [
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
-        name: `C357552 Create simple holdings ${Helper.getRandomBarcode()}` },
+        name: `C357552 Create simple holdings ${Helper.getRandomBarcode()}`,
+        permanentLocation: LOCALION_NAMES.ONLINE },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
         name: `C357552 Create simple holdings ${Helper.getRandomBarcode()}` }
     },
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
-        name: `C357552 Create simple items ${Helper.getRandomBarcode()}` },
+        name: `C357552 Create simple items ${Helper.getRandomBarcode()}`,
+        status: ITEM_STATUS_NAMES.AVAILABLE,
+        permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: `C357552 Create simple items ${Helper.getRandomBarcode()}` }
     },
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
-        name: `C357552 Update Item by POL match ${Helper.getRandomBarcode()}` },
+        name: `C357552 Update Item by POL match ${Helper.getRandomBarcode()}`,
+        status: ITEM_STATUS_NAMES.AVAILABLE,
+        permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: `C357552 Update simple items ${Helper.getRandomBarcode()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
@@ -150,7 +160,7 @@ describe('ui-data-import', () => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
     NewFieldMappingProfile.addStatisticalCode(statisticalCode, 4);
-    NewFieldMappingProfile.fillPermanentLocation('"Online (E)"');
+    NewFieldMappingProfile.fillPermanentLocation(`"${holdingsMappingProfile.permanentLocation}"`);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
   };
@@ -160,8 +170,8 @@ describe('ui-data-import', () => {
     NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfile);
     NewFieldMappingProfile.fillMaterialType();
     NewFieldMappingProfile.addStatisticalCode(statisticalCode, 6);
-    NewFieldMappingProfile.fillPermanentLoanType('Can circulate');
-    NewFieldMappingProfile.fillStatus('Available');
+    NewFieldMappingProfile.fillPermanentLoanType(itemMappingProfile.permanentLoanType);
+    NewFieldMappingProfile.fillStatus(itemMappingProfile.status);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfile.name);
   };

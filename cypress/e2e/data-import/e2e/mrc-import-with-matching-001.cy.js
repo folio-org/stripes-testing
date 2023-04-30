@@ -18,6 +18,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { LOCALION_NAMES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let user = {};
@@ -41,7 +42,7 @@ describe('ui-data-import', () => {
     name: `autoTestMappingProf.${getRandomPostfix()}`,
     typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
     update: true,
-    permanentLocation: '"Annex (KU/CC/DI/A)"',
+    permanentLocation: `"${LOCALION_NAMES.ANNEX}"`,
   };
   const actionProfile = {
     typeValue : NewActionProfile.folioRecordTypeValue.instance,

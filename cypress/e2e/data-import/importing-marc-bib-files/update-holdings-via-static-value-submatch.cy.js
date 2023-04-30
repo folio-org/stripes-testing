@@ -20,6 +20,7 @@ import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRec
 import Helper from '../../../support/fragments/finance/financeHelper';
 import FileManager from '../../../support/utils/fileManager';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import { LOCALION_NAMES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let instanceHrid;
@@ -47,10 +48,10 @@ describe('ui-data-import', () => {
     statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
     statisticalCodeUI: 'Book, print (books)',
     adminNote: `autotestAdminNote.${getRandomPostfix()}`,
-    permanentLocation: '"Main Library (KU/CC/DI/M)"',
-    permanentLocationUI:'Main Library',
-    temporaryLocation: '"Online (E)"',
-    temporaryLocationUI: 'Online',
+    permanentLocation: `"${LOCALION_NAMES.MAIN_LIBRARY}"`,
+    permanentLocationUI: LOCALION_NAMES.MAIN_LIBRARY_UI,
+    temporaryLocation: `"${LOCALION_NAMES.ONLINE}"`,
+    temporaryLocationUI: LOCALION_NAMES.ONLINE_UI,
     shelvingTitle: `autotestShelvingTitle.${getRandomPostfix()}`,
     callNumberType: 'National Library of Medicine classification',
     callNumber: Helper.getRandomBarcode(),

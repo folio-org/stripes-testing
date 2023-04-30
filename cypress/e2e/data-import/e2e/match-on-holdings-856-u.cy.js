@@ -2,6 +2,7 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TestTypes from '../../../support/dictionary/testTypes';
+import { LOCALION_NAMES } from '../../../support/constants';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -32,7 +33,8 @@ describe('ui-data-import', () => {
     },
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
-        name: `createEHoldingsMappingProf${getRandomPostfix()}` },
+        name: `createEHoldingsMappingProf${getRandomPostfix()}`,
+        permanentLocation: `"${LOCALION_NAMES.ONLINE}"` },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
         name: `createEHoldingsActionProf${getRandomPostfix()}` }
     },
@@ -98,7 +100,7 @@ describe('ui-data-import', () => {
   const createHoldingsMappingProfile = (holdingsMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
-    NewFieldMappingProfile.fillPermanentLocation('"Online (E)"');
+    NewFieldMappingProfile.fillPermanentLocation(holdingsMappingProfile.permanentLocation);
     NewFieldMappingProfile.addElectronicAccess('Resource', '856$u', '856$z');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);

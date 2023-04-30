@@ -21,6 +21,12 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import FileManager from '../../../support/utils/fileManager';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import {
+  LOAN_TYPE_NAMES,
+  MATERIAL_TYPE_NAMES,
+  ITEM_STATUS_NAMES,
+  LOCALION_NAMES
+} from '../../../support/constants';
 
 describe('ui-data-import', () => {
   const itemBarcode = uuid();
@@ -38,11 +44,11 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { name: `C17033 holdings create mapping profile_${getRandomPostfix()}`,
         typeValue : NewFieldMappingProfile.folioRecordTypeValue.holdings,
-        permanentLocation: '"Main Library (KU/CC/DI/M)"',
-        permanentLocationUI:'Main Library',
+        permanentLocation: `"${LOCALION_NAMES.MAIN_LIBRARY}"`,
+        permanentLocationUI: LOCALION_NAMES.MAIN_LIBRARY_UI,
         permanentLocationInHoldingsAccordion: 'Main Library >',
-        temporaryLocation: '"Online (E)"',
-        temporaryLocationUI: 'Online',
+        temporaryLocation: `"${LOCALION_NAMES.ONLINE}"`,
+        temporaryLocationUI: LOCALION_NAMES.ONLINE_UI,
         illPolicy: 'Unknown lending policy',
         digitizationPolicy: '"Digitization policy"',
         digitizationPolicyUI: 'Digitization policy' },
@@ -55,13 +61,13 @@ describe('ui-data-import', () => {
         barcode: '945$a',
         accessionNumber: '"12345"',
         accessionNumberUI: '12345',
-        materialType:'book',
+        materialType: MATERIAL_TYPE_NAMES.BOOK,
         numberOfPieces: '"25"',
         numberOfPiecesUI: '25',
-        permanentLoanType: 'Can circulate',
-        temporaryLoanType:'"Course reserves"',
-        temporaryLoanTypeUI:'Course reserves',
-        status: 'Available' },
+        permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
+        temporaryLoanType: `"${LOAN_TYPE_NAMES.COURSE_RESERVES}"`,
+        temporaryLoanTypeUI: LOAN_TYPE_NAMES.COURSE_RESERVES,
+        status: ITEM_STATUS_NAMES.AVAILABLE },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: `C17033 item create action profile_${getRandomPostfix()}` }
     },

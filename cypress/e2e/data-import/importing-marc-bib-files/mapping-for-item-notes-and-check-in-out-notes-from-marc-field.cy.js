@@ -4,7 +4,8 @@ import DevTeams from '../../../support/dictionary/devTeams';
 import {
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
-  ITEM_STATUS_NAMES
+  ITEM_STATUS_NAMES,
+  LOCALION_NAMES
 } from '../../../support/constants';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -47,7 +48,7 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
         name: `C368005 Create holdings for mapping notes ${Helper.getRandomBarcode()}`,
-        permanetLocation: '"Annex (KU/CC/DI/A)"' },
+        permanetLocation: `"${LOCALION_NAMES.ANNEX}"` },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
         name: `C368005 Create holdings for mapping notes ${Helper.getRandomBarcode()}` }
     },
