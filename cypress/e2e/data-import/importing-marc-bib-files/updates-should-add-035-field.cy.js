@@ -204,6 +204,7 @@ describe('ui-data-import', () => {
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(secondMarcFileNameForCreate);
       cy.wrap(fieldsContent).each(row => {
+        cy.wait(2000);
         FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, row.rowNumber);
         FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, row.rowNumber);
       });
@@ -274,6 +275,7 @@ describe('ui-data-import', () => {
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(secondFileNameAfterUpload);
       cy.wrap(fieldsContent).each(row => {
+        cy.wait(2000);
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, row.rowNumber);
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, row.rowNumber);
       });
@@ -296,10 +298,10 @@ describe('ui-data-import', () => {
           InventoryInstance.viewSource();
           InventoryViewSource.contains('001\t');
           InventoryViewSource.contains(instanceHrid);
+          InventoryViewSource.notContains('003\t');
+          InventoryViewSource.contains('035\t');
+          InventoryViewSource.contains(element.content);
         });
-        InventoryViewSource.notContains('003\t');
-        InventoryViewSource.contains('035\t');
-        InventoryViewSource.contains(element.content);
       });
 
       JobProfiles.deleteJobProfile(jobProfile.profileName);
