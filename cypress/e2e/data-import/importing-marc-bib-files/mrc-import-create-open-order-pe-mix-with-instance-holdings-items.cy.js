@@ -2,7 +2,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE, ORDER_STATUSES, ITEM_STATUSES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -30,7 +30,7 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { name: `C380446 Test P/E mix open order with instance, holdings, item ${getRandomPostfix()}`,
         typeValue: FOLIO_RECORD_TYPE.ORDER,
-        orderStatus: 'Open',
+        orderStatus: ORDER_STATUSES.OPEN,
         approved: true,
         vendor: 'GOBI Library Solutions',
         title: '245$a',
@@ -61,7 +61,7 @@ describe('ui-data-import', () => {
         typeValue: FOLIO_RECORD_TYPE.ITEM,
         materialType:'book',
         permanentLoanType: 'Course reserves',
-        status: 'On order' },
+        status: ITEM_STATUSES.ON_ORDER },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C380446 Create simple item for open order ${getRandomPostfix()}` }
     },

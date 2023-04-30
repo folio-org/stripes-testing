@@ -1,6 +1,7 @@
 export const ITEM_STATUSES = {
   CHECKED_OUT: 'Checked out',
   DECLARED_LOST: 'Declared lost',
+  ON_ORDER: 'On order'
 };
 
 export const REQUEST_METHOD = {
@@ -92,4 +93,9 @@ export const PAYMENT_METHOD = {
 export const BATCH_GROUP = {
   FOLIO:'"FOLIO"',
   AMHERST:'"Amherst (AC)"'
+};
+
+export const ORDER_STATUSES = {
+  OPEN: 'Open',
+  PENDING: 'Pending'
 };
