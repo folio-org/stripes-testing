@@ -17,6 +17,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 
 describe('ui-data-import', () => {
   let instanceHRID = null;
@@ -27,15 +28,13 @@ describe('ui-data-import', () => {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance,
         name: `createInstanceMappingProf${getRandomPostfix()}` },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
-        name: `createInstanceActionProf${getRandomPostfix()}`,
-        action: 'Create (all record types except MARC Authority or MARC Holdings)' }
+        name: `createInstanceActionProf${getRandomPostfix()}` }
     },
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
         name: `createEHoldingsMappingProf${getRandomPostfix()}` },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
-        name: `createEHoldingsActionProf${getRandomPostfix()}`,
-        action: 'Create (all record types except MARC Authority or MARC Holdings)' }
+        name: `createEHoldingsActionProf${getRandomPostfix()}` }
     },
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
@@ -143,7 +142,7 @@ describe('ui-data-import', () => {
     cy.wait(2500);
     JobProfiles.createJobProfile(updateEHoldingsJobProfile);
     NewJobProfile.linkMatchProfile(matchProfile.profileName);
-    NewJobProfile.linkActionProfileForMatches(collectionOfMappingAndActionProfiles[2].actionProfile);
+    NewJobProfile.linkActionProfileForMatches(collectionOfMappingAndActionProfiles[2].actionProfile.name);
     NewJobProfile.saveAndClose();
     JobProfiles.checkJobProfilePresented(updateEHoldingsJobProfile.profileName);
 
@@ -151,34 +150,31 @@ describe('ui-data-import', () => {
     // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
     cy.reload();
     DataImport.uploadFile('marcFileForC17025.mrc', nameForCreateMarcFile);
-    JobProfiles.searchJobProfileForImport(updateEHoldingsJobProfile.profileName);
+    JobProfiles.searchJobProfileForImport(createInstanceAndEHoldingsJobProfile.profileName);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(nameForCreateMarcFile);
+    Logs.checkStatusOfJobProfile('Completed');
+    Logs.openFileDetails(nameForCreateMarcFile);
+    FileDetails.openInstanceInInventory('Created');
+    InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+      instanceHRID = initialInstanceHrId;
 
-    InventorySearchAndFilter.getInstanceHRID()
-      .then(hrId => {
-        instanceHRID = hrId;
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
-        InventoryInstance.openHoldingView();
-        HoldingsRecordView.checkURIIsNotEmpty();
-      });
+      InventoryInstance.openHoldingView();
+      HoldingsRecordView.checkURIIsNotEmpty();
 
-    cy.visit(TopMenu.dataImportPath);
-    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-    cy.reload();
-    DataImport.uploadFile('marcFileForC17025.mrc', nameForUpdateCreateMarcFile);
-    JobProfiles.searchJobProfileForImport(updateEHoldingsJobProfile.profileName);
-    JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(nameForUpdateCreateMarcFile);
-    Logs.checkStatusOfJobProfile();
+      cy.visit(TopMenu.dataImportPath);
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
+      DataImport.uploadFile('marcFileForC17025.mrc', nameForUpdateCreateMarcFile);
+      JobProfiles.searchJobProfileForImport(updateEHoldingsJobProfile.profileName);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(nameForUpdateCreateMarcFile);
+      Logs.checkStatusOfJobProfile();
 
-    InventorySearchAndFilter.getInstanceHRID()
-      .then(() => {
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
-        InventoryInstance.openHoldingView();
-        HoldingsRecordView.checkCallNumber('ONLINE');
-      });
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
+      InventoryInstance.openHoldingView();
+      HoldingsRecordView.checkCallNumber('ONLINE');
+    });
   });
 });
