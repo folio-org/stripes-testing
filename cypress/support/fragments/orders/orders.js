@@ -107,6 +107,13 @@ export default {
     ]);
   },
 
+  editOrderNumber: (poNumber) => {
+    cy.do([
+      TextField({ name: 'poNumber'}).fillIn(poNumber),
+      saveAndClose.click()
+    ]);
+  },
+
   duplicateOrder() {
     cy.do([
       orderDetailsPane
