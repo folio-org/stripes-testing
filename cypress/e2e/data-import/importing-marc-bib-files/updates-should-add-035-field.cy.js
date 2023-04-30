@@ -216,6 +216,7 @@ describe('ui-data-import', () => {
         DataImport.waitLoading();
         Logs.openFileDetails(secondMarcFileNameForCreate);
         FileDetails.openInstanceInInventory('Created', row.rowNumber);
+        cy.wait(2000);
         InventoryInstance.viewSource();
         // changing the second file
         InventoryViewSource.extructDataFrom999Field()
@@ -286,6 +287,7 @@ describe('ui-data-import', () => {
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(secondFileNameAfterUpload);
         FileDetails.openInstanceInInventory('Updated', element.rowNumber);
+        cy.wait(2000);
         InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatusTerm);
         InstanceRecordView.verifyStatisticalCode(mappingProfile.statisticalCodeUI);
         InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
