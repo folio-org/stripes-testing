@@ -40,7 +40,6 @@ describe('ui-data-import', () => {
   ];
   const itemNote = 'THIS WAS UPDATED!';
   const jobProfileNameForExport = `C357552 Bibs with Item HRIDs ${Helper.getRandomBarcode()}`;
-
   // file names
   const nameMarcFileForImportCreate = `C357552autotestFile.${Helper.getRandomBarcode()}.mrc`;
   const nameForCSVFile = `C357552autotestFile${Helper.getRandomBarcode()}.csv`;
@@ -209,7 +208,7 @@ describe('ui-data-import', () => {
       JobProfiles.createJobProfile(updateJobProfile);
       NewJobProfile.linkMatchProfile(matchProfileItemHrid.profileName);
       NewJobProfile.linkMatchProfileForMatches(matchProfileItemStatus.profileName);
-      NewJobProfile.linkActionProfileForMatches(collectionOfMappingAndActionProfiles[2].actionProfile);
+      NewJobProfile.linkActionProfileForMatches(collectionOfMappingAndActionProfiles[2].actionProfile.name);
       NewJobProfile.saveAndClose();
       JobProfiles.checkJobProfilePresented(updateJobProfile.profileName);
 
