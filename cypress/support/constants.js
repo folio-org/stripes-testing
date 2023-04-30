@@ -1,8 +1,3 @@
-export const ITEM_STATUSES = {
-  CHECKED_OUT: 'Checked out',
-  DECLARED_LOST: 'Declared lost',
-};
-
 export const REQUEST_METHOD = {
   DELETE: 'DELETE',
   GET: 'GET',
@@ -35,7 +30,7 @@ export const LOST_ITEM_FEES_POLICY_NAMES = {
 
 export const LOAN_TYPE_NAMES = {
   CAN_CIRCULATE: 'Can circulate',
-  COURSE_RESERVES:'Course reserves'
+  COURSE_RESERVES: 'Course reserves'
 };
 
 export const MATERIAL_TYPE_NAMES = {
@@ -54,7 +49,7 @@ export const ITEM_STATUS_NAMES = {
   AWAITING_PICKUP: 'Awaiting pickup',
   CHECKED_OUT: 'Checked out',
   DECLARED_LOST: 'Declared lost',
-  AWAITING_DALIVERY: 'Awaiting delivery'
+  AWAITING_DELIVERY: 'Awaiting delivery'
 };
 
 export const CY_ENV = {

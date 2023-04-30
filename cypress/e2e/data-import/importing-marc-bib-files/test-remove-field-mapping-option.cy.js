@@ -2,11 +2,6 @@ import uuid from 'uuid';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import {
-  LOAN_TYPE_NAMES,
-  MATERIAL_TYPE_NAMES,
-  ITEM_STATUS_NAMES
-} from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -30,7 +25,6 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 describe('ui-data-import', () => {
   const itemBarcode = uuid();
   const quantityOfItems = '1';
-  // unique file names
   const marcFileNameForCreate = `C17033 autotestFile.${getRandomPostfix()}.mrc`;
   const editedMarcFileName = `marcFileForC317033.${getRandomPostfix()}.mrc`;
   // profiles for creating
@@ -61,13 +55,13 @@ describe('ui-data-import', () => {
         barcode: '945$a',
         accessionNumber: '"12345"',
         accessionNumberUI: '12345',
-        materialType: MATERIAL_TYPE_NAMES.BOOK,
+        materialType:'book',
         numberOfPieces: '"25"',
         numberOfPiecesUI: '25',
-        permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
+        permanentLoanType: 'Can circulate',
         temporaryLoanType:'"Course reserves"',
-        temporaryLoanTypeUI:LOAN_TYPE_NAMES.COURSE_RESERVES,
-        status: ITEM_STATUS_NAMES.AVAILABLE },
+        temporaryLoanTypeUI:'Course reserves',
+        status: 'Available' },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: `C17033 item create action profile_${getRandomPostfix()}` }
     },
@@ -277,8 +271,8 @@ describe('ui-data-import', () => {
           // create Job profile
           cy.visit(SettingsMenu.jobProfilePath);
           JobProfiles.createJobProfileWithLinkingProfilesForUpdate(jobProfileForUpdate);
-          NewJobProfile.linkMatchAndActionProfilesForHoldings(collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.name, collectionOfMatchProfiles[0].matchProfile.profileName, 0);
-          NewJobProfile.linkMatchAndActionProfilesForItem(collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.name, collectionOfMatchProfiles[1].matchProfile.profileName, 2);
+          NewJobProfile.linkMatchAndActionProfilesForHoldings(collectionOfMappingAndActionProfilesForUpdate[0].actionProfile.name, collectionOfMatchProfiles[0].matchProfile.profileName, 0);
+          NewJobProfile.linkMatchAndActionProfilesForItem(collectionOfMappingAndActionProfilesForUpdate[1].actionProfile.name, collectionOfMatchProfiles[1].matchProfile.profileName, 2);
           NewJobProfile.saveAndClose();
           JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
 
