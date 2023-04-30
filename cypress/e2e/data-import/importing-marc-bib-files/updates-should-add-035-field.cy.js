@@ -202,7 +202,7 @@ describe('ui-data-import', () => {
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(secondMarcFileNameForCreate);
       cy.wrap(fieldsContent).each(row => {
-        cy.wait(2000);
+        cy.wait(8000);
         FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, row.rowNumber);
         FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, row.rowNumber);
       });
@@ -210,12 +210,12 @@ describe('ui-data-import', () => {
       FileDetails.checkInstanceQuantityInSummaryTable(itemQuantity);
       cy.wrap(fieldsContent).each(row => {
         // need to wait until page will be opened in loop
-        cy.wait(2000);
+        cy.wait(8000);
         cy.visit(TopMenu.dataImportPath);
         DataImport.waitLoading();
         Logs.openFileDetails(secondMarcFileNameForCreate);
         FileDetails.openInstanceInInventory('Created', row.rowNumber);
-        cy.wait(2000);
+        cy.wait(8000);
         InventoryInstance.viewSource();
         // changing the second file
         InventoryViewSource.extructDataFrom999Field()
@@ -271,7 +271,7 @@ describe('ui-data-import', () => {
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(secondFileNameAfterUpload);
       cy.wrap(fieldsContent).each(row => {
-        cy.wait(2000);
+        cy.wait(8000);
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc, row.rowNumber);
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, row.rowNumber);
       });
@@ -281,11 +281,11 @@ describe('ui-data-import', () => {
       // open the instances in the Inventory and check 001, 003, 035 fields
       cy.wrap(fieldsContent).each(element => {
         // need to wait until page will be opened in loop
-        cy.wait(2000);
+        cy.wait(8000);
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(secondFileNameAfterUpload);
         FileDetails.openInstanceInInventory('Updated', element.rowNumber);
-        cy.wait(2000);
+        cy.wait(8000);
         InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatusTerm);
         InstanceRecordView.verifyStatisticalCode(mappingProfile.statisticalCodeUI);
         InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
@@ -298,6 +298,7 @@ describe('ui-data-import', () => {
           InventoryViewSource.contains('035\t');
           InventoryViewSource.contains(element.content);
         });
+        cy.wait(8000);
       });
 
       JobProfiles.deleteJobProfile(jobProfile.profileName);
