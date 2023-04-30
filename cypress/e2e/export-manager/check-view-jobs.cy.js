@@ -18,11 +18,11 @@ describe('orders: export', () => {
   const order = { ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',
     ongoing: { isSubscription: false, manualRenewal: false },
-    approved: true };
+    approved: true,
+  };
   const organization = {
     ...NewOrganization.defaultUiOrganizations,
-    accounts: [
-      {
+    accounts: [{
         accountNo: getRandomPostfix(),
         accountStatus: 'Active',
         acqUnitIds: [],
@@ -33,8 +33,8 @@ describe('orders: export', () => {
         name: 'TestAccout1',
         notes: '',
         paymentMethod: 'Cash',
-      },
-      {
+    },
+    {
         accountNo: getRandomPostfix(),
         accountStatus: 'Active',
         acqUnitIds: [],
@@ -45,34 +45,32 @@ describe('orders: export', () => {
         name: 'TestAccout2',
         notes: '',
         paymentMethod: 'Cash',
-      },
-    ]
-  };
-  const integrationName1 = `FirstIntegrationName${getRandomPostfix()}`;
-  const integrationName2 = `SecondIntegrationName${getRandomPostfix()}`;
+    }]};
+  const firstIntegrationName = `FirstIntegrationName${getRandomPostfix()}`;
+  const secondIntegrationName = `SecondIntegrationName${getRandomPostfix()}`;
   const integartionDescription1 = 'Test Integation descripton1';
   const integartionDescription2 = 'Test Integation descripton2';
   const vendorEDICodeFor1Integration = getRandomPostfix();
   const libraryEDICodeFor1Integration = getRandomPostfix();
   const vendorEDICodeFor2Integration = getRandomPostfix();
   const libraryEDICodeFor2Integration = getRandomPostfix();
+  const UTCTime = DateTools.getUTCDateForScheduling();
   let user;
   let location;
   let servicePointId;
   let orderNumber;
-  const UTCTime = DateTools.getUTCDateForScheduling();
 
   before(() => {
     cy.getAdminToken();
 
     ServicePoints.getViaApi()
-      .then((servicePoint) => {
-        servicePointId = servicePoint[0].id;
-        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
-          .then(res => {
-            location = res;
-          });
-      });
+    .then((servicePoint) => {
+      servicePointId = servicePoint[0].id;
+      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
+        .then(res => {
+          location = res;
+        });
+    });
     Organizations.createOrganizationViaApi(organization)
       .then(organizationsResponse => {
         organization.id = organizationsResponse;
@@ -83,23 +81,23 @@ describe('orders: export', () => {
     Organizations.checkSearchResults(organization);
     Organizations.selectOrganization(organization.name);
     Organizations.addIntegration();
-    Organizations.fillIntegrationInformation(integrationName1, integartionDescription1, vendorEDICodeFor1Integration, libraryEDICodeFor1Integration, organization.accounts[0].accountNo, 'Purchase', UTCTime);
+    Organizations.fillIntegrationInformation(firstIntegrationName, integartionDescription1, vendorEDICodeFor1Integration, libraryEDICodeFor1Integration, organization.accounts[0].accountNo, 'Purchase', UTCTime);
     Organizations.addIntegration();
     cy.wait(2000);
-    Organizations.fillIntegrationInformation(integrationName2, integartionDescription2, vendorEDICodeFor2Integration, libraryEDICodeFor2Integration, organization.accounts[1].accountNo, 'Purchase At Vendor System', UTCTime);
+    Organizations.fillIntegrationInformation(secondIntegrationName, integartionDescription2, vendorEDICodeFor2Integration, libraryEDICodeFor2Integration, organization.accounts[1].accountNo, 'Purchase At Vendor System', UTCTime);
 
     cy.createOrderApi(order)
       .then((response) => {
-        orderNumber = response.body.poNumber;
-      });
+      orderNumber = response.body.poNumber;
+    });
 
     cy.createTempUser([
       permissions.uiOrdersView.gui,
-      permissions.uiOrdersCreate.gui,
+      permissions.uiOrdersCreate.gui, 
       permissions.uiOrdersEdit.gui,
       permissions.uiOrdersApprovePurchaseOrders.gui,
-      permissions.uiOrganizationsViewEditCreate.gui,
-      permissions.uiOrganizationsView.gui,
+      permissions.viewEditCreateOrganization.gui, 
+      permissions.viewOrganization.gui,
       permissions.uiExportOrders.gui,
       permissions.exportManagerAll.gui,
       permissions.exportManagerDownloadAndResendFiles.gui,
@@ -121,16 +119,16 @@ describe('orders: export', () => {
 
     Organizations.deleteOrganizationViaApi(organization.id);
     NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
-      location.institutionId,
-      location.campusId,
-      location.libraryId,
-      location.id
-    );
+        location.institutionId,
+        location.campusId,
+        location.libraryId,
+        location.id
+      );
     Users.deleteViaApi(user.userId);
   });
 
-  it('C350402: Verify that an Order is exported to a definite Vendors Account specified in one of several Integration configurations (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
-    // Need to wait while first job will be runing
+  it('C347885: Check view for jobs on Export Manager page (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
+    //Need to wait while first job will be runing
     cy.wait(60000);
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList();
@@ -141,19 +139,15 @@ describe('orders: export', () => {
     Orders.openOrder();
     cy.visit(TopMenu.exportManagerOrganizationsPath);
     ExportManagerSearchPane.selectOrganizationsSearch();
-    ExportManagerSearchPane.selectExportMethod(integrationName1);
-    ExportManagerSearchPane.selectSearchResultItem();
+    ExportManagerSearchPane.selectFailedStatusCheckbox();
+    ExportManagerSearchPane.selectJobByIntegrationInList(firstIntegrationName);
+    ExportManagerSearchPane.verifyThirdPaneExportJobExist();
     ExportManagerSearchPane.rerunJob();
-    cy.reload();
-    ExportManagerSearchPane.verifyResult('Successful');
-    ExportManagerSearchPane.selectJob('Successful');
-    ExportManagerSearchPane.downloadJob();
+    ExportManagerSearchPane.closeExportJobPane();
     ExportManagerSearchPane.resetAll();
-    ExportManagerSearchPane.selectOrganizationsSearch();
-    ExportManagerSearchPane.selectExportMethod(integrationName2);
-    ExportManagerSearchPane.selectSearchResultItem();
-    ExportManagerSearchPane.rerunJob();
     cy.reload();
-    ExportManagerSearchPane.verifyResult('Failed');
+    ExportManagerSearchPane.selectSuccessfulStatusCheckbox();
+    ExportManagerSearchPane.selectJobByIntegrationInList(firstIntegrationName);
+    ExportManagerSearchPane.verifyThirdPaneExportJobExist();
   });
 });
