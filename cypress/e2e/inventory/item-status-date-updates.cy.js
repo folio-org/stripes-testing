@@ -276,31 +276,34 @@ describe('inventory', () => {
 
     // create delivery request (hold or recall) on item
     cy.visit(TopMenu.requestsPath);
+    cy.wait(8000);
     NewRequest.createDeliveryRequest({
       itemBarcode,
       requesterBarcode: userForDeliveryRequest.barcode,
       requestType: 'Hold'
     });
-    // cy.visit(TopMenu.checkInPath);
-    // CheckInActions.checkInItem(itemBarcode);
-    // CheckInModals.confirmMultipieceCheckIn();
-    // cy.visit(TopMenu.checkOutPath);
-    // CheckOutActions.checkOutItemWithUserName(userName, itemBarcode);
-    // CheckOutModals.cancelMultipleCheckOut();
-    // openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    // fullCheck(ItemRecordView.itemStatuses.awaitingDelivery);
+    cy.wait(8000);
+    cy.visit(TopMenu.checkInPath);
+    CheckInActions.checkInItem(itemBarcode);
+    CheckInModals.confirmMultipieceCheckIn();
+    cy.wait(8000);
+    cy.visit(TopMenu.checkOutPath);
+    CheckOutActions.checkOutItemWithUserName(userName, itemBarcode);
+    CheckOutModals.cancelMultipleCheckOut();
+    cy.wait(8000);
+    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    fullCheck(ItemRecordView.itemStatuses.awaitingDelivery);
 
-    // // check out item to user with delivery request
-    // checkOut(userForDeliveryRequest.username, itemBarcode, ItemRecordView.itemStatuses.checkedOut, CheckOutModals.confirmMultipieceCheckOut);
+    // check out item to user with delivery request
+    checkOut(userForDeliveryRequest.username, itemBarcode, ItemRecordView.itemStatuses.checkedOut, CheckOutModals.confirmMultipieceCheckOut);
 
-    // // check in item at service point assigned to its effective location
-    // cy.visit(TopMenu.checkInPath);
-    // CheckInActions.backdateCheckInItem(DateTools.getPreviousDayDate(), itemBarcode);
-    // CheckInModals.confirmMultipieceCheckIn();
-    // // TODO investigate why need 1 min wait before each step
-    // // it's enough to wait 10000 before and after check in
-    // cy.wait(10000);
-    // openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    // fullCheck(ItemRecordView.itemStatuses.available);
+    // check in item at service point assigned to its effective location
+    cy.visit(TopMenu.checkInPath);
+    cy.wait(8000);
+    CheckInActions.backdateCheckInItem(DateTools.getPreviousDayDate(), itemBarcode);
+    CheckInModals.confirmMultipieceCheckIn();
+    cy.wait(8000);
+    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    fullCheck(ItemRecordView.itemStatuses.available);
   });
 });
