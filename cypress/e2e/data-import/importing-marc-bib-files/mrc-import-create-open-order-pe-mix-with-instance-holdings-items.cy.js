@@ -2,6 +2,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { LOCALION_NAMES, MATERIAL_TYPE_NAMES, LOAN_TYPE_NAMES, ITEM_STATUS_NAMES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -42,7 +43,7 @@ describe('ui-data-import', () => {
         currency: 'USD',
         electronicUnitPrice: '25',
         quantityElectronic: '1',
-        locationName: 'Annex (KU/CC/DI/A)',
+        locationName: LOCALION_NAMES.ANNEX,
         locationQuantityPhysical: '1',
         locationQuantityElectronic: '1' },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.order,
@@ -51,17 +52,17 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { name: `C380446 Create simple holdings for open order ${getRandomPostfix()}`,
         typeValue : NewFieldMappingProfile.folioRecordTypeValue.holdings,
-        permanentLocation: '"Main Library (KU/CC/DI/M)"',
-        permanentLocationUI:'Main Library' },
+        permanentLocation: `"${LOCALION_NAMES.MAIN_LIBRARY}"`,
+        permanentLocationUI: LOCALION_NAMES.MAIN_LIBRARY_UI },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
         name: `C380446 Create simple holdings for open order ${getRandomPostfix()}` }
     },
     {
       mappingProfile: { name: `C380446 Create simple item for open order ${getRandomPostfix()}`,
         typeValue : NewFieldMappingProfile.folioRecordTypeValue.item,
-        materialType:'book',
-        permanentLoanType: 'Course reserves',
-        status: 'On order' },
+        materialType: MATERIAL_TYPE_NAMES.BOOK,
+        permanentLoanType: LOAN_TYPE_NAMES.COURSE_RESERVES,
+        status: ITEM_STATUS_NAMES.ON_ORDER },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: `C380446 Create simple item for open order ${getRandomPostfix()}` }
     },

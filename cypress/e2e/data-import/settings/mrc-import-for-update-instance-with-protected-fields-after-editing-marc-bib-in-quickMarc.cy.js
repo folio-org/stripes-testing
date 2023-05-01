@@ -39,14 +39,9 @@ describe('ui-data-import', () => {
   // unique file names
   const editedMarcFileName = `C356829 editedMarcFile.${getRandomPostfix()}.mrc`;
   const nameMarcFileForUpload = `C356829 autotestFile.${getRandomPostfix()}.mrc`;
-  // unique profile names
-  const matchProfileName = `C356829 001 to Instance HRID ${getRandomPostfix()}`;
-  const mappingProfileName = `C356829 Update instance and check field protections ${getRandomPostfix()}`;
-  const actionProfileName = `C356829 Update instance and check field protections ${getRandomPostfix()}`;
-  const jobProfileName = `C356829 Update instance and check field protections ${getRandomPostfix()}`;
 
   const matchProfile = {
-    profileName: matchProfileName,
+    profileName: `C356829 001 to Instance HRID ${getRandomPostfix()}`,
     incomingRecordFields: {
       field: '001'
     },
@@ -55,18 +50,18 @@ describe('ui-data-import', () => {
     instanceOption: NewMatchProfile.optionsList.instanceHrid
   };
   const mappingProfile = {
-    name: mappingProfileName,
+    name: `C356829 Update instance and check field protections ${getRandomPostfix()}`,
     typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance,
     catalogedDate: '###TODAY###',
     instanceStatus: 'Batch Loaded'
   };
   const actionProfile = {
     typeValue: NewActionProfile.folioRecordTypeValue.instance,
-    name: actionProfileName,
+    name: `C356829 Update instance and check field protections ${getRandomPostfix()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
   const jobProfile = {
-    profileName: jobProfileName,
+    profileName: `C356829 Update instance and check field protections ${getRandomPostfix()}`,
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
@@ -96,10 +91,10 @@ describe('ui-data-import', () => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
     FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-    JobProfiles.deleteJobProfile(jobProfileName);
-    MatchProfiles.deleteMatchProfile(matchProfileName);
-    ActionProfiles.deleteActionProfile(actionProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
+    MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+    ActionProfiles.deleteActionProfile(actionProfile.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
     Users.deleteViaApi(user.userId);
   });
 
@@ -138,7 +133,7 @@ describe('ui-data-import', () => {
       // create match profile
       cy.visit(SettingsMenu.matchProfilePath);
       MatchProfiles.createMatchProfile(matchProfile);
-      MatchProfiles.checkMatchProfilePresented(matchProfileName);
+      MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
 
       // create mapping profile
       cy.visit(SettingsMenu.mappingProfilePath);
@@ -147,20 +142,20 @@ describe('ui-data-import', () => {
       NewFieldMappingProfile.fillCatalogedDate(mappingProfile.catalogedDate);
       NewFieldMappingProfile.fillInstanceStatusTerm(mappingProfile.statusTerm);
       FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfileName);
-      FieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
+      FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+      FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
       // create action profile
       cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.create(actionProfile, mappingProfileName);
-      ActionProfiles.checkActionProfilePresented(actionProfileName);
+      ActionProfiles.create(actionProfile, mappingProfile.name);
+      ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
       // create job profile
       cy.visit(SettingsMenu.jobProfilePath);
       JobProfiles.createJobProfile(jobProfile);
-      NewJobProfile.linkMatchAndActionProfilesForInstance(actionProfileName, matchProfileName);
+      NewJobProfile.linkMatchAndActionProfilesForInstance(actionProfile.name, matchProfile.profileName);
       NewJobProfile.saveAndClose();
-      JobProfiles.checkJobProfilePresented(jobProfileName);
+      JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
       cy.visit(TopMenu.inventoryPath);
       InventoryInstances.importWithOclc(oclcForImport);
@@ -200,7 +195,7 @@ describe('ui-data-import', () => {
         // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
         cy.reload();
         DataImport.uploadFile(editedMarcFileName, nameMarcFileForUpload);
-        JobProfiles.searchJobProfileForImport(jobProfileName);
+        JobProfiles.searchJobProfileForImport(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFileForUpload);
         Logs.checkStatusOfJobProfile('Completed');
