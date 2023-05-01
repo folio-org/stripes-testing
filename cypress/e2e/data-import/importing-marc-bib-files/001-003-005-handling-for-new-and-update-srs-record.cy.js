@@ -25,6 +25,7 @@ describe('ui-data-import', () => {
   let instanceHrid = null;
   let instanceHridForReimport = null;
   let exportedFileName = null;
+  const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   // resource identifiers
   const resourceIdentifiers = [
     { type: 'OCLC', value: '(OCoLC)26493177' },
@@ -38,14 +39,8 @@ describe('ui-data-import', () => {
   const editedMarcFileName = `C17039 fileWith999Field.${getRandomPostfix()}.mrc`;
   const fileNameAfterUpload = `C17039 uploadedFile.${getRandomPostfix()}.mrc`;
 
-  // unique profile names
-  const matchProfileName = `C17039 match profile ${Helper.getRandomBarcode()}`;
-  const mappingProfileName = `C17039 mapping profile ${Helper.getRandomBarcode()}`;
-  const actionProfileName = `C17039 action profile ${Helper.getRandomBarcode()}`;
-  const jobProfileName = `C17039 job profile ${Helper.getRandomBarcode()}`;
-
   const matchProfile = {
-    profileName: matchProfileName,
+    profileName: `C17039 match profile ${Helper.getRandomBarcode()}`,
     incomingRecordFields: {
       field: '999',
       in1: 'f',
@@ -58,18 +53,18 @@ describe('ui-data-import', () => {
   };
 
   const mappingProfile = {
-    name: mappingProfileName,
+    name: `C17039 mapping profile ${Helper.getRandomBarcode()}`,
     typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance
   };
 
   const actionProfile = {
     typeValue: NewActionProfile.folioRecordTypeValue.instance,
-    name: actionProfileName,
+    name: `C17039 action profile ${Helper.getRandomBarcode()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
 
   const jobProfile = {
-    profileName: jobProfileName,
+    profileName: `C17039 job profile ${Helper.getRandomBarcode()}`,
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
@@ -83,7 +78,7 @@ describe('ui-data-import', () => {
         // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
         cy.reload();
         DataImport.uploadFile('oneMarcBib.mrc', fileName);
-        JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+        JobProfiles.searchJobProfileForImport(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);
         Logs.openFileDetails(fileName);
@@ -97,10 +92,10 @@ describe('ui-data-import', () => {
   });
 
   after('delete test data', () => {
-    JobProfiles.deleteJobProfile(jobProfileName);
-    MatchProfiles.deleteMatchProfile(matchProfileName);
-    ActionProfiles.deleteActionProfile(actionProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
+    MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+    ActionProfiles.deleteActionProfile(actionProfile.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
     // delete downloads folder and created files in fixtures
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
     FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
@@ -121,7 +116,7 @@ describe('ui-data-import', () => {
     // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
     cy.reload();
     DataImport.uploadFile('marcFilrForC17039.mrc', nameMarcFileForCreate);
-    JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+    JobProfiles.searchJobProfileForImport(jobProfileToRun);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(nameMarcFileForCreate);
     Logs.checkStatusOfJobProfile('Completed');
@@ -181,7 +176,7 @@ describe('ui-data-import', () => {
 
         // create job profile for update
         cy.visit(SettingsMenu.jobProfilePath);
-        JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);
+        JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfile.name, matchProfile.profileName);
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         // upload a marc file for updating already created instance

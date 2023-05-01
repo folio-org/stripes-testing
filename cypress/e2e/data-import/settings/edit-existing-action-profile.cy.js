@@ -11,11 +11,10 @@ import ActionProfileEdit from '../../../support/fragments/data_import/action_pro
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
 
 describe('ui-data-import', () => {
-  const actionProfileName = `C2348 autotest action profile ${Helper.getRandomBarcode()}`;
   let user;
   const actionProfile = {
     typeValue: NewActionProfile.folioRecordTypeValue.instance,
-    name: actionProfileName
+    name: `C2348 autotest action profile ${Helper.getRandomBarcode()}`
   };
 
   before('create user', () => {
@@ -34,7 +33,7 @@ describe('ui-data-import', () => {
 
   after('delete test data', () => {
     Users.deleteViaApi(user.userId);
-    ActionProfiles.deleteActionProfile(actionProfileName);
+    ActionProfiles.deleteActionProfile(actionProfile.name);
   });
 
   it('C2348 Edit an existing action profile without associated job profile (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {

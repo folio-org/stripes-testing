@@ -15,7 +15,7 @@ import {
   TextInput,
   Pane,
 } from '../../../../../interactors';
-import { ITEM_STATUSES } from '../../../constants';
+import { ITEM_STATUS_NAMES } from '../../../constants';
 import DateTools from '../../../utils/dateTools';
 import { getFullName } from '../../../utils/users';
 
@@ -80,10 +80,10 @@ export default {
     this.checkKeyValue('Renewal count', '1');
   },
   checkStatusDeclaredLost() {
-    this.checkStatus(ITEM_STATUSES.DECLARED_LOST);
+    this.checkStatus(ITEM_STATUS_NAMES.DECLARED_LOST);
   },
   checkStatusCheckedOut() {
-    this.checkStatus(ITEM_STATUSES.CHECKED_OUT);
+    this.checkStatus(ITEM_STATUS_NAMES.CHECKED_OUT);
   },
   checkStatusInList(row, status) {
     cy.then(() => MultiColumnListHeader({ id: 'list-column-itemstatus' }).index()).then((columnIndex) => {
@@ -97,7 +97,7 @@ export default {
     });
   },
   checkStatusDeclaredLostInList(row) {
-    this.checkStatusInList(row, ITEM_STATUSES.DECLARED_LOST);
+    this.checkStatusInList(row, ITEM_STATUS_NAMES.DECLARED_LOST);
   },
   anonymizeAllLoans() {
     cy.do(AnonymizeAllButton.click());
@@ -161,7 +161,7 @@ export default {
     });
   },
   checkActionDeclaredLost(row) {
-    this.checkAction(row, ITEM_STATUSES.DECLARED_LOST);
+    this.checkAction(row, ITEM_STATUS_NAMES.DECLARED_LOST);
   },
   checkLoansActionsHaveSameDueDate(firstRow, secondRow, dueDate) {
     this.checkDateValid(dueDate);
