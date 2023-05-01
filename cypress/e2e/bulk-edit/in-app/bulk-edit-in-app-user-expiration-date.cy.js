@@ -19,7 +19,7 @@ describe('bulk-edit', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditUpdateRecords.gui,
-        permissions.gui,
+        permissions.uiUsersView.gui,
       ])
         .then(userProperties => {
           user = userProperties;
