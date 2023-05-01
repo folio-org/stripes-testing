@@ -13,33 +13,33 @@ import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthorit
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 
 describe('plug-in MARC authority | Search', () => {
-    const testData = {
-      forC359233: {
-        searchOptionA: 'Children\'s subject heading',
-        searchOptionB: 'Name-title',
-        value: 'María de Jesús, de Agreda, sister, 1602-1665',
-        valueInDetailView: '‡a María de Jesús, ‡c de Agreda, sister, ‡d 1602-1665',
-        markedValue: 'María de Jesús,',
-        noResults: 'No results found for "María de Jesús, de Agreda, sister, 1602-1665". Please check your spelling and filters.'
-      },
-    };
-    
-    const marcFiles = [
-      {
-        marc: 'oneMarcBib.mrc', 
-        fileName: `testMarcFile.${getRandomPostfix()}.mrc`, 
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-        numOfRecords: 1,
-      }, 
-      {
-        marc: 'marcFileForC359233.mrc', 
-        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
-        numOfRecords: 1,
-      }
-    ]
+  const testData = {
+    forC359233: {
+      searchOptionA: 'Children\'s subject heading',
+      searchOptionB: 'Name-title',
+      value: 'María de Jesús, de Agreda, sister, 1602-1665',
+      valueInDetailView: '‡a María de Jesús, ‡c de Agreda, sister, ‡d 1602-1665',
+      markedValue: 'María de Jesús,',
+      noResults: 'No results found for "María de Jesús, de Agreda, sister, 1602-1665". Please check your spelling and filters.'
+    },
+  };
 
-    let createdAuthorityIDs = [];
+  const marcFiles = [
+    {
+      marc: 'oneMarcBib.mrc',
+      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      numOfRecords: 1,
+    },
+    {
+      marc: 'marcFileForC359233.mrc',
+      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      jobProfileToRun: 'Default - Create SRS MARC Authority',
+      numOfRecords: 1,
+    }
+  ];
+
+  const createdAuthorityIDs = [];
 
   before('Creating user', () => {
     cy.createTempUser([

@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -26,7 +26,7 @@ describe('ui-data-import', () => {
     actionForSuppress: 'Mark for all affected records',
     catalogedDate: '"2021-02-24"',
     catalogedDateUI: '2021-02-24',
-    instanceStatus: 'Batch Loaded',
+    instanceStatus: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
     statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
     statisticalCodeUI: 'Book, print (books)',
     natureOfContent: 'bibliography'

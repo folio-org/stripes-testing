@@ -2,7 +2,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import DateTools from '../../../support/utils/dateTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -23,7 +23,7 @@ describe('ui-data-import', () => {
   const itemsForCreateInstance = {
     catalogedDate: '###TODAY###',
     catalogedDateUi: DateTools.getFormattedDate({ date: new Date() }),
-    statusTerm: 'Batch Loaded',
+    statusTerm: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
     statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
     statisticalCodeUI: 'Book, print (books)'
   };

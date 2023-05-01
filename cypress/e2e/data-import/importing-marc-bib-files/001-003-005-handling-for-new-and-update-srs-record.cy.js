@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -31,7 +31,7 @@ describe('ui-data-import', () => {
     { type: 'OCLC', value: '(OCoLC)26493177' },
     { type: 'System control number', value: '(ICU)1299036' }
   ];
-  const instanceStatusTerm = 'Batch Loaded';
+  const instanceStatusTerm = INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED;
   const catalogedDate = '###TODAY###';
 
   // unique file names

@@ -1,6 +1,6 @@
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -31,7 +31,7 @@ describe('ui-data-import', () => {
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
     statisticalCodeUI: 'Book, print (books)',
-    instanceStatus: 'Batch Loaded'
+    instanceStatus: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED
   };
   const marcBibMappingProfile = {
     name: `C17019 autotest marc bib mapping profile.${Helper.getRandomBarcode()}`,

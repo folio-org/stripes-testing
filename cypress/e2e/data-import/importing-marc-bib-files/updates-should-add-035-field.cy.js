@@ -2,7 +2,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -23,6 +23,7 @@ import FileManager from '../../../support/utils/fileManager';
 
 describe('ui-data-import', () => {
   let user = null;
+  const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   // unique file names
   const firstMarcFileNameForCreate = `C358998 firstCreateAutotestFile.${getRandomPostfix()}.mrc`;
   const firstMarcFileNameForUpdate = `C358998 firstUpdateAutotestFile.${getRandomPostfix()}.mrc`;
@@ -34,7 +35,7 @@ describe('ui-data-import', () => {
   const mappingProfile = {
     name: `C358998 Update instance via 999$i match and check 001, 003, 035 ${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-    instanceStatusTerm: 'Batch Loaded',
+    instanceStatusTerm: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
     statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
     statisticalCodeUI: 'Book, print (books)'
   };

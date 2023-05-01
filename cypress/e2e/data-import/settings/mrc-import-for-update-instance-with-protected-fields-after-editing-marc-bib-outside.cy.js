@@ -2,7 +2,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
@@ -49,7 +49,7 @@ describe('ui-data-import', () => {
     name: `C356830 Update instance and check field protections ${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     catalogedDate: '###TODAY###',
-    instanceStatus: 'Batch Loaded'
+    instanceStatus: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED
   };
   const actionProfile = {
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,
