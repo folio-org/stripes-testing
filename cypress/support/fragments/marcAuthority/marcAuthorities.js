@@ -26,6 +26,7 @@ const buttonLink = Button('Link');
 const buttonAdvancedSearch = Button('Advanced search');
 const modalAdvancedSearch = Modal('Advanced search');
 const buttonSearchInAdvancedModal = Button({ariaLabel: 'Search'});
+const buttonCancelInAdvancedModal = Button({ariaLabel: 'Cancel'});
 
 export default {
   waitLoading: () => cy.expect(rootSection.exists()),
@@ -310,5 +311,48 @@ export default {
 
   checkSearchInput(value) {
     cy.expect(searchInput.has({ value: value }));
+  },
+
+  clickCancelButton() {
+    cy.do(modalAdvancedSearch.find(buttonCancelInAdvancedModal).click());
+  },
+
+  checkAdvancedSearchModalAbsence() {
+    cy.expect(modalAdvancedSearch.absent());
+  },
+
+  checkAdvancedSearchModalFields: (row, value, searchOption, boolean) => {
+    cy.expect([
+      modalAdvancedSearch.exists(),
+      AdvancedSearchRow({ index: 0 }).has({text: including('Search for')}),
+      AdvancedSearchRow({ index: row }).find(TextField()).has({value: including(value)}),
+      AdvancedSearchRow({ index: row }).has({text: including('in')}),
+      AdvancedSearchRow({ index: row }).find(Select({ label: 'Search options*' })).has({content: including(searchOption)}),
+      modalAdvancedSearch.find(buttonSearchInAdvancedModal).exists(),
+      modalAdvancedSearch.find(buttonCancelInAdvancedModal).exists(),
+    ]);
+    if (boolean) cy.expect([AdvancedSearchRow({ index: row }).find(Select({ label: 'Operator*' })).has({content: including(boolean)}),]);
+  },
+
+  checkAdvancedSearchOption(rowIndex) {
+    cy.do( AdvancedSearchRow({ index: rowIndex }).find(Select({ label: 'Search options*' })).click());
+    cy.expect([
+      AdvancedSearchRow({ index: rowIndex }).find(Select({ label: 'Search options*' })).has({ content: including('Keyword') }),
+      AdvancedSearchRow({ index: rowIndex }).find(Select({ label: 'Search options*' })).has({ content: including('Identifier (all)') }),
+      AdvancedSearchRow({ index: rowIndex }).find(Select({ label: 'Search options*' })).has({ content: including('Personal name') }),
+      AdvancedSearchRow({ index: rowIndex }).find(Select({ label: 'Search options*' })).has({ content: including('Corporate/Conference name') }),
+      AdvancedSearchRow({ index: rowIndex }).find(Select({ label: 'Search options*' })).has({ content: including('Geographic name') }),
+      AdvancedSearchRow({ index: rowIndex }).find(Select({ label: 'Search options*' })).has({ content: including('Name-title') }),
+      AdvancedSearchRow({ index: rowIndex }).find(Select({ label: 'Search options*' })).has({ content: including('Uniform title') }),
+      AdvancedSearchRow({ index: rowIndex }).find(Select({ label: 'Search options*' })).has({ content: including('Subject') }),
+      AdvancedSearchRow({ index: rowIndex }).find(Select({ label: 'Search options*' })).has({ content: including('Children\'s subject heading') }),
+      AdvancedSearchRow({ index: rowIndex }).find(Select({ label: 'Search options*' })).has({ content: including('Genre') }),
+    ]);
+  },
+
+  checkResultList(records) {
+    records.forEach(record => {
+      cy.expect(MultiColumnListCell(record).exists());
+    });
   },
 };
