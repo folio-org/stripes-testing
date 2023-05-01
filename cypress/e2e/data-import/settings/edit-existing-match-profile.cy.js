@@ -11,7 +11,6 @@ import MatchProfileEdit from '../../../support/fragments/data_import/match_profi
 import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('ui-data-import', () => {
-  const matchProfileName = `C2339 autotest MatchProf${Helper.getRandomBarcode()}`;
   let user;
   const matchProfile = {
     profileName: `C2339 autotest MatchProf${Helper.getRandomBarcode()}`,
