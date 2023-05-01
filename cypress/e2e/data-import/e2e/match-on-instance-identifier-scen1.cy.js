@@ -16,6 +16,7 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import permissions from '../../../support/dictionary/permissions';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
@@ -146,7 +147,7 @@ describe('ui-data-import', () => {
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(fileNameForUpdateInstance);
       Logs.verifyInstanceStatus(0, 3, 'Updated');
-      Logs.verifyInstanceStatus(1, 3, 'Discarded');
+      Logs.verifyInstanceStatus(1, 3, FileDetails.status.noAction);
       Logs.clickOnHotLink(0, 3, 'Updated');
       InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
       InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);

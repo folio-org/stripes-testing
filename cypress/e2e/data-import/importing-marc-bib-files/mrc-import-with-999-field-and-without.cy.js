@@ -52,7 +52,7 @@ describe('ui-data-import', () => {
       // check that "SRS MARC" and "Instance" were not created for record, that contain 999 ff field
       FileDetails.checkSrsRecordQuantityInSummaryTable('1', 2);
       FileDetails.checkErrorQuantityInSummaryTable('1', 3);
-      FileDetails.checkStatusInColumn(FileDetails.status.discarded, FileDetails.columnName.srsMarc);
+      FileDetails.checkStatusInColumn(FileDetails.status.noAction, FileDetails.columnName.srsMarc);
       FileDetails.checkStatusInColumn(FileDetails.status.error, FileDetails.columnName.error);
       FileDetails.verifyErrorMessage(error);
     });

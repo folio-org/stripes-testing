@@ -304,7 +304,7 @@ describe('ui-data-import', () => {
       });
       // check items what statuses were changed have Discarded status
       titlesItemsStatusChanged.forEach(title => {
-        FileDetails.checkStatusByTitle(title, 'Discarded');
+        FileDetails.checkStatusByTitle(title, FileDetails.status.noAction);
       });
     });
 });

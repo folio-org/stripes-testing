@@ -349,7 +349,7 @@ describe('ui-data-import', () => {
       FileDetails.checkHoldingsQuantityInSummaryTable('1', 1);
       FileDetails.checkItemQuantityInSummaryTable('1', 1);
       FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);
-      FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
+      FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.noAction, FileDetails.status.noAction, FileDetails.status.noAction]);
 
       // check is items updated
       FileDetails.openInstanceInInventory('Updated');
