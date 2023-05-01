@@ -14,7 +14,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import TopMenu from '../../../support/fragments/topMenu';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { LOCALION_NAMES, FOLIO_RECORD_TYPE } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   // unique file name to upload
@@ -39,7 +39,7 @@ describe('ui-data-import', () => {
     const mappingProfileForExport = {
       name: mappingProfileNameForExport,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-      permanentLocation: '"Annex (KU/CC/DI/A)"',
+      permanentLocation: `"${LOCALION_NAMES.ANNEX}"`,
     };
     cy.visit(SettingsMenu.mappingProfilePath);
     FieldMappingProfiles.createMappingProfile(mappingProfileForExport);
@@ -119,7 +119,7 @@ describe('ui-data-import', () => {
           name: mappingProfileName,
           typeValue: FOLIO_RECORD_TYPE.INSTANCE,
           update: true,
-          permanentLocation: '"Annex (KU/CC/DI/A)"'
+          permanentLocation: `"${LOCALION_NAMES.ANNEX}"`
         };
         cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.createMappingProfile(mappingProfile);

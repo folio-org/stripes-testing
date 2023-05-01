@@ -27,6 +27,7 @@ describe.skip('ui-data-import', () => {
   let user = null;
   let instanceHridFromFirstFile;
   const instanceHridsFromSecondFile = [];
+  const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const instanceStatusTerm = 'Batch Loaded';
   const statisticalCode = 'ARL (Collection stats): books - Book, print (books)';
   const statisticalCodeUI = 'Book, print (books)';
@@ -42,7 +43,6 @@ describe.skip('ui-data-import', () => {
     { instanceNumber: 6, field035contains:'(OCoLC)1195818788' },
     { instanceNumber: 7, field035contains:'(OCoLC)ocn991553174' }
   ];
-
   // unique file names
   const firstMarcFileNameForCreate = `C358998 firstCreateAutotestFile.${getRandomPostfix()}.mrc`;
   const secondMarcFileNameForCreate = `C358998 secondCreateAutotestFile.${getRandomPostfix()}.mrc`;
@@ -51,25 +51,19 @@ describe.skip('ui-data-import', () => {
   const firstFileNameAfterUpload = `C358998 firstFileNameAfterUpload.${getRandomPostfix()}.mrc`;
   const secondFileNameAfterUpload = `C358998 secondFileNameAfterUpload.${getRandomPostfix()}.mrc`;
 
-  // unique profile names
-  const mappingProfileName = `C358998 Update instance via 999$i match and check 001, 003, 035 ${getRandomPostfix()}`;
-  const actionProfileName = `C358998 Update instance via 999$i match and check 001, 003, 035 ${getRandomPostfix()}`;
-  const matchProfileName = `C358998 Match 999$i to Instance UUID ${getRandomPostfix()}`;
-  const jobProfileName = `C358998 Update instance via 999$i match and check 001, 003, 035 ${getRandomPostfix()}`;
-
   const mappingProfile = {
-    name: mappingProfileName,
+    name: `C358998 Update instance via 999$i match and check 001, 003, 035 ${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE
   };
 
   const actionProfile = {
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-    name: actionProfileName,
+    name: `C358998 Update instance via 999$i match and check 001, 003, 035 ${getRandomPostfix()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
 
   const matchProfile = {
-    profileName: matchProfileName,
+    profileName: `C358998 Match 999$i to Instance UUID ${getRandomPostfix()}`,
     incomingRecordFields: {
       field: '999',
       in1: 'f',
@@ -82,7 +76,7 @@ describe.skip('ui-data-import', () => {
   };
 
   const jobProfile = {
-    profileName: jobProfileName,
+    profileName: `C358998 Update instance via 999$i match and check 001, 003, 035 ${getRandomPostfix()}`,
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
@@ -103,10 +97,10 @@ describe.skip('ui-data-import', () => {
   });
 
   after('delete test data', () => {
-    JobProfiles.deleteJobProfile(jobProfileName);
-    MatchProfiles.deleteMatchProfile(matchProfileName);
-    ActionProfiles.deleteActionProfile(actionProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
+    MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+    ActionProfiles.deleteActionProfile(actionProfile.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
     Users.deleteViaApi(user.userId);
     // delete downloads folder and created files in fixtures
     FileManager.deleteFile(`cypress/fixtures/${firstMarcFileNameForUpdate}`);
@@ -129,7 +123,7 @@ describe.skip('ui-data-import', () => {
       cy.reload();
       // upload the first .mrc file
       DataImport.uploadFile('marcFileForC358998ForCreate_1.mrc', firstMarcFileNameForCreate);
-      JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+      JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(firstMarcFileNameForCreate);
       Logs.checkStatusOfJobProfile('Completed');
@@ -162,7 +156,7 @@ describe.skip('ui-data-import', () => {
         // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
         cy.reload();
         DataImport.uploadFile('marcFileForC358998ForCreate_2.mrc', secondMarcFileNameForCreate);
-        JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+        JobProfiles.searchJobProfileForImport(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(secondMarcFileNameForCreate);
         Logs.checkStatusOfJobProfile('Completed');
@@ -225,7 +219,7 @@ describe.skip('ui-data-import', () => {
 
         // create job profile for update
         cy.visit(SettingsMenu.jobProfilePath);
-        JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);
+        JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfile.name, matchProfile.profileName);
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         // upload a marc file for updating already created first instance

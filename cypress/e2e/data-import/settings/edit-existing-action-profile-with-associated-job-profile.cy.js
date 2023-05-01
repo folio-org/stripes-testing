@@ -20,15 +20,15 @@ describe('ui-data-import', () => {
   const jobProfileName = `C367994 autotest job profile${Helper.getRandomBarcode()}`;
   let user;
   const mappingProfile = {
-    name: mappingProfileName,
+    name: `C367994 autotest mapping profile ${Helper.getRandomBarcode()}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE
   };
   const actionProfile = {
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-    name: actionProfileName
+    name: `C367994 autotest action profile ${Helper.getRandomBarcode()}`
   };
   const jobProfile = { ...NewJobProfile.defaultJobProfile,
-    profileName: jobProfileName,
+    profileName: `C367994 autotest job profile${Helper.getRandomBarcode()}`,
     acceptedType: NewJobProfile.acceptedDataType.marc };
 
   before('create user', () => {
@@ -54,15 +54,15 @@ describe('ui-data-import', () => {
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkActionProfile(actionProfile);
         NewJobProfile.saveAndClose();
-        JobProfiles.checkJobProfilePresented(jobProfileName);
+        JobProfiles.checkJobProfilePresented(jobProfile.profileName);
       });
   });
 
   after('delete test data', () => {
     Users.deleteViaApi(user.userId);
-    JobProfiles.deleteJobProfile(jobProfileName);
-    ActionProfiles.deleteActionProfile(actionProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
+    ActionProfiles.deleteActionProfile(actionProfile.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
   });
 
   it('C367994 Edit an existing action profile with associated job profile (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {

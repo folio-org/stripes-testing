@@ -21,30 +21,24 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 
 describe('ui-data-import', () => {
   let user = null;
+  let instanceHrid = null;
   const fieldsForDelete = ['977', '978', '979'];
   const fieldsForDeleteIds = [];
-  let instanceHrid = null;
-
-  // unique profile names
-  const jobProfileName = `C350678 Create bib and instance, but remove some MARC fields first ${Helper.getRandomBarcode()}`;
-  const actionProfileName = `C350678 Remove extraneous MARC fields ${Helper.getRandomBarcode()}`;
-  const mappingProfileName = `C350678 Remove extraneous MARC fields ${Helper.getRandomBarcode()}`;
-
   // unique file name to upload
   const fileName = `C350678autotestFileProtection.${Helper.getRandomBarcode()}.mrc`;
 
-  const mappingProfile = { name: mappingProfileName,
+  const mappingProfile = { name: `C350678 Remove extraneous MARC fields ${Helper.getRandomBarcode()}`,
     typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC };
 
   const actionProfile = {
     typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
-    name: actionProfileName,
+    name: `C350678 Remove extraneous MARC fields ${Helper.getRandomBarcode()}`,
     action: 'Modify (MARC Bibliographic record type only)'
   };
 
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: jobProfileName,
+    profileName: `C350678 Create bib and instance, but remove some MARC fields first ${Helper.getRandomBarcode()}`,
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
@@ -65,9 +59,9 @@ describe('ui-data-import', () => {
   after('delete test data', () => {
     fieldsForDeleteIds.forEach(fieldId => MarcFieldProtection.deleteMarcFieldProtectionViaApi(fieldId));
     // delete profiles
-    JobProfiles.deleteJobProfile(jobProfileName);
-    ActionProfiles.deleteActionProfile(actionProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
+    ActionProfiles.deleteActionProfile(actionProfile.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
     Users.deleteViaApi(user.userId);
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
       .then((instance) => {
@@ -113,28 +107,28 @@ describe('ui-data-import', () => {
       NewFieldMappingProfile.addNewFieldInModificationSection();
       NewFieldMappingProfile.fillModificationSectionWithDelete('Delete', fieldsForDelete[2], 2);
       FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfileName);
-      FieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
+      FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+      FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
       // create action profile
       cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.create(actionProfile, mappingProfileName);
-      ActionProfiles.checkActionProfilePresented(actionProfileName);
+      ActionProfiles.create(actionProfile, mappingProfile.name);
+      ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
       // create job profile
       cy.visit(SettingsMenu.jobProfilePath);
       JobProfiles.createJobProfile(jobProfile);
-      NewJobProfile.linkActionProfileByName(actionProfileName);
+      NewJobProfile.linkActionProfileByName(actionProfile.name);
       NewJobProfile.linkActionProfileByName('Default - Create instance');
       NewJobProfile.saveAndClose();
-      JobProfiles.checkJobProfilePresented(jobProfileName);
+      JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
       // upload a marc file for creating of the new instance, holding and item
       cy.visit(TopMenu.dataImportPath);
       // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
       cy.reload();
       DataImport.uploadFile('marcFileForC350678.mrc', fileName);
-      JobProfiles.searchJobProfileForImport(jobProfileName);
+      JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileName);
       Logs.openFileDetails(fileName);

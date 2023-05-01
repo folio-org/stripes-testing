@@ -23,10 +23,6 @@ describe('ui-data-import', () => {
   const fileNameForCreateInstance = `C347828autotestFile.${getRandomPostfix()}.mrc`;
   const fileNameForUpdateInstance = `C347828autotestFile.${getRandomPostfix()}.mrc`;
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-  const matchProfileName = `autotestMatchProf${getRandomPostfix()}`;
-  const mappingProfileName = `autotestMappingProf${getRandomPostfix()}`;
-  const actionProfileName = `autotestActionProf${getRandomPostfix()}`;
-  const jobProfileName = `autotestJobProf${getRandomPostfix()}`;
   const instanceGeneralNote = 'IDENTIFIER UPDATE 1';
   const resourceIdentifiers = [
     { type: 'UPC', value: 'ORD32671387-4' },
@@ -35,7 +31,7 @@ describe('ui-data-import', () => {
     { type: 'System control number', value: '(AMB)84714376518561876438' },
   ];
   const matchProfile = {
-    profileName: matchProfileName,
+    profileName: `autotestMatchProf${getRandomPostfix()}`,
     incomingRecordFields: {
       field: '024',
       in1: '1',
@@ -47,7 +43,7 @@ describe('ui-data-import', () => {
     instanceOption: 'Identifier: UPC',
   };
   const mappingProfile = {
-    name: mappingProfileName,
+    name: `autotestMappingProf${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     suppressFromDiscavery: 'Mark for all affected records',
     catalogedDate: '"2021-12-01"',
@@ -55,12 +51,12 @@ describe('ui-data-import', () => {
     instanceStatus: 'Batch Loaded',
   };
   const actionProfile = {
-    name: actionProfileName,
+    name: `autotestActionProf${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
   const jobProfile = {
-    profileName: jobProfileName,
+    profileName: `autotestJobProf${getRandomPostfix()}`,
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
@@ -94,10 +90,10 @@ describe('ui-data-import', () => {
   after('delete test data', () => {
     Users.deleteViaApi(userId);
     // delete profiles
-    JobProfiles.deleteJobProfile(jobProfileName);
-    MatchProfiles.deleteMatchProfile(matchProfileName);
-    ActionProfiles.deleteActionProfile(actionProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
+    MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+    ActionProfiles.deleteActionProfile(actionProfile.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
   });
 
   it('C347828 Match on Instance identifier match meets both the Identifier type and Data requirements (folijet)',
@@ -120,7 +116,7 @@ describe('ui-data-import', () => {
 
       cy.visit(SettingsMenu.matchProfilePath);
       MatchProfiles.createMatchProfile(matchProfile);
-      MatchProfiles.checkMatchProfilePresented(matchProfileName);
+      MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
 
       cy.visit(SettingsMenu.mappingProfilePath);
       FieldMappingProfiles.openNewMappingProfileForm();
@@ -133,18 +129,18 @@ describe('ui-data-import', () => {
       FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
       cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.create(actionProfile, mappingProfileName);
-      ActionProfiles.checkActionProfilePresented(actionProfileName);
+      ActionProfiles.create(actionProfile, mappingProfile.name);
+      ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
       cy.visit(SettingsMenu.jobProfilePath);
-      JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);
-      JobProfiles.checkJobProfilePresented(jobProfileName);
+      JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfile.name, matchProfile.profileName);
+      JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
       cy.visit(TopMenu.dataImportPath);
       // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
       cy.reload();
       DataImport.uploadFile('marcFileForMatchOnIdentifierForUpdate.mrc', fileNameForUpdateInstance);
-      JobProfiles.searchJobProfileForImport(jobProfileName);
+      JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileNameForUpdateInstance);
       Logs.checkStatusOfJobProfile('Completed');

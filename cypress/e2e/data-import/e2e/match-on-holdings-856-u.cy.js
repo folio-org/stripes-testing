@@ -2,7 +2,7 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TestTypes from '../../../support/dictionary/testTypes';
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { LOCALION_NAMES, FOLIO_RECORD_TYPE } from '../../../support/constants';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -17,47 +17,37 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 
 describe('ui-data-import', () => {
-  const matchProfileName = `autotestMatchProf${getRandomPostfix()}`;
+  let instanceHRID = null;
   const nameForCreateMarcFile = `createFile${getRandomPostfix()}.mrc`;
   const nameForUpdateCreateMarcFile = `updateFile${getRandomPostfix()}.mrc`;
-  const createInstanceMappingProfileName = `createInstanceMappingProf${getRandomPostfix()}`;
-  const createEHoldingsMappingProfileName = `createEHoldingsMappingProf${getRandomPostfix()}`;
-  const updateEHoldingsMappingProfileName = `updateEHoldingsMappingProf${getRandomPostfix()}`;
-  const createInstanceActionProfileName = `createInstanceActionProf${getRandomPostfix()}`;
-  const createEHoldingsActionProfileName = `createEHoldingsActionProf${getRandomPostfix()}`;
-  const updateEHoldingsActionProfileName = `updateEHoldingsActionProf${getRandomPostfix()}`;
-  const createInstanceAndEHoldingsJobProfileName = `createInstanceAndEHoldingsJobProf${getRandomPostfix()}`;
-  const updateEHoldingsJobProfileName = `updateEHoldingsJobProf${getRandomPostfix()}`;
-  let instanceHRID = null;
-
   const collectionOfMappingAndActionProfiles = [
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-        name: createInstanceMappingProfileName },
+        name: `createInstanceMappingProf${getRandomPostfix()}` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-        name: createInstanceActionProfileName,
-        action: 'Create (all record types except MARC Authority or MARC Holdings)' }
+        name: `createInstanceActionProf${getRandomPostfix()}` }
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: createEHoldingsMappingProfileName },
+        name: `createEHoldingsMappingProf${getRandomPostfix()}`,
+        permanentLocation: `"${LOCALION_NAMES.ONLINE}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: createEHoldingsActionProfileName,
-        action: 'Create (all record types except MARC Authority or MARC Holdings)' }
+        name: `createEHoldingsActionProf${getRandomPostfix()}` }
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: updateEHoldingsMappingProfileName },
+        name: `updateEHoldingsMappingProf${getRandomPostfix()}` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: updateEHoldingsActionProfileName,
+        name: `updateEHoldingsActionProf${getRandomPostfix()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     }
   ];
 
   const matchProfile = {
-    profileName: matchProfileName,
+    profileName: `autotestMatchProf${getRandomPostfix()}`,
     incomingRecordFields: {
       field: '856',
       in1: '4',
@@ -71,11 +61,11 @@ describe('ui-data-import', () => {
 
   const createInstanceAndEHoldingsJobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: createInstanceAndEHoldingsJobProfileName,
+    profileName: `createInstanceAndEHoldingsJobProf${getRandomPostfix()}`,
   };
   const updateEHoldingsJobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: updateEHoldingsJobProfileName,
+    profileName: `updateEHoldingsJobProf${getRandomPostfix()}`,
   };
 
   before('login', () => {
@@ -84,15 +74,13 @@ describe('ui-data-import', () => {
   });
 
   after('delete test data', () => {
-    JobProfiles.deleteJobProfile(createInstanceAndEHoldingsJobProfileName);
-    JobProfiles.deleteJobProfile(updateEHoldingsJobProfileName);
-    MatchProfiles.deleteMatchProfile(matchProfileName);
-    ActionProfiles.deleteActionProfile(createInstanceActionProfileName);
-    ActionProfiles.deleteActionProfile(createEHoldingsActionProfileName);
-    ActionProfiles.deleteActionProfile(updateEHoldingsActionProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(createInstanceMappingProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(createEHoldingsMappingProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(updateEHoldingsMappingProfileName);
+    JobProfiles.deleteJobProfile(createInstanceAndEHoldingsJobProfile.profileName);
+    JobProfiles.deleteJobProfile(updateEHoldingsJobProfile.profileName);
+    MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+    collectionOfMappingAndActionProfiles.forEach(profile => {
+      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+    });
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
       .then((instance) => {
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
@@ -111,7 +99,7 @@ describe('ui-data-import', () => {
   const createHoldingsMappingProfile = (holdingsMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
-    NewFieldMappingProfile.fillPermanentLocation('"Online (E)"');
+    NewFieldMappingProfile.fillPermanentLocation(holdingsMappingProfile.permanentLocation);
     NewFieldMappingProfile.addElectronicAccess('Resource', '856$u', '856$z');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
@@ -149,48 +137,45 @@ describe('ui-data-import', () => {
     NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[0].actionProfile);
     NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[1].actionProfile);
     NewJobProfile.saveAndClose();
-    JobProfiles.checkJobProfilePresented(createInstanceAndEHoldingsJobProfileName);
+    JobProfiles.checkJobProfilePresented(createInstanceAndEHoldingsJobProfile.profileName);
 
     // need to wait until the first job profile will be created
     cy.wait(2500);
     JobProfiles.createJobProfile(updateEHoldingsJobProfile);
-    NewJobProfile.linkMatchProfile(matchProfileName);
-    NewJobProfile.linkActionProfileForMatches(updateEHoldingsActionProfileName);
+    NewJobProfile.linkMatchProfile(matchProfile.profileName);
+    NewJobProfile.linkActionProfileForMatches(collectionOfMappingAndActionProfiles[2].actionProfile.name);
     NewJobProfile.saveAndClose();
-    JobProfiles.checkJobProfilePresented(updateEHoldingsJobProfileName);
+    JobProfiles.checkJobProfilePresented(updateEHoldingsJobProfile.profileName);
 
     cy.visit(TopMenu.dataImportPath);
     // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
     cy.reload();
     DataImport.uploadFile('marcFileForC17025.mrc', nameForCreateMarcFile);
-    JobProfiles.searchJobProfileForImport(createInstanceAndEHoldingsJobProfileName);
+    JobProfiles.searchJobProfileForImport(createInstanceAndEHoldingsJobProfile.profileName);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(nameForCreateMarcFile);
+    Logs.checkStatusOfJobProfile('Completed');
+    Logs.openFileDetails(nameForCreateMarcFile);
+    FileDetails.openInstanceInInventory('Created');
+    InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+      instanceHRID = initialInstanceHrId;
 
-    InventorySearchAndFilter.getInstanceHRID()
-      .then(hrId => {
-        instanceHRID = hrId;
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
-        InventoryInstance.openHoldingView();
-        HoldingsRecordView.checkURIIsNotEmpty();
-      });
+      InventoryInstance.openHoldingView();
+      HoldingsRecordView.checkURIIsNotEmpty();
 
-    cy.visit(TopMenu.dataImportPath);
-    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-    cy.reload();
-    DataImport.uploadFile('marcFileForC17025.mrc', nameForUpdateCreateMarcFile);
-    JobProfiles.searchJobProfileForImport(updateEHoldingsJobProfileName);
-    JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(nameForUpdateCreateMarcFile);
-    Logs.checkStatusOfJobProfile();
+      cy.visit(TopMenu.dataImportPath);
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
+      DataImport.uploadFile('marcFileForC17025.mrc', nameForUpdateCreateMarcFile);
+      JobProfiles.searchJobProfileForImport(updateEHoldingsJobProfile.profileName);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(nameForUpdateCreateMarcFile);
+      Logs.checkStatusOfJobProfile();
 
-    InventorySearchAndFilter.getInstanceHRID()
-      .then(() => {
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
-        InventoryInstance.openHoldingView();
-        HoldingsRecordView.checkCallNumber('ONLINE');
-      });
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
+      InventoryInstance.openHoldingView();
+      HoldingsRecordView.checkCallNumber('ONLINE');
+    });
   });
 });

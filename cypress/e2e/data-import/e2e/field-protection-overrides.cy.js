@@ -25,20 +25,7 @@ describe('ui-data-import', () => {
   let firstFieldId = null;
   let secondFieldId = null;
   let instanceHrid = null;
-
-  // unique name for profiles
-  const marcBibMapProfileNameForUpdate = `C17018 Update MARC Bib with protections.${getRandomPostfix()}`;
-  const instanceMapProfileNameForUpdate = `C17018 Update instance 1.${getRandomPostfix()}`;
-  const marcBibMapProfileNameForUpdateAndOverride = `C17018 Update MARC Bib with protection OVERRIDES.${getRandomPostfix()}`;
-  const instanceMapProfileNameForUpdateAndOverride = `C17018 Update instance 2.${getRandomPostfix()}`;
-  const marcBibActionProfileNameForUpdate = `C17018 Update MARC Bib with protections.${getRandomPostfix()}`;
-  const instanceActionProfileNameForUpdate = `C17018 Update instance 1.${getRandomPostfix()}`;
-  const marcBibActionProfileNameForUpdateAndOverride = `C17018 Update MARC Bib with protection OVERRIDES.${getRandomPostfix()}`;
-  const instanceActionProfileNameForUpdateAndOverride = `C17018 Update MARC Bib with protection OVERRIDES.${getRandomPostfix()}`;
-  const matchProfileName = `C17018 001 to 001 MARC Bib.${getRandomPostfix()}`;
-  const jobProfileNameForUpdate = `C17018 Update 1: MARC Bib with protections.${getRandomPostfix()}`;
-  const jobProfileNameForOverride = `C17018 Update 2: MARC Bib with protections.${getRandomPostfix()}`;
-
+  const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   // unique file name to upload
   const fileNameForCreatingInstance = `C17018autotestFileCreteInstance.${getRandomPostfix()}.mrc`;
   const fileNameForProtect = `C17018 marcFileForC17018-Rev1-Protect_${getRandomPostfix()}.mrc`;
@@ -71,50 +58,50 @@ describe('ui-data-import', () => {
     { type: 'ISBN', value: '4934691323219 (paperback)' }
   ];
   const marcBibMappingProfile = {
-    name: marcBibMapProfileNameForUpdate,
+    name: `C17018 Update MARC Bib with protections.${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC
   };
 
   const instanceMappingProfile = {
-    name: instanceMapProfileNameForUpdate,
+    name: `C17018 Update instance 1.${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE
   };
 
   const marcBibMappingProfileOverride = {
-    name: marcBibMapProfileNameForUpdateAndOverride,
+    name: `C17018 Update MARC Bib with protection OVERRIDES.${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC
   };
 
   const instanceMappingProfileOverride = {
-    name: instanceMapProfileNameForUpdateAndOverride,
+    name: `C17018 Update instance 2.${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE
   };
 
   const marcBibActionProfile = {
     typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
-    name: marcBibActionProfileNameForUpdate,
+    name: `C17018 Update MARC Bib with protections.${getRandomPostfix()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
 
   const instanceActionProfile = {
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-    name: instanceActionProfileNameForUpdate,
+    name: `C17018 Update instance 1.${getRandomPostfix()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
 
   const marcBibActionProfileOverride = {
     typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
-    name: marcBibActionProfileNameForUpdateAndOverride,
+    name: `C17018 Update MARC Bib with protection OVERRIDES.${getRandomPostfix()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
 
   const instanceActionProfileOverride = {
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-    name: instanceActionProfileNameForUpdateAndOverride,
+    name: `C17018 Update MARC Bib with protection OVERRIDES.${getRandomPostfix()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
 
-  const matchProfile = { profileName: matchProfileName,
+  const matchProfile = { profileName: `C17018 001 to 001 MARC Bib.${getRandomPostfix()}`,
     incomingRecordFields: {
       field: '001'
     },
@@ -126,13 +113,13 @@ describe('ui-data-import', () => {
 
   const jobProfileForUpdate = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: jobProfileNameForUpdate,
+    profileName: `C17018 Update 1: MARC Bib with protections.${getRandomPostfix()}`,
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
   const jobProfileForOverride = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: jobProfileNameForOverride,
+    profileName: `C17018 Update 2: MARC Bib with protections.${getRandomPostfix()}`,
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
@@ -170,17 +157,17 @@ describe('ui-data-import', () => {
     MarcFieldProtection.deleteMarcFieldProtectionViaApi(firstFieldId);
     MarcFieldProtection.deleteMarcFieldProtectionViaApi(secondFieldId);
     // delete profiles
-    JobProfiles.deleteJobProfile(jobProfileNameForUpdate);
-    JobProfiles.deleteJobProfile(jobProfileNameForOverride);
-    MatchProfiles.deleteMatchProfile(matchProfileName);
-    ActionProfiles.deleteActionProfile(marcBibActionProfileNameForUpdate);
-    ActionProfiles.deleteActionProfile(instanceActionProfileNameForUpdate);
-    ActionProfiles.deleteActionProfile(marcBibActionProfileNameForUpdateAndOverride);
-    ActionProfiles.deleteActionProfile(instanceActionProfileNameForUpdateAndOverride);
-    FieldMappingProfiles.deleteFieldMappingProfile(marcBibMapProfileNameForUpdate);
-    FieldMappingProfiles.deleteFieldMappingProfile(instanceMapProfileNameForUpdate);
-    FieldMappingProfiles.deleteFieldMappingProfile(marcBibMapProfileNameForUpdateAndOverride);
-    FieldMappingProfiles.deleteFieldMappingProfile(instanceMapProfileNameForUpdateAndOverride);
+    JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
+    JobProfiles.deleteJobProfile(jobProfileForOverride.profileName);
+    MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+    ActionProfiles.deleteActionProfile(marcBibActionProfile.name);
+    ActionProfiles.deleteActionProfile(instanceActionProfile.name);
+    ActionProfiles.deleteActionProfile(marcBibActionProfileOverride.name);
+    ActionProfiles.deleteActionProfile(instanceActionProfileOverride.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(marcBibMappingProfile.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfile.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(marcBibMappingProfileOverride.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileOverride.name);
     // delete created files
     FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev1}`);
     FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);
@@ -245,7 +232,7 @@ describe('ui-data-import', () => {
     // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
     cy.reload();
     DataImport.uploadFile('marcFileForC17018-BeforeOverride.mrc', fileNameForCreatingInstance);
-    JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+    JobProfiles.searchJobProfileForImport(jobProfileToRun);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(fileNameForCreatingInstance);
     Logs.checkStatusOfJobProfile('Completed');

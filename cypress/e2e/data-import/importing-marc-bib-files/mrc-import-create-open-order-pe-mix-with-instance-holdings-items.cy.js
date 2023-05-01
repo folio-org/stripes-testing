@@ -2,7 +2,13 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE, ORDER_STATUSES, ITEM_STATUSES } from '../../../support/constants';
+import {
+  LOCALION_NAMES,
+  FOLIO_RECORD_TYPE,
+  MATERIAL_TYPE_NAMES,
+  LOAN_TYPE_NAMES,
+  ITEM_STATUS_NAMES,
+  ORDER_STATUSES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -42,7 +48,7 @@ describe('ui-data-import', () => {
         currency: 'USD',
         electronicUnitPrice: '25',
         quantityElectronic: '1',
-        locationName: 'Annex (KU/CC/DI/A)',
+        locationName: LOCALION_NAMES.ANNEX,
         locationQuantityPhysical: '1',
         locationQuantityElectronic: '1' },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ORDER,
@@ -51,8 +57,8 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { name: `C380446 Create simple holdings for open order ${getRandomPostfix()}`,
         typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        permanentLocation: '"Main Library (KU/CC/DI/M)"',
-        permanentLocationUI:'Main Library' },
+        permanentLocation: `"${LOCALION_NAMES.MAIN_LIBRARY}"`,
+        permanentLocationUI: LOCALION_NAMES.MAIN_LIBRARY_UI },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C380446 Create simple holdings for open order ${getRandomPostfix()}` }
     },

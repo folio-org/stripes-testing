@@ -12,17 +12,13 @@ import ActionProfileEdit from '../../../support/fragments/data_import/action_pro
 import ConfirmRemoval from '../../../support/fragments/data_import/action_profiles/modals/confirmRemoval';
 
 describe('ui-data-import', () => {
-  // unique profile names
-  const mappingProfileName = `C11115 autotest mapping profile ${Helper.getRandomBarcode()}`;
-  const actionProfileName = `C11115 autotest action profile ${Helper.getRandomBarcode()}`;
-
   const mappingProfile = {
-    name: mappingProfileName,
+    name: `C11115 autotest mapping profile ${Helper.getRandomBarcode()}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE
   };
 
   const actionProfile = {
-    name: actionProfileName,
+    name: `C11115 autotest action profile ${Helper.getRandomBarcode()}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE
   };
 
@@ -32,8 +28,8 @@ describe('ui-data-import', () => {
   });
 
   after('delete test data', () => {
-    ActionProfiles.deleteActionProfile(actionProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    ActionProfiles.deleteActionProfile(actionProfile.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
   });
 
   it('C11115 Attach/Remove a field mapping profile to an action profile (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {

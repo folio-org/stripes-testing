@@ -1,7 +1,7 @@
 import uuid from 'uuid';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE, LOCALION_NAMES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import Orders from '../../../support/fragments/orders/orders';
@@ -35,21 +35,6 @@ import ItemActions from '../../../support/fragments/inventory/inventoryItem/item
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 
 describe('ui-data-import', () => {
-  const firstItem = {
-    title: 'Agrarianism and capitalism in early Georgia, 1732-1743 / Jay Jordan Butler.',
-    productId: '9782266111560',
-    quantity: '1',
-    price: '20',
-    barcode: uuid()
-  };
-
-  const secondItem = {
-    title: 'Evolution of the Earth / Donald R. Prothero, Robert H. Dott, Jr.',
-    productId: '9783161484100',
-    quantity: '1',
-    price: '20'
-  };
-
   let firstOrderNumber;
   let secondOrderNumber;
   let vendorId;
@@ -59,51 +44,50 @@ describe('ui-data-import', () => {
   let materialTypeId;
   let user = {};
   let servicePointId;
-
-  // unique profile names
-  const jobProfileName = `C350590 autotestJobProf${Helper.getRandomBarcode()}`;
-  const matchProfileNameForInstance = `C350590 935 $a POL to Instance POL ${Helper.getRandomBarcode()}`;
-  const matchProfileNameForHoldings = `C350590 935 $a POL to Holdings POL ${Helper.getRandomBarcode()}`;
-  const matchProfileNameForItem = `C350590 935 $a POL to Item POL ${Helper.getRandomBarcode()}`;
-  const actionProfileNameForInstance = `C350590 Update Instance by POL match ${Helper.getRandomBarcode()}`;
-  const actionProfileNameForHoldings = `C350590 Update Holdings by POL match ${Helper.getRandomBarcode()}`;
-  const actionProfileNameForItem = `C350590 Update Item by POL match ${Helper.getRandomBarcode()}`;
-  const mappingProfileNameForInstance = `C350590 Update Instance by POL match ${Helper.getRandomBarcode()}`;
-  const mappingProfileNameForHoldings = `C350590 Update Holdings by POL match ${Helper.getRandomBarcode()}`;
-  const mappingProfileNameForItem = `C350590 Update Item by POL match ${Helper.getRandomBarcode()}`;
-
+  const firstItem = {
+    title: 'Agrarianism and capitalism in early Georgia, 1732-1743 / Jay Jordan Butler.',
+    productId: '9782266111560',
+    quantity: '1',
+    price: '20',
+    barcode: uuid()
+  };
+  const secondItem = {
+    title: 'Evolution of the Earth / Donald R. Prothero, Robert H. Dott, Jr.',
+    productId: '9783161484100',
+    quantity: '1',
+    price: '20'
+  };
   const editedMarcFileName = `C350590 marcFileForMatchOnPol.${Helper.getRandomBarcode()}.mrc`;
-
   const collectionOfProfiles = [
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-        name: mappingProfileNameForInstance,
+        name: `C350590 Update Instance by POL match ${Helper.getRandomBarcode()}`,
         update: true },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-        name: actionProfileNameForInstance,
+        name: `C350590 Update Instance by POL match ${Helper.getRandomBarcode()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: mappingProfileNameForHoldings,
+        name: `C350590 Update Holdings by POL match ${Helper.getRandomBarcode()}`,
         update: true },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: actionProfileNameForHoldings,
+        name: `C350590 Update Holdings by POL match ${Helper.getRandomBarcode()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: mappingProfileNameForItem,
+        name: `C350590 Update Item by POL match ${Helper.getRandomBarcode()}`,
         update: true },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: actionProfileNameForItem,
+        name: `C350590 Update Item by POL match ${Helper.getRandomBarcode()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     }
   ];
 
   const collectionOfMatchProfiles = [
     {
-      matchProfile: { profileName: matchProfileNameForInstance,
+      matchProfile: { profileName: `C350590 935 $a POL to Instance POL ${Helper.getRandomBarcode()}`,
         incomingRecordFields: {
           field: '935',
           subfield:'a'
@@ -113,7 +97,7 @@ describe('ui-data-import', () => {
         instanceOption: NewMatchProfile.optionsList.pol }
     },
     {
-      matchProfile: { profileName: matchProfileNameForHoldings,
+      matchProfile: { profileName: `C350590 935 $a POL to Holdings POL ${Helper.getRandomBarcode()}`,
         incomingRecordFields: {
           field: '935',
           subfield: 'a'
@@ -124,7 +108,7 @@ describe('ui-data-import', () => {
     },
     {
       matchProfile: {
-        profileName: matchProfileNameForItem,
+        profileName: `C350590 935 $a POL to Item POL ${Helper.getRandomBarcode()}`,
         incomingRecordFields: {
           field: '935',
           subfield: 'a'
@@ -137,7 +121,7 @@ describe('ui-data-import', () => {
   ];
 
   const specialJobProfile = { ...NewJobProfile.defaultJobProfile,
-    profileName: jobProfileName,
+    profileName: `C350590 autotestJobProf${Helper.getRandomBarcode()}`,
     acceptedType: NewJobProfile.acceptedDataType.marc };
 
   before('create test data', () => {
@@ -207,7 +191,7 @@ describe('ui-data-import', () => {
       });
     Users.deleteViaApi(user.userId);
     // delete generated profiles
-    JobProfiles.deleteJobProfile(jobProfileName);
+    JobProfiles.deleteJobProfile(specialJobProfile.profileName);
     collectionOfMatchProfiles.forEach(profile => {
       MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
     });
@@ -342,9 +326,9 @@ describe('ui-data-import', () => {
       // create job profile
       cy.visit(SettingsMenu.jobProfilePath);
       JobProfiles.createJobProfileWithLinkingProfilesForUpdate(specialJobProfile);
-      NewJobProfile.linkMatchAndActionProfilesForInstance(actionProfileNameForInstance, matchProfileNameForInstance, 0);
-      NewJobProfile.linkMatchAndActionProfilesForHoldings(actionProfileNameForHoldings, matchProfileNameForHoldings, 2);
-      NewJobProfile.linkMatchAndActionProfilesForItem(actionProfileNameForItem, matchProfileNameForItem, 4);
+      NewJobProfile.linkMatchAndActionProfilesForInstance(collectionOfProfiles[0].actionProfile.name, collectionOfMatchProfiles[0].matchProfile.profileName, 0);
+      NewJobProfile.linkMatchAndActionProfilesForHoldings(collectionOfProfiles[1].actionProfile.name, collectionOfMatchProfiles[1].matchProfile.profileName, 2);
+      NewJobProfile.linkMatchAndActionProfilesForItem(collectionOfProfiles[2].actionProfile.name, collectionOfMatchProfiles[2].matchProfile.profileName, 4);
       NewJobProfile.saveAndClose();
 
       // upload .mrc file
@@ -353,7 +337,7 @@ describe('ui-data-import', () => {
       cy.reload();
       DataImport.checkIsLandingPageOpened();
       DataImport.uploadFile(editedMarcFileName);
-      JobProfiles.searchJobProfileForImport(jobProfileName);
+      JobProfiles.searchJobProfileForImport(specialJobProfile.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(editedMarcFileName);
       Logs.checkStatusOfJobProfile();
@@ -371,12 +355,12 @@ describe('ui-data-import', () => {
       InventoryInstance.openHoldingView();
       HoldingsRecordView.checkHoldingsType('Monograph');
       HoldingsRecordView.checkCallNumberType('Library of Congress classification');
-      HoldingsRecordView.checkPermanentLocation('Main Library');
+      HoldingsRecordView.checkPermanentLocation(LOCALION_NAMES.MAIN_LIBRARY_UI);
       HoldingsRecordView.close();
-      InventoryInstance.openHoldingsAccordion('Main Library');
+      InventoryInstance.openHoldingsAccordion(LOCALION_NAMES.MAIN_LIBRARY_UI);
       InventoryInstance.openItemByBarcode(firstItem.barcode);
       ItemRecordView.verifyItemStatus('In process');
-      ItemRecordView.checkEffectiveLocation('Main Library');
+      ItemRecordView.checkEffectiveLocation(LOCALION_NAMES.MAIN_LIBRARY_UI);
       ItemRecordView.closeDetailView();
       InventoryInstance.viewSource();
       InventoryViewSource.verifyBarcodeInMARCBibSource(firstItem.barcode);
