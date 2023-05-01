@@ -12,6 +12,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 
 describe('ui-data-import', () => {
   let user;
+  const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const instanceTitle = 'Mistapim in Cambodia [microform]. Photos. by the author.';
   const error = '{"error":"A new Instance was not created because the incoming record already contained a 999ff$s or 999ff$i field"}';
   const nameMarcFileForCreate = `C359012 autotestFile.${getRandomPostfix()}.mrc`;
@@ -39,7 +40,7 @@ describe('ui-data-import', () => {
       // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
       cy.reload();
       DataImport.uploadFile('marcFileForC359012.mrc', nameMarcFileForCreate);
-      JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+      JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(nameMarcFileForCreate);
       Logs.checkStatusOfJobProfile('Completed with errors');

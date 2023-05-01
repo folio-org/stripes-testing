@@ -1,5 +1,11 @@
-import TestTypes from '../../../support/dictionary/testTypes';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TestTypes from '../../../support/dictionary/testTypes';
+import DevTeams from '../../../support/dictionary/devTeams';
+import {
+  LOAN_TYPE_NAMES,
+  MATERIAL_TYPE_NAMES,
+  ITEM_STATUS_NAMES
+} from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -19,7 +25,6 @@ import ExportJobProfiles from '../../../support/fragments/data-export/exportJobP
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import SettingsJobProfiles from '../../../support/fragments/settings/dataImport/settingsJobProfiles';
-import DevTeams from '../../../support/dictionary/devTeams';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('ui-data-import', () => {
@@ -35,6 +40,11 @@ describe('ui-data-import', () => {
   const nameItemActionProfile = `autotest_item_action_profile_${getRandomPostfix()}`;
   const jobProfileNameCreate = `autotest_job_profile_${getRandomPostfix()}`;
   const recordType = 'MARC_BIBLIOGRAPHIC';
+  // file names
+  const nameMarcFileForImportCreate = `C343335autotestFile.${getRandomPostfix()}.mrc`;
+  const nameForCSVFile = `autotestFile${getRandomPostfix()}.csv`;
+  const nameMarcFileForImportUpdate = `C343335autotestFile${getRandomPostfix()}.mrc`;
+  const jobProfileNameForExport = `autoTestJobProf.${getRandomPostfix()}`;
 
   const marcBibMappingProfile = {
     profile:{
@@ -196,51 +206,33 @@ describe('ui-data-import', () => {
       actionProfile: itemActionProfile },
   ];
 
-  // file names
-  const nameMarcFileForImportCreate = `C343335autotestFile.${getRandomPostfix()}.mrc`;
-  const nameForCSVFile = `autotestFile${getRandomPostfix()}.csv`;
-  const nameMarcFileForImportUpdate = `C343335autotestFile${getRandomPostfix()}.mrc`;
-  // profile names for updating
-  const jobProfileNameUpdate = `autotestJobProf${getRandomPostfix()}`;
-  const actionProfileNameForInstance = `autotestActionInstance${getRandomPostfix()}`;
-  const actionProfileNameForHoldings = `autotestActionHoldings${getRandomPostfix()}`;
-  const actionProfileNameForItem = `autotestActionItem${getRandomPostfix()}`;
-  const matchProfileNameForInstance = `autotestMatchInstance${getRandomPostfix()}`;
-  const matchProfileNameForHoldings = `autotestMatchHoldings${getRandomPostfix()}`;
-  const matchProfileNameForItem = `autotestMatchItem${getRandomPostfix()}`;
-  const mappingProfileNameForInstance = `autotestMappingInstance${getRandomPostfix()}`;
-  const mappingProfileNameForHoldings = `autotestMappingHoldings${getRandomPostfix()}`;
-  const mappingProfileNameForItem = `autotestMappingItem${getRandomPostfix()}`;
-  const mappingProfileNameForExport = `autoTestMappingProf.${getRandomPostfix()}`;
-  const jobProfileNameForExport = `autoTestJobProf.${getRandomPostfix()}`;
-
   const collectionOfMappingAndActionProfiles = [
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance,
-        name: mappingProfileNameForInstance },
+        name: `autotestMappingInstance${getRandomPostfix()}` },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
-        name: actionProfileNameForInstance,
+        name: `autotestActionInstance${getRandomPostfix()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
-        name: mappingProfileNameForHoldings },
+        name: `autotestMappingHoldings${getRandomPostfix()}` },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
-        name: actionProfileNameForHoldings,
+        name: `autotestActionHoldings${getRandomPostfix()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
       mappingProfile: { typeValue : NewFieldMappingProfile.folioRecordTypeValue.item,
-        name: mappingProfileNameForItem },
+        name: `autotestMappingItem${getRandomPostfix()}` },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
-        name: actionProfileNameForItem,
+        name: `autotestActionItem${getRandomPostfix()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     }
   ];
 
   const collectionOfMatchProfiles = [
     {
-      matchProfile: { profileName: matchProfileNameForInstance,
+      matchProfile: { profileName: `autotestMatchInstance${getRandomPostfix()}`,
         incomingRecordFields: {
           field: '001'
         },
@@ -251,7 +243,7 @@ describe('ui-data-import', () => {
         existingRecordType: 'MARC_BIBLIOGRAPHIC' }
     },
     {
-      matchProfile: { profileName: matchProfileNameForHoldings,
+      matchProfile: { profileName: `autotestMatchHoldings${getRandomPostfix()}`,
         incomingRecordFields: {
           field: '901',
           subfield: 'a'
@@ -262,7 +254,7 @@ describe('ui-data-import', () => {
     },
     {
       matchProfile: {
-        profileName: matchProfileNameForItem,
+        profileName: `autotestMatchItem${getRandomPostfix()}`,
         incomingRecordFields: {
           field: '902',
           subfield: 'a'
@@ -273,11 +265,18 @@ describe('ui-data-import', () => {
       }
     }
   ];
-
   const jobProfileForUpdate = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: jobProfileNameUpdate,
+    profileName: `autotestJobProf${getRandomPostfix()}`,
     acceptedType: NewJobProfile.acceptedDataType.marc
+  };
+  // create Field mapping profile for export
+  const exportMappingProfile = {
+    name: `autoTestMappingProf.${getRandomPostfix()}`,
+    holdingsMarcField: '901',
+    subfieldForHoldings:'$a',
+    itemMarcField:'902',
+    subfieldForItem:'$a'
   };
 
   beforeEach('create test data', () => {
@@ -308,7 +307,7 @@ describe('ui-data-import', () => {
 
   afterEach('delete test data', () => {
     // delete generated profiles
-    JobProfiles.deleteJobProfile(jobProfileNameUpdate);
+    JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
     collectionOfMatchProfiles.forEach(profile => {
       MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
     });
@@ -361,10 +360,10 @@ describe('ui-data-import', () => {
   const createItemMappingProfile = (profile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
-    NewFieldMappingProfile.fillMaterialType('electronic resource');
+    NewFieldMappingProfile.fillMaterialType(MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE);
     NewFieldMappingProfile.addItemNotes('"Electronic bookplate"', '"Smith Family Foundation"', 'Mark for all affected records');
-    NewFieldMappingProfile.fillPermanentLoanType('Can circulate');
-    NewFieldMappingProfile.fillStatus('Available');
+    NewFieldMappingProfile.fillPermanentLoanType(LOAN_TYPE_NAMES.CAN_CIRCULATE);
+    NewFieldMappingProfile.fillStatus(ITEM_STATUS_NAMES.AVAILABLE);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
   };
@@ -399,20 +398,11 @@ describe('ui-data-import', () => {
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
       });
 
-    // create Field mapping profile for export
-    const exportMappingProfile = {
-      name: mappingProfileNameForExport,
-      holdingsMarcField: '901',
-      subfieldForHoldings:'$a',
-      itemMarcField:'902',
-      subfieldForItem:'$a'
-    };
-
     cy.visit(SettingsMenu.exportMappingProfilePath);
     ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
 
     cy.visit(SettingsMenu.exportJobProfilePath);
-    ExportJobProfiles.createJobProfile(jobProfileNameForExport, mappingProfileNameForExport);
+    ExportJobProfiles.createJobProfile(jobProfileNameForExport, exportMappingProfile.name);
 
     // download exported marc file
     cy.visit(TopMenu.dataExportPath);
@@ -445,9 +435,9 @@ describe('ui-data-import', () => {
     // create Job profile
     cy.visit(SettingsMenu.jobProfilePath);
     JobProfiles.createJobProfileWithLinkingProfilesForUpdate(jobProfileForUpdate);
-    NewJobProfile.linkMatchAndActionProfilesForInstance(actionProfileNameForInstance, matchProfileNameForInstance, 0);
-    NewJobProfile.linkMatchAndActionProfilesForHoldings(actionProfileNameForHoldings, matchProfileNameForHoldings, 2);
-    NewJobProfile.linkMatchAndActionProfilesForItem(actionProfileNameForItem, matchProfileNameForItem, 4);
+    NewJobProfile.linkMatchAndActionProfilesForInstance(collectionOfMappingAndActionProfiles[0].actionProfile.name, collectionOfMatchProfiles[0].matchProfile.profileName, 0);
+    NewJobProfile.linkMatchAndActionProfilesForHoldings(collectionOfMappingAndActionProfiles[1].actionProfile.name, collectionOfMatchProfiles[1].matchProfile.profileName, 2);
+    NewJobProfile.linkMatchAndActionProfilesForItem(collectionOfMappingAndActionProfiles[2].actionProfile.name, collectionOfMatchProfiles[2].matchProfile.profileName, 4);
     NewJobProfile.saveAndClose();
 
     // upload the exported marc file

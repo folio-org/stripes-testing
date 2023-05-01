@@ -26,13 +26,8 @@ describe('ui-data-import', () => {
   let user;
   let instanceHrid = null;
   const marcFieldProtectionId = [];
+  const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const quantityOfItems = '1';
-
-  // unique profile names
-  const matchProfileName = `C356830 001 to Instance HRID ${getRandomPostfix()}`;
-  const mappingProfileName = `C356830 Update instance and check field protections ${getRandomPostfix()}`;
-  const actionProfileName = `C356830 Update instance and check field protections ${getRandomPostfix()}`;
-  const jobProfileName = `C356830 Update instance and check field protections ${getRandomPostfix()}`;
   // unique file names
   const nameMarcFileForCreate = `C356830 autotestFile.${getRandomPostfix()}.mrc`;
   const editedMarcFileName = `C356830 marcFileForMatch.${getRandomPostfix()}.mrc`;
@@ -42,7 +37,7 @@ describe('ui-data-import', () => {
     secondField: '920'
   };
   const matchProfile = {
-    profileName: matchProfileName,
+    profileName: `C356830 001 to Instance HRID ${getRandomPostfix()}`,
     incomingRecordFields: {
       field: '001'
     },
@@ -51,18 +46,18 @@ describe('ui-data-import', () => {
     instanceOption: NewMatchProfile.optionsList.instanceHrid
   };
   const mappingProfile = {
-    name: mappingProfileName,
+    name: `C356830 Update instance and check field protections ${getRandomPostfix()}`,
     typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance,
     catalogedDate: '###TODAY###',
     instanceStatus: 'Batch Loaded'
   };
   const actionProfile = {
     typeValue: NewActionProfile.folioRecordTypeValue.instance,
-    name: actionProfileName,
+    name: `C356830 Update instance and check field protections ${getRandomPostfix()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
   const jobProfile = {
-    profileName: jobProfileName,
+    profileName: `C356830 Update instance and check field protections ${getRandomPostfix()}`,
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
@@ -84,10 +79,10 @@ describe('ui-data-import', () => {
   });
 
   after('delete test data', () => {
-    JobProfiles.deleteJobProfile(jobProfileName);
-    MatchProfiles.deleteMatchProfile(matchProfileName);
-    ActionProfiles.deleteActionProfile(actionProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
+    MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+    ActionProfiles.deleteActionProfile(actionProfile.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
     // delete created files
     FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
     Users.deleteViaApi(user.userId);
@@ -137,27 +132,27 @@ describe('ui-data-import', () => {
       NewFieldMappingProfile.fillCatalogedDate(mappingProfile.catalogedDate);
       NewFieldMappingProfile.fillInstanceStatusTerm(mappingProfile.statusTerm);
       FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfileName);
-      FieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
+      FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+      FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
       // create action profile
       cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.create(actionProfile, mappingProfileName);
-      ActionProfiles.checkActionProfilePresented(actionProfileName);
+      ActionProfiles.create(actionProfile, mappingProfile.name);
+      ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
       // create job profile
       cy.visit(SettingsMenu.jobProfilePath);
       JobProfiles.createJobProfile(jobProfile);
-      NewJobProfile.linkMatchAndActionProfilesForInstance(actionProfileName, matchProfileName);
+      NewJobProfile.linkMatchAndActionProfilesForInstance(actionProfile.name, matchProfile.profileName);
       NewJobProfile.saveAndClose();
-      JobProfiles.checkJobProfilePresented(jobProfileName);
+      JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
       // upload a marc file for creating of the new instance
       cy.visit(TopMenu.dataImportPath);
       // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
       cy.reload();
       DataImport.uploadFile('marcFileForC356830.mrc', nameMarcFileForCreate);
-      JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+      JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(nameMarcFileForCreate);
       Logs.openFileDetails(nameMarcFileForCreate);
@@ -192,7 +187,7 @@ describe('ui-data-import', () => {
       cy.reload();
       DataImport.checkIsLandingPageOpened();
       DataImport.uploadFile(editedMarcFileName);
-      JobProfiles.searchJobProfileForImport(jobProfileName);
+      JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(editedMarcFileName);
       Logs.checkStatusOfJobProfile();

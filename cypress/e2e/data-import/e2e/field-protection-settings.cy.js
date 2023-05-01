@@ -31,50 +31,38 @@ describe('ui-data-import', () => {
   const dataForField500 = 'Repeatable unprotected field';
   const dataForField507 = 'Non-repeatable protected field';
   const dataForField920 = 'This field should be protected';
-
   // data for changing .mrc file
   const updateDataForField500 = 'Repeatable unprotected field Updated';
   const updateDataForField507 = 'Non-repeatable protected field Updated';
   const updateDataForField920 = 'The previous 920 should be retained, since it is protected and repeatable, and this new 920 added.';
-
-  // unique profile names
-  const mappingProfileName = `C17017 autotest MappingProf${getRandomPostfix()}`;
-  const mappingProfileUpdateName = `C17017 autotest update MappingProf${getRandomPostfix()}`;
-  const actionProfileName = `C17017 autotest ActionProf${getRandomPostfix()}`;
-  const actionProfileUpdateName = `C17017 autotest update ActionProf${getRandomPostfix()}`;
-  const jobProfileName = `C17017 autotest JobProf${getRandomPostfix()}`;
-  const jobProfileUpdateName = `C17017 autotest update JobProf${getRandomPostfix()}`;
-  const matchProfileUpdateName = `C17017 autotest MatchProf${getRandomPostfix()}`;
-
   // unique file names
   const nameMarcFileForCreate = `C17017 autotestFile.${getRandomPostfix()}.mrc`;
   const editedMarcFileName = `C17017 protectedFields.${getRandomPostfix()}.mrc`;
   const fileNameForUpdate = `C17017 updatedProtectedFields.${getRandomPostfix()}.mrc`;
-
   // profiles for create
-  const mappingProfile = { name: mappingProfileName,
+  const mappingProfile = { name: `C17017 autotest MappingProf${getRandomPostfix()}`,
     typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance };
 
-  const actionProfile = { name: actionProfileName,
+  const actionProfile = { name: `C17017 autotest ActionProf${getRandomPostfix()}`,
     typeValue : NewActionProfile.folioRecordTypeValue.instance };
 
   const jobProfile = {
-    profileName: jobProfileName,
+    profileName: `C17017 autotest JobProf${getRandomPostfix()}`,
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
   // profiles for update
-  const mappingProfileUpdate = { name: mappingProfileUpdateName,
+  const mappingProfileUpdate = { name: `C17017 autotest update MappingProf${getRandomPostfix()}`,
     typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance };
 
   const actionProfileUpdate = {
-    name: actionProfileUpdateName,
+    name: `C17017 autotest update ActionProf${getRandomPostfix()}`,
     typeValue : NewActionProfile.folioRecordTypeValue.instance,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
   };
 
   const matchProfile = {
-    profileName: matchProfileUpdateName,
+    profileName: `C17017 autotest MatchProf${getRandomPostfix()}`,
     incomingRecordFields: {
       field: '001'
     },
@@ -84,7 +72,7 @@ describe('ui-data-import', () => {
   };
 
   const jobProfileUpdate = {
-    profileName: jobProfileUpdateName,
+    profileName: `C17017 autotest update JobProf${getRandomPostfix()}`,
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
@@ -112,13 +100,13 @@ describe('ui-data-import', () => {
   after('delete test data', () => {
     marcFieldProtectionId.forEach(field => MarcFieldProtection.deleteMarcFieldProtectionViaApi(field));
     // delete profiles
-    JobProfiles.deleteJobProfile(jobProfileName);
-    JobProfiles.deleteJobProfile(jobProfileUpdateName);
-    MatchProfiles.deleteMatchProfile(matchProfileUpdateName);
-    ActionProfiles.deleteActionProfile(actionProfileName);
-    ActionProfiles.deleteActionProfile(actionProfileUpdateName);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileUpdateName);
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
+    JobProfiles.deleteJobProfile(jobProfileUpdate.profileName);
+    MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+    ActionProfiles.deleteActionProfile(actionProfile.name);
+    ActionProfiles.deleteActionProfile(actionProfileUpdate.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileUpdate.name);
     // delete created files
     FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
     FileManager.deleteFile(`cypress/fixtures/${fileNameForUpdate}`);
@@ -152,20 +140,20 @@ describe('ui-data-import', () => {
 
     // create action profile
     cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.create(actionProfile, mappingProfileName);
-    ActionProfiles.checkActionProfilePresented(actionProfileName);
+    ActionProfiles.create(actionProfile, mappingProfile.name);
+    ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
     // create job profile
     cy.visit(SettingsMenu.jobProfilePath);
     JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfile.name);
-    JobProfiles.checkJobProfilePresented(jobProfileName);
+    JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
     // upload a marc file for creating of the new instance
     cy.visit(TopMenu.dataImportPath);
     // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
     cy.reload();
     DataImport.uploadFile('marcFileForC17017.mrc', nameMarcFileForCreate);
-    JobProfiles.searchJobProfileForImport(jobProfileName);
+    JobProfiles.searchJobProfileForImport(jobProfile.profileName);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(nameMarcFileForCreate);
     Logs.checkStatusOfJobProfile('Completed');
@@ -201,7 +189,7 @@ describe('ui-data-import', () => {
 
     // create action profile for update
     cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.create(actionProfileUpdate, mappingProfileUpdateName);
+    ActionProfiles.create(actionProfileUpdate, mappingProfileUpdate.name);
     ActionProfiles.checkActionProfilePresented(actionProfileUpdate.name);
 
     // create match profile for update
@@ -210,15 +198,15 @@ describe('ui-data-import', () => {
 
     // create job profile for update
     cy.visit(SettingsMenu.jobProfilePath);
-    JobProfiles.createJobProfileWithLinkingProfiles(jobProfileUpdate, actionProfileUpdateName, matchProfileUpdateName);
-    JobProfiles.checkJobProfilePresented(jobProfileUpdateName);
+    JobProfiles.createJobProfileWithLinkingProfiles(jobProfileUpdate, actionProfileUpdate.name, matchProfile.profileName);
+    JobProfiles.checkJobProfilePresented(jobProfileUpdate.profileName);
 
     // upload a marc file for updating already created instance
     cy.visit(TopMenu.dataImportPath);
     // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
     cy.reload();
     DataImport.uploadFile(editedMarcFileName, fileNameForUpdate);
-    JobProfiles.searchJobProfileForImport(jobProfileUpdateName);
+    JobProfiles.searchJobProfileForImport(jobProfileUpdate.profileName);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(fileNameForUpdate);
     Logs.checkStatusOfJobProfile('Completed');

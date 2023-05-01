@@ -14,7 +14,7 @@ describe('ui-data-import', () => {
   const matchProfileName = `C2339 autotest MatchProf${Helper.getRandomBarcode()}`;
   let user;
   const matchProfile = {
-    profileName: matchProfileName,
+    profileName: `C2339 autotest MatchProf${Helper.getRandomBarcode()}`,
     incomingRecordFields: {
       field: '001'
     },
@@ -41,18 +41,18 @@ describe('ui-data-import', () => {
 
   after('delete test data', () => {
     Users.deleteViaApi(user.userId);
-    MatchProfiles.deleteMatchProfile(matchProfileName);
+    MatchProfiles.deleteMatchProfile(matchProfile.profileName);
   });
 
   it('C2339 Edit an existing match profile (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     MatchProfiles.checkListOfExistingProfilesIsDisplayed();
-    MatchProfiles.search(matchProfileName);
-    MatchProfiles.selectMatchProfileFromList(matchProfileName);
+    MatchProfiles.search(matchProfile.profileName);
+    MatchProfiles.selectMatchProfileFromList(matchProfile.profileName);
     MatchProfileView.edit();
-    MatchProfileEdit.verifyScreenName(matchProfileName);
+    MatchProfileEdit.verifyScreenName(matchProfile.profileName);
     MatchProfileEdit.changeExistingInstanceRecordField();
     MatchProfileEdit.save();
-    MatchProfiles.checkCalloutMessage(matchProfileName);
+    MatchProfiles.checkCalloutMessage(matchProfile.profileName);
     MatchProfileView.verifyExistingInstanceRecordField();
   });
 });
