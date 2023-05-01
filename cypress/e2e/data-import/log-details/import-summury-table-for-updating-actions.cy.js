@@ -448,10 +448,10 @@ describe('ui-data-import', () => {
       JobProfiles.waitFileIsImported(nameMarcFileForImportUpdate);
       Logs.openFileDetails(nameMarcFileForImportUpdate);
 
-      [FileDetails.columnName.srsMarc,
-        FileDetails.columnName.instance,
-        FileDetails.columnName.holdings,
-        FileDetails.columnName.item].forEach(columnName => {
+      [FileDetails.columnNameInResultList.srsMarc,
+        FileDetails.columnNameInResultList.instance,
+        FileDetails.columnNameInResultList.holdings,
+        FileDetails.columnNameInResultList.item].forEach(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
       });
       // check Created counter in the Summary table

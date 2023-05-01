@@ -62,14 +62,14 @@ describe('ui-data-import', () => {
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(editedMarcFileName);
       Logs.openFileDetails(editedMarcFileName);
-      FileDetails.checkStatusInColumn(FileDetails.status.noAction, FileDetails.columnName.srsMarc);
-      [FileDetails.columnName.srsMarc,
-        FileDetails.columnName.holdings
+      FileDetails.checkStatusInColumn(FileDetails.status.noAction, FileDetails.columnNameInResultList.srsMarc);
+      [FileDetails.columnNameInResultList.srsMarc,
+        FileDetails.columnNameInResultList.holdings
       ].forEach(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName, 1);
       });
-      FileDetails.checkStatusInColumn(FileDetails.status.noAction, FileDetails.columnName.srsMarc, 2);
-      FileDetails.checkStatusInColumn(FileDetails.status.noAction, FileDetails.columnName.srsMarc, 3);
+      FileDetails.checkStatusInColumn(FileDetails.status.noAction, FileDetails.columnNameInResultList.srsMarc, 2);
+      FileDetails.checkStatusInColumn(FileDetails.status.noAction, FileDetails.columnNameInResultList.srsMarc, 3);
       // check created counter in the Summary table
       FileDetails.checkSrsRecordQuantityInSummaryTable('1');
       FileDetails.checkHoldingsQuantityInSummaryTable('1');

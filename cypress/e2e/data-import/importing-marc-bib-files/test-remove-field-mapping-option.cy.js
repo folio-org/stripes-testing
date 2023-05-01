@@ -211,10 +211,10 @@ describe('ui-data-import', () => {
       JobProfiles.waitFileIsImported(marcFileNameForCreate);
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(marcFileNameForCreate);
-      [FileDetails.columnName.srsMarc,
-        FileDetails.columnName.instance,
-        FileDetails.columnName.holdings,
-        FileDetails.columnName.item
+      [FileDetails.columnNameInResultList.srsMarc,
+        FileDetails.columnNameInResultList.instance,
+        FileDetails.columnNameInResultList.holdings,
+        FileDetails.columnNameInResultList.item
       ].forEach(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
       });
@@ -292,8 +292,8 @@ describe('ui-data-import', () => {
           JobProfiles.waitFileIsImported(editedMarcFileName);
           Logs.checkStatusOfJobProfile('Completed');
           Logs.openFileDetails(editedMarcFileName);
-          [FileDetails.columnName.holdings,
-            FileDetails.columnName.item
+          [FileDetails.columnNameInResultList.holdings,
+            FileDetails.columnNameInResultList.item
           ].forEach(columnName => {
             FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
           });
