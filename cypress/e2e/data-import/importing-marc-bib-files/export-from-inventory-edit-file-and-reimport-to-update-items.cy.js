@@ -1,6 +1,7 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import SettingsJobProfiles from '../../../support/fragments/settings/dataImport/settingsJobProfiles';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -12,7 +13,6 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
@@ -39,17 +39,26 @@ describe('ui-data-import', () => {
   const nameMarcFileForUpload = `C11123 autotestFile.${getRandomPostfix()}.mrc`;
   const editedMarcFileName = `C11123 fileWithItemHrid.${getRandomPostfix()}.mrc`;
   const nameMarcFileForUpdate = `C11123 autotestFileForUpdateItem.${getRandomPostfix()}.mrc`;
+  // unique profile names for creating
+  const instanceMappingProfileNameForCreate = `C11123 autotest_instance_mapping_profile_${getRandomPostfix()}`;
+  const holdingsMappingProfileNameForCreate = `C11123 autotest_holdings_mapping_profile_${getRandomPostfix()}`;
+  const itemMappingProfileNameForCreate = `C11123 autotest_item_mapping_profile_${getRandomPostfix()}`;
+  const instanceActionProfileNameForCreate = `C11123 autotest_instance_action_profile_${getRandomPostfix()}`;
+  const holdingsActionProfileNameForCreate = `C11123 autotest_holdings_action_profile_${getRandomPostfix()}`;
+  const itemActionProfileNameForCreate = `C11123 autotest_item_action_profile_${getRandomPostfix()}`;
+  const jobProfileNameForCreate = `C11123 autotest_job_profile_${getRandomPostfix()}`;
+
   // profiles for creating instance, holdings, item
   const instanceMappingProfileForCreate = {
     profile:{
-      name: `C11123 autotest_instance_mapping_profile_${getRandomPostfix()}`,
+      name: instanceMappingProfileNameForCreate,
       incomingRecordType: recordType,
       existingRecordType: 'INSTANCE',
     }
   };
   const holdingsMappingProfileForCreate = {
     profile:{
-      name: `C11123 autotest_holdings_mapping_profile_${getRandomPostfix()}`,
+      name: holdingsMappingProfileNameForCreate,
       incomingRecordType: recordType,
       existingRecordType: 'HOLDINGS',
       mappingDetails: { name: 'holdings',
@@ -63,7 +72,7 @@ describe('ui-data-import', () => {
   };
   const itemMappingProfileForCreate = {
     profile:{
-      name: `C11123 autotest_item_mapping_profile_${getRandomPostfix()}`,
+      name: itemMappingProfileNameForCreate,
       incomingRecordType: recordType,
       existingRecordType: 'ITEM',
       mappingDetails: { name: 'item',
@@ -92,7 +101,7 @@ describe('ui-data-import', () => {
   };
   const instanceActionProfileForCreate = {
     profile: {
-      name: `C11123 autotest_instance_action_profile_${getRandomPostfix()}`,
+      name: instanceActionProfileNameForCreate,
       action: 'CREATE',
       folioRecord: 'INSTANCE'
     },
@@ -108,7 +117,7 @@ describe('ui-data-import', () => {
   };
   const holdingsActionProfileForCreate = {
     profile: {
-      name: `C11123 autotest_holdings_action_profile_${getRandomPostfix()}`,
+      name: holdingsActionProfileNameForCreate,
       action: 'CREATE',
       folioRecord: 'HOLDINGS'
     },
@@ -124,7 +133,7 @@ describe('ui-data-import', () => {
   };
   const itemActionProfileForCreate = {
     profile: {
-      name: `C11123 autotest_item_action_profile_${getRandomPostfix()}`,
+      name: itemActionProfileNameForCreate,
       action: 'CREATE',
       folioRecord: 'ITEM'
     },
@@ -148,7 +157,7 @@ describe('ui-data-import', () => {
   ];
   const jobProfileForCreate = {
     profile: {
-      name: `C11123 autotest_job_profile_${getRandomPostfix()}`,
+      name: jobProfileNameForCreate,
       dataType: 'MARC'
     },
     addedRelations: [],
@@ -169,10 +178,10 @@ describe('ui-data-import', () => {
   };
   const itemMappingProfileForUpdate = {
     name: `C11123 mapping profile update item.${getRandomPostfix()}`,
-    typeValue : NewFieldMappingProfile.folioRecordTypeValue.item
+    typeValue: FOLIO_RECORD_TYPE.ITEM
   };
   const itemActionProfileForUpdate = {
-    typeValue: NewActionProfile.folioRecordTypeValue.item,
+    typeValue: FOLIO_RECORD_TYPE.ITEM,
     name: `C11123 action profile update item.${getRandomPostfix()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };

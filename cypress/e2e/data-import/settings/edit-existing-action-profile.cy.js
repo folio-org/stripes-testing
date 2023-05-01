@@ -1,10 +1,10 @@
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import Users from '../../../support/fragments/users/users';
 import ActionProfileEdit from '../../../support/fragments/data_import/action_profiles/actionProfileEdit';
@@ -13,7 +13,7 @@ import ActionProfileView from '../../../support/fragments/data_import/action_pro
 describe('ui-data-import', () => {
   let user;
   const actionProfile = {
-    typeValue: NewActionProfile.folioRecordTypeValue.instance,
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     name: `C2348 autotest action profile ${Helper.getRandomBarcode()}`
   };
 

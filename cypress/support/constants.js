@@ -85,11 +85,26 @@ export const LOAN_PROFILE = {
   ROLLING: 'Rolling',
 };
 
-export const LOCALION_NAMES = {
-  ANNEX: 'Annex (KU/CC/DI/A)',
-  ANNEX_UI: 'Annex',
-  ONLINE: 'Online (E)',
-  ONLINE_UI: 'Online',
-  MAIN_LIBRARY: 'Main Library (KU/CC/DI/M)',
-  MAIN_LIBRARY_UI: 'Main Library'
+export const FOLIO_RECORD_TYPE = {
+  INSTANCE:'Instance',
+  HOLDINGS:'Holdings',
+  ITEM:'Item',
+  ORDER:'Order',
+  INVOICE:'Invoice',
+  MARCBIBLIOGRAPHIC:'MARC Bibliographic'
+};
+
+export const PAYMENT_METHOD = {
+  CASH:'"Cash"',
+  CREDIT_CARD:'"Credit Card"'
+};
+
+export const BATCH_GROUP = {
+  FOLIO:'"FOLIO"',
+  AMHERST:'"Amherst (AC)"'
+};
+
+export const ORDER_STATUSES = {
+  OPEN: 'Open',
+  PENDING: 'Pending'
 };

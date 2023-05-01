@@ -1,14 +1,12 @@
 import uuid from 'uuid';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
+import { FOLIO_RECORD_TYPE, LOCALION_NAMES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
-import { LOCALION_NAMES } from '../../../support/constants';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import Orders from '../../../support/fragments/orders/orders';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -62,26 +60,26 @@ describe('ui-data-import', () => {
   const editedMarcFileName = `C350590 marcFileForMatchOnPol.${Helper.getRandomBarcode()}.mrc`;
   const collectionOfProfiles = [
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         name: `C350590 Update Instance by POL match ${Helper.getRandomBarcode()}`,
         update: true },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         name: `C350590 Update Instance by POL match ${Helper.getRandomBarcode()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C350590 Update Holdings by POL match ${Helper.getRandomBarcode()}`,
         update: true },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C350590 Update Holdings by POL match ${Helper.getRandomBarcode()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C350590 Update Item by POL match ${Helper.getRandomBarcode()}`,
         update: true },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C350590 Update Item by POL match ${Helper.getRandomBarcode()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     }

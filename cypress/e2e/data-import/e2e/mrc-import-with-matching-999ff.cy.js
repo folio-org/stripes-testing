@@ -1,6 +1,4 @@
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
@@ -16,7 +14,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import TopMenu from '../../../support/fragments/topMenu';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { LOCALION_NAMES } from '../../../support/constants';
+import { LOCALION_NAMES, FOLIO_RECORD_TYPE } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   // unique file name to upload
@@ -26,11 +24,11 @@ describe('ui-data-import', () => {
 
   const mappingProfileForExport = {
     name: `autotestMappingProf${getRandomPostfix()}`,
-    typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     permanentLocation: `"${LOCALION_NAMES.ANNEX}"`,
   };
   const actionProfileForExport = {
-    typeValue : NewActionProfile.folioRecordTypeValue.instance,
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     name: `autotestActionProf${getRandomPostfix()}`
   };
   const jobProfileForExport = {
@@ -39,12 +37,12 @@ describe('ui-data-import', () => {
   };
   const mappingProfile = {
     name: `autotestMappingProf${getRandomPostfix()}`,
-    typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     update: true,
     permanentLocation: `"${LOCALION_NAMES.ANNEX}"`
   };
   const actionProfile = {
-    typeValue : NewActionProfile.folioRecordTypeValue.instance,
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     name: `autotestActionProf${getRandomPostfix()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
@@ -97,7 +95,6 @@ describe('ui-data-import', () => {
     FieldMappingProfiles.checkMappingProfilePresented(mappingProfileForExport.name);
 
     // create Action profile for export and link it to Field mapping profile
-
     cy.visit(SettingsMenu.actionProfilePath);
     ActionProfiles.create(actionProfileForExport, mappingProfileForExport.name);
     ActionProfiles.checkActionProfilePresented(actionProfileForExport.name);

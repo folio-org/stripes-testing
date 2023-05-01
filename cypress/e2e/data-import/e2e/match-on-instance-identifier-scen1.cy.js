@@ -1,5 +1,6 @@
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -10,7 +11,6 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
@@ -45,7 +45,7 @@ describe('ui-data-import', () => {
   };
   const mappingProfile = {
     name: `autotestMappingProf${getRandomPostfix()}`,
-    typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     suppressFromDiscavery: 'Mark for all affected records',
     catalogedDate: '"2021-12-01"',
     catalogedDateUI: '2021-12-01',
@@ -53,7 +53,7 @@ describe('ui-data-import', () => {
   };
   const actionProfile = {
     name: `autotestActionProf${getRandomPostfix()}`,
-    typeValue : NewActionProfile.folioRecordTypeValue.instance,
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
   const jobProfile = {
