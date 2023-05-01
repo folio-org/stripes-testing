@@ -1,6 +1,4 @@
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
@@ -16,7 +14,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import TopMenu from '../../../support/fragments/topMenu';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { LOCALION_NAMES } from '../../../support/constants';
+import { LOCALION_NAMES, FOLIO_RECORD_TYPE } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   // unique file name to upload
@@ -40,7 +38,7 @@ describe('ui-data-import', () => {
     // create Field mapping profile for export
     const mappingProfileForExport = {
       name: mappingProfileNameForExport,
-      typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
+      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       permanentLocation: `"${LOCALION_NAMES.ANNEX}"`,
     };
     cy.visit(SettingsMenu.mappingProfilePath);
@@ -49,7 +47,7 @@ describe('ui-data-import', () => {
 
     // create Action profile for export and link it to Field mapping profile
     const actionProfileForExport = {
-      typeValue : NewActionProfile.folioRecordTypeValue.instance,
+      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       name: actionProfileNameForExport
     };
     cy.visit(SettingsMenu.actionProfilePath);
@@ -119,7 +117,7 @@ describe('ui-data-import', () => {
         // create Field mapping profile
         const mappingProfile = {
           name: mappingProfileName,
-          typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
+          typeValue: FOLIO_RECORD_TYPE.INSTANCE,
           update: true,
           permanentLocation: `"${LOCALION_NAMES.ANNEX}"`
         };
@@ -129,7 +127,7 @@ describe('ui-data-import', () => {
 
         // create Action profile and link it to Field mapping profile
         const actionProfile = {
-          typeValue : NewActionProfile.folioRecordTypeValue.instance,
+          typeValue: FOLIO_RECORD_TYPE.INSTANCE,
           name: actionProfileName,
           action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
         };

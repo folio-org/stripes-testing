@@ -2,10 +2,10 @@ import uuid from 'uuid';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -37,13 +37,13 @@ describe('ui-data-import', () => {
   const collectionOfMappingAndActionProfilesForCreate = [
     {
       mappingProfile: { name: `C17033 instance create mapping profile_${getRandomPostfix()}`,
-        typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
+        typeValue: FOLIO_RECORD_TYPE.INSTANCE },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         name: `C17033 instance create action profile_${getRandomPostfix()}` }
     },
     {
       mappingProfile: { name: `C17033 holdings create mapping profile_${getRandomPostfix()}`,
-        typeValue : NewFieldMappingProfile.folioRecordTypeValue.holdings,
+        typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         permanentLocation: `"${LOCALION_NAMES.MAIN_LIBRARY}"`,
         permanentLocationUI: LOCALION_NAMES.MAIN_LIBRARY_UI,
         permanentLocationInHoldingsAccordion: 'Main Library >',
@@ -52,12 +52,12 @@ describe('ui-data-import', () => {
         illPolicy: 'Unknown lending policy',
         digitizationPolicy: '"Digitization policy"',
         digitizationPolicyUI: 'Digitization policy' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C17033 holdings create action profile_${getRandomPostfix()}` }
     },
     {
       mappingProfile: { name: `C17033 item create mapping profile_${getRandomPostfix()}`,
-        typeValue : NewFieldMappingProfile.folioRecordTypeValue.item,
+        typeValue: FOLIO_RECORD_TYPE.ITEM,
         barcode: '945$a',
         accessionNumber: '"12345"',
         accessionNumberUI: '12345',
@@ -68,7 +68,7 @@ describe('ui-data-import', () => {
         temporaryLoanType: `"${LOAN_TYPE_NAMES.COURSE_RESERVES}"`,
         temporaryLoanTypeUI: LOAN_TYPE_NAMES.COURSE_RESERVES,
         status: ITEM_STATUS_NAMES.AVAILABLE },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C17033 item create action profile_${getRandomPostfix()}` }
     },
   ];
@@ -104,20 +104,20 @@ describe('ui-data-import', () => {
   const collectionOfMappingAndActionProfilesForUpdate = [
     {
       mappingProfile: { name: `C17033 holdings update mapping profile_${getRandomPostfix()}`,
-        typeValue : NewFieldMappingProfile.folioRecordTypeValue.holdings,
+        typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         temporaryLocation: '###REMOVE###',
         digitizationPolicy: '###REMOVE###' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C17033 holdings update action profile_${getRandomPostfix()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
       mappingProfile: { name: `C17033 item update mapping profile_${getRandomPostfix()}`,
-        typeValue : NewFieldMappingProfile.folioRecordTypeValue.item,
+        typeValue: FOLIO_RECORD_TYPE.ITEM,
         accessionNumber: '###REMOVE###',
         numberOfPieces: '###REMOVE###',
         temporaryLoanType:'###REMOVE###' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C17033 item update action profile_${getRandomPostfix()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
