@@ -1,4 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -13,7 +14,6 @@ import NewFieldMappingProfile from '../../../support/fragments/data_import/mappi
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
@@ -54,11 +54,11 @@ describe('ui-data-import', () => {
 
   const mappingProfile = {
     name: `C17039 mapping profile ${Helper.getRandomBarcode()}`,
-    typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE
   };
 
   const actionProfile = {
-    typeValue: NewActionProfile.folioRecordTypeValue.instance,
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     name: `C17039 action profile ${Helper.getRandomBarcode()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };

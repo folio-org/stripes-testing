@@ -5,12 +5,12 @@ import {
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
   ITEM_STATUS_NAMES,
-  LOCALION_NAMES
+  LOCALION_NAMES,
+  FOLIO_RECORD_TYPE
 } from '../../../support/constants';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -39,21 +39,21 @@ describe('ui-data-import', () => {
   };
   const collectionOfProfiles = [
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         name: `C368005 Create instance for mapping notes ${Helper.getRandomBarcode()}`,
         catalogingDate: '###TODAY###' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         name: `C368005 Create instance for mapping notes ${Helper.getRandomBarcode()}` }
     },
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C368005 Create holdings for mapping notes ${Helper.getRandomBarcode()}`,
         permanetLocation: `"${LOCALION_NAMES.ANNEX}"` },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C368005 Create holdings for mapping notes ${Helper.getRandomBarcode()}` }
     },
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C368005 Create item for mapping notes ${Helper.getRandomBarcode()}`,
         materialType: MATERIAL_TYPE_NAMES.BOOK,
         noteType: '876$t',
@@ -64,7 +64,7 @@ describe('ui-data-import', () => {
         staffOnlyForCheckIn: 'Mark for all affected records',
         permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
         status: ITEM_STATUS_NAMES.AVAILABLE },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C368005 Create items for mapping notes ${Helper.getRandomBarcode()}` }
     }
   ];
