@@ -10,7 +10,8 @@ import Users from '../../../support/fragments/users/users';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import DevTeams from '../../../support/dictionary/devTeams';
 
-describe('ui-data-import', () => {
+// this autotest is needed to be skipped because it is running in infinite loop. TODO analyze this issue and fix it
+describe.skip('ui-data-import', () => {
   let userId = null;
   let fileNameToUpload = '';
   const filePathToUpload = 'oneMarcBib.mrc';
@@ -19,6 +20,7 @@ describe('ui-data-import', () => {
   const numberOfLogsPerPage = 25;
   const numberOfLogsToUpload = 30;
   const getCalloutSuccessMessage = logsCount => `${logsCount} data import logs have been successfully deleted.`;
+  const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
 
   before('create test data', () => {
     cy.createTempUser([
@@ -45,7 +47,7 @@ describe('ui-data-import', () => {
           DataImport.uploadFile(filePath, fileNameToUpload);
           // need to wait until file will be uploaded in loop
           cy.wait(8000);
-          JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+          JobProfiles.searchJobProfileForImport(jobProfileToRun);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(fileNameToUpload);
         });

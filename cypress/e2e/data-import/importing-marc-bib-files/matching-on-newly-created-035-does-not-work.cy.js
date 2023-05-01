@@ -2,6 +2,7 @@ import permissions from '../../../support/dictionary/permissions';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -14,7 +15,6 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
@@ -23,26 +23,20 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 
 describe('ui-data-import', () => {
   let user = null;
+  const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const note = 'This instance was updated, plus a new subject heading was added';
   const resourceIdentifierForFirstInstance = { type: 'System control number', value: '(NhFolYBP)2304396' };
   const resourceIdentifierForSecondInstance = { type: 'System control number', value: '(NhFolYBP)2345942-321678' };
   let firstInstanceHrid;
   let secondInstanceHrid;
-
   // unique file names
   const fileForCreateFirstName = `C358138 firstAutotestFileForCreate.${Helper.getRandomBarcode()}.mrc`;
   const fileForCreateSecondName = `C358138 secondAutotestFileForCreate.${Helper.getRandomBarcode()}.mrc`;
   const fileForUpdateFirstName = `C358138 firstAutotestFileForUpdate.${Helper.getRandomBarcode()}.mrc`;
   const fileForUpdateSecondName = `C358138 secondAutotestFileForUpdate.${Helper.getRandomBarcode()}.mrc`;
 
-  // unique profile names
-  const matchProfileName = `C358138 Match on newly-created 035 ${Helper.getRandomBarcode()}`;
-  const mappingProfileName = `C358138 Update instance via 035 ${Helper.getRandomBarcode()}`;
-  const actionProfileName = `C358138 Update instance via 035 ${Helper.getRandomBarcode()}`;
-  const jobProfileName = `C358138 Update instance via 035 ${Helper.getRandomBarcode()}`;
-
   const matchProfile = {
-    profileName: matchProfileName,
+    profileName: `C358138 Match on newly-created 035 ${Helper.getRandomBarcode()}`,
     incomingRecordFields: {
       field: '035',
       in1: '*',
@@ -55,18 +49,18 @@ describe('ui-data-import', () => {
   };
 
   const mappingProfile = {
-    name: mappingProfileName,
-    typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance
+    name: `C358138 Update instance via 035 ${Helper.getRandomBarcode()}`,
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE
   };
 
   const actionProfile = {
-    typeValue: NewActionProfile.folioRecordTypeValue.instance,
-    name: actionProfileName,
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+    name: `C358138 Update instance via 035 ${Helper.getRandomBarcode()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
 
   const jobProfile = {
-    profileName: jobProfileName,
+    profileName: `C358138 Update instance via 035 ${Helper.getRandomBarcode()}`,
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
@@ -106,10 +100,10 @@ describe('ui-data-import', () => {
 
   after('delete test data', () => {
   // delete profiles
-    JobProfiles.deleteJobProfile(jobProfileName);
-    MatchProfiles.deleteMatchProfile(matchProfileName);
-    ActionProfiles.deleteActionProfile(actionProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
+    MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+    ActionProfiles.deleteActionProfile(actionProfile.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
     Users.deleteViaApi(user.userId);
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${firstInstanceHrid}"` })
       .then((instance) => {
@@ -127,7 +121,7 @@ describe('ui-data-import', () => {
       cy.reload();
       // upload a marc file for creating of the new instance
       DataImport.uploadFile('marcFileForC358138.mrc', fileForCreateFirstName);
-      JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+      JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileForCreateFirstName);
       Logs.checkStatusOfJobProfile('Completed');
@@ -172,7 +166,7 @@ describe('ui-data-import', () => {
 
       // create job profile for update
       cy.visit(SettingsMenu.jobProfilePath);
-      JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);
+      JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfile.name, matchProfile.profileName);
       JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
       // upload a marc file for updating already created instance
@@ -203,7 +197,7 @@ describe('ui-data-import', () => {
       // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
       cy.reload();
       DataImport.uploadFile('marcFileForC358138_with_035.mrc', fileForCreateSecondName);
-      JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+      JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileForCreateSecondName);
       Logs.checkStatusOfJobProfile('Completed');

@@ -106,6 +106,18 @@ export default {
     ]);
   },
 
+  checkCreatedPOLineOtherResource: (orderLineTitleName, fund) => {
+    cy.expect([
+      orderLineInfoPage.exists(),
+      itemDetailsSection.find(KeyValue({ value: orderLineTitleName })).exists(),
+      poLineInfoSection.find(KeyValue({ value: 'Other' })).exists(),
+      fundDistributionSection
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .has({ content: `${fund.name}(${fund.code})` }),
+    ]);
+  },
+
   checkCreatedPOLineElectronicResource: (orderLineTitleName, fund) => {
     cy.expect([
       orderLineInfoPage.exists(),
@@ -157,6 +169,7 @@ export default {
 
   backToEditingOrder: () => {
     cy.do(Button({ id: 'clickable-backToPO' }).click());
+    cy.wait(4000);
   },
 
   deleteOrderLine: () => {
@@ -189,6 +202,28 @@ export default {
     cy.do([
       orderLineTitleField.fillIn(orderLineTitleName),
       orderFormatSelect.choose('Physical resource'),
+      acquisitionMethodButton.click(),
+      SelectionOption('Depository').click(),
+      receivingWorkflowSelect.choose('Independent order and receipt quantity'),
+      physicalUnitPriceTextField.fillIn(physicalUnitPrice),
+      quantityPhysicalTextField.fillIn(quantityPhysical),
+      materialTypeSelect.choose('book'),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      fundDistributionField.fillIn('100'),
+      addLocationButton.click(),
+      locationSelect.click(),
+      onlineLocationOption.click(),
+      quantityPhysicalLocationField.fillIn(quantityPhysical),
+      saveAndClose.click()
+    ]);
+  },
+
+  POLineInfodorOtherMaterialWithFund: (orderLineTitleName, fund) => {
+    cy.do([
+      orderLineTitleField.fillIn(orderLineTitleName),
+      orderFormatSelect.choose('Other'),
       acquisitionMethodButton.click(),
       SelectionOption('Depository').click(),
       receivingWorkflowSelect.choose('Independent order and receipt quantity'),
@@ -324,6 +359,68 @@ export default {
       fundDistributionField.fillIn('100'),
       saveAndClose.click()
     ]);
+  },
+
+  fillPolWithEuroCurrency( fund, unitPrice, quantity, institutionId) {
+    cy.do([
+      orderFormatSelect.choose('Physical resource'),
+      acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      SelectionOption('Depository').click(),
+      receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
+      physicalUnitPriceTextField.fillIn(unitPrice),
+      quantityPhysicalTextField.fillIn(quantity),
+      Button({ id: 'currency' }).click(),
+      SelectionOption('Euro (EUR)').click(),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      fundDistributionField.fillIn('100'),
+      materialTypeSelect.choose('book'),
+      addLocationButton.click(),
+      Button('Create new holdings for location').click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+        cy.do([
+      Modal('Select permanent location').find(Button('Save and close')).click(),
+      quantityPhysicalLocationField.fillIn(quantity),
+      saveAndClose.click()
+    ]);
+    cy.wait(4000);
+    this.submitOrderLine();
+  },
+
+  fillPolWithPLNCurrency(fund, unitPrice, quantity, institutionId) {
+    cy.do([
+      orderFormatSelect.choose('Physical resource'),
+      acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      SelectionOption('Depository').click(),
+      receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
+      physicalUnitPriceTextField.fillIn(unitPrice),
+      quantityPhysicalTextField.fillIn(quantity),
+      Button({ id: 'currency' }).click(),
+      SelectionOption('Polish Zloty (PLN)').click(),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      fundDistributionField.fillIn('100'),
+      materialTypeSelect.choose('book'),
+      addLocationButton.click(),
+      Button('Create new holdings for location').click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+        cy.do([
+      Modal('Select permanent location').find(Button('Save and close')).click(),
+      quantityPhysicalLocationField.fillIn(quantity),
+      saveAndClose.click()
+    ]);
+    cy.wait(4000);
+    this.submitOrderLine();
   },
 
   fillInPOLineInfoViaUi: () => {
@@ -519,9 +616,9 @@ export default {
     ]);
   },
 
-  selectPOLInOrder: () => {
+  selectPOLInOrder: (indexNumber) => {
     cy.do(Accordion({ id: 'POListing' })
-      .find(MultiColumnListRow({ index: 0 }))
+      .find(MultiColumnListRow({ index: indexNumber }))
       .find(MultiColumnListCell({ columnIndex: 0 }))
       .click());
   },
@@ -669,6 +766,10 @@ export default {
 
   checkFundInPOL:(fund) => {
     cy.expect(Section({ id: 'FundDistribution' }).find(Link(`${fund.name}(${fund.code})`)).exists());
+  },
+
+  checkCurrencyInPOL:(currentEncumbrance) => {
+    cy.expect(Section({ id: 'FundDistribution'}).find(Link(`$${currentEncumbrance}`)).exists());
   },
 
   checkDownloadedFile() {

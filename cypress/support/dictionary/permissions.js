@@ -134,9 +134,6 @@ export default {
   checkinAll: { internal: 'ui-checkin.all', gui: 'Check in: All permissions' },
   // Receiving
   uiReceivingViewEditCreate:{ internal:'ui-receiving.create', gui:'Receiving: View, edit, create' },
-  // Organization
-  viewOrganization:{ internal:'ui-organizations.view', gui:'Organizations: View' },
-  viewEditCreateOrganization:{ internal:'ui-organizations.create', gui:'Organizations: View, edit, create' },
   // Invoice
   viewEditDeleteInvoiceInvoiceLine:{ internal:'ui-invoice.invoice.delete', gui:'Invoice: Can view, edit and delete Invoices and Invoice lines' },
   viewEditCreateInvoiceInvoiceLine: { internal: 'ui-invoice.invoice.create', gui: 'Invoice: Can view, edit and create new Invoices and Invoice lines' },
@@ -224,4 +221,6 @@ export default {
   // Export manager
   exportManagerAll: { internal: 'ui-export-manager.export-manager.all', gui: 'Export manager: All' },
   exportManagerDownloadAndResendFiles: { internal: 'ui-export-manager.jobs.downloadAndResend', gui: 'Export manager: Download and re-send files' },
+  // OAI-PMH
+  oaipmhSettingsEdit: { internal: 'ui-oai-pmh.edit', gui: 'Settings (OAI-PMH): Can view and edit settings' },
 };

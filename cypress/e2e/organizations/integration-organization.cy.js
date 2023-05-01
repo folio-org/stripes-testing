@@ -33,7 +33,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
   const libraryEDICodeFor1Integration = getRandomPostfix();
 
   before(() => {
-    cy.createTempUser([permissions.viewEditCreateOrganization.gui])
+    cy.createTempUser([permissions.uiOrganizationsViewEditCreate.gui])
       .then(userProperties => {
         userId = userProperties.userId;
         cy.login(userProperties.username, userProperties.password);
