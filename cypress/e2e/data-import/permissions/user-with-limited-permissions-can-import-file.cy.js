@@ -1,11 +1,11 @@
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { LOAN_TYPE_NAMES, ITEM_STATUS_NAMES, FOLIO_RECORD_TYPE, LOCALION_NAMES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -24,33 +24,27 @@ describe('ui-data-import', () => {
   let secondUser;
   let instanceHrid;
   const quantityOfItems = '1';
-  // unique profile names
-  const itemMappingProfileName = `C356841 item mapping profile ${Helper.getRandomBarcode()}`;
-  const holdingsMappingProfileName = `C356841 holdings mapping profile ${Helper.getRandomBarcode()}`;
-  const itemActionProfileName = `C356841 item action profile ${Helper.getRandomBarcode()}`;
-  const holdingsActionProfileName = `C356841 holdings action profile ${Helper.getRandomBarcode()}`;
-  const jobProfileName = `C356841 job profile ${Helper.getRandomBarcode()}`;
   const nameMarcFile = `C356841autotestFile.${Helper.getRandomBarcode()}.mrc`;
   const collectionOfMappingAndActionProfiles = [
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
-        name: holdingsMappingProfileName,
-        pernanentLocation: '"Online (E)"' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
-        name: holdingsActionProfileName }
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        name: `C356841 holdings mapping profile ${Helper.getRandomBarcode()}`,
+        pernanentLocation: `"${LOCALION_NAMES.ONLINE}"` },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        name: `C356841 holdings action profile ${Helper.getRandomBarcode()}` }
     },
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
-        name: itemMappingProfileName,
-        permanentLoanType: 'Can circulate',
-        status: 'Available' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
-        name: itemActionProfileName }
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
+        name: `C356841 item mapping profile ${Helper.getRandomBarcode()}`,
+        permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
+        status: ITEM_STATUS_NAMES.AVAILABLE },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
+        name: `C356841 item action profile ${Helper.getRandomBarcode()}` }
     }
   ];
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: jobProfileName
+    profileName: `C356841 job profile ${Helper.getRandomBarcode()}`
   };
 
   before('create test data', () => {
@@ -76,11 +70,11 @@ describe('ui-data-import', () => {
     Users.deleteViaApi(firstUser.userId);
     Users.deleteViaApi(secondUser.userId);
     // delete generated profiles
-    JobProfiles.deleteJobProfile(jobProfileName);
-    ActionProfiles.deleteActionProfile(itemActionProfileName);
-    ActionProfiles.deleteActionProfile(holdingsActionProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileName);
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
+    collectionOfMappingAndActionProfiles.forEach(profile => {
+      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+    });
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
       .then((instance) => {
         cy.deleteItemViaApi(instance.items[0].id);
@@ -99,13 +93,13 @@ describe('ui-data-import', () => {
       NewFieldMappingProfile.fillPermanentLoanType(collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLoanType);
       NewFieldMappingProfile.fillStatus(collectionOfMappingAndActionProfiles[1].mappingProfile.status);
       FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfileName);
+      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile.name);
 
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
       NewFieldMappingProfile.fillPermanentLocation(collectionOfMappingAndActionProfiles[0].mappingProfile.pernanentLocation);
       FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfileName);
+      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
 
       // create action profiles
       collectionOfMappingAndActionProfiles.forEach(profile => {
@@ -121,7 +115,7 @@ describe('ui-data-import', () => {
       NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[0].actionProfile);
       NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[1].actionProfile);
       NewJobProfile.saveAndClose();
-      JobProfiles.checkJobProfilePresented(jobProfileName);
+      JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
       cy.logout();
       cy.login(secondUser.username, secondUser.password, { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
@@ -144,7 +138,7 @@ describe('ui-data-import', () => {
       // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
       cy.reload();
       DataImport.uploadFile('oneMarcBib.mrc', nameMarcFile);
-      JobProfiles.searchJobProfileForImport(jobProfileName);
+      JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(nameMarcFile);
       Logs.checkStatusOfJobProfile('Completed');

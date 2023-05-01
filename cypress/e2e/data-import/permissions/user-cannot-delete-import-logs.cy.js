@@ -14,6 +14,7 @@ import Users from '../../../support/fragments/users/users';
 describe('ui-data-import', () => {
   let user;
   let instanceHrid;
+  const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const fileName = `C353641 autotestFile.${Helper.getRandomBarcode()}.mrc`;
 
   before('create test data', () => {
@@ -39,7 +40,7 @@ describe('ui-data-import', () => {
       // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
       cy.reload();
       DataImport.uploadFile('oneMarcBib.mrc', fileName);
-      JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+      JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileName);
       Logs.checkStatusOfJobProfile('Completed');
