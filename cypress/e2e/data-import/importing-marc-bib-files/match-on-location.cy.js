@@ -2,8 +2,8 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
@@ -187,19 +187,19 @@ describe('ui-data-import', () => {
   ];
   const holdingsMappingProfileForUpdate = {
     name: `C17027 mapping profile update holdings.${getRandomPostfix()}`,
-    typeValue : NewFieldMappingProfile.folioRecordTypeValue.holdings
+    typeValue: FOLIO_RECORD_TYPE.HOLDINGS
   };
   const itemMappingProfileForUpdate = {
     name: `C17027 mapping profile update item.${getRandomPostfix()}`,
-    typeValue : NewFieldMappingProfile.folioRecordTypeValue.item
+    typeValue: FOLIO_RECORD_TYPE.ITEM
   };
   const holdingsActionProfileForUpdate = {
-    typeValue: NewActionProfile.folioRecordTypeValue.holdings,
+    typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
     name: `C17027 action profile update holdings.${getRandomPostfix()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
   const itemActionProfileForUpdate = {
-    typeValue: NewActionProfile.folioRecordTypeValue.item,
+    typeValue: FOLIO_RECORD_TYPE.ITEM,
     name: `C17027 action profile update item.${getRandomPostfix()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };

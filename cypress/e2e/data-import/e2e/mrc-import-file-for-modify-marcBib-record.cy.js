@@ -1,4 +1,5 @@
 import TestTypes from '../../../support/dictionary/testTypes';
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -28,11 +29,11 @@ describe('ui-data-import', () => {
   const nameForCSVFile = `C345423autotestFile${getRandomPostfix()}.csv`;
   const nameMarcFileForUpload = `C345423autotestFile.${getRandomPostfix()}.mrc`;
   const mappingProfileFieldsForModify = { name: `autoTestMappingProf.${getRandomPostfix()}`,
-    typeValue: NewFieldMappingProfile.folioRecordTypeValue.marcBib };
+    typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC };
   const actionProfile = {
     name: `autoTestActionProf.${getRandomPostfix()}`,
     action: 'Modify (MARC Bibliographic record type only)',
-    typeValue: 'MARC Bibliographic',
+    typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
   };
   const matchProfile = {
     profileName: `autoTestMatchProf.${getRandomPostfix()}`,

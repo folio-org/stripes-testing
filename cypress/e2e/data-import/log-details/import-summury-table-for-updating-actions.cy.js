@@ -3,7 +3,8 @@ import DevTeams from '../../../support/dictionary/devTeams';
 import { LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
   ITEM_STATUS_NAMES,
-  LOCALION_NAMES } from '../../../support/constants';
+  LOCALION_NAMES
+  FOLIO_RECORD_TYPE } from '../../../support/constants';
 import DateTools from '../../../support/utils/dateTools';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
@@ -21,7 +22,6 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import FileManager from '../../../support/utils/fileManager';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
@@ -213,19 +213,19 @@ describe('ui-data-import', () => {
   // profiles for updating instance, holdings, item
   const collectionOfMappingAndActionProfiles = [
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         name: `C356802 update instance mapping profile ${Helper.getRandomBarcode()}`,
         catalogedDate: '###TODAY###',
         catalogedDateUi: DateTools.getFormattedDate({ date: new Date() }),
         instanceStatus: 'Batch Loaded',
         statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
         statisticalCodeUI: 'Book, print (books)' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         name: `C356802 update instance action profile ${Helper.getRandomBarcode()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C356802 update holdings mapping profile ${Helper.getRandomBarcode()}`,
         holdingsType: 'Electronic',
         permanentLocation: `"${LOCALION_NAMES.ONLINE}"`,
@@ -234,12 +234,12 @@ describe('ui-data-import', () => {
         callNumber: '050$a " " 050$b',
         relationship: 'Resource',
         uri: '856$u' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C356802 update holdings action profile ${Helper.getRandomBarcode()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
-      mappingProfile: { typeValue : NewFieldMappingProfile.folioRecordTypeValue.item,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C356802 update item mapping profile ${Helper.getRandomBarcode()}`,
         materialType: MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE,
         noteType: '"Electronic bookplate"',
@@ -248,7 +248,7 @@ describe('ui-data-import', () => {
         staffOnly: 'Mark for all affected records',
         permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
         status: ITEM_STATUS_NAMES.AVAILABLE },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C356802 update item action profile ${Helper.getRandomBarcode()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     }
@@ -343,10 +343,10 @@ describe('ui-data-import', () => {
           testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
         });
 
-      cy.visit(TopMenu.dataImportPath);
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-      cy.reload();
       // upload a marc file for creating of the new instance, holding and item
+      cy.visit(TopMenu.dataImportPath);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);
       JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
       JobProfiles.runImportFile();
@@ -439,8 +439,8 @@ describe('ui-data-import', () => {
 
       // upload the exported marc file
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-      cy.reload();
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       DataImport.uploadExportedFile(nameMarcFileForImportUpdate);
       JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
       JobProfiles.runImportFile();

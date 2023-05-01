@@ -1,10 +1,10 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -41,10 +41,10 @@ describe('ui-data-import', () => {
   const fileNameForUpdate = `C17017 updatedProtectedFields.${getRandomPostfix()}.mrc`;
   // profiles for create
   const mappingProfile = { name: `C17017 autotest MappingProf${getRandomPostfix()}`,
-    typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance };
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE };
 
   const actionProfile = { name: `C17017 autotest ActionProf${getRandomPostfix()}`,
-    typeValue : NewActionProfile.folioRecordTypeValue.instance };
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE };
 
   const jobProfile = {
     profileName: `C17017 autotest JobProf${getRandomPostfix()}`,
@@ -53,11 +53,11 @@ describe('ui-data-import', () => {
 
   // profiles for update
   const mappingProfileUpdate = { name: `C17017 autotest update MappingProf${getRandomPostfix()}`,
-    typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance };
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE };
 
   const actionProfileUpdate = {
     name: `C17017 autotest update ActionProf${getRandomPostfix()}`,
-    typeValue : NewActionProfile.folioRecordTypeValue.instance,
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
   };
 
@@ -150,8 +150,8 @@ describe('ui-data-import', () => {
 
     // upload a marc file for creating of the new instance
     cy.visit(TopMenu.dataImportPath);
-    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-    cy.reload();
+    // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.verifyUploadState();
     DataImport.uploadFile('marcFileForC17017.mrc', nameMarcFileForCreate);
     JobProfiles.searchJobProfileForImport(jobProfile.profileName);
     JobProfiles.runImportFile();
@@ -203,8 +203,8 @@ describe('ui-data-import', () => {
 
     // upload a marc file for updating already created instance
     cy.visit(TopMenu.dataImportPath);
-    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-    cy.reload();
+    // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.verifyUploadState();
     DataImport.uploadFile(editedMarcFileName, fileNameForUpdate);
     JobProfiles.searchJobProfileForImport(jobProfileUpdate.profileName);
     JobProfiles.runImportFile();

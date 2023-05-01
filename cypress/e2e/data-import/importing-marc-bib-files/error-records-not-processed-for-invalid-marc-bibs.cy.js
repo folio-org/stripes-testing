@@ -46,7 +46,7 @@ describe('ui-data-import', () => {
       Logs.checkStatusOfJobProfile('Completed with errors');
       Logs.openFileDetails(nameMarcFileForImportCreate);
       FileDetails.verifyTitle('No content', FileDetails.columnNameInResultList.title);
-      FileDetails.checkStatusInColumn(FileDetails.status.discarded, FileDetails.columnNameInResultList.srsMarc);
+      FileDetails.checkStatusInColumn(FileDetails.status.noAction, FileDetails.columnNameInResultList.srsMarc);
       FileDetails.checkStatusInColumn(FileDetails.status.error, FileDetails.columnNameInResultList.error);
       FileDetails.verifyErrorMessage(error);
     });

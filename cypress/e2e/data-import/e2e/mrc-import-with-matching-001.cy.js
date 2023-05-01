@@ -1,13 +1,12 @@
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import TopMenu from '../../../support/fragments/topMenu';
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
@@ -40,12 +39,12 @@ describe('ui-data-import', () => {
   };
   const mappingProfile = {
     name: `autoTestMappingProf.${getRandomPostfix()}`,
-    typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
+    typeValue : FOLIO_RECORD_TYPE.INSTANCE,
     update: true,
     permanentLocation: `"${LOCALION_NAMES.ANNEX}"`,
   };
   const actionProfile = {
-    typeValue : NewActionProfile.folioRecordTypeValue.instance,
+    typeValue : FOLIO_RECORD_TYPE.INSTANCE,
     name: `autoTestActionProf.${getRandomPostfix()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
   };
