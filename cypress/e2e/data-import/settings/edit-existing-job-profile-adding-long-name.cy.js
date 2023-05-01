@@ -9,7 +9,6 @@ import JobProfileView from '../../../support/fragments/data_import/job_profiles/
 import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/jobProfileEdit';
 
 describe('ui-data-import', () => {
-  const jobProfileName = `C2332 autotest job profile ${getRandomPostfix()}`;
   const jobProfileLongName = `C2332_autotest_job_profile_long_name_${getRandomPostfix()}_${getRandomPostfix()}_${getRandomPostfix()}_${getRandomPostfix()}_${getRandomPostfix()}_${getRandomPostfix()}`;
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
