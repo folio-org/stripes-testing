@@ -18,9 +18,42 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { LOCALION_NAMES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let user = {};
+  const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+  // unique file name to upload
+  const nameForMarcFile = `C17044autoTestFile${getRandomPostfix()}.mrc`;
+  const nameForExportedMarcFile = `C17044autoTestFile${getRandomPostfix()}.mrc`;
+  const nameForCSVFile = `C17044autoTestFile${getRandomPostfix()}.csv`;
+  const matchProfile = {
+    profileName: `autoTestMatchProf.${getRandomPostfix()}`,
+    incomingRecordFields: {
+      field: '001',
+    },
+    existingRecordFields: {
+      field: '001',
+    },
+    matchCriterion: 'Exactly matches',
+    existingRecordType: 'MARC_BIBLIOGRAPHIC'
+  };
+  const mappingProfile = {
+    name: `autoTestMappingProf.${getRandomPostfix()}`,
+    typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
+    update: true,
+    permanentLocation: `"${LOCALION_NAMES.ANNEX}"`,
+  };
+  const actionProfile = {
+    typeValue : NewActionProfile.folioRecordTypeValue.instance,
+    name: `autoTestActionProf.${getRandomPostfix()}`,
+    action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+  };
+  const jobProfile = {
+    ...NewJobProfile.defaultJobProfile,
+    profileName: `autoTestJobProf.${getRandomPostfix()}`,
+    acceptedType: NewJobProfile.acceptedDataType.marc
+  };
 
   before('login', () => {
     cy.createTempUser([
@@ -38,25 +71,22 @@ describe('ui-data-import', () => {
 
   after('delete test data', () => {
     Users.deleteViaApi(user.userId);
+    // clean up generated profiles
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
+    MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+    ActionProfiles.deleteActionProfile(actionProfile.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+    // delete created files in fixtures
+    FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
+    FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
   });
 
   it('C17044: MARC-MARC matching for 001 field (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    // unique file name to upload
-    const nameForMarcFile = `C17044autoTestFile${getRandomPostfix()}.mrc`;
-    const nameForExportedMarcFile = `C17044autoTestFile${getRandomPostfix()}.mrc`;
-    const nameForCSVFile = `C17044autoTestFile${getRandomPostfix()}.csv`;
-
-    // unique name for profiles
-    const matchProfileName = `autoTestMatchProf.${getRandomPostfix()}`;
-    const mappingProfileName = `autoTestMappingProf.${getRandomPostfix()}`;
-    const actionProfileName = `autoTestActionProf.${getRandomPostfix()}`;
-    const jobProfileName = `autoTestJobProf.${getRandomPostfix()}`;
-
     // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
     cy.reload();
     // upload a marc file for export
     DataImport.uploadFile('oneMarcBib.mrc', nameForMarcFile);
-    JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+    JobProfiles.searchJobProfileForImport(jobProfileToRun);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(nameForMarcFile);
     Logs.openFileDetails(nameForMarcFile);
@@ -80,50 +110,21 @@ describe('ui-data-import', () => {
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
 
         // create Match profile
-        const matchProfile = {
-          profileName: matchProfileName,
-          incomingRecordFields: {
-            field: '001',
-          },
-          existingRecordFields: {
-            field: '001',
-          },
-          matchCriterion: 'Exactly matches',
-          existingRecordType: 'MARC_BIBLIOGRAPHIC'
-        };
-
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.createMatchProfile(matchProfile);
 
         // create Field mapping profile
-        const mappingProfile = {
-          name: mappingProfileName,
-          typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
-          update: true,
-          permanentLocation: '"Annex (KU/CC/DI/A)"',
-        };
-
         cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.createMappingProfile(mappingProfile);
 
         // create Action profile and link it to Field mapping profile
-        const actionProfile = {
-          typeValue : NewActionProfile.folioRecordTypeValue.instance,
-          name: actionProfileName,
-          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
-        };
         cy.visit(SettingsMenu.actionProfilePath);
         ActionProfiles.create(actionProfile, mappingProfile.name);
-        ActionProfiles.checkActionProfilePresented(actionProfileName);
+        ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
         // create Job profile
-        const jobProfile = {
-          ...NewJobProfile.defaultJobProfile,
-          profileName: jobProfileName,
-          acceptedType: NewJobProfile.acceptedDataType.marc
-        };
         cy.visit(SettingsMenu.jobProfilePath);
-        JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);
+        JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfile.name, matchProfile.profileName);
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         // upload the exported marc file with 001 field
@@ -131,7 +132,7 @@ describe('ui-data-import', () => {
         // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
         cy.reload();
         DataImport.uploadExportedFile(nameForExportedMarcFile);
-        JobProfiles.searchJobProfileForImport(jobProfileName);
+        JobProfiles.searchJobProfileForImport(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameForExportedMarcFile);
         Logs.openFileDetails(nameForExportedMarcFile);
@@ -142,16 +143,6 @@ describe('ui-data-import', () => {
 
         // ensure the fields created in Field mapping profile exists in inventory
         InventorySearchAndFilter.checkInstanceDetails();
-
-        // clean up generated profiles
-        JobProfiles.deleteJobProfile(jobProfileName);
-        MatchProfiles.deleteMatchProfile(matchProfileName);
-        ActionProfiles.deleteActionProfile(actionProfileName);
-        FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
-
-        // delete created files in fixtures
-        FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
-        FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
       });
   });
 });

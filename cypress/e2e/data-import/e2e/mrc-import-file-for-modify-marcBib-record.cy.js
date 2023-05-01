@@ -22,29 +22,20 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 describe('ui-data-import', () => {
   let user = {};
   let instanceHRID;
-
-  // unique name for profiles
-  const mappingProfileName = `autoTestMappingProf.${getRandomPostfix()}`;
-  const actionProfileName = `autoTestActionProf.${getRandomPostfix()}`;
-  const matchProfileName = `autoTestMatchProf.${getRandomPostfix()}`;
-  const jobProfileName = `autoTestJobProf.${getRandomPostfix()}`;
-
+  const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   // file name
   const nameMarcFileForCreate = `C345423autotestFile.${getRandomPostfix()}.mrc`;
   const nameForCSVFile = `C345423autotestFile${getRandomPostfix()}.csv`;
   const nameMarcFileForUpload = `C345423autotestFile.${getRandomPostfix()}.mrc`;
-
-  const mappingProfileFieldsForModify = { name: mappingProfileName,
+  const mappingProfileFieldsForModify = { name: `autoTestMappingProf.${getRandomPostfix()}`,
     typeValue: NewFieldMappingProfile.folioRecordTypeValue.marcBib };
-
   const actionProfile = {
-    name: actionProfileName,
+    name: `autoTestActionProf.${getRandomPostfix()}`,
     action: 'Modify (MARC Bibliographic record type only)',
     typeValue: 'MARC Bibliographic',
   };
-
   const matchProfile = {
-    profileName: matchProfileName,
+    profileName: `autoTestMatchProf.${getRandomPostfix()}`,
     incomingRecordFields: {
       field: '001',
     },
@@ -54,10 +45,9 @@ describe('ui-data-import', () => {
     matchCriterion: 'Exactly matches',
     existingRecordType: 'MARC_BIBLIOGRAPHIC'
   };
-
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: jobProfileName,
+    profileName: `autoTestJobProf.${getRandomPostfix()}`,
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
@@ -80,10 +70,10 @@ describe('ui-data-import', () => {
 
   after('delete test data', () => {
     // delete profiles
-    JobProfiles.deleteJobProfile(jobProfileName);
-    MatchProfiles.deleteMatchProfile(matchProfileName);
-    ActionProfiles.deleteActionProfile(actionProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
+    MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+    ActionProfiles.deleteActionProfile(actionProfile.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileFieldsForModify.name);
     // delete downloads folder and created files in fixtures
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
     FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpload}`);
@@ -100,7 +90,7 @@ describe('ui-data-import', () => {
     cy.reload();
     // upload a marc file for creating of the new instance, holding and item
     DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
-    JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+    JobProfiles.searchJobProfileForImport(jobProfileToRun);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(nameMarcFileForCreate);
     Logs.openFileDetails(nameMarcFileForCreate);
@@ -137,12 +127,12 @@ describe('ui-data-import', () => {
     NewFieldMappingProfile.fillModificationSectionWithAdd('Add', '947', 'a', 'Add subfield', 'Test', 'b', 'Addition');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfileFieldsForModify.name);
-    FieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
+    FieldMappingProfiles.checkMappingProfilePresented(mappingProfileFieldsForModify.name);
 
     // create Action profile and link it to Field mapping profile
     cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.create(actionProfile, mappingProfileName);
-    ActionProfiles.checkActionProfilePresented(actionProfileName);
+    ActionProfiles.create(actionProfile, mappingProfileFieldsForModify.name);
+    ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
     // create Match profile
     cy.visit(SettingsMenu.matchProfilePath);
@@ -150,7 +140,7 @@ describe('ui-data-import', () => {
 
     // create Job profile
     cy.visit(SettingsMenu.jobProfilePath);
-    JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);
+    JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfile.name, matchProfile.profileName);
     JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
     // upload a marc file for creating of the new instance, holding and item
