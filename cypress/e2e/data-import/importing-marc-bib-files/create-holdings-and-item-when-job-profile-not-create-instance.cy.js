@@ -185,8 +185,8 @@ describe('ui-data-import', () => {
           JobProfiles.waitFileIsImported(exportedFileName);
           Logs.checkStatusOfJobProfile('Completed');
           Logs.openFileDetails(exportedFileName);
-          [FileDetails.columnName.holdings,
-            FileDetails.columnName.item].forEach(columnName => {
+          [FileDetails.columnNameInResultList.holdings,
+            FileDetails.columnNameInResultList.item].forEach(columnName => {
             FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
           });
           FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems, 0);

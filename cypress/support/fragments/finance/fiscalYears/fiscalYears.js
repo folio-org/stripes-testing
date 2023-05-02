@@ -1,4 +1,15 @@
-import { Button, TextField, Pane, MultiColumnList, PaneContent, PaneHeader, MultiColumnListCell, SelectionOption, Link, Section } from '../../../../../interactors';
+import {
+  Button,
+  TextField,
+  Pane,
+  MultiColumnList,
+  PaneContent,
+  PaneHeader,
+  MultiColumnListCell,
+  SelectionOption,
+  Link,
+  Section
+} from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 import DateTools from '../../../utils/dateTools';
 

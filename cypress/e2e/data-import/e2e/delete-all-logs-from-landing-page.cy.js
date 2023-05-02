@@ -29,10 +29,8 @@ describe.skip('ui-data-import', () => {
     ])
       .then(userProperties => {
         userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading
-        });
+        cy.login(userProperties.username, userProperties.password,
+          { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
       })
       .then(() => {
         DataImport.checkIsLandingPageOpened();
@@ -44,7 +42,9 @@ describe.skip('ui-data-import', () => {
           fileNameToUpload = `C358137autotestFile.${getRandomPostfix()}.mrc`;
           // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
           cy.reload();
-          DataImport.uploadFile(filePath, fileNameToUpload);
+          cy.wrap(
+            DataImport.uploadFile(filePath, fileNameToUpload)
+          );
           // need to wait until file will be uploaded in loop
           cy.wait(8000);
           JobProfiles.searchJobProfileForImport(jobProfileToRun);

@@ -45,9 +45,9 @@ describe('ui-data-import', () => {
       JobProfiles.waitFileIsImported(nameMarcFileForImportCreate);
       Logs.checkStatusOfJobProfile('Completed with errors');
       Logs.openFileDetails(nameMarcFileForImportCreate);
-      FileDetails.verifyTitle('No content', FileDetails.columnName.title);
-      FileDetails.checkStatusInColumn(FileDetails.status.noAction, FileDetails.columnName.srsMarc);
-      FileDetails.checkStatusInColumn(FileDetails.status.error, FileDetails.columnName.error);
+      FileDetails.verifyTitle('No content', FileDetails.columnNameInResultList.title);
+      FileDetails.checkStatusInColumn(FileDetails.status.noAction, FileDetails.columnNameInResultList.srsMarc);
+      FileDetails.checkStatusInColumn(FileDetails.status.error, FileDetails.columnNameInResultList.error);
       FileDetails.verifyErrorMessage(error);
     });
 });
