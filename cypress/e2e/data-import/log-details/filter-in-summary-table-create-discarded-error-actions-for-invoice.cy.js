@@ -94,7 +94,7 @@ describe('ui-data-import', () => {
 
       // check created counter in the Summary table
       FileDetails.checkInvoiceInSummaryTable(quantityOfItems, 0);
-      // check Discarded counter in the Summary table
+      // check No action counter in the Summary table
       FileDetails.checkInvoiceInSummaryTable(quantityOfItems, 2);
       // check Error counter in the Summary table
       FileDetails.checkInvoiceInSummaryTable(quantityOfItems, 3);

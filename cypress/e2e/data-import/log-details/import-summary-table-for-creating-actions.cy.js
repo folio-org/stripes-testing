@@ -1,7 +1,6 @@
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import Helper from '../../../support/fragments/finance/financeHelper';
@@ -15,7 +14,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
-import { LOCALION_NAMES, LOAN_TYPE_NAMES, ITEM_STATUS_NAMES } from '../../../support/constants';
+import { LOCALION_NAMES, LOAN_TYPE_NAMES, ITEM_STATUS_NAMES, FOLIO_RECORD_TYPE } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let user;
@@ -161,7 +160,7 @@ describe('ui-data-import', () => {
       FileDetails.checkItemsQuantityInSummaryTable(0, quantityOfItems);
       // check Updated counter in the Summary table
       FileDetails.checkItemsQuantityInSummaryTable(1, '0');
-      // check Discarded counter in the Summary table
+      // check No action counter in the Summary table
       FileDetails.checkItemsQuantityInSummaryTable(2, '0');
       // check Error counter in the Summary table
       FileDetails.checkItemsQuantityInSummaryTable(3, '0');

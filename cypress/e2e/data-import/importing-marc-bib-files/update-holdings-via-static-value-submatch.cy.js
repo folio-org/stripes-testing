@@ -1,7 +1,7 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE, LOCALION_NAMES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -20,7 +20,6 @@ import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRec
 import Helper from '../../../support/fragments/finance/financeHelper';
 import FileManager from '../../../support/utils/fileManager';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import { LOCALION_NAMES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let instanceHrid;

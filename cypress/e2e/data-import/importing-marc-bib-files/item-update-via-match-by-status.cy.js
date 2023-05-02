@@ -302,7 +302,7 @@ describe('ui-data-import', () => {
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(nameMarcFileForUpdate);
       });
-      // check items what statuses were changed have Discarded status
+      // check items what statuses were changed have No action status
       titlesItemsStatusChanged.forEach(title => {
         FileDetails.checkStatusByTitle(title, FileDetails.status.noAction);
       });

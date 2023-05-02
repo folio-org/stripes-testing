@@ -19,6 +19,7 @@ const columnName = {
   instance: resultsList.find(MultiColumnListHeader({ id:'list-column-instancestatus' })),
   holdings: resultsList.find(MultiColumnListHeader({ id:'list-column-holdingsstatus' })),
   item: resultsList.find(MultiColumnListHeader({ id:'list-column-itemstatus' })),
+  authority: resultsList.find(MultiColumnListHeader({ id:'list-column-authoritystatus' })),
   invoice: resultsList.find(MultiColumnListHeader({ id:'list-column-invoicestatus' })),
   error: resultsList.find(MultiColumnListHeader({ id:'list-column-error' })),
   title: resultsList.find(MultiColumnListHeader({ id:'list-column-title' }))
@@ -57,6 +58,13 @@ const checkItemQuantityInSummaryTable = (quantity, row = 0) => {
   cy.expect(jobSummaryTable
     .find(MultiColumnListRow({ indexRow: `row-${row}` }))
     .find(MultiColumnListCell({ columnIndex: 4, content: quantity }))
+    .exists());
+};
+
+const checkAuthorityQuantityInSummaryTable = (quantity, row = 0) => {
+  cy.expect(jobSummaryTable
+    .find(MultiColumnListRow({ indexRow: `row-${row}` }))
+    .find(MultiColumnListCell({ columnIndex: 5, content: quantity }))
     .exists());
 };
 
@@ -136,6 +144,7 @@ export default {
   checkInstanceQuantityInSummaryTable,
   checkHoldingsQuantityInSummaryTable,
   checkItemQuantityInSummaryTable,
+  checkAuthorityQuantityInSummaryTable,
   checkErrorQuantityInSummaryTable,
 
   openInstanceInInventory:(itemStatus, rowNumber = 0) => {
