@@ -305,7 +305,7 @@ describe('ui-data-import', () => {
       });
   });
 
-  afterEach(() => {
+  afterEach('delete test data', () => {
     // delete generated profiles
     JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
     collectionOfMatchProfiles.forEach(profile => {
@@ -377,10 +377,10 @@ describe('ui-data-import', () => {
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(nameMarcFileForImportCreate);
     Logs.openFileDetails(nameMarcFileForImportCreate);
-    [FileDetails.columnName.srsMarc,
-      FileDetails.columnName.instance,
-      FileDetails.columnName.holdings,
-      FileDetails.columnName.item].forEach(columnName => {
+    [FileDetails.columnNameInResultList.srsMarc,
+      FileDetails.columnNameInResultList.instance,
+      FileDetails.columnNameInResultList.holdings,
+      FileDetails.columnNameInResultList.item].forEach(columnName => {
       FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
     });
     FileDetails.checkItemsQuantityInSummaryTable(0, '1');
@@ -449,10 +449,10 @@ describe('ui-data-import', () => {
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(nameMarcFileForImportUpdate);
     Logs.openFileDetails(nameMarcFileForImportUpdate);
-    [FileDetails.columnName.srsMarc,
-      FileDetails.columnName.instance,
-      FileDetails.columnName.holdings,
-      FileDetails.columnName.item].forEach(columnName => {
+    [FileDetails.columnNameInResultList.srsMarc,
+      FileDetails.columnNameInResultList.instance,
+      FileDetails.columnNameInResultList.holdings,
+      FileDetails.columnNameInResultList.item].forEach(columnName => {
       FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
     });
     FileDetails.checkItemsQuantityInSummaryTable(1, '1');

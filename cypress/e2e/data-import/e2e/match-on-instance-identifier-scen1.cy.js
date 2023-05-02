@@ -1,6 +1,6 @@
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -49,7 +49,7 @@ describe('ui-data-import', () => {
     suppressFromDiscavery: 'Mark for all affected records',
     catalogedDate: '"2021-12-01"',
     catalogedDateUI: '2021-12-01',
-    instanceStatus: 'Batch Loaded',
+    instanceStatus: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
   };
   const actionProfile = {
     name: `autotestActionProf${getRandomPostfix()}`,
