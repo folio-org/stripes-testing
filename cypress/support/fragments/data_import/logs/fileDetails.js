@@ -27,7 +27,7 @@ const columnName = {
 const status = {
   created: 'Created',
   updated: 'Updated',
-  discarded: 'Discarded',
+  noAction: 'No action',
   dash: 'No value set-',
   error: 'Error'
 };

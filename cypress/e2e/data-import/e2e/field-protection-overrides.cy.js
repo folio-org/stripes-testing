@@ -227,10 +227,10 @@ describe('ui-data-import', () => {
     NewJobProfile.saveAndClose();
     JobProfiles.checkJobProfilePresented(jobProfileForOverride.profileName);
 
-    cy.visit(TopMenu.dataImportPath);
     // upload a marc file
-    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-    cy.reload();
+    cy.visit(TopMenu.dataImportPath);
+    // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.verifyUploadState();
     DataImport.uploadFile('marcFileForC17018-BeforeOverride.mrc', fileNameForCreatingInstance);
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
     JobProfiles.runImportFile();
@@ -252,8 +252,8 @@ describe('ui-data-import', () => {
 
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-        cy.reload();
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
         DataImport.uploadFile(editedFileNameRev1, fileNameForProtect);
         JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
@@ -282,8 +282,8 @@ describe('ui-data-import', () => {
 
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-        cy.reload();
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
         DataImport.uploadFile(editedFileNameRev2, fileNameForOverride);
         JobProfiles.searchJobProfileForImport(jobProfileForOverride.profileName);
         JobProfiles.runImportFile();

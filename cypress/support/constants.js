@@ -108,3 +108,12 @@ export const ORDER_STATUSES = {
   OPEN: 'Open',
   PENDING: 'Pending'
 };
+
+export const LOCALION_NAMES = {
+  ANNEX: 'Annex (KU/CC/DI/A)',
+  ANNEX_UI: 'Annex',
+  ONLINE: 'Online (E)',
+  ONLINE_UI: 'Online',
+  MAIN_LIBRARY: 'Main Library (KU/CC/DI/M)',
+  MAIN_LIBRARY_UI: 'Main Library'
+};
