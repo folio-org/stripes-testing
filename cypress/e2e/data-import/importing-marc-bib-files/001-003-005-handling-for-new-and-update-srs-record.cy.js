@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -31,7 +31,7 @@ describe('ui-data-import', () => {
     { type: 'OCLC', value: '(OCoLC)26493177' },
     { type: 'System control number', value: '(ICU)1299036' }
   ];
-  const instanceStatusTerm = 'Batch Loaded';
+  const instanceStatusTerm = INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED;
   const catalogedDate = '###TODAY###';
 
   // unique file names
@@ -121,8 +121,8 @@ describe('ui-data-import', () => {
     JobProfiles.waitFileIsImported(nameMarcFileForCreate);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(nameMarcFileForCreate);
-    [FileDetails.columnName.srsMarc,
-      FileDetails.columnName.instance].forEach(columnName => {
+    [FileDetails.columnNameInResultList.srsMarc,
+      FileDetails.columnNameInResultList.instance].forEach(columnName => {
       FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
     });
     FileDetails.checkSrsRecordQuantityInSummaryTable('1');
@@ -189,8 +189,8 @@ describe('ui-data-import', () => {
         JobProfiles.waitFileIsImported(fileNameAfterUpload);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(fileNameAfterUpload);
-        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
-        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
+        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc);
+        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance);
         FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
         FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
 
@@ -229,8 +229,8 @@ describe('ui-data-import', () => {
         JobProfiles.waitFileIsImported(exportedFileName);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(exportedFileName);
-        [FileDetails.columnName.srsMarc,
-          FileDetails.columnName.instance].forEach(columnName => {
+        [FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.instance].forEach(columnName => {
           FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');

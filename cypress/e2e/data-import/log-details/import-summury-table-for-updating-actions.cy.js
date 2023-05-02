@@ -3,8 +3,9 @@ import DevTeams from '../../../support/dictionary/devTeams';
 import { LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
   ITEM_STATUS_NAMES,
-  LOCALION_NAMES
-  FOLIO_RECORD_TYPE } from '../../../support/constants';
+  LOCALION_NAMES,
+  FOLIO_RECORD_TYPE,
+  INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
 import DateTools from '../../../support/utils/dateTools';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
@@ -217,7 +218,7 @@ describe('ui-data-import', () => {
         name: `C356802 update instance mapping profile ${Helper.getRandomBarcode()}`,
         catalogedDate: '###TODAY###',
         catalogedDateUi: DateTools.getFormattedDate({ date: new Date() }),
-        instanceStatus: 'Batch Loaded',
+        instanceStatus: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
         statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
         statisticalCodeUI: 'Book, print (books)' },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
@@ -447,10 +448,10 @@ describe('ui-data-import', () => {
       JobProfiles.waitFileIsImported(nameMarcFileForImportUpdate);
       Logs.openFileDetails(nameMarcFileForImportUpdate);
 
-      [FileDetails.columnName.srsMarc,
-        FileDetails.columnName.instance,
-        FileDetails.columnName.holdings,
-        FileDetails.columnName.item].forEach(columnName => {
+      [FileDetails.columnNameInResultList.srsMarc,
+        FileDetails.columnNameInResultList.instance,
+        FileDetails.columnNameInResultList.holdings,
+        FileDetails.columnNameInResultList.item].forEach(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
       });
       // check Created counter in the Summary table

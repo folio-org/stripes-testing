@@ -69,8 +69,8 @@ describe('ui-data-import', () => {
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(nameMarcFileForCreate);
       rowNumbers.forEach(rowNumber => {
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc, rowNumber);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.instance, rowNumber);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumber);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumber);
       });
       FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
       FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems);
