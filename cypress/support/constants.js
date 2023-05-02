@@ -117,3 +117,9 @@ export const LOCALION_NAMES = {
   MAIN_LIBRARY: 'Main Library (KU/CC/DI/M)',
   MAIN_LIBRARY_UI: 'Main Library'
 };
+
+export const INSTANCE_STATUS_TERM_NAMES = {
+  BATCH_LOADED: 'Batch Loaded',
+  CATALOGED: 'Cataloged',
+  UNCATALOGED: 'Uncataloged'
+};

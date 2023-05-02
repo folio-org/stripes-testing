@@ -16,6 +16,7 @@ export default {
       case 'permanentLocation': verifyFunc = this.verifyMatchedResultByPermanentLocation; break;
       case 'temporaryLocation': verifyFunc = this.verifyMatchedResultByTemporaryLocation; break;
       case 'instanceHrid': verifyFunc = this.verifyMatchedResultByInstanceHrid; break;
+      case 'itemStatus': verifyFunc = this.verifyMatchedResultByItemStatus; break;
       default: verifyFunc = this.verifyMatchedResultByHRID;
     }
 
@@ -136,5 +137,10 @@ export default {
   verifyMatchedResultByInstanceHrid(actualResult, expectedResult) {
     const actualInstanceHrid = actualResult.split(',')[33];
     expect(actualInstanceHrid).to.eq(expectedResult);
+  },
+
+  verifyMatchedResultByItemStatus(actualResult, expectedResult) {
+    const actualItemStatus = actualResult.split(',')[33];
+    expect(actualItemStatus).to.eq(expectedResult);
   },
 };

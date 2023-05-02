@@ -2,13 +2,12 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import {
-  LOCALION_NAMES,
+import { LOCALION_NAMES,
   FOLIO_RECORD_TYPE,
-  MATERIAL_TYPE_NAMES,
-  LOAN_TYPE_NAMES,
   ITEM_STATUS_NAMES,
-  ORDER_STATUSES } from '../../../support/constants';
+  ORDER_STATUSES,
+  MATERIAL_TYPE_NAMES,
+  LOAN_TYPE_NAMES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -65,9 +64,9 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { name: `C380446 Create simple item for open order ${getRandomPostfix()}`,
         typeValue: FOLIO_RECORD_TYPE.ITEM,
-        materialType:'book',
-        permanentLoanType: 'Course reserves',
-        status: ITEM_STATUSES.ON_ORDER },
+        materialType: MATERIAL_TYPE_NAMES.BOOK,
+        permanentLoanType: LOAN_TYPE_NAMES.COURSE_RESERVES,
+        status: ITEM_STATUS_NAMES.ON_ORDER },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C380446 Create simple item for open order ${getRandomPostfix()}` }
     },
@@ -155,10 +154,10 @@ describe('ui-data-import', () => {
       JobProfiles.waitFileIsImported(marcFileName);
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(marcFileName);
-      [FileDetails.columnName.srsMarc,
-        FileDetails.columnName.instance,
-        FileDetails.columnName.holdings,
-        FileDetails.columnName.item
+      [FileDetails.columnNameInResultList.srsMarc,
+        FileDetails.columnNameInResultList.instance,
+        FileDetails.columnNameInResultList.holdings,
+        FileDetails.columnNameInResultList.item
       ].forEach(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
       });

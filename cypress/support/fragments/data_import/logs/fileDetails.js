@@ -14,7 +14,7 @@ const invoiceNumberFromEdifactFile = '94999';
 const resultsList = MultiColumnList({ id:'search-results-list' });
 const jobSummaryTable = MultiColumnList({ id: 'job-summary-table' });
 
-const columnName = {
+const columnNameInResultList = {
   srsMarc: resultsList.find(MultiColumnListHeader({ id:'list-column-srsmarcstatus' })),
   instance: resultsList.find(MultiColumnListHeader({ id:'list-column-instancestatus' })),
   holdings: resultsList.find(MultiColumnListHeader({ id:'list-column-holdingsstatus' })),
@@ -23,6 +23,13 @@ const columnName = {
   invoice: resultsList.find(MultiColumnListHeader({ id:'list-column-invoicestatus' })),
   error: resultsList.find(MultiColumnListHeader({ id:'list-column-error' })),
   title: resultsList.find(MultiColumnListHeader({ id:'list-column-title' }))
+};
+
+const columnNameInSummuryTable = {
+  authority: jobSummaryTable.find(MultiColumnListHeader({ id:'job-summary-table-list-column-authority' })),
+  order: jobSummaryTable.find(MultiColumnListHeader({ id:'job-summary-table-list-column-order' })),
+  invoice: jobSummaryTable.find(MultiColumnListHeader({ id:'job-summary-table-list-column-invoice' })),
+  error: jobSummaryTable.find(MultiColumnListHeader({ id:'job-summary-table-list-column-invoice' }))
 };
 
 const status = {
@@ -91,6 +98,13 @@ const checkItemsQuantityInSummaryTable = (rowNumber, quantity) => {
   }
 };
 
+const checkColumnsInSummaryTable = (value, specialColumnName) => {
+  cy.then(() => specialColumnName.index())
+    .then((index) => cy.expect(jobSummaryTable
+      .find(MultiColumnListCell({ columnIndex: index }))
+      .has({ content: value })));
+};
+
 const checkStatusInColumn = (specialStatus, specialColumnName, rowIndex = 0) => {
   cy.then(() => specialColumnName.index())
     .then((index) => cy.expect(resultsList.find(MultiColumnListRow({ index: rowIndex }))
@@ -131,7 +145,8 @@ function validateNumsAscendingOrder(prev) {
 }
 
 export default {
-  columnName,
+  columnNameInResultList,
+  columnNameInSummuryTable,
   status,
   invoiceNumberFromEdifactFile,
   validateNumsAscendingOrder,
@@ -146,6 +161,7 @@ export default {
   checkItemQuantityInSummaryTable,
   checkAuthorityQuantityInSummaryTable,
   checkErrorQuantityInSummaryTable,
+  checkColumnsInSummaryTable,
 
   openInstanceInInventory:(itemStatus, rowNumber = 0) => {
     cy.do(resultsList.find(MultiColumnListCell({ row: rowNumber, columnIndex: 3 }))

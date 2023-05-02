@@ -2,7 +2,6 @@ import uuid from 'uuid';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -25,7 +24,8 @@ import {
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
   ITEM_STATUS_NAMES,
-  LOCALION_NAMES
+  LOCALION_NAMES,
+  FOLIO_RECORD_TYPE
 } from '../../../support/constants';
 
 describe('ui-data-import', () => {
@@ -211,10 +211,10 @@ describe('ui-data-import', () => {
       JobProfiles.waitFileIsImported(marcFileNameForCreate);
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(marcFileNameForCreate);
-      [FileDetails.columnName.srsMarc,
-        FileDetails.columnName.instance,
-        FileDetails.columnName.holdings,
-        FileDetails.columnName.item
+      [FileDetails.columnNameInResultList.srsMarc,
+        FileDetails.columnNameInResultList.instance,
+        FileDetails.columnNameInResultList.holdings,
+        FileDetails.columnNameInResultList.item
       ].forEach(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
       });
@@ -292,8 +292,8 @@ describe('ui-data-import', () => {
           JobProfiles.waitFileIsImported(editedMarcFileName);
           Logs.checkStatusOfJobProfile('Completed');
           Logs.openFileDetails(editedMarcFileName);
-          [FileDetails.columnName.holdings,
-            FileDetails.columnName.item
+          [FileDetails.columnNameInResultList.holdings,
+            FileDetails.columnNameInResultList.item
           ].forEach(columnName => {
             FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
           });

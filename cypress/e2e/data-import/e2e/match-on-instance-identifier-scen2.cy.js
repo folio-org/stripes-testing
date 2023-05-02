@@ -1,7 +1,7 @@
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TopMenu from '../../../support/fragments/topMenu';
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -50,7 +50,7 @@ describe('ui-data-import', () => {
     staffSuppress: 'Mark for all affected records',
     catalogedDate: '"2021-12-02"',
     catalogedDateUI: '2021-12-02',
-    instanceStatus: 'Cataloged'
+    instanceStatus: INSTANCE_STATUS_TERM_NAMES.CATALOGED
   };
   const actionProfile = {
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,

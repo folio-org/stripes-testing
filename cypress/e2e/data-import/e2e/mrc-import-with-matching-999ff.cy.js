@@ -113,7 +113,7 @@ describe('ui-data-import', () => {
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(nameForMarcFile);
     Logs.openFileDetails(nameForMarcFile);
-    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.instance);
+    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance);
 
     // get Instance HRID through API
     InventorySearchAndFilter.getInstanceHRID()
@@ -162,7 +162,7 @@ describe('ui-data-import', () => {
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameForExportedMarcFile);
         Logs.openFileDetails(nameForExportedMarcFile);
-        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
+        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance);
 
         // get Instance HRID through API
         InventorySearchAndFilter.getInstanceHRID()

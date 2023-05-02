@@ -97,7 +97,7 @@ describe('ui-data-import', () => {
       Logs.checkImportFile(jobProfile.profileName);
       Logs.checkStatusOfJobProfile();
       Logs.openFileDetails(fileName);
-      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.invoice);
+      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.invoice);
       FileDetails.checkInvoiceInSummaryTable(quantityOfItems);
       InvoiceView.checkInvoiceDetails(InvoiceView.vendorInvoiceNumber);
     });
