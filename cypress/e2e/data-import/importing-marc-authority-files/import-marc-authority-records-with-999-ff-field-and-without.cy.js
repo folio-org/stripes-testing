@@ -43,15 +43,15 @@ describe('ui-data-import', () => {
       Logs.checkStatusOfJobProfile('Completed with errors');
       Logs.openFileDetails(fileName);
       cy.wrap([0, 6]).each((rowNumber) => {
-        [FileDetails.columnName.srsMarc,
-          FileDetails.columnName.authority
+        [FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.authority
         ].forEach(columnName => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, columnName, rowNumber);
         });
       });
       cy.wrap([1, 2, 3, 4, 5, 7]).each((rowNumber) => {
-        FileDetails.checkStatusInColumn(FileDetails.status.noAction, FileDetails.columnName.srsMarc, rowNumber);
-        FileDetails.checkStatusInColumn(FileDetails.status.error, FileDetails.columnName.error, rowNumber);
+        FileDetails.checkStatusInColumn(FileDetails.status.noAction, FileDetails.columnNameInResultList.srsMarc, rowNumber);
+        FileDetails.checkStatusInColumn(FileDetails.status.error, FileDetails.columnNameInResultList.error, rowNumber);
       });
       FileDetails.checkSrsRecordQuantityInSummaryTable('2');
       FileDetails.checkAuthorityQuantityInSummaryTable('2');
