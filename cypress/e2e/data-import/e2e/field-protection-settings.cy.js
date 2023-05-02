@@ -1,7 +1,7 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -53,7 +53,8 @@ describe('ui-data-import', () => {
 
   // profiles for update
   const mappingProfileUpdate = { name: `C17017 autotest update MappingProf${getRandomPostfix()}`,
-    typeValue: FOLIO_RECORD_TYPE.INSTANCE };
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+    instanceStatusTerm: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED };
 
   const actionProfileUpdate = {
     name: `C17017 autotest update ActionProf${getRandomPostfix()}`,
@@ -126,7 +127,7 @@ describe('ui-data-import', () => {
   const createInstanceMappingProfileForUpdate = (instanceMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(instanceMappingProfile);
-    NewFieldMappingProfile.fillInstanceStatusTerm('Batch Loaded');
+    NewFieldMappingProfile.fillInstanceStatusTerm(instanceMappingProfile.instanceStatusTerm);
     NewFieldMappingProfile.addStatisticalCode('ARL (Collection stats): books - Book, print (books)', 8);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfile.name);

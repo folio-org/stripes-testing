@@ -239,10 +239,10 @@ describe('ui-data-import', () => {
       JobProfiles.waitFileIsImported(nameMarcFileForImportCreate);
       Logs.openFileDetails(nameMarcFileForImportCreate);
       for (let i = 0; i < 9; i++) {
-        [FileDetails.columnName.srsMarc,
-          FileDetails.columnName.instance,
-          FileDetails.columnName.holdings,
-          FileDetails.columnName.item].forEach(columnName => {
+        [FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.instance,
+          FileDetails.columnNameInResultList.holdings,
+          FileDetails.columnNameInResultList.item].forEach(columnName => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, columnName, i);
         });
       }

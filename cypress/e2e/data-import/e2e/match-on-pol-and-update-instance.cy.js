@@ -5,10 +5,10 @@ import DevTeams from '../../../support/dictionary/devTeams';
 import {
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
-  ITEM_STATUS_NAMES
+  ITEM_STATUS_NAMES,
+  FOLIO_RECORD_TYPE
 } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import Orders from '../../../support/fragments/orders/orders';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';

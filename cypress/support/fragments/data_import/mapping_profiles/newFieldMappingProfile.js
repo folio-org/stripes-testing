@@ -14,7 +14,7 @@ import {
   Checkbox
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
-import { FOLIO_RECORD_TYPE } from '../../../constants';
+import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES } from '../../../constants';
 
 const saveButton = Button('Save as profile & Close');
 const organizationModal = Modal('Select Organization');
@@ -50,7 +50,6 @@ const status = '"In process"';
 const holdingsType = 'Holdings';
 const itemType = 'Item';
 const catalogedDate = '###TODAY###';
-const instanceStatusTerm = 'Batch Loaded';
 const defaultMappingProfile = {
   name: `autotest${FOLIO_RECORD_TYPE.INSTANCE}${getRandomPostfix()}`,
   typeValue: FOLIO_RECORD_TYPE.INSTANCE,
@@ -84,7 +83,6 @@ export default {
   permanentLoanType,
   statusField: status,
   organization,
-  instanceStatusTerm,
   catalogedDate,
   actions,
   selectFromResultsList,
@@ -137,7 +135,7 @@ export default {
       if ('update' in specialMappingProfile) {
         cy.do([
           TextField('Cataloged date').fillIn(catalogedDate),
-          TextField('Instance status term').fillIn(`"${instanceStatusTerm}"`),
+          TextField('Instance status term').fillIn(`"${INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED}"`),
         ]);
         // wait accepted values to be filled
         // eslint-disable-next-line cypress/no-unnecessary-waiting
@@ -199,7 +197,7 @@ export default {
       if ('update' in specialMappingProfile) {
         cy.do([
           TextField('Cataloged date').fillIn(catalogedDate),
-          TextField('Instance status term').fillIn(`"${instanceStatusTerm}"`),
+          TextField('Instance status term').fillIn(`"${INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED}"`),
         ]);
         // wait accepted values to be filled
         // eslint-disable-next-line cypress/no-unnecessary-waiting
@@ -361,7 +359,7 @@ export default {
     waitLoading();
   },
 
-  fillInstanceStatusTerm:(statusTerm = instanceStatusTerm) => {
+  fillInstanceStatusTerm:(statusTerm = INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED) => {
     cy.do(TextField('Instance status term').fillIn(`"${statusTerm}"`));
     waitLoading();
   },
