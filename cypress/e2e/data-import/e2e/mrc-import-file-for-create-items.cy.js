@@ -5,10 +5,10 @@ import {
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
   ITEM_STATUS_NAMES,
-  LOCALION_NAMES
+  LOCALION_NAMES,
+  FOLIO_RECORD_TYPE
 } from '../../../support/constants';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -27,25 +27,25 @@ describe('ui-data-import', () => {
 
   const collectionOfProfiles = [
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         name: `autotestMappingInstance${getRandomPostfix()}` },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         name: `autotestActionInstance${getRandomPostfix()}` }
     },
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `autotestMappingHoldings${getRandomPostfix()}`,
         permanentLocation: `"${LOCALION_NAMES.ANNEX}"` },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `autotestActionHoldings${getRandomPostfix()}` }
     },
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `autotestMappingItem${getRandomPostfix()}`,
         materialType: MATERIAL_TYPE_NAMES.BOOK,
         permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
         status: ITEM_STATUS_NAMES.AVAILABLE },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `autotestActionItem${getRandomPostfix()}` }
     }
   ];

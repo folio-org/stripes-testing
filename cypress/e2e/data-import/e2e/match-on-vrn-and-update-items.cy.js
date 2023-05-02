@@ -241,7 +241,7 @@ describe('ui-data-import', () => {
       Logs.checkStatusOfJobProfile();
       Logs.openFileDetails(editedMarcFileName);
       FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);
-      FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
+      FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.noAction, FileDetails.status.noAction, FileDetails.status.noAction]);
 
       // verify Instance, Holdings and Item details
       MatchOnVRN.clickOnUpdatedHotlink();

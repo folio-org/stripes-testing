@@ -2,13 +2,12 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -60,44 +59,44 @@ describe('ui-data-import', () => {
   ];
   const marcBibMappingProfile = {
     name: `C17018 Update MARC Bib with protections.${getRandomPostfix()}`,
-    typeValue : NewFieldMappingProfile.folioRecordTypeValue.marcBib
+    typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC
   };
 
   const instanceMappingProfile = {
     name: `C17018 Update instance 1.${getRandomPostfix()}`,
-    typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE
   };
 
   const marcBibMappingProfileOverride = {
     name: `C17018 Update MARC Bib with protection OVERRIDES.${getRandomPostfix()}`,
-    typeValue : NewFieldMappingProfile.folioRecordTypeValue.marcBib
+    typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC
   };
 
   const instanceMappingProfileOverride = {
     name: `C17018 Update instance 2.${getRandomPostfix()}`,
-    typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE
   };
 
   const marcBibActionProfile = {
-    typeValue: NewActionProfile.folioRecordTypeValue.marcBib,
+    typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
     name: `C17018 Update MARC Bib with protections.${getRandomPostfix()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
 
   const instanceActionProfile = {
-    typeValue: NewActionProfile.folioRecordTypeValue.instance,
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     name: `C17018 Update instance 1.${getRandomPostfix()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
 
   const marcBibActionProfileOverride = {
-    typeValue: NewActionProfile.folioRecordTypeValue.marcBib,
+    typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
     name: `C17018 Update MARC Bib with protection OVERRIDES.${getRandomPostfix()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
 
   const instanceActionProfileOverride = {
-    typeValue: NewActionProfile.folioRecordTypeValue.instance,
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     name: `C17018 Update MARC Bib with protection OVERRIDES.${getRandomPostfix()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
@@ -228,10 +227,10 @@ describe('ui-data-import', () => {
     NewJobProfile.saveAndClose();
     JobProfiles.checkJobProfilePresented(jobProfileForOverride.profileName);
 
-    cy.visit(TopMenu.dataImportPath);
     // upload a marc file
-    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-    cy.reload();
+    cy.visit(TopMenu.dataImportPath);
+    // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.verifyUploadState();
     DataImport.uploadFile('marcFileForC17018-BeforeOverride.mrc', fileNameForCreatingInstance);
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
     JobProfiles.runImportFile();
@@ -253,8 +252,8 @@ describe('ui-data-import', () => {
 
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-        cy.reload();
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
         DataImport.uploadFile(editedFileNameRev1, fileNameForProtect);
         JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
@@ -283,8 +282,8 @@ describe('ui-data-import', () => {
 
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-        cy.reload();
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
         DataImport.uploadFile(editedFileNameRev2, fileNameForOverride);
         JobProfiles.searchJobProfileForImport(jobProfileForOverride.profileName);
         JobProfiles.runImportFile();

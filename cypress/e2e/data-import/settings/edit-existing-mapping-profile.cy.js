@@ -1,5 +1,6 @@
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -14,7 +15,7 @@ describe('ui-data-import', () => {
   let user;
   const mappingProfile = {
     name: `C2351 autotest mapping profile ${Helper.getRandomBarcode()}`,
-    typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE
   };
   const instanceStatusTerm = '"Batch Loaded"';
 

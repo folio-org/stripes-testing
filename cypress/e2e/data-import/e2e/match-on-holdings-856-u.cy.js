@@ -2,9 +2,8 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TestTypes from '../../../support/dictionary/testTypes';
-import { LOCALION_NAMES } from '../../../support/constants';
+import { LOCALION_NAMES, FOLIO_RECORD_TYPE } from '../../../support/constants';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -26,22 +25,22 @@ describe('ui-data-import', () => {
   const nameForUpdateCreateMarcFile = `updateFile${getRandomPostfix()}.mrc`;
   const collectionOfMappingAndActionProfiles = [
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         name: `createInstanceMappingProf${getRandomPostfix()}` },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         name: `createInstanceActionProf${getRandomPostfix()}` }
     },
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `createEHoldingsMappingProf${getRandomPostfix()}`,
         permanentLocation: `"${LOCALION_NAMES.ONLINE}"` },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `createEHoldingsActionProf${getRandomPostfix()}` }
     },
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `updateEHoldingsMappingProf${getRandomPostfix()}` },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `updateEHoldingsActionProf${getRandomPostfix()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     }

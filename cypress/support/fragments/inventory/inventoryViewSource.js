@@ -37,5 +37,17 @@ export default {
   verifyFieldInMARCBibSource:(fieldNumber, content) => {
     contains(fieldNumber);
     contains(content);
+  },
+
+  verifyRecordNotContainsDuplicatedContent:(value) => {
+    cy.get(`td:contains("${value}")`).then(
+      elements => elements.length === 1
+    );
+  },
+
+  verifyRecordContainsDuplicatedContent:(value, quantity) => {
+    cy.get(`td:contains("${value}")`).then(
+      elements => elements.length === quantity
+    );
   }
 };

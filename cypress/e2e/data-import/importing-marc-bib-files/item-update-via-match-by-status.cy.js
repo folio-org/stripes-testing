@@ -5,14 +5,14 @@ import permissions from '../../../support/dictionary/permissions';
 import {
   LOAN_TYPE_NAMES,
   ITEM_STATUS_NAMES,
-  LOCALION_NAMES
+  LOCALION_NAMES,
+  FOLIO_RECORD_TYPE
 } from '../../../support/constants';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -52,26 +52,26 @@ describe('ui-data-import', () => {
 
   const collectionOfMappingAndActionProfiles = [
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C357552 Create simple holdings ${Helper.getRandomBarcode()}`,
         permanentLocation: LOCALION_NAMES.ONLINE },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C357552 Create simple holdings ${Helper.getRandomBarcode()}` }
     },
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C357552 Create simple items ${Helper.getRandomBarcode()}`,
         status: ITEM_STATUS_NAMES.AVAILABLE,
         permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C357552 Create simple items ${Helper.getRandomBarcode()}` }
     },
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C357552 Update Item by POL match ${Helper.getRandomBarcode()}`,
         status: ITEM_STATUS_NAMES.AVAILABLE,
         permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C357552 Update simple items ${Helper.getRandomBarcode()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     }
@@ -304,7 +304,7 @@ describe('ui-data-import', () => {
       });
       // check items what statuses were changed have Discarded status
       titlesItemsStatusChanged.forEach(title => {
-        FileDetails.checkStatusByTitle(title, 'Discarded');
+        FileDetails.checkStatusByTitle(title, FileDetails.status.noAction);
       });
     });
 });
