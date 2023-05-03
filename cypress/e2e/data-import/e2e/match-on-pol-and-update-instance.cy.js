@@ -2,13 +2,18 @@ import uuid from 'uuid';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import {
+  LOAN_TYPE_NAMES,
+  MATERIAL_TYPE_NAMES,
+  ITEM_STATUS_NAMES,
+  FOLIO_RECORD_TYPE
+} from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import Orders from '../../../support/fragments/orders/orders';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
@@ -30,18 +35,8 @@ describe('ui-data-import', () => {
   let user = null;
   let orderNumber;
   const itemBarcode = uuid();
+  const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const instanceTitle = 'South Asian texts in history : critical engagements with Sheldon Pollock. edited by Yigal Bronner, Whitney Cox, and Lawrence McCrea.';
-
-  // unique profile names
-  const jobProfileName = `C350944 Update Instance, and create Holdings, Item based on POL match ${Helper.getRandomBarcode()}`;
-  const matchProfileName = `C350944 935 $a POL to Instance POL ${Helper.getRandomBarcode()}`;
-  const actionProfileNameForInstance = `C350944 Update Instance by POL match ${Helper.getRandomBarcode()}`;
-  const actionProfileNameForHoldings = `C350944 Create Holdings by POL match ${Helper.getRandomBarcode()}`;
-  const actionProfileNameForItem = `C350944 Create Item by POL match ${Helper.getRandomBarcode()}`;
-  const mappingProfileNameForInstance = `C350944 Update Instance by POL match ${Helper.getRandomBarcode()}`;
-  const mappingProfileNameForHoldings = `C350944 Create Holdings by POL match ${Helper.getRandomBarcode()}`;
-  const mappingProfileNameForItem = `C350944 Create Item by POL match ${Helper.getRandomBarcode()}`;
-
   // unique file names
   const nameMarcFileForCreate = `C350944 autotestFile.${getRandomPostfix()}.mrc`;
   const editedMarcFileName = `C350944 marcFileForMatchOnPol.${getRandomPostfix()}.mrc`;
@@ -49,31 +44,31 @@ describe('ui-data-import', () => {
 
   const collectionOfProfiles = [
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance,
-        name: mappingProfileNameForInstance },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
-        name: actionProfileNameForInstance,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+        name: `C350944 Update Instance by POL match ${Helper.getRandomBarcode()}` },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+        name: `C350944 Update Instance by POL match ${Helper.getRandomBarcode()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
-        name: mappingProfileNameForHoldings },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
-        name: actionProfileNameForHoldings }
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        name: `C350944 Create Holdings by POL match ${Helper.getRandomBarcode()}` },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        name: `C350944 Create Holdings by POL match ${Helper.getRandomBarcode()}` }
     },
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
-        name: mappingProfileNameForItem,
-        status:'Available',
-        permanentLoanType:'Can circulate',
-        materialType:'book' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
-        name: actionProfileNameForItem }
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
+        name: `C350944 Create Item by POL match ${Helper.getRandomBarcode()}`,
+        status: ITEM_STATUS_NAMES.AVAILABLE,
+        permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
+        materialType: MATERIAL_TYPE_NAMES.BOOK },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
+        name: `C350944 Create Item by POL match ${Helper.getRandomBarcode()}` }
     }
   ];
 
   const matchProfile = {
-    profileName: matchProfileName,
+    profileName: `C350944 935 $a POL to Instance POL ${Helper.getRandomBarcode()}`,
     incomingRecordFields: {
       field: '935',
       subfield:'a'
@@ -84,7 +79,7 @@ describe('ui-data-import', () => {
   };
 
   const jobProfile = { ...NewJobProfile.defaultJobProfile,
-    profileName: jobProfileName,
+    profileName: `C350944 Update Instance, and create Holdings, Item based on POL match ${Helper.getRandomBarcode()}`,
     acceptedType: NewJobProfile.acceptedDataType.marc };
 
   const order = { ...NewOrder.defaultOneTimeOrder,
@@ -97,7 +92,7 @@ describe('ui-data-import', () => {
     orderFormat: 'Physical resource',
     quantity: '1',
     price: '20',
-    materialType: 'book',
+    materialType: MATERIAL_TYPE_NAMES.BOOK,
     createInventory: 'None'
   };
 
@@ -125,7 +120,7 @@ describe('ui-data-import', () => {
 
   after('delete test data', () => {
     // delete generated profiles
-    JobProfiles.deleteJobProfile(jobProfileName);
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
     MatchProfiles.deleteMatchProfile(matchProfile.profileName);
     collectionOfProfiles.forEach(profile => {
       ActionProfiles.deleteActionProfile(profile.actionProfile.name);
@@ -217,7 +212,7 @@ describe('ui-data-import', () => {
       // create job profile
       cy.visit(SettingsMenu.jobProfilePath);
       JobProfiles.createJobProfile(jobProfile);
-      NewJobProfile.linkMatchAndThreeActionProfiles(matchProfileName, actionProfileNameForInstance, actionProfileNameForHoldings, actionProfileNameForItem);
+      NewJobProfile.linkMatchAndThreeActionProfiles(matchProfile.profileName, collectionOfProfiles[0].actionProfile.name, collectionOfProfiles[1].actionProfile.name, collectionOfProfiles[2].actionProfile.name);
       NewJobProfile.saveAndClose();
       JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
@@ -226,7 +221,7 @@ describe('ui-data-import', () => {
       // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
       cy.reload();
       DataImport.uploadFile('marcFileForC350944.mrc', nameMarcFileForCreate);
-      JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+      JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(nameMarcFileForCreate);
       Logs.openFileDetails(nameMarcFileForCreate);
@@ -255,13 +250,13 @@ describe('ui-data-import', () => {
       // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
       cy.reload();
       DataImport.uploadFile(editedMarcFileName, marcFileName);
-      JobProfiles.searchJobProfileForImport(jobProfileName);
+      JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(marcFileName);
       Logs.checkStatusOfJobProfile();
       Logs.openFileDetails(marcFileName);
       FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.created, FileDetails.status.created]);
-      FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded]);
+      FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.noAction]);
 
       FileDetails.openInstanceInInventory('Updated');
       InventoryInstance.checkIsInstanceUpdated();

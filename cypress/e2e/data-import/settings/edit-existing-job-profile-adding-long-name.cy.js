@@ -9,11 +9,10 @@ import JobProfileView from '../../../support/fragments/data_import/job_profiles/
 import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/jobProfileEdit';
 
 describe('ui-data-import', () => {
-  const jobProfileName = `C2332 autotest job profile ${getRandomPostfix()}`;
   const jobProfileLongName = `C2332_autotest_job_profile_long_name_${getRandomPostfix()}_${getRandomPostfix()}_${getRandomPostfix()}_${getRandomPostfix()}_${getRandomPostfix()}_${getRandomPostfix()}`;
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: jobProfileName,
+    profileName: `C2332 autotest job profile ${getRandomPostfix()}`,
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
@@ -26,7 +25,7 @@ describe('ui-data-import', () => {
     JobProfiles.createJobProfile(jobProfile);
     NewJobProfile.saveAndClose();
     InteractorsTools.closeCalloutMessage();
-    JobProfiles.closeJobProfile(jobProfileName);
+    JobProfiles.closeJobProfile(jobProfile.profileName);
   });
 
   after('delete test data', () => {
@@ -35,9 +34,9 @@ describe('ui-data-import', () => {
 
   it('C2332 Edit an existing job profile by adding a long name (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     JobProfiles.checkListOfExistingProfilesIsDisplayed();
-    JobProfiles.searchJobProfileForImport(jobProfileName);
+    JobProfiles.searchJobProfileForImport(jobProfile.profileName);
     JobProfileView.edit();
-    JobProfileEdit.verifyScreenName(jobProfileName);
+    JobProfileEdit.verifyScreenName(jobProfile.profileName);
     JobProfileEdit.changeProfileName(jobProfileLongName);
     JobProfileEdit.saveAndClose();
     JobProfileView.verifyJobProfileOpened();

@@ -2,10 +2,15 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { LOCALION_NAMES,
+  FOLIO_RECORD_TYPE,
+  ITEM_STATUS_NAMES,
+  ORDER_STATUSES,
+  MATERIAL_TYPE_NAMES,
+  LOAN_TYPE_NAMES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -29,8 +34,8 @@ describe('ui-data-import', () => {
   const collectionOfMappingAndActionProfiles = [
     {
       mappingProfile: { name: `C380446 Test P/E mix open order with instance, holdings, item ${getRandomPostfix()}`,
-        typeValue : NewFieldMappingProfile.folioRecordTypeValue.order,
-        orderStatus: 'Open',
+        typeValue: FOLIO_RECORD_TYPE.ORDER,
+        orderStatus: ORDER_STATUSES.OPEN,
         approved: true,
         vendor: 'GOBI Library Solutions',
         title: '245$a',
@@ -42,27 +47,27 @@ describe('ui-data-import', () => {
         currency: 'USD',
         electronicUnitPrice: '25',
         quantityElectronic: '1',
-        locationName: 'Annex (KU/CC/DI/A)',
+        locationName: LOCALION_NAMES.ANNEX,
         locationQuantityPhysical: '1',
         locationQuantityElectronic: '1' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.order,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.ORDER,
         name: `C380446 Test P/E mix open order with instance, holdings, item ${getRandomPostfix()}` }
     },
     {
       mappingProfile: { name: `C380446 Create simple holdings for open order ${getRandomPostfix()}`,
-        typeValue : NewFieldMappingProfile.folioRecordTypeValue.holdings,
-        permanentLocation: '"Main Library (KU/CC/DI/M)"',
-        permanentLocationUI:'Main Library' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
+        typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        permanentLocation: `"${LOCALION_NAMES.MAIN_LIBRARY}"`,
+        permanentLocationUI: LOCALION_NAMES.MAIN_LIBRARY_UI },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C380446 Create simple holdings for open order ${getRandomPostfix()}` }
     },
     {
       mappingProfile: { name: `C380446 Create simple item for open order ${getRandomPostfix()}`,
-        typeValue : NewFieldMappingProfile.folioRecordTypeValue.item,
-        materialType:'book',
-        permanentLoanType: 'Course reserves',
-        status: 'On order' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
+        typeValue: FOLIO_RECORD_TYPE.ITEM,
+        materialType: MATERIAL_TYPE_NAMES.BOOK,
+        permanentLoanType: LOAN_TYPE_NAMES.COURSE_RESERVES,
+        status: ITEM_STATUS_NAMES.ON_ORDER },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C380446 Create simple item for open order ${getRandomPostfix()}` }
     },
   ];
@@ -149,10 +154,10 @@ describe('ui-data-import', () => {
       JobProfiles.waitFileIsImported(marcFileName);
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(marcFileName);
-      [FileDetails.columnName.srsMarc,
-        FileDetails.columnName.instance,
-        FileDetails.columnName.holdings,
-        FileDetails.columnName.item
+      [FileDetails.columnNameInResultList.srsMarc,
+        FileDetails.columnNameInResultList.instance,
+        FileDetails.columnNameInResultList.holdings,
+        FileDetails.columnNameInResultList.item
       ].forEach(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
       });

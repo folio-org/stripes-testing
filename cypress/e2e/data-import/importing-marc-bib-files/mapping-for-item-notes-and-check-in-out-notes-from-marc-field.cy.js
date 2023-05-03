@@ -1,10 +1,16 @@
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import {
+  LOAN_TYPE_NAMES,
+  MATERIAL_TYPE_NAMES,
+  ITEM_STATUS_NAMES,
+  LOCALION_NAMES,
+  FOLIO_RECORD_TYPE
+} from '../../../support/constants';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -31,47 +37,39 @@ describe('ui-data-import', () => {
     checkInNoteForSecondItem: 'This is a check in note',
     staffOnly: 'Yes'
   };
-  // unique profile names
-  const jobProfileName = `C368005 Create mappings for item notes ${Helper.getRandomBarcode()}`;
-  const actionProfileNameForInstance = `C368005 Create instance for mapping notes ${Helper.getRandomBarcode()}`;
-  const actionProfileNameForHoldings = `C368005 Create holdings for mapping notes ${Helper.getRandomBarcode()}`;
-  const actionProfileNameForItem = `C368005 Create items for mapping notes ${Helper.getRandomBarcode()}`;
-  const mappingProfileNameForInstance = `C368005 Create instance for mapping notes ${Helper.getRandomBarcode()}`;
-  const mappingProfileNameForHoldings = `C368005 Create holdings for mapping notes ${Helper.getRandomBarcode()}`;
-  const mappingProfileNameForItem = `C368005 Create item for mapping notes ${Helper.getRandomBarcode()}`;
   const collectionOfProfiles = [
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance,
-        name: mappingProfileNameForInstance,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+        name: `C368005 Create instance for mapping notes ${Helper.getRandomBarcode()}`,
         catalogingDate: '###TODAY###' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
-        name: actionProfileNameForInstance }
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+        name: `C368005 Create instance for mapping notes ${Helper.getRandomBarcode()}` }
     },
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
-        name: mappingProfileNameForHoldings,
-        permanetLocation: '"Annex (KU/CC/DI/A)"' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
-        name: actionProfileNameForHoldings }
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        name: `C368005 Create holdings for mapping notes ${Helper.getRandomBarcode()}`,
+        permanetLocation: `"${LOCALION_NAMES.ANNEX}"` },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        name: `C368005 Create holdings for mapping notes ${Helper.getRandomBarcode()}` }
     },
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
-        name: mappingProfileNameForItem,
-        materialType: 'book',
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
+        name: `C368005 Create item for mapping notes ${Helper.getRandomBarcode()}`,
+        materialType: MATERIAL_TYPE_NAMES.BOOK,
         noteType: '876$t',
         note: '876$n',
         staffOnly: 'Mark for all affected records',
         noteTypeForCheckIn: '878$t',
         noteForCheckIn: '878$a',
         staffOnlyForCheckIn: 'Mark for all affected records',
-        permanentLoanType: 'Can circulate',
-        status: 'Available' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
-        name: actionProfileNameForItem }
+        permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
+        status: ITEM_STATUS_NAMES.AVAILABLE },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
+        name: `C368005 Create items for mapping notes ${Helper.getRandomBarcode()}` }
     }
   ];
   const jobProfile = { ...NewJobProfile.defaultJobProfile,
-    profileName: jobProfileName,
+    profileName: `C368005 Create mappings for item notes ${Helper.getRandomBarcode()}`,
     acceptedType: NewJobProfile.acceptedDataType.marc };
 
   before('create test data', () => {
@@ -90,7 +88,7 @@ describe('ui-data-import', () => {
   after('delete test data', () => {
     Users.deleteViaApi(user.userId);
     // delete generated profiles
-    JobProfiles.deleteJobProfile(jobProfileName);
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
     collectionOfProfiles.forEach(profile => {
       ActionProfiles.deleteActionProfile(profile.actionProfile.name);
       FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
@@ -116,22 +114,22 @@ describe('ui-data-import', () => {
       NewFieldMappingProfile.fillPermanentLoanType(collectionOfProfiles[2].mappingProfile.permanentLoanType);
       NewFieldMappingProfile.fillStatus(collectionOfProfiles[2].mappingProfile.status);
       FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfileNameForItem);
-      FieldMappingProfiles.checkMappingProfilePresented(mappingProfileNameForItem);
+      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfProfiles[2].mappingProfile.name);
+      FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[2].mappingProfile.name);
 
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfProfiles[1].mappingProfile);
       NewFieldMappingProfile.fillPermanentLocation(collectionOfProfiles[1].mappingProfile.permanetLocation);
       FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfileNameForHoldings);
-      FieldMappingProfiles.checkMappingProfilePresented(mappingProfileNameForHoldings);
+      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfProfiles[1].mappingProfile.name);
+      FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[1].mappingProfile.name);
 
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfProfiles[0].mappingProfile);
       NewFieldMappingProfile.fillCatalogedDate(collectionOfProfiles[0].mappingProfile.catalogingDate);
       FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfileNameForInstance);
-      FieldMappingProfiles.checkMappingProfilePresented(mappingProfileNameForInstance);
+      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfProfiles[0].mappingProfile.name);
+      FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[0].mappingProfile.name);
 
       // create Action profiles
       collectionOfProfiles.forEach(profile => {
@@ -147,22 +145,22 @@ describe('ui-data-import', () => {
       NewJobProfile.linkActionProfile(collectionOfProfiles[1].actionProfile);
       NewJobProfile.linkActionProfile(collectionOfProfiles[2].actionProfile);
       NewJobProfile.saveAndClose();
-      JobProfiles.checkJobProfilePresented(jobProfileName);
+      JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
       // upload a marc file
       cy.visit(TopMenu.dataImportPath);
       // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
       cy.reload();
       DataImport.uploadFile('marcFileForC368005.mrc', marcFileName);
-      JobProfiles.searchJobProfileForImport(jobProfileName);
+      JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(marcFileName);
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(marcFileName);
-      [FileDetails.columnName.srsMarc,
-        FileDetails.columnName.instance,
-        FileDetails.columnName.holdings,
-        FileDetails.columnName.item
+      [FileDetails.columnNameInResultList.srsMarc,
+        FileDetails.columnNameInResultList.instance,
+        FileDetails.columnNameInResultList.holdings,
+        FileDetails.columnNameInResultList.item
       ].forEach(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName, 1);

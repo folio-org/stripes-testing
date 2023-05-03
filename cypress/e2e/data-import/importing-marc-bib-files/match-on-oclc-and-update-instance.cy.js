@@ -2,10 +2,10 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import DateTools from '../../../support/utils/dateTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -23,7 +23,7 @@ describe('ui-data-import', () => {
   const itemsForCreateInstance = {
     catalogedDate: '###TODAY###',
     catalogedDateUi: DateTools.getFormattedDate({ date: new Date() }),
-    statusTerm: 'Batch Loaded',
+    statusTerm: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
     statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
     statisticalCodeUI: 'Book, print (books)'
   };
@@ -35,40 +35,29 @@ describe('ui-data-import', () => {
   const oclcNumber = { type: 'OCLC', value: '(OCoLC)879516309' };
   const quantityOfItems = '1';
   const actionForSuppress = 'Mark for all affected records';
-
-  // profile names for creating
-  const instanceCreateMapProfileName = `C11109 create mapping profile_${getRandomPostfix()}`;
-  const instanceCreateActionProfileName = `C11109 create action profile_${getRandomPostfix()}`;
-  const jobProfileForCreateName = `C11109 create job profile_${getRandomPostfix()}`;
-  // profile names for updating
-  const instanceUpdateMapProfileName = `C11109 update mapping profile_${getRandomPostfix()}`;
-  const instanceUpdateActionProfileName = `C11109 update action profile_${getRandomPostfix()}`;
-  const matchProfileName = `C11109 match profile_${getRandomPostfix()}`;
-  const jobProfileForUpdateName = `C11109 update job profile_${getRandomPostfix()}`;
-
   // unique file names
   const nameMarcFileForCreate = `C11109 autotestFile.${getRandomPostfix()}.mrc`;
   const nameMarcFileForUpdate = `C11109 autotestFile.${getRandomPostfix()}.mrc`;
 
   const collectionOfMappingAndActionProfiles = [
     {
-      mappingProfile: { name: instanceCreateMapProfileName,
-        typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
-        name: instanceCreateActionProfileName,
+      mappingProfile: { name: `C11109 create mapping profile_${getRandomPostfix()}`,
+        typeValue: FOLIO_RECORD_TYPE.INSTANCE },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+        name: `C11109 create action profile_${getRandomPostfix()}`,
         action: 'Create (all record types except MARC Authority or MARC Holdings)' }
     },
     {
-      mappingProfile: { name: instanceUpdateMapProfileName,
-        typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
-        name: instanceUpdateActionProfileName,
+      mappingProfile: { name: `C11109 update mapping profile_${getRandomPostfix()}`,
+        typeValue: FOLIO_RECORD_TYPE.INSTANCE },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+        name: `C11109 update action profile_${getRandomPostfix()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     }
   ];
 
   const matchProfile = {
-    profileName: matchProfileName,
+    profileName: `C11109 match profile_${getRandomPostfix()}`,
     incomingRecordFields: {
       field: '035',
       in1: '*',
@@ -82,11 +71,11 @@ describe('ui-data-import', () => {
 
   const collectionOfJobProfiles = [
     { jobProfile: {
-      profileName: jobProfileForCreateName,
+      profileName: `C11109 create job profile_${getRandomPostfix()}`,
       acceptedType: NewJobProfile.acceptedDataType.marc
     } },
     { jobProfile: {
-      profileName: jobProfileForUpdateName,
+      profileName: `C11109 update job profile_${getRandomPostfix()}`,
       acceptedType: NewJobProfile.acceptedDataType.marc
     } }
   ];
@@ -107,9 +96,9 @@ describe('ui-data-import', () => {
   });
 
   after('delete test data', () => {
-    JobProfiles.deleteJobProfile(jobProfileForCreateName);
-    JobProfiles.deleteJobProfile(jobProfileForUpdateName);
-    MatchProfiles.deleteMatchProfile(matchProfileName);
+    JobProfiles.deleteJobProfile(collectionOfJobProfiles[0].jobProfile.profileName);
+    JobProfiles.deleteJobProfile(collectionOfJobProfiles[1].jobProfile.profileName);
+    MatchProfiles.deleteMatchProfile(matchProfile.profileName);
     collectionOfMappingAndActionProfiles.forEach(profile => {
       ActionProfiles.deleteActionProfile(profile.actionProfile.name);
       FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
@@ -134,31 +123,31 @@ describe('ui-data-import', () => {
       NewFieldMappingProfile.addStatisticalCode(itemsForCreateInstance.statisticalCode, 8);
       NewFieldMappingProfile.addNatureOfContentTerms('bibliography');
       FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(instanceCreateMapProfileName);
-      FieldMappingProfiles.checkMappingProfilePresented(instanceCreateMapProfileName);
+      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
+      FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
 
       // create action profile for creating instance
       cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.create(collectionOfMappingAndActionProfiles[0].actionProfile, instanceCreateMapProfileName);
-      ActionProfiles.checkActionProfilePresented(instanceCreateActionProfileName);
+      ActionProfiles.create(collectionOfMappingAndActionProfiles[0].actionProfile, collectionOfMappingAndActionProfiles[0].mappingProfile.name);
+      ActionProfiles.checkActionProfilePresented(collectionOfMappingAndActionProfiles[0].actionProfile.name);
 
       // create job profile for creating instance
       cy.visit(SettingsMenu.jobProfilePath);
-      JobProfiles.createJobProfileWithLinkingProfiles(collectionOfJobProfiles[0].jobProfile, instanceCreateActionProfileName);
-      JobProfiles.checkJobProfilePresented(jobProfileForCreateName);
+      JobProfiles.createJobProfileWithLinkingProfiles(collectionOfJobProfiles[0].jobProfile, collectionOfMappingAndActionProfiles[0].actionProfile.name);
+      JobProfiles.checkJobProfilePresented(collectionOfJobProfiles[0].jobProfile.profileName);
 
       // upload a marc file for creating of the new instance
       cy.visit(TopMenu.dataImportPath);
       // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
       cy.reload();
       DataImport.uploadFile('marcFileForC11109.mrc', nameMarcFileForCreate);
-      JobProfiles.searchJobProfileForImport(jobProfileForCreateName);
+      JobProfiles.searchJobProfileForImport(collectionOfJobProfiles[0].jobProfile.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(nameMarcFileForCreate);
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(nameMarcFileForCreate);
-      [FileDetails.columnName.srsMarc,
-        FileDetails.columnName.instance,
+      [FileDetails.columnNameInResultList.srsMarc,
+        FileDetails.columnNameInResultList.instance,
       ].forEach(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
       });
@@ -184,39 +173,39 @@ describe('ui-data-import', () => {
           NewFieldMappingProfile.fillInstanceStatusTerm(itemsForUpdateInstance.statusTerm);
           NewFieldMappingProfile.addStatisticalCode(itemsForUpdateInstance.statisticalCode, 8);
           FieldMappingProfiles.saveProfile();
-          FieldMappingProfiles.closeViewModeForMappingProfile(instanceUpdateMapProfileName);
-          FieldMappingProfiles.checkMappingProfilePresented(instanceUpdateMapProfileName);
+          FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile.name);
+          FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[1].mappingProfile.name);
 
           // create action profile for updating instance
           cy.visit(SettingsMenu.actionProfilePath);
-          ActionProfiles.create(collectionOfMappingAndActionProfiles[1].actionProfile, instanceUpdateMapProfileName);
-          ActionProfiles.checkActionProfilePresented(instanceUpdateActionProfileName);
+          ActionProfiles.create(collectionOfMappingAndActionProfiles[1].actionProfile, collectionOfMappingAndActionProfiles[1].mappingProfile.name);
+          ActionProfiles.checkActionProfilePresented(collectionOfMappingAndActionProfiles[1].actionProfile.name);
 
           // craete match profile
           cy.visit(SettingsMenu.matchProfilePath);
           MatchProfiles.createMatchProfile(matchProfile);
-          MatchProfiles.checkMatchProfilePresented(matchProfileName);
+          MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
 
           // create job profile for updating instance
           cy.visit(SettingsMenu.jobProfilePath);
           JobProfiles.createJobProfile(collectionOfJobProfiles[1].jobProfile);
-          NewJobProfile.linkMatchProfile(matchProfileName);
-          NewJobProfile.linkActionProfileForMatches(instanceUpdateActionProfileName);
+          NewJobProfile.linkMatchProfile(matchProfile.profileName);
+          NewJobProfile.linkActionProfileForMatches(collectionOfMappingAndActionProfiles[1].actionProfile.name);
           NewJobProfile.saveAndClose();
-          JobProfiles.checkJobProfilePresented(jobProfileForUpdateName);
+          JobProfiles.checkJobProfilePresented(collectionOfJobProfiles[1].jobProfile.profileName);
 
           // upload a marc file for updating instance
           cy.visit(TopMenu.dataImportPath);
           // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
           cy.reload();
           DataImport.uploadFile('marcFileForC11109.mrc', nameMarcFileForUpdate);
-          JobProfiles.searchJobProfileForImport(jobProfileForUpdateName);
+          JobProfiles.searchJobProfileForImport(collectionOfJobProfiles[1].jobProfile.profileName);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(nameMarcFileForUpdate);
           Logs.checkStatusOfJobProfile('Completed');
           Logs.openFileDetails(nameMarcFileForUpdate);
-          FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc);
-          FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
+          FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc);
+          FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance);
           FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
           FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 1);
 
