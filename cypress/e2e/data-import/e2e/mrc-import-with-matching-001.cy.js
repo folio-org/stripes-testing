@@ -1,7 +1,7 @@
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import TopMenu from '../../../support/fragments/topMenu';
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE, LOCALION_NAMES } from '../../../support/constants';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -17,7 +17,6 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { LOCALION_NAMES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let user = {};
@@ -89,7 +88,7 @@ describe('ui-data-import', () => {
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(nameForMarcFile);
     Logs.openFileDetails(nameForMarcFile);
-    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.instance);
+    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance);
 
     // get Instance HRID through API
     InventorySearchAndFilter.getInstanceHRID()
@@ -135,7 +134,7 @@ describe('ui-data-import', () => {
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameForExportedMarcFile);
         Logs.openFileDetails(nameForExportedMarcFile);
-        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
+        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance);
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(hrId[0]);

@@ -226,10 +226,10 @@ describe('ui-data-import', () => {
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileForCreate);
         Logs.openFileDetails(marcFileForCreate);
-        [FileDetails.columnName.srsMarc,
-          FileDetails.columnName.instance,
-          FileDetails.columnName.holdings,
-          FileDetails.columnName.item
+        [FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.instance,
+          FileDetails.columnNameInResultList.holdings,
+          FileDetails.columnNameInResultList.item
         ].forEach(columnName => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
         });
@@ -324,7 +324,7 @@ describe('ui-data-import', () => {
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFileForUpdate);
         Logs.openFileDetails(nameMarcFileForUpdate);
-        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.item);
+        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.item);
         FileDetails.checkItemQuantityInSummaryTable(quantityOfItems, 1);
 
         cy.visit(TopMenu.inventoryPath);

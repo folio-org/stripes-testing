@@ -143,10 +143,10 @@ describe('ui-data-import', () => {
       JobProfiles.waitFileIsImported(nameMarcFile);
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(nameMarcFile);
-      [FileDetails.columnName.srsMarc,
-        FileDetails.columnName.instance,
-        FileDetails.columnName.holdings,
-        FileDetails.columnName.item
+      [FileDetails.columnNameInResultList.srsMarc,
+        FileDetails.columnNameInResultList.instance,
+        FileDetails.columnNameInResultList.holdings,
+        FileDetails.columnNameInResultList.item
       ].forEach(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
       });

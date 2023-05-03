@@ -95,8 +95,8 @@ describe('ui-data-import', () => {
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(nameMarcFileForCreate);
     Logs.openFileDetails(nameMarcFileForCreate);
-    [FileDetails.columnName.srsMarc,
-      FileDetails.columnName.instance,
+    [FileDetails.columnNameInResultList.srsMarc,
+      FileDetails.columnNameInResultList.instance,
     ].forEach(columnName => {
       FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
     });
@@ -155,8 +155,8 @@ describe('ui-data-import', () => {
     Logs.checkStatusOfJobProfile();
     Logs.checkImportFile(jobProfile.profileName);
     Logs.openFileDetails(nameMarcFileForUpload);
-    [FileDetails.columnName.srsMarc,
-      FileDetails.columnName.instance
+    [FileDetails.columnNameInResultList.srsMarc,
+      FileDetails.columnNameInResultList.instance
     ].forEach(columnName => {
       FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
     });
