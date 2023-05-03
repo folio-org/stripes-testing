@@ -106,8 +106,8 @@ describe('ui-data-import', () => {
 
     // upload a marc file for export
     cy.visit(TopMenu.dataImportPath);
-    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-    cy.reload();
+    // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.verifyUploadState();
     DataImport.uploadFile('oneMarcBib.mrc', nameForMarcFile);
     JobProfiles.searchJobProfileForImport(jobProfileForExport.profileName);
     JobProfiles.runImportFile();
@@ -155,8 +155,8 @@ describe('ui-data-import', () => {
 
         // upload the exported marc file with 999.f.f.s fields
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-        cy.reload();
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
         DataImport.uploadExportedFile(nameForExportedMarcFile);
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
         JobProfiles.runImportFile();

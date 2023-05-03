@@ -116,7 +116,7 @@ export default {
     cy.expect(requestExpirationDateInput.has({ disabled: false }));
     cy.expect(fulfillmentPreferenceSelect.has({ disabled: true }));
     cy.expect(pickupServicePointSelect.has({ disabled: false }));
-    cy.expect(holdShelfExpirationDateKeyValue.has({ value: '-' }));
+    cy.expect(holdShelfExpirationDateKeyValue.has({ value: 'No value set-' }));
     cy.do(pickupServicePointSelect.choose(this.servicePoint));
     cy.do(requestExpirationDateInput.fillIn(this.expirationDates[4].formValue));
     this.saveAndClose();
