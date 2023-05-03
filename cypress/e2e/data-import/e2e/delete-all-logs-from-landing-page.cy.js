@@ -41,13 +41,12 @@ describe('ui-data-import', () => {
           fileNameToUpload = `C358137autotestFile.${getRandomPostfix()}.mrc`;
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
-          // need to wait until file will be uploaded in loop
-          cy.wait(8000);
+          DataImport.waitLoading();
           DataImport.uploadFile(filePath, fileNameToUpload);
           JobProfiles.searchJobProfileForImport(jobProfileToRun);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(fileNameToUpload);
-          cy.wait(8000);
+          cy.wait(10000);
         });
       });
   });
