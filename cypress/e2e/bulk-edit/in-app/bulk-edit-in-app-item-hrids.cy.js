@@ -30,7 +30,7 @@ describe('Bulk Edit - Items', () => {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading
         });
-        InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode)
+        InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
         cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` })
           .then((res) => {
             item.hrid = res.hrid;
