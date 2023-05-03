@@ -40,8 +40,8 @@ describe.skip('ui-data-import', () => {
           // we are uploading 29 empty files and 1 file with content to speed up uploading process
           const filePath = numberOfLogsToUpload - 1 === index ? filePathToUpload : emptyFilePathToUpload;
           fileNameToUpload = `C358137autotestFile.${getRandomPostfix()}.mrc`;
-          // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-          cy.reload();
+          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+          DataImport.verifyUploadState();
           cy.wrap(
             DataImport.uploadFile(filePath, fileNameToUpload)
           );
