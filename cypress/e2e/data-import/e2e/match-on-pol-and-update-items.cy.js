@@ -333,8 +333,8 @@ describe('ui-data-import', () => {
 
       // upload .mrc file
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-      cy.reload();
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       DataImport.checkIsLandingPageOpened();
       DataImport.uploadFile(editedMarcFileName);
       JobProfiles.searchJobProfileForImport(specialJobProfile.profileName);
