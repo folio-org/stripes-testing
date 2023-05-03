@@ -10,8 +10,7 @@ import Users from '../../../support/fragments/users/users';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import DevTeams from '../../../support/dictionary/devTeams';
 
-// this autotest is needed to be skipped because it is running in infinite loop. TODO analyze this issue and fix it
-describe.skip('ui-data-import', () => {
+describe('ui-data-import', () => {
   let userId = null;
   let fileNameToUpload = '';
   const filePathToUpload = 'oneMarcBib.mrc';
@@ -42,14 +41,13 @@ describe.skip('ui-data-import', () => {
           fileNameToUpload = `C358137autotestFile.${getRandomPostfix()}.mrc`;
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
-          cy.wrap(
-            DataImport.uploadFile(filePath, fileNameToUpload)
-          );
           // need to wait until file will be uploaded in loop
           cy.wait(8000);
+          DataImport.uploadFile(filePath, fileNameToUpload);
           JobProfiles.searchJobProfileForImport(jobProfileToRun);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(fileNameToUpload);
+          cy.wait(8000);
         });
       });
   });
