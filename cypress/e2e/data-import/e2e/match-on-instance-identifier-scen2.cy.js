@@ -101,8 +101,8 @@ describe('ui-data-import', () => {
   });
 
   it('C347829 Match on Instance identifier match meets both the Identifier type and Data requirements (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-    cy.reload();
+    // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.verifyUploadState();
     DataImport.uploadFile(filePathForCreateInstance, fileNameForCreateInstance);
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
     JobProfiles.runImportFile();
@@ -139,8 +139,8 @@ describe('ui-data-import', () => {
     JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
     cy.visit(TopMenu.dataImportPath);
-    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-    cy.reload();
+    // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.verifyUploadState();
     DataImport.uploadFile(filePathForUpdateInstance, fileNameForUpdateInstance);
     JobProfiles.searchJobProfileForImport(jobProfile.profileName);
     JobProfiles.runImportFile();

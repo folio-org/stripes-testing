@@ -117,7 +117,14 @@ describe('Inventory -> Call Number Browse', () => {
     InventoryInstance.addItemData(item.callNumber, item.copyNumber, item.callNumberSuffix);
     InventoryInstance.addEnumerationData(item.volume, item.enumeration, item.chronology);
     InventoryInstance.saveItemDataAndVerifyExistence(item.copyNumber);
-    search(item.callNumber);
+    BrowseCallNumber.clickBrowseBtn();
+    InventorySearchAndFilter.clickResetAllButton();
+    InventorySearchAndFilter.verifyKeywordsAsDefault();
+    InventorySearchAndFilter.selectBrowseCallNumbers();
+    InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
+    InventoryActions.actionsIsAbsent();
+    InventorySearchAndFilter.showsOnlyEffectiveLocation();
+    InventorySearchAndFilter.browseSubjectsSearch(item.callNumber);
     BrowseCallNumber.checkItemSearchResult(item.callNumber, item.callNumberSuffix);
     InventorySearchAndFilter.selectFoundItem(item.callNumber, item.callNumberSuffix);
     InventorySearchAndFilter.verifyShelvingOrder();
