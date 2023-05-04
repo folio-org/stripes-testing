@@ -1,28 +1,22 @@
-import moment from 'moment';
-import uuid from 'uuid';
 import permissions from '../../../support/dictionary/permissions';
 import devTeams from '../../../support/dictionary/devTeams';
 import testType from '../../../support/dictionary/testTypes';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import Orders from '../../../support/fragments/orders/orders';
-import Receiving from '../../../support/fragments/receiving/receiving';
 import TopMenu from '../../../support/fragments/topMenu';
 import Helper from '../../../support/fragments/finance/financeHelper';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import Organizations from '../../../support/fragments/organizations/organizations';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import OrderLines from '../../../support/fragments/orders/orderLines';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
-import ItemRecordEdit from '../../../support/fragments/inventory/itemRecordEdit';
-import SwitchServicePoint from '../../../support/fragments/servicePoint/switchServicePoint';
-import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
-import Checkout from '../../support/fragments/checkout/checkout';
-// import Users from '../../support/fragments/users/users';
+import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
+import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import Users from '../../../support/fragments/users/users';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
 describe('orders: Receiving and Check-in', () => {
   const order = {
@@ -46,10 +40,13 @@ describe('orders: Receiving and Check-in', () => {
       }
     ]
   };
-  const barcodeForFirstItem = Helper.getRandomBarcode();
-  const barcodeForSecondItem = Helper.getRandomBarcode();
-  const barcodeForThirdItem = Helper.getRandomBarcode();
-  const barcodeForFourItem = Helper.getRandomBarcode();
+  const orderLineTitle = BasicOrderLine.defaultOrderLine.titleOrPackage;
+  const instanceStatus = 'Cataloged';
+  const otherInstanceStatus = 'Other';
+  const instanceType = 'cartographic image';
+  const otherInstanceType = 'other';
+  const loanType = 'Can circulate';
+  const selectedLoanType = 'Selected';
 
   let orderNumber;
   let user;
@@ -78,48 +75,29 @@ describe('orders: Receiving and Check-in', () => {
                 Orders.searchByParameter('PO number', orderNumber);
                 Orders.selectFromResultsList();
                 Orders.createPOLineViaActions();
-                OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
-                OrderLines.fillInPOLineInfoForExportWithLocationForPhisicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', locationResponse.institutionId, '4');
+                OrderLines.POLineInfodorPhysicalMaterialWithLocation(orderLineTitle, locationResponse.institutionId);
                 OrderLines.backToEditingOrder();
               });
           });
       });
 
     cy.createTempUser([
-      permissions.uiInventoryViewInstances.gui,
-      permissions.uiReceivingViewEditCreate.gui,
-
+      permissions.uiOrdersReopenPurchaseOrders.gui,
+      permissions.uiOrdersView.gui,
+      permissions.uiSettingsOrdersCanViewAndEditAllSettings.gui,
+      permissions.uiInventoryViewInstances.gui
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path:TopMenu.receivingPath, waiter: Receiving.waitLoading });
+        cy.login(userProperties.username, userProperties.password, { path:SettingsMenu.ordersInstanceStatusPath, waiter: SettingsOrders.waitLoadingInstanceStatus });
       });
   });
 
   after(() => {
-    Checkout.checkoutItemViaApi({
-      id: uuid(),
-      itemBarcode: barcodeForFirstItem,
-      loanDate: moment.utc().format(),
-      servicePointId: effectiveLocationServicePoint.id,
-      userBarcode: user.barcode,
-    });
-    Checkout.checkoutItemViaApi({
-      id: uuid(),
-      itemBarcode: barcodeForSecondItem,
-      loanDate: moment.utc().format(),
-      servicePointId: effectiveLocationServicePoint.id,
-      userBarcode: user.barcode,
-    });
-    cy.loginAsAdmin({ path:TopMenu.receivingPath, waiter: Receiving.waitLoading });
-    Orders.searchByParameter('PO number', orderNumber);
-    Receiving.selectFromResultsList();
-    Receiving.unreceiveFromReceivedSection();
-    cy.visit(TopMenu.ordersPath);
+    cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList();
-    Orders.reOpenOrder();
-    Orders.unOpenOrder(orderNumber);
+    Orders.unOpenOrder();
     OrderLines.selectPOLInOrder(0);
     OrderLines.deleteOrderLine();
     // Need to wait until the order is opened before deleting it
@@ -127,38 +105,36 @@ describe('orders: Receiving and Check-in', () => {
     Orders.deleteOrderViaApi(order.id);
 
     Organizations.deleteOrganizationViaApi(organization.id);
-    // TODO: Need to find solution to delete all data, becouse now i cant delete location and user
-    // NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
-    //     location.institutionId,
-    //     location.campusId,
-    //     location.libraryId,
-    //     location.id
-    //   );
-
-    // Users.deleteViaApi(user.userId);
+    NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+      location.institutionId,
+      location.campusId,
+      location.libraryId,
+      location.id
+    );
+    cy.visit(SettingsMenu.ordersInstanceStatusPath);
+    SettingsOrders.selectInstanceStatus(otherInstanceStatus);
+    cy.visit(SettingsMenu.ordersInstanceTypePath);
+    SettingsOrders.selectInstanceType(otherInstanceType);
+    cy.visit(SettingsMenu.ordersLoanTypePath);
+    SettingsOrders.selectLoanType(selectedLoanType);
+    Users.deleteViaApi(user.userId);
   });
 
   it('C9219 Adjust Instance status, instance type and loan type defaults (items for receiving includes "Order closed" statuses) (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
+    SettingsOrders.selectInstanceStatus(instanceStatus);
+    cy.visit(SettingsMenu.ordersInstanceTypePath);
+    SettingsOrders.selectInstanceType(instanceType);
+    cy.visit(SettingsMenu.ordersLoanTypePath);
+    SettingsOrders.selectLoanType(loanType);
+    cy.visit(TopMenu.ordersPath);
     Orders.searchByParameter('PO number', orderNumber);
-    Receiving.selectFromResultsList();
-    Receiving.receiveFromExpectedSectionWithClosePOL();
-    Receiving.receiveAll();
-    Receiving.clickOnInstance();
+    Orders.selectFromResultsList(orderNumber);
+    Orders.openOrder();
+    OrderLines.selectPOLInOrder(0);
+    OrderLines.openInstance();
     InventoryInstance.openHoldingsAccordion(location.name);
-    InventorySearchAndFilter.switchToItem();
-    InventorySearchAndFilter.searchByParameter('Barcode', barcodeForFirstItem);
-    ItemRecordView.checkItemDetails(location.name, barcodeForFirstItem, 'Available');
-    ItemActions.closeItem();
-    InventorySearchAndFilter.switchToItem();
-    InventorySearchAndFilter.searchByParameter('Barcode', barcodeForSecondItem);
-    ItemRecordView.checkItemDetails(location.name, barcodeForSecondItem, 'Available');
-    ItemActions.closeItem();
-    InventorySearchAndFilter.switchToItem();
-    InventorySearchAndFilter.searchByParameter('Barcode', barcodeForThirdItem);
-    ItemRecordView.checkItemDetails(location.name, barcodeForThirdItem, 'In process');
-    ItemActions.closeItem();
-    InventorySearchAndFilter.switchToItem();
-    InventorySearchAndFilter.searchByParameter('Barcode', barcodeForFourItem);
-    ItemRecordView.checkItemDetails(location.name, barcodeForFourItem, 'In process');
+    InventoryInstance.verifyLoan(loanType);
+    InstanceRecordView.verifyResourceType(instanceType);
+    InstanceRecordView.verifyInstanceStatusTerm(instanceStatus);
   });
 });
