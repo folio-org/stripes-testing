@@ -37,8 +37,8 @@ describe('ui-data-import', () => {
 
   it('C353641 A user can not delete import logs with standard Data import: Can upload files, import, and view logs permission (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-      cy.reload();
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       DataImport.uploadFile('oneMarcBib.mrc', fileName);
       JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();

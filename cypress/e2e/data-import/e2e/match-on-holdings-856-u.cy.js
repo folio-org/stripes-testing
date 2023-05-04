@@ -148,8 +148,8 @@ describe('ui-data-import', () => {
     JobProfiles.checkJobProfilePresented(updateEHoldingsJobProfile.profileName);
 
     cy.visit(TopMenu.dataImportPath);
-    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-    cy.reload();
+    // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.verifyUploadState();
     DataImport.uploadFile('marcFileForC17025.mrc', nameForCreateMarcFile);
     JobProfiles.searchJobProfileForImport(createInstanceAndEHoldingsJobProfile.profileName);
     JobProfiles.runImportFile();
@@ -164,8 +164,8 @@ describe('ui-data-import', () => {
       HoldingsRecordView.checkURIIsNotEmpty();
 
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-      cy.reload();
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       DataImport.uploadFile('marcFileForC17025.mrc', nameForUpdateCreateMarcFile);
       JobProfiles.searchJobProfileForImport(updateEHoldingsJobProfile.profileName);
       JobProfiles.runImportFile();
