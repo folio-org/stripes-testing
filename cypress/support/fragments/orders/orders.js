@@ -50,6 +50,7 @@ const ordersFiltersPane = Pane({ id: 'orders-filters-pane' });
 const ordersResultsPane = Pane({ id: 'orders-results-pane' });
 const buttonAcquisitionMethodFilter = Button({ id: 'accordion-toggle-button-acquisitionMethod' });
 const purchaseOrderSection = Section({ id: 'purchaseOrder' });
+const purchaseOrderLineLimitReachedModal = Modal({ id: 'data-test-lines-limit-modal' });
 const searchByParameter = (parameter, value) => {
   cy.do([
     searchForm.selectIndex(parameter),
@@ -658,9 +659,9 @@ export default {
 
   checkPurchaseOrderLineLimitReachedModal: () => {
     cy.expect([
-      Modal({ id: 'data-test-lines-limit-modal' }).exists(),
-      Modal({ id: 'data-test-lines-limit-modal' }).find(Button('Ok')).exists(),
-      Modal({ id: 'data-test-lines-limit-modal' }).find(Button('Create new purchase order')).exists(),
+      purchaseOrderLineLimitReachedModal.exists(),
+      purchaseOrderLineLimitReachedModal.find(Button('Ok')).exists(),
+      purchaseOrderLineLimitReachedModal.find(Button('Create new purchase order')).exists(),
     ]);
   },
 };
