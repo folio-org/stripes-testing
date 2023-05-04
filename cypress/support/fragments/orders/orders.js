@@ -655,4 +655,12 @@ export default {
   errorMessage:(modalName, errorContent) => {
     cy.expect(Modal(modalName).content(errorContent));
   },
+
+  checkPurchaseOrderLineLimitReachedModal: () => {
+    cy.expect([
+      Modal({ id: 'data-test-lines-limit-modal' }).exists(),
+      Modal({ id: 'data-test-lines-limit-modal' }).find(Button('Ok')).exists(),
+      Modal({ id: 'data-test-lines-limit-modal' }).find(Button('Create new purchase order')).exists(),
+    ]);
+  },
 };

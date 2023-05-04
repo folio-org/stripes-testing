@@ -58,6 +58,7 @@ export default {
     cy.wait(2000);
     cy.get('input[name=value]').click().type(`{selectall}{backspace}${polNumbers}`);
     cy.do(Button({ id: 'set-polines-limit-submit-btn' }).click());
+    InteractorsTools.checkCalloutMessage('The limit of purchase order lines has been successfully saved');
   },
 
   fillRequiredFields: (info) => {

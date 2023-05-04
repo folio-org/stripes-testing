@@ -10,12 +10,9 @@ import NewOrganization from '../../../support/fragments/organizations/newOrganiz
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
 describe('orders: Settings', () => {
   const order = {
@@ -39,13 +36,6 @@ describe('orders: Settings', () => {
       }
     ]
   };
-  const orderLineTitle = BasicOrderLine.defaultOrderLine.titleOrPackage;
-  const instanceStatus = 'Cataloged';
-  const otherInstanceStatus = 'Other';
-  const instanceType = 'cartographic image';
-  const otherInstanceType = 'other';
-  const loanType = 'Can circulate';
-  const selectedLoanType = 'Selected';
 
   let orderNumber;
   let user;
@@ -76,10 +66,8 @@ describe('orders: Settings', () => {
       });
 
     cy.createTempUser([
-      permissions.uiOrdersReopenPurchaseOrders.gui,
-      permissions.uiOrdersView.gui,
-      permissions.uiSettingsOrdersCanViewAndEditAllSettings.gui,
-      permissions.uiInventoryViewInstances.gui
+      permissions.uiOrdersCreate.gui,
+      permissions.uiSettingsOrdersCanViewAndEditAllSettings.gui
     ])
       .then(userProperties => {
         user = userProperties;
@@ -88,14 +76,8 @@ describe('orders: Settings', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList();
-    Orders.unOpenOrder();
-    OrderLines.selectPOLInOrder(0);
-    OrderLines.deleteOrderLine();
-    // Need to wait until the order is opened before deleting it
-    cy.wait(2000);
+    cy.loginAsAdmin({ path:SettingsMenu.ordersPurchaseOrderLinesLimit, waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit });
+    SettingsOrders.setPurchaseOrderLinesLimit(1);
     Orders.deleteOrderViaApi(order.id);
 
     Organizations.deleteOrganizationViaApi(organization.id);
@@ -105,22 +87,24 @@ describe('orders: Settings', () => {
       location.libraryId,
       location.id
     );
-    cy.visit(SettingsMenu.ordersInstanceStatusPath);
-    SettingsOrders.selectInstanceStatus(otherInstanceStatus);
-    cy.visit(SettingsMenu.ordersInstanceTypePath);
-    SettingsOrders.selectInstanceType(otherInstanceType);
-    cy.visit(SettingsMenu.ordersLoanTypePath);
-    SettingsOrders.selectLoanType(selectedLoanType);
+
     Users.deleteViaApi(user.userId);
   });
 
   it('C15497 Increase purchase order lines limit (items for receiving includes "Order closed" statuses) (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
-
+    SettingsOrders.setPurchaseOrderLinesLimit(2);
     cy.visit(TopMenu.ordersPath);
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList();
     Orders.createPOLineViaActions();
-    OrderLines.POLineInfodorPhysicalMaterialWithLocation(orderLineTitle, locationResponse.institutionId);
+    OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
+    OrderLines.fillInPOLineInfoForExportWithLocationForPhisicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId, '4');
     OrderLines.backToEditingOrder();
+    Orders.createPOLineViaActions();
+    OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
+    OrderLines.fillInPOLineInfoForExportWithLocationForPhisicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId, '4');
+    OrderLines.backToEditingOrder();
+    Orders.createPOLineViaActions();
+    Orders.checkPurchaseOrderLineLimitReachedModal();
   });
 });
