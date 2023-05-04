@@ -71,11 +71,6 @@ describe('orders: Settings', () => {
             cy.createOrderApi(order)
               .then((response) => {
                 orderNumber = response.body.poNumber;
-                Orders.searchByParameter('PO number', orderNumber);
-                Orders.selectFromResultsList();
-                Orders.createPOLineViaActions();
-                OrderLines.POLineInfodorPhysicalMaterialWithLocation(orderLineTitle, locationResponse.institutionId);
-                OrderLines.backToEditingOrder();
               });
           });
       });
@@ -88,7 +83,7 @@ describe('orders: Settings', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path:SettingsMenu.ordersInstanceStatusPath, waiter: SettingsOrders.waitLoadingInstanceStatus });
+        cy.login(userProperties.username, userProperties.password, { path:SettingsMenu.ordersPurchaseOrderLinesLimit, waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit });
       });
   });
 
@@ -119,21 +114,13 @@ describe('orders: Settings', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C9219 Adjust Instance status, instance type and loan type defaults (items for receiving includes "Order closed" statuses) (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
-    SettingsOrders.selectInstanceStatus(instanceStatus);
-    cy.visit(SettingsMenu.ordersInstanceTypePath);
-    SettingsOrders.selectInstanceType(instanceType);
-    cy.visit(SettingsMenu.ordersLoanTypePath);
-    SettingsOrders.selectLoanType(loanType);
+  it('C15497 Increase purchase order lines limit (items for receiving includes "Order closed" statuses) (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
+
     cy.visit(TopMenu.ordersPath);
     Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList(orderNumber);
-    Orders.openOrder();
-    OrderLines.selectPOLInOrder(0);
-    OrderLines.openInstance();
-    InventoryInstance.openHoldingsAccordion(location.name);
-    InventoryInstance.verifyLoan(loanType);
-    InstanceRecordView.verifyResourceType(instanceType);
-    InstanceRecordView.verifyInstanceStatusTerm(instanceStatus);
+    Orders.selectFromResultsList();
+    Orders.createPOLineViaActions();
+    OrderLines.POLineInfodorPhysicalMaterialWithLocation(orderLineTitle, locationResponse.institutionId);
+    OrderLines.backToEditingOrder();
   });
 });
