@@ -3,45 +3,31 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
-
-
-
-import { LOAN_TYPE_NAMES,
-  MATERIAL_TYPE_NAMES,
-  ITEM_STATUS_NAMES,
-  LOCALION_NAMES,
-  FOLIO_RECORD_TYPE,
-  INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
-import DateTools from '../../../support/utils/dateTools';
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import Helper from '../../../support/fragments/finance/financeHelper';
-import SettingsJobProfiles from '../../../support/fragments/settings/dataImport/settingsJobProfiles';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
-import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import ExportFile from '../../../support/fragments/data-export/exportFile';
 import FileManager from '../../../support/utils/fileManager';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 
 describe('ui-data-import', () => {
   let user;
-  let firstFieldId = null;
-  let secondFieldId = null;
+  const fieldProtectionIds = [];
+  let instanceHRID = null;
+  const quantityOfItems = '1';
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+  const marcFileNameForCreate = `C367966 autotestFile.${getRandomPostfix()}.mrc`;
+  const editedMarcFileName = `C367966 editedAutotestFile.${getRandomPostfix()}.mrc`;
+  const marcFileName = `C367966 autotestFile.${getRandomPostfix()}.mrc`;
   const protectedFields = {
     firstField: '020',
     secondField: '514'
@@ -50,15 +36,18 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { name: `C367966 Update MARC Bib with protections ${getRandomPostfix()}`,
         typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC },
-      actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-        name: `createInstanceActionProf${getRandomPostfix()}` }
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+        name: `createInstanceActionProf${getRandomPostfix()}`,
+        action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
       mappingProfile: { name: `C367966 Update instance 1 ${getRandomPostfix()}`,
         typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-        administrativeNote: 'This note was added when the MARC Bib was updated to check field protections' },
+        administrativeNote: 'This note was added when the MARC Bib was updated to check field protections',
+        noteInFile: 'This is the ORIGINAL version of the non-repeatable 514 note' },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-        name: `createInstanceActionProf${getRandomPostfix()}` }
+        name: `createInstanceActionProf${getRandomPostfix()}`,
+        action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     }
   ];
   const matchProfile = {
@@ -92,6 +81,23 @@ describe('ui-data-import', () => {
       });
   });
 
+  after('delete test data', () => {
+    cy.wrap(fieldProtectionIds).each(id => {
+      MarcFieldProtection.deleteMarcFieldProtectionViaApi(id);
+    });
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
+    MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+    collectionOfMappingAndActionProfiles.forEach(profile => {
+      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+    });
+    // delete created file in fixtures
+    FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
+      .then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+  });
 
   it('C367966 Confirm the number of updated instances in the import log does not exceed the number of records in the file (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
@@ -104,7 +110,7 @@ describe('ui-data-import', () => {
         field: protectedFields.firstField
       })
         .then((resp) => {
-          firstFieldId = resp.id;
+          fieldProtectionIds.push(resp.id);
         });
       MarcFieldProtection.createMarcFieldProtectionViaApi({
         indicator1: '*',
@@ -115,11 +121,12 @@ describe('ui-data-import', () => {
         field: protectedFields.secondField
       })
         .then((resp) => {
-          secondFieldId = resp.id;
+          fieldProtectionIds.push(resp.id);
         });
 
       // create Field mapping profiles
       FieldMappingProfiles.createMappingProfileForUpdatesMarc(collectionOfMappingAndActionProfiles[0].mappingProfile);
+      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
       FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
       FieldMappingProfiles.createMappingProfileWithNotes(collectionOfMappingAndActionProfiles[1].mappingProfile,
         collectionOfMappingAndActionProfiles[1].mappingProfile.administrativeNote);
@@ -143,7 +150,7 @@ describe('ui-data-import', () => {
       NewJobProfile.linkMatchAndTwoActionProfiles(
         matchProfile.profileName,
         collectionOfMappingAndActionProfiles[0].actionProfile.name,
-        collectionOfMappingAndActionProfiles[0].actionProfile.name
+        collectionOfMappingAndActionProfiles[1].actionProfile.name
       );
       NewJobProfile.saveAndClose();
       JobProfiles.checkJobProfilePresented(jobProfile.profileName);
@@ -152,10 +159,39 @@ describe('ui-data-import', () => {
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
-      DataImport.uploadFile('marcFileForC17018-BeforeOverride.mrc', fileNameForCreatingInstance);
+      DataImport.uploadFile('marcFileForC367966_BeforeOverride.mrc', marcFileNameForCreate);
       JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(fileNameForCreatingInstance);
-      Logs.checkStatusOfJobProfile('Completed');
+      JobProfiles.waitFileIsImported(marcFileNameForCreate);
+      Logs.checkStatusOfJobProfile();
+      Logs.openFileDetails(marcFileNameForCreate);
+      [FileDetails.columnNameInResultList.srsMarc, FileDetails.columnNameInResultList.instance].forEach(columnName => {
+        FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+      });
+      FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
+      FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems);
+      FileDetails.openInstanceInInventory('Created');
+      InstanceRecordView.verifyInstanceRecordViewOpened();
+      InstanceRecordView.getAssignedHRID().then(initialInstanceHrId => {
+        instanceHRID = initialInstanceHrId;
+
+        InstanceRecordView.viewSource();
+        InventoryViewSource.contains('514\t');
+        InventoryViewSource.contains(collectionOfMappingAndActionProfiles[1].mappingProfile.noteInFile);
+        DataImport.editMarcFile('marcFileForC367966_Rev1Protect.mrc', editedMarcFileName, ['in00000000331'], [instanceHRID]);
+      });
+
+      // upload an edited marc file
+      cy.visit(TopMenu.dataImportPath);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
+      DataImport.uploadFile(editedMarcFileName, marcFileName);
+      JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(marcFileName);
+      Logs.checkStatusOfJobProfile();
+      Logs.openFileDetails(marcFileName);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance);
+      FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 1);
     });
 });
