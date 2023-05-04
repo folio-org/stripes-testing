@@ -63,8 +63,8 @@ describe('ui-data-import', () => {
       // import a file
       cy.visit(TopMenu.dataImportPath);
       DataImport.checkIsLandingPageOpened();
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-      cy.reload();
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       DataImport.uploadFile('marcFileForC356824.mrc', fileName);
       // wait until file will be uploaded
       cy.wait(10000);

@@ -25,6 +25,7 @@ import logsViewAll from '../data_import/logs/logsViewAll';
 import DateTools from '../../utils/dateTools';
 import Helper from '../finance/financeHelper';
 
+const searchAndFilterSection = Pane({ id: 'browse-inventory-filters-pane' });
 const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
 const sourceAccordion = Accordion('Source');
 const languageInput = Accordion({ id: 'language' });
@@ -35,6 +36,7 @@ const inventorySearchAndFilter = TextInput({ id: 'input-inventory-search' });
 const inventorySearchAndFilterInput = Select({ id: 'input-inventory-search-qindex' });
 const browseSearchAndFilterInput = Select({ id: 'input-record-search-qindex' });
 const resetAllButton = Button({ id: 'clickable-reset-all' });
+const resetAllBtn = Button('Reset all');
 const navigationInstancesButton = Button({ id: 'segment-navigation-instances' });
 const paneFilterSection = Section({ id: 'pane-filter' });
 const paneResultsSection = Section({ id: 'pane-results' });
@@ -379,6 +381,10 @@ export default {
 
   resetAll() {
     cy.do(resetAllButton.click());
+  },
+
+  clickResetAllButton() {
+    cy.do(searchAndFilterSection.find(resetAllBtn).click());
   },
 
   checkContributorsColumResult(cellContent) {

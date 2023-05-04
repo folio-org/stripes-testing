@@ -46,8 +46,8 @@ describe('ui-data-import', () => {
         const fileName = `C358968autotestFile.${getRandomPostfix()}.mrc`;
 
         Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
-        // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-        cy.reload();
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC358968.mrc', fileName);
         JobProfiles.searchJobProfileForImport(jobProfileToRun);
         JobProfiles.runImportFile();
