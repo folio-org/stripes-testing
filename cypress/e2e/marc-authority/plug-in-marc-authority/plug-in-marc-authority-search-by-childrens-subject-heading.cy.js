@@ -98,6 +98,6 @@ describe('plug-in MARC authority | Search', () => {
     MarcAuthorities.checkFieldAndContentExistence('100', testData.forC359233.valueInDetailView);
     MarcAuthorities.checkRecordDetailPageMarkedValue(testData.forC359233.markedValue);
     MarcAuthorities.searchBy(testData.forC359233.searchOptionB, testData.forC359233.value);
-    MarcAuthorities.checkRecordAbsence(testData.forC359233.noResults);
+    MarcAuthorities.checkNoResultsMessage(testData.forC359233.noResults);
   });
 });
