@@ -190,7 +190,7 @@ export default {
     cy.expect(saveAndCloseButton.absent());
   },
 
-  createMatchProfileViaApi:(nameProfile, matchProfileId, actProfileId) => {
+  createJobProfileViaApi:(nameProfile, matchProfileId, actProfileId) => {
     return cy
       .okapiRequest({
         method: 'POST',
