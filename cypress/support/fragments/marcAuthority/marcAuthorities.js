@@ -355,4 +355,8 @@ export default {
       cy.expect(MultiColumnListCell(record).exists());
     });
   },
+
+  checkSearchOption(searchOption) {
+    cy.expect(browseSearchAndFilterInput.has({ value: searchOption }));
+  },
 };
