@@ -16,6 +16,7 @@ describe('Data Import - Importing MARC Authority files', () => {
   const testData = {
     searchOptionPersonalName: 'Personal name',
     searchOptionNameTitle: 'Name-title',
+    searchOptionKeyword: 'Keyword',
     recordA: 'Angelou, Maya.',
     recordB: 'Angelou, Maya. And still I rise',
     recordBRef: 'Angelou, Maya. Still I rise',
@@ -179,5 +180,38 @@ describe('Data Import - Importing MARC Authority files', () => {
 
     MarcAuthorities.searchByParameter('Name-title', 'Twain');
     MarcAuthorities.checkNoResultsMessage('No results found for "Twain". Please check your spelling and filters.');
+  });
+
+  it('C353995 Search for records which have subfield "t" value (personalNameTitle and sftPersonalNameTitle) (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    DataImport.uploadFile('marcFileForC353995.mrc', fileName);
+    JobProfiles.waitLoadingList();
+    JobProfiles.searchJobProfileForImport(jobProfileToRun);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileName);
+    Logs.checkStatusOfJobProfile('Completed');
+    Logs.openFileDetails(fileName);
+    for (let i = 0; i < 1; i++) {
+      Logs.getCreatedItemsID(i).then(link => {
+        createdAuthorityIDs.push(link.split('/')[5]);
+      });
+    }
+
+    cy.visit(TopMenu.marcAuthorities);
+
+    MarcAuthorities.checkSearchOption('keyword');
+    MarcAuthorities.searchByParameter(testData.searchOptionKeyword, testData.recordB);
+    MarcAuthorityBrowse.checkResultWithValue(testData.authorized, testData.recordB);
+
+    MarcAuthorities.searchByParameter(testData.searchOptionKeyword, testData.recordA);
+    MarcAuthorityBrowse.checkResultWithValueB(testData.authorized, testData.recordB, testData.reference, testData.recordBRef);
+    
+    MarcAuthorities.searchByParameter(testData.searchOptionPersonalName, testData.recordA);
+    MarcAuthorities.checkNoResultsMessage('No results found for "Angelou, Maya.". Please check your spelling and filters.');
+    
+    MarcAuthorities.searchByParameter(testData.searchOptionNameTitle, testData.recordB);
+    MarcAuthorityBrowse.checkResultWithValue(testData.authorized, testData.recordB);
+    
+    MarcAuthorities.searchByParameter(testData.searchOptionNameTitle, testData.recordA);
+    MarcAuthorityBrowse.checkResultWithValueB(testData.authorized, testData.recordB, testData.reference, testData.recordBRef);
   });
 });
