@@ -80,8 +80,8 @@ describe('ui-data-import', () => {
   });
 
   it('C17044: MARC-MARC matching for 001 field (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-    cy.reload();
+    // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.verifyUploadState();
     // upload a marc file for export
     DataImport.uploadFile('oneMarcBib.mrc', nameForMarcFile);
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
@@ -127,8 +127,8 @@ describe('ui-data-import', () => {
 
         // upload the exported marc file with 001 field
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-        cy.reload();
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
         DataImport.uploadExportedFile(nameForExportedMarcFile);
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
         JobProfiles.runImportFile();

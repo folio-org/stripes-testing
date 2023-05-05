@@ -21,11 +21,12 @@ export default {
       fileName: MultiColumnListCell({ 'row': 0, columnIndex: 0 }),
       status: MultiColumnListCell({ 'row': 0, columnIndex: 1 }),
       total: MultiColumnListCell({ 'row': 0, columnIndex: 2 }),
-      failed: MultiColumnListCell({ 'row': 0, columnIndex: 3 }),
-      jobProfile: MultiColumnListCell({ 'row': 0, columnIndex: 4 }),
-      endedRunning: MultiColumnListCell({ 'row': 0, columnIndex: 5 }),
-      runBy: MultiColumnListCell({ 'row': 0, columnIndex: 6 }),
-      id: MultiColumnListCell({ 'row': 0, columnIndex: 7 }),
+      exported: MultiColumnListCell({ 'row': 0, columnIndex: 3 }),
+      failed: MultiColumnListCell({ 'row': 0, columnIndex: 4 }),
+      jobProfile: MultiColumnListCell({ 'row': 0, columnIndex: 5 }),
+      endedRunning: MultiColumnListCell({ 'row': 0, columnIndex: 6 }),
+      runBy: MultiColumnListCell({ 'row': 0, columnIndex: 7 }),
+      id: MultiColumnListCell({ 'row': 0, columnIndex: 8 }),
     };
     cy.getAdminToken().then(() => {
       cy.getUsers({ limit: 1, query: `username=${userName || Cypress.env('diku_login')}` }).then(() => {
@@ -33,6 +34,7 @@ export default {
         cy.do([
           resultRow.status.is({ content: 'Completed' }),
           resultRow.total.is({ content: recordsCount.toString() }),
+          resultRow.exported.is({ content: recordsCount.toString() }),
           resultRow.failed.is({ content: '' }),
           resultRow.jobProfile.is({ content: this.defaultJobProfile }),
           resultRow.runBy.is({ content: userNameToVerify }),

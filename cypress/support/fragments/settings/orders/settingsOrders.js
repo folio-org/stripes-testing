@@ -1,4 +1,4 @@
-import { Button, Checkbox, EditableListRow, MultiColumnListCell, PaneHeader, TextField } from '../../../../../interactors';
+import { Button, Checkbox, EditableListRow, MultiColumnListCell, PaneHeader, Select, TextField } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 
 const editPoNumberCheckbox = Checkbox('User can edit');
@@ -25,6 +25,18 @@ export default {
     cy.expect(PaneHeader('Purchase order lines limit').exists());
   },
 
+  waitLoadingInstanceStatus : () => {
+    cy.expect(PaneHeader('Instance status').exists());
+  },
+
+  waitLoadingInstanceType : () => {
+    cy.expect(PaneHeader('Instance type').exists());
+  },
+
+  waitLoadingLoanType : () => {
+    cy.expect(PaneHeader('Loan type').exists());
+  },
+
   userCanEditPONumber : () => {
     cy.wait(4000);
     cy.do(editPoNumberCheckbox.click());
@@ -46,6 +58,7 @@ export default {
     cy.wait(2000);
     cy.get('input[name=value]').click().type(`{selectall}{backspace}${polNumbers}`);
     cy.do(Button({ id: 'set-polines-limit-submit-btn' }).click());
+    InteractorsTools.checkCalloutMessage('The limit of purchase order lines has been successfully saved');
   },
 
   fillRequiredFields: (info) => {
@@ -98,4 +111,31 @@ export default {
     ));
     InteractorsTools.checkCalloutMessage(`The suffix ${suffixInfo.name} was successfully deleted`);
   },
+
+  selectInstanceStatus(status) {
+    cy.wait(6000);
+    cy.do([
+      Select({ name: 'inventory-instanceStatusCode' }).choose(status),
+      Button({ id: 'clickable-save-config' }).click(),
+    ]);
+    InteractorsTools.checkCalloutMessage('Setting was successfully updated.');
+  },
+
+  selectInstanceType(type) {
+    cy.wait(6000);
+    cy.do([
+      Select({ name: 'inventory-instanceTypeCode' }).choose(type),
+      Button({ id: 'clickable-save-config' }).click(),
+    ]);
+    InteractorsTools.checkCalloutMessage('Setting was successfully updated.');
+  },
+
+  selectLoanType(type) {
+    cy.wait(6000);
+    cy.do([
+      Select({ name: 'inventory-loanTypeName' }).choose(type),
+      Button({ id: 'clickable-save-config' }).click(),
+    ]);
+    InteractorsTools.checkCalloutMessage('Setting was successfully updated.');
+  }
 };
