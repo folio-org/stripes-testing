@@ -1,5 +1,6 @@
 import uuid from 'uuid';
 import TestTypes from '../../support/dictionary/testTypes';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -14,39 +15,30 @@ import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import NoticePolicyApi from '../../support/fragments/circulation/notice-policy';
 import NoticePolicyTemplateApi from '../../support/fragments/circulation/notice-policy-template';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import NewNoticePolicy from '../../support/fragments/circulation/newNoticePolicy';
 import NewNoticePolicyTemplate from '../../support/fragments/circulation/newNoticePolicyTemplate';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import { getTestEntityValue } from '../../support/utils/stringTools';
+import UserLoans from '../../support/fragments/users/loans/userLoans';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../support/fragments/checkout/checkout';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import getRandomPostfix from '../../support/utils/stringTools';
-import OverdueFinePolicy from '../../support/fragments/circulation/overdue-fine-policy';
-import UsersOwners from '../../support/fragments/settings/users/usersOwners';
-import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
 import LoanPolicy from '../../support/fragments/circulation/loan-policy';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../support/fragments/users/usersCard';
-import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
-import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
-import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
-import UserLoans from '../../support/fragments/users/loans/userLoans';
-import { ITEM_STATUS_NAMES } from '../../support/constants';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
 
-describe('Overdue fine', () => {
+describe('Loan notice triggers', () => {
   let addedCirculationRule;
   const patronGroup = {
-    name: 'groupToTestNotices' + getRandomPostfix(),
+    name: getTestEntityValue('groupToTestNotices'),
   };
   const userData = {
     personal: {
       lastname: null,
     },
   };
-  const itemData = {
-    barcode: generateItemBarcode(),
-    title: `Instance ${getRandomPostfix()}`,
+  const instanceData = {
+    itemBarcode: generateItemBarcode(),
+    title: getTestEntityValue('InstanceNotice'),
   };
   const testData = {
     userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestReceiveNotice', uuid()),
@@ -54,34 +46,32 @@ describe('Overdue fine', () => {
   };
   const createNoticeTemplate = (noticeName) => {
     return {
-      name: `Autotest_${getRandomPostfix()}_${noticeName}`,
+      name: getTestEntityValue(noticeName),
       description: 'Created by autotest team',
-      category: 'Automated fee/fine charge',
-      subject: `Autotest_${getRandomPostfix()}_${noticeName}`,
+      category: 'Loan',
+      subject: getTestEntityValue(noticeName),
       body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
     };
   };
   const noticeTemplates = {
-    returnedUponAt: createNoticeTemplate('Overdue_fine_returned_upon_at'),
-    returnedAfterOnce: createNoticeTemplate('Overdue_fine_returned_after_once'),
-    returnedAfterRecurring: createNoticeTemplate(
-      `Autotest_${getRandomPostfix()}_Overdue_fine_returned_after_recurring`
-    ),
+    uponAt: createNoticeTemplate('Item_aged_to_lost_upon_at_template'),
+    afterOnce: createNoticeTemplate('Item_aged_to_lost_after_once_template'),
+    afterRecurring: createNoticeTemplate('Item_aged_to_lost_after_recurring_template'),
   };
   const selectOptions = (template) => {
     const generalOptions = {
-      noticeName: 'FeeFine',
-      noticeId: 'feeFine',
+      noticeName: 'Loan',
+      noticeId: 'loan',
       format: 'Email',
-      action: 'Overdue fine, returned',
+      action: 'Item aged to lost',
       templateName: template.name,
     };
-    if (template.name === noticeTemplates.returnedUponAt.name) {
+    if (template.name === noticeTemplates.uponAt.name) {
       return {
         send: 'Upon/At',
         ...generalOptions,
       };
-    } else if (template.name === noticeTemplates.returnedAfterOnce.name) {
+    } else if (template.name === noticeTemplates.afterOnce.name) {
       return {
         send: 'After',
         sendBy: {
@@ -91,7 +81,7 @@ describe('Overdue fine', () => {
         frequency: 'One Time',
         ...generalOptions,
       };
-    } else if (template.name === noticeTemplates.returnedAfterRecurring.name) {
+    } else if (template.name === noticeTemplates.afterRecurring.name) {
       return {
         send: 'After',
         sendBy: {
@@ -108,16 +98,16 @@ describe('Overdue fine', () => {
     }
     return generalOptions;
   };
-  const searchResultsData = (templateName) => {
+  const searchResultsData = (templateName, itemBarcode) => {
     return {
       userBarcode: userData.barcode,
-      itemBarcode: itemData.barcode,
+      itemBarcode,
       object: 'Notice',
       circAction: 'Send',
       // TODO: add check for date with format <C6/8/2022, 6:46 AM>
       servicePoint: testData.userServicePoint.name,
       source: 'System',
-      desc: `Template: ${templateName}. Triggering event: Overdue fine returned.`,
+      desc: `Template: ${templateName}. Triggering event: Aged to lost.`,
     };
   };
   const checkNoticeIsSent = (checkParams) => {
@@ -127,12 +117,12 @@ describe('Overdue fine', () => {
     });
   };
   const noticePolicy = {
-    name: `Autotest ${getRandomPostfix()} Overdue fine, returned`,
+    name: getTestEntityValue('Overdue fine, returned'),
     description: 'Created by autotest team',
   };
   const loanPolicyBody = {
     id: uuid(),
-    name: `1_minute_${getRandomPostfix()}`,
+    name: getTestEntityValue('1_minute'),
     loanable: true,
     loansPolicy: {
       closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE_TIME',
@@ -142,25 +132,38 @@ describe('Overdue fine', () => {
       },
       profileId: 'Rolling',
     },
-    renewable: false,
+    renewable: true,
+    renewalsPolicy: {
+      unlimited: false,
+      numberAllowed: 2,
+      renewFromId: 'SYSTEM_DATE',
+    },
   };
-  const overdueFinePolicyBody = {
+  const lostItemFeePolicyBody = {
+    name: getTestEntityValue('1_lost'),
+    itemAgedLostOverdue: {
+      duration: 1,
+      intervalId: 'Minutes',
+    },
+    chargeAmountItem: {
+      chargeType: 'actualCost',
+      amount: 0.0,
+    },
+    lostItemProcessingFee: 0.0,
+    chargeAmountItemPatron: false,
+    chargeAmountItemSystem: false,
+    lostItemChargeFeeFine: {
+      duration: 6,
+      intervalId: 'Weeks',
+    },
+    returnedLostItemProcessingFee: false,
+    replacedLostItemProcessingFee: false,
+    replacementProcessingFee: 0.0,
+    replacementAllowed: false,
+    lostItemReturned: 'Charge',
     id: uuid(),
-    name: `automationOverdueFinePolicy${getRandomPostfix()}`,
-    overdueFine: { quantity: '1.00', intervalId: 'minute' },
-    countClosed: true,
-    maxOverdueFine: '100.00',
   };
-  const userOwnerBody = {
-    id: uuid(),
-    owner: 'AutotestOwner' + getRandomPostfix(),
-    servicePointOwner: [
-      {
-        value: testData.userServicePoint.id,
-        label: testData.userServicePoint.name,
-      },
-    ],
-  };
+
 
   before('Preconditions', () => {
     cy.getAdminToken()
@@ -175,7 +178,7 @@ describe('Overdue fine', () => {
           testData.holdingTypeId = holdingTypes[0].id;
         });
         cy.createLoanType({
-          name: `type_${getRandomPostfix()}`,
+          name: getTestEntityValue('type'),
         }).then((loanType) => {
           testData.loanTypeId = loanType.id;
         });
@@ -187,7 +190,7 @@ describe('Overdue fine', () => {
         InventoryInstances.createFolioInstanceViaApi({
           instance: {
             instanceTypeId: testData.instanceTypeId,
-            title: itemData.title,
+            title: instanceData.title,
           },
           holdings: [
             {
@@ -197,38 +200,27 @@ describe('Overdue fine', () => {
           ],
           items: [
             {
-              barcode: itemData.barcode,
+              barcode: instanceData.itemBarcode,
               status: { name: ITEM_STATUS_NAMES.AVAILABLE },
               permanentLoanType: { id: testData.loanTypeId },
               materialType: { id: testData.materialTypeId },
-            },
+            }
           ],
-        }).then((specialInstanceIds) => {
-          itemData.instanceId = specialInstanceIds.instanceId;
-          itemData.holdingId = specialInstanceIds.holdingIds[0].id;
-          itemData.itemId = specialInstanceIds.holdingIds[0].itemIds;
         });
       });
 
-    OtherSettings.setOtherSettingsViaApi({ prefPatronIdentifier: 'barcode,username' });
     LoanPolicy.createViaApi(loanPolicyBody);
-    OverdueFinePolicy.createViaApi(overdueFinePolicyBody);
-    UsersOwners.createViaApi(userOwnerBody);
-    PaymentMethods.createViaApi(userOwnerBody.id).then((paymentMethodRes) => {
-      testData.paymentMethod = paymentMethodRes;
-    });
-
+    LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
     PatronGroups.createViaApi(patronGroup.name).then((res) => {
       patronGroup.id = res;
       cy.createTempUser(
         [
-          permissions.checkinAll.gui,
-          permissions.checkoutAll.gui,
           permissions.circulationLogAll.gui,
           permissions.uiCirculationSettingsNoticeTemplates.gui,
           permissions.uiCirculationSettingsNoticePolicies.gui,
-          permissions.uiUsersfeefinesCRUD.gui,
-          permissions.uiUserAccounts.gui,
+          permissions.checkoutAll.gui,
+          permissions.okapiTimersPatch.gui,
+          permissions.checkinAll.gui,
         ],
         patronGroup.name
       )
@@ -245,12 +237,9 @@ describe('Overdue fine', () => {
             userData.userId,
             testData.userServicePoint.id
           );
-
-          cy.getCirculationRules().then((response) => {
-            testData.baseRules = response.rulesAsText;
-            testData.ruleProps = CirculationRules.getRuleProps(response.rulesAsText);
-          });
-
+          cy.getToken(userData.username, userData.password);
+          UserLoans.updateTimerForAgedToLost('minute');
+          cy.getAdminToken();
           cy.login(userData.username, userData.password, {
             path: SettingsMenu.circulationPatronNoticeTemplatesPath,
             waiter: NewNoticePolicyTemplate.waitLoading,
@@ -260,36 +249,35 @@ describe('Overdue fine', () => {
   });
 
   after('Deleting created entities', () => {
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
+    cy.getToken(userData.username, userData.password);
+    UserLoans.updateTimerForAgedToLost('reset');
+    cy.getAdminToken();
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     cy.deleteLoanPolicy(loanPolicyBody.id);
+    LostItemFeePolicy.deleteViaApi(lostItemFeePolicyBody.id);
     NoticePolicyApi.deleteViaApi(testData.ruleProps.n);
-    OverdueFinePolicy.deleteViaApi(overdueFinePolicyBody.id);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    cy.deleteItemViaApi(itemData.itemId);
-    cy.deleteHoldingRecordViaApi(itemData.holdingId);
-    InventoryInstance.deleteInstanceViaApi(itemData.instanceId);
-    PaymentMethods.deleteViaApi(testData.paymentMethod.id);
-    UsersOwners.deleteViaApi(userOwnerBody.id);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(instanceData.itemBarcode);
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id
     );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.returnedUponAt.name}` }).then(
+    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.uponAt.name}` }).then(
       (templateId) => {
         NoticePolicyTemplateApi.deleteViaApi(templateId);
       }
     );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.returnedAfterOnce.name}` }).then(
+    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.afterOnce.name}` }).then(
       (templateId) => {
         NoticePolicyTemplateApi.deleteViaApi(templateId);
       }
     );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.returnedAfterRecurring.name}` }).then(
+    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.afterRecurring.name}` }).then(
       (templateId) => {
         NoticePolicyTemplateApi.deleteViaApi(templateId);
       }
@@ -298,85 +286,70 @@ describe('Overdue fine', () => {
   });
 
   it(
-    'C347874 Overdue fine, returned triggers (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    'C347865: Item aged to lost triggers (vega)',
+    { tags: [TestTypes.criticalPath, devTeams.vega] },
     () => {
-      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.returnedUponAt);
-      NewNoticePolicyTemplate.checkAfterSaving({
-        ...noticeTemplates.returnedUponAt,
-        category: 'AutomatedFeeFineCharge',
-      });
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.returnedAfterOnce);
-      NewNoticePolicyTemplate.checkAfterSaving({
-        ...noticeTemplates.returnedAfterOnce,
-        category: 'AutomatedFeeFineCharge',
-      });
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.returnedAfterRecurring);
-      NewNoticePolicyTemplate.checkAfterSaving({
-        ...noticeTemplates.returnedAfterRecurring,
-        category: 'AutomatedFeeFineCharge',
-      });
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.uponAt);
+      NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.uponAt);
+      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.afterOnce);
+      NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.afterOnce);
+      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.afterRecurring);
+      NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.afterRecurring);
 
       cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
       NewNoticePolicy.waitLoading();
       NewNoticePolicy.startAdding();
       NewNoticePolicy.checkInitialState();
       NewNoticePolicy.fillGeneralInformation(noticePolicy);
-      NewNoticePolicy.addNotice(selectOptions(noticeTemplates.returnedUponAt));
-      NewNoticePolicy.addNotice(selectOptions(noticeTemplates.returnedAfterOnce), 1);
-      NewNoticePolicy.addNotice(selectOptions(noticeTemplates.returnedAfterRecurring), 2);
+      NewNoticePolicy.addNotice(selectOptions(noticeTemplates.uponAt));
+      NewNoticePolicy.addNotice(selectOptions(noticeTemplates.afterOnce), 1);
+      NewNoticePolicy.addNotice(selectOptions(noticeTemplates.afterRecurring), 2);
       NewNoticePolicy.save();
       NewNoticePolicy.waitLoading();
       NewNoticePolicy.checkPolicyName(noticePolicy);
 
-      cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
-        testData.ruleProps.n = noticePolicyRes[0].id;
-        testData.ruleProps.l = loanPolicyBody.id;
-        testData.ruleProps.o = overdueFinePolicyBody.id;
-        addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + testData.ruleProps.i + ' l ' + testData.ruleProps.l + ' r ' + testData.ruleProps.r + ' o ' + testData.ruleProps.o + ' n ' + testData.ruleProps.n;
-        CirculationRules.addRuleViaApi(testData.baseRules, testData.ruleProps, 't ', testData.loanTypeId);
+      CirculationRules.getViaApi().then((response) => {
+        testData.baseRules = response.rulesAsText;
+        testData.ruleProps = CirculationRules.getRuleProps(response.rulesAsText);
+        cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
+          testData.ruleProps.n = noticePolicyRes[0].id;
+          testData.ruleProps.l = loanPolicyBody.id;
+          testData.ruleProps.i = lostItemFeePolicyBody.id;
+          addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + testData.ruleProps.i + ' l ' + testData.ruleProps.l + ' r ' + testData.ruleProps.r + ' o ' + testData.ruleProps.o + ' n ' + testData.ruleProps.n;
+          CirculationRules.addRuleViaApi(testData.baseRules, testData.ruleProps, 't ', testData.loanTypeId);
+        });
       });
 
       cy.visit(TopMenu.checkOutPath);
       CheckOutActions.checkOutUser(userData.barcode);
       CheckOutActions.checkUserInfo(userData, patronGroup.name);
-      CheckOutActions.checkOutItem(itemData.barcode);
-      Checkout.verifyResultsInTheRow([itemData.barcode]);
+      CheckOutActions.checkOutItem(instanceData.itemBarcode);
+      Checkout.verifyResultsInTheRow([instanceData.itemBarcode]);
       CheckOutActions.endCheckOutSession();
-
       UserLoans.changeDueDateForAllOpenPatronLoans(userData.userId, -1);
 
+      cy.visit(TopMenu.circulationLogPath);
+      // wait to get "Item aged to lost - after - once" and "Item aged to lost - after - recurring" notices
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(250000);
+      cy.reload();
+      checkNoticeIsSent(searchResultsData(noticeTemplates.uponAt.name, instanceData.itemBarcode));
+      checkNoticeIsSent(searchResultsData(noticeTemplates.afterOnce.name, instanceData.itemBarcode));
+      checkNoticeIsSent(searchResultsData(noticeTemplates.afterRecurring.name, instanceData.itemBarcode));
+
       cy.visit(TopMenu.checkInPath);
-      CheckInActions.checkInItem(itemData.barcode);
-      CheckInActions.verifyLastCheckInItem(itemData.barcode);
+      CheckInActions.checkInItemGui(instanceData.itemBarcode);
+      CheckInActions.confirmCheckInLostItem();
+      CheckInActions.verifyLastCheckInItem(instanceData.itemBarcode);
       CheckInActions.endCheckInSession();
 
-      cy.visit(TopMenu.circulationLogPath);
-      // wait to get "Overdue fine returned after once" and "Overdue fine returned after recurring" notices
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(200000);
-      cy.reload();
-      checkNoticeIsSent(searchResultsData(noticeTemplates.returnedAfterRecurring.name));
-      checkNoticeIsSent(searchResultsData(noticeTemplates.returnedAfterOnce.name));
-      checkNoticeIsSent(searchResultsData(noticeTemplates.returnedUponAt.name));
-
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.waitLoading();
-      UsersSearchPane.searchByKeywords(userData.barcode);
-      UsersCard.waitLoading();
-      UsersCard.openFeeFines();
-      UsersCard.showOpenedFeeFines();
-      UserAllFeesFines.clickRowCheckbox(0);
-      UserAllFeesFines.paySelectedFeeFines();
-      PayFeeFaine.setPaymentMethod(testData.paymentMethod);
-      PayFeeFaine.submitAndConfirm();
 
       cy.visit(TopMenu.circulationLogPath);
-      // wait to check that we don't get new "Overdue fine returned after recurring" notice because fee/fine was paid
+      // wait to check that we don't get new "Item aged to lost - after - recurring" notice because item was returned
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(100000);
       SearchPane.searchByUserBarcode(userData.barcode);
-      SearchPane.checkResultSearch({ object: 'Fee/fine', circAction: 'Paid fully' }, 0);
+      SearchPane.checkResultSearch({ object: 'Loan', circAction: 'Closed loan' }, 0);
     }
   );
 });
