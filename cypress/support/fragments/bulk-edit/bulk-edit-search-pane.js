@@ -71,6 +71,10 @@ export default {
     cy.expect(actions.absent());
   },
 
+  logActionsIsAbsent() {
+    cy.expect(Button({ icon: 'ellipsis' }).absent());
+  },
+
   actionsIsShown() {
     cy.expect(actions.exists());
   },
