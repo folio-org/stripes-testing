@@ -1,6 +1,7 @@
 export const ITEM_STATUSES = {
   CHECKED_OUT: 'Checked out',
   DECLARED_LOST: 'Declared lost',
+  AVAILABLE: 'Available',
 };
 
 export const REQUEST_METHOD = {
@@ -73,4 +74,20 @@ export const LIBRARY_DUE_DATE_MANAGMENT = {
 export const LOAN_PROFILE = {
   FIXED: 'Fixed',
   ROLLING: 'Rolling',
+};
+
+export const FULFILMENT_PREFERENCES = {
+  HOLD_SHELF: 'Hold Shelf',
+  DELIVERY: 'Delivery'
+};
+
+export const REQUEST_LEVELS = {
+  ITEM: 'Item',
+  TITLE: 'Title',
+};
+
+export const REQUEST_TYPES = {
+  PAGE: 'Page',
+  HOLD: 'Hold',
+  RECALL: 'Recall',
 };

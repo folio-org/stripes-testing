@@ -341,9 +341,9 @@ describe('Overdue fine', () => {
       NewNoticePolicy.startAdding();
       NewNoticePolicy.checkInitialState();
       NewNoticePolicy.fillGeneralInformation(noticePolicy);
-      NewNoticePolicy.addFeeFineNotice(selectOptions(noticeTemplates.returnedUponAt));
-      NewNoticePolicy.addFeeFineNotice(selectOptions(noticeTemplates.returnedAfterOnce), 1);
-      NewNoticePolicy.addFeeFineNotice(selectOptions(noticeTemplates.returnedAfterRecurring), 2);
+      NewNoticePolicy.addNotice(selectOptions(noticeTemplates.returnedUponAt));
+      NewNoticePolicy.addNotice(selectOptions(noticeTemplates.returnedAfterOnce), 1);
+      NewNoticePolicy.addNotice(selectOptions(noticeTemplates.returnedAfterRecurring), 2);
       NewNoticePolicy.save();
       NewNoticePolicy.waitLoading();
       NewNoticePolicy.checkPolicyName(noticePolicy);
