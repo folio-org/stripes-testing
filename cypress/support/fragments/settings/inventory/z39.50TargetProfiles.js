@@ -124,7 +124,7 @@ export default {
     });
   },
 
-  createNewZ3950TargetProfileViaApi:(name) => {
+  createNewZ3950TargetProfileViaApi:(name, createJobProfileIds, updateJobProfileIds) => {
     return cy.okapiRequest({
       method: 'POST',
       path: 'copycat/profiles',
@@ -135,8 +135,8 @@ export default {
         internalIdEmbedPath:'999ff$i',
         createJobProfileId:'d0ebb7b0-2f0f-11eb-adc1-0242ac120002',
         updateJobProfileId:'91f9b8d6-d80e-4727-9783-73fb53e3c786',
-        allowedCreateJobProfileIds:['d0ebb7b0-2f0f-11eb-adc1-0242ac120002', 'fa0262c7-5816-48d0-b9b3-7b7a862a5bc7', '6eefa4c6-bbf7-4845-ad82-de7fc5abd0e3'],
-        allowedUpdateJobProfileIds:['91f9b8d6-d80e-4727-9783-73fb53e3c786'],
+        allowedCreateJobProfileIds:['d0ebb7b0-2f0f-11eb-adc1-0242ac120002', ...createJobProfileIds],
+        allowedUpdateJobProfileIds:['91f9b8d6-d80e-4727-9783-73fb53e3c786', ...updateJobProfileIds],
         targetOptions:{ charset:'utf-8' },
         externalIdentifierType:'439bfbae-75bc-4f74-9fc7-b2a2d47ce3ef',
         enabled:true
@@ -145,12 +145,6 @@ export default {
     }).then(({ body }) => {
       return body.id;
     });
-  },
-
-  openOclcWorldCat:() => {
-    cy.do(targetProfileName
-      .find(Link({ href: including('/settings/inventory/targetProfiles/f26df83c-aa25-40b6-876e-96852c3d4fd4') }))
-      .click());
   },
 
   openTargetProfile:(id = 'f26df83c-aa25-40b6-876e-96852c3d4fd4') => {
@@ -192,30 +186,34 @@ export default {
   },
 
   verifyCreateInstanceJobProfileList:(name) => {
-    cy.expect(MultiColumnList({ ariaRowCount: 4 })
+    cy.expect(MultiColumnList({ ariaRowCount: 6 })
       .find(MultiColumnListRow({ indexRow: 'row-0' }))
       .find(MultiColumnListCell({ content: including('Inventory Single Record - Default Create Instance') }))
       .exists());
-    //validateJobProfilesSortingOrder();
+    validateJobProfilesSortingOrder();
     cy.expect([
       MultiColumnListHeader('Job profiles for import/create').exists(),
       MultiColumnListHeader('Default').exists()
     ]);
+    // the job profile view is opened in a new tab but cypress can't work with tabs
+    // check only the presence of a link for a job profile
     cy.expect(Pane(`✓ ${name}`)
       .find(Link({ href: including(linkTodefaultCreateInstanceJobProfile) }))
       .exists());
   },
 
   verifyUpdateInstanceJobProfileList:(name) => {
-    cy.expect(MultiColumnList({ ariaRowCount: 2 })
+    cy.expect(MultiColumnList({ ariaRowCount: 5 })
       .find(MultiColumnListRow({ indexRow: 'row-0' }))
       .find(MultiColumnListCell({ content: including('Inventory Single Record - Default Update Instance') }))
       .exists());
-    //validateJobProfilesSortingOrder();
+    validateJobProfilesSortingOrder();
     cy.expect([
       MultiColumnListHeader('Job profiles for overlay/update').exists(),
       MultiColumnListHeader('Default').exists()
     ]);
+    // the job profile view is opened in a new tab but cypress can't work with tabs
+    // check only the presence of a link for a job profile
     cy.expect(Pane(`✓ ${name}`)
       .find(Link({ href: including(linkTodefaultUpdateInstanceJobProfile) }))
       .exists());

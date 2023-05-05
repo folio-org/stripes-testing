@@ -216,5 +216,30 @@ export default {
         },
         isDefaultSearchParamsRequired: false,
       });
+  },
+
+  createJobProfileWithLinkedActionProfileViaApi:(nameProfile, actProfileId) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/jobProfiles',
+        body: {
+          profile:{
+            name: nameProfile,
+            dataType:'MARC'
+          },
+          addedRelations:[
+            { masterProfileId:null,
+              masterProfileType:'JOB_PROFILE',
+              detailProfileId:actProfileId,
+              detailProfileType:'ACTION_PROFILE',
+              order:0 }],
+          deletedRelations:[]
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((responce) => {
+        return responce.body.id;
+      });
   }
 };
