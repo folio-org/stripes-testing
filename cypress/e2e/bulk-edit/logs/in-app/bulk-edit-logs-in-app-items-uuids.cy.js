@@ -12,12 +12,18 @@ import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-fil
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import ItemRecordView from '../../../../support/fragments/inventory/itemRecordView';
+import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 
 let user;
-const validItemUUIDsFileName = `validItemBarcodes_${getRandomPostfix()}.csv`;
-const matchRecordsFileNameValid = `*Matched-Records-${validItemUUIDsFileName}`;
-const updatesPreviewFileName = `*Updates-Preview-${validItemUUIDsFileName}`;
-const updatedRecordsFileName = `modified-*-${matchRecordsFileNameValid}`;
+const validItemUUIDsFileName = `validItemUUIDs_${getRandomPostfix()}.csv`;
+const matchedRecordsFileName = `Matched-Records-${validItemUUIDsFileName}`;
+const changedRecordsFileName = `*-Changed-Records*-${validItemUUIDsFileName}`;
+// It downloads 2 files in one click, both with same content
+const previewOfProposedChangesFileName = {
+  first: `*-Updates-Preview-${validItemUUIDsFileName}`,
+  second: `modified-*-${matchedRecordsFileName}`
+};
+const updatedRecordsFileName = `result-*-${matchedRecordsFileName}`;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
@@ -50,19 +56,15 @@ describe('Bulk Edit - Logs', () => {
       });
   });
 
-  beforeEach('select item tab', () => {
-    cy.visit(TopMenu.bulkEditPath);
-    BulkEditSearchPane.checkItemsRadio();
-  });
-
   after('delete test data', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${validItemUUIDsFileName}`);
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    FileManager.deleteFileFromDownloadsByMask(validItemUUIDsFileName, `*${matchedRecordsFileName}`, changedRecordsFileName, previewOfProposedChangesFileName.first, previewOfProposedChangesFileName.second, updatedRecordsFileName);
   });
 
   it('C375273 Verify generated Logs files for Items In app -- only valid Item UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    BulkEditSearchPane.checkItemsRadio();
     BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');
 
     BulkEditSearchPane.uploadFile(validItemUUIDsFileName);
@@ -76,7 +78,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditActions.addNewBulkEditFilterString();
     BulkEditActions.replacePermanentLocation(newLocation, 'item', 1);
     BulkEditActions.addNewBulkEditFilterString();
-    BulkEditActions.replaceItemStatus('Available', 2);
+    BulkEditActions.replaceItemStatus(ITEM_STATUS_NAMES.AVAILABLE, 2);
     BulkEditActions.addNewBulkEditFilterString();
     BulkEditActions.fillTemporaryLoanType('Reading room', 3);
     BulkEditActions.addNewBulkEditFilterString();
@@ -90,17 +92,17 @@ describe('Bulk Edit - Logs', () => {
 
     BulkEditSearchPane.openLogsSearch();
     BulkEditSearchPane.checkItemsCheckbox();
-    BulkEditSearchPane.clickActionsOnTheRow();
+    BulkEditSearchPane.clickActionsRunBy(user.username);
     BulkEditSearchPane.verifyLogsRowActionWhenCompleted();
 
     BulkEditSearchPane.downloadFileUsedToTrigger();
     BulkEditFiles.verifyCSVFileRows(validItemUUIDsFileName, [item.itemId]);
 
     BulkEditSearchPane.downloadFileWithMatchingRecords();
-    BulkEditFiles.verifyMatchedResultFileContent(matchRecordsFileNameValid, [item.itemId], 'firstElement', true);
+    BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileName}`, [item.itemId], 'firstElement', true);
 
     BulkEditSearchPane.downloadFileWithProposedChanges();
-    BulkEditFiles.verifyMatchedResultFileContent(updatesPreviewFileName, [item.itemId], 'firstElement', true);
+    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, [item.itemId], 'firstElement', true);
 
     BulkEditSearchPane.downloadFileWithUpdatedRecords();
     BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, [item.itemId], 'firstElement', true);
@@ -111,6 +113,6 @@ describe('Bulk Edit - Logs', () => {
     ItemRecordView.waitLoading();
     ItemRecordView.closeDetailView();
     InventoryInstance.openHoldings(['']);
-    InventoryInstance.verifyCellsContent(newLocation, 'Available', 'Reading room');
+    InventoryInstance.verifyCellsContent(newLocation, ITEM_STATUS_NAMES.AVAILABLE, 'Reading room');
   });
 });

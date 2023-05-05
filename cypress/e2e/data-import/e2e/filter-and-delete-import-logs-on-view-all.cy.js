@@ -13,7 +13,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import TestTypes from '../../../support/dictionary/testTypes';
 import Helper from '../../../support/fragments/finance/financeHelper';
 
-describe('ui-data-import: A user can filter and delete import logs from the "View all" page', () => {
+describe('ui-data-import', () => {
   const startedDate = new Date();
   const completedDate = startedDate;
   // format date as YYYY-MM-DD
@@ -61,7 +61,7 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
           const nameMarcFileForCreate = `C358136autotestFile.${getRandomPostfix()}.mrc`;
 
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-          DataImport.clickDataImportNavButton();
+          DataImport.verifyUploadState();
           DataImport.uploadFile('oneMarcAuthority.mrc', nameMarcFileForCreate);
           // need to wait until file will be uploaded in loop
           cy.wait(8000);

@@ -1,6 +1,7 @@
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TopMenu from '../../../support/fragments/topMenu';
+import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -10,12 +11,12 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import permissions from '../../../support/dictionary/permissions';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
@@ -25,10 +26,6 @@ describe('ui-data-import', () => {
   const fileNameForCreateInstance = `C347829autotestFile.${getRandomPostfix()}.mrc`;
   const fileNameForUpdateInstance = `C347829autotestFile.${getRandomPostfix()}.mrc`;
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-  const matchProfileName = `C347829autotestMatchProf${getRandomPostfix()}`;
-  const mappingProfileName = `C347829autotestMappingProf${getRandomPostfix()}`;
-  const actionProfileName = `C347829autotestActionProf${getRandomPostfix()}`;
-  const jobProfileName = `C347829autotestActionProf${getRandomPostfix()}`;
   const instanceGeneralNote = 'IDENTIFIER UPDATE 2';
   const resourceIdentifiers = [
     { type: 'UPC', value: 'ORD32671387-4' },
@@ -37,7 +34,7 @@ describe('ui-data-import', () => {
     { type: 'System control number', value: '(AMB)84714376518561876438' },
   ];
   const matchProfile = {
-    profileName: matchProfileName,
+    profileName: `C347829autotestMatchProf${getRandomPostfix()}`,
     incomingRecordFields: {
       field: '024',
       in1: '1',
@@ -48,21 +45,21 @@ describe('ui-data-import', () => {
     instanceOption: 'Identifier: Invalid UPC',
   };
   const mappingProfile = {
-    name: mappingProfileName,
-    typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
+    name: `C347829autotestMappingProf${getRandomPostfix()}`,
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     staffSuppress: 'Mark for all affected records',
     catalogedDate: '"2021-12-02"',
     catalogedDateUI: '2021-12-02',
-    instanceStatus: 'Cataloged'
+    instanceStatus: INSTANCE_STATUS_TERM_NAMES.CATALOGED
   };
   const actionProfile = {
-    typeValue : NewActionProfile.folioRecordTypeValue.instance,
-    name: actionProfileName,
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+    name: `C347829autotestActionProf${getRandomPostfix()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: jobProfileName,
+    profileName: `C347829autotestActionProf${getRandomPostfix()}`,
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
@@ -96,16 +93,16 @@ describe('ui-data-import', () => {
 
   after('delete test data', () => {
     // delete profiles
-    JobProfiles.deleteJobProfile(jobProfileName);
-    MatchProfiles.deleteMatchProfile(matchProfileName);
-    ActionProfiles.deleteActionProfile(actionProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
+    MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+    ActionProfiles.deleteActionProfile(actionProfile.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
     Users.deleteViaApi(userId);
   });
 
   it('C347829 Match on Instance identifier match meets both the Identifier type and Data requirements (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-    cy.reload();
+    // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.verifyUploadState();
     DataImport.uploadFile(filePathForCreateInstance, fileNameForCreateInstance);
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
     JobProfiles.runImportFile();
@@ -134,23 +131,23 @@ describe('ui-data-import', () => {
     FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
     cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.create(actionProfile, mappingProfileName);
-    ActionProfiles.checkActionProfilePresented(actionProfileName);
+    ActionProfiles.create(actionProfile, mappingProfile.name);
+    ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
     cy.visit(SettingsMenu.jobProfilePath);
-    JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);
-    JobProfiles.checkJobProfilePresented(jobProfileName);
+    JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfile.name, matchProfile.profileName);
+    JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
     cy.visit(TopMenu.dataImportPath);
-    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-    cy.reload();
+    // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.verifyUploadState();
     DataImport.uploadFile(filePathForUpdateInstance, fileNameForUpdateInstance);
-    JobProfiles.searchJobProfileForImport(jobProfileName);
+    JobProfiles.searchJobProfileForImport(jobProfile.profileName);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(fileNameForUpdateInstance);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileNameForUpdateInstance);
-    Logs.verifyInstanceStatus(0, 3, 'Discarded');
+    Logs.verifyInstanceStatus(0, 3, FileDetails.status.noAction);
     Logs.verifyInstanceStatus(1, 3, 'Updated');
     Logs.clickOnHotLink(1, 3, 'Updated');
     InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);

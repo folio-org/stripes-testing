@@ -5,8 +5,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
+import DataImport from '../../../support/fragments/data_import/dataImport';
 
 describe('ui-data-import', () => {
   // Path to static file in fixtures
@@ -31,12 +31,14 @@ describe('ui-data-import', () => {
     });
 
     cy.visit(TopMenu.dataImportPath);
-    // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-    DataImport.clickDataImportNavButton();
+    // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.verifyUploadState();
     // Upload files
     // runs with errors
     cy.uploadFileWithDefaultJobProfile(fileNameForFailedImport);
     cy.reload();
+    // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.verifyUploadState();
     // runs successfully
     cy.uploadFileWithDefaultJobProfile(fileNameForSuccessfulImport);
 

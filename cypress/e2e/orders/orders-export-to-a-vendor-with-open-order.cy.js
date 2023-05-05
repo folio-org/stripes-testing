@@ -54,11 +54,11 @@ describe('orders: export', () => {
     InteractorsTools.checkCalloutMessage('Integration was saved');
     cy.createTempUser([
       permissions.uiOrdersView.gui,
-      permissions.uiOrdersCreate.gui, 
+      permissions.uiOrdersCreate.gui,
       permissions.uiOrdersEdit.gui,
       permissions.uiOrdersApprovePurchaseOrders.gui,
-      permissions.viewEditCreateOrganization.gui, 
-      permissions.viewOrganization.gui,
+      permissions.uiOrganizationsViewEditCreate.gui,
+      permissions.uiOrganizationsView.gui,
       permissions.uiExportOrders.gui,
       permissions.exportManagerAll.gui,
     ])
@@ -69,7 +69,7 @@ describe('orders: export', () => {
   });
 
   after(() => {
-    Orders.deleteOrderApi(order.id);
+    Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
     Users.deleteViaApi(user.userId);
   });

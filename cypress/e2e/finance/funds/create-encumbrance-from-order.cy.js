@@ -58,9 +58,9 @@ describe('ui-finance: Transactions', () => {
       });
     cy.createTempUser([
       permissions.uiFinanceViewEditDeletFundBudget.gui,
-      permissions.uiCreateOrderAndOrderLine.gui,
-      permissions.uiEditOrderAndOrderLine.gui,
-      permissions.uiCanViewOrderAndOrderLine.gui,
+      permissions.uiOrdersCreate.gui,
+      permissions.uiOrdersEdit.gui,
+      permissions.uiOrdersView.gui
     ])
       .then(userProperties => {
         user = userProperties;
@@ -75,11 +75,11 @@ describe('ui-finance: Transactions', () => {
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder(orderNumber);
-    OrderLines.selectPOLInOrder();
+    OrderLines.selectPOLInOrder(0);
     OrderLines.deleteOrderLine();
     // Need to wait few seconds, that data will be deleted
     cy.wait(2000);
-    Orders.deleteOrderApi(order.id);
+    Orders.deleteOrderViaApi(order.id);
     cy.visit(TopMenu.fundPath);
     FinanceHelp.searchByName(defaultFund.name);
     Funds.selectFund(defaultFund.name);

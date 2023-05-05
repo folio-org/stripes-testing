@@ -1,3 +1,4 @@
+import { including, HTML } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -6,8 +7,7 @@ import {
   MultiColumnListCell,
   Section,
   MultiColumnList,
-  HTML,
-  including
+  Pane
 } from '../../../../interactors';
 import InventoryViewSource from './inventoryViewSource';
 import InventoryNewHoldings from './inventoryNewHoldings';
@@ -22,6 +22,7 @@ const duplicateButton = Button({ id: 'copy-holdings' });
 const deleteConfirmationModal = Modal({ id:'delete-confirmation-modal' });
 const holdingHrIdKeyValue = KeyValue('Holdings HRID');
 const closeButton = Button({ icon: 'times' });
+const electronicAccessAccordion = Accordion('Electronic access');
 
 function waitLoading() { cy.expect(actionsButton.exists()); }
 
@@ -80,6 +81,10 @@ export default {
     ]);
   },
 
+  openAccordion:(name) => {
+    cy.do(Accordion(name).click());
+  },
+
   // checks
   checkActionsMenuOptionsInFolioSource:() => {
     cy.do(actionsButton.click());
@@ -107,7 +112,7 @@ export default {
   checkFormerHoldingsId: value => cy.expect(KeyValue('Former holdings ID', { value }).exists()),
   checkIllPolicy: value => cy.expect(KeyValue('ILL policy', { value }).exists()),
   checkDigitizationPolicy: expectedPolicy => cy.expect(KeyValue('Digitization policy', { value: expectedPolicy }).exists()),
-  checkURIIsNotEmpty:() => cy.expect(Accordion('Electronic access')
+  checkURIIsNotEmpty:() => cy.expect(electronicAccessAccordion
     .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: '-' }))
     .absent()),
   checkAdministrativeNote:(note) => cy.expect(MultiColumnList({ id: 'administrative-note-list' })
@@ -125,6 +130,17 @@ export default {
   checkMarkAsSuppressedFromDiscovery:() => cy.expect(root
     .find(HTML(including('Warning: Holdings is marked suppressed from discovery')))
     .exists()),
+  checkElectronicAccess:(relationshipValue, uriValue) => {
+    cy.expect(electronicAccessAccordion
+      .find(MultiColumnListCell({ row: 0, columnIndex: 0, content: relationshipValue }))
+      .exists());
+    cy.expect(electronicAccessAccordion
+      .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: uriValue }))
+      .exists());
+  },
+  checkHoldingRecordViewOpened: () => {
+    cy.expect(Pane({ id:'ui-inventory.holdingsRecordView' }).exists());
+  },
 
   getHoldingsHrId: () => cy.then(() => holdingHrIdKeyValue.value()),
   getId:() => {

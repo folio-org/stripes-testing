@@ -35,7 +35,7 @@ const searhInputId = 'input-record-search';
 const searchButton = Button('Search');
 const newButton = Button('New');
 const saveAndClose = Button('Save & close');
-const orderDetailsAccordionId = 'purchaseOrder';
+const orderDetailsAccordion = Accordion({ id: 'purchaseOrder' });
 const createdByAdmin = 'ADMINISTRATOR, DIKU ';
 const searchField = SearchField({ id: 'input-record-search' });
 const admin = 'administrator';
@@ -50,6 +50,7 @@ const ordersFiltersPane = Pane({ id: 'orders-filters-pane' });
 const ordersResultsPane = Pane({ id: 'orders-results-pane' });
 const buttonAcquisitionMethodFilter = Button({ id: 'accordion-toggle-button-acquisitionMethod' });
 const purchaseOrderSection = Section({ id: 'purchaseOrder' });
+const purchaseOrderLineLimitReachedModal = Modal({ id: 'data-test-lines-limit-modal' });
 const searchByParameter = (parameter, value) => {
   cy.do([
     searchForm.selectIndex(parameter),
@@ -96,6 +97,8 @@ export default {
       Button('Open').click(),
       Button('Submit').click()
     ]);
+    // Need to wait,while order's data will be loaded
+    cy.wait(4000);
   },
 
   editOrder: () => {
@@ -104,6 +107,13 @@ export default {
         .find(PaneHeader({ id: 'paneHeaderorder-details' })
           .find(actionsButton)).click(),
       Button('Edit').click(),
+    ]);
+  },
+
+  editOrderNumber: (poNumber) => {
+    cy.do([
+      TextField({ name: 'poNumber' }).fillIn(poNumber),
+      saveAndClose.click()
     ]);
   },
 
@@ -172,7 +182,7 @@ export default {
       Button('Reopen').click(),
     ]);
   },
-  
+
   receiveOrderViaActions: () => {
     cy.do([
       orderDetailsPane
@@ -192,6 +202,42 @@ export default {
     cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
     cy.do(Select('Order type*').choose(order.orderType));
     if (isApproved) cy.do(Checkbox({ name:'approved' }).click());
+    if (isManual) cy.do(Checkbox({ name:'manualPo' }).click());
+    cy.do(saveAndClose.click());
+    return cy.wait('@newOrderID', getLongDelay())
+      .then(({ response }) => {
+        return response.body.id;
+      });
+  },
+
+  createOrderWithPONumber(poNumber, order, isManual = false) {
+    cy.do([
+      actionsButton.click(),
+      newButton.click(),
+      TextField({ name: 'poNumber' }).fillIn(poNumber),
+    ]);
+    this.selectVendorOnUi(order.vendor);
+    cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
+    cy.do(Select('Order type*').choose(order.orderType));
+    if (isManual) cy.do(Checkbox({ name:'manualPo' }).click());
+    cy.do(saveAndClose.click());
+    return cy.wait('@newOrderID', getLongDelay())
+      .then(({ response }) => {
+        return response.body.id;
+      });
+  },
+
+  createOrderWithPONumberPreffixSuffix(poPreffix, poSuffix, poNumber, order, isManual = false) {
+    cy.do([
+      actionsButton.click(),
+      newButton.click(),
+      TextField({ name: 'poNumber' }).fillIn(poNumber),
+      Select({ name: 'poNumberPrefix' }).choose(poPreffix),
+      Select({ name: 'poNumberSuffix' }).choose(poSuffix),
+    ]);
+    this.selectVendorOnUi(order.vendor);
+    cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
+    cy.do(Select('Order type*').choose(order.orderType));
     if (isManual) cy.do(Checkbox({ name:'manualPo' }).click());
     cy.do(saveAndClose.click());
     return cy.wait('@newOrderID', getLongDelay())
@@ -260,11 +306,21 @@ export default {
 
   checkCreatedOrder: (order) => {
     cy.expect(Pane({ id: 'order-details' }).exists());
-    cy.expect(Accordion({ id: orderDetailsAccordionId })
+    cy.expect(orderDetailsAccordion
       .find(KeyValue({ value: order.vendor }))
       .exists());
-    cy.expect(Accordion({ id: orderDetailsAccordionId })
+    cy.expect(orderDetailsAccordion
       .find(KeyValue({ value: createdByAdmin }))
+      .exists());
+  },
+
+  checkCreatedOngoingOrder: (order) => {
+    cy.expect(Pane({ id: 'order-details' }).exists());
+    cy.expect(orderDetailsAccordion
+      .find(KeyValue({ value: order.vendor }))
+      .exists());
+    cy.expect(orderDetailsAccordion
+      .find(KeyValue({ value: order.orderType }))
       .exists());
   },
 
@@ -283,9 +339,21 @@ export default {
 
   checkCreatedOrderFromTemplate: (organization) => {
     cy.expect(Pane({ id: 'order-details' }).exists());
-    cy.expect(Accordion({ id: orderDetailsAccordionId })
+    cy.expect(orderDetailsAccordion
       .find(KeyValue({ value: organization }))
       .exists());
+  },
+
+  checkCreatedOrderWithOrderNumber: (organization, orderNumber) => {
+    cy.expect(Pane({ id: 'order-details' }).exists());
+    cy.expect([
+      orderDetailsAccordion
+        .find(KeyValue({ value: organization }))
+        .exists(),
+      orderDetailsAccordion
+        .find(KeyValue({ value: orderNumber }))
+        .exists(),
+    ]);
   },
 
   selectFromResultsList: (number) => {
@@ -531,7 +599,7 @@ export default {
       });
   },
 
-  deleteOrderApi: (id) => cy.okapiRequest({
+  deleteOrderViaApi: (id) => cy.okapiRequest({
     method: 'DELETE',
     path: `orders/composite-orders/${id}`,
     isDefaultSearchParamsRequired: false,
@@ -580,12 +648,20 @@ export default {
 
   checkEditedOngoingOrder: (orderNumber, organizationName) => {
     cy.expect(Pane({ id: 'order-details' }).exists());
-    cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: orderNumber })).exists());
-    cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: organizationName })).exists());
-    cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: 'Ongoing' })).exists());
+    cy.expect(orderDetailsAccordion.find(KeyValue({ value: orderNumber })).exists());
+    cy.expect(orderDetailsAccordion.find(KeyValue({ value: organizationName })).exists());
+    cy.expect(orderDetailsAccordion.find(KeyValue({ value: 'Ongoing' })).exists());
   },
 
- errorMessage:(modalName, errorContent) => {
+  errorMessage:(modalName, errorContent) => {
     cy.expect(Modal(modalName).content(errorContent));
+  },
+
+  checkPurchaseOrderLineLimitReachedModal: () => {
+    cy.expect([
+      purchaseOrderLineLimitReachedModal.exists(),
+      purchaseOrderLineLimitReachedModal.find(Button('Ok')).exists(),
+      purchaseOrderLineLimitReachedModal.find(Button('Create new purchase order')).exists(),
+    ]);
   },
 };

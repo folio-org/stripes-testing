@@ -1,4 +1,4 @@
-import { MultiColumnList, Modal, TextField, Callout, MultiSelect, QuickMarcEditorRow, PaneContent, PaneHeader, Select, Section, HTML, including, Button, MultiColumnListCell, MultiColumnListRow, SearchField, Accordion, Checkbox, ColumnHeader } from '../../../../interactors';
+import { MultiColumnList, Modal, TextField, Callout, MultiSelect, QuickMarcEditorRow, PaneContent, PaneHeader, Select, Section, HTML, including, Button, MultiColumnListCell, MultiColumnListRow, SearchField, Accordion, Checkbox, ColumnHeader, AdvancedSearchRow } from '../../../../interactors';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const authoritiesList = rootSection.find(MultiColumnList({ id: 'authority-result-list' }));
@@ -20,6 +20,13 @@ const resetButton = Button('Reset all');
 const selectField = Select({ id: 'textarea-authorities-search-qindex' });
 const headinfTypeAccordion = Accordion('Type of heading');
 const authoritySearchResults = Section({ id: 'authority-search-results-pane' });
+const nextButton = Button({ id: 'authority-result-list-next-paging-button' });
+const searchNav = Button({ id: 'segment-navigation-search' });
+const buttonLink = Button('Link');
+const buttonAdvancedSearch = Button('Advanced search');
+const modalAdvancedSearch = Modal('Advanced search');
+const buttonSearchInAdvancedModal = Button({ariaLabel: 'Search'});
+const buttonCancelInAdvancedModal = Button({ariaLabel: 'Cancel'});
 
 export default {
   waitLoading: () => cy.expect(rootSection.exists()),
@@ -31,6 +38,10 @@ export default {
     cy.expect(marcAuthUpdatesCsvBtn.exists());
     cy.do(marcAuthUpdatesCsvBtn.click());
     cy.expect(authReportModal.exists());
+  },
+
+  switchToSearch: () => {
+    cy.do(searchNav.click());
   },
 
   fillReportModal: (today, tomorrow) => {
@@ -98,6 +109,15 @@ export default {
   checkRowsCount:(expectedRowsCount) => cy.expect(authoritiesList.find(MultiColumnListRow({ index: expectedRowsCount + 1 })).absent()),
 
   switchToBrowse:() => cy.do(Button({ id:'segment-navigation-browse' }).click()),
+
+  checkDefaultBrowseOptions: (searchValue) => {
+    cy.expect([
+      marcViewSection.absent(),
+      SearchField({ id: 'textarea-authorities-search', value: searchValue }).absent(),
+      selectField.has({ content: including('Select a browse option') }),
+      rootSection.find(HTML(including('Choose a filter or enter a search query to show results.'))).exists(),
+    ]);
+  },
 
   searchBy: (parameter, value) => {
     cy.do(filtersSection.find(SearchField({ id: 'textarea-authorities-search' })).selectIndex(parameter));
@@ -178,6 +198,22 @@ export default {
     ]);
   },
 
+  checkType(typeA, typeB, typeC) {
+    cy.expect([
+      MultiColumnListCell({ columnIndex: 1, content: typeA }).exists(),
+      MultiColumnListCell({ columnIndex: 1, content: typeB }).exists(),
+      MultiColumnListCell({ columnIndex: 1, content: typeC }).exists(),
+    ]);
+  },
+
+  clickNextPagination() {
+    cy.do(authoritySearchResults.find(nextButton).click());
+  },
+
+  clickLinkButton() {
+    cy.do(buttonLink.click());
+  },
+
   checkFieldAndContentExistence(tag, value) {
     cy.expect([
       marcViewSection.exists(),
@@ -191,6 +227,10 @@ export default {
       editorSection.exists(),
       QuickMarcEditorRow({ tagValue: '010' }).absent()
     ]);
+  },
+
+  clickReset: () => {
+    cy.do(filtersSection.find(resetButton).click());
   },
 
   clickResetAndCheck: (searchValue) => {
@@ -248,5 +288,75 @@ export default {
       MultiColumnListCell({ columnIndex: 3, content: headingTypeA }).absent(),
       MultiColumnListCell({ columnIndex: 3, content: headingTypeB }).exists(),
     ]);
+  },
+
+  checkNoResultsMessage(absenceMessage) {
+    cy.expect(rootSection.find(HTML(including(absenceMessage))).exists());
+  },
+
+  clickAdvancedSearchButton() {
+    cy.do(buttonAdvancedSearch.click());
+    cy.expect(modalAdvancedSearch.exists());
+  },
+
+  fillAdvancedSearchField(rowIndex, value, searchOption, booleanOption) {
+    cy.do(AdvancedSearchRow({ index: rowIndex }).fillQuery(value));
+    cy.do(AdvancedSearchRow({ index: rowIndex }).selectSearchOption(rowIndex, searchOption));
+    if (booleanOption) cy.do(AdvancedSearchRow({ index: rowIndex }).selectBoolean(rowIndex, booleanOption));
+  },
+
+  clickSearchButton() {
+    cy.do(buttonSearchInAdvancedModal.click());
+  },
+
+  checkSearchInput(value) {
+    cy.expect(searchInput.has({ value: value }));
+  },
+
+  clickCancelButton() {
+    cy.do(modalAdvancedSearch.find(buttonCancelInAdvancedModal).click());
+  },
+
+  checkAdvancedSearchModalAbsence() {
+    cy.expect(modalAdvancedSearch.absent());
+  },
+
+  checkAdvancedSearchModalFields: (row, value, searchOption, boolean) => {
+    cy.expect([
+      modalAdvancedSearch.exists(),
+      AdvancedSearchRow({ index: 0 }).has({text: including('Search for')}),
+      AdvancedSearchRow({ index: row }).find(TextField()).has({value: including(value)}),
+      AdvancedSearchRow({ index: row }).has({text: including('in')}),
+      AdvancedSearchRow({ index: row }).find(Select({ label: 'Search options*' })).has({content: including(searchOption)}),
+      modalAdvancedSearch.find(buttonSearchInAdvancedModal).exists(),
+      modalAdvancedSearch.find(buttonCancelInAdvancedModal).exists(),
+    ]);
+    if (boolean) cy.expect([AdvancedSearchRow({ index: row }).find(Select({ label: 'Operator*' })).has({content: including(boolean)}),]);
+  },
+
+  checkAdvancedSearchOption(rowIndex) {
+    cy.do( AdvancedSearchRow({ index: rowIndex }).find(Select({ label: 'Search options*' })).click());
+    cy.expect([
+      AdvancedSearchRow({ index: rowIndex }).find(Select({ label: 'Search options*' })).has({ content: including('Keyword') }),
+      AdvancedSearchRow({ index: rowIndex }).find(Select({ label: 'Search options*' })).has({ content: including('Identifier (all)') }),
+      AdvancedSearchRow({ index: rowIndex }).find(Select({ label: 'Search options*' })).has({ content: including('Personal name') }),
+      AdvancedSearchRow({ index: rowIndex }).find(Select({ label: 'Search options*' })).has({ content: including('Corporate/Conference name') }),
+      AdvancedSearchRow({ index: rowIndex }).find(Select({ label: 'Search options*' })).has({ content: including('Geographic name') }),
+      AdvancedSearchRow({ index: rowIndex }).find(Select({ label: 'Search options*' })).has({ content: including('Name-title') }),
+      AdvancedSearchRow({ index: rowIndex }).find(Select({ label: 'Search options*' })).has({ content: including('Uniform title') }),
+      AdvancedSearchRow({ index: rowIndex }).find(Select({ label: 'Search options*' })).has({ content: including('Subject') }),
+      AdvancedSearchRow({ index: rowIndex }).find(Select({ label: 'Search options*' })).has({ content: including('Children\'s subject heading') }),
+      AdvancedSearchRow({ index: rowIndex }).find(Select({ label: 'Search options*' })).has({ content: including('Genre') }),
+    ]);
+  },
+
+  checkResultList(records) {
+    records.forEach(record => {
+      cy.expect(MultiColumnListCell(record).exists());
+    });
+  },
+
+  checkSearchOption(searchOption) {
+    cy.expect(browseSearchAndFilterInput.has({ value: searchOption }));
   },
 };

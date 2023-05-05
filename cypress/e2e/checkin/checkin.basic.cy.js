@@ -14,6 +14,7 @@ import Users from '../../support/fragments/users/users';
 import Checkout from '../../support/fragments/checkout/checkout';
 import devTeams from '../../support/dictionary/devTeams';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('Check In - Actions ', () => {
   const userData = {
@@ -30,7 +31,7 @@ describe('Check In - Actions ', () => {
   let defaultLocation;
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation('autotest basic checkin', uuid());
   const checkInResultsData = [
-    'Available',
+    ITEM_STATUS_NAMES.AVAILABLE,
     itemData.barcode,
   ];
 
@@ -59,7 +60,7 @@ describe('Check In - Actions ', () => {
       }],
       items:[{
         barcode: itemData.barcode,
-        status:  { name: 'Available' },
+        status:  { name: ITEM_STATUS_NAMES.AVAILABLE },
         permanentLoanType: { id: itemData.loanTypeId },
         materialType: { id: itemData.materialTypeId },
       }] });

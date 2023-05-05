@@ -13,12 +13,12 @@ import ExportNewJobProfile from '../../../support/fragments/data-export/exportJo
 
 let user;
 let fieldMappingProfileId;
-let newJobProfileName = `jobProfile${getRandomPostfix()}`
-let secondNewJobProfileName = `secondJobProfile${getRandomPostfix()}`
-let fieldMappingProfileName = `fieldMappingProfile${getRandomPostfix()}`;
-let newJobProfileCalloutMessage = `Job profile ${newJobProfileName} has been successfully created`
-let secondNewJobProfileCalloutMessage = `Job profile ${secondNewJobProfileName} has been successfully created`
-let newJobProfileDescription = `Decription${getRandomPostfix()}`
+const newJobProfileName = `jobProfile${getRandomPostfix()}`;
+const secondNewJobProfileName = `secondJobProfile${getRandomPostfix()}`;
+const fieldMappingProfileName = `fieldMappingProfile${getRandomPostfix()}`;
+const newJobProfileCalloutMessage = `Job profile ${newJobProfileName} has been successfully created`;
+const secondNewJobProfileCalloutMessage = `Job profile ${secondNewJobProfileName} has been successfully created`;
+const newJobProfileDescription = `Decription${getRandomPostfix()}`;
 
 describe('settings: data-export', () => {
   before('create user, job and navigate to page', () => {
@@ -34,7 +34,7 @@ describe('settings: data-export', () => {
     ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(fieldMappingProfileName)
       .then((response) => {
         fieldMappingProfileId = response.body.id;
-      })
+      });
   });
 
   after('delete jobs and user', () => {

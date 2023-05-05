@@ -61,6 +61,12 @@ export default {
   ordersPONumberEditPath: 'settings/orders/po-number',
   ordersOpeningPurchaseOrdersPath: 'settings/orders/open-order',
   ordersPurchaseOrderLinesLimit: 'settings/orders/polines-limit',
+  ordersPrefixes: 'settings/orders/prefixes',
+  ordersSuffixes: 'settings/orders/suffixes',
+  ordersInventoryInteractionsDefaultsPath: 'settings/orders/create-inventory',
+  ordersInstanceStatusPath: 'settings/orders/instance-status',
+  ordersInstanceTypePath: 'settings/orders/instance-type',
+  ordersLoanTypePath: 'settings/orders/loan-type',
   // Users
   usersOwnersPath: 'settings/users/owners',
   usersPath: 'settings/users',

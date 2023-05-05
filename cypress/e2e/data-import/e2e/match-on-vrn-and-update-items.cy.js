@@ -142,7 +142,7 @@ describe('ui-data-import', () => {
   after('delete test data', () => {
     Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
       .then(order => {
-        Orders.deleteOrderApi(order[0].id);
+        Orders.deleteOrderViaApi(order[0].id);
       });
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
@@ -231,8 +231,8 @@ describe('ui-data-import', () => {
 
       // import a file
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-      cy.reload();
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       DataImport.checkIsLandingPageOpened();
       DataImport.uploadFile(editedMarcFileName);
       JobProfiles.searchJobProfileForImport(jobProfilesData.name);
@@ -241,7 +241,7 @@ describe('ui-data-import', () => {
       Logs.checkStatusOfJobProfile();
       Logs.openFileDetails(editedMarcFileName);
       FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);
-      FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
+      FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.noAction, FileDetails.status.noAction, FileDetails.status.noAction]);
 
       // verify Instance, Holdings and Item details
       MatchOnVRN.clickOnUpdatedHotlink();

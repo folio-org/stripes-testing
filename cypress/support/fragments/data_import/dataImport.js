@@ -1,9 +1,8 @@
+import { HTML, including } from '@interactors/html';
 import {
   Button,
   Checkbox,
   Section,
-  HTML,
-  including,
   PaneHeader,
   Pane,
   Modal,
@@ -20,6 +19,7 @@ import MarcAuthoritiesSearch from '../marcAuthority/marcAuthoritiesSearch';
 import MarcAuthorities from '../marcAuthority/marcAuthorities';
 import FileManager from '../../utils/fileManager';
 import Logs from './logs/logs';
+import DataImportUploadFile from '../../../../interactors/dataImportUploadFile';
 
 const sectionPaneJobsTitle = Section({ id: 'pane-jobs-title' });
 const actionsButton = Button('Actions');
@@ -158,6 +158,7 @@ export default {
   uploadBinaryMarcFile,
   processFile,
 
+  // actions
   importFileForBrowse(profileName, fileName) {
     JobProfiles.waitLoadingList();
     JobProfiles.searchJobProfileForImport(profileName);
@@ -191,25 +192,14 @@ export default {
 
   getLinkToAuthority: (title) => cy.then(() => Button(title).href()),
 
-  checkIsLandingPageOpened: () => {
-    cy.expect(jobsPane.find(orChooseFilesButton).exists());
-    cy.expect(logsPaneHeader.find(actionsButton).exists());
-  },
-
   cancelDeleteImportLogs: () => {
     cy.do(deleteLogsModalCancelButton.click());
-
     cy.expect(deleteLogsModal.absent());
   },
 
   confirmDeleteImportLogs: () => {
     cy.do(deleteLogsModalConfirmButton.click());
-
     cy.expect(deleteLogsModal.absent());
-  },
-
-  checkMultiColumnListRowsCount: count => {
-    cy.expect(jobLogsList.has({ rowCount: count }));
   },
 
   getLogsHrIdsFromUI: (logsCount = 25) => {
@@ -246,46 +236,11 @@ export default {
       .find(Checkbox()).click());
   },
 
-  verifyDataImportLogsDeleted(oldLogsHrIds) {
-    cy.get('body').then($body => {
-      if (!$body.find('#job-logs-list').length) {
-        cy.expect(jobLogsList.absent());
-        return;
-      }
-      cy.expect(selectAllCheckbox.is({ disabled: false }));
-      // since data import landing page displays latest 25 logs at a time,
-      // when there are more than 25 logs and after deleting current logs, new logs will be displayed.
-      // so we need to verify that the hrIds of new logs are different from those of previous logs.
-      this.getLogsHrIdsFromUI().then(newLogsHrIds => {
-        const isLogsDeleted = newLogsHrIds.every(log => !oldLogsHrIds.includes(log));
+  checkMultiColumnListRowsCount: count => cy.expect(jobLogsList.has({ rowCount: count })),
 
-        expect(isLogsDeleted).to.equal(true);
-      });
-    });
-  },
-
-  verifyAllLogsCheckedStatus: ({ logsCount = 25, checked = true }) => {
-    new Array(logsCount).fill(null).forEach((_, index) => {
-      cy.expect(jobLogsList
-        .find(MultiColumnListCell({ row: index, columnIndex: 0 }))
-        .find(Checkbox())
-        .is({ checked }));
-    });
-  },
-
-  verifyLogsPaneSubtitleExist: (count = 25) => {
-    const subtitle = `${count} log${count > 1 ? 's' : ''} selected`;
-
-    cy.expect(logsPane.has({ subtitle }));
-  },
-
-  verifyLogsPaneSubtitleAbsent: () => {
-    cy.expect(logsPane.find(HTML(including('selected'))).absent());
-  },
-
-  verifyDeleteLogsButtonDisabled: () => {
-    cy.do(actionsButton.click());
-    cy.expect(deleteLogsButton.is({ disabled: true }));
+  checkIsLandingPageOpened: () => {
+    cy.expect(jobsPane.find(orChooseFilesButton).exists());
+    cy.expect(logsPaneHeader.find(actionsButton).exists());
   },
 
   editMarcFile(editedFileName, finalFileName, stringToBeReplaced, replaceString) {
@@ -328,12 +283,63 @@ export default {
       });
   },
 
-  verifyChooseFileButtonState: ({ isDisabled }) => {
-    cy.expect(orChooseFilesButton.has({ disabled: isDisabled }));
-  },
-
   clickDataImportNavButton:() => {
     // TODO delete this function after fix https://issues.folio.org/browse/MODDATAIMP-691
     cy.do(Button({ id:'app-list-item-clickable-data-import-module' }).click());
+  },
+
+  // checks
+  verifyDataImportLogsDeleted(oldLogsHrIds) {
+    cy.get('body').then($body => {
+      if (!$body.find('#job-logs-list').length) {
+        cy.expect(jobLogsList.absent());
+        return;
+      }
+      cy.expect(selectAllCheckbox.is({ disabled: false }));
+      // since data import landing page displays latest 25 logs at a time,
+      // when there are more than 25 logs and after deleting current logs, new logs will be displayed.
+      // so we need to verify that the hrIds of new logs are different from those of previous logs.
+      this.getLogsHrIdsFromUI().then(newLogsHrIds => {
+        const isLogsDeleted = newLogsHrIds.every(log => !oldLogsHrIds.includes(log));
+
+        expect(isLogsDeleted).to.equal(true);
+      });
+    });
+  },
+
+  verifyAllLogsCheckedStatus: ({ logsCount = 25, checked = true }) => {
+    new Array(logsCount).fill(null).forEach((_, index) => {
+      cy.expect(jobLogsList
+        .find(MultiColumnListCell({ row: index, columnIndex: 0 }))
+        .find(Checkbox())
+        .is({ checked }));
+    });
+  },
+
+  verifyLogsPaneSubtitleExist: (count = 25) => {
+    const subtitle = `${count} log${count > 1 ? 's' : ''} selected`;
+
+    cy.expect(logsPane.has({ subtitle }));
+  },
+
+  verifyLogsPaneSubtitleAbsent: () => cy.expect(logsPane.find(HTML(including('selected'))).absent()),
+  verifyChooseFileButtonState: ({ isDisabled }) => cy.expect(orChooseFilesButton.has({ disabled: isDisabled })),
+
+  verifyDeleteLogsButtonDisabled: () => {
+    cy.do(actionsButton.click());
+    cy.expect(deleteLogsButton.is({ disabled: true }));
+  },
+
+  // delete file if it hangs unimported before test
+  verifyUploadState: () => {
+    cy.allure().startStep('Delete files before upload file');
+    waitLoading();
+    cy.then(() => DataImportUploadFile().isDeleteFilesButtonExists()).then(isDeleteFilesButtonExists => {
+      if (isDeleteFilesButtonExists) {
+        cy.do(Button('Delete files').click());
+        cy.expect(Button('or choose files').exists());
+        cy.allure().endStep();
+      }
+    });
   }
 };

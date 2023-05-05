@@ -1,30 +1,20 @@
 import { TextField, Button, Select, Section, Pane } from '../../../../../interactors';
 import SelectMappingProfile from './modals/selectMappingProfile';
+import { FOLIO_RECORD_TYPE } from '../../../constants';
 
 const action = 'Create (all record types except MARC Authority or MARC Holdings)';
 
-const typeValue = 'MARC Bibliographic';
-
-const folioRecordTypeValue = {
-  instance: 'Instance',
-  holdings: 'Holdings',
-  item: 'Item',
-  marcBib: 'MARC Bibliographic'
-};
-
 const defaultActionProfile = {
   name: 'autotest action profile',
-  typeValue: folioRecordTypeValue.instance,
+  typeValue: FOLIO_RECORD_TYPE.INSTANCE,
 };
 
 export default {
-  folioRecordTypeValue,
-
   fill: (specialActionProfile = defaultActionProfile) => {
     cy.do([
       TextField({ name:'profile.name' }).fillIn(specialActionProfile.name),
       Select({ name:'profile.action' }).choose(specialActionProfile.action || action),
-      Select({ name:'profile.folioRecord' }).choose(specialActionProfile.typeValue || typeValue),
+      Select({ name:'profile.folioRecord' }).choose(specialActionProfile.typeValue || FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC),
     ]);
   },
 

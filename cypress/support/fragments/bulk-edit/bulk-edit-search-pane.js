@@ -15,6 +15,7 @@ import {
   MultiColumnListRow,
   TextField
 } from '../../../../interactors';
+import { ListRow } from '../../../../interactors/multi-column-list';
 
 const logsStartDateAccordion = Accordion('Start date');
 const logsEndDateAccordion = Accordion('End date');
@@ -68,6 +69,10 @@ export default {
 
   actionsIsAbsent() {
     cy.expect(actions.absent());
+  },
+
+  logActionsIsAbsent() {
+    cy.expect(Button({ icon: 'ellipsis' }).absent());
   },
 
   actionsIsShown() {
@@ -714,6 +719,10 @@ export default {
 
   clickActionsOnTheRow(row = 0) {
     cy.do(MultiColumnListRow({ indexRow: `row-${row}` }).find(Button({ icon: 'ellipsis' })).click());
+  },
+
+  clickActionsRunBy(runByUsername) {
+    cy.do(ListRow({ text: including(runByUsername) }).find(Button({ icon: 'ellipsis' })).click());
   },
 
   verifyTriggerLogsAction() {

@@ -19,6 +19,7 @@ import Users from '../../../support/fragments/users/users';
 describe('ui-data-import', () => {
   let user = null;
   let instanceHrid = null;
+  const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const protectedField = '856';
   const authentication = '100473910/PAOLF';
   const oclcForChanging = '466478385';
@@ -45,16 +46,16 @@ describe('ui-data-import', () => {
         const fileName = `C358968autotestFile.${getRandomPostfix()}.mrc`;
 
         Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
-        // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-        cy.reload();
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC358968.mrc', fileName);
-        JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+        JobProfiles.searchJobProfileForImport(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(fileName);
-        [FileDetails.columnName.srsMarc,
-          FileDetails.columnName.instance].forEach(columnName => {
+        [FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.instance].forEach(columnName => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable('1');

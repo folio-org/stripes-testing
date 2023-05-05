@@ -1,12 +1,12 @@
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import Users from '../../../support/fragments/users/users';
 import ActionProfileEdit from '../../../support/fragments/data_import/action_profiles/actionProfileEdit';
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
@@ -14,21 +14,18 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import ConfirmChanges from '../../../support/fragments/data_import/action_profiles/modals/confirmChanges';
 
-describe('ui-data-import: Edit an existing action profile with associated job profile', () => {
-  const mappingProfileName = `C367994 autotest mapping profile ${Helper.getRandomBarcode()}`;
-  const actionProfileName = `C367994 autotest action profile ${Helper.getRandomBarcode()}`;
-  const jobProfileName = `C367994 autotest job profile${Helper.getRandomBarcode()}`;
+describe('ui-data-import', () => {
   let user;
   const mappingProfile = {
-    name: mappingProfileName,
-    typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance
+    name: `C367994 autotest mapping profile ${Helper.getRandomBarcode()}`,
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE
   };
   const actionProfile = {
-    typeValue: NewActionProfile.folioRecordTypeValue.instance,
-    name: actionProfileName
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+    name: `C367994 autotest action profile ${Helper.getRandomBarcode()}`
   };
   const jobProfile = { ...NewJobProfile.defaultJobProfile,
-    profileName: jobProfileName,
+    profileName: `C367994 autotest job profile${Helper.getRandomBarcode()}`,
     acceptedType: NewJobProfile.acceptedDataType.marc };
 
   before('create user', () => {
@@ -54,15 +51,15 @@ describe('ui-data-import: Edit an existing action profile with associated job pr
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkActionProfile(actionProfile);
         NewJobProfile.saveAndClose();
-        JobProfiles.checkJobProfilePresented(jobProfileName);
+        JobProfiles.checkJobProfilePresented(jobProfile.profileName);
       });
   });
 
   after('delete test data', () => {
     Users.deleteViaApi(user.userId);
-    JobProfiles.deleteJobProfile(jobProfileName);
-    ActionProfiles.deleteActionProfile(actionProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
+    ActionProfiles.deleteActionProfile(actionProfile.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
   });
 
   it('C367994 Edit an existing action profile with associated job profile (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {

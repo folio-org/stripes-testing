@@ -1,4 +1,5 @@
-import { Button, Modal, HTML, including } from '../../../../../interactors';
+import { HTML, including } from '@interactors/html';
+import { Button, Modal } from '../../../../../interactors';
 
 const confirmModal = Modal('Delete data import logs?');
 

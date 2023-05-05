@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import TestTypes from '../../support/dictionary/testTypes';
-import { ITEM_STATUSES } from '../../support/constants';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -201,7 +201,7 @@ describe('Loan notice triggers', () => {
           items: [
             {
               barcode: instanceData.itemBarcode,
-              status: { name: ITEM_STATUSES.AVAILABLE },
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
               permanentLoanType: { id: testData.loanTypeId },
               materialType: { id: testData.materialTypeId },
             }

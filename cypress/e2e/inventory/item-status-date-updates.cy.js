@@ -7,6 +7,8 @@ import {
   CY_ENV,
   LOST_ITEM_FEES_POLICY_NAMES,
   LOAN_POLICY_NAMES,
+  FULFILMENT_PREFERENCES,
+  REQUEST_TYPES
 } from '../../support/constants';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrder from '../../support/fragments/orders/newOrder';
@@ -107,7 +109,7 @@ describe('ui-inventory: Item status date updates', () => {
               defaultDeliveryAddressTypeId: '46ff3f08-8f41-485c-98d8-701ba8404f4f',
               defaultServicePointId: null,
               delivery: true,
-              fulfillment: 'Delivery',
+              fulfillment: FULFILMENT_PREFERENCES.DELIVERY,
               holdShelf: true,
               userId: userForDeliveryRequest.userId
             });
@@ -118,7 +120,7 @@ describe('ui-inventory: Item status date updates', () => {
   afterEach(() => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
     Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
-      .then(order => Orders.deleteOrderApi(order[0].id));
+      .then(order => Orders.deleteOrderViaApi(order[0].id));
     UserEdit.changeServicePointPreferenceViaApi(
       userForDeliveryRequest.userId,
       [effectiveLocationServicePoint.id, notEffectiveLocationServicePoint.id]
@@ -286,7 +288,7 @@ describe('ui-inventory: Item status date updates', () => {
       itemBarcode,
       itemTitle: null,
       requesterBarcode: userForDeliveryRequest.barcode,
-      requestType: 'Hold'
+      requestType: REQUEST_TYPES.HOLD
     });
     cy.visit(TopMenu.checkInPath);
     CheckInActions.checkInItem(itemBarcode);

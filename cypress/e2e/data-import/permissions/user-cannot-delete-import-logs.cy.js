@@ -14,6 +14,7 @@ import Users from '../../../support/fragments/users/users';
 describe('ui-data-import', () => {
   let user;
   let instanceHrid;
+  const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const fileName = `C353641 autotestFile.${Helper.getRandomBarcode()}.mrc`;
 
   before('create test data', () => {
@@ -36,10 +37,10 @@ describe('ui-data-import', () => {
 
   it('C353641 A user can not delete import logs with standard Data import: Can upload files, import, and view logs permission (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-      cy.reload();
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       DataImport.uploadFile('oneMarcBib.mrc', fileName);
-      JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+      JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileName);
       Logs.checkStatusOfJobProfile('Completed');

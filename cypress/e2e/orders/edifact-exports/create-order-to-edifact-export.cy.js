@@ -14,7 +14,6 @@ import NewLocation from '../../../support/fragments/settings/tenant/locations/ne
 import DateTools from '../../../support/utils/dateTools';
 
 describe('orders: export', () => {
-    
   const order = { ...NewOrder.defaultOneTimeOrder };
   const organization = {
     ...NewOrganization.defaultUiOrganizations,
@@ -47,13 +46,13 @@ describe('orders: export', () => {
     cy.getAdminToken();
 
     ServicePoints.getViaApi()
-    .then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
-        .then(res => {
-          location = res;
-        });
-    });
+      .then((servicePoint) => {
+        servicePointId = servicePoint[0].id;
+        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
+          .then(res => {
+            location = res;
+          });
+      });
 
     Organizations.createOrganizationViaApi(organization)
       .then(organizationsResponse => {
@@ -70,11 +69,11 @@ describe('orders: export', () => {
 
     cy.createTempUser([
       permissions.uiOrdersView.gui,
-      permissions.uiOrdersCreate.gui, 
+      permissions.uiOrdersCreate.gui,
       permissions.uiOrdersEdit.gui,
       permissions.uiOrdersApprovePurchaseOrders.gui,
-      permissions.viewEditCreateOrganization.gui, 
-      permissions.viewOrganization.gui,
+      permissions.uiOrganizationsViewEditCreate.gui,
+      permissions.uiOrganizationsView.gui,
       permissions.uiExportOrders.gui,
       permissions.exportManagerAll.gui,
       permissions.exportManagerDownloadAndResendFiles.gui,
@@ -86,14 +85,14 @@ describe('orders: export', () => {
   });
 
   after(() => {
-    Orders.deleteOrderApi(order.id);
+    Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
     NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
-        location.institutionId,
-        location.campusId,
-        location.libraryId,
-        location.id
-      );
+      location.institutionId,
+      location.campusId,
+      location.libraryId,
+      location.id
+    );
     Users.deleteViaApi(user.userId);
   });
 

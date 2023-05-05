@@ -1,7 +1,7 @@
 import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Section, Button, Modal, Callout, TextField, and, some, Pane, HTML, including, PaneContent } from '../../../interactors';
 import dateTools from '../utils/dateTools';
 import getRandomPostfix from '../utils/stringTools';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstance from './inventory/inventoryInstance';
 
 const rootSection = Section({ id: 'quick-marc-editor-pane' });
 const viewMarcSection = Section({ id: 'marc-view-pane' });
@@ -17,7 +17,7 @@ const saveAndKeepEditingBtnEnabled = Button({ id: 'quick-marc-record-save-edit',
 const saveAndCloseButtonDisabled = Button({ id:'quick-marc-record-save', disabled: true });
 const saveAndKeepEditingBtnDisabled = Button({ id: 'quick-marc-record-save-edit', disabled: true });
 const confirmationModal = Modal({ id: 'quick-marc-confirm-modal' });
-const cancelEditConformModel = Modal({ id: 'cancel-editing-confirmation' })
+const cancelEditConformModel = Modal({ id: 'cancel-editing-confirmation' });
 const cancelEditConfirmBtn = Button('Keep editing');
 const updateLinkedBibFieldsModal = Modal({ id: 'quick-marc-update-linked-bib-fields' });
 const saveButton = Modal().find(Button({ id: 'clickable-quick-marc-update-linked-bib-fields-confirm' }));
@@ -33,18 +33,18 @@ const specRetInputNamesHoldings008 = ['records[3].content.Spec ret[0]',
 
 const tag008HoldingsBytesProperties = {
   acqStatus : { interactor:TextField('AcqStatus'), defaultValue:'0', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
-  acqMethod :{ interactor:TextField('AcqMethod'), defaultValue:'u', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
-  acqEndDate :{ interactor:TextField('AcqEndDate'), defaultValue:'\\\\\\\\', newValue:'vvvv', voidValue:' ', replacedVoidValue:'\\\\\\\\' },
-  genRet : { interactor:TextField('Gen ret'), defaultValue:'0', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
+  acqMethod :{ interactor:TextField('AcqMethod'), defaultValue:'\\', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
+  acqEndDate :{ interactor:TextField('AcqEndDate'), defaultValue:'\\\\0\\', newValue:'vvvv', voidValue:' ', replacedVoidValue:'\\\\\\\\' },
+  genRet : { interactor:TextField('Gen ret'), defaultValue:'\\', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
   specRet0: { interactor:TextField('Spec ret', { name:specRetInputNamesHoldings008[0] }), defaultValue:'\\', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
-  specRet1: { interactor:TextField('Spec ret', { name:specRetInputNamesHoldings008[1] }), defaultValue:'\\', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
-  specRet2: { interactor:TextField('Spec ret', { name:specRetInputNamesHoldings008[2] }), defaultValue:'\\', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
-  compl : { interactor:TextField('Compl'), defaultValue:'0', newValue:'9', voidValue:' ', replacedVoidValue:'\\' },
-  copies :{ interactor:TextField('Copies'), defaultValue:'\\\\\\', newValue:'vvv', voidValue:' ', replacedVoidValue:'\\\\\\' },
-  lend : { interactor:TextField('Lend'), defaultValue:'u', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
-  repro : { interactor:TextField('Repro'), defaultValue:'u', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
-  lang : { interactor:TextField('Lang'), defaultValue:'eng', newValue:'vvv', voidValue:' ', replacedVoidValue:'\\\\\\' },
-  sepComp : { interactor:TextField('Sep/comp'), defaultValue:'0', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
+  specRet1: { interactor:TextField('Spec ret', { name:specRetInputNamesHoldings008[1] }), defaultValue:'u', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
+  specRet2: { interactor:TextField('Spec ret', { name:specRetInputNamesHoldings008[2] }), defaultValue:'u', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
+  compl : { interactor:TextField('Compl'), defaultValue:'e', newValue:'9', voidValue:' ', replacedVoidValue:'\\' },
+  copies :{ interactor:TextField('Copies'), defaultValue:'ng0', newValue:'vvv', voidValue:' ', replacedVoidValue:'\\\\\\' },
+  lend : { interactor:TextField('Lend'), defaultValue:'\\', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
+  repro : { interactor:TextField('Repro'), defaultValue:'\\', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
+  lang : { interactor:TextField('Lang'), defaultValue:'\\\\\\', newValue:'vvv', voidValue:' ', replacedVoidValue:'\\\\\\' },
+  sepComp : { interactor:TextField('Sep/comp'), defaultValue:'\\', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
   reptDate :{ interactor:TextField('Rept date'), defaultValue:'\\\\\\\\\\\\', newValue:'vvvvvv', voidValue:' ', replacedVoidValue:'\\\\\\\\\\\\' },
   getUsualProperties:() => {
     return [tag008HoldingsBytesProperties.acqStatus,
@@ -159,7 +159,7 @@ export default {
       viewMarcSection.exists(),
     ]);
   },
-  
+
   saveAndCloseUpdatedLinkedBibField() {
     cy.do(saveAndCloseButton.click());
     cy.expect([
@@ -194,7 +194,7 @@ export default {
   deleteFieldAndCheck(rowIndex, tag) {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).click());
     cy.expect(QuickMarcEditorRow({ tagValue: tag }).absent());
-  }, 
+  },
 
   deleteField(rowIndex) {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).click());
@@ -407,7 +407,7 @@ export default {
   closeWithoutSaving() {
     cy.do(cancelButton.click());
   },
-  
+
   closeWithoutSavingAfterChange() {
     cy.do(cancelButton.click());
     cy.expect(closeWithoutSavingBtn.exists());
@@ -476,7 +476,7 @@ export default {
     cy.expect(getRowInteractorByTagName(tag).find(linkToMarcRecordButton).exists());
   },
 
-  checkButtonSaveAndCloseEnable() { 
+  checkButtonSaveAndCloseEnable() {
     cy.expect(saveAndCloseButton.exists());
   },
 
@@ -487,4 +487,8 @@ export default {
   checkDeleteButtonNotExist(rowIndex) {
     cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).absent());
   },
+
+  checkCallout(callout) {
+    cy.expect(Callout(callout).exists());
+  }
 };

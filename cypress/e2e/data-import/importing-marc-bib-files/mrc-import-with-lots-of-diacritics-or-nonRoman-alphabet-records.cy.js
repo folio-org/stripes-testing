@@ -13,6 +13,7 @@ describe('ui-data-import', () => {
   const quantityOfItems = '15';
   const rowNumbers = [1, 4, 7, 14];
   const instanceSource = 'MARC';
+  const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const firstRecord = {
     title: 'ha-Maʻaśim li-vene Erets-Yiśraʼel : halakhah ṿe-hisṭoryah be-Erets-Yiśraʼel ha-Bizanṭit / Hilel Nyuman.',
     firstAlternativeTitle: 'Maʻasim of the people of the land of Israel : halakhah and history in Byzantine Palestine',
@@ -62,14 +63,14 @@ describe('ui-data-import', () => {
     // upload a marc file for creating of the new instance
       cy.visit(TopMenu.dataImportPath);
       DataImport.uploadFile('mrcFileForC6709.mrc', nameMarcFileForCreate);
-      JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+      JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(nameMarcFileForCreate);
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(nameMarcFileForCreate);
       rowNumbers.forEach(rowNumber => {
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc, rowNumber);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.instance, rowNumber);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumber);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance, rowNumber);
       });
       FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
       FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems);
