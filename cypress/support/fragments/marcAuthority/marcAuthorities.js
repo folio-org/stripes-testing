@@ -290,7 +290,7 @@ export default {
     ]);
   },
 
-  checkRecordAbsence(absenceMessage) {
+  checkNoResultsMessage(absenceMessage) {
     cy.expect(rootSection.find(HTML(including(absenceMessage))).exists());
   },
 

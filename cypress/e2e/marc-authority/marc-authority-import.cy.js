@@ -178,7 +178,6 @@ describe('Data Import - Importing MARC Authority files', () => {
     MarcAuthorities.checkResultList(['Twain, Marek, 1835-1910', 'Twain, Mark, 1835-1910']); 
 
     MarcAuthorities.searchByParameter('Name-title', 'Twain');
-    MarcAuthorities.checkRecordAbsence('Twain, Marek, 1835-1910');
-    MarcAuthorities.checkRecordAbsence('Twain, Mark, 1835-1910');
+    MarcAuthorities.checkNoResultsMessage('No results found for "Twain". Please check your spelling and filters.');
   });
 });
