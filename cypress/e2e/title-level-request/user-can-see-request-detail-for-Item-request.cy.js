@@ -2,7 +2,7 @@ import uuid from 'uuid';
 import testTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
-import { FULFILMENT_PREFERENCES, ITEM_STATUSES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
+import { FULFILMENT_PREFERENCES, ITEM_STATUS_NAMES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
@@ -80,7 +80,7 @@ describe('Title Level Request. Request Detail', () => {
           items: [
             {
               barcode: testData.itemBarcode,
-              status: { name: ITEM_STATUSES.AVAILABLE },
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
               permanentLoanType: { id: testData.loanTypeId },
               materialType: { id: testData.materialTypeId },
             },

@@ -55,21 +55,21 @@ describe('ui-data-import', () => {
 
       // upload a marc file for creating holdings
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-      cy.reload();
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       DataImport.uploadFile(editedMarcFileName);
       JobProfiles.searchJobProfileForImport('Default - Create Holdings and SRS MARC Holdings');
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(editedMarcFileName);
       Logs.openFileDetails(editedMarcFileName);
-      FileDetails.checkStatusInColumn(FileDetails.status.discarded, FileDetails.columnName.srsMarc);
-      [FileDetails.columnName.srsMarc,
-        FileDetails.columnName.holdings
+      FileDetails.checkStatusInColumn(FileDetails.status.noAction, FileDetails.columnNameInResultList.srsMarc);
+      [FileDetails.columnNameInResultList.srsMarc,
+        FileDetails.columnNameInResultList.holdings
       ].forEach(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName, 1);
       });
-      FileDetails.checkStatusInColumn(FileDetails.status.discarded, FileDetails.columnName.srsMarc, 2);
-      FileDetails.checkStatusInColumn(FileDetails.status.discarded, FileDetails.columnName.srsMarc, 3);
+      FileDetails.checkStatusInColumn(FileDetails.status.noAction, FileDetails.columnNameInResultList.srsMarc, 2);
+      FileDetails.checkStatusInColumn(FileDetails.status.noAction, FileDetails.columnNameInResultList.srsMarc, 3);
       // check created counter in the Summary table
       FileDetails.checkSrsRecordQuantityInSummaryTable('1');
       FileDetails.checkHoldingsQuantityInSummaryTable('1');

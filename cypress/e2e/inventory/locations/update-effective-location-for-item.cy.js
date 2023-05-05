@@ -11,7 +11,7 @@ import GenerateItemBarcode from '../../../support/utils/generateItemBarcode';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Helper from '../../../support/fragments/finance/financeHelper';
-import { ITEM_STATUSES } from '../../../support/constants';
+import { ITEM_STATUS_NAMES } from '../../../support/constants';
 
 describe('ui-inventory: Update the effective location for the item', () => {
   const itemData = {
@@ -45,7 +45,7 @@ describe('ui-inventory: Update the effective location for the item', () => {
           items: [
             {
               barcode: itemData.itemBarcode,
-              status: { name: ITEM_STATUSES.AVAILABLE },
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
               permanentLoanType: { id: itemData.loanTypeId },
               materialType: { id: itemData.materialTypeId }
             }]

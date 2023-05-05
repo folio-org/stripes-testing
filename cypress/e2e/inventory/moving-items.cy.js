@@ -18,7 +18,7 @@ import users from '../../support/fragments/users/users';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
 import Z3950TargetProfiles from '../../support/fragments/settings/inventory/z39.50TargetProfiles';
-import { ITEM_STATUSES } from '../../support/constants';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('ui-inventory: moving items', { retries: 2 }, () => {
   const successCalloutMessage = '1 item has been successfully moved.';
@@ -92,7 +92,7 @@ describe('ui-inventory: moving items', { retries: 2 }, () => {
                   barcode: ITEM_BARCODE,
                   missingPieces: '3',
                   numberOfMissingPieces: '3',
-                  status: { name: ITEM_STATUSES.AVAILABLE },
+                  status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                   permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
                   materialType: { id: Cypress.env('materialTypes')[0].id },
                 }],

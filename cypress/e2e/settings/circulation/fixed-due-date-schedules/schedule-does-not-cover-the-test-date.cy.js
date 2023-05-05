@@ -15,7 +15,7 @@ import {
   LIBRARY_DUE_DATE_MANAGMENT,
   LOAN_PROFILE,
   LOST_ITEM_FEES_POLICY_NAMES,
-  ITEM_STATUSES,
+  ITEM_STATUS_NAMES,
 } from '../../../../support/constants';
 import FixedDueDateSchedules from '../../../../support/fragments/circulation/fixedDueDateSchedules';
 import Checkout from '../../../../support/fragments/checkout/checkout';
@@ -93,7 +93,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
           }],
           items: [[{
             barcode: ITEM_BARCODE,
-            status: { name: ITEM_STATUSES.AVAILABLE },
+            status: { name: ITEM_STATUS_NAMES.AVAILABLE },
             permanentLoanType: { id: Cypress.env(CY_ENV.LOAN_TYPES)[0].id },
             materialType: { id: materialTypeId },
           }]],

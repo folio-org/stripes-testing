@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../../utils/stringTools';
-import { ITEM_STATUSES } from '../../../constants';
+import { ITEM_STATUS_NAMES } from '../../../constants';
 
 export default {
   defaultUiInstanceType : {
@@ -60,7 +60,7 @@ export default {
         id: uuid(),
       },
       status: {
-        name: ITEM_STATUSES.AVAILABLE
+        name: ITEM_STATUS_NAMES.AVAILABLE
       },
     }
   },

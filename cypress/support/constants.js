@@ -1,8 +1,8 @@
-export const ITEM_STATUSES = {
-  CHECKED_OUT: 'Checked out',
-  DECLARED_LOST: 'Declared lost',
-  AVAILABLE: 'Available',
-};
+// export const ITEM_STATUS_NAMES = {
+//   CHECKED_OUT: 'Checked out',
+//   DECLARED_LOST: 'Declared lost',
+//   AVAILABLE: 'Available',
+// };
 
 export const REQUEST_METHOD = {
   DELETE: 'DELETE',
@@ -36,11 +36,26 @@ export const LOST_ITEM_FEES_POLICY_NAMES = {
 
 export const LOAN_TYPE_NAMES = {
   CAN_CIRCULATE: 'Can circulate',
+  COURSE_RESERVES: 'Course reserves'
 };
 
 export const MATERIAL_TYPE_NAMES = {
   MICROFORM: 'microform',
   BOOK: 'book',
+  ELECTRONIC_RESOURCE: 'electronic resource'
+};
+
+export const ITEM_STATUS_NAMES = {
+  ON_ORDER: 'On order',
+  IN_PROCESS: 'In process',
+  AVAILABLE: 'Available',
+  MISSING: 'Missing',
+  IN_TRANSIT: 'In transit',
+  PAGED: 'Paged',
+  AWAITING_PICKUP: 'Awaiting pickup',
+  CHECKED_OUT: 'Checked out',
+  DECLARED_LOST: 'Declared lost',
+  AWAITING_DELIVERY: 'Awaiting delivery'
 };
 
 export const CY_ENV = {
@@ -90,4 +105,43 @@ export const REQUEST_TYPES = {
   PAGE: 'Page',
   HOLD: 'Hold',
   RECALL: 'Recall',
+};
+
+export const FOLIO_RECORD_TYPE = {
+  INSTANCE:'Instance',
+  HOLDINGS:'Holdings',
+  ITEM:'Item',
+  ORDER:'Order',
+  INVOICE:'Invoice',
+  MARCBIBLIOGRAPHIC:'MARC Bibliographic'
+};
+
+export const PAYMENT_METHOD = {
+  CASH:'"Cash"',
+  CREDIT_CARD:'"Credit Card"'
+};
+
+export const BATCH_GROUP = {
+  FOLIO:'"FOLIO"',
+  AMHERST:'"Amherst (AC)"'
+};
+
+export const ORDER_STATUSES = {
+  OPEN: 'Open',
+  PENDING: 'Pending'
+};
+
+export const LOCALION_NAMES = {
+  ANNEX: 'Annex (KU/CC/DI/A)',
+  ANNEX_UI: 'Annex',
+  ONLINE: 'Online (E)',
+  ONLINE_UI: 'Online',
+  MAIN_LIBRARY: 'Main Library (KU/CC/DI/M)',
+  MAIN_LIBRARY_UI: 'Main Library'
+};
+
+export const INSTANCE_STATUS_TERM_NAMES = {
+  BATCH_LOADED: 'Batch Loaded',
+  CATALOGED: 'Cataloged',
+  UNCATALOGED: 'Uncataloged'
 };

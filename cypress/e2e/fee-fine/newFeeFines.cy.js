@@ -22,7 +22,7 @@ import InventoryHoldings from '../../support/fragments/inventory/holdings/invent
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
 import devTeams from '../../support/dictionary/devTeams';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
-import { ITEM_STATUSES } from '../../support/constants';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('Fee/fine management', () => {
   const testData = {
@@ -61,7 +61,7 @@ describe('Fee/fine management', () => {
               });
             });
 
-            cy.getMaterialTypes({ limit: 1 }).then((res) => { testData.materialType = res.id; });
+            cy.getMaterialTypes({ query: 'name="book"' }).then((res) => { testData.materialType = res.id; });
             cy.getLocations({ limit: 1 }).then((res) => { testData.location = res.id; });
             cy.getHoldingTypes({ limit: 1 }).then((res) => { testData.holdingType = res[0].id; });
             InventoryHoldings.getHoldingSources({ limit: 1 }).then((res) => { testData.holdingSource = res[0].id; });
@@ -84,7 +84,7 @@ describe('Fee/fine management', () => {
                   barcode: itemBarcode,
                   missingPieces: '3',
                   numberOfMissingPieces: '3',
-                  status: { name: ITEM_STATUSES.AVAILABLE },
+                  status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                   permanentLoanType: { id: testData.loanType },
                   materialType: { id: testData.materialType },
                 }],
@@ -95,7 +95,7 @@ describe('Fee/fine management', () => {
     });
   });
 
-  it('C455 Verify "New fee/fine" behavior when "Charge & pay now" button pressed (spitfire)', { tags: [TestType.smoke, Features.feeFine, devTeams.spitfire] }, () => {
+  it('C455 Verify "New fee/fine" behavior when "Charge & pay now" button pressed (vega)', { tags: [TestType.smoke, Features.feeFine, devTeams.vega] }, () => {
     const feeInfo = [testData.owner.name, testData.feeFineType.feeFineTypeName, 'Paid fully'];
     const itemInfo = [testData.instanceTitle + ' (book)', itemBarcode];
     const initialCheckNewFeeFineFragment = () => {

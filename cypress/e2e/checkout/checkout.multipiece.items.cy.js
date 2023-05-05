@@ -16,7 +16,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import DevTeams from '../../support/dictionary/devTeams';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
-import { ITEM_STATUSES } from '../../support/constants';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('Check Out', () => {
   let user = {};
@@ -42,7 +42,7 @@ describe('Check Out', () => {
       const getTestItem = (numberOfPieces, hasDiscription, hasMissingPieces) => {
         const defaultItem = {
           barcode: Helper.getRandomBarcode(),
-          status:  { name: ITEM_STATUSES.AVAILABLE },
+          status:  { name: ITEM_STATUS_NAMES.AVAILABLE },
           permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
           materialType: { id: materialTypeName.id },
         };

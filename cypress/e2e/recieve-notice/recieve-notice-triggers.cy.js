@@ -26,7 +26,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import getRandomPostfix from '../../support/utils/stringTools';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
-import { ITEM_STATUSES } from '../../support/constants';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('Triggers: Check Out, Loan due date change, Check in', () => {
   let addedCirculationRule;
@@ -140,7 +140,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
             items: [
               {
                 barcode: item.barcode,
-                status: { name: ITEM_STATUSES.AVAILABLE },
+                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                 permanentLoanType: { id: testData.loanTypeId },
                 materialType: { id: testData.materialTypeId },
               },
@@ -243,8 +243,8 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
   });
 
   it(
-    'C347862 Check out + Loan due date change + Check in triggers (vega)',
-    { tags: [TestTypes.smoke, devTeams.vega] },
+    'C347862 Check out + Loan due date change + Check in triggers (volaris)',
+    { tags: [TestTypes.smoke, devTeams.volaris] },
     () => {
       NewNoticePolicyTemplate.createPatronNoticeTemplate(checkOutTemplate);
       NewNoticePolicyTemplate.checkAfterSaving(checkOutTemplate);

@@ -3,7 +3,7 @@ import moment from 'moment';
 import testTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
-import { ITEM_STATUSES, REQUEST_TYPES } from '../../support/constants';
+import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
@@ -82,7 +82,7 @@ describe('Create Item or Title level request', () => {
           items: [
             {
               barcode: testData.itemBarcode,
-              status: { name: ITEM_STATUSES.AVAILABLE },
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
               permanentLoanType: { id: testData.loanTypeId },
               materialType: { id: testData.materialTypeId },
             },

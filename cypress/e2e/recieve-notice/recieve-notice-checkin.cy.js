@@ -23,7 +23,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import getRandomPostfix from '../../support/utils/stringTools';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
-import { ITEM_STATUSES } from '../../support/constants';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('Recieving notice: Checkout', () => {
   let addedCirculationRule;
@@ -104,7 +104,7 @@ describe('Recieving notice: Checkout', () => {
           }],
           items:[{
             barcode: item.barcode,
-            status:  { name: ITEM_STATUSES.AVAILABLE },
+            status:  { name: ITEM_STATUS_NAMES.AVAILABLE },
             permanentLoanType: { id: testData.loanTypeId },
             materialType: { id: testData.materialTypeId },
           }] }).then(specialInstanceIds => {
@@ -173,8 +173,8 @@ describe('Recieving notice: Checkout', () => {
     });
   });
 
-  it('C347623 Check that user can receive notice with multiple items after finishing the session "Check in" by clicking the End Session button (vega)',
-    { tags: [testTypes.smoke, devTeams.vega] }, () => {
+  it('C347623 Check that user can receive notice with multiple items after finishing the session "Check in" by clicking the End Session button (volaris)',
+    { tags: [testTypes.smoke, devTeams.volaris] }, () => {
       NewNoticePolicyTemplate.startAdding();
       NewNoticePolicyTemplate.checkInitialState();
       NewNoticePolicyTemplate.addToken(testData.noticePolicyTemplateToken);

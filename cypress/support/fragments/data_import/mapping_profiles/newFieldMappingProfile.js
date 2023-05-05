@@ -14,6 +14,7 @@ import {
   Checkbox
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
+import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES } from '../../../constants';
 
 const saveButton = Button('Save as profile & Close');
 const organizationModal = Modal('Select Organization');
@@ -26,17 +27,10 @@ const incomingRecordType = {
   marcBib: 'MARC Bibliographic',
   edifact: 'EDIFACT invoice',
 };
-const folioRecordTypeValue = {
-  instance: 'Instance',
-  holdings: 'Holdings',
-  item: 'Item',
-  invoice: 'Invoice',
-  marcBib: 'MARC Bibliographic',
-  order: 'Order'
-};
 const organization = {
   gobiLibrary: 'GOBI Library Solutions',
   harrassowitz: 'Otto Harrassowitz GmbH & Co. KG',
+  ebsco:'EBSCO SUBSCRIPTION SERVICES'
 };
 const actions = {
   addTheseToExisting: 'Add these to existing',
@@ -56,10 +50,9 @@ const status = '"In process"';
 const holdingsType = 'Holdings';
 const itemType = 'Item';
 const catalogedDate = '###TODAY###';
-const instanceStatusTerm = 'Batch Loaded';
 const defaultMappingProfile = {
-  name: `autotest${folioRecordTypeValue.instance}${getRandomPostfix()}`,
-  typeValue: folioRecordTypeValue.instance,
+  name: `autotest${FOLIO_RECORD_TYPE.INSTANCE}${getRandomPostfix()}`,
+  typeValue: FOLIO_RECORD_TYPE.INSTANCE,
   location: permanentLocation,
   material: materialType,
   loan: permanentLoanType,
@@ -84,13 +77,12 @@ const waitLoading = () => {
 const selectFromResultsList = (rowNumber = 0) => cy.do(organizationModal.find(MultiColumnListRow({ index: rowNumber })).click());
 
 export default {
-  folioRecordTypeValue,
+  incomingRecordType,
   permanentLocation,
   materialType,
   permanentLoanType,
   statusField: status,
   organization,
-  instanceStatusTerm,
   catalogedDate,
   actions,
   selectFromResultsList,
@@ -139,11 +131,11 @@ export default {
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(1800);
       cy.do(TextField('Status').fillIn(status));
-    } else if (specialMappingProfile.typeValue === folioRecordTypeValue.instance) {
+    } else if (specialMappingProfile.typeValue === FOLIO_RECORD_TYPE.INSTANCE) {
       if ('update' in specialMappingProfile) {
         cy.do([
           TextField('Cataloged date').fillIn(catalogedDate),
-          TextField('Instance status term').fillIn(`"${instanceStatusTerm}"`),
+          TextField('Instance status term').fillIn(`"${INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED}"`),
         ]);
         // wait accepted values to be filled
         // eslint-disable-next-line cypress/no-unnecessary-waiting
@@ -166,18 +158,18 @@ export default {
     cy.expect(saveButton.absent());
   },
 
-  fillMappingProfileForInvoice:(specialMappingProfileName = defaultMappingProfile.name, organizationName) => {
+  fillMappingProfileForInvoice:(profile) => {
     cy.do([
-      TextField({ name:'profile.name' }).fillIn(specialMappingProfileName),
-      Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.edifact),
-      Select({ name:'profile.existingRecordType' }).choose(folioRecordTypeValue.invoice),
+      TextField({ name:'profile.name' }).fillIn(profile.name),
+      Select({ name:'profile.incomingRecordType' }).choose(profile.incomingRecordType),
+      Select({ name:'profile.existingRecordType' }).choose(profile.existingRecordType),
       TextArea({ name:'profile.description' }).fillIn(''),
-      TextField('Batch group*').fillIn('"FOLIO"'),
+      TextField('Batch group*').fillIn(profile.batchGroup),
       Button('Organization look-up').click()
     ]);
-    selectOrganizationByName(organizationName);
+    selectOrganizationByName(profile.organizationName);
     cy.do([
-      TextField('Payment method*').fillIn('"Cash"'),
+      TextField('Payment method*').fillIn(profile.paymentMethod),
       saveButton.click(),
     ]);
   },
@@ -201,11 +193,11 @@ export default {
       cy.do(TextField('Barcode').fillIn('981$b'));
       cy.do(TextField('Copy number').fillIn('981$b'));
       cy.do(TextField('Status').fillIn(status));
-    } else if (specialMappingProfile.typeValue === folioRecordTypeValue.instance) {
+    } else if (specialMappingProfile.typeValue === FOLIO_RECORD_TYPE.INSTANCE) {
       if ('update' in specialMappingProfile) {
         cy.do([
           TextField('Cataloged date').fillIn(catalogedDate),
-          TextField('Instance status term').fillIn(`"${instanceStatusTerm}"`),
+          TextField('Instance status term').fillIn(`"${INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED}"`),
         ]);
         // wait accepted values to be filled
         // eslint-disable-next-line cypress/no-unnecessary-waiting
@@ -367,7 +359,7 @@ export default {
     waitLoading();
   },
 
-  fillInstanceStatusTerm:(statusTerm = instanceStatusTerm) => {
+  fillInstanceStatusTerm:(statusTerm = INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED) => {
     cy.do(TextField('Instance status term').fillIn(`"${statusTerm}"`));
     waitLoading();
   },

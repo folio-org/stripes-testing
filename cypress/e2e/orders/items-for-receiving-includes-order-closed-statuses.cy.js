@@ -22,7 +22,7 @@ import ItemRecordEdit from '../../support/fragments/inventory/itemRecordEdit';
 import SwitchServicePoint from '../../support/fragments/servicePoint/switchServicePoint';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../support/fragments/checkout/checkout';
-import { ITEM_STATUSES } from '../../support/constants';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 // import Users from '../../support/fragments/users/users';
 
 describe('orders: Receiving and Check-in', () => {
@@ -195,11 +195,11 @@ describe('orders: Receiving and Check-in', () => {
     InventoryInstance.openHoldingsAccordion(location.name);
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', barcodeForFirstItem);
-    ItemRecordView.checkItemDetails(location.name, barcodeForFirstItem, ITEM_STATUSES.AVAILABLE);
+    ItemRecordView.checkItemDetails(location.name, barcodeForFirstItem, ITEM_STATUS_NAMES.AVAILABLE);
     ItemActions.closeItem();
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', barcodeForSecondItem);
-    ItemRecordView.checkItemDetails(location.name, barcodeForSecondItem, ITEM_STATUSES.AVAILABLE);
+    ItemRecordView.checkItemDetails(location.name, barcodeForSecondItem, ITEM_STATUS_NAMES.AVAILABLE);
     ItemActions.closeItem();
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', barcodeForThirdItem);

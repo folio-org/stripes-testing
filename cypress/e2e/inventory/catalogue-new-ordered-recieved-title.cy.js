@@ -24,7 +24,7 @@ import ConfirmItemInModal from '../../support/fragments/check-in-actions/confirm
 import Users from '../../support/fragments/users/users';
 import ServicePoint from '../../support/fragments/servicePoint/servicePoint';
 import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
-import { ITEM_STATUSES } from '../../support/constants';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('orders: Receive piece from Order', () => {
   let effectiveLocation;
@@ -124,8 +124,8 @@ describe('orders: Receive piece from Order', () => {
     );
   });
 
-  it('C3506 Catalog a new title which has been ordered and received in Orders (prokopovych)',
-    { tags: [TestTypes.smoke, DevTeams.prokopovych] }, () => {
+  it('C3506 Catalog a new title which has been ordered and received in Orders (folijet)',
+    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
       InventoryInstances.selectInstance();
       InventoryInstances.verifyInstanceDetailsView();
       InventoryInstance.openHoldings(effectiveLocation.name);
@@ -151,7 +151,7 @@ describe('orders: Receive piece from Order', () => {
       InventoryInstances.selectInstance();
       InventoryInstances.verifyInstanceDetailsView();
       InventoryInstance.openHoldings(effectiveLocation.name);
-      InventoryInstance.checkHoldingsTable(effectiveLocation.name, 0, '-', barcode, ITEM_STATUSES.AVAILABLE);
+      InventoryInstance.checkHoldingsTable(effectiveLocation.name, 0, '-', barcode, ITEM_STATUS_NAMES.AVAILABLE);
       InventoryInstance.verifyLoan('Can circulate');
       InventoryInstance.openItemByBarcode(barcode);
       ItemRecordView.waitLoading();

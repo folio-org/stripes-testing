@@ -38,7 +38,7 @@ describe('ui-users-settings: Owners', () => {
       });
     });
 
-    it('C350616 Fee/Fine Owners are not required to have a Service Point (prokopovych)', { tags: [TestType.smoke, DevTeams.prokopovych] }, () => {
+    it('C350616 Fee/Fine Owners are not required to have a Service Point (volaris)', { tags: [TestType.smoke, DevTeams.volaris] }, () => {
       const ownerName = `Automation owner $${getRandomPostfix()}`;
       ownerNames.push(ownerName);
       UsersOwners.startNewLineAdding();
@@ -49,7 +49,7 @@ describe('ui-users-settings: Owners', () => {
       UsersOwners.multiCheckFreeServicePointPresence(servicePoints);
     });
 
-    it('C350615 The "Shared" Fee/Fine Owner is not allowed to have Service Points (prokopovych)', { tags: [TestType.smoke, Features.sharedOwner] }, () => {
+    it('C350615 The "Shared" Fee/Fine Owner is not allowed to have Service Points (volaris)', { tags: [TestType.smoke, Features.sharedOwner, DevTeams.volaris] }, () => {
       const ownerName = 'Shared';
       UsersOwners.startNewLineAdding();
       UsersOwners.fill(ownerName);
@@ -70,7 +70,7 @@ describe('ui-users-settings: Owners', () => {
     const createRegularUser = () => cy.createTempUser([Permissions.uiUsersSettingsOwners.gui,
       Permissions.uiUsersEdituserservicepoints.gui]);
 
-    it('C441 Verify that you can create/edit/delete associations between fee/fine owners and service points (prokopovych)', { tags: [TestType.criticalPath, DevTeams.prokopovych] }, () => {
+    it('C441 Verify that you can create/edit/delete associations between fee/fine owners and service points (volaris)', { tags: [TestType.criticalPath, DevTeams.volaris] }, () => {
       createRegularUser().then(firstUserProperties => {
         testUsers.push(firstUserProperties);
 

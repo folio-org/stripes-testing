@@ -3,7 +3,7 @@ import moment from 'moment';
 import TestTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
-import { ITEM_STATUSES, REQUEST_TYPES } from '../../support/constants';
+import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
 import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
@@ -115,13 +115,13 @@ describe('TLR: Item renew', () => {
         instanceData.itemsData = [
           {
             barcode: generateUniqueItemBarcodeWithShift(),
-            status: { name: ITEM_STATUSES.AVAILABLE },
+            status: { name: ITEM_STATUS_NAMES.AVAILABLE },
             permanentLoanType: { id: testData.loanTypeId },
             materialType: { id: testData.materialBookId },
           },
           {
             barcode: generateUniqueItemBarcodeWithShift(),
-            status: { name: ITEM_STATUSES.AVAILABLE },
+            status: { name: ITEM_STATUS_NAMES.AVAILABLE },
             permanentLoanType: { id: testData.loanTypeId },
             materialType: { id: testData.materialDvdId },
           },

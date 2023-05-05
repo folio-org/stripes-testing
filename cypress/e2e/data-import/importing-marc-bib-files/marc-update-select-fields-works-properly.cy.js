@@ -1,5 +1,6 @@
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -10,7 +11,6 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -28,22 +28,22 @@ describe('ui-data-import', () => {
   // profiles for updating instance
   const instanceMappingProfile = {
     name: `C17019 autotest instance mapping profile.${Helper.getRandomBarcode()}`,
-    typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
     statisticalCodeUI: 'Book, print (books)',
-    instanceStatus: 'Batch Loaded'
+    instanceStatus: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED
   };
   const marcBibMappingProfile = {
     name: `C17019 autotest marc bib mapping profile.${Helper.getRandomBarcode()}`,
-    typeValue : NewFieldMappingProfile.folioRecordTypeValue.marcBib
+    typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC
   };
   const instanceActionProfile = {
-    typeValue: NewActionProfile.folioRecordTypeValue.instance,
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     name: `C17019 autotest instance action profile.${Helper.getRandomBarcode()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
   const marcBibActionProfile = {
-    typeValue: NewActionProfile.folioRecordTypeValue.marcBib,
+    typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
     name: `C17019 autotest marc bib action profile.${Helper.getRandomBarcode()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
@@ -137,16 +137,16 @@ describe('ui-data-import', () => {
 
       // upload a marc file
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-      cy.reload();
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       DataImport.uploadFile(editedMarcFileName, fileNameForUpdate);
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileNameForUpdate);
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(fileNameForUpdate);
-      [FileDetails.columnName.srsMarc,
-        FileDetails.columnName.instance].forEach(columnName => {
+      [FileDetails.columnNameInResultList.srsMarc,
+        FileDetails.columnNameInResultList.instance].forEach(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
       });
       FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems, 1);

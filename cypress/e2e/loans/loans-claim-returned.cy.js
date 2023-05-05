@@ -26,7 +26,7 @@ import Location from '../../support/fragments/settings/tenant/locations/newLocat
 import ConfirmClaimReturnedModal from '../../support/fragments/users/loans/confirmClaimReturnedModal';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
-import { ITEM_STATUSES } from '../../support/constants';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 function getClaimedReturnedLoansQuantity(loansArray) {
   let res = 0;
@@ -130,7 +130,7 @@ describe('Loans ', () => {
         }],
         items:[{
           barcode: item.barcode,
-          status:  { name: ITEM_STATUSES.AVAILABLE },
+          status:  { name: ITEM_STATUS_NAMES.AVAILABLE },
           permanentLoanType: { id: testData.loanTypeId },
           materialType: { id: testData.materialTypeId },
         }] }).then(specialInstanceIds => {

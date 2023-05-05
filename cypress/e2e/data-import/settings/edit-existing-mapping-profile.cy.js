@@ -1,5 +1,6 @@
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -11,11 +12,10 @@ import InteractorsTools from '../../../support/utils/interactorsTools';
 import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
-  const mappingProfileName = `C2351 autotest mapping profile ${Helper.getRandomBarcode()}`;
   let user;
   const mappingProfile = {
-    name: mappingProfileName,
-    typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance
+    name: `C2351 autotest mapping profile ${Helper.getRandomBarcode()}`,
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE
   };
   const instanceStatusTerm = '"Batch Loaded"';
 
@@ -32,22 +32,22 @@ describe('ui-data-import', () => {
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
         FieldMappingProfiles.saveProfile();
         InteractorsTools.closeCalloutMessage();
-        FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfileName);
+        FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
       });
   });
 
   after('delete test data', () => {
     Users.deleteViaApi(user.userId);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
   });
 
   it('C2351 Edit an existing field mapping profile (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-    FieldMappingProfiles.search(mappingProfileName);
+    FieldMappingProfiles.search(mappingProfile.name);
     FieldMappingProfileView.editMappingProfile();
-    FieldMappingProfileEdit.verifyScreenName(mappingProfileName);
+    FieldMappingProfileEdit.verifyScreenName(mappingProfile.name);
     FieldMappingProfileEdit.fillInstanceStatusTerm(instanceStatusTerm);
     FieldMappingProfileEdit.save();
-    FieldMappingProfileView.checkCalloutMessage(mappingProfileName);
+    FieldMappingProfileView.checkCalloutMessage(mappingProfile.name);
     FieldMappingProfileView.verifyInstanceStatusTerm(instanceStatusTerm);
   });
 });

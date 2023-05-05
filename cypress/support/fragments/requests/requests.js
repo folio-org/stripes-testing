@@ -16,7 +16,7 @@ import {
   Heading,
   Spinner
 } from '../../../../interactors';
-import { REQUEST_TYPES, REQUEST_LEVELS, ITEM_STATUSES, FULFILMENT_PREFERENCES } from '../../constants';
+import { REQUEST_TYPES, REQUEST_LEVELS, ITEM_STATUS_NAMES, FULFILMENT_PREFERENCES } from '../../constants';
 import users from '../users/users';
 import inventoryHoldings from '../inventory/holdings/inventoryHoldings';
 import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
@@ -46,7 +46,7 @@ const waitContentLoading = () => {
  * @returns {Object}
  */
 function createRequestApi(
-  itemStatus = ITEM_STATUSES.AVAILABLE,
+  itemStatus = ITEM_STATUS_NAMES.AVAILABLE,
   requestType = REQUEST_TYPES.PAGE,
   requestLevel = REQUEST_LEVELS.ITEM,
 ) {

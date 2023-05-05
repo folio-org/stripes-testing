@@ -152,4 +152,32 @@ describe('Data Import - Importing MARC Authority files', () => {
     MarcAuthorityBrowse.searchByChangingParameter(testData.searchOptionNameTitle, testData.recordWithoutTitle);
     MarcAuthorityBrowse.checkResultWithNoValue(testData.recordWithoutTitle);
   });
+
+  it('C356765 Search for record without subfield "t" (personalNameTitle and sftPersonalName) (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    DataImport.uploadFile('marcFileForC356765.mrc', fileName);
+    JobProfiles.waitLoadingList();
+    JobProfiles.searchJobProfileForImport(jobProfileToRun);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileName);
+    Logs.checkStatusOfJobProfile('Completed');
+    Logs.openFileDetails(fileName);
+    Logs.getCreatedItemsID(0).then(link => {
+      createdAuthorityIDs.push(link.split('/')[5]);
+    });
+
+    cy.visit(TopMenu.marcAuthorities);
+
+    MarcAuthorities.clickActionsButton();
+    MarcAuthorities.actionsSortBy('Type of heading');
+
+    MarcAuthorities.checkSearchOption('keyword');
+    MarcAuthorities.searchByParameter('Keyword', 'Twain');
+    MarcAuthorities.checkResultList(['Twain, Marek, 1835-1910', 'Twain, Mark, 1835-1910']); 
+
+    MarcAuthorities.searchByParameter('Personal name', 'Twain');
+    MarcAuthorities.checkResultList(['Twain, Marek, 1835-1910', 'Twain, Mark, 1835-1910']); 
+
+    MarcAuthorities.searchByParameter('Name-title', 'Twain');
+    MarcAuthorities.checkNoResultsMessage('No results found for "Twain". Please check your spelling and filters.');
+  });
 });

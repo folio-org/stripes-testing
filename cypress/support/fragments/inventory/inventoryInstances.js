@@ -16,7 +16,7 @@ import InventoryHoldings from './holdings/inventoryHoldings';
 import inventoryNewInstance from './inventoryNewInstance';
 import InventoryInstance from './inventoryInstance';
 import Arrays from '../../utils/arrays';
-import { ITEM_STATUSES } from '../../constants';
+import { ITEM_STATUS_NAMES } from '../../constants';
 
 const rootSection = Section({ id: 'pane-results' });
 const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
@@ -130,7 +130,7 @@ export default {
                 barcode: itemBarcode,
                 missingPieces: '3',
                 numberOfMissingPieces: '3',
-                status: { name: ITEM_STATUSES.AVAILABLE },
+                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                 permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
                 materialType: { id: Cypress.env('materialTypes')[0].id },
                 itemLevelCallNumber: itemCallNumber,
@@ -140,7 +140,7 @@ export default {
                 barcode: 'secondBarcode_' + itemBarcode,
                 missingPieces: '3',
                 numberOfMissingPieces: '3',
-                status: { name: ITEM_STATUSES.AVAILABLE },
+                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                 permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
                 materialType: { id: Cypress.env('materialTypes')[0].id },
                 itemLevelCallNumber: itemCallNumber,
@@ -203,7 +203,7 @@ export default {
                 barcode: itemBarcode,
                 missingPieces: '3',
                 numberOfMissingPieces: '3',
-                status: { name: ITEM_STATUSES.AVAILABLE },
+                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                 permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
                 materialType: { id: Cypress.env('materialTypes')[0].id },
                 itemLevelCallNumber: itemCallNumber,
@@ -213,7 +213,7 @@ export default {
                 barcode: 'secondBarcode_' + itemBarcode,
                 missingPieces: '3',
                 numberOfMissingPieces: '3',
-                status: { name: ITEM_STATUSES.AVAILABLE },
+                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                 permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
                 materialType: { id: Cypress.env('materialTypes')[0].id },
                 itemLevelCallNumber: itemCallNumber,

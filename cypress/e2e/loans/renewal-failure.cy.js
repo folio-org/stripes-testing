@@ -8,7 +8,7 @@ import permissions from '../../support/dictionary/permissions';
 import RenewalActions from '../../support/fragments/loans/renewals';
 import {
   CY_ENV,
-  ITEM_STATUSES,
+  ITEM_STATUS_NAMES,
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
 } from '../../support/constants';
@@ -113,7 +113,7 @@ describe('Renewal', () => {
           }],
           items: [[{
             barcode: itemData.barcode,
-            status: { name: ITEM_STATUSES.AVAILABLE },
+            status: { name: ITEM_STATUS_NAMES.AVAILABLE },
             permanentLoanType: { id: Cypress.env(CY_ENV.LOAN_TYPES)[0].id },
             materialType: { id: materialTypeId },
           }]],
@@ -172,7 +172,7 @@ describe('Renewal', () => {
       });
   });
 
-  it('C568 Renewal: failure because loan is not renewable (prokopovych)', { tags: [TestType.smoke, DevTeams.prokopovych] }, () => {
+  it('C568 Renewal: failure because loan is not renewable (vega)', { tags: [TestType.smoke, DevTeams.vega] }, () => {
     RenewalActions.renewWithoutOverrideAccess(loanId, renewUserData.id, itemData);
     cy.login(renewOverrideUserData.lastName, renewOverrideUserData.password);
     RenewalActions.renewWithOverrideAccess(

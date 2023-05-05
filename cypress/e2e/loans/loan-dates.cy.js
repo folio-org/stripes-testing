@@ -3,7 +3,7 @@ import TestTypes from '../../support/dictionary/testTypes';
 import DevTeams from '../../support/dictionary/devTeams';
 import getRandomPostfix from '../../support/utils/stringTools';
 import permissions from '../../support/dictionary/permissions';
-import { ITEM_STATUSES, REQUEST_TYPES } from '../../support/constants';
+import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
 import LoansPage from '../../support/fragments/loans/loansPage';
@@ -74,7 +74,7 @@ describe('loan dates', () => {
                   barcode: item.barcode,
                   missingPieces: '3',
                   numberOfMissingPieces: '3',
-                  status: { name: ITEM_STATUSES.AVAILABLE },
+                  status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                   permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
                   materialType: { id: Cypress.env('materialTypes')[0].id },
                 }],
@@ -113,7 +113,7 @@ describe('loan dates', () => {
     Users.deleteViaApi(checkOutUser.userId);
   });
 
-  it('C566 Loan: Change due date warnings and alerts (prokopovych)', { tags: [TestTypes.smoke, DevTeams.prokopovych] }, () => {
+  it('C566 Loan: Change due date warnings and alerts (volaris)', { tags: [TestTypes.smoke, DevTeams.volaris] }, () => {
     cy.visit(TopMenu.usersPath);
     // show open loans
     UsersSearchPane.searchByKeywords(checkOutUser.username);

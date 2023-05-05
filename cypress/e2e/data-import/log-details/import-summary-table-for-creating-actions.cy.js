@@ -5,7 +5,6 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -15,7 +14,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
-import { ITEM_STATUSES } from '../../../support/constants';
+import { LOCALION_NAMES, LOAN_TYPE_NAMES, ITEM_STATUS_NAMES, FOLIO_RECORD_TYPE } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let user;
@@ -34,25 +33,25 @@ describe('ui-data-import', () => {
 
   const collectionOfMappingAndActionProfiles = [
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         name: instanceMappingProfileName },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         name: instanceActionProfileName }
     },
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: holdingsMappingProfileName,
-        pernanentLocation: '"Online (E)"',
-        pernanentLocationUI:'Online' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
+        pernanentLocation: `"${LOCALION_NAMES.ONLINE}"`,
+        pernanentLocationUI: LOCALION_NAMES.ONLINE_UI },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: holdingsActionProfileName }
     },
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: itemMappingProfileName,
-        permanentLoanType: 'Can circulate',
-        status: ITEM_STATUSES.AVAILABLE },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
+        permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
+        status: ITEM_STATUS_NAMES.AVAILABLE },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: itemActionProfileName }
     }
   ];
@@ -129,8 +128,8 @@ describe('ui-data-import', () => {
 
       // upload a marc file for creating of the new instance, holding and item
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-      cy.reload();
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       DataImport.uploadFile('oneMarcBib.mrc', nameMarcFile);
       JobProfiles.searchJobProfileForImport(jobProfileName);
       JobProfiles.runImportFile();
@@ -150,10 +149,10 @@ describe('ui-data-import', () => {
       );
       cy.go('back');
 
-      [FileDetails.columnName.srsMarc,
-        FileDetails.columnName.instance,
-        FileDetails.columnName.holdings,
-        FileDetails.columnName.item
+      [FileDetails.columnNameInResultList.srsMarc,
+        FileDetails.columnNameInResultList.instance,
+        FileDetails.columnNameInResultList.holdings,
+        FileDetails.columnNameInResultList.item
       ].forEach(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
       });

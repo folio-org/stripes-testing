@@ -30,7 +30,7 @@ import NewFeeFine from '../../../../support/fragments/users/newFeeFine';
 import Renewals from '../../../../support/fragments/loans/renewals';
 import OverrideAndRenewModal from '../../../../support/fragments/users/loans/overrideAndRenewModal';
 import RenewConfirmationModal from '../../../../support/fragments/users/loans/renewConfirmationModal';
-import { ITEM_STATUSES } from '../../../../support/constants';
+import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 
 describe('Patron Block: Lost items', () => {
   let addedCirculationRule;
@@ -168,7 +168,7 @@ describe('Patron Block: Lost items', () => {
             items: [
               {
                 barcode: item.barcode,
-                status: { name: ITEM_STATUSES.AVAILABLE },
+                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                 permanentLoanType: { id: testData.loanTypeId },
                 materialType: { id: testData.materialTypeId },
               },

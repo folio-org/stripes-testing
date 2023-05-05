@@ -1,4 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -9,7 +10,6 @@ import NewFieldMappingProfile from '../../../support/fragments/data_import/mappi
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -20,30 +20,24 @@ describe('ui-data-import', () => {
   let instanceHrid;
   const quantityOfItems = '1';
   const marcFileForCreate = `C11103 autotestFile.${getRandomPostfix()}.mrc`;
-  const mappingProfileName = `C11103 autotest mapping profile.${getRandomPostfix()}`;
-  const actionProfileName = `C11103 autotest action profile.${getRandomPostfix()}`;
-  const jobProfileName = `C11103 autotest job profile.${getRandomPostfix()}`;
-
   const mappingProfile = {
-    name: mappingProfileName,
-    typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
+    name: `C11103 autotest mapping profile.${getRandomPostfix()}`,
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     actionForSuppress: 'Mark for all affected records',
     catalogedDate: '"2021-02-24"',
     catalogedDateUI: '2021-02-24',
-    instanceStatus: 'Batch Loaded',
+    instanceStatus: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
     statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
     statisticalCodeUI: 'Book, print (books)',
     natureOfContent: 'bibliography'
   };
-
   const actionProfile = {
-    typeValue: NewActionProfile.folioRecordTypeValue.instance,
-    name: actionProfileName,
+    typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+    name: `C11103 autotest action profile.${getRandomPostfix()}`,
     action: 'Create (all record types except MARC Authority or MARC Holdings)'
   };
-
   const jobProfile = {
-    profileName: jobProfileName,
+    profileName: `C11103 autotest job profile.${getRandomPostfix()}`,
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
@@ -53,9 +47,9 @@ describe('ui-data-import', () => {
   });
 
   after('delete test data', () => {
-    JobProfiles.deleteJobProfile(jobProfileName);
-    ActionProfiles.deleteActionProfile(actionProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
+    ActionProfiles.deleteActionProfile(actionProfile.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
       .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
@@ -74,8 +68,8 @@ describe('ui-data-import', () => {
     NewFieldMappingProfile.addStatisticalCode(mappingProfile.statisticalCode, 8);
     NewFieldMappingProfile.addNatureOfContentTerms(mappingProfile.natureOfContent);
     FieldMappingProfiles.saveProfile();
-    FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfileName);
-    FieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
+    FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+    FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
     // create action profile
     cy.visit(SettingsMenu.actionProfilePath);
@@ -85,22 +79,22 @@ describe('ui-data-import', () => {
     // create job profile
     cy.visit(SettingsMenu.jobProfilePath);
     JobProfiles.createJobProfile(jobProfile);
-    NewJobProfile.linkActionProfileByName(actionProfileName);
+    NewJobProfile.linkActionProfileByName(actionProfile.name);
     NewJobProfile.saveAndClose();
-    JobProfiles.checkJobProfilePresented(jobProfileName);
+    JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
     // upload a marc file for creating of the new instance
     cy.visit(TopMenu.dataImportPath);
-    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-    cy.reload();
+    // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.verifyUploadState();
     DataImport.uploadFile('oneMarcBib.mrc', marcFileForCreate);
-    JobProfiles.searchJobProfileForImport(jobProfileName);
+    JobProfiles.searchJobProfileForImport(jobProfile.profileName);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(marcFileForCreate);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(marcFileForCreate);
-    [FileDetails.columnName.srsMarc,
-      FileDetails.columnName.instance,
+    [FileDetails.columnNameInResultList.srsMarc,
+      FileDetails.columnNameInResultList.instance,
     ].forEach(columnName => {
       FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
     });

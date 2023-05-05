@@ -1,11 +1,17 @@
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import {
+  LOAN_TYPE_NAMES,
+  MATERIAL_TYPE_NAMES,
+  ITEM_STATUS_NAMES,
+  LOCALION_NAMES,
+  FOLIO_RECORD_TYPE
+} from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -22,7 +28,6 @@ import Users from '../../../support/fragments/users/users';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
 import FileManager from '../../../support/utils/fileManager';
-import { ITEM_STATUSES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let user;
@@ -30,38 +35,26 @@ describe('ui-data-import', () => {
   let exportedFileName;
   const quantityOfItems = '1';
   const fileName = `oneMarcBib.mrc${Helper.getRandomBarcode()}`;
-  const holdingsPermanentLocation = 'Annex (KU/CC/DI/A)';
-  const itemMaterialType = 'electronic resource';
-  const itemPermanentLoanType = 'Can circulate';
-  // unique profile names
-  const jobProfileName = `C368009 Testing SRS MARC bib ${Helper.getRandomBarcode()}`;
-  const matchProfileName = `C368009 001 to Instance HRID ${Helper.getRandomBarcode()}`;
-  const holdingsActionProfileName = `C368009 Testing holding for SRS MARC bib ${Helper.getRandomBarcode()}`;
-  const itemActionProfileName = `C368009 Testing holding for SRS MARC bib ${Helper.getRandomBarcode()}`;
-  const holdingsMappingProfileName = `C368009 Testing holding for SRS MARC bib ${Helper.getRandomBarcode()}`;
-  const itemMappingProfileName = `C368009 Testing item for SRS MARC bib ${Helper.getRandomBarcode()}`;
   const collectionOfMappingAndActionProfiles = [
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
-        name: itemMappingProfileName,
-        materialType: itemMaterialType,
-        permanentLoanType:itemPermanentLoanType,
-        status: ITEM_STATUSES.AVAILABLE },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
-        name: itemActionProfileName,
-        action: 'Create (all record types except MARC Authority or MARC Holdings)' }
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
+        name: `C368009 Testing item for SRS MARC bib ${Helper.getRandomBarcode()}`,
+        materialType: MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE,
+        permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
+        status: ITEM_STATUS_NAMES.AVAILABLE },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
+        name: `C368009 Testing holding for SRS MARC bib ${Helper.getRandomBarcode()}` }
     },
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
-        name: holdingsMappingProfileName,
-        permanentLocation: `"${holdingsPermanentLocation}"` },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
-        name: holdingsActionProfileName,
-        action: 'Create (all record types except MARC Authority or MARC Holdings)' }
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        name: `C368009 Testing holding for SRS MARC bib ${Helper.getRandomBarcode()}`,
+        permanentLocation: `"${LOCALION_NAMES.ANNEX}"` },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        name: `C368009 Testing holding for SRS MARC bib ${Helper.getRandomBarcode()}` }
     }
   ];
   const matchProfile = {
-    profileName: matchProfileName,
+    profileName: `C368009 001 to Instance HRID ${Helper.getRandomBarcode()}`,
     incomingRecordFields: {
       field: '001'
     },
@@ -70,7 +63,7 @@ describe('ui-data-import', () => {
     instanceOption: NewMatchProfile.optionsList.instanceHrid
   };
   const jobProfile = {
-    profileName: jobProfileName,
+    profileName: `C368009 Testing SRS MARC bib ${Helper.getRandomBarcode()}`,
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
@@ -101,12 +94,12 @@ describe('ui-data-import', () => {
 
   after('delete test data', () => {
     // delete generated profiles
-    JobProfiles.deleteJobProfile(jobProfileName);
-    MatchProfiles.deleteMatchProfile(matchProfileName);
-    ActionProfiles.deleteActionProfile(holdingsActionProfileName);
-    ActionProfiles.deleteActionProfile(itemActionProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileName);
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
+    MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+    collectionOfMappingAndActionProfiles.forEach(profile => {
+      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+    });
     Users.deleteViaApi(user.userId);
     // delete downloads folder and created files in fixtures
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
@@ -142,9 +135,9 @@ describe('ui-data-import', () => {
       // create mapping profiles
       cy.visit(SettingsMenu.mappingProfilePath);
       createItemMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
-      FieldMappingProfiles.checkMappingProfilePresented(itemMappingProfileName);
+      FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
       createHoldingsMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
-      FieldMappingProfiles.checkMappingProfilePresented(holdingsMappingProfileName);
+      FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[1].mappingProfile.name);
 
       // create action profiles
       collectionOfMappingAndActionProfiles.forEach(profile => {
@@ -156,16 +149,16 @@ describe('ui-data-import', () => {
       // create match profile
       cy.visit(SettingsMenu.matchProfilePath);
       MatchProfiles.createMatchProfile(matchProfile);
-      MatchProfiles.checkMatchProfilePresented(matchProfileName);
+      MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
 
       // create job profile
       cy.visit(SettingsMenu.jobProfilePath);
       JobProfiles.createJobProfile(jobProfile);
-      NewJobProfile.linkMatchProfile(matchProfileName);
-      NewJobProfile.linkActionProfileForMatches(holdingsActionProfileName);
-      NewJobProfile.linkActionProfileForMatches(itemActionProfileName);
+      NewJobProfile.linkMatchProfile(matchProfile.profileName);
+      NewJobProfile.linkActionProfileForMatches(collectionOfMappingAndActionProfiles[1].actionProfile.name);
+      NewJobProfile.linkActionProfileForMatches(collectionOfMappingAndActionProfiles[0].actionProfile.name);
       NewJobProfile.saveAndClose();
-      JobProfiles.checkJobProfilePresented(jobProfileName);
+      JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
       const selectedRecords = 1;
       cy.visit(TopMenu.inventoryPath);
@@ -184,16 +177,16 @@ describe('ui-data-import', () => {
           ExportFile.downloadExportedMarcFile(exportedFileName);
           // upload the exported marc file
           cy.visit(TopMenu.dataImportPath);
-          // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-          cy.reload();
+          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+          DataImport.verifyUploadState();
           DataImport.uploadExportedFile(exportedFileName);
-          JobProfiles.searchJobProfileForImport(jobProfileName);
+          JobProfiles.searchJobProfileForImport(jobProfile.profileName);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(exportedFileName);
           Logs.checkStatusOfJobProfile('Completed');
           Logs.openFileDetails(exportedFileName);
-          [FileDetails.columnName.holdings,
-            FileDetails.columnName.item].forEach(columnName => {
+          [FileDetails.columnNameInResultList.holdings,
+            FileDetails.columnNameInResultList.item].forEach(columnName => {
             FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
           });
           FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems, 0);
@@ -201,11 +194,11 @@ describe('ui-data-import', () => {
 
           // check created items
           FileDetails.openHoldingsInInventory('Created');
-          HoldingsRecordView.checkPermanentLocation('Annex');
+          HoldingsRecordView.checkPermanentLocation(LOCALION_NAMES.ANNEX_UI);
           cy.go('back');
           FileDetails.openItemInInventory('Created');
-          ItemRecordView.verifyMaterialType(itemMaterialType);
-          ItemRecordView.verifyPermanentLoanType(itemPermanentLoanType);
+          ItemRecordView.verifyMaterialType(MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE);
+          ItemRecordView.verifyPermanentLoanType(LOAN_TYPE_NAMES.CAN_CIRCULATE);
           ItemRecordView.verifyItemStatus(collectionOfMappingAndActionProfiles[0].mappingProfile.status);
         });
     });

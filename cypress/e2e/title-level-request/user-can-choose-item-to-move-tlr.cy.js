@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { FULFILMENT_PREFERENCES, ITEM_STATUSES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
+import { FULFILMENT_PREFERENCES, ITEM_STATUS_NAMES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
 import TestTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
@@ -59,19 +59,19 @@ describe('Title Level Request', () => {
         instanceData.itemsData = [
           {
             barcode: generateUniqueItemBarcodeWithShift(),
-            status: { name: ITEM_STATUSES.AVAILABLE },
+            status: { name: ITEM_STATUS_NAMES.AVAILABLE },
             permanentLoanType: { id: testData.loanTypeId },
             materialType: { id: testData.materialTypeId },
           },
           {
             barcode: generateUniqueItemBarcodeWithShift(),
-            status: { name: ITEM_STATUSES.AVAILABLE },
+            status: { name: ITEM_STATUS_NAMES.AVAILABLE },
             permanentLoanType: { id: testData.loanTypeId },
             materialType: { id: testData.materialTypeId },
           },
           {
             barcode: generateUniqueItemBarcodeWithShift(),
-            status: { name: ITEM_STATUSES.AVAILABLE },
+            status: { name: ITEM_STATUS_NAMES.AVAILABLE },
             permanentLoanType: { id: testData.loanTypeId },
             materialType: { id: testData.materialTypeId },
           },

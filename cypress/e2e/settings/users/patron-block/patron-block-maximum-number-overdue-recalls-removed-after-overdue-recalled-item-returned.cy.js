@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import moment from 'moment';
-import { FULFILMENT_PREFERENCES, ITEM_STATUSES, REQUEST_LEVELS, REQUEST_TYPES } from '../../../../support/constants';
+import { FULFILMENT_PREFERENCES, ITEM_STATUS_NAMES, REQUEST_LEVELS, REQUEST_TYPES } from '../../../../support/constants';
 import TestTypes from '../../../../support/dictionary/testTypes';
 import devTeams from '../../../../support/dictionary/devTeams';
 import permissions from '../../../../support/dictionary/permissions';
@@ -120,7 +120,7 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
             items: [
               {
                 barcode: item.barcode,
-                status: { name: ITEM_STATUSES.AVAILABLE },
+                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                 permanentLoanType: { id: testData.loanTypeId },
                 materialType: { id: testData.materialTypeId },
               },

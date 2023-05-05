@@ -12,7 +12,7 @@ import InventoryHoldings from '../../support/fragments/inventory/holdings/invent
 import devTeams from '../../support/dictionary/devTeams';
 import Users from '../../support/fragments/users/users';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import { ITEM_STATUSES } from '../../support/constants';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 let userId;
 const instanceTitle = `Inventory export test ${Number(new Date())}`;
@@ -57,7 +57,7 @@ describe('ui-inventory: exports', () => {
                   barcode: `testItem_${getRandomPostfix()}`,
                   missingPieces: '3',
                   numberOfMissingPieces: '3',
-                  status: { name: ITEM_STATUSES.AVAILABLE },
+                  status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                   permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
                   materialType: { id: Cypress.env('materialTypes')[0].id },
                 }],

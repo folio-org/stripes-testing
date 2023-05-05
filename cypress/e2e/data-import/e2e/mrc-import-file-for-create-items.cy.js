@@ -1,5 +1,14 @@
+import permissions from '../../../support/dictionary/permissions';
+import TestTypes from '../../../support/dictionary/testTypes';
+import DevTeams from '../../../support/dictionary/devTeams';
+import {
+  LOAN_TYPE_NAMES,
+  MATERIAL_TYPE_NAMES,
+  ITEM_STATUS_NAMES,
+  LOCALION_NAMES,
+  FOLIO_RECORD_TYPE
+} from '../../../support/constants';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -7,56 +16,42 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import TestTypes from '../../../support/dictionary/testTypes';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import TopMenu from '../../../support/fragments/topMenu';
-import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
-import DevTeams from '../../../support/dictionary/devTeams';
-import { ITEM_STATUSES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let user = {};
-
-  // unique file name to upload
   const fileName = `C343334autotestFile.${getRandomPostfix()}.mrc`;
-
-  // unique profile names
-  const jobProfileName = `autotestJobProf${getRandomPostfix()}`;
-  const actionProfileNameForInstance = `autotestActionInstance${getRandomPostfix()}`;
-  const actionProfileNameForHoldings = `autotestActionHoldings${getRandomPostfix()}`;
-  const actionProfileNameForItem = `autotestActionItem${getRandomPostfix()}`;
-  const mappingProfileNameForInstance = `autotestMappingInstance${getRandomPostfix()}`;
-  const mappingProfileNameForHoldings = `autotestMappingHoldings${getRandomPostfix()}`;
-  const mappingProfileNameForItem = `autotestMappingItem${getRandomPostfix()}`;
 
   const collectionOfProfiles = [
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance,
-        name: mappingProfileNameForInstance },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
-        name: actionProfileNameForInstance }
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+        name: `autotestMappingInstance${getRandomPostfix()}` },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+        name: `autotestActionInstance${getRandomPostfix()}` }
     },
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
-        name: mappingProfileNameForHoldings },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
-        name: actionProfileNameForHoldings }
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        name: `autotestMappingHoldings${getRandomPostfix()}`,
+        permanentLocation: `"${LOCALION_NAMES.ANNEX}"` },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        name: `autotestActionHoldings${getRandomPostfix()}` }
     },
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
-        name: mappingProfileNameForItem,
-        materialType:'book',
-        permanentLoanType:'Can circulate',
-        status:ITEM_STATUSES.AVAILABLE },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
-        name: actionProfileNameForItem }
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
+        name: `autotestMappingItem${getRandomPostfix()}`,
+        materialType: MATERIAL_TYPE_NAMES.BOOK,
+        permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
+        status: ITEM_STATUS_NAMES.AVAILABLE },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
+        name: `autotestActionItem${getRandomPostfix()}` }
     }
   ];
 
   const specialJobProfile = { ...NewJobProfile.defaultJobProfile,
-    profileName: jobProfileName,
+    profileName: `autotestJobProf${getRandomPostfix()}`,
     acceptedType: NewJobProfile.acceptedDataType.marc };
 
   before('login', () => {
@@ -82,7 +77,7 @@ describe('ui-data-import', () => {
   const createHoldingsMappingProfile = (holdingsMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
-    NewFieldMappingProfile.fillPermanentLocation('"Annex (KU/CC/DI/A)"');
+    NewFieldMappingProfile.fillPermanentLocation(holdingsMappingProfile.permanentLocation);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
   };
@@ -132,8 +127,8 @@ describe('ui-data-import', () => {
     JobProfiles.checkJobProfilePresented(specialJobProfile.profileName);
 
     cy.visit(TopMenu.dataImportPath);
-    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-    cy.reload();
+    // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.verifyUploadState();
     DataImport.uploadFile('oneMarcBib.mrc', fileName);
     JobProfiles.searchJobProfileForImport(specialJobProfile.profileName);
     JobProfiles.runImportFile();
@@ -142,10 +137,10 @@ describe('ui-data-import', () => {
     Logs.checkImportFile(specialJobProfile.profileName);
     Logs.openFileDetails(fileName);
 
-    [FileDetails.columnName.srsMarc,
-      FileDetails.columnName.instance,
-      FileDetails.columnName.holdings,
-      FileDetails.columnName.item].forEach(columnName => {
+    [FileDetails.columnNameInResultList.srsMarc,
+      FileDetails.columnNameInResultList.instance,
+      FileDetails.columnNameInResultList.holdings,
+      FileDetails.columnNameInResultList.item].forEach(columnName => {
       FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
     });
     FileDetails.checkItemsQuantityInSummaryTable(0, '1');

@@ -8,7 +8,7 @@ import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import permissions from '../../support/dictionary/permissions';
 import {
   CY_ENV,
-  ITEM_STATUSES,
+  ITEM_STATUS_NAMES,
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
 } from '../../support/constants';
@@ -107,13 +107,13 @@ describe('Renewal', () => {
           }],
           items: [[{
             barcode: itemData.barcode,
-            status: { name: ITEM_STATUSES.AVAILABLE },
+            status: { name: ITEM_STATUS_NAMES.AVAILABLE },
             permanentLoanType: { id: Cypress.env(CY_ENV.LOAN_TYPES)[0].id },
             materialType: { id: materialTypeId },
           },
           {
             barcode: secondItemBarcode,
-            status: { name: ITEM_STATUSES.AVAILABLE },
+            status: { name: ITEM_STATUS_NAMES.AVAILABLE },
             permanentLoanType: { id: Cypress.env(CY_ENV.LOAN_TYPES)[0].id },
             materialType: { id: materialTypeId },
           }]],
@@ -179,7 +179,7 @@ describe('Renewal', () => {
       });
   });
 
-  it('C567: Renewal: success, from open loans (multiple items) (prokopovych)', { tags: [TestType.smoke, DevTeams.prokopovych] }, () => {
+  it('C567: Renewal: success, from open loans (multiple items) (vega)', { tags: [TestType.smoke, DevTeams.vega] }, () => {
     cy.visit(TopMenu.usersPath);
     cy.intercept('GET', '/configurations/entries?*').as('getEntries');
     UsersSearchPane.searchByKeywords(userName);

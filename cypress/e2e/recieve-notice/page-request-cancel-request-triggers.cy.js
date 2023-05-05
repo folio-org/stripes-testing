@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { ITEM_STATUSES, REQUEST_TYPES } from '../../support/constants';
+import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import TestTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
@@ -114,7 +114,7 @@ describe('Request notice triggers', () => {
           items: [
             {
               barcode: itemData.barcode,
-              status: { name: ITEM_STATUSES.AVAILABLE },
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
               permanentLoanType: { id: testData.loanTypeId },
               materialType: { id: testData.materialTypeId },
             },
@@ -185,8 +185,8 @@ describe('Request notice triggers', () => {
   });
 
   it(
-    'C347866 Page request + Cancel request triggers (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    'C347866 Page request + Cancel request triggers (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.pageRequest);
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.pageRequest);
@@ -233,7 +233,7 @@ describe('Request notice triggers', () => {
       NewRequest.waitLoadingNewRequestPage();
       NewRequest.enterItemInfo(itemData.barcode);
       NewRequest.verifyItemInformation([itemData.barcode, itemData.title]);
-      NewRequest.verifyRequestInformation(ITEM_STATUSES.AVAILABLE);
+      NewRequest.verifyRequestInformation(ITEM_STATUS_NAMES.AVAILABLE);
       NewRequest.enterRequesterInfo({
         requesterBarcode: userData.barcode,
         pickupServicePoint: testData.userServicePoint.name,

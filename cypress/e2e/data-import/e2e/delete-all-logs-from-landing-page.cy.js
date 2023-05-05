@@ -19,6 +19,7 @@ describe('ui-data-import', () => {
   const numberOfLogsPerPage = 25;
   const numberOfLogsToUpload = 30;
   const getCalloutSuccessMessage = logsCount => `${logsCount} data import logs have been successfully deleted.`;
+  const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
 
   before('create test data', () => {
     cy.createTempUser([
@@ -27,10 +28,8 @@ describe('ui-data-import', () => {
     ])
       .then(userProperties => {
         userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading
-        });
+        cy.login(userProperties.username, userProperties.password,
+          { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
       })
       .then(() => {
         DataImport.checkIsLandingPageOpened();
@@ -40,14 +39,14 @@ describe('ui-data-import', () => {
           // we are uploading 29 empty files and 1 file with content to speed up uploading process
           const filePath = numberOfLogsToUpload - 1 === index ? filePathToUpload : emptyFilePathToUpload;
           fileNameToUpload = `C358137autotestFile.${getRandomPostfix()}.mrc`;
-          // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-          cy.reload();
+          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+          DataImport.verifyUploadState();
+          DataImport.waitLoading();
           DataImport.uploadFile(filePath, fileNameToUpload);
-          // need to wait until file will be uploaded in loop
-          cy.wait(8000);
-          JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+          JobProfiles.searchJobProfileForImport(jobProfileToRun);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(fileNameToUpload);
+          cy.wait(10000);
         });
       });
   });

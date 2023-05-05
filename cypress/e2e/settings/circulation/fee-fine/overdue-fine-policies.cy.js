@@ -24,7 +24,7 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
 import NewFeeFine from '../../../../support/fragments/users/newFeeFine';
 import OtherSettings from '../../../../support/fragments/settings/circulation/otherSettings';
-import { ITEM_STATUSES } from '../../../../support/constants';
+import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 
 // TO DO remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => {
@@ -131,7 +131,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
         }],
         items: [{
           barcode: instanceData.itemBarcode,
-          status: { name: ITEM_STATUSES.AVAILABLE },
+          status: { name: ITEM_STATUS_NAMES.AVAILABLE },
           permanentLoanType: { id: testData.loanTypeId },
           materialType: { id: testData.materialTypeId },
         }],
@@ -203,10 +203,13 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
     cy.deleteLoanType(testData.loanTypeId);
   });
 
-  it('C5557: Verify that you can create/edit/delete overdue fine policies (spitfire)', { tags: [devTeams.spitfire, testTypes.smoke] }, () => {
-    cy.loginAsAdmin();
-    // TODO add check that name is unique
-    cy.visit(SettingsMenu.circulationoVerdueFinePoliciesPath);
+  it(
+    'C5557: Verify that you can create/edit/delete overdue fine policies (vega)',
+    { tags: [devTeams.vega, testTypes.smoke] },
+    () => {
+      cy.loginAsAdmin();
+      // TODO add check that name is unique
+      cy.visit(SettingsMenu.circulationoVerdueFinePoliciesPath);
 
     const overduePolicyProps = ['1.00', '2.00', '3.00', '4.00'];
     const editedOverduePolicyProps = ['5.00', '6.00', '7.00', '8.00'];

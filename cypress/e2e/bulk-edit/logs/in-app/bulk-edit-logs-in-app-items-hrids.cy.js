@@ -15,7 +15,7 @@ import Location from '../../../../support/fragments/settings/tenant/locations/ne
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../../support/fragments/inventory/itemRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import { ITEM_STATUSES } from '../../../../support/constants';
+import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 
 let user;
 const itemHRIDsFileName = `validItemHRIDs_${getRandomPostfix()}.csv`;
@@ -95,7 +95,7 @@ describe('Bulk Edit - Logs', () => {
               items: [
                 {
                   barcode: item1.barcode,
-                  status: { name: ITEM_STATUSES.AVAILABLE },
+                  status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                   permanentLoanType: { id: instance.loanTypeId },
                   materialType: { id: instance.materialTypeId },
                 },

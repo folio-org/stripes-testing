@@ -7,7 +7,7 @@ import {
   Button,
   TextArea,
 } from '../../../../../interactors';
-import { ITEM_STATUSES } from '../../../constants';
+import { ITEM_STATUS_NAMES } from '../../../constants';
 
 const LOANS_HISTORY_LIST_ID = 'list-loanshistory';
 const DECLARE_LOST_MODAL_TITLE = 'Confirm item status: Declared lost';
@@ -37,10 +37,10 @@ export default {
     });
   },
   checkStatusCheckedOut(row) {
-    this.checkStatus(row, ITEM_STATUSES.CHECKED_OUT);
+    this.checkStatus(row, ITEM_STATUS_NAMES.CHECKED_OUT);
   },
   checkStatusDeclaredLost(row) {
-    this.checkStatus(row, ITEM_STATUSES.DECLARED_LOST);
+    this.checkStatus(row, ITEM_STATUS_NAMES.DECLARED_LOST);
   },
   startDeclareLost(row) {
     cy.then(() => MultiColumnListHeader({ id: 'list-column-10' }).index()).then((columnIndex) => {

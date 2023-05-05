@@ -1,5 +1,11 @@
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { LOAN_TYPE_NAMES,
+  MATERIAL_TYPE_NAMES,
+  ITEM_STATUS_NAMES,
+  LOCALION_NAMES,
+  FOLIO_RECORD_TYPE,
+  INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
 import DateTools from '../../../support/utils/dateTools';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
@@ -17,7 +23,6 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import FileManager from '../../../support/utils/fileManager';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
@@ -25,47 +30,24 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
-import { ITEM_STATUSES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let instanceHrid;
   const recordType = 'MARC_BIBLIOGRAPHIC';
   const holdingsPermanentLocation = 'Annex';
-  const itemStatus = ITEM_STATUSES.AVAILABLE;
+  const itemStatus = ITEM_STATUS_NAMES.AVAILABLE;
   const quantityOfItems = '1';
   const instanceTitle = 'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)';
   // file names
   const nameMarcFileForImportCreate = `C356802autotestFile.${Helper.getRandomBarcode()}.mrc`;
   const nameForCSVFile = `C356802autotestFile${Helper.getRandomBarcode()}.csv`;
   const nameMarcFileForImportUpdate = `C356802autotestFile${Helper.getRandomBarcode()}.mrc`;
-  // unique profile names
-  const marcBibMappingProfileNameForCreate = `C356802 create marcBib mapping profile ${Helper.getRandomBarcode()}`;
-  const instanceMappingProfileNameForCreate = `C356802 create instance mapping profile ${Helper.getRandomBarcode()}`;
-  const holdingsMappingProfileNameForCreate = `C356802 create holdings mapping profile ${Helper.getRandomBarcode()}`;
-  const itemMappingProfileNameForCreate = `C356802 create item mapping profile ${Helper.getRandomBarcode()}`;
-  const marcBibActionProfileNameForCreate = `C356802 create marcBib action profile ${Helper.getRandomBarcode()}`;
-  const instanceActionProfileNameForCreate = `C356802 create instance action profile ${Helper.getRandomBarcode()}`;
-  const holdingsActionProfileNameForCreate = `C356802 create holdings action profile ${Helper.getRandomBarcode()}`;
-  const itemActionProfileNameForCreate = `C356802 create item action profile ${Helper.getRandomBarcode()}`;
-  const jobProfileNameForCreate = `C356802 create job profile ${Helper.getRandomBarcode()}`;
-  const mappingProfileNameForExport = `C356802 mapping profile ${Helper.getRandomBarcode()}`;
   const jobProfileNameForExport = `C356802 job profile.${Helper.getRandomBarcode()}`;
-  const instanceMappingProfileNameForUpdate = `C356802 update instance mapping profile ${Helper.getRandomBarcode()}`;
-  const holdingsMappingProfileNameForUpdate = `C356802 update holdings mapping profile ${Helper.getRandomBarcode()}`;
-  const itemMappingProfileNameForUpdate = `C356802 update item mapping profile ${Helper.getRandomBarcode()}`;
-  const instanceActionProfileNameForUpdate = `C356802 update instance action profile ${Helper.getRandomBarcode()}`;
-  const holdingsActionProfileNameForUpdate = `C356802 update holdings action profile ${Helper.getRandomBarcode()}`;
-  const itemActionProfileNameForUpdate = `C356802 update item action profile ${Helper.getRandomBarcode()}`;
-  const matchProfileNameForInstance = `C356802 MARC-to-MARC 001 to 001 match profile ${Helper.getRandomBarcode()}`;
-  const matchProfileNameForHoldings = `C356802 MARC-to-Holdings 901h to Holdings HRID match profile ${Helper.getRandomBarcode()}`;
-  const matchProfileNameForItem = `C356802 MARC-to-Item 902i to Item HRID match profile ${Helper.getRandomBarcode()}`;
-  const jobProfileNameForUpdate = `C356802 update job profile ${Helper.getRandomBarcode()}`;
-
   // profiles for creating instance, holdings, item
   const marcBibMappingProfileForCreate = {
     profile:{
       id: '',
-      name: marcBibMappingProfileNameForCreate,
+      name: `C356802 create marcBib mapping profile ${Helper.getRandomBarcode()}`,
       incomingRecordType: recordType,
       existingRecordType: recordType,
       mappingDetails: { name: 'holdings',
@@ -90,7 +72,7 @@ describe('ui-data-import', () => {
   const instanceMappingProfileForCreate = {
     profile:{
       id: '',
-      name: instanceMappingProfileNameForCreate,
+      name: `C356802 create instance mapping profile ${Helper.getRandomBarcode()}`,
       incomingRecordType: recordType,
       existingRecordType: 'INSTANCE',
     }
@@ -98,7 +80,7 @@ describe('ui-data-import', () => {
   const holdingsMappingProfileForCreate = {
     profile:{
       id: '',
-      name: holdingsMappingProfileNameForCreate,
+      name: `C356802 create holdings mapping profile ${Helper.getRandomBarcode()}`,
       incomingRecordType: recordType,
       existingRecordType: 'HOLDINGS',
       mappingDetails: { name: 'holdings',
@@ -113,7 +95,7 @@ describe('ui-data-import', () => {
   const itemMappingProfileForCreate = {
     profile:{
       id: '',
-      name: itemMappingProfileNameForCreate,
+      name: `C356802 create item mapping profile ${Helper.getRandomBarcode()}`,
       incomingRecordType: recordType,
       existingRecordType: 'ITEM',
       mappingDetails: { name: 'item',
@@ -138,7 +120,7 @@ describe('ui-data-import', () => {
   const marcBibActionProfileForCreate = {
     profile: {
       id: '',
-      name: marcBibActionProfileNameForCreate,
+      name: `C356802 create marcBib action profile ${Helper.getRandomBarcode()}`,
       action: 'MODIFY',
       folioRecord: recordType
     },
@@ -154,7 +136,7 @@ describe('ui-data-import', () => {
   const instanceActionProfileForCreate = {
     profile: {
       id: '',
-      name: instanceActionProfileNameForCreate,
+      name: `C356802 create instance action profile ${Helper.getRandomBarcode()}`,
       action: 'CREATE',
       folioRecord: 'INSTANCE'
     },
@@ -171,7 +153,7 @@ describe('ui-data-import', () => {
   const holdingsActionProfileForCreate = {
     profile: {
       id: '',
-      name: holdingsActionProfileNameForCreate,
+      name: `C356802 create holdings action profile ${Helper.getRandomBarcode()}`,
       action: 'CREATE',
       folioRecord: 'HOLDINGS'
     },
@@ -188,7 +170,7 @@ describe('ui-data-import', () => {
   const itemActionProfileForCreate = {
     profile: {
       id: '',
-      name: itemActionProfileNameForCreate,
+      name: `C356802 create item action profile ${Helper.getRandomBarcode()}`,
       action: 'CREATE',
       folioRecord: 'ITEM'
     },
@@ -204,7 +186,7 @@ describe('ui-data-import', () => {
   };
   const jobProfileForCreate = {
     profile: {
-      name: jobProfileNameForCreate,
+      name: `C356802 create job profile ${Helper.getRandomBarcode()}`,
       dataType: 'MARC'
     },
     addedRelations: [],
@@ -223,7 +205,7 @@ describe('ui-data-import', () => {
   ];
   // create Field mapping profile for export
   const exportMappingProfile = {
-    name: mappingProfileNameForExport,
+    name: `C356802 mapping profile ${Helper.getRandomBarcode()}`,
     holdingsMarcField: '901',
     subfieldForHoldings:'$h',
     itemMarcField:'902',
@@ -232,49 +214,49 @@ describe('ui-data-import', () => {
   // profiles for updating instance, holdings, item
   const collectionOfMappingAndActionProfiles = [
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance,
-        name: instanceMappingProfileNameForUpdate,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+        name: `C356802 update instance mapping profile ${Helper.getRandomBarcode()}`,
         catalogedDate: '###TODAY###',
         catalogedDateUi: DateTools.getFormattedDate({ date: new Date() }),
-        instanceStatus: 'Batch Loaded',
+        instanceStatus: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
         statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
         statisticalCodeUI: 'Book, print (books)' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
-        name: instanceActionProfileNameForUpdate,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+        name: `C356802 update instance action profile ${Helper.getRandomBarcode()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
-      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
-        name: holdingsMappingProfileNameForUpdate,
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        name: `C356802 update holdings mapping profile ${Helper.getRandomBarcode()}`,
         holdingsType: 'Electronic',
-        permanentLocation: '"Online (E)"',
-        permanentLocationUI: 'Online',
+        permanentLocation: `"${LOCALION_NAMES.ONLINE}"`,
+        permanentLocationUI: LOCALION_NAMES.ONLINE_UI,
         callNumberType: 'Library of Congress classification',
         callNumber: '050$a " " 050$b',
         relationship: 'Resource',
         uri: '856$u' },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
-        name: holdingsActionProfileNameForUpdate,
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        name: `C356802 update holdings action profile ${Helper.getRandomBarcode()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
-      mappingProfile: { typeValue : NewFieldMappingProfile.folioRecordTypeValue.item,
-        name: itemMappingProfileNameForUpdate,
-        materialType: 'electronic resource',
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
+        name: `C356802 update item mapping profile ${Helper.getRandomBarcode()}`,
+        materialType: MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE,
         noteType: '"Electronic bookplate"',
         note: '"Smith Family Foundation"',
         noteUI: 'Smith Family Foundation',
         staffOnly: 'Mark for all affected records',
-        permanentLoanType: 'Can circulate',
-        status: ITEM_STATUSES.AVAILABLE },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
-        name: itemActionProfileNameForUpdate,
+        permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
+        status: ITEM_STATUS_NAMES.AVAILABLE },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
+        name: `C356802 update item action profile ${Helper.getRandomBarcode()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     }
   ];
   const collectionOfMatchProfiles = [
     {
-      matchProfile: { profileName: matchProfileNameForInstance,
+      matchProfile: { profileName: `C356802 MARC-to-MARC 001 to 001 match profile ${Helper.getRandomBarcode()}`,
         incomingRecordFields: {
           field: '001'
         },
@@ -285,7 +267,7 @@ describe('ui-data-import', () => {
         existingRecordType: 'MARC_BIBLIOGRAPHIC' }
     },
     {
-      matchProfile: { profileName: matchProfileNameForHoldings,
+      matchProfile: { profileName: `C356802 MARC-to-Holdings 901h to Holdings HRID match profile ${Helper.getRandomBarcode()}`,
         incomingRecordFields: {
           field: '901',
           subfield: 'h'
@@ -296,7 +278,7 @@ describe('ui-data-import', () => {
     },
     {
       matchProfile: {
-        profileName: matchProfileNameForItem,
+        profileName: `C356802 MARC-to-Item 902i to Item HRID match profile ${Helper.getRandomBarcode()}`,
         incomingRecordFields: {
           field: '902',
           subfield: 'i'
@@ -309,7 +291,7 @@ describe('ui-data-import', () => {
   ];
   const jobProfileForUpdate = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: jobProfileNameForUpdate,
+    profileName: `C356802 update job profile ${Helper.getRandomBarcode()}`,
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
@@ -322,19 +304,19 @@ describe('ui-data-import', () => {
     // delete created files in fixtures
     FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
     FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
-    JobProfiles.deleteJobProfile(jobProfileNameForCreate);
-    JobProfiles.deleteJobProfile(jobProfileNameForUpdate);
+    JobProfiles.deleteJobProfile(jobProfileForCreate.profile.name);
+    JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
     collectionOfMatchProfiles.forEach(profile => {
       MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
     });
-    ActionProfiles.deleteActionProfile(marcBibActionProfileNameForCreate);
-    ActionProfiles.deleteActionProfile(instanceActionProfileNameForCreate);
-    ActionProfiles.deleteActionProfile(holdingsActionProfileNameForCreate);
-    ActionProfiles.deleteActionProfile(itemActionProfileNameForCreate);
-    FieldMappingProfiles.deleteFieldMappingProfile(marcBibMappingProfileNameForCreate);
-    FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileNameForCreate);
-    FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileNameForCreate);
-    FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileNameForCreate);
+    ActionProfiles.deleteActionProfile(marcBibActionProfileForCreate.profile.name);
+    ActionProfiles.deleteActionProfile(instanceActionProfileForCreate.profile.name);
+    ActionProfiles.deleteActionProfile(holdingsActionProfileForCreate.profile.name);
+    ActionProfiles.deleteActionProfile(itemActionProfileForCreate.profile.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(marcBibMappingProfileForCreate.profile.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileForCreate.profile.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileForCreate.profile.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileForCreate.profile.name);
     collectionOfMappingAndActionProfiles.forEach(profile => {
       ActionProfiles.deleteActionProfile(profile.actionProfile.name);
       FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
@@ -362,10 +344,10 @@ describe('ui-data-import', () => {
           testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
         });
 
-      cy.visit(TopMenu.dataImportPath);
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-      cy.reload();
       // upload a marc file for creating of the new instance, holding and item
+      cy.visit(TopMenu.dataImportPath);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);
       JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
       JobProfiles.runImportFile();
@@ -385,7 +367,7 @@ describe('ui-data-import', () => {
         ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
 
         cy.visit(SettingsMenu.exportJobProfilePath);
-        ExportJobProfiles.createJobProfile(jobProfileNameForExport, mappingProfileNameForExport);
+        ExportJobProfiles.createJobProfile(jobProfileNameForExport, exportMappingProfile.name);
 
         // download .csv file
         cy.visit(TopMenu.inventoryPath);
@@ -409,7 +391,7 @@ describe('ui-data-import', () => {
       NewFieldMappingProfile.fillInstanceStatusTerm(collectionOfMappingAndActionProfiles[0].mappingProfile.instanceStatus);
       NewFieldMappingProfile.addStatisticalCode(collectionOfMappingAndActionProfiles[0].mappingProfile.statisticalCode, 8);
       FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfileNameForUpdate);
+      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
 
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
@@ -419,7 +401,7 @@ describe('ui-data-import', () => {
       NewFieldMappingProfile.fillCallNumber(collectionOfMappingAndActionProfiles[1].mappingProfile.callNumber);
       NewFieldMappingProfile.addElectronicAccess(collectionOfMappingAndActionProfiles[1].mappingProfile.relationship, collectionOfMappingAndActionProfiles[1].mappingProfile.uri);
       FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfileNameForUpdate);
+      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile.name);
 
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile);
@@ -432,7 +414,7 @@ describe('ui-data-import', () => {
       NewFieldMappingProfile.fillPermanentLoanType(collectionOfMappingAndActionProfiles[2].mappingProfile.permanentLoanType);
       NewFieldMappingProfile.fillStatus(collectionOfMappingAndActionProfiles[2].mappingProfile.status);
       FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfileNameForUpdate);
+      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile.name);
 
       // create action profiles
       collectionOfMappingAndActionProfiles.forEach(profile => {
@@ -451,25 +433,25 @@ describe('ui-data-import', () => {
       // create job profile
       cy.visit(SettingsMenu.jobProfilePath);
       JobProfiles.createJobProfileWithLinkingProfilesForUpdate(jobProfileForUpdate);
-      NewJobProfile.linkMatchAndActionProfilesForInstance(instanceActionProfileNameForUpdate, matchProfileNameForInstance, 0);
-      NewJobProfile.linkMatchAndActionProfilesForHoldings(holdingsActionProfileNameForUpdate, matchProfileNameForHoldings, 2);
-      NewJobProfile.linkMatchAndActionProfilesForItem(itemActionProfileNameForUpdate, matchProfileNameForItem, 4);
+      NewJobProfile.linkMatchAndActionProfilesForInstance(collectionOfMappingAndActionProfiles[0].actionProfile.name, collectionOfMatchProfiles[0].matchProfile.profileName, 0);
+      NewJobProfile.linkMatchAndActionProfilesForHoldings(collectionOfMappingAndActionProfiles[1].actionProfile.name, collectionOfMatchProfiles[1].matchProfile.profileName, 2);
+      NewJobProfile.linkMatchAndActionProfilesForItem(collectionOfMappingAndActionProfiles[2].actionProfile.name, collectionOfMatchProfiles[2].matchProfile.profileName, 4);
       NewJobProfile.saveAndClose();
 
       // upload the exported marc file
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-      cy.reload();
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       DataImport.uploadExportedFile(nameMarcFileForImportUpdate);
       JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(nameMarcFileForImportUpdate);
       Logs.openFileDetails(nameMarcFileForImportUpdate);
 
-      [FileDetails.columnName.srsMarc,
-        FileDetails.columnName.instance,
-        FileDetails.columnName.holdings,
-        FileDetails.columnName.item].forEach(columnName => {
+      [FileDetails.columnNameInResultList.srsMarc,
+        FileDetails.columnNameInResultList.instance,
+        FileDetails.columnNameInResultList.holdings,
+        FileDetails.columnNameInResultList.item].forEach(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
       });
       // check Created counter in the Summary table
