@@ -16,6 +16,7 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import DefaultUser from '../../support/fragments/users/userDefaultObjects/defaultUser';
 import Checkout from '../../support/fragments/checkout/checkout';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('Check Out - Actions ', () => {
   const userData = {
@@ -67,7 +68,7 @@ describe('Check Out - Actions ', () => {
           items: [
             {
               barcode: itemData.barcode,
-              status: { name: 'Available' },
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
               permanentLoanType: { id: itemData.loanTypeId },
               materialType: { id: itemData.materialTypeId },
             },
