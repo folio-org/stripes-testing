@@ -1,7 +1,7 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE, ITEM_STATUS_NAMES } from '../../../support/constants';
 import SettingsJobProfiles from '../../../support/fragments/settings/dataImport/settingsJobProfiles';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -28,7 +28,7 @@ describe('ui-data-import', () => {
     instanceTitle: 'Love enough / Dionne Brand.',
     instanceSubject: '35678123678',
     holdingsLocation: 'Main Library >',
-    itemStatus: 'Available'
+    itemStatus: ITEM_STATUS_NAMES.AVAILABLE
   };
   const permanentLocation = 'Main Library (KU/CC/DI/M)';
   const recordType = 'MARC_BIBLIOGRAPHIC';

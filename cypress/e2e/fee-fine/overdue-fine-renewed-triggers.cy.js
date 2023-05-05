@@ -34,6 +34,7 @@ import OtherSettings from '../../support/fragments/settings/circulation/otherSet
 import UserLoans from '../../support/fragments/users/loans/userLoans';
 import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 
 describe('Overdue fine', () => {
@@ -205,7 +206,7 @@ describe('Overdue fine', () => {
           items: [
             {
               barcode: itemData.barcode,
-              status: { name: 'Available' },
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
               permanentLoanType: { id: testData.loanTypeId },
               materialType: { id: testData.materialTypeId },
             },
