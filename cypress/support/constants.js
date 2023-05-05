@@ -1,9 +1,3 @@
-// export const ITEM_STATUS_NAMES = {
-//   CHECKED_OUT: 'Checked out',
-//   DECLARED_LOST: 'Declared lost',
-//   AVAILABLE: 'Available',
-// };
-
 export const REQUEST_METHOD = {
   DELETE: 'DELETE',
   GET: 'GET',
