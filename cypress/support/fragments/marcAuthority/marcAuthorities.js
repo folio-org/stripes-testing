@@ -290,7 +290,7 @@ export default {
     ]);
   },
 
-  checkRecordAbsence(absenceMessage) {
+  checkNoResultsMessage(absenceMessage) {
     cy.expect(rootSection.find(HTML(including(absenceMessage))).exists());
   },
 
@@ -354,5 +354,9 @@ export default {
     records.forEach(record => {
       cy.expect(MultiColumnListCell(record).exists());
     });
+  },
+
+  checkSearchOption(searchOption) {
+    cy.expect(browseSearchAndFilterInput.has({ value: searchOption }));
   },
 };

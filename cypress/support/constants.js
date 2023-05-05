@@ -85,6 +85,22 @@ export const LOAN_PROFILE = {
   ROLLING: 'Rolling',
 };
 
+export const FULFILMENT_PREFERENCES = {
+  HOLD_SHELF: 'Hold Shelf',
+  DELIVERY: 'Delivery'
+};
+
+export const REQUEST_LEVELS = {
+  ITEM: 'Item',
+  TITLE: 'Title',
+};
+
+export const REQUEST_TYPES = {
+  PAGE: 'Page',
+  HOLD: 'Hold',
+  RECALL: 'Recall',
+};
+
 export const FOLIO_RECORD_TYPE = {
   INSTANCE:'Instance',
   HOLDINGS:'Holdings',

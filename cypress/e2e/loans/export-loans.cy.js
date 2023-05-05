@@ -17,6 +17,7 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 
 import Users from '../../support/fragments/users/users';
 import Checkout from '../../support/fragments/checkout/checkout';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('Export Loans ', () => {
   const testData = {};
@@ -60,7 +61,7 @@ describe('Export Loans ', () => {
         }],
         items:[{
           barcode: item.barcode,
-          status:  { name: 'Available' },
+          status:  { name: ITEM_STATUS_NAMES.AVAILABLE },
           permanentLoanType: { id: testData.loanTypeId },
           materialType: { id: testData.materialTypeId },
         }] })

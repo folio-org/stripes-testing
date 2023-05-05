@@ -2,6 +2,7 @@ import uuid from 'uuid';
 import testTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
+import { FULFILMENT_PREFERENCES, ITEM_STATUS_NAMES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
@@ -35,7 +36,7 @@ describe('Title Level Request. Request Detail', () => {
     itemBarcode: generateItemBarcode(),
   };
   const requestPolicyBody = {
-    requestTypes: ['Page', 'Hold'],
+    requestTypes: [REQUEST_TYPES.PAGE, REQUEST_TYPES.HOLD],
     name: `requestPolicy${getRandomPostfix()}`,
     id: uuid(),
   };
@@ -79,7 +80,7 @@ describe('Title Level Request. Request Detail', () => {
           items: [
             {
               barcode: testData.itemBarcode,
-              status: { name: 'Available' },
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
               permanentLoanType: { id: testData.loanTypeId },
               materialType: { id: testData.materialTypeId },
             },
@@ -135,26 +136,26 @@ describe('Title Level Request. Request Detail', () => {
         }
       );
       Requests.createNewRequestViaApi({
-        fulfilmentPreference: 'Hold Shelf',
+        fulfilmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
         holdingsRecordId: testData.holdingTypeId,
         instanceId: instanceData.instanceId,
         item: { barcode: testData.itemBarcode },
         itemId: instanceData.itemId[0],
         pickupServicePointId: testData.userServicePoint.id,
         requestDate: new Date(),
-        requestLevel: 'Item',
-        requestType: 'Page',
+        requestLevel: REQUEST_LEVELS.ITEM,
+        requestType: REQUEST_TYPES.PAGE,
         requesterId: userData.userId,
       }).then((request) => {
         requestIds.push(request.body.id);
       });
       Requests.createNewRequestViaApi({
-        fulfilmentPreference: 'Hold Shelf',
+        fulfilmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
         instanceId: instanceData.instanceId,
         pickupServicePointId: testData.userServicePoint.id,
         requestDate: new Date(),
-        requestLevel: 'Title',
-        requestType: 'Hold',
+        requestLevel: REQUEST_LEVELS.TITLE,
+        requestType: REQUEST_TYPES.HOLD,
         requesterId: userForTLR.userId,
       }).then((request) => {
         requestIds.push(request.body.id);
@@ -212,16 +213,16 @@ describe('Title Level Request. Request Detail', () => {
       });
 
       RequestDetail.checkRequesInformation({
-        type: 'Page',
+        type: REQUEST_TYPES.PAGE,
         status: 'Open',
-        level: 'Item',
+        level: REQUEST_LEVELS.ITEM,
       });
 
       RequestDetail.checkRequesterInformation({
         lastName: userData.lastName,
         barcode: userData.barcode,
         group: patronGroup.name,
-        preference: 'Hold Shelf',
+        preference: FULFILMENT_PREFERENCES.HOLD_SHELF,
         pickupSP: testData.userServicePoint.name,
       });
     }

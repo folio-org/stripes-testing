@@ -5,6 +5,7 @@ import {
   Modal,
   Pane,
 } from '../../../interactors';
+import { FULFILMENT_PREFERENCES, ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import EditRequest from '../../support/fragments/requests/edit-request';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
@@ -92,8 +93,8 @@ describe('Deleting user', () => {
       .getItems({ limit: 1, query: 'status.name=="Available"' })
       .then(() => {
         cy.createItemRequestApi({
-          requestType: 'Page',
-          fulfilmentPreference: 'Hold Shelf',
+          requestType: REQUEST_TYPES.PAGE,
+          fulfilmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
           itemId: Cypress.env('items')[0].id,
           requesterId: specialUserId,
           pickupServicePointId: servicePoint.id,
@@ -143,7 +144,7 @@ describe('Deleting user', () => {
               barcode: ITEM_BARCODE,
               missingPieces: '3',
               numberOfMissingPieces: '3',
-              status: { name: 'Available' },
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
               permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
               materialType: { id: Cypress.env('materialTypes')[0].id },
             }],

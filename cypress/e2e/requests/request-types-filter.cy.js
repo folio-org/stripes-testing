@@ -3,6 +3,7 @@ import TestTypes from '../../support/dictionary/testTypes';
 import Requests from '../../support/fragments/requests/requests';
 import TopMenu from '../../support/fragments/topMenu';
 import { Pane } from '../../../interactors';
+import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import Users from '../../support/fragments/users/users';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import DevTeams from '../../support/dictionary/devTeams';
@@ -25,7 +26,7 @@ describe('ui-requests: Make sure that request type filters are working properly'
     });
 
     Object.values(Requests.requestTypes).forEach(requestType => {
-      const itemStatus = requestType === 'Page' ? 'Available' : 'Checked out';
+      const itemStatus = requestType === REQUEST_TYPES.PAGE ? ITEM_STATUS_NAMES.AVAILABLE : ITEM_STATUS_NAMES.CHECKED_OUT;
       Requests
         .createRequestApi(itemStatus, requestType)
         .then(({ instanceRecordData, createdRequest, createdUser }) => {
