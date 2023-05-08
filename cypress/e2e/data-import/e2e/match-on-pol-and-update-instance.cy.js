@@ -255,7 +255,7 @@ describe('ui-data-import', () => {
       JobProfiles.waitFileIsImported(marcFileName);
       Logs.checkStatusOfJobProfile();
       Logs.openFileDetails(marcFileName);
-      FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.created, FileDetails.status.created]);
+      FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.created, FileDetails.status.created]);
       FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.noAction]);
 
       FileDetails.openInstanceInInventory('Updated');
