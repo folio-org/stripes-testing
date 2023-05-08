@@ -1,0 +1,170 @@
+import getRandomPostfix from '../../../support/utils/stringTools';
+import permissions from '../../../support/dictionary/permissions';
+import DevTeams from '../../../support/dictionary/devTeams';
+import TestTypes from '../../../support/dictionary/testTypes';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import {
+  FOLIO_RECORD_TYPE,
+  INSTANCE_STATUS_TERM_NAMES,
+  LOCALION_NAMES,
+  LOAN_TYPE_NAMES,
+  ITEM_STATUS_NAMES
+} from '../../../support/constants';
+import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import TopMenu from '../../../support/fragments/topMenu';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Users from '../../../support/fragments/users/users';
+
+describe('ui-data-import', () => {
+  let user;
+  const marcFileName = `C378901autotestFile.${getRandomPostfix()}.mrc`;
+  const collectionOfMappingAndActionProfiles = [
+    {
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+        name: `C378901 instance mapping profile ${getRandomPostfix()}`,
+        barcode: '876$a',
+        materialType: '877$m',
+        permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
+        status: ITEM_STATUS_NAMES.AVAILABLE,
+        instanceStatusTerm: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+        name: `C378901 instance action profile ${getRandomPostfix()}` }
+    },
+    {
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        name: `C378901 holdings mapping profile ${getRandomPostfix()}`,
+        permanentLocation: `"${LOCALION_NAMES.ONLINE}"`,
+        callNumberType: '852$t',
+        callNumber: '852$h',
+        relationship: 'Resource',
+        uri: '856$u',
+        link: '856$y' },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        name: `C378901 holdings action profile${getRandomPostfix()}` }
+    },
+    {
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
+        name: `C378901 item mapping profile ${getRandomPostfix()}` },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        name: `C378901 item action profile${getRandomPostfix()}` }
+    }
+  ];
+  const matchProfile = {
+    profileName: `C378901 match profile ${getRandomPostfix()}`,
+    incomingRecordFields: {
+      field: '034',
+      in1: '9',
+      in2: ' ',
+      subfield: 'a'
+    },
+    matchCriterion: 'Exactly matches',
+    existingRecordType: 'INSTANCE',
+    instanceOption: NewMatchProfile.optionsList.systemControlNumber
+  };
+  const jobProfile = { ...NewJobProfile.defaultJobProfile,
+    profileName: `C378901 job profile ${getRandomPostfix()}m}`,
+    acceptedType: NewJobProfile.acceptedDataType.marc };
+
+  before(() => {
+    cy.createTempUser([
+      permissions.settingsDataImportEnabled.gui,
+      permissions.moduleDataImportEnabled.gui
+    ])
+      .then(userProperties => {
+        user = userProperties;
+
+        cy.login(userProperties.username, userProperties.password,
+          { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+      });
+  });
+
+  const createInstanceMappingProfile = (profile) => {
+    FieldMappingProfiles.openNewMappingProfileForm();
+    NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
+    NewFieldMappingProfile.fillCatalogedDate('###TODAY###');
+    NewFieldMappingProfile.fillInstanceStatusTerm();
+    FieldMappingProfiles.saveProfile();
+    FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
+  };
+  const createHoldingsMappingProfile = (profile) => {
+    FieldMappingProfiles.openNewMappingProfileForm();
+    NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
+    NewFieldMappingProfile.fillPermanentLocation(profile.permanentLocation);
+    NewFieldMappingProfile.fillCallNumberType(profile.callNumberType);
+    NewFieldMappingProfile.fillCallNumber(profile.callNumber);
+    NewFieldMappingProfile.addElectronicAccess(profile.relationship, profile.uri, profile.link);
+    FieldMappingProfiles.saveProfile();
+    FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
+  };
+  const createItemMappingProfile = (profile) => {
+    FieldMappingProfiles.openNewMappingProfileForm();
+    NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
+    NewFieldMappingProfile.fillBarcode(profile.barcode);
+    NewFieldMappingProfile.fillMaterialType(profile.materialType);
+    NewFieldMappingProfile.fillPermanentLoanType(profile.permanentLoanType);
+    NewFieldMappingProfile.fillStatus(profile.status);
+    FieldMappingProfiles.saveProfile();
+    FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
+  };
+
+  it('C378901 Check log summary counts for inventory records created after NOT matching (folijet)',
+    { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+      // create mapping profiles
+      createInstanceMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
+      FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
+      createHoldingsMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
+      FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[1].mappingProfile.name);
+      createItemMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile);
+      FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[2].mappingProfile.name);
+
+      // create action profiles
+      collectionOfMappingAndActionProfiles.forEach(profile => {
+        cy.visit(SettingsMenu.actionProfilePath);
+        ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
+        ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+      });
+
+      // create match profile
+      cy.visit(SettingsMenu.matchProfilePath);
+      MatchProfiles.createMatchProfile(matchProfile);
+      MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
+
+      // create job profile
+      cy.visit(SettingsMenu.jobProfilePath);
+      JobProfiles.createJobProfile(jobProfile);
+      NewJobProfile.linkMatchAndThreeActionProfiles(
+        matchProfile.profileName,
+        collectionOfMappingAndActionProfiles[0].actionProfile.name,
+        collectionOfMappingAndActionProfiles[1].actionProfile.name,
+        collectionOfMappingAndActionProfiles[2].actionProfile.name
+      );
+      NewJobProfile.saveAndClose();
+      JobProfiles.checkJobProfilePresented(jobProfile.profileName);
+
+      // upload .mrc file
+      cy.visit(TopMenu.dataImportPath);
+      DataImport.checkIsLandingPageOpened();
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
+      DataImport.uploadFile('marcFileForC378901.mrc', marcFileName);
+      JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(marcFileName);
+      Logs.checkStatusOfJobProfile();
+      Logs.openFileDetails(marcFileName);
+      [FileDetails.columnNameInResultList.srsMarc,
+        FileDetails.columnNameInResultList.instance,
+        FileDetails.columnNameInResultList.holdings,
+        FileDetails.columnNameInResultList.item].forEach(columnName => {
+        FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+      });
+    });
+});
