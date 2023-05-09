@@ -21,19 +21,18 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import TopMenu from '../../../support/fragments/topMenu';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
   let user;
   const marcFileName = `C378901autotestFile.${getRandomPostfix()}.mrc`;
+  const barcodes = ['B(UMLLTTEST3)LLTAMGUT8UGUT_-UM', 'B(UMLLTTEST3)LLTAALIVIAUCO_-UM'];
   const collectionOfMappingAndActionProfiles = [
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         name: `C378901 instance mapping profile ${getRandomPostfix()}`,
-        barcode: '876$a',
-        materialType: '877$m',
-        permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-        status: ITEM_STATUS_NAMES.AVAILABLE,
+        catalogedDate: '###TODAY###',
         instanceStatusTerm: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         name: `C378901 instance action profile ${getRandomPostfix()}` }
@@ -52,8 +51,12 @@ describe('ui-data-import', () => {
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C378901 item mapping profile ${getRandomPostfix()}` },
-      actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        name: `C378901 item mapping profile ${getRandomPostfix()}`,
+        barcode: '876$a',
+        materialType: '877$m',
+        permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
+        status: ITEM_STATUS_NAMES.AVAILABLE },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C378901 item action profile${getRandomPostfix()}` }
     }
   ];
@@ -70,10 +73,10 @@ describe('ui-data-import', () => {
     instanceOption: NewMatchProfile.optionsList.systemControlNumber
   };
   const jobProfile = { ...NewJobProfile.defaultJobProfile,
-    profileName: `C378901 job profile ${getRandomPostfix()}m}`,
+    profileName: `C378901 job profile ${getRandomPostfix()}`,
     acceptedType: NewJobProfile.acceptedDataType.marc };
 
-  before(() => {
+  before('login', () => {
     cy.createTempUser([
       permissions.settingsDataImportEnabled.gui,
       permissions.moduleDataImportEnabled.gui
@@ -86,10 +89,22 @@ describe('ui-data-import', () => {
       });
   });
 
+  after('delete test data', () => {
+    Users.deleteViaApi(user.userId);
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
+    MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+    collectionOfMappingAndActionProfiles.forEach(profile => {
+      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+    });
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(barcodes[0]);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(barcodes[1]);
+  });
+
   const createInstanceMappingProfile = (profile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
-    NewFieldMappingProfile.fillCatalogedDate('###TODAY###');
+    NewFieldMappingProfile.fillCatalogedDate(profile.catalogedDate);
     NewFieldMappingProfile.fillInstanceStatusTerm();
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
@@ -144,7 +159,8 @@ describe('ui-data-import', () => {
         matchProfile.profileName,
         collectionOfMappingAndActionProfiles[0].actionProfile.name,
         collectionOfMappingAndActionProfiles[1].actionProfile.name,
-        collectionOfMappingAndActionProfiles[2].actionProfile.name
+        collectionOfMappingAndActionProfiles[2].actionProfile.name,
+        1
       );
       NewJobProfile.saveAndClose();
       JobProfiles.checkJobProfilePresented(jobProfile.profileName);
@@ -166,5 +182,9 @@ describe('ui-data-import', () => {
         FileDetails.columnNameInResultList.item].forEach(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
       });
+      FileDetails.checkItemsQuantityInSummaryTable(0, '2');
+      FileDetails.checkItemsQuantityInSummaryTable(1, '0');
+      FileDetails.checkItemsQuantityInSummaryTable(2, '0');
+      FileDetails.checkItemsQuantityInSummaryTable(3, '0');
     });
 });

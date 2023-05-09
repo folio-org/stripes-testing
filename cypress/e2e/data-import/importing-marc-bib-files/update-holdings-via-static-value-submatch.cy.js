@@ -1,7 +1,7 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES, LOCALION_NAMES } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES, LOCALION_NAMES, CALL_NUMBER_TYPE_NAMES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -52,7 +52,7 @@ describe('ui-data-import', () => {
     temporaryLocation: `"${LOCALION_NAMES.ONLINE}"`,
     temporaryLocationUI: LOCALION_NAMES.ONLINE_UI,
     shelvingTitle: `autotestShelvingTitle.${getRandomPostfix()}`,
-    callNumberType: 'National Library of Medicine classification',
+    callNumberType: `"${CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_MEDICINE}"`,
     callNumber: Helper.getRandomBarcode(),
     holdingsStatements: `autotestHoldingsStatements.${getRandomPostfix()}`,
     illPolicy: 'Unknown lending policy',
@@ -69,7 +69,7 @@ describe('ui-data-import', () => {
     statisticalCodeUI: 'Music scores, electronic',
     adminNote: `autotestAdminNote.${getRandomPostfix()}`,
     shelvingTitle: `autotestShelvingTitle.${getRandomPostfix()}`,
-    callNumberType: 'Other scheme',
+    callNumberType: CALL_NUMBER_TYPE_NAMES.OTHER_SCHEME,
     callNumber: Helper.getRandomBarcode(),
     holdingsStatements: `autotestHoldingsStatements.${getRandomPostfix()}`,
     illPolicy: 'Will lend'
