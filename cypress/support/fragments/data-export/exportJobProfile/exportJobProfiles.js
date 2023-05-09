@@ -1,5 +1,6 @@
-import { Pane, NavListItem, Button, MultiColumnListCell } from '../../../../../interactors';
+import {Pane, NavListItem, Button, MultiColumnListCell, MultiColumnListRow} from '../../../../../interactors';
 import exportNewJobProfile from './exportNewJobProfile';
+import {including} from "bigtest";
 
 const jobProfilesPane = Pane('Job profiles');
 const newButton = Button('New');
@@ -39,4 +40,11 @@ export default {
     path: `data-export/job-profiles/${id}`,
     isDefaultSearchParamsRequired: false
   }),
+  verifyDefaultProfiles() {
+    cy.expect([
+      MultiColumnListRow(including('Default authority export job profile')).exists(),
+      MultiColumnListRow(including('Default holdings export job profile')).exists(),
+      MultiColumnListRow(including('Default instances export job profile')).exists(),
+    ]);
+  },
 };
