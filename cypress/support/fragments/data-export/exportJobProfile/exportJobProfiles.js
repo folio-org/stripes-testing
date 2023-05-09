@@ -1,6 +1,6 @@
-import {Pane, NavListItem, Button, MultiColumnListCell, MultiColumnListRow} from '../../../../../interactors';
+import { including } from 'bigtest';
+import { Pane, NavListItem, Button, MultiColumnListCell, MultiColumnListRow } from '../../../../../interactors';
 import exportNewJobProfile from './exportNewJobProfile';
-import {including} from "bigtest";
 
 const jobProfilesPane = Pane('Job profiles');
 const newButton = Button('New');
