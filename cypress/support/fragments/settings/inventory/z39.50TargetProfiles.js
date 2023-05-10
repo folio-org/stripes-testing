@@ -11,6 +11,7 @@ import {
 } from '../../../../../interactors';
 
 const oclcWorldcatPane = Pane('✓ OCLC WorldCat');
+const targetProfileName = Pane('Z39.50 target profiles');
 
 const defaultCreateInstanceJobProfileName = 'Inventory Single Record - Default Create Instance (d0ebb7b0-2f0f-11eb-adc1-0242ac120002)';
 const defaultUpdateInstanceJobProfileName = 'Inventory Single Record - Default Update Instance (91f9b8d6-d80e-4727-9783-73fb53e3c786)';
@@ -101,5 +102,42 @@ export default {
     save();
   },
 
-  checkIsOclcWorldCatIsChanged:(auth) => cy.expect(oclcWorldcatPane.find(KeyValue({ value: auth })))
+  checkIsOclcWorldCatIsChanged:(auth) => cy.expect(oclcWorldcatPane.find(KeyValue({ value: auth }))),
+
+  createNewZ3950TargetProfileViaApi:(name, createJobProfileIds, updateJobProfileIds = []) => {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: 'copycat/profiles',
+      body: {
+        name,
+        url:'zcat.oclc.org/OLUCWorldCat',
+        authentication:'100473910/PAOLF',
+        externalIdQueryMap:'@attr 1=1211 $identifier',
+        internalIdEmbedPath:'999ff$i',
+        createJobProfileId:'d0ebb7b0-2f0f-11eb-adc1-0242ac120002',
+        updateJobProfileId:'91f9b8d6-d80e-4727-9783-73fb53e3c786',
+        allowedCreateJobProfileIds:['d0ebb7b0-2f0f-11eb-adc1-0242ac120002', ...createJobProfileIds],
+        allowedUpdateJobProfileIds:['91f9b8d6-d80e-4727-9783-73fb53e3c786', ...updateJobProfileIds],
+        targetOptions:{ charset:'utf-8' },
+        externalIdentifierType:'439bfbae-75bc-4f74-9fc7-b2a2d47ce3ef',
+        enabled:true
+      },
+      isDefaultSearchParamsRequired: false,
+    }).then(({ body }) => {
+      return body.id;
+    });
+  },
+
+  deleteFundViaApi: (id) => cy.okapiRequest({
+    method: 'DELETE',
+    path: `copycat/profiles/${id}`,
+    isDefaultSearchParamsRequired: false,
+  }),
+
+  openTargetProfile:(profileName, id = 'f26df83c-aa25-40b6-876e-96852c3d4fd4') => {
+    cy.do(targetProfileName
+      .find(Link({ href: including(`/settings/inventory/targetProfiles/${id}`) }))
+      .click());
+    cy.expect(Pane(`✓ ${profileName}`).exists());
+  }
 };

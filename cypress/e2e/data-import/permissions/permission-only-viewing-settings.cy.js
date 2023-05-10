@@ -47,7 +47,7 @@ describe('ui-data-import', () => {
               .then((matchProfileResponse) => {
                 matchProfileId = matchProfileResponse.body.id;
 
-                NewJobProfile.createMatchProfileViaApi(jobProfileName, matchProfileId, actProfileId);
+                NewJobProfile.createJobProfileViaApi(jobProfileName, matchProfileId, actProfileId);
               });
           });
       });
