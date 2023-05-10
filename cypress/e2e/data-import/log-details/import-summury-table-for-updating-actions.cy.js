@@ -5,7 +5,8 @@ import { LOAN_TYPE_NAMES,
   ITEM_STATUS_NAMES,
   LOCALION_NAMES,
   FOLIO_RECORD_TYPE,
-  INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
+  INSTANCE_STATUS_TERM_NAMES,
+  CALL_NUMBER_TYPE_NAMES } from '../../../support/constants';
 import DateTools from '../../../support/utils/dateTools';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
@@ -231,7 +232,7 @@ describe('ui-data-import', () => {
         holdingsType: 'Electronic',
         permanentLocation: `"${LOCALION_NAMES.ONLINE}"`,
         permanentLocationUI: LOCALION_NAMES.ONLINE_UI,
-        callNumberType: 'Library of Congress classification',
+        callNumberType: `"${CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS}"`,
         callNumber: '050$a " " 050$b',
         relationship: 'Resource',
         uri: '856$u' },
@@ -242,7 +243,7 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C356802 update item mapping profile ${Helper.getRandomBarcode()}`,
-        materialType: MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE,
+        materialType: `"${MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE}"`,
         noteType: '"Electronic bookplate"',
         note: '"Smith Family Foundation"',
         noteUI: 'Smith Family Foundation',
