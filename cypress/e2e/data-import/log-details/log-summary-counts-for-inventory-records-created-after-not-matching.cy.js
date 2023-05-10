@@ -23,11 +23,15 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Users from '../../../support/fragments/users/users';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
 
 describe('ui-data-import', () => {
   let user;
   const marcFileName = `C378901autotestFile.${getRandomPostfix()}.mrc`;
   const barcodes = ['B(UMLLTTEST3)LLTAMGUT8UGUT_-UM', 'B(UMLLTTEST3)LLTAALIVIAUCO_-UM'];
+  const firstInstanceTitle = '<In lacu> Guillelmus de Sancto Theodorico (dubium) [electronic resource]';
   const collectionOfMappingAndActionProfiles = [
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
@@ -79,7 +83,8 @@ describe('ui-data-import', () => {
   before('login', () => {
     cy.createTempUser([
       permissions.settingsDataImportEnabled.gui,
-      permissions.moduleDataImportEnabled.gui
+      permissions.moduleDataImportEnabled.gui,
+      permissions.uiInventoryViewInstances.gui
     ])
       .then(userProperties => {
         user = userProperties;
@@ -182,9 +187,22 @@ describe('ui-data-import', () => {
         FileDetails.columnNameInResultList.item].forEach(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
       });
+      // check created counter in the Summary table
       FileDetails.checkItemsQuantityInSummaryTable(0, '2');
+      // check Updated counter in the Summary table
       FileDetails.checkItemsQuantityInSummaryTable(1, '0');
+      // check No action counter in the Summary table
       FileDetails.checkItemsQuantityInSummaryTable(2, '0');
+      // check Error counter in the Summary table
       FileDetails.checkItemsQuantityInSummaryTable(3, '0');
+
+      FileDetails.openInstanceInInventory('Created');
+      InstanceRecordView.verifyIsInstanceOpened(firstInstanceTitle);
+      cy.go('back');
+      FileDetails.openHoldingsInInventory('Created');
+      HoldingsRecordView.checkPermanentLocation(LOCALION_NAMES.ONLINE_UI);
+      cy.go('back');
+      FileDetails.openItemInInventory('Created');
+      ItemRecordView.verifyItemStatus(collectionOfMappingAndActionProfiles[2].mappingProfile.status);
     });
 });
