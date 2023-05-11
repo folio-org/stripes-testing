@@ -50,6 +50,7 @@ const ordersFiltersPane = Pane({ id: 'orders-filters-pane' });
 const ordersResultsPane = Pane({ id: 'orders-results-pane' });
 const buttonAcquisitionMethodFilter = Button({ id: 'accordion-toggle-button-acquisitionMethod' });
 const purchaseOrderSection = Section({ id: 'purchaseOrder' });
+const purchaseOrderLineLimitReachedModal = Modal({ id: 'data-test-lines-limit-modal' });
 const searchByParameter = (parameter, value) => {
   cy.do([
     searchForm.selectIndex(parameter),
@@ -96,6 +97,8 @@ export default {
       Button('Open').click(),
       Button('Submit').click()
     ]);
+    // Need to wait,while order's data will be loaded
+    cy.wait(4000);
   },
 
   editOrder: () => {
@@ -109,7 +112,7 @@ export default {
 
   editOrderNumber: (poNumber) => {
     cy.do([
-      TextField({ name: 'poNumber'}).fillIn(poNumber),
+      TextField({ name: 'poNumber' }).fillIn(poNumber),
       saveAndClose.click()
     ]);
   },
@@ -179,7 +182,7 @@ export default {
       Button('Reopen').click(),
     ]);
   },
-  
+
   receiveOrderViaActions: () => {
     cy.do([
       orderDetailsPane
@@ -211,7 +214,7 @@ export default {
     cy.do([
       actionsButton.click(),
       newButton.click(),
-      TextField({ name: 'poNumber'}).fillIn(poNumber),
+      TextField({ name: 'poNumber' }).fillIn(poNumber),
     ]);
     this.selectVendorOnUi(order.vendor);
     cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
@@ -228,7 +231,7 @@ export default {
     cy.do([
       actionsButton.click(),
       newButton.click(),
-      TextField({ name: 'poNumber'}).fillIn(poNumber),
+      TextField({ name: 'poNumber' }).fillIn(poNumber),
       Select({ name: 'poNumberPrefix' }).choose(poPreffix),
       Select({ name: 'poNumberSuffix' }).choose(poSuffix),
     ]);
@@ -345,11 +348,11 @@ export default {
     cy.expect(Pane({ id: 'order-details' }).exists());
     cy.expect([
       orderDetailsAccordion
-      .find(KeyValue({ value: organization }))
-      .exists(),
+        .find(KeyValue({ value: organization }))
+        .exists(),
       orderDetailsAccordion
-      .find(KeyValue({ value: orderNumber }))
-      .exists(),
+        .find(KeyValue({ value: orderNumber }))
+        .exists(),
     ]);
   },
 
@@ -650,7 +653,15 @@ export default {
     cy.expect(orderDetailsAccordion.find(KeyValue({ value: 'Ongoing' })).exists());
   },
 
- errorMessage:(modalName, errorContent) => {
+  errorMessage:(modalName, errorContent) => {
     cy.expect(Modal(modalName).content(errorContent));
+  },
+
+  checkPurchaseOrderLineLimitReachedModal: () => {
+    cy.expect([
+      purchaseOrderLineLimitReachedModal.exists(),
+      purchaseOrderLineLimitReachedModal.find(Button('Ok')).exists(),
+      purchaseOrderLineLimitReachedModal.find(Button('Create new purchase order')).exists(),
+    ]);
   },
 };

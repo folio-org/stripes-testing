@@ -1,5 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import { Button, TextField, Pane, Select, HTML, including, Checkbox, Section, Accordion, TextArea } from '../../../../interactors';
+import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../constants';
 import SelectUser from './selectUser';
 
 const actionsButton = Button('Actions');
@@ -130,9 +131,9 @@ export default {
   },
 
   verifyRequestInformation: (itemStatus) => {
-    if (itemStatus === 'Available') {
+    if (itemStatus === ITEM_STATUS_NAMES.AVAILABLE) {
       cy.expect(Section({ id: 'new-request-info' }, including('Page')).exists);
-    } else if (itemStatus === 'Hold' || itemStatus === 'Recall') {
+    } else if (itemStatus === REQUEST_TYPES.HOLD || itemStatus === REQUEST_TYPES.RECALL) {
       cy.expect(Select({ name: 'requestType' }).exists);
     }
     cy.expect([

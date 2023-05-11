@@ -22,6 +22,7 @@ import InventoryHoldings from '../../support/fragments/inventory/holdings/invent
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
 import devTeams from '../../support/dictionary/devTeams';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('Fee/fine management', () => {
   const testData = {
@@ -83,7 +84,7 @@ describe('Fee/fine management', () => {
                   barcode: itemBarcode,
                   missingPieces: '3',
                   numberOfMissingPieces: '3',
-                  status: { name: 'Available' },
+                  status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                   permanentLoanType: { id: testData.loanType },
                   materialType: { id: testData.materialType },
                 }],

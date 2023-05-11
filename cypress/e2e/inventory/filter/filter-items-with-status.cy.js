@@ -11,6 +11,7 @@ import TestTypes from '../../../support/dictionary/testTypes';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { ITEM_STATUS_NAMES } from '../../../support/constants';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
@@ -42,7 +43,7 @@ describe('ui-inventory: items with status', () => {
           })
           .then(() => {
             const items = FilterItems.itemStatuses.map(status => ({
-              barcode: status === 'Available' ? ITEM_BARCODE : `test${getRandomPostfix()}`,
+              barcode: status === ITEM_STATUS_NAMES.AVAILABLE ? ITEM_BARCODE : `test${getRandomPostfix()}`,
               missingPieces: '3',
               numberOfMissingPieces: '3',
               status: { name: status },

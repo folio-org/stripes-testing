@@ -61,7 +61,7 @@ describe('ui-data-import', () => {
         barcode: '945$a',
         accessionNumber: '"12345"',
         accessionNumberUI: '12345',
-        materialType: MATERIAL_TYPE_NAMES.BOOK,
+        materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
         numberOfPieces: '"25"',
         numberOfPiecesUI: '25',
         permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,

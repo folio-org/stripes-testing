@@ -18,6 +18,7 @@ import DevTeams from '../../../../support/dictionary/devTeams';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import OtherSettings from '../../../../support/fragments/settings/circulation/otherSettings';
 import CirculationRules from '../../../../support/fragments/circulation/circulation-rules';
+import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 
 describe('ui-users: Verify that maximum number of items borrowed for loan type (e.g. course reserve) limit works', () => {
   let user = {};
@@ -59,7 +60,7 @@ describe('ui-users: Verify that maximum number of items borrowed for loan type (
         const getTestItem = (type) => {
           const defaultItem = {
             barcode: Helper.getRandomBarcode(),
-            status:  { name: 'Available' },
+            status:  { name: ITEM_STATUS_NAMES.AVAILABLE },
             permanentLoanType: { id:type },
             materialType: { id: materialType.id },
           };

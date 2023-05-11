@@ -55,7 +55,7 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C368005 Create item for mapping notes ${Helper.getRandomBarcode()}`,
-        materialType: MATERIAL_TYPE_NAMES.BOOK,
+        materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
         noteType: '876$t',
         note: '876$n',
         staffOnly: 'Mark for all affected records',

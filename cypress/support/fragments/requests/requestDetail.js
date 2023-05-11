@@ -1,5 +1,5 @@
 import { HTML, including } from '@interactors/html';
-import { Pane, Section, Heading, KeyValue } from '../../../../interactors';
+import { Pane, Section, Heading, KeyValue, Button } from '../../../../interactors';
 
 const requestDetailsSection = Pane({ id: 'instance-details' });
 const titleInformationSection = Section({ id: 'title-info' });
@@ -7,6 +7,8 @@ const itemInformationSection = Section({ id: 'item-info' });
 const requestInfoSection = Section({ id: 'request-info' });
 const requesterInfoSection = Section({ id: 'requester-info' });
 const staffNotesInfoSection = Section({ id: 'staff-notes' });
+const actionsButton = requestDetailsSection.find(Button('Actions'));
+const moveRequestButton = Button('Move request');
 
 export default {
   waitLoading: () => {
@@ -52,4 +54,12 @@ export default {
       requesterInfoSection.find(KeyValue('Pickup service point', { value: data.pickupSP })).exists(),
     ]);
   },
+
+  openActions() {
+    cy.do(actionsButton.click());
+  },
+
+  openMoveRequest() {
+    cy.do(moveRequestButton.click());
+  }
 };

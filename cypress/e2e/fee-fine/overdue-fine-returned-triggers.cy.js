@@ -32,6 +32,7 @@ import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
 import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('Overdue fine', () => {
   let addedCirculationRule;
@@ -197,7 +198,7 @@ describe('Overdue fine', () => {
           items: [
             {
               barcode: itemData.barcode,
-              status: { name: 'Available' },
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
               permanentLoanType: { id: testData.loanTypeId },
               materialType: { id: testData.materialTypeId },
             },
@@ -321,9 +322,9 @@ describe('Overdue fine', () => {
       NewNoticePolicy.startAdding();
       NewNoticePolicy.checkInitialState();
       NewNoticePolicy.fillGeneralInformation(noticePolicy);
-      NewNoticePolicy.addFeeFineNotice(selectOptions(noticeTemplates.returnedUponAt));
-      NewNoticePolicy.addFeeFineNotice(selectOptions(noticeTemplates.returnedAfterOnce), 1);
-      NewNoticePolicy.addFeeFineNotice(selectOptions(noticeTemplates.returnedAfterRecurring), 2);
+      NewNoticePolicy.addNotice(selectOptions(noticeTemplates.returnedUponAt));
+      NewNoticePolicy.addNotice(selectOptions(noticeTemplates.returnedAfterOnce), 1);
+      NewNoticePolicy.addNotice(selectOptions(noticeTemplates.returnedAfterRecurring), 2);
       NewNoticePolicy.save();
       NewNoticePolicy.waitLoading();
       NewNoticePolicy.checkPolicyName(noticePolicy);

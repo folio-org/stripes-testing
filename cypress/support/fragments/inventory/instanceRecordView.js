@@ -123,4 +123,11 @@ export default {
     cy.do(Button('View holdings').click());
     cy.expect(Button('Actions').exists());
   },
+
+  verifyIsInstanceOpened:(title) => {
+    cy.expect(Pane({ id:'pane-instancedetails' }).exists());
+    cy.expect(Pane({ titleLabel: including(title) }).exists());
+  },
+
+  getAssignedHRID:() => cy.then(() => KeyValue('Instance HRID').value())
 };

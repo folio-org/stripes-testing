@@ -3,6 +3,7 @@ import moment from 'moment';
 import testTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
+import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
@@ -37,7 +38,7 @@ describe('Create Item or Title level request', () => {
     itemBarcode: generateItemBarcode(),
   };
   const requestPolicyBody = {
-    requestTypes: ['Hold'],
+    requestTypes: [REQUEST_TYPES.HOLD],
     name: `hold${getRandomPostfix()}`,
     id: uuid(),
   };
@@ -81,7 +82,7 @@ describe('Create Item or Title level request', () => {
           items: [
             {
               barcode: testData.itemBarcode,
-              status: { name: 'Available' },
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
               permanentLoanType: { id: testData.loanTypeId },
               materialType: { id: testData.materialTypeId },
             },
@@ -185,8 +186,8 @@ describe('Create Item or Title level request', () => {
       NewRequest.waitLoadingNewRequestPage(true);
       NewRequest.enterHridInfo(testData.instanceHRID);
       NewRequest.verifyHridInformation([instanceData.title]);
-      NewRequest.chooseRequestType('Hold');
-      NewRequest.verifyRequestInformation('Hold');
+      NewRequest.chooseRequestType(REQUEST_TYPES.HOLD);
+      NewRequest.verifyRequestInformation(REQUEST_TYPES.HOLD);
       NewRequest.enterRequesterInfo({
         requesterBarcode: userForHold.barcode,
         pickupServicePoint: testData.userServicePoint.name,

@@ -1,5 +1,6 @@
 import uuid from 'uuid';
 import moment from 'moment';
+import { FULFILMENT_PREFERENCES, ITEM_STATUS_NAMES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
 import TestTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import TopMenu from '../../support/fragments/topMenu';
@@ -44,8 +45,8 @@ describe('Check In - Actions', () => {
     title: `Instance_${getRandomPostfix()}`,
   };
   const requestPolicyBody = {
-    requestTypes: ['Hold'],
-    name: `recall ${getRandomPostfix()}`,
+    requestTypes: [REQUEST_TYPES.HOLD],
+    name: `hold${getRandomPostfix()}`,
     id: uuid(),
   };
 
@@ -87,7 +88,7 @@ describe('Check In - Actions', () => {
           items: [
             {
               barcode: itemData.barcode,
-              status: { name: 'Available' },
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
               permanentLoanType: { id: testData.loanTypeId },
               materialType: { id: testData.materialTypeId },
             },
@@ -140,7 +141,7 @@ describe('Check In - Actions', () => {
           userBarcode: userData.barcode,
         }).then((checkoutResponse) => {
           Requests.createNewRequestViaApi({
-            fulfilmentPreference: 'Hold Shelf',
+            fulfilmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
             holdingsRecordId: testData.holdingTypeId,
             instanceId: itemData.instanceId,
             item: { barcode: itemData.barcode },
@@ -148,8 +149,8 @@ describe('Check In - Actions', () => {
             pickupServicePointId: testData.servicePointS1.id,
             requestDate: new Date(),
             requestExpirationDate: new Date(new Date().getTime() + 86400000),
-            requestLevel: 'Item',
-            requestType: 'Hold',
+            requestLevel: REQUEST_LEVELS.ITEM,
+            requestType: REQUEST_TYPES.HOLD,
             requesterId: requestUserData.userId,
           }).then((request) => {
             testData.requestsId = request.body.id;
