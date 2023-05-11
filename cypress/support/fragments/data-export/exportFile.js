@@ -134,7 +134,9 @@ export default {
 
         FileManager.readFile(lastDownloadedFilename)
           .then((actualContent) => {
-            expect(actualContent).to.include(content);
+            content.forEach(element => {
+              expect(actualContent).to.include(element);
+            });
           });
       });
   },

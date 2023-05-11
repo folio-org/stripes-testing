@@ -12,13 +12,13 @@ import DataExportResults from '../../support/fragments/data-export/dataExportRes
 import ExportFile from '../../support/fragments/data-export/exportFile';
 
 let user;
-let uuid;
 const item = {
   barcode: getRandomPostfix(),
   instanceName: `instanceName-${getRandomPostfix()}`,
 };
 const fileName = `autoTestFile${getRandomPostfix()}.csv`;
 let instanceHRID;
+let holdingsUUID;
 
 describe('Data Export - Holdings records export', () => {
   before('create test data', () => {
@@ -40,8 +40,8 @@ describe('Data Export - Holdings records export', () => {
       query: `"instanceId"="${instanceId}"`
     })
       .then(holdings => {
-        uuid = holdings[0].id;
-        FileManager.createFile(`cypress/fixtures/${fileName}`, uuid);
+        holdingsUUID = holdings[0].id;
+        FileManager.createFile(`cypress/fixtures/${fileName}`, holdingsUUID);
       });
     cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceId}"` })
       .then(instance => {
@@ -68,7 +68,7 @@ describe('Data Export - Holdings records export', () => {
 
       DataExportResults.verifySuccessExportResultCells(resultFileName, recordsCount, jobId, user.username, 'holdings');
       DataExportLogs.clickButtonWithText(resultFileName);
-      ExportFile.verifyFileIncludes(resultFileName, instanceHRID);
+      ExportFile.verifyFileIncludes(resultFileName, [holdingsUUID, instanceHRID]);
 
       FileManager.deleteFileFromDownloadsByMask(resultFileName);
     });
