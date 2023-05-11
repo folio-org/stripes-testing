@@ -16,7 +16,7 @@ export default {
     ]);
   },
 
-  verifySuccessExportResultCells(resultFileName, recordsCount, jobId, userName = null) {
+  verifySuccessExportResultCells(resultFileName, recordsCount, jobId, userName = null, jobType = 'instances') {
     const resultRow = {
       fileName: MultiColumnListCell({ 'row': 0, columnIndex: 0 }),
       status: MultiColumnListCell({ 'row': 0, columnIndex: 1 }),
@@ -36,7 +36,7 @@ export default {
           resultRow.total.is({ content: recordsCount.toString() }),
           resultRow.exported.is({ content: recordsCount.toString() }),
           resultRow.failed.is({ content: '' }),
-          resultRow.jobProfile.is({ content: this.defaultJobProfile }),
+          resultRow.jobProfile.is({ content: `Default ${jobType} export job profile` }),
           resultRow.runBy.is({ content: userNameToVerify }),
           resultRow.id.is({ content: jobId.toString() })
         ]);
