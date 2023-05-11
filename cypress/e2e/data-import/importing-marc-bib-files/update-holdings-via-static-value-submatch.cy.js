@@ -1,7 +1,7 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES, LOCALION_NAMES } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES, LOCALION_NAMES, CALL_NUMBER_TYPE_NAMES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -52,7 +52,7 @@ describe('ui-data-import', () => {
     temporaryLocation: `"${LOCALION_NAMES.ONLINE}"`,
     temporaryLocationUI: LOCALION_NAMES.ONLINE_UI,
     shelvingTitle: `autotestShelvingTitle.${getRandomPostfix()}`,
-    callNumberType: 'National Library of Medicine classification',
+    callNumberType: CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_MEDICINE,
     callNumber: Helper.getRandomBarcode(),
     holdingsStatements: `autotestHoldingsStatements.${getRandomPostfix()}`,
     illPolicy: 'Unknown lending policy',
@@ -69,7 +69,7 @@ describe('ui-data-import', () => {
     statisticalCodeUI: 'Music scores, electronic',
     adminNote: `autotestAdminNote.${getRandomPostfix()}`,
     shelvingTitle: `autotestShelvingTitle.${getRandomPostfix()}`,
-    callNumberType: 'Other scheme',
+    callNumberType: CALL_NUMBER_TYPE_NAMES.OTHER_SCHEME,
     callNumber: Helper.getRandomBarcode(),
     holdingsStatements: `autotestHoldingsStatements.${getRandomPostfix()}`,
     illPolicy: 'Will lend'
@@ -137,77 +137,77 @@ describe('ui-data-import', () => {
       });
   });
 
-  it('C11110 Update a holdings via a static value submatch (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+  it('C11110 Update a holdings via a static value submatch (folijet)',
+    { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     // create mapping profiles
-    FieldMappingProfiles.openNewMappingProfileForm();
-    NewFieldMappingProfile.fillSummaryInMappingProfile(instanceMappingProfileForCreate);
-    NewFieldMappingProfile.addStaffSuppress(instanceMappingProfileForCreate.actionForSuppress);
-    NewFieldMappingProfile.addSuppressFromDiscovery(instanceMappingProfileForCreate.actionForSuppress);
-    NewFieldMappingProfile.addPreviouslyHeld(instanceMappingProfileForCreate.actionForSuppress);
-    NewFieldMappingProfile.fillCatalogedDate(instanceMappingProfileForCreate.catalogedDate);
-    NewFieldMappingProfile.fillInstanceStatusTerm(instanceMappingProfileForCreate.statusTerm);
-    NewFieldMappingProfile.addStatisticalCode(instanceMappingProfileForCreate.statisticalCode, 8);
-    NewFieldMappingProfile.addNatureOfContentTerms(instanceMappingProfileForCreate.natureOfContent);
-    FieldMappingProfiles.saveProfile();
-    FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfileForCreate.name);
-    FieldMappingProfiles.checkMappingProfilePresented(instanceMappingProfileForCreate.name);
+      FieldMappingProfiles.openNewMappingProfileForm();
+      NewFieldMappingProfile.fillSummaryInMappingProfile(instanceMappingProfileForCreate);
+      NewFieldMappingProfile.addStaffSuppress(instanceMappingProfileForCreate.actionForSuppress);
+      NewFieldMappingProfile.addSuppressFromDiscovery(instanceMappingProfileForCreate.actionForSuppress);
+      NewFieldMappingProfile.addPreviouslyHeld(instanceMappingProfileForCreate.actionForSuppress);
+      NewFieldMappingProfile.fillCatalogedDate(instanceMappingProfileForCreate.catalogedDate);
+      NewFieldMappingProfile.fillInstanceStatusTerm(instanceMappingProfileForCreate.statusTerm);
+      NewFieldMappingProfile.addStatisticalCode(instanceMappingProfileForCreate.statisticalCode, 8);
+      NewFieldMappingProfile.addNatureOfContentTerms(instanceMappingProfileForCreate.natureOfContent);
+      FieldMappingProfiles.saveProfile();
+      FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfileForCreate.name);
+      FieldMappingProfiles.checkMappingProfilePresented(instanceMappingProfileForCreate.name);
 
-    FieldMappingProfiles.openNewMappingProfileForm();
-    NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfileForCreate);
-    NewFieldMappingProfile.addFormerHoldings(holdingsMappingProfileForCreate.formerHoldingsId);
-    NewFieldMappingProfile.fillHoldingsType(holdingsMappingProfileForCreate.holdingsType);
-    NewFieldMappingProfile.addStatisticalCode(holdingsMappingProfileForCreate.statisticalCode, 4);
-    NewFieldMappingProfile.addAdministrativeNote(holdingsMappingProfileForCreate.adminNote, 5);
-    NewFieldMappingProfile.fillPermanentLocation(holdingsMappingProfileForCreate.permanentLocation);
-    NewFieldMappingProfile.fillTemporaryLocation(holdingsMappingProfileForCreate.temporaryLocation);
-    NewFieldMappingProfile.fillCallNumberType(holdingsMappingProfileForCreate.callNumberType);
-    NewFieldMappingProfile.fillCallNumber(`"${holdingsMappingProfileForCreate.callNumber}"`);
-    NewFieldMappingProfile.addHoldingsStatements(holdingsMappingProfileForCreate.holdingsStatements);
-    NewFieldMappingProfile.fillIllPolicy(holdingsMappingProfileForCreate.illPolicy);
-    NewFieldMappingProfile.addHoldingsNotes(holdingsMappingProfileForCreate.noteType, holdingsMappingProfileForCreate.holdingsNote, holdingsMappingProfileForCreate.staffOnly);
-    FieldMappingProfiles.saveProfile();
-    FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfileForCreate.name);
-    FieldMappingProfiles.checkMappingProfilePresented(holdingsMappingProfileForCreate.name);
+      FieldMappingProfiles.openNewMappingProfileForm();
+      NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfileForCreate);
+      NewFieldMappingProfile.addFormerHoldings(holdingsMappingProfileForCreate.formerHoldingsId);
+      NewFieldMappingProfile.fillHoldingsType(holdingsMappingProfileForCreate.holdingsType);
+      NewFieldMappingProfile.addStatisticalCode(holdingsMappingProfileForCreate.statisticalCode, 4);
+      NewFieldMappingProfile.addAdministrativeNote(holdingsMappingProfileForCreate.adminNote, 5);
+      NewFieldMappingProfile.fillPermanentLocation(holdingsMappingProfileForCreate.permanentLocation);
+      NewFieldMappingProfile.fillTemporaryLocation(holdingsMappingProfileForCreate.temporaryLocation);
+      NewFieldMappingProfile.fillCallNumberType(`"${holdingsMappingProfileForCreate.callNumberType}"`);
+      NewFieldMappingProfile.fillCallNumber(`"${holdingsMappingProfileForCreate.callNumber}"`);
+      NewFieldMappingProfile.addHoldingsStatements(holdingsMappingProfileForCreate.holdingsStatements);
+      NewFieldMappingProfile.fillIllPolicy(holdingsMappingProfileForCreate.illPolicy);
+      NewFieldMappingProfile.addHoldingsNotes(holdingsMappingProfileForCreate.noteType, holdingsMappingProfileForCreate.holdingsNote, holdingsMappingProfileForCreate.staffOnly);
+      FieldMappingProfiles.saveProfile();
+      FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfileForCreate.name);
+      FieldMappingProfiles.checkMappingProfilePresented(holdingsMappingProfileForCreate.name);
 
-    // create action profiles
-    cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.create(instanceActionProfileForCreate, instanceMappingProfileForCreate.name);
-    ActionProfiles.checkActionProfilePresented(instanceActionProfileForCreate.name);
-    ActionProfiles.create(holdingsActionProfileForCreate, holdingsMappingProfileForCreate.name);
-    ActionProfiles.checkActionProfilePresented(holdingsActionProfileForCreate.name);
+      // create action profiles
+      cy.visit(SettingsMenu.actionProfilePath);
+      ActionProfiles.create(instanceActionProfileForCreate, instanceMappingProfileForCreate.name);
+      ActionProfiles.checkActionProfilePresented(instanceActionProfileForCreate.name);
+      ActionProfiles.create(holdingsActionProfileForCreate, holdingsMappingProfileForCreate.name);
+      ActionProfiles.checkActionProfilePresented(holdingsActionProfileForCreate.name);
 
-    // create job profile
-    cy.visit(SettingsMenu.jobProfilePath);
-    JobProfiles.createJobProfile(jobProfileForCreate);
-    NewJobProfile.linkActionProfile(instanceActionProfileForCreate);
-    NewJobProfile.linkActionProfile(holdingsActionProfileForCreate);
-    NewJobProfile.saveAndClose();
-    JobProfiles.checkJobProfilePresented(jobProfileForCreate.profileName);
+      // create job profile
+      cy.visit(SettingsMenu.jobProfilePath);
+      JobProfiles.createJobProfile(jobProfileForCreate);
+      NewJobProfile.linkActionProfile(instanceActionProfileForCreate);
+      NewJobProfile.linkActionProfile(holdingsActionProfileForCreate);
+      NewJobProfile.saveAndClose();
+      JobProfiles.checkJobProfilePresented(jobProfileForCreate.profileName);
 
-    // upload a marc file for creating
-    cy.visit(TopMenu.dataImportPath);
-    // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-    DataImport.verifyUploadState();
-    DataImport.uploadFile('oneMarcBib.mrc', marcFileNameForCreate);
-    JobProfiles.searchJobProfileForImport(jobProfileForCreate.profileName);
-    JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(marcFileNameForCreate);
-    Logs.checkStatusOfJobProfile('Completed');
-    Logs.openFileDetails(marcFileNameForCreate);
-    [FileDetails.columnNameInResultList.srsMarc,
-      FileDetails.columnNameInResultList.instance,
-      FileDetails.columnNameInResultList.holdings
-    ].forEach(columnName => {
-      FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
-    });
-    FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
-    FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems);
-    FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems);
+      // upload a marc file for creating
+      cy.visit(TopMenu.dataImportPath);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
+      DataImport.uploadFile('oneMarcBib.mrc', marcFileNameForCreate);
+      JobProfiles.searchJobProfileForImport(jobProfileForCreate.profileName);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(marcFileNameForCreate);
+      Logs.checkStatusOfJobProfile('Completed');
+      Logs.openFileDetails(marcFileNameForCreate);
+      [FileDetails.columnNameInResultList.srsMarc,
+        FileDetails.columnNameInResultList.instance,
+        FileDetails.columnNameInResultList.holdings
+      ].forEach(columnName => {
+        FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+      });
+      FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
+      FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems);
+      FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems);
 
-    // get Instance HRID through API
-    InventorySearchAndFilter.getInstanceHRID()
-      .then(hrId => {
-        instanceHrid = hrId[0];
+      FileDetails.openInstanceInInventory('Created');
+      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        instanceHrid = initialInstanceHrId;
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
@@ -234,7 +234,7 @@ describe('ui-data-import', () => {
         NewFieldMappingProfile.fillHoldingsType(holdingsMappingProfileForUpdate.holdingsType);
         NewFieldMappingProfile.addStatisticalCode(holdingsMappingProfileForUpdate.statisticalCode, 4, NewFieldMappingProfile.actions.deleteAllExistingAndAddThese);
         NewFieldMappingProfile.addAdministrativeNote(holdingsMappingProfileForUpdate.adminNote, 5, NewFieldMappingProfile.actions.deleteAllExistingAndAddThese);
-        NewFieldMappingProfile.fillCallNumberType(holdingsMappingProfileForUpdate.callNumberType);
+        NewFieldMappingProfile.fillCallNumberType(`"${holdingsMappingProfileForUpdate.callNumberType}"`);
         NewFieldMappingProfile.fillCallNumber(`"${holdingsMappingProfileForUpdate.callNumber}"`);
         NewFieldMappingProfile.addHoldingsStatements(holdingsMappingProfileForUpdate.holdingsStatements, NewFieldMappingProfile.actions.deleteAllExistingAndAddThese);
         NewFieldMappingProfile.fillIllPolicy(holdingsMappingProfileForUpdate.illPolicy);
@@ -289,5 +289,5 @@ describe('ui-data-import', () => {
         HoldingsRecordView.checkHoldingsStatement(holdingsMappingProfileForUpdate.holdingsStatements);
         HoldingsRecordView.checkIllPolicy(holdingsMappingProfileForUpdate.illPolicy);
       });
-  });
+    });
 });

@@ -31,23 +31,14 @@ describe('ui-data-import', () => {
   const jobProfileName = `C353645_job_profile_${getRandomPostfix()}`;
 
   before('create test data', () => {
-    let mapProileId;
-    let actProfileId;
-    let matchProfileId;
     cy.getAdminToken();
     NewFieldMappingProfile.createMappingProfileViaApi(mappingProfileName)
       .then((mappingProfileResponse) => {
-        mapProileId = mappingProfileResponse.body.id;
-
-        NewActionProfile.createActionProfileViaApi(actionProfileName, mapProileId)
+        NewActionProfile.createActionProfileViaApi(actionProfileName, mappingProfileResponse.body.id)
           .then((actionProfileResponse) => {
-            actProfileId = actionProfileResponse.body.id;
-
             NewMatchProfile.createMatchProfileViaApi(matchProfileName)
               .then((matchProfileResponse) => {
-                matchProfileId = matchProfileResponse.body.id;
-
-                NewJobProfile.createMatchProfileViaApi(jobProfileName, matchProfileId, actProfileId);
+                NewJobProfile.createJobProfileViaApi(jobProfileName, matchProfileResponse.body.id, actionProfileResponse.body.id);
               });
           });
       });

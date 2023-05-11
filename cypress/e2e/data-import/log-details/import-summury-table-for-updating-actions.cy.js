@@ -5,7 +5,8 @@ import { LOAN_TYPE_NAMES,
   ITEM_STATUS_NAMES,
   LOCALION_NAMES,
   FOLIO_RECORD_TYPE,
-  INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
+  INSTANCE_STATUS_TERM_NAMES,
+  CALL_NUMBER_TYPE_NAMES } from '../../../support/constants';
 import DateTools from '../../../support/utils/dateTools';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
@@ -231,7 +232,7 @@ describe('ui-data-import', () => {
         holdingsType: 'Electronic',
         permanentLocation: `"${LOCALION_NAMES.ONLINE}"`,
         permanentLocationUI: LOCALION_NAMES.ONLINE_UI,
-        callNumberType: 'Library of Congress classification',
+        callNumberType: CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS,
         callNumber: '050$a " " 050$b',
         relationship: 'Resource',
         uri: '856$u' },
@@ -397,7 +398,7 @@ describe('ui-data-import', () => {
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
       NewFieldMappingProfile.fillHoldingsType(collectionOfMappingAndActionProfiles[1].mappingProfile.holdingsType);
       NewFieldMappingProfile.fillPermanentLocation(collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocation);
-      NewFieldMappingProfile.fillCallNumberType(collectionOfMappingAndActionProfiles[1].mappingProfile.callNumberType);
+      NewFieldMappingProfile.fillCallNumberType(`"${collectionOfMappingAndActionProfiles[1].mappingProfile.callNumberType}"`);
       NewFieldMappingProfile.fillCallNumber(collectionOfMappingAndActionProfiles[1].mappingProfile.callNumber);
       NewFieldMappingProfile.addElectronicAccess(collectionOfMappingAndActionProfiles[1].mappingProfile.relationship, collectionOfMappingAndActionProfiles[1].mappingProfile.uri);
       FieldMappingProfiles.saveProfile();
@@ -405,7 +406,7 @@ describe('ui-data-import', () => {
 
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile);
-      NewFieldMappingProfile.fillMaterialType(collectionOfMappingAndActionProfiles[2].mappingProfile.materialType);
+      NewFieldMappingProfile.fillMaterialType(`"${collectionOfMappingAndActionProfiles[2].mappingProfile.materialType}"`);
       NewFieldMappingProfile.addItemNotes(
         collectionOfMappingAndActionProfiles[2].mappingProfile.noteType,
         collectionOfMappingAndActionProfiles[2].mappingProfile.note,
