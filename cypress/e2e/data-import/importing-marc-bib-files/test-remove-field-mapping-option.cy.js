@@ -61,7 +61,7 @@ describe('ui-data-import', () => {
         barcode: '945$a',
         accessionNumber: '"12345"',
         accessionNumberUI: '12345',
-        materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
+        materialType: MATERIAL_TYPE_NAMES.BOOK,
         numberOfPieces: '"25"',
         numberOfPiecesUI: '25',
         permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
@@ -174,7 +174,7 @@ describe('ui-data-import', () => {
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile);
       NewFieldMappingProfile.fillBarcode(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.barcode);
       NewFieldMappingProfile.fillAccessionNumber(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.accessionNumber);
-      NewFieldMappingProfile.fillMaterialType(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.materialType);
+      NewFieldMappingProfile.fillMaterialType(`"${collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.materialType}"`);
       NewFieldMappingProfile.fillNumberOfPieces(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.numberOfPieces);
       NewFieldMappingProfile.fillPermanentLoanType(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.permanentLoanType);
       NewFieldMappingProfile.fillTemporaryLoanType(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.temporaryLoanType);
