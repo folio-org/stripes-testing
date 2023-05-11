@@ -9,18 +9,12 @@ describe('ui-requests: Assign Tags to Request', () => {
   let userId;
   let requestData;
   let instanceData;
-  let oldRulesText;
-  let requestPolicyId;
   const tag = 'important';
 
   before(() => {
     cy.loginAsAdmin();
     cy.getAdminToken()
       .then(() => {
-        Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {
-          oldRulesText = oldRulesAsText;
-          requestPolicyId = policy.id;
-        });
         Requests.createRequestApi().then(({
           createdUser,
           createdRequest,
@@ -44,8 +38,6 @@ describe('ui-requests: Assign Tags to Request', () => {
       .then(() => {
         Users.deleteViaApi(userId);
       });
-    Requests.updateCirculationRulesApi(oldRulesText);
-    Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
   it('C747 Assign Tags to Request (folijet) (prokopovych)', { tags:  [testType.smoke, DevTeams.folijet] }, () => {

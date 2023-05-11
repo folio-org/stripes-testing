@@ -11,19 +11,13 @@ describe('ui-requests: Sort requests', () => {
   const userIds = [];
   const requests = [];
   const instances = [];
-  let oldRulesText;
-  let requestPolicyId;
+  const requestTypes = { PAGE: 'Page', HOLD: 'Hold', RECALL: 'Recall' };
 
   beforeEach(() => {
     cy.loginAsAdmin();
     cy.getAdminToken();
 
-    Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {
-      oldRulesText = oldRulesAsText;
-      requestPolicyId = policy.id;
-    });
-
-    Object.values(Requests.requestTypes).forEach((requestType) => {
+    Object.values(requestTypes).forEach((requestType) => {
       const itemStatus = requestType === REQUEST_TYPES.PAGE ? ITEM_STATUS_NAMES.AVAILABLE : ITEM_STATUS_NAMES.CHECKED_OUT;
       Requests.createRequestApi(itemStatus, requestType).then(({
         instanceRecordData,
@@ -49,8 +43,6 @@ describe('ui-requests: Sort requests', () => {
     userIds.forEach(id => {
       Users.deleteViaApi(id);
     });
-    Requests.updateCirculationRulesApi(oldRulesText);
-    Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
   // Test is failed. This is a known issue.
