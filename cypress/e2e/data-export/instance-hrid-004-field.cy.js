@@ -1,16 +1,16 @@
-import permissions from "../../support/dictionary/permissions"
+import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import DataExportLogs from "../../support/fragments/data-export/dataExportLogs";
-import InventoryInstances from "../../support/fragments/inventory/inventoryInstances";
-import getRandomPostfix from "../../support/utils/stringTools";
-import Users from "../../support/fragments/users/users";
-import FileManager from "../../support/utils/fileManager";
-import testTypes from "../../support/dictionary/testTypes";
-import devTeams from "../../support/dictionary/devTeams";
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import getRandomPostfix from '../../support/utils/stringTools';
+import Users from '../../support/fragments/users/users';
+import FileManager from '../../support/utils/fileManager';
+import testTypes from '../../support/dictionary/testTypes';
+import devTeams from '../../support/dictionary/devTeams';
 import ExportFileHelper from '../../support/fragments/data-export/exportFile';
 import { getLongDelay } from '../../support/utils/cypressTools';
 import DataExportResults from '../../support/fragments/data-export/dataExportResults';
-import ExportFile from "../../support/fragments/data-export/exportFile";
+import ExportFile from '../../support/fragments/data-export/exportFile';
 
 let user;
 let uuid;
@@ -18,13 +18,10 @@ const item = {
   barcode: getRandomPostfix(),
   instanceName: `instanceName-${getRandomPostfix()}`,
 };
-const fileName = {
-  first: `autoTestFile${getRandomPostfix()}`,
-  second: `autoTestFile${getRandomPostfix()}.csv`,
-}
+const fileName = `autoTestFile${getRandomPostfix()}.csv`;
 let instanceHRID;
 
-describe('Data Export › Holdings records export', () => {
+describe('Data Export - Holdings records export', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.dataExportEnableSettings.gui,
@@ -45,7 +42,7 @@ describe('Data Export › Holdings records export', () => {
     })
       .then(holdings => {
         uuid = holdings[0].id;
-        FileManager.createFile(`cypress/fixtures/${fileName.second}`, uuid);
+        FileManager.createFile(`cypress/fixtures/${fileName}`, uuid);
       });
     cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceId}"` })
       .then(instance => {
@@ -56,12 +53,12 @@ describe('Data Export › Holdings records export', () => {
   after('delete test data', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
     Users.deleteViaApi(user.userId);
-    FileManager.deleteFile(`cypress/fixtures/${fileName.second}`);
+    FileManager.deleteFile(`cypress/fixtures/${fileName}`);
   });
 
   it('C376962 Verify that Default mapping profile for holdings maps instance HRID to "004" field (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    ExportFileHelper.uploadFile(fileName.second);
-    ExportFileHelper.exportWithDefaultJobProfile(fileName.second, 'holdings', 'Holdings');
+    ExportFileHelper.uploadFile(fileName);
+    ExportFileHelper.exportWithDefaultJobProfile(fileName, 'holdings', 'Holdings');
 
     cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
     cy.wait('@getInfo', getLongDelay()).then((interception) => {

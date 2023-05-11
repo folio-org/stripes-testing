@@ -1,7 +1,6 @@
 import { recurse } from 'cypress-recurse';
 import { Modal, Button, Select, Pane, MultiColumnListCell, PaneHeader } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
-import DataExportResults from './dataExportResults';
 import FileManager from '../../utils/fileManager';
 
 const downloadCSVFile = (fileName, mask) => {
