@@ -127,6 +127,10 @@ export default {
     MultiColumnListCell(record).has({ innerHTML: including(`<strong>${record}</strong>`) });
   },
 
+  checkSearchResultRow(contributorName, contributorNameType, contributorType, numberOfTitles) {
+    cy.expect(MultiColumnListRow(`${contributorName}${contributorNameType}${contributorType}${numberOfTitles}`).exists());
+  },
+
   checkContributorRowValues: (values) => {
     cy.intercept('GET', '/browse/contributors/instances?*').as('getInstances');
     cy.wait('@getInstances', { timeout: 10000 }).then(item => {
