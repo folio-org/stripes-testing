@@ -21,6 +21,9 @@ const defaultCreateInstanceJobProfileName = 'Inventory Single Record - Default C
 const defaultUpdateInstanceJobProfileName = 'Inventory Single Record - Default Update Instance (91f9b8d6-d80e-4727-9783-73fb53e3c786)';
 const linkTodefaultCreateInstanceJobProfile = '/settings/data-import/job-profiles/view/d0ebb7b0-2f0f-11eb-adc1-0242ac120002';
 const linkTodefaultUpdateInstanceJobProfile = '/settings/data-import/job-profiles/view/91f9b8d6-d80e-4727-9783-73fb53e3c786';
+const defaultCreateInstanceJobProfileId = 'd0ebb7b0-2f0f-11eb-adc1-0242ac120002';
+const defaultUpdateInstanceJobProfileId = '91f9b8d6-d80e-4727-9783-73fb53e3c786';
+const defaultCopyCatProfileId = 'f26df83c-aa25-40b6-876e-96852c3d4fd4';
 
 function edit() {
   cy.do(oclcWorldcatPane.find(Button('Edit')).click());
@@ -86,14 +89,14 @@ export default {
   changeOclcWorldCatToDefaultViaApi:() => {
     cy.okapiRequest({
       method: 'PUT',
-      path: 'copycat/profiles/f26df83c-aa25-40b6-876e-96852c3d4fd4',
+      path: `copycat/profiles/${defaultCopyCatProfileId}`,
       body: {
         name:'OCLC WorldCat',
         url:'zcat.oclc.org/OLUCWorldCat',
         externalIdQueryMap:'@attr 1=1211 $identifier',
         internalIdEmbedPath:'999ff$i',
-        createJobProfileId:'d0ebb7b0-2f0f-11eb-adc1-0242ac120002',
-        updateJobProfileId:'91f9b8d6-d80e-4727-9783-73fb53e3c786',
+        createJobProfileId: defaultCreateInstanceJobProfileId,
+        updateJobProfileId:defaultUpdateInstanceJobProfileId,
         targetOptions:{ charset:'utf-8' },
         externalIdentifierType:'439bfbae-75bc-4f74-9fc7-b2a2d47ce3ef',
         enabled:true
@@ -105,16 +108,16 @@ export default {
   changeOclcWorldCatValueViaApi: (value) => {
     cy.okapiRequest({
       method: 'PUT',
-      path: 'copycat/profiles/f26df83c-aa25-40b6-876e-96852c3d4fd4',
+      path: `copycat/profiles/${defaultCopyCatProfileId}`,
       body: {
         name:'OCLC WorldCat',
         url:'zcat.oclc.org/OLUCWorldCat',
         externalIdQueryMap:'@attr 1=1211 $identifier',
         internalIdEmbedPath:'999ff$i',
-        createJobProfileId:'d0ebb7b0-2f0f-11eb-adc1-0242ac120002',
-        updateJobProfileId:'91f9b8d6-d80e-4727-9783-73fb53e3c786',
-        allowedCreateJobProfileIds:['d0ebb7b0-2f0f-11eb-adc1-0242ac120002'],
-        allowedUpdateJobProfileIds:['91f9b8d6-d80e-4727-9783-73fb53e3c786'],
+        createJobProfileId:defaultCreateInstanceJobProfileId,
+        updateJobProfileId:defaultUpdateInstanceJobProfileId,
+        allowedCreateJobProfileIds:[defaultCreateInstanceJobProfileId],
+        allowedUpdateJobProfileIds:[defaultUpdateInstanceJobProfileId],
         targetOptions:{ charset:'utf-8' },
         externalIdentifierType:'439bfbae-75bc-4f74-9fc7-b2a2d47ce3ef',
         enabled:true,
@@ -124,30 +127,7 @@ export default {
     });
   },
 
-  createNewZ3950TargetProfileViaApi:(name, createJobProfileIds, updateJobProfileIds) => {
-    return cy.okapiRequest({
-      method: 'POST',
-      path: 'copycat/profiles',
-      body: {
-        name,
-        url:'test.oclc.org',
-        externalIdQueryMap:'@attr 1=1211 $identifier',
-        internalIdEmbedPath:'999ff$i',
-        createJobProfileId:'d0ebb7b0-2f0f-11eb-adc1-0242ac120002',
-        updateJobProfileId:'91f9b8d6-d80e-4727-9783-73fb53e3c786',
-        allowedCreateJobProfileIds:['d0ebb7b0-2f0f-11eb-adc1-0242ac120002', ...createJobProfileIds],
-        allowedUpdateJobProfileIds:['91f9b8d6-d80e-4727-9783-73fb53e3c786', ...updateJobProfileIds],
-        targetOptions:{ charset:'utf-8' },
-        externalIdentifierType:'439bfbae-75bc-4f74-9fc7-b2a2d47ce3ef',
-        enabled:true
-      },
-      isDefaultSearchParamsRequired: false,
-    }).then(({ body }) => {
-      return body.id;
-    });
-  },
-
-  openTargetProfile:(id = 'f26df83c-aa25-40b6-876e-96852c3d4fd4') => {
+  openTargetProfile:(id = defaultCopyCatProfileId) => {
     cy.do(targetProfileName
       .find(Link({ href: including(`/settings/inventory/targetProfiles/${id}`) }))
       .click());
@@ -166,9 +146,7 @@ export default {
 
   checkIsOclcWorldCatIsChanged:(auth) => cy.expect(oclcWorldcatPane.find(KeyValue({ value: auth }))),
 
-  verifyTargetProfileFormOpened: () => {
-    cy.expect(targetProfileName.exists());
-  },
+  verifyTargetProfileFormOpened: () => cy.expect(targetProfileName.exists()),
 
   verifyTargetProfileForm() {
     cy.expect([
@@ -219,73 +197,6 @@ export default {
       .exists());
   },
 
-  openTargetProfile:(profileName, id = 'f26df83c-aa25-40b6-876e-96852c3d4fd4') => {
-    cy.do(targetProfileName
-      .find(Link({ href: including(`/settings/inventory/targetProfiles/${id}`) }))
-      .click());
-    cy.expect(Pane(`✓ ${profileName}`).exists());
-  },
-
-  changeOclcWorldCatToDefaultViaApi:() => {
-    cy.okapiRequest({
-      method: 'PUT',
-      path: 'copycat/profiles/f26df83c-aa25-40b6-876e-96852c3d4fd4',
-      body: {
-        name:'OCLC WorldCat',
-        url:'zcat.oclc.org/OLUCWorldCat',
-        externalIdQueryMap:'@attr 1=1211 $identifier',
-        internalIdEmbedPath:'999ff$i',
-        createJobProfileId:'d0ebb7b0-2f0f-11eb-adc1-0242ac120002',
-        updateJobProfileId:'91f9b8d6-d80e-4727-9783-73fb53e3c786',
-        targetOptions:{ charset:'utf-8' },
-        externalIdentifierType:'439bfbae-75bc-4f74-9fc7-b2a2d47ce3ef',
-        enabled:true
-      },
-      isDefaultSearchParamsRequired: false,
-    });
-  },
-
-  changeOclcWorldCatValueViaApi: (value) => {
-    cy.okapiRequest({
-      method: 'PUT',
-      path: 'copycat/profiles/f26df83c-aa25-40b6-876e-96852c3d4fd4',
-      body: {
-        name:'OCLC WorldCat',
-        url:'zcat.oclc.org/OLUCWorldCat',
-        externalIdQueryMap:'@attr 1=1211 $identifier',
-        internalIdEmbedPath:'999ff$i',
-        createJobProfileId:'d0ebb7b0-2f0f-11eb-adc1-0242ac120002',
-        updateJobProfileId:'91f9b8d6-d80e-4727-9783-73fb53e3c786',
-        allowedCreateJobProfileIds:['d0ebb7b0-2f0f-11eb-adc1-0242ac120002'],
-        allowedUpdateJobProfileIds:['91f9b8d6-d80e-4727-9783-73fb53e3c786'],
-        targetOptions:{ charset:'utf-8' },
-        externalIdentifierType:'439bfbae-75bc-4f74-9fc7-b2a2d47ce3ef',
-        enabled:true,
-        authentication: value
-      },
-      isDefaultSearchParamsRequired: false,
-    });
-  },
-
-  openOclcWorldCat:() => {
-    cy.do(Pane('Z39.50 target profiles')
-      .find(Link({ href: including('/settings/inventory/targetProfiles/f26df83c-aa25-40b6-876e-96852c3d4fd4') }))
-      .click());
-  },
-
-  editOclcWorldCat:(auth) => {
-    edit();
-    addJobProfileForCreate();
-    addJobProfileForUpdate();
-    cy.do([
-      TextField({ name:'authentication' }).fillIn(auth),
-      Select({ name:'externalIdentifierType' }).choose('OCLC')
-    ]);
-    save();
-  },
-
-  checkIsOclcWorldCatIsChanged:(auth) => cy.expect(oclcWorldcatPane.find(KeyValue({ value: auth }))),
-
   createNewZ3950TargetProfileViaApi:(name, createJobProfileIds, updateJobProfileIds = []) => {
     return cy.okapiRequest({
       method: 'POST',
@@ -296,10 +207,10 @@ export default {
         authentication:'100473910/PAOLF',
         externalIdQueryMap:'@attr 1=1211 $identifier',
         internalIdEmbedPath:'999ff$i',
-        createJobProfileId:'d0ebb7b0-2f0f-11eb-adc1-0242ac120002',
-        updateJobProfileId:'91f9b8d6-d80e-4727-9783-73fb53e3c786',
-        allowedCreateJobProfileIds:['d0ebb7b0-2f0f-11eb-adc1-0242ac120002', ...createJobProfileIds],
-        allowedUpdateJobProfileIds:['91f9b8d6-d80e-4727-9783-73fb53e3c786', ...updateJobProfileIds],
+        createJobProfileId:defaultCreateInstanceJobProfileId,
+        updateJobProfileId:defaultUpdateInstanceJobProfileId,
+        allowedCreateJobProfileIds:[defaultCreateInstanceJobProfileId, ...createJobProfileIds],
+        allowedUpdateJobProfileIds:[defaultUpdateInstanceJobProfileId, ...updateJobProfileIds],
         targetOptions:{ charset:'utf-8' },
         externalIdentifierType:'439bfbae-75bc-4f74-9fc7-b2a2d47ce3ef',
         enabled:true
