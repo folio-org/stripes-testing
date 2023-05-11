@@ -42,7 +42,7 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `autotestMappingItem${getRandomPostfix()}`,
-        materialType: MATERIAL_TYPE_NAMES.BOOK,
+        materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
         permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
         status: ITEM_STATUS_NAMES.AVAILABLE },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
