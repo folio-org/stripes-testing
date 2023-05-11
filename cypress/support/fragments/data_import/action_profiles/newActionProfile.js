@@ -27,7 +27,7 @@ export default {
     cy.expect(Pane('Action profiles').find(Button('Actions')).exists());
   },
 
-  createActionProfileViaApi:(nameMapProfile, mapProfileId) => {
+  createActionProfileViaApi:(nameMapProfile, mapProfileId, profileAction = 'CREATE') => {
     return cy
       .okapiRequest({
         method: 'POST',
@@ -35,7 +35,7 @@ export default {
         body: {
           profile: {
             name: nameMapProfile,
-            action: 'CREATE',
+            action: profileAction,
             folioRecord: 'INSTANCE'
           },
           addedRelations: [
