@@ -105,6 +105,7 @@ describe('orders: Receiving and Check-in', () => {
     // Need to wait until the order is opened before deleting it
     cy.wait(2000);
     Orders.deleteOrderViaApi(order.id);
+    Users.deleteViaApi(user.userId);
   });
 
   it('C738 Receiving pieces from an order for P/E MIx that is set to create Items in inventory (items for receiving includes "Order closed" statuses) (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
