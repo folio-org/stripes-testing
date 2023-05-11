@@ -576,6 +576,39 @@ export default {
     this.submitOrderLine();
   },
 
+  fillInPOLineInfoWithLocationForPEMIXResource(accountNumber, AUMethod, institutionName, quantity) {
+    cy.do([
+      orderFormatSelect.choose('P/E mix'),
+      acquisitionMethodButton.click(),
+      acquisitionMethodButton.click(),
+      SelectionOption(AUMethod).click(),
+      Select({ name: 'vendorDetail.vendorAccount' }).choose(accountNumber),
+    ]);
+    cy.do([
+      receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
+      physicalUnitPriceTextField.fillIn(physicalUnitPrice),
+      quantityPhysicalTextField.fillIn(quantity),
+      electronicUnitPriceTextField.fillIn(electronicUnitPrice),
+      quantityElectronicTextField.fillIn(quantity),
+      materialTypeSelect.choose('book'),
+      Select({ name: 'eresource.materialType' }).choose('dvd'),
+      addLocationButton.click(),
+      createNewLocationButton.click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionName);
+    cy.do([
+      Modal('Select permanent location').find(Button('Save and close')).click(),
+      quantityPhysicalLocationField.fillIn(quantity),
+      TextField({ name: 'locations[0].quantityElectronic' }).fillIn(quantity),
+      Accordion('Physical resource details').find(Select({ name: 'physical.createInventory' })).choose('Instance, holdings, item'),
+      Accordion('E-resources details').find(Select({ name: 'eresource.createInventory' })).choose('Instance, holdings'),
+      saveAndClose.click()
+    ]);
+    // If purchase order line will be dublicate, Modal with button 'Submit' will be activated
+    cy.wait(2000);
+    this.submitOrderLine();
+  },
+
   selectFilterMainLibraryLocationsPOL: () => {
     cy.do([
       buttonLocationFilter.click(),
