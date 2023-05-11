@@ -17,17 +17,15 @@ describe('ui-requests: Sort requests', () => {
     cy.loginAsAdmin();
     cy.getAdminToken();
 
-    Object.values(requestTypes).forEach((requestType) => {
+    Object.values(requestTypes).forEach(requestType => {
       const itemStatus = requestType === REQUEST_TYPES.PAGE ? ITEM_STATUS_NAMES.AVAILABLE : ITEM_STATUS_NAMES.CHECKED_OUT;
-      Requests.createRequestApi(itemStatus, requestType).then(({
-        instanceRecordData,
-        createdRequest,
-        createdUser
-      }) => {
-        userIds.push(createdUser.id);
-        instances.push(instanceRecordData);
-        requests.push(createdRequest);
-      });
+      Requests
+        .createRequestApi(itemStatus, requestType)
+        .then(({ instanceRecordData, createdRequest, createdUser }) => {
+          userIds.push(createdUser.id);
+          instances.push(instanceRecordData);
+          requests.push(createdRequest);
+        });
     });
   });
 
