@@ -101,7 +101,7 @@ describe('ui-data-import', () => {
   it('C356829 Test field protections when importing to update instance, after editing the MARC Bib in quickMARC (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       cy.visit(SettingsMenu.targetProfilesPath);
-      Z3950TargetProfiles.openOclcWorldCat();
+      Z3950TargetProfiles.openTargetProfile();
       Z3950TargetProfiles.editOclcWorldCat(authentication);
       Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(authentication);
 
