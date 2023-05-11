@@ -44,7 +44,6 @@ describe('orders: Receiving and Check-in', () => {
   const barcodeForFirstItem = Helper.getRandomBarcode();
   const barcodeForSecondItem = Helper.getRandomBarcode();
 
-
   let orderNumber;
   let user;
   let effectiveLocationServicePoint;
