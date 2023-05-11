@@ -6,7 +6,8 @@ import {
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
   ITEM_STATUS_NAMES,
-  FOLIO_RECORD_TYPE
+  FOLIO_RECORD_TYPE,
+  CALL_NUMBER_TYPE_NAMES
 } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -52,7 +53,8 @@ describe('ui-data-import', () => {
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `C350944 Create Holdings by POL match ${Helper.getRandomBarcode()}` },
+        name: `C350944 Create Holdings by POL match ${Helper.getRandomBarcode()}`,
+        callNumberType: `"${CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C350944 Create Holdings by POL match ${Helper.getRandomBarcode()}` }
     },
@@ -61,7 +63,7 @@ describe('ui-data-import', () => {
         name: `C350944 Create Item by POL match ${Helper.getRandomBarcode()}`,
         status: ITEM_STATUS_NAMES.AVAILABLE,
         permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-        materialType: MATERIAL_TYPE_NAMES.BOOK },
+        materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C350944 Create Item by POL match ${Helper.getRandomBarcode()}` }
     }
@@ -156,7 +158,7 @@ describe('ui-data-import', () => {
     NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
     NewFieldMappingProfile.fillHoldingsType('Monograph');
     NewFieldMappingProfile.fillPermanentLocation('980$a');
-    NewFieldMappingProfile.fillCallNumberType('Library of Congress classification');
+    NewFieldMappingProfile.fillCallNumberType(holdingsMappingProfile.callNumberType);
     NewFieldMappingProfile.fillCallNumber('980$b " " 980$c');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
@@ -255,7 +257,7 @@ describe('ui-data-import', () => {
       JobProfiles.waitFileIsImported(marcFileName);
       Logs.checkStatusOfJobProfile();
       Logs.openFileDetails(marcFileName);
-      FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.created, FileDetails.status.created]);
+      FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.created, FileDetails.status.created]);
       FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.noAction]);
 
       FileDetails.openInstanceInInventory('Updated');

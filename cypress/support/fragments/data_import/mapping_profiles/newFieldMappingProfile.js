@@ -370,7 +370,7 @@ export default {
   },
 
   fillCallNumberType:(type) => {
-    cy.do(TextField('Call number type').fillIn(`"${type}"`));
+    cy.do(TextField('Call number type').fillIn(type));
     waitLoading();
   },
 
@@ -389,8 +389,8 @@ export default {
     waitLoading();
   },
 
-  fillMaterialType:(type = 'book') => {
-    cy.do(TextField('Material type').fillIn(`"${type}"`));
+  fillMaterialType:(type) => {
+    cy.do(TextField('Material type').fillIn(type));
     waitLoading();
   },
 
