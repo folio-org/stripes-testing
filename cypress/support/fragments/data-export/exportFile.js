@@ -52,7 +52,7 @@ const downloadExportedMarcFile = (fileName) => {
         },
       });
     })
-    .then(({ body:{ link } }) => {
+    .then(({ body: { link } }) => {
       // download exported file
       cy.downloadFile(link, 'cypress/downloads', fileName);
 
@@ -82,20 +82,20 @@ export default {
   downloadCSVFile,
   downloadExportedMarcFile,
   waitLandingPageOpened,
-  uploadFile:(fileName) => {
+  uploadFile: (fileName) => {
     cy.get('input[type=file]', getLongDelay()).attachFile(fileName);
   },
 
-  exportWithDefaultJobProfile:(fileName) => {
+  exportWithDefaultJobProfile: (fileName, jobType = 'instances', selectType = 'Instances') => {
     cy.do([
-      MultiColumnListCell({ content: DataExportResults.defaultJobProfile, columnIndex: 0 }).click(),
-      Modal({ id: 'choose-job-profile-confirmation-modal' }).find(Select()).choose('Instances'),
+      MultiColumnListCell({ content: `Default ${jobType} export job profile`, columnIndex: 0 }).click(),
+      Modal({ id: 'choose-job-profile-confirmation-modal' }).find(Select()).choose(selectType),
       Button('Run').click(),
     ]);
     cy.get('#job-logs-list').contains(fileName.replace('.csv', ''));
   },
 
-  exportWithCreatedJobProfile:(fileName, profileName) => {
+  exportWithCreatedJobProfile: (fileName, profileName) => {
     // wait for data to be loaded
     cy.intercept(
       {
@@ -105,14 +105,14 @@ export default {
     ).as('getProfiles');
     cy.wait('@getProfiles');
     cy.do([
-      Pane({ id:'pane-results' }).find(MultiColumnListCell({ content: profileName })).click(),
+      Pane({ id: 'pane-results' }).find(MultiColumnListCell({ content: profileName })).click(),
       Modal({ id: 'choose-job-profile-confirmation-modal' }).find(Select()).choose('Instances'),
       Button('Run').click(),
     ]);
     cy.get('#job-logs-list').contains(fileName.replace('.csv', ''));
   },
 
-  getExportedFileNameViaApi:() => {
+  getExportedFileNameViaApi: () => {
     return cy.okapiRequest({
       path: 'data-export/job-executions',
       isDefaultSearchParamsRequired: false,
@@ -122,5 +122,21 @@ export default {
     }).then((name) => {
       return name.body.jobExecutions[0].exportedFiles[0].fileName;
     });
-  }
+  },
+
+  verifyFileIncludes(fileName, content) {
+    // Wait until file has been downloaded
+    recurse(
+      () => FileManager.findDownloadedFilesByMask(fileName),
+      (x) => typeof (x) === 'object' && !!x,
+    )
+      .then(foundFiles => {
+        const lastDownloadedFilename = foundFiles.sort()[foundFiles.length - 1];
+
+        FileManager.readFile(lastDownloadedFilename)
+          .then((actualContent) => {
+            expect(actualContent).to.include(content);
+          });
+      });
+  },
 };
