@@ -5,7 +5,9 @@ import {
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
   ITEM_STATUS_NAMES,
-  FOLIO_RECORD_TYPE
+  FOLIO_RECORD_TYPE,
+  CALL_NUMBER_TYPE_NAMES,
+  LOCALION_NAMES
 } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -216,14 +218,19 @@ describe('ui-data-import', () => {
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `autotestMappingHoldings${getRandomPostfix()}` },
+        name: `autotestMappingHoldings${getRandomPostfix()}`,
+        callNumberType: `"${CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS}"`,
+        permanentLocation: `"${LOCALION_NAMES.ONLINE}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `autotestActionHoldings${getRandomPostfix()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `autotestMappingItem${getRandomPostfix()}` },
+        name: `autotestMappingItem${getRandomPostfix()}`,
+        materialType: `"${MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE}"`,
+        status: ITEM_STATUS_NAMES.AVAILABLE,
+        permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `autotestActionItem${getRandomPostfix()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
@@ -349,8 +356,8 @@ describe('ui-data-import', () => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
     NewFieldMappingProfile.fillHoldingsType('Electronic');
-    NewFieldMappingProfile.fillPermanentLocation('"Online (E)"');
-    NewFieldMappingProfile.fillCallNumberType('Library of Congress classification');
+    NewFieldMappingProfile.fillPermanentLocation(profile.permanentLocation);
+    NewFieldMappingProfile.fillCallNumberType(profile.callNumberType);
     NewFieldMappingProfile.fillCallNumber('050$a " " 050$b');
     NewFieldMappingProfile.addElectronicAccess('Resource', '856$u');
     FieldMappingProfiles.saveProfile();
@@ -360,10 +367,10 @@ describe('ui-data-import', () => {
   const createItemMappingProfile = (profile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
-    NewFieldMappingProfile.fillMaterialType(MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE);
+    NewFieldMappingProfile.fillMaterialType(profile.materialType);
     NewFieldMappingProfile.addItemNotes('"Electronic bookplate"', '"Smith Family Foundation"', 'Mark for all affected records');
-    NewFieldMappingProfile.fillPermanentLoanType(LOAN_TYPE_NAMES.CAN_CIRCULATE);
-    NewFieldMappingProfile.fillStatus(ITEM_STATUS_NAMES.AVAILABLE);
+    NewFieldMappingProfile.fillPermanentLoanType(profile.permanentLoanType);
+    NewFieldMappingProfile.fillStatus(profile.status);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
   };

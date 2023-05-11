@@ -2,7 +2,7 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TestTypes from '../../../support/dictionary/testTypes';
-import { LOCALION_NAMES, FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { LOCALION_NAMES, FOLIO_RECORD_TYPE, CALL_NUMBER_TYPE_NAMES } from '../../../support/constants';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -39,7 +39,8 @@ describe('ui-data-import', () => {
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `updateEHoldingsMappingProf${getRandomPostfix()}` },
+        name: `updateEHoldingsMappingProf${getRandomPostfix()}`,
+        callNumberType: `"${CALL_NUMBER_TYPE_NAMES.OTHER_SCHEME}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `updateEHoldingsActionProf${getRandomPostfix()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
@@ -88,31 +89,31 @@ describe('ui-data-import', () => {
       });
   });
 
-  const createInstanceMappingProfile = (instanceMappingProfile) => {
+  const createInstanceMappingProfile = (profile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
-    NewFieldMappingProfile.fillSummaryInMappingProfile(instanceMappingProfile);
+    NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
     NewFieldMappingProfile.fillCatalogedDate('###TODAY###');
     FieldMappingProfiles.saveProfile();
-    FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfile.name);
+    FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
   };
 
-  const createHoldingsMappingProfile = (holdingsMappingProfile) => {
+  const createHoldingsMappingProfile = (profile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
-    NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
-    NewFieldMappingProfile.fillPermanentLocation(holdingsMappingProfile.permanentLocation);
+    NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
+    NewFieldMappingProfile.fillPermanentLocation(profile.permanentLocation);
     NewFieldMappingProfile.addElectronicAccess('Resource', '856$u', '856$z');
     FieldMappingProfiles.saveProfile();
-    FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
+    FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
   };
 
-  const updateHoldingsMappingProfile = (holdingsMappingProfile) => {
+  const updateHoldingsMappingProfile = (profile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
-    NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
+    NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
     NewFieldMappingProfile.addSuppressFromDiscovery('Mark for all affected records');
-    NewFieldMappingProfile.fillCallNumberType('Other scheme');
+    NewFieldMappingProfile.fillCallNumberType(profile.callNumberType);
     NewFieldMappingProfile.fillCallNumber('"ONLINE"');
     FieldMappingProfiles.saveProfile();
-    FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
+    FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
   };
 
   it('C17025 Match on Holdings 856 $u (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
