@@ -194,4 +194,15 @@ export default {
       PaneContent({ id: 'pane-title-details-content' }).find(Link()).click()
     ]);
   },
+
+  receiveAllPhysicalItemsWithBarcodes: (firstBarcode, secondBarcode) => {
+    cy.do([
+      Checkbox({ name: 'receivedItems[0].checked' }).clickInput(),
+      TextField({ name: 'receivedItems[0].barcode' }).fillIn(firstBarcode),
+      Checkbox({ name: 'receivedItems[1].checked' }).clickInput(),
+      TextField({ name: 'receivedItems[1].barcode' }).fillIn(secondBarcode),
+      receiveButton.click(),
+    ]);
+    InteractorsTools.checkCalloutMessage(receivingSuccessful);
+  },
 };
