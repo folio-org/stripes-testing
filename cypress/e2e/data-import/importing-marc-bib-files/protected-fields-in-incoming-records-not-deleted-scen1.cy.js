@@ -91,7 +91,7 @@ describe('ui-data-import', () => {
       MarcFieldProtection.checkFieldProtectionIsCreated(protectedField);
 
       cy.visit(SettingsMenu.targetProfilesPath);
-      Z3950TargetProfiles.openOclcWorldCat();
+      Z3950TargetProfiles.openTargetProfile();
       Z3950TargetProfiles.editOclcWorldCat(authentication);
       Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(authentication);
 
