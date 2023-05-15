@@ -29,6 +29,7 @@ export default {
   fillName:(name) => {
     cy.wait(1500);
     cy.do(nameField.fillIn(name));
+    cy.wait(1500);
   },
   addJobProfileForImportCreate:() => cy.do(jobProfileForImportCreateButton.click()),
   addJobProfileForOverlayUpdate:() => cy.do(jobProfileForOverlayUpdateButton.click()),
