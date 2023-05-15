@@ -41,7 +41,7 @@ describe('bulk-edit', () => {
               itemData.electronicAccess = null;
               itemData.statisticalCodeIds = null;
               itemData.purchaseOrderLineIdentifier = null;
-              cy.updateItemViaApi(itemData).then(() => {
+              cy.updateItemViaApi(itemData).then(_ => {
                 FileManager.createFile(`cypress/fixtures/${itemIDsFileName}`, item.id);
               });
             });
