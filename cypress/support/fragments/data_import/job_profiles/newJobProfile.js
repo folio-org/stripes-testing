@@ -12,11 +12,24 @@ const defaultJobProfile = {
   acceptedType: acceptedDataType.marc,
 };
 
+const getDefaultJobProfile = (name) => {
+  const defaultjobProfile = {
+    profile: {
+      name,
+      dataType: 'MARC'
+    },
+    addedRelations: [],
+    deletedRelations: []
+  };
+  return defaultjobProfile;
+};
+
 const actionsButton = Button('Action');
 const matchButton = Button('Match');
 const saveAndCloseButton = Button('Save as profile & Close');
 
 export default {
+  getDefaultJobProfile,
   defaultJobProfile,
   acceptedDataType,
 

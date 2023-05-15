@@ -8,8 +8,68 @@ const defaultActionProfile = {
   name: 'autotest action profile',
   typeValue: FOLIO_RECORD_TYPE.INSTANCE,
 };
+const getDefaultInstanceActionProfile = (name) => {
+  const defaultInstanceActionProfile = {
+    profile: {
+      name,
+      action: 'CREATE',
+      folioRecord: 'INSTANCE'
+    },
+    addedRelations: [
+      {
+        masterProfileId: null,
+        masterProfileType: 'ACTION_PROFILE',
+        detailProfileId: '',
+        detailProfileType: 'MAPPING_PROFILE'
+      }
+    ],
+    deletedRelations: []
+  };
+  return defaultInstanceActionProfile;
+};
+const getDefaultHoldingsActionProfile = (name) => {
+  const defaultHoldingsActionProfile = {
+    profile: {
+      name,
+      action: 'CREATE',
+      folioRecord: 'HOLDINGS'
+    },
+    addedRelations: [
+      {
+        masterProfileId: null,
+        masterProfileType: 'ACTION_PROFILE',
+        detailProfileId: '',
+        detailProfileType: 'MAPPING_PROFILE'
+      }
+    ],
+    deletedRelations: []
+  };
+  return defaultHoldingsActionProfile;
+};
+const getDefaultItemActionProfile = (name) => {
+  const defaultItemActionProfile = {
+    profile: {
+      name,
+      action: 'CREATE',
+      folioRecord: 'ITEM'
+    },
+    addedRelations: [
+      {
+        masterProfileId: null,
+        masterProfileType: 'ACTION_PROFILE',
+        detailProfileId: '',
+        detailProfileType: 'MAPPING_PROFILE'
+      }
+    ],
+    deletedRelations: []
+  };
+  return defaultItemActionProfile;
+};
 
 export default {
+  getDefaultInstanceActionProfile,
+  getDefaultHoldingsActionProfile,
+  getDefaultItemActionProfile,
   fill: (specialActionProfile = defaultActionProfile) => {
     cy.do([
       TextField({ name:'profile.name' }).fillIn(specialActionProfile.name),

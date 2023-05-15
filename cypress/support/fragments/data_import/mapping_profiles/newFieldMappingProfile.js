@@ -76,7 +76,70 @@ const waitLoading = () => {
 
 const selectFromResultsList = (rowNumber = 0) => cy.do(organizationModal.find(MultiColumnListRow({ index: rowNumber })).click());
 
+const getDefaultInstanceMappingProfile = (name) => {
+  const defaultInstanceMappingProfile = {
+    profile: {
+      name,
+      incomingRecordType: 'MARC_BIBLIOGRAPHIC',
+      existingRecordType: 'INSTANCE',
+    }
+  };
+  return defaultInstanceMappingProfile;
+};
+const getDefaultHoldingsMappingProfile = (name, permLocation) => {
+  const defaultHoldingsMappingProfile = {
+    profile: {
+      name,
+      incomingRecordType: 'MARC_BIBLIOGRAPHIC',
+      existingRecordType: 'HOLDINGS',
+      mappingDetails: { name: 'holdings',
+        recordType: 'HOLDINGS',
+        mappingFields: [
+          { name: 'permanentLocationId',
+            enabled: true,
+            path: 'holdings.permanentLocationId',
+            value: `"${permLocation}"` }] }
+    }
+  };
+  return defaultHoldingsMappingProfile;
+};
+const getDefaultItemMappingProfile = (name) => {
+  const defaultItemMappingProfile = {
+    profile: {
+      name,
+      incomingRecordType: 'MARC_BIBLIOGRAPHIC',
+      existingRecordType: 'ITEM',
+      mappingDetails: { name: 'item',
+        recordType: 'ITEM',
+        mappingFields: [
+          { name: 'materialType.id',
+            enabled: true,
+            path: 'item.materialType.id',
+            value: '"book"',
+            acceptedValues: { '1a54b431-2e4f-452d-9cae-9cee66c9a892': 'book' } },
+          { name: 'permanentLoanType.id',
+            enabled: true,
+            path: 'item.permanentLoanType.id',
+            value: '"Can circulate"',
+            acceptedValues: { '2b94c631-fca9-4892-a730-03ee529ffe27': 'Can circulate' } },
+          { name: 'status.name',
+            enabled: true,
+            path: 'item.status.name',
+            value: '"Available"' },
+          { name: 'permanentLocation.id',
+            enabled: 'true',
+            path: 'item.permanentLocation.id',
+            value: `"${permanentLocation}"`,
+            acceptedValues: { 'fcd64ce1-6995-48f0-840e-89ffa2288371' : 'Main Library (KU/CC/DI/M)' } }] }
+    }
+  };
+  return defaultItemMappingProfile;
+};
+
 export default {
+  getDefaultInstanceMappingProfile,
+  getDefaultHoldingsMappingProfile,
+  getDefaultItemMappingProfile,
   incomingRecordType,
   permanentLocation,
   materialType,

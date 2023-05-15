@@ -75,6 +75,13 @@ export default {
     ]);
   },
 
+  duplicate:() => {
+    cy.do([
+      fullScreenView.find(actionsButton).click(),
+      Button('Duplicate').click()
+    ]);
+  },
+
   addFieldForUpdates:() => {
     cy.do(Accordion({ id:'edit-field-mappings-for-marc-updates' }).find(Button('Add field')).click());
   },

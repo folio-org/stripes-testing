@@ -2,6 +2,11 @@ import { TextField, Button, Select, Checkbox, Modal, Accordion } from '../../../
 import modalSelectTransformations from './modalSelectTransformations';
 
 const outputFormat = 'MARC';
+const transformations = {
+  holdingsHrid: 'Holdings - HRID',
+  itemHrid: 'Item - HRID',
+  itemId: 'Item - ID'
+};
 
 const addTransformationsButton = Button('Add transformations');
 const fieldName = TextField({ name:'name' });
@@ -19,11 +24,11 @@ export default {
       itemCheckbox.click(),
       addTransformationsButton.click()
     ]);
-    modalSelectTransformations.searchItemTransformationsByName('Holdings - HRID');
+    modalSelectTransformations.searchItemTransformationsByName(profile.holdingsTransformation);
     modalSelectTransformations.selectTransformations(profile.holdingsMarcField, profile.subfieldForHoldings);
     cy.do(addTransformationsButton.click());
     cy.expect(Modal('Select transformations').absent());
-    modalSelectTransformations.searchItemTransformationsByName('Item - HRID');
+    modalSelectTransformations.searchItemTransformationsByName(profile.itemTransformation);
     modalSelectTransformations.selectTransformations(profile.itemMarcField, profile.subfieldForItem);
   },
 

@@ -207,8 +207,10 @@ describe('ui-data-import', () => {
   // create Field mapping profile for export
   const exportMappingProfile = {
     name: `C356802 mapping profile ${Helper.getRandomBarcode()}`,
+    holdingsTransformation: 'Holdings - HRID',
     holdingsMarcField: '901',
     subfieldForHoldings:'$h',
+    itemTransformation: 'Item - HRID',
     itemMarcField:'902',
     subfieldForItem:'$i'
   };

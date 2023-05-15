@@ -280,8 +280,10 @@ describe('ui-data-import', () => {
   // create Field mapping profile for export
   const exportMappingProfile = {
     name: `autoTestMappingProf.${getRandomPostfix()}`,
+    holdingsTransformation: 'Holdings - HRID',
     holdingsMarcField: '901',
     subfieldForHoldings:'$a',
+    itemTransformation: 'Item - HRID',
     itemMarcField:'902',
     subfieldForItem:'$a'
   };
