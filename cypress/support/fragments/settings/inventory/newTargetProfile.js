@@ -4,7 +4,6 @@ import {
   TextField,
   Checkbox,
   Select,
-  Pane,
   SelectionList,
   RadioButton,
   RepeatableField,
@@ -14,7 +13,6 @@ import {
 const nameField = TextField('Name*');
 const saveButton = Button('Save & close');
 const cancelButton = Button('Cancel');
-const newPane = Pane('New');
 const jobProfileForImportCreateAccordion = RepeatableField({ id:'input-targetprofile-createJobProfileIds' });
 const jobProfileForOverlayUpdateAccordion = RepeatableField({ id:'input-targetprofile-updateJobProfileIds' });
 const jobProfileForImportCreateButton = Button('Add job profile for import/create');
@@ -40,52 +38,38 @@ export default {
       SelectionList().select(profileName)
     ]);
     // list is in alhabetical order
+    // SelectionList({id:'sl-container-stripes-selection-11'})
   },
   selectJobProfileForOverlayUpdate:(profileName, profileNumber = 0) => {
     cy.do([
-      jobProfileForOverlayUpdateAccordion
-        .find(Button({ name:`allowedUpdateJobProfileIds[${profileNumber}]` })).click(),
+      jobProfileForOverlayUpdateAccordion.find(Button({ name:`allowedUpdateJobProfileIds[${profileNumber}]` })).click(),
       SelectionList().select(profileName)
     ]);
     // list is in alhabetical order
+    // SelectionList({id:'sl-container-stripes-selection-11'})
   },
   setDefaultJobProfileForCreate:(profileNumber) => {
     if (!profileNumber) {
       cy.do(firstRadioButtonForCreateJobProfile.click());
-      cy.expect([
-        firstRadioButtonForCreateJobProfile.has({ checked: true }),
-        secondRadioButtonForCreateJobProfile.has({ checked: false })
-      ]);
+      cy.expect(firstRadioButtonForCreateJobProfile.has({ checked: true }));
     } else {
       cy.do(secondRadioButtonForCreateJobProfile.click());
-      cy.expect([
-        firstRadioButtonForCreateJobProfile.has({ checked: false }),
-        secondRadioButtonForCreateJobProfile.has({ checked: true })
-      ]);
+      cy.expect(secondRadioButtonForCreateJobProfile.has({ checked: true }));
     }
   },
   setDefaultJobProfileForUpdate:(profileNumber) => {
     if (!profileNumber) {
       cy.do(firstRadioButtonForUpdateJobProfile.click());
-      cy.expect([
-        firstRadioButtonForUpdateJobProfile.has({ checked: true }),
-        secondRadioButtonForUpdateJobProfile.has({ checked: false })
-      ]);
+      cy.expect(firstRadioButtonForUpdateJobProfile.has({ checked: true }));
     } else {
       cy.do(secondRadioButtonForUpdateJobProfile.click());
-      cy.expect([
-        firstRadioButtonForUpdateJobProfile.has({ checked: false }),
-        secondRadioButtonForUpdateJobProfile.has({ checked: true })
-      ]);
+      cy.expect(firstRadioButtonForUpdateJobProfile.has({ checked: false }));
     }
   },
-  removeJobProfileForImportCreate:(content) => {
-    cy.contains('div[class^="repeatableFieldItem-"]', content)
-      .then(elem => {
-        cy.pause();
-        elem.parent()[0].querySelector('button[icon="trash"]').click();
-      });
-    cy.expect(HTML(including(content))).absent();
+  removeJobProfileForImportCreate:(content, rowNumber) => {
+    cy.do(RepeatableFieldItem({ index: rowNumber }).find(Button({ icon:'trash' })).click());
+    // cy.do(RepeatableField({ itemCount: '2' }).find(Button({ icon:'trash' })).click());
+    cy.expect(HTML(including(content)).absent());
   },
 
   // checks
@@ -110,11 +94,8 @@ export default {
     ]);
   },
   verifyErrorMessageIsPresented:() => {
-    cy.expect([
-      newPane.find(HTML(including('Please select to continue'))),
-      //   jobProfileForOverlayUpdateAccordion.has({ error: 'Please select to continue' }),
-      newPane.exists()
-    ]);
+    cy.get('[class*="row--"]:first-child').contains('Please select to continue');
+    cy.get('[class*="row--"]:last-child').contains('Please select to continue');
   },
   verifyJobProfileForImportCreateAccordion:() => {
     cy.do(jobProfileForImportCreateAccordion.find(Button({ icon:'info' })).click());

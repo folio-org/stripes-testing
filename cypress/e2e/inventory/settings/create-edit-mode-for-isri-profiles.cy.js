@@ -14,7 +14,8 @@ describe('ui-inventory', () => {
   const newTargetProfileName = `C374178 autotest targetProfileName ${getRandomPostfix()}`;
   const firstCreateProfileName = 'Inventory Single Record - Default Create Instance (d0ebb7b0-2f0f-11eb-adc1-0242ac120002)';
   const secondCreateProfileName = 'Default - Create instance and SRS MARC Bib (e34d7b92-9b83-11eb-a8b3-0242ac130003)';
-  const fieldNumber = '1';
+  const firstRow = 1;
+  const secondRow = 2;
   const firstUpdateProfileName = 'Inventory Single Record - Default Update Instance (91f9b8d6-d80e-4727-9783-73fb53e3c786)';
 
   before('create test data', () => {
@@ -30,13 +31,13 @@ describe('ui-inventory', () => {
       });
   });
 
-//   after('delete test data', () => {
-//     Users.deleteViaApi(user.userId);
-//     Z3950TargetProfiles.getTargetProfileIdViaApi({ query: `name="${newTargetProfileName}"` })
-//       .then(profileId => {
-//         Z3950TargetProfiles.getTargetProfileIdViaApi(profileId);
-//       });
-//   });
+  after('delete test data', () => {
+    Users.deleteViaApi(user.userId);
+    Z3950TargetProfiles.getTargetProfileIdViaApi({ query: `name="${newTargetProfileName}"` })
+      .then(profileId => {
+        Z3950TargetProfiles.getTargetProfileIdViaApi(profileId);
+      });
+  });
 
   it('C374178 Verify the create/edit mode for ISRI profiles (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
@@ -49,28 +50,27 @@ describe('ui-inventory', () => {
       NewTargetProfile.verifyJobProfileForImportCreateAccordion();
       NewTargetProfile.selectJobProfileForImportCreate(firstCreateProfileName);
       NewTargetProfile.addJobProfileForImportCreate();
-      NewTargetProfile.selectJobProfileForImportCreate(secondCreateProfileName, fieldNumber);
-      NewTargetProfile.setDefaultJobProfileForCreate(fieldNumber);
+      NewTargetProfile.selectJobProfileForImportCreate(secondCreateProfileName, firstRow);
+      NewTargetProfile.setDefaultJobProfileForCreate(firstRow);
+      NewTargetProfile.removeJobProfileForImportCreate(secondCreateProfileName, secondRow);
+      NewTargetProfile.verifyJobProfileForImportCreateIsRemoved();
+      NewTargetProfile.setDefaultJobProfileForCreate();
 
-      NewTargetProfile.removeJobProfileForImportCreate(secondCreateProfileName);
-      // NewTargetProfile.verifyJobProfileForImportCreateIsRemoved();
+      NewTargetProfile.addJobProfileForOverlayUpdate();
+      NewTargetProfile.verifyJobProfileForOverlayUpdateAccordion();
+      NewTargetProfile.selectJobProfileForOverlayUpdate(firstUpdateProfileName);
+      NewTargetProfile.selectJobProfileForOverlayUpdate(secondCreateProfileName, firstRow);
+      NewTargetProfile.setDefaultJobProfileForUpdate(firstRow);
+      NewTargetProfile.removeJobProfileForImportCreate(secondCreateProfileName, secondRow);
+      NewTargetProfile.verifyJobProfileForImportCreateIsRemoved();
+      NewTargetProfile.setDefaultJobProfileForUpdate();
+      NewTargetProfile.save();
+      Z3950TargetProfiles.verifyTargetProfileIsCreated(targetProfileName);
 
-      //   NewTargetProfile.addJobProfileForOverlayUpdate();
-      //   NewTargetProfile.verifyJobProfileForOverlayUpdateAccordion();
-      //   NewTargetProfile.selectJobProfileForOverlayUpdate(firstUpdateProfileName);
-      //   NewTargetProfile.selectJobProfileForOverlayUpdate(secondCreateProfileName, fieldNumber);
-      //   NewTargetProfile.setDefaultJobProfileForUpdate(fieldNumber);
-
-      //   // NewTargetProfile.deleteJobProfileForImportCreate(secondCreateProfileName);
-      //   // NewTargetProfile.verifyJobProfileForImportCreateIsRemoved();
-
-      //   NewTargetProfile.save();
-      //   Z3950TargetProfiles.verifyTargetProfileIsCreated(targetProfileName);
-
-    //   Z3950TargetProfiles.edit(`✕ ${targetProfileName}`);
-    //   EditTargetProfile.verifyTargetProfileFormOpened();
-    //   EditTargetProfile.fillName(newTargetProfileName);
-    //   EditTargetProfile.save(targetProfileName);
-    //   Z3950TargetProfiles.verifyTargetProfileIsUpdated(targetProfileName, newTargetProfileName);
+      Z3950TargetProfiles.edit(`✕ ${targetProfileName}`);
+      EditTargetProfile.verifyTargetProfileFormOpened();
+      EditTargetProfile.fillName(newTargetProfileName);
+      EditTargetProfile.save(targetProfileName);
+      Z3950TargetProfiles.verifyTargetProfileIsUpdated(targetProfileName, newTargetProfileName);
     });
 });
