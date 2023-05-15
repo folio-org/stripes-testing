@@ -536,6 +536,10 @@ export default {
     cy.expect(Accordion('Errors').find(HTML(`${fileName}: ${validRecordCount + invalidRecordCount} entries * ${validRecordCount} records changed * ${invalidRecordCount} errors`)).exists());
   },
 
+  verifyReasonForError(errorText) {
+    cy.expect(Accordion('Errors').find(HTML(including(errorText))).exists());
+  },
+
   verifyActionsAfterConductedCSVUploading(errors = true) {
     cy.do(actions.click());
     cy.expect([
