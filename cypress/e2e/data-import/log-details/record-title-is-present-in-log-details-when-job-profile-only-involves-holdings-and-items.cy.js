@@ -31,10 +31,12 @@ import ItemRecordView from '../../../support/fragments/inventory/itemRecordView'
 describe('ui-data-import', () => {
   let user;
   const instanceHrids = [];
+  const instanceTitle = 'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)';
   const exportJobProfileName = `Testing titles for import.${getRandomPostfix()}`;
   const marcFileForCreateFirstRecord = `C375109 marcFile.${getRandomPostfix()}.mrc`;
   const marcFileForCreateSecondRecord = `C375109 marcFile.${getRandomPostfix()}.mrc`;
   const csvFileNameForFirstRecord = `C375109 autotestFile${getRandomPostfix()}.csv`;
+  const csvFileNameForSecondRecord = `C375109 autotestFile${getRandomPostfix()}.csv`;
   const marcFileNameForUpdateFirstRecord = `C375109 marcFile.${getRandomPostfix()}.mrc`;
   const marcFileNameForUpdateSecondRecord = `C375109 marcFile.${getRandomPostfix()}.mrc`;
   const firstRecord = {
@@ -103,7 +105,7 @@ describe('ui-data-import', () => {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `WITH instance match item.${getRandomPostfix()}`,
         itemNote: 'Add this to existing',
-        noteType: '"Provenance"',
+        noteType: 'Provenance',
         note: 'Acquired in 2022 from the Arceneaux Trust for Cajun History',
         staffOnly: 'Unmark for all affected records' },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -219,8 +221,8 @@ describe('ui-data-import', () => {
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(marcFileForCreateFirstRecord);
         FileDetails.openInstanceInInventory('Created');
-        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
-          instanceHrids.push(initialInstanceHrId);
+        InventoryInstance.getAssignedHRID().then(firstInstanceHrId => {
+          instanceHrids.push(firstInstanceHrId);
         });
 
         // create the second instance
@@ -247,9 +249,10 @@ describe('ui-data-import', () => {
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(marcFileForCreateFirstRecord);
         FileDetails.openInstanceInInventory('Created');
-        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
-          instanceHrids.push(initialInstanceHrId);
+        InventoryInstance.getAssignedHRID().then(secondInstanceHrId => {
+          instanceHrids.push(secondInstanceHrId);
         });
+        cy.logout();
 
         cy.createTempUser([
           permissions.moduleDataImportEnabled.gui,
@@ -316,7 +319,7 @@ describe('ui-data-import', () => {
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
       NewFieldMappingProfile.addItemNotes(
-        collectionOfMappingAndActionProfiles[0].mappingProfile.noteType,
+        `"${collectionOfMappingAndActionProfiles[0].mappingProfile.noteType}"`,
         `"${collectionOfMappingAndActionProfiles[0].mappingProfile.note}"`,
         collectionOfMappingAndActionProfiles[0].mappingProfile.staffOnly
       );
@@ -398,24 +401,29 @@ describe('ui-data-import', () => {
       FileDetails.checkStatusInColumn(FileDetails.status.dash, FileDetails.columnNameInResultList.instance);
       FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.holdings);
       FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.item);
+      FileDetails.verifyTitle(instanceTitle, FileDetails.columnNameInResultList.title);
 
       FileDetails.openHoldingsInInventory('Updated');
-      HoldingsRecordView.checkHoldingsNote(collectionOfMappingAndActionProfiles[0].mappingProfile.note);
+      HoldingsRecordView.checkAdministrativeNote(collectionOfMappingAndActionProfiles[2].mappingProfile.adminNote);
       cy.go('back');
       FileDetails.openItemInInventory('Updated');
-      ItemRecordView.checkItemAdministrativeNote(collectionOfMappingAndActionProfiles[2].mappingProfile.adminNote);
+      ItemRecordView.checkItemNote(
+        collectionOfMappingAndActionProfiles[0].mappingProfile.note,
+        'No',
+        collectionOfMappingAndActionProfiles[0].mappingProfile.noteType
+      );
 
       // update the second record
       cy.visit(TopMenu.inventoryPath);
       InventorySearchAndFilter.searchInstanceByHRID(instanceHrids[1]);
       InventorySearchAndFilter.saveUUIDs();
-      ExportFile.downloadCSVFile(csvFileNameForFirstRecord, 'SearchInstanceUUIDs*');
+      ExportFile.downloadCSVFile(csvFileNameForSecondRecord, 'SearchInstanceUUIDs*');
       FileManager.deleteFolder(Cypress.config('downloadsFolder'));
 
       // download exported marc file
       cy.visit(TopMenu.dataExportPath);
-      ExportFile.uploadFile(csvFileNameForFirstRecord);
-      ExportFile.exportWithCreatedJobProfile(csvFileNameForFirstRecord, exportJobProfileName);
+      ExportFile.uploadFile(csvFileNameForSecondRecord);
+      ExportFile.exportWithCreatedJobProfile(csvFileNameForSecondRecord, exportJobProfileName);
       ExportFile.downloadExportedMarcFile(marcFileNameForUpdateSecondRecord);
 
       // upload the exported marc file
@@ -433,11 +441,16 @@ describe('ui-data-import', () => {
       FileDetails.checkStatusInColumn(FileDetails.status.dash, FileDetails.columnNameInResultList.instance);
       FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.holdings);
       FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.item);
+      FileDetails.verifyTitle(instanceTitle, FileDetails.columnNameInResultList.title);
 
       FileDetails.openHoldingsInInventory('Updated');
-      HoldingsRecordView.checkHoldingsNote(collectionOfMappingAndActionProfiles[0].mappingProfile.note);
+      HoldingsRecordView.checkAdministrativeNote(collectionOfMappingAndActionProfiles[2].mappingProfile.adminNote);
       cy.go('back');
       FileDetails.openItemInInventory('Updated');
-      ItemRecordView.checkItemAdministrativeNote(collectionOfMappingAndActionProfiles[2].mappingProfile.adminNote);
+      ItemRecordView.checkItemNote(
+        collectionOfMappingAndActionProfiles[0].mappingProfile.note,
+        'No',
+        collectionOfMappingAndActionProfiles[0].mappingProfile.noteType
+      );
     });
 });

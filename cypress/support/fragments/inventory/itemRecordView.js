@@ -81,8 +81,8 @@ export default {
     cy.expect(itemDataAccordion.find(HTML(including(type))).exists());
   },
 
-  checkItemNote:(note, staffValue = 'Yes') => {
-    cy.expect(itemNotesAccordion.find(KeyValue('Note')).has({ value: note }));
+  checkItemNote:(note, staffValue = 'Yes', value = 'Note') => {
+    cy.expect(itemNotesAccordion.find(KeyValue(value)).has({ value: note }));
     cy.expect(itemNotesAccordion.find(KeyValue('Staff only')).has({ value: staffValue }));
   },
 
