@@ -8,6 +8,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 
 let user;
 const items = [];
@@ -22,6 +23,7 @@ for (let i = 0; i < 8; i++) {
 
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*Matched-Records-${itemBarcodesFileName}`;
+let fileContent = '';
 
 describe('Bulk Edit - Items', () => {
     before('create test data', () => {
@@ -36,7 +38,6 @@ describe('Bulk Edit - Items', () => {
             waiter: BulkEditSearchPane.waitLoading
           });
 
-          let fileContent = '';
           items.forEach(item => {
             fileContent += `${item.itemBarcode}\n`;
             InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
@@ -64,5 +65,8 @@ describe('Bulk Edit - Items', () => {
         BulkEditSearchPane.verifySpecificItemsMatched(item.itemBarcode);
       });
       BulkEditActions.downloadMatchedResults();
+      
+      const values = BulkEditFiles.getValuesFromCSVFile(fileContent);
+      BulkEditFiles.verifyMatchedResultFileContent(matchedRecordsFileName, values, 'barcode', true);
     });
   });
