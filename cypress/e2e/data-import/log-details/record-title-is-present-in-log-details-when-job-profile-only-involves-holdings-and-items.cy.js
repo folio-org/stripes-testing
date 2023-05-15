@@ -25,6 +25,8 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import FileManager from '../../../support/utils/fileManager';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
 
 describe('ui-data-import', () => {
   let user;
@@ -92,7 +94,7 @@ describe('ui-data-import', () => {
     holdingsTransformation: 'Holdings - HRID',
     holdingsMarcField: '911',
     subfieldForHoldings:'$h',
-    itemTransformation: 'Item - ID',
+    itemTransformation: 'Item - HRID',
     itemMarcField:'911',
     subfieldForItem:'$i'
   };
@@ -102,7 +104,7 @@ describe('ui-data-import', () => {
         name: `WITH instance match item.${getRandomPostfix()}`,
         itemNote: 'Add this to existing',
         noteType: '"Provenance"',
-        note: '"Acquired in 2022 from the Arceneaux Trust for Cajun History"',
+        note: 'Acquired in 2022 from the Arceneaux Trust for Cajun History',
         staffOnly: 'Unmark for all affected records' },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `WITH instance match item.${getRandomPostfix()}`,
@@ -264,6 +266,41 @@ describe('ui-data-import', () => {
       });
   });
 
+  after('delete test data', () => {
+    JobProfiles.deleteJobProfile(firstRecord.jobProfileName);
+    ActionProfiles.deleteActionProfile(firstRecord.instanceActionProfileName);
+    ActionProfiles.deleteActionProfile(firstRecord.holdingsActionProfileName);
+    ActionProfiles.deleteActionProfile(firstRecord.itemActionProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(firstRecord.instanceMappingProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(firstRecord.holdingsMappingProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(firstRecord.itemMappingProfileName);
+    JobProfiles.deleteJobProfile(secondRecord.jobProfileName);
+    ActionProfiles.deleteActionProfile(secondRecord.instanceActionProfileName);
+    ActionProfiles.deleteActionProfile(secondRecord.holdingsActionProfileName);
+    ActionProfiles.deleteActionProfile(secondRecord.itemActionProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(secondRecord.instanceMappingProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(secondRecord.holdingsMappingProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(secondRecord.itemMappingProfileName);
+    JobProfiles.deleteJobProfile(jobProfileWithMatch.profileName);
+    JobProfiles.deleteJobProfile(jobProfileWithoutMatch.profileName);
+    cy.wrap(collectionOfMatchProfiles).each(profile => {
+      MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+    });
+    cy.wrap(collectionOfMappingAndActionProfiles).each(profile => {
+      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+    });
+    Users.deleteViaApi(user.userId);
+    instanceHrids.forEach(hrid => {
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` })
+        .then((instance) => {
+          cy.deleteItemViaApi(instance.items[0].id);
+          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
+    });
+  });
+
   it('C375109 When MARC Bib job profile only involves holdings and items, verify that the record title is present in the log details (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       // create Field mapping profile for export
@@ -280,7 +317,7 @@ describe('ui-data-import', () => {
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
       NewFieldMappingProfile.addItemNotes(
         collectionOfMappingAndActionProfiles[0].mappingProfile.noteType,
-        collectionOfMappingAndActionProfiles[0].mappingProfile.note,
+        `"${collectionOfMappingAndActionProfiles[0].mappingProfile.note}"`,
         collectionOfMappingAndActionProfiles[0].mappingProfile.staffOnly
       );
       FieldMappingProfiles.saveProfile();
@@ -355,12 +392,18 @@ describe('ui-data-import', () => {
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(marcFileNameForUpdateFirstRecord);
       Logs.openFileDetails(marcFileNameForUpdateFirstRecord);
-      // FileDetails.checkHoldingsQuantityInSummaryTable('1', 1);
-      // FileDetails.checkItemQuantityInSummaryTable('1', 1);
-      // FileDetails.checkStatusInColumn(FileDetails.status.blank, FileDetails.columnNameInResultList.srsMarc);
-      // FileDetails.checkStatusInColumn(FileDetails.status.blank, FileDetails.columnNameInResultList.instance);
-      // FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.holdings);
-      // FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.item);
+      FileDetails.checkHoldingsQuantityInSummaryTable('1', 1);
+      FileDetails.checkItemQuantityInSummaryTable('1', 1);
+      FileDetails.checkStatusInColumn(FileDetails.status.dash, FileDetails.columnNameInResultList.srsMarc);
+      FileDetails.checkStatusInColumn(FileDetails.status.dash, FileDetails.columnNameInResultList.instance);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.holdings);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.item);
+
+      FileDetails.openHoldingsInInventory('Updated');
+      HoldingsRecordView.checkHoldingsNote(collectionOfMappingAndActionProfiles[0].mappingProfile.note);
+      cy.go('back');
+      FileDetails.openItemInInventory('Updated');
+      ItemRecordView.checkItemAdministrativeNote(collectionOfMappingAndActionProfiles[2].mappingProfile.adminNote);
 
       // update the second record
       cy.visit(TopMenu.inventoryPath);
@@ -384,11 +427,17 @@ describe('ui-data-import', () => {
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(marcFileNameForUpdateSecondRecord);
       Logs.openFileDetails(marcFileNameForUpdateSecondRecord);
-      // FileDetails.checkHoldingsQuantityInSummaryTable('1', 1);
-      // FileDetails.checkItemQuantityInSummaryTable('1', 1);
-      // FileDetails.checkStatusInColumn(FileDetails.status.blank, FileDetails.columnNameInResultList.srsMarc);
-      // FileDetails.checkStatusInColumn(FileDetails.status.blank, FileDetails.columnNameInResultList.instance);
-      // FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.holdings);
-      // FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.item);
+      FileDetails.checkHoldingsQuantityInSummaryTable('1', 1);
+      FileDetails.checkItemQuantityInSummaryTable('1', 1);
+      FileDetails.checkStatusInColumn(FileDetails.status.dash, FileDetails.columnNameInResultList.srsMarc);
+      FileDetails.checkStatusInColumn(FileDetails.status.dash, FileDetails.columnNameInResultList.instance);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.holdings);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.item);
+
+      FileDetails.openHoldingsInInventory('Updated');
+      HoldingsRecordView.checkHoldingsNote(collectionOfMappingAndActionProfiles[0].mappingProfile.note);
+      cy.go('back');
+      FileDetails.openItemInInventory('Updated');
+      ItemRecordView.checkItemAdministrativeNote(collectionOfMappingAndActionProfiles[2].mappingProfile.adminNote);
     });
 });
