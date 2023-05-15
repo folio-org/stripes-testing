@@ -23,7 +23,7 @@ const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
 };
-const calloutMessage = `The URL relationship term ${newRelationshipName} was successfully deleted`
+const calloutMessage = `The URL relationship term ${newRelationshipName} was successfully deleted`;
 
 describe('Bulk Edit - Holdings', () => {
   before('create test data', () => {
