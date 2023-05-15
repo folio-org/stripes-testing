@@ -7,7 +7,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import { getLongDelay } from '../../support/utils/cypressTools';
 import permissions from '../../support/dictionary/permissions';
 import devTeams from '../../support/dictionary/devTeams';
-import users from '../../support/fragments/users/users';
+import Users from '../../support/fragments/users/users';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 
@@ -36,7 +36,7 @@ describe('data-export', () => {
 
   after('delete test data', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-    users.deleteViaApi(user.userId);
+    Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${fileName}`);
   });
 
