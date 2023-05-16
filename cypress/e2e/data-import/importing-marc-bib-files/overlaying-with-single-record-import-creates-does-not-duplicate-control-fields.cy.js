@@ -37,7 +37,8 @@ describe('ui-data-import', () => {
         user = userProperties;
 
         Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF');
-        cy.login(user.username, user.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+        cy.login(user.username, user.password,
+          { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
       });
   });
 
