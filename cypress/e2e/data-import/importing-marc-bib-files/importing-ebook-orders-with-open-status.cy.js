@@ -1,0 +1,135 @@
+import getRandomPostfix from '../../../support/utils/stringTools';
+import permissions from '../../../support/dictionary/permissions';
+import DevTeams from '../../../support/dictionary/devTeams';
+import TestTypes from '../../../support/dictionary/testTypes';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import { FOLIO_RECORD_TYPE, MATERIAL_TYPE_NAMES, ORDER_STATUSES } from '../../../support/constants';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import TopMenu from '../../../support/fragments/topMenu';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Users from '../../../support/fragments/users/users';
+
+describe('ui-data-import', () => {
+  let user;
+  const quantityOfItems = '1';
+  const marcFileName = `C375989 autotestFileName.${getRandomPostfix()}`;
+  const mappingProfile = {
+    name: `C375989 Test Order mapping profile ${getRandomPostfix()}`,
+    typeValue: FOLIO_RECORD_TYPE.ORDER,
+    purchaseOrderStatus: ORDER_STATUSES.OPEN,
+    approved: true,
+    vendor: 'GOBI Library Solutions',
+    reEncumber: false,
+    title: '245$a',
+    mustAcknowledgeReceivingNote: false,
+    publicationDate: '264$c; else 260$c',
+    publisher: '264$b; else 260$b',
+    edition: '250$a',
+    internalNote: '981$d',
+    acquisitionMethod: 'Purchase At Vendor System',
+    orderFormat: 'Electronic Resource',
+    receiptStatus: 'Pending',
+    paymentStatus: 'Pending',
+    selector: '981$e',
+    cancellationRestriction: false,
+    rush: '981$h',
+    receivingWorkflow: 'Synchronized',
+    accountNumber: '981$g',
+    instructionsToVendor: '981$f',
+    electronicUnitPrice: '980$b',
+    quantityElectronic: '980$g',
+    currency: 'USD',
+    createSnventory: 'None',
+    materialType: MATERIAL_TYPE_NAMES.BOOK,
+    accessProvider: 'GOBI Library Solutions',
+    createInventoryEResources: 'None',
+    materialTypeEResources: 'electronic resource',
+    contributor: '100$a',
+    contributorType: 'Personal name',
+    productId: '020$a',
+    qualifier: '020$q',
+    productIDType: 'ISBN',
+    vendorReferenceNumber: '980$f',
+    vendoeReferenceType: 'Vendor order reference number',
+    fundId: '981$b',
+    expenseClass: '981$c',
+    value: '100',
+    type: '%',
+    locationName: '049$a',
+    locationQuantityPhysical: '',
+    locationQuantityElectronic: '980$g'
+  };
+  const actionProfile = { name: `C375989 Test Order action profile ${getRandomPostfix()}`,
+    typeValue: FOLIO_RECORD_TYPE.ORDER };
+  const jobProfile = {
+    ...NewJobProfile.defaultJobProfile,
+    profileName: `C375989 Test Order ${getRandomPostfix()}`,
+  };
+
+  before(() => {
+    cy.createTempUser([
+      permissions.settingsDataImportEnabled.gui,
+      permissions.moduleDataImportEnabled.gui,
+      permissions.uiOrganizationsView.gui,
+      permissions.inventoryAll.gui,
+      permissions.uiOrdersView.gui
+    ])
+      .then(userProperties => {
+        user = userProperties;
+
+        cy.login(userProperties.username, userProperties.password,
+          { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+      });
+  });
+
+  //   after('delete test data', () => {
+  //     Users.deleteViaApi(user.userId);
+  //     JobProfiles.deleteJobProfile(jobProfile.profileName);
+  //     ActionProfiles.deleteActionProfile(actionProfile.name);
+  //     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+  //   });
+
+  it('C375989 Verify the importing of eBook orders with open status (folijet)',
+    { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+      // create mapping profile
+      FieldMappingProfiles.openNewMappingProfileForm();
+
+      
+
+      // create action profile
+      cy.visit(SettingsMenu.actionProfilePath);
+      ActionProfiles.create(actionProfile, mappingProfile.name);
+      ActionProfiles.checkActionProfilePresented(actionProfile.name);
+
+      // create job profile
+      cy.visit(SettingsMenu.jobProfilePath);
+      JobProfiles.createJobProfile(jobProfile);
+      NewJobProfile.linkActionProfile(actionProfile);
+      NewJobProfile.saveAndClose();
+      JobProfiles.checkJobProfilePresented(jobProfile.profileName);
+
+      cy.visit(TopMenu.dataImportPath);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
+      DataImport.uploadFile('marcFileForC375989.mrc', marcFileName);
+      JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(marcFileName);
+      Logs.checkStatusOfJobProfile('Completed');
+      Logs.openFileDetails(marcFileName);
+      [FileDetails.columnNameInResultList.srsMarc,
+        FileDetails.columnNameInResultList.instance,
+        FileDetails.columnNameInResultList.holdings,
+        FileDetails.columnNameInResultList.item
+      ].forEach(columnName => {
+        FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+      });
+      FileDetails.checkItemQuantityInSummaryTable(quantityOfItems);
+      FileDetails.openOrder('Created');
+    });
+});

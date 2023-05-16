@@ -162,7 +162,7 @@ describe('ui-data-import', () => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
       });
       FileDetails.checkItemQuantityInSummaryTable(quantityOfItems);
-      FileDetails.openOrderInInventory('Created');
+      FileDetails.openOrder('Created');
 
       OrderLines.waitLoading();
       OrderLines.checkCreateInventory();

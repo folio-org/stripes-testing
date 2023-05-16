@@ -172,7 +172,7 @@ export default {
       .click());
   },
 
-  openOrderInInventory:(itemStatus, rowNumber = 0) => {
+  openOrder:(itemStatus, rowNumber = 0) => {
     cy.do(resultsList.find(MultiColumnListCell({ row: rowNumber, columnIndex: 7 }))
       .find(Link(itemStatus))
       .click());
