@@ -17,7 +17,7 @@ import Users from '../../../support/fragments/users/users';
 import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
 
 describe('Orders: Receiving and Check-in', () => {
-  const order = { 
+  const order = {
     ...NewOrder.defaultOneTimeOrder,
     approved: true,
   };
@@ -60,26 +60,26 @@ describe('Orders: Receiving and Check-in', () => {
     Orders.deleteOrderViaApi(order.id);
 
     Organizations.deleteOrganizationViaApi(organization.id);
-    
+
     Users.deleteViaApi(user.userId);
   });
 
   it('C343213 Receive pieces for package order (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
     const barcode = Helper.getRandomBarcode();
     const caption = 'autotestCaption';
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList(orderNumber);
-        Orders.openOrder();
-        InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully opened`);
-        Orders.receiveOrderViaActions();
-        // Receiving part
-        Receiving.selectPOLInReceive(orderLineTitle);
-        Receiving.receivePiece(0, caption, barcode);
-        Receiving.checkReceivedPiece(0, caption, barcode);
-        // inventory part
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.switchToItem();
-        InventorySearchAndFilter.searchByParameter('Barcode', barcode);
-        ItemRecordView.checkItemDetails(OrdersHelper.onlineLibraryLocation, barcode, 'In process');
+    Orders.searchByParameter('PO number', orderNumber);
+    Orders.selectFromResultsList(orderNumber);
+    Orders.openOrder();
+    InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully opened`);
+    Orders.receiveOrderViaActions();
+    // Receiving part
+    Receiving.selectPOLInReceive(orderLineTitle);
+    Receiving.receivePiece(0, caption, barcode);
+    Receiving.checkReceivedPiece(0, caption, barcode);
+    // inventory part
+    cy.visit(TopMenu.inventoryPath);
+    InventorySearchAndFilter.switchToItem();
+    InventorySearchAndFilter.searchByParameter('Barcode', barcode);
+    ItemRecordView.checkItemDetails(OrdersHelper.onlineLibraryLocation, barcode, 'In process');
   });
 });
