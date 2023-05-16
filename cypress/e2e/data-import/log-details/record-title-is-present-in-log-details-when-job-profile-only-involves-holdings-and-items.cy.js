@@ -200,7 +200,7 @@ describe('ui-data-import', () => {
         // create the first instance
         firstTestData.jobProfileForCreate = firstJobProfileForCreate;
 
-        firstTestData.forEach(specialPair => {
+        cy.wrap(firstTestData).each(specialPair => {
           cy.createOnePairMappingAndActionProfiles(specialPair.mappingProfile, specialPair.actionProfile).then(idActionProfile => {
             cy.addJobProfileRelation(firstTestData.jobProfileForCreate.addedRelations, idActionProfile);
           });
@@ -228,7 +228,7 @@ describe('ui-data-import', () => {
         // create the second instance
         secondTestData.jobProfileForCreate = secondJobProfileForCreate;
 
-        secondTestData.forEach(specialPair => {
+        cy.wrap(secondTestData).each(specialPair => {
           cy.createOnePairMappingAndActionProfiles(specialPair.mappingProfile, specialPair.actionProfile).then(idActionProfile => {
             cy.addJobProfileRelation(secondTestData.jobProfileForCreate.addedRelations, idActionProfile);
           });
@@ -245,27 +245,27 @@ describe('ui-data-import', () => {
         DataImport.uploadFile('oneMarcBib.mrc', marcFileForCreateSecondRecord);
         JobProfiles.searchJobProfileForImport(secondTestData.jobProfileForCreate.profile.name);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFileForCreateFirstRecord);
+        JobProfiles.waitFileIsImported(marcFileForCreateSecondRecord);
         Logs.checkStatusOfJobProfile('Completed');
-        Logs.openFileDetails(marcFileForCreateFirstRecord);
+        Logs.openFileDetails(marcFileForCreateSecondRecord);
         FileDetails.openInstanceInInventory('Created');
         InventoryInstance.getAssignedHRID().then(secondInstanceHrId => {
           instanceHrids.push(secondInstanceHrId);
         });
         cy.logout();
+      });
 
-        cy.createTempUser([
-          permissions.moduleDataImportEnabled.gui,
-          permissions.inventoryAll.gui,
-          permissions.dataExportEnableSettings.gui,
-          permissions.settingsDataImportEnabled.gui,
-          permissions.dataExportEnableApp.gui
-        ])
-          .then(userProperties => {
-            user = userProperties;
+    cy.createTempUser([
+      permissions.moduleDataImportEnabled.gui,
+      permissions.inventoryAll.gui,
+      permissions.dataExportEnableSettings.gui,
+      permissions.settingsDataImportEnabled.gui,
+      permissions.dataExportEnableApp.gui
+    ])
+      .then(userProperties => {
+        user = userProperties;
 
-            cy.login(userProperties.username, userProperties.password);
-          });
+        cy.login(userProperties.username, userProperties.password);
       });
   });
 
@@ -293,8 +293,12 @@ describe('ui-data-import', () => {
       ActionProfiles.deleteActionProfile(profile.actionProfile.name);
       FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
     });
+    FileManager.deleteFile(`cypress/fixtures/${marcFileNameForUpdateFirstRecord}`);
+    FileManager.deleteFile(`cypress/fixtures/${marcFileNameForUpdateSecondRecord}`);
+    FileManager.deleteFile(`cypress/fixtures/${csvFileNameForFirstRecord}`);
+    FileManager.deleteFile(`cypress/fixtures/${csvFileNameForSecondRecord}`);
     Users.deleteViaApi(user.userId);
-    instanceHrids.forEach(hrid => {
+    cy.wrap(instanceHrids).each(hrid => {
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` })
         .then((instance) => {
           cy.deleteItemViaApi(instance.items[0].id);
@@ -324,7 +328,8 @@ describe('ui-data-import', () => {
         collectionOfMappingAndActionProfiles[0].mappingProfile.staffOnly
       );
       FieldMappingProfiles.saveProfile();
-
+      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
+      FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
       FieldMappingProfileView.duplicate();
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
       FieldMappingProfiles.saveProfile();
@@ -334,13 +339,17 @@ describe('ui-data-import', () => {
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile);
       NewFieldMappingProfile.addAdministrativeNote(collectionOfMappingAndActionProfiles[2].mappingProfile.adminNote, 5);
       FieldMappingProfiles.saveProfile();
+      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile.name);
+      FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[2].mappingProfile.name);
       FieldMappingProfileView.duplicate();
+      cy.wait(10000);
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[3].mappingProfile);
+      cy.wait(10000);
       FieldMappingProfiles.saveProfile();
       FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[3].mappingProfile.name);
 
       // create action profiles
-      collectionOfMappingAndActionProfiles.forEach(profile => {
+      cy.wrap(collectionOfMappingAndActionProfiles).each(profile => {
         cy.visit(SettingsMenu.actionProfilePath);
         ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
         ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
@@ -349,6 +358,7 @@ describe('ui-data-import', () => {
       // create match profiles
       cy.visit(SettingsMenu.matchProfilePath);
       collectionOfMatchProfiles.forEach(profile => {
+        cy.wait(5000);
         MatchProfiles.createMatchProfile(profile.matchProfile);
         MatchProfiles.checkMatchProfilePresented(profile.matchProfile.profileName);
       });

@@ -80,6 +80,7 @@ export default {
       fullScreenView.find(actionsButton).click(),
       Button('Duplicate').click()
     ]);
+    cy.expect(Pane({ title: 'New field mapping profile' }).exists());
   },
 
   addFieldForUpdates:() => {
