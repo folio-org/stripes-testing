@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { Select, TextInput, Heading, PaneHeader, Form, Button, Option, Section, PaneContent, HTML, including, MultiColumnListCell, Pane, MultiColumnListHeader, MultiColumnListRow, Image, or } from '../../../../../interactors';
+import { Select, TextInput, Heading, PaneHeader, Form, Button, Option, Section, PaneContent, HTML, including, MultiColumnListCell, Pane, MultiColumnListHeader, MultiColumnListRow, Image, or, MultiColumnList } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
 const defaultInstanceAWithContributor = {
@@ -140,6 +140,10 @@ export default {
 
   openInstance(contributor) {
     cy.do(MultiColumnListCell(contributor.name).click());
+  },
+
+  openRecord(record) {
+    cy.do(Button(record).click());
   },
 
   checkInstance(instance) {

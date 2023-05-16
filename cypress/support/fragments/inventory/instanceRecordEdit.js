@@ -2,12 +2,14 @@ import {
   Accordion,
   Button,
   Section,
+  Pane,
   Select,
   TextArea,
   TextField,
   FieldSet,
   Selection,
   including,
+  RepeatableFieldItem,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import InventoryInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
@@ -19,6 +21,7 @@ const actionsButton = Button('Actions');
 const identifierAccordion = Accordion('Identifier');
 const contributorAccordion = Accordion('Contributor');
 const contributorButton = Button('Add contributor');
+const deleteButton = Button({ icon: 'trash' });
 
 export default {
   close:() => cy.do(closeButton.click()),
@@ -134,5 +137,9 @@ export default {
     cy.do(TextArea({ name: `contributors[${indexRow}].name` }).fillIn(name));
     cy.do(Select({ name: `contributors[${indexRow}].contributorNameTypeId` }).choose(nameType));
     cy.do(Select({ name: `contributors[${indexRow}].contributorTypeId` }).choose(type));
+  },
+
+  deleteContributor(rowIndex) {
+    cy.do(Section({ id: 'instanceSection04' }).find(RepeatableFieldItem({ index: rowIndex })).find(deleteButton).click());
   },
 };
