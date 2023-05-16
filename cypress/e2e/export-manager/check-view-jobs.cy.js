@@ -94,8 +94,8 @@ describe('orders: export', () => {
       permissions.uiOrdersCreate.gui,
       permissions.uiOrdersEdit.gui,
       permissions.uiOrdersApprovePurchaseOrders.gui,
-      permissions.viewEditCreateOrganization.gui,
-      permissions.viewOrganization.gui,
+      permissions.uiOrganizationsViewEditCreate.gui,
+      permissions.uiOrganizationsView.gui,
       permissions.uiExportOrders.gui,
       permissions.exportManagerAll.gui,
       permissions.exportManagerDownloadAndResendFiles.gui,
@@ -137,14 +137,14 @@ describe('orders: export', () => {
     Orders.openOrder();
     cy.visit(TopMenu.exportManagerOrganizationsPath);
     ExportManagerSearchPane.selectOrganizationsSearch();
-    ExportManagerSearchPane.selectFailedStatusCheckbox();
+    ExportManagerSearchPane.searchByFailed();
     ExportManagerSearchPane.selectJobByIntegrationInList(firstIntegrationName);
     ExportManagerSearchPane.verifyThirdPaneExportJobExist();
     ExportManagerSearchPane.rerunJob();
     ExportManagerSearchPane.closeExportJobPane();
     ExportManagerSearchPane.resetAll();
     cy.reload();
-    ExportManagerSearchPane.selectSuccessfulStatusCheckbox();
+    ExportManagerSearchPane.searchBySuccessful();
     ExportManagerSearchPane.selectJobByIntegrationInList(firstIntegrationName);
     ExportManagerSearchPane.verifyThirdPaneExportJobExist();
   });

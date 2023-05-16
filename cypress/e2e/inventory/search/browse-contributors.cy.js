@@ -8,6 +8,7 @@ import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRec
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('Inventory -> Contributors Browse', () => {
   const testData = {
@@ -17,7 +18,7 @@ describe('Inventory -> Contributors Browse', () => {
     },
 
     contributor: {
-      name: 'Test, ContributorC353999',
+      name: `Test_Contributor_${getRandomPostfix()}`,
       nameTypes: {
         personal: 'Personal name',
         corporate: 'Corporate name',
@@ -27,6 +28,9 @@ describe('Inventory -> Contributors Browse', () => {
         actor: 'Actor',
         addressee: 'Addressee',
         adapter: 'Adapter',
+        colorist: 'Colorist',
+        architect: 'Architect',
+        dancer: 'Dancer',
       },
     }
   };
@@ -37,16 +41,18 @@ describe('Inventory -> Contributors Browse', () => {
     ]).then(createdUserProperties => {
       testData.userProperties = createdUserProperties;
     });
-
-    InventoryInstances.createInstanceViaApi(testData.item.instanceName, testData.item.itemBarcode);
   });
 
   beforeEach(() => {
+    InventoryInstances.createInstanceViaApi(testData.item.instanceName, testData.item.itemBarcode);
     cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventorySearchAndFilter.waitLoading });
   });
 
   after(() => {
     Users.deleteViaApi(testData.userProperties.userId);
+  });
+
+  afterEach(() => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.item.itemBarcode);
   });
 
@@ -71,5 +77,57 @@ describe('Inventory -> Contributors Browse', () => {
     BrowseContributors.checkSearchResultRow(testData.contributor.name, testData.contributor.nameTypes.personal, testData.contributor.types.actor, '1');
     BrowseContributors.checkSearchResultRow(testData.contributor.name, testData.contributor.nameTypes.corporate, testData.contributor.types.addressee, '1');
     BrowseContributors.checkSearchResultRow(testData.contributor.name, testData.contributor.nameTypes.meeting, testData.contributor.types.adapter, '1');
+  });
+
+  it('C353660 Verify that the "Contributor name" from the same "Instance" record", with the same "Name type", but different "Relator terms" counted once at browse result list. (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    InventorySearchAndFilter.searchInstanceByTitle(testData.item.instanceName);
+    InventorySearchAndFilter.selectSearchResultItem();
+    InventorySearchAndFilter.clickEditInstance();
+
+    InstanceRecordEdit.clickAddContributor();
+    InstanceRecordEdit.fillContributorData(0, testData.contributor.name, testData.contributor.nameTypes.personal, testData.contributor.types.dancer);
+    InstanceRecordEdit.clickAddContributor();
+    InstanceRecordEdit.fillContributorData(1, testData.contributor.name, testData.contributor.nameTypes.personal, testData.contributor.types.colorist);
+    InstanceRecordEdit.clickAddContributor();
+    InstanceRecordEdit.fillContributorData(2, testData.contributor.name, testData.contributor.nameTypes.personal, testData.contributor.types.architect);
+    InstanceRecordEdit.saveAndClose();
+
+    InventorySearchAndFilter.switchToBrowseTab();
+
+    BrowseContributors.select();
+    BrowseContributors.browse(testData.contributor.name);
+    BrowseContributors.checkSearchResultRecord(testData.contributor.name);
+    BrowseContributors.checkSearchResultRow(testData.contributor.name, testData.contributor.nameTypes.personal, `${testData.contributor.types.colorist}, ${testData.contributor.types.architect}, ${testData.contributor.types.dancer}`, '1');
+  });
+
+  it('C356837 Verify that deleted Contributor on instance record with source = Folio does not display on browse result list (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    InventorySearchAndFilter.searchInstanceByTitle(testData.item.instanceName);
+    InventorySearchAndFilter.selectSearchResultItem();
+    InventorySearchAndFilter.clickEditInstance();
+
+    InstanceRecordEdit.clickAddContributor();
+    InstanceRecordEdit.fillContributorData(0, testData.contributor.name, testData.contributor.nameTypes.personal, testData.contributor.types.architect);
+    InstanceRecordEdit.saveAndClose();
+
+    InventorySearchAndFilter.switchToBrowseTab();
+    BrowseContributors.select();
+    BrowseContributors.browse(testData.contributor.name);
+    BrowseContributors.checkSearchResultRecord(testData.contributor.name);
+    BrowseContributors.checkSearchResultRow(testData.contributor.name, testData.contributor.nameTypes.personal, testData.contributor.types.architect, '1');
+    
+    BrowseContributors.openRecord(testData.contributor.name);
+    InventoryInstance.checkInstanceButtonExistence();
+    InventorySearchAndFilter.verifyInstanceDetailsView();
+    InventorySearchAndFilter.verifyInstanceDisplayed(testData.item.instanceName);
+    InventoryInstance.checkPresentedText(testData.item.instanceName);
+    InventoryInstance.checkContributor(testData.contributor.name);
+    InventorySearchAndFilter.clickEditInstance();
+    InstanceRecordEdit.deleteContributor(1);
+    InstanceRecordEdit.saveAndClose();
+
+    InventorySearchAndFilter.switchToBrowseTab();
+    BrowseContributors.select();
+    BrowseContributors.browse(testData.contributor.name);
+    InventorySearchAndFilter.verifySearchResult(`${testData.contributor.name}would be here`);
   });
 });
