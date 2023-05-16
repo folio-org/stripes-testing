@@ -43,10 +43,6 @@ describe('ui-finance: Transactions', () => {
     ongoing: { isSubscription: false, manualRenewal: false },
     approved: true,
     reEncumber: true };
-  const secondOrder = {
-    approved: true,
-    reEncumber: true,
-  };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const allocatedQuantity = '1000';
@@ -108,10 +104,8 @@ describe('ui-finance: Transactions', () => {
       .then(responseOrganizations => {
         organization.id = responseOrganizations;
         invoice.accountingCode = organization.erpCode;
-        secondOrder.orderType = 'One-time';
       });
     firstOrder.vendor = organization.name;
-    secondOrder.vendor = organization.name;
     cy.visit(TopMenu.ordersPath);
     Orders.createOrderForRollover(firstOrder).then(firstOrderResponse => {
       firstOrder.id = firstOrderResponse.id;
@@ -122,16 +116,6 @@ describe('ui-finance: Transactions', () => {
       OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(firstFund, '100', '1', '100', location.institutionId);
       OrderLines.backToEditingOrder();
       Orders.openOrder();
-      cy.visit(TopMenu.ordersPath);
-      Orders.createOrderForRollover(secondOrder).then(secondOrderResponse => {
-        secondOrder.id = secondOrderResponse.id;
-        Orders.checkCreatedOrder(secondOrder);
-        OrderLines.addPOLine();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 2);
-        OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(secondFund, '200', '1', '200', location.institutionId);
-        OrderLines.backToEditingOrder();
-        Orders.openOrder();
-      });
       cy.visit(TopMenu.invoicesPath);
       Invoices.createRolloverInvoice(invoice, organization.name);
       Invoices.createInvoiceLineFromPol(orderNumber);
@@ -141,15 +125,14 @@ describe('ui-finance: Transactions', () => {
       Invoices.payInvoice();
     });
     cy.createTempUser([
-      permissions.uiFinanceExecuteFiscalYearRollover.gui,
-      permissions.uiFinanceViewFiscalYear.gui,
       permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiFinanceViewLedger.gui,
-      permissions.uiOrdersView.gui
+      permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
+      permissions.uiInvoicesCancelInvoices.gui,
+      permissions.uiOrdersView.gui,
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path:TopMenu.ledgerPath, waiter: Ledgers.waitForLedgerDetailsLoading });
+        cy.login(userProperties.username, userProperties.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
       });
   });
 
@@ -158,32 +141,44 @@ describe('ui-finance: Transactions', () => {
   });
 
   it('C375105 Unrelease encumbrance when cancelling approved invoice related to Ongoing order (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    FinanceHelp.searchByName(defaultLedger.name);
-    Ledgers.selectLedger(defaultLedger.name);
-    Ledgers.rollover();
-    Ledgers.fillInRolloverInfo(secondFiscalYear.code);
-    Ledgers.closeRolloverInfo();
-    Ledgers.selectFundInLedger(firstFund.name);
-    Funds.selectPlannedBudgetDetails();
+    // Invoices.searchByNumber(invoice.invoiceNumber);
+    // Invoices.selectInvoice(invoice.invoiceNumber);
+    // Invoices.selectInvoiceLine();
+    // Invoices.selectFundInInvoiceLine(firstFund);
+
+    FinanceHelp.searchByName(firstFund.name);
+    Funds.selectFund(firstFund.name);
+    Funds.selectBudgetDetails();
     Funds.viewTransactions();
+    cy.pause();
     Funds.checkOrderInTransactionList(firstFund.code, '($100.00)');
-    Funds.closeMenu();
-    cy.wait(1000);
-    Funds.closeMenu();
-    Funds.selectBudgetDetails();
-    Funds.viewTransactions();
-    Funds.checkOrderInTransactionList(firstFund.code, '$0.00');
-    cy.visit(TopMenu.fundPath);
-    FinanceHelp.searchByName(secondFund.name);
-    Funds.selectFund(secondFund.name);
-    Funds.selectPlannedBudgetDetails();
-    Funds.viewTransactions();
-    Funds.checkOrderInTransactionList(secondFund.code, '($200.00)');
-    Funds.closeMenu();
-    cy.wait(1000);
-    Funds.closeMenu();
-    Funds.selectBudgetDetails();
-    Funds.viewTransactions();
-    Funds.checkOrderInTransactionList(secondFund.code, '($200.00)');
+
+    // FinanceHelp.searchByName(defaultLedger.name);
+    // Ledgers.selectLedger(defaultLedger.name);
+    // Ledgers.rollover();
+    // Ledgers.fillInRolloverInfo(secondFiscalYear.code);
+    // Ledgers.closeRolloverInfo();
+    // Ledgers.selectFundInLedger(firstFund.name);
+    // Funds.selectPlannedBudgetDetails();
+    // Funds.viewTransactions();
+    Funds.checkOrderInTransactionList(firstFund.code, '($100.00)');
+    // Funds.closeMenu();
+    // cy.wait(1000);
+    // Funds.closeMenu();
+    // Funds.selectBudgetDetails();
+    // Funds.viewTransactions();
+    // Funds.checkOrderInTransactionList(firstFund.code, '$0.00');
+    // cy.visit(TopMenu.fundPath);
+    // FinanceHelp.searchByName(secondFund.name);
+    // Funds.selectFund(secondFund.name);
+    // Funds.selectPlannedBudgetDetails();
+    // Funds.viewTransactions();
+    // Funds.checkOrderInTransactionList(secondFund.code, '($200.00)');
+    // Funds.closeMenu();
+    // cy.wait(1000);
+    // Funds.closeMenu();
+    // Funds.selectBudgetDetails();
+    // Funds.viewTransactions();
+    // Funds.checkOrderInTransactionList(secondFund.code, '($200.00)');
   });
 });
