@@ -55,7 +55,7 @@ describe('Bulk Edit - Holdings', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C367977 Verify Bulk edit Holdings records with non-existent Electronic access Relationship type ID', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+  it('C367977 Verify Bulk edit Holdings records with non-existent Electronic access Relationship type ID (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     UrlRelationship.createNewRelationship(newRelationshipName);
     UrlRelationship.verifyElectronicAccessNameOnTable(newRelationshipName);
 
