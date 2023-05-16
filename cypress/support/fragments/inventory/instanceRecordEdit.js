@@ -2,7 +2,6 @@ import {
   Accordion,
   Button,
   Section,
-  Pane,
   Select,
   TextArea,
   TextField,
