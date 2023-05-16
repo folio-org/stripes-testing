@@ -7,7 +7,9 @@ import {
   MultiColumnListCell,
   Section,
   MultiColumnList,
-  Pane
+  Pane,
+  Select,
+  TextArea
 } from '../../../../interactors';
 import InventoryViewSource from './inventoryViewSource';
 import InventoryNewHoldings from './inventoryNewHoldings';
@@ -23,6 +25,9 @@ const deleteConfirmationModal = Modal({ id:'delete-confirmation-modal' });
 const holdingHrIdKeyValue = KeyValue('Holdings HRID');
 const closeButton = Button({ icon: 'times' });
 const electronicAccessAccordion = Accordion('Electronic access');
+const addElectronicAccessButton = Button('Add electronic access');
+const relationshipSelectDropdown = Select('Relationship');
+const uriTextarea = TextArea({ ariaLabel: 'URI' });
 
 function waitLoading() { cy.expect(actionsButton.exists()); }
 
@@ -141,7 +146,15 @@ export default {
   checkHoldingRecordViewOpened: () => {
     cy.expect(Pane({ id:'ui-inventory.holdingsRecordView' }).exists());
   },
-
+  addElectronicAccess: (type) => {
+    cy.expect(electronicAccessAccordion.exists());
+    cy.do([
+      addElectronicAccessButton.click(),
+      relationshipSelectDropdown.choose(type),
+      uriTextarea.fillIn(type),
+      Button('Save & close').click(),
+    ]);
+  },
   getHoldingsHrId: () => cy.then(() => holdingHrIdKeyValue.value()),
   getId:() => {
     // parse hodling record id from current url
