@@ -27,27 +27,33 @@ export default {
   // actions
   save:() => cy.do(saveButton.click()),
   fillName:(name) => {
+    // TODO need to wait until page will be uploaded
     cy.wait(1500);
     cy.do(nameField.fillIn(name));
+    // TODO need to wait until data will be filled
     cy.wait(1500);
   },
   addJobProfileForImportCreate:() => cy.do(jobProfileForImportCreateButton.click()),
   addJobProfileForOverlayUpdate:() => cy.do(jobProfileForOverlayUpdateButton.click()),
-  selectJobProfileForImportCreate:(profileName, profileNumber = 0) => {
-    cy.do([
-      Button({ name:`allowedCreateJobProfileIds[${profileNumber}]` }).click(),
-      SelectionList().select(profileName)
-    ]);
-    // list is in alhabetical order
-    // SelectionList({id:'sl-container-stripes-selection-11'})
+  selectJobProfileForImportCreate:(profileName, profileNumber = 0, rowNumber = 0) => {
+    cy.do(Button({ name:`allowedCreateJobProfileIds[${profileNumber}]` }).click());
+    cy.get('[class^=selectionList-]').eq(rowNumber).then(elements => {
+      const strings = [...elements].map(el => el.innerText);
+
+      expect(strings).to.have.ordered.members([...strings]);
+    });
+    cy.do(SelectionList().select(profileName));
   },
-  selectJobProfileForOverlayUpdate:(profileName, profileNumber = 0) => {
-    cy.do([
-      jobProfileForOverlayUpdateAccordion.find(Button({ name:`allowedUpdateJobProfileIds[${profileNumber}]` })).click(),
-      SelectionList().select(profileName)
-    ]);
-    // list is in alhabetical order
-    // SelectionList({id:'sl-container-stripes-selection-11'})
+  selectJobProfileForOverlayUpdate:(profileName, profileNumber = 0, rowNumber = 0) => {
+    cy.do(jobProfileForOverlayUpdateAccordion
+      .find(Button({ name:`allowedUpdateJobProfileIds[${profileNumber}]` }))
+      .click());
+    cy.get('[class^=selectionList-]').eq(rowNumber).then(elements => {
+      const strings = [...elements].map(el => el.innerText);
+
+      expect(strings).to.have.ordered.members([...strings]);
+    });
+    cy.do(SelectionList().select(profileName));
   },
   setDefaultJobProfileForCreate:(profileNumber) => {
     if (!profileNumber) {
@@ -101,6 +107,7 @@ export default {
   verifyJobProfileForImportCreateAccordion:() => {
     cy.do(jobProfileForImportCreateAccordion.find(Button({ icon:'info' })).click());
     cy.get('[class*="content"]').contains('Review the listed job profiles carefully before assigning for Inventory single record imports. Only MARC Bibliographic job profiles can be assigned, not MARC Holdings or MARC Authority job profiles.');
+    // TODO need to wait until list will be uploaded
     cy.wait(5000);
     cy.do(jobProfileForImportCreateAccordion
       .find(Button({ id:'input-targetprofile-createJobProfileIds-add-button' })).click());
@@ -114,6 +121,7 @@ export default {
     cy.do(jobProfileForOverlayUpdateAccordion.find(Button({ icon:'info' })).click());
     cy.get('[class*="content"]')
       .contains('Review the listed job profiles carefully before assigning for Inventory single record imports. Only MARC Bibliographic job profiles can be assigned, not MARC Holdings or MARC Authority job profiles.');
+    // TODO need to wait until list will be uploaded
     cy.wait(5000);
     cy.do(jobProfileForOverlayUpdateAccordion
       .find(Button({ id:'input-targetprofile-updateJobProfileIds-add-button' })).click());

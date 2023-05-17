@@ -50,7 +50,7 @@ describe('ui-inventory', () => {
       NewTargetProfile.verifyJobProfileForImportCreateAccordion();
       NewTargetProfile.selectJobProfileForImportCreate(firstCreateProfileName);
       NewTargetProfile.addJobProfileForImportCreate();
-      NewTargetProfile.selectJobProfileForImportCreate(secondCreateProfileName, firstRow);
+      NewTargetProfile.selectJobProfileForImportCreate(secondCreateProfileName, firstRow, 1);
       NewTargetProfile.setDefaultJobProfileForCreate(firstRow);
       NewTargetProfile.removeJobProfileForImportCreate(secondCreateProfileName, secondRow);
       NewTargetProfile.verifyJobProfileForImportCreateIsRemoved();
@@ -59,7 +59,7 @@ describe('ui-inventory', () => {
       NewTargetProfile.addJobProfileForOverlayUpdate();
       NewTargetProfile.verifyJobProfileForOverlayUpdateAccordion();
       NewTargetProfile.selectJobProfileForOverlayUpdate(firstUpdateProfileName);
-      NewTargetProfile.selectJobProfileForOverlayUpdate(secondCreateProfileName, firstRow);
+      NewTargetProfile.selectJobProfileForOverlayUpdate(secondCreateProfileName, firstRow, 1);
       NewTargetProfile.setDefaultJobProfileForUpdate(firstRow);
       NewTargetProfile.removeJobProfileForImportCreate(secondCreateProfileName, secondRow);
       NewTargetProfile.verifyJobProfileForImportCreateIsRemoved();
