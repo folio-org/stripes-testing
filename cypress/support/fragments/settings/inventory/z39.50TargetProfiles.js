@@ -16,6 +16,7 @@ import {
 
 const oclcWorldcatPane = Pane('✓ OCLC WorldCat');
 const targetProfileName = Pane('Z39.50 target profiles');
+const newPane = Pane('New');
 
 const defaultCreateInstanceJobProfileName = 'Inventory Single Record - Default Create Instance (d0ebb7b0-2f0f-11eb-adc1-0242ac120002)';
 const defaultUpdateInstanceJobProfileName = 'Inventory Single Record - Default Update Instance (91f9b8d6-d80e-4727-9783-73fb53e3c786)';
@@ -25,12 +26,17 @@ const defaultCreateInstanceJobProfileId = 'd0ebb7b0-2f0f-11eb-adc1-0242ac120002'
 const defaultUpdateInstanceJobProfileId = '91f9b8d6-d80e-4727-9783-73fb53e3c786';
 const defaultCopyCatProfileId = 'f26df83c-aa25-40b6-876e-96852c3d4fd4';
 
-function edit() {
-  cy.do(oclcWorldcatPane.find(Button('Edit')).click());
+function edit(profileName) {
+  cy.do(Pane(profileName).find(Button('Edit')).click());
 }
 function save() {
   cy.do(Pane('OCLC WorldCat').find(Button('Save & close')).click());
 }
+function create() {
+  cy.do(targetProfileName.find(Button('+ New')).click());
+  cy.expect(newPane.exists());
+}
+
 function addJobProfileForCreate(profile = defaultCreateInstanceJobProfileName) {
   // wait until elements will be displayed on page
   cy.wait(1000);
@@ -84,6 +90,7 @@ function validateJobProfilesSortingOrder() {
 export default {
   edit,
   save,
+  create,
   addJobProfileForCreate,
   addJobProfileForUpdate,
   changeOclcWorldCatToDefaultViaApi:() => {
@@ -195,6 +202,34 @@ export default {
     cy.expect(Pane(`✓ ${name}`)
       .find(Link({ href: including(linkTodefaultUpdateInstanceJobProfile) }))
       .exists());
+  },
+
+  verifyTargetProfileIsCreated:(name, message) => {
+    cy.expect([
+      newPane.absent(),
+      Pane(`✕ ${name}`).exists()
+    ]);
+    // cy.expect(Callout({ textContent: 'The Z39.50 target profile was successfully created.'}).exists());
+  },
+
+  verifyTargetProfileIsUpdated:(name, newName, message) => {
+    cy.expect([
+      Pane(name).absent(),
+      Pane(`✕ ${newName}`).exists()
+    ]);
+    // cy.expect(Callout({ textContent: 'The Z39.50 target profile was successfully updated.' }).exists());
+  },
+
+  getTargetProfileIdViaApi:(searchParams) => {
+    return cy
+      .okapiRequest({
+        path: 'copycat/profiles',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(response => {
+        return response.body.profiles[0].id;
+      });
   },
 
   createNewZ3950TargetProfileViaApi:(name, createJobProfileIds, updateJobProfileIds = []) => {

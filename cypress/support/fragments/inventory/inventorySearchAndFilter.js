@@ -62,6 +62,15 @@ const searchInstanceByHRID = (id) => {
   InventoryInstances.waitLoading();
 };
 
+const searchHoldingsByHRID = (hrid) => {
+  cy.do([
+    Select({ id: 'input-inventory-search-qindex' }).choose('Holdings HRID'),
+    TextField({ id: 'input-inventory-search' }).fillIn(hrid),
+    searchButton.click()
+  ]);
+  InventoryInstances.waitLoading();
+};
+
 const searchInstanceByTitle = (title) => {
   cy.do([
     TextField({ id: 'input-inventory-search' }).fillIn(title),
@@ -124,6 +133,7 @@ const checkInstanceDetails = () => {
 
 export default {
   searchInstanceByHRID,
+  searchHoldingsByHRID,
   searchInstanceByTitle,
   getInstanceHRID,
   checkInstanceDetails,
