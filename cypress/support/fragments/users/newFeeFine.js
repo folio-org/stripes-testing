@@ -24,8 +24,8 @@ const getNewFeeFineAccount = ({ id, ownerId, feeFineId, amount, paymentStatus, s
   ownerId,
   // required field
   amount,
-  paymentStatus: paymentStatus || { "name":"Outstanding" },
-  status: status || {"name":"Open"},
+  paymentStatus: paymentStatus || { 'name':'Outstanding' },
+  status: status || { 'name':'Open' },
   // required field
   id,
   // required field

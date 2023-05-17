@@ -245,6 +245,8 @@ Cypress.Commands.add('createItem', (item) => {
   });
 });
 
+
+
 Cypress.Commands.add('getItems', (searchParams) => {
   cy
     .okapiRequest({
@@ -255,6 +257,15 @@ Cypress.Commands.add('getItems', (searchParams) => {
       Cypress.env('items', body.items);
       return body.items[0];
     });
+});
+
+Cypress.Commands.add('updateItemViaApi', (item) => {
+  cy
+    .okapiRequest({
+      method: 'PUT',
+      path: `inventory/items/${item.id}`,
+      body: { ...item },
+    }).then(({ body }) => body);
 });
 
 Cypress.Commands.add('deleteItemViaApi', (itemId) => {
