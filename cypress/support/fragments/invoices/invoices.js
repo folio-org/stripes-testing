@@ -60,7 +60,7 @@ export default {
     ]);
     this.selectVendorOnUi(invoice.vendorName);
     cy.do([
-      Button({ name: 'accountNo'}).click(),
+      Button({ name: 'accountNo' }).click(),
       SelectionList().select(`Default (${invoice.accountingCode})`),
       Selection('Batch group*').open(),
       SelectionList().select(invoice.batchGroup),
@@ -72,7 +72,7 @@ export default {
     InteractorsTools.checkCalloutMessage(invoiceStates.invoiceCreatedMessage);
   },
 
-  createRolloverInvoice(invoice,organization) {
+  createRolloverInvoice(invoice, organization) {
     cy.do(actionsButton.click());
     cy.expect(buttonNew.exists());
     cy.do([
@@ -376,10 +376,10 @@ export default {
   waitLoading : () => {
     cy.expect(Pane({ id: 'invoice-results-pane' }).exists());
   },
-  
+
   selectInvoiceLine: () => {
     cy.do(Section({ id: 'invoiceLines' })
-    .find(MultiColumnListRow({ index: 0 }))
+      .find(MultiColumnListRow({ index: 0 }))
       .find(MultiColumnListCell({ columnIndex: 0 }))
       .click());
   },
@@ -404,7 +404,7 @@ export default {
     ]);
   },
 
-  addAdjustment:(descriptionInput , valueInput, typeToggle, realtioToTotal) => {
+  addAdjustment:(descriptionInput, valueInput, typeToggle, realtioToTotal) => {
     cy.do([
       Button({ id: 'adjustments-add-button' }).click(),
       TextField({ name: 'adjustments[0].description' }).fillIn(descriptionInput),
@@ -416,6 +416,6 @@ export default {
   },
 
   checkFundInInvoiceLine:(fund) => {
-    cy.expect(Section({ id: 'invoiceLineFundDistribution'}).find(Link(`${fund.name}(${fund.code})`)).exists());
+    cy.expect(Section({ id: 'invoiceLineFundDistribution' }).find(Link(`${fund.name}(${fund.code})`)).exists());
   },
 };
