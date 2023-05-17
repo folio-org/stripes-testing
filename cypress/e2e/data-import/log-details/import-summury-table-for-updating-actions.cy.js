@@ -459,7 +459,7 @@ describe('ui-data-import', () => {
       FileDetails.checkItemsQuantityInSummaryTable(0, '0');
       // check Updated counter in the Summary table
       FileDetails.checkItemsQuantityInSummaryTable(1, quantityOfItems);
-      // check Discarded counter in the Summary table
+      // check No action counter in the Summary table
       FileDetails.checkItemsQuantityInSummaryTable(2, '0');
       // check Error counter in the Summary table
       FileDetails.checkItemsQuantityInSummaryTable(3, '0');
