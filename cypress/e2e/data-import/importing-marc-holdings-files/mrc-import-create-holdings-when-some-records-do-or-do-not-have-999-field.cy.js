@@ -73,7 +73,7 @@ describe('ui-data-import', () => {
       // check created counter in the Summary table
       FileDetails.checkSrsRecordQuantityInSummaryTable('1');
       FileDetails.checkHoldingsQuantityInSummaryTable('1');
-      // check Discarded counter in the Summary table
+      // check No action counter in the Summary table
       FileDetails.checkSrsRecordQuantityInSummaryTable('3', 2);
       // check Error counter in the Summary table
       FileDetails.checkSrsRecordQuantityInSummaryTable('3', 3);
