@@ -18,11 +18,11 @@ import ServicePoints from '../../../support/fragments/settings/tenant/servicePoi
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 
 describe('ui-finance: Transactions', () => {
-  const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
+  const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
-  const firstFund = { ...Funds.defaultUiFund };
+  const defaultFund = { ...Funds.defaultUiFund };
 
-  const firstOrder = { ...NewOrder.defaultOneTimeOrder,
+  const defaultOrder = { ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',
     ongoing: { isSubscription: false, manualRenewal: false },
     approved: true,
@@ -37,21 +37,20 @@ describe('ui-finance: Transactions', () => {
 
   before(() => {
     cy.getAdminToken();
-    // create first Fiscal Year and prepere 2 Funds for Rollover
-    FiscalYears.createViaApi(firstFiscalYear)
+    FiscalYears.createViaApi(defaultFiscalYear)
       .then(firstFiscalYearResponse => {
-        firstFiscalYear.id = firstFiscalYearResponse.id;
-        defaultLedger.fiscalYearOneId = firstFiscalYear.id;
+        defaultFiscalYear.id = firstFiscalYearResponse.id;
+        defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
         Ledgers.createViaApi(defaultLedger)
           .then(ledgerResponse => {
             defaultLedger.id = ledgerResponse.id;
-            firstFund.ledgerId = defaultLedger.id;
-            Funds.createViaApi(firstFund)
+            defaultFund.ledgerId = defaultLedger.id;
+            Funds.createViaApi(defaultFund)
               .then(fundResponse => {
-                firstFund.id = fundResponse.fund.id;
+                defaultFund.id = fundResponse.fund.id;
                 cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
-                FinanceHelp.searchByName(firstFund.name);
-                Funds.selectFund(firstFund.name);
+                FinanceHelp.searchByName(defaultFund.name);
+                Funds.selectFund(defaultFund.name);
                 Funds.addBudget(allocatedQuantity);
               });
           });
@@ -65,21 +64,20 @@ describe('ui-finance: Transactions', () => {
           });
       });
 
-    // Prepare 2 Open Orders for Rollover
     Organizations.createOrganizationViaApi(organization)
       .then(responseOrganizations => {
         organization.id = responseOrganizations;
         invoice.accountingCode = organization.erpCode;
       });
-    firstOrder.vendor = organization.name;
+    defaultOrder.vendor = organization.name;
     cy.visit(TopMenu.ordersPath);
-    Orders.createOrderForRollover(firstOrder).then(firstOrderResponse => {
-      firstOrder.id = firstOrderResponse.id;
+    Orders.createOrderForRollover(defaultOrder).then(firstOrderResponse => {
+      defaultOrder.id = firstOrderResponse.id;
       orderNumber = firstOrderResponse.poNumber;
-      Orders.checkCreatedOrder(firstOrder);
+      Orders.checkCreatedOrder(defaultOrder);
       OrderLines.addPOLine();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
-      OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(firstFund, '100', '1', '100', location.institutionId);
+      OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(defaultFund, '100', '1', '100', location.institutionId);
       OrderLines.backToEditingOrder();
       Orders.openOrder();
       cy.visit(TopMenu.invoicesPath);
@@ -107,23 +105,23 @@ describe('ui-finance: Transactions', () => {
   });
 
   it('C375105 Unrelease encumbrance when cancelling approved invoice related to Ongoing order (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    FinanceHelp.searchByName(firstFund.name);
-    Funds.selectFund(firstFund.name);
+    FinanceHelp.searchByName(defaultFund.name);
+    Funds.selectFund(defaultFund.name);
     Funds.selectBudgetDetails();
     Funds.viewTransactions();
-    Funds.checkTransactionDetails(1, firstFiscalYear.code, '($0.00)', `${orderNumber}-1`, 'Encumbrance', `${firstFund.name} (${firstFund.code})`, 'Released');
+    Funds.checkTransactionDetails(1, defaultFiscalYear.code, '($0.00)', `${orderNumber}-1`, 'Encumbrance', `${defaultFund.name} (${defaultFund.code})`, 'Released');
     cy.visit(TopMenu.invoicesPath);
     Invoices.searchByNumber(invoice.invoiceNumber);
     Invoices.selectInvoice(invoice.invoiceNumber);
     Invoices.cancelInvoice();
     cy.visit(TopMenu.fundPath);
-    FinanceHelp.searchByName(firstFund.name);
-    Funds.selectFund(firstFund.name);
+    FinanceHelp.searchByName(defaultFund.name);
+    Funds.selectFund(defaultFund.name);
     Funds.selectBudgetDetails();
     Funds.viewTransactions();
-    Funds.checkTransactionDetails(2, firstFiscalYear.code, '($100.00)', `${orderNumber}-1`, 'Encumbrance', `${firstFund.name} (${firstFund.code})`, 'Unreleased');
+    Funds.checkTransactionDetails(2, defaultFiscalYear.code, '($100.00)', `${orderNumber}-1`, 'Encumbrance', `${defaultFund.name} (${defaultFund.code})`, 'Unreleased');
     Funds.closeTransactionDetails();
-    Funds.checkPaymentInTransactionDetails(1, firstFiscalYear.code, '($100.00)', invoice.invoiceNumber, `${firstFund.name} (${firstFund.code})`, '$100.00');
+    Funds.checkPaymentInTransactionDetails(1, defaultFiscalYear.code, '($100.00)', invoice.invoiceNumber, `${defaultFund.name} (${defaultFund.code})`, '$100.00');
     Funds.clickInfoInTransactionDetails();
   });
 });
