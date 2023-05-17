@@ -33,31 +33,31 @@ describe('Mapping profile - setup', () => {
 
   after('delete test data', () => {
     ExportFieldMappingProfiles.getFieldMappingProfile({ query: `"name"=="${fieldMappingProfileName}"` })
-    .then(response => {
-      DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(response.id);
-    });
+      .then(response => {
+        DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(response.id);
+      });
     Users.deleteViaApi(user.userId);
   });
 
-  it('C10983 Create a new mapping profile for MARC bib record with holdings data included - Instance record (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+  it('C196758 Create a new mapping profile for MARC bib record with holdings data included - Source record storage (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     ExportFieldMappingProfiles.goTofieldMappingProfilesTab();
-		ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, ['Inventory instance (selected fields)', 'Holdings']);
-		ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
-		ModalSelectTransformations.uncheckItemRecordTypeChechbox();
+    ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, ['Source record storage (entire record)', 'Holdings', 'Item']);
+    ModalSelectTransformations.verifyCheckboxDisabled('Instance');
+    ModalSelectTransformations.uncheckItemRecordTypeChechbox();
     ModalSelectTransformations.clickNthCheckbox();
-		ModalSelectTransformations.fillInTransformationsTextfields('123', '1', '2', '$a');
-    
-		ModalSelectTransformations.uncheckInstanceRecordTypeChechbox();
-		ModalSelectTransformations.checkHoldingsRecordTypeChechbox();
+    ModalSelectTransformations.fillInTransformationsTextfields('123', '1', '2', '$a');
+
+    ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
+    ModalSelectTransformations.checkItemRecordTypeChechbox();
     ModalSelectTransformations.clickNthCheckbox();
-		ModalSelectTransformations.fillInTransformationsTextfields('245', '3', '4', '$a');
+    ModalSelectTransformations.fillInTransformationsTextfields('245', '3', '4', '$a');
 
     ModalSelectTransformations.clickTransformationsSaveAndCloseButton();
-		InteractorsTools.checkCalloutMessage(newTransformationCalloutMessage);
+    InteractorsTools.checkCalloutMessage(newTransformationCalloutMessage);
 
-		ExportFieldMappingProfiles.saveMappingProfile();
-		InteractorsTools.checkCalloutMessage(newFieldMappingProfileCalloutMessage);
-    
+    ExportFieldMappingProfiles.saveMappingProfile();
+    InteractorsTools.checkCalloutMessage(newFieldMappingProfileCalloutMessage);
+
     ExportFieldMappingProfiles.verifyProfileNameOnTheList(fieldMappingProfileName);
   });
 });
