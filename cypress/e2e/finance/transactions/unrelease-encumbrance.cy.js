@@ -1,14 +1,12 @@
 import permissions from '../../../support/dictionary/permissions';
 import testType from '../../../support/dictionary/testTypes';
 import devTeams from '../../../support/dictionary/devTeams';
-import getRandomPostfix from '../../../support/utils/stringTools';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import TopMenu from '../../../support/fragments/topMenu';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import Users from '../../../support/fragments/users/users';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
-import DateTools from '../../../support/utils/dateTools';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import Orders from '../../../support/fragments/orders/orders';
 import OrderLines from '../../../support/fragments/orders/orderLines';
@@ -20,24 +18,10 @@ import ServicePoints from '../../../support/fragments/settings/tenant/servicePoi
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 
 describe('ui-finance: Transactions', () => {
-  const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
-  const secondFiscalYear = {
-    name: `autotest_year_${getRandomPostfix()}`,
-    code: DateTools.getRandomFiscalYearCodeForRollover(2000, 9999),
-    periodStart: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
-    periodEnd: `${DateTools.getDayAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
-    description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
-    series: 'FYTA',
-  };
+  const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };
-  const secondFund = {
-    name: `autotest_fund2_${getRandomPostfix()}`,
-    code: getRandomPostfix(),
-    externalAccountNo: getRandomPostfix(),
-    fundStatus: 'Active',
-    description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
-  };
+
   const firstOrder = { ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',
     ongoing: { isSubscription: false, manualRenewal: false },
@@ -62,25 +46,12 @@ describe('ui-finance: Transactions', () => {
           .then(ledgerResponse => {
             defaultLedger.id = ledgerResponse.id;
             firstFund.ledgerId = defaultLedger.id;
-            secondFund.ledgerId = defaultLedger.id;
-
             Funds.createViaApi(firstFund)
               .then(fundResponse => {
                 firstFund.id = fundResponse.fund.id;
-
                 cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
                 FinanceHelp.searchByName(firstFund.name);
                 Funds.selectFund(firstFund.name);
-                Funds.addBudget(allocatedQuantity);
-              });
-
-            Funds.createViaApi(secondFund)
-              .then(secondFundResponse => {
-                secondFund.id = secondFundResponse.fund.id;
-
-                cy.visit(TopMenu.fundPath);
-                FinanceHelp.searchByName(secondFund.name);
-                Funds.selectFund(secondFund.name);
                 Funds.addBudget(allocatedQuantity);
               });
           });
@@ -92,11 +63,6 @@ describe('ui-finance: Transactions', () => {
           .then(res => {
             location = res;
           });
-      });
-    // Create second Fiscal Year for Rollover
-    FiscalYears.createViaApi(secondFiscalYear)
-      .then(secondFiscalYearResponse => {
-        secondFiscalYear.id = secondFiscalYearResponse.id;
       });
 
     // Prepare 2 Open Orders for Rollover
@@ -141,44 +107,23 @@ describe('ui-finance: Transactions', () => {
   });
 
   it('C375105 Unrelease encumbrance when cancelling approved invoice related to Ongoing order (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    // Invoices.searchByNumber(invoice.invoiceNumber);
-    // Invoices.selectInvoice(invoice.invoiceNumber);
-    // Invoices.selectInvoiceLine();
-    // Invoices.selectFundInInvoiceLine(firstFund);
-
     FinanceHelp.searchByName(firstFund.name);
     Funds.selectFund(firstFund.name);
     Funds.selectBudgetDetails();
     Funds.viewTransactions();
-    cy.pause();
-    Funds.checkOrderInTransactionList(firstFund.code, '($100.00)');
-
-    // FinanceHelp.searchByName(defaultLedger.name);
-    // Ledgers.selectLedger(defaultLedger.name);
-    // Ledgers.rollover();
-    // Ledgers.fillInRolloverInfo(secondFiscalYear.code);
-    // Ledgers.closeRolloverInfo();
-    // Ledgers.selectFundInLedger(firstFund.name);
-    // Funds.selectPlannedBudgetDetails();
-    // Funds.viewTransactions();
-    Funds.checkOrderInTransactionList(firstFund.code, '($100.00)');
-    // Funds.closeMenu();
-    // cy.wait(1000);
-    // Funds.closeMenu();
-    // Funds.selectBudgetDetails();
-    // Funds.viewTransactions();
-    // Funds.checkOrderInTransactionList(firstFund.code, '$0.00');
-    // cy.visit(TopMenu.fundPath);
-    // FinanceHelp.searchByName(secondFund.name);
-    // Funds.selectFund(secondFund.name);
-    // Funds.selectPlannedBudgetDetails();
-    // Funds.viewTransactions();
-    // Funds.checkOrderInTransactionList(secondFund.code, '($200.00)');
-    // Funds.closeMenu();
-    // cy.wait(1000);
-    // Funds.closeMenu();
-    // Funds.selectBudgetDetails();
-    // Funds.viewTransactions();
-    // Funds.checkOrderInTransactionList(secondFund.code, '($200.00)');
+    Funds.checkTransactionDetails(1, firstFiscalYear.code, '($0.00)', `${orderNumber}-1`, 'Encumbrance', `${firstFund.name} (${firstFund.code})`, 'Released');
+    cy.visit(TopMenu.invoicesPath);
+    Invoices.searchByNumber(invoice.invoiceNumber);
+    Invoices.selectInvoice(invoice.invoiceNumber);
+    Invoices.cancelInvoice();
+    cy.visit(TopMenu.fundPath);
+    FinanceHelp.searchByName(firstFund.name);
+    Funds.selectFund(firstFund.name);
+    Funds.selectBudgetDetails();
+    Funds.viewTransactions();
+    Funds.checkTransactionDetails(2, firstFiscalYear.code, '($100.00)', `${orderNumber}-1`, 'Encumbrance', `${firstFund.name} (${firstFund.code})`, 'Unreleased');
+    Funds.closeTransactionDetails();
+    Funds.checkPaymentInTransactionDetails(1, firstFiscalYear.code, '($100.00)', invoice.invoiceNumber, `${firstFund.name} (${firstFund.code})`, '$100.00');
+    Funds.clickInfoInTransactionDetails();
   });
 });
