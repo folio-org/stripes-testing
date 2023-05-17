@@ -1,3 +1,4 @@
+// This test is failing due to the CIRCSTORE-412 bug.
 import uuid from 'uuid';
 import TestTypes from '../../support/dictionary/testTypes';
 import { REQUEST_TYPES } from '../../support/constants';
@@ -212,8 +213,6 @@ describe('Request notice triggers', () => {
     PatronGroups.createViaApi(patronGroup.name).then((res) => {
       patronGroup.id = res;
       cy.createTempUser([permissions.checkoutAll.gui], patronGroup.name).then((userProperties) => {
-        userForCheckOut.username = userProperties.username;
-        userForCheckOut.password = userProperties.password;
         userForCheckOut.userId = userProperties.userId;
         userForCheckOut.barcode = userProperties.barcode;
         userForCheckOut.personal.lastname = userProperties.lastName;
