@@ -16,6 +16,7 @@ describe('Data Import - Importing MARC Authority files', () => {
   const testData = {
     searchOptionPersonalName: 'Personal name',
     searchOptionNameTitle: 'Name-title',
+    searchOptionKeyword: 'Keyword',
     recordA: 'Angelou, Maya.',
     recordB: 'Angelou, Maya. And still I rise',
     recordBRef: 'Angelou, Maya. Still I rise',
@@ -151,5 +152,66 @@ describe('Data Import - Importing MARC Authority files', () => {
     MarcAuthorityBrowse.checkResultWithValue(testData.authorized, testData.recordWithoutTitle);
     MarcAuthorityBrowse.searchByChangingParameter(testData.searchOptionNameTitle, testData.recordWithoutTitle);
     MarcAuthorityBrowse.checkResultWithNoValue(testData.recordWithoutTitle);
+  });
+
+  it('C356765 Search for record without subfield "t" (personalNameTitle and sftPersonalName) (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    DataImport.uploadFile('marcFileForC356765.mrc', fileName);
+    JobProfiles.waitLoadingList();
+    JobProfiles.searchJobProfileForImport(jobProfileToRun);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileName);
+    Logs.checkStatusOfJobProfile('Completed');
+    Logs.openFileDetails(fileName);
+    Logs.getCreatedItemsID(0).then(link => {
+      createdAuthorityIDs.push(link.split('/')[5]);
+    });
+
+    cy.visit(TopMenu.marcAuthorities);
+
+    MarcAuthorities.clickActionsButton();
+    MarcAuthorities.actionsSortBy('Type of heading');
+
+    MarcAuthorities.checkSearchOption('keyword');
+    MarcAuthorities.searchByParameter('Keyword', 'Twain');
+    MarcAuthorities.checkResultList(['Twain, Marek, 1835-1910', 'Twain, Mark, 1835-1910']); 
+
+    MarcAuthorities.searchByParameter('Personal name', 'Twain');
+    MarcAuthorities.checkResultList(['Twain, Marek, 1835-1910', 'Twain, Mark, 1835-1910']); 
+
+    MarcAuthorities.searchByParameter('Name-title', 'Twain');
+    MarcAuthorities.checkNoResultsMessage('No results found for "Twain". Please check your spelling and filters.');
+  });
+
+  it('C353995 Search for records which have subfield "t" value (personalNameTitle and sftPersonalNameTitle) (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    DataImport.uploadFile('marcFileForC353995.mrc', fileName);
+    JobProfiles.waitLoadingList();
+    JobProfiles.searchJobProfileForImport(jobProfileToRun);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileName);
+    Logs.checkStatusOfJobProfile('Completed');
+    Logs.openFileDetails(fileName);
+    for (let i = 0; i < 1; i++) {
+      Logs.getCreatedItemsID(i).then(link => {
+        createdAuthorityIDs.push(link.split('/')[5]);
+      });
+    }
+
+    cy.visit(TopMenu.marcAuthorities);
+
+    MarcAuthorities.checkSearchOption('keyword');
+    MarcAuthorities.searchByParameter(testData.searchOptionKeyword, testData.recordB);
+    MarcAuthorityBrowse.checkResultWithValue(testData.authorized, testData.recordB);
+
+    MarcAuthorities.searchByParameter(testData.searchOptionKeyword, testData.recordA);
+    MarcAuthorityBrowse.checkResultWithValueB(testData.authorized, testData.recordB, testData.reference, testData.recordBRef);
+    
+    MarcAuthorities.searchByParameter(testData.searchOptionPersonalName, testData.recordA);
+    MarcAuthorities.checkNoResultsMessage('No results found for "Angelou, Maya.". Please check your spelling and filters.');
+    
+    MarcAuthorities.searchByParameter(testData.searchOptionNameTitle, testData.recordB);
+    MarcAuthorityBrowse.checkResultWithValue(testData.authorized, testData.recordB);
+    
+    MarcAuthorities.searchByParameter(testData.searchOptionNameTitle, testData.recordA);
+    MarcAuthorityBrowse.checkResultWithValueB(testData.authorized, testData.recordB, testData.reference, testData.recordBRef);
   });
 });

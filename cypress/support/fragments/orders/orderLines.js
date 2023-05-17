@@ -63,6 +63,7 @@ const poLineInfoSection = Section({ id: 'poLine' });
 const fundDistributionSection = Section({ id: 'FundDistribution' });
 const locationSection = Section({ id: 'location' });
 const selectInstanceModal = Modal('Select instance');
+const createNewLocationButton = Button('Create new holdings for location');
 
 export default {
 
@@ -198,6 +199,27 @@ export default {
     ]);
   },
 
+  POLineInfodorPhysicalMaterialWithLocation: (orderLineTitleName, institutionId) => {
+    cy.do([
+      orderLineTitleField.fillIn(orderLineTitleName),
+      orderFormatSelect.choose('Physical resource'),
+      acquisitionMethodButton.click(),
+      SelectionOption('Depository').click(),
+      receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
+      physicalUnitPriceTextField.fillIn(physicalUnitPrice),
+      quantityPhysicalTextField.fillIn(quantityPhysical),
+      materialTypeSelect.choose('book'),
+      addLocationButton.click(),
+      Button('Location look-up').click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+    cy.do([
+      Modal('Select permanent location').find(Button('Save and close')).click(),
+      quantityPhysicalLocationField.fillIn(quantityPhysical),
+      saveAndClose.click()
+    ]);
+  },
+
   POLineInfodorPhysicalMaterialWithFund: (orderLineTitleName, fund) => {
     cy.do([
       orderLineTitleField.fillIn(orderLineTitleName),
@@ -260,7 +282,7 @@ export default {
       fundDistributionField.fillIn(value),
       materialTypeSelect.choose('book'),
       addLocationButton.click(),
-      Button('Create new holdings for location').click(),
+      createNewLocationButton.click(),
     ]);
     cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
     cy.do([
@@ -361,7 +383,7 @@ export default {
     ]);
   },
 
-  fillPolWithEuroCurrency( fund, unitPrice, quantity, institutionId) {
+  fillPolWithEuroCurrency(fund, unitPrice, quantity, institutionId) {
     cy.do([
       orderFormatSelect.choose('Physical resource'),
       acquisitionMethodButton.click(),
@@ -380,10 +402,10 @@ export default {
       fundDistributionField.fillIn('100'),
       materialTypeSelect.choose('book'),
       addLocationButton.click(),
-      Button('Create new holdings for location').click(),
+      createNewLocationButton.click(),
     ]);
     cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
-        cy.do([
+    cy.do([
       Modal('Select permanent location').find(Button('Save and close')).click(),
       quantityPhysicalLocationField.fillIn(quantity),
       saveAndClose.click()
@@ -411,10 +433,10 @@ export default {
       fundDistributionField.fillIn('100'),
       materialTypeSelect.choose('book'),
       addLocationButton.click(),
-      Button('Create new holdings for location').click(),
+      createNewLocationButton.click(),
     ]);
     cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
-        cy.do([
+    cy.do([
       Modal('Select permanent location').find(Button('Save and close')).click(),
       quantityPhysicalLocationField.fillIn(quantity),
       saveAndClose.click()
@@ -495,7 +517,7 @@ export default {
       quantityElectronicTextField.fillIn(quantityElectronic),
       Select({ name: 'eresource.materialType' }).choose('book'),
       addLocationButton.click(),
-      Button('Create new holdings for location').click(),
+      createNewLocationButton.click(),
     ]);
     cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
     cy.do([
@@ -537,7 +559,7 @@ export default {
       quantityPhysicalTextField.fillIn(quantity),
       materialTypeSelect.choose('book'),
       addLocationButton.click(),
-      Button('Create new holdings for location').click(),
+      createNewLocationButton.click(),
     ]);
     cy.get('form[id=location-form] select[name=institutionId]').select(institutionName);
     cy.do([
@@ -549,6 +571,39 @@ export default {
       quantityPhysicalLocationField.has({ value: quantity }),
     ]);
     cy.do(saveAndClose.click());
+    // If purchase order line will be dublicate, Modal with button 'Submit' will be activated
+    cy.wait(2000);
+    this.submitOrderLine();
+  },
+
+  fillInPOLineInfoWithLocationForPEMIXResource(accountNumber, AUMethod, institutionName, quantity) {
+    cy.do([
+      orderFormatSelect.choose('P/E mix'),
+      acquisitionMethodButton.click(),
+      acquisitionMethodButton.click(),
+      SelectionOption(AUMethod).click(),
+      Select({ name: 'vendorDetail.vendorAccount' }).choose(accountNumber),
+    ]);
+    cy.do([
+      receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
+      physicalUnitPriceTextField.fillIn(physicalUnitPrice),
+      quantityPhysicalTextField.fillIn(quantity),
+      electronicUnitPriceTextField.fillIn(electronicUnitPrice),
+      quantityElectronicTextField.fillIn(quantity),
+      materialTypeSelect.choose('book'),
+      Select({ name: 'eresource.materialType' }).choose('dvd'),
+      addLocationButton.click(),
+      createNewLocationButton.click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionName);
+    cy.do([
+      Modal('Select permanent location').find(Button('Save and close')).click(),
+      quantityPhysicalLocationField.fillIn(quantity),
+      TextField({ name: 'locations[0].quantityElectronic' }).fillIn(quantity),
+      Accordion('Physical resource details').find(Select({ name: 'physical.createInventory' })).choose('Instance, holdings, item'),
+      Accordion('E-resources details').find(Select({ name: 'eresource.createInventory' })).choose('Instance, holdings'),
+      saveAndClose.click()
+    ]);
     // If purchase order line will be dublicate, Modal with button 'Submit' will be activated
     cy.wait(2000);
     this.submitOrderLine();
@@ -769,7 +824,7 @@ export default {
   },
 
   checkCurrencyInPOL:(currentEncumbrance) => {
-    cy.expect(Section({ id: 'FundDistribution'}).find(Link(`$${currentEncumbrance}`)).exists());
+    cy.expect(Section({ id: 'FundDistribution' }).find(Link(`$${currentEncumbrance}`)).exists());
   },
 
   checkDownloadedFile() {

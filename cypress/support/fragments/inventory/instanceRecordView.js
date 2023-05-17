@@ -7,7 +7,8 @@ import {
   Button,
   Accordion,
   Link,
-  Pane
+  Pane,
+  Callout
 } from '../../../../interactors';
 
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
@@ -92,7 +93,10 @@ const verifyInstanceRecordViewOpened = () => {
   cy.expect(Pane({ id:'pane-instancedetails' }).exists());
 };
 
+const waitLoading = () => cy.expect(actionsButton.exists());
+
 export default {
+  waitLoading,
   verifyResourceTitle,
   verifyInstanceStatusCode,
   verifyResourceType,
@@ -118,9 +122,19 @@ export default {
   verifyIsHoldingsCreated:(...holdingToBeOpened) => {
     cy.expect(Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) }).exists());
   },
+  verifyIsInstanceOpened:(title) => {
+    cy.expect(Pane({ id:'pane-instancedetails' }).exists());
+    cy.expect(Pane({ titleLabel: including(title) }).exists());
+  },
+  verivyCalloutMessage: (number) => {
+    cy.expect(Callout({ textContent: including(`Record ${number} created. Results may take a few moments to become visible in Inventory`) })
+      .exists());
+  },
 
   openHoldingView: () => {
     cy.do(Button('View holdings').click());
     cy.expect(Button('Actions').exists());
   },
+
+  getAssignedHRID:() => cy.then(() => KeyValue('Instance HRID').value())
 };

@@ -35,6 +35,7 @@ export default {
   inventoryPath: 'settings/inventory',
   materialTypePath: '/settings/inventory/materialtypes',
   targetProfilesPath: 'settings/inventory/targetProfiles',
+  urlRelationshipPath: 'settings/inventory/URLrelationship',
   // Invoice
   invoiceApprovalsPath: 'settings/invoice/approvals',
   invoiceAdjustmentsPath: 'settings/invoice/adjustments',
@@ -63,6 +64,10 @@ export default {
   ordersPurchaseOrderLinesLimit: 'settings/orders/polines-limit',
   ordersPrefixes: 'settings/orders/prefixes',
   ordersSuffixes: 'settings/orders/suffixes',
+  ordersInventoryInteractionsDefaultsPath: 'settings/orders/create-inventory',
+  ordersInstanceStatusPath: 'settings/orders/instance-status',
+  ordersInstanceTypePath: 'settings/orders/instance-type',
+  ordersLoanTypePath: 'settings/orders/loan-type',
   // Users
   usersOwnersPath: 'settings/users/owners',
   usersPath: 'settings/users',

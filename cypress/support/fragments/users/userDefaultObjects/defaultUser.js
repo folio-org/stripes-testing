@@ -2,6 +2,7 @@ import uuid from 'uuid';
 import getRandomPostfix from '../../../utils/stringTools';
 import defaultInstanceHoldingItem from '../../inventory/holdingsMove/defaultInstanceHoldingItem';
 import NewServicePoint from '../../settings/tenant/servicePoints/newServicePoint';
+import { FULFILMENT_PREFERENCES } from '../../../constants';
 
 const defaultApiPatron = {
   username: `autotest_username_${getRandomPostfix()}`,
@@ -42,7 +43,7 @@ export default {
       defaultDeliveryAddressTypeId: null,
       defaultServicePointId: null,
       delivery: false,
-      fulfillment: 'Hold Shelf',
+      fulfillment: FULFILMENT_PREFERENCES.HOLD_SHELF,
       holdShelf: true,
       id: uuid(),
       userId: uuid(),

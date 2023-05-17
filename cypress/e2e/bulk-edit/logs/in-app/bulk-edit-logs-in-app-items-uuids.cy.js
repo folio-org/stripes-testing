@@ -12,6 +12,7 @@ import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-fil
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import ItemRecordView from '../../../../support/fragments/inventory/itemRecordView';
+import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 
 let user;
 const validItemUUIDsFileName = `validItemUUIDs_${getRandomPostfix()}.csv`;
@@ -77,7 +78,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditActions.addNewBulkEditFilterString();
     BulkEditActions.replacePermanentLocation(newLocation, 'item', 1);
     BulkEditActions.addNewBulkEditFilterString();
-    BulkEditActions.replaceItemStatus('Available', 2);
+    BulkEditActions.replaceItemStatus(ITEM_STATUS_NAMES.AVAILABLE, 2);
     BulkEditActions.addNewBulkEditFilterString();
     BulkEditActions.fillTemporaryLoanType('Reading room', 3);
     BulkEditActions.addNewBulkEditFilterString();
@@ -112,6 +113,6 @@ describe('Bulk Edit - Logs', () => {
     ItemRecordView.waitLoading();
     ItemRecordView.closeDetailView();
     InventoryInstance.openHoldings(['']);
-    InventoryInstance.verifyCellsContent(newLocation, 'Available', 'Reading room');
+    InventoryInstance.verifyCellsContent(newLocation, ITEM_STATUS_NAMES.AVAILABLE, 'Reading room');
   });
 });

@@ -85,6 +85,22 @@ export const LOAN_PROFILE = {
   ROLLING: 'Rolling',
 };
 
+export const FULFILMENT_PREFERENCES = {
+  HOLD_SHELF: 'Hold Shelf',
+  DELIVERY: 'Delivery'
+};
+
+export const REQUEST_LEVELS = {
+  ITEM: 'Item',
+  TITLE: 'Title',
+};
+
+export const REQUEST_TYPES = {
+  PAGE: 'Page',
+  HOLD: 'Hold',
+  RECALL: 'Recall',
+};
+
 export const FOLIO_RECORD_TYPE = {
   INSTANCE:'Instance',
   HOLDINGS:'Holdings',
@@ -122,4 +138,10 @@ export const INSTANCE_STATUS_TERM_NAMES = {
   BATCH_LOADED: 'Batch Loaded',
   CATALOGED: 'Cataloged',
   UNCATALOGED: 'Uncataloged'
+};
+
+export const CALL_NUMBER_TYPE_NAMES = {
+  OTHER_SCHEME: 'Other scheme',
+  LIBRARY_OF_CONGRESS: 'Library of Congress classification',
+  LIBRARY_OF_MEDICINE: 'National Library of Medicine classification'
 };

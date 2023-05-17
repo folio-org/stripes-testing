@@ -8,9 +8,11 @@ const importButtonInModal = Button('Import');
 const OCLWorldCatIdentifierTextField = TextField({ name: 'externalIdentifier' });
 const importTypeSelect = Select({ name :'externalIdentifierType' });
 
+function open() { cy.do(Section({ id:'pane-results' }).find(Button('Actions')).click()); }
+
 // TODO: merge inventoryActions and InventoryInstances
 export default {
-  open: () => cy.do(Section({ id:'pane-results' }).find(Button('Actions')).click()),
+  open,
   options: {
     new: Button('New'),
     saveUUIDs: Button('Save instances UUIDs'),
@@ -22,7 +24,7 @@ export default {
   },
   openNewFastAddRecordForm() {
     cy.do([
-      this.open(),
+      open(),
       this.options.newFastAddRecord.click()
     ]);
   },
@@ -38,7 +40,7 @@ export default {
   },
 
   import(specialOCLCWorldCatidentifier = InventoryInstance.validOCLC.id) {
-    this.open();
+    open();
     cy.do(importButtonInActions.click());
     cy.expect(OCLWorldCatIdentifierTextField.exists());
     this.fillImportFields(specialOCLCWorldCatidentifier);
@@ -47,6 +49,11 @@ export default {
     // TODO: see issues in cypress tests run related with this step and awaiting of holdingsRecordView
     // InteractorsTools.closeCalloutMessage();
     InventoryInstance.checkExpectedMARCSource();
+  },
+
+  openSingleReportImportModal:() => {
+    open();
+    cy.do(importButtonInActions.click());
   },
 
   // the same steps can be used in Overlay Source Bibliographic Record

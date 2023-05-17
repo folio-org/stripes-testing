@@ -23,7 +23,7 @@ export const MultiColumnListRow = HTML.extend('multi column list row')
 
 export const ListRow = HTML.extend('list row')
   .selector('[class^=mclRowFormatterContainer-]')
-  .locator(content)
+  .locator(content);
 
 export const MultiColumnListCell = HTML.extend('multi column list cell')
   .selector('div[class*=mclCell-]')

@@ -1,6 +1,7 @@
 import uuid from 'uuid';
 import Users from '../fragments/users/users';
 import getRandomPostfix from '../utils/stringTools';
+import { FULFILMENT_PREFERENCES } from '../constants';
 
 Cypress.Commands.add('getUsers', (searchParams) => {
   cy
@@ -108,7 +109,7 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName) => {
                 defaultDeliveryAddressTypeId: null,
                 defaultServicePointId: null,
                 delivery: false,
-                fulfillment: 'Hold Shelf',
+                fulfillment: FULFILMENT_PREFERENCES.HOLD_SHELF,
                 holdShelf: true,
                 id: uuid(),
                 userId:  newUserProperties.id,

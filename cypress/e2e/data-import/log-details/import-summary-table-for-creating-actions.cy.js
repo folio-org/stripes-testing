@@ -14,7 +14,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
-import { LOCALION_NAMES, LOAN_TYPE_NAMES, ITEM_STATUS_NAMES, FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { LOCALION_NAMES, LOAN_TYPE_NAMES, ITEM_STATUS_NAMES, FOLIO_RECORD_TYPE, MATERIAL_TYPE_NAMES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let user;
@@ -50,7 +50,8 @@ describe('ui-data-import', () => {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: itemMappingProfileName,
         permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-        status: ITEM_STATUS_NAMES.AVAILABLE },
+        status: ITEM_STATUS_NAMES.AVAILABLE,
+        materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: itemActionProfileName }
     }
@@ -104,7 +105,7 @@ describe('ui-data-import', () => {
 
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile);
-      NewFieldMappingProfile.fillMaterialType();
+      NewFieldMappingProfile.fillMaterialType(collectionOfMappingAndActionProfiles[2].mappingProfile.materialType);
       NewFieldMappingProfile.fillPermanentLoanType(collectionOfMappingAndActionProfiles[2].mappingProfile.permanentLoanType);
       NewFieldMappingProfile.fillStatus(collectionOfMappingAndActionProfiles[2].mappingProfile.status);
       FieldMappingProfiles.saveProfile();
