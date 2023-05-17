@@ -124,6 +124,6 @@ describe('invoices: add adjustment', () => {
     Funds.selectFund(firstFund.name);
     Funds.selectBudgetDetails();
     Funds.viewTransactions();
-    Funds.checkTransactionDetails(2, defaultFiscalYear.code,'($22.00)', invoice.invoiceNumber, 'Payment', `${firstFund.name} (${firstFund.code})`);
+    Funds.checkPaymentInTransactionDetails(2, defaultFiscalYear.code, invoice.invoiceNumber, `${firstFund.name} (${firstFund.code})`, '($22.00)');
   });
 });

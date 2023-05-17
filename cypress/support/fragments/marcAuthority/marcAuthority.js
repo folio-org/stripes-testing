@@ -166,7 +166,7 @@ export default {
 
     cy.expect(QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextField()).has({ disabled: true }));
     cy.do(saveAndCloseButton.click());
-    cy.expect(Callout('Record cannot be saved. Can only have one MARC 001.').exists());
+    cy.expect(Callout('Record has been updated.').exists());
   },
   
   deleteTag: (rowIndex) => { 
@@ -177,6 +177,10 @@ export default {
     // wait until all the saved and updated values will be loaded.
     cy.wait(2000);
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].tag` })).fillIn(tag));
+  },
+
+  checkTagInRowDoesntExist: (rowIndex, tag) => {
+    cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].tag`, value: tag })).absent());
   },
 
   checkLinkingAuthority: () => {
