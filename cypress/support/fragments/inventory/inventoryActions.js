@@ -24,8 +24,8 @@ export default {
   },
   openNewFastAddRecordForm() {
     cy.do([
-      open(),
-      this.options.newFastAddRecord.click()
+      Section({ id:'pane-results' }).find(Button('Actions')).click(),
+      Button({ id:'new-fast-add-record' }).click()
     ]);
   },
   optionsIsDisabled: (array) => {

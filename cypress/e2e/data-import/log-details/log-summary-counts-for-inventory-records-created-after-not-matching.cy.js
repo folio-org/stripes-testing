@@ -45,6 +45,7 @@ describe('ui-data-import', () => {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C378901 holdings mapping profile ${getRandomPostfix()}`,
         permanentLocation: `"${LOCALION_NAMES.ONLINE}"`,
+        permanentLocationUI: LOCALION_NAMES.ONLINE_UI,
         callNumberType: '852$t',
         callNumber: '852$h',
         relationship: 'Resource',
@@ -200,7 +201,7 @@ describe('ui-data-import', () => {
       InstanceRecordView.verifyIsInstanceOpened(firstInstanceTitle);
       cy.go('back');
       FileDetails.openHoldingsInInventory('Created');
-      HoldingsRecordView.checkPermanentLocation(LOCALION_NAMES.ONLINE_UI);
+      HoldingsRecordView.checkPermanentLocation(collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocationUI);
       cy.go('back');
       FileDetails.openItemInInventory('Created');
       ItemRecordView.verifyItemStatus(collectionOfMappingAndActionProfiles[2].mappingProfile.status);
