@@ -60,4 +60,14 @@ export default {
       Accordion('Transformations').find(Button('Add transformations')).click(),
     ]);
   },
+  createNewFieldMappingProfile(name, recordTypes) {
+    cy.do([
+      Button('New').click(),
+      TextField('Name*').fillIn(name),
+    ]);
+    recordTypes.forEach(recordType => {
+      cy.do(Checkbox(recordType).click())
+    });
+    cy.do(Accordion('Transformations').find(Button('Add transformations')).click())
+  },
 };
