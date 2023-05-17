@@ -50,11 +50,22 @@ const browseButton = Button({ id: 'mode-navigation-browse' });
 const viewHoldingButton = Button('View holdings');
 const statisticalCodeAccordion = Accordion({ id:'itemsStatisticalCodeIds' });
 const callNumberBrowsePane = Pane({ title: 'Browse inventory' });
+const actionsButton = Button('Actions');
+const editInstanceButton = Button('Edit instance');
 
 const searchInstanceByHRID = (id) => {
   cy.do([
     Select({ id: 'input-inventory-search-qindex' }).choose('Instance HRID'),
     TextField({ id: 'input-inventory-search' }).fillIn(id),
+    searchButton.click()
+  ]);
+  InventoryInstances.waitLoading();
+};
+
+const searchHoldingsByHRID = (hrid) => {
+  cy.do([
+    Select({ id: 'input-inventory-search-qindex' }).choose('Holdings HRID'),
+    TextField({ id: 'input-inventory-search' }).fillIn(hrid),
     searchButton.click()
   ]);
   InventoryInstances.waitLoading();
@@ -122,6 +133,7 @@ const checkInstanceDetails = () => {
 
 export default {
   searchInstanceByHRID,
+  searchHoldingsByHRID,
   searchInstanceByTitle,
   getInstanceHRID,
   checkInstanceDetails,
@@ -512,5 +524,12 @@ export default {
       TextField({ id: 'input-record-search' }).fillIn(searchValue),
       searchButton.click()
     ]);
-  }
+  },
+
+  clickEditInstance() {
+    cy.do([
+      instanceDetailsSection.find(actionsButton).click(),
+      editInstanceButton.click(),
+    ]);
+  },
 };

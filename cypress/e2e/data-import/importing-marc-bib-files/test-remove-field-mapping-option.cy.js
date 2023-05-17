@@ -174,7 +174,7 @@ describe('ui-data-import', () => {
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile);
       NewFieldMappingProfile.fillBarcode(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.barcode);
       NewFieldMappingProfile.fillAccessionNumber(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.accessionNumber);
-      NewFieldMappingProfile.fillMaterialType(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.materialType);
+      NewFieldMappingProfile.fillMaterialType(`"${collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.materialType}"`);
       NewFieldMappingProfile.fillNumberOfPieces(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.numberOfPieces);
       NewFieldMappingProfile.fillPermanentLoanType(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.permanentLoanType);
       NewFieldMappingProfile.fillTemporaryLoanType(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.temporaryLoanType);
