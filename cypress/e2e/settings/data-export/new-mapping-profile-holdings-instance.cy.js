@@ -57,5 +57,7 @@ describe('Mapping profile - setup', () => {
 
 		ExportFieldMappingProfiles.saveMappingProfile();
 		InteractorsTools.checkCalloutMessage(newFieldMappingProfileCalloutMessage);
+    
+    ExportFieldMappingProfiles.verifyProfileNameOnTheList(fieldMappingProfileName);
   });
 });
