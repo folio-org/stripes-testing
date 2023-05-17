@@ -490,6 +490,12 @@ export default {
     cy.expect(resultsAccordion.has({ itemsAmount: (values.length).toString() }));
   },
 
+  verifySpecificItemsMatched(...values) {
+    values.forEach(value => {
+      cy.expect(resultsAccordion.find(MultiColumnListCell({ content: value })).exists());
+    });
+  },
+
   matchedAccordionIsAbsent() {
     cy.expect(resultsAccordion.absent());
   },
@@ -534,6 +540,10 @@ export default {
 
   verifyErrorLabelAfterChanges(fileName, validRecordCount, invalidRecordCount) {
     cy.expect(Accordion('Errors').find(HTML(`${fileName}: ${validRecordCount + invalidRecordCount} entries * ${validRecordCount} records changed * ${invalidRecordCount} errors`)).exists());
+  },
+
+  verifyReasonForError(errorText) {
+    cy.expect(Accordion('Errors').find(HTML(including(errorText))).exists());
   },
 
   verifyActionsAfterConductedCSVUploading(errors = true) {
