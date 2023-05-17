@@ -52,13 +52,16 @@ export default {
       isDefaultSearchParamsRequired: false,
     }).then(({ response }) => { return response; });
   },
-  createNewFieldMappingProfile(name, recordType) {
+  
+  createNewFieldMappingProfile(name, recordTypes) {
     cy.do([
       Button('New').click(),
       TextField('Name*').fillIn(name),
-      Checkbox(recordType).click(),
-      Accordion('Transformations').find(Button('Add transformations')).click(),
     ]);
+    recordTypes.forEach(recordType => {
+      cy.do(Checkbox(recordType).click())
+    });
+    cy.do(Accordion('Transformations').find(Button('Add transformations')).click())
   },
   createNewFieldMappingProfile(name, recordTypes) {
     cy.do([
