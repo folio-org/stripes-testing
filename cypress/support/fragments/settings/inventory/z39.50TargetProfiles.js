@@ -11,8 +11,7 @@ import {
   MultiColumnListHeader,
   MultiColumnList,
   MultiColumnListCell,
-  MultiColumnListRow,
-  Callout
+  MultiColumnListRow
 } from '../../../../../interactors';
 
 const oclcWorldcatPane = Pane('✓ OCLC WorldCat');
