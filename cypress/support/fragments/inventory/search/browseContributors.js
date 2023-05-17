@@ -142,6 +142,10 @@ export default {
     cy.do(MultiColumnListCell(contributor.name).click());
   },
 
+  openRecord(record) {
+    cy.do(Button(record).click());
+  },
+
   checkInstance(instance) {
     cy.do([
       recordSearch.has({ value: instance.contributors[0].name }),
