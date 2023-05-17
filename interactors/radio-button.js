@@ -6,12 +6,14 @@ export default HTML.extend('radio button')
   .selector('div[class^=radioButton]')
   .locator((el) => el.querySelector('[class^=labelText]').textContent)
   .filters({
+    name: (el) => el.querySelector('input').name,
     title: (el) => el.querySelector('input').title,
     id: (el) => el.querySelector('input').id,
     valid: (el) => el.querySelector('input').validity.valid,
     checked: (el) => el.querySelector('input').checked,
     value: (el) => el.querySelector('input').value,
     label: (el) => el.textContent,
+    ariaLabel: (el) => el.querySelector('input').ariaLabel,
     feedbackText: (el) => el.querySelector('[class^=radioFeedback]').textContent,
     hasWarning: (el) => !!el.className.match(/hasWarning/),
     hasError: (el) => !!el.className.match(/hasError/),
