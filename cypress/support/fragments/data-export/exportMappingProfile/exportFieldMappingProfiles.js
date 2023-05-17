@@ -85,5 +85,11 @@ export default {
       MultiColumnListRow(including('Default holdings mapping profileHoldings')).exists(),
       MultiColumnListRow(including('Default instance mapping profileInstance')).exists(),
     ]);
+  },
+
+  verifyProfileNameOnTheList(name) {
+    cy.expect([
+      MultiColumnListRow(including(name)).exists()
+    ]);
   }
 };
