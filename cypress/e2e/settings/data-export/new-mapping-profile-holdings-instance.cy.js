@@ -1,4 +1,4 @@
-import getRandomPostfix from "../../../support/utils/stringTools";
+import { getTestEntityValue } from "../../../support/utils/stringTools";
 import testTypes from "../../../support/dictionary/testTypes";
 import devTeams from "../../../support/dictionary/devTeams";
 import Users from '../../../support/fragments/users/users';
@@ -12,7 +12,7 @@ import DeleteFieldMappingProfile from "../../../support/fragments/data-export/ex
 import InteractorsTools from "../../../support/utils/interactorsTools";
 
 let user;
-let fieldMappingProfileName = `fieldMappingProfile${getRandomPostfix()}`;
+let fieldMappingProfileName = getTestEntityValue('fieldMappingProfile');
 const newTransformationCalloutMessage = '2 transformations have been successfully added';
 const newFieldMappingProfileCalloutMessage = `The field mapping profile ${fieldMappingProfileName} has been successfully created`;
 
