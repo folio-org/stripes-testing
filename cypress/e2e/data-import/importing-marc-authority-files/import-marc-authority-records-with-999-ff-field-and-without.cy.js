@@ -57,6 +57,6 @@ describe('ui-data-import', () => {
       FileDetails.checkAuthorityQuantityInSummaryTable('2');
       // check No action counter in the Summary table
       FileDetails.checkSrsRecordQuantityInSummaryTable('6', 2);
-      FileDetails.verifyErrorMessage(error);
+      FileDetails.verifyErrorMessage(error, 1);
     });
 });

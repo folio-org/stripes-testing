@@ -219,7 +219,7 @@ export default {
     ));
   },
 
-  verifyErrorMessage:(expectedError) => {
+  verifyErrorMessage:(expectedError, rowNumber = 0) => {
     return LogsViewAll.getSingleJobProfile() // get the first job id from job logs list
       .then(({ id }) => {
       // then, make request with the job id
@@ -234,7 +234,7 @@ export default {
           },
         })
           .then(({ body: { entries } }) => {
-            cy.expect(entries[0].error).to.eql(expectedError);
+            cy.expect(entries[rowNumber].error).to.eql(expectedError);
           });
       });
   },
