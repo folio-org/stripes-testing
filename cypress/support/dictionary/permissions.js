@@ -75,6 +75,7 @@ export default {
   inventoryStorageAuthoritiesAll:{ internal: 'inventory-storage.authorities.all', gui:'inventory storage module - all authorities permissions' },
   // Circulation log
   circulationLogAll: { internal: 'inn-reach.all', gui: 'Circulation log: All' },
+  circulationLogView: { internal: 'ui-circulation-log.log-event.view', gui: 'Circulation log: View' },
   // Circulation
   uiCirculationViewCreateEditDelete: { internal: 'ui-circulation.settings.circulation-rules', gui: 'Settings (Circ): Can create, edit and remove circulation rules' },
   uiCirculationSettingsNoticeTemplates: { internal: 'ui-circulation.settings.notice-templates', gui: 'Settings (Circ): Can create, edit and remove patron notice templates' },

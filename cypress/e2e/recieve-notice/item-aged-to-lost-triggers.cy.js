@@ -286,8 +286,8 @@ describe('Loan notice triggers', () => {
   });
 
   it(
-    'C347865: Item aged to lost triggers (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    'C347865: Item aged to lost triggers (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.uponAt);
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.uponAt);
