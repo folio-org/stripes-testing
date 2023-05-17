@@ -74,7 +74,7 @@ export default {
   },
 
   setFilterOptionFromAccordion(accordion, checkboxOption) {
-    // accordionOption = 'loan', 'notice', 'fee', 'request'
+    // accordion = 'loan', 'notice', 'fee', 'request'
     cy.do([
       Accordion({ id: accordion }).clickHeader(),
       Checkbox(checkboxOption).click()
