@@ -27,6 +27,7 @@ const saveAndClose = Button('Save & close');
 const actionsButton = Button('Actions');
 const searhInputId = 'input-record-search';
 const searchButton = Button('Search');
+const saveButton = Button('Save and close');
 const searchField = SearchField({ id: 'input-record-search' });
 const buttonLocationFilter = Button({ id: 'accordion-toggle-button-pol-location-filter' });
 const buttonFundCodeFilter = Button({ id: 'accordion-toggle-button-fundCode' });
@@ -64,6 +65,13 @@ const fundDistributionSection = Section({ id: 'FundDistribution' });
 const locationSection = Section({ id: 'location' });
 const selectInstanceModal = Modal('Select instance');
 const createNewLocationButton = Button('Create new holdings for location');
+const paneHeaderOrderLinesDetailes = PaneHeader({ id: 'paneHeaderorder-lines-details' });
+const orderLineDetailsPane = Pane({ id: 'order-lines-details' });
+const physicalResourceDetailsAccordion = Accordion('Physical resource details');
+const eResourcesDetails = Accordion('E-resources details');
+const polListingAccordion = Accordion({ id: 'POListing' });
+const quantityElectronicField = TextField({ name: 'locations[0].quantityElectronic' });
+const selectPermanentLocationModal = Modal('Select permanent location');
 
 export default {
 
@@ -71,7 +79,7 @@ export default {
     cy.do([
       searchForm.selectIndex(parameter),
       searchForm.fillIn(value),
-      Button('Search').click(),
+      searchButton.click(),
     ]);
   },
 
@@ -149,7 +157,7 @@ export default {
       cy.do([
         searchField.selectIndex(key),
         searchField.fillIn(value),
-        Button('Search').click(),
+        searchButton.click(),
       ]);
       // verify that first row in the result list contains related order line title
       this.checkSearchResults(orderNumber);
@@ -161,9 +169,7 @@ export default {
 
   addPOLine: () => {
     cy.do([
-      Accordion({ id: 'POListing' })
-        .find(Button('Actions'))
-        .click(),
+      polListingAccordion.find(actionsButton).click(),
       Button('Add PO line').click()
     ]);
   },
@@ -175,7 +181,7 @@ export default {
 
   deleteOrderLine: () => {
     cy.do([
-      PaneHeader({ id: 'paneHeaderorder-lines-details' }).find(actionsButton).click(),
+      paneHeaderOrderLinesDetailes.find(actionsButton).click(),
       Button('Delete').click(),
       Button({ id: 'clickable-delete-line-confirmation-confirm' }).click()
     ]);
@@ -214,7 +220,7 @@ export default {
     ]);
     cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
     cy.do([
-      Modal('Select permanent location').find(Button('Save and close')).click(),
+      selectPermanentLocationModal.find(saveButton).click(),
       quantityPhysicalLocationField.fillIn(quantityPhysical),
       saveAndClose.click()
     ]);
@@ -286,7 +292,7 @@ export default {
     ]);
     cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
     cy.do([
-      Modal('Select permanent location').find(Button('Save and close')).click(),
+      selectPermanentLocationModal.find(saveButton).click(),
       quantityPhysicalLocationField.fillIn(quantity),
       saveAndClose.click()
     ]);
@@ -336,7 +342,7 @@ export default {
       addLocationButton.click(),
       locationSelect.click(),
       onlineLocationOption.click(),
-      TextField({ name: 'locations[0].quantityElectronic' }).fillIn(quantity),
+      quantityElectronicField.fillIn(quantity),
       saveAndClose.click()
     ]);
   },
@@ -357,7 +363,7 @@ export default {
       addLocationButton.click(),
       locationSelect.click(),
       onlineLocationOption.click(),
-      TextField({ name: 'locations[0].quantityElectronic' }).fillIn(quantityElectronic),
+      quantityElectronicField.fillIn(quantityElectronic),
       saveAndClose.click()
     ]);
   },
@@ -406,7 +412,7 @@ export default {
     ]);
     cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
     cy.do([
-      Modal('Select permanent location').find(Button('Save and close')).click(),
+      selectPermanentLocationModal.find(saveButton).click(),
       quantityPhysicalLocationField.fillIn(quantity),
       saveAndClose.click()
     ]);
@@ -437,7 +443,7 @@ export default {
     ]);
     cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
     cy.do([
-      Modal('Select permanent location').find(Button('Save and close')).click(),
+      selectPermanentLocationModal.find(saveButton).click(),
       quantityPhysicalLocationField.fillIn(quantity),
       saveAndClose.click()
     ]);
@@ -462,7 +468,7 @@ export default {
       locationSelect.click(),
       onlineLocationOption.click(),
       quantityPhysicalLocationField.fillIn(quantityPhysical),
-      TextField({ name: 'locations[0].quantityElectronic' }).fillIn(quantityElectronic),
+      quantityElectronicField.fillIn(quantityElectronic),
     ]);
     cy.expect([
       physicalUnitPriceTextField.has({ value: physicalUnitPrice }),
@@ -493,7 +499,7 @@ export default {
       locationSelect.click(),
       onlineLocationOption.click(),
       quantityPhysicalLocationField.fillIn(quantityPhysical),
-      TextField({ name: 'locations[0].quantityElectronic' }).fillIn(quantityElectronic),
+      quantityElectronicField.fillIn(quantityElectronic),
     ]);
     cy.expect([
       physicalUnitPriceTextField.has({ value: physicalUnitPrice }),
@@ -521,8 +527,8 @@ export default {
     ]);
     cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
     cy.do([
-      Modal('Select permanent location').find(Button('Save and close')).click(),
-      TextField({ name: 'locations[0].quantityElectronic' }).fillIn(quantityElectronic),
+      selectPermanentLocationModal.find(saveButton).click(),
+      quantityElectronicField.fillIn(quantityElectronic),
     ]);
     cy.expect([
       electronicUnitPriceTextField.has({ value: electronicUnitPrice }),
@@ -563,7 +569,7 @@ export default {
     ]);
     cy.get('form[id=location-form] select[name=institutionId]').select(institutionName);
     cy.do([
-      Modal('Select permanent location').find(Button('Save and close')).click(),
+      selectPermanentLocationModal.find(saveButton).click(),
       quantityPhysicalLocationField.fillIn(quantity),
     ]);
     cy.expect([
@@ -597,11 +603,11 @@ export default {
     ]);
     cy.get('form[id=location-form] select[name=institutionId]').select(institutionName);
     cy.do([
-      Modal('Select permanent location').find(Button('Save and close')).click(),
+      selectPermanentLocationModal.find(saveButton).click(),
       quantityPhysicalLocationField.fillIn(quantity),
-      TextField({ name: 'locations[0].quantityElectronic' }).fillIn(quantity),
-      Accordion('Physical resource details').find(Select({ name: 'physical.createInventory' })).choose('Instance, holdings, item'),
-      Accordion('E-resources details').find(Select({ name: 'eresource.createInventory' })).choose('Instance, holdings'),
+      quantityElectronicField.fillIn(quantity),
+      physicalResourceDetailsAccordion.find(Select({ name: 'physical.createInventory' })).choose('Instance, holdings, item'),
+      eResourcesDetails.find(Select({ name: 'eresource.createInventory' })).choose('Instance, holdings'),
       saveAndClose.click()
     ]);
     // If purchase order line will be dublicate, Modal with button 'Submit' will be activated
@@ -616,7 +622,7 @@ export default {
       Select({ name: 'campusId' }).choose('City Campus'),
       Button({ id: 'locationId' }).click(),
       SelectionOption('Main Library (KU/CC/DI/M) ').click(),
-      Button('Save and close').click(),
+      saveButton.click(),
       buttonLocationFilter.click(),
     ]);
   },
@@ -672,7 +678,7 @@ export default {
   },
 
   selectPOLInOrder: (indexNumber) => {
-    cy.do(Accordion({ id: 'POListing' })
+    cy.do(polListingAccordion
       .find(MultiColumnListRow({ index: indexNumber }))
       .find(MultiColumnListCell({ columnIndex: 0 }))
       .click());
@@ -680,8 +686,8 @@ export default {
 
   editPOLInOrder: () => {
     cy.do([
-      Pane({ id: 'order-lines-details' })
-        .find(PaneHeader({ id: 'paneHeaderorder-lines-details' })
+      orderLineDetailsPane
+        .find(paneHeaderOrderLinesDetailes
           .find(actionsButton)).click(),
       Button('Edit').click(),
     ]);
@@ -714,7 +720,7 @@ export default {
 
   openReceiving:() => {
     cy.do([
-      PaneHeader({ id: 'paneHeaderorder-lines-details' }).find(actionsButton).click(),
+      paneHeaderOrderLinesDetailes.find(actionsButton).click(),
       Button('Receive').click()
     ]);
   },
@@ -798,13 +804,13 @@ export default {
   },
 
   selectCurrentEncumbrance:(currentEncumbrance) => {
-    cy.do(Section({ id: 'FundDistribution' }).find(Link(currentEncumbrance)).click());
+    cy.do(fundDistributionSection.find(Link(currentEncumbrance)).click());
   },
 
   cancelPOL:() => {
     cy.do([
-      Pane({ id: 'order-lines-details' })
-        .find(PaneHeader({ id: 'paneHeaderorder-lines-details' })
+      orderLineDetailsPane
+        .find(paneHeaderOrderLinesDetailes
           .find(actionsButton)).click(),
       Button('Cancel').click(),
       Button('Cancel order line').click()
@@ -820,11 +826,11 @@ export default {
   },
 
   checkFundInPOL:(fund) => {
-    cy.expect(Section({ id: 'FundDistribution' }).find(Link(`${fund.name}(${fund.code})`)).exists());
+    cy.expect(fundDistributionSection.find(Link(`${fund.name}(${fund.code})`)).exists());
   },
 
   checkCurrencyInPOL:(currentEncumbrance) => {
-    cy.expect(Section({ id: 'FundDistribution' }).find(Link(`$${currentEncumbrance}`)).exists());
+    cy.expect(fundDistributionSection.find(Link(`$${currentEncumbrance}`)).exists());
   },
 
   checkDownloadedFile() {
@@ -857,8 +863,8 @@ export default {
 
   checkCreateInventory() {
     cy.expect([
-      Accordion('Physical resource details').find(KeyValue({ value: 'Instance, Holding, Item' })).exists(),
-      Accordion('E-resources details').find(KeyValue({ value: 'Instance, Holding, Item' })).exists()
+      physicalResourceDetailsAccordion.find(KeyValue({ value: 'Instance, Holding, Item' })).exists(),
+      eResourcesDetails.find(KeyValue({ value: 'Instance, Holding, Item' })).exists()
     ]);
   },
 
@@ -869,5 +875,10 @@ export default {
   },
 
   getAssignedPOLNumber:() => cy.then(() => Accordion('Purchase order line').find(KeyValue('POL number')).value()),
-};
 
+  verifyPOLDetailsIsOpened:() => {
+    cy.expect(orderLineDetailsPane
+      .find(paneHeaderOrderLinesDetailes)
+      .exists());
+  }
+};
