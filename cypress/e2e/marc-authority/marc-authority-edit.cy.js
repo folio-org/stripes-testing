@@ -178,9 +178,9 @@ describe('MARC Authority -> Edit Authority record', () => {
 
   it('C353585 Verify LDR validation rules with invalid data (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     const wrongPositionError = 'Record cannot be saved. Please check the Leader. Only positions 5, 17, 18 can be edited in the Leader.';
-    const positions5Error = 'Record cannot be saved. Wrong value "w" on position 5 of the Leader. Allowed only: [a, c, d, n, o, s, x]';
-    const position17Error = 'Record cannot be saved. Wrong value "p" on position 17 of the Leader. Allowed only: [n, o]';
-    const positions18Error = 'Record cannot be saved. Wrong value "q" on position 18 of the Leader. Allowed only: [\\,  , c, i, u]';
+    const positions5Error = 'Record cannot be saved. Please enter a valid Leader 05. Valid values are listed at https://www.loc.gov/marc/authority/adleader.html';
+    const position17Error = 'Record cannot be saved. Please enter a valid Leader 17. Valid values are listed at https://www.loc.gov/marc/authority/adleader.html';
+    const positions18Error = 'Record cannot be saved. Please enter a valid Leader 18. Valid values are listed at https://www.loc.gov/marc/authority/adleader.html';
 
     const changedLDRs = [
       { newContent: replaceByIndex(initialLDRValue, 4, 3), errorMessage: wrongPositionError },
