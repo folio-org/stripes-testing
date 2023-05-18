@@ -50,6 +50,10 @@ export default {
   verifyItemStatus,
   verifyItemStatusInPane,
 
+  suppressedAsDiscoveryIsAbsent() {
+    cy.expect(HTML(including('Warning: Item is marked suppressed from discovery')).absent());
+  },
+
   getAssignedHRID:() => cy.then(() => KeyValue('Item HRID').value()),
 
   verifyUpdatedItemDate:() => {
