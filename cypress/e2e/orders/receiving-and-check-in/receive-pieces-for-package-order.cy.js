@@ -7,7 +7,6 @@ import Orders from '../../../support/fragments/orders/orders';
 import Receiving from '../../../support/fragments/receiving/receiving';
 import TopMenu from '../../../support/fragments/topMenu';
 import Helper from '../../../support/fragments/finance/financeHelper';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import OrdersHelper from '../../../support/fragments/orders/ordersHelper';
 import Organizations from '../../../support/fragments/organizations/organizations';
@@ -15,6 +14,7 @@ import NewOrganization from '../../../support/fragments/organizations/newOrganiz
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Users from '../../../support/fragments/users/users';
 import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('Orders: Receiving and Check-in', () => {
   const order = {
@@ -23,6 +23,10 @@ describe('Orders: Receiving and Check-in', () => {
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const orderLineTitle = BasicOrderLine.defaultOrderLine.titleOrPackage;
+  const copyNumber = Helper.getRandomBarcode();
+  const enumeration = Helper.getRandomBarcode();
+  const chronology = Helper.getRandomBarcode();
+  const caption = Helper.getRandomBarcode();
   let orderNumber;
   let user;
 
@@ -65,8 +69,6 @@ describe('Orders: Receiving and Check-in', () => {
   });
 
   it('C343213 Receive pieces for package order (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
-    const barcode = Helper.getRandomBarcode();
-    const caption = 'autotestCaption';
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.openOrder();
@@ -74,12 +76,15 @@ describe('Orders: Receiving and Check-in', () => {
     Orders.receiveOrderViaActions();
     // Receiving part
     Receiving.selectPOLInReceive(orderLineTitle);
-    Receiving.receivePiece(0, caption, barcode);
-    Receiving.checkReceivedPiece(0, caption, barcode);
+    Receiving.addPiece(caption, copyNumber, enumeration, chronology);
+    Receiving.selectPiece(caption);
+    Receiving.quickReceivePiece(enumeration);
+    Receiving.selectInstanceInReceive(orderLineTitle);
     // inventory part
-    cy.visit(TopMenu.inventoryPath);
-    InventorySearchAndFilter.switchToItem();
-    InventorySearchAndFilter.searchByParameter('Barcode', barcode);
-    ItemRecordView.checkItemDetails(OrdersHelper.onlineLibraryLocation, barcode, 'In process');
+    InventoryInstance.openHoldingsAccordion(OrdersHelper.onlineLibraryLocation);
+    ItemRecordView.findRowAndClickLink(copyNumber);
+    cy.pause();
+    ItemRecordView.checkEffectiveLocation(OrdersHelper.onlineLibraryLocation);
+    ItemRecordView.checkStatus('In process');
   });
 });
