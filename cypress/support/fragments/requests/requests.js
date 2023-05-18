@@ -252,6 +252,9 @@ function waitLoadingTags() {
   // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(1000);
 }
+function selectSpecifiedRequestLevel(parameter) {
+  return cy.do(Checkbox({ name: parameter }).click());
+}
 
 export default {
   createRequestApi,
@@ -270,7 +273,8 @@ export default {
   selectInTransitRequest:() => cy.do(Checkbox({ name: 'Open - In transit' }).click()),
   selectNotYetFilledRequest:() => cy.do(Checkbox({ name: 'Open - Not yet filled' }).click()),
   selectClosedCancelledRequest:() => cy.do((Checkbox({ name: 'Closed - Cancelled' }).click())),
-  selectItemRequestLevel:() => cy.do((Checkbox({ name: 'Item' }).click())),
+  selectItemRequestLevel:() => selectSpecifiedRequestLevel('Item'),
+  selectTitleRequestLevel:() => selectSpecifiedRequestLevel('Title'),
   selectFirstRequest:(title) => cy.do(requestsPane.find(MultiColumnListCell({ row: 0, content: title })).click()),
   openTagsPane:() => cy.do(showTagsButton.click()),
   closePane:(title) => cy.do(Pane({ title }).find(IconButton({ ariaLabel: 'Close ' })).click()),

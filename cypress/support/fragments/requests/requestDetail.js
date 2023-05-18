@@ -30,13 +30,18 @@ export default {
   },
 
   checkItemInformation: (data) => {
-    cy.expect([
-      itemInformationSection.find(KeyValue('Item barcode', { value: data.itemBarcode })).exists(),
-      itemInformationSection.find(KeyValue('Title', { value: data.title })).exists(),
-    ]);
+    if (data) {
+      cy.expect([
+        itemInformationSection.find(KeyValue('Item barcode', { value: data.itemBarcode })).exists(),
+        itemInformationSection.find(KeyValue('Title', { value: data.title })).exists(),
+        itemInformationSection.find(KeyValue('Effective location', { value: data.effectiveLocation })).exists(),
+        itemInformationSection.find(KeyValue('Item status', { value: data.itemStatus })).exists(),
+        itemInformationSection.find(KeyValue('Requests on item', { value: data.requestsOnItem })).exists(),
+      ]);
+    } else itemInformationSection.find(HTML(including('There is no item information for this request.')));
   },
 
-  checkRequesInformation: (data) => {
+  checkRequestInformation: (data) => {
     cy.expect([
       requestInfoSection.find(KeyValue('Request type', { value: data.type })).exists(),
       requestInfoSection.find(KeyValue('Request status', { value: including(data.status) })).exists(),
