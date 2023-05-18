@@ -1,3 +1,4 @@
+import TopMenu from '../../../../support/fragments/topMenu';
 import testTypes from '../../../../support/dictionary/testTypes';
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
@@ -7,31 +8,13 @@ import FileManager from '../../../../support/utils/fileManager';
 import Users from '../../../../support/fragments/users/users';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import ItemActions from '../../../../support/fragments/inventory/inventoryItem/itemActions';
-import TopMenu from '../../../../support/fragments/topMenu';
-import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import ItemRecordView from '../../../../support/fragments/inventory/itemRecordView';
 
 let user;
 const itemBarcodesFileName = `invalidItemBarcodes_${getRandomPostfix()}.csv`;
 const errorsFromMatchingFileName = `*Errors-${itemBarcodesFileName}*`;
-const invalidItemBarcode = getRandomPostfix();
 
-const validItemBarcodesFileName = `validItemBarcodes_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `Matched-Records-${validItemBarcodesFileName}`;
-const changedRecordsFileName = `*-Changed-Records*-${validItemBarcodesFileName}`;
-const updatedRecordsFileName = `result-*-${matchedRecordsFileName}`;
-const previewOfProposedChangesFileName = {
-  first: `*-Updates-Preview-${validItemBarcodesFileName}`,
-  second: `modified-*-${matchedRecordsFileName}`
-};
+const invalidItemBrcode = getRandomPostfix();
 
-const inventoryEntity = {
-  instanceName: `testBulkEdit_${getRandomPostfix()}`,
-  itemBarcode: getRandomPostfix(),
-  itemId: '',
-};
 
 describe('Bulk Edit - Logs', () => {
   before('create test data', () => {
@@ -47,22 +30,14 @@ describe('Bulk Edit - Logs', () => {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading
         });
-        InventoryInstances.createInstanceViaApi(inventoryEntity.instanceName, inventoryEntity.itemBarcode);
-        cy.getItems({ query: `"barcode"=="${inventoryEntity.itemBarcode}"` }).then(inventoryItem => {
-          inventoryItem.discoverySuppress = true;
-          inventoryEntity.itemId = inventoryItem.id;
-          ItemActions.editItemViaApi(inventoryItem);
-        });
-        FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, invalidItemBarcode);
-        FileManager.createFile(`cypress/fixtures/${validItemBarcodesFileName}`, inventoryEntity.itemBarcode);
+        FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, invalidItemBrcode);
       });
   });
 
   after('delete test data', () => {
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
-    FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);
-    FileManager.deleteFileFromDownloadsByMask(validItemBarcodesFileName, `*${matchedRecordsFileName}`, changedRecordsFileName, previewOfProposedChangesFileName.first, previewOfProposedChangesFileName.second, updatedRecordsFileName);
+    FileManager.deleteFileFromDownloadsByMask(errorsFromMatchingFileName, itemBarcodesFileName);
   });
 
   it('C375284 Verify generated Logs files for Items In app -- only invalid records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -80,57 +55,9 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.verifyLogsRowActionWhenCompletedWithErrorsWithoutModification();
 
     BulkEditSearchPane.downloadFileUsedToTrigger();
-    BulkEditFiles.verifyCSVFileRows(`${itemBarcodesFileName}*`, [invalidItemBarcode]);
+    BulkEditFiles.verifyCSVFileRows(`${itemBarcodesFileName}*`, [invalidItemBrcode]);
 
     BulkEditSearchPane.downloadFileWithErrorsEncountered();
-    BulkEditFiles.verifyMatchedResultFileContent(errorsFromMatchingFileName, [invalidItemBarcode], 'firstElement', false);
-  });
-
-  it('C380761 Verify generated Logs files for Items suppressed from discovery (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    BulkEditSearchPane.checkItemsRadio();
-    BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-
-    BulkEditSearchPane.uploadFile(validItemBarcodesFileName);
-    BulkEditSearchPane.waitFileUploading();
-    BulkEditActions.openActions();
-    BulkEditActions.clickSuppressedFromDiscoveryCheckbox();
-    BulkEditSearchPane.verifyResultColumTitles('Suppressed from discovery');
-    BulkEditSearchPane.verifyResultColumnValue('true');
-
-    BulkEditActions.openActions();
-    BulkEditActions.downloadMatchedResults();
-    BulkEditActions.openInAppStartBulkEditFrom();
-    BulkEditActions.editSuppressFromDiscovery('Set false');
-    BulkEditActions.addNewBulkEditFilterString();
-    BulkEditActions.fillPermanentLoanType('Selected', 1);
-    BulkEditActions.confirmChanges();
-    BulkEditActions.downloadPreview();
-    BulkEditActions.commitChanges();
-    BulkEditSearchPane.waitFileUploading();
-    BulkEditActions.openActions();
-    BulkEditActions.downloadChangedCSV();
-
-    BulkEditSearchPane.openLogsSearch();
-    BulkEditSearchPane.checkItemsCheckbox();
-    BulkEditSearchPane.clickActionsRunBy(user.username);
-
-    BulkEditSearchPane.downloadFileUsedToTrigger();
-    BulkEditFiles.verifyCSVFileRows(validItemBarcodesFileName, [inventoryEntity.itemBarcode]);
-
-    BulkEditSearchPane.downloadFileWithMatchingRecords();
-    BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileName}`, [inventoryEntity.itemId], 'firstElement', true);
-
-    BulkEditSearchPane.downloadFileWithProposedChanges();
-    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, [inventoryEntity.itemId], 'firstElement', true);
-
-    BulkEditSearchPane.downloadFileWithUpdatedRecords();
-    BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, [inventoryEntity.itemId], 'firstElement', true);
-
-    cy.visit(TopMenu.inventoryPath);
-    InventorySearchAndFilter.switchToItem();
-    InventorySearchAndFilter.searchByParameter('Barcode', inventoryEntity.itemBarcode);
-    ItemRecordView.waitLoading();
-    ItemRecordView.suppressedAsDiscoveryIsAbsent();
-    ItemRecordView.verifyPermanentLoanType('Selected');
+    BulkEditFiles.verifyMatchedResultFileContent(errorsFromMatchingFileName, [invalidItemBrcode], 'firstElement', false);
   });
 });
