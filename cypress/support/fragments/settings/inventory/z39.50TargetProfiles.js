@@ -140,8 +140,8 @@ export default {
       .click());
   },
 
-  editOclcWorldCat:(auth) => {
-    edit();
+  editOclcWorldCat:(auth, profileName) => {
+    edit(profileName);
     addJobProfileForCreate();
     addJobProfileForUpdate();
     cy.do([
