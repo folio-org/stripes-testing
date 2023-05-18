@@ -56,6 +56,7 @@ export default {
   uiInventoryMarcItemRestricted:{ internal:'ui-inventory.items.mark-restricted', gui:'Inventory: Mark items restricted' },
   uiInventoryMarcItemUnavailable:{ internal:'ui-inventory.items.mark-unavailable', gui:'Inventory: Mark items unavailable' },
   uiInventoryMarcItemUnknow:{ internal:'ui-inventory.items.mark-unknown', gui:'Inventory: Mark items unknown' },
+  uiCreateEditDeleteURL: { internal:'ui-inventory.settings.electronic-access-relationships', gui:'Settings (Inventory): Create, edit, delete URL relationships' },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui:'Tags: All permissions' },
   // Settings->Owners
@@ -74,6 +75,7 @@ export default {
   inventoryStorageAuthoritiesAll:{ internal: 'inventory-storage.authorities.all', gui:'inventory storage module - all authorities permissions' },
   // Circulation log
   circulationLogAll: { internal: 'inn-reach.all', gui: 'Circulation log: All' },
+  circulationLogView: { internal: 'ui-circulation-log.log-event.view', gui: 'Circulation log: View' },
   // Circulation
   uiCirculationViewCreateEditDelete: { internal: 'ui-circulation.settings.circulation-rules', gui: 'Settings (Circ): Can create, edit and remove circulation rules' },
   uiCirculationSettingsNoticeTemplates: { internal: 'ui-circulation.settings.notice-templates', gui: 'Settings (Circ): Can create, edit and remove patron notice templates' },

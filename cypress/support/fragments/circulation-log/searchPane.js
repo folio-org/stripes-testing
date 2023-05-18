@@ -73,6 +73,14 @@ export default {
     ]);
   },
 
+  setFilterOptionFromAccordion(accordion, checkboxOption) {
+    // accordion = 'loan', 'notice', 'fee', 'request'
+    cy.do([
+      Accordion({ id: accordion }).clickHeader(),
+      Checkbox(checkboxOption).click()
+    ]);
+  },
+
   resetFilters() {
     cy.do(Button({ id: 'reset-receiving-filters' }).click());
   },
@@ -165,5 +173,10 @@ export default {
       actionsButton.click(),
       Button('Export results (CSV)').click(),
     ]);
+  },
+
+  checkExportResultIsUnavailable() {
+    cy.do(actionsButton.click());
+    cy.expect(Button('Export results (CSV)', { disabled: true }).exists());
   },
 };

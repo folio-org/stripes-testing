@@ -7,7 +7,9 @@ import { LOCALION_NAMES,
   ITEM_STATUS_NAMES,
   ORDER_STATUSES,
   MATERIAL_TYPE_NAMES,
-  LOAN_TYPE_NAMES } from '../../../support/constants';
+  LOAN_TYPE_NAMES,
+  ORDER_FORMAT_NAMES,
+  ACQUISITION_METHOD_NAMES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -39,8 +41,8 @@ describe('ui-data-import', () => {
         approved: true,
         vendor: 'GOBI Library Solutions',
         title: '245$a',
-        acquisitionMethod: 'Approval Plan',
-        orderFormat: 'P/E Mix',
+        acquisitionMethod: ACQUISITION_METHOD_NAMES.APPROVAL_PLAN,
+        orderFormat: ORDER_FORMAT_NAMES.PE_MIX,
         receivingWorkflow: 'Synchronized',
         physicalUnitPrice: '20',
         quantityPhysical: '1',
@@ -110,7 +112,7 @@ describe('ui-data-import', () => {
     { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
       // create mapping profiles
       FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillOrderMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
+      NewFieldMappingProfile.fillPEMixOrderMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
       FieldMappingProfiles.saveProfile();
       FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
 
@@ -162,7 +164,7 @@ describe('ui-data-import', () => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
       });
       FileDetails.checkItemQuantityInSummaryTable(quantityOfItems);
-      FileDetails.openOrderInInventory('Created');
+      FileDetails.openOrder('Created');
 
       OrderLines.waitLoading();
       OrderLines.checkCreateInventory();

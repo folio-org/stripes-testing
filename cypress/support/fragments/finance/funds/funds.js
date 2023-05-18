@@ -187,7 +187,7 @@ export default {
     ]);
   },
 
-  checkTransactionDetails: (indexNumber, fiscalYear, amount, source, type, fund) => {
+  checkTransactionDetails: (indexNumber, fiscalYear, amount, source, type, fund, status) => {
     cy.do(
       transactionList
         .find(MultiColumnListRow({ index: indexNumber }))
@@ -199,6 +199,23 @@ export default {
       transactionDetailSection.find(KeyValue('Amount')).has({ value: amount }),
       transactionDetailSection.find(KeyValue('Source')).has({ value: source }),
       transactionDetailSection.find(KeyValue('Type')).has({ value: type }),
+      transactionDetailSection.find(KeyValue('From')).has({ value: fund }),
+      transactionDetailSection.find(KeyValue('Status')).has({ value: status }),
+    );
+  },
+
+  checkPaymentInTransactionDetails: (indexNumber, fiscalYear, source, fund, amount) => {
+    cy.do(
+      transactionList
+        .find(MultiColumnListRow({ index: indexNumber }))
+        .find(Link())
+        .click()
+    );
+    cy.expect(
+      transactionDetailSection.find(KeyValue('Fiscal year')).has({ value: fiscalYear }),
+      transactionDetailSection.find(KeyValue('Amount')).has({ value: amount }),
+      transactionDetailSection.find(KeyValue('Source')).has({ value: source }),
+      transactionDetailSection.find(KeyValue('Type')).has({ value: 'Payment' }),
       transactionDetailSection.find(KeyValue('From')).has({ value: fund }),
     );
   },
@@ -578,6 +595,14 @@ export default {
 
   closeMenu:() => {
     cy.do(Button({ icon: 'times' }).click());
+  },
+
+  closeTransactionDetails:() => {
+    cy.do(Section({ id: 'pane-transaction-details' }).find(Button({ icon: 'times' })).click());
+  },
+
+  clickInfoInTransactionDetails:() => {
+    cy.do(Section({ id: 'pane-transaction-details' }).find(Button({ icon: 'info' })).click());
   },
 
   addAUToFund: (AUName) => {
