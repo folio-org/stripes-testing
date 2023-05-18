@@ -1,5 +1,5 @@
 import { HTML, including } from '@interactors/html';
-import { Accordion, KeyValue, Pane, Button, TextField, MultiColumnList, Callout, PaneHeader, Link, MultiColumnListCell, MultiColumnListRow } from '../../../../interactors';
+import { Accordion, KeyValue, Pane, Button, TextField, MultiColumnList, Callout, PaneHeader, Link } from '../../../../interactors';
 import dateTools from '../../utils/dateTools';
 
 const loanAccordion = Accordion('Loan and availability');
