@@ -57,7 +57,7 @@ describe('Bulk Edit - Logs', () => {
   after('delete test data', () => {
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);
-    FileManager.deleteFileFromDownloadsByMask(validItemBarcodesFileName,`*${matchedRecordsFileName}`, changedRecordsFileName, previewOfProposedChangesFileName.first, previewOfProposedChangesFileName.second, updatedRecordsFileName);
+    FileManager.deleteFileFromDownloadsByMask(validItemBarcodesFileName, `*${matchedRecordsFileName}`, changedRecordsFileName, previewOfProposedChangesFileName.first, previewOfProposedChangesFileName.second, updatedRecordsFileName);
   });
 
   it('C380761 Verify generated Logs files for Items suppressed from discovery (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
