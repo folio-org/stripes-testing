@@ -150,6 +150,6 @@ describe('ui-orders: Orders', () => {
     Funds.selectFund(firstFund.name);
     Funds.selectBudgetDetails();
     Funds.viewTransactions();
-    Funds.checkTransactionDetails(1, defaultFiscalYear.code,'($50.00)', invoice.invoiceNumber, 'Payment', `${firstFund.name} (${firstFund.code})`);
+    Funds.checkPaymentInTransactionDetails(1, defaultFiscalYear.code, invoice.invoiceNumber, `${firstFund.name} (${firstFund.code})`, '($50.00)');
   });
 });

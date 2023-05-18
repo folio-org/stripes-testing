@@ -20,8 +20,7 @@ import FinanceHelp from '../../support/fragments/finance/financeHelper';
 describe('invoices: add adjustment', () => {
   const order = { ...NewOrder.defaultOngoingTimeOrder,
     approved: true,
-    reEncumber: true,
-  };
+    reEncumber: true };
   const organization = { ...NewOrganization.defaultUiOrganizations,
     addresses:[{
       addressLine1: '1 Centerpiece Blvd.',
@@ -59,25 +58,25 @@ describe('invoices: add adjustment', () => {
     invoice.batchGroup = 'FOLIO';
 
     FiscalYears.createViaApi(defaultFiscalYear)
-    .then(response => {
-      defaultFiscalYear.id = response.id;
-      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+      .then(response => {
+        defaultFiscalYear.id = response.id;
+        defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
 
-      Ledgers.createViaApi(defaultLedger)
-        .then(ledgerResponse => {
-          defaultLedger.id = ledgerResponse.id;
-          firstFund.ledgerId = defaultLedger.id;
+        Ledgers.createViaApi(defaultLedger)
+          .then(ledgerResponse => {
+            defaultLedger.id = ledgerResponse.id;
+            firstFund.ledgerId = defaultLedger.id;
 
-          Funds.createViaApi(firstFund)
-            .then(fundResponse => {
-              firstFund.id = fundResponse.fund.id;
-              cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
-              FinanceHelp.searchByName(firstFund.name);
-              Funds.selectFund(firstFund.name);
-              Funds.addBudget(allocatedQuantityForFistFund);
-            });
-        });
-    });
+            Funds.createViaApi(firstFund)
+              .then(fundResponse => {
+                firstFund.id = fundResponse.fund.id;
+                cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
+                FinanceHelp.searchByName(firstFund.name);
+                Funds.selectFund(firstFund.name);
+                Funds.addBudget(allocatedQuantityForFistFund);
+              });
+          });
+      });
 
     cy.createOrderApi(order)
       .then((response) => {
@@ -124,6 +123,6 @@ describe('invoices: add adjustment', () => {
     Funds.selectFund(firstFund.name);
     Funds.selectBudgetDetails();
     Funds.viewTransactions();
-    Funds.checkTransactionDetails(2, defaultFiscalYear.code,'($22.00)', invoice.invoiceNumber, 'Payment', `${firstFund.name} (${firstFund.code})`);
+    Funds.checkPaymentInTransactionDetails(2, defaultFiscalYear.code, invoice.invoiceNumber, `${firstFund.name} (${firstFund.code})`, '($22.00)');
   });
 });

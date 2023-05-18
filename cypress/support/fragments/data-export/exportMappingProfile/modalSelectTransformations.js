@@ -108,6 +108,9 @@ export default {
     cy.expect(unSelectedStatusChechbox.has({ checked: false }));
     cy.do(unSelectedStatusChechbox.click());
   },
+  verifyCheckboxDisabled(name) {
+    cy.expect(Checkbox(name).has({ disabled: true }));
+  },
   verifyTotalSelected(expectedTotalSelected) {
     cy.expect(Modal('Select transformations').has({ content: including(`Total selected: ${expectedTotalSelected}`) }));
   },
