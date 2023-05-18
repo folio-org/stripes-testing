@@ -205,6 +205,23 @@ export default {
     ]);
   },
 
+  POLineInfodorPhysicalMaterialForRecieve: (orderLineTitleName) => {
+    cy.do([
+      orderLineTitleField.fillIn(orderLineTitleName),
+      orderFormatSelect.choose('Physical resource'),
+      acquisitionMethodButton.click(),
+      SelectionOption('Depository').click(),
+      receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
+      physicalUnitPriceTextField.fillIn(physicalUnitPrice),
+      quantityPhysicalTextField.fillIn('1'),
+      materialTypeSelect.choose('book'),
+      addLocationButton.click(),
+      locationSelect.click(),
+      onlineLocationOption.click(),
+      quantityPhysicalLocationField.fillIn('1'),
+      saveAndClose.click()
+    ]);
+  },
   POLineInfodorPhysicalMaterialWithLocation: (orderLineTitleName, institutionId) => {
     cy.do([
       orderLineTitleField.fillIn(orderLineTitleName),
