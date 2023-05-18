@@ -167,6 +167,10 @@ describe('Title Level Request. Request Detail', () => {
     });
   });
 
+  afterEach('Reset filters', () => {
+    Requests.resetAllFilters();
+  });
+
   after('Deleting created entities', () => {
     cy.loginAsAdmin({
       path: SettingsMenu.circulationTitleLevelRequestsPath,
@@ -210,9 +214,12 @@ describe('Title Level Request. Request Detail', () => {
       RequestDetail.checkItemInformation({
         itemBarcode: testData.itemBarcode,
         title: instanceData.title,
+        effectiveLocation: testData.defaultLocation.name,
+        itemStatus: ITEM_STATUS_NAMES.PAGED,
+        requestsOnItem: '1',
       });
 
-      RequestDetail.checkRequesInformation({
+      RequestDetail.checkRequestInformation({
         type: REQUEST_TYPES.PAGE,
         status: 'Open',
         level: REQUEST_LEVELS.ITEM,
@@ -221,6 +228,38 @@ describe('Title Level Request. Request Detail', () => {
       RequestDetail.checkRequesterInformation({
         lastName: userData.lastName,
         barcode: userData.barcode,
+        group: patronGroup.name,
+        preference: FULFILMENT_PREFERENCES.HOLD_SHELF,
+        pickupSP: testData.userServicePoint.name,
+      });
+    }
+  );
+
+  it(
+    'C350416 Check that the user can see "Request Detail" for Title request (vega)',
+    { tags: [testTypes.criticalPath, devTeams.vega] },
+    () => {
+      Requests.selectTitleRequestLevel();
+      Requests.findCreatedRequest(instanceData.title);
+      Requests.selectFirstRequest(instanceData.title);
+      RequestDetail.waitLoading();
+
+      RequestDetail.checkTitleInformation({
+        TLRs: '1',
+        title: instanceData.title,
+      });
+
+      RequestDetail.checkItemInformation();
+
+      RequestDetail.checkRequestInformation({
+        type: REQUEST_TYPES.HOLD,
+        status: 'Open',
+        level: REQUEST_LEVELS.TITLE,
+      });
+
+      RequestDetail.checkRequesterInformation({
+        lastName: userForTLR.lastName,
+        barcode: userForTLR.barcode,
         group: patronGroup.name,
         preference: FULFILMENT_PREFERENCES.HOLD_SHELF,
         pickupSP: testData.userServicePoint.name,
