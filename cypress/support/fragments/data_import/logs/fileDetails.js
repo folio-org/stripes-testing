@@ -82,6 +82,13 @@ const checkInvoiceInSummaryTable = (quantity, row = 0) => {
     .exists());
 };
 
+const checkOrderInSummaryTable = (quantity, row = 0) => {
+  cy.expect(jobSummaryTable
+    .find(MultiColumnListRow({ indexRow: `row-${row}` }))
+    .find(MultiColumnListCell({ columnIndex: 6, content: quantity }))
+    .exists());
+};
+
 const checkErrorQuantityInSummaryTable = (quantity, row = 0) => {
   cy.expect(jobSummaryTable
     .find(MultiColumnListRow({ indexRow: `row-${row}` }))
@@ -154,6 +161,7 @@ export default {
   checkStatusInColumn,
   checkItemsStatusesInResultList,
   checkItemsQuantityInSummaryTable,
+  checkOrderInSummaryTable,
   checkInvoiceInSummaryTable,
   checkSrsRecordQuantityInSummaryTable,
   checkInstanceQuantityInSummaryTable,
@@ -181,7 +189,7 @@ export default {
       .click());
   },
 
-  openOrderInInventory:(itemStatus, rowNumber = 0) => {
+  openOrder:(itemStatus, rowNumber = 0) => {
     cy.do(resultsList.find(MultiColumnListCell({ row: rowNumber, columnIndex: 7 }))
       .find(Link(itemStatus))
       .click());
