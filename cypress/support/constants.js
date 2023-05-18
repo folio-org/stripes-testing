@@ -125,6 +125,16 @@ export const ORDER_STATUSES = {
   PENDING: 'Pending'
 };
 
+export const ORDER_FORMAT_NAMES = {
+  ELECTRONIC_RESOURCE: 'Electronic Resource',
+  PE_MIX: 'P/E Mix'
+};
+
+export const ACQUISITION_METHOD_NAMES = {
+  APPROVAL_PLAN: 'Approval Plan',
+  PURCHASE_AT_VENDOR_SYSTEM: 'Purchase At Vendor System'
+};
+
 export const LOCALION_NAMES = {
   ANNEX: 'Annex (KU/CC/DI/A)',
   ANNEX_UI: 'Annex',
