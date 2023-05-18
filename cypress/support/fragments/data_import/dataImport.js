@@ -341,5 +341,23 @@ export default {
         cy.allure().endStep();
       }
     });
+  },
+
+  deleteImportJob:(fileName) => {
+    cy.get('div[class^="listContainer-"]').contains('li[class^="job-"]', fileName).then(elem => {
+      elem.parent()[0].querySelector('button[icon="trash"]').click();
+    });
+  },
+
+  verifyCancelImportJobModal:() => {
+    cy.expect([
+      Modal('Cancel import job?').exists(),
+      Modal('Cancel import job?').find(Button('Yes, cancel import job')).exists(),
+      Modal('Cancel import job?').find(Button('No, do not cancel import')).exists()
+    ]);
+  },
+
+  cancelImportJob:() => {
+    cy.do(Modal('Cancel import job?').find(Button('Yes, cancel import job')).click());
   }
 };
