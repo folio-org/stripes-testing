@@ -205,5 +205,6 @@ export default {
     // Need to wait while Button will be loaded for click
     cy.wait(7000);
     cy.do(Button('Rerun').click());
+    cy.wait(7000);
   },
 };
