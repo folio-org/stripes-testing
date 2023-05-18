@@ -16,7 +16,7 @@ describe('ui-data-import', () => {
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const numberOfLogsToDelete = '1';
 
-  before(() => {
+  before('login', () => {
     cy.createTempUser([
       permissions.moduleDataImportEnabled.gui,
       permissions.dataImportDeleteLogs.gui
@@ -31,7 +31,7 @@ describe('ui-data-import', () => {
       });
   });
 
-  after('', () => {
+  after('delete user', () => {
     Users.deleteViaApi(user.userId);
   });
 
@@ -40,11 +40,13 @@ describe('ui-data-import', () => {
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
-      DataImport.uploadFile('marcFileForC356824.mrc', bigFileName);
+      DataImport.uploadFile('oneThousandMarcBib.mrc', bigFileName);
+      // TODO wait until file will be uploaded
       cy.wait(5000);
       JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();
       Logs.checkFileIsRunning(bigFileName);
+      // TODO wait until at least 1% of the file will be processed
       cy.wait(5000);
       DataImport.deleteImportJob(bigFileName);
       DataImport.verifyCancelImportJobModal();
