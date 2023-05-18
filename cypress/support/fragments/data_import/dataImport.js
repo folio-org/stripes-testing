@@ -33,6 +33,8 @@ const logsPane = Pane('Logs');
 const logsPaneHeader = PaneHeader({ id: 'paneHeaderpane-logs-title' });
 const jobsPane = Pane({ id: 'pane-jobs-title' });
 const orChooseFilesButton = Button('or choose files');
+const cancelImportJobModal = Modal('Cancel import job?');
+const yesButton = Button('Yes, cancel import job');
 
 const uploadFile = (filePathName, fileName) => {
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
@@ -341,5 +343,23 @@ export default {
         cy.allure().endStep();
       }
     });
+  },
+
+  deleteImportJob:(fileName) => {
+    cy.get('div[class^="listContainer-"]').contains('li[class^="job-"]', fileName).then(elem => {
+      elem.parent()[0].querySelector('button[icon="trash"]').click();
+    });
+  },
+
+  verifyCancelImportJobModal:() => {
+    cy.expect([
+      cancelImportJobModal.exists(),
+      cancelImportJobModal.find(yesButton).exists(),
+      cancelImportJobModal.find(Button('No, do not cancel import')).exists()
+    ]);
+  },
+
+  cancelImportJob:() => {
+    cy.do(cancelImportJobModal.find(yesButton).click());
   }
 };
