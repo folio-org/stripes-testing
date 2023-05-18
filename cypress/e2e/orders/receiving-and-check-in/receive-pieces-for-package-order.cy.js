@@ -23,10 +23,30 @@ describe('Orders: Receiving and Check-in', () => {
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const orderLineTitle = BasicOrderLine.defaultOrderLine.titleOrPackage;
-  const copyNumber = Helper.getRandomBarcode();
-  const enumeration = Helper.getRandomBarcode();
-  const chronology = Helper.getRandomBarcode();
-  const caption = Helper.getRandomBarcode();
+  const firstPiece = {
+    copyNumber: Helper.getRandomBarcode(),
+    enumeration: Helper.getRandomBarcode(),
+    chronology: Helper.getRandomBarcode(),
+    caption: `autotestCaption-${Helper.getRandomBarcode()}`,
+  };
+  const secondPiece = {
+    copyNumber: Helper.getRandomBarcode(),
+    enumeration: Helper.getRandomBarcode(),
+    chronology: Helper.getRandomBarcode(),
+    caption: `autotestCaption-${Helper.getRandomBarcode()}`,
+  };
+  const thirdPiece = {
+    copyNumber: Helper.getRandomBarcode(),
+    enumeration: Helper.getRandomBarcode(),
+    chronology: Helper.getRandomBarcode(),
+    caption: `autotestCaption-${Helper.getRandomBarcode()}`,
+  };
+  const fourthPiece = {
+    copyNumber: Helper.getRandomBarcode(),
+    enumeration: Helper.getRandomBarcode(),
+    chronology: Helper.getRandomBarcode(),
+    caption: `autotestCaption-${Helper.getRandomBarcode()}`,
+  };
   let orderNumber;
   let user;
 
@@ -76,15 +96,39 @@ describe('Orders: Receiving and Check-in', () => {
     Orders.receiveOrderViaActions();
     // Receiving part
     Receiving.selectPOLInReceive(orderLineTitle);
-    Receiving.addPiece(caption, copyNumber, enumeration, chronology);
-    Receiving.selectPiece(caption);
-    Receiving.quickReceivePiece(enumeration);
+    Receiving.addPiece(firstPiece.caption, firstPiece.copyNumber, firstPiece.enumeration, firstPiece.chronology);
+    Receiving.selectPiece(firstPiece.caption);
+    Receiving.quickReceivePiece(firstPiece.enumeration);
+    Receiving.addPiece(secondPiece.caption, secondPiece.copyNumber, secondPiece.enumeration, secondPiece.chronology);
+    Receiving.selectPiece(secondPiece.caption);
+    Receiving.quickReceivePiece(secondPiece.enumeration);
+    Receiving.addPiece(thirdPiece.caption, thirdPiece.copyNumber, thirdPiece.enumeration, thirdPiece.chronology);
+    Receiving.selectPiece(thirdPiece.caption);
+    Receiving.quickReceivePiece(thirdPiece.enumeration);
+    Receiving.addPiece(fourthPiece.caption, fourthPiece.copyNumber, fourthPiece.enumeration, fourthPiece.chronology);
+    Receiving.selectPiece(fourthPiece.caption);
+    Receiving.quickReceivePiece(fourthPiece.enumeration);
     Receiving.selectInstanceInReceive(orderLineTitle);
     // inventory part
     InventoryInstance.openHoldingsAccordion(OrdersHelper.onlineLibraryLocation);
-    ItemRecordView.findRowAndClickLink(copyNumber);
-    cy.pause();
+    ItemRecordView.findRowAndClickLink(firstPiece.copyNumber);
     ItemRecordView.checkEffectiveLocation(OrdersHelper.onlineLibraryLocation);
     ItemRecordView.checkStatus('In process');
+    ItemRecordView.closeDetailView();
+    InventoryInstance.openHoldingsAccordion(OrdersHelper.onlineLibraryLocation);
+    ItemRecordView.findRowAndClickLink(secondPiece.enumeration);
+    ItemRecordView.checkEffectiveLocation(OrdersHelper.onlineLibraryLocation);
+    ItemRecordView.checkStatus('In process');
+    ItemRecordView.closeDetailView();
+    InventoryInstance.openHoldingsAccordion(OrdersHelper.onlineLibraryLocation);
+    ItemRecordView.findRowAndClickLink(thirdPiece.chronology);
+    ItemRecordView.checkEffectiveLocation(OrdersHelper.onlineLibraryLocation);
+    ItemRecordView.checkStatus('In process');
+    ItemRecordView.closeDetailView();
+    InventoryInstance.openHoldingsAccordion(OrdersHelper.onlineLibraryLocation);
+    ItemRecordView.findRowAndClickLink(fourthPiece.copyNumber);
+    ItemRecordView.checkEffectiveLocation(OrdersHelper.onlineLibraryLocation);
+    ItemRecordView.checkStatus('In process');
+    ItemRecordView.closeDetailView();
   });
 });
