@@ -24,6 +24,11 @@ const closeDetailView = () => {
   cy.expect(Pane(including('Item')).exists());
   cy.do(Button({ icon: 'times' }).click());
 };
+const findRowAndClickLink = (enumerationValue) => {
+  cy.get('div[class^="mclRow-"]').contains('div[class^="mclCell-"]', enumerationValue).then(elem => {
+    elem.parent()[0].querySelector('a').click();
+  });
+};
 
 const itemStatuses = {
   onOrder: 'On order',
@@ -54,6 +59,7 @@ export default {
     cy.expect(HTML(including('Warning: Item is marked suppressed from discovery')).absent());
   },
 
+  findRowAndClickLink,
   getAssignedHRID:() => cy.then(() => KeyValue('Item HRID').value()),
 
   verifyUpdatedItemDate:() => {
@@ -72,6 +78,15 @@ export default {
       Button('Save & close').click()
     ]);
   },
+
+  // findItemInLocation:(enumeration) => {
+  //   cy.do(() => {
+  //     const cell = MultiColumnListCell(enumeration);
+  //     const row = cell.closest(MultiColumnListRow());
+  //     const link = row.find(Link('No barcode'));
+  //     link.click();
+  //   });
+  // },
 
   checkEffectiveLocation:(location) => {
     cy.expect(Accordion('Location').find(KeyValue('Effective location for item')).has({ value: location }));

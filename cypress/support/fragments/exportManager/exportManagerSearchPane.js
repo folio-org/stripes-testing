@@ -11,6 +11,7 @@ import {
   MultiColumnList,
   PaneHeader,
   KeyValue,
+  Section,
 } from '../../../../interactors';
 
 const searchButton = Button({ type: 'submit' });
@@ -20,7 +21,7 @@ const endTimeAccordion = Accordion({ id: 'endTime' });
 const systemAccordion = Accordion({ id: 'isSystemSource' });
 const sourceAccordion = Accordion({ id: 'createdByUserId' });
 const jobTypeAccordion = Accordion({ id: 'type' });
-const statusAccordion = Accordion({ id: 'status' });
+const statusAccordion = Section({ id: 'edi-status-filter' });
 const startDateTextfield = TextField({ name: 'startDate' });
 const endDateTextfield = TextField({ name: 'endDate' });
 const applyButton = Button('Apply');
@@ -204,5 +205,6 @@ export default {
     // Need to wait while Button will be loaded for click
     cy.wait(7000);
     cy.do(Button('Rerun').click());
+    cy.wait(7000);
   },
 };
