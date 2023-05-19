@@ -27,6 +27,7 @@ describe('Orders: Receiving and Check-in', () => {
   const enumeration = Helper.getRandomBarcode();
   const chronology = Helper.getRandomBarcode();
   const caption = Helper.getRandomBarcode();
+  const itemStatus = 'In process';
   let orderNumber;
   let user;
 
@@ -84,6 +85,6 @@ describe('Orders: Receiving and Check-in', () => {
     InventoryInstance.openHoldingsAccordion(OrdersHelper.onlineLibraryLocation);
     ItemRecordView.findRowAndClickLink(copyNumber);
     ItemRecordView.checkEffectiveLocation(OrdersHelper.onlineLibraryLocation);
-    ItemRecordView.checkStatus('In process');
+    ItemRecordView.checkStatus(itemStatus);
   });
 });

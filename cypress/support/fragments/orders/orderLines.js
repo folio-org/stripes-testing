@@ -72,7 +72,27 @@ const eResourcesDetails = Accordion('E-resources details');
 const polListingAccordion = Accordion({ id: 'POListing' });
 const quantityElectronicField = TextField({ name: 'locations[0].quantityElectronic' });
 const selectPermanentLocationModal = Modal('Select permanent location');
-
+const orderFormat = {
+  electronicResourse: 'Electronic resource',
+  physicalResourse: 'Physical resource',
+  PEMIX: 'P/E mix',
+  other: 'Other',
+};
+const acquisitionMethod = {
+  approvalPlan: 'Approval plan',
+  DDA: 'Demand driven acquisitions (DDA)',
+  depository: 'Depository',
+  EBA:'Evidence based acquisitions (EBA)',
+  exchange: 'Exchange',
+  free: 'Free',
+  gift: 'Gift',
+  internalTransfer: 'Internal transfer',
+  membership: 'Membership',
+  other: 'Other',
+  purchase: 'Purchase',
+  purchaseAtVendorSystem: 'Purchase at vendor system',
+  technical: 'Technical'
+};
 export default {
 
   searchByParameter: (parameter, value) => {
@@ -106,7 +126,7 @@ export default {
     cy.expect([
       orderLineInfoPage.exists(),
       itemDetailsSection.find(KeyValue({ value: orderLineTitleName })).exists(),
-      poLineInfoSection.find(KeyValue({ value: 'Physical Resource' })).exists(),
+      poLineInfoSection.find(KeyValue({ value: orderFormat.physicalResourse })).exists(),
       fundDistributionSection
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 0 }))
@@ -119,7 +139,7 @@ export default {
     cy.expect([
       orderLineInfoPage.exists(),
       itemDetailsSection.find(KeyValue({ value: orderLineTitleName })).exists(),
-      poLineInfoSection.find(KeyValue({ value: 'Other' })).exists(),
+      poLineInfoSection.find(KeyValue({ value: orderFormat.other })).exists(),
       fundDistributionSection
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 0 }))
@@ -190,9 +210,9 @@ export default {
   POLineInfodorPhysicalMaterial: (orderLineTitleName) => {
     cy.do([
       orderLineTitleField.fillIn(orderLineTitleName),
-      orderFormatSelect.choose('Physical resource'),
+      orderFormatSelect.choose(orderFormat.physicalResourse),
       acquisitionMethodButton.click(),
-      SelectionOption('Depository').click(),
+      SelectionOption(acquisitionMethod.depository).click(),
       receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
@@ -208,9 +228,9 @@ export default {
   POLineInfodorPhysicalMaterialForRecieve: (orderLineTitleName) => {
     cy.do([
       orderLineTitleField.fillIn(orderLineTitleName),
-      orderFormatSelect.choose('Physical resource'),
+      orderFormatSelect.choose(orderFormat.physicalResourse),
       acquisitionMethodButton.click(),
-      SelectionOption('Depository').click(),
+      SelectionOption(acquisitionMethod.depository).click(),
       receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn('1'),
@@ -225,9 +245,9 @@ export default {
   POLineInfodorPhysicalMaterialWithLocation: (orderLineTitleName, institutionId) => {
     cy.do([
       orderLineTitleField.fillIn(orderLineTitleName),
-      orderFormatSelect.choose('Physical resource'),
+      orderFormatSelect.choose(orderFormat.physicalResourse),
       acquisitionMethodButton.click(),
-      SelectionOption('Depository').click(),
+      SelectionOption(acquisitionMethod.depository).click(),
       receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
@@ -246,9 +266,9 @@ export default {
   POLineInfodorPhysicalMaterialWithFund: (orderLineTitleName, fund) => {
     cy.do([
       orderLineTitleField.fillIn(orderLineTitleName),
-      orderFormatSelect.choose('Physical resource'),
+      orderFormatSelect.choose(orderFormat.physicalResourse),
       acquisitionMethodButton.click(),
-      SelectionOption('Depository').click(),
+      SelectionOption(acquisitionMethod.depository).click(),
       receivingWorkflowSelect.choose('Independent order and receipt quantity'),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
@@ -268,9 +288,9 @@ export default {
   POLineInfodorOtherMaterialWithFund: (orderLineTitleName, fund) => {
     cy.do([
       orderLineTitleField.fillIn(orderLineTitleName),
-      orderFormatSelect.choose('Other'),
+      orderFormatSelect.choose(orderFormat.other),
       acquisitionMethodButton.click(),
-      SelectionOption('Depository').click(),
+      SelectionOption(acquisitionMethod.depository).click(),
       receivingWorkflowSelect.choose('Independent order and receipt quantity'),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
@@ -289,12 +309,12 @@ export default {
 
   rolloverPOLineInfoforPhysicalMaterialWithFund(fund, unitPrice, quantity, value, institutionId) {
     cy.do([
-      orderFormatSelect.choose('Physical resource'),
+      orderFormatSelect.choose(orderFormat.physicalResourse),
       acquisitionMethodButton.click(),
     ]);
     cy.wait(2000);
     cy.do([
-      SelectionOption('Depository').click(),
+      SelectionOption(acquisitionMethod.depository).click(),
       receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
       physicalUnitPriceTextField.fillIn(unitPrice),
       quantityPhysicalTextField.fillIn(quantity),
@@ -345,9 +365,9 @@ export default {
   rolloverPOLineInfoforElectronicResourceWithFund: (orderLineTitleName, fund, unitPrice, quantity, value) => {
     cy.do([
       orderLineTitleField.fillIn(orderLineTitleName),
-      orderFormatSelect.choose('Electronic resource'),
+      orderFormatSelect.choose(orderFormat.electronicResourse),
       acquisitionMethodButton.click(),
-      SelectionOption('Other').click(),
+      SelectionOption(orderFormat.other).click(),
       receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
       electronicUnitPriceTextField.fillIn(unitPrice),
       quantityElectronicTextField.fillIn(quantity),
@@ -367,9 +387,9 @@ export default {
   POLineInfoforElectronicResource: (orderLineTitleName, fund) => {
     cy.do([
       orderLineTitleField.fillIn(orderLineTitleName),
-      orderFormatSelect.choose('Electronic resource'),
+      orderFormatSelect.choose(orderFormat.electronicResourse),
       acquisitionMethodButton.click(),
-      SelectionOption('Other').click(),
+      SelectionOption(orderFormat.other).click(),
       receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
       electronicUnitPriceTextField.fillIn(electronicUnitPrice),
       quantityElectronicTextField.fillIn(quantityElectronic),
@@ -388,9 +408,9 @@ export default {
   fillInPOLineInfoWithFund: (fund) => {
     cy.do([
       orderLineTitleField.fillIn(orderLineTitle),
-      orderFormatSelect.choose('Physical resource'),
+      orderFormatSelect.choose(orderFormat.physicalResourse),
       acquisitionMethodButton.click(),
-      SelectionOption('Depository').click(),
+      SelectionOption(acquisitionMethod.depository).click(),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn('2'),
       materialTypeSelect.choose('book'),
@@ -408,12 +428,12 @@ export default {
 
   fillPolWithEuroCurrency(fund, unitPrice, quantity, institutionId) {
     cy.do([
-      orderFormatSelect.choose('Physical resource'),
+      orderFormatSelect.choose(orderFormat.physicalResourse),
       acquisitionMethodButton.click(),
     ]);
     cy.wait(2000);
     cy.do([
-      SelectionOption('Depository').click(),
+      SelectionOption(acquisitionMethod.depository).click(),
       receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
       physicalUnitPriceTextField.fillIn(unitPrice),
       quantityPhysicalTextField.fillIn(quantity),
@@ -439,12 +459,12 @@ export default {
 
   fillPolWithPLNCurrency(fund, unitPrice, quantity, institutionId) {
     cy.do([
-      orderFormatSelect.choose('Physical resource'),
+      orderFormatSelect.choose(orderFormat.physicalResourse),
       acquisitionMethodButton.click(),
     ]);
     cy.wait(2000);
     cy.do([
-      SelectionOption('Depository').click(),
+      SelectionOption(acquisitionMethod.depository).click(),
       receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
       physicalUnitPriceTextField.fillIn(unitPrice),
       quantityPhysicalTextField.fillIn(quantity),
@@ -471,10 +491,10 @@ export default {
   fillInPOLineInfoViaUi: () => {
     cy.do([
       orderLineTitleField.fillIn(orderLineTitle),
-      orderFormatSelect.choose('P/E mix'),
+      orderFormatSelect.choose(orderFormat.PEMIX),
       acquisitionMethodButton.click(),
       acquisitionMethodButton.click(),
-      SelectionOption('Depository').click(),
+      SelectionOption(acquisitionMethod.depository).click(),
       receivingWorkflowSelect.choose('Independent order and receipt quantity'),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
@@ -499,7 +519,7 @@ export default {
   fillInPOLineInfoForExport(accountNumber, AUMethod) {
     cy.do([
       orderLineTitleField.fillIn(orderLineTitle),
-      orderFormatSelect.choose('P/E mix'),
+      orderFormatSelect.choose(orderFormat.PEMIX),
       acquisitionMethodButton.click(),
       acquisitionMethodButton.click(),
       SelectionOption(AUMethod).click(),
@@ -529,7 +549,7 @@ export default {
 
   fillInPOLineInfoForExportWithLocation(accountNumber, AUMethod, institutionId) {
     cy.do([
-      orderFormatSelect.choose('Electronic resource'),
+      orderFormatSelect.choose(orderFormat.electronicResourse),
       acquisitionMethodButton.click(),
       acquisitionMethodButton.click(),
       SelectionOption(AUMethod).click(),
@@ -571,7 +591,7 @@ export default {
 
   fillInPOLineInfoForExportWithLocationForPhisicalResource(accountNumber, AUMethod, institutionName, quantity) {
     cy.do([
-      orderFormatSelect.choose('Physical resource'),
+      orderFormatSelect.choose(orderFormat.physicalResourse),
       acquisitionMethodButton.click(),
       acquisitionMethodButton.click(),
       SelectionOption(AUMethod).click(),
@@ -601,7 +621,7 @@ export default {
 
   fillInPOLineInfoWithLocationForPEMIXResource(accountNumber, AUMethod, institutionName, quantity) {
     cy.do([
-      orderFormatSelect.choose('P/E mix'),
+      orderFormatSelect.choose(orderFormat.PEMIX),
       acquisitionMethodButton.click(),
       acquisitionMethodButton.click(),
       SelectionOption(AUMethod).click(),
@@ -782,9 +802,9 @@ export default {
 
   fillPOLWithTitleLookUp:() => {
     cy.do([
-      orderFormatSelect.choose('Other'),
+      orderFormatSelect.choose(orderFormat.other),
       acquisitionMethodButton.click(),
-      SelectionOption('Depository').click(),
+      SelectionOption(acquisitionMethod.depository).click(),
       receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
