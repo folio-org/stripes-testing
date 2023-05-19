@@ -16,6 +16,7 @@ import Users from '../../../support/fragments/users/users';
 describe('ui-data-import', () => {
   let user = {};
   const authentication = '100473910/PAOLF';
+  const targetProfileName = '✓ OCLC WorldCat';
   const fileName = `C356824autotestFile.${getRandomPostfix()}.mrc`;
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const oclcForImport = '912958093';
@@ -57,7 +58,7 @@ describe('ui-data-import', () => {
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       cy.visit(SettingsMenu.targetProfilesPath);
       Z3950TargetProfiles.openTargetProfile();
-      Z3950TargetProfiles.editOclcWorldCat(authentication);
+      Z3950TargetProfiles.editOclcWorldCat(authentication, targetProfileName);
       Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(authentication);
 
       // import a file
