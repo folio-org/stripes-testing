@@ -2,11 +2,6 @@ import { TextField, Button, Select, Checkbox, Modal, Accordion } from '../../../
 import modalSelectTransformations from './modalSelectTransformations';
 
 const outputFormat = 'MARC';
-const transformations = {
-  holdingsHrid: 'Holdings - HRID',
-  itemHrid: 'Item - HRID',
-  itemId: 'Item - ID'
-};
 
 const addTransformationsButton = Button('Add transformations');
 const fieldName = TextField({ name:'name' });
@@ -57,15 +52,15 @@ export default {
       isDefaultSearchParamsRequired: false,
     }).then(({ response }) => { return response; });
   },
-  
+
   createNewFieldMappingProfile(name, recordTypes) {
     cy.do([
       Button('New').click(),
       TextField('Name*').fillIn(name),
     ]);
     recordTypes.forEach(recordType => {
-      cy.do(Checkbox(recordType).click())
+      cy.do(Checkbox(recordType).click());
     });
-    cy.do(Accordion('Transformations').find(Button('Add transformations')).click())
+    cy.do(Accordion('Transformations').find(Button('Add transformations')).click());
   },
 };
