@@ -54,6 +54,11 @@ export default {
   closeDetailView,
   verifyItemStatus,
   verifyItemStatusInPane,
+
+  suppressedAsDiscoveryIsAbsent() {
+    cy.expect(HTML(including('Warning: Item is marked suppressed from discovery')).absent());
+  },
+
   findRowAndClickLink,
   getAssignedHRID:() => cy.then(() => KeyValue('Item HRID').value()),
 
