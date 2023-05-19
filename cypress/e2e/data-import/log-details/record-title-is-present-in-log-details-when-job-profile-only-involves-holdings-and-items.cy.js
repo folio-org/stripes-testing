@@ -356,8 +356,10 @@ describe('ui-data-import', () => {
       // create match profiles
       cy.visit(SettingsMenu.matchProfilePath);
       collectionOfMatchProfiles.forEach(profile => {
+        // TODO need to wait until profile will be created in loop
         cy.wait(8000);
         MatchProfiles.createMatchProfile(profile.matchProfile);
+        // TODO need to wait until profile will be created in loop
         cy.wait(8000);
         MatchProfiles.checkMatchProfilePresented(profile.matchProfile.profileName);
       });
