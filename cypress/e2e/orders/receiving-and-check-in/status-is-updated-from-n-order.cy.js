@@ -15,6 +15,7 @@ import OrderLines from '../../../support/fragments/orders/orderLines';
 import Users from '../../../support/fragments/users/users';
 import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import { ITEM_STATUS_NAMES } from '../../../support/constants';
 
 describe('Orders: Receiving and Check-in', () => {
   const order = {
@@ -27,7 +28,6 @@ describe('Orders: Receiving and Check-in', () => {
   const enumeration = Helper.getRandomBarcode();
   const chronology = Helper.getRandomBarcode();
   const caption = Helper.getRandomBarcode();
-  const itemStatus = 'In process';
   let orderNumber;
   let user;
 
@@ -85,6 +85,6 @@ describe('Orders: Receiving and Check-in', () => {
     InventoryInstance.openHoldingsAccordion(OrdersHelper.onlineLibraryLocation);
     ItemRecordView.findRowAndClickLink(copyNumber);
     ItemRecordView.checkEffectiveLocation(OrdersHelper.onlineLibraryLocation);
-    ItemRecordView.checkStatus(itemStatus);
+    ItemRecordView.checkStatus(ITEM_STATUS_NAMES.IN_PROCESS);
   });
 });
