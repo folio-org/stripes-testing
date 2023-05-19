@@ -5,7 +5,6 @@ import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
 import InstanceRecordEdit from '../../support/fragments/inventory/instanceRecordEdit';
 import TestTypes from '../../support/dictionary/testTypes';
-import Features from '../../support/dictionary/features';
 import Permissions from '../../support/dictionary/permissions';
 import Users from '../../support/fragments/users/users';
 import DevTeams from '../../support/dictionary/devTeams';
@@ -64,7 +63,7 @@ describe('MARC -> MARC Bibliographic', () => {
     });
   });
 
-  it('C10924 Add a field to a record using quickMARC (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.quickMarcEditor] }, () => {
+  it('C10924 Add a field to a record using quickMARC (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
     InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
 
     InventoryInstance.goToEditMARCBiblRecord();
@@ -85,7 +84,7 @@ describe('MARC -> MARC Bibliographic', () => {
     QuickMarcEditor.checkContent();
   });
 
-  it('C10928 Delete a field(s) from a record in quickMARC (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.quickMarcEditor] }, () => {
+  it('C10928 Delete a field(s) from a record in quickMARC (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
     InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
 
     InventoryInstance.goToEditMARCBiblRecord();
@@ -101,7 +100,7 @@ describe('MARC -> MARC Bibliographic', () => {
     });
   });
 
-  it('C10957 Attempt to delete a required field (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.quickMarcEditor] }, () => {
+  it('C10957 Attempt to delete a required field (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
     InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
 
     InventoryInstance.goToEditMARCBiblRecord();
@@ -109,7 +108,7 @@ describe('MARC -> MARC Bibliographic', () => {
     QuickMarcEditor.checkRequiredFields();
   });
 
-  it('C10951 Add a 5XX field to a marc record in quickMARC (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.quickMarcEditor] }, () => {
+  it('C10951 Add a 5XX field to a marc record in quickMARC (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
     InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
 
     InventoryInstance.startOverlaySourceBibRecord();
@@ -139,7 +138,7 @@ describe('MARC -> MARC Bibliographic', () => {
     InventoryInstance.checkInstanceNotes(testRecord.tagMeaning, testRecord.content);
   });
 
-  it('C345388 Derive a MARC bib record (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.quickMarcEditor] }, () => {
+  it('C345388 Derive a MARC bib record (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
     InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
 
     InventoryInstance.getAssignedHRID()
