@@ -34,9 +34,14 @@ export const LOAN_TYPE_NAMES = {
 };
 
 export const MATERIAL_TYPE_NAMES = {
-  MICROFORM: 'microform',
   BOOK: 'book',
-  ELECTRONIC_RESOURCE: 'electronic resource'
+  DVD: 'dvd',
+  ELECTRONIC_RESOURCE: 'electronic resource',
+  MICROFORM: 'microform',
+  SOUND_RECORDING: 'sound recording',
+  TEXT: 'text',
+  UNSPECIFIED: 'unspecified',
+  VIDEO_RECORDING: 'video recording',
 };
 
 export const ITEM_STATUS_NAMES = {
@@ -127,12 +132,30 @@ export const ORDER_STATUSES = {
 
 export const ORDER_FORMAT_NAMES = {
   ELECTRONIC_RESOURCE: 'Electronic Resource',
-  PE_MIX: 'P/E Mix'
+  PE_MIX: 'P/E Mix',
+  OTHER: 'Other',
+  PHYSICAL_RESOURCE: 'Physical resource',
+};
+
+export const RECEIVING_WORKFLOW_NAMES = {
+  SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY: 'Synchronized order and receipt quantity',
+  INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY: 'Independent order and receipt quantity',
 };
 
 export const ACQUISITION_METHOD_NAMES = {
-  APPROVAL_PLAN: 'Approval Plan',
-  PURCHASE_AT_VENDOR_SYSTEM: 'Purchase At Vendor System'
+  APPROVAL_PLAN: 'Approval plan',
+  DDA: 'Demand driven acquisitions (DDA)',
+  DEPOSITORY: 'Depository',
+  EBA:'Evidence based acquisitions (EBA)',
+  EXCHANGE: 'Exchange',
+  FREE: 'Free',
+  GIFT: 'Gift',
+  INTERNAL_TRANSFER: 'Internal transfer',
+  MEMBERSHIP: 'Membership',
+  OTHER: 'Other',
+  PURCHASE: 'Purchase',
+  PURCHASE_AT_VENDOR_SYSTEM: 'Purchase at vendor system',
+  TECHNICAL: 'Technical'
 };
 
 export const LOCALION_NAMES = {
