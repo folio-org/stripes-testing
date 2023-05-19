@@ -93,6 +93,11 @@ const acquisitionMethod = {
   purchaseAtVendorSystem: 'Purchase at vendor system',
   technical: 'Technical'
 };
+const receivingWorkflow = {
+  synchronizedOrderAndReceiptQuantity: 'Synchronized order and receipt quantity',
+  independentOrderAndReceiptQuantity: 'Independent order and receipt quantity',
+};
+
 export default {
 
   searchByParameter: (parameter, value) => {
@@ -213,7 +218,7 @@ export default {
       orderFormatSelect.choose(orderFormat.physicalResourse),
       acquisitionMethodButton.click(),
       SelectionOption(acquisitionMethod.depository).click(),
-      receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
+      receivingWorkflowSelect.choose(receivingWorkflow.synchronizedOrderAndReceiptQuantity),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
       materialTypeSelect.choose('book'),
@@ -231,7 +236,7 @@ export default {
       orderFormatSelect.choose(orderFormat.physicalResourse),
       acquisitionMethodButton.click(),
       SelectionOption(acquisitionMethod.depository).click(),
-      receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
+      receivingWorkflowSelect.choose(receivingWorkflow.synchronizedOrderAndReceiptQuantity),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn('1'),
       materialTypeSelect.choose('book'),
@@ -248,7 +253,7 @@ export default {
       orderFormatSelect.choose(orderFormat.physicalResourse),
       acquisitionMethodButton.click(),
       SelectionOption(acquisitionMethod.depository).click(),
-      receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
+      receivingWorkflowSelect.choose(receivingWorkflow.synchronizedOrderAndReceiptQuantity),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
       materialTypeSelect.choose('book'),
@@ -269,7 +274,7 @@ export default {
       orderFormatSelect.choose(orderFormat.physicalResourse),
       acquisitionMethodButton.click(),
       SelectionOption(acquisitionMethod.depository).click(),
-      receivingWorkflowSelect.choose('Independent order and receipt quantity'),
+      receivingWorkflowSelect.choose(receivingWorkflow.independentOrderAndReceiptQuantity),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
       materialTypeSelect.choose('book'),
@@ -291,7 +296,7 @@ export default {
       orderFormatSelect.choose(orderFormat.other),
       acquisitionMethodButton.click(),
       SelectionOption(acquisitionMethod.depository).click(),
-      receivingWorkflowSelect.choose('Independent order and receipt quantity'),
+      receivingWorkflowSelect.choose(receivingWorkflow.independentOrderAndReceiptQuantity),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
       materialTypeSelect.choose('book'),
@@ -315,7 +320,7 @@ export default {
     cy.wait(2000);
     cy.do([
       SelectionOption(acquisitionMethod.depository).click(),
-      receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
+      receivingWorkflowSelect.choose(receivingWorkflow.synchronizedOrderAndReceiptQuantity),
       physicalUnitPriceTextField.fillIn(unitPrice),
       quantityPhysicalTextField.fillIn(quantity),
       addFundDistributionButton.click(),
@@ -368,7 +373,7 @@ export default {
       orderFormatSelect.choose(orderFormat.electronicResourse),
       acquisitionMethodButton.click(),
       SelectionOption(orderFormat.other).click(),
-      receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
+      receivingWorkflowSelect.choose(receivingWorkflow.synchronizedOrderAndReceiptQuantity),
       electronicUnitPriceTextField.fillIn(unitPrice),
       quantityElectronicTextField.fillIn(quantity),
       addFundDistributionButton.click(),
@@ -390,7 +395,7 @@ export default {
       orderFormatSelect.choose(orderFormat.electronicResourse),
       acquisitionMethodButton.click(),
       SelectionOption(orderFormat.other).click(),
-      receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
+      receivingWorkflowSelect.choose(receivingWorkflow.synchronizedOrderAndReceiptQuantity),
       electronicUnitPriceTextField.fillIn(electronicUnitPrice),
       quantityElectronicTextField.fillIn(quantityElectronic),
       addFundDistributionButton.click(),
@@ -434,7 +439,7 @@ export default {
     cy.wait(2000);
     cy.do([
       SelectionOption(acquisitionMethod.depository).click(),
-      receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
+      receivingWorkflowSelect.choose(receivingWorkflow.synchronizedOrderAndReceiptQuantity),
       physicalUnitPriceTextField.fillIn(unitPrice),
       quantityPhysicalTextField.fillIn(quantity),
       Button({ id: 'currency' }).click(),
@@ -465,7 +470,7 @@ export default {
     cy.wait(2000);
     cy.do([
       SelectionOption(acquisitionMethod.depository).click(),
-      receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
+      receivingWorkflowSelect.choose(receivingWorkflow.synchronizedOrderAndReceiptQuantity),
       physicalUnitPriceTextField.fillIn(unitPrice),
       quantityPhysicalTextField.fillIn(quantity),
       Button({ id: 'currency' }).click(),
@@ -495,7 +500,7 @@ export default {
       acquisitionMethodButton.click(),
       acquisitionMethodButton.click(),
       SelectionOption(acquisitionMethod.depository).click(),
-      receivingWorkflowSelect.choose('Independent order and receipt quantity'),
+      receivingWorkflowSelect.choose(receivingWorkflow.independentOrderAndReceiptQuantity),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
       electronicUnitPriceTextField.fillIn(electronicUnitPrice),
@@ -523,7 +528,7 @@ export default {
       acquisitionMethodButton.click(),
       acquisitionMethodButton.click(),
       SelectionOption(AUMethod).click(),
-      receivingWorkflowSelect.choose('Independent order and receipt quantity'),
+      receivingWorkflowSelect.choose(receivingWorkflow.independentOrderAndReceiptQuantity),
       Select({ name: 'vendorDetail.vendorAccount' }).choose(accountNumber),
     ]);
     cy.do([
@@ -628,7 +633,7 @@ export default {
       Select({ name: 'vendorDetail.vendorAccount' }).choose(accountNumber),
     ]);
     cy.do([
-      receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
+      receivingWorkflowSelect.choose(receivingWorkflow.synchronizedOrderAndReceiptQuantity),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantity),
       electronicUnitPriceTextField.fillIn(electronicUnitPrice),
@@ -805,7 +810,7 @@ export default {
       orderFormatSelect.choose(orderFormat.other),
       acquisitionMethodButton.click(),
       SelectionOption(acquisitionMethod.depository).click(),
-      receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
+      receivingWorkflowSelect.choose(receivingWorkflow.synchronizedOrderAndReceiptQuantity),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
       materialTypeSelect.choose('book'),
