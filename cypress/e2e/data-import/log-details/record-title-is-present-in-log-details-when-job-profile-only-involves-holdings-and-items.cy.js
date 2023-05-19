@@ -321,6 +321,17 @@ describe('ui-data-import', () => {
       // create mapping profiles
       cy.visit(SettingsMenu.mappingProfilePath);
       FieldMappingProfiles.openNewMappingProfileForm();
+      NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile);
+      NewFieldMappingProfile.addAdministrativeNote(collectionOfMappingAndActionProfiles[2].mappingProfile.adminNote, 5);
+      FieldMappingProfiles.saveProfile();
+      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile.name);
+      FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[2].mappingProfile.name);
+      FieldMappingProfileView.duplicate();
+      NewFieldMappingProfile.addName(collectionOfMappingAndActionProfiles[3].mappingProfile.name);
+      FieldMappingProfiles.saveProfile();
+      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[3].mappingProfile.name);
+
+      FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
       NewFieldMappingProfile.addItemNotes(
         `"${collectionOfMappingAndActionProfiles[0].mappingProfile.noteType}"`,
@@ -334,19 +345,6 @@ describe('ui-data-import', () => {
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
       FieldMappingProfiles.saveProfile();
       FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile.name);
-
-      FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile);
-      NewFieldMappingProfile.addAdministrativeNote(collectionOfMappingAndActionProfiles[2].mappingProfile.adminNote, 5);
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile.name);
-      FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[2].mappingProfile.name);
-      FieldMappingProfileView.duplicate();
-      cy.wait(10000);
-      NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[3].mappingProfile);
-      cy.wait(10000);
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[3].mappingProfile.name);
 
       // create action profiles
       cy.wrap(collectionOfMappingAndActionProfiles).each(profile => {

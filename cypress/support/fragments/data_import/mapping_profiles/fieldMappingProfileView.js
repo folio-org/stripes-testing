@@ -81,6 +81,7 @@ export default {
       Button('Duplicate').click()
     ]);
     cy.expect(Pane({ title: 'New field mapping profile' }).exists());
+    cy.wait(1500);
   },
 
   addFieldForUpdates:() => {
