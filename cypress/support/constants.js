@@ -34,9 +34,14 @@ export const LOAN_TYPE_NAMES = {
 };
 
 export const MATERIAL_TYPE_NAMES = {
-  MICROFORM: 'microform',
   BOOK: 'book',
-  ELECTRONIC_RESOURCE: 'electronic resource'
+  DVD: 'dvd',
+  ELECTRONIC_RESOURCE: 'electronic resource',
+  MICROFORM: 'microform',
+  SOUND_RECORDING: 'sound recording',
+  TEXT: 'text',
+  UNSPECIFIED: 'unspecified',
+  VIDEO_RECORDING: 'video recording',
 };
 
 export const ITEM_STATUS_NAMES = {

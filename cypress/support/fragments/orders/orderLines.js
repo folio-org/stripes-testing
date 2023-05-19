@@ -20,7 +20,7 @@ import {
 import SearchHelper from '../finance/financeHelper';
 import getRandomPostfix from '../../utils/stringTools';
 import SelectInstanceModal from './selectInstanceModal';
-import { ORDER_FORMAT_NAMES, ACQUISITION_METHOD_NAMES, RECEIVING_WORKFLOW_NAMES } from '../../constants';
+import { ORDER_FORMAT_NAMES, ACQUISITION_METHOD_NAMES, RECEIVING_WORKFLOW_NAMES, MATERIAL_TYPE_NAMES } from '../../constants';
 
 const path = require('path');
 
@@ -197,7 +197,7 @@ export default {
       receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
-      materialTypeSelect.choose('book'),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
       locationSelect.click(),
       onlineLocationOption.click(),
@@ -215,7 +215,7 @@ export default {
       receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn('1'),
-      materialTypeSelect.choose('book'),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
       locationSelect.click(),
       onlineLocationOption.click(),
@@ -232,7 +232,7 @@ export default {
       receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
-      materialTypeSelect.choose('book'),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
       Button('Location look-up').click(),
     ]);
@@ -253,7 +253,7 @@ export default {
       receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
-      materialTypeSelect.choose('book'),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
@@ -275,7 +275,7 @@ export default {
       receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
-      materialTypeSelect.choose('book'),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
@@ -304,7 +304,7 @@ export default {
       SelectionOption(`${fund.name} (${fund.code})`).click(),
       Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
       fundDistributionField.fillIn(value),
-      materialTypeSelect.choose('book'),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
@@ -394,7 +394,7 @@ export default {
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn('2'),
-      materialTypeSelect.choose('book'),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
       locationSelect.click(),
       SelectionOption('Main Library (KU/CC/DI/M)').click(),
@@ -424,7 +424,7 @@ export default {
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
       fundDistributionField.fillIn('100'),
-      materialTypeSelect.choose('book'),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
@@ -455,7 +455,7 @@ export default {
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
       fundDistributionField.fillIn('100'),
-      materialTypeSelect.choose('book'),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
@@ -481,7 +481,7 @@ export default {
       quantityPhysicalTextField.fillIn(quantityPhysical),
       electronicUnitPriceTextField.fillIn(electronicUnitPrice),
       quantityElectronicTextField.fillIn(quantityElectronic),
-      materialTypeSelect.choose('book'),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
       locationSelect.click(),
       onlineLocationOption.click(),
@@ -512,7 +512,7 @@ export default {
       quantityPhysicalTextField.fillIn(quantityPhysical),
       electronicUnitPriceTextField.fillIn(electronicUnitPrice),
       quantityElectronicTextField.fillIn(quantityElectronic),
-      materialTypeSelect.choose('book'),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
       locationSelect.click(),
       onlineLocationOption.click(),
@@ -539,7 +539,7 @@ export default {
     cy.do([
       electronicUnitPriceTextField.fillIn(electronicUnitPrice),
       quantityElectronicTextField.fillIn(quantityElectronic),
-      Select({ name: 'eresource.materialType' }).choose('book'),
+      Select({ name: 'eresource.materialType' }).choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
@@ -581,7 +581,7 @@ export default {
     cy.do([
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantity),
-      materialTypeSelect.choose('book'),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
@@ -614,8 +614,8 @@ export default {
       quantityPhysicalTextField.fillIn(quantity),
       electronicUnitPriceTextField.fillIn(electronicUnitPrice),
       quantityElectronicTextField.fillIn(quantity),
-      materialTypeSelect.choose('book'),
-      Select({ name: 'eresource.materialType' }).choose('dvd'),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
+      Select({ name: 'eresource.materialType' }).choose(MATERIAL_TYPE_NAMES.DVD),
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
@@ -789,7 +789,7 @@ export default {
       receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
-      materialTypeSelect.choose('book'),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
       locationSelect.click(),
       onlineLocationOption.click(),
