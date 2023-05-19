@@ -194,7 +194,7 @@ export default {
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
-      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_ANA_RECEIPT_QUANTITY),
+      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
       materialTypeSelect.choose('book'),
@@ -212,7 +212,7 @@ export default {
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
-      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_ANA_RECEIPT_QUANTITY),
+      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn('1'),
       materialTypeSelect.choose('book'),
@@ -229,7 +229,7 @@ export default {
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
-      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_ANA_RECEIPT_QUANTITY),
+      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
       materialTypeSelect.choose('book'),
@@ -296,7 +296,7 @@ export default {
     cy.wait(2000);
     cy.do([
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
-      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_ANA_RECEIPT_QUANTITY),
+      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY),
       physicalUnitPriceTextField.fillIn(unitPrice),
       quantityPhysicalTextField.fillIn(quantity),
       addFundDistributionButton.click(),
@@ -349,7 +349,7 @@ export default {
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE),
       acquisitionMethodButton.click(),
       SelectionOption(ORDER_FORMAT_NAMES.OTHER).click(),
-      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_ANA_RECEIPT_QUANTITY),
+      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY),
       electronicUnitPriceTextField.fillIn(unitPrice),
       quantityElectronicTextField.fillIn(quantity),
       addFundDistributionButton.click(),
@@ -371,7 +371,7 @@ export default {
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE),
       acquisitionMethodButton.click(),
       SelectionOption(ORDER_FORMAT_NAMES.OTHER).click(),
-      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_ANA_RECEIPT_QUANTITY),
+      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY),
       electronicUnitPriceTextField.fillIn(electronicUnitPrice),
       quantityElectronicTextField.fillIn(quantityElectronic),
       addFundDistributionButton.click(),
@@ -415,7 +415,7 @@ export default {
     cy.wait(2000);
     cy.do([
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
-      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_ANA_RECEIPT_QUANTITY),
+      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY),
       physicalUnitPriceTextField.fillIn(unitPrice),
       quantityPhysicalTextField.fillIn(quantity),
       Button({ id: 'currency' }).click(),
@@ -446,7 +446,7 @@ export default {
     cy.wait(2000);
     cy.do([
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
-      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_ANA_RECEIPT_QUANTITY),
+      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY),
       physicalUnitPriceTextField.fillIn(unitPrice),
       quantityPhysicalTextField.fillIn(quantity),
       Button({ id: 'currency' }).click(),
@@ -609,7 +609,7 @@ export default {
       Select({ name: 'vendorDetail.vendorAccount' }).choose(accountNumber),
     ]);
     cy.do([
-      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_ANA_RECEIPT_QUANTITY),
+      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantity),
       electronicUnitPriceTextField.fillIn(electronicUnitPrice),
@@ -786,7 +786,7 @@ export default {
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.OTHER),
       acquisitionMethodButton.click(),
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
-      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_ANA_RECEIPT_QUANTITY),
+      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
       materialTypeSelect.choose('book'),

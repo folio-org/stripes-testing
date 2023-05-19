@@ -133,8 +133,8 @@ export const ORDER_FORMAT_NAMES = {
 };
 
 export const RECEIVING_WORKFLOW_NAMES = {
-  SYNCHRONIZED_ORDER_ANA_RECEIPT_QUANTITY: 'Synchronized order and receipt quantity',
-  INDEPENDENT_ORDER_ANA_RECEIPT_QUANTITY: 'Independent order and receipt quantity',
+  SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY: 'Synchronized order and receipt quantity',
+  INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY: 'Independent order and receipt quantity',
 };
 
 export const ACQUISITION_METHOD_NAMES = {
