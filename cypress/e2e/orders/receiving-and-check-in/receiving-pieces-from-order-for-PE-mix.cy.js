@@ -19,7 +19,7 @@ import ItemActions from '../../../support/fragments/inventory/inventoryItem/item
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
 import Users from '../../../support/fragments/users/users';
 
-describe('orders: Receiving and Check-in', () => {
+describe('Orders: Receiving and Check-in', () => {
   const order = {
     ...NewOrder.defaultOneTimeOrder,
     approved: true,

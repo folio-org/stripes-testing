@@ -633,6 +633,7 @@ export default {
 
   openHoldingsAccordion:(location) => {
     cy.do(Button(including(location)).click());
+    cy.wait(6000);
   },
 
   verifyHoldingLocation(content) {
