@@ -702,6 +702,10 @@ export default {
     cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).exists());
   },
 
+  verifyResultColumnValue(value) {
+    cy.expect(MultiColumnListCell(value).exists());
+  },
+
   verifyResultColumTitlesDoNotInclude(title) {
     cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).absent());
   },
