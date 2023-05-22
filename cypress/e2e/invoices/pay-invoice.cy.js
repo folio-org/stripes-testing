@@ -20,9 +20,9 @@ describe('ui-invoices: Approve invoice', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
   const invoiceLine = { ...NewInvoiceLine.defaultUiInvoiceLine };
-  const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
+  const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
-  const firstFund = { ...Funds.defaultUiFund };
+  const defaultFund = { ...Funds.defaultUiFund };
   const subtotalValue = 100;
   const allocatedQuantity = '100';
   let user;
@@ -40,28 +40,28 @@ describe('ui-invoices: Approve invoice', () => {
         cy.getBatchGroups()
           .then(batchGroup => {
             invoice.batchGroup = batchGroup.name;
-            FiscalYears.createViaApi(firstFiscalYear)
+            FiscalYears.createViaApi(defaultFiscalYear)
               .then(firstFiscalYearResponse => {
-                firstFiscalYear.id = firstFiscalYearResponse.id;
-                defaultLedger.fiscalYearOneId = firstFiscalYear.id;
+                defaultFiscalYear.id = firstFiscalYearResponse.id;
+                defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
                 Ledgers.createViaApi(defaultLedger)
                   .then(ledgerResponse => {
                     defaultLedger.id = ledgerResponse.id;
-                    firstFund.ledgerId = defaultLedger.id;
+                    defaultFund.ledgerId = defaultLedger.id;
 
-                    Funds.createViaApi(firstFund)
+                    Funds.createViaApi(defaultFund)
                       .then(fundResponse => {
-                        firstFund.id = fundResponse.fund.id;
+                        defaultFund.id = fundResponse.fund.id;
 
                         cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
-                        Helper.searchByName(firstFund.name);
-                        Funds.selectFund(firstFund.name);
+                        Helper.searchByName(defaultFund.name);
+                        Funds.selectFund(defaultFund.name);
                         Funds.addBudget(allocatedQuantity);
                         invoiceLine.subTotal = -subtotalValue;
                         cy.visit(TopMenu.invoicesPath);
                         Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
                         Invoices.createInvoiceLine(invoiceLine);
-                        Invoices.addFundDistributionToLine(invoiceLine, firstFund);
+                        Invoices.addFundDistributionToLine(invoiceLine, defaultFund);
                         Invoices.approveInvoice();
                       });
                   });
@@ -93,10 +93,10 @@ describe('ui-invoices: Approve invoice', () => {
     Invoices.payInvoice();
     // check transactions after payment
     cy.visit(TopMenu.fundPath);
-    Helper.searchByName(firstFund.name);
-    Funds.selectFund(firstFund.name);
+    Helper.searchByName(defaultFund.name);
+    Funds.selectFund(defaultFund.name);
     Funds.selectBudgetDetails();
     Funds.openTransactions();
-    Funds.checkTransaction(1, transactionFactory.create('credit', valueInTransactionTable, firstFund.code, '', 'Invoice', ''));
+    Funds.checkTransaction(1, transactionFactory.create('credit', valueInTransactionTable, defaultFund.code, '', 'Invoice', ''));
   });
 });
