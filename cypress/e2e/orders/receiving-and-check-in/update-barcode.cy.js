@@ -109,7 +109,7 @@ describe('Orders: Receiving and Check-in', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C736 Update Barcode and call number information when receiving (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
+  it('C736 Update Barcode and call number information when receiving (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.openOrder();
