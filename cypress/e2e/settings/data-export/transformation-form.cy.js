@@ -38,7 +38,7 @@ describe('settings: data-export', () => {
 	});
 
 	it('C15819 Transformation form (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-		ExportFieldMappingProfiles.goTofieldMappingProfilesTab();
+		ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
 		ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, ['Item']);
 		ModalSelectTransformations.verifySearchAndFilterPane();
 		ModalSelectTransformations.searchText('text');
