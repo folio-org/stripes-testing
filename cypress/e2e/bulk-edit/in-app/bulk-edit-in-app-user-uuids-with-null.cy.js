@@ -7,7 +7,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import devTeams from '../../../support/dictionary/devTeams';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import Users from '../../../support/fragments/users/users';
-import UsersSearchPane from "../../../support/fragments/users/usersSearchPane";
+import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
