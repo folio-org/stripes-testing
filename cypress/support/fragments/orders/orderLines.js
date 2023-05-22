@@ -107,7 +107,7 @@ export default {
     cy.expect([
       orderLineInfoPage.exists(),
       itemDetailsSection.find(KeyValue({ value: orderLineTitleName })).exists(),
-      poLineInfoSection.find(KeyValue({ value: ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE })).exists(),
+      poLineInfoSection.find(KeyValue({ value: ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE_Check })).exists(),
       fundDistributionSection
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 0 }))
@@ -132,7 +132,7 @@ export default {
     cy.expect([
       orderLineInfoPage.exists(),
       itemDetailsSection.find(KeyValue({ value: orderLineTitleName })).exists(),
-      poLineInfoSection.find(KeyValue({ value: ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE })).exists(),
+      poLineInfoSection.find(KeyValue({ value: ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE_Check })).exists(),
       fundDistributionSection
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 0 }))
