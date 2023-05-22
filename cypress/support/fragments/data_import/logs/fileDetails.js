@@ -19,6 +19,7 @@ const columnNameInResultList = {
   instance: resultsList.find(MultiColumnListHeader({ id:'list-column-instancestatus' })),
   holdings: resultsList.find(MultiColumnListHeader({ id:'list-column-holdingsstatus' })),
   item: resultsList.find(MultiColumnListHeader({ id:'list-column-itemstatus' })),
+  authority: resultsList.find(MultiColumnListHeader({ id:'list-column-authoritystatus' })),
   invoice: resultsList.find(MultiColumnListHeader({ id:'list-column-invoicestatus' })),
   error: resultsList.find(MultiColumnListHeader({ id:'list-column-error' })),
   title: resultsList.find(MultiColumnListHeader({ id:'list-column-title' }))
@@ -67,10 +68,24 @@ const checkItemQuantityInSummaryTable = (quantity, row = 0) => {
     .exists());
 };
 
+const checkAuthorityQuantityInSummaryTable = (quantity, row = 0) => {
+  cy.expect(jobSummaryTable
+    .find(MultiColumnListRow({ indexRow: `row-${row}` }))
+    .find(MultiColumnListCell({ columnIndex: 5, content: quantity }))
+    .exists());
+};
+
 const checkInvoiceInSummaryTable = (quantity, row = 0) => {
   cy.expect(jobSummaryTable
     .find(MultiColumnListRow({ indexRow: `row-${row}` }))
     .find(MultiColumnListCell({ columnIndex: 7, content: quantity }))
+    .exists());
+};
+
+const checkOrderInSummaryTable = (quantity, row = 0) => {
+  cy.expect(jobSummaryTable
+    .find(MultiColumnListRow({ indexRow: `row-${row}` }))
+    .find(MultiColumnListCell({ columnIndex: 6, content: quantity }))
     .exists());
 };
 
@@ -146,11 +161,13 @@ export default {
   checkStatusInColumn,
   checkItemsStatusesInResultList,
   checkItemsQuantityInSummaryTable,
+  checkOrderInSummaryTable,
   checkInvoiceInSummaryTable,
   checkSrsRecordQuantityInSummaryTable,
   checkInstanceQuantityInSummaryTable,
   checkHoldingsQuantityInSummaryTable,
   checkItemQuantityInSummaryTable,
+  checkAuthorityQuantityInSummaryTable,
   checkErrorQuantityInSummaryTable,
   checkColumnsInSummaryTable,
 
@@ -172,7 +189,7 @@ export default {
       .click());
   },
 
-  openOrderInInventory:(itemStatus, rowNumber = 0) => {
+  openOrder:(itemStatus, rowNumber = 0) => {
     cy.do(resultsList.find(MultiColumnListCell({ row: rowNumber, columnIndex: 7 }))
       .find(Link(itemStatus))
       .click());
@@ -210,7 +227,7 @@ export default {
     ));
   },
 
-  verifyErrorMessage:(expectedError) => {
+  verifyErrorMessage:(expectedError, rowNumber = 0) => {
     return LogsViewAll.getSingleJobProfile() // get the first job id from job logs list
       .then(({ id }) => {
       // then, make request with the job id
@@ -225,7 +242,7 @@ export default {
           },
         })
           .then(({ body: { entries } }) => {
-            cy.expect(entries[0].error).to.eql(expectedError);
+            cy.expect(entries[rowNumber].error).to.eql(expectedError);
           });
       });
   },

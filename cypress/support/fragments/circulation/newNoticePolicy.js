@@ -70,7 +70,7 @@ export default {
     // add check for alert "div[role=alert]" 'Always sent at the end of a session and loans are bundled into a single notice for each patron.'
     if (patronNoticePolicy.send !== undefined) {
       cy.do(Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].sendOptions.sendHow` }).choose(patronNoticePolicy.send));
-      if (patronNoticePolicy.send === 'After') {
+      if (patronNoticePolicy.send === 'After' || patronNoticePolicy.send === 'Before') {
         cy.do([
           TextField({ name: `${patronNoticePolicy.noticeId}Notices[${index}].sendOptions.sendBy.duration` }).fillIn(patronNoticePolicy.sendBy.duration),
           Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].sendOptions.sendBy.intervalId` }).choose(patronNoticePolicy.sendBy.interval),

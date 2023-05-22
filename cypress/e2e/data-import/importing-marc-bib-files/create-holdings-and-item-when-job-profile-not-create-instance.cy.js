@@ -39,7 +39,7 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C368009 Testing item for SRS MARC bib ${Helper.getRandomBarcode()}`,
-        materialType: MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE,
+        materialType: `"${MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE}"`,
         permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
         status: ITEM_STATUS_NAMES.AVAILABLE },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,

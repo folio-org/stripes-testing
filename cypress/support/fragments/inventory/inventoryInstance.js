@@ -109,6 +109,7 @@ const quickMarcEditorPane = Section({ id: 'quick-marc-editor-pane' });
 const filterPane = Section({ id: 'pane-filter' });
 const inputSearchField = TextField({ id: 'input-inventory-search' });
 const holdingsPane = Pane(including('Holdings'));
+const instancesButton = Button({ id: 'segment-navigation-instances' });
 
 const validOCLC = { id:'176116217',
   // TODO: hardcoded count related with interactors getters issue. Redesign to cy.then(QuickMarkEditor().rowsCount()).then(rowsCount => {...}
@@ -632,6 +633,7 @@ export default {
 
   openHoldingsAccordion:(location) => {
     cy.do(Button(including(location)).click());
+    cy.wait(6000);
   },
 
   verifyHoldingLocation(content) {
@@ -686,6 +688,13 @@ export default {
       .find(MultiColumnListCell(including(text))).exists());
   },
 
+  checkContributor: (text) => {
+    cy.expect(section.find(Button(including('Contributor'))).exists());
+    cy.expect(Accordion('Contributor')
+      .find(MultiColumnList({ id: 'list-contributors' }))
+      .find(MultiColumnListCell(including(text))).exists());
+  },
+
   verifyLoan: (content) => cy.expect(MultiColumnListCell({ content }).exists()),
 
   verifyLoanInItemPage(barcode, value) {
@@ -713,4 +722,8 @@ export default {
       cy.expect(MultiColumnListCell({ content: itemContent }).exists());
     });
   },
+
+  checkInstanceButtonExistence() {
+    cy.expect(filterPane.find(instancesButton).exists());
+  }
 };

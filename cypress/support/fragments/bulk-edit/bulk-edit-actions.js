@@ -80,6 +80,10 @@ export default {
     cy.do(actionsBtn.click());
   },
 
+  clickSuppressedFromDiscoveryCheckbox() {
+    cy.do(Checkbox('Suppressed from discovery').click());
+  },
+
   verifyActionAfterChangingRecords() {
     cy.do(actionsBtn.click());
     cy.expect([
@@ -212,6 +216,13 @@ export default {
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Temporary loan type'),
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Clear field'),
+    ]);
+  },
+
+  editSuppressFromDiscovery(value, rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Suppress from discovery'),
+      RepeatableFieldItem({ index: rowIndex }).find(Select({ content: including('Set') })).choose(value),
     ]);
   },
 

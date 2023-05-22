@@ -6,7 +6,8 @@ import {
   LOAN_TYPE_NAMES,
   ITEM_STATUS_NAMES,
   LOCALION_NAMES,
-  FOLIO_RECORD_TYPE
+  FOLIO_RECORD_TYPE,
+  MATERIAL_TYPE_NAMES
 } from '../../../support/constants';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -62,7 +63,8 @@ describe('ui-data-import', () => {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C357552 Create simple items ${Helper.getRandomBarcode()}`,
         status: ITEM_STATUS_NAMES.AVAILABLE,
-        permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE },
+        permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
+        materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C357552 Create simple items ${Helper.getRandomBarcode()}` }
     },
@@ -168,7 +170,7 @@ describe('ui-data-import', () => {
   const mappingProfileForCreateItem = (itemMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfile);
-    NewFieldMappingProfile.fillMaterialType();
+    NewFieldMappingProfile.fillMaterialType(itemMappingProfile.materialType);
     NewFieldMappingProfile.addStatisticalCode(statisticalCode, 6);
     NewFieldMappingProfile.fillPermanentLoanType(itemMappingProfile.permanentLoanType);
     NewFieldMappingProfile.fillStatus(itemMappingProfile.status);
@@ -302,7 +304,7 @@ describe('ui-data-import', () => {
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(nameMarcFileForUpdate);
       });
-      // check items what statuses were changed have Discarded status
+      // check items what statuses were changed have No action status
       titlesItemsStatusChanged.forEach(title => {
         FileDetails.checkStatusByTitle(title, FileDetails.status.noAction);
       });

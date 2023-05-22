@@ -1,5 +1,18 @@
 import { including } from 'bigtest';
-import { Pane, Button, TextField, MultiColumnListCell, Accordion, Checkbox, Modal, SelectionOption, MultiColumnList, PaneHeader } from '../../../../interactors';
+import {
+  Pane,
+  Button,
+  TextField,
+  MultiColumnListCell,
+  Accordion,
+  Checkbox,
+  Modal,
+  SelectionOption,
+  MultiColumnList,
+  PaneHeader,
+  KeyValue,
+  Section,
+} from '../../../../interactors';
 
 const searchButton = Button({ type: 'submit' });
 const userSearchResults = Pane('User Search Results');
@@ -8,7 +21,7 @@ const endTimeAccordion = Accordion({ id: 'endTime' });
 const systemAccordion = Accordion({ id: 'isSystemSource' });
 const sourceAccordion = Accordion({ id: 'createdByUserId' });
 const jobTypeAccordion = Accordion({ id: 'type' });
-const statusAccordion = Accordion({ id: 'status' });
+const statusAccordion = Section({ id: 'edi-status-filter' });
 const startDateTextfield = TextField({ name: 'startDate' });
 const endDateTextfield = TextField({ name: 'endDate' });
 const applyButton = Button('Apply');
@@ -26,7 +39,7 @@ export default {
   selectJob(content) {
     return cy.do(MultiColumnListCell(including(content)).click());
   },
-  
+
   searchById(id) {
     cy.do([
       TextField().fillIn(id),
@@ -41,15 +54,6 @@ export default {
   selectJobByIntegrationInList(integrationName) {
     cy.wait(6000);
     cy.do(MultiColumnList({ id: 'export-edi-jobs-list' }).find(MultiColumnListCell(integrationName)).click());
-  },
-
-  selectFailedStatusCheckbox() {
-    cy.do(Checkbox({ id: 'clickable-filter-status-failed' }).click());
-  },
-
-  selectSuccessfulStatusCheckbox() {
-    cy.do(Checkbox({ id: 'clickable-filter-status-successful' }).click());
-    cy.wait(4000);
   },
 
   closeExportJobPane() {
@@ -93,6 +97,18 @@ export default {
   verifyThirdPaneExportJobExist() {
     cy.wait(10000);
     cy.expect(PaneHeader('Export job ').exists());
+  },
+
+  clickJobIdInThirdPane() {
+    this.verifyThirdPaneExportJobExist();
+    cy.do(KeyValue('Job ID').clickLink());
+    // Wait for the file to download
+    cy.wait(5000);
+  },
+
+  verifyJobIdInThirdPaneHasNoLink() {
+    this.verifyThirdPaneExportJobExist();
+    cy.expect(KeyValue('Job ID').has({ hasLink: false }));
   },
 
   searchByBulkEdit() {
@@ -189,5 +205,6 @@ export default {
     // Need to wait while Button will be loaded for click
     cy.wait(7000);
     cy.do(Button('Rerun').click());
+    cy.wait(7000);
   },
 };

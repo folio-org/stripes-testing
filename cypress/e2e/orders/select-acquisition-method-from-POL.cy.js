@@ -1,4 +1,6 @@
 import permissions from '../../support/dictionary/permissions';
+import testType from '../../support/dictionary/testTypes';
+import devTeams from '../../support/dictionary/devTeams';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
 import TopMenu from '../../support/fragments/topMenu';
@@ -10,9 +12,9 @@ import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('orders: Export', () => {
-  const organization = { 
+  const organization = {
     ...NewOrganization.defaultUiOrganizations,
-    paymentMethod: "EFT"
+    paymentMethod: 'EFT'
   };
   const order = {
     ...NewOrder.defaultOneTimeOrder,
@@ -57,7 +59,7 @@ describe('orders: Export', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C350601 Select Acquisition method from controlled vocabulary list [except tags] (thunderjet)', () => {
+  it('C350601 Select Acquisition method from controlled vocabulary list [except tags] (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     OrderLines.addPOLine();

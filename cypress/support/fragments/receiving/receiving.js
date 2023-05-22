@@ -22,7 +22,7 @@ const expectedPiecesAccordionId = 'expected';
 const receivedPiecesAccordionId = 'received';
 const receiveButton = Button('Receive');
 const unreceiveButton = Button('Unreceive');
-
+const addPieceModal = Modal({ id: 'add-piece-modal' });
 const searchByParameter = (parameter, value) => {
   cy.do(Select({ id: 'input-record-search-qindex' }).choose(parameter));
   cy.do(TextField({ id:'input-record-search' }).fillIn(value));
@@ -57,6 +57,30 @@ export default {
       receiveButton.click(),
     ]);
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
+  },
+
+  addPiece: (caption, copyNumber, enumeration, chronology) => {
+    cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
+    cy.do([
+      Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
+      Button('Add piece').click(),
+      addPieceModal.find(TextField('Caption')).fillIn(caption),
+      addPieceModal.find(TextField('Copy number')).fillIn(copyNumber),
+      addPieceModal.find(TextField('Enumeration')).fillIn(enumeration),
+      addPieceModal.find(TextField('Chronology')).fillIn(chronology),
+      addPieceModal.find(Checkbox('Create item')).click(),
+      addPieceModal.find(Button('Save & close')).click(),
+    ]);
+    InteractorsTools.checkCalloutMessage('The piece was successfully saved');
+  },
+
+  selectPiece: (caption) => {
+    cy.do(Accordion({ id: expectedPiecesAccordionId }).find(MultiColumnListCell(caption)).click());
+  },
+
+  quickReceivePiece: (enumeration) => {
+    cy.do(addPieceModal.find(Button('Quick receive')).click());
+    InteractorsTools.checkCalloutMessage(`The piece ${enumeration} was successfully received`);
   },
 
   receivePieceWithoutBarcode: (rowNumber, caption) => {
@@ -193,5 +217,16 @@ export default {
       Button('Collapse all').click(),
       PaneContent({ id: 'pane-title-details-content' }).find(Link()).click()
     ]);
+  },
+
+  receiveAllPhysicalItemsWithBarcodes: (firstBarcode, secondBarcode) => {
+    cy.do([
+      Checkbox({ name: 'receivedItems[0].checked' }).clickInput(),
+      TextField({ name: 'receivedItems[0].barcode' }).fillIn(firstBarcode),
+      Checkbox({ name: 'receivedItems[1].checked' }).clickInput(),
+      TextField({ name: 'receivedItems[1].barcode' }).fillIn(secondBarcode),
+      receiveButton.click(),
+    ]);
+    InteractorsTools.checkCalloutMessage(receivingSuccessful);
   },
 };

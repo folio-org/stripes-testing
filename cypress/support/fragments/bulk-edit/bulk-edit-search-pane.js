@@ -490,6 +490,12 @@ export default {
     cy.expect(resultsAccordion.has({ itemsAmount: (values.length).toString() }));
   },
 
+  verifySpecificItemsMatched(...values) {
+    values.forEach(value => {
+      cy.expect(resultsAccordion.find(MultiColumnListCell({ content: value })).exists());
+    });
+  },
+
   matchedAccordionIsAbsent() {
     cy.expect(resultsAccordion.absent());
   },
@@ -534,6 +540,10 @@ export default {
 
   verifyErrorLabelAfterChanges(fileName, validRecordCount, invalidRecordCount) {
     cy.expect(Accordion('Errors').find(HTML(`${fileName}: ${validRecordCount + invalidRecordCount} entries * ${validRecordCount} records changed * ${invalidRecordCount} errors`)).exists());
+  },
+
+  verifyReasonForError(errorText) {
+    cy.expect(Accordion('Errors').find(HTML(including(errorText))).exists());
   },
 
   verifyActionsAfterConductedCSVUploading(errors = true) {
@@ -692,6 +702,10 @@ export default {
     cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).exists());
   },
 
+  verifyResultColumnValue(value) {
+    cy.expect(MultiColumnListCell(value).exists());
+  },
+
   verifyResultColumTitlesDoNotInclude(title) {
     cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).absent());
   },
@@ -799,15 +813,15 @@ export default {
 
   verifyLogsTableHeaders() {
     cy.expect([
-      MultiColumnListHeader('ID').exists(),
       MultiColumnListHeader('Record type').exists(),
       MultiColumnListHeader('Status').exists(),
-      MultiColumnListHeader('Run by').exists(),
-      MultiColumnListHeader('Started running').exists(),
-      MultiColumnListHeader('Ended running').exists(),
+      MultiColumnListHeader('Editing').exists(),
       MultiColumnListHeader('# of records').exists(),
       MultiColumnListHeader('Processed').exists(),
-      MultiColumnListHeader('Editing').exists(),
+      MultiColumnListHeader('Started').exists(),
+      MultiColumnListHeader('Ended').exists(),
+      MultiColumnListHeader('Run by').exists(),
+      MultiColumnListHeader('ID').exists(),
       MultiColumnListHeader('Actions').exists(),
     ]);
   },

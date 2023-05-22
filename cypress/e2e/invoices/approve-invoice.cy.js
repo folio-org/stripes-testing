@@ -33,11 +33,11 @@ describe('ui-invoices: Approve invoice', () => {
         invoice.accountingCode = organization.erpCode;
         Object.assign(vendorPrimaryAddress,
           organization.addresses.find(address => address.isPrimary === true));
-          cy.getBatchGroups()
-          .then(batchGroup => { 
+        cy.getBatchGroups()
+          .then(batchGroup => {
             invoice.batchGroup = batchGroup.name;
             Funds.createFundViaUI(defaultFund)
-            .then(() => {
+              .then(() => {
                 Funds.addBudget(100);
                 Funds.checkCreatedBudget(defaultFund.code, DateTools.getCurrentFiscalYearCode());
                 invoiceLine.subTotal = -subtotalValue;
@@ -45,24 +45,24 @@ describe('ui-invoices: Approve invoice', () => {
                 Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
                 Invoices.createInvoiceLine(invoiceLine);
                 Invoices.addFundDistributionToLine(invoiceLine, defaultFund);
-            });
-        });
-    });
+              });
+          });
+      });
     cy.createTempUser([
-        permissions.uiFinanceViewFundAndBudget.gui,
-        permissions.viewEditCreateInvoiceInvoiceLine.gui,
-        permissions.uiInvoicesApproveInvoices.gui,
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(userProperties.username, userProperties.password, { path:TopMenu.invoicesPath, waiter: Invoices.waitLoading });
-        });
+      permissions.uiFinanceViewFundAndBudget.gui,
+      permissions.viewEditCreateInvoiceInvoiceLine.gui,
+      permissions.uiInvoicesApproveInvoices.gui,
+    ])
+      .then(userProperties => {
+        user = userProperties;
+        cy.login(userProperties.username, userProperties.password, { path:TopMenu.invoicesPath, waiter: Invoices.waitLoading });
+      });
   });
-  
+
   after(() => {
     Users.deleteViaApi(user.userId);
   });
-  
+
   it('C10945 Approve invoice (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     const transactionFactory = new Transaction();
     Invoices.searchByNumber(invoice.invoiceNumber);
