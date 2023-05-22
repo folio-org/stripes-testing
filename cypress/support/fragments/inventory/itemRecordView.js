@@ -79,15 +79,6 @@ export default {
     ]);
   },
 
-  // findItemInLocation:(enumeration) => {
-  //   cy.do(() => {
-  //     const cell = MultiColumnListCell(enumeration);
-  //     const row = cell.closest(MultiColumnListRow());
-  //     const link = row.find(Link('No barcode'));
-  //     link.click();
-  //   });
-  // },
-
   checkEffectiveLocation:(location) => {
     cy.expect(Accordion('Location').find(KeyValue('Effective location for item')).has({ value: location }));
   },
