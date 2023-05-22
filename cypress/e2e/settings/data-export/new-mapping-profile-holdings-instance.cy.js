@@ -44,6 +44,7 @@ describe('Mapping profile - setup', () => {
 		ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, ['Inventory instance (selected fields)', 'Holdings']);
 		ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
 		ModalSelectTransformations.uncheckItemRecordTypeChechbox();
+    ModalSelectTransformations.searchItemTransformationsByName('Instance - ID');
     ModalSelectTransformations.clickNthCheckbox();
 		ModalSelectTransformations.fillInTransformationsTextfields('123', '1', '2', '$a');
 
