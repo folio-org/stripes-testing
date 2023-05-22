@@ -1,11 +1,22 @@
 import { including } from 'bigtest';
-import { Button, Pane, NavListItem, TextField, MultiColumnListHeader, MultiColumnListRow } from '../../../../../interactors';
+import {
+  Button,
+  Pane,
+  NavListItem,
+  TextField,
+  MultiColumnListHeader,
+  MultiColumnListRow,
+  MultiColumnListCell, Modal
+} from '../../../../../interactors';
 import exportNewFieldMappingProfile from './exportNewFieldMappingProfile';
+import InteractorsTools from '../../../utils/interactorsTools';
 
 const saveAndCloseButton = Button('Save & close');
 const fieldMappingProfilesPane = Pane('Field mapping profiles');
 const newButton = Button('New');
 const searchButton = Button('Search');
+const deleteButton = Button('Delete');
+const actionsButton = Button('Actions');
 
 const openNewMappingProfileForm = () => {
   cy.do(newButton.click());
@@ -22,6 +33,17 @@ export default {
     openNewMappingProfileForm();
     exportNewFieldMappingProfile.fillMappingProfile(mappingProfile);
     saveMappingProfile();
+  },
+
+  deleteMappingProfile: (mappingProfileName) => {
+    cy.do([
+      MultiColumnListCell(mappingProfileName).click(),
+      actionsButton.click(),
+      deleteButton.click(),
+      Modal().find(deleteButton).click()
+    ]);
+    InteractorsTools.checkCalloutMessage(`Mapping profile ${mappingProfileName} has been successfully deleted`);
+    cy.expect(MultiColumnListCell(mappingProfileName).absent());
   },
 
   createMappingProfileForItemHrid: (mappingProfile) => {
