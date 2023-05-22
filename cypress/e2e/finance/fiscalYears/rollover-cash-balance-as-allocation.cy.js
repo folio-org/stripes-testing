@@ -102,7 +102,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       firstOrderNumber = firstOrderResponse.poNumber;
       Orders.checkCreatedOrder(secondOrder);
       OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 25);
       OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(defaultFund, '40', '1', '40', location.institutionId);
       OrderLines.backToEditingOrder();
       Orders.openOrder();
@@ -111,7 +111,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
         firstOrder.id = secondOrderResponse.id;
         Orders.checkCreatedOrder(firstOrder);
         OrderLines.addPOLine();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
+        OrderLines.selectRandomInstanceInTitleLookUP('*', 35);
         OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(defaultFund, '10', '1', '10', location.institutionId);
         OrderLines.backToEditingOrder();
         Orders.openOrder();

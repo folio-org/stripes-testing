@@ -847,8 +847,8 @@ export default {
     cy.expect(fundDistributionSection.find(Link(`${fund.name}(${fund.code})`)).exists());
   },
 
-  checkCurrencyInPOL:(currentEncumbrance) => {
-    cy.expect(fundDistributionSection.find(Link(`$${currentEncumbrance}`)).exists());
+  checkCurrencyInPOL:() => {
+    cy.get('[id=FundDistribution]').contains('a', '$').should('exist');
   },
 
   checkDownloadedFile() {

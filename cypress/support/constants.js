@@ -132,7 +132,7 @@ export const ORDER_STATUSES = {
 
 export const ORDER_FORMAT_NAMES = {
   ELECTRONIC_RESOURCE: 'Electronic Resource',
-  PE_MIX: 'P/E Mix',
+  PE_MIX: 'P/E mix',
   OTHER: 'Other',
   PHYSICAL_RESOURCE: 'Physical resource',
 };
