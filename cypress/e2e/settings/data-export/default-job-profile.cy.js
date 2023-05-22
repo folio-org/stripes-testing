@@ -30,7 +30,7 @@ describe('data-export', () => {
   it('C380470 Verify that Default Data export profiles are present (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     ExportJobProfiles.goToJobProfilesTab();
     ExportJobProfiles.verifyDefaultProfiles();
-    ExportFieldMappingProfiles.goTofieldMappingProfilesTab();
+    ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
     ExportFieldMappingProfiles.verifyDefaultProfiles();
   });
 });

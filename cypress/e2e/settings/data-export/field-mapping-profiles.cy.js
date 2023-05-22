@@ -25,7 +25,7 @@ describe('setting: data-export', () => {
   });
 
   it('C10982 "Settings" > "Data export" > "Field mapping profiles" page (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    ExportFieldMappingProfiles.goTofieldMappingProfilesTab();
+    ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
     ExportFieldMappingProfiles.verifyFieldMappingProfilesPane();
     ExportFieldMappingProfiles.verifyDefaultProfiles();
   });

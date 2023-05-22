@@ -52,7 +52,7 @@ export default {
     saveMappingProfile();
   },
 
-  goTofieldMappingProfilesTab() {
+  goToFieldMappingProfilesTab() {
     cy.do(NavListItem('Data export').click());
     cy.expect(Pane('Data export').exists());
     cy.do(NavListItem('Field mapping profiles').click());

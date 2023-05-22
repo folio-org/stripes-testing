@@ -40,13 +40,13 @@ describe('Mapping profile - setup', () => {
   });
 
   it('C10983 Create a new mapping profile for MARC bib record with holdings data included - Instance record (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    ExportFieldMappingProfiles.goTofieldMappingProfilesTab();
+    ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
 		ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, ['Inventory instance (selected fields)', 'Holdings']);
 		ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
 		ModalSelectTransformations.uncheckItemRecordTypeChechbox();
     ModalSelectTransformations.clickNthCheckbox();
 		ModalSelectTransformations.fillInTransformationsTextfields('123', '1', '2', '$a');
-    
+
 		ModalSelectTransformations.uncheckInstanceRecordTypeChechbox();
 		ModalSelectTransformations.checkHoldingsRecordTypeChechbox();
     ModalSelectTransformations.clickNthCheckbox();
@@ -57,7 +57,7 @@ describe('Mapping profile - setup', () => {
 
 		ExportFieldMappingProfiles.saveMappingProfile();
 		InteractorsTools.checkCalloutMessage(newFieldMappingProfileCalloutMessage);
-    
+
     ExportFieldMappingProfiles.verifyProfileNameOnTheList(fieldMappingProfileName);
   });
 });

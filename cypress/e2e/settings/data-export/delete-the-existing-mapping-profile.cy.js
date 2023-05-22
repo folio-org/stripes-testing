@@ -26,7 +26,7 @@ describe('setting: data-export', () => {
   });
 
   it('C15828 Delete the existing mapping profile (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    ExportFieldMappingProfiles.goTofieldMappingProfilesTab();
+    ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
     ExportFieldMappingProfiles.verifyFieldMappingProfilesPane();
 
     const testProfile = {
