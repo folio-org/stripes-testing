@@ -40,7 +40,7 @@ describe('Mapping profile - setup', () => {
   });
 
   it('C196758 Create a new mapping profile for MARC bib record with holdings data included - Source record storage (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    ExportFieldMappingProfiles.goTofieldMappingProfilesTab();
+    ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
     ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, ['Source record storage (entire record)', 'Holdings', 'Item']);
     ModalSelectTransformations.verifyCheckboxDisabled('Instance');
     ModalSelectTransformations.uncheckItemRecordTypeChechbox();
