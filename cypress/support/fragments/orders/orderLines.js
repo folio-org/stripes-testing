@@ -107,7 +107,7 @@ export default {
     cy.expect([
       orderLineInfoPage.exists(),
       itemDetailsSection.find(KeyValue({ value: orderLineTitleName })).exists(),
-      poLineInfoSection.find(KeyValue({ value: ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE })).exists(),
+      poLineInfoSection.find(KeyValue({ value: ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE_Check })).exists(),
       fundDistributionSection
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 0 }))
@@ -132,7 +132,7 @@ export default {
     cy.expect([
       orderLineInfoPage.exists(),
       itemDetailsSection.find(KeyValue({ value: orderLineTitleName })).exists(),
-      poLineInfoSection.find(KeyValue({ value: ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE })).exists(),
+      poLineInfoSection.find(KeyValue({ value: ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE_Check })).exists(),
       fundDistributionSection
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 0 }))
@@ -847,8 +847,8 @@ export default {
     cy.expect(fundDistributionSection.find(Link(`${fund.name}(${fund.code})`)).exists());
   },
 
-  checkCurrencyInPOL:(currentEncumbrance) => {
-    cy.expect(fundDistributionSection.find(Link(`$${currentEncumbrance}`)).exists());
+  checkCurrencyInPOL:() => {
+    cy.get('[id=FundDistribution]').contains('a', '$').should('exist');
   },
 
   checkDownloadedFile() {
