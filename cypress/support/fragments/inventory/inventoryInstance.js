@@ -119,7 +119,6 @@ const validOCLC = { id:'176116217',
   ldrValue: '01677cam\\a22003974a\\4500',
   tag008BytesProperties : {
     srce: { interactor:TextField('Srce'), defaultValue:'\\' },
-    ctrl : { interactor:TextField('Ctrl'), defaultValue:'' },
     lang : { interactor:TextField('Lang'), defaultValue:'rus' },
     form : { interactor:TextField('Form'), defaultValue:'\\' },
     ctry : { interactor:TextField('Ctry'), defaultValue:'ru\\' },
