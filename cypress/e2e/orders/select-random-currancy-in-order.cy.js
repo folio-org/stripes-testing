@@ -24,8 +24,6 @@ describe('orders: create an order', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const allocatedQuantity = '1000';
-  const euroPrice = '109.78';
-  const plnPrice = '23.81';
   let servicePointId;
   let location;
   let user;
@@ -66,19 +64,19 @@ describe('orders: create an order', () => {
           .then(res => {
             location = res;
           });
-    });
+      });
     cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
     SettingsOrders.setPurchaseOrderLinesLimit(2);
     cy.createTempUser([
-        permissions.uiOrdersCreate.gui,
-        permissions.uiOrdersEdit.gui,
-        permissions.uiOrdersApprovePurchaseOrders.gui,
-        permissions.uiOrdersReopenPurchaseOrders.gui,
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(userProperties.username, userProperties.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-        });
+      permissions.uiOrdersCreate.gui,
+      permissions.uiOrdersEdit.gui,
+      permissions.uiOrdersApprovePurchaseOrders.gui,
+      permissions.uiOrdersReopenPurchaseOrders.gui,
+    ])
+      .then(userProperties => {
+        user = userProperties;
+        cy.login(userProperties.username, userProperties.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+      });
   });
 
   afterEach(() => {
@@ -90,21 +88,21 @@ describe('orders: create an order', () => {
 
   it('C8357 Create purchase order in foreign currency (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
     Orders.createOrder(order).then(orderId => {
-        order.id = orderId;
-        Orders.createPOLineViaActions();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
-        OrderLines.fillPolWithEuroCurrency(defaultFund, '100', '1', location.institutionId);
-        OrderLines.backToEditingOrder();
-        Orders.createPOLineViaActions();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
-        OrderLines.fillPolWithPLNCurrency(defaultFund, '100', '1', location.institutionId);
-        OrderLines.backToEditingOrder();
-        Orders.openOrder();
-        OrderLines.selectPOLInOrder(0);
-        OrderLines.checkCurrencyInPOL(euroPrice);
-        OrderLines.backToEditingOrder();
-        OrderLines.selectPOLInOrder(1);
-        OrderLines.checkCurrencyInPOL(plnPrice);
-      });
+      order.id = orderId;
+      Orders.createPOLineViaActions();
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
+      OrderLines.fillPolWithEuroCurrency(defaultFund, '100', '1', location.institutionId);
+      OrderLines.backToEditingOrder();
+      Orders.createPOLineViaActions();
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
+      OrderLines.fillPolWithPLNCurrency(defaultFund, '100', '1', location.institutionId);
+      OrderLines.backToEditingOrder();
+      Orders.openOrder();
+      OrderLines.selectPOLInOrder(0);
+      OrderLines.checkCurrencyInPOL();
+      OrderLines.backToEditingOrder();
+      OrderLines.selectPOLInOrder(1);
+      OrderLines.checkCurrencyInPOL();
+    });
   });
 });

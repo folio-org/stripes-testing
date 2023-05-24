@@ -9,7 +9,8 @@ import { Button,
   Select,
   Pane,
   Link,
-  MultiColumnListCell } from '../../../../../interactors';
+  MultiColumnListCell, 
+  Modal} from '../../../../../interactors';
 import FinanceHelper from '../financeHelper';
 import getRandomPostfix from '../../../utils/stringTools';
 
@@ -57,7 +58,7 @@ export default {
     ]);
   },
 
-  fillInRolloverInfo : (fiscalYear) => {
+  fillInRolloverInfo(fiscalYear) {
     cy.do(fiscalYearSelect.click());
     // Need to wait,while date of fiscal year will be loaded
     cy.wait(3000);
@@ -70,13 +71,26 @@ export default {
       Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
       rolloverButton.click(),
     ]);
-    cy.wait(2000);
+    cy.wait(4000);
+    this.continueRollover();
     cy.do([
       rolloverConfirmButton.click(),
     ]);
   },
 
-  fillInRolloverForCashBalance : (fiscalYear, rolloverBudgetValue, rolloverValueAs) => {
+  continueRollover:() => {
+    const continueButton = Button('Continue');
+    cy.get('body').then($body => {
+      if ($body.find('[id=unpaid-invoice-list-modal]').length) {
+        cy.wait(4000);
+        cy.do(Modal({ id: 'unpaid-invoice-list-modal' }).find(continueButton).click());
+      } else {
+        // do nothing if modal is not displayed
+      }
+    });
+  },
+
+  fillInRolloverForCashBalance(fiscalYear, rolloverBudgetValue, rolloverValueAs) {
     cy.do(fiscalYearSelect.click());
     // Need to wait,while date of fiscal year will be loaded
     cy.wait(3000);
@@ -87,7 +101,8 @@ export default {
       aaddAvailableToSelect.choose(rolloverValueAs),
       rolloverButton.click(),
     ]);
-    cy.wait(2000);
+    cy.wait(4000);
+    this.continueRollover();
     cy.do([
       rolloverConfirmButton.click(),
     ]);

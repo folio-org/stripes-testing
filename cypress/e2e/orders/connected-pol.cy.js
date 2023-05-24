@@ -24,12 +24,12 @@ describe('orders: create an order', () => {
     order.orderType = 'One-time';
 
     cy.createTempUser([
-        permissions.uiOrdersCreate.gui,  
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(userProperties.username, userProperties.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-        });
+      permissions.uiOrdersCreate.gui,
+    ])
+      .then(userProperties => {
+        user = userProperties;
+        cy.login(userProperties.username, userProperties.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+      });
   });
 
   afterEach(() => {
@@ -39,10 +39,10 @@ describe('orders: create an order', () => {
 
   it('C10926 Populate POL details from Inventory instance (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
     Orders.createOrder(order).then(orderId => {
-        order.id = orderId;
-        Orders.createPOLineViaActions();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
-        OrderLines.checkConnectedInstance();
-      });
+      order.id = orderId;
+      Orders.createPOLineViaActions();
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
+      OrderLines.checkConnectedInstance();
+    });
   });
 });

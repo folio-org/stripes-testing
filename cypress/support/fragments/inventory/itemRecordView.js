@@ -54,6 +54,11 @@ export default {
   closeDetailView,
   verifyItemStatus,
   verifyItemStatusInPane,
+
+  suppressedAsDiscoveryIsAbsent() {
+    cy.expect(HTML(including('Warning: Item is marked suppressed from discovery')).absent());
+  },
+
   findRowAndClickLink,
   getAssignedHRID:() => cy.then(() => KeyValue('Item HRID').value()),
 
@@ -73,15 +78,6 @@ export default {
       Button('Save & close').click()
     ]);
   },
-
-  // findItemInLocation:(enumeration) => {
-  //   cy.do(() => {
-  //     const cell = MultiColumnListCell(enumeration);
-  //     const row = cell.closest(MultiColumnListRow());
-  //     const link = row.find(Link('No barcode'));
-  //     link.click();
-  //   });
-  // },
 
   checkEffectiveLocation:(location) => {
     cy.expect(Accordion('Location').find(KeyValue('Effective location for item')).has({ value: location }));
@@ -148,5 +144,12 @@ export default {
   checkHotlinksToCreatedPOL:(number) => {
     cy.expect(Accordion('Acquisition').find(KeyValue('POL number')).has({ value: number }));
     cy.expect(Accordion('Acquisition').find(Link({ href: including('/orders/lines/view') })).exists());
-  }
+  },
+
+  changeItemBarcode:(barcode) => {
+    cy.do([
+      TextField({ id: 'additem_barcode' }).fillIn(barcode),
+      Button('Save & close').click()
+    ]);
+  },
 };
