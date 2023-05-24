@@ -59,6 +59,10 @@ export default {
     cy.expect(HTML(including('Warning: Item is marked suppressed from discovery')).absent());
   },
 
+  suppressedAsDiscoveryIsPresent() {
+    cy.expect(HTML(including('Warning: Item is marked suppressed from discovery')).exists());
+  },
+
   findRowAndClickLink,
   getAssignedHRID:() => cy.then(() => KeyValue('Item HRID').value()),
 
