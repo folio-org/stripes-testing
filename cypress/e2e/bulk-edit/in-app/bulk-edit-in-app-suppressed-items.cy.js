@@ -49,7 +49,7 @@ describe('bulk-edit', () => {
       FileManager.deleteFile(`cypress/fixtures/${itemUUIDsFileName}`);
     });
 
-    it('C380641 Verify "Suppress from discovery" behaviour in Bulk Editing Items (firebird)', {tags: [testTypes.criticalPath, devTeams.firebird]}, () => {
+    it('C380641 Verify "Suppress from discovery" behaviour in Bulk Editing Items (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
       BulkEditSearchPane.checkItemsRadio();
       BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');
 
