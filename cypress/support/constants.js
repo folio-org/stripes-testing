@@ -131,10 +131,13 @@ export const ORDER_STATUSES = {
 };
 
 export const ORDER_FORMAT_NAMES = {
-  ELECTRONIC_RESOURCE: 'Electronic Resource',
-  PE_MIX: 'P/E Mix',
+  ELECTRONIC_RESOURCE: 'Electronic resource',
+  ELECTRONIC_RESOURCE_Check: 'Electronic Resource',
+  PE_MIX: 'P/E mix',
+  PE_MIX_Check: 'P/E Mix',
   OTHER: 'Other',
   PHYSICAL_RESOURCE: 'Physical resource',
+  PHYSICAL_RESOURCE_Check: 'Physical Resource',
 };
 
 export const RECEIVING_WORKFLOW_NAMES = {

@@ -79,15 +79,6 @@ export default {
     ]);
   },
 
-  // findItemInLocation:(enumeration) => {
-  //   cy.do(() => {
-  //     const cell = MultiColumnListCell(enumeration);
-  //     const row = cell.closest(MultiColumnListRow());
-  //     const link = row.find(Link('No barcode'));
-  //     link.click();
-  //   });
-  // },
-
   checkEffectiveLocation:(location) => {
     cy.expect(Accordion('Location').find(KeyValue('Effective location for item')).has({ value: location }));
   },
@@ -153,5 +144,12 @@ export default {
   checkHotlinksToCreatedPOL:(number) => {
     cy.expect(Accordion('Acquisition').find(KeyValue('POL number')).has({ value: number }));
     cy.expect(Accordion('Acquisition').find(Link({ href: including('/orders/lines/view') })).exists());
-  }
+  },
+
+  changeItemBarcode:(barcode) => {
+    cy.do([
+      TextField({ id: 'additem_barcode' }).fillIn(barcode),
+      Button('Save & close').click()
+    ]);
+  },
 };

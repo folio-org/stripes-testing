@@ -34,20 +34,20 @@ const specRetInputNamesHoldings008 = ['records[3].content.Spec ret[0]',
   'records[3].content.Spec ret[2]'];
 
 const tag008HoldingsBytesProperties = {
-  acqStatus : { interactor:TextField('AcqStatus'), defaultValue:'0', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
+  acqStatus : { interactor:TextField('AcqStatus'), defaultValue:'\\', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
   acqMethod :{ interactor:TextField('AcqMethod'), defaultValue:'\\', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
-  acqEndDate :{ interactor:TextField('AcqEndDate'), defaultValue:'\\\\0\\', newValue:'vvvv', voidValue:' ', replacedVoidValue:'\\\\\\\\' },
-  genRet : { interactor:TextField('Gen ret'), defaultValue:'\\', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
-  specRet0: { interactor:TextField('Spec ret', { name:specRetInputNamesHoldings008[0] }), defaultValue:'\\', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
-  specRet1: { interactor:TextField('Spec ret', { name:specRetInputNamesHoldings008[1] }), defaultValue:'u', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
-  specRet2: { interactor:TextField('Spec ret', { name:specRetInputNamesHoldings008[2] }), defaultValue:'u', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
-  compl : { interactor:TextField('Compl'), defaultValue:'e', newValue:'9', voidValue:' ', replacedVoidValue:'\\' },
-  copies :{ interactor:TextField('Copies'), defaultValue:'ng0', newValue:'vvv', voidValue:' ', replacedVoidValue:'\\\\\\' },
-  lend : { interactor:TextField('Lend'), defaultValue:'\\', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
-  repro : { interactor:TextField('Repro'), defaultValue:'\\', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
-  lang : { interactor:TextField('Lang'), defaultValue:'\\\\\\', newValue:'vvv', voidValue:' ', replacedVoidValue:'\\\\\\' },
-  sepComp : { interactor:TextField('Sep/comp'), defaultValue:'\\', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
-  reptDate :{ interactor:TextField('Rept date'), defaultValue:'\\\\\\\\\\\\', newValue:'vvvvvv', voidValue:' ', replacedVoidValue:'\\\\\\\\\\\\' },
+  acqEndDate :{ interactor:TextField('AcqEndDate'), defaultValue:'\\\\\\\\', newValue:'vvvv', voidValue:'    ', replacedVoidValue:'\\\\\\\\' },
+  genRet : { interactor:TextField('Gen ret'), defaultValue:'\\', newValue:'v', voidValue:'v', replacedVoidValue:'v' },
+  specRet0: { interactor:TextField('Spec ret', { name:specRetInputNamesHoldings008[0] }), defaultValue:'u', newValue:'v', voidValue:'v', replacedVoidValue:'v' },
+  specRet1: { interactor:TextField('Spec ret', { name:specRetInputNamesHoldings008[1] }), defaultValue:'u', newValue:'v', voidValue:'v', replacedVoidValue:'v' },
+  specRet2: { interactor:TextField('Spec ret', { name:specRetInputNamesHoldings008[2] }), defaultValue:'e', newValue:'v', voidValue:'v', replacedVoidValue:'v' },
+  compl : { interactor:TextField('Compl'), defaultValue:'n', newValue:'9', voidValue:'9', replacedVoidValue:'9' },
+  copies :{ interactor:TextField('Copies'), defaultValue:'g\\\\', newValue:'vvv', voidValue:'vvv', replacedVoidValue:'vvv' },
+  lend : { interactor:TextField('Lend'), defaultValue:'\\', newValue:'v', voidValue:'v', replacedVoidValue:'v' },
+  repro : { interactor:TextField('Repro'), defaultValue:'\\', newValue:'v', voidValue:'v', replacedVoidValue:'v' },
+  lang : { interactor:TextField('Lang'), defaultValue:'\\\\\\', newValue:'vvv', voidValue:'vvv', replacedVoidValue:'vvv' },
+  sepComp : { interactor:TextField('Sep/comp'), defaultValue:'\\', newValue:'v', voidValue:'v', replacedVoidValue:'v' },
+  reptDate :{ interactor:TextField('Rept date'), defaultValue:'\\\\\\\\\\\\', newValue:'vvvvvv', voidValue:'vvvvvv', replacedVoidValue:'vvvvvv' },
   getUsualProperties:() => {
     return [tag008HoldingsBytesProperties.acqStatus,
       tag008HoldingsBytesProperties.acqMethod,
@@ -410,8 +410,8 @@ export default {
   },
 
   clearTag008Holdings() {
-    tag008HoldingsBytesProperties.getAllProperties().forEach(byteProperty => {
-      cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).fillIn(''));
+    tag008HoldingsBytesProperties.getUsualProperties().forEach(byteProperty => {
+      cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).fillIn(byteProperty.voidValue));
     });
     this.pressSaveAndClose();
     return tag008HoldingsBytesProperties.getAllProperties().map(property => property.voidValue).join('');
