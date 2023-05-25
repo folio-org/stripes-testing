@@ -110,6 +110,13 @@ export default {
     ]);
   },
 
+  approveOrder: () => {
+    cy.do([
+      Checkbox('Approved').click(),
+      saveAndClose.click()
+    ]);
+  },
+
   editOrderNumber: (poNumber) => {
     cy.do([
       TextField({ name: 'poNumber' }).fillIn(poNumber),
