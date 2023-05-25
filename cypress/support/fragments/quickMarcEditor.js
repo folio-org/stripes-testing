@@ -10,6 +10,8 @@ const closeWithoutSavingBtn = Button('Close without saving');
 const addFieldButton = Button({ ariaLabel : 'plus-sign' });
 const deleteFieldButton = Button({ ariaLabel : 'trash' });
 const linkToMarcRecordButton = Button({ ariaLabel : 'link' });
+const unlinkIconButton = Button({ ariaLabel: 'unlink' });
+const viewAuthorutyIconButton = Button({ ariaLabel: 'eye-open' });
 const saveAndCloseButton = Button({ id:'quick-marc-record-save' });
 const saveAndKeepEditingBtn = Button({ id: 'quick-marc-record-save-edit' });
 const saveAndCloseButtonEnabled = Button({ id:'quick-marc-record-save', disabled: false });
@@ -123,6 +125,15 @@ export default {
   },
 
   pressSaveAndClose() { cy.do(saveAndCloseButton.click()); },
+
+  pressSaveAndKeepEditing(calloutMsg) { 
+    cy.do(saveAndKeepEditingBtn.click()); 
+    cy.expect(Callout(calloutMsg).exists());
+  },
+
+  pressCancel() {
+    cy.do(cancelButton.click());
+  },
 
   clickSaveAndCloseThenCheck(records) {
     cy.do(saveAndCloseButton.click());
@@ -250,6 +261,27 @@ export default {
   checkEmptyContent(tagName) {
     cy.expect(getRowInteractorByTagName(tagName).find(quickMarcEditorRowContent).exists());
     cy.expect(getRowInteractorByTagName(tagName).find(quickMarcEditorRowContent).find(TextField()).absent());
+  },
+
+  verifyAfterLinkingAuthority(tag) {
+    cy.expect([
+      Callout(`Field ${tag} has been linked to a MARC authority record.`).exists(),
+      QuickMarcEditorRow({ tagValue: tag }).find(unlinkIconButton).exists(),
+      QuickMarcEditorRow({ tagValue: tag }).find(viewAuthorutyIconButton).exists(),
+    ]);
+  },
+
+  verifyTagFieldAfterLinking(rowIndex) {
+    cy.expect([
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].tag` })).has({disabled: true, value: '100'}),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[0]` })).has({disabled: true}),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[1]` })).has({disabled: true}),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].subfieldGroups.controlled` })).has({disabled: true, value: '$a Coates, Ta-Nehisi'}),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledAlpha` })).has({disabled: false, value: '$e author.'}),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].subfieldGroups.zeroSubfield` })).has({disabled: true, value: '$0 id.loc.gov/authorities/names/n2008001084'}),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledNumber` })).has({disabled: false, value: ''}),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ value: '$9' })).absent(),
+    ]);
   },
 
   fillAllAvailableValues(fieldContent, tag, initialRowsCount = validRecord.lastRowNumber) {
