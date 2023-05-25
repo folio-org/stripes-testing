@@ -29,7 +29,6 @@ describe('setting: data-export', () => {
       .then(userProperties => {
         user = userProperties;
         cy.login(user.username, user.password, { path: TopMenu.settingsPath, waiter: SettingsPane.waitLoading });
-        console.log(profileDetails.name)
         ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(profileDetails.name);
       });
   });

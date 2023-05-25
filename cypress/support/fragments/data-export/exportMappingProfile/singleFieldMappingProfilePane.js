@@ -21,7 +21,7 @@ export default {
       KeyValue('FOLIO record type').has({ value: profileDetails.recordType }),
       KeyValue('Output format').has({ value: profileDetails.outputFormat }),
       KeyValue('Description').has({ value: profileDetails.description }),
+      Accordion({ headline: 'Update information' }).has({ content: including(`Source: ${profileDetails.source}`) })
     ]);
-    cy.expect(Accordion({ headline: 'Update information' }).has({ content: including(`Source: ${profileDetails.source}`) }));
   },
 };
