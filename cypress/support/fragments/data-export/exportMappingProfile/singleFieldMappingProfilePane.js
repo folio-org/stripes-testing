@@ -3,8 +3,11 @@ import {
   Accordion,
   PaneHeader,
   MultiColumnListCell,
-  KeyValue
+  KeyValue,
+  Button,
 } from "../../../../../interactors";
+
+const actionsButton = Button('Actions');
 
 export default {
   clickProfileNameFromTheList(name) {
@@ -22,6 +25,15 @@ export default {
       KeyValue('Output format').has({ value: profileDetails.outputFormat }),
       KeyValue('Description').has({ value: profileDetails.description }),
       Accordion({ headline: 'Update information' }).has({ content: including(`Source: ${profileDetails.source}`) })
+    ]);
+  },
+
+  verifyOnlyDuplicateOptionAvailable() {
+    cy.do(actionsButton.click());
+    cy.expect([
+      Button('Edit').has({ disabled: true }),
+      Button('Duplicate').has({ disabled: false }),
+      Button('Delete').has({ disabled: true })
     ]);
   },
 };
