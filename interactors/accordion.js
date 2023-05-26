@@ -2,6 +2,7 @@ import { Button } from '@interactors/html';
 import { isVisible } from 'element-is-visible';
 import HTML from './baseHTML';
 
+const content = el => el.textContent;
 function label(element) {
   const labelEl = element.querySelector('[class^=labelArea]');
   return labelEl ? labelEl.textContent.trim() : '';
@@ -11,6 +12,7 @@ export default HTML.extend('accordion')
   .selector('[class^=accordion]')
   .locator(label)
   .filters({
+    content,
     label,
     headline: el => el.querySelector('[class^=headline-]').textContent,
     id: el => el.id,
