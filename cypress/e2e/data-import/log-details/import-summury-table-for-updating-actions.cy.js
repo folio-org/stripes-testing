@@ -6,7 +6,12 @@ import { LOAN_TYPE_NAMES,
   LOCALION_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
-  CALL_NUMBER_TYPE_NAMES } from '../../../support/constants';
+  CALL_NUMBER_TYPE_NAMES,
+  EXPORT_TRANSFORMATION_NAMES,
+  ACCEPTED_DATA_TYPE_NAMES,
+  PROFILE_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES,
+  JOB_STATUS_NAMES } from '../../../support/constants';
 import DateTools from '../../../support/utils/dateTools';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
@@ -50,7 +55,7 @@ describe('ui-data-import', () => {
       id: '',
       name: `C356802 create marcBib mapping profile ${Helper.getRandomBarcode()}`,
       incomingRecordType: recordType,
-      existingRecordType: recordType,
+      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
       mappingDetails: { name: 'holdings',
         recordType: 'MARC_BIBLIOGRAPHIC',
         marcMappingDetails: [{
@@ -75,7 +80,7 @@ describe('ui-data-import', () => {
       id: '',
       name: `C356802 create instance mapping profile ${Helper.getRandomBarcode()}`,
       incomingRecordType: recordType,
-      existingRecordType: 'INSTANCE',
+      existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
     }
   };
   const holdingsMappingProfileForCreate = {
@@ -83,7 +88,7 @@ describe('ui-data-import', () => {
       id: '',
       name: `C356802 create holdings mapping profile ${Helper.getRandomBarcode()}`,
       incomingRecordType: recordType,
-      existingRecordType: 'HOLDINGS',
+      existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
       mappingDetails: { name: 'holdings',
         recordType: 'HOLDINGS',
         mappingFields: [
@@ -98,7 +103,7 @@ describe('ui-data-import', () => {
       id: '',
       name: `C356802 create item mapping profile ${Helper.getRandomBarcode()}`,
       incomingRecordType: recordType,
-      existingRecordType: 'ITEM',
+      existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
       mappingDetails: { name: 'item',
         recordType: 'ITEM',
         mappingFields: [
@@ -127,9 +132,9 @@ describe('ui-data-import', () => {
     },
     addedRelations: [
       {
-        masterProfileType: 'ACTION_PROFILE',
+        masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
         detailProfileId: '',
-        detailProfileType: 'MAPPING_PROFILE'
+        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
       }
     ],
     deletedRelations: []
@@ -144,9 +149,9 @@ describe('ui-data-import', () => {
     addedRelations: [
       {
         masterProfileId: null,
-        masterProfileType: 'ACTION_PROFILE',
+        masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
         detailProfileId: '',
-        detailProfileType: 'MAPPING_PROFILE'
+        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
       }
     ],
     deletedRelations: []
@@ -161,9 +166,9 @@ describe('ui-data-import', () => {
     addedRelations: [
       {
         masterProfileId: null,
-        masterProfileType: 'ACTION_PROFILE',
+        masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
         detailProfileId: '',
-        detailProfileType: 'MAPPING_PROFILE'
+        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
       }
     ],
     deletedRelations: []
@@ -178,9 +183,9 @@ describe('ui-data-import', () => {
     addedRelations: [
       {
         masterProfileId: null,
-        masterProfileType: 'ACTION_PROFILE',
+        masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
         detailProfileId: '',
-        detailProfileType: 'MAPPING_PROFILE'
+        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
       }
     ],
     deletedRelations: []
@@ -188,7 +193,7 @@ describe('ui-data-import', () => {
   const jobProfileForCreate = {
     profile: {
       name: `C356802 create job profile ${Helper.getRandomBarcode()}`,
-      dataType: 'MARC'
+      dataType: ACCEPTED_DATA_TYPE_NAMES.MARC
     },
     addedRelations: [],
     deletedRelations: []
@@ -207,10 +212,10 @@ describe('ui-data-import', () => {
   // create Field mapping profile for export
   const exportMappingProfile = {
     name: `C356802 mapping profile ${Helper.getRandomBarcode()}`,
-    holdingsTransformation: 'Holdings - HRID',
+    holdingsTransformation: EXPORT_TRANSFORMATION_NAMES.HOLDINGS_HRID,
     holdingsMarcField: '901',
     subfieldForHoldings:'$h',
-    itemTransformation: 'Item - HRID',
+    itemTransformation: EXPORT_TRANSFORMATION_NAMES.ITEM_HRID,
     itemMarcField:'902',
     subfieldForItem:'$i'
   };
@@ -267,7 +272,7 @@ describe('ui-data-import', () => {
           field: '001'
         },
         matchCriterion: 'Exactly matches',
-        existingRecordType: 'MARC_BIBLIOGRAPHIC' }
+        existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC }
     },
     {
       matchProfile: { profileName: `C356802 MARC-to-Holdings 901h to Holdings HRID match profile ${Helper.getRandomBarcode()}`,
@@ -276,7 +281,7 @@ describe('ui-data-import', () => {
           subfield: 'h'
         },
         matchCriterion: 'Exactly matches',
-        existingRecordType: 'HOLDINGS',
+        existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
         holdingsOption: NewMatchProfile.optionsList.holdingsHrid }
     },
     {
@@ -287,7 +292,7 @@ describe('ui-data-import', () => {
           subfield: 'i'
         },
         matchCriterion: 'Exactly matches',
-        existingRecordType: 'ITEM',
+        existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
         itemOption: NewMatchProfile.optionsList.itemHrid
       }
     }
@@ -295,7 +300,7 @@ describe('ui-data-import', () => {
   const jobProfileForUpdate = {
     ...NewJobProfile.defaultJobProfile,
     profileName: `C356802 update job profile ${Helper.getRandomBarcode()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
   before('login', () => {
@@ -355,7 +360,7 @@ describe('ui-data-import', () => {
       JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(nameMarcFileForImportCreate);
-      Logs.checkStatusOfJobProfile('Completed');
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(nameMarcFileForImportCreate);
 
       // check the instance is created

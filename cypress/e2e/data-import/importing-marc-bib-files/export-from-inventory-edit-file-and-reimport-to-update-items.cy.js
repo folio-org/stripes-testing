@@ -1,7 +1,11 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE, ITEM_STATUS_NAMES } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE,
+  ITEM_STATUS_NAMES,
+  ACCEPTED_DATA_TYPE_NAMES,
+  PROFILE_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES } from '../../../support/constants';
 import SettingsJobProfiles from '../../../support/fragments/settings/dataImport/settingsJobProfiles';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -53,14 +57,14 @@ describe('ui-data-import', () => {
     profile:{
       name: instanceMappingProfileNameForCreate,
       incomingRecordType: recordType,
-      existingRecordType: 'INSTANCE',
+      existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
     }
   };
   const holdingsMappingProfileForCreate = {
     profile:{
       name: holdingsMappingProfileNameForCreate,
       incomingRecordType: recordType,
-      existingRecordType: 'HOLDINGS',
+      existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
       mappingDetails: { name: 'holdings',
         recordType: 'HOLDINGS',
         mappingFields: [
@@ -74,7 +78,7 @@ describe('ui-data-import', () => {
     profile:{
       name: itemMappingProfileNameForCreate,
       incomingRecordType: recordType,
-      existingRecordType: 'ITEM',
+      existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
       mappingDetails: { name: 'item',
         recordType: 'ITEM',
         mappingFields: [
@@ -108,9 +112,9 @@ describe('ui-data-import', () => {
     addedRelations: [
       {
         masterProfileId: null,
-        masterProfileType: 'ACTION_PROFILE',
+        masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
         detailProfileId: '',
-        detailProfileType: 'MAPPING_PROFILE'
+        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
       }
     ],
     deletedRelations: []
@@ -124,9 +128,9 @@ describe('ui-data-import', () => {
     addedRelations: [
       {
         masterProfileId: null,
-        masterProfileType: 'ACTION_PROFILE',
+        masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
         detailProfileId: '',
-        detailProfileType: 'MAPPING_PROFILE'
+        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
       }
     ],
     deletedRelations: []
@@ -140,9 +144,9 @@ describe('ui-data-import', () => {
     addedRelations: [
       {
         masterProfileId: null,
-        masterProfileType: 'ACTION_PROFILE',
+        masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
         detailProfileId: '',
-        detailProfileType: 'MAPPING_PROFILE'
+        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
       }
     ],
     deletedRelations: []
@@ -158,7 +162,7 @@ describe('ui-data-import', () => {
   const jobProfileForCreate = {
     profile: {
       name: jobProfileNameForCreate,
-      dataType: 'MARC'
+      dataType: ACCEPTED_DATA_TYPE_NAMES.MARC
     },
     addedRelations: [],
     deletedRelations: []
@@ -173,7 +177,7 @@ describe('ui-data-import', () => {
       subfield: 'a'
     },
     matchCriterion: 'Exactly matches',
-    existingRecordType: 'ITEM',
+    existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
     itemOption: NewMatchProfile.optionsList.itemHrid
   };
   const itemMappingProfileForUpdate = {
@@ -188,7 +192,7 @@ describe('ui-data-import', () => {
   const jobProfileForUpdate = {
     ...NewJobProfile.defaultJobProfile,
     profileName: `C11123 job profile.${getRandomPostfix()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
   before('create test data', () => {

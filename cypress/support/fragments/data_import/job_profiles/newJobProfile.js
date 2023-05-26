@@ -1,22 +1,18 @@
 import { HTML, including } from '@interactors/html';
 import { Accordion, Button, Select, TextField, Pane } from '../../../../../interactors';
 import ModalSelectProfile from './modalSelectProfile';
-
-const acceptedDataType = {
-  marc:'MARC',
-  edifact:'EDIFACT'
-};
+import { ACCEPTED_DATA_TYPE_NAMES, PROFILE_TYPE_NAMES } from '../../../constants';
 
 const defaultJobProfile = {
   profileName:  '',
-  acceptedType: acceptedDataType.marc,
+  acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
 };
 
 const getDefaultJobProfile = (name) => {
   const defaultjobProfile = {
     profile: {
       name,
-      dataType: 'MARC'
+      dataType: ACCEPTED_DATA_TYPE_NAMES.MARC
     },
     addedRelations: [],
     deletedRelations: []
@@ -31,7 +27,6 @@ const saveAndCloseButton = Button('Save as profile & Close');
 export default {
   getDefaultJobProfile,
   defaultJobProfile,
-  acceptedDataType,
 
   fillJobProfile: (specialJobProfile = defaultJobProfile) => {
     cy.do(TextField({ name:'profile.name' }).fillIn(specialJobProfile.profileName));
@@ -211,19 +206,19 @@ export default {
         body: {
           profile:{
             name: nameProfile,
-            dataType:'MARC'
+            dataType: ACCEPTED_DATA_TYPE_NAMES.MARC
           },
           addedRelations:[{
             masterProfileId:null,
-            masterProfileType:'JOB_PROFILE',
+            masterProfileType: PROFILE_TYPE_NAMES.JOB_PROFILE,
             detailProfileId:matchProfileId,
-            detailProfileType:'MATCH_PROFILE',
+            detailProfileType: PROFILE_TYPE_NAMES.MATCH_PROFILE,
             order:0
           },
           { masterProfileId:null,
-            masterProfileType:'JOB_PROFILE',
+            masterProfileType: PROFILE_TYPE_NAMES.JOB_PROFILE,
             detailProfileId:actProfileId,
-            detailProfileType:'ACTION_PROFILE',
+            detailProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
             order:1 }],
           deletedRelations:[]
         },
@@ -239,13 +234,13 @@ export default {
         body: {
           profile:{
             name: nameProfile,
-            dataType:'MARC'
+            dataType: ACCEPTED_DATA_TYPE_NAMES.MARC
           },
           addedRelations:[
             { masterProfileId:null,
-              masterProfileType:'JOB_PROFILE',
+              masterProfileType: PROFILE_TYPE_NAMES.JOB_PROFILE,
               detailProfileId:actProfileId,
-              detailProfileType:'ACTION_PROFILE',
+              detailProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
               order:0 }],
           deletedRelations:[]
         },

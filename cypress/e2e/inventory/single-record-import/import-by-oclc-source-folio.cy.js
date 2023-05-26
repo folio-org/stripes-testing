@@ -9,6 +9,7 @@ import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/z
 import DevTeams from '../../../support/dictionary/devTeams';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
 
 let user;
 let instanceRecord;
@@ -70,7 +71,7 @@ describe('ui-inventory: import by OCLC', () => {
     cy.wait(10000);
     InventoryInstance.waitInstanceRecordViewOpened(oclcRecordData.title);
     InventoryInstance.verifyLastUpdatedDate();
-    InstanceRecordView.verifyInstanceSource('MARC');
+    InstanceRecordView.verifyInstanceSource(INSTANCE_SOURCE_NAMES.MARC);
     InventoryInstance.verifyInstanceTitle(oclcRecordData.title);
     InventoryInstance.verifyInstanceLanguage(oclcRecordData.language);
     InventoryInstance.verifyInstancePublisher(0, 0, oclcRecordData.publisher);

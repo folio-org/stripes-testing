@@ -25,7 +25,9 @@ import {
   MATERIAL_TYPE_NAMES,
   ITEM_STATUS_NAMES,
   LOCALION_NAMES,
-  FOLIO_RECORD_TYPE
+  FOLIO_RECORD_TYPE,
+  EXISTING_RECORDS_NAMES,
+  JOB_STATUS_NAMES
 } from '../../../support/constants';
 
 describe('ui-data-import', () => {
@@ -85,7 +87,7 @@ describe('ui-data-import', () => {
           subfield: 'a'
         },
         matchCriterion: 'Exactly matches',
-        existingRecordType: 'HOLDINGS',
+        existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
         holdingsOption: NewMatchProfile.optionsList.holdingsHrid }
     },
     {
@@ -96,7 +98,7 @@ describe('ui-data-import', () => {
           subfield: 'a'
         },
         matchCriterion: 'Exactly matches',
-        existingRecordType: 'ITEM',
+        existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
         itemOption: NewMatchProfile.optionsList.barcode
       }
     }
@@ -209,7 +211,7 @@ describe('ui-data-import', () => {
       JobProfiles.searchJobProfileForImport(jobProfileForCreate.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(marcFileNameForCreate);
-      Logs.checkStatusOfJobProfile('Completed');
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(marcFileNameForCreate);
       [FileDetails.columnNameInResultList.srsMarc,
         FileDetails.columnNameInResultList.instance,
@@ -290,7 +292,7 @@ describe('ui-data-import', () => {
           JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(editedMarcFileName);
-          Logs.checkStatusOfJobProfile('Completed');
+          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(editedMarcFileName);
           [FileDetails.columnNameInResultList.holdings,
             FileDetails.columnNameInResultList.item

@@ -7,7 +7,11 @@ import ExportFieldMappingProfiles from '../../../support/fragments/data-export/e
 import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import { FOLIO_RECORD_TYPE, LOCALION_NAMES } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE,
+  LOCALION_NAMES,
+  ACCEPTED_DATA_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES,
+  JOB_STATUS_NAMES } from '../../../support/constants';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
@@ -142,7 +146,7 @@ describe('ui-data-import', () => {
           field: '001'
         },
         matchCriterion: 'Exactly matches',
-        existingRecordType: 'INSTANCE',
+        existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
         instanceOption: NewMatchProfile.optionsList.instanceHrid }
     },
     {
@@ -152,7 +156,7 @@ describe('ui-data-import', () => {
           subfield: 'h'
         },
         matchCriterion: 'Exactly matches',
-        existingRecordType: 'HOLDINGS',
+        existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
         holdingsOption: NewMatchProfile.optionsList.holdingsHrid }
     },
     {
@@ -162,7 +166,7 @@ describe('ui-data-import', () => {
           subfield: 'i'
         },
         matchCriterion: 'Exactly matches',
-        existingRecordType: 'ITEM',
+        existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
         itemOption: NewMatchProfile.optionsList.itemHrid }
     },
     {
@@ -172,7 +176,7 @@ describe('ui-data-import', () => {
           subfield: 'h'
         },
         matchCriterion: 'Exactly matches',
-        existingRecordType: 'HOLDINGS',
+        existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
         holdingsOption: NewMatchProfile.optionsList.holdingsHrid }
     },
     {
@@ -182,16 +186,16 @@ describe('ui-data-import', () => {
           subfield: 'i'
         },
         matchCriterion: 'Exactly matches',
-        existingRecordType: 'ITEM',
+        existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
         itemOption: NewMatchProfile.optionsList.itemHrid }
     }
   ];
   const jobProfileWithMatch = { ...NewJobProfile.defaultJobProfile,
     profileName: `WITH instance match.${getRandomPostfix()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc };
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC };
   const jobProfileWithoutMatch = { ...NewJobProfile.defaultJobProfile,
     profileName: `WITHOUT instance match.${getRandomPostfix()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc };
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC };
 
   before(() => {
     cy.loginAsAdmin();
@@ -218,7 +222,7 @@ describe('ui-data-import', () => {
         JobProfiles.searchJobProfileForImport(firstTestData.jobProfileForCreate.profile.name);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileForCreateFirstRecord);
-        Logs.checkStatusOfJobProfile('Completed');
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileForCreateFirstRecord);
         FileDetails.openInstanceInInventory('Created');
         InventoryInstance.getAssignedHRID().then(firstInstanceHrId => {
@@ -246,7 +250,7 @@ describe('ui-data-import', () => {
         JobProfiles.searchJobProfileForImport(secondTestData.jobProfileForCreate.profile.name);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileForCreateSecondRecord);
-        Logs.checkStatusOfJobProfile('Completed');
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileForCreateSecondRecord);
         FileDetails.openInstanceInInventory('Created');
         InventoryInstance.getAssignedHRID().then(secondInstanceHrId => {

@@ -14,7 +14,7 @@ import {
   Checkbox
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
-import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES } from '../../../constants';
+import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES, EXISTING_RECORDS_NAMES } from '../../../constants';
 
 const saveButton = Button('Save as profile & Close');
 const organizationModal = Modal('Select Organization');
@@ -131,7 +131,7 @@ const getDefaultInstanceMappingProfile = (name) => {
     profile: {
       name,
       incomingRecordType: 'MARC_BIBLIOGRAPHIC',
-      existingRecordType: 'INSTANCE',
+      existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
     }
   };
   return defaultInstanceMappingProfile;
@@ -141,7 +141,7 @@ const getDefaultHoldingsMappingProfile = (name, permLocation) => {
     profile: {
       name,
       incomingRecordType: 'MARC_BIBLIOGRAPHIC',
-      existingRecordType: 'HOLDINGS',
+      existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
       mappingDetails: { name: 'holdings',
         recordType: 'HOLDINGS',
         mappingFields: [
@@ -158,7 +158,7 @@ const getDefaultItemMappingProfile = (name) => {
     profile: {
       name,
       incomingRecordType: 'MARC_BIBLIOGRAPHIC',
-      existingRecordType: 'ITEM',
+      existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
       mappingDetails: { name: 'item',
         recordType: 'ITEM',
         mappingFields: [
@@ -687,7 +687,7 @@ export default {
         body: { profile: {
           name: nameProfile,
           incomingRecordType: 'MARC_BIBLIOGRAPHIC',
-          existingRecordType: 'INSTANCE',
+          existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
         } },
         isDefaultSearchParamsRequired: false,
       })

@@ -10,6 +10,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
+import { JOB_STATUS_NAMES } from '../../../support/constants';
 
 describe('Browse in Inventory', () => {
   const testData = {
@@ -17,12 +18,12 @@ describe('Browse in Inventory', () => {
   };
 
   const values = {
-    name: "McOrmond, Steve, 1971- (Test)",
-    contributorNameTypeId: "2b94c631-fca9-4892-a730-03ee529ffe2a",
-    authorityId: "bb30e977-f934-4a2f-8fb8-858bac51b7ad",
+    name: 'McOrmond, Steve, 1971- (Test)',
+    contributorNameTypeId: '2b94c631-fca9-4892-a730-03ee529ffe2a',
+    authorityId: 'bb30e977-f934-4a2f-8fb8-858bac51b7ad',
     isAnchor: true,
     totalRecords: 1
-  }
+  };
 
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const fileName = `testInventoryFile.${getRandomPostfix()}.mrc`;
@@ -32,7 +33,7 @@ describe('Browse in Inventory', () => {
     cy.createTempUser([
       Permissions.moduleDataImportEnabled.gui,
       Permissions.uiInventoryViewCreateEditInstances.gui,
-      Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,      
+      Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
     ]).then(createdUserProperties => {
       testData.userProperties = createdUserProperties;
     });
@@ -56,27 +57,27 @@ describe('Browse in Inventory', () => {
     });
   });
 
-  it('C359597 Verify that contributors with the same "Name" , "Name type" and "authorityID" will display as one row in the response (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
+  it('C359597 Verify that contributors with the same "Name" , "Name type" and "authorityID" will display as one row in the response (spitfire)',
+    { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
+      DataImport.uploadFile('marcFileForC359597.mrc', fileName);
+      JobProfiles.waitLoadingList();
+      JobProfiles.searchJobProfileForImport(jobProfileToRun);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(fileName);
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      Logs.openFileDetails(fileName);
+      for (let i = 0; i < 1; i++) {
+        Logs.getCreatedItemsID(i).then(link => {
+          createdInstanceIDs.push(link.split('/')[5]);
+        });
+      }
 
-    DataImport.uploadFile('marcFileForC359597.mrc', fileName);
-    JobProfiles.waitLoadingList();
-    JobProfiles.searchJobProfileForImport(jobProfileToRun);
-    JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(fileName);
-    Logs.checkStatusOfJobProfile('Completed');
-    Logs.openFileDetails(fileName);
-    for (let i = 0; i < 1; i++) {
-      Logs.getCreatedItemsID(i).then(link => {
-        createdInstanceIDs.push(link.split('/')[5]);
-      });
-    }
-
-    cy.visit(TopMenu.inventoryPath);
-    InventorySearchAndFilter.switchToBrowseTab();
-    InventorySearchAndFilter.verifyKeywordsAsDefault();
-    BrowseContributors.select();
-    BrowseContributors.browse(testData.contributorName);
-    BrowseContributors.checkSearchResultRecord(testData.contributorName);
-    BrowseContributors.checkContributorRowValues(values);
-  });
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.switchToBrowseTab();
+      InventorySearchAndFilter.verifyKeywordsAsDefault();
+      BrowseContributors.select();
+      BrowseContributors.browse(testData.contributorName);
+      BrowseContributors.checkSearchResultRecord(testData.contributorName);
+      BrowseContributors.checkContributorRowValues(values);
+    });
 });

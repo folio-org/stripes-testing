@@ -1,5 +1,6 @@
 import { TextField, Button, Select, Checkbox, Modal, Accordion } from '../../../../../interactors';
 import modalSelectTransformations from './modalSelectTransformations';
+import { EXPORT_TRANSFORMATION_NAMES } from '../../../constants';
 
 const outputFormat = 'MARC';
 
@@ -35,7 +36,7 @@ export default {
       itemCheckbox.click(),
       addTransformationsButton.click()
     ]);
-    modalSelectTransformations.searchItemTransformationsByName('Item - HRID');
+    modalSelectTransformations.searchItemTransformationsByName(EXPORT_TRANSFORMATION_NAMES.ITEM_HRID);
     modalSelectTransformations.selectTransformations(itemMarcField, subfield);
   },
 

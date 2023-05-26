@@ -1,6 +1,6 @@
 import { TextField, Button, Select, Section, Pane } from '../../../../../interactors';
 import SelectMappingProfile from './modals/selectMappingProfile';
-import { FOLIO_RECORD_TYPE } from '../../../constants';
+import { FOLIO_RECORD_TYPE, PROFILE_TYPE_NAMES } from '../../../constants';
 
 const action = 'Create (all record types except MARC Authority or MARC Holdings)';
 
@@ -18,9 +18,9 @@ const getDefaultInstanceActionProfile = (name) => {
     addedRelations: [
       {
         masterProfileId: null,
-        masterProfileType: 'ACTION_PROFILE',
+        masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
         detailProfileId: '',
-        detailProfileType: 'MAPPING_PROFILE'
+        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
       }
     ],
     deletedRelations: []
@@ -37,9 +37,9 @@ const getDefaultHoldingsActionProfile = (name) => {
     addedRelations: [
       {
         masterProfileId: null,
-        masterProfileType: 'ACTION_PROFILE',
+        masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
         detailProfileId: '',
-        detailProfileType: 'MAPPING_PROFILE'
+        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
       }
     ],
     deletedRelations: []
@@ -56,9 +56,9 @@ const getDefaultItemActionProfile = (name) => {
     addedRelations: [
       {
         masterProfileId: null,
-        masterProfileType: 'ACTION_PROFILE',
+        masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
         detailProfileId: '',
-        detailProfileType: 'MAPPING_PROFILE'
+        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
       }
     ],
     deletedRelations: []
@@ -101,9 +101,9 @@ export default {
           addedRelations: [
             {
               masterProfileId: null,
-              masterProfileType: 'ACTION_PROFILE',
+              masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
               detailProfileId: mapProfileId,
-              detailProfileType: 'MAPPING_PROFILE'
+              detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
             }
           ],
           deletedRelations: []

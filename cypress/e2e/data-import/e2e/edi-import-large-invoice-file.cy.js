@@ -1,6 +1,6 @@
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE, PAYMENT_METHOD, BATCH_GROUP } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE, PAYMENT_METHOD, BATCH_GROUP, ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -32,7 +32,7 @@ describe('ui-data-import', () => {
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
     profileName: `Create Large Harrassowitz serials invoice ${getRandomPostfix()}`,
-    acceptedType: NewJobProfile.acceptedDataType.edifact
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.EDIFACT
   };
 
   beforeEach('login', () => {

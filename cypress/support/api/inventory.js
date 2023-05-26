@@ -1,7 +1,8 @@
 import uuid from 'uuid';
+import { INSTANCE_SOURCE_NAMES } from '../constants';
 
 const DEFAULT_INSTANCE = {
-  source: 'FOLIO',
+  source: INSTANCE_SOURCE_NAMES.FOLIO,
   discoverySuppress: false,
   staffSuppress: false,
   previouslyHeld: false,

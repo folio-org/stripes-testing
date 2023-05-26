@@ -6,7 +6,8 @@ import {
   MATERIAL_TYPE_NAMES,
   ITEM_STATUS_NAMES,
   LOCALION_NAMES,
-  FOLIO_RECORD_TYPE
+  FOLIO_RECORD_TYPE,
+  ACCEPTED_DATA_TYPE_NAMES
 } from '../../../support/constants';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -52,7 +53,7 @@ describe('ui-data-import', () => {
 
   const specialJobProfile = { ...NewJobProfile.defaultJobProfile,
     profileName: `autotestJobProf${getRandomPostfix()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc };
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC };
 
   before('login', () => {
     cy.createTempUser([

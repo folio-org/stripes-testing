@@ -6,7 +6,9 @@ import {
   MATERIAL_TYPE_NAMES,
   ITEM_STATUS_NAMES,
   LOCALION_NAMES,
-  FOLIO_RECORD_TYPE
+  FOLIO_RECORD_TYPE,
+  ACCEPTED_DATA_TYPE_NAMES,
+  JOB_STATUS_NAMES
 } from '../../../support/constants';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -70,7 +72,7 @@ describe('ui-data-import', () => {
   ];
   const jobProfile = { ...NewJobProfile.defaultJobProfile,
     profileName: `C368005 Create mappings for item notes ${Helper.getRandomBarcode()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc };
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC };
 
   before('create test data', () => {
     cy.createTempUser([
@@ -155,7 +157,7 @@ describe('ui-data-import', () => {
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(marcFileName);
-      Logs.checkStatusOfJobProfile('Completed');
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(marcFileName);
       [FileDetails.columnNameInResultList.srsMarc,
         FileDetails.columnNameInResultList.instance,
