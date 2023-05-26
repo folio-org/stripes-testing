@@ -5,6 +5,8 @@ import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
+import SingleFieldMappingProfilePane from "../../../support/fragments/data-export/exportMappingProfile/singleFieldMappingProfilePane";
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 
 let user;
 
@@ -20,13 +22,28 @@ describe('setting: data-export', () => {
       });
   });
 
-  after('selete user', () => {
+  beforeEach('go to page', () => {
+    cy.visit(SettingsMenu.exportMappingProfilePath)
+  });
+
+  after('delete user', () => {
     Users.deleteViaApi(user.userId);
   });
 
   it('C10982 "Settings" > "Data export" > "Field mapping profiles" page (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
     ExportFieldMappingProfiles.verifyFieldMappingProfilesPane();
     ExportFieldMappingProfiles.verifyDefaultProfiles();
+  });
+
+  it('C15822 Preventing changes to the default instance mapping profile (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+    SingleFieldMappingProfilePane.clickProfileNameFromTheList('Default instance mapping profile');
+    SingleFieldMappingProfilePane.waitLoading('Default instance mapping profile');
+    SingleFieldMappingProfilePane.verifyOnlyDuplicateOptionAvailable();
+  });
+
+  it('C15825 Profiles that cannot be edited or deleted (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+    SingleFieldMappingProfilePane.clickProfileNameFromTheList('Default holdings mapping profile');
+    SingleFieldMappingProfilePane.waitLoading('Default holdings mapping profile');
+    SingleFieldMappingProfilePane.verifyOnlyDuplicateOptionAvailable();
   });
 });
