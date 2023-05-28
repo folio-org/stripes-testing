@@ -30,8 +30,7 @@ export default {
     cy.wrap(optionsNames).each(optionName => {
       if (optionName === 'Barcode') {
         this.verifyCheckboxIsChecked('#barcode-checkbox', 'checkbox');
-      } else cy.do(Checkbox(optionName).click());
-      if (optionName === 'Username') {
+      } else if (optionName === 'Username') {
         this.verifyCheckboxIsChecked('#username-checkbox', 'checkbox');
       } else cy.do(Checkbox(optionName).click());
     });
