@@ -24,6 +24,11 @@ const closeDetailView = () => {
   cy.expect(Pane(including('Item')).exists());
   cy.do(Button({ icon: 'times' }).click());
 };
+const findRowAndClickLink = (enumerationValue) => {
+  cy.get('div[class^="mclRow-"]').contains('div[class^="mclCell-"]', enumerationValue).then(elem => {
+    elem.parent()[0].querySelector('a').click();
+  });
+};
 
 const itemStatuses = {
   onOrder: 'On order',
@@ -50,6 +55,15 @@ export default {
   verifyItemStatus,
   verifyItemStatusInPane,
 
+  suppressedAsDiscoveryIsAbsent() {
+    cy.expect(HTML(including('Warning: Item is marked suppressed from discovery')).absent());
+  },
+
+  suppressedAsDiscoveryIsPresent() {
+    cy.expect(HTML(including('Warning: Item is marked suppressed from discovery')).exists());
+  },
+
+  findRowAndClickLink,
   getAssignedHRID:() => cy.then(() => KeyValue('Item HRID').value()),
 
   verifyUpdatedItemDate:() => {
@@ -134,5 +148,12 @@ export default {
   checkHotlinksToCreatedPOL:(number) => {
     cy.expect(Accordion('Acquisition').find(KeyValue('POL number')).has({ value: number }));
     cy.expect(Accordion('Acquisition').find(Link({ href: including('/orders/lines/view') })).exists());
-  }
+  },
+
+  changeItemBarcode:(barcode) => {
+    cy.do([
+      TextField({ id: 'additem_barcode' }).fillIn(barcode),
+      Button('Save & close').click()
+    ]);
+  },
 };

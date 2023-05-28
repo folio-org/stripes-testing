@@ -121,7 +121,7 @@ export default {
   // Data Export
   dataExportAll: { internal: 'data-export.all', gui: 'Data Export - all permissions' },
   dataExportEnableModule: { internal: 'module.data-export.enabled', gui: 'Data export: all permissions' },
-  dataExportEnableSettings: { internal: 'ui-data-export.settings.enabled', gui: 'Settings (data-export): display list of settings pages' },
+  dataExportEnableSettings: { internal: 'ui-data-export.settings.enabled', gui: 'Settings (Data export): display list of settings pages' },
   dataExportEnableApp:{ internal:'ui-data-export.app.enabled', gui:'UI: Data export module is enabled' },
   // Loans
   loansAll: { internal: 'ui-users.loans.all', gui: 'Users: User loans view, change due date, renew' },

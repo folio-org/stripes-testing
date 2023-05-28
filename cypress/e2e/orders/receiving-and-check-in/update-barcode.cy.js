@@ -43,6 +43,7 @@ describe('Orders: Receiving and Check-in', () => {
   };
   const barcodeForFirstItem = Helper.getRandomBarcode();
   const barcodeForSecondItem = Helper.getRandomBarcode();
+  const changedBarcode = Helper.getRandomBarcode();
 
   let orderNumber;
   let user;
@@ -69,7 +70,7 @@ describe('Orders: Receiving and Check-in', () => {
               .then((response) => {
                 orderNumber = response.body.poNumber;
                 Orders.searchByParameter('PO number', orderNumber);
-                Orders.selectFromResultsList();
+                Orders.selectFromResultsList(orderNumber);
                 Orders.createPOLineViaActions();
                 OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
                 OrderLines.fillInPOLineInfoForExportWithLocationForPhisicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', locationResponse.institutionId, '2');
@@ -83,6 +84,7 @@ describe('Orders: Receiving and Check-in', () => {
       permissions.uiOrdersEdit.gui,
       permissions.uiOrdersView.gui,
       permissions.uiReceivingViewEditCreate.gui,
+      permissions.uiInventoryViewCreateEditItems.gui,
     ])
       .then(userProperties => {
         user = userProperties;
@@ -107,7 +109,7 @@ describe('Orders: Receiving and Check-in', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C738 Receiving pieces from an order for P/E MIx that is set to create Items in inventory (items for receiving includes "Order closed" statuses) (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
+  it('C736 Update Barcode and call number information when receiving (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.openOrder();
@@ -120,6 +122,9 @@ describe('Orders: Receiving and Check-in', () => {
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', barcodeForFirstItem);
     ItemRecordView.checkItemDetails(location.name, barcodeForFirstItem, ITEM_STATUS_NAMES.IN_PROCESS);
+    ItemActions.edit();
+    ItemRecordView.changeItemBarcode(changedBarcode);
+    ItemRecordView.checkItemDetails(location.name, changedBarcode, ITEM_STATUS_NAMES.IN_PROCESS);
     ItemActions.closeItem();
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', barcodeForSecondItem);
