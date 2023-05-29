@@ -51,13 +51,6 @@ const ordersResultsPane = Pane({ id: 'orders-results-pane' });
 const buttonAcquisitionMethodFilter = Button({ id: 'accordion-toggle-button-acquisitionMethod' });
 const purchaseOrderSection = Section({ id: 'purchaseOrder' });
 const purchaseOrderLineLimitReachedModal = Modal({ id: 'data-test-lines-limit-modal' });
-// const searchByParameter = (parameter, value) => {
-//   cy.do([
-//     searchForm.selectIndex(parameter),
-//     searchForm.fillIn(value),
-//     Button('Search').click(),
-//   ]);
-// };
 
 export default {
   searchByParameter(parameter, value) {
