@@ -181,7 +181,7 @@ export default {
     cy.wait(4000);
   },
 
-  openVersionHistory: () => {
+  openVersionHistory() {
     cy.do(Section({ id: 'order-details' }).find(Button({ icon: 'clock' })).click());
     cy.wait(2000);
     cy.expect([
@@ -191,9 +191,15 @@ export default {
     ]);
   },
 
-  checkVersionHistoryCard: (bodyInfo) => {
+  checkVersionHistoryCard(date, textInformation) {
     cy.expect([
-      Section({ id: 'versions-history-pane-order' }).find(Card().has({body: bodyInfo})),
+      Section({ id: 'versions-history-pane-order' }).find(Card({ headerStart: date })).has({ text: textInformation }),
+    ]);
+  },
+
+  selectVersionHistoryCard(date) {
+    cy.do([
+      Section({ id: 'versions-history-pane-order' }).find(Card({ headerStart: date })).find(Button({ icon: 'clock' })).click(),
     ]);
   },
 
