@@ -10,6 +10,7 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import Users from '../../../support/fragments/users/users';
 
 const abcProfile = {
   createJobProfile: `abc jobProfile.${getRandomPostfix()}`,
@@ -98,6 +99,8 @@ describe('ui-data-import', () => {
       FieldMappingProfiles.deleteFieldMappingProfile(profile.createMappingProfile);
       FieldMappingProfiles.deleteFieldMappingProfile(profile.updateMappingProfile);
     });
+    Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);
+    Users.deleteViaApi(user.userId);
   });
 
   it('C374176 Verify the view mode of ISRI profiles (folijet)',
