@@ -1,12 +1,15 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE,
+  INSTANCE_STATUS_TERM_NAMES,
+  ACCEPTED_DATA_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES,
+  JOB_STATUS_NAMES } from '../../../support/constants';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -48,7 +51,7 @@ describe('ui-data-import', () => {
 
   const jobProfile = {
     profileName: `C17017 autotest JobProf${getRandomPostfix()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
   // profiles for update
@@ -68,13 +71,13 @@ describe('ui-data-import', () => {
       field: '001'
     },
     matchCriterion: 'Exactly matches',
-    existingRecordType: 'INSTANCE',
+    existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
     instanceOption: NewMatchProfile.optionsList.instanceHrid
   };
 
   const jobProfileUpdate = {
     profileName: `C17017 autotest update JobProf${getRandomPostfix()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
   beforeEach('create test data', () => {
@@ -157,7 +160,7 @@ describe('ui-data-import', () => {
     JobProfiles.searchJobProfileForImport(jobProfile.profileName);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(nameMarcFileForCreate);
-    Logs.checkStatusOfJobProfile('Completed');
+    Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     Logs.openFileDetails(nameMarcFileForCreate);
     Logs.verifyInstanceStatus(0, 2, 'Created');
     Logs.verifyInstanceStatus(0, 3, 'Created');
@@ -210,7 +213,7 @@ describe('ui-data-import', () => {
     JobProfiles.searchJobProfileForImport(jobProfileUpdate.profileName);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(fileNameForUpdate);
-    Logs.checkStatusOfJobProfile('Completed');
+    Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     Logs.openFileDetails(fileNameForUpdate);
     Logs.verifyInstanceStatus(0, 2, 'Created');
     Logs.verifyInstanceStatus(0, 3, 'Updated');

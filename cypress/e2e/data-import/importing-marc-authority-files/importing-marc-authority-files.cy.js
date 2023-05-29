@@ -10,13 +10,14 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import { ACCEPTED_DATA_TYPE_NAMES, JOB_STATUS_NAMES } from '../../../support/constants';
 
 describe('Data Import -> Importing MARC Authority files', { retries: 2 }, () => {
   const testData = {};
   const jobProfileToRun = 'Default - Create SRS MARC Authority';
   const createdJobProfile = {
     profileName: 'Update MARC authority records - 999 ff $s',
-    acceptedType: 'MARC',
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
   };
   let fileName;
   const createdAuthorityIDs = [];
@@ -67,13 +68,13 @@ describe('Data Import -> Importing MARC Authority files', { retries: 2 }, () => 
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(fileName);
-    Logs.checkStatusOfJobProfile('Completed');
+    Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     Logs.openFileDetails(fileName);
     Logs.getCreatedItemsID().then(link => {
       createdAuthorityIDs.push(link.split('/')[5]);
     });
     Logs.goToTitleLink('Created');
-    MarcAuthority.contains('MARC');
+    MarcAuthority.contains(ACCEPTED_DATA_TYPE_NAMES.MARC);
   });
 
   it('C350668 Update a MARC authority record via data import. Record match with 999 ff $s (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
@@ -82,12 +83,12 @@ describe('Data Import -> Importing MARC Authority files', { retries: 2 }, () => 
     JobProfiles.searchJobProfileForImport(createdJobProfile.profileName);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(fileName);
-    Logs.checkStatusOfJobProfile('Completed');
+    Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     Logs.openFileDetails(fileName);
     Logs.getCreatedItemsID().then(link => {
       createdAuthorityIDs.push(link.split('/')[5]);
     });
     Logs.goToTitleLink('Created');
-    MarcAuthority.contains('MARC');
+    MarcAuthority.contains(ACCEPTED_DATA_TYPE_NAMES.MARC);
   });
 });

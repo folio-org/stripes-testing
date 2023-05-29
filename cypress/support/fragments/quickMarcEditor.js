@@ -149,6 +149,10 @@ export default {
     cy.do(restoreDeletedFieldsBtn.click());
   },
 
+  clickLinkIconInTagField(rowIndex) {
+    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).click());
+  },
+
   cancelEditConfirmationPresented() { cy.expect(cancelEditConformModel.exists()); },
 
   confirmEditCancel() { cy.do(cancelEditConfirmBtn.click()); },

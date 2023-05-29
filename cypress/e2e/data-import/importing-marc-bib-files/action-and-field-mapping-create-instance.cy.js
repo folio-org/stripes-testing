@@ -1,5 +1,8 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE,
+  INSTANCE_STATUS_TERM_NAMES,
+  ACCEPTED_DATA_TYPE_NAMES,
+  JOB_STATUS_NAMES } from '../../../support/constants';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -38,7 +41,7 @@ describe('ui-data-import', () => {
   };
   const jobProfile = {
     profileName: `C11103 autotest job profile.${getRandomPostfix()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
   before('login', () => {
@@ -91,7 +94,7 @@ describe('ui-data-import', () => {
     JobProfiles.searchJobProfileForImport(jobProfile.profileName);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(marcFileForCreate);
-    Logs.checkStatusOfJobProfile('Completed');
+    Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     Logs.openFileDetails(marcFileForCreate);
     [FileDetails.columnNameInResultList.srsMarc,
       FileDetails.columnNameInResultList.instance,

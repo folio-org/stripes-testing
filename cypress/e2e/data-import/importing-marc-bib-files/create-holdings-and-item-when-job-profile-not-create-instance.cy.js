@@ -6,7 +6,10 @@ import {
   MATERIAL_TYPE_NAMES,
   ITEM_STATUS_NAMES,
   LOCALION_NAMES,
-  FOLIO_RECORD_TYPE
+  FOLIO_RECORD_TYPE,
+  ACCEPTED_DATA_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES,
+  JOB_STATUS_NAMES
 } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -59,12 +62,12 @@ describe('ui-data-import', () => {
       field: '001'
     },
     matchCriterion: 'Exactly matches',
-    existingRecordType: 'INSTANCE',
+    existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
     instanceOption: NewMatchProfile.optionsList.instanceHrid
   };
   const jobProfile = {
     profileName: `C368009 Testing SRS MARC bib ${Helper.getRandomBarcode()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
   before('create test data', () => {
@@ -85,7 +88,7 @@ describe('ui-data-import', () => {
         DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
         // get hrid of created instance
         JobProfiles.waitFileIsImported(fileName);
-        Logs.checkStatusOfJobProfile('Completed');
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileName);
         FileDetails.openInstanceInInventory('Created');
         InventoryInstance.getAssignedHRID().then(initialInstanceHrId => { instanceHrid = initialInstanceHrId; });
@@ -162,7 +165,7 @@ describe('ui-data-import', () => {
 
       const selectedRecords = 1;
       cy.visit(TopMenu.inventoryPath);
-      InventorySearchAndFilter.bySource('MARC');
+      InventorySearchAndFilter.bySource(ACCEPTED_DATA_TYPE_NAMES.MARC);
       InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
       InventorySearchAndFilter.closeInstanceDetailPane();
       InventorySearchAndFilter.selectResultCheckboxes(selectedRecords);
@@ -183,7 +186,7 @@ describe('ui-data-import', () => {
           JobProfiles.searchJobProfileForImport(jobProfile.profileName);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(exportedFileName);
-          Logs.checkStatusOfJobProfile('Completed');
+          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(exportedFileName);
           [FileDetails.columnNameInResultList.holdings,
             FileDetails.columnNameInResultList.item].forEach(columnName => {

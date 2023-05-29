@@ -15,7 +15,8 @@ import {
   Link,
   including,
   Section,
-  KeyValue
+  KeyValue,
+  Card
 } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import getRandomPostfix from '../../utils/stringTools';
@@ -178,6 +179,38 @@ export default {
   backToEditingOrder: () => {
     cy.do(Button({ id: 'clickable-backToPO' }).click());
     cy.wait(4000);
+  },
+
+  openVersionHistory() {
+    cy.do(Section({ id: 'order-details' }).find(Button({ icon: 'clock' })).click());
+    cy.wait(2000);
+    cy.expect([
+      Section({ id: 'POListing' }).absent(),
+      Section({ id: 'relatedInvoices' }).absent(),
+      Section({ id: 'versions-history-pane-order' }).exists(),
+    ]);
+  },
+
+  checkVersionHistoryCard(date, textInformation) {
+    cy.expect([
+      Section({ id: 'versions-history-pane-order' }).find(Card({ headerStart: date })).has({ text: textInformation }),
+    ]);
+  },
+
+  selectVersionHistoryCard(date) {
+    cy.do([
+      Section({ id: 'versions-history-pane-order' }).find(Card({ headerStart: date })).find(Button({ icon: 'clock' })).click(),
+    ]);
+  },
+
+  closeVersionHistory: () => {
+    cy.do(Section({ id: 'versions-history-pane-order' }).find(Button({ icon: 'times' })).click());
+    cy.wait(2000);
+    cy.expect([
+      Section({ id: 'POListing' }).exists(),
+      Section({ id: 'relatedInvoices' }).exists(),
+      Section({ id: 'versions-history-pane-order' }).absent(),
+    ]);
   },
 
   deleteOrderLine: () => {

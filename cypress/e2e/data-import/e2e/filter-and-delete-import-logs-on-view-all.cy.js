@@ -12,6 +12,7 @@ import DevTeams from '../../../support/dictionary/devTeams';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import TestTypes from '../../../support/dictionary/testTypes';
 import Helper from '../../../support/fragments/finance/financeHelper';
+import { JOB_STATUS_NAMES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   const startedDate = new Date();
@@ -68,7 +69,7 @@ describe('ui-data-import', () => {
           JobProfiles.searchJobProfileForImport('Default - Create SRS MARC Authority');
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(nameMarcFileForCreate);
-          Logs.checkStatusOfJobProfile('Completed');
+          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         }
       });
   });

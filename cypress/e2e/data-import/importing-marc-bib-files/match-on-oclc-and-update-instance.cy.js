@@ -2,7 +2,11 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import DateTools from '../../../support/utils/dateTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE,
+  INSTANCE_STATUS_TERM_NAMES,
+  ACCEPTED_DATA_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES,
+  JOB_STATUS_NAMES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -65,18 +69,18 @@ describe('ui-data-import', () => {
       subfield: 'a'
     },
     matchCriterion: 'Exactly matches',
-    existingRecordType: 'INSTANCE',
+    existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
     instanceOption: 'Identifier: OCLC',
   };
 
   const collectionOfJobProfiles = [
     { jobProfile: {
       profileName: `C11109 create job profile_${getRandomPostfix()}`,
-      acceptedType: NewJobProfile.acceptedDataType.marc
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
     } },
     { jobProfile: {
       profileName: `C11109 update job profile_${getRandomPostfix()}`,
-      acceptedType: NewJobProfile.acceptedDataType.marc
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
     } }
   ];
 
@@ -144,7 +148,7 @@ describe('ui-data-import', () => {
       JobProfiles.searchJobProfileForImport(collectionOfJobProfiles[0].jobProfile.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(nameMarcFileForCreate);
-      Logs.checkStatusOfJobProfile('Completed');
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(nameMarcFileForCreate);
       [FileDetails.columnNameInResultList.srsMarc,
         FileDetails.columnNameInResultList.instance,
@@ -202,7 +206,7 @@ describe('ui-data-import', () => {
           JobProfiles.searchJobProfileForImport(collectionOfJobProfiles[1].jobProfile.profileName);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(nameMarcFileForUpdate);
-          Logs.checkStatusOfJobProfile('Completed');
+          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(nameMarcFileForUpdate);
           FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc);
           FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance);

@@ -95,9 +95,13 @@ export default {
     this.waitLoading();
   },
 
+  enableTitleLevelRequest() {
+    cy.do(titleLevelRequest.click());
+  },
+
   waitLoadingNewRequestPage(TLR = false) {
     cy.expect(Pane({ title: 'New request' }).exists());
-    if (TLR) cy.expect(Checkbox('Create title level request').exists());
+    if (TLR) cy.expect(titleLevelRequest.exists());
     cy.expect([
       Accordion('Item information').exists(),
       Accordion('Request information').exists(),
@@ -122,19 +126,26 @@ export default {
     cy.expect(HTML(including(message)).exists());
   },
 
+  verifyTitleLevelRequestsCheckbox(isChecked = false) {
+    cy.expect(titleLevelRequest.exists());
+    if (isChecked) {
+      cy.expect(titleLevelRequest.has({ checked: true }));
+    } else cy.expect(titleLevelRequest.has({ checked: false }));
+  },
+
   verifyItemInformation: (allContentToCheck) => {
-    return allContentToCheck.forEach(contentToCheck => cy.expect(Section({ id: 'section-item-info' }, including(contentToCheck)).exists));
+    return allContentToCheck.forEach(contentToCheck => cy.expect(Section({ id: 'new-item-info' }, including(contentToCheck)).exists()));
   },
 
   verifyHridInformation: (allContentToCheck) => {
-    return allContentToCheck.forEach(contentToCheck => cy.expect(Section({ id: 'section-instance-info' }, including(contentToCheck)).exists));
+    return allContentToCheck.forEach(contentToCheck => cy.expect(Section({ id: 'section-instance-info' }, including(contentToCheck)).exists()));
   },
 
   verifyRequestInformation: (itemStatus) => {
     if (itemStatus === ITEM_STATUS_NAMES.AVAILABLE) {
-      cy.expect(Section({ id: 'new-request-info' }, including('Page')).exists);
+      cy.expect(Section({ id: 'new-request-info' }, including('Page')).exists());
     } else if (itemStatus === REQUEST_TYPES.HOLD || itemStatus === REQUEST_TYPES.RECALL) {
-      cy.expect(Select({ name: 'requestType' }).exists);
+      cy.expect(Select({ name: 'requestType' }).exists());
     }
     cy.expect([
       TextField({ id: 'requestExpirationDate' }).exists(),
@@ -150,7 +161,7 @@ export default {
     cy.do(requesterBarcodeInput.fillIn(newRequest.requesterBarcode));
     cy.intercept('/proxiesfor?*').as('getUsers');
     cy.do(enterRequesterBarcodeButton.click());
-    cy.expect(selectServicePoint.exists);
+    cy.expect(selectServicePoint.exists());
     cy.wait('@getUsers');
     this.choosepickupServicePoint(newRequest.pickupServicePoint);
   }

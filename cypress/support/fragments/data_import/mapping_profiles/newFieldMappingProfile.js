@@ -14,7 +14,7 @@ import {
   Checkbox
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
-import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES } from '../../../constants';
+import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES, EXISTING_RECORDS_NAMES } from '../../../constants';
 
 const saveButton = Button('Save as profile & Close');
 const organizationModal = Modal('Select Organization');
@@ -126,7 +126,70 @@ const addVendor = (profile) => {
   ]);
 };
 
+const getDefaultInstanceMappingProfile = (name) => {
+  const defaultInstanceMappingProfile = {
+    profile: {
+      name,
+      incomingRecordType: 'MARC_BIBLIOGRAPHIC',
+      existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+    }
+  };
+  return defaultInstanceMappingProfile;
+};
+const getDefaultHoldingsMappingProfile = (name, permLocation) => {
+  const defaultHoldingsMappingProfile = {
+    profile: {
+      name,
+      incomingRecordType: 'MARC_BIBLIOGRAPHIC',
+      existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+      mappingDetails: { name: 'holdings',
+        recordType: 'HOLDINGS',
+        mappingFields: [
+          { name: 'permanentLocationId',
+            enabled: true,
+            path: 'holdings.permanentLocationId',
+            value: `"${permLocation}"` }] }
+    }
+  };
+  return defaultHoldingsMappingProfile;
+};
+const getDefaultItemMappingProfile = (name) => {
+  const defaultItemMappingProfile = {
+    profile: {
+      name,
+      incomingRecordType: 'MARC_BIBLIOGRAPHIC',
+      existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
+      mappingDetails: { name: 'item',
+        recordType: 'ITEM',
+        mappingFields: [
+          { name: 'materialType.id',
+            enabled: true,
+            path: 'item.materialType.id',
+            value: '"book"',
+            acceptedValues: { '1a54b431-2e4f-452d-9cae-9cee66c9a892': 'book' } },
+          { name: 'permanentLoanType.id',
+            enabled: true,
+            path: 'item.permanentLoanType.id',
+            value: '"Can circulate"',
+            acceptedValues: { '2b94c631-fca9-4892-a730-03ee529ffe27': 'Can circulate' } },
+          { name: 'status.name',
+            enabled: true,
+            path: 'item.status.name',
+            value: '"Available"' },
+          { name: 'permanentLocation.id',
+            enabled: 'true',
+            path: 'item.permanentLocation.id',
+            value: `"${permanentLocation}"`,
+            acceptedValues: { 'fcd64ce1-6995-48f0-840e-89ffa2288371' : 'Main Library (KU/CC/DI/M)' } }] }
+    }
+  };
+  return defaultItemMappingProfile;
+};
+
 export default {
+  getDefaultInstanceMappingProfile,
+  getDefaultHoldingsMappingProfile,
+  getDefaultItemMappingProfile,
   incomingRecordType,
   permanentLocation,
   materialType,
@@ -624,7 +687,7 @@ export default {
         body: { profile: {
           name: nameProfile,
           incomingRecordType: 'MARC_BIBLIOGRAPHIC',
-          existingRecordType: 'INSTANCE',
+          existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
         } },
         isDefaultSearchParamsRequired: false,
       })

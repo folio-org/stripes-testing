@@ -279,25 +279,25 @@ export default {
   },
 
   clickViewAuthorityIconDisplayedInTagField(tag) {
-   cy.wrap(QuickMarcEditorRow({ tagValue: tag }).find(Link()).href()).as('link');
-   cy.get('@link').then((link) => {
-    cy.visit(link);
-   });
+    cy.wrap(QuickMarcEditorRow({ tagValue: tag }).find(Link()).href()).as('link');
+    cy.get('@link').then((link) => {
+      cy.visit(link);
+    });
   },
 
   clickViewAuthorityIconDisplayedInContributorField() {
     cy.wrap(Accordion('Contributor').find(MultiColumnListRow({ indexRow: 'row-0' })).find(Link()).href()).as('link');
     cy.get('@link').then((link) => {
-     cy.visit(link);
+      cy.visit(link);
     });
-   },
+  },
 
-   clickViewAuthorityIconDisplayedInMarcViewPane() {
+  clickViewAuthorityIconDisplayedInMarcViewPane() {
     cy.wrap(marcViewPaneContent.find(Link()).href()).as('link');
     cy.get('@link').then((link) => {
-     cy.visit(link);
+      cy.visit(link);
     });
-   },
+  },
 
   goToPreviousPage() {
     cy.go('back');

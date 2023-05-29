@@ -9,7 +9,8 @@ import {
   MATERIAL_TYPE_NAMES,
   ORDER_STATUSES,
   ORDER_FORMAT_NAMES,
-  ACQUISITION_METHOD_NAMES
+  ACQUISITION_METHOD_NAMES,
+  JOB_STATUS_NAMES
 } from '../../../support/constants';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -127,7 +128,7 @@ describe('ui-data-import', () => {
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(marcFileName);
-      Logs.checkStatusOfJobProfile('Completed');
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(marcFileName);
       FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
       FileDetails.checkOrderInSummaryTable(quantityOfItems);
