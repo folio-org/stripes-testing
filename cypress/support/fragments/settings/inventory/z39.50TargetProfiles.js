@@ -11,7 +11,8 @@ import {
   MultiColumnListHeader,
   MultiColumnList,
   MultiColumnListCell,
-  MultiColumnListRow
+  MultiColumnListRow,
+  Callout
 } from '../../../../../interactors';
 
 const oclcWorldcatPane = Pane('✓ OCLC WorldCat');
@@ -98,15 +99,15 @@ export default {
       method: 'PUT',
       path: `copycat/profiles/${defaultCopyCatProfileId}`,
       body: {
-        name:'OCLC WorldCat',
-        url:'zcat.oclc.org/OLUCWorldCat',
-        externalIdQueryMap:'@attr 1=1211 $identifier',
-        internalIdEmbedPath:'999ff$i',
+        name: 'OCLC WorldCat',
+        url: 'zcat.oclc.org/OLUCWorldCat',
+        externalIdQueryMap: '@attr 1=1211 $identifier',
+        internalIdEmbedPath: '999ff$i',
         createJobProfileId: defaultCreateInstanceJobProfileId,
-        updateJobProfileId:defaultUpdateInstanceJobProfileId,
-        targetOptions:{ charset:'utf-8' },
-        externalIdentifierType:'439bfbae-75bc-4f74-9fc7-b2a2d47ce3ef',
-        enabled:true
+        updateJobProfileId: defaultUpdateInstanceJobProfileId,
+        targetOptions: { charset:'utf-8' },
+        externalIdentifierType: '439bfbae-75bc-4f74-9fc7-b2a2d47ce3ef',
+        enabled: true
       },
       isDefaultSearchParamsRequired: false,
     });
@@ -117,17 +118,17 @@ export default {
       method: 'PUT',
       path: `copycat/profiles/${defaultCopyCatProfileId}`,
       body: {
-        name:'OCLC WorldCat',
-        url:'zcat.oclc.org/OLUCWorldCat',
-        externalIdQueryMap:'@attr 1=1211 $identifier',
-        internalIdEmbedPath:'999ff$i',
-        createJobProfileId:defaultCreateInstanceJobProfileId,
-        updateJobProfileId:defaultUpdateInstanceJobProfileId,
-        allowedCreateJobProfileIds:[defaultCreateInstanceJobProfileId],
-        allowedUpdateJobProfileIds:[defaultUpdateInstanceJobProfileId],
-        targetOptions:{ charset:'utf-8' },
-        externalIdentifierType:'439bfbae-75bc-4f74-9fc7-b2a2d47ce3ef',
-        enabled:true,
+        name: 'OCLC WorldCat',
+        url: 'zcat.oclc.org/OLUCWorldCat',
+        externalIdQueryMap: '@attr 1=1211 $identifier',
+        internalIdEmbedPath: '999ff$i',
+        createJobProfileId: defaultCreateInstanceJobProfileId,
+        updateJobProfileId: defaultUpdateInstanceJobProfileId,
+        allowedCreateJobProfileIds: [defaultCreateInstanceJobProfileId],
+        allowedUpdateJobProfileIds: [defaultUpdateInstanceJobProfileId],
+        targetOptions: { charset:'utf-8' },
+        externalIdentifierType: '439bfbae-75bc-4f74-9fc7-b2a2d47ce3ef',
+        enabled: true,
         authentication: value
       },
       isDefaultSearchParamsRequired: false,
@@ -204,20 +205,20 @@ export default {
       .exists());
   },
 
-  verifyTargetProfileIsCreated:(name, message) => {
+  verifyTargetProfileIsCreated:(name) => {
     cy.expect([
       newPane.absent(),
       Pane(`✕ ${name}`).exists()
     ]);
-    // cy.expect(Callout({ textContent: 'The Z39.50 target profile was successfully created.'}).exists());
+    cy.expect(Callout({ textContent: including('created') }).exists());
   },
 
-  verifyTargetProfileIsUpdated:(name, newName, message) => {
+  verifyTargetProfileIsUpdated:(name, newName) => {
     cy.expect([
       Pane(name).absent(),
       Pane(`✕ ${newName}`).exists()
     ]);
-    // cy.expect(Callout({ textContent: 'The Z39.50 target profile was successfully updated.' }).exists());
+    cy.expect(Callout({ textContent: including('updated') }).exists());
   },
 
   getTargetProfileIdViaApi:(searchParams) => {
@@ -256,7 +257,7 @@ export default {
     });
   },
 
-  deleteFundViaApi: (id) => cy.okapiRequest({
+  deleteTargetProfileViaApi: (id) => cy.okapiRequest({
     method: 'DELETE',
     path: `copycat/profiles/${id}`,
     isDefaultSearchParamsRequired: false,
