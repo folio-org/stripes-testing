@@ -11,12 +11,12 @@ import InventoryEditMarcRecord from '../../../support/fragments/inventory/invent
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import { TARGET_PROFILE_NAMES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let user = null;
   const authentication = '100473910/PAOLF';
   const oclcForImport = '19257462';
-  const targetProfileName = '✓ OCLC WorldCat';
   const initialFields = {
     first580field: '‡a Merged with: Journal of the Chemical Society. Perkin transactions I; Journal of the Chemical Society. Perkin transactions II; and Journal of the Chemical Society. Dalton transactions, to form: Perkin 1; Perkin 2; and Dalton (Cambridge, England).',
     first780field: '‡t Acta chemica Scandinavica. Series A, Physical and inorganic chemistry ‡x 0302-4377 ‡w (DLC)sn 79006037 ‡w (OCoLC)981847',
@@ -87,7 +87,7 @@ describe('ui-data-import', () => {
 
       cy.visit(SettingsMenu.targetProfilesPath);
       Z3950TargetProfiles.openTargetProfile();
-      Z3950TargetProfiles.editOclcWorldCat(authentication, targetProfileName);
+      Z3950TargetProfiles.editOclcWorldCat(authentication, TARGET_PROFILE_NAMES.OCLC_WORLDCAT);
       Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(authentication);
 
       cy.visit(TopMenu.inventoryPath);

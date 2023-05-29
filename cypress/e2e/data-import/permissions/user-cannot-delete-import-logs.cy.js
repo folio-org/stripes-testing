@@ -10,6 +10,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
+import { JOB_STATUS_NAMES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let user;
@@ -43,7 +44,7 @@ describe('ui-data-import', () => {
       JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileName);
-      Logs.checkStatusOfJobProfile('Completed');
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       // get Instance HRID through API for delete instance
       InventorySearchAndFilter.getInstanceHRID().then(hrId => { instanceHrid = hrId[0]; });
       Logs.verifyCheckboxForMarkingLogsAbsent();

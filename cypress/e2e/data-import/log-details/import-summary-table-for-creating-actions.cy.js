@@ -14,7 +14,12 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
-import { LOCALION_NAMES, LOAN_TYPE_NAMES, ITEM_STATUS_NAMES, FOLIO_RECORD_TYPE, MATERIAL_TYPE_NAMES } from '../../../support/constants';
+import { LOCALION_NAMES,
+  LOAN_TYPE_NAMES,
+  ITEM_STATUS_NAMES,
+  FOLIO_RECORD_TYPE,
+  MATERIAL_TYPE_NAMES,
+  JOB_STATUS_NAMES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let user;
@@ -135,7 +140,7 @@ describe('ui-data-import', () => {
       JobProfiles.searchJobProfileForImport(jobProfileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(nameMarcFile);
-      Logs.checkStatusOfJobProfile('Completed');
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(nameMarcFile);
 
       // check created instance

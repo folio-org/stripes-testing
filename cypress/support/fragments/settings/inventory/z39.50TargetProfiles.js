@@ -1,3 +1,4 @@
+import { HTML } from '@interactors/html';
 import {
   Button,
   TextField,
@@ -204,20 +205,20 @@ export default {
       .exists());
   },
 
-  verifyTargetProfileIsCreated:(name, message) => {
+  verifyTargetProfileIsCreated:(name) => {
     cy.expect([
       newPane.absent(),
       Pane(`✕ ${name}`).exists()
     ]);
-    // cy.expect(Callout({ textContent: 'The Z39.50 target profile was successfully created.'}).exists());
+    cy.expect(HTML(including('The Z39.50 target profile was successfully created.')).exists());
   },
 
-  verifyTargetProfileIsUpdated:(name, newName, message) => {
+  verifyTargetProfileIsUpdated:(name, newName) => {
     cy.expect([
       Pane(name).absent(),
       Pane(`✕ ${newName}`).exists()
     ]);
-    // cy.expect(Callout({ textContent: 'The Z39.50 target profile was successfully updated.' }).exists());
+    cy.expect(HTML(including('The Z39.50 target profile was successfully updated.')).exists());
   },
 
   getTargetProfileIdViaApi:(searchParams) => {

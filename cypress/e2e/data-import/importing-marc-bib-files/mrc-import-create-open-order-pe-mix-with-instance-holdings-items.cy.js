@@ -9,7 +9,8 @@ import { LOCALION_NAMES,
   MATERIAL_TYPE_NAMES,
   LOAN_TYPE_NAMES,
   ORDER_FORMAT_NAMES,
-  ACQUISITION_METHOD_NAMES } from '../../../support/constants';
+  ACQUISITION_METHOD_NAMES,
+  JOB_STATUS_NAMES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -154,7 +155,7 @@ describe('ui-data-import', () => {
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(marcFileName);
-      Logs.checkStatusOfJobProfile('Completed');
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(marcFileName);
       [FileDetails.columnNameInResultList.srsMarc,
         FileDetails.columnNameInResultList.instance,

@@ -1,7 +1,12 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES, LOCALION_NAMES, CALL_NUMBER_TYPE_NAMES } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE,
+  INSTANCE_STATUS_TERM_NAMES,
+  LOCALION_NAMES,
+  CALL_NUMBER_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES,
+  JOB_STATUS_NAMES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -93,14 +98,14 @@ describe('ui-data-import', () => {
       field: '001'
     },
     matchCriterion: 'Exactly matches',
-    existingRecordType: 'INSTANCE',
+    existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
     instanceOption: NewMatchProfile.optionsList.instanceHrid
   };
   const holdingsMatchProfile = {
     profileName: `C11110 autotest holdings match profile.${getRandomPostfix()}`,
     incomingStaticValue: 'Main Library (KU/CC/DI/M)',
     matchCriterion: 'Exactly matches',
-    existingRecordType: 'HOLDINGS',
+    existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
     itemOption: NewMatchProfile.optionsList.holdingsPermLoc
   };
   const jobProfileForCreate = {
@@ -193,7 +198,7 @@ describe('ui-data-import', () => {
       JobProfiles.searchJobProfileForImport(jobProfileForCreate.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(marcFileNameForCreate);
-      Logs.checkStatusOfJobProfile('Completed');
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(marcFileNameForCreate);
       [FileDetails.columnNameInResultList.srsMarc,
         FileDetails.columnNameInResultList.instance,

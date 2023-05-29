@@ -14,7 +14,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import TopMenu from '../../../support/fragments/topMenu';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { LOCALION_NAMES, FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { LOCALION_NAMES, FOLIO_RECORD_TYPE, ACCEPTED_DATA_TYPE_NAMES, EXISTING_RECORDS_NAMES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   // unique file name to upload
@@ -61,12 +61,12 @@ describe('ui-data-import', () => {
       subfield: 's'
     },
     matchCriterion: 'Exactly matches',
-    existingRecordType: 'MARC_BIBLIOGRAPHIC'
+    existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC
   };
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
     profileName: `autotestJobProf${getRandomPostfix()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
   before('login', () => {

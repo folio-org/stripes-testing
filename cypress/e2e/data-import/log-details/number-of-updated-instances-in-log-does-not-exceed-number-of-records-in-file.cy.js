@@ -3,7 +3,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE, ACCEPTED_DATA_TYPE_NAMES, EXISTING_RECORDS_NAMES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -59,12 +59,12 @@ describe('ui-data-import', () => {
       field: '001'
     },
     matchCriterion: 'Exactly matches',
-    existingRecordType: 'MARC_BIBLIOGRAPHIC'
+    existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC
   };
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
     profileName: `C367966 Update 1: MARC Bib with protections ${getRandomPostfix()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
   before('login', () => {

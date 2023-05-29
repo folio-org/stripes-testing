@@ -1,4 +1,5 @@
 import getRandomPostfix from '../../../utils/stringTools';
+import { PROFILE_TYPE_NAMES } from '../../../constants';
 
 const marcAuthorityUpdateActionProfile = {
   'profile': {
@@ -10,10 +11,10 @@ const marcAuthorityUpdateActionProfile = {
   'addedRelations': [
     {
       'masterProfileId': null,
-      'masterProfileType': 'ACTION_PROFILE',
+      'masterProfileType': PROFILE_TYPE_NAMES.ACTION_PROFILE,
       // detailProfileId should be related with existing mapping profile
       'detailProfileId': null,
-      'detailProfileType': 'MAPPING_PROFILE'
+      'detailProfileType': PROFILE_TYPE_NAMES.MAPPING_PROFILE
     }
   ],
   'deletedRelations': []
