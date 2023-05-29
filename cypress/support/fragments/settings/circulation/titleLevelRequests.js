@@ -19,7 +19,8 @@ export default {
       .then((checked) => {
         if (!checked && status === 'allow') {
           cy.expect(Checkbox({ name: 'titleLevelRequestsFeatureEnabled', disabled: false }).exists());
-          cy.do([TLRCheckbox.click(), SaveButton.click()]);
+          cy.do(TLRCheckbox.click());
+          cy.do(SaveButton.click());
           this.checkUpdateTLRCalloutAppeared();
         } else if (checked && status === 'forbid') {
           cy.expect(Checkbox({ name: 'titleLevelRequestsFeatureEnabled', disabled: false }).exists());
