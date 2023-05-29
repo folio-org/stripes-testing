@@ -11,7 +11,6 @@ import {
   MultiColumnList,
   PaneHeader,
   KeyValue,
-  Section,
 } from '../../../../interactors';
 
 const searchButton = Button({ type: 'submit' });
@@ -21,7 +20,7 @@ const endTimeAccordion = Accordion({ id: 'endTime' });
 const systemAccordion = Accordion({ id: 'isSystemSource' });
 const sourceAccordion = Accordion({ id: 'createdByUserId' });
 const jobTypeAccordion = Accordion({ id: 'type' });
-const statusAccordion = Section({ id: 'edi-status-filter' });
+const statusAccordion = Accordion({ id: 'status' });
 const startDateTextfield = TextField({ name: 'startDate' });
 const endDateTextfield = TextField({ name: 'endDate' });
 const applyButton = Button('Apply');
