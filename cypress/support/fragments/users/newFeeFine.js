@@ -17,25 +17,11 @@ const getChargeFeeFine = ({ amount, userId, feeFineType, id, dateAction, created
   source,
 });
 
-const getNewFeeFineAccount = ({ id, ownerId, feeFineId, amount, paymentStatus, status, userId, feeFineType, feeFineOwner }) => ({
-  // required field
-  feeFineId,
-  // required field
-  ownerId,
-  // required field
-  amount,
-  paymentStatus: paymentStatus || { 'name':'Outstanding' },
-  status: status || { 'name':'Open' },
-  // required field
-  id,
-  // required field
-  userId,
-  // required field
-  feeFineType,
-  // required field
-  remaining: amount,
-  // required field
-  feeFineOwner,
+const getNewFeeFineAccount = (values) => ({
+  ...values,
+  paymentStatus: values.paymentStatus || { 'name':'Outstanding' },
+  status: values.status || { 'name':'Open' },
+  remaining: values.amount,
 });
 
 const createFeeFineAccountViaApi = (feeFineAccount) => (
