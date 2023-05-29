@@ -127,6 +127,14 @@ export default {
     MultiColumnListCell(record).has({ innerHTML: including(`<strong>${record}</strong>`) });
   },
 
+  checkAuthorityIconAndValueDisplayed(value) {
+    cy.expect([
+      MultiColumnListCell({ row: 5, columnIndex: 0 }).has({ innerHTML: including(`<strong>${value}</strong>`) }),
+      MultiColumnListCell({ row: 5, columnIndex: 0 }).has({ innerHTML: including('<img') }),
+      MultiColumnListCell({ row: 5, columnIndex: 0 }).has({ innerHTML: including('alt="MARC Authorities module">') }),
+    ]);
+  },
+
   checkSearchResultRow(contributorName, contributorNameType, contributorType, numberOfTitles) {
     cy.expect(MultiColumnListRow(`${contributorName}${contributorNameType}${contributorType}${numberOfTitles}`).exists());
   },
