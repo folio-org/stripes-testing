@@ -106,7 +106,7 @@ describe('Browse in Inventory', () => {
     DataImport.confirmDeleteImportLogs();
   });
 
-  it('C388531 Verify that contributors with the same "Name" , "Name type" and "authorityID" will display as one row (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
+  it('C388531 Verify that contributors with the same "Name" , "Name type" and "authorityID" will display as one row (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     InventorySearchAndFilter.switchToBrowseTab();
     InventorySearchAndFilter.verifyKeywordsAsDefault();
     BrowseContributors.select();
