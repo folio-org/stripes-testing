@@ -1,4 +1,5 @@
 import getRandomPostfix from '../../../utils/stringTools';
+import { PROFILE_TYPE_NAMES } from '../../../constants';
 
 const marcAuthorityUpdateJobProfile = {
   'profile': {
@@ -9,19 +10,19 @@ const marcAuthorityUpdateJobProfile = {
   'addedRelations': [
     {
       'masterProfileId': null,
-      'masterProfileType': 'JOB_PROFILE',
+      'masterProfileType': PROFILE_TYPE_NAMES.JOB_PROFILE,
       // match profile should be specified
       'detailProfileId': null,
-      'detailProfileType': 'MATCH_PROFILE',
+      'detailProfileType': PROFILE_TYPE_NAMES.MATCH_PROFILE,
       'order': 0
     },
     {
       // match profile should be specified
       'masterProfileId': null,
-      'masterProfileType': 'MATCH_PROFILE',
+      'masterProfileType': PROFILE_TYPE_NAMES.MATCH_PROFILE,
       // action profile should be specified
       'detailProfileId': null,
-      'detailProfileType': 'ACTION_PROFILE',
+      'detailProfileType': PROFILE_TYPE_NAMES.ACTION_PROFILE,
       'order': 0,
       'reactTo': 'MATCH'
     }

@@ -2,7 +2,11 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE,
+  INSTANCE_STATUS_TERM_NAMES,
+  ACCEPTED_DATA_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES,
+  JOB_STATUS_NAMES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -16,7 +20,6 @@ import FieldMappingProfiles from '../../../support/fragments/data_import/mapping
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
@@ -55,13 +58,13 @@ describe('ui-data-import', () => {
       subfield: 'i'
     },
     matchCriterion: 'Exactly matches',
-    existingRecordType: 'INSTANCE',
+    existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
     instanceOption: NewMatchProfile.optionsList.instanceUuid
   };
 
   const jobProfile = {
     profileName: `C358998 Update instance via 999$i match and check 001, 003, 035 ${getRandomPostfix()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
   beforeEach('create test data', () => {
@@ -89,7 +92,7 @@ describe('ui-data-import', () => {
       JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(firstMarcFileNameForCreate);
-      Logs.checkStatusOfJobProfile('Completed');
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(firstMarcFileNameForCreate);
       [FileDetails.columnNameInResultList.srsMarc,
         FileDetails.columnNameInResultList.instance].forEach(columnName => {
@@ -147,7 +150,7 @@ describe('ui-data-import', () => {
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(firstFileNameAfterUpload);
-        Logs.checkStatusOfJobProfile('Completed');
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(firstFileNameAfterUpload);
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc);
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance);
@@ -200,7 +203,7 @@ describe('ui-data-import', () => {
       JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(secondMarcFileNameForCreate);
-      Logs.checkStatusOfJobProfile('Completed');
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(secondMarcFileNameForCreate);
       cy.wrap(fieldsContent).each(row => {
         cy.wait(8000);
@@ -269,7 +272,7 @@ describe('ui-data-import', () => {
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(secondFileNameAfterUpload);
-      Logs.checkStatusOfJobProfile('Completed');
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(secondFileNameAfterUpload);
       cy.wrap(fieldsContent).each(row => {
         cy.wait(8000);

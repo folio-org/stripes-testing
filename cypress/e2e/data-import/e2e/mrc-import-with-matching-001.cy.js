@@ -1,7 +1,7 @@
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import TopMenu from '../../../support/fragments/topMenu';
-import { FOLIO_RECORD_TYPE, LOCALION_NAMES } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE, LOCALION_NAMES, ACCEPTED_DATA_TYPE_NAMES, EXISTING_RECORDS_NAMES } from '../../../support/constants';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -34,7 +34,7 @@ describe('ui-data-import', () => {
       field: '001',
     },
     matchCriterion: 'Exactly matches',
-    existingRecordType: 'MARC_BIBLIOGRAPHIC'
+    existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC
   };
   const mappingProfile = {
     name: `autoTestMappingProf.${getRandomPostfix()}`,
@@ -50,7 +50,7 @@ describe('ui-data-import', () => {
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
     profileName: `autoTestJobProf.${getRandomPostfix()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
   before('login', () => {

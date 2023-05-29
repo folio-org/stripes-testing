@@ -2,7 +2,10 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE,
+  ACCEPTED_DATA_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES,
+  JOB_STATUS_NAMES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
@@ -109,18 +112,18 @@ describe('ui-data-import', () => {
       field: '001'
     },
     matchCriterion: 'Exactly matches',
-    existingRecordType: 'MARC_BIBLIOGRAPHIC' };
+    existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC };
 
   const jobProfileForUpdate = {
     ...NewJobProfile.defaultJobProfile,
     profileName: `C17018 Update 1: MARC Bib with protections.${getRandomPostfix()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
   const jobProfileForOverride = {
     ...NewJobProfile.defaultJobProfile,
     profileName: `C17018 Update 2: MARC Bib with protections.${getRandomPostfix()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
 
@@ -235,7 +238,7 @@ describe('ui-data-import', () => {
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(fileNameForCreatingInstance);
-    Logs.checkStatusOfJobProfile('Completed');
+    Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     Logs.openFileDetails(fileNameForCreatingInstance);
     [FileDetails.columnNameInResultList.srsMarc, FileDetails.columnNameInResultList.instance].forEach(columnName => {
       FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
@@ -258,7 +261,7 @@ describe('ui-data-import', () => {
         JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForProtect);
-        Logs.checkStatusOfJobProfile('Completed');
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForProtect);
         [FileDetails.columnNameInResultList.srsMarc, FileDetails.columnNameInResultList.instance].forEach(columnName => {
           FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
@@ -288,7 +291,7 @@ describe('ui-data-import', () => {
         JobProfiles.searchJobProfileForImport(jobProfileForOverride.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForOverride);
-        Logs.checkStatusOfJobProfile('Completed');
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForOverride);
         [FileDetails.columnNameInResultList.srsMarc, FileDetails.columnNameInResultList.instance].forEach(columnName => {
           FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);

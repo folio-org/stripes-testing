@@ -208,17 +208,17 @@ export default {
   verifyTargetProfileIsCreated:(name) => {
     cy.expect([
       newPane.absent(),
-      Pane(`✕ ${name}`).exists()
+      Pane(`✕ ${name}`).exists(),
+      Callout({ textContent: including('created') }).exists()
     ]);
-    cy.expect(Callout({ textContent: including('created') }).exists());
   },
 
   verifyTargetProfileIsUpdated:(name, newName) => {
     cy.expect([
       Pane(name).absent(),
-      Pane(`✕ ${newName}`).exists()
+      Pane(`✕ ${newName}`).exists(),
+      Callout({ textContent: including('updated') }).exists()
     ]);
-    cy.expect(Callout({ textContent: including('updated') }).exists());
   },
 
   getTargetProfileIdViaApi:(searchParams) => {

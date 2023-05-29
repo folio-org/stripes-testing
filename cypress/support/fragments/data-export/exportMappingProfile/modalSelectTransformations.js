@@ -1,5 +1,14 @@
 import { including } from '@interactors/html';
-import { Checkbox, Button, Modal, TextField, MultiColumnListRow, MultiColumnListCell, Pane, MultiColumnListHeader } from '../../../../../interactors';
+import {
+  Checkbox,
+  Button,
+  Modal,
+  TextField,
+  MultiColumnListRow,
+  MultiColumnListCell,
+  Pane,
+  MultiColumnListHeader
+} from '../../../../../interactors';
 
 const ModalTransformation = Modal('Select transformations');
 const instanceRecordTypeChechbox = Checkbox({ value: 'INSTANCE', name: 'filters.recordTypes' });
