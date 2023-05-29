@@ -94,7 +94,7 @@ describe('Orders: orders', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C369046: "Version history" viewing for Order (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
+  it('C369046: "Version history" viewing for Order (thunderjet)', { tags: [TestTypes.criticalPath, devTeams.thunderjet] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     OrderLines.openVersionHistory();
