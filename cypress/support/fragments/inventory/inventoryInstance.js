@@ -285,8 +285,8 @@ export default {
     });
   },
 
-  clickViewAuthorityIconDisplayedInContributorField() {
-    cy.wrap(Accordion('Contributor').find(MultiColumnListRow({ indexRow: 'row-0' })).find(Link()).href()).as('link');
+  clickViewAuthorityIconDisplayedInInstanceDetailsPane(accordion) {
+    cy.wrap(Accordion(accordion).find(Link()).href()).as('link');
     cy.get('@link').then((link) => {
       cy.visit(link);
     });
@@ -301,6 +301,14 @@ export default {
 
   goToPreviousPage() {
     cy.go('back');
+  },
+
+  checkAbsenceOfAuthorityIconInInstanceDetailPane(accordion) {
+    cy.expect(Accordion(accordion).find(Link()).absent());
+  },
+
+  checkAbsenceOfAuthorityIconInMarcViewPane() {
+    cy.expect(marcViewPaneContent.find(Link()).absent());
   },
 
   verifyAndClickLinkIcon(tag) {

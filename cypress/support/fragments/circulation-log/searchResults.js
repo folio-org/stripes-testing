@@ -4,6 +4,9 @@ import {
   Link,
   MultiColumnListHeader,
   including,
+  MultiColumnListRow,
+  Button,
+  DropdownMenu,
 } from '../../../../interactors';
 
 const resultTable = MultiColumnList({ id: 'circulation-log-list' });
@@ -21,5 +24,14 @@ export default {
     return cy.wrap(Object.values(columns)).each((columnToCheck) => {
       cy.expect(resultTable.find(MultiColumnListHeader({ content: including(columnToCheck) })).absent());
     });
+  },
+
+  chooseActionByRow(rowIndex, actionName) {
+    cy.do([
+      MultiColumnListRow({ indexRow: `row-${rowIndex}` })
+        .find(Button({ icon: 'ellipsis' }))
+        .click(),
+      DropdownMenu().find(Button(actionName)).click(),
+    ]);
   },
 };
