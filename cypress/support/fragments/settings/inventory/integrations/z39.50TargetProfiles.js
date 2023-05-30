@@ -13,7 +13,7 @@ import {
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow
-} from '../../../../../interactors';
+} from '../../../../../../interactors';
 
 const oclcWorldcatPane = Pane('✓ OCLC WorldCat');
 const targetProfileName = Pane('Z39.50 target profiles');
