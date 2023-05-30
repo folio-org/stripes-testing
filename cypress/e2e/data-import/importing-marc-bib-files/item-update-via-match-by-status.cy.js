@@ -7,7 +7,8 @@ import {
   ITEM_STATUS_NAMES,
   LOCALION_NAMES,
   FOLIO_RECORD_TYPE,
-  MATERIAL_TYPE_NAMES
+  MATERIAL_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES
 } from '../../../support/constants';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -88,7 +89,7 @@ describe('ui-data-import', () => {
       subfield: 'a'
     },
     matchCriterion: 'Exactly matches',
-    existingRecordType: 'ITEM',
+    existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
     itemOption: NewMatchProfile.optionsList.itemHrid
   };
 
@@ -96,7 +97,7 @@ describe('ui-data-import', () => {
     profileName: `C357552 Item status = Available ${Helper.getRandomBarcode()}`,
     incomingStaticValue: 'Available',
     matchCriterion: 'Exactly matches',
-    existingRecordType: 'ITEM',
+    existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
     itemOption: NewMatchProfile.optionsList.status,
   };
 

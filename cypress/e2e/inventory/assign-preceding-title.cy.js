@@ -7,6 +7,7 @@ import InstanceRecordEdit from '../../support/fragments/inventory/instanceRecord
 import Helper from '../../support/fragments/finance/financeHelper';
 import TestTypes from '../../support/dictionary/testTypes';
 import DevTeams from '../../support/dictionary/devTeams';
+import { INSTANCE_SOURCE_NAMES } from '../../support/constants';
 
 describe('ui-inventory: Assign a Preceding title for an instance', () => {
   const instanceIds = [];
@@ -28,11 +29,11 @@ describe('ui-inventory: Assign a Preceding title for an instance', () => {
           {
             instanceTypeId: Cypress.env('instanceTypes')[0].id,
             title: instanceTitle,
-            source: 'FOLIO',
+            source: INSTANCE_SOURCE_NAMES.FOLIO,
           }, {
             instanceTypeId: Cypress.env('instanceTypes')[0].id,
             title: instanceTitle2,
-            source: 'FOLIO',
+            source: INSTANCE_SOURCE_NAMES.FOLIO,
           }
         ]).each((instance, i) => cy.createInstance({ instance }).then(specialInstanceId => { instanceIds[i] = specialInstanceId; }));
       });

@@ -15,13 +15,13 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventoryEditMarcRecord from '../../../support/fragments/inventory/inventoryEditMarcRecord';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import Users from '../../../support/fragments/users/users';
+import { TARGET_PROFILE_NAMES, JOB_STATUS_NAMES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let user = null;
   let instanceHrid = null;
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const protectedField = '856';
-  const targetProfileName = '✓ OCLC WorldCat';
   const authentication = '100473910/PAOLF';
   const oclcForChanging = '466478385';
   const imported856Field = 'Notice et cote du catalogue de la Bibliothèque nationale de France ‡u http://catalogue.bnf.fr/ark:/12148/cb371881758';
@@ -53,7 +53,7 @@ describe('ui-data-import', () => {
         JobProfiles.searchJobProfileForImport(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);
-        Logs.checkStatusOfJobProfile('Completed');
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileName);
         [FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance].forEach(columnName => {
@@ -93,7 +93,7 @@ describe('ui-data-import', () => {
 
       cy.visit(SettingsMenu.targetProfilesPath);
       Z3950TargetProfiles.openTargetProfile();
-      Z3950TargetProfiles.editOclcWorldCat(authentication, targetProfileName);
+      Z3950TargetProfiles.editOclcWorldCat(authentication, TARGET_PROFILE_NAMES.OCLC_WORLDCAT);
       Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(authentication);
 
       cy.visit(TopMenu.inventoryPath);

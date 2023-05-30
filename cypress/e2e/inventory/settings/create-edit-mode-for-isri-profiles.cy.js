@@ -35,7 +35,7 @@ describe('ui-inventory', () => {
     Users.deleteViaApi(user.userId);
     Z3950TargetProfiles.getTargetProfileIdViaApi({ query: `name="${newTargetProfileName}"` })
       .then(profileId => {
-        Z3950TargetProfiles.getTargetProfileIdViaApi(profileId);
+        Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);
       });
   });
 

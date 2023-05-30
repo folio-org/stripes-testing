@@ -6,6 +6,7 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import Helper from '../../support/fragments/finance/financeHelper';
 import DevTeams from '../../support/dictionary/devTeams';
+import { INSTANCE_SOURCE_NAMES } from '../../support/constants';
 
 describe('ui-inventory: Assign tags to an Instance record', () => {
   const instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
@@ -28,7 +29,7 @@ describe('ui-inventory: Assign tags to an Instance record', () => {
           instance: {
             instanceTypeId: Cypress.env('instanceTypes')[0].id,
             title: instanceTitle,
-            source: 'FOLIO',
+            source: INSTANCE_SOURCE_NAMES.FOLIO
           },
         }).then(specialInstanceId => { instanceId = specialInstanceId; });
       });

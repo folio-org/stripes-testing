@@ -12,6 +12,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Users from '../../../support/fragments/users/users';
+import { TARGET_PROFILE_NAMES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let user = {};
@@ -57,7 +58,7 @@ describe('ui-data-import', () => {
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       cy.visit(SettingsMenu.targetProfilesPath);
       Z3950TargetProfiles.openTargetProfile();
-      Z3950TargetProfiles.editOclcWorldCat(authentication);
+      Z3950TargetProfiles.editOclcWorldCat(authentication, TARGET_PROFILE_NAMES.OCLC_WORLDCAT);
       Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(authentication);
 
       // import a file

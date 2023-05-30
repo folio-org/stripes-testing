@@ -9,7 +9,9 @@ import {
   INSTANCE_STATUS_TERM_NAMES,
   LOCALION_NAMES,
   LOAN_TYPE_NAMES,
-  ITEM_STATUS_NAMES
+  ITEM_STATUS_NAMES,
+  ACCEPTED_DATA_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES
 } from '../../../support/constants';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -74,12 +76,12 @@ describe('ui-data-import', () => {
       subfield: 'a'
     },
     matchCriterion: 'Exactly matches',
-    existingRecordType: 'INSTANCE',
+    existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
     instanceOption: NewMatchProfile.optionsList.systemControlNumber
   };
   const jobProfile = { ...NewJobProfile.defaultJobProfile,
     profileName: `C378901 job profile ${getRandomPostfix()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc };
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC };
 
   before('login', () => {
     cy.createTempUser([

@@ -2,7 +2,11 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TestTypes from '../../../support/dictionary/testTypes';
-import { LOCALION_NAMES, FOLIO_RECORD_TYPE, CALL_NUMBER_TYPE_NAMES } from '../../../support/constants';
+import { LOCALION_NAMES,
+  FOLIO_RECORD_TYPE,
+  CALL_NUMBER_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES,
+  JOB_STATUS_NAMES } from '../../../support/constants';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -56,7 +60,7 @@ describe('ui-data-import', () => {
       subfield: 'u'
     },
     matchCriterion: 'Exactly matches',
-    existingRecordType: 'HOLDINGS',
+    existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
     holdingsOption: NewMatchProfile.optionsList.uri,
   };
 
@@ -155,7 +159,7 @@ describe('ui-data-import', () => {
     JobProfiles.searchJobProfileForImport(createInstanceAndEHoldingsJobProfile.profileName);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(nameForCreateMarcFile);
-    Logs.checkStatusOfJobProfile('Completed');
+    Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     Logs.openFileDetails(nameForCreateMarcFile);
     FileDetails.openInstanceInInventory('Created');
     InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
