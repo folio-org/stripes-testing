@@ -51,16 +51,15 @@ const ordersResultsPane = Pane({ id: 'orders-results-pane' });
 const buttonAcquisitionMethodFilter = Button({ id: 'accordion-toggle-button-acquisitionMethod' });
 const purchaseOrderSection = Section({ id: 'purchaseOrder' });
 const purchaseOrderLineLimitReachedModal = Modal({ id: 'data-test-lines-limit-modal' });
-const searchByParameter = (parameter, value) => {
-  cy.do([
-    searchForm.selectIndex(parameter),
-    searchForm.fillIn(value),
-    Button('Search').click(),
-  ]);
-};
 
 export default {
-  searchByParameter,
+  searchByParameter(parameter, value) {
+    cy.do([
+      searchForm.selectIndex(parameter),
+      searchForm.fillIn(value),
+      Button('Search').click(),
+    ]);
+  },
   waitLoading() {
     cy.expect([
       ordersFiltersPane.exists(),
@@ -89,7 +88,7 @@ export default {
     return cy.get('@orderNumber');
   },
 
-  openOrder: () => {
+  openOrder() {
     cy.do([
       orderDetailsPane
         .find(PaneHeader({ id: 'paneHeaderorder-details' })
@@ -101,12 +100,19 @@ export default {
     cy.wait(4000);
   },
 
-  editOrder: () => {
+  editOrder() {
     cy.do([
       orderDetailsPane
         .find(PaneHeader({ id: 'paneHeaderorder-details' })
           .find(actionsButton)).click(),
       Button('Edit').click(),
+    ]);
+  },
+
+  approveOrder() {
+    cy.do([
+      Checkbox('Approved').click(),
+      saveAndClose.click()
     ]);
   },
 
@@ -162,6 +168,29 @@ export default {
       Button('Submit').click(),
     ]);
     InteractorsTools.checkCalloutMessage('Order was closed');
+  },
+
+  cancelOrder: () => {
+    cy.do([
+      orderDetailsPane
+        .find(PaneHeader({ id: 'paneHeaderorder-details' })
+          .find(actionsButton)).click(),
+      Button('Cancel').click(),
+      Button('Submit').click(),
+    ]);
+    InteractorsTools.checkCalloutMessage('Order was closed');
+  },
+
+  editOrderToManual: (orderNumber) => {
+    cy.do([
+      orderDetailsPane
+        .find(PaneHeader({ id: 'paneHeaderorder-details' })
+          .find(actionsButton)).click(),
+      Button('Edit').click(),
+      Checkbox({ name: 'manualPo' }).click(),
+      saveAndClose.click()
+    ]);
+    InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully saved`);
   },
 
   unOpenOrder: () => {
@@ -356,7 +385,7 @@ export default {
     ]);
   },
 
-  selectFromResultsList: (number) => {
+  selectFromResultsList(number) {
     cy.do(MultiColumnList({ id:'orders-list' }).find(Link(number)).click());
   },
 

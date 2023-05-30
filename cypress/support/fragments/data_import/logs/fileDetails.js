@@ -37,6 +37,7 @@ const status = {
   updated: 'Updated',
   noAction: 'No action',
   dash: 'No value set-',
+  blank: 'No value set',
   error: 'Error'
 };
 

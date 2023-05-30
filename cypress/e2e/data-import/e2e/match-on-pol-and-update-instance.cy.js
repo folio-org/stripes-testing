@@ -7,7 +7,9 @@ import {
   MATERIAL_TYPE_NAMES,
   ITEM_STATUS_NAMES,
   FOLIO_RECORD_TYPE,
-  CALL_NUMBER_TYPE_NAMES
+  CALL_NUMBER_TYPE_NAMES,
+  ACCEPTED_DATA_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES
 } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -76,13 +78,13 @@ describe('ui-data-import', () => {
       subfield:'a'
     },
     matchCriterion: 'Exactly matches',
-    existingRecordType: 'INSTANCE',
+    existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
     instanceOption: NewMatchProfile.optionsList.pol
   };
 
   const jobProfile = { ...NewJobProfile.defaultJobProfile,
     profileName: `C350944 Update Instance, and create Holdings, Item based on POL match ${Helper.getRandomBarcode()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc };
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC };
 
   const order = { ...NewOrder.defaultOneTimeOrder,
     vendor: 'GOBI Library Solutions',

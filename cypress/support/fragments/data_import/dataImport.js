@@ -20,6 +20,7 @@ import MarcAuthorities from '../marcAuthority/marcAuthorities';
 import FileManager from '../../utils/fileManager';
 import Logs from './logs/logs';
 import DataImportUploadFile from '../../../../interactors/dataImportUploadFile';
+import { ACCEPTED_DATA_TYPE_NAMES, JOB_STATUS_NAMES } from '../../constants';
 
 const sectionPaneJobsTitle = Section({ id: 'pane-jobs-title' });
 const actionsButton = Button('Actions');
@@ -145,7 +146,7 @@ function processFile(uploadDefinitionId, fileId, sourcePath, jobExecutionId, uiK
       jobProfileInfo: {
         id: jobProfileId,
         name: 'Default - Create instance and SRS MARC Bib',
-        dataType: 'MARC'
+        dataType: ACCEPTED_DATA_TYPE_NAMES.MARC
       }
     },
     isDefaultSearchParamsRequired: false
@@ -166,7 +167,7 @@ export default {
     JobProfiles.searchJobProfileForImport(profileName);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(fileName);
-    Logs.checkStatusOfJobProfile('Completed');
+    Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     Logs.openFileDetails(fileName);
   },
 

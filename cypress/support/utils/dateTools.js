@@ -27,7 +27,7 @@ export default {
 
   getPreviousDayDate: () => {
     const today = new Date();
-    let yesterday = new Date(today);
+    const yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
 
     if (today.getMonth() !== yesterday.getMonth()) {
@@ -42,7 +42,7 @@ export default {
 
   getTomorrowDayDateForFiscalYear: () => {
     const today = new Date();
-    let tomorrow = new Date(today);
+    const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
 
     if (today.getMonth() !== tomorrow.getMonth()) {
@@ -52,7 +52,7 @@ export default {
     const month = tomorrow.getMonth() + 1;
     const day = tomorrow.getDate();
     const year = tomorrow.getFullYear();
-    return`${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}/${year}`;
+    return `${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}/${year}`;
   },
 
   getDayAfterTomorrowDateForFiscalYear: () => {
@@ -164,11 +164,25 @@ export default {
     const today = new Date();
     let hours = today.getUTCHours();
     let minutes = today.getUTCMinutes() + 2;
-    let ampm = hours >= 12 ? 'P' : 'A';
-    hours = hours % 12;
-    hours = hours ? hours : 12;
+    const ampm = hours >= 12 ? 'P' : 'A';
+    hours %= 12;
+    hours = hours || 12;
     minutes = minutes < 10 ? '0' + minutes : minutes;
     return hours + ':' + minutes + ' ' + ampm;
     // return value in format HH:MM AM/PM
+  },
+  getCurrentUTCTime() {
+    const currentDate = new Date();
+    const options = {
+      month: 'numeric',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true,
+      timeZone: 'UTC'
+    };
+    const formattedTime = currentDate.toLocaleString('en-US', options);
+    return formattedTime;
   },
 };
