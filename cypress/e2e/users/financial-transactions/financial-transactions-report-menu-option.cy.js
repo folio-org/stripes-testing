@@ -16,10 +16,13 @@ describe('Financial Transactions Detail Report', () => {
         ownerData.name = ownerName;
         ownerData.id = id;
       });
-    }).then(() => {
-      cy.loginAsAdmin();
-      cy.visit(TopMenu.usersPath);
-      UsersSearchResultsPane.waitLoading();
+    });
+  });
+
+  beforeEach('visiting Users module', () => {
+    cy.loginAsAdmin();
+    cy.visit(TopMenu.usersPath);
+    UsersSearchResultsPane.waitLoading();
     });
   });
 
