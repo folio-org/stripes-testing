@@ -11,27 +11,19 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import TargetProfileView from '../../../support/fragments/settings/inventory/integrations/targetProfileView';
+import ViewTargetProfile from '../../../support/fragments/settings/inventory/integrations/viewTargetProfile';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-
-
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-
 import InventoryModals from '../../../support/fragments/inventory/inventoryModals';
-
+import InteractorsTools from '../../../support/utils/interactorsTools';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import Users from '../../../support/fragments/users/users';
-
 
 describe('ui-inventory', () => {
   let user;
   let instanceHRID;
+  const profileForImport = 'Inventory Single Record - Default Update Instance (Default)';
   const fileName = `C375146autotestFile.${getRandomPostfix()}.mrc`;
+  const targetIdentifier = '1234567';
   const targetProfile = {
     name: 'OCLC WorldCat',
     url: 'zcat.oclc.org/OLUCWorldCat',
@@ -39,6 +31,8 @@ describe('ui-inventory', () => {
     externalId: '@attr 1=1211 $identifier',
     internalId: '999ff$i'
   };
+  const successCalloutMessage = 'Record 1234567 updated. Results may take a few moments to become visible in Inventory';
+  const instanceTitle = 'The Gospel according to Saint Mark : Evangelistib Markusib aglangit.';
 
   before('login', () => {
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
@@ -54,7 +48,7 @@ describe('ui-inventory', () => {
         Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF');
         cy.visit(SettingsMenu.targetProfilesPath);
         Z3950TargetProfiles.openTargetProfile();
-        TargetProfileView.verifyTargetProfileForm(
+        ViewTargetProfile.verifyTargetProfileForm(
           targetProfile.name,
           targetProfile.url,
           targetProfile.authentification,
@@ -76,10 +70,27 @@ describe('ui-inventory', () => {
       });
   });
 
+  after('delete test data', () => {
+    Users.deleteViaApi(user.userId);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
+      .then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+  });
+
   it('C375146 Verify the modal window for ISRI In inventory instance details menu for single target profile (update) (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
       InventoryInstance.startOverlaySourceBibRecord();
-
+      InventoryModals.verifyReImportModalWithOneTargetProfile();
+      InventoryModals.verifySelectTheProfileToBeUsedToOverlayTheCurrentDataField(profileForImport);
+      InventoryModals.selectTheProfileToBeUsedToOverlayTheCurrentData(profileForImport);
+      InventoryModals.fillEnterTheTargetIdentifier(targetIdentifier);
+      InventoryModals.reImport();
+      // need to wait because after the import the data in the instance is displayed for a long time
+      // https://issues.folio.org/browse/MODCPCT-73
+      cy.wait(10000);
+      InteractorsTools.checkCalloutMessage(successCalloutMessage);
+      InstanceRecordView.verifyIsInstanceOpened(instanceTitle);
     });
 });

@@ -4,7 +4,7 @@ import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/z39.50TargetProfiles';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
