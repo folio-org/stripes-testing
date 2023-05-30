@@ -41,7 +41,7 @@ describe('ui-data-import', () => {
     edition: '250$a',
     internalNote: '981$d',
     acquisitionMethod: ACQUISITION_METHOD_NAMES.PURCHASE_AT_VENDOR_SYSTEM,
-    orderFormat: ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE,
+    orderFormat: ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE_Check,
     receiptStatus: 'Pending',
     paymentStatus: 'Pending',
     selector: '981$e',
