@@ -25,7 +25,6 @@ export default {
     options.forEach((option) => {
       cy.expect(actionsButtons[option].exists());
     });
-    cy.do(actionsButtonInSearchResultsPane.click());
   },
   openFinancialTransactionDetailReportModal:() => {
     cy.do([actionsButtonInSearchResultsPane.click(), actionsButtons['financialTransactionsReport'].click()]);

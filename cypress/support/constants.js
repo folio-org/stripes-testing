@@ -157,7 +157,7 @@ export const ACQUISITION_METHOD_NAMES = {
   MEMBERSHIP: 'Membership',
   OTHER: 'Other',
   PURCHASE: 'Purchase',
-  PURCHASE_AT_VENDOR_SYSTEM: 'Purchase at vendor system',
+  PURCHASE_AT_VENDOR_SYSTEM: 'Purchase At Vendor System',
   TECHNICAL: 'Technical'
 };
 

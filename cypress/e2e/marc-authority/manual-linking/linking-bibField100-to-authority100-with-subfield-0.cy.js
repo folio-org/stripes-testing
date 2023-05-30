@@ -1,25 +1,27 @@
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
-import Permissions from '../../support/dictionary/permissions';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import DataImport from '../../support/fragments/data_import/dataImport';
-import Logs from '../../support/fragments/data_import/logs/logs';
-import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
-import getRandomPostfix from '../../support/utils/stringTools';
-import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
-import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
-import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
+import TestTypes from '../../../support/dictionary/testTypes';
+import DevTeams from '../../../support/dictionary/devTeams';
+import Permissions from '../../../support/dictionary/permissions';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
+import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
+import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 
 describe('Manual Linking Bib field to Authority 1XX', () => {
     const testData = {
       tag100: '100',
       tag010: '010',
+      tag240: '240',
       authority100FieldValue: 'Coates, Ta-Nehisi',
       authority010FieldValue: 'n 2008001084',
       successMsg: 'This record has successfully saved and is in process. Changes may not appear immediately.',
+      accordion: 'Contributor',
     };
     
     const marcFiles = [
@@ -99,7 +101,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
 
     InventoryInstance.clickLinkButton();
     QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag100);
-    QuickMarcEditor.verifyTagFieldAfterLinking(33);
+    QuickMarcEditor.verifyTagFieldAfterLinking(33, '100', '1', '\\', '$a Coates, Ta-Nehisi', '$e author.', '$0 id.loc.gov/authorities/names/n2008001084', '');
     QuickMarcEditor.pressSaveAndKeepEditing(testData.successMsg);
    
     InventoryInstance.clickViewAuthorityIconDisplayedInTagField(testData.tag100);
@@ -108,7 +110,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
     InventoryInstance.goToPreviousPage();
     QuickMarcEditor.pressCancel();
 
-    InventoryInstance.clickViewAuthorityIconDisplayedInContributorField();
+    InventoryInstance.clickViewAuthorityIconDisplayedInInstanceDetailsPane(testData.accordion);
     MarcAuthorities.checkRecordDetailPageMarkedValue(testData.authority100FieldValue);
     InventoryInstance.goToPreviousPage();
 
