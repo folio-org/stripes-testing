@@ -27,6 +27,7 @@ const buttonAdvancedSearch = Button('Advanced search');
 const modalAdvancedSearch = Modal('Advanced search');
 const buttonSearchInAdvancedModal = Button({ ariaLabel: 'Search' });
 const buttonCancelInAdvancedModal = Button({ ariaLabel: 'Cancel' });
+const buttonClose = Button({ icon: 'times' });
 
 export default {
   waitLoading: () => cy.expect(rootSection.exists()),
@@ -141,6 +142,10 @@ export default {
     cy.do(searchButton.click());
     cy.expect(MultiColumnListRow({ index: 0 }).find(Button({ text: including('Beethoven, Ludwig van (no 010)') })).exists());
     cy.expect(marcViewSection.exists());
+  },
+
+  closeMarcViewPane() {
+    cy.do(buttonClose.click());
   },
 
   checkRecordDetailPageMarkedValue(markedValue) {
