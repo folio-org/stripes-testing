@@ -9,6 +9,7 @@ import Users from '../../../support/fragments/users/users';
 import MatchProfileView from '../../../support/fragments/data_import/match_profiles/matchProfileView';
 import MatchProfileEdit from '../../../support/fragments/data_import/match_profiles/matchProfileEdit';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let user;
@@ -18,7 +19,7 @@ describe('ui-data-import', () => {
       field: '001'
     },
     matchCriterion: 'Exactly matches',
-    existingRecordType: 'INSTANCE',
+    existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
     instanceOption: NewMatchProfile.optionsList.instanceHrid
   };
 

@@ -1,5 +1,5 @@
 import TestTypes from '../../../support/dictionary/testTypes';
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE, ACCEPTED_DATA_TYPE_NAMES, EXISTING_RECORDS_NAMES } from '../../../support/constants';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -44,12 +44,12 @@ describe('ui-data-import', () => {
       field: '001',
     },
     matchCriterion: 'Exactly matches',
-    existingRecordType: 'MARC_BIBLIOGRAPHIC'
+    existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC
   };
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
     profileName: `autoTestJobProf.${getRandomPostfix()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
   before('login', () => {

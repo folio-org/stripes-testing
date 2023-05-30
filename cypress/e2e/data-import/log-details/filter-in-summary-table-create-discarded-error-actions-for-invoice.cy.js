@@ -2,7 +2,11 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TestTypes from '../../../support/dictionary/testTypes';
-import { FOLIO_RECORD_TYPE, PAYMENT_METHOD, BATCH_GROUP } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE,
+  PAYMENT_METHOD,
+  BATCH_GROUP,
+  ACCEPTED_DATA_TYPE_NAMES,
+  JOB_STATUS_NAMES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -36,8 +40,8 @@ describe('ui-data-import', () => {
   };
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: `autoTestJobProf.${getRandomPostfix()}`,
-    acceptedType: NewJobProfile.acceptedDataType.edifact
+    profileName: `C357018 autoTestJobProf.${getRandomPostfix()}`,
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.EDIFACT
   };
 
   before(() => {
@@ -89,7 +93,7 @@ describe('ui-data-import', () => {
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(marcFileName);
-      Logs.checkStatusOfJobProfile('Completed with errors');
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
       Logs.openFileDetails(marcFileName);
 
       // check created counter in the Summary table

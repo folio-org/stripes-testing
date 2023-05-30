@@ -8,6 +8,7 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import Users from '../../../support/fragments/users/users';
+import { JOB_STATUS_NAMES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let user;
@@ -64,6 +65,6 @@ describe('ui-data-import', () => {
       JobProfiles.selectJobProfile();
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(smallFileName);
-      Logs.checkStatusOfJobProfile('Completed');
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     });
 });

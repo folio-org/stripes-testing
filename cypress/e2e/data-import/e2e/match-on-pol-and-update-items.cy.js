@@ -1,7 +1,12 @@
 import uuid from 'uuid';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
-import { FOLIO_RECORD_TYPE, LOCALION_NAMES } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE,
+  LOCALION_NAMES,
+  ACCEPTED_DATA_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES,
+  ORDER_STATUSES,
+  ITEM_STATUS_NAMES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import Orders from '../../../support/fragments/orders/orders';
@@ -93,7 +98,7 @@ describe('ui-data-import', () => {
           subfield:'a'
         },
         matchCriterion: 'Exactly matches',
-        existingRecordType: 'INSTANCE',
+        existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
         instanceOption: NewMatchProfile.optionsList.pol }
     },
     {
@@ -103,7 +108,7 @@ describe('ui-data-import', () => {
           subfield: 'a'
         },
         matchCriterion: 'Exactly matches',
-        existingRecordType: 'HOLDINGS',
+        existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
         holdingsOption: NewMatchProfile.optionsList.pol }
     },
     {
@@ -114,7 +119,7 @@ describe('ui-data-import', () => {
           subfield: 'a'
         },
         matchCriterion: 'Exactly matches',
-        existingRecordType: 'ITEM',
+        existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
         itemOption: NewMatchProfile.optionsList.pol
       }
     }
@@ -122,7 +127,7 @@ describe('ui-data-import', () => {
 
   const specialJobProfile = { ...NewJobProfile.defaultJobProfile,
     profileName: `C350590 autotestJobProf${Helper.getRandomBarcode()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc };
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC };
 
   before('create test data', () => {
     cy.createTempUser([
@@ -269,7 +274,7 @@ describe('ui-data-import', () => {
           Orders.checkIsOrderCreated(firstOrderNumber);
           // open the first PO with POL
           openOrder(firstOrderNumber);
-          OrderView.checkIsOrderOpened('Open');
+          OrderView.checkIsOrderOpened(ORDER_STATUSES.OPEN);
           OrderView.checkIsItemsInInventoryCreated(firstItem.title, location.name);
           // check receiving pieces are created
           checkReceivedPiece(firstOrderNumber, firstItem.title);
@@ -297,7 +302,7 @@ describe('ui-data-import', () => {
               Orders.checkIsOrderCreated(secondOrderNumber);
               // open the second PO
               openOrder(secondOrderNumber);
-              OrderView.checkIsOrderOpened('Open');
+              OrderView.checkIsOrderOpened(ORDER_STATUSES.OPEN);
               OrderView.checkIsItemsInInventoryCreated(secondItem.title, location.name);
               // check receiving pieces are created
               checkReceivedPiece(secondOrderNumber, secondItem.title);
@@ -359,7 +364,7 @@ describe('ui-data-import', () => {
       HoldingsRecordView.close();
       InventoryInstance.openHoldingsAccordion(LOCALION_NAMES.MAIN_LIBRARY_UI);
       InventoryInstance.openItemByBarcode(firstItem.barcode);
-      ItemRecordView.verifyItemStatus('In process');
+      ItemRecordView.verifyItemStatus(ITEM_STATUS_NAMES.IN_PROCESS);
       ItemRecordView.checkEffectiveLocation(LOCALION_NAMES.MAIN_LIBRARY_UI);
       ItemRecordView.closeDetailView();
       InventoryInstance.viewSource();

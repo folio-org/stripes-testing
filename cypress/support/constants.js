@@ -34,9 +34,14 @@ export const LOAN_TYPE_NAMES = {
 };
 
 export const MATERIAL_TYPE_NAMES = {
-  MICROFORM: 'microform',
   BOOK: 'book',
-  ELECTRONIC_RESOURCE: 'electronic resource'
+  DVD: 'dvd',
+  ELECTRONIC_RESOURCE: 'electronic resource',
+  MICROFORM: 'microform',
+  SOUND_RECORDING: 'sound recording',
+  TEXT: 'text',
+  UNSPECIFIED: 'unspecified',
+  VIDEO_RECORDING: 'video recording',
 };
 
 export const ITEM_STATUS_NAMES = {
@@ -126,13 +131,34 @@ export const ORDER_STATUSES = {
 };
 
 export const ORDER_FORMAT_NAMES = {
-  ELECTRONIC_RESOURCE: 'Electronic Resource',
-  PE_MIX: 'P/E Mix'
+  ELECTRONIC_RESOURCE: 'Electronic resource',
+  ELECTRONIC_RESOURCE_Check: 'Electronic Resource',
+  PE_MIX: 'P/E mix',
+  PE_MIX_Check: 'P/E Mix',
+  OTHER: 'Other',
+  PHYSICAL_RESOURCE: 'Physical resource',
+  PHYSICAL_RESOURCE_Check: 'Physical Resource',
+};
+
+export const RECEIVING_WORKFLOW_NAMES = {
+  SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY: 'Synchronized order and receipt quantity',
+  INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY: 'Independent order and receipt quantity',
 };
 
 export const ACQUISITION_METHOD_NAMES = {
-  APPROVAL_PLAN: 'Approval Plan',
-  PURCHASE_AT_VENDOR_SYSTEM: 'Purchase At Vendor System'
+  APPROVAL_PLAN: 'Approval plan',
+  DDA: 'Demand driven acquisitions (DDA)',
+  DEPOSITORY: 'Depository',
+  EBA:'Evidence based acquisitions (EBA)',
+  EXCHANGE: 'Exchange',
+  FREE: 'Free',
+  GIFT: 'Gift',
+  INTERNAL_TRANSFER: 'Internal transfer',
+  MEMBERSHIP: 'Membership',
+  OTHER: 'Other',
+  PURCHASE: 'Purchase',
+  PURCHASE_AT_VENDOR_SYSTEM: 'Purchase at vendor system',
+  TECHNICAL: 'Technical'
 };
 
 export const LOCALION_NAMES = {
@@ -154,4 +180,43 @@ export const CALL_NUMBER_TYPE_NAMES = {
   OTHER_SCHEME: 'Other scheme',
   LIBRARY_OF_CONGRESS: 'Library of Congress classification',
   LIBRARY_OF_MEDICINE: 'National Library of Medicine classification'
+};
+
+export const EXPORT_TRANSFORMATION_NAMES = {
+  ITEM_HRID: 'Item - HRID',
+  HOLDINGS_HRID: 'Holdings - HRID'
+};
+
+export const TARGET_PROFILE_NAMES = {
+  OCLC_WORLDCAT: '✓ OCLC WorldCat'
+};
+
+export const ACCEPTED_DATA_TYPE_NAMES = {
+  MARC: 'MARC',
+  EDIFACT: 'EDIFACT'
+};
+
+export const INSTANCE_SOURCE_NAMES = {
+  MARC: 'MARC',
+  FOLIO: 'FOLIO'
+};
+
+export const PROFILE_TYPE_NAMES = {
+  JOB_PROFILE: 'JOB_PROFILE',
+  MATCH_PROFILE: 'MATCH_PROFILE',
+  ACTION_PROFILE: 'ACTION_PROFILE',
+  MAPPING_PROFILE: 'MAPPING_PROFILE'
+};
+
+export const EXISTING_RECORDS_NAMES = {
+  INSTANCE: 'INSTANCE',
+  HOLDINGS: 'HOLDINGS',
+  ITEM: 'ITEM',
+  MARC_BIBLIOGRAPHIC: 'MARC_BIBLIOGRAPHIC'
+};
+
+export const JOB_STATUS_NAMES = {
+  COMPLETED: 'Completed',
+  COMPLETED_WITH_ERRORS: 'Completed with errors',
+  FAILED: 'Failed'
 };

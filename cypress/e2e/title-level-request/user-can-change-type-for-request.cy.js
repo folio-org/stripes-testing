@@ -18,13 +18,15 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import Requests from '../../support/fragments/requests/requests';
 import RequestDetail from '../../support/fragments/requests/requestDetail';
+import RequestsSearchResultsPane from '../../support/fragments/requests/requestsSearchResultsPane';
+import NewRequest from '../../support/fragments/requests/newRequest';
 
 describe('Title Level Request. Request Detail', () => {
+  const unchecked = false;
+  const tlrCheckboxExists = true;
   let addedCirculationRule;
   let originalCirculationRules;
   let userData = {};
-  let userForTLR = {};
-  const requestIds = [];
   const patronGroup = {
     name: 'groupTLR' + getRandomPostfix(),
   };
@@ -36,7 +38,7 @@ describe('Title Level Request. Request Detail', () => {
     itemBarcode: generateItemBarcode(),
   };
   const requestPolicyBody = {
-    requestTypes: [REQUEST_TYPES.PAGE, REQUEST_TYPES.HOLD],
+    requestTypes: [REQUEST_TYPES.PAGE, REQUEST_TYPES.HOLD, REQUEST_TYPES.RECALL],
     name: `requestPolicy${getRandomPostfix()}`,
     id: uuid(),
   };
@@ -103,15 +105,6 @@ describe('Title Level Request. Request Detail', () => {
       CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
     });
 
-    cy.createTempUser([permissions.requestsAll.gui], patronGroup.name).then((userProperties) => {
-      userForTLR = userProperties;
-      UserEdit.addServicePointViaApi(
-        testData.userServicePoint.id,
-        userForTLR.userId,
-        testData.userServicePoint.id
-      );
-    });
-
     cy.createTempUser(
       [
         permissions.uiRequestsCreate.gui,
@@ -122,7 +115,6 @@ describe('Title Level Request. Request Detail', () => {
       ],
       patronGroup.name
     ).then((userProperties) => {
-      cy.log(JSON.stringify(userProperties));
       userData = userProperties;
       UserEdit.addServicePointViaApi(
         testData.userServicePoint.id,
@@ -130,63 +122,28 @@ describe('Title Level Request. Request Detail', () => {
         testData.userServicePoint.id
       );
       TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
-      cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceData.instanceId}"` }).then(
-        (instance) => {
-          testData.instanceHRID = instance.hrid;
-        }
-      );
-      Requests.createNewRequestViaApi({
-        fulfilmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
-        holdingsRecordId: testData.holdingTypeId,
-        instanceId: instanceData.instanceId,
-        item: { barcode: testData.itemBarcode },
-        itemId: instanceData.itemId[0],
-        pickupServicePointId: testData.userServicePoint.id,
-        requestDate: new Date(),
-        requestLevel: REQUEST_LEVELS.ITEM,
-        requestType: REQUEST_TYPES.PAGE,
-        requesterId: userData.userId,
-      }).then((request) => {
-        requestIds.push(request.body.id);
-      });
-      Requests.createNewRequestViaApi({
-        fulfilmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
-        instanceId: instanceData.instanceId,
-        pickupServicePointId: testData.userServicePoint.id,
-        requestDate: new Date(),
-        requestLevel: REQUEST_LEVELS.TITLE,
-        requestType: REQUEST_TYPES.HOLD,
-        requesterId: userForTLR.userId,
-      }).then((request) => {
-        requestIds.push(request.body.id);
-      });
       cy.login(userData.username, userData.password, {
         path: TopMenu.requestsPath,
-        waiter: Requests.waitLoading,
+        waiter: RequestsSearchResultsPane.waitLoading,
       });
     });
   });
 
-  afterEach('Reset filters', () => {
-    Requests.resetAllFilters();
-  });
 
   after('Deleting created entities', () => {
+    CirculationRules.deleteRuleViaApi(addedCirculationRule);
     cy.loginAsAdmin({
       path: SettingsMenu.circulationTitleLevelRequestsPath,
       waiter: TitleLevelRequests.waitLoading,
     });
-    cy.wrap(requestIds).each((id) => {
+    cy.get('@requestId').then((id) => {
       Requests.deleteRequestViaApi(id);
     });
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
     cy.deleteLoanType(testData.loanTypeId);
-    UserEdit.changeServicePointPreferenceViaApi(userForTLR.userId, [testData.userServicePoint.id]);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
-    Users.deleteViaApi(userForTLR.userId);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
@@ -198,71 +155,28 @@ describe('Title Level Request. Request Detail', () => {
     TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
   it(
-    'C350415 Check that the user can see "Request Detail" for Item request (vega)',
+    'C350385 Check that user can change type from "Item" level to "Title" and save the request (vega)',
     { tags: [testTypes.criticalPath, devTeams.vega] },
     () => {
-      Requests.selectItemRequestLevel();
-      Requests.findCreatedRequest(instanceData.title);
-      Requests.selectFirstRequest(instanceData.title);
+      cy.intercept('POST', 'circulation/requests').as('createRequest');
+      RequestsSearchResultsPane.verifyOptionsInActionsMenu();
+      NewRequest.openNewRequestPane();
+      NewRequest.waitLoadingNewRequestPage(tlrCheckboxExists);
+      NewRequest.verifyTitleLevelRequestsCheckbox(unchecked);
+      NewRequest.enterItemInfo(testData.itemBarcode);
+      NewRequest.verifyItemInformation([testData.itemBarcode, instanceData.title, testData.defaultLocation.name, ITEM_STATUS_NAMES.AVAILABLE]);
+      NewRequest.verifyRequestInformation(ITEM_STATUS_NAMES.AVAILABLE);
+      NewRequest.enableTitleLevelRequest();
+      NewRequest.verifyItemInformation(['0', instanceData.title]);
+
+      NewRequest.enterRequesterInfo({
+        requesterBarcode: userData.barcode,
+        pickupServicePoint: testData.userServicePoint.name,
+      });
+      NewRequest.saveRequestAndClose();
       RequestDetail.waitLoading();
-
-      RequestDetail.checkTitleInformation({
-        TLRs: '1',
-        title: instanceData.title,
-      });
-
-      RequestDetail.checkItemInformation({
-        itemBarcode: testData.itemBarcode,
-        title: instanceData.title,
-        effectiveLocation: testData.defaultLocation.name,
-        itemStatus: ITEM_STATUS_NAMES.PAGED,
-        requestsOnItem: '1',
-      });
-
-      RequestDetail.checkRequestInformation({
-        type: REQUEST_TYPES.PAGE,
-        status: 'Open',
-        level: REQUEST_LEVELS.ITEM,
-      });
-
-      RequestDetail.checkRequesterInformation({
-        lastName: userData.lastName,
-        barcode: userData.barcode,
-        group: patronGroup.name,
-        preference: FULFILMENT_PREFERENCES.HOLD_SHELF,
-        pickupSP: testData.userServicePoint.name,
-      });
-    }
-  );
-
-  it(
-    'C350416 Check that the user can see "Request Detail" for Title request (vega)',
-    { tags: [testTypes.criticalPath, devTeams.vega] },
-    () => {
-      Requests.selectTitleRequestLevel();
-      Requests.findCreatedRequest(instanceData.title);
-      Requests.selectFirstRequest(instanceData.title);
-      RequestDetail.waitLoading();
-
-      RequestDetail.checkTitleInformation({
-        TLRs: '1',
-        title: instanceData.title,
-      });
-
-      RequestDetail.checkItemInformation();
-
-      RequestDetail.checkRequestInformation({
-        type: REQUEST_TYPES.HOLD,
-        status: 'Open',
-        level: REQUEST_LEVELS.TITLE,
-      });
-
-      RequestDetail.checkRequesterInformation({
-        lastName: userForTLR.lastName,
-        barcode: userForTLR.barcode,
-        group: patronGroup.name,
-        preference: FULFILMENT_PREFERENCES.HOLD_SHELF,
-        pickupSP: testData.userServicePoint.name,
+      cy.wait('@createRequest').then((intercept) => {
+        cy.wrap(intercept.response.body.id).as('requestId');
       });
     }
   );

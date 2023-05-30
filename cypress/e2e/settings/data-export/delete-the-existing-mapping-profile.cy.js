@@ -5,6 +5,7 @@ import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 
@@ -24,9 +25,18 @@ describe('setting: data-export', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C10982 "Settings" > "Data export" > "Field mapping profiles" page (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    ExportFieldMappingProfiles.goTofieldMappingProfilesTab();
+  it('C15828 Delete the existing mapping profile (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+    ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
     ExportFieldMappingProfiles.verifyFieldMappingProfilesPane();
-    ExportFieldMappingProfiles.verifyDefaultProfiles();
+
+    const testProfile = {
+      name: `autoTestMappingProf.${getRandomPostfix()}`,
+      holdingsMarcField: '901',
+      subfieldForHoldings:'$a',
+      itemMarcField:'902',
+      subfieldForItem:'$a'
+    };
+    ExportFieldMappingProfiles.createMappingProfile(testProfile);
+    ExportFieldMappingProfiles.deleteMappingProfile(testProfile.name);
   });
 });

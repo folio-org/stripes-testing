@@ -27,6 +27,7 @@ import {
   Modal,
   PaneHeader,
   or,
+  PaneContent,
 } from '../../../../interactors';
 import InstanceRecordEdit from './instanceRecordEdit';
 import InventoryViewSource from './inventoryViewSource';
@@ -83,6 +84,7 @@ const createdDateAccordion = Section({ id: 'createdDate' });
 const updatedDateAccordion = Section({ id: 'updatedDate' });
 const searchTextArea = TextArea({ id: 'textarea-authorities-search' });
 const marcViewPane = Section({ id: 'marc-view-pane' });
+const marcViewPaneContent = PaneContent({ id: 'marc-view-pane-content' });
 const searchButton = Button({ type: 'submit' });
 const enabledSearchBtn = Button({ type: 'submit', disabled: false });
 const disabledResetAllBtn = Button({ id: 'clickable-reset-all', disabled: true });
@@ -119,7 +121,6 @@ const validOCLC = { id:'176116217',
   ldrValue: '01677cam\\a22003974a\\4500',
   tag008BytesProperties : {
     srce: { interactor:TextField('Srce'), defaultValue:'\\' },
-    ctrl : { interactor:TextField('Ctrl'), defaultValue:'' },
     lang : { interactor:TextField('Lang'), defaultValue:'rus' },
     form : { interactor:TextField('Form'), defaultValue:'\\' },
     ctry : { interactor:TextField('Ctry'), defaultValue:'ru\\' },
@@ -275,6 +276,31 @@ export default {
       filterPane.find(searchButton).click(),
     ]);
     cy.expect(MultiColumnListRow({ index: 0 }).exists());
+  },
+
+  clickViewAuthorityIconDisplayedInTagField(tag) {
+    cy.wrap(QuickMarcEditorRow({ tagValue: tag }).find(Link()).href()).as('link');
+    cy.get('@link').then((link) => {
+      cy.visit(link);
+    });
+  },
+
+  clickViewAuthorityIconDisplayedInContributorField() {
+    cy.wrap(Accordion('Contributor').find(MultiColumnListRow({ indexRow: 'row-0' })).find(Link()).href()).as('link');
+    cy.get('@link').then((link) => {
+      cy.visit(link);
+    });
+  },
+
+  clickViewAuthorityIconDisplayedInMarcViewPane() {
+    cy.wrap(marcViewPaneContent.find(Link()).href()).as('link');
+    cy.get('@link').then((link) => {
+      cy.visit(link);
+    });
+  },
+
+  goToPreviousPage() {
+    cy.go('back');
   },
 
   verifyAndClickLinkIcon(tag) {

@@ -59,6 +59,10 @@ export default {
     cy.expect(HTML(including('Warning: Item is marked suppressed from discovery')).absent());
   },
 
+  suppressedAsDiscoveryIsPresent() {
+    cy.expect(HTML(including('Warning: Item is marked suppressed from discovery')).exists());
+  },
+
   findRowAndClickLink,
   getAssignedHRID:() => cy.then(() => KeyValue('Item HRID').value()),
 
@@ -79,15 +83,6 @@ export default {
     ]);
   },
 
-  // findItemInLocation:(enumeration) => {
-  //   cy.do(() => {
-  //     const cell = MultiColumnListCell(enumeration);
-  //     const row = cell.closest(MultiColumnListRow());
-  //     const link = row.find(Link('No barcode'));
-  //     link.click();
-  //   });
-  // },
-
   checkEffectiveLocation:(location) => {
     cy.expect(Accordion('Location').find(KeyValue('Effective location for item')).has({ value: location }));
   },
@@ -100,8 +95,8 @@ export default {
     cy.expect(itemDataAccordion.find(HTML(including(type))).exists());
   },
 
-  checkItemNote:(note, staffValue = 'Yes') => {
-    cy.expect(itemNotesAccordion.find(KeyValue('Note')).has({ value: note }));
+  checkItemNote:(note, staffValue = 'Yes', value = 'Note') => {
+    cy.expect(itemNotesAccordion.find(KeyValue(value)).has({ value: note }));
     cy.expect(itemNotesAccordion.find(KeyValue('Staff only')).has({ value: staffValue }));
   },
 
@@ -153,5 +148,12 @@ export default {
   checkHotlinksToCreatedPOL:(number) => {
     cy.expect(Accordion('Acquisition').find(KeyValue('POL number')).has({ value: number }));
     cy.expect(Accordion('Acquisition').find(Link({ href: including('/orders/lines/view') })).exists());
-  }
+  },
+
+  changeItemBarcode:(barcode) => {
+    cy.do([
+      TextField({ id: 'additem_barcode' }).fillIn(barcode),
+      Button('Save & close').click()
+    ]);
+  },
 };
