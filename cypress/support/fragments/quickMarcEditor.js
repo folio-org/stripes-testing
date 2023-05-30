@@ -26,6 +26,10 @@ const saveButton = Modal().find(Button({ id: 'clickable-quick-marc-update-linked
 const continueWithSaveButton = Modal().find(Button({ id: 'clickable-quick-marc-confirm-modal-confirm' }));
 const restoreDeletedFieldsBtn = Modal().find(Button({ id: 'clickable-quick-marc-confirm-modal-cancel' }));
 const quickMarcEditorRowContent = HTML({ className: including('quickMarcEditorRowContent') });
+const instanceDetailsPane = Pane({ id:'pane-instancedetails' });
+const unlinkModal = Modal({ id: 'quick-marc-confirm-unlink-modal' });
+const unlinkButtonInsideModal = Button({ id: 'clickable-quick-marc-confirm-unlink-modal-confirm' });
+const calloutAfterSaveAndClose = Callout('This record has successfully saved and is in process. Changes may not appear immediately.');
 const calloutUpdatedRecord = Callout('Record has been updated.');
 const calloutUpdatedLinkedBibRecord = Callout('Record has been updated. 2 linked bibliographic record(s) updates have begun.');
 const validRecord = InventoryInstance.validOCLC;
@@ -153,6 +157,12 @@ export default {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).click());
   },
 
+  clickUnlinkIconInTagField(rowIndex) {
+    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).click());
+    cy.expect(unlinkModal.exists());
+    cy.do(unlinkModal.find(unlinkButtonInsideModal).click());
+  },
+
   cancelEditConfirmationPresented() { cy.expect(cancelEditConformModel.exists()); },
 
   confirmEditCancel() { cy.do(cancelEditConfirmBtn.click()); },
@@ -243,6 +253,13 @@ export default {
     ]);
   },
 
+  checkAfterSaveAndClose() {
+    cy.expect([
+      calloutAfterSaveAndClose.exists(),
+      instanceDetailsPane.exists(),
+    ]);
+  },
+
   verifyConfirmModal() {
     cy.expect(confirmationModal.exists());
     cy.expect(confirmationModal.has({ content: including('By selecting Continue with save, then 1 field(s) will be deleted and this record will be updated. Are you sure you want to continue?') }));
@@ -275,16 +292,25 @@ export default {
     ]);
   },
 
-  verifyTagFieldAfterLinking(rowIndex) {
+  verifyTagFieldAfterLinking(rowIndex, tag, secondBox, thirdBox, content, eSubfield, zeroSubfield, seventhBox) {
     cy.expect([
-      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].tag` })).has({disabled: true, value: '100'}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[0]` })).has({disabled: true}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[1]` })).has({disabled: true}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].subfieldGroups.controlled` })).has({disabled: true, value: '$a Coates, Ta-Nehisi'}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledAlpha` })).has({disabled: false, value: '$e author.'}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].subfieldGroups.zeroSubfield` })).has({disabled: true, value: '$0 id.loc.gov/authorities/names/n2008001084'}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledNumber` })).has({disabled: false, value: ''}),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].tag` })).has({disabled: true, value: tag}),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[0]` })).has({disabled: true, value: secondBox}),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[1]` })).has({disabled: true, value: thirdBox}),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].subfieldGroups.controlled` })).has({disabled: true, value: content}),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledAlpha` })).has({disabled: false, value: eSubfield}),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].subfieldGroups.zeroSubfield` })).has({disabled: true, value: zeroSubfield}),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledNumber` })).has({disabled: false, value: seventhBox}),
       QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ value: '$9' })).absent(),
+    ]);
+  },
+
+  verifyTagFieldAfterUnlinking(rowIndex, tag, secondBox, thirdBox, content) {
+    cy.expect([
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].tag` })).has({value: tag}),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[0]` })).has({value: secondBox}),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[1]` })).has({value: thirdBox}),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].content` })).has({value: content}),
     ]);
   },
 

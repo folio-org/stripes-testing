@@ -65,7 +65,7 @@ describe('ui-inventory', () => {
     ActionProfiles.deleteActionProfile(profile.createActionProfile);
     FieldMappingProfiles.deleteFieldMappingProfile(profile.createMappingProfile);
     Users.deleteViaApi(user.userId);
-    Z3950TargetProfiles.deleteFundViaApi(profileId);
+    Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
       .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
@@ -75,7 +75,7 @@ describe('ui-inventory', () => {
   it('C375122 Verify the modal window for ISRI Import/Create in inventory main actions menu for multiple target profiles (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       InventoryActions.openSingleReportImportModal();
-      InventoryModals.verifyInventorySingleRecordModal();
+      InventoryModals.verifyInventorySingleRecordModalWithSeveralTargetProfiles();
       InventoryModals.selectExternalTarget(targetProfileName);
       InventoryModals.selectTheProfileToBeUsed(profile.createJobProfile);
       InventoryModals.fillEnterTestIdentifier(testIdentifier);
