@@ -23,7 +23,6 @@ describe('Financial Transactions Detail Report', () => {
     cy.loginAsAdmin();
     cy.visit(TopMenu.usersPath);
     UsersSearchResultsPane.waitLoading();
-    });
   });
 
   after('UserOwner is removed', () => {
