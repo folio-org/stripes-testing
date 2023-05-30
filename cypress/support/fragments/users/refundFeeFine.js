@@ -14,5 +14,11 @@ export default {
     cy.do(rootModal.find(Button({ id:'submit-button' })).click());
     cy.do(confirmationModal.find(Button({ id: matching('clickable-confirmation-[0-9]+-confirm') })).click());
   },
+  refundFeeFineViaApi:(apiBody, feeFineId) => cy.okapiRequest({
+    method: 'POST',
+    path: `accounts/${feeFineId}/refund`,
+    body: apiBody,
+    isDefaultSearchParamsRequired: false
+  }),
 };
 
