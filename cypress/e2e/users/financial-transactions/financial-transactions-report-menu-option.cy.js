@@ -6,7 +6,6 @@ import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
 
-
 describe('Financial Transactions Detail Report', () => {
   const ownerData = {};
 
@@ -17,11 +16,13 @@ describe('Financial Transactions Detail Report', () => {
         ownerData.name = ownerName;
         ownerData.id = id;
       });
-    }).then(() => {
-      cy.loginAsAdmin();
-      cy.visit(TopMenu.usersPath);
-      UsersSearchResultsPane.waitLoading();
     });
+  });
+
+  beforeEach('visiting Users module', () => {
+    cy.loginAsAdmin();
+    cy.visit(TopMenu.usersPath);
+    UsersSearchResultsPane.waitLoading();
   });
 
   after('UserOwner is removed', () => {
@@ -36,5 +37,12 @@ describe('Financial Transactions Detail Report', () => {
     UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
     FinancialTransactionDetailReportModal.fillInRequiredFields({ startDate: false, ownerName: ownerData.name });
     FinancialTransactionDetailReportModal.verifySaveButtonIsEnabled();
+  });
+
+  it('C343317 Check that the "Export in progress" success toast appear when the user click on the "Save&close" button', { tags: [TestTypes.criticalPath, DevTeams.vega] }, () => {
+    UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
+    FinancialTransactionDetailReportModal.fillInRequiredFields({ startDate: false, ownerName: ownerData.name });
+    FinancialTransactionDetailReportModal.save();
+    FinancialTransactionDetailReportModal.verifyCalloutMessage();
   });
 });
