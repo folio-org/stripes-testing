@@ -1,4 +1,4 @@
-import getRandomPostfix, { getTestEntityValue } from "../../../support/utils/stringTools";
+import { getTestEntityValue } from "../../../support/utils/stringTools";
 import testTypes from '../../../support/dictionary/testTypes';
 import devTeams from '../../../support/dictionary/devTeams';
 import Users from '../../../support/fragments/users/users';
@@ -16,7 +16,7 @@ import SingleFieldMappingProfilePane from "../../../support/fragments/data-expor
 let user;
 let fieldMappingProfileName = getTestEntityValue('fieldMappingProfile');
 let updatedFieldMappingProfileName = getTestEntityValue('updated-fieldMappingProfile');
-let description = getRandomPostfix()
+let description = getTestEntityValue('description');
 const newTransformationCalloutMessage = '1 transformation has been successfully added';
 const updatedTransformationCalloutMessage = `The transformations have been updated`;
 const newFieldMappingProfileCalloutMessage = `The field mapping profile ${fieldMappingProfileName} has been successfully created`;
