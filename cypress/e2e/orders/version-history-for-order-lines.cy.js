@@ -153,11 +153,9 @@ describe('Orders: orders', () => {
       });
   });
 
-  // after(() => {
-  //   Orders.deleteOrderViaApi(order.id);
-  //   Organizations.deleteOrganizationViaApi(organization.id);
-  //   Users.deleteViaApi(user.userId);
-  // });
+  after(() => {
+    Users.deleteViaApi(user.userId);
+  });
 
   it('C369047: "Version history" viewing for Order line (thunderjet)', { tags: [TestTypes.criticalPath, devTeams.thunderjet] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
