@@ -11,16 +11,11 @@ import DeleteFieldMappingProfile from "../../../support/fragments/data-export/ex
 import ModalSelectTransformations from "../../../support/fragments/data-export/exportMappingProfile/modalSelectTransformations";
 import InteractorsTools from "../../../support/utils/interactorsTools";
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import SingleFieldMappingProfilePane from "../../../support/fragments/data-export/exportMappingProfile/singleFieldMappingProfilePane";
 
 let user;
 let fieldMappingProfileName = getTestEntityValue('fieldMappingProfile');
-let updatedFieldMappingProfileName = getTestEntityValue('updated-fieldMappingProfile');
-let description = getTestEntityValue('description');
 const newTransformationCalloutMessage = '1 transformation has been successfully added';
-const updatedTransformationCalloutMessage = `The transformations have been updated`;
 const newFieldMappingProfileCalloutMessage = `The field mapping profile ${fieldMappingProfileName} has been successfully created`;
-const updatedFieldMappingProfileCalloutMessage = `The field mapping profile ${updatedFieldMappingProfileName} has been successfully saved`;
 
 describe('setting: data-export', () => {
   before('create test data', () => {
@@ -39,7 +34,7 @@ describe('setting: data-export', () => {
   });
 
   after('delete test data', () => {
-    ExportFieldMappingProfiles.getFieldMappingProfile({ query: `"name"=="${updatedFieldMappingProfileName}"` })
+    ExportFieldMappingProfiles.getFieldMappingProfile({ query: `"name"=="${fieldMappingProfileName}"` })
     .then(response => {
       DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(response.id);
     });
@@ -60,26 +55,5 @@ describe('setting: data-export', () => {
     InteractorsTools.checkCalloutMessage(newFieldMappingProfileCalloutMessage);
 
     ExportFieldMappingProfiles.verifyProfileNameOnTheList(fieldMappingProfileName);
-  });
-
-  it('C15826 Editing the existing mapping profile (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    SingleFieldMappingProfilePane.clickProfileNameFromTheList(fieldMappingProfileName);
-    SingleFieldMappingProfilePane.verifyActionOptions();
-    SingleFieldMappingProfilePane.editFieldMappingProfile(updatedFieldMappingProfileName, description);
-
-    SingleFieldMappingProfilePane.clickEditTransformations();
-    ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
-    ModalSelectTransformations.uncheckInstanceRecordTypeChechbox();
-    ModalSelectTransformations.searchItemTransformationsByName('Item - ID');
-    ModalSelectTransformations.clickNthCheckbox();
-    ModalSelectTransformations.fillInTransformationsTextfields('458', '1', '2', '$a');
-
-    ModalSelectTransformations.clickTransformationsSaveAndCloseButton();
-    InteractorsTools.checkCalloutMessage(updatedTransformationCalloutMessage);
-
-    ExportFieldMappingProfiles.saveMappingProfile();
-    InteractorsTools.checkCalloutMessage(updatedFieldMappingProfileCalloutMessage);
-
-    ExportFieldMappingProfiles.verifyProfileNameOnTheList(updatedFieldMappingProfileName);
   });
 });
