@@ -8,7 +8,7 @@ import {
   RadioButton,
   RepeatableField,
   RepeatableFieldItem
-} from '../../../../../interactors';
+} from '../../../../../../interactors';
 
 const nameField = TextField('Name*');
 const saveButton = Button('Save & close');

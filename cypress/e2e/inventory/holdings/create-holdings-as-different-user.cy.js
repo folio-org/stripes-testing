@@ -17,7 +17,7 @@ describe('ui-inventory: Create a Holdings record as another user than the one th
   const instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
   const recordsData = {
     instanceTitle,
-    permanentLocationOption: LOCALION_NAMES.ONLINE,
+    permanentLocationOption: 'Online (E) ',
     permanentLocationValue: LOCALION_NAMES.ONLINE_UI,
     source: INSTANCE_SOURCE_NAMES.FOLIO
   };
