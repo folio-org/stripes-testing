@@ -31,8 +31,7 @@ describe('setting: data-export', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.dataExportEnableSettings.gui,
-      permissions.dataExportEnableApp.gui,
-      permissions.uiUsersView.gui
+      permissions.dataExportEnableApp.gui
     ])
       .then(userProperties => {
         user = userProperties;
