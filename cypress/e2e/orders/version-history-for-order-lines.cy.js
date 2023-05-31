@@ -12,6 +12,15 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import DateTools from '../../support/utils/dateTools';
 import Users from '../../support/fragments/users/users';
+import Agreements from '../../support/fragments/agreements/agreements';
+import NewAgreement from '../../support/fragments/agreements/newAgreement';
+import AgreementsDetails from '../../support/fragments/agreements/agreementsDetails';
+import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
+import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
+import Funds from '../../support/fragments/finance/funds/funds';
+import NewInvoice from '../../support/fragments/invoices/newInvoice';
+import Invoices from '../../support/fragments/invoices/invoices';
+import FinanceHelp from '../../support/fragments/finance/financeHelper';
 
 describe('Orders: orders', () => {
   const order = { ...NewOrder.defaultOneTimeOrder,
@@ -35,16 +44,45 @@ describe('Orders: orders', () => {
       },
     ]
   };
+  const defaultAgreement = { ...NewAgreement.defaultAgreement };
+  const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
+  const defaultLedger = { ...Ledgers.defaultUiLedger };
+  const defaultFund = { ...Funds.defaultUiFund };
+  const invoice = { ...NewInvoice.defaultUiInvoice };
+  const allocatedQuantity = '100';
   let user;
   let location;
   let servicePointId;
   let orderNumber;
   let firstDate;
+  let secondDate;
   let firstCard;
+  let secondCard;
+  let thirdCard;
+  let thirdDate;
 
   before(() => {
     cy.getAdminToken();
+    FiscalYears.createViaApi(firstFiscalYear)
+      .then(firstFiscalYearResponse => {
+        firstFiscalYear.id = firstFiscalYearResponse.id;
+        defaultLedger.fiscalYearOneId = firstFiscalYear.id;
+        Ledgers.createViaApi(defaultLedger)
+          .then(ledgerResponse => {
+            defaultLedger.id = ledgerResponse.id;
+            defaultFund.ledgerId = defaultLedger.id;
 
+            Funds.createViaApi(defaultFund)
+              .then(fundResponse => {
+                defaultFund.id = fundResponse.fund.id;
+
+                cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
+                FinanceHelp.searchByName(defaultFund.name);
+                Funds.selectFund(defaultFund.name);
+                Funds.addBudget(allocatedQuantity);
+              });
+          });
+      });
     ServicePoints.getViaApi()
       .then((servicePoint) => {
         servicePointId = servicePoint[0].id;
@@ -61,26 +99,53 @@ describe('Orders: orders', () => {
     cy.createOrderApi(order)
       .then((response) => {
         orderNumber = response.body.poNumber;
-        // Need to wait for the next card in the order history to be created with a difference of a minute.
-        cy.wait(40000);
-        cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+        cy.visit(TopMenu.ordersPath);
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList();
-        Orders.createPOLineViaActions();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
-        OrderLines.fillInPOLineInfoForExportWithLocation(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId);
-        OrderLines.backToEditingOrder();
         Orders.editOrder();
         Orders.approveOrder();
+        Orders.createPOLineViaActions();
+        OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
+        OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(defaultFund, '40', '1', '40', location.institutionId);
+        cy.then(() => {
+          firstDate = DateTools.getCurrentUTCTime();
+          firstCard = `${firstDate}\nView this version\nSource: ADMINISTRATOR, DIKU\nOriginal version`;
+        });
+        // Need to wait for the next card in the order history to be created with a difference of a minute.
+        cy.wait(60000);
+        OrderLines.addNewNote();
+        OrderLines.editPOLInOrder();
+        OrderLines.editFundInPOL(defaultFund, '70', '70');
+        cy.then(() => {
+          secondDate = DateTools.getCurrentUTCTime();
+          secondCard = `${secondDate}\nView this version\nSource: ADMINISTRATOR, DIKU\nChanged\nEstimated price\nPhysical unit price\nValue`;
+        });
+        // Need to wait for the next card in the order history to be created with a difference of a minute.
+        cy.wait(60000);
+        OrderLines.backToEditingOrder();
+        Orders.openOrder();
+        cy.then(() => {
+          thirdDate = DateTools.getCurrentUTCTime();
+          thirdCard = `${thirdDate}\nView this version\nSource: ADMINISTRATOR, DIKU\nCurrent version\nChanged\nCurrent encumbrance\nHolding\nName (code)\nPayment status\nReceipt status`;
+        });
+        cy.visit(TopMenu.invoicesPath);
+        Invoices.createRolloverInvoice(invoice, organization.name);
+        Invoices.createInvoiceLineFromPol(orderNumber);
+        cy.visit(TopMenu.agreementsPath);
+        AgreementsDetails.switchToLocalKBSearch();
+        AgreementsDetails.selectCurrentStatusInPackages();
+        AgreementsDetails.selectPackageFromList();
+        AgreementsDetails.addPackageToBusket();
+        AgreementsDetails.openBusket();
+        AgreementsDetails.createNewAgreementInBusket();
+        NewAgreement.fill(defaultAgreement);
+        NewAgreement.save();
+        AgreementsDetails.openAgreementLines();
+        AgreementsDetails.newAgreementLine(`${orderNumber}-1`);
       });
-    cy.then(() => {
-      firstDate = DateTools.getCurrentUTCTime();
-      firstCard = `${firstDate}\nView this version\nSource: ADMINISTRATOR, DIKU\nCurrent version\nChanged\nApproved\nnextPolNumber`;
-    });
-    // Need to wait for the next card in the order history to be created with a difference of a minute.
-    cy.wait(70000);
     cy.createTempUser([
-      permissions.uiOrdersEdit.gui,
+      permissions.uiOrdersView.gui,
+      permissions.uiNotesItemView.gui,
     ])
       .then(userProperties => {
         user = userProperties;
@@ -88,48 +153,23 @@ describe('Orders: orders', () => {
       });
   });
 
-  after(() => {
-    Orders.deleteOrderViaApi(order.id);
-    Organizations.deleteOrganizationViaApi(organization.id);
-    Users.deleteViaApi(user.userId);
-  });
+  // after(() => {
+  //   Orders.deleteOrderViaApi(order.id);
+  //   Organizations.deleteOrganizationViaApi(organization.id);
+  //   Users.deleteViaApi(user.userId);
+  // });
 
   it('C369047: "Version history" viewing for Order line (thunderjet)', { tags: [TestTypes.criticalPath, devTeams.thunderjet] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
+    OrderLines.selectPOLInOrder(0);
     OrderLines.openVersionHistory();
     OrderLines.checkVersionHistoryCard(firstDate, firstCard);
+    OrderLines.checkVersionHistoryCard(secondDate, secondCard);
+    OrderLines.checkVersionHistoryCard(thirdDate, thirdCard);
+    OrderLines.selectVersionHistoryCard(secondDate);
+    OrderLines.selectVersionHistoryCard(thirdDate);
+    OrderLines.selectVersionHistoryCard(firstDate);
     OrderLines.closeVersionHistory();
-    Orders.editOrderToManual(orderNumber);
-    cy.then(() => {
-      const secondDate = DateTools.getCurrentUTCTime();
-      const secondCard = `${secondDate}\nView this version\nSource: ${user.username}, ${user.firstName}\nCurrent version\nChanged\nManual`;
-      OrderLines.openVersionHistory();
-      OrderLines.checkVersionHistoryCard(secondDate, secondCard);
-      OrderLines.closeVersionHistory();
-      // Need to wait for the next card in the order history to be created with a difference of a minute.
-      cy.wait(60000);
-      cy.then(() => {
-        Orders.openOrder();
-        const thirdDate = DateTools.getCurrentUTCTime();
-        const thirdCard = `${thirdDate}\nView this version\nSource: ${user.username}, ${user.firstName}\nCurrent version\nChanged\nApproval date\nApproved by\nDate opened\nWorkflow status`;
-        OrderLines.openVersionHistory();
-        OrderLines.checkVersionHistoryCard(thirdDate, thirdCard);
-        OrderLines.closeVersionHistory();
-        // Need to wait for the next card in the order history to be created with a difference of a minute.
-        cy.wait(60000);
-        Orders.closeOrder('Cancelled');
-        cy.then(() => {
-          const forthDate = DateTools.getCurrentUTCTime();
-          const forthCard = `${forthDate}\nView this version\nSource: ${user.username}, ${user.firstName}\nCurrent version\nChanged\nNotes on closure\nReason for closure\nWorkflow status`;
-          OrderLines.openVersionHistory();
-          OrderLines.checkVersionHistoryCard(forthDate, forthCard);
-          OrderLines.selectVersionHistoryCard(firstDate);
-          OrderLines.selectVersionHistoryCard(secondDate);
-          OrderLines.selectVersionHistoryCard(thirdDate);
-          OrderLines.selectVersionHistoryCard(forthDate);
-        });
-      });
-    });
   });
 });

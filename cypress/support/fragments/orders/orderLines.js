@@ -71,9 +71,10 @@ const paneHeaderOrderLinesDetailes = PaneHeader({ id: 'paneHeaderorder-lines-det
 const orderLineDetailsPane = Pane({ id: 'order-lines-details' });
 const physicalResourceDetailsAccordion = Accordion('Physical resource details');
 const eResourcesDetails = Accordion('E-resources details');
-const polListingAccordion = Accordion({ id: 'POListing' });
+const polListingAccordion = Section({ id: 'POListing' });
 const quantityElectronicField = TextField({ name: 'locations[0].quantityElectronic' });
 const selectPermanentLocationModal = Modal('Select permanent location');
+const noteTitle = `Autotest Title_${getRandomPostfix()}`;
 
 export default {
 
@@ -182,34 +183,36 @@ export default {
   },
 
   openVersionHistory() {
-    cy.do(Section({ id: 'order-details' }).find(Button({ icon: 'clock' })).click());
+    cy.do(Section({ id: 'order-lines-details' }).find(Button({ icon: 'clock' })).click());
     cy.wait(2000);
     cy.expect([
-      Section({ id: 'POListing' }).absent(),
-      Section({ id: 'relatedInvoices' }).absent(),
-      Section({ id: 'versions-history-pane-order' }).exists(),
+      Section({ id: 'relatedAgreementLines' }).absent(),
+      Section({ id: 'relatedInvoiceLines' }).absent(),
+      Section({ id: 'notes' }).absent(),
+      Section({ id: 'versions-history-pane-order-line' }).exists(),
     ]);
   },
 
   checkVersionHistoryCard(date, textInformation) {
     cy.expect([
-      Section({ id: 'versions-history-pane-order' }).find(Card({ headerStart: date })).has({ text: textInformation }),
+      Section({ id: 'versions-history-pane-order-line' }).find(Card({ headerStart: date })).has({ text: textInformation }),
     ]);
   },
 
   selectVersionHistoryCard(date) {
     cy.do([
-      Section({ id: 'versions-history-pane-order' }).find(Card({ headerStart: date })).find(Button({ icon: 'clock' })).click(),
+      Section({ id: 'versions-history-pane-order-line' }).find(Card({ headerStart: date })).find(Button({ icon: 'clock' })).click(),
     ]);
   },
-
+  
   closeVersionHistory: () => {
-    cy.do(Section({ id: 'versions-history-pane-order' }).find(Button({ icon: 'times' })).click());
+    cy.do(Section({ id: 'versions-history-pane-order-line' }).find(Button({ icon: 'times' })).click());
     cy.wait(2000);
     cy.expect([
-      Section({ id: 'POListing' }).exists(),
-      Section({ id: 'relatedInvoices' }).exists(),
-      Section({ id: 'versions-history-pane-order' }).absent(),
+      Section({ id: 'relatedAgreementLines' }).exists(),
+      Section({ id: 'relatedInvoiceLines' }).exists(),
+      Section({ id: 'notes' }).exists(),
+      Section({ id: 'versions-history-pane-order-line' }).absent(),
     ]);
   },
 
@@ -931,5 +934,14 @@ export default {
     cy.expect(orderLineDetailsPane
       .find(paneHeaderOrderLinesDetailes)
       .exists());
-  }
+  },
+
+  addNewNote() {
+    cy.do([
+      Section({ id: 'notes' }).find(Button({ id: 'note-create-button' })).click(),
+      TextField({ name: 'title' }).fillIn(noteTitle),
+      saveAndClose.click()
+    ]);
+    cy.wait(4000);
+  },
 };
