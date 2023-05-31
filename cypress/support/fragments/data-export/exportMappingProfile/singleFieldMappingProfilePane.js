@@ -6,7 +6,8 @@ import {
   KeyValue,
   Button,
   TextField,
-  TextArea
+  TextArea,
+  Checkbox
 } from "../../../../../interactors";
 
 const actionsButton = Button('Actions');
@@ -15,6 +16,7 @@ const duplicateButton = Button('Duplicate');
 const deleteButton = Button('Delete');
 const nameTextfield = TextField('Name*');
 const descriptionTextarea = TextArea('Description');
+const saveAndCloseButton = Button('Save & close');
 
 export default {
   clickProfileNameFromTheList(name) {
@@ -64,7 +66,18 @@ export default {
     ])
   },
 
+  duplicateFieldMappingProfile() {
+    cy.do([
+      duplicateButton.click(),
+      saveAndCloseButton.click()
+    ]);
+  },
+
   clickEditTransformations() {
     cy.do(Accordion('Transformations').find(Button('Edit transformations')).click());
-  }
+  },
+
+  checkRecordType(recordType) {
+    cy.do(Checkbox(recordType).click())
+  },
 };
