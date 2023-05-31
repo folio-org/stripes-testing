@@ -159,7 +159,9 @@ describe('Circulation log', () => {
           );
         });
       });
+  });
 
+  beforeEach('Login', () => {
     cy.loginAsAdmin({
       path: TopMenu.circulationLogPath,
       waiter: SearchPane.waitLoading,
@@ -211,6 +213,33 @@ describe('Circulation log', () => {
       SearchPane.searchByItemBarcode(itemData.barcode);
       SearchResults.clickOnCell(itemData.barcode, 0);
       ItemRecordView.waitLoading();
+    }
+  );
+
+  it(
+    'C17057 Filter circulation log by refunded fully (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      const searchResultsData = {
+        userBarcode: userData.barcode,
+        itemBarcode: itemData.barcode,
+        object: 'Fee/fine',
+        circAction: 'Refunded fully',
+        // TODO: add check for date with format <C6/8/2022, 6:46 AM>
+        servicePoint: testData.userServicePoint.name,
+        source: 'ADMINISTRATOR, DIKU',
+        desc: `Fee/Fine type: ${testData.manualChargeName}.`,
+      };
+
+      SearchPane.setFilterOptionFromAccordion('fee', 'Refunded fully');
+      SearchPane.findResultRowIndexByContent(searchResultsData.desc).then((rowIndex) => {
+        SearchPane.checkResultSearch(searchResultsData, rowIndex);
+      });
+      SearchPane.resetResults();
+      SearchPane.searchByItemBarcode(itemData.barcode);
+      SearchPane.findResultRowIndexByContent(searchResultsData.desc).then((rowIndex) => {
+        SearchPane.checkResultSearch(searchResultsData, rowIndex);
+      });
     }
   );
 });
