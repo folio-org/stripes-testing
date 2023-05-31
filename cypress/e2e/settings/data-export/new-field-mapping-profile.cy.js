@@ -1,4 +1,4 @@
-import { getTestEntityValue } from "../../../support/utils/stringTools";
+import { getTestEntityValue } from '../../../support/utils/stringTools';
 import testTypes from '../../../support/dictionary/testTypes';
 import devTeams from '../../../support/dictionary/devTeams';
 import Users from '../../../support/fragments/users/users';
@@ -7,10 +7,9 @@ import TopMenu from '../../../support/fragments/topMenu';
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
 import ExportNewFieldMappingProfile from '../../../support/fragments/data-export/exportMappingProfile/exportNewFieldMappingProfile';
-import DeleteFieldMappingProfile from "../../../support/fragments/data-export/exportMappingProfile/deleteFieldMappingProfile";
-import ModalSelectTransformations from "../../../support/fragments/data-export/exportMappingProfile/modalSelectTransformations";
-import InteractorsTools from "../../../support/utils/interactorsTools";
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import DeleteFieldMappingProfile from '../../../support/fragments/data-export/exportMappingProfile/deleteFieldMappingProfile';
+import ModalSelectTransformations from '../../../support/fragments/data-export/exportMappingProfile/modalSelectTransformations';
+import InteractorsTools from '../../../support/utils/interactorsTools';
 
 let user;
 let fieldMappingProfileName = getTestEntityValue('fieldMappingProfile');
@@ -29,10 +28,6 @@ describe('setting: data-export', () => {
       });
   });
 
-  beforeEach('go to page', () => {
-    cy.visit(SettingsMenu.exportMappingProfilePath)
-  });
-
   after('delete test data', () => {
     ExportFieldMappingProfiles.getFieldMappingProfile({ query: `"name"=="${fieldMappingProfileName}"` })
     .then(response => {
@@ -42,6 +37,7 @@ describe('setting: data-export', () => {
   });
 
   it('C10984 New mapping profile form (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+    ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
     ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, ['Item']);
     ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
     ModalSelectTransformations.uncheckInstanceRecordTypeChechbox();

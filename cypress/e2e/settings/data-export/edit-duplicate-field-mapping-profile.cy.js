@@ -1,4 +1,4 @@
-import { getTestEntityValue } from "../../../support/utils/stringTools";
+import { getTestEntityValue } from '../../../support/utils/stringTools';
 import testTypes from '../../../support/dictionary/testTypes';
 import devTeams from '../../../support/dictionary/devTeams';
 import Users from '../../../support/fragments/users/users';
@@ -7,10 +7,10 @@ import TopMenu from '../../../support/fragments/topMenu';
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
 import ExportNewFieldMappingProfile from '../../../support/fragments/data-export/exportMappingProfile/exportNewFieldMappingProfile';
-import DeleteFieldMappingProfile from "../../../support/fragments/data-export/exportMappingProfile/deleteFieldMappingProfile";
-import SingleFieldMappingProfilePane from "../../../support/fragments/data-export/exportMappingProfile/singleFieldMappingProfilePane";
-import ModalSelectTransformations from "../../../support/fragments/data-export/exportMappingProfile/modalSelectTransformations";
-import InteractorsTools from "../../../support/utils/interactorsTools";
+import DeleteFieldMappingProfile from '../../../support/fragments/data-export/exportMappingProfile/deleteFieldMappingProfile';
+import SingleFieldMappingProfilePane from '../../../support/fragments/data-export/exportMappingProfile/singleFieldMappingProfilePane';
+import ModalSelectTransformations from '../../../support/fragments/data-export/exportMappingProfile/modalSelectTransformations';
+import InteractorsTools from '../../../support/utils/interactorsTools';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 
 let user;
@@ -24,7 +24,7 @@ let updatedDescription = getTestEntityValue('description');
 const updatedTransformationCalloutMessage = `The transformations have been updated`;
 const updatedFieldMappingProfileCalloutMessage = `The field mapping profile ${updatedFieldMappingProfileName} has been successfully saved`;
 
-const duplicatedFieldMappingProfileName = `Copy of ${profileNames[1]}`
+const duplicatedFieldMappingProfileName = `Copy of ${profileNames[1]}`;
 const duplicatedFieldMappingProfileCalloutMessage = `The field mapping profile ${duplicatedFieldMappingProfileName} has been successfully created`;
 
 describe('setting: data-export', () => {
@@ -44,7 +44,7 @@ describe('setting: data-export', () => {
   });
 
   beforeEach('go to page', () => {
-    cy.visit(SettingsMenu.exportMappingProfilePath)
+    cy.visit(SettingsMenu.exportMappingProfilePath);
   });
 
   after('delete test data', () => {
