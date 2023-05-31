@@ -27,7 +27,7 @@ const updatedFieldMappingProfileCalloutMessage = `The field mapping profile ${up
 const duplicatedFieldMappingProfileName = `Copy of ${profileNames[1]}`;
 const duplicatedFieldMappingProfileCalloutMessage = `The field mapping profile ${duplicatedFieldMappingProfileName} has been successfully created`;
 
-describe('setting: data-export', () => {
+describe('Mapping profile - setup', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.dataExportEnableSettings.gui,
