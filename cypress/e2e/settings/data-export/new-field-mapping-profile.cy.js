@@ -20,7 +20,7 @@ let description = getTestEntityValue('description');
 const newTransformationCalloutMessage = '1 transformation has been successfully added';
 const updatedTransformationCalloutMessage = `The transformations have been updated`;
 const newFieldMappingProfileCalloutMessage = `The field mapping profile ${fieldMappingProfileName} has been successfully created`;
-const updatedFieldMappingProfileCalloutMessage = `The field mapping profile ${updatedFieldMappingProfileName} has been successfully saved`
+const updatedFieldMappingProfileCalloutMessage = `The field mapping profile ${updatedFieldMappingProfileName} has been successfully saved`;
 
 describe('setting: data-export', () => {
   before('create test data', () => {
