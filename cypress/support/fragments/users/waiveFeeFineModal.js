@@ -42,5 +42,11 @@ export default {
     cy.do(Button('Confirm').click());
   },
   cancel:() => cy.do(Button({ id: 'cancel-button' }).click()),
+  waiveFeeFineViaApi:(apiBody, feeFineId) => cy.okapiRequest({
+    method: 'POST',
+    path: `accounts/${feeFineId}/waive`,
+    body: apiBody,
+    isDefaultSearchParamsRequired: false
+  }),
 };
 
