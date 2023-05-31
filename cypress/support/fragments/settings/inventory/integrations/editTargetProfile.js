@@ -1,8 +1,4 @@
-import {
-  Button,
-  TextField,
-  Pane
-} from '../../../../../interactors';
+import { Button, TextField, Pane } from '../../../../../../interactors';
 
 export default {
   verifyTargetProfileFormOpened: (name) => cy.expect(Pane(name).exists()),

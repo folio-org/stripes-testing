@@ -1,9 +1,9 @@
+import { including } from '@interactors/html';
 import {
   Button,
   TextField,
   Pane,
   Link,
-  including,
   KeyValue,
   Selection,
   SelectionList,
@@ -13,7 +13,7 @@ import {
   MultiColumnListCell,
   MultiColumnListRow,
   Callout
-} from '../../../../../interactors';
+} from '../../../../../../interactors';
 
 const oclcWorldcatPane = Pane('✓ OCLC WorldCat');
 const targetProfileName = Pane('Z39.50 target profiles');

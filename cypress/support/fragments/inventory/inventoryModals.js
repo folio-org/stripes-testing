@@ -6,6 +6,7 @@ const selectedJobProfile = Select({ name:'selectedJobProfileId' });
 const externalIdentifierField = TextField({ name:'externalIdentifier' });
 const importButton = Button('Import');
 const singleReportImportModal = Modal('Single record import');
+const reImportModal = Modal('Re-import');
 
 function getModalCheckboxByRow(row) { return Modal().find(MultiColumnListCell({ 'row': row, 'columnIndex': 0 })).find(Checkbox()); }
 function buttonIsEnabled(name) { return cy.expect(Modal().find(Button(name)).is({ disabled: false })); }
@@ -88,8 +89,38 @@ export default {
     cy.expect(singleReportImportModal.absent());
   },
 
+  selectTheProfileToBeUsedToOverlayTheCurrentData(profileName) {
+    cy.do(reImportModal.find(selectedJobProfile).choose(profileName));
+    cy.expect(reImportModal.find(selectedJobProfile).has({ content: including(profileName) }));
+  },
+
+  fillEnterTheTargetIdentifier(identifier) {
+    cy.do(reImportModal.find(externalIdentifierField).fillIn(identifier));
+    cy.expect(reImportModal.find(externalIdentifierField).has({ value: identifier }));
+  },
+
+  reImport() {
+    cy.do(reImportModal.find(importButton).click());
+    cy.expect(reImportModal.absent());
+  },
+
   verifySelectTheProfileToBeUsedField(profileName) {
     cy.expect(singleReportImportModal.find(selectedJobProfile).has({ content: including(profileName) }));
     verifyListIsSortedInAlhpabeticalOrder();
-  }
+  },
+
+  verifyReImportModalWithOneTargetProfile:() => {
+    cy.expect([
+      reImportModal.exists(),
+      selectedJobProfile.exists(),
+      externalIdentifierField.exists(),
+      Button('Cancel').exists(),
+      importButton.has({ visible: false })
+    ]);
+  },
+
+  verifySelectTheProfileToBeUsedToOverlayTheCurrentDataField(profileName) {
+    cy.expect(reImportModal.find(selectedJobProfile).has({ content: including(profileName) }));
+    verifyListIsSortedInAlhpabeticalOrder();
+  },
 };

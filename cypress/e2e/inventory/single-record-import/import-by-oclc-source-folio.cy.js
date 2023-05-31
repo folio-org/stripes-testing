@@ -5,7 +5,7 @@ import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/z39.50TargetProfiles';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import DevTeams from '../../../support/dictionary/devTeams';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
