@@ -75,6 +75,10 @@ const polListingAccordion = Section({ id: 'POListing' });
 const quantityElectronicField = TextField({ name: 'locations[0].quantityElectronic' });
 const selectPermanentLocationModal = Modal('Select permanent location');
 const noteTitle = `Autotest Title_${getRandomPostfix()}`;
+const orderHistorySection = Section({ id: 'versions-history-pane-order-line' });
+const agreementLinesSection = Section({ id: 'relatedAgreementLines' });
+const invoiceLinesSection = Section({ id: 'relatedInvoiceLines' });
+const notesSection = Section({ id: 'notes' });
 
 export default {
 
@@ -186,33 +190,33 @@ export default {
     cy.do(Section({ id: 'order-lines-details' }).find(Button({ icon: 'clock' })).click());
     cy.wait(2000);
     cy.expect([
-      Section({ id: 'relatedAgreementLines' }).absent(),
-      Section({ id: 'relatedInvoiceLines' }).absent(),
-      Section({ id: 'notes' }).absent(),
-      Section({ id: 'versions-history-pane-order-line' }).exists(),
+      agreementLinesSection.absent(),
+      invoiceLinesSection.absent(),
+      notesSection.absent(),
+      orderHistorySection.exists(),
     ]);
   },
 
   checkVersionHistoryCard(date, textInformation) {
     cy.expect([
-      Section({ id: 'versions-history-pane-order-line' }).find(Card({ headerStart: date })).has({ text: textInformation }),
+      orderHistorySection.find(Card({ headerStart: date })).has({ text: textInformation }),
     ]);
   },
 
   selectVersionHistoryCard(date) {
     cy.do([
-      Section({ id: 'versions-history-pane-order-line' }).find(Card({ headerStart: date })).find(Button({ icon: 'clock' })).click(),
+      orderHistorySection.find(Card({ headerStart: date })).find(Button({ icon: 'clock' })).click(),
     ]);
   },
 
   closeVersionHistory: () => {
-    cy.do(Section({ id: 'versions-history-pane-order-line' }).find(Button({ icon: 'times' })).click());
+    cy.do(orderHistorySection.find(Button({ icon: 'times' })).click());
     cy.wait(2000);
     cy.expect([
-      Section({ id: 'relatedAgreementLines' }).exists(),
-      Section({ id: 'relatedInvoiceLines' }).exists(),
-      Section({ id: 'notes' }).exists(),
-      Section({ id: 'versions-history-pane-order-line' }).absent(),
+      agreementLinesSection.exists(),
+      invoiceLinesSection.exists(),
+      notesSection.exists(),
+      orderHistorySection.absent(),
     ]);
   },
 

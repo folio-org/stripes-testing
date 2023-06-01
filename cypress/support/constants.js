@@ -130,6 +130,11 @@ export const ORDER_STATUSES = {
   PENDING: 'Pending'
 };
 
+export const ORDER_TYPES = {
+  ONE_TIME: 'One-Time',
+  ONGOING: 'Ongoing'
+};
+
 export const ORDER_FORMAT_NAMES = {
   ELECTRONIC_RESOURCE: 'Electronic resource',
   ELECTRONIC_RESOURCE_Check: 'Electronic Resource',

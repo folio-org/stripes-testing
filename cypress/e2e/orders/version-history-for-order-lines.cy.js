@@ -20,10 +20,11 @@ import Funds from '../../support/fragments/finance/funds/funds';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import Invoices from '../../support/fragments/invoices/invoices';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
+import { ORDER_TYPES } from '../../support/constants';
 
 describe('Orders: orders', () => {
   const order = { ...NewOrder.defaultOneTimeOrder,
-    orderType: 'Ongoing',
+    orderType: ORDER_TYPES.ONGOING,
     ongoing: { isSubscription: false, manualRenewal: false },
     approved: false };
   const organization = {
