@@ -13,10 +13,10 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import ViewTargetProfile from '../../../support/fragments/settings/inventory/integrations/viewTargetProfile';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryModals from '../../../support/fragments/inventory/inventoryModals';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import Users from '../../../support/fragments/users/users';
+import ReImportModal from '../../../support/fragments/inventory/reImportModal';
 
 describe('ui-inventory', () => {
   let user;
@@ -82,11 +82,11 @@ describe('ui-inventory', () => {
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
       InventoryInstance.startOverlaySourceBibRecord();
-      InventoryModals.verifyReImportModalWithOneTargetProfile();
-      InventoryModals.verifySelectTheProfileToBeUsedToOverlayTheCurrentDataField(profileForImport);
-      InventoryModals.selectTheProfileToBeUsedToOverlayTheCurrentData(profileForImport);
-      InventoryModals.fillEnterTheTargetIdentifier(targetIdentifier);
-      InventoryModals.reImport();
+      ReImportModal.verifyModalWithOneTargetProfile();
+      ReImportModal.verifySelectTheProfileToBeUsedToOverlayTheCurrentDataField(profileForImport);
+      ReImportModal.selectTheProfileToBeUsedToOverlayTheCurrentData(profileForImport);
+      ReImportModal.fillEnterTheTargetIdentifier(targetIdentifier);
+      ReImportModal.import();
       // need to wait because after the import the data in the instance is displayed for a long time
       // https://issues.folio.org/browse/MODCPCT-73
       cy.wait(10000);
