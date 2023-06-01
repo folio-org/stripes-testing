@@ -15,14 +15,12 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import FeeFineDetails from '../../support/fragments/users/feeFineDetails';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
-import RefundReasons from '../../support/fragments/settings/users/refundReasons';
-import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
 import ManualCharges from '../../support/fragments/settings/users/manualCharges';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
-import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
-import RefundFeeFine from '../../support/fragments/users/refundFeeFine';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
+import WaiveFeeFineModal from '../../support/fragments/users/waiveFeeFineModal';
+import WaiveReasons from '../../support/fragments/settings/users/waiveReasons';
 
 describe('Circulation log', () => {
   const patronGroup = {
@@ -46,7 +44,8 @@ describe('Circulation log', () => {
       },
     ],
   };
-  const refundReason = RefundReasons.getDefaultNewRefundReason(uuid());
+  const waiveReason = WaiveReasons.getDefaultNewWaiveReason(uuid());
+
 
   before('Preconditions', () => {
     cy.getAdminToken()
@@ -102,11 +101,7 @@ describe('Circulation log', () => {
       testData.manualChargeId = chargeRes.id;
       testData.manualChargeName = chargeRes.feeFineType;
     });
-    PaymentMethods.createViaApi(userOwnerBody.id).then((paymentRes) => {
-      testData.paymentMethodId = paymentRes.id;
-      testData.paymentMethodName = paymentRes.name;
-    });
-    RefundReasons.createViaApi(refundReason);
+    WaiveReasons.createViaApi(waiveReason);
 
     PatronGroups.createViaApi(patronGroup.name)
       .then((group) => {
@@ -137,20 +132,10 @@ describe('Circulation log', () => {
           title: itemData.title,
         }).then((feeFineId) => {
           testData.feeFineId = feeFineId;
-          PayFeeFaine.payFeeFineViaApi(
+          WaiveFeeFineModal.waiveFeeFineViaApi(
             {
               amount: '5.00',
-              paymentMethod: testData.paymentMethodName,
-              notifyPatron: false,
-              servicePointId: testData.userServicePoint.id,
-              userName: 'ADMINISTRATOR, DIKU',
-            },
-            feeFineId
-          );
-          RefundFeeFine.refundFeeFineViaApi(
-            {
-              amount: '5.00',
-              paymentMethod: refundReason.nameReason,
+              paymentMethod: waiveReason.nameReason,
               notifyPatron: false,
               servicePointId: testData.userServicePoint.id,
               userName: 'ADMINISTRATOR, DIKU',
@@ -174,9 +159,8 @@ describe('Circulation log', () => {
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    RefundReasons.deleteViaApi(refundReason.id);
+    WaiveReasons.deleteViaApi(waiveReason.id);
     ManualCharges.deleteViaApi(testData.manualChargeId);
-    PaymentMethods.deleteViaApi(testData.paymentMethodId);
     UsersOwners.deleteViaApi(userOwnerBody.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
@@ -188,58 +172,31 @@ describe('Circulation log', () => {
   });
 
   it(
-    'C17058 Check the Actions button from filtering Circulation log by refunded fully (volaris)',
+    'C17054 Check the Actions button from filtering Circulation log by waived fully (volaris)',
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
-      SearchPane.setFilterOptionFromAccordion('fee', 'Refunded fully');
+      SearchPane.setFilterOptionFromAccordion('fee', 'Waived fully');
       SearchPane.searchByItemBarcode(itemData.barcode);
-      SearchPane.findResultRowIndexByContent('Refunded fully').then((rowIndex) => {
+      SearchPane.findResultRowIndexByContent('Waived fully').then((rowIndex) => {
         SearchResults.chooseActionByRow(rowIndex, 'Fee/fine details');
         FeeFineDetails.waitLoading();
       });
 
       cy.visit(TopMenu.circulationLogPath);
       SearchPane.waitLoading();
-      SearchPane.setFilterOptionFromAccordion('fee', 'Refunded fully');
+      SearchPane.setFilterOptionFromAccordion('fee', 'Waived fully');
       SearchPane.searchByItemBarcode(itemData.barcode);
-      SearchPane.findResultRowIndexByContent('Refunded fully').then((rowIndex) => {
+      SearchPane.findResultRowIndexByContent('Waived fully').then((rowIndex) => {
         SearchResults.chooseActionByRow(rowIndex, 'User details');
         Users.verifyFirstNameOnUserDetailsPane(userData.firstName);
       });
 
       cy.visit(TopMenu.circulationLogPath);
       SearchPane.waitLoading();
-      SearchPane.setFilterOptionFromAccordion('fee', 'Refunded fully');
+      SearchPane.setFilterOptionFromAccordion('fee', 'Waived fully');
       SearchPane.searchByItemBarcode(itemData.barcode);
       SearchResults.clickOnCell(itemData.barcode, 0);
       ItemRecordView.waitLoading();
-    }
-  );
-
-  it(
-    'C17057 Filter circulation log by refunded fully (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
-    () => {
-      const searchResultsData = {
-        userBarcode: userData.barcode,
-        itemBarcode: itemData.barcode,
-        object: 'Fee/fine',
-        circAction: 'Refunded fully',
-        // TODO: add check for date with format <C6/8/2022, 6:46 AM>
-        servicePoint: testData.userServicePoint.name,
-        source: 'ADMINISTRATOR, DIKU',
-        desc: `Fee/Fine type: ${testData.manualChargeName}.`,
-      };
-
-      SearchPane.setFilterOptionFromAccordion('fee', 'Refunded fully');
-      SearchPane.findResultRowIndexByContent(searchResultsData.desc).then((rowIndex) => {
-        SearchPane.checkResultSearch(searchResultsData, rowIndex);
-      });
-      SearchPane.resetResults();
-      SearchPane.searchByItemBarcode(itemData.barcode);
-      SearchPane.findResultRowIndexByContent(searchResultsData.desc).then((rowIndex) => {
-        SearchPane.checkResultSearch(searchResultsData, rowIndex);
-      });
     }
   );
 });

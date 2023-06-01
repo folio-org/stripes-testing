@@ -17,7 +17,7 @@ import InventoryInstancesMovement from '../../support/fragments/inventory/holdin
 import users from '../../support/fragments/users/users';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
-import Z3950TargetProfiles from '../../support/fragments/settings/inventory/z39.50TargetProfiles';
+import Z3950TargetProfiles from '../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('ui-inventory: moving items', { retries: 2 }, () => {

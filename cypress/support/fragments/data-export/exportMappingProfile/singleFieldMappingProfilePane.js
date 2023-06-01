@@ -5,9 +5,18 @@ import {
   MultiColumnListCell,
   KeyValue,
   Button,
+  TextField,
+  TextArea,
+  Checkbox
 } from "../../../../../interactors";
 
 const actionsButton = Button('Actions');
+const editButton = Button('Edit');
+const duplicateButton = Button('Duplicate');
+const deleteButton = Button('Delete');
+const nameTextfield = TextField('Name*');
+const descriptionTextarea = TextArea('Description');
+const saveAndCloseButton = Button('Save & close');
 
 export default {
   clickProfileNameFromTheList(name) {
@@ -31,9 +40,44 @@ export default {
   verifyOnlyDuplicateOptionAvailable() {
     cy.do(actionsButton.click());
     cy.expect([
-      Button('Edit').has({ disabled: true }),
-      Button('Duplicate').has({ disabled: false }),
-      Button('Delete').has({ disabled: true })
+      editButton.has({ disabled: true }),
+      duplicateButton.has({ disabled: false }),
+      deleteButton.has({ disabled: true })
     ]);
+  },
+
+  verifyActionOptions() {
+    cy.do(actionsButton.click());
+    cy.expect([
+      editButton.has({ disabled: false }),
+      duplicateButton.has({ disabled: false }),
+      deleteButton.has({ disabled: false })
+    ]);
+  },
+
+  editFieldMappingProfile(newName, newDescription) {
+    cy.do(editButton.click())
+    // Need to wait for page to reload
+    cy.wait(2000)
+    cy.do([
+      nameTextfield.clear(),
+      nameTextfield.fillIn(newName),
+      descriptionTextarea.fillIn(newDescription)
+    ])
+  },
+
+  duplicateFieldMappingProfile() {
+    cy.do([
+      duplicateButton.click(),
+      saveAndCloseButton.click()
+    ]);
+  },
+
+  clickEditTransformations() {
+    cy.do(Accordion('Transformations').find(Button('Edit transformations')).click());
+  },
+
+  checkRecordType(recordType) {
+    cy.do(Checkbox(recordType).click())
   },
 };
