@@ -9,6 +9,7 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import { JOB_STATUS_NAMES } from '../../../support/constants';
 
 describe('Search in Inventory', () => {
   const testData = {};
@@ -51,7 +52,7 @@ describe('Search in Inventory', () => {
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(fileName);
-    Logs.checkStatusOfJobProfile('Completed');
+    Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     Logs.openFileDetails(fileName);
     for (let i = 0; i < 5; i++) {
       Logs.getCreatedItemsID(i).then(link => {
@@ -86,7 +87,7 @@ describe('Search in Inventory', () => {
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(fileName);
-    Logs.checkStatusOfJobProfile('Completed');
+    Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     Logs.openFileDetails(fileName);
     for (let i = 0; i < 2; i++) {
       Logs.getCreatedItemsID(i).then(link => {

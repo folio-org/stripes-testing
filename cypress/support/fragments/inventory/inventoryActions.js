@@ -4,6 +4,7 @@ import InventoryInstance from './inventoryInstance';
 import FileManager from '../../utils/fileManager';
 
 const importButtonInActions = Button({ id: 'dropdown-clickable-import-record' });
+const reImportButtonInActions = Button({ id:'dropdown-clickable-reimport-record' });
 const importButtonInModal = Button('Import');
 const OCLWorldCatIdentifierTextField = TextField({ name: 'externalIdentifier' });
 const importTypeSelect = Select({ name :'externalIdentifierType' });
@@ -54,6 +55,11 @@ export default {
   openSingleReportImportModal:() => {
     open();
     cy.do(importButtonInActions.click());
+  },
+
+  openReImportModal:() => {
+    open();
+    cy.do(reImportButtonInActions.click());
   },
 
   // the same steps can be used in Overlay Source Bibliographic Record

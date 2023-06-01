@@ -2,9 +2,16 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
+import {
+  FOLIO_RECORD_TYPE,
+  INSTANCE_STATUS_TERM_NAMES,
+  TARGET_PROFILE_NAMES,
+  ACCEPTED_DATA_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES,
+  JOB_STATUS_NAMES
+} from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/z39.50TargetProfiles';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
@@ -30,7 +37,6 @@ describe('ui-data-import', () => {
   let instanceHrid;
   const marcFieldProtectionId = [];
   const authentication = '100473910/PAOLF';
-  const targetProfileName = '✓ OCLC WorldCat';
   const protectedFields = {
     firstField: '*',
     secondField: '920'
@@ -47,7 +53,7 @@ describe('ui-data-import', () => {
       field: '001'
     },
     matchCriterion: 'Exactly matches',
-    existingRecordType: 'INSTANCE',
+    existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
     instanceOption: NewMatchProfile.optionsList.instanceHrid
   };
   const mappingProfile = {
@@ -63,7 +69,7 @@ describe('ui-data-import', () => {
   };
   const jobProfile = {
     profileName: `C356829 Update instance and check field protections ${getRandomPostfix()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
   before('create test user', () => {
@@ -103,7 +109,7 @@ describe('ui-data-import', () => {
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       cy.visit(SettingsMenu.targetProfilesPath);
       Z3950TargetProfiles.openTargetProfile();
-      Z3950TargetProfiles.editOclcWorldCat(authentication, targetProfileName);
+      Z3950TargetProfiles.editOclcWorldCat(authentication, TARGET_PROFILE_NAMES.OCLC_WORLDCAT);
       Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(authentication);
 
       MarcFieldProtection.createMarcFieldProtectionViaApi({
@@ -199,7 +205,7 @@ describe('ui-data-import', () => {
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFileForUpload);
-        Logs.checkStatusOfJobProfile('Completed');
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameMarcFileForUpload);
         [FileDetails.columnNameInResultList.srsMarc, FileDetails.columnNameInResultList.instance].forEach(columnName => {
           FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);

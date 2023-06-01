@@ -6,7 +6,7 @@ import permissions from '../../../support/dictionary/permissions';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/z39.50TargetProfiles';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
@@ -65,7 +65,7 @@ describe('ui-inventory', () => {
     ActionProfiles.deleteActionProfile(profile.createActionProfile);
     FieldMappingProfiles.deleteFieldMappingProfile(profile.createMappingProfile);
     Users.deleteViaApi(user.userId);
-    Z3950TargetProfiles.deleteFundViaApi(profileId);
+    Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
       .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
@@ -75,7 +75,7 @@ describe('ui-inventory', () => {
   it('C375122 Verify the modal window for ISRI Import/Create in inventory main actions menu for multiple target profiles (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       InventoryActions.openSingleReportImportModal();
-      InventoryModals.verifyInventorySingleRecordModal();
+      InventoryModals.verifyInventorySingleRecordModalWithSeveralTargetProfiles();
       InventoryModals.selectExternalTarget(targetProfileName);
       InventoryModals.selectTheProfileToBeUsed(profile.createJobProfile);
       InventoryModals.fillEnterTestIdentifier(testIdentifier);

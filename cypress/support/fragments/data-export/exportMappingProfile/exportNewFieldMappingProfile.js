@@ -1,5 +1,6 @@
 import { TextField, Button, Select, Checkbox, Modal, Accordion } from '../../../../../interactors';
 import modalSelectTransformations from './modalSelectTransformations';
+import { EXPORT_TRANSFORMATION_NAMES } from '../../../constants';
 
 const outputFormat = 'MARC';
 
@@ -19,11 +20,11 @@ export default {
       itemCheckbox.click(),
       addTransformationsButton.click()
     ]);
-    modalSelectTransformations.searchItemTransformationsByName('Holdings - HRID');
+    modalSelectTransformations.searchItemTransformationsByName(profile.holdingsTransformation);
     modalSelectTransformations.selectTransformations(profile.holdingsMarcField, profile.subfieldForHoldings);
     cy.do(addTransformationsButton.click());
     cy.expect(Modal('Select transformations').absent());
-    modalSelectTransformations.searchItemTransformationsByName('Item - HRID');
+    modalSelectTransformations.searchItemTransformationsByName(profile.itemTransformation);
     modalSelectTransformations.selectTransformations(profile.itemMarcField, profile.subfieldForItem);
   },
 
@@ -35,7 +36,7 @@ export default {
       itemCheckbox.click(),
       addTransformationsButton.click()
     ]);
-    modalSelectTransformations.searchItemTransformationsByName('Item - HRID');
+    modalSelectTransformations.searchItemTransformationsByName(EXPORT_TRANSFORMATION_NAMES.ITEM_HRID);
     modalSelectTransformations.selectTransformations(itemMarcField, subfield);
   },
 
@@ -52,15 +53,15 @@ export default {
       isDefaultSearchParamsRequired: false,
     }).then(({ response }) => { return response; });
   },
-  
+
   createNewFieldMappingProfile(name, recordTypes) {
     cy.do([
       Button('New').click(),
       TextField('Name*').fillIn(name),
     ]);
     recordTypes.forEach(recordType => {
-      cy.do(Checkbox(recordType).click())
+      cy.do(Checkbox(recordType).click());
     });
-    cy.do(Accordion('Transformations').find(Button('Add transformations')).click())
+    cy.do(Accordion('Transformations').find(Button('Add transformations')).click());
   },
 };

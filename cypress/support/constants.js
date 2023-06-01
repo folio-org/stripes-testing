@@ -157,7 +157,7 @@ export const ACQUISITION_METHOD_NAMES = {
   MEMBERSHIP: 'Membership',
   OTHER: 'Other',
   PURCHASE: 'Purchase',
-  PURCHASE_AT_VENDOR_SYSTEM: 'Purchase at vendor system',
+  PURCHASE_AT_VENDOR_SYSTEM: 'Purchase At Vendor System',
   TECHNICAL: 'Technical'
 };
 
@@ -180,4 +180,43 @@ export const CALL_NUMBER_TYPE_NAMES = {
   OTHER_SCHEME: 'Other scheme',
   LIBRARY_OF_CONGRESS: 'Library of Congress classification',
   LIBRARY_OF_MEDICINE: 'National Library of Medicine classification'
+};
+
+export const EXPORT_TRANSFORMATION_NAMES = {
+  ITEM_HRID: 'Item - HRID',
+  HOLDINGS_HRID: 'Holdings - HRID'
+};
+
+export const TARGET_PROFILE_NAMES = {
+  OCLC_WORLDCAT: '✓ OCLC WorldCat'
+};
+
+export const ACCEPTED_DATA_TYPE_NAMES = {
+  MARC: 'MARC',
+  EDIFACT: 'EDIFACT'
+};
+
+export const INSTANCE_SOURCE_NAMES = {
+  MARC: 'MARC',
+  FOLIO: 'FOLIO'
+};
+
+export const PROFILE_TYPE_NAMES = {
+  JOB_PROFILE: 'JOB_PROFILE',
+  MATCH_PROFILE: 'MATCH_PROFILE',
+  ACTION_PROFILE: 'ACTION_PROFILE',
+  MAPPING_PROFILE: 'MAPPING_PROFILE'
+};
+
+export const EXISTING_RECORDS_NAMES = {
+  INSTANCE: 'INSTANCE',
+  HOLDINGS: 'HOLDINGS',
+  ITEM: 'ITEM',
+  MARC_BIBLIOGRAPHIC: 'MARC_BIBLIOGRAPHIC'
+};
+
+export const JOB_STATUS_NAMES = {
+  COMPLETED: 'Completed',
+  COMPLETED_WITH_ERRORS: 'Completed with errors',
+  FAILED: 'Failed'
 };

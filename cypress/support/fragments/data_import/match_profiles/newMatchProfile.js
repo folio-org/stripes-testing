@@ -8,6 +8,7 @@ import {
   SelectionOption,
   Dropdown
 } from '../../../../../interactors';
+import { EXISTING_RECORDS_NAMES } from '../../../constants';
 
 const criterionValueTypeList = SelectionList({ id: 'sl-container-criterion-value-type' });
 const criterionValueTypeButton = Button({ id:'criterion-value-type' });
@@ -174,7 +175,7 @@ export default {
             { 'label':'recordSubfield', 'value':'' }],
             staticValueDetails:null,
             dataValueType:'VALUE_FROM_RECORD' },
-            existingRecordType:'INSTANCE',
+            existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
             existingMatchExpression:{ fields:[{
               label:'field',
               value:'instance.hrid'
@@ -182,7 +183,7 @@ export default {
             dataValueType:'VALUE_FROM_RECORD' },
             matchCriterion:'EXACTLY_MATCHES' }],
           name: nameProfile,
-          existingRecordType:'INSTANCE' },
+          existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE },
         addedRelations:[],
         deletedRelations:[] },
         isDefaultSearchParamsRequired: false,

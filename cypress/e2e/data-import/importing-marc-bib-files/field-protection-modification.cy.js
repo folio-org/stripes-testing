@@ -1,7 +1,7 @@
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE, ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -39,7 +39,7 @@ describe('ui-data-import', () => {
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
     profileName: `C350678 Create bib and instance, but remove some MARC fields first ${Helper.getRandomBarcode()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
   before('login', () => {

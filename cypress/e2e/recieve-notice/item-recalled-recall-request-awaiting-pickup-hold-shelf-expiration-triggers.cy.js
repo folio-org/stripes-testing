@@ -300,8 +300,8 @@ describe('Request notice triggers', () => {
   });
 
   it(
-    'C347867 Item recalled + Recall request + Awaiting pickup + Hold shelf expiration triggers (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    'C347867 Item recalled + Recall request + Awaiting pickup + Hold shelf expiration triggers (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.itemRecaled);
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.itemRecaled);

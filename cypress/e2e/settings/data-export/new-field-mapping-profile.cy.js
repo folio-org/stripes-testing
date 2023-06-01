@@ -1,4 +1,4 @@
-import { getTestEntityValue } from "../../../support/utils/stringTools";
+import { getTestEntityValue } from '../../../support/utils/stringTools';
 import testTypes from '../../../support/dictionary/testTypes';
 import devTeams from '../../../support/dictionary/devTeams';
 import Users from '../../../support/fragments/users/users';
@@ -7,9 +7,9 @@ import TopMenu from '../../../support/fragments/topMenu';
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
 import ExportNewFieldMappingProfile from '../../../support/fragments/data-export/exportMappingProfile/exportNewFieldMappingProfile';
-import DeleteFieldMappingProfile from "../../../support/fragments/data-export/exportMappingProfile/deleteFieldMappingProfile";
-import ModalSelectTransformations from "../../../support/fragments/data-export/exportMappingProfile/modalSelectTransformations";
-import InteractorsTools from "../../../support/utils/interactorsTools";
+import DeleteFieldMappingProfile from '../../../support/fragments/data-export/exportMappingProfile/deleteFieldMappingProfile';
+import ModalSelectTransformations from '../../../support/fragments/data-export/exportMappingProfile/modalSelectTransformations';
+import InteractorsTools from '../../../support/utils/interactorsTools';
 
 let user;
 let fieldMappingProfileName = getTestEntityValue('fieldMappingProfile');

@@ -1,5 +1,9 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE,
+  INSTANCE_STATUS_TERM_NAMES,
+  ACCEPTED_DATA_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES,
+  JOB_STATUS_NAMES } from '../../../support/constants';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -15,7 +19,6 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -48,7 +51,7 @@ describe('ui-data-import', () => {
       subfield: 'i'
     },
     matchCriterion: 'Exactly matches',
-    existingRecordType: 'INSTANCE',
+    existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
     instanceOption: NewMatchProfile.optionsList.instanceUuid
   };
 
@@ -65,7 +68,7 @@ describe('ui-data-import', () => {
 
   const jobProfile = {
     profileName: `C17039 job profile ${Helper.getRandomBarcode()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
   before('create test data', () => {
@@ -119,7 +122,7 @@ describe('ui-data-import', () => {
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(nameMarcFileForCreate);
-    Logs.checkStatusOfJobProfile('Completed');
+    Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     Logs.openFileDetails(nameMarcFileForCreate);
     [FileDetails.columnNameInResultList.srsMarc,
       FileDetails.columnNameInResultList.instance].forEach(columnName => {
@@ -187,7 +190,7 @@ describe('ui-data-import', () => {
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameAfterUpload);
-        Logs.checkStatusOfJobProfile('Completed');
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameAfterUpload);
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc);
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance);
@@ -227,7 +230,7 @@ describe('ui-data-import', () => {
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(exportedFileName);
-        Logs.checkStatusOfJobProfile('Completed');
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(exportedFileName);
         [FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance].forEach(columnName => {
