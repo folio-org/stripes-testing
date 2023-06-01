@@ -2,8 +2,6 @@ import TopMenu from '../../support/fragments/topMenu';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
-import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
-import InstanceRecordEdit from '../../support/fragments/inventory/instanceRecordEdit';
 import testTypes from '../../support/dictionary/testTypes';
 import features from '../../support/dictionary/features';
 import permissions from '../../support/dictionary/permissions';
@@ -11,7 +9,7 @@ import { replaceByIndex } from '../../support/utils/stringTools';
 import { Callout } from '../../../interactors';
 import Users from '../../support/fragments/users/users';
 import DevTeams from '../../support/dictionary/devTeams';
-import Z3950TargetProfiles from '../../support/fragments/settings/inventory/z39.50TargetProfiles';
+import Z3950TargetProfiles from '../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 
 describe('Manage inventory Bib records with quickMarc editor', () => {

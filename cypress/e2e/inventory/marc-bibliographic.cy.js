@@ -9,7 +9,7 @@ import Permissions from '../../support/dictionary/permissions';
 import Users from '../../support/fragments/users/users';
 import DevTeams from '../../support/dictionary/devTeams';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
-import Z3950TargetProfiles from '../../support/fragments/settings/inventory/z39.50TargetProfiles';
+import Z3950TargetProfiles from '../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 
 describe('MARC -> MARC Bibliographic', () => {
   const testData = {};

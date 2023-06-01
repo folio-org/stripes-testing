@@ -100,7 +100,8 @@ describe('plug-in MARC authority | Search', () => {
     MarcAuthorities.checkSingleHeadingType(testData.forC359232.typeA, testData.forC359232.typeOfHeading);
     MarcAuthorities.checkType(testData.forC359232.typeA, testData.forC359232.typeB, testData.forC359232.typeC);
     MarcAuthorities.clickNextPagination();
-    MarcAuthorities.selectTitle(testData.forC359232.value);
+    MarcAuthorities.checkSingleHeadingType(testData.forC359232.typeA, testData.forC359232.typeOfHeading);
+    MarcAuthorities.searchByParameter(testData.forC359232.searchOption, testData.forC359232.value);
     MarcAuthorities.checkRecordDetailPageMarkedValue(testData.forC359232.value);
     InventoryInstance.closeDetailsView();
   });
