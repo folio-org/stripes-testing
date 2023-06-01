@@ -204,7 +204,7 @@ export default {
       Section({ id: 'versions-history-pane-order-line' }).find(Card({ headerStart: date })).find(Button({ icon: 'clock' })).click(),
     ]);
   },
-  
+
   closeVersionHistory: () => {
     cy.do(Section({ id: 'versions-history-pane-order-line' }).find(Button({ icon: 'times' })).click());
     cy.wait(2000);
@@ -739,9 +739,9 @@ export default {
   },
 
   editPOLInOrder: () => {
-    cy.do(orderLineDetailsPane.find(paneHeaderOrderLinesDetailes.find(actionsButton)).click());
-    cy.wait(4000);
-    cy.do(Button('Edit').click());
+    cy.do([orderLineDetailsPane.find(paneHeaderOrderLinesDetailes.find(actionsButton)).click(),
+      Button('Edit').click()
+    ]);
   },
 
   deleteFundInPOL() {

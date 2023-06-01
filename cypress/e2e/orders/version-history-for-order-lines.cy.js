@@ -113,9 +113,9 @@ describe('Orders: orders', () => {
         });
         // Need to wait for the next card in the order history to be created with a difference of a minute.
         cy.wait(60000);
-        OrderLines.addNewNote();
         OrderLines.editPOLInOrder();
         OrderLines.editFundInPOL(defaultFund, '70', '70');
+        OrderLines.addNewNote();
         cy.then(() => {
           secondDate = DateTools.getCurrentUTCTime();
           secondCard = `${secondDate}\nView this version\nSource: ADMINISTRATOR, DIKU\nChanged\nEstimated price\nPhysical unit price\nValue`;
