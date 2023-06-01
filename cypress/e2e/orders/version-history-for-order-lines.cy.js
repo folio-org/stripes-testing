@@ -12,7 +12,6 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import DateTools from '../../support/utils/dateTools';
 import Users from '../../support/fragments/users/users';
-import Agreements from '../../support/fragments/agreements/agreements';
 import NewAgreement from '../../support/fragments/agreements/newAgreement';
 import AgreementsDetails from '../../support/fragments/agreements/agreementsDetails';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';

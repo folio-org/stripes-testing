@@ -1,4 +1,3 @@
-import { id } from 'date-fns/locale';
 import { Accordion, Button, including, HTML, Section, MultiColumnListCell, Badge, Modal, Checkbox, MultiColumnList, MultiColumnListRow, SelectionOption, SearchField } from '../../../../interactors';
 import NewNote from '../notes/newNote';
 import { getLongDelay } from '../../utils/cypressTools';
