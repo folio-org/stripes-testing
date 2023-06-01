@@ -11,7 +11,7 @@ import { replaceByIndex } from '../../support/utils/stringTools';
 import { Callout } from '../../../interactors';
 import Users from '../../support/fragments/users/users';
 import DevTeams from '../../support/dictionary/devTeams';
-import Z3950TargetProfiles from '../../support/fragments/settings/inventory/z39.50TargetProfiles';
+import Z3950TargetProfiles from '../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 
 describe('Manage inventory Bib records with quickMarc editor', () => {
