@@ -739,12 +739,9 @@ export default {
   },
 
   editPOLInOrder: () => {
-    cy.do([
-      orderLineDetailsPane
-        .find(paneHeaderOrderLinesDetailes
-          .find(actionsButton)).click(),
-      Button('Edit').click(),
-    ]);
+    cy.do(orderLineDetailsPane.find(paneHeaderOrderLinesDetailes.find(actionsButton)).click());
+    cy.wait(4000);
+    cy.do(Button('Edit').click());
   },
 
   deleteFundInPOL() {
