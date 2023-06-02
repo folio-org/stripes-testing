@@ -200,7 +200,7 @@ describe('ui-data-import', () => {
       // upload .mrc file
       cy.visit(TopMenu.dataImportPath);
       DataImport.uploadFile('marcFileForC358998ForCreate_2.mrc', secondMarcFileNameForCreate);
-      JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+      JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(secondMarcFileNameForCreate);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);

@@ -6,7 +6,10 @@ import {
   SelectionList,
   Accordion,
   SelectionOption,
-  Dropdown
+  Dropdown,
+  Checkbox,
+  Section,
+  including
 } from '../../../../../interactors';
 import { EXISTING_RECORDS_NAMES } from '../../../constants';
 
@@ -151,11 +154,43 @@ const fillMatchProfileStaticValue = ({ profileName, incomingStaticValue, matchCr
     .find(SelectionOption(itemOption)).click());
 };
 
+const fillMatchProfileWithQualifier = ({
+  profileName,
+  incomingRecordFields,
+  existingRecordFields,
+  matchCriterion
+}) => {
+  cy.do(TextField('Name*').fillIn(profileName));
+  // wait for data to be loaded
+  cy.wait(8000);
+  cy.do(matchProfileDetailsAccordion.find(Button({ dataId:'MARC_BIBLIOGRAPHIC' })).click());
+  fillIncomingRecordFields(incomingRecordFields.field, 'field');
+  fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
+  cy.contains('Incoming MARC Bibliographic record').then(elem => {
+    elem.parent()[0].querySelector('input[type="checkbox').click();
+  });
+  cy.do([
+    Select({ name:'profile.matchDetails[0].incomingMatchExpression.qualifier.qualifierType' }).choose('Begins with'),
+    TextField({ name:'profile.matchDetails[0].incomingMatchExpression.qualifier.qualifierValue' }).fillIn('ccn')
+  ]);
+  cy.do(Select('Match criterion').choose(matchCriterion));
+  fillExistingRecordFields(existingRecordFields.field, 'field');
+  fillExistingRecordFields(existingRecordFields.subfield, 'subfield');
+  cy.contains('Existing MARC Bibliographic record').then(elem => {
+    elem.parent()[0].querySelector('input[type="checkbox').click();
+  });
+  cy.do([
+    Select({ name:'profile.matchDetails[0].existingMatchExpression.qualifier.qualifierType' }).choose('Begins with'),
+    TextField({ name:'profile.matchDetails[0].existingMatchExpression.qualifier.qualifierValue' }).fillIn('ccn')
+  ]);
+};
+
 export default {
   optionsList,
   fillMatchProfileForm,
   fillMatchProfileWithExistingPart,
   fillMatchProfileStaticValue,
+  fillMatchProfileWithQualifier,
 
   createMatchProfileViaApi:(nameProfile) => {
     return cy
