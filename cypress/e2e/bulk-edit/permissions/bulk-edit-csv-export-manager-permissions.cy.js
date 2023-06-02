@@ -21,6 +21,7 @@ describe('Permissions Bulk Edit', () => {
       permissions.bulkEditCsvEdit.gui,
       permissions.bulkEditEdit.gui,
       permissions.bulkEditView.gui,
+      permissions.uiUsersView.gui,
       permissions.exportManagerAll.gui,
     ])
       .then(userProperties => {
@@ -51,7 +52,7 @@ describe('Permissions Bulk Edit', () => {
     ExportManagerSearchPane.searchByBulkEdit();
     ExportManagerSearchPane.selectJob(user.username);
     ExportManagerSearchPane.clickJobIdInThirdPane();
-    
+
     BulkEditFiles.verifyMatchedResultFileContent(matchedRecordsFileName, [user.userId], 'userId', true);
   });
 });
