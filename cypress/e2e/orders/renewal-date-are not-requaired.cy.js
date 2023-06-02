@@ -15,12 +15,13 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Users from '../../support/fragments/users/users';
 import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
+import { ORDER_STATUSES } from '../../support/constants';
 
 describe('Orders', () => {
-  const order = {
-    ...NewOrder.defaultOneTimeOrder,
-    approved: true,
-  };
+  const order = { ...NewOrder.defaultOneTimeOrder,
+    orderType: 'Ongoing',
+    ongoing: { isSubscription: false, manualRenewal: false },
+    approved: false };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const orderLineTitle = BasicOrderLine.defaultOrderLine.titleOrPackage;
   let orderNumber;
@@ -46,9 +47,17 @@ describe('Orders', () => {
       permissions.uiOrdersView.gui,
       permissions.uiOrdersApprovePurchaseOrders.gui,
       permissions.uiOrdersReopenPurchaseOrders.gui,
-      permissions.uiInventoryViewInstances.gui,
-      permissions.uiReceivingViewEditCreate.gui,
-
+      permissions.uiOrdersAssignAcquisitionUnitsToNewOrder.gui,
+      permissions.uiOrdersCreate.gui,
+      permissions.uiOrdersEdit.gui,
+      permissions.uiOrdersDelete.gui,
+      permissions.uiOrdersCancelOrderLines.gui,
+      permissions.uiOrdersCancelPurchaseOrders.gui,
+      permissions.uiExportOrders.gui,
+      permissions.uiOrdersManageAcquisitionUnits.gui,
+      permissions.uiOrdersShowAllHiddenFields.gui,
+      permissions.uiOrdersUnopenpurchaseorders.gui,
+      permissions.uiOrdersUpdateEncumbrances.gui,
     ])
       .then(userProperties => {
         user = userProperties;
@@ -65,21 +74,21 @@ describe('Orders', () => {
   });
 
   it('C353627 "Renewal date" and "Renewal interval" are not required for opening, unopening, closing, reopening ongoing order (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    const barcode = Helper.getRandomBarcode();
-    const caption = 'autotestCaption';
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.openOrder();
     InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully opened`);
-    Orders.receiveOrderViaActions();
-    // Receiving part
-    Receiving.selectPOLInReceive(orderLineTitle);
-    Receiving.receivePiece(0, caption, barcode);
-    Receiving.checkReceivedPiece(0, caption, barcode);
-    // inventory part
-    cy.visit(TopMenu.inventoryPath);
-    InventorySearchAndFilter.switchToItem();
-    InventorySearchAndFilter.searchByParameter('Barcode', barcode);
-    ItemRecordView.checkItemDetails(OrdersHelper.onlineLibraryLocation, barcode, 'In process');
+    Orders.checkOrderStatus(ORDER_STATUSES.OPEN);
+    Orders.checkReviewDateOnOngoingOrder();
+    Orders.unOpenOrder();
+    Orders.checkOrderStatus(ORDER_STATUSES.PENDING);
+    Orders.checkReviewDateOnOngoingOrder();
+    Orders.openOrder();
+    InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully opened`);
+    Orders.checkOrderStatus(ORDER_STATUSES.OPEN);
+    Orders.checkReviewDateOnOngoingOrder();
+    Orders.closeOrder('Cancelled');
+    Orders.checkOrderStatus(ORDER_STATUSES.CLOSED);
+    Orders.checkReviewDateOnOngoingOrder();
   });
 });
