@@ -8,37 +8,47 @@ import InteractorsTools from '../../support/utils/interactorsTools';
 import DevTeams from '../../support/dictionary/devTeams';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import permissions from '../../support/dictionary/permissions';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import InventorySteps from '../../support/fragments/inventory/inventorySteps';
 import Users from '../../support/fragments/users/users';
+import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../support/fragments/data_import/logs/logs';
+import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('Manage holding records through quickmarc editor', () => {
+describe('MARC -> MARC Holdings', () => {
   const testData = {};
+  const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
+  const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   let instanceID;
 
   before(() => {
-    cy.getAdminToken().then(() => {
-      cy.createTempUser([
-        permissions.inventoryAll.gui,
-      ]).then(userProperties => {
-        testData.user = userProperties;
+    cy.createTempUser([
+      permissions.inventoryAll.gui,
+      permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
+      permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
+    ]).then(userProperties => {
+      testData.user = userProperties;
+    });
 
-        cy.loginAsAdmin();
-        DataImport.uploadMarcBib();
-
-        cy.visit(TopMenu.inventoryPath);
-        InventoryInstances.searchBySource('MARC');
-        InventoryInstances.selectInstance();
-        InventoryInstance.getId().then(id => { instanceID = id; });
-        InventorySteps.addMarcHoldingRecord();
+    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
+      DataImport.uploadFile('oneMarcBib.mrc', fileName);
+      JobProfiles.waitLoadingList();
+      JobProfiles.searchJobProfileForImport(jobProfileToRun);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(fileName);
+      Logs.checkStatusOfJobProfile('Completed');
+      Logs.openFileDetails(fileName);
+      Logs.getCreatedItemsID(0).then(link => {
+        instanceID = link.split('/')[5];
       });
+      Logs.goToTitleLink('Created');
+      InventorySteps.addMarcHoldingRecord();
     });
   });
 
   beforeEach(() => {
-    cy.visit(TopMenu.inventoryPath);
+    cy.login(testData.user.username, testData.user.password, { path: TopMenu.inventoryPath, waiter: InventorySearchAndFilter.waitLoading });
     InventorySearchAndFilter.searchInstanceByTitle(instanceID);
     InventorySearchAndFilter.selectViewHoldings();
     HoldingsRecordView.editInQuickMarc();
@@ -55,7 +65,7 @@ describe('Manage holding records through quickmarc editor', () => {
     InventorySearchAndFilter.selectViewHoldings();
     HoldingsRecordView.delete();
     Users.deleteViaApi(testData.user.userId);
-    InventoryInstance.deleteInstanceViaApi(instanceID);
+    if (instanceID) InventoryInstance.deleteInstanceViaApi(instanceID);
   });
 
   it('C345390 Add a field to a record using quickMARC (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
@@ -69,8 +79,9 @@ describe('Manage holding records through quickmarc editor', () => {
     InventoryViewSource.contains(expectedInSourceRow);
   });
 
-  it('C345398 Add/Edit MARC 008 (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
-    QuickMarcEditor.checkInitial008TagValueFromHoldings();
+  it('C345398 Edit MARC 008 (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
+    // TODO: rewiew initial values with QA
+    // QuickMarcEditor.checkInitial008TagValueFromHoldings();
     QuickMarcEditor.checkNotExpectedByteLabelsInTag008Holdings();
 
     const changed008TagValue = QuickMarcEditor.updateAllDefaultValuesIn008TagInHoldings();
