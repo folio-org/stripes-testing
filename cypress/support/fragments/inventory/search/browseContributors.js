@@ -127,6 +127,10 @@ export default {
     MultiColumnListCell(record).has({ innerHTML: including(`<strong>${record}</strong>`) });
   },
 
+  verifyRecordWithBold(record) {
+    cy.expect(MultiColumnListCell(record).has({ innerHTML: including(`<strong>${record}</strong>`) }));
+  },
+
   checkAuthorityIconAndValueDisplayed(value) {
     cy.expect([
       MultiColumnListCell({ row: 5, columnIndex: 0 }).has({ innerHTML: including(`<strong>${value}</strong>`) }),
