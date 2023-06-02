@@ -11,6 +11,7 @@ import {
   MultiColumnList,
   PaneHeader,
   KeyValue,
+  HTML
 } from '../../../../interactors';
 
 const searchButton = Button({ type: 'submit' });
@@ -32,7 +33,10 @@ const waitClick = () => { cy.wait(1000); };
 export default {
   getSearchResult,
   waitLoading() {
-    cy.expect(Pane('Export jobs').exists());
+    cy.expect([
+      Pane('Export jobs').exists(),
+      HTML('Choose a filter or enter a search query to show results.').exists()
+    ]);
   },
 
   selectJob(content) {
