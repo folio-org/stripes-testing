@@ -185,6 +185,15 @@ export default {
     ]);
   },
 
+  constinueWithSaveAndCheckInstanceRecord() {
+    cy.do(continueWithSaveButton.click());
+    cy.expect([
+      calloutAfterSaveAndClose.exists(),
+      rootSection.absent(),
+      instanceDetailsPane.exists(),
+    ]);
+  },
+
   saveAndCloseUpdatedLinkedBibField() {
     cy.do(saveAndCloseButton.click());
     cy.expect([
