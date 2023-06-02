@@ -22,7 +22,7 @@ describe('Inventory -> Contributors Browse', () => {
     const fileName = `testMarcFile.${getRandomPostfix()}.mrc` ;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     
-    let createdAuthorityIDs = [];
+    let importedInstanceID = [];
 
   before('Creating user and importing record', () => {
     cy.createTempUser([
@@ -40,11 +40,9 @@ describe('Inventory -> Contributors Browse', () => {
         JobProfiles.waitFileIsImported(fileName);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(fileName);
-        for (let i = 0; i < 1; i++) {
-          Logs.getCreatedItemsID(i).then(link => {
-            createdAuthorityIDs.push(link.split('/')[5]);
-          });
-        }
+        Logs.getCreatedItemsID(0).then(link => {
+          importedInstanceID.push(link.split('/')[5]);
+        });
        });
     });
   });
@@ -55,7 +53,7 @@ describe('Inventory -> Contributors Browse', () => {
 
   after('Deleting created user and record', () => {
     Users.deleteViaApi(testData.userProperties.userId);
-    InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
+    InventoryInstance.deleteInstanceViaApi(importedInstanceID[0]);
     
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     DataImport.selectLog();
@@ -64,7 +62,7 @@ describe('Inventory -> Contributors Browse', () => {
   });
 
   it('C357021 Verify that deleted Contributor from "MARC Bibliographic" record not displayed at browse result list (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
-    InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+    InventoryInstance.searchByTitle(importedInstanceID[0]);
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
     
