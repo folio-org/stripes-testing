@@ -726,4 +726,12 @@ export default {
       Section({ id: 'versions-history-pane-order' }).absent(),
     ]);
   },
+
+  checkOrderStatus(orderStatus) {
+    cy.expect(Section({ id: 'POSummary' }).find(KeyValue('Workflow status')).has({ value: orderStatus }));
+  },
+
+  checkReviewDateOnOngoingOrder() {
+    cy.expect(Section({ id: 'ongoing' }).find(KeyValue('Review date')).has({ value: 'No value set-' }));
+  },
 };

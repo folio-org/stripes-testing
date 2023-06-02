@@ -127,7 +127,8 @@ export const BATCH_GROUP = {
 
 export const ORDER_STATUSES = {
   OPEN: 'Open',
-  PENDING: 'Pending'
+  PENDING: 'Pending',
+  CLOSED: 'Closed'
 };
 
 export const ORDER_TYPES = {
