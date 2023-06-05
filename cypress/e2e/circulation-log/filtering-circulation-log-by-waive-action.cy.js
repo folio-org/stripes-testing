@@ -34,6 +34,7 @@ describe('Circulation log', () => {
   const waiveReason = WaiveReasons.getDefaultNewWaiveReason(uuid());
   const testData = {
     userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestCircLog', uuid()),
+    manualChargeName: null,
   };
   const waiveFeeFineBody = {
     amount: '2.00',
@@ -59,7 +60,7 @@ describe('Circulation log', () => {
     SearchPane.searchByItemBarcode(itemData.barcode);
     return SearchPane.findResultRowIndexByContent(filterName);
   };
-  const filterByAction = (filterName) => {
+  const checkActionsButton = (filterName) => {
     goToCircLogApp(filterName).then((rowIndex) => {
       SearchResults.chooseActionByRow(rowIndex, 'Fee/fine details');
       FeeFineDetails.waitLoading();
@@ -73,16 +74,29 @@ describe('Circulation log', () => {
       ItemRecordView.waitLoading();
     });
   };
-  const searchResults = (circAction, desc) => ({
-    userBarcode: userData.barcode,
-    itemBarcode: itemData.barcode,
-    object: 'Fee/fine',
-    circAction,
-    // TODO: add check for date with format <C6/8/2022, 6:46 AM>
-    servicePoint: testData.userServicePoint.name,
-    source: 'ADMINISTRATOR, DIKU',
-    desc,
-  });
+  const filterByAction = (filterName) => {
+    const searchResultsData = {
+      userBarcode: userData.barcode,
+      itemBarcode: itemData.barcode,
+      object: 'Fee/fine',
+      circAction: filterName,
+      // TODO: add check for date with format <C6/8/2022, 6:46 AM>
+      servicePoint: testData.userServicePoint.name,
+      source: 'ADMINISTRATOR, DIKU',
+      desc: `Fee/Fine type: ${testData.manualChargeName}.`,
+    };
+    cy.visit(TopMenu.circulationLogPath);
+    SearchPane.waitLoading();
+    SearchPane.setFilterOptionFromAccordion('fee', filterName);
+    SearchPane.findResultRowIndexByContent(searchResultsData.desc).then((rowIndex) => {
+      SearchPane.checkResultSearch(searchResultsData, rowIndex);
+    });
+    SearchPane.resetResults();
+    SearchPane.searchByItemBarcode(itemData.barcode);
+    SearchPane.findResultRowIndexByContent(searchResultsData.desc).then((rowIndex) => {
+      SearchPane.checkResultSearch(searchResultsData, rowIndex);
+    });
+  };
 
   before('Preconditions', () => {
     cy.getAdminToken()
@@ -170,8 +184,11 @@ describe('Circulation log', () => {
         }).then((feeFineId) => {
           testData.feeFineId = feeFineId;
         });
-        cy.loginAsAdmin();
       });
+  });
+
+  beforeEach('login', () => {
+    cy.loginAsAdmin();
   });
 
   after('Deleting created entities', () => {
@@ -197,6 +214,14 @@ describe('Circulation log', () => {
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       WaiveFeeFineModal.waiveFeeFineViaApi(waiveFeeFineBody, testData.feeFineId);
+      checkActionsButton('Waived partially');
+    }
+  );
+
+  it(
+    'C17055 Filter circulation log by waived partially (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
       filterByAction('Waived partially');
     }
   );
@@ -206,7 +231,7 @@ describe('Circulation log', () => {
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       WaiveFeeFineModal.waiveFeeFineViaApi(waiveFeeFineBody, testData.feeFineId);
-      filterByAction('Waived fully');
+      checkActionsButton('Waived fully');
     }
   );
 
@@ -214,21 +239,7 @@ describe('Circulation log', () => {
     'C17053 Filter circulation log by waived fully (volaris)',
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
-      const searchResultsData = searchResults(
-        'Waived fully',
-        `Fee/Fine type: ${testData.manualChargeName}.`
-      );
-      cy.visit(TopMenu.circulationLogPath);
-      SearchPane.waitLoading();
-      SearchPane.setFilterOptionFromAccordion('fee', 'Waived fully');
-      SearchPane.findResultRowIndexByContent(searchResultsData.desc).then((rowIndex) => {
-        SearchPane.checkResultSearch(searchResultsData, rowIndex);
-      });
-      SearchPane.resetResults();
-      SearchPane.searchByItemBarcode(itemData.barcode);
-      SearchPane.findResultRowIndexByContent(searchResultsData.desc).then((rowIndex) => {
-        SearchPane.checkResultSearch(searchResultsData, rowIndex);
-      });
+      filterByAction('Waived fully');
     }
   );
 });
