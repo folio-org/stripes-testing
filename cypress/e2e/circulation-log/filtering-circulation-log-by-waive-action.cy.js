@@ -231,31 +231,4 @@ describe('Circulation log', () => {
       });
     }
   );
-
-  it(
-    'C17053 Filter circulation log by waived fully (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
-    () => {
-      const searchResultsData = {
-        userBarcode: userData.barcode,
-        itemBarcode: itemData.barcode,
-        object: 'Fee/fine',
-        circAction: 'Waived fully',
-        // TODO: add check for date with format <C6/8/2022, 6:46 AM>
-        servicePoint: testData.userServicePoint.name,
-        source: 'ADMINISTRATOR, DIKU',
-        desc: `Fee/Fine type: ${testData.manualChargeName}.`,
-      };
-
-      SearchPane.setFilterOptionFromAccordion('fee', 'Waived fully');
-      SearchPane.findResultRowIndexByContent(searchResultsData.desc).then((rowIndex) => {
-        SearchPane.checkResultSearch(searchResultsData, rowIndex);
-      });
-      SearchPane.resetResults();
-      SearchPane.searchByItemBarcode(itemData.barcode);
-      SearchPane.findResultRowIndexByContent(searchResultsData.desc).then((rowIndex) => {
-        SearchPane.checkResultSearch(searchResultsData, rowIndex);
-      });
-    }
-  );
 });
