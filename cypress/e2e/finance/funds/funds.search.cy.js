@@ -6,6 +6,8 @@ import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import { MultiColumnList } from '../../../../interactors';
 import testType from '../../../support/dictionary/testTypes';
 import devTeams from '../../../support/dictionary/devTeams';
+import permissions from '../../../support/dictionary/permissions';
+import Users from '../../../support/fragments/users/users';
 
 describe('ui-finance: Funds', () => {
   let aUnit;
@@ -48,7 +50,13 @@ describe('ui-finance: Funds', () => {
         group = body.groups[0];
       });
 
-    cy.visit(TopMenu.fundPath);
+    cy.createTempUser([
+      permissions.uiFinanceViewLedger.gui,
+    ])
+      .then(userProperties => {
+        user = userProperties;
+        cy.login(userProperties.username, userProperties.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
+      });
   });
 
   beforeEach(() => {
@@ -64,6 +72,7 @@ describe('ui-finance: Funds', () => {
 
   afterEach(() => {
     cy.deleteFundApi(fund.id);
+    Users.deleteViaApi(user.userId);
   });
 
   it('C4059 Test the search and filter options for funds (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, function () {
@@ -71,32 +80,28 @@ describe('ui-finance: Funds', () => {
 
     Funds.checkFundFilters(ledger.name, fundType.name, 'Active', aUnit.name,
       tag.label, group.name, fund.name);
-    cy.expect(MultiColumnList({ id: 'funds-list' }).has({ rowCount: 1 }));
-
+    Funds.checkSearch();
     // search by name
     Funds.resetFundFilters();
     FinanceHelp.searchByName(fund.name);
-    cy.expect(MultiColumnList({ id: 'funds-list' }).has({ rowCount: 1 }));
-
+    Funds.checkSearch();
     // search by code
     Funds.resetFundFilters();
     FinanceHelp.searchByCode(fund.code);
-    cy.expect(MultiColumnList({ id: 'funds-list' }).has({ rowCount: 1 }));
-
+    Funds.checkSearch();
     // search by external accounts
     Funds.resetFundFilters();
     FinanceHelp.searchByExternalAccount(fund.externalAccountNo);
-    cy.expect(MultiColumnList({ id: 'funds-list' }).has({ rowCount: 1 }));
-
+    Funds.checkSearch();
     // search by all
     Funds.resetFundFilters();
     FinanceHelp.searchByAll(fund.name);
-    cy.expect(MultiColumnList({ id: 'funds-list' }).has({ rowCount: 1 }));
+    Funds.checkSearch();
     Funds.resetFundFilters();
     FinanceHelp.searchByAll(fund.code);
-    cy.expect(MultiColumnList({ id: 'funds-list' }).has({ rowCount: 1 }));
+    Funds.checkSearch();
     Funds.resetFundFilters();
     FinanceHelp.searchByAll(fund.description);
-    cy.expect(MultiColumnList({ id: 'funds-list' }).has({ rowCount: 1 }));
+    Funds.checkSearch();
   });
 });
