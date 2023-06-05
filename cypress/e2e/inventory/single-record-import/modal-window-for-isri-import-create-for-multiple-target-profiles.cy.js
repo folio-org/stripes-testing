@@ -10,13 +10,13 @@ import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/i
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
-import InventoryModals from '../../../support/fragments/inventory/inventoryModals';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import Users from '../../../support/fragments/users/users';
+import SingleRecordImportModal from '../../../support/fragments/inventory/singleRecordImportModal';
 
 describe('ui-inventory', () => {
   let user;
@@ -75,11 +75,11 @@ describe('ui-inventory', () => {
   it('C375122 Verify the modal window for ISRI Import/Create in inventory main actions menu for multiple target profiles (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       InventoryActions.openSingleReportImportModal();
-      InventoryModals.verifyInventorySingleRecordModalWithSeveralTargetProfiles();
-      InventoryModals.selectExternalTarget(targetProfileName);
-      InventoryModals.selectTheProfileToBeUsed(profile.createJobProfile);
-      InventoryModals.fillEnterTestIdentifier(testIdentifier);
-      InventoryModals.import();
+      SingleRecordImportModal.verifyInventorySingleRecordModalWithSeveralTargetProfiles();
+      SingleRecordImportModal.selectExternalTarget(targetProfileName);
+      SingleRecordImportModal.selectTheProfileToBeUsed(profile.createJobProfile);
+      SingleRecordImportModal.fillEnterTestIdentifier(testIdentifier);
+      SingleRecordImportModal.import();
       InstanceRecordView.verivyCalloutMessage(testIdentifier);
       // need to wait because after the import the data in the instance is displayed for a long time
       // https://issues.folio.org/browse/MODCPCT-73

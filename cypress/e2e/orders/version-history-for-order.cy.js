@@ -97,37 +97,37 @@ describe('Orders: orders', () => {
   it('C369046: "Version history" viewing for Order (thunderjet)', { tags: [TestTypes.criticalPath, devTeams.thunderjet] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
-    OrderLines.openVersionHistory();
-    OrderLines.checkVersionHistoryCard(firstDate, firstCard);
-    OrderLines.closeVersionHistory();
+    Orders.openVersionHistory();
+    Orders.checkVersionHistoryCard(firstDate, firstCard);
+    Orders.closeVersionHistory();
     Orders.editOrderToManual(orderNumber);
     cy.then(() => {
       const secondDate = DateTools.getCurrentUTCTime();
       const secondCard = `${secondDate}\nView this version\nSource: ${user.username}, ${user.firstName}\nCurrent version\nChanged\nManual`;
-      OrderLines.openVersionHistory();
-      OrderLines.checkVersionHistoryCard(secondDate, secondCard);
-      OrderLines.closeVersionHistory();
+      Orders.openVersionHistory();
+      Orders.checkVersionHistoryCard(secondDate, secondCard);
+      Orders.closeVersionHistory();
       // Need to wait for the next card in the order history to be created with a difference of a minute.
       cy.wait(60000);
       cy.then(() => {
         Orders.openOrder();
         const thirdDate = DateTools.getCurrentUTCTime();
         const thirdCard = `${thirdDate}\nView this version\nSource: ${user.username}, ${user.firstName}\nCurrent version\nChanged\nApproval date\nApproved by\nDate opened\nWorkflow status`;
-        OrderLines.openVersionHistory();
-        OrderLines.checkVersionHistoryCard(thirdDate, thirdCard);
-        OrderLines.closeVersionHistory();
+        Orders.openVersionHistory();
+        Orders.checkVersionHistoryCard(thirdDate, thirdCard);
+        Orders.closeVersionHistory();
         // Need to wait for the next card in the order history to be created with a difference of a minute.
         cy.wait(60000);
         Orders.closeOrder('Cancelled');
         cy.then(() => {
           const forthDate = DateTools.getCurrentUTCTime();
           const forthCard = `${forthDate}\nView this version\nSource: ${user.username}, ${user.firstName}\nCurrent version\nChanged\nNotes on closure\nReason for closure\nWorkflow status`;
-          OrderLines.openVersionHistory();
-          OrderLines.checkVersionHistoryCard(forthDate, forthCard);
-          OrderLines.selectVersionHistoryCard(firstDate);
-          OrderLines.selectVersionHistoryCard(secondDate);
-          OrderLines.selectVersionHistoryCard(thirdDate);
-          OrderLines.selectVersionHistoryCard(forthDate);
+          Orders.openVersionHistory();
+          Orders.checkVersionHistoryCard(forthDate, forthCard);
+          Orders.selectVersionHistoryCard(firstDate);
+          Orders.selectVersionHistoryCard(secondDate);
+          Orders.selectVersionHistoryCard(thirdDate);
+          Orders.selectVersionHistoryCard(forthDate);
         });
       });
     });

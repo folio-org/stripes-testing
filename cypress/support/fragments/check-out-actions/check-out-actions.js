@@ -121,8 +121,7 @@ export default {
   changeDueDateToPast(minutes) {
     const todayFormatted = {};
     const today = new Date();
-    const month = today.getMonth() < 9 ? 0 + (today.getMonth() + 1).toString() : today.getMonth() + 1;
-    todayFormatted.formattedDate = month + '/' + today.getDate() + '/' + today.getFullYear();
+    todayFormatted.formattedDate = (today.getMonth() + 1).toString().padStart(2, "0") + '/' + today.getDate().toString().padStart(2, "0") + '/' + today.getFullYear();
     today.setUTCMinutes(today.getMinutes() - minutes);
     todayFormatted.formattedTime = today.toLocaleTimeString('en-US', { timeZone: 'UTC', hour: '2-digit', minute: '2-digit' });
 

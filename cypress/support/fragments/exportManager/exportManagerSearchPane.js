@@ -11,6 +11,7 @@ import {
   MultiColumnList,
   PaneHeader,
   KeyValue,
+  HTML
 } from '../../../../interactors';
 
 const searchButton = Button({ type: 'submit' });
@@ -20,7 +21,7 @@ const endTimeAccordion = Accordion({ id: 'endTime' });
 const systemAccordion = Accordion({ id: 'isSystemSource' });
 const sourceAccordion = Accordion({ id: 'createdByUserId' });
 const jobTypeAccordion = Accordion({ id: 'type' });
-const statusAccordion = Accordion({ id: 'status' });
+const statusAccordion = Accordion('Status');
 const startDateTextfield = TextField({ name: 'startDate' });
 const endDateTextfield = TextField({ name: 'endDate' });
 const applyButton = Button('Apply');
@@ -32,7 +33,10 @@ const waitClick = () => { cy.wait(1000); };
 export default {
   getSearchResult,
   waitLoading() {
-    cy.expect(Pane('Export jobs').exists());
+    cy.expect([
+      Pane('Export jobs').exists(),
+      HTML('Choose a filter or enter a search query to show results.').exists()
+    ]);
   },
 
   selectJob(content) {

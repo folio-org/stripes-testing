@@ -233,7 +233,7 @@ export default {
       });
   },
 
-  createNewZ3950TargetProfileViaApi:(name, createJobProfileIds, updateJobProfileIds = []) => {
+  createNewZ3950TargetProfileViaApi:(name, createJobProfileIds = [], updateJobProfileIds = []) => {
     return cy.okapiRequest({
       method: 'POST',
       path: 'copycat/profiles',

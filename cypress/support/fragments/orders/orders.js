@@ -19,6 +19,7 @@ import {
   MultiSelectOption,
   Link,
   Section,
+  Card,
 } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -692,5 +693,45 @@ export default {
       purchaseOrderLineLimitReachedModal.find(Button('Ok')).exists(),
       purchaseOrderLineLimitReachedModal.find(Button('Create new purchase order')).exists(),
     ]);
+  },
+
+  openVersionHistory() {
+    cy.do(Section({ id: 'order-details' }).find(Button({ icon: 'clock' })).click());
+    cy.wait(2000);
+    cy.expect([
+      Section({ id: 'POListing' }).absent(),
+      Section({ id: 'relatedInvoices' }).absent(),
+      Section({ id: 'versions-history-pane-order' }).exists(),
+    ]);
+  },
+
+  checkVersionHistoryCard(date, textInformation) {
+    cy.expect([
+      Section({ id: 'versions-history-pane-order' }).find(Card({ headerStart: date })).has({ text: textInformation }),
+    ]);
+  },
+
+  selectVersionHistoryCard(date) {
+    cy.do([
+      Section({ id: 'versions-history-pane-order' }).find(Card({ headerStart: date })).find(Button({ icon: 'clock' })).click(),
+    ]);
+  },
+
+  closeVersionHistory: () => {
+    cy.do(Section({ id: 'versions-history-pane-order' }).find(Button({ icon: 'times' })).click());
+    cy.wait(2000);
+    cy.expect([
+      Section({ id: 'POListing' }).exists(),
+      Section({ id: 'relatedInvoices' }).exists(),
+      Section({ id: 'versions-history-pane-order' }).absent(),
+    ]);
+  },
+
+  checkOrderStatus(orderStatus) {
+    cy.expect(Section({ id: 'POSummary' }).find(KeyValue('Workflow status')).has({ value: orderStatus }));
+  },
+
+  checkReviewDateOnOngoingOrder() {
+    cy.expect(Section({ id: 'ongoing' }).find(KeyValue('Review date')).has({ value: 'No value set-' }));
   },
 };
