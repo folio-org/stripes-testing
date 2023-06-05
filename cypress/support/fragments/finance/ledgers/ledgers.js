@@ -24,7 +24,7 @@ const fiscalYearSelect = Select({ name: 'toFiscalYearId' });
 const rolloverAllocationCheckbox = Checkbox({ name: 'budgetsRollover[0].rolloverAllocation' });
 const rolloverBudgetVelue = Select({ name: 'budgetsRollover[0].rolloverBudgetValue' });
 const addAvailableToSelect = Select({ name: 'budgetsRollover[0].addAvailableTo' });
-const resetButton = 
+const resetButton = Button({ id: 'reset-ledgers-filters' });
 export default {
   defaultUiLedger: {
     name: `autotest_ledger_${getRandomPostfix()}`,

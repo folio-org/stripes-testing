@@ -26,7 +26,6 @@ describe('ui-finance: Funds', () => {
   };
 
   before(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getAdminToken();
 
     cy.getFundTypesApi({ limit: 1 })
@@ -51,7 +50,7 @@ describe('ui-finance: Funds', () => {
       });
 
     cy.createTempUser([
-      permissions.uiFinanceViewLedger.gui,
+      permissions.uiFinanceViewFundAndBudget.gui,
     ])
       .then(userProperties => {
         user = userProperties;

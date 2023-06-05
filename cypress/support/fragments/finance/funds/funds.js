@@ -78,8 +78,8 @@ export default {
     cy.expect(Pane({ id: 'transaction-results-pane' }).exists());
   },
 
-  checkSearch : () => {
-    cy.expect(MultiColumnList({ id: 'ledgers-list' }).has({ rowCount: 1 }));
+  checkSearch() {
+    cy.expect(MultiColumnList({ id: 'funds-list' }).has({ rowCount: 1 }));
   },
 
   waitForFundDetailsLoading : () => {
