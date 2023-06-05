@@ -3,7 +3,6 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenu from '../../../support/fragments/topMenu';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
-import { MultiColumnList } from '../../../../interactors';
 import testType from '../../../support/dictionary/testTypes';
 import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
@@ -15,6 +14,7 @@ describe('ui-finance: Funds', () => {
   let ledger;
   let group;
   let fundType;
+  let user;
 
   const fund = {
     id: uuid(),
