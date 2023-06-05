@@ -23,8 +23,8 @@ const rolloverConfirmButton = Button({ id: 'clickable-rollover-confirmation-conf
 const fiscalYearSelect = Select({ name: 'toFiscalYearId' });
 const rolloverAllocationCheckbox = Checkbox({ name: 'budgetsRollover[0].rolloverAllocation' });
 const rolloverBudgetVelue = Select({ name: 'budgetsRollover[0].rolloverBudgetValue' });
-const aaddAvailableToSelect = Select({ name: 'budgetsRollover[0].addAvailableTo' });
-
+const addAvailableToSelect = Select({ name: 'budgetsRollover[0].addAvailableTo' });
+const resetButton = Button({ id: 'reset-ledgers-filters' });
 export default {
   defaultUiLedger: {
     name: `autotest_ledger_${getRandomPostfix()}`,
@@ -98,7 +98,7 @@ export default {
       fiscalYearSelect.choose(fiscalYear),
       rolloverAllocationCheckbox.click(),
       rolloverBudgetVelue.choose(rolloverBudgetValue),
-      aaddAvailableToSelect.choose(rolloverValueAs),
+      addAvailableToSelect.choose(rolloverValueAs),
       rolloverButton.click(),
     ]);
     cy.wait(4000);
@@ -116,7 +116,7 @@ export default {
       Select({ name: 'toFiscalYearId' }).choose(fiscalYear),
       Checkbox({ name: 'budgetsRollover[0].rolloverAllocation' }).click(),
       rolloverBudgetVelue.choose(rolloverBudgetValue),
-      aaddAvailableToSelect.choose(rolloverValueAs),
+      addAvailableToSelect.choose(rolloverValueAs),
       Button('Test rollover').click(),
     ]);
     cy.wait(2000);
@@ -151,7 +151,8 @@ export default {
   },
 
   resetFilters: () => {
-    cy.do(Button({ id: 'reset-ledgers-filters' }).click());
+    cy.do(resetButton.click());
+    cy.expect(resetButton.is({ disabled: true }));
   },
 
   tryToCreateLedgerWithoutMandatoryFields(ledgerName) {
