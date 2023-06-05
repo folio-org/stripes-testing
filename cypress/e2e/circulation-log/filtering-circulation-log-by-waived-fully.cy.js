@@ -52,11 +52,26 @@ describe('Circulation log', () => {
       },
     ],
   };
-  const goToCircLogApp = (filter) => {
+  const goToCircLogApp = (filterName) => {
     cy.visit(TopMenu.circulationLogPath);
     SearchPane.waitLoading();
-    SearchPane.setFilterOptionFromAccordion('fee', filter);
+    SearchPane.setFilterOptionFromAccordion('fee', filterName);
     SearchPane.searchByItemBarcode(itemData.barcode);
+    return SearchPane.findResultRowIndexByContent(filterName);
+  };
+  const filterByAction = (filterName) => {
+    goToCircLogApp(filterName).then((rowIndex) => {
+      SearchResults.chooseActionByRow(rowIndex, 'Fee/fine details');
+      FeeFineDetails.waitLoading();
+    });
+    goToCircLogApp(filterName).then((rowIndex) => {
+      SearchResults.chooseActionByRow(rowIndex, 'User details');
+      Users.verifyFirstNameOnUserDetailsPane(userData.firstName);
+    });
+    goToCircLogApp(filterName).then((rowIndex) => {
+      SearchResults.clickOnCell(itemData.barcode, Number(rowIndex));
+      ItemRecordView.waitLoading();
+    });
   };
   const searchResults = (circAction, desc) => ({
     userBarcode: userData.barcode,
@@ -182,21 +197,7 @@ describe('Circulation log', () => {
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       WaiveFeeFineModal.waiveFeeFineViaApi(waiveFeeFineBody, testData.feeFineId);
-      goToCircLogApp('Waived partially');
-      SearchPane.findResultRowIndexByContent('Waived partially').then((rowIndex) => {
-        SearchResults.chooseActionByRow(rowIndex, 'Fee/fine details');
-        FeeFineDetails.waitLoading();
-      });
-
-      goToCircLogApp('Waived partially');
-      SearchPane.findResultRowIndexByContent('Waived partially').then((rowIndex) => {
-        SearchResults.chooseActionByRow(rowIndex, 'User details');
-        Users.verifyFirstNameOnUserDetailsPane(userData.firstName);
-      });
-
-      goToCircLogApp('Waived partially');
-      SearchResults.clickOnCell(itemData.barcode, 0);
-      ItemRecordView.waitLoading();
+      filterByAction('Waived partially');
     }
   );
 
@@ -205,21 +206,7 @@ describe('Circulation log', () => {
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       WaiveFeeFineModal.waiveFeeFineViaApi(waiveFeeFineBody, testData.feeFineId);
-      goToCircLogApp('Waived fully');
-      SearchPane.findResultRowIndexByContent('Waived fully').then((rowIndex) => {
-        SearchResults.chooseActionByRow(rowIndex, 'Fee/fine details');
-        FeeFineDetails.waitLoading();
-      });
-
-      goToCircLogApp('Waived fully');
-      SearchPane.findResultRowIndexByContent('Waived fully').then((rowIndex) => {
-        SearchResults.chooseActionByRow(rowIndex, 'User details');
-        Users.verifyFirstNameOnUserDetailsPane(userData.firstName);
-      });
-
-      goToCircLogApp('Waived fully');
-      SearchResults.clickOnCell(itemData.barcode, 0);
-      ItemRecordView.waitLoading();
+      filterByAction('Waived fully');
     }
   );
 
