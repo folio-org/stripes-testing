@@ -6,6 +6,7 @@ const nameField = TextField('Name*');
 const codeField = TextField('Code*');
 const fundModal = Modal('Select funds');
 const resetButton = Button({ id: 'reset-groups-filters' });
+
 export default {
 
   defaultUiGroup: {
