@@ -31,8 +31,17 @@ describe('Circulation log', () => {
     barcode: generateItemBarcode(),
     title: getTestEntityValue('InstanceCircLog'),
   };
+  const waiveReason = WaiveReasons.getDefaultNewWaiveReason(uuid());
   const testData = {
     userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestCircLog', uuid()),
+    manualChargeName: null,
+  };
+  const waiveFeeFineBody = {
+    amount: '2.00',
+    paymentMethod: waiveReason.nameReason,
+    notifyPatron: false,
+    servicePointId: testData.userServicePoint.id,
+    userName: 'ADMINISTRATOR, DIKU',
   };
   const userOwnerBody = {
     id: uuid(),
@@ -44,8 +53,50 @@ describe('Circulation log', () => {
       },
     ],
   };
-  const waiveReason = WaiveReasons.getDefaultNewWaiveReason(uuid());
-
+  const goToCircLogApp = (filterName) => {
+    cy.visit(TopMenu.circulationLogPath);
+    SearchPane.waitLoading();
+    SearchPane.setFilterOptionFromAccordion('fee', filterName);
+    SearchPane.searchByItemBarcode(itemData.barcode);
+    return SearchPane.findResultRowIndexByContent(filterName);
+  };
+  const checkActionsButton = (filterName) => {
+    goToCircLogApp(filterName).then((rowIndex) => {
+      SearchResults.chooseActionByRow(rowIndex, 'Fee/fine details');
+      FeeFineDetails.waitLoading();
+    });
+    goToCircLogApp(filterName).then((rowIndex) => {
+      SearchResults.chooseActionByRow(rowIndex, 'User details');
+      Users.verifyFirstNameOnUserDetailsPane(userData.firstName);
+    });
+    goToCircLogApp(filterName).then((rowIndex) => {
+      SearchResults.clickOnCell(itemData.barcode, Number(rowIndex));
+      ItemRecordView.waitLoading();
+    });
+  };
+  const filterByAction = (filterName) => {
+    const searchResultsData = {
+      userBarcode: userData.barcode,
+      itemBarcode: itemData.barcode,
+      object: 'Fee/fine',
+      circAction: filterName,
+      // TODO: add check for date with format <C6/8/2022, 6:46 AM>
+      servicePoint: testData.userServicePoint.name,
+      source: 'ADMINISTRATOR, DIKU',
+      desc: `Fee/Fine type: ${testData.manualChargeName}.`,
+    };
+    cy.visit(TopMenu.circulationLogPath);
+    SearchPane.waitLoading();
+    SearchPane.setFilterOptionFromAccordion('fee', filterName);
+    SearchPane.findResultRowIndexByContent(searchResultsData.desc).then((rowIndex) => {
+      SearchPane.checkResultSearch(searchResultsData, rowIndex);
+    });
+    SearchPane.resetResults();
+    SearchPane.searchByItemBarcode(itemData.barcode);
+    SearchPane.findResultRowIndexByContent(searchResultsData.desc).then((rowIndex) => {
+      SearchPane.checkResultSearch(searchResultsData, rowIndex);
+    });
+  };
 
   before('Preconditions', () => {
     cy.getAdminToken()
@@ -93,7 +144,7 @@ describe('Circulation log', () => {
 
     UsersOwners.createViaApi(userOwnerBody);
     ManualCharges.createViaApi({
-      defaultAmount: '5',
+      defaultAmount: '4',
       automatic: false,
       feeFineType: getTestEntityValue('ChargeCircLog'),
       ownerId: userOwnerBody.id,
@@ -123,7 +174,7 @@ describe('Circulation log', () => {
           id: uuid(),
           ownerId: userOwnerBody.id,
           feeFineId: testData.manualChargeId,
-          amount: 5,
+          amount: 4,
           feeFineType: testData.manualChargeName,
           feeFineOwner: userOwnerBody.owner,
           userId: userData.userId,
@@ -132,25 +183,12 @@ describe('Circulation log', () => {
           title: itemData.title,
         }).then((feeFineId) => {
           testData.feeFineId = feeFineId;
-          WaiveFeeFineModal.waiveFeeFineViaApi(
-            {
-              amount: '5.00',
-              paymentMethod: waiveReason.nameReason,
-              notifyPatron: false,
-              servicePointId: testData.userServicePoint.id,
-              userName: 'ADMINISTRATOR, DIKU',
-            },
-            feeFineId
-          );
         });
       });
   });
 
-  beforeEach('Login', () => {
-    cy.loginAsAdmin({
-      path: TopMenu.circulationLogPath,
-      waiter: SearchPane.waitLoading,
-    });
+  beforeEach('login', () => {
+    cy.loginAsAdmin();
   });
 
   after('Deleting created entities', () => {
@@ -172,31 +210,36 @@ describe('Circulation log', () => {
   });
 
   it(
+    'C17056 Check the Actions button from filtering Circulation log by waived partially (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      WaiveFeeFineModal.waiveFeeFineViaApi(waiveFeeFineBody, testData.feeFineId);
+      checkActionsButton('Waived partially');
+    }
+  );
+
+  it(
+    'C17055 Filter circulation log by waived partially (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      filterByAction('Waived partially');
+    }
+  );
+
+  it(
     'C17054 Check the Actions button from filtering Circulation log by waived fully (volaris)',
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
-      SearchPane.setFilterOptionFromAccordion('fee', 'Waived fully');
-      SearchPane.searchByItemBarcode(itemData.barcode);
-      SearchPane.findResultRowIndexByContent('Waived fully').then((rowIndex) => {
-        SearchResults.chooseActionByRow(rowIndex, 'Fee/fine details');
-        FeeFineDetails.waitLoading();
-      });
+      WaiveFeeFineModal.waiveFeeFineViaApi(waiveFeeFineBody, testData.feeFineId);
+      checkActionsButton('Waived fully');
+    }
+  );
 
-      cy.visit(TopMenu.circulationLogPath);
-      SearchPane.waitLoading();
-      SearchPane.setFilterOptionFromAccordion('fee', 'Waived fully');
-      SearchPane.searchByItemBarcode(itemData.barcode);
-      SearchPane.findResultRowIndexByContent('Waived fully').then((rowIndex) => {
-        SearchResults.chooseActionByRow(rowIndex, 'User details');
-        Users.verifyFirstNameOnUserDetailsPane(userData.firstName);
-      });
-
-      cy.visit(TopMenu.circulationLogPath);
-      SearchPane.waitLoading();
-      SearchPane.setFilterOptionFromAccordion('fee', 'Waived fully');
-      SearchPane.searchByItemBarcode(itemData.barcode);
-      SearchResults.clickOnCell(itemData.barcode, 0);
-      ItemRecordView.waitLoading();
+  it(
+    'C17053 Filter circulation log by waived fully (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      filterByAction('Waived fully');
     }
   );
 });
