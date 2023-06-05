@@ -31,8 +31,16 @@ describe('Circulation log', () => {
     barcode: generateItemBarcode(),
     title: getTestEntityValue('InstanceCircLog'),
   };
+  const waiveReason = WaiveReasons.getDefaultNewWaiveReason(uuid());
   const testData = {
     userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestCircLog', uuid()),
+  };
+  const waiveFeeFineBody = {
+    amount: '2.00',
+    paymentMethod: waiveReason.nameReason,
+    notifyPatron: false,
+    servicePointId: testData.userServicePoint.id,
+    userName: 'ADMINISTRATOR, DIKU',
   };
   const userOwnerBody = {
     id: uuid(),
@@ -44,8 +52,37 @@ describe('Circulation log', () => {
       },
     ],
   };
-  const waiveReason = WaiveReasons.getDefaultNewWaiveReason(uuid());
-
+  const goToCircLogApp = (filterName) => {
+    cy.visit(TopMenu.circulationLogPath);
+    SearchPane.waitLoading();
+    SearchPane.setFilterOptionFromAccordion('fee', filterName);
+    SearchPane.searchByItemBarcode(itemData.barcode);
+    return SearchPane.findResultRowIndexByContent(filterName);
+  };
+  const filterByAction = (filterName) => {
+    goToCircLogApp(filterName).then((rowIndex) => {
+      SearchResults.chooseActionByRow(rowIndex, 'Fee/fine details');
+      FeeFineDetails.waitLoading();
+    });
+    goToCircLogApp(filterName).then((rowIndex) => {
+      SearchResults.chooseActionByRow(rowIndex, 'User details');
+      Users.verifyFirstNameOnUserDetailsPane(userData.firstName);
+    });
+    goToCircLogApp(filterName).then((rowIndex) => {
+      SearchResults.clickOnCell(itemData.barcode, Number(rowIndex));
+      ItemRecordView.waitLoading();
+    });
+  };
+  const searchResults = (circAction, desc) => ({
+    userBarcode: userData.barcode,
+    itemBarcode: itemData.barcode,
+    object: 'Fee/fine',
+    circAction,
+    // TODO: add check for date with format <C6/8/2022, 6:46 AM>
+    servicePoint: testData.userServicePoint.name,
+    source: 'ADMINISTRATOR, DIKU',
+    desc,
+  });
 
   before('Preconditions', () => {
     cy.getAdminToken()
@@ -93,7 +130,7 @@ describe('Circulation log', () => {
 
     UsersOwners.createViaApi(userOwnerBody);
     ManualCharges.createViaApi({
-      defaultAmount: '5',
+      defaultAmount: '4',
       automatic: false,
       feeFineType: getTestEntityValue('ChargeCircLog'),
       ownerId: userOwnerBody.id,
@@ -123,7 +160,7 @@ describe('Circulation log', () => {
           id: uuid(),
           ownerId: userOwnerBody.id,
           feeFineId: testData.manualChargeId,
-          amount: 5,
+          amount: 4,
           feeFineType: testData.manualChargeName,
           feeFineOwner: userOwnerBody.owner,
           userId: userData.userId,
@@ -132,25 +169,9 @@ describe('Circulation log', () => {
           title: itemData.title,
         }).then((feeFineId) => {
           testData.feeFineId = feeFineId;
-          WaiveFeeFineModal.waiveFeeFineViaApi(
-            {
-              amount: '5.00',
-              paymentMethod: waiveReason.nameReason,
-              notifyPatron: false,
-              servicePointId: testData.userServicePoint.id,
-              userName: 'ADMINISTRATOR, DIKU',
-            },
-            feeFineId
-          );
         });
+        cy.loginAsAdmin();
       });
-  });
-
-  beforeEach('Login', () => {
-    cy.loginAsAdmin({
-      path: TopMenu.circulationLogPath,
-      waiter: SearchPane.waitLoading,
-    });
   });
 
   after('Deleting created entities', () => {
@@ -172,31 +193,20 @@ describe('Circulation log', () => {
   });
 
   it(
+    'C17056 Check the Actions button from filtering Circulation log by waived partially (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      WaiveFeeFineModal.waiveFeeFineViaApi(waiveFeeFineBody, testData.feeFineId);
+      filterByAction('Waived partially');
+    }
+  );
+
+  it(
     'C17054 Check the Actions button from filtering Circulation log by waived fully (volaris)',
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
-      SearchPane.setFilterOptionFromAccordion('fee', 'Waived fully');
-      SearchPane.searchByItemBarcode(itemData.barcode);
-      SearchPane.findResultRowIndexByContent('Waived fully').then((rowIndex) => {
-        SearchResults.chooseActionByRow(rowIndex, 'Fee/fine details');
-        FeeFineDetails.waitLoading();
-      });
-
-      cy.visit(TopMenu.circulationLogPath);
-      SearchPane.waitLoading();
-      SearchPane.setFilterOptionFromAccordion('fee', 'Waived fully');
-      SearchPane.searchByItemBarcode(itemData.barcode);
-      SearchPane.findResultRowIndexByContent('Waived fully').then((rowIndex) => {
-        SearchResults.chooseActionByRow(rowIndex, 'User details');
-        Users.verifyFirstNameOnUserDetailsPane(userData.firstName);
-      });
-
-      cy.visit(TopMenu.circulationLogPath);
-      SearchPane.waitLoading();
-      SearchPane.setFilterOptionFromAccordion('fee', 'Waived fully');
-      SearchPane.searchByItemBarcode(itemData.barcode);
-      SearchResults.clickOnCell(itemData.barcode, 0);
-      ItemRecordView.waitLoading();
+      WaiveFeeFineModal.waiveFeeFineViaApi(waiveFeeFineBody, testData.feeFineId);
+      filterByAction('Waived fully');
     }
   );
 
@@ -204,17 +214,12 @@ describe('Circulation log', () => {
     'C17053 Filter circulation log by waived fully (volaris)',
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
-      const searchResultsData = {
-        userBarcode: userData.barcode,
-        itemBarcode: itemData.barcode,
-        object: 'Fee/fine',
-        circAction: 'Waived fully',
-        // TODO: add check for date with format <C6/8/2022, 6:46 AM>
-        servicePoint: testData.userServicePoint.name,
-        source: 'ADMINISTRATOR, DIKU',
-        desc: `Fee/Fine type: ${testData.manualChargeName}.`,
-      };
-
+      const searchResultsData = searchResults(
+        'Waived fully',
+        `Fee/Fine type: ${testData.manualChargeName}.`
+      );
+      cy.visit(TopMenu.circulationLogPath);
+      SearchPane.waitLoading();
       SearchPane.setFilterOptionFromAccordion('fee', 'Waived fully');
       SearchPane.findResultRowIndexByContent(searchResultsData.desc).then((rowIndex) => {
         SearchPane.checkResultSearch(searchResultsData, rowIndex);
