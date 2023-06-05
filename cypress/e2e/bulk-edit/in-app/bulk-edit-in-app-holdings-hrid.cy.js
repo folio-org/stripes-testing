@@ -2,7 +2,6 @@ import testTypes from '../../../support/dictionary/testTypes';
 import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
-import UrlRelationship from '../../../support/fragments/settings/inventory/instance-holdings-item/urlRelationship';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -10,7 +9,6 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import FileManager from '../../../support/utils/fileManager';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
-import InteractorsTools from '../../../support/utils/interactorsTools';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
