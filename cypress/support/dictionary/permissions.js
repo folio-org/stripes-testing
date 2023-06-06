@@ -23,6 +23,7 @@ export default {
   uiAgreementsAgreementsDelete: { internal: 'ui-agreements.agreements.delete', gui: 'Agreements: Delete agreements' },
   // QuickMarc
   uiQuickMarcQuickMarcHoldingsEditorCreate: { internal: 'ui-quick-marc.quick-marc-holdings-editor.create', gui: 'quickMARC: Create a new MARC holdings record' },
+  uiQuickMarcQuickMarcBibliographicEditorCreate: { internal: 'ui-quick-marc.quick-marc-bibliographic-editor.create', gui: 'quickMARC: Create a new MARC bibliographic record' },
   uiQuickMarcQuickMarcEditorDuplicate: { internal: 'ui-quick-marc.quick-marc-editor.duplicate', gui: 'quickMARC: Derive new MARC bibliographic record' },
   uiQuickMarcQuickMarcBibliographicEditorAll: { internal: 'ui-quick-marc.quick-marc-bibliographic-editor.all', gui: 'quickMARC: View, edit MARC bibliographic record' },
   uiQuickMarcQuickMarcHoldingsEditorAll: { internal: 'ui-quick-marc.quick-marc-holdings-editor.all', gui: 'quickMARC: View, edit MARC holdings record' },
