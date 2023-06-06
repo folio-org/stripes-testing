@@ -50,15 +50,15 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.uploadFile(userUUIDsFileName);
       BulkEditSearchPane.waitFileUploading();
       BulkEditActions.downloadMatchedResults();
-  
+
       BulkEditActions.prepareValidBulkEditFile(matchedRecordsFileName, editedFileName, user.firstName, newFirstName);
-  
+
       BulkEditActions.openStartBulkEditForm();
       BulkEditSearchPane.uploadFile(editedFileName);
       BulkEditSearchPane.waitFileUploading();
       BulkEditActions.clickNext();
       BulkEditActions.commitChanges();
-  
+
       BulkEditSearchPane.verifyChangedResults(newFirstName);
 
       cy.visit(TopMenu.usersPath);
