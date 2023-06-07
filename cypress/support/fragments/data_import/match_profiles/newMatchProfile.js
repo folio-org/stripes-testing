@@ -158,20 +158,22 @@ const fillMatchProfileWithQualifier = ({
   profileName,
   incomingRecordFields,
   existingRecordFields,
-  matchCriterion
+  matchCriterion,
+  qualifierType,
+  qualifierValue
 }) => {
   cy.do(TextField('Name*').fillIn(profileName));
-  // wait for data to be loaded
-  cy.wait(8000);
   cy.do(matchProfileDetailsAccordion.find(Button({ dataId:'MARC_BIBLIOGRAPHIC' })).click());
+  // wait for list will be loaded
+  cy.wait(2000);
   fillIncomingRecordFields(incomingRecordFields.field, 'field');
   fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
   cy.contains('Incoming MARC Bibliographic record').then(elem => {
     elem.parent()[0].querySelector('input[type="checkbox').click();
   });
   cy.do([
-    Select({ name:'profile.matchDetails[0].incomingMatchExpression.qualifier.qualifierType' }).choose('Begins with'),
-    TextField({ name:'profile.matchDetails[0].incomingMatchExpression.qualifier.qualifierValue' }).fillIn('ccn')
+    Select({ name:'profile.matchDetails[0].incomingMatchExpression.qualifier.qualifierType' }).choose(qualifierType),
+    TextField({ name:'profile.matchDetails[0].incomingMatchExpression.qualifier.qualifierValue' }).fillIn(qualifierValue)
   ]);
   cy.do(Select('Match criterion').choose(matchCriterion));
   fillExistingRecordFields(existingRecordFields.field, 'field');
@@ -180,8 +182,8 @@ const fillMatchProfileWithQualifier = ({
     elem.parent()[0].querySelector('input[type="checkbox').click();
   });
   cy.do([
-    Select({ name:'profile.matchDetails[0].existingMatchExpression.qualifier.qualifierType' }).choose('Begins with'),
-    TextField({ name:'profile.matchDetails[0].existingMatchExpression.qualifier.qualifierValue' }).fillIn('ccn')
+    Select({ name:'profile.matchDetails[0].existingMatchExpression.qualifier.qualifierType' }).choose(qualifierType),
+    TextField({ name:'profile.matchDetails[0].existingMatchExpression.qualifier.qualifierValue' }).fillIn(qualifierValue)
   ]);
 };
 

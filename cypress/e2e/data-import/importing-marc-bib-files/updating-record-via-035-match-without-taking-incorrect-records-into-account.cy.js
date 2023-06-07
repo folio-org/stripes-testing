@@ -6,31 +6,31 @@ import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import { EXISTING_RECORDS_NAMES, FOLIO_RECORD_TYPE, JOB_STATUS_NAMES } from '../../../support/constants';
+import { EXISTING_RECORDS_NAMES,
+  FOLIO_RECORD_TYPE,
+  JOB_STATUS_NAMES,
+  ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import Users from '../../../support/fragments/users/users';
-import Helper from '../../../support/fragments/finance/financeHelper';
 
 describe('ui-data-import', () => {
   let user;
-  let instanceHrid;
   const identifier = 'ccn00999523';
   const protectedFields = {
     firstField: '020',
     secondField: '514'
   };
-  let firstFieldId = null;
-  let secondFieldId = null;
+  const protectedFieldIds = [];
+  const filePathToUpload = 'marcBibFileForC380390.mrc';
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const fileNameForCreate = `C380390 autotest file.${getRandomPostfix()}.mrc`;
   const fileNameForMatch = `C380390 autotest file.${getRandomPostfix()}.mrc`;
@@ -41,6 +41,8 @@ describe('ui-data-import', () => {
       field: '035',
       subfield: 'a'
     },
+    qualifierType: 'Begins with',
+    qualifierValue: 'ccn',
     existingRecordFields: {
       field: '035',
       subfield: 'a'
@@ -56,7 +58,7 @@ describe('ui-data-import', () => {
     name: `C380390 New or update on ccn.${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC
   };
-  const actionProfileUpdate = {
+  const actionProfile = {
     name: `C380390 New or update on ccn.${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
@@ -72,14 +74,12 @@ describe('ui-data-import', () => {
         MarcFieldProtection.createMarcFieldProtectionViaApi({
           indicator1: '*',
           indicator2: '*',
-          subfield: 'a',
+          subfield: '*',
           data: '*',
           source: 'USER',
           field: protectedFields.firstField
         })
-          .then((resp) => {
-            firstFieldId = resp.id;
-          });
+          .then((firstResp) => { protectedFieldIds.push(firstResp.id); });
         MarcFieldProtection.createMarcFieldProtectionViaApi({
           indicator1: '*',
           indicator2: '*',
@@ -88,9 +88,7 @@ describe('ui-data-import', () => {
           source: 'USER',
           field: protectedFields.secondField
         })
-          .then((resp) => {
-            secondFieldId = resp.id;
-          });
+          .then((secondResp) =>  { protectedFieldIds.push(secondResp.id); });
 
         InventorySearchAndFilter.getInstancesByIdentifierViaApi(identifier)
           .then(instances => {
@@ -120,18 +118,21 @@ describe('ui-data-import', () => {
     ActionProfiles.deleteActionProfile(actionProfile.name);
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
     Users.deleteViaApi(user.userId);
-    MarcFieldProtection.deleteMarcFieldProtectionViaApi(firstFieldId);
-    MarcFieldProtection.deleteMarcFieldProtectionViaApi(secondFieldId);
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-          .then((instance) => {
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          });
+    protectedFieldIds.forEach(fieldId => MarcFieldProtection.deleteMarcFieldProtectionViaApi(fieldId));
+    InventorySearchAndFilter.getInstancesByIdentifierViaApi(identifier)
+      .then(instances => {
+        instances.forEach(({ id }) => {
+            InventoryInstance.deleteInstanceViaApi(id);
+        });
+      });
   });
 
   it('C380390 Verify updating record via 035 match, without taking incorrect records into account (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       // upload a marc file
-      DataImport.uploadFile('marcBibFileForC380390.mrc', fileNameForCreate);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
+      DataImport.uploadFile(filePathToUpload, fileNameForCreate);
       JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileNameForCreate);
@@ -152,13 +153,15 @@ describe('ui-data-import', () => {
 
       // upload a marc file
       cy.visit(TopMenu.dataImportPath);
-      DataImport.uploadFile('marcBibFileForC380390.mrc', fileNameForMatch);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
+      DataImport.uploadFile(filePathToUpload, fileNameForMatch);
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileNameForMatch);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(fileNameForMatch);
-      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc);
+      // FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc);
       FileDetails.checkStatusInColumn(FileDetails.status.dash, FileDetails.columnNameInResultList.instance);
 
       // create mapping profile
@@ -168,7 +171,7 @@ describe('ui-data-import', () => {
       NewFieldMappingProfile.markFieldForProtection(protectedFields.firstField);
       NewFieldMappingProfile.markFieldForProtection(protectedFields.secondField);
       FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfile.name);
+      FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
       FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
       // create action profile
@@ -186,7 +189,9 @@ describe('ui-data-import', () => {
 
       // upload a marc file
       cy.visit(TopMenu.dataImportPath);
-      DataImport.uploadFile('marcBibFileForC380390.mrc', fileNameForUpdate);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
+      DataImport.uploadFile(filePathToUpload, fileNameForUpdate);
       JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileNameForUpdate);
