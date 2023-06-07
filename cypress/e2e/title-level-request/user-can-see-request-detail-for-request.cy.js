@@ -131,7 +131,7 @@ describe('Title Level Request. Request Detail', () => {
       );
       TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
       Requests.createNewRequestViaApi({
-        fulfilmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
+        fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
         holdingsRecordId: testData.holdingTypeId,
         instanceId: instanceData.instanceId,
         item: { barcode: testData.itemBarcode },
@@ -145,7 +145,7 @@ describe('Title Level Request. Request Detail', () => {
         requestIds.push(request.body.id);
       });
       Requests.createNewRequestViaApi({
-        fulfilmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
+        fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
         instanceId: instanceData.instanceId,
         pickupServicePointId: testData.userServicePoint.id,
         requestDate: new Date(),

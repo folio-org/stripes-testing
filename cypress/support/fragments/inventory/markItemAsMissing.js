@@ -142,7 +142,7 @@ export default {
       requestLevel: REQUEST_LEVELS.ITEM,
       itemId: item.itemId,
       requestDate: new Date().toISOString(),
-      fulfilmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
+      fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
       pickupServicePointId: null,
       status: requestStatus,
     };
