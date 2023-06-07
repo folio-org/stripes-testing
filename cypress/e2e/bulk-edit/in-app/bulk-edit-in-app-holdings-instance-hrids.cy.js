@@ -14,12 +14,12 @@ import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-s
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 let user;
-let holdingsHRID;
 let permanentLocation;
-const holdingsHRIDFileName = `holdingsHRIDFileName${getRandomPostfix()}.csv`;
+const instanceHRIDFileName = `instanceHRIDFileName${getRandomPostfix()}.csv`;
 const item = {
-  instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
+  instanceName: `testBulkEdit_${getRandomPostfix()}`,
+  instanceHRID: ''
 };
 
 describe('Bulk Edit - Holdings', () => {
@@ -37,16 +37,19 @@ describe('Bulk Edit - Holdings', () => {
         });
 
         const instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+        cy.getInstanceById(instanceId)
+          .then((instance) => {
+            item.instanceHRID = instance.hrid;
+            FileManager.createFile(`cypress/fixtures/${instanceHRIDFileName}`, item.instanceHRID);
+          });
         cy.getHoldings({ limit: 1, query: `"instanceId"="${instanceId}"` })
           .then(holdings => {
-            holdingsHRID = holdings[0].hrid;
             cy.getLocations({ limit: 1, query: `id="${holdings[0].permanentLocationId}"` })
               .then(location => { permanentLocation = location.name; });
-            FileManager.createFile(`cypress/fixtures/${holdingsHRIDFileName}`, holdingsHRID);
           })
           .then(() => {
             InventorySearchAndFilter.switchToHoldings();
-            InventorySearchAndFilter.searchHoldingsByHRID(holdingsHRID);
+            InventorySearchAndFilter.byKeywords(item.instanceName);
             InventoryInstance.openHoldingView();
             HoldingsRecordView.edit();
             HoldingsRecordEdit.clearTemporaryLocation();
@@ -58,16 +61,16 @@ describe('Bulk Edit - Holdings', () => {
 
   after('delete test data', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-    FileManager.deleteFile(`cypress/fixtures/${holdingsHRIDFileName}`);
+    FileManager.deleteFile(`cypress/fixtures/${instanceHRIDFileName}`);
     Users.deleteViaApi(user.userId);
   });
 
   it('C380576 Verify that Holdings records are displayed in the Errors with "No change in value required" reason if no changes were made (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     BulkEditSearchPane.checkHoldingsRadio();
-    BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
-    BulkEditSearchPane.uploadFile(holdingsHRIDFileName);
+    BulkEditSearchPane.selectRecordIdentifier('Instance HRIDs');
+    BulkEditSearchPane.uploadFile(instanceHRIDFileName);
     BulkEditSearchPane.waitFileUploading();
-    BulkEditSearchPane.verifyMatchedResults(holdingsHRID);
+    BulkEditSearchPane.verifyMatchedResults(permanentLocation);
 
     BulkEditActions.openActions();
     BulkEditActions.openInAppStartBulkEditFrom();
