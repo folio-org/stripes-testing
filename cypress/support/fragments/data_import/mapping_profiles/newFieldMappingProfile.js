@@ -679,6 +679,12 @@ export default {
     waitLoading();
   },
 
+  markFieldForProtection:(field) => {
+    cy.get('div[class^="mclRow--"]').contains('div[class^="mclCell-"]', field).then(elem => {
+      elem.parent()[0].querySelector('input[type="checkbox"]').click();
+    });
+  },
+
   createMappingProfileViaApi:(nameProfile) => {
     return cy
       .okapiRequest({
