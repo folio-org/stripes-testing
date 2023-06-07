@@ -154,16 +154,15 @@ const fillMatchProfileStaticValue = ({ profileName, incomingStaticValue, matchCr
 const fillMatchProfileWithQualifier = ({
   profileName,
   incomingRecordFields,
+  existingRecordFields,
   matchCriterion,
   qualifierType,
-  qualifierValue,
-  existingRecordType,
-  instanceOption
+  qualifierValue
 }) => {
   cy.do(TextField('Name*').fillIn(profileName));
-  // wait for data to be loaded
-  cy.wait(8000);
-  cy.do(matchProfileDetailsAccordion.find(Button({ dataId: existingRecordType })).click());
+  cy.do(matchProfileDetailsAccordion.find(Button({ dataId:'MARC_BIBLIOGRAPHIC' })).click());
+  // wait for list will be loaded
+  cy.wait(2000);
   fillIncomingRecordFields(incomingRecordFields.field, 'field');
   fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
   cy.contains('Incoming MARC Bibliographic record').then(elem => {
@@ -174,11 +173,15 @@ const fillMatchProfileWithQualifier = ({
     TextField({ name:'profile.matchDetails[0].incomingMatchExpression.qualifier.qualifierValue' }).fillIn(qualifierValue)
   ]);
   cy.do(Select('Match criterion').choose(matchCriterion));
-  cy.do(criterionValueTypeButton.click());
-  cy.expect(criterionValueTypeList.exists());
-  // wait for list will be loaded
-  cy.wait(2000);
-  cy.do(SelectionList({ id:'sl-container-criterion-value-type' }).find(SelectionOption(instanceOption)).click());
+  fillExistingRecordFields(existingRecordFields.field, 'field');
+  fillExistingRecordFields(existingRecordFields.subfield, 'subfield');
+  cy.contains('Existing MARC Bibliographic record').then(elem => {
+    elem.parent()[0].querySelector('input[type="checkbox').click();
+  });
+  cy.do([
+    Select({ name:'profile.matchDetails[0].existingMatchExpression.qualifier.qualifierType' }).choose(qualifierType),
+    TextField({ name:'profile.matchDetails[0].existingMatchExpression.qualifier.qualifierValue' }).fillIn(qualifierValue)
+  ]);
 };
 
 export default {

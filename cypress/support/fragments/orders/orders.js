@@ -52,6 +52,7 @@ const ordersResultsPane = Pane({ id: 'orders-results-pane' });
 const buttonAcquisitionMethodFilter = Button({ id: 'accordion-toggle-button-acquisitionMethod' });
 const purchaseOrderSection = Section({ id: 'purchaseOrder' });
 const purchaseOrderLineLimitReachedModal = Modal({ id: 'data-test-lines-limit-modal' });
+const resetButton = Button('Reset all');
 
 export default {
   searchByParameter(parameter, value) {
@@ -399,7 +400,8 @@ export default {
   },
 
   resetFilters: () => {
-    cy.do(Button('Reset all').click());
+    cy.do(resetButton.click());
+    cy.expect(resetButton.is({ disabled: true }));
   },
 
   selectStatusInSearch: (orderStatus) => {

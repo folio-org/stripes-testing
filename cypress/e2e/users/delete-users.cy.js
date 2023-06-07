@@ -94,7 +94,7 @@ describe('Deleting user', () => {
       .then(() => {
         cy.createItemRequestApi({
           requestType: REQUEST_TYPES.PAGE,
-          fulfilmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
+          fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
           itemId: Cypress.env('items')[0].id,
           requesterId: specialUserId,
           pickupServicePointId: servicePoint.id,

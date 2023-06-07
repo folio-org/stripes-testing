@@ -53,6 +53,7 @@ const updatedRecordBtn = DropdownMenu().find(Button('File with updated records')
 const errorsCommittingBtn = DropdownMenu().find(Button('File with errors encountered when committing the changes'));
 const buildQueryButton = Button('Build query');
 const buildQueryModal = Modal('Build query');
+const logsActionButton = Button({ icon: 'ellipsis' });
 
 export default {
   waitLoading() {
@@ -72,7 +73,7 @@ export default {
   },
 
   logActionsIsAbsent() {
-    cy.expect(Button({ icon: 'ellipsis' }).absent());
+    cy.expect(logsActionButton.absent());
   },
 
   actionsIsShown() {
@@ -732,11 +733,11 @@ export default {
   },
 
   clickActionsOnTheRow(row = 0) {
-    cy.do(MultiColumnListRow({ indexRow: `row-${row}` }).find(Button({ icon: 'ellipsis' })).click());
+    cy.do(MultiColumnListRow({ indexRow: `row-${row}` }).find(logsActionButton).click());
   },
 
   clickActionsRunBy(runByUsername) {
-    cy.do(ListRow({ text: including(runByUsername) }).find(Button({ icon: 'ellipsis' })).click());
+    cy.do(ListRow({ text: including(runByUsername) }).find(logsActionButton).click());
   },
 
   verifyTriggerLogsAction() {

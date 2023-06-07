@@ -52,6 +52,7 @@ const budgetSummaryAcordion = Accordion('Budget summary');
 const budgetInformationAcordion = Accordion('Budget information');
 const fundingInformationMCList = MultiColumnList({ ariaRowCount: 7 });
 const FinancialActivityAndOveragesMCList = MultiColumnList({ ariaRowCount: 5 });
+const resetButton = Button({ id: 'reset-funds-filters' });
 
 export default {
 
@@ -75,6 +76,10 @@ export default {
 
   waitLoadingTransactions : () => {
     cy.expect(Pane({ id: 'transaction-results-pane' }).exists());
+  },
+
+  checkSearch() {
+    cy.expect(MultiColumnList({ id: 'funds-list' }).has({ rowCount: 1 }));
   },
 
   waitForFundDetailsLoading : () => {
@@ -371,9 +376,8 @@ export default {
   },
 
   resetFundFilters: () => {
-    cy.do([
-      Button({ id: 'reset-funds-filters' }).click(),
-    ]);
+    cy.do(resetButton.click());
+    cy.expect(resetButton.is({ disabled: true }));
   },
 
   selectStatusInSearch: (fundStatus) => {
