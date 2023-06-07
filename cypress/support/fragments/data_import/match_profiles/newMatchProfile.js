@@ -6,10 +6,7 @@ import {
   SelectionList,
   Accordion,
   SelectionOption,
-  Dropdown,
-  Checkbox,
-  Section,
-  including
+  Dropdown
 } from '../../../../../interactors';
 import { EXISTING_RECORDS_NAMES } from '../../../constants';
 
