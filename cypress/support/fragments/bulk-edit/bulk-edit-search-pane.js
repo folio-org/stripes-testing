@@ -738,6 +738,10 @@ export default {
   clickActionsRunBy(runByUsername) {
     cy.do(ListRow({ text: including(runByUsername) }).find(Button({ icon: 'ellipsis' })).click());
   },
+  
+  verifyNoActionsButton(runByUsername) {
+    cy.expect(ListRow({ text: including(runByUsername) }).find(Button({ icon: 'ellipsis' })).absent());
+  },
 
   verifyTriggerLogsAction() {
     cy.expect(triggerBtn.exists());
