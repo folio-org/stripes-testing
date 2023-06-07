@@ -7,8 +7,6 @@ import testTypes from '../../../../support/dictionary/testTypes';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import FileManager from '../../../../support/utils/fileManager';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
-import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
-import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 
 let user;
 const newName = `testName_${getRandomPostfix()}`;
@@ -41,7 +39,7 @@ describe('Bulk Edit - Logs', () => {
     FileManager.deleteFileFromDownloadsByMask(`*${matchedRecordsFileName}`, changedRecordsFileName);
   });
 
-  it('C380562 Verify generated Logs files for Users CSV are hidden without "Users: Can view user profile" permission(firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C380562 Verify generated Logs files for Users CSV are hidden without "Users: Can view user profile" permission (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.verifyDragNDropUsersUIIDsArea();
     BulkEditSearchPane.uploadFile(userUUIDsFileName);
     BulkEditSearchPane.waitFileUploading();

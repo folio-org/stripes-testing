@@ -41,7 +41,7 @@ describe('Bulk Edit - Holdings', () => {
           .then((instance) => {
             item.instanceHRID = instance.hrid;
             FileManager.createFile(`cypress/fixtures/${instanceHRIDFileName}`, item.instanceHRID);
-          })
+          });
         cy.getHoldings({ limit: 1, query: `"instanceId"="${instanceId}"` })
           .then(holdings => {
             cy.getLocations({ limit: 1, query: `id="${holdings[0].permanentLocationId}"` })
