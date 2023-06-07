@@ -739,10 +739,6 @@ export default {
   clickActionsRunBy(runByUsername) {
     cy.do(ListRow({ text: including(runByUsername) }).find(logsActionButton).click());
   },
-  
-  verifyNoActionsButton(runByUsername) {
-    cy.expect(ListRow({ text: including(runByUsername) }).find(logsActionButton).absent());
-  },
 
   verifyTriggerLogsAction() {
     cy.expect(triggerBtn.exists());

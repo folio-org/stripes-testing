@@ -60,6 +60,6 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.openLogsSearch();
     BulkEditSearchPane.verifyLogsPane();
     BulkEditSearchPane.checkUsersCheckbox();
-    BulkEditSearchPane.verifyNoActionsButton(user.username);
+    BulkEditSearchPane.logActionsIsAbsent();
   });
 });
