@@ -141,7 +141,7 @@ describe('Check In - Actions', () => {
           userBarcode: userData.barcode,
         }).then((checkoutResponse) => {
           Requests.createNewRequestViaApi({
-            fulfilmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
+            fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
             holdingsRecordId: testData.holdingTypeId,
             instanceId: itemData.instanceId,
             item: { barcode: itemData.barcode },

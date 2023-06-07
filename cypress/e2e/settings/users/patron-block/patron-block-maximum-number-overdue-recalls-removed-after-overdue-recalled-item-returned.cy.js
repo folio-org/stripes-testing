@@ -188,7 +188,7 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
             userBarcode: userData.barcode,
           }).then((checkoutResponse) => {
             Requests.createNewRequestViaApi({
-              fulfilmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
+              fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
               holdingsRecordId: testData.holdingTypeId,
               instanceId: item.instanceId,
               item: { barcode: item.barcode },

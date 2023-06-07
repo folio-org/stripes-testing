@@ -5,10 +5,10 @@ import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/i
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
-import InventoryModals from '../../../support/fragments/inventory/inventoryModals';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
+import SingleRecordImportModal from '../../../support/fragments/inventory/singleRecordImportModal';
 
 describe('ui-inventory', () => {
   let user;
@@ -44,11 +44,11 @@ describe('ui-inventory', () => {
   it('C375145 Verify the modal window for ISRI Import/Create in inventory main actions menu for single target profiles (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       InventoryActions.openSingleReportImportModal();
-      InventoryModals.verifyInventorySingleRecordModalWithOneTargetProfile();
-      InventoryModals.verifySelectTheProfileToBeUsedField(profileForImport);
-      InventoryModals.selectTheProfileToBeUsed(profileForImport);
-      InventoryModals.fillEnterTestIdentifier(testIdentifier);
-      InventoryModals.import();
+      SingleRecordImportModal.verifyInventorySingleRecordModalWithOneTargetProfile();
+      SingleRecordImportModal.verifySelectTheProfileToBeUsedField(profileForImport);
+      SingleRecordImportModal.selectTheProfileToBeUsed(profileForImport);
+      SingleRecordImportModal.fillEnterTestIdentifier(testIdentifier);
+      SingleRecordImportModal.import();
       InstanceRecordView.verivyCalloutMessage(testIdentifier);
       // need to wait because after the import the data in the instance is displayed for a long time
       // https://issues.folio.org/browse/MODCPCT-73

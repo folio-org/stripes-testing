@@ -70,6 +70,24 @@ const tag008HoldingsBytesProperties = {
   }
 };
 
+const tag008DefaultValues = [
+    { interactor:TextField('Srce'), defaultValue:'\\' },
+    { interactor:TextField('Audn'), defaultValue:'\\' },
+    { interactor:TextField('Lang'), defaultValue:'\\\\\\' },
+    { interactor:TextField('Form'), defaultValue:'\\' },
+    { interactor:TextField('Conf'), defaultValue:'\\' },
+    { interactor:TextField('Biog'), defaultValue:'\\' },
+    { interactor:TextField('MRec'), defaultValue:'\\' },
+    { interactor:TextField('Ctry'), defaultValue:'\\\\\\' },
+    { interactor:TextField('GPub'), defaultValue:'\\' },
+    { interactor:TextField('LitF'), defaultValue:'\\' },
+    { interactor:TextField('Indx'), defaultValue:'\\' },
+    { interactor:TextField('Fest'), defaultValue:'\\' },
+    { interactor:TextField('DtSt'), defaultValue:'\\' },
+    { interactor:TextField('Start date'), defaultValue:'\\\\\\\\' },
+    { interactor:TextField('End date'), defaultValue:'\\\\\\\\' }
+];
+
 const defaultFieldValues = {
   content:'qwe',
   subfieldPrefixInEditor: '$',
@@ -288,6 +306,12 @@ export default {
       .has({ value: content ?? defaultFieldValues.contentWithSubfield }));
   },
 
+  checkFieldContentMatch(selector, regExp) {
+   cy.get(selector).invoke('val').then(text => {
+    expect(text).to.match(regExp);
+   });
+  },
+
   checkEmptyContent(tagName) {
     cy.expect(getRowInteractorByTagName(tagName).find(quickMarcEditorRowContent).exists());
     cy.expect(getRowInteractorByTagName(tagName).find(quickMarcEditorRowContent).find(TextField()).absent());
@@ -320,6 +344,16 @@ export default {
       QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[0]` })).has({value: secondBox}),
       QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[1]` })).has({value: thirdBox}),
       QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].content` })).has({value: content}),
+    ]);
+  },
+
+  verifyTagField(rowIndex, tag, secondBox, thirdBox, subfieldS, subfieldI) {
+    cy.expect([
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].tag` })).has({value: tag}),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[0]` })).has({value: secondBox}),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[1]` })).has({value: thirdBox}),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].content` })).has({value: including(subfieldS) }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].content` })).has({value: including(subfieldI) }),
     ]);
   },
 
@@ -460,6 +494,12 @@ export default {
     tag008HoldingsBytesProperties.getAllProperties().forEach(byteProperty => {
       cy.expect(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).has({ value: byteProperty.replacedVoidValue }));
     });
+  },
+  
+  check008FieldContent() {
+    tag008DefaultValues.forEach(field => {
+      cy.expect(field.interactor.has({ value: field.defaultValue }))
+    })
   },
 
   getRegularTagContent(tag) {

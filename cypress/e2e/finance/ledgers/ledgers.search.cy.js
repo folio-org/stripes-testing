@@ -6,10 +6,12 @@ import TopMenu from '../../../support/fragments/topMenu';
 import { MultiColumnList } from '../../../../interactors';
 import TestType from '../../../support/dictionary/testTypes';
 import devTeams from '../../../support/dictionary/devTeams';
+import permissions from '../../../support/dictionary/permissions';
+import Users from '../../../support/fragments/users/users';
 
 describe('ui-finance: Ledgers', () => {
   let aUnit;
-
+  let user;
   const ledger = {
     id: uuid(),
     name: `E2E ledger ${getRandomPostfix()}`,
@@ -24,7 +26,6 @@ describe('ui-finance: Ledgers', () => {
   };
 
   before(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getAdminToken();
 
     cy.getAcqUnitsApi({ limit: 1 })
@@ -38,7 +39,13 @@ describe('ui-finance: Ledgers', () => {
         ledger.fiscalYearOneId = body.fiscalYears[0].id;
       });
 
-    cy.visit(TopMenu.ledgerPath);
+    cy.createTempUser([
+      permissions.uiFinanceViewLedger.gui,
+    ])
+      .then(userProperties => {
+        user = userProperties;
+        cy.login(userProperties.username, userProperties.password, { path:TopMenu.ledgerPath, waiter: Ledgers.waitForLedgerDetailsLoading });
+      });
   });
 
   beforeEach(() => {
@@ -49,6 +56,7 @@ describe('ui-finance: Ledgers', () => {
 
   afterEach(() => {
     cy.deleteLedgerApi(ledger.id);
+    Users.deleteViaApi(user.userId);
   });
 
   it('C4061 Test the search and filter options for ledgers (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, function () {

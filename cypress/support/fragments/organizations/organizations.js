@@ -25,6 +25,7 @@ const organizationNameField = TextField('Name*');
 const organizationCodeField = TextField('Code*');
 const today = new Date();
 const todayDate = DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY')
+const resetButton = Button('Reset all');
 
 export default {
 
@@ -175,7 +176,8 @@ export default {
   },
 
   resetFilters: () => {
-    cy.do(Button('Reset all').click());
+    cy.do(resetButton.click());
+    cy.expect(resetButton.is({ disabled: true }));
   },
 
   checkSearchResults: (organization) => {

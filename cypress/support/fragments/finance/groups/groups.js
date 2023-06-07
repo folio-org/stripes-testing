@@ -5,6 +5,7 @@ const newButton = Button('New');
 const nameField = TextField('Name*');
 const codeField = TextField('Code*');
 const fundModal = Modal('Select funds');
+const resetButton = Button({ id: 'reset-groups-filters' });
 
 export default {
 
@@ -116,7 +117,8 @@ export default {
   },
 
   resetFilters: () => {
-    cy.do(Button({ id: 'reset-groups-filters' }).click());
+    cy.do(resetButton.click());
+    cy.expect(resetButton.is({ disabled: true }));
   },
 
   openAcquisitionAccordion() {

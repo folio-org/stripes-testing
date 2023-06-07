@@ -22,4 +22,10 @@ export default {
       SelectionList().select(including(location)),
     ]);
   },
+  clearTemporaryLocation: () => {
+    cy.do([
+      Button({ id:'additem_temporarylocation' }).click(),
+      SelectionList().select('Select location'),
+    ]);
+  },
 };
