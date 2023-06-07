@@ -93,7 +93,7 @@ function createRequestApi(
     requestLevel,
     itemId: instanceRecordData.itemId,
     requestDate: new Date().toISOString(),
-    fulfilmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
+    fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
     pickupServicePointId: null,
   };
   let createdUser;
@@ -488,7 +488,7 @@ export default {
   },
 
   verifyFulfillmentPreference() {
-    cy.expect(cy.get('[name="fulfilmentPreference"]').find('option:selected').should('have.text', FULFILMENT_PREFERENCES.HOLD_SHELF));
+    cy.expect(cy.get('[name="fulfillmentPreference"]').find('option:selected').should('have.text', FULFILMENT_PREFERENCES.HOLD_SHELF));
   },
 
   waitLoadingRequests() {
