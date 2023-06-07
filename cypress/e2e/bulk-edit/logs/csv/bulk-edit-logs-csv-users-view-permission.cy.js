@@ -39,7 +39,7 @@ describe('Bulk Edit - Logs', () => {
     FileManager.deleteFileFromDownloadsByMask(`*${matchedRecordsFileName}`, changedRecordsFileName);
   });
 
-  it('C380562 Verify generated Logs files for Users CSV are hidden without "Users: Can view user profile" permission (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C380562 Verify generated Logs files for Users CSV are hidden without "Users: Can view user profile" permission (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     BulkEditSearchPane.verifyDragNDropUsersUIIDsArea();
     BulkEditSearchPane.uploadFile(userUUIDsFileName);
     BulkEditSearchPane.waitFileUploading();
