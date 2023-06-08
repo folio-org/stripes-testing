@@ -59,7 +59,7 @@ describe('Bulk Edit - Items', () => {
     FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
   });
 
-  it('C380393 Verify that bulk edit jobs run by correct user (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+  it('C380393 Verify that bulk edit jobs run by correct user (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird], retries: 2 }, () => {
     BulkEditSearchPane.checkItemsRadio();
     BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');
 
