@@ -50,7 +50,7 @@ describe('Bulk Edit - Items', () => {
       .then(() => {
         FileManager.createFile(`cypress/fixtures/${validItemUUIDsFileName}`, item.itemId);
         FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, `${user1.barcode}\n${user2.barcode}`);
-      })
+      });
   });
 
   after('delete test data', () => {
