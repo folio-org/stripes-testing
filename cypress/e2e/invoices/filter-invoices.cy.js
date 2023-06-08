@@ -19,7 +19,7 @@ import Invoices from '../../support/fragments/invoices/invoices';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
 import { ORDER_TYPES } from '../../support/constants';
 
-describe('Orders: orders', () => {
+describe('Invoices', () => {
   const order = { ...NewOrder.defaultOneTimeOrder,
     orderType: ORDER_TYPES.ONGOING,
     ongoing: { isSubscription: false, manualRenewal: false },
@@ -100,6 +100,7 @@ describe('Orders: orders', () => {
         cy.visit(TopMenu.invoicesPath);
         Invoices.createRolloverInvoice(invoice, organization.name);
         Invoices.createInvoiceLineFromPol(orderNumber);
+        Invoices.approveInvoice();
       });
     cy.createTempUser([
       permissions.uiOrdersView.gui,
@@ -112,42 +113,18 @@ describe('Orders: orders', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin({ path:TopMenu.invoicesPath, waiter: Invoices.waitLoading });
-    Invoices.searchByParameter('All', invoice.invoiceNumber);
-    Invoices.selectInvoice(invoice.invoiceNumber);
-    Invoices.selectInvoiceLine();
-    Invoices.deleteInvoiceLineViaActions();
-    Invoices.deleteInvoiceViaActions();
-    cy.visit(TopMenu.ordersPath);
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList();
-    Orders.unOpenOrder(orderNumber);
-    OrderLines.selectPOLInOrder(0);
-    OrderLines.deleteOrderLine();
-    Orders.deleteOrderViaApi(order.id);
-    Organizations.deleteOrganizationViaApi(organization.id);
     Users.deleteViaApi(user.userId);
   });
 
-  it('C6724: Test the invoice filters (thunderjet)', { tags: [TestTypes.criticalPath, devTeams.thunderjet] }, () => {
-    Invoices.searchByParameter('All', invoice.invoiceNumber);
-    Invoices.selectInvoice(invoice.invoiceNumber);
-    Invoices.closeInvoiceDetailsPane();
-    Invoices.resetFilters();
-
-    Invoices.searchByParameter('Vendor invoice number', invoice.invoiceNumber);
-    Invoices.selectInvoice(invoice.invoiceNumber);
-    Invoices.closeInvoiceDetailsPane();
-    Invoices.resetFilters();
-
-    Invoices.searchByParameter('PO number', orderNumber);
-    Invoices.selectInvoice(invoice.invoiceNumber);
-    Invoices.closeInvoiceDetailsPane();
-    Invoices.resetFilters();
-
-    Invoices.searchByParameter('Accounting code', organization.erpCode);
-    Invoices.selectInvoice(invoice.invoiceNumber);
-    Invoices.closeInvoiceDetailsPane();
-    Invoices.resetFilters();
+  [
+    { filterActions: Invoices.selectStatusFilter('Approved') },
+    { filterActions: () => { Invoices.selectVendorFilter(invoice); } },
+  ].forEach((filter) => {
+    it('C6724: Test the invoice filters (thunderjet)', { tags: [TestTypes.criticalPath, devTeams.thunderjet] }, () => {
+      filter.filterActions();
+      Invoices.selectInvoice(invoice.invoiceNumber);
+      Invoices.closeInvoiceDetailsPane();
+      Invoices.resetFilters();
+    });
   });
 });

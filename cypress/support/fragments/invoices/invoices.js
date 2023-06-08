@@ -447,4 +447,21 @@ export default {
   checkFundInInvoiceLine:(fund) => {
     cy.expect(Section({ id: 'invoiceLineFundDistribution' }).find(Link(`${fund.name}(${fund.code})`)).exists());
   },
+
+  selectStatusFilter:(status) => {
+    cy.do([
+      Section({ id: 'invoice-filters-pane' }).find(Section({ id: 'status' })).find(Button({ ariaLabel: 'Status filter list' })).click(),
+      Checkbox(status).click(),
+    ]);
+  },
+
+  selectVendorFilter: (invoice) => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-filter-vendor' }).click(),
+      Button('Organization look-up').click(),
+      Modal('Select Organization').find(SearchField({ id: searhInputId })).fillIn(invoice.vendorName),
+      searchButton.click(),
+    ]);
+    Helper.selectFromResultsList();
+  },
 };
