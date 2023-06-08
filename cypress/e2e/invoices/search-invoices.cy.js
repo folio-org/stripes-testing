@@ -10,10 +10,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import DateTools from '../../support/utils/dateTools';
 import Users from '../../support/fragments/users/users';
-import NewAgreement from '../../support/fragments/agreements/newAgreement';
-import AgreementsDetails from '../../support/fragments/agreements/agreementsDetails';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
 import Funds from '../../support/fragments/finance/funds/funds';
@@ -44,7 +41,6 @@ describe('Orders: orders', () => {
       },
     ]
   };
-  const defaultAgreement = { ...NewAgreement.defaultAgreement };
   const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
@@ -54,12 +50,6 @@ describe('Orders: orders', () => {
   let location;
   let servicePointId;
   let orderNumber;
-  let firstDate;
-  let secondDate;
-  let firstCard;
-  let secondCard;
-  let thirdCard;
-  let thirdDate;
 
   before(() => {
     cy.getAdminToken();
