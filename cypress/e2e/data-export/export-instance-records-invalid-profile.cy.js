@@ -34,11 +34,11 @@ describe('data-export', () => {
       });
   });
 
-    after('delete test data', () => {
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-      Users.deleteViaApi(user.userId);
-      FileManager.deleteFile(`cypress/fixtures/${fileName}`);
-    });
+  after('delete test data', () => {
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
+    Users.deleteViaApi(user.userId);
+    FileManager.deleteFile(`cypress/fixtures/${fileName}`);
+  });
 
   it('C350407 Verify that a user cannot trigger the DATA EXPORT using invalid job profile (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     ExportFileHelper.uploadFile(fileName);
