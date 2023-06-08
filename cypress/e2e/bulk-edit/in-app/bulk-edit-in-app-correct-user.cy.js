@@ -46,9 +46,11 @@ describe('Bulk Edit - Items', () => {
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${item.itemBarcode}"` })
       .then((instance) => {
         item.itemId = instance.items[0].id;
+      })
+      .then(() => {
         FileManager.createFile(`cypress/fixtures/${validItemUUIDsFileName}`, item.itemId);
         FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, `${user1.barcode}\n${user2.barcode}`);
-      });
+      })
   });
 
   after('delete test data', () => {
@@ -59,7 +61,7 @@ describe('Bulk Edit - Items', () => {
     FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
   });
 
-  it('C380393 Verify that bulk edit jobs run by correct user (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird], retries: 2 }, () => {
+  it('C380393 Verify that bulk edit jobs run by correct user (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     BulkEditSearchPane.checkItemsRadio();
     BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');
 

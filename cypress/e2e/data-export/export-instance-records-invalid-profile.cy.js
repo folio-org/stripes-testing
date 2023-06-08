@@ -1,5 +1,5 @@
 import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
+import testTypes from '../../support/dictionary/testTypes';
 import FileManager from '../../support/utils/fileManager';
 import ExportFileHelper from '../../support/fragments/data-export/exportFile';
 import DataExportResults from '../../support/fragments/data-export/dataExportResults';
@@ -40,7 +40,7 @@ describe('data-export', () => {
     FileManager.deleteFile(`cypress/fixtures/${fileName}`);
   });
 
-  it('C350407 Verify that a user cannot trigger the DATA EXPORT using invalid job profile (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
+  it('C350407 Verify that a user cannot trigger the DATA EXPORT using invalid job profile (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     ExportFileHelper.uploadFile(fileName);
     ExportFileHelper.exportWithDefaultJobProfile(fileName, 'holdings', 'Holdings');
 
