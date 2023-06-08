@@ -39,6 +39,10 @@ const invoiceDetailsPaneId = 'paneHeaderpane-invoiceDetails';
 const searhInputId = 'input-record-search';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderinvoice-results-pane-subtitle"]/span';
 const zeroResultsFoundText = '0 records found';
+const searchForm = SearchField({ id: 'input-record-search' });
+const resetButton = Button({ id: 'reset-invoice-filters' });
+const invoiceLineDetailsPane = PaneHeader({ id: 'paneHeaderpane-invoiceLineDetails' });
+const deleteButton = Button('Delete');
 
 export default {
 
@@ -148,7 +152,15 @@ export default {
   deleteInvoiceViaActions() {
     cy.do([
       PaneHeader({ id: invoiceDetailsPaneId }).find(actionsButton).click(),
-      Button('Delete').click(),
+      deleteButton.click(),
+    ]);
+  },
+
+  deleteInvoiceLineViaActions() {
+    cy.do([
+      invoiceLineDetailsPane.find(actionsButton).click(),
+      deleteButton.click(),
+      Modal({ id: 'delete-invoice-line-confirmation' }).find(deleteButton).click()
     ]);
   },
 
@@ -216,7 +228,7 @@ export default {
   addFundDistributionToLine: (invoiceLine, fund) => {
     cy.do([
       Accordion({ id: invoiceLinesAccordionId }).find(MultiColumnListCell({ content: invoiceLine.description })).click(),
-      PaneHeader({ id: 'paneHeaderpane-invoiceLineDetails' })
+      invoiceLineDetailsPane
         .find(actionsButton).click(),
       Button('Edit').click(),
       Button({ id: 'fundDistributions-add-button' }).click(),
@@ -260,6 +272,14 @@ export default {
       SearchField({ id: searhInputId }).selectIndex('Vendor invoice number'),
       SearchField({ id: searhInputId }).fillIn(invoiceNumber),
       searchButton.click(),
+    ]);
+  },
+
+  searchByParameter(parameter, value) {
+    cy.do([
+      searchForm.selectIndex(parameter),
+      searchForm.fillIn(value),
+      Button('Search').click(),
     ]);
   },
 
@@ -395,6 +415,15 @@ export default {
 
   selectInvoice:(invoiceNumber) => {
     cy.do(Pane({ id: 'invoice-results-pane' }).find(Link(invoiceNumber)).click());
+  },
+
+  closeInvoiceDetailsPane:() => {
+    cy.do(Pane({ id: 'pane-invoiceDetails' }).find(Button({ icon: 'times' })).click());
+  },
+
+  resetFilters: () => {
+    cy.do(resetButton.click());
+    cy.expect(resetButton.is({ disabled: true }));
   },
 
   editInvoiceLine:() => {
