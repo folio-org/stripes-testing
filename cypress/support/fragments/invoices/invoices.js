@@ -15,7 +15,8 @@ import {
   MultiColumnListRow,
   Select,
   Section,
-  Link
+  Link,
+  SelectionOption
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import Helper from '../finance/financeHelper';
@@ -43,6 +44,12 @@ const searchForm = SearchField({ id: 'input-record-search' });
 const resetButton = Button({ id: 'reset-invoice-filters' });
 const invoiceLineDetailsPane = PaneHeader({ id: 'paneHeaderpane-invoiceLineDetails' });
 const deleteButton = Button('Delete');
+const invoiceFiltersSection = Section({ id: 'invoice-filters-pane' });
+const batchGroupFilterSection = Section({ id: 'batchGroupId' });
+const fundCodeFilterSection = Section({ id: 'fundCode' });
+const fiscalYearFilterSection = Section({ id: 'fiscalYearId' });
+const invoiceDateFilterSection = Section({ id: 'invoiceDate' });
+const approvalDateFilterSection = Section({ id: 'approvalDate' });
 
 export default {
 
@@ -446,5 +453,64 @@ export default {
 
   checkFundInInvoiceLine:(fund) => {
     cy.expect(Section({ id: 'invoiceLineFundDistribution' }).find(Link(`${fund.name}(${fund.code})`)).exists());
+  },
+
+  selectStatusFilter:(status) => {
+    cy.do([
+      invoiceFiltersSection.find(Section({ id: 'status' })).find(Button({ ariaLabel: 'Status filter list' })).click(),
+      Checkbox(status).click(),
+    ]);
+  },
+
+  selectVendorFilter: (organization) => {
+    cy.do([
+      invoiceFiltersSection.find(Section({ id: 'vendorId' })).find(Button({ ariaLabel: 'Vendor name filter list' })).click(),
+      Button('Organization look-up').click(),
+      Modal('Select Organization').find(SearchField({ id: searhInputId })).fillIn(organization.name),
+      searchButton.click(),
+    ]);
+    Helper.selectFromResultsList();
+  },
+
+  selectApprovalDateFilter:(dateFrom, dateTo) => {
+    cy.do([
+      invoiceFiltersSection.find(approvalDateFilterSection).find(Button({ ariaLabel: 'Approval date filter list' })).click(),
+      approvalDateFilterSection.find(TextField({ name: 'startDate' })).fillIn(dateFrom),
+      approvalDateFilterSection.find(TextField({ name: 'endDate' })).fillIn(dateTo),
+      approvalDateFilterSection.find(Button('Apply')).click(),
+    ]);
+  },
+
+  selectInvoiceDateFilter:(dateFrom, dateTo) => {
+    cy.do([
+      invoiceFiltersSection.find(invoiceDateFilterSection).find(Button({ ariaLabel: 'Invoice date filter list' })).click(),
+      invoiceDateFilterSection.find(TextField({ name: 'startDate' })).fillIn(dateFrom),
+      invoiceDateFilterSection.find(TextField({ name: 'endDate' })).fillIn(dateTo),
+      invoiceDateFilterSection.find(Button('Apply')).click(),
+    ]);
+  },
+
+  selectFundCodeFilter:(fundCode) => {
+    cy.do([
+      invoiceFiltersSection.find(fundCodeFilterSection).find(Button({ ariaLabel: 'Fund code filter list' })).click(),
+      fundCodeFilterSection.find(Button({ id: 'fundCode-selection' })).click(),
+      fundCodeFilterSection.find(SelectionOption(fundCode)).click(),
+    ]);
+  },
+
+  selectFiscalYearFilter:(fiscalYear) => {
+    cy.do([
+      invoiceFiltersSection.find(fiscalYearFilterSection).find(Button({ ariaLabel: 'Fiscal year filter list' })).click(),
+      fiscalYearFilterSection.find(Button({ id: 'fiscalYearId-selection' })).click(),
+      fiscalYearFilterSection.find(SelectionOption(fiscalYear)).click(),
+    ]);
+  },
+
+  selectButchGroupFilter:(batchGroup) => {
+    cy.do([
+      invoiceFiltersSection.find(batchGroupFilterSection).find(Button({ ariaLabel: 'Batch group filter list' })).click(),
+      batchGroupFilterSection.find(Button({ id: 'batchGroupId-selection' })).click(),
+      batchGroupFilterSection.find(SelectionOption(batchGroup)).click(),
+    ]);
   },
 };
