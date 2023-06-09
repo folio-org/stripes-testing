@@ -19,7 +19,7 @@ import Invoices from '../../support/fragments/invoices/invoices';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
 import { ORDER_TYPES } from '../../support/constants';
 
-describe('Orders: orders', () => {
+describe('Invoices', () => {
   const order = { ...NewOrder.defaultOneTimeOrder,
     orderType: ORDER_TYPES.ONGOING,
     ongoing: { isSubscription: false, manualRenewal: false },
