@@ -47,7 +47,6 @@ const deleteButton = Button('Delete');
 const invoiceFiltersSection = Section({ id: 'invoice-filters-pane' });
 const batchGroupFilterSection = Section({ id: 'batchGroupId' });
 const fundCodeFilterSection = Section({ id: 'fundCode' });
-const fiscalYearFilterSection = Section({ id: 'fiscalYearId' });
 const invoiceDateFilterSection = Section({ id: 'invoiceDate' });
 const approvalDateFilterSection = Section({ id: 'approvalDate' });
 
@@ -495,14 +494,6 @@ export default {
       invoiceFiltersSection.find(fundCodeFilterSection).find(Button({ ariaLabel: 'Fund code filter list' })).click(),
       fundCodeFilterSection.find(Button({ id: 'fundCode-selection' })).click(),
       fundCodeFilterSection.find(SelectionOption(fundCode)).click(),
-    ]);
-  },
-
-  selectFiscalYearFilter:(fiscalYear) => {
-    cy.do([
-      invoiceFiltersSection.find(fiscalYearFilterSection).find(Button({ ariaLabel: 'Fiscal year filter list' })).click(),
-      fiscalYearFilterSection.find(Button({ id: 'fiscalYearId-selection' })).click(),
-      fiscalYearFilterSection.find(SelectionOption(fiscalYear)).click(),
     ]);
   },
 

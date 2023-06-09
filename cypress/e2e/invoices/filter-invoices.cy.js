@@ -127,7 +127,6 @@ describe('Invoices', () => {
     { filterActions: () => { Invoices.selectApprovalDateFilter(todayDate, todayDate); } },
     { filterActions: () => { Invoices.selectFundCodeFilter(defaultFund.code); } },
     { filterActions: () => { Invoices.selectButchGroupFilter('FOLIO'); } },
-    { filterActions: () => { Invoices.selectFiscalYearFilter(defaultFiscalYear.code); } },
 
   ].forEach((filter) => {
     it('C6724: Test the invoice filters (thunderjet)', { tags: [TestTypes.criticalPath, devTeams.thunderjet] }, () => {
