@@ -40,6 +40,7 @@ export default {
   // TODO: gui name related with several internal names. Clarify the reason
   inventoryAll: { internal: ['inventory.all', 'Inventory: All permissions'], gui: 'Inventory: All permissions' },
   uiCallNumberBrowse: { internal: 'browse.call-numbers.instances.collection.get', gui:'Call number browse: View permissions' },
+  uiSubjectBrowse: { internal: 'ui-inventory.subjects.view', gui: 'Subject browse: View permissions' },
   uiInventorySingleRecordImport: { internal: 'ui-inventory.single-record-import', gui: 'Inventory: Import single bibliographic records' },
   uiInventoryMarkItemsWithdrawn: { internal: 'ui-inventory.items.mark-items-withdrawn', gui: 'Inventory: Mark items withdrawn' },
   uiInventoryViewInstances: { internal: 'ui-inventory.instance.view', gui: 'Inventory: View instances, holdings, and items' },
