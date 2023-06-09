@@ -17,6 +17,7 @@ import Funds from '../../support/fragments/finance/funds/funds';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import Invoices from '../../support/fragments/invoices/invoices';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
+import DateTools from '../../support/utils/dateTools';
 import { ORDER_TYPES } from '../../support/constants';
 
 describe('Invoices', () => {
@@ -41,10 +42,11 @@ describe('Invoices', () => {
       },
     ]
   };
-  const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
+  const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
   const invoice = { ...NewInvoice.defaultUiInvoice };
+  const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
   const allocatedQuantity = '100';
   let user;
   let location;
@@ -53,10 +55,10 @@ describe('Invoices', () => {
 
   before(() => {
     cy.getAdminToken();
-    FiscalYears.createViaApi(firstFiscalYear)
+    FiscalYears.createViaApi(defaultFiscalYear)
       .then(firstFiscalYearResponse => {
-        firstFiscalYear.id = firstFiscalYearResponse.id;
-        defaultLedger.fiscalYearOneId = firstFiscalYear.id;
+        defaultFiscalYear.id = firstFiscalYearResponse.id;
+        defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
         Ledgers.createViaApi(defaultLedger)
           .then(ledgerResponse => {
             defaultLedger.id = ledgerResponse.id;
@@ -100,6 +102,8 @@ describe('Invoices', () => {
         cy.visit(TopMenu.invoicesPath);
         Invoices.createRolloverInvoice(invoice, organization.name);
         Invoices.createInvoiceLineFromPol(orderNumber);
+        // Need to wait, while data will be loaded
+        cy.wait(6000);
         Invoices.approveInvoice();
       });
     cy.createTempUser([
@@ -117,8 +121,14 @@ describe('Invoices', () => {
   });
 
   [
-    { filterActions: Invoices.selectStatusFilter('Approved') },
-    { filterActions: () => { Invoices.selectVendorFilter(invoice); } },
+    { filterActions: () => { Invoices.selectStatusFilter('Approved'); } },
+    { filterActions: () => { Invoices.selectVendorFilter(organization); } },
+    { filterActions: () => { Invoices.selectInvoiceDateFilter(todayDate, todayDate); } },
+    { filterActions: () => { Invoices.selectApprovalDateFilter(todayDate, todayDate); } },
+    { filterActions: () => { Invoices.selectFundCodeFilter(defaultFund.code); } },
+    { filterActions: () => { Invoices.selectButchGroupFilter('FOLIO'); } },
+    { filterActions: () => { Invoices.selectFiscalYearFilter(defaultFiscalYear.code); } },
+
   ].forEach((filter) => {
     it('C6724: Test the invoice filters (thunderjet)', { tags: [TestTypes.criticalPath, devTeams.thunderjet] }, () => {
       filter.filterActions();
