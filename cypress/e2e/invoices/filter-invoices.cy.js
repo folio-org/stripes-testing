@@ -42,7 +42,7 @@ describe('Invoices', () => {
       },
     ]
   };
-  const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
+  const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -127,6 +127,7 @@ describe('Invoices', () => {
     { filterActions: () => { Invoices.selectApprovalDateFilter(todayDate, todayDate); } },
     { filterActions: () => { Invoices.selectFundCodeFilter(defaultFund.code); } },
     { filterActions: () => { Invoices.selectButchGroupFilter('FOLIO'); } },
+    { filterActions: () => { Invoices.selectFiscalYearFilter(defaultFiscalYear.code); } },
 
   ].forEach((filter) => {
     it('C6724: Test the invoice filters (thunderjet)', { tags: [TestTypes.criticalPath, devTeams.thunderjet] }, () => {
