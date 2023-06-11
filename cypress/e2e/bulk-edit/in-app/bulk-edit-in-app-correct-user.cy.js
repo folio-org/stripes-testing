@@ -46,6 +46,8 @@ describe('Bulk Edit - Items', () => {
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${item.itemBarcode}"` })
       .then((instance) => {
         item.itemId = instance.items[0].id;
+      })
+      .then(() => {
         FileManager.createFile(`cypress/fixtures/${validItemUUIDsFileName}`, item.itemId);
         FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, `${user1.barcode}\n${user2.barcode}`);
       });
