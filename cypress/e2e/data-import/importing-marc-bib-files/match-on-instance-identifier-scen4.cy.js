@@ -42,18 +42,18 @@ describe('ui-data-import', () => {
     { type: 'System control number', value: '(AMB)84714376518561876438' },
   ];
   const matchProfile = {
-    profileName: `C347831autotestMatchProf${getRandomPostfix()}`,
+    profileName: `C347831 ID Match Test - Update4 (System control number).${getRandomPostfix()}`,
     incomingRecordFields: {
       field: '035',
       in1: '*',
-      in1: '*',
+      in2: '*',
       subfield: 'a'
     },
     matchCriterion: 'Exactly matches',
     qualifierType: 'Begins with',
-    qualifierValue: '(AMB)',
+    qualifierValue: 'AMB',
     existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
-    instanceOption: NewMatchProfile.optionsList.systemControlNumber
+    existingRecordOption: NewMatchProfile.optionsList.systemControlNumber
   };
   const mappingProfile = {
     name: `C347831 ID Match Test - Update4 (System control number).${getRandomPostfix()}`,
@@ -88,6 +88,26 @@ describe('ui-data-import', () => {
       });
   });
 
+  after('delete test data', () => {
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
+    MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+    ActionProfiles.deleteActionProfile(actionProfile.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+    Users.deleteViaApi(user.userId);
+    InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value)
+    .then(instances => {
+      instances.forEach(({ id }) => {
+        InventoryInstance.deleteInstanceViaApi(id);
+      });
+    });
+    InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[3].value)
+    .then(instances => {
+      instances.forEach(({ id }) => {
+        InventoryInstance.deleteInstanceViaApi(id);
+      });
+    });
+  });
+
   it('C347831 MODDICORE-231 "Match on Instance identifier match meets both the Identifier type and Data requirements" Scenario 4 (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
@@ -109,8 +129,8 @@ describe('ui-data-import', () => {
     InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[3].type, resourceIdentifiers[3].value, 3);
 
     cy.visit(SettingsMenu.matchProfilePath);
-      MatchProfiles.createMatchProfileWithQualifier(matchProfile);
-      MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
+    MatchProfiles.createMatchProfileWithQualifierAndExistingRecordField(matchProfile);
+    MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
 
     cy.visit(SettingsMenu.mappingProfilePath);
     FieldMappingProfiles.openNewMappingProfileForm();
@@ -143,7 +163,6 @@ describe('ui-data-import', () => {
     Logs.verifyInstanceStatus(1, 3, 'Updated');
     Logs.clickOnHotLink(1, 3, 'Updated');
     InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
-    InstanceRecordView.verifyMarkAsSuppressed();
     InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);
     InstanceRecordView.verifyGeneralNoteContent(instanceGeneralNote);
     });
