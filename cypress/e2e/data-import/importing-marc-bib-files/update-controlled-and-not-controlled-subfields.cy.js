@@ -140,17 +140,17 @@ describe('Importing MARC Bib files', () => {
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
     MarcAuthority.deleteViaAPI(createdAuthorityIDs[1]);
-    //clean up generated profiles
+    // clean up generated profiles
     JobProfiles.deleteJobProfile(jobProfile.profileName);
     MatchProfiles.deleteMatchProfile(matchProfile.profileName);
     ActionProfiles.deleteActionProfile(actionProfile.name);
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
-    //delete created files in fixtures
+    // delete created files in fixtures
     FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
     FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
     FileManager.deleteFile(`cypress/fixtures/${nameForUpdatedMarcFile}`);
   });
-  
+
   it('C375098 Update controlled and not controlled subfields of linked "MARC Bib" field which is controlled by "MARC Authority" record (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
     InventoryInstances.selectInstance();
