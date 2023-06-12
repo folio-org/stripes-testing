@@ -17,7 +17,7 @@ const item = {
   itemBarcode: getRandomPostfix(),
 };
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
-const newLocation = 'Online'
+const newLocation = 'Online';
 
 describe('Bulk Edit - Items', () => {
   before('create test data', () => {
