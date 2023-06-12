@@ -321,6 +321,10 @@ export default {
     cy.go('back');
   },
 
+  checkExistanceOfAuthorityIconInInstanceDetailPane(accordion) {
+    cy.expect(Accordion(accordion).find(Link()).exists());
+  },
+
   checkAbsenceOfAuthorityIconInInstanceDetailPane(accordion) {
     cy.expect(Accordion(accordion).find(Link()).absent());
   },
