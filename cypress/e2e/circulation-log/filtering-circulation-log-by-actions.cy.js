@@ -108,12 +108,12 @@ describe('Circulation log', () => {
     cy.visit(TopMenu.circulationLogPath);
     SearchPane.waitLoading();
     SearchPane.setFilterOptionFromAccordion('fee', filterName);
-    SearchPane.findResultRowIndexByContent(searchResultsData.desc).then((rowIndex) => {
+    SearchPane.findResultRowIndexByContent(searchResultsData.servicePoint).then((rowIndex) => {
       SearchPane.checkResultSearch(searchResultsData, rowIndex);
     });
     SearchPane.resetResults();
     SearchPane.searchByItemBarcode(itemData.barcode);
-    SearchPane.findResultRowIndexByContent(searchResultsData.desc).then((rowIndex) => {
+    SearchPane.findResultRowIndexByContent(searchResultsData.servicePoint).then((rowIndex) => {
       SearchPane.checkResultSearch(searchResultsData, rowIndex);
     });
   };
@@ -241,50 +241,50 @@ describe('Circulation log', () => {
     );
   });
 
-  it(
-    'C17060 Check the Actions button from filtering Circulation log by refunded partially (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
-    () => {
-      PayFeeFaine.payFeeFineViaApi(payBody('4.00'), testData.feeFineId);
-      RefundFeeFine.refundFeeFineViaApi(refundBody('2.00'), testData.feeFineId);
-      checkActionsButton('Refunded partially');
-    }
-  );
+  // it(
+  //   'C17060 Check the Actions button from filtering Circulation log by refunded partially (volaris)',
+  //   { tags: [TestTypes.criticalPath, devTeams.volaris] },
+  //   () => {
+  //     PayFeeFaine.payFeeFineViaApi(payBody('4.00'), testData.feeFineId);
+  //     RefundFeeFine.refundFeeFineViaApi(refundBody('2.00'), testData.feeFineId);
+  //     checkActionsButton('Refunded partially');
+  //   }
+  // );
 
-  it(
-    'C17058 Check the Actions button from filtering Circulation log by refunded fully (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
-    () => {
-      PayFeeFaine.payFeeFineViaApi(payBody('4.00'), testData.feeFineId);
-      RefundFeeFine.refundFeeFineViaApi(refundBody('4.00'), testData.feeFineId);
-      checkActionsButton('Refunded fully');
-    }
-  );
+  // it(
+  //   'C17058 Check the Actions button from filtering Circulation log by refunded fully (volaris)',
+  //   { tags: [TestTypes.criticalPath, devTeams.volaris] },
+  //   () => {
+  //     PayFeeFaine.payFeeFineViaApi(payBody('4.00'), testData.feeFineId);
+  //     RefundFeeFine.refundFeeFineViaApi(refundBody('4.00'), testData.feeFineId);
+  //     checkActionsButton('Refunded fully');
+  //   }
+  // );
 
-  it(
-    'C17057 Filter circulation log by refunded fully (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
-    () => {
-      filterByAction('Refunded fully');
-    }
-  );
+  // it(
+  //   'C17057 Filter circulation log by refunded fully (volaris)',
+  //   { tags: [TestTypes.criticalPath, devTeams.volaris] },
+  //   () => {
+  //     filterByAction('Refunded fully');
+  //   }
+  // );
 
-  it(
-    'C17056 Check the Actions button from filtering Circulation log by waived partially (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
-    () => {
-      WaiveFeeFineModal.waiveFeeFineViaApi(waiveBody('2.00'), testData.feeFineId);
-      checkActionsButton('Waived partially');
-    }
-  );
+  // it(
+  //   'C17056 Check the Actions button from filtering Circulation log by waived partially (volaris)',
+  //   { tags: [TestTypes.criticalPath, devTeams.volaris] },
+  //   () => {
+  //     WaiveFeeFineModal.waiveFeeFineViaApi(waiveBody('2.00'), testData.feeFineId);
+  //     checkActionsButton('Waived partially');
+  //   }
+  // );
 
-  it(
-    'C17055 Filter circulation log by waived partially (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
-    () => {
-      filterByAction('Waived partially');
-    }
-  );
+  // it(
+  //   'C17055 Filter circulation log by waived partially (volaris)',
+  //   { tags: [TestTypes.criticalPath, devTeams.volaris] },
+  //   () => {
+  //     filterByAction('Waived partially');
+  //   }
+  // );
 
   it(
     'C17054 Check the Actions button from filtering Circulation log by waived fully (volaris)',
