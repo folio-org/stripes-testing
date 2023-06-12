@@ -1,4 +1,3 @@
-import { HTML, including } from '@interactors/html';
 import { Button, Modal, TextField, Select, Pane } from '../../../../interactors';
 
 const rootModal = Modal({ id: 'transfer-modal' });
