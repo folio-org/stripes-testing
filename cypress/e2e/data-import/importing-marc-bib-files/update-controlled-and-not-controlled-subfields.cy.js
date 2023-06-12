@@ -66,13 +66,13 @@ describe('Importing MARC Bib files', () => {
 
   const marcFiles = [
     {
-      marc: 'marcBibFileForC375098.mrc', 
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`, 
+      marc: 'marcBibFileForC375098.mrc',
+      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       numOfRecords: 1
-    }, 
+    },
     {
-      marc: 'marcFileForC375098.mrc', 
+      marc: 'marcFileForC375098.mrc',
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numOfRecords: 1
