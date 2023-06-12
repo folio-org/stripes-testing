@@ -117,6 +117,23 @@ describe('Circulation log', () => {
       SearchPane.checkResultSearch(searchResultsData, rowIndex);
     });
   };
+  const createFeeFine = () => {
+    return NewFeeFine.createViaApi({
+      id: uuid(),
+      ownerId: userOwnerBody.id,
+      feeFineId: testData.manualChargeId,
+      amount: 4,
+      feeFineType: testData.manualChargeName,
+      feeFineOwner: userOwnerBody.owner,
+      userId: userData.userId,
+      itemId: itemData.itemId[0],
+      barcode: itemData.barcode,
+      title: itemData.title,
+      createdAt: testData.userServicePoint.id,
+      dateAction: moment.utc().format(),
+      source: 'ADMINISTRATOR, DIKU',
+    });
+  };
 
   before('Preconditions', () => {
     cy.getAdminToken()
@@ -197,29 +214,8 @@ describe('Circulation log', () => {
       .then(() => {});
   });
 
-  beforeEach('Create fee/fine', () => {
-    NewFeeFine.createViaApi({
-      id: uuid(),
-      ownerId: userOwnerBody.id,
-      feeFineId: testData.manualChargeId,
-      amount: 4,
-      feeFineType: testData.manualChargeName,
-      feeFineOwner: userOwnerBody.owner,
-      userId: userData.userId,
-      itemId: itemData.itemId[0],
-      barcode: itemData.barcode,
-      title: itemData.title,
-      createdAt: testData.userServicePoint.id,
-      dateAction: moment.utc().format(),
-      source: 'ADMINISTRATOR, DIKU',
-    }).then((feeFineId) => {
-      testData.feeFineId = feeFineId;
-    });
+  beforeEach('Login', () => {
     cy.loginAsAdmin();
-  });
-
-  afterEach('Delete fee/fine', () => {
-    NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
   });
 
   after('Deleting created entities', () => {
@@ -241,57 +237,72 @@ describe('Circulation log', () => {
     );
   });
 
-  // it(
-  //   'C17060 Check the Actions button from filtering Circulation log by refunded partially (volaris)',
-  //   { tags: [TestTypes.criticalPath, devTeams.volaris] },
-  //   () => {
-  //     PayFeeFaine.payFeeFineViaApi(payBody('4.00'), testData.feeFineId);
-  //     RefundFeeFine.refundFeeFineViaApi(refundBody('2.00'), testData.feeFineId);
-  //     checkActionsButton('Refunded partially');
-  //   }
-  // );
+  it(
+    'C17060 Check the Actions button from filtering Circulation log by refunded partially (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      createFeeFine().then((feeFineId) => {
+        testData.feeFineId = feeFineId;
+        PayFeeFaine.payFeeFineViaApi(payBody('4.00'), testData.feeFineId);
+        RefundFeeFine.refundFeeFineViaApi(refundBody('2.00'), testData.feeFineId);
+        checkActionsButton('Refunded partially');
+        NewFeeFine.deleteFeeFineAccountViaApi(feeFineId);
+      });
+    }
+  );
 
-  // it(
-  //   'C17058 Check the Actions button from filtering Circulation log by refunded fully (volaris)',
-  //   { tags: [TestTypes.criticalPath, devTeams.volaris] },
-  //   () => {
-  //     PayFeeFaine.payFeeFineViaApi(payBody('4.00'), testData.feeFineId);
-  //     RefundFeeFine.refundFeeFineViaApi(refundBody('4.00'), testData.feeFineId);
-  //     checkActionsButton('Refunded fully');
-  //   }
-  // );
+  it(
+    'C17058 Check the Actions button from filtering Circulation log by refunded fully (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      createFeeFine().then((feeFineId) => {
+        testData.feeFineId = feeFineId;
+        PayFeeFaine.payFeeFineViaApi(payBody('4.00'), testData.feeFineId);
+        RefundFeeFine.refundFeeFineViaApi(refundBody('4.00'), testData.feeFineId);
+        checkActionsButton('Refunded fully');
+      });
+    }
+  );
 
-  // it(
-  //   'C17057 Filter circulation log by refunded fully (volaris)',
-  //   { tags: [TestTypes.criticalPath, devTeams.volaris] },
-  //   () => {
-  //     filterByAction('Refunded fully');
-  //   }
-  // );
+  it(
+    'C17057 Filter circulation log by refunded fully (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      filterByAction('Refunded fully');
+      NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
+    }
+  );
 
-  // it(
-  //   'C17056 Check the Actions button from filtering Circulation log by waived partially (volaris)',
-  //   { tags: [TestTypes.criticalPath, devTeams.volaris] },
-  //   () => {
-  //     WaiveFeeFineModal.waiveFeeFineViaApi(waiveBody('2.00'), testData.feeFineId);
-  //     checkActionsButton('Waived partially');
-  //   }
-  // );
+  it(
+    'C17056 Check the Actions button from filtering Circulation log by waived partially (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      createFeeFine().then((feeFineId) => {
+        testData.feeFineId = feeFineId;
+        WaiveFeeFineModal.waiveFeeFineViaApi(waiveBody('2.00'), testData.feeFineId);
+        checkActionsButton('Waived partially');
+      });
+    }
+  );
 
-  // it(
-  //   'C17055 Filter circulation log by waived partially (volaris)',
-  //   { tags: [TestTypes.criticalPath, devTeams.volaris] },
-  //   () => {
-  //     filterByAction('Waived partially');
-  //   }
-  // );
+  it(
+    'C17055 Filter circulation log by waived partially (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      filterByAction('Waived partially');
+      NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
+    }
+  );
 
   it(
     'C17054 Check the Actions button from filtering Circulation log by waived fully (volaris)',
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
-      WaiveFeeFineModal.waiveFeeFineViaApi(waiveBody('4.00'), testData.feeFineId);
-      checkActionsButton('Waived fully');
+      createFeeFine().then((feeFineId) => {
+        testData.feeFineId = feeFineId;
+        WaiveFeeFineModal.waiveFeeFineViaApi(waiveBody('4.00'), testData.feeFineId);
+        checkActionsButton('Waived fully');
+      });
     }
   );
 
@@ -300,6 +311,7 @@ describe('Circulation log', () => {
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       filterByAction('Waived fully');
+      NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
     }
   );
 });
