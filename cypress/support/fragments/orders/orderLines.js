@@ -79,9 +79,20 @@ const orderHistorySection = Section({ id: 'versions-history-pane-order-line' });
 const agreementLinesSection = Section({ id: 'relatedAgreementLines' });
 const invoiceLinesSection = Section({ id: 'relatedInvoiceLines' });
 const notesSection = Section({ id: 'notes' });
+const submitOrderLine = () => {
+  const submitButton = Button('Submit');
+  cy.get('body').then($body => {
+    if ($body.find('[id=line-is-not-unique-confirmation]').length) {
+      cy.wait(4000);
+      cy.do(Modal({ id: 'line-is-not-unique-confirmation' }).find(submitButton).click());
+    } else {
+      // do nothing if modal is not displayed
+    }
+  });
+};
 
 export default {
-
+  submitOrderLine,
   searchByParameter: (parameter, value) => {
     cy.do([
       searchForm.selectIndex(parameter),
@@ -355,7 +366,7 @@ export default {
       saveAndClose.click()
     ]);
     cy.wait(4000);
-    this.submitOrderLine();
+    submitOrderLine();
   },
 
   editFundInPOL(fund, unitPrice, value) {
@@ -367,7 +378,7 @@ export default {
       saveAndClose.click()
     ]);
     cy.wait(6000);
-    this.submitOrderLine();
+    submitOrderLine();
   },
 
   addFundToPOL(fund, value) {
@@ -380,7 +391,7 @@ export default {
       saveAndClose.click()
     ]);
     cy.wait(6000);
-    this.submitOrderLine();
+    submitOrderLine();
   },
 
   rolloverPOLineInfoforElectronicResourceWithFund: (orderLineTitleName, fund, unitPrice, quantity, value) => {
@@ -475,7 +486,7 @@ export default {
       saveAndClose.click()
     ]);
     cy.wait(4000);
-    this.submitOrderLine();
+    submitOrderLine();
   },
 
   fillPolWithPLNCurrency(fund, unitPrice, quantity, institutionId) {
@@ -506,7 +517,7 @@ export default {
       saveAndClose.click()
     ]);
     cy.wait(4000);
-    this.submitOrderLine();
+    submitOrderLine();
   },
 
   fillInPOLineInfoViaUi: () => {
@@ -595,19 +606,7 @@ export default {
     cy.do(saveAndClose.click());
     // If purchase order line will be dublicate, Modal with button 'Submit' will be activated
     cy.wait(2000);
-    this.submitOrderLine();
-  },
-
-  submitOrderLine:() => {
-    const submitButton = Button('Submit');
-    cy.get('body').then($body => {
-      if ($body.find('[id=line-is-not-unique-confirmation]').length) {
-        cy.wait(4000);
-        cy.do(Modal({ id: 'line-is-not-unique-confirmation' }).find(submitButton).click());
-      } else {
-        // do nothing if modal is not displayed
-      }
-    });
+    submitOrderLine();
   },
 
   fillInPOLineInfoForExportWithLocationForPhisicalResource(accountNumber, AUMethod, institutionName, quantity) {
@@ -637,7 +636,7 @@ export default {
     cy.do(saveAndClose.click());
     // If purchase order line will be dublicate, Modal with button 'Submit' will be activated
     cy.wait(2000);
-    this.submitOrderLine();
+    submitOrderLine();
   },
 
   fillInPOLineInfoWithLocationForPEMIXResource(accountNumber, AUMethod, institutionName, quantity) {
@@ -670,7 +669,7 @@ export default {
     ]);
     // If purchase order line will be dublicate, Modal with button 'Submit' will be activated
     cy.wait(2000);
-    this.submitOrderLine();
+    submitOrderLine();
   },
 
   selectFilterMainLibraryLocationsPOL: () => {
@@ -754,7 +753,7 @@ export default {
       saveAndClose.click()
     ]);
     cy.wait(6000);
-    this.submitOrderLine();
+    submitOrderLine();
   },
 
   addContributorToPOL: () => {
