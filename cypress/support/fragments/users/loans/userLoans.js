@@ -151,7 +151,7 @@ export default {
       delayTime = '1';
     }
 
-    const scheduledAgeToLostModuleId = 'mod-circulation_7';
+    const scheduledAgeToLostModuleId = 'mod-circulation_9';
     const scheduledAgeToLostRoutingEntry = {
       methods: ['POST'],
       pathPattern: '/circulation/scheduled-age-to-lost',
@@ -174,7 +174,7 @@ export default {
         'scheduled-notice-storage.scheduled-notices.item.post',
       ],
     };
-    const scheduledAgeToLostFeeChargingModuleId = 'mod-circulation_8';
+    const scheduledAgeToLostFeeChargingModuleId = 'mod-circulation_10';
     const scheduledAgeToLostFeeChargingRoutingEntry = {
       methods: ['POST'],
       pathPattern: '/circulation/scheduled-age-to-lost-fee-charging',
