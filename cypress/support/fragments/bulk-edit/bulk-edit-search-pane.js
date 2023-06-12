@@ -525,6 +525,10 @@ export default {
     }
   },
 
+  verifyChangesUnderColumns(columnName, value) {
+    cy.expect(changesAccordion.find(MultiColumnListCell({ column: columnName, content: value })).exists());
+  },
+
   verifyNonMatchedResults(...values) {
     cy.expect([
       errorsAccordion.find(MultiColumnListHeader('Record identifier')).exists(),
@@ -695,8 +699,8 @@ export default {
     ]);
   },
 
-  changeShowColumnCheckbox(name) {
-    cy.do(DropdownMenu().find(Checkbox(name)).click());
+  changeShowColumnCheckbox(...names) {
+    names.forEach(name => { cy.do(DropdownMenu().find(Checkbox(name)).click()) });
   },
 
   verifyResultColumTitles(title) {

@@ -14,11 +14,17 @@ const verifyNote = value => { cy.expect(KeyValue('Check in note').has({ value })
 const waitLoading = () => { cy.expect(Pane(including('Item')).exists()); };
 const verifyItemStatus = (itemStatus) => { cy.expect(loanAccordion.find(HTML(including(itemStatus))).exists()); };
 const verifyItemStatusInPane = (itemStatus) => { cy.expect(PaneHeader(including(itemStatus)).exists()); };
-const verifyPermanentLocation = location => {
+const verifyEffectiveLocation = location => {
   // TODO: Try to add ID for div.row- for better interaction with KeyValue
   cy.expect(Accordion({ label: 'Location' })
     .find(KeyValue('Effective location for item'))
     .has({ value: location }));
+};
+const verifyPermanentLocation = location => {
+  cy.expect(Accordion({ label: 'Location' }).find(KeyValue({ dataTestId: 'item-permanent-location', value: location })).exists());
+};
+const verifyTemporaryLocation = location => {
+  cy.expect(Accordion({ label: 'Location' }).find(KeyValue({ dataTestId: 'item-temporary-location', value: location })).exists());
 };
 const closeDetailView = () => {
   cy.expect(Pane(including('Item')).exists());
@@ -50,7 +56,9 @@ export default {
   verifyPermanentLoanType,
   verifyTemporaryLoanType,
   verifyNote,
+  verifyEffectiveLocation,
   verifyPermanentLocation,
+  verifyTemporaryLocation,
   closeDetailView,
   verifyItemStatus,
   verifyItemStatusInPane,
@@ -64,9 +72,9 @@ export default {
   },
 
   findRowAndClickLink,
-  getAssignedHRID:() => cy.then(() => KeyValue('Item HRID').value()),
+  getAssignedHRID: () => cy.then(() => KeyValue('Item HRID').value()),
 
-  verifyUpdatedItemDate:() => {
+  verifyUpdatedItemDate: () => {
     cy.do(loanAccordion.find(KeyValue('Item status')).perform(element => {
       const rawDate = element.innerText;
       const parsedDate = Date.parse(rawDate.match(/\d{1,2}\/\d{1,2}\/\d{4},\s\d{1,2}:\d{1,2}\s\w{2}/gm)[0]);
@@ -76,49 +84,49 @@ export default {
     }));
   },
 
-  addPieceToItem:(numberOfPieces) => {
+  addPieceToItem: (numberOfPieces) => {
     cy.do([
-      TextField({ name:'numberOfPieces' }).fillIn(numberOfPieces),
+      TextField({ name: 'numberOfPieces' }).fillIn(numberOfPieces),
       Button('Save & close').click()
     ]);
   },
 
-  checkEffectiveLocation:(location) => {
+  checkEffectiveLocation: (location) => {
     cy.expect(Accordion('Location').find(KeyValue('Effective location for item')).has({ value: location }));
   },
 
-  checkItemAdministrativeNote:(note) => {
+  checkItemAdministrativeNote: (note) => {
     cy.expect(MultiColumnList({ id: 'administrative-note-list' }).find(HTML(including(note))).exists());
   },
 
-  verifyMaterialType:(type) => {
+  verifyMaterialType: (type) => {
     cy.expect(itemDataAccordion.find(HTML(including(type))).exists());
   },
 
-  checkItemNote:(note, staffValue = 'Yes', value = 'Note') => {
+  checkItemNote: (note, staffValue = 'Yes', value = 'Note') => {
     cy.expect(itemNotesAccordion.find(KeyValue(value)).has({ value: note }));
     cy.expect(itemNotesAccordion.find(KeyValue('Staff only')).has({ value: staffValue }));
   },
 
-  checkCheckInNote:(note, staffValue = 'Yes') => {
+  checkCheckInNote: (note, staffValue = 'Yes') => {
     cy.expect(loanAccordion.find(KeyValue('Check in note')).has({ value: note }));
     cy.expect(HTML(staffValue).exists());
   },
 
-  checkCheckOutNote:(note, staffValue = 'Yes') => {
+  checkCheckOutNote: (note, staffValue = 'Yes') => {
     cy.expect(loanAccordion.find(KeyValue('Check out note')).has({ value: note }));
     cy.expect(HTML(staffValue).exists());
   },
 
-  checkElectronicBookplateNote:(note) => {
+  checkElectronicBookplateNote: (note) => {
     cy.expect(itemNotesAccordion.find(KeyValue('Electronic bookplate')).has({ value: note }));
   },
 
-  checkBindingNote:(note) => {
+  checkBindingNote: (note) => {
     cy.expect(itemNotesAccordion.find(KeyValue('Binding')).has({ value: note }));
   },
 
-  checkBarcode:(barcode) => {
+  checkBarcode: (barcode) => {
     cy.expect(administrativeDataAccordion.find(KeyValue('Item barcode')).has({ value: barcode }));
   },
 
@@ -127,7 +135,7 @@ export default {
       .exists());
   },
 
-  checkStatus:(status) => {
+  checkStatus: (status) => {
     cy.expect(loanAccordion.find(KeyValue('Item status')).has({ value: status }));
   },
 
@@ -137,20 +145,20 @@ export default {
     this.checkStatus(status);
   },
 
-  checkAccessionNumber:(number) => {
+  checkAccessionNumber: (number) => {
     cy.expect(administrativeDataAccordion.find(KeyValue('Accession number')).has({ value: number }));
   },
 
-  checkNumberOfPieces:(number) => {
+  checkNumberOfPieces: (number) => {
     cy.expect(itemDataAccordion.find(KeyValue('Number of pieces')).has({ value: number }));
   },
 
-  checkHotlinksToCreatedPOL:(number) => {
+  checkHotlinksToCreatedPOL: (number) => {
     cy.expect(Accordion('Acquisition').find(KeyValue('POL number')).has({ value: number }));
     cy.expect(Accordion('Acquisition').find(Link({ href: including('/orders/lines/view') })).exists());
   },
 
-  changeItemBarcode:(barcode) => {
+  changeItemBarcode: (barcode) => {
     cy.do([
       TextField({ id: 'additem_barcode' }).fillIn(barcode),
       Button('Save & close').click()
