@@ -24,7 +24,7 @@ import { LOCALION_NAMES, FOLIO_RECORD_TYPE, ACCEPTED_DATA_TYPE_NAMES, EXISTING_R
 
 describe('Importing MARC Bib files', () => {
   const testData = {};
-
+  
   // unique file name to upload
   const nameForUpdatedMarcFile = `C375098autotestFile${getRandomPostfix()}.mrc`;
   const nameForExportedMarcFile = `C375098autotestFile${getRandomPostfix()}.mrc`;
@@ -77,9 +77,9 @@ describe('Importing MARC Bib files', () => {
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numOfRecords: 1
     }
-  ]
+  ];
 
-  let createdAuthorityIDs = [];
+  const createdAuthorityIDs = [];
 
   before('Creating user', () => {
     cy.createTempUser([
@@ -93,7 +93,7 @@ describe('Importing MARC Bib files', () => {
       Permissions.dataExportEnableApp.gui,
     ]).then(createdUserProperties => {
       testData.userProperties = createdUserProperties;
-  
+
       marcFiles.forEach(marcFile => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
           DataImport.uploadFile(marcFile.marc, marcFile.fileName);
@@ -137,7 +137,6 @@ describe('Importing MARC Bib files', () => {
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
       });
       
-     
       cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
     });
   });
@@ -203,9 +202,9 @@ describe('Importing MARC Bib files', () => {
     cy.visit(TopMenu.inventoryPath);
     InventoryInstance.searchByTitle('Paradise of other side (updated title)');
     InventoryInstances.selectInstance();
-    InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane('Contributor')
+    InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane('Contributor');
     InventoryInstance.editMarcBibliographicRecord();
     QuickMarcEditor.verifyTagFieldAfterLinking(19, '100', '1', '\\', '$a Chin, Staceyann,  $d 1972-', '$e Producer $e Narrator  $u test', '$0 id.loc.gov/authorities/names/n2008052404', '$4 prf.');
-    QuickMarcEditor.verifyTagFieldAfterUnlinking(20, '245', '1', '4', '$a Paradise of other side (updated title) : $b a memoir / $c Staceyann Chin.')
+    QuickMarcEditor.verifyTagFieldAfterUnlinking(20, '245', '1', '4', '$a Paradise of other side (updated title) : $b a memoir / $c Staceyann Chin.');
   });
 });
