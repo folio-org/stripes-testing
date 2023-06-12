@@ -46,4 +46,15 @@ export default {
     ]);
     InteractorsTools.checkCalloutMessage('The template was deleted');
   },
+
+  editTemplate : (templateName) => {
+    cy.do([
+      NavListItem(templateName).click(),
+      Button('Actions').click(),
+      Button('Edit').click(),
+      TextField({ name: 'templateName' }).fillIn(`${templateName}edited`),
+      Button({ id: 'save-order-template-button' }).click()
+    ]);
+    InteractorsTools.checkCalloutMessage('The template was saved');
+  },
 };
