@@ -24,12 +24,10 @@ import { LOCALION_NAMES, FOLIO_RECORD_TYPE, ACCEPTED_DATA_TYPE_NAMES, EXISTING_R
 
 describe('Importing MARC Bib files', () => {
   const testData = {};
-  
   // unique file name to upload
   const nameForUpdatedMarcFile = `C375098autotestFile${getRandomPostfix()}.mrc`;
   const nameForExportedMarcFile = `C375098autotestFile${getRandomPostfix()}.mrc`;
   const nameForCSVFile = `C375098autotestFile${getRandomPostfix()}.csv`;
-
   const mappingProfile = {
     name: 'Update MARC Bib records by matching 999 ff $s subfield value',
     typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
@@ -63,7 +61,6 @@ describe('Importing MARC Bib files', () => {
     profileName: 'Update MARC Bib records by matching 999 ff $s subfield value',
     acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
-
   const marcFiles = [
     {
       marc: 'marcBibFileForC375098.mrc',
@@ -78,7 +75,6 @@ describe('Importing MARC Bib files', () => {
       numOfRecords: 1
     }
   ];
-
   const createdAuthorityIDs = [];
 
   before('Creating user', () => {
@@ -93,7 +89,6 @@ describe('Importing MARC Bib files', () => {
       Permissions.dataExportEnableApp.gui,
     ]).then(createdUserProperties => {
       testData.userProperties = createdUserProperties;
-
       marcFiles.forEach(marcFile => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
           DataImport.uploadFile(marcFile.marc, marcFile.fileName);
@@ -136,7 +131,7 @@ describe('Importing MARC Bib files', () => {
         JobProfiles.waitLoadingList();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
       });
-      
+
       cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
     });
   });
@@ -155,7 +150,7 @@ describe('Importing MARC Bib files', () => {
     FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
     FileManager.deleteFile(`cypress/fixtures/${nameForUpdatedMarcFile}`);
   });
-
+  
   it('C375098 Update controlled and not controlled subfields of linked "MARC Bib" field which is controlled by "MARC Authority" record (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
     InventoryInstances.selectInstance();
