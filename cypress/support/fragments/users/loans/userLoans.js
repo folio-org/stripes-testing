@@ -139,7 +139,15 @@ export default {
     })
       .then((({ body }) => body))),
 
-  updateTimerForAgedToLost: (mode) => {
+  getListTimersForTenant: () => (
+    cy.okapiRequest({
+      method: 'GET',
+      path: '_/proxy/tenants/diku/timers',
+      isDefaultSearchParamsRequired: false,
+    })
+      .then(({ body }) => body)),
+
+  updateTimerForAgedToLost(mode) {
     if (typeof mode !== 'string') {
       throw new Error('Unknown mode!');
     }
@@ -151,61 +159,63 @@ export default {
       delayTime = '1';
     }
 
-    const scheduledAgeToLostModuleId = 'mod-circulation_9';
-    const scheduledAgeToLostRoutingEntry = {
-      methods: ['POST'],
-      pathPattern: '/circulation/scheduled-age-to-lost',
-      unit: 'minute',
-      delay: delayTime,
-      modulePermissions: [
-        'circulation-storage.loans.item.put',
-        'circulation-storage.loans.item.get',
-        'circulation-storage.loans.collection.get',
-        'circulation-storage.circulation-rules.get',
-        'circulation-storage.patron-notice-policies.collection.get',
-        'circulation-storage.patron-notice-policies.item.get',
-        'inventory-storage.items.item.put',
-        'circulation.internal.fetch-items',
-        'lost-item-fees-policies.item.get',
-        'lost-item-fees-policies.collection.get',
-        'pubsub.publish.post',
-        'users.item.get',
-        'users.collection.get',
-        'scheduled-notice-storage.scheduled-notices.item.post',
-      ],
-    };
-    const scheduledAgeToLostFeeChargingModuleId = 'mod-circulation_10';
-    const scheduledAgeToLostFeeChargingRoutingEntry = {
-      methods: ['POST'],
-      pathPattern: '/circulation/scheduled-age-to-lost-fee-charging',
-      unit: 'minute',
-      delay: delayTime,
-      modulePermissions: [
-        'circulation-storage.loans.item.put',
-        'circulation-storage.loans.item.get',
-        'circulation-storage.loans.collection.get',
-        'inventory-storage.items.item.put',
-        'circulation.internal.fetch-items',
-        'lost-item-fees-policies.item.get',
-        'lost-item-fees-policies.collection.get',
-        'owners.collection.get',
-        'feefines.collection.get',
-        'accounts.item.post',
-        'feefineactions.item.post',
-        'pubsub.publish.post',
-        'users.item.get',
-        'users.collection.get',
-        'usergroups.collection.get',
-        'usergroups.item.get',
-        'circulation-storage.circulation-rules.get',
-        'circulation-storage.patron-notice-policies.item.get',
-        'circulation-storage.patron-notice-policies.collection.get',
-        'circulation.rules.notice-policy.get',
-        'scheduled-notice-storage.scheduled-notices.item.post',
-        'actual-cost-record-storage.actual-cost-records.item.post',
-      ],
-    };
-    updateTimer(scheduledAgeToLostModuleId, scheduledAgeToLostRoutingEntry);
-    updateTimer(scheduledAgeToLostFeeChargingModuleId, scheduledAgeToLostFeeChargingRoutingEntry);
+    this.getListTimersForTenant().then((timers) => {
+      const scheduledAgeToLostModuleId = timers.find((t) => t.routingEntry.pathPattern === '/circulation/scheduled-age-to-lost').id;
+      const scheduledAgeToLostRoutingEntry = {
+        methods: ['POST'],
+        pathPattern: '/circulation/scheduled-age-to-lost',
+        unit: 'minute',
+        delay: delayTime,
+        modulePermissions: [
+          'circulation-storage.loans.item.put',
+          'circulation-storage.loans.item.get',
+          'circulation-storage.loans.collection.get',
+          'circulation-storage.circulation-rules.get',
+          'circulation-storage.patron-notice-policies.collection.get',
+          'circulation-storage.patron-notice-policies.item.get',
+          'inventory-storage.items.item.put',
+          'circulation.internal.fetch-items',
+          'lost-item-fees-policies.item.get',
+          'lost-item-fees-policies.collection.get',
+          'pubsub.publish.post',
+          'users.item.get',
+          'users.collection.get',
+          'scheduled-notice-storage.scheduled-notices.item.post',
+        ],
+      };
+      const scheduledAgeToLostFeeChargingModuleId = timers.find((t) => t.routingEntry.pathPattern === '/circulation/scheduled-age-to-lost-fee-charging').id;
+      const scheduledAgeToLostFeeChargingRoutingEntry = {
+        methods: ['POST'],
+        pathPattern: '/circulation/scheduled-age-to-lost-fee-charging',
+        unit: 'minute',
+        delay: delayTime,
+        modulePermissions: [
+          'circulation-storage.loans.item.put',
+          'circulation-storage.loans.item.get',
+          'circulation-storage.loans.collection.get',
+          'inventory-storage.items.item.put',
+          'circulation.internal.fetch-items',
+          'lost-item-fees-policies.item.get',
+          'lost-item-fees-policies.collection.get',
+          'owners.collection.get',
+          'feefines.collection.get',
+          'accounts.item.post',
+          'feefineactions.item.post',
+          'pubsub.publish.post',
+          'users.item.get',
+          'users.collection.get',
+          'usergroups.collection.get',
+          'usergroups.item.get',
+          'circulation-storage.circulation-rules.get',
+          'circulation-storage.patron-notice-policies.item.get',
+          'circulation-storage.patron-notice-policies.collection.get',
+          'circulation.rules.notice-policy.get',
+          'scheduled-notice-storage.scheduled-notices.item.post',
+          'actual-cost-record-storage.actual-cost-records.item.post',
+        ],
+      };
+      updateTimer(scheduledAgeToLostModuleId, scheduledAgeToLostRoutingEntry);
+      updateTimer(scheduledAgeToLostFeeChargingModuleId, scheduledAgeToLostFeeChargingRoutingEntry);
+    });
   },
 };
