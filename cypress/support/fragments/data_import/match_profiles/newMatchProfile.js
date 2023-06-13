@@ -133,7 +133,7 @@ const fillMatchProfileWithExistingPart = ({
   cy.do(SelectionList({ id:'sl-container-criterion-value-type' }).find(SelectionOption(instanceOption)).click());
 };
 
-const fillMatchProfileStaticValue = ({ profileName, incomingStaticValue, matchCriterion, itemOption, existingRecordType }) => {
+const fillMatchProfileStaticValue = ({ profileName, incomingStaticValue, matchCriterion, existingRecordOption, existingRecordType }) => {
   cy.do(TextField('Name*').fillIn(profileName));
   // wait for data to be loaded
   cy.wait(15000);
@@ -148,7 +148,7 @@ const fillMatchProfileStaticValue = ({ profileName, incomingStaticValue, matchCr
   // wait for list will be loaded
   cy.wait(2000);
   cy.do(SelectionList({ id:'sl-container-criterion-value-type' })
-    .find(SelectionOption(itemOption)).click());
+    .find(SelectionOption(existingRecordOption)).click());
 };
 
 const fillMatchProfileWithQualifier = ({

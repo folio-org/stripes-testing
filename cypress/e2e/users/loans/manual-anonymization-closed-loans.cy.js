@@ -212,8 +212,8 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
   });
 
   it(
-    'C9217 Manual anonymization in closed loans (folijet) (prokopovych)',
-    { tags: [testTypes.smoke, DevTeams.folijet] },
+    'C9217 Manual anonymization in closed loans (volaris)',
+    { tags: [testTypes.smoke, DevTeams.volaris] },
     () => {
       LoanDetails.createFeeFine(newOwnerData.owner, feeFineType);
       LoanDetails.anonymizeAllLoans();

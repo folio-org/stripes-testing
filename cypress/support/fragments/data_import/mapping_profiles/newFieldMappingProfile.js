@@ -480,6 +480,7 @@ export default {
       suppressFromDiscoverySelect.focus(),
       suppressFromDiscoverySelect.choose(suppressFromDiscavery)
     ]);
+    waitLoading();
   },
 
   addStaffSuppress:(staffSuppress) => {
