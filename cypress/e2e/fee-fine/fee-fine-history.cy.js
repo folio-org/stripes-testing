@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import moment from 'moment';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import TestTypes from '../../support/dictionary/testTypes';
@@ -81,6 +82,9 @@ describe('Fee/Fine history ', { retries: 1 }, () => {
               userId: userData.userId,
               feeFineType: feeFineType.name,
               feeFineOwner: ownerData.name,
+              createdAt: servicePointId,
+              dateAction: moment.utc().format(),
+              source: 'ADMINISTRATOR, DIKU'
             };
             NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
               feeFineAccount.id = feeFineAccountId;
