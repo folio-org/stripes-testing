@@ -40,6 +40,7 @@ export default {
   // TODO: gui name related with several internal names. Clarify the reason
   inventoryAll: { internal: ['inventory.all', 'Inventory: All permissions'], gui: 'Inventory: All permissions' },
   uiCallNumberBrowse: { internal: 'browse.call-numbers.instances.collection.get', gui:'Call number browse: View permissions' },
+  uiSubjectBrowse: { internal: 'ui-inventory.subjects.view', gui: 'Subject browse: View permissions' },
   uiInventorySingleRecordImport: { internal: 'ui-inventory.single-record-import', gui: 'Inventory: Import single bibliographic records' },
   uiInventoryMarkItemsWithdrawn: { internal: 'ui-inventory.items.mark-items-withdrawn', gui: 'Inventory: Mark items withdrawn' },
   uiInventoryViewInstances: { internal: 'ui-inventory.instance.view', gui: 'Inventory: View instances, holdings, and items' },
@@ -219,11 +220,13 @@ export default {
   settingsDataImportEnabled:{ internal: 'settings.data-import.enabled', gui:'Settings (Data import): Can view, create, edit, and remove' },
   settingsDataImportCanViewOnly:{ internal:'ui-data-import.settings.readOnly', gui:'Settings (Data import): Can view only' },
   settingsTenantViewLocation:{ internal:'ui - tenant - settings.settings.location.view', gui:'Settings (Tenant): View locations' },
+  settingsUsersCRUD: { internal: 'ui-users.settings.transfers.all', gui: 'Settings (Users): Can create, edit and remove transfer accounts' },
   // Timers
   okapiTimersPatch: { internal: 'okapi.proxy.self.timers.patch', gui: 'Okapi - patch timer for current tenant' },
   // Export manager
   exportManagerAll: { internal: 'ui-export-manager.export-manager.all', gui: 'Export manager: All' },
   exportManagerDownloadAndResendFiles: { internal: 'ui-export-manager.jobs.downloadAndResend', gui: 'Export manager: Download and re-send files' },
+  transferExports: { internal: 'ui-plugin-bursar-export.bursar-exports.all', gui: 'Transfer exports: Transfer admin' },
   // OAI-PMH
   oaipmhSettingsEdit: { internal: 'ui-oai-pmh.edit', gui: 'Settings (OAI-PMH): Can view and edit settings' },
 };

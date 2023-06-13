@@ -51,7 +51,7 @@ describe('Bulk Edit - Logs', () => {
 
     BulkEditSearchPane.openLogsSearch();
     BulkEditSearchPane.checkItemsCheckbox();
-    BulkEditSearchPane.clickActionsOnTheRow();
+    BulkEditSearchPane.clickActionsRunBy(user.username);
     BulkEditSearchPane.verifyLogsRowActionWhenCompletedWithErrorsWithoutModification();
 
     BulkEditSearchPane.downloadFileUsedToTrigger();
