@@ -32,6 +32,7 @@ describe('orders: Settings', () => {
     OrderTemplate.checkTemplateCreated(orderTemplateName);
     cy.createTempUser([
       permissions.uiSettingsOrdersCanViewEditOrderTemplates.gui,
+      permissions.uiSettingsOrdersCanViewEditDeleteOrderTemplates.gui,
       permissions.uiOrdersCreate.gui
     ]).then(userProperties => {
       user = userProperties;
