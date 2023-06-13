@@ -60,6 +60,8 @@ describe('Circulation log', () => {
       SearchResults.checkTableWithoutLinks();
       SearchResults.checkTableWithoutColumns(['Action']);
       SearchPane.checkExportResultIsUnavailable();
+      // needed for the data to be updated
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(1000);
       SearchPane.setFilterOptionFromAccordion('loan', 'Checked out');
       SearchPane.checkResultSearch({ object: 'Loan' });
@@ -67,6 +69,8 @@ describe('Circulation log', () => {
       SearchPane.resetResults();
 
       SearchPane.filterByLastWeek();
+      // needed for the data to be updated
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(1000);
       SearchPane.setFilterOptionFromAccordion('notice', 'Send');
       SearchPane.checkResultSearch({ object: 'Notice' });
@@ -74,6 +78,8 @@ describe('Circulation log', () => {
       SearchPane.resetResults();
 
       SearchPane.filterByLastWeek();
+      // needed for the data to be updated
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(1000);
       SearchPane.setFilterOptionFromAccordion('fee', 'Paid fully');
       SearchPane.checkResultSearch({ object: 'Fee/fine' });
@@ -81,6 +87,8 @@ describe('Circulation log', () => {
       SearchPane.resetResults();
 
       SearchPane.filterByLastWeek();
+      // needed for the data to be updated
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(1000);
       SearchPane.setFilterOptionFromAccordion('request', 'Created');
       SearchPane.checkResultSearch({ object: 'Request' });
