@@ -165,8 +165,7 @@ describe('Importing MARC Bib files', () => {
       });
 
       cy.loginAsAdmin();
-      cy.getAdminToken()
-      .then(() => {
+      cy.getAdminToken().then(() => {      
         MarcFieldProtection.createMarcFieldProtectionViaApi({
           indicator1: '*',
           indicator2: '*',
