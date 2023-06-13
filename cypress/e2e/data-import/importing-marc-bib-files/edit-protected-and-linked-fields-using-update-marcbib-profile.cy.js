@@ -165,7 +165,7 @@ describe('Importing MARC Bib files', () => {
       });
 
       cy.loginAsAdmin();
-      cy.getAdminToken().then(() => {      
+      cy.getAdminToken().then(() => {
         MarcFieldProtection.createMarcFieldProtectionViaApi({
           indicator1: '*',
           indicator2: '*',
@@ -209,8 +209,8 @@ describe('Importing MARC Bib files', () => {
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
     createdAuthorityIDs.forEach((id, index) => {
-        if (index) MarcAuthority.deleteViaAPI(id);
-      });
+      if (index) MarcAuthority.deleteViaAPI(id);
+    });
     MarcFieldProtection.deleteMarcFieldProtectionViaApi(firstFieldId);
     MarcFieldProtection.deleteMarcFieldProtectionViaApi(secondFieldId);
     MarcFieldProtection.deleteMarcFieldProtectionViaApi(thirdFieldId);
@@ -230,17 +230,17 @@ describe('Importing MARC Bib files', () => {
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
     linkingTagAndValues.forEach(linking => {
-        QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
-        MarcAuthorities.switchToSearch();
-        InventoryInstance.verifySelectMarcAuthorityModal();
-        InventoryInstance.verifySearchOptions();
-        InventoryInstance.searchResults(linking.value);
-        InventoryInstance.clickLinkButton();
-        InventoryInstance.closeDetailsView();
-        InventoryInstance.closeFindAuthorityModal();
-        // wait for the fileds to be linked.
-        cy.wait(1000);
-      });
+      QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
+      MarcAuthorities.switchToSearch();
+      InventoryInstance.verifySelectMarcAuthorityModal();
+      InventoryInstance.verifySearchOptions();
+      InventoryInstance.searchResults(linking.value);
+      InventoryInstance.clickLinkButton();
+      InventoryInstance.closeDetailsView();
+      InventoryInstance.closeFindAuthorityModal();
+      // wait for the fileds to be linked.
+      cy.wait(1000);
+    });
     QuickMarcEditor.pressSaveAndClose();
     QuickMarcEditor.checkAfterSaveAndClose();
 
