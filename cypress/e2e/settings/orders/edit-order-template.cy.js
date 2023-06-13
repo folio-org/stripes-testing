@@ -31,10 +31,7 @@ describe('orders: Settings', () => {
     OrderTemplate.saveTemplate();
     OrderTemplate.checkTemplateCreated(orderTemplateName);
     cy.createTempUser([
-      permissions.uiSettingsOrdersCanViewOrderTemplates.gui,
-      permissions.uiSettingsOrdersCanViewEditCreateNewOrderTemplates.gui,
       permissions.uiSettingsOrdersCanViewEditOrderTemplates.gui,
-      permissions.uiSettingsOrdersCanViewEditDeleteOrderTemplates.gui,
       permissions.uiOrdersCreate.gui
     ]).then(userProperties => {
       user = userProperties;
@@ -49,11 +46,12 @@ describe('orders: Settings', () => {
   });
 
   it('C6726 Edit existing order template (thunderjet)', { tags: [TestType.criticalPath, devTeams.thunderjet] }, () => {
+    OrderTemplate.selectTemplate(orderTemplateName);
     OrderTemplate.editTemplate(orderTemplateName);
     OrderTemplate.checkTemplateCreated(`${orderTemplateName}-edited`);
-    // cy.visit(TopMenu.ordersPath);
-    // Orders.createOrderByTemplate(orderTemplateName);
-    // Orders.checkCreatedOrderFromTemplate(organization.name);
+    cy.visit(TopMenu.ordersPath);
+    Orders.createOrderByTemplate(`${orderTemplateName}-edited`);
+    Orders.checkCreatedOrderFromTemplate(organization.name);
     cy.visit(SettingsMenu.ordersOrderTemplatesPath);
     OrderTemplate.deleteTemplate(`${orderTemplateName}-edited`);
   });

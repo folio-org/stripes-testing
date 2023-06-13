@@ -1,18 +1,18 @@
-import { Button, Modal, NavListItem, Pane, PaneContent, SearchField, Select, SelectionOption, TextField } from '../../../../../interactors';
+import { Button, DropdownMenu, Modal, NavListItem, Pane, PaneContent, SearchField, Select, SelectionOption, TextField } from '../../../../../interactors';
 import SearchHelper from '../../finance/financeHelper';
 import InteractorsTools from '../../../utils/interactorsTools';
 
 export default {
 
-  waitLoading: () => {
+  waitLoading() {
     cy.expect(Pane({ id: 'order-settings-order-templates-list' }).exists());
   },
 
-  newTemplate: () => {
+  newTemplate() {
     cy.do(Button('New').click());
   },
 
-  fillTemplateInformationWithAcquisitionMethod: (templateName, organizationName, acquisitionMethod) => {
+  fillTemplateInformationWithAcquisitionMethod(templateName, organizationName, acquisitionMethod) {
     cy.do([
       TextField({ name: 'templateName' }).fillIn(templateName),
       Button('PO information').click(),
@@ -29,15 +29,15 @@ export default {
     ]);
   },
 
-  saveTemplate : () => {
+  saveTemplate() {
     cy.do(Button({ id: 'save-order-template-button' }).click());
   },
 
-  checkTemplateCreated: (templateName) => {
+  checkTemplateCreated(templateName) {
     cy.expect(PaneContent({ id: 'order-settings-order-templates-list-content' }).find(NavListItem(templateName)).exists());
   },
 
-  deleteTemplate : (templateName) => {
+  deleteTemplate(templateName) {
     cy.do([
       NavListItem(templateName).click(),
       Button('Actions').click(),
@@ -47,14 +47,30 @@ export default {
     InteractorsTools.checkCalloutMessage('The template was deleted');
   },
 
-  editTemplate : (templateName) => {
+  selectTemplate(templateName) {
+    cy.wait(6000);
     cy.do([
       NavListItem(templateName).click(),
-      Button('Actions').click(),
-      Button('Edit').click(),
-      TextField({ name: 'templateName' }).fillIn(`${templateName}edited`),
-      Button({ id: 'save-order-template-button' }).click()
     ]);
+  },
+
+  closeTemplate() {
+    cy.wait(6000);
+    cy.do(Button({ icon: 'times' }).click());
+  },
+
+  editTemplate(templateName) {
+    cy.wait(6000);
+    cy.do([
+      Button('Actions').click(),
+    ]);
+    cy.wait(6000);
+    cy.do([
+      DropdownMenu().find(Button('Edit')).click(),
+      TextField({ name: 'templateName' }).fillIn(`${templateName}-edited`),
+    ]);
+    cy.wait(6000);
+    cy.do(Button({ id: 'save-order-template-button' }).click());
     InteractorsTools.checkCalloutMessage('The template was saved');
   },
 };
