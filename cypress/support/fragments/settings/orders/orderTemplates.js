@@ -2,6 +2,10 @@ import { Button, DropdownMenu, Modal, NavListItem, Pane, PaneContent, SearchFiel
 import SearchHelper from '../../finance/financeHelper';
 import InteractorsTools from '../../../utils/interactorsTools';
 
+const saveButton = Button({ id: 'save-order-template-button' });
+const actionsButton = Button('Actions');
+const templateNameField = TextField({ name: 'templateName' });
+
 export default {
 
   waitLoading() {
@@ -14,7 +18,7 @@ export default {
 
   fillTemplateInformationWithAcquisitionMethod(templateName, organizationName, acquisitionMethod) {
     cy.do([
-      TextField({ name: 'templateName' }).fillIn(templateName),
+      templateNameField.fillIn(templateName),
       Button('PO information').click(),
       Button({ id: 'vendor-plugin' }).click(),
       Modal('Select Organization').find(SearchField({ id: 'input-record-search' })).fillIn(organizationName),
@@ -30,7 +34,7 @@ export default {
   },
 
   saveTemplate() {
-    cy.do(Button({ id: 'save-order-template-button' }).click());
+    cy.do(saveButton.click());
   },
 
   checkTemplateCreated(templateName) {
@@ -40,7 +44,7 @@ export default {
   deleteTemplate(templateName) {
     cy.do([
       NavListItem(templateName).click(),
-      Button('Actions').click(),
+      actionsButton.click(),
       Button('Delete').click(),
       Button({ id: 'clickable-delete-order-template-modal-confirm' }).click(),
     ]);
@@ -62,15 +66,15 @@ export default {
   editTemplate(templateName) {
     cy.wait(6000);
     cy.do([
-      Button('Actions').click(),
+      actionsButton.click(),
     ]);
     cy.wait(6000);
     cy.do([
       DropdownMenu().find(Button('Edit')).click(),
-      TextField({ name: 'templateName' }).fillIn(`${templateName}-edited`),
+      templateNameField.fillIn(`${templateName}-edited`),
     ]);
     cy.wait(6000);
-    cy.do(Button({ id: 'save-order-template-button' }).click());
+    cy.do(saveButton.click());
     InteractorsTools.checkCalloutMessage('The template was saved');
   },
 };
