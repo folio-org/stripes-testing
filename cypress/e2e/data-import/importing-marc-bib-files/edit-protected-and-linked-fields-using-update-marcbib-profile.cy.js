@@ -157,7 +157,7 @@ describe('Importing MARC Bib files', () => {
         NewJobProfile.fillJobProfile(jobProfile);
         NewJobProfile.linkMatchProfile(matchProfile.profileName);
         NewJobProfile.linkActionProfileByName(actionProfile.name);
-        // wait for the action profile to be linked
+        // waiter needed for the action profile to be linked
         cy.wait(1000);
         NewJobProfile.saveAndClose();
         JobProfiles.waitLoadingList();
@@ -238,7 +238,7 @@ describe('Importing MARC Bib files', () => {
       InventoryInstance.clickLinkButton();
       InventoryInstance.closeDetailsView();
       InventoryInstance.closeFindAuthorityModal();
-      // wait for the fileds to be linked.
+      // waiter needed for the fileds to be linked.
       cy.wait(1000);
     });
     QuickMarcEditor.pressSaveAndClose();
