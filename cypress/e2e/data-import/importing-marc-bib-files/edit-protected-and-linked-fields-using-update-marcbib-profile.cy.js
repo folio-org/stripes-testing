@@ -86,24 +86,24 @@ describe('Importing MARC Bib files', () => {
   ];
   const linkingTagAndValues = [
     {
-        rowIndex: 17,
-        value: 'Ludwig van, Beethoven, 1770-1827.'
+      rowIndex: 17,
+      value: 'Ludwig van, Beethoven, 1770-1827.'
     },
     {
-        rowIndex: 18,
-        value: 'Beethoven, Ludwig van, 1770-1827 Variations, piano, violin, cello, op. 44, E♭ major'
+      rowIndex: 18,
+      value: 'Beethoven, Ludwig van, 1770-1827 Variations, piano, violin, cello, op. 44, E♭ major'
     },
     {
-        rowIndex: 41,
-        value: 'Music piano'
+      rowIndex: 41,
+      value: 'Music piano'
     },
     {
-        rowIndex: 50,
-        value: 'Hewitt, Angela, 1958-'
+      rowIndex: 50,
+      value: 'Hewitt, Angela, 1958-'
     },
     {
-        rowIndex: 51,
-        value: 'Ludwig van, Beethoven, 1770-1827.'
+      rowIndex: 51,
+      value: 'Ludwig van, Beethoven, 1770-1827.'
     },
   ];
   const createdAuthorityIDs = [];
