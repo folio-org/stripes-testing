@@ -82,6 +82,12 @@ export default {
     waitCreatingMatchProfile();
   },
 
+  createMatchProfileWithQualifierAndComparePart:(profile) => {
+    openNewMatchProfileForm();
+    NewMatchProfile.fillMatchProfileWithStaticValueAndComparePartValue(profile);
+    saveAndClose();
+    waitCreatingMatchProfile();
+  },
   createMatchProfileWithStaticValue:(profile) => {
     openNewMatchProfileForm();
     NewMatchProfile.fillMatchProfileStaticValue(profile);
