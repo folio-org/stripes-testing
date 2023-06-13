@@ -7,7 +7,10 @@ import {
   including,
   TextField,
   Pane,
-  Dropdown, DropdownMenu, Checkbox
+  Dropdown,
+  DropdownMenu,
+  Checkbox,
+  MultiSelect
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
@@ -56,6 +59,13 @@ export default {
     cy.do([
       Accordion({ id: 'loan' }).clickHeader(),
       Checkbox({ id: 'clickable-filter-loan-changed-due-date' }).click()
+    ]);
+  },
+
+  searchByServicePoint(servicePoint) {
+    cy.do([
+      MultiSelect({ ariaLabelledby: 'accordion-toggle-button-servicePointId' }).fillIn(servicePoint),
+      MultiSelect({ ariaLabelledby: 'accordion-toggle-button-servicePointId' }).choose(servicePoint),
     ]);
   },
 
