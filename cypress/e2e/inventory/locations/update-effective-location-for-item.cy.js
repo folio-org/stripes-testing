@@ -95,6 +95,6 @@ describe('ui-inventory: Update the effective location for the item', () => {
       InventoryInstance.openHoldings([anotherPermanentLocation]);
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.searchByParameter('Barcode', itemData.itemBarcode);
-      ItemRecordView.verifyPermanentLocation(anotherPermanentLocation);
+      ItemRecordView.verifyEffectiveLocation(anotherPermanentLocation);
     });
 });
