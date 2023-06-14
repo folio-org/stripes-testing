@@ -293,4 +293,11 @@ export default {
   selectOrganization:(organizationName) => {
     cy.do(Pane({ id: 'organizations-results-pane' }).find(Link(organizationName)).click());
   },
+
+  editOrganizationName: (organization) => {
+    cy.do([
+      organizationNameField.fillIn(`${organization.name}-edited`),
+      saveAndClose.click()
+    ]);
+  },
 };
