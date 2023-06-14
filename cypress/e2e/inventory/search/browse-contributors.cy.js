@@ -35,9 +35,13 @@ describe('Inventory -> Contributors Browse', () => {
     }
   };
 
+  const testValue = `testValue_${getRandomPostfix()}`;
+
   before(() => {
     cy.createTempUser([
       Permissions.uiInventoryViewCreateEditInstances.gui,
+      Permissions.uiCallNumberBrowse.gui,
+      Permissions.uiSubjectBrowse.gui
     ]).then(createdUserProperties => {
       testData.userProperties = createdUserProperties;
     });
@@ -129,5 +133,32 @@ describe('Inventory -> Contributors Browse', () => {
     BrowseContributors.select();
     BrowseContributors.browse(testData.contributor.name);
     InventorySearchAndFilter.verifySearchResult(`${testData.contributor.name}would be here`);
+  });
+
+  it('C358148 Verify that switching between browse options doesn\'t submit a form (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    InventorySearchAndFilter.switchToBrowseTab();
+    BrowseContributors.select();
+    BrowseContributors.browse(testValue);
+    InventorySearchAndFilter.verifySearchResult(`${testValue}would be here`);
+
+    InventorySearchAndFilter.selectBrowseSubjects();
+    InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
+    InventorySearchAndFilter.browseSearch(testValue);
+    InventorySearchAndFilter.verifySearchResult(`${testValue}would be here`);
+
+    BrowseContributors.select();
+    InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
+    BrowseContributors.browse(testValue);
+    InventorySearchAndFilter.verifySearchResult(`${testValue}would be here`);
+
+    InventorySearchAndFilter.selectBrowseCallNumbers();
+    InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
+    InventorySearchAndFilter.browseSearch(testValue);
+    InventorySearchAndFilter.verifySearchResult(`${testValue}would be here`);
+
+    BrowseContributors.select();
+    InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
+    BrowseContributors.browse(testValue);
+    InventorySearchAndFilter.verifySearchResult(`${testValue}would be here`);
   });
 });
