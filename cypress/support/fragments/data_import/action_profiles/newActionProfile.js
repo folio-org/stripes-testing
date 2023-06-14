@@ -113,5 +113,29 @@ export default {
       .then(({ response }) => {
         return response;
       });
-  }
+  },
+
+  createActionProfileViaApiMarc: (name, action, folioRecordType, mapProfileId) => {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: 'data-import-profiles/actionProfiles',
+      body: {
+        profile: {
+          name: name,
+          action: action,
+          folioRecord: folioRecordType
+        },
+        addedRelations: [{
+          masterProfileId: null,
+          masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
+          detailProfileId: mapProfileId,
+          detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
+        }],
+        deletedRelations: []
+      },
+      isDefaultSearchParamsRequired: false,
+    }).then(({ response }) => {
+      return response;
+    });
+  },
 };

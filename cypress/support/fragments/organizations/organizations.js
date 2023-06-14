@@ -188,14 +188,14 @@ export default {
   },
   selectYesInIsVendor: () => {
     cy.do([
-      Button({ id: 'accordion-toggle-button-org-filter-isVendor' }).click(),
+      Button({ id: 'accordion-toggle-button-isVendor' }).click(),
       Checkbox('Yes').click(),
     ]);
   },
 
   selectCountryFilter: () => {
     cy.do([
-      Button({ id: 'accordion-toggle-button-org-filter-addresses' }).click(),
+      Button({ id: 'accordion-toggle-button-plugin-country-filter' }).click(),
       Button({ id: 'addresses-selection' }).click(),
       SelectionOption('United States').click(),
     ]);
@@ -203,14 +203,14 @@ export default {
 
   selectLanguageFilter: () => {
     cy.do([
-      Button({ id: 'accordion-toggle-button-org-filter-language' }).click(),
+      Button({ id: 'accordion-toggle-button-plugin-language-filter' }).click(),
       Button({ id: 'language-selection' }).click(),
       SelectionOption('English').click(),
     ]);
   },
   selectCashInPaymentMethod: () => {
     cy.do([
-      Button({ id: 'accordion-toggle-button-org-filter-paymentMethod' }).click(),
+      Button({ id: 'accordion-toggle-button-paymentMethod' }).click(),
       Checkbox('Cash').click(),
     ]);
   },

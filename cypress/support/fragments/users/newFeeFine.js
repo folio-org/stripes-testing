@@ -17,12 +17,33 @@ const getChargeFeeFine = ({ amount, userId, feeFineType, id, dateAction, created
   source,
 });
 
-const getNewFeeFineAccount = (values) => ({
-  ...values,
-  paymentStatus: values.paymentStatus || { 'name':'Outstanding' },
-  status: values.status || { 'name':'Open' },
-  remaining: values.amount,
-});
+const getNewFeeFineAccount = (values) => {
+  const body = {
+    // required field
+    feeFineId: values.feeFineId,
+    // required field
+    ownerId: values.ownerId,
+    // required field
+    amount: values.amount,
+    paymentStatus: values.paymentStatus || { name: 'Outstanding' },
+    status: values.status || { name: 'Open' },
+    // required field
+    id: values.id,
+    // required field
+    userId: values.userId,
+    // required field
+    feeFineType: values.feeFineType,
+    // required field
+    remaining: values.amount,
+    // required field
+    feeFineOwner: values.feeFineOwner,
+  };
+  if ('itemId' in values) {
+    return { ...body, itemId: values.itemId, barcode: values.barcode, title: values.title };
+  } else {
+    return body;
+  }
+};
 
 const createFeeFineAccountViaApi = (feeFineAccount) => (
   cy.okapiRequest({

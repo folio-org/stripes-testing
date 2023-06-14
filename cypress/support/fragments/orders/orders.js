@@ -118,6 +118,13 @@ export default {
     ]);
   },
 
+  approveOrderbyActions() {
+    cy.do([
+      PaneHeader({ id: 'paneHeaderorder-details' }).find(actionsButton).click(),
+      Button('Approve').click()
+    ]);
+  },
+
   editOrderNumber: (poNumber) => {
     cy.do([
       TextField({ name: 'poNumber' }).fillIn(poNumber),

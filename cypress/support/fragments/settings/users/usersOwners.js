@@ -31,6 +31,15 @@ const deleteOwner = (rowNumber = 2) => {
   cy.expect(Modal('Delete Fee/fine owner').absent());
 };
 
+function getAddServicePointsToOwnerPayload(owner, servicePoints) {
+  const points = servicePoints.map(servicePoint => {
+    return { 'value': servicePoint.id, 'label': `${servicePoint.name}` };
+  });
+  return { 'owner': owner.name,
+    'servicePointOwner': points,
+    'id': owner.id };
+}
+
 export default {
   trySave,
   waitLoading:() => {
@@ -143,5 +152,13 @@ export default {
   },
   checkValidatorError: (ownerName, errorMessage) => {
     cy.expect(rootPaneset.find(TextField({ value: ownerName })).has({ error: errorMessage }));
-  }
+  },
+  addServicePointsViaApi: (owner, servicePoints) => {
+    return cy.okapiRequest({
+      method: 'PUT',
+      path: `owners/${owner.id}`,
+      body: getAddServicePointsToOwnerPayload(owner, servicePoints),
+      isDefaultSearchParamsRequired: false,
+    });
+  },
 };

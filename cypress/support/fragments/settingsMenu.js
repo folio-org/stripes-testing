@@ -57,6 +57,7 @@ export default {
   tenantPath: 'settings/tenant-settings',
   tenantLocationsPath: 'settings/tenant-settings/location-locations',
   // Orders
+  approvalsPath: 'settings/orders/approvals',
   acquisitionMethodsPath: 'settings/orders/acquisition-methods',
   ordersOrderTemplatesPath: 'settings/orders/order-templates',
   ordersPONumberEditPath: 'settings/orders/po-number',
@@ -77,6 +78,7 @@ export default {
   limitsPath: 'settings/users/limits',
   waiveReasons: 'settings/users/waivereasons',
   patronBlockTemplates: 'settings/users/manual-block-templates',
+  usersTransferCriteria: '/settings/users/transfer-criteria',
   // Data Import
   mappingProfilePath: 'settings/data-import/mapping-profiles',
   actionProfilePath: 'settings/data-import/action-profiles',

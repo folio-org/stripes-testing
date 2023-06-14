@@ -14,12 +14,6 @@ const verifyNote = value => { cy.expect(KeyValue('Check in note').has({ value })
 const waitLoading = () => { cy.expect(Pane(including('Item')).exists()); };
 const verifyItemStatus = (itemStatus) => { cy.expect(loanAccordion.find(HTML(including(itemStatus))).exists()); };
 const verifyItemStatusInPane = (itemStatus) => { cy.expect(PaneHeader(including(itemStatus)).exists()); };
-const verifyPermanentLocation = location => {
-  // TODO: Try to add ID for div.row- for better interaction with KeyValue
-  cy.expect(Accordion({ label: 'Location' })
-    .find(KeyValue('Effective location for item'))
-    .has({ value: location }));
-};
 const closeDetailView = () => {
   cy.expect(Pane(including('Item')).exists());
   cy.do(Button({ icon: 'times' }).click());
@@ -50,7 +44,6 @@ export default {
   verifyPermanentLoanType,
   verifyTemporaryLoanType,
   verifyNote,
-  verifyPermanentLocation,
   closeDetailView,
   verifyItemStatus,
   verifyItemStatusInPane,
@@ -78,13 +71,21 @@ export default {
 
   addPieceToItem:(numberOfPieces) => {
     cy.do([
-      TextField({ name:'numberOfPieces' }).fillIn(numberOfPieces),
+      TextField({ name: 'numberOfPieces' }).fillIn(numberOfPieces),
       Button('Save & close').click()
     ]);
   },
 
-  checkEffectiveLocation:(location) => {
+  verifyEffectiveLocation: (location) => {
     cy.expect(Accordion('Location').find(KeyValue('Effective location for item')).has({ value: location }));
+  },
+
+  verifyPermanentLocation:(location) => {
+    cy.expect(Accordion({ label: 'Location' }).find(KeyValue({ dataTestId: 'item-permanent-location', value: location })).exists());
+  },
+
+  verifyTemporaryLocation: (location) => {
+    cy.expect(Accordion({ label: 'Location' }).find(KeyValue({ dataTestId: 'item-temporary-location', value: location })).exists());
   },
 
   checkItemAdministrativeNote:(note) => {
@@ -132,7 +133,7 @@ export default {
   },
 
   checkItemDetails(location, barcode, status) {
-    this.checkEffectiveLocation(location);
+    this.verifyEffectiveLocation(location);
     this.checkBarcode(barcode);
     this.checkStatus(status);
   },

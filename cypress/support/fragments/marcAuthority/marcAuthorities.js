@@ -28,6 +28,9 @@ const modalAdvancedSearch = Modal('Advanced search');
 const buttonSearchInAdvancedModal = Button({ ariaLabel: 'Search' });
 const buttonCancelInAdvancedModal = Button({ ariaLabel: 'Cancel' });
 const buttonClose = Button({ icon: 'times' });
+const checkBoxAllRecords = Checkbox({ ariaLabel: 'Select all records on this page' });
+const resultPaneActionsButton = rootSection.find(Button('Actions'));
+const buttonExportSelected = Button('Export selected records (CSV/MARC)');
 
 export default {
   waitLoading: () => cy.expect(rootSection.exists()),
@@ -267,6 +270,17 @@ export default {
 
   actionsSelectCheckbox(value) {
     cy.do(Checkbox(value).click());
+  },
+
+  selectAllRecords() {
+    // need to wait until page loading
+    cy.wait(1000);
+    cy.do(checkBoxAllRecords.click());
+  },
+
+  exportSelected() {
+    cy.do(resultPaneActionsButton.click());
+    cy.do(buttonExportSelected.click());
   },
 
   checkRowsContent(contents) {
