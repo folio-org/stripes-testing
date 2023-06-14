@@ -16,6 +16,7 @@ import DateTools from '../../utils/dateTools';
 
 const dropdownButton = MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(Dropdown()).find(Button());
 const actionsButton = Button('Actions');
+const servicePointField = MultiSelect({ ariaLabelledby: 'accordion-toggle-button-servicePointId' });
 
 
 // TODO: will rework to interactor when we get section id
@@ -64,8 +65,8 @@ export default {
 
   searchByServicePoint(servicePoint) {
     cy.do([
-      MultiSelect({ ariaLabelledby: 'accordion-toggle-button-servicePointId' }).fillIn(servicePoint),
-      MultiSelect({ ariaLabelledby: 'accordion-toggle-button-servicePointId' }).choose(servicePoint),
+      servicePointField.fillIn(servicePoint),
+      servicePointField.choose(servicePoint),
     ]);
   },
 
