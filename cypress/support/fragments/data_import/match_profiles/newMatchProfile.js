@@ -240,6 +240,8 @@ export default {
     fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
     fillQualifierInIncomingPart(qualifierType, qualifierValue);
     selectMatchCriterion(matchCriterion);
+    // wait for list will be loaded
+    cy.wait(2000);
     selectExistingRecordField(existingRecordOption);
   },
   
