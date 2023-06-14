@@ -46,6 +46,8 @@ export default {
       viewCheckbox.click(),
       saveAUButton.click(),
     ]);
+    // need to wait,while page will be loaded after save
+    cy.wait(6000);
   },
 
   assignUser: (userName) => {
