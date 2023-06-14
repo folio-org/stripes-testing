@@ -60,6 +60,7 @@ export default {
   },
 
   createDefaultInvoice(invoice, vendorPrimaryAddress) {
+    cy.wait(4000);
     cy.do(actionsButton.click());
     cy.expect(buttonNew.exists());
     cy.do([
