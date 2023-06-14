@@ -365,7 +365,7 @@ describe('ui-data-import', () => {
       InventoryInstance.openHoldingsAccordion(LOCALION_NAMES.MAIN_LIBRARY_UI);
       InventoryInstance.openItemByBarcode(firstItem.barcode);
       ItemRecordView.verifyItemStatus(ITEM_STATUS_NAMES.IN_PROCESS);
-      ItemRecordView.checkEffectiveLocation(LOCALION_NAMES.MAIN_LIBRARY_UI);
+      ItemRecordView.verifyEffectiveLocation(LOCALION_NAMES.MAIN_LIBRARY_UI);
       ItemRecordView.closeDetailView();
       InventoryInstance.viewSource();
       InventoryViewSource.verifyBarcodeInMARCBibSource(firstItem.barcode);
