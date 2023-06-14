@@ -117,7 +117,7 @@ describe('Invoices', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C375998 Approve and pay invoice with added adjustment amount to invoice line (not prorated, related to total as "In addition to") (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
+  it('C375998 Approve and pay invoice with added adjustment amount to invoice line (not prorated, related to total as "In addition to") (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     cy.createOrderApi(order)
       .then((response) => {
         orderNumber = response.body.poNumber;
