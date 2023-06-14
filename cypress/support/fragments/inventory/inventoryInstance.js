@@ -115,6 +115,7 @@ const instancesButton = Button({ id: 'segment-navigation-instances' });
 const newMarcBibButton = Button({ id: 'clickable-newmarcrecord' });
 const quickMarcPaneHeader = PaneHeader({ id: 'paneHeaderquick-marc-editor-pane' });
 const detailsPaneContent = PaneContent({ id: 'pane-instancedetails-content' });
+const administrativeDataAccordion = Accordion('Administrative data');
 
 const validOCLC = { id:'176116217',
   // TODO: hardcoded count related with interactors getters issue. Redesign to cy.then(QuickMarkEditor().rowsCount()).then(rowsCount => {...}
@@ -786,5 +787,10 @@ export default {
 
   checkInstanceButtonExistence() {
     cy.expect(filterPane.find(instancesButton).exists());
-  }
+  },
+
+  verifyRecordStatus(text) {
+    cy.do(administrativeDataAccordion.find(Button(including('Record last updated'))).click());
+    cy.expect(administrativeDataAccordion.find(HTML(including(text))).exists());
+  },
 };

@@ -80,8 +80,6 @@ describe('MARC -> MARC Holdings', () => {
   });
 
   it('C345398 Edit MARC 008 (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
-    // TODO: rewiew initial values with QA
-    // QuickMarcEditor.checkInitial008TagValueFromHoldings();
     QuickMarcEditor.checkNotExpectedByteLabelsInTag008Holdings();
 
     const changed008TagValue = QuickMarcEditor.updateAllDefaultValuesIn008TagInHoldings();
