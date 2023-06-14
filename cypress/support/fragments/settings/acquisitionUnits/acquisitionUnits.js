@@ -46,6 +46,7 @@ export default {
       viewCheckbox.click(),
       saveAUButton.click(),
     ]);
+    cy.wait(6000);
   },
 
   assignUser: (userName) => {
