@@ -246,8 +246,16 @@ describe('Circulation log', () => {
         PayFeeFaine.payFeeFineViaApi(payBody('4.00'), testData.feeFineId);
         RefundFeeFine.refundFeeFineViaApi(refundBody('2.00'), testData.feeFineId);
         checkActionsButton('Refunded partially');
-        NewFeeFine.deleteFeeFineAccountViaApi(feeFineId);
       });
+    }
+  );
+
+  it(
+    'C17059 Filter circulation log by refunded partially (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      filterByAction('Refunded partially');
+      NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
     }
   );
 
