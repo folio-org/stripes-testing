@@ -28,7 +28,7 @@ describe('Organizations', () => {
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 
-  it('C673 Edit existing organization record (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
+  it('C673 Edit existing organization record (thunderjet)', { tags: [TestType.criticalPath, devTeams.thunderjet] }, () => {
     Organizations.searchByParameters('Name', organization.name);
     Organizations.selectOrganization(organization.name);
     Organizations.editOrganization();
