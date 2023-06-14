@@ -101,19 +101,19 @@ describe('ui-data-import', () => {
       });
   });
 
-  after('delete test data', () => {
-    JobProfiles.deleteJobProfile(jobProfile.profileName);
-    MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-    ActionProfiles.deleteActionProfile(actionProfile.name);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
-    Users.deleteViaApi(user.userId);
-    InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value)
-    .then(instances => {
-      instances.forEach(({ id }) => {
-        InventoryInstance.deleteInstanceViaApi(id);
-      });
-    });
-  });
+  // after('delete test data', () => {
+  //   JobProfiles.deleteJobProfile(jobProfile.profileName);
+  //   MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+  //   ActionProfiles.deleteActionProfile(actionProfile.name);
+  //   FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+  //   Users.deleteViaApi(user.userId);
+  //   InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value)
+  //   .then(instances => {
+  //     instances.forEach(({ id }) => {
+  //       InventoryInstance.deleteInstanceViaApi(id);
+  //     });
+  //   });
+  // });
 
   it('C347831 MODDICORE-231 "Match on Instance identifier match meets both the Identifier type and Data requirements" Scenario 4 (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
@@ -172,7 +172,7 @@ describe('ui-data-import', () => {
     FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, 1);
     
     // check updated instance in Inventory
-    FileDetails.openInstanceInInventory('Updated');
+    FileDetails.openInstanceInInventory('Updated', 1);
     InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
     InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);
     InstanceRecordView.verifyGeneralNoteContent(instanceGeneralNote);
