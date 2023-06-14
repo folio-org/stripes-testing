@@ -10,9 +10,10 @@ import {
 } from '../../../../../interactors';
 import { EXISTING_RECORDS_NAMES } from '../../../constants';
 
-const criterionValueTypeList = SelectionList({ id: 'sl-container-criterion-value-type' });
+const criterionValueTypeList = SelectionList({ id:'sl-container-criterion-value-type' });
 const criterionValueTypeButton = Button({ id:'criterion-value-type' });
 const matchProfileDetailsAccordion = Accordion({ id:'match-profile-details' });
+
 const optionsList = {
   instanceHrid: 'Admin data: Instance HRID',
   holdingsHrid: 'Admin data: Holdings HRID',
@@ -47,124 +48,17 @@ function fillIncomingRecordFields(value = '', selector) {
   cy.do(TextField({ name: map[selector] }).fillIn(value));
 }
 
-const fillMatchProfileForm = ({
-  profileName,
-  incomingRecordFields,
-  existingRecordFields,
-  matchCriterion,
-  existingRecordType,
-  instanceOption,
-  holdingsOption,
-  itemOption
-}) => {
+function fillName(profileName) {
   cy.do(TextField('Name*').fillIn(profileName));
   // wait for data to be loaded
   cy.wait(15000);
-  // select existing record type
-  if (existingRecordType === 'MARC_BIBLIOGRAPHIC') {
-    cy.do(Button({ dataId:'MARC_BIBLIOGRAPHIC' }).click());
-    fillIncomingRecordFields(incomingRecordFields.field, 'field');
-    fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
-    fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
-    fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
-    cy.do(Select('Match criterion').choose(matchCriterion));
-    fillExistingRecordFields(existingRecordFields.field, 'field');
-    fillExistingRecordFields(existingRecordFields.in1, 'in1');
-    fillExistingRecordFields(existingRecordFields.in2, 'in2');
-    fillExistingRecordFields(existingRecordFields.subfield, 'subfield');
-  } else if (existingRecordType === 'INSTANCE') {
-    // wait for list with data to be loaded
-    cy.wait(1500);
-    cy.do(matchProfileDetailsAccordion.find(Button({ dataId:'INSTANCE' })).click());
-    fillIncomingRecordFields(incomingRecordFields.field, 'field');
-    if (incomingRecordFields.in1) {
-      fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
-    }
-    fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
-    cy.do(criterionValueTypeButton.click());
-    cy.expect(criterionValueTypeList.exists());
-    cy.do(SelectionList({ id:'sl-container-criterion-value-type' }).find(SelectionOption(instanceOption)).click());
-  } else if (existingRecordType === 'HOLDINGS') {
-    // wait for list with data to be loaded
-    cy.wait(1500);
-    cy.do(matchProfileDetailsAccordion.find(Button({ dataId:'HOLDINGS' })).click());
-    fillIncomingRecordFields(incomingRecordFields.field, 'field');
-    if (incomingRecordFields.in1) {
-      fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
-    }
-    if (incomingRecordFields.in2) {
-      fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
-    }
-    fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
-    cy.do(criterionValueTypeButton.click());
-    cy.expect(criterionValueTypeList.exists());
-    cy.do(SelectionList({ id:'sl-container-criterion-value-type' }).find(SelectionOption(holdingsOption)).click());
-  } else {
-    cy.do(matchProfileDetailsAccordion.find(Button({ dataId:'ITEM' })).click());
-    fillIncomingRecordFields(incomingRecordFields.field, 'field');
-    fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
-    cy.do(criterionValueTypeButton.click());
-    cy.expect(criterionValueTypeList.exists());
-    // wait for list will be loaded
-    cy.wait(2000);
-    cy.do(SelectionList({ id:'sl-container-criterion-value-type' }).find(SelectionOption(itemOption)).click());
-  }
-};
+}
 
-const fillMatchProfileWithExistingPart = ({
-  profileName,
-  incomingRecordFields,
-  matchCriterion,
-  instanceOption
-}) => {
-  cy.do(TextField('Name*').fillIn(profileName));
-  // wait for data to be loaded
-  cy.wait(15000);
-  cy.do(matchProfileDetailsAccordion.find(Button({ dataId:'INSTANCE' })).click());
-  fillIncomingRecordFields(incomingRecordFields.field, 'field');
-  fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
-  fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
-  fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
-  cy.do(Select('Match criterion').choose(matchCriterion));
-  cy.do(criterionValueTypeButton.click());
-  cy.expect(criterionValueTypeList.exists());
-  // wait for list will be loaded
-  cy.wait(2000);
-  cy.do(SelectionList({ id:'sl-container-criterion-value-type' }).find(SelectionOption(instanceOption)).click());
-};
+function selectExistingRecordType(existingRecordType) {
+  cy.do(matchProfileDetailsAccordion.find(Button({ dataId: existingRecordType })).click());
+}
 
-const fillMatchProfileStaticValue = ({ profileName, incomingStaticValue, matchCriterion, existingRecordOption, existingRecordType }) => {
-  cy.do(TextField('Name*').fillIn(profileName));
-  // wait for data to be loaded
-  cy.wait(15000);
-  cy.do([
-    matchProfileDetailsAccordion.find(Button({ dataId: existingRecordType })).click(),
-    Dropdown({ id:'record-selector-dropdown' }).open(),
-    Button('Static value (submatch only)').click(),
-    TextField({ name:'profile.matchDetails[0].incomingMatchExpression.staticValueDetails.text' }).fillIn(incomingStaticValue),
-    Select('Match criterion').choose(matchCriterion),
-    criterionValueTypeButton.click()]);
-  cy.expect(criterionValueTypeList.exists());
-  // wait for list will be loaded
-  cy.wait(2000);
-  cy.do(SelectionList({ id:'sl-container-criterion-value-type' })
-    .find(SelectionOption(existingRecordOption)).click());
-};
-
-const fillMatchProfileWithQualifier = ({
-  profileName,
-  incomingRecordFields,
-  existingRecordFields,
-  matchCriterion,
-  qualifierType,
-  qualifierValue
-}) => {
-  cy.do(TextField('Name*').fillIn(profileName));
-  cy.do(matchProfileDetailsAccordion.find(Button({ dataId:'MARC_BIBLIOGRAPHIC' })).click());
-  // wait for list will be loaded
-  cy.wait(2000);
-  fillIncomingRecordFields(incomingRecordFields.field, 'field');
-  fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
+function fillQualifierInIncomingPart(qualifierType, qualifierValue){
   cy.contains('Incoming MARC Bibliographic record').then(elem => {
     elem.parent()[0].querySelector('input[type="checkbox').click();
   });
@@ -172,9 +66,9 @@ const fillMatchProfileWithQualifier = ({
     Select({ name:'profile.matchDetails[0].incomingMatchExpression.qualifier.qualifierType' }).choose(qualifierType),
     TextField({ name:'profile.matchDetails[0].incomingMatchExpression.qualifier.qualifierValue' }).fillIn(qualifierValue)
   ]);
-  cy.do(Select('Match criterion').choose(matchCriterion));
-  fillExistingRecordFields(existingRecordFields.field, 'field');
-  fillExistingRecordFields(existingRecordFields.subfield, 'subfield');
+}
+
+function fillQualifierInExistingPart(qualifierType, qualifierValue){
   cy.contains('Existing MARC Bibliographic record').then(elem => {
     elem.parent()[0].querySelector('input[type="checkbox').click();
   });
@@ -182,15 +76,175 @@ const fillMatchProfileWithQualifier = ({
     Select({ name:'profile.matchDetails[0].existingMatchExpression.qualifier.qualifierType' }).choose(qualifierType),
     TextField({ name:'profile.matchDetails[0].existingMatchExpression.qualifier.qualifierValue' }).fillIn(qualifierValue)
   ]);
-};
+}
+
+function fillStaticValue(staticValue){
+  cy.do([
+    Dropdown({ id:'record-selector-dropdown' }).open(),
+    Button('Static value (submatch only)').click(),
+    TextField({ name:'profile.matchDetails[0].incomingMatchExpression.staticValueDetails.text' })
+      .fillIn(staticValue)
+  ]);
+}
+
+function selectMatchCriterion(matchCriterion) {
+  cy.do(Select('Match criterion').choose(matchCriterion));
+}
+
+function selectExistingRecordField(existingRecordOption){
+  cy.do(criterionValueTypeButton.click());
+  cy.expect(criterionValueTypeList.exists());
+  // wait for list will be loaded
+  cy.wait(2000);
+  cy.do(criterionValueTypeList
+    .find(SelectionOption(existingRecordOption)).click());
+}
 
 export default {
   optionsList,
-  fillMatchProfileForm,
-  fillMatchProfileWithExistingPart,
-  fillMatchProfileStaticValue,
-  fillMatchProfileWithQualifier,
+  fillName,
+  selectExistingRecordType,
+  selectMatchCriterion,
+  fillQualifierInIncomingPart,
+  fillQualifierInExistingPart,
+  selectExistingRecordField,
+  fillStaticValue,
 
+  fillMatchProfileForm:({
+    profileName,
+    incomingRecordFields,
+    existingRecordFields,
+    matchCriterion,
+    existingRecordType,
+    instanceOption,
+    holdingsOption,
+    itemOption
+  }) => {
+    fillName(profileName);
+    // select existing record type
+    if (existingRecordType === 'MARC_BIBLIOGRAPHIC') {
+      selectExistingRecordType(existingRecordType);
+      fillIncomingRecordFields(incomingRecordFields.field, 'field');
+      fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
+      fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
+      fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
+      matchCriterion(matchCriterion);
+      fillExistingRecordFields(existingRecordFields.field, 'field');
+      fillExistingRecordFields(existingRecordFields.in1, 'in1');
+      fillExistingRecordFields(existingRecordFields.in2, 'in2');
+      fillExistingRecordFields(existingRecordFields.subfield, 'subfield');
+    } else if (existingRecordType === 'INSTANCE') {
+      // wait for list with data to be loaded
+      cy.wait(1500);
+      selectExistingRecordType(existingRecordType);
+      fillIncomingRecordFields(incomingRecordFields.field, 'field');
+      if (incomingRecordFields.in1) {
+        fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
+      }
+      fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
+      cy.do(criterionValueTypeButton.click());
+      cy.expect(criterionValueTypeList.exists());
+      cy.do(criterionValueTypeList.find(SelectionOption(instanceOption)).click());
+    } else if (existingRecordType === 'HOLDINGS') {
+      // wait for list with data to be loaded
+      cy.wait(1500);
+      cy.do(matchProfileDetailsAccordion.find(Button({ dataId:'HOLDINGS' })).click());
+      fillIncomingRecordFields(incomingRecordFields.field, 'field');
+      if (incomingRecordFields.in1) {
+        fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
+      }
+      if (incomingRecordFields.in2) {
+        fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
+      }
+      fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
+      cy.do(criterionValueTypeButton.click());
+      cy.expect(criterionValueTypeList.exists());
+      cy.do(criterionValueTypeList.find(SelectionOption(holdingsOption)).click());
+    } else {
+      cy.do(matchProfileDetailsAccordion.find(Button({ dataId:'ITEM' })).click());
+      fillIncomingRecordFields(incomingRecordFields.field, 'field');
+      fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
+      cy.do(criterionValueTypeButton.click());
+      cy.expect(criterionValueTypeList.exists());
+      // wait for list will be loaded
+      cy.wait(2000);
+      cy.do(criterionValueTypeList.find(SelectionOption(itemOption)).click());
+    }
+  },
+
+  fillMatchProfileWithExistingPart:({
+    profileName,
+    existingRecordType,
+    incomingRecordFields,
+    matchCriterion,
+    existingRecordOption
+  }) => {
+    fillName(profileName);
+    selectExistingRecordType(existingRecordType);
+    fillIncomingRecordFields(incomingRecordFields.field, 'field');
+    fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
+    fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
+    fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
+    selectMatchCriterion(matchCriterion);
+    selectExistingRecordField(existingRecordOption);
+  },
+
+  fillMatchProfileWithStaticValue({
+    profileName,
+    incomingStaticValue,
+    matchCriterion,
+    existingRecordOption,
+    existingRecordType
+  }) {
+    fillName(profileName);
+    selectExistingRecordType(existingRecordType);
+    fillStaticValue(incomingStaticValue);
+    selectMatchCriterion(matchCriterion);
+    selectExistingRecordField(existingRecordOption);
+  },
+
+  fillMatchProfileWithQualifierInIncomingAndExistingRecords({
+    profileName,
+    existingRecordType,
+    incomingRecordFields,
+    existingRecordFields,
+    matchCriterion,
+    qualifierType,
+    qualifierValue
+  }) {
+    fillName(profileName);
+    selectExistingRecordType(existingRecordType);
+    fillIncomingRecordFields(incomingRecordFields.field, 'field');
+    fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
+    fillQualifierInIncomingPart(qualifierType, qualifierValue);
+    selectMatchCriterion(matchCriterion);
+    fillExistingRecordFields(existingRecordFields.field, 'field');
+    fillExistingRecordFields(existingRecordFields.subfield, 'subfield');
+    fillQualifierInExistingPart(qualifierType, qualifierValue);
+  },
+
+  fillMatchProfileWithQualifierInIncomingRecordsAndValueInExistingRecord({
+    profileName,
+    existingRecordType,
+    incomingRecordFields,
+    existingRecordOption,
+    matchCriterion,
+    qualifierType,
+    qualifierValue
+  }) {
+    fillName(profileName);
+    selectExistingRecordType(existingRecordType);
+    fillIncomingRecordFields(incomingRecordFields.field, 'field');
+    fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
+    fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
+    fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
+    fillQualifierInIncomingPart(qualifierType, qualifierValue);
+    selectMatchCriterion(matchCriterion);
+    // wait for list will be loaded
+    cy.wait(2000);
+    selectExistingRecordField(existingRecordOption);
+  },
+  
   createMatchProfileViaApi:(nameProfile) => {
     return cy
       .okapiRequest({
