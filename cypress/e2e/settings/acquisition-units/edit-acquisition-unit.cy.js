@@ -11,26 +11,29 @@ describe('Acquisition Units: Settings (ACQ Units)', () => {
 
   before(() => {
     cy.getAdminToken();
+    cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
+    AcquisitionUnits.newAcquisitionUnit();
+    AcquisitionUnits.fillInAUInfo(defaultAcquisitionUnit.name);
+    AcquisitionUnits.assignAdmin();
     cy.createTempUser([
       permissions.uiSettingsAcquisitionUnitsViewEditCreateDelete.gui,
       permissions.uiFinanceManageAcquisitionUnits.gui
     ])
       .then(userProperties => {
         user = userProperties;
+        cy.login(user.username, user.password, { path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
       });
   });
 
   after(() => {
     cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
-    AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
-    AcquisitionUnits.delete(defaultAcquisitionUnit.name);
+    AcquisitionUnits.unAssignAdmin(`${defaultAcquisitionUnit.name}-edited`);
+    AcquisitionUnits.delete(`${defaultAcquisitionUnit.name}-edited`);
     Users.deleteViaApi(user.userId);
   });
 
-  it('C6728 Create acquisitions unit (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    cy.login(user.username, user.password, { path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
-    AcquisitionUnits.newAcquisitionUnit();
-    AcquisitionUnits.fillInAUInfo(defaultAcquisitionUnit.name);
-    AcquisitionUnits.assignAdmin();
+  it('C6729 Update existing acquisition unit (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
+    AcquisitionUnits.edit(defaultAcquisitionUnit.name);
+    AcquisitionUnits.fillInAUInfo(`${defaultAcquisitionUnit.name}-edited`);
   });
 });
