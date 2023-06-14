@@ -48,7 +48,6 @@ describe('Invoices', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
   const allocatedQuantityForFistFund = '100';
-  const adjustmentDescription = `test_description${getRandomPostfix()}`;
   let user;
   let orderNumber;
 
