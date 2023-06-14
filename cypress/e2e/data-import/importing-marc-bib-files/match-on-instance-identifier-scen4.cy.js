@@ -23,6 +23,7 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
@@ -51,7 +52,7 @@ describe('ui-data-import', () => {
     },
     matchCriterion: 'Exactly matches',
     qualifierType: 'Begins with',
-    qualifierValue: 'AMB',
+    qualifierValue: '(AMB)',
     existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
     existingRecordOption: NewMatchProfile.optionsList.systemControlNumber
   };
@@ -75,6 +76,18 @@ describe('ui-data-import', () => {
   };
 
   before('create test data', () => {
+    cy.getAdminToken()
+    .then(() => {
+      InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value)
+          .then(instances => {
+            if (instances) {
+              instances.forEach(({ id }) => {
+                InventoryInstance.deleteInstanceViaApi(id);
+              });
+            }
+          });
+    });
+
     cy.createTempUser([
       permissions.moduleDataImportEnabled.gui,
       permissions.dataImportDeleteLogs.gui,
@@ -95,12 +108,6 @@ describe('ui-data-import', () => {
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
     Users.deleteViaApi(user.userId);
     InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value)
-    .then(instances => {
-      instances.forEach(({ id }) => {
-        InventoryInstance.deleteInstanceViaApi(id);
-      });
-    });
-    InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[3].value)
     .then(instances => {
       instances.forEach(({ id }) => {
         InventoryInstance.deleteInstanceViaApi(id);
@@ -127,7 +134,7 @@ describe('ui-data-import', () => {
     InventoryInstance.verifyInstanceTitle(secondInstaneTitle);
     InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[2].type, resourceIdentifiers[2].value, 0);
     InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[3].type, resourceIdentifiers[3].value, 3);
-
+    
     cy.visit(SettingsMenu.matchProfilePath);
     MatchProfiles.createMatchProfileWithQualifierAndExistingRecordField(matchProfile);
     MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
@@ -159,9 +166,13 @@ describe('ui-data-import', () => {
     JobProfiles.waitFileIsImported(fileNameForUpdateInstance);
     Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     Logs.openFileDetails(fileNameForUpdateInstance);
-    Logs.verifyInstanceStatus(0, 3, FileDetails.status.noAction);
-    Logs.verifyInstanceStatus(1, 3, 'Updated');
-    Logs.clickOnHotLink(1, 3, 'Updated');
+    FileDetails.checkStatusInColumn(FileDetails.status.dash, FileDetails.columnNameInResultList.srsMarc);
+    FileDetails.checkStatusInColumn(FileDetails.status.noAction, FileDetails.columnNameInResultList.instance);
+    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, 1);
+    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance, 1);
+    
+    // check updated instance in Inventory
+    FileDetails.openInstanceInInventory('Updated');
     InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
     InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);
     InstanceRecordView.verifyGeneralNoteContent(instanceGeneralNote);
