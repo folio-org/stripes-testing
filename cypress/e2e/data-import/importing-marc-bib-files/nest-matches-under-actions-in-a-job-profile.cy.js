@@ -26,11 +26,16 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
 
 describe('ui-data-import', () => {
   let user = null;
   let holdingsHrId = null;
   let exportedFileName = null;
+  let instanceHrid = null;
   const holdingsPermanentLocation = 'Online';
   const recordType = 'MARC_BIBLIOGRAPHIC';
   const filePathToUpload = 'oneMarcBib.mrc';
@@ -118,7 +123,7 @@ describe('ui-data-import', () => {
   };
   const holdingsMatchProfile = {
     profileName: `C347894 autotest holdings match profile.${getRandomPostfix()}`,
-    incomingStaticValue: 'online (online)',
+    incomingStaticValue: 'Online',
     matchCriterion: 'Exactly matches',
     existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
     existingRecordOption: NewMatchProfile.optionsList.holdingsPermLoc
@@ -209,6 +214,11 @@ describe('ui-data-import', () => {
     FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileForCreate.profile.name);
     FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileForCreate.profile.name);
     Users.deleteViaApi(user.userId);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
   });
 
   it('C347894 Nest matches under actions in a job profile, and run the job profile successfully (folijet)',
@@ -286,6 +296,8 @@ describe('ui-data-import', () => {
         FileDetails.checkHoldingsQuantityInSummaryTable('1', '1');
         FileDetails.openInstanceInInventory('Updated');
         InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
+        InstanceRecordView.getAssignedHRID().then(initialInstanceHrId => { instanceHrid = initialInstanceHrId; });
+        cy.go('back');
         FileDetails.openHoldingsInInventory('Updated');
         HoldingsRecordView.checkMarkAsSuppressedFromDiscovery();
       });
