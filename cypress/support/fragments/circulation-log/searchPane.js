@@ -7,12 +7,16 @@ import {
   including,
   TextField,
   Pane,
-  Dropdown, DropdownMenu, Checkbox
+  Dropdown,
+  DropdownMenu,
+  Checkbox,
+  MultiSelect
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
 const dropdownButton = MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(Dropdown()).find(Button());
 const actionsButton = Button('Actions');
+const servicePointField = MultiSelect({ ariaLabelledby: 'accordion-toggle-button-servicePointId' });
 
 
 // TODO: will rework to interactor when we get section id
@@ -56,6 +60,13 @@ export default {
     cy.do([
       Accordion({ id: 'loan' }).clickHeader(),
       Checkbox({ id: 'clickable-filter-loan-changed-due-date' }).click()
+    ]);
+  },
+
+  searchByServicePoint(servicePoint) {
+    cy.do([
+      servicePointField.fillIn(servicePoint),
+      servicePointField.choose(servicePoint),
     ]);
   },
 
