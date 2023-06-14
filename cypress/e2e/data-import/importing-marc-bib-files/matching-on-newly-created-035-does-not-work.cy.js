@@ -47,7 +47,7 @@ describe('ui-data-import', () => {
     },
     matchCriterion: 'Exactly matches',
     existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
-    instanceOption: NewMatchProfile.optionsList.systemControlNumber
+    existingRecordOption: NewMatchProfile.optionsList.systemControlNumber
   };
 
   const mappingProfile = {

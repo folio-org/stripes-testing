@@ -146,5 +146,11 @@ export default {
 
   selectContentInGeneralOrders(content) {
     cy.do(NavListItem(content).click());
-  }
+  },
+
+  selectApprovalRequired() {
+    cy.do([
+      Checkbox({ name: 'isApprovalRequired' }).click(),
+      saveButton.click()]);
+  },
 };

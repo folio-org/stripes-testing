@@ -82,15 +82,16 @@ export default {
     waitCreatingMatchProfile();
   },
 
-  createMatchProfileWithQualifierAndComparePart:(profile) => {
+  createMatchProfileWithQualifierAndExistingRecordField:(profile) => {
     openNewMatchProfileForm();
-    NewMatchProfile.fillMatchProfileWithStaticValueAndComparePartValue(profile);
+    NewMatchProfile.fillMatchProfileWithQualifierInIncomingRecordsAndValueInExistingRecord(profile);
     saveAndClose();
     waitCreatingMatchProfile();
   },
+
   createMatchProfileWithStaticValue:(profile) => {
     openNewMatchProfileForm();
-    NewMatchProfile.fillMatchProfileStaticValue(profile);
+    NewMatchProfile.fillMatchProfileWithStaticValue(profile);
     saveAndClose();
     waitCreatingMatchProfile();
   },

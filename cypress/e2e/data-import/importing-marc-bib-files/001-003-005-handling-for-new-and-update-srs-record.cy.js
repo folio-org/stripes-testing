@@ -52,7 +52,7 @@ describe('ui-data-import', () => {
     },
     matchCriterion: 'Exactly matches',
     existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
-    instanceOption: NewMatchProfile.optionsList.instanceUuid
+    existingRecordOption: NewMatchProfile.optionsList.instanceUuid
   };
 
   const mappingProfile = {

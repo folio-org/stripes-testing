@@ -98,7 +98,7 @@ describe('ui-data-import', () => {
     incomingStaticValue: 'Available',
     matchCriterion: 'Exactly matches',
     existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
-    itemOption: NewMatchProfile.optionsList.status,
+    existingRecordOption: NewMatchProfile.optionsList.status,
   };
 
   const createJobProfile = {

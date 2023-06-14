@@ -101,7 +101,9 @@ describe('circulation-log', () => {
             InventoryInstance.deleteInstanceViaApi(instance.id);
           });
         cy.getBlockApi(userId).then(() => {
-          cy.deleteBlockApi(Cypress.env('blockIds')[0].id);
+          if (Cypress.env('blockIds')[0]) {
+            cy.deleteBlockApi(Cypress.env('blockIds')[0].id);
+          }
         });
         Users.deleteViaApi(userId);
       });
@@ -195,6 +197,11 @@ describe('circulation-log', () => {
 
     cy.visit(TopMenu.circulationLogPath);
     SearchPane.searchByChangedDueDate();
+    SearchPane.verifyResultCells();
+  });
+
+  it('C17010 Filter circulation log by service points (firebird)', { tags: [TestTypes.criticalPath, devTeams.firebird] }, () => {
+    SearchPane.searchByServicePoint('Circ Desk 2');
     SearchPane.verifyResultCells();
   });
 });
