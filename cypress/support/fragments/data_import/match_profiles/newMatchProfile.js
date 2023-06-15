@@ -233,7 +233,9 @@ export default {
     fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
     fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
     fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
+    cy.wait(2000);
     fillQualifierInIncomingPart(qualifierType, qualifierValue);
+    cy.pause();
     fillOnlyComparePartOfTheValue(compareValue);
     selectMatchCriterion(matchCriterion);
     selectExistingRecordField(existingRecordOption);
