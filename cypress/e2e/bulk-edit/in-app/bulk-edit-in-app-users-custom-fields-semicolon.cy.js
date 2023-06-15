@@ -20,9 +20,9 @@ const customFieldData = {
   label2: `label2;${getRandomPostfix()}`,
 };
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
-const previewOfProposedChangesFileName =  `*-Updates-Preview-${userBarcodesFileName}`;
+const previewOfProposedChangesFileName = `*-Updates-Preview-${userBarcodesFileName}`;
 
-describe('Bulk Edit -- Users- CSV approach', () => {
+describe('Bulk Edit-- Users - in app approach', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.bulkEditUpdateRecords.gui,
@@ -32,7 +32,7 @@ describe('Bulk Edit -- Users- CSV approach', () => {
       permissions.uiUserEdit.gui,
     ], 'faculty')
       .then(userProperties => {
-        user = userProperties
+        user = userProperties;
         cy.login(user.username, user.password, {
           path: SettingsMenu.customFieldsPath,
           waiter: CustomFields.waitLoading
@@ -69,7 +69,7 @@ describe('Bulk Edit -- Users- CSV approach', () => {
     BulkEditActions.downloadPreview();
     BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName, ['staff'], 'patronGroup', true);
     BulkEditActions.commitChanges();
-    
+
     BulkEditSearchPane.verifyValuesInChangesPreview(user.username, 'staff', `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`);
 
     cy.visit(TopMenu.usersPath);
