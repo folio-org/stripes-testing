@@ -81,6 +81,7 @@ export default {
   waiveReasons: 'settings/users/waivereasons',
   patronBlockTemplates: 'settings/users/manual-block-templates',
   usersTransferCriteria: '/settings/users/transfer-criteria',
+  customFieldsPath: 'settings/users/custom-fields',
   // Data Import
   mappingProfilePath: 'settings/data-import/mapping-profiles',
   actionProfilePath: 'settings/data-import/action-profiles',
