@@ -5,6 +5,7 @@ const customFieldsPane = Pane('Custom fields');
 const editNewButton = Button({ href: '/settings/users/custom-fields/edit' });
 const addCustomFieldDropdown = Dropdown('Add custom field');
 const saveAndCloseButton = Button('Save & close');
+
 export default {
   waitLoading() {
     cy.expect(customFieldsPane.exists());
