@@ -179,7 +179,8 @@ export const LOCALION_NAMES = {
 export const INSTANCE_STATUS_TERM_NAMES = {
   BATCH_LOADED: 'Batch Loaded',
   CATALOGED: 'Cataloged',
-  UNCATALOGED: 'Uncataloged'
+  UNCATALOGED: 'Uncataloged',
+  OTHER: 'Other'
 };
 
 export const CALL_NUMBER_TYPE_NAMES = {

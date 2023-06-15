@@ -49,6 +49,7 @@ const emptyResultsMessage = 'Choose a filter or enter a search query to show res
 const browseButton = Button({ id: 'mode-navigation-browse' });
 const viewHoldingButton = Button('View holdings');
 const statisticalCodeAccordion = Accordion({ id:'itemsStatisticalCodeIds' });
+const holdingsPermanentLocationAccordion = Accordion({ id:'holdingsPermanentLocation' });
 const callNumberBrowsePane = Pane({ title: 'Browse inventory' });
 const actionsButton = Button('Actions');
 const editInstanceButton = Button('Edit instance');
@@ -532,4 +533,15 @@ export default {
       editInstanceButton.click(),
     ]);
   },
+
+  filterHoldingsByPermanentLocation:(location) => {
+    cy.do(Button({id:'accordion-toggle-button-holdingsPermanentLocation'}).click());
+    // need to wait until data will be loaded
+    cy.wait(1000);
+    cy.do(holdingsPermanentLocationAccordion.find(TextField()).fillIn(location));
+    // need to wait until data will be loaded
+    cy.wait(1000);
+    holdingsPermanentLocationAccordion.find(TextField()).click();
+    cy.do(holdingsPermanentLocationAccordion.find(Checkbox(location)).click());
+  }
 };

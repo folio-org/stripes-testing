@@ -1,4 +1,4 @@
-import { including } from '@interactors/html';
+import { HTML, including } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -73,6 +73,10 @@ const configurations = {
 export default {
   configurations,
 
+  waitLoading() {
+    cy.expect(Pane('Remote storage').exists());
+  },
+
   deleteRemoteStorage(name) {
     cy.do([
       MultiColumnListCell({ content: name }).click(),
@@ -136,5 +140,9 @@ export default {
 
   closeWithSaving() {
     return cy.do(Modal().find(Button('Save')).click());
+  },
+
+  verifyCaiaSoftWarning() {
+    cy.expect(HTML('CaiaSoft Accession tables are available after remote storage has been configured.').exists());
   }
 };

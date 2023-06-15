@@ -1,4 +1,4 @@
-import { Button, Checkbox, EditableListRow, MultiColumnListCell, PaneHeader, Select, TextField } from '../../../../../interactors';
+import { Button, Checkbox, EditableListRow, MultiColumnListCell, NavListItem, PaneHeader, Section, Select, TextField } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 
 const editPoNumberCheckbox = Checkbox('User can edit');
@@ -8,6 +8,10 @@ const deleteButton = Button('Delete');
 function getEditableListRow(rowNumber) { return EditableListRow({ index: +rowNumber.split('-')[1] }); }
 
 export default {
+
+  waitLoadingOrderSettings: () => {
+    cy.expect(Section({ id: 'settings-nav-pane' }).exists());
+  },
 
   waitLoadingEditPONumber: () => {
     cy.expect(PaneHeader('Edit').exists());
@@ -138,5 +142,15 @@ export default {
       Button({ id: 'clickable-save-config' }).click(),
     ]);
     InteractorsTools.checkCalloutMessage('Setting was successfully updated.');
-  }
+  },
+
+  selectContentInGeneralOrders(content) {
+    cy.do(NavListItem(content).click());
+  },
+
+  selectApprovalRequired() {
+    cy.do([
+      Checkbox({ name: 'isApprovalRequired' }).click(),
+      saveButton.click()]);
+  },
 };
