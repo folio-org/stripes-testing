@@ -64,6 +64,8 @@ export default {
 
   downloadPreview() {
     cy.do(downloadPreviewBtn.click());
+    // Wait for file to download
+    cy.wait(3000);
   },
 
   clickKeepEditingBtn() {
