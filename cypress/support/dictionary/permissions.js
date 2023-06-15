@@ -108,6 +108,7 @@ export default {
   uiUsersCreatePatronGroups: { internal: 'ui-users.settings.usergroups', gui: 'Settings (Users): Can create, edit and remove patron groups' },
   uiUsersCreatePatronLimits: { internal: 'ui-users.settings.limits', gui: 'Settings (Users): Can create, edit and remove patron blocks limits' },
   uiUsersCreatePatronConditions: { internal: 'ui-users.settings.conditions', gui: 'Settings (Users): Can view and edit patron blocks conditions' },
+  uiUsersCustomField: { internal: 'ui-users.settings.customfields.all', gui: 'Settings (Users): Can create, edit, view and delete custom fields' },
   // Remote Storage
   remoteStorageCRUD: { internal: '', gui: 'Settings (Remote storage): Can create, edit, delete remote storage settings' },
   remoteStorageView: { internal: 'ui-remote-storage.settings.remote-storages.view', gui: 'Remote storage: View' },
