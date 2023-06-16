@@ -62,7 +62,7 @@ function selectExistingRecordType(existingRecordType) {
 
 function fillQualifierInIncomingPart(qualifierType, qualifierValue){
   cy.contains('Incoming MARC Bibliographic record').then(elem => {
-    elem.parent()[0].querySelector('input[type="checkbox').click();
+    elem.parent()[0].querySelectorAll('input[type="checkbox"]')[0].click();
   });
   cy.do([
     Select({ name:'profile.matchDetails[0].incomingMatchExpression.qualifier.qualifierType' }).choose(qualifierType),
@@ -104,13 +104,10 @@ function selectExistingRecordField(existingRecordOption){
 
 function fillOnlyComparePartOfTheValue(value){
   cy.contains('Incoming MARC Bibliographic record').then(elem => {
-    elem.parent()[0].querySelector('input[type="checkbox').click();
+    elem.parent()[0].querySelectorAll('input[type="checkbox"]')[1].click();
   });
-  // cy.do([
-  //   Section({ mark: 'Incoming MARC Bibliographic record'}).find(Checkbox('Only compare part of the value')).click(),
-  //   Select({ name:'profile.matchDetails[0].incomingMatchExpression.qualifier.comparisonPart' })
-  //     .choose(value)
-  // ]);
+  cy.do(Select({ name:'profile.matchDetails[0].incomingMatchExpression.qualifier.comparisonPart' })
+    .choose(value));
 }
 
 export default {
@@ -235,7 +232,6 @@ export default {
     fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
     cy.wait(2000);
     fillQualifierInIncomingPart(qualifierType, qualifierValue);
-    cy.pause();
     fillOnlyComparePartOfTheValue(compareValue);
     selectMatchCriterion(matchCriterion);
     selectExistingRecordField(existingRecordOption);
