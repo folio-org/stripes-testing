@@ -11,7 +11,7 @@ const openNewJobProfileForm = () => {
 
 export default {
   openNewJobProfileForm,
-  createJobProfile:(profileName, mappingProfile) => {
+  createJobProfile: (profileName, mappingProfile) => {
     openNewJobProfileForm();
     exportNewJobProfile.fillJobProfile(profileName, mappingProfile);
     exportNewJobProfile.saveJobProfile();
@@ -33,11 +33,7 @@ export default {
         for (let i = 0; i < itemAmount; i++) {
           cy.expect(jobProfilesPane.find(MultiColumnListCell({ column: 'Name', content: including(text) })).exists());
         };
-      } else {
-        cy.expect([
-          HTML('The list contains no items').exists()
-        ]);
-      };
+      } else cy.expect(HTML('The list contains no items').exists());
     });
   },
   getJobProfile: (searchParams) => {
