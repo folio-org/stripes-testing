@@ -5,12 +5,12 @@ import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
-import SingleFieldMappingProfilePane from "../../../support/fragments/data-export/exportMappingProfile/singleFieldMappingProfilePane";
+import SingleFieldMappingProfilePane from '../../../support/fragments/data-export/exportMappingProfile/singleFieldMappingProfilePane';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 
 let user;
 
-describe('setting: data-export', () => {
+describe('settings: data-export', () => {
   before('create user and go to page', () => {
     cy.createTempUser([
       permissions.dataExportEnableSettings.gui,
@@ -23,7 +23,7 @@ describe('setting: data-export', () => {
   });
 
   beforeEach('go to page', () => {
-    cy.visit(SettingsMenu.exportMappingProfilePath)
+    cy.visit(SettingsMenu.exportMappingProfilePath);
   });
 
   after('delete user', () => {
