@@ -245,8 +245,16 @@ describe('Circulation log', () => {
         testData.feeFineId = feeFineId;
         PayFeeFaine.payFeeFineViaApi(payBody('4.00'), testData.feeFineId);
         checkActionsButton('Paid fully');
-        NewFeeFine.deleteFeeFineAccountViaApi(feeFineId);
       });
+    }
+  );
+
+  it(
+    'C17049 Filter circulation log by paid fully (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      filterByAction('Paid fully');
+      NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
     }
   );
 
