@@ -60,13 +60,13 @@ export default {
     cy.expect(Accordion('Overview').find(HTML(including(matchProfileName))).exists());
   },
 
-  linkProfileForNonMatches(actionProfileName, forMatchesOrder = 1) {
+  linkProfileForNonMatches(profileName, forMatchesOrder = 1) {
     // TODO move to const
     cy.get('[id*="type-selector-dropdown-ROOT"]').eq(forMatchesOrder).click();
     cy.do(actionsButton.click());
-    ModalSelectProfile.searchProfileByName(actionProfileName);
-    ModalSelectProfile.selectProfile(actionProfileName);
-    cy.expect(Accordion('Overview').find(HTML(including(actionProfileName))).exists());
+    ModalSelectProfile.searchProfileByName(profileName);
+    ModalSelectProfile.selectProfile(profileName);
+    cy.expect(Accordion('Overview').find(HTML(including(profileName))).exists());
   },
 
   linkActionProfileForMatches(actionProfileName, forMatchesOrder = 0) {
