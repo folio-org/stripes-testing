@@ -78,4 +78,15 @@ export default {
   fillinDescription(descriptionText) {
     cy.do(descriptionTextarea.fillIn(descriptionText));
   },
+  createNewJobProfileViaApi: (name, mappingProfileId) => {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: 'data-export/job-profiles',
+      body: {
+        mappingProfileId: mappingProfileId,
+        name: name,
+      },
+      isDefaultSearchParamsRequired: false,
+    }).then(({ response }) => { return response; });
+  },
 };
