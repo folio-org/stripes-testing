@@ -1,9 +1,10 @@
 import { including } from 'bigtest';
-import { Pane, NavListItem, Button, MultiColumnListCell, MultiColumnListRow } from '../../../../../interactors';
+import { Pane, NavListItem, Button, MultiColumnListCell, MultiColumnListRow, TextField, HTML } from '../../../../../interactors';
 import exportNewJobProfile from './exportNewJobProfile';
 
 const jobProfilesPane = Pane('Job profiles');
 const newButton = Button('New');
+const searchField = TextField('Search Job profiles');
 const openNewJobProfileForm = () => {
   cy.do(newButton.click());
 };
@@ -23,6 +24,21 @@ export default {
   },
   verifyJobProfileInTheTable(jobProfileName) {
     cy.expect(jobProfilesPane.find(MultiColumnListCell({ content: `${jobProfileName}` })));
+  },
+  verifyJobProfileSearchResult(text) {
+    cy.get('body').then((body) => {
+      const element = body.find('[class^=mclEndOfListContainer]');
+      if (element) {
+        const itemAmount = element.attr('data-end-of-list');
+        for (let i = 0; i < itemAmount; i++) {
+          cy.expect(jobProfilesPane.find(MultiColumnListCell({ column: 'Name', content: including(text) })).exists());
+        };
+      } else {
+        cy.expect([
+          HTML('The list contains no items').exists()
+        ]);
+      };
+    });
   },
   getJobProfile: (searchParams) => {
     return cy
@@ -46,5 +62,8 @@ export default {
       MultiColumnListRow(including('Default holdings export job profile')).exists(),
       MultiColumnListRow(including('Default instances export job profile')).exists(),
     ]);
+  },
+  searchJobProfile(text) {
+    cy.do(searchField.fillIn(text));
   },
 };
