@@ -19,4 +19,5 @@ export default {
   getChargePath: (userId) => `${getUserPath(userId)}/charge`,
   getUserPreviewPath:(userId) => `${topMenu.usersPath}/preview/${userId}`,
   getFeeFineDetailsPath: (userId, accountId) => `${getUserPath(userId)}/accounts/view/${accountId}`,
+  getOpenFeeFinePath: (userId) => `${getUserPath(userId)}/accounts/open`,
 };
