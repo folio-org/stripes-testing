@@ -28,6 +28,14 @@ const organizationCodeField = TextField('Code*');
 const today = new Date();
 const todayDate = DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY');
 const resetButton = Button('Reset all');
+const openContactSectionButton = Button({ id: 'accordion-toggle-button-contactPeopleSection' });
+const addContacsModal = Modal('Add contacts');
+const lastNameField = TextField({ name: 'lastName' });
+const firstNameField = TextField({ name: 'firstName' });
+const saveButtonInCotact = Button({ id: 'clickable-save-contact-person-footer' });
+const editButton = Button('Edit');
+const contactPeopleSection = Section({ id: 'contactPeopleSection' });
+const addContactButton = Button('Add contact');
 
 export default {
 
@@ -153,7 +161,7 @@ export default {
   editIntegrationInformation: () => {
     cy.do([
       actionsButton.click(),
-      Button('Edit').click(),
+      editButton.click(),
       ediSection.find(TextField('Vendor EDI code*')).fillIn(vendorEDICodeEdited),
       ediSection.find(TextField('Library EDI code*')).fillIn(libraryEDICodeEdited),
       saveAndClose.click(),
@@ -237,7 +245,7 @@ export default {
   editOrganization: () => {
     cy.do([
       actionsButton.click(),
-      Button('Edit').click(),
+      editButton.click(),
     ]);
   },
 
@@ -250,27 +258,27 @@ export default {
 
   addNewContact: (contact) => {
     cy.do([
-      Button({ id: 'accordion-toggle-button-contactPeopleSection' }).click(),
-      Section({ id: 'contactPeopleSection' }).find(Button('Add contact')).click(),
-      Modal('Add contacts').find(Button('New')).click(),
-      TextField({ name: 'lastName' }).fillIn(contact.lastName),
-      TextField({ name: 'firstName' }).fillIn(contact.firstName),
-      Button({ id: 'clickable-save-contact-person-footer' }).click()
+      openContactSectionButton.click(),
+      contactPeopleSection.find(addContactButton).click(),
+      addContacsModal.find(buttonNew).click(),
+      lastNameField.fillIn(contact.lastName),
+      firstNameField.fillIn(contact.firstName),
+      saveButtonInCotact.click()
     ]);
     InteractorsTools.checkCalloutMessage('The contact was saved');
   },
 
   addContactToOrganization: (contact) => {
     cy.do([
-      Button({ id: 'accordion-toggle-button-contactPeopleSection' }).click(),
-      Section({ id: 'contactPeopleSection' }).find(Button('Add contact')).click(),
-      Modal('Add contacts').find(SearchField({ id: 'input-record-search' })).fillIn(contact.lastName),
-      Modal('Add contacts').find(Button({ type: 'submit' })).click()
+      openContactSectionButton.click(),
+      contactPeopleSection.find(addContactButton).click(),
+      addContacsModal.find(SearchField({ id: 'input-record-search' })).fillIn(contact.lastName),
+      addContacsModal.find(Button({ type: 'submit' })).click()
     ]);
     cy.wait(4000);
     SearchHelper.selectCheckboxFromResultsList();
     cy.do([
-      Modal('Add contacts').find(Button('Save')).click(),
+      addContacsModal.find(Button('Save')).click(),
       Button({ id: 'organization-form-save' }).click()
     ]);
   },
@@ -284,7 +292,7 @@ export default {
   },
 
   checkContactIsAdd: (contact) => {
-    cy.expect(Section({ id: 'contactPeopleSection' })
+    cy.expect(contactPeopleSection
       .find(MultiColumnListRow({ index: 0 }))
       .find(MultiColumnListCell({ columnIndex: 0 }))
       .has({ content: `${contact.lastName}, ${contact.firstName}` }));
@@ -293,17 +301,17 @@ export default {
   selectContact: (contact) => {
     cy.wait(4000);
     cy.do([
-      Section({ id: 'contactPeopleSection' }).find(MultiColumnListCell({ content: `${contact.lastName}, ${contact.firstName}` })).click(),
+      contactPeopleSection.find(MultiColumnListCell({ content: `${contact.lastName}, ${contact.firstName}` })).click(),
     ]);
   },
 
   editContact: (contact) => {
     cy.do([
       actionsButton.click(),
-      Button('Edit').click(),
-      TextField({ name: 'lastName' }).fillIn(`${contact.lastName}-edited`),
-      TextField({ name: 'firstName' }).fillIn(`${contact.firstName}-edited`),
-      Button({ id: 'clickable-save-contact-person-footer' }).click()
+      editButton.click(),
+      lastNameField.fillIn(`${contact.lastName}-edited`),
+      firstNameField.fillIn(`${contact.firstName}-edited`),
+      saveButtonInCotact.click()
     ]);
   },
 
