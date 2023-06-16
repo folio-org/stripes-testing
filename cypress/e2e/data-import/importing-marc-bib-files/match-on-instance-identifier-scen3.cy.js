@@ -139,7 +139,6 @@ describe('ui-data-import', () => {
     InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[2].type, resourceIdentifiers[2].value, 0);
     InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[3].type, resourceIdentifiers[3].value, 3);
 
-
     cy.visit(SettingsMenu.matchProfilePath);
     MatchProfiles.createMatchProfileWithQualifierAndComparePart(matchProfile);
     MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
