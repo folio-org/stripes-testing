@@ -15,8 +15,8 @@ let fieldMappingProfileId;
 const newJobProfileName = `jobProfile${getRandomPostfix()}`;
 const fieldMappingProfileName = `fieldMappingProfile${getRandomPostfix()}`;
 
-describe('settings: data-export', () => {
-  before('create user, job and navigate to page', () => {
+describe('Job profile - setup', () => {
+  before('create test data', () => {
     cy.createTempUser([
       permissions.dataExportEnableSettings.gui,
       permissions.dataExportEnableApp.gui,
@@ -33,7 +33,7 @@ describe('settings: data-export', () => {
       });
   });
 
-  after('delete jobs and user', () => {
+  after('delete test data', () => {
     ExportJobProfiles.getJobProfile({ query: `"name"=="${newJobProfileName}"` })
       .then(response => {
         ExportJobProfiles.deleteJobProfileViaApi(response.id);
@@ -44,13 +44,11 @@ describe('settings: data-export', () => {
 
   it('C345411 Search job profiles (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     ExportJobProfiles.goToJobProfilesTab();
-    ExportJobProfiles.searchJobProfile(newJobProfileName);
-    ExportJobProfiles.verifyJobProfileSearchResult(newJobProfileName);
 
-    ExportJobProfiles.searchJobProfile('some-random-string');
-    ExportJobProfiles.verifyJobProfileSearchResult('some-random-string');
-    
-    ExportJobProfiles.searchJobProfile('Default');
-    ExportJobProfiles.verifyJobProfileSearchResult('Default');
+    [newJobProfileName, 'random-string', 'Default', getRandomPostfix()]
+      .forEach(element => {
+        ExportJobProfiles.searchJobProfile(element);
+        ExportJobProfiles.verifyJobProfileSearchResult(element);
+      });
   });
 });
