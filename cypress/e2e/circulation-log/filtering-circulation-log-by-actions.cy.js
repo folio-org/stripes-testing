@@ -238,6 +238,19 @@ describe('Circulation log', () => {
   });
 
   it(
+    'C17052 Check the Actions button from filtering Circulation log by Paid partially (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      createFeeFine().then((feeFineId) => {
+        testData.feeFineId = feeFineId;
+        PayFeeFaine.payFeeFineViaApi(payBody('2.00'), testData.feeFineId);
+        checkActionsButton('Paid partially');
+        NewFeeFine.deleteFeeFineAccountViaApi(feeFineId);
+      });
+    }
+  );
+
+  it(
     'C17050 Check the Actions button from filtering Circulation log by Paid fully (volaris)',
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
