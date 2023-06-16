@@ -10,6 +10,7 @@ import Users from '../../../support/fragments/users/users';
 
 let user;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
+const userBarcodesFileNameWithDuplicates = `userBarcodesDuplicates_${getRandomPostfix()}.csv`;
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
@@ -22,12 +23,20 @@ describe('bulk-edit', () => {
           user = userProperties;
           cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
           FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
+          FileManager.createFile(`cypress/fixtures/${userBarcodesFileNameWithDuplicates}`,
+            `${user.barcode}\r\n${user.barcode}\r\n${getRandomPostfix()}`);
         });
     });
 
     after('delete test data', () => {
       FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileNameWithDuplicates}`);
+      FileManager.deleteFileFromDownloadsByMask(`*Errors-${userBarcodesFileNameWithDuplicates}`);
       Users.deleteViaApi(user.userId);
+    });
+
+    afterEach('reload bulk-edit page', () => {
+      cy.visit(TopMenu.bulkEditPath);
     });
 
     it('C359586 Negative --Verify populating "Errors" accordion (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
@@ -45,6 +54,16 @@ describe('bulk-edit', () => {
       BulkEditActions.commitChanges();
       BulkEditSearchPane.waitFileUploading();
       BulkEditSearchPane.verifyErrorLabelAfterChanges(userBarcodesFileName, 0, 1);
+    });
+
+    it('C347883 Error messages in submitted identifiers (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
+      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
+
+      BulkEditSearchPane.uploadFile(userBarcodesFileNameWithDuplicates);
+      BulkEditSearchPane.waitFileUploading();
+
+      BulkEditActions.openActions();
+      BulkEditActions.downloadErrors();
     });
   });
 });
