@@ -51,5 +51,10 @@ export default {
     addresses: [{
       country: 'USA'
     }],
+  },
+
+  defaultContact:{
+    firstName:`AT_FN_${getRandomPostfix()}`,
+    lastName:`AT_LN_${getRandomPostfix()}`,
   }
 };

@@ -1,6 +1,8 @@
-import { Button, TextField, Select, KeyValue, Accordion, Pane, Checkbox, MultiColumnList, MultiColumnListCell, SearchField, MultiColumnListRow, SelectionOption, Section, TextArea, MultiSelect, MultiSelectOption, PaneHeader, Link } from '../../../../interactors';
+import { Button, TextField, Select, KeyValue, Accordion, Pane, Checkbox, MultiColumnList, MultiColumnListCell, SearchField, MultiColumnListRow, SelectionOption, Section, TextArea, MultiSelect, MultiSelectOption, PaneHeader, Link, Modal } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 import DateTools from '../../utils/dateTools';
+import SearchHelper from '../finance/financeHelper';
+import InteractorsTools from '../../utils/interactorsTools';
 
 const buttonNew = Button('New');
 const saveAndClose = Button('Save & close');
@@ -24,8 +26,16 @@ const organizationStatus = Select('Organization status*');
 const organizationNameField = TextField('Name*');
 const organizationCodeField = TextField('Code*');
 const today = new Date();
-const todayDate = DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY')
+const todayDate = DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY');
 const resetButton = Button('Reset all');
+const openContactSectionButton = Button({ id: 'accordion-toggle-button-contactPeopleSection' });
+const addContacsModal = Modal('Add contacts');
+const lastNameField = TextField({ name: 'lastName' });
+const firstNameField = TextField({ name: 'firstName' });
+const saveButtonInCotact = Button({ id: 'clickable-save-contact-person-footer' });
+const editButton = Button('Edit');
+const contactPeopleSection = Section({ id: 'contactPeopleSection' });
+const addContactButton = Button('Add contact');
 
 export default {
 
@@ -50,7 +60,7 @@ export default {
     ]);
   },
 
-  createOrganizationWithAU: (organization,AcquisitionUnit) => {
+  createOrganizationWithAU: (organization, AcquisitionUnit) => {
     cy.expect(buttonNew.exists());
     cy.do([
       buttonNew.click(),
@@ -60,7 +70,7 @@ export default {
     ]);
     // Need to wait while Acquisition Unit data will be loaded
     cy.wait(4000);
-      cy.do([
+    cy.do([
       MultiSelect({ id: 'org-acq-units' }).find(Button({ ariaLabel: 'open menu' })).click(),
       MultiSelectOption(AcquisitionUnit).click(),
       saveAndClose.click()
@@ -120,9 +130,9 @@ export default {
       ftpSection.find(TextField('Username')).fillIn('folio'),
       ftpSection.find(TextField('Password')).fillIn('Ffx29%pu'),
       ftpSection.find(TextField('Order directory')).fillIn('/files'),
-      schedulingSection.find(Checkbox({ name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.enableScheduledExport'})).click(),
+      schedulingSection.find(Checkbox({ name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.enableScheduledExport' })).click(),
       schedulingSection.find(TextField('Schedule frequency*')).fillIn('1'),
-      schedulingSection.find(Select({ name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.scheduleParameters.schedulePeriod'})).choose('Daily'),
+      schedulingSection.find(Select({ name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.scheduleParameters.schedulePeriod' })).choose('Daily'),
       schedulingSection.find(TextField({ name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.scheduleParameters.schedulingDate' })).fillIn(`${todayDate}`),
       schedulingSection.find(TextField('Time*')).fillIn(`${UTCTime}`),
     ]);
@@ -151,7 +161,7 @@ export default {
   editIntegrationInformation: () => {
     cy.do([
       actionsButton.click(),
-      Button('Edit').click(),
+      editButton.click(),
       ediSection.find(TextField('Vendor EDI code*')).fillIn(vendorEDICodeEdited),
       ediSection.find(TextField('Library EDI code*')).fillIn(libraryEDICodeEdited),
       saveAndClose.click(),
@@ -235,7 +245,7 @@ export default {
   editOrganization: () => {
     cy.do([
       actionsButton.click(),
-      Button('Edit').click(),
+      editButton.click(),
     ]);
   },
 
@@ -243,6 +253,65 @@ export default {
     cy.do([
       Button({ id: 'accordion-toggle-button-org-filter-paymentMethod' }).click(),
       Checkbox('Cash').click(),
+    ]);
+  },
+
+  addNewContact: (contact) => {
+    cy.do([
+      openContactSectionButton.click(),
+      contactPeopleSection.find(addContactButton).click(),
+      addContacsModal.find(buttonNew).click(),
+      lastNameField.fillIn(contact.lastName),
+      firstNameField.fillIn(contact.firstName),
+      saveButtonInCotact.click()
+    ]);
+    InteractorsTools.checkCalloutMessage('The contact was saved');
+  },
+
+  addContactToOrganization: (contact) => {
+    cy.do([
+      openContactSectionButton.click(),
+      contactPeopleSection.find(addContactButton).click(),
+      addContacsModal.find(SearchField({ id: 'input-record-search' })).fillIn(contact.lastName),
+      addContacsModal.find(Button({ type: 'submit' })).click()
+    ]);
+    cy.wait(4000);
+    SearchHelper.selectCheckboxFromResultsList();
+    cy.do([
+      addContacsModal.find(Button('Save')).click(),
+      Button({ id: 'organization-form-save' }).click()
+    ]);
+  },
+
+  closeContact: () => {
+    cy.do(Section({ id: 'view-contact' }).find(Button({ icon: 'times' })).click());
+  },
+
+  cancelOrganization: () => {
+    cy.do(Button('Cancel').click());
+  },
+
+  checkContactIsAdd: (contact) => {
+    cy.expect(contactPeopleSection
+      .find(MultiColumnListRow({ index: 0 }))
+      .find(MultiColumnListCell({ columnIndex: 0 }))
+      .has({ content: `${contact.lastName}, ${contact.firstName}` }));
+  },
+
+  selectContact: (contact) => {
+    cy.wait(4000);
+    cy.do([
+      contactPeopleSection.find(MultiColumnListCell({ content: `${contact.lastName}, ${contact.firstName}` })).click(),
+    ]);
+  },
+
+  editContact: (contact) => {
+    cy.do([
+      actionsButton.click(),
+      editButton.click(),
+      lastNameField.fillIn(`${contact.lastName}-edited`),
+      firstNameField.fillIn(`${contact.firstName}-edited`),
+      saveButtonInCotact.click()
     ]);
   },
 
