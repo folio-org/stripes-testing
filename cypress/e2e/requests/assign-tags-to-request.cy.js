@@ -48,7 +48,7 @@ describe('ui-requests: Assign Tags to Request', () => {
     Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
-  it('C747 Assign Tags to Request (folijet) (prokopovych)', { tags:  [testType.smoke, DevTeams.folijet] }, () => {
+  it('C747 Assign Tags to Request (vega)', { tags:  [testType.smoke, DevTeams.vega] }, () => {
     cy.visit(TopMenu.requestsPath);
     Requests.selectNotYetFilledRequest();
     Requests.findCreatedRequest(instanceData.instanceTitle);

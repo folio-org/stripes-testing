@@ -106,7 +106,7 @@ describe('ui-data-import', () => {
     incomingStaticValue: 'Main Library (KU/CC/DI/M)',
     matchCriterion: 'Exactly matches',
     existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
-    itemOption: NewMatchProfile.optionsList.holdingsPermLoc
+    existingRecordOption: NewMatchProfile.optionsList.holdingsPermLoc
   };
   const jobProfileForCreate = {
     ...NewJobProfile.defaultJobProfile,

@@ -64,6 +64,8 @@ export default {
 
   downloadPreview() {
     cy.do(downloadPreviewBtn.click());
+    // Wait for file to download
+    cy.wait(3000);
   },
 
   clickKeepEditingBtn() {
@@ -251,6 +253,11 @@ export default {
 
   downloadErrors() {
     cy.do(Button('Download errors (CSV)').click());
+    BulkEditSearchPane.waitingFileDownload();
+  },
+
+  downloadMatchedErrors() {
+    cy.do(Button('Download matched records (CSV)').click());
     BulkEditSearchPane.waitingFileDownload();
   },
 

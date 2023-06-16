@@ -53,6 +53,8 @@ export default {
   ordersPath: 'settings/orders',
   organizationsPath: 'settings/organizations',
   remoteStoragePath: 'settings/remote-storage',
+  remoteStorageConfigurationPathPath: '/settings/remote-storage/configurations',
+  remoteStorageAccTablesPathPath: '/settings/remote-storage/accession-tables',
   tagsPath: 'settings/tags',
   tenantPath: 'settings/tenant-settings',
   tenantLocationsPath: 'settings/tenant-settings/location-locations',
@@ -79,6 +81,7 @@ export default {
   waiveReasons: 'settings/users/waivereasons',
   patronBlockTemplates: 'settings/users/manual-block-templates',
   usersTransferCriteria: '/settings/users/transfer-criteria',
+  customFieldsPath: 'settings/users/custom-fields',
   // Data Import
   mappingProfilePath: 'settings/data-import/mapping-profiles',
   actionProfilePath: 'settings/data-import/action-profiles',
