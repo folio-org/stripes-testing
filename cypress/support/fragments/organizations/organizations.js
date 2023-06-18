@@ -268,6 +268,17 @@ export default {
     InteractorsTools.checkCalloutMessage('The contact was saved');
   },
 
+  addNewInterface: (defaultInterface) => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-interfacesSection' }).click(),
+      Section({ id: 'interfacesSection' }).find(Button('Add interface')).click(),
+      Modal('Add interfaces').find(buttonNew).click(),
+      TextField({ name: 'name' }).fillIn(defaultInterface.name),
+      Button('Save').click()
+    ]);
+    InteractorsTools.checkCalloutMessage('The interface was saved');
+  },
+
   addContactToOrganization: (contact) => {
     cy.do([
       openContactSectionButton.click(),
@@ -283,8 +294,27 @@ export default {
     ]);
   },
 
+  addIntrefaceToOrganization: (defaultInterface) => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-interfacesSection' }).click(),
+      Section({ id: 'interfacesSection' }).find(Button('Add interface')).click(),
+      Modal('Add interfaces').find(TextField({ name: 'query' })).fillIn(defaultInterface.name),
+      Modal('Add interfaces').find(Button({ type: 'submit' })).click()
+    ]);
+    cy.wait(4000);
+    SearchHelper.selectCheckboxFromResultsList();
+    cy.do([
+      Modal('Add interfaces').find(Button('Save')).click(),
+      Button({ id: 'organization-form-save' }).click()
+    ]);
+  },
+
   closeContact: () => {
     cy.do(Section({ id: 'view-contact' }).find(Button({ icon: 'times' })).click());
+  },
+
+  closeInterface: () => {
+    cy.do(Section({ id: 'view-interface' }).find(Button({ icon: 'times' })).click());
   },
 
   cancelOrganization: () => {
@@ -296,6 +326,12 @@ export default {
       .find(MultiColumnListRow({ index: 0 }))
       .find(MultiColumnListCell({ columnIndex: 0 }))
       .has({ content: `${contact.lastName}, ${contact.firstName}` }));
+  },
+
+  checkInterfaceIsAdd: (defaultInterface) => {
+    cy.expect(Section({ id: 'interfacesSection' })
+      .find(KeyValue({ value: defaultInterface.name }))
+      .exists());
   },
 
   selectContact: (contact) => {
@@ -368,5 +404,19 @@ export default {
       organizationNameField.fillIn(`${organization.name}-edited`),
       saveAndClose.click()
     ]);
+  },
+
+  unAssignInterface: (defaultInterface) => {
+    cy.do(Button({ id: 'accordion-toggle-button-interfacesSection' }).click());
+    cy.get('#interface-list')
+      .find('a[class^="mclRow-"]')
+      .contains('div[class^="mclCell-"]', defaultInterface.name)
+      .parents('div[data-row-index]')
+      .find('button[aria-label="Unassign"]')
+      .click();
+  },
+
+  saveOrganization: () => {
+    cy.do(saveAndClose.click());
   },
 };
