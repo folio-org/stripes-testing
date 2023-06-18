@@ -40,5 +40,9 @@ describe('Organizations', () => {
     Organizations.closeInterface();
     Organizations.addIntrefaceToOrganization(defaultInterface);
     Organizations.checkInterfaceIsAdd(defaultInterface);
+    Organizations.editOrganization();
+    Organizations.selectInterface(defaultInterface);
+    Organizations.deleteInterface();
+    Organizations.cancelOrganization();
   });
 });

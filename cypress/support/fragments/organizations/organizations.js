@@ -36,6 +36,15 @@ const saveButtonInCotact = Button({ id: 'clickable-save-contact-person-footer' }
 const editButton = Button('Edit');
 const contactPeopleSection = Section({ id: 'contactPeopleSection' });
 const addContactButton = Button('Add contact');
+const openInterfaceSectionButton = Button({ id: 'accordion-toggle-button-interfacesSection' });
+const interfaceSection = Section({ id: 'interfacesSection' });
+const addInterfaceButton = Button('Add interface');
+const addInterfacesModal = Modal('Add interfaces');
+const saveButton = Button('Save');
+const searchButtonInModal = Button({ type: 'submit' });
+const timesButton = Button({ icon: 'times' });
+const openintegrationDetailsSectionButton = Button({ id: 'accordion-toggle-button-integrationDetailsSection' });
+const listIntegrationConfigs = MultiColumnList({ id: 'list-integration-configs' });
 
 export default {
 
@@ -99,15 +108,15 @@ export default {
 
   addIntegration: () => {
     cy.do([
-      Button({ id: 'accordion-toggle-button-integrationDetailsSection' }).click(),
+      openintegrationDetailsSectionButton.click(),
       Button({ id: 'clickable-neworganization-integration' }).click(),
     ]);
   },
 
   selectIntegration: (integrationName) => {
     cy.do([
-      Button({ id: 'accordion-toggle-button-integrationDetailsSection' }).click(),
-      MultiColumnList({ id: 'list-integration-configs' }).find(MultiColumnListCell({ content: integrationName })).click(),
+      openintegrationDetailsSectionButton.click(),
+      listIntegrationConfigs.find(MultiColumnListCell({ content: integrationName })).click(),
     ]);
   },
 
@@ -270,11 +279,11 @@ export default {
 
   addNewInterface: (defaultInterface) => {
     cy.do([
-      Button({ id: 'accordion-toggle-button-interfacesSection' }).click(),
-      Section({ id: 'interfacesSection' }).find(Button('Add interface')).click(),
-      Modal('Add interfaces').find(buttonNew).click(),
+      openInterfaceSectionButton.click(),
+      interfaceSection.find(addInterfaceButton).click(),
+      addInterfacesModal.find(buttonNew).click(),
       TextField({ name: 'name' }).fillIn(defaultInterface.name),
-      Button('Save').click()
+      saveButton.click()
     ]);
     InteractorsTools.checkCalloutMessage('The interface was saved');
   },
@@ -284,37 +293,37 @@ export default {
       openContactSectionButton.click(),
       contactPeopleSection.find(addContactButton).click(),
       addContacsModal.find(SearchField({ id: 'input-record-search' })).fillIn(contact.lastName),
-      addContacsModal.find(Button({ type: 'submit' })).click()
+      addContacsModal.find(searchButtonInModal).click()
     ]);
     cy.wait(4000);
     SearchHelper.selectCheckboxFromResultsList();
     cy.do([
-      addContacsModal.find(Button('Save')).click(),
+      addContacsModal.find(saveButton).click(),
       Button({ id: 'organization-form-save' }).click()
     ]);
   },
 
   addIntrefaceToOrganization: (defaultInterface) => {
     cy.do([
-      Button({ id: 'accordion-toggle-button-interfacesSection' }).click(),
-      Section({ id: 'interfacesSection' }).find(Button('Add interface')).click(),
-      Modal('Add interfaces').find(TextField({ name: 'query' })).fillIn(defaultInterface.name),
-      Modal('Add interfaces').find(Button({ type: 'submit' })).click()
+      openInterfaceSectionButton.click(),
+      interfaceSection.find(addInterfaceButton).click(),
+      addInterfacesModal.find(TextField({ name: 'query' })).fillIn(defaultInterface.name),
+      addInterfacesModal.find(searchButtonInModal).click()
     ]);
     cy.wait(4000);
     SearchHelper.selectCheckboxFromResultsList();
     cy.do([
-      Modal('Add interfaces').find(Button('Save')).click(),
+      addInterfacesModal.find(saveButton).click(),
       Button({ id: 'organization-form-save' }).click()
     ]);
   },
 
   closeContact: () => {
-    cy.do(Section({ id: 'view-contact' }).find(Button({ icon: 'times' })).click());
+    cy.do(Section({ id: 'view-contact' }).find(timesButton).click());
   },
 
   closeInterface: () => {
-    cy.do(Section({ id: 'view-interface' }).find(Button({ icon: 'times' })).click());
+    cy.do(Section({ id: 'view-interface' }).find(timesButton).click());
   },
 
   cancelOrganization: () => {
@@ -329,9 +338,25 @@ export default {
   },
 
   checkInterfaceIsAdd: (defaultInterface) => {
-    cy.expect(Section({ id: 'interfacesSection' })
+    cy.do(openInterfaceSectionButton.click());
+    cy.expect(interfaceSection
       .find(KeyValue({ value: defaultInterface.name }))
       .exists());
+  },
+
+  selectInterface: (defaultInterface) => {
+    cy.do([
+      openInterfaceSectionButton.click(),
+      MultiColumnListCell({ content: defaultInterface.name }).click(),
+    ]);
+  },
+
+  deleteInterface: () => {
+    cy.do([
+      actionsButton.click(),
+      Button('Delete').click(),
+      Button({ id: 'clickable-delete-interface-modal-confirm' }).click()
+    ]);
   },
 
   selectContact: (contact) => {
@@ -353,13 +378,13 @@ export default {
 
   checkIntegrationsAdd: (integrationName, integartionDescription) => {
     cy.do([
-      Button({ id: 'accordion-toggle-button-integrationDetailsSection' }).click(),
+      openintegrationDetailsSectionButton.click(),
     ]);
-    cy.expect(MultiColumnList({ id: 'list-integration-configs' })
+    cy.expect(listIntegrationConfigs
       .find(MultiColumnListRow({ index: 0 }))
       .find(MultiColumnListCell({ columnIndex: 0 }))
       .has({ content: integrationName }));
-    cy.expect(MultiColumnList({ id: 'list-integration-configs' })
+    cy.expect(listIntegrationConfigs
       .find(MultiColumnListRow({ index: 0 }))
       .find(MultiColumnListCell({ columnIndex: 1 }))
       .has({ content: integartionDescription }));
@@ -367,21 +392,21 @@ export default {
 
   checkTwoIntegationsAdd: (integrationName1, integartionDescription1, integrationName2, integartionDescription2) => {
     cy.do([
-      Button({ id: 'accordion-toggle-button-integrationDetailsSection' }).click(),
+      openintegrationDetailsSectionButton.click(),
     ]);
-    cy.expect(MultiColumnList({ id: 'list-integration-configs' })
+    cy.expect(listIntegrationConfigs
       .find(MultiColumnListRow({ index: 0 }))
       .find(MultiColumnListCell({ columnIndex: 0 }))
       .has({ content: integrationName1 }));
-    cy.expect(MultiColumnList({ id: 'list-integration-configs' })
+    cy.expect(listIntegrationConfigs
       .find(MultiColumnListRow({ index: 0 }))
       .find(MultiColumnListCell({ columnIndex: 1 }))
       .has({ content: integartionDescription1 }));
-    cy.expect(MultiColumnList({ id: 'list-integration-configs' })
+    cy.expect(listIntegrationConfigs
       .find(MultiColumnListRow({ index: 1 }))
       .find(MultiColumnListCell({ columnIndex: 0 }))
       .has({ content: integrationName2 }));
-    cy.expect(MultiColumnList({ id: 'list-integration-configs' })
+    cy.expect(listIntegrationConfigs
       .find(MultiColumnListRow({ index: 1 }))
       .find(MultiColumnListCell({ columnIndex: 1 }))
       .has({ content: integartionDescription2 }));
@@ -407,7 +432,7 @@ export default {
   },
 
   unAssignInterface: (defaultInterface) => {
-    cy.do(Button({ id: 'accordion-toggle-button-interfacesSection' }).click());
+    cy.do(openInterfaceSectionButton.click());
     cy.get('#interface-list')
       .find('a[class^="mclRow-"]')
       .contains('div[class^="mclCell-"]', defaultInterface.name)
