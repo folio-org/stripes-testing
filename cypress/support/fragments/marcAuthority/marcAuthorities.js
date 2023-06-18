@@ -1,4 +1,4 @@
-import { MultiColumnList, Modal, TextField, Callout, MultiSelect, QuickMarcEditorRow, PaneContent, PaneHeader, Select, Section, HTML, including, Button, MultiColumnListCell, MultiColumnListRow, SearchField, Accordion, Checkbox, ColumnHeader, AdvancedSearchRow } from '../../../../interactors';
+import { MultiColumnList, Modal, TextField, Callout, MultiSelect, MultiSelectOption, QuickMarcEditorRow, Pane, PaneContent, PaneHeader, Select, Section, HTML, including, Button, MultiColumnListCell, MultiColumnListRow, SearchField, Accordion, Checkbox, ColumnHeader, AdvancedSearchRow } from '../../../../interactors';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const authoritiesList = rootSection.find(MultiColumnList({ id: 'authority-result-list' }));
@@ -31,6 +31,8 @@ const buttonClose = Button({ icon: 'times' });
 const checkBoxAllRecords = Checkbox({ ariaLabel: 'Select all records on this page' });
 const resultPaneActionsButton = rootSection.find(Button('Actions'));
 const buttonExportSelected = Button('Export selected records (CSV/MARC)');
+const openAuthSourceMenuButton = Button({ ariaLabel: 'open menu' });
+const sourceFileAccordion = Section({ id: 'sourceFileId' });
 
 export default {
   waitLoading: () => cy.expect(rootSection.exists()),
@@ -258,6 +260,15 @@ export default {
     });
   },
 
+  clickAccordionAndCheckResultList(accordion, record) {
+    cy.do(Accordion(accordion).clickHeader());
+    cy.expect(MultiColumnListCell({ content: including(record) }).exists())
+  },
+
+  chooseAuthoritySourceOption: (option) => {
+      cy.do(MultiSelect({ ariaLabelledby: 'sourceFileId-multiselect-label' }).select([including(option)]));
+  },
+
   clickActionsButton() {
     cy.do(rootSection.find(PaneHeader()).find(actionsButton).click());
   },
@@ -367,6 +378,52 @@ export default {
       AdvancedSearchRow({ index: rowIndex }).find(Select({ label: 'Search options*' })).has({ content: including('Children\'s subject heading') }),
       AdvancedSearchRow({ index: rowIndex }).find(Select({ label: 'Search options*' })).has({ content: including('Genre') }),
     ]);
+  },
+
+  checkAuthoritySourceOptions() {
+    cy.do(sourceFileAccordion.find(openAuthSourceMenuButton).click());
+    cy.expect([
+      sourceFileAccordion.find(MultiSelectOption(including('LC Name Authority file (LCNAF)'))).exists(),
+      sourceFileAccordion.find(MultiSelectOption(including('LC Subject Headings (LCSH)'))).exists(),
+      sourceFileAccordion.find(MultiSelectOption(including('LC Children\'s Subject Headings'))).exists(),
+      sourceFileAccordion.find(MultiSelectOption(including('LC Genre/Form Terms (LCGFT)'))).exists(),
+      sourceFileAccordion.find(MultiSelectOption(including('LC Demographic Group Terms (LCFGT)'))).exists(),
+      sourceFileAccordion.find(MultiSelectOption(including('LC Medium of Performance Thesaurus for Music (LCMPT)'))).exists(),
+      sourceFileAccordion.find(MultiSelectOption(including('Faceted Application of Subject Terminology (FAST)'))).exists(),
+      sourceFileAccordion.find(MultiSelectOption(including('Medical Subject Headings (MeSH)'))).exists(),
+      sourceFileAccordion.find(MultiSelectOption(including('Thesaurus for Graphic Materials (TGM)'))).exists(),
+      sourceFileAccordion.find(MultiSelectOption(including('Rare Books and Manuscripts Section (RBMS)'))).exists(),
+      sourceFileAccordion.find(MultiSelectOption(including('Art & architecture thesaurus (AAT)'))).exists(),
+      sourceFileAccordion.find(MultiSelectOption(including('GSAFD Genre Terms (GSAFD)'))).exists(),
+      sourceFileAccordion.find(MultiSelectOption(including('Not specified'))).exists(),
+      sourceFileAccordion.find(MultiSelectOption({ innerHTML: including('class="totalRecordsLabel') })).exists(),
+    ]);
+  },
+
+  checkResultsListRecordsCountLowerThan(totalRecord) {
+    cy.expect(PaneHeader('MARC authority').exists());
+    cy.intercept('GET', '/search/authorities?*').as('getItems');
+    cy.wait('@getItems', { timeout: 10000 }).then(item => {
+      cy.expect(Pane({ subtitle: `${item.response.body.totalRecords} records found` }).exists());
+      expect(item.response.body.totalRecords < totalRecord).to.be.true;
+    });
+  },
+
+  checkResultsListRecordsCountGreaterThan(totalRecord) {
+    cy.expect(PaneHeader('MARC authority').exists());
+    cy.intercept('GET', '/search/authorities?*').as('getItems');
+    cy.wait('@getItems', { timeout: 10000 }).then(item => {
+      cy.expect(Pane({ subtitle: `${item.response.body.totalRecords} records found` }).exists());
+      expect(item.response.body.totalRecords > totalRecord).to.be.true;
+    });
+  },
+
+  checkSelectedAuthoritySource(option) {
+    cy.expect(sourceFileAccordion.find(MultiSelect({ selected: including(option) })).exists());
+  },
+
+  closeAuthoritySourceOption() {
+    cy.do(sourceFileAccordion.find(Button({ icon: 'times' })).click());
   },
 
   checkResultList(records) {
