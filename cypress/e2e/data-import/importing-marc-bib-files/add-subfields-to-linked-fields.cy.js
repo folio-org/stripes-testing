@@ -224,7 +224,7 @@ describe('Importing MARC Bib files', () => {
     QuickMarcEditor.closeEditorPane();
     InventoryInstance.viewSource();
     InventoryInstance.checkExistanceOfAuthorityIconInMarcViewPane();
-    MarcAuthorities.checkFieldAndContentExistence('100', '‡9')
-    MarcAuthorities.checkFieldAndContentExistence('700', '‡9')
+    MarcAuthorities.checkFieldAndContentExistence('100', '‡9');
+    MarcAuthorities.checkFieldAndContentExistence('700', '‡9');
   });
 });
