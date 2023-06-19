@@ -88,7 +88,7 @@ describe('Orders: Receiving and Check-in', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C739 Serials receiving - "Receiving workflow" and create items in inventory from receiving area (items for receiving includes "Order closed" statuses) (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
+  it('C739 Serials receiving - "Receiving workflow" and create items in inventory from receiving area (items for receiving includes "Order closed" statuses) (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList();
     Orders.createPOLineViaActions();
