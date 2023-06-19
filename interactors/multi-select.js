@@ -34,6 +34,7 @@ export const MultiSelectOption = HTML.extend('multi select option')
     cursored: (el) => el.className.includes('cursor'),
     index: (el) => [...el.parentNode.children].indexOf(el),
     selected: (el) => el.className.includes('selected'),
+    innerHTML: (el) => el.innerHTML,
   });
 
 export const ValueChipRoot = HTML.extend('value chip root')
