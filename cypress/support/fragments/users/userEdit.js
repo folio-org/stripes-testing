@@ -8,7 +8,8 @@ import {
   Checkbox,
   Modal,
   MultiColumnList,
-  Select
+  Select,
+  MultiSelect
 } from '../../../../interactors';
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
@@ -20,6 +21,8 @@ const userDetailsPane = Pane({ id: 'pane-userdetails' });
 const editButton = Button('Edit');
 const extendedInformationAccordion = Accordion('Extended information');
 const externalSystemIdTextfield = TextField('External system ID');
+const customFieldsAccordion = Accordion('Custom fields');
+const selectPermissionsModal = Modal('Select Permissions');
 
 // servicePointIds is array of ids
 const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) => cy.okapiRequest({
@@ -52,7 +55,7 @@ export default {
       cy.do(Button('Search').click());
       cy.do(MultiColumnListRow({ index: 0 }).find(Checkbox()).click());
     });
-    cy.do(saveAndCloseBtn.click());
+    cy.do(selectPermissionsModal.find(saveAndCloseBtn).click());
   },
 
   addServicePoints(...points) {
@@ -118,6 +121,17 @@ export default {
       editButton.click(),
       extendedInformationAccordion.click(),
       extendedInformationAccordion.find(externalSystemIdTextfield).fillIn(externalId),
+    ]);
+    this.saveAndClose();
+  },
+
+  addCustomField(data) {
+    cy.do([
+      userDetailsPane.find(actionsButton).click(),
+      editButton.click(),
+      customFieldsAccordion.click(),
+      customFieldsAccordion.find(MultiSelect({ label: data.fieldLabel })).choose(data.label1),
+      customFieldsAccordion.find(MultiSelect({ label: data.fieldLabel })).choose(data.label2),
     ]);
     this.saveAndClose();
   },

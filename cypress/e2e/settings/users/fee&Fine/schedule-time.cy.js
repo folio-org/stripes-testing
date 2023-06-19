@@ -3,7 +3,7 @@ import DevTeams from '../../../../support/dictionary/devTeams';
 import settingsMenu from '../../../../support/fragments/settingsMenu';
 import TransferFeeFine from '../../../../support/fragments/users/transferFeeFine';
 
-describe('ui-users: Verify that maximum number of items borrowed for loan type (e.g. course reserve) limit works', () => {
+describe('Settings (Users): verifying time picker', () => {
   before(() => {
     cy.loginAsAdmin({ path: settingsMenu.usersTransferCriteria, waiter: TransferFeeFine.waitLoadingTransferCriteria });
   });

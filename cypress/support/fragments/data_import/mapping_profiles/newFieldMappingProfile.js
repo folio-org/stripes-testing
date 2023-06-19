@@ -480,6 +480,7 @@ export default {
       suppressFromDiscoverySelect.focus(),
       suppressFromDiscoverySelect.choose(suppressFromDiscavery)
     ]);
+    waitLoading();
   },
 
   addStaffSuppress:(staffSuppress) => {
@@ -700,5 +701,27 @@ export default {
       .then(({ response }) => {
         return response;
       });
-  }
+  },
+
+  createMappingProfileViaApiMarc: (name, incomingRecordType, folioRecordType) => {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: 'data-import-profiles/mappingProfiles',
+      body: {
+        profile: {
+          name: name,
+          incomingRecordType: incomingRecordType,
+          existingRecordType: folioRecordType,
+          mappingDetails: {
+            marcMappingOption: "UPDATE",
+            name: "marcAuthority",
+            recordType: "MARC_AUTHORITY"
+          }
+        }
+      },
+      isDefaultSearchParamsRequired: false,
+    }).then(({ response }) => {
+      return response;
+    });
+  },
 };

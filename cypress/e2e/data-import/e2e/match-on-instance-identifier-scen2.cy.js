@@ -63,7 +63,7 @@ describe('ui-data-import', () => {
   };
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: `C347829autotestActionProf${getRandomPostfix()}`,
+    profileName: `C347829autotestJobProf${getRandomPostfix()}`,
     acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 

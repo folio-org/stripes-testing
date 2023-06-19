@@ -133,7 +133,7 @@ export default {
   },
 
   checkItemDetails(location, barcode, status) {
-    this.checkEffectiveLocation(location);
+    this.verifyEffectiveLocation(location);
     this.checkBarcode(barcode);
     this.checkStatus(status);
   },
