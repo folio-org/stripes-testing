@@ -944,4 +944,11 @@ export default {
     ]);
     cy.wait(4000);
   },
+
+  receiveOrderLineViaActions() {
+    cy.do([PaneHeader({ id: 'paneHeaderorder-lines-details' })
+      .find(actionsButton).click(),
+    Button('Receive').click(),
+    ]);
+  },
 };

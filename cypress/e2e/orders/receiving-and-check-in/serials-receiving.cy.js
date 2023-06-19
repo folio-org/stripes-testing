@@ -7,15 +7,12 @@ import Orders from '../../../support/fragments/orders/orders';
 import Receiving from '../../../support/fragments/receiving/receiving';
 import TopMenu from '../../../support/fragments/topMenu';
 import Helper from '../../../support/fragments/finance/financeHelper';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import Organizations from '../../../support/fragments/organizations/organizations';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
 import Users from '../../../support/fragments/users/users';
 
@@ -41,8 +38,12 @@ describe('Orders: Receiving and Check-in', () => {
       }
     ]
   };
-  const barcodeForFirstItem = Helper.getRandomBarcode();
-  const barcodeForSecondItem = Helper.getRandomBarcode();
+  const firstPiece = {
+    copyNumber: Helper.getRandomBarcode(),
+    enumeration: Helper.getRandomBarcode(),
+    chronology: Helper.getRandomBarcode(),
+    caption: `autotestCaption-${Helper.getRandomBarcode()}`,
+  };
 
   let orderNumber;
   let user;
@@ -63,17 +64,9 @@ describe('Orders: Receiving and Check-in', () => {
                 organization.id = organizationsResponse;
                 order.vendor = organizationsResponse;
               });
-
-            cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
             cy.createOrderApi(order)
               .then((response) => {
                 orderNumber = response.body.poNumber;
-                Orders.searchByParameter('PO number', orderNumber);
-                Orders.selectFromResultsList();
-                Orders.createPOLineViaActions();
-                OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
-                OrderLines.fillInPOLineInfoForExportWithLocationForPhisicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', locationResponse.institutionId, '2');
-                OrderLines.backToEditingOrder();
               });
           });
       });
@@ -81,6 +74,7 @@ describe('Orders: Receiving and Check-in', () => {
     cy.createTempUser([
       permissions.uiInventoryViewInstances.gui,
       permissions.uiOrdersEdit.gui,
+      permissions.uiOrdersCreate.gui,
       permissions.uiOrdersView.gui,
       permissions.uiReceivingViewEditCreate.gui,
     ])
@@ -91,40 +85,23 @@ describe('Orders: Receiving and Check-in', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin({ path:TopMenu.receivingPath, waiter: Receiving.waitLoading });
-    Orders.searchByParameter('PO number', orderNumber);
-    Receiving.selectFromResultsList();
-    Receiving.unreceiveFromReceivedSection();
-    cy.visit(TopMenu.ordersPath);
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList();
-    Orders.unOpenOrder(orderNumber);
-    OrderLines.selectPOLInOrder(0);
-    OrderLines.deleteOrderLine();
-    // Need to wait until the order is opened before deleting it
-    cy.wait(2000);
-    Orders.deleteOrderViaApi(order.id);
     Users.deleteViaApi(user.userId);
   });
 
   it('C739 Serials receiving - "Receiving workflow" and create items in inventory from receiving area (items for receiving includes "Order closed" statuses) (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList(orderNumber);
+    Orders.selectFromResultsList();
+    Orders.createPOLineViaActions();
+    OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
+    OrderLines.fillInPOLineInfoForExportWithLocationForPhisicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId, '2');
+    OrderLines.backToEditingOrder();
     Orders.openOrder();
-    Orders.receiveOrderViaActions();
+    OrderLines.selectPOLInOrder(0);
+    OrderLines.receiveOrderLineViaActions();
     Receiving.selectFromResultsList();
-    Receiving.receiveFromExpectedSection();
-    Receiving.receiveAllPhysicalItemsWithBarcodes(barcodeForFirstItem, barcodeForSecondItem);
-    Receiving.clickOnInstance();
-    InventoryInstance.openHoldingsAccordion(location.name);
-    InventorySearchAndFilter.switchToItem();
-    InventorySearchAndFilter.searchByParameter('Barcode', barcodeForFirstItem);
-    ItemRecordView.checkItemDetails(location.name, barcodeForFirstItem, ITEM_STATUS_NAMES.IN_PROCESS);
-    ItemActions.closeItem();
-    InventorySearchAndFilter.switchToItem();
-    InventorySearchAndFilter.searchByParameter('Barcode', barcodeForSecondItem);
-    ItemRecordView.checkItemDetails(location.name, barcodeForSecondItem, ITEM_STATUS_NAMES.IN_PROCESS);
-    ItemActions.closeItem();
-    InventorySearchAndFilter.switchToItem();
+    Receiving.addPiece(firstPiece.caption, firstPiece.copyNumber, firstPiece.enumeration, firstPiece.chronology);
+    Receiving.selectPiece(firstPiece.caption);
+    Receiving.selectConnectedInEditPiece();
+    ItemRecordView.checkStatus(ITEM_STATUS_NAMES.ON_ORDER);
   });
 });
