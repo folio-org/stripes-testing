@@ -33,6 +33,7 @@ const resultPaneActionsButton = rootSection.find(Button('Actions'));
 const buttonExportSelected = Button('Export selected records (CSV/MARC)');
 const openAuthSourceMenuButton = Button({ ariaLabel: 'open menu' });
 const sourceFileAccordion = Section({ id: 'sourceFileId' });
+const marcAuthPaneHeader = PaneHeader('MARC authority');
 
 export default {
   waitLoading: () => cy.expect(rootSection.exists()),
@@ -401,7 +402,7 @@ export default {
   },
 
   checkResultsListRecordsCountLowerThan(totalRecord) {
-    cy.expect(PaneHeader('MARC authority').exists());
+    cy.expect(marcAuthPaneHeader.exists());
     cy.intercept('GET', '/search/authorities?*').as('getItems');
     cy.wait('@getItems', { timeout: 10000 }).then(item => {
       cy.expect(Pane({ subtitle: `${item.response.body.totalRecords} records found` }).exists());
@@ -410,7 +411,7 @@ export default {
   },
 
   checkResultsListRecordsCountGreaterThan(totalRecord) {
-    cy.expect(PaneHeader('MARC authority').exists());
+    cy.expect(marcAuthPaneHeader.exists());
     cy.intercept('GET', '/search/authorities?*').as('getItems');
     cy.wait('@getItems', { timeout: 10000 }).then(item => {
       cy.expect(Pane({ subtitle: `${item.response.body.totalRecords} records found` }).exists());
