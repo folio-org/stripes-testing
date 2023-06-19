@@ -26,7 +26,6 @@ import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
   let userId = null;
-  let instanceHrid = null;
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const filePathForCreateInstance = 'marcFileForMatchOnIdentifierForCreate.mrc';
   const filePathForUpdateInstance = 'marcFileForMatchOnIdentifierForUpdate_3.mrc';
@@ -40,7 +39,7 @@ describe('ui-data-import', () => {
     { type: 'System control number', value: '(AMB)84714376518561876438' },
   ];
   const matchProfile = {
-    profileName: `C347831 C347830 ID Match Test - Update3 (OCLC).${getRandomPostfix()}`,
+    profileName: `C347830 ID Match Test - Update3 (OCLC).${getRandomPostfix()}`,
     incomingRecordFields: {
       field: '035',
       in1: '*',
@@ -55,7 +54,7 @@ describe('ui-data-import', () => {
     existingRecordOption: NewMatchProfile.optionsList.systemControlNumber
   };
   const mappingProfile = {
-    name: `C347831 ID Match Test - Update3 (OCLC).${getRandomPostfix()}`,
+    name: `C347830 ID Match Test - Update3 (OCLC).${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     staffSuppress: 'Unmark for all affected records',
     catalogedDate: '"2021-12-03"',
@@ -64,12 +63,12 @@ describe('ui-data-import', () => {
   };
   const actionProfile = {
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-    name: `C347831 ID Match Test - Update3 (OCLC).${getRandomPostfix()}`,
+    name: `C347830 ID Match Test - Update3 (OCLC).${getRandomPostfix()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: `C347831 ID Match Test - Update3 (OCLC).${getRandomPostfix()}`,
+    profileName: `C347830 ID Match Test - Update3 (OCLC).${getRandomPostfix()}`,
     acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
@@ -180,7 +179,5 @@ describe('ui-data-import', () => {
     InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);
     InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
     InstanceRecordView.verifyGeneralNoteContent(instanceGeneralNote);
-    InstanceRecordView.getAssignedHRID()
-      .then(initialInstanceHrId => { instanceHrid = initialInstanceHrId; });
   });
 });
