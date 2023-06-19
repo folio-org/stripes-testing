@@ -642,16 +642,43 @@ export default {
     cy.do(Select({ name:'profile.mappingDetails.marcMappingOption' }).choose(actionsFieldMappingsForMarc.modify));
   },
 
-  fillModificationSectionWithAdd:(action, fieldNumber, subfieldInFirstField = '*', subaction, subfieldTextInFirstField, subfieldInSecondField, subfieldTextInSecondField) => {
+  // modifications: {
+  //   action: 'Add',
+  //   field: '650',
+  //   ind1: '',
+  //   ind2: '4',
+  //   subfield: 'a',
+  //   subaction: '',
+  //   data: 'Test update'
+  // }
+
+  fillModificationSectionWithAdd:({
+    action,
+    field,
+    ind1,
+    ind2,
+    subfield,
+    data,
+    subaction,
+    subfieldInd1,
+    subfieldInd2
+    }) => {
     cy.do([
       Select({ name:'profile.mappingDetails.marcMappingDetails[0].action' }).choose(action),
-      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.field' }).fillIn(fieldNumber),
-      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subfield' }).fillIn(subfieldInFirstField),
-      Select({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subaction' }).choose(subaction),
-      TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].data.text' }).fillIn(subfieldTextInFirstField),
-      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].subfield' }).fillIn(subfieldInSecondField),
-      TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].data.text' }).fillIn(subfieldTextInSecondField)
+      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.field' }).fillIn(field),
+      TextField({name: 'profile.mappingDetails.marcMappingDetails[0].field.indicator1'}).fillIn(ind1),
+      TextField({name: 'profile.mappingDetails.marcMappingDetails[0].field.indicator2'}).fillIn(ind2),
+      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subfield' }).fillIn(subfield),
+      TextArea({name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].data.text'}).fillIn(data)
     ]);
+      if(subaction){
+        cy.do([
+          Select({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subaction' }).choose(subaction),
+          TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].data.text' }).fillIn(subfieldInd1),
+          TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].subfield' }).fillIn(subfieldInd2),
+        ]);
+      }
+      
   },
 
   fillModificationSectionWithDelete:(action, fieldNumber, number) => {
