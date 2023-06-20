@@ -334,6 +334,14 @@ export default {
     ]);
   },
 
+  verifyAfterLinkingUsingRowIndex(tag, rowIndex) {
+    cy.expect([
+      Callout(`Field ${tag} has been linked to a MARC authority record.`).exists(),
+      QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).exists(),
+      QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorutyIconButton).exists(),
+    ]);
+  },
+
   verifyTagFieldAfterLinking(rowIndex, tag, secondBox, thirdBox, content, eSubfield, zeroSubfield, seventhBox) {
     cy.expect([
       QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].tag` })).has({disabled: true, value: tag}),

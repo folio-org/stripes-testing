@@ -78,15 +78,18 @@ describe('Importing MARC Bib files', () => {
   const linkingTagAndValues = [
     {
       rowIndex: 33,
-      value: 'Coates, Ta-Nehisi'
+      value: 'Coates, Ta-Nehisi',
+      tag: 100
     },
     {
       rowIndex: 75,
-      value: 'Chin, Staceyann,'
+      value: 'Chin, Staceyann,',
+      tag: 700
     },
     {
       rowIndex: 78,
-      value: 'Lee, Stan, 1922-2018'
+      value: 'Lee, Stan, 1922-2018',
+      tag: 700
     },
   ];
   const createdAuthorityIDs = [];
@@ -179,10 +182,7 @@ describe('Importing MARC Bib files', () => {
       InventoryInstance.verifySearchOptions();
       InventoryInstance.searchResults(linking.value);
       InventoryInstance.clickLinkButton();
-      InventoryInstance.closeDetailsView();
-      InventoryInstance.closeFindAuthorityModal();
-      // waiter needed for the fileds to be linked.
-      cy.wait(1000);
+      QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
     });
     QuickMarcEditor.pressSaveAndClose();
     QuickMarcEditor.checkAfterSaveAndClose();
