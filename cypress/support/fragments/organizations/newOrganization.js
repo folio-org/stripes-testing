@@ -56,5 +56,9 @@ export default {
   defaultContact:{
     firstName:`AT_FN_${getRandomPostfix()}`,
     lastName:`AT_LN_${getRandomPostfix()}`,
+  },
+
+  defaultInterface:{
+    name:`AIN_${getRandomPostfix()}`,
   }
 };

@@ -180,7 +180,8 @@ export const INSTANCE_STATUS_TERM_NAMES = {
   BATCH_LOADED: 'Batch Loaded',
   CATALOGED: 'Cataloged',
   UNCATALOGED: 'Uncataloged',
-  OTHER: 'Other'
+  OTHER: 'Other',
+  NOTYETASSIGNED: 'Not yet assigned'
 };
 
 export const CALL_NUMBER_TYPE_NAMES = {

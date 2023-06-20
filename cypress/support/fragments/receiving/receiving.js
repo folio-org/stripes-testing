@@ -178,6 +178,10 @@ export default {
     cy.do(Section({ id: 'receiving-results-pane' }).find(Link(POLName)).click());
   },
 
+  selectConnectedInEditPiece:() => {
+    cy.do(Modal('Edit piece').find(Link('Connected')).click());
+  },
+
   receiveFromExpectedSection:() => {
     cy.do([
       Section({ id: 'expected' }).find(actionsButton).click(),
