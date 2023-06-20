@@ -7,7 +7,7 @@ import {
   Pane,
   MultiColumnListCell,
   Modal,
-  KeyValue
+  KeyValue, MultiColumnListHeader
 } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 import DateTools from '../../../utils/dateTools';
@@ -35,10 +35,12 @@ function fillGeneralInfo(fileName, providerName) {
 }
 
 function saveAndCloseForm() {
-  return cy.do([
+  cy.do([
     saveAndCloseBtn.click(),
     saveBtn.click()
   ]);
+  // time for saving on back-end side
+  cy.wait(2000);
 }
 
 const configurations = {
@@ -144,5 +146,13 @@ export default {
 
   verifyCaiaSoftWarning() {
     cy.expect(HTML('CaiaSoft Accession tables are available after remote storage has been configured.').exists());
+  },
+
+  verifyAccessionTablePane() {
+    cy.expect([
+      MultiColumnListHeader('Original location').exists(),
+      MultiColumnListHeader('Final location (Remote)').exists(),
+      MultiColumnListHeader('Actions').exists(),
+    ]);
   }
 };

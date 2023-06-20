@@ -1,4 +1,4 @@
-import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Section, Button, Modal, Callout, TextField, and, some, Pane, HTML, including, PaneContent } from '../../../interactors';
+import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Section, Button, Modal, Callout, TextField, and, some, Pane, HTML, including, PaneContent, PaneHeader } from '../../../interactors';
 import dateTools from '../utils/dateTools';
 import getRandomPostfix from '../utils/stringTools';
 import InventoryInstance from './inventory/inventoryInstance';
@@ -32,6 +32,7 @@ const unlinkButtonInsideModal = Button({ id: 'clickable-quick-marc-confirm-unlin
 const calloutAfterSaveAndClose = Callout('This record has successfully saved and is in process. Changes may not appear immediately.');
 const calloutUpdatedRecord = Callout('Record has been updated.');
 const calloutUpdatedLinkedBibRecord = Callout('Record has been updated. 2 linked bibliographic record(s) updates have begun.');
+const closeButton = Button({ icon: 'times' });
 const validRecord = InventoryInstance.validOCLC;
 const specRetInputNamesHoldings008 = ['records[3].content.Spec ret[0]',
   'records[3].content.Spec ret[1]',
@@ -229,6 +230,14 @@ export default {
     ]);
   },
 
+  closeEditorPane() {
+    cy.do(PaneHeader().find(closeButton).click());
+    cy.expect([
+      rootSection.absent(),
+      instanceDetailsPane.exists(),
+    ]);
+  },
+
   checkFieldAbsense(tag) {
     cy.expect(PaneContent({ id: 'marc-view-pane-content', text: (including(tag)) }).absent());
   },
@@ -322,6 +331,14 @@ export default {
       Callout(`Field ${tag} has been linked to a MARC authority record.`).exists(),
       QuickMarcEditorRow({ tagValue: tag }).find(unlinkIconButton).exists(),
       QuickMarcEditorRow({ tagValue: tag }).find(viewAuthorutyIconButton).exists(),
+    ]);
+  },
+
+  verifyAfterLinkingUsingRowIndex(tag, rowIndex) {
+    cy.expect([
+      Callout(`Field ${tag} has been linked to a MARC authority record.`).exists(),
+      QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).exists(),
+      QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorutyIconButton).exists(),
     ]);
   },
 
