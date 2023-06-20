@@ -334,6 +334,10 @@ export default {
     cy.expect(marcViewPaneContent.find(Link()).absent());
   },
 
+  checkExistanceOfAuthorityIconInMarcViewPane() {
+    cy.expect(marcViewPaneContent.find(Link()).exists());
+  },
+
   verifyAndClickLinkIcon(tag) {
     // Waiter needed for the link to be loaded properly.
     cy.wait(1000);
