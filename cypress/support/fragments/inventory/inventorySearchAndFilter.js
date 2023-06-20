@@ -202,6 +202,7 @@ export default {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000);
     cy.do(Select('Search field index').choose('Call numbers'));
+    cy.expect(effectiveLocationInput.exists());
   },
 
   selectBrowseSubjects() {
@@ -244,6 +245,15 @@ export default {
     cy.expect(Accordion({ id: 'instancesTags' }).absent());
   },
 
+  verifyBrowseOptions() {
+    cy.do(browseSearchAndFilterInput.click());
+    cy.expect([
+      browseSearchAndFilterInput.has({ content: including('Call numbers') }),
+      browseSearchAndFilterInput.has({ content: including('Contributors') }),
+      browseSearchAndFilterInput.has({ content: including('Subjects') }),
+    ]);
+  },
+
   verifyKeywordsAsDefault() {
     cy.get('#input-record-search-qindex').then((elem) => {
       expect(elem.text()).to.include('Select a browse option');
@@ -259,6 +269,14 @@ export default {
     cy.expect(callNumberBrowsePane.exists());
     cy.expect(callNumberBrowsePane.has({ subtitle: 'Enter search criteria to start browsing' }));
     cy.expect(HTML(including('Browse for results entering a query or choosing a filter.')).exists());
+  },
+
+  verifyCallNumberBrowseNotEmptyPane() {
+    cy.expect([
+      callNumberBrowsePane.exists(),
+      Pane({ subtitle: 'Enter search criteria to start browsing' }).absent(),
+      HTML(including('Browse for results entering a query or choosing a filter.')).absent()
+    ]);
   },
 
   verifyCallNumberBrowsePane() {
