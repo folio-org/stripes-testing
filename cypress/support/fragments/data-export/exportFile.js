@@ -1,4 +1,5 @@
 import { recurse } from 'cypress-recurse';
+import { HTML } from '@interactors/html';
 import { Modal, Button, Select, Pane, MultiColumnListCell, PaneHeader } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 import FileManager from '../../utils/fileManager';
@@ -140,4 +141,16 @@ export default {
           });
       });
   },
+
+  waitLoading() {
+    cy.expect(Pane('Jobs').exists());
+  },
+
+  verifyWarningWithInvalidFileExtension() {
+    cy.expect(Modal().find(HTML('Only file with .csv or .cql extension can be uploaded')).exists());
+  },
+
+  clickCancelButton() {
+    cy.do(Button('Cancel').click());
+  }
 };
