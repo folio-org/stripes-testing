@@ -23,7 +23,8 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it('C368012 Verify that the user without "Bulk edit - Can view logs" permission cannot access to the logs. (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C347868\n' +
+      'Verify that user without Bulk Edit: View permissions cannot access Bulk Edit app (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
       cy.visit(TopMenu.bulkEditPath);
       BulkEditSearchPane.verifyNoPermissionWarning();
     });
