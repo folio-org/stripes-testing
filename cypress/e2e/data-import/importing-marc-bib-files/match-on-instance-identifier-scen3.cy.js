@@ -8,6 +8,7 @@ import { FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES } from '../../../support/constants';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import DataImport from '../../../support/fragments/data_import/dataImport';
+import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -24,13 +25,13 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
-  let userId;
+  let userId = null;
+  const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const filePathForCreateInstance = 'marcFileForMatchOnIdentifierForCreate.mrc';
-  const filePathForUpdateInstance = 'marcFileForMatchOnIdentifierForUpdate_2.mrc';
+  const filePathForUpdateInstance = 'marcFileForMatchOnIdentifierForUpdate_3.mrc';
   const fileNameForCreateInstance = `C347829autotestFile.${getRandomPostfix()}.mrc`;
   const fileNameForUpdateInstance = `C347829autotestFile.${getRandomPostfix()}.mrc`;
-  const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-  const instanceGeneralNote = 'IDENTIFIER UPDATE 2';
+  const instanceGeneralNote = 'IDENTIFIER UPDATE 3';
   const resourceIdentifiers = [
     { type: 'UPC', value: 'ORD32671387-4' },
     { type: 'OCLC', value: '(OCoLC)84714376518561876438' },
@@ -38,36 +39,52 @@ describe('ui-data-import', () => {
     { type: 'System control number', value: '(AMB)84714376518561876438' },
   ];
   const matchProfile = {
-    profileName: `C347829autotestMatchProf${getRandomPostfix()}`,
+    profileName: `C347830 ID Match Test - Update3 (OCLC).${getRandomPostfix()}`,
     incomingRecordFields: {
-      field: '024',
-      in1: '1',
-      subfield: 'z'
+      field: '035',
+      in1: '*',
+      in2: '*',
+      subfield: 'a'
     },
     matchCriterion: 'Exactly matches',
+    qualifierType: 'Begins with',
+    qualifierValue: '(OCoLC)',
+    compareValue: 'Numerics only',
     existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
-    instanceOption: 'Identifier: Invalid UPC',
+    existingRecordOption: NewMatchProfile.optionsList.systemControlNumber
   };
   const mappingProfile = {
-    name: `C347829autotestMappingProf${getRandomPostfix()}`,
+    name: `C347830 ID Match Test - Update3 (OCLC).${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-    staffSuppress: 'Mark for all affected records',
-    catalogedDate: '"2021-12-02"',
-    catalogedDateUI: '2021-12-02',
-    instanceStatus: INSTANCE_STATUS_TERM_NAMES.CATALOGED
+    staffSuppress: 'Unmark for all affected records',
+    catalogedDate: '"2021-12-03"',
+    catalogedDateUI: '2021-12-03',
+    instanceStatus: INSTANCE_STATUS_TERM_NAMES.NOTYETASSIGNED
   };
   const actionProfile = {
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-    name: `C347829autotestActionProf${getRandomPostfix()}`,
+    name: `C347830 ID Match Test - Update3 (OCLC).${getRandomPostfix()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: `C347829autotestJobProf${getRandomPostfix()}`,
+    profileName: `C347830 ID Match Test - Update3 (OCLC).${getRandomPostfix()}`,
     acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
-  beforeEach('create test data', () => {
+  before('create test data', () => {
+    cy.getAdminToken()
+      .then(() => {
+        InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value)
+          .then(instances => {
+            if (instances) {
+              instances.forEach(({ id }) => {
+                InventoryInstance.deleteInstanceViaApi(id);
+              });
+            }
+          });
+      });
+
     cy.createTempUser([
       permissions.moduleDataImportEnabled.gui,
       permissions.dataImportDeleteLogs.gui,
@@ -86,13 +103,6 @@ describe('ui-data-import', () => {
           waiter: DataImport.waitLoading
         });
       });
-
-    InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value)
-      .then(instances => {
-        instances.forEach(({ id }) => {
-          InventoryInstance.deleteInstanceViaApi(id);
-        });
-      });
   });
 
   after('delete test data', () => {
@@ -102,9 +112,16 @@ describe('ui-data-import', () => {
     ActionProfiles.deleteActionProfile(actionProfile.name);
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
     Users.deleteViaApi(userId);
+    InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value)
+      .then(instances => {
+        instances.forEach(({ id }) => {
+          InventoryInstance.deleteInstanceViaApi(id);
+        });
+      });
   });
 
-  it('C347829 Match on Instance identifier match meets both the Identifier type and Data requirements Scenario 2 (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+  it('C347830 Match on Instance identifier match meets both the Identifier type and Data requirements Scenario 3 (folijet)',
+  { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
     DataImport.verifyUploadState();
     DataImport.uploadFile(filePathForCreateInstance, fileNameForCreateInstance);
@@ -122,8 +139,9 @@ describe('ui-data-import', () => {
     InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[3].type, resourceIdentifiers[3].value, 3);
 
     cy.visit(SettingsMenu.matchProfilePath);
-    MatchProfiles.createMatchProfile(matchProfile);
-
+    MatchProfiles.createMatchProfileWithQualifierAndComparePart(matchProfile);
+    MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
+    
     cy.visit(SettingsMenu.mappingProfilePath);
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
@@ -151,12 +169,15 @@ describe('ui-data-import', () => {
     JobProfiles.waitFileIsImported(fileNameForUpdateInstance);
     Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     Logs.openFileDetails(fileNameForUpdateInstance);
-    Logs.verifyInstanceStatus(0, 3, FileDetails.status.noAction);
-    Logs.verifyInstanceStatus(1, 3, 'Updated');
-    Logs.clickOnHotLink(1, 3, 'Updated');
-    InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
-    InstanceRecordView.verifyMarkAsSuppressed();
+    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc);
+    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance);
+    FileDetails.checkStatusInColumn(FileDetails.status.dash, FileDetails.columnNameInResultList.srsMarc, 1);
+    FileDetails.checkStatusInColumn(FileDetails.status.noAction, FileDetails.columnNameInResultList.instance, 1);
+
+    // check updated instance in Inventory
+    FileDetails.openInstanceInInventory('Updated');
     InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);
+    InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
     InstanceRecordView.verifyGeneralNoteContent(instanceGeneralNote);
   });
 });

@@ -60,7 +60,7 @@ function selectExistingRecordType(existingRecordType) {
 
 function fillQualifierInIncomingPart(qualifierType, qualifierValue){
   cy.contains('Incoming MARC Bibliographic record').then(elem => {
-    elem.parent()[0].querySelector('input[type="checkbox').click();
+    elem.parent()[0].querySelectorAll('input[type="checkbox"]')[0].click();
   });
   cy.do([
     Select({ name:'profile.matchDetails[0].incomingMatchExpression.qualifier.qualifierType' }).choose(qualifierType),
@@ -100,6 +100,14 @@ function selectExistingRecordField(existingRecordOption){
     .find(SelectionOption(existingRecordOption)).click());
 }
 
+function fillOnlyComparePartOfTheValue(value){
+  cy.contains('Incoming MARC Bibliographic record').then(elem => {
+    elem.parent()[0].querySelectorAll('input[type="checkbox"]')[1].click();
+  });
+  cy.do(Select({ name:'profile.matchDetails[0].incomingMatchExpression.qualifier.comparisonPart' })
+    .choose(value));
+}
+
 export default {
   optionsList,
   fillName,
@@ -109,6 +117,7 @@ export default {
   fillQualifierInExistingPart,
   selectExistingRecordField,
   fillStaticValue,
+  fillOnlyComparePartOfTheValue,
 
   fillMatchProfileForm:({
     profileName,
@@ -203,6 +212,29 @@ export default {
     selectExistingRecordField(existingRecordOption);
   },
 
+  fillMatchProfileWithStaticValueAndComparePartValue({
+    profileName,
+    incomingRecordFields,
+    matchCriterion,
+    existingRecordOption,
+    existingRecordType,
+    compareValue,
+    qualifierType,
+    qualifierValue
+  }) {
+    fillName(profileName);
+    selectExistingRecordType(existingRecordType);
+    fillIncomingRecordFields(incomingRecordFields.field, 'field');
+    fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
+    fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
+    fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
+    cy.wait(2000);
+    fillQualifierInIncomingPart(qualifierType, qualifierValue);
+    fillOnlyComparePartOfTheValue(compareValue);
+    selectMatchCriterion(matchCriterion);
+    selectExistingRecordField(existingRecordOption);
+  },
+
   fillMatchProfileWithQualifierInIncomingAndExistingRecords({
     profileName,
     existingRecordType,
@@ -279,74 +311,5 @@ export default {
       .then(({ response }) => {
         return response;
       });
-  },
-
-  createMatchProfileViaApiMarc: (name, incomingRecords, existingRecords) => {
-    return cy.okapiRequest({
-      method: 'POST',
-      path: 'data-import-profiles/matchProfiles',
-      body: {
-        profile: {
-          incomingRecordType: incomingRecords.type,
-          matchDetails: [{
-            incomingRecordType: incomingRecords.type,
-            incomingMatchExpression: {
-              fields: [
-                {
-                  label: 'field',
-                  value: incomingRecords.field
-                },
-                {
-                  label: 'indicator1',
-                  value: incomingRecords.ind1
-                },
-                {
-                  label: 'indicator2',
-                  value: incomingRecords.ind2
-                },
-                {
-                  label: 'recordSubfield', 
-                  value: incomingRecords.subfield
-                }
-              ],
-              staticValueDetails: null,
-              dataValueType: 'VALUE_FROM_RECORD'
-            },
-            existingRecordType: existingRecords.type,
-            existingMatchExpression: {
-              fields: [
-                {
-                  label: 'field',
-                  value: existingRecords.field
-                },
-                {
-                  label: 'indicator1',
-                  value: existingRecords.ind1
-                },
-                {
-                  label: 'indicator2',
-                  value: existingRecords.ind2
-                },
-                {
-                  label: 'recordSubfield', 
-                  value: existingRecords.subfield
-                }
-              ],
-              staticValueDetails: null,
-              dataValueType: 'VALUE_FROM_RECORD'
-            },
-            matchCriterion: 'EXACTLY_MATCHES'
-          }],
-          name: name,
-          existingRecordType: existingRecords.type
-        },
-        addedRelations: [],
-        deletedRelations: []
-      },
-      isDefaultSearchParamsRequired: false,
-    })
-      .then(({ response }) => {
-        return response;
-      });
-  },
+  }
 };
