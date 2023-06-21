@@ -68,7 +68,7 @@ describe('bulk-edit', () => {
     it('C347870 Verify that user with Bulk Edit: View and Edit permission can start bulk editing (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
       cy.visit(TopMenu.bulkEditPath);
       BulkEditSearchPane.actionsIsAbsent();
-      BulkEditSearchPane.isDragAndDropAreaDisabled();
+      BulkEditSearchPane.isDragAndDropAreaDisabled(true);
     });
   });
 });
