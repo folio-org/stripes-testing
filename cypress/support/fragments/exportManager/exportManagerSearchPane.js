@@ -210,4 +210,8 @@ export default {
     cy.do(Button('Rerun').click());
     cy.wait(7000);
   },
+
+  verifyNoPermissionWarning() {
+    cy.expect(HTML('You don\'t have permission to view this app/record').exists());
+  },
 };
