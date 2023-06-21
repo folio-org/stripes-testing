@@ -9,8 +9,10 @@ import { Button,
   Select,
   Pane,
   Link,
-  MultiColumnListCell, 
-  Modal} from '../../../../../interactors';
+  MultiColumnListCell,
+  Modal,
+  MultiColumnList,
+  MultiColumnListRow } from '../../../../../interactors';
 import FinanceHelper from '../financeHelper';
 import getRandomPostfix from '../../../utils/stringTools';
 
@@ -244,6 +246,18 @@ export default {
       .click();
   },
 
+  checkRolloverLogs:(dataFile) => {
+    cy.expect([
+      MultiColumnList({ id: 'rollover-logs-list' }).find(MultiColumnListCell('Successful')).exists()
+    ]);
+    cy.get('#rollover-logs-list')
+      .find('div[role="gridcell"]')
+      .contains('a', `${dataFile}-result`);
+      cy.get('#rollover-logs-list')
+      .find('div[role="gridcell"]')
+      .contains('a', `${dataFile}-settings`);
+  },
+
 
   checkDownloadedFile(fileName, fund, secondFiscalYear, allowableEncumbrance, allowableExpenditure, initialAllocation, totalAllocation, totalFunding, cashBalance, available) {
     cy.wait(3000); // wait for the file to load
@@ -271,6 +285,22 @@ export default {
   deleteDownloadedFile(fileName) {
     const filePath = `cypress\\downloads\\${fileName}`;
     cy.exec(`del "${filePath}"`, { failOnNonZeroExit: false });
+  },
+
+  fillInTestRolloverInfoCashBalanceWithNotActiveAllocation : (fiscalYear, rolloverBudgetValue, rolloverValueAs) => {
+    cy.do(fiscalYearSelect.click());
+    // Need to wait,while date of fiscal year will be loaded
+    cy.wait(3000);
+    cy.do([
+      Select({ name: 'toFiscalYearId' }).choose(fiscalYear),
+      rolloverBudgetVelue.choose(rolloverBudgetValue),
+      addAvailableToSelect.choose(rolloverValueAs),
+      Button('Test rollover').click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      Button({ id: 'clickable-test-rollover-confirmation-confirm' }).click(),
+    ]);
   },
 
 };
