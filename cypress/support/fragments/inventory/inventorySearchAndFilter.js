@@ -17,7 +17,8 @@ import {
   Section,
   MultiSelect,
   MultiSelectOption,
-  MultiColumnListRow
+  MultiColumnListRow,
+  DropdownMenu
 } from '../../../../interactors';
 import InventoryActions from './inventoryActions';
 import InventoryInstances from './inventoryInstances';
@@ -549,6 +550,14 @@ export default {
     cy.do([
       instanceDetailsSection.find(actionsButton).click(),
       editInstanceButton.click(),
+    ]);
+  },
+
+  verifyActionButtonOptions() {
+    cy.do(paneResultsSection.find(actionsButton).click());
+    cy.expect([
+      Button('New').exists(),
+      DropdownMenu().find(HTML('Show columns')).exists(),
     ]);
   },
 
