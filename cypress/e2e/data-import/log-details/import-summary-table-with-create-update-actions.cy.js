@@ -1,4 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
+import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import { LOAN_TYPE_NAMES,
@@ -18,7 +19,6 @@ import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
 import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -28,16 +28,24 @@ import NewFieldMappingProfile from '../../../support/fragments/data_import/mappi
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import permissions from '../../../support/dictionary/permissions';
+import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
 
 describe('ui-data-import', () => {
   let user;
-  let instanceHRID;
+  let instanceHrids;
+  const quantityOfUpdatedItems = '2';
   const filePathForCreateInstance = 'marcFileForC356791.mrc';
+  const filePathWithUpdatedContent = 'marcFileForC356791_for_update.mrc';
   const fileNameForCreateInstance = `C356791 autotestFileForCreate.${getRandomPostfix()}.mrc`;
+  const nameForCSVFile = `C356791autotestCsvFile.${getRandomPostfix()}.csv`;
+  const exportedFileName = `C356791 autotestExportedFile.${getRandomPostfix()}.mrc`;
+  const fileNameWithUpdatedContent = `C356791 autotestFileForUpdate.${getRandomPostfix()}.mrc`;
   const fileNameForUpdateInstance = `C356791 autotestFileForUpdate.${getRandomPostfix()}.mrc`;
   const jobProfileNameForExport = `C356791 autotest job profile.${getRandomPostfix()}`;
-  const nameForCSVFile = `C356791autotestCsvFile.${getRandomPostfix()}.csv`;
+ 
   const collectionOfProfilesForCreate = [
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
@@ -48,10 +56,11 @@ describe('ui-data-import', () => {
           ind1: '',
           ind2: '4',
           subfield: 'a',
-          data: 'Test update' }
+          data: `Test update.${getRandomPostfix()}` }
        },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
-        name: `C356791 autotest marcBib action profile.${getRandomPostfix()}` }
+        name: `C356791 autotest marcBib action profile.${getRandomPostfix()}`,
+        action: 'Modify (MARC Bibliographic record type only)' }
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
@@ -107,6 +116,7 @@ describe('ui-data-import', () => {
         name: `C356791 autotest holdings mapping profile.${getRandomPostfix()}`,
         holdingsType: 'electronic',
         permanetLocation: `"${LOCALION_NAMES.ONLINE}"`,
+        permanetLocationUI: LOCALION_NAMES.ONLINE_UI,
         callNumberType: CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS,
         callNumber: '050$a " " 050$b' },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
@@ -186,9 +196,37 @@ describe('ui-data-import', () => {
       });
   });
 
+  // after('delete test data', () => {
+  //   // delete created files in fixtures
+  //   FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
+  //   FileManager.deleteFile(`cypress/fixtures/${fileNameWithUpdatedContent}`);
+  //   FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
+  //   JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
+  //   JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
+  //   collectionOfMatchProfiles.forEach(profile => {
+  //     MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+  //   });
+  //   collectionOfProfilesForCreate.forEach(profile => {
+  //     ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+  //     FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+  //   });
+  //   collectionOfProfilesForUpdate.forEach(profile => {
+  //     ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+  //     FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+  //   });
+  //   instanceHrids.forEach(hrid =>{
+  //     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` })
+  //     .then((instance) => {
+  //       cy.deleteItemViaApi(instance.items[0].id);
+  //       cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+  //       InventoryInstance.deleteInstanceViaApi(instance.id);
+  //     });
+  //   });
+  // });
+
   it('C356791 Check import summary table with "create + update" actions (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      // create mapping profiles
+      // create mapping profiles for creating
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfProfilesForCreate[0].mappingProfile);
       NewFieldMappingProfile.addFieldMappingsForMarc();
@@ -217,14 +255,14 @@ describe('ui-data-import', () => {
       FieldMappingProfiles.saveProfile();
       FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfProfilesForCreate[3].mappingProfile.name);
 
-      // create action profiles
+      // create action profiles for creating
       collectionOfProfilesForCreate.forEach(profile => {
         cy.visit(SettingsMenu.actionProfilePath);
         ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
         ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
       });
 
-      // create job profile
+      // create job profile for creating
       cy.visit(SettingsMenu.jobProfilePath);
       JobProfiles.createJobProfile(jobProfileForCreate);
       collectionOfProfilesForCreate.forEach(profile =>{
@@ -233,7 +271,7 @@ describe('ui-data-import', () => {
       NewJobProfile.saveAndClose();
       JobProfiles.checkJobProfilePresented(jobProfileForCreate.profileName);
 
-      // upload the exported marc file
+      // upload the marc file for creating
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.uploadFile(filePathForCreateInstance, fileNameForCreateInstance);
@@ -248,100 +286,123 @@ describe('ui-data-import', () => {
       ].forEach(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
       });
-      // need to get Instance hrid for unique searching in Inventory
-      FileDetails.openInstanceInInventory('Created');
-      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
-        instanceHRID = initialInstanceHrId;
 
-      // // create Field mapping profile for export
-      // cy.visit(SettingsMenu.exportMappingProfilePath);
-      // ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
+      // create Field mapping profile for export
+      cy.visit(SettingsMenu.exportMappingProfilePath);
+      ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
 
-      // cy.visit(SettingsMenu.exportJobProfilePath);
-      // ExportJobProfiles.createJobProfile(jobProfileNameForExport, exportMappingProfile.name);
+      // create job profile for export
+      cy.visit(SettingsMenu.exportJobProfilePath);
+      ExportJobProfiles.createJobProfile(jobProfileNameForExport, exportMappingProfile.name);
 
-      // // download exported marc file
-      // cy.visit(TopMenu.dataExportPath);
-      // ExportFile.uploadFile(nameForCSVFile);
-      // ExportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
-      // ExportFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.searchByParameter('Subject', collectionOfProfilesForCreate[0].mappingProfile.modifications.data);
+      InventorySearchAndFilter.saveUUIDs();
+      ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+    
+      // download exported marc file
+      cy.visit(TopMenu.dataExportPath);
+      ExportFile.uploadFile(nameForCSVFile);
+      ExportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
+      ExportFile.downloadExportedMarcFile(exportedFileName);
+      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
 
-      // cy.visit(TopMenu.inventoryPath);
-      // InventorySearchAndFilter.searchByParameter('Subject', collectionOfProfilesForCreate[0].mappingProfile.modifications.data);
-      // InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
-      // InventorySearchAndFilter.saveUUIDs();
-      // ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
-      // FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+      // edit marc file to add one record
+      DataImport.editMarcFileAddNewRecords(exportedFileName, fileNameWithUpdatedContent, filePathWithUpdatedContent);
+      
+      // create mapping profiles for updating
+      cy.visit(SettingsMenu.mappingProfilePath);
+      FieldMappingProfiles.openNewMappingProfileForm();
+      NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfProfilesForUpdate[0].mappingProfile);
+      NewFieldMappingProfile.fillInstanceStatusTerm(collectionOfProfilesForUpdate[0].mappingProfile.instanceStatusTerm);
+      NewFieldMappingProfile.addStatisticalCode(collectionOfProfilesForUpdate[0].mappingProfile.statisticalCode, 8);
+      FieldMappingProfiles.saveProfile();
+      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfProfilesForUpdate[0].mappingProfile.name);
+      FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfilesForUpdate[0].mappingProfile.name);
+
+      FieldMappingProfiles.openNewMappingProfileForm();
+      NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfProfilesForUpdate[1].mappingProfile);
+      NewFieldMappingProfile.fillPermanentLocation(collectionOfProfilesForUpdate[1].mappingProfile.permanetLocation);
+      FieldMappingProfiles.saveProfile();
+      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfProfilesForUpdate[1].mappingProfile.name);
+      FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfilesForUpdate[1].mappingProfile.name);
+
+      FieldMappingProfiles.openNewMappingProfileForm();
+      NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfProfilesForUpdate[2].mappingProfile);
+      NewFieldMappingProfile.fillMaterialType(collectionOfProfilesForUpdate[2].mappingProfile.materialType);
+      NewFieldMappingProfile.addItemNotes(
+        collectionOfProfilesForUpdate[2].mappingProfile.noteType,
+        collectionOfProfilesForUpdate[2].mappingProfile.note,
+        collectionOfProfilesForUpdate[2].mappingProfile.staffOnly
+      );
+      NewFieldMappingProfile.fillPermanentLoanType(collectionOfProfilesForUpdate[2].mappingProfile.permanentLoanType);
+      NewFieldMappingProfile.fillStatus(collectionOfProfilesForUpdate[2].mappingProfile.status);
+      FieldMappingProfiles.saveProfile();
+      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfProfilesForUpdate[2].mappingProfile.name);
+
+      // create action profiles for updating
+      collectionOfProfilesForUpdate.forEach(profile => {
+        cy.visit(SettingsMenu.actionProfilePath);
+        ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
+        ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
       });
 
-      // // download exported marc file
-      // cy.visit(TopMenu.dataExportPath);
-      // ExportFile.uploadFile(nameForCSVFile);
-      // ExportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
-      // ExportFile.downloadExportedMarcFile(fileNameForUpdateInstance);
-        
-      // // step 21
+      // create match profiles for updating
+      cy.visit(SettingsMenu.matchProfilePath);
+      collectionOfMatchProfiles.forEach(profile => {
+      MatchProfiles.createMatchProfile(profile.matchProfile);
+      MatchProfiles.checkMatchProfilePresented(profile.matchProfile.profileName);
+      });
+
+      // create job profile for updating
+      cy.visit(SettingsMenu.jobProfilePath);
+      JobProfiles.createJobProfileWithLinkingProfilesForUpdate(jobProfileForUpdate);
+      NewJobProfile.linkMatchAndActionProfilesForInstance(collectionOfProfilesForUpdate[0].actionProfile.name, collectionOfMatchProfiles[0].matchProfile.profileName, 0);
+      NewJobProfile.linkProfileForNonMatches(collectionOfProfilesForCreate[1].actionProfile.name);
+      NewJobProfile.linkMatchAndActionProfilesForHoldings(collectionOfProfilesForUpdate[1].actionProfile.name, collectionOfMatchProfiles[1].matchProfile.profileName, 2);
+      NewJobProfile.linkProfileForNonMatches(collectionOfProfilesForCreate[2].actionProfile.name, 3);
+      NewJobProfile.linkMatchAndActionProfilesForItem(collectionOfProfilesForUpdate[2].actionProfile.name, collectionOfMatchProfiles[2].matchProfile.profileName, 4);
+      NewJobProfile.linkProfileForNonMatches(collectionOfProfilesForCreate[3].actionProfile.name, 5);
+      NewJobProfile.saveAndClose();
       
-      // // create mapping profiles
-      // cy.visit(SettingsMenu.mappingProfilePath);
-      // FieldMappingProfiles.openNewMappingProfileForm();
-      // NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfProfilesForUpdate[0].mappingProfile);
-      // NewFieldMappingProfile.fillInstanceStatusTerm(collectionOfProfilesForUpdate[0].mappingProfile.instanceStatusTerm);
-      // NewFieldMappingProfile.addStatisticalCode(collectionOfProfilesForUpdate[0].mappingProfile.statisticalCode, 8);
-      // FieldMappingProfiles.saveProfile();
-      // FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfProfilesForUpdate[0].mappingProfile.name);
-      // FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfilesForUpdate[0].mappingProfile.name);
-
-      // FieldMappingProfiles.openNewMappingProfileForm();
-      // NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfProfilesForUpdate[1].mappingProfile);
-      // NewFieldMappingProfile.fillPermanentLocation(collectionOfProfilesForUpdate[1].mappingProfile.permanetLocation);
-      // FieldMappingProfiles.saveProfile();
-      // FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfProfilesForUpdate[1].mappingProfile.name);
-      // FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfilesForUpdate[1].mappingProfile.name);
-
-      // FieldMappingProfiles.openNewMappingProfileForm();
-      // NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfProfilesForUpdate[2].mappingProfile);
-      // NewFieldMappingProfile.fillMaterialType(collectionOfProfilesForUpdate[2].mappingProfile.materialType);
-      // NewFieldMappingProfile.addItemNotes(
-      //   collectionOfProfilesForUpdate[2].mappingProfile.noteType,
-      //   collectionOfProfilesForUpdate[2].mappingProfile.note,
-      //   collectionOfProfilesForUpdate[2].mappingProfile.staffOnly
-      // );
-      // NewFieldMappingProfile.fillPermanentLoanType(collectionOfProfilesForUpdate[2].mappingProfile.permanentLoanType);
-      // NewFieldMappingProfile.fillStatus(collectionOfProfilesForUpdate[2].mappingProfile.status);
-      // FieldMappingProfiles.saveProfile();
-      // FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfProfilesForUpdate[2].mappingProfile.name);
-
-      // // create action profiles
-      // collectionOfProfilesForUpdate.forEach(profile => {
-      //   cy.visit(SettingsMenu.actionProfilePath);
-      //   ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-      //   ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
-      // });
-
-      // // create match profiles
-      // cy.visit(SettingsMenu.matchProfilePath);
-      // collectionOfMatchProfiles.forEach(profile => {
-      // MatchProfiles.createMatchProfile(profile.matchProfile);
-      // MatchProfiles.checkMatchProfilePresented(profile.matchProfile.profileName);
-      // });
-
-      // // create job profile
-      // cy.visit(SettingsMenu.jobProfilePath);
-      // JobProfiles.createJobProfileWithLinkingProfilesForUpdate(jobProfileForUpdate);
-      // NewJobProfile.linkMatchAndActionProfilesForInstance(collectionOfProfilesForUpdate[0].actionProfile.name, collectionOfMatchProfiles[0].matchProfile.profileName, 0);
-      // NewJobProfile.linkMatchAndActionProfilesForHoldings(collectionOfProfilesForUpdate[1].actionProfile.name, collectionOfMatchProfiles[1].matchProfile.profileName, 2);
-      // NewJobProfile.linkMatchAndActionProfilesForItem(collectionOfProfilesForUpdate[2].actionProfile.name, collectionOfMatchProfiles[2].matchProfile.profileName, 4);
-      // NewJobProfile.saveAndClose();
-      
-      // // upload the exported marc file
-      // cy.visit(TopMenu.dataImportPath);
-      // // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-      // DataImport.uploadFile(filePathForCreateInstance, fileNameForCreateInstance);
-      // JobProfiles.searchJobProfileForImport(jobProfileForUpdate);
-      // JobProfiles.runImportFile();
-      // JobProfiles.waitFileIsImported(fileNameForCreateInstance);
-      // Logs.openFileDetails(fileNameForCreateInstance);
-      
+      // upload the edited marc file
+      cy.visit(TopMenu.dataImportPath);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.uploadFile(fileNameWithUpdatedContent, fileNameForUpdateInstance);
+      JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(fileNameForUpdateInstance);
+      Logs.openFileDetails(fileNameForUpdateInstance);
+      FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfUpdatedItems, 1);
+      FileDetails.checkInstanceQuantityInSummaryTable(quantityOfUpdatedItems, 1);
+      FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfUpdatedItems, 1);
+      FileDetails.checkItemQuantityInSummaryTable(quantityOfUpdatedItems, 1);
+      [0, 1].forEach(rowNumber => {
+        [FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.instance,
+          FileDetails.columnNameInResultList.holdings,
+          FileDetails.columnNameInResultList.item].forEach(columnName => {
+          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName, rowNumber);
+        });
+        FileDetails.openInstanceInInventory('Updated', rowNumber);
+        InstanceRecordView.verifyInstanceStatusTerm(collectionOfProfilesForUpdate[0].mappingProfile.statusTerm);
+        InstanceRecordView.verifyStatisticalCode(collectionOfProfilesForUpdate[0].mappingProfile.statisticalCodeUI);
+        InstanceRecordView.getAssignedHRID().then(initialInstanceHrId => instanceHrids.push(initialInstanceHrId));
+        cy.go('back');
+        FileDetails.openHoldingsInInventory('Updated', rowNumber);
+        HoldingsRecordView.checkPermanentLocation(collectionOfProfilesForUpdate[1].mappingProfile.permanetLocationUI);
+        HoldingsRecordView.checkCallNumberType(collectionOfProfilesForUpdate[1].mappingProfile.callNumberType);
+        cy.go('back');
+        FileDetails.openItemInInventory('Updated', rowNumber);
+        ItemRecordView.verifyMaterialType(collectionOfProfilesForUpdate[2].mappingProfile.materialType);
+        ItemRecordView.verifyPermanentLoanType(collectionOfProfilesForUpdate[2].mappingProfile.permanentLoanType);
+        ItemRecordView.verifyItemStatus(collectionOfProfilesForUpdate[2].mappingProfile.status);
+      });
+      [FileDetails.columnNameInResultList.srsMarc,
+        FileDetails.columnNameInResultList.instance,
+        FileDetails.columnNameInResultList.holdings,
+        FileDetails.columnNameInResultList.item].forEach(columnName => {
+        FileDetails.checkStatusInColumn(FileDetails.status.created, columnName, 2);
+      });
   });
 });

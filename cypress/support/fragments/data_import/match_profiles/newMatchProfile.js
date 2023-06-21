@@ -169,6 +169,8 @@ export default {
       // wait for list will be loaded
       cy.wait(2000);
       cy.do(criterionValueTypeList.find(SelectionOption(itemOption)).click());
+      // wait for list will be loaded
+      cy.wait(2000);
     }
   },
 
