@@ -6,6 +6,7 @@ import devTeams from '../../../support/dictionary/devTeams';
 import users from '../../../support/fragments/users/users';
 
 let user;
+let userCircAndLogsPermissions;
 
 describe('bulk-edit', () => {
   describe('permissions', () => {
@@ -23,10 +24,23 @@ describe('bulk-edit', () => {
             waiter: BulkEditSearchPane.waitLoading
           });
         });
+
+      cy.createTempUser([
+        permissions.bulkEditCsvView.gui,
+        permissions.bulkEditCsvEdit.gui,
+        permissions.circulationLogAll.gui,
+        permissions.inventoryAll.gui,
+        permissions.uiUserEdit.gui,
+        permissions.uiUsersView.gui
+      ])
+        .then(userProperties => {
+          userCircAndLogsPermissions = userProperties;
+        });
     });
 
     after('delete test data', () => {
       users.deleteViaApi(user.userId);
+      users.deleteViaApi(userCircAndLogsPermissions.userId);
     });
 
     it('C360090 Verify switching between Inventory record types radio buttons (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -49,6 +63,12 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.selectRecordIdentifier('Usernames');
       BulkEditSearchPane.verifyInputLabel('Drag and drop or choose file with Usernames');
       BulkEditSearchPane.verifyInputLabel('Select a file with Usernames');
+    });
+
+    it('C347870 Verify that user with Bulk Edit: View and Edit permission can start bulk editing (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
+      cy.visit(TopMenu.bulkEditPath);
+      BulkEditSearchPane.actionsIsAbsent();
+      BulkEditSearchPane.isDragAndDropAreaDisabled(true);
     });
   });
 });
