@@ -104,30 +104,30 @@ describe('Data Import - Update MARC Authority files', () => {
     });
   });
 
-  // after(() => {
-  //   Users.deleteViaApi(testData.userProperties.userId);
-  //   JobProfiles.deleteJobProfile(testData.jobProfileName);
-  //   MatchProfiles.deleteMatchProfile(testData.matchProfileName);
-  //   ActionProfiles.deleteActionProfile(testData.actionProfileName);
-  //   FieldMappingProfiles.deleteFieldMappingProfile(testData.mappingProfileName);
+  after(() => {
+    Users.deleteViaApi(testData.userProperties.userId);
+    JobProfiles.deleteJobProfile(testData.jobProfileName);
+    MatchProfiles.deleteMatchProfile(testData.matchProfileName);
+    ActionProfiles.deleteActionProfile(testData.actionProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(testData.mappingProfileName);
 
-  //   if (createdAuthorityIDs[0]) InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
-  //   createdAuthorityIDs.forEach((id, index) => {
-  //     if (index) MarcAuthority.deleteViaAPI(id);
-  //   });
-  //   cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-  //   DataImport.selectLog();
-  //   DataImport.openDeleteImportLogsModal();
-  //   DataImport.confirmDeleteImportLogs();
-  //   DataImport.selectLog();
-  //   DataImport.openDeleteImportLogsModal();
-  //   DataImport.confirmDeleteImportLogs();
+    if (createdAuthorityIDs[0]) InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
+    createdAuthorityIDs.forEach((id, index) => {
+      if (index) MarcAuthority.deleteViaAPI(id);
+    });
+    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
+    DataImport.selectLog();
+    DataImport.openDeleteImportLogsModal();
+    DataImport.confirmDeleteImportLogs();
+    DataImport.selectLog();
+    DataImport.openDeleteImportLogsModal();
+    DataImport.confirmDeleteImportLogs();
 
-  //   FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-  //   FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
-  //   FileManager.deleteFile(`cypress/fixtures/${testData.exportedMarcFile}`);
-  //   FileManager.deleteFile(`cypress/fixtures/${testData.csvFile}`);
-  // });
+    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
+    FileManager.deleteFile(`cypress/fixtures/${testData.exportedMarcFile}`);
+    FileManager.deleteFile(`cypress/fixtures/${testData.csvFile}`);
+  });
 
   it('C374186 Update "1XX" field value (edit controlling field) of linked "MARC Authority" record (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
