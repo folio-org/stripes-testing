@@ -11,30 +11,25 @@ describe('ui-requests: Sort requests', () => {
   const userIds = [];
   const requests = [];
   const instances = [];
-  let oldRulesText;
-  let requestPolicyId;
+  const requestTypes = { PAGE: 'Page', HOLD: 'Hold', RECALL: 'Recall' };
 
   beforeEach(() => {
-    cy.loginAsAdmin();
-    cy.getAdminToken();
-
-    Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {
-      oldRulesText = oldRulesAsText;
-      requestPolicyId = policy.id;
-    });
-
-    Object.values(Requests.requestTypes).forEach((requestType) => {
-      const itemStatus = requestType === REQUEST_TYPES.PAGE ? ITEM_STATUS_NAMES.AVAILABLE : ITEM_STATUS_NAMES.CHECKED_OUT;
-      Requests.createRequestApi(itemStatus, requestType).then(({
-        instanceRecordData,
-        createdRequest,
-        createdUser
-      }) => {
-        userIds.push(createdUser.id);
-        instances.push(instanceRecordData);
-        requests.push(createdRequest);
+    cy.getAdminToken()
+    .then(()=>{
+      Object.values(requestTypes).forEach((requestType) => {
+        const itemStatus = requestType === REQUEST_TYPES.PAGE ? ITEM_STATUS_NAMES.AVAILABLE : ITEM_STATUS_NAMES.CHECKED_OUT;
+        Requests.createRequestApi(itemStatus, requestType).then(({
+          instanceRecordData,
+          createdRequest,
+          createdUser
+        }) => {
+          userIds.push(createdUser.id);
+          instances.push(instanceRecordData);
+          requests.push(createdRequest);
+        });
       });
     });
+    cy.loginAsAdmin();
   });
 
   afterEach(() => {
@@ -49,12 +44,10 @@ describe('ui-requests: Sort requests', () => {
     userIds.forEach(id => {
       Users.deleteViaApi(id);
     });
-    Requests.updateCirculationRulesApi(oldRulesText);
-    Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
   // Test is failed. This is a known issue.
-  it('C2379 Test Request app sorting (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+  it('C2379 Test Request app sorting (vega)', { tags: [TestTypes.smoke, DevTeams.vega] }, () => {
     cy.visit(TopMenu.requestsPath);
 
     cy.intercept('GET', '/circulation/requests?*').as('getRequests');
