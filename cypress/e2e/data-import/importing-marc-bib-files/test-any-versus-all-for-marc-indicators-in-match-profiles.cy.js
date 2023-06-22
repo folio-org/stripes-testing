@@ -24,14 +24,14 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
 import FileManager from '../../../support/utils/fileManager';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('ui-data-import', () => {
   const instanceTitle = 'The distant sound / Susan Philipsz.';
   const itemBarcode = uuid();
   const quantityOfItems = '1';
-  const filePathToUpload = 'marcFileForC17033.mrc';
+  const filePathToUpload = 'marcFileForC17036.mrc';
   const editedMarcFileName = `C17036 autotestFile.${getRandomPostfix()}.mrc`;
   const marcFileNameForFirstUpdate = `C17036 autotestFile.${getRandomPostfix()}.mrc`;
   const marcFileNameForSecondUpdate = `C17036 autotestFile.${getRandomPostfix()}.mrc`;
@@ -41,7 +41,7 @@ describe('ui-data-import', () => {
       mappingProfile: { name: `C17036 instance create mapping profile_${getRandomPostfix()}`,
         typeValue: FOLIO_RECORD_TYPE.INSTANCE },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-        name: `C17033 instance create action profile_${getRandomPostfix()}` }
+        name: `C17036 instance create action profile_${getRandomPostfix()}` }
     },
     {
       mappingProfile: { name: `C17036 holdings create mapping profile_${getRandomPostfix()}`,
@@ -49,7 +49,7 @@ describe('ui-data-import', () => {
         permanentLocation: `"${LOCALION_NAMES.MAIN_LIBRARY}"`,
         permanentLocationUI: LOCALION_NAMES.MAIN_LIBRARY_UI, },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `C17033 holdings create action profile_${getRandomPostfix()}` }
+        name: `C17036 holdings create action profile_${getRandomPostfix()}` }
     },
     {
       mappingProfile: { name: `C17036 item create mapping profile_${getRandomPostfix()}`,
@@ -59,7 +59,7 @@ describe('ui-data-import', () => {
         permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
         status: ITEM_STATUS_NAMES.AVAILABLE },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C17033 item create action profile_${getRandomPostfix()}` }
+        name: `C17036 item create action profile_${getRandomPostfix()}` }
     },
   ];
   const jobProfileForCreate = {
@@ -100,7 +100,7 @@ describe('ui-data-import', () => {
         itemIdentifier: `"${'SUCCEED'}"`,
         itemIdentifierUI: 'SUCCEED' },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C17033 item update action profile_${getRandomPostfix()}`,
+        name: `C17036 item update action profile_${getRandomPostfix()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     }
   ];
@@ -253,22 +253,27 @@ describe('ui-data-import', () => {
       JobProfiles.waitFileIsImported(marcFileNameForFirstUpdate);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(marcFileNameForFirstUpdate);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.item);
+      FileDetails.checkStatusInColumn(FileDetails.status.noAction, FileDetails.columnNameInResultList.item);
+
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.switchToItem();
+      InventorySearchAndFilter.searchByParameter('Barcode', itemBarcode);
+      ItemRecordView.verifyItemIdentifier('-');
 
       // upload a marc file for updating
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
       DataImport.uploadFile(editedMarcFileName, marcFileNameForSecondUpdate);
-      JobProfiles.searchJobProfileForImport(jobProfileForUpdateWithFail.profileName);
+      JobProfiles.searchJobProfileForImport(jobProfileForUpdateWithSucceed.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(marcFileNameForSecondUpdate);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(marcFileNameForSecondUpdate);
       FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.item);
 
-      // check created instance
+      // check updated item
       FileDetails.openItemInInventory('Updated');
-      ItemRecordView.verifyItemIdentifier(itemIdentifierUI);
+      ItemRecordView.verifyItemIdentifier(collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.itemIdentifierUI);
     });
 });
