@@ -6,6 +6,7 @@ import testTypes from '../../../support/dictionary/testTypes';
 import devTeams from '../../../support/dictionary/devTeams';
 
 let user;
+let userWithQueryView;
 
 describe('bulk-edit', () => {
   describe('permissions', () => {
@@ -17,16 +18,40 @@ describe('bulk-edit', () => {
           user = userProperties;
           cy.login(user.username, user.password);
         });
+
+      cy.createTempUser([
+        permissions.bulkEditEdit.gui,
+        permissions.bulkEditView.gui,
+        permissions.bulkEditCsvEdit.gui,
+        permissions.bulkEditCsvView.gui,
+        permissions.bulkEditUpdateRecords.gui,
+        permissions.bulkEditQueryView.gui,
+      ])
+        .then(userProperties => {
+          userWithQueryView = userProperties;
+        });
     });
 
     after('delete test data', () => {
       Users.deleteViaApi(user.userId);
+      Users.deleteViaApi(userWithQueryView.userId);
     });
 
-    it('C347868\n' +
-      'Verify that user without Bulk Edit: View permissions cannot access Bulk Edit app (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
+    it('C347868 Verify that user without Bulk Edit: View permissions cannot access Bulk Edit app (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
       cy.visit(TopMenu.bulkEditPath);
       BulkEditSearchPane.verifyNoPermissionWarning();
+    });
+
+    it('C376993 Verify Query tab permissions without Inventory and Users permissions (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
+      cy.login(userWithQueryView.username, userWithQueryView.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
+
+      BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
+      BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
+      BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Logs');
+      BulkEditSearchPane.openQuerySearch();
+      BulkEditSearchPane.usersRadioIsDisabled(true);
+      BulkEditSearchPane.itemsRadioIsDisabled(true);
+      BulkEditSearchPane.itemsHoldingsIsDisabled(true);
     });
   });
 });
