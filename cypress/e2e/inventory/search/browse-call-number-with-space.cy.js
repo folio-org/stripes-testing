@@ -49,6 +49,18 @@ describe('Inventory -> Call Number Browse', () => {
     parameter: 'Keyword (title, contributor, identifier, HRID, UUID)',
   };
 
+  let barcodes = [];
+  let itemCallNumbers = [];
+  let instances = [];
+
+  const createTestInstances = () => {
+    for (let i = 0; i < 10; i++) {
+      barcodes.push(`barcode_${getRandomPostfix()}`);
+      itemCallNumbers.push(`itemCallNumbers_${getRandomPostfix()}`);
+      instances.push(`instances_${getRandomPostfix()}`);
+    }
+  };
+
   const search = (query) => {
     BrowseCallNumber.clickBrowseBtn();
     InventorySearchAndFilter.verifyKeywordsAsDefault();
@@ -71,6 +83,12 @@ describe('Inventory -> Call Number Browse', () => {
         permissions.uiCallNumberBrowse.gui
       ]).then(userProperties => {
         testData.user = userProperties;
+
+        createTestInstances();
+
+        for (let i = 0; i < 10; i++) {
+          InventoryInstances.createInstanceViaApi(instances[i], barcodes[i], null, '1', itemCallNumbers[i]);
+        }
         InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode, item.publisher, item.holdingCallNumber, item.itemCallNumber);
         InventoryInstances.createInstanceViaApi(itemA1.instanceName, itemA1.itemBarcode, itemA1.publisher, itemA1.holdingCallNumber, itemA1.itemCallNumber);
         InventoryInstances.createInstanceViaApi(itemA2.instanceName, itemA2.itemBarcode, itemA2.publisher, itemA2.holdingCallNumber, itemA2.itemCallNumber);
@@ -83,6 +101,9 @@ describe('Inventory -> Call Number Browse', () => {
   });
 
   after('Deleting user and instance', () => {
+    barcodes.forEach((barcode) => {
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(barcode);
+    })
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemA1.itemBarcode);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemA2.itemBarcode);
@@ -152,5 +173,19 @@ describe('Inventory -> Call Number Browse', () => {
     BrowseCallNumber.checkExactSearchResult(itemA1.itemCallNumber);
     BrowseCallNumber.clickOnResult(itemA1.itemCallNumber);
     InventorySearchAndFilter.verifyActionButtonOptions();
+  });
+
+  it('C347909 Verify browse call numbers function and result list (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    InventorySearchAndFilter.switchToBrowseTab();
+    InventorySearchAndFilter.verifyBrowseOptions();
+    InventorySearchAndFilter.selectBrowseCallNumbers();
+    InventorySearchAndFilter.browseSubjectsSearch(item.itemCallNumber);
+    BrowseCallNumber.checkExactSearchResult(item.itemCallNumber);
+    BrowseCallNumber.checkSearchResultsTable();
+    InventorySearchAndFilter.clickPreviousPaginationButton();
+    InventorySearchAndFilter.clickNextPaginationButton();
+    BrowseCallNumber.selectFoundCallNumber(item.itemCallNumber);    
+    InventorySearchAndFilter.switchToBrowseTab();
+    InventorySearchAndFilter.clickResetAllButton();
   });
 });
