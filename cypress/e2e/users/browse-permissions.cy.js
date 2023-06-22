@@ -11,7 +11,7 @@ let user;
 let testUser_C350673;
 let testUser_C350674;
 
-describe('bulk-edit', () => {
+describe('Users', () => {
   before('create test users', () => {
     cy.createTempUser([]).then(userProperties => { testUser_C350673 = userProperties });
     cy.createTempUser([]).then(userProperties => { testUser_C350674 = userProperties });
