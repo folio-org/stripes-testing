@@ -26,7 +26,7 @@ describe('Users', () => {
   });
 
   after('delete test data', () => {
-    [testUser_C350673, testUser_C350674]
+    [user, testUser_C350673, testUser_C350674]
       .forEach(user => {
         Users.deleteViaApi(user.userId);
       });
