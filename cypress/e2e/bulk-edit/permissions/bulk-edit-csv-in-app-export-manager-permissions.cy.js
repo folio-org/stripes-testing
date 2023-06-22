@@ -51,7 +51,7 @@ describe('Permissions Bulk Edit', () => {
         FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.itemBarcode);
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-    
+
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
         cy.visit(TopMenu.exportManagerPath);
@@ -73,7 +73,7 @@ describe('Permissions Bulk Edit', () => {
     ExportManagerSearchPane.selectJobByIndex(user.username, 0);
     ExportManagerSearchPane.clickJobIdInThirdPane();
     BulkEditFiles.verifyMatchedResultFileContent(itemMatchedRecordsFileName, [item.itemBarcode], 'barcode', true);
-    
+
     ExportManagerSearchPane.selectJobByIndex(user.username, 1);
     ExportManagerSearchPane.clickJobIdInThirdPane();
     BulkEditFiles.verifyMatchedResultFileContent(userMatchedRecordsFileName, [user.userId], 'userId', true);
