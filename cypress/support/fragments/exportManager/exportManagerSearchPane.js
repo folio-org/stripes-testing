@@ -43,6 +43,18 @@ export default {
     return cy.do(MultiColumnListCell(including(content)).click());
   },
 
+  selectJobByIndex(content, index) {
+    cy.get('div[class*=mclRow-]').contains(content).then(element => {
+      element.prevObject[index].click();
+    });
+  },
+
+  verifyJobAmount(text, amount) {
+    cy.get('div[class*=mclRow-]').contains(text).then(element => {
+      expect(element.prevObject.length).to.eq(amount)
+    });
+  },
+
   searchById(id) {
     cy.do([
       TextField().fillIn(id),
