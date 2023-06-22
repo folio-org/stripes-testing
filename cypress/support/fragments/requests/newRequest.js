@@ -1,5 +1,5 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import { Button, TextField, Pane, Select, HTML, including, Checkbox, Section, Accordion, TextArea } from '../../../../interactors';
+import { Button, TextField, Pane, Select, HTML, including, Checkbox, Section, Accordion, TextArea, MultiColumnListCell } from '../../../../interactors';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../constants';
 import SelectUser from './selectUser';
 
@@ -14,6 +14,7 @@ const saveAndCloseButton = Button('Save & close');
 const selectServicePoint = Select({ name:'pickupServicePointId' });
 const selectRequestType = Select({ name: 'requestType' });
 const titleLevelRequest = Checkbox({ name: 'createTitleLevelRequest' });
+const selectItemPane = Pane({ id: 'items-dialog-instance-items-list' });
 
 function addRequester(userName) {
   cy.do(Button({ id:'requestform-addrequest' }).click());
@@ -96,6 +97,8 @@ export default {
   },
 
   enableTitleLevelRequest() {
+    //need to synchronize actions before click
+    cy.wait(3000);
     cy.do(titleLevelRequest.click());
   },
 
@@ -135,6 +138,11 @@ export default {
 
   verifyItemInformation: (allContentToCheck) => {
     return allContentToCheck.forEach(contentToCheck => cy.expect(Section({ id: 'new-item-info' }, including(contentToCheck)).exists()));
+  },
+
+  chooseItemInSelectItemPane: (itemBarcode) => {
+    cy.expect(selectItemPane.exists());
+    return cy.do(selectItemPane.find(MultiColumnListCell(itemBarcode)).click());
   },
 
   verifyHridInformation: (allContentToCheck) => {

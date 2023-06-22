@@ -238,6 +238,48 @@ describe('Circulation log', () => {
   });
 
   it(
+    'C17052 Check the Actions button from filtering Circulation log by Paid partially (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      createFeeFine().then((feeFineId) => {
+        testData.feeFineId = feeFineId;
+        PayFeeFaine.payFeeFineViaApi(payBody('2.00'), testData.feeFineId);
+        checkActionsButton('Paid partially');
+      });
+    }
+  );
+
+  it(
+    'C17051 Filter circulation log by paid partially (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      filterByAction('Paid partially');
+      NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
+    }
+  );
+
+  it(
+    'C17050 Check the Actions button from filtering Circulation log by Paid fully (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      createFeeFine().then((feeFineId) => {
+        testData.feeFineId = feeFineId;
+        PayFeeFaine.payFeeFineViaApi(payBody('4.00'), testData.feeFineId);
+        checkActionsButton('Paid fully');
+      });
+    }
+  );
+
+  it(
+    'C17049 Filter circulation log by paid fully (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      filterByAction('Paid fully');
+      NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
+    }
+  );
+
+  it(
     'C17060 Check the Actions button from filtering Circulation log by refunded partially (volaris)',
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {

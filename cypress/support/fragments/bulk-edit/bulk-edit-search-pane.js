@@ -60,6 +60,10 @@ export default {
     cy.expect(bulkEditPane.exists());
   },
 
+  verifyNoPermissionWarning() {
+    cy.expect(HTML('You don\'t have permission to view this app/record').exists());
+  },
+
   searchBtnIsDisabled(isDisabled) {
     cy.expect(searchButton.has({ disabled: isDisabled }));
   },
@@ -706,7 +710,7 @@ export default {
   },
 
   changeShowColumnCheckbox(...names) {
-    names.forEach(name => { cy.do(DropdownMenu().find(Checkbox(name)).click()) });
+    names.forEach(name => { cy.do(DropdownMenu().find(Checkbox(name)).click()); });
   },
 
   verifyResultColumTitles(title) {

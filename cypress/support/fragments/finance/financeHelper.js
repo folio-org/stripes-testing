@@ -1,4 +1,4 @@
-import { Button, MultiColumnListRow, SearchField } from '../../../../interactors';
+import { Button, Checkbox, MultiColumnListRow, SearchField } from '../../../../interactors';
 
 const searchField = SearchField({ id: 'input-record-search' });
 const noResultsMessageLabel = '//span[contains(@class,"noResultsMessageLabel")]';
@@ -44,6 +44,10 @@ export default {
 
   selectFromResultsList: (rowNumber = 0) => {
     cy.do(MultiColumnListRow({ index: rowNumber }).click());
+  },
+
+  selectCheckboxFromResultsList: (rowNumber = 0) => {
+    cy.do(MultiColumnListRow({ index: rowNumber }).find(Checkbox()).click());
   },
 
   checkZeroSearchResultsMessage : () => {

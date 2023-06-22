@@ -28,7 +28,7 @@ describe('ui-data-import', () => {
     title: '8-15 shi ji zhong xi bu Xizang de li shi, wen hua yu yi shu / Airuika Fute [and four others] zhu bian = Tibet in dialogue with its neighbours : history, culture and art of central and western Tibet, 8th to 15th century / Erika Forte [and four others] eds.',
     firstAlternativeTitle: 'Tibet in dialogue with its neighbour : history, culture and art of central and western Tibet, 8th to 15th century',
     secondAlternativeTitle: '8-15世纪中西部西藏的历史, 文化与艺术',
-    contributerName: 'Forte, Erika,',
+    contributerName: 'Forte, Erika',
     firstPublisher: 'Zhongguo Zang xue chu ban she',
     secondPublisher: '中国藏学出版社',
     language: 'Chinese, English'

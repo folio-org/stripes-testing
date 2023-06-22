@@ -22,6 +22,7 @@ const editButton = Button('Edit');
 const extendedInformationAccordion = Accordion('Extended information');
 const externalSystemIdTextfield = TextField('External system ID');
 const customFieldsAccordion = Accordion('Custom fields');
+const selectPermissionsModal = Modal('Select Permissions');
 
 // servicePointIds is array of ids
 const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) => cy.okapiRequest({
@@ -54,7 +55,7 @@ export default {
       cy.do(Button('Search').click());
       cy.do(MultiColumnListRow({ index: 0 }).find(Checkbox()).click());
     });
-    cy.do(saveAndCloseBtn.click());
+    cy.do(selectPermissionsModal.find(saveAndCloseBtn).click());
   },
 
   addServicePoints(...points) {

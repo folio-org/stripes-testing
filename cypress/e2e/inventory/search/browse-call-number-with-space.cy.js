@@ -130,4 +130,27 @@ describe('Inventory -> Call Number Browse', () => {
     InventorySearchAndFilter.verifyShelvingOrder();
     InventorySearchAndFilter.verifyInstanceDisplayed(item.instanceName);
   });
+
+  it('C347906 Verify that look and list of available facets change according to search option (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    InventorySearchAndFilter.switchToBrowseTab();
+    InventorySearchAndFilter.clickResetAllButton();
+    InventorySearchAndFilter.verifyBrowseOptions();
+    InventorySearchAndFilter.selectBrowseCallNumbers();
+    InventorySearchAndFilter.byEffectiveLocation();
+    InventorySearchAndFilter.verifyCallNumberBrowseNotEmptyPane();
+
+    InventorySearchAndFilter.selectBrowseSubjects();
+    InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();      
+  });
+
+  it('C347910 Verify that "Actions" menu is displayed when searching by any search option except "Call numbers" (spitfire)', { tags: [DevTeams.spitfire, TestTypes.criticalPath] }, () => {
+    BrowseCallNumber.clickBrowseBtn();
+    InventorySearchAndFilter.selectBrowseCallNumbers();
+    InventoryActions.actionsIsAbsent();
+    InventorySearchAndFilter.showsOnlyEffectiveLocation();
+    InventorySearchAndFilter.browseSubjectsSearch(itemA1.itemCallNumber);
+    BrowseCallNumber.checkExactSearchResult(itemA1.itemCallNumber);
+    BrowseCallNumber.clickOnResult(itemA1.itemCallNumber);
+    InventorySearchAndFilter.verifyActionButtonOptions();
+  });
 });

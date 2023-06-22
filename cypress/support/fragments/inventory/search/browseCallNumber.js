@@ -3,6 +3,10 @@ import {Button, including, MultiColumnListCell} from '../../../../../interactors
 const browseButton = Button({ id: 'mode-navigation-browse' });
 
 export default {
+  clickOnResult(searchQuery) {
+    cy.do(MultiColumnListCell(`${searchQuery}`).find(Button(`${searchQuery}`)).click());
+  },
+
   checkExactSearchResult(searchQuery) {
     cy.do([
       MultiColumnListCell(`${searchQuery}`).has({ innerHTML: including(`<strong>${searchQuery}</strong>`) }),

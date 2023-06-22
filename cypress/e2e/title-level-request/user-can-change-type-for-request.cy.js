@@ -2,7 +2,7 @@ import uuid from 'uuid';
 import testTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
-import { FULFILMENT_PREFERENCES, ITEM_STATUS_NAMES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
+import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
@@ -22,7 +22,9 @@ import RequestsSearchResultsPane from '../../support/fragments/requests/requests
 import NewRequest from '../../support/fragments/requests/newRequest';
 
 describe('Title Level Request. Request Detail', () => {
+  let instanceHRID;
   const unchecked = false;
+  let requestId;
   const tlrCheckboxExists = true;
   let addedCirculationRule;
   let originalCirculationRules;
@@ -91,6 +93,11 @@ describe('Title Level Request. Request Detail', () => {
           instanceData.instanceId = specialInstanceIds.instanceId;
           instanceData.holdingId = specialInstanceIds.holdingIds[0].id;
           instanceData.itemId = specialInstanceIds.holdingIds[0].itemIds;
+          cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceData.instanceId}"` }).then(
+            (instance) => {
+              instanceHRID = instance.hrid;
+            }
+          );
         });
       });
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
@@ -122,22 +129,22 @@ describe('Title Level Request. Request Detail', () => {
         testData.userServicePoint.id
       );
       TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.requestsPath,
-        waiter: RequestsSearchResultsPane.waitLoading,
-      });
     });
   });
 
+  beforeEach('login', () => {
+    cy.login(userData.username, userData.password, {
+      path: TopMenu.requestsPath,
+      waiter: RequestsSearchResultsPane.waitLoading,
+    });
+    cy.intercept('POST', 'circulation/requests').as('createRequest');
+  });
 
   after('Deleting created entities', () => {
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
     cy.loginAsAdmin({
       path: SettingsMenu.circulationTitleLevelRequestsPath,
       waiter: TitleLevelRequests.waitLoading,
-    });
-    cy.get('@requestId').then((id) => {
-      Requests.deleteRequestViaApi(id);
     });
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
@@ -154,11 +161,15 @@ describe('Title Level Request. Request Detail', () => {
     );
     TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
+
+  afterEach('deleting request', () => {
+    Requests.deleteRequestViaApi(requestId);
+  });
+
   it(
     'C350385 Check that user can change type from "Item" level to "Title" and save the request (vega)',
     { tags: [testTypes.criticalPath, devTeams.vega] },
     () => {
-      cy.intercept('POST', 'circulation/requests').as('createRequest');
       RequestsSearchResultsPane.verifyOptionsInActionsMenu();
       NewRequest.openNewRequestPane();
       NewRequest.waitLoadingNewRequestPage(tlrCheckboxExists);
@@ -168,6 +179,32 @@ describe('Title Level Request. Request Detail', () => {
       NewRequest.verifyRequestInformation(ITEM_STATUS_NAMES.AVAILABLE);
       NewRequest.enableTitleLevelRequest();
       NewRequest.verifyItemInformation(['0', instanceData.title]);
+      NewRequest.enterRequesterInfo({
+        requesterBarcode: userData.barcode,
+        pickupServicePoint: testData.userServicePoint.name,
+      });
+      NewRequest.saveRequestAndClose();
+      RequestDetail.waitLoading();
+      cy.wait('@createRequest').then((intercept) => {
+        requestId = intercept.response.body.id;
+      });
+    }
+  );
+
+  it('C350386 Check that user can change type from "Title" level to "Item" and save the request (vega)',
+    { tags: [testTypes.criticalPath, devTeams.vega] },
+    () => {
+      RequestsSearchResultsPane.verifyOptionsInActionsMenu();
+      NewRequest.openNewRequestPane();
+      NewRequest.waitLoadingNewRequestPage(tlrCheckboxExists);
+      NewRequest.verifyTitleLevelRequestsCheckbox(unchecked);
+      NewRequest.enterHridInfo(instanceHRID);
+      NewRequest.verifyItemInformation(['0', instanceData.title]);
+      NewRequest.enableTitleLevelRequest();
+
+      NewRequest.chooseItemInSelectItemPane(testData.itemBarcode);
+      NewRequest.verifyItemInformation([testData.itemBarcode, instanceData.title, testData.defaultLocation.name, ITEM_STATUS_NAMES.AVAILABLE]);
+      NewRequest.verifyRequestInformation(ITEM_STATUS_NAMES.AVAILABLE);
 
       NewRequest.enterRequesterInfo({
         requesterBarcode: userData.barcode,
@@ -176,8 +213,7 @@ describe('Title Level Request. Request Detail', () => {
       NewRequest.saveRequestAndClose();
       RequestDetail.waitLoading();
       cy.wait('@createRequest').then((intercept) => {
-        cy.wrap(intercept.response.body.id).as('requestId');
+        requestId = intercept.response.body.id;
       });
-    }
-  );
+    });
 });

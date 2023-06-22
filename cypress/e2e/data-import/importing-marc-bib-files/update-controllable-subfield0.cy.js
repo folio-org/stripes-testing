@@ -20,18 +20,14 @@ import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthorit
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import { LOCALION_NAMES, FOLIO_RECORD_TYPE, ACCEPTED_DATA_TYPE_NAMES, EXISTING_RECORDS_NAMES } from '../../../support/constants';
 
 describe('Importing MARC Bib files', () => {
   const testData = {};
-  let firstFieldId = null;
-  let secondFieldId = null;
-  let thirdFieldId = null;
   // unique file name to upload
-  const nameForUpdatedMarcFile = `C380511autotestFile${getRandomPostfix()}.mrc`;
-  const nameForExportedMarcFile = `C380511autotestFile${getRandomPostfix()}.mrc`;
-  const nameForCSVFile = `C380511autotestFile${getRandomPostfix()}.csv`;
+  const nameForUpdatedMarcFile = `C375098autotestFile${getRandomPostfix()}.mrc`;
+  const nameForExportedMarcFile = `C375098autotestFile${getRandomPostfix()}.mrc`;
+  const nameForCSVFile = `C375098autotestFile${getRandomPostfix()}.csv`;
   const mappingProfile = {
     name: 'Update MARC Bib records by matching 999 ff $s subfield value',
     typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
@@ -65,50 +61,44 @@ describe('Importing MARC Bib files', () => {
     profileName: 'Update MARC Bib records by matching 999 ff $s subfield value',
     acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
-  const protectedFields = {
-    firstField: '100',
-    secondField: '240',
-    thirdField: '700'
-  };
   const marcFiles = [
     {
-      marc: 'marcBibFileForC380511.mrc',
+      marc: 'marcBibFileForC385665.mrc',
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       numOfRecords: 1
     },
     {
-      marc: 'marcFileForC380511.mrc',
+      marc: 'marcAuthFileC385665_1.mrc',
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
-      numOfRecords: 4
-    }
+      numOfRecords: 1
+    },
+    {
+      marc: 'marcAuthFileC385665_2.mrc',
+      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      jobProfileToRun: 'Default - Create SRS MARC Authority',
+      numOfRecords: 1
+    },
+    {
+      marc: 'marcAuthFileC385665_3.mrc',
+      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      jobProfileToRun: 'Default - Create SRS MARC Authority',
+      numOfRecords: 1
+    },
   ];
   const linkingTagAndValues = [
     {
-      rowIndex: 17,
-      value: 'Ludwig van, Beethoven, 1770-1827.',
-      tag: '100'
+      rowIndex: 75,
+      value: 'Chin, Staceyann'
     },
     {
-      rowIndex: 18,
-      value: 'Beethoven, Ludwig van, 1770-1827 Variations, piano, violin, cello, op. 44, E♭ major',
-      tag: '240'
+      rowIndex: 76,
+      value: 'Lee, Stan, 1922-2018'
     },
     {
-      rowIndex: 41,
-      value: 'Music piano',
-      tag: '650'
-    },
-    {
-      rowIndex: 50,
-      value: 'Hewitt, Angela, 1958-',
-      tag: '700'
-    },
-    {
-      rowIndex: 51,
-      value: 'Ludwig van, Beethoven, 1770-1827.',
-      tag: '700'
+      rowIndex: 77,
+      value: 'Kirby, Jack'
     },
   ];
   const createdAuthorityIDs = [];
@@ -125,7 +115,6 @@ describe('Importing MARC Bib files', () => {
       Permissions.dataExportEnableApp.gui,
     ]).then(createdUserProperties => {
       testData.userProperties = createdUserProperties;
-
       marcFiles.forEach(marcFile => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
           DataImport.uploadFile(marcFile.marc, marcFile.fileName);
@@ -162,48 +151,11 @@ describe('Importing MARC Bib files', () => {
         NewJobProfile.fillJobProfile(jobProfile);
         NewJobProfile.linkMatchProfile(matchProfile.profileName);
         NewJobProfile.linkActionProfileByName(actionProfile.name);
-        // waiter needed for the action profile to be linked
+        // wait for the action profile to be linked
         cy.wait(1000);
         NewJobProfile.saveAndClose();
         JobProfiles.waitLoadingList();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
-      });
-
-      cy.loginAsAdmin();
-      cy.getAdminToken().then(() => {
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
-          indicator1: '*',
-          indicator2: '*',
-          subfield: '0',
-          data: '*',
-          source: 'USER',
-          field: protectedFields.firstField
-        })
-          .then((resp) => {
-            firstFieldId = resp.id;
-          });
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
-          indicator1: '*',
-          indicator2: '*',
-          subfield: '0',
-          data: '*',
-          source: 'USER',
-          field: protectedFields.secondField
-        })
-          .then((resp) => {
-            secondFieldId = resp.id;
-          });
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
-          indicator1: '*',
-          indicator2: '*',
-          subfield: '9',
-          data: '*',
-          source: 'USER',
-          field: protectedFields.thirdField
-        })
-          .then((resp) => {
-            thirdFieldId = resp.id;
-          });
       });
 
       cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
@@ -212,13 +164,10 @@ describe('Importing MARC Bib files', () => {
 
   after('delete test data', () => {
     Users.deleteViaApi(testData.userProperties.userId);
-    InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
+    if (createdAuthorityIDs[0]) InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
     createdAuthorityIDs.forEach((id, index) => {
       if (index) MarcAuthority.deleteViaAPI(id);
     });
-    MarcFieldProtection.deleteMarcFieldProtectionViaApi(firstFieldId);
-    MarcFieldProtection.deleteMarcFieldProtectionViaApi(secondFieldId);
-    MarcFieldProtection.deleteMarcFieldProtectionViaApi(thirdFieldId);
     // clean up generated profiles
     JobProfiles.deleteJobProfile(jobProfile.profileName);
     MatchProfiles.deleteMatchProfile(matchProfile.profileName);
@@ -230,7 +179,7 @@ describe('Importing MARC Bib files', () => {
     FileManager.deleteFile(`cypress/fixtures/${nameForUpdatedMarcFile}`);
   });
 
-  it('C380511 Edit protected and linked fields using update MARC Bib profile (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+  it('C385665 Update controllable subfield, "$0" in one of the linked repeatable fields (multiple repeatable fields with same indicators) (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
@@ -241,7 +190,10 @@ describe('Importing MARC Bib files', () => {
       InventoryInstance.verifySearchOptions();
       InventoryInstance.searchResults(linking.value);
       InventoryInstance.clickLinkButton();
-      QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
+      InventoryInstance.closeDetailsView();
+      InventoryInstance.closeFindAuthorityModal();
+      // waiter needed for the fileds to be linked.
+      cy.wait(1000);
     });
     QuickMarcEditor.pressSaveAndClose();
     QuickMarcEditor.checkAfterSaveAndClose();
@@ -261,8 +213,8 @@ describe('Importing MARC Bib files', () => {
     DataImport.editMarcFile(
       nameForExportedMarcFile,
       nameForUpdatedMarcFile,
-      ['aLudwig van, Beethoven,d1770-1827ecomposer', '0id.loc.gov/authorities/names/n83130832', 'aMusic piano', 'ewriter of supplementary textual content.', 'aLudwig van, Beethoven,d1770-1827iContainer of (work):0id.loc.gov/authorities/names/n79107741'],
-      ['aBeethoven, Ludwig V.d1770-1827eAuthor', '0id.loc.gov/authorities/names/n83130833', 'aMusic pianocTest environment', 'eauthor of supplementary textual content.', 'aBeethoven, Ludwig V.d1770-1827iContainer of (work):']
+      ['aKirby, Jack', 'n77020008'],
+      ['aKirby, Steve,', 'n77020008test']
     );
 
     // upload the exported marc file with 999.f.f.s fields
@@ -274,14 +226,13 @@ describe('Importing MARC Bib files', () => {
     JobProfiles.waitFileIsImported(nameForUpdatedMarcFile);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(nameForUpdatedMarcFile);
-    Logs.clickOnHotLink(0, 3, 'Updated');
+
+    cy.visit(TopMenu.inventoryPath);
+    InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+    InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
-    QuickMarcEditor.verifyTagFieldAfterLinking(17, '100', '1', '\\', '$a Ludwig van, Beethoven,  $d 1770-1827', '$e composer.', '$0 id.loc.gov/authorities/names/n79107741', '');
-    QuickMarcEditor.verifyTagFieldAfterLinking(18, '240', '1', '0', '$a Variations,  $m piano, violin, cello,  $n op. 44,  $r E♭ major', '$c Ludwig Van Beethoven.', '$0 id.loc.gov/authorities/names/n83130832', '');
-    QuickMarcEditor.verifyTagFieldAfterLinking(41, '650', '\\', '0', '$a Music piano', '$c Test environment', '$0 id.loc.gov/authorities/childrensSubjects/sj2021056711', '');
-    QuickMarcEditor.verifyTagFieldAfterLinking(50, '700', '1', '\\', '$a Hewitt, Angela,  $d 1958-', '$e instrumentalist, $e writer of supplementary textual content.', '$0 id.loc.gov/authorities/names/n91099716', '');
-    QuickMarcEditor.verifyTagFieldAfterLinking(51, '700', '1', '2', '$a Ludwig van, Beethoven,  $d 1770-1827', '$i Container of (work):', '$0 id.loc.gov/authorities/names/n79107741', '');
-    QuickMarcEditor.verifyTagFieldAfterUnlinking(52, '700', '1', '\\', '$a Hewitt, Angela, $d 1958- $e instrumentalist, $e author of supplementary textual content. $0 id.loc.gov/authorities/names/n91099716');
-    QuickMarcEditor.verifyTagFieldAfterUnlinking(53, '700', '1', '2', '$a Beethoven, Ludwig V. $d 1770-1827 $i Container of (work):');
+    QuickMarcEditor.verifyTagFieldAfterLinking(75, '700', '1', '\\', '$a Chin, Staceyann,  $d 1972-', '$e letterer.', '$0 id.loc.gov/authorities/names/n2008052404', '');
+    QuickMarcEditor.verifyTagFieldAfterLinking(76, '700', '1', '\\', '$a Lee, Stan,  $d 1922-2018', '$e creator', '$0 id.loc.gov/authorities/names/n83169267', '');
+    QuickMarcEditor.verifyTagFieldAfterUnlinking(77, '700', '1', '\\', '$a Kirby, Steve, $e creator. $0 id.loc.gov/authorities/names/n77020008test');
   });
 });
