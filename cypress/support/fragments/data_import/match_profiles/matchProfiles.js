@@ -82,6 +82,13 @@ export default {
     waitCreatingMatchProfile();
   },
 
+  createMatchProfileWithQualifierAndComparePart:(profile) => {
+    openNewMatchProfileForm();
+    NewMatchProfile.fillMatchProfileWithStaticValueAndComparePartValue(profile);
+    saveAndClose();
+    waitCreatingMatchProfile();
+  },
+
   createMatchProfileWithQualifierAndExistingRecordField:(profile) => {
     openNewMatchProfileForm();
     NewMatchProfile.fillMatchProfileWithQualifierInIncomingRecordsAndValueInExistingRecord(profile);

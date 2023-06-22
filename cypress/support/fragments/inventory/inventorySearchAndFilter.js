@@ -17,7 +17,8 @@ import {
   Section,
   MultiSelect,
   MultiSelectOption,
-  MultiColumnListRow
+  MultiColumnListRow,
+  DropdownMenu
 } from '../../../../interactors';
 import InventoryActions from './inventoryActions';
 import InventoryInstances from './inventoryInstances';
@@ -53,6 +54,9 @@ const holdingsPermanentLocationAccordion = Accordion({ id:'holdingsPermanentLoca
 const callNumberBrowsePane = Pane({ title: 'Browse inventory' });
 const actionsButton = Button('Actions');
 const editInstanceButton = Button('Edit instance');
+const inventorySearchResultsPane = Section({ id: 'browse-inventory-results-pane' });
+const nextButton = Button({ id: 'browse-results-list-callNumbers-next-paging-button' });
+const previousButton = Button({ id: 'browse-results-list-callNumbers-prev-paging-button' });
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -202,6 +206,7 @@ export default {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000);
     cy.do(Select('Search field index').choose('Call numbers'));
+    cy.expect(effectiveLocationInput.exists());
   },
 
   selectBrowseSubjects() {
@@ -244,6 +249,15 @@ export default {
     cy.expect(Accordion({ id: 'instancesTags' }).absent());
   },
 
+  verifyBrowseOptions() {
+    cy.do(browseSearchAndFilterInput.click());
+    cy.expect([
+      browseSearchAndFilterInput.has({ content: including('Call numbers') }),
+      browseSearchAndFilterInput.has({ content: including('Contributors') }),
+      browseSearchAndFilterInput.has({ content: including('Subjects') }),
+    ]);
+  },
+
   verifyKeywordsAsDefault() {
     cy.get('#input-record-search-qindex').then((elem) => {
       expect(elem.text()).to.include('Select a browse option');
@@ -259,6 +273,14 @@ export default {
     cy.expect(callNumberBrowsePane.exists());
     cy.expect(callNumberBrowsePane.has({ subtitle: 'Enter search criteria to start browsing' }));
     cy.expect(HTML(including('Browse for results entering a query or choosing a filter.')).exists());
+  },
+
+  verifyCallNumberBrowseNotEmptyPane() {
+    cy.expect([
+      callNumberBrowsePane.exists(),
+      Pane({ subtitle: 'Enter search criteria to start browsing' }).absent(),
+      HTML(including('Browse for results entering a query or choosing a filter.')).absent()
+    ]);
   },
 
   verifyCallNumberBrowsePane() {
@@ -400,6 +422,14 @@ export default {
     cy.do(searchAndFilterSection.find(resetAllBtn).click());
   },
 
+  clickNextPaginationButton() {
+    cy.do(inventorySearchResultsPane.find(nextButton).click());
+  },
+  
+  clickPreviousPaginationButton() {
+    cy.do(inventorySearchResultsPane.find(previousButton).click());
+  },
+
   checkContributorsColumResult(cellContent) {
     cy.expect(MultiColumnList({ id: 'list-inventory' }).find(MultiColumnListCell(including(cellContent))).exists());
   },
@@ -531,6 +561,14 @@ export default {
     cy.do([
       instanceDetailsSection.find(actionsButton).click(),
       editInstanceButton.click(),
+    ]);
+  },
+
+  verifyActionButtonOptions() {
+    cy.do(paneResultsSection.find(actionsButton).click());
+    cy.expect([
+      Button('New').exists(),
+      DropdownMenu().find(HTML('Show columns')).exists(),
     ]);
   },
 

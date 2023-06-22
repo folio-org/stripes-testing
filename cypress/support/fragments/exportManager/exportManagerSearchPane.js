@@ -43,6 +43,18 @@ export default {
     return cy.do(MultiColumnListCell(including(content)).click());
   },
 
+  selectJobByIndex(content, index) {
+    cy.get('div[class*=mclRow-]').contains(content).then(element => {
+      element.prevObject[index].click();
+    });
+  },
+
+  verifyJobAmount(text, amount) {
+    cy.get('div[class*=mclRow-]').contains(text).then(element => {
+      expect(element.prevObject.length).to.eq(amount)
+    });
+  },
+
   searchById(id) {
     cy.do([
       TextField().fillIn(id),
@@ -209,5 +221,9 @@ export default {
     cy.wait(7000);
     cy.do(Button('Rerun').click());
     cy.wait(7000);
+  },
+
+  verifyNoPermissionWarning() {
+    cy.expect(HTML('You don\'t have permission to view this app/record').exists());
   },
 };
