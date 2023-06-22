@@ -49,6 +49,8 @@ describe('Inventory -> Call Number Browse', () => {
     parameter: 'Keyword (title, contributor, identifier, HRID, UUID)',
   };
 
+  const notExistingCallNumber = `callNumber_${getRandomPostfix()}`;
+
   let barcodes = [];
   let itemCallNumbers = [];
   let instances = [];
@@ -186,6 +188,16 @@ describe('Inventory -> Call Number Browse', () => {
     InventorySearchAndFilter.clickNextPaginationButton();
     BrowseCallNumber.selectFoundCallNumber(item.itemCallNumber);    
     InventorySearchAndFilter.switchToBrowseTab();
+    InventorySearchAndFilter.clickResetAllButton();
+  });
+
+  it('C347916 Verify Browse with non-existent call number (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    InventorySearchAndFilter.switchToBrowseTab();
+    InventorySearchAndFilter.verifyBrowseOptions();
+    InventorySearchAndFilter.selectBrowseCallNumbers();
+    InventorySearchAndFilter.browseSubjectsSearch(notExistingCallNumber);
+    BrowseCallNumber.checkNotExistingCallNumber(notExistingCallNumber);
+    BrowseCallNumber.checkNotClickableResult(notExistingCallNumber);
     InventorySearchAndFilter.clickResetAllButton();
   });
 });
