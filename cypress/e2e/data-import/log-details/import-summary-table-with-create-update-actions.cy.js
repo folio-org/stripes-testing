@@ -114,7 +114,7 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C356791 autotest holdings mapping profile.${getRandomPostfix()}`,
-        holdingsType: 'electronic',
+        holdingsType: 'Electronic',
         permanetLocation: `"${LOCALION_NAMES.ONLINE}"`,
         permanetLocationUI: LOCALION_NAMES.ONLINE_UI,
         callNumberType: CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS,
@@ -196,33 +196,33 @@ describe('ui-data-import', () => {
       });
   });
 
-  // after('delete test data', () => {
-  //   // delete created files in fixtures
-  //   FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
-  //   FileManager.deleteFile(`cypress/fixtures/${fileNameWithUpdatedContent}`);
-  //   FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
-  //   JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
-  //   JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-  //   collectionOfMatchProfiles.forEach(profile => {
-  //     MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
-  //   });
-  //   collectionOfProfilesForCreate.forEach(profile => {
-  //     ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-  //     FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
-  //   });
-  //   collectionOfProfilesForUpdate.forEach(profile => {
-  //     ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-  //     FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
-  //   });
-  //   instanceHrids.forEach(hrid =>{
-  //     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` })
-  //     .then((instance) => {
-  //       cy.deleteItemViaApi(instance.items[0].id);
-  //       cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-  //       InventoryInstance.deleteInstanceViaApi(instance.id);
-  //     });
-  //   });
-  // });
+  after('delete test data', () => {
+    // delete created files in fixtures
+    FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
+    FileManager.deleteFile(`cypress/fixtures/${fileNameWithUpdatedContent}`);
+    FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
+    JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
+    JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
+    collectionOfMatchProfiles.forEach(profile => {
+      MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+    });
+    collectionOfProfilesForCreate.forEach(profile => {
+      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+    });
+    collectionOfProfilesForUpdate.forEach(profile => {
+      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+    });
+    instanceHrids.forEach(hrid =>{
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` })
+      .then((instance) => {
+        cy.deleteItemViaApi(instance.items[0].id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+    });
+  });
 
   it('C356791 Check import summary table with "create + update" actions (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
