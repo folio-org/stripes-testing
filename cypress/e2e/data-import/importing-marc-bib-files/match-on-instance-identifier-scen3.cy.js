@@ -29,8 +29,8 @@ describe('ui-data-import', () => {
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const filePathForCreateInstance = 'marcFileForMatchOnIdentifierForCreate.mrc';
   const filePathForUpdateInstance = 'marcFileForMatchOnIdentifierForUpdate_3.mrc';
-  const fileNameForCreateInstance = `C347829autotestFile.${getRandomPostfix()}.mrc`;
-  const fileNameForUpdateInstance = `C347829autotestFile.${getRandomPostfix()}.mrc`;
+  const fileNameForCreateInstance = `C347830autotestFile.${getRandomPostfix()}.mrc`;
+  const fileNameForUpdateInstance = `C347830autotestFile.${getRandomPostfix()}.mrc`;
   const instanceGeneralNote = 'IDENTIFIER UPDATE 3';
   const resourceIdentifiers = [
     { type: 'UPC', value: 'ORD32671387-4' },
