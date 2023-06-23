@@ -77,7 +77,7 @@ describe('ui-data-import', () => {
       InventoryInstance.startOverlaySourceBibRecord();
       InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();
       InventoryInstance.importWithOclc(oclcForUpdating);
-      InventoryInstance.checkCalloutMessage(`Updated record ${oclcForUpdating}`);
+      InventoryInstance.checkCalloutMessage(`Record ${oclcForUpdating} updated. Results may take a few moments to become visible in Inventory`);
 
       // check instance is updated
       InventoryInstance.verifyInstanceTitle(updatedInstanceData.title);

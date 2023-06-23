@@ -20,6 +20,7 @@ import MarcAuthoritiesSearch from '../marcAuthority/marcAuthoritiesSearch';
 import MarcAuthorities from '../marcAuthority/marcAuthorities';
 import FileManager from '../../utils/fileManager';
 import Logs from './logs/logs';
+import DataImportUploadFile from '../../../../interactors/dataImportUploadFile';
 
 const sectionPaneJobsTitle = Section({ id: 'pane-jobs-title' });
 const actionsButton = Button('Actions');
@@ -335,5 +336,18 @@ export default {
   clickDataImportNavButton:() => {
     // TODO delete this function after fix https://issues.folio.org/browse/MODDATAIMP-691
     cy.do(Button({ id:'app-list-item-clickable-data-import-module' }).click());
+  },
+
+  // delete file if it hangs unimported before test
+  verifyUploadState: () => {
+    cy.allure().startStep('Delete files before upload file');
+    waitLoading();
+    cy.then(() => DataImportUploadFile().isDeleteFilesButtonExists()).then(isDeleteFilesButtonExists => {
+      if (isDeleteFilesButtonExists) {
+        cy.do(Button('Delete files').click());
+        cy.expect(Button('or choose files').exists());
+        cy.allure().endStep();
+      }
+    });
   }
 };

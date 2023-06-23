@@ -65,7 +65,7 @@ const fillFastAddNewRecordForm = ({
 };
 
 const saveAndClose = () => {
-  cy.do(Button('Save & close').click());
+  cy.do(Button('Save and close').click());
 
   cy.expect(Section({ id: 'pane-results' }).find(Button('Actions')).exists());
 };
