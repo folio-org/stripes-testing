@@ -87,23 +87,28 @@ describe('Importing MARC Bib files', () => {
   const linkingTagAndValues = [
     {
       rowIndex: 17,
-      value: 'Ludwig van, Beethoven, 1770-1827.'
+      value: 'Ludwig van, Beethoven, 1770-1827.',
+      tag: '100'
     },
     {
       rowIndex: 18,
-      value: 'Beethoven, Ludwig van, 1770-1827 Variations, piano, violin, cello, op. 44, E♭ major'
+      value: 'Beethoven, Ludwig van, 1770-1827 Variations, piano, violin, cello, op. 44, E♭ major',
+      tag: '240'
     },
     {
       rowIndex: 41,
-      value: 'Music piano'
+      value: 'Music piano',
+      tag: '650'
     },
     {
       rowIndex: 50,
-      value: 'Hewitt, Angela, 1958-'
+      value: 'Hewitt, Angela, 1958-',
+      tag: '700'
     },
     {
       rowIndex: 51,
-      value: 'Ludwig van, Beethoven, 1770-1827.'
+      value: 'Ludwig van, Beethoven, 1770-1827.',
+      tag: '700'
     },
   ];
   const createdAuthorityIDs = [];
@@ -236,10 +241,7 @@ describe('Importing MARC Bib files', () => {
       InventoryInstance.verifySearchOptions();
       InventoryInstance.searchResults(linking.value);
       InventoryInstance.clickLinkButton();
-      InventoryInstance.closeDetailsView();
-      InventoryInstance.closeFindAuthorityModal();
-      // waiter needed for the fileds to be linked.
-      cy.wait(1000);
+      QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
     });
     QuickMarcEditor.pressSaveAndClose();
     QuickMarcEditor.checkAfterSaveAndClose();
