@@ -94,7 +94,7 @@ const addProductId = (profile) => {
 const addVendorReferenceNumber = (profile) => {
   cy.do([Button('Add vendor reference number').click(),
     TextField('Vendor reference number').fillIn(profile.vendorReferenceNumber),
-    TextField('Vendor reference type').fillIn(`"${profile.vendoeReferenceType}"`)
+    TextField('Vendor reference type').fillIn(`"${profile.vendorReferenceType}"`)
   ]);
 };
 
@@ -110,9 +110,14 @@ const addFundDistriction = (profile) => {
 const addLocation = (profile) => {
   cy.do([
     Accordion('Location').find(Button('Add location')).click(),
-    TextField('Name (code)').fillIn(profile.locationName),
-    Accordion('Location').find(TextField('Quantity electronic')).fillIn(profile.locationQuantityElectronic)
+    TextField('Name (code)').fillIn(profile.locationName)
   ]);
+  if(profile.locationQuantityElectronic){
+    cy.do(Accordion('Location').find(TextField('Quantity electronic')).fillIn(profile.locationQuantityElectronic));
+  }
+  if(profile.locationQuantityPhysical){
+    cy.do(Accordion('Location').find(TextField('Quantity physical')).fillIn(profile.locationQuantityPhysical));
+  }
 };
 
 const addVendor = (profile) => {
@@ -123,6 +128,13 @@ const addVendor = (profile) => {
     organizationModal.find(Button('Search')).click(),
     organizationModal.find(HTML(including('1 record found'))).exists(),
     MultiColumnListCell(profile.vendor).click({ row: 0, columnIndex: 0 })
+  ]);
+};
+
+const addVolume = (profile) => {
+  cy.do([
+    Accordion('Physical resource details').find(Button('Add volume')).click(),
+    TextField('Volume').fillIn(profile.volume)
   ]);
 };
 
@@ -204,6 +216,7 @@ export default {
   addFundDistriction,
   addLocation,
   addVendor,
+  addVolume,
   selectFromResultsList,
   waitLoading,
 
@@ -392,6 +405,54 @@ export default {
     addVendorReferenceNumber(profile);
     addFundDistriction(profile);
     addLocation(profile);
+    waitLoading();
+  },
+
+  fillPhysicalOrderMappingProfile:(profile) => {
+    cy.do([
+      TextField({ name:'profile.name' }).fillIn(profile.name),
+      Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.marcBib),
+      Select({ name:'profile.existingRecordType' }).choose(profile.typeValue),
+      TextField('Purchase order status*').fillIn(`"${profile.orderStatus}"`),
+      Accordion('Order information').find(Checkbox({ name:'profile.mappingDetails.mappingFields[1].booleanFieldAction' })).click(),
+      Accordion('Order information').find(Button('Organization look-up')).click(),
+      organizationModal.find(TextField({ id: 'input-record-search' })).fillIn(profile.vendor),
+      organizationModal.find(Button('Search')).click(),
+      organizationModal.find(HTML(including('1 record found'))).exists(),
+      MultiColumnListCell(profile.vendor).click({ row: 0, columnIndex: 0 }),
+      TextField('Re-encumber').fillIn(`"${profile.reEncumber}"`),
+      TextField('Title*').fillIn(profile.title),
+      TextField('Must acknowledge receiving note').fillIn(`"${profile.mustAcknowledgeReceivingNote}"`),
+      TextField('Publication date').fillIn(profile.publicationDate),
+      TextField('Publisher').fillIn(profile.publisher),
+      TextField('Edition').fillIn(profile.edition),
+      TextArea('Internal note').fillIn(profile.internalNote),
+      TextField('Acquisition method*').fillIn(`"${profile.acquisitionMethod}"`),
+      TextField('Order format*').fillIn(`"${profile.orderFormat}"`),
+      TextField('Receipt status').fillIn(`"${profile.receiptStatus}"`),
+      TextField('Payment status').fillIn(`"${profile.paymentStatus}"`),
+      TextField('Selector').fillIn(profile.selector),
+      TextField('Cancellation restriction').fillIn(`"${profile.cancellationRestriction}"`),
+      TextField('Rush').fillIn(profile.rush),
+      TextField('Receiving workflow*').fillIn(`"${profile.receivingWorkflow}"`),
+      TextField('Account number').fillIn(profile.accountNumber),
+      TextField('Physical unit price').fillIn(profile.physicalUnitPrice),
+      TextField('Quantity physical').fillIn(profile.quantityPhysical),
+      TextField('Currency*').fillIn(`"${profile.currency}"`),
+      Accordion('Physical resource details').find(Button('Organization look-up')).click(),
+      organizationModal.find(TextField({ id: 'input-record-search' })).fillIn(profile.materialSupplier),
+      organizationModal.find(Button('Search')).click(),
+      organizationModal.find(HTML(including('1 record found'))).exists(),
+      MultiColumnListCell(profile.vendor).click({ row: 0, columnIndex: 0 }),
+      Accordion('Physical resource details').find(TextField('Create inventory')).fillIn(`"${profile.createInventory}"`),
+      Accordion('Physical resource details').find(TextField('Material type')).fillIn(`"${profile.materialType}"`)
+    ]);
+    addContributor(profile);
+    addProductId(profile);
+    addVendorReferenceNumber(profile);
+    addFundDistriction(profile);
+    addLocation(profile);
+    addVolume(profile);
     waitLoading();
   },
 
