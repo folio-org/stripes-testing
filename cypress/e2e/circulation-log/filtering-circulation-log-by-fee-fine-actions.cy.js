@@ -210,8 +210,7 @@ describe('Circulation log', () => {
               testData.userServicePoint.id
             );
           });
-      })
-      .then(() => {});
+      });
   });
 
   beforeEach('Login', () => {
