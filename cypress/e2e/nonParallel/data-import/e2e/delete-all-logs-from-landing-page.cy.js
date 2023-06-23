@@ -10,8 +10,7 @@ import Users from '../../../../support/fragments/users/users';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import DevTeams from '../../../../support/dictionary/devTeams';
 
-// this autotest is needed to be skipped because it is running in infinite loop. TODO analyze this issue and fix it
-describe.skip('ui-data-import', () => {
+describe('ui-data-import', () => {
   let userId = null;
   let fileNameToUpload = '';
   const filePathToUpload = 'oneMarcBib.mrc';
@@ -20,18 +19,17 @@ describe.skip('ui-data-import', () => {
   const numberOfLogsPerPage = 25;
   const numberOfLogsToUpload = 30;
   const getCalloutSuccessMessage = logsCount => `${logsCount} data import logs have been successfully deleted.`;
+  const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
 
-  before(() => {
+  before('create test data', () => {
     cy.createTempUser([
       permissions.moduleDataImportEnabled.gui,
       permissions.dataImportDeleteLogs.gui
     ])
       .then(userProperties => {
         userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading
-        });
+        cy.login(userProperties.username, userProperties.password,
+          { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
       })
       .then(() => {
         DataImport.checkIsLandingPageOpened();
@@ -41,20 +39,19 @@ describe.skip('ui-data-import', () => {
           // we are uploading 29 empty files and 1 file with content to speed up uploading process
           const filePath = numberOfLogsToUpload - 1 === index ? filePathToUpload : emptyFilePathToUpload;
           fileNameToUpload = `C358137autotestFile.${getRandomPostfix()}.mrc`;
-
-          // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-          cy.reload();
+          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+          DataImport.verifyUploadState();
+          DataImport.waitLoading();
           DataImport.uploadFile(filePath, fileNameToUpload);
-          // need to wait until file will be uploaded in loop
-          cy.wait(8000);
-          JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+          JobProfiles.searchJobProfileForImport(jobProfileToRun);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(fileNameToUpload);
+          cy.wait(10000);
         });
       });
   });
 
-  after(() => {
+  after('delete test data', () => {
     Logs.selectAllLogs();
     Logs.actionsButtonClick();
     Logs.deleteLogsButtonClick();
