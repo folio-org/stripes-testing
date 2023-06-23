@@ -8,6 +8,7 @@ const itemDataAccordion = Accordion('Item data');
 const itemNotesAccordion = Accordion('Item notes');
 
 const verifyItemBarcode = value => { cy.expect(KeyValue('Item barcode').has({ value })); };
+const verifyItemIdentifier = value => { cy.expect(KeyValue('Item identifier').has({ value })); };
 const verifyPermanentLoanType = value => { cy.expect(KeyValue('Permanent loan type').has({ value })); };
 const verifyTemporaryLoanType = value => { cy.expect(KeyValue('Temporary loan type').has({ value })); };
 const verifyNote = value => { cy.expect(KeyValue('Check in note').has({ value })); };
@@ -41,6 +42,7 @@ export default {
   itemStatuses,
   waitLoading,
   verifyItemBarcode,
+  verifyItemIdentifier,
   verifyPermanentLoanType,
   verifyTemporaryLoanType,
   verifyNote,
