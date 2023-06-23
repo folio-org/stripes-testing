@@ -54,6 +54,9 @@ const holdingsPermanentLocationAccordion = Accordion({ id:'holdingsPermanentLoca
 const callNumberBrowsePane = Pane({ title: 'Browse inventory' });
 const actionsButton = Button('Actions');
 const editInstanceButton = Button('Edit instance');
+const inventorySearchResultsPane = Section({ id: 'browse-inventory-results-pane' });
+const nextButton = Button({ id: 'browse-results-list-callNumbers-next-paging-button' });
+const previousButton = Button({ id: 'browse-results-list-callNumbers-prev-paging-button' });
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -417,6 +420,14 @@ export default {
 
   clickResetAllButton() {
     cy.do(searchAndFilterSection.find(resetAllBtn).click());
+  },
+
+  clickNextPaginationButton() {
+    cy.do(inventorySearchResultsPane.find(nextButton).click());
+  },
+  
+  clickPreviousPaginationButton() {
+    cy.do(inventorySearchResultsPane.find(previousButton).click());
   },
 
   checkContributorsColumResult(cellContent) {
