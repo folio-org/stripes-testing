@@ -2,12 +2,9 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { LOCALION_NAMES,
-  FOLIO_RECORD_TYPE,
-  ITEM_STATUS_NAMES,
+import { FOLIO_RECORD_TYPE,
   ORDER_STATUSES,
   MATERIAL_TYPE_NAMES,
-  LOAN_TYPE_NAMES,
   ORDER_FORMAT_NAMES,
   ACQUISITION_METHOD_NAMES,
   JOB_STATUS_NAMES } from '../../../support/constants';
@@ -22,16 +19,43 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import OrderLines from '../../../support/fragments/orders/orderLines';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
 
 describe('ui-data-import', () => {
   let user;
+  const quantityOfOrders = '2';
   const filePathForCreateOrder = 'marcFileForC375174.mrc';
   const marcFileName = `C375174 autotestFileName ${getRandomPostfix()}`;
+  const orderData = {
+    title: 'ROALD DAHL : TELLER OF THE UNEXPECTED : A BIOGRAPHY.',
+    publicationDate: '2023',
+    publisher: 'PEGASUS BOOKS',
+    internalNote: 'AAH/bsc ',
+    acquisitionMethod: 'Purchase at vendor system',
+    orderFormat: ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE_Check,
+    receiptStatus: 'Pending',
+    paymentStatus: 'Pending',
+    source: 'MARC',
+    selector: 'AAH',
+    receivingWorkflow: 'Synchronized order and receipt quantity',
+    accountNumber: '137009',
+    physicalUnitPrice: '$27.95',
+    quantityPhysical: '1',
+    currency: 'USD',
+    materialSupplier: 'GOBI Library Solutions',
+    createInventory: 'Instance, Holding, Item',
+    materialType: MATERIAL_TYPE_NAMES.BOOK,
+    contributor: 'DENNISON, MATTHEW',
+    contributorType: 'Personal name',
+    productId: '9781639363322',
+    productIDType: 'ISBN',
+    vendorReferenceNumber: '99992466210',
+    vendorReferenceType: 'Vendor order reference number',
+    fund: 'Gifts (Non-recurring)(GIFTS-ONE-TIME)',
+    value: '100%',
+    locationName: 'Main Library (KU/CC/DI/M)',
+    locationQuantityPhysical: '1'
+  };
   const mappingProfile = {
     name: `C375174 Test Order ${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.ORDER,
@@ -46,7 +70,7 @@ describe('ui-data-import', () => {
     edition: '250$a',
     internalNote: '981$d',
     acquisitionMethod: ACQUISITION_METHOD_NAMES.PURCHASE_AT_VENDOR_SYSTEM,
-    orderFormat: 'Physical Resource',
+    orderFormat: ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE_Check,
     receiptStatus: 'Pending',
     paymentStatus: 'Pending',
     selector: '981$e',
@@ -59,7 +83,7 @@ describe('ui-data-import', () => {
     currency: 'USD',
     materialSupplier: 'GOBI Library Solutions',
     createInventory: 'Instance, Holding, Item',
-    materialType: 'book',
+    materialType: MATERIAL_TYPE_NAMES.BOOK,
     contributor: '100$a',
     contributorType: 'Personal name',
     productId: '020$a',
@@ -100,6 +124,13 @@ describe('ui-data-import', () => {
       });
   });
 
+  after('delete test data', () => {
+    Users.deleteViaApi(user.userId);
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
+    ActionProfiles.deleteActionProfile(actionProfile.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+  });
+
   it('C375174 Verify the importing of orders with pending status (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       // create mapping profile
@@ -129,6 +160,16 @@ describe('ui-data-import', () => {
       JobProfiles.waitFileIsImported(marcFileName);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(marcFileName);
-      
+      [0, 1].forEach(rowNumber => {
+        [FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.order
+        ].forEach(columnName => {
+          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName, rowNumber);
+        });
+      });
+      FileDetails.checkOrderInSummaryTable(quantityOfOrders);
+      FileDetails.openOrder('Created');
+      OrderLines.waitLoading();
+      OrderLines.checkIsOrderCreatedWithDataFromImportedFile(orderData);
     });
 });
