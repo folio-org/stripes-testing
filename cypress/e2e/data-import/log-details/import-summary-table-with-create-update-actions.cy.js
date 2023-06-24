@@ -32,11 +32,13 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
   let user;
   let instanceHrids;
   const quantityOfUpdatedItems = '2';
+  const quantityOfCreatedItems = '1';
   const filePathForCreateInstance = 'marcFileForC356791.mrc';
   const filePathWithUpdatedContent = 'marcFileForC356791_for_update.mrc';
   const fileNameForCreateInstance = `C356791 autotestFileForCreate.${getRandomPostfix()}.mrc`;
@@ -45,6 +47,7 @@ describe('ui-data-import', () => {
   const fileNameWithUpdatedContent = `C356791 autotestFileForUpdate.${getRandomPostfix()}.mrc`;
   const fileNameForUpdateInstance = `C356791 autotestFileForUpdate.${getRandomPostfix()}.mrc`;
   const jobProfileNameForExport = `C356791 autotest job profile.${getRandomPostfix()}`;
+  const addedInstanceTitle = 'Minakata Kumagusu kinrui saishoku zufu hyakusen.';
  
   const collectionOfProfilesForCreate = [
     {
@@ -71,7 +74,8 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C356791 autotest holdings mapping profile.${getRandomPostfix()}`,
-        permanentLocation: `"${LOCALION_NAMES.ONLINE}"` },
+        permanentLocation: `"${LOCALION_NAMES.ONLINE}"`,
+        pernanentLocationUI: LOCALION_NAMES.ONLINE_UI },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C356791 autotest holdings action profile.${getRandomPostfix()}` }
     },
@@ -214,6 +218,7 @@ describe('ui-data-import', () => {
       ActionProfiles.deleteActionProfile(profile.actionProfile.name);
       FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
     });
+    Users.deleteViaApi(user.userId);
     instanceHrids.forEach(hrid =>{
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` })
       .then((instance) => {
@@ -373,10 +378,18 @@ describe('ui-data-import', () => {
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileNameForUpdateInstance);
       Logs.openFileDetails(fileNameForUpdateInstance);
+      // check Created counter in the Summary table
+      FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfCreatedItems);
+      FileDetails.checkInstanceQuantityInSummaryTable(quantityOfCreatedItems);
+      FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfCreatedItems);
+      FileDetails.checkItemQuantityInSummaryTable(quantityOfCreatedItems);
+      // check Updated counter in the Summary table
       FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfUpdatedItems, 1);
       FileDetails.checkInstanceQuantityInSummaryTable(quantityOfUpdatedItems, 1);
       FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfUpdatedItems, 1);
       FileDetails.checkItemQuantityInSummaryTable(quantityOfUpdatedItems, 1);
+            
+      // check items is updated in Inventory
       [0, 1].forEach(rowNumber => {
         [FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
@@ -397,6 +410,7 @@ describe('ui-data-import', () => {
         ItemRecordView.verifyMaterialType(collectionOfProfilesForUpdate[2].mappingProfile.materialType);
         ItemRecordView.verifyPermanentLoanType(collectionOfProfilesForUpdate[2].mappingProfile.permanentLoanType);
         ItemRecordView.verifyItemStatus(collectionOfProfilesForUpdate[2].mappingProfile.status);
+        cy.go('back');
       });
       [FileDetails.columnNameInResultList.srsMarc,
         FileDetails.columnNameInResultList.instance,
@@ -404,5 +418,11 @@ describe('ui-data-import', () => {
         FileDetails.columnNameInResultList.item].forEach(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName, 2);
       });
+      FileDetails.openInstanceInInventory('Created', 2);
+      InventoryInstance.checkIsInstancePresented(
+        addedInstanceTitle,
+        collectionOfProfilesForCreate[2].mappingProfile.pernanentLocationUI,
+        collectionOfProfilesForCreate[3].mappingProfile.status
+      );
   });
 });
