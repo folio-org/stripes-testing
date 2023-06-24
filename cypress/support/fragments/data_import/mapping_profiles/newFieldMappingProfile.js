@@ -404,6 +404,7 @@ export default {
   fillCallNumber:(number) => cy.do(TextField('Call number').fillIn(number)),
   fillNumberOfPieces:(number) => cy.do(TextField('Number of pieces').fillIn(number)),
   fillBarcode:(barcode) => cy.do(TextField('Barcode').fillIn(barcode)),
+  fillItemIdentifier:(identifier) => cy.do(TextField('Item identifier').fillIn(identifier)),
   fillAccessionNumber:(number) => cy.do(TextField('Accession number').fillIn(number)),
   fillCopyNumber:(number) => cy.do(TextField('Copy number').fillIn(number)),
   fillVendorInvoiceNumber:(number) => cy.do(TextField('Vendor invoice number*').fillIn(number)),

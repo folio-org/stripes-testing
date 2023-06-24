@@ -24,6 +24,7 @@ describe('Inventory -> Call Number Browse', () => {
     volume: 'v.1',
     enumeration: 'e.2',
     chronology: 'ch.3',
+    shelvingOrderValue: 'PRT 3718 _V 11 E 12 CH 13 C 14 SUF',
   };
 
   const itemA1 = {
@@ -48,6 +49,8 @@ describe('Inventory -> Call Number Browse', () => {
     itemWithLowerCaseR: 'Rr 718',
     parameter: 'Keyword (title, contributor, identifier, HRID, UUID)',
   };
+
+  const notExistingCallNumber = `callNumber_${getRandomPostfix()}`;
 
   let barcodes = [];
   let itemCallNumbers = [];
@@ -148,7 +151,7 @@ describe('Inventory -> Call Number Browse', () => {
     InventorySearchAndFilter.browseSubjectsSearch(item.callNumber);
     BrowseCallNumber.checkItemSearchResult(item.callNumber, item.callNumberSuffix);
     InventorySearchAndFilter.selectFoundItem(item.callNumber, item.callNumberSuffix);
-    InventorySearchAndFilter.verifyShelvingOrder();
+    InventorySearchAndFilter.verifyShelvingOrder(item.shelvingOrderValue);
     InventorySearchAndFilter.verifyInstanceDisplayed(item.instanceName);
   });
 
@@ -184,7 +187,30 @@ describe('Inventory -> Call Number Browse', () => {
     BrowseCallNumber.checkSearchResultsTable();
     InventorySearchAndFilter.clickPreviousPaginationButton();
     InventorySearchAndFilter.clickNextPaginationButton();
-    BrowseCallNumber.selectFoundCallNumber(item.itemCallNumber);    
+    BrowseCallNumber.selectFoundCallNumber(item.itemCallNumber);
+    InventorySearchAndFilter.switchToBrowseTab();
+    InventorySearchAndFilter.clickResetAllButton();
+  });
+
+  it('C347916 Verify Browse with non-existent call number (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    InventorySearchAndFilter.switchToBrowseTab();
+    InventorySearchAndFilter.verifyBrowseOptions();
+    InventorySearchAndFilter.selectBrowseCallNumbers();
+    InventorySearchAndFilter.browseSubjectsSearch(notExistingCallNumber);
+    BrowseCallNumber.checkNotExistingCallNumber(notExistingCallNumber);
+    BrowseCallNumber.checkNotClickableResult(notExistingCallNumber);
+    InventorySearchAndFilter.clickResetAllButton();
+  });
+
+  it('C347918 Verify selecting row from browse result list (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    InventorySearchAndFilter.switchToBrowseTab();
+    InventorySearchAndFilter.verifyBrowseOptions();
+    InventorySearchAndFilter.selectBrowseCallNumbers();
+    InventorySearchAndFilter.browseSubjectsSearch(item.itemCallNumber);
+    InventorySearchAndFilter.selectFoundItem(item.callNumber, item.callNumberSuffix);
+    InventorySearchAndFilter.verifyShelvingOrder(item.shelvingOrderValue);
+    InventorySearchAndFilter.verifyInstanceDisplayed(item.instanceName);
+
     InventorySearchAndFilter.switchToBrowseTab();
     InventorySearchAndFilter.clickResetAllButton();
   });
