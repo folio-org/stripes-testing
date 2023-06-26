@@ -136,6 +136,7 @@ export default {
   // Checkout
   checkoutAll: { internal: 'ui-checkout.all', gui: 'Check out: All permissions' },
   checkoutCirculatingItems: { internal: 'ui-checkout.circulation', gui: 'Check out: Check out circulating items' },
+  checkoutViewFeeFines: { internal: 'ui-checkout.viewFeeFines', gui: 'Check out: View fees/fines' },
   // Checkin
   checkinAll: { internal: 'ui-checkin.all', gui: 'Check in: All permissions' },
   // Receiving
