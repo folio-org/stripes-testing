@@ -78,10 +78,10 @@ describe('Bulk Edit - Holdings', () => {
 
     // Delete items because only holdings with no items have field "Effective location" in Inventory
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${item.itemBarcode}"` })
-    .then((instance) => {
-      cy.deleteItemViaApi(instance.items[0].id);
-      cy.deleteItemViaApi(instance.items[1].id);
-    });
+      .then((instance) => {
+        cy.deleteItemViaApi(instance.items[0].id);
+        cy.deleteItemViaApi(instance.items[1].id);
+      });
 
     cy.visit(TopMenu.inventoryPath);
     InventorySearchAndFilter.switchToHoldings();
