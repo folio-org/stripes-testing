@@ -7,7 +7,8 @@ import {
   MultiColumnListRow,
   MultiColumnListCell,
   CheckboxInTable,
-  DropdownMenu
+  DropdownMenu,
+  PaneHeader
 } from '../../../../interactors';
 import ConfirmItemStatusModal from '../users/loans/confirmItemStatusModal';
 
@@ -17,6 +18,9 @@ const resolveClaimButton = Button('Resolve claim');
 const markAsMissingButton = Button('Mark as missing');
 
 export default {
+  waitLoading: () => {
+    cy.expect(PaneHeader({ id: 'paneHeaderpane-loandetails' }).exists());
+  },
   checkAll() {
     cy.do(CheckboxInTable({ name: 'check-all' }).click());
   },
