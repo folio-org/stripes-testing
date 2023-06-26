@@ -126,11 +126,22 @@ describe('ui-data-import', () => {
     acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
-
   beforeEach('create test data', () => {
     cy.loginAsAdmin();
     cy.getAdminToken()
       .then(() => {
+        MarcFieldProtection.getListOfMarcFieldProtectionViaApi({ query: `"field"=="${protectedFields.firstField}"` })
+          .then(list => {
+            if(list){
+              list.forEach(({ id }) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(id));
+            }
+        });
+        MarcFieldProtection.getListOfMarcFieldProtectionViaApi({ query: `"field"=="${protectedFields.secondField}"` })
+          .then(list => {
+            if(list){
+              list.forEach(({ id }) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(id));
+            } 
+        });
         MarcFieldProtection.createMarcFieldProtectionViaApi({
           indicator1: '*',
           indicator2: '*',

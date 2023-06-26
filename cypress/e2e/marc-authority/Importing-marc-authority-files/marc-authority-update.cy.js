@@ -24,10 +24,10 @@ import FileManager from '../../../support/utils/fileManager';
 
 describe('Data Import - Update MARC Authority files', () => {
   const testData = {
-    mappingProfileName: 'test mapping profile name',
-    actionProfileName: 'test action profile name',
-    matchProfileName: 'test match profile name',
-    jobProfileName: 'Update MARC authority records by matching 999 ff $s subfield value',
+    mappingProfileName: `test mapping profile name.${getRandomPostfix()}`,
+    actionProfileName: `test action profile name.${getRandomPostfix()}`,
+    matchProfileName: `test match profile name.${getRandomPostfix()}`,
+    jobProfileName: `Update MARC authority records by matching 999 ff $s subfield value.${getRandomPostfix()}`,
 
     authorityTitle: 'Elizabeth II, Queen of Great Britain, 1926-',
     instanseTitle: 'Elizabeth',
