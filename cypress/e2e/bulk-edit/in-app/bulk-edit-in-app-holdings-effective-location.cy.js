@@ -48,7 +48,7 @@ describe('Bulk Edit - Holdings', () => {
             cy.deleteItemViaApi(instance.items[0].id);
             cy.deleteItemViaApi(instance.items[1].id);
           });
-          
+
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading
@@ -56,12 +56,12 @@ describe('Bulk Edit - Holdings', () => {
       });
   });
 
-  after('delete test data', () => {
-    cy.deleteHoldingRecordViaApi(item.holdingUUID);
-    InventoryInstance.deleteInstanceViaApi(item.instanceId);
-    Users.deleteViaApi(user.userId);
-    FileManager.deleteFile(`cypress/fixtures/${holdingUUIDsFileName}`);
-  });
+  // after('delete test data', () => {
+  //   cy.deleteHoldingRecordViaApi(item.holdingUUID);
+  //   InventoryInstance.deleteInstanceViaApi(item.instanceId);
+  //   Users.deleteViaApi(user.userId);
+  //   FileManager.deleteFile(`cypress/fixtures/${holdingUUIDsFileName}`);
+  // });
 
   it('C380547 Verify updating Holdings "Effective location" in case of updating Holdings "Temporary location" (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     BulkEditSearchPane.checkHoldingsRadio();
