@@ -31,12 +31,14 @@ describe('Finance: Fiscal Year Rollover', () => {
   };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
-  const secondOrder = { ...NewOrder.defaultOneTimeOrder,
+  const secondOrder = { ...NewOrder.defaultOngoingTimeOrder,
     orderType: 'Ongoing',
     ongoing: { isSubscription: false, manualRenewal: false },
     approved: true,
     reEncumber: true };
-  const firstOrder = { ...NewOrder.defaultOneTimeOrder };
+  const firstOrder = { ...NewOrder.defaultOneTimeOrder,
+    approved: true,
+    reEncumber: true };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const allocatedQuantity = '100';
@@ -90,37 +92,37 @@ describe('Finance: Fiscal Year Rollover', () => {
         organization.id = responseOrganizations;
         invoice.accountingCode = organization.erpCode;
         firstOrder.orderType = 'One-time';
+        secondOrder.vendor = organization.name;
+        firstOrder.vendor = organization.name;
+        cy.visit(TopMenu.ordersPath);
+        Orders.createOrderForRollover(firstOrder, true).then(secondOrderResponse => {
+          firstOrder.id = secondOrderResponse.id;
+          firstOrderNumber = secondOrderResponse.poNumber;
+          Orders.checkCreatedOrder(firstOrder);
+          OrderLines.addPOLine();
+          OrderLines.selectRandomInstanceInTitleLookUP('*', 35);
+          OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(defaultFund, '40', '1', '40', location.institutionId);
+          OrderLines.backToEditingOrder();
+          Orders.openOrder();
+          cy.visit(TopMenu.invoicesPath);
+          Invoices.createRolloverInvoice(invoice, organization.name);
+          Invoices.createInvoiceLineFromPol(firstOrderNumber);
+        });
+        // Need to wait, while data will be loaded
+        cy.wait(4000);
+        Invoices.approveInvoice();
+        Invoices.payInvoice();
+        cy.visit(TopMenu.ordersPath);
+        Orders.createOrderForRollover(secondOrder, true).then(firstOrderResponse => {
+          secondOrder.id = firstOrderResponse.id;
+          Orders.checkCreatedOrder(secondOrder);
+          OrderLines.addPOLine();
+          OrderLines.selectRandomInstanceInTitleLookUP('*', 25);
+          OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(defaultFund, '10', '1', '10', location.institutionId);
+          OrderLines.backToEditingOrder();
+          Orders.openOrder();
+        });
       });
-    secondOrder.vendor = organization.name;
-    firstOrder.vendor = organization.name;
-    cy.visit(TopMenu.ordersPath);
-    Orders.createOrderForRollover(firstOrder, true).then(firstOrderResponse => {
-      firstOrder.id = firstOrderResponse.id;
-      firstOrderNumber = firstOrderResponse.poNumber;
-      Orders.checkCreatedOrder(firstOrder);
-      OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 25);
-      OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(defaultFund, '40', '1', '40', location.institutionId);
-      OrderLines.backToEditingOrder();
-      Orders.openOrder();
-      cy.visit(TopMenu.invoicesPath);
-      Invoices.createRolloverInvoice(invoice, organization.name);
-      Invoices.createInvoiceLineFromPol(firstOrderNumber);
-      // Need to wait, while data will be loaded
-      cy.wait(4000);
-      Invoices.approveInvoice();
-      Invoices.payInvoice();
-    });
-    cy.visit(TopMenu.ordersPath);
-    Orders.createOrderForRollover(secondOrder).then(secondOrderResponse => {
-      secondOrder.id = secondOrderResponse.id;
-      Orders.checkCreatedOrder(secondOrder);
-      OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 35);
-      OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(defaultFund, '10', '1', '10', location.institutionId);
-      OrderLines.backToEditingOrder();
-      Orders.openOrder();
-    });
     cy.createTempUser([
       permissions.uiFinanceExecuteFiscalYearRollover.gui,
       permissions.uiFinanceViewFiscalYear.gui,
@@ -134,9 +136,9 @@ describe('Finance: Fiscal Year Rollover', () => {
       });
   });
 
-  after(() => {
-    Users.deleteViaApi(user.userId);
-  });
+  // after(() => {
+  //   Users.deleteViaApi(user.userId);
+  // });
 
   it('C376608 Rollover cash balance as allocation ("Allocation" option is NOT active) (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     FinanceHelp.searchByName(defaultLedger.name);
@@ -147,10 +149,11 @@ describe('Finance: Fiscal Year Rollover', () => {
     Ledgers.checkRolloverLogs(todayDate);
     Ledgers.exportRollover(todayDate);
     Ledgers.checkDownloadedFile(`${fileNameDate}-result.csv`, defaultFund, secondFiscalYear, '100', '100', '60', '60', '60', '60', '60');
+    cy.pause();
     Ledgers.deleteDownloadedFile(`${fileNameDate}-result.csv`);
     Ledgers.closeOpenedPage();
     Ledgers.rollover();
-    Ledgers.fillInRolloverForCashBalance(secondFiscalYear.code, 'Cash balance', 'Allocation');
+    Ledgers.fillInRolloverForCashBalanceWithNotActiveAllocation(secondFiscalYear.code, 'Cash balance', 'Allocation');
     Ledgers.closeRolloverInfo();
     Ledgers.selectFundInLedger(defaultFund.name);
     Funds.selectPlannedBudgetDetails();

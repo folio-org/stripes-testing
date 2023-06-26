@@ -110,6 +110,23 @@ export default {
     ]);
   },
 
+  fillInRolloverForCashBalanceWithNotActiveAllocation(fiscalYear, rolloverBudgetValue, rolloverValueAs) {
+    cy.do(fiscalYearSelect.click());
+    // Need to wait,while date of fiscal year will be loaded
+    cy.wait(3000);
+    cy.do([
+      fiscalYearSelect.choose(fiscalYear),
+      rolloverBudgetVelue.choose(rolloverBudgetValue),
+      addAvailableToSelect.choose(rolloverValueAs),
+      rolloverButton.click(),
+    ]);
+    cy.wait(4000);
+    this.continueRollover();
+    cy.do([
+      rolloverConfirmButton.click(),
+    ]);
+  },
+
   fillInTestRolloverInfoCashBalance : (fiscalYear, rolloverBudgetValue, rolloverValueAs) => {
     cy.do(fiscalYearSelect.click());
     // Need to wait,while date of fiscal year will be loaded
