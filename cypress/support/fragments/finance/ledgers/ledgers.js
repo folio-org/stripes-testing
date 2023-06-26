@@ -11,8 +11,7 @@ import { Button,
   Link,
   MultiColumnListCell,
   Modal,
-  MultiColumnList,
-  MultiColumnListRow } from '../../../../../interactors';
+  MultiColumnList } from '../../../../../interactors';
 import FinanceHelper from '../financeHelper';
 import getRandomPostfix from '../../../utils/stringTools';
 
@@ -270,7 +269,7 @@ export default {
     cy.get('#rollover-logs-list')
       .find('div[role="gridcell"]')
       .contains('a', `${dataFile}-result`);
-      cy.get('#rollover-logs-list')
+    cy.get('#rollover-logs-list')
       .find('div[role="gridcell"]')
       .contains('a', `${dataFile}-settings`);
   },
