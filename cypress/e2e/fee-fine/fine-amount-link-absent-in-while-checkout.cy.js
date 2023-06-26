@@ -56,8 +56,6 @@ describe('Fee fine amout link in checkout', () => {
 
       cy.createTempUser([
         permissions.checkoutCirculatingItems.gui,
-        permissions.checkoutViewFeeFines.gui,
-        permissions.uiUsersfeefinesView.gui
       ])
         .then(userProperties => {
           userData.username = userProperties.username;
@@ -112,14 +110,13 @@ describe('Fee fine amout link in checkout', () => {
     Users.deleteViaApi(userData.userId);
   });
 
-  it('C388524 Check that User can click the fine amount as a link with necessary permissions (vega)', { tags: [TestTypes.extendedPath, DevTeams.vega] }, () => {
+  it('C388525 Check that User can not click the fine amount as a link with necessary permissions (vega)', { tags: [TestTypes.extendedPath, DevTeams.vega] }, () => {
     cy.login(userData.username, userData.password);
     cy.visit(TopMenu.checkOutPath);
     Checkout.waitLoading();
     // without this waiter, the user will not be found by username
     cy.wait(4000);
     CheckOutActions.checkOutUser(userData.barcode);
-    CheckOutActions.openFeeFineLink('9.00', userData.userId);
-    UserFeeFines.checkResultsInTheRowByBarcode([feeFineAccount.feeFineType], feeFineAccount.feeFineOwner);
+    CheckOutActions.feeFineLinkIsNotClickable('9.00', userData.userId);
   });
 });

@@ -16,5 +16,4 @@ export default {
     return allContentToCheck.forEach(contentToCheck => cy.expect(MultiColumnListRow({ text: matching(feeFineOwner), isContainer: false }).find(MultiColumnListCell({ content: including(contentToCheck) })).exists()));
   },
 
-
 };
