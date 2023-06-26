@@ -100,7 +100,7 @@ describe('Finance: Fiscal Year Rollover', () => {
           firstOrderNumber = secondOrderResponse.poNumber;
           Orders.checkCreatedOrder(firstOrder);
           OrderLines.addPOLine();
-          OrderLines.selectRandomInstanceInTitleLookUP('*', 35);
+          OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
           OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(defaultFund, '40', '1', '40', location.institutionId);
           OrderLines.backToEditingOrder();
           Orders.openOrder();
@@ -117,7 +117,7 @@ describe('Finance: Fiscal Year Rollover', () => {
           secondOrder.id = firstOrderResponse.id;
           Orders.checkCreatedOrder(secondOrder);
           OrderLines.addPOLine();
-          OrderLines.selectRandomInstanceInTitleLookUP('*', 25);
+          OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
           OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(defaultFund, '10', '1', '10', location.institutionId);
           OrderLines.backToEditingOrder();
           Orders.openOrder();
@@ -136,9 +136,9 @@ describe('Finance: Fiscal Year Rollover', () => {
       });
   });
 
-  // after(() => {
-  //   Users.deleteViaApi(user.userId);
-  // });
+  after(() => {
+    Users.deleteViaApi(user.userId);
+  });
 
   it('C376608 Rollover cash balance as allocation ("Allocation" option is NOT active) (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     FinanceHelp.searchByName(defaultLedger.name);
