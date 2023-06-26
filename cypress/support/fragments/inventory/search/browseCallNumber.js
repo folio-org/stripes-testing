@@ -35,6 +35,14 @@ export default {
     ]);
   },
 
+  checkNotExistingCallNumber(callNumber) {
+    cy.expect(MultiColumnListCell(`${callNumber}would be here`).has({ content: including(`${callNumber}would be here`) }));
+  },
+
+  checkNotClickableResult(searchQuery) {
+    cy.expect(Button(searchQuery).absent());
+  },
+
   selectFoundCallNumber(callNumber) {
     cy.do(Button(including(callNumber)).click());
     cy.expect(instanceDetailsPane.exists());

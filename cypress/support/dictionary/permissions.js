@@ -59,6 +59,7 @@ export default {
   uiInventoryMarcItemUnavailable:{ internal:'ui-inventory.items.mark-unavailable', gui:'Inventory: Mark items unavailable' },
   uiInventoryMarcItemUnknow:{ internal:'ui-inventory.items.mark-unknown', gui:'Inventory: Mark items unknown' },
   uiCreateEditDeleteURL: { internal:'ui-inventory.settings.electronic-access-relationships', gui:'Settings (Inventory): Create, edit, delete URL relationships' },
+  inventoryCRUDHoldings: { internal: 'ui-inventory.holdings.delete', gui: 'Inventory: View, create, edit, delete holdings' },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui:'Tags: All permissions' },
   // Settings->Owners
