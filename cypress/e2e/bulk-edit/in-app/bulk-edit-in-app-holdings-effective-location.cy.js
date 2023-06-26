@@ -22,7 +22,7 @@ const item = {
 };
 const holdingUUIDsFileName = `holdingUUIDs_${getRandomPostfix()}.csv`;
 
-describe('Bulk Edit - Items', () => {
+describe('Bulk Edit - Holdings', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.bulkEditView.gui,
