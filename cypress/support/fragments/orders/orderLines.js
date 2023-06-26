@@ -112,7 +112,6 @@ export default {
     cy.do(Button('Reset all').click());
   },
 
-
   checkOrderlineSearchResults: (orderLineNumber) => {
     cy.expect(MultiColumnList({ id: 'order-line-list' })
       .find(MultiColumnListRow({ index: 0 }))
@@ -934,6 +933,10 @@ export default {
     cy.expect(orderLineDetailsPane
       .find(paneHeaderOrderLinesDetailes)
       .exists());
+  },
+
+  verifyOrderTitle(title) {
+    cy.expect(KeyValue('Title').has({ value: title }));
   },
 
   addNewNote() {
