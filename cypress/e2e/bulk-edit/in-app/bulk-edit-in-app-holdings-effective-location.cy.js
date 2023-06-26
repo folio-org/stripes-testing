@@ -43,12 +43,6 @@ describe('Bulk Edit - Holdings', () => {
             FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, item.holdingUUID);
           });
 
-          cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${item.itemBarcode}"` })
-          .then((instance) => {
-            cy.deleteItemViaApi(instance.items[0].id);
-            cy.deleteItemViaApi(instance.items[1].id);
-          });
-
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading
@@ -82,6 +76,12 @@ describe('Bulk Edit - Holdings', () => {
     BulkEditSearchPane.verifyChangesUnderColumns('Temporary location', newLocation);
     BulkEditSearchPane.verifyChangesUnderColumns('Effective location', newLocation);
 
+    cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${item.itemBarcode}"` })
+    .then((instance) => {
+      cy.deleteItemViaApi(instance.items[0].id);
+      cy.deleteItemViaApi(instance.items[1].id);
+    });
+    
     cy.visit(TopMenu.inventoryPath);
     InventorySearchAndFilter.switchToHoldings();
     InventorySearchAndFilter.searchHoldingsByHRID(item.holdingHRID);
