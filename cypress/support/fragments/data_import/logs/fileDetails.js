@@ -20,6 +20,7 @@ const columnNameInResultList = {
   holdings: resultsList.find(MultiColumnListHeader({ id:'list-column-holdingsstatus' })),
   item: resultsList.find(MultiColumnListHeader({ id:'list-column-itemstatus' })),
   authority: resultsList.find(MultiColumnListHeader({ id:'list-column-authoritystatus' })),
+  order: resultsList.find(MultiColumnListHeader({ id:'list-column-orderstatus' })),
   invoice: resultsList.find(MultiColumnListHeader({ id:'list-column-invoicestatus' })),
   error: resultsList.find(MultiColumnListHeader({ id:'list-column-error' })),
   title: resultsList.find(MultiColumnListHeader({ id:'list-column-title' }))
