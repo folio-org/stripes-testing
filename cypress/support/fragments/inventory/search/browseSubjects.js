@@ -8,6 +8,8 @@ const searchFilterPane = Pane('Search & filter');
 const inventorySearchResultsPane = Section({ id: 'browse-inventory-results-pane' });
 const nextButton = Button({ id: 'browse-results-list-browseSubjects-next-paging-button' });
 const previousButton = Button({ id: 'browse-results-list-browseSubjects-prev-paging-button' });
+const mclhSubjectTitle = MultiColumnListHeader({ id: 'list-column-subject' });
+const mclhNumberOfTTitle = MultiColumnListHeader({ id: 'list-column-numberoftitles' });
 
 export default {
   verifySearchButtonDisabled() {
@@ -40,8 +42,8 @@ export default {
 
   checkSearchResultsTable() {
     cy.expect([
-      MultiColumnListHeader({ id: 'list-column-subject' }).has({ content: 'Subject' }),
-      MultiColumnListHeader({ id: 'list-column-numberoftitles' }).has({ content: 'Number of titles' }),
+      mclhSubjectTitle.has({ content: 'Subject' }),
+      mclhNumberOfTTitle.has({ content: 'Number of titles' }),
     ]);
   },
 
@@ -49,14 +51,14 @@ export default {
     cy.expect(MultiColumnListRow({ indexRow: `row-${rowIndex}` }).has({ content: value }));
   },
 
-  checkAbsenceResultAndItsRow(rowIndex, value) {
+  checkAbsenceOfResultAndItsRow(rowIndex, value) {
     cy.expect(MultiColumnListRow({ indexRow: `row-${rowIndex}`, content: value }).absent());
   },
 
   checkPaginationButtons() {
     cy.expect([
-      Button('Previous').is({ visible: true, disabled: false }),
-      Button('Next').is({ visible: true, disabled: false }),
+      previousButton.is({ visible: true, disabled: false }),
+      nextButton.is({ visible: true, disabled: false }),
     ]);
   },
 

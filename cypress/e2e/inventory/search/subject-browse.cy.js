@@ -65,7 +65,7 @@ describe('Inventory > Subject Browse', () => {
     BrowseSubjects.checkPaginationButtons();
 
     BrowseSubjects.clickPreviousPaginationButton();
-    BrowseSubjects.checkAbsenceResultAndItsRow(5, `${testData.testValue}would be here`)
+    BrowseSubjects.checkAbsenceOfResultAndItsRow(5, `${testData.testValue}would be here`)
 
     BrowseSubjects.clickNextPaginationButton();
     BrowseSubjects.checkResultAndItsRow(5, `${testData.testValue}would be here`);
