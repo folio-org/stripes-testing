@@ -172,6 +172,12 @@ export default {
     } else {
       cy.do(matchProfileDetailsAccordion.find(Button({ dataId:'ITEM' })).click());
       fillIncomingRecordFields(incomingRecordFields.field, 'field');
+      if (incomingRecordFields.in1) {
+        fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
+      }
+      if (incomingRecordFields.in2) {
+        fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
+      }
       fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
       cy.do(criterionValueTypeButton.click());
       cy.expect(criterionValueTypeList.exists());
@@ -308,6 +314,75 @@ export default {
         deletedRelations:[] },
         isDefaultSearchParamsRequired: false,
       })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+ 
+  createMatchProfileViaApiMarc: (name, incomingRecords, existingRecords) => {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: 'data-import-profiles/matchProfiles',
+      body: {
+        profile: {
+          incomingRecordType: incomingRecords.type,
+          matchDetails: [{
+            incomingRecordType: incomingRecords.type,
+            incomingMatchExpression: {
+              fields: [
+                {
+                  label: 'field',
+                  value: incomingRecords.field
+                },
+                {
+                  label: 'indicator1',
+                  value: incomingRecords.ind1
+                },
+                {
+                  label: 'indicator2',
+                  value: incomingRecords.ind2
+                },
+                {
+                  label: 'recordSubfield', 
+                  value: incomingRecords.subfield
+                }
+              ],
+              staticValueDetails: null,
+              dataValueType: 'VALUE_FROM_RECORD'
+            },
+            existingRecordType: existingRecords.type,
+            existingMatchExpression: {
+              fields: [
+                {
+                  label: 'field',
+                  value: existingRecords.field
+                },
+                {
+                  label: 'indicator1',
+                  value: existingRecords.ind1
+                },
+                {
+                  label: 'indicator2',
+                  value: existingRecords.ind2
+                },
+                {
+                  label: 'recordSubfield', 
+                  value: existingRecords.subfield
+                }
+              ],
+              staticValueDetails: null,
+              dataValueType: 'VALUE_FROM_RECORD'
+            },
+            matchCriterion: 'EXACTLY_MATCHES'
+          }],
+          name: name,
+          existingRecordType: existingRecords.type
+        },
+        addedRelations: [],
+        deletedRelations: []
+      },
+      isDefaultSearchParamsRequired: false,
+    })
       .then(({ response }) => {
         return response;
       });

@@ -56,14 +56,14 @@ export default {
   },
 
   editFieldMappingProfile(newName, newDescription) {
-    cy.do(editButton.click())
+    cy.do(editButton.click());
     // Need to wait for page to reload
-    cy.wait(2000)
+    cy.wait(2000);
     cy.do([
       nameTextfield.clear(),
       nameTextfield.fillIn(newName),
       descriptionTextarea.fillIn(newDescription)
-    ])
+    ]);
   },
 
   duplicateFieldMappingProfile() {
