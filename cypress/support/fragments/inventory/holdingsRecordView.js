@@ -110,6 +110,7 @@ export default {
   checkHrId: expectedHrId => cy.expect(holdingHrIdKeyValue.has({ value: expectedHrId })),
   checkPermanentLocation:expectedLocation => cy.expect(KeyValue('Permanent', { value: expectedLocation }).exists()),
   checkTemporaryLocation:expectedLocation => cy.expect(KeyValue('Temporary', { value: expectedLocation }).exists()),
+  checkEffectiveLocation:expectedLocation => cy.expect(KeyValue('Effective location for holdings', { value: expectedLocation }).exists()),
   checkReadOnlyFields:() => {},
   checkHoldingsType: type => cy.expect(KeyValue('Holdings type').has({ value: type })),
   checkCallNumberType: number => cy.expect(KeyValue('Call number type').has({ value: number })),
