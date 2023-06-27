@@ -40,14 +40,14 @@ describe('Job profile - setup', () => {
       });
   });
 
-  // after('delete test data', () => {
-  //   ExportJobProfiles.getJobProfile({ query: `"name"=="${jobProfileNewName}"` })
-  //     .then(response => {
-  //       ExportJobProfiles.deleteJobProfileViaApi(response.id);
-  //     });
-  //   DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(fieldMappingProfileId);
-  //   Users.deleteViaApi(user.userId);
-  // });
+  after('delete test data', () => {
+    ExportJobProfiles.getJobProfile({ query: `"name"=="${jobProfileNewName}"` })
+      .then(response => {
+        ExportJobProfiles.deleteJobProfileViaApi(response.id);
+      });
+    DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(fieldMappingProfileId);
+    Users.deleteViaApi(user.userId);
+  });
 
   it('C350671 Verify Job profile - edit existing profile (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     ExportJobProfiles.goToJobProfilesTab();
