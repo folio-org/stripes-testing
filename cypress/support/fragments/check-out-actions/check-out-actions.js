@@ -152,5 +152,12 @@ export default {
   closeForDeliveryRequestModal:() => {
     cy.do(modalForDeliveryRequest.find(Checkbox('Print slip')).click());
     cy.do(modalForDeliveryRequest.find(Button('Close and check out')).click());
+  },
+
+  openFeeFineLink:(value, userId) => {
+    cy.do(KeyValue({ value: including(value) }).find(Link({ href: including(`/users/${userId}/accounts/open`) })).click());
+  },
+  feeFineLinkIsNotClickable:(value, userId) => {
+    cy.expect(KeyValue({ value: including(value) }).find(Link({ href: including(`/users/${userId}/accounts/open`) })).absent());
   }
 };
