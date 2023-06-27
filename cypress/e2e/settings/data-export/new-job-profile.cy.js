@@ -70,7 +70,7 @@ describe('settings: data-export', () => {
     ExportNewJobProfile.selectMappingProfileFromDropdown(fieldMappingProfileName);
     ExportNewJobProfile.verifySelectMappingProfileValidationErrorGone();
 
-    ExportNewJobProfile.saveAndClose();
+    ExportNewJobProfile.saveJobProfile();
     InteractorsTools.checkCalloutMessage(newJobProfileCalloutMessage);
     ExportJobProfiles.verifyJobProfileInTheTable(newJobProfileName);
 
@@ -78,14 +78,14 @@ describe('settings: data-export', () => {
     ExportNewJobProfile.verifyNewJobProfileForm();
 
     ExportNewJobProfile.fillinDescription(newJobProfileDescription);
-    ExportNewJobProfile.saveAndClose();
+    ExportNewJobProfile.saveJobProfile();
 
     ExportNewJobProfile.verifyNameValidationError();
     ExportNewJobProfile.verifySelectMappingProfileValidationError();
 
     ExportNewJobProfile.fillinNameTextfield(secondNewJobProfileName);
     ExportNewJobProfile.selectMappingProfileFromDropdown(fieldMappingProfileName);
-    ExportNewJobProfile.saveAndClose();
+    ExportNewJobProfile.saveJobProfile();
 
     InteractorsTools.checkCalloutMessage(secondNewJobProfileCalloutMessage);
     ExportJobProfiles.verifyJobProfileInTheTable(secondNewJobProfileName);
