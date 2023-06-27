@@ -738,16 +738,6 @@ export default {
     cy.do(Select({ name:'profile.mappingDetails.marcMappingOption' }).choose(actionsFieldMappingsForMarc.modify));
   },
 
-  // modifications: {
-  //   action: 'Add',
-  //   field: '650',
-  //   ind1: '',
-  //   ind2: '4',
-  //   subfield: 'a',
-  //   subaction: '',
-  //   data: 'Test update'
-  // }
-
   fillModificationSectionWithAdd:({
     action,
     field,

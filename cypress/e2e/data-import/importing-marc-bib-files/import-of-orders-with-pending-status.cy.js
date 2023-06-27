@@ -167,7 +167,7 @@ describe('ui-data-import', () => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, columnName, rowNumber);
         });
       });
-      FileDetails.checkOrderInSummaryTable(quantityOfOrders);
+      FileDetails.checkOrderQuantityInSummaryTable(quantityOfOrders);
       FileDetails.openOrder('Created');
       OrderLines.waitLoading();
       OrderLines.checkIsOrderCreatedWithDataFromImportedFile(orderData);
