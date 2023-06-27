@@ -490,9 +490,9 @@ export default {
     waitLoading();
   },
 
-  addName:(name) => cy.do(TextField({ name:'profile.name' }).fillIn(name)),
-  addIncomingRecordType:(type) => cy.do(Select({ name:'profile.incomingRecordType' }).choose(type)),
-  addFolioRecordType:(folioType) => cy.do(Select({ name:'profile.existingRecordType' }).choose(folioType)),
+  addName:(name) => cy.do(nameField.fillIn(name)),
+  addIncomingRecordType:(type) => cy.do(incomingRecordTypeField.choose(type)),
+  addFolioRecordType:(folioType) => cy.do(existingRecordType.choose(folioType)),
   saveProfile:() => cy.do(saveButton.click()),
   fillTemporaryLocation:(location) => cy.do(TextField('Temporary').fillIn(location)),
   fillDigitizationPolicy:(policy) => cy.do(TextField('Digitization policy').fillIn(policy)),
@@ -512,7 +512,7 @@ export default {
       nameField.fillIn(specialMappingProfile.name),
       incomingRecordTypeField.choose(incomingRecordType.marcBib),
       existingRecordType.choose(specialMappingProfile.typeValue),
-      Select({ name:'profile.mappingDetails.marcMappingOption' }).choose(actionsFieldMappingsForMarc.update)
+      Select({ name:'profile.mappingDetails.marcMappingOption' }).choose(actionsFieldMappingsForMarc.update),
     ]);
   },
 
@@ -520,7 +520,7 @@ export default {
     cy.do([
       nameField.fillIn(specialMappingProfile.name),
       incomingRecordTypeField.choose(incomingRecordType.marcBib),
-      existingRecordType.choose(specialMappingProfile.typeValue)
+      existingRecordType.choose(specialMappingProfile.typeValue),
     ]);
   },
 
