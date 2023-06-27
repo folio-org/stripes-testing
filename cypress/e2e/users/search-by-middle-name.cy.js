@@ -68,6 +68,7 @@ describe('Users', () => {
   after('Deleting created entities', () => {
     UserEdit.changeServicePointPreferenceViaApi(userData.id, [testData.servicePointId]);
     Users.deleteViaApi(userData.id);
+    PatronGroups.deleteViaApi(patronGroup.id);
   });
 
   it('C389464 Search by middle name', { tags: [TestTypes.criticalPath, devTeams.volaris] }, () => {
