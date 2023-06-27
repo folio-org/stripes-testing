@@ -17,7 +17,7 @@ let fieldMappingProfileId;
 const mappingProfileName = getTestEntityValue('fieldMappingProfile');
 const jobProfileName = getTestEntityValue('jobProfile');
 const jobProfileNewName = getTestEntityValue('jobProfileNew');
-const secondNewJobProfileCalloutMessage = `Job profile ${jobProfileNewName} has been successfully edited`;
+const secondNewJobProfileCalloutMessage = `Job profile ${jobProfileNewName} has been successfully created`;
 
 describe('Job profile - setup', () => {
   before('create test data', () => {
@@ -29,7 +29,7 @@ describe('Job profile - setup', () => {
       .then(userProperties => {
         user = userProperties;
         cy.login(user.username, user.password, {
-          path: TopMenu.settingsPath, 
+          path: TopMenu.settingsPath,
           waiter: SettingsPane.waitLoading
         });
         ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(mappingProfileName)
@@ -40,38 +40,37 @@ describe('Job profile - setup', () => {
       });
   });
 
-  // after('delete test data', () => {
-  //   ExportJobProfiles.getJobProfile({ query: `"name"=="${jobProfileNewName}"` })
-  //     .then(response => {
-  //       ExportJobProfiles.deleteJobProfileViaApi(response.id);
-  //     });
-  //   DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(fieldMappingProfileId);
-  //   Users.deleteViaApi(user.userId);
-  // });
+  after('delete test data', () => {
+    [jobProfileName, jobProfileNewName].forEach(name => {
+      ExportJobProfiles.getJobProfile({ query: `"name"=="${name}"` })
+        .then(response => {
+          ExportJobProfiles.deleteJobProfileViaApi(response.id);
+        });
+    });
+    DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(fieldMappingProfileId);
+    Users.deleteViaApi(user.userId);
+  });
 
-  it('C350671 Verify Job profile - edit existing profile (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+  it('C350672 Verify Job profile - duplicate existing profile (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     ExportJobProfiles.goToJobProfilesTab();
     ExportJobProfiles.waitLoading();
     ExportJobProfiles.clickProfileNameFromTheList(jobProfileName);
     SingleJobProfile.waitLoading(jobProfileName);
 
     SingleJobProfile.openActions();
-    SingleJobProfile.clickEditButton();
+    SingleJobProfile.clickDuplicateButton();
     SingleJobProfile.verifyProfileDetailsEditable();
-    SingleJobProfile.verifySource('ADMINISTRATOR, DIKU');
     SingleJobProfile.clickCancelButton();
-    
+
     ExportJobProfiles.clickProfileNameFromTheList(jobProfileName);
-    SingleJobProfile.waitLoading(jobProfileName);
     SingleJobProfile.openActions();
-    SingleJobProfile.clickEditButton();
+    SingleJobProfile.clickDuplicateButton();
     SingleJobProfile.editJobProfile(jobProfileNewName);
     SingleJobProfile.clickCancelButton();
 
     ExportJobProfiles.clickProfileNameFromTheList(jobProfileName);
-    SingleJobProfile.waitLoading(jobProfileName);
     SingleJobProfile.openActions();
-    SingleJobProfile.clickEditButton();
+    SingleJobProfile.clickDuplicateButton();
     SingleJobProfile.editJobProfile(jobProfileNewName);
     ExportNewJobProfile.saveJobProfile();
 
