@@ -131,7 +131,7 @@ describe('ui-data-import', () => {
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(marcFileName);
       FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
-      FileDetails.checkOrderInSummaryTable(quantityOfItems);
+      FileDetails.checkOrderQuantityInSummaryTable(quantityOfItems);
       FileDetails.openOrder('Created');
       OrderLines.verifyPOLDetailsIsOpened();
     });
