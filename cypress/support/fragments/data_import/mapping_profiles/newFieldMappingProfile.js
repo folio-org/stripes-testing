@@ -17,11 +17,49 @@ import getRandomPostfix from '../../../utils/stringTools';
 import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES, EXISTING_RECORDS_NAMES } from '../../../constants';
 
 const saveButton = Button('Save as profile & Close');
+const searchButton = Button('Search');
+const organizationLookUpButton = Button('Organization look-up');
 const organizationModal = Modal('Select Organization');
 const staffSuppressSelect = Select('Staff suppress');
 const suppressFromDiscoverySelect = Select('Suppress from discovery');
 const previouslyHeldSelect = Select('Previously held');
 const loanAndAvailabilityAccordion = Accordion('Loan and availability');
+const orderInformationAccordion = Accordion('Order information');
+const locationAccordion = Accordion('Location');
+const physicalResourceDetailsAccordion = Accordion('Physical resource details');
+const nameField = TextField({ name:'profile.name' });
+const searchField = TextField({ id: 'input-record-search' });
+const permanentLocationField = TextField('Permanent');
+const catalogedDateField = TextField('Cataloged date');
+const titleField = TextField('Title*');
+const incomingRecordTypeField = Select({ name:'profile.incomingRecordType' });
+const currencyField = TextField('Currency*');
+const noteTypeField = TextField('Note type');
+const reEncumberField = TextField('Re-encumber');
+const purchaseOrderStatus = TextField('Purchase order status*');
+const mustAcknoledgeReceivingNoteField = TextField('Must acknowledge receiving note');
+const publicationDateField = TextField('Publication date');
+const publisherField = TextField('Publisher');
+const editionField = TextField('Edition');
+const internalNoteField = TextArea('Internal note');
+const acquisitionMethodField = TextField('Acquisition method*');
+const orderFormatField = TextField('Order format*');
+const receiptStatusField = TextField('Receipt status');
+const paymentStatusField = TextField('Payment status');
+const selectorField = TextField('Selector');
+const rushField = TextField('Rush');
+const materialTypeField = TextField('Material type');
+const paymentMethodField = TextField('Payment method*');
+const batchGroupField = TextField('Batch group*');
+const receivingWorkflowField = TextField('Receiving workflow*');
+const accountNumberField = TextField('Account number');
+const physicalUnitPrice = TextField('Physical unit price');
+const cancellationRestrictionField = TextField('Cancellation restriction');
+const quantityPhysicalField = TextField('Quantity physical');
+const electronicUnitPriceField = TextField('Electronic unit price');
+const quantityElectronicField = TextField('Quantity electronic');
+const existingRecordType = Select({ name:'profile.existingRecordType' });
+const approvedCheckbox = Checkbox({ name:'profile.mappingDetails.mappingFields[1].booleanFieldAction' });
 
 const incomingRecordType = {
   marcBib: 'MARC Bibliographic',
@@ -62,8 +100,8 @@ const defaultMappingProfile = {
 
 const selectOrganizationByName = (organizationName) => {
   cy.do([
-    organizationModal.find(TextField({ id: 'input-record-search' })).fillIn(organizationName),
-    organizationModal.find(Button('Search')).click(),
+    organizationModal.find(searchField).fillIn(organizationName),
+    organizationModal.find(searchButton).click(),
     organizationModal.find(HTML(including('1 record found'))).exists(),
     MultiColumnListCell(organizationName).click({ row: 0, columnIndex: 0 }),
   ]);
@@ -94,7 +132,7 @@ const addProductId = (profile) => {
 const addVendorReferenceNumber = (profile) => {
   cy.do([Button('Add vendor reference number').click(),
     TextField('Vendor reference number').fillIn(profile.vendorReferenceNumber),
-    TextField('Vendor reference type').fillIn(`"${profile.vendoeReferenceType}"`)
+    TextField('Vendor reference type').fillIn(`"${profile.vendorReferenceType}"`)
   ]);
 };
 
@@ -109,20 +147,32 @@ const addFundDistriction = (profile) => {
 
 const addLocation = (profile) => {
   cy.do([
-    Accordion('Location').find(Button('Add location')).click(),
-    TextField('Name (code)').fillIn(profile.locationName),
-    Accordion('Location').find(TextField('Quantity electronic')).fillIn(profile.locationQuantityElectronic)
+    locationAccordion.find(Button('Add location')).click(),
+    TextField('Name (code)').fillIn(profile.locationName)
   ]);
+  if(profile.locationQuantityElectronic){
+    cy.do(locationAccordion.find(quantityElectronicField).fillIn(profile.locationQuantityElectronic));
+  }
+  if(profile.locationQuantityPhysical){
+    cy.do(locationAccordion.find(quantityPhysicalField).fillIn(profile.locationQuantityPhysical));
+  }
 };
 
 const addVendor = (profile) => {
   cy.wait(1000);
   cy.do([
-    Accordion('Order information').find(Button('Organization look-up')).click(),
-    organizationModal.find(TextField({ id: 'input-record-search' })).fillIn(profile.vendor),
-    organizationModal.find(Button('Search')).click(),
+    orderInformationAccordion.find(organizationLookUpButton).click(),
+    organizationModal.find(searchField).fillIn(profile.vendor),
+    organizationModal.find(searchButton).click(),
     organizationModal.find(HTML(including('1 record found'))).exists(),
     MultiColumnListCell(profile.vendor).click({ row: 0, columnIndex: 0 })
+  ]);
+};
+
+const addVolume = (profile) => {
+  cy.do([
+    physicalResourceDetailsAccordion.find(Button('Add volume')).click(),
+    TextField('Volume').fillIn(profile.volume)
   ]);
 };
 
@@ -204,18 +254,19 @@ export default {
   addFundDistriction,
   addLocation,
   addVendor,
+  addVolume,
   selectFromResultsList,
   waitLoading,
 
   fillMappingProfile:(specialMappingProfile = defaultMappingProfile) => {
     cy.do([
-      TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
-      Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.marcBib),
-      Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue)
+      nameField.fillIn(specialMappingProfile.name),
+      incomingRecordTypeField.choose(incomingRecordType.marcBib),
+      existingRecordType.choose(specialMappingProfile.typeValue)
     ]);
     if (specialMappingProfile.typeValue === holdingsType) {
       if (specialMappingProfile.permanentLocation) {
-        cy.do(TextField('Permanent').fillIn(specialMappingProfile.permanentLocation));
+        cy.do(permanentLocationField.fillIn(specialMappingProfile.permanentLocation));
       }
 
       if (specialMappingProfile.electronicAccess) {
@@ -243,7 +294,7 @@ export default {
       }
     } else if (specialMappingProfile.typeValue === itemType) {
       cy.intercept('loan-types?*').as('getType');
-      cy.do(TextField('Material type').fillIn(materialType));
+      cy.do(materialTypeField.fillIn(materialType));
       cy.do(TextField('Permanent loan type').fillIn(permanentLoanType));
       cy.wait('@getType');
       // wait accepted values to be filled
@@ -253,14 +304,14 @@ export default {
     } else if (specialMappingProfile.typeValue === FOLIO_RECORD_TYPE.INSTANCE) {
       if ('update' in specialMappingProfile) {
         cy.do([
-          TextField('Cataloged date').fillIn(catalogedDate),
+          catalogedDateField.fillIn(catalogedDate),
           TextField('Instance status term').fillIn(`"${INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED}"`),
         ]);
         // wait accepted values to be filled
         // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(1800);
       } else {
-        cy.do(TextField('Cataloged date').fillIn(catalogedDate));
+        cy.do(catalogedDateField.fillIn(catalogedDate));
       }
     }
     cy.do(saveButton.click());
@@ -268,9 +319,9 @@ export default {
 
   fillMappingProfileForUpdate:(specialMappingProfile = defaultMappingProfile) => {
     cy.do([
-      TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
-      Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.marcBib),
-      Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue)
+      nameField.fillIn(specialMappingProfile.name),
+      incomingRecordTypeField.choose(incomingRecordType.marcBib),
+      existingRecordType.choose(specialMappingProfile.typeValue)
     ]);
     specialMappingProfile.fillProfile();
     cy.do(saveButton.click());
@@ -279,31 +330,31 @@ export default {
 
   fillMappingProfileForInvoice:(profile) => {
     cy.do([
-      TextField({ name:'profile.name' }).fillIn(profile.name),
-      Select({ name:'profile.incomingRecordType' }).choose(profile.incomingRecordType),
-      Select({ name:'profile.existingRecordType' }).choose(profile.existingRecordType),
+      nameField.fillIn(profile.name),
+      incomingRecordTypeField.choose(profile.incomingRecordType),
+      existingRecordType.choose(profile.existingRecordType),
       TextArea({ name:'profile.description' }).fillIn(''),
-      TextField('Batch group*').fillIn(profile.batchGroup),
-      Button('Organization look-up').click()
+      batchGroupField.fillIn(profile.batchGroup),
+      organizationLookUpButton.click()
     ]);
     selectOrganizationByName(profile.organizationName);
     cy.do([
-      TextField('Payment method*').fillIn(profile.paymentMethod),
+      paymentMethodField.fillIn(profile.paymentMethod),
       saveButton.click(),
     ]);
   },
 
   fillMappingProfileForMatch:(specialMappingProfile = defaultMappingProfile) => {
     cy.do([
-      TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
-      Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.marcBib),
-      Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue)
+      nameField.fillIn(specialMappingProfile.name),
+      incomingRecordTypeField.choose(incomingRecordType.marcBib),
+      existingRecordType.choose(specialMappingProfile.typeValue)
     ]);
     if (specialMappingProfile.typeValue === holdingsType) {
       cy.do(TextField('Holdings type').fillIn('"Monograph"'));
       // wait accepted values to be filled
       cy.wait(1500);
-      cy.do(TextField('Permanent').fillIn('980$a'));
+      cy.do(permanentLocationField.fillIn('980$a'));
       cy.do(TextField('Call number type').fillIn('"Library of Congress classification"'));
       // wait accepted values to be filled
       cy.wait(1500);
@@ -315,7 +366,7 @@ export default {
     } else if (specialMappingProfile.typeValue === FOLIO_RECORD_TYPE.INSTANCE) {
       if ('update' in specialMappingProfile) {
         cy.do([
-          TextField('Cataloged date').fillIn(catalogedDate),
+          catalogedDateField.fillIn(catalogedDate),
           TextField('Instance status term').fillIn(`"${INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED}"`),
         ]);
         // wait accepted values to be filled
@@ -328,63 +379,61 @@ export default {
 
   fillPEMixOrderMappingProfile:(profile) => {
     cy.do([
-      TextField({ name:'profile.name' }).fillIn(profile.name),
-      Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.marcBib),
-      Select({ name:'profile.existingRecordType' }).choose(profile.typeValue),
-      TextField('Purchase order status*').fillIn(`"${profile.orderStatus}"`),
-      Accordion('Order information').find(Checkbox({ name:'profile.mappingDetails.mappingFields[1].booleanFieldAction' })).click(),
-      Accordion('Order information').find(Button('Organization look-up')).click(),
-      organizationModal.find(TextField({ id: 'input-record-search' })).fillIn(profile.vendor),
-      organizationModal.find(Button('Search')).click(),
-      organizationModal.find(HTML(including('1 record found'))).exists(),
-      MultiColumnListCell(profile.vendor).click({ row: 0, columnIndex: 0 }),
-      TextField('Title*').fillIn(profile.title),
-      TextField('Acquisition method*').fillIn(`"${profile.acquisitionMethod}"`),
-      TextField('Order format*').fillIn(`"${profile.orderFormat}"`),
-      TextField('Receiving workflow*').fillIn(`"${profile.receivingWorkflow}"`),
-      TextField('Physical unit price').fillIn(`"${profile.physicalUnitPrice}"`),
-      TextField('Quantity physical').fillIn(`"${profile.quantityPhysical}"`),
-      TextField('Currency*').fillIn(`"${profile.currency}"`),
-      TextField('Electronic unit price').fillIn(`"${profile.electronicUnitPrice}"`),
-      TextField('Quantity electronic').fillIn(`"${profile.quantityElectronic}"`),
-      Accordion('Location').find(Button('Add location')).click(),
+      nameField.fillIn(profile.name),
+      incomingRecordTypeField.choose(incomingRecordType.marcBib),
+      existingRecordType.choose(profile.typeValue),
+      purchaseOrderStatus.fillIn(`"${profile.orderStatus}"`),
+      orderInformationAccordion.find(approvedCheckbox).click()
+    ]);
+    addVendor(profile);
+    cy.do([
+      titleField.fillIn(profile.title),
+      acquisitionMethodField.fillIn(`"${profile.acquisitionMethod}"`),
+      orderFormatField.fillIn(`"${profile.orderFormat}"`),
+      receivingWorkflowField.fillIn(`"${profile.receivingWorkflow}"`),
+      physicalUnitPrice.fillIn(`"${profile.physicalUnitPrice}"`),
+      quantityPhysicalField.fillIn(`"${profile.quantityPhysical}"`),
+      currencyField.fillIn(`"${profile.currency}"`),
+      electronicUnitPriceField.fillIn(`"${profile.electronicUnitPrice}"`),
+      quantityElectronicField.fillIn(`"${profile.quantityElectronic}"`),
+      locationAccordion.find(Button('Add location')).click(),
       TextField('Name (code)').fillIn(`"${profile.locationName}"`),
-      Accordion('Location').find(TextField('Quantity physical')).fillIn(`"${profile.locationQuantityPhysical}"`),
-      Accordion('Location').find(TextField('Quantity electronic')).fillIn(`"${profile.locationQuantityElectronic}"`)
+      locationAccordion.find(quantityPhysicalField).fillIn(`"${profile.locationQuantityPhysical}"`),
+      locationAccordion.find(quantityElectronicField).fillIn(`"${profile.locationQuantityElectronic}"`)
     ]);
   },
 
   fillElectronicOrderMappingProfile:(profile) => {
     waitLoading();
     cy.do([
-      TextField({ name:'profile.name' }).fillIn(profile.name),
-      Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.marcBib),
-      Select({ name:'profile.existingRecordType' }).choose(profile.typeValue),
-      TextField('Purchase order status*').fillIn(`"${profile.orderStatus}"`),
-      Accordion('Order information').find(Checkbox({ name:'profile.mappingDetails.mappingFields[1].booleanFieldAction' })).click()
+      nameField.fillIn(profile.name),
+      incomingRecordTypeField.choose(incomingRecordType.marcBib),
+      existingRecordType.choose(profile.typeValue),
+      purchaseOrderStatus.fillIn(`"${profile.orderStatus}"`),
+      orderInformationAccordion.find(approvedCheckbox).click()
     ]);
     addVendor(profile);
     cy.do([
-      TextField('Re-encumber').fillIn(`"${profile.reEncumber}"`),
-      TextField('Title*').fillIn(profile.title),
-      TextField('Must acknowledge receiving note').fillIn(`"${profile.mustAcknowledgeReceivingNote}"`),
-      TextField('Publication date').fillIn(profile.publicationDate),
-      TextField('Publisher').fillIn(profile.publisher),
-      TextField('Edition').fillIn(profile.edition),
-      TextArea('Internal note').fillIn(profile.internalNote),
-      TextField('Acquisition method*').fillIn(`"${profile.acquisitionMethod}"`),
-      TextField('Order format*').fillIn(`"${profile.orderFormat}"`),
-      TextField('Receipt status').fillIn(`"${profile.receiptStatus}"`),
-      TextField('Payment status').fillIn(`"${profile.paymentStatus}"`),
-      TextField('Selector').fillIn(profile.selector),
-      TextField('Cancellation restriction').fillIn(`"${profile.cancellationRestriction}"`),
-      TextField('Rush').fillIn(profile.rush),
-      TextField('Receiving workflow*').fillIn(`"${profile.receivingWorkflow}"`),
-      TextField('Account number').fillIn(profile.accountNumber),
+      reEncumberField.fillIn(`"${profile.reEncumber}"`),
+      titleField.fillIn(profile.title),
+      mustAcknoledgeReceivingNoteField.fillIn(`"${profile.mustAcknowledgeReceivingNote}"`),
+      publicationDateField.fillIn(profile.publicationDate),
+      publisherField.fillIn(profile.publisher),
+      editionField.fillIn(profile.edition),
+      internalNoteField.fillIn(profile.internalNote),
+      acquisitionMethodField.fillIn(`"${profile.acquisitionMethod}"`),
+      orderFormatField.fillIn(`"${profile.orderFormat}"`),
+      receiptStatusField.fillIn(`"${profile.receiptStatus}"`),
+      paymentStatusField.fillIn(`"${profile.paymentStatus}"`),
+      selectorField.fillIn(profile.selector),
+      cancellationRestrictionField.fillIn(`"${profile.cancellationRestriction}"`),
+      rushField.fillIn(profile.rush),
+      receivingWorkflowField.fillIn(`"${profile.receivingWorkflow}"`),
+      accountNumberField.fillIn(profile.accountNumber),
       TextArea('Instructions to vendor').fillIn(profile.instructionsToVendor),
-      TextField('Electronic unit price').fillIn(profile.electronicUnitPrice),
-      TextField('Quantity electronic').fillIn(profile.quantityElectronic),
-      TextField('Currency*').fillIn(`"${profile.currency}"`),
+      electronicUnitPriceField.fillIn(profile.electronicUnitPrice),
+      quantityElectronicField.fillIn(profile.quantityElectronic),
+      currencyField.fillIn(`"${profile.currency}"`),
       TextField('Access provider').fillIn(`"${profile.accessProvider}"`)
     ]);
     addContributor(profile);
@@ -395,9 +444,55 @@ export default {
     waitLoading();
   },
 
-  addName:(name) => cy.do(TextField({ name:'profile.name' }).fillIn(name)),
-  addIncomingRecordType:(type) => cy.do(Select({ name:'profile.incomingRecordType' }).choose(type)),
-  addFolioRecordType:(folioType) => cy.do(Select({ name:'profile.existingRecordType' }).choose(folioType)),
+  fillPhysicalOrderMappingProfile:(profile) => {
+    cy.do([
+      nameField.fillIn(profile.name),
+      incomingRecordTypeField.choose(incomingRecordType.marcBib),
+      existingRecordType.choose(profile.typeValue),
+      purchaseOrderStatus.fillIn(`"${profile.orderStatus}"`),
+      orderInformationAccordion.find(approvedCheckbox).click()
+    ]);
+    addVendor(profile);
+    cy.do([
+      reEncumberField.fillIn(`"${profile.reEncumber}"`),
+      titleField.fillIn(profile.title),
+      mustAcknoledgeReceivingNoteField.fillIn(`"${profile.mustAcknowledgeReceivingNote}"`),
+      publicationDateField.fillIn(profile.publicationDate),
+      publisherField.fillIn(profile.publisher),
+      editionField.fillIn(profile.edition),
+      internalNoteField.fillIn(profile.internalNote),
+      acquisitionMethodField.fillIn(`"${profile.acquisitionMethod}"`),
+      orderFormatField.fillIn(`"${profile.orderFormat}"`),
+      receiptStatusField.fillIn(`"${profile.receiptStatus}"`),
+      paymentStatusField.fillIn(`"${profile.paymentStatus}"`),
+      selectorField.fillIn(profile.selector),
+      cancellationRestrictionField.fillIn(`"${profile.cancellationRestriction}"`),
+      rushField.fillIn(profile.rush),
+      receivingWorkflowField.fillIn(`"${profile.receivingWorkflow}"`),
+      accountNumberField.fillIn(profile.accountNumber),
+      physicalUnitPrice.fillIn(profile.physicalUnitPrice),
+      quantityPhysicalField.fillIn(profile.quantityPhysical),
+      currencyField.fillIn(`"${profile.currency}"`),
+      physicalResourceDetailsAccordion.find(organizationLookUpButton).click(),
+      organizationModal.find(searchField).fillIn(profile.materialSupplier),
+      organizationModal.find(searchButton).click(),
+      organizationModal.find(HTML(including('1 record found'))).exists(),
+      MultiColumnListCell(profile.vendor).click({ row: 0, columnIndex: 0 }),
+      physicalResourceDetailsAccordion.find(TextField('Create inventory')).fillIn(`"${profile.createInventory}"`),
+      physicalResourceDetailsAccordion.find(materialTypeField).fillIn(`"${profile.materialType}"`)
+    ]);
+    addContributor(profile);
+    addProductId(profile);
+    addVendorReferenceNumber(profile);
+    addFundDistriction(profile);
+    addLocation(profile);
+    addVolume(profile);
+    waitLoading();
+  },
+
+  addName:(name) => cy.do(nameField.fillIn(name)),
+  addIncomingRecordType:(type) => cy.do(incomingRecordTypeField.choose(type)),
+  addFolioRecordType:(folioType) => cy.do(existingRecordType.choose(folioType)),
   saveProfile:() => cy.do(saveButton.click()),
   fillTemporaryLocation:(location) => cy.do(TextField('Temporary').fillIn(location)),
   fillDigitizationPolicy:(policy) => cy.do(TextField('Digitization policy').fillIn(policy)),
@@ -414,18 +509,18 @@ export default {
 
   fillMappingProfileForUpdatesMarc:(specialMappingProfile = defaultMappingProfile) => {
     cy.do([
-      TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
-      Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.marcBib),
-      Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue),
+      nameField.fillIn(specialMappingProfile.name),
+      incomingRecordTypeField.choose(incomingRecordType.marcBib),
+      existingRecordType.choose(specialMappingProfile.typeValue),
       Select({ name:'profile.mappingDetails.marcMappingOption' }).choose(actionsFieldMappingsForMarc.update),
     ]);
   },
 
   fillSummaryInMappingProfile:(specialMappingProfile = defaultMappingProfile) => {
     cy.do([
-      TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
-      Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.marcBib),
-      Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue),
+      nameField.fillIn(specialMappingProfile.name),
+      incomingRecordTypeField.choose(incomingRecordType.marcBib),
+      existingRecordType.choose(specialMappingProfile.typeValue),
     ]);
   },
 
@@ -511,12 +606,12 @@ export default {
   },
 
   fillPermanentLocation:(location) => {
-    cy.do(TextField('Permanent').fillIn(location));
+    cy.do(permanentLocationField.fillIn(location));
     waitLoading();
   },
 
   fillCatalogedDate:(date = catalogedDate) => {
-    cy.do(TextField('Cataloged date').fillIn(date));
+    cy.do(catalogedDateField.fillIn(date));
     waitLoading();
   },
 
@@ -551,7 +646,7 @@ export default {
   },
 
   fillMaterialType:(type) => {
-    cy.do(TextField('Material type').fillIn(type));
+    cy.do(materialTypeField.fillIn(type));
     waitLoading();
   },
 
@@ -568,7 +663,7 @@ export default {
       Select({ name:holdingsNotesFieldName }).focus(),
       Select({ name:holdingsNotesFieldName }).choose(actions.addTheseToExisting),
       Button('Add holdings note').click(),
-      TextField('Note type').fillIn(type),
+      noteTypeField.fillIn(type),
       TextField('Note').fillIn(`"${note}"`),
       Select({ name:selectName }).focus(),
       Select({ name:selectName }).choose(staffOnly)
@@ -577,12 +672,12 @@ export default {
   },
 
   fillBatchGroup:(group) => {
-    cy.do(TextField('Batch group*').fillIn(group));
+    cy.do(batchGroupField.fillIn(group));
     waitLoading();
   },
 
   fillPaymentMethod:(method) => {
-    cy.do(TextField('Payment method*').fillIn(method));
+    cy.do(paymentMethodField.fillIn(method));
     waitLoading();
   },
 
@@ -594,7 +689,7 @@ export default {
       Select({ name:noteFieldName }).focus(),
       Select({ name:noteFieldName }).choose(actions.addTheseToExisting),
       Button('Add item note').click(),
-      TextField('Note type').fillIn(noteType),
+      noteTypeField.fillIn(noteType),
       TextField('Note').fillIn(note),
       Select({ name:selectName }).focus(),
       Select({ name:selectName })
@@ -611,7 +706,7 @@ export default {
       Select({ name:noteFieldName }).focus(),
       Select({ name:noteFieldName }).choose(actions.addTheseToExisting),
       Button('Add check in / check out note').click(),
-      loanAndAvailabilityAccordion.find(TextField('Note type')).fillIn(noteType),
+      loanAndAvailabilityAccordion.find(noteTypeField).fillIn(noteType),
       loanAndAvailabilityAccordion.find(TextField('Note')).fillIn(note),
       Select({ name:selectName }).focus(),
       Select({ name:selectName })
@@ -621,15 +716,15 @@ export default {
   },
 
   fillCurrency:(currency) => {
-    cy.do(TextField('Currency*').fillIn(currency));
+    cy.do(currencyField.fillIn(currency));
     waitLoading();
   },
 
   fillVendorName:(vendorName) => {
     cy.do([
-      Button('Organization look-up').click(),
+      organizationLookUpButton.click(),
       SearchField({ id: 'input-record-search' }).fillIn(vendorName),
-      Button('Search').click()
+      searchButton.click()
     ]);
     selectFromResultsList();
   },

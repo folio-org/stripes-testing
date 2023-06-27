@@ -1,36 +1,65 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
-import DevTeams from '../../../support/dictionary/devTeams';
 import TestTypes from '../../../support/dictionary/testTypes';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import {
-  FOLIO_RECORD_TYPE,
-  MATERIAL_TYPE_NAMES,
+import DevTeams from '../../../support/dictionary/devTeams';
+import { FOLIO_RECORD_TYPE,
   ORDER_STATUSES,
+  MATERIAL_TYPE_NAMES,
   ORDER_FORMAT_NAMES,
   ACQUISITION_METHOD_NAMES,
-  JOB_STATUS_NAMES
-} from '../../../support/constants';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+  JOB_STATUS_NAMES } from '../../../support/constants';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import Users from '../../../support/fragments/users/users';
 import OrderLines from '../../../support/fragments/orders/orderLines';
+import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
   let user;
-  const quantityOfItems = '17';
-  const marcFileName = `C375989 autotestFileName.${getRandomPostfix()}`;
+  const quantityOfOrders = '2';
+  const filePathForCreateOrder = 'marcFileForC375174.mrc';
+  const marcFileName = `C375174 autotestFileName ${getRandomPostfix()}`;
+  const orderData = {
+    title: 'ROALD DAHL : TELLER OF THE UNEXPECTED : A BIOGRAPHY.',
+    publicationDate: '2023',
+    publisher: 'PEGASUS BOOKS',
+    internalNote: 'AAH/bsc ',
+    acquisitionMethod: 'Purchase at vendor system',
+    orderFormat: ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE_Check,
+    receiptStatus: 'Pending',
+    paymentStatus: 'Pending',
+    source: 'MARC',
+    selector: 'AAH',
+    receivingWorkflow: 'Synchronized order and receipt quantity',
+    accountNumber: '137009',
+    physicalUnitPrice: '$27.95',
+    quantityPhysical: '1',
+    currency: 'USD',
+    materialSupplier: 'GOBI Library Solutions',
+    createInventory: 'Instance, Holding, Item',
+    materialType: MATERIAL_TYPE_NAMES.BOOK,
+    contributor: 'DENNISON, MATTHEW',
+    contributorType: 'Personal name',
+    productId: '9781639363322',
+    productIDType: 'ISBN',
+    vendorReferenceNumber: '99992466210',
+    vendorReferenceType: 'Vendor order reference number',
+    fund: 'Gifts (Non-recurring)(GIFTS-ONE-TIME)',
+    value: '100%',
+    locationName: 'Main Library (KU/CC/DI/M)',
+    locationQuantityPhysical: '1'
+  };
   const mappingProfile = {
-    name: `C375989 Test Order mapping profile ${getRandomPostfix()}`,
+    name: `C375174 Test Order ${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.ORDER,
-    orderStatus: ORDER_STATUSES.OPEN,
+    orderStatus: ORDER_STATUSES.PENDING,
     approved: true,
     vendor: 'GOBI Library Solutions',
     reEncumber: 'false',
@@ -41,7 +70,7 @@ describe('ui-data-import', () => {
     edition: '250$a',
     internalNote: '981$d',
     acquisitionMethod: ACQUISITION_METHOD_NAMES.PURCHASE_AT_VENDOR_SYSTEM,
-    orderFormat: ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE_Check,
+    orderFormat: ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE_Check,
     receiptStatus: 'Pending',
     paymentStatus: 'Pending',
     selector: '981$e',
@@ -49,13 +78,12 @@ describe('ui-data-import', () => {
     rush: '981$h',
     receivingWorkflow: 'Synchronized',
     accountNumber: '981$g',
-    instructionsToVendor: '981$f',
-    electronicUnitPrice: '980$b',
-    quantityElectronic: '980$g',
+    physicalUnitPrice: '980$b',
+    quantityPhysical: '980$g',
     currency: 'USD',
-    accessProvider: 'GOBI Library Solutions',
-    createInventoryEResources: 'None',
-    materialTypeEResources: MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE,
+    materialSupplier: 'GOBI Library Solutions',
+    createInventory: 'Instance, Holding, Item',
+    materialType: MATERIAL_TYPE_NAMES.BOOK,
     contributor: '100$a',
     contributorType: 'Personal name',
     productId: '020$a',
@@ -68,16 +96,19 @@ describe('ui-data-import', () => {
     value: '100',
     type: '%',
     locationName: '049$a',
-    locationQuantityElectronic: '980$g'
+    locationQuantityPhysical: '980$g',
+    volume: '993$a'
   };
-  const actionProfile = { name: `C375989 Test Order action profile ${getRandomPostfix()}`,
-    typeValue: FOLIO_RECORD_TYPE.ORDER };
+  const actionProfile = {
+    typeValue: FOLIO_RECORD_TYPE.ORDER,
+    name: `C375174 Test Order ${getRandomPostfix()}`
+  };
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: `C375989 Test Order ${getRandomPostfix()}`,
+    profileName: `C375174 Test Order ${getRandomPostfix()}`,
   };
 
-  before(() => {
+  before('login', () => {
     cy.createTempUser([
       permissions.settingsDataImportEnabled.gui,
       permissions.moduleDataImportEnabled.gui,
@@ -100,14 +131,13 @@ describe('ui-data-import', () => {
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
   });
 
-  it('C375989 Verify the importing of eBook orders with open status (folijet)',
+  it('C375174 Verify the importing of orders with pending status (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       // create mapping profile
       FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillElectronicOrderMappingProfile(mappingProfile);
+      NewFieldMappingProfile.fillPhysicalOrderMappingProfile(mappingProfile);
       FieldMappingProfiles.saveProfile();
       FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
-      FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
       // create action profile
       cy.visit(SettingsMenu.actionProfilePath);
@@ -124,15 +154,22 @@ describe('ui-data-import', () => {
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
-      DataImport.uploadFile('marcFileForC375989.mrc', marcFileName);
+      DataImport.uploadFile(filePathForCreateOrder, marcFileName);
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(marcFileName);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(marcFileName);
-      FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
-      FileDetails.checkOrderQuantityInSummaryTable(quantityOfItems);
+      [0, 1].forEach(rowNumber => {
+        [FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.order
+        ].forEach(columnName => {
+          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName, rowNumber);
+        });
+      });
+      FileDetails.checkOrderInSummaryTable(quantityOfOrders);
       FileDetails.openOrder('Created');
-      OrderLines.verifyPOLDetailsIsOpened();
+      OrderLines.waitLoading();
+      OrderLines.checkIsOrderCreatedWithDataFromImportedFile(orderData);
     });
 });

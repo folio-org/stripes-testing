@@ -112,7 +112,6 @@ export default {
     cy.do(Button('Reset all').click());
   },
 
-
   checkOrderlineSearchResults: (orderLineNumber) => {
     cy.expect(MultiColumnList({ id: 'order-line-list' })
       .find(MultiColumnListRow({ index: 0 }))
@@ -936,6 +935,10 @@ export default {
       .exists());
   },
 
+  verifyOrderTitle(title) {
+    cy.expect(KeyValue('Title').has({ value: title }));
+  },
+
   addNewNote() {
     cy.do([
       Section({ id: 'notes' }).find(Button({ id: 'note-create-button' })).click(),
@@ -951,4 +954,59 @@ export default {
     Button('Receive').click(),
     ]);
   },
+
+  checkIsOrderCreatedWithDataFromImportedFile: (orderData) => {
+    cy.expect([
+      KeyValue('Title').has({ value: orderData.title }),
+      KeyValue('Publication date').has({ value: orderData.publicationDate }),
+      KeyValue('Publisher').has({ value: orderData.publisher }),
+      KeyValue('Internal note').has({ value: orderData.internalNote }),
+      KeyValue('Acquisition method').has({ value: orderData.acquisitionMethod }),
+      KeyValue('Order format').has({ value: orderData.orderFormat }),
+      KeyValue('Receipt status').has({ value: orderData.receiptStatus }),
+      KeyValue('Payment status').has({ value: orderData.paymentStatus }),
+      KeyValue('Source').has({ value: orderData.source }),
+      KeyValue('Selector').has({ value: orderData.selector }),
+      KeyValue('Receiving workflow').has({ value: orderData.receivingWorkflow }),
+      KeyValue('Account number').has({ value: orderData.accountNumber }),
+      KeyValue('Physical unit price').has({ value: orderData.physicalUnitPrice }),
+      Accordion('Cost details').find(KeyValue('Quantity physical')).has({ value: orderData.quantityPhysical }),
+      KeyValue('Currency').has({ value: orderData.currency }),
+      KeyValue('Material supplier').has({ value: orderData.materialSupplier }),
+      KeyValue('Create inventory').has({ value: orderData.createInventory }),
+      KeyValue('Material type').has({ value: orderData.materialType })
+    ]);
+    cy.expect(MultiColumnList({ id: 'list-item-contributors' })
+      .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 0 }))
+      .has({ content: orderData.contributor }));
+    cy.expect(MultiColumnList({ id: 'list-item-contributors' })
+      .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 1 }))
+      .has({ content: orderData.contributorType }));
+    cy.expect(MultiColumnList({ id: 'list-product-ids' })
+      .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 0 }))
+      .has({ content: orderData.productId }));
+    cy.expect(MultiColumnList({ id: 'list-product-ids' })
+      .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 2 }))
+      .has({ content: orderData.productIDType }));
+    cy.expect(MultiColumnList({ id: 'list-item-reference-numbers' })
+      .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 0 }))
+      .has({ content: orderData.vendorReferenceNumber }));
+    cy.expect(MultiColumnList({ id: 'list-item-reference-numbers' })
+      .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 1 }))
+      .has({ content: orderData.vendorReferenceType }));
+    cy.expect([
+      KeyValue('Name (code)').has({ value: orderData.locationName }),
+      Pane({ id: 'order-lines-details' }).find(Accordion('Location'))
+        .find(KeyValue('Quantity physical'))
+        .has({ value: orderData.locationQuantityPhysical })
+    ]);
+    cy.expect(Accordion({ id: 'FundDistribution' })
+      .find(MultiColumnList())
+      .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 0 }))
+      .has({ content: orderData.fund }));
+    cy.expect(Accordion({ id: 'FundDistribution' })
+      .find(MultiColumnList())
+      .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 2 }))
+      .has({ content: orderData.value }));
+  }
 };

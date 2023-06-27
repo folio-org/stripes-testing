@@ -1,4 +1,6 @@
 import { not } from 'bigtest';
+import uuid from 'uuid';
+
 import { Button, Pane, Select, TextField, including, TextFieldIcon, MultiColumnListRow, MultiColumnListCell, Modal, HTML } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
@@ -69,7 +71,8 @@ export default {
     body: {
       allowedRefundMethod: true,
       nameMethod: `autotestPaymentMethod${getRandomPostfix()}`,
-      ownerId
+      ownerId,
+      id: uuid()
     },
     isDefaultSearchParamsRequired : false,
   }).then(response => ({ name: response.body.nameMethod, id: response.body.id }))
