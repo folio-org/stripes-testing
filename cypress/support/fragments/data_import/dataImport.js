@@ -278,6 +278,21 @@ export default {
       });
   },
 
+  editMarcFileAddNewRecords(editedFileName, finalFileName, fileWithContentForEdit) {
+    FileManager.readFile(`cypress/fixtures/${editedFileName}`)
+      .then((actualContent) => {
+        const currentContent = actualContent;
+        
+        FileManager.readFile(`cypress/fixtures/${fileWithContentForEdit}`)
+          .then((content) => {
+            const contentForEdit = content;
+            const newContent = currentContent.concat(contentForEdit);
+            
+            FileManager.createFile(`cypress/fixtures/${finalFileName}`, newContent);
+          });
+      });
+  },
+
   uploadFileViaApi:(filePathName, fileName) => {
     const uiKeyValue = fileName;
 
