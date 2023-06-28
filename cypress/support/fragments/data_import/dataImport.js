@@ -41,6 +41,21 @@ const uploadFile = (filePathName, fileName) => {
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
 };
 
+const uploadBunchOfFiles = (editedFileName, numberOfFiles, finalFileName) => {
+  const arrayOfFiles = [];
+
+  for (let i = 0; i < numberOfFiles; i++) {
+    FileManager.readFile(`cypress/fixtures/${editedFileName}`)
+      .then((actualContent) => {
+        let fileName = `${finalFileName + i}.mrc`;
+
+        FileManager.createFile(`cypress/fixtures/${fileName}`, actualContent);
+        arrayOfFiles.push(fileName);
+    });
+  }
+  cy.get('input[type=file]').attachFile(arrayOfFiles);
+};
+
 const waitLoading = () => {
   cy.expect(sectionPaneJobsTitle.exists());
   cy.expect(sectionPaneJobsTitle.find(HTML(including('Loading'))).absent());
@@ -156,6 +171,7 @@ function processFile(uploadDefinitionId, fileId, sourcePath, jobExecutionId, uiK
 export default {
   importFile,
   uploadFile,
+  uploadBunchOfFiles,
   waitLoading,
   uploadDefinitions,
   uploadBinaryMarcFile,

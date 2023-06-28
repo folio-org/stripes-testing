@@ -123,7 +123,7 @@ export default {
 
   waitFileIsImported:(fileName) => {
     // wait until uploaded file is displayed in the list
-    cy.expect(MultiColumnList({ id:'job-logs-list' }).find(Button(fileName)).exists());
+    cy.expect(MultiColumnList({ id:'job-logs-list' }).find(Button(including(fileName))).exists());
   },
 
   createJobProfileWithLinkingProfiles: (jobProfile, actionProfileName, matchProfileName) => {
