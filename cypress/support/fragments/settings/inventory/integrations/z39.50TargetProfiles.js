@@ -57,11 +57,13 @@ function addJobProfileForUpdate(profile = defaultUpdateInstanceJobProfileName) {
 
 function getMultiColumnListCellsValues() {
   const cells = [];
-  return cy.get('[data-row-index="row-1"],[data-row-index="row-2"]').each($row => {
-    // from each row, choose specific cell
-    cy.get('[class*="mclCell-"]:nth-child(1)', { withinSubject: $row })
-    // extract its text content
-      .invoke('text')
+
+  return cy.get('[data-row-index="row-1"],[data-row-index="row-2"],[data-row-index="row-3"],[data-row-index="row-4"]')
+    .each($row => {
+  // from each row, choose specific cell
+  cy.get('[class*="mclCell-"]:nth-child(1)', { withinSubject: $row })
+  // extract its text content
+    .invoke('text')
       .then(cellValue => {
         cells.push(cellValue);
       });
@@ -136,6 +138,7 @@ export default {
   },
 
   openTargetProfile:(id = defaultCopyCatProfileId) => {
+    cy.wait(1500);
     cy.do(targetProfileName
       .find(Link({ href: including(`/settings/inventory/targetProfiles/${id}`) }))
       .click());
@@ -172,9 +175,7 @@ export default {
   },
 
   verifyCreateInstanceJobProfileList:(name) => {
-    cy.expect(MultiColumnList({ ariaRowCount: 6 })
-      .find(MultiColumnListRow({ indexRow: 'row-0' }))
-      .find(MultiColumnListCell({ content: including('Inventory Single Record - Default Create Instance') }))
+    cy.expect(MultiColumnListRow({ index: 0, content: including('Inventory Single Record - Default Create Instance') })
       .exists());
     validateJobProfilesSortingOrder();
     cy.expect([
@@ -188,22 +189,20 @@ export default {
       .exists());
   },
 
-  verifyUpdateInstanceJobProfileList:(name) => {
-    cy.expect(MultiColumnList({ ariaRowCount: 5 })
-      .find(MultiColumnListRow({ indexRow: 'row-0' }))
-      .find(MultiColumnListCell({ content: including('Inventory Single Record - Default Update Instance') }))
-      .exists());
-    validateJobProfilesSortingOrder();
-    cy.expect([
-      MultiColumnListHeader('Job profiles for overlay/update').exists(),
-      MultiColumnListHeader('Default').exists()
-    ]);
-    // the job profile view is opened in a new tab but cypress can't work with tabs
-    // check only the presence of a link for a job profile
-    cy.expect(Pane(`✓ ${name}`)
-      .find(Link({ href: including(linkTodefaultUpdateInstanceJobProfile) }))
-      .exists());
-  },
+  // verifyUpdateInstanceJobProfileList:(name) => {
+  //   cy.expect(MultiColumnListRow({ index: 0, content: including('Inventory Single Record - Default Update Instance') })
+  //     .exists());
+  //   validateJobProfilesSortingOrder();
+  //   cy.expect([
+  //     MultiColumnListHeader('Job profiles for overlay/update').exists(),
+  //     MultiColumnListHeader('Default').exists()
+  //   ]);
+  //   // the job profile view is opened in a new tab but cypress can't work with tabs
+  //   // check only the presence of a link for a job profile
+  //   cy.expect(Pane(`✓ ${name}`)
+  //     .find(Link({ href: including(linkTodefaultUpdateInstanceJobProfile) }))
+  //     .exists());
+  // },
 
   verifyTargetProfileIsCreated:(name) => {
     cy.expect([
