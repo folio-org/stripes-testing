@@ -17,7 +17,8 @@ describe('ui-data-import', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(user.username, user.password);
+        cy.login(userProperties.username, userProperties.password,
+          { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
       });
   });
 
