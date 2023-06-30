@@ -13,34 +13,34 @@ import ActionProfiles from '../../../support/fragments/data_import/action_profil
 import Users from '../../../support/fragments/users/users';
 
 const abcProfile = {
-  createJobProfile: `abc jobProfile.${getRandomPostfix()}`,
+  createJobProfile: `abc createJobProfile.${getRandomPostfix()}`,
   createActionProfile: `abc autotest actionProfile${getRandomPostfix()}`,
   createMappingProfile: `abc autotest mappingProfile${getRandomPostfix()}`,
-  updateJobProfile: `abc jobProfile.${getRandomPostfix()}`,
+  updateJobProfile: `abc updateJobProfile.${getRandomPostfix()}`,
   updateActionProfile: `abc autotest actionProfile${getRandomPostfix()}`,
   updateMappingProfile: `abc autotest mappingProfile${getRandomPostfix()}`
 };
 const adcProfile = {
-  createJobProfile: `adc jobProfile.${getRandomPostfix()}`,
+  createJobProfile: `adc createJobProfile.${getRandomPostfix()}`,
   createActionProfile: `adc autotest actionProfile${getRandomPostfix()}`,
   createMappingProfile: `adc autotest mappingProfile${getRandomPostfix()}`,
-  updateJobProfile: `adc jobProfile.${getRandomPostfix()}`,
+  updateJobProfile: `adc updateJobProfile.${getRandomPostfix()}`,
   updateActionProfile: `adc autotest actionProfile${getRandomPostfix()}`,
   updateMappingProfile: `adc autotest mappingProfile${getRandomPostfix()}`
 };
 const zbcProfile = {
-  createJobProfile: `zbc jobProfile.${getRandomPostfix()}`,
+  createJobProfile: `zbc createJobProfile.${getRandomPostfix()}`,
   createActionProfile: `zbc autotest actionProfile${getRandomPostfix()}`,
   createMappingProfile: `zbc autotest mappingProfile${getRandomPostfix()}`,
-  updateJobProfile: `zbc jobProfile.${getRandomPostfix()}`,
+  updateJobProfile: `zbc updateJobProfile.${getRandomPostfix()}`,
   updateActionProfile: `zbc autotest actionProfile${getRandomPostfix()}`,
   updateMappingProfile: `zbc autotest mappingProfile${getRandomPostfix()}`
 };
 const zdcProfile = {
-  createJobProfile: `zdc jobProfile.${getRandomPostfix()}`,
+  createJobProfile: `zdc createJobProfile.${getRandomPostfix()}`,
   createActionProfile: `zdc autotest actionProfile${getRandomPostfix()}`,
   createMappingProfile: `zdc autotest mappingProfile${getRandomPostfix()}`,
-  updateJobProfile: `zdc jobProfile.${getRandomPostfix()}`,
+  updateJobProfile: `zdc updateJobProfile.${getRandomPostfix()}`,
   updateActionProfile: `zdc autotest actionProfile${getRandomPostfix()}`,
   updateMappingProfile: `zdc autotest mappingProfile${getRandomPostfix()}`
 };

@@ -55,21 +55,23 @@ function addJobProfileForUpdate(profile = defaultUpdateInstanceJobProfileName) {
   ]);
 }
 
-function getMultiColumnListCellsValues() {
-  const cells = [];
+// function validateJobProfilesSortingOrder(partOfListWithJobProfilesNumber) {
+//   // TODO need to wait until list will be uploaded
+//   cy.wait(2000);
+//   cy.get('div[class^="mclRowContainer--"]').first().then(elem => {
+//     // get NodeList with rows content
+//     const jobProfileRows = elem[0].querySelectorAll('[data-row-index]');
+//     // put NodeList in the array
+//     const allJobProfiles = Array.prototype.slice.call(jobProfileRows);
+//     // detete default job profile from list
+//     allJobProfiles.shift();
 
-  return cy.get('[data-row-index="row-1"],[data-row-index="row-2"],[data-row-index="row-3"],[data-row-index="row-4"]')
-    .each($row => {
-  // from each row, choose specific cell
-  cy.get('[class*="mclCell-"]:nth-child(1)', { withinSubject: $row })
-  // extract its text content
-    .invoke('text')
-      .then(cellValue => {
-        cells.push(cellValue);
-      });
-  })
-    .then(() => cells);
-}
+//     const rows = [];
+    
+//     allJobProfiles.forEach(element => rows.push(element.textContent));
+//     validateStringsAscendingOrder(rows);
+//   });
+// }
 
 function validateStringsAscendingOrder(prev) {
   const itemsClone = [...prev];
@@ -84,9 +86,39 @@ function validateStringsAscendingOrder(prev) {
   expect(prev).to.deep.equal(itemsClone);
 }
 
-function validateJobProfilesSortingOrder() {
-  getMultiColumnListCellsValues().then(cells => {
-    validateStringsAscendingOrder(cells);
+function verifyJobProfilesForImportCreateAscendingOrder() {
+  // TODO need to wait until list will be uploaded
+  cy.wait(2000);
+  cy.get('div[class^="mclRowContainer--"]').first().then(elem => {
+    // get NodeList with rows content
+    const jobProfileRows = elem[0].querySelectorAll('[data-row-index]');
+    // put NodeList in the array
+    const allJobProfiles = Array.prototype.slice.call(jobProfileRows);
+    // detete default job profile from list
+    allJobProfiles.shift();
+
+    const rows = [];
+    
+    allJobProfiles.forEach(element => rows.push(element.textContent));
+    validateStringsAscendingOrder(rows);
+  });
+}
+
+function verifyJobProfilesForOverlayUpdateAscendingOrder() {
+  // TODO need to wait until list will be uploaded
+  cy.wait(2000);
+  cy.get('div[class^="mclRowContainer--"]').last().then(elem => {
+    // get NodeList with rows content
+    const jobProfileRows = elem[0].querySelectorAll('[data-row-index]');
+    // put NodeList in the array
+    const allJobProfiles = Array.prototype.slice.call(jobProfileRows);
+    // detete default job profile from list
+    allJobProfiles.shift();
+
+    const rows = [];
+    
+    allJobProfiles.forEach(element => rows.push(element.textContent));
+    validateStringsAscendingOrder(rows);
   });
 }
 
@@ -96,6 +128,8 @@ export default {
   create,
   addJobProfileForCreate,
   addJobProfileForUpdate,
+  verifyJobProfilesForImportCreateAscendingOrder,
+  verifyJobProfilesForOverlayUpdateAscendingOrder,
   changeOclcWorldCatToDefaultViaApi:() => {
     cy.okapiRequest({
       method: 'PUT',
@@ -177,7 +211,7 @@ export default {
   verifyCreateInstanceJobProfileList:(name) => {
     cy.expect(MultiColumnListRow({ index: 0, content: including('Inventory Single Record - Default Create Instance') })
       .exists());
-    validateJobProfilesSortingOrder();
+    verifyJobProfilesForImportCreateAscendingOrder();
     cy.expect([
       MultiColumnListHeader('Job profiles for import/create').exists(),
       MultiColumnListHeader('Default').exists()
@@ -189,20 +223,20 @@ export default {
       .exists());
   },
 
-  // verifyUpdateInstanceJobProfileList:(name) => {
-  //   cy.expect(MultiColumnListRow({ index: 0, content: including('Inventory Single Record - Default Update Instance') })
-  //     .exists());
-  //   validateJobProfilesSortingOrder();
-  //   cy.expect([
-  //     MultiColumnListHeader('Job profiles for overlay/update').exists(),
-  //     MultiColumnListHeader('Default').exists()
-  //   ]);
-  //   // the job profile view is opened in a new tab but cypress can't work with tabs
-  //   // check only the presence of a link for a job profile
-  //   cy.expect(Pane(`✓ ${name}`)
-  //     .find(Link({ href: including(linkTodefaultUpdateInstanceJobProfile) }))
-  //     .exists());
-  // },
+  verifyUpdateInstanceJobProfileList:(name) => {
+    cy.expect(MultiColumnListRow({ index: 0, content: including('Inventory Single Record - Default Update Instance') })
+      .exists());
+    verifyJobProfilesForOverlayUpdateAscendingOrder();
+    cy.expect([
+      MultiColumnListHeader('Job profiles for overlay/update').exists(),
+      MultiColumnListHeader('Default').exists()
+    ]);
+    // the job profile view is opened in a new tab but cypress can't work with tabs
+    // check only the presence of a link for a job profile
+    cy.expect(Pane(`✓ ${name}`)
+      .find(Link({ href: including(linkTodefaultUpdateInstanceJobProfile) }))
+      .exists());
+  },
 
   verifyTargetProfileIsCreated:(name) => {
     cy.expect([
