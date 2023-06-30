@@ -10,6 +10,7 @@ import {
   Modal,
   PaneContent,
   or,
+  Link
 } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
@@ -47,6 +48,13 @@ const waitLoading = () => {
   cy.expect(Button('End session').exists());
 };
 
+const checkInItemGui = (barcode) => {
+  return cy.do([itemBarcodeField.exists(),
+    itemBarcodeField.fillIn(barcode),
+    addItemButton.click()
+  ]);
+};
+
 export default {
   waitLoading:() => {
     cy.expect(itemBarcodeField.exists());
@@ -61,12 +69,15 @@ export default {
     cy.wait('@getItems', getLongDelay());
     cy.wait(1000);
   },
-  checkInItemGui:(barcode) => {
-    return cy.do([itemBarcodeField.exists(),
-      itemBarcodeField.fillIn(barcode),
-      addItemButton.click()
-    ]);
+  checkInItemGui,
+  getSessionIdAfterCheckInItem:(barcode) => {
+    cy.intercept('/inventory/items?*').as('getItems');
+    cy.intercept('circulation/check-in-by-barcode').as('getCheckInResponse');
+    checkInItemGui(barcode);
+    cy.wait('@getItems');
+    return cy.wait('@getCheckInResponse', getLongDelay()).its('request.body.sessionId');
   },
+
   confirmCheckInLostItem:() => {
     cy.do(Button('Confirm').click());
   },
