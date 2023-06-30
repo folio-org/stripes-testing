@@ -150,7 +150,7 @@ describe('Check In - Actions ', () => {
     ServicePoints.deleteViaApi(servicePoint.id);
   });
 
-  it('C398022 Check sessionId does not change when switching to other applications in scope of one check-in session (vega)', { tags: [TestTypes.criticalPath, devTeams.vega] }, () => {
+  it('C398022 Check sessionId does not change when switching to other applications in scope of one check-in session (vega)', { tags: [TestTypes.extendedPath, devTeams.vega] }, () => {
     cy.login(userData[0].username, userData[0].password);
     cy.visit(TopMenu.checkInPath);
     CheckInActions.waitLoading();
@@ -166,7 +166,7 @@ describe('Check In - Actions ', () => {
     });
   });
 
-  it('C398005 Check sessionId field while check-in (vega)', { tags: [TestTypes.criticalPath, devTeams.vega] }, () => {
+  it('C398005 Check sessionId field while check-in (vega)', { tags: [TestTypes.extendedPath, devTeams.vega] }, () => {
     cy.login(userData[1].username, userData[1].password);
     cy.visit(TopMenu.checkInPath);
     CheckInActions.waitLoading();
