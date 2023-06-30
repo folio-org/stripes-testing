@@ -4,8 +4,8 @@ import DevTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import NewTargetProfile from '../../../support/fragments/settings/inventory/newTargetProfile';
-import EditTargetProfile from '../../../support/fragments/settings/inventory/editTargetProfile';
+import NewTargetProfile from '../../../support/fragments/settings/inventory/integrations/newTargetProfile';
+import EditTargetProfile from '../../../support/fragments/settings/inventory/integrations/editTargetProfile';
 import Users from '../../../support/fragments/users/users';
 
 describe('ui-inventory', () => {
