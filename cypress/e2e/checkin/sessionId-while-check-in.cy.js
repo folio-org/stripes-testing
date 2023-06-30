@@ -98,7 +98,7 @@ describe('Check In - Actions ', () => {
           loanDate: moment.utc().format(),
           servicePointId: servicePoint.id,
           userBarcode: userData[0].barcode,
-        }).then(response => cy.log('HERE'+JSON.stringify(response)));
+        });
         Checkout.checkoutItemViaApi({
           id: uuid(),
           itemBarcode: itemData.items[1].barcode,
