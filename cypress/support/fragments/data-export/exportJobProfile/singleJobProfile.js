@@ -10,6 +10,7 @@ import {
 
 const actionsButton = Button('Actions');
 const editButton = Button('Edit');
+const duplicateButton = Button('Duplicate');
 const nameTextfield = TextField('Name*');
 const cancelButton = Button('Cancel');
 
@@ -18,13 +19,16 @@ export default {
     cy.expect(PaneHeader(name).exists());
   },
 
-  verifyProfileDetails(profileDetails) {
+  verifyProfileDetailsEditable() {
     cy.expect([
-      TextField('Name*').has({ value: profileDetails.name }),
+      TextField('Name*').exists(),
       Select('Mapping profile*').exists(),
-      TextArea('Description').has({ value: profileDetails.description }),
-      Accordion({ headline: 'Update information' }).has({ content: including(`Source: ${profileDetails.source}`) })
+      TextArea('Description').exists(),
     ]);
+  },
+
+  verifySource(source) {
+    cy.expect(Accordion({ headline: 'Update information' }).has({ content: including(`Source: ${source}`) }));
   },
 
   openActions() {
@@ -35,12 +39,15 @@ export default {
     cy.do(editButton.click());
   },
 
+  clickDuplicateButton() {
+    cy.do(duplicateButton.click());
+  },
+
   clickCancelButton() {
     cy.do(cancelButton.click());
   },
 
   editJobProfile(newName) {
-    this.clickEditButton();
     cy.do([
       nameTextfield.clear(),
       nameTextfield.fillIn(newName),

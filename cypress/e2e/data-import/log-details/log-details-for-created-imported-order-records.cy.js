@@ -1,21 +1,21 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
-import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE,
+import TestTypes from '../../../support/dictionary/testTypes';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import {FOLIO_RECORD_TYPE,
   ORDER_STATUSES,
   MATERIAL_TYPE_NAMES,
   ORDER_FORMAT_NAMES,
   ACQUISITION_METHOD_NAMES,
-  JOB_STATUS_NAMES } from '../../../support/constants';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+  JOB_STATUS_NAMES} from '../../../support/constants';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
+import TopMenu from '../../../support/fragments/topMenu';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import OrderLines from '../../../support/fragments/orders/orderLines';
@@ -23,41 +23,16 @@ import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
   let user;
-  const quantityOfOrders = '2';
-  const filePathForCreateOrder = 'marcFileForC375174.mrc';
-  const marcFileName = `C375174 autotestFileName ${getRandomPostfix()}`;
-  const orderData = {
-    title: 'ROALD DAHL : TELLER OF THE UNEXPECTED : A BIOGRAPHY.',
-    publicationDate: '2023',
-    publisher: 'PEGASUS BOOKS',
-    internalNote: 'AAH/bsc ',
-    acquisitionMethod: 'Purchase at vendor system',
-    orderFormat: ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE_Check,
-    receiptStatus: 'Pending',
-    paymentStatus: 'Pending',
-    source: 'MARC',
-    selector: 'AAH',
-    receivingWorkflow: 'Synchronized order and receipt quantity',
-    accountNumber: '137009',
-    physicalUnitPrice: '$27.95',
-    quantityPhysical: '1',
-    currency: 'USD',
-    materialSupplier: 'GOBI Library Solutions',
-    createInventory: 'Instance, Holding, Item',
-    materialType: MATERIAL_TYPE_NAMES.BOOK,
-    contributor: 'DENNISON, MATTHEW',
-    contributorType: 'Personal name',
-    productId: '9781639363322',
-    productIDType: 'ISBN',
-    vendorReferenceNumber: '99992466210',
-    vendorReferenceType: 'Vendor order reference number',
-    fund: 'Gifts (Non-recurring)(GIFTS-ONE-TIME)',
-    value: '100%',
-    locationName: 'Main Library (KU/CC/DI/M)',
-    locationQuantityPhysical: '1'
-  };
+  const quantityOfOrders = '3';
+  const filePathForCreateOrder = 'marcFileForC375178.mrc';
+  const marcFileName = `C375178 autotestFileName ${getRandomPostfix()}`;
+  const ordersData = [
+    { title: 'ROALD DAHL : TELLER OF THE UNEXPECTED : A BIOGRAPHY.', rowNumber: 0 },
+    { title: 'CULTURAL HISTORY OF IDEAS', rowNumber: 1 },
+    { title: 'BOAT PEOPLE; TRANS. BY VANESSA PERE-ROSARIO.', rowNumber: 2 }
+  ];
   const mappingProfile = {
-    name: `C375174 Test Order ${getRandomPostfix()}`,
+    name: `C375178 Test Order ${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.ORDER,
     orderStatus: ORDER_STATUSES.PENDING,
     approved: true,
@@ -101,26 +76,43 @@ describe('ui-data-import', () => {
   };
   const actionProfile = {
     typeValue: FOLIO_RECORD_TYPE.ORDER,
-    name: `C375174 Test Order ${getRandomPostfix()}`
+    name: `C375178 Test Order ${getRandomPostfix()}`
   };
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: `C375174 Test Order ${getRandomPostfix()}`,
+    profileName: `C375178 Test Order ${getRandomPostfix()}`,
   };
 
   before('login', () => {
+    cy.loginAsAdmin();
+    // create mapping profile
+    cy.visit(SettingsMenu.mappingProfilePath);
+    FieldMappingProfiles.openNewMappingProfileForm();
+    NewFieldMappingProfile.fillPhysicalOrderMappingProfile(mappingProfile);
+    FieldMappingProfiles.saveProfile();
+    FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+
+    // create action profile
+    cy.visit(SettingsMenu.actionProfilePath);
+    ActionProfiles.create(actionProfile, mappingProfile.name);
+    ActionProfiles.checkActionProfilePresented(actionProfile.name);
+
+    // create job profile
+    cy.visit(SettingsMenu.jobProfilePath);
+    JobProfiles.createJobProfile(jobProfile);
+    NewJobProfile.linkActionProfile(actionProfile);
+    NewJobProfile.saveAndClose();
+    JobProfiles.checkJobProfilePresented(jobProfile.profileName);
+
     cy.createTempUser([
       permissions.settingsDataImportEnabled.gui,
-      permissions.moduleDataImportEnabled.gui,
-      permissions.uiOrganizationsView.gui,
-      permissions.inventoryAll.gui,
-      permissions.uiOrdersView.gui
+      permissions.moduleDataImportEnabled.gui
     ])
       .then(userProperties => {
         user = userProperties;
 
         cy.login(userProperties.username, userProperties.password,
-          { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+          { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
       });
   });
 
@@ -131,27 +123,8 @@ describe('ui-data-import', () => {
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
   });
 
-  it('C375174 Verify the importing of orders with pending status (folijet)',
+  it('C375178 Verify the importing of orders with pending status (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      // create mapping profile
-      FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillPhysicalOrderMappingProfile(mappingProfile);
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
-
-      // create action profile
-      cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.create(actionProfile, mappingProfile.name);
-      ActionProfiles.checkActionProfilePresented(actionProfile.name);
-
-      // create job profile
-      cy.visit(SettingsMenu.jobProfilePath);
-      JobProfiles.createJobProfile(jobProfile);
-      NewJobProfile.linkActionProfile(actionProfile);
-      NewJobProfile.saveAndClose();
-      JobProfiles.checkJobProfilePresented(jobProfile.profileName);
-
-      cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
       DataImport.uploadFile(filePathForCreateOrder, marcFileName);
@@ -160,16 +133,16 @@ describe('ui-data-import', () => {
       JobProfiles.waitFileIsImported(marcFileName);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(marcFileName);
-      [0, 1].forEach(rowNumber => {
-        [FileDetails.columnNameInResultList.srsMarc,
-          FileDetails.columnNameInResultList.order
-        ].forEach(columnName => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName, rowNumber);
-        });
-      });
       FileDetails.checkOrderQuantityInSummaryTable(quantityOfOrders);
-      FileDetails.openOrder('Created');
-      OrderLines.waitLoading();
-      OrderLines.checkIsOrderCreatedWithDataFromImportedFile(orderData);
+      FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfOrders);
+      cy.wrap(ordersData).forEach(order => {
+        FileDetails.verifyTitle(order.title, FileDetails.columnNameInResultList.title, order.rowNumber);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.order, order.rowNumber);
+        FileDetails.verifyStatusHasLinkToOrder(order.rowNumber);
+        FileDetails.openOrder('Created', order.rowNumber);
+        OrderLines.waitLoading();
+        OrderLines.verifyOrderTitle(order.title);
+        cy.go('back');
+      });
     });
 });
