@@ -9,8 +9,6 @@ import {
   SelectionList,
   Select,
   MultiColumnListHeader,
-  MultiColumnList,
-  MultiColumnListCell,
   MultiColumnListRow,
   Callout
 } from '../../../../../../interactors';
