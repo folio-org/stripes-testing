@@ -13,34 +13,34 @@ import ActionProfiles from '../../../support/fragments/data_import/action_profil
 import Users from '../../../support/fragments/users/users';
 
 const abcProfile = {
-  createJobProfile: `abc jobProfile.${getRandomPostfix()}`,
+  createJobProfile: `abc createJobProfile.${getRandomPostfix()}`,
   createActionProfile: `abc autotest actionProfile${getRandomPostfix()}`,
   createMappingProfile: `abc autotest mappingProfile${getRandomPostfix()}`,
-  updateJobProfile: `abc jobProfile.${getRandomPostfix()}`,
+  updateJobProfile: `abc updateJobProfile.${getRandomPostfix()}`,
   updateActionProfile: `abc autotest actionProfile${getRandomPostfix()}`,
   updateMappingProfile: `abc autotest mappingProfile${getRandomPostfix()}`
 };
 const adcProfile = {
-  createJobProfile: `adc jobProfile.${getRandomPostfix()}`,
+  createJobProfile: `adc createJobProfile.${getRandomPostfix()}`,
   createActionProfile: `adc autotest actionProfile${getRandomPostfix()}`,
   createMappingProfile: `adc autotest mappingProfile${getRandomPostfix()}`,
-  updateJobProfile: `adc jobProfile.${getRandomPostfix()}`,
+  updateJobProfile: `adc updateJobProfile.${getRandomPostfix()}`,
   updateActionProfile: `adc autotest actionProfile${getRandomPostfix()}`,
   updateMappingProfile: `adc autotest mappingProfile${getRandomPostfix()}`
 };
 const zbcProfile = {
-  createJobProfile: `zbc jobProfile.${getRandomPostfix()}`,
+  createJobProfile: `zbc createJobProfile.${getRandomPostfix()}`,
   createActionProfile: `zbc autotest actionProfile${getRandomPostfix()}`,
   createMappingProfile: `zbc autotest mappingProfile${getRandomPostfix()}`,
-  updateJobProfile: `zbc jobProfile.${getRandomPostfix()}`,
+  updateJobProfile: `zbc updateJobProfile.${getRandomPostfix()}`,
   updateActionProfile: `zbc autotest actionProfile${getRandomPostfix()}`,
   updateMappingProfile: `zbc autotest mappingProfile${getRandomPostfix()}`
 };
 const zdcProfile = {
-  createJobProfile: `zdc jobProfile.${getRandomPostfix()}`,
+  createJobProfile: `zdc createJobProfile.${getRandomPostfix()}`,
   createActionProfile: `zdc autotest actionProfile${getRandomPostfix()}`,
   createMappingProfile: `zdc autotest mappingProfile${getRandomPostfix()}`,
-  updateJobProfile: `zdc jobProfile.${getRandomPostfix()}`,
+  updateJobProfile: `zdc updateJobProfile.${getRandomPostfix()}`,
   updateActionProfile: `zdc autotest actionProfile${getRandomPostfix()}`,
   updateMappingProfile: `zdc autotest mappingProfile${getRandomPostfix()}`
 };
@@ -53,31 +53,36 @@ describe('ui-data-import', () => {
   let profileId;
 
   before('login', () => {
-    cy.getAdminToken();
-    // create job profiles for create
-    [zbcProfile, adcProfile, zdcProfile, abcProfile].forEach(profile => {
-      NewFieldMappingProfile.createMappingProfileViaApi(profile.createMappingProfile)
-        .then((mappingProfileResponse) => {
-          NewActionProfile.createActionProfileViaApi(profile.createActionProfile, mappingProfileResponse.body.id)
-            .then((actionProfileResponse) => {
-              NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(profile.createJobProfile, actionProfileResponse.body.id);
-            }).then(id => createJobProfileIds.push(id));
-        });
-    });
-    // create job profile for update
-    [abcProfile, zbcProfile, zdcProfile, adcProfile].forEach(profile => {
-      NewFieldMappingProfile.createMappingProfileViaApi(profile.updateMappingProfile)
-        .then((mappingProfileResponse) => {
-          NewActionProfile.createActionProfileViaApi(profile.updateActionProfile, mappingProfileResponse.body.id, 'UPDATE')
-            .then((actionProfileResponse) => {
-              NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(profile.updateJobProfile, actionProfileResponse.body.id);
-            }).then(id => {
-              updateJobProfileIds.push(id);
+    cy.getAdminToken()
+      .then(()=>{
+        // create job profiles for create
+        [zbcProfile, adcProfile, zdcProfile, abcProfile].forEach(profile => {
+          NewFieldMappingProfile.createMappingProfileViaApi(profile.createMappingProfile)
+            .then((mappingProfileResponse) => {
+              NewActionProfile.createActionProfileViaApi(profile.createActionProfile, mappingProfileResponse.body.id)
+                .then((actionProfileResponse) => {
+                    NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(profile.createJobProfile, actionProfileResponse.body.id);
+                }).then(id => createJobProfileIds.push(id));
+              });
+          });
+        // create job profile for update
+        [abcProfile, zbcProfile, zdcProfile, adcProfile].forEach(profile => {
+          NewFieldMappingProfile.createMappingProfileViaApi(profile.updateMappingProfile)
+            .then((mappingProfileResponse) => {
+              NewActionProfile.createActionProfileViaApi(profile.updateActionProfile, mappingProfileResponse.body.id, 'UPDATE')
+                .then((actionProfileResponse) => {
+                  NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(profile.updateJobProfile, actionProfileResponse.body.id);
+                }).then(id => {
+                  updateJobProfileIds.push(id);
+                });
             });
+          });
+        })
+        .then(()=>{
           Z3950TargetProfiles.createNewZ3950TargetProfileViaApi(targetProfileName, createJobProfileIds, updateJobProfileIds)
-            .then(initialId => { profileId = initialId; });
-        });
-    });
+          .then(initialId => {
+            profileId = initialId; });
+      });
 
     cy.createTempUser([
       permissions.settingsDataImportEnabled.gui,
