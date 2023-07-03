@@ -217,6 +217,8 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
     () => {
       LoanDetails.createFeeFine(newOwnerData.owner, feeFineType);
       LoanDetails.anonymizeAllLoans();
+      LoanDetails.checkAnonymizeAllLoansModalOpen();
+      LoanDetails.confirmAnonymizeAllLoans();
       LoanDetails.checkAnonymizeModalOpen();
       LoanDetails.closeAnonymizeModal();
       LoanDetails.checkLoanAbsent(newFirstItemData.barcode);
