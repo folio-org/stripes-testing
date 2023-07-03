@@ -26,6 +26,7 @@ const AnonymizeAllButton = Button('Anonymize all loans');
 const ActionButton = Button({ ariaLabel: 'Action' });
 const NewFeeFineButton = Button('New fee/fine');
 const DeclareLostModal = Modal(DECLARE_LOST_MODAL_TITLE);
+const AnonymizeAllLoansModal = Modal('Anonymize all loans?');
 const AnonymizeModal = Modal('Anonymization prevented');
 const LoanActionsList = MultiColumnList(LOAN_ACTIONS_LIST_ID);
 
@@ -118,6 +119,12 @@ export default {
       TextInput({ id: 'amount' }).fillIn('1'),
       Button({ id: 'chargeOnly' }).click(),
     ]);
+  },
+  checkAnonymizeAllLoansModalOpen() {
+    cy.expect(AnonymizeAllLoansModal.exists());
+  },
+  confirmAnonymizeAllLoans() {
+    cy.do(AnonymizeAllLoansModal.find(Button('Confirm')).click());
   },
   checkAnonymizeModalOpen() {
     cy.expect(AnonymizeModal.exists());
