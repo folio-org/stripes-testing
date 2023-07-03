@@ -77,12 +77,12 @@ describe('ui-data-import', () => {
                 });
             });
           });
-    })
-    .then(()=>{
-      Z3950TargetProfiles.createNewZ3950TargetProfileViaApi(targetProfileName, createJobProfileIds, updateJobProfileIds)
-      .then(initialId => {
-        profileId = initialId; });
-    });    
+        })
+        .then(()=>{
+          Z3950TargetProfiles.createNewZ3950TargetProfileViaApi(targetProfileName, createJobProfileIds, updateJobProfileIds)
+          .then(initialId => {
+            profileId = initialId; });
+      });
 
     cy.createTempUser([
       permissions.settingsDataImportEnabled.gui,

@@ -9,8 +9,6 @@ import {
   SelectionList,
   Select,
   MultiColumnListHeader,
-  MultiColumnList,
-  MultiColumnListCell,
   MultiColumnListRow,
   Callout
 } from '../../../../../../interactors';
@@ -55,24 +53,6 @@ function addJobProfileForUpdate(profile = defaultUpdateInstanceJobProfileName) {
   ]);
 }
 
-// function validateJobProfilesSortingOrder(partOfListWithJobProfilesNumber) {
-//   // TODO need to wait until list will be uploaded
-//   cy.wait(2000);
-//   cy.get('div[class^="mclRowContainer--"]').first().then(elem => {
-//     // get NodeList with rows content
-//     const jobProfileRows = elem[0].querySelectorAll('[data-row-index]');
-//     // put NodeList in the array
-//     const allJobProfiles = Array.prototype.slice.call(jobProfileRows);
-//     // detete default job profile from list
-//     allJobProfiles.shift();
-
-//     const rows = [];
-    
-//     allJobProfiles.forEach(element => rows.push(element.textContent));
-//     validateStringsAscendingOrder(rows);
-//   });
-// }
-
 function validateStringsAscendingOrder(prev) {
   const itemsClone = [...prev];
 
@@ -98,7 +78,7 @@ function verifyJobProfilesForImportCreateAscendingOrder() {
     allJobProfiles.shift();
 
     const rows = [];
-    
+
     allJobProfiles.forEach(element => rows.push(element.textContent));
     validateStringsAscendingOrder(rows);
   });
@@ -116,7 +96,7 @@ function verifyJobProfilesForOverlayUpdateAscendingOrder() {
     allJobProfiles.shift();
 
     const rows = [];
-    
+
     allJobProfiles.forEach(element => rows.push(element.textContent));
     validateStringsAscendingOrder(rows);
   });
