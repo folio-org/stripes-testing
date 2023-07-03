@@ -162,7 +162,7 @@ describe('ui-data-import', () => {
       ].forEach(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
       });
-      // check created counter in the Summary table
+      // check Created counter in the Summary table
       FileDetails.checkItemsQuantityInSummaryTable(0, quantityOfItems);
       // check Updated counter in the Summary table
       FileDetails.checkItemsQuantityInSummaryTable(1, '0');

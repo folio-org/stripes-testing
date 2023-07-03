@@ -82,6 +82,14 @@ export default {
     cy.do(actionsBtn.click());
   },
 
+  downloadMatchedRecordsExists() {
+    cy.expect(Button('Download matched records (CSV)').exists());
+  },
+
+  downloadErrorsExists() {
+    cy.expect(Button('Download errors (CSV)').exists());
+  },
+
   clickSuppressedFromDiscoveryCheckbox() {
     cy.do(Checkbox('Suppressed from discovery').click());
   },

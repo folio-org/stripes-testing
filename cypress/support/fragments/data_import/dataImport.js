@@ -41,6 +41,21 @@ const uploadFile = (filePathName, fileName) => {
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
 };
 
+const uploadBunchOfFiles = (editedFileName, numberOfFiles, finalFileName) => {
+  const arrayOfFiles = [];
+
+  for (let i = 0; i < numberOfFiles; i++) {
+    FileManager.readFile(`cypress/fixtures/${editedFileName}`)
+      .then((actualContent) => {
+        let fileName = `${finalFileName + i}.mrc`;
+
+        FileManager.createFile(`cypress/fixtures/${fileName}`, actualContent);
+        arrayOfFiles.push(fileName);
+    });
+  }
+  cy.get('input[type=file]').attachFile(arrayOfFiles);
+};
+
 const waitLoading = () => {
   cy.expect(sectionPaneJobsTitle.exists());
   cy.expect(sectionPaneJobsTitle.find(HTML(including('Loading'))).absent());
@@ -156,6 +171,7 @@ function processFile(uploadDefinitionId, fileId, sourcePath, jobExecutionId, uiK
 export default {
   importFile,
   uploadFile,
+  uploadBunchOfFiles,
   waitLoading,
   uploadDefinitions,
   uploadBinaryMarcFile,
@@ -259,6 +275,21 @@ export default {
 
         content[0] = firstString;
         FileManager.createFile(`cypress/fixtures/${finalFileName}`, content.join('\n'));
+      });
+  },
+
+  editMarcFileAddNewRecords(editedFileName, finalFileName, fileWithContentForEdit) {
+    FileManager.readFile(`cypress/fixtures/${editedFileName}`)
+      .then((actualContent) => {
+        const currentContent = actualContent;
+        
+        FileManager.readFile(`cypress/fixtures/${fileWithContentForEdit}`)
+          .then((content) => {
+            const contentForEdit = content;
+            const newContent = currentContent.concat(contentForEdit);
+            
+            FileManager.createFile(`cypress/fixtures/${finalFileName}`, newContent);
+          });
       });
   },
 

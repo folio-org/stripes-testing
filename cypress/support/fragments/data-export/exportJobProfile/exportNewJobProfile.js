@@ -72,9 +72,6 @@ export default {
       HTML('Please enter a value').absent(),
     ]);
   },
-  saveAndClose() {
-    cy.do(saveAndCloseButton.click());
-  },
   fillinDescription(descriptionText) {
     cy.do(descriptionTextarea.fillIn(descriptionText));
   },
