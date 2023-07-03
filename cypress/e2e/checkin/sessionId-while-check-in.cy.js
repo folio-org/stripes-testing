@@ -7,7 +7,6 @@ import CheckInActions from '../../support/fragments/check-in-actions/checkInActi
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../support/fragments/users/userEdit';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 import Users from '../../support/fragments/users/users';
 import Checkout from '../../support/fragments/checkout/checkout';
@@ -18,15 +17,17 @@ import { getNewItem } from '../../support/fragments/inventory/item';
 
 
 describe('Check In - Actions ', () => {
-  const userData = {
+  const userData = [{
     permissions: [permissions.checkinAll.gui,
       permissions.checkoutAll.gui],
-  };
+  },
+  {
+    permissions: [permissions.checkinAll.gui],
+  }];
   const itemData = {
-    barcode: generateItemBarcode(),
+    items: [getNewItem(), getNewItem(), getNewItem(), getNewItem()],
     instanceTitle: `Instance ${getRandomPostfix()}`,
   };
-  const secondItem = getNewItem();
   let defaultLocation;
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation('autotest basic checkin', uuid());
   let sessionId;
@@ -51,14 +52,26 @@ describe('Check In - Actions ', () => {
         holdingsTypeId: itemData.holdingTypeId,
         permanentLocationId: defaultLocation.id,
       }],
-      items:[{
-        barcode: itemData.barcode,
+      items: [{
+        barcode: itemData.items[0].barcode,
         status:  { name: ITEM_STATUS_NAMES.AVAILABLE },
         permanentLoanType: { id: itemData.loanTypeId },
         materialType: { id: itemData.materialTypeId },
       },
       {
-        barcode: secondItem.barcode,
+        barcode: itemData.items[1].barcode,
+        status:  { name: ITEM_STATUS_NAMES.AVAILABLE },
+        permanentLoanType: { id: itemData.loanTypeId },
+        materialType: { id: itemData.materialTypeId },
+      },
+      {
+        barcode: itemData.items[2].barcode,
+        status:  { name: ITEM_STATUS_NAMES.AVAILABLE },
+        permanentLoanType: { id: itemData.loanTypeId },
+        materialType: { id: itemData.materialTypeId },
+      },
+      {
+        barcode: itemData.items[3].barcode,
         status:  { name: ITEM_STATUS_NAMES.AVAILABLE },
         permanentLoanType: { id: itemData.loanTypeId },
         materialType: { id: itemData.materialTypeId },
@@ -67,42 +80,67 @@ describe('Check In - Actions ', () => {
       itemData.testInstanceIds = specialInstanceIds;
     });
 
-    cy.createTempUser(userData.permissions)
+    cy.createTempUser(userData[0].permissions)
       .then(userProperties => {
-        userData.username = userProperties.username;
-        userData.password = userProperties.password;
-        userData.userId = userProperties.userId;
-        userData.barcode = userProperties.barcode;
-        userData.firstName = userProperties.firstName;
+        userData[0].username = userProperties.username;
+        userData[0].password = userProperties.password;
+        userData[0].userId = userProperties.userId;
+        userData[0].barcode = userProperties.barcode;
+        userData[0].firstName = userProperties.firstName;
       })
       .then(() => {
         UserEdit.addServicePointViaApi(servicePoint.id,
-          userData.userId, servicePoint.id);
+          userData[0].userId, servicePoint.id);
 
         Checkout.checkoutItemViaApi({
           id: uuid(),
-          itemBarcode: itemData.barcode,
+          itemBarcode: itemData.items[0].barcode,
           loanDate: moment.utc().format(),
           servicePointId: servicePoint.id,
-          userBarcode: userData.barcode,
+          userBarcode: userData[0].barcode,
         });
-
         Checkout.checkoutItemViaApi({
           id: uuid(),
-          itemBarcode: secondItem.barcode,
+          itemBarcode: itemData.items[1].barcode,
           loanDate: moment.utc().format(),
           servicePointId: servicePoint.id,
-          userBarcode: userData.barcode,
+          userBarcode: userData[0].barcode,
         });
-
-        cy.login(userData.username, userData.password);
+        cy.createTempUser(userData[1].permissions)
+          .then(userProperties => {
+            userData[1].username = userProperties.username;
+            userData[1].password = userProperties.password;
+            userData[1].userId = userProperties.userId;
+            userData[1].barcode = userProperties.barcode;
+            userData[1].firstName = userProperties.firstName;
+          })
+          .then(() => {
+            UserEdit.addServicePointViaApi(servicePoint.id,
+              userData[1].userId, servicePoint.id);
+            Checkout.checkoutItemViaApi({
+              id: uuid(),
+              itemBarcode: itemData.items[2].barcode,
+              loanDate: moment.utc().format(),
+              servicePointId: servicePoint.id,
+              userBarcode: userData[1].barcode,
+            });
+            Checkout.checkoutItemViaApi({
+              id: uuid(),
+              itemBarcode: itemData.items[3].barcode,
+              loanDate: moment.utc().format(),
+              servicePointId: servicePoint.id,
+              userBarcode: userData[1].barcode,
+            });
+          });
       });
   });
 
   after('Delete New Service point, Item and User', () => {
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint.id]);
-    Users.deleteViaApi(userData.userId);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.items[0].barcode);
+    UserEdit.changeServicePointPreferenceViaApi(userData[0].userId, [servicePoint.id]);
+    UserEdit.changeServicePointPreferenceViaApi(userData[1].userId, [servicePoint.id]);
+    Users.deleteViaApi(userData[0].userId);
+    Users.deleteViaApi(userData[1].userId);
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       defaultLocation.institutionId,
       defaultLocation.campusId,
@@ -112,26 +150,34 @@ describe('Check In - Actions ', () => {
     ServicePoints.deleteViaApi(servicePoint.id);
   });
 
-  it('C398022 Check sessionId does not change when switching to other applications in scope of one check-in session (vega)', { tags: [TestTypes.criticalPath, devTeams.vega] }, () => {
+  it('C398022 Check sessionId does not change when switching to other applications in scope of one check-in session (vega)', { tags: [TestTypes.extendedPath, devTeams.vega] }, () => {
+    cy.login(userData[0].username, userData[0].password);
     cy.visit(TopMenu.checkInPath);
     CheckInActions.waitLoading();
-    CheckInActions.checkinItemViaApi({
-      itemBarcode: itemData.barcode,
-      servicePointId: servicePoint.id,
-      checkInDate: new Date().toISOString()
-    }).then(response => {
-      sessionId = response.sessionId;
+    CheckInActions.getSessionIdAfterCheckInItem(itemData.items[0].barcode).then(responseSessionId => {
+      sessionId = responseSessionId;
     });
-    cy.visit(TopMenu.checkOutPath);
+    TopMenu.openCheckOutApp();
     Checkout.waitLoading();
+    TopMenu.openCheckInApp();
+    CheckInActions.waitLoading();
+    CheckInActions.getSessionIdAfterCheckInItem(itemData.items[1].barcode).then(responseSessionId => {
+      cy.wrap(responseSessionId).should('equal', sessionId);
+    });
+  });
+
+  it('C398005 Check sessionId field while check-in (vega)', { tags: [TestTypes.extendedPath, devTeams.vega] }, () => {
+    cy.login(userData[1].username, userData[1].password);
     cy.visit(TopMenu.checkInPath);
     CheckInActions.waitLoading();
-    CheckInActions.checkinItemViaApi({
-      itemBarcode: secondItem.barcode,
-      servicePointId: servicePoint.id,
-      checkInDate: new Date().toISOString()
-    }).then(response => {
-      cy.wrap(response.sessionId).should('equal', sessionId);
+    CheckInActions.getSessionIdAfterCheckInItem(itemData.items[2].barcode).then(responseSessionId => {
+      sessionId = responseSessionId;
+    }).then(() => {
+      //needed to synchronize with textfield to enter data
+      cy.wait(1000);
+      CheckInActions.getSessionIdAfterCheckInItem(itemData.items[3].barcode).then(responseSessionId2 => {
+        cy.wrap(responseSessionId2).should('equal', sessionId);
+      });
     });
   });
 });
