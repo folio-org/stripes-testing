@@ -55,20 +55,6 @@ function addJobProfileForUpdate(profile = defaultUpdateInstanceJobProfileName) {
   ]);
 }
 
-function getMultiColumnListCellsValues() {
-  const cells = [];
-  return cy.get('[data-row-index="row-1"],[data-row-index="row-2"]').each($row => {
-    // from each row, choose specific cell
-    cy.get('[class*="mclCell-"]:nth-child(1)', { withinSubject: $row })
-    // extract its text content
-      .invoke('text')
-      .then(cellValue => {
-        cells.push(cellValue);
-      });
-  })
-    .then(() => cells);
-}
-
 function validateStringsAscendingOrder(prev) {
   const itemsClone = [...prev];
 
@@ -82,9 +68,39 @@ function validateStringsAscendingOrder(prev) {
   expect(prev).to.deep.equal(itemsClone);
 }
 
-function validateJobProfilesSortingOrder() {
-  getMultiColumnListCellsValues().then(cells => {
-    validateStringsAscendingOrder(cells);
+function verifyJobProfilesForImportCreateAscendingOrder() {
+  // TODO need to wait until list will be uploaded
+  cy.wait(2000);
+  cy.get('div[class^="mclRowContainer--"]').first().then(elem => {
+    // get NodeList with rows content
+    const jobProfileRows = elem[0].querySelectorAll('[data-row-index]');
+    // put NodeList in the array
+    const allJobProfiles = Array.prototype.slice.call(jobProfileRows);
+    // detete default job profile from list
+    allJobProfiles.shift();
+
+    const rows = [];
+
+    allJobProfiles.forEach(element => rows.push(element.textContent));
+    validateStringsAscendingOrder(rows);
+  });
+}
+
+function verifyJobProfilesForOverlayUpdateAscendingOrder() {
+  // TODO need to wait until list will be uploaded
+  cy.wait(2000);
+  cy.get('div[class^="mclRowContainer--"]').last().then(elem => {
+    // get NodeList with rows content
+    const jobProfileRows = elem[0].querySelectorAll('[data-row-index]');
+    // put NodeList in the array
+    const allJobProfiles = Array.prototype.slice.call(jobProfileRows);
+    // detete default job profile from list
+    allJobProfiles.shift();
+
+    const rows = [];
+
+    allJobProfiles.forEach(element => rows.push(element.textContent));
+    validateStringsAscendingOrder(rows);
   });
 }
 
@@ -94,6 +110,8 @@ export default {
   create,
   addJobProfileForCreate,
   addJobProfileForUpdate,
+  verifyJobProfilesForImportCreateAscendingOrder,
+  verifyJobProfilesForOverlayUpdateAscendingOrder,
   changeOclcWorldCatToDefaultViaApi:() => {
     cy.okapiRequest({
       method: 'PUT',
@@ -136,6 +154,7 @@ export default {
   },
 
   openTargetProfile:(id = defaultCopyCatProfileId) => {
+    cy.wait(1500);
     cy.do(targetProfileName
       .find(Link({ href: including(`/settings/inventory/targetProfiles/${id}`) }))
       .click());
@@ -172,11 +191,9 @@ export default {
   },
 
   verifyCreateInstanceJobProfileList:(name) => {
-    cy.expect(MultiColumnList({ ariaRowCount: 6 })
-      .find(MultiColumnListRow({ indexRow: 'row-0' }))
-      .find(MultiColumnListCell({ content: including('Inventory Single Record - Default Create Instance') }))
+    cy.expect(MultiColumnListRow({ index: 0, content: including('Inventory Single Record - Default Create Instance') })
       .exists());
-    validateJobProfilesSortingOrder();
+    verifyJobProfilesForImportCreateAscendingOrder();
     cy.expect([
       MultiColumnListHeader('Job profiles for import/create').exists(),
       MultiColumnListHeader('Default').exists()
@@ -189,11 +206,9 @@ export default {
   },
 
   verifyUpdateInstanceJobProfileList:(name) => {
-    cy.expect(MultiColumnList({ ariaRowCount: 5 })
-      .find(MultiColumnListRow({ indexRow: 'row-0' }))
-      .find(MultiColumnListCell({ content: including('Inventory Single Record - Default Update Instance') }))
+    cy.expect(MultiColumnListRow({ index: 0, content: including('Inventory Single Record - Default Update Instance') })
       .exists());
-    validateJobProfilesSortingOrder();
+    verifyJobProfilesForOverlayUpdateAscendingOrder();
     cy.expect([
       MultiColumnListHeader('Job profiles for overlay/update').exists(),
       MultiColumnListHeader('Default').exists()
