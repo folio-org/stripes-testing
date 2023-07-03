@@ -1,5 +1,5 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import { or } from '@interactors/html';
+import { or, HTML, including } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -323,5 +323,10 @@ export default {
   openFileDetails:(fileName) => {
     cy.do(MultiColumnList({ id:'list-data-import' }).find(Link(fileName)).click());
   },
-  verifyCheckboxForMarkingLogsAbsent:() => cy.expect(selectAllCheckbox.absent())
+
+  verifyCheckboxForMarkingLogsAbsent:() => cy.expect(selectAllCheckbox.absent()),
+
+  verifyQuantityOfLogs:(quantity) => {
+    cy.expect(Pane({ id:'pane-results' }).find(HTML(including(`${quantity} logs found`))).exists());
+  },
 };

@@ -135,7 +135,7 @@ describe('ui-data-import', () => {
       Logs.openFileDetails(marcFileName);
       FileDetails.checkOrderQuantityInSummaryTable(quantityOfOrders);
       FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfOrders);
-      cy.wrap(ordersData).forEach(order => {
+      cy.wrap(ordersData).each(order => {
         FileDetails.verifyTitle(order.title, FileDetails.columnNameInResultList.title, order.rowNumber);
         FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.order, order.rowNumber);
         FileDetails.verifyStatusHasLinkToOrder(order.rowNumber);
