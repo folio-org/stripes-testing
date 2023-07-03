@@ -26,6 +26,8 @@ import PaymentMethods from '../../support/fragments/settings/users/paymentMethod
 import RefundReasons from '../../support/fragments/settings/users/refundReasons';
 import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
 import RefundFeeFine from '../../support/fragments/users/refundFeeFine';
+import TransferFeeFine from '../../support/fragments/users/transferFeeFine';
+import TransferAccounts from '../../support/fragments/settings/users/transferAccounts';
 
 describe('Circulation log', () => {
   const patronGroup = {
@@ -38,6 +40,7 @@ describe('Circulation log', () => {
   };
   const waiveReason = WaiveReasons.getDefaultNewWaiveReason(uuid());
   const refundReason = RefundReasons.getDefaultNewRefundReason(uuid());
+  const transferAccount = TransferAccounts.getDefaultNewTransferAccount(uuid());
   const testData = {
     userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestCircLog', uuid()),
     manualChargeName: null,
@@ -52,6 +55,13 @@ describe('Circulation log', () => {
   const payBody = (amount) => ({
     amount,
     paymentMethod: testData.paymentMethodName,
+    notifyPatron: false,
+    servicePointId: testData.userServicePoint.id,
+    userName: 'ADMINISTRATOR, DIKU',
+  });
+  const transferBody = (amount) => ({
+    amount,
+    paymentMethod: transferAccount.accountName,
     notifyPatron: false,
     servicePointId: testData.userServicePoint.id,
     userName: 'ADMINISTRATOR, DIKU',
@@ -189,6 +199,7 @@ describe('Circulation log', () => {
       testData.manualChargeId = chargeRes.id;
       testData.manualChargeName = chargeRes.feeFineType;
     });
+    TransferAccounts.createViaApi({ ...transferAccount, ownerId: userOwnerBody.id });
     WaiveReasons.createViaApi(waiveReason);
     PaymentMethods.createViaApi(userOwnerBody.id).then((paymentRes) => {
       testData.paymentMethodId = paymentRes.id;
@@ -226,6 +237,7 @@ describe('Circulation log', () => {
     WaiveReasons.deleteViaApi(waiveReason.id);
     ManualCharges.deleteViaApi(testData.manualChargeId);
     PaymentMethods.deleteViaApi(testData.paymentMethodId);
+    TransferAccounts.deleteViaApi(transferAccount.id);
     UsersOwners.deleteViaApi(userOwnerBody.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
@@ -235,6 +247,20 @@ describe('Circulation log', () => {
       testData.defaultLocation.id
     );
   });
+
+  it(
+    'C17061 Filter circulation log by transferred fully (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      createFeeFine().then((feeFineId) => {
+        cy.log(userData.userName);
+        testData.feeFineId = feeFineId;
+        TransferFeeFine.transferFeeFineViaApi(transferBody('4.00'), testData.feeFineId);
+        filterByAction('Transferred fully');
+        NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
+      });
+    }
+  );
 
   it(
     'C17052 Check the Actions button from filtering Circulation log by Paid partially (volaris)',
