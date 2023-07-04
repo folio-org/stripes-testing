@@ -42,6 +42,16 @@ const status = {
   error: 'Error'
 };
 
+const visibleColumnsInResultsList = {
+  RECORD: { columnIndex: 1 },
+  TITLE: { columnIndex: 2 },
+  SRS_MARC: { columnIndex: 3 },
+  INSTANCE: { columnIndex: 4 },
+  HOLDINGS: { columnIndex: 5 },
+  ITEM: { columnIndex: 6 },
+  ORDER: { columnIndex: 7 }
+};
+
 const checkSrsRecordQuantityInSummaryTable = (quantity, row = 0) => {
   cy.expect(jobSummaryTable
     .find(MultiColumnListRow({ indexRow: `row-${row}` }))
@@ -132,21 +142,6 @@ function checkItemsStatusesInResultList(rowIndex, itemStatuses) {
   });
 }
 
-function getMultiColumnListCellsValues() {
-  const cells = [];
-  // get MultiColumnList rows and loop over
-  return cy.get('[data-row-index]').each($row => {
-    // from each row, choose specific cell
-    cy.get('[class*="mclCell-"]:nth-child(1)', { withinSubject: $row })
-    // extract its text content
-      .invoke('text')
-      .then(cellValue => {
-        cells.push(cellValue);
-      });
-  })
-    .then(() => cells);
-}
-
 function validateNumsAscendingOrder(prev) {
   const itemsClone = [...prev];
   itemsClone.sort((a, b) => a - b);
@@ -159,7 +154,6 @@ export default {
   status,
   invoiceNumberFromEdifactFile,
   validateNumsAscendingOrder,
-  getMultiColumnListCellsValues,
   checkStatusInColumn,
   checkItemsStatusesInResultList,
   checkItemsQuantityInSummaryTable,
@@ -264,23 +258,28 @@ export default {
     cy.expect(jobSummaryTable.absent());
   },
 
-  // this.getMultiColumnListCellsValues(this.visibleColumns.ENDED_RUNNING.columnIndex).then(cells => {
-  //   // convert each cell value to Date object
-  //   const dates = cells.map(cell => new Date(cell));
+  getMultiColumnListCellsValuesInResultsList(cell) {
+    const cells = [];
 
-  //   // create new array from the dates and sort this array in descending order
-  //   const sortedDates = [...dates].sort((a, b) => b - a);
+    // get MultiColumnList rows and loop over
+    return cy.get('#search-results-list')
+    .find('[data-row-index]').each($row => {
+      // from each row, choose specific cell
+      cy.get(`[class*="mclCell-"]:nth-child(${cell})`, { withinSubject: $row })
+      // extract its text content
+        .invoke('text')
+        .then(cellValue => {
+          cells.push(cellValue);
+        });
+    })
+      .then(() => cells);
+  },
 
-  //   // if job logs are sorted by default in reverse chronological order
-  //   // the dates and sortedDates should be equal
-  //   expect(dates).to.deep.equal(sortedDates);
-  // });
-
-  verifyRecordsSortingOrder() {
-    getMultiColumnListCellsValues(1).then(cells => {
-      const dates = cells.map(cell => new Date(cell));
-      validateNumsAscendingOrder(dates);
-    });
+  verifyRecordColumnHasStandardSequentialNumberingForRecords() {
+    this.getMultiColumnListCellsValuesInResultsList(visibleColumnsInResultsList.RECORD.columnIndex)
+      .then(cells => {
+        validateNumsAscendingOrder(cells);
+      });
   },
 
   verifyStatusHasLinkToOrder:(rowNumber) => {
@@ -288,6 +287,14 @@ export default {
       .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
       .find(MultiColumnListCell({ columnIndex: 7 }))
       .find(Link({ href: including('/orders/lines/view') }))
+      .exists());
+  },
+
+  verifyTitleHasLinkToJsonFile:(rowNumber) => {
+    cy.expect(resultsList
+      .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
+      .find(MultiColumnListCell({ columnIndex: 1 }))
+      .find(Link({ href: including('/data-import/log') }))
       .exists());
   }
 };

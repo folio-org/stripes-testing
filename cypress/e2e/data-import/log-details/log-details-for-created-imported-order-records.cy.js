@@ -22,9 +22,10 @@ import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
   let user;
+  const orderNumbers = [];
   const quantityOfOrders = '7';
   const filePathForCreateOrder = 'marcFileForC376973.mrc';
-  const marcFileName = `C375174 autotestFileName ${getRandomPostfix()}`;
+  const marcFileName = `C375173 autotestFileName ${getRandomPostfix()}`;
   const mappingProfile = {
     name: `C376973 mapping profile ${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.ORDER,
@@ -110,6 +111,19 @@ describe('ui-data-import', () => {
       });
   });
 
+  after('delete test data', () => {
+    Users.deleteViaApi(user.userId);
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
+    ActionProfiles.deleteActionProfile(actionProfile.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+    cy.wrap(orderNumbers).each(number => {
+      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` })
+      .then(orderId => {
+        Orders.deleteOrderViaApi(orderId[0].id);
+      });
+    });
+  });
+
   it('C376973 Verify the log details for created imported order records (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       cy.visit(TopMenu.dataImportPath);
@@ -122,6 +136,20 @@ describe('ui-data-import', () => {
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(marcFileName);
       FileDetails.checkOrderQuantityInSummaryTable(quantityOfOrders);
-      
+      FileDetails.verifyRecordColumnHasStandardSequentialNumberingForRecords();
+      [0, 1, 2, 3, 4, 5, 6].forEach(rowNumber => {
+        FileDetails.verifyTitleHasLinkToJsonFile(rowNumber);
+        FileDetails.verifyStatusHasLinkToOrder(rowNumber);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.order, rowNumber);
+        FileDetails.openOrder('Created', rowNumber);
+        OrderLines.waitLoading();
+        OrderLines.getAssignedPOLNumber()
+        .then(initialNumber => {
+          const orderNumber = initialNumber.replace('-1', '');
+
+          orderNumbers.push(orderNumber);
+        });
+        cy.go('back');
+      });
     });
 });

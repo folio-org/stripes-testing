@@ -58,14 +58,14 @@ describe('ui-data-import', () => {
       });
   });
 
-  // after('delete test data', () => {
-  //   Users.deleteViaApi(user.userId);
-  //   JobProfiles.deleteJobProfile(jobProfile.profileName);
-  //   ActionProfiles.deleteActionProfile(actionProfile.name);
-  //   FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
-  //   cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${invoiceNumber}"` })
-  //     .then(id => cy.deleteInvoiceFromStorageViaApi(id));
-  // });
+  after('delete test data', () => {
+    Users.deleteViaApi(user.userId);
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
+    ActionProfiles.deleteActionProfile(actionProfile.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+    cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${invoiceNumber}"` })
+      .then(id => cy.deleteInvoiceFromStorageViaApi(id));
+  });
 
   it('C357018 Check the filter in summary table with "create + discarded + error" actions for the Invoice column (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
@@ -105,7 +105,6 @@ describe('ui-data-import', () => {
       FileDetails.filterRecordsWithError(quantityOfItems);
       FileDetails.verifyQuantityOfRecordsWithError(3);
       FileDetails.verifyLogSummaryTableIsHidden();
-      cy.pause();
       FileDetails.verifyRecordsSortingOrder();
     });
 });

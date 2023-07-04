@@ -20,9 +20,11 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Users from '../../../support/fragments/users/users';
+import Orders from '../../../support/fragments/orders/orders';
 
 describe('ui-data-import', () => {
   let user;
+  const orderNumbers = [];
   const quantityOfOrders = '3';
   const filePathForCreateOrder = 'marcFileForC375178.mrc';
   const marcFileName = `C375178 autotestFileName ${getRandomPostfix()}`;
@@ -121,6 +123,12 @@ describe('ui-data-import', () => {
     JobProfiles.deleteJobProfile(jobProfile.profileName);
     ActionProfiles.deleteActionProfile(actionProfile.name);
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+    cy.wrap(orderNumbers).each(number => {
+      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` })
+      .then(orderId => {
+        Orders.deleteOrderViaApi(orderId[0].id);
+      });
+    });
   });
 
   it('C375178 Verify the importing of orders with pending status (folijet)',
@@ -142,6 +150,12 @@ describe('ui-data-import', () => {
         FileDetails.openOrder('Created', order.rowNumber);
         OrderLines.waitLoading();
         OrderLines.verifyOrderTitle(order.title);
+        OrderLines.getAssignedPOLNumber()
+        .then(initialNumber => {
+          const orderNumber = initialNumber.replace('-1', '');
+
+          orderNumbers.push(orderNumber);
+        });
         cy.go('back');
       });
     });
