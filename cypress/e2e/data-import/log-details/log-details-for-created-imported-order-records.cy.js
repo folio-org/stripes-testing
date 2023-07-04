@@ -18,6 +18,8 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import TopMenu from '../../../support/fragments/topMenu';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import OrderLines from '../../../support/fragments/orders/orderLines';
+import Orders from '../../../support/fragments/orders/orders';
 import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
