@@ -4,12 +4,12 @@ import DevTeams from '../../../support/dictionary/devTeams';
 import TestTypes from '../../../support/dictionary/testTypes';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import { FOLIO_RECORD_TYPE,
+import {FOLIO_RECORD_TYPE,
   ORDER_STATUSES,
   MATERIAL_TYPE_NAMES,
   ORDER_FORMAT_NAMES,
   ACQUISITION_METHOD_NAMES,
-  JOB_STATUS_NAMES } from '../../../support/constants';
+  JOB_STATUS_NAMES} from '../../../support/constants';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -18,15 +18,21 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import TopMenu from '../../../support/fragments/topMenu';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import OrderLines from '../../../support/fragments/orders/orderLines';
 import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
   let user;
-  const quantityOfOrders = '7';
-  const filePathForCreateOrder = 'marcFileForC376973.mrc';
-  const marcFileName = `C375174 autotestFileName ${getRandomPostfix()}`;
+  const quantityOfOrders = '3';
+  const filePathForCreateOrder = 'marcFileForC375178.mrc';
+  const marcFileName = `C375178 autotestFileName ${getRandomPostfix()}`;
+  const ordersData = [
+    { title: 'ROALD DAHL : TELLER OF THE UNEXPECTED : A BIOGRAPHY.', rowNumber: 0 },
+    { title: 'CULTURAL HISTORY OF IDEAS', rowNumber: 1 },
+    { title: 'BOAT PEOPLE; TRANS. BY VANESSA PERE-ROSARIO.', rowNumber: 2 }
+  ];
   const mappingProfile = {
-    name: `C376973 mapping profile ${getRandomPostfix()}`,
+    name: `C375178 Test Order ${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.ORDER,
     orderStatus: ORDER_STATUSES.PENDING,
     approved: true,
@@ -70,16 +76,17 @@ describe('ui-data-import', () => {
   };
   const actionProfile = {
     typeValue: FOLIO_RECORD_TYPE.ORDER,
-    name: `C376973 action profile ${getRandomPostfix()}`
+    name: `C375178 Test Order ${getRandomPostfix()}`
   };
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: `C376973 job profile ${getRandomPostfix()}`,
+    profileName: `C375178 Test Order ${getRandomPostfix()}`,
   };
 
   before('login', () => {
-    cy.loginAsAdmin({ path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+    cy.loginAsAdmin();
     // create mapping profile
+    cy.visit(SettingsMenu.mappingProfilePath);
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillPhysicalOrderMappingProfile(mappingProfile);
     FieldMappingProfiles.saveProfile();
@@ -96,7 +103,6 @@ describe('ui-data-import', () => {
     NewJobProfile.linkActionProfile(actionProfile);
     NewJobProfile.saveAndClose();
     JobProfiles.checkJobProfilePresented(jobProfile.profileName);
-    cy.logout();
 
     cy.createTempUser([
       permissions.settingsDataImportEnabled.gui,
@@ -106,13 +112,19 @@ describe('ui-data-import', () => {
         user = userProperties;
 
         cy.login(userProperties.username, userProperties.password,
-          { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+          { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
       });
   });
 
-  it('C376973 Verify the log details for created imported order records (folijet)',
+  after('delete test data', () => {
+    Users.deleteViaApi(user.userId);
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
+    ActionProfiles.deleteActionProfile(actionProfile.name);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+  });
+
+  it('C375178 Verify the importing of orders with pending status (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
       DataImport.uploadFile(filePathForCreateOrder, marcFileName);
@@ -122,6 +134,15 @@ describe('ui-data-import', () => {
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(marcFileName);
       FileDetails.checkOrderQuantityInSummaryTable(quantityOfOrders);
-      
+      FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfOrders);
+      cy.wrap(ordersData).each(order => {
+        FileDetails.verifyTitle(order.title, FileDetails.columnNameInResultList.title, order.rowNumber);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.order, order.rowNumber);
+        FileDetails.verifyStatusHasLinkToOrder(order.rowNumber);
+        FileDetails.openOrder('Created', order.rowNumber);
+        OrderLines.waitLoading();
+        OrderLines.verifyOrderTitle(order.title);
+        cy.go('back');
+      });
     });
 });

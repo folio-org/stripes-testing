@@ -264,6 +264,18 @@ export default {
     cy.expect(jobSummaryTable.absent());
   },
 
+  // this.getMultiColumnListCellsValues(this.visibleColumns.ENDED_RUNNING.columnIndex).then(cells => {
+  //   // convert each cell value to Date object
+  //   const dates = cells.map(cell => new Date(cell));
+
+  //   // create new array from the dates and sort this array in descending order
+  //   const sortedDates = [...dates].sort((a, b) => b - a);
+
+  //   // if job logs are sorted by default in reverse chronological order
+  //   // the dates and sortedDates should be equal
+  //   expect(dates).to.deep.equal(sortedDates);
+  // });
+
   verifyRecordsSortingOrder() {
     getMultiColumnListCellsValues(1).then(cells => {
       const dates = cells.map(cell => new Date(cell));
