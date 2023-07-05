@@ -4,6 +4,7 @@ const globby = require('globby');
 const { rmdir, unlink } = require('fs');
 const { downloadFile } = require('cypress-downloadfile/lib/addPlugin');
 const fs = require('fs');
+const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 
 module.exports = defineConfig({
   viewportWidth: 1920,
@@ -24,6 +25,8 @@ module.exports = defineConfig({
   },
   e2e: {
     async setupNodeEvents(on, config) {
+      allureWriter(on, config);
+
       on('task', {
         async findFiles(mask) {
           if (!mask) {
