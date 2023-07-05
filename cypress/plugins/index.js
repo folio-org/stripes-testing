@@ -5,14 +5,13 @@ const { rmdir, unlink } = require('fs');
 const cypressGrep = require('cypress-grep/src/plugin');
 const { downloadFile } = require('cypress-downloadfile/lib/addPlugin');
 const allureWriter = require('@shelex/cypress-allure-plugin/writer');
-// import allureWriter from "@shelex/cypress-allure-plugin/writer";
+const fs = require('fs');
+const path = require('path');
 
-// eslint-disable-next-line no-unused-vars
 module.exports = async (on, config) => {
   cypressGrep(config);
 
   on('task', {
-    // a task to find files matching the given mask
     async findFiles(mask) {
       if (!mask) {
         throw new Error('Missing a file mask to search');
@@ -53,9 +52,16 @@ module.exports = async (on, config) => {
         });
       });
     },
+
+    readFileFromDownloads(filename) {
+      const downloadsFolder = config.downloadsFolder || path.join(__dirname, '..', '..', 'Downloads');
+      const filePath = path.join(downloadsFolder, filename);
+      return fs.readFileSync(filePath, 'utf-8');
+    },
   });
+
   allureWriter(on, config);
-  // eslint-disable-next-line global-require
   await require('cypress-testrail-simple/src/plugin')(on, config);
+
   return config;
 };
