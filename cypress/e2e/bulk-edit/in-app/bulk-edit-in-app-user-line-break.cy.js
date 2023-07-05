@@ -13,8 +13,8 @@ import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 
 let user;
-let testUsers = [];
-let testUsersBarcodes = [];
+const testUsers = [];
+const testUsersBarcodes = [];
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const customFieldName = `customFieldName-${getRandomPostfix()}`;
 const customFieldText = `customFieldText\n${getRandomPostfix()}`;
@@ -31,12 +31,12 @@ describe('Bulk Edit-- Users - in app approach', () => {
           testUsersBarcodes.push(userProperties.barcode);
           FileManager.appendFile(`cypress/fixtures/${userBarcodesFileName}`, `${userProperties.barcode}\n`);
         });
-    };
+    }
 
     cy.createTempUser([
       permissions.bulkEditUpdateRecords.gui,
       permissions.uiUsersView.gui,
-    ]).then(userProperties => user = userProperties)
+    ]).then(userProperties => { user = userProperties })
       .then(() => {
         cy.loginAsAdmin({ path: SettingsMenu.customFieldsPath, waiter: CustomFields.waitLoading });
         CustomFields.addTextAreaCustomField(customFieldName);
@@ -53,7 +53,7 @@ describe('Bulk Edit-- Users - in app approach', () => {
 
   after('delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
-    testUsers.forEach(user => Users.deleteViaApi(user.userId));
+    testUsers.forEach(testUser => Users.deleteViaApi(testUser.userId));
     Users.deleteViaApi(user.userId);
     FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName, changedRecordsFileName, previewFileName);
   });
@@ -72,7 +72,7 @@ describe('Bulk Edit-- Users - in app approach', () => {
 
     BulkEditActions.fillPatronGroup('faculty (Faculty Member)');
     BulkEditActions.confirmChanges();
-    BulkEditActions.verifyAreYouSureForm(testUsers.length, `${customFieldName}:${customFieldText}`);
+    BulkEditActions.verifyAreYouSureForm(testUsersBarcodes.length, `${customFieldName}:${customFieldText}`);
     BulkEditActions.downloadPreview();
     BulkEditActions.commitChanges();
     BulkEditSearchPane.waitFileUploading();
