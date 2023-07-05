@@ -59,6 +59,7 @@ export default {
   createMatchProfile(profile) {
     openNewMatchProfileForm();
     NewMatchProfile.fillMatchProfileForm(profile);
+    cy.pause();
     saveAndClose();
     waitCreatingMatchProfile();
   },
@@ -77,7 +78,7 @@ export default {
 
   createMatchProfileWithQualifier:(profile) => {
     openNewMatchProfileForm();
-    NewMatchProfile.fillMatchProfileWithQualifier(profile);
+    NewMatchProfile.fillMatchProfileWithQualifierInIncomingAndExistingRecords(profile);
     saveAndClose();
     waitCreatingMatchProfile();
   },
