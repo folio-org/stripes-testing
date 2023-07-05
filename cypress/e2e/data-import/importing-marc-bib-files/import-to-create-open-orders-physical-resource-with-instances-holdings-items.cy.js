@@ -40,8 +40,8 @@ describe('ui-data-import', () => {
         acquisitionMethod: ACQUISITION_METHOD_NAMES.PURCHASE_AT_VENDOR_SYSTEM,
         orderFormat: ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE_Check,
         receivingWorkflow: 'Synchronized',
-        physicalUnitPrice: '20',
-        quantityPhysical: '1',
+        physicalUnitPrice: '"20"',
+        quantityPhysical: '"1"',
         currency: 'USD',
         locationName: LOCATION_NAMES.ANNEX,
         locationQuantityPhysical: '1'

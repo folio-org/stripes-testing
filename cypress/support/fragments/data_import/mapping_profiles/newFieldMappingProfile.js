@@ -115,27 +115,36 @@ const waitLoading = () => {
 const selectFromResultsList = (rowNumber = 0) => cy.do(organizationModal.find(MultiColumnListRow({ index: rowNumber })).click());
 
 const addContributor = (profile) => {
-  cy.do([Button('Add contributor').click(),
-    TextField('Contributor').fillIn(profile.contributor),
-    TextField('Contributor type').fillIn(`"${profile.contributorType}"`)
-  ]);
+  if(profile.qualifier){
+    cy.do([
+      Button('Add contributor').click(),
+      TextField('Contributor').fillIn(profile.contributor),
+      TextField('Contributor type').fillIn(`"${profile.contributorType}"`)
+    ]);
+  }
 };
 
 const addProductId = (profile) => {
-  cy.do([Button('Add product ID and product ID type').click(),
-    TextField('Product ID').fillIn(profile.productId)
-  ]);
+  if(profile.productId){
+    cy.do([
+      Button('Add product ID and product ID type').click(),
+      TextField('Product ID').fillIn(profile.productId),
+      TextField('Product ID type').fillIn(`"${profile.productIDType}"`)
+    ]);
+  }
   if(profile.qualifier){
     cy.do(TextField('Qualifier').fillIn(profile.qualifier));
   }
-  cy.do(TextField('Product ID type').fillIn(`"${profile.productIDType}"`));
 };
 
 const addVendorReferenceNumber = (profile) => {
-  cy.do([Button('Add vendor reference number').click(),
-    TextField('Vendor reference number').fillIn(profile.vendorReferenceNumber),
-    TextField('Vendor reference type').fillIn(`"${profile.vendorReferenceType}"`)
+  if(profile.vendorReferenceNumber){
+    cy.do([
+      Button('Add vendor reference number').click(),
+      TextField('Vendor reference number').fillIn(profile.vendorReferenceNumber),
+      TextField('Vendor reference type').fillIn(`"${profile.vendorReferenceType}"`)
   ]);
+  }
 };
 
 const addFundDistriction = (profile) => {
@@ -466,13 +475,19 @@ export default {
     if(profile.mustAcknowledgeReceivingNote){
       cy.do(mustAcknoledgeReceivingNoteField.fillIn(`"${profile.mustAcknowledgeReceivingNote}"`));
     }
+    if(profile.publicationDate){
+      cy.do([
+        publicationDateField.fillIn(profile.publicationDate),
+        publisherField.fillIn(profile.publisher)
+      ]);
+    }
+    if(profile.edition){
+      cy.do(editionField.fillIn(profile.edition));
+    }
+    if(profile.internalNote){
+      cy.do(internalNoteField.fillIn(profile.internalNote));
+    }
     cy.do([
-      publicationDateField.fillIn(profile.publicationDate),
-      publisherField.fillIn(profile.publisher)]);
-      if(profile.edition){
-        cy.do(editionField.fillIn(profile.edition));
-      }
-    cy.do([internalNoteField.fillIn(profile.internalNote),
       acquisitionMethodField.fillIn(`"${profile.acquisitionMethod}"`),
       orderFormatField.fillIn(`"${profile.orderFormat}"`)]);
     if(profile.receiptStatus){
@@ -508,7 +523,9 @@ export default {
         MultiColumnListCell(profile.vendor).click({ row: 0, columnIndex: 0 }),
       ]);
     }
-    cy.do(physicalResourceDetailsAccordion.find(TextField('Create inventory')).fillIn(`"${profile.createInventory}"`));
+    if(profile.createInventory){
+      cy.do(physicalResourceDetailsAccordion.find(TextField('Create inventory')).fillIn(`"${profile.createInventory}"`));
+    }
     if(profile.materialType){
       cy.do(physicalResourceDetailsAccordion.find(materialTypeField).fillIn(`"${profile.materialType}"`));
     }
