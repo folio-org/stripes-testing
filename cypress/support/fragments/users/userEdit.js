@@ -9,7 +9,8 @@ import {
   Modal,
   MultiColumnList,
   Select,
-  MultiSelect
+  MultiSelect,
+  TextArea
 } from '../../../../interactors';
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
@@ -125,13 +126,23 @@ export default {
     this.saveAndClose();
   },
 
-  addCustomField(data) {
+  addMultiSelectCustomField(data) {
     cy.do([
       userDetailsPane.find(actionsButton).click(),
       editButton.click(),
       customFieldsAccordion.click(),
       customFieldsAccordion.find(MultiSelect({ label: data.fieldLabel })).choose(data.label1),
       customFieldsAccordion.find(MultiSelect({ label: data.fieldLabel })).choose(data.label2),
+    ]);
+    this.saveAndClose();
+  },
+
+  addCustomField(customFieldName, customFieldText) {
+    cy.do([
+      userDetailsPane.find(actionsButton).click(),
+      editButton.click(),
+      customFieldsAccordion.click(),
+      customFieldsAccordion.find(TextArea({ label: customFieldName })).fillIn(customFieldText),
     ]);
     this.saveAndClose();
   },

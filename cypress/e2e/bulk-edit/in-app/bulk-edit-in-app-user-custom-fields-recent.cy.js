@@ -56,7 +56,7 @@ describe('Bulk Edit-- Users - in app approach', () => {
     CustomFields.addMultiSelectCustomField(customFieldData);
     cy.visit(TopMenu.usersPath);
     UsersSearchPane.searchByUsername(user.username);
-    UserEdit.addCustomField(customFieldData);
+    UserEdit.addMultiSelectCustomField(customFieldData);
     cy.visit(TopMenu.bulkEditPath);
 
     BulkEditSearchPane.checkUsersRadio();

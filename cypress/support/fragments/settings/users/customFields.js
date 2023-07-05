@@ -10,6 +10,7 @@ export default {
   waitLoading() {
     cy.expect(customFieldsPane.exists());
   },
+
   addMultiSelectCustomField(data) {
     cy.do([
       editNewButton.click(),
@@ -28,6 +29,15 @@ export default {
       TextField('Field label*').fillIn(newData.fieldLabel),
       MultiColumnListRow({ indexRow: 'row-0' }).find(TextField()).fillIn(newData.label1),
       MultiColumnListRow({ indexRow: 'row-1' }).find(TextField()).fillIn(newData.label2),
+      saveAndCloseButton.click(),
+    ]);
+  },
+
+  addTextAreaCustomField(text) {
+    cy.do([
+      editNewButton.click(),
+      addCustomFieldDropdown.choose('Text area'),
+      TextField('Field label*').fillIn(text),
       saveAndCloseButton.click(),
     ]);
   },
