@@ -404,6 +404,10 @@ export default {
     ]);
   },
 
+  verifyRecordIdentifierDisabled() {
+    cy.expect(recordIdentifierDropdown.has({ disabled: true }));
+  },
+
   selectRecordIdentifier(value) {
     cy.do(recordIdentifierDropdown.choose(value));
   },
