@@ -2,7 +2,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { LOCALION_NAMES,
+import { LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
   ITEM_STATUS_NAMES,
   ORDER_STATUSES,
@@ -50,7 +50,7 @@ describe('ui-data-import', () => {
         currency: 'USD',
         electronicUnitPrice: '25',
         quantityElectronic: '1',
-        locationName: LOCALION_NAMES.ANNEX,
+        locationName: LOCATION_NAMES.ANNEX,
         locationQuantityPhysical: '1',
         locationQuantityElectronic: '1' },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ORDER,
@@ -59,8 +59,8 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { name: `C380446 Create simple holdings for open order ${getRandomPostfix()}`,
         typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        permanentLocation: `"${LOCALION_NAMES.MAIN_LIBRARY}"`,
-        permanentLocationUI: LOCALION_NAMES.MAIN_LIBRARY_UI },
+        permanentLocation: `"${LOCATION_NAMES.MAIN_LIBRARY}"`,
+        permanentLocationUI: LOCATION_NAMES.MAIN_LIBRARY_UI },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C380446 Create simple holdings for open order ${getRandomPostfix()}` }
     },
