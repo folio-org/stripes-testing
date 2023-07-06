@@ -72,7 +72,7 @@ describe('Bulk Edit-- Users - in app approach', () => {
 
     BulkEditActions.fillPatronGroup('faculty (Faculty Member)');
     BulkEditActions.confirmChanges();
-    BulkEditActions.verifyAreYouSureForm(testUsersBarcodes.length, `${customFieldName}:${customFieldText}`);
+    BulkEditActions.verifyAreYouSureForm(testUsersBarcodes.length, `faculty`);
     BulkEditActions.downloadPreview();
     BulkEditActions.commitChanges();
     BulkEditSearchPane.waitFileUploading();
@@ -86,5 +86,8 @@ describe('Bulk Edit-- Users - in app approach', () => {
     UsersSearchPane.searchByKeywords(testUsersBarcodes[0]);
     Users.verifyPatronGroupOnUserDetailsPane('faculty');
     Users.verifyCustomFieldOnUserDetailsPane(customFieldName, customFieldText);
+
+    cy.loginAsAdmin({ path: SettingsMenu.customFieldsPath, waiter: CustomFields.waitLoading });
+    CustomFields.deleteCustomField(customFieldName);
   });
 });

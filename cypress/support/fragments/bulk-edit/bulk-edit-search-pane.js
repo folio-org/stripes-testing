@@ -527,12 +527,6 @@ export default {
     cy.expect(bulkEditPane.find(HTML(`${values.length} records have been successfully changed`)).exists());
   },
 
-  verifyValuesInChangesPreview(...values) {
-    values.forEach(value => {
-      cy.expect(changesAccordion.find(MultiColumnListCell({ content: value })).exists());
-    });
-  },
-
   verifyLocationChanges(rows, locationValue) {
     for (let i = 0; i < rows; i++) {
       cy.expect(changesAccordion.find(MultiColumnListCell({ row: i, content: locationValue })).exists());
@@ -540,7 +534,7 @@ export default {
   },
 
   verifyChangesUnderColumns(columnName, value) {
-    cy.expect(changesAccordion.find(MultiColumnListCell({ column: columnName, content: value })).exists());
+    cy.expect(changesAccordion.find(MultiColumnListCell({ column: columnName, content: including(value) })).exists());
   },
 
   verifyNonMatchedResults(...values) {

@@ -5,6 +5,7 @@ const customFieldsPane = Pane('Custom fields');
 const editNewButton = Button({ href: '/settings/users/custom-fields/edit' });
 const addCustomFieldDropdown = Dropdown('Add custom field');
 const saveAndCloseButton = Button('Save & close');
+const saveLoseDataButton = Button('Save & lose data');
 
 export default {
   waitLoading() {
@@ -39,6 +40,15 @@ export default {
       addCustomFieldDropdown.choose('Text area'),
       TextField('Field label*').fillIn(text),
       saveAndCloseButton.click(),
+    ]);
+  },
+
+  deleteCustomField(name) {
+    cy.do([
+      editNewButton.click(),
+      Accordion(including(name)).find(Button({ icon: 'trash' })).click(),
+      saveAndCloseButton.click(),
+      saveLoseDataButton.click(),
     ]);
   },
 };
