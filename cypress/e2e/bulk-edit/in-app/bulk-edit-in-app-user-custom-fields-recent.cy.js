@@ -80,7 +80,7 @@ describe('Bulk Edit-- Users - in app approach', () => {
     cy.visit(SettingsMenu.customFieldsPath);
     CustomFields.editMultiSelectCustomField(customFieldData, updatedCustomFieldData);
     // Wait for changes to be saved and reflected
-    cy.wait(10000);
+    cy.wait(15000);
     cy.visit(TopMenu.bulkEditPath);
 
     BulkEditSearchPane.checkUsersRadio();
