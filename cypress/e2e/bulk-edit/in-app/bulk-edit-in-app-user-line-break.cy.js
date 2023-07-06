@@ -72,7 +72,7 @@ describe('Bulk Edit-- Users - in app approach', () => {
 
     BulkEditActions.fillPatronGroup('faculty (Faculty Member)');
     BulkEditActions.confirmChanges();
-    BulkEditActions.verifyAreYouSureForm(testUsersBarcodes.length, `faculty`);
+    BulkEditActions.verifyAreYouSureForm(testUsersBarcodes.length, 'faculty');
     BulkEditActions.downloadPreview();
     BulkEditActions.commitChanges();
     BulkEditSearchPane.waitFileUploading();
