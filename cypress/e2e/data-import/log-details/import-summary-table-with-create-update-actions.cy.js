@@ -32,6 +32,7 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
@@ -219,7 +220,7 @@ describe('ui-data-import', () => {
       FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
     });
     Users.deleteViaApi(user.userId);
-    instanceHrids.forEach(hrid =>{
+    cy.wrap(instanceHrids).each(hrid =>{
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` })
       .then((instance) => {
         cy.deleteItemViaApi(instance.items[0].id);
@@ -391,12 +392,10 @@ describe('ui-data-import', () => {
             
       // check items is updated in Inventory
       [0, 1].forEach(rowNumber => {
-        [FileDetails.columnNameInResultList.srsMarc,
-          FileDetails.columnNameInResultList.instance,
-          FileDetails.columnNameInResultList.holdings,
-          FileDetails.columnNameInResultList.item].forEach(columnName => {
-          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName, rowNumber);
-        });
+        FileDetails.checkItemsStatusesInResultList(
+          rowNumber,
+          [FileDetails.status.updated, FileDetails.status.updated,
+            FileDetails.status.updated, FileDetails.status.updated]);
         FileDetails.openInstanceInInventory('Updated', rowNumber);
         InstanceRecordView.verifyInstanceStatusTerm(collectionOfProfilesForUpdate[0].mappingProfile.statusTerm);
         InstanceRecordView.verifyStatisticalCode(collectionOfProfilesForUpdate[0].mappingProfile.statisticalCodeUI);
