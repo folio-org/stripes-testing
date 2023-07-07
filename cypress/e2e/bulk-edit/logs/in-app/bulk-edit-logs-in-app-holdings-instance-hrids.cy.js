@@ -126,7 +126,7 @@ describe('Bulk Edit - Logs', () => {
             }).then((specialInstanceIds) => {
               instance.id = specialInstanceIds.instanceId;
             })
-            // Creating second instance
+              // Creating second instance
               .then(() => {
                 InventoryInstances.createFolioInstanceViaApi({
                   instance: {
@@ -171,7 +171,7 @@ describe('Bulk Edit - Logs', () => {
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${validAndInvalidInstanceHRIDsFileName}`);
     FileManager.deleteFileFromDownloadsByMask(validAndInvalidInstanceHRIDsFileName, `*${matchedRecordsFileName}`, previewOfProposedChangesFileName, updatedRecordsFileName);
-      // FileManager.deleteFileFromDownloadsByMask(errorsFromCommittingFileName, errorsFromMatchingFileName);
+    // FileManager.deleteFileFromDownloadsByMask(errorsFromCommittingFileName, errorsFromMatchingFileName);
   });
 
   it('C375298 Verify generated Logs files for Holdings In app -- valid and invalid records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
