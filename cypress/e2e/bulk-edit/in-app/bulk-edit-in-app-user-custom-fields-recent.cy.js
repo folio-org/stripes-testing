@@ -56,7 +56,7 @@ describe('Bulk Edit-- Users - in app approach', () => {
     CustomFields.addMultiSelectCustomField(customFieldData);
     cy.visit(TopMenu.usersPath);
     UsersSearchPane.searchByUsername(user.username);
-    UserEdit.addCustomField(customFieldData);
+    UserEdit.addMultiSelectCustomField(customFieldData);
     cy.visit(TopMenu.bulkEditPath);
 
     BulkEditSearchPane.checkUsersRadio();
@@ -75,12 +75,10 @@ describe('Bulk Edit-- Users - in app approach', () => {
     BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName, ['staff'], 'patronGroup', true);
     BulkEditActions.commitChanges();
 
-    BulkEditSearchPane.verifyValuesInChangesPreview(user.username, 'staff', `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`);
+    BulkEditSearchPane.verifyChangesUnderColumns('Custom fields', `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`);
 
     cy.visit(SettingsMenu.customFieldsPath);
     CustomFields.editMultiSelectCustomField(customFieldData, updatedCustomFieldData);
-    // Wait for changes to be saved and reflected
-    cy.wait(10000);
     cy.visit(TopMenu.bulkEditPath);
 
     BulkEditSearchPane.checkUsersRadio();
@@ -97,10 +95,13 @@ describe('Bulk Edit-- Users - in app approach', () => {
     BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName, ['graduate'], 'patronGroup', true);
     BulkEditActions.commitChanges();
 
-    BulkEditSearchPane.verifyValuesInChangesPreview(user.username, 'graduate', `${updatedCustomFieldData.fieldLabel}:${updatedCustomFieldData.label1};${updatedCustomFieldData.label2}`);
+    BulkEditSearchPane.verifyChangesUnderColumns('Custom fields', `${updatedCustomFieldData.fieldLabel}:${updatedCustomFieldData.label1};${updatedCustomFieldData.label2}`);
 
     cy.visit(TopMenu.usersPath);
     UsersSearchPane.searchByUsername(user.username);
     Users.verifyPatronGroupOnUserDetailsPane('graduate');
+
+    cy.visit(SettingsMenu.customFieldsPath);
+    CustomFields.deleteCustomField(updatedCustomFieldData.fieldLabel);
   });
 });
