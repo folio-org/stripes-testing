@@ -62,7 +62,7 @@ describe('ui-data-import', () => {
     qualifier: '020$q',
     productIDType: 'ISBN',
     vendorReferenceNumber: '980$f',
-    vendoeReferenceType: 'Vendor order reference number',
+    vendorReferenceType: 'Vendor order reference number',
     fundId: '981$b',
     expenseClass: '981$c',
     value: '100',
@@ -131,7 +131,7 @@ describe('ui-data-import', () => {
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(marcFileName);
       FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
-      FileDetails.checkOrderInSummaryTable(quantityOfItems);
+      FileDetails.checkOrderQuantityInSummaryTable(quantityOfItems);
       FileDetails.openOrder('Created');
       OrderLines.verifyPOLDetailsIsOpened();
     });

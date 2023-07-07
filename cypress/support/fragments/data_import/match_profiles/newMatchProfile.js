@@ -172,12 +172,20 @@ export default {
     } else {
       cy.do(matchProfileDetailsAccordion.find(Button({ dataId:'ITEM' })).click());
       fillIncomingRecordFields(incomingRecordFields.field, 'field');
+      if (incomingRecordFields.in1) {
+        fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
+      }
+      if (incomingRecordFields.in2) {
+        fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
+      }
       fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
       cy.do(criterionValueTypeButton.click());
       cy.expect(criterionValueTypeList.exists());
       // wait for list will be loaded
       cy.wait(2000);
       cy.do(criterionValueTypeList.find(SelectionOption(itemOption)).click());
+      // wait for list will be loaded
+      cy.wait(2000);
     }
   },
 

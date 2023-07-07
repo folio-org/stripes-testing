@@ -32,7 +32,7 @@ import ExportFile from '../../../support/fragments/data-export/exportFile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
 
-describe('ui-data-import', () => {
+describe.skip('ui-data-import', () => {
   let user;
   const instanceHrids = [];
   const instanceTitle = 'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)';

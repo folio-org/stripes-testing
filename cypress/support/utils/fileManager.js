@@ -24,6 +24,10 @@ export default {
     return cy.writeFile(pathToFile, content);
   },
 
+  appendFile(pathToFile, content) {
+    return cy.writeFile(pathToFile, content, { flag: 'a+' });
+  },
+
   deleteFile(pathToFile) {
     return cy.task('deleteFile', pathToFile);
   },

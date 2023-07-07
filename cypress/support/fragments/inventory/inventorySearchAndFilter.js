@@ -54,6 +54,9 @@ const holdingsPermanentLocationAccordion = Accordion({ id:'holdingsPermanentLoca
 const callNumberBrowsePane = Pane({ title: 'Browse inventory' });
 const actionsButton = Button('Actions');
 const editInstanceButton = Button('Edit instance');
+const inventorySearchResultsPane = Section({ id: 'browse-inventory-results-pane' });
+const nextButton = Button({ id: 'browse-results-list-callNumbers-next-paging-button' });
+const previousButton = Button({ id: 'browse-results-list-callNumbers-prev-paging-button' });
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -419,6 +422,14 @@ export default {
     cy.do(searchAndFilterSection.find(resetAllBtn).click());
   },
 
+  clickNextPaginationButton() {
+    cy.do(inventorySearchResultsPane.find(nextButton).click());
+  },
+  
+  clickPreviousPaginationButton() {
+    cy.do(inventorySearchResultsPane.find(previousButton).click());
+  },
+
   checkContributorsColumResult(cellContent) {
     cy.expect(MultiColumnList({ id: 'list-inventory' }).find(MultiColumnListCell(including(cellContent))).exists());
   },
@@ -493,11 +504,11 @@ export default {
     cy.expect(MultiColumnListCell({ content: instanceTitle }).exists());
   },
 
-  verifyShelvingOrder() {
+  verifyShelvingOrder(val) {
     cy.get('#input-inventory-search-qindex').then((elem) => {
       expect(elem.text()).to.include('Effective call number (item), shelving order');
     });
-    cy.expect(inventorySearchAndFilter.has({ value:'PRT 3718 _V 11 E 12 CH 13 C 14 SUF' }));
+    cy.expect(inventorySearchAndFilter.has({ value: val }));
   },
 
   verifyPanesExist() {

@@ -10,7 +10,7 @@ export default {
   },
 
   selectUserFromList:(userName) => {
-    cy.do(selectUserModal.find(MultiColumnListCell(userName)).click());
+    cy.do(selectUserModal.find(MultiColumnListCell(including(userName))).click());
     cy.expect(selectUserModal.absent());
   }
 };
