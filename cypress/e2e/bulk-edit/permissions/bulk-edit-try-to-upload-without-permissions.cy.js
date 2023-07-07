@@ -11,7 +11,8 @@ import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-acti
 
 let user;
 const items = [];
-
+const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
+const changedRecordsFileName = `*-Changed-Records-${itemBarcodesFileName}`;
 // prepare names for 5 instances with 2 items = 10 items
 for (let i = 0; i < 5; i++) {
   items.push({
@@ -20,13 +21,11 @@ for (let i = 0; i < 5; i++) {
   });
 }
 
-const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
-
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
-        permissions.bulkEditView.gui,
+        permissions.bulkEditCsvView.gui,
         permissions.bulkEditEdit.gui,
       ])
         .then(userProperties => {
@@ -58,10 +57,13 @@ describe('bulk-edit', () => {
       items.forEach(item => InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode));
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
+      FileManager.deleteFileFromDownloadsByMask(changedRecordsFileName);
     });
 
     it('C388491 Verify that User with "Bulk Edit: (CSV) View" and "Bulk Edit: In app - Edit" permissions CAN\'T edit user records (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.checkItemsRadio();
+      BulkEditSearchPane.isUsersRadioChecked();
+      BulkEditSearchPane.verifyRecordIdentifierDisabled();
+      BulkEditSearchPane.verifyItemIdentifiersDefaultState();
       BulkEditSearchPane.selectRecordIdentifier('Item barcode');
       BulkEditSearchPane.uploadFile(itemBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
@@ -71,7 +73,7 @@ describe('bulk-edit', () => {
       BulkEditActions.downloadMatchedRecordsExists();
       BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.verifyModifyLandingPageBeforeModifying();
-      BulkEditActions.fillPermanentLoanType('Selected');
+      BulkEditActions.replaceTemporaryLocation('Online');
       BulkEditActions.verifyModifyLandingPageAfterModifying();
       BulkEditActions.confirmChanges();
       BulkEditActions.commitChanges();
@@ -79,6 +81,10 @@ describe('bulk-edit', () => {
 
       BulkEditActions.openActions();
       BulkEditActions.downloadChangedCSV();
+
+      BulkEditActions.newBulkEdit();
+      BulkEditSearchPane.isUsersRadioChecked();
+      BulkEditSearchPane.verifyRecordIdentifierDisabled();
     });
   });
 });

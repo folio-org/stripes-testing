@@ -178,6 +178,13 @@ export default {
     ]);
   },
 
+  checkAuthorizedReferenceColumn(authorized, reference) {
+    cy.expect([
+      MultiColumnListCell({ columnIndex: 1, content: authorized }).exists(),
+      MultiColumnListCell({ columnIndex: 1, content: reference }).exists(),
+    ]);
+  },
+
   checkAfterSearch(type, record) {
     cy.expect([
       MultiColumnListCell({ columnIndex: 1, content: type }).exists(),

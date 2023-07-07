@@ -106,4 +106,8 @@ export default {
   verifyExpirationDateOnUserDetailsPane(expirationDate) {
     cy.expect(userDetailsPane.find(KeyValue('Expiration date')).has({ value: `${expirationDate}` }));
   },
+
+  verifyCustomFieldOnUserDetailsPane(name, text) {
+    cy.expect(userDetailsPane.find(KeyValue(name)).has({ value: text }));
+  },
 };
