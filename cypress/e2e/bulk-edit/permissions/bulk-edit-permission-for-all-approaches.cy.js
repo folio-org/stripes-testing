@@ -45,7 +45,7 @@ describe('bulk-edit', () => {
       FileManager.deleteFile(`cypress/fixtures/${usersBarcodesFileName}`);
     });
 
-    it('C368011 Verify that the "Logs" tab is added (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C353561 Verify "Actions" menu elements with CSV and In app permissions (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
       BulkEditSearchPane.checkItemsRadio();
       BulkEditSearchPane.selectRecordIdentifier('Item barcode');
       BulkEditSearchPane.uploadFile(itemBarcodesFileName);

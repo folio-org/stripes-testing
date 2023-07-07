@@ -51,7 +51,7 @@ describe('Bulk Edit-- Users - in app approach', () => {
     CustomFields.addMultiSelectCustomField(customFieldData);
     cy.visit(TopMenu.usersPath);
     UsersSearchPane.searchByUsername(user.username);
-    UserEdit.addCustomField(customFieldData);
+    UserEdit.addMultiSelectCustomField(customFieldData);
     cy.visit(TopMenu.bulkEditPath);
 
     BulkEditSearchPane.checkUsersRadio();
@@ -69,11 +69,13 @@ describe('Bulk Edit-- Users - in app approach', () => {
     BulkEditActions.downloadPreview();
     BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName, ['staff'], 'patronGroup', true);
     BulkEditActions.commitChanges();
-
-    BulkEditSearchPane.verifyValuesInChangesPreview(user.username, 'staff', `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`);
+    BulkEditSearchPane.verifyChangesUnderColumns('Custom fields', `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`);
 
     cy.visit(TopMenu.usersPath);
     UsersSearchPane.searchByUsername(user.username);
     Users.verifyPatronGroupOnUserDetailsPane('staff');
+
+    cy.visit(SettingsMenu.customFieldsPath);
+    CustomFields.deleteCustomField(customFieldData.fieldLabel);
   });
 });
