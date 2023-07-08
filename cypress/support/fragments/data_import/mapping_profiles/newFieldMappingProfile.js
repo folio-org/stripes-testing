@@ -148,12 +148,14 @@ const addVendorReferenceNumber = (profile) => {
 };
 
 const addFundDistriction = (profile) => {
-  cy.do([Button('Add fund distribution').click(),
+  if(profile.fundId){
+    cy.do([Button('Add fund distribution').click(),
     TextField('Fund ID').fillIn(profile.fundId),
     TextField('Expense class').fillIn(profile.expenseClass),
     TextField('Value').fillIn(`"${profile.value}"`),
     Accordion('Fund distribution').find(Button('%')).click()
   ]);
+  }
 };
 
 const addLocation = (profile) => {
