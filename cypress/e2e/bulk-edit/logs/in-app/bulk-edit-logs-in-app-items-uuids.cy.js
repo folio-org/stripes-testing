@@ -11,7 +11,7 @@ import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-a
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import ItemRecordView from '../../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 
 let user;

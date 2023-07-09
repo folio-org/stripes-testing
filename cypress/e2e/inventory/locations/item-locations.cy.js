@@ -10,7 +10,7 @@ import InventoryHoldings from '../../../support/fragments/inventory/holdings/inv
 import devTeams from '../../../support/dictionary/devTeams';
 import users from '../../../support/fragments/users/users';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;

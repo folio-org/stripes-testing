@@ -31,7 +31,7 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {

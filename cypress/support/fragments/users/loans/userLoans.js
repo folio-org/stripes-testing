@@ -8,7 +8,7 @@ import {
   Button,
   KeyValue,
 } from '../../../../../interactors';
-import ItemRecordView from '../../inventory/itemRecordView';
+import ItemRecordView from '../../inventory/item/itemRecordView';
 import { REQUEST_METHOD } from '../../../constants';
 
 const claimReturnedButton = Button('Claim returned');
