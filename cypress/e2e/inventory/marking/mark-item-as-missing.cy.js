@@ -8,7 +8,7 @@ import Users from '../../../support/fragments/users/users';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
 
 describe('ui-inventory: Mark an item as Missing', () => {

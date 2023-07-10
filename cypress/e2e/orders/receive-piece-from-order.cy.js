@@ -14,7 +14,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Users from '../../support/fragments/users/users';
-import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
 
 describe('orders: Receive piece from Order', () => {
   const order = { 

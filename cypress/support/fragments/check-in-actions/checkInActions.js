@@ -13,7 +13,7 @@ import {
 } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
-import ItemRecordView from '../inventory/itemRecordView';
+import ItemRecordView from '../inventory/item/itemRecordView';
 
 const loanDetailsButton = Button('Loan details');
 const patronDetailsButton = Button('Patron details');
@@ -178,6 +178,13 @@ export default {
     cy.expect(feeFinePane.find(HTML(including(loanPolicyName))).exists());
     cy.expect(feeFinePane.find(HTML(including(OverdueFinePolicyName))).exists());
     cy.expect(feeFinePane.find(HTML(including(LostItemFeePolicyName))).exists());
+  },
+
+  endCheckInSessionAndCheckDetailsOfCheckInAreCleared:() => {
+    cy.do(endSessionButton.click());
+    cy.expect(PaneContent({ id: 'check-in-content' })
+      .find(HTML(including('No items have been entered yet.')))
+      .exists());
   },
 
   backdateCheckInItem:(date, barcode) => {

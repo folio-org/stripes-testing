@@ -14,7 +14,7 @@ import ServicePoints from '../../../../support/fragments/settings/tenant/service
 import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import ItemRecordView from '../../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 
 let user;

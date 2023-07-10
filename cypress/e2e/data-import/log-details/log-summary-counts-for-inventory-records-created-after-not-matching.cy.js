@@ -27,7 +27,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import Users from '../../../support/fragments/users/users';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 
 describe('ui-data-import', () => {
   let user;

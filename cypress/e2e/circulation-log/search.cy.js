@@ -16,7 +16,7 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import LoansPage from '../../support/fragments/loans/loansPage';
 import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
 import SearchResults from '../../support/fragments/circulation-log/searchResults';
-import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
