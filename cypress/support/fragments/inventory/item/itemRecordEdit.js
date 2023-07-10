@@ -1,5 +1,5 @@
 import { including } from '@interactors/html';
-import { Accordion, TextField, Pane, Button } from '../../../../interactors';
+import { Accordion, TextField, Pane, Button } from '../../../../../interactors';
 
 const cancelBtn = Button({ id: 'cancel-item-edit' });
 const saveAndCloseBtn = Button({ id: 'clickable-save-item' });

@@ -19,7 +19,7 @@ import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import ManualCharges from '../../support/fragments/settings/users/manualCharges';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
 import WaiveFeeFineModal from '../../support/fragments/users/waiveFeeFineModal';
 import WaiveReasons from '../../support/fragments/settings/users/waiveReasons';
 import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';

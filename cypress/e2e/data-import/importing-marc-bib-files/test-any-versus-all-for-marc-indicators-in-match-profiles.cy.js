@@ -22,7 +22,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import FileManager from '../../../support/utils/fileManager';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';

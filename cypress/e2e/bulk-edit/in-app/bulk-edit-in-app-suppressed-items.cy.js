@@ -9,7 +9,7 @@ import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 
 let user;
 const itemUUIDsFileName = `validItemHRIDs_${getRandomPostfix()}.csv`;

@@ -149,7 +149,6 @@ describe('Finance: Fiscal Year Rollover', () => {
     Ledgers.checkRolloverLogs(todayDate);
     Ledgers.exportRollover(todayDate);
     Ledgers.checkDownloadedFile(`${fileNameDate}-result.csv`, defaultFund, secondFiscalYear, '100', '100', '60', '60', '60', '60', '60');
-    cy.pause();
     Ledgers.deleteDownloadedFile(`${fileNameDate}-result.csv`);
     Ledgers.closeOpenedPage();
     Ledgers.rollover();

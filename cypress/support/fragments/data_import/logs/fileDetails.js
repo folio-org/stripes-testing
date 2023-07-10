@@ -42,6 +42,16 @@ const status = {
   error: 'Error'
 };
 
+const visibleColumnsInResultsList = {
+  RECORD: { columnIndex: 1 },
+  TITLE: { columnIndex: 2 },
+  SRS_MARC: { columnIndex: 3 },
+  INSTANCE: { columnIndex: 4 },
+  HOLDINGS: { columnIndex: 5 },
+  ITEM: { columnIndex: 6 },
+  ORDER: { columnIndex: 7 }
+};
+
 const checkSrsRecordQuantityInSummaryTable = (quantity, row = 0) => {
   cy.expect(jobSummaryTable
     .find(MultiColumnListRow({ indexRow: `row-${row}` }))
@@ -132,6 +142,12 @@ function checkItemsStatusesInResultList(rowIndex, itemStatuses) {
   });
 }
 
+function validateNumsAscendingOrder(prev) {
+  const itemsClone = [...prev];
+  itemsClone.sort((a, b) => a - b);
+  cy.expect(itemsClone).to.deep.equal(prev);
+}
+
 function getMultiColumnListCellsValues() {
   const cells = [];
   // get MultiColumnList rows and loop over
@@ -145,12 +161,6 @@ function getMultiColumnListCellsValues() {
       });
   })
     .then(() => cells);
-}
-
-function validateNumsAscendingOrder(prev) {
-  const itemsClone = [...prev];
-  itemsClone.sort((a, b) => a - b);
-  cy.expect(itemsClone).to.deep.equal(prev);
 }
 
 export default {
@@ -256,6 +266,13 @@ export default {
         .has({ content: title })));
   },
 
+  verifyRecordsSortingOrder() {
+    getMultiColumnListCellsValues(1).then(cells => {
+      const dates = cells.map(cell => new Date(cell));
+      validateNumsAscendingOrder(dates);
+    });
+  },
+
   verifyQuantityOfRecordsWithError:(number) => {
     cy.expect(PaneHeader({ id:'paneHeaderpane-results' }).find(HTML(including(`${number} records found`))).exists());
   },
@@ -264,11 +281,28 @@ export default {
     cy.expect(jobSummaryTable.absent());
   },
 
-  verifyRecordsSortingOrder() {
-    getMultiColumnListCellsValues(1).then(cells => {
-      const dates = cells.map(cell => new Date(cell));
-      validateNumsAscendingOrder(dates);
-    });
+  getMultiColumnListCellsValuesInResultsList(cell) {
+    const cells = [];
+
+    // get MultiColumnList rows and loop over
+    return cy.get('#search-results-list')
+    .find('[data-row-index]').each($row => {
+      // from each row, choose specific cell
+      cy.get(`[class*="mclCell-"]:nth-child(${cell})`, { withinSubject: $row })
+      // extract its text content
+        .invoke('text')
+        .then(cellValue => {
+          cells.push(cellValue);
+        });
+    })
+      .then(() => cells);
+  },
+
+  verifyRecordColumnHasStandardSequentialNumberingForRecords() {
+    this.getMultiColumnListCellsValuesInResultsList(visibleColumnsInResultsList.RECORD.columnIndex)
+      .then(cells => {
+        validateNumsAscendingOrder(cells);
+      });
   },
 
   verifyStatusHasLinkToOrder:(rowNumber) => {
@@ -276,6 +310,14 @@ export default {
       .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
       .find(MultiColumnListCell({ columnIndex: 7 }))
       .find(Link({ href: including('/orders/lines/view') }))
+      .exists());
+  },
+
+  verifyTitleHasLinkToJsonFile:(rowNumber) => {
+    cy.expect(resultsList
+      .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
+      .find(MultiColumnListCell({ columnIndex: 1 }))
+      .find(Link({ href: including('/data-import/log') }))
       .exists());
   }
 };

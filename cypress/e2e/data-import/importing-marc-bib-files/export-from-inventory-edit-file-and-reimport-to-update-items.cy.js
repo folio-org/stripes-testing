@@ -23,7 +23,7 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import FileManager from '../../../support/utils/fileManager';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 
 describe('ui-data-import', () => {
   let instanceHrid;

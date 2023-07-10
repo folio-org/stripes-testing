@@ -16,7 +16,7 @@ import devTeams from '../../support/dictionary/devTeams';
 import InventoryInstancesMovement from '../../support/fragments/inventory/holdingsMove/inventoryInstancesMovement';
 import users from '../../support/fragments/users/users';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
 import Z3950TargetProfiles from '../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 

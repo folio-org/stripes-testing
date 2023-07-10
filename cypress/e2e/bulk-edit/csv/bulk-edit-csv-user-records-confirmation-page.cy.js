@@ -39,7 +39,7 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it('C357982 Verify user records - in app permission - confirmation page', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C357982 Verify user records - in app permission - confirmation page (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('Usernames');
 
       BulkEditSearchPane.uploadFile(userUUIDsFileName);

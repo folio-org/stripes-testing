@@ -4,12 +4,12 @@ import DevTeams from '../../../support/dictionary/devTeams';
 import TestTypes from '../../../support/dictionary/testTypes';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import {FOLIO_RECORD_TYPE,
+import { FOLIO_RECORD_TYPE,
   ORDER_STATUSES,
   MATERIAL_TYPE_NAMES,
   ORDER_FORMAT_NAMES,
   ACQUISITION_METHOD_NAMES,
-  JOB_STATUS_NAMES} from '../../../support/constants';
+  JOB_STATUS_NAMES } from '../../../support/constants';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -19,20 +19,17 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import OrderLines from '../../../support/fragments/orders/orderLines';
+import Orders from '../../../support/fragments/orders/orders';
 import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
   let user;
-  const quantityOfOrders = '3';
-  const filePathForCreateOrder = 'marcFileForC375178.mrc';
-  const marcFileName = `C375178 autotestFileName ${getRandomPostfix()}`;
-  const ordersData = [
-    { title: 'ROALD DAHL : TELLER OF THE UNEXPECTED : A BIOGRAPHY.', rowNumber: 0 },
-    { title: 'CULTURAL HISTORY OF IDEAS', rowNumber: 1 },
-    { title: 'BOAT PEOPLE; TRANS. BY VANESSA PERE-ROSARIO.', rowNumber: 2 }
-  ];
+  const orderNumbers = [];
+  const quantityOfOrders = '7';
+  const filePathForCreateOrder = 'marcFileForC376973.mrc';
+  const marcFileName = `C375173 autotestFileName ${getRandomPostfix()}`;
   const mappingProfile = {
-    name: `C375178 Test Order ${getRandomPostfix()}`,
+    name: `C376973 mapping profile ${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.ORDER,
     orderStatus: ORDER_STATUSES.PENDING,
     approved: true,
@@ -76,17 +73,16 @@ describe('ui-data-import', () => {
   };
   const actionProfile = {
     typeValue: FOLIO_RECORD_TYPE.ORDER,
-    name: `C375178 Test Order ${getRandomPostfix()}`
+    name: `C376973 action profile ${getRandomPostfix()}`
   };
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: `C375178 Test Order ${getRandomPostfix()}`,
+    profileName: `C376973 job profile ${getRandomPostfix()}`,
   };
 
   before('login', () => {
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({ path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
     // create mapping profile
-    cy.visit(SettingsMenu.mappingProfilePath);
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillPhysicalOrderMappingProfile(mappingProfile);
     FieldMappingProfiles.saveProfile();
@@ -103,6 +99,7 @@ describe('ui-data-import', () => {
     NewJobProfile.linkActionProfile(actionProfile);
     NewJobProfile.saveAndClose();
     JobProfiles.checkJobProfilePresented(jobProfile.profileName);
+    cy.logout();
 
     cy.createTempUser([
       permissions.settingsDataImportEnabled.gui,
@@ -112,7 +109,7 @@ describe('ui-data-import', () => {
         user = userProperties;
 
         cy.login(userProperties.username, userProperties.password,
-          { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
+          { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
       });
   });
 
@@ -121,10 +118,17 @@ describe('ui-data-import', () => {
     JobProfiles.deleteJobProfile(jobProfile.profileName);
     ActionProfiles.deleteActionProfile(actionProfile.name);
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+    cy.wrap(orderNumbers).each(number => {
+      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` })
+      .then(orderId => {
+        Orders.deleteOrderViaApi(orderId[0].id);
+      });
+    });
   });
 
-  it('C375178 Verify the importing of orders with pending status (folijet)',
+  it('C376973 Verify the log details for created imported order records (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+      cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
       DataImport.uploadFile(filePathForCreateOrder, marcFileName);
@@ -134,14 +138,19 @@ describe('ui-data-import', () => {
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(marcFileName);
       FileDetails.checkOrderQuantityInSummaryTable(quantityOfOrders);
-      FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfOrders);
-      cy.wrap(ordersData).each(order => {
-        FileDetails.verifyTitle(order.title, FileDetails.columnNameInResultList.title, order.rowNumber);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.order, order.rowNumber);
-        FileDetails.verifyStatusHasLinkToOrder(order.rowNumber);
-        FileDetails.openOrder('Created', order.rowNumber);
+      FileDetails.verifyRecordColumnHasStandardSequentialNumberingForRecords();
+      [0, 1, 2, 3, 4, 5, 6].forEach(rowNumber => {
+        FileDetails.verifyTitleHasLinkToJsonFile(rowNumber);
+        FileDetails.verifyStatusHasLinkToOrder(rowNumber);
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.order, rowNumber);
+        FileDetails.openOrder('Created', rowNumber);
         OrderLines.waitLoading();
-        OrderLines.verifyOrderTitle(order.title);
+        OrderLines.getAssignedPOLNumber()
+        .then(initialNumber => {
+          const orderNumber = initialNumber.replace('-1', '');
+
+          orderNumbers.push(orderNumber);
+        });
         cy.go('back');
       });
     });
