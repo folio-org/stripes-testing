@@ -11,7 +11,7 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import ItemActions from '../../../../support/fragments/inventory/inventoryItem/itemActions';
 import TopMenu from '../../../../support/fragments/topMenu';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import ItemRecordView from '../../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 
 let user;
 

@@ -126,7 +126,7 @@ export default {
     cy.expect(Pane({ id:'pane-instancedetails' }).exists());
     cy.expect(Pane({ titleLabel: including(title) }).exists());
   },
-  verivyCalloutMessage: (number) => {
+  verifyCalloutMessage: (number) => {
     cy.expect(Callout({ textContent: including(`Record ${number} created. Results may take a few moments to become visible in Inventory`) })
       .exists());
   },

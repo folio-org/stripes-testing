@@ -159,5 +159,10 @@ export default {
   },
   feeFineLinkIsNotClickable:(value, userId) => {
     cy.expect(KeyValue({ value: including(value) }).find(Link({ href: including(`/users/${userId}/accounts/open`) })).absent());
+  },
+  checkDetailsOfCheckOUTAreCleared:() => {
+    cy.expect(Pane({ id: 'item-details' })
+      .find(HTML(including('No items have been entered yet')))
+      .exists());
   }
 };

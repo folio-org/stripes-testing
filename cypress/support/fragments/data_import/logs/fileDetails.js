@@ -148,12 +148,28 @@ function validateNumsAscendingOrder(prev) {
   cy.expect(itemsClone).to.deep.equal(prev);
 }
 
+function getMultiColumnListCellsValues() {
+  const cells = [];
+  // get MultiColumnList rows and loop over
+  return cy.get('[data-row-index]').each($row => {
+    // from each row, choose specific cell
+    cy.get('[class*="mclCell-"]:nth-child(1)', { withinSubject: $row })
+    // extract its text content
+      .invoke('text')
+      .then(cellValue => {
+        cells.push(cellValue);
+      });
+  })
+    .then(() => cells);
+}
+
 export default {
   columnNameInResultList,
   columnNameInSummuryTable,
   status,
   invoiceNumberFromEdifactFile,
   validateNumsAscendingOrder,
+  getMultiColumnListCellsValues,
   checkStatusInColumn,
   checkItemsStatusesInResultList,
   checkItemsQuantityInSummaryTable,
@@ -248,6 +264,13 @@ export default {
       .then((index) => cy.expect(resultsList.find(MultiColumnListRow({ index: rowIndex }))
         .find(MultiColumnListCell({ columnIndex: index }))
         .has({ content: title })));
+  },
+
+  verifyRecordsSortingOrder() {
+    getMultiColumnListCellsValues(1).then(cells => {
+      const dates = cells.map(cell => new Date(cell));
+      validateNumsAscendingOrder(dates);
+    });
   },
 
   verifyQuantityOfRecordsWithError:(number) => {
