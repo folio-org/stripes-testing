@@ -23,7 +23,7 @@ const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${itemBarcodesFileName}`;
 const changedRecordsFileName = `*-Changed-Records-${itemBarcodesFileName}`;
 const previewFileName = `*-Updates-Preview-${itemBarcodesFileName}`;
-const note = 'Line-1\nLine-2\n\nLine-3'
+const note = 'Line-1\nLine-2\n\nLine-3';
 for (let i = 0; i < 5; i++) {
   items.push({
     instanceName: `testBulkEdit_${getRandomPostfix()}`,
