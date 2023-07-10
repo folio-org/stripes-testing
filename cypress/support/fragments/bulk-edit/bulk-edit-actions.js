@@ -27,7 +27,12 @@ const downloadPreviewBtn = Button('Download preview');
 function getEmailField() {
   // 2 the same selects without class, id or someone different attr
   return cy.get('[class^=textField]');
-}
+};
+
+function waitReload() {
+  // Wait for page to reload
+  cy.wait(500);
+};
 
 const bulkPageSelections = {
   valueType: Select({ content: including('Select option') }),
@@ -125,6 +130,7 @@ export default {
   },
 
   replaceTemporaryLocation(location = 'Annex', type = 'item', rowIndex = 0) {
+    waitReload();
     cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(`Temporary ${type} location`));
     if (type === 'item') {
       cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Replace with'));
@@ -178,6 +184,7 @@ export default {
   },
 
   fillPatronGroup(group = 'staff (Staff Member)', rowIndex = 0) {
+    waitReload();
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Patron group'),
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.patronGroup).choose(group),
