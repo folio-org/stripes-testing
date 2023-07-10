@@ -10,8 +10,8 @@ import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
-import ItemRecordEdit from '../../../support/fragments/inventory/itemRecordEdit';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import ItemRecordEdit from '../../../support/fragments/inventory/item/itemRecordEdit';
 import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
@@ -83,7 +83,7 @@ describe('bulk-edit', () => {
       ExportFile.verifyFileIncludes(matchedRecordsFileName, [note]);
       BulkEditSearchPane.changeShowColumnCheckbox('Administrative notes');
       BulkEditSearchPane.verifySpecificItemsMatched(note);
-      
+
       BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.verifyModifyLandingPageBeforeModifying();
       const location = 'Annex';
