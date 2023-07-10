@@ -401,6 +401,15 @@ export default {
     cy.expect(authoritySearchResults.exists());
   },
 
+  searchResultsWithOption(option, value) {
+    cy.do(selectField.choose(including(option)));
+    cy.do(searchInput.fillIn(value));
+    cy.expect(searchInput.has({ value }));
+    cy.expect(enabledSearchBtn.exists());
+    cy.do(searchButton.click());
+    cy.expect(authoritySearchResults.exists());
+  },
+
   fillInAndSearchResults(value) {
     cy.do(searchInput.fillIn(value));
     cy.expect(searchInput.has({ value }));

@@ -139,6 +139,16 @@ export default {
     ]);
   },
 
+  checkAuthorityIconAndValueDisplayedForMultipleRows(rowCount, value) {
+    for (let i = 0; i < rowCount; i++) {
+      cy.expect([
+        MultiColumnListCell({ row: 5 + i, columnIndex: 0 }).has({ innerHTML: including(`<strong>${value}</strong>`) }),
+        MultiColumnListCell({ row: 5 + i, columnIndex: 0 }).has({ innerHTML: including('<img') }),
+        MultiColumnListCell({ row: 5 + i, columnIndex: 0 }).has({ innerHTML: including('alt="MARC Authorities module">') }),
+      ]);
+    }
+  },
+
   checkSearchResultRow(contributorName, contributorNameType, contributorType, numberOfTitles) {
     cy.expect(MultiColumnListRow(`${contributorName}${contributorNameType}${contributorType}${numberOfTitles}`).exists());
   },
