@@ -59,7 +59,6 @@ export default {
   createMatchProfile(profile) {
     openNewMatchProfileForm();
     NewMatchProfile.fillMatchProfileForm(profile);
-    cy.pause();
     saveAndClose();
     waitCreatingMatchProfile();
   },

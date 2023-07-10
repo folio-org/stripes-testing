@@ -9,8 +9,7 @@ import {
   Pane,
   Modal,
   PaneContent,
-  or,
-  Link
+  or
 } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';

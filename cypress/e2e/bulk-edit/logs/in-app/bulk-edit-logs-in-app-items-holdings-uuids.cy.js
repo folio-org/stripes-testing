@@ -16,13 +16,9 @@ import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 let user;
 const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileNameValid = `Matched-Records-${validHoldingUUIDsFileName}`;
-const changedRecordsFileName = `Changed-Records-${validHoldingUUIDsFileName}`;
-// It downloads 2 files in one click, both with same content
-const previewOfProposedChangesFileName = {
-  first: `*-Updates-Preview-${validHoldingUUIDsFileName}`,
-  second: `modified-*-${matchedRecordsFileNameValid}`
-};
-const updatedRecordsFileName = `result-*-${matchedRecordsFileNameValid}`;
+const previewOfProposedChangesFileName = `*-Updates-Preview-${validHoldingUUIDsFileName}`;
+const updatedRecordsFileName = `*-Changed-Records*-${validHoldingUUIDsFileName}`;
+
 const inventoryEntity = {
   instance: {
     id: '',
@@ -81,7 +77,7 @@ describe('Bulk Edit - Logs', () => {
     Users.deleteViaApi(user.userId);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(inventoryEntity.item.barcode);
     FileManager.deleteFile(`cypress/fixtures/${validHoldingUUIDsFileName}`);
-    FileManager.deleteFileFromDownloadsByMask(validHoldingUUIDsFileName, `*${changedRecordsFileName}`, `*${matchedRecordsFileNameValid}`, previewOfProposedChangesFileName.first, previewOfProposedChangesFileName.second, updatedRecordsFileName);
+    FileManager.deleteFileFromDownloadsByMask(validHoldingUUIDsFileName, `*${matchedRecordsFileNameValid}`, previewOfProposedChangesFileName, updatedRecordsFileName);
   });
 
   it('C375288 Verify generated Logs files for Items In app -- only valid Holdings UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -118,8 +114,8 @@ describe('Bulk Edit - Logs', () => {
     BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileNameValid}`, [inventoryEntity.item.id, inventoryEntity.item.id2], 'firstElement', true);
 
     BulkEditSearchPane.downloadFileWithProposedChanges();
-    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, ['', ''], 'temporaryLocation', true);
-    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.second, ['', ''], 'temporaryLocation', true);
+    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName, ['', ''], 'temporaryLocation', true);
+    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName, ['', ''], 'temporaryLocation', true);
 
     BulkEditSearchPane.downloadFileWithUpdatedRecords();
     BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, ['', ''], 'temporaryLocation', true);
