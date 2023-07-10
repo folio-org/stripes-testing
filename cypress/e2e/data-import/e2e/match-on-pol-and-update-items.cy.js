@@ -20,7 +20,7 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import OrderView from '../../../support/fragments/orders/orderView';

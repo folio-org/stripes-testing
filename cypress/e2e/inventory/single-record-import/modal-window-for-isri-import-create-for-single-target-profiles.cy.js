@@ -49,7 +49,7 @@ describe('ui-inventory', () => {
       SingleRecordImportModal.selectTheProfileToBeUsed(profileForImport);
       SingleRecordImportModal.fillEnterTestIdentifier(testIdentifier);
       SingleRecordImportModal.import();
-      InstanceRecordView.verivyCalloutMessage(testIdentifier);
+      InstanceRecordView.verifyCalloutMessage(testIdentifier);
       // need to wait because after the import the data in the instance is displayed for a long time
       // https://issues.folio.org/browse/MODCPCT-73
       cy.wait(10000);

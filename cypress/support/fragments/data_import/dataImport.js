@@ -393,5 +393,10 @@ export default {
 
   cancelImportJob:() => {
     cy.do(cancelImportJobModal.find(yesButton).click());
+  },
+
+  waitFileIsUploaded:() => {
+    // TODO need to wait until big file is uploaded
+    cy.wait(5000);
   }
 };

@@ -10,7 +10,7 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import InteractorsTools from '../../support/utils/interactorsTools';
 import InventoryInstancesMovement from '../../support/fragments/inventory/holdingsMove/inventoryInstancesMovement';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
-import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
 
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => false);
