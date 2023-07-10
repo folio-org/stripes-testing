@@ -31,7 +31,7 @@ function getEmailField() {
 
 function waitReload() {
   // Wait for page to reload
-  cy.wait(500);
+  cy.wait(1000);
 };
 
 const bulkPageSelections = {
@@ -124,6 +124,7 @@ export default {
   },
 
   replaceEmail(oldEmailDomain, newEmailDomain, rowIndex = 0) {
+    waitReload();
     cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'));
     getEmailField().first().type(oldEmailDomain);
     getEmailField().eq(2).type(newEmailDomain);
@@ -143,6 +144,7 @@ export default {
   },
 
   replacePermanentLocation(location, type = 'item', rowIndex = 0) {
+    waitReload();
     cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(`Permanent ${type} location`));
     if (type === 'item') {
       cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Replace with'));
@@ -154,16 +156,19 @@ export default {
   },
 
   clearPermanentLocation(type = 'item', rowIndex = 0) {
+    waitReload();
     cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(`Permanent ${type} location`));
     cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Clear field'));
   },
 
   clearTemporaryLocation(type = 'item', rowIndex = 0) {
+    waitReload();
     cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(`Temporary ${type} location`));
     cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Clear field'));
   },
 
   replaceItemStatus(status, rowIndex = 0) {
+    waitReload();
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Item status'),
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.itemStatus).choose(status),
@@ -171,6 +176,7 @@ export default {
   },
 
   typeInTemporaryLocationFilter(location = 'Annex', type = 'item', rowIndex = 0) {
+    waitReload();
     cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(`Temporary ${type} location`));
     if (type === 'item') {
       cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Replace with'));
@@ -192,6 +198,7 @@ export default {
   },
 
   fillExpirationDate(date, rowIndex = 0) {
+    waitReload();
     // js date object
     const formattedDate = DateTools.getFormattedDate({ date }, 'MM/DD/YYYY');
     cy.do([
@@ -204,6 +211,7 @@ export default {
   },
 
   verifyCalendarItem(rowIndex = 0) {
+    waitReload();
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Expiration date'),
       Button({ icon: 'calendar' }).click()
@@ -213,6 +221,7 @@ export default {
   },
 
   fillPermanentLoanType(type = 'Selected', rowIndex = 0) {
+    waitReload();
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Permanent loan type'),
       RepeatableFieldItem({ index: rowIndex }).find(Button({ id: 'loanType' })).click(),
@@ -221,6 +230,7 @@ export default {
   },
 
   fillTemporaryLoanType(type = 'Selected', rowIndex = 0) {
+    waitReload();
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Temporary loan type'),
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Replace with'),
@@ -230,6 +240,7 @@ export default {
   },
 
   clearTemporaryLoanType(rowIndex = 0) {
+    waitReload();
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Temporary loan type'),
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Clear field'),
@@ -237,6 +248,7 @@ export default {
   },
 
   editSuppressFromDiscovery(value, rowIndex = 0) {
+    waitReload();
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Suppress from discovery'),
       RepeatableFieldItem({ index: rowIndex }).find(Select({ content: including('Set') })).choose(value),
