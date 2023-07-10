@@ -22,13 +22,8 @@ let tempLocation;
 let tempLocation2;
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*Matched-Records-${itemBarcodesFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${itemBarcodesFileName}`;
-// It downloads 2 files in one click, both with same content
-const previewOfProposedChangesFileName = {
-  first: `*-Updates-Preview-${itemBarcodesFileName}`,
-  second: `modified-*-${matchedRecordsFileName}`
-};
-const updatedRecordsFileName = `result-*-${matchedRecordsFileName}`;
+const previewOfProposedChangesFileName = `*-Updates-Preview-${itemBarcodesFileName}`;
+const updatedRecordsFileName = `*-Changed-Records*-${itemBarcodesFileName}`;
 
 const item = {
   barcode: `456-${getRandomPostfix()}`
@@ -169,7 +164,7 @@ describe('Bulk Edit - Logs', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item2.barcode);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
-    FileManager.deleteFileFromDownloadsByMask(itemBarcodesFileName, `*${matchedRecordsFileName}`, changedRecordsFileName, previewOfProposedChangesFileName.first, previewOfProposedChangesFileName.second, updatedRecordsFileName);
+    FileManager.deleteFileFromDownloadsByMask(itemBarcodesFileName, `*${matchedRecordsFileName}`, previewOfProposedChangesFileName, updatedRecordsFileName);
   });
 
   it('C375300 Verify generated Logs files for Holdings In app -- only valid Item barcodes (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -205,8 +200,8 @@ describe('Bulk Edit - Logs', () => {
     BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileName}`, [item.barcode, item2.barcode], 'holdingsItemBarcode', true);
 
     BulkEditSearchPane.downloadFileWithProposedChanges();
-    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, [tempLocation.name, tempLocation.name], 'temporaryLocation', true);
-    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, ['Online', 'Online'], 'permanentLocation', true);
+    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName, [tempLocation.name, tempLocation.name], 'temporaryLocation', true);
+    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName, ['Online', 'Online'], 'permanentLocation', true);
 
     BulkEditSearchPane.downloadFileWithUpdatedRecords();
     BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, [tempLocation.name, tempLocation.name], 'temporaryLocation', true);
