@@ -16,12 +16,11 @@ const userUUIDsFileName = `userUUIDs-${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `Matched-Records-${userUUIDsFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 const changedRecordsFileName = `*-Changed-Records*-${editedFileName}`;
-// It downloads 2 files in one click, both with same content
 const previewOfProposedChangesFileName = {
-  first: `*-Updates-Preview-${editedFileName}`,
-  second: editedFileName
+  first: `*-Updates-Preview-${userUUIDsFileName}`,
+  second: `*-Updates-Preview-${editedFileName}`
 };
-const updatedRecordsFileName = `result-*-${matchedRecordsFileName}`;
+const updatedRecordsFileName = `*-Changed-Records*-${userUUIDsFileName}`;
 
 describe('Bulk Edit - Logs', () => {
   before('create test data', () => {
@@ -72,7 +71,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.verifyLogsRowActionWhenCompleted();
 
     BulkEditSearchPane.downloadFileUsedToTrigger();
-    BulkEditFiles.verifyMatchedResultFileContent(userUUIDsFileName, [user.userId], 'userId', true);
+    BulkEditFiles.verifyCSVFileRows(userUUIDsFileName, [user.userId]);
 
     BulkEditSearchPane.downloadFileWithMatchingRecords();
     BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileName}`, [user.userId], 'userId', true);
