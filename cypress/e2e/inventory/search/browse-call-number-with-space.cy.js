@@ -206,7 +206,7 @@ describe('Inventory -> Call Number Browse', () => {
     InventorySearchAndFilter.switchToBrowseTab();
     InventorySearchAndFilter.verifyBrowseOptions();
     InventorySearchAndFilter.selectBrowseCallNumbers();
-    InventorySearchAndFilter.browseSubjectsSearch(item.itemCallNumber);
+    InventorySearchAndFilter.browseSubjectsSearch(item.callNumber);
     InventorySearchAndFilter.selectFoundItem(item.callNumber, item.callNumberSuffix);
     InventorySearchAndFilter.verifyShelvingOrder(item.shelvingOrderValue);
     InventorySearchAndFilter.verifyInstanceDisplayed(item.instanceName);
