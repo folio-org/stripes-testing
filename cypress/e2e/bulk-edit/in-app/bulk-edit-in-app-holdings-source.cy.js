@@ -19,51 +19,49 @@ const item = {
 };
 
 describe('bulk-edit', () => {
-  describe('in-app approach', () => {
-    before('create test data', () => {
-      cy.createTempUser([
-        permissions.inventoryAll.gui,
-        permissions.bulkEditView.gui,
-        permissions.bulkEditEdit.gui,
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading
-          });
-
-          const instanceId = InventoryInstances.createInstanceMARCSourceViaApi(item.instanceName, item.itemBarcode);
-          cy.getHoldings({
-            limit: 1,
-            query: `"instanceId"="${instanceId}"`
-          })
-            .then(holdings => {
-              uuid = holdings[0].id;
-              FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, uuid);
-            });
+  before('create test data', () => {
+    cy.createTempUser([
+      permissions.inventoryAll.gui,
+      permissions.bulkEditView.gui,
+      permissions.bulkEditEdit.gui,
+    ])
+      .then(userProperties => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading
         });
-    });
 
-    after('delete test data', () => {
-      Users.deleteViaApi(user.userId);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-      FileManager.deleteFile(`cypress/fixtures/${validHoldingUUIDsFileName}`);
-    });
+        const instanceId = InventoryInstances.createInstanceMARCSourceViaApi(item.instanceName, item.itemBarcode);
+        cy.getHoldings({
+          limit: 1,
+          query: `"instanceId"="${instanceId}"`
+        })
+          .then(holdings => {
+            uuid = holdings[0].id;
+            FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, uuid);
+          });
+      });
+  });
 
-    it('C365125 Verify that User CANNOT bulk edit Holdings that have source "MARC"  (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.checkHoldingsRadio();
-      BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
-      BulkEditSearchPane.verifyDragNDropHoldingsUUIDsArea();
-      BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
+  after('delete test data', () => {
+    Users.deleteViaApi(user.userId);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
+    FileManager.deleteFile(`cypress/fixtures/${validHoldingUUIDsFileName}`);
+  });
 
-      BulkEditActions.openActions();
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.replacePermanentLocation(location, 'holdings');
-      BulkEditActions.confirmChanges();
-      BulkEditActions.commitChanges();
-      BulkEditSearchPane.verifyNonMatchedResults('Holdings records that have source "MARC" cannot be changed');
-    });
+  it('C365125 Verify that User CANNOT bulk edit Holdings that have source "MARC"  (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+    BulkEditSearchPane.checkHoldingsRadio();
+    BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
+    BulkEditSearchPane.verifyDragNDropHoldingsUUIDsArea();
+    BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
+    BulkEditSearchPane.waitFileUploading();
+
+    BulkEditActions.openActions();
+    BulkEditActions.openInAppStartBulkEditFrom();
+    BulkEditActions.replacePermanentLocation(location, 'holdings');
+    BulkEditActions.confirmChanges();
+    BulkEditActions.commitChanges();
+    BulkEditSearchPane.verifyNonMatchedResults('Holdings records that have source "MARC" cannot be changed');
   });
 });
