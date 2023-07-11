@@ -14,7 +14,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import TopMenu from '../../../support/fragments/topMenu';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { LOCALION_NAMES, FOLIO_RECORD_TYPE, ACCEPTED_DATA_TYPE_NAMES, EXISTING_RECORDS_NAMES } from '../../../support/constants';
+import { LOCATION_NAMES, FOLIO_RECORD_TYPE, ACCEPTED_DATA_TYPE_NAMES, EXISTING_RECORDS_NAMES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   // unique file name to upload
@@ -25,7 +25,7 @@ describe('ui-data-import', () => {
   const mappingProfileForExport = {
     name: `autotestMappingProf${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-    permanentLocation: `"${LOCALION_NAMES.ANNEX}"`,
+    permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
   };
   const actionProfileForExport = {
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,
@@ -39,7 +39,7 @@ describe('ui-data-import', () => {
     name: `autotestMappingProf${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     update: true,
-    permanentLocation: `"${LOCALION_NAMES.ANNEX}"`
+    permanentLocation: `"${LOCATION_NAMES.ANNEX}"`
   };
   const actionProfile = {
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,

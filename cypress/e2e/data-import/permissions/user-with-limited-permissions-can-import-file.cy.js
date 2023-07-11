@@ -4,7 +4,7 @@ import DevTeams from '../../../support/dictionary/devTeams';
 import { LOAN_TYPE_NAMES,
   ITEM_STATUS_NAMES,
   FOLIO_RECORD_TYPE,
-  LOCALION_NAMES,
+  LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
   JOB_STATUS_NAMES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -34,7 +34,7 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C356841 holdings mapping profile ${Helper.getRandomBarcode()}`,
-        pernanentLocation: `"${LOCALION_NAMES.ONLINE}"` },
+        pernanentLocation: `"${LOCATION_NAMES.ONLINE}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C356841 holdings action profile ${Helper.getRandomBarcode()}` }
     },

@@ -3,7 +3,7 @@ import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import { FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
-  LOCALION_NAMES,
+  LOCATION_NAMES,
   CALL_NUMBER_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
   JOB_STATUS_NAMES } from '../../../support/constants';
@@ -52,10 +52,10 @@ describe('ui-data-import', () => {
     statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
     statisticalCodeUI: 'Book, print (books)',
     adminNote: `autotestAdminNote.${getRandomPostfix()}`,
-    permanentLocation: `"${LOCALION_NAMES.MAIN_LIBRARY}"`,
-    permanentLocationUI: LOCALION_NAMES.MAIN_LIBRARY_UI,
-    temporaryLocation: `"${LOCALION_NAMES.ONLINE}"`,
-    temporaryLocationUI: LOCALION_NAMES.ONLINE_UI,
+    permanentLocation: `"${LOCATION_NAMES.MAIN_LIBRARY}"`,
+    permanentLocationUI: LOCATION_NAMES.MAIN_LIBRARY_UI,
+    temporaryLocation: `"${LOCATION_NAMES.ONLINE}"`,
+    temporaryLocationUI: LOCATION_NAMES.ONLINE_UI,
     shelvingTitle: `autotestShelvingTitle.${getRandomPostfix()}`,
     callNumberType: CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_MEDICINE,
     callNumber: Helper.getRandomBarcode(),
