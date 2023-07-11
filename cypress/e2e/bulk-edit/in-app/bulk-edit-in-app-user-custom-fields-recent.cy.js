@@ -27,8 +27,8 @@ const updatedCustomFieldData = {
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const previewOfProposedChangesFileName = `*-Updates-Preview-${userBarcodesFileName}`;
 
-describe('bulk-edit', { retries: 1 }, () => {
-  describe('in-app approach', () => {
+describe('bulk-edit', () => {
+  describe('in-app approach', { retries: 1 }, () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditUpdateRecords.gui,
@@ -44,6 +44,10 @@ describe('bulk-edit', { retries: 1 }, () => {
             waiter: CustomFields.waitLoading
           });
           FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
+          CustomFields.addMultiSelectCustomField(customFieldData);
+          cy.visit(TopMenu.usersPath);
+          UsersSearchPane.searchByUsername(user.username);
+          UserEdit.addMultiSelectCustomField(customFieldData);
         });
     });
 
@@ -54,12 +58,7 @@ describe('bulk-edit', { retries: 1 }, () => {
     });
 
     it('C389570 In app | Verify bulk edit Users records with recently updated Custom fields (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-      CustomFields.addMultiSelectCustomField(customFieldData);
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.searchByUsername(user.username);
-      UserEdit.addMultiSelectCustomField(customFieldData);
       cy.visit(TopMenu.bulkEditPath);
-
       BulkEditSearchPane.checkUsersRadio();
       BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
 
