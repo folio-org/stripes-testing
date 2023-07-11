@@ -671,7 +671,7 @@ export default {
 
   verifyResourceIdentifierAbsent:(value) => cy.expect(identifiersAccordion.find(MultiColumnListCell(including(value))).absent()),
   verifyInstanceLanguage:(language) => cy.expect(descriptiveDataAccordion.find(KeyValue('Language')).has({ value: language })),
-  verifyInstancePhisicalcyDescription:(description) => {
+  verifyInstancePhysicalcyDescription:(description) => {
     cy.expect(descriptiveDataAccordion.find(KeyValue('Physical description')).has({ value: description }));
   },
 

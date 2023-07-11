@@ -99,6 +99,13 @@ export default {
     cy.expect(actionsButton.exists());
   },
 
+  createOrderMappingProfile:(mappingProfile) => {
+    openNewMappingProfileForm();
+    NewFieldMappingProfile.fillOrderMappingProfile(mappingProfile);
+    saveProfile();
+    closeViewModeForMappingProfile(mappingProfile.name);
+  },
+
   deleteFieldMappingProfile,
   mappingProfileForDuplicate,
   waitLoading: () => cy.expect(MultiColumnListRow({ index:0 }).exists()),

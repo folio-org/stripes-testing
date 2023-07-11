@@ -26,9 +26,8 @@ import OrderLines from '../../../support/fragments/orders/orderLines';
 import Users from '../../../support/fragments/users/users';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Orders from '../../../support/fragments/orders/orders';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('ui-data-import', () => {
   let user;
@@ -36,17 +35,18 @@ describe('ui-data-import', () => {
   let instanceHrid;
   const instanceTitle = 'Quiet time.';
   const filePathForCreateOrder = 'marcFileForCreateOrder.mrc';
-  const marcFileName = `C380474 autotestFileName ${getRandomPostfix()}`;
+  const marcFileName = `C380485 autotestFileName ${getRandomPostfix()}`;
   const collectionOfMappingAndActionProfiles = [
     {
-      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ORDER,
-        name: `C380474 Test Physical resource open order with instance, holdings, item ${getRandomPostfix()}`,
+      mappingProfile: {
+        name: `C380485 Test Other open order with instance, holdings ${getRandomPostfix()}`,
+        typeValue: FOLIO_RECORD_TYPE.ORDER,
         orderStatus: ORDER_STATUSES.OPEN,
         approved: true,
         vendor: 'GOBI Library Solutions',
         title: '245$a',
         acquisitionMethod: ACQUISITION_METHOD_NAMES.PURCHASE_AT_VENDOR_SYSTEM,
-        orderFormat: ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE_Check,
+        orderFormat: ORDER_FORMAT_NAMES.OTHER,
         receivingWorkflow: 'Synchronized',
         physicalUnitPrice: '"20"',
         quantityPhysical: '"1"',
@@ -55,27 +55,18 @@ describe('ui-data-import', () => {
         locationQuantityPhysical: '"1"'
       },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ORDER,
-        name: `C380474 Test Physical resource open order with instance, holdings, item ${getRandomPostfix()}` }
+        name: `C380485 Test Other open order with instance, holdings ${getRandomPostfix()}` }
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `C380474 Create simple holdings for open order ${getRandomPostfix()}`,
-        permanentLocation: `"${LOCATION_NAMES.ANNEX}"` },
+        name: `C380485 Create simple holdings for open order ${getRandomPostfix()}`,
+        permanentLocation: `"${LOCATION_NAMES.MAIN_LIBRARY}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C380474 Create simple holdings for open order ${getRandomPostfix()}` }
-    },
-    {
-      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C380474 Create simple item for open order ${getRandomPostfix()}`,
-        materialType: `"${MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE}"`,
-        permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-        status: ITEM_STATUS_NAMES.AVAILABLE },
-      actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C380474 Create simple item for open order${getRandomPostfix()}` }
-    },
+    }
   ];
   const jobProfile = {
-    profileName: `C380474 Test Physical resource open order with instance, holdings, item ${getRandomPostfix()}`,
+    profileName: `C380485 Test Other open order with instance, holdings ${getRandomPostfix()}`,
     acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
@@ -108,36 +99,23 @@ describe('ui-data-import', () => {
       });
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
       .then((instance) => {
-        cy.deleteItemViaApi(instance.items[0].id);
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
   });
 
-  it('C380474 Import to create open orders: Physical resource with Instances, Holdings, Items (folijet)',
+  it('C380485 Import to create open orders: Other with Instances, Holdings (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      // create mapping profiles
-      FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillPhysicalOrderMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
+      // create mapping profile
+      FieldMappingProfiles.createOrderMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
       FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
-      
+
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
       NewFieldMappingProfile.fillPermanentLocation(collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocation);
       FieldMappingProfiles.saveProfile();
       FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile.name);
       FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[1].mappingProfile.name);
-
-      FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile);
-      NewFieldMappingProfile.fillMaterialType(collectionOfMappingAndActionProfiles[2].mappingProfile.materialType);
-      NewFieldMappingProfile.fillPermanentLoanType(collectionOfMappingAndActionProfiles[2].mappingProfile.permanentLoanType);
-      NewFieldMappingProfile.fillStatus(collectionOfMappingAndActionProfiles[2].mappingProfile.status);
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile.name);
-      FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[2].mappingProfile.name);
 
       // create action profiles
       collectionOfMappingAndActionProfiles.forEach(profile => {
@@ -152,7 +130,6 @@ describe('ui-data-import', () => {
       NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[0].actionProfile);
       NewJobProfile.linkActionProfileByName('Default - Create instance');
       NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[1].actionProfile);
-      NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[2].actionProfile);
       NewJobProfile.saveAndClose();
       JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
@@ -168,7 +145,6 @@ describe('ui-data-import', () => {
       [FileDetails.columnNameInResultList.srsMarc,
         FileDetails.columnNameInResultList.instance,
         FileDetails.columnNameInResultList.holdings,
-        FileDetails.columnNameInResultList.item,
         FileDetails.columnNameInResultList.order
       ].forEach(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
@@ -179,19 +155,15 @@ describe('ui-data-import', () => {
         const polNumber = initialNumber;
         orderNumber = polNumber.replace('-1', '');
 
-        OrderLines.checkCreatedInventoryInPhysicalRecourceDetails('Instance, Holding, Item');
+        OrderLines.checkCreatedInventoryInOtherRecourceDetails('Instance, Holding');
         OrderLines.openLinkedInstance();
         InstanceRecordView.verifyIsInstanceOpened(instanceTitle);
         InstanceRecordView.getAssignedHRID().then(initialInstanceHrId => { instanceHrid = initialInstanceHrId; });
         InstanceRecordView.verifyHotlinkToPOL(polNumber);
-        InstanceRecordView.verifyIsHoldingsCreated([`${LOCATION_NAMES.ANNEX_UI} >`]);
+        InstanceRecordView.verifyIsHoldingsCreated([`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`]);
         InstanceRecordView.openHoldingView();
         HoldingsRecordView.checkHoldingRecordViewOpened();
-        HoldingsRecordView.close();
-        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ANNEX_UI} >`);
-        InventoryInstance.openItemByBarcode('No barcode');
-        ItemRecordView.waitLoading();
-        ItemRecordView.checkHotlinksToCreatedPOL(polNumber);
+        HoldingsRecordView.checkHotlinkToPOL(polNumber);
       });
     });
 });
