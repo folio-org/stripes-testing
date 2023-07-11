@@ -15,7 +15,7 @@ import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 
-describe('Browse Contributors in Inventory (linked records)', () => {
+describe('Inventory: Contributors Browse', () => {
   const testData = {
     contributorName: 'Lee, Stanley Test C359596',
   };
@@ -79,7 +79,8 @@ describe('Browse Contributors in Inventory (linked records)', () => {
         });
       });
 
-      cy.loginAsAdmin({ path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading }).then(() => {
+      cy.visit(TopMenu.inventoryPath).then(() => {
+        InventoryInstances.waitContentLoading();
         InventoryInstance.searchByTitle(createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();

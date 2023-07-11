@@ -402,8 +402,10 @@ export default {
   },
 
   searchResultsWithOption(option, value) {
-    cy.do(selectField.choose(including(option)));
-    cy.do(searchInput.fillIn(value));
+    cy.do([
+      selectField.choose(including(option)),
+      searchInput.fillIn(value)
+    ]);
     cy.expect(searchInput.has({ value }));
     cy.expect(enabledSearchBtn.exists());
     cy.do(searchButton.click());
