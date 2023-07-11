@@ -38,6 +38,7 @@ describe('bulk-edit', () => {
           BulkEditActions.clickNext();
           BulkEditActions.commitChanges();
           BulkEditSearchPane.verifyChangedResults(newName);
+          BulkEditActions.newBulkEdit();
         });
     });
 
@@ -49,7 +50,6 @@ describe('bulk-edit', () => {
     });
 
     it('C353551 Verify new bulk edit button (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
-      BulkEditActions.newBulkEdit();
       BulkEditSearchPane.verifyBulkEditPaneItems();
       BulkEditSearchPane.usersRadioIsDisabled(false);
       BulkEditSearchPane.itemsRadioIsDisabled(true);
