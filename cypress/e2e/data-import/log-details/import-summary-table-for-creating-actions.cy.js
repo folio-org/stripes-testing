@@ -14,7 +14,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
-import { LOCALION_NAMES,
+import { LOCATION_NAMES,
   LOAN_TYPE_NAMES,
   ITEM_STATUS_NAMES,
   FOLIO_RECORD_TYPE,
@@ -46,8 +46,8 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: holdingsMappingProfileName,
-        pernanentLocation: `"${LOCALION_NAMES.ONLINE}"`,
-        pernanentLocationUI: LOCALION_NAMES.ONLINE_UI },
+        pernanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
+        pernanentLocationUI: LOCATION_NAMES.ONLINE_UI },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: holdingsActionProfileName }
     },

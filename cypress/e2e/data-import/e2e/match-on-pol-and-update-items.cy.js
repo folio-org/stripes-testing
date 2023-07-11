@@ -2,7 +2,7 @@ import uuid from 'uuid';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import { FOLIO_RECORD_TYPE,
-  LOCALION_NAMES,
+  LOCATION_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
   ORDER_STATUSES,
@@ -360,12 +360,12 @@ describe('ui-data-import', () => {
       InventoryInstance.openHoldingView();
       HoldingsRecordView.checkHoldingsType('Monograph');
       HoldingsRecordView.checkCallNumberType('Library of Congress classification');
-      HoldingsRecordView.checkPermanentLocation(LOCALION_NAMES.MAIN_LIBRARY_UI);
+      HoldingsRecordView.checkPermanentLocation(LOCATION_NAMES.MAIN_LIBRARY_UI);
       HoldingsRecordView.close();
-      InventoryInstance.openHoldingsAccordion(LOCALION_NAMES.MAIN_LIBRARY_UI);
+      InventoryInstance.openHoldingsAccordion(LOCATION_NAMES.MAIN_LIBRARY_UI);
       InventoryInstance.openItemByBarcode(firstItem.barcode);
       ItemRecordView.verifyItemStatus(ITEM_STATUS_NAMES.IN_PROCESS);
-      ItemRecordView.verifyEffectiveLocation(LOCALION_NAMES.MAIN_LIBRARY_UI);
+      ItemRecordView.verifyEffectiveLocation(LOCATION_NAMES.MAIN_LIBRARY_UI);
       ItemRecordView.closeDetailView();
       InventoryInstance.viewSource();
       InventoryViewSource.verifyBarcodeInMARCBibSource(firstItem.barcode);

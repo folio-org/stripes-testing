@@ -7,7 +7,7 @@ import {
   ITEM_STATUS_NAMES,
   FOLIO_RECORD_TYPE,
   CALL_NUMBER_TYPE_NAMES,
-  LOCALION_NAMES,
+  LOCATION_NAMES,
   EXPORT_TRANSFORMATION_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
   PROFILE_TYPE_NAMES,
@@ -224,7 +224,7 @@ describe('ui-data-import', () => {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `autotestMappingHoldings${getRandomPostfix()}`,
         callNumberType: `"${CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS}"`,
-        permanentLocation: `"${LOCALION_NAMES.ONLINE}"` },
+        permanentLocation: `"${LOCATION_NAMES.ONLINE}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `autotestActionHoldings${getRandomPostfix()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
