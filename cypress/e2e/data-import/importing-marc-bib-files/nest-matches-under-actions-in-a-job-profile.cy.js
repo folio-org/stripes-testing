@@ -4,7 +4,7 @@ import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import {
   FOLIO_RECORD_TYPE,
-  LOCALION_NAMES,
+  LOCATION_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
   PROFILE_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
@@ -59,7 +59,7 @@ describe('ui-data-import', () => {
           { name: 'permanentLocationId',
             enabled: true,
             path: 'holdings.permanentLocationId',
-            value: `"${LOCALION_NAMES.ONLINE}"`
+            value: `"${LOCATION_NAMES.ONLINE}"`
           }
         ]
       }

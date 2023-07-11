@@ -167,7 +167,7 @@ export const ACQUISITION_METHOD_NAMES = {
   TECHNICAL: 'Technical'
 };
 
-export const LOCALION_NAMES = {
+export const LOCATION_NAMES = {
   ANNEX: 'Annex (KU/CC/DI/A)',
   ANNEX_UI: 'Annex',
   ONLINE: 'Online (E)',

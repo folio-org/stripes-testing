@@ -5,7 +5,7 @@ import {
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
   ITEM_STATUS_NAMES,
-  LOCALION_NAMES,
+  LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES
 } from '../../../support/constants';
@@ -36,7 +36,7 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `autotestMappingHoldings${getRandomPostfix()}`,
-        permanentLocation: `"${LOCALION_NAMES.ANNEX}"` },
+        permanentLocation: `"${LOCATION_NAMES.ANNEX}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `autotestActionHoldings${getRandomPostfix()}` }
     },
