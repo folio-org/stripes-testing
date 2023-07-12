@@ -2,7 +2,7 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TestTypes from '../../../support/dictionary/testTypes';
-import { LOCALION_NAMES,
+import { LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
   CALL_NUMBER_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
@@ -37,7 +37,7 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `createEHoldingsMappingProf${getRandomPostfix()}`,
-        permanentLocation: `"${LOCALION_NAMES.ONLINE}"` },
+        permanentLocation: `"${LOCATION_NAMES.ONLINE}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `createEHoldingsActionProf${getRandomPostfix()}` }
     },

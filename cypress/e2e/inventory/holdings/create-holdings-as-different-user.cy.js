@@ -9,7 +9,7 @@ import TestTypes from '../../../support/dictionary/testTypes';
 import Users from '../../../support/fragments/users/users';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { INSTANCE_SOURCE_NAMES, LOCALION_NAMES } from '../../../support/constants';
+import { INSTANCE_SOURCE_NAMES, LOCATION_NAMES } from '../../../support/constants';
 
 describe('ui-inventory: Create a Holdings record as another user than the one that created the Instance', () => {
   let firstUser;
@@ -18,7 +18,7 @@ describe('ui-inventory: Create a Holdings record as another user than the one th
   const recordsData = {
     instanceTitle,
     permanentLocationOption: 'Online (E) ',
-    permanentLocationValue: LOCALION_NAMES.ONLINE_UI,
+    permanentLocationValue: LOCATION_NAMES.ONLINE_UI,
     source: INSTANCE_SOURCE_NAMES.FOLIO
   };
 

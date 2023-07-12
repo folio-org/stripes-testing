@@ -3,7 +3,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import { FOLIO_RECORD_TYPE,
-  LOCALION_NAMES,
+  LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
   LOAN_TYPE_NAMES,
   ITEM_STATUS_NAMES,
@@ -46,8 +46,8 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { name: `C17036 holdings create mapping profile_${getRandomPostfix()}`,
         typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        permanentLocation: `"${LOCALION_NAMES.MAIN_LIBRARY}"`,
-        permanentLocationUI: LOCALION_NAMES.MAIN_LIBRARY_UI, },
+        permanentLocation: `"${LOCATION_NAMES.MAIN_LIBRARY}"`,
+        permanentLocationUI: LOCATION_NAMES.MAIN_LIBRARY_UI, },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C17036 holdings create action profile_${getRandomPostfix()}` }
     },
