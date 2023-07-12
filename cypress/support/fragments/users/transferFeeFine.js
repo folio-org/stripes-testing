@@ -44,4 +44,11 @@ export default {
       confirmButton.click(),
     ]);
   },
+
+  transferFeeFineViaApi:(apiBody, feeFineId) => cy.okapiRequest({
+    method: 'POST',
+    path: `accounts/${feeFineId}/transfer`,
+    body: apiBody,
+    isDefaultSearchParamsRequired: false
+  }),
 };

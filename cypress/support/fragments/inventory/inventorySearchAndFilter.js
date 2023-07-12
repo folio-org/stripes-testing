@@ -205,7 +205,7 @@ export default {
     // cypress can't draw selected option without wait
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000);
-    cy.do(Select('Search field index').choose('Call numbers'));
+    cy.do(Select('Search field index').choose('Call numbers (all)'));
     cy.expect(effectiveLocationInput.exists());
   },
 
@@ -252,7 +252,7 @@ export default {
   verifyBrowseOptions() {
     cy.do(browseSearchAndFilterInput.click());
     cy.expect([
-      browseSearchAndFilterInput.has({ content: including('Call numbers') }),
+      browseSearchAndFilterInput.has({ content: including('Call numbers (all)') }),
       browseSearchAndFilterInput.has({ content: including('Contributors') }),
       browseSearchAndFilterInput.has({ content: including('Subjects') }),
     ]);
