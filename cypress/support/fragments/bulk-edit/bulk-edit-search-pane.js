@@ -501,7 +501,7 @@ export default {
 
   verifySpecificItemsMatched(...values) {
     values.forEach(value => {
-      cy.expect(resultsAccordion.find(MultiColumnListCell({ content: value })).exists());
+      cy.expect(resultsAccordion.find(MultiColumnListCell({ content: including(value) })).exists());
     });
   },
 
