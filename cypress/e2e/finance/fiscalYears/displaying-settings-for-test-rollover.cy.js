@@ -154,6 +154,5 @@ describe('ui-finance: Fiscal Year Rollover', () => {
     Ledgers.fillInTestRolloverInfoCashBalance(secondFiscalYear.code, 'None', 'Allocation');
     Ledgers.rolloverLogs();
     Ledgers.checkRolloverLogs(todayDate);
-    cy.pause();
   });
 });
