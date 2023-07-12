@@ -10,7 +10,8 @@ import { LOCATION_NAMES,
   LOAN_TYPE_NAMES,
   ORDER_FORMAT_NAMES_IN_PROFILE,
   JOB_STATUS_NAMES,
-  VENDOR_NAMES } from '../../../support/constants';
+  VENDOR_NAMES,
+  ACQUISITION_METHOD_NAMES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
