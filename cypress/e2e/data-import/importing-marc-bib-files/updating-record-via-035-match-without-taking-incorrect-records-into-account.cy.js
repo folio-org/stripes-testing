@@ -24,6 +24,7 @@ import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
   let user;
+  const quantityOfItems = '1';
   const identifier = 'ccn00999523';
   const protectedFields = {
     firstField: '020',
@@ -137,7 +138,7 @@ describe('ui-data-import', () => {
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileNameForCreate);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-
+      
       // create match profile
       cy.visit(SettingsMenu.matchProfilePath);
       MatchProfiles.createMatchProfileWithQualifier(matchProfile);
@@ -161,6 +162,7 @@ describe('ui-data-import', () => {
       JobProfiles.waitFileIsImported(fileNameForMatch);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(fileNameForMatch);
+      FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
       FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc);
       FileDetails.checkStatusInColumn(FileDetails.status.dash, FileDetails.columnNameInResultList.instance);
 
@@ -196,8 +198,11 @@ describe('ui-data-import', () => {
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileNameForUpdate);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-      Logs.openFileDetails(fileNameForMatch);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance);
+      Logs.openFileDetails(fileNameForUpdate);
+      [FileDetails.columnNameInResultList.srsMarc, FileDetails.columnNameInResultList.instance].forEach(columnName => {
+        FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+      });
+      FileDetails.checkSrsRecordQuantityInSummaryTable('1', 1);
+      FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
     });
 });

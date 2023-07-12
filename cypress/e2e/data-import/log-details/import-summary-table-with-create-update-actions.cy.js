@@ -5,7 +5,7 @@ import DevTeams from '../../../support/dictionary/devTeams';
 import { LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
   ITEM_STATUS_NAMES,
-  LOCALION_NAMES,
+  LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
   EXPORT_TRANSFORMATION_NAMES,
@@ -31,7 +31,8 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
@@ -74,8 +75,8 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C356791 autotest holdings mapping profile.${getRandomPostfix()}`,
-        permanentLocation: `"${LOCALION_NAMES.ONLINE}"`,
-        pernanentLocationUI: LOCALION_NAMES.ONLINE_UI },
+        permanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
+        pernanentLocationUI: LOCATION_NAMES.ONLINE_UI },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C356791 autotest holdings action profile.${getRandomPostfix()}` }
     },
@@ -119,8 +120,8 @@ describe('ui-data-import', () => {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C356791 autotest holdings mapping profile.${getRandomPostfix()}`,
         holdingsType: 'Electronic',
-        permanetLocation: `"${LOCALION_NAMES.ONLINE}"`,
-        permanetLocationUI: LOCALION_NAMES.ONLINE_UI,
+        permanetLocation: `"${LOCATION_NAMES.ONLINE}"`,
+        permanetLocationUI: LOCATION_NAMES.ONLINE_UI,
         callNumberType: CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS,
         callNumber: '050$a " " 050$b' },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
@@ -219,7 +220,7 @@ describe('ui-data-import', () => {
       FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
     });
     Users.deleteViaApi(user.userId);
-    instanceHrids.forEach(hrid =>{
+    cy.wrap(instanceHrids).each(hrid =>{
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` })
       .then((instance) => {
         cy.deleteItemViaApi(instance.items[0].id);
@@ -391,12 +392,10 @@ describe('ui-data-import', () => {
             
       // check items is updated in Inventory
       [0, 1].forEach(rowNumber => {
-        [FileDetails.columnNameInResultList.srsMarc,
-          FileDetails.columnNameInResultList.instance,
-          FileDetails.columnNameInResultList.holdings,
-          FileDetails.columnNameInResultList.item].forEach(columnName => {
-          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName, rowNumber);
-        });
+        FileDetails.checkItemsStatusesInResultList(
+          rowNumber,
+          [FileDetails.status.updated, FileDetails.status.updated,
+            FileDetails.status.updated, FileDetails.status.updated]);
         FileDetails.openInstanceInInventory('Updated', rowNumber);
         InstanceRecordView.verifyInstanceStatusTerm(collectionOfProfilesForUpdate[0].mappingProfile.statusTerm);
         InstanceRecordView.verifyStatisticalCode(collectionOfProfilesForUpdate[0].mappingProfile.statisticalCodeUI);

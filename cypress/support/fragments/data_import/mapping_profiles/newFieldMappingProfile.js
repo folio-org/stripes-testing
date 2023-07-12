@@ -115,41 +115,56 @@ const waitLoading = () => {
 const selectFromResultsList = (rowNumber = 0) => cy.do(organizationModal.find(MultiColumnListRow({ index: rowNumber })).click());
 
 const addContributor = (profile) => {
-  cy.do([Button('Add contributor').click(),
-    TextField('Contributor').fillIn(profile.contributor),
-    TextField('Contributor type').fillIn(`"${profile.contributorType}"`)
-  ]);
+  if(profile.qualifier){
+    cy.do([
+      Button('Add contributor').click(),
+      TextField('Contributor').fillIn(profile.contributor),
+      TextField('Contributor type').fillIn(`"${profile.contributorType}"`)
+    ]);
+  }
 };
 
 const addProductId = (profile) => {
-  cy.do([Button('Add product ID and product ID type').click(),
-    TextField('Product ID').fillIn(profile.productId),
-    TextField('Qualifier').fillIn(profile.qualifier),
-    TextField('Product ID type').fillIn(`"${profile.productIDType}"`)
-  ]);
+  if(profile.productId){
+    cy.do([
+      Button('Add product ID and product ID type').click(),
+      TextField('Product ID').fillIn(profile.productId),
+      TextField('Product ID type').fillIn(`"${profile.productIDType}"`)
+    ]);
+  }
+  if(profile.qualifier){
+    cy.do(TextField('Qualifier').fillIn(profile.qualifier));
+  }
 };
 
 const addVendorReferenceNumber = (profile) => {
-  cy.do([Button('Add vendor reference number').click(),
-    TextField('Vendor reference number').fillIn(profile.vendorReferenceNumber),
-    TextField('Vendor reference type').fillIn(`"${profile.vendorReferenceType}"`)
+  if(profile.vendorReferenceNumber){
+    cy.do([
+      Button('Add vendor reference number').click(),
+      TextField('Vendor reference number').fillIn(profile.vendorReferenceNumber),
+      TextField('Vendor reference type').fillIn(`"${profile.vendorReferenceType}"`)
   ]);
+  }
 };
 
 const addFundDistriction = (profile) => {
-  cy.do([Button('Add fund distribution').click(),
+  if(profile.fundId){
+    cy.do([Button('Add fund distribution').click(),
     TextField('Fund ID').fillIn(profile.fundId),
     TextField('Expense class').fillIn(profile.expenseClass),
     TextField('Value').fillIn(`"${profile.value}"`),
     Accordion('Fund distribution').find(Button('%')).click()
   ]);
+  }
 };
 
 const addLocation = (profile) => {
-  cy.do([
-    locationAccordion.find(Button('Add location')).click(),
-    TextField('Name (code)').fillIn(profile.locationName)
-  ]);
+  if(profile.locationName){
+    cy.do([
+      locationAccordion.find(Button('Add location')).click(),
+      TextField('Name (code)').fillIn(profile.locationName)
+    ]);
+  }
   if(profile.locationQuantityElectronic){
     cy.do(locationAccordion.find(quantityElectronicField).fillIn(profile.locationQuantityElectronic));
   }
@@ -170,10 +185,12 @@ const addVendor = (profile) => {
 };
 
 const addVolume = (profile) => {
+if(profile.volume){
   cy.do([
     physicalResourceDetailsAccordion.find(Button('Add volume')).click(),
     TextField('Volume').fillIn(profile.volume)
   ]);
+}
 };
 
 const getDefaultInstanceMappingProfile = (name) => {
@@ -413,29 +430,57 @@ export default {
       orderInformationAccordion.find(approvedCheckbox).click()
     ]);
     addVendor(profile);
+    if(profile.reEncumber){
+      cy.do(reEncumberField.fillIn(`"${profile.reEncumber}"`));
+    }
+    cy.do(titleField.fillIn(profile.title));
+    if(profile.mustAcknowledgeReceivingNote){
+      cy.do(mustAcknoledgeReceivingNoteField.fillIn(`"${profile.mustAcknowledgeReceivingNote}"`));
+    }
+    if(profile.publicationDate){
+      cy.do([
+        publicationDateField.fillIn(profile.publicationDate),
+        publisherField.fillIn(profile.publisher),
+        editionField.fillIn(profile.edition)
+      ]);
+    }
+    if(profile.internalNote){
+      cy.do(internalNoteField.fillIn(profile.internalNote));
+    }
     cy.do([
-      reEncumberField.fillIn(`"${profile.reEncumber}"`),
-      titleField.fillIn(profile.title),
-      mustAcknoledgeReceivingNoteField.fillIn(`"${profile.mustAcknowledgeReceivingNote}"`),
-      publicationDateField.fillIn(profile.publicationDate),
-      publisherField.fillIn(profile.publisher),
-      editionField.fillIn(profile.edition),
-      internalNoteField.fillIn(profile.internalNote),
       acquisitionMethodField.fillIn(`"${profile.acquisitionMethod}"`),
-      orderFormatField.fillIn(`"${profile.orderFormat}"`),
-      receiptStatusField.fillIn(`"${profile.receiptStatus}"`),
-      paymentStatusField.fillIn(`"${profile.paymentStatus}"`),
-      selectorField.fillIn(profile.selector),
-      cancellationRestrictionField.fillIn(`"${profile.cancellationRestriction}"`),
-      rushField.fillIn(profile.rush),
-      receivingWorkflowField.fillIn(`"${profile.receivingWorkflow}"`),
-      accountNumberField.fillIn(profile.accountNumber),
-      TextArea('Instructions to vendor').fillIn(profile.instructionsToVendor),
+      orderFormatField.fillIn(`"${profile.orderFormat}"`)
+    ]);
+    if(profile.receiptStatus){
+      cy.do(receiptStatusField.fillIn(`"${profile.receiptStatus}"`));
+    }
+    if(profile.paymentStatus){
+      cy.do(paymentStatusField.fillIn(`"${profile.paymentStatus}"`));
+    }
+    if(profile.selector){
+      cy.do(selectorField.fillIn(profile.selector));
+    }
+    if(profile.cancellationRestriction){
+      cy.do(cancellationRestrictionField.fillIn(`"${profile.cancellationRestriction}"`));
+    }
+    if(profile.rush){
+      cy.do(rushField.fillIn(profile.rush));
+    }
+    cy.do(receivingWorkflowField.fillIn(`"${profile.receivingWorkflow}"`));
+    if(profile.accountNumber){
+      cy.do(accountNumberField.fillIn(profile.accountNumber));
+    }
+    if(profile.instructionsToVendor){
+      cy.do(TextArea('Instructions to vendor').fillIn(profile.instructionsToVendor));
+    }
+    cy.do([
       electronicUnitPriceField.fillIn(profile.electronicUnitPrice),
       quantityElectronicField.fillIn(profile.quantityElectronic),
-      currencyField.fillIn(`"${profile.currency}"`),
-      TextField('Access provider').fillIn(`"${profile.accessProvider}"`)
+      currencyField.fillIn(`"${profile.currency}"`)
     ]);
+    if(profile.accessProvider){
+      cy.do(TextField('Access provider').fillIn(`"${profile.accessProvider}"`));
+    }
     addContributor(profile);
     addProductId(profile);
     addVendorReferenceNumber(profile);
@@ -453,34 +498,67 @@ export default {
       orderInformationAccordion.find(approvedCheckbox).click()
     ]);
     addVendor(profile);
+    if(profile.reEncumber){
+      cy.do(reEncumberField.fillIn(`"${profile.reEncumber}"`));
+    }
+    cy.do(titleField.fillIn(profile.title));
+    if(profile.mustAcknowledgeReceivingNote){
+      cy.do(mustAcknoledgeReceivingNoteField.fillIn(`"${profile.mustAcknowledgeReceivingNote}"`));
+    }
+    if(profile.publicationDate){
+      cy.do([
+        publicationDateField.fillIn(profile.publicationDate),
+        publisherField.fillIn(profile.publisher)
+      ]);
+    }
+    if(profile.edition){
+      cy.do(editionField.fillIn(profile.edition));
+    }
+    if(profile.internalNote){
+      cy.do(internalNoteField.fillIn(profile.internalNote));
+    }
     cy.do([
-      reEncumberField.fillIn(`"${profile.reEncumber}"`),
-      titleField.fillIn(profile.title),
-      mustAcknoledgeReceivingNoteField.fillIn(`"${profile.mustAcknowledgeReceivingNote}"`),
-      publicationDateField.fillIn(profile.publicationDate),
-      publisherField.fillIn(profile.publisher),
-      editionField.fillIn(profile.edition),
-      internalNoteField.fillIn(profile.internalNote),
       acquisitionMethodField.fillIn(`"${profile.acquisitionMethod}"`),
-      orderFormatField.fillIn(`"${profile.orderFormat}"`),
-      receiptStatusField.fillIn(`"${profile.receiptStatus}"`),
-      paymentStatusField.fillIn(`"${profile.paymentStatus}"`),
-      selectorField.fillIn(profile.selector),
-      cancellationRestrictionField.fillIn(`"${profile.cancellationRestriction}"`),
-      rushField.fillIn(profile.rush),
-      receivingWorkflowField.fillIn(`"${profile.receivingWorkflow}"`),
-      accountNumberField.fillIn(profile.accountNumber),
+      orderFormatField.fillIn(`"${profile.orderFormat}"`)]);
+    if(profile.receiptStatus){
+      cy.do(receiptStatusField.fillIn(`"${profile.receiptStatus}"`));
+    }
+    if(profile.paymentStatus){
+      cy.do(paymentStatusField.fillIn(`"${profile.paymentStatus}"`));
+    }
+    if(profile.selector){
+      cy.do(selectorField.fillIn(profile.selector));
+    }
+    if(profile.cancellationRestriction){
+      cy.do(cancellationRestrictionField.fillIn(`"${profile.cancellationRestriction}"`));
+    }
+    if(profile.rush){
+      cy.do(rushField.fillIn(profile.rush));
+    }
+    cy.do(receivingWorkflowField.fillIn(`"${profile.receivingWorkflow}"`));
+    if(profile.accountNumber){
+      cy.do(accountNumberField.fillIn(profile.accountNumber));
+    }
+    cy.do([
       physicalUnitPrice.fillIn(profile.physicalUnitPrice),
       quantityPhysicalField.fillIn(profile.quantityPhysical),
-      currencyField.fillIn(`"${profile.currency}"`),
-      physicalResourceDetailsAccordion.find(organizationLookUpButton).click(),
-      organizationModal.find(searchField).fillIn(profile.materialSupplier),
-      organizationModal.find(searchButton).click(),
-      organizationModal.find(HTML(including('1 record found'))).exists(),
-      MultiColumnListCell(profile.vendor).click({ row: 0, columnIndex: 0 }),
-      physicalResourceDetailsAccordion.find(TextField('Create inventory')).fillIn(`"${profile.createInventory}"`),
-      physicalResourceDetailsAccordion.find(materialTypeField).fillIn(`"${profile.materialType}"`)
+      currencyField.fillIn(`"${profile.currency}"`)
     ]);
+    if(profile.materialSupplier){
+      cy.do([
+        physicalResourceDetailsAccordion.find(organizationLookUpButton).click(),
+        organizationModal.find(searchField).fillIn(profile.materialSupplier),
+        organizationModal.find(searchButton).click(),
+        organizationModal.find(HTML(including('1 record found'))).exists(),
+        MultiColumnListCell(profile.vendor).click({ row: 0, columnIndex: 0 }),
+      ]);
+    }
+    if(profile.createInventory){
+      cy.do(physicalResourceDetailsAccordion.find(TextField('Create inventory')).fillIn(`"${profile.createInventory}"`));
+    }
+    if(profile.materialType){
+      cy.do(physicalResourceDetailsAccordion.find(materialTypeField).fillIn(`"${profile.materialType}"`));
+    }
     addContributor(profile);
     addProductId(profile);
     addVendorReferenceNumber(profile);

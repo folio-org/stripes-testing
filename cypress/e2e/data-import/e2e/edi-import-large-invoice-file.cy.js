@@ -70,6 +70,7 @@ describe('ui-data-import', () => {
     // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
     DataImport.verifyUploadState();
     DataImport.uploadFile('ediFileForC347615.edi', fileName);
+    DataImport.waitFileIsUploaded();
     JobProfiles.searchJobProfileForImport(jobProfile.profileName);
     JobProfiles.selectJobProfile();
     JobProfiles.runImportFile();

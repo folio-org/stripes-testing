@@ -5,7 +5,7 @@ import permissions from '../../../support/dictionary/permissions';
 import {
   LOAN_TYPE_NAMES,
   ITEM_STATUS_NAMES,
-  LOCALION_NAMES,
+  LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
   MATERIAL_TYPE_NAMES,
   EXISTING_RECORDS_NAMES
@@ -25,7 +25,7 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import TopMenu from '../../../support/fragments/topMenu';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
@@ -56,7 +56,7 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C357552 Create simple holdings ${Helper.getRandomBarcode()}`,
-        permanentLocation: LOCALION_NAMES.ONLINE },
+        permanentLocation: LOCATION_NAMES.ONLINE },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C357552 Create simple holdings ${Helper.getRandomBarcode()}` }
     },

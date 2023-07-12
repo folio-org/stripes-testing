@@ -34,7 +34,7 @@ import InventoryViewSource from './inventoryViewSource';
 import InventoryNewHoldings from './inventoryNewHoldings';
 import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
 import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovement';
-import ItemRecordView from './itemRecordView';
+import ItemRecordView from './item/itemRecordView';
 import DateTools from '../../utils/dateTools';
 
 const section = Section({ id: 'pane-instancedetails' });
@@ -397,6 +397,19 @@ export default {
     cy.do(searchInput.fillIn(value));
     cy.expect(searchInput.has({ value }));
     cy.expect(enabledSearchBtn.exists());
+    cy.do(searchButton.click());
+    cy.expect(authoritySearchResults.exists());
+  },
+
+  searchResultsWithOption(option, value) {
+    cy.do([
+      selectField.choose(including(option)),
+      searchInput.fillIn(value)
+    ]);
+    cy.expect([
+      searchInput.has({ value }),
+      enabledSearchBtn.exists()
+    ]);
     cy.do(searchButton.click());
     cy.expect(authoritySearchResults.exists());
   },

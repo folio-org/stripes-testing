@@ -1,11 +1,14 @@
 import { HTML, including } from '@interactors/html';
-import { Accordion, KeyValue, Pane, Button, TextField, MultiColumnList, Callout, PaneHeader, Link } from '../../../../interactors';
-import dateTools from '../../utils/dateTools';
+import { Accordion, KeyValue, Pane, Button, TextField, MultiColumnList, Callout, PaneHeader, Link } from '../../../../../interactors';
+import dateTools from '../../../utils/dateTools';
 
 const loanAccordion = Accordion('Loan and availability');
 const administrativeDataAccordion = Accordion('Administrative data');
+const acquisitionAccordion = Accordion('Acquisition');
 const itemDataAccordion = Accordion('Item data');
 const itemNotesAccordion = Accordion('Item notes');
+const circulationHistoryAccordion = Accordion('Circulation history');
+const saveAndCloseBtn = Button('Save & close');
 
 const verifyItemBarcode = value => { cy.expect(KeyValue('Item barcode').has({ value })); };
 const verifyItemIdentifier = value => { cy.expect(KeyValue('Item identifier').has({ value })); };
@@ -24,6 +27,7 @@ const findRowAndClickLink = (enumerationValue) => {
     elem.parent()[0].querySelector('a').click();
   });
 };
+const getAssignedHRID = () => cy.then(() => KeyValue('Item HRID').value());
 
 const itemStatuses = {
   onOrder: 'On order',
@@ -49,6 +53,8 @@ export default {
   closeDetailView,
   verifyItemStatus,
   verifyItemStatusInPane,
+  getAssignedHRID,
+  findRowAndClickLink,
 
   suppressedAsDiscoveryIsAbsent() {
     cy.expect(HTML(including('Warning: Item is marked suppressed from discovery')).absent());
@@ -57,9 +63,6 @@ export default {
   suppressedAsDiscoveryIsPresent() {
     cy.expect(HTML(including('Warning: Item is marked suppressed from discovery')).exists());
   },
-
-  findRowAndClickLink,
-  getAssignedHRID:() => cy.then(() => KeyValue('Item HRID').value()),
 
   verifyUpdatedItemDate:() => {
     cy.do(loanAccordion.find(KeyValue('Item status')).perform(element => {
@@ -74,7 +77,14 @@ export default {
   addPieceToItem:(numberOfPieces) => {
     cy.do([
       TextField({ name: 'numberOfPieces' }).fillIn(numberOfPieces),
-      Button('Save & close').click()
+      saveAndCloseBtn.click()
+    ]);
+  },
+
+  duplicateItem() {
+    cy.do([
+      Button('Actions').click(),
+      Button('Duplicate').click()
     ]);
   },
 
@@ -149,14 +159,27 @@ export default {
   },
 
   checkHotlinksToCreatedPOL:(number) => {
-    cy.expect(Accordion('Acquisition').find(KeyValue('POL number')).has({ value: number }));
-    cy.expect(Accordion('Acquisition').find(Link({ href: including('/orders/lines/view') })).exists());
+    cy.expect(acquisitionAccordion.find(KeyValue('POL number')).has({ value: number }));
+    cy.expect(acquisitionAccordion.find(Link({ href: including('/orders/lines/view') })).exists());
+  },
+
+  checkItemCirculationHistory:(date, servicePointName, userName) => {
+    cy.expect([
+      circulationHistoryAccordion.find(KeyValue('Check in date')).has({ value: including(date) }),
+      circulationHistoryAccordion.find(KeyValue('Service point')).has({ value: servicePointName }),
+      circulationHistoryAccordion.find(KeyValue('Source')).has({value: including(userName) })
+    ]);
+  },
+
+  verifyCalloutMessage:() => {
+    cy.expect(Callout({ textContent: including('has been successfully saved.') })
+      .exists());
   },
 
   changeItemBarcode:(barcode) => {
     cy.do([
       TextField({ id: 'additem_barcode' }).fillIn(barcode),
-      Button('Save & close').click()
+      saveAndCloseBtn.click()
     ]);
   },
 };

@@ -5,7 +5,7 @@ import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRec
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import TopMenu from '../../../support/fragments/topMenu';
 import GenerateItemBarcode from '../../../support/utils/generateItemBarcode';
 import Users from '../../../support/fragments/users/users';

@@ -71,6 +71,7 @@ const paneHeaderOrderLinesDetailes = PaneHeader({ id: 'paneHeaderorder-lines-det
 const orderLineDetailsPane = Pane({ id: 'order-lines-details' });
 const physicalResourceDetailsAccordion = Accordion('Physical resource details');
 const eResourcesDetails = Accordion('E-resources details');
+const fundDistributionAccordion = Accordion({ id: 'FundDistribution' });
 const polListingAccordion = Section({ id: 'POListing' });
 const quantityElectronicField = TextField({ name: 'locations[0].quantityElectronic' });
 const selectPermanentLocationModal = Modal('Select permanent location');
@@ -955,6 +956,16 @@ export default {
     ]);
   },
 
+  checkCreatedInventoryInPhysicalRecourceDetails: (value) =>{
+    cy.expect(Accordion('Physical resource details')
+      .find(KeyValue('Create inventory')).has({ value: value }));
+  },
+
+  checkCreatedInventoryInElectronicRecourceDetails: (value) =>{
+    cy.expect(Accordion('E-resources details')
+      .find(KeyValue('Create inventory')).has({ value: value }));
+  },
+
   checkIsOrderCreatedWithDataFromImportedFile: (orderData) => {
     cy.expect([
       KeyValue('Title').has({ value: orderData.title }),
@@ -1000,13 +1011,32 @@ export default {
         .find(KeyValue('Quantity physical'))
         .has({ value: orderData.locationQuantityPhysical })
     ]);
-    cy.expect(Accordion({ id: 'FundDistribution' })
+    cy.expect(fundDistributionAccordion
       .find(MultiColumnList())
       .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 0 }))
       .has({ content: orderData.fund }));
-    cy.expect(Accordion({ id: 'FundDistribution' })
+    cy.expect(fundDistributionAccordion
       .find(MultiColumnList())
       .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 2 }))
       .has({ content: orderData.value }));
+  },
+
+  checkFundAndExpenseClassPopulated(fundInformation){
+    cy.expect(fundDistributionAccordion
+      .find(MultiColumnList())
+      .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 0 }))
+      .has({ content: fundInformation.fund }));
+    cy.expect(fundDistributionAccordion
+      .find(MultiColumnList())
+      .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 1 }))
+      .has({ content: fundInformation.expenseClass }));
+    cy.expect(fundDistributionAccordion
+      .find(MultiColumnList())
+      .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 2 }))
+      .has({ content: fundInformation.value }));
+    cy.expect(fundDistributionAccordion
+      .find(MultiColumnList())
+      .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 3 }))
+      .has({ content: fundInformation.amount })); 
   }
 };
