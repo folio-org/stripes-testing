@@ -181,6 +181,6 @@ describe('Data Import - Update MARC Authority files', () => {
     InventoryInstances.selectInstance();
     InventoryInstance.verifyRecordStatus('Automated linking update');
     InventoryInstance.editMarcBibliographicRecord();
-    QuickMarcEditor.verifyTagFieldAfterLinking(60, '700', '0', '\\', '$a Elizabeth  $b II,  $c 1926-2022,  $q Queen of G. Britain', '', '$0 id.loc.gov/authorities/names/n80126296', '');
+    QuickMarcEditor.verifyTagFieldAfterLinking(60, '700', '0', '\\', '$a Elizabeth $b II, $c 1926-2022, $q Queen of G. Britain', '', '$0 id.loc.gov/authorities/names/n80126296', '');
   });
 });

@@ -961,6 +961,11 @@ export default {
       .find(KeyValue('Create inventory')).has({ value: value }));
   },
 
+  checkCreatedInventoryInElectronicRecourceDetails: (value) =>{
+    cy.expect(Accordion('E-resources details')
+      .find(KeyValue('Create inventory')).has({ value: value }));
+  },
+
   checkCreatedInventoryInOtherRecourceDetails: (value) =>{
     cy.expect(Accordion('Other resource details')
       .find(KeyValue('Create inventory')).has({ value: value }));
