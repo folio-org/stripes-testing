@@ -15,8 +15,8 @@ import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 let user;
-let items = [];
-let holdingsHRIDs = [];
+const items = [];
+const holdingsHRIDs = [];
 const holdingsNote = 'Line-1\nLine-2\nLine-3\nLine-4';
 const holdingsHRIDFileName = `holdingsHRID_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*-Matched-Records-${holdingsHRIDFileName}`;
@@ -68,10 +68,10 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
-      Users.deleteViaApi(user.userId);
       items.forEach(item => {
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       });
+      Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${holdingsHRIDFileName}`);
       FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName, changedRecordsFileName, previewFileName);
     });
@@ -90,7 +90,7 @@ describe('bulk-edit', () => {
       const location = 'Online';
       BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.replaceTemporaryLocation(location, 'holdings');
-      
+
       BulkEditActions.confirmChanges();
       BulkEditActions.verifyAreYouSureForm(holdingsHRIDs.length, location);
       BulkEditActions.downloadPreview();
@@ -101,13 +101,13 @@ describe('bulk-edit', () => {
       BulkEditActions.downloadChangedCSV();
       ExportFile.verifyFileIncludes(changedRecordsFileName, [holdingsNote]);
 
-      cy.visit( TopMenu.inventoryPath);
+      cy.visit(TopMenu.inventoryPath);
       items.forEach(item => {
         InventorySearchAndFilter.searchInstanceByTitle(item.instanceName);
         InventorySearchAndFilter.selectViewHoldings();
         InventoryInstance.verifyHoldingsTemporaryLocation(location);
         InventoryInstance.closeHoldingsView();
-      })
+      });
     });
   });
 });
