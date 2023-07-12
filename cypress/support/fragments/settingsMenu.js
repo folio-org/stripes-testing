@@ -72,6 +72,7 @@ export default {
   ordersInstanceTypePath: 'settings/orders/instance-type',
   ordersLoanTypePath: 'settings/orders/loan-type',
   // Users
+  permissionSets: 'settings/users/perms',
   usersOwnersPath: 'settings/users/owners',
   usersPath: 'settings/users',
   manualCharges: 'settings/users/feefinestable',

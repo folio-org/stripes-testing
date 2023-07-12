@@ -58,7 +58,7 @@ export default {
       Option({ value: 'contributors' }).exists(),
       contributorsOption.exists(),
     ]);
-    cy.then(() => Option('Call numbers').index()).then((callNumbersOptionIndex) => {
+    cy.then(() => Option('Call numbers (all)').index()).then((callNumbersOptionIndex) => {
         cy.then(() => contributorsOption.index()).then((contributorsOptionIndex) => {
             expect(contributorsOptionIndex).to.equal(callNumbersOptionIndex + 1);
         });
