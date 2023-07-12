@@ -5,7 +5,7 @@ import {
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
   ITEM_STATUS_NAMES,
-  LOCALION_NAMES,
+  LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
   JOB_STATUS_NAMES
@@ -50,7 +50,7 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C368005 Create holdings for mapping notes ${Helper.getRandomBarcode()}`,
-        permanetLocation: `"${LOCALION_NAMES.ANNEX}"` },
+        permanetLocation: `"${LOCATION_NAMES.ANNEX}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C368005 Create holdings for mapping notes ${Helper.getRandomBarcode()}` }
     },

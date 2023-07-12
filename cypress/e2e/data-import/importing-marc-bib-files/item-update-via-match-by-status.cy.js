@@ -5,7 +5,7 @@ import permissions from '../../../support/dictionary/permissions';
 import {
   LOAN_TYPE_NAMES,
   ITEM_STATUS_NAMES,
-  LOCALION_NAMES,
+  LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
   MATERIAL_TYPE_NAMES,
   EXISTING_RECORDS_NAMES
@@ -56,7 +56,7 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C357552 Create simple holdings ${Helper.getRandomBarcode()}`,
-        permanentLocation: LOCALION_NAMES.ONLINE },
+        permanentLocation: LOCATION_NAMES.ONLINE },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C357552 Create simple holdings ${Helper.getRandomBarcode()}` }
     },

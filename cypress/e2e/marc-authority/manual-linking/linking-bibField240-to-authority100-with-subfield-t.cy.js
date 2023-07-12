@@ -101,7 +101,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
 
     InventoryInstance.clickLinkButton();
     QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
-    QuickMarcEditor.verifyTagFieldAfterLinking(18, '240', '1', '0', '$a Variations,  $m piano, violin, cello,  $n op. 44,  $r E♭ major', '', '$0 id.loc.gov/authorities/names/n83130832', '');
+    QuickMarcEditor.verifyTagFieldAfterLinking(18, '240', '1', '0', '$a Variations, $m piano, violin, cello, $n op. 44, $r E♭ major', '', '$0 id.loc.gov/authorities/names/n83130832', '');
     QuickMarcEditor.pressSaveAndClose();
     QuickMarcEditor.checkAfterSaveAndClose();
 

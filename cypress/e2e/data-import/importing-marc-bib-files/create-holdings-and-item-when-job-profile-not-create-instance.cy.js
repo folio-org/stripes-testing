@@ -5,7 +5,7 @@ import {
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
   ITEM_STATUS_NAMES,
-  LOCALION_NAMES,
+  LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
@@ -51,7 +51,7 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C368009 Testing holding for SRS MARC bib ${Helper.getRandomBarcode()}`,
-        permanentLocation: `"${LOCALION_NAMES.ANNEX}"` },
+        permanentLocation: `"${LOCATION_NAMES.ANNEX}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C368009 Testing holding for SRS MARC bib ${Helper.getRandomBarcode()}` }
     }
@@ -197,7 +197,7 @@ describe('ui-data-import', () => {
 
           // check created items
           FileDetails.openHoldingsInInventory('Created');
-          HoldingsRecordView.checkPermanentLocation(LOCALION_NAMES.ANNEX_UI);
+          HoldingsRecordView.checkPermanentLocation(LOCATION_NAMES.ANNEX_UI);
           cy.go('back');
           FileDetails.openItemInInventory('Created');
           ItemRecordView.verifyMaterialType(MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE);
