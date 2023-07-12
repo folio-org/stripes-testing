@@ -99,11 +99,9 @@ describe('Inventory: Contributors Browse', () => {
         QuickMarcEditor.pressSaveAndClose();
         InventoryInstance.waitLoading();
       });
-    });
-  });
 
-  beforeEach('Login to the application', () => {
-    cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+      cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+    });
   });
 
   after('Deleting created user and data', () => {
