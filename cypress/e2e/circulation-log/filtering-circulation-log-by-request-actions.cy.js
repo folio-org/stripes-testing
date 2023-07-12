@@ -25,7 +25,7 @@ import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
 import LoansPage from '../../support/fragments/loans/loansPage';
 
 describe('Circulation log', () => {

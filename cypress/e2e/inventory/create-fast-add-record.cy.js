@@ -3,7 +3,7 @@ import TestTypes from '../../support/dictionary/testTypes';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import FastAddNewRecord from '../../support/fragments/inventory/fastAddNewRecord';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
-import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
 import InstanceRecordView from '../../support/fragments/inventory/instanceRecordView';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import { getLongDelay } from '../../support/utils/cypressTools';

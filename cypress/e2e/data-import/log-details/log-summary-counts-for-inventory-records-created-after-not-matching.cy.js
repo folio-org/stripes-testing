@@ -7,7 +7,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import {
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
-  LOCALION_NAMES,
+  LOCATION_NAMES,
   LOAN_TYPE_NAMES,
   ITEM_STATUS_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
@@ -27,7 +27,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import Users from '../../../support/fragments/users/users';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 
 describe('ui-data-import', () => {
   let user;
@@ -46,8 +46,8 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C378901 holdings mapping profile ${getRandomPostfix()}`,
-        permanentLocation: `"${LOCALION_NAMES.ONLINE}"`,
-        permanentLocationUI: LOCALION_NAMES.ONLINE_UI,
+        permanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
+        permanentLocationUI: LOCATION_NAMES.ONLINE_UI,
         callNumberType: '852$t',
         callNumber: '852$h',
         relationship: 'Resource',

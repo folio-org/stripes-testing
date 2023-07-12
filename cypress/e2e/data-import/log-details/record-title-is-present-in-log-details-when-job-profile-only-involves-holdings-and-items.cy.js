@@ -8,7 +8,7 @@ import ExportJobProfiles from '../../../support/fragments/data-export/exportJobP
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import { FOLIO_RECORD_TYPE,
-  LOCALION_NAMES,
+  LOCATION_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
   JOB_STATUS_NAMES } from '../../../support/constants';
@@ -30,7 +30,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import FileManager from '../../../support/utils/fileManager';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 
 describe.skip('ui-data-import', () => {
   let user;
@@ -46,7 +46,7 @@ describe.skip('ui-data-import', () => {
   const firstRecord = {
     instanceMappingProfileName: `C375109 instance mapping profile.${getRandomPostfix()}`,
     holdingsMappingProfileName: `C375109 holdings mapping profile.${getRandomPostfix()}`,
-    permanentLocation: LOCALION_NAMES.MAIN_LIBRARY,
+    permanentLocation: LOCATION_NAMES.MAIN_LIBRARY,
     itemMappingProfileName: `C375109 item mapping profile.${getRandomPostfix()}`,
     instanceActionProfileName: `C375109 instance action profile.${getRandomPostfix()}`,
     holdingsActionProfileName: `C375109 holdings action profile.${getRandomPostfix()}`,
@@ -56,7 +56,7 @@ describe.skip('ui-data-import', () => {
   const secondRecord = {
     instanceMappingProfileName: `C375109 instance mapping profile.${getRandomPostfix()}`,
     holdingsMappingProfileName: `C375109 holdings mapping profile.${getRandomPostfix()}`,
-    permanentLocation: LOCALION_NAMES.MAIN_LIBRARY,
+    permanentLocation: LOCATION_NAMES.MAIN_LIBRARY,
     itemMappingProfileName: `C375109 item mapping profile.${getRandomPostfix()}`,
     instanceActionProfileName: `C375109 instance action profile.${getRandomPostfix()}`,
     holdingsActionProfileName: `C375109 holdings action profile.${getRandomPostfix()}`,

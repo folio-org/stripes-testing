@@ -20,7 +20,7 @@ import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthorit
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import { LOCALION_NAMES, FOLIO_RECORD_TYPE, ACCEPTED_DATA_TYPE_NAMES, EXISTING_RECORDS_NAMES } from '../../../support/constants';
+import { LOCATION_NAMES, FOLIO_RECORD_TYPE, ACCEPTED_DATA_TYPE_NAMES, EXISTING_RECORDS_NAMES } from '../../../support/constants';
 
 describe('Importing MARC Bib files', () => {
   const testData = {};
@@ -32,7 +32,7 @@ describe('Importing MARC Bib files', () => {
     name: 'Update MARC Bib records by matching 999 ff $s subfield value',
     typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
     update: true,
-    permanentLocation: `"${LOCALION_NAMES.ANNEX}"`
+    permanentLocation: `"${LOCATION_NAMES.ANNEX}"`
   };
   const actionProfile = {
     typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
@@ -199,7 +199,7 @@ describe('Importing MARC Bib files', () => {
     InventoryInstances.selectInstance();
     InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane('Contributor');
     InventoryInstance.editMarcBibliographicRecord();
-    QuickMarcEditor.verifyTagFieldAfterLinking(19, '100', '1', '\\', '$a Chin, Staceyann,  $d 1972-', '$e Producer $e Narrator  $u test', '$0 id.loc.gov/authorities/names/n2008052404', '$4 prf.');
+    QuickMarcEditor.verifyTagFieldAfterLinking(19, '100', '1', '\\', '$a Chin, Staceyann, $d 1972-', '$e Producer $e Narrator $u test', '$0 id.loc.gov/authorities/names/n2008052404', '$4 prf.');
     QuickMarcEditor.verifyTagFieldAfterUnlinking(20, '245', '1', '4', '$a Paradise of other side (updated title) : $b a memoir / $c Staceyann Chin.');
   });
 });

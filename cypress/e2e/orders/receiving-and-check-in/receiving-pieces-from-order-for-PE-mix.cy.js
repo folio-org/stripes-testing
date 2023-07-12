@@ -11,7 +11,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import Organizations from '../../../support/fragments/organizations/organizations';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import OrderLines from '../../../support/fragments/orders/orderLines';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';

@@ -14,7 +14,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -24,7 +24,7 @@ import {
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
   ITEM_STATUS_NAMES,
-  LOCALION_NAMES,
+  LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
   EXISTING_RECORDS_NAMES,
   JOB_STATUS_NAMES
@@ -46,11 +46,11 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { name: `C17033 holdings create mapping profile_${getRandomPostfix()}`,
         typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        permanentLocation: `"${LOCALION_NAMES.MAIN_LIBRARY}"`,
-        permanentLocationUI: LOCALION_NAMES.MAIN_LIBRARY_UI,
+        permanentLocation: `"${LOCATION_NAMES.MAIN_LIBRARY}"`,
+        permanentLocationUI: LOCATION_NAMES.MAIN_LIBRARY_UI,
         permanentLocationInHoldingsAccordion: 'Main Library >',
-        temporaryLocation: `"${LOCALION_NAMES.ONLINE}"`,
-        temporaryLocationUI: LOCALION_NAMES.ONLINE_UI,
+        temporaryLocation: `"${LOCATION_NAMES.ONLINE}"`,
+        temporaryLocationUI: LOCATION_NAMES.ONLINE_UI,
         illPolicy: 'Unknown lending policy',
         digitizationPolicy: '"Digitization policy"',
         digitizationPolicyUI: 'Digitization policy' },

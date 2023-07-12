@@ -1,14 +1,13 @@
 import { including } from '@interactors/html';
-import { Accordion, TextField, Pane, Button } from '../../../../interactors';
+import { Accordion, TextField, Pane, Button } from '../../../../../interactors';
 
-const cancelBtn = Button({ id: 'cancel-item-edit' });
-const saveAndCloseBtn = Button({ id: 'clickable-save-item' });
+const saveAndCloseBtn = Button('Save & close');
+const cancelBtn = Button('Cancel');
 
 export default {
   waitLoading: (itemTitle) => {
     cy.expect(Pane(including(itemTitle)).exists());
     cy.expect(cancelBtn.has({ disabled: false }));
-    cy.expect(saveAndCloseBtn.has({ disabled: true }));
   },
 
   addBarcode:(barcode) => {

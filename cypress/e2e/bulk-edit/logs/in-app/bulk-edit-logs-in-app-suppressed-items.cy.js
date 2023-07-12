@@ -11,18 +11,14 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import ItemActions from '../../../../support/fragments/inventory/inventoryItem/itemActions';
 import TopMenu from '../../../../support/fragments/topMenu';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import ItemRecordView from '../../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 
 let user;
 
 const validItemBarcodesFileName = `validItemBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `Matched-Records-${validItemBarcodesFileName}`;
-const changedRecordsFileName = `*-Changed-Records*-${validItemBarcodesFileName}`;
-const updatedRecordsFileName = `result-*-${matchedRecordsFileName}`;
-const previewOfProposedChangesFileName = {
-  first: `*-Updates-Preview-${validItemBarcodesFileName}`,
-  second: `modified-*-${matchedRecordsFileName}`
-};
+const previewOfProposedChangesFileName = `*-Updates-Preview-${validItemBarcodesFileName}`;
+const updatedRecordsFileName = `*-Changed-Records*-${validItemBarcodesFileName}`;
 
 const inventoryEntity = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
@@ -57,7 +53,7 @@ describe('Bulk Edit - Logs', () => {
   after('delete test data', () => {
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);
-    FileManager.deleteFileFromDownloadsByMask(validItemBarcodesFileName, `*${matchedRecordsFileName}`, changedRecordsFileName, previewOfProposedChangesFileName.first, previewOfProposedChangesFileName.second, updatedRecordsFileName);
+    FileManager.deleteFileFromDownloadsByMask(validItemBarcodesFileName, `*${matchedRecordsFileName}`, previewOfProposedChangesFileName, updatedRecordsFileName);
   });
 
   it('C380761 Verify generated Logs files for Items suppressed from discovery (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
@@ -95,7 +91,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileName}`, [inventoryEntity.itemId], 'firstElement', true);
 
     BulkEditSearchPane.downloadFileWithProposedChanges();
-    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, [inventoryEntity.itemId], 'firstElement', true);
+    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName, [inventoryEntity.itemId], 'firstElement', true);
 
     BulkEditSearchPane.downloadFileWithUpdatedRecords();
     BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, [inventoryEntity.itemId], 'firstElement', true);

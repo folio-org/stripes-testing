@@ -20,7 +20,7 @@ import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthorit
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import { LOCALION_NAMES, FOLIO_RECORD_TYPE, ACCEPTED_DATA_TYPE_NAMES, EXISTING_RECORDS_NAMES } from '../../../support/constants';
+import { LOCATION_NAMES, FOLIO_RECORD_TYPE, ACCEPTED_DATA_TYPE_NAMES, EXISTING_RECORDS_NAMES } from '../../../support/constants';
 
 describe('Importing MARC Bib files', () => {
   const testData = {};
@@ -32,7 +32,7 @@ describe('Importing MARC Bib files', () => {
     name: 'Update MARC Bib records by matching 999 ff $s subfield value',
     typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
     update: true,
-    permanentLocation: `"${LOCALION_NAMES.ANNEX}"`
+    permanentLocation: `"${LOCATION_NAMES.ANNEX}"`
   };
   const actionProfile = {
     typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
@@ -218,8 +218,8 @@ describe('Importing MARC Bib files', () => {
     Logs.clickOnHotLink(0, 3, 'Updated');
     InventoryInstance.editMarcBibliographicRecord();
     QuickMarcEditor.verifyTagFieldAfterLinking(33, '100', '1', '\\', '$a Coates, Ta-Nehisi', '$e Writer $e author.', '$0 id.loc.gov/authorities/names/n2008001084', '');
-    QuickMarcEditor.verifyTagFieldAfterLinking(75, '700', '1', '\\', '$a Chin, Staceyann,  $d 1972-', '$e letterer.', '$0 id.loc.gov/authorities/names/n2008052404', '');
-    QuickMarcEditor.verifyTagFieldAfterLinking(76, '700', '1', '\\', '$a Lee, Stan,  $d 1922-2018', '$e AUTHOR $e creator', '$0 id.loc.gov/authorities/names/n83169267', '');
+    QuickMarcEditor.verifyTagFieldAfterLinking(75, '700', '1', '\\', '$a Chin, Staceyann, $d 1972-', '$e letterer.', '$0 id.loc.gov/authorities/names/n2008052404', '');
+    QuickMarcEditor.verifyTagFieldAfterLinking(76, '700', '1', '\\', '$a Lee, Stan, $d 1922-2018', '$e AUTHOR $e creator', '$0 id.loc.gov/authorities/names/n83169267', '');
 
     QuickMarcEditor.closeEditorPane();
     InventoryInstance.viewSource();

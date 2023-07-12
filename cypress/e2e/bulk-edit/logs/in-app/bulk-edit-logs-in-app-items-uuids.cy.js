@@ -11,19 +11,14 @@ import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-a
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import ItemRecordView from '../../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 
 let user;
 const validItemUUIDsFileName = `validItemUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `Matched-Records-${validItemUUIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records*-${validItemUUIDsFileName}`;
-// It downloads 2 files in one click, both with same content
-const previewOfProposedChangesFileName = {
-  first: `*-Updates-Preview-${validItemUUIDsFileName}`,
-  second: `modified-*-${matchedRecordsFileName}`
-};
-const updatedRecordsFileName = `result-*-${matchedRecordsFileName}`;
+const previewOfProposedChangesFileName = `*-Updates-Preview-${validItemUUIDsFileName}`;
+const updatedRecordsFileName = `*-Changed-Records*-${validItemUUIDsFileName}`;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
@@ -60,7 +55,7 @@ describe('Bulk Edit - Logs', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${validItemUUIDsFileName}`);
-    FileManager.deleteFileFromDownloadsByMask(validItemUUIDsFileName, `*${matchedRecordsFileName}`, changedRecordsFileName, previewOfProposedChangesFileName.first, previewOfProposedChangesFileName.second, updatedRecordsFileName);
+    FileManager.deleteFileFromDownloadsByMask(validItemUUIDsFileName, `*${matchedRecordsFileName}`, previewOfProposedChangesFileName, updatedRecordsFileName);
   });
 
   it('C375273 Verify generated Logs files for Items In app -- only valid Item UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -102,7 +97,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileName}`, [item.itemId], 'firstElement', true);
 
     BulkEditSearchPane.downloadFileWithProposedChanges();
-    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, [item.itemId], 'firstElement', true);
+    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName, [item.itemId], 'firstElement', true);
 
     BulkEditSearchPane.downloadFileWithUpdatedRecords();
     BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, [item.itemId], 'firstElement', true);

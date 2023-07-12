@@ -23,7 +23,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import FileManager from '../../../support/utils/fileManager';
 
 describe('ui-data-import', () => {

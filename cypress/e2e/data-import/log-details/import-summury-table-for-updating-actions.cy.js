@@ -3,7 +3,7 @@ import DevTeams from '../../../support/dictionary/devTeams';
 import { LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
   ITEM_STATUS_NAMES,
-  LOCALION_NAMES,
+  LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
   CALL_NUMBER_TYPE_NAMES,
@@ -35,7 +35,7 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 
 describe('ui-data-import', () => {
   let instanceHrid;
@@ -237,8 +237,8 @@ describe('ui-data-import', () => {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C356802 update holdings mapping profile ${Helper.getRandomBarcode()}`,
         holdingsType: 'Electronic',
-        permanentLocation: `"${LOCALION_NAMES.ONLINE}"`,
-        permanentLocationUI: LOCALION_NAMES.ONLINE_UI,
+        permanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
+        permanentLocationUI: LOCATION_NAMES.ONLINE_UI,
         callNumberType: CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS,
         callNumber: '050$a " " 050$b',
         relationship: 'Resource',
