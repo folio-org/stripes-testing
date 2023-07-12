@@ -956,6 +956,11 @@ export default {
     ]);
   },
 
+  checkCreatedInventoryInPhysicalRecourceDetails: (value) =>{
+    cy.expect(Accordion('Physical resource details')
+      .find(KeyValue('Create inventory')).has({ value: value }));
+  },
+
   checkIsOrderCreatedWithDataFromImportedFile: (orderData) => {
     cy.expect([
       KeyValue('Title').has({ value: orderData.title }),

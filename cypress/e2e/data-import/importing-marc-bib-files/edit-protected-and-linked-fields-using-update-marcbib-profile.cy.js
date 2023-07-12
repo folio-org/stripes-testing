@@ -21,7 +21,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
-import { LOCALION_NAMES, FOLIO_RECORD_TYPE, ACCEPTED_DATA_TYPE_NAMES, EXISTING_RECORDS_NAMES } from '../../../support/constants';
+import { LOCATION_NAMES, FOLIO_RECORD_TYPE, ACCEPTED_DATA_TYPE_NAMES, EXISTING_RECORDS_NAMES } from '../../../support/constants';
 
 describe('Importing MARC Bib files', () => {
   const testData = {};
@@ -36,7 +36,7 @@ describe('Importing MARC Bib files', () => {
     name: 'Update MARC Bib records by matching 999 ff $s subfield value',
     typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
     update: true,
-    permanentLocation: `"${LOCALION_NAMES.ANNEX}"`
+    permanentLocation: `"${LOCATION_NAMES.ANNEX}"`
   };
   const actionProfile = {
     typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
@@ -276,11 +276,11 @@ describe('Importing MARC Bib files', () => {
     Logs.openFileDetails(nameForUpdatedMarcFile);
     Logs.clickOnHotLink(0, 3, 'Updated');
     InventoryInstance.editMarcBibliographicRecord();
-    QuickMarcEditor.verifyTagFieldAfterLinking(17, '100', '1', '\\', '$a Ludwig van, Beethoven,  $d 1770-1827', '$e composer.', '$0 id.loc.gov/authorities/names/n79107741', '');
-    QuickMarcEditor.verifyTagFieldAfterLinking(18, '240', '1', '0', '$a Variations,  $m piano, violin, cello,  $n op. 44,  $r E♭ major', '$c Ludwig Van Beethoven.', '$0 id.loc.gov/authorities/names/n83130832', '');
+    QuickMarcEditor.verifyTagFieldAfterLinking(17, '100', '1', '\\', '$a Ludwig van, Beethoven, $d 1770-1827', '$e composer.', '$0 id.loc.gov/authorities/names/n79107741', '');
+    QuickMarcEditor.verifyTagFieldAfterLinking(18, '240', '1', '0', '$a Variations, $m piano, violin, cello, $n op. 44, $r E♭ major', '$c Ludwig Van Beethoven.', '$0 id.loc.gov/authorities/names/n83130832', '');
     QuickMarcEditor.verifyTagFieldAfterLinking(41, '650', '\\', '0', '$a Music piano', '$c Test environment', '$0 id.loc.gov/authorities/childrensSubjects/sj2021056711', '');
-    QuickMarcEditor.verifyTagFieldAfterLinking(50, '700', '1', '\\', '$a Hewitt, Angela,  $d 1958-', '$e instrumentalist, $e writer of supplementary textual content.', '$0 id.loc.gov/authorities/names/n91099716', '');
-    QuickMarcEditor.verifyTagFieldAfterLinking(51, '700', '1', '2', '$a Ludwig van, Beethoven,  $d 1770-1827', '$i Container of (work):', '$0 id.loc.gov/authorities/names/n79107741', '');
+    QuickMarcEditor.verifyTagFieldAfterLinking(50, '700', '1', '\\', '$a Hewitt, Angela, $d 1958-', '$e instrumentalist, $e writer of supplementary textual content.', '$0 id.loc.gov/authorities/names/n91099716', '');
+    QuickMarcEditor.verifyTagFieldAfterLinking(51, '700', '1', '2', '$a Ludwig van, Beethoven, $d 1770-1827', '$i Container of (work):', '$0 id.loc.gov/authorities/names/n79107741', '');
     QuickMarcEditor.verifyTagFieldAfterUnlinking(52, '700', '1', '\\', '$a Hewitt, Angela, $d 1958- $e instrumentalist, $e author of supplementary textual content. $0 id.loc.gov/authorities/names/n91099716');
     QuickMarcEditor.verifyTagFieldAfterUnlinking(53, '700', '1', '2', '$a Beethoven, Ludwig V. $d 1770-1827 $i Container of (work):');
   });
