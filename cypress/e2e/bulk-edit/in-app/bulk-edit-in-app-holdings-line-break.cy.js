@@ -76,7 +76,7 @@ describe('bulk-edit', () => {
       FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName, changedRecordsFileName, previewFileName);
     });
 
-    it('C360119 Verify that different Holdings identifiers are supported for Bulk edit (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C399093 Verify Previews for the number of Holdings records if the records have fields with line breaks (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
       BulkEditSearchPane.verifyDragNDropHoldingsHRIDsArea();
       BulkEditSearchPane.uploadFile(holdingsHRIDFileName);
       BulkEditSearchPane.waitFileUploading();
