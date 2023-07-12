@@ -4,12 +4,12 @@ import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import { FOLIO_RECORD_TYPE,
   ORDER_STATUSES,
-  ORDER_FORMAT_NAMES,
+  ORDER_FORMAT_NAMES_IN_PROFILE,
   ACQUISITION_METHOD_NAMES,
-  JOB_STATUS_NAMES } from '../../../support/constants';
+  JOB_STATUS_NAMES,
+  VENDOR_NAMES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -67,13 +67,13 @@ describe('ui-data-import', () => {
     typeValue: FOLIO_RECORD_TYPE.ORDER,
     orderStatus: ORDER_STATUSES.PENDING,
     approved: true,
-    vendor: 'GOBI Library Solutions',
+    vendor: VENDOR_NAMES.GOBI,
     title: '245$a',
     publicationDate: '264$c; else 260$c',
     publisher: '264$b; else 260$b',
     internalNote: '981$d',
     acquisitionMethod: ACQUISITION_METHOD_NAMES.PURCHASE_AT_VENDOR_SYSTEM,
-    orderFormat: ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE_Check,
+    orderFormat: ORDER_FORMAT_NAMES_IN_PROFILE.PHYSICAL_RESOURCE,
     selector: '981$e',
     receivingWorkflow: 'Synchronized',
     physicalUnitPrice: '980$b',
@@ -132,10 +132,7 @@ describe('ui-data-import', () => {
   it('C376975 Order field mapping profile: Check fund and expense class mappings (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       // create mapping profile
-      FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillPhysicalOrderMappingProfile(mappingProfile);
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+      FieldMappingProfiles.createOrderMappingProfile(mappingProfile);
       FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
       // create action profile

@@ -65,11 +65,6 @@ const incomingRecordType = {
   marcBib: 'MARC Bibliographic',
   edifact: 'EDIFACT invoice',
 };
-const organization = {
-  gobiLibrary: 'GOBI Library Solutions',
-  harrassowitz: 'Otto Harrassowitz GmbH & Co. KG',
-  ebsco:'EBSCO SUBSCRIPTION SERVICES'
-};
 const actions = {
   addTheseToExisting: 'Add these to existing',
   deleteAllExistingValues: 'Delete all existing values',
@@ -115,7 +110,7 @@ const waitLoading = () => {
 const selectFromResultsList = (rowNumber = 0) => cy.do(organizationModal.find(MultiColumnListRow({ index: rowNumber })).click());
 
 const addContributor = (profile) => {
-  if(profile.qualifier){
+  if(profile.contributor){
     cy.do([
       Button('Add contributor').click(),
       TextField('Contributor').fillIn(profile.contributor),
@@ -262,7 +257,6 @@ export default {
   materialType,
   permanentLoanType,
   statusField: status,
-  organization,
   catalogedDate,
   actions,
   addContributor,
@@ -345,7 +339,7 @@ export default {
     cy.expect(saveButton.absent());
   },
 
-  fillMappingProfileForInvoice:(profile) => {
+  fillInvoiceMappingProfile:(profile) => {
     cy.do([
       nameField.fillIn(profile.name),
       incomingRecordTypeField.choose(profile.incomingRecordType),
@@ -394,78 +388,15 @@ export default {
     cy.do(saveButton.click());
   },
 
-  fillPEMixOrderMappingProfile:(profile) => {
-    cy.do([
-      nameField.fillIn(profile.name),
-      incomingRecordTypeField.choose(incomingRecordType.marcBib),
-      existingRecordType.choose(profile.typeValue),
-      purchaseOrderStatus.fillIn(`"${profile.orderStatus}"`),
-      orderInformationAccordion.find(approvedCheckbox).click()
-    ]);
-    addVendor(profile);
-    cy.do([
-      titleField.fillIn(profile.title),
-      acquisitionMethodField.fillIn(`"${profile.acquisitionMethod}"`),
-      orderFormatField.fillIn(`"${profile.orderFormat}"`),
-      receivingWorkflowField.fillIn(`"${profile.receivingWorkflow}"`),
-      physicalUnitPrice.fillIn(`"${profile.physicalUnitPrice}"`),
-      quantityPhysicalField.fillIn(`"${profile.quantityPhysical}"`),
-      currencyField.fillIn(`"${profile.currency}"`),
-      electronicUnitPriceField.fillIn(`"${profile.electronicUnitPrice}"`),
-      quantityElectronicField.fillIn(`"${profile.quantityElectronic}"`),
-      locationAccordion.find(Button('Add location')).click(),
-      TextField('Name (code)').fillIn(`"${profile.locationName}"`),
-      locationAccordion.find(quantityPhysicalField).fillIn(`"${profile.locationQuantityPhysical}"`),
-      locationAccordion.find(quantityElectronicField).fillIn(`"${profile.locationQuantityElectronic}"`)
-    ]);
-  },
-
-  fillElectronicOrderMappingProfile:(profile) => {
-    waitLoading();
-    cy.do([
-      nameField.fillIn(profile.name),
-      incomingRecordTypeField.choose(incomingRecordType.marcBib),
-      existingRecordType.choose(profile.typeValue),
-      purchaseOrderStatus.fillIn(`"${profile.orderStatus}"`),
-      orderInformationAccordion.find(approvedCheckbox).click()
-    ]);
-    addVendor(profile);
-    cy.do([
-      reEncumberField.fillIn(`"${profile.reEncumber}"`),
-      titleField.fillIn(profile.title),
-      mustAcknoledgeReceivingNoteField.fillIn(`"${profile.mustAcknowledgeReceivingNote}"`),
-      publicationDateField.fillIn(profile.publicationDate),
-      publisherField.fillIn(profile.publisher),
-      editionField.fillIn(profile.edition),
-      internalNoteField.fillIn(profile.internalNote),
-      acquisitionMethodField.fillIn(`"${profile.acquisitionMethod}"`),
-      orderFormatField.fillIn(`"${profile.orderFormat}"`),
-      receiptStatusField.fillIn(`"${profile.receiptStatus}"`),
-      paymentStatusField.fillIn(`"${profile.paymentStatus}"`),
-      selectorField.fillIn(profile.selector),
-      cancellationRestrictionField.fillIn(`"${profile.cancellationRestriction}"`),
-      rushField.fillIn(profile.rush),
-      receivingWorkflowField.fillIn(`"${profile.receivingWorkflow}"`),
-      accountNumberField.fillIn(profile.accountNumber),
-      TextArea('Instructions to vendor').fillIn(profile.instructionsToVendor),
-      electronicUnitPriceField.fillIn(profile.electronicUnitPrice),
-      quantityElectronicField.fillIn(profile.quantityElectronic),
-      currencyField.fillIn(`"${profile.currency}"`),
-      TextField('Access provider').fillIn(`"${profile.accessProvider}"`)
-    ]);
-    addContributor(profile);
-    addProductId(profile);
-    addVendorReferenceNumber(profile);
-    addFundDistriction(profile);
-    addLocation(profile);
-    waitLoading();
-  },
-
   fillOrderMappingProfile:(profile) => {
+    // Summary section
     cy.do([
       nameField.fillIn(profile.name),
       incomingRecordTypeField.choose(incomingRecordType.marcBib),
-      existingRecordType.choose(profile.typeValue),
+      existingRecordType.choose(profile.typeValue)
+    ]);
+    // Order information section
+    cy.do([
       purchaseOrderStatus.fillIn(`"${profile.orderStatus}"`),
       orderInformationAccordion.find(approvedCheckbox).click()
     ]);
@@ -473,6 +404,7 @@ export default {
     if(profile.reEncumber){
       cy.do(reEncumberField.fillIn(`"${profile.reEncumber}"`));
     }
+    // Order line information
     cy.do(titleField.fillIn(profile.title));
     if(profile.mustAcknowledgeReceivingNote){
       cy.do(mustAcknoledgeReceivingNoteField.fillIn(`"${profile.mustAcknowledgeReceivingNote}"`));
@@ -486,6 +418,8 @@ export default {
     if(profile.edition){
       cy.do(editionField.fillIn(profile.edition));
     }
+    addContributor(profile);
+    addProductId(profile);
     if(profile.internalNote){
       cy.do(internalNoteField.fillIn(profile.internalNote));
     }
@@ -508,14 +442,28 @@ export default {
       cy.do(rushField.fillIn(profile.rush));
     }
     cy.do(receivingWorkflowField.fillIn(`"${profile.receivingWorkflow}"`));
+    addVendorReferenceNumber(profile);
+    if(profile.instructionsToVendor){
+      cy.do(TextArea('Instructions to vendor').fillIn(profile.instructionsToVendor));
+    }
     if(profile.accountNumber){
       cy.do(accountNumberField.fillIn(profile.accountNumber));
     }
-    cy.do([
-      physicalUnitPrice.fillIn(profile.physicalUnitPrice),
-      quantityPhysicalField.fillIn(profile.quantityPhysical),
-      currencyField.fillIn(`"${profile.currency}"`)
-    ]);
+    if(profile.physicalUnitPrice){
+      cy.do([
+        physicalUnitPrice.fillIn(profile.physicalUnitPrice),
+        quantityPhysicalField.fillIn(profile.quantityPhysical)
+      ]);
+    }
+    cy.do(currencyField.fillIn(`"${profile.currency}"`));
+    if(profile.quantityElectronic){
+      cy.do(quantityElectronicField.fillIn(profile.quantityElectronic));
+    }
+    if(profile.electronicUnitPrice){
+      cy.do(electronicUnitPriceField.fillIn(profile.electronicUnitPrice));
+    }
+    addFundDistriction(profile);
+    addLocation(profile);
     if(profile.materialSupplier){
       cy.do([
         physicalResourceDetailsAccordion.find(organizationLookUpButton).click(),
@@ -531,91 +479,10 @@ export default {
     if(profile.materialType){
       cy.do(physicalResourceDetailsAccordion.find(materialTypeField).fillIn(`"${profile.materialType}"`));
     }
-    addContributor(profile);
-    addProductId(profile);
-    addVendorReferenceNumber(profile);
-    addFundDistriction(profile);
-    addLocation(profile);
     addVolume(profile);
-    waitLoading();
-  },
-
-  fillPhysicalOrderMappingProfile:(profile) => {
-    cy.do([
-      nameField.fillIn(profile.name),
-      incomingRecordTypeField.choose(incomingRecordType.marcBib),
-      existingRecordType.choose(profile.typeValue),
-      purchaseOrderStatus.fillIn(`"${profile.orderStatus}"`),
-      orderInformationAccordion.find(approvedCheckbox).click()
-    ]);
-    addVendor(profile);
-    if(profile.reEncumber){
-      cy.do(reEncumberField.fillIn(`"${profile.reEncumber}"`));
+    if(profile.accessProvider){
+      cy.do(TextField('Access provider').fillIn(`"${profile.accessProvider}"`));
     }
-    cy.do(titleField.fillIn(profile.title));
-    if(profile.mustAcknowledgeReceivingNote){
-      cy.do(mustAcknoledgeReceivingNoteField.fillIn(`"${profile.mustAcknowledgeReceivingNote}"`));
-    }
-    if(profile.publicationDate){
-      cy.do([
-        publicationDateField.fillIn(profile.publicationDate),
-        publisherField.fillIn(profile.publisher)
-      ]);
-    }
-    if(profile.edition){
-      cy.do(editionField.fillIn(profile.edition));
-    }
-    if(profile.internalNote){
-      cy.do(internalNoteField.fillIn(profile.internalNote));
-    }
-    cy.do([
-      acquisitionMethodField.fillIn(`"${profile.acquisitionMethod}"`),
-      orderFormatField.fillIn(`"${profile.orderFormat}"`)]);
-    if(profile.receiptStatus){
-      cy.do(receiptStatusField.fillIn(`"${profile.receiptStatus}"`));
-    }
-    if(profile.paymentStatus){
-      cy.do(paymentStatusField.fillIn(`"${profile.paymentStatus}"`));
-    }
-    if(profile.selector){
-      cy.do(selectorField.fillIn(profile.selector));
-    }
-    if(profile.cancellationRestriction){
-      cy.do(cancellationRestrictionField.fillIn(`"${profile.cancellationRestriction}"`));
-    }
-    if(profile.rush){
-      cy.do(rushField.fillIn(profile.rush));
-    }
-    cy.do(receivingWorkflowField.fillIn(`"${profile.receivingWorkflow}"`));
-    if(profile.accountNumber){
-      cy.do(accountNumberField.fillIn(profile.accountNumber));
-    }
-    cy.do([
-      physicalUnitPrice.fillIn(profile.physicalUnitPrice),
-      quantityPhysicalField.fillIn(profile.quantityPhysical),
-      currencyField.fillIn(`"${profile.currency}"`)
-    ]);
-    if(profile.materialSupplier){
-      cy.do([
-        physicalResourceDetailsAccordion.find(organizationLookUpButton).click(),
-        organizationModal.find(searchField).fillIn(profile.materialSupplier),
-        organizationModal.find(searchButton).click(),
-        organizationModal.find(HTML(including('1 record found'))).exists(),
-        MultiColumnListCell(profile.vendor).click({ row: 0, columnIndex: 0 }),
-      ]);
-    }
-    if(profile.createInventory){
-      cy.do(physicalResourceDetailsAccordion.find(TextField('Create inventory')).fillIn(`"${profile.createInventory}"`));
-    }
-    if(profile.materialType){
-      cy.do(physicalResourceDetailsAccordion.find(materialTypeField).fillIn(`"${profile.materialType}"`));
-    }
-    addContributor(profile);
-    addProductId(profile);
-    addVendorReferenceNumber(profile);
-    addFundDistriction(profile);
-    addLocation(profile);
-    addVolume(profile);
     waitLoading();
   },
 

@@ -9,7 +9,10 @@ import {
   FOLIO_RECORD_TYPE,
   CALL_NUMBER_TYPE_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
-  EXISTING_RECORDS_NAMES
+  EXISTING_RECORDS_NAMES,
+  ORDER_FORMAT_NAMES,
+  ACQUISITION_METHOD_NAMES,
+  VENDOR_NAMES
 } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -87,13 +90,13 @@ describe('ui-data-import', () => {
     acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC };
 
   const order = { ...NewOrder.defaultOneTimeOrder,
-    vendor: 'GOBI Library Solutions',
+    vendor: VENDOR_NAMES.GOBI,
     orderType: 'One-time' };
 
   const pol = {
     title: 'Sport and sociology. Dominic Malcolm.',
-    acquisitionMethod: 'Purchase at vendor system',
-    orderFormat: 'Physical resource',
+    acquisitionMethod: ACQUISITION_METHOD_NAMES.PURCHASE_AT_VENDOR_SYSTEM,
+    orderFormat: ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE,
     quantity: '1',
     price: '20',
     materialType: MATERIAL_TYPE_NAMES.BOOK,

@@ -5,12 +5,13 @@ import DevTeams from '../../../support/dictionary/devTeams';
 import { FOLIO_RECORD_TYPE,
   ORDER_STATUSES,
   MATERIAL_TYPE_NAMES,
-  ORDER_FORMAT_NAMES,
+  ORDER_FORMAT_NAMES_IN_PROFILE,
   ACQUISITION_METHOD_NAMES,
-  JOB_STATUS_NAMES } from '../../../support/constants';
+  JOB_STATUS_NAMES,
+  ACQUISITION_METHOD_NAMES,
+  VENDOR_NAMES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -33,8 +34,8 @@ describe('ui-data-import', () => {
     publicationDate: '2023',
     publisher: 'PEGASUS BOOKS',
     internalNote: 'AAH/bsc ',
-    acquisitionMethod: 'Purchase at vendor system',
-    orderFormat: ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE_Check,
+    acquisitionMethod: ACQUISITION_METHOD_NAMES.PURCHASE_AT_VENDOR_SYSTEM,
+    orderFormat: ORDER_FORMAT_NAMES_IN_PROFILE.PHYSICAL_RESOURCE,
     receiptStatus: 'Pending',
     paymentStatus: 'Pending',
     source: 'MARC',
@@ -44,7 +45,7 @@ describe('ui-data-import', () => {
     physicalUnitPrice: '$27.95',
     quantityPhysical: '1',
     currency: 'USD',
-    materialSupplier: 'GOBI Library Solutions',
+    materialSupplier: VENDOR_NAMES.GOBI,
     createInventory: 'Instance, Holding, Item',
     materialType: MATERIAL_TYPE_NAMES.BOOK,
     contributor: 'DENNISON, MATTHEW',
@@ -63,7 +64,7 @@ describe('ui-data-import', () => {
     typeValue: FOLIO_RECORD_TYPE.ORDER,
     orderStatus: ORDER_STATUSES.PENDING,
     approved: true,
-    vendor: 'GOBI Library Solutions',
+    vendor: VENDOR_NAMES.GOBI,
     reEncumber: 'false',
     title: '245$a',
     mustAcknowledgeReceivingNote: 'false',
@@ -72,7 +73,7 @@ describe('ui-data-import', () => {
     edition: '250$a',
     internalNote: '981$d',
     acquisitionMethod: ACQUISITION_METHOD_NAMES.PURCHASE_AT_VENDOR_SYSTEM,
-    orderFormat: ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE_Check,
+    orderFormat: ORDER_FORMAT_NAMES_IN_PROFILE.PHYSICAL_RESOURCE,
     receiptStatus: 'Pending',
     paymentStatus: 'Pending',
     selector: '981$e',
@@ -83,7 +84,7 @@ describe('ui-data-import', () => {
     physicalUnitPrice: '980$b',
     quantityPhysical: '980$g',
     currency: 'USD',
-    materialSupplier: 'GOBI Library Solutions',
+    materialSupplier: VENDOR_NAMES.GOBI,
     createInventory: 'Instance, Holding, Item',
     materialType: MATERIAL_TYPE_NAMES.BOOK,
     contributor: '100$a',
@@ -140,10 +141,8 @@ describe('ui-data-import', () => {
   it('C375174 Verify the importing of orders with pending status (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       // create mapping profile
-      FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillPhysicalOrderMappingProfile(mappingProfile);
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+      FieldMappingProfiles.createOrderMappingProfile(mappingProfile);
+      FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
       // create action profile
       cy.visit(SettingsMenu.actionProfilePath);
@@ -166,6 +165,7 @@ describe('ui-data-import', () => {
       JobProfiles.waitFileIsImported(marcFileName);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(marcFileName);
+
       [0, 1].forEach(rowNumber => {
         [FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.order
@@ -179,7 +179,8 @@ describe('ui-data-import', () => {
       OrderLines.checkIsOrderCreatedWithDataFromImportedFile(orderData);
       OrderLines.getAssignedPOLNumber()
         .then(initialNumber => {
-          orderNumber = initialNumber.replace('-1', '');
+          const polNumber = initialNumber;
+          orderNumber = polNumber.replace('-1', '');
         });
     });
 });

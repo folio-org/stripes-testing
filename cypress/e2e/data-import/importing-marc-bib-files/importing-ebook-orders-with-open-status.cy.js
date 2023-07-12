@@ -6,11 +6,11 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import {
   FOLIO_RECORD_TYPE,
-  MATERIAL_TYPE_NAMES,
   ORDER_STATUSES,
-  ORDER_FORMAT_NAMES,
+  ORDER_FORMAT_NAMES_IN_PROFILE,
   ACQUISITION_METHOD_NAMES,
-  JOB_STATUS_NAMES
+  JOB_STATUS_NAMES,
+  VENDOR_NAMES
 } from '../../../support/constants';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -19,7 +19,6 @@ import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import Users from '../../../support/fragments/users/users';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 
@@ -32,7 +31,7 @@ describe('ui-data-import', () => {
     typeValue: FOLIO_RECORD_TYPE.ORDER,
     orderStatus: ORDER_STATUSES.OPEN,
     approved: true,
-    vendor: 'GOBI Library Solutions',
+    vendor: VENDOR_NAMES.GOBI,
     reEncumber: 'false',
     title: '245$a',
     mustAcknowledgeReceivingNote: 'false',
@@ -41,7 +40,7 @@ describe('ui-data-import', () => {
     edition: '250$a',
     internalNote: '981$d',
     acquisitionMethod: ACQUISITION_METHOD_NAMES.PURCHASE_AT_VENDOR_SYSTEM,
-    orderFormat: ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE_Check,
+    orderFormat: ORDER_FORMAT_NAMES_IN_PROFILE.ELECTRONIC_RESOURCE,
     receiptStatus: 'Pending',
     paymentStatus: 'Pending',
     selector: '981$e',
@@ -53,9 +52,7 @@ describe('ui-data-import', () => {
     electronicUnitPrice: '980$b',
     quantityElectronic: '980$g',
     currency: 'USD',
-    accessProvider: 'GOBI Library Solutions',
-    createInventoryEResources: 'None',
-    materialTypeEResources: MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE,
+    accessProvider: VENDOR_NAMES.GOBI,
     contributor: '100$a',
     contributorType: 'Personal name',
     productId: '020$a',
@@ -103,10 +100,7 @@ describe('ui-data-import', () => {
   it('C375989 Verify the importing of eBook orders with open status (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       // create mapping profile
-      FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillElectronicOrderMappingProfile(mappingProfile);
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+      FieldMappingProfiles.createOrderMappingProfile(mappingProfile);
       FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
       // create action profile

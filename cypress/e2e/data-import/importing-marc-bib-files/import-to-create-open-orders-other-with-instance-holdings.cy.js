@@ -4,14 +4,12 @@ import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import { FOLIO_RECORD_TYPE,
   ORDER_STATUSES,
-  MATERIAL_TYPE_NAMES,
-  ORDER_FORMAT_NAMES,
+  ORDER_FORMAT_NAMES_IN_PROFILE,
   ACQUISITION_METHOD_NAMES,
   JOB_STATUS_NAMES,
   LOCATION_NAMES,
-  LOAN_TYPE_NAMES,
-  ITEM_STATUS_NAMES,
-  ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
+  ACCEPTED_DATA_TYPE_NAMES,
+  VENDOR_NAMES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -43,10 +41,10 @@ describe('ui-data-import', () => {
         typeValue: FOLIO_RECORD_TYPE.ORDER,
         orderStatus: ORDER_STATUSES.OPEN,
         approved: true,
-        vendor: 'GOBI Library Solutions',
+        vendor: VENDOR_NAMES.GOBI,
         title: '245$a',
         acquisitionMethod: ACQUISITION_METHOD_NAMES.PURCHASE_AT_VENDOR_SYSTEM,
-        orderFormat: ORDER_FORMAT_NAMES.OTHER,
+        orderFormat: ORDER_FORMAT_NAMES_IN_PROFILE.OTHER,
         receivingWorkflow: 'Synchronized',
         physicalUnitPrice: '"20"',
         quantityPhysical: '"1"',
@@ -62,7 +60,7 @@ describe('ui-data-import', () => {
         name: `C380485 Create simple holdings for open order ${getRandomPostfix()}`,
         permanentLocation: `"${LOCATION_NAMES.MAIN_LIBRARY}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `C380474 Create simple holdings for open order ${getRandomPostfix()}` }
+        name: `C380485 Create simple holdings for open order ${getRandomPostfix()}` }
     }
   ];
   const jobProfile = {

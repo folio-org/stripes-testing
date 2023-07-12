@@ -8,9 +8,9 @@ import { LOCATION_NAMES,
   ORDER_STATUSES,
   MATERIAL_TYPE_NAMES,
   LOAN_TYPE_NAMES,
-  ORDER_FORMAT_NAMES,
-  ACQUISITION_METHOD_NAMES,
-  JOB_STATUS_NAMES } from '../../../support/constants';
+  ORDER_FORMAT_NAMES_IN_PROFILE,
+  JOB_STATUS_NAMES,
+  VENDOR_NAMES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -32,6 +32,7 @@ describe('ui-data-import', () => {
   let user;
   let instanceHrid;
   const quantityOfItems = '1';
+  const filePathForCreateOrder = 'marcFileForCreateOrder.mrc';
   const marcFileName = `C380446 autotest file ${getRandomPostfix()}`;
 
   const collectionOfMappingAndActionProfiles = [
@@ -40,19 +41,19 @@ describe('ui-data-import', () => {
         typeValue: FOLIO_RECORD_TYPE.ORDER,
         orderStatus: ORDER_STATUSES.OPEN,
         approved: true,
-        vendor: 'GOBI Library Solutions',
+        vendor: VENDOR_NAMES.GOBI,
         title: '245$a',
         acquisitionMethod: ACQUISITION_METHOD_NAMES.APPROVAL_PLAN,
-        orderFormat: ORDER_FORMAT_NAMES.PE_MIX,
+        orderFormat: ORDER_FORMAT_NAMES_IN_PROFILE.PE_MIX,
         receivingWorkflow: 'Synchronized',
-        physicalUnitPrice: '20',
-        quantityPhysical: '1',
+        physicalUnitPrice: '"20"',
+        quantityPhysical: '"1"',
         currency: 'USD',
         electronicUnitPrice: '25',
-        quantityElectronic: '1',
-        locationName: LOCATION_NAMES.ANNEX,
-        locationQuantityPhysical: '1',
-        locationQuantityElectronic: '1' },
+        quantityElectronic: '"1"',
+        locationName: `"${LOCATION_NAMES.ANNEX}"`,
+        locationQuantityPhysical: '"1"',
+        locationQuantityElectronic: '"1"' },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ORDER,
         name: `C380446 Test P/E mix open order with instance, holdings, item ${getRandomPostfix()}` }
     },
@@ -112,9 +113,8 @@ describe('ui-data-import', () => {
   it('C380446 Import to create open orders: P/E mix with Instances, Holdings, Items (folijet)',
     { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
       // create mapping profiles
-      FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillPEMixOrderMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
-      FieldMappingProfiles.saveProfile();
+      FieldMappingProfiles.createOrderMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
+      FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
       FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
 
       FieldMappingProfiles.openNewMappingProfileForm();
@@ -151,7 +151,7 @@ describe('ui-data-import', () => {
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
-      DataImport.uploadFile('marcFileForC380446.mrc', marcFileName);
+      DataImport.uploadFile(filePathForCreateOrder, marcFileName);
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(marcFileName);

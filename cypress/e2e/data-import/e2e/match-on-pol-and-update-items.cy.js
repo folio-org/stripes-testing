@@ -6,7 +6,8 @@ import { FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
   ORDER_STATUSES,
-  ITEM_STATUS_NAMES } from '../../../support/constants';
+  ITEM_STATUS_NAMES,
+  VENDOR_NAMES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import Orders from '../../../support/fragments/orders/orders';
@@ -150,7 +151,7 @@ describe('ui-data-import', () => {
       .then(() => {
         cy.getAdminToken()
           .then(() => {
-            Organizations.getOrganizationViaApi({ query: 'name="GOBI Library Solutions"' })
+            Organizations.getOrganizationViaApi({ query: `name="${VENDOR_NAMES.GOBI}"` })
               .then(organization => {
                 vendorId = organization.id;
               });

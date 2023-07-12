@@ -26,7 +26,12 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import { ACCEPTED_DATA_TYPE_NAMES, EXISTING_RECORDS_NAMES, ORDER_STATUSES } from '../../../support/constants';
+import {
+  ACCEPTED_DATA_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES,
+  ORDER_STATUSES,
+  VENDOR_NAMES
+} from '../../../support/constants';
 
 describe('ui-data-import', () => {
   const item = {
@@ -113,7 +118,7 @@ describe('ui-data-import', () => {
       .then(() => {
         cy.getAdminToken()
           .then(() => {
-            Organizations.getOrganizationViaApi({ query: 'name="GOBI Library Solutions"' })
+            Organizations.getOrganizationViaApi({ query: `name="${VENDOR_NAMES.GOBI}"` })
               .then(organization => {
                 vendorId = organization.id;
               });
