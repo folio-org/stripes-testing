@@ -32,6 +32,7 @@ const unlinkButtonInsideModal = Button({ id: 'clickable-quick-marc-confirm-unlin
 const calloutAfterSaveAndClose = Callout('This record has successfully saved and is in process. Changes may not appear immediately.');
 const calloutUpdatedRecord = Callout('Record has been updated.');
 const calloutUpdatedLinkedBibRecord = Callout('Record has been updated. 2 linked bibliographic record(s) updates have begun.');
+const calloutNonEditableLdrBib = Callout('Record cannot be saved. Please check the Leader. Only positions 5, 6, 7, 8, 17, 18 and/or 19 can be edited in the Leader.');
 const closeButton = Button({ icon: 'times' });
 const validRecord = InventoryInstance.validOCLC;
 const specRetInputNamesHoldings008 = ['records[3].content.Spec ret[0]',
@@ -618,5 +619,14 @@ export default {
 
   checkCallout(callout) {
     cy.expect(Callout(callout).exists());
+  },
+
+  checkNonEditableLdrCalloutBib() {
+    cy.expect([
+      calloutNonEditableLdrBib.exists(),
+      calloutNonEditableLdrBib.has({ type: 'error' })
+    ]);
+    cy.do(calloutNonEditableLdrBib.dismiss());
+    cy.expect(calloutNonEditableLdrBib.absent());
   }
 };
