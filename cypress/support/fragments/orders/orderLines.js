@@ -22,6 +22,7 @@ import SearchHelper from '../finance/financeHelper';
 import getRandomPostfix from '../../utils/stringTools';
 import SelectInstanceModal from './selectInstanceModal';
 import { ORDER_FORMAT_NAMES, ACQUISITION_METHOD_NAMES, RECEIVING_WORKFLOW_NAMES, MATERIAL_TYPE_NAMES } from '../../constants';
+import InteractorsTools from '../../utils/interactorsTools';
 
 const path = require('path');
 
@@ -957,10 +958,13 @@ export default {
   },
 
   checkCreatedInventoryInPhysicalRecourceDetails: (value) => {
+  checkCreatedInventoryInPhysicalRecourceDetails: (value) => {
     cy.expect(Accordion('Physical resource details')
+      .find(KeyValue('Create inventory')).has({ value }));
       .find(KeyValue('Create inventory')).has({ value }));
   },
 
+  checkCreatedInventoryInElectronicRecourceDetails: (value) => {
   checkCreatedInventoryInElectronicRecourceDetails: (value) => {
     cy.expect(Accordion('E-resources details')
       .find(KeyValue('Create inventory')).has({ value }));
@@ -1026,6 +1030,7 @@ export default {
       .has({ content: orderData.value }));
   },
 
+  checkFundAndExpenseClassPopulated(fundInformation) {
   checkFundAndExpenseClassPopulated(fundInformation) {
     cy.expect(fundDistributionAccordion
       .find(MultiColumnList())
