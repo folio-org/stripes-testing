@@ -53,8 +53,7 @@ describe('ui-data-import', () => {
         quantityPhysical: '"1"',
         currency: 'USD',
         locationName: `"${LOCATION_NAMES.ANNEX}"`,
-        locationQuantityPhysical: '"1"'
-      },
+        locationQuantityPhysical: '"1"' },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ORDER,
         name: `C380474 Test Physical resource open order with instance, holdings, item ${getRandomPostfix()}` }
     },

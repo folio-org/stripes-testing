@@ -89,7 +89,7 @@ describe('ui-data-import', () => {
           source: 'USER',
           field: protectedFields.secondField
         })
-          .then((secondResp) =>  { protectedFieldIds.push(secondResp.id); });
+          .then((secondResp) => { protectedFieldIds.push(secondResp.id); });
 
         InventorySearchAndFilter.getInstancesByIdentifierViaApi(identifier)
           .then(instances => {
@@ -112,7 +112,7 @@ describe('ui-data-import', () => {
       });
   });
 
-  after('delete test data', ()=>{
+  after('delete test data', () => {
     JobProfiles.deleteJobProfile(jobProfile.profileName);
     JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
     MatchProfiles.deleteMatchProfile(matchProfile.profileName);
@@ -123,7 +123,7 @@ describe('ui-data-import', () => {
     InventorySearchAndFilter.getInstancesByIdentifierViaApi(identifier)
       .then(instances => {
         instances.forEach(({ id }) => {
-            InventoryInstance.deleteInstanceViaApi(id);
+          InventoryInstance.deleteInstanceViaApi(id);
         });
       });
   });
@@ -138,7 +138,7 @@ describe('ui-data-import', () => {
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileNameForCreate);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-      
+
       // create match profile
       cy.visit(SettingsMenu.matchProfilePath);
       MatchProfiles.createMatchProfileWithQualifier(matchProfile);

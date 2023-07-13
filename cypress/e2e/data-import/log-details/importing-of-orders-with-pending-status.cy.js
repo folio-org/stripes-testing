@@ -125,9 +125,9 @@ describe('ui-data-import', () => {
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
     cy.wrap(orderNumbers).each(number => {
       Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` })
-      .then(orderId => {
-        Orders.deleteOrderViaApi(orderId[0].id);
-      });
+        .then(orderId => {
+          Orders.deleteOrderViaApi(orderId[0].id);
+        });
     });
   });
 
@@ -151,11 +151,11 @@ describe('ui-data-import', () => {
         OrderLines.waitLoading();
         OrderLines.verifyOrderTitle(order.title);
         OrderLines.getAssignedPOLNumber()
-        .then(initialNumber => {
-          const orderNumber = initialNumber.replace('-1', '');
+          .then(initialNumber => {
+            const orderNumber = initialNumber.replace('-1', '');
 
-          orderNumbers.push(orderNumber);
-        });
+            orderNumbers.push(orderNumber);
+          });
         cy.go('back');
       });
     });

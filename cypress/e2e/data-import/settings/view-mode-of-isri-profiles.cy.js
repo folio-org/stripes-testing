@@ -54,17 +54,17 @@ describe('ui-data-import', () => {
 
   before('login', () => {
     cy.getAdminToken()
-      .then(()=>{
+      .then(() => {
         // create job profiles for create
         [zbcProfile, adcProfile, zdcProfile, abcProfile].forEach(profile => {
           NewFieldMappingProfile.createMappingProfileViaApi(profile.createMappingProfile)
             .then((mappingProfileResponse) => {
               NewActionProfile.createActionProfileViaApi(profile.createActionProfile, mappingProfileResponse.body.id)
                 .then((actionProfileResponse) => {
-                    NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(profile.createJobProfile, actionProfileResponse.body.id);
+                  NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(profile.createJobProfile, actionProfileResponse.body.id);
                 }).then(id => createJobProfileIds.push(id));
-              });
-          });
+            });
+        });
         // create job profile for update
         [abcProfile, zbcProfile, zdcProfile, adcProfile].forEach(profile => {
           NewFieldMappingProfile.createMappingProfileViaApi(profile.updateMappingProfile)
@@ -76,12 +76,13 @@ describe('ui-data-import', () => {
                   updateJobProfileIds.push(id);
                 });
             });
-          });
-        })
-        .then(()=>{
-          Z3950TargetProfiles.createNewZ3950TargetProfileViaApi(targetProfileName, createJobProfileIds, updateJobProfileIds)
+        });
+      })
+      .then(() => {
+        Z3950TargetProfiles.createNewZ3950TargetProfileViaApi(targetProfileName, createJobProfileIds, updateJobProfileIds)
           .then(initialId => {
-            profileId = initialId; });
+            profileId = initialId;
+          });
       });
 
     cy.createTempUser([

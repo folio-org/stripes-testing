@@ -121,8 +121,8 @@ export default {
       path: 'data-import-profiles/actionProfiles',
       body: {
         profile: {
-          name: name,
-          action: action,
+          name,
+          action,
           folioRecord: folioRecordType
         },
         addedRelations: [{

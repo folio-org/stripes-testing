@@ -123,9 +123,9 @@ describe('ui-data-import', () => {
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
     cy.wrap(orderNumbers).each(number => {
       Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` })
-      .then(orderId => {
-        Orders.deleteOrderViaApi(orderId[0].id);
-      });
+        .then(orderId => {
+          Orders.deleteOrderViaApi(orderId[0].id);
+        });
     });
   });
 
@@ -162,7 +162,7 @@ describe('ui-data-import', () => {
       OrderLines.getAssignedPOLNumber()
         .then(initialNumber => {
           const orderNumber = initialNumber.replace('-1', '');
-          
+
           orderNumbers.push(orderNumber);
         });
       OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[0]);
@@ -173,7 +173,7 @@ describe('ui-data-import', () => {
       OrderLines.getAssignedPOLNumber()
         .then(initialNumber => {
           const orderNumber = initialNumber.replace('-1', '');
-          
+
           orderNumbers.push(orderNumber);
         });
       OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[1]);
@@ -195,14 +195,14 @@ describe('ui-data-import', () => {
       Logs.openFileDetails(secondMarcFileName);
       FileDetails.checkStatusInColumn(FileDetails.status.noAction, FileDetails.columnNameInResultList.order);
       FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.order, 1);
-      
+
       // check Fund and Expense class populated in the second POL
       FileDetails.openOrder('Created', 1);
       OrderLines.waitLoading();
       OrderLines.getAssignedPOLNumber()
         .then(initialNumber => {
           const orderNumber = initialNumber.replace('-1', '');
-          
+
           orderNumbers.push(orderNumber);
         });
       OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[1]);
@@ -230,7 +230,7 @@ describe('ui-data-import', () => {
       OrderLines.getAssignedPOLNumber()
         .then(initialNumber => {
           const orderNumber = initialNumber.replace('-1', '');
-          
+
           orderNumbers.push(orderNumber);
         });
       OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[0]);
@@ -241,7 +241,7 @@ describe('ui-data-import', () => {
       OrderLines.getAssignedPOLNumber()
         .then(initialNumber => {
           const orderNumber = initialNumber.replace('-1', '');
-          
+
           orderNumbers.push(orderNumber);
         });
       OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[0]);
@@ -269,7 +269,7 @@ describe('ui-data-import', () => {
       OrderLines.getAssignedPOLNumber()
         .then(initialNumber => {
           const orderNumber = initialNumber.replace('-1', '');
-          
+
           orderNumbers.push(orderNumber);
         });
       OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[1]);
@@ -280,7 +280,7 @@ describe('ui-data-import', () => {
       OrderLines.getAssignedPOLNumber()
         .then(initialNumber => {
           const orderNumber = initialNumber.replace('-1', '');
-          
+
           orderNumbers.push(orderNumber);
         });
       OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[1]);
