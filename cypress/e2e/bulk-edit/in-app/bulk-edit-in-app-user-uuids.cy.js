@@ -171,7 +171,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyActionsAfterConductedCSVUploading(false);
       BulkEditSearchPane.verifyUserBarcodesResultAccordion();
       BulkEditSearchPane.verifyUsersActionShowColumns();
-      
+
       BulkEditSearchPane.changeShowColumnCheckbox('Last name');
       BulkEditSearchPane.verifyResultColumTitlesDoNotInclude('Last name');
 
