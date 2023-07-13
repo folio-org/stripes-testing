@@ -21,7 +21,7 @@ describe('Create holding records with MARC source', () => {
     numOfRecords: 1,
   };
 
-  const testData = {};
+  let user;
   const recordIDs = [];
 
   function getCurrentDateYYMMDD() {
@@ -36,7 +36,7 @@ describe('Create holding records with MARC source', () => {
       Permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
       Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
     ]).then(createdUserProperties => {
-      testData.userProperties = createdUserProperties;
+      user = createdUserProperties;
 
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         DataImport.uploadFile(marcFile.marc, marcFile.fileName);
@@ -49,13 +49,13 @@ describe('Create holding records with MARC source', () => {
         Logs.getCreatedItemsID().then(link => {
           recordIDs.push(link.split('/')[5]);
         });
-        cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+        cy.login(user.username, user.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
       });
     });
   });
 
   after('Deleting created user, data', () => {
-    Users.deleteViaApi(testData.userProperties.userId);
+    Users.deleteViaApi(user.userId);
     cy.deleteHoldingRecordViaApi(recordIDs[1]);
     InventoryInstance.deleteInstanceViaApi(recordIDs[0]);
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
