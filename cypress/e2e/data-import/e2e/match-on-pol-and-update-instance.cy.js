@@ -10,8 +10,8 @@ import {
   CALL_NUMBER_TYPE_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
-  ORDER_FORMAT_NAMES_IN_PROFILE,
-  ACQUISITION_METHOD_NAMES,
+  ORDER_FORMAT_NAMES,
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
   VENDOR_NAMES
 } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
@@ -95,8 +95,8 @@ describe('ui-data-import', () => {
 
   const pol = {
     title: 'Sport and sociology. Dominic Malcolm.',
-    acquisitionMethod: ACQUISITION_METHOD_NAMES.PURCHASE_AT_VENDOR_SYSTEM,
-    orderFormat: ORDER_FORMAT_NAMES_IN_PROFILE.PHYSICAL_RESOURCE,
+    acquisitionMethod: ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM,
+    orderFormat: ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE,
     quantity: '1',
     price: '20',
     materialType: MATERIAL_TYPE_NAMES.BOOK,

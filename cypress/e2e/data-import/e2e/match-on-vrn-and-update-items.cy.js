@@ -30,7 +30,8 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
   ORDER_STATUSES,
-  VENDOR_NAMES
+  VENDOR_NAMES,
+  ACQUISITION_METHOD_NAMES_IN_PROFILE
 } from '../../../support/constants';
 
 describe('ui-data-import', () => {
@@ -126,7 +127,7 @@ describe('ui-data-import', () => {
               .then(materialType => {
                 materialTypeId = materialType.id;
               });
-            cy.getAcquisitionMethodsApi({ query: 'value="Purchase at vendor system"' })
+            cy.getAcquisitionMethodsApi({ query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"` })
               .then(params => {
                 acquisitionMethodId = params.body.acquisitionMethods[0].id;
               });

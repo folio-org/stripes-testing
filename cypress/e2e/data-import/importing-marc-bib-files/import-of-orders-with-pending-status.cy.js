@@ -8,7 +8,8 @@ import { FOLIO_RECORD_TYPE,
   ORDER_FORMAT_NAMES_IN_PROFILE,
   ACQUISITION_METHOD_NAMES,
   JOB_STATUS_NAMES,
-  VENDOR_NAMES } from '../../../support/constants';
+  VENDOR_NAMES,
+  ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -33,7 +34,7 @@ describe('ui-data-import', () => {
     publicationDate: '2023',
     publisher: 'PEGASUS BOOKS',
     internalNote: 'AAH/bsc ',
-    acquisitionMethod: ACQUISITION_METHOD_NAMES.PURCHASE_AT_VENDOR_SYSTEM,
+    acquisitionMethod: ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM,
     orderFormat: ORDER_FORMAT_NAMES_IN_PROFILE.PHYSICAL_RESOURCE,
     receiptStatus: 'Pending',
     paymentStatus: 'Pending',

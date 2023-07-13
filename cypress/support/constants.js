@@ -153,6 +153,11 @@ export const ORDER_FORMAT_NAMES_IN_PROFILE = {
   PHYSICAL_RESOURCE: 'Physical Resource',
 };
 
+export const ACQUISITION_METHOD_NAMES_IN_PROFILE = {
+  APPROVAL_PLAN: 'Approval plan',
+  PURCHASE_AT_VENDOR_SYSTEM: 'Purchase at vendor system'
+};
+
 export const RECEIVING_WORKFLOW_NAMES = {
   SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY: 'Synchronized order and receipt quantity',
   INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY: 'Independent order and receipt quantity',
