@@ -647,8 +647,10 @@ export default {
   },
 
   checkAfterSaveHoldings() {
-    cy.expect(calloutAfterSaveAndClose.exists());
-    cy.expect(Button('Actions').exists());
+    cy.expect([
+      calloutAfterSaveAndClose.exists(),
+      Button('Actions').exists()
+    ]);
   },
 
   checkDelete008Callout() {

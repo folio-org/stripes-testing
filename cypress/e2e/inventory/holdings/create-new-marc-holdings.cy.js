@@ -49,12 +49,9 @@ describe('Create holding records with MARC source', () => {
         Logs.getCreatedItemsID().then(link => {
           recordIDs.push(link.split('/')[5]);
         });
+        cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
       });
     });
-  });
-
-  beforeEach('Login', () => {
-    cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
   });
 
   after('Deleting created user, data', () => {
