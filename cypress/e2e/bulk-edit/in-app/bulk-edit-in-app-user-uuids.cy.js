@@ -161,5 +161,22 @@ describe('bulk-edit', () => {
       BulkEditActions.verifySuccessBanner(1);
       BulkEditSearchPane.verifyChangedResults(user.username);
     });
+
+    it('C359197 Verify that User can change the columns in the "Preview of record matched" (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
+      BulkEditSearchPane.verifyDragNDropUsersUIIDsArea();
+      BulkEditSearchPane.uploadFile(userUUIDsFileName);
+      BulkEditSearchPane.waitFileUploading();
+      BulkEditSearchPane.verifyMatchedResults(user.username);
+
+      BulkEditSearchPane.verifyActionsAfterConductedCSVUploading(false);
+      BulkEditSearchPane.verifyUserBarcodesResultAccordion();
+      BulkEditSearchPane.verifyUsersActionShowColumns();
+      
+      BulkEditSearchPane.changeShowColumnCheckbox('Last name');
+      BulkEditSearchPane.verifyResultColumTitlesDoNotInclude('Last name');
+
+      BulkEditSearchPane.changeShowColumnCheckbox('Email');
+      BulkEditSearchPane.verifyResultColumTitles('Email');
+    });
   });
 });
