@@ -1,34 +1,25 @@
-import permissions from '../../../support/dictionary/permissions';
-import testType from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
-import TopMenu from '../../../support/fragments/topMenu';
-import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
-import Users from '../../../support/fragments/users/users';
-import Funds from '../../../support/fragments/finance/funds/funds';
-import FinanceHelp from '../../../support/fragments/finance/financeHelper';
-import DateTools from '../../../support/utils/dateTools';
-import NewOrder from '../../../support/fragments/orders/newOrder';
-import Orders from '../../../support/fragments/orders/orders';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import Organizations from '../../../support/fragments/organizations/organizations';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import NewInvoice from '../../../support/fragments/invoices/newInvoice';
-import Invoices from '../../../support/fragments/invoices/invoices';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
+import permissions from '../../support/dictionary/permissions';
+import testType from '../../support/dictionary/testTypes';
+import devTeams from '../../support/dictionary/devTeams';
+import getRandomPostfix from '../../support/utils/stringTools';
+import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
+import TopMenu from '../../support/fragments/topMenu';
+import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
+import Users from '../../support/fragments/users/users';
+import Funds from '../../support/fragments/finance/funds/funds';
+import FinanceHelp from '../../support/fragments/finance/financeHelper';
+import NewOrder from '../../support/fragments/orders/newOrder';
+import Orders from '../../support/fragments/orders/orders';
+import OrderLines from '../../support/fragments/orders/orderLines';
+import Organizations from '../../support/fragments/organizations/organizations';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import NewInvoice from '../../support/fragments/invoices/newInvoice';
+import Invoices from '../../support/fragments/invoices/invoices';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 
-describe('ui-finance: Fiscal Year Rollover', () => {
+describe('Orders', () => {
   const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
-  const secondFiscalYear = {
-    name: `autotest_year_${getRandomPostfix()}`,
-    code: DateTools.getRandomFiscalYearCodeForRollover(2000, 9999),
-    periodStart: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
-    periodEnd: `${DateTools.getDayAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
-    description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
-    series: 'FYTA',
-  };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };
   const secondFund = {
@@ -45,7 +36,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
     reEncumber: true };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const invoice = { ...NewInvoice.defaultUiInvoice };
-  const todayDate = DateTools.getCurrentDate();
+  const errorToastMessage = 'The purchase order line fund distribution can not be changed because the order line is linked to an invoice line that currently has the "approved" status';
   const allocatedQuantity = '1000';
   let user;
   let orderNumber;
@@ -54,7 +45,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
 
   before(() => {
     cy.getAdminToken();
-    // create first Fiscal Year and prepere 2 Funds for Rollover
+
     FiscalYears.createViaApi(firstFiscalYear)
       .then(firstFiscalYearResponse => {
         firstFiscalYear.id = firstFiscalYearResponse.id;
@@ -94,13 +85,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
             location = res;
           });
       });
-    // Create second Fiscal Year for Rollover
-    FiscalYears.createViaApi(secondFiscalYear)
-      .then(secondFiscalYearResponse => {
-        secondFiscalYear.id = secondFiscalYearResponse.id;
-      });
 
-    // Prepare 2 Open Orders for Rollover
     Organizations.createOrganizationViaApi(organization)
       .then(responseOrganizations => {
         organization.id = responseOrganizations;
@@ -123,17 +108,16 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       // Need to wait, while data will be loaded
       cy.wait(4000);
       Invoices.approveInvoice();
-      Invoices.payInvoice();
     });
+
     cy.createTempUser([
-      permissions.uiFinanceExecuteFiscalYearRollover.gui,
-      permissions.uiFinanceViewFiscalYear.gui,
+      permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
+      permissions.uiOrdersEdit.gui,
       permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiFinanceViewLedger.gui,
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path:TopMenu.ledgerPath, waiter: Ledgers.waitForLedgerDetailsLoading });
+        cy.login(userProperties.username, userProperties.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
       });
   });
 
@@ -141,12 +125,12 @@ describe('ui-finance: Fiscal Year Rollover', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C376978 Displaying FY rollover settings for test rollover (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    FinanceHelp.searchByName(defaultLedger.name);
-    Ledgers.selectLedger(defaultLedger.name);
-    Ledgers.rollover();
-    Ledgers.fillInTestRolloverInfoCashBalance(secondFiscalYear.code, 'None', 'Allocation');
-    Ledgers.rolloverLogs();
-    Ledgers.checkRolloverLogs(todayDate);
+  it('C368485 Editing fund distribution is blocked when PO line has related approved invoice (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
+    Orders.searchByParameter('PO number', orderNumber);
+    Orders.selectFromResultsList(orderNumber);
+    OrderLines.selectPOLInOrder(0);
+    OrderLines.editPOLInOrder();
+    OrderLines.editFundInPOL(secondFund, '200', '200');
+    OrderLines.checkErrorToastMessage(errorToastMessage);
   });
 });

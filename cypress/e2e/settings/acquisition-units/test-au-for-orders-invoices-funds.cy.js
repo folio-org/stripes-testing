@@ -95,7 +95,7 @@ describe('ui-acquisition units: Acquisition Units', () => {
       Orders.checkCreatedOrder(defaultOrder);
       OrderLines.addPOLine();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
-      OrderLines.fillInPOLineInfoForExportWithLocationForPhisicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId, '4');      OrderLines.backToEditingOrder();
+      OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId, '4');      OrderLines.backToEditingOrder();
       cy.visit(TopMenu.invoicesPath);
       Invoices.createRolloverInvoice(invoice, organization.name);
       Invoices.createInvoiceLineFromPol(orderNumber);

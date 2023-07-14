@@ -10,7 +10,7 @@ import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll
 describe('ui-data-import', () => {
   const filePathForUpload = 'oneMarcBib.mrc';
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-  
+
   before(() => {
     cy.loginAsAdmin();
   });
@@ -40,7 +40,7 @@ describe('ui-data-import', () => {
         JobProfiles.searchJobProfileForImport(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(upload.fileName);
-  
+
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();
         LogsViewAll.selectOption('Keyword (ID, File name)');
