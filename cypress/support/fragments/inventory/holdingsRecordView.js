@@ -167,5 +167,12 @@ export default {
     // parse hodling record id from current url
     cy.url().then(url => cy.wrap(url.split('?')[0].split('/').at(-1)).as('holdingsRecorId'));
     return cy.get('@holdingsRecorId');
+  },
+  getHoldingsIDInDetailView() {
+    cy.url().then(url => {
+      const holdingsID = url.split('/')[6].split('?')[0];
+      cy.wrap(holdingsID).as('holdingsID');
+    });
+    return cy.get('@holdingsID');
   }
 };
