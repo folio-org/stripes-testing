@@ -49,19 +49,17 @@ describe('ui-data-import', () => {
   const fileNameForUpdateInstance = `C356791 autotestFileForUpdate.${getRandomPostfix()}.mrc`;
   const jobProfileNameForExport = `C356791 autotest job profile.${getRandomPostfix()}`;
   const addedInstanceTitle = 'Minakata Kumagusu kinrui saishoku zufu hyakusen.';
- 
+
   const collectionOfProfilesForCreate = [
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
         name: `C356791 autotest marcBib mapping profile.${getRandomPostfix()}`,
-        modifications: {
-          action: 'Add',
+        modifications: { action: 'Add',
           field: '650',
           ind1: '',
           ind2: '4',
           subfield: 'a',
-          data: `Test update.${getRandomPostfix()}` }
-       },
+          data: `Test update.${getRandomPostfix()}` } },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
         name: `C356791 autotest marcBib action profile.${getRandomPostfix()}`,
         action: 'Modify (MARC Bibliographic record type only)' }
@@ -220,13 +218,13 @@ describe('ui-data-import', () => {
       FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
     });
     Users.deleteViaApi(user.userId);
-    cy.wrap(instanceHrids).each(hrid =>{
+    cy.wrap(instanceHrids).each(hrid => {
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` })
-      .then((instance) => {
-        cy.deleteItemViaApi(instance.items[0].id);
-        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
+        .then((instance) => {
+          cy.deleteItemViaApi(instance.items[0].id);
+          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
     });
   });
 
@@ -271,7 +269,7 @@ describe('ui-data-import', () => {
       // create job profile for creating
       cy.visit(SettingsMenu.jobProfilePath);
       JobProfiles.createJobProfile(jobProfileForCreate);
-      collectionOfProfilesForCreate.forEach(profile =>{
+      collectionOfProfilesForCreate.forEach(profile => {
         NewJobProfile.linkActionProfile(profile.actionProfile);
       });
       NewJobProfile.saveAndClose();
@@ -305,7 +303,7 @@ describe('ui-data-import', () => {
       InventorySearchAndFilter.searchByParameter('Subject', collectionOfProfilesForCreate[0].mappingProfile.modifications.data);
       InventorySearchAndFilter.saveUUIDs();
       ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
-    
+
       // download exported marc file
       cy.visit(TopMenu.dataExportPath);
       ExportFile.uploadFile(nameForCSVFile);
@@ -315,7 +313,7 @@ describe('ui-data-import', () => {
 
       // edit marc file to add one record
       DataImport.editMarcFileAddNewRecords(exportedFileName, fileNameWithUpdatedContent, filePathWithUpdatedContent);
-      
+
       // create mapping profiles for updating
       cy.visit(SettingsMenu.mappingProfilePath);
       FieldMappingProfiles.openNewMappingProfileForm();
@@ -356,8 +354,8 @@ describe('ui-data-import', () => {
       // create match profiles for updating
       cy.visit(SettingsMenu.matchProfilePath);
       collectionOfMatchProfiles.forEach(profile => {
-      MatchProfiles.createMatchProfile(profile.matchProfile);
-      MatchProfiles.checkMatchProfilePresented(profile.matchProfile.profileName);
+        MatchProfiles.createMatchProfile(profile.matchProfile);
+        MatchProfiles.checkMatchProfilePresented(profile.matchProfile.profileName);
       });
 
       // create job profile for updating
@@ -370,7 +368,7 @@ describe('ui-data-import', () => {
       NewJobProfile.linkMatchAndActionProfilesForItem(collectionOfProfilesForUpdate[2].actionProfile.name, collectionOfMatchProfiles[2].matchProfile.profileName, 4);
       NewJobProfile.linkProfileForNonMatches(collectionOfProfilesForCreate[3].actionProfile.name, 5);
       NewJobProfile.saveAndClose();
-      
+
       // upload the edited marc file
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
@@ -389,13 +387,14 @@ describe('ui-data-import', () => {
       FileDetails.checkInstanceQuantityInSummaryTable(quantityOfUpdatedItems, 1);
       FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfUpdatedItems, 1);
       FileDetails.checkItemQuantityInSummaryTable(quantityOfUpdatedItems, 1);
-            
+
       // check items is updated in Inventory
       [0, 1].forEach(rowNumber => {
         FileDetails.checkItemsStatusesInResultList(
           rowNumber,
           [FileDetails.status.updated, FileDetails.status.updated,
-            FileDetails.status.updated, FileDetails.status.updated]);
+            FileDetails.status.updated, FileDetails.status.updated]
+        );
         FileDetails.openInstanceInInventory('Updated', rowNumber);
         InstanceRecordView.verifyInstanceStatusTerm(collectionOfProfilesForUpdate[0].mappingProfile.statusTerm);
         InstanceRecordView.verifyStatisticalCode(collectionOfProfilesForUpdate[0].mappingProfile.statisticalCodeUI);
@@ -423,5 +422,5 @@ describe('ui-data-import', () => {
         collectionOfProfilesForCreate[2].mappingProfile.pernanentLocationUI,
         collectionOfProfilesForCreate[3].mappingProfile.status
       );
-  });
+    });
 });

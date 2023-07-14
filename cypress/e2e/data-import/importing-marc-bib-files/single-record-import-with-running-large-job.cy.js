@@ -86,7 +86,7 @@ describe('ui-data-import', () => {
       InventoryInstance.verifyInstancePublisher(0, 0, updatedInstanceData.publisher);
       InventoryInstance.verifyInstancePublisher(0, 2, updatedInstanceData.placeOfPublication);
       InventoryInstance.verifyInstancePublisher(0, 3, updatedInstanceData.publicationDate);
-      InventoryInstance.verifyInstancePhisicalcyDescription(updatedInstanceData.physicalDescription);
+      InventoryInstance.verifyInstancePhysicalcyDescription(updatedInstanceData.physicalDescription);
       InventoryInstance.verifyInstanceSubject(0, 0, updatedInstanceData.subject);
       InventoryInstance.checkInstanceNotes(updatedInstanceData.notes.noteType, updatedInstanceData.notes.noteContent);
 

@@ -23,14 +23,14 @@ import NewJobProfile from './job_profiles/newJobProfile';
 import InventoryViewSource from '../inventory/inventoryViewSource';
 import DateTools from '../../utils/dateTools';
 import getRandomPostfix from '../../utils/stringTools';
-import { ITEM_STATUS_NAMES } from '../../constants';
+import { ITEM_STATUS_NAMES, ORDER_FORMAT_NAMES_IN_PROFILE } from '../../constants';
 
 const poLineData = {
   title: 'Agrarianism and capitalism in early Georgia, 1732-1743 / Jay Jordan Butler.',
   productId: `xyz${getRandomPostfix()}`,
   productIdType: 'ISSN',
   acquisitionMethod: 'Purchase at vendor system',
-  orderFormat: 'Physical resource',
+  orderFormat: ORDER_FORMAT_NAMES_IN_PROFILE.PHYSICAL_RESOURCE,
   vrn: '14567-1',
   vrnType: 'Vendor order reference number',
   physicalUnitPrice: '20',

@@ -26,7 +26,13 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import { ACCEPTED_DATA_TYPE_NAMES, EXISTING_RECORDS_NAMES, ORDER_STATUSES } from '../../../support/constants';
+import {
+  ACCEPTED_DATA_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES,
+  ORDER_STATUSES,
+  VENDOR_NAMES,
+  ACQUISITION_METHOD_NAMES_IN_PROFILE
+} from '../../../support/constants';
 
 describe('ui-data-import', () => {
   const item = {
@@ -113,7 +119,7 @@ describe('ui-data-import', () => {
       .then(() => {
         cy.getAdminToken()
           .then(() => {
-            Organizations.getOrganizationViaApi({ query: 'name="GOBI Library Solutions"' })
+            Organizations.getOrganizationViaApi({ query: `name="${VENDOR_NAMES.GOBI}"` })
               .then(organization => {
                 vendorId = organization.id;
               });
@@ -121,7 +127,7 @@ describe('ui-data-import', () => {
               .then(materialType => {
                 materialTypeId = materialType.id;
               });
-            cy.getAcquisitionMethodsApi({ query: 'value="Purchase at vendor system"' })
+            cy.getAcquisitionMethodsApi({ query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"` })
               .then(params => {
                 acquisitionMethodId = params.body.acquisitionMethods[0].id;
               });

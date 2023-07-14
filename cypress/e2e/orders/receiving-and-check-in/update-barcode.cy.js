@@ -73,7 +73,7 @@ describe('Orders: Receiving and Check-in', () => {
                 Orders.selectFromResultsList(orderNumber);
                 Orders.createPOLineViaActions();
                 OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
-                OrderLines.fillInPOLineInfoForExportWithLocationForPhisicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', locationResponse.institutionId, '2');
+                OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', locationResponse.institutionId, '2');
                 OrderLines.backToEditingOrder();
               });
           });
