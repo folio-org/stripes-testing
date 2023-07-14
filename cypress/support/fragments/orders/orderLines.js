@@ -1044,5 +1044,10 @@ export default {
       .find(MultiColumnList())
       .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 3 }))
       .has({ content: fundInformation.amount }));
-  }
+  },
+
+  checkErrorToastMessage: (message) => {
+    cy.wait(4000);
+    InteractorsTools.checkCalloutErrorMessage(message);
+  },
 };
