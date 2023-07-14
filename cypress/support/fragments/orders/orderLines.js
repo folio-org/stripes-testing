@@ -610,7 +610,7 @@ export default {
     submitOrderLine();
   },
 
-  fillInPOLineInfoForExportWithLocationForPhisicalResource(accountNumber, AUMethod, institutionName, quantity) {
+  fillInPOLineInfoForExportWithLocationForPhysicalResource(accountNumber, AUMethod, institutionName, quantity) {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
@@ -964,6 +964,11 @@ export default {
 
   checkCreatedInventoryInElectronicRecourceDetails: (value) => {
     cy.expect(Accordion('E-resources details')
+      .find(KeyValue('Create inventory')).has({ value }));
+  },
+
+  checkCreatedInventoryInOtherRecourceDetails: (value) => {
+    cy.expect(Accordion('Other resource details')
       .find(KeyValue('Create inventory')).has({ value }));
   },
 

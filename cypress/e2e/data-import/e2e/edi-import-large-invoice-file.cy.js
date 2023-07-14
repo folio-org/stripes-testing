@@ -1,6 +1,12 @@
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE, PAYMENT_METHOD, BATCH_GROUP, ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
+import {
+  FOLIO_RECORD_TYPE,
+  PAYMENT_METHOD,
+  BATCH_GROUP,
+  ACCEPTED_DATA_TYPE_NAMES,
+  VENDOR_NAMES
+} from '../../../support/constants';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -22,7 +28,7 @@ describe('ui-data-import', () => {
     existingRecordType:FOLIO_RECORD_TYPE.INVOICE,
     description:'',
     batchGroup: BATCH_GROUP.FOLIO,
-    organizationName: NewFieldMappingProfile.organization.harrassowitz,
+    organizationName: VENDOR_NAMES.HARRASSOWITZ,
     paymentMethod: PAYMENT_METHOD.CASH
   };
   const actionProfile = {

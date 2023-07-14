@@ -7,11 +7,11 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import { FOLIO_RECORD_TYPE,
   ORDER_STATUSES,
   MATERIAL_TYPE_NAMES,
-  ORDER_FORMAT_NAMES,
+  ORDER_FORMAT_NAMES_IN_PROFILE,
   ACQUISITION_METHOD_NAMES,
-  JOB_STATUS_NAMES } from '../../../support/constants';
+  JOB_STATUS_NAMES,
+  VENDOR_NAMES } from '../../../support/constants';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -33,7 +33,7 @@ describe('ui-data-import', () => {
     typeValue: FOLIO_RECORD_TYPE.ORDER,
     orderStatus: ORDER_STATUSES.PENDING,
     approved: true,
-    vendor: 'GOBI Library Solutions',
+    vendor: VENDOR_NAMES.GOBI,
     reEncumber: 'false',
     title: '245$a',
     mustAcknowledgeReceivingNote: 'false',
@@ -42,7 +42,7 @@ describe('ui-data-import', () => {
     edition: '250$a',
     internalNote: '981$d',
     acquisitionMethod: ACQUISITION_METHOD_NAMES.PURCHASE_AT_VENDOR_SYSTEM,
-    orderFormat: ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE_Check,
+    orderFormat: ORDER_FORMAT_NAMES_IN_PROFILE.PHYSICAL_RESOURCE,
     receiptStatus: 'Pending',
     paymentStatus: 'Pending',
     selector: '981$e',
@@ -53,7 +53,7 @@ describe('ui-data-import', () => {
     physicalUnitPrice: '980$b',
     quantityPhysical: '980$g',
     currency: 'USD',
-    materialSupplier: 'GOBI Library Solutions',
+    materialSupplier: VENDOR_NAMES.GOBI,
     createInventory: 'Instance, Holding, Item',
     materialType: MATERIAL_TYPE_NAMES.BOOK,
     contributor: '100$a',
@@ -83,10 +83,8 @@ describe('ui-data-import', () => {
   before('login', () => {
     cy.loginAsAdmin({ path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
     // create mapping profile
-    FieldMappingProfiles.openNewMappingProfileForm();
-    NewFieldMappingProfile.fillPhysicalOrderMappingProfile(mappingProfile);
-    FieldMappingProfiles.saveProfile();
-    FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+    FieldMappingProfiles.createOrderMappingProfile(mappingProfile);
+    FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
     // create action profile
     cy.visit(SettingsMenu.actionProfilePath);
@@ -120,9 +118,9 @@ describe('ui-data-import', () => {
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
     cy.wrap(orderNumbers).each(number => {
       Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` })
-      .then(orderId => {
-        Orders.deleteOrderViaApi(orderId[0].id);
-      });
+        .then(orderId => {
+          Orders.deleteOrderViaApi(orderId[0].id);
+        });
     });
   });
 
@@ -146,11 +144,11 @@ describe('ui-data-import', () => {
         FileDetails.openOrder('Created', rowNumber);
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber()
-        .then(initialNumber => {
-          const orderNumber = initialNumber.replace('-1', '');
+          .then(initialNumber => {
+            const orderNumber = initialNumber.replace('-1', '');
 
-          orderNumbers.push(orderNumber);
-        });
+            orderNumbers.push(orderNumber);
+          });
         cy.go('back');
       });
     });

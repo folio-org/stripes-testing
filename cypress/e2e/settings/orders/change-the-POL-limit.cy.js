@@ -91,17 +91,17 @@ describe('orders: Settings', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C15497 Increase purchase order lines limit (items for receiving includes "Order closed" statuses) (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
+  it('C668 Change the purchase order lines limit, then create POs with PO Lines of (PO Line limit + 1), to see how the order app behaves (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
     SettingsOrders.setPurchaseOrderLinesLimit(2);
     cy.visit(TopMenu.ordersPath);
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList();
     Orders.createPOLineViaActions();
-    OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
+    OrderLines.selectRandomInstanceInTitleLookUP('*', 20);
     OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId, '4');
     OrderLines.backToEditingOrder();
     Orders.createPOLineViaActions();
-    OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
+    OrderLines.selectRandomInstanceInTitleLookUP('*', 40);
     OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId, '4');
     OrderLines.backToEditingOrder();
     Orders.createPOLineViaActions();

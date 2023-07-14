@@ -132,16 +132,16 @@ describe('ui-data-import', () => {
       .then(() => {
         MarcFieldProtection.getListOfMarcFieldProtectionViaApi({ query: `"field"=="${protectedFields.firstField}"` })
           .then(list => {
-            if(list){
+            if (list) {
               list.forEach(({ id }) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(id));
             }
-        });
+          });
         MarcFieldProtection.getListOfMarcFieldProtectionViaApi({ query: `"field"=="${protectedFields.secondField}"` })
           .then(list => {
-            if(list){
+            if (list) {
               list.forEach(({ id }) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(id));
-            } 
-        });
+            }
+          });
         MarcFieldProtection.createMarcFieldProtectionViaApi({
           indicator1: '*',
           indicator2: '*',
