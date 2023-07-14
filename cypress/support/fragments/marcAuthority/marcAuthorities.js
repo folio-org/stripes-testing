@@ -1,4 +1,4 @@
-import { MultiColumnList, Modal, TextField, Callout, MultiSelect, MultiSelectOption, QuickMarcEditorRow, Pane, PaneContent, PaneHeader, Select, Section, HTML, including, Button, MultiColumnListCell, MultiColumnListRow, SearchField, Accordion, Checkbox, ColumnHeader, AdvancedSearchRow } from '../../../../interactors';
+import { MultiColumnList, Modal, TextField, Callout, MultiSelect, MultiSelectOption, QuickMarcEditorRow, Pane, PaneContent, PaneHeader, Select, Section, HTML, including, Button, MultiColumnListCell, MultiColumnListRow, SearchField, Accordion, Checkbox, ColumnHeader, AdvancedSearchRow, Link } from '../../../../interactors';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const authoritiesList = rootSection.find(MultiColumnList({ id: 'authority-result-list' }));
@@ -95,6 +95,17 @@ export default {
   selectItem: (item) => {
     cy.expect(MultiColumnListCell({ content: item }).exists());
     cy.do(Button(including(item)).click());
+  },
+
+  clickOnNumberOfTitlesLink(columnIndex, linkValue) {
+    cy.wrap(MultiColumnListCell({columnIndex: columnIndex, content: linkValue }).find(Link()).href()).as('link');
+    cy.get('@link').then((link) => {
+      cy.visit(link);
+    });
+  },
+
+  verifyNumberOfTitles(columnIndex, linkValue) {
+    cy.expect(MultiColumnListCell({columnIndex: columnIndex, content: linkValue }).find(Link()).exists());
   },
 
   verifyFirstValueSaveSuccess(successMsg, txt) {
