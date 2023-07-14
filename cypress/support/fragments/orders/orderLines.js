@@ -610,7 +610,7 @@ export default {
     submitOrderLine();
   },
 
-  fillInPOLineInfoForExportWithLocationForPhysicalResource(accountNumber, AUMethod, institutionName, quantity) {
+  fillInPOLineInfoForExportWithLocationForPhisicalResource(accountNumber, AUMethod, institutionName, quantity) {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
@@ -958,13 +958,10 @@ export default {
   },
 
   checkCreatedInventoryInPhysicalRecourceDetails: (value) => {
-  checkCreatedInventoryInPhysicalRecourceDetails: (value) => {
     cy.expect(Accordion('Physical resource details')
-      .find(KeyValue('Create inventory')).has({ value }));
       .find(KeyValue('Create inventory')).has({ value }));
   },
 
-  checkCreatedInventoryInElectronicRecourceDetails: (value) => {
   checkCreatedInventoryInElectronicRecourceDetails: (value) => {
     cy.expect(Accordion('E-resources details')
       .find(KeyValue('Create inventory')).has({ value }));
@@ -1031,7 +1028,6 @@ export default {
   },
 
   checkFundAndExpenseClassPopulated(fundInformation) {
-  checkFundAndExpenseClassPopulated(fundInformation) {
     cy.expect(fundDistributionAccordion
       .find(MultiColumnList())
       .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 0 }))
@@ -1048,5 +1044,10 @@ export default {
       .find(MultiColumnList())
       .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 3 }))
       .has({ content: fundInformation.amount }));
-  }
+  },
+
+  checkErrorToastMessage: (message) => {
+    cy.wait(4000);
+    InteractorsTools.checkCalloutErrorMessage(message);
+  },
 };
