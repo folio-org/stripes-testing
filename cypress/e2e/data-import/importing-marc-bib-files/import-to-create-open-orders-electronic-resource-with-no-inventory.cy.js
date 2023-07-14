@@ -50,7 +50,7 @@ describe('ui-data-import', () => {
     ...NewJobProfile.defaultJobProfile,
     profileName: `C375989 Test Order ${getRandomPostfix()}`,
   };
-  
+
   before('login', () => {
     cy.createTempUser([
       permissions.settingsDataImportEnabled.gui,
@@ -112,6 +112,6 @@ describe('ui-data-import', () => {
       OrderLines.waitLoading();
       OrderLines.getAssignedPOLNumber()
         .then(initialNumber => { orderNumber = initialNumber.replace('-1', ''); });
-        OrderLines.checkCreatedInventoryInElectronicRecourceDetails('None');
+      OrderLines.checkCreatedInventoryInElectronicRecourceDetails('None');
     });
 });

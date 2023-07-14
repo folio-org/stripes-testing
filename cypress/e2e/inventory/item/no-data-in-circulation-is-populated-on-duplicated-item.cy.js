@@ -1,11 +1,11 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
 import uuid from 'uuid';
 import moment from 'moment';
+import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TestTypes from '../../../support/dictionary/testTypes';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import { ITEM_STATUS_NAMES, LOCALION_NAMES } from '../../../support/constants';
+import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
@@ -27,14 +27,14 @@ describe('inventory', () => {
     barcode: uuid(),
     instanceTitle: `autotestInstance ${getRandomPostfix()}`,
   };
-  const holdingsPermanentLocation = LOCALION_NAMES.ONLINE_UI;
+  const holdingsPermanentLocation = LOCATION_NAMES.ONLINE_UI;
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation('servicePoint', uuid());
   const testData = [
     ITEM_STATUS_NAMES.IN_TRANSIT,
     itemData.barcode,
   ];
   const newItemBarcode = uuid();
-  const todayDate = moment(new Date).format('M/D/YYYY');
+  const todayDate = moment(new Date()).format('M/D/YYYY');
 
   before('create test data and login', () => {
     cy.getAdminToken()
@@ -51,24 +51,24 @@ describe('inventory', () => {
           itemData.materialTypeName = res.name;
           testData.push(`${itemData.instanceTitle} (${itemData.materialTypeName})`);
         });
-    }).then(() => {
-      InventoryInstances.createFolioInstanceViaApi({ instance: {
-        instanceTypeId: itemData.instanceTypeId,
-        title: itemData.instanceTitle,
-      },
-      holdings: [{
-        holdingsTypeId: itemData.holdingTypeId,
-        permanentLocationId: testData.locationsId,
-      }],
-      items:[{
-        barcode: itemData.barcode,
-        status:  { name: ITEM_STATUS_NAMES.AVAILABLE },
-        permanentLoanType: { id: itemData.loanTypeId },
-        materialType: { id: itemData.materialTypeId },
-      }] });
-    }).then(specialInstanceIds => {
-      itemData.testInstanceIds = specialInstanceIds;
-    });
+      }).then(() => {
+        InventoryInstances.createFolioInstanceViaApi({ instance: {
+          instanceTypeId: itemData.instanceTypeId,
+          title: itemData.instanceTitle,
+        },
+        holdings: [{
+          holdingsTypeId: itemData.holdingTypeId,
+          permanentLocationId: testData.locationsId,
+        }],
+        items:[{
+          barcode: itemData.barcode,
+          status:  { name: ITEM_STATUS_NAMES.AVAILABLE },
+          permanentLoanType: { id: itemData.loanTypeId },
+          materialType: { id: itemData.materialTypeId },
+        }] });
+      }).then(specialInstanceIds => {
+        itemData.testInstanceIds = specialInstanceIds;
+      });
 
     cy.createTempUser([
       permissions.inventoryAll.gui,

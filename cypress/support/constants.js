@@ -146,6 +146,18 @@ export const ORDER_FORMAT_NAMES = {
   PHYSICAL_RESOURCE_Check: 'Physical Resource',
 };
 
+export const ORDER_FORMAT_NAMES_IN_PROFILE = {
+  ELECTRONIC_RESOURCE: 'Electronic Resource',
+  PE_MIX: 'P/E Mix',
+  OTHER: 'Other',
+  PHYSICAL_RESOURCE: 'Physical Resource',
+};
+
+export const ACQUISITION_METHOD_NAMES_IN_PROFILE = {
+  APPROVAL_PLAN: 'Approval plan',
+  PURCHASE_AT_VENDOR_SYSTEM: 'Purchase at vendor system'
+};
+
 export const RECEIVING_WORKFLOW_NAMES = {
   SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY: 'Synchronized order and receipt quantity',
   INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY: 'Independent order and receipt quantity',
@@ -227,4 +239,10 @@ export const JOB_STATUS_NAMES = {
   COMPLETED: 'Completed',
   COMPLETED_WITH_ERRORS: 'Completed with errors',
   FAILED: 'Failed'
+};
+
+export const VENDOR_NAMES = {
+  GOBI: 'GOBI Library Solutions',
+  HARRASSOWITZ: 'Otto Harrassowitz GmbH & Co. KG',
+  EBSCO:'EBSCO SUBSCRIPTION SERVICES'
 };

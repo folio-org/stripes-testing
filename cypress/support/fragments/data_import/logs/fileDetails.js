@@ -286,15 +286,15 @@ export default {
 
     // get MultiColumnList rows and loop over
     return cy.get('#search-results-list')
-    .find('[data-row-index]').each($row => {
+      .find('[data-row-index]').each($row => {
       // from each row, choose specific cell
-      cy.get(`[class*="mclCell-"]:nth-child(${cell})`, { withinSubject: $row })
-      // extract its text content
-        .invoke('text')
-        .then(cellValue => {
-          cells.push(cellValue);
-        });
-    })
+        cy.get(`[class*="mclCell-"]:nth-child(${cell})`, { withinSubject: $row })
+        // extract its text content
+          .invoke('text')
+          .then(cellValue => {
+            cells.push(cellValue);
+          });
+      })
       .then(() => cells);
   },
 

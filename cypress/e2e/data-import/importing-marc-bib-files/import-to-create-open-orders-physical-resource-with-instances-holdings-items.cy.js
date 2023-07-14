@@ -5,13 +5,14 @@ import DevTeams from '../../../support/dictionary/devTeams';
 import { FOLIO_RECORD_TYPE,
   ORDER_STATUSES,
   MATERIAL_TYPE_NAMES,
-  ORDER_FORMAT_NAMES,
+  ORDER_FORMAT_NAMES_IN_PROFILE,
   ACQUISITION_METHOD_NAMES,
   JOB_STATUS_NAMES,
   LOCATION_NAMES,
   LOAN_TYPE_NAMES,
   ITEM_STATUS_NAMES,
-  ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
+  ACCEPTED_DATA_TYPE_NAMES,
+  VENDOR_NAMES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -35,7 +36,7 @@ describe('ui-data-import', () => {
   let orderNumber;
   let instanceHrid;
   const instanceTitle = 'Quiet time.';
-  const filePathForCreateOrder = 'marcFileForC380474.mrc';
+  const filePathForCreateOrder = 'marcFileForCreateOrder.mrc';
   const marcFileName = `C380474 autotestFileName ${getRandomPostfix()}`;
   const collectionOfMappingAndActionProfiles = [
     {
@@ -43,17 +44,16 @@ describe('ui-data-import', () => {
         name: `C380474 Test Physical resource open order with instance, holdings, item ${getRandomPostfix()}`,
         orderStatus: ORDER_STATUSES.OPEN,
         approved: true,
-        vendor: 'GOBI Library Solutions',
+        vendor: VENDOR_NAMES.GOBI,
         title: '245$a',
         acquisitionMethod: ACQUISITION_METHOD_NAMES.PURCHASE_AT_VENDOR_SYSTEM,
-        orderFormat: ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE_Check,
+        orderFormat: ORDER_FORMAT_NAMES_IN_PROFILE.PHYSICAL_RESOURCE,
         receivingWorkflow: 'Synchronized',
         physicalUnitPrice: '"20"',
         quantityPhysical: '"1"',
         currency: 'USD',
         locationName: `"${LOCATION_NAMES.ANNEX}"`,
-        locationQuantityPhysical: '"1"'
-      },
+        locationQuantityPhysical: '"1"' },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ORDER,
         name: `C380474 Test Physical resource open order with instance, holdings, item ${getRandomPostfix()}` }
     },
@@ -117,12 +117,9 @@ describe('ui-data-import', () => {
   it('C380474 Import to create open orders: Physical resource with Instances, Holdings, Items (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       // create mapping profiles
-      FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillPhysicalOrderMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
+      FieldMappingProfiles.createOrderMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
       FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
-      
+
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
       NewFieldMappingProfile.fillPermanentLocation(collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocation);
