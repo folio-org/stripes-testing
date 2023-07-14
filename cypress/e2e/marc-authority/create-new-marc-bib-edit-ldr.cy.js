@@ -39,7 +39,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
       Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
     ]).then(createdUserProperties => {
       testData.userProperties = createdUserProperties;
-      cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+      cy.login(createdUserProperties.username, createdUserProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
     });
   });
 
