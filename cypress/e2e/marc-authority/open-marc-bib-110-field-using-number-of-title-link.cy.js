@@ -64,7 +64,8 @@ describe('MARC -> MARC Authority', () => {
         });
       });
 
-      cy.loginAsAdmin({ path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading }).then(() => {
+      cy.visit(TopMenu.inventoryPath).then(() => {
+        InventoryInstances.waitContentLoading();
         InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
@@ -78,7 +79,7 @@ describe('MARC -> MARC Authority', () => {
         QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag, testData.rowIndex);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
-      })
+      });
 
       cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.marcAuthorities, waiter: MarcAuthorities.waitLoading });
     });
