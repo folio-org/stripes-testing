@@ -58,7 +58,7 @@ function selectExistingRecordType(existingRecordType) {
   cy.do(matchProfileDetailsAccordion.find(Button({ dataId: existingRecordType })).click());
 }
 
-function fillQualifierInIncomingPart(qualifierType, qualifierValue){
+function fillQualifierInIncomingPart(qualifierType, qualifierValue) {
   cy.contains('Incoming MARC Bibliographic record').then(elem => {
     elem.parent()[0].querySelectorAll('input[type="checkbox"]')[0].click();
   });
@@ -68,7 +68,7 @@ function fillQualifierInIncomingPart(qualifierType, qualifierValue){
   ]);
 }
 
-function fillQualifierInExistingPart(qualifierType, qualifierValue){
+function fillQualifierInExistingPart(qualifierType, qualifierValue) {
   cy.contains('Existing MARC Bibliographic record').then(elem => {
     elem.parent()[0].querySelector('input[type="checkbox').click();
   });
@@ -78,7 +78,7 @@ function fillQualifierInExistingPart(qualifierType, qualifierValue){
   ]);
 }
 
-function fillStaticValue(staticValue){
+function fillStaticValue(staticValue) {
   cy.do([
     Dropdown({ id:'record-selector-dropdown' }).open(),
     Button('Static value (submatch only)').click(),
@@ -91,7 +91,7 @@ function selectMatchCriterion(matchCriterion) {
   cy.do(Select('Match criterion').choose(matchCriterion));
 }
 
-function selectExistingRecordField(existingRecordOption){
+function selectExistingRecordField(existingRecordOption) {
   cy.do(criterionValueTypeButton.click());
   cy.expect(criterionValueTypeList.exists());
   // wait for list will be loaded
@@ -100,7 +100,7 @@ function selectExistingRecordField(existingRecordOption){
     .find(SelectionOption(existingRecordOption)).click());
 }
 
-function fillOnlyComparePartOfTheValue(value){
+function fillOnlyComparePartOfTheValue(value) {
   cy.contains('Incoming MARC Bibliographic record').then(elem => {
     elem.parent()[0].querySelectorAll('input[type="checkbox"]')[1].click();
   });
@@ -284,7 +284,7 @@ export default {
     cy.wait(2000);
     selectExistingRecordField(existingRecordOption);
   },
-  
+
   createMatchProfileViaApi:(nameProfile) => {
     return cy
       .okapiRequest({
@@ -320,7 +320,7 @@ export default {
         return response;
       });
   },
- 
+
   createMatchProfileViaApiMarc: (name, incomingRecords, existingRecords) => {
     return cy.okapiRequest({
       method: 'POST',
@@ -345,7 +345,7 @@ export default {
                   value: incomingRecords.ind2
                 },
                 {
-                  label: 'recordSubfield', 
+                  label: 'recordSubfield',
                   value: incomingRecords.subfield
                 }
               ],
@@ -368,7 +368,7 @@ export default {
                   value: existingRecords.ind2
                 },
                 {
-                  label: 'recordSubfield', 
+                  label: 'recordSubfield',
                   value: existingRecords.subfield
                 }
               ],
@@ -377,7 +377,7 @@ export default {
             },
             matchCriterion: 'EXACTLY_MATCHES'
           }],
-          name: name,
+          name,
           existingRecordType: existingRecords.type
         },
         addedRelations: [],

@@ -32,6 +32,7 @@ const unlinkButtonInsideModal = Button({ id: 'clickable-quick-marc-confirm-unlin
 const calloutAfterSaveAndClose = Callout('This record has successfully saved and is in process. Changes may not appear immediately.');
 const calloutUpdatedRecord = Callout('Record has been updated.');
 const calloutUpdatedLinkedBibRecord = Callout('Record has been updated. 2 linked bibliographic record(s) updates have begun.');
+const calloutDelete008Error = Callout('Record cannot be saved without 008 field');
 const closeButton = Button({ icon: 'times' });
 const validRecord = InventoryInstance.validOCLC;
 const specRetInputNamesHoldings008 = ['records[3].content.Spec ret[0]',
@@ -108,6 +109,23 @@ const getRowInteractorByRowNumber = (specialRowNumber) => QuickMarcEditor()
   .find(QuickMarcEditorRow({ index: specialRowNumber }));
 const getRowInteractorByTagName = (tagName) => QuickMarcEditor()
   .find(QuickMarcEditorRow({ tagValue: tagName }));
+
+const tag008DefaultValuesHoldings = [
+  { interactor:TextField('AcqStatus'), defaultValue:'\\' },
+  { interactor:TextField('AcqMethod'), defaultValue:'\\' },
+  { interactor:TextField('AcqEndDate'), defaultValue:'\\\\\\\\' },
+  { interactor:TextField('Gen ret'), defaultValue:'\\' },
+  { interactor:TextField('Spec ret', { name: 'records[3].content.Spec ret[0]' }), defaultValue:'\\' },
+  { interactor:TextField('Spec ret', { name: 'records[3].content.Spec ret[1]' }), defaultValue:'\\' },
+  { interactor:TextField('Spec ret', { name: 'records[3].content.Spec ret[2]' }), defaultValue:'\\' },
+  { interactor:TextField('Compl'), defaultValue:'\\' },
+  { interactor:TextField('Copies'), defaultValue:'\\\\\\' },
+  { interactor:TextField('Lend'), defaultValue:'\\' },
+  { interactor:TextField('Repro'), defaultValue:'\\' },
+  { interactor:TextField('Lang'), defaultValue:'\\\\\\' },
+  { interactor:TextField('Sep/comp'), defaultValue:'\\' },
+  { interactor:TextField('Rept date'), defaultValue:'\\\\\\\\\\\\' }
+];
 
 export default {
 
@@ -618,5 +636,30 @@ export default {
 
   checkCallout(callout) {
     cy.expect(Callout(callout).exists());
+  },
+
+  clearCertain008Boxes(...boxNames) {
+    boxNames.forEach(boxName => {
+      cy.do([
+        QuickMarcEditorRow({ tagValue: '008' }).find(TextField(boxName)).fillIn('')
+      ]);
+    });
+  },
+
+  checkAfterSaveHoldings() {
+    cy.expect([
+      calloutAfterSaveAndClose.exists(),
+      Button('Actions').exists()
+    ]);
+  },
+
+  checkDelete008Callout() {
+    cy.expect(calloutDelete008Error.exists());
+  },
+
+  check008FieldsEmptyHoldings() {
+    tag008DefaultValuesHoldings.forEach(field => {
+      cy.expect(field.interactor.has({ value: field.defaultValue }));
+    });
   }
 };

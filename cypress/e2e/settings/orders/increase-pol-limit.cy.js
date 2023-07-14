@@ -98,11 +98,11 @@ describe('orders: Settings', () => {
     Orders.selectFromResultsList();
     Orders.createPOLineViaActions();
     OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
-    OrderLines.fillInPOLineInfoForExportWithLocationForPhisicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId, '4');
+    OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId, '4');
     OrderLines.backToEditingOrder();
     Orders.createPOLineViaActions();
     OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
-    OrderLines.fillInPOLineInfoForExportWithLocationForPhisicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId, '4');
+    OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId, '4');
     OrderLines.backToEditingOrder();
     Orders.createPOLineViaActions();
     Orders.checkPurchaseOrderLineLimitReachedModal();
