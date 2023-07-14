@@ -1,5 +1,9 @@
 # Change history for stripes-testing
 
+## 4.6.0 IN PROGRESS
+
+* Export some `@bigtest/react` functions. Refs UITEST-108.
+
 ## [4.5.0](https://github.com/folio-org/stripes-testing/tree/v4.5.0) (2023-02-01)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v4.4.0...v4.5.0)
 

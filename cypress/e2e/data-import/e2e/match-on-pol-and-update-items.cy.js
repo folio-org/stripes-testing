@@ -6,7 +6,9 @@ import { FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
   ORDER_STATUSES,
-  ITEM_STATUS_NAMES } from '../../../support/constants';
+  ITEM_STATUS_NAMES,
+  VENDOR_NAMES,
+  ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import Orders from '../../../support/fragments/orders/orders';
@@ -150,7 +152,7 @@ describe('ui-data-import', () => {
       .then(() => {
         cy.getAdminToken()
           .then(() => {
-            Organizations.getOrganizationViaApi({ query: 'name="GOBI Library Solutions"' })
+            Organizations.getOrganizationViaApi({ query: `name="${VENDOR_NAMES.GOBI}"` })
               .then(organization => {
                 vendorId = organization.id;
               });
@@ -158,7 +160,7 @@ describe('ui-data-import', () => {
               .then(materialType => {
                 materialTypeId = materialType.id;
               });
-            cy.getAcquisitionMethodsApi({ query: 'value="Purchase at vendor system"' })
+            cy.getAcquisitionMethodsApi({ query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"` })
               .then(params => {
                 acquisitionMethodId = params.body.acquisitionMethods[0].id;
               });

@@ -6,7 +6,8 @@ import { FOLIO_RECORD_TYPE,
   PAYMENT_METHOD,
   BATCH_GROUP,
   ACCEPTED_DATA_TYPE_NAMES,
-  JOB_STATUS_NAMES } from '../../../support/constants';
+  JOB_STATUS_NAMES,
+  VENDOR_NAMES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -31,7 +32,7 @@ describe('ui-data-import', () => {
     existingRecordType:FOLIO_RECORD_TYPE.INVOICE,
     description:'',
     batchGroup: BATCH_GROUP.AMHERST,
-    organizationName: NewFieldMappingProfile.organization.ebsco,
+    organizationName: VENDOR_NAMES.EBSCO,
     paymentMethod: PAYMENT_METHOD.CREDIT_CARD
   };
   const actionProfile = {
