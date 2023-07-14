@@ -64,7 +64,8 @@ describe('MARC -> MARC Authority', () => {
         });
       });
 
-      cy.loginAsAdmin({ path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading }).then(() => {
+      cy.visit(TopMenu.inventoryPath).then(() => {
+        InventoryInstances.waitContentLoading();
         InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
