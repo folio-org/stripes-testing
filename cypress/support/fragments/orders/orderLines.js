@@ -610,7 +610,7 @@ export default {
     submitOrderLine();
   },
 
-  fillInPOLineInfoForExportWithLocationForPhisicalResource(accountNumber, AUMethod, institutionName, quantity) {
+  fillInPOLineInfoForExportWithLocationForPhysicalResource(accountNumber, AUMethod, institutionName, quantity) {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
