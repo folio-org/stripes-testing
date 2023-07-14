@@ -193,7 +193,7 @@ describe('Importing MARC Bib files', () => {
     JobProfiles.waitFileIsImported(nameForUpdatedMarcFile);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(nameForUpdatedMarcFile);
-    
+
     cy.visit(TopMenu.inventoryPath);
     InventoryInstance.searchByTitle('Paradise of other side (updated title)');
     InventoryInstances.selectInstance();

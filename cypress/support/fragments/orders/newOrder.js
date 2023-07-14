@@ -28,7 +28,7 @@ export default {
     id: uuid(),
     vendor: '',
     ongoing: {
-      isSubscription: false, 
+      isSubscription: false,
       manualRenewal: false,
     },
     orderType: 'Ongoing'

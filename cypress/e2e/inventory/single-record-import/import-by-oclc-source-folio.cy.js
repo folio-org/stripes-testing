@@ -77,7 +77,7 @@ describe('ui-inventory: import by OCLC', () => {
     InventoryInstance.verifyInstancePublisher(0, 0, oclcRecordData.publisher);
     InventoryInstance.verifyInstancePublisher(0, 2, oclcRecordData.placeOfPublication);
     InventoryInstance.verifyInstancePublisher(0, 3, oclcRecordData.publicationDate);
-    InventoryInstance.verifyInstancePhisicalcyDescription(oclcRecordData.physicalDescription);
+    InventoryInstance.verifyInstancePhysicalcyDescription(oclcRecordData.physicalDescription);
     InventoryInstance.verifyResourceIdentifier('ISBN', oclcRecordData.isbn1, 4);
     InventoryInstance.verifyResourceIdentifier('ISBN', oclcRecordData.isbn2, 5);
     InventoryInstance.verifyInstanceSubject(0, 0, oclcRecordData.subject);
