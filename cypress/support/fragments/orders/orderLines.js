@@ -958,13 +958,10 @@ export default {
   },
 
   checkCreatedInventoryInPhysicalRecourceDetails: (value) => {
-  checkCreatedInventoryInPhysicalRecourceDetails: (value) => {
     cy.expect(Accordion('Physical resource details')
-      .find(KeyValue('Create inventory')).has({ value }));
       .find(KeyValue('Create inventory')).has({ value }));
   },
 
-  checkCreatedInventoryInElectronicRecourceDetails: (value) => {
   checkCreatedInventoryInElectronicRecourceDetails: (value) => {
     cy.expect(Accordion('E-resources details')
       .find(KeyValue('Create inventory')).has({ value }));
@@ -1030,7 +1027,6 @@ export default {
       .has({ content: orderData.value }));
   },
 
-  checkFundAndExpenseClassPopulated(fundInformation) {
   checkFundAndExpenseClassPopulated(fundInformation) {
     cy.expect(fundDistributionAccordion
       .find(MultiColumnList())
