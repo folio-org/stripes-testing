@@ -1,0 +1,118 @@
+import uuid from 'uuid';
+import moment from 'moment';
+import TopMenu from '../../support/fragments/topMenu';
+import TestTypes from '../../support/dictionary/testTypes';
+import SearchPane from '../../support/fragments/circulation-log/searchPane';
+import getRandomPostfix from '../../support/utils/stringTools';
+import permissions from '../../support/dictionary/permissions';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import UsersCard from '../../support/fragments/users/usersCard';
+import devTeams from '../../support/dictionary/devTeams';
+import Users from '../../support/fragments/users/users';
+import UserEdit from '../../support/fragments/users/userEdit';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import Checkout from '../../support/fragments/checkout/checkout';
+import LoansPage from '../../support/fragments/loans/loansPage';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import UserLoans from '../../support/fragments/users/loans/userLoans';
+import ConfirmClaimReturnedModal from '../../support/fragments/users/loans/confirmClaimReturnedModal';
+import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
+import UsersOwners from '../../support/fragments/settings/users/usersOwners';
+import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+
+let user;
+const item = {
+  instanceName: `Barcode search test ${Number(new Date())}`,
+  barcode: `123${getRandomPostfix()}`,
+};
+const testData = {
+  userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest lost items', uuid()),
+};
+const ownerBody = {
+  owner: 'AutotestOwner' + getRandomPostfix(),
+  servicePointOwner: [
+    {
+      value: testData.userServicePoint.id,
+      label: testData.userServicePoint.name,
+    },
+  ],
+};
+
+describe('circulation-log', () => {
+  before('create test data', () => {
+    cy.createTempUser([
+      permissions.circulationLogAll.gui,
+    ])
+      .then(userProperties => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.circulationLogPath,
+          waiter: SearchPane.waitLoading
+        });
+
+        ServicePoints.createViaApi(testData.userServicePoint);
+        testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
+        Location.createViaApi(testData.defaultLocation);
+        UserEdit.addServicePointViaApi(testData.userServicePoint.id, user.userId);
+
+        item.instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
+        cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` })
+          .then((holdings) => {
+            console.log('holdings[0].id', holdings[0].id)
+            cy.updateHoldingRecord(holdings[0].id, {
+              ...holdings[0],
+              permanentLocationId: testData.defaultLocation.id
+            });
+          });
+
+        Checkout.checkoutItemViaApi({
+          itemBarcode: item.barcode,
+          userBarcode: user.barcode,
+          servicePointId: testData.userServicePoint.id,
+        });
+
+        UsersOwners.createViaApi(ownerBody).then((ownerResponse) => {
+          testData.ownerId = ownerResponse.id;
+          PaymentMethods.createViaApi(testData.ownerId).then((paymentMethod) => {
+            testData.paymentMethodId = paymentMethod.id;
+          });
+        });
+        UserLoans.getUserLoansIdViaApi(user.userId).then((userLoans) => {
+          UserLoans.declareLoanLostViaApi({
+            servicePointId: testData.userServicePoint.id,
+            declaredLostDateTime: moment.utc().format(),
+          }, userLoans.loans[0].id);
+        });
+      });
+  });
+
+  after('delete test data', () => {
+    CheckInActions.checkinItemViaApi({
+      itemBarcode: item.barcode,
+      servicePointId: testData.userServicePoint.id,
+      checkInDate: new Date().toISOString(),
+    });
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
+    PaymentMethods.deleteViaApi(testData.paymentMethodId);
+    // Users.deleteViaApi(user.userId);
+    UsersOwners.deleteViaApi(testData.ownerId);
+  });
+
+  it('C16997 Filter circulation log by Claimed returned (firebird)', { tags: [TestTypes.criticalPath, devTeams.firebird] }, () => {
+    SearchPane.setFilterOptionFromAccordion('loan', 'Declared lost');
+    SearchPane.verifyResultCells();
+    SearchPane.checkResultSearch({
+      itemBarcode: item.barcode,
+      circAction: 'Declared lost',
+    });
+    SearchPane.resetResults();
+
+    SearchPane.searchByItemBarcode(item.barcode);
+    SearchPane.checkResultSearch({
+      itemBarcode: item.barcode,
+      circAction: 'Declared lost',
+    });
+  });
+});
