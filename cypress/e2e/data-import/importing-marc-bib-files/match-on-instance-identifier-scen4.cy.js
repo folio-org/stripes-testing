@@ -24,13 +24,13 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import DateTools from '../../../support/utils/dateTools';
+import GenerateIdentifierCode from '../../../support/utils/generateIdentifierCode';
 import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
   let user;
-  const randomIdentifierCode = DateTools.getRandomIdentifierCode();
+  const randomIdentifierCode = GenerateIdentifierCode.getRandomIdentifierCode();
   const editedMarcFileNameForCreate = `C347831 marcFileForCreate.${getRandomPostfix()}.mrc`;
   const editedMarcFileNameForUpdate = `C347831 marcFileForUpdate.${getRandomPostfix()}.mrc`;
   const fileNameForCreateInstance = `C347831autotestFile.${getRandomPostfix()}.mrc`;
