@@ -17,8 +17,8 @@ import {
 } from '../../../../interactors';
 import { ListRow } from '../../../../interactors/multi-column-list';
 
-const logsStartDateAccordion = Accordion('Start date');
-const logsEndDateAccordion = Accordion('End date');
+const logsStartDateAccordion = Accordion('Started');
+const logsEndDateAccordion = Accordion('Ended');
 const applyBtn = Button('Apply');
 const logsResultPane = Pane({ id: 'bulk-edit-logs-pane' });
 const resultsAccordion = Accordion('Preview of record matched');
@@ -370,8 +370,8 @@ export default {
       recordTypesAccordion.find(Checkbox('Users')).has({ checked: false }),
       recordTypesAccordion.find(Checkbox('Inventory - items')).has({ checked: false }),
       recordTypesAccordion.find(Checkbox('Inventory - holdings')).has({ checked: false }),
-      Accordion('Start date').has({ open: false }),
-      Accordion('End date').has({ open: false }),
+      logsStartDateAccordion.has({ open: false }),
+      logsEndDateAccordion.has({ open: false }),
       bulkEditPane.find(HTML('Enter search criteria to start search')).exists(),
       bulkEditPane.find(HTML('Choose a filter to show results.')).exists(),
     ]);
