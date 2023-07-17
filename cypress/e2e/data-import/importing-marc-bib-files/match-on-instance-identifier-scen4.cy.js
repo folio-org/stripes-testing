@@ -25,13 +25,14 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import DateTools from '../../../support/utils/dateTools';
+import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
   let user;
   const randomIdentifierCode = DateTools.getRandomIdentifierCode();
   const editedMarcFileNameForCreate = `C347831 marcFileForCreate.${getRandomPostfix()}.mrc`;
-  const editedMarcFileNameForUpdate = `C347831 marcFileForCreate.${getRandomPostfix()}.mrc`;
+  const editedMarcFileNameForUpdate = `C347831 marcFileForUpdate.${getRandomPostfix()}.mrc`;
   const fileNameForCreateInstance = `C347831autotestFile.${getRandomPostfix()}.mrc`;
   const fileNameForUpdateInstance = `C347831autotestFile.${getRandomPostfix()}.mrc`;
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
@@ -109,6 +110,9 @@ describe('ui-data-import', () => {
     ActionProfiles.deleteActionProfile(actionProfile.name);
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
     Users.deleteViaApi(user.userId);
+    // delete created files
+    FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForCreate}`);
+    FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForUpdate}`);
     InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value)
       .then(instances => {
         instances.forEach(({ id }) => {
