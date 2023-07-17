@@ -100,7 +100,7 @@ describe('ui-data-import', () => {
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
   });
 
-  it('C347828 Match on Instance identifier match meets both the Identifier type and Data requirements (folijet)',
+  it('C347828 MODDICORE-231 "Match on Instance identifier match meets both the Identifier type and Data requirements" Scenario 1 (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
