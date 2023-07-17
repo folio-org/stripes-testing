@@ -92,7 +92,7 @@ describe('circulation-log', () => {
     UsersOwners.deleteViaApi(testData.ownerId);
   });
 
-  it('C16997 Filter circulation log by Claimed returned (firebird)', { tags: [TestTypes.criticalPath, devTeams.firebird] }, () => {
+  it('C17135 Filter circulation log by declared lost (firebird)', { tags: [TestTypes.criticalPath, devTeams.firebird] }, () => {
     SearchPane.setFilterOptionFromAccordion('loan', 'Declared lost');
     SearchPane.verifyResultCells();
     SearchPane.checkResultSearch({
