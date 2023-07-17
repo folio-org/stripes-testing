@@ -2,21 +2,16 @@ import uuid from 'uuid';
 import moment from 'moment';
 import TopMenu from '../../support/fragments/topMenu';
 import TestTypes from '../../support/dictionary/testTypes';
+import Users from '../../support/fragments/users/users';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import getRandomPostfix from '../../support/utils/stringTools';
 import permissions from '../../support/dictionary/permissions';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../support/fragments/users/usersCard';
 import devTeams from '../../support/dictionary/devTeams';
-import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Checkout from '../../support/fragments/checkout/checkout';
-import LoansPage from '../../support/fragments/loans/loansPage';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
-import ConfirmClaimReturnedModal from '../../support/fragments/users/loans/confirmClaimReturnedModal';
-import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
@@ -24,20 +19,18 @@ import CheckInActions from '../../support/fragments/check-in-actions/checkInActi
 
 let user;
 const item = {
-  instanceName: `Barcode search test ${Number(new Date())}`,
-  barcode: `123${getRandomPostfix()}`,
+  instanceName: `instance-name-${getRandomPostfix()}`,
+  barcode: `barcode-${getRandomPostfix()}`,
 };
 const testData = {
   userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest lost items', uuid()),
 };
 const ownerBody = {
   owner: 'AutotestOwner' + getRandomPostfix(),
-  servicePointOwner: [
-    {
-      value: testData.userServicePoint.id,
-      label: testData.userServicePoint.name,
-    },
-  ],
+  servicePointOwner: [{
+    value: testData.userServicePoint.id,
+    label: testData.userServicePoint.name,
+  }],
 };
 
 describe('circulation-log', () => {
@@ -60,7 +53,6 @@ describe('circulation-log', () => {
         item.instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
         cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` })
           .then((holdings) => {
-            console.log('holdings[0].id', holdings[0].id)
             cy.updateHoldingRecord(holdings[0].id, {
               ...holdings[0],
               permanentLocationId: testData.defaultLocation.id
@@ -96,7 +88,7 @@ describe('circulation-log', () => {
     });
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
     PaymentMethods.deleteViaApi(testData.paymentMethodId);
-    // Users.deleteViaApi(user.userId);
+    Users.deleteViaApi(user.userId);
     UsersOwners.deleteViaApi(testData.ownerId);
   });
 
