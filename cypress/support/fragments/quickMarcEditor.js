@@ -32,6 +32,7 @@ const unlinkButtonInsideModal = Button({ id: 'clickable-quick-marc-confirm-unlin
 const calloutAfterSaveAndClose = Callout('This record has successfully saved and is in process. Changes may not appear immediately.');
 const calloutUpdatedRecord = Callout('Record has been updated.');
 const calloutUpdatedLinkedBibRecord = Callout('Record has been updated. 2 linked bibliographic record(s) updates have begun.');
+const calloutNonEditableLdrBib = Callout('Record cannot be saved. Please check the Leader. Only positions 5, 6, 7, 8, 17, 18 and/or 19 can be edited in the Leader.');
 const calloutDelete008Error = Callout('Record cannot be saved without 008 field');
 const closeButton = Button({ icon: 'times' });
 const validRecord = InventoryInstance.validOCLC;
@@ -638,6 +639,15 @@ export default {
     cy.expect(Callout(callout).exists());
   },
 
+  checkNonEditableLdrCalloutBib() {
+    cy.expect([
+      calloutNonEditableLdrBib.exists(),
+      calloutNonEditableLdrBib.has({ type: 'error' })
+    ]);
+    cy.do(calloutNonEditableLdrBib.dismiss());
+    cy.expect(calloutNonEditableLdrBib.absent());
+  },
+
   clearCertain008Boxes(...boxNames) {
     boxNames.forEach(boxName => {
       cy.do([
@@ -661,5 +671,14 @@ export default {
     tag008DefaultValuesHoldings.forEach(field => {
       cy.expect(field.interactor.has({ value: field.defaultValue }));
     });
+  },
+
+  checkSubfieldsAbsenceInTag008() {
+    cy.expect(getRowInteractorByTagName('008').find(quickMarcEditorRowContent)
+      .find(HTML({ className: including('bytesFieldRow-') })).absent());
+  },
+
+  saveInstanceIdToArrayInQuickMarc(IdArray) {
+    cy.url().then(url => { IdArray.push(url.split('/')[6].split('?')[0]); });
   }
 };
