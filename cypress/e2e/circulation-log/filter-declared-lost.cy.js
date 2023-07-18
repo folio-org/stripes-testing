@@ -16,6 +16,10 @@ import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import SearchResults from '../../support/fragments/circulation-log/searchResults';
+import LoansPage from '../../support/fragments/loans/loansPage';
+import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 let user;
 const item = {
@@ -40,10 +44,10 @@ describe('circulation-log', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.circulationLogPath,
-          waiter: SearchPane.waitLoading
-        });
+        // cy.login(user.username, user.password, {
+        //   path: TopMenu.circulationLogPath,
+        //   waiter: SearchPane.waitLoading
+        // });
 
         ServicePoints.createViaApi(testData.userServicePoint);
         testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
@@ -78,6 +82,7 @@ describe('circulation-log', () => {
           }, userLoans.loans[0].id);
         });
       });
+      cy.loginAsAdmin({ path: TopMenu.circulationLogPath, waiter: SearchPane.waitLoading });
   });
 
   after('delete test data', () => {
@@ -106,5 +111,19 @@ describe('circulation-log', () => {
       itemBarcode: item.barcode,
       circAction: 'Declared lost',
     });
+  });
+
+  it('C45934 Check the Actions button from filtering Circulation log by declared lost (firebird)', { tags: [TestTypes.criticalPath, devTeams.firebird] }, () => {
+    SearchPane.setFilterOptionFromAccordion('loan', 'Declared lost');
+    SearchResults.chooseActionByRow(0, 'Loan details');
+    LoansPage.waitLoading();
+    TopMenuNavigation.navigateToApp('Circulation log');
+
+    SearchResults.chooseActionByRow(0, 'User details');
+    Users.verifyFirstNameOnUserDetailsPane(user.firstName);
+    TopMenuNavigation.navigateToApp('Circulation log');
+
+    SearchResults.clickOnCell(item.barcode, 0);
+    ItemRecordView.waitLoading();
   });
 });
