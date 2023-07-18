@@ -146,6 +146,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
     Ledgers.selectLedger(defaultLedger.name);
     Ledgers.rollover();
     Ledgers.fillInRolloverForCashBalance(secondFiscalYear.code, 'Cash balance', 'Allocation');
+    Ledgers.closeRolloverInfo();
     Ledgers.rolloverLogs();
     Ledgers.checkRolloverLogs(todayDate);
   });
