@@ -288,7 +288,7 @@ Cypress.Commands.add('getProductIdTypes', (searchParams) => {
     });
 });
 
-Cypress.Commands.add('getHoldingsDataInEditorViaApi', (holdingsID) => {
+Cypress.Commands.add('getRecordDataInEditorViaApi', (holdingsID) => {
   cy
     .okapiRequest({
       method: 'GET',
