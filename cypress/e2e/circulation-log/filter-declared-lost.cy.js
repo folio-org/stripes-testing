@@ -44,10 +44,6 @@ describe('circulation-log', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-        // cy.login(user.username, user.password, {
-        //   path: TopMenu.circulationLogPath,
-        //   waiter: SearchPane.waitLoading
-        // });
 
         ServicePoints.createViaApi(testData.userServicePoint);
         testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
@@ -82,7 +78,7 @@ describe('circulation-log', () => {
           }, userLoans.loans[0].id);
         });
       });
-      cy.loginAsAdmin({ path: TopMenu.circulationLogPath, waiter: SearchPane.waitLoading });
+    cy.loginAsAdmin({ path: TopMenu.circulationLogPath, waiter: SearchPane.waitLoading });
   });
 
   after('delete test data', () => {
