@@ -73,21 +73,21 @@ const tag008HoldingsBytesProperties = {
 };
 
 const tag008DefaultValues = [
-    { interactor:TextField('Srce'), defaultValue:'\\' },
-    { interactor:TextField('Audn'), defaultValue:'\\' },
-    { interactor:TextField('Lang'), defaultValue:'\\\\\\' },
-    { interactor:TextField('Form'), defaultValue:'\\' },
-    { interactor:TextField('Conf'), defaultValue:'\\' },
-    { interactor:TextField('Biog'), defaultValue:'\\' },
-    { interactor:TextField('MRec'), defaultValue:'\\' },
-    { interactor:TextField('Ctry'), defaultValue:'\\\\\\' },
-    { interactor:TextField('GPub'), defaultValue:'\\' },
-    { interactor:TextField('LitF'), defaultValue:'\\' },
-    { interactor:TextField('Indx'), defaultValue:'\\' },
-    { interactor:TextField('Fest'), defaultValue:'\\' },
-    { interactor:TextField('DtSt'), defaultValue:'\\' },
-    { interactor:TextField('Start date'), defaultValue:'\\\\\\\\' },
-    { interactor:TextField('End date'), defaultValue:'\\\\\\\\' }
+  { interactor:TextField('Srce'), defaultValue:'\\' },
+  { interactor:TextField('Audn'), defaultValue:'\\' },
+  { interactor:TextField('Lang'), defaultValue:'\\\\\\' },
+  { interactor:TextField('Form'), defaultValue:'\\' },
+  { interactor:TextField('Conf'), defaultValue:'\\' },
+  { interactor:TextField('Biog'), defaultValue:'\\' },
+  { interactor:TextField('MRec'), defaultValue:'\\' },
+  { interactor:TextField('Ctry'), defaultValue:'\\\\\\' },
+  { interactor:TextField('GPub'), defaultValue:'\\' },
+  { interactor:TextField('LitF'), defaultValue:'\\' },
+  { interactor:TextField('Indx'), defaultValue:'\\' },
+  { interactor:TextField('Fest'), defaultValue:'\\' },
+  { interactor:TextField('DtSt'), defaultValue:'\\' },
+  { interactor:TextField('Start date'), defaultValue:'\\\\\\\\' },
+  { interactor:TextField('End date'), defaultValue:'\\\\\\\\' }
 ];
 
 const defaultFieldValues = {
@@ -167,8 +167,8 @@ export default {
 
   pressSaveAndClose() { cy.do(saveAndCloseButton.click()); },
 
-  pressSaveAndKeepEditing(calloutMsg) { 
-    cy.do(saveAndKeepEditingBtn.click()); 
+  pressSaveAndKeepEditing(calloutMsg) {
+    cy.do(saveAndKeepEditingBtn.click());
     cy.expect(Callout(calloutMsg).exists());
   },
 
@@ -334,9 +334,9 @@ export default {
   },
 
   checkFieldContentMatch(selector, regExp) {
-   cy.get(selector).invoke('val').then(text => {
-    expect(text).to.match(regExp);
-   });
+    cy.get(selector).invoke('val').then(text => {
+      expect(text).to.match(regExp);
+    });
   },
 
   checkEmptyContent(tagName) {
@@ -362,33 +362,33 @@ export default {
 
   verifyTagFieldAfterLinking(rowIndex, tag, secondBox, thirdBox, content, eSubfield, zeroSubfield, seventhBox) {
     cy.expect([
-      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].tag` })).has({disabled: true, value: tag}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[0]` })).has({disabled: true, value: secondBox}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[1]` })).has({disabled: true, value: thirdBox}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].subfieldGroups.controlled` })).has({disabled: true, value: content}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledAlpha` })).has({disabled: false, value: eSubfield}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].subfieldGroups.zeroSubfield` })).has({disabled: true, value: zeroSubfield}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledNumber` })).has({disabled: false, value: seventhBox}),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].tag` })).has({ disabled: true, value: tag }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[0]` })).has({ disabled: true, value: secondBox }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[1]` })).has({ disabled: true, value: thirdBox }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].subfieldGroups.controlled` })).has({ disabled: true, value: content }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledAlpha` })).has({ disabled: false, value: eSubfield }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].subfieldGroups.zeroSubfield` })).has({ disabled: true, value: zeroSubfield }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledNumber` })).has({ disabled: false, value: seventhBox }),
       QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ value: '$9' })).absent(),
     ]);
   },
 
   verifyTagFieldAfterUnlinking(rowIndex, tag, secondBox, thirdBox, content) {
     cy.expect([
-      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].tag` })).has({value: tag}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[0]` })).has({value: secondBox}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[1]` })).has({value: thirdBox}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].content` })).has({value: content}),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].tag` })).has({ value: tag }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[0]` })).has({ value: secondBox }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[1]` })).has({ value: thirdBox }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].content` })).has({ value: content }),
     ]);
   },
 
   verifyTagField(rowIndex, tag, secondBox, thirdBox, subfieldS, subfieldI) {
     cy.expect([
-      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].tag` })).has({value: tag}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[0]` })).has({value: secondBox}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[1]` })).has({value: thirdBox}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].content` })).has({value: including(subfieldS) }),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].content` })).has({value: including(subfieldI) }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].tag` })).has({ value: tag }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[0]` })).has({ value: secondBox }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[1]` })).has({ value: thirdBox }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].content` })).has({ value: including(subfieldS) }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].content` })).has({ value: including(subfieldI) }),
     ]);
   },
 
@@ -530,11 +530,11 @@ export default {
       cy.expect(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).has({ value: byteProperty.replacedVoidValue }));
     });
   },
-  
+
   check008FieldContent() {
     tag008DefaultValues.forEach(field => {
-      cy.expect(field.interactor.has({ value: field.defaultValue }))
-    })
+      cy.expect(field.interactor.has({ value: field.defaultValue }));
+    });
   },
 
   getRegularTagContent(tag) {

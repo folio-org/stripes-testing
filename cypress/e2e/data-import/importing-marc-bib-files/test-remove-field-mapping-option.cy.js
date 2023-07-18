@@ -48,7 +48,7 @@ describe('ui-data-import', () => {
         typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         permanentLocation: `"${LOCATION_NAMES.MAIN_LIBRARY}"`,
         permanentLocationUI: LOCATION_NAMES.MAIN_LIBRARY_UI,
-        permanentLocationInHoldingsAccordion: 'Main Library >',
+        permanentLocationInHoldingsAccordion: `${LOCATION_NAMES.MAIN_LIBRARY_UI} >`,
         temporaryLocation: `"${LOCATION_NAMES.ONLINE}"`,
         temporaryLocationUI: LOCATION_NAMES.ONLINE_UI,
         illPolicy: 'Unknown lending policy',

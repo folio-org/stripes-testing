@@ -51,7 +51,7 @@ export default {
 
   verifyJobAmount(text, amount) {
     cy.get('div[class*=mclRow-]').contains(text).then(element => {
-      expect(element.prevObject.length).to.eq(amount)
+      expect(element.prevObject.length).to.eq(amount);
     });
   },
 
@@ -185,7 +185,7 @@ export default {
 
   downloadLastCreatedJob(jobId) {
     // TODO: redesign to interactors
-    cy.get(`a:contains(${jobId})`).first().click()
+    cy.get(`a:contains(${jobId})`).first().click();
   },
 
   verifyUserSearchResult(username) {

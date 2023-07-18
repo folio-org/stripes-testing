@@ -11,43 +11,45 @@ import TopMenu from '../../../support/fragments/topMenu';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import ConfirmItemInModal from '../../../support/fragments/check-in-actions/confirmItemInModal';
-import CheckInPane from '../../../support/fragments/check-in-actions/checkInPane';
-import CheckOutActions from '../../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../../support/fragments/checkout/checkout';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import Users from '../../../support/fragments/users/users';
+import FilterItems from '../../../support/fragments/inventory/filterItems';
+import SwitchServicePoint from '../../../support/fragments/servicePoint/switchServicePoint';
 
 describe('inventory', () => {
   let user;
+  const itemStatus = 'Checked out';
+  const todayDate = moment(new Date()).format('M/D/YYYY');
   const itemData = {
     barcode: uuid(),
     instanceTitle: `autotestInstance ${getRandomPostfix()}`,
   };
   const holdingsPermanentLocation = LOCATION_NAMES.ONLINE_UI;
-  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation('servicePoint', uuid());
+  const firstServicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation('firstServicePoint', uuid());
+  const secondServicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation('secondServicePoint', uuid());
   const testData = [
-    ITEM_STATUS_NAMES.IN_TRANSIT,
+    ITEM_STATUS_NAMES.AVAILABLE,
     itemData.barcode,
   ];
-  const newItemBarcode = uuid();
-  const todayDate = moment(new Date()).format('M/D/YYYY');
 
   before('create test data and login', () => {
     cy.getAdminToken()
       .then(() => {
+        ServicePoints.createViaApi(firstServicePoint);
+        ServicePoints.createViaApi(secondServicePoint);
+
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => { itemData.instanceTypeId = instanceTypes[0].id; });
         cy.getHoldingTypes({ limit: 1 }).then((res) => { itemData.holdingTypeId = res[0].id; });
-        ServicePoints.createViaApi(servicePoint);
         cy.getLocations({ query: `name="${holdingsPermanentLocation}"` }).then((locations) => {
           testData.locationsId = locations.id;
         });
         cy.getLoanTypes({ limit: 1 }).then((res) => { itemData.loanTypeId = res[0].id; });
         cy.getMaterialTypes({ limit: 1 }).then((res) => { itemData.materialTypeId = res.id; });
-      }).then(() => {
+      })
+      .then(() => {
         InventoryInstances.createFolioInstanceViaApi({ instance: {
           instanceTypeId: itemData.instanceTypeId,
           title: itemData.instanceTitle,
@@ -61,71 +63,68 @@ describe('inventory', () => {
           status:  { name: ITEM_STATUS_NAMES.AVAILABLE },
           permanentLoanType: { id: itemData.loanTypeId },
           materialType: { id: itemData.materialTypeId },
-        }] });
-      }).then(specialInstanceIds => {
-        itemData.testInstanceIds = specialInstanceIds;
+        }] }).then(specialInstanceIds => {
+          itemData.testInstanceIds = specialInstanceIds;
+        });
+
+        cy.getUsers({ limit: 1, query: '"barcode"="" and "active"="true"' })
+          .then((users) => {
+            Checkout.checkoutItemViaApi({
+              itemBarcode: itemData.barcode,
+              userBarcode: users[0].barcode,
+              servicePointId: firstServicePoint.id,
+            });
+          });
       });
 
     cy.createTempUser([
-      permissions.inventoryAll.gui,
-      permissions.checkinAll.gui,
-      permissions.checkoutAll.gui
+      permissions.uiInventoryViewInstances.gui,
+      permissions.checkinAll.gui
     ])
       .then(userProperties => {
         user = userProperties;
 
-        UserEdit.addServicePointsViaApi([servicePoint.id], user.userId, servicePoint.id);
+        UserEdit.addServicePointsViaApi([firstServicePoint.id, secondServicePoint.id], user.userId, firstServicePoint.id);
         cy.login(userProperties.username, userProperties.password);
-        cy.visit(TopMenu.checkInPath);
-        CheckInActions.waitLoading();
+        cy.visit(TopMenu.inventoryPath);
       });
   });
 
   after('delete test data', () => {
-    CheckInActions.checkinItemViaApi({
-      itemBarcode: itemData.barcode,
-      servicePointId: servicePoint.id,
-      checkInDate: new Date().toISOString(),
-    });
-    UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.id]);
-    ServicePoints.deleteViaApi(servicePoint.id);
+    UserEdit.changeServicePointPreferenceViaApi(user.userId, [firstServicePoint.id, secondServicePoint.id]);
+    ServicePoints.deleteViaApi(firstServicePoint.id);
+    ServicePoints.deleteViaApi(secondServicePoint.id);
     Users.deleteViaApi(user.userId);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
   });
 
-  it('C397325 Verify that no data in circulation is populated on duplicated Item (folijet)',
+  it('C399075 Incorrect service point displayed in Inventory Circulation history for checked in loan (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+      InventorySearchAndFilter.waitLoading();
+      InventorySearchAndFilter.switchToItem();
+      FilterItems.toggleItemStatusAccordion();
+      FilterItems.toggleStatus(itemStatus);
+      InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
+      InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ONLINE_UI} >`);
+
+      cy.visit(TopMenu.checkInPath);
+      CheckInActions.waitLoading();
       CheckInActions.checkInItemGui(itemData.barcode);
       ConfirmItemInModal.confirmInTransitModal();
-      CheckInPane.checkResultsInTheRow(testData);
-      CheckInActions.endCheckInSessionAndCheckDetailsOfCheckInAreCleared();
-
-      cy.visit(TopMenu.checkOutPath);
-      Checkout.waitLoading();
-      // without this waiter, the user will not be found by username
-      cy.wait(4000);
-      CheckOutActions.checkOutUser(user.barcode, user.username);
-      CheckOutActions.checkOutItem(itemData.barcode);
-      CheckOutActions.checkItemInfo(itemData.barcode, itemData.instanceTitle);
-      CheckOutActions.endCheckOutSession();
-      CheckOutActions.checkDetailsOfCheckOUTAreCleared();
-
-      cy.visit(TopMenu.inventoryPath);
-      InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
-      InventoryInstance.openHoldingsAccordion(`${holdingsPermanentLocation} >`);
+      cy.go('back');
+      InventoryInstance.waitInstanceRecordViewOpened(itemData.instanceTitle);
+      InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ONLINE_UI} >`);
       InventoryInstance.openItemByBarcode(itemData.barcode);
       ItemRecordView.waitLoading();
-      ItemRecordView.checkStatus('Checked out');
-      ItemRecordView.checkItemCirculationHistory(todayDate, servicePoint.name, user.username);
-      ItemRecordView.duplicateItem();
-      ItemRecordNew.waitLoading(itemData.instanceTitle);
-      ItemRecordNew.addBarcode(newItemBarcode);
-      ItemRecordNew.save();
-      ItemRecordView.verifyCalloutMessage();
-      ItemRecordView.closeDetailView();
-      InstanceRecordView.verifyInstanceRecordViewOpened();
-      InventoryInstance.openHoldingsAccordion(`${holdingsPermanentLocation} >`);
-      InventoryInstance.openItemByBarcode(newItemBarcode);
-      ItemRecordView.checkItemCirculationHistory('-', '-', '-');
+      ItemRecordView.checkItemCirculationHistory(todayDate, firstServicePoint.name, user.username);
+
+      cy.visit(TopMenu.checkInPath);
+      CheckInActions.waitLoading();
+      SwitchServicePoint.switchServicePoint(secondServicePoint.name);
+      CheckInActions.checkInItemGui(itemData.barcode);
+      ConfirmItemInModal.confirmInTransitModal();
+      cy.go('back');
+      ItemRecordView.waitLoading();
+      ItemRecordView.checkItemCirculationHistory(todayDate, secondServicePoint.name, user.username);
     });
 });
