@@ -10,6 +10,15 @@ export default {
     return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(currentDate.getDate())}/${currentDate.getFullYear()}`;
   },
 
+  getRandomStartDate: (i) => {
+    const currentDate = new Date();
+    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(currentDate.getDate() + i)}/${currentDate.getFullYear()}`;
+  },
+  getRandomEndDate: (i) => {
+    const currentDate = new Date();
+    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(currentDate.getDate() + i + 1)}/${currentDate.getFullYear()}`;
+  },
+
   getCurrentDateForFileNaming: () => {
     const currentDate = new Date();
     return `${padWithZero(currentDate.getMonth() + 1)}_${padWithZero(currentDate.getDate())}_${currentDate.getFullYear()}`;
@@ -185,9 +194,4 @@ export default {
     const formattedTime = currentDate.toLocaleString('en-US', options);
     return formattedTime;
   },
-
-  getCurrentDateYYMMDD() {
-    const initialCurrentDate = new Date();
-    return `${initialCurrentDate.getFullYear().toString().substring(2)}${padWithZero(initialCurrentDate.getMonth() + 1)}${padWithZero(initialCurrentDate.getDate())}`;
-  }
 };

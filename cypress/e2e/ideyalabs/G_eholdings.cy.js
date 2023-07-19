@@ -1,27 +1,11 @@
-/**
- * C692-Create a custom package
- * "1. Under Search and Filter pane, select Packages toggle
-2. Click New button on the Package screen (also known as the second pane) or use shortcut key alt + n (for Windows) / Option + n (for Mac)
-3. Fill in at least the required fields (marked with asterisk)
-4. Click """"save"""" OR use keyboard shortcut ctrl + s (for Windows) / cmd + s (for Mac)"
- */
 
-// import eHolding from "../../support/fragments/eholdings/eHolding";
-// import eHolding from "../../support/fragments/eholdings/eHolding";
-// import eHoldingsPackage from "../../support/fragments/eholdings/eHoldingsPackage";
-// import eHoldingsPackages from "../../support/fragments/eholdings/eHoldingsPackages";
-// import eHoldingsProviders from "../../support/fragments/eholdings/eHoldingsProviders";
-// import eHoldingsProvidersSearch from "../../support/fragments/eholdings/eHoldingsProvidersSearch";
-// import eHoldingsSearch from "../../support/fragments/eholdings/eHoldingsSearch";
-// import topMenu from "../../support/fragments/topMenu";
 
 
 import eHoldingsPackages from '../../support/fragments/eholdings/eHoldingsPackages';
 import TopMenu from '../../support/fragments/topMenu';
-import { Button, TextField, TextArea, Section } from '../../../interactors';
+import { Button, TextArea, Section } from '../../../interactors';
 import eHoldingsProvidersSearch from '../../support/fragments/eholdings/eHoldingsProvidersSearch';
 import eHoldingsPackagesSearch from '../../support/fragments/eholdings/eHoldingsPackagesSearch';
-import eHoldingsPackage from '../../support/fragments/eholdings/eHoldingsPackage';
 
 import eHoldingsProviders from '../../support/fragments/eholdings/eHoldingsProviders';
 import organisations from '../../support/fragments/organizations/organizations';
@@ -34,7 +18,7 @@ import eHolding from './eHolding';
 
 import settingsMenu from '../../support/fragments/settingsMenu';
 import circulationRules from '../../support/fragments/circulation/circulation-rules';
-// import eHolding from '../../support/fragments/eholdings/eHolding';
+
 
 const RandomNumber = Math.floor(Math.random(9000) * 1000) + 1000;
 
@@ -139,17 +123,6 @@ describe('Create a custom package', () => {
 
     eHoldingsProvidersSearch.byProvider('Fashion');
   });
-
-
-  // it('C9236__Settings: Add/Edit a custom label', () => {
-
-  //     cy.visit(SettingsMenu.eHoldingsPath)
-
-  //     eHoldingsPackage.customLabel({ label1: 'AutomatingTheFolioApplicationAndTestingApplication', label2: 'Test :' })
-
-  // })
-
-
   it('350418__Check that user can create ""Recall""  Item level request', () => {
     cy.visit(TopMenu.requestsPath);
 
@@ -167,8 +140,6 @@ describe('Create a custom package', () => {
   });
 
   it('Edit/Add a token to the Gale Academic OneFile', () => {
-    // cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-
     cy.visit(TopMenu.eholdingsPath);
 
     eHoldingsSearch.switchToPackages();
@@ -192,8 +163,6 @@ describe('Create a custom package', () => {
     eHolding.bySelectionStatusOpen('Selected');
   });
   it('C654-Test behavior for incomplete vs complete circulation rules (i.e., all policy types must be present; else error', () => {
-    // cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-
     cy.visit(TopMenu.settingsPath);
 
     cy.visit(settingsMenu.circulationRulesPath);
