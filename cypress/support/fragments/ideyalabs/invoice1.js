@@ -202,7 +202,7 @@ export default {
       saveAndClose.click(),
     ]);
   },
-  /** ************** ORDERLINES******************** */
+ 
 
   searchByParameter: (parameter, value) => {
     cy.do([
@@ -242,7 +242,6 @@ export default {
     ]);
   },
 
-  /** *****************INVOICES APP*************************** */
   openStatusAndClickCheckbox() {
     cy.do([
       selectStatusSection.find(Button('Status')).click(),
