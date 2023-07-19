@@ -12,6 +12,7 @@ import {
   TextField,
   SelectionOption,
   Pane,
+  PaneContent,
   Link,
   including,
   Section,
@@ -26,6 +27,7 @@ import InteractorsTools from '../../utils/interactorsTools';
 
 const path = require('path');
 
+const receivedtitleDetails=PaneContent({id:'receiving-results-pane-content'})
 const saveAndClose = Button('Save & close');
 const actionsButton = Button('Actions');
 const searhInputId = 'input-record-search';
@@ -43,6 +45,8 @@ const quantityPhysical = '5';
 const electronicUnitPrice = '10';
 const quantityElectronic = '5';
 const physicalUnitPriceTextField = TextField({ name: 'cost.listUnitPrice' });
+const OrderLines=Button('Order lines');
+const Funddetails=Section({id:"FundDistribution"});
 const quantityPhysicalTextField = TextField({ name: 'cost.quantityPhysical' });
 const electronicUnitPriceTextField = TextField({ name: 'cost.listUnitPriceElectronic' });
 const quantityElectronicTextField = TextField({ name: 'cost.quantityElectronic' });
@@ -103,6 +107,11 @@ export default {
     ]);
   },
 
+  clickOnOrderLines: () => {
+    cy.do([
+      OrderLines.click()
+    ])
+  },
   waitLoading() {
     cy.expect([
       Pane({ id: 'order-lines-filters-pane' }).exists(),
@@ -110,6 +119,9 @@ export default {
     ]);
   },
 
+  selectFund: (FundName) => {
+    cy.do(Funddetails.find(Link(FundName)).click());
+  },
   resetFilters: () => {
     cy.do(Button('Reset all').click());
   },
@@ -380,6 +392,14 @@ export default {
     ]);
     cy.wait(6000);
     submitOrderLine();
+  },
+
+  selectOrderline:(POlinenumber) => {
+    cy.do(Pane({ id: 'order-lines-results-pane' }).find(Link(POlinenumber)).click());
+  },
+  selectreceivedTitleName:(tittle) => {
+    cy.do(receivedtitleDetails.find((Link(tittle))).click())
+  
   },
 
   addFundToPOL(fund, value) {

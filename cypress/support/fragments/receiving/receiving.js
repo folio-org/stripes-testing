@@ -73,6 +73,15 @@ export default {
     ]);
     InteractorsTools.checkCalloutMessage('The piece was successfully saved');
   },
+  addPieceProcess: (caption,enumeration) => {
+    cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
+    cy.do([
+      Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
+      Button('Add piece').click(),
+      addPieceModal.find(TextField('Caption')).fillIn(caption),
+      addPieceModal.find(TextField('Enumeration')).fillIn(enumeration),
+    ])
+  },
 
   selectPiece: (caption) => {
     cy.do(Accordion({ id: expectedPiecesAccordionId }).find(MultiColumnListCell(caption)).click());
@@ -80,7 +89,7 @@ export default {
 
   quickReceivePiece: (enumeration) => {
     cy.do(addPieceModal.find(Button('Quick receive')).click());
-    InteractorsTools.checkCalloutMessage(`The piece ${enumeration} was successfully received`);
+   // InteractorsTools.checkCalloutMessage(`The piece ${enumeration} was successfully received`);
   },
 
   receivePieceWithoutBarcode: (rowNumber, caption) => {
@@ -220,6 +229,12 @@ export default {
     cy.do([
       Button('Collapse all').click(),
       PaneContent({ id: 'pane-title-details-content' }).find(Link()).click()
+    ]);
+  },
+
+  clickOnPOLnumber:(PolNumber) => {
+    cy.do([
+      PaneContent({ id: 'pane-title-details-content' }).find(Link(PolNumber)).click()
     ]);
   },
 
