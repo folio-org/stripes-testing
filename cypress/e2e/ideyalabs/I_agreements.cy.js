@@ -1,6 +1,6 @@
 import TopMenu from '../../support/fragments/topMenu';
 import NewAgreement from '../../support/fragments/agreements/newAgreement';
-import eHoldings from './eHolding';
+import eHoldings from '../../support/a_ideyalabs/eHolding';
 import eHoldingsPackages from '../../support/fragments/eholdings/eHoldingsPackages';
 
 describe('Creating New Agreement', () => {

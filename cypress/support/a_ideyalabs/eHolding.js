@@ -17,14 +17,6 @@ const selectedText = "#packageShowHoldingStatus div[class^='headline']";
 const RandomValue = Math.floor(Math.random() * 2);
 const availableProxies = ['Inherited - None', 'FOLIO-Bugfest', 'EZProxy'];
 const SearchButton = Section({ id: 'providerShowProviderList' }).find(Button({ ariaLabel: 'Toggle filters pane' }));
-
-
-// const availableProxies = [
-//     'Inherited - None',
-//     'FOLIO-Bugfest',
-//     'EZProxy'
-// ];
-
 const proxySelect = Select({ id: 'eholdings-proxy-id' });
 const selectionStatusAccordion = Accordion({ id: 'accordion-toggle-button-filter-packages-selected' });
 const selectionStatusSection = Section({ id: 'filter-packages-selected' });
@@ -48,7 +40,6 @@ export default {
   SwitchTopackage() {
     cy.visit(TopMenu.eholdingsPath);
     eHoldingsProvidersSearch.byProvider('Gale Cengage');
-    // eholdingsPackagesSearch.bySelectionStatus('Selected')
   },
   SwitchToPackageandsearch() {
     cy.visit(TopMenu.eholdingsPath);
@@ -84,20 +75,6 @@ export default {
     ]);
   },
 
-  // changeproxy: () => {
-  //     cy.get(selectedText).invoke("text").then((text) => {
-  //             if (text === "Selected") {
-  //                 editactions();
-  //                 eHoldings.changeproxy();
-  //                 eHoldingsProviderEdit.saveAndClose();
-  //             } else {
-  //                 eHoldingsPackage.addToHodlings();
-  //                 eHoldings.editactions();
-  //                 eHoldings.changeproxy();
-  //                 eHoldingsProviderEdit.saveAndClose();
-  //             }
-  //         });
-  // },
   changeProxy: () => {
     cy.get('select#eholdings-proxy-id option:selected')
       .invoke('text')
@@ -113,14 +90,8 @@ export default {
       TextField({ id: 'begin-coverage-0' }).clear(),
       TextField({ id: 'end-coverage-0' }).clear(),
       cy.wait(2000),
-      TextField({ id: 'begin-coverage-0' }).fillIn(
-        // dateTools.getRandomStartDate(RandomValue)
-        '07/18/2023'
-      ),
-      TextField({ id: 'end-coverage-0' }).fillIn(
-        // dateTools.getRandomEndDate(RandomValue)
-        '07/19/2023'
-      ),
+      TextField({ id: 'begin-coverage-0' }).fillIn(dateTools.getRandomStartDate(RandomValue)),
+      TextField({ id: 'end-coverage-0' }).fillIn(dateTools.getRandomEndDate(RandomValue)),
       SaveAndClose.click(),
     ]);
   },
@@ -138,7 +109,6 @@ export default {
     cy.do(Button('Search').click());
   },
   bySelectionStatusSection(selectionStatus) {
-    // cy.do(selectionStatusAccordion.clickHeader());
     cy.do(selectionStatusSection
       .find(RadioButton(selectionStatus)).click());
     cy.do(Button('Search').click());
@@ -159,8 +129,6 @@ export default {
       SaveAndClose.click()
     ]);
   },
-
-
   packageSearch() {
     cy.visit(TopMenu.eholdingsPath);
     eHoldingsSearch.switchToPackages();
@@ -170,7 +138,5 @@ export default {
 
   packageButton:() => {
     cy.do(SearchButton.click());
-
-    // cy.do(Section({ id: 'providerShowProviderList' }).find(Button({ icon: 'search' })).click())
   }
 };
