@@ -23,7 +23,7 @@ const userTwo = {
   }
 };
 
-describe('creat a users', () => {
+describe('create a users', () => {
   it('C421-Create: new user; required: contact info, email, phone, external system ID, address', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(topMenu.usersPath);
