@@ -1,4 +1,4 @@
-import { MultiColumnList, Modal, TextField, Callout, MultiSelect, MultiSelectOption, QuickMarcEditorRow, Pane, PaneContent, PaneHeader, Select, Section, HTML, including, Button, MultiColumnListCell, MultiColumnListRow, SearchField, Accordion, Checkbox, ColumnHeader, AdvancedSearchRow, Link } from '../../../../interactors';
+import { MultiColumnList, Modal, TextField, Callout, MultiSelect, MultiSelectOption, QuickMarcEditorRow, Pane, PaneContent, PaneHeader, Select, Section, HTML, including, Button, MultiColumnListCell, MultiColumnListRow, SearchField, Accordion, Checkbox, ColumnHeader, AdvancedSearchRow } from '../../../../interactors';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const authoritiesList = rootSection.find(MultiColumnList({ id: 'authority-result-list' }));
@@ -34,7 +34,7 @@ const buttonExportSelected = Button('Export selected records (CSV/MARC)');
 const openAuthSourceMenuButton = Button({ ariaLabel: 'open menu' });
 const sourceFileAccordion = Section({ id: 'sourceFileId' });
 const marcAuthPaneHeader = PaneHeader('MARC authority');
-
+const buttonUnlink = Button('unlink');
 export default {
   waitLoading: () => cy.expect(rootSection.exists()),
 
@@ -50,7 +50,21 @@ export default {
   switchToSearch: () => {
     cy.do(searchNav.click());
   },
-
+  serchbeats(value){
+    cy.do((SearchField({ id: 'textarea-authorities-search' })).fillIn(value));
+        cy.do((Button({ id: 'submit-authorities-search' })).click());
+      },
+      checkFieldTagExists: () => {
+ cy.expect([
+  editorSection.exists(),
+  QuickMarcEditorRow({ tagValue: '625' }).exists()
+     ]);
+    },
+    verifyMARCAuthorityFileName(actualName) {
+  const fileNameMask = /\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}_\d{4}_auth_headings_updates\.csv/gm;
+  expect(actualName).to.match(fileNameMask);
+   },
+   
   fillReportModal: (today, tomorrow) => {
     cy.do([
       fromDate.fillIn(today),
@@ -95,17 +109,6 @@ export default {
   selectItem: (item) => {
     cy.expect(MultiColumnListCell({ content: item }).exists());
     cy.do(Button(including(item)).click());
-  },
-
-  clickOnNumberOfTitlesLink(columnIndex, linkValue) {
-    cy.wrap(MultiColumnListCell({columnIndex: columnIndex, content: linkValue }).find(Link()).href()).as('link');
-    cy.get('@link').then((link) => {
-      cy.visit(link);
-    });
-  },
-
-  verifyNumberOfTitles(columnIndex, linkValue) {
-    cy.expect(MultiColumnListCell({columnIndex: columnIndex, content: linkValue }).find(Link()).exists());
   },
 
   verifyFirstValueSaveSuccess(successMsg, txt) {
@@ -186,13 +189,6 @@ export default {
       selectField.has({ content: including('Children\'s subject heading') }),
       selectField.has({ content: including('Genre') }),
       selectField.has({ content: including('Advanced search') }),
-    ]);
-  },
-
-  checkAuthorizedReferenceColumn(authorized, reference) {
-    cy.expect([
-      MultiColumnListCell({ columnIndex: 1, content: authorized }).exists(),
-      MultiColumnListCell({ columnIndex: 1, content: reference }).exists(),
     ]);
   },
 

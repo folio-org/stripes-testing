@@ -126,6 +126,7 @@ export default {
     cy.expect(Callout('Record cannot be saved. A MARC tag must contain three characters.').exists());
   },
   
+
   checkAddNew1XXTag: (rowIndex, tag, content) => {
     cy.do([
       QuickMarcEditorRow({ index: rowIndex }).find(addFieldButton).click(),
@@ -168,8 +169,8 @@ export default {
     cy.do(saveAndCloseButton.click());
     cy.expect(Callout('Record has been updated.').exists());
   },
-  
-  deleteTag: (rowIndex) => { 
+
+  deleteTag: (rowIndex) => {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).click());
   },
 
