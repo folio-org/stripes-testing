@@ -10,7 +10,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
-import inventorySteps from '../../../support/fragments/inventory/inventorySteps';
+import InventorySteps from '../../../support/fragments/inventory/inventorySteps';
 import { getCurrentDateYYMMDD } from '../../../support/utils/dateTools';
 
 describe('Data Import: Importing MARC Bib files', () => {
@@ -68,7 +68,7 @@ describe('Data Import: Importing MARC Bib files', () => {
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.checkFieldsExist(testData.expectedFieldsInQuickMarc);
       QuickMarcEditor.checkFieldsCount(testData.expectedFieldsInQuickMarc.length);
-      inventorySteps.verifyHiddenFieldValueIn008(createdRecordIDs[0], 'Entered', testData.initial008EnteredValue);
+      InventorySteps.verifyHiddenFieldValueIn008(createdRecordIDs[0], 'Entered', testData.initial008EnteredValue);
       QuickMarcEditor.updateExistingField('245', '$a ' + testData.updatedTitleEdit);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndClose();
@@ -86,7 +86,7 @@ describe('Data Import: Importing MARC Bib files', () => {
       QuickMarcEditor.checkFieldsCount(testData.expectedFieldsInQuickMarc.length);
       QuickMarcEditor.checkContent('$a ' + testData.updatedTitleDerive, 4);
       QuickMarcEditor.saveInstanceIdToArrayInQuickMarc(createdRecordIDs).then(() => {
-        inventorySteps.verifyHiddenFieldValueIn008(createdRecordIDs[1], 'Entered', getCurrentDateYYMMDD());
+        InventorySteps.verifyHiddenFieldValueIn008(createdRecordIDs[1], 'Entered', getCurrentDateYYMMDD());
       });
     });
   });
