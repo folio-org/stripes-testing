@@ -59,7 +59,7 @@ export default {
   checkPreview: (displayText) => {
     cy.do(PaneContent({ id: 'patron-notice-template-pane-content' }).find(Button('Preview')).click());
     cy.expect([
-      Modal('Preview of patron notice template').exists(),
+      Modal(including('Preview of patron notice template')).exists(),
       Modal({ content: including(displayText) }).exists()
     ]);
     cy.do(Button('Close').click());

@@ -12,7 +12,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import UserEdit from '../../support/fragments/users/userEdit';
 
-describe('Staff slips', () => {
+describe('Patron Notices', () => {
   let userData;
   const patronGroup = {
     name: getTestEntityValue('groupNoticePolicy'),
