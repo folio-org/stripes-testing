@@ -5,6 +5,8 @@ const newButton = Button('New');
 const nameField = TextField('Name*');
 const codeField = TextField('Code*');
 const fundModal = Modal('Select funds');
+const GroupTab = Button('Group');
+const searchField = SearchField({ id: 'input-record-search' });
 const resetButton = Button({ id: 'reset-groups-filters' });
 
 export default {
@@ -67,7 +69,7 @@ export default {
     cy.do([
       Section({ id: 'fund' }).find(Button('Add to group')).click(),
       fundModal.find(SearchField({ id: 'input-record-search' })).fillIn(fundName),
-      fundModal.find(Button({ type: 'submit'})).click(),
+      fundModal.find(Button({ type: 'submit' })).click(),
       MultiColumnList({ id: 'list-plugin-find-records' })
         .find(MultiColumnListHeader({ id:'list-column-ischecked' }))
         .find(Checkbox())
@@ -148,6 +150,19 @@ export default {
     path: `finance/groups/${groupId}`,
     isDefaultSearchParamsRequired: false,
   }),
+  clickOnGroupTab: () => {
+    cy.do([
+      GroupTab.click()
+    ]);
+  },
+  searchByName : (name) => {
+    cy.do([
+      searchField.selectIndex('Name'),
+      searchField.fillIn(name),
+      Button('Search').click(),
+    ]);
+    cy.wait(4000);
+  },
 
   selectGroup:(GroupName) => {
     cy.do(Section({ id: 'group-results-pane' }).find(Link(GroupName)).click());

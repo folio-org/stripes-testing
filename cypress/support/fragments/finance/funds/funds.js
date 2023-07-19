@@ -39,6 +39,8 @@ const currentBudgetSection = Section({ id: 'currentBudget' });
 const actionsButton = Button('Actions');
 const deleteButton = Button('Delete');
 const transferButton = Button('Transfer');
+const FundsTab = Button('Fund');
+const searchField = SearchField({ id: 'input-record-search' });
 const amountTextField = TextField({ name: 'amount' });
 const confirmButton = Button('Confirm');
 const newButton = Button('New');
@@ -591,6 +593,19 @@ export default {
   checkCancelPendingPayment:(invoiceNumber) => {
     cy.expect(KeyValue({ value: invoiceNumber }).exists());
     cy.do(Section({ id: 'information' }).find(Button({ icon: 'info' })).click());
+  },
+  clickOnFundsTab: () => {
+    cy.do([
+      FundsTab.click()
+    ]);
+  },
+  searchByName : (name) => {
+    cy.do([
+      searchField.selectIndex('Name'),
+      searchField.fillIn(name),
+      Button('Search').click(),
+    ]);
+    cy.wait(4000);
   },
 
   selectFund:(FundName) => {
