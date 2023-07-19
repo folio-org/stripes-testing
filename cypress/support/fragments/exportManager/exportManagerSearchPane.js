@@ -42,7 +42,10 @@ export default {
   selectJob(content) {
     return cy.do(MultiColumnListCell(including(content)).click());
   },
-
+  verifyResultAndClick(content) {
+    cy.expect(MultiColumnListCell(including(content)).exists());
+    cy.do(MultiColumnListCell(including(content)).click());
+  },
   selectJobByIndex(content, index) {
     cy.get('div[class*=mclRow-]').contains(content).then(element => {
       element.prevObject[index].click();
@@ -51,7 +54,7 @@ export default {
 
   verifyJobAmount(text, amount) {
     cy.get('div[class*=mclRow-]').contains(text).then(element => {
-      expect(element.prevObject.length).to.eq(amount)
+      expect(element.prevObject.length).to.eq(amount);
     });
   },
 
@@ -185,7 +188,7 @@ export default {
 
   downloadLastCreatedJob(jobId) {
     // TODO: redesign to interactors
-    cy.get(`a:contains(${jobId})`).first().click()
+    cy.get(`a:contains(${jobId})`).first().click();
   },
 
   verifyUserSearchResult(username) {
