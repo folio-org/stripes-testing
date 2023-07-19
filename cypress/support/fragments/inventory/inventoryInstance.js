@@ -116,6 +116,7 @@ const newMarcBibButton = Button({ id: 'clickable-newmarcrecord' });
 const quickMarcPaneHeader = PaneHeader({ id: 'paneHeaderquick-marc-editor-pane' });
 const detailsPaneContent = PaneContent({ id: 'pane-instancedetails-content' });
 const administrativeDataAccordion = Accordion('Administrative data');
+const unlinkIconButton = Button({ icon: 'unlink' });
 
 const validOCLC = { id:'176116217',
   // TODO: hardcoded count related with interactors getters issue. Redesign to cy.then(QuickMarkEditor().rowsCount()).then(rowsCount => {...}
@@ -236,12 +237,32 @@ export default {
     cy.expect(section.find(HTML(including('MARC'))).exists());
     cy.expect(section.find(HTML(including('FOLIO'))).absent());
   },
+  verifyUnlinkIcon(tag) {
+    // Waiter needed for the link to be loaded properly.
 
+    cy.wait(1000);
+
+    cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(unlinkIconButton).exists());
+  },
+  verifyLinkIcon(tag) {
+    // Waiter needed for the link to be loaded properly.
+
+    cy.wait(1000);
+
+    cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(linkIconButton).exists());
+  },
   goToEditMARCBiblRecord:() => {
     cy.do(actionsButton.click());
     cy.do(editMARCBibRecordButton.click());
   },
-
+  selectTopRecord() {
+    cy.do(MultiColumnListRow({ index: 0 }).find(MultiColumnListCell({ columnIndex: 1 })).find(Button()).click());
+  },
+  deriveNewMarcBibRecord:() => {
+    cy.do(actionsButton.click());
+    cy.do(deriveNewMarcBibRecord.click());
+    cy.expect(QuickMarcEditor().exists());
+  },
   viewSource: () => {
     cy.do(actionsButton.click());
     cy.do(viewSourceButton.click());
@@ -256,7 +277,7 @@ export default {
     cy.expect([
       quickMarcEditorPane.exists(),
       quickMarcPaneHeader.has({ text: including('new') }),
-    ])
+    ]);
   },
 
   checkInstanceTitle(title) {
@@ -302,6 +323,15 @@ export default {
     cy.get('@link').then((link) => {
       cy.visit(link);
     });
+  },
+  verifyAndClickUnlinkIcon(tag) {
+    // Waiter needed for the link to be loaded properly.
+
+    cy.wait(1000);
+
+    cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(unlinkIconButton).exists());
+
+    cy.do(QuickMarcEditorRow({ tagValue: tag }).find(unlinkIconButton).click());
   },
 
   clickViewAuthorityIconDisplayedInInstanceDetailsPane(accordion) {

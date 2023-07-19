@@ -34,7 +34,7 @@ const buttonExportSelected = Button('Export selected records (CSV/MARC)');
 const openAuthSourceMenuButton = Button({ ariaLabel: 'open menu' });
 const sourceFileAccordion = Section({ id: 'sourceFileId' });
 const marcAuthPaneHeader = PaneHeader('MARC authority');
-
+const buttonUnlink = Button('unlink');
 export default {
   waitLoading: () => cy.expect(rootSection.exists()),
 
@@ -49,6 +49,21 @@ export default {
 
   switchToSearch: () => {
     cy.do(searchNav.click());
+  },
+  serchbeats(value) {
+    cy.do((SearchField({ id: 'textarea-authorities-search' })).fillIn(value));
+    cy.do((Button({ id: 'submit-authorities-search' })).click());
+  },
+  checkFieldTagExists: () => {
+    cy.expect([
+      editorSection.exists(),
+      QuickMarcEditorRow({ tagValue: '625' }).exists()
+    ]);
+  },
+  verifyMARCAuthorityFileName(actualName) {
+    // valid name example: 2023-03-26_09-51-07_7642_auth_headings_updates.csv
+    const fileNameMask = /\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}_\d{4}_auth_headings_updates\.csv/gm;
+    expect(actualName).to.match(fileNameMask);
   },
 
   fillReportModal: (today, tomorrow) => {
@@ -98,14 +113,14 @@ export default {
   },
 
   clickOnNumberOfTitlesLink(columnIndex, linkValue) {
-    cy.wrap(MultiColumnListCell({columnIndex: columnIndex, content: linkValue }).find(Link()).href()).as('link');
+    cy.wrap(MultiColumnListCell({ columnIndex, content: linkValue }).find(Link()).href()).as('link');
     cy.get('@link').then((link) => {
       cy.visit(link);
     });
   },
 
   verifyNumberOfTitles(columnIndex, linkValue) {
-    cy.expect(MultiColumnListCell({columnIndex: columnIndex, content: linkValue }).find(Link()).exists());
+    cy.expect(MultiColumnListCell({ columnIndex, content: linkValue }).find(Link()).exists());
   },
 
   verifyFirstValueSaveSuccess(successMsg, txt) {
@@ -281,11 +296,11 @@ export default {
 
   clickAccordionAndCheckResultList(accordion, record) {
     cy.do(Accordion(accordion).clickHeader());
-    cy.expect(MultiColumnListCell({ content: including(record) }).exists())
+    cy.expect(MultiColumnListCell({ content: including(record) }).exists());
   },
 
   chooseAuthoritySourceOption: (option) => {
-      cy.do(MultiSelect({ ariaLabelledby: 'sourceFileId-multiselect-label' }).select([including(option)]));
+    cy.do(MultiSelect({ ariaLabelledby: 'sourceFileId-multiselect-label' }).select([including(option)]));
   },
 
   clickActionsButton() {

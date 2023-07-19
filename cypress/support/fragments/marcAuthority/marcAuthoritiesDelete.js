@@ -2,6 +2,7 @@ import { MultiColumnListCell, including, Button, PaneHeader, DropdownMenu, Headi
 
 const actionsButton = PaneHeader({ id: 'paneHeadermarc-view-pane' }).find(Button('Actions'));
 const deleteButton = DropdownMenu().find(Button('Delete'));
+const printButton = DropdownMenu().find(Button('Print'));
 const deleteConfirmModal = Modal({ id: 'confirm-delete-note' });
 const deleteConfirmModalHeader = Heading({ id: 'confirm-delete-note-label' });
 const confirmDeleteButton = deleteConfirmModal.find(Button('Delete'));
@@ -21,6 +22,12 @@ export default {
       deleteConfirmModalHeader.exists(),
       deleteConfirmModal.find(Button('Cancel')).exists(),
       confirmDeleteButton.exists(),
+    ]);
+  },
+  clickprintButton() {
+    cy.do([
+      actionsButton.click(),
+      printButton.click(),
     ]);
   },
 
