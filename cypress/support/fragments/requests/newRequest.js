@@ -1,6 +1,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import { Button, TextField, Pane, Select, HTML, including, Checkbox, Section, Accordion, TextArea, MultiColumnListCell } from '../../../../interactors';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../constants';
+import dateTools from '../../utils/dateTools';
 import SelectUser from './selectUser';
 
 const actionsButton = Button('Actions');
@@ -159,6 +160,18 @@ export default {
       TextField({ id: 'requestExpirationDate' }).exists(),
       TextArea({ id: 'patronComments' }).exists(),
     ]);
+  },
+
+  enterrequestAndpatron: (patron) => {
+
+    cy.do([TextField({ id: 'requestExpirationDate' }).fillIn(dateTools.getCurrentDate()),
+
+    TextArea({ id: 'patronComments' }).fillIn(patron),
+
+    Checkbox({ name: 'createTitleLevelRequest' }).click()])
+
+    cy.wait(2000)
+
   },
 
   chooseRequestType(requestType) {

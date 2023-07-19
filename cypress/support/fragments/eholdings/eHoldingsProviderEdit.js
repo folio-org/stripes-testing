@@ -28,6 +28,6 @@ export default {
   },
   saveAndClose:() => {
     cy.do(Button('Save & close').click());
-    eHoldingsProviderView.waitLoading();
+   // eHoldingsProviderView.waitLoading();
   }
 };

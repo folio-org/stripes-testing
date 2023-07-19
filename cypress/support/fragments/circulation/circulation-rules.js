@@ -14,6 +14,37 @@ export default {
   defaultcirculationPolicy: {
     'rulesAsText': 'circulation policy'
   },
+  verifyError(){
+
+    
+    cy.expect(cy.xpath("//div[@class='rule-error']").should('exist'))
+    
+      },
+      policyError({
+
+        priorityType,
+    
+        priorityTypeName,
+    
+        loanPolicyName,
+    
+      }){
+    
+        if (priorityType) {
+    
+          this.fillInCirculationRules(priorityType);
+    
+          this.clickCirculationRulesHintItem(priorityTypeName);
+    
+          this.fillInCirculationRules(': ');
+    
+        }
+    
+        this.fillInCirculationRules('l ');
+    
+        this.clickCirculationRulesHintItem(loanPolicyName);
+    
+      },
   clearCirculationRules() {
     cy.do(CodeMirror().clear());
   },
