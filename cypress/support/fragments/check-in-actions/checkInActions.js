@@ -9,11 +9,12 @@ import {
   Pane,
   Modal,
   PaneContent,
-  or
+  or,
+  Link
 } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
-import ItemRecordView from '../inventory/item/itemRecordView';
+import ItemRecordView from '../inventory/itemRecordView';
 
 const loanDetailsButton = Button('Loan details');
 const patronDetailsButton = Button('Patron details');
@@ -31,6 +32,7 @@ const checkInButtonInModal = confirmModal.find(Button('Check in'));
 const endSessionButton = Button('End session');
 const feeFineDetailsButton = Button('Fee/fine details');
 const feeFinePane = PaneContent({ id: 'pane-account-action-history-content' });
+const barcode = "//div[text()='Barcode']/following-sibling::*//a";
 
 const actionsButtons = {
   loanDetails: loanDetailsButton,
@@ -53,6 +55,7 @@ const checkInItemGui = (barcode) => {
     addItemButton.click()
   ]);
 };
+
 
 export default {
   waitLoading:() => {
@@ -178,13 +181,6 @@ export default {
     cy.expect(feeFinePane.find(HTML(including(loanPolicyName))).exists());
     cy.expect(feeFinePane.find(HTML(including(OverdueFinePolicyName))).exists());
     cy.expect(feeFinePane.find(HTML(including(LostItemFeePolicyName))).exists());
-  },
-
-  endCheckInSessionAndCheckDetailsOfCheckInAreCleared:() => {
-    cy.do(endSessionButton.click());
-    cy.expect(PaneContent({ id: 'check-in-content' })
-      .find(HTML(including('No items have been entered yet.')))
-      .exists());
   },
 
   backdateCheckInItem:(date, barcode) => {

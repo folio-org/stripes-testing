@@ -17,15 +17,21 @@ import DateTools from '../../utils/dateTools';
 const dropdownButton = MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(Dropdown()).find(Button());
 const actionsButton = Button('Actions');
 const servicePointField = MultiSelect({ ariaLabelledby: 'accordion-toggle-button-servicePointId' });
+const barcodeText = "//div[@data-row-inner='0']//a[@data-test-text-link='true']";
+const data = '4502015';
 
 
-// TODO: will rework to interactor when we get section id
-function clickApplyMainFilter() {
-  cy.get('[class^="button-"][type="submit"]').first().click();
-}
+
+// // TODO: will rework to interactor when we get section id
+// function clickApplyMainFilter() {
+//   cy.get('[class^="button-"][type="submit"]').first().click();
+// }
 
 
 export default {
+  clickApplyMainFilter() {
+    cy.get('[class^="button-"][type="submit"]').first().click();
+  },
   waitLoading() {
     cy.expect(Pane('Circulation log').exists());
   },
@@ -33,7 +39,8 @@ export default {
   searchByCheckedOut() {
     cy.do([
       Accordion({ id: 'loan' }).clickHeader(),
-      Checkbox({ id: 'clickable-filter-loan-checked-out' }).click()
+      Checkbox({ id: 'clickable-filter-loan-checked-out' }).click(),
+      cy.do(TextField({ name: 'itemBarcode' }).fillIn(data))
     ]);
   },
 
@@ -43,7 +50,7 @@ export default {
 
   searchByItemBarcode(barcode) {
     cy.do(TextField({ name: 'itemBarcode' }).fillIn(barcode));
-    clickApplyMainFilter();
+    this.clickApplyMainFilter();
   },
 
   searchByUserBarcode(barcode) {
@@ -68,6 +75,30 @@ export default {
       servicePointField.fillIn(servicePoint),
       servicePointField.choose(servicePoint),
     ]);
+  },
+  checkbarcode() {
+    cy.expect(Pane({ title: 'Circulation log' }).exists());
+    cy.do([
+      Accordion({ id: 'loan' }).clickHeader(),
+      Checkbox({
+        id: 'clickable-filter-loan-renewed-through-override',
+      }).click(),
+    ]);
+    cy.do(Button({ id:'reset-receiving-filters' }).click());
+    cy.do(TextField({ name: 'itemBarcode' }).fillIn('1040'));
+    this.clickApplyMainFilter();
+  },
+  checkElemtText:() => {
+    cy.xpath(barcodeText).then((val) => {
+      const data = val[0].innerText;
+      cy.do([
+        Checkbox({ id: 'clickable-filter-loan-renewed-through-override' }).click()
+
+      ]);
+
+      cy.do(TextField({ name: 'itemBarcode' }).fillIn(data));
+      clickApplyMainFilter();
+    });
   },
 
   searchByClaimedReturned() {
