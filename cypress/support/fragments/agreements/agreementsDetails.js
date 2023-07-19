@@ -20,6 +20,8 @@ const deleteButtonInConfirmation = Button('Delete', { id: 'clickable-delete-agre
 const showMoreLink = Button('Show more');
 const notesAccordion = rootSection.find(Accordion({ id: 'notes' }));
 const deleteConfirmationModal = Modal({ id: 'delete-agreement-confirmation' });
+const cancelButton = Button('Cancel');
+const noteRecord = "//p[normalize-space()='More details']";
 
 function waitLoading() {
   cy.xpath(headerXpath).should('be.visible');
@@ -43,6 +45,15 @@ export default {
     cy.do(newNoteButton.click());
     NewNote.fill(specialNote);
     NewNote.save();
+  },
+
+  clickOnNoteRecord() {
+    // cy.expect((noteRecord).exists())
+    cy.do([cy.xpath(noteRecord).click()]);
+  },
+
+  clickOnNewButton() {
+    cy.do(rootSection.find(newNoteButton).click());
   },
 
   checkNotesCount(notesCount) {
@@ -91,6 +102,11 @@ export default {
 
   switchToLocalKBSearch() {
     cy.do(Button('Local KB search').click());
+  },
+
+  clickCancelButton() {
+    cy.expect((cancelButton).exists());
+    cy.do(cancelButton.click());
   },
 
   selectCurrentStatusInPackages() {

@@ -28,6 +28,11 @@ const receivingPath = '/receiving';
 const bulkEditPath = '/bulk-edit';
 const exportManagerPath = '/export-manager';
 const exportManagerOrganizationsPath = 'export-manager/edi-jobs';
+const customFieldsPath = '/settings/users/custom-fields';
+const notesPath = '/settings/notes/general';
+const permissionSetPath = '/settings/users/perms?layer=add';
+const customLabel = '/settings/eholdings';
+
 
 export default {
   // direct paths to folio apps to use in cy.visit() into initial steps of our scenarios
@@ -59,6 +64,10 @@ export default {
   bulkEditPath,
   exportManagerPath,
   exportManagerOrganizationsPath,
+  customFieldsPath,
+  notesPath,
+  permissionSetPath,
+  customLabel,
   openCheckInApp:() => {
     cy.do(Link({ href: including('/checkin') }).click());
   },
