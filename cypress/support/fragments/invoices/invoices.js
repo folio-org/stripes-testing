@@ -56,7 +56,7 @@ const invoiceDateFilterSection = Section({ id: "invoiceDate" });
 const approvalDateFilterSection = Section({ id: "approvalDate" });
 const ResultListFirstRecord = Section({ id: "invoice-results-pane" });
 const value = FieldSet({ id: "adjustments" });
-const FundIDselect = "//a[text()=`${text}`]";
+
 export default {
   checkZeroSearchResultsHeader: () => {
     cy.xpath(numberOfSearchResultsHeader)

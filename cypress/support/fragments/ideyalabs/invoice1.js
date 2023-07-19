@@ -26,7 +26,6 @@ const invoiceStates = {
 };
 
 const actionsButton = Button('Actions');
-const invoiceLinePane = Section({ id: 'pane-invoiceLineDetails' });
 const invoiceLineDetailsPane = PaneHeader({
   id: 'paneHeaderpane-invoiceLineDetails',
 });
@@ -60,7 +59,6 @@ const fundDistribution = FieldSet({ id: 'fundDistribution' });
 const selectStatusSection = Section({ id: 'status' });
 const invoiceLinesSection = Section({ id: 'invoiceLines' });
 const fundDistributionSection = Section({ id: 'invoiceLineFundDistribution' });
-const POfundDistribution = Section({ id: 'FundDistribution' });
 const encumbrancePane = Section({ id: 'pane-transaction-details' });
 const crossButton = Button({ icon: 'times' });
 const search = TextField({ id: 'input-record-search' });
@@ -227,7 +225,7 @@ export default {
     ]);
   },
 
-  selectCurrentEncumbrance: (currentEncumbrance) => {
+  selectCurrentEncumbrance: () => {
     cy.do([
       // POfundDistribution.find(Link(currentEncumbrance)).removeAttr('target'),
       cy.xpath('//a[text()="$5.00"]').invoke('removeAttr', 'target').click(),
