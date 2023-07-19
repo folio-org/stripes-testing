@@ -1,18 +1,13 @@
 import {
   Button,
-  KeyValue,
   Modal,
-  MultiSelect,
   MultiSelectMenu,
   MultiSelectOption,
-  Pane,
-  PaneContent,
   PaneHeader,
   RadioButton,
   Section,
   TextField,
 } from '../../../interactors';
-import modal from '../../../interactors/modal';
 
 import exportManagerSearchPane from '../fragments/exportManager/exportManagerSearchPane';
 import topMenu from '../fragments/topMenu';
@@ -114,23 +109,19 @@ export default {
 
   verifyJobIDRecord() {
     cy.xpath(JobId).then(($ele) => {
-      const txt = $ele.text();
-      const txt1 = txt.slice(26, 32);
+      const txt = $ele.text().slice(26, 32);
       cy.visit(topMenu.exportManagerPath);
       exportManagerSearchPane.searchBySuccessful();
-      exportManagerSearchPane.downloadLastCreatedJob(txt1);
-      // this.verifyJobIdInThirdPaneHasNoLink(txt1)
+      exportManagerSearchPane.downloadLastCreatedJob(txt);
     });
   },
 
   verifyJobIDInRecord() {
     cy.xpath(JobId).then(($ele) => {
-      const txt = $ele.text();
-      const txt1 = txt.slice(26, 32);
+      const txt = $ele.text().slice(26, 32);
       cy.visit(topMenu.exportManagerPath);
       exportManagerSearchPane.searchBySuccessful();
-      // exportManagerSearchPane.downloadLastCreatedJob(txt1);
-      this.verifyJobIdInThirdPaneHasNoLink(txt1);
+      this.verifyJobIdInThirdPaneHasNoLink(txt);
     });
   },
   verifyFileName: () => {
@@ -148,19 +139,6 @@ export default {
         exportManagerSearchPane.downloadLastCreatedJob(txt1);
       }
     });
-
-    // cy.get(`span:contains(${JobId})`).should(($element) => {
-    //   if ($element.length > 0) {
-    //     cy.log("Failed")
-    //   } else {
-    //     cy.log("in Progress")
-    //     // Element with the specified JobId was not found
-    //     // Write your code for the "else" case here
-    //     // ...
-    //   }
-    // });
-    // cy.get(`a:contains(${JobId})`).click()
-    // cy.expect(KeyValue({value:JobId}).has({ hasLink: false }));
   },
   verifyThirdPaneExportJobExist() {
     cy.wait(10000);
