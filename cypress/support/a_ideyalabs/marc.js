@@ -1,22 +1,15 @@
 import {
   Button,
-  Link,
   QuickMarcEditorRow,
-  SearchField,
   Section,
-  Select,
   TextField,
 } from '../../../interactors';
-import button from '../../../interactors/button';
 import section from '../../../interactors/section';
 import holdingsRecordView from '../fragments/inventory/holdingsRecordView';
-import inventoryInstance from '../fragments/inventory/inventoryInstance';
 
 const rootSection = Section({ id: 'marc-view-pane' });
 const tagNumber = TextField({ name: 'records[5].tag' });
 const filterSection = Section({ id: 'pane-filter' });
-const packageShowTitlesSection = Section({ id: 'packageShowTitles' });
-const SearchButton = Button({ icon: 'search' });
 const saveAndCloseBtn = Button('Save & close');
 const close = Button({ ariaLabel: 'Close The !!!Kung of Nyae Nyae / Lorna Marshall.' });
 const linkHeadingsButton = Button('Link headings');
@@ -35,19 +28,6 @@ export default {
   assertTagNumber: () => {
     cy.do([cy.expect(tagNumber.find(content).exists())]);
   },
-  // searchByValue1: (parameter, value) => {
-  //   cy.do(
-  //     filterSection
-  //       .find(Select({ id: "input-inventory-search-qindex" }))
-  //       .selectIndex(parameter)
-  //   );
-  //   cy.do(
-  //     filterSection
-  //       .find(TextField({ id: "input-inventory-search" }))
-  //       .fillIn(value)
-  //   );
-  //   cy.do(filterSection.find(Button("Search")).click());
-  // },
 
   searchByValue: (value) => {
     cy.do(
@@ -67,8 +47,7 @@ export default {
   },
 
   popupUnlinkButton: () => {
-    // cy.do(unlinkFromMarcAuthorityPane.find(Button('Unlink')).click());
-    cy.do(Button('Unlink').click()); // Unlink Button on Modal
+    cy.do(Button('Unlink').click()); 
   },
 
   keepLinkingButton: () => {
@@ -108,22 +87,18 @@ export default {
 
   recordLastUpdated: () => {
     cy.do(section({ id:'acc01' }).find(Button).click());
-    // cy.do(button({class:"metaHeaderButton---dLg5S interactionStyles---eaRy_"}).click());
   },
 
   checkFieldContentMatch() {
     cy.xpath('//div[contains(text(),"Record created: ")]/following-sibling::*//a')
       .then(($txt) => {
-        const actual = $txt.text();
-        const actualText = actual.slice(0, 19);
-        cy.log(actualText);
+        const actualContent = $txt.text().slice(0, 19);
+        cy.log(actualContent);
         holdingsRecordView.editInQuickMarc();
         cy.xpath('//div[@class="quickMarcRecordInfoWrapper---C70k7"]').then(($ele) => {
-          const expected = $ele.text();
-          cy.log(expected);
-          const expectedText = expected.slice(59, 78);
-          cy.log(expectedText);
-          expect(actualText).to.equal(expectedText);
+          const expectedContent = $ele.text().slice(59, 78);
+          cy.log(expectedContent);
+          expect(actualContent).to.equal(expectedContent);
         });
       });
   },
