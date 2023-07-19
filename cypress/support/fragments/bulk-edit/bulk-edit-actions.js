@@ -307,12 +307,6 @@ export default {
     ]);
   },
 
-  newBulkEdit() {
-    cy.do(newBulkEditButton.click());
-    // very fast reload bulk edit page
-    cy.wait(500);
-  },
-
   verifyNoNewBulkEditButton() {
     cy.expect(newBulkEditButton.absent());
   },

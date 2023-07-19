@@ -95,8 +95,8 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.waitFileUploading();
       BulkEditActions.clickNext();
       BulkEditActions.commitChanges();
-  
-      BulkEditSearchPane.verifyChangedResults(newUsername);      
+
+      BulkEditSearchPane.verifyChangedResults(newUsername);
       BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
       BulkEditSearchPane.usersRadioIsDisabled(false);
       BulkEditSearchPane.itemsRadioIsDisabled(true);
