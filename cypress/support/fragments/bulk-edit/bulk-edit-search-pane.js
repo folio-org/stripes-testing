@@ -247,7 +247,7 @@ export default {
     ]);
   },
 
-  verifyDragNDropUsersUIIDsArea() {
+  verifyDragNDropUsersUUIDsArea() {
     this.checkUsersRadio();
     this.selectRecordIdentifier('User UUIDs');
     cy.expect([
@@ -418,7 +418,7 @@ export default {
 
   verifyDefaultFilterState() {
     cy.expect([
-      Button('or choose file').has({ disabled: true }),
+      fileButton.has({ disabled: true }),
       HTML('Select record identifier').exists()
     ]);
     this.verifyBulkEditPaneItems();
@@ -477,7 +477,7 @@ export default {
   },
 
   uploadFile(fileName) {
-    cy.do(Button('or choose file').has({ disabled: false }));
+    cy.do(fileButton.has({ disabled: false }));
     cy.get('input[type=file]').attachFile(fileName, { allowEmpty: true });
   },
 
@@ -581,6 +581,15 @@ export default {
     if (errors) {
       cy.expect(Button('Download errors (CSV)').exists());
     }
+  },
+
+  verifyActionsAfterChangingRecords() {
+    cy.do(actions.click());
+    cy.expect([
+      Button('Download matched records (CSV)').absent(),
+      Button('Start bulk edit').absent(),
+      DropdownMenu().find(HTML('Show columns')).exists(),
+    ]);
   },
 
   verifyUsersActionShowColumns() {
