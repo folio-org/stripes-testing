@@ -23,6 +23,7 @@ const deleteBtn = Button({ icon: 'trash' });
 const keepEditingBtn = Button('Keep editing');
 const areYouSureForm = Modal('Are you sure?');
 const downloadPreviewBtn = Button('Download preview');
+const newBulkEditButton = Button('New bulk edit');
 
 function getEmailField() {
   // 2 the same selects without class, id or someone different attr
@@ -307,9 +308,13 @@ export default {
   },
 
   newBulkEdit() {
-    cy.do(Button('New bulk edit').click());
+    cy.do(newBulkEditButton.click());
     // very fast reload bulk edit page
     cy.wait(500);
+  },
+
+  verifyNoNewBulkEditButton() {
+    cy.expect(newBulkEditButton.absent());
   },
 
   verifyUsersActionDropdownItemsInCaseOfError() {

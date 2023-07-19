@@ -8,6 +8,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import FileManager from '../../../support/utils/fileManager';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
 const item = {
@@ -55,7 +56,7 @@ describe('bulk-edit', () => {
       BulkEditActions.downloadMatchedRecordsExists();
       BulkEditActions.downloadErrorsExists();
 
-      BulkEditActions.newBulkEdit();
+      TopMenuNavigation.navigateToApp('Bulk edit');
 
       BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
 

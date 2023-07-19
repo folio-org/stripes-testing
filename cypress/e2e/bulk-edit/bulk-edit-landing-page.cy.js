@@ -48,7 +48,7 @@ describe('bulk-edit', () => {
 
     // verify identifier items
     BulkEditSearchPane.verifyRecordIdentifierItems();
-    BulkEditSearchPane.verifyDragNDropUsersUIIDsArea();
+    BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
     BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
     BulkEditSearchPane.verifyDragNDropExternalIDsArea();
     BulkEditSearchPane.verifyDragNDropUsernamesArea();

@@ -7,6 +7,7 @@ import devTeams from '../../../support/dictionary/devTeams';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
@@ -44,7 +45,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyUserBarcodesResultAccordion();
       BulkEditSearchPane.verifyMatchedResults(user.barcode);
 
-      BulkEditActions.newBulkEdit();
+      TopMenuNavigation.navigateToApp('Bulk edit');
       BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
 
       BulkEditSearchPane.uploadFile('example.json');
