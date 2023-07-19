@@ -44,6 +44,7 @@ export default {
   },
   openInAppStartBulkEditFrom() {
     cy.do(Button('Start bulk edit').click());
+    cy.wait(1000);
   },
   verifyBulkEditForm(rowIndex = 0) {
     cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'));
