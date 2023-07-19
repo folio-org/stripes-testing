@@ -15,7 +15,6 @@ import Location from '../../support/fragments/settings/tenant/locations/newLocat
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 import { getNewItem } from '../../support/fragments/inventory/item';
 
-
 describe('Check In - Actions ', () => {
   const userData = [{
     permissions: [permissions.checkinAll.gui,
@@ -173,7 +172,7 @@ describe('Check In - Actions ', () => {
     CheckInActions.getSessionIdAfterCheckInItem(itemData.items[2].barcode).then(responseSessionId => {
       sessionId = responseSessionId;
     }).then(() => {
-      //needed to synchronize with textfield to enter data
+      // needed to synchronize with textfield to enter data
       cy.wait(1000);
       CheckInActions.getSessionIdAfterCheckInItem(itemData.items[3].barcode).then(responseSessionId2 => {
         cy.wrap(responseSessionId2).should('equal', sessionId);
@@ -181,4 +180,3 @@ describe('Check In - Actions ', () => {
     });
   });
 });
-
