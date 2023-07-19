@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import moment from 'moment';
 import TestTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
@@ -61,6 +62,7 @@ describe('Overdue fine', () => {
       body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
     };
   };
+  const previewText = () => `Test email body The Wines of Italy ${moment().format('lll')}`;
   const noticeTemplates = {
     returnedUponAt: createNoticeTemplate('Overdue_fine_returned_upon_at'),
     returnedAfterOnce: createNoticeTemplate('Overdue_fine_returned_after_once'),
@@ -301,17 +303,17 @@ describe('Overdue fine', () => {
     'C347874 Overdue fine, returned triggers (volaris)',
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
-      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.returnedUponAt);
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.returnedUponAt, previewText());
       NewNoticePolicyTemplate.checkAfterSaving({
         ...noticeTemplates.returnedUponAt,
         category: 'AutomatedFeeFineCharge',
       });
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.returnedAfterOnce);
+      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.returnedAfterOnce, previewText());
       NewNoticePolicyTemplate.checkAfterSaving({
         ...noticeTemplates.returnedAfterOnce,
         category: 'AutomatedFeeFineCharge',
       });
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.returnedAfterRecurring);
+      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.returnedAfterRecurring, previewText());
       NewNoticePolicyTemplate.checkAfterSaving({
         ...noticeTemplates.returnedAfterRecurring,
         category: 'AutomatedFeeFineCharge',

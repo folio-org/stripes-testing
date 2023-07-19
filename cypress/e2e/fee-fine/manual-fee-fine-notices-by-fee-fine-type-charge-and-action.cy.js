@@ -45,6 +45,7 @@ describe('Overdue fine', () => {
       body: '{{item.title}}',
     };
   };
+  const previewText = () => 'The Wines of Italy';
   const noticeTemplates = {
     manualFeeFineCharge: createNoticeTemplate('Manual_fee_fine_charge', 'Manual fee/fine charge'),
     manualFeeFineAction: createNoticeTemplate(
@@ -183,12 +184,18 @@ describe('Overdue fine', () => {
         UsersSearchPane.waitLoading();
       };
 
-      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.manualFeeFineCharge);
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(
+        noticeTemplates.manualFeeFineCharge,
+        previewText()
+      );
       NewNoticePolicyTemplate.checkAfterSaving({
         ...noticeTemplates.manualFeeFineCharge,
         category: 'FeeFineCharge',
       });
-      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.manualFeeFineAction);
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(
+        noticeTemplates.manualFeeFineAction,
+        previewText()
+      );
       NewNoticePolicyTemplate.checkAfterSaving({
         ...noticeTemplates.manualFeeFineAction,
         category: 'FeeFineAction',

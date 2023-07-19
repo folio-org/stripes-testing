@@ -1,6 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import getRandomPostfix from '../../utils/stringTools';
-import { Button, TextField, TextArea, KeyValue, Checkbox, Link, Heading, Select, Pane, Modal, PaneContent } from '../../../../interactors';
+import { Button, TextField, TextArea, KeyValue, Checkbox, Link, Heading, Select, Pane, Modal, PaneContent, NavListItem, RichEditor, including } from '../../../../interactors';
 import richTextEditor from '../../../../interactors/rich-text-editor';
 import { NOTICE_CATEGORIES } from './notice-policy';
 import { actionsButtons } from './newNoticePolicy';
@@ -56,9 +56,12 @@ export default {
     cy.do(Select({ name: 'category' }).choose(category));
   },
 
-  checkPreview: () => {
+  checkPreview: (displayText) => {
     cy.do(PaneContent({ id: 'patron-notice-template-pane-content' }).find(Button('Preview')).click());
-    cy.expect(Modal('Preview of patron notice template').exists());
+    cy.expect([
+      Modal('Preview of patron notice template').exists(),
+      Modal({ content: including(displayText) }).exists()
+    ]);
     cy.do(Button('Close').click());
   },
 
@@ -77,6 +80,10 @@ export default {
     ]);
     cy.do(bodyField.has({ value: `{{${noticePolicyTemplateToken}}}` }));
     return cy.wrap(noticePolicyTemplateToken);
+  },
+
+  clearBody() {
+    cy.do(RichEditor().fillIn(''));
   },
 
   saveAndClose() {
@@ -147,6 +154,14 @@ export default {
     ]);
   },
 
+  editTemplate(name) {
+    cy.do([
+      NavListItem(name).click(),
+      actionsButton.click(),
+      actionsButtons.edit.click(),
+    ]);
+  },
+
   typeTemplateName: (noticePolicytemplateName) => {
     cy.do(nameField.fillIn(noticePolicytemplateName));
   },
@@ -155,22 +170,22 @@ export default {
     cy.do(subjectField.fillIn(noticePolicytemplateSubject));
   },
 
-  createPatronNoticeTemplate(template) {
+  createPatronNoticeTemplate(template, previewText) {
     this.startAdding();
     this.checkInitialState();
     this.addToken('item.title');
     this.create(template, false);
     this.chooseCategory(template.category);
-    this.checkPreview();
+    this.checkPreview(previewText);
     this.saveAndClose();
     this.waitLoading();
   },
 
-  duplicatePatronNoticeTemplate(template) {
+  duplicatePatronNoticeTemplate(template, previewText) {
     this.duplicateTemplate();
     this.typeTemplateName(template.name);
     this.typeTemplateSubject(template.subject);
-    this.checkPreview();
+    this.checkPreview(previewText);
     this.saveAndClose();
     this.waitLoading();
   },

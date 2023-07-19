@@ -10,7 +10,7 @@ const defaultNoticeTemplateBody = {
   },
   body: '<div> Email body {{item.title}} </div>',
   header: 'Email subject: Loan',
-  name: `Template_name_${getRandomPostfix}`,
+  name: `Template_name_${getRandomPostfix()}`,
   outputFormats: ['text/html'],
   0: 'text/html',
   templateResolver: 'mustache',

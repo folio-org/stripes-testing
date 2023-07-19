@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import moment from 'moment';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import TestTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
@@ -46,6 +47,7 @@ describe('Request notice triggers', () => {
       body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
     };
   };
+  const previewText = () => `Test email body The Wines of Italy ${moment().format('lll')}`;
   const noticeTemplates = {
     pageRequest: createNoticeTemplate('Page_request'),
     cancelRequest: createNoticeTemplate('Cancel_request'),
@@ -188,9 +190,9 @@ describe('Request notice triggers', () => {
     'C347866 Page request + Cancel request triggers (volaris)',
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
-      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.pageRequest);
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.pageRequest, previewText());
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.pageRequest);
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.cancelRequest);
+      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.cancelRequest, previewText());
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.cancelRequest);
 
       cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);

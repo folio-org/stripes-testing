@@ -1,4 +1,4 @@
-// This test is failing due to the CIRCSTORE-412 bug.
+import moment from 'moment';
 import uuid from 'uuid';
 import TestTypes from '../../support/dictionary/testTypes';
 import { REQUEST_TYPES } from '../../support/constants';
@@ -59,6 +59,7 @@ describe('Request notice triggers', () => {
       body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
     };
   };
+  const previewText = () => `Test email body The Wines of Italy ${moment().format('lll')}`;
   const noticeTemplates = {
     itemRecaled: { ...createNoticeTemplate('Item_recalled_template'), category: 'Loan' },
     recallRequest: createNoticeTemplate('Recall_request_template'),
@@ -303,17 +304,17 @@ describe('Request notice triggers', () => {
     'C347867 Item recalled + Recall request + Awaiting pickup + Hold shelf expiration triggers (volaris)',
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
-      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.itemRecaled);
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.itemRecaled, previewText());
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.itemRecaled);
-      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.recallRequest);
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.recallRequest, previewText());
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.recallRequest);
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.awaitingPickUp);
+      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.awaitingPickUp, previewText());
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.awaitingPickUp);
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.holdShelfBeforeOnce);
+      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.holdShelfBeforeOnce, previewText());
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.holdShelfBeforeOnce);
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.holdShelfBeforeRecurring);
+      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.holdShelfBeforeRecurring, previewText());
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.holdShelfBeforeRecurring);
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.holdShelfUponAt);
+      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.holdShelfUponAt, previewText());
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.holdShelfUponAt);
 
       cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);

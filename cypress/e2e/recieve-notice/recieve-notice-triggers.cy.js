@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import moment from 'moment';
 import TestTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
@@ -36,6 +37,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
     body: 'Test_email_body',
     category: 'Loan',
   };
+  const previewText = () => `Test email body The Wines of Italy ${moment().format('lll')}`;
   const checkOutTemplate = { ...defaultTemplate };
   checkOutTemplate.name += ' Check out';
   checkOutTemplate.subject = checkOutTemplate.name;
@@ -246,11 +248,11 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
     'C347862 Check out + Loan due date change + Check in triggers (volaris)',
     { tags: [TestTypes.smoke, devTeams.volaris] },
     () => {
-      NewNoticePolicyTemplate.createPatronNoticeTemplate(checkOutTemplate);
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(checkOutTemplate, previewText());
       NewNoticePolicyTemplate.checkAfterSaving(checkOutTemplate);
-      NewNoticePolicyTemplate.createPatronNoticeTemplate(loanDueDateChangeTemplate);
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(loanDueDateChangeTemplate, previewText());
       NewNoticePolicyTemplate.checkAfterSaving(loanDueDateChangeTemplate);
-      NewNoticePolicyTemplate.createPatronNoticeTemplate(checkInTemplate);
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(checkInTemplate, previewText());
       NewNoticePolicyTemplate.checkAfterSaving(checkInTemplate);
 
       cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
