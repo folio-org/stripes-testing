@@ -1,4 +1,4 @@
-import { Button, Checkbox, MultiColumnList, MultiColumnListCell, PaneContent } from '../../../interactors';
+import { Checkbox } from '../../../interactors';
 import button from '../../../interactors/button';
 import textField from '../../../interactors/text-field';
 import checkInActions from '../fragments/check-in-actions/checkInActions';
@@ -36,9 +36,7 @@ export default {
     );
     cy.wait(3000);
     cy.xpath("(//span[@class='appIcon---m1ayU small---gZXwD icon-alignment-center---nDpym'])[33]").then((value) => {
-      // alert("First Iteration")
       const barcode2 = value[0].innerText;
-      console.log(barcode2);
       cy.visit(topMenu.checkInPath);
       checkInActions.checkInItem(barcode2);
       serviceshift.clickClose();
@@ -54,15 +52,6 @@ export default {
       Checkbox({ id: 'clickable-filter-itemStatus-withdrawn' }).click(),
     ]);
     inventorySearchAndFilter.clickSearchResultItem();
-    // cy.do(
-    //   button({
-    //     id: "accordion-toggle-button-74b0fd65-57a6-443d-8cb6-1ff585471f63",
-    //   }).click()
-    // );
-    // cy.xpath("(//span[@class='appIcon---m1ayU small---gZXwD icon-alignment-center---nDpym']//span[@class='label---zHSX1'])[2]").then((value) => {
-    // alert('First Iteration')
-    // const data = value[0].innerText;
-    //   console.log(data)
     cy.visit(topMenu.checkInPath);
     checkInActions.checkInItem(data);
     serviceshift.clickClose();
@@ -85,29 +74,9 @@ export default {
     );
     cy.xpath("(//span[@class='appIcon---m1ayU small---gZXwD icon-alignment-center---nDpym']//span[@class='label---zHSX1'])[2]").then((vari) => {
       const test = vari[0].innerText;
-      // console.log(vari)
       cy.visit(topMenu.checkInPath);
       checkInActions.checkInItem(test);
       serviceshift.clickClose();
     });
   },
-
-  //     checkout(){
-  // cy.xpath(patroncode).type(patronid);
-  //         cy.do(button({ id: "clickable-find-patron" }).click());
-  //         serviceshift.clickClose();
-  //          cy.xpath(itempath).click().type(itemid)
-  //         cy.do(button({id:"clickable-add-item"}).click())
-  //         serviceshift.clickClose();
-  //         cy.visit(topMenu.checkOutPath);
-  //         cy.xpath(patroncode).type(patronid);
-  //         cy.do(button({ id: "clickable-find-patron" }).click());
-  //         cy.xpath(itempath).click().type(itemid)
-  //         serviceshift.clickClose();
-  //         cy.do(button({id:"clickable-add-item"}).click())
-  //         serviceshift.clickClose();
-
-  //     }
-
-
 };

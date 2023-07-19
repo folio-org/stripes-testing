@@ -1,13 +1,11 @@
 import topMenu from '../../support/fragments/topMenu';
 import serviceshift from '../../support/a_ideyalabs/serviceshift';
-import TopMenu from '../../support/fragments/topMenu';
 import checkInActions from '../../support/fragments/check-in-actions/checkInActions';
 import inventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import searchPane from '../../support/fragments/circulation-log/searchPane';
 import checkinitems from '../../support/a_ideyalabs/checkinitems';
 
 const item_A = '13575447';
-// const times =button({ icon: "times" });
 const testData = {
   item_A : '14367843',
   item_B : '17276636',
@@ -46,15 +44,15 @@ describe('servicepoints shift', () => {
 
 
   it('C17137 - Filter circulation log by renewed through override', () => {
-    cy.visit(TopMenu.circulationLogPath);
+    cy.visit(topMenu.circulationLogPath);
     searchPane.checkbarcode();
   });
   it('C590 Check in: multipiece items', () => {
-    cy.visit(TopMenu.checkInPath);
+    cy.visit(topMenu.checkInPath);
     cy.checkIn(testData.item_A);
     checkInActions.openItemDetails(testData.item_A);
     checkInActions.editItemDetails(testData.itemAnumberOfPieces, '', '');
-    cy.visit(TopMenu.checkInPath);
+    cy.visit(topMenu.checkInPath);
 
     cy.cancelCheckInMultipleItem(testData.item_B);
 
@@ -66,7 +64,7 @@ describe('servicepoints shift', () => {
       '',
       testData.description
     );
-    cy.visit(TopMenu.checkInPath);
+    cy.visit(topMenu.checkInPath);
     cy.checkInMultipleItem(testData.item_B);
     cy.wait(3000);
 
@@ -78,7 +76,7 @@ describe('servicepoints shift', () => {
       testData.itemAnumberOfPieces,
       testData.description
     );
-    cy.visit(TopMenu.checkInPath);
+    cy.visit(topMenu.checkInPath);
     cy.checkInMultipleItem(testData.item_C);
     cy.wait(3000);
 
@@ -90,7 +88,7 @@ describe('servicepoints shift', () => {
       testData.itemnumberOfPieces,
       testData.description
     );
-    cy.visit(TopMenu.checkInPath);
+    cy.visit(topMenu.checkInPath);
     cy.checkInMultipleItem(testData.item_D);
   });
 });

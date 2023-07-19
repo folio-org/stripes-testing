@@ -20,14 +20,6 @@ const servicePointField = MultiSelect({ ariaLabelledby: 'accordion-toggle-button
 const barcodeText = "//div[@data-row-inner='0']//a[@data-test-text-link='true']";
 const data = '4502015';
 
-
-
-// // TODO: will rework to interactor when we get section id
-// function clickApplyMainFilter() {
-//   cy.get('[class^="button-"][type="submit"]').first().click();
-// }
-
-
 export default {
   clickApplyMainFilter() {
     cy.get('[class^="button-"][type="submit"]').first().click();
@@ -55,12 +47,12 @@ export default {
 
   searchByUserBarcode(barcode) {
     cy.do(TextField({ name: 'userBarcode' }).fillIn(barcode));
-    clickApplyMainFilter();
+    this.clickApplyMainFilter();
   },
 
   searchByDescription(desc) {
     cy.do(TextField({ name: 'description' }).fillIn(desc));
-    clickApplyMainFilter();
+    this.clickApplyMainFilter();
   },
 
   searchByChangedDueDate() {
@@ -97,7 +89,7 @@ export default {
       ]);
 
       cy.do(TextField({ name: 'itemBarcode' }).fillIn(data));
-      clickApplyMainFilter();
+      this.clickApplyMainFilter();
     });
   },
 
