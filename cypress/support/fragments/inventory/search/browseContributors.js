@@ -59,9 +59,9 @@ export default {
       contributorsOption.exists(),
     ]);
     cy.then(() => Option('Call numbers (all)').index()).then((callNumbersOptionIndex) => {
-        cy.then(() => contributorsOption.index()).then((contributorsOptionIndex) => {
-            expect(contributorsOptionIndex).to.equal(callNumbersOptionIndex + 1);
-        });
+      cy.then(() => contributorsOption.index()).then((contributorsOptionIndex) => {
+        expect(contributorsOptionIndex).to.equal(callNumbersOptionIndex + 1);
+      });
     });
   },
 
@@ -80,7 +80,7 @@ export default {
       Section({ id: 'browse-inventory-results-pane' }).find(Heading('Browse inventory')).exists(),
       Image({ alt: 'View and manage instance records, holdings records and item records' }).exists(),
       PaneHeader({ id: 'paneHeaderbrowse-inventory-results-pane' }).find(HTML('Enter search criteria to start browsing')).exists(),
-      PaneContent('Browse for results entering a query or choosing a filter.').exists(),[]
+      PaneContent('Browse for results entering a query or choosing a filter.').exists(), []
     ]);
   },
 
