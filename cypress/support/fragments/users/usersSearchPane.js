@@ -8,26 +8,17 @@ import { Accordion,
   Pane,
   MultiColumnListCell,
   Select,
-  MultiColumnListRow,
   Section,
   TextArea,
   RadioButtonGroup } from '../../../../interactors';
-// require('@4tw/cypress-drag-drop')
-// import 'cypress-drag-drop';
 
 // Cypress clicks before the UI loads, use when there is no way to attach waiter to element
 const waitClick = () => { cy.wait(1000); };
-const openLoanSectionButton = Button({
-  id: 'accordion-toggle-button-loansSection',
-});
+const openLoanSectionButton = Button({ id: 'accordion-toggle-button-loansSection' });
 const ActionButton = Section({ id: 'pane-userdetails' }).find(Button('Actions'));
 const editButton = Button('Edit');
 const AdditionalInfo = Button('Additional information');
 const saveAndClose = Button('Save & close');
-const dragItem = '//div[@class="labelArea---D_osb"][normalize-space()="Single Select Dropdown · Single select"]';
-const DropItem = '//div[@class="labelArea---D_osb"][normalize-space()="CheckBoxx · Checkbox"]';
-// const selectDropdown = "//option[text()='Select a single select dropdown']/.."
-
 
 
 export default {
@@ -83,7 +74,6 @@ export default {
   },
 
   openUserLoanSection:() => {
-    // cy.do(Accordion({ id: 'accordion-toggle-button-loansSection' }).click());;
     cy.do([openLoanSectionButton.click()]);
   },
 
@@ -96,8 +86,7 @@ export default {
   },
 
   verifyTestArea: (name) => {
-    cy.do([
-      ActionButton.click(),
+    cy.do([ActionButton.click(),
       editButton.click(),
     ]);
     cy.expect(TextArea(name).exists());
@@ -149,8 +138,6 @@ export default {
   VerifyDragItem() {
     cy.do(AdditionalInfo.click());
     cy.get('[aria-label=" Additional information"]').then((elements) => {
-      const draggableElement = elements[0];
-      const targetElement = elements[1];
       cy.expect(elements);
     });
   }

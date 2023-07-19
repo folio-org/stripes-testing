@@ -12,12 +12,10 @@ import {
   MultiSelect,
   MultiSelectOption,
   Pane,
-  PaneContent,
   PaneHeader,
   SearchField,
   Section,
   Select,
-  Selection,
   SelectionOption,
   TextArea,
   TextField,
@@ -34,7 +32,6 @@ const organizationDetails = Pane({ id: 'pane-organization-details' });
 const contactPeopleDetails = MultiColumnList({ id: 'contact-list' });
 const organizationsList = MultiColumnList({ id: 'organizations-list' });
 const blueColor = 'rgba(0, 0, 0, 0)';
-const tagsFilter = Section({ id: 'org-filter-tags' });
 const tagButton = Button({ icon: 'tag' });
 const summarySection = Accordion({ id: summaryAccordionId });
 const searchInput = SearchField({ id: 'input-record-search' });
@@ -46,8 +43,7 @@ const ediSection = Section({ id: 'edi' });
 const ftpSection = Section({ id: 'ftp' });
 const schedulingSection = Section({ id: 'scheduling' });
 const actionsButton = Button('Actions');
-const numberOfSearchResultsHeader =
-  '//*[@id="paneHeaderorganizations-results-pane-subtitle"]/span';
+const numberOfSearchResultsHeader = '//*[@id="paneHeaderorganizations-results-pane-subtitle"]/span';
 const categoryDropdown = Button('Category');
 const zeroResultsFoundText = '0 records found';
 const organizationStatus = Select('Organization status*');
@@ -61,7 +57,6 @@ const resetButton = Button('Reset all');
 const openContactSectionButton = Button({
   id: 'accordion-toggle-button-contactPeopleSection',
 });
-const tagOpenMenuButton = '(//button[@aria-label="open menu"])[2]';
 const newButton = Button('+ New');
 const addContacsModal = Modal('Add contacts');
 const lastNameField = TextField({ name: 'lastName' });
@@ -174,7 +169,7 @@ export default {
     );
   },
 
-  organizationTagDetails: (tagname) => {
+  organizationTagDetails: () => {
     // cy.expect(tagsButton.exists());
     cy.do([
       tagButton.click(),
@@ -389,7 +384,7 @@ export default {
 
   resetFilters: () => {
     cy.do(resetButton.click());
-    cy.expect(resetButton.is({ disabled: true })); // Actual : true
+    cy.expect(resetButton.is({ disabled: true }));
   },
 
   checkSearchResults: (organization) => {
@@ -513,7 +508,6 @@ export default {
   deleteContact: () => {
     cy.do([actionsButton.click(), deleteButton.click(),
       cy.wait(2000), confirmButton.click()]);
-    // cy.expect(contactPeopleDetails.has({ content: "orgsantosh" }));
   },
   selectCategories: (category) => {
     cy.do([
