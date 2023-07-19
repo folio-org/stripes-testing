@@ -1,4 +1,4 @@
-import invoice1 from '../../support/fragments/ideyalabs/invoice1';
+import invoice from '../../support/fragments/ideyalabs/invoice';
 import invoices from '../../support/fragments/invoices/invoices';
 import TopMenu from '../../support/fragments/topMenu';
 
@@ -52,19 +52,19 @@ describe('C353566-Correct fund validation to approve invoice', () => {
   it('Invoices App', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.ordersPath);
-    invoice1.createOrder(orderOne.orderType, orderOne.templateName);
-    invoice1.POlines(orderOnePOLine.title, orderOnePOLine.fundID);
-    invoice1.purchaseOrder();
-    invoice1.createAnotherOrder(orderTwo.orderType, orderTwo.templateName),
-    invoice1.POlinesForAnotherOrder(orderTwoPOLine.title, orderTwoPOLine.price, orderTwoPOLine.fundID, orderTwoPOLine.val1, orderTwoPOLine.val2)
+    invoice.createOrder(orderOne.orderType, orderOne.templateName);
+    invoice.POlines(orderOnePOLine.title, orderOnePOLine.fundID);
+    invoice.purchaseOrder();
+    invoice.createAnotherOrder(orderTwo.orderType, orderTwo.templateName),
+    invoice.POlinesForAnotherOrder(orderTwoPOLine.title, orderTwoPOLine.price, orderTwoPOLine.fundID, orderTwoPOLine.val1, orderTwoPOLine.val2)
     ,
-    invoice1.purchaseAnotherOrder();
+    invoice.purchaseAnotherOrder();
     cy.visit(TopMenu.invoicesPath);
     invoices.createVendorInvoice(newInvoice);
 
 
-    invoice1.searchByNumber(newInvoice.invoiceNumber);
-    invoice1.selectInvoice(newInvoice.invoiceNumber);
+    invoice.searchByNumber(newInvoice.invoiceNumber);
+    invoice.selectInvoice(newInvoice.invoiceNumber);
     invoices.createInvoiceLineFromPol(invoiceLines.line1);
     invoices.applyConfirmationalPopup();
     invoices.applyConfirmationalPopup();
@@ -77,19 +77,19 @@ describe('C353566-Correct fund validation to approve invoice', () => {
     invoices.createInvoiceLineFromPol(invoiceLines.line4);
     invoices.applyConfirmationalPopup(); // confirmation for 1st time
     invoices.applyConfirmationalPopup(); // confirmation for 2nd time
-    invoice1.addFundDistributionToLine2(fundDistribution.fundID1);
-    invoice1.addFundDistributionToLine4(fundDistribution.fundID2);
-    invoice1.adjustments();
+    invoice.addFundDistributionToLine2(fundDistribution.fundID1);
+    invoice.addFundDistributionToLine4(fundDistribution.fundID2);
+    invoice.adjustments();
 
-    invoice1.approveInvoice();
+    invoice.approveInvoice();
   });
   it('C368486 - Editing fund distribution in PO line when related Reviewed invoice exists', () => {
     cy.visit(TopMenu.orderLinesPath);
-    invoice1.searchByParameter(searchInvoiceNumber.parameter, searchInvoiceNumber.value);
-    invoice1.orderList(searchInvoiceNumber.value);
-    invoice1.PODetails(fundID);  // API getting failed while changing Fund ID
-    invoice1.selectCurrentEncumbrance('$5.00');
+    invoice.searchByParameter(searchInvoiceNumber.parameter, searchInvoiceNumber.value);
+    invoice.orderList(searchInvoiceNumber.value);
+    invoice.PODetails(fundID);  // API getting failed while changing Fund ID
+    invoice.selectCurrentEncumbrance('$5.00');
     cy.visit(TopMenu.invoicesPath);
-    invoice1.openStatusAndClickCheckbox();
+    invoice.openStatusAndClickCheckbox();
   });
 });

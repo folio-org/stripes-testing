@@ -126,15 +126,7 @@ export default {
   },
 
   SelectFundIDFromthelist: () => {
-    // let text = 'FundA(A)'
-
-    cy.xpath('//a[text()="Fund A(A)"]').invoke("removeAttr", "target").click();
-
-    // cy.do([
-
-    //   Section({ id: 'invoiceLineFundDistribution' }).find(Link(FundID)).invoke('removeAttr','target').click()
-
-    // ])
+     cy.xpath('//a[text()="Fund A(A)"]').invoke("removeAttr", "target").click();
   },
 
   viewDetailsPreviousBudgets: (Name) => {
@@ -195,10 +187,7 @@ export default {
     cy.do([
       Section({ id: "rollover-logs-results-pane" })
         .find(MultiColumnListCell({ row: 0, content: "07/14/2023-result" }))
-
-        // .find(Link("07/14/2023-result"))
-
-        .click(),
+      .click(),
     ]);
   },
 
@@ -217,10 +206,6 @@ export default {
       Section({ id: "pane-transaction-details" })
         .find(Button({ icon: "times" }))
         .click(),
-
-      // Section({name:'class="pane---M_bJw focusIndicator---YSu0f focusWithinIndicator---xDG5p"'}).find(Button({ icon: "times" })).click()
-
-      // closeButton.find(Button({ icon: "times" })).click()
     ]);
   },
 

@@ -83,7 +83,6 @@ export default {
 
   createAnotherOrder: (orderTypes, templateNames) => {
     cy.do([
-      // newOrderSection.find(actionsButton).click(),
       PaneHeader({ id: 'paneHeaderorders-results-pane' })
         .find(Button('Actions'))
         .click(),
