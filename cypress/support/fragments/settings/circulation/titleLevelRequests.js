@@ -3,9 +3,9 @@ import InteractorsTools from '../../../utils/interactorsTools';
 
 const SaveButton = Button('Save');
 const TLRCheckbox = Checkbox({ name: 'titleLevelRequestsFeatureEnabled' });
-const ConfirmationNotice= Select({name: "confirmationPatronNoticeTemplateId"});
-const CancellationNotice =Select({name:'cancellationPatronNoticeTemplateId'});
-const ExpirationNotice = Select({name:'expirationPatronNoticeTemplateId'});
+const ConfirmationNotice = Select({ name: 'confirmationPatronNoticeTemplateId' });
+const CancellationNotice = Select({ name:'cancellationPatronNoticeTemplateId' });
+const ExpirationNotice = Select({ name:'expirationPatronNoticeTemplateId' });
 
 export default {
   waitLoading() {
@@ -16,29 +16,19 @@ export default {
     cy.expect(Pane({ id: 'app-settings-nav-pane' }).find(NavListItem('Title level requests')).exists());
   },
   SelectConfirmationNoticeDropdown: (notice) => {
-
     cy.do(ConfirmationNotice.choose(notice.notice1));
-
   },
 
   SelectCancelleationNoticeDropdown: (notice) => {
-
     cy.do(CancellationNotice.choose(notice.notice2));
-
   },
 
   SelectExpirationNoticeDropdown: (notice) => {
-
-    cy.do(ExpirationNotice.choose(notice.notice3))
-
-   
-
+    cy.do(ExpirationNotice.choose(notice.notice3));
   },
 
-  clickOnSaveButton:()=>{
-
+  clickOnSaveButton:() => {
     cy.do(SaveButton.click());
-
   },
 
   changeTitleLevelRequestsStatus(status) {

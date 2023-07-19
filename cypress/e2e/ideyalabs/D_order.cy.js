@@ -18,8 +18,6 @@ describe('Orders app ', () => {
     orderLines.selectreceivedTitleName('Approve rolled');
     receiving.addPieceProcess('xys', 'Electronic');
     receiving.quickReceivePiece();
-    //  receiving.clickOnPOLnumber("20692-1")
-    //  orderLines.selectFund("HBZ-HBZ2024")
   });
   it('C350428 Patron notice', () => {
     cy.visit(SettingsMenu.circulationTitleLevelRequestsPath);

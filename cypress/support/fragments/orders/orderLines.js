@@ -27,7 +27,7 @@ import InteractorsTools from '../../utils/interactorsTools';
 
 const path = require('path');
 
-const receivedtitleDetails=PaneContent({id:'receiving-results-pane-content'})
+const receivedtitleDetails = PaneContent({ id:'receiving-results-pane-content' });
 const saveAndClose = Button('Save & close');
 const actionsButton = Button('Actions');
 const searhInputId = 'input-record-search';
@@ -45,8 +45,8 @@ const quantityPhysical = '5';
 const electronicUnitPrice = '10';
 const quantityElectronic = '5';
 const physicalUnitPriceTextField = TextField({ name: 'cost.listUnitPrice' });
-const OrderLines=Button('Order lines');
-const Funddetails=Section({id:"FundDistribution"});
+const OrderLines = Button('Order lines');
+const Funddetails = Section({ id:'FundDistribution' });
 const quantityPhysicalTextField = TextField({ name: 'cost.quantityPhysical' });
 const electronicUnitPriceTextField = TextField({ name: 'cost.listUnitPriceElectronic' });
 const quantityElectronicTextField = TextField({ name: 'cost.quantityElectronic' });
@@ -110,7 +110,7 @@ export default {
   clickOnOrderLines: () => {
     cy.do([
       OrderLines.click()
-    ])
+    ]);
   },
   waitLoading() {
     cy.expect([
@@ -397,9 +397,8 @@ export default {
   selectOrderline:(POlinenumber) => {
     cy.do(Pane({ id: 'order-lines-results-pane' }).find(Link(POlinenumber)).click());
   },
-  selectreceivedTitleName:(tittle) => {
-    cy.do(receivedtitleDetails.find((Link(tittle))).click())
-  
+  selectreceivedTitleName:(title) => {
+    cy.do(receivedtitleDetails.find((Link(title))).click());
   },
 
   addFundToPOL(fund, value) {
