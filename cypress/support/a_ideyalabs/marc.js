@@ -1,29 +1,21 @@
 import {
   Button,
-  Link,
   QuickMarcEditorRow,
-  SearchField,
   Section,
-  Select,
   TextField,
 } from '../../../interactors';
-import button from '../../../interactors/button';
 import section from '../../../interactors/section';
 import holdingsRecordView from '../fragments/inventory/holdingsRecordView';
-import inventoryInstance from '../fragments/inventory/inventoryInstance';
 
 const rootSection = Section({ id: 'marc-view-pane' });
 const tagNumber = TextField({ name: 'records[5].tag' });
 const filterSection = Section({ id: 'pane-filter' });
-const packageShowTitlesSection = Section({ id: 'packageShowTitles' });
-const SearchButton = Button({ icon: 'search' });
 const saveAndCloseBtn = Button('Save & close');
 const close = Button({ ariaLabel: 'Close The !!!Kung of Nyae Nyae / Lorna Marshall.' });
 const linkHeadingsButton = Button('Link headings');
 const searchButton = Button({ type: 'submit' });
 
 export default {
-
   clickLinkheadings: () => {
     cy.do(linkHeadingsButton.click());
   },
@@ -35,19 +27,6 @@ export default {
   assertTagNumber: () => {
     cy.do([cy.expect(tagNumber.find(content).exists())]);
   },
-  // searchByValue1: (parameter, value) => {
-  //   cy.do(
-  //     filterSection
-  //       .find(Select({ id: "input-inventory-search-qindex" }))
-  //       .selectIndex(parameter)
-  //   );
-  //   cy.do(
-  //     filterSection
-  //       .find(TextField({ id: "input-inventory-search" }))
-  //       .fillIn(value)
-  //   );
-  //   cy.do(filterSection.find(Button("Search")).click());
-  // },
 
   searchByValue: (value) => {
     cy.do(
@@ -67,8 +46,7 @@ export default {
   },
 
   popupUnlinkButton: () => {
-    // cy.do(unlinkFromMarcAuthorityPane.find(Button('Unlink')).click());
-    cy.do(Button('Unlink').click()); // Unlink Button on Modal
+    cy.do(Button('Unlink').click()); 
   },
 
   keepLinkingButton: () => {
@@ -108,7 +86,6 @@ export default {
 
   recordLastUpdated: () => {
     cy.do(section({ id:'acc01' }).find(Button).click());
-    // cy.do(button({class:"metaHeaderButton---dLg5S interactionStyles---eaRy_"}).click());
   },
 
   checkFieldContentMatch() {
@@ -140,5 +117,4 @@ export default {
       QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ value: '$9' })).absent(),
     ]);
   },
-
 };

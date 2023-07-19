@@ -176,7 +176,8 @@ describe('New Marc Bib Record and new MARC Holdings record', () => {
 
   it('C380747 Add non-controllable subfields to a linked field when creating ""MARC Bibliographic"" record', () => {
     cy.visit(topMenu.inventoryPath);
-    inventoryInstance.newMarcBibRecord();
+    inventoryInstance.newMarcB
+    ibRecord();
     quickMarcEditor.checkReadOnlyTags();
     quickMarcEditor.updateExistingField(
       testData.tags.tag245,
