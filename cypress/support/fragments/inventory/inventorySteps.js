@@ -9,9 +9,9 @@ export default {
     QuickMarcEditor.pressSaveAndClose();
   },
 
-  verifyHiddenFieldValueInHoldings008(holdingsID, fieldLabel, expectedValue) {
-    cy.getHoldingsDataInEditorViaApi(holdingsID).then(holdingsData => {
-      cy.expect(holdingsData.fields[2].content[fieldLabel]).equal(expectedValue);
+  verifyHiddenFieldValueIn008(recordID, fieldLabel, expectedValue) {
+    cy.getRecordDataInEditorViaApi(recordID).then(recordData => {
+      cy.expect(recordData.fields.filter(field => field.tag === '008')[0].content[fieldLabel]).equal(expectedValue);
     });
   }
 };

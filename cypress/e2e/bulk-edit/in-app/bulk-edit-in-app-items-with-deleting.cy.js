@@ -68,7 +68,6 @@ describe('bulk-edit', () => {
       BulkEditActions.verifyActionAfterChangingRecords();
       BulkEditSearchPane.verifyErrorLabelAfterChanges(itemBarcodesFileName, 1, 1);
       BulkEditActions.verifySuccessBanner(1);
-      BulkEditActions.newBulkEdit();
     });
   });
 });
