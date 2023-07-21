@@ -34,6 +34,7 @@ const calloutUpdatedRecord = Callout('Record has been updated.');
 const calloutUpdatedLinkedBibRecord = Callout('Record has been updated. 2 linked bibliographic record(s) updates have begun.');
 const calloutNonEditableLdrBib = Callout('Record cannot be saved. Please check the Leader. Only positions 5, 6, 7, 8, 17, 18 and/or 19 can be edited in the Leader.');
 const calloutDelete008Error = Callout('Record cannot be saved without 008 field');
+const calloutAfterSaveAndCloseNewRecord = Callout('Record created.');
 const closeButton = Button({ icon: 'times' });
 const validRecord = InventoryInstance.validOCLC;
 const specRetInputNamesHoldings008 = ['records[3].content.Spec ret[0]',
@@ -679,6 +680,30 @@ export default {
   },
 
   saveInstanceIdToArrayInQuickMarc(IdArray) {
-    cy.url().then(url => { IdArray.push(url.split('/')[6].split('?')[0]); });
+    cy.url().then(url => {
+      const instanceId = IdArray.push(url.split('/')[6].split('?')[0]);
+      cy.wrap(instanceId).as('instanceId');
+    });
+    return cy.get('@instanceId');
+  },
+
+  checkFieldsExist(tags) {
+    tags.forEach(tag => {
+      cy.expect(getRowInteractorByTagName(tag).exists());
+    });
+  },
+
+  checkFieldsCount(expectedCount) {
+    cy.then(() => QuickMarcEditor().rowsCount())
+      .then(FieldsCount => {
+        cy.expect(FieldsCount).equal(expectedCount);
+      });
+  },
+
+  checkAfterSaveAndCloseDerive() {
+    cy.expect([
+      calloutAfterSaveAndCloseNewRecord.exists(),
+      instanceDetailsPane.exists(),
+    ]);
   }
 };

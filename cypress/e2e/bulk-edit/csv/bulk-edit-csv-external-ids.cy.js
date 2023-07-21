@@ -57,7 +57,6 @@ describe('bulk-edit', () => {
       BulkEditActions.commitChanges();
 
       BulkEditSearchPane.verifyChangedResults(newUserName);
-      BulkEditActions.newBulkEdit();
     });
   });
 });

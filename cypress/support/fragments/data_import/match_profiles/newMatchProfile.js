@@ -13,6 +13,7 @@ import { EXISTING_RECORDS_NAMES } from '../../../constants';
 const criterionValueTypeList = SelectionList({ id:'sl-container-criterion-value-type' });
 const criterionValueTypeButton = Button({ id:'criterion-value-type' });
 const matchProfileDetailsAccordion = Accordion({ id:'match-profile-details' });
+const recordSelectorDropdown = Dropdown({ id: 'record-selector-dropdown' });
 
 const optionsList = {
   instanceHrid: 'Admin data: Instance HRID',
@@ -57,6 +58,10 @@ function fillName(profileName) {
 
 function selectExistingRecordType(existingRecordType) {
   cy.do(matchProfileDetailsAccordion.find(Button({ dataId: existingRecordType })).click());
+}
+
+function selectIncomingRecordType(incomingRecordType) {
+  cy.do(matchProfileDetailsAccordion.find(recordSelectorDropdown).choose(incomingRecordType));
 }
 
 function fillQualifierInIncomingPart(qualifierType, qualifierValue) {
@@ -157,6 +162,18 @@ export default {
       cy.do(criterionValueTypeButton.click());
       cy.expect(criterionValueTypeList.exists());
       cy.do(criterionValueTypeList.find(SelectionOption(instanceOption)).click());
+    } else if (existingRecordType === 'MARC_AUTHORITY') {
+      selectExistingRecordType(existingRecordType);
+      selectIncomingRecordType('MARC Authority');
+      fillIncomingRecordFields(incomingRecordFields.field, 'field');
+      fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
+      fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
+      fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
+      selectMatchCriterion(matchCriterion);
+      fillExistingRecordFields(existingRecordFields.field, 'field');
+      fillExistingRecordFields(existingRecordFields.in1, 'in1');
+      fillExistingRecordFields(existingRecordFields.in2, 'in2');
+      fillExistingRecordFields(existingRecordFields.subfield, 'subfield');
     } else if (existingRecordType === 'HOLDINGS') {
       // wait for list with data to be loaded
       cy.wait(1500);

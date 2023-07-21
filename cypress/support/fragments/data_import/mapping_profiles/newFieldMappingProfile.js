@@ -64,6 +64,7 @@ const approvedCheckbox = Checkbox({ name:'profile.mappingDetails.mappingFields[1
 const incomingRecordType = {
   marcBib: 'MARC Bibliographic',
   edifact: 'EDIFACT invoice',
+  marcAuth: 'MARC Authority'
 };
 const actions = {
   addTheseToExisting: 'Add these to existing',
@@ -507,6 +508,15 @@ export default {
     cy.do([
       nameField.fillIn(specialMappingProfile.name),
       incomingRecordTypeField.choose(incomingRecordType.marcBib),
+      existingRecordType.choose(specialMappingProfile.typeValue),
+      Select({ name:'profile.mappingDetails.marcMappingOption' }).choose(actionsFieldMappingsForMarc.update),
+    ]);
+  },
+
+  fillMappingProfileForUpdatesMarcAuthority:(specialMappingProfile = defaultMappingProfile) => {
+    cy.do([
+      nameField.fillIn(specialMappingProfile.name),
+      incomingRecordTypeField.choose(incomingRecordType.marcAuth),
       existingRecordType.choose(specialMappingProfile.typeValue),
       Select({ name:'profile.mappingDetails.marcMappingOption' }).choose(actionsFieldMappingsForMarc.update),
     ]);

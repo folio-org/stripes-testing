@@ -56,7 +56,6 @@ describe('bulk-edit', () => {
       BulkEditActions.verifyNoMatchingOptionsForLocationFilter();
 
       BulkEditActions.cancel();
-      BulkEditActions.newBulkEdit();
     });
 
     it('C356787 Verify enable type ahead in location look-up (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -73,7 +72,6 @@ describe('bulk-edit', () => {
       BulkEditActions.verifyMatchingOptionsForLocationFilter(location);
 
       BulkEditActions.cancel();
-      BulkEditActions.newBulkEdit();
     });
   });
 });
