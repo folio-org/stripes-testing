@@ -97,7 +97,6 @@ describe('Creating Permissions Set and Custom Fields', () => {
     organizations.verifynewCategory(`Test${RandomNumber}`);
   });
   it('C367970-Check that User can save changes while edit ""Fixed due date schedules"" without changing ""Fixed due date schedules name"" field', () => {
-    cy.visit(TopMenu.settingsPath);
     cy.visit(SettingsMenu.circulationFixedDueDateSchedulesPath);
     eHoldingsProviders.editSchedule({ data: { name: 'Magnus test', description: `Test${RandomNumber}` } });
   });

@@ -10,7 +10,8 @@ import { Accordion,
   Select,
   Section,
   TextArea,
-  RadioButtonGroup } from '../../../../interactors';
+  RadioButtonGroup,
+  Spinner } from '../../../../interactors';
 
 // Cypress clicks before the UI loads, use when there is no way to attach waiter to element
 const waitClick = () => { cy.wait(1000); };
@@ -61,6 +62,7 @@ export default {
   },
 
   selectFirstUser: (userName) => {
+    cy.expect(Spinner().absent());
     cy.do(Pane({ id: 'users-search-results-pane' }).find(Link(userName)).click());
   },
 

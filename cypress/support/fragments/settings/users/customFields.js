@@ -1,5 +1,5 @@
 import { including } from 'bigtest';
-import { Pane, Button, Dropdown, TextField, MultiColumnListRow, TextArea, Accordion } from '../../../../../interactors';
+import { Pane, Button, Dropdown, TextField, MultiColumnListRow, TextArea, Accordion, Spinner } from '../../../../../interactors';
 
 const customFieldsPane = Pane('Custom fields');
 const editNewButton = Button({ href: '/settings/users/custom-fields/edit' });
@@ -10,6 +10,8 @@ const newButton = Button('+ New');
 const permissionName = TextField({ id: 'input-permission-title' });
 const permissionDesc = TextArea({ id: 'input-permission-description' });
 const addPermissionBtn = Button('Add permission');
+const fieldLabel = TextField('Field label*');
+const helpText = TextField('Help text');
 
 
 export default {
@@ -61,62 +63,71 @@ export default {
   clickONewButton() {
     cy.do(newButton.click());
   },
+  // Creating New permission
   createPermission(data) {
     cy.do([permissionName.fillIn(data.name), permissionDesc.fillIn(data.description), addPermissionBtn.click(), saveAndCloseButton.click()]);
   },
 
+  // Adding text field custom fields
   addCustomTextField(data) {
     cy.do([editNewButton.click(),
       addCustomFieldDropdown.choose('Text field'),
-      TextField('Field label*').fillIn(data.fieldLabel),
-      TextField('Help text').fillIn(data.helpText),
+      fieldLabel.fillIn(data.fieldLabel),
+      helpText.fillIn(data.helpText),
       saveAndCloseButton.click()]);
-    cy.wait(5000);
+    cy.expect(Spinner().absent());
   },
 
+
+  // Adding text area custom fields
   addCustomTextArea(data) {
     cy.do([editNewButton.click(),
       addCustomFieldDropdown.choose('Text area'),
-      TextField('Field label*').fillIn(data.fieldLabel),
-      TextField('Help text').fillIn(data.helpText),
+      fieldLabel.fillIn(data.fieldLabel),
+      helpText.fillIn(data.helpText),
       saveAndCloseButton.click()]);
-    cy.wait(5000);
+    cy.expect(Spinner().absent());
   },
 
+
+  // Adding checkbox custom fields
   addCustomCheckBox(data) {
     cy.do([editNewButton.click(),
       addCustomFieldDropdown.choose('Checkbox'),
-      TextField('Field label*').fillIn(data.fieldLabel),
-      TextField('Help text').fillIn(data.helpText),
+      fieldLabel.fillIn(data.fieldLabel),
+      helpText.fillIn(data.helpText),
       saveAndCloseButton.click()]);
-    cy.wait(5000);
+    cy.expect(Spinner().absent());
   },
 
-
+  // Adding Radio Button custom fields
   addCustomRadioButton({ data }) {
     cy.do([
       editNewButton.click(),
       addCustomFieldDropdown.choose('Radio button set'),
-      TextField('Field label*').fillIn(data.fieldLabel),
-      TextField('Help text').fillIn(data.helpText),
+      fieldLabel.fillIn(data.fieldLabel),
+      helpText.fillIn(data.helpText),
       MultiColumnListRow({ indexRow: 'row-1' }).find(TextField()).fillIn(data.label1),
       MultiColumnListRow({ indexRow: 'row-2' }).find(TextField()).fillIn(data.label2),
       saveAndCloseButton.click(),
     ]);
   },
 
+  // Adding Single Select custom fields
   addCustomSingleSelect({ data }) {
     cy.do([
       editNewButton.click(),
       addCustomFieldDropdown.choose('Single select'),
-      TextField('Field label*').fillIn(data.fieldLabel),
-      TextField('Help text').fillIn(data.helpText),
+      fieldLabel.fillIn(data.fieldLabel),
+      helpText.fillIn(data.helpText),
       MultiColumnListRow({ indexRow: 'row-1' }).find(TextField()).fillIn(data.label1),
       MultiColumnListRow({ indexRow: 'row-2' }).find(TextField()).fillIn(data.label2),
       saveAndCloseButton.click(),
     ]);
   },
+
   editButton() {
+    cy.expect(editNewButton.exists());
     cy.do([
       editNewButton.click()]);
   }

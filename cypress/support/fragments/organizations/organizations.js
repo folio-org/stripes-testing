@@ -213,7 +213,6 @@ export default {
   },
   addNewCategory: (value) => {
     cy.do(categoryButton.click());
-    cy.wait(2000);
     cy.expect(newButton.exists());
     cy.do(newButton.click()),
     cy.do(nameTextField.fillIn(value)),
@@ -472,7 +471,7 @@ export default {
     .then((response) => response.body.id),
 
   editOrganization: () => {
-    cy.wait(2000);
+    cy.expect(actionsButton.exists());
     cy.do([actionsButton.click(),
       editButton.click()]);
   },

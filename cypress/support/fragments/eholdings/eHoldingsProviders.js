@@ -46,12 +46,13 @@ export default {
   editSchedule({ data }) {
     cy.do([
       NavListItem(data.name).click(),
-      Button('Actions').click(),
-      Button('Edit').click(),
+      actionsButton.click(),
+      editButton.click(),
       desc.fillIn(data.description),
       SaveAndClose.click()
     ]);
   },
+
   proxyChange() {
     const text = cy
       .get(selectedText)
