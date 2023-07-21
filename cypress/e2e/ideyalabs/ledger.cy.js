@@ -45,7 +45,6 @@ const testData = {
 describe('Users-loans App', () => {
   it('login to Folio', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    // cy.visit(topMenu.ledgerPath);
   });
 
   it('C377030-Available balance"" is displayed as a negative number when running a deficit', () => {
