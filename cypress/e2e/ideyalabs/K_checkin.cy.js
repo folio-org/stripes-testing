@@ -4,8 +4,11 @@ import checkInActions from '../../support/fragments/check-in-actions/checkInActi
 import inventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import searchPane from '../../support/fragments/circulation-log/searchPane';
 import checkinitems from '../../support/a_ideyalabs/checkinitems';
+import getRandomPostfix from '../../support/utils/stringTools';
+import button from '../../../interactors/button';
+import { Modal, Spinner } from '../../../interactors';
 
-const item_A = '13575447';
+const barcode = getRandomPostfix();
 const testData = {
   item_A : '14367843',
   item_B : '17276636',
@@ -21,18 +24,31 @@ describe('servicepoints shift', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
-  xit('C589 Check in items at service points for effective location', () => {
+  it('C589 Check in items at service points for effective location', () => {
     serviceshift.servicepoints1();
+    cy.visit(topMenu.inventoryPath);
+    checkinitems.createinstance(barcode);
     cy.visit(topMenu.checkInPath);
-    checkInActions.checkInItem(item_A);
+    checkInActions.checkInItem(barcode);
+    serviceshift.clickClose();
+    checkInActions.openItemDetails();
+    cy.visit(topMenu.checkInPath);
+    checkInActions.checkInItem(barcode);
+    checkinitems.clickonModal();
     serviceshift.servicepoints2();
+    cy.visit(topMenu.inventoryPath);
+    checkinitems.createinstance(barcode);
     cy.visit(topMenu.checkInPath);
-    checkInActions.checkInItem(item_A);
+    checkInActions.checkInItem(barcode);
+    serviceshift.clickClose();
+    checkInActions.openItemDetails();
+    cy.visit(topMenu.checkInPath);
+    checkInActions.checkInItem(barcode);
+    checkinitems.clickonModal();
   });
 
   it('C9194 Check in: confirm check in for item status', () => {
-    cy.visit(topMenu.inventoryPath);
-    inventorySearchAndFilter.switchToItem();
+    cy.visit(topMenu.circulationLogPath);
     checkinitems.declareditem();
 
     cy.visit(topMenu.inventoryPath);
@@ -57,7 +73,6 @@ describe('servicepoints shift', () => {
     cy.cancelCheckInMultipleItem(testData.item_B);
 
     cy.checkIn(testData.item_B);
-    cy.wait(2000);
     checkInActions.openItemDetails(testData.item_B);
     checkInActions.editItemDetails(
       testData.itemnumberOfPieces,
@@ -66,10 +81,8 @@ describe('servicepoints shift', () => {
     );
     cy.visit(topMenu.checkInPath);
     cy.checkInMultipleItem(testData.item_B);
-    cy.wait(3000);
 
     cy.checkIn(testData.item_C);
-    cy.wait(4000);
     checkInActions.openItemDetails(testData.item_C);
     checkInActions.editItemDetails(
       testData.itemnumberOfPieces,
@@ -78,10 +91,8 @@ describe('servicepoints shift', () => {
     );
     cy.visit(topMenu.checkInPath);
     cy.checkInMultipleItem(testData.item_C);
-    cy.wait(3000);
-
     cy.checkIn(testData.item_D);
-    cy.wait(4000);
+
     checkInActions.openItemDetails(testData.item_D);
     checkInActions.editItemDetails(
       '',

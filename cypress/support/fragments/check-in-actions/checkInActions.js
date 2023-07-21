@@ -9,14 +9,12 @@ import {
   Pane,
   Modal,
   PaneContent,
-  or,
-  Link
+  or
 } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
 import button from '../../../../interactors/button';
 import textField from '../../../../interactors/text-field';
-// import ItemRecordView from '../inventory/itemRecordView';
 
 const loanDetailsButton = Button('Loan details');
 const patronDetailsButton = Button('Patron details');
@@ -35,6 +33,11 @@ const endSessionButton = Button('End session');
 const feeFineDetailsButton = Button('Fee/fine details');
 const feeFinePane = PaneContent({ id: 'pane-account-action-history-content' });
 const pieces = textField({ id:'additem_numberofpieces' });
+const numberOfPieces = TextField({ name:'numberOfPieces' });
+const numberOfMissingPieces = TextField({ name:'numberOfMissingPieces' });
+const descriptionOfmissingPieces = TextField({ name:'missingPieces' });
+const actionsButton = Button('Actions');
+const editButton = Button('Edit');
 const actionsButtons = {
   loanDetails: loanDetailsButton,
   patronDetails: patronDetailsButton,
@@ -63,6 +66,19 @@ export default {
   waitLoading:() => {
     cy.expect(itemBarcodeField.exists());
     cy.expect(Button('End session').exists());
+  },
+  editItemDetails: (pieces, missingPieces, missingPiecesDescription) => {
+    cy.do([
+      actionsButton.click(),
+      editButton.click(),
+      numberOfPieces.click(),
+      numberOfPieces.fillIn(pieces),
+      numberOfMissingPieces.click(),
+      numberOfMissingPieces.fillIn(missingPieces),
+      descriptionOfmissingPieces.click(),
+      descriptionOfmissingPieces.fillIn(missingPiecesDescription),
+      Button('Save & close').click(),
+    ]);
   },
 
   checkInItem:(barcode) => {

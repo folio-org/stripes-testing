@@ -25,6 +25,9 @@ export default {
   clickonitem() {
     cy.do(items).click();
   },
+  clickonModal() {
+    cy.do(Modal({ id:'multipiece-modal' }).find(button('Check in')).click());
+  },
   createinstance(barcode) {
     cy.do([
       button('Actions').click(),
