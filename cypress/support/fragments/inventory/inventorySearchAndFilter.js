@@ -18,7 +18,8 @@ import {
   MultiSelect,
   MultiSelectOption,
   MultiColumnListRow,
-  DropdownMenu
+  DropdownMenu,
+  Spinner
 } from '../../../../interactors';
 import InventoryActions from './inventoryActions';
 import InventoryInstances from './inventoryInstances';
@@ -170,7 +171,7 @@ export default {
   },
 
   selectSearchResultItem(indexRow = 0) {
-    cy.expect(spinner().absent());
+    cy.expect(Spinner().absent());
     cy.do(this.getSearchResult(indexRow, 0).click());
     // must wait page render
     cy.wait(2000);

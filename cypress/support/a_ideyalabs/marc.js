@@ -1,12 +1,13 @@
 import {
   Accordion,
   Button,
+  Pane,
   QuickMarcEditorRow,
   Section,
+  Spinner,
   TextField,
   including,
 } from '../../../interactors';
-import section from '../../../interactors/section';
 import holdingsRecordView from '../fragments/inventory/holdingsRecordView';
 
 const rootSection = Section({ id: 'marc-view-pane' });
@@ -87,25 +88,22 @@ export default {
   },
 
   recordLastUpdated: () => {
-    cy.expect(spinner().absent());
+    cy.expect(Spinner().absent());
     cy.do(Accordion('Administrative data').find(Button(including('Record last updated'))).click());
   },
 
   checkFieldContentMatch() {
-    cy.xpath('//div[contains(text(),"Record created: ")]/following-sibling::*//a')
-      .then(($txt) => {
-        const actual = $txt.text();
-        const actualText = actual.slice(0, 19);
-        cy.log(actualText);
-        holdingsRecordView.editInQuickMarc();
-        cy.xpath('//div[@class="quickMarcRecordInfoWrapper---C70k7"]').then(($ele) => {
-          const expected = $ele.text();
-          cy.log(expected);
-          const expectedText = expected.slice(59, 78);
-          cy.log(expectedText);
-          expect(actualText).to.equal(expectedText);
-        });
-      });
+    cy.wrap(Accordion({ headline: 'Update information' }).text()).as('message');
+    cy.get('@message').then((val) => {
+      const sourceRegex = /Source: [^\n]*/;
+      const sourceLineMatch = val.match(sourceRegex);
+      const sourceText = sourceLineMatch ? sourceLineMatch[0].slice(8) : '';
+      const words = sourceText.split(', ');
+      [words[0], words[1]] = [words[1], words[0]];
+      const swappedString = words.join(', ');
+      holdingsRecordView.editInQuickMarc();
+      cy.expect(Pane().has({ text: including(`Source: ${swappedString}`) }));
+    });
   },
 
   verifyTagFieldAfterLinking(rowIndex, tag, secondBox, thirdBox, content, eSubfield, zeroSubfield, seventhBox) {
