@@ -25,7 +25,8 @@ const optionsList = {
   itemPermLoc: 'Location: Permanent',
   systemControlNumber: 'Identifier: System control number',
   status: 'Loan and availability: Status',
-  barcode: 'Admin data: Barcode'
+  barcode: 'Admin data: Barcode',
+  instanceStatusTerm: 'Admin data: Instance status term'
 };
 
 function fillExistingRecordFields(value = '', selector) {
@@ -94,10 +95,12 @@ function selectMatchCriterion(matchCriterion) {
 function selectExistingRecordField(existingRecordOption) {
   cy.do(criterionValueTypeButton.click());
   cy.expect(criterionValueTypeList.exists());
-  // wait for list will be loaded
-  cy.wait(2000);
+  // TODO wait for list will be loaded
+  cy.wait(1000);
   cy.do(criterionValueTypeList
     .find(SelectionOption(existingRecordOption)).click());
+  // TODO wait until option will be selected
+  cy.wait(2000);
 }
 
 function fillOnlyComparePartOfTheValue(value) {
