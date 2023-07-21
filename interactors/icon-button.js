@@ -15,4 +15,5 @@ export default HTML.extend('icon button')
   })
   .actions({
     click: ({ perform }) => perform(el => el.click()),
+    count: ({ perform }) => perform(el => el.querySelector('span[class^=label-]').textContent), // retrival count inside a button
   });

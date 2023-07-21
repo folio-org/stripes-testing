@@ -13,13 +13,12 @@ const searchByCode = {
 const organizationStatus = {
   active: 'Active',
   inActive: 'Inactive',
-  pending: 'Pending'
+  pending: 'Pending',
 };
 
 const addContactPeople = { firstName: 'test', lastName: 'orgsantosh' };
 const addCategory = 'claim';
 const tags = '&';
-
 
 describe('Organzation App', () => {
   before('login', () => {
@@ -40,7 +39,9 @@ describe('Organzation App', () => {
     organizations.checkSearchResults({ name: organizationStatus.inActive });
     organizations.resetAll();
     organizations.selectPendingStatus();
-    organizations.checkZeroSearchResultsHeader({ name: organizationStatus.pending }); // as we dont have any pending status shows zero records
+    organizations.checkZeroSearchResultsHeader({
+      name: organizationStatus.pending,
+    });
     organizations.resetAll();
   });
   it('C730, Make existing organization a Vendor', () => {
@@ -56,9 +57,7 @@ describe('Organzation App', () => {
     organizations.selectOrganization(testdata.name);
     organizations.editOrganization();
     organizations.addNewContact(addContactPeople);
-    cy.wait(2000);
     organizations.closeDetailsPane();
-    cy.wait(4000);
     organizations.addContactToOrganization(addContactPeople);
   });
 
@@ -70,8 +69,7 @@ describe('Organzation App', () => {
     organizations.selectContact(addContactPeople);
     organizations.editOrganization();
     organizations.selectCategories(addCategory);
-    cy.wait(2000);
-    organizations.closeDetailsPane(); // closing edit Organization pane
+    organizations.closeDetailsPane();
   });
   it('C729, Delete a contact person', () => {
     organizations.searchByParameters(searchByCode.dropdown, searchByCode.code);
@@ -80,8 +78,7 @@ describe('Organzation App', () => {
     organizations.openContactPeopleSection();
     organizations.selectContact(addContactPeople);
     organizations.deleteContact();
-    cy.wait(2000);
-    organizations.closeDetailsPane(); // closing edit Organization pane
+    organizations.closeDetailsPane();
   });
 
   it('C6710, Add tags to an Organization record', () => {
@@ -89,12 +86,14 @@ describe('Organzation App', () => {
     organizations.searchByParameters(searchByCode.dropdown, searchByCode.code);
     organizations.selectOrganization(testdata.name);
     organizations.organizationTagDetails();
-    organizations.addTag(),
+    organizations.addTag();
+    organizations.tagsPane();
     organizations.verifyTagCount();
     organizations.resetAll();
   });
   it('C6711, Filter Organizations by tags', () => {
     organizations.tagFilter(tags);
+    organizations.resetAll();
   });
   it('C674, Delete existing organization record', () => {
     organizations.searchByParameters(searchByCode.dropdown, searchByCode.code);
@@ -104,4 +103,3 @@ describe('Organzation App', () => {
     organizations.checkZeroSearchResultsHeader();
   });
 });
-

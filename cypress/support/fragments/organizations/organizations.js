@@ -17,9 +17,12 @@ import {
   Section,
   Select,
   SelectionOption,
+  Spinner,
   TextArea,
   TextField,
 } from '../../../../interactors';
+import section from '../../../../interactors/section';
+import spinner from '../../../../interactors/spinner';
 import DateTools from '../../utils/dateTools';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
@@ -165,6 +168,9 @@ export default {
         .count()
         .then((val) => cy.log(val))
     );
+  },
+  tagsPane: () => {
+    cy.do(PaneHeader({ id: 'paneHeadertagsPane' }).find(timesButton).click());
   },
 
   tagFilter: (tags) => {
@@ -411,8 +417,10 @@ export default {
     ]);
   },
 
-  closeDetailsPane: () => {
-    cy.do([timesButton.click()]);
+  closeDetailsPane() {
+    cy.expect(timesButton.exists()); // Not working with this expeect so used cy.wait
+    cy.wait(2000);
+    cy.do(timesButton.click());
   },
 
   selectCountryFilter: () => {
@@ -461,7 +469,7 @@ export default {
     .then((response) => response.body.id),
 
   editOrganization: () => {
-    cy.wait(2000);
+    cy.expect(actionsButton.exists());
     cy.do([actionsButton.click(), editButton.click()]);
   },
 
@@ -483,42 +491,36 @@ export default {
   },
 
   addNewContact: (contact) => {
+    cy.expect(openContactSectionButton.exists());
     cy.do([
       openContactSectionButton.click(),
       contactPeopleSection.find(addContactButton).click(),
       addContacsModal.find(buttonNew).click(),
       lastNameField.fillIn(contact.lastName),
       firstNameField.fillIn(contact.firstName),
-      saveButtonInCotact.click(),
+      Button('Save & close').click(),
     ]);
     InteractorsTools.checkCalloutMessage('The contact was saved');
   },
 
   deleteContact: () => {
-    cy.do([
-      actionsButton.click(),
-      deleteButton.click(),
-      cy.wait(2000),
-      confirmButton.click(),
-    ]);
-    // cy.expect(contactPeopleDetails.has({ content: 'orgsantosh' }));
+    cy.do([actionsButton.click(), deleteButton.click()]);
+    cy.expect(confirmButton.exists());
+    cy.do(confirmButton.click());
   },
   selectCategories: (category) => {
-    cy.do([
-      cy.wait(2000),
-      MultiSelect().select(category),
-      saveAndClose.click(),
-      cy.wait(2000),
-      timesButton.click(),
-      openContactSectionButton.click(),
-    ]);
+    cy.expect(MultiSelect().exists());
+    cy.do([MultiSelect().select(category), saveAndClose.click()]);
+    cy.expect(timesButton.exists());
+    cy.do([timesButton.click(), openContactSectionButton.click()]);
     cy.expect(
       contactPeopleDetails
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 1 }))
         .has({ content: 'claim' })
     );
-    cy.do([timesButton.click()]);
+    cy.expect(timesButton.exists());
+    cy.do(timesButton.click());
   },
 
   addNewInterface: (defaultInterface) => {
@@ -535,24 +537,27 @@ export default {
   openContactPeopleSection: () => {
     cy.do([openContactSectionButton.click()]);
   },
-  addContactToOrganization: (contact) => {
+
+  selectCheckboxFromResultsList: (rowNumber = 0) => {
+    cy.expect(Spinner().exists());
+    cy.do(MultiColumnListRow({ index: rowNumber }).find(Checkbox()).click());
+  },
+
+  addContactToOrganization(contact) {
+    cy.expect(openContactSectionButton.exists());
     cy.do([
       openContactSectionButton.click(),
       contactPeopleSection.find(addContactButton).click(),
       addContacsModal
         .find(SearchField({ id: 'input-record-search' }))
         .fillIn(contact.lastName),
-      cy.wait(2000),
-      addContacsModal.find(searchButtonInModal).click(),
     ]);
-    cy.wait(2000);
-    SearchHelper.selectCheckboxFromResultsList();
-    cy.do([
-      addContacsModal.find(saveButton).click(),
-      cy.wait(3000),
-      Button('Save & close').click(),
-      cy.wait(2000),
-    ]);
+    cy.expect(addContacsModal.exists());
+    cy.do(addContacsModal.find(searchButtonInModal).click());
+    this.selectCheckboxFromResultsList();
+    cy.do(addContacsModal.find(saveButton).click());
+    cy.expect(Button('Save & close').exists());
+    cy.do(Button('Save & close').click());
   },
 
   addIntrefaceToOrganization: (defaultInterface) => {
@@ -616,7 +621,7 @@ export default {
   },
 
   selectContact: (contact) => {
-    cy.wait(4000);
+    cy.expect(contactPeopleSection.exists());
     cy.do([
       contactPeopleSection
         .find(
