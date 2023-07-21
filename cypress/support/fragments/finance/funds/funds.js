@@ -20,6 +20,7 @@ import {
   Link,
   MultiColumnList,
   MultiSelectOption,
+  MultiSelectMenu,
 } from '../../../../../interactors';
 import FinanceHelp from '../financeHelper';
 import TopMenu from '../../topMenu';
@@ -98,6 +99,26 @@ export default {
       ledgerSelection.open(),
       SelectionList().select(fund.ledgerName),
       saveAndCloseButton.click()
+    ]);
+    this.waitForFundDetailsLoading();
+  },
+
+  cancelCreatingFundWithTransfers(defaultFund, firstFund, secondFund) {
+    cy.do([
+      newButton.click(),
+      nameField.fillIn(defaultFund.name),
+      codeField.fillIn(defaultFund.code),
+      externalAccountField.fillIn(defaultFund.externalAccount),
+      ledgerSelection.open(),
+      SelectionList().select(defaultFund.ledgerName),
+      MultiSelect('Transfer from').open(),
+      MultiSelectOption(firstFund.code).click(),
+      MultiSelect('Transfer to').open(),
+      MultiSelectOption(secondFund.code).click()
+    ]);
+    cy.do([
+      cancelButton.click(),
+      Button('Close without saving').click()
     ]);
     this.waitForFundDetailsLoading();
   },

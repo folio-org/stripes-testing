@@ -9,7 +9,7 @@ import Users from '../../../support/fragments/users/users';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 
-describe('ui-finance: Transactions', () => {
+describe('ui-finance: Funds', () => {
   const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };
@@ -19,14 +19,17 @@ describe('ui-finance: Transactions', () => {
     externalAccountNo: getRandomPostfix(),
     fundStatus: 'Active',
     description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
-    allocatedToIds: [{
-      0: firstFund.id,
-    }],
+  };
+  const thirdFund = {
+    name: `autotest_fund3_${getRandomPostfix()}`,
+    code: getRandomPostfix(),
+    externalAccountNo: getRandomPostfix(),
+    fundStatus: 'Active',
+    description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
   };
 
   const allocatedQuantity = '1000';
   let user;
-  let orderNumber;
 
   before(() => {
     cy.getAdminToken();
@@ -59,11 +62,7 @@ describe('ui-finance: Transactions', () => {
       });
 
     cy.createTempUser([
-      permissions.uiFinanceExecuteFiscalYearRollover.gui,
-      permissions.uiFinanceViewFiscalYear.gui,
-      permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiFinanceViewLedger.gui,
-      permissions.uiOrdersView.gui
+      permissions.uiFinanceViewFundAndBudget.gui
     ])
       .then(userProperties => {
         user = userProperties;
@@ -72,16 +71,24 @@ describe('ui-finance: Transactions', () => {
   });
 
   after(() => {
+    cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
+    FinanceHelp.searchByName(firstFund.name);
+    Funds.selectFund(firstFund.name);
+    Funds.selectBudgetDetails();
+    Funds.deleteBudgetViaActions();
+    Funds.checkIsBudgetDeleted();
+
+    Funds.deleteFundViaApi(firstFund.id);
+    Funds.deleteFundViaApi(secondFund.id);
+
+    Ledgers.deleteledgerViaApi(defaultLedger.id);
+
+    FiscalYears.deleteFiscalYearViaApi(firstFiscalYear.id);
+
     Users.deleteViaApi(user.userId);
   });
 
   it('C380708 Filter in "Transfer from" and "Transfer to" fields works correctly when creating a new fund (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    FinanceHelp.searchByName(defaultfund.name);
-    Funds.selectFund(defaultfund.name);
-    Funds.selectBudgetDetails();
-    Funds.increaseAllocation();
-    InteractorsTools.checkCalloutMessage(`$50.00 was successfully allocated to the budget ${defaultfund.code}-${defaultFiscalYear.code}`);
-    Funds.viewTransactions();
-    Funds.checkTransactionList(defaultfund.code);
+    Funds.cancelCreatingFundWithTransfers(thirdFund);
   });
 });
