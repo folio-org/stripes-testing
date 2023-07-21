@@ -185,4 +185,9 @@ export default {
     const formattedTime = currentDate.toLocaleString('en-US', options);
     return formattedTime;
   },
+
+  getCurrentDateYYMMDD() {
+    const initialCurrentDate = new Date();
+    return `${initialCurrentDate.getFullYear().toString().substring(2)}${padWithZero(initialCurrentDate.getMonth() + 1)}${padWithZero(initialCurrentDate.getDate())}`;
+  }
 };

@@ -51,7 +51,7 @@ describe('Bulk Edit - Logs', () => {
   });
 
   it('C375245 Verify genetated Logs files for Users In app -- valid and invalid records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    BulkEditSearchPane.verifyDragNDropUsersUIIDsArea();
+    BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
     BulkEditSearchPane.uploadFile(invalidAndValidUserUUIDsFileName);
     BulkEditSearchPane.waitFileUploading();
 
