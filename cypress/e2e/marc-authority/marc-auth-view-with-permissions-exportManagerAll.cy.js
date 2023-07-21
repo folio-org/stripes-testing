@@ -5,10 +5,10 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 
-describe('MARC Authority Sort', () => {
+describe('MARC -> MARC Authority', () => {
   const testData = {};
 
-  before(() => {
+  before('Creating user', () => {
     cy.createTempUser([
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
       Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
@@ -24,7 +24,7 @@ describe('MARC Authority Sort', () => {
     cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.marcAuthorities, waiter: MarcAuthorities.waitLoading });
   });
 
-  after(() => {
+  after('Deleting user', () => {
     Users.deleteViaApi(testData.userProperties.userId);
   });
 
