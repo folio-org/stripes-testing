@@ -21,7 +21,6 @@ export default {
   },
   openPackage: (rowNumber = 0) => {
     const specialRow = resultSection.find(ListItem({ className: including('list-item-'), index: rowNumber }));
-    // cy.log(JSON.stringify(specialRow.h3Value())) -- swathiM
 
     cy.then(() => specialRow.h3Value())
       .then(specialPackage => {

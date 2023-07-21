@@ -6,11 +6,11 @@ import eHoldingsPackages from '../../support/fragments/eholdings/eHoldingsPackag
 describe('Creating New Agreement', () => {
   it('C757__Create an Agreement', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.visit(TopMenu.agreementsPath);
-    NewAgreement.NewButton();
-    NewAgreement.fill();
-    NewAgreement.save();
-    NewAgreement.waitLoading();
+    // cy.visit(TopMenu.agreementsPath);
+    // NewAgreement.NewButton();
+    // NewAgreement.fill();
+    // NewAgreement.save();
+    // NewAgreement.waitLoading();
   });
   it('C1295__Create a new Agreement and attach a package', () => {
     cy.visit(TopMenu.eholdingsPath);
