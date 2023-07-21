@@ -10,22 +10,25 @@ import {
   PaneHeader,
   Section,
   Select,
-  TextField
+  TextField,
 } from "../../../../interactors";
 import getRandomPostfix from "../../utils/stringTools";
-const errorMsg = TextField({ error: "This barcode has already been taken" });
+
+const errorMessage = TextField({
+  error: "This barcode has already been taken",
+});
 const closeButton = Button("Close");
 const cancelButton = Button({ id: "clickable-cancel" });
 const userDetailsPane = Pane({ id: "pane-userdetails" });
-const ClosedLoancheckboxclick = "//input[@name='Closed loan']";
+const closedLoanCheckbox = "//input[@name='Closed loan']";
 const contactInformationAccordion = Accordion("Contact information");
 const defaultUserName = `AutotestUser${getRandomPostfix()}`;
-const ActionButton = "//span[text()='Actions']";
+const actionButton = "//span[text()='Actions']";
 const newButton = Button("New");
 const editButton = Button("Edit");
 const checkbox = "//input[@name='check-all']";
-const BarCode = TextField("Barcode");
-const Closewithoutsavingbutton = Button({
+const barCode = TextField("Barcode");
+const closeWithoutSavingButton = Button({
   id: "clickable-cancel-editing-confirmation-cancel",
 });
 
@@ -65,11 +68,13 @@ export default {
         firstName: response.body.personal.firstName,
         middleName: response.body.personal.middleName,
       })),
+
   Assertion: () => {
-    cy.do(BarCode.has({ error: "This barcode has already been taken" }));
+    cy.do(barCode.has({ error: "This barcode has already been taken" }));
   },
+
   Closewithoutsavingbutton: () => {
-    cy.do([Closewithoutsavingbutton.click()]);
+    cy.do([closeWithoutSavingButton.click()]);
   },
 
   deleteViaApi: (userId) =>
@@ -210,7 +215,9 @@ export default {
     cy.do([MultiColumnListCell(Barcode).click({ row: 0, columnIndex: 2 })]);
   },
   checkErrorMessage: () => {
-    cy.expect(errorMsg.has({ error: "This barcode has already been taken" }));
+    cy.expect(
+      errorMessage.has({ error: "This barcode has already been taken" })
+    );
   },
   clearTextfield() {
     cy.do(TextField({ id: "adduser_preferredname" }).clear());
@@ -234,7 +241,7 @@ export default {
     cy.do([cy.xpath(checkbox).click()]);
   },
   clickOnClosedLoanCheckBox: () => {
-    cy.do([cy.xpath(ClosedLoancheckboxclick).click()]);
+    cy.do([cy.xpath(closedLoanCheckbox).click()]);
   },
 
   clickOnXButton() {
@@ -243,13 +250,13 @@ export default {
   clickOnResetFilterText() {
     cy.do([Button({ id: "reset-receiving-filters" }).click()]);
   },
-  SaveBtn() {
+  saveButton() {
     cy.do([Button({ id: "clickable-save" }).click()]);
   },
 
   ActionsViaNew: () => {
     cy.do([
-      cy.xpath(ActionButton).click({ multiple: true }),
+      cy.xpath(actionButton).click({ multiple: true }),
       newButton.click({ multiple: true }),
     ]);
   },
