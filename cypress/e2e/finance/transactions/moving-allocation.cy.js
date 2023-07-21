@@ -26,7 +26,6 @@ describe('ui-finance: Transactions', () => {
 
   const allocatedQuantity = '1000';
   let user;
-  let orderNumber;
 
   before(() => {
     cy.getAdminToken();
@@ -59,11 +58,8 @@ describe('ui-finance: Transactions', () => {
       });
 
     cy.createTempUser([
-      permissions.uiFinanceExecuteFiscalYearRollover.gui,
-      permissions.uiFinanceViewFiscalYear.gui,
+      permissions.uiFinanceCreateAllocations.gui,
       permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiFinanceViewLedger.gui,
-      permissions.uiOrdersView.gui
     ])
       .then(userProperties => {
         user = userProperties;
@@ -72,6 +68,20 @@ describe('ui-finance: Transactions', () => {
   });
 
   after(() => {
+    cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
+    FinanceHelp.searchByName(firstFund.name);
+    Funds.selectFund(firstFund.name);
+    Funds.selectBudgetDetails();
+    Funds.deleteBudgetViaActions();
+    Funds.checkIsBudgetDeleted();
+
+    Funds.deleteFundViaApi(firstFund.id);
+    Funds.deleteFundViaApi(secondFund.id);
+
+    Ledgers.deleteledgerViaApi(defaultLedger.id);
+
+    FiscalYears.deleteFiscalYearViaApi(firstFiscalYear.id);
+
     Users.deleteViaApi(user.userId);
   });
 
