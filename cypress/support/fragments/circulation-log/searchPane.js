@@ -81,17 +81,14 @@ export default {
     this.clickApplyMainFilter();
   },
   checkElemtText:() => {
-    cy.xpath(barcodeText).then((val) => {
-      const data = val[0].innerText;
-      cy.do([
-        Checkbox({ id: 'clickable-filter-loan-renewed-through-override' }).click()
+    cy.do([
+      Checkbox({ id: 'clickable-filter-loan-renewed-through-override' }).click(),
 
-      ]);
 
-      cy.do(TextField({ name: 'itemBarcode' }).fillIn(data));
-      this.clickApplyMainFilter();
-    });
+      TextField({ name: 'itemBarcode' }).fillIn(data)]);
+    this.clickApplyMainFilter();
   },
+
 
   searchByClaimedReturned() {
     cy.do([

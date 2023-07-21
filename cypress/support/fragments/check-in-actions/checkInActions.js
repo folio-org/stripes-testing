@@ -14,7 +14,9 @@ import {
 } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
-import ItemRecordView from '../inventory/itemRecordView';
+import button from '../../../../interactors/button';
+import textField from '../../../../interactors/text-field';
+// import ItemRecordView from '../inventory/itemRecordView';
 
 const loanDetailsButton = Button('Loan details');
 const patronDetailsButton = Button('Patron details');
@@ -32,7 +34,7 @@ const checkInButtonInModal = confirmModal.find(Button('Check in'));
 const endSessionButton = Button('End session');
 const feeFineDetailsButton = Button('Fee/fine details');
 const feeFinePane = PaneContent({ id: 'pane-account-action-history-content' });
-
+const pieces = textField({ id:'additem_numberofpieces' });
 const actionsButtons = {
   loanDetails: loanDetailsButton,
   patronDetails: patronDetailsButton,
@@ -42,6 +44,7 @@ const actionsButtons = {
   printTransitSlip: printTransitSlipButton,
   printHoldSlip: printHoldSlipButton,
 };
+const itemAnumberOfPieces = '2';
 
 const waitLoading = () => {
   cy.expect(TextField({ name: 'item.barcode' }).exists());
@@ -117,12 +120,15 @@ export default {
     ]);
     cy.expect(Pane({ title: including(username) }).exists());
   },
-  openItemDetails: (itemBarcode) => {
+  openItemDetails: () => {
     cy.do([
       availableActionsButton.click(),
-      itemDetailsButton.click()
+      itemDetailsButton.click(),
+      button('Actions').click(),
+      button('Edit').click(),
+      pieces.fillIn(itemAnumberOfPieces),
+      button('Save & close').click()
     ]);
-    cy.expect(Pane(including(itemBarcode)).exists());
   },
   openRequestDetails: (itemBarcode) => {
     cy.do([
