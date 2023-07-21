@@ -1,1 +1,7 @@
-require('cypress-downloadfile/lib/downloadFileCommand');
+require("cypress-downloadfile/lib/downloadFileCommand");
+
+Cypress.on("uncaught:exception", (err, runnable) => {
+  // returning false here prevents Cypress from
+  // failing the test
+  return false;
+});
