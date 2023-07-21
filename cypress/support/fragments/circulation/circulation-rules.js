@@ -92,8 +92,10 @@ export default {
     cy.do(CodeMirrorHint().clickItem(kebabCase(name)));
   },
   saveCirculationRules() {
+    cy.expect(Button('Save').exists())
     cy.do(Button('Save').click());
   },
+  
   checkUpdateCirculationRulesCalloutAppeared() {
     InteractorsTools.checkCalloutMessage(calloutMessages.CIRCULATION_RULES_UPDATE_SUCCESS);
   },

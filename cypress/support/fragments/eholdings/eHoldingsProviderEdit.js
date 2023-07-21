@@ -8,6 +8,7 @@ const availableProxies = [
   'TestingFolio'
 ];
 const proxySelect = Select('Proxy');
+const saveAndCloseButton = Button('Save & close');
 
 export default {
   waitLoading: (providerName) => {
@@ -26,8 +27,9 @@ export default {
         return cy.wrap(notSelectedProxy);
       });
   },
+
   saveAndClose:() => {
-    cy.do(Button('Save & close').click());
-   // eHoldingsProviderView.waitLoading();
+    cy.expect(saveAndCloseButton.exists());
+    cy.do(saveAndCloseButton.click());
   }
 };

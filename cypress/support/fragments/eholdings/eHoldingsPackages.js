@@ -28,7 +28,7 @@ export default {
         cy.do(resultSection
           .find(ListItem({ className: including('list-item-'), index: rowNumber })
             .find(Button())).click());
-        //eHoldingsPackage.waitLoading(specialPackage);
+        // eHoldingsPackage.waitLoading(specialPackage);
         cy.wrap(specialPackage).as('selectedPackage');
       });
     return cy.get('@selectedPackage');
@@ -83,21 +83,21 @@ export default {
     });
     return cy.get('@packageId');
   },
-  
+
   updateProxy() {
     cy.get(selectedText)
-        .invoke("text")
-        .then((text) => {
-            if (text === "Selected") {
-                eHoldingsPackage.editactions();
-                eHoldingsPackage.changeProxy();
-                eHoldingsPackage.saveAndClose();
-            } else {
-                eHoldingsPackage.addToHodlings();
-                eHoldingsPackage.editactions();
-                eHoldingsPackage.changeProxy();
-                eHoldingsPackage.saveAndClose();
-            }
-        });
-}
-}
+      .invoke('text')
+      .then((text) => {
+        if (text === 'Selected') {
+          eHoldingsPackage.editactions();
+          eHoldingsPackage.changeProxy();
+          eHoldingsPackage.saveAndClose();
+        } else {
+          eHoldingsPackage.addToHodlings();
+          eHoldingsPackage.editactions();
+          eHoldingsPackage.changeProxy();
+          eHoldingsPackage.saveAndClose();
+        }
+      });
+  }
+};

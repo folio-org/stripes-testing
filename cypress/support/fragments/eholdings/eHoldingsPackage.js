@@ -1,4 +1,4 @@
-import { Accordion, Button, Modal, Section, RadioButton, HTML, including, MultiSelect, KeyValue, MultiSelectOption, ValueChipRoot, Spinner } from '../../../../interactors';
+import { Accordion, Button, Modal, Section, RadioButton, HTML, including, MultiSelect, KeyValue, MultiSelectOption, ValueChipRoot, Spinner,Select } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 import { getLongDelay } from '../../utils/cypressTools';
 
@@ -8,6 +8,10 @@ const closeButton = Button({ icon: 'times' });
 const actionsButton = Button('Actions');
 const removeFromHoldingsButton = Button('Remove from holdings');
 const confirmButton = Button('Yes, remove');
+const editButton = Button('Edit');
+const availableProxies = ['Inherited - None', 'FOLIO-Bugfest', 'EZProxy'];
+const proxySelect = Select({ id: 'eholdings-proxy-id' });
+const RandomValue = Math.floor(Math.random() * 2);
 
 const filterStatuses = { all: 'All',
   selected: 'Selected',
@@ -113,5 +117,24 @@ export default {
     expectedTags.forEach(tag => {
       cy.expect(tagsSection.find(HTML(including(tag))).absent());
     });
-  }
+  },
+  editactions: () => {
+    cy.expect(Spinner().absent());
+    cy.do(actionsButton.click());
+    cy.expect(editButton.exists());
+    cy.do(editButton.click());
+  },
+
+  changeProxy: () => {
+    cy.get('select#eholdings-proxy-id option:selected')
+      .invoke('text')
+      .then((text) => {
+        const options = availableProxies.filter((option) => option != text);
+        cy.do(proxySelect.choose(options[RandomValue]));
+      });
+  },
+  saveAndClose: () => {
+    cy.do(Button('Save & close').click());
+    // eHoldingsProviderView.waitLoading();
+  },
 };

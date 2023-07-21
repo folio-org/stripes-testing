@@ -1,5 +1,10 @@
 import { HTML, including, Button, TextField } from '../../../../interactors';
 
+const carotButton = Button({ className: 'navButton---wRwTS interactionStylesControl---e1lwD button---mtWnz' });
+const keyborardShortcut = Button('Keyboard shortcuts');
+const KBcontent = Button({ id: 'content-item' });
+const syatemStatus = Button({ id: 'system-status-item' });
+
 export default {
 
   waitLoading:() => {
@@ -13,11 +18,11 @@ export default {
     cy.do(Button('Save & close').click());
   },
   clickOneHoldingCarat: () => {
-    cy.do(Button({ className: 'navButton---wRwTS interactionStylesControl---e1lwD button---mtWnz' }).click());
-    cy.do(Button({ id: 'content-item' }).click())
-    cy.do(Button({ className: 'navButton---wRwTS interactionStylesControl---e1lwD button---mtWnz' }).click())
-    cy.do(Button({id: 'system-status-item'}).click())
-    cy.do(Button({ className: 'navButton---wRwTS interactionStylesControl---e1lwD button---mtWnz' }).click())
-    cy.do(Button("Keyboard shortcuts").click())
+    cy.do([carotButton.click(),
+      KBcontent.click(),
+      carotButton.click(),
+      syatemStatus.click(),
+      carotButton.click(),
+      keyborardShortcut.click()]);
   }
 };

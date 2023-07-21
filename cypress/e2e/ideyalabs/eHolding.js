@@ -1,22 +1,26 @@
-import { Button, Select, HTML, including, MultiSelect, RadioButton, Accordion, NavListItem, TextField, TextArea, FieldSet, Section } from '../../../interactors';
-
+import { Button, Select, Spinner, MultiSelect, RadioButton, Accordion, NavListItem, TextField, TextArea, FieldSet, Section, KeyValue } from '../../../interactors';
 import eHoldingsSearch from '../../support/fragments/eholdings/eHoldingsSearch';
 import TopMenu from '../../support/fragments/topMenu';
 import eHoldingsProvidersSearch from '../../support/fragments/eholdings/eHoldingsProvidersSearch';
 import eholdingsPackagesSearch from '../../support/fragments/eholdings/eHoldingsPackagesSearch';
+import dateTools from '../../support/utils/dateTools';
 
+const RandomNumber = Math.floor(Math.random(9000) * 1000) + 1000
 
 const editButton = Button('Edit');
 const actionsButton = Button('Actions');
 const searchButton = Button('Search');
-const alternativesTitles = "//div[text()='Alternate title(s)']/following-sibling::div";
 const desc = TextArea({ name: 'description' });
 const SaveAndClose = Button('Save & close');
-const Wait = () => { cy.wait(2000); };
 const RandomValue = Math.floor(Math.random() * 2);
 const availableProxies = ['Inherited - None', 'FOLIO-Bugfest', 'EZProxy'];
 const SearchButton = Section({ id: 'providerShowProviderList' }).find(Button({ ariaLabel: 'Toggle filters pane' }));
-
+const proxySelect = Select({ id: 'eholdings-proxy-id' });
+const selectionStatusAccordion = Accordion({ id: 'accordion-toggle-button-filter-packages-selected' });
+const selectionStatusSection = Section({ id: 'filter-packages-selected' });
+const iconSearch = Button({ icon: 'search' });
+const accordianClick = Button({ id: 'accordion-toggle-button-providerShowProviderList' });
+const patronRadioButton = FieldSet('Show titles in package to patrons').find(RadioButton({ checked: false }));
 
 // const availableProxies = [
 //     'Inherited - None',
@@ -24,17 +28,16 @@ const SearchButton = Section({ id: 'providerShowProviderList' }).find(Button({ a
 //     'EZProxy'
 // ];
 
-const proxySelect = Select({ id: 'eholdings-proxy-id' });
-const selectionStatusAccordion = Accordion({ id: 'accordion-toggle-button-filter-packages-selected' });
-const selectionStatusSection = Section({ id: 'filter-packages-selected' });
-
 
 export default {
   PackageAccordianClick() {
-    cy.do([Button({ id: 'accordion-toggle-button-providerShowProviderList' }).click()]);
+    cy.expect(accordianClick.exists());
+    cy.do(accordianClick.click());
   },
+
   PackageButtonClick(name) {
-    cy.do([Button(name).click()]);
+    cy.expect(Button(name).exists());
+    cy.do(Button(name).click());
   },
 
   SwitchToPackage() {
@@ -57,46 +60,30 @@ export default {
   },
 
   editactions: () => {
-    cy.wait(2000);
+    cy.expect(Spinner().absent());
     cy.do(actionsButton.click());
-    cy.wait(2000);
+    cy.expect(editButton.exists());
     cy.do(editButton.click());
   },
 
-  alternativesTitles: () => {
-    cy.do([
-      cy.xpath(alternativesTitles).then((value) => {
-        cy.log(value.text());
-        cy.expect(value.text()).to.include(';');
-      }),
-    ]);
+  getAlternateTitles: () => cy.then(() => KeyValue('Alternate title(s)').value()),
+  alternativesTitles() {
+    this.getAlternateTitles().then(val => {
+      // cy.expect(val.includes(";")).to.be.true;
+      expect(val).to.include(';');
+    });
   },
+
   searchActions() {
+    cy.expect(searchButton.exists());
     cy.do(searchButton.click());
   },
 
   patronRadiobutton: () => {
-    cy.do([
-      FieldSet('Show titles in package to patrons')
-        .find(RadioButton({ checked: false }))
-        .click()
-    ]);
+    cy.expect(patronRadioButton.exists());
+    cy.do(patronRadioButton.click());
   },
 
-  // changeproxy: () => {
-  //     cy.get(selectedText).invoke("text").then((text) => {
-  //             if (text === "Selected") {
-  //                 editactions();
-  //                 eHoldings.changeproxy();
-  //                 eHoldingsProviderEdit.saveAndClose();
-  //             } else {
-  //                 eHoldingsPackage.addToHodlings();
-  //                 eHoldings.editactions();
-  //                 eHoldings.changeproxy();
-  //                 eHoldingsProviderEdit.saveAndClose();
-  //             }
-  //         });
-  // },
   changeProxy: () => {
     cy.get('select#eholdings-proxy-id option:selected')
       .invoke('text')
@@ -107,29 +94,21 @@ export default {
   },
 
   editDateRange: () => {
-    cy.wait(2000);
+    cy.expect(Spinner().exists())
     cy.do([
       TextField({ id: 'begin-coverage-0' }).clear(),
       TextField({ id: 'end-coverage-0' }).clear(),
-      cy.wait(2000),
-      TextField({ id: 'begin-coverage-0' }).fillIn(
-        // dateTools.getRandomStartDate(RandomValue)
-        '07/18/2023'
-      ),
-      TextField({ id: 'end-coverage-0' }).fillIn(
-        // dateTools.getRandomEndDate(RandomValue)
-        '07/19/2023'
-      ),
+      TextField({ id: 'begin-coverage-0' }).fillIn(dateTools.getRandomStartDate(RandomValue)),
+      TextField({ id: 'end-coverage-0' }).fillIn(dateTools.getRandomEndDate(RandomValue)),
       SaveAndClose.click(),
     ]);
   },
-  radioButtonclick(title) {
-    cy.do([cy.xpath(title).click({ force: true })]);
-  },
 
   DropdownValuesSelect(names) {
+    cy.expect(MultiSelect().exists());
     cy.do(MultiSelect().select(names));
   },
+
   bySelectionStatus(selectionStatus) {
     cy.do(selectionStatusAccordion.clickHeader());
     cy.do(selectionStatusAccordion
@@ -159,7 +138,6 @@ export default {
     ]);
   },
 
-
   packageSearch() {
     cy.visit(TopMenu.eholdingsPath);
     eHoldingsSearch.switchToPackages();
@@ -168,8 +146,14 @@ export default {
   },
 
   packageButton:() => {
+    cy.expect(SearchButton.exists());
     cy.do(SearchButton.click());
-
-    // cy.do(Section({ id: 'providerShowProviderList' }).find(Button({ icon: 'search' })).click())
-  }
+  },
+  searchButton() {
+    cy.expect(iconSearch.exists());
+    cy.do(iconSearch.click());
+  },
+  providerToken() {
+    cy.do(TextArea({ name: 'providerTokenValue' }).fillIn(`Test${RandomNumber}`))
+}
 };

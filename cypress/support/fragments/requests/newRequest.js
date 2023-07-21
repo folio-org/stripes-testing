@@ -1,5 +1,5 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import { Button, TextField, Pane, Select, HTML, including, Checkbox, Section, Accordion, TextArea, MultiColumnListCell } from '../../../../interactors';
+import { Button, TextField, Pane, Select, HTML, including, Checkbox, Section, Accordion, TextArea, MultiColumnListCell, Spinner } from '../../../../interactors';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../constants';
 import dateTools from '../../utils/dateTools';
 import SelectUser from './selectUser';
@@ -98,7 +98,7 @@ export default {
   },
 
   enableTitleLevelRequest() {
-    //need to synchronize actions before click
+    // need to synchronize actions before click
     cy.wait(3000);
     cy.do(titleLevelRequest.click());
   },
@@ -163,15 +163,10 @@ export default {
   },
 
   enterrequestAndpatron: (patron) => {
-
     cy.do([TextField({ id: 'requestExpirationDate' }).fillIn(dateTools.getCurrentDate()),
-
-    TextArea({ id: 'patronComments' }).fillIn(patron),
-
-    Checkbox({ name: 'createTitleLevelRequest' }).click()])
-
-    cy.wait(2000)
-
+      TextArea({ id: 'patronComments' }).fillIn(patron),
+      Checkbox({ name: 'createTitleLevelRequest' }).click()]);
+    cy.expect(Spinner().absent());
   },
 
   chooseRequestType(requestType) {

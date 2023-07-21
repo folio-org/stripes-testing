@@ -1,3 +1,4 @@
+import { HTML, including } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -20,124 +21,118 @@ import {
   SelectionOption,
   TextArea,
   TextField,
-} from "../../../../interactors";
-import { HTML, including } from '@interactors/html';
-import DateTools from "../../utils/dateTools";
-import InteractorsTools from "../../utils/interactorsTools";
-import getRandomPostfix from "../../utils/stringTools";
-import SearchHelper from "../finance/financeHelper";
+} from '../../../../interactors';
+import DateTools from '../../utils/dateTools';
+import InteractorsTools from '../../utils/interactorsTools';
+import getRandomPostfix from '../../utils/stringTools';
+import SearchHelper from '../finance/financeHelper';
 
-const buttonNew = Button("New");
-const saveAndClose = Button("Save & close");
-const summaryAccordionId = "summarySection";
-const organizationDetails = Pane({ id: "pane-organization-details" });
-const contactPeopleDetails = MultiColumnList({ id: "contact-list" });
-const organizationsList = MultiColumnList({ id: "organizations-list" });
-const blueColor = "rgba(0, 0, 0, 0)";
-const tagsFilter = Section({ id: "org-filter-tags" });
-const tagButton = Button({ icon: "tag" });
+const buttonNew = Button('New');
+const saveAndClose = Button('Save & close');
+const summaryAccordionId = 'summarySection';
+const organizationDetails = Pane({ id: 'pane-organization-details' });
+const contactPeopleDetails = MultiColumnList({ id: 'contact-list' });
+const organizationsList = MultiColumnList({ id: 'organizations-list' });
+const blueColor = 'rgba(0, 0, 0, 0)';
+const tagsFilter = Section({ id: 'org-filter-tags' });
+const tagButton = Button({ icon: 'tag' });
 const summarySection = Accordion({ id: summaryAccordionId });
-const searchInput = SearchField({ id: "input-record-search" });
+const searchInput = SearchField({ id: 'input-record-search' });
 const vendorEDICodeEdited = `${getRandomPostfix()}`;
 const libraryEDICodeEdited = `${getRandomPostfix()}`;
-const serverAddress = "ftp://ftp.ci.folio.org";
-const FTPport = "22";
-const ediSection = Section({ id: "edi" });
-const ftpSection = Section({ id: "ftp" });
-const schedulingSection = Section({ id: "scheduling" });
-const actionsButton = Button("Actions");
+const serverAddress = 'ftp://ftp.ci.folio.org';
+const FTPport = '22';
+const ediSection = Section({ id: 'edi' });
+const ftpSection = Section({ id: 'ftp' });
+const schedulingSection = Section({ id: 'scheduling' });
+const actionsButton = Button('Actions');
 const numberOfSearchResultsHeader =
   '//*[@id="paneHeaderorganizations-results-pane-subtitle"]/span';
-  const categoryDropdown = Button('Category');
-const zeroResultsFoundText = "0 records found";
-const organizationStatus = Select("Organization status*");
-const organizationNameField = TextField("Name*");
-const nameTextField = TextField("[object Object] 0")
-const organizationCodeField = TextField("Code*");
+const categoryDropdown = Button('Category');
+const zeroResultsFoundText = '0 records found';
+const organizationStatus = Select('Organization status*');
+const organizationNameField = TextField('Name*');
+const nameTextField = TextField('[object Object] 0');
+const organizationCodeField = TextField('Code*');
 const today = new Date();
-const tagsSection = Section({ id: "tagsPane" });
-const todayDate = DateTools.getFormattedDate({ date: today }, "MM/DD/YYYY");
-const resetButton = Button("Reset all");
+const tagsSection = Section({ id: 'tagsPane' });
+const todayDate = DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY');
+const resetButton = Button('Reset all');
 const openContactSectionButton = Button({
-  id: "accordion-toggle-button-contactPeopleSection",
+  id: 'accordion-toggle-button-contactPeopleSection',
 });
-const tagOpenMenuButton ='(//button[@aria-label="open menu"])[2]' 
-const newButton = Button("+ New");
-const addContacsModal = Modal("Add contacts");
-const lastNameField = TextField({ name: "lastName" });
-const firstNameField = TextField({ name: "firstName" });
+const tagOpenMenuButton = '(//button[@aria-label="open menu"])[2]';
+const newButton = Button('+ New');
+const addContacsModal = Modal('Add contacts');
+const lastNameField = TextField({ name: 'lastName' });
+const firstNameField = TextField({ name: 'firstName' });
 const saveButtonInCotact = Button({
-  id: "clickable-save-contact-person-footer",
+  id: 'clickable-save-contact-person-footer',
 });
-const editButton = Button("Edit");
-const deleteButton = Button("Delete");
-const contactPeopleSection = Section({ id: "contactPeopleSection" });
-const addContactButton = Button("Add contact");
+const editButton = Button('Edit');
+const deleteButton = Button('Delete');
+const contactPeopleSection = Section({ id: 'contactPeopleSection' });
+const addContactButton = Button('Add contact');
 const openInterfaceSectionButton = Button({
-  id: "accordion-toggle-button-interfacesSection",
+  id: 'accordion-toggle-button-interfacesSection',
 });
-const interfaceSection = Section({ id: "interfacesSection" });
-const addInterfaceButton = Button("Add interface");
-const addInterfacesModal = Modal("Add interfaces");
-const saveButton = Button("Save");
-const confirmButton = Button("Confirm");
-const searchButtonInModal = Button({ type: "submit" });
-const timesButton = Button({ icon: "times" });
+const interfaceSection = Section({ id: 'interfacesSection' });
+const addInterfaceButton = Button('Add interface');
+const addInterfacesModal = Modal('Add interfaces');
+const saveButton = Button('Save');
+const confirmButton = Button('Confirm');
+const searchButtonInModal = Button({ type: 'submit' });
+const timesButton = Button({ icon: 'times' });
 const categoryButton = Button('Categories');
 const openintegrationDetailsSectionButton = Button({
-  id: "accordion-toggle-button-integrationDetailsSection",
+  id: 'accordion-toggle-button-integrationDetailsSection',
 });
 const listIntegrationConfigs = MultiColumnList({
-  id: "list-integration-configs",
+  id: 'list-integration-configs',
 });
-const tagCount = "//button[@icon='tag']//span[contains(@class,'label')]"
+const tagCount = "//button[@icon='tag']//span[contains(@class,'label')]";
 
 
 
 export default {
   waitLoading: () => {
-    cy.expect(Pane({ id: "organizations-results-pane" }).exists());
+    cy.expect(Pane({ id: 'organizations-results-pane' }).exists());
   },
 
   checkZeroSearchResultsHeader: () => {
     cy.xpath(numberOfSearchResultsHeader)
-      .should("be.visible")
-      .and("have.text", zeroResultsFoundText);
+      .should('be.visible')
+      .and('have.text', zeroResultsFoundText);
   },
   addTag: () => {
-
     const newTag = `tag${getRandomPostfix()}`;
-  
+
     cy.then(() => tagsSection.find(MultiSelect()).selected()).then(
-  
+
       (selectedTags) => {
-  
         cy.wait(2000).then(() => {
-  
           cy.do(tagsSection.find(MultiSelect()).fillIn(newTag));
-  
+
           cy.do(tagsSection.find(MultiSelectOption({ index: 0 })).click());
-  
-  
-  
+
+
+
           cy.expect(
-  
+
             tagsSection
-  
+
               .find(MultiSelect({ selected: [...selectedTags, newTag].sort() }))
-  
+
               .exists()
-  
+
           );
-  
         });
-  
       }
-  
+
     );
     return newTag;
   },
-  
+
 
   createOrganizationViaUi: (organization) => {
     cy.expect(buttonNew.exists());
@@ -161,8 +156,8 @@ export default {
     // Need to wait while Acquisition Unit data will be loaded
     cy.wait(4000);
     cy.do([
-      MultiSelect({ id: "org-acq-units" })
-        .find(Button({ ariaLabel: "open menu" }))
+      MultiSelect({ id: 'org-acq-units' })
+        .find(Button({ ariaLabel: 'open menu' }))
         .click(),
       MultiSelectOption(AcquisitionUnit).click(),
       saveAndClose.click(),
@@ -180,58 +175,55 @@ export default {
   },
 
   organizationTagDetails: (tagname) => {
-    //cy.expect(tagsButton.exists());
+    // cy.expect(tagsButton.exists());
     cy.do([
       tagButton.click(),
     ]);
   },
- 
-  
+
+
   verifyTagCount() {
-    cy.xpath(tagCount).then(($ele)=>{
-       let count = $ele.text()
-       cy.expect(tagButton.find(HTML(including(count))).exists());
-    })
-    
+    cy.xpath(tagCount).then(($ele) => {
+      const count = $ele.text();
+      cy.expect(tagButton.find(HTML(including(count))).exists());
+    });
   },
 
-  tagFilter:()=>{
-    
+  tagFilter:() => {
     cy.do([
 
-      Section({ id: "org-filter-tags" }).find(Button("Tags")).click(),
+      Section({ id: 'org-filter-tags' }).find(Button('Tags')).click(),
 
-      Button({ className: "multiSelectToggleButton---cD_fu" }).click(),
+      Button({ className: 'multiSelectToggleButton---cD_fu' }).click(),
 
-      MultiSelectOption("^").click(),
+      MultiSelectOption('^').click(),
 
-    ]);  
-  }
+    ]);
+  },
 
-,
-   
+
 
   selectActiveStatus: () => {
-    cy.do(Checkbox("Active").click());
+    cy.do(Checkbox('Active').click());
   },
   selectInActiveStatus: () => {
-    cy.do(Checkbox("Inactive").click());
+    cy.do(Checkbox('Inactive').click());
   },
   selectPendingStatus: () => {
-    cy.do(Checkbox("Pending").click());
+    cy.do(Checkbox('Pending').click());
   },
 
   checkOrganizationFilter: () => {
     cy.expect(organizationsList.exists());
   },
   addNewCategory: (value) => {
-    cy.do(categoryButton.click())
-    cy.wait(2000)
+    cy.do(categoryButton.click());
+    cy.wait(2000);
     cy.expect(newButton.exists());
     cy.do(newButton.click()),
     cy.do(nameTextField.fillIn(value)),
     cy.do(saveButton.click()),
-    cy.contains(value).should("exist")
+    cy.contains(value).should('exist');
   },
 
   chooseOrganizationFromList: (organization) => {
@@ -245,7 +237,7 @@ export default {
   addIntegration: () => {
     cy.do([
       openintegrationDetailsSectionButton.click(),
-      Button({ id: "clickable-neworganization-integration" }).click(),
+      Button({ id: 'clickable-neworganization-integration' }).click(),
     ]);
   },
 
@@ -268,18 +260,18 @@ export default {
     UTCTime
   ) => {
     cy.do([
-      Section({ id: "integrationInfo" })
-        .find(TextField("Integration name*"))
+      Section({ id: 'integrationInfo' })
+        .find(TextField('Integration name*'))
         .fillIn(integrationName),
-      TextArea("Description").fillIn(integartionDescription),
-      ediSection.find(TextField("Vendor EDI code*")).fillIn(vendorEDICode),
-      ediSection.find(TextField("Library EDI code*")).fillIn(libraryEDICode),
-      ediSection.find(Button({ icon: "info" })).click(),
+      TextArea('Description').fillIn(integartionDescription),
+      ediSection.find(TextField('Vendor EDI code*')).fillIn(vendorEDICode),
+      ediSection.find(TextField('Library EDI code*')).fillIn(libraryEDICode),
+      ediSection.find(Button({ icon: 'info' })).click(),
       Checkbox({
-        name: "exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.supportOrder",
+        name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.supportOrder',
       }).click(),
       Checkbox({
-        name: "exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.supportInvoice",
+        name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.supportInvoice',
       }).click(),
     ]);
     cy.get(
@@ -289,35 +281,35 @@ export default {
       'select[name="exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.defaultAcquisitionMethods"]'
     ).select(acquisitionMethod);
     cy.do([
-      ftpSection.find(Select("EDI FTP")).choose("FTP"),
-      ftpSection.find(TextField("Server address*")).fillIn(serverAddress),
-      ftpSection.find(TextField("FTP port*")).fillIn(FTPport),
-      ftpSection.find(TextField("Username")).fillIn("folio"),
-      ftpSection.find(TextField("Password")).fillIn("Ffx29%pu"),
-      ftpSection.find(TextField("Order directory")).fillIn("/files"),
+      ftpSection.find(Select('EDI FTP')).choose('FTP'),
+      ftpSection.find(TextField('Server address*')).fillIn(serverAddress),
+      ftpSection.find(TextField('FTP port*')).fillIn(FTPport),
+      ftpSection.find(TextField('Username')).fillIn('folio'),
+      ftpSection.find(TextField('Password')).fillIn('Ffx29%pu'),
+      ftpSection.find(TextField('Order directory')).fillIn('/files'),
       schedulingSection
         .find(
           Checkbox({
-            name: "exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.enableScheduledExport",
+            name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.enableScheduledExport',
           })
         )
         .click(),
-      schedulingSection.find(TextField("Schedule frequency*")).fillIn("1"),
+      schedulingSection.find(TextField('Schedule frequency*')).fillIn('1'),
       schedulingSection
         .find(
           Select({
-            name: "exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.scheduleParameters.schedulePeriod",
+            name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.scheduleParameters.schedulePeriod',
           })
         )
-        .choose("Daily"),
+        .choose('Daily'),
       schedulingSection
         .find(
           TextField({
-            name: "exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.scheduleParameters.schedulingDate",
+            name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.scheduleParameters.schedulingDate',
           })
         )
         .fillIn(`${todayDate}`),
-      schedulingSection.find(TextField("Time*")).fillIn(`${UTCTime}`),
+      schedulingSection.find(TextField('Time*')).fillIn(`${UTCTime}`),
     ]);
     cy.do(saveAndClose.click());
   },
@@ -331,15 +323,15 @@ export default {
     acquisitionMethod
   ) => {
     cy.do([
-      Section({ id: "integrationInfo" })
-        .find(TextField("Integration name*"))
+      Section({ id: 'integrationInfo' })
+        .find(TextField('Integration name*'))
         .fillIn(integrationName),
-      TextArea("Description").fillIn(integartionDescription),
-      ediSection.find(TextField("Vendor EDI code*")).fillIn(vendorEDICode),
-      ediSection.find(TextField("Library EDI code*")).fillIn(libraryEDICode),
-      ediSection.find(Button({ icon: "info" })).click(),
+      TextArea('Description').fillIn(integartionDescription),
+      ediSection.find(TextField('Vendor EDI code*')).fillIn(vendorEDICode),
+      ediSection.find(TextField('Library EDI code*')).fillIn(libraryEDICode),
+      ediSection.find(Button({ icon: 'info' })).click(),
       Checkbox({
-        name: "exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.supportInvoice",
+        name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.supportInvoice',
       }).click(),
     ]);
     cy.get(
@@ -349,9 +341,9 @@ export default {
       'select[name="exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.defaultAcquisitionMethods"]'
     ).select(acquisitionMethod);
     cy.do([
-      ftpSection.find(Select("EDI FTP")).choose("FTP"),
-      ftpSection.find(TextField("Server address*")).fillIn(serverAddress),
-      ftpSection.find(TextField("FTP port*")).fillIn(FTPport),
+      ftpSection.find(Select('EDI FTP')).choose('FTP'),
+      ftpSection.find(TextField('Server address*')).fillIn(serverAddress),
+      ftpSection.find(TextField('FTP port*')).fillIn(FTPport),
     ]);
     cy.do(saveAndClose.click());
   },
@@ -361,19 +353,19 @@ export default {
       actionsButton.click(),
       editButton.click(),
       ediSection
-        .find(TextField("Vendor EDI code*"))
+        .find(TextField('Vendor EDI code*'))
         .fillIn(vendorEDICodeEdited),
       ediSection
-        .find(TextField("Library EDI code*"))
+        .find(TextField('Library EDI code*'))
         .fillIn(libraryEDICodeEdited),
       saveAndClose.click(),
     ]);
   },
 
   expectColorFromList: () => {
-    cy.get("#organizations-list").should(
-      "have.css",
-      "background-color",
+    cy.get('#organizations-list').should(
+      'have.css',
+      'background-color',
       blueColor
     );
   },
@@ -391,13 +383,13 @@ export default {
     cy.do([
       searchInput.selectIndex(parameter),
       searchInput.fillIn(value),
-      Button("Search").click(),
+      Button('Search').click(),
     ]);
   },
 
   resetFilters: () => {
     cy.do(resetButton.click());
-    cy.expect(resetButton.is({ disabled: true })); //Actual : true
+    cy.expect(resetButton.is({ disabled: true })); // Actual : true
   },
 
   checkSearchResults: (organization) => {
@@ -411,24 +403,24 @@ export default {
 
   selectYesInIsVendor: () => {
     cy.do([
-      Button({ id: "accordion-toggle-button-org-filter-isVendor" }).click(),
-      Checkbox("Yes").click(),
+      Button({ id: 'accordion-toggle-button-org-filter-isVendor' }).click(),
+      Checkbox('Yes').click(),
     ]);
   },
   selectNoInIsVendor: () => {
     cy.do([
-      Button({ id: "accordion-toggle-button-org-filter-isVendor" }).click(),
-      Checkbox("No").click(),
+      Button({ id: 'accordion-toggle-button-org-filter-isVendor' }).click(),
+      Checkbox('No').click(),
     ]);
   },
 
   selectVendor: () => {
-    cy.do([Checkbox("Vendor").click(), saveAndClose.click()]);
+    cy.do([Checkbox('Vendor').click(), saveAndClose.click()]);
   },
 
   deselectVendor: () => {
     cy.do([
-      Checkbox("Vendor").click(),
+      Checkbox('Vendor').click(),
       confirmButton.click(),
       cy.wait(2000),
       saveAndClose.click(),
@@ -441,55 +433,52 @@ export default {
 
   selectCountryFilter: () => {
     cy.do([
-      Button({ id: "accordion-toggle-button-plugin-country-filter" }).click(),
-      Button({ id: "addresses-selection" }).click(),
-      SelectionOption("United States").click(),
+      Button({ id: 'accordion-toggle-button-plugin-country-filter' }).click(),
+      Button({ id: 'addresses-selection' }).click(),
+      SelectionOption('United States').click(),
     ]);
   },
 
   selectLanguageFilter: () => {
     cy.do([
-      Button({ id: "accordion-toggle-button-plugin-language-filter" }).click(),
-      Button({ id: "language-selection" }).click(),
-      SelectionOption("English").click(),
+      Button({ id: 'accordion-toggle-button-plugin-language-filter' }).click(),
+      Button({ id: 'language-selection' }).click(),
+      SelectionOption('English').click(),
     ]);
   },
   selectCashInPaymentMethod: () => {
     cy.do([
-      Button({ id: "accordion-toggle-button-paymentMethod" }).click(),
-      Checkbox("Cash").click(),
+      Button({ id: 'accordion-toggle-button-paymentMethod' }).click(),
+      Checkbox('Cash').click(),
     ]);
   },
-  deleteOrganizationViaApi: (organizationId) =>
-    cy.okapiRequest({
-      method: "DELETE",
-      path: `organizations/organizations/${organizationId}`,
-      isDefaultSearchParamsRequired: false,
+  deleteOrganizationViaApi: (organizationId) => cy.okapiRequest({
+    method: 'DELETE',
+    path: `organizations/organizations/${organizationId}`,
+    isDefaultSearchParamsRequired: false,
+  }),
+
+  getOrganizationViaApi: (searchParams) => cy
+    .okapiRequest({
+      path: 'organizations/organizations',
+      searchParams,
+    })
+    .then((response) => {
+      return response.body.organizations[0];
     }),
 
-  getOrganizationViaApi: (searchParams) =>
-    cy
-      .okapiRequest({
-        path: "organizations/organizations",
-        searchParams,
-      })
-      .then((response) => {
-        return response.body.organizations[0];
-      }),
-
-  createOrganizationViaApi: (organization) =>
-    cy
-      .okapiRequest({
-        method: "POST",
-        path: "organizations/organizations",
-        body: organization,
-        isDefaultSearchParamsRequired: false,
-      })
-      .then((response) => response.body.id),
+  createOrganizationViaApi: (organization) => cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'organizations/organizations',
+      body: organization,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((response) => response.body.id),
 
   editOrganization: () => {
-    cy.wait(2000)
-    cy.do([actionsButton.click(), 
+    cy.expect(actionsButton.exists());
+    cy.do([actionsButton.click(),
       editButton.click()]);
   },
 
@@ -498,15 +487,14 @@ export default {
       openContactSectionButton.click(),
       contactPeopleSection.find(addContactButton).click(),
       categoryDropdown.click(),
-      cy.contains(category).should('exist')])
-  }
-,
+      cy.contains(category).should('exist')]);
+  },
   addAccount: () => {
     cy.do([
       Button({
-        id: "accordion-toggle-button-org-filter-paymentMethod",
+        id: 'accordion-toggle-button-org-filter-paymentMethod',
       }).click(),
-      Checkbox("Cash").click(),
+      Checkbox('Cash').click(),
     ]);
   },
 
@@ -519,13 +507,13 @@ export default {
       firstNameField.fillIn(contact.firstName),
       saveButtonInCotact.click(),
     ]);
-    InteractorsTools.checkCalloutMessage("The contact was saved");
+    InteractorsTools.checkCalloutMessage('The contact was saved');
   },
 
   deleteContact: () => {
     cy.do([actionsButton.click(), deleteButton.click(),
       cy.wait(2000), confirmButton.click()]);
-    //cy.expect(contactPeopleDetails.has({ content: "orgsantosh" }));
+    // cy.expect(contactPeopleDetails.has({ content: "orgsantosh" }));
   },
   selectCategories: (category) => {
     cy.do([
@@ -540,7 +528,7 @@ export default {
       contactPeopleDetails
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 1 }))
-        .has({ content: "claim" })
+        .has({ content: 'claim' })
     );
     cy.do([timesButton.click()]);
   },
@@ -550,10 +538,10 @@ export default {
       openInterfaceSectionButton.click(),
       interfaceSection.find(addInterfaceButton).click(),
       addInterfacesModal.find(buttonNew).click(),
-      TextField({ name: "name" }).fillIn(defaultInterface.name),
+      TextField({ name: 'name' }).fillIn(defaultInterface.name),
       saveButton.click(),
     ]);
-    InteractorsTools.checkCalloutMessage("The interface was saved");
+    InteractorsTools.checkCalloutMessage('The interface was saved');
   },
 
   openContactPeopleSection: () => {
@@ -564,9 +552,9 @@ export default {
       openContactSectionButton.click(),
       contactPeopleSection.find(addContactButton).click(),
       addContacsModal
-        .find(SearchField({ id: "input-record-search" }))
+        .find(SearchField({ id: 'input-record-search' }))
         .fillIn(contact.lastName),
-        cy.wait(2000),
+      cy.wait(2000),
       addContacsModal.find(searchButtonInModal).click(),
     ]);
     cy.wait(2000);
@@ -574,7 +562,7 @@ export default {
     cy.do([
       addContacsModal.find(saveButton).click(),
       cy.wait(3000),
-      Button("Save & close").click(),
+      Button('Save & close').click(),
       cy.wait(2000)
     ]);
   },
@@ -584,7 +572,7 @@ export default {
       openInterfaceSectionButton.click(),
       interfaceSection.find(addInterfaceButton).click(),
       addInterfacesModal
-        .find(TextField({ name: "query" }))
+        .find(TextField({ name: 'query' }))
         .fillIn(defaultInterface.name),
       addInterfacesModal.find(searchButtonInModal).click(),
     ]);
@@ -592,20 +580,20 @@ export default {
     SearchHelper.selectCheckboxFromResultsList();
     cy.do([
       addInterfacesModal.find(saveButton).click(),
-      Button({ id: "organization-form-save" }).click(),
+      Button({ id: 'organization-form-save' }).click(),
     ]);
   },
 
   closeContact: () => {
-    cy.do(Section({ id: "view-contact" }).find(timesButton).click());
+    cy.do(Section({ id: 'view-contact' }).find(timesButton).click());
   },
 
   closeInterface: () => {
-    cy.do(Section({ id: "view-interface" }).find(timesButton).click());
+    cy.do(Section({ id: 'view-interface' }).find(timesButton).click());
   },
 
   cancelOrganization: () => {
-    cy.do(Button("Cancel").click());
+    cy.do(Button('Cancel').click());
   },
 
   checkContactIsAdd: (contact) => {
@@ -634,8 +622,8 @@ export default {
   deleteInterface: () => {
     cy.do([
       actionsButton.click(),
-      Button("Delete").click(),
-      Button({ id: "clickable-delete-interface-modal-confirm" }).click(),
+      Button('Delete').click(),
+      Button({ id: 'clickable-delete-interface-modal-confirm' }).click(),
     ]);
   },
 
@@ -713,12 +701,12 @@ export default {
 
   deleteOrganization: () => {
     cy.do([
-      PaneHeader({ id: "paneHeaderpane-organization-details" })
+      PaneHeader({ id: 'paneHeaderpane-organization-details' })
         .find(actionsButton)
         .click(),
-      Button("Delete").click(),
+      Button('Delete').click(),
       Button({
-        id: "clickable-delete-organization-confirmation-confirm",
+        id: 'clickable-delete-organization-confirmation-confirm',
       }).click(),
       cy.wait(2000),
     ]);
@@ -726,7 +714,7 @@ export default {
 
   selectOrganization: (organizationName) => {
     cy.do(
-      Pane({ id: "organizations-results-pane" })
+      Pane({ id: 'organizations-results-pane' })
         .find(Link(organizationName))
         .click()
     );
@@ -748,10 +736,10 @@ export default {
 
   unAssignInterface: (defaultInterface) => {
     cy.do(openInterfaceSectionButton.click());
-    cy.get("#interface-list")
+    cy.get('#interface-list')
       .find('a[class^="mclRow-"]')
       .contains('div[class^="mclCell-"]', defaultInterface.name)
-      .parents("div[data-row-index]")
+      .parents('div[data-row-index]')
       .find('button[aria-label="Unassign"]')
       .click();
   },
