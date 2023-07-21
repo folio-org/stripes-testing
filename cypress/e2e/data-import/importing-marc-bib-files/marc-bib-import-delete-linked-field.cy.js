@@ -23,13 +23,31 @@ import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import { LOCATION_NAMES, FOLIO_RECORD_TYPE, ACCEPTED_DATA_TYPE_NAMES, EXISTING_RECORDS_NAMES } from '../../../support/constants';
 
 describe('Importing MARC Bib files', () => {
+  function replace999SubfieldsInPreupdatedFile(exportedFileName, preUpdatedFileName, finalFileName) {
+    FileManager.readFile(`cypress/fixtures/${exportedFileName}`)
+      .then((actualContent) => {
+        const lines = actualContent.split('');
+        const field999data = lines[lines.length - 2];
+        FileManager.readFile(`cypress/fixtures/${preUpdatedFileName}`)
+          .then((updatedContent) => {
+            const content = updatedContent.split('\n');
+            let firstString = content[0].slice();
+            firstString = firstString.replace('ff000000000-0000-0000-0000-000000000000i00000000-0000-0000-0000-000000000000', field999data);
+            content[0] = firstString;
+            FileManager.createFile(`cypress/fixtures/${finalFileName}`, content.join('\n'));
+          });
+      });
+  }
+
   const testData = {
     tag100: '100',
     tag010: '010',
+    contributorAccordion: 'Contributor'
   };
   const nameForUpdatedMarcBibFile = `C376946autotestFile${getRandomPostfix()}.mrc`;
   const nameForExportedMarcBibFile = `C376946autotestFile${getRandomPostfix()}.mrc`;
   const nameForCSVFile = `C376946autotestFile${getRandomPostfix()}.csv`;
+  const nameForPreUpdatedMarcBibFile = 'C376946MarcBibPreUpdated.mrc';
   const mappingProfile = {
     name: 'C376946 Update MARC Bib records by matching 999 ff $s subfield value',
     typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
@@ -67,7 +85,8 @@ describe('Importing MARC Bib files', () => {
     {
       marc: 'C376946MarcBib.mrc',
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib'
+      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      instanceTitle: 'The other side of paradise : a memoir / Staceyann Chin. C376946'
     },
     {
       marc: 'C376946MarcAuth.mrc',
@@ -108,6 +127,7 @@ describe('Importing MARC Bib files', () => {
         // create Match profile
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.createMatchProfile(matchProfile);
+        MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
         // create Field mapping profile
         cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.createMappingProfileForUpdatesMarc(mappingProfile);
@@ -181,14 +201,10 @@ describe('Importing MARC Bib files', () => {
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
     cy.log('#####End Of Export#####');
 
-    DataImport.editMarcFile(
-      nameForExportedMarcBibFile,
-      nameForUpdatedMarcBibFile,
-      ['0id.loc.gov/authorities/names/n2008052404376946'],
-      ['']
-    );
+    // add 999 subfield values from exported file to pre-updated file with field 100 deleted
+    replace999SubfieldsInPreupdatedFile(nameForExportedMarcBibFile, nameForPreUpdatedMarcBibFile, nameForUpdatedMarcBibFile);
 
-    // upload the exported marc file with 999.f.f.s fields
+    // upload the updated MARC file with 999 subfields and without 100 field
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile(nameForUpdatedMarcBibFile, nameForUpdatedMarcBibFile);
     JobProfiles.waitLoadingList();
@@ -199,12 +215,14 @@ describe('Importing MARC Bib files', () => {
     Logs.openFileDetails(nameForUpdatedMarcBibFile);
 
     cy.visit(TopMenu.inventoryPath);
-    InventoryInstance.searchByTitle('The other side of paradise : a memoir / Staceyann Chin. C376946');
+    InventoryInstance.searchByTitle(marcFiles[0].instanceTitle);
     InventoryInstances.selectInstance();
-    InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane('Contributor');
+    InventoryInstance.checkValueAbsenceInDetailView(testData.contributorAccordion, marcFiles[1].authorityHeading);
     InventoryInstance.editMarcBibliographicRecord();
-    cy.wait(15000);
-    // QuickMarcEditor.verifyTagFieldAfterLinking(19, '100', '1', '\\', '$a Chin, Staceyann, $d 1972-', '$e Producer $e Narrator $u test', '$0 id.loc.gov/authorities/names/n2008052404', '$4 prf.');
-    // QuickMarcEditor.verifyTagFieldAfterUnlinking(20, '245', '1', '4', '$a Paradise of other side (updated title) : $b a memoir / $c Staceyann Chin.');
+    QuickMarcEditor.checkFieldAbsense(testData.tag100);
+
+    cy.visit(TopMenu.marcAuthorities);
+    MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);
+    MarcAuthorities.verifyEmptyNumberOfTitles();
   });
 });
