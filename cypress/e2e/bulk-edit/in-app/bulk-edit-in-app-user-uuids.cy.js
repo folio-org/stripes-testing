@@ -163,7 +163,7 @@ describe('bulk-edit', () => {
     });
 
     it('C359197 Verify that User can change the columns in the "Preview of record matched" (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.verifyDragNDropUsersUIIDsArea();
+      BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
       BulkEditSearchPane.uploadFile(userUUIDsFileName);
       BulkEditSearchPane.waitFileUploading();
       BulkEditSearchPane.verifyMatchedResults(user.username);
