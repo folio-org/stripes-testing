@@ -47,7 +47,7 @@ export default {
   },
 
   popupUnlinkButton: () => {
-    cy.do(Button('Unlink').click()); 
+    cy.do(Button('Unlink').click());
   },
 
   keepLinkingButton: () => {

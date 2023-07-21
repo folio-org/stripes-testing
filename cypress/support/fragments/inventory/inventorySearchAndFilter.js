@@ -25,6 +25,7 @@ import InventoryInstances from './inventoryInstances';
 import logsViewAll from '../data_import/logs/logsViewAll';
 import DateTools from '../../utils/dateTools';
 import Helper from '../finance/financeHelper';
+import spinner from '../../../../interactors/spinner';
 
 const searchAndFilterSection = Pane({ id: 'browse-inventory-filters-pane' });
 const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
@@ -152,9 +153,10 @@ export default {
     mainLibrary: { id: 'clickable-filter-effectiveLocation-main-library' }
   },
   selectSearchResultByRowIndex(indexRow) {
+    cy.expect(spinner().absent());
     cy.do(this.getSearchResult(indexRow, 0).click());
     // must wait page render
-    cy.wait(2000);
+    cy.expect(spinner().absent());
   },
 
   language: {

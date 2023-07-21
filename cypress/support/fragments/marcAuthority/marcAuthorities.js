@@ -257,6 +257,9 @@ export default {
   clickLinkButton() {
     cy.do(buttonLink.click());
   },
+  clickOnHeading() {
+    cy.do(MultiColumnListCell({ row:0, columnIndex:2 }).find(Button()).click());
+  },
 
   checkFieldAndContentExistence(tag, value) {
     cy.expect([

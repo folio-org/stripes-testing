@@ -239,16 +239,10 @@ export default {
   },
   verifyUnlinkIcon(tag) {
     // Waiter needed for the link to be loaded properly.
-
-    cy.wait(1000);
-
     cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(unlinkIconButton).exists());
   },
   verifyLinkIcon(tag) {
     // Waiter needed for the link to be loaded properly.
-
-    cy.wait(1000);
-
     cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(linkIconButton).exists());
   },
   goToEditMARCBiblRecord:() => {
@@ -326,11 +320,7 @@ export default {
   },
   verifyAndClickUnlinkIcon(tag) {
     // Waiter needed for the link to be loaded properly.
-
     cy.wait(1000);
-
-    cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(unlinkIconButton).exists());
-
     cy.do(QuickMarcEditorRow({ tagValue: tag }).find(unlinkIconButton).click());
   },
 
