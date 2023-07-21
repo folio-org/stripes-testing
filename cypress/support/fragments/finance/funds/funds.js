@@ -25,6 +25,7 @@ import FinanceHelp from '../financeHelper';
 import TopMenu from '../../topMenu';
 import getRandomPostfix from '../../../utils/stringTools';
 import Describer from '../../../utils/describer';
+import InteractorsTools from '../../../utils/interactorsTools';
 
 const createdFundNameXpath = '//*[@id="paneHeaderpane-fund-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfund-results-pane-subtitle"]/span';
@@ -44,6 +45,7 @@ const searchField = SearchField({ id: 'input-record-search' });
 const amountTextField = TextField({ name: 'amount' });
 const confirmButton = Button('Confirm');
 const newButton = Button('New');
+const cancelButton = Button('Cancel');
 const nameField = TextField('Name*');
 const codeField = TextField('Code*');
 const externalAccountField = TextField('External account*');
@@ -55,6 +57,7 @@ const budgetInformationAcordion = Accordion('Budget information');
 const fundingInformationMCList = MultiColumnList({ ariaRowCount: 7 });
 const FinancialActivityAndOveragesMCList = MultiColumnList({ ariaRowCount: 5 });
 const resetButton = Button({ id: 'reset-funds-filters' });
+const addTransferModal = Modal({ id: 'add-transfer-modal' });
 
 export default {
 
@@ -147,7 +150,7 @@ export default {
       // try to navigate without saving
       Button('Agreements').click(),
       Button('Keep editing').click,
-      Button('Cancel').click(),
+      cancelButton.click(),
       Button('Close without saving').click()
     ]);
   },
@@ -256,7 +259,7 @@ export default {
       amountTextField.fillIn('50'),
     ]);
     cy.wait(2000);
-    cy.do(Modal({ id: 'add-transfer-modal' }).find(Button('Confirm')).click());
+    cy.do(addTransferModal.find(confirmButton).click());
   },
 
   transfer: (thisFund, fromFund) => {
@@ -268,7 +271,7 @@ export default {
       Button({ name: 'fromFundId' }).click(),
       SelectionOption(`${fromFund.name} (${fromFund.code})`).click(),
       amountTextField.fillIn('10'),
-      Modal({ id: 'add-transfer-modal' }).find(confirmButton).click(),
+      addTransferModal.find(confirmButton).click(),
     ]);
   },
 
@@ -636,5 +639,23 @@ export default {
       saveAndCloseButton.click()
     ]);
     cy.wait(4000);
+  },
+
+  moveAllocationWithError: (firstFund, secondFund, amount) => {
+    cy.do([
+      actionsButton.click(),
+      Button('Move allocation').click(),
+    ]);
+    cy.wait(4000);
+    cy.do([
+      addTransferModal.find(Button({ name: 'fromFundId' })).click(),
+      MultiSelectOption(secondFund.name).click(),
+      addTransferModal.find(Button({ name: 'toFundId' })).click(),
+      MultiSelectOption(firstFund.name).click(),
+      addTransferModal.find(TextField({ name: 'amount' })).fillIn(amount),
+      addTransferModal.find(confirmButton).click(),
+    ]);
+    InteractorsTools.checkCalloutErrorMessage(`$50.00 was not successfully allocated because ${secondFund.code} has no budget`);
+    cy.do(addTransferModal.find(cancelButton).click());
   },
 };
