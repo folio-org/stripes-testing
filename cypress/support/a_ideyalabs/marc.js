@@ -1,8 +1,10 @@
 import {
+  Accordion,
   Button,
   QuickMarcEditorRow,
   Section,
   TextField,
+  including,
 } from '../../../interactors';
 import section from '../../../interactors/section';
 import holdingsRecordView from '../fragments/inventory/holdingsRecordView';
@@ -46,7 +48,7 @@ export default {
   },
 
   popupUnlinkButton: () => {
-    cy.do(Button('Unlink').click()); 
+    cy.do(Button('Unlink').click());
   },
 
   keepLinkingButton: () => {
@@ -85,7 +87,8 @@ export default {
   },
 
   recordLastUpdated: () => {
-    cy.do(section({ id:'acc01' }).find(Button).click());
+    cy.expect(spinner().absent());
+    cy.do(Accordion('Administrative data').find(Button(including('Record last updated'))).click());
   },
 
   checkFieldContentMatch() {

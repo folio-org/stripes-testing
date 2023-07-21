@@ -256,11 +256,15 @@ export default {
     cy.expect([
       quickMarcEditorPane.exists(),
       quickMarcPaneHeader.has({ text: including('new') }),
-    ])
+    ]);
   },
 
   checkInstanceTitle(title) {
     cy.expect(detailsPaneContent.has({ text: including(title) }));
+  },
+
+  verifyUnlinkIcon(tag) {
+    cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(unlinkIconButton).exists());
   },
 
   startOverlaySourceBibRecord:() => {
@@ -275,6 +279,7 @@ export default {
   },
 
   editMarcBibliographicRecord:() => {
+    cy.expect(spinner().absent());
     cy.do(actionsButton.click());
     cy.do(editMARCBibRecordButton.click());
     cy.expect(Pane({ id: 'quick-marc-editor-pane' }).exists());

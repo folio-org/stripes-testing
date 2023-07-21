@@ -136,8 +136,6 @@ describe('New Marc Bib Record and new MARC Holdings record', () => {
     );
     marcAuthorities.clickLinkButton();
     marc.saveAndClose();
-    cy.wait(3000);
-
     inventoryInstance.editMarcBibliographicRecord();
     marc.crossIcon();
     inventoryInstance.viewSource();
@@ -154,7 +152,6 @@ describe('New Marc Bib Record and new MARC Holdings record', () => {
     inventorySearchAndFilter.switchToHoldings();
     inventorySearchAndFilter.bySource('MARC');
     marc.searchByValue(testData.holdingValue);
-    cy.wait(2000);
     inventorySearchAndFilter.selectSearchResultItem();
     inventoryInstance.goToMarcHoldingRecordAdding();
     quickMarcEditor.updateExistingField(
@@ -169,14 +166,13 @@ describe('New Marc Bib Record and new MARC Holdings record', () => {
     marc.saveAndClose();
     holdingsRecordView.viewSource();
     marc.crossIcon();
-    cy.wait(2000);
     marc.recordLastUpdated();
     marc.checkFieldContentMatch();
   });
 
   it('C380747 Add non-controllable subfields to a linked field when creating ""MARC Bibliographic"" record', () => {
     cy.visit(topMenu.inventoryPath);
-    inventoryInstance.newMarcB
+    inventoryInstance.newMarcB;
     ibRecord();
     quickMarcEditor.checkReadOnlyTags();
     quickMarcEditor.updateExistingField(
