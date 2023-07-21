@@ -42,7 +42,6 @@ describe('Exports', () => {
     exportJobs.packageFieldsToExportRadio();
     exportJobs.packageFieldsToExportDropdown(testData.packageOptions);
     exportJobs.titleFieldsToExportRadio();
-    exportJobs.titleFieldsToExportDropDown();
     exportJobs.clickExportButton();
     exportJobs.verifyJobIDRecord();
     fileManager.verifyFile(
@@ -66,8 +65,8 @@ describe('Exports', () => {
       testData.packageFields.package2
     );
     exportJobs.allPackageFieldsToExportRadioButton();
-    exportJobs.titleFieldsSelectFromExportDropDown(testData.titleFields.title1);
-    exportJobs.titleFieldsSelectFromExportDropDown(testData.titleFields.title2);
+    exportJobs.titleFieldsToExportDropDown(testData.titleFields.title1);
+    exportJobs.titleFieldsToExportDropDown(testData.titleFields.title2);
     exportJobs.allTitleFieldsToExportRadioButton();
     exportJobs.clickCancelButton();
     exportJobs.filterTitles(testData.data.title);
@@ -79,11 +78,11 @@ describe('Exports', () => {
       testData.packageFields.package2
     );
     exportJobs.allPackageFieldsToExportRadioButton();
-    exportJobs.titleFieldsSelectFromExportDropDown(testData.titleFields.title1);
-    exportJobs.titleFieldsSelectFromExportDropDown(testData.titleFields.title2);
+    exportJobs.titleFieldsToExportDropDown(testData.titleFields.title1);
+    exportJobs.titleFieldsToExportDropDown(testData.titleFields.title2);
     exportJobs.allTitleFieldsToExportRadioButton();
     exportJobs.clickExportButton();
-    exportJobs.verifyJobIDRecord();// Gets failed if "JOB ID" is in "InProgress" status
+    exportJobs.verifyJobIDRecord();
     fileManager.verifyFile(
       loansPage.verifyFileName,
       testData.fileNameMask,
@@ -91,10 +90,9 @@ describe('Exports', () => {
       ['Package Holdings Status', 'Selected']
     );
   });
-  it('C353217 Download batch export files from full screen view with Voucher export permission (FTP/JSON) - upload to server', () => {
-    cy.visit(topMenu.invoicesPath);
+  it('C353217-Download batch export files from full screen view with Voucher export permission (FTP/JSON) - upload to server', () => {
+    cy.visit(topMenu.inventoryPath);
     invoices.searchfolio();
     invoices.voucherExport(batchGroup);
-    // Getting Failed as when clicking on Run Manual Export status is "Error" and "Vouchers for batch voucher export were not found"
   });
 });

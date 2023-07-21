@@ -17,7 +17,8 @@ import {
   Section,
   FieldSet,
   Link,
-  SelectionOption
+  SelectionOption,
+  Spinner
 } from '../../../../interactors';
 import button from '../../../../interactors/button';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -561,7 +562,7 @@ export default {
       Button('Run manual export').click(),
       Button({ id: 'clickable-run-manual-export-confirmation-confirm' }).click(),
     ]);
-    cy.wait(2000);
+    cy.expect(Spinner().absent());
     cy.do(MultiColumnList({ id: 'batch-voucher-exports' })
       .find(MultiColumnListRow({ index: 0 }))
       .find(MultiColumnListCell({ columnIndex: 3 }))
