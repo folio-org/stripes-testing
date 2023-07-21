@@ -5,7 +5,8 @@ import { FOLIO_RECORD_TYPE,
   ITEM_STATUS_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
   PROFILE_TYPE_NAMES,
-  EXISTING_RECORDS_NAMES } from '../../../support/constants';
+  EXISTING_RECORDS_NAMES,
+  LOCATION_NAMES } from '../../../support/constants';
 import SettingsJobProfiles from '../../../support/fragments/settings/dataImport/settingsJobProfiles';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -31,10 +32,10 @@ describe('ui-data-import', () => {
   const instance = {
     instanceTitle: 'Love enough / Dionne Brand.',
     instanceSubject: '35678123678',
-    holdingsLocation: 'Main Library >',
+    holdingsLocation: `${LOCATION_NAMES.MAIN_LIBRARY_UI} >`,
     itemStatus: ITEM_STATUS_NAMES.AVAILABLE
   };
-  const permanentLocation = 'Main Library (KU/CC/DI/M)';
+  const permanentLocation = LOCATION_NAMES.MAIN_LIBRARY;
   const recordType = 'MARC_BIBLIOGRAPHIC';
   const note = 'Test administrative note for item';
   // unique file name
@@ -333,7 +334,7 @@ describe('ui-data-import', () => {
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-        InventoryInstance.openHoldingsAccordion('Main Library >');
+        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
         InventoryInstance.openItemByBarcode('No barcode');
         ItemRecordView.checkItemAdministrativeNote(note);
       });
