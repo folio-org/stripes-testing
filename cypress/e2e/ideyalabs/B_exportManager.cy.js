@@ -1,4 +1,3 @@
-// import Exports from "../../support/a_ideyalabs/export";
 import exportJobs from '../../support/a_ideyalabs/exportJobs';
 import exportManagerSearchPane from '../../support/fragments/exportManager/exportManagerSearchPane';
 import topMenu from '../../support/fragments/topMenu';
@@ -8,7 +7,8 @@ describe('Exports', () => {
     integrationMethod: 'Integration name',
     status: 'Successful',
     exportMethod: 'Integration name',
-    fileName: 'AAA_Integration name_2023-06-20_14_36_04.edi'
+    fileName: 'AAA_Integration name_2023-06-20_14_36_04.edi',
+    jobFileName: 'AAA_Integration name_2023-06-20_14:36:04.edi'
   };
 
   before('login', () => {
@@ -18,11 +18,11 @@ describe('Exports', () => {
   it('C358971 Already exported order is not included repeatedly in next exports(Thunderjet)', () => {
     cy.visit(topMenu.exportManagerOrganizationsPath);
     exportManagerSearchPane.selectExportMethod(testData.integrationMethod);
+    exportManagerSearchPane.searchBySuccessful();
     exportManagerSearchPane.verifyResult(testData.status);
     exportManagerSearchPane.verifyResultAndClick(testData.status);
     cy.exec('java -jar sikuli_ide.jar -r ftp.sikuli');
-    // Open FTP client (f.e. FileZilla) and search for exported File name from Step 2 in FTP order directory from Preconditions #2.4
-    // Open exported .edi file with ""Notepad"" or similar tool
+    // Based on the Testcase we need to change the PNG in the sikuli folder as it changes from the system to system
     exportManagerSearchPane.rerunJob();
     cy.reload();
   });
@@ -30,11 +30,13 @@ describe('Exports', () => {
   it('C365123 Downloading the exact .edi file that was exported for a given export job with Successful status', () => {
     cy.visit(topMenu.exportManagerOrganizationsPath);
     exportManagerSearchPane.selectExportMethod(testData.exportMethod);
+    exportManagerSearchPane.searchBySuccessful();
     exportManagerSearchPane.selectSearchResultItem();
-    exportJobs.verifyFileName();
+    exportJobs.verifyFileName(testData.jobFileName);
     exportManagerSearchPane.verifyResultAndClick(testData.status);
     exportManagerSearchPane.downloadJob();
     cy.verifyDownload(testData.fileName);
     cy.exec('java -jar sikuli_ide.jar -r ss.sikuli');
+    // Based on the Testcase we need to change the PNG in the sikuli folder as it changes from the system to system
   });
 });

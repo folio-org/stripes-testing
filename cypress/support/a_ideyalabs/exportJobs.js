@@ -1,6 +1,9 @@
 import {
   Button,
+  Callout,
+  KeyValue,
   Modal,
+  MultiSelect,
   MultiSelectMenu,
   MultiSelectOption,
   PaneHeader,
@@ -8,7 +11,6 @@ import {
   Section,
   TextField,
 } from '../../../interactors';
-
 import exportManagerSearchPane from '../fragments/exportManager/exportManagerSearchPane';
 import topMenu from '../fragments/topMenu';
 
@@ -25,12 +27,8 @@ const allTitleRadioButton = RadioButton({
   ariaLabel: 'Export all fields',
   name: 'titleFields',
 });
-const packageDropDown = '//input[@aria-labelledby="selected-package-fields"]';
-const titleDropdown = '//input[@aria-labelledby="selected-title-fields"]';
 const exportButton = Button('Export');
 const crossIcon = Button({ icon: 'times' });
-const JobId = "//div[@class='message---BOLVw']//b";
-const fileName = '//div[text()="File name"]//following-sibling::div';
 const exportSettingsModal = Modal({ id: 'eholdings-export-modal' });
 const cancelButton = Button('Cancel');
 const titlesSection = Section({ id: 'packageShowTitles' });
@@ -38,7 +36,7 @@ const searchIcon = Button({ icon: 'search' });
 const filterTitlesModal = Modal({ id: 'eholdings-details-view-search-modal' });
 const titlesSearchField = TextField({ id: 'eholdings-search' });
 const selectionStatusButton = Button('Selection status');
-const notSelectedRadioButton = RadioButton('Not selected'); exportButton;
+const notSelectedRadioButton = RadioButton('Not selected');
 const searchButton = Button('Search');
 
 export default {
@@ -64,18 +62,20 @@ export default {
   },
 
   packageFieldsSelectFromExportDropdown: (options) => {
-    cy.do(radioPackageFieldsToExport.click());
-    cy.xpath(packageDropDown).click();
     cy.do([
+      radioPackageFieldsToExport.click(),
+      MultiSelect({ ariaLabelledby: 'selected-package-fields' }).toggle(),
       MultiSelectMenu().find(MultiSelectOption(options)).click(),
       exportSettingsModal.find(crossIcon).click(),
     ]);
   },
 
   packageFieldsToExportDropdown: (options) => {
-    cy.do(radioPackageFieldsToExport.click());
-    cy.xpath(packageDropDown).click();
-    cy.do(MultiSelectMenu().find(MultiSelectOption(options)).click());
+    cy.do([
+      radioPackageFieldsToExport.click(),
+      MultiSelect({ ariaLabelledby: 'selected-package-fields' }).toggle(),
+      MultiSelectMenu().find(MultiSelectOption(options)).click(),
+    ]);
   },
 
   allTitleFieldsToExportRadioButton: () => {
@@ -86,16 +86,10 @@ export default {
     cy.do(radioTitleFieldsToExport.click());
   },
 
-  titleFieldsToExportDropDown: () => {
-    cy.xpath(titleDropdown).click();
-  },
-
-  titleFieldsSelectFromExportDropDown: (options) => {
-    cy.do(radioTitleFieldsToExport.click());
-    cy.xpath(titleDropdown).click();
+  titleFieldsToExportDropDown: (options) => {
     cy.do([
+      MultiSelect({ ariaLabelledby: 'selected-title-fields' }).toggle(),
       MultiSelectMenu().find(MultiSelectOption(options)).click(),
-      exportSettingsModal.find(crossIcon).click(),
     ]);
   },
 
@@ -108,40 +102,41 @@ export default {
   },
 
   verifyJobIDRecord() {
-    cy.xpath(JobId).then(($ele) => {
-      const txt = $ele.text().slice(26, 32);
+    cy.expect(Callout({ type: 'success' }).exists());
+    cy.wrap(Callout({ type: 'success' }).text()).as('message');
+    cy.get('@message').then((val) => {
+      cy.log(val);
+      const txt1 = val.slice(31, 37);
+      cy.log(txt1);
       cy.visit(topMenu.exportManagerPath);
       exportManagerSearchPane.searchBySuccessful();
-      exportManagerSearchPane.downloadLastCreatedJob(txt);
+      exportManagerSearchPane.downloadLastCreatedJob(txt1);
     });
   },
 
-  verifyJobIDInRecord() {
-    cy.xpath(JobId).then(($ele) => {
-      const txt = $ele.text().slice(26, 32);
-      cy.visit(topMenu.exportManagerPath);
-      exportManagerSearchPane.searchBySuccessful();
-      this.verifyJobIdInThirdPaneHasNoLink(txt);
+  getFileName: () => cy.then(() => KeyValue('File name').value()),
+  verifyFileName(fileName) {
+    this.getFileName().then((val) => {
+      cy.log(val);
+      expect(val).to.include(fileName);
     });
-  },
-  verifyFileName: () => {
-    cy.expect(cy.xpath(fileName));
   },
 
   verifyJobIdInThirdPaneHasNoLink(JobId) {
     this.verifyThirdPaneExportJobExist();
-    cy.get(`span:contains(${JobId})`).its('length').then((length) => {
-      if (length > 0) {
-        cy.get(`span:contains(${JobId})`).click();
-        cy.log('job id is "InProgress" or "Failed"');
-      } else {
-        cy.get(`span:contains(${JobId})`).click();
-        exportManagerSearchPane.downloadLastCreatedJob(txt1);
-      }
-    });
+    cy.get(`span:contains(${JobId})`)
+      .its('length')
+      .then((length) => {
+        if (length > 0) {
+          cy.get(`span:contains(${JobId})`).click();
+          cy.log('job id is "InProgress" or "Failed"');
+        } else {
+          cy.get(`a:contains(${JobId})`).click();
+          exportManagerSearchPane.downloadLastCreatedJob(txt1);
+        }
+      });
   },
   verifyThirdPaneExportJobExist() {
-    cy.wait(10000);
     cy.expect(PaneHeader('Export jobs').exists());
   },
 };

@@ -11,7 +11,9 @@ import {
   MultiColumnList,
   PaneHeader,
   KeyValue,
-  HTML
+  HTML,
+  MultiColumnListRow,
+  Spinner
 } from '../../../../interactors';
 
 const searchButton = Button({ type: 'submit' });
@@ -44,7 +46,7 @@ export default {
   },
   verifyResultAndClick(content) {
     cy.expect(MultiColumnListCell(including(content)).exists());
-    cy.do(MultiColumnListCell(including(content)).click());
+    cy.do(MultiColumnListRow({ index:0 }).click());
   },
   selectJobByIndex(content, index) {
     cy.get('div[class*=mclRow-]').contains(content).then(element => {
@@ -99,7 +101,7 @@ export default {
   },
 
   searchBySuccessful() {
-    waitClick();
+    cy.expect(Spinner().absent());
     cy.do(statusAccordion.find(Checkbox({ id: 'clickable-filter-status-successful' })).click());
   },
 
@@ -209,21 +211,20 @@ export default {
 
   downloadJob() {
     // Need to wait while Button will be loaded for click
-    cy.wait(7000);
+    cy.expect(Button('Actions').exists());
     cy.do(Button('Actions').click());
     // Need to wait while Button will be loaded for click
-    cy.wait(7000);
+    cy.expect(Button('Download').exists());
     cy.do(Button('Download').click());
   },
 
   rerunJob() {
     // Need to wait while Button will be loaded for click
-    cy.wait(7000);
+    cy.expect(Button('Actions').exists());
     cy.do(Button('Actions').click());
     // Need to wait while Button will be loaded for click
-    cy.wait(7000);
+    cy.expect(Button('Rerun').exists());
     cy.do(Button('Rerun').click());
-    cy.wait(7000);
   },
 
   verifyNoPermissionWarning() {
