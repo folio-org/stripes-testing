@@ -167,7 +167,7 @@ describe('ui-data-import', () => {
       });
   });
 
-  it('C356801 Check import summary table with "Created" actions for instance, holding and item (folijet)',
+  it('C397983 Verify the ability to import Holdings and Instance using marc-to-marc submatch: 2 matches (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       // change file for creating uniq 035 field
       DataImport.editMarcFile(testData.fileName, editedMarcFileNameForCreate, ['9000098'], [uniq001Field]);
@@ -224,7 +224,7 @@ describe('ui-data-import', () => {
       });
 
       // change file for changing content of 856 field
-      DataImport.editMarcFile('marcFileForC397983.mrc', editedMarcFileNameForUpdate, ['9000098', 'http://jbjjhhjj:3000/'], [uniq001Field, 'http://jbjjhhjj:3000/Test2']);
+      DataImport.editMarcFile(testData.fileName, editedMarcFileNameForUpdate, ['9000098', 'http://jbjjhhjj:3000/'], [uniq001Field, 'http://jbjjhhjj:3000/Test2']);
 
       // create Field mapping profiles for updating
       cy.visit(SettingsMenu.mappingProfilePath);
