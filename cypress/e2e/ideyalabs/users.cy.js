@@ -41,6 +41,7 @@ const verifyData = {
   verifyPreferredfirstnameOnUserDetailsPane: "Dan basco1",
   verifyFirstNameOnUserDetailsPane: "king1",
   verifyMiddleNameOnUserDetailsPane: "chary",
+  verifyClearFirstNameDetailsPane:'No value set-'
 };
 
 describe("create a users", () => {
@@ -81,5 +82,6 @@ describe("create a users", () => {
     users.editButton();
     users.clearTextfieldfirstName();
     users.saveButton();
+    users.verifyFirstNameOnUserDetailsPane(verifyData.verifyClearFirstNameDetailsPane);
   });
 });
