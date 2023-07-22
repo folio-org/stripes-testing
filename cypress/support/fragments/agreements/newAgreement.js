@@ -1,9 +1,8 @@
+import { Accordion, Button, Link, MultiColumnListRow, Section, TextField, including } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import getRandomPostfix from '../../utils/stringTools';
-import { Button, TextField, Section, MultiColumnListRow, Link } from '../../../../interactors';
 
 export default class NewAgreement {
-  // TODO: start to use interactors instead of selectors
   static #rootCss = 'section[id="pane-agreement-form"]'
   static #statusCss = `${this.#rootCss} select[id="edit-agreement-status"]`;
   static #nameField = TextField({ id: 'edit-agreement-name' });
@@ -11,17 +10,10 @@ export default class NewAgreement {
   static #saveButton = Button('Save & close');
   static #newButton = Section({ id: 'packageShowAgreements' }).find(Button('New'))
   static #agreementLine = Section({ id: 'lines' }).find(Button('Agreement lines'))
-  static #rowInList = Section({ id:'lines' }).find(MultiColumnListRow({ index:0 }).find(Link('VLeBooks')))
+  static #rowInList = Section({ id: 'lines' }).find(MultiColumnListRow({ index: 0 }).find(Link('VLeBooks')))
   static #cancel = Button({ ariaLabel: 'Close VLeBooks' })
-  static #NewButton = Button('New')
-
-  // static #statusValue = {
-  //   closed: 'Closed',
-  //   draft: 'Draft',
-  //   requested: 'Requested',
-  //   inNegotiation: 'In negotiation',
-  //   active: 'Active',
-  // }
+  static #newButtonClick = Button('New')
+  static #recordLastUpdated = Section({ id: 'agreementInfoRecordMeta' }).find(Button(including(`Record last updated`)))
   static #statusValue = {
     active: 'Active',
     closed: 'Closed',
@@ -49,6 +41,16 @@ export default class NewAgreement {
     cy.do(this.#startDateField.fillIn(specialAgreement.startDate));
   }
 
+  static validateDateAndTime(specialAgreement = this.#defaultAgreement) {
+    cy.wrap(this.#recordLastUpdated.text()).as("date");
+    cy.get("@date").then((val) => {
+      const dateTimePattern = /\d{1,2}\/\d{1,2}\/\d{4} \d{1,2}:\d{2} [AP]M/g;
+      const dateTimes = val.match(dateTimePattern)[0];
+      cy.expect(this.#recordLastUpdated.has({ text: including(`Record last updated: ${dateTimes}`) }))
+      cy.expect(Accordion({ headline: 'Update information' }).has({ content: including(`Record created: ${dateTimes}`) }))
+    })
+  }
+
   static save() {
     cy.do(this.#saveButton.click());
   }
@@ -56,18 +58,16 @@ export default class NewAgreement {
   static waitLoading() {
     cy.expect(this.#nameField.exists());
   }
-
   static newButton() {
-    cy.do(this.#newButton.click());
+    cy.do(this.#newButton.click())
   }
 
   static agreementLine() {
     cy.do([this.#agreementLine.click(),
-      this.#rowInList.click(),
-      this.#cancel.click()]);
+    this.#rowInList.click(),
+    this.#cancel.click()])
   }
-
-  static NewButton() {
-    cy.do(this.#NewButton.click());
+  static newButtonClick() {
+    cy.do(this.#newButtonClick.click())
   }
 }

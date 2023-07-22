@@ -1,24 +1,24 @@
-import TopMenu from '../../support/fragments/topMenu';
-import NewAgreement from '../../support/fragments/agreements/newAgreement';
-import eHoldings from '../../support/a_ideyalabs/eHolding';
-import eHoldingsPackages from '../../support/fragments/eholdings/eHoldingsPackages';
+import newAgreement from '../../support/fragments/agreements/newAgreement';
+import eHoldingsPackages from "../../support/fragments/eholdings/eHoldingsPackages";
+import topMenu from '../../support/fragments/topMenu';
+import eHoldings from "./eHolding";
 
 describe('Creating New Agreement', () => {
   it('C757__Create an Agreement', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    // cy.visit(TopMenu.agreementsPath);
-    // NewAgreement.NewButton();
-    // NewAgreement.fill();
-    // NewAgreement.save();
-    // NewAgreement.waitLoading();
-  });
+    cy.visit(topMenu.agreementsPath)
+    newAgreement.newButtonClick()
+    newAgreement.fill()
+    newAgreement.save()
+    newAgreement.validateDateAndTime()
+  })
   it('C1295__Create a new Agreement and attach a package', () => {
-    cy.visit(TopMenu.eholdingsPath);
-    eHoldings.packageSearch();
-    eHoldingsPackages.openPackage();
-    NewAgreement.newButton();
-    NewAgreement.fill();
-    NewAgreement.save();
-    NewAgreement.agreementLine();
+    cy.visit(topMenu.eholdingsPath)
+    eHoldings.packageSearch()
+    eHoldingsPackages.openPackage()
+    newAgreement.newButton()
+    newAgreement.fill()
+    newAgreement.save()
+    newAgreement.agreementLine()
   });
-});
+})
