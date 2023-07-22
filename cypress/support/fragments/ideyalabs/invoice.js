@@ -221,10 +221,16 @@ export default {
   },
 
   selectCurrentEncumbrance: () => {
+    const buttonInteractor = Section({ id: "FundDistribution" })
+      .find(MultiColumnListCell({ row: 0, columnIndex: 5 }))
+      .find(Button());
     cy.do([
-      Section({id:"FundDistribution"}).find(MultiColumnListCell({ row: 0,columnIndex  :5 })).find(Button()).click(),
+      buttonInteractor.perform((interactor) =>
+        interactor.removeAttribute("target")
+      ),
+      buttonInteractor.click(),
       encumbrancePane.find(crossButton).click(),
-      crossButton.click(), // Transaction details
+      crossButton.click(), //Transaction details
       crossButton.click(), // budget screen
       search.fillIn("Fund A"),
       searchButton.click(),
@@ -233,8 +239,10 @@ export default {
       budgetInformation.find(Link("View transactions")).click(),
     ]);
   },
-
   openStatusAndClickCheckbox() {
+    const buttonInteractor = fundDistributionSection
+      .find(MultiColumnListCell({ row: 0, columnIndex: 5 }))
+      .find(Button());
     cy.do([
       selectStatusSection.find(Button("Status")).click(),
       Checkbox("Reviewed").click(),
@@ -243,10 +251,10 @@ export default {
         .find(Link("234"))
         .click(),
       invoiceLinesSection.find(MultiColumnListRow({ index: 0 })).click(),
-      fundDistributionSection
-        .find(MultiColumnListCell({ row: 0, columnIndex: 5 }))
-        .find(Button())
-        .click(),
+      buttonInteractor.perform((interactor) =>
+        interactor.removeAttribute("target")
+      ),
+      buttonInteractor.click(),
     ]);
   },
 };

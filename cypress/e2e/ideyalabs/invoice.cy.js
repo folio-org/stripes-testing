@@ -48,7 +48,7 @@ const searchInvoiceNumber = {
 const fundID = "Fund B (b)";
 
 describe("C353566-Correct fund validation to approve invoice", () => {
-  xit("Invoices App", () => {
+  it("Invoices App", () => {
     cy.login(Cypress.env("diku_login"), Cypress.env("diku_password"));
     cy.visit(TopMenu.ordersPath);
     invoice.createOrder(orderOne.orderType, orderOne.templateName);
@@ -83,7 +83,6 @@ describe("C353566-Correct fund validation to approve invoice", () => {
     invoice.addFundDistributionToLine2(fundDistribution.fundID1);
     invoice.addFundDistributionToLine4(fundDistribution.fundID2);
     invoice.adjustments();
-
     invoice.approveInvoice();
   });
   it("C368486 - Editing fund distribution in PO line when related Reviewed invoice exists", () => {
