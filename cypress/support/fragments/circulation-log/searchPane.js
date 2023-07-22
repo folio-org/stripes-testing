@@ -10,14 +10,16 @@ import {
   Dropdown,
   DropdownMenu,
   Checkbox,
-  MultiSelect
+  MultiSelect,
+  PaneContent
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
+import section from '../../../../interactors/section';
+import button from '../../../../interactors/button';
 
 const dropdownButton = MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(Dropdown()).find(Button());
 const actionsButton = Button('Actions');
 const servicePointField = MultiSelect({ ariaLabelledby: 'accordion-toggle-button-servicePointId' });
-const barcodeText = "//div[@data-row-inner='0']//a[@data-test-text-link='true']";
 const data = '4502015';
 
 export default {
@@ -75,18 +77,18 @@ export default {
       Checkbox({
         id: 'clickable-filter-loan-renewed-through-override',
       }).click(),
-    ]);
-    cy.do(Button({ id:'reset-receiving-filters' }).click());
-    cy.do(TextField({ name: 'itemBarcode' }).fillIn('1040'));
-    this.clickApplyMainFilter();
+ Button('Reset all').click(),
+   TextField({ name: 'itemBarcode' }).fillIn('1040')]),
+    cy.get('[class^="button-"][type="submit"]').first().click();
+ cy.expect(MultiColumnListRow().exists());
   },
+  
   checkElemtText:() => {
     cy.do([
       Checkbox({ id: 'clickable-filter-loan-renewed-through-override' }).click(),
-
-
-      TextField({ name: 'itemBarcode' }).fillIn(data)]);
+TextField({ name: 'itemBarcode' }).fillIn(data)]);
     this.clickApplyMainFilter();
+
   },
 
 
