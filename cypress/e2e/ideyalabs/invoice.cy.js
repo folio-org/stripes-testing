@@ -92,6 +92,7 @@ describe("C353566-Correct fund validation to approve invoice", () => {
       searchInvoiceNumber.value
     );
     invoice.orderList(searchInvoiceNumber.value);
+    invoice.orderLinesResults();
     invoice.PODetails(fundID); // API getting failed while changing Fund ID
     invoice.selectCurrentEncumbrance();
     cy.visit(TopMenu.invoicesPath);

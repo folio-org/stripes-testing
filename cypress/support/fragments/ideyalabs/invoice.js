@@ -13,17 +13,14 @@ import {
   MultiColumnList,
   Checkbox,
   MultiColumnListCell,
-  Link,
-  Selection,
+  Link
 } from "../../../../interactors";
 import interactorsTools from "../../utils/interactorsTools";
 
 const invoiceStates = {
   invoiceCreatedMessage: "Invoice has been saved",
   invoiceLineCreatedMessage: "Invoice line has been saved",
-  InvoiceApprovedMessage: "Invoice has been approved successfully",
-  InvoicePaidMessage: "Invoice has been paid successfully",
-  InvoiceDeletedMessage: "Invoice has been deleted",
+  InvoiceApprovedMessage: "Invoice has been approved successfully"
 };
 
 const actionsButton = Button("Actions");
@@ -67,6 +64,7 @@ const searchButton = Button("Search");
 const fundResultsPane = Section({ id: "fund-results-pane" });
 const currentBudget = Section({ id: "currentBudget" });
 const budgetInformation = Section({ id: "information" });
+const orderLinesResults = Pane({ id: "order-lines-results-pane" });
 
 export default {
   createOrder: (orderTypes, templateNames) => {
@@ -208,6 +206,10 @@ export default {
     cy.do(ordersList.find(Link(POLnumber)).click());
   },
 
+  orderLinesResults: () => {
+    cy.expect(orderLinesResults.exists());
+  },
+
   PODetails: (id) => {
     cy.do([
       POorderDetails.find(Button("Actions")).click(),
@@ -238,6 +240,7 @@ export default {
       currentBudget.find(MultiColumnListRow({ index: 0 })).click(),
       budgetInformation.find(Link("View transactions")).click(),
     ]);
+    cy.expect(Section({ id: "transaction-results-pane" }).exists());
   },
   openStatusAndClickCheckbox() {
     const buttonInteractor = fundDistributionSection
@@ -256,5 +259,10 @@ export default {
       ),
       buttonInteractor.click(),
     ]);
+    cy.expect(
+      Section({ id: "transaction-results-pane" })
+        .find(MultiColumnListRow({ index: 0 }))
+        .exists()
+    );
   },
 };
