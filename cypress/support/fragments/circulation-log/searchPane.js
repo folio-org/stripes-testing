@@ -34,6 +34,7 @@ export default {
       Checkbox({ id: 'clickable-filter-loan-checked-out' }).click(),
       cy.do(TextField({ name: 'itemBarcode' }).fillIn(data))
     ]);
+    cy.expect(MultiColumnListRow().exists());
   },
 
   verifyResult(content) {
