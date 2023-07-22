@@ -405,7 +405,10 @@ export default {
   },
 
   selectVendor: () => {
-    cy.do([Checkbox('Vendor').click(), saveAndClose.click()]);
+    cy.do(Checkbox('Vendor').click());
+    //cy.expect(Checkbox('Vendor').should('be.checked'));
+    cy.expect(Checkbox({ name: 'isVendor', disabled: false }).exists());
+    cy.do(saveAndClose.click());
   },
 
   deselectVendor: () => {

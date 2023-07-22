@@ -93,6 +93,7 @@ describe('Organzation App', () => {
   });
   it('C6711, Filter Organizations by tags', () => {
     organizations.tagFilter(tags);
+    organizations.checkOrganizationFilter();
     organizations.resetAll();
   });
   it('C674, Delete existing organization record', () => {
