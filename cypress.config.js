@@ -15,8 +15,10 @@ module.exports = defineConfig({
   env: {
     OKAPI_HOST: 'https://folio-testing-cypress-okapi.ci.folio.org',
     OKAPI_TENANT: 'diku',
-    diku_login: 'diku_admin',
-    diku_password: 'admin',
+    diku_login: 'folio',
+    diku_password: 'folio',
+    // diku_login: 'diku_admin',
+    // diku_password: 'admin',
     is_kiwi_release: false,
     downloadTimeout: 1000,
     allure: 'true',
@@ -81,6 +83,7 @@ module.exports = defineConfig({
 
       return config;
     },
-    baseUrl: 'https://folio-testing-cypress-diku.ci.folio.org',
+    // baseUrl: 'https://folio-testing-cypress-diku.ci.folio.org',
+    baseUrl:'https://bugfest-orchid.int.aws.folio.org/'
   },
 });
