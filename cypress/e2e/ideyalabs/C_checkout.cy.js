@@ -3,7 +3,6 @@ import topMenu from '../../support/fragments/topMenu';
 import userLoans from '../../support/fragments/users/loans/userLoans';
 import usersSearchPane from '../../support/fragments/users/usersSearchPane';
 import getRandomPostfix from '../../support/utils/stringTools';
-
 const testData = {
   loanBarcode: '81264459',
   patronBarcode: '0000074372',

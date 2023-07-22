@@ -14,21 +14,18 @@ import {
   TextArea,
   RadioButtonGroup
 } from '../../../../interactors';
-//require('@4tw/cypress-drag-drop')
-//import 'cypress-drag-drop';
+// require('@4tw/cypress-drag-drop')
+// import 'cypress-drag-drop';
 
 // Cypress clicks before the UI loads, use when there is no way to attach waiter to element
 const waitClick = () => { cy.wait(1000); };
 const openLoanSectionButton = Button({
-  id: "accordion-toggle-button-loansSection",
+  id: 'accordion-toggle-button-loansSection',
 });
-const ActionButton = Section({ id: 'pane-userdetails' }).find(Button('Actions'))
+const ActionButton = Section({ id: 'pane-userdetails' }).find(Button('Actions'));
 const editButton = Button('Edit');
-const AdditionalInfo = Button('Additional information')
-const saveAndClose = Button('Save & close')
-const dragItem = '//div[@class="labelArea---D_osb"][normalize-space()="Single Select Dropdown · Single select"]'
-const DropItem = '//div[@class="labelArea---D_osb"][normalize-space()="CheckBoxx · Checkbox"]'
-//const selectDropdown = "//option[text()='Select a single select dropdown']/.."
+const AdditionalInfo = Button('Additional information');
+const saveAndClose = Button('Save & close');
 
 
 
@@ -64,17 +61,17 @@ export default {
     waitClick();
   },
 
-  EntertheBarcodeSearchFiled(Barcode){
+  EntertheBarcodeSearchFiled(Barcode) {
     cy.do([
-      TextField({id: 'input-item-barcode'}).fillIn(Barcode),
-      Button({id:'clickable-add-item'}).click()
-    ])
+      TextField({ id: 'input-item-barcode' }).fillIn(Barcode),
+      Button({ id:'clickable-add-item' }).click()
+    ]);
   },
 
   selectFirstUser: (userName) => {
     cy.do(Pane({ id: 'users-search-results-pane' }).find(Link(userName)).click());
   },
-  
+
 
   selectUserFromList: (userName) => {
     cy.do(Pane({ id:'users-search-results-pane' }).find(MultiColumnListCell(userName)).click());
@@ -84,9 +81,9 @@ export default {
     return cy.do(Link({ href: including(userId) }).click());
   },
 
-  openUserLoanSection:()=>{
-   // cy.do(Accordion({ id: 'accordion-toggle-button-loansSection' }).click());;
-     cy.do([openLoanSectionButton.click()])
+  openUserLoanSection:() => {
+    // cy.do(Accordion({ id: 'accordion-toggle-button-loansSection' }).click());;
+    cy.do([openLoanSectionButton.click()]);
   },
 
   verifyTestField: (name) => {
@@ -94,7 +91,7 @@ export default {
       ActionButton.click(),
       editButton.click(),
     ]);
-    cy.expect(TextField(name).exists())
+    cy.expect(TextField(name).exists());
   },
 
   verifyTestArea: (name) => {
@@ -102,7 +99,7 @@ export default {
       ActionButton.click(),
       editButton.click(),
     ]);
-    cy.expect(TextArea(name).exists())
+    cy.expect(TextArea(name).exists());
   },
 
   verifyCheckBox: (name) => {
@@ -110,7 +107,7 @@ export default {
       ActionButton.click(),
       editButton.click(),
     ]);
-    cy.expect(Checkbox(name).exists())
+    cy.expect(Checkbox(name).exists());
   },
 
   verifyRadioButton: (name) => {
@@ -118,39 +115,37 @@ export default {
       ActionButton.click(),
       editButton.click(),
     ]);
-    cy.expect(RadioButtonGroup(name).exists())
+    cy.expect(RadioButtonGroup(name).exists());
   },
 
-  verifySingleSeclect: (name,label) => {
+  verifySingleSeclect: (name, label) => {
     cy.do([ActionButton.click(),
-    editButton.click(),
-    Select(name).choose(label),
-    saveAndClose.click(),
-    AdditionalInfo.click()
+      editButton.click(),
+      Select(name).choose(label),
+      saveAndClose.click(),
+      AdditionalInfo.click()
     ]);
   },
 
   DragAndDropCustomFields: () => {
-
-    cy.get(".FieldAccordionDraggableWrapper---c2vRL").then((elements)=>{
-
+    cy.get('.FieldAccordionDraggableWrapper---c2vRL').then((elements) => {
       const draggableElement = elements[0];
 
       const targetElement = elements[1];
 
       if (targetElement) {
-
         cy.get(draggableElement).dragAndDrop(
 
           draggableElement,
 
           targetElement
 
-        )    }
-
-    })},AdditionalInfoButton() {
-    cy.do(AdditionalInfo.click())
-
+        );
+      }
+    });
+  },
+  AdditionalInfoButton() {
+    cy.do(AdditionalInfo.click());
   }
 
 
