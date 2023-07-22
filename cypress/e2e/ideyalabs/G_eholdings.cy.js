@@ -6,9 +6,8 @@ import eHoldingsProviderEdit from '../../support/fragments/eholdings/eHoldingsPr
 import eHoldingsProviders from '../../support/fragments/eholdings/eHoldingsProviders';
 import eHoldingsProvidersSearch from '../../support/fragments/eholdings/eHoldingsProvidersSearch';
 import eHoldingsSearch from '../../support/fragments/eholdings/eHoldingsSearch';
-import organisations from '../../support/fragments/organizations/organizations';
+import organizations from '../../support/fragments/organizations/organizations';
 import newRequest from '../../support/fragments/requests/newRequest';
-import settingsMenu from '../../support/fragments/settingsMenu';
 import topMenu from '../../support/fragments/topMenu';
 import eHolding from './eHolding';
 
@@ -17,6 +16,7 @@ describe('Create a custom package', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(topMenu.eholdingsPath)
     eHolding.switchToPackage()
+    cy.expect(PaneContent({ id: "search-results-content" }).exists());
   })
   it('C692-Create a custom package', () => {
     cy.visit(topMenu.eholdingsPath)
@@ -29,7 +29,6 @@ describe('Create a custom package', () => {
     eHoldingsPackages.openPackage()
     eHoldingsProviders.titlesSearch()
     eHoldingsProviders.clickSearchTitles()
-
   })
 
   it('C17090-Title Record - Packages accordion - Filter packages list', () => {
@@ -40,6 +39,7 @@ describe('Create a custom package', () => {
     eHolding.searchButton()
     eHolding.dropdownValuesSelect(['Agricultural & Environmental Science Database (DRAA)', 'Biological Sciences Database (DRAA)'])
     eHolding.searchActions()
+    cy.expect(section({ id: "titleShowPackages" }).exists());
   })
 
   it('C157916-Title - Packages accordion - Filter by Holding Status', () => {
@@ -61,12 +61,9 @@ describe('Create a custom package', () => {
     eHoldingsProvidersSearch.byProvider("Wiley")
     eHoldingsProviders.viewProvider()
     eHolding.packageAccordianClick()
+    eHolding.packageButtonClick('Collapse all', "false")
     eHolding.packageAccordianClick()
-    eHolding.packageButtonClick('Collapse all')
-    eHolding.packageAccordianClick()
-    eHolding.packageAccordianClick()
-    eHolding.packageButtonClick('Expand all')
-
+    eHolding.packageButtonClick('Expand all', "true")
   });
 
   it('C703-Set [Show titles in package to patrons] to Hide', () => {
@@ -98,6 +95,7 @@ describe('Create a custom package', () => {
     cy.visit(topMenu.eholdingsPath)
     eHoldingsSearch.switchToTitles()
     eHoldingsProvidersSearch.byProvider('Fashion')
+    cy.expect(PaneContent({ id: "search-results-content" }).exists());
   });
 
   it('350418-Check that user can create ""Recall""  Item level request', () => {
@@ -143,7 +141,7 @@ describe('Create a custom package', () => {
   it('C699-Add or edit package custom coverage', () => {
     eHolding.switchToPackage();
     eHoldingsPackages.openPackage();
-    organisations.editOrganization();
+    organizations.editOrganization();
     eHolding.editDateRange();
 
   });

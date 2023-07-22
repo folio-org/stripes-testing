@@ -1,10 +1,10 @@
 import { kebabCase } from 'lodash';
 import {
+  Button,
   CodeMirror,
   CodeMirrorHint,
-  Button,
 } from '../../../../interactors';
-import InteractorsTools from '../../utils/interactorsTools';
+import interactorsTools from '../../utils/interactorsTools';
 
 const calloutMessages = {
   CIRCULATION_RULES_UPDATE_SUCCESS: 'Rules were successfully updated.',
@@ -14,54 +14,45 @@ export default {
   defaultcirculationPolicy: {
     'rulesAsText': 'circulation policy'
   },
-  verifyError(){
-
-    
+  verifyError() {
     cy.expect(cy.xpath("//div[@class='rule-error']").should('exist'))
-    
-      },
-      policyError({
+  },
 
-        priorityType,
-    
-        priorityTypeName,
-    
-        loanPolicyName,
-    
-      }){
-    
-        if (priorityType) {
-    
-          this.fillInCirculationRules(priorityType);
-    
-          this.clickCirculationRulesHintItem(priorityTypeName);
-    
-          this.fillInCirculationRules(': ');
-    
-        }
-    
-        this.fillInCirculationRules('l ');
-    
-        this.clickCirculationRulesHintItem(loanPolicyName);
-    
-      },
+  policyError({
+    priorityType,
+    priorityTypeName,
+    loanPolicyName,
+  }) {
+    if (priorityType) {
+      this.fillInCirculationRules(priorityType);
+      this.clickCirculationRulesHintItem(priorityTypeName);
+      this.fillInCirculationRules(': ');
+    }
+    this.fillInCirculationRules('l ');
+    this.clickCirculationRulesHintItem(loanPolicyName);
+  },
   clearCirculationRules() {
     cy.do(CodeMirror().clear());
   },
+
   fillInCirculationRules(value) {
     cy.do(CodeMirror().fillIn(value));
   },
+
   fillInPriority(value = 'priority: t, s, c, b, a, m, g') {
     this.fillInCirculationRules(value);
     this.fillInNewLine();
   },
+
   fillInNewLine() {
     this.fillInCirculationRules('\n');
   },
+
   fillInFallbackPolicy(policyData) {
     this.fillInCirculationRules('fallback-policy: ');
     this.fillInPolicy(policyData);
   },
+
   fillInPolicy({
     priorityType,
     priorityTypeName,
@@ -88,28 +79,35 @@ export default {
     this.clickCirculationRulesHintItem(noticePolicyName);
     this.fillInNewLine();
   },
+
   clickCirculationRulesHintItem(name) {
     cy.do(CodeMirrorHint().clickItem(kebabCase(name)));
   },
+
   saveCirculationRules() {
     cy.expect(Button('Save').exists())
     cy.do(Button('Save').click());
+    interactorsTools.checkCalloutMessage('Rules were successfully updated.')
   },
-  
+
   checkUpdateCirculationRulesCalloutAppeared() {
-    InteractorsTools.checkCalloutMessage(calloutMessages.CIRCULATION_RULES_UPDATE_SUCCESS);
+    interactorsTools.checkCalloutMessage(calloutMessages.CIRCULATION_RULES_UPDATE_SUCCESS);
   },
+
   checkNoticePolicyAddedToCirculationRules(noticePolicyId) {
     this.getViaApi().then((circulationRules) => {
       cy.expect(circulationRules.rulesAsText).to.include(`n ${noticePolicyId}`);
     });
   },
+
   getViaApi() {
     return cy.getCirculationRules();
   },
+
   updateViaApi(data) {
     return cy.updateCirculationRules(data);
   },
+
   getRuleProps(defaultRules) {
     const oIndex = defaultRules.indexOf(' o ', 2);
     const lIndex = defaultRules.indexOf(' l ', 2);

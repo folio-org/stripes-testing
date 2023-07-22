@@ -1,9 +1,8 @@
 import { Accordion, Button, FieldSet, KeyValue, Modal, MultiSelect, NavListItem, RadioButton, Section, Select, Spinner, TextArea, TextField } from "../../../interactors";
-
 import eholdingsPackagesSearch from '../../support/fragments/eholdings/eHoldingsPackagesSearch';
 import eHoldingsProvidersSearch from '../../support/fragments/eholdings/eHoldingsProvidersSearch';
 import eHoldingsSearch from '../../support/fragments/eholdings/eHoldingsSearch';
-import TopMenu from '../../support/fragments/topMenu';
+import topMenu from '../../support/fragments/topMenu';
 import dateTools from "../../support/utils/dateTools";
 
 const editButton = Button('Edit');
@@ -11,26 +10,43 @@ const actionsButton = Button('Actions');
 const searchButton = Button('Search');
 const desc = TextArea({ name: 'description' })
 const SaveAndClose = Button('Save & close')
-const RandomValue = Math.floor(Math.random() * 2)
+const randomValue = Math.floor(Math.random() * 2)
 const availableProxies = ["Inherited - None", "FOLIO-Bugfest", "EZProxy"];
 const SearchButton = Section({ id: 'providerShowProviderList' }).find(Button({ ariaLabel: 'Toggle filters pane' }))
 const iconSearch = Button({ icon: 'search' })
-const RandomNumber = Math.floor(Math.random(9000) * 1000) + 1000
+const randomNumber = Math.floor(Math.random(9000) * 1000) + 1000
+
+// const availableProxies = [
+//     'Inherited - None',
+//     'FOLIO-Bugfest',
+//     'EZProxy'
+// ];
+
 const proxySelect = Select({ id: 'eholdings-proxy-id' });
 const selectionStatusAccordion = Accordion({ id: 'accordion-toggle-button-filter-packages-selected' });
 const selectionStatusSection = Section({ id: "filter-packages-selected" });
 const accordianClick = Button({ id: 'accordion-toggle-button-providerShowProviderList' })
 const patronRadioButton = FieldSet("Show titles in package to patrons").find(RadioButton({ checked: false }))
-
+const tagsClick = Button({ id: 'accordion-toggle-button-providerShowTags' })
+const providerClick = Button({ id: 'accordion-toggle-button-providerShowProviderSettings' })
+const notesClick = Button({ id: 'accordion-toggle-button-providerShowNotes' })
+const packagesClick = Button({ id: 'accordion-toggle-button-providerShowProviderInformation' })
 
 export default {
   packageAccordianClick() {
     cy.expect(accordianClick.exists())
-    cy.do(accordianClick.click())
+    cy.do([accordianClick.click(),
+    accordianClick.click()])
+    cy.expect(Spinner().absent())
   },
-  packageButtonClick(name) {
+  packageButtonClick(name, open) {
     cy.expect(Button(name).exists())
     cy.do(Button(name).click())
+    cy.expect([accordianClick.has({ ariaExpanded: open }),
+    tagsClick.has({ ariaExpanded: open }),
+    providerClick.has({ ariaExpanded: open }),
+    notesClick.has({ ariaExpanded: open }),
+    packagesClick.has({ ariaExpanded: open })])
   },
 
   switchToPackage() {
@@ -40,12 +56,13 @@ export default {
   },
 
   switchToPackages() {
-    cy.visit(TopMenu.eholdingsPath)
+    cy.visit(topMenu.eholdingsPath)
     eHoldingsProvidersSearch.byProvider('Gale Cengage')
+    //eholdingsPackagesSearch.bySelectionStatus('Selected')
 
   },
   switchToPackageAndSearch() {
-    cy.visit(TopMenu.eholdingsPath)
+    cy.visit(topMenu.eholdingsPath)
     eHoldingsSearch.switchToPackages()
     eHoldingsProvidersSearch.byProvider('Wiley Online Library')
     eholdingsPackagesSearch.bySelectionStatus('Selected')
@@ -75,20 +92,21 @@ export default {
     cy.do(patronRadioButton.click())
   },
 
+
   changeProxy: () => {
     cy.get("select#eholdings-proxy-id option:selected")
       .invoke("text")
       .then((text) => {
         let options = availableProxies.filter((option) => option != text);
-        cy.do(proxySelect.choose(options[RandomValue]));
+        cy.do(proxySelect.choose(options[randomValue]));
       })
   },
 
   editDateRange: () => {
     cy.expect(Spinner().absent())
     cy.do([
-      TextField({ id: "begin-coverage-0" }).fillIn(dateTools.getRandomStartDate(RandomValue)),
-      TextField({ id: "end-coverage-0" }).fillIn(dateTools.getRandomEndDate(RandomValue)),
+      TextField({ id: "begin-coverage-0" }).fillIn(dateTools.getRandomStartDate(randomValue)),
+      TextField({ id: "end-coverage-0" }).fillIn(dateTools.getRandomEndDate(randomValue)),
       SaveAndClose.click(),
     ]);
   },
@@ -132,7 +150,7 @@ export default {
 
 
   packageSearch() {
-    cy.visit(TopMenu.eholdingsPath)
+    cy.visit(topMenu.eholdingsPath)
     eHoldingsSearch.switchToPackages()
     eHoldingsProvidersSearch.byProvider('VLeBooks')
     eholdingsPackagesSearch.bySelectionStatus('Selected')
@@ -148,12 +166,12 @@ export default {
     cy.do(iconSearch.click())
 
   },
-
   modelSearch() {
     cy.do(Modal({ id: "package-filter-modal" }).find(Button('Search').click()))
   },
-
   providerToken() {
-    cy.do(TextArea({ name: 'providerTokenValue' }).fillIn(`Test${RandomNumber}`))
+    cy.do(TextArea({ name: 'providerTokenValue' }).fillIn(`Test${randomNumber}`))
+    cy.expect(saveAndCloseButton.exists())
+    cy.do(saveAndCloseButton.click());
   }
 }

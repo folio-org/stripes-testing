@@ -11,8 +11,10 @@ export default {
     cy.do(Button('New').click());
     eHoldingsNewCustomPackage.fillInRequiredProperties(packageName);
     eHoldingsNewCustomPackage.saveAndClose();
+    cy.expect(PaneContent({ id: `${create.packageName}-content` }).exists());
     return packageName;
   },
+
   waitLoading: () => {
     cy.expect(or(
       resultSection.find(ListItem({ className: including('list-item-'), index: 1 }).find(Button())).exists(),
