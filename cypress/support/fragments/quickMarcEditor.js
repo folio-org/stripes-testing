@@ -705,5 +705,11 @@ export default {
       calloutAfterSaveAndCloseNewRecord.exists(),
       instanceDetailsPane.exists(),
     ]);
+  },
+
+  verifyAndDismissRecordUpdatedCallout() {
+    cy.expect(calloutUpdatedRecord.exists());
+    cy.do(calloutUpdatedRecord.dismiss());
+    cy.expect(calloutUpdatedRecord.absent());
   }
 };
