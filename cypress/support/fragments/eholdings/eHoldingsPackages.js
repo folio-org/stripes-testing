@@ -1,4 +1,4 @@
-import { Button, ListItem, Section, HTML, including, or } from '../../../../interactors';
+import { Button, HTML, ListItem, Section, including, or } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 import eHoldingsNewCustomPackage from './eHoldingsNewCustomPackage';
 import eHoldingsPackage from './eHoldingsPackage';
@@ -19,16 +19,16 @@ export default {
       resultSection.find(HTML(including('Enter a query to show search results.'))).exists()
     ));
   },
+
   openPackage: (rowNumber = 0) => {
     const specialRow = resultSection.find(ListItem({ className: including('list-item-'), index: rowNumber }));
     // cy.log(JSON.stringify(specialRow.h3Value())) -- swathiM
-
     cy.then(() => specialRow.h3Value())
       .then(specialPackage => {
         cy.do(resultSection
           .find(ListItem({ className: including('list-item-'), index: rowNumber })
             .find(Button())).click());
-        // eHoldingsPackage.waitLoading(specialPackage);
+        //eHoldingsPackage.waitLoading(specialPackage);
         cy.wrap(specialPackage).as('selectedPackage');
       });
     return cy.get('@selectedPackage');
@@ -86,9 +86,9 @@ export default {
 
   updateProxy() {
     cy.get(selectedText)
-      .invoke('text')
+      .invoke("text")
       .then((text) => {
-        if (text === 'Selected') {
+        if (text === "Selected") {
           eHoldingsPackage.editactions();
           eHoldingsPackage.changeProxy();
           eHoldingsPackage.saveAndClose();
@@ -100,4 +100,4 @@ export default {
         }
       });
   }
-};
+}

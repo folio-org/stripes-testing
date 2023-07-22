@@ -1,67 +1,59 @@
-import { Button, Select, Spinner, MultiSelect, RadioButton, Accordion, NavListItem, TextField, TextArea, FieldSet, Section, KeyValue } from '../../../interactors';
+import { Accordion, Button, FieldSet, KeyValue, Modal, MultiSelect, NavListItem, RadioButton, Section, Select, Spinner, TextArea, TextField } from "../../../interactors";
+
+import eholdingsPackagesSearch from '../../support/fragments/eholdings/eHoldingsPackagesSearch';
+import eHoldingsProvidersSearch from '../../support/fragments/eholdings/eHoldingsProvidersSearch';
 import eHoldingsSearch from '../../support/fragments/eholdings/eHoldingsSearch';
 import TopMenu from '../../support/fragments/topMenu';
-import eHoldingsProvidersSearch from '../../support/fragments/eholdings/eHoldingsProvidersSearch';
-import eholdingsPackagesSearch from '../../support/fragments/eholdings/eHoldingsPackagesSearch';
-import dateTools from '../../support/utils/dateTools';
-
-const RandomNumber = Math.floor(Math.random(9000) * 1000) + 1000
+import dateTools from "../../support/utils/dateTools";
 
 const editButton = Button('Edit');
 const actionsButton = Button('Actions');
 const searchButton = Button('Search');
-const desc = TextArea({ name: 'description' });
-const SaveAndClose = Button('Save & close');
-const RandomValue = Math.floor(Math.random() * 2);
-const availableProxies = ['Inherited - None', 'FOLIO-Bugfest', 'EZProxy'];
-const SearchButton = Section({ id: 'providerShowProviderList' }).find(Button({ ariaLabel: 'Toggle filters pane' }));
+const desc = TextArea({ name: 'description' })
+const SaveAndClose = Button('Save & close')
+const RandomValue = Math.floor(Math.random() * 2)
+const availableProxies = ["Inherited - None", "FOLIO-Bugfest", "EZProxy"];
+const SearchButton = Section({ id: 'providerShowProviderList' }).find(Button({ ariaLabel: 'Toggle filters pane' }))
+const iconSearch = Button({ icon: 'search' })
+const RandomNumber = Math.floor(Math.random(9000) * 1000) + 1000
 const proxySelect = Select({ id: 'eholdings-proxy-id' });
 const selectionStatusAccordion = Accordion({ id: 'accordion-toggle-button-filter-packages-selected' });
-const selectionStatusSection = Section({ id: 'filter-packages-selected' });
-const iconSearch = Button({ icon: 'search' });
-const accordianClick = Button({ id: 'accordion-toggle-button-providerShowProviderList' });
-const patronRadioButton = FieldSet('Show titles in package to patrons').find(RadioButton({ checked: false }));
-
-// const availableProxies = [
-//     'Inherited - None',
-//     'FOLIO-Bugfest',
-//     'EZProxy'
-// ];
+const selectionStatusSection = Section({ id: "filter-packages-selected" });
+const accordianClick = Button({ id: 'accordion-toggle-button-providerShowProviderList' })
+const patronRadioButton = FieldSet("Show titles in package to patrons").find(RadioButton({ checked: false }))
 
 
 export default {
-  PackageAccordianClick() {
-    cy.expect(accordianClick.exists());
-    cy.do(accordianClick.click());
+  packageAccordianClick() {
+    cy.expect(accordianClick.exists())
+    cy.do(accordianClick.click())
+  },
+  packageButtonClick(name) {
+    cy.expect(Button(name).exists())
+    cy.do(Button(name).click())
   },
 
-  PackageButtonClick(name) {
-    cy.expect(Button(name).exists());
-    cy.do(Button(name).click());
+  switchToPackage() {
+    eHoldingsSearch.switchToPackages()
+    eHoldingsProvidersSearch.byProvider('JSTOR')
+    eholdingsPackagesSearch.bySelectionStatus('Selected')
   },
 
-  SwitchToPackage() {
-    cy.visit(TopMenu.eholdingsPath);
-    eHoldingsSearch.switchToPackages();
-    eHoldingsProvidersSearch.byProvider('JSTOR');
-    eholdingsPackagesSearch.bySelectionStatus('Selected');
+  switchToPackages() {
+    cy.visit(TopMenu.eholdingsPath)
+    eHoldingsProvidersSearch.byProvider('Gale Cengage')
+
+  },
+  switchToPackageAndSearch() {
+    cy.visit(TopMenu.eholdingsPath)
+    eHoldingsSearch.switchToPackages()
+    eHoldingsProvidersSearch.byProvider('Wiley Online Library')
+    eholdingsPackagesSearch.bySelectionStatus('Selected')
   },
 
-  SwitchTopackage() {
-    cy.visit(TopMenu.eholdingsPath);
-    eHoldingsProvidersSearch.byProvider('Gale Cengage');
-    // eholdingsPackagesSearch.bySelectionStatus('Selected')
-  },
-  SwitchToPackageandsearch() {
-    cy.visit(TopMenu.eholdingsPath);
-    eHoldingsSearch.switchToPackages();
-    eHoldingsProvidersSearch.byProvider('Wiley Online Library');
-    eholdingsPackagesSearch.bySelectionStatus('Selected');
-  },
-
-  editactions: () => {
+  editActions: () => {
     cy.expect(Spinner().absent());
-    cy.do(actionsButton.click());
+    cy.do(actionsButton.click())
     cy.expect(editButton.exists());
     cy.do(editButton.click());
   },
@@ -69,57 +61,57 @@ export default {
   getAlternateTitles: () => cy.then(() => KeyValue('Alternate title(s)').value()),
   alternativesTitles() {
     this.getAlternateTitles().then(val => {
-      // cy.expect(val.includes(";")).to.be.true;
-      expect(val).to.include(';');
-    });
+      expect(val).to.include(";");
+    })
   },
 
   searchActions() {
-    cy.expect(searchButton.exists());
-    cy.do(searchButton.click());
+    cy.expect(searchButton.exists())
+    cy.do(searchButton.click())
   },
 
-  patronRadiobutton: () => {
-    cy.expect(patronRadioButton.exists());
-    cy.do(patronRadioButton.click());
+  patronRadioButton: () => {
+    cy.expect(patronRadioButton.exists())
+    cy.do(patronRadioButton.click())
   },
 
   changeProxy: () => {
-    cy.get('select#eholdings-proxy-id option:selected')
-      .invoke('text')
+    cy.get("select#eholdings-proxy-id option:selected")
+      .invoke("text")
       .then((text) => {
-        const options = availableProxies.filter((option) => option != text);
+        let options = availableProxies.filter((option) => option != text);
         cy.do(proxySelect.choose(options[RandomValue]));
-      });
+      })
   },
 
   editDateRange: () => {
-    cy.expect(Spinner().exists())
+    cy.expect(Spinner().absent())
     cy.do([
-      TextField({ id: 'begin-coverage-0' }).clear(),
-      TextField({ id: 'end-coverage-0' }).clear(),
-      TextField({ id: 'begin-coverage-0' }).fillIn(dateTools.getRandomStartDate(RandomValue)),
-      TextField({ id: 'end-coverage-0' }).fillIn(dateTools.getRandomEndDate(RandomValue)),
+      TextField({ id: "begin-coverage-0" }).fillIn(dateTools.getRandomStartDate(RandomValue)),
+      TextField({ id: "end-coverage-0" }).fillIn(dateTools.getRandomEndDate(RandomValue)),
       SaveAndClose.click(),
     ]);
   },
-
-  DropdownValuesSelect(names) {
-    cy.expect(MultiSelect().exists());
-    cy.do(MultiSelect().select(names));
+  radioButtonclick(title) {
+    cy.do([cy.xpath(title).click({ force: true })])
   },
 
+  dropdownValuesSelect(names) {
+    cy.expect(MultiSelect().exists())
+    cy.do(MultiSelect().select(names))
+  },
   bySelectionStatus(selectionStatus) {
+    cy.expect(selectionStatusAccordion.exists())
     cy.do(selectionStatusAccordion.clickHeader());
     cy.do(selectionStatusAccordion
       .find(RadioButton(selectionStatus)).click());
     cy.do(Button('Search').click());
   },
   bySelectionStatusSection(selectionStatus) {
-    // cy.do(selectionStatusAccordion.clickHeader());
+    cy.expect(selectionStatusSection.exists())
     cy.do(selectionStatusSection
       .find(RadioButton(selectionStatus)).click());
-    cy.do(Button('Search').click());
+
   },
   bySelectionStatusOpen(selectionStatus) {
     cy.do(selectionStatusSection.find(Button('Selection status')).click());
@@ -138,22 +130,30 @@ export default {
     ]);
   },
 
+
   packageSearch() {
-    cy.visit(TopMenu.eholdingsPath);
-    eHoldingsSearch.switchToPackages();
-    eHoldingsProvidersSearch.byProvider('VLeBooks');
-    eholdingsPackagesSearch.bySelectionStatus('Selected');
+    cy.visit(TopMenu.eholdingsPath)
+    eHoldingsSearch.switchToPackages()
+    eHoldingsProvidersSearch.byProvider('VLeBooks')
+    eholdingsPackagesSearch.bySelectionStatus('Selected')
   },
 
-  packageButton:() => {
-    cy.expect(SearchButton.exists());
-    cy.do(SearchButton.click());
+  packageButton: () => {
+    cy.expect(SearchButton.exists())
+    cy.do(SearchButton.click())
   },
+
   searchButton() {
-    cy.expect(iconSearch.exists());
-    cy.do(iconSearch.click());
+    cy.expect(iconSearch.exists())
+    cy.do(iconSearch.click())
+
   },
+
+  modelSearch() {
+    cy.do(Modal({ id: "package-filter-modal" }).find(Button('Search').click()))
+  },
+
   providerToken() {
     cy.do(TextArea({ name: 'providerTokenValue' }).fillIn(`Test${RandomNumber}`))
+  }
 }
-};
