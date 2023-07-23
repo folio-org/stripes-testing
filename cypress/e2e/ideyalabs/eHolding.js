@@ -103,12 +103,17 @@ export default {
   },
 
   editDateRange: () => {
-    cy.expect(Spinner().absent())
+    cy.expect(Spinner().absent());
     cy.do([
-      TextField({ id: "begin-coverage-0" }).fillIn(dateTools.getRandomStartDate(randomValue)),
-      TextField({ id: "end-coverage-0" }).fillIn(dateTools.getRandomEndDate(randomValue)),
+      TextField({ id: "begin-coverage-0" }).fillIn(
+        dateTools.getTomorrowDayDateForFiscalYear(randomValue)
+      ),
+      TextField({ id: "end-coverage-0" }).fillIn(
+        dateTools.getDayAfterTomorrowDayDateForFiscalYear(randomValue)
+      ),
       SaveAndClose.click(),
     ]);
+
   },
   radioButtonclick(title) {
     cy.do([cy.xpath(title).click({ force: true })])
@@ -171,7 +176,45 @@ export default {
   },
   providerToken() {
     cy.do(TextArea({ name: 'providerTokenValue' }).fillIn(`Test${randomNumber}`))
-    cy.expect(saveAndCloseButton.exists())
-    cy.do(saveAndCloseButton.click());
-  }
+    cy.expect(SaveAndClose.exists())
+    cy.do(SaveAndClose.click());
+  },
+  getProxyValue: () => cy.then(() => KeyValue("Proxy").value()),
+  proxy() {
+    this.getProxyValue().then((val) => {
+      expect(val).to.be.exist;
+    });
+  },
+
+  getToken: () => cy.then(() => KeyValue("Provider token").value()),
+  checkToken() {
+    this.getToken().then((val) => {
+      expect(val).to.be.exist;
+    });
+  },
+
+  providerToken() {
+    cy.do(
+      TextArea({ name: "providerTokenValue" }).fillIn(`Test${randomNumber}`)
+    );
+    cy.expect(SaveAndClose.exists());
+    cy.do(SaveAndClose.click());
+  },
+
+  getAlternateRadio: () =>
+    cy.then(() => KeyValue("Show titles in package to patrons").value()),
+  alternativeRadio() {
+    this.getAlternateRadio().then((val) => {
+      const radioArray = ["Yes", "No"];
+      const newRadioArray = radioArray.filter((x) => !x.includes(val));
+      expect(val).to.not.equal(newRadioArray[0]);
+    });
+  },
+
+  getDatesValue: () => cy.then(() => KeyValue("Custom coverage dates").value()),
+  alternativeDates() {
+    this.getDatesValue().then((val) => {
+      expect(val).to.be.exist;
+    });
+  },
 }

@@ -1,25 +1,38 @@
-import { Accordion, Button, Modal, Section, RadioButton, HTML, including, MultiSelect, KeyValue, MultiSelectOption, ValueChipRoot, Spinner,Select } from '../../../../interactors';
-import getRandomPostfix from '../../utils/stringTools';
+import { Accordion, Button, Checkbox, HTML, KeyValue, Modal, MultiSelect, MultiSelectOption, Section, Select, Spinner, TextField, ValueChipRoot, including } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
+import getRandomPostfix from '../../utils/stringTools';
 
-const titlesFilterModal = Modal({ id : 'eholdings-details-view-search-modal' });
+const titlesFilterModal = Modal({ id: 'eholdings-details-view-search-modal' });
 const tagsSection = Section({ id: 'packageShowTags' });
 const closeButton = Button({ icon: 'times' });
 const actionsButton = Button('Actions');
+const editButton = Button('Edit')
 const removeFromHoldingsButton = Button('Remove from holdings');
 const confirmButton = Button('Yes, remove');
-const editButton = Button('Edit');
-const availableProxies = ['Inherited - None', 'FOLIO-Bugfest', 'EZProxy'];
-const proxySelect = Select({ id: 'eholdings-proxy-id' });
-const RandomValue = Math.floor(Math.random() * 2);
 
-const filterStatuses = { all: 'All',
+const filterStatuses = {
+  all: 'All',
   selected: 'Selected',
-  notSelected: 'Not selected' };
+  notSelected: 'Not selected'
+};
 
 const packageHoldingStatusSection = Section({ id: 'packageShowHoldingStatus' });
 const titlesSection = Section({ id: 'packageShowTitles' });
-const confirmationModal = Modal({ id:'eholdings-confirmation-modal' });
+const confirmationModal = Modal({ id: 'eholdings-confirmation-modal' });
+const availableProxies = ["Inherited - None", "FOLIO-Bugfest", "EZProxy"];
+const proxySelect = Select({ id: 'eholdings-proxy-id' });
+const customLabelButton = Button('Custom labels')
+
+const displayLabel = TextField({ name: 'customLabel1.displayLabel' })
+
+const displayLabel1 = TextField({ name: 'customLabel2.displayLabel' })
+
+const fullTextFinderCheckbox = Checkbox({ name: 'customLabel2.displayOnFullTextFinder' })
+
+const saveButton = Button('Save')
+
+const verifyCustomLabel = Section({ id: 'resourceShowCustomLabels' })
+const RandomValue = Math.floor(Math.random() * 2)
 
 const getElementIdByName = (packageName) => packageName.replaceAll(' ', '-').toLowerCase();
 
@@ -32,7 +45,7 @@ const waitTitlesLoading = () => cy.url().then(url => {
 export default {
   filterStatuses,
   waitLoading: (specialPackage) => {
-    cy.expect(Section({ id : getElementIdByName(specialPackage) }).exists());
+    cy.expect(Section({ id: getElementIdByName(specialPackage) }).exists());
     cy.expect(tagsSection.find(MultiSelect()).exists());
   },
 
@@ -55,7 +68,7 @@ export default {
       cy.expect(Spinner().absent());
     });
   },
-  verifyHoldingStatus:(expectedStatus = filterStatuses.selected) => {
+  verifyHoldingStatus: (expectedStatus = filterStatuses.selected) => {
     cy.expect(packageHoldingStatusSection.find(HTML(including(expectedStatus))).exists());
     // TODO: request dynamic loading of titles
     // need to load changed state of titles
@@ -70,10 +83,23 @@ export default {
       });
     });
   },
-  checkEmptyTitlesList:() => {
-    cy.expect(titlesSection.find(KeyValue('Records found', { value:'0' })));
+
+  customLabel(name) {
+    cy.do([(customLabelButton).click(),
+    displayLabel.fillIn(name.label1),
+    displayLabel1.fillIn(name.label2),
+    fullTextFinderCheckbox.click(),
+    saveButton.click()
+    ])
+
+    cy.visit('/eholdings/resources/58-473-185972')
+    cy.expect(verifyCustomLabel.exists())
+
   },
-  removeFromHoldings:() => {
+  checkEmptyTitlesList: () => {
+    cy.expect(titlesSection.find(KeyValue('Records found', { value: '0' })));
+  },
+  removeFromHoldings: () => {
     cy.do(actionsButton.click());
     cy.expect(removeFromHoldingsButton.exists());
     cy.do(removeFromHoldingsButton.click());
@@ -81,7 +107,7 @@ export default {
     cy.do(confirmationModal.find(confirmButton).click());
     cy.expect(confirmationModal.absent());
   },
-  addTag:() => {
+  addTag: () => {
     const newTag = `tag${getRandomPostfix()}`;
     cy.then(() => tagsSection.find(MultiSelect()).selected())
       .then(selectedTags => {
@@ -92,13 +118,13 @@ export default {
 
     return newTag;
   },
-  close:(packageName) => {
+  close: (packageName) => {
     const packageId = getElementIdByName(packageName);
-    const section = Section({ id : packageId });
-    cy.do(section.find(Button({ icon:'times', ariaLabel:`Close ${packageName}` })).click());
+    const section = Section({ id: packageId });
+    cy.do(section.find(Button({ icon: 'times', ariaLabel: `Close ${packageName}` })).click());
     cy.expect(section.absent());
   },
-  verifyExistingTags:(...expectedTags) => {
+  verifyExistingTags: (...expectedTags) => {
     expectedTags.forEach(tag => {
       cy.expect(tagsSection.find(HTML(including(tag))).exists());
     });
@@ -113,28 +139,35 @@ export default {
         });
       });
   },
-  verifyDeletedTags:(...expectedTags) => {
+  verifyDeletedTags: (...expectedTags) => {
     expectedTags.forEach(tag => {
       cy.expect(tagsSection.find(HTML(including(tag))).absent());
     });
   },
+
+  addToHodlings: () => {
+    cy.do(packageHoldingStatusSection.find(Button('Add package to holdings')).click());
+    cy.expect(confirmationModal.exists());
+    cy.do(confirmationModal.find(Button('Add package (all titles) to holdings')).click());
+    cy.expect(confirmationModal.absent());
+  },
   editactions: () => {
-    cy.expect(Spinner().absent());
-    cy.do(actionsButton.click());
-    cy.expect(editButton.exists());
+    cy.expect(Spinner().absent())
+    cy.do(actionsButton.click())
+    cy.expect(editButton.exists())
     cy.do(editButton.click());
   },
 
   changeProxy: () => {
-    cy.get('select#eholdings-proxy-id option:selected')
-      .invoke('text')
+    cy.get("select#eholdings-proxy-id option:selected")
+      .invoke("text")
       .then((text) => {
-        const options = availableProxies.filter((option) => option != text);
+        let options = availableProxies.filter((option) => option != text);
         cy.do(proxySelect.choose(options[RandomValue]));
-      });
+      })
   },
   saveAndClose: () => {
     cy.do(Button('Save & close').click());
     // eHoldingsProviderView.waitLoading();
   },
-};
+}

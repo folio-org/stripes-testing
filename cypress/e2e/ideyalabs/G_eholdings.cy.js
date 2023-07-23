@@ -1,3 +1,5 @@
+import { PaneContent } from '../../../interactors';
+import section from '../../../interactors/section';
 import circulationRules from '../../support/fragments/circulation/circulation-rules';
 import eHoldingsNewCustomPackage from '../../support/fragments/eholdings/eHoldingsNewCustomPackage';
 import eHoldingsPackages from '../../support/fragments/eholdings/eHoldingsPackages';
@@ -8,6 +10,7 @@ import eHoldingsProvidersSearch from '../../support/fragments/eholdings/eHolding
 import eHoldingsSearch from '../../support/fragments/eholdings/eHoldingsSearch';
 import organizations from '../../support/fragments/organizations/organizations';
 import newRequest from '../../support/fragments/requests/newRequest';
+import settingsMenu from '../../support/fragments/settingsMenu';
 import topMenu from '../../support/fragments/topMenu';
 import eHolding from './eHolding';
 
@@ -66,23 +69,25 @@ describe('Create a custom package', () => {
     eHolding.packageButtonClick('Expand all', "true")
   });
 
-  it('C703-Set [Show titles in package to patrons] to Hide', () => {
-    cy.visit(topMenu.eholdingsPath)
-    eHoldingsSearch.switchToPackages()
-    eHoldingsProvidersSearch.byProvider("Edinburgh Scholarship Online")
-    eHoldingsPackagesSearch.bySelectionStatus('Selected')
-    eHoldingsProviders.viewPackage()
-    eHolding.editActions()
-    eHolding.patronRadioButton()
-    eHoldingsProviderEdit.saveAndClose()
-  })
+  it(" C703-Set [Show titles in package to patrons] to Hide", () => {
+    cy.visit(topMenu.eholdingsPath);
+    eHoldingsSearch.switchToPackages();
+    eHoldingsProvidersSearch.byProvider("Edinburgh Scholarship Online");
+    eHoldingsPackagesSearch.bySelectionStatus("Selected");
+    eHoldingsProviders.viewPackage();
+    eHolding.editActions();
+    eHolding.patronRadioButton();
+    eHoldingsProviderEdit.saveAndClose();
+    eHolding.alternativeRadio()
+  });
 
-  it("C3464-Update Package Proxy", () => {
+  it("C3464__Update Package Proxy", () => {
     cy.visit(topMenu.eholdingsPath);
     eHoldingsSearch.switchToPackages();
     eHoldingsProvidersSearch.byProvider("Edinburgh Scholarship Online");
     eHoldingsProviders.viewPackage();
-    eHoldingsPackages.updateProxy()
+    eHoldingsPackages.updateProxy();
+    eHolding.proxy()
   });
 
 
@@ -108,16 +113,16 @@ describe('Create a custom package', () => {
     newRequest.saveRequestAndClose()
   })
 
-  it('3466-Edit/Add a token to the Gale Academic OneFile', () => {
-    cy.visit(topMenu.eholdingsPath)
-    eHoldingsSearch.switchToPackages()
-    eHoldingsProvidersSearch.byProvider("Gale Academic OneFile")
-    eHoldingsPackagesSearch.bySelectionStatus('Selected')
-    eHoldingsProviders.viewPackage()
-    eHolding.editActions()
-    eHolding.providerToken()
-    eHoldingsProviderEdit.saveAndClose()
-  })
+  it("3466__Edit/Add a token to the Gale Academic OneFile", () => {
+    cy.visit(topMenu.eholdingsPath);
+    eHoldingsSearch.switchToPackages();
+    eHoldingsProvidersSearch.byProvider("Gale Academic OneFile");
+    eHoldingsPackagesSearch.bySelectionStatus("Selected");
+    eHoldingsProviders.viewPackage();
+    eHolding.editActions();
+    eHolding.providerToken();
+    eHolding.checkToken()
+  });
 
   it('C694-Search providers for [Gale | Cengage]. Then Search list of packages on Provider detail record for all selected packages', () => {
     eHolding.switchToPackages()
@@ -129,6 +134,7 @@ describe('Create a custom package', () => {
     cy.visit(settingsMenu.circulationRulesPath)
     circulationRules.fillInPolicy({ priorityType: "g ", loanPolicyName: "irina-loan-policy", overdueFinePolicyName: "no-overdue-fine", lostItemFeePolicyName: "lostsetfines", requestPolicyName: "allow-all", noticePolicyName: "julies-check-out-policy", priorityTypeName: "ip" })
     circulationRules.saveCirculationRules()
+    circulationRules.verifyToast()
   })
 
   it('C656-Ensure interface alerts user of syntax errors in rules', () => {
@@ -138,11 +144,12 @@ describe('Create a custom package', () => {
     circulationRules.verifyError()
   })
 
-  it('C699-Add or edit package custom coverage', () => {
+  it("C699-Add or edit package custom coverage", () => {
+    cy.visit(topMenu.eholdingsPath);
     eHolding.switchToPackage();
     eHoldingsPackages.openPackage();
     organizations.editOrganization();
     eHolding.editDateRange();
-
+    eHolding.alternativeDates();
   });
 })

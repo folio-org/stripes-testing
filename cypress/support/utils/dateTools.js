@@ -194,4 +194,33 @@ export default {
     const formattedTime = currentDate.toLocaleString('en-US', options);
     return formattedTime;
   },
+  getTomorrowDayDateForFiscalYear: (date) => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1 + date);
+    if (today.getMonth() !== tomorrow.getMonth()) {
+      tomorrow.setMonth(tomorrow.getMonth());
+    }
+    const month = tomorrow.getMonth() + 1;
+    const day = tomorrow.getDate();
+    const year = tomorrow.getFullYear();
+    return `${month.toString().padStart(2, "0")}/${day
+      .toString()
+      .padStart(2, "0")}/${year}`;
+  },
+
+  getDayAfterTomorrowDayDateForFiscalYear: (date) => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 2 + date);
+    if (today.getMonth() !== tomorrow.getMonth()) {
+      tomorrow.setMonth(tomorrow.getMonth());
+    }
+    const month = tomorrow.getMonth() + 1;
+    const day = tomorrow.getDate();
+    const year = tomorrow.getFullYear();
+    return `${month.toString().padStart(2, "0")}/${day
+      .toString()
+      .padStart(2, "0")}/${year}`;
+  },
 };
