@@ -14,7 +14,6 @@ import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import { INSTANCE_STATUS_TERM_NAMES,
   HOLDINGS_TYPE_NAMES,
@@ -33,12 +32,18 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 
 describe('ui-data-import', () => {
   let user;
+  let instanceHrid;
   const testData = {
     protectedField: '856',
     protectedFieldId: null,
-    fileName: 'marcFileForC397983.mrc',
+    fileName: 'marcFileForSubmatch.mrc',
     newUri: 'http://jbjjhhjj:3000/Test'
   };
+  const fileNameForCreate = `C397984 autotestFileForCreate.${getRandomPostfix()}.mrc`;
+  const fileNameForUpdate = `C397984 autotestFileForUpdate.${getRandomPostfix()}.mrc`;
+  const editedMarcFileNameForCreate = `C397984 editedAutotestFileForCreate.${getRandomPostfix()}.mrc`;
+  const editedMarcFileNameForUpdate = `C397984 editedAutotestFileForUpdate.${getRandomPostfix()}.mrc`;
+  const uniq001Field = Helper.getRandomBarcode();
   const collectionOfMappingAndActionProfilesForCreate = [
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
@@ -94,7 +99,7 @@ describe('ui-data-import', () => {
     profileName: `C397984 035$a to 035$a match with instance status type submatch ${getRandomPostfix()}`,
     acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
-  
+
   before('create test data and login', () => {
     cy.createTempUser([
       permissions.settingsDataImportEnabled.gui,
@@ -122,6 +127,31 @@ describe('ui-data-import', () => {
           });
         cy.login(user.username, user.password,
           { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+      });
+  });
+
+  after('delete test data', () => {
+    MarcFieldProtection.deleteMarcFieldProtectionViaApi(testData.protectedFieldId);
+    InstanceStatusTypes.deleteViaApi(testData.instanceStatusTypeId);
+    FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForCreate}`);
+    FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForUpdate}`);
+    // delete profiles
+    JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
+    JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
+    MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+    collectionOfMappingAndActionProfilesForCreate.forEach(profile => {
+      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+    });
+    collectionOfMappingAndActionProfilesForUpdate.forEach(profile => {
+      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+    });
+    Users.deleteViaApi(user.userId);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
       });
   });
 
@@ -182,13 +212,15 @@ describe('ui-data-import', () => {
       });
 
       // change file for changing content of 856 field
-      DataImport.editMarcFile('marcFileForC397983.mrc', editedMarcFileNameForUpdate, ['9000098', 'http://jbjjhhjj:3000/'], [uniq001Field, 'http://jbjjhhjj:3000/Test']);
+      DataImport.editMarcFile(testData.fileName, editedMarcFileNameForUpdate, ['9000098', 'http://jbjjhhjj:3000/'],
+        [uniq001Field, 'http://jbjjhhjj:3000/Test']);
 
       // create Field mapping profiles for updating
       cy.visit(SettingsMenu.mappingProfilePath);
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillMappingProfileForUpdatesMarc(collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile);
       NewFieldMappingProfile.markFieldForProtection(testData.protectedField);
+
       FieldMappingProfiles.saveProfile();
       FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.name);
 
@@ -210,7 +242,8 @@ describe('ui-data-import', () => {
       JobProfiles.createJobProfileWithLinkingProfiles(
         jobProfileForUpdate,
         collectionOfMappingAndActionProfilesForUpdate[0].actionProfile.name,
-        matchProfile.profileName);
+        matchProfile.profileName
+      );
       JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
 
       cy.visit(TopMenu.dataImportPath);
