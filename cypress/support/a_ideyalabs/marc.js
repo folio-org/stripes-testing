@@ -58,10 +58,6 @@ export default {
     cy.do(Button({ icon: 'times' }).click());
   },
 
-  crossIcon: () => {
-    cy.do(Button({ icon: 'times' }).click());
-  },
-
   create006Tag: () => {
     cy.get('.quickMarcEditorAddField:last').click();
 

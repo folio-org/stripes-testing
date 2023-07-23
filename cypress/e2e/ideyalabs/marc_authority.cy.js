@@ -8,20 +8,22 @@ import topMenu from '../../support/fragments/topMenu';
 
 const testData = {
   searchOption: 'Keyword',
-  value: 'Speaking Oratory debating',
+  authority650FieldValue: 'Speaking Oratory debating',
   searchHoldingOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
   holdingValue: 'The !!!Kung of Nyae Nyae / Lorna Marshall.',
   record: 'Gibbons, Boyd',
+  accordion: 'Subject',
 
   derive: {
     searchOption: 'Personal name',
-    value: 'Gibbons, Boyd',
+    authority700FieldValue: 'Gibbons, Boyd',
     tagValue: '700',
     rowIndex: 1,
+    accordion: 'Contributor'
   },
   link: {
     searchOption: 'Personal name',
-    value: 'Gibbons, Boyd',
+    authority700FieldValue: 'Gibbons, Boyd',
     tagValue: '700',
     content: ' ',
     rowIndex: 1,
@@ -37,27 +39,26 @@ describe('Feature MARC Authority', () => {
     cy.visit(topMenu.inventoryPath);
     inventorySearchAndFilter.switchToHoldings();
     inventorySearchAndFilter.bySource('MARC');
-    cy.wait(2000);
     inventorySearchAndFilter.selectSearchResultByRowIndex(
       testData.derive.rowIndex
     );
-    // inventorySearchAndFilter.selectSearchResultItem();
     inventoryInstance.editMarcBibliographicRecord();
     inventoryInstance.verifyAndClickLinkIcon('650');
     marcAuthorities.switchToSearch();
     inventoryInstance.verifySearchOptions();
     marcAuthorities.clickReset();
-    marcAuthorities.searchBy(testData.searchOption, testData.value);
+    inventoryInstance.searchResults(testData.authority650FieldValue);
     marcAuthorities.clickLinkButton();
     marcAuthority.checkLinkingAuthority650();
     marc.saveAndClose();
+    inventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(testData.accordion);
     inventoryInstance.viewSource();
     marcAuthorities.closeMarcViewPane();
     inventoryInstance.editMarcBibliographicRecord();
-    cy.wait(2000);
     inventoryInstance.verifyAndClickUnlinkIcon('650');
     marc.popupUnlinkButton();
     marc.saveAndClose();
+    inventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(testData.accordion);
     inventoryInstance.viewSource();
   });
 
@@ -65,7 +66,6 @@ describe('Feature MARC Authority', () => {
     cy.visit(topMenu.inventoryPath);
     inventorySearchAndFilter.switchToHoldings();
     inventorySearchAndFilter.bySource('MARC');
-    cy.wait(3000);
     inventorySearchAndFilter.selectSearchResultByRowIndex(
       testData.derive.rowIndex
     );
@@ -80,7 +80,7 @@ describe('Feature MARC Authority', () => {
       marcAuthorities.clickReset();
       marcAuthorities.searchBy(
         testData.derive.searchOption,
-        testData.derive.value
+        testData.derive.authority700FieldValue
       );
       marcAuthorities.clickLinkButton();
       marcAuthority.checkLinkingAuthority700();
@@ -93,6 +93,7 @@ describe('Feature MARC Authority', () => {
     inventoryInstance.verifyAndClickUnlinkIcon(testData.derive.tagValue);
     marc.popupUnlinkButton();
     marc.saveAndClose();
+    inventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(testData.derive.accordion);
     inventoryInstance.editMarcBibliographicRecord();
     inventoryInstance.verifyLinkIcon(testData.derive.tagValue);
   });
@@ -101,7 +102,6 @@ describe('Feature MARC Authority', () => {
     cy.visit(topMenu.inventoryPath);
     inventorySearchAndFilter.switchToHoldings();
     inventorySearchAndFilter.bySource('MARC');
-    cy.wait(2000);
     inventorySearchAndFilter.selectSearchResultByRowIndex(
       testData.link.rowIndex
     );
@@ -110,11 +110,14 @@ describe('Feature MARC Authority', () => {
     marc.popupUnlinkButton();
     inventoryInstance.verifyAndClickLinkIcon(testData.link.tagValue);
     marcAuthorities.switchToSearch();
+    inventoryInstance.verifySelectMarcAuthorityModal();
     inventoryInstance.verifySearchOptions();
-    marcAuthorities.searchBy(testData.link.searchOption, testData.link.value);
+    inventoryInstance.verifySearchOptions();
+    marcAuthorities.searchBy(testData.link.searchOption, testData.link.authority700FieldValue);
     marcAuthorities.clickLinkButton();
     marcAuthority.checkLinkingAuthority700();
     marc.saveAndClose();
+    inventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(testData.derive.accordion);
   });
 
   it('C376987:print marcfile', () => {
@@ -124,16 +127,12 @@ describe('Feature MARC Authority', () => {
     inventoryInstance.selectRecord();
     marcAuthoritiesDelete.clickprintButton();
     cy.exec('java -jar sikuli_ide.jar -r printer.sikuli');
-    cy.wait(3000);
   });
 
   it('C388651 - 008 field updated when valid LDR 06-07 combinations entered when editing MARC bib record', () => {
-    // cy.login(Cypress.env("diku_login"), Cypress.env("diku_password"));
-
     cy.visit(topMenu.inventoryPath);
     inventorySearchAndFilter.switchToHoldings();
     inventorySearchAndFilter.bySource('MARC');
-    cy.wait(3000);
     inventorySearchAndFilter.selectSearchResultByRowIndex(
       testData.derive.rowIndex
     );
