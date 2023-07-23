@@ -248,3 +248,8 @@ export const VENDOR_NAMES = {
   HARRASSOWITZ: 'Otto Harrassowitz GmbH & Co. KG',
   EBSCO:'EBSCO SUBSCRIPTION SERVICES'
 };
+
+export const HOLDINGS_TYPE_NAMES = {
+  ELECTRONIC: 'Electronic',
+  MONOGRAPH: 'Monograph'
+};
