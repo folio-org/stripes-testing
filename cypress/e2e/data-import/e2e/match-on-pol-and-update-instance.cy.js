@@ -12,7 +12,8 @@ import {
   EXISTING_RECORDS_NAMES,
   ORDER_FORMAT_NAMES,
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
-  VENDOR_NAMES
+  VENDOR_NAMES,
+  LOCATION_NAMES
 } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -267,8 +268,8 @@ describe('ui-data-import', () => {
 
       FileDetails.openInstanceInInventory('Updated');
       InventoryInstance.checkIsInstanceUpdated();
-      InventoryInstance.checkIsHoldingsCreated(['Main Library >']);
-      InventoryInstance.openHoldingsAccordion('Main Library >');
+      InventoryInstance.checkIsHoldingsCreated([`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`]);
+      InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
       InventoryInstance.checkIsItemCreated(itemBarcode);
       InventoryInstance.viewSource();
       InventoryViewSource.verifyBarcodeInMARCBibSource(itemBarcode);

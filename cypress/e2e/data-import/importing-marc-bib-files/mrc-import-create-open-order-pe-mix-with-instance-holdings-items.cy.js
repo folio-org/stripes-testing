@@ -179,11 +179,11 @@ describe('ui-data-import', () => {
           instanceHrid = initialInstanceHrId;
         });
         InstanceRecordView.verifyHotlinkToPOL(polNumber);
-        InstanceRecordView.verifyIsHoldingsCreated(['Main Library >']);
+        InstanceRecordView.verifyIsHoldingsCreated([`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`]);
         InventoryInstance.openHoldingView();
         HoldingsRecordView.checkHoldingRecordViewOpened();
         HoldingsRecordView.close();
-        InventoryInstance.openHoldingsAccordion('Main Library >');
+        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
         InventoryInstance.openItemByBarcode('No barcode');
         ItemRecordView.waitLoading();
         ItemRecordView.checkHotlinksToCreatedPOL(polNumber);
