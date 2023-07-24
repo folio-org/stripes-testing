@@ -194,7 +194,8 @@ export const INSTANCE_STATUS_TERM_NAMES = {
   CATALOGED: 'Cataloged',
   UNCATALOGED: 'Uncataloged',
   OTHER: 'Other',
-  NOTYETASSIGNED: 'Not yet assigned'
+  NOTYETASSIGNED: 'Not yet assigned',
+  ELECTRONIC_RESOURCE: 'Electronic Resource'
 };
 
 export const CALL_NUMBER_TYPE_NAMES = {
@@ -247,4 +248,9 @@ export const VENDOR_NAMES = {
   GOBI: 'GOBI Library Solutions',
   HARRASSOWITZ: 'Otto Harrassowitz GmbH & Co. KG',
   EBSCO:'EBSCO SUBSCRIPTION SERVICES'
+};
+
+export const HOLDINGS_TYPE_NAMES = {
+  ELECTRONIC: 'Electronic',
+  MONOGRAPH: 'Monograph'
 };

@@ -3,7 +3,6 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import TestTypes from '../../../support/dictionary/testTypes';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import permissions from '../../../support/dictionary/permissions';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
@@ -95,9 +94,9 @@ describe('ui-inventory: location', () => {
     // select instance
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
-    InventoryInstances.selectInstance();
+    ItemRecordView.waitLoading();
     ItemRecordView.closeDetailView();
-    InventoryInstance.openHoldings([toBeEditedLocationName]);
+    InventoryInstance.openHoldings(['']);
     InventoryInstance.openItemByBarcode(ITEM_BARCODE);
 
     // edit instance
@@ -109,7 +108,7 @@ describe('ui-inventory: location', () => {
     // verify results
     InventoryInstance.checkHoldingsTable(
       toBeEditedLocationName,
-      0,
+      1,
       '-',
       ITEM_BARCODE,
       ITEM_STATUS_NAMES.AVAILABLE,
@@ -124,9 +123,9 @@ describe('ui-inventory: location', () => {
     // select instance
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
-    InventoryInstances.selectInstance();
+    ItemRecordView.waitLoading();
     ItemRecordView.closeDetailView();
-    InventoryInstance.openHoldings([editedLocationName]);
+    InventoryInstance.openHoldings(['']);
     InventoryInstance.openItemByBarcode(ITEM_BARCODE);
 
     // edit instance
@@ -138,7 +137,7 @@ describe('ui-inventory: location', () => {
     // verify results
     InventoryInstance.checkHoldingsTable(
       editedLocationName,
-      0,
+      1,
       '-',
       ITEM_BARCODE,
       ITEM_STATUS_NAMES.AVAILABLE,
