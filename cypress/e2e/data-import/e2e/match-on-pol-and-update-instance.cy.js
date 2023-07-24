@@ -2,8 +2,7 @@ import uuid from 'uuid';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import {
-  LOAN_TYPE_NAMES,
+import { LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
   ITEM_STATUS_NAMES,
   FOLIO_RECORD_TYPE,
@@ -13,8 +12,8 @@ import {
   ORDER_FORMAT_NAMES,
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   VENDOR_NAMES,
-  LOCATION_NAMES
-} from '../../../support/constants';
+  LOCATION_NAMES,
+  HOLDINGS_TYPE_NAMES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import Orders from '../../../support/fragments/orders/orders';
@@ -162,7 +161,7 @@ describe('ui-data-import', () => {
   const createHoldingsMappingProfile = (holdingsMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
-    NewFieldMappingProfile.fillHoldingsType('Monograph');
+    NewFieldMappingProfile.fillHoldingsType(HOLDINGS_TYPE_NAMES.MONOGRAPH);
     NewFieldMappingProfile.fillPermanentLocation('980$a');
     NewFieldMappingProfile.fillCallNumberType(holdingsMappingProfile.callNumberType);
     NewFieldMappingProfile.fillCallNumber('980$b " " 980$c');

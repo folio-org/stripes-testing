@@ -11,7 +11,8 @@ import { LOAN_TYPE_NAMES,
   EXPORT_TRANSFORMATION_NAMES,
   INSTANCE_STATUS_TERM_NAMES,
   CALL_NUMBER_TYPE_NAMES,
-  EXISTING_RECORDS_NAMES } from '../../../support/constants';
+  EXISTING_RECORDS_NAMES,
+  HOLDINGS_TYPE_NAMES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -117,7 +118,7 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C356791 autotest holdings mapping profile.${getRandomPostfix()}`,
-        holdingsType: 'Electronic',
+        holdingsType: HOLDINGS_TYPE_NAMES.ELECTRONIC,
         permanetLocation: `"${LOCATION_NAMES.ONLINE}"`,
         permanetLocationUI: LOCATION_NAMES.ONLINE_UI,
         callNumberType: CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS,
