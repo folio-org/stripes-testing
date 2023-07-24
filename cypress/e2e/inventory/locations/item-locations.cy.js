@@ -3,7 +3,6 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import TestTypes from '../../../support/dictionary/testTypes';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import permissions from '../../../support/dictionary/permissions';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
