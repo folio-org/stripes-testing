@@ -150,6 +150,7 @@ export default {
   },
 
   enterEndTime(fromDate, toDate) {
+    waitClick();
     cy.do([
       endTimeAccordion.clickHeader(),
       endTimeAccordion.find(startDateTextfield).fillIn(fromDate),
@@ -163,6 +164,7 @@ export default {
   },
 
   searchBySystemNo() {
+    waitClick();
     cy.do([
       systemAccordion.clickHeader(),
       systemAccordion.find(Checkbox({ label: 'No' })).click(),
