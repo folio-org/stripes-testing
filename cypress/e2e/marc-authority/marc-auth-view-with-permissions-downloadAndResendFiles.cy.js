@@ -4,6 +4,7 @@ import Permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
+import DateTools from '../../support/utils/dateTools';
 
 describe('MARC -> MARC Authority', () => {
   const testData = {};
@@ -19,9 +20,9 @@ describe('MARC -> MARC Authority', () => {
       Permissions.exportManagerAll.gui,
     ]).then(createdUserProperties => {
       testData.userProperties = createdUserProperties;
-    });
 
-    cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.marcAuthorities, waiter: MarcAuthorities.waitLoading });
+      cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.marcAuthorities, waiter: MarcAuthorities.waitLoading });
+    });
   });
 
   after('Deleting user', () => {
