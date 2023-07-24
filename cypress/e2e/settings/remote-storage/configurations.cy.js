@@ -1,6 +1,6 @@
 import RemoteStorageHelper from '../../../support/fragments/settings/remote-storage/remote-storage-configuration';
 import Users from '../../../support/fragments/users/users';
-import TestTypes from '../../../support/dictionary/testTypes';
+import testTypes from '../../../support/dictionary/testTypes';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import devTeams from '../../../support/dictionary/devTeams';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -17,12 +17,12 @@ describe('remote-storage-configuration', () => {
     });
   });
 
-  after('delet test data', () => {
+  after('delete test data', () => {
     RemoteStorageHelper.deleteRemoteStorage(name);
     Users.deleteViaApi(user.userId);
   });
 
-  it('C343219 Check “Accession tables” page without configurations with CaiaSoft provider (firebird)', { tags: [TestTypes.criticalPath, devTeams.firebird] }, () => {
+  it('C343219 Check “Accession tables” page without configurations with CaiaSoft provider (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     const dematicEMS = RemoteStorageHelper.configurations.DematicEMS;
     const caiaSoft = RemoteStorageHelper.configurations.CaiaSoft;
     const dematicStagingDirector = RemoteStorageHelper.configurations.DematicStagingDirector;
