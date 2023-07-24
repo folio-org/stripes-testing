@@ -23,6 +23,7 @@ const deleteBtn = Button({ icon: 'trash' });
 const keepEditingBtn = Button('Keep editing');
 const areYouSureForm = Modal('Are you sure?');
 const downloadPreviewBtn = Button('Download preview');
+const newBulkEditButton = Button('New bulk edit');
 
 function getEmailField() {
   // 2 the same selects without class, id or someone different attr
@@ -43,6 +44,7 @@ export default {
   },
   openInAppStartBulkEditFrom() {
     cy.do(Button('Start bulk edit').click());
+    cy.wait(1000);
   },
   verifyBulkEditForm(rowIndex = 0) {
     cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'));
@@ -306,10 +308,8 @@ export default {
     ]);
   },
 
-  newBulkEdit() {
-    cy.do(Button('New bulk edit').click());
-    // very fast reload bulk edit page
-    cy.wait(500);
+  verifyNoNewBulkEditButton() {
+    cy.expect(newBulkEditButton.absent());
   },
 
   verifyUsersActionDropdownItemsInCaseOfError() {

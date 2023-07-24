@@ -167,7 +167,7 @@ export default {
     cy.expect([
       circulationHistoryAccordion.find(KeyValue('Check in date')).has({ value: including(date) }),
       circulationHistoryAccordion.find(KeyValue('Service point')).has({ value: servicePointName }),
-      circulationHistoryAccordion.find(KeyValue('Source')).has({value: including(userName) })
+      circulationHistoryAccordion.find(KeyValue('Source')).has({ value: including(userName) })
     ]);
   },
 

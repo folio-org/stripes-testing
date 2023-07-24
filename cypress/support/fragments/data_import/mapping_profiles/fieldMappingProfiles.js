@@ -123,6 +123,12 @@ export default {
     cy.do(saveProfileButton.click());
   },
 
+  createMappingProfileForUpdatesMarcAuthority:(mappingProfile) => {
+    openNewMappingProfileForm();
+    NewFieldMappingProfile.fillMappingProfileForUpdatesMarcAuthority(mappingProfile);
+    cy.do(saveProfileButton.click());
+  },
+
   createMappingProfileForUpdatesAndOverrideMarc:(mappingProfile, firstProtectedField, secondProtectedField) => {
     openNewMappingProfileForm();
     NewFieldMappingProfile.fillMappingProfileForUpdatesMarc(mappingProfile);
