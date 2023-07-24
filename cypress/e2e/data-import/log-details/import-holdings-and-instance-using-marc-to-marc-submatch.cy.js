@@ -35,65 +35,11 @@ describe('ui-data-import', () => {
   const testData = {
     protectedField: '856',
     protectedFieldId: null,
-    fileName: 'marcFileForSubmatch.mrc'
+    fileName: 'marcFileForSubmatch.mrc',
+    newUri: 'http://jbjjhhjj:3000/Test2'
   };
   let user;
-  let instanceHrid;
-  // profiles for create
-  const collectionOfMappingAndActionProfilesForCreate = [
-    {
-      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-        name: `Create ER Instance ${getRandomPostfix()}`,
-        instanceStatusTerm: INSTANCE_STATUS_TERM_NAMES.ELECTRONIC_RESOURCE },
-      actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-        name: `Create ER Instance ${getRandomPostfix()}` }
-    },
-    {
-      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `Create ER Holdings ${getRandomPostfix()}`,
-        holdingsType: HOLDINGS_TYPE_NAMES.ELECTRONIC,
-        permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
-        relationship: 'Resource',
-        uri: '856$u',
-        linkText: '856$y',
-        materialsSpecified: '856$3',
-        urlPublicNote: '856$z' },
-      actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `Create ER Holdings ${getRandomPostfix()}` }
-    }
-  ];
-  // profiles for update
-  const collectionOfMappingAndActionProfilesForUpdate = [
-    {
-      mappingProfile: { name: `Override 856 protection ${getRandomPostfix()}`,
-        typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC },
-      actionProfile: { typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
-        name: `Update srs override 856 protection ${getRandomPostfix()}`,
-        action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
-    }
-  ];
-  const collectionOfMatchProfiles = [
-    {
-      matchProfile: { profileName: `Instance status submatch - Electronic Resource ${getRandomPostfix()}`,
-        incomingStaticValue: 'Electronic Resource',
-        matchCriterion: 'Exactly matches',
-        existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
-        existingRecordOption: NewMatchProfile.optionsList.instanceStatusTerm }
-    },
-    {
-      matchProfile: { profileName: `035$a to 035$a match ${getRandomPostfix()}`,
-        incomingRecordFields: {
-          field: '035',
-          subfield: 'a'
-        },
-        existingRecordFields: {
-          field: '035',
-          subfield: 'a'
-        },
-        matchCriterion: 'Exactly matches',
-        existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC }
-    }
-  ];
+  const instanceHrids = [];
 
   before('create test data and login', () => {
     cy.createTempUser([
@@ -105,53 +51,49 @@ describe('ui-data-import', () => {
       .then(userProperties => {
         user = userProperties;
 
-        // MarcFieldProtection.createMarcFieldProtectionViaApi({
-        //   indicator1: '*',
-        //   indicator2: '*',
-        //   subfield: '*',
-        //   data: '*',
-        //   source: 'USER',
-        //   field: testData.protectedField
-        // })
-        //   .then((resp) => {
-        //     testData.protectedFieldId = resp.id;
-        //   });
-        // NewInstanceStatusType.createViaApi()
-        //   .then((initialInstanceStatusType) => {
-        //     testData.instanceStatusTypeId = initialInstanceStatusType.body.id;
-        //   });
+        MarcFieldProtection.createMarcFieldProtectionViaApi({
+          indicator1: '*',
+          indicator2: '*',
+          subfield: '*',
+          data: '*',
+          source: 'USER',
+          field: testData.protectedField
+        })
+          .then((resp) => {
+            testData.protectedFieldId = resp.id;
+          });
+        NewInstanceStatusType.createViaApi()
+          .then((initialInstanceStatusType) => {
+            testData.instanceStatusTypeId = initialInstanceStatusType.body.id;
+          });
         cy.login(user.username, user.password);
       });
   });
 
-  // after('delete test data', () => {
-  //   MarcFieldProtection.deleteMarcFieldProtectionViaApi(testData.protectedFieldId);
-  //   InstanceStatusTypes.deleteViaApi(testData.instanceStatusTypeId);
-  //   FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForCreate}`);
-  //   FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForUpdate}`);
-  //   // delete profiles
-  //   JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-  //   JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
-  //   MatchProfiles.deleteMatchProfile(collectionOfMatchProfiles[1].matchProfile.profileName);
-  //   MatchProfiles.deleteMatchProfile(collectionOfMatchProfiles[0].matchProfile.profileName);
-  //   collectionOfMappingAndActionProfilesForCreate.forEach(profile => {
-  //     ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-  //     FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
-  //   });
-  //   collectionOfMappingAndActionProfilesForUpdate.forEach(profile => {
-  //     ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-  //     FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
-  //   });
-  //  Users.deleteViaApi(user.userId);
-  // });
+  after('delete test data', () => {
+    MarcFieldProtection.deleteMarcFieldProtectionViaApi(testData.protectedFieldId);
+    InstanceStatusTypes.deleteViaApi(testData.instanceStatusTypeId);
+    Users.deleteViaApi(user.userId);
+    instanceHrids.forEach(hrid => {
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` })
+        .then((instance) => {
+          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
+    });
 
-  // afterEach('', () => {
-  //   cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-  //     .then((instance) => {
-  //       cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-  //       InventoryInstance.deleteInstanceViaApi(instance.id);
-  //     });
-  // });
+    // // delete profiles
+    // MatchProfiles.deleteMatchProfile(collectionOfMatchProfiles[1].matchProfile.profileName);
+    // MatchProfiles.deleteMatchProfile(collectionOfMatchProfiles[0].matchProfile.profileName);
+    // collectionOfMappingAndActionProfilesForCreate.forEach(profile => {
+    //   ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+    //   FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+    // });
+    // collectionOfMappingAndActionProfilesForUpdate.forEach(profile => {
+    //   ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+    //   FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+    // });
+  });
 
   it('C397983 Verify the ability to import Holdings and Instance using marc-to-marc submatch: 2 matches (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
@@ -161,11 +103,66 @@ describe('ui-data-import', () => {
       const editedMarcFileNameForUpdate = `C397983 editedAutotestFileForUpdate.${getRandomPostfix()}.mrc`;
       const uniq001Field = Helper.getRandomBarcode();
       const newUri = 'http://jbjjhhjj:3000/Test2';
+      // profiles for create
+      const collectionOfMappingAndActionProfilesForCreate = [
+        {
+          mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+            name: `C397983 Create ER Instance ${getRandomPostfix()}`,
+            instanceStatusTerm: INSTANCE_STATUS_TERM_NAMES.ELECTRONIC_RESOURCE },
+          actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+            name: `C397983 Create ER Instance ${getRandomPostfix()}` }
+        },
+        {
+          mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+            name: `C397983 Create ER Holdings ${getRandomPostfix()}`,
+            holdingsType: HOLDINGS_TYPE_NAMES.ELECTRONIC,
+            permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
+            relationship: 'Resource',
+            uri: '856$u',
+            linkText: '856$y',
+            materialsSpecified: '856$3',
+            urlPublicNote: '856$z' },
+          actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+            name: `C397983 Create ER Holdings ${getRandomPostfix()}` }
+        }
+      ];
       const jobProfileForCreate = {
         ...NewJobProfile.defaultJobProfile,
         profileName: `C397983 Create ER Instance and Holdings ${getRandomPostfix()}`,
         acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
       };
+      // profiles for update
+      const collectionOfMappingAndActionProfilesForUpdate = [
+        {
+          mappingProfile: { name: `C397983 Override 856 protection ${getRandomPostfix()}`,
+            typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC },
+          actionProfile: { typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+            name: `C397983 Update srs override 856 protection ${getRandomPostfix()}`,
+            action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
+        }
+      ];
+      const collectionOfMatchProfiles = [
+        {
+          matchProfile: { profileName: `C397983 Instance status submatch - Electronic Resource ${getRandomPostfix()}`,
+            incomingStaticValue: 'Electronic Resource',
+            matchCriterion: 'Exactly matches',
+            existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+            existingRecordOption: NewMatchProfile.optionsList.instanceStatusTerm }
+        },
+        {
+          matchProfile: { profileName: `C397983 035$a to 035$a match ${getRandomPostfix()}`,
+            incomingRecordFields: {
+              field: '035',
+              subfield: 'a'
+            },
+            existingRecordFields: {
+              field: '035',
+              subfield: 'a'
+            },
+            matchCriterion: 'Exactly matches',
+            existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC }
+        }
+      ];
       const jobProfileForUpdate = {
         ...NewJobProfile.defaultJobProfile,
         profileName: `C397983 035$a to 035$a match with instance status type submatch ${getRandomPostfix()}`,
@@ -228,7 +225,8 @@ describe('ui-data-import', () => {
       });
 
       // change file for changing content of 856 field
-      DataImport.editMarcFile(testData.fileName, editedMarcFileNameForUpdate, ['9000098', 'http://jbjjhhjj:3000/'], [uniq001Field, 'http://jbjjhhjj:3000/Test2']);
+      DataImport.editMarcFile(testData.fileName, editedMarcFileNameForUpdate, ['9000098', 'http://jbjjhhjj:3000/'],
+        [uniq001Field, newUri]);
 
       // create Field mapping profiles for updating
       cy.visit(SettingsMenu.mappingProfilePath);
@@ -277,150 +275,223 @@ describe('ui-data-import', () => {
       Logs.openFileDetails(fileNameForUpdate);
       FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc);
       FileDetails.openInstanceInInventory('Updated');
-      InventoryInstance.getAssignedHRID().then(hrId => { instanceHrid = hrId; });
-      InstanceRecordView.verifyElectronicAccess(testData.newUri);
+      InventoryInstance.getAssignedHRID()
+        .then(hrId => {
+          instanceHrids.push(hrId);
+        });
+      InstanceRecordView.verifyElectronicAccess(newUri);
       InstanceRecordView.viewSource();
-      InventoryViewSource.verifyFieldInMARCBibSource(testData.protectedField, testData.newUri);
+      InventoryViewSource.verifyFieldInMARCBibSource(testData.protectedField, newUri);
 
-      // delete edited files
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForCreate}`);
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForUpdate}`);
       // delete profiles
       JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
       JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
+      MatchProfiles.deleteMatchProfile(collectionOfMatchProfiles[1].matchProfile.profileName);
+      MatchProfiles.deleteMatchProfile(collectionOfMatchProfiles[0].matchProfile.profileName);
+      collectionOfMappingAndActionProfilesForCreate.forEach(profile => {
+        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+      });
+      collectionOfMappingAndActionProfilesForUpdate.forEach(profile => {
+        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+      });
+      // delete created files
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForCreate}`);
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForUpdate}`);
     });
 
-  // it('C397984 Verify the ability to import Holdings and Instance using marc-to-marc submatch: 1 match (folijet)',
-  //   { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-  //     const fileNameForCreate = `C397984 autotestFileForCreate.${getRandomPostfix()}.mrc`;
-  //     const fileNameForUpdate = `C397984 autotestFileForUpdate.${getRandomPostfix()}.mrc`;
-  //     const editedMarcFileNameForCreate = `C397984 editedAutotestFileForCreate.${getRandomPostfix()}.mrc`;
-  //     const editedMarcFileNameForUpdate = `C397984 editedAutotestFileForUpdate.${getRandomPostfix()}.mrc`;
-  //     const uniq001Field = Helper.getRandomBarcode();
-  //     const newUri = 'http://jbjjhhjj:3000/Test';
-  //     const jobProfileForCreate = {
-  //       ...NewJobProfile.defaultJobProfile,
-  //       profileName: `C397984 Create ER Instance and Holdings ${getRandomPostfix()}`,
-  //       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
-  //     };
-  //     const jobProfileForUpdate = {
-  //       ...NewJobProfile.defaultJobProfile,
-  //       profileName: `C397984 035$a to 035$a match with instance status type submatch ${getRandomPostfix()}`,
-  //       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
-  //     };
+  it('C397984 Verify the ability to import Holdings and Instance using marc-to-marc submatch: 1 match (folijet)',
+    { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+      const fileNameForCreate = `C397984 autotestFileForCreate.${getRandomPostfix()}.mrc`;
+      const fileNameForUpdate = `C397984 autotestFileForUpdate.${getRandomPostfix()}.mrc`;
+      const editedMarcFileNameForCreate = `C397984 editedAutotestFileForCreate.${getRandomPostfix()}.mrc`;
+      const editedMarcFileNameForUpdate = `C397984 editedAutotestFileForUpdate.${getRandomPostfix()}.mrc`;
+      const uniq001Field = Helper.getRandomBarcode();
+      const newUri = 'http://jbjjhhjj:3000/Test';
+      // profiles for create
+      const collectionOfMappingAndActionProfilesForCreate = [
+        {
+          mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+            name: `C397984 Create ER Instance ${getRandomPostfix()}`,
+            instanceStatusTerm: INSTANCE_STATUS_TERM_NAMES.ELECTRONIC_RESOURCE },
+          actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+            name: `C397984 Create ER Instance ${getRandomPostfix()}` }
+        },
+        {
+          mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+            name: `C397984 Create ER Holdings ${getRandomPostfix()}`,
+            holdingsType: HOLDINGS_TYPE_NAMES.ELECTRONIC,
+            permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
+            relationship: 'Resource',
+            uri: '856$u',
+            linkText: '856$y',
+            materialsSpecified: '856$3',
+            urlPublicNote: '856$z' },
+          actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+            name: `C397984 Create ER Holdings ${getRandomPostfix()}` }
+        }
+      ];
+      const jobProfileForCreate = {
+        ...NewJobProfile.defaultJobProfile,
+        profileName: `C397984 Create ER Instance and Holdings ${getRandomPostfix()}`,
+        acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
+      };
+      // profiles for update
+      const collectionOfMappingAndActionProfilesForUpdate = [
+        {
+          mappingProfile: { name: `C397984 Override 856 protection ${getRandomPostfix()}`,
+            typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC },
+          actionProfile: { typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+            name: `C397984 Update srs override 856 protection ${getRandomPostfix()}`,
+            action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
+        }
+      ];
+      const matchProfile = {
+        profileName: `C397984 035$a to 035$a match ${getRandomPostfix()}`,
+        incomingRecordFields: {
+          field: '035',
+          subfield: 'a'
+        },
+        existingRecordFields: {
+          field: '035',
+          subfield: 'a'
+        },
+        matchCriterion: 'Exactly matches',
+        existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC
+      };
+      const jobProfileForUpdate = {
+        ...NewJobProfile.defaultJobProfile,
+        profileName: `C397984 035$a to 035$a match with instance status type submatch ${getRandomPostfix()}`,
+        acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
+      };
 
-  //     // change file for creating uniq 035 field
-  //     DataImport.editMarcFile(testData.fileName, editedMarcFileNameForCreate, ['9000098'], [uniq001Field]);
+      // change file for creating uniq 035 field
+      DataImport.editMarcFile(testData.fileName, editedMarcFileNameForCreate, ['9000098'], [uniq001Field]);
 
-  //     // create Field mapping profiles for creating
-  //     FieldMappingProfiles.openNewMappingProfileForm();
-  //     NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfilesForCreate[0].mappingProfile);
-  //     NewFieldMappingProfile.fillInstanceStatusTerm(collectionOfMappingAndActionProfilesForCreate[0].mappingProfile.instanceStatusTerm);
-  //     FieldMappingProfiles.saveProfile();
-  //     FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfilesForCreate[0].mappingProfile.name);
+      // create Field mapping profiles for creating
+      cy.visit(SettingsMenu.mappingProfilePath);
+      FieldMappingProfiles.openNewMappingProfileForm();
+      NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfilesForCreate[0].mappingProfile);
+      NewFieldMappingProfile.fillInstanceStatusTerm(collectionOfMappingAndActionProfilesForCreate[0].mappingProfile.instanceStatusTerm);
+      FieldMappingProfiles.saveProfile();
+      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfilesForCreate[0].mappingProfile.name);
 
-  //     FieldMappingProfiles.openNewMappingProfileForm();
-  //     NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile);
-  //     NewFieldMappingProfile.fillHoldingsType(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.holdingsType);
-  //     NewFieldMappingProfile.fillPermanentLocation(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.permanentLocation);
-  //     NewFieldMappingProfile.addElectronicAccess(
-  //       collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.relationship,
-  //       collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.uri,
-  //       collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.linkText,
-  //       collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.materialsSpecified,
-  //       collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.urlPublicNote
-  //     );
-  //     FieldMappingProfiles.saveProfile();
-  //     FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.name);
+      FieldMappingProfiles.openNewMappingProfileForm();
+      NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile);
+      NewFieldMappingProfile.fillHoldingsType(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.holdingsType);
+      NewFieldMappingProfile.fillPermanentLocation(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.permanentLocation);
+      NewFieldMappingProfile.addElectronicAccess(
+        collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.relationship,
+        collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.uri,
+        collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.linkText,
+        collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.materialsSpecified,
+        collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.urlPublicNote
+      );
+      FieldMappingProfiles.saveProfile();
+      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.name);
 
-  //     // create action profiles for creating
-  //     collectionOfMappingAndActionProfilesForCreate.forEach(profile => {
-  //       cy.visit(SettingsMenu.actionProfilePath);
-  //       ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-  //       ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
-  //     });
+      // create action profiles for creating
+      collectionOfMappingAndActionProfilesForCreate.forEach(profile => {
+        cy.visit(SettingsMenu.actionProfilePath);
+        ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
+        ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+      });
 
-  //     // create job profile for creating
-  //     cy.visit(SettingsMenu.jobProfilePath);
-  //     JobProfiles.createJobProfile(jobProfileForCreate);
-  //     NewJobProfile.linkActionProfileByName(collectionOfMappingAndActionProfilesForCreate[0].actionProfile.name);
-  //     NewJobProfile.linkActionProfileByName(collectionOfMappingAndActionProfilesForCreate[1].actionProfile.name);
-  //     NewJobProfile.saveAndClose();
-  //     JobProfiles.checkJobProfilePresented(jobProfileForCreate.profileName);
+      // create job profile for creating
+      cy.visit(SettingsMenu.jobProfilePath);
+      JobProfiles.createJobProfile(jobProfileForCreate);
+      NewJobProfile.linkActionProfileByName(collectionOfMappingAndActionProfilesForCreate[0].actionProfile.name);
+      NewJobProfile.linkActionProfileByName(collectionOfMappingAndActionProfilesForCreate[1].actionProfile.name);
+      NewJobProfile.saveAndClose();
+      JobProfiles.checkJobProfilePresented(jobProfileForCreate.profileName);
 
-  //     cy.visit(TopMenu.dataImportPath);
-  //     // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-  //     DataImport.verifyUploadState();
-  //     DataImport.uploadFile(editedMarcFileNameForCreate, fileNameForCreate);
-  //     JobProfiles.searchJobProfileForImport(jobProfileForCreate.profileName);
-  //     JobProfiles.runImportFile();
-  //     JobProfiles.waitFileIsImported(fileNameForCreate);
-  //     Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-  //     Logs.openFileDetails(fileNameForCreate);
-  //     [FileDetails.columnNameInResultList.srsMarc,
-  //       FileDetails.columnNameInResultList.instance,
-  //       FileDetails.columnNameInResultList.holdings].forEach(columnName => {
-  //       FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
-  //     });
+      cy.visit(TopMenu.dataImportPath);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
+      DataImport.uploadFile(editedMarcFileNameForCreate, fileNameForCreate);
+      JobProfiles.searchJobProfileForImport(jobProfileForCreate.profileName);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(fileNameForCreate);
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      Logs.openFileDetails(fileNameForCreate);
+      [FileDetails.columnNameInResultList.srsMarc,
+        FileDetails.columnNameInResultList.instance,
+        FileDetails.columnNameInResultList.holdings].forEach(columnName => {
+        FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+      });
 
-  //     // change file for changing content of 856 field
-  //     DataImport.editMarcFile('marcFileForC397983.mrc', editedMarcFileNameForUpdate,
-  //       ['9000098', 'http://jbjjhhjj:3000/'], [uniq001Field, newUri]);
+      // change file for changing content of 856 field
+      DataImport.editMarcFile(testData.fileName, editedMarcFileNameForUpdate, ['9000098', 'http://jbjjhhjj:3000/'],
+        [uniq001Field, newUri]);
 
-  //     // create Field mapping profiles for updating
-  //     cy.visit(SettingsMenu.mappingProfilePath);
-  //     FieldMappingProfiles.openNewMappingProfileForm();
-  //     NewFieldMappingProfile.fillMappingProfileForUpdatesMarc(collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile);
-  //     NewFieldMappingProfile.markFieldForProtection(testData.protectedField);
-  //     FieldMappingProfiles.saveProfile();
-  //     FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.name);
+      // create Field mapping profiles for updating
+      cy.visit(SettingsMenu.mappingProfilePath);
+      FieldMappingProfiles.openNewMappingProfileForm();
+      NewFieldMappingProfile.fillMappingProfileForUpdatesMarc(collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile);
+      NewFieldMappingProfile.markFieldForProtection(testData.protectedField);
 
-  //     // create action profiles for updating
-  //     cy.visit(SettingsMenu.actionProfilePath);
-  //     ActionProfiles.create(
-  //       collectionOfMappingAndActionProfilesForUpdate[0].actionProfile,
-  //       collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.name
-  //     );
-  //     ActionProfiles.checkActionProfilePresented(collectionOfMappingAndActionProfilesForUpdate[0].actionProfile.name);
+      FieldMappingProfiles.saveProfile();
+      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.name);
 
-  //     // create match profiles
-  //     cy.visit(SettingsMenu.matchProfilePath);
-  //     MatchProfiles.createMatchProfile(collectionOfMatchProfiles[1].matchProfile);
-  //     MatchProfiles.checkMatchProfilePresented(collectionOfMatchProfiles[1].matchProfile);
+      // create action profiles for updating
+      cy.visit(SettingsMenu.actionProfilePath);
+      ActionProfiles.create(
+        collectionOfMappingAndActionProfilesForUpdate[0].actionProfile,
+        collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.name
+      );
+      ActionProfiles.checkActionProfilePresented(collectionOfMappingAndActionProfilesForUpdate[0].actionProfile.name);
 
-  //     // create job profile for updating
-  //     cy.visit(SettingsMenu.jobProfilePath);
-  //     JobProfiles.createJobProfileWithLinkingProfiles(
-  //       jobProfileForUpdate,
-  //       collectionOfMappingAndActionProfilesForUpdate[0].actionProfile.name,
-  //       collectionOfMatchProfiles[1].matchProfile.profileName
-  //     );
-  //     JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
+      // create match profiles
+      cy.visit(SettingsMenu.matchProfilePath);
+      MatchProfiles.createMatchProfile(matchProfile);
+      MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
 
-  //     cy.visit(TopMenu.dataImportPath);
-  //     // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-  //     DataImport.verifyUploadState();
-  //     DataImport.uploadFile(editedMarcFileNameForUpdate, fileNameForUpdate);
-  //     JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
-  //     JobProfiles.runImportFile();
-  //     JobProfiles.waitFileIsImported(fileNameForUpdate);
-  //     Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-  //     Logs.openFileDetails(fileNameForUpdate);
-  //     [FileDetails.columnNameInResultList.srsMarc,
-  //       FileDetails.columnNameInResultList.instance].forEach(columnName => {
-  //       FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
-  //     });
-  //     FileDetails.openInstanceInInventory('Updated');
-  //     InventoryInstance.getAssignedHRID().then(hrId => { instanceHrid = hrId; });
-  //     InstanceRecordView.verifyElectronicAccess(testData.newUri);
-  //     InstanceRecordView.viewSource();
-  //     InventoryViewSource.verifyFieldInMARCBibSource(testData.protectedField, testData.newUri);
+      // create job profile for updating
+      cy.visit(SettingsMenu.jobProfilePath);
+      JobProfiles.createJobProfileWithLinkingProfiles(
+        jobProfileForUpdate,
+        collectionOfMappingAndActionProfilesForUpdate[0].actionProfile.name,
+        matchProfile.profileName
+      );
+      JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
 
-  // // delete edited files
-  // FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForCreate}`);
-  // FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForUpdate}`);
-  // // delete profiles
-  // JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-  // JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
-  //   });
+      cy.visit(TopMenu.dataImportPath);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
+      DataImport.uploadFile(editedMarcFileNameForUpdate, fileNameForUpdate);
+      JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(fileNameForUpdate);
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      Logs.openFileDetails(fileNameForUpdate);
+      [FileDetails.columnNameInResultList.srsMarc,
+        FileDetails.columnNameInResultList.instance].forEach(columnName => {
+        FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+      });
+      FileDetails.openInstanceInInventory('Updated');
+      InventoryInstance.getAssignedHRID()
+        .then(hrId => {
+          instanceHrids.push(hrId);
+        });
+      InstanceRecordView.verifyElectronicAccess(newUri);
+      InstanceRecordView.viewSource();
+      InventoryViewSource.verifyFieldInMARCBibSource(testData.protectedField, newUri);
+
+      // delete profiles
+      JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
+      JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
+      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+      collectionOfMappingAndActionProfilesForCreate.forEach(profile => {
+        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+      });
+      collectionOfMappingAndActionProfilesForUpdate.forEach(profile => {
+        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+      });
+      // delete created files
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForCreate}`);
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForUpdate}`);
+    });
 });
