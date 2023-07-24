@@ -131,6 +131,14 @@ export default {
     cy.expect(Callout({ textContent: including(`Record ${number} created. Results may take a few moments to become visible in Inventory`) })
       .exists());
   },
+  verifyElectronicAccess:(uriValue) => {
+    cy.expect(electronicAccessAccordion
+      .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: uriValue }))
+      .exists());
+    cy.expect(electronicAccessAccordion
+      .find(MultiColumnListCell({ row: 1, columnIndex: 1 }))
+      .absent());
+  },
 
   verifyElectronicAccess:(uriValue) => {
     cy.expect(electronicAccessAccordion
