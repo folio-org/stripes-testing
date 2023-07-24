@@ -76,6 +76,11 @@ describe('Create holding records with MARC source', () => {
     QuickMarcEditor.pressSaveAndClose();
     QuickMarcEditor.checkAfterSaveHoldings();
     HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
+      // "Edit in quickMARC" option might not be active immediately after creating MARC Holdings
+      // this option becomes active after reopening Holdings view window
+      HoldingsRecordView.close();
+      InventoryInstance.openHoldingView();
+
       HoldingsRecordView.editInQuickMarc();
       QuickMarcEditor.waitLoading();
       QuickMarcEditor.check008FieldsEmptyHoldings();
