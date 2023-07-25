@@ -13,7 +13,6 @@ const testData = {
   holdingValue: 'The !!!Kung of Nyae Nyae / Lorna Marshall.',
   record: 'Gibbons, Boyd',
   accordion: 'Subject',
-
   derive: {
     searchOption: 'Personal name',
     authority700FieldValue: 'Gibbons, Boyd',
