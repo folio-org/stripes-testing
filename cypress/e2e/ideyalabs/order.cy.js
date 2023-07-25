@@ -1,4 +1,5 @@
-import order from "../../support/a_ideyalabs/orders";
+import order from "../../support/a_ideyalabs/orders"
+import orderFragment from "../../support/fragments/orders/orders";
 import orderLines from "../../support/fragments/orders/orderLines";
 import receiving from "../../support/fragments/receiving/receiving";
 import titleLevelRequests from "../../support/fragments/settings/circulation/titleLevelRequests";
@@ -10,19 +11,18 @@ const orderDetails = {
   enterPoLineNumber: "20692-1",
   checkOrderLineSearchResults: "20692-1",
   titleName: "Approve rolled",
-  caption: "xys",
+  caption: "Done",
   enumeration: "Electronic",
   poLineNumber: "20692-1",
-  selectFund: "Fund HBZ(HBZ)",
 };
 const patronData = {
-  notice1: "Test TLR",
-  notice2: "Request expired",
-  notice3: "Test TLR",
+  notice1: "Request expired",
+  notice2: "Test TLR",
+  notice3: "Requested item - available",
 };
 
 describe("Orders app ", () => {
-  xit('C378899-Encumbrance releases when receive piece for order with payment status ""Payment Not Required""', () => {
+  it('C378899-Encumbrance releases when receive piece for order with payment status ""Payment Not Required""', () => {
     cy.login(Cypress.env("diku_login"), Cypress.env("diku_password"));
     cy.visit(topMenu.ordersPath);
     orderLines.clickOnOrderLines();
@@ -39,8 +39,9 @@ describe("Orders app ", () => {
     receiving.addPieceProcess(orderDetails.caption, orderDetails.enumeration);
     receiving.quickReceivePiece();
     receiving.clickOnPOLnumber(orderDetails.poLineNumber);
-    orderLines.selectFund(orderDetails.selectFund);
+    orderFragment.selectFundIDFromthelist()
   });
+
   it("C350428 Patron notice", () => {
     cy.visit(SettingsMenu.circulationTitleLevelRequestsPath);
     titleLevelRequests.SelectConfirmationNoticeDropdown({
@@ -54,6 +55,7 @@ describe("Orders app ", () => {
     });
     titleLevelRequests.clickOnSaveButton();
   });
+  
   it("C365619 Re-exported Order contains more than two PO lines is successfully exported in the next scheduled run", () => {
     cy.visit(topMenu.ordersPath);
     order.switchToOrders();

@@ -27,7 +27,6 @@ import { getLongDelay } from '../../utils/cypressTools';
 import DateTools from '../../utils/dateTools';
 import FileManager from '../../utils/fileManager';
 
-
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderorders-results-pane-subtitle"]/span';
 const zeroResultsFoundText = '0 records found';
 const actionsButton = Button('Actions');
@@ -742,5 +741,17 @@ export default {
 
   checkReviewDateOnOngoingOrder() {
     cy.expect(Section({ id: 'ongoing' }).find(KeyValue('Review date')).has({ value: 'No value set-' }));
+  },
+
+  selectFundIDFromthelist: () => {
+    const buttonInteractor = Section({
+      id: "FundDistribution",
+    }).find(MultiColumnListCell({ row: 0,columnIndex:5 }));
+    cy.do([
+      buttonInteractor.perform((interactor) =>
+        interactor.removeAttribute("target")
+      ),
+      buttonInteractor.click(),
+    ]);
   },
 };
