@@ -93,7 +93,7 @@ describe('Exports', () => {
 
   it('C353217-Download batch export files from full screen view with Voucher export permission (FTP/JSON) - upload to server', () => {
     cy.visit(topMenu.invoicesPath);
-    invoices.searchFolio();
+    invoices.selectFolio();
     invoices.voucherExport(batchGroup);
   });
 });

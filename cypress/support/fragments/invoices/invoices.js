@@ -54,7 +54,7 @@ const invoiceDateFilterSection = Section({ id: 'invoiceDate' });
 const approvalDateFilterSection = Section({ id: 'approvalDate' });
 
 export default {
-  searchFolio() {
+  selectFolio() {
     cy.do([
       Button({ id: 'accordion-toggle-button-status' }).click(),
       Checkbox({ id: 'clickable-filter-status-paid' }).click(),
