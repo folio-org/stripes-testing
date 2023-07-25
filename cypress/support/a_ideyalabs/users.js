@@ -21,7 +21,7 @@ const submitButton = Button({ type: 'submit' });
 const newButton = Button('New');
 const checkOutApp = Checkbox({ name: 'popUpOnCheckOut' });
 const checkOut = TextField({ id: 'input-patron-identifier' });
-const PatronButton = Button({ id: 'clickable-find-patron' });
+const patronButton = Button({ id: 'clickable-find-patron' });
 const userNoteModal = Modal('User note');
 const searchField = TextField({ id: 'input-user-search' });
 const searchButton = Button('Search');
@@ -71,7 +71,7 @@ export default {
       cy.visit(topMenu.checkOutPath);
       cy.do([
         checkOut.fillIn(barcode),
-        PatronButton.click(),
+        patronButton.click(),
         userNoteModal.find(Button('Close')).click(),
       ]),
       cy.visit(topMenu.usersPath),
@@ -84,7 +84,7 @@ export default {
   },
 
   enterBardcodeCheckout: (barcode) => {
-    cy.do([checkOut.fillIn(barcode), PatronButton.click()]);
+    cy.do([checkOut.fillIn(barcode), patronButton.click()]);
   },
 
   dueDate: (rowIndex = 0) => {
@@ -92,8 +92,8 @@ export default {
       'date'
     );
     cy.get('@date').then((val) => {
-      cy.log(val);
       // here log is used to print the due date
+      cy.log(val);
     });
   },
 
