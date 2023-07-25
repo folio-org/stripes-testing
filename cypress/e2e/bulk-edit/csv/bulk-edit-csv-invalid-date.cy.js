@@ -21,7 +21,7 @@ const changedRecordsFileName = `*-Changed-Records*-${editedFileName}`;
 describe('bulk-edit', () => {
   describe('csv approach', () => {
     before('create test data', () => {
-      cy.createTempUser([]).then(userProperties => { testUser = userProperties });
+      cy.createTempUser([]).then(userProperties => { testUser = userProperties; });
       cy.createTempUser([
         permissions.bulkEditCsvView.gui,
         permissions.bulkEditCsvEdit.gui,
