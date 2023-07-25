@@ -1,5 +1,6 @@
 import {
   Button,
+  Checkbox,
   Modal,
   MultiColumnList,
   TextField,
@@ -7,51 +8,13 @@ import {
 
 Cypress.Commands.add('checkInItem', barcode => {
   cy.do([
-    TextField('Item ID').fillIn(barcode),
+    TextField({ id: 'input-item-barcode' }).fillIn(barcode),
     Button('Enter').click(),
     Modal('Confirm multipiece check in').find(Button('Check in')).click(),
-    Button('End session').click(),
+    Checkbox('Print slip').click(),
+    Button('Close').click(),
   ]);
 });
-
-Cypress.Commands.add('checkIn', barcode => {
-  cy.do([
-    TextField('Item ID').fillIn(barcode),
-    Button('Enter').click()
-    // Modal('Confirm multipiece check in').find(Button('Check in')).click(),
-    // Button('End session').click(),
-  ]);
-});
-
-Cypress.Commands.add('checkInMultipleItem', barcode => {
-  cy.do([
-    TextField('Item ID').fillIn(barcode),
-    Button('Enter').click(),
-    cy.wait(5000),
-    Modal('Confirm multipiece check in').find(Button('Check in')).click()
-    // Button('End session').click(),
-  ]);
-});
-
-Cypress.Commands.add('checkInMultipleItemNotExist', barcode => {
-  const modal = Modal('Confirm multipiece check in');
-  cy.do([
-    TextField('Item ID').fillIn(barcode),
-    Button('Enter').click(),
-    cy.wait(5000),
-    cy.expect(Button('Check in').absent()),
-  ]);
-});
-
-Cypress.Commands.add('cancelCheckInMultipleItem', barcode => {
-  cy.do([
-    TextField('Item ID').fillIn(barcode),
-    Button('Enter').click(),
-    cy.wait(5000),
-    Button('Cancel').click(),
-  ]);
-});
-
 
 Cypress.Commands.add('verifyItemCheckIn', () => {
   cy.expect(MultiColumnList({ id: 'list-items-checked-in' }).exists());
