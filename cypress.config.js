@@ -15,8 +15,8 @@ module.exports = defineConfig({
   env: {
     OKAPI_HOST: 'https://folio-testing-cypress-okapi.ci.folio.org',
     OKAPI_TENANT: 'diku',
-    diku_login: 'folio',
-    diku_password: 'folio',
+    diku_login: 'diku_admin',
+    diku_password: 'admin',
     is_kiwi_release: false,
     downloadTimeout: 1000,
     allure: 'true',
@@ -26,19 +26,15 @@ module.exports = defineConfig({
   e2e: {
     async setupNodeEvents(on, config) {
       allureWriter(on, config);
-
       on('task', {
         async findFiles(mask) {
           if (!mask) {
             throw new Error('Missing a file mask to search');
           }
-
           const list = await globby(mask);
-
           if (!list.length) {
             return null;
           }
-
           return list;
         },
         downloadFile,
@@ -50,7 +46,6 @@ module.exports = defineConfig({
               if (err && err.code !== 'ENOENT') {
                 return reject(err);
               }
-
               resolve(null);
             });
           });
@@ -63,26 +58,21 @@ module.exports = defineConfig({
               if (err && err.code !== 'ENOENT') {
                 return reject(err);
               }
-
               resolve(null);
             });
           });
         },
 
         readFileFromDownloads(filename) {
-          const downloadsFolder =
-            config.downloadsFolder ||
-            path.join(__dirname, '..', '..', 'Downloads');
+          const downloadsFolder = config.downloadsFolder || path.join(__dirname, '..', '..', 'Downloads');
           const filePath = path.join(downloadsFolder, filename);
           return fs.readFileSync(filePath, 'utf-8');
         },
       });
-
       // eslint-disable-next-line global-require
       await require('cypress-testrail-simple/src/plugin')(on, config);
-
       return config;
     },
-    baseUrl: 'https://bugfest-orchid.int.aws.folio.org/',
+    baseUrl: 'https://folio-testing-cypress-diku.ci.folio.org',
   },
 });
