@@ -106,7 +106,7 @@ function selectExistingRecordField(existingRecordOption) {
   cy.do(criterionValueTypeList
     .find(SelectionOption(existingRecordOption)).click());
   // TODO wait until option will be selected
-  cy.wait(5000);
+  cy.wait(1500);
 }
 
 function fillOnlyComparePartOfTheValue(value) {

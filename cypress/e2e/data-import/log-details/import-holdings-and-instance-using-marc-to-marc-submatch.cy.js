@@ -30,6 +30,7 @@ import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
 import InstanceStatusTypes from '../../../support/fragments/settings/inventory/instances/instanceStatusTypes/instanceStatusTypes';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 
 describe('ui-data-import', () => {
   const testData = {
@@ -539,20 +540,6 @@ describe('ui-data-import', () => {
       ];
       const collectionOfMatchProfiles = [
         {
-          matchProfile: { profileName: `C397383 Holdings type electronic ${getRandomPostfix()}`,
-            incomingStaticValue: 'Electronic',
-            matchCriterion: 'Exactly matches',
-            existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
-            existingRecordOption: NewMatchProfile.optionsList.holdingsType }
-        },
-        {
-          matchProfile: { profileName: `C397383 Instance status submatch - Electronic Resource ${getRandomPostfix()}`,
-            incomingStaticValue: 'Electronic Resource',
-            matchCriterion: 'Exactly matches',
-            existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
-            existingRecordOption: NewMatchProfile.optionsList.instanceStatusTerm }
-        },
-        {
           matchProfile: { profileName: `C397383 035$a to 035$a match ${getRandomPostfix()}`,
             incomingRecordFields: {
               field: '035',
@@ -564,6 +551,20 @@ describe('ui-data-import', () => {
             },
             matchCriterion: 'Exactly matches',
             existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC }
+        },
+        {
+          matchProfile: { profileName: `C397383 Instance status submatch - Electronic Resource ${getRandomPostfix()}`,
+            incomingStaticValue: 'Electronic Resource',
+            matchCriterion: 'Exactly matches',
+            existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+            existingRecordOption: NewMatchProfile.optionsList.instanceStatusTerm }
+        },
+        {
+          matchProfile: { profileName: `C397383 Holdings type electronic ${getRandomPostfix()}`,
+            incomingStaticValue: 'Electronic',
+            matchCriterion: 'Exactly matches',
+            existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+            existingRecordOption: NewMatchProfile.optionsList.holdingsType }
         }
       ];
       const jobProfileForUpdate = {
@@ -638,16 +639,18 @@ describe('ui-data-import', () => {
       NewFieldMappingProfile.markFieldForProtection(testData.protectedField);
       FieldMappingProfiles.saveProfile();
       FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.name);
+      FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.name);
 
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile);
       NewFieldMappingProfile.fillHoldingsType(collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.holdingsType);
       NewFieldMappingProfile.fillPermanentLocation(collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.permanentLocation);
       FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.name);
+      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.name);
+      FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.name);
 
       // create action profiles for updating
-      collectionOfMappingAndActionProfilesForCreate.forEach(profile => {
+      collectionOfMappingAndActionProfilesForUpdate.forEach(profile => {
         cy.visit(SettingsMenu.actionProfilePath);
         ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
         ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
@@ -655,25 +658,70 @@ describe('ui-data-import', () => {
 
       // create match profiles
       cy.visit(SettingsMenu.matchProfilePath);
-      MatchProfiles.createMatchProfileWithStaticValue(collectionOfMatchProfiles[0].matchProfile);
-      MatchProfiles.checkMatchProfilePresented(collectionOfMatchProfiles[0].matchProfile.profileName);
+      MatchProfiles.createMatchProfileWithStaticValue(collectionOfMatchProfiles[2].matchProfile);
+      MatchProfiles.checkMatchProfilePresented(collectionOfMatchProfiles[2].matchProfile.profileName);
       MatchProfiles.createMatchProfileWithStaticValue(collectionOfMatchProfiles[1].matchProfile);
       MatchProfiles.checkMatchProfilePresented(collectionOfMatchProfiles[1].matchProfile.profileName);
-      MatchProfiles.createMatchProfile(collectionOfMatchProfiles[2].matchProfile);
-      MatchProfiles.checkMatchProfilePresented(collectionOfMatchProfiles[2].matchProfile.profileName);
+      MatchProfiles.createMatchProfile(collectionOfMatchProfiles[0].matchProfile);
+      MatchProfiles.checkMatchProfilePresented(collectionOfMatchProfiles[0].matchProfile.profileName);
 
       // create job profile for updating
       cy.visit(SettingsMenu.jobProfilePath);
       JobProfiles.openNewJobProfileForm();
       NewJobProfile.fillJobProfile(jobProfileForUpdate);
-      NewJobProfile.linkMatchProfile(collectionOfMatchProfiles[1].matchProfile.profileName);
-      
-      // NewJobProfile.linkMatchAndActionProfilesForSubMatches(
-      //   collectionOfMatchProfiles[0].matchProfile.profileName,
-      //   collectionOfMappingAndActionProfilesForUpdate[0].actionProfile.name
-      // );
+      NewJobProfile.linkMatchProfile(collectionOfMatchProfiles[0].matchProfile.profileName);
+      NewJobProfile.linkMatchProfileForMatches(collectionOfMatchProfiles[1].matchProfile.profileName);
+      NewJobProfile.linkMatchAndTwoActionProfilesForSubMatches(
+        collectionOfMatchProfiles[2].matchProfile.profileName,
+        collectionOfMappingAndActionProfilesForUpdate[0].actionProfile.name,
+        collectionOfMappingAndActionProfilesForUpdate[1].actionProfile.name
+      );
       NewJobProfile.saveAndClose();
       JobProfiles.waitLoadingList();
       JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
+
+      cy.visit(TopMenu.dataImportPath);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
+      DataImport.uploadFile(editedMarcFileNameForUpdate, fileNameForUpdate);
+      JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(fileNameForUpdate);
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      Logs.openFileDetails(fileNameForUpdate);
+      [FileDetails.columnNameInResultList.srsMarc,
+        FileDetails.columnNameInResultList.instance,
+        FileDetails.columnNameInResultList.holdings].forEach(columnName => {
+        FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+      });
+      FileDetails.openInstanceInInventory('Updated');
+      InventoryInstance.getAssignedHRID()
+        .then(hrId => {
+          instanceHrids.push(hrId);
+        });
+      InstanceRecordView.verifyElectronicAccess(newUri);
+      InstanceRecordView.viewSource();
+      InventoryViewSource.verifyFieldInMARCBibSource(testData.protectedField, newUri);
+      InventoryViewSource.close();
+      InstanceRecordView.openHoldingView();
+      HoldingsRecordView.checkPermanentLocation(LOCATION_NAMES.ONLINE_UI);
+
+      // delete profiles
+      JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
+      JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
+      collectionOfMatchProfiles.forEach(profile => {
+        MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+      });
+      collectionOfMappingAndActionProfilesForCreate.forEach(profile => {
+        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+      });
+      collectionOfMappingAndActionProfilesForUpdate.forEach(profile => {
+        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+      });
+      // delete created files
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForCreate}`);
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForUpdate}`);
     });
 });
