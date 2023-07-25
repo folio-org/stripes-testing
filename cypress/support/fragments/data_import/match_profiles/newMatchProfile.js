@@ -27,7 +27,8 @@ const optionsList = {
   systemControlNumber: 'Identifier: System control number',
   status: 'Loan and availability: Status',
   barcode: 'Admin data: Barcode',
-  instanceStatusTerm: 'Admin data: Instance status term'
+  instanceStatusTerm: 'Admin data: Instance status term',
+  holdingsType: 'Admin data: Holdings type'
 };
 
 function fillExistingRecordFields(value = '', selector) {
