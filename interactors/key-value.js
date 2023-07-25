@@ -11,6 +11,5 @@ export default createInteractor('key value')
   })
   .actions({
     // Use in case when link inside keyValue doesn't have href attribute
-    clickLink: ({ perform }) => perform((el) => el.querySelector('[data-testid=text-link]').click()),
-    getText : ((el) => el.querySelector('[class^=kvValue]').innerText)
+    clickLink: ({ perform }) => perform((el) => el.querySelector('[data-testid=text-link]').click())
   });

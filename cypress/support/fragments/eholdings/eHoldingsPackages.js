@@ -1,18 +1,26 @@
-import { Button, HTML, ListItem, Section, including, or } from '../../../../interactors';
+import { Button, HTML, ListItem, Modal, Section, including, or } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 import eHoldingsNewCustomPackage from './eHoldingsNewCustomPackage';
 import eHoldingsPackage from './eHoldingsPackage';
 
 const resultSection = Section({ id: 'search-results' });
 const selectedText = "#packageShowHoldingStatus div[class^='headline']";
+const actionButton = Button('Actions');
+const deletePackage = Button('Delete package');
+const confirmModal = Modal('Delete custom package');
 
 export default {
   create: (packageName = `package_${getRandomPostfix()}`) => {
     cy.do(Button('New').click());
     eHoldingsNewCustomPackage.fillInRequiredProperties(packageName);
     eHoldingsNewCustomPackage.saveAndClose();
-    cy.expect(PaneContent({ id: `${create.packageName}-content` }).exists());
     return packageName;
+  },
+
+  deletePackage: () => {
+    cy.do([actionButton.click(),
+      deletePackage.click(),
+      confirmModal.find(Button('Yes, delete')).click()]);
   },
 
   waitLoading: () => {
@@ -24,13 +32,11 @@ export default {
 
   openPackage: (rowNumber = 0) => {
     const specialRow = resultSection.find(ListItem({ className: including('list-item-'), index: rowNumber }));
-    // cy.log(JSON.stringify(specialRow.h3Value())) -- swathiM
     cy.then(() => specialRow.h3Value())
       .then(specialPackage => {
         cy.do(resultSection
           .find(ListItem({ className: including('list-item-'), index: rowNumber })
             .find(Button())).click());
-        //eHoldingsPackage.waitLoading(specialPackage);
         cy.wrap(specialPackage).as('selectedPackage');
       });
     return cy.get('@selectedPackage');
@@ -39,6 +45,7 @@ export default {
   getPackageName: (rowNumber = 0) => {
     return cy.then(() => resultSection.find(ListItem({ className: including('list-item-'), index: rowNumber })).h3Value());
   },
+
   getCustomPackageViaApi: () => {
     cy.okapiRequest({
       path: 'eholdings/packages',
@@ -52,6 +59,7 @@ export default {
     });
     return cy.get('@customePackageName');
   },
+
   getNotCustomSelectedPackageIdViaApi: () => {
     cy.okapiRequest({
       path: 'eholdings/packages',
@@ -69,6 +77,7 @@ export default {
     });
     return cy.get('@packageId');
   },
+
   getNotSelectedPackageIdViaApi: () => {
     cy.okapiRequest({
       path: 'eholdings/packages',
@@ -88,9 +97,9 @@ export default {
 
   updateProxy() {
     cy.get(selectedText)
-      .invoke("text")
+      .invoke('text')
       .then((text) => {
-        if (text === "Selected") {
+        if (text === 'Selected') {
           eHoldingsPackage.editactions();
           eHoldingsPackage.changeProxy();
           eHoldingsPackage.saveAndClose();
@@ -102,4 +111,4 @@ export default {
         }
       });
   }
-}
+};

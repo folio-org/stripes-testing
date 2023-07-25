@@ -1,6 +1,5 @@
-import { Select, Section, Button, HTML, including } from '../../../../interactors';
+import { Button, HTML, Section, Select, including } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
-import eHoldingsProviderView from './eHoldingsProviderView';
 
 const availableProxies = [
   'chalmers',
@@ -14,10 +13,11 @@ export default {
   waitLoading: (providerName) => {
     cy.intercept('eholdings/providers/**').as('getProviderProperties');
     cy.wait('@getProviderProperties', getLongDelay()).then(request => {
-      cy.expect(Section({ id : providerName.replaceAll(' ', '-').toLowerCase() }).exists());
-      cy.expect(proxySelect.has({ value:  request.response.body.data.attributes.proxy.id }));
+      cy.expect(Section({ id: providerName.replaceAll(' ', '-').toLowerCase() }).exists());
+      cy.expect(proxySelect.has({ value: request.response.body.data.attributes.proxy.id }));
     });
   },
+
   changeProxy: () => {
     return cy.then(() => proxySelect.value())
       .then(selectedProxy => {
@@ -28,8 +28,8 @@ export default {
       });
   },
 
-  saveAndClose:() => {
+  saveAndClose() {
     cy.expect(saveAndCloseButton.exists());
     cy.do(saveAndCloseButton.click());
-  }
+  },
 };
