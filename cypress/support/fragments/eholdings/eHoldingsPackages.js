@@ -1,10 +1,13 @@
-import { Button, ListItem, Section, HTML, including, or } from '../../../../interactors';
+import { Button, HTML, ListItem, Modal, Section, including, or } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 import eHoldingsNewCustomPackage from './eHoldingsNewCustomPackage';
 import eHoldingsPackage from './eHoldingsPackage';
 
 const resultSection = Section({ id: 'search-results' });
 const selectedText = "#packageShowHoldingStatus div[class^='headline']";
+const actionButton = Button('Actions');
+const deletePackage = Button('Delete package');
+const confirmModal = Modal('Delete custom package');
 
 export default {
   create: (packageName = `package_${getRandomPostfix()}`) => {
@@ -13,21 +16,27 @@ export default {
     eHoldingsNewCustomPackage.saveAndClose();
     return packageName;
   },
+
+  deletePackage: () => {
+    cy.do([actionButton.click(),
+      deletePackage.click(),
+      confirmModal.find(Button('Yes, delete')).click()]);
+  },
+
   waitLoading: () => {
     cy.expect(or(
       resultSection.find(ListItem({ className: including('list-item-'), index: 1 }).find(Button())).exists(),
       resultSection.find(HTML(including('Enter a query to show search results.'))).exists()
     ));
   },
+
   openPackage: (rowNumber = 0) => {
     const specialRow = resultSection.find(ListItem({ className: including('list-item-'), index: rowNumber }));
-
     cy.then(() => specialRow.h3Value())
       .then(specialPackage => {
         cy.do(resultSection
           .find(ListItem({ className: including('list-item-'), index: rowNumber })
             .find(Button())).click());
-        // eHoldingsPackage.waitLoading(specialPackage);
         cy.wrap(specialPackage).as('selectedPackage');
       });
     return cy.get('@selectedPackage');
@@ -36,6 +45,7 @@ export default {
   getPackageName: (rowNumber = 0) => {
     return cy.then(() => resultSection.find(ListItem({ className: including('list-item-'), index: rowNumber })).h3Value());
   },
+
   getCustomPackageViaApi: () => {
     cy.okapiRequest({
       path: 'eholdings/packages',
@@ -49,6 +59,7 @@ export default {
     });
     return cy.get('@customePackageName');
   },
+
   getNotCustomSelectedPackageIdViaApi: () => {
     cy.okapiRequest({
       path: 'eholdings/packages',
@@ -66,6 +77,7 @@ export default {
     });
     return cy.get('@packageId');
   },
+
   getNotSelectedPackageIdViaApi: () => {
     cy.okapiRequest({
       path: 'eholdings/packages',
