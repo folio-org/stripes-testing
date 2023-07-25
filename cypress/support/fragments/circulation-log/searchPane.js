@@ -17,7 +17,6 @@ import DateTools from '../../utils/dateTools';
 const dropdownButton = MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(Dropdown()).find(Button());
 const actionsButton = Button('Actions');
 const servicePointField = MultiSelect({ ariaLabelledby: 'accordion-toggle-button-servicePointId' });
-const barcodeText = "//div[@data-row-inner='0']//a[@data-test-text-link='true']";
 const data = '4502015';
 
 export default {
@@ -80,18 +79,6 @@ export default {
     cy.do(Button({ id:'reset-receiving-filters' }).click());
     cy.do(TextField({ name: 'itemBarcode' }).fillIn('1040'));
     this.clickApplyMainFilter();
-  },
-  checkElemtText:() => {
-    cy.xpath(barcodeText).then((val) => {
-      const data = val[0].innerText;
-      cy.do([
-        Checkbox({ id: 'clickable-filter-loan-renewed-through-override' }).click()
-
-      ]);
-
-      cy.do(TextField({ name: 'itemBarcode' }).fillIn(data));
-      clickApplyMainFilter();
-    });
   },
 
   searchByClaimedReturned() {
@@ -166,7 +153,7 @@ export default {
       }
     });
   },
-checkResultSearch(searchResults, rowIndex = 0) {
+  checkResultSearch(searchResults, rowIndex = 0) {
     return cy.wrap(Object.values(searchResults)).each(contentToCheck => {
       cy.expect(MultiColumnListRow({ indexRow: `row-${rowIndex}` }).find(MultiColumnListCell({ content: including(contentToCheck) })).exists());
     });
