@@ -41,6 +41,34 @@ describe('ui-data-import', () => {
   };
   let user;
   const instanceHrids = [];
+  // profiles for create
+  const collectionOfMappingAndActionProfilesForCreate = [
+    {
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+        name: `Create ER Instance ${getRandomPostfix()}`,
+        instanceStatusTerm: INSTANCE_STATUS_TERM_NAMES.ELECTRONIC_RESOURCE },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+        name: `Create ER Instance ${getRandomPostfix()}` }
+    },
+    {
+      mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        name: `Create ER Holdings ${getRandomPostfix()}`,
+        holdingsType: HOLDINGS_TYPE_NAMES.ELECTRONIC,
+        permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
+        relationship: 'Resource',
+        uri: '856$u',
+        linkText: '856$y',
+        materialsSpecified: '856$3',
+        urlPublicNote: '856$z' },
+      actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        name: `Create ER Holdings ${getRandomPostfix()}` }
+    }
+  ];
+  const jobProfileForCreate = {
+    ...NewJobProfile.defaultJobProfile,
+    profileName: `Create ER Instance and Holdings ${getRandomPostfix()}`,
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
+  };
 
   before('create test data and login', () => {
     cy.createTempUser([
@@ -67,13 +95,54 @@ describe('ui-data-import', () => {
           .then((initialInstanceStatusType) => {
             testData.instanceStatusTypeId = initialInstanceStatusType.body.id;
           });
-        cy.login(user.username, user.password);
+        cy.login(user.username, user.password, { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+
+        // create Field mapping profiles for creating
+        FieldMappingProfiles.openNewMappingProfileForm();
+        NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfilesForCreate[0].mappingProfile);
+        NewFieldMappingProfile.fillInstanceStatusTerm(collectionOfMappingAndActionProfilesForCreate[0].mappingProfile.instanceStatusTerm);
+        FieldMappingProfiles.saveProfile();
+        FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfilesForCreate[0].mappingProfile.name);
+
+        FieldMappingProfiles.openNewMappingProfileForm();
+        NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile);
+        NewFieldMappingProfile.fillHoldingsType(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.holdingsType);
+        NewFieldMappingProfile.fillPermanentLocation(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.permanentLocation);
+        NewFieldMappingProfile.addElectronicAccess(
+          collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.relationship,
+          collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.uri,
+          collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.linkText,
+          collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.materialsSpecified,
+          collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.urlPublicNote
+        );
+        FieldMappingProfiles.saveProfile();
+        FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.name);
+
+        // create action profiles for creating
+        collectionOfMappingAndActionProfilesForCreate.forEach(profile => {
+          cy.visit(SettingsMenu.actionProfilePath);
+          ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
+          ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+        });
+
+        // create job profile for creating
+        cy.visit(SettingsMenu.jobProfilePath);
+        JobProfiles.createJobProfile(jobProfileForCreate);
+        NewJobProfile.linkActionProfileByName(collectionOfMappingAndActionProfilesForCreate[0].actionProfile.name);
+        NewJobProfile.linkActionProfileByName(collectionOfMappingAndActionProfilesForCreate[1].actionProfile.name);
+        NewJobProfile.saveAndClose();
+        JobProfiles.checkJobProfilePresented(jobProfileForCreate.profileName);
       });
   });
 
   after('delete test data', () => {
     MarcFieldProtection.deleteMarcFieldProtectionViaApi(testData.protectedFieldId);
     InstanceStatusTypes.deleteViaApi(testData.instanceStatusTypeId);
+    JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
+    collectionOfMappingAndActionProfilesForCreate.forEach(profile => {
+      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+    });
     Users.deleteViaApi(user.userId);
     instanceHrids.forEach(hrid => {
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` })
@@ -92,34 +161,6 @@ describe('ui-data-import', () => {
       const editedMarcFileNameForUpdate = `C397983 editedAutotestFileForUpdate.${getRandomPostfix()}.mrc`;
       const uniq001Field = Helper.getRandomBarcode();
       const newUri = 'http://jbjjhhjj:3000/Test2';
-      // profiles for create
-      const collectionOfMappingAndActionProfilesForCreate = [
-        {
-          mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-            name: `C397983 Create ER Instance ${getRandomPostfix()}`,
-            instanceStatusTerm: INSTANCE_STATUS_TERM_NAMES.ELECTRONIC_RESOURCE },
-          actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-            name: `C397983 Create ER Instance ${getRandomPostfix()}` }
-        },
-        {
-          mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-            name: `C397983 Create ER Holdings ${getRandomPostfix()}`,
-            holdingsType: HOLDINGS_TYPE_NAMES.ELECTRONIC,
-            permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
-            relationship: 'Resource',
-            uri: '856$u',
-            linkText: '856$y',
-            materialsSpecified: '856$3',
-            urlPublicNote: '856$z' },
-          actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-            name: `C397983 Create ER Holdings ${getRandomPostfix()}` }
-        }
-      ];
-      const jobProfileForCreate = {
-        ...NewJobProfile.defaultJobProfile,
-        profileName: `C397983 Create ER Instance and Holdings ${getRandomPostfix()}`,
-        acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
-      };
       // profiles for update
       const collectionOfMappingAndActionProfilesForUpdate = [
         {
@@ -160,43 +201,6 @@ describe('ui-data-import', () => {
 
       // change file for creating uniq 035 field
       DataImport.editMarcFile(testData.fileName, editedMarcFileNameForCreate, ['9000098'], [uniq001Field]);
-
-      // create Field mapping profiles for creating
-      cy.visit(SettingsMenu.mappingProfilePath);
-      FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfilesForCreate[0].mappingProfile);
-      NewFieldMappingProfile.fillInstanceStatusTerm(collectionOfMappingAndActionProfilesForCreate[0].mappingProfile.instanceStatusTerm);
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfilesForCreate[0].mappingProfile.name);
-
-      FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile);
-      NewFieldMappingProfile.fillHoldingsType(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.holdingsType);
-      NewFieldMappingProfile.fillPermanentLocation(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.permanentLocation);
-      NewFieldMappingProfile.addElectronicAccess(
-        collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.relationship,
-        collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.uri,
-        collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.linkText,
-        collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.materialsSpecified,
-        collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.urlPublicNote
-      );
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.name);
-
-      // create action profiles for creating
-      collectionOfMappingAndActionProfilesForCreate.forEach(profile => {
-        cy.visit(SettingsMenu.actionProfilePath);
-        ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-        ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
-      });
-
-      // create job profile for creating
-      cy.visit(SettingsMenu.jobProfilePath);
-      JobProfiles.createJobProfile(jobProfileForCreate);
-      NewJobProfile.linkActionProfileByName(collectionOfMappingAndActionProfilesForCreate[0].actionProfile.name);
-      NewJobProfile.linkActionProfileByName(collectionOfMappingAndActionProfilesForCreate[1].actionProfile.name);
-      NewJobProfile.saveAndClose();
-      JobProfiles.checkJobProfilePresented(jobProfileForCreate.profileName);
 
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
@@ -274,13 +278,8 @@ describe('ui-data-import', () => {
 
       // delete profiles
       JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-      JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
       MatchProfiles.deleteMatchProfile(collectionOfMatchProfiles[1].matchProfile.profileName);
       MatchProfiles.deleteMatchProfile(collectionOfMatchProfiles[0].matchProfile.profileName);
-      collectionOfMappingAndActionProfilesForCreate.forEach(profile => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
-      });
       collectionOfMappingAndActionProfilesForUpdate.forEach(profile => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
         FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
@@ -298,34 +297,6 @@ describe('ui-data-import', () => {
       const editedMarcFileNameForUpdate = `C397984 editedAutotestFileForUpdate.${getRandomPostfix()}.mrc`;
       const uniq001Field = Helper.getRandomBarcode();
       const newUri = 'http://jbjjhhjj:3000/Test';
-      // profiles for create
-      const collectionOfMappingAndActionProfilesForCreate = [
-        {
-          mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-            name: `C397984 Create ER Instance ${getRandomPostfix()}`,
-            instanceStatusTerm: INSTANCE_STATUS_TERM_NAMES.ELECTRONIC_RESOURCE },
-          actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-            name: `C397984 Create ER Instance ${getRandomPostfix()}` }
-        },
-        {
-          mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-            name: `C397984 Create ER Holdings ${getRandomPostfix()}`,
-            holdingsType: HOLDINGS_TYPE_NAMES.ELECTRONIC,
-            permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
-            relationship: 'Resource',
-            uri: '856$u',
-            linkText: '856$y',
-            materialsSpecified: '856$3',
-            urlPublicNote: '856$z' },
-          actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-            name: `C397984 Create ER Holdings ${getRandomPostfix()}` }
-        }
-      ];
-      const jobProfileForCreate = {
-        ...NewJobProfile.defaultJobProfile,
-        profileName: `C397984 Create ER Instance and Holdings ${getRandomPostfix()}`,
-        acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
-      };
       // profiles for update
       const collectionOfMappingAndActionProfilesForUpdate = [
         {
@@ -357,43 +328,6 @@ describe('ui-data-import', () => {
 
       // change file for creating uniq 035 field
       DataImport.editMarcFile(testData.fileName, editedMarcFileNameForCreate, ['9000098'], [uniq001Field]);
-
-      // create Field mapping profiles for creating
-      cy.visit(SettingsMenu.mappingProfilePath);
-      FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfilesForCreate[0].mappingProfile);
-      NewFieldMappingProfile.fillInstanceStatusTerm(collectionOfMappingAndActionProfilesForCreate[0].mappingProfile.instanceStatusTerm);
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfilesForCreate[0].mappingProfile.name);
-
-      FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile);
-      NewFieldMappingProfile.fillHoldingsType(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.holdingsType);
-      NewFieldMappingProfile.fillPermanentLocation(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.permanentLocation);
-      NewFieldMappingProfile.addElectronicAccess(
-        collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.relationship,
-        collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.uri,
-        collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.linkText,
-        collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.materialsSpecified,
-        collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.urlPublicNote
-      );
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.name);
-
-      // create action profiles for creating
-      collectionOfMappingAndActionProfilesForCreate.forEach(profile => {
-        cy.visit(SettingsMenu.actionProfilePath);
-        ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-        ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
-      });
-
-      // create job profile for creating
-      cy.visit(SettingsMenu.jobProfilePath);
-      JobProfiles.createJobProfile(jobProfileForCreate);
-      NewJobProfile.linkActionProfileByName(collectionOfMappingAndActionProfilesForCreate[0].actionProfile.name);
-      NewJobProfile.linkActionProfileByName(collectionOfMappingAndActionProfilesForCreate[1].actionProfile.name);
-      NewJobProfile.saveAndClose();
-      JobProfiles.checkJobProfilePresented(jobProfileForCreate.profileName);
 
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
@@ -468,12 +402,7 @@ describe('ui-data-import', () => {
 
       // delete profiles
       JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-      JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      collectionOfMappingAndActionProfilesForCreate.forEach(profile => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
-      });
       collectionOfMappingAndActionProfilesForUpdate.forEach(profile => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
         FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
@@ -491,34 +420,6 @@ describe('ui-data-import', () => {
       const editedMarcFileNameForUpdate = `C397383 editedAutotestFileForUpdate.${getRandomPostfix()}.mrc`;
       const uniq001Field = Helper.getRandomBarcode();
       const newUri = 'http://jbjjhhjj:3000/Test3';
-      // profiles for create
-      const collectionOfMappingAndActionProfilesForCreate = [
-        {
-          mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-            name: `C397383 Create ER Instance ${getRandomPostfix()}`,
-            instanceStatusTerm: INSTANCE_STATUS_TERM_NAMES.ELECTRONIC_RESOURCE },
-          actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-            name: `C397383 Create ER Instance ${getRandomPostfix()}` }
-        },
-        {
-          mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-            name: `C397383 Create ER Holdings ${getRandomPostfix()}`,
-            holdingsType: HOLDINGS_TYPE_NAMES.ELECTRONIC,
-            permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
-            relationship: 'Resource',
-            uri: '856$u',
-            linkText: '856$y',
-            materialsSpecified: '856$3',
-            urlPublicNote: '856$z' },
-          actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-            name: `C397383 Create ER Holdings ${getRandomPostfix()}` }
-        }
-      ];
-      const jobProfileForCreate = {
-        ...NewJobProfile.defaultJobProfile,
-        profileName: `C397383 Create ER Instance and Holdings ${getRandomPostfix()}`,
-        acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
-      };
       // profiles for update
       const collectionOfMappingAndActionProfilesForUpdate = [
         {
@@ -575,43 +476,6 @@ describe('ui-data-import', () => {
 
       // change file for creating uniq 035 field
       DataImport.editMarcFile(testData.fileName, editedMarcFileNameForCreate, ['9000098'], [uniq001Field]);
-
-      // create Field mapping profiles for creating
-      cy.visit(SettingsMenu.mappingProfilePath);
-      FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfilesForCreate[0].mappingProfile);
-      NewFieldMappingProfile.fillInstanceStatusTerm(collectionOfMappingAndActionProfilesForCreate[0].mappingProfile.instanceStatusTerm);
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfilesForCreate[0].mappingProfile.name);
-
-      FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile);
-      NewFieldMappingProfile.fillHoldingsType(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.holdingsType);
-      NewFieldMappingProfile.fillPermanentLocation(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.permanentLocation);
-      NewFieldMappingProfile.addElectronicAccess(
-        collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.relationship,
-        collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.uri,
-        collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.linkText,
-        collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.materialsSpecified,
-        collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.urlPublicNote
-      );
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.name);
-
-      // create action profiles for creating
-      collectionOfMappingAndActionProfilesForCreate.forEach(profile => {
-        cy.visit(SettingsMenu.actionProfilePath);
-        ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-        ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
-      });
-
-      // create job profile for creating
-      cy.visit(SettingsMenu.jobProfilePath);
-      JobProfiles.createJobProfile(jobProfileForCreate);
-      NewJobProfile.linkActionProfileByName(collectionOfMappingAndActionProfilesForCreate[0].actionProfile.name);
-      NewJobProfile.linkActionProfileByName(collectionOfMappingAndActionProfilesForCreate[1].actionProfile.name);
-      NewJobProfile.saveAndClose();
-      JobProfiles.checkJobProfilePresented(jobProfileForCreate.profileName);
 
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
@@ -708,13 +572,8 @@ describe('ui-data-import', () => {
 
       // delete profiles
       JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-      JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
       collectionOfMatchProfiles.forEach(profile => {
         MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
-      });
-      collectionOfMappingAndActionProfilesForCreate.forEach(profile => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
       });
       collectionOfMappingAndActionProfilesForUpdate.forEach(profile => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
