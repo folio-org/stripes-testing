@@ -20,7 +20,6 @@ import {
   Link,
   MultiColumnList,
   MultiSelectOption,
-  MultiSelectMenu,
 } from '../../../../../interactors';
 import FinanceHelp from '../financeHelper';
 import TopMenu from '../../topMenu';
@@ -103,24 +102,27 @@ export default {
     this.waitForFundDetailsLoading();
   },
 
-  cancelCreatingFundWithTransfers(defaultFund, firstFund, secondFund) {
+  cancelCreatingFundWithTransfers(defaultFund, defaultLedger, firstFund, secondFund) {
     cy.do([
       newButton.click(),
       nameField.fillIn(defaultFund.name),
       codeField.fillIn(defaultFund.code),
-      externalAccountField.fillIn(defaultFund.externalAccount),
       ledgerSelection.open(),
-      SelectionList().select(defaultFund.ledgerName),
-      MultiSelect('Transfer from').open(),
-      MultiSelectOption(firstFund.code).click(),
-      MultiSelect('Transfer to').open(),
-      MultiSelectOption(secondFund.code).click()
+      SelectionList().select(defaultLedger),
     ]);
+    cy.get('[data-test-col-transfer-from="true"]').click();
+    cy.get('[data-test-col-transfer-from="true"] ul[role="listbox"]')
+      .contains(firstFund.name)
+      .click();
+    cy.get('[data-test-col-transfer-to="true"]').click();
+    cy.get('[data-test-col-transfer-to="true"] ul[role="listbox"]')
+      .contains(secondFund.name)
+      .click();
     cy.do([
       cancelButton.click(),
       Button('Close without saving').click()
     ]);
-    this.waitForFundDetailsLoading();
+    this.waitLoading();
   },
 
   createFundForWarningMessage(fund) {

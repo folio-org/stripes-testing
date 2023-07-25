@@ -16,14 +16,14 @@ describe('ui-finance: Funds', () => {
   const secondFund = {
     name: `autotest_fund2_${getRandomPostfix()}`,
     code: getRandomPostfix(),
-    externalAccountNo: getRandomPostfix(),
+    externalAccountNo: `2${getRandomPostfix()}`,
     fundStatus: 'Active',
     description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
   };
   const thirdFund = {
     name: `autotest_fund3_${getRandomPostfix()}`,
-    code: getRandomPostfix(),
-    externalAccountNo: getRandomPostfix(),
+    code: `3${getRandomPostfix()}`,
+    externalAccountNo: `32${getRandomPostfix()}`,
     fundStatus: 'Active',
     description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
   };
@@ -62,11 +62,12 @@ describe('ui-finance: Funds', () => {
       });
 
     cy.createTempUser([
-      permissions.uiFinanceViewFundAndBudget.gui
+      permissions.uiFinanceViewEditCreateFundAndBudget.gui,
+      permissions.uiFinanceViewLedger.gui,
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path:TopMenu.ledgerPath, waiter: Ledgers.waitForLedgerDetailsLoading });
+        cy.login(userProperties.username, userProperties.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
       });
   });
 
@@ -89,6 +90,6 @@ describe('ui-finance: Funds', () => {
   });
 
   it('C380708 Filter in "Transfer from" and "Transfer to" fields works correctly when creating a new fund (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    Funds.cancelCreatingFundWithTransfers(thirdFund);
+    Funds.cancelCreatingFundWithTransfers(thirdFund, defaultLedger.name, firstFund, secondFund);
   });
 });
