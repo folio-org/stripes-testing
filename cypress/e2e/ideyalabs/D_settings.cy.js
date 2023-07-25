@@ -1,113 +1,153 @@
-import CustomFields from '../../support/fragments/settings/users/customFields';
-import TopMenu from '../../support/fragments/topMenu';
-import usersSearchPane from '../../support/fragments/users/usersSearchPane';
-import { MultiColumnListCell } from '../../../interactors';
 import agreementsDetails from '../../support/fragments/agreements/agreementsDetails';
-import NewNote from '../../support/fragments/notes/newNote';
-import ExistingNoteEdit from '../../support/fragments/notes/existingNoteEdit';
-import existingNoteView from '../../support/fragments/notes/existingNoteView';
-import organizations from '../../support/fragments/organizations/organizations';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import eHoldingsProviders from '../../support/fragments/eholdings/eHoldingsProviders';
+import existingNoteEdit from '../../support/fragments/notes/existingNoteEdit';
+import existingNoteView from '../../support/fragments/notes/existingNoteView';
+import newNote from '../../support/fragments/notes/newNote';
+import organizations from '../../support/fragments/organizations/organizations';
+import customFields from '../../support/fragments/settings/users/customFields';
+import settingsMenu from '../../support/fragments/settingsMenu';
+import topMenu from '../../support/fragments/topMenu';
+import usersSearchPane from '../../support/fragments/users/usersSearchPane';
 
-
-const RandomNumber = Math.floor(Math.random(9000) * 1000) + 1000;
+const randomNumber = Math.floor(Math.random(9000) * 1000) + 1000;
 
 describe('Creating Permissions Set and Custom Fields', () => {
   it('login to Folio', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
+
   it('C2234__Create new permission set', () => {
-    cy.visit(TopMenu.permissionSetPath);
-    CustomFields.clickONewButton();
-    CustomFields.createPermission({ name: 'Adminstrator', description: 'Hello' });
+    cy.visit(topMenu.permissionSetPath);
+    customFields.clickONewButton();
+    customFields.createPermission({
+      name: `Adminstrator${randomNumber}`,
+      description: `Hello${randomNumber}`,
+    });
+    customFields.deletePermission();
   });
+
   it('C15693__Create a text field custom field', () => {
-    cy.visit(TopMenu.customFieldsPath);
-    CustomFields.addCustomTextField({ fieldLabel: 'test', helpText: 'testdata' });
-    cy.visit(TopMenu.usersPath);
+    cy.visit(topMenu.customFieldsPath);
+    customFields.addCustomTextField({
+      fieldLabel: 'test',
+      helpText: 'testdata',
+    });
+    cy.visit(topMenu.usersPath);
     usersSearchPane.searchByKeywords('testing');
     usersSearchPane.selectFirstUser('Excel, Testing');
     usersSearchPane.verifyTestField('test');
   });
+
   it('C15694__Create a text area custom field and add help text', () => {
-    cy.visit(TopMenu.customFieldsPath);
-    CustomFields.addCustomTextArea({ fieldLabel: 'dataArea', helpText: 'fillData' });
-    cy.visit(TopMenu.usersPath);
+    cy.visit(topMenu.customFieldsPath);
+    customFields.addCustomTextArea({
+      fieldLabel: 'dataArea',
+      helpText: 'fillData',
+    });
+    cy.visit(topMenu.usersPath);
     usersSearchPane.searchByKeywords('testing');
     usersSearchPane.selectFirstUser('Excel, Testing');
     usersSearchPane.verifyTestArea('dataArea');
   });
+
   it('C15695__Create a checkbox custom field', () => {
-    cy.visit(TopMenu.customFieldsPath);
-    CustomFields.addCustomCheckBox({ fieldLabel: 'CheckBoxx', helpText: 'testdata' });
-    cy.visit(TopMenu.usersPath);
+    cy.visit(topMenu.customFieldsPath);
+    customFields.addCustomCheckBox({
+      fieldLabel: 'CheckBoxx',
+      helpText: 'testdata',
+    });
+    cy.visit(topMenu.usersPath);
     usersSearchPane.searchByKeywords('testing');
     usersSearchPane.selectFirstUser('Excel, Testing');
     usersSearchPane.verifyCheckBox('CheckBoxx');
   });
+
   it('C15696__Create a radio button custom field', () => {
-    cy.visit(TopMenu.customFieldsPath);
-    CustomFields.addCustomRadioButton({ data: { fieldLabel: 'RadioButton', helpText: 'testData', label1: 'Radio1', label2: 'Radio2' } });
-    cy.visit(TopMenu.usersPath);
+    cy.visit(topMenu.customFieldsPath);
+    customFields.addCustomRadioButton({
+      data: {
+        fieldLabel: 'RadioButton',
+        helpText: 'testData',
+        label1: 'Radio1',
+        label2: 'Radio2',
+      },
+    });
+    cy.visit(topMenu.usersPath);
     usersSearchPane.searchByKeywords('testing');
     usersSearchPane.selectFirstUser('Excel, Testing');
     usersSearchPane.verifyRadioButton('RadioButton');
   });
+
   it('C15697__Create a single select custom field', () => {
-    const label2 = `select${RandomNumber}`;
-    cy.visit(TopMenu.customFieldsPath);
-    CustomFields.addCustomSingleSelect({ data: { fieldLabel: `Single Select Dropdown${RandomNumber}`, helpText: 'select One Data', label1: `Select${RandomNumber}`, label2 } });
-    cy.visit(TopMenu.usersPath);
+    const label2 = `select${randomNumber}`;
+    cy.visit(topMenu.customFieldsPath);
+    customFields.addCustomSingleSelect({
+      data: {
+        fieldLabel: `Single Select Dropdown${randomNumber}`,
+        helpText: 'select One Data',
+        label1: `Select${randomNumber}`,
+        label2,
+      },
+    });
+    cy.visit(topMenu.usersPath);
     usersSearchPane.searchByKeywords('testing');
     usersSearchPane.selectFirstUser('Excel, Testing');
-    usersSearchPane.verifySingleSeclect(`Single Select Dropdown${RandomNumber}`, label2);
+    usersSearchPane.verifySingleSeclect(
+      `Single Select Dropdown${randomNumber}`,
+      label2
+    );
   });
+
   it('C16985__Settings | Set up a note type', () => {
-    cy.visit(TopMenu.notesPath);
-    NewNote.clickOnNew(`New Note${RandomNumber}`);
-    cy.visit(TopMenu.agreementsPath);
-    cy.do(MultiColumnListCell('2020 ACS Publications').click());
+    cy.visit(topMenu.notesPath);
+    newNote.clickOnNew(`New Note${randomNumber}`);
+    cy.visit(topMenu.agreementsPath);
+    agreementsDetails.agreementlistClick();
     agreementsDetails.openNotesSection();
     agreementsDetails.clickOnNewButton();
-    NewNote.clickOnNoteType(`New Note${RandomNumber}`);
+    newNote.clickOnNoteType(`New Note${randomNumber}`);
   });
+
   it('C1304__Settings | Edit a note type', () => {
-    cy.visit(TopMenu.notesPath);
-    ExistingNoteEdit.clickEditButton(`Item${RandomNumber}`);
-    cy.visit(TopMenu.agreementsPath);
-    cy.do(MultiColumnListCell('2020 ACS Publications').click());
+    cy.visit(topMenu.notesPath);
+    existingNoteEdit.clickEditButton(`Item${randomNumber}`);
+    cy.visit(topMenu.agreementsPath);
+    agreementsDetails.agreementlistClick();
     agreementsDetails.openNotesSection();
     agreementsDetails.clickOnNewButton();
-    NewNote.clickOnNoteType(`Item${RandomNumber}`);
+    newNote.clickOnNoteType(`Item${randomNumber}`);
     agreementsDetails.clickCancelButton();
-    NewNote.closeWithoutSaveButton();
+    newNote.closeWithoutSaveButton();
     agreementsDetails.openNotesSection();
     agreementsDetails.clickOnNoteRecord();
     existingNoteView.gotoEdit();
-    NewNote.clickOnNoteType(`Item${RandomNumber}`);
+    newNote.clickOnNoteType(`Item${randomNumber}`);
   });
+
   it('C731__Create new categories', () => {
-    cy.visit(SettingsMenu.organizationsPath);
-    organizations.addNewCategory(`Test${RandomNumber}`);
-    cy.visit(TopMenu.organizationsPath);
+    cy.visit(settingsMenu.organizationsPath);
+    organizations.addNewCategory(`Test${randomNumber}`);
+    cy.visit(topMenu.organizationsPath);
     organizations.searchByParameters('All', 'organization');
     organizations.selectOrganization('New organization');
     organizations.editOrganization();
-    organizations.verifynewCategory(`Test${RandomNumber}`);
+    organizations.verifynewCategory(`Test${randomNumber}`);
   });
+
   it('C367970-Check that User can save changes while edit ""Fixed due date schedules"" without changing ""Fixed due date schedules name"" field', () => {
-    cy.visit(SettingsMenu.circulationFixedDueDateSchedulesPath);
-    eHoldingsProviders.editSchedule({ data: { name: 'Magnus test', description: `Test${RandomNumber}` } });
+    cy.visit(settingsMenu.circulationFixedDueDateSchedulesPath);
+    eHoldingsProviders.editSchedule({
+      data: { name: 'Magnus test', description: `Test${randomNumber}` },
+    });
   });
 
   it('C15701__Change custom fields order', () => {
-    cy.visit(TopMenu.customFieldsPath);
-    CustomFields.editButton();
-    usersSearchPane.DragAndDropCustomFields();
-    cy.visit(TopMenu.usersPath);
+    cy.visit(topMenu.customFieldsPath);
+    customFields.editButton();
+    usersSearchPane.dragAndDropCustomFields();
+    cy.visit(topMenu.usersPath);
     usersSearchPane.searchByKeywords('testing');
     usersSearchPane.selectFirstUser('Excel, Testing');
-    usersSearchPane.VerifyDragItem();
+    usersSearchPane.verifyDragItem();
   });
 });

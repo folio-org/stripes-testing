@@ -6,13 +6,10 @@ const nameTextfield = TextField('Note type 0');
 const saveButton = Button('Save');
 const closeWithoutSave = Button('Close without saving');
 
-
 export default class NewNote {
   static #titleTextField = TextField('Note title*');
 
-
   static #saveButton = Button('Save & close');
-
 
   static #defaultNote = {
     title: `autotest_title_${getRandomPostfix()}`,
@@ -23,7 +20,6 @@ export default class NewNote {
   static get defaultNote() {
     return this.#defaultNote;
   }
-
 
   static fill(specialNote = this.#defaultNote) {
     cy.do([this.#titleTextField.fillIn(specialNote.title),
@@ -42,7 +38,6 @@ export default class NewNote {
 
   static clickOnNoteType(selectedNote) {
     cy.expect(Spinner().absent());
-    // cy.do([cy.xpath(notetype).select(selectedNote)])
     cy.do(Select('Note type').choose(selectedNote));
     cy.contains(selectedNote).should('exist');
   }

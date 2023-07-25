@@ -1,17 +1,20 @@
 import { including } from 'bigtest';
-import { Pane, Button, Dropdown, TextField, MultiColumnListRow, TextArea, Accordion, Spinner, Callout } from '../../../../../interactors';
+import { Accordion, Button, Callout, Dropdown, Modal, MultiColumnListRow, Pane, Spinner, TextArea, TextField } from '../../../../../interactors';
 
 const customFieldsPane = Pane('Custom fields');
 const editNewButton = Button({ href: '/settings/users/custom-fields/edit' });
 const addCustomFieldDropdown = Dropdown('Add custom field');
 const saveAndCloseButton = Button('Save & close');
-const newButton = Button('+ New')
-const permissionName = TextField({ id: "input-permission-title" });
-const permissionDesc = TextArea({ id: "input-permission-description" })
-const addPermissionBtn = Button("Add permission")
-const fieldLabel = TextField('Field label*')
-const helpText = TextField("Help text")
-
+const newButton = Button('+ New');
+const permissionTitle = TextField({ id: 'input-permission-title' });
+const permissionDescription = TextArea({ id: 'input-permission-description' });
+const addPermissionButton = Button('Add permission');
+const fieldLabel = TextField('Field label*');
+const helpText = TextField('Help text');
+const editButton = Button('Edit');
+const deleteButton = Button('Delete');
+const deleteConfirmationModal = Modal({ id: 'deletepermissionset-confirmation' });
+const deleteButtonInConfirmation = Button('Delete', { id: 'clickable-deletepermissionset-confirmation-confirm' });
 
 export default {
   waitLoading() {
@@ -38,54 +41,49 @@ export default {
       saveAndCloseButton.click(),
     ]);
   },
+
   clickONewButton() {
-    cy.do(newButton.click())
+    cy.do(newButton.click());
   },
 
-  //Creating New permission
+  deletePermission() {
+    cy.do([editButton.click(),
+      deleteButton.click(),
+      deleteConfirmationModal.find(deleteButtonInConfirmation).click()]);
+  },
+
   createPermission(data) {
-    cy.do([permissionName.fillIn(data.name), permissionDesc.fillIn(data.description), addPermissionBtn.click(), saveAndCloseButton.click()])
-    cy.expect(Callout({ type: 'success' }).has({ text: including(`The permission set ${data.name} was successfully created`) }))
+    cy.do([permissionTitle.fillIn(data.name), permissionDescription.fillIn(data.description), addPermissionButton.click(), saveAndCloseButton.click()]);
+    cy.expect(Callout({ type: 'success' }).has({ text: including(`The permission set ${data.name} was successfully created`) }));
   },
 
-
-  //Adding text field custom fields
   addCustomTextField(data) {
     cy.do([editNewButton.click(),
-    addCustomFieldDropdown.choose('Text field'),
-    fieldLabel.fillIn(data.fieldLabel),
-    helpText.fillIn(data.helpText),
-    saveAndCloseButton.click()])
-    // cy.wait(5000)
+      addCustomFieldDropdown.choose('Text field'),
+      fieldLabel.fillIn(data.fieldLabel),
+      helpText.fillIn(data.helpText),
+      saveAndCloseButton.click()]);
     cy.expect(Spinner().absent());
-
   },
 
-
-  //Adding text area custom fields
   addCustomTextArea(data) {
     cy.do([editNewButton.click(),
-    addCustomFieldDropdown.choose('Text area'),
-    fieldLabel.fillIn(data.fieldLabel),
-    helpText.fillIn(data.helpText),
-    saveAndCloseButton.click()])
-    // cy.wait(5000)
+      addCustomFieldDropdown.choose('Text area'),
+      fieldLabel.fillIn(data.fieldLabel),
+      helpText.fillIn(data.helpText),
+      saveAndCloseButton.click()]);
     cy.expect(Spinner().absent());
   },
 
-
-  //Adding checkbox custom fields
   addCustomCheckBox(data) {
     cy.do([editNewButton.click(),
-    addCustomFieldDropdown.choose('Checkbox'),
-    fieldLabel.fillIn(data.fieldLabel),
-    helpText.fillIn(data.helpText),
-    saveAndCloseButton.click()])
-    // cy.wait(5000)
+      addCustomFieldDropdown.choose('Checkbox'),
+      fieldLabel.fillIn(data.fieldLabel),
+      helpText.fillIn(data.helpText),
+      saveAndCloseButton.click()]);
     cy.expect(Spinner().absent());
   },
 
-  //Adding Radio Button custom fields
   addCustomRadioButton({ data }) {
     cy.do([
       editNewButton.click(),
@@ -98,7 +96,6 @@ export default {
     ]);
   },
 
-  //Adding Single Select custom fields
   addCustomSingleSelect({ data }) {
     cy.do([
       editNewButton.click(),
@@ -112,9 +109,9 @@ export default {
   },
 
   editButton() {
-    cy.expect(editNewButton.exists())
+    cy.expect(editNewButton.exists());
     cy.do([
-      editNewButton.click()])
+      editNewButton.click()]);
   }
 };
 

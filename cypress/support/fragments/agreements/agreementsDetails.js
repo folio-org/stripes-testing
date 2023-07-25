@@ -1,18 +1,15 @@
-import { Accordion, Button, including, HTML, Section, MultiColumnListCell, Badge, Modal, Checkbox, MultiColumnList, MultiColumnListRow, SelectionOption, SearchField } from '../../../../interactors';
+import { Accordion, Button, including, HTML, Section, MultiColumnListCell, Badge, Modal, Checkbox, MultiColumnList, MultiColumnListRow, SelectionOption, SearchField, Spinner } from '../../../../interactors';
 import NewNote from '../notes/newNote';
 import { getLongDelay } from '../../utils/cypressTools';
 import ExistingNoteEdit from '../notes/existingNoteEdit';
 
-
 const rootXpath = '//section[@id="pane-view-agreement"]';
-const rootSection = Section({ id : 'pane-view-agreement' });
+const rootSection = Section({ id: 'pane-view-agreement' });
 const headerXpath = `${rootXpath}//div[@id="pane-view-agreement-content"]//h2`;
 const rootCss = 'section[id=pane-view-agreement]';
 const notesSectionXpath = `${rootXpath}//section[@id="notes"]`;
 const noteTitleXpath = `${notesSectionXpath}//strong[contains(.,'Title')]/..`;
 const notesAccordionXpath = `${notesSectionXpath}//button[@id="accordion-toggle-button-notes"]`;
-
-
 const newNoteButton = Button('New', { id: 'note-create-button' });
 const actionsButton = Button('Actions');
 const deleteButton = Button('Delete');
@@ -21,7 +18,6 @@ const showMoreLink = Button('Show more');
 const notesAccordion = rootSection.find(Accordion({ id: 'notes' }));
 const deleteConfirmationModal = Modal({ id: 'delete-agreement-confirmation' });
 const cancelButton = Button('Cancel');
-const noteRecord = "//p[normalize-space()='More details']";
 
 function waitLoading() {
   cy.xpath(headerXpath).should('be.visible');
@@ -33,11 +29,11 @@ export default {
 
   waitLoadingWithExistingNote(title) {
     waitLoading();
-    cy.expect(rootSection.find(Section({ id: 'notes' })).find(MultiColumnListCell({ columnIndex:1 })).find(HTML(including(title))).exists());
+    cy.expect(rootSection.find(Section({ id: 'notes' })).find(MultiColumnListCell({ columnIndex: 1 })).find(HTML(including(title))).exists());
   },
 
   openNotesSection() {
-    cy.do(rootSection.find(Section({ id :'notes' })).find(Button({ id:'accordion-toggle-button-notes' })).click());
+    cy.do(rootSection.find(Section({ id: 'notes' })).find(Button({ id: 'accordion-toggle-button-notes' })).click());
     cy.expect(rootSection.find(newNoteButton).exists());
   },
 
@@ -48,11 +44,12 @@ export default {
   },
 
   clickOnNoteRecord() {
-    // cy.expect((noteRecord).exists())
-    cy.do([cy.xpath(noteRecord).click()]);
+    cy.expect(Spinner().absent());
+    cy.do((MultiColumnList({ id: 'notes-list' }).click({ row: 0 })));
   },
 
   clickOnNewButton() {
+    cy.expect(rootSection.exists());
     cy.do(rootSection.find(newNoteButton).click());
   },
 
@@ -115,11 +112,11 @@ export default {
   },
 
   selectPackageFromList(row = 0) {
-    cy.do(MultiColumnList({ id:'list-packages' }).find(MultiColumnListRow({ indexRow: `row-${row}` })).click());
+    cy.do(MultiColumnList({ id: 'list-packages' }).find(MultiColumnListRow({ indexRow: `row-${row}` })).click());
   },
 
   addPackageToBusket() {
-    cy.do(Section({ id:'pane-view-eresource' }).find(Button('Add package to basket')).click());
+    cy.do(Section({ id: 'pane-view-eresource' }).find(Button('Add package to basket')).click());
   },
 
   openBusket() {
@@ -152,4 +149,8 @@ export default {
       Button('Save & close').click()
     ]);
   },
+
+  agreementlistClick() {
+    cy.do(MultiColumnListCell('2020 ACS Publications').click());
+  }
 };

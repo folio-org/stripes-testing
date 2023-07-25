@@ -1,29 +1,31 @@
 import { including } from '@interactors/html';
-import { Accordion,
-  Checkbox,
-  TextField,
+import {
+  Accordion,
   Button,
+  Checkbox,
   Link,
-  PaneHeader,
-  Pane,
   MultiColumnListCell,
-  Select,
-  Section,
-  TextArea,
+  Pane,
+  PaneHeader,
   RadioButtonGroup,
-  Spinner } from '../../../../interactors';
+  Section,
+  Select,
+  Spinner,
+  TextArea,
+  TextField
+} from '../../../../interactors';
 
 // Cypress clicks before the UI loads, use when there is no way to attach waiter to element
 const waitClick = () => { cy.wait(1000); };
 const openLoanSectionButton = Button({ id: 'accordion-toggle-button-loansSection' });
-const ActionButton = Section({ id: 'pane-userdetails' }).find(Button('Actions'));
+const actionButton = Section({ id: 'pane-userdetails' }).find(Button('Actions'));
 const editButton = Button('Edit');
 const AdditionalInfo = Button('Additional information');
 const saveAndClose = Button('Save & close');
 
 
 export default {
-  waitLoading:() => cy.expect(PaneHeader('User search').exists()),
+  waitLoading: () => cy.expect(PaneHeader('User search').exists()),
 
   searchByStatus(status) {
     waitClick();
@@ -57,7 +59,7 @@ export default {
   EntertheBarcodeSearchFiled(Barcode) {
     cy.do([
       TextField({ id: 'input-item-barcode' }).fillIn(Barcode),
-      Button({ id:'clickable-add-item' }).click()
+      Button({ id: 'clickable-add-item' }).click()
     ]);
   },
 
@@ -68,50 +70,47 @@ export default {
 
 
   selectUserFromList: (userName) => {
-    cy.do(Pane({ id:'users-search-results-pane' }).find(MultiColumnListCell(userName)).click());
+    cy.do(Pane({ id: 'users-search-results-pane' }).find(MultiColumnListCell(userName)).click());
   },
 
   openUser(userId) {
     return cy.do(Link({ href: including(userId) }).click());
   },
 
-  openUserLoanSection:() => {
+  openUserLoanSection: () => {
     cy.do([openLoanSectionButton.click()]);
   },
 
   verifyTestField: (name) => {
-    cy.do([
-      ActionButton.click(),
+    cy.do([actionButton.click(),
       editButton.click(),
     ]);
     cy.expect(TextField(name).exists());
   },
 
   verifyTestArea: (name) => {
-    cy.do([ActionButton.click(),
+    cy.do([actionButton.click(),
       editButton.click(),
     ]);
     cy.expect(TextArea(name).exists());
   },
 
   verifyCheckBox: (name) => {
-    cy.do([
-      ActionButton.click(),
+    cy.do([actionButton.click(),
       editButton.click(),
     ]);
     cy.expect(Checkbox(name).exists());
   },
 
   verifyRadioButton: (name) => {
-    cy.do([
-      ActionButton.click(),
+    cy.do([actionButton.click(),
       editButton.click(),
     ]);
     cy.expect(RadioButtonGroup(name).exists());
   },
 
   verifySingleSeclect: (name, label) => {
-    cy.do([ActionButton.click(),
+    cy.do([actionButton.click(),
       editButton.click(),
       Select(name).choose(label),
       saveAndClose.click(),
@@ -119,28 +118,21 @@ export default {
     ]);
   },
 
-  DragAndDropCustomFields: () => {
-    cy.get('.FieldAccordionDraggableWrapper---c2vRL').then((elements) => {
+  dragAndDropCustomFields: () => {
+    cy.get('[class^=FieldAccordionDraggableWrapper---]').then((elements) => {
       const draggableElement = elements[0];
-
       const targetElement = elements[1];
-
       if (targetElement) {
         cy.get(draggableElement).dragAndDrop(
-
           draggableElement,
-
           targetElement
-
         );
       }
     });
   },
 
-  VerifyDragItem() {
+  verifyDragItem() {
+    cy.expect(AdditionalInfo.exists());
     cy.do(AdditionalInfo.click());
-    cy.get('[aria-label=" Additional information"]').then((elements) => {
-      cy.expect(elements);
-    });
   }
 };
