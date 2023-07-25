@@ -4,10 +4,9 @@ import eHoldingsNewCustomPackage from './eHoldingsNewCustomPackage';
 import eHoldingsPackage from './eHoldingsPackage';
 
 const resultSection = Section({ id: 'search-results' });
-const selectedText = "#packageShowHoldingStatus div[class^='headline']";
 
 export default {
-  create: (packageName = `package_${getRandomPostfix()}`) => {
+  create:(packageName = `package_${getRandomPostfix()}`) => {
     cy.do(Button('New').click());
     eHoldingsNewCustomPackage.fillInRequiredProperties(packageName);
     eHoldingsNewCustomPackage.saveAndClose();
@@ -15,34 +14,30 @@ export default {
   },
   waitLoading: () => {
     cy.expect(or(
-      resultSection.find(ListItem({ className: including('list-item-'), index: 1 }).find(Button())).exists(),
+      resultSection.find(ListItem({ index: 1 }).find(Button())).exists(),
       resultSection.find(HTML(including('Enter a query to show search results.'))).exists()
     ));
   },
   openPackage: (rowNumber = 0) => {
-    const specialRow = resultSection.find(ListItem({ className: including('list-item-'), index: rowNumber }));
-    // cy.log(JSON.stringify(specialRow.h3Value())) -- swathiM
+    const specialRow = resultSection.find(ListItem({ index: rowNumber }));
 
     cy.then(() => specialRow.h3Value())
       .then(specialPackage => {
         cy.do(resultSection
-          .find(ListItem({ className: including('list-item-'), index: rowNumber })
+          .find(ListItem({ index: rowNumber })
             .find(Button())).click());
-        // eHoldingsPackage.waitLoading(specialPackage);
+        eHoldingsPackage.waitLoading(specialPackage);
         cy.wrap(specialPackage).as('selectedPackage');
       });
     return cy.get('@selectedPackage');
   },
-
-  getPackageName: (rowNumber = 0) => {
-    return cy.then(() => resultSection.find(ListItem({ className: including('list-item-'), index: rowNumber })).h3Value());
+  getPackageName:(rowNumber = 0) => {
+    return cy.then(() => resultSection.find(ListItem({ index: rowNumber })).h3Value());
   },
-  getCustomPackageViaApi: () => {
-    cy.okapiRequest({
-      path: 'eholdings/packages',
-      searchParams: { 'filter[custom]': true, count: 10, pageSize: 10 },
-      isDefaultSearchParamsRequired: false
-    }).then(({ body }) => {
+  getCustomPackageViaApi:() => {
+    cy.okapiRequest({ path: 'eholdings/packages',
+      searchParams: { 'filter[custom]':true, count:10, pageSize:10 },
+      isDefaultSearchParamsRequired : false }).then(({ body }) => {
       const initialPackageNames = body.data.filter(specialPackage => specialPackage?.attributes?.isCustom)
         .map(customePackage => customePackage.attributes?.name)
         .filter(name => name);
@@ -50,29 +45,11 @@ export default {
     });
     return cy.get('@customePackageName');
   },
-  getNotCustomSelectedPackageIdViaApi: () => {
-    cy.okapiRequest({
-      path: 'eholdings/packages',
-      searchParams: { 'filter[selected]': true, count: 100, pageSize: 100 },
-      isDefaultSearchParamsRequired: false
-    }).then(({ body }) => {
-      const initialPackageIds = body.data.filter(specialPackage => !specialPackage?.attributes?.isCustom
-        && specialPackage?.attributes?.name
-        // TODO: can't see not complete package in response now
-        // && specialPackage.attributes?.packageType !== 'Complete'
-        // TODO: potencial issue with this package
-        && !['123Library eBooks'].includes(specialPackage?.attributes?.name))
-        .map(customePackage => ({ id: customePackage.id, name: customePackage.attributes.name }));
-      cy.wrap([...new Set(initialPackageIds)][0]).as('packageId');
-    });
-    return cy.get('@packageId');
-  },
-  getNotSelectedPackageIdViaApi: () => {
-    cy.okapiRequest({
-      path: 'eholdings/packages',
-      searchParams: { 'filter[selected]': false, count: 100, pageSize: 100 },
-      isDefaultSearchParamsRequired: false
-    }).then(({ body }) => {
+  getNotCustomSelectedPackageIdViaApi:() => {
+    // TODO: issue related with filter[custom] https://issues.folio.org/browse/MODKBEKBJ-630
+    cy.okapiRequest({ path: 'eholdings/packages',
+      searchParams: { 'filter[selected]':true, count:100, pageSize:100 },
+      isDefaultSearchParamsRequired : false }).then(({ body }) => {
       const initialPackageIds = body.data.filter(specialPackage => !specialPackage?.attributes?.isCustom
         && specialPackage?.attributes?.name
         && specialPackage.attributes?.packageType !== 'Complete'
@@ -83,21 +60,19 @@ export default {
     });
     return cy.get('@packageId');
   },
-
-  updateProxy() {
-    cy.get(selectedText)
-      .invoke('text')
-      .then((text) => {
-        if (text === 'Selected') {
-          eHoldingsPackage.editactions();
-          eHoldingsPackage.changeProxy();
-          eHoldingsPackage.saveAndClose();
-        } else {
-          eHoldingsPackage.addToHodlings();
-          eHoldingsPackage.editactions();
-          eHoldingsPackage.changeProxy();
-          eHoldingsPackage.saveAndClose();
-        }
-      });
+  getNotSelectedPackageIdViaApi:() => {
+    // TODO: issue related with filter[custom] https://issues.folio.org/browse/MODKBEKBJ-630
+    cy.okapiRequest({ path: 'eholdings/packages',
+      searchParams: { 'filter[selected]':false, count:100, pageSize:100 },
+      isDefaultSearchParamsRequired : false }).then(({ body }) => {
+      const initialPackageIds = body.data.filter(specialPackage => !specialPackage?.attributes?.isCustom
+        && specialPackage?.attributes?.name
+        && specialPackage.attributes?.packageType !== 'Complete'
+        // TODO: potencial issue with this package
+        && !['123Library eBooks'].includes(specialPackage?.attributes?.name))
+        .map(customePackage => ({ id: customePackage.id, name: customePackage.attributes.name }));
+      cy.wrap([...new Set(initialPackageIds)][0]).as('packageId');
+    });
+    return cy.get('@packageId');
   }
 };

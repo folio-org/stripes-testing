@@ -43,6 +43,7 @@ export default {
     cy.do(actionsBtn.click());
     cy.do(Button('Export package (CSV)').click());
   },
+
   filterTitles: (title) => {
     cy.do([
       titlesSection.find(searchIcon).click(),
@@ -56,6 +57,7 @@ export default {
   packageFieldsToExportRadio: () => {
     cy.do(radioPackageFieldsToExport.click());
   },
+
   allPackageFieldsToExportRadioButton: () => {
     cy.do(allPackageRadioButton.click());
   },
@@ -103,34 +105,21 @@ export default {
     cy.expect(Callout({ type: 'success' }).exists());
     cy.wrap(Callout({ type: 'success' }).text()).as('message');
     cy.get('@message').then((val) => {
-      const txt1 = val.slice(31, 37);
+      const message = val.slice(31, 37);
       cy.visit(topMenu.exportManagerPath);
       exportManagerSearchPane.searchBySuccessful();
-      exportManagerSearchPane.downloadLastCreatedJob(txt1);
+      exportManagerSearchPane.downloadLastCreatedJob(message);
     });
   },
 
   getFileName: () => cy.then(() => KeyValue('File name').value()),
+
   verifyFileName(fileName) {
     this.getFileName().then((val) => {
       expect(val).to.include(fileName);
     });
   },
 
-  verifyJobIdInThirdPaneHasNoLink(JobId) {
-    this.verifyThirdPaneExportJobExist();
-    cy.get(`span:contains(${JobId})`)
-      .its('length')
-      .then((length) => {
-        if (length > 0) {
-          cy.get(`span:contains(${JobId})`).click();
-          cy.log('job id is "InProgress" or "Failed"');
-        } else {
-          cy.get(`a:contains(${JobId})`).click();
-          exportManagerSearchPane.downloadLastCreatedJob(txt1);
-        }
-      });
-  },
   verifyThirdPaneExportJobExist() {
     cy.expect(PaneHeader('Export jobs').exists());
   },
