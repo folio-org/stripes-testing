@@ -122,20 +122,6 @@ export default {
     });
   },
 
-  verifyJobIdInThirdPaneHasNoLink(JobId) {
-    this.verifyThirdPaneExportJobExist();
-    cy.get(`span:contains(${JobId})`)
-      .its('length')
-      .then((length) => {
-        if (length > 0) {
-          cy.get(`span:contains(${JobId})`).click();
-          cy.log('job id is "InProgress" or "Failed"');
-        } else {
-          cy.get(`a:contains(${JobId})`).click();
-          exportManagerSearchPane.downloadLastCreatedJob(txt1);
-        }
-      });
-  },
   verifyThirdPaneExportJobExist() {
     cy.expect(PaneHeader('Export jobs').exists());
   },
