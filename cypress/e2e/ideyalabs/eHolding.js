@@ -1,65 +1,95 @@
-import { Accordion, Button, FieldSet, KeyValue, Modal, PaneContent, MultiSelect, NavListItem, RadioButton, Section, Select, Spinner, TextArea, TextField } from '../../../interactors';
-import eholdingsPackagesSearch from '../../support/fragments/eholdings/eHoldingsPackagesSearch';
-import eHoldingsProvidersSearch from '../../support/fragments/eholdings/eHoldingsProvidersSearch';
-import eHoldingsSearch from '../../support/fragments/eholdings/eHoldingsSearch';
-import topMenu from '../../support/fragments/topMenu';
-import dateTools from '../../support/utils/dateTools';
+import {
+  Accordion,
+  Button,
+  FieldSet,
+  KeyValue,
+  Modal,
+  MultiSelect,
+  NavListItem,
+  PaneContent,
+  RadioButton,
+  Section,
+  Select,
+  Spinner,
+  TextArea,
+  TextField,
+} from "../../../interactors";
+import eholdingsPackagesSearch from "../../support/fragments/eholdings/eHoldingsPackagesSearch";
+import eHoldingsProvidersSearch from "../../support/fragments/eholdings/eHoldingsProvidersSearch";
+import eHoldingsSearch from "../../support/fragments/eholdings/eHoldingsSearch";
+import topMenu from "../../support/fragments/topMenu";
+import dateTools from "../../support/utils/dateTools";
+import {
+  randomFourDigitNumber,
+  randomTwoDigitNumber,
+} from "../../support/utils/stringTools";
 
-const editButton = Button('Edit');
-const actionsButton = Button('Actions');
-const searchButton = Button('Search');
-const description = TextArea({ name: 'description' });
-const SaveAndClose = Button('Save & close');
-const randomValue = Math.floor(Math.random() * 2);
-const availableProxies = ['Inherited - None', 'FOLIO-Bugfest', 'EZProxy'];
-const SearchButton = Section({ id: 'providerShowProviderList' }).find(Button({ ariaLabel: 'Toggle filters pane' }));
-const iconSearch = Button({ icon: 'search' });
-const randomNumber = Math.floor(Math.random(9000) * 1000) + 1000;
-const proxySelect = Select({ id: 'eholdings-proxy-id' });
-const selectionStatusAccordion = Accordion({ id: 'accordion-toggle-button-filter-packages-selected' });
-const selectionStatusSection = Section({ id: 'filter-packages-selected' });
-const accordianClick = Button({ id: 'accordion-toggle-button-providerShowProviderList' });
-const patronRadioButton = FieldSet('Show titles in package to patrons').find(RadioButton({ checked: false }));
-const tagsClick = Button({ id: 'accordion-toggle-button-providerShowTags' });
-const providerClick = Button({ id: 'accordion-toggle-button-providerShowProviderSettings' });
-const notesClick = Button({ id: 'accordion-toggle-button-providerShowNotes' });
-const packagesClick = Button({ id: 'accordion-toggle-button-providerShowProviderInformation' });
+const editButton = Button("Edit");
+const actionsButton = Button("Actions");
+const searchButton = Button("Search");
+const description = TextArea({ name: "description" });
+const SaveAndClose = Button("Save & close");
+const availableProxies = ["Inherited - None", "FOLIO-Bugfest", "EZProxy"];
+const SearchButton = Section({ id: "providerShowProviderList" }).find(
+  Button({ ariaLabel: "Toggle filters pane" })
+);
+const iconSearch = Button({ icon: "search" });
+const proxySelect = Select({ id: "eholdings-proxy-id" });
+const selectionStatusAccordion = Accordion({
+  id: "accordion-toggle-button-filter-packages-selected",
+});
+const selectionStatusSection = Section({ id: "filter-packages-selected" });
+const accordianClick = Button({
+  id: "accordion-toggle-button-providerShowProviderList",
+});
+const patronRadioButton = FieldSet("Show titles in package to patrons").find(
+  RadioButton({ checked: false })
+);
+const tagsClick = Button({ id: "accordion-toggle-button-providerShowTags" });
+const providerClick = Button({
+  id: "accordion-toggle-button-providerShowProviderSettings",
+});
+const notesClick = Button({ id: "accordion-toggle-button-providerShowNotes" });
+const packagesClick = Button({
+  id: "accordion-toggle-button-providerShowProviderInformation",
+});
 
 export default {
   packageAccordianClick() {
     cy.expect(accordianClick.exists());
-    cy.do([accordianClick.click(),
-      accordianClick.click()]);
+    cy.do([accordianClick.click(), accordianClick.click()]);
     cy.expect(Spinner().absent());
   },
   packageButtonClick(name, open) {
     cy.expect(Button(name).exists());
     cy.do(Button(name).click());
-    cy.expect([accordianClick.has({ ariaExpanded: open }),
+    cy.expect([
+      accordianClick.has({ ariaExpanded: open }),
       tagsClick.has({ ariaExpanded: open }),
       providerClick.has({ ariaExpanded: open }),
       notesClick.has({ ariaExpanded: open }),
-      packagesClick.has({ ariaExpanded: open })]);
+      packagesClick.has({ ariaExpanded: open }),
+    ]);
   },
 
   switchToPackage() {
     eHoldingsSearch.switchToPackages();
-    eHoldingsProvidersSearch.byProvider('JSTOR');
-    eholdingsPackagesSearch.bySelectionStatus('Selected');
+    eHoldingsProvidersSearch.byProvider("JSTOR");
+    eholdingsPackagesSearch.bySelectionStatus("Selected");
   },
 
   verifyPackage() {
-    cy.expect(PaneContent({ id: 'search-results-content' }).exists());
+    cy.expect(PaneContent({ id: "search-results-content" }).exists());
   },
   switchToPackages() {
     cy.visit(topMenu.eholdingsPath);
-    eHoldingsProvidersSearch.byProvider('Gale Cengage');
+    eHoldingsProvidersSearch.byProvider("Gale Cengage");
   },
   switchToPackageAndSearch() {
     cy.visit(topMenu.eholdingsPath);
     eHoldingsSearch.switchToPackages();
-    eHoldingsProvidersSearch.byProvider('Wiley Online Library');
-    eholdingsPackagesSearch.bySelectionStatus('Selected');
+    eHoldingsProvidersSearch.byProvider("Wiley Online Library");
+    eholdingsPackagesSearch.bySelectionStatus("Selected");
   },
 
   editActions: () => {
@@ -69,10 +99,11 @@ export default {
     cy.do(editButton.click());
   },
 
-  getAlternateTitles: () => cy.then(() => KeyValue('Alternate title(s)').value()),
+  getAlternateTitles: () =>
+    cy.then(() => KeyValue("Alternate title(s)").value()),
   alternativesTitles() {
-    this.getAlternateTitles().then(val => {
-      expect(val).to.include(';');
+    this.getAlternateTitles().then((val) => {
+      expect(val).to.include(";");
     });
   },
 
@@ -82,7 +113,7 @@ export default {
   },
 
   verifyFilterPackages() {
-    cy.expect(Section({ id: 'titleShowPackages' }).exists());
+    cy.expect(Section({ id: "titleShowPackages" }).exists());
   },
 
   patronRadioButton: () => {
@@ -90,24 +121,25 @@ export default {
     cy.do(patronRadioButton.click());
   },
 
-
   changeProxy: () => {
-    cy.get('select#eholdings-proxy-id option:selected')
-      .invoke('text')
+    cy.get("select#eholdings-proxy-id option:selected")
+      .invoke("text")
       .then((text) => {
         const options = availableProxies.filter((option) => option !== text);
-        cy.do(proxySelect.choose(options[randomValue]));
+        cy.do(proxySelect.choose(options[randomTwoDigitNumber()]));
       });
   },
 
   editDateRange: () => {
     cy.expect(Spinner().absent());
     cy.do([
-      TextField({ id: 'begin-coverage-0' }).fillIn(
-        dateTools.getTomorrowDayDateForFiscalYear(randomValue)
+      TextField({ id: "begin-coverage-0" }).fillIn(
+        dateTools.getTomorrowDayDateForFiscalYear(randomTwoDigitNumber())
       ),
-      TextField({ id: 'end-coverage-0' }).fillIn(
-        dateTools.getDayAfterTomorrowDayDateForFiscalYear(randomValue)
+      TextField({ id: "end-coverage-0" }).fillIn(
+        dateTools.getDayAfterTomorrowDayDateForFiscalYear(
+          randomTwoDigitNumber()
+        )
       ),
       SaveAndClose.click(),
     ]);
@@ -121,39 +153,36 @@ export default {
   bySelectionStatus(selectionStatus) {
     cy.expect(selectionStatusAccordion.exists());
     cy.do(selectionStatusAccordion.clickHeader());
-    cy.do(selectionStatusAccordion
-      .find(RadioButton(selectionStatus)).click());
-    cy.do(Button('Search').click());
+    cy.do(selectionStatusAccordion.find(RadioButton(selectionStatus)).click());
+    cy.do(Button("Search").click());
   },
 
   bySelectionStatusSection(selectionStatus) {
     cy.expect(selectionStatusSection.exists());
-    cy.do(selectionStatusSection
-      .find(RadioButton(selectionStatus)).click());
+    cy.do(selectionStatusSection.find(RadioButton(selectionStatus)).click());
   },
 
   bySelectionStatusOpen(selectionStatus) {
-    cy.do(selectionStatusSection.find(Button('Selection status')).click());
-    cy.do(selectionStatusSection
-      .find(RadioButton(selectionStatus)).click());
-    cy.do(Button('Search').click());
+    cy.do(selectionStatusSection.find(Button("Selection status")).click());
+    cy.do(selectionStatusSection.find(RadioButton(selectionStatus)).click());
+    cy.do(Button("Search").click());
   },
 
   editSchedule({ data }) {
     cy.do([
       NavListItem(data.name).click(),
-      Button('Actions').click(),
-      Button('Edit').click(),
+      Button("Actions").click(),
+      Button("Edit").click(),
       description.fillIn(data.description),
-      SaveAndClose.click()
+      SaveAndClose.click(),
     ]);
   },
 
   packageSearch() {
     cy.visit(topMenu.eholdingsPath);
     eHoldingsSearch.switchToPackages();
-    eHoldingsProvidersSearch.byProvider('VLeBooks');
-    eholdingsPackagesSearch.bySelectionStatus('Selected');
+    eHoldingsProvidersSearch.byProvider("VLeBooks");
+    eholdingsPackagesSearch.bySelectionStatus("Selected");
   },
 
   packageButton: () => {
@@ -166,14 +195,18 @@ export default {
     cy.do(iconSearch.click());
   },
   modelSearch() {
-    cy.do(Modal({ id: 'package-filter-modal' }).find(Button('Search').click()));
+    cy.do(Modal({ id: "package-filter-modal" }).find(Button("Search").click()));
   },
   providerToken() {
-    cy.do(TextArea({ name: 'providerTokenValue' }).fillIn(`Test${randomNumber}`));
+    cy.do(
+      TextArea({ name: "providerTokenValue" }).fillIn(
+        `Test${randomFourDigitNumber()}`
+      )
+    );
     cy.expect(SaveAndClose.exists());
     cy.do(SaveAndClose.click());
   },
-  getProxyValue: () => cy.then(() => KeyValue('Proxy').value()),
+  getProxyValue: () => cy.then(() => KeyValue("Proxy").value()),
   verifyProxy() {
     this.getProxyValue().then((val) => {
       // eslint-disable-next-line no-unused-expressions
@@ -181,7 +214,7 @@ export default {
     });
   },
 
-  getToken: () => cy.then(() => KeyValue('Provider token').value()),
+  getToken: () => cy.then(() => KeyValue("Provider token").value()),
   checkToken() {
     this.getToken().then((val) => {
       // eslint-disable-next-line no-unused-expressions
@@ -189,16 +222,17 @@ export default {
     });
   },
 
-  getAlternateRadio: () => cy.then(() => KeyValue('Show titles in package to patrons').value()),
+  getAlternateRadio: () =>
+    cy.then(() => KeyValue("Show titles in package to patrons").value()),
   alternativeRadio() {
     this.getAlternateRadio().then((val) => {
-      const radioArray = ['Yes', 'No'];
+      const radioArray = ["Yes", "No"];
       const newRadioArray = radioArray.filter((x) => !x.includes(val));
       expect(val).to.not.equal(newRadioArray[0]);
     });
   },
 
-  getDatesValue: () => cy.then(() => KeyValue('Custom coverage dates').value()),
+  getDatesValue: () => cy.then(() => KeyValue("Custom coverage dates").value()),
   alternativeDates() {
     this.getDatesValue().then((val) => {
       // eslint-disable-next-line no-unused-expressions
