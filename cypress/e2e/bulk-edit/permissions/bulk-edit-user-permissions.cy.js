@@ -34,7 +34,7 @@ describe('bulk-edit', () => {
         permissions.bulkEditEdit.gui,
         permissions.bulkEditUpdateRecords.gui,
       ];
-      const csvDeletePermission = permissions.bulkEditCsvDelete.gui
+      const csvDeletePermission = permissions.bulkEditCsvDelete.gui;
 
       cy.login(userWthViewEditPermissions.username, userWthViewEditPermissions.password);
       cy.visit(TopMenu.usersPath);
