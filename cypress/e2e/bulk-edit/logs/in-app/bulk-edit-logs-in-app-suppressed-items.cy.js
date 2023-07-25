@@ -62,7 +62,7 @@ describe('Bulk Edit - Logs', () => {
 
     BulkEditSearchPane.uploadFile(validItemBarcodesFileName);
     BulkEditSearchPane.waitFileUploading();
-    
+
     BulkEditActions.downloadMatchedResults();
     BulkEditActions.openInAppStartBulkEditFrom();
     BulkEditActions.editItemsSuppressFromDiscovery(false);

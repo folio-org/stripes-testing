@@ -20,61 +20,63 @@ const item = {
 };
 
 describe('bulk-edit', () => {
-  before('create test data', () => {
-    cy.createTempUser([
-      permissions.inventoryAll.gui,
-      permissions.bulkEditView.gui,
-      permissions.bulkEditEdit.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading
+  describe('in-app approach', () => {
+    before('create test data', () => {
+      cy.createTempUser([
+        permissions.inventoryAll.gui,
+        permissions.bulkEditView.gui,
+        permissions.bulkEditEdit.gui,
+      ])
+        .then(userProperties => {
+          user = userProperties;
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading
+          });
+
+          const instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+          cy.getHoldings({ query: `"instanceId"="${instanceId}"` }).then(holdings => {
+            FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, holdings[0].id);
+          });
         });
+    });
 
-        const instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-        cy.getHoldings({ query: `"instanceId"="${instanceId}"` }).then(holdings => {
-          FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, holdings[0].id);
-        });
-      });
-  });
+    after('delete test data', () => {
+      Users.deleteViaApi(user.userId);
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
+      FileManager.deleteFile(`cypress/fixtures/${holdingUUIDsFileName}`);
+    });
 
-  after('delete test data', () => {
-    Users.deleteViaApi(user.userId);
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-    FileManager.deleteFile(`cypress/fixtures/${holdingUUIDsFileName}`);
-  });
+    it('C398010 Verify "Suppress from discovery" (Set true) option in Bulk Editing Holdings (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+      BulkEditSearchPane.checkHoldingsRadio();
+      BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
+      BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
+      BulkEditSearchPane.waitFileUploading();
 
-  it('C398010 Verify "Suppress from discovery" (Set true) option in Bulk Editing Holdings (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    BulkEditSearchPane.checkHoldingsRadio();
-    BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
-    BulkEditSearchPane.uploadFile(holdingUUIDsFileName);
-    BulkEditSearchPane.waitFileUploading();
+      const suppressFromDiscovery = true;
+      BulkEditActions.openActions();
+      BulkEditSearchPane.changeShowColumnCheckbox('Suppressed from discovery');
+      BulkEditActions.openInAppStartBulkEditFrom();
+      BulkEditActions.editHoldingsSuppressFromDiscovery(suppressFromDiscovery);
+      BulkEditActions.confirmChanges();
+      BulkEditActions.commitChanges();
 
-    const suppressFromDiscovery = true;
-    BulkEditActions.openActions();
-    BulkEditSearchPane.changeShowColumnCheckbox('Suppressed from discovery');
-    BulkEditActions.openInAppStartBulkEditFrom();
-    BulkEditActions.editHoldingsSuppressFromDiscovery(suppressFromDiscovery);
-    BulkEditActions.confirmChanges();
-    BulkEditActions.commitChanges();
+      BulkEditSearchPane.waitFileUploading();
+      BulkEditSearchPane.verifyChangesUnderColumns('Suppressed from discovery', suppressFromDiscovery);
 
-    BulkEditSearchPane.waitFileUploading();
-    BulkEditSearchPane.verifyChangesUnderColumns('Suppressed from discovery', suppressFromDiscovery);
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.switchToItem();
+      InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
+      ItemRecordView.waitLoading();
+      ItemRecordView.closeDetailView();
+      InventorySearchAndFilter.selectViewHoldings();
+      HoldingsRecordView.checkMarkAsSuppressedFromDiscovery();
 
-    cy.visit(TopMenu.inventoryPath);
-    InventorySearchAndFilter.switchToItem();
-    InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
-    ItemRecordView.waitLoading();
-    ItemRecordView.closeDetailView();
-    InventorySearchAndFilter.selectViewHoldings();
-    HoldingsRecordView.checkMarkAsSuppressedFromDiscovery();
-
-    cy.visit(TopMenu.inventoryPath);
-    InventorySearchAndFilter.switchToItem();
-    InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
-    ItemRecordView.waitLoading();
-    ItemRecordView.suppressedAsDiscoveryIsPresent();
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.switchToItem();
+      InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
+      ItemRecordView.waitLoading();
+      ItemRecordView.suppressedAsDiscoveryIsPresent();
+    });
   });
 });
