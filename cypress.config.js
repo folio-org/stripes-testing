@@ -15,8 +15,8 @@ module.exports = defineConfig({
   env: {
     OKAPI_HOST: 'https://folio-testing-cypress-okapi.ci.folio.org',
     OKAPI_TENANT: 'diku',
-    diku_login: 'diku_admin',
-    diku_password: 'admin',
+    diku_login: 'folio',
+    diku_password: 'folio',
     is_kiwi_release: false,
     downloadTimeout: 1000,
     allure: 'true',
