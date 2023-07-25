@@ -57,9 +57,9 @@ describe('Request notice triggers', () => {
       category: 'Request',
       subject: getTestEntityValue(noticeName),
       body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
+      previewText: `Test email body The Wines of Italy ${moment().format('ll')}`,
     };
   };
-  const previewText = () => `Test email body The Wines of Italy ${moment().format('lll')}`;
   const noticeTemplates = {
     itemRecaled: { ...createNoticeTemplate('Item_recalled_template'), category: 'Loan' },
     recallRequest: createNoticeTemplate('Recall_request_template'),
@@ -304,17 +304,23 @@ describe('Request notice triggers', () => {
     'C347867 Item recalled + Recall request + Awaiting pickup + Hold shelf expiration triggers (volaris)',
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
-      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.itemRecaled, previewText());
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.itemRecaled);
+      delete noticeTemplates.itemRecaled.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.itemRecaled);
-      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.recallRequest, previewText());
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.recallRequest);
+      delete noticeTemplates.recallRequest.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.recallRequest);
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.awaitingPickUp, previewText());
+      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.awaitingPickUp);
+      delete noticeTemplates.awaitingPickUp.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.awaitingPickUp);
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.holdShelfBeforeOnce, previewText());
+      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.holdShelfBeforeOnce);
+      delete noticeTemplates.holdShelfBeforeOnce.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.holdShelfBeforeOnce);
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.holdShelfBeforeRecurring, previewText());
+      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.holdShelfBeforeRecurring);
+      delete noticeTemplates.holdShelfBeforeRecurring.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.holdShelfBeforeRecurring);
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.holdShelfUponAt, previewText());
+      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.holdShelfUponAt);
+      delete noticeTemplates.holdShelfUponAt.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.holdShelfUponAt);
 
       cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);

@@ -56,11 +56,17 @@ export default {
     cy.do(Select({ name: 'category' }).choose(category));
   },
 
-  checkPreview: (displayText) => {
-    cy.do(PaneContent({ id: 'patron-notice-template-pane-content' }).find(Button('Preview')).click());
+  checkPreview: (previewText) => {
+    cy.get('body').then(($body) => {
+      if ($body.find('[id=patron-notice-template-pane-content]').length) {
+        cy.do(PaneContent({ id: 'patron-notice-template-pane-content' }).find(Button('Preview')).click());
+      } else {
+        cy.do(Button('Preview').click());
+      }
+    });
     cy.expect([
       Modal(including('Preview of patron notice template')).exists(),
-      Modal({ content: including(displayText) }).exists()
+      Modal({ content: including(previewText) }).exists()
     ]);
     cy.do(Button('Close').click());
   },
@@ -170,22 +176,22 @@ export default {
     cy.do(subjectField.fillIn(noticePolicytemplateSubject));
   },
 
-  createPatronNoticeTemplate(template, previewText) {
+  createPatronNoticeTemplate(template) {
     this.startAdding();
     this.checkInitialState();
     this.addToken('item.title');
     this.create(template, false);
     this.chooseCategory(template.category);
-    this.checkPreview(previewText);
+    this.checkPreview(template.previewText);
     this.saveAndClose();
     this.waitLoading();
   },
 
-  duplicatePatronNoticeTemplate(template, previewText) {
+  duplicatePatronNoticeTemplate(template) {
     this.duplicateTemplate();
     this.typeTemplateName(template.name);
     this.typeTemplateSubject(template.subject);
-    this.checkPreview(previewText);
+    this.checkPreview(template.previewText);
     this.saveAndClose();
     this.waitLoading();
   },

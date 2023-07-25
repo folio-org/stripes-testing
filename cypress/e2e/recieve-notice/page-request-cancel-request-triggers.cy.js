@@ -45,9 +45,9 @@ describe('Request notice triggers', () => {
       category: 'Request',
       subject: getTestEntityValue(noticeName),
       body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
+      previewText: `Test email body The Wines of Italy ${moment().format('ll')}`,
     };
   };
-  const previewText = () => `Test email body The Wines of Italy ${moment().format('lll')}`;
   const noticeTemplates = {
     pageRequest: createNoticeTemplate('Page_request'),
     cancelRequest: createNoticeTemplate('Cancel_request'),
@@ -190,9 +190,11 @@ describe('Request notice triggers', () => {
     'C347866 Page request + Cancel request triggers (volaris)',
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
-      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.pageRequest, previewText());
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.pageRequest);
+      delete noticeTemplates.pageRequest.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.pageRequest);
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.cancelRequest, previewText());
+      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.cancelRequest);
+      delete noticeTemplates.cancelRequest.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.cancelRequest);
 
       cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);

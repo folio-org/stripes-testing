@@ -43,9 +43,9 @@ describe('Overdue fine', () => {
       category: noticeCategory,
       subject: `${noticeName}_${getRandomPostfix()}`,
       body: '{{item.title}}',
+      previewText: 'The Wines of Italy',
     };
   };
-  const previewText = () => 'The Wines of Italy';
   const noticeTemplates = {
     manualFeeFineCharge: createNoticeTemplate('Manual_fee_fine_charge', 'Manual fee/fine charge'),
     manualFeeFineAction: createNoticeTemplate(
@@ -184,18 +184,14 @@ describe('Overdue fine', () => {
         UsersSearchPane.waitLoading();
       };
 
-      NewNoticePolicyTemplate.createPatronNoticeTemplate(
-        noticeTemplates.manualFeeFineCharge,
-        previewText()
-      );
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.manualFeeFineCharge);
+      delete noticeTemplates.manualFeeFineCharge.previewText;
       NewNoticePolicyTemplate.checkAfterSaving({
         ...noticeTemplates.manualFeeFineCharge,
         category: 'FeeFineCharge',
       });
-      NewNoticePolicyTemplate.createPatronNoticeTemplate(
-        noticeTemplates.manualFeeFineAction,
-        previewText()
-      );
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.manualFeeFineAction);
+      delete noticeTemplates.manualFeeFineAction.previewText;
       NewNoticePolicyTemplate.checkAfterSaving({
         ...noticeTemplates.manualFeeFineAction,
         category: 'FeeFineAction',

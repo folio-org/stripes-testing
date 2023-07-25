@@ -36,8 +36,8 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
     description: 'Created by autotest team',
     body: 'Test_email_body',
     category: 'Loan',
+    previewText: 'Test_email_body'
   };
-  const previewText = () => `Test email body The Wines of Italy ${moment().format('lll')}`;
   const checkOutTemplate = { ...defaultTemplate };
   checkOutTemplate.name += ' Check out';
   checkOutTemplate.subject = checkOutTemplate.name;
@@ -248,11 +248,14 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
     'C347862 Check out + Loan due date change + Check in triggers (volaris)',
     { tags: [TestTypes.smoke, devTeams.volaris] },
     () => {
-      NewNoticePolicyTemplate.createPatronNoticeTemplate(checkOutTemplate, previewText());
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(checkOutTemplate);
+      delete checkOutTemplate.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(checkOutTemplate);
-      NewNoticePolicyTemplate.createPatronNoticeTemplate(loanDueDateChangeTemplate, previewText());
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(loanDueDateChangeTemplate);
+      delete loanDueDateChangeTemplate.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(loanDueDateChangeTemplate);
-      NewNoticePolicyTemplate.createPatronNoticeTemplate(checkInTemplate, previewText());
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(checkInTemplate);
+      delete checkInTemplate.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(checkInTemplate);
 
       cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);

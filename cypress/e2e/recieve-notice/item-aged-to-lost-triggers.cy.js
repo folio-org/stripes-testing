@@ -52,9 +52,9 @@ describe('Loan notice triggers', () => {
       category: 'Loan',
       subject: getTestEntityValue(noticeName),
       body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
+      previewText: `Test email body The Wines of Italy ${moment().format('ll')}`,
     };
   };
-  const previewText = () => `Test email body The Wines of Italy ${moment().format('lll')}`;
   const noticeTemplates = {
     uponAt: createNoticeTemplate('Item_aged_to_lost_upon_at_template'),
     afterOnce: createNoticeTemplate('Item_aged_to_lost_after_once_template'),
@@ -291,11 +291,14 @@ describe('Loan notice triggers', () => {
     'C347865: Item aged to lost triggers (volaris)',
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
-      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.uponAt, previewText());
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.uponAt);
+      delete noticeTemplates.uponAt.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.uponAt);
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.afterOnce, previewText());
+      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.afterOnce);
+      delete noticeTemplates.afterOnce.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.afterOnce);
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.afterRecurring, previewText());
+      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.afterRecurring);
+      delete noticeTemplates.afterRecurring.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.afterRecurring);
 
       cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
