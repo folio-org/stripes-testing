@@ -13,7 +13,6 @@ let user;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*Matched-Records-${userBarcodesFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
-const errorsInChangedRecordsFileName = `*-Errors-${editedFileName}`;
 
 describe('bulk-edit', () => {
   describe('csv approach', () => {
@@ -36,7 +35,7 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
-      FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName, errorsInChangedRecordsFileName);
+      FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName);
     });
 
     it('C388498 Negative: Verify CSV updating records with invalid date (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
@@ -59,7 +58,6 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyErrorLabelAfterChanges(editedFileName, 0, 1);
       BulkEditSearchPane.verifyReasonForError('Field "createdDate"');
       BulkEditActions.openActions();
-      BulkEditActions.downloadErrors();
     });
   });
 });
