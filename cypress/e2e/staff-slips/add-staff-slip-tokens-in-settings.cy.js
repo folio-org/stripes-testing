@@ -26,8 +26,11 @@ describe('Staff slips', () => {
     });
   });
 
-  after('Deleting created entities', () => {
+  afterEach('Clear template', () => {
     EditStaffClips.editAndClearTransit();
+  });
+
+  after('Deleting created entities', () => {
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
   });
@@ -42,6 +45,19 @@ describe('Staff slips', () => {
       EditStaffClips.saveAndClose();
       EditStaffClips.checkAfterUpdate('Transit');
       EditStaffClips.checkPreview('Transit', 'Undergraduate');
+    }
+  );
+
+  it(
+    'C387442 Add "Departments" as staff slip token in Settings',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      cy.visit(SettingsMenu.circulationStaffSlipsPath);
+      EditStaffClips.editTransit();
+      EditStaffClips.addToken(['requester.departments']);
+      EditStaffClips.saveAndClose();
+      EditStaffClips.checkAfterUpdate('Transit');
+      EditStaffClips.checkPreview('Transit', 'Library Technical Services; IT Operations');
     }
   );
 });
