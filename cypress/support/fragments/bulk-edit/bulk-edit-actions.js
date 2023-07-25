@@ -24,6 +24,7 @@ const keepEditingBtn = Button('Keep editing');
 const areYouSureForm = Modal('Are you sure?');
 const downloadPreviewBtn = Button('Download preview');
 const newBulkEditButton = Button('New bulk edit');
+const startBulkEditLocalButton = Button('Start bulk edit (Local)');
 
 function getEmailField() {
   // 2 the same selects without class, id or someone different attr
@@ -40,7 +41,7 @@ const bulkPageSelections = {
 
 export default {
   openStartBulkEditForm() {
-    cy.do(Button('Start bulk edit (CSV)').click());
+    cy.do(startBulkEditLocalButton.click());
   },
   openInAppStartBulkEditFrom() {
     cy.do(Button('Start bulk edit').click());

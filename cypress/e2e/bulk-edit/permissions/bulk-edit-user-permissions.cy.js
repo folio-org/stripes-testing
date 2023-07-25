@@ -30,8 +30,11 @@ describe('bulk-edit', () => {
       const permissionsToVerify = [
         permissions.bulkEditCsvView.gui,
         permissions.bulkEditCsvEdit.gui,
-        permissions.bulkEditCsvDelete.gui,
+        permissions.bulkEditView.gui,
+        permissions.bulkEditEdit.gui,
+        permissions.bulkEditUpdateRecords.gui,
       ];
+      const csvDeletePermission = permissions.bulkEditCsvDelete.gui;
 
       cy.login(userWthViewEditPermissions.username, userWthViewEditPermissions.password);
       cy.visit(TopMenu.usersPath);
@@ -39,6 +42,7 @@ describe('bulk-edit', () => {
       UsersSearchPane.searchByKeywords(userWthViewEditPermissions.barcode);
       UsersSearchPane.openUser(userWthViewEditPermissions.userId);
       UserEdit.addPermissions(permissionsToVerify);
+      UserEdit.verifyPermissionDoesNotExist(csvDeletePermission);
       UserEdit.saveAndClose();
       UsersCard.verifyPermissions(permissionsToVerify);
     });
