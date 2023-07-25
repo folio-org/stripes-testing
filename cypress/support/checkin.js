@@ -13,8 +13,6 @@ Cypress.Commands.add('checkIn', (barcode) => {
   cy.do([
     TextField('Item ID').fillIn(barcode),
     Button('Enter').click(),
-    // Modal('Confirm multipiece check in').find(Button('Check in')).click(),
-    // Button('End session').click(),
   ]);
 });
 
@@ -23,12 +21,10 @@ Cypress.Commands.add('checkInMultipleItem', (barcode) => {
     TextField('Item ID').fillIn(barcode),
     Button('Enter').click(),
     Modal('Confirm multipiece check in').find(Button('Check in')).click(),
-    // Button('End session').click(),
   ]);
 });
 
 Cypress.Commands.add('checkInMultipleItemNotExist', (barcode) => {
-  const modal = Modal('Confirm multipiece check in');
   cy.do([
     TextField('Item ID').fillIn(barcode),
     Button('Enter').click(),

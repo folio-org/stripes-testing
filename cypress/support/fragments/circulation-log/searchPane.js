@@ -2,27 +2,29 @@ import { matching } from 'bigtest';
 import {
   Accordion,
   Button,
-  MultiColumnListCell,
-  MultiColumnListRow,
-  including,
-  TextField,
-  Pane,
+  Checkbox,
   Dropdown,
   DropdownMenu,
-  Checkbox,
+  MultiColumnListCell,
+  MultiColumnListRow,
   MultiSelect,
-  PaneContent
+  Pane,
+  TextField,
+  including,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
-import section from '../../../../interactors/section';
-import button from '../../../../interactors/button';
 
-const dropdownButton = MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(Dropdown()).find(Button());
+const dropdownButton = MultiColumnListRow({ rowIndexInParent: 'row-0' })
+  .find(Dropdown())
+  .find(Button());
 const actionsButton = Button('Actions');
-const servicePointField = MultiSelect({ ariaLabelledby: 'accordion-toggle-button-servicePointId' });
+const servicePointField = MultiSelect({
+  ariaLabelledby: 'accordion-toggle-button-servicePointId',
+});
 const data = '4502015';
 
 export default {
+  // TODO: will rework to interactor when we get section id
   clickApplyMainFilter() {
     cy.get('[class^="button-"][type="submit"]').first().click();
   },
@@ -34,7 +36,7 @@ export default {
     cy.do([
       Accordion({ id: 'loan' }).clickHeader(),
       Checkbox({ id: 'clickable-filter-loan-checked-out' }).click(),
-      cy.do(TextField({ name: 'itemBarcode' }).fillIn(data))
+      cy.do(TextField({ name: 'itemBarcode' }).fillIn(data)),
     ]);
   },
 
@@ -60,7 +62,7 @@ export default {
   searchByChangedDueDate() {
     cy.do([
       Accordion({ id: 'loan' }).clickHeader(),
-      Checkbox({ id: 'clickable-filter-loan-changed-due-date' }).click()
+      Checkbox({ id: 'clickable-filter-loan-changed-due-date' }).click(),
     ]);
   },
 
@@ -77,32 +79,34 @@ export default {
       Checkbox({
         id: 'clickable-filter-loan-renewed-through-override',
       }).click(),
- Button('Reset all').click(),
-   TextField({ name: 'itemBarcode' }).fillIn('1040')]),
+      Button('Reset all').click(),
+      TextField({ name: 'itemBarcode' }).fillIn('1040'),
+    ]),
     cy.get('[class^="button-"][type="submit"]').first().click();
- cy.expect(MultiColumnListRow().exists());
+    cy.expect(MultiColumnListRow().exists());
   },
-  
-  checkElemtText:() => {
+
+  checkElemtText: () => {
     cy.do([
-      Checkbox({ id: 'clickable-filter-loan-renewed-through-override' }).click(),
-TextField({ name: 'itemBarcode' }).fillIn(data)]);
+      Checkbox({
+        id: 'clickable-filter-loan-renewed-through-override',
+      }).click(),
+      TextField({ name: 'itemBarcode' }).fillIn(data),
+    ]);
     this.clickApplyMainFilter();
-
   },
-
 
   searchByClaimedReturned() {
     cy.do([
       Accordion({ id: 'loan' }).clickHeader(),
-      Checkbox({ id: 'clickable-filter-loan-claimed-returned' }).click()
+      Checkbox({ id: 'clickable-filter-loan-claimed-returned' }).click(),
     ]);
   },
 
   searchByMarkedAsMissing() {
     cy.do([
       Accordion({ id: 'loan' }).clickHeader(),
-      Checkbox({ id: 'clickable-filter-loan-marked-as-missing' }).click()
+      Checkbox({ id: 'clickable-filter-loan-marked-as-missing' }).click(),
     ]);
   },
 
@@ -110,7 +114,7 @@ TextField({ name: 'itemBarcode' }).fillIn(data)]);
     // accordion = 'loan', 'notice', 'fee', 'request'
     cy.do([
       Accordion({ id: accordion }).clickHeader(),
-      Checkbox(checkboxOption).click()
+      Checkbox(checkboxOption).click(),
     ]);
   },
 
@@ -123,21 +127,56 @@ TextField({ name: 'itemBarcode' }).fillIn(data)]);
 
     function getResultRowByRowNumber(rowNumber) {
       return {
-        userBarcode: MultiColumnListCell({ row: rowNumber, columnIndex: 0, content: matching(/\d|/) }),
-        itemBarcode: MultiColumnListCell({ row: rowNumber, columnIndex: 1, content: matching(/\d|/) }),
-        object: MultiColumnListCell({ row: rowNumber, columnIndex: 2, content: matching(/\w|-/) }),
-        circAction: MultiColumnListCell({ row: rowNumber, columnIndex: 3, content: matching(/\w/) }),
-        date: MultiColumnListCell({ row: rowNumber, columnIndex: 4, content: matching(dateRegEx) }),
-        servicePoint: MultiColumnListCell({ row: rowNumber, columnIndex: 5, content: matching(/\w|/) }),
-        source: MultiColumnListCell({ row: rowNumber, columnIndex: 6, content: matching(/\w|/) }),
-        description: MultiColumnListCell({ row: rowNumber, columnIndex: 7, content: matching(/\w|/) })
+        userBarcode: MultiColumnListCell({
+          row: rowNumber,
+          columnIndex: 0,
+          content: matching(/\d|/),
+        }),
+        itemBarcode: MultiColumnListCell({
+          row: rowNumber,
+          columnIndex: 1,
+          content: matching(/\d|/),
+        }),
+        object: MultiColumnListCell({
+          row: rowNumber,
+          columnIndex: 2,
+          content: matching(/\w|-/),
+        }),
+        circAction: MultiColumnListCell({
+          row: rowNumber,
+          columnIndex: 3,
+          content: matching(/\w/),
+        }),
+        date: MultiColumnListCell({
+          row: rowNumber,
+          columnIndex: 4,
+          content: matching(dateRegEx),
+        }),
+        servicePoint: MultiColumnListCell({
+          row: rowNumber,
+          columnIndex: 5,
+          content: matching(/\w|/),
+        }),
+        source: MultiColumnListCell({
+          row: rowNumber,
+          columnIndex: 6,
+          content: matching(/\w|/),
+        }),
+        description: MultiColumnListCell({
+          row: rowNumber,
+          columnIndex: 7,
+          content: matching(/\w|/),
+        }),
       };
     }
 
     // TODO: rework with interactor (now we don't have interactor for this)
-    return cy.get('#circulation-log-list').then(element => {
+    return cy.get('#circulation-log-list').then((element) => {
       // only 30 records shows on every page
-      const resultCount = element.attr('data-total-count') > 29 ? 29 : element.attr('data-total-count');
+      const resultCount =
+        element.attr('data-total-count') > 29
+          ? 29
+          : element.attr('data-total-count');
 
       // verify every string in result table
       for (let i = 0; i < resultCount; i++) {
@@ -150,7 +189,7 @@ TextField({ name: 'itemBarcode' }).fillIn(data)]);
 
         if (verifyDate) {
           cy.do(
-            resultRow.date.perform(el => {
+            resultRow.date.perform((el) => {
               const actualDate = new Date(el.textContent);
               const lastWeek = DateTools.getLastWeekDateObj();
               const today = new Date();
@@ -166,14 +205,22 @@ TextField({ name: 'itemBarcode' }).fillIn(data)]);
   },
 
   checkResultSearch(searchResults, rowIndex = 0) {
-    return cy.wrap(Object.values(searchResults)).each(contentToCheck => {
-      cy.expect(MultiColumnListRow({ indexRow: `row-${rowIndex}` }).find(MultiColumnListCell({ content: including(contentToCheck) })).exists());
+    return cy.wrap(Object.values(searchResults)).each((contentToCheck) => {
+      cy.expect(
+        MultiColumnListRow({ indexRow: `row-${rowIndex}` })
+          .find(MultiColumnListCell({ content: including(contentToCheck) }))
+          .exists()
+      );
     });
   },
 
   // TODO check if we can use it using MultiColumnRow
   findResultRowIndexByContent(content) {
-    return cy.get('*[class^="mclCell"]').contains(content).parent().invoke('attr', 'data-row-inner');
+    return cy
+      .get('*[class^="mclCell"]')
+      .contains(content)
+      .parent()
+      .invoke('attr', 'data-row-inner');
   },
 
   filterByLastWeek() {
@@ -181,9 +228,13 @@ TextField({ name: 'itemBarcode' }).fillIn(data)]);
     const today = new Date();
 
     return cy.do([
-      TextField({ name: 'endDate' }).fillIn(DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY')),
-      TextField({ name: 'startDate' }).fillIn(DateTools.getFormattedDate({ date: lastWeek }, 'MM/DD/YYYY')),
-      Accordion({ id: 'date' }).find(Button('Apply')).click()
+      TextField({ name: 'endDate' }).fillIn(
+        DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY')
+      ),
+      TextField({ name: 'startDate' }).fillIn(
+        DateTools.getFormattedDate({ date: lastWeek }, 'MM/DD/YYYY')
+      ),
+      Accordion({ id: 'date' }).find(Button('Apply')).click(),
     ]);
   },
   resetResults() {
@@ -191,10 +242,7 @@ TextField({ name: 'itemBarcode' }).fillIn(data)]);
   },
 
   goToUserDetails() {
-    cy.do([
-      dropdownButton.click(),
-      DropdownMenu().find(Button()).click()
-    ]);
+    cy.do([dropdownButton.click(), DropdownMenu().find(Button()).click()]);
   },
 
   userDetailIsOpen() {
@@ -202,10 +250,7 @@ TextField({ name: 'itemBarcode' }).fillIn(data)]);
   },
 
   exportResults() {
-    cy.do([
-      actionsButton.click(),
-      Button('Export results (CSV)').click(),
-    ]);
+    cy.do([actionsButton.click(), Button('Export results (CSV)').click()]);
   },
 
   checkExportResultIsUnavailable() {
