@@ -14,7 +14,7 @@ import {
 import exportManagerSearchPane from '../fragments/exportManager/exportManagerSearchPane';
 import topMenu from '../fragments/topMenu';
 
-const actionsBtn = Button('Actions');
+const actionsButton = Button('Actions');
 const radioPackageFieldsToExport = RadioButton({
   id: 'selected-package-fields',
 });
@@ -40,7 +40,7 @@ const searchButton = Button('Search');
 
 export default {
   exportsPackageCSVClick: () => {
-    cy.do(actionsBtn.click());
+    cy.do(actionsButton.click());
     cy.do(Button('Export package (CSV)').click());
   },
 

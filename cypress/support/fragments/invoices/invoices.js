@@ -16,8 +16,7 @@ import {
   Selection,
   SelectionList,
   SelectionOption,
-  Spinner,
-  TextField,
+  TextField
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import Helper from '../finance/financeHelper';
@@ -27,9 +26,9 @@ const saveAndClose = Button('Save & close');
 const invoiceStates = {
   invoiceCreatedMessage: 'Invoice has been saved',
   invoiceLineCreatedMessage: 'Invoice line has been saved',
-  InvoiceApprovedMessage: 'Invoice has been approved successfully',
-  InvoicePaidMessage: 'Invoice has been paid successfully',
-  InvoiceDeletedMessage: 'Invoice has been deleted',
+  invoiceApprovedMessage: 'Invoice has been approved successfully',
+  invoicePaidMessage: 'Invoice has been paid successfully',
+  invoiceDeletedMessage: 'Invoice has been deleted',
 };
 const vendorDetailsAccordionId = 'vendorDetails';
 const invoiceLinesAccordionId = 'invoiceLines';
