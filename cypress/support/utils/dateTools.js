@@ -189,5 +189,20 @@ export default {
   getCurrentDateYYMMDD() {
     const initialCurrentDate = new Date();
     return `${initialCurrentDate.getFullYear().toString().substring(2)}${padWithZero(initialCurrentDate.getMonth() + 1)}${padWithZero(initialCurrentDate.getDate())}`;
-  }
+  },
+
+  getDayAfterTomorrowDayDateForFiscalYear: (date) => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 2 + date);
+    if (today.getMonth() !== tomorrow.getMonth()) {
+      tomorrow.setMonth(tomorrow.getMonth());
+    }
+    const month = tomorrow.getMonth() + 1;
+    const day = tomorrow.getDate();
+    const year = tomorrow.getFullYear();
+    return `${month.toString().padStart(2, '0')}/${day
+      .toString()
+      .padStart(2, '0')}/${year}`;
+  },
 };

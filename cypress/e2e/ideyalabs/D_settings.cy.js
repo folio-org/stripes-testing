@@ -8,8 +8,7 @@ import customFields from '../../support/fragments/settings/users/customFields';
 import settingsMenu from '../../support/fragments/settingsMenu';
 import topMenu from '../../support/fragments/topMenu';
 import usersSearchPane from '../../support/fragments/users/usersSearchPane';
-
-const randomNumber = Math.floor(Math.random(9000) * 1000) + 1000;
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Creating Permissions Set and Custom Fields', () => {
   it('login to Folio', () => {
@@ -20,8 +19,8 @@ describe('Creating Permissions Set and Custom Fields', () => {
     cy.visit(topMenu.permissionSetPath);
     customFields.clickONewButton();
     customFields.createPermission({
-      name: `Adminstrator${randomNumber}`,
-      description: `Hello${randomNumber}`,
+      name: `Adminstrator${getRandomPostfix}`,
+      description: `Hello${getRandomPostfix}`,
     });
     customFields.deletePermission();
   });
@@ -79,13 +78,13 @@ describe('Creating Permissions Set and Custom Fields', () => {
   });
 
   it('C15697__Create a single select custom field', () => {
-    const label2 = `select${randomNumber}`;
+    const label2 = `select${getRandomPostfix}`;
     cy.visit(topMenu.customFieldsPath);
     customFields.addCustomSingleSelect({
       data: {
-        fieldLabel: `Single Select Dropdown${randomNumber}`,
+        fieldLabel: `Single Select Dropdown${getRandomPostfix}`,
         helpText: 'select One Data',
-        label1: `Select${randomNumber}`,
+        label1: `Select${getRandomPostfix}`,
         label2,
       },
     });
@@ -93,51 +92,51 @@ describe('Creating Permissions Set and Custom Fields', () => {
     usersSearchPane.searchByKeywords('testing');
     usersSearchPane.selectFirstUser('Excel, Testing');
     usersSearchPane.verifySingleSeclect(
-      `Single Select Dropdown${randomNumber}`,
+      `Single Select Dropdown${getRandomPostfix}`,
       label2
     );
   });
 
   it('C16985__Settings | Set up a note type', () => {
     cy.visit(topMenu.notesPath);
-    newNote.clickOnNew(`New Note${randomNumber}`);
+    newNote.clickOnNew(`New Note${getRandomPostfix}`);
     cy.visit(topMenu.agreementsPath);
     agreementsDetails.agreementlistClick();
     agreementsDetails.openNotesSection();
     agreementsDetails.clickOnNewButton();
-    newNote.clickOnNoteType(`New Note${randomNumber}`);
+    newNote.clickOnNoteType(`New Note${getRandomPostfix}`);
   });
 
   it('C1304__Settings | Edit a note type', () => {
     cy.visit(topMenu.notesPath);
-    existingNoteEdit.clickEditButton(`Item${randomNumber}`);
+    existingNoteEdit.clickEditButton(`Item${getRandomPostfix}`);
     cy.visit(topMenu.agreementsPath);
     agreementsDetails.agreementlistClick();
     agreementsDetails.openNotesSection();
     agreementsDetails.clickOnNewButton();
-    newNote.clickOnNoteType(`Item${randomNumber}`);
+    newNote.clickOnNoteType(`Item${getRandomPostfix}`);
     agreementsDetails.clickCancelButton();
     newNote.closeWithoutSaveButton();
     agreementsDetails.openNotesSection();
     agreementsDetails.clickOnNoteRecord();
     existingNoteView.gotoEdit();
-    newNote.clickOnNoteType(`Item${randomNumber}`);
+    newNote.clickOnNoteType(`Item${getRandomPostfix}`);
   });
 
   it('C731__Create new categories', () => {
     cy.visit(settingsMenu.organizationsPath);
-    organizations.addNewCategory(`Test${randomNumber}`);
+    organizations.addNewCategory(`Test${getRandomPostfix}`);
     cy.visit(topMenu.organizationsPath);
     organizations.searchByParameters('All', 'organization');
     organizations.selectOrganization('New organization');
     organizations.editOrganization();
-    organizations.verifynewCategory(`Test${randomNumber}`);
+    organizations.verifynewCategory(`Test${getRandomPostfix}`);
   });
 
   it('C367970-Check that User can save changes while edit ""Fixed due date schedules"" without changing ""Fixed due date schedules name"" field', () => {
     cy.visit(settingsMenu.circulationFixedDueDateSchedulesPath);
     eHoldingsProviders.editSchedule({
-      data: { name: 'Magnus test', description: `Test${randomNumber}` },
+      data: { name: 'Magnus test', description: `Test${getRandomPostfix}` },
     });
   });
 
