@@ -45,7 +45,7 @@ const testData = {
   fundFinancialQuantity1: "1,000.00",
   fundFinancialQuantity2: "975.00",
   groupFinancialQuantity1: "2,000.00",
-  groupFinancialQuantity2: "2,00.00",
+  groupFinancialQuantity2: "2,000.00",
   ledgerFinancialQuantity1: "0.00",
   ledgerFinancialQuantity2: "0.00",
 };
@@ -109,7 +109,7 @@ describe("Users-loans App", () => {
     groups.selectGroup(testData.selectGroupName);
     ledgers.checkFinancialSummeryQuality(
       testData.groupFinancialQuantity1,
-      testData.ledgerFinancialQuantity2
+      testData.groupFinancialQuantity2
     );
     ledgers.closeOpenedPage();
     funds.clickOnFundsTab();
@@ -121,6 +121,7 @@ describe("Users-loans App", () => {
       testData.fundFinancialQuantity2
     );
   });
+
   it("C396360-Save invoice fiscal year after fund distribution change to fund using different ledger if FY was undefined", () => {
     cy.visit(topMenu.invoicesPath);
     invoices.searchByNumber(testData.searchByInvoiceName);
@@ -196,6 +197,7 @@ describe("Users-loans App", () => {
     invoices.ClickOnViewTransactionsHyperText();
     invoices.TransactionListDetailsResultsFromPreviousBudgetEmbrance();
   });
+
   it('C359604-Make more than one preview for one ledger and same fiscal year with ""Test rollover"", check test rollover results', () => {
     cy.visit(topMenu.financePath);
     financeHelper.searchByName(rollOverData.ledgerName);
@@ -231,6 +233,7 @@ describe("Users-loans App", () => {
     );
     ledgers.verifyEncumbranceDetailsSection(rollOverData.assertionData);
   });
+  
   it("C375267-Encumbrances are rolled over correctly when order fund distribution was changed and related paid invoice exists (based on Remaining)", () => {
     cy.visit(topMenu.financePath);
     financeHelper.searchByName(encumbranceData.searchByName);
