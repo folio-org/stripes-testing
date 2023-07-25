@@ -12,15 +12,16 @@ import {
 } from '../../../../interactors';
 
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
+const instanceDetailsNotesSection = Section({ id: 'instance-details-notes' });
+const marcViewSection = Section({ id: 'marc-view-pane' });
 const catalogedDateKeyValue = KeyValue('Cataloged date');
 const sourceKeyValue = KeyValue('Source');
 const instanceStatusTermKeyValue = KeyValue('Instance status term');
-const instanceDetailsNotesSection = Section({ id: 'instance-details-notes' });
-const marcViewSection = Section({ id: 'marc-view-pane' });
 const actionsButton = Button('Actions');
 const viewSourceButton = Button('View source');
 const instanceAdministrativeNote = MultiColumnList({ id: 'administrative-note-list' });
 const instanceNote = MultiColumnList({ id: 'list-instance-notes-0' });
+const electronicAccessAccordion = Accordion('Electronic access');
 
 const verifyResourceTitle = value => {
   cy.expect(KeyValue('Resource title').has({ value }));
@@ -129,6 +130,23 @@ export default {
   verifyCalloutMessage: (number) => {
     cy.expect(Callout({ textContent: including(`Record ${number} created. Results may take a few moments to become visible in Inventory`) })
       .exists());
+  },
+  verifyElectronicAccess:(uriValue) => {
+    cy.expect(electronicAccessAccordion
+      .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: uriValue }))
+      .exists());
+    cy.expect(electronicAccessAccordion
+      .find(MultiColumnListCell({ row: 1, columnIndex: 1 }))
+      .absent());
+  },
+
+  verifyElectronicAccess:(uriValue) => {
+    cy.expect(electronicAccessAccordion
+      .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: uriValue }))
+      .exists());
+    cy.expect(electronicAccessAccordion
+      .find(MultiColumnListCell({ row: 1, columnIndex: 1 }))
+      .absent());
   },
 
   openHoldingView: () => {
