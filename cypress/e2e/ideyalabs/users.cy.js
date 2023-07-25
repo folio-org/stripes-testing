@@ -1,47 +1,51 @@
 import ledgers from "../../support/fragments/finance/ledgers/ledgers";
 import topMenu from "../../support/fragments/topMenu";
 import users from "../../support/fragments/users/users";
+import getRandomPostfix, { getFourDigitRandomNumber } from "../../support/utils/stringTools";
 
-const RandomNumber = Math.floor(Math.random(9000) * 1000) + 1000;
+const barcodeNumber = getRandomPostfix();
 
 const userOne = {
   patronGroup: "A1A1",
-  barcode: `237${RandomNumber}`,
-  userName: `dan${RandomNumber}`,
+  barcode: barcodeNumber,
+  userName: `AutotestUser_${getRandomPostfix()}`,
   personal: {
-    lastName: "somai",
-    firstName: "king1",
-    email: `dan${RandomNumber}@gmail.com`,
+    lastName: "User",
+    firstName: "Delete",
+    email: `dan${getFourDigitRandomNumber}@gmail.com`,
   },
 };
+
 const userTwo = {
   patronGroup: "A1A1",
-  barcode: `237${RandomNumber}`,
-  userName: `Son${RandomNumber}`,
+  barcode: barcodeNumber,
+  userName: `AutotestUser_${getRandomPostfix()}`,
   personal: {
-    lastName: "somaid",
-    firstName: "king3",
-    email: `dan${RandomNumber}@gmail.com`,
+    lastName: "User",
+    firstName: "Delete",
+    email: `dan${getFourDigitRandomNumber}@gmail.com`,
   },
 };
+
 const userThree = {
   patronGroup: "A1A1",
-  barcode: `2988${RandomNumber}`,
-  userName: `Mann${RandomNumber}`,
+  barcode: `678${getFourDigitRandomNumber}`,
+  userName: `Mann${getFourDigitRandomNumber}`,
   personal: {
-    lastName: "Array",
-    firstName: "king1",
+    lastName: "Code",
+    firstName: "Auto",
     email: "dan@gmail.com",
-    middleName: "chary",
-    preferredFirstName: "Dan basco1",
+    middleName: "Test",
+    preferredFirstName: "Dan",
   },
 };
+
 const verifyData = {
-  verifyLastNameOnUserDetailsPane: "Array",
-  verifyPreferredfirstnameOnUserDetailsPane: "Dan basco1",
-  verifyFirstNameOnUserDetailsPane: "king1",
-  verifyMiddleNameOnUserDetailsPane: "chary",
-  verifyClearFirstNameDetailsPane:'No value set-'
+  verifyLastNameOnUserDetailsPane: "Code",
+  verifyPreferredfirstnameOnUserDetailsPane: "Dan",
+  verifyFirstNameOnUserDetailsPane: "Auto",
+  verifyMiddleNameOnUserDetailsPane: "Test",
+  verifyClearFirstNameDetailsPane: 'No value set-'
 };
 
 describe("create a users", () => {
@@ -51,10 +55,11 @@ describe("create a users", () => {
     users.createViaUi(userOne);
     cy.visit(topMenu.usersPath);
     users.createViaUi(userTwo);
-    users.Assertion();
+    users.assertion();
     ledgers.closeOpenedPage();
-    users.Closewithoutsavingbutton();
+    users.closeWithoutSavingButton();
   });
+
   it("C11096-Add Preferred first name and confirm its display in the User record View and Edit screens", () => {
     cy.visit(topMenu.usersPath);
     users.createData(userThree);
@@ -84,4 +89,5 @@ describe("create a users", () => {
     users.saveButton();
     users.verifyFirstNameOnUserDetailsPane(verifyData.verifyClearFirstNameDetailsPane);
   });
+
 });
