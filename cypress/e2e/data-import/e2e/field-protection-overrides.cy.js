@@ -256,72 +256,72 @@ describe('ui-data-import', () => {
     });
     FileDetails.checkSrsRecordQuantityInSummaryTable('1', 0);
     FileDetails.checkInstanceQuantityInSummaryTable('1', 0);
+    // open Instance for getting hrid
+    FileDetails.openInstanceInInventory('Created');
+    InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+      instanceHrid = initialInstanceHrId;
 
-    // get Instance HRID through API
-    InventorySearchAndFilter.getInstanceHRID()
-      .then(hrId => {
-        instanceHrid = hrId[0];
-        DataImport.editMarcFile(fileForEditRev1, editedFileNameRev1, [instanceHridFromFile], [instanceHrid]);
-        DataImport.editMarcFile(fileForEditRev2, editedFileNameRev2, [instanceHridFromFile], [instanceHrid]);
+      DataImport.editMarcFile(fileForEditRev1, editedFileNameRev1, [instanceHridFromFile], [instanceHrid]);
+      DataImport.editMarcFile(fileForEditRev2, editedFileNameRev2, [instanceHridFromFile], [instanceHrid]);
 
-        // upload a marc file
-        cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(editedFileNameRev1, fileNameForProtect);
-        JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileNameForProtect);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(fileNameForProtect);
-        [FileDetails.columnNameInResultList.srsMarc, FileDetails.columnNameInResultList.instance].forEach(columnName => {
-          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
-        });
-        FileDetails.checkSrsRecordQuantityInSummaryTable('1', 1);
-        FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
-
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-        InstanceRecordView.verifyAdministrativeNote(administrativeNote);
-        InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[0].type, resourceIdentifiers[0].value, 0);
-        InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[1].type, resourceIdentifiers[1].value, 2);
-        InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[2].type, resourceIdentifiers[2].value, 1);
-        InstanceRecordView.verifyInstanceNote(instanceNote);
-        // verify table data in marc bibliographic source
-        InventoryInstance.viewSource();
-        resourceIdentifiers.forEach(element => {
-          InventoryViewSource.verifyFieldInMARCBibSource(protectedFields.firstField, element.value);
-        });
-        InventoryViewSource.verifyFieldInMARCBibSource(protectedFields.secondField, instanceNote);
-
-        // upload a marc file
-        cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(editedFileNameRev2, fileNameForOverride);
-        JobProfiles.searchJobProfileForImport(jobProfileForOverride.profileName);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileNameForOverride);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(fileNameForOverride);
-        [FileDetails.columnNameInResultList.srsMarc, FileDetails.columnNameInResultList.instance].forEach(columnName => {
-          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
-        });
-        FileDetails.checkSrsRecordQuantityInSummaryTable('1', 1);
-        FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
-
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-        InstanceRecordView.verifyAdministrativeNote(administrativeNote);
-        InstanceRecordView.verifyAdministrativeNote(updatedAdministativeNote);
-        resourceIdentifiers.forEach(element => {
-          InventoryInstance.verifyResourceIdentifierAbsent(element.value);
-        });
-        InstanceRecordView.verifyInstanceNote(updatedInstanceNote);
-        // verify table data in marc bibliographic source
-        InventoryInstance.viewSource();
-        InventoryViewSource.notContains(`${protectedFields.firstField}\t`);
-        InventoryViewSource.verifyFieldInMARCBibSource(protectedFields.secondField, updatedInstanceNote);
+      // upload a marc file
+      cy.visit(TopMenu.dataImportPath);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
+      DataImport.uploadFile(editedFileNameRev1, fileNameForProtect);
+      JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(fileNameForProtect);
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      Logs.openFileDetails(fileNameForProtect);
+      [FileDetails.columnNameInResultList.srsMarc, FileDetails.columnNameInResultList.instance].forEach(columnName => {
+        FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
       });
+      FileDetails.checkSrsRecordQuantityInSummaryTable('1', 1);
+      FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
+
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+      InstanceRecordView.verifyAdministrativeNote(administrativeNote);
+      InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[0].type, resourceIdentifiers[0].value, 0);
+      InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[1].type, resourceIdentifiers[1].value, 2);
+      InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[2].type, resourceIdentifiers[2].value, 1);
+      InstanceRecordView.verifyInstanceNote(instanceNote);
+      // verify table data in marc bibliographic source
+      InventoryInstance.viewSource();
+      resourceIdentifiers.forEach(element => {
+        InventoryViewSource.verifyFieldInMARCBibSource(protectedFields.firstField, element.value);
+      });
+      InventoryViewSource.verifyFieldInMARCBibSource(protectedFields.secondField, instanceNote);
+
+      // upload a marc file
+      cy.visit(TopMenu.dataImportPath);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
+      DataImport.uploadFile(editedFileNameRev2, fileNameForOverride);
+      JobProfiles.searchJobProfileForImport(jobProfileForOverride.profileName);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(fileNameForOverride);
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      Logs.openFileDetails(fileNameForOverride);
+      [FileDetails.columnNameInResultList.srsMarc, FileDetails.columnNameInResultList.instance].forEach(columnName => {
+        FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+      });
+      FileDetails.checkSrsRecordQuantityInSummaryTable('1', 1);
+      FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
+
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+      InstanceRecordView.verifyAdministrativeNote(administrativeNote);
+      InstanceRecordView.verifyAdministrativeNote(updatedAdministativeNote);
+      resourceIdentifiers.forEach(element => {
+        InventoryInstance.verifyResourceIdentifierAbsent(element.value);
+      });
+      InstanceRecordView.verifyInstanceNote(updatedInstanceNote);
+      // verify table data in marc bibliographic source
+      InventoryInstance.viewSource();
+      InventoryViewSource.notContains(`${protectedFields.firstField}\t`);
+      InventoryViewSource.verifyFieldInMARCBibSource(protectedFields.secondField, updatedInstanceNote);
+    });
   });
 });

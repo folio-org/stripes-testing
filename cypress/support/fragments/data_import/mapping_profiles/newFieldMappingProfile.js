@@ -490,7 +490,10 @@ export default {
   addName:(name) => cy.do(nameField.fillIn(name)),
   addIncomingRecordType:(type) => cy.do(incomingRecordTypeField.choose(type)),
   addFolioRecordType:(folioType) => cy.do(existingRecordType.choose(folioType)),
-  saveProfile:() => cy.do(saveButton.click()),
+  saveProfile:() => {
+    cy.wait(1000);
+    cy.do(saveButton.click());
+  },
   fillTemporaryLocation:(location) => cy.do(TextField('Temporary').fillIn(location)),
   fillDigitizationPolicy:(policy) => cy.do(TextField('Digitization policy').fillIn(policy)),
   fillCallNumber:(number) => cy.do(TextField('Call number').fillIn(number)),
