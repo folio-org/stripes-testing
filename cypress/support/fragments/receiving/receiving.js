@@ -73,6 +73,7 @@ export default {
     ]);
     InteractorsTools.checkCalloutMessage('The piece was successfully saved');
   },
+
   addPieceProcess: (caption,enumeration) => {
     cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
     cy.do([
@@ -87,7 +88,7 @@ export default {
     cy.do(Accordion({ id: expectedPiecesAccordionId }).find(MultiColumnListCell(caption)).click());
   },
 
-  quickReceivePiece: (enumeration) => {
+  quickReceivePiece: () => {
     cy.do(addPieceModal.find(Button('Quick receive')).click());
    // InteractorsTools.checkCalloutMessage(`The piece ${enumeration} was successfully received`);
   },
