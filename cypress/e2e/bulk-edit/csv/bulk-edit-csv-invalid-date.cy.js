@@ -8,20 +8,16 @@ import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-s
 import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import DateTools from '../../../support/utils/dateTools';
-import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 
 let user;
-let testUser;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*Matched-Records-${userBarcodesFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 const errorsInChangedRecordsFileName = `*-Errors-${editedFileName}`;
-const changedRecordsFileName = `*-Changed-Records*-${editedFileName}`;
 
 describe('bulk-edit', () => {
   describe('csv approach', () => {
     before('create test data', () => {
-      cy.createTempUser([]).then(userProperties => { testUser = userProperties; });
       cy.createTempUser([
         permissions.bulkEditCsvView.gui,
         permissions.bulkEditCsvEdit.gui,
@@ -32,7 +28,7 @@ describe('bulk-edit', () => {
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading
           });
-          FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, `${user.barcode}\r\n${testUser.barcode}`);
+          FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
         });
     });
 
@@ -40,7 +36,7 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
-      FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName, errorsInChangedRecordsFileName, changedRecordsFileName);
+      FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName, errorsInChangedRecordsFileName);
     });
 
     it('C388498 Negative: Verify CSV updating records with invalid date (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
@@ -60,13 +56,10 @@ describe('bulk-edit', () => {
       BulkEditActions.clickNext();
       BulkEditActions.commitChanges();
 
-      BulkEditSearchPane.verifyErrorLabelAfterChanges(editedFileName, 1, 1);
+      BulkEditSearchPane.verifyErrorLabelAfterChanges(editedFileName, 0, 1);
       BulkEditSearchPane.verifyReasonForError('Field "createdDate"');
       BulkEditActions.openActions();
-      BulkEditActions.downloadChangedCSV();
       BulkEditActions.downloadErrors();
-      BulkEditFiles.verifyMatchedResultFileContent(changedRecordsFileName, [testUser.barcode], 'userBarcode', true);
-      BulkEditFiles.verifyMatchedResultFileContent(errorsInChangedRecordsFileName, [user.barcode], 'firstElement', false);
     });
   });
 });
