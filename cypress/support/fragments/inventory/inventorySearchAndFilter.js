@@ -202,7 +202,7 @@ export default {
     // must wait page render
     cy.wait(2000);
   },
-  clickSearchResultItem(indexRow = 3) {
+  clickSearchResultItem(indexRow = 8) {
     cy.do(this.getSearchResult(indexRow, 0).click());
     // must wait page render
     cy.wait(2000);

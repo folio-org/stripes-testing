@@ -1,26 +1,23 @@
+import { Button } from "../../../interactors";
 
-import { Button } from '../../../interactors';
-import button from '../../../interactors/button';
+const profile = Button({ ariaLabel: "My profile" });
+const times = Button({ icon: "times" });
 
-const profile = button({ ariaLabel:'My profile' });
-const times = Button({ icon: 'times' });
 export default {
-  servicepoints1() {
+  servicePointsOne() {
     cy.do(profile.click());
-    cy.do(button({ id: 'service-points-clickable-menuItem0' }).click());
-    cy.do(button({ id: 'service-point-btn-3' }).click());
+    cy.do(Button({ id: "service-points-clickable-menuItem0" }).click());
+    cy.do(Button({ id: "service-point-btn-3" }).click());
   },
-  servicepoints2() {
+  servicePointsTwo() {
     cy.do(profile.click());
-    cy.do(button({ id: 'service-points-clickable-menuItem0' }).click());
-    cy.do(button({ id: 'service-point-btn-5' }).click());
+    cy.do(Button({ id: "service-points-clickable-menuItem0" }).click());
+    cy.do(Button({ id: "service-point-btn-5" }).click());
   },
   clickApplyMainFilter() {
-    cy.get('[class^="button-"][type="submit"]').first().click();
+    cy.get('[class^="Button-"][type="submit"]').first().click();
   },
-  clickClose:() => {
+  clickClose: () => {
     cy.do([times.click()]);
-  }
-
-
+  },
 };
