@@ -21,8 +21,6 @@ import {
   TextArea,
   TextField,
 } from '../../../../interactors';
-import section from '../../../../interactors/section';
-import spinner from '../../../../interactors/spinner';
 import DateTools from '../../utils/dateTools';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
@@ -52,7 +50,6 @@ const categoryDropdown = Button('Category');
 const zeroResultsFoundText = '0 records found';
 const organizationStatus = Select('Organization status*');
 const organizationNameField = TextField('Name*');
-const nameTextField = TextField('[object Object] 0');
 const organizationCodeField = TextField('Code*');
 const today = new Date();
 const tagsSection = Section({ id: 'tagsPane' });
@@ -61,7 +58,6 @@ const resetButton = Button('Reset all');
 const openContactSectionButton = Button({
   id: 'accordion-toggle-button-contactPeopleSection',
 });
-const newButton = Button('+ New');
 const addContacsModal = Modal('Add contacts');
 const lastNameField = TextField({ name: 'lastName' });
 const firstNameField = TextField({ name: 'firstName' });
@@ -82,7 +78,6 @@ const saveButton = Button('Save');
 const confirmButton = Button('Confirm');
 const searchButtonInModal = Button({ type: 'submit' });
 const timesButton = Button({ icon: 'times' });
-const categoryButton = Button('Categories');
 const openintegrationDetailsSectionButton = Button({
   id: 'accordion-toggle-button-integrationDetailsSection',
 });
@@ -100,6 +95,7 @@ export default {
       .should('be.visible')
       .and('have.text', zeroResultsFoundText);
   },
+
   addTag: () => {
     const newTag = `tag${getRandomPostfix()}`;
     cy.then(() => tagsSection.find(MultiSelect()).selected()).then(
@@ -169,6 +165,7 @@ export default {
         .then((val) => cy.log(val))
     );
   },
+
   tagsPane: () => {
     cy.do(PaneHeader({ id: 'paneHeadertagsPane' }).find(timesButton).click());
   },
@@ -184,24 +181,17 @@ export default {
   selectActiveStatus: () => {
     cy.do(Checkbox('Active').click());
   },
+
   selectInActiveStatus: () => {
     cy.do(Checkbox('Inactive').click());
   },
+
   selectPendingStatus: () => {
     cy.do(Checkbox('Pending').click());
   },
 
   checkOrganizationFilter: () => {
     cy.expect(organizationsList.exists());
-  },
-  addNewCategory: (value) => {
-    cy.do(categoryButton.click());
-    cy.wait(2000);
-    cy.expect(newButton.exists());
-    cy.do(newButton.click());
-    cy.do(nameTextField.fillIn(value));
-    cy.do(saveButton.click());
-    cy.contains(value).should('exist');
   },
 
   chooseOrganizationFromList: (organization) => {
@@ -357,6 +347,7 @@ export default {
       summarySection.find(KeyValue({ value: organization.code })).exists()
     );
   },
+
   searchByParameters: (parameter, value) => {
     cy.do([
       searchInput.selectIndex(parameter),
@@ -367,7 +358,7 @@ export default {
 
   resetFilters: () => {
     cy.do(resetButton.click());
-    cy.expect(resetButton.is({ disabled: true })); // Actual : true
+    cy.expect(resetButton.is({ disabled: true }));
   },
 
   resetAll: () => {
@@ -382,11 +373,11 @@ export default {
         .has({ content: organization.name })
     );
   },
+
   checkOrganizationNameSearchResults: (code) => {
     cy.expect(
       organizationsList
         .find(MultiColumnListCell({ row: 0, columnIndex: 1 }))
-        // .find(MultiColumnListRow({ index: 0 }))
         .has({ content: code })
     );
   },
@@ -397,6 +388,7 @@ export default {
       Checkbox('Yes').click(),
     ]);
   },
+
   selectNoInIsVendor: () => {
     cy.do([
       Button({ id: 'accordion-toggle-button-org-filter-isVendor' }).click(),
@@ -406,22 +398,13 @@ export default {
 
   selectVendor: () => {
     cy.do(Checkbox('Vendor').click());
-    //cy.expect(Checkbox('Vendor').should('be.checked'));
     cy.expect(Checkbox({ name: 'isVendor', disabled: false }).exists());
     cy.do(saveAndClose.click());
   },
 
-  deselectVendor: () => {
-    cy.do([
-      Checkbox('Vendor').click(),
-      confirmButton.click(),
-      cy.wait(2000),
-      saveAndClose.click(),
-    ]);
-  },
-
   closeDetailsPane() {
-    cy.expect(timesButton.exists()); // Not working with this expeect so used cy.wait
+    cy.expect(timesButton.exists());
+    // need to wait before closing the pane
     cy.wait(2000);
     cy.do(timesButton.click());
   },
@@ -441,12 +424,14 @@ export default {
       SelectionOption('English').click(),
     ]);
   },
+
   selectCashInPaymentMethod: () => {
     cy.do([
       Button({ id: 'accordion-toggle-button-paymentMethod' }).click(),
       Checkbox('Cash').click(),
     ]);
   },
+
   deleteOrganizationViaApi: (organizationId) => cy.okapiRequest({
     method: 'DELETE',
     path: `organizations/organizations/${organizationId}`,
@@ -484,6 +469,7 @@ export default {
       cy.contains(category).should('exist'),
     ]);
   },
+
   addAccount: () => {
     cy.do([
       Button({
@@ -511,11 +497,15 @@ export default {
     cy.expect(confirmButton.exists());
     cy.do(confirmButton.click());
   },
+
   selectCategories: (category) => {
     cy.expect(MultiSelect().exists());
     cy.do([MultiSelect().select(category), saveAndClose.click()]);
     cy.expect(timesButton.exists());
-    cy.do([timesButton.click(), openContactSectionButton.click()]);
+    cy.do([
+      timesButton.click(),
+      contactPeopleSection.find(openContactSectionButton).click(),
+    ]);
     cy.expect(
       contactPeopleDetails
         .find(MultiColumnListRow({ index: 0 }))
@@ -704,7 +694,6 @@ export default {
       Button({
         id: 'clickable-delete-organization-confirmation-confirm',
       }).click(),
-      cy.wait(2000),
     ]);
   },
 
