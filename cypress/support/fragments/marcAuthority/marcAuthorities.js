@@ -1,4 +1,4 @@
-import { MultiColumnList, Modal, TextField, Callout, MultiSelect, MultiSelectOption, QuickMarcEditorRow, Pane, PaneContent, PaneHeader, Select, Section, HTML, including, Button, MultiColumnListCell, MultiColumnListRow, SearchField, Accordion, Checkbox, ColumnHeader, AdvancedSearchRow, Link } from '../../../../interactors';
+import { Accordion, AdvancedSearchRow, Button, Callout, Checkbox, ColumnHeader, HTML, Link, Modal, MultiColumnList, MultiColumnListCell, MultiColumnListRow, MultiSelect, MultiSelectOption, Pane, PaneContent, PaneHeader, QuickMarcEditorRow, SearchField, Section, Select, TextField, including } from '../../../../interactors';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const authoritiesList = rootSection.find(MultiColumnList({ id: 'authority-result-list' }));
@@ -34,7 +34,7 @@ const buttonExportSelected = Button('Export selected records (CSV/MARC)');
 const openAuthSourceMenuButton = Button({ ariaLabel: 'open menu' });
 const sourceFileAccordion = Section({ id: 'sourceFileId' });
 const marcAuthPaneHeader = PaneHeader('MARC authority');
-const buttonUnlink = Button('unlink');
+
 export default {
   waitLoading: () => cy.expect(rootSection.exists()),
 
@@ -59,11 +59,6 @@ export default {
       editorSection.exists(),
       QuickMarcEditorRow({ tagValue: '625' }).exists()
     ]);
-  },
-  verifyMARCAuthorityFileName(actualName) {
-    // valid name example: 2023-03-26_09-51-07_7642_auth_headings_updates.csv
-    const fileNameMask = /\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}_\d{4}_auth_headings_updates\.csv/gm;
-    expect(actualName).to.match(fileNameMask);
   },
 
   fillReportModal: (today, tomorrow) => {

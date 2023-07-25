@@ -1,4 +1,4 @@
-import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Section, Button, Modal, Callout, TextField, and, some, Pane, HTML, including, PaneContent, PaneHeader } from '../../../interactors';
+import { Button, Callout, HTML, Modal, Pane, PaneContent, PaneHeader, QuickMarcEditor, QuickMarcEditorRow, Section, TextArea, TextField, and, including, some } from '../../../interactors';
 import dateTools from '../utils/dateTools';
 import getRandomPostfix from '../utils/stringTools';
 import InventoryInstance from './inventory/inventoryInstance';
@@ -515,7 +515,7 @@ export default {
     validRecord.tag008AuthorityBytesProperties.getAllProperties().forEach(byteProperty => {
       cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).fillIn(byteProperty.newValue));
     });
-    QuickmarcEditor.pressSaveAndClose();
+    QuickMarcEditor.pressSaveAndClose();
     return validRecord.tag008AuthorityBytesProperties.getNewValueSourceLine();
   },
 

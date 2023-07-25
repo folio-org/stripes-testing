@@ -1,31 +1,31 @@
-import uuid from 'uuid';
 import { HTML, including } from '@interactors/html';
+import uuid from 'uuid';
 import {
+  Accordion,
+  Button,
+  Checkbox,
+  DropdownMenu,
+  Form,
+  KeyValue,
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListHeader,
-  Pane,
-  Accordion,
-  Checkbox,
-  TextField,
-  Button,
-  SearchField,
-  Select,
-  Form,
-  TextInput,
-  KeyValue,
-  Section,
+  MultiColumnListRow,
   MultiSelect,
   MultiSelectOption,
-  MultiColumnListRow,
-  DropdownMenu,
-  Spinner
+  Pane,
+  SearchField,
+  Section,
+  Select,
+  Spinner,
+  TextField,
+  TextInput
 } from '../../../../interactors';
+import DateTools from '../../utils/dateTools';
+import logsViewAll from '../data_import/logs/logsViewAll';
+import Helper from '../finance/financeHelper';
 import InventoryActions from './inventoryActions';
 import InventoryInstances from './inventoryInstances';
-import logsViewAll from '../data_import/logs/logsViewAll';
-import DateTools from '../../utils/dateTools';
-import Helper from '../finance/financeHelper';
 
 const searchAndFilterSection = Pane({ id: 'browse-inventory-filters-pane' });
 const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
@@ -412,9 +412,7 @@ export default {
 
   checkContributorRequest() {
     cy.intercept('GET', '/search/instances?*').as('getInstances');
-
     this.clickSearch();
-
     cy.wait('@getInstances').then(interception => {
       // checking that request contains '=' after 'contributors.name'
       expect(interception.request.url).to.include('contributors.name%3D');

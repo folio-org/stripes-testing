@@ -8,90 +8,90 @@ import marcAuthorities from '../../support/fragments/marcAuthority/marcAuthoriti
 import marcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
 import quickMarcEditor from '../../support/fragments/quickMarcEditor';
 import topMenu from '../../support/fragments/topMenu';
-import SettingsMenu from '../../support/fragments/settingsMenu';
+import settingsMenu from '../../support/fragments/settingsMenu';
+
+const testData = {
+  tag100Content: {
+    secondBoxValue: "''",
+    thirdBoxValue: "''",
+    fourthBoxValue: '$a María de Jesús, $c de Agreda, sister, $d 1602-1665',
+    fifthBoxValue: '',
+    sixthBoxValue: '$0 id.loc.gov/authorities/childrensSubjects/sj2018050004',
+    seventhBoxValue: '',
+  },
+  tag700Content: {
+    secondBoxValue: "''",
+    thirdBoxValue: "''",
+    fourthBoxValue: '$a TestPersonalName',
+    fifthBoxValue: '',
+    sixthBoxValue: '$0 id.loc.gov/authorities/names/n00000911',
+    seventhBoxValue: '',
+  },
+  search: {
+    searchOption: 'Keyword',
+    value: 'starr',
+  },
+  search240: {
+    searchOption: 'Keyword',
+    value: 'starr'
+  },
+  search730: {
+    searchOption: 'Keyword',
+    value: 'Iroquois people',
+  },
+
+  rowIndex: {
+    row100: 5,
+    row700: 6,
+  },
+  tags: {
+    tag100: '100',
+    tag700: '700',
+    tag245: '245',
+    tagLDR: 'LDR',
+    tag240: '240',
+    tag730: '730',
+    tag650: '650',
+    tag852: '852',
+    tag866: '866',
+  },
+  fieldContents: {
+    tag100Content: 'Author, Person',
+    tag700Content: ' ',
+    tag245Content: 'The most important book',
+    tagLDRContent: '00000naa\\a2200000uu\\4500',
+    tag240Content: 'test 123',
+    tag730Content: 'test 123',
+    tag852Content: 'KU/CC/DI/A',
+    tag866Content: 'Test',
+    tag100$0Content: '3052328889 $0 3052044 $0 971255',
+    tag650Content: 'sh85095299',
+    tag035Content: '(OCoLC)ocn607TST001'
+  },
+  accordions: {
+    contributor: 'Contributor',
+    subject: 'Subject',
+    titleData: 'Title data',
+  },
+  contributor: {
+    name: 'María de Jesús, de Agreda, sister, 1602-1665',
+  },
+  holdingValue: 'Andreĭ',
+  sourceValues: {
+    folio: 'ADMINISTRATOR, DIKU',
+  },
+};
 
 describe('New Marc Bib Record and new MARC Holdings record', () => {
-  const testData = {
-    tag100Content: {
-      secondBoxValue: "''",
-      thirdBoxValue: "''",
-      fourthBoxValue: '$a María de Jesús, $c de Agreda, sister, $d 1602-1665',
-      fifthBoxValue: '',
-      sixthBoxValue: '$0 id.loc.gov/authorities/childrensSubjects/sj2018050004',
-      seventhBoxValue: '',
-    },
-    tag700Content: {
-      secondBoxValue: "''",
-      thirdBoxValue: "''",
-      fourthBoxValue: '$a TestPersonalName',
-      fifthBoxValue: '',
-      sixthBoxValue: '$0 id.loc.gov/authorities/names/n00000911',
-      seventhBoxValue: '',
-    },
-    search: {
-      searchOption: 'Keyword',
-      value: 'starr',
-    },
-    search240: {
-      searchOption: 'Keyword',
-      // value: "Angelou, Maya. And still I rise",
-      value: 'starr'
-    },
-    search730: {
-      searchOption: 'Keyword',
-      value: 'Iroquois people',
-    },
-
-    rowIndex: {
-      row100: 5,
-      row700: 6,
-    },
-    tags: {
-      tag100: '100',
-      tag700: '700',
-      tag245: '245',
-      tagLDR: 'LDR',
-      tag240: '240',
-      tag730: '730',
-      tag650: '650',
-      tag852: '852',
-      tag866: '866',
-    },
-    fieldContents: {
-      tag100Content: 'Author, Person',
-      tag700Content: ' ',
-      tag245Content: 'The most important book',
-      tagLDRContent: '00000naa\\a2200000uu\\4500',
-      tag240Content: 'test 123',
-      tag730Content: 'test 123',
-      tag852Content: 'KU/CC/DI/A',
-      tag866Content: 'Test',
-      tag100$0Content: '3052328889 $0 3052044 $0 971255',
-      tag650Content: 'sh85095299',
-      tag035Content: '(OCoLC)ocn607TST001'
-    },
-    accordions: {
-      contributor: 'Contributor',
-      subject: 'Subject',
-      titleData: 'Title data',
-    },
-    contributor: {
-      name: 'María de Jesús, de Agreda, sister, 1602-1665',
-    },
-    holdingValue: 'Andreĭ',
-    sourceValues: {
-      folio: 'ADMINISTRATOR, DIKU',
-    },
-  };
   before('login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
   it('C9236__Settings: Add/Edit a custom label', () => {
-    cy.visit(SettingsMenu.eHoldingsPath);
+    cy.visit(settingsMenu.eHoldingsPath);
     eHoldingsPackage.customLabel({
-      label1: 'AutomatingTheFolioApplicationAndTestingApplication',
-      label2: 'Test :',
+      labelOne: 'AutomatingTheFolioApplicationAndTestingApplication',
+      labelTwo: 'Test :',
     });
   });
 
@@ -185,7 +185,6 @@ describe('New Marc Bib Record and new MARC Holdings record', () => {
       testData.tags.tagLDR,
       testData.fieldContents.tagLDRContent
     );
-
     marcAuthority.addNewField(
       4,
       testData.tags.tag240,

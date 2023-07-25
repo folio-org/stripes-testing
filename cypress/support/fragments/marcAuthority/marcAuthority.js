@@ -1,13 +1,13 @@
 import {
-  Section,
   Button,
+  Callout,
   HTML,
-  including,
-  TextField,
-  QuickMarcEditorRow,
-  TextArea,
   MultiColumnListHeader,
-  Callout
+  QuickMarcEditorRow,
+  Section,
+  TextArea,
+  TextField,
+  including
 } from '../../../../interactors';
 
 const defaultCreateJobProfile = 'Default - Create SRS MARC Authority';

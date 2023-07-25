@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { Select, TextInput, Heading, PaneHeader, Form, Button, Option, Section, PaneContent, HTML, including, MultiColumnListCell, Pane, MultiColumnListHeader, MultiColumnListRow, Image, or } from '../../../../../interactors';
+import { Button, Form, HTML, Heading, Image, MultiColumnListCell, MultiColumnListHeader, MultiColumnListRow, Option, Pane, PaneContent, PaneHeader, Section, Select, TextInput, including, or } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
 const defaultInstanceAWithContributor = {

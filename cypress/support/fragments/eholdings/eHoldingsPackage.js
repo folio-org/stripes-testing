@@ -1,6 +1,6 @@
-import { Accordion, Button, Modal, Section, TextField, Checkbox, CheckboxRadioButton, Select, HTML, including, MultiSelect, KeyValue, MultiSelectOption, ValueChipRoot, Spinner } from '../../../../interactors';
-import getRandomPostfix from '../../utils/stringTools';
+import { Accordion, Button, Checkbox, HTML, KeyValue, Modal, MultiSelect, MultiSelectOption, RadioButton, Section, Select, Spinner, TextField, ValueChipRoot, including } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
+import getRandomPostfix from '../../utils/stringTools';
 
 const titlesFilterModal = Modal({ id : 'eholdings-details-view-search-modal' });
 const tagsSection = Section({ id: 'packageShowTags' });
@@ -20,18 +20,12 @@ const confirmationModal = Modal({ id:'eholdings-confirmation-modal' });
 const availableProxies = ['Inherited - None', 'FOLIO-Bugfest', 'EZProxy'];
 const proxySelect = Select({ id: 'eholdings-proxy-id' });
 const customLabelButton = Button('Custom labels');
-
 const displayLabel = TextField({ name: 'customLabel1.displayLabel' });
-
-const displayLabel1 = TextField({ name: 'customLabel2.displayLabel' });
-
+const displayLabelOne = TextField({ name: 'customLabel2.displayLabel' });
 const fullTextFinderCheckbox = Checkbox({ name: 'customLabel2.displayOnFullTextFinder' });
-
 const saveButton = Button('Save');
-
 const verifyCustomLabel = Section({ id: 'resourceShowCustomLabels' });
 const RandomValue = Math.floor(Math.random() * 2);
-
 const getElementIdByName = (packageName) => packageName.replaceAll(' ', '-').toLowerCase();
 
 const waitTitlesLoading = () => cy.url().then(url => {
@@ -84,21 +78,15 @@ export default {
 
   customLabel(name) {
     cy.do([(customLabelButton).click(),
-
       displayLabel.fillIn(name.label1),
-
-      displayLabel1.fillIn(name.label2),
-
+      displayLabelOne.fillIn(name.label2),
       fullTextFinderCheckbox.click(),
-
       saveButton.click()
-
     ]);
-
     cy.visit('/eholdings/resources/58-473-185972');
-
     cy.expect(verifyCustomLabel.exists());
   },
+
   checkEmptyTitlesList:() => {
     cy.expect(titlesSection.find(KeyValue('Records found', { value:'0' })));
   },
@@ -148,12 +136,6 @@ export default {
     });
   },
 
-  addToHodlings: () => {
-    cy.do(packageHoldingStatusSection.find(Button('Add package to holdings')).click());
-    cy.expect(confirmationModal.exists());
-    cy.do(confirmationModal.find(Button('Add package (all titles) to holdings')).click());
-    cy.expect(confirmationModal.absent());
-  },
   editactions: () => {
     cy.wait(2000);
     cy.do(actionsButton.click());
@@ -171,6 +153,5 @@ export default {
   },
   saveAndClose: () => {
     cy.do(Button('Save & close').click());
-  // eHoldingsProviderView.waitLoading();
   },
 };

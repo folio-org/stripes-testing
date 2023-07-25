@@ -1,19 +1,19 @@
-import { including, HTML } from '@interactors/html';
+import { HTML, including } from '@interactors/html';
 import {
   Accordion,
   Button,
   KeyValue,
+  Link,
   Modal,
-  MultiColumnListCell,
-  Section,
   MultiColumnList,
+  MultiColumnListCell,
   Pane,
+  Section,
   Select,
-  TextArea,
-  Link
+  TextArea
 } from '../../../../interactors';
-import InventoryViewSource from './inventoryViewSource';
 import InventoryNewHoldings from './inventoryNewHoldings';
+import InventoryViewSource from './inventoryViewSource';
 
 const root = Section({ id: 'ui-inventory.holdingsRecordView' });
 const actionsButton = Button('Actions');
