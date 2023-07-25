@@ -25,13 +25,14 @@ const displayLabel1 = TextField({ name: 'customLabel2.displayLabel' });
 const fullTextFinderCheckbox = Checkbox({ name: 'customLabel2.displayOnFullTextFinder' });
 const saveButton = Button('Save');
 const verifyCustomLabel = Section({ id: 'resourceShowCustomLabels' });
-const RandomValue = Math.floor(Math.random() * 2);
 const getElementIdByName = (packageName) => packageName.replaceAll(' ', '-').toLowerCase();
 const waitTitlesLoading = () => cy.url().then(url => {
   const packageId = url.split('?')[0].split('/').at(-1);
   cy.intercept(`eholdings/packages/${packageId}/resources?**`).as('getTitles');
   cy.wait('@getTitles', getLongDelay());
 });
+
+export const randomTwoDigitNumber = () => Math.floor(Math.random() * 2);
 
 export default {
   filterStatuses,
@@ -135,7 +136,7 @@ export default {
     });
   },
 
-  addToHodlings: () => {
+  addToHoldings: () => {
     cy.do(packageHoldingStatusSection.find(Button('Add package to holdings')).click());
     cy.expect(confirmationModal.exists());
     cy.do(confirmationModal.find(Button('Add package (all titles) to holdings')).click());
@@ -154,7 +155,7 @@ export default {
       .invoke('text')
       .then((text) => {
         const options = availableProxies.filter((option) => option !== text);
-        cy.do(proxySelect.choose(options[RandomValue]));
+        cy.do(proxySelect.choose(options[randomTwoDigitNumber]));
       });
   },
 

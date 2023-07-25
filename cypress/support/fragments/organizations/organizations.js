@@ -448,7 +448,7 @@ export default {
     cy.do([actionsButton.click(), editButton.click()]);
   },
 
-  verifynewCategory: (category) => {
+  verifyNewCategory: (category) => {
     cy.do([
       openContactSectionButton.click(),
       contactPeopleSection.find(addContactButton).click(),

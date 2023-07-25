@@ -15,7 +15,7 @@ import {
   including,
 } from '../../../../interactors';
 import dateTools from '../../utils/dateTools';
-import TopMenu from '../topMenu';
+import topMenu from '../topMenu';
 import eholdingsPackagesSearch from './eHoldingsPackagesSearch';
 import eHoldingsProviderView from './eHoldingsProviderView';
 // eslint-disable-next-line import/no-cycle
@@ -85,14 +85,14 @@ export default {
   },
 
   SwitchToPackage() {
-    cy.visit(TopMenu.eholdingsPath);
+    cy.visit(topMenu.eholdingsPath);
     eHoldingsSearch.switchToPackages();
     eHoldingsProvidersSearch.byProvider('JSTOR');
     eholdingsPackagesSearch.bySelectionStatus('Selected');
   },
 
   SwitchToPackageandsearch() {
-    cy.visit(TopMenu.eholdingsPath);
+    cy.visit(topMenu.eholdingsPath);
     eHoldingsSearch.switchToPackages();
     eHoldingsProvidersSearch.byProvider('Wiley Online Library');
     eholdingsPackagesSearch.bySelectionStatus('Selected');
@@ -186,10 +186,5 @@ export default {
     cy.do(selectionStatusSection.find(Button('Selection status')).click());
     cy.do(selectionStatusSection.find(RadioButton(selectionStatus)).click());
     cy.do(Button('Search').click());
-  },
-
-  SwitchTopackage() {
-    cy.visit(TopMenu.eholdingsPath);
-    eHoldingsProvidersSearch.byProvider('Gale Cengage');
   },
 };
