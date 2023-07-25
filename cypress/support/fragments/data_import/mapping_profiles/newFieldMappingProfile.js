@@ -804,6 +804,8 @@ export default {
     cy.get('div[class^="mclRow--"]').contains('div[class^="mclCell-"]', field).then(elem => {
       elem.parent()[0].querySelector('input[type="checkbox"]').click();
     });
+    // TODO wait until checkbox will be marked
+    cy.wait(2000);
   },
 
   createMappingProfileViaApi:(nameProfile) => {

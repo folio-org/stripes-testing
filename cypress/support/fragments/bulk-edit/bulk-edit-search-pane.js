@@ -54,6 +54,7 @@ const errorsCommittingBtn = DropdownMenu().find(Button('File with errors encount
 const buildQueryButton = Button('Build query');
 const buildQueryModal = Modal('Build query');
 const logsActionButton = Button({ icon: 'ellipsis' });
+const startBulkEditLocalButton = Button('Start bulk edit (Local)');
 
 export default {
   waitLoading() {
@@ -563,7 +564,7 @@ export default {
     cy.do(actions.click());
     cy.expect([
       Button('Download matched records (CSV)').exists(),
-      Button('Start bulk edit (CSV)').exists(),
+      startBulkEditLocalButton.exists(),
       DropdownMenu().find(HTML('Show columns')).exists(),
     ]);
     if (errors) {
