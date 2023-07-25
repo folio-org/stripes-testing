@@ -34,7 +34,6 @@ const buttonExportSelected = Button('Export selected records (CSV/MARC)');
 const openAuthSourceMenuButton = Button({ ariaLabel: 'open menu' });
 const sourceFileAccordion = Section({ id: 'sourceFileId' });
 const marcAuthPaneHeader = PaneHeader('MARC authority');
-const buttonUnlink = Button('unlink');
 export default {
   waitLoading: () => cy.expect(rootSection.exists()),
 
@@ -71,6 +70,17 @@ export default {
       toDate.fillIn(tomorrow),
     ]);
     cy.expect(authReportModal.find(exportButton).exists());
+  },
+
+  clickOnNumberOfTitlesLink(columnIndex, linkValue) {
+    cy.wrap(MultiColumnListCell({ columnIndex, content: linkValue }).find(Link()).href()).as('link');
+    cy.get('@link').then((link) => {
+      cy.visit(link);
+    });
+  },
+
+  verifyNumberOfTitles(columnIndex, linkValue) {
+    cy.expect(MultiColumnListCell({ columnIndex, content: linkValue }).find(Link()).exists());
   },
 
   clickExportButton: () => {
@@ -117,7 +127,6 @@ export default {
       marcViewSectionContent.has({ text: including(`${txt.substring(0, 7)}  ${txt.substring(9, 18)}  ${txt.substring(20, 24)}`) }),
     ]);
   },
-
   verifySaveSuccess(successMsg, txt) {
     cy.expect([
       Callout(successMsg).exists(),
@@ -172,6 +181,13 @@ export default {
     cy.expect([
       marcViewSection.exists(),
       marcViewSection.has({ mark: markedValue }),
+    ]);
+  },
+
+  checkAuthorizedReferenceColumn(authorized, reference) {
+    cy.expect([
+      MultiColumnListCell({ columnIndex: 1, content: authorized }).exists(),
+      MultiColumnListCell({ columnIndex: 1, content: reference }).exists(),
     ]);
   },
 
