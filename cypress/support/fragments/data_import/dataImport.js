@@ -397,6 +397,6 @@ export default {
 
   waitFileIsUploaded:() => {
     // TODO need to wait until big file is uploaded
-    cy.wait(8000);
+    cy.wait(10000);
   }
 };

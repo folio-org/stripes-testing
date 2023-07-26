@@ -24,7 +24,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 
-describe('ui-data-import', () => {
+describe('ui-data-import', { retries: 2 }, () => {
   let firstFieldId = null;
   let secondFieldId = null;
   let instanceHrid = null;

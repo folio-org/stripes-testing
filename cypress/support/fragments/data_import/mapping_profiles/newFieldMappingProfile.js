@@ -778,10 +778,11 @@ export default {
   },
 
   fillModificationSectionWithDelete:(action, fieldNumber, number) => {
-    cy.do([
-      Select({ name:`profile.mappingDetails.marcMappingDetails[${number}].action` }).choose(action),
-      TextField({ name:`profile.mappingDetails.marcMappingDetails[${number}].field.field` }).fillIn(fieldNumber)
-    ]);
+    cy.do(Select({ name:`profile.mappingDetails.marcMappingDetails[${number}].action` }).choose(action));
+    cy.do(TextField({ name:`profile.mappingDetails.marcMappingDetails[${number}].field.field` }).fillIn(fieldNumber));
+    cy.expect(TextField({ name:`profile.mappingDetails.marcMappingDetails[${number}].field.field` })
+      .has({ value: fieldNumber }));
+    cy.wait(1500);
   },
 
   addNewFieldInModificationSection:() => {
