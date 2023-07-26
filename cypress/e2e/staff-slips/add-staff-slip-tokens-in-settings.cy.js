@@ -130,33 +130,33 @@ describe('Staff slips', () => {
     );
   });
 
-  // it(
-  //   'C375293 Add "requester.patronGroup" as staff slip token in Settings',
-  //   { tags: [TestTypes.criticalPath, devTeams.volaris] },
-  //   () => {
-  //     cy.visit(SettingsMenu.circulationStaffSlipsPath);
-  //     EditStaffClips.editTransit();
-  //     EditStaffClips.addToken(['requester.patronGroup']);
-  //     EditStaffClips.saveAndClose();
-  //     EditStaffClips.checkAfterUpdate('Transit');
-  //     EditStaffClips.checkPreview('Transit', 'Undergraduate');
-  //     EditStaffClips.editAndClearTransit();
-  //   }
-  // );
+  it(
+    'C375293 Add "requester.patronGroup" as staff slip token in Settings',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      cy.visit(SettingsMenu.circulationStaffSlipsPath);
+      EditStaffClips.editTransit();
+      EditStaffClips.addToken(['requester.patronGroup']);
+      EditStaffClips.saveAndClose();
+      EditStaffClips.checkAfterUpdate('Transit');
+      EditStaffClips.checkPreview('Transit', 'Undergraduate');
+      EditStaffClips.editAndClearTransit();
+    }
+  );
 
-  // it(
-  //   'C387442 Add "Departments" as staff slip token in Settings',
-  //   { tags: [TestTypes.criticalPath, devTeams.volaris] },
-  //   () => {
-  //     cy.visit(SettingsMenu.circulationStaffSlipsPath);
-  //     EditStaffClips.editTransit();
-  //     EditStaffClips.addToken(['requester.departments']);
-  //     EditStaffClips.saveAndClose();
-  //     EditStaffClips.checkAfterUpdate('Transit');
-  //     EditStaffClips.checkPreview('Transit', 'Library Technical Services; IT Operations');
-  //     EditStaffClips.editAndClearTransit();
-  //   }
-  // );
+  it(
+    'C387442 Add "Departments" as staff slip token in Settings',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      cy.visit(SettingsMenu.circulationStaffSlipsPath);
+      EditStaffClips.editTransit();
+      EditStaffClips.addToken(['requester.departments']);
+      EditStaffClips.saveAndClose();
+      EditStaffClips.checkAfterUpdate('Transit');
+      EditStaffClips.checkPreview('Transit', 'Library Technical Services; IT Operations');
+      EditStaffClips.editAndClearTransit();
+    }
+  );
 
   it(
     'C388508 Verify that token "currentDateTime" is populated in the pick slip',
