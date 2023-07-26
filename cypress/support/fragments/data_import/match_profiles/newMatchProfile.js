@@ -27,7 +27,8 @@ const optionsList = {
   systemControlNumber: 'Identifier: System control number',
   status: 'Loan and availability: Status',
   barcode: 'Admin data: Barcode',
-  instanceStatusTerm: 'Admin data: Instance status term'
+  instanceStatusTerm: 'Admin data: Instance status term',
+  holdingsType: 'Admin data: Holdings type'
 };
 
 function fillExistingRecordFields(value = '', selector) {
@@ -105,7 +106,7 @@ function selectExistingRecordField(existingRecordOption) {
   cy.do(criterionValueTypeList
     .find(SelectionOption(existingRecordOption)).click());
   // TODO wait until option will be selected
-  cy.wait(5000);
+  cy.wait(1500);
 }
 
 function fillOnlyComparePartOfTheValue(value) {
