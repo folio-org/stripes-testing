@@ -1,6 +1,6 @@
 import invoice from '../../support/fragments/ideyalabs/invoice';
 import invoices from '../../support/fragments/invoices/invoices';
-import TopMenu from '../../support/fragments/topMenu';
+import topMenu from '../../support/fragments/topMenu';
 import dateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
 
@@ -61,12 +61,12 @@ const fundID = 'Fund B (b)';
 describe('C353566-Correct fund validation to approve invoice', () => {
   it('Invoices App', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.visit(TopMenu.ordersPath);
+    cy.visit(topMenu.ordersPath);
     invoice.createOrder(orderOne.orderType, orderOne.templateName);
-    invoice.POlines(orderOnePOLine.title, orderOnePOLine.fundID);
+    invoice.POLines(orderOnePOLine.title, orderOnePOLine.fundID);
     invoice.purchaseOrder();
     invoice.createAnotherOrder(orderTwo.orderType, orderTwo.templateName);
-    invoice.POlinesForAnotherOrder(
+    invoice.POLinesForAnotherOrder(
       orderTwoPOLine.title,
       orderTwoPOLine.price,
       orderTwoPOLine.fundID,
@@ -74,7 +74,7 @@ describe('C353566-Correct fund validation to approve invoice', () => {
       orderTwoPOLine.valueTwo
     );
     invoice.purchaseAnotherOrder();
-    cy.visit(TopMenu.invoicesPath);
+    cy.visit(topMenu.invoicesPath);
     invoices.createVendorInvoice(newInvoice);
     invoice.searchByNumber(newInvoice.invoiceNumber);
     invoice.selectInvoice(newInvoice.invoiceNumber);
@@ -93,20 +93,20 @@ describe('C353566-Correct fund validation to approve invoice', () => {
     invoice.addFundDistributionToLine2(fundDistribution.fundIDOne);
     invoice.addFundDistributionToLine4(fundDistribution.fundIDTwo);
     invoice.adjustments();
-    invoice.approveInvoice();
+    invoice.approveInvoice();  //Approve API failure
   });
 
   it('C368486 - Editing fund distribution in PO line when related Reviewed invoice exists', () => {
-    cy.visit(TopMenu.orderLinesPath);
+    cy.visit(topMenu.orderLinesPath);
     invoice.searchByParameter(
       searchInvoiceNumber.parameter,
       searchInvoiceNumber.value
     );
-    invoice.orderList(searchInvoiceNumber.value);
     invoice.orderLinesResults();
+    invoice.orderList(searchInvoiceNumber.value); 
     invoice.PODetails(fundID); // API getting failed while changing Fund ID in bugfest ENV
     invoice.selectCurrentEncumbrance();
-    cy.visit(TopMenu.invoicesPath);
+    cy.visit(topMenu.invoicesPath);
     invoice.openStatusAndClickCheckbox();
   });
 });
