@@ -1,5 +1,7 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../utils/stringTools';
+import { Button, Modal, including } from '../../../../interactors';
+
 
 const defaultNoticeTemplateBody = {
   active: true,
@@ -10,7 +12,7 @@ const defaultNoticeTemplateBody = {
   },
   body: '<div> Email body {{item.title}} </div>',
   header: 'Email subject: Loan',
-  name: `Template_name_${getRandomPostfix}`,
+  name: `Template_name_${getRandomPostfix()}`,
   outputFormats: ['text/html'],
   0: 'text/html',
   templateResolver: 'mustache',
@@ -18,6 +20,14 @@ const defaultNoticeTemplateBody = {
 
 export default {
   defaultNoticeTemplateBody,
+  checkPreview: (previewText) => {
+    cy.do(Button('Preview').click());
+    cy.expect([
+      Modal(including('Preview of patron notice template')).exists(),
+      Modal({ content: including(previewText) }).exists(),
+    ]);
+    cy.do(Button('Close').click());
+  },
   createViaApi(noticeTemplateCategory) {
     return cy.okapiRequest({ method: 'POST',
       path: 'templates',

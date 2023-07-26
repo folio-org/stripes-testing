@@ -1,4 +1,4 @@
-// This test is failing due to the CIRCSTORE-412 bug.
+import moment from 'moment';
 import uuid from 'uuid';
 import TestTypes from '../../support/dictionary/testTypes';
 import { REQUEST_TYPES } from '../../support/constants';
@@ -57,6 +57,7 @@ describe('Request notice triggers', () => {
       category: 'Request',
       subject: getTestEntityValue(noticeName),
       body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
+      previewText: `Test email body The Wines of Italy ${moment().format('ll')}`,
     };
   };
   const noticeTemplates = {
@@ -304,16 +305,22 @@ describe('Request notice triggers', () => {
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.itemRecaled);
+      delete noticeTemplates.itemRecaled.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.itemRecaled);
       NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.recallRequest);
+      delete noticeTemplates.recallRequest.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.recallRequest);
       NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.awaitingPickUp);
+      delete noticeTemplates.awaitingPickUp.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.awaitingPickUp);
       NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.holdShelfBeforeOnce);
+      delete noticeTemplates.holdShelfBeforeOnce.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.holdShelfBeforeOnce);
       NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.holdShelfBeforeRecurring);
+      delete noticeTemplates.holdShelfBeforeRecurring.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.holdShelfBeforeRecurring);
       NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.holdShelfUponAt);
+      delete noticeTemplates.holdShelfUponAt.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.holdShelfUponAt);
 
       cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
