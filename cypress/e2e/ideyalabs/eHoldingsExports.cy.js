@@ -32,7 +32,7 @@ describe('Exports', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
-  it('C356417 Export of selected “Package” without titles. User chooses ""Package"" fields to export.', () => {
+  it('C356417 Export of selected ""Package"" without titles. User chooses ""Package"" fields to export.', () => {
     cy.visit(topMenu.eholdingsPath);
     eHoldingsSearch.switchToPackages();
     eHoldingsPackagesSearch.byName(testData.searchOption);

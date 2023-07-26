@@ -36,7 +36,7 @@ const actionsButton = Button('Actions');
 const submitButton = Button('Submit');
 const searchButton = Button('Search');
 const invoiceDetailsPaneId = 'paneHeaderpane-invoiceDetails';
-const searhInputId = 'input-record-search';
+const searchInputId = 'input-record-search';
 const numberOfSearchResultsHeader =
   '//*[@id="paneHeaderinvoice-results-pane-subtitle"]/span';
 const zeroResultsFoundText = '0 records found';
@@ -142,7 +142,7 @@ export default {
   selectVendorOnUi: (organizationName) => {
     cy.do([
       Button('Organization look-up').click(),
-      SearchField({ id: searhInputId }).fillIn(organizationName),
+      SearchField({ id: searchInputId }).fillIn(organizationName),
       searchButton.click(),
     ]);
     Helper.selectFromResultsList();
@@ -232,7 +232,7 @@ export default {
     cy.do([
       Button('POL look-up').click(),
       Modal('Select order lines')
-        .find(SearchField({ id: searhInputId }))
+        .find(SearchField({ id: searchInputId }))
         .fillIn(orderNumber),
       searchButton.click(),
     ]);
@@ -260,7 +260,7 @@ export default {
     cy.expect(Modal('Select order lines').exists());
     cy.do([
       Modal('Select order lines')
-        .find(SearchField({ id: searhInputId }))
+        .find(SearchField({ id: searchInputId }))
         .fillIn(orderNumber),
       Modal('Select order lines').find(searchButton).click(),
       Checkbox({ ariaLabel: `record ${rowNumber} checkbox` }).clickInput(),
@@ -343,8 +343,8 @@ export default {
 
   searchByNumber: (invoiceNumber) => {
     cy.do([
-      SearchField({ id: searhInputId }).selectIndex('Vendor invoice number'),
-      SearchField({ id: searhInputId }).fillIn(invoiceNumber),
+      SearchField({ id: searchInputId }).selectIndex('Vendor invoice number'),
+      SearchField({ id: searchInputId }).fillIn(invoiceNumber),
       searchButton.click(),
     ]);
   },
@@ -419,10 +419,10 @@ export default {
     for (const [key, value] of searchParamsMap.entries()) {
       cy.do([
         Modal('Select order lines')
-          .find(SearchField({ id: searhInputId }))
+          .find(SearchField({ id: searchInputId }))
           .selectIndex(key),
         Modal('Select order lines')
-          .find(SearchField({ id: searhInputId }))
+          .find(SearchField({ id: searchInputId }))
           .fillIn(value),
         Modal('Select order lines').find(searchButton).click(),
       ]);
@@ -574,7 +574,7 @@ export default {
         .click(),
       Button('Organization look-up').click(),
       Modal('Select Organization')
-        .find(SearchField({ id: searhInputId }))
+        .find(SearchField({ id: searchInputId }))
         .fillIn(organization.name),
       searchButton.click(),
     ]);
