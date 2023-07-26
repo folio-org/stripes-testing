@@ -15,15 +15,16 @@ import topMenu from '../fragments/topMenu';
 import serviceShift from './serviceShift';
 
 const itemStatusSearchField = TextField('itemStatus-field');
-const test = '58485788';
-const data = '114545699';
-const date = '2023-07-21';
+const itemBarcode = '58485788';
+const startData = '114545699';
+const endDate = '2023-07-21';
 
 export default {
-  clickonItem() {
+  clickOnItem() {
     cy.do(items).click();
   },
-  clickonModal() {
+  clickOnModal() {
+    cy.expect(Modal({ id: 'multipiece-modal' }).exists());
     cy.do(Modal({ id: 'multipiece-modal' }).find(Button('Check in')).click());
   },
   createInstance() {
@@ -34,12 +35,13 @@ export default {
       Select({ id: 'select_instance_type' }).choose('other'),
       Button('Save & close').click(),
     ]);
+    cy.expect(Button({ id: 'clickable-new-holdings-record' }).exists());
   },
   createItem(barcode) {
     cy.do([
       Button('Date created').click(),
-      TextField({ name: 'startDate' }).fillIn(date),
-      TextField({ name: 'endDate' }).fillIn(date),
+      TextField({ name: 'startDate' }).fillIn(startData),
+      TextField({ name: 'endDate' }).fillIn(endDate),
       Button('Apply').click(),
     ]);
     inventorySearchAndFilter.clickSearchResultItem();
@@ -48,6 +50,7 @@ export default {
       Selection('Permanent*').open(),
       SelectionOption('acq admin (acq,admin) ').click(),
       Button('Save & close').click(),
+      cy.expect(Button('Add item').exists()),
     ]);
     cy.expect(Button('Holdings: acq admin >').exists());
     cy.do([
@@ -101,7 +104,7 @@ export default {
     ]);
     inventorySearchAndFilter.selectSearchResultItem();
     cy.visit(topMenu.checkInPath);
-    checkInActions.checkInItem(test);
+    checkInActions.checkInItem(itemBarcode);
     serviceShift.clickClose();
   },
   checkIn: (barcode) => {

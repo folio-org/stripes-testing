@@ -11,13 +11,13 @@ const testData = {
   itemB: '17276636',
   itemC: '123321',
   itemD: '65656565',
-  itemAnumberOfPieces: '1',
-  itemnumberOfPieces: '2',
+  numberOfPiecesItemA: '1',
+  numberOfPiecesItemB: '2',
   description: 'pieces count',
 };
 
 describe('servicepoints shift', () => {
-  beforeEach(() => {
+  before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
@@ -31,7 +31,7 @@ describe('servicepoints shift', () => {
     checkInActions.openItemDetails();
     cy.visit(topMenu.checkInPath);
     checkInActions.checkInItem(barcode);
-    checkInItems.clickonModal();
+    checkInItems.clickOnModal();
     serviceshift.servicePointsTwo();
     cy.visit(topMenu.inventoryPath);
     checkInItems.createInstance(barcode);
@@ -41,7 +41,7 @@ describe('servicepoints shift', () => {
     checkInActions.openItemDetails();
     cy.visit(topMenu.checkInPath);
     checkInActions.checkInItem(barcode);
-    checkInItems.clickonModal();
+    checkInItems.clickOnModal();
   });
 
   it('C9194 Check in: confirm check in for item status', () => {
@@ -62,13 +62,13 @@ describe('servicepoints shift', () => {
     cy.visit(topMenu.checkInPath);
     checkInItems.checkIn(testData.itemA);
     checkInActions.openItemDetails(testData.itemA);
-    checkInActions.editItemDetails(testData.itemAnumberOfPieces, '', '');
+    checkInActions.editItemDetails(testData.numberOfPiecesItemA, '', '');
     cy.visit(topMenu.checkInPath);
     checkInItems.cancelCheckInMultipleItem(testData.itemB);
     checkInItems.checkIn(testData.itemB);
     checkInActions.openItemDetails(testData.itemB);
     checkInActions.editItemDetails(
-      testData.itemnumberOfPieces,
+      testData.numberOfPiecesItemA,
       '',
       testData.description
     );
@@ -77,8 +77,8 @@ describe('servicepoints shift', () => {
     checkInItems.checkIn(testData.itemC);
     checkInActions.openItemDetails(testData.itemC);
     checkInActions.editItemDetails(
-      testData.itemnumberOfPieces,
-      testData.itemAnumberOfPieces,
+      testData.numberOfPiecesItemB,
+      testData.numberOfPiecesItemA,
       testData.description
     );
     cy.visit(topMenu.checkInPath);
@@ -87,7 +87,7 @@ describe('servicepoints shift', () => {
     checkInActions.openItemDetails(testData.itemD);
     checkInActions.editItemDetails(
       '',
-      testData.itemnumberOfPieces,
+      testData.numberOfPiecesItemA,
       testData.description
     );
     cy.visit(topMenu.checkInPath);
