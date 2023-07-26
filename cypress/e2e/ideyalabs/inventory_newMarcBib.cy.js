@@ -7,10 +7,11 @@ import browseContributors from '../../support/fragments/inventory/search/browseC
 import marcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import marcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
 import quickMarcEditor from '../../support/fragments/quickMarcEditor';
-import topMenu from '../../support/fragments/topMenu';
 import settingsMenu from '../../support/fragments/settingsMenu';
+import topMenu from '../../support/fragments/topMenu';
 
 const testData = {
+  source: "MARC",
   tag100Content: {
     secondBoxValue: "''",
     thirdBoxValue: "''",
@@ -33,7 +34,7 @@ const testData = {
   },
   search240: {
     searchOption: 'Keyword',
-    value: 'starr'
+    value: 'starr',
   },
   search730: {
     searchOption: 'Keyword',
@@ -66,7 +67,7 @@ const testData = {
     tag866Content: 'Test',
     tag100$0Content: '3052328889 $0 3052044 $0 971255',
     tag650Content: 'sh85095299',
-    tag035Content: '(OCoLC)ocn607TST001'
+    tag035Content: '(OCoLC)ocn607TST001',
   },
   accordions: {
     contributor: 'Contributor',
@@ -76,7 +77,6 @@ const testData = {
   contributor: {
     name: 'María de Jesús, de Agreda, sister, 1602-1665',
   },
-  holdingValue: 'Andreĭ',
   sourceValues: {
     folio: 'ADMINISTRATOR, DIKU',
   },
@@ -85,6 +85,15 @@ const testData = {
 describe('New Marc Bib Record and new MARC Holdings record', () => {
   before('login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+  });
+
+  after('Delete created MARC Holdings record', () => {
+    cy.visit(topMenu.inventoryPath);
+    inventorySearchAndFilter.switchToHoldings();
+    inventorySearchAndFilter.bySource(testData.source);
+    inventorySearchAndFilter.selectSearchResultItem();
+    marc.openCreatedHoldingView();
+    marc.deleteHolding();
   });
 
   it('C9236__Settings: Add/Edit a custom label', () => {
@@ -108,7 +117,6 @@ describe('New Marc Bib Record and new MARC Holdings record', () => {
       testData.tags.tagLDR,
       testData.fieldContents.tagLDRContent
     );
-
     marcAuthority.addNewField(
       6,
       testData.tags.tag100,
@@ -141,7 +149,6 @@ describe('New Marc Bib Record and new MARC Holdings record', () => {
     inventoryInstance.viewSource();
     marc.crossIcon();
     inventorySearchAndFilter.switchToBrowseTab();
-
     browseContributors.select();
     browseContributors.browse(testData.contributor.name);
     browseContributors.checkSearchResultRecord(testData.contributor.name);
@@ -150,8 +157,7 @@ describe('New Marc Bib Record and new MARC Holdings record', () => {
   it('C350646 Create a new MARC Holdings record for existing Instance record', () => {
     cy.visit(topMenu.inventoryPath);
     inventorySearchAndFilter.switchToHoldings();
-    inventorySearchAndFilter.bySource('MARC');
-    marc.searchByValue(testData.holdingValue);
+    inventorySearchAndFilter.bySource(testData.source);
     inventorySearchAndFilter.selectSearchResultItem();
     inventoryInstance.goToMarcHoldingRecordAdding();
     quickMarcEditor.updateExistingField(
@@ -164,6 +170,9 @@ describe('New Marc Bib Record and new MARC Holdings record', () => {
       `$a ${testData.fieldContents.tag866Content}`
     );
     marc.saveAndClose();
+    cy.wait(5000); // Wait Needed: need to wait until the View Source Button will be enabled
+    marc.crossIcon();
+    marc.openCreatedHoldingView();
     holdingsRecordView.viewSource();
     marc.crossIcon();
     marc.recordLastUpdated();
@@ -172,8 +181,7 @@ describe('New Marc Bib Record and new MARC Holdings record', () => {
 
   it('C380747 Add non-controllable subfields to a linked field when creating ""MARC Bibliographic"" record', () => {
     cy.visit(topMenu.inventoryPath);
-    inventoryInstance.newMarcB;
-    ibRecord();
+    inventoryInstance.newMarcBibRecord();
     quickMarcEditor.checkReadOnlyTags();
     quickMarcEditor.updateExistingField(
       testData.tags.tag245,
@@ -211,8 +219,8 @@ describe('New Marc Bib Record and new MARC Holdings record', () => {
       testData.search730.value
     );
     marcAuthorities.clickLinkButton();
-    inventoryInstance.verifyUnlinkIcon('240');
-    inventoryInstance.verifyUnlinkIcon('730');
+    inventoryInstance.verifyUnlinkIcon(testData.tags.tag240);
+    inventoryInstance.verifyUnlinkIcon(testData.tags.tag730);
     marc.saveAndClose();
     inventoryInstance.editMarcBibliographicRecord();
   });

@@ -152,6 +152,7 @@ export default {
   effectiveLocation: {
     mainLibrary: { id: 'clickable-filter-effectiveLocation-main-library' }
   },
+  
   selectSearchResultByRowIndex(indexRow) {
     cy.do(this.getSearchResult(indexRow, 0).click());
     // must wait page render
@@ -193,6 +194,7 @@ export default {
   },
 
   bySource(source) {
+    cy.expect(Spinner().absent());
     cy.do([
       sourceAccordion.clickHeader(),
       sourceAccordion.find(Checkbox(source)).click()]);
