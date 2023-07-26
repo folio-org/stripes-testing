@@ -55,6 +55,21 @@ describe('orders: Receive piece from Order', () => {
           });
         }
       });
+    InventoryInteractionsDefaults
+      .getConfigurationInventoryInteractions({ query: '(module==ORDERS and configName==inventory-loanTypeName)' })
+      .then((body) => {
+        if (body.configs.length !== 0) {
+          const id = body.configs[0].id;
+
+          InventoryInteractionsDefaults.setConfigurationInventoryInteractions({
+            id,
+            module:'ORDERS',
+            configName:'inventory-loanTypeName',
+            enabled:true,
+            value:'Can circulate'
+          });
+        }
+      });
     cy.getMaterialTypes({ query: 'name="book"' })
       .then(materialType => {
         materialTypeId = materialType.id;

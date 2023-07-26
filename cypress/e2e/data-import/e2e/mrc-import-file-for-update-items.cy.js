@@ -11,7 +11,8 @@ import {
   EXPORT_TRANSFORMATION_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
   PROFILE_TYPE_NAMES,
-  EXISTING_RECORDS_NAMES
+  EXISTING_RECORDS_NAMES,
+  HOLDINGS_TYPE_NAMES
 } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -361,7 +362,7 @@ describe('ui-data-import', () => {
   const createHoldingsMappingProfile = (profile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
-    NewFieldMappingProfile.fillHoldingsType('Electronic');
+    NewFieldMappingProfile.fillHoldingsType(HOLDINGS_TYPE_NAMES.ELECTRONIC);
     NewFieldMappingProfile.fillPermanentLocation(profile.permanentLocation);
     NewFieldMappingProfile.fillCallNumberType(profile.callNumberType);
     NewFieldMappingProfile.fillCallNumber('050$a " " 050$b');

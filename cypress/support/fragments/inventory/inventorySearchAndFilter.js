@@ -425,7 +425,7 @@ export default {
   clickNextPaginationButton() {
     cy.do(inventorySearchResultsPane.find(nextButton).click());
   },
-  
+
   clickPreviousPaginationButton() {
     cy.do(inventorySearchResultsPane.find(previousButton).click());
   },
@@ -573,7 +573,7 @@ export default {
   },
 
   filterHoldingsByPermanentLocation:(location) => {
-    cy.do(Button({id:'accordion-toggle-button-holdingsPermanentLocation'}).click());
+    cy.do(Button({ id:'accordion-toggle-button-holdingsPermanentLocation' }).click());
     // need to wait until data will be loaded
     cy.wait(1000);
     cy.do(holdingsPermanentLocationAccordion.find(TextField()).fillIn(location));

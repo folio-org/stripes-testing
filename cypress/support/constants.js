@@ -112,7 +112,8 @@ export const FOLIO_RECORD_TYPE = {
   ITEM:'Item',
   ORDER:'Order',
   INVOICE:'Invoice',
-  MARCBIBLIOGRAPHIC:'MARC Bibliographic'
+  MARCBIBLIOGRAPHIC:'MARC Bibliographic',
+  MARCAUTHORITY: 'MARC Authority'
 };
 
 export const PAYMENT_METHOD = {
@@ -193,7 +194,8 @@ export const INSTANCE_STATUS_TERM_NAMES = {
   CATALOGED: 'Cataloged',
   UNCATALOGED: 'Uncataloged',
   OTHER: 'Other',
-  NOTYETASSIGNED: 'Not yet assigned'
+  NOTYETASSIGNED: 'Not yet assigned',
+  ELECTRONIC_RESOURCE: 'Electronic Resource'
 };
 
 export const CALL_NUMBER_TYPE_NAMES = {
@@ -232,7 +234,8 @@ export const EXISTING_RECORDS_NAMES = {
   INSTANCE: 'INSTANCE',
   HOLDINGS: 'HOLDINGS',
   ITEM: 'ITEM',
-  MARC_BIBLIOGRAPHIC: 'MARC_BIBLIOGRAPHIC'
+  MARC_BIBLIOGRAPHIC: 'MARC_BIBLIOGRAPHIC',
+  MARC_AUTHORITY: 'MARC_AUTHORITY'
 };
 
 export const JOB_STATUS_NAMES = {
@@ -245,4 +248,9 @@ export const VENDOR_NAMES = {
   GOBI: 'GOBI Library Solutions',
   HARRASSOWITZ: 'Otto Harrassowitz GmbH & Co. KG',
   EBSCO:'EBSCO SUBSCRIPTION SERVICES'
+};
+
+export const HOLDINGS_TYPE_NAMES = {
+  ELECTRONIC: 'Electronic',
+  MONOGRAPH: 'Monograph'
 };
