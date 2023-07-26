@@ -8,6 +8,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
 const items = [];
@@ -82,7 +83,7 @@ describe('bulk-edit', () => {
       BulkEditActions.openActions();
       BulkEditActions.downloadChangedCSV();
 
-      BulkEditActions.newBulkEdit();
+      TopMenuNavigation.navigateToApp('Bulk edit');
       BulkEditSearchPane.isUsersRadioChecked();
       BulkEditSearchPane.verifyRecordIdentifierDisabled();
     });

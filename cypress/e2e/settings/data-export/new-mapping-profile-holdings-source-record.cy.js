@@ -44,11 +44,13 @@ describe('Mapping profile - setup', () => {
     ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, ['Source record storage (entire record)', 'Holdings', 'Item']);
     ModalSelectTransformations.verifyCheckboxDisabled('Instance');
     ModalSelectTransformations.uncheckItemRecordTypeChechbox();
+    ModalSelectTransformations.searchItemTransformationsByName('Holdings - ID');
     ModalSelectTransformations.clickNthCheckbox();
     ModalSelectTransformations.fillInTransformationsTextfields('123', '1', '2', '$a');
 
     ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
     ModalSelectTransformations.checkItemRecordTypeChechbox();
+    ModalSelectTransformations.searchItemTransformationsByName('Item - ID');
     ModalSelectTransformations.clickNthCheckbox();
     ModalSelectTransformations.fillInTransformationsTextfields('245', '3', '4', '$a');
 

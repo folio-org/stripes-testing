@@ -12,6 +12,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import Users from '../../../support/fragments/users/users';
 import Permissions from '../../../support/dictionary/permissions';
 import InventorySteps from '../../../support/fragments/inventory/inventorySteps';
+import { getCurrentDateYYMMDD } from '../../../support/utils/dateTools';
 
 describe('Create holding records with MARC source', () => {
   const marcFile = {
@@ -23,12 +24,6 @@ describe('Create holding records with MARC source', () => {
 
   let user;
   const recordIDs = [];
-
-  function getCurrentDateYYMMDD() {
-    const padWithZero = value => String(value).padStart(2, '0');
-    const initialCurrentDate = new Date();
-    return `${initialCurrentDate.getFullYear().toString().substring(2)}${padWithZero(initialCurrentDate.getMonth() + 1)}${padWithZero(initialCurrentDate.getDate())}`;
-  }
 
   before(() => {
     cy.createTempUser([
@@ -81,10 +76,15 @@ describe('Create holding records with MARC source', () => {
     QuickMarcEditor.pressSaveAndClose();
     QuickMarcEditor.checkAfterSaveHoldings();
     HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
+      // "Edit in quickMARC" option might not be active immediately after creating MARC Holdings
+      // this option becomes active after reopening Holdings view window
+      HoldingsRecordView.close();
+      InventoryInstance.openHoldingView();
+
       HoldingsRecordView.editInQuickMarc();
       QuickMarcEditor.waitLoading();
       QuickMarcEditor.check008FieldsEmptyHoldings();
-      InventorySteps.verifyHiddenFieldValueInHoldings008(holdingsID, 'Date Ent', getCurrentDateYYMMDD());
+      InventorySteps.verifyHiddenFieldValueIn008(holdingsID, 'Date Ent', getCurrentDateYYMMDD());
       recordIDs.push(holdingsID);
     });
   });
