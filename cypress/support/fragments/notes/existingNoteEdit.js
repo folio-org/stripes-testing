@@ -39,6 +39,5 @@ export default class ExistingNoteEdit {
       cy.do(editButton.click());
       cy.do(nameTextfield.fillIn(name));
       cy.do(saveButton.click());
-      cy.wait(2000);
     }
 }
