@@ -31,11 +31,11 @@ const addCategory = 'claim';
 const tags = '&';
 
 describe('Organzation App', () => {
-  before('login', () => {
+  before('Login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
-  after('verifying deleted test data', () => {
+  after('Verifying deleted test data', () => {
     organizations.searchByParameters(searchByCode.dropdown, searchByCode.code);
     organizations.checkZeroSearchResultsHeader();
   });
@@ -77,6 +77,9 @@ describe('Organzation App', () => {
     organizations.addNewContact(addContactPeople);
     organizations.closeDetailsPane();
     organizations.addContactToOrganization(addContactPeople);
+    organizations.verifySavedContactToOrganization(
+      `${addContactPeople.lastName}, ${addContactPeople.firstName}`
+    );
   });
 
   it('C732, Assign categories to contact person', () => {

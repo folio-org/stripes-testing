@@ -491,13 +491,18 @@ export default {
     cy.do([actionsButton.click(), deleteButton.click()]);
     cy.expect(confirmButton.exists());
     cy.do(confirmButton.click());
+    cy.expect(contactPeopleSection.exists());
+    cy.do(openContactSectionButton.click());
+    cy.expect(contactPeopleDetails.absent());
   },
 
   selectCategories: (category) => {
     cy.expect(MultiSelect().exists());
     cy.do([MultiSelect().select(category), saveAndClose.click()]);
     cy.expect(
-      Section({ id: 'view-contact' }).find(IconButton({ icon: 'times' }))
+      Section({ id: 'view-contact' })
+        .find(IconButton({ icon: 'times' }))
+        .exists()
     );
     cy.do([
       timesButton.click(),
@@ -545,9 +550,18 @@ export default {
     cy.expect(addContacsModal.exists());
     cy.do(addContacsModal.find(searchButtonInModal).click());
     this.selectCheckboxFromResultsList();
-    cy.do(addContacsModal.find(saveButton).click());
-    cy.expect(Button('Save & close').exists());
-    cy.do(Button('Save & close').click());
+    cy.do([
+      addContacsModal.find(saveButton).click(),
+      Button({ id: 'organization-form-save' }).click(),
+    ]);
+  },
+
+  verifySavedContactToOrganization(contact) {
+    cy.expect(
+      contactPeopleSection
+        .find(MultiColumnListRow({ index: 0 }))
+        .has({ content: contact })
+    );
   },
 
   addIntrefaceToOrganization: (defaultInterface) => {
