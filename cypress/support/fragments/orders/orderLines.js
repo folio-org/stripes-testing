@@ -27,7 +27,7 @@ import InteractorsTools from '../../utils/interactorsTools';
 
 const path = require('path');
 
-const receivedtitleDetails = PaneContent({ id:'receiving-results-pane-content' });
+const receivedtitleDetails = PaneContent({ id: 'receiving-results-pane-content' });
 const saveAndClose = Button('Save & close');
 const actionsButton = Button('Actions');
 const searhInputId = 'input-record-search';
@@ -45,8 +45,8 @@ const quantityPhysical = '5';
 const electronicUnitPrice = '10';
 const quantityElectronic = '5';
 const physicalUnitPriceTextField = TextField({ name: 'cost.listUnitPrice' });
-const OrderLines = Button('Order lines');
-const Funddetails = Section({ id:'FundDistribution' });
+const orderLines = Button('Order lines');
+const funddetails = Section({ id: 'FundDistribution' });
 const quantityPhysicalTextField = TextField({ name: 'cost.quantityPhysical' });
 const electronicUnitPriceTextField = TextField({ name: 'cost.listUnitPriceElectronic' });
 const quantityElectronicTextField = TextField({ name: 'cost.quantityElectronic' });
@@ -109,7 +109,7 @@ export default {
 
   clickOnOrderLines: () => {
     cy.do([
-      OrderLines.click()
+      orderLines.click(),
     ]);
   },
   waitLoading() {
@@ -120,8 +120,9 @@ export default {
   },
 
   selectFund: (FundName) => {
-    cy.do(Funddetails.find(Link(FundName)).click());
+    cy.do(funddetails.find(Link(FundName)).click());
   },
+
   resetFilters: () => {
     cy.do(Button('Reset all').click());
   },
@@ -394,10 +395,10 @@ export default {
     submitOrderLine();
   },
 
-  selectOrderline:(POlinenumber) => {
+  selectOrderline: (POlinenumber) => {
     cy.do(Pane({ id: 'order-lines-results-pane' }).find(Link(POlinenumber)).click());
   },
-  selectreceivedTitleName:(title) => {
+  selectreceivedTitleName: (title) => {
     cy.do(receivedtitleDetails.find((Link(title))).click());
   },
 
@@ -763,7 +764,7 @@ export default {
 
   editPOLInOrder: () => {
     cy.do([orderLineDetailsPane.find(paneHeaderOrderLinesDetailes.find(actionsButton)).click(),
-      Button('Edit').click()
+    Button('Edit').click()
     ]);
   },
 
@@ -788,56 +789,56 @@ export default {
     cy.do(Button({ id: 'clickable-updatePoLine' }).click());
   },
 
-  openInstance:() => {
-    cy.do(Section({ id:'ItemDetails' }).find(Link({ href: including('/inventory/view/') })).click());
+  openInstance: () => {
+    cy.do(Section({ id: 'ItemDetails' }).find(Link({ href: including('/inventory/view/') })).click());
   },
 
-  openReceiving:() => {
+  openReceiving: () => {
     cy.do([
       paneHeaderOrderLinesDetailes.find(actionsButton).click(),
       Button('Receive').click()
     ]);
   },
 
-  fillPolByLinkTitle:(instanceTitle) => {
+  fillPolByLinkTitle: (instanceTitle) => {
     cy.do(Button('Title look-up').click());
     SelectInstanceModal.searchByName(instanceTitle);
     SelectInstanceModal.selectInstance(instanceTitle);
   },
 
-  addAcquisitionMethod:(method) => {
+  addAcquisitionMethod: (method) => {
     cy.do(acquisitionMethodButton.click());
     cy.do(SelectionOption(method).click());
   },
 
-  addOrderFormat:(format) => {
+  addOrderFormat: (format) => {
     cy.do(orderFormatSelect.choose(format));
   },
 
-  fillPhysicalUnitPrice:(price) => {
+  fillPhysicalUnitPrice: (price) => {
     cy.do(physicalUnitPriceTextField.fillIn(price));
   },
 
-  fillPhysicalUnitQuantity:(quantity) => {
+  fillPhysicalUnitQuantity: (quantity) => {
     cy.do(quantityPhysicalTextField.fillIn(quantity));
   },
 
-  addCreateInventory:(inventory) => {
+  addCreateInventory: (inventory) => {
     cy.do(Select('Create inventory*').choose(inventory));
   },
 
-  addMaterialType:(type) => {
-    cy.do(Select({ name:'physical.materialType' }).choose(type));
+  addMaterialType: (type) => {
+    cy.do(Select({ name: 'physical.materialType' }).choose(type));
     // need to wait upload product types
     cy.wait(1000);
   },
 
-  savePol:() => {
+  savePol: () => {
     cy.do(saveAndClose.click());
-    cy.do(Pane({ id:'pane-poLineForm' }).absent());
+    cy.do(Pane({ id: 'pane-poLineForm' }).absent());
   },
 
-  fillPOLWithTitleLookUp:() => {
+  fillPOLWithTitleLookUp: () => {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.OTHER),
       acquisitionMethodButton.click(),
@@ -854,7 +855,7 @@ export default {
     ]);
   },
 
-  selectRandomInstanceInTitleLookUP:(instanceName, rowNumber = 0) => {
+  selectRandomInstanceInTitleLookUP: (instanceName, rowNumber = 0) => {
     cy.do([
       Button({ id: 'find-instance-trigger' }).click(),
       selectInstanceModal.find(TextField({ name: 'query' })).fillIn(instanceName),
@@ -865,23 +866,23 @@ export default {
     cy.wait(2000);
   },
 
-  checkConnectedInstance:() => {
+  checkConnectedInstance: () => {
     cy.expect(Section({ id: 'itemDetails' }).find(Link('Connected')).exists());
   },
 
-  fillInInvalidDataForPublicationDate:() => {
+  fillInInvalidDataForPublicationDate: () => {
     cy.do(TextField({ text: 'Publication date' }).fillIn('Invalid date'));
   },
 
-  clickNotConnectionInfoButton:() => {
+  clickNotConnectionInfoButton: () => {
     cy.do(Section({ id: 'itemDetails' }).find(Button({ icon: 'info' })).click());
   },
 
-  selectCurrentEncumbrance:(currentEncumbrance) => {
+  selectCurrentEncumbrance: (currentEncumbrance) => {
     cy.do(fundDistributionSection.find(Link(currentEncumbrance)).click());
   },
 
-  cancelPOL:() => {
+  cancelPOL: () => {
     cy.do([
       orderLineDetailsPane
         .find(paneHeaderOrderLinesDetailes
@@ -891,7 +892,7 @@ export default {
     ]);
   },
 
-  changeFundInPOL:(fund) => {
+  changeFundInPOL: (fund) => {
     cy.do([
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
@@ -899,11 +900,11 @@ export default {
     ]);
   },
 
-  checkFundInPOL:(fund) => {
+  checkFundInPOL: (fund) => {
     cy.expect(fundDistributionSection.find(Link(`${fund.name}(${fund.code})`)).exists());
   },
 
-  checkCurrencyInPOL:() => {
+  checkCurrencyInPOL: () => {
     cy.get('[id=FundDistribution]').contains('a', '$').should('exist');
   },
 
@@ -948,9 +949,9 @@ export default {
       .click());
   },
 
-  getAssignedPOLNumber:() => cy.then(() => Accordion('Purchase order line').find(KeyValue('POL number')).value()),
+  getAssignedPOLNumber: () => cy.then(() => Accordion('Purchase order line').find(KeyValue('POL number')).value()),
 
-  verifyPOLDetailsIsOpened:() => {
+  verifyPOLDetailsIsOpened: () => {
     cy.expect(orderLineDetailsPane
       .find(paneHeaderOrderLinesDetailes)
       .exists());

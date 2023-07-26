@@ -81,16 +81,16 @@ export default {
       Button('Add piece').click(),
       addPieceModal.find(TextField('Caption')).fillIn(caption),
       addPieceModal.find(TextField('Enumeration')).fillIn(enumeration),
-    ])
+    ]);
   },
 
   selectPiece: (caption) => {
     cy.do(Accordion({ id: expectedPiecesAccordionId }).find(MultiColumnListCell(caption)).click());
   },
 
-  quickReceivePiece: () => {
+  quickReceivePiece: (enumeration) => {
     cy.do(addPieceModal.find(Button('Quick receive')).click());
-   // InteractorsTools.checkCalloutMessage(`The piece ${enumeration} was successfully received`);
+    InteractorsTools.checkCalloutMessage(`The piece ${enumeration} was successfully received`);
   },
 
   receivePieceWithoutBarcode: (rowNumber, caption) => {
