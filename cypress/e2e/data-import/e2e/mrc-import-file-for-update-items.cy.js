@@ -400,17 +400,18 @@ describe('ui-data-import', () => {
     FileDetails.checkItemsQuantityInSummaryTable(0, '1');
     FileDetails.checkItemsQuantityInSummaryTable(1, '0');
 
-    // get Instance HRID through API
-    InventorySearchAndFilter.getInstanceHRID()
-      .then(hrId => {
-        instanceHRID = hrId[0];
-        // download .csv file
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchInstanceByHRID(hrId[0]);
-        InventorySearchAndFilter.saveUUIDs();
-        ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
-        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-      });
+    // open Instance for getting hrid
+    FileDetails.openInstanceInInventory('Created');
+    InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+      instanceHRID = initialInstanceHrId;
+
+      // download .csv file
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
+      InventorySearchAndFilter.saveUUIDs();
+      ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    });
 
     cy.visit(SettingsMenu.exportMappingProfilePath);
     ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile);

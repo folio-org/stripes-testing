@@ -135,11 +135,11 @@ describe('ui-data-import', () => {
       FileDetails.checkSrsRecordQuantityInSummaryTable('1');
       FileDetails.checkInstanceQuantityInSummaryTable('1');
 
-      // get Instance HRID through API for delete instance
-      InventorySearchAndFilter.getInstanceHRID()
-        .then(hrId => {
-          firstInstanceHrid = hrId[0];
-        });
+      // open Instance for getting hrid
+      FileDetails.openInstanceInInventory('Created');
+      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        firstInstanceHrid = initialInstanceHrId;
+      });
 
       FileDetails.openInstanceInInventory('Created');
       InventoryInstance.verifyResourceIdentifier(resourceIdentifierForFirstInstance.type, resourceIdentifierForFirstInstance.value, 2);
@@ -211,11 +211,11 @@ describe('ui-data-import', () => {
       FileDetails.checkSrsRecordQuantityInSummaryTable('1');
       FileDetails.checkInstanceQuantityInSummaryTable('1');
 
-      // get Instance HRID through API for delete instance
-      InventorySearchAndFilter.getInstanceHRID()
-        .then(hrId => {
-          secondInstanceHrid = hrId[0];
-        });
+      // open Instance for getting hrid
+      FileDetails.openInstanceInInventory('Created');
+      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        secondInstanceHrid = initialInstanceHrId;
+      });
 
       FileDetails.openInstanceInInventory('Created');
       InventoryInstance.verifyResourceIdentifier(resourceIdentifierForSecondInstance.type, resourceIdentifierForSecondInstance.value, 3);

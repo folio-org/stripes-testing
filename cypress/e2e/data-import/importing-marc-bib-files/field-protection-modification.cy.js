@@ -139,18 +139,19 @@ describe('ui-data-import', () => {
       FileDetails.checkSrsRecordQuantityInSummaryTable('1', 0);
       FileDetails.checkInstanceQuantityInSummaryTable('1', 0);
 
-      // get Instance HRID through API
-      InventorySearchAndFilter.getInstanceHRID()
-        .then(hrId => {
-          instanceHrid = hrId[0];
-          // check fields are absent in the view source
-          cy.visit(TopMenu.inventoryPath);
-          InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-          // verify table data in marc bibliographic source
-          InventoryInstance.viewSource();
-          fieldsForDelete.forEach(fieldNumber => {
-            InventoryViewSource.notContains(`${fieldNumber}\t`);
-          });
+      // open Instance for getting hrid
+      FileDetails.openInstanceInInventory('Created');
+      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        instanceHrid = initialInstanceHrId;
+
+        // check fields are absent in the view source
+        cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+        // verify table data in marc bibliographic source
+        InventoryInstance.viewSource();
+        fieldsForDelete.forEach(fieldNumber => {
+          InventoryViewSource.notContains(`${fieldNumber}\t`);
         });
+      });
     });
 });

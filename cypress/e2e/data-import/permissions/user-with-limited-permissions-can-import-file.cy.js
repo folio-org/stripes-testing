@@ -21,7 +21,6 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('ui-data-import', () => {
@@ -158,10 +157,10 @@ describe('ui-data-import', () => {
       });
       FileDetails.checkItemQuantityInSummaryTable(quantityOfItems);
 
-      // get Instance HRID through API
-      InventorySearchAndFilter.getInstanceHRID()
-        .then(hrId => {
-          instanceHrid = hrId[0];
-        });
+      // open Instance to get hrid
+      FileDetails.openInstanceInInventory('Created');
+      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        instanceHrid = initialInstanceHrId;
+      });
     });
 });
