@@ -13,7 +13,7 @@ const userOne = {
   personal: {
     lastName: 'User',
     firstName: 'Delete',
-    email: `dan${getFourDigitRandomNumber}@gmail.com`,
+    email: `dan${getFourDigitRandomNumber}@yopmail.com`,
   },
 };
 
@@ -24,7 +24,7 @@ const userTwo = {
   personal: {
     lastName: 'User',
     firstName: 'Delete',
-    email: `dan${getFourDigitRandomNumber}@gmail.com`,
+    email: `dan${getFourDigitRandomNumber}@yopmail.com`,
   },
 };
 
@@ -35,7 +35,7 @@ const userThree = {
   personal: {
     lastName: 'Script',
     firstName: 'Auto',
-    email: 'dan@gmail.com',
+    email: `dan${getFourDigitRandomNumber}@yopmail.com`,
     middleName: 'Test',
     preferredFirstName: 'Dan',
   },
@@ -45,7 +45,7 @@ const deleteData = {
   name: 'User Delete',
   selectName: 'User, Delete',
   lastName: 'Script',
-  selectLastName: 'Script Test'
+  selectLastName: 'Script Test',
 };
 
 const verifyData = {
@@ -63,9 +63,10 @@ describe('create a users', () => {
   });
 
   after(() => {
-    usersSearchPane.searchByLastname(deleteData.lastName);
+    usersSearchPane.searchByLastName(deleteData.lastName);
     usersSearchPane.selectUsersFromList(deleteData.selectLastName);
     users.deleteUser();
+    users.checkZeroSearchResultsHeader();
   });
 
   it('C421-Create: new user; required: contact info, email, phone, external system ID, address', () => {
@@ -78,6 +79,7 @@ describe('create a users', () => {
     usersSearchPane.searchByKeywords(deleteData.name);
     usersSearchPane.selectUsersFromList(deleteData.selectName);
     users.deleteUser();
+    users.checkZeroSearchResultsHeader();
   });
 
   it('C11096-Add Preferred first name and confirm its display in the User record View and Edit screens', () => {
@@ -92,7 +94,7 @@ describe('create a users', () => {
       verifyData.verifyMiddleNameOnUserDetailsPane
     );
     users.editButton();
-    users.clearTextfield();
+    users.clearTextField();
     users.saveButton();
     users.verifyLastNameOnUserDetailsPane(
       verifyData.verifyLastNameOnUserDetailsPane
@@ -104,7 +106,7 @@ describe('create a users', () => {
       verifyData.verifyFirstNameOnUserDetailsPane
     );
     users.editButton();
-    users.clearTextfieldfirstName();
+    users.clearTextFieldFirstName();
     users.saveButton();
     users.verifyFirstNameOnUserDetailsPane(verifyData.verifyClearFirstNameDetailsPane);
   });

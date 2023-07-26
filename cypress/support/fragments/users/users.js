@@ -20,7 +20,10 @@ const editButton = Button('Edit');
 const barCode = TextField('Barcode');
 const deleteUser = Button({ id: 'clickable-checkdeleteuser' });
 const closeWithoutSavingButton = Button({ id: 'clickable-cancel-editing-confirmation-cancel' });
-const deleteYesButton = Button({ id: 'delete-user-button' })
+const deleteYesButton = Button({ id: 'delete-user-button' });
+// As we checking number of search results value  but we dont have intaractor to get value so using xpath for this method
+const zeroResultsFoundText = '0 records found';
+const numberOfSearchResultsHeader = '//p[@id="paneHeaderusers-search-results-pane-subtitle"]';
 
 const defaultUser = {
   username: defaultUserName,
@@ -192,11 +195,11 @@ export default {
     );
   },
 
-  clearTextfield() {
+  clearTextField() {
     cy.do(TextField({ id: 'adduser_preferredname' }).clear());
   },
 
-  clearTextfieldfirstName() {
+  clearTextFieldFirstName() {
     cy.do(TextField({ id: 'adduser_firstname' }).clear());
   },
 
@@ -224,4 +227,9 @@ export default {
       editButton.click(),
     ]);
   },
-}
+  checkZeroSearchResultsHeader: () => {
+    cy.xpath(numberOfSearchResultsHeader)
+      .should('be.visible')
+      .and('have.text', zeroResultsFoundText);
+  },
+};

@@ -37,7 +37,7 @@ export default {
     ]);
     waitClick();
   },
-  searchByLastname(lastName) {
+  searchByLastName(lastName) {
     cy.do([
       Select({ id: 'input-user-search-qindex' }).choose('Last name'),
       TextField({ id: 'input-user-search' }).fillIn(lastName),
