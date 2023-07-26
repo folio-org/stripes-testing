@@ -64,7 +64,7 @@ export default {
     waitClick();
   },
 
-  EntertheBarcodeSearchFiled(Barcode) {
+  entertheBarcodeSearchFiled(Barcode) {
     cy.do([
       TextField({ id: 'input-item-barcode' }).fillIn(Barcode),
       Button({ id: 'clickable-add-item' }).click(),
@@ -113,7 +113,7 @@ export default {
     cy.expect(RadioButtonGroup(name).exists());
   },
 
-  verifySingleSeclect: (name, label) => {
+  verifySingleSelect: (name, label) => {
     cy.do([
       actionButton.click(),
       editButton.click(),
@@ -123,7 +123,7 @@ export default {
     ]);
   },
 
-  AdditionalInfoButton() {
+  additionalInfoButton() {
     cy.do(additionalInfo.click());
   },
 };

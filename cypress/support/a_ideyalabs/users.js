@@ -103,7 +103,7 @@ export default {
         patronButton.click(),
         userNoteModal.find(Button('Close')).click(),
       ]);
-      cy.visit(topMenu.usersPath)
+      cy.visit(topMenu.usersPath);
       cy.do([
         Select({ id: 'input-user-search-qindex' }).choose('Barcode'),
         searchField.fillIn(barcode),
