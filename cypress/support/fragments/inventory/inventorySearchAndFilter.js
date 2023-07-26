@@ -584,5 +584,8 @@ export default {
     cy.do(holdingsPermanentLocationAccordion.find(Checkbox(location)).click());
   },
 
-  checkRowsCount:(expectedRowsCount) => cy.expect(instancesList.find(MultiColumnListRow({ index: expectedRowsCount + 1 })).absent())
+  checkRowsCount:(expectedRowsCount) => {
+    cy.expect(instancesList.find(MultiColumnListRow({ index: expectedRowsCount - 1 })).exists());
+    cy.expect(instancesList.find(MultiColumnListRow({ index: expectedRowsCount })).absent());
+  }
 };
