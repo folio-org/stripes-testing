@@ -237,26 +237,32 @@ export default {
     cy.expect(section.find(HTML(including('MARC'))).exists());
     cy.expect(section.find(HTML(including('FOLIO'))).absent());
   },
+
   verifyUnlinkIcon(tag) {
     // Waiter needed for the link to be loaded properly.
     cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(unlinkIconButton).exists());
   },
+
   verifyLinkIcon(tag) {
     // Waiter needed for the link to be loaded properly.
     cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(linkIconButton).exists());
   },
+
   goToEditMARCBiblRecord:() => {
     cy.do(actionsButton.click());
     cy.do(editMARCBibRecordButton.click());
   },
+
   selectTopRecord() {
     cy.do(MultiColumnListRow({ index: 0 }).find(MultiColumnListCell({ columnIndex: 1 })).find(Button()).click());
   },
+
   deriveNewMarcBibRecord:() => {
     cy.do(actionsButton.click());
     cy.do(deriveNewMarcBibRecord.click());
     cy.expect(QuickMarcEditor().exists());
   },
+
   viewSource: () => {
     cy.do(actionsButton.click());
     cy.do(viewSourceButton.click());
@@ -318,6 +324,7 @@ export default {
       cy.visit(link);
     });
   },
+
   verifyAndClickUnlinkIcon(tag) {
     // Waiter needed for the link to be loaded properly.
     cy.wait(1000);
@@ -620,6 +627,7 @@ export default {
     InventoryInstanceSelectInstanceModal.selectInstance();
     InventoryInstancesMovement.move();
   },
+
   moveHoldingsToAnotherInstanceByItemTitle: (holdingName, title) => {
     cy.do(actionsButton.click());
     cy.do(moveHoldingsToAnotherInstanceButton.click());
@@ -628,6 +636,7 @@ export default {
     InventoryInstanceSelectInstanceModal.selectInstance();
     InventoryInstancesMovement.moveFromMultiple(holdingName, title);
   },
+
   checkAddItem:(holdingsRecordId) => {
     cy.expect(section.find(Section({ id:holdingsRecordId }))
       .find(Button({ id: `clickable-new-item-${holdingsRecordId}` }))

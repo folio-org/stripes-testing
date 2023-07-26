@@ -15,7 +15,7 @@ export default {
   clickLinkheadings: () => {
     cy.do(linkHeadingsButton.click());
   },
-  
+
   printButton: () => {
     cy.do(rootSection.find(Button('Actions')).click());
     cy.do(Button('Print').click());
@@ -52,7 +52,6 @@ export default {
 
   create006Tag: () => {
     cy.get('.quickMarcEditorAddField:last').click();
-
     cy.get('[class*="quickMarcEditorRow--"]:last-child')
       .find('input')
       .then(([tag]) => {

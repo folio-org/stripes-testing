@@ -7,12 +7,17 @@ import marcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
 import topMenu from '../../support/fragments/topMenu';
 
 const testData = {
+  source: 'MARC',
   searchOption: 'Keyword',
   authority650FieldValue: 'Speaking Oratory debating',
   searchHoldingOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
   holdingValue: 'The !!!Kung of Nyae Nyae / Lorna Marshall.',
   record: 'Gibbons, Boyd',
   accordion: 'Subject',
+  marcRecord: 'Beatles',
+  tag: {
+    tag650: '650',
+  },
   derive: {
     searchOption: 'Personal name',
     authority700FieldValue: 'Gibbons, Boyd',
@@ -37,12 +42,12 @@ describe('Feature MARC Authority', () => {
   it('C375070 Link the 650 of MARC Bib field with 150 field of MARC Authority record.', () => {
     cy.visit(topMenu.inventoryPath);
     inventorySearchAndFilter.switchToHoldings();
-    inventorySearchAndFilter.bySource('MARC');
+    inventorySearchAndFilter.bySource(testData.source);
     inventorySearchAndFilter.selectSearchResultByRowIndex(
       testData.derive.rowIndex
     );
     inventoryInstance.editMarcBibliographicRecord();
-    inventoryInstance.verifyAndClickLinkIcon('650');
+    inventoryInstance.verifyAndClickLinkIcon(testData.tag.tag650);
     marcAuthorities.switchToSearch();
     inventoryInstance.verifySearchOptions();
     marcAuthorities.clickReset();
@@ -54,7 +59,7 @@ describe('Feature MARC Authority', () => {
     inventoryInstance.viewSource();
     marcAuthorities.closeMarcViewPane();
     inventoryInstance.editMarcBibliographicRecord();
-    inventoryInstance.verifyAndClickUnlinkIcon('650');
+    inventoryInstance.verifyAndClickUnlinkIcon(testData.tag.tag650);
     marc.popupUnlinkButton();
     marc.saveAndClose();
     inventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(testData.accordion);
@@ -64,7 +69,7 @@ describe('Feature MARC Authority', () => {
   it('C365602 Derive Unlink MARC Bibliographic field from MARC Authority record and use the Save close button in deriving window', () => {
     cy.visit(topMenu.inventoryPath);
     inventorySearchAndFilter.switchToHoldings();
-    inventorySearchAndFilter.bySource('MARC');
+    inventorySearchAndFilter.bySource(testData.source);
     inventorySearchAndFilter.selectSearchResultByRowIndex(
       testData.derive.rowIndex
     );
@@ -100,7 +105,7 @@ describe('Feature MARC Authority', () => {
   it('C380755 Link of empty MARC Bib field with MARC Authority record', () => {
     cy.visit(topMenu.inventoryPath);
     inventorySearchAndFilter.switchToHoldings();
-    inventorySearchAndFilter.bySource('MARC');
+    inventorySearchAndFilter.bySource(testData.source);
     inventorySearchAndFilter.selectSearchResultByRowIndex(
       testData.link.rowIndex
     );
@@ -111,7 +116,6 @@ describe('Feature MARC Authority', () => {
     marcAuthorities.switchToSearch();
     inventoryInstance.verifySelectMarcAuthorityModal();
     inventoryInstance.verifySearchOptions();
-    inventoryInstance.verifySearchOptions();
     marcAuthorities.searchBy(testData.link.searchOption, testData.link.authority700FieldValue);
     marcAuthorities.clickLinkButton();
     marcAuthority.checkLinkingAuthority700();
@@ -121,7 +125,7 @@ describe('Feature MARC Authority', () => {
 
   it('C376987:print marcfile', () => {
     cy.visit(topMenu.marcAuthorities);
-    marcAuthorities.serchbeats('Beatles');
+    marcAuthorities.serchbeats(testData.marcRecord);
     marcAuthorities.clickActionsButton();
     inventoryInstance.selectRecord();
     marcAuthoritiesDelete.clickprintButton();
@@ -131,7 +135,7 @@ describe('Feature MARC Authority', () => {
   it('C388651 - 008 field updated when valid LDR 06-07 combinations entered when editing MARC bib record', () => {
     cy.visit(topMenu.inventoryPath);
     inventorySearchAndFilter.switchToHoldings();
-    inventorySearchAndFilter.bySource('MARC');
+    inventorySearchAndFilter.bySource(testData.source);
     inventorySearchAndFilter.selectSearchResultByRowIndex(
       testData.derive.rowIndex
     );
