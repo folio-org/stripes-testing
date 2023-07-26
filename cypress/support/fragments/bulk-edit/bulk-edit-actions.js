@@ -93,10 +93,6 @@ export default {
     cy.expect(Button('Download errors (CSV)').exists());
   },
 
-  clickSuppressedFromDiscoveryCheckbox() {
-    cy.do(Checkbox('Suppressed from discovery').click());
-  },
-
   verifyActionAfterChangingRecords() {
     cy.do(actionsBtn.click());
     cy.expect([
@@ -232,11 +228,19 @@ export default {
     ]);
   },
 
-  editSuppressFromDiscovery(value, rowIndex = 0) {
+  editItemsSuppressFromDiscovery(value, rowIndex = 0) {
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Suppress from discovery'),
-      RepeatableFieldItem({ index: rowIndex }).find(Select({ content: including('Set') })).choose(value),
+      RepeatableFieldItem({ index: rowIndex }).find(Select({ content: including('Set') })).choose(`Set ${value}`),
     ]);
+  },
+
+  editHoldingsSuppressFromDiscovery(value, rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Suppress from discovery'),
+      RepeatableFieldItem({ index: rowIndex }).find(Select({ content: including('Set') })).choose(`Set ${value}`),
+    ]);
+    if (value) cy.expect(Checkbox('Apply to items records').has({ checked: true }));
   },
 
   verifyNoMatchingOptionsForLocationFilter() {
