@@ -140,15 +140,6 @@ export default {
       .absent());
   },
 
-  verifyElectronicAccess:(uriValue) => {
-    cy.expect(electronicAccessAccordion
-      .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: uriValue }))
-      .exists());
-    cy.expect(electronicAccessAccordion
-      .find(MultiColumnListCell({ row: 1, columnIndex: 1 }))
-      .absent());
-  },
-
   openHoldingView: () => {
     cy.do(Button('View holdings').click());
     cy.expect(Button('Actions').exists());
