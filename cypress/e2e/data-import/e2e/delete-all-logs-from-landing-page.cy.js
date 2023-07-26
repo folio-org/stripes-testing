@@ -41,6 +41,7 @@ describe('ui-data-import', () => {
           fileNameToUpload = `C358137autotestFile.${getRandomPostfix()}.mrc`;
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
+          cy.reload();
           DataImport.waitLoading();
           DataImport.uploadFile(filePath, fileNameToUpload);
           JobProfiles.searchJobProfileForImport(jobProfileToRun);
