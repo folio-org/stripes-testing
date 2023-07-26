@@ -9,7 +9,7 @@ function label(element) {
 }
 
 export default HTML.extend('accordion')
-  .selector('[class^=accordion-]')
+  .selector('[class^=accordion]')
   .locator(label)
   .filters({
     content,
