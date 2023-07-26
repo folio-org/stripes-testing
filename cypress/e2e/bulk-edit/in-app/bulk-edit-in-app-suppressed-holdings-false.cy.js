@@ -12,6 +12,7 @@ import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRec
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
 const holdingHRIDsFileName = `holdingHRIDs_${getRandomPostfix()}.csv`;
@@ -73,7 +74,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.waitFileUploading();
       BulkEditSearchPane.verifyChangesUnderColumns('Suppressed from discovery', suppressFromDiscovery);
 
-      cy.visit(TopMenu.inventoryPath);
+      TopMenuNavigation.navigateToApp('Inventory');
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.searchByParameter('Barcode', inventoryEntity.barcode);
       ItemRecordView.waitLoading();
@@ -81,13 +82,13 @@ describe('bulk-edit', () => {
       InventorySearchAndFilter.selectViewHoldings();
       HoldingsRecordView.checkMarkAsSuppressedFromDiscoveryAbsent();
 
-      cy.visit(TopMenu.inventoryPath);
+      TopMenuNavigation.navigateToApp('Inventory');
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.searchByParameter('Barcode', inventoryEntity.barcode);
       ItemRecordView.waitLoading();
       ItemRecordView.suppressedAsDiscoveryIsPresent();
 
-      cy.visit(TopMenu.inventoryPath);
+      TopMenuNavigation.navigateToApp('Inventory');
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.searchByParameter('Barcode', inventoryEntity.secondBarcode);
       ItemRecordView.waitLoading();
