@@ -204,8 +204,6 @@ export default {
   },
   clickSearchResultItem(indexRow = 8) {
     cy.do(this.getSearchResult(indexRow, 0).click());
-    // must wait page render
-    cy.wait(2000);
   },
 
   byEffectiveLocation(values) {

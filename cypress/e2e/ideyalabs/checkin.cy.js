@@ -55,7 +55,7 @@ describe('servicepoints shift', () => {
 
   it('C17137 - Filter circulation log by renewed through override', () => {
     cy.visit(topMenu.circulationLogPath);
-    searchPane.checkbarcode();
+    searchPane.checkBarcode();
   });
 
   it('C590 Check in: multipiece items', () => {

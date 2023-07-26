@@ -72,7 +72,7 @@ export default {
       servicePointField.choose(servicePoint),
     ]);
   },
-  checkbarcode() {
+  checkBarcode() {
     cy.expect(Pane({ title: 'Circulation log' }).exists());
     cy.do([
       Accordion({ id: 'loan' }).clickHeader(),
@@ -86,7 +86,7 @@ export default {
     cy.expect(MultiColumnListRow().exists());
   },
 
-  checkElemtText: () => {
+  checkElementText: () => {
     cy.do([
       Checkbox({
         id: 'clickable-filter-loan-renewed-through-override',
@@ -124,7 +124,6 @@ export default {
 
   verifyResultCells(verifyDate = false) {
     const dateRegEx = /\d{1,2}\/\d{1,2}\/\d{4},\s\d{1,2}:\d{2}\s\w{2}/gm;
-
     function getResultRowByRowNumber(rowNumber) {
       return {
         userBarcode: MultiColumnListCell({

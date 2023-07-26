@@ -16,8 +16,7 @@ import serviceShift from './serviceShift';
 
 const itemStatusSearchField = TextField('itemStatus-field');
 const itemBarcode = '58485788';
-const startData = '114545699';
-const endDate = '2023-07-21';
+const date = '2023-07-21';
 
 export default {
   clickOnItem() {
@@ -40,11 +39,12 @@ export default {
   createItem(barcode) {
     cy.do([
       Button('Date created').click(),
-      TextField({ name: 'startDate' }).fillIn(startData),
-      TextField({ name: 'endDate' }).fillIn(endDate),
+      TextField({ name: 'startDate' }).fillIn(date),
+      TextField({ name: 'endDate' }).fillIn(date),
       Button('Apply').click(),
     ]);
     inventorySearchAndFilter.clickSearchResultItem();
+    cy.expect(Button({ id: 'clickable-new-holdings-record' }).exists());
     cy.do([
       Button({ id: 'clickable-new-holdings-record' }).click(),
       Selection('Permanent*').open(),
