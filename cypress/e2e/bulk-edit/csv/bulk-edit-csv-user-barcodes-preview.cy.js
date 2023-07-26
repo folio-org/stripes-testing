@@ -44,7 +44,7 @@ describe('bulk-edit', () => {
       FileManager.deleteFile(`cypress/fixtures/${invalidUserBarcodesFileName}`);
     });
 
-    it('C347872 Populating preview of matched records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404415 Populating preview of matched records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.uploadFile(userBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
       BulkEditSearchPane.verifyUserBarcodesResultAccordion();
@@ -60,7 +60,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyResultColumTitles('Email');
     });
 
-    it('C360556 Populating preview of matched records in case no matches (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404416 Populating preview of matched records in case no matches (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.uploadFile(invalidUserBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
       BulkEditSearchPane.matchedAccordionIsAbsent();

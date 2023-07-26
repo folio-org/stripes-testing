@@ -69,7 +69,7 @@ describe('bulk-edit', () => {
       cy.visit(TopMenu.bulkEditPath);
     });
 
-    it('C357052 Verify Downloaded matched records if identifiers return more than one item (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404466 Verify Downloaded matched records if identifiers return more than one item (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
       BulkEditSearchPane.waitFileUploading();
       BulkEditSearchPane.verifyMatchedResults(hrid);
@@ -78,7 +78,7 @@ describe('bulk-edit', () => {
       BulkEditFiles.verifyMatchedResultFileContent(resultFileName, [hrid], 'hrid');
     });
 
-    it('C356810 Verify uploading file with holdings UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404465 Verify uploading file with holdings UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
       BulkEditSearchPane.waitFileUploading();
       BulkEditSearchPane.verifyMatchedResults(hrid);
@@ -95,7 +95,7 @@ describe('bulk-edit', () => {
       BulkEditActions.verifySuccessBanner(1);
     });
 
-    it('C360120 Verify that User can trigger bulk of holdings with file containing Holdings identifiers (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404520 Verify that User can trigger bulk of holdings with file containing Holdings identifiers (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
 
       BulkEditSearchPane.uploadFile(validHoldingHRIDsFileName);
@@ -129,7 +129,7 @@ describe('bulk-edit', () => {
       BulkEditActions.verifySuccessBanner(1);
     });
 
-    it('C367975 Verify Bulk edit Holdings records with empty Electronic access Relationship type (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+    it('C404524 Verify Bulk edit Holdings records with empty Electronic access Relationship type (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
 
       BulkEditSearchPane.uploadFile(validHoldingHRIDsFileName);

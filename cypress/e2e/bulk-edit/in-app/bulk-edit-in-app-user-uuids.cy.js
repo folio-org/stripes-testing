@@ -41,7 +41,7 @@ describe('bulk-edit', () => {
       cy.visit(TopMenu.bulkEditPath);
     });
 
-    it('C357579 Bulk edit: In app - Update user records permission enabled - Preview of records matched (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404423 Bulk edit: In app - Update user records permission enabled - Preview of records matched (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
       BulkEditSearchPane.uploadFile(userUUIDsFileName);
@@ -53,7 +53,7 @@ describe('bulk-edit', () => {
       BulkEditActions.verifyBulkEditForm();
     });
 
-    it('C357578 Verify "In app - Update user records" permission (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404422 Verify "In app - Update user records" permission (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.verifyUsersUpdatePermission();
       BulkEditSearchPane.verifyRecordIdentifierItems();
       BulkEditSearchPane.verifyDragNDropUpdateUsersArea();
@@ -68,7 +68,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyDragNDropUsernamesArea();
     });
 
-    it('C357987 Verify Users Patron group bulk edit -- in app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404424 Verify Users Patron group bulk edit -- in app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
       BulkEditSearchPane.uploadFile(userUUIDsFileName);
@@ -87,7 +87,7 @@ describe('bulk-edit', () => {
       UsersCard.verifyPatronBlockValue('graduate');
     });
 
-    it('C359213 Verify elements "Are you sure form?" -- Users-in app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404426 Verify elements "Are you sure form?" -- Users-in app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
       BulkEditSearchPane.uploadFile(userUUIDsFileName);
@@ -108,7 +108,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyChangedResults('staff');
     });
 
-    it('C359214 Verify expiration date updates in In-app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404427 Verify expiration date updates in In-app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       const todayDate = new Date();
 
       BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
@@ -130,7 +130,7 @@ describe('bulk-edit', () => {
       UsersCard.verifyExpirationDate(todayDate);
     });
 
-    it('C359237 Verify "Expiration date" option in the dropdown (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404430 Verify "Expiration date" option in the dropdown (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
       BulkEditSearchPane.uploadFile(userUUIDsFileName);
@@ -141,7 +141,7 @@ describe('bulk-edit', () => {
       BulkEditActions.verifyCalendarItem();
     });
 
-    it('C359585 Verify clicking on the "Commit changes" button (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404431 Verify clicking on the "Commit changes" button (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
       BulkEditSearchPane.uploadFile(userUUIDsFileName);

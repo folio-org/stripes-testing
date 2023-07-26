@@ -46,7 +46,7 @@ describe('Bulk Edit - Logs', () => {
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
-  it('C375244 Verify genetated Logs files for Users In app -- only valid (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C405500 Verify generated Logs files for Users In app -- only valid (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
     BulkEditSearchPane.uploadFile(validUserBarcodesFileName);
     BulkEditSearchPane.waitFileUploading();

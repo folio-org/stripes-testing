@@ -64,7 +64,7 @@ describe('bulk-edit', () => {
       FileManager.deleteFile(`cypress/fixtures/${validItemAccessionNumbersFileName}`);
     });
 
-    it('C350905 Negative uploading file with identifiers -- In app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404459 Negative uploading file with identifiers -- In app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
       // try to upload empty file
@@ -81,7 +81,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyModalName(invalidFileWarning);
     });
 
-    it('C357030 Verify Matched records label cleanup -- In -app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404462 Verify Matched records label cleanup -- Items (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
       BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
@@ -105,7 +105,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyChangedResults(newLocation);
     });
 
-    it('C356809 Verify uploading file with Item accession number (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404464 Verify uploading file with Item accession number (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('Item accession number');
 
       BulkEditSearchPane.uploadFile(validItemAccessionNumbersFileName);

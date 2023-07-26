@@ -24,7 +24,7 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it('C368012 Verify that the user without "Bulk edit - Can view logs" permission cannot access to the logs. (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C405494 Verify that the user without "Bulk edit - Can view logs" permission cannot access to the logs. (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.verifyBulkEditPaneItems();
       BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
       BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Logs');

@@ -51,7 +51,7 @@ describe('bulk-edit', () => {
       FileManager.deleteFile(`cypress/fixtures/${validItemFormerIdsFileName}`);
     });
 
-    it('C356808 Verify uploading file with Item former identifiers (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404451 Verify uploading file with Item former identifiers (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.checkItemsRadio();
       BulkEditSearchPane.selectRecordIdentifier('Item former identifier');
 

@@ -38,7 +38,7 @@ describe('bulk-edit', () => {
     });
 
 
-    it('C353964 Verify uploading file with Usernames (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C405124 Verify uploading file with Usernames (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('Usernames');
 
       BulkEditSearchPane.uploadFile(userUUIDsFileName);
