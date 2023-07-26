@@ -52,7 +52,6 @@ const organizationNameField = TextField('Name*');
 const nameTextField = TextField('[object Object] 0');
 const organizationCodeField = TextField('Code*');
 const today = new Date();
-const tagsSection = Section({ id: 'tagsPane' });
 const todayDate = DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY');
 const resetButton = Button('Reset all');
 const openContactSectionButton = Button({
@@ -96,22 +95,6 @@ export default {
     cy.xpath(numberOfSearchResultsHeader)
       .should('be.visible')
       .and('have.text', zeroResultsFoundText);
-  },
-
-  addTag: () => {
-    const newTag = `tag${getRandomPostfix()}`;
-    cy.then(() => tagsSection.find(MultiSelect()).selected()).then(
-      (selectedTags) => {
-        cy.wait(2000).then(() => {
-          cy.do(tagsSection.find(MultiSelect()).fillIn(newTag));
-          cy.do(tagsSection.find(MultiSelectOption({ index: 0 })).click());
-          cy.expect(
-            tagsSection.find(MultiSelect({ selected: [...selectedTags, newTag].sort() })).exists()
-          );
-        });
-      }
-    );
-    return newTag;
   },
 
   createOrganizationViaUi: (organization) => {

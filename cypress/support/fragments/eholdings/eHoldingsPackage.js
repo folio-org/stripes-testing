@@ -150,6 +150,7 @@ export default {
   getProxyValue: () => cy.then(() => KeyValue('Proxy').value()),
   proxy() {
     this.getProxyValue().then((val) => {
+      // eslint-disable-next-line no-unused-expressions
       expect(val).to.be.exist;
     });
   },

@@ -150,6 +150,7 @@ describe('Create a custom package', () => {
     cy.visit(settingsMenu.circulationRulesPath);
     circulationRules.fillInPolicy({ priorityType:'g ', loanPolicyName:'irina-loan-policy', overdueFinePolicyName:'no-overdue-fine', lostItemFeePolicyName:'lostsetfines', requestPolicyName:'allow-all', noticePolicyName:'julies-check-out-policy', priorityTypeName:'ip' });
     circulationRules.saveCirculationRules();
+    circulationRules.verifyToast();
   });
 
   it('C656-Ensure interface alerts user of syntax errors in rules', () => {

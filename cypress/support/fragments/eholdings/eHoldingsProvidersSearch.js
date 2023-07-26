@@ -6,7 +6,7 @@ export default {
     cy.do(TextField({ id: 'eholdings-search' }).fillIn(provider));
     cy.do(Button('Search').click());
     // waitLoading is not working fine
-    //eHoldingsProviders.waitLoading();
+    // eHoldingsProviders.waitLoading();
   },
 
   verifyTitleSearch() {

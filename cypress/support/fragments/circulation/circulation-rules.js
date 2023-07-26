@@ -4,7 +4,8 @@ import {
   CodeMirror,
   CodeMirrorHint,
 } from '../../../../interactors';
-import interactorsTools from '../../utils/interactorsTools';
+import InteractorsTools from '../../utils/interactorsTools';
+
 
 const calloutMessages = {
   CIRCULATION_RULES_UPDATE_SUCCESS: 'Rules were successfully updated.',
@@ -92,11 +93,11 @@ export default {
   },
 
   verifyToast() {
-    interactorsTools.checkCalloutMessage('Rules were successfully updated.');
+    InteractorsTools.checkCalloutMessage('Rules were successfully updated.');
   },
 
   checkUpdateCirculationRulesCalloutAppeared() {
-    interactorsTools.checkCalloutMessage(calloutMessages.CIRCULATION_RULES_UPDATE_SUCCESS);
+    InteractorsTools.checkCalloutMessage(calloutMessages.CIRCULATION_RULES_UPDATE_SUCCESS);
   },
 
   checkNoticePolicyAddedToCirculationRules(noticePolicyId) {
