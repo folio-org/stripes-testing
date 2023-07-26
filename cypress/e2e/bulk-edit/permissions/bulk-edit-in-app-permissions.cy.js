@@ -20,7 +20,7 @@ describe('bulk-edit', () => {
       users.deleteViaApi(userWithInAppViewPermission.userId);
     });
 
-    it('C350936 Verify "Bulk edit: in app - view" permissions (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404402 Verify "Bulk edit: in app - view" permissions (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       cy.login(userWithInAppViewPermission.username, userWithInAppViewPermission.password);
       cy.visit(TopMenu.bulkEditPath);
 

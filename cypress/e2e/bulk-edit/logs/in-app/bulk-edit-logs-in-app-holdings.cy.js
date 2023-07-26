@@ -37,7 +37,7 @@ describe('Bulk Edit - Logs', () => {
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
-  it('C375299 Verify generated Logs files for Holdings In app -- only invalid records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C405502 Verify generated Logs files for Holdings In app -- only invalid records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.verifyDragNDropHoldingsHRIDsArea();
     BulkEditSearchPane.uploadFile(invalidHoldingHRIDsFileName);
     BulkEditActions.openActions();

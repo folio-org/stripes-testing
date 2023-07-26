@@ -52,7 +52,7 @@ describe('bulk-edit', () => {
       FileManager.deleteFolder(Cypress.config('downloadsFolder'));
     });
 
-    it('C360114 Verify that User can upload file with Holdings UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404517 Verify that User can upload file with Holdings UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
       BulkEditSearchPane.waitFileUploading();
       [

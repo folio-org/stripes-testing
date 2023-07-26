@@ -71,7 +71,7 @@ describe('bulk-edit', () => {
       FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
     });
 
-    it('C358939 Verify that 10 records returned in preview of matched records after editing (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404487 Verify that 10 records returned in preview of matched records after editing (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.uploadFile(itemBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
 
@@ -86,7 +86,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyLocationChanges(10, 'Annex');
     });
 
-    it('C359210 Verify the in-app bulk edit permanent loan type (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404495 Verify the in-app bulk edit permanent loan type (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.uploadFile(itemBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
 
@@ -111,7 +111,7 @@ describe('bulk-edit', () => {
       });
     });
 
-    it('C359225 Verify the in-app bulk edit temporary loan type (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404496 Verify the in-app bulk edit temporary loan type (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.uploadFile(itemBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
 
@@ -133,7 +133,7 @@ describe('bulk-edit', () => {
       });
     });
 
-    it('C359226 Verify user can clear temporary loan type value (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404497 Verify user can clear temporary loan type value (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.uploadFile(itemBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
 
@@ -153,7 +153,7 @@ describe('bulk-edit', () => {
       });
     });
 
-    it('C360530 Verify that User cannot clear permanent loan type (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404499 Verify that User cannot clear permanent loan type (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.uploadFile(itemBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
 
@@ -163,7 +163,7 @@ describe('bulk-edit', () => {
       BulkEditActions.replaceWithIsDisabled();
     });
 
-    it('C359208 Verify Loan types options in Bulk Edit (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+    it('C404457 Verify Loan types options in Bulk Edit (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
       BulkEditSearchPane.uploadFile(itemBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
 

@@ -49,7 +49,7 @@ describe('Bulk Edit - Logs', { retries: 1 }, () => {
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
-  it('C375215 Verify generated Logs files for Users CSV - with errors (firebird)', { tags: [testTypes.smoke, devTeams.firebird], retries: 1 }, () => {
+  it('C405497 Verify generated Logs files for Users CSV - with errors (firebird)', { tags: [testTypes.smoke, devTeams.firebird], retries: 1 }, () => {
     // Upload file with invalid and valid user UUIDs
     BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
     BulkEditSearchPane.uploadFile(invalidAndValidUserBarcodesFileName);

@@ -53,7 +53,7 @@ describe('bulk-edit', () => {
       cy.visit(TopMenu.bulkEditPath);
     });
 
-    it('C353232 Verify error accordion during matching (In app approach) (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404450 Verify error accordion during matching (In app approach) (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
 
@@ -65,7 +65,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyErrorLabel(invalidItemBarcodesFileName, 1, 1);
     });
 
-    it('C350941 Verify uploading file with identifiers -- In app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404460 Verify uploading file with identifiers -- In app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.verifyDragNDropItemBarcodeArea();
       BulkEditSearchPane.uploadFile(validItemBarcodeFileName);
       BulkEditSearchPane.waitFileUploading();
@@ -92,7 +92,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyResultColumTitles('Item ID');
     });
 
-    it('C350943 Verify Record identifiers dropdown -- Inventory-Items app (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404391 Verify Record identifiers dropdown -- Inventory-Items app (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.verifyItemIdentifiers();
 
       [
@@ -122,7 +122,7 @@ describe('bulk-edit', () => {
       });
     });
 
-    it('C357035 Verify elements of the bulk edit app -- In app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404453 Verify elements of the bulk edit Items -- In app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.clickToBulkEditMainButton();
       BulkEditSearchPane.verifyDefaultFilterState();
 
@@ -136,7 +136,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyDefaultFilterState();
     });
 
-    it('C360089 Verify "Inventory - holdings" option on "Bulk edit" app (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404515 Verify "Inventory - holdings" option on "Bulk edit" app (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.checkHoldingsRadio();
       BulkEditSearchPane.verifyHoldingIdentifiers();
 

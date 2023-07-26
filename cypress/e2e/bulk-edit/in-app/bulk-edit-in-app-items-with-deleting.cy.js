@@ -48,7 +48,7 @@ describe('bulk-edit', () => {
       FileManager.deleteFile(`cypress/fixtures/${invalidItemBarcodesFileName}`);
     });
 
-    it('C353230 Verify completion of the in-app bulk edit (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404473 Verify completion of the in-app bulk edit (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.checkItemsRadio();
       BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 

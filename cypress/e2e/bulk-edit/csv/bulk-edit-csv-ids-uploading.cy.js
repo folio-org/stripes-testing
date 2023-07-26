@@ -39,7 +39,7 @@ describe('bulk-edit', () => {
       cy.visit(TopMenu.bulkEditPath);
     });
 
-    it('C353956 Verify uploading file with User UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C405126 Verify uploading file with User UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
       BulkEditSearchPane.uploadFile(userUUIDsFileName);
