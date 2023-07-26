@@ -22,10 +22,12 @@ export default {
   clickOnItem() {
     cy.do(items).click();
   },
+
   clickOnModal() {
     cy.expect(Modal({ id: 'multipiece-modal' }).exists());
     cy.do(Modal({ id: 'multipiece-modal' }).find(Button('Check in')).click());
   },
+
   createInstance() {
     cy.do([
       Button('Actions').click(),
@@ -36,6 +38,7 @@ export default {
     ]);
     cy.expect(Button({ id: 'clickable-new-holdings-record' }).exists());
   },
+
   createItem(barcode) {
     cy.do([
       Button('Date created').click(),
@@ -76,6 +79,7 @@ export default {
       serviceShift.clickClose();
     });
   },
+
   withdrawn() {
     inventorySearchAndFilter.switchToItem();
     cy.do(Button({ id: 'accordion-toggle-button-itemStatus' }).click());
@@ -90,6 +94,7 @@ export default {
     checkInActions.checkInItem(data);
     serviceShift.clickClose();
   },
+
   lostAndPaid() {
     inventorySearchAndFilter.switchToItem();
     cy.do(Button({ id: 'accordion-toggle-button-itemStatus' }).click());
@@ -107,6 +112,7 @@ export default {
     checkInActions.checkInItem(itemBarcode);
     serviceShift.clickClose();
   },
+
   checkIn: (barcode) => {
     cy.do([TextField('Item ID').fillIn(barcode), Button('Enter').click()]);
   },

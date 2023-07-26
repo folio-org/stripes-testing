@@ -13,8 +13,6 @@ import {
 } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
-import button from '../../../../interactors/button';
-import textField from '../../../../interactors/text-field';
 
 const loanDetailsButton = Button('Loan details');
 const patronDetailsButton = Button('Patron details');
@@ -32,7 +30,7 @@ const checkInButtonInModal = confirmModal.find(Button('Check in'));
 const endSessionButton = Button('End session');
 const feeFineDetailsButton = Button('Fee/fine details');
 const feeFinePane = PaneContent({ id: 'pane-account-action-history-content' });
-const pieces = textField({ id:'additem_numberofpieces' });
+const pieces = TextField({ id:'additem_numberofpieces' });
 const numberOfPieces = TextField({ name:'numberOfPieces' });
 const numberOfMissingPieces = TextField({ name:'numberOfMissingPieces' });
 const descriptionOfmissingPieces = TextField({ name:'missingPieces' });
@@ -48,12 +46,10 @@ const actionsButtons = {
   printHoldSlip: printHoldSlipButton,
 };
 const itemAnumberOfPieces = '2';
-
 const waitLoading = () => {
   cy.expect(TextField({ name: 'item.barcode' }).exists());
   cy.expect(Button('End session').exists());
 };
-
 const checkInItemGui = (barcode) => {
   return cy.do([itemBarcodeField.exists(),
     itemBarcodeField.fillIn(barcode),
@@ -61,12 +57,12 @@ const checkInItemGui = (barcode) => {
   ]);
 };
 
-
 export default {
   waitLoading:() => {
     cy.expect(itemBarcodeField.exists());
     cy.expect(Button('End session').exists());
   },
+
   editItemDetails: (pieces, missingPieces, missingPiecesDescription) => {
     cy.do([
       actionsButton.click(),
@@ -89,6 +85,7 @@ export default {
     cy.wait('@getItems', getLongDelay());
     cy.wait(1000);
   },
+
   checkInItemGui,
   getSessionIdAfterCheckInItem:(barcode) => {
     cy.intercept('/inventory/items?*').as('getItems');
@@ -101,6 +98,7 @@ export default {
   confirmCheckInLostItem:() => {
     cy.do(Button('Confirm').click());
   },
+
   openItemRecordInInventory:(status) => {
     cy.expect(MultiColumnListRow({ indexRow: 'row-0' }).find(HTML(including(status))).exists());
     cy.do(availableActionsButton.click());
@@ -110,6 +108,7 @@ export default {
     cy.wait('@getTags', getLongDelay());
     ItemRecordView.waitLoading();
   },
+
   checkActionsMenuOptions: (optionsToCheck = ['loanDetails', 'patronDetails', 'itemDetails', 'newFeeFine']) => {
     cy.expect(availableActionsButton.exists());
     cy.do(availableActionsButton.click());
@@ -118,9 +117,11 @@ export default {
     });
     cy.do(availableActionsButton.click());
   },
+
   openCheckInPane: () => {
     cy.do(checkInButton.click());
   },
+
   openLoanDetails: (username) => {
     cy.do([
       availableActionsButton.click(),
@@ -129,6 +130,7 @@ export default {
     cy.expect(Pane(including(username)).exists());
     cy.expect(Pane(including('Loan details')).exists());
   },
+
   openPatronDetails: (username) => {
     cy.do([
       availableActionsButton.click(),
@@ -136,16 +138,18 @@ export default {
     ]);
     cy.expect(Pane({ title: including(username) }).exists());
   },
+
   openItemDetails: () => {
     cy.do([
       availableActionsButton.click(),
       itemDetailsButton.click(),
-      button('Actions').click(),
-      button('Edit').click(),
+      Button('Actions').click(),
+      Button('Edit').click(),
       pieces.fillIn(itemAnumberOfPieces),
-      button('Save & close').click()
+      Button('Save & close').click()
     ]);
   },
+
   openRequestDetails: (itemBarcode) => {
     cy.do([
       availableActionsButton.click(),
@@ -154,6 +158,7 @@ export default {
     cy.expect(Pane(including('Request Detail')).exists());
     cy.expect(HTML(including(itemBarcode)).exists());
   },
+
   openNewfeefinesPane: () => {
     cy.do([
       availableActionsButton.click(),
@@ -161,6 +166,7 @@ export default {
     ]);
     cy.expect(Modal(including('New fee/fine')).exists());
   },
+
   checkinItemViaApi: (body) => {
     return cy.okapiRequest({
       method: REQUEST_METHOD.POST,
@@ -172,15 +178,18 @@ export default {
       isDefaultSearchParamsRequired: false
     });
   },
+
   confirmMultipleItemsCheckin(barcode) {
     cy.do(checkInButtonInModal.click());
     cy.expect(MultiColumnList({ id:'list-items-checked-in' }).find(HTML(including(barcode))).exists());
   },
+
   verifyLastCheckInItem(itemBarcode) {
     return cy.expect(MultiColumnListRow({ indexRow: 'row-0' })
       .find(MultiColumnListCell({ content: including(itemBarcode) }))
       .exists());
   },
+
   endCheckInSession:() => {
     cy.do(endSessionButton.click());
     cy.intercept('/circulation/end-patron-action-session').as('end-patron-session');
@@ -188,6 +197,7 @@ export default {
       cy.wrap(xhr.response.statusCode).should('eq', 204);
     });
   },
+
   checkFeeFinesDetails(billedAmount, instanceBarcode, loanPolicyName, OverdueFinePolicyName, LostItemFeePolicyName) {
     cy.do(availableActionsButton.click());
     cy.do(feeFineDetailsButton.click());
@@ -203,6 +213,7 @@ export default {
     cy.expect(feeFinePane.find(HTML(including(OverdueFinePolicyName))).exists());
     cy.expect(feeFinePane.find(HTML(including(LostItemFeePolicyName))).exists());
   },
+
   endCheckInSessionAndCheckDetailsOfCheckInAreCleared:() => {
     cy.do(endSessionButton.click());
     cy.expect(PaneContent({ id: 'check-in-content' })
