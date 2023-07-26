@@ -16,6 +16,7 @@ import {
   Section,
   Select,
   SelectionOption,
+  Spinner,
   TextArea,
   TextField,
 } from '../../../../interactors';
@@ -444,8 +445,11 @@ export default {
     .then((response) => response.body.id),
 
   editOrganization: () => {
+    cy.expect(Spinner().absent());
     cy.expect(actionsButton.exists());
-    cy.do([actionsButton.click(), editButton.click()]);
+    cy.do(actionsButton.click());
+    cy.expect(editButton.exists());
+    cy.do(editButton.click());
   },
 
   verifyNewCategory: (category) => {

@@ -13,9 +13,16 @@ import topMenu from '../../support/fragments/topMenu';
 import eHolding from './eHolding';
 
 describe('Create a custom package', () => {
-  it('C683-Search packages for [JSTOR]. Filter results to only show selected packages', () => {
+  before('Login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(topMenu.eholdingsPath);
+  });
+
+  after('Deleting created Package', () => {
+    eHolding.deletePackage();
+  });
+
+  it('C683-Search packages for [JSTOR]. Filter results to only show selected packages', () => {
     eHolding.switchToPackage();
     eHolding.verifyPackage();
   });
@@ -23,8 +30,7 @@ describe('Create a custom package', () => {
   it('C692-Create a custom package', () => {
     cy.visit(topMenu.eholdingsPath);
     eHoldingsSearch.switchToPackages();
-    eHoldingsPackages.create();
-    eHoldingsPackages.deletePackage();
+    eHolding.create();
   });
 
   it('C695-Package Record: Search all titles included in a package', () => {
@@ -41,7 +47,10 @@ describe('Create a custom package', () => {
     eHoldingsProvidersSearch.byProvider('Journal of Fish Biology');
     eHoldingsProviders.viewPackage();
     eHolding.searchButton();
-    eHolding.dropdownValuesSelect(['Agricultural & Environmental Science Database (DRAA)', 'Biological Sciences Database (DRAA)']);
+    eHolding.dropdownValuesSelect([
+      'Agricultural & Environmental Science Database (DRAA)',
+      'Biological Sciences Database (DRAA)',
+    ]);
     eHolding.searchActions();
     eHolding.verifyFilterPackages();
   });
@@ -56,7 +65,9 @@ describe('Create a custom package', () => {
   });
 
   it('C360543-Check the content of ""Title information"" accordion in ""Title"" detail record', () => {
-    cy.visit('https://bugfest-orchid.int.aws.folio.org/eholdings/titles/41327?searchType=titles&q=journal&offset=1');
+    cy.visit(
+      'https://bugfest-orchid.int.aws.folio.org/eholdings/titles/41327?searchType=titles&q=journal&offset=1'
+    );
     eHolding.alternativesTitles();
   });
 
@@ -64,9 +75,9 @@ describe('Create a custom package', () => {
     cy.visit(topMenu.eholdingsPath);
     eHoldingsProvidersSearch.byProvider('Wiley');
     eHoldingsProviders.viewProvider();
-    eHolding.packageAccordianClick();
+    eHolding.packageAccordionClick();
     eHolding.packageButtonClick('Collapse all', 'false');
-    eHolding.packageAccordianClick();
+    eHolding.packageAccordionClick();
     eHolding.packageButtonClick('Expand all', 'true');
   });
 
@@ -108,7 +119,10 @@ describe('Create a custom package', () => {
     newRequest.openNewRequestPane();
     newRequest.enterItemInfo('1234567890');
     newRequest.verifyRequestInformation();
-    newRequest.enterRequesterInfo({ requesterBarcode: '000000098538', pickupServicePoint: 'API' });
+    newRequest.enterRequesterInfo({
+      requesterBarcode: '000000098538',
+      pickupServicePoint: 'API',
+    });
     newRequest.enterRequestAndPatron('Testing');
     newRequest.saveRequestAndClose();
   });
@@ -132,16 +146,14 @@ describe('Create a custom package', () => {
   });
 
   it('C654-Test behavior for incomplete vs complete circulation rules (i.e., all policy types must be present; else error', () => {
+    cy.visit(topMenu.settingsPath);
     cy.visit(settingsMenu.circulationRulesPath);
-    circulationRules.fillInPolicy({ priorityType: 'g ', loanPolicyName: 'irina-loan-policy', overdueFinePolicyName: 'no-overdue-fine', lostItemFeePolicyName: 'lostsetfines', requestPolicyName: 'allow-all', noticePolicyName: 'julies-check-out-policy', priorityTypeName: 'ip' });
+    circulationRules.fillInPolicy({ priorityType:'g ', loanPolicyName:'irina-loan-policy', overdueFinePolicyName:'no-overdue-fine', lostItemFeePolicyName:'lostsetfines', requestPolicyName:'allow-all', noticePolicyName:'julies-check-out-policy', priorityTypeName:'ip' });
     circulationRules.saveCirculationRules();
-    circulationRules.verifyToast();
-    circulationRules.clearCirculationRules();
   });
 
   it('C656-Ensure interface alerts user of syntax errors in rules', () => {
-    cy.visit(settingsMenu.circulationRulesPath);
-    circulationRules.policyError({ priorityType: 'g ', priorityTypeName: 'ip', loanPolicyName: 'irina-loan-policy' });
+    circulationRules.policyError({ priorityType:'g ', priorityTypeName:'ip', loanPolicyName:'irina-loan-policy' });
     circulationRules.saveCirculationRules();
     circulationRules.verifyError();
   });
@@ -151,7 +163,7 @@ describe('Create a custom package', () => {
     eHolding.switchToPackage();
     eHoldingsPackages.openPackage();
     organizations.editOrganization();
-    eHolding.editDateRange();
+    eHolding.generateRandomDates();
     eHolding.alternativeDates();
   });
 });

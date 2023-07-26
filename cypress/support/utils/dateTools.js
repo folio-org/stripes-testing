@@ -10,13 +10,9 @@ export default {
     return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(currentDate.getDate())}/${currentDate.getFullYear()}`;
   },
 
-  getRandomStartDate: (i) => {
+  getWeekDate: () => {
     const currentDate = new Date();
-    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(currentDate.getDate() + i)}/${currentDate.getFullYear()}`;
-  },
-  getRandomEndDate: (i) => {
-    const currentDate = new Date();
-    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(currentDate.getDate() + i + 1)}/${currentDate.getFullYear()}`;
+    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(currentDate.getDate() + 4)}/${currentDate.getFullYear()}`;
   },
 
   getCurrentDateForFileNaming: () => {
@@ -46,6 +42,21 @@ export default {
     const month = yesterday.getMonth() + 1;
     const day = yesterday.getDate();
     const year = yesterday.getFullYear();
+    return `${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}/${year}`;
+  },
+
+  getTomorrowDayDateForFiscalYear: () => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    if (today.getMonth() !== tomorrow.getMonth()) {
+      tomorrow.setMonth(tomorrow.getMonth());
+    }
+
+    const month = tomorrow.getMonth() + 1;
+    const day = tomorrow.getDate();
+    const year = tomorrow.getFullYear();
     return `${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}/${year}`;
   },
 
@@ -179,33 +190,9 @@ export default {
     const formattedTime = currentDate.toLocaleString('en-US', options);
     return formattedTime;
   },
-  getTomorrowDayDateForFiscalYear: (date) => {
-    const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1 + date);
-    if (today.getMonth() !== tomorrow.getMonth()) {
-      tomorrow.setMonth(tomorrow.getMonth());
-    }
-    const month = tomorrow.getMonth() + 1;
-    const day = tomorrow.getDate();
-    const year = tomorrow.getFullYear();
-    return `${month.toString().padStart(2, '0')}/${day
-      .toString()
-      .padStart(2, '0')}/${year}`;
-  },
 
-  getDayAfterTomorrowDayDateForFiscalYear: (date) => {
-    const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 2 + date);
-    if (today.getMonth() !== tomorrow.getMonth()) {
-      tomorrow.setMonth(tomorrow.getMonth());
-    }
-    const month = tomorrow.getMonth() + 1;
-    const day = tomorrow.getDate();
-    const year = tomorrow.getFullYear();
-    return `${month.toString().padStart(2, '0')}/${day
-      .toString()
-      .padStart(2, '0')}/${year}`;
-  },
+  getCurrentDateYYMMDD() {
+    const initialCurrentDate = new Date();
+    return `${initialCurrentDate.getFullYear().toString().substring(2)}${padWithZero(initialCurrentDate.getMonth() + 1)}${padWithZero(initialCurrentDate.getDate())}`;
+  }
 };

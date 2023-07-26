@@ -1,6 +1,6 @@
 import { Accordion, Button, Checkbox, HTML, KeyValue, Modal, RadioButton, MultiSelect, MultiSelectOption, Section, Select, Spinner, TextField, ValueChipRoot, including } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
-import getRandomPostfix from '../../utils/stringTools';
+import getRandomPostfix, { randomTwoDigitNumber } from '../../utils/stringTools';
 
 const titlesFilterModal = Modal({ id: 'eholdings-details-view-search-modal' });
 const tagsSection = Section({ id: 'packageShowTags' });
@@ -31,8 +31,6 @@ const waitTitlesLoading = () => cy.url().then(url => {
   cy.intercept(`eholdings/packages/${packageId}/resources?**`).as('getTitles');
   cy.wait('@getTitles', getLongDelay());
 });
-
-export const randomTwoDigitNumber = () => Math.floor(Math.random() * 2);
 
 export default {
   filterStatuses,
@@ -143,19 +141,24 @@ export default {
     cy.expect(confirmationModal.absent());
   },
 
-  editactions: () => {
+  editProxyActions: () => {
     cy.expect(Spinner().absent());
     cy.do(actionsButton.click());
     cy.expect(editButton.exists());
     cy.do(editButton.click());
   },
-
+  getProxyValue: () => cy.then(() => KeyValue('Proxy').value()),
+  proxy() {
+    this.getProxyValue().then((val) => {
+      expect(val).to.be.exist;
+    });
+  },
   changeProxy: () => {
     cy.get('select#eholdings-proxy-id option:selected')
       .invoke('text')
       .then((text) => {
         const options = availableProxies.filter((option) => option !== text);
-        cy.do(proxySelect.choose(options[randomTwoDigitNumber]));
+        cy.do(proxySelect.choose(options[randomTwoDigitNumber()]));
       });
   },
 

@@ -6,9 +6,8 @@ import eHoldingsPackage from './eHoldingsPackage';
 const resultSection = Section({ id: 'search-results' });
 const selectedText = "#packageShowHoldingStatus div[class^='headline']";
 const actionButton = Button('Actions');
-const deletePackage = Button('Delete package');
+const deletePackageBtn = Button('Delete package');
 const confirmModal = Modal('Delete custom package');
-
 export default {
   create: (packageName = `package_${getRandomPostfix()}`) => {
     cy.do(Button('New').click());
@@ -19,7 +18,7 @@ export default {
 
   deletePackage: () => {
     cy.do([actionButton.click(),
-      deletePackage.click(),
+      deletePackageBtn.click(),
       confirmModal.find(Button('Yes, delete')).click()]);
   },
 
@@ -100,12 +99,12 @@ export default {
       .invoke('text')
       .then((text) => {
         if (text === 'Selected') {
-          eHoldingsPackage.editactions();
+          eHoldingsPackage.editProxyActions();
           eHoldingsPackage.changeProxy();
           eHoldingsPackage.saveAndClose();
         } else {
-          eHoldingsPackage.addToHodlings();
-          eHoldingsPackage.editactions();
+          eHoldingsPackage.addToHoldings();
+          eHoldingsPackage.editProxyActions();
           eHoldingsPackage.changeProxy();
           eHoldingsPackage.saveAndClose();
         }
