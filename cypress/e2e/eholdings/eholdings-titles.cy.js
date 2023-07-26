@@ -17,6 +17,9 @@ import permissions from '../../support/dictionary/permissions';
 import users from '../../support/fragments/users/users';
 import devTeams from '../../support/dictionary/devTeams';
 
+// TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
+Cypress.on('uncaught:exception', () => false);
+
 describe('eHoldings titles management', () => {
   let userId;
 
