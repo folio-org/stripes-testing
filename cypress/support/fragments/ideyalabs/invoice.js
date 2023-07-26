@@ -31,14 +31,14 @@ const invoiceDetailsPaneId = 'paneHeaderpane-invoiceDetails';
 const invoiceLineAdjustments = Select({ name: 'adjustments[0].prorate' });
 const newButton = Button('New');
 const orderType = Select('Order type*');
-const saveAndClose = Button('Save & close');
+const saveAndCloseButton = Button('Save & close');
 const orderDetails = PaneHeader({ id: 'paneHeaderorder-details' });
-const addPOLine = Button('Add PO line');
-const title = TextField({ name: 'titleOrPackage' });
-const fundDistributions = Button({ id: 'fundDistribution-add-button' });
-const fund = FieldSet({ id: 'fundDistributions' });
-const fundID = Button({ id: 'fundDistribution[0].fundId' });
-const fundButtonID = Button({ id: 'fundDistributions[0].fundId' });
+const addPOLineButton = Button('Add PO line');
+const titleField = TextField({ name: 'titleOrPackage' });
+const addFundDistributionButton = Button({ id: 'fundDistribution-add-button' });
+const fundDistributionFieldSet = FieldSet({ id: 'fundDistributions' });
+const fundIDDropdown = Button({ id: 'fundDistribution[0].fundId' });
+const fundIDButton = Button({ id: 'fundDistributions[0].fundId' });
 const valueText = TextField({ name: 'fundDistribution[0].value' });
 const valueText1 = TextField({ name: 'fundDistribution[1].value' });
 const costDetails = TextField({ name: 'cost.listUnitPrice' });
@@ -71,9 +71,9 @@ export default {
       orderType.choose(orderTypes),
       Button({ id: 'order-template' }).click(),
       SelectionOption(templateNames).click(),
-      saveAndClose.click(),
+      saveAndCloseButton.click(),
       Section({ id: 'POListing' }).find(Button('Actions')).click(),
-      addPOLine.click(),
+      addPOLineButton.click(),
     ]);
   },
 
@@ -86,34 +86,34 @@ export default {
       orderType.choose(orderTypes),
       Button({ id: 'order-template' }).click(),
       SelectionOption(templateNames).click(),
-      saveAndClose.click(),
+      saveAndCloseButton.click(),
       Section({ id: 'POListing' }).find(Button('Actions')).click(),
-      addPOLine.click(),
+      addPOLineButton.click(),
     ]);
   },
 
   POLines: (titles, id) => {
-    cy.do(title.fillIn(titles));
-    cy.expect(fundDistributions.exists());
+    cy.do(titleField.fillIn(titles));
+    cy.expect(addFundDistributionButton.exists());
     cy.do([
-      fundDistributions.click(),
-      fundID.click(),
+      addFundDistributionButton.click(),
+      fundIDDropdown.click(),
       SelectionOption(id).click(),
-      saveAndClose.click(),
+      saveAndCloseButton.click(),
       backArrow.click(),
     ]);
   },
 
   POLinesForAnotherOrder: (titles, price, id, valText, valText1) => {
     cy.do([
-      title.fillIn(titles),
+      titleField.fillIn(titles),
       costDetails.fillIn(price),
-      fundDistributions.click(),
+      addFundDistributionButton.click(),
       fundIDForAnotherOrder.click(),
       SelectionOption(id).click(),
       valueText.fillIn(valText),
       valueText1.fillIn(valText1),
-      saveAndClose.click(),
+      saveAndCloseButton.click(),
       backArrow.click(),
     ]);
   },
@@ -167,9 +167,9 @@ export default {
       invoiceLines.find(MultiColumnListRow({ index: 1 })).click(),
       invoiceLineDetailsPane.find(actionsButton).click(),
       Button('Edit').click(),
-      fund.find(fundButtonID).click(),
+      fundDistributionFieldSet.find(fundIDButton).click(),
       SelectionOption(id).click(),
-      saveAndClose.click(),
+      saveAndCloseButton.click(),
     ]);
   },
 
@@ -178,9 +178,9 @@ export default {
       invoiceLines.find(MultiColumnListRow({ index: 3 })).click(),
       invoiceLineDetailsPane.find(actionsButton).click(),
       Button('Edit').click(),
-      fund.find(fundButtonID).click(),
+      fundDistributionFieldSet.find(fundIDButton).click(),
       SelectionOption(id).click(),
-      saveAndClose.click(),
+      saveAndCloseButton.click(),
     ]);
   },
 
@@ -198,7 +198,7 @@ export default {
       PaneHeader({ id: invoiceDetailsPaneId }).find(actionsButton).click(),
       Button('Edit').click(),
       invoiceLineAdjustments.choose('By amount'),
-      saveAndClose.click(),
+      saveAndCloseButton.click(),
     ]);
   },
 
@@ -226,7 +226,7 @@ export default {
         .find(Button({ id: 'fundDistribution[0].fundId' }))
         .click(),
       SelectionOption(id).click(),
-      saveAndClose.click(),
+      saveAndCloseButton.click(),
     ]);
     cy.expect(Section({ id: 'order-lines-details' }).exists());
   },

@@ -93,7 +93,7 @@ describe('C353566-Correct fund validation to approve invoice', () => {
     invoice.addFundDistributionToLine2(fundDistribution.fundIDOne);
     invoice.addFundDistributionToLine4(fundDistribution.fundIDTwo);
     invoice.adjustments();
-    invoice.approveInvoice();  //Approve API failure
+    invoice.approveInvoice();  // Approve API failure
   });
 
   it('C368486 - Editing fund distribution in PO line when related Reviewed invoice exists', () => {
@@ -103,7 +103,7 @@ describe('C353566-Correct fund validation to approve invoice', () => {
       searchInvoiceNumber.value
     );
     invoice.orderLinesResults();
-    invoice.orderList(searchInvoiceNumber.value); 
+    invoice.orderList(searchInvoiceNumber.value);
     invoice.PODetails(fundID); // API getting failed while changing Fund ID in bugfest ENV
     invoice.selectCurrentEncumbrance();
     cy.visit(topMenu.invoicesPath);
