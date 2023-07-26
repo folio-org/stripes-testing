@@ -105,9 +105,7 @@ export default {
     cy.expect(Callout({ type: 'success' }).exists());
     cy.wrap(Callout({ type: 'success' }).text()).as('message');
     cy.get('@message').then((val) => {
-      cy.log(val);
       const txt1 = val.slice(31, 37);
-      cy.log(txt1);
       cy.visit(topMenu.exportManagerPath);
       exportManagerSearchPane.searchBySuccessful();
       exportManagerSearchPane.downloadLastCreatedJob(txt1);
@@ -117,7 +115,6 @@ export default {
   getFileName: () => cy.then(() => KeyValue('File name').value()),
   verifyFileName(fileName) {
     this.getFileName().then((val) => {
-      cy.log(val);
       expect(val).to.include(fileName);
     });
   },
