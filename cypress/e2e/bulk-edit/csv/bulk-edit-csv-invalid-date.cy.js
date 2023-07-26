@@ -38,7 +38,7 @@ describe('bulk-edit', () => {
       FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName);
     });
 
-    it('C388498 Negative: Verify CSV updating records with invalid date (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
+    it('C388498 Negative: Verify Local updating records with invalid date (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
 
       BulkEditSearchPane.uploadFile(userBarcodesFileName);
