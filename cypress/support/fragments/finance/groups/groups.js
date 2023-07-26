@@ -5,7 +5,7 @@ const newButton = Button('New');
 const nameField = TextField('Name*');
 const codeField = TextField('Code*');
 const fundModal = Modal('Select funds');
-const GroupTab = Button('Group');
+const groupTab = Button('Group');
 const searchField = SearchField({ id: 'input-record-search' });
 const resetButton = Button({ id: 'reset-groups-filters' });
 
@@ -152,7 +152,7 @@ export default {
   }),
   clickOnGroupTab: () => {
     cy.do([
-      GroupTab.click()
+      groupTab.click()
     ]);
   },
   searchByName : (name) => {

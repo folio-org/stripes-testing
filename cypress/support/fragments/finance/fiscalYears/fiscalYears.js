@@ -25,7 +25,6 @@ const edit = Button('Edit');
 const deleteButton = Button('Delete');
 const fiscalYear = Button('Fiscal year');
 const Ledgertab = Button('Ledger');
-const StartDateCalenderIcon = Button({ id: 'datepicker-toggle-calendar-button-dp-21867' });
 const resetButton = Button({ id: 'reset-fiscal-years-filters' });
 export default {
 
@@ -37,6 +36,7 @@ export default {
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
     series: 'FY'
   },
+
   defaultRolloverFiscalYear: {
     name: `autotest_year_${getRandomPostfix()}`,
     code: DateTools.getRandomFiscalYearCodeForRollover(2000, 9999),
@@ -69,7 +69,7 @@ export default {
   openAcquisitionAccordion() {
     cy.do(Button({ id: 'accordion-toggle-button-acqUnitIds' }).click());
   },
-  clickOnFiscialYear: () => {
+  clickOnFiscalYear: () => {
     cy.do([
       fiscalYear.click()
     ]);
@@ -79,7 +79,7 @@ export default {
       Ledgertab.click()
     ]);
   },
-  EditFiscalYEarDetails: () => {
+  editFiscalYearDetails: () => {
     cy.do([
       actions.click(),
       edit.click()
@@ -98,7 +98,7 @@ export default {
       .should('be.visible')
       .and('have.text', fiscalYearName);
   },
-  FilltheStartAndEndDateoncalenderstartDateField1: () => {
+  filltheStartAndEndDateoncalenderstartDateField1: () => {
     cy.do([
       TextField({ name: 'periodStart' }).clear(),
       TextField({ name: 'periodStart' }).fillIn('01/01/2022'),
@@ -107,7 +107,7 @@ export default {
       saveAndClose.click()
     ]);
   },
-  FilltheStartAndEndDateoncalenderstartDateField2: () => {
+  filltheStartAndEndDateoncalenderstartDateField2: () => {
     cy.do([
       TextField({ name: 'periodStart' }).clear(),
       TextField({ name: 'periodStart' }).fillIn('01/01/2024'),

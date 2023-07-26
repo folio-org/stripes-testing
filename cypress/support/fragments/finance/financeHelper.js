@@ -1,4 +1,4 @@
-import { Button, Checkbox, MultiColumnListRow, MultiColumnListCell, Pane, Link, SearchField, PaneContent, MultiColumnList } from '../../../../interactors';
+import { Button, Checkbox, MultiColumnListRow, Link, SearchField, PaneContent } from '../../../../interactors';
 
 const searchField = SearchField({ id: 'input-record-search' });
 const noResultsMessageLabel = '//span[contains(@class,"noResultsMessageLabel")]';
@@ -53,9 +53,7 @@ export default {
   selectCheckboxFromResultsList: (rowNumber = 0) => {
     cy.do(MultiColumnListRow({ index: rowNumber }).find(Checkbox()).click());
   },
-  selectFirstFinace: (name) => {
-    // cy.do(PaneContent({ id: 'fiscal-year-results-pane-content' }).find(Link(Name)).click());
-
+  selectFirstFinance: (name) => {
     cy.do(fiscalResultsList.find((Link(name))).click());
   },
   selectFirstLedger: (name) => {

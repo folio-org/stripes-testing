@@ -54,7 +54,6 @@ const invoiceDateFilterSection = Section({ id: 'invoiceDate' });
 const approvalDateFilterSection = Section({ id: 'approvalDate' });
 const ResultListFirstRecord = Section({ id: 'invoice-results-pane' });
 const value = FieldSet({ id: 'adjustments' });
-const FundIDselect = '//a[text()=`${text}`]';
 export default {
 
   checkZeroSearchResultsHeader: () => {
@@ -87,104 +86,71 @@ export default {
     cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(invoiceStates.invoiceCreatedMessage);
   },
+
   clickOnFirstInvoicesResultList: (invoiceNumber) => {
     cy.do(ResultListFirstRecord.find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
-
       .find(Link(invoiceNumber))
-
       .click());
   },
+
   SelectFundID: () => {
     cy.do([
-
       Section({ id: 'invoiceLineForm-fundDistribution' }).find(Button({ id: 'fundDistributions[0].fundId' })).click(),
-
       SelectionOption('Fund A (A)').click(),
-
       value.find(TextField({ id: 'adjustments[0].value' })).fillIn('1'),
-
       saveAndClose.click(),
-
     ]);
   },
 
   SelectCurrentBudgerFromthelist: (Name) => {
     cy.do([
-
       Section({ id: 'currentBudget' }).find(MultiColumnListCell(Name)).click()
-
     ]);
   },
 
   ClickOnViewTransactionsHyperText: () => {
     cy.do([
-
       Section({ id: 'information' }).find(Link('View transactions')).click()
-
     ]);
   },
 
   SelectFundIDFromthelist: () => {
-  // let text = 'FundA(A)'
-
     cy.xpath('//a[text()="Fund A(A)"]').invoke('removeAttr', 'target').click();
-
-    // cy.do([
-
-    //   Section({ id: 'invoiceLineFundDistribution' }).find(Link(FundID)).invoke('removeAttr','target').click()
-
-    // ])
   },
 
   viewDetailsPreviousBudgets: (Name) => {
     cy.do([
-
       Section({ id: 'previousBudgets' }).find(MultiColumnListCell(Name)).click()
-
     ]);
   },
 
   viewDetailsPlannedBudgets: (Name) => {
     cy.do([
-
       Section({ id: 'plannedBudget' }).find(MultiColumnListCell(Name)).click()
-
     ]);
   },
+
   cancelInvoiceNumber: () => {
     cy.do([
-
       PaneHeader({ id: PaneHeaderpane - invoiceDetails })
-
         .find(actionsButton).click(),
-
       Button('Cancel').click(),
-
-
-
-
     ]);
   },
 
   TransactionListDetailsResultsFromCurrentBudget: () => {
     cy.do([
       MultiColumnList({ id: 'transactions-list' }).find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
-
         .find(Link('3/6/2023, 7:48 AM'))
-
         .click(),
-
     ]);
   },
 
   TransactionListDetailsResultsFromPreviousBudget: () => {
     cy.do([
       MultiColumnList({ id: 'transactions-list' }).find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
-
         .find(Link('9/29/2021, 10:14 AM'))
-
         .click(),
-
     ]);
   },
 
@@ -199,31 +165,21 @@ export default {
   TransactionListDetailsResultsFromRolledLogs: () => {
     cy.do([
       Section({ id: 'rollover-logs-results-pane' }).find(MultiColumnListCell({ row: 0, content: '07/14/2023-result' }))
-
-      // .find(Link("07/14/2023-result"))
-
         .click()
-
     ]);
   },
 
   TransactionListDetailsResultsFromPreviousBudgetEmbrance: () => {
     cy.do([
       MultiColumnList({ id: 'transactions-list' }).find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
-
         .find(Link('6/20/2023, 5:33 AM'))
-
         .click(),
     ]);
   },
+
   CloseTwoXmarkInOneScreen: () => {
     cy.do([
-
       Section({ id: 'pane-transaction-details' }).find(Button({ icon: 'times' })).click(),
-
-      // Section({name:'class="pane---M_bJw focusIndicator---YSu0f focusWithinIndicator---xDG5p"'}).find(Button({ icon: "times" })).click()
-
-    // closeButton.find(Button({ icon: "times" })).click()
     ]);
   },
 
@@ -292,6 +248,7 @@ export default {
     cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(invoiceStates.invoiceCreatedMessage);
   },
+
   selectVendorOnUi: (organizationName) => {
     cy.do([
       Button('Organization look-up').click(),
@@ -501,13 +458,9 @@ export default {
   },
   editVendorInvoiceNumber: () => {
     cy.do([
-
       PaneHeader({ id: 'paneHeaderpane-invoiceDetails' }).find(actionsButton).click(),
-
       Button('Edit').click(),
-
       Button('Cancel').click()
-
     ]);
   },
 
