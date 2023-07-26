@@ -93,4 +93,6 @@ export default {
   // Data export
   exportMappingProfilePath: 'settings/data-export/mapping-profiles',
   exportJobProfilePath: 'settings/data-export/job-profiles',
+  // Organizations
+  organizationCategoryPath: 'settings/organizations/category'
 };

@@ -2,6 +2,7 @@ import { HTML, including } from '@interactors/html';
 import {
   Accordion,
   Button,
+  Callout,
   Checkbox,
   KeyValue,
   Link,
@@ -17,8 +18,9 @@ import {
   Section,
   Select,
   SelectionOption,
+  Spinner,
   TextArea,
-  TextField,
+  TextField
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -29,7 +31,6 @@ const buttonNew = Button('New');
 const saveAndClose = Button('Save & close');
 const summaryAccordionId = 'summarySection';
 const organizationDetails = Pane({ id: 'pane-organization-details' });
-const contactPeopleDetails = MultiColumnList({ id: 'contact-list' });
 const organizationsList = MultiColumnList({ id: 'organizations-list' });
 const blueColor = 'rgba(0, 0, 0, 0)';
 const tagButton = Button({ icon: 'tag' });
@@ -43,7 +44,8 @@ const ediSection = Section({ id: 'edi' });
 const ftpSection = Section({ id: 'ftp' });
 const schedulingSection = Section({ id: 'scheduling' });
 const actionsButton = Button('Actions');
-const numberOfSearchResultsHeader = '//*[@id="paneHeaderorganizations-results-pane-subtitle"]/span';
+const numberOfSearchResultsHeader =
+  '//*[@id="paneHeaderorganizations-results-pane-subtitle"]/span';
 const categoryDropdown = Button('Category');
 const zeroResultsFoundText = '0 records found';
 const organizationStatus = Select('Organization status*');
@@ -51,7 +53,6 @@ const organizationNameField = TextField('Name*');
 const nameTextField = TextField('[object Object] 0');
 const organizationCodeField = TextField('Code*');
 const today = new Date();
-const tagsSection = Section({ id: 'tagsPane' });
 const todayDate = DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY');
 const resetButton = Button('Reset all');
 const openContactSectionButton = Button({
@@ -65,7 +66,6 @@ const saveButtonInCotact = Button({
   id: 'clickable-save-contact-person-footer',
 });
 const editButton = Button('Edit');
-const deleteButton = Button('Delete');
 const contactPeopleSection = Section({ id: 'contactPeopleSection' });
 const addContactButton = Button('Add contact');
 const openInterfaceSectionButton = Button({
@@ -75,7 +75,6 @@ const interfaceSection = Section({ id: 'interfacesSection' });
 const addInterfaceButton = Button('Add interface');
 const addInterfacesModal = Modal('Add interfaces');
 const saveButton = Button('Save');
-const confirmButton = Button('Confirm');
 const searchButtonInModal = Button({ type: 'submit' });
 const timesButton = Button({ icon: 'times' });
 const categoryButton = Button('Categories');
@@ -86,6 +85,9 @@ const listIntegrationConfigs = MultiColumnList({
   id: 'list-integration-configs',
 });
 const tagCount = "//button[@icon='tag']//span[contains(@class,'label')]";
+const trashButton = Button({ icon:'trash' });
+const deleteCategoryModal = Modal({ id: 'delete-controlled-vocab-entry-confirmation' });
+const deleteButtonInCategory = Button('Delete', { id: 'clickable-delete-controlled-vocab-entry-confirmation-confirm' });
 
 
 
@@ -99,35 +101,6 @@ export default {
       .should('be.visible')
       .and('have.text', zeroResultsFoundText);
   },
-  addTag: () => {
-    const newTag = `tag${getRandomPostfix()}`;
-
-    cy.then(() => tagsSection.find(MultiSelect()).selected()).then(
-
-      (selectedTags) => {
-        cy.wait(2000).then(() => {
-          cy.do(tagsSection.find(MultiSelect()).fillIn(newTag));
-
-          cy.do(tagsSection.find(MultiSelectOption({ index: 0 })).click());
-
-
-
-          cy.expect(
-
-            tagsSection
-
-              .find(MultiSelect({ selected: [...selectedTags, newTag].sort() }))
-
-              .exists()
-
-          );
-        });
-      }
-
-    );
-    return newTag;
-  },
-
 
   createOrganizationViaUi: (organization) => {
     cy.expect(buttonNew.exists());
@@ -169,14 +142,6 @@ export default {
     );
   },
 
-  organizationTagDetails: () => {
-    // cy.expect(tagsButton.exists());
-    cy.do([
-      tagButton.click(),
-    ]);
-  },
-
-
   verifyTagCount() {
     cy.xpath(tagCount).then(($ele) => {
       const count = $ele.text();
@@ -184,19 +149,13 @@ export default {
     });
   },
 
-  tagFilter:() => {
+  tagFilter: () => {
     cy.do([
-
       Section({ id: 'org-filter-tags' }).find(Button('Tags')).click(),
-
       Button({ className: 'multiSelectToggleButton---cD_fu' }).click(),
-
       MultiSelectOption('^').click(),
-
     ]);
   },
-
-
 
   selectActiveStatus: () => {
     cy.do(Checkbox('Active').click());
@@ -211,12 +170,13 @@ export default {
   checkOrganizationFilter: () => {
     cy.expect(organizationsList.exists());
   },
+
   addNewCategory: (value) => {
     cy.do(categoryButton.click());
     cy.expect(newButton.exists());
-    cy.do(newButton.click()),
-    cy.do(nameTextField.fillIn(value)),
-    cy.do(saveButton.click()),
+    cy.do(newButton.click());
+    cy.do(nameTextField.fillIn(value));
+    cy.do(saveButton.click());
     cy.contains(value).should('exist');
   },
 
@@ -373,6 +333,7 @@ export default {
       summarySection.find(KeyValue({ value: organization.code })).exists()
     );
   },
+
   searchByParameters: (parameter, value) => {
     cy.do([
       searchInput.selectIndex(parameter),
@@ -383,7 +344,7 @@ export default {
 
   resetFilters: () => {
     cy.do(resetButton.click());
-    cy.expect(resetButton.is({ disabled: true }));
+    cy.expect(resetButton.is({ disabled: true })); // Actual : true
   },
 
   checkSearchResults: (organization) => {
@@ -401,6 +362,7 @@ export default {
       Checkbox('Yes').click(),
     ]);
   },
+
   selectNoInIsVendor: () => {
     cy.do([
       Button({ id: 'accordion-toggle-button-org-filter-isVendor' }).click(),
@@ -410,15 +372,6 @@ export default {
 
   selectVendor: () => {
     cy.do([Checkbox('Vendor').click(), saveAndClose.click()]);
-  },
-
-  deselectVendor: () => {
-    cy.do([
-      Checkbox('Vendor').click(),
-      confirmButton.click(),
-      cy.wait(2000),
-      saveAndClose.click(),
-    ]);
   },
 
   closeDetailsPane: () => {
@@ -440,12 +393,14 @@ export default {
       SelectionOption('English').click(),
     ]);
   },
+
   selectCashInPaymentMethod: () => {
     cy.do([
       Button({ id: 'accordion-toggle-button-paymentMethod' }).click(),
       Checkbox('Cash').click(),
     ]);
   },
+
   deleteOrganizationViaApi: (organizationId) => cy.okapiRequest({
     method: 'DELETE',
     path: `organizations/organizations/${organizationId}`,
@@ -471,18 +426,26 @@ export default {
     .then((response) => response.body.id),
 
   editOrganization: () => {
+    cy.expect(Spinner().absent());
     cy.expect(actionsButton.exists());
     cy.do([actionsButton.click(),
       editButton.click()]);
   },
 
-  verifynewCategory: (category) => {
+  verifyNewCategory: (category) => {
     cy.do([
       openContactSectionButton.click(),
       contactPeopleSection.find(addContactButton).click(),
       categoryDropdown.click(),
       cy.contains(category).should('exist')]);
   },
+
+  deleteCreatedCategory:(name) => {
+    cy.do([Section({ id:'controlled-vocab-pane' }).find(MultiColumnListRow({ content:including(name) })).find(trashButton).click(),
+      deleteCategoryModal.find(deleteButtonInCategory).click()]);
+    cy.expect(Callout({ type: 'success' }).has({ text: including(`The category ${name} was successfully deleted`) }));
+  },
+
   addAccount: () => {
     cy.do([
       Button({
@@ -504,28 +467,6 @@ export default {
     InteractorsTools.checkCalloutMessage('The contact was saved');
   },
 
-  deleteContact: () => {
-    cy.do([actionsButton.click(), deleteButton.click(),
-      cy.wait(2000), confirmButton.click()]);
-  },
-  selectCategories: (category) => {
-    cy.do([
-      cy.wait(2000),
-      MultiSelect().select(category),
-      saveAndClose.click(),
-      cy.wait(2000),
-      timesButton.click(),
-      openContactSectionButton.click(),
-    ]);
-    cy.expect(
-      contactPeopleDetails
-        .find(MultiColumnListRow({ index: 0 }))
-        .find(MultiColumnListCell({ columnIndex: 1 }))
-        .has({ content: 'claim' })
-    );
-    cy.do([timesButton.click()]);
-  },
-
   addNewInterface: (defaultInterface) => {
     cy.do([
       openInterfaceSectionButton.click(),
@@ -540,6 +481,7 @@ export default {
   openContactPeopleSection: () => {
     cy.do([openContactSectionButton.click()]);
   },
+
   addContactToOrganization: (contact) => {
     cy.do([
       openContactSectionButton.click(),
@@ -706,18 +648,7 @@ export default {
   },
 
   selectOrganization: (organizationName) => {
-    cy.do(
-      Pane({ id: 'organizations-results-pane' })
-        .find(Link(organizationName))
-        .click()
-    );
-  },
-
-  checkTextofElement: () => {
-    cy.xpath(numberOfSearchResultsHeader).then(($value) => {
-      const textValue = $value.length;
-      cy.log(textValue);
-    });
+    cy.do(Pane({ id: 'organizations-results-pane' }).find(Link(organizationName)).click());
   },
 
   editOrganizationName: (organization) => {

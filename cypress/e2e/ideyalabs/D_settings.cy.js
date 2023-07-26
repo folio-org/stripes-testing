@@ -8,138 +8,59 @@ import customFields from '../../support/fragments/settings/users/customFields';
 import settingsMenu from '../../support/fragments/settingsMenu';
 import topMenu from '../../support/fragments/topMenu';
 import usersSearchPane from '../../support/fragments/users/usersSearchPane';
-import getRandomPostfix from '../../support/utils/stringTools';
+import { randomFourDigitNumber } from '../../support/utils/stringTools';
 
 describe('Creating Permissions Set and Custom Fields', () => {
-  it('login to Folio', () => {
+  const textFieldData = { fieldLabel: `Test${randomFourDigitNumber()}`, helpText: `Testdata${randomFourDigitNumber()}` };
+  const testAreaData = { fieldLabel: `dataArea${randomFourDigitNumber()}`, helpText: `fillData${randomFourDigitNumber()}` };
+  const checkboxData = { fieldLabel: `CheckBox${randomFourDigitNumber()}`, helpText: `testdata${randomFourDigitNumber()}` };
+  const radioButtonData = { data: { fieldLabel: `RadioButton${randomFourDigitNumber()}`, helpText: `testData${randomFourDigitNumber()}`, label1: `Radio1${randomFourDigitNumber()}`, label2: `Radio2${randomFourDigitNumber()}` } };
+  const label2 = `select${randomFourDigitNumber()}`;
+  const singleSelectData = { data: { fieldLabel: `Single Select Dropdown${randomFourDigitNumber()}`, helpText: 'select One Data', label1: `Select${randomFourDigitNumber()}`, label2 } };
+
+  before('login to Folio', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
-
-  it('C2234__Create new permission set', () => {
-    cy.visit(topMenu.permissionSetPath);
-    customFields.clickONewButton();
-    customFields.createPermission({
-      name: `Adminstrator${getRandomPostfix}`,
-      description: `Hello${getRandomPostfix}`,
-    });
-    customFields.deletePermission();
-  });
-
   it('C15693__Create a text field custom field', () => {
     cy.visit(topMenu.customFieldsPath);
-    customFields.addCustomTextField({
-      fieldLabel: 'test',
-      helpText: 'testdata',
-    });
+    customFields.addCustomTextField(textFieldData);
     cy.visit(topMenu.usersPath);
     usersSearchPane.searchByKeywords('testing');
     usersSearchPane.selectFirstUser('Excel, Testing');
-    usersSearchPane.verifyTestField('test');
+    usersSearchPane.verifyTestField(textFieldData.fieldLabel);
   });
-
   it('C15694__Create a text area custom field and add help text', () => {
     cy.visit(topMenu.customFieldsPath);
-    customFields.addCustomTextArea({
-      fieldLabel: 'dataArea',
-      helpText: 'fillData',
-    });
+    customFields.addCustomTextArea(testAreaData);
     cy.visit(topMenu.usersPath);
     usersSearchPane.searchByKeywords('testing');
     usersSearchPane.selectFirstUser('Excel, Testing');
-    usersSearchPane.verifyTestArea('dataArea');
+    usersSearchPane.verifyTestArea(testAreaData.fieldLabel);
   });
-
   it('C15695__Create a checkbox custom field', () => {
     cy.visit(topMenu.customFieldsPath);
-    customFields.addCustomCheckBox({
-      fieldLabel: 'CheckBoxx',
-      helpText: 'testdata',
-    });
+    customFields.addCustomCheckBox(checkboxData);
     cy.visit(topMenu.usersPath);
     usersSearchPane.searchByKeywords('testing');
     usersSearchPane.selectFirstUser('Excel, Testing');
-    usersSearchPane.verifyCheckBox('CheckBoxx');
+    usersSearchPane.verifyCheckBox(checkboxData.fieldLabel);
   });
-
   it('C15696__Create a radio button custom field', () => {
     cy.visit(topMenu.customFieldsPath);
-    customFields.addCustomRadioButton({
-      data: {
-        fieldLabel: 'RadioButton',
-        helpText: 'testData',
-        label1: 'Radio1',
-        label2: 'Radio2',
-      },
-    });
+    customFields.addCustomRadioButton(radioButtonData);
     cy.visit(topMenu.usersPath);
     usersSearchPane.searchByKeywords('testing');
     usersSearchPane.selectFirstUser('Excel, Testing');
-    usersSearchPane.verifyRadioButton('RadioButton');
+    usersSearchPane.verifyRadioButton(radioButtonData.data.fieldLabel);
   });
-
   it('C15697__Create a single select custom field', () => {
-    const label2 = `select${getRandomPostfix}`;
     cy.visit(topMenu.customFieldsPath);
-    customFields.addCustomSingleSelect({
-      data: {
-        fieldLabel: `Single Select Dropdown${getRandomPostfix}`,
-        helpText: 'select One Data',
-        label1: `Select${getRandomPostfix}`,
-        label2,
-      },
-    });
+    customFields.addCustomSingleSelect(singleSelectData);
     cy.visit(topMenu.usersPath);
     usersSearchPane.searchByKeywords('testing');
     usersSearchPane.selectFirstUser('Excel, Testing');
-    usersSearchPane.verifySingleSeclect(
-      `Single Select Dropdown${getRandomPostfix}`,
-      label2
-    );
+    usersSearchPane.verifySingleSelect(singleSelectData.data.fieldLabel, label2);
   });
-
-  it('C16985__Settings | Set up a note type', () => {
-    cy.visit(topMenu.notesPath);
-    newNote.clickOnNew(`New Note${getRandomPostfix}`);
-    cy.visit(topMenu.agreementsPath);
-    agreementsDetails.agreementlistClick();
-    agreementsDetails.openNotesSection();
-    agreementsDetails.clickOnNewButton();
-    newNote.clickOnNoteType(`New Note${getRandomPostfix}`);
-  });
-
-  it('C1304__Settings | Edit a note type', () => {
-    cy.visit(topMenu.notesPath);
-    existingNoteEdit.clickEditButton(`Item${getRandomPostfix}`);
-    cy.visit(topMenu.agreementsPath);
-    agreementsDetails.agreementlistClick();
-    agreementsDetails.openNotesSection();
-    agreementsDetails.clickOnNewButton();
-    newNote.clickOnNoteType(`Item${getRandomPostfix}`);
-    agreementsDetails.clickCancelButton();
-    newNote.closeWithoutSaveButton();
-    agreementsDetails.openNotesSection();
-    agreementsDetails.clickOnNoteRecord();
-    existingNoteView.gotoEdit();
-    newNote.clickOnNoteType(`Item${getRandomPostfix}`);
-  });
-
-  it('C731__Create new categories', () => {
-    cy.visit(settingsMenu.organizationsPath);
-    organizations.addNewCategory(`Test${getRandomPostfix}`);
-    cy.visit(topMenu.organizationsPath);
-    organizations.searchByParameters('All', 'organization');
-    organizations.selectOrganization('New organization');
-    organizations.editOrganization();
-    organizations.verifynewCategory(`Test${getRandomPostfix}`);
-  });
-
-  it('C367970-Check that User can save changes while edit ""Fixed due date schedules"" without changing ""Fixed due date schedules name"" field', () => {
-    cy.visit(settingsMenu.circulationFixedDueDateSchedulesPath);
-    eHoldingsProviders.editSchedule({
-      data: { name: 'Magnus test', description: `Test${getRandomPostfix}` },
-    });
-  });
-
   it('C15701__Change custom fields order', () => {
     cy.visit(topMenu.customFieldsPath);
     customFields.editButton();
@@ -148,5 +69,72 @@ describe('Creating Permissions Set and Custom Fields', () => {
     usersSearchPane.searchByKeywords('testing');
     usersSearchPane.selectFirstUser('Excel, Testing');
     usersSearchPane.verifyDragItem();
+  });
+  it('C2234__Create new permission set', () => {
+    const testData = {
+      name: `Administrator${randomFourDigitNumber()}`,
+      description: `Hello${randomFourDigitNumber()}`,
+    };
+    cy.visit(topMenu.permissionSetPath);
+    customFields.clickONewButton();
+    customFields.createPermission(testData);
+    customFields.deletePermission(testData);
+  });
+  it('C16985__Settings | Set up a note type', () => {
+    const noteData = `New Note${randomFourDigitNumber()}`;
+    cy.visit(topMenu.notesPath);
+    newNote.clickOnNew(noteData);
+    cy.visit(topMenu.agreementsPath);
+    agreementsDetails.agreementListClick('2020 ACS Publications');
+    agreementsDetails.openNotesSection();
+    agreementsDetails.clickOnNewButton();
+    newNote.clickOnNoteType(noteData);
+    newNote.deleteNote(noteData);
+  });
+  it('C1304__Settings | Edit a note type', () => {
+    cy.visit(topMenu.notesPath);
+    existingNoteEdit.clickEditButton(`Item${randomFourDigitNumber()}`);
+    cy.visit(topMenu.agreementsPath);
+    agreementsDetails.agreementListClick('2020 ACS Publications');
+    agreementsDetails.openNotesSection();
+    agreementsDetails.clickOnNewButton();
+    newNote.clickOnNoteType(`Item${randomFourDigitNumber()}`);
+    agreementsDetails.clickCancelButton();
+    newNote.closeWithoutSaveButton();
+    agreementsDetails.openNotesSection();
+    agreementsDetails.clickOnNoteRecord();
+    existingNoteView.gotoEdit();
+    newNote.clickOnNoteType(`Item${randomFourDigitNumber()}`);
+  });
+  it('C731__Create new categories', () => {
+    const categoryName = `Test${randomFourDigitNumber()}`;
+    cy.visit(settingsMenu.organizationsPath);
+    organizations.addNewCategory(categoryName);
+    cy.visit(topMenu.organizationsPath);
+    organizations.searchByParameters('All', 'organization');
+    organizations.selectOrganization('New organization');
+    organizations.editOrganization();
+    organizations.verifyNewCategory(categoryName);
+    cy.visit(settingsMenu.organizationCategoryPath);
+    organizations.deleteCreatedCategory(categoryName);
+  });
+  it('C367970-Check that User can save changes while edit ""Fixed due date schedules"" without changing ""Fixed due date schedules name"" field', () => {
+    cy.visit(settingsMenu.circulationFixedDueDateSchedulesPath);
+    eHoldingsProviders.editSchedule({ data: { name: 'Magnus test', description: `Test${randomFourDigitNumber()}` } });
+  });
+  after('delete the test data', () => {
+    cy.visit(topMenu.customFieldsPath);
+    customFields.editButton();
+    customFields.removeCustomField(`${textFieldData.fieldLabel} · Text field`);
+    customFields.removeCustomField(`${testAreaData.fieldLabel} · Text area`);
+    customFields.removeCustomField(`${checkboxData.fieldLabel} · Checkbox`);
+    customFields.removeCustomField(`${radioButtonData.data.fieldLabel} · Radio button set`);
+    customFields.removeCustomField(`${singleSelectData.data.fieldLabel} · Single select`);
+    customFields.deleteCustomFields();
+    customFields.verifyDeletedCustomFields(`${textFieldData.fieldLabel} · Text field`);
+    customFields.verifyDeletedCustomFields(`${testAreaData.fieldLabel} · Text area`);
+    customFields.verifyDeletedCustomFields(`${checkboxData.fieldLabel} · Checkbox`);
+    customFields.verifyDeletedCustomFields(`${radioButtonData.data.fieldLabel} · Radio button set`);
+    customFields.verifyDeletedCustomFields(`${singleSelectData.data.fieldLabel} · Single select`);
   });
 });

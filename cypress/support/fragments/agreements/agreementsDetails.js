@@ -3,6 +3,7 @@ import NewNote from '../notes/newNote';
 import { getLongDelay } from '../../utils/cypressTools';
 import ExistingNoteEdit from '../notes/existingNoteEdit';
 
+
 const rootXpath = '//section[@id="pane-view-agreement"]';
 const rootSection = Section({ id: 'pane-view-agreement' });
 const headerXpath = `${rootXpath}//div[@id="pane-view-agreement-content"]//h2`;
@@ -64,6 +65,7 @@ export default {
 
   remove() {
     cy.do(actionsButton.click());
+    cy.expect(deleteButton.exists());
     cy.do(deleteButton.click());
     cy.expect(deleteConfirmationModal.exists());
     cy.do(deleteConfirmationModal.find(deleteButtonInConfirmation).click());
@@ -150,7 +152,7 @@ export default {
     ]);
   },
 
-  agreementlistClick() {
-    cy.do(MultiColumnListCell('2020 ACS Publications').click());
+  agreementListClick(agreementName) {
+    cy.do(MultiColumnListCell(agreementName).click());
   }
 };

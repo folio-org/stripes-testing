@@ -1,6 +1,7 @@
 import { including } from 'bigtest';
 import { Accordion, Button, Callout, Dropdown, Modal, MultiColumnListRow, Pane, Spinner, TextArea, TextField } from '../../../../../interactors';
 
+
 const customFieldsPane = Pane('Custom fields');
 const editNewButton = Button({ href: '/settings/users/custom-fields/edit' });
 const addCustomFieldDropdown = Dropdown('Add custom field');
@@ -15,6 +16,7 @@ const editButton = Button('Edit');
 const deleteButton = Button('Delete');
 const deleteConfirmationModal = Modal({ id: 'deletepermissionset-confirmation' });
 const deleteButtonInConfirmation = Button('Delete', { id: 'clickable-deletepermissionset-confirmation-confirm' });
+
 
 export default {
   waitLoading() {
@@ -41,15 +43,15 @@ export default {
       saveAndCloseButton.click(),
     ]);
   },
-
   clickONewButton() {
     cy.do(newButton.click());
   },
 
-  deletePermission() {
+  deletePermission(data) {
     cy.do([editButton.click(),
       deleteButton.click(),
       deleteConfirmationModal.find(deleteButtonInConfirmation).click()]);
+    cy.expect(Callout({ type: 'success' }).has({ text: including(`The permission set ${data.name} was successfully deleted.`) }));
   },
 
   createPermission(data) {
@@ -112,6 +114,19 @@ export default {
     cy.expect(editNewButton.exists());
     cy.do([
       editNewButton.click()]);
+  },
+
+  removeCustomField(field) {
+    cy.do(Accordion(field).find(Button({ icon: 'trash' })).click());
+  },
+
+  deleteCustomFields() {
+    cy.do(Button('Save & close').click());
+    cy.do(Modal('Delete field data').find(Button('Save & lose data')).click());
+  },
+
+  verifyDeletedCustomFields(field) {
+    cy.expect(Accordion(field).absent());
   }
 };
 
