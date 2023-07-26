@@ -13,7 +13,6 @@ import UserEdit from '../../../support/fragments/users/userEdit';
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => false);
 
-
 let user;
 
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;

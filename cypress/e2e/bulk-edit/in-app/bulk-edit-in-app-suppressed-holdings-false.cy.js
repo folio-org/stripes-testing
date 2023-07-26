@@ -18,7 +18,7 @@ const holdingHRIDsFileName = `holdingHRIDs_${getRandomPostfix()}.csv`;
 const barcode = getRandomPostfix();
 const inventoryEntity = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
-  barcode: barcode,
+  barcode,
   secondBarcode: `secondBarcode_${barcode}`,
 };
 
