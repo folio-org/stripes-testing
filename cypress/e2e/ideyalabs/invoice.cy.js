@@ -1,66 +1,63 @@
-import invoice from '../../support/fragments/ideyalabs/invoice';
-import invoices from '../../support/fragments/invoices/invoices';
-import topMenu from '../../support/fragments/topMenu';
-import dateTools from '../../support/utils/dateTools';
-import getRandomPostfix from '../../support/utils/stringTools';
-
-const randomTitleOne = getRandomPostfix();
-const randomTitleTwo = getRandomPostfix();
+import invoice from "../../support/fragments/ideyalabs/invoice";
+import invoices from "../../support/fragments/invoices/invoices";
+import topMenu from "../../support/fragments/topMenu";
+import dateTools from "../../support/utils/dateTools";
+import getRandomPostfix from "../../support/utils/stringTools";
 
 const orderOne = {
-  templateName: 'Adlibris book order (adlibris)',
-  orderType: 'One-time',
+  templateName: "Adlibris book order (adlibris)",
+  orderType: "One-time",
 };
 
 const orderOnePOLine = {
-  title: `AutoTest_${randomTitleOne}`,
-  fundID: 'Alpha FYRO (AFYRO)',
+  title: `AutoTest_${getRandomPostfix}`,
+  fundID: "Alpha FYRO (AFYRO)",
 };
 
 const orderTwo = {
-  templateName: 'Amazon book orders (Amazon-B)',
-  orderType: 'Ongoing',
+  templateName: "Amazon book orders (Amazon-B)",
+  orderType: "Ongoing",
 };
 
 const orderTwoPOLine = {
-  title: `AutoTest_${randomTitleTwo}`,
-  fundID: 'PO Fund 1 (POF1)',
-  price: '1',
-  valueOne: '90',
-  valueTwo: '10',
+  title: `AutoTest_${getRandomPostfix}`,
+  fundID: "PO Fund 1 (POF1)",
+  price: "1",
+  valueOne: "90",
+  valueTwo: "10",
 };
 
 const newInvoice = {
   invoiceDate: dateTools.getCurrentDate(),
-  status: 'Open',
+  status: "Open",
   invoiceNumber: getRandomPostfix(),
-  vendorName: '1517 THE LEGACY PROJECT',
-  accountingCode: '1233',
-  batchGroup: 'BG1',
+  vendorName: "1517 THE LEGACY PROJECT",
+  accountingCode: "1233",
+  batchGroup: "BG1",
 };
 
 const invoiceLines = {
-  invoiceLineOne: '12320886456-1',
-  invoiceLineTwo: '12320886456-1',
-  invoiceLineThree: '12320877456-1',
-  invoiceLineFour: '12320873456-1',
+  invoiceLineOne: "12320886456-1",
+  invoiceLineTwo: "12320886456-1",
+  invoiceLineThree: "12320877456-1",
+  invoiceLineFour: "12320873456-1",
 };
 
 const fundDistribution = {
-  fundIDOne: 'Alpha FYRO (AFYRO)',
-  fundIDTwo: 'Beta FYRO (BFYRO)',
+  fundIDOne: "Alpha FYRO (AFYRO)",
+  fundIDTwo: "Beta FYRO (BFYRO)",
 };
 
 const searchInvoiceNumber = {
-  parameter: 'Keyword',
-  value: '17210-4',
+  parameter: "Keyword",
+  value: "17210-4",
 };
 
-const fundID = 'Fund B (b)';
+const fundID = "Fund B (b)";
 
-describe('C353566-Correct fund validation to approve invoice', () => {
-  it('Invoices App', () => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+describe("C353566-Correct fund validation to approve invoice", () => {
+  it("Invoices App", () => {
+    cy.login(Cypress.env("diku_login"), Cypress.env("diku_password"));
     cy.visit(topMenu.ordersPath);
     invoice.createOrder(orderOne.orderType, orderOne.templateName);
     invoice.POLines(orderOnePOLine.title, orderOnePOLine.fundID);
@@ -93,10 +90,10 @@ describe('C353566-Correct fund validation to approve invoice', () => {
     invoice.addFundDistributionToLine2(fundDistribution.fundIDOne);
     invoice.addFundDistributionToLine4(fundDistribution.fundIDTwo);
     invoice.adjustments();
-    invoice.approveInvoice();  // Approve API failure
+    invoice.approveInvoice(); // Approve API failure
   });
 
-  it('C368486 - Editing fund distribution in PO line when related Reviewed invoice exists', () => {
+  it("C368486 - Editing fund distribution in PO line when related Reviewed invoice exists", () => {
     cy.visit(topMenu.orderLinesPath);
     invoice.searchByParameter(
       searchInvoiceNumber.parameter,
