@@ -1,6 +1,7 @@
 import ledgers from "../../support/fragments/finance/ledgers/ledgers";
 import topMenu from "../../support/fragments/topMenu";
 import users from "../../support/fragments/users/users";
+import usersSearchPane from "../../support/fragments/users/usersSearchPane";
 import getRandomPostfix, { getFourDigitRandomNumber } from "../../support/utils/stringTools";
 
 const barcodeNumber = getRandomPostfix();
@@ -32,7 +33,7 @@ const userThree = {
   barcode: `678${getFourDigitRandomNumber}`,
   userName: `Mann${getFourDigitRandomNumber}`,
   personal: {
-    lastName: "Code",
+    lastName: "Script",
     firstName: "Auto",
     email: "dan@gmail.com",
     middleName: "Test",
@@ -40,8 +41,15 @@ const userThree = {
   },
 };
 
+const deleteData = {
+  name: 'User Delete',
+  selectName: 'User, Delete',
+  lastName: 'Script',
+  selectLastName: 'Script Test'
+}
+
 const verifyData = {
-  verifyLastNameOnUserDetailsPane: "Code",
+  verifyLastNameOnUserDetailsPane: "Script",
   verifyPreferredfirstnameOnUserDetailsPane: "Dan",
   verifyFirstNameOnUserDetailsPane: "Auto",
   verifyMiddleNameOnUserDetailsPane: "Test",
@@ -49,19 +57,30 @@ const verifyData = {
 };
 
 describe("create a users", () => {
-  it("C421-Create: new user; required: contact info, email, phone, external system ID, address", () => {
+  before(() => {
     cy.login(Cypress.env("diku_login"), Cypress.env("diku_password"));
     cy.visit(topMenu.usersPath);
+  });
+
+  after(() => {
+    usersSearchPane.searchByLastname(deleteData.lastName)
+    usersSearchPane.selectUsersFromList(deleteData.selectLastName)
+    users.deleteUser()
+  });
+
+  it("C421-Create: new user; required: contact info, email, phone, external system ID, address", () => {
     users.createViaUi(userOne);
     cy.visit(topMenu.usersPath);
     users.createViaUi(userTwo);
     users.assertion();
     ledgers.closeOpenedPage();
     users.closeWithoutSavingButton();
+    usersSearchPane.searchByKeywords(deleteData.name)
+    usersSearchPane.selectUsersFromList(deleteData.selectName)
+    users.deleteUser()
   });
 
   it("C11096-Add Preferred first name and confirm its display in the User record View and Edit screens", () => {
-    cy.visit(topMenu.usersPath);
     users.createData(userThree);
     users.verifyPreferredfirstnameOnUserDetailsPane(
       verifyData.verifyPreferredfirstnameOnUserDetailsPane

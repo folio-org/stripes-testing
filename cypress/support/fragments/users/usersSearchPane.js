@@ -15,7 +15,7 @@ import {
 const waitClick = () => { cy.wait(1000); };
 
 export default {
-  waitLoading:() => cy.expect(PaneHeader('User search').exists()),
+  waitLoading: () => cy.expect(PaneHeader('User search').exists()),
 
   searchByStatus(status) {
     waitClick();
@@ -37,9 +37,20 @@ export default {
     ]);
     waitClick();
   },
+  searchByLastname(lastName) {
+    cy.do([
+      Select({ id: 'input-user-search-qindex' }).choose('Last name'),
+      TextField({ id: 'input-user-search' }).fillIn(lastName),
+      Button({ id: 'submit-user-search' }).click()
+    ]);
+    waitClick();
+  },
 
   selectUserFromList: (userName) => {
-    cy.do(Pane({ id:'users-search-results-pane' }).find(MultiColumnListCell(userName)).click());
+    cy.do(Pane({ id: 'users-search-results-pane' }).find(MultiColumnListCell(userName)).click());
+  },
+  selectUsersFromList: (userName) => {
+    cy.do(Pane({ id: 'users-search-results-pane' }).find(Link(userName)).click());
   },
 
   openUser(userId) {

@@ -12,14 +12,15 @@ import {
   TextField,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
+
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
 const contactInformationAccordion = Accordion('Contact information');
 const defaultUserName = `AutotestUser_${getRandomPostfix()}`;
 const editButton = Button('Edit');
 const barCode = TextField('Barcode');
-const closeWithoutSavingButton = Button({
-  id: 'clickable-cancel-editing-confirmation-cancel',
-});
+const deleteUser = Button({ id: 'clickable-checkdeleteuser' });
+const closeWithoutSavingButton = Button({ id: 'clickable-cancel-editing-confirmation-cancel' });
+const deleteYesButton = Button({ id: 'delete-user-button' })
 
 const defaultUser = {
   username: defaultUserName,
@@ -197,6 +198,17 @@ export default {
 
   clearTextfieldfirstName() {
     cy.do(TextField({ id: 'adduser_firstname' }).clear());
+  },
+
+  deleteUser: () => {
+    cy.do([
+      Section({ id: 'pane-userdetails' })
+        .find(PaneHeader({ id: 'paneHeaderpane-userdetails' }))
+        .find(Button('Actions'))
+        .click(),
+      deleteUser.click(),
+      deleteYesButton.click()
+    ]);
   },
 
   saveButton() {
