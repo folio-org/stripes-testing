@@ -35,6 +35,11 @@ describe('Organzation App', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
+  after('verifying deleted test data', () => {
+    organizations.searchByParameters(searchByCode.dropdown, searchByCode.code);
+    organizations.checkZeroSearchResultsHeader();
+  });
+
   it('C677, Search an alternate organization name', () => {
     cy.visit(topMenu.organizationsPath);
     organizations.createOrganizationViaUi(newOrganization);
@@ -45,15 +50,15 @@ describe('Organzation App', () => {
   it('C728, Filter organizations by status', () => {
     organizations.selectActiveStatus();
     organizations.checkSearchResults({ name: organizationStatus.active });
-    organizations.resetAll();
+    organizations.resetFilters();
     organizations.selectInActiveStatus();
     organizations.checkSearchResults({ name: organizationStatus.inActive });
-    organizations.resetAll();
+    organizations.resetFilters();
     organizations.selectPendingStatus();
     organizations.checkZeroSearchResultsHeader({
       name: organizationStatus.pending,
     });
-    organizations.resetAll();
+    organizations.resetFilters();
   });
 
   it('C730, Make existing organization a Vendor', () => {
@@ -62,10 +67,10 @@ describe('Organzation App', () => {
     organizations.editOrganization();
     organizations.selectVendor();
     organizations.closeDetailsPane();
+    organizations.resetFilters();
   });
 
   it('C725, Add new contact and assign to an organization record', () => {
-    organizations.resetAll();
     organizations.searchByParameters(searchByCode.dropdown, searchByCode.code);
     organizations.selectOrganization(newOrganization.name);
     organizations.editOrganization();
@@ -102,20 +107,18 @@ describe('Organzation App', () => {
     organizations.addTag();
     organizations.tagsPane();
     organizations.verifyTagCount();
-    organizations.resetAll();
+    organizations.resetFilters();
   });
 
   it('C6711, Filter Organizations by tags', () => {
     organizations.tagFilter(tags);
     organizations.checkOrganizationFilter();
-    organizations.resetAll();
+    organizations.resetFilters();
   });
 
   it('C674, Delete existing organization record', () => {
     organizations.searchByParameters(searchByCode.dropdown, searchByCode.code);
     organizations.selectOrganization(newOrganization.name);
     organizations.deleteOrganization();
-    organizations.searchByParameters(searchByCode.dropdown, searchByCode.code);
-    organizations.checkZeroSearchResultsHeader();
   });
 });

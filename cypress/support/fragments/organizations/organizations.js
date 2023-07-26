@@ -2,6 +2,7 @@ import {
   Accordion,
   Button,
   Checkbox,
+  HTML,
   IconButton,
   KeyValue,
   Link,
@@ -20,6 +21,7 @@ import {
   Spinner,
   TextArea,
   TextField,
+  including,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -34,6 +36,7 @@ const contactPeopleDetails = MultiColumnList({ id: 'contact-list' });
 const organizationsList = MultiColumnList({ id: 'organizations-list' });
 const blueColor = 'rgba(0, 0, 0, 0)';
 const tagButton = Button({ icon: 'tag' });
+const tagsButton = Button({ id: 'clickable-show-tags' });
 const summarySection = Accordion({ id: summaryAccordionId });
 const searchInput = SearchField({ id: 'input-record-search' });
 const vendorEDICodeEdited = `${getRandomPostfix()}`;
@@ -158,12 +161,8 @@ export default {
     cy.do([tagButton.click()]);
   },
 
-  verifyTagCount() {
-    cy.expect(
-      IconButton({ icon: 'tag' })
-        .count()
-        .then((val) => cy.log(val))
-    );
+  verifyTagCount(count = '1') {
+    cy.expect(tagsButton.find(HTML(including(count))).exists());
   },
 
   tagsPane: () => {
@@ -358,11 +357,7 @@ export default {
 
   resetFilters: () => {
     cy.do(resetButton.click());
-    cy.expect(resetButton.is({ disabled: true }));
-  },
-
-  resetAll: () => {
-    cy.do(resetButton.click());
+    cy.expect(resetButton.is({ disabled: true })); // Assertion gets failed due to in bugfest Url Reset All button is enabled by default
   },
 
   checkSearchResults: (organization) => {
@@ -501,7 +496,9 @@ export default {
   selectCategories: (category) => {
     cy.expect(MultiSelect().exists());
     cy.do([MultiSelect().select(category), saveAndClose.click()]);
-    cy.expect(timesButton.exists());
+    cy.expect(
+      Section({ id: 'view-contact' }).find(IconButton({ icon: 'times' }))
+    );
     cy.do([
       timesButton.click(),
       contactPeopleSection.find(openContactSectionButton).click(),
