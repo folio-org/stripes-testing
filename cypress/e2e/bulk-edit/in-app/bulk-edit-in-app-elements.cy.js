@@ -122,7 +122,7 @@ describe('bulk-edit', () => {
       });
     });
 
-    it('C357035 Verify elements of the bulk edit Items -- In app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404453 Verify elements of the bulk edit Items -- In app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.clickToBulkEditMainButton();
       BulkEditSearchPane.verifyDefaultFilterState();
 
