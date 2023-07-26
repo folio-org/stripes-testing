@@ -585,7 +585,9 @@ export default {
   },
 
   checkRowsCount:(expectedRowsCount) => {
-    cy.expect(instancesList.find(MultiColumnListRow({ index: expectedRowsCount - 1 })).exists());
-    cy.expect(instancesList.find(MultiColumnListRow({ index: expectedRowsCount })).absent());
+    cy.expect([
+      instancesList.find(MultiColumnListRow({ index: expectedRowsCount - 1 })).exists(),
+      instancesList.find(MultiColumnListRow({ index: expectedRowsCount })).absent()
+    ]);
   }
 };
