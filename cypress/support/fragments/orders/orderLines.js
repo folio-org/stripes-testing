@@ -45,8 +45,8 @@ const quantityPhysical = '5';
 const electronicUnitPrice = '10';
 const quantityElectronic = '5';
 const physicalUnitPriceTextField = TextField({ name: 'cost.listUnitPrice' });
-const orderLines = Button('Order lines');
-const funddetails = Section({ id: 'FundDistribution' });
+const orderLineButton = Button('Order lines');
+const funddetailsSection = Section({ id: 'FundDistribution' });
 const quantityPhysicalTextField = TextField({ name: 'cost.quantityPhysical' });
 const electronicUnitPriceTextField = TextField({ name: 'cost.listUnitPriceElectronic' });
 const quantityElectronicTextField = TextField({ name: 'cost.quantityElectronic' });
@@ -109,7 +109,7 @@ export default {
 
   clickOnOrderLines: () => {
     cy.do([
-      orderLines.click(),
+      orderLineButton.click(),
     ]);
   },
   waitLoading() {
@@ -120,7 +120,7 @@ export default {
   },
 
   selectFund: (FundName) => {
-    cy.do(funddetails.find(Link(FundName)).click());
+    cy.do(funddetailsSection.find(Link(FundName)).click());
   },
 
   resetFilters: () => {

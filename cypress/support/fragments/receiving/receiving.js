@@ -74,7 +74,7 @@ export default {
     InteractorsTools.checkCalloutMessage('The piece was successfully saved');
   },
 
-  addPieceProcess: (caption,enumeration) => {
+  addPieceProcess: (caption, enumeration) => {
     cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
     cy.do([
       Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),

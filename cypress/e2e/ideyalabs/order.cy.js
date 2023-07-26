@@ -44,13 +44,13 @@ describe('Orders app ', () => {
 
   it('C350428 Patron notice', () => {
     cy.visit(SettingsMenu.circulationTitleLevelRequestsPath);
-    titleLevelRequests.SelectConfirmationNoticeDropdown({
+    titleLevelRequests.selectConfirmationNoticeDropdown({
       notice1: patronData.notice1,
     });
-    titleLevelRequests.SelectCancelleationNoticeDropdown({
+    titleLevelRequests.selectCancelleationNoticeDropdown({
       notice2: patronData.notice2,
     });
-    titleLevelRequests.SelectExpirationNoticeDropdown({
+    titleLevelRequests.selectExpirationNoticeDropdown({
       notice3: patronData.notice3,
     });
     titleLevelRequests.clickOnSaveButton();

@@ -1,11 +1,11 @@
 import { Pane, Button, Select, Checkbox, NavListItem } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 
-const SaveButton = Button('Save');
+const saveButton = Button('Save');
 const TLRCheckbox = Checkbox({ name: 'titleLevelRequestsFeatureEnabled' });
-const ConfirmationNotice = Select({ name: 'confirmationPatronNoticeTemplateId' });
-const CancellationNotice = Select({ name:'cancellationPatronNoticeTemplateId' });
-const ExpirationNotice = Select({ name:'expirationPatronNoticeTemplateId' });
+const confirmationNotice = Select({ name: 'confirmationPatronNoticeTemplateId' });
+const cancellationNotice = Select({ name:'cancellationPatronNoticeTemplateId' });
+const expirationNotice = Select({ name:'expirationPatronNoticeTemplateId' });
 
 export default {
   waitLoading() {
@@ -15,20 +15,20 @@ export default {
   checkCirculationHasTLR() {
     cy.expect(Pane({ id: 'app-settings-nav-pane' }).find(NavListItem('Title level requests')).exists());
   },
-  SelectConfirmationNoticeDropdown: (notice) => {
-    cy.do(ConfirmationNotice.choose(notice.notice1));
+  selectConfirmationNoticeDropdown: (notice) => {
+    cy.do(confirmationNotice.choose(notice.notice1));
   },
 
-  SelectCancelleationNoticeDropdown: (notice) => {
-    cy.do(CancellationNotice.choose(notice.notice2));
+  selectCancelleationNoticeDropdown: (notice) => {
+    cy.do(cancellationNotice.choose(notice.notice2));
   },
 
-  SelectExpirationNoticeDropdown: (notice) => {
-    cy.do(ExpirationNotice.choose(notice.notice3));
+  selectExpirationNoticeDropdown: (notice) => {
+    cy.do(expirationNotice.choose(notice.notice3));
   },
 
   clickOnSaveButton:() => {
-    cy.do(SaveButton.click());
+    cy.do(saveButton.click());
   },
 
   changeTitleLevelRequestsStatus(status) {
@@ -38,7 +38,7 @@ export default {
         if (!checked && status === 'allow') {
           cy.expect(Checkbox({ name: 'titleLevelRequestsFeatureEnabled', disabled: false }).exists());
           cy.do(TLRCheckbox.click());
-          cy.do(SaveButton.click());
+          cy.do(saveButton.click());
           this.checkUpdateTLRCalloutAppeared();
         } else if (checked && status === 'forbid') {
           cy.expect(Checkbox({ name: 'titleLevelRequestsFeatureEnabled', disabled: false }).exists());
@@ -50,7 +50,7 @@ export default {
             if (body.find('div[label*="Cannot change"]').length) {
               cy.do(Button('Close').click());
             } else {
-              cy.do(SaveButton.click());
+              cy.do(saveButton.click());
               this.checkUpdateTLRCalloutAppeared();
             }
           });

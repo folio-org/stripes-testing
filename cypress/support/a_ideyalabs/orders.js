@@ -8,7 +8,7 @@ import {
   Section,
 } from '../../../interactors';
 
-const ordersTab = Button('Orders');
+const ordersButton = Button('Orders');
 const ordersPane = PaneContent({ id: 'orders-filters-pane-content' });
 const statusDropDown = Button('Status');
 const openCheckBox = Checkbox('Open');
@@ -23,7 +23,7 @@ const confirmButton = Button('Confirm');
 
 export default {
   switchToOrders: () => {
-    cy.do(ordersPane.find(ordersTab).click());
+    cy.do(ordersPane.find(ordersButton).click());
   },
   status: () => {
     cy.do([ordersPane.find(statusDropDown).click(), openCheckBox.click()]);
