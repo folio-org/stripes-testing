@@ -27,7 +27,7 @@ describe('Creating Permissions Set and Custom Fields', () => {
     cy.visit(topMenu.usersPath);
     usersSearchPane.searchByKeywords('testing');
     usersSearchPane.selectFirstUser('Excel, Testing');
-    usersSearchPane.verifyTestField(textFieldData.fieldLabel);
+    usersSearchPane.verifyTextField(textFieldData.fieldLabel);
   });
   it('C15694__Create a text area custom field and add help text', () => {
     cy.visit(topMenu.customFieldsPath);
@@ -35,7 +35,7 @@ describe('Creating Permissions Set and Custom Fields', () => {
     cy.visit(topMenu.usersPath);
     usersSearchPane.searchByKeywords('testing');
     usersSearchPane.selectFirstUser('Excel, Testing');
-    usersSearchPane.verifyTestArea(testAreaData.fieldLabel);
+    usersSearchPane.verifyTextArea(testAreaData.fieldLabel);
   });
   it('C15695__Create a checkbox custom field', () => {
     cy.visit(topMenu.customFieldsPath);

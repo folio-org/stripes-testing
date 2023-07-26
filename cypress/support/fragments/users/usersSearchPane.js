@@ -20,7 +20,7 @@ const waitClick = () => { cy.wait(1000); };
 const openLoanSectionButton = Button({ id: 'accordion-toggle-button-loansSection' });
 const actionButton = Section({ id: 'pane-userdetails' }).find(Button('Actions'));
 const editButton = Button('Edit');
-const AdditionalInfo = Button('Additional information');
+const additionalInfo = Button('Additional information');
 const saveAndClose = Button('Save & close');
 
 
@@ -56,9 +56,9 @@ export default {
     waitClick();
   },
 
-  EntertheBarcodeSearchFiled(Barcode) {
+  enterBarcodeSearchField(barcode) {
     cy.do([
-      TextField({ id: 'input-item-barcode' }).fillIn(Barcode),
+      TextField({ id: 'input-item-barcode' }).fillIn(barcode),
       Button({ id: 'clickable-add-item' }).click()
     ]);
   },
@@ -81,14 +81,14 @@ export default {
     cy.do([openLoanSectionButton.click()]);
   },
 
-  verifyTestField: (name) => {
+  verifyTextField: (name) => {
     cy.do([actionButton.click(),
       editButton.click(),
     ]);
     cy.expect(TextField(name).exists());
   },
 
-  verifyTestArea: (name) => {
+  verifyTextArea: (name) => {
     cy.do([actionButton.click(),
       editButton.click(),
     ]);
@@ -114,7 +114,7 @@ export default {
       editButton.click(),
       Select(name).choose(label),
       saveAndClose.click(),
-      AdditionalInfo.click()
+      additionalInfo.click()
     ]);
   },
 
