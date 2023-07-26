@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../utils/stringTools';
-import { Button, Modal, PaneContent, including } from '../../../../interactors';
+import { Button, Modal, including } from '../../../../interactors';
 
 
 const defaultNoticeTemplateBody = {
