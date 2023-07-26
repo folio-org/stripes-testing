@@ -1,4 +1,4 @@
-import { HTML, including } from '@interactors/html';
+import { including } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -33,7 +33,6 @@ const summaryAccordionId = 'summarySection';
 const organizationDetails = Pane({ id: 'pane-organization-details' });
 const organizationsList = MultiColumnList({ id: 'organizations-list' });
 const blueColor = 'rgba(0, 0, 0, 0)';
-const tagButton = Button({ icon: 'tag' });
 const summarySection = Accordion({ id: summaryAccordionId });
 const searchInput = SearchField({ id: 'input-record-search' });
 const vendorEDICodeEdited = `${getRandomPostfix()}`;
@@ -84,7 +83,6 @@ const openintegrationDetailsSectionButton = Button({
 const listIntegrationConfigs = MultiColumnList({
   id: 'list-integration-configs',
 });
-const tagCount = "//button[@icon='tag']//span[contains(@class,'label')]";
 const trashButton = Button({ icon:'trash' });
 const deleteCategoryModal = Modal({ id: 'delete-controlled-vocab-entry-confirmation' });
 const deleteButtonInCategory = Button('Delete', { id: 'clickable-delete-controlled-vocab-entry-confirmation-confirm' });
@@ -140,13 +138,6 @@ export default {
     cy.expect(
       summarySection.find(KeyValue({ value: organization.code })).exists()
     );
-  },
-
-  verifyTagCount() {
-    cy.xpath(tagCount).then(($ele) => {
-      const count = $ele.text();
-      cy.expect(tagButton.find(HTML(including(count))).exists());
-    });
   },
 
   tagFilter: () => {
@@ -363,19 +354,8 @@ export default {
     ]);
   },
 
-  selectNoInIsVendor: () => {
-    cy.do([
-      Button({ id: 'accordion-toggle-button-org-filter-isVendor' }).click(),
-      Checkbox('No').click(),
-    ]);
-  },
-
   selectVendor: () => {
     cy.do([Checkbox('Vendor').click(), saveAndClose.click()]);
-  },
-
-  closeDetailsPane: () => {
-    cy.do([timesButton.click()]);
   },
 
   selectCountryFilter: () => {

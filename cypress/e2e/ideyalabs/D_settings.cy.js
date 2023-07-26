@@ -125,12 +125,12 @@ describe('Creating Permissions Set and Custom Fields', () => {
   after('delete the test data', () => {
     cy.visit(topMenu.customFieldsPath);
     customFields.editButton();
-    customFields.removeCustomField(`${textFieldData.fieldLabel} · Text field`);
-    customFields.removeCustomField(`${testAreaData.fieldLabel} · Text area`);
-    customFields.removeCustomField(`${checkboxData.fieldLabel} · Checkbox`);
-    customFields.removeCustomField(`${radioButtonData.data.fieldLabel} · Radio button set`);
-    customFields.removeCustomField(`${singleSelectData.data.fieldLabel} · Single select`);
-    customFields.deleteCustomFields();
+    customFields.deleteCustomField(`${textFieldData.fieldLabel} · Text field`);
+    customFields.deleteCustomField(`${testAreaData.fieldLabel} · Text area`);
+    customFields.deleteCustomField(`${checkboxData.fieldLabel} · Checkbox`);
+    customFields.deleteCustomField(`${radioButtonData.data.fieldLabel} · Radio button set`);
+    customFields.deleteCustomField(`${singleSelectData.data.fieldLabel} · Single select`);
+    customFields.confirmDeletion();
     customFields.verifyDeletedCustomFields(`${textFieldData.fieldLabel} · Text field`);
     customFields.verifyDeletedCustomFields(`${testAreaData.fieldLabel} · Text area`);
     customFields.verifyDeletedCustomFields(`${checkboxData.fieldLabel} · Checkbox`);

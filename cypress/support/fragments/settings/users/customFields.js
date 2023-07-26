@@ -43,7 +43,9 @@ export default {
       saveAndCloseButton.click(),
     ]);
   },
-  clickONewButton() {
+
+  clickOnNewButton() {
+    cy.expect(newButton.exists());
     cy.do(newButton.click());
   },
 
@@ -116,11 +118,11 @@ export default {
       editNewButton.click()]);
   },
 
-  removeCustomField(field) {
+  deleteCustomField(field) {
     cy.do(Accordion(field).find(Button({ icon: 'trash' })).click());
   },
 
-  deleteCustomFields() {
+  confirmDeletion() {
     cy.do(Button('Save & close').click());
     cy.do(Modal('Delete field data').find(Button('Save & lose data')).click());
   },
