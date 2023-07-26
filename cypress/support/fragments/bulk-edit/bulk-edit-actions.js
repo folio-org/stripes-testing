@@ -241,6 +241,7 @@ export default {
       RepeatableFieldItem({ index: rowIndex }).find(Select({ content: including('Set') })).choose(`Set ${value}`),
     ]);
     if (value) cy.expect(Checkbox('Apply to items records').has({ checked: true }));
+    else cy.expect(Checkbox('Apply to items records').has({ checked: false }));
   },
 
   verifyNoMatchingOptionsForLocationFilter() {
