@@ -72,7 +72,7 @@ describe('Patron Notices', () => {
       NewNoticePolicyTemplate.addToken('item.effectiveLocationDiscoveryDisplayName');
       NewNoticePolicyTemplate.saveAndClose();
       NewNoticePolicyTemplate.waitLoading();
-      NewNoticePolicyTemplate.checkPreview('Main Library');
+      NoticePolicyTemplate.checkPreview('Main Library');
     }
   );
 });

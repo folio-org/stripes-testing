@@ -57,16 +57,10 @@ export default {
   },
 
   checkPreview: (previewText) => {
-    cy.get('body').then(($body) => {
-      if ($body.find('[id=patron-notice-template-pane-content]').length) {
-        cy.do(PaneContent({ id: 'patron-notice-template-pane-content' }).find(Button('Preview')).click());
-      } else {
-        cy.do(Button('Preview').click());
-      }
-    });
+    cy.do(PaneContent({ id: 'patron-notice-template-pane-content' }).find(Button('Preview')).click());
     cy.expect([
       Modal(including('Preview of patron notice template')).exists(),
-      Modal({ content: including(previewText) }).exists()
+      Modal({ content: including(previewText) }).exists(),
     ]);
     cy.do(Button('Close').click());
   },
