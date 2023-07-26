@@ -16,13 +16,15 @@ const successfulCreateCalloutMessage = 'Remote storage configuration was success
 const successfulChangeCalloutMessage = 'Remote storage configuration was successfully changed.';
 const successfulDeleteCalloutMessage = 'Remote storage configuration was successfully deleted.';
 const configurationPane = Pane({ title: 'Configurations' });
+const verifyDataSynchronizationSettingsAccordion = Accordion('Data synchronization settings');
 const saveAndCloseBtn = Button('Save & close');
 const saveBtn = Button('Save');
 const actionsBtn = Button('Actions');
 const configurationFields = {
   nameInput: TextField({ name: 'name' }),
   urlInput: TextField({ name: 'url' }),
-  timingInput: TextField({ name: 'accessionDelay' })
+  timingInput: TextField({ name: 'accessionDelay' }),
+  provider: Select({ name: 'providerName' }),
 };
 
 
@@ -110,7 +112,11 @@ export default {
     ]);
 
     for (const param in configuration) {
-      cy.do(configurationFields[param].fillIn(configuration[param]));
+      if (param === 'provider') {
+        cy.do(configurationFields[param].choose(including(configuration[param])));
+      } else {
+        cy.do(configurationFields[param].fillIn(configuration[param]));
+      }
     }
     cy.do(saveAndCloseBtn.click());
   },
@@ -154,5 +160,10 @@ export default {
       MultiColumnListHeader('Final location (Remote)').exists(),
       MultiColumnListHeader('Actions').exists(),
     ]);
-  }
+  },
+
+  verifyDataSynchronizationSettingsAccordion(exists) {
+    if (exists) cy.expect(verifyDataSynchronizationSettingsAccordion.exists());
+    else cy.expect(verifyDataSynchronizationSettingsAccordion.absent())
+  },
 };

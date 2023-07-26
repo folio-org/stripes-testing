@@ -31,7 +31,7 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it('C350928 Verify error accordion during matching (CSV approach) (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C350928 Verify error accordion during matching (Local approach) (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.checkUsersRadio();
       BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
