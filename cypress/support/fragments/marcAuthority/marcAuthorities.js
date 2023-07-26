@@ -51,7 +51,7 @@ export default {
     cy.do(searchNav.click());
   },
 
-  serchbeats(value) {
+  searchbeats(value) {
     cy.do((SearchField({ id: 'textarea-authorities-search' })).fillIn(value));
     cy.do((Button({ id: 'submit-authorities-search' })).click());
   },

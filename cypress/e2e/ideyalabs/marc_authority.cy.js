@@ -125,7 +125,7 @@ describe('Feature MARC Authority', () => {
 
   it('C376987:print marcfile', () => {
     cy.visit(topMenu.marcAuthorities);
-    marcAuthorities.serchbeats(testData.marcRecord);
+    marcAuthorities.searchbeats(testData.marcRecord);
     marcAuthorities.clickActionsButton();
     inventoryInstance.selectRecord();
     marcAuthoritiesDelete.clickprintButton();
