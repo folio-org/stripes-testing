@@ -1,8 +1,7 @@
-import { Accordion, Button, including, HTML, Section, MultiColumnListCell, Badge, Modal, Checkbox, MultiColumnList, MultiColumnListRow, SelectionOption, SearchField, Spinner } from '../../../../interactors';
-import NewNote from '../notes/newNote';
+import { Accordion, Badge, Button, Checkbox, HTML, Modal, MultiColumnList, MultiColumnListCell, MultiColumnListRow, SearchField, Section, SelectionOption, Spinner, including } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 import ExistingNoteEdit from '../notes/existingNoteEdit';
-
+import NewNote from '../notes/newNote';
 
 const rootXpath = '//section[@id="pane-view-agreement"]';
 const rootSection = Section({ id: 'pane-view-agreement' });
@@ -150,8 +149,4 @@ export default {
       Button('Save & close').click()
     ]);
   },
-
-  agreementlistClick() {
-    cy.do(MultiColumnListCell('2020 ACS Publications').click());
-  }
 };
