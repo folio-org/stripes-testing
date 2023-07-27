@@ -11,9 +11,6 @@ import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 
-// TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
-Cypress.on('uncaught:exception', () => false);
-
 let user;
 const externalId = getRandomPostfix();
 const userExternalIDsFileName = `userExternalIDs_${getRandomPostfix()}.csv`;

@@ -85,6 +85,7 @@ describe('export manager', () => {
     InteractorsTools.checkCalloutMessage(jobCompletedCalloutMessage);
 
     cy.visit(TopMenu.exportManagerPath);
+    FileManager.deleteFileFromDownloadsByMask('CIRCULATION_LOG*');
   });
 
   after('check in item, delete instance, user and files', () => {
@@ -96,7 +97,6 @@ describe('export manager', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
     Users.deleteViaApi(userData.userId);
     FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
-    FileManager.deleteFileFromDownloadsByMask('CIRCULATION_LOG*');
   });
 
   it('C350727 Verify search filter options Export Manager (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
