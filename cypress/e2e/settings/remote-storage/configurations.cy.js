@@ -43,7 +43,7 @@ describe('remote-storage-configuration', () => {
     RemoteStorageHelper.deleteRemoteStorage(name);
   });
 
-  it.only('C343287 Data synchronization settings field must be undefined for any provider except Dematic StagingDirector (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+  it('C343287 Data synchronization settings field must be undefined for any provider except Dematic StagingDirector (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     const name = `AutotestConfigurationName${getRandomPostfix()}`;
 
     RemoteStorageHelper.verifyProviderDataSynchronizationSettings();

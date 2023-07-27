@@ -33,8 +33,8 @@ const configurationFields = {
 
 function fillGeneralInfo(fileName, providerName) {
   return cy.do([
-   newButton.click(),
-    TextField({ name: 'name' }).fillIn(fileName),
+    newButton.click(),
+    configurationFields.nameInput.fillIn(fileName),
     generalInformationAccordion.find(Select()).choose(including(providerName)),
   ]);
 }
@@ -60,7 +60,7 @@ const configurations = {
     title: 'Dematic StagingDirector',
     create(name) {
       fillGeneralInfo(name, this.title);
-      cy.do(TextField({ name: 'accessionDelay' }).fillIn('1'));
+      cy.do(configurationFields.timingInput.fillIn('1'));
       saveAndCloseForm();
     }
   },
