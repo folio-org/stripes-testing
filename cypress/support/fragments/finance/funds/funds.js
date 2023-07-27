@@ -56,6 +56,7 @@ const fundingInformationMCList = MultiColumnList({ ariaRowCount: 7 });
 const FinancialActivityAndOveragesMCList = MultiColumnList({ ariaRowCount: 5 });
 const resetButton = Button({ id: 'reset-funds-filters' });
 const addTransferModal = Modal({ id: 'add-transfer-modal' });
+const closeWithoutSavingButton = Button('Close without saving');
 
 export default {
 
@@ -100,6 +101,30 @@ export default {
       saveAndCloseButton.click()
     ]);
     this.waitForFundDetailsLoading();
+  },
+
+  cancelCreatingFundWithTransfers(defaultFund, defaultLedger, firstFund, secondFund) {
+    cy.do([
+      newButton.click(),
+      nameField.fillIn(defaultFund.name),
+      codeField.fillIn(defaultFund.code),
+      ledgerSelection.open(),
+      SelectionList().select(defaultLedger),
+    ]);
+    // TO DO: change xpath to interactors when it would be possible
+    cy.get('[data-test-col-transfer-from="true"]').click();
+    cy.get('[data-test-col-transfer-from="true"] ul[role="listbox"]')
+      .contains(firstFund.name)
+      .click();
+    cy.get('[data-test-col-transfer-to="true"]').click();
+    cy.get('[data-test-col-transfer-to="true"] ul[role="listbox"]')
+      .contains(secondFund.name)
+      .click();
+    cy.do([
+      cancelButton.click(),
+      closeWithoutSavingButton.click()
+    ]);
+    this.waitLoading();
   },
 
   createFundForWarningMessage(fund) {
@@ -149,7 +174,7 @@ export default {
       Button('Agreements').click(),
       Button('Keep editing').click,
       cancelButton.click(),
-      Button('Close without saving').click()
+      closeWithoutSavingButton.click()
     ]);
   },
 
