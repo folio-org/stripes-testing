@@ -66,7 +66,7 @@ describe('ui-data-import', () => {
     acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
-  before('create test data and login', () => {
+  before('login', () => {
     cy.createTempUser([
       permissions.moduleDataImportEnabled.gui,
       permissions.settingsDataImportEnabled.gui,
@@ -99,7 +99,7 @@ describe('ui-data-import', () => {
       });
   });
 
-  it('C397983 Verify the ability to import Holdings and Instance using marc-to-marc submatch: 2 matches (folijet)',
+  it('C400649 Verify that mapping for the 856 field maintains relationship between URL and link text (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       // create Field mapping profiles
       cy.visit(SettingsMenu.mappingProfilePath);
@@ -154,9 +154,9 @@ describe('ui-data-import', () => {
       });
       FileDetails.openInstanceInInventory('Created');
       InventoryInstance.getAssignedHRID().then(hrId => { instanceHrid = hrId; });
-      InstanceRecordView.verifyElectronicAccessS(URLs[0].url, URLs[0].linkText);
-      InstanceRecordView.verifyElectronicAccessS(URLs[1].url, URLs[1].linkText, 1);
-      InstanceRecordView.verifyElectronicAccessS(URLs[2].url, URLs[2].linkText, 2);
-      InstanceRecordView.verifyElectronicAccessS(URLs[3].url, URLs[3].linkText, 3);
+      InstanceRecordView.verifyElectronicAccess(URLs[0].url, URLs[0].linkText);
+      InstanceRecordView.verifyElectronicAccess(URLs[1].url, URLs[1].linkText, 1);
+      InstanceRecordView.verifyElectronicAccess(URLs[2].url, URLs[2].linkText, 2);
+      InstanceRecordView.verifyElectronicAccess(URLs[3].url, URLs[3].linkText, 3);
     });
 });
