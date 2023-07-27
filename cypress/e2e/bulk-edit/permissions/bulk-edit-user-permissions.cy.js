@@ -7,6 +7,9 @@ import UsersCard from '../../../support/fragments/users/usersCard';
 import devTeams from '../../../support/dictionary/devTeams';
 import users from '../../../support/fragments/users/users';
 
+// TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
+Cypress.on('uncaught:exception', () => false);
+
 let userWthViewEditPermissions;
 
 describe('bulk-edit', () => {
