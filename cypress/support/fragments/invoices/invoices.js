@@ -203,6 +203,26 @@ export default {
     InteractorsTools.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage);
   },
 
+  createInvoiceLinePOLLookUWithSubTotal: (orderNumber, total) => {
+    cy.do([
+      Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click(),
+      Button('New blank line').click()
+    ]);
+    cy.do([
+      Button('POL look-up').click(),
+      Modal('Select order lines').find(SearchField({ id: searhInputId })).fillIn(orderNumber),
+      searchButton.click()
+    ]);
+    Helper.selectFromResultsList();
+    cy.get('input[name="subTotal"]').clear().type(total);
+    cy.do([
+      Section({ id: 'invoiceLineForm-fundDistribution' }).find(Button('%')).click(),
+      saveAndClose.click(),
+    ]);
+    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage);
+    cy.wait(4000);
+  },
+
   addLineFromPol: (orderNumber) => {
     cy.do([
       Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click(),
