@@ -1,3 +1,4 @@
+import moment from 'moment';
 import uuid from 'uuid';
 import TestTypes from '../../support/dictionary/testTypes';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
@@ -51,6 +52,7 @@ describe('Loan notice triggers', () => {
       category: 'Loan',
       subject: getTestEntityValue(noticeName),
       body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
+      previewText: `Test email body The Wines of Italy ${moment().format('ll')}`,
     };
   };
   const noticeTemplates = {
@@ -290,10 +292,13 @@ describe('Loan notice triggers', () => {
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.uponAt);
+      delete noticeTemplates.uponAt.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.uponAt);
       NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.afterOnce);
+      delete noticeTemplates.afterOnce.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.afterOnce);
       NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.afterRecurring);
+      delete noticeTemplates.afterRecurring.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.afterRecurring);
 
       cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
