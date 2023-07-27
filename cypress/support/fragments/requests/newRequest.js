@@ -1,6 +1,19 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import { Button, TextField, Pane, Select, HTML, including, Checkbox, Section, Accordion, TextArea, MultiColumnListCell } from '../../../../interactors';
+import {
+  Button,
+  TextField,
+  Pane,
+  Select,
+  HTML,
+  including,
+  Checkbox,
+  Section,
+  Accordion,
+  TextArea,
+  MultiColumnListCell,
+} from '../../../../interactors';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../constants';
+import InteractorsTools from '../../utils/interactorsTools';
 import SelectUser from './selectUser';
 
 const actionsButton = Button('Actions');
@@ -29,9 +42,15 @@ function openNewRequestPane() {
   ]);
 }
 
+function printPickSlips() {
+  cy.do([actionsButton.click(), Button({ id: 'printPickSlipsBtn' }).click()]);
+  InteractorsTools.checkCalloutMessage('Print options loading in progress. It might take a few seconds, please be patient.');
+}
+
 export default {
   addRequester,
   openNewRequestPane,
+  printPickSlips,
 
   fillRequiredFields(newRequest) {
     if ('instanceHRID' in newRequest) {

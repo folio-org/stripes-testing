@@ -555,14 +555,16 @@ export default {
     ]);
   },
 
-  addElectronicAccess:(relationship, uri, linkText = '') => {
+  addElectronicAccess:(relationship, uri, linkText = '', materialsSpecified = '', urlPublicNote = '') => {
     cy.do([
       Select({ name:'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).focus(),
       Select({ name:'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).choose(actions.addTheseToExisting),
       Button('Add electronic access').click(),
       TextField('Relationship').fillIn(`"${relationship}"`),
       TextField('URI').fillIn(uri),
-      TextField('Link text').fillIn(linkText)
+      TextField('Link text').fillIn(linkText),
+      TextField('Materials specified').fillIn(materialsSpecified),
+      TextField('URL public note').fillIn(urlPublicNote)
     ]);
     waitLoading();
   },
@@ -802,6 +804,8 @@ export default {
     cy.get('div[class^="mclRow--"]').contains('div[class^="mclCell-"]', field).then(elem => {
       elem.parent()[0].querySelector('input[type="checkbox"]').click();
     });
+    // TODO wait until checkbox will be marked
+    cy.wait(2000);
   },
 
   createMappingProfileViaApi:(nameProfile) => {
