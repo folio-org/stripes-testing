@@ -2,10 +2,8 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import Helper from '../../../support/fragments/finance/financeHelper';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -14,31 +12,32 @@ import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import { INSTANCE_STATUS_TERM_NAMES,
   HOLDINGS_TYPE_NAMES,
   LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
-  EXISTING_RECORDS_NAMES,
   JOB_STATUS_NAMES } from '../../../support/constants';
 import NewInstanceStatusType from '../../../support/fragments/settings/inventory/instances/instanceStatusTypes/newInstanceStatusType';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
-import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
 import InstanceStatusTypes from '../../../support/fragments/settings/inventory/instances/instanceStatusTypes/instanceStatusTypes';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('ui-data-import', () => {
   let user;
+  let instanceHrid;
   const testData = {
     protectedFieldId: null,
     filePath: 'marcFileForC400649.mrc',
     fileName: `C400649 autotestFile_${getRandomPostfix()}`
-    // newUri: 'http://jbjjhhjj:3000/Test2'
   };
+  const URLs = [
+    { url: 'https://muse.jhu.edu/book/67428', linkText: 'Project Muse' },
+    { url: 'https://muse.jhu.edu/book/74528', linkText: 'Project Muse' },
+    { url: 'https://www.jstor.org/stable/10.2307/j.ctv26d9pv', linkText: 'JSTOR' },
+    { url: 'https://www.jstor.org/stable/10.2307/j.ctvcwp01n', linkText: 'JSTOR' }
+  ];
   const collectionOfMappingAndActionProfiles = [
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
@@ -82,6 +81,21 @@ describe('ui-data-import', () => {
           });
         cy.login(user.username, user.password,
           { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+      });
+  });
+
+  after('delete test data', () => {
+    InstanceStatusTypes.deleteViaApi(testData.instanceStatusTypeId);
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
+    collectionOfMappingAndActionProfiles.forEach(profile => {
+      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+    });
+    Users.deleteViaApi(user.userId);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
       });
   });
 
@@ -139,7 +153,10 @@ describe('ui-data-import', () => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
       });
       FileDetails.openInstanceInInventory('Created');
-
-      
+      InventoryInstance.getAssignedHRID().then(hrId => { instanceHrid = hrId; });
+      InstanceRecordView.verifyElectronicAccessS(URLs[0].url, URLs[0].linkText);
+      InstanceRecordView.verifyElectronicAccessS(URLs[1].url, URLs[1].linkText, 1);
+      InstanceRecordView.verifyElectronicAccessS(URLs[2].url, URLs[2].linkText, 2);
+      InstanceRecordView.verifyElectronicAccessS(URLs[3].url, URLs[3].linkText, 3);
     });
 });
