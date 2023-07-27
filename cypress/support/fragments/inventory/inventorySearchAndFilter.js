@@ -57,6 +57,7 @@ const editInstanceButton = Button('Edit instance');
 const inventorySearchResultsPane = Section({ id: 'browse-inventory-results-pane' });
 const nextButton = Button({ id: 'browse-results-list-callNumbers-next-paging-button' });
 const previousButton = Button({ id: 'browse-results-list-callNumbers-prev-paging-button' });
+const instancesList = paneResultsSection.find(MultiColumnList({ id: 'list-inventory' }));
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -581,5 +582,12 @@ export default {
     cy.wait(1000);
     holdingsPermanentLocationAccordion.find(TextField()).click();
     cy.do(holdingsPermanentLocationAccordion.find(Checkbox(location)).click());
+  },
+
+  checkRowsCount:(expectedRowsCount) => {
+    cy.expect([
+      instancesList.find(MultiColumnListRow({ index: expectedRowsCount - 1 })).exists(),
+      instancesList.find(MultiColumnListRow({ index: expectedRowsCount })).absent()
+    ]);
   }
 };

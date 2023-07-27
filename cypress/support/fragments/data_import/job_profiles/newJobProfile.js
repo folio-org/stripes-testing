@@ -41,8 +41,24 @@ function linkMatchProfileForMatches(matchProfileName, forMatchesOrder = 0) {
   cy.expect(Accordion('Overview').find(HTML(including(matchProfileName))).exists());
 }
 
+function linkMatchProfileForSubMatches(matchProfileName, forMatchesOrder = 0) {
+  cy.get('[id*="type-selector-dropdown-ROOT-MATCH"]').eq(forMatchesOrder).click();
+  cy.do(matchButton.click());
+  ModalSelectProfile.searchProfileByName(matchProfileName, 'match');
+  ModalSelectProfile.selectProfile(matchProfileName);
+  cy.expect(Accordion('Overview').find(HTML(including(matchProfileName))).exists());
+}
+
 function linkActionProfileForMatches(actionProfileName, forMatchesOrder = 0) {
   cy.get('[id*="type-selector-dropdown-ROOT"]').eq(forMatchesOrder).click();
+  cy.do(actionsButton.click());
+  ModalSelectProfile.searchProfileByName(actionProfileName);
+  ModalSelectProfile.selectProfile(actionProfileName);
+  cy.expect(Accordion('Overview').find(HTML(including(actionProfileName))).exists());
+}
+
+function linkActionProfileForSubMatches(actionProfileName, forMatchesOrder = 0) {
+  cy.get('[id*="type-selector-dropdown-ROOT-MATCH-MATCH"]').eq(forMatchesOrder).click();
   cy.do(actionsButton.click());
   ModalSelectProfile.searchProfileByName(actionProfileName);
   ModalSelectProfile.selectProfile(actionProfileName);
@@ -54,6 +70,8 @@ export default {
   linkActionProfileByName,
   linkMatchProfileForMatches,
   linkActionProfileForMatches,
+  linkMatchProfileForSubMatches,
+  linkActionProfileForSubMatches,
   defaultJobProfile,
 
   fillJobProfile: (specialJobProfile = defaultJobProfile) => {
@@ -95,6 +113,12 @@ export default {
     ModalSelectProfile.searchProfileByName(actionProfileName);
     ModalSelectProfile.selectProfile(actionProfileName);
     cy.expect(Accordion('Overview').find(HTML(including(actionProfileName))).exists());
+  },
+
+  linkMatchAndTwoActionProfilesForSubMatches(matchProfileName, firstActionProfileName, secondActionProfileName) {
+    linkMatchProfileForSubMatches(matchProfileName);
+    linkActionProfileForSubMatches(firstActionProfileName);
+    linkActionProfileForSubMatches(secondActionProfileName);
   },
 
   linkMatchAndActionProfiles(matchProfileName, actionProfileName, forMatchesOrder = 0) {
