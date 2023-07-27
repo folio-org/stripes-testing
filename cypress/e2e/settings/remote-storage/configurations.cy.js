@@ -7,7 +7,10 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 
 let user;
-const name = `AutotestConfigurationName${getRandomPostfix()}`;
+
+const dematicEMS = RemoteStorageHelper.configurations.DematicEMS;
+const caiaSoft = RemoteStorageHelper.configurations.CaiaSoft;
+const dematicStagingDirector = RemoteStorageHelper.configurations.DematicStagingDirector;
 
 describe('remote-storage-configuration', () => {
   before('create test data', () => {
@@ -18,14 +21,11 @@ describe('remote-storage-configuration', () => {
   });
 
   after('delete test data', () => {
-    RemoteStorageHelper.deleteRemoteStorage(name);
     Users.deleteViaApi(user.userId);
   });
 
   it('C343219 Check “Accession tables” page without configurations with CaiaSoft provider (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    const dematicEMS = RemoteStorageHelper.configurations.DematicEMS;
-    const caiaSoft = RemoteStorageHelper.configurations.CaiaSoft;
-    const dematicStagingDirector = RemoteStorageHelper.configurations.DematicStagingDirector;
+    const name = `AutotestConfigurationName${getRandomPostfix()}`;
 
     dematicEMS.create(name);
     RemoteStorageHelper.verifyCreatedConfiguration(name, dematicEMS);
@@ -39,5 +39,17 @@ describe('remote-storage-configuration', () => {
     RemoteStorageHelper.closeWithSaving();
     RemoteStorageHelper.verifyEditedConfiguration(name, { provider: `${dematicStagingDirector.title} (TCP/IP)` });
     RemoteStorageHelper.verifyDataSynchronizationSettingsAccordion(true);
+
+    RemoteStorageHelper.deleteRemoteStorage(name);
+  });
+
+  it('C343287 Data synchronization settings field must be undefined for any provider except Dematic StagingDirector (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+    const name = `AutotestConfigurationName${getRandomPostfix()}`;
+
+    RemoteStorageHelper.verifyProviderDataSynchronizationSettings();
+    dematicStagingDirector.create(name);
+    RemoteStorageHelper.verifyCreatedConfiguration(name, dematicStagingDirector);
+
+    RemoteStorageHelper.deleteRemoteStorage(name);
   });
 });
