@@ -100,10 +100,10 @@ describe('ui-invoices: Cancelling approved invoices', () => {
         cy.login(userProperties.username, userProperties.password, { path:TopMenu.invoicesPath, waiter: Invoices.waitLoading });
       });
   });
-  //   after(() => {
-  //     Organizations.deleteOrganizationViaApi(organization.id);
-  //     Users.deleteViaApi(user.userId);
-  //   });
+  after(() => {
+    Organizations.deleteOrganizationViaApi(organization.id);
+    Users.deleteViaApi(user.userId);
+  });
 
   it('C347897 Approve invoice with both payment and credit (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     cy.visit(TopMenu.invoicesPath);
