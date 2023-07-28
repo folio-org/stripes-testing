@@ -360,6 +360,19 @@ export default {
     cy.expect(resetButton.is({ disabled: true })); // Assertion gets failed due to in bugfest Url Reset All button is enabled by default
   },
 
+  verifyResetFilters: () => {
+    cy.expect(
+      Section({ id: 'organizations-results-pane' })
+        .find(
+          HTML(
+            including(
+              'Choose a filter or enter a search query to show results.'
+            )
+          )
+        )
+        .exists()
+    );
+  },
   checkSearchResults: (organization) => {
     cy.expect(
       organizationsList
@@ -395,6 +408,14 @@ export default {
     cy.do(Checkbox('Vendor').click());
     cy.expect(Checkbox({ name: 'isVendor', disabled: false }).exists());
     cy.do(saveAndClose.click());
+  },
+
+  verifyVendorExists: () => {
+    cy.expect(
+      Section({ id: 'summarySection' })
+        .find(Checkbox({ checked: true }))
+        .exists()
+    );
   },
 
   closeDetailsPane() {
@@ -493,10 +514,13 @@ export default {
     cy.do(confirmButton.click());
     cy.expect(contactPeopleSection.exists());
     cy.do(openContactSectionButton.click());
+  },
+
+  verifyDeletedContact: () => {
     cy.expect(contactPeopleDetails.absent());
   },
 
-  selectCategories: (category) => {
+  selectAndVerifyCategories: (category) => {
     cy.expect(MultiSelect().exists());
     cy.do([MultiSelect().select(category), saveAndClose.click()]);
     cy.expect(
