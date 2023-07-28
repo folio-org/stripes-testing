@@ -1,13 +1,13 @@
 export default {
   // bulk edit
-  bulkEditView: { internal: 'ui-bulk-edit.app-view', gui: 'Bulk Edit: In app - View inventory records' },
-  bulkEditEdit: { internal: 'ui-bulk-edit.app-edit', gui: 'Bulk Edit: In app - Edit inventory records' },
-  bulkEditCsvView: { internal: 'ui-bulk-edit.view', gui: 'Bulk Edit: Local - View user records' },
-  bulkEditCsvEdit: { internal: 'ui-bulk-edit.edit', gui: 'Bulk Edit: Local - Edit user records' },
+  bulkEditView: { internal: 'ui-bulk-edit.app-view', gui: 'Bulk Edit: In app - View' },
+  bulkEditEdit: { internal: 'ui-bulk-edit.app-edit', gui: 'Bulk Edit: In app - Edit' },
+  bulkEditCsvView: { internal: 'ui-bulk-edit.view', gui: 'Bulk Edit: (CSV) View' },
+  bulkEditCsvEdit: { internal: 'ui-bulk-edit.edit', gui: 'Bulk Edit: (CSV) Edit' },
   bulkEditCsvDelete: { internal: 'ui-bulk-edit.delete', gui: 'Bulk Edit: (CSV) Delete' },
-  bulkEditUpdateRecords: { internal: 'ui-bulk-edit.app-edit.users', gui: 'Bulk edit: In app - Edit user records' },
-  bulkEditQueryView: { internal: 'ui-bulk-edit.query', gui: 'Bulk edit: Can build query' },
-  bulkEditLogsView: { internal: 'ui-bulk-edit.logs.view', gui: 'Bulk edit: Can view logs' },
+  bulkEditUpdateRecords: { internal: 'ui-bulk-edit.app-edit.users', gui: 'Bulk edit: In app - Update user records' },
+  bulkEditQueryView: { internal: 'ui-bulk-edit.query', gui: 'Bulk edit: Query' },
+  bulkEditLogsView: { internal: 'ui-bulk-edit.logs.view', gui: 'Bulk edit - Can view logs' },
   // eHoldings
   uieHoldingsRecordsEdit: { internal: 'ui-eholdings.records.edit', gui:'eHoldings: Can edit providers, packages, titles detail records' },
   uieHoldingsTitlesPackagesCreateDelete: { internal: 'ui-eholdings.titles-packages.create-delete', gui: 'eHoldings: Can create and delete custom packages and titles' },
@@ -84,7 +84,6 @@ export default {
   uiCirculationSettingsNoticeTemplates: { internal: 'ui-circulation.settings.notice-templates', gui: 'Settings (Circ): Can create, edit and remove patron notice templates' },
   uiCirculationSettingsNoticePolicies: { internal: 'ui-circulation.settings.notice-policies', gui: 'Settings (Circ): Can create, edit and remove notice policies' },
   uiCirculationSettingsOtherSettings: { internal: 'ui-circulation.settings.other-settings', gui: 'Settings (Circ): Can create, edit and remove other settings' },
-  uiCirculationCreateEditRemoveStaffSlips: { internal: 'ui-circulation.settings.staff-slips', gui: 'Settings (Circ): Can create, edit and remove staff slips' },
   // Users
   usersViewRequests: { internal: 'ui-users.requests.all', gui: 'Users: View requests' },
   uiUsersView: { internal: 'ui-users.view', gui: 'Users: Can view user profile' },
@@ -112,7 +111,7 @@ export default {
   uiUsersCreatePatronConditions: { internal: 'ui-users.settings.conditions', gui: 'Settings (Users): Can view and edit patron blocks conditions' },
   uiUsersCustomField: { internal: 'ui-users.settings.customfields.all', gui: 'Settings (Users): Can create, edit, view and delete custom fields' },
   // Remote Storage
-  remoteStorageCRUD: { internal: 'ui-remote-storage.settings.remote-storages.edit', gui: 'Remote storage: Create, edit, delete' },
+  remoteStorageCRUD: { internal: '', gui: 'Settings (Remote storage): Can create, edit, delete remote storage settings' },
   remoteStorageView: { internal: 'ui-remote-storage.settings.remote-storages.view', gui: 'Remote storage: View' },
   // Requests
   uiRequestsCreate: { internal: 'ui-requests.create', gui: 'Requests: View, create' },
@@ -225,6 +224,13 @@ export default {
   settingsDataImportCanViewOnly:{ internal:'ui-data-import.settings.readOnly', gui:'Settings (Data import): Can view only' },
   settingsTenantViewLocation:{ internal:'ui - tenant - settings.settings.location.view', gui:'Settings (Tenant): View locations' },
   settingsUsersCRUD: { internal: 'ui-users.settings.transfers.all', gui: 'Settings (Users): Can create, edit and remove transfer accounts' },
+  // Tried to add below permissions based on testcase requirements
+  settingseHoldingsView: { internal: 'ui-eHoldings.settings.all', gui: 'Settings (eHoldings): Can view, edit, create and delete eHoldings' },
+  settingseHoldings: { internal: 'ui-eHoldings.settings', gui: 'Settings (eHoldings): Can view, edit, create and delete settings' },
+  settingseHoldingsCustomLabel:{ internal: 'ui-custom-labels.settings.all', gui: 'Settings (custom labels): Can view, edit, create and delete custom labels' },
+  uieHoldingsItemCreate:{ internal: 'ui-eholdings.item.create', gui: 'eHoldings: Can create a custom label' },
+  uieHoldingsItemView: { internal: 'ui-eholdings.item.view', gui: 'eHoldings: Can view a custom label' },
+  uieHoldingsItemEdit:{ internal: 'ui-eholdings.item.edit', gui: 'eHoldings: Can edit a custom label' },
   // Timers
   okapiTimersPatch: { internal: 'okapi.proxy.self.timers.patch', gui: 'Okapi - patch timer for current tenant' },
   // Export manager
