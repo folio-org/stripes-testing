@@ -274,6 +274,23 @@ export default {
     ]);
   },
 
+  checkInvoiceInTransactionList: (indexnumber, type, amount, source) => {
+    cy.expect([
+      transactionList
+        .find(MultiColumnListRow({ index: indexnumber }))
+        .find(MultiColumnListCell({ columnIndex: 1 }))
+        .has({ content: type }),
+      transactionList
+        .find(MultiColumnListRow({ index: indexnumber }))
+        .find(MultiColumnListCell({ columnIndex: 2 }))
+        .has({ content: `${amount}` }),
+      transactionList
+        .find(MultiColumnListRow({ index: indexnumber }))
+        .find(MultiColumnListCell({ columnIndex: 5 }))
+        .has({ content: source })
+    ]);
+  },
+
 
   increaseAllocation: () => {
     cy.do([
