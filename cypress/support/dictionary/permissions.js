@@ -1,13 +1,13 @@
 export default {
   // bulk edit
-  bulkEditView: { internal: 'ui-bulk-edit.app-view', gui: 'Bulk Edit: In app - View' },
-  bulkEditEdit: { internal: 'ui-bulk-edit.app-edit', gui: 'Bulk Edit: In app - Edit' },
-  bulkEditCsvView: { internal: 'ui-bulk-edit.view', gui: 'Bulk Edit: (CSV) View' },
-  bulkEditCsvEdit: { internal: 'ui-bulk-edit.edit', gui: 'Bulk Edit: (CSV) Edit' },
+  bulkEditView: { internal: 'ui-bulk-edit.app-view', gui: 'Bulk Edit: In app - View inventory records' },
+  bulkEditEdit: { internal: 'ui-bulk-edit.app-edit', gui: 'Bulk Edit: In app - Edit inventory records' },
+  bulkEditCsvView: { internal: 'ui-bulk-edit.view', gui: 'Bulk Edit: Local - View user records' },
+  bulkEditCsvEdit: { internal: 'ui-bulk-edit.edit', gui: 'Bulk Edit: Local - Edit user records' },
   bulkEditCsvDelete: { internal: 'ui-bulk-edit.delete', gui: 'Bulk Edit: (CSV) Delete' },
-  bulkEditUpdateRecords: { internal: 'ui-bulk-edit.app-edit.users', gui: 'Bulk edit: In app - Update user records' },
-  bulkEditQueryView: { internal: 'ui-bulk-edit.query', gui: 'Bulk edit: Query' },
-  bulkEditLogsView: { internal: 'ui-bulk-edit.logs.view', gui: 'Bulk edit - Can view logs' },
+  bulkEditUpdateRecords: { internal: 'ui-bulk-edit.app-edit.users', gui: 'Bulk edit: In app - Edit user records' },
+  bulkEditQueryView: { internal: 'ui-bulk-edit.query', gui: 'Bulk edit: Can build query' },
+  bulkEditLogsView: { internal: 'ui-bulk-edit.logs.view', gui: 'Bulk edit: Can view logs' },
   // eHoldings
   uieHoldingsRecordsEdit: { internal: 'ui-eholdings.records.edit', gui:'eHoldings: Can edit providers, packages, titles detail records' },
   uieHoldingsTitlesPackagesCreateDelete: { internal: 'ui-eholdings.titles-packages.create-delete', gui: 'eHoldings: Can create and delete custom packages and titles' },
@@ -112,7 +112,7 @@ export default {
   uiUsersCreatePatronConditions: { internal: 'ui-users.settings.conditions', gui: 'Settings (Users): Can view and edit patron blocks conditions' },
   uiUsersCustomField: { internal: 'ui-users.settings.customfields.all', gui: 'Settings (Users): Can create, edit, view and delete custom fields' },
   // Remote Storage
-  remoteStorageCRUD: { internal: '', gui: 'Settings (Remote storage): Can create, edit, delete remote storage settings' },
+  remoteStorageCRUD: { internal: 'ui-remote-storage.settings.remote-storages.edit', gui: 'Remote storage: Create, edit, delete' },
   remoteStorageView: { internal: 'ui-remote-storage.settings.remote-storages.view', gui: 'Remote storage: View' },
   // Requests
   uiRequestsCreate: { internal: 'ui-requests.create', gui: 'Requests: View, create' },
