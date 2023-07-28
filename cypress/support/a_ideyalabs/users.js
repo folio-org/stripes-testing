@@ -2,9 +2,11 @@ import {
   Accordion,
   Button,
   Checkbox,
+  HTML,
   KeyValue,
   Link,
   Modal,
+  MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
   PaneContent,
@@ -69,6 +71,13 @@ export default {
       deleteButtonInConfirmation.click(),
       Accordion({ id: 'notesAccordion' }).clickHeader(),
     ]);
+  },
+
+  verifyNoteExist: () => {
+    cy.expect(Section({ id: 'notesAccordion' }).find(MultiColumnListRow({ index: 0, content: title })).exists());
+  },
+
+  verifyNoteAbsent: () => {
     cy.expect(Section({ id: 'notesAccordion' }).find(MultiColumnListRow({ index: 0, content: title })).absent());
   },
 
@@ -177,5 +186,13 @@ export default {
   renewButton: () => {
     cy.expect(renewButton.exists());
     cy.do(renewButton.click());
+  },
+
+  checkRenewConfirmationModal: () => {
+    cy.expect(Modal({ id: 'bulk-renewal-modal-label' }).exists());
+  },
+
+  verifyItemBarcode:(barcode) => {
+    cy.expect(MultiColumnList({ id: 'list-loanshistory' }).find(HTML(including(barcode))).exists());
   },
 };

@@ -1,4 +1,6 @@
 import users from '../../support/a_ideyalabs/users';
+import devTeams from '../../support/dictionary/devTeams';
+import testTypes from '../../support/dictionary/testTypes';
 import topMenu from '../../support/fragments/topMenu';
 import userLoans from '../../support/fragments/users/loans/userLoans';
 import usersSearchPane from '../../support/fragments/users/usersSearchPane';
@@ -8,6 +10,7 @@ const testData = {
   loanBarcode: '81264459',
   patronBarcodeOne: '0000074372',
   patronBarcodeTwo: '322',
+  itemBarcodeOne: '132431',
   status: 'Active',
   name: 'A2L 3, Holly',
   parameter: 'Keyword (name, email, identifier)',
@@ -15,9 +18,10 @@ const testData = {
     details: `Test details ${getRandomPostfix()}`,
     editTitle: `Test Title ${getRandomPostfix()}`,
   },
-  barcode: '555555',
-  itemBarcode: '108204829'
+  patronBarcode: '555555',
+  itemBarcode: '108204829',
 };
+
 
 describe('Checkout item', () => {
   before('Login', () => {
@@ -27,51 +31,75 @@ describe('Checkout item', () => {
   after('Delete test data', () => {
     cy.visit(topMenu.usersPath);
     usersSearchPane.searchByStatus(testData.status);
-    usersSearchPane.searchByUsername(testData.name);
+    usersSearchPane.searchByKeywords(testData.parameter, testData.name);
     users.openNote();
     users.deleteNote();
+    users.verifyNoteAbsent();
   });
 
-  it('C343243 Check out app: Display a pop-up note and Close note', () => {
-    cy.visit(topMenu.usersPath);
-    usersSearchPane.searchByStatus(testData.status);
-    usersSearchPane.searchByUsername(testData.name);
-    users.createNote(testData.note.details);
-    users.getUserBarcode();
-    users.editNote(testData.note.editTitle, testData.note.details);
-  });
+  it(
+    'C343243 Check out app: Display a pop-up note and Close note',
+    { tags: testTypes.extendedPath },
+    () => {
+      cy.visit(topMenu.usersPath);
+      usersSearchPane.searchByStatus(testData.status);
+      usersSearchPane.searchByKeywords(testData.parameter, testData.name);
+      users.createNote(testData.note.details);
+      users.getUserBarcode();
+      users.editNote(testData.note.editTitle, testData.note.details);
+      users.verifyNoteExist();
+    }
+  );
 
-  it('C642 Cannot find the patron and item that meet circulation rule criteria', () => {
-    cy.visit(topMenu.checkOutPath);
-    users.enterPatronBarcodeCheckOut(testData.patronBarcodeOne);
-    users.clickOpenLoansCount();
-    userLoans.checkOffLoanByBarcode(testData.loanBarcode);
-    users.renewButton();
-  });
+  it(
+    'C642 Cannot find the patron and item that meet circulation rule criteria (vega)',
+    { tags: [testTypes.extendedPath, devTeams.vega] },
+    () => {
+      cy.visit(topMenu.checkOutPath);
+      users.enterPatronBarcodeCheckOut(testData.patronBarcodeOne);
+      users.clickOpenLoansCount();
+      userLoans.checkOffLoanByBarcode(testData.loanBarcode);
+      users.renewButton();
+      users.checkRenewConfirmationModal();
+    }
+  );
 
-  it('C646 Cannot find the patron and item that meet circulation rule criteria', () => {
-    cy.visit(topMenu.checkOutPath);
-    users.enterPatronBarcodeCheckOut(testData.patronBarcodeTwo);
-    users.clickOpenLoansCount();
-    users.dueDate();
-  });
+  it(
+    'C646 Cannot find the patron and item that meet circulation rule criteria (vega)',
+    { tags: [testTypes.extendedPath, devTeams.vega] },
+    () => {
+      cy.visit(topMenu.checkOutPath);
+      users.enterPatronBarcodeCheckOut(testData.patronBarcodeTwo);
+      users.enterItemBarcodeCheckOut(testData.itemBarcodeOne);
+      users.closeButton();
+      users.clickOpenLoansCount();
+      users.dueDate();
+      users.verifyItemBarcode(testData.itemBarcodeOne);
+    }
+  );
 
-  it('C777 Check out: override non-circulating items', () => {
-    cy.visit(topMenu.checkOutPath);
-    users.enterPatronBarcodeCheckOut(testData.barcode);
-    users.enterItemBarcodeCheckOut(testData.itemBarcode);
-    users.closeButton();
-    users.enterPatronBarcodeCheckOut(testData.barcode);
-    users.enterItemBarcodeCheckOut(testData.itemBarcode);
-    users.patronOverride();
-    users.cancelButton();
-    users.enterPatronBarcodeCheckOut(testData.barcode);
-    users.enterItemBarcodeCheckOut(testData.itemBarcode);
-    users.closeButton();
-    users.enterPatronBarcodeCheckOut(testData.barcode);
-    users.enterItemBarcodeCheckOut(testData.itemBarcode);
-    users.patronOverride();
-    users.saveAndCloseButton();
-    users.clickOpenLoansCount();
-  });
+  it(
+    'C777 Check out: override non-circulating items (vega)',
+    { tags: [testTypes.criticalPath, devTeams.vega] },
+    () => {
+      cy.visit(topMenu.checkOutPath);
+      users.enterPatronBarcodeCheckOut(testData.patronBarcode);
+      users.enterItemBarcodeCheckOut(testData.itemBarcode);
+      users.closeButton();
+      users.enterPatronBarcodeCheckOut(testData.patronBarcode);
+      users.enterItemBarcodeCheckOut(testData.itemBarcode);
+      users.patronOverride();
+      users.cancelButton();
+      users.enterPatronBarcodeCheckOut(testData.patronBarcode);
+      users.enterItemBarcodeCheckOut(testData.itemBarcode);
+      users.closeButton();
+      users.enterPatronBarcodeCheckOut(testData.patronBarcode);
+      users.enterItemBarcodeCheckOut(testData.itemBarcode);
+      users.cancelButton();
+      users.patronOverride();
+      users.saveAndCloseButton();
+      users.clickOpenLoansCount();
+      users.verifyItemBarcode(itemBarcode);
+    }
+  );
 });
