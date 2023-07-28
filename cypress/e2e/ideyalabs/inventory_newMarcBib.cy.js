@@ -9,9 +9,11 @@ import marcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
 import quickMarcEditor from '../../support/fragments/quickMarcEditor';
 import settingsMenu from '../../support/fragments/settingsMenu';
 import topMenu from '../../support/fragments/topMenu';
+import testTypes from '../../support/dictionary/testTypes';
+import devTeams from '../../support/dictionary/devTeams';
 
 const testData = {
-  source: "MARC",
+  source: 'MARC',
   tag100Content: {
     secondBoxValue: "''",
     thirdBoxValue: "''",
@@ -83,7 +85,7 @@ const testData = {
 };
 
 describe('New Marc Bib Record and new MARC Holdings record', () => {
-  before('login', () => {
+  before('Login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
@@ -96,15 +98,16 @@ describe('New Marc Bib Record and new MARC Holdings record', () => {
     marc.deleteHolding();
   });
 
-  it('C9236__Settings: Add/Edit a custom label', () => {
+  it('C9236 Settings: Add/Edit a custom label (spitfire)', { tags: [testTypes.extendedPath, devTeams.spitfire] }, () => {
     cy.visit(settingsMenu.eHoldingsPath);
     eHoldingsPackage.customLabel({
       labelOne: 'AutomatingTheFolioApplicationAndTestingApplication',
       labelTwo: 'Test :',
     });
+    eHoldingsPackage.verifyCustomLabel();
   });
 
-  it('C380726 Link ""Contributor"" fields when creating ""MARC Bibliographic"" record', () => {
+  it('C380726 Link ""Contributor"" fields when creating ""MARC Bibliographic"" record (spitfire)', { tags: [testTypes.criticalPath, devTeams.spitfire] }, () => {
     cy.visit(topMenu.inventoryPath);
     inventoryInstance.newMarcBibRecord();
     quickMarcEditor.updateExistingField(
@@ -154,7 +157,7 @@ describe('New Marc Bib Record and new MARC Holdings record', () => {
     browseContributors.checkSearchResultRecord(testData.contributor.name);
   });
 
-  it('C350646 Create a new MARC Holdings record for existing Instance record', () => {
+  it('C350646 Create a new MARC Holdings record for existing ""Instance"" record (Spitfire)', { tags: [testTypes.criticalPath, devTeams.spitfire] }, () => {
     cy.visit(topMenu.inventoryPath);
     inventorySearchAndFilter.switchToHoldings();
     inventorySearchAndFilter.bySource(testData.source);
@@ -179,7 +182,7 @@ describe('New Marc Bib Record and new MARC Holdings record', () => {
     marc.checkFieldContentMatch();
   });
 
-  it('C380747 Add non-controllable subfields to a linked field when creating ""MARC Bibliographic"" record', () => {
+  it('C380747 Add non-controllable subfields to a linked field when creating ""MARC Bibliographic"" record (spitfire)', { tags: [testTypes.criticalPath, devTeams.spitfire] }, () => {
     cy.visit(topMenu.inventoryPath);
     inventoryInstance.newMarcBibRecord();
     quickMarcEditor.checkReadOnlyTags();
@@ -223,9 +226,11 @@ describe('New Marc Bib Record and new MARC Holdings record', () => {
     inventoryInstance.verifyUnlinkIcon(testData.tags.tag730);
     marc.saveAndClose();
     inventoryInstance.editMarcBibliographicRecord();
+    inventoryInstance.verifyUnlinkIcon(testData.tags.tag240);
+    inventoryInstance.verifyUnlinkIcon(testData.tags.tag730);
   });
 
-  it('C389495 Auto-linking fields with multiple ""$0"" when creating new ""MARC Bib"" record', () => {
+  it('C389495 Auto-linking fields with multiple ""$0"" when creating new ""MARC Bib"" record (spitfire)', { tags: [testTypes.extendedPath, devTeams.spitfire] }, () => {
     cy.visit(topMenu.inventoryPath);
     inventoryInstance.newMarcBibRecord();
     quickMarcEditor.updateExistingField(
@@ -250,7 +255,7 @@ describe('New Marc Bib Record and new MARC Holdings record', () => {
     inventoryInstance.viewSource();
   });
 
-  it('C380736 Search created ""MARC bib"" record by Title, OCLC number', () => {
+  it('C380736 Search created ""MARC bib"" record by Title, OCLC number (spitfire)', { tags: [testTypes.criticalPath, devTeams.spitfire] }, () => {
     cy.visit(topMenu.inventoryPath);
     inventoryInstance.newMarcBibRecord();
     quickMarcEditor.updateExistingField(
@@ -262,7 +267,7 @@ describe('New Marc Bib Record and new MARC Holdings record', () => {
     marcAuthority.addNewField(
       4,
       testData.tags.tag035,
-      `$0 ${testData.fieldContents.tag03Content}`
+      `$0 ${testData.fieldContents.tag035Content}`
     );
   });
 });

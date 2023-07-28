@@ -50,7 +50,7 @@ export default {
   switchToSearch: () => {
     cy.do(searchNav.click());
   },
-  serchbeats(value) {
+  searchBeats(value) {
     cy.do((SearchField({ id: 'textarea-authorities-search' })).fillIn(value));
     cy.do((Button({ id: 'submit-authorities-search' })).click());
   },
