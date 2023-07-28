@@ -35,7 +35,7 @@ describe('Eholdings - exports', () => {
   });
 
   it(
-    'C356417 Export of selected ""Package"" without titles. User chooses ""Package"" fields to export. (spifire)',
+    'C356417 Export of selected ""Package"" without titles. User chooses ""Package"" fields to export. (spitfire)',
     { tags: [testTypes.extendedPath, devTeams.spitfire] },
     () => {
       cy.visit(topMenu.eholdingsPath);

@@ -1,5 +1,5 @@
 export default { smoke:'smoke',
-  criticalPath: 'criticalPath',
+  criticalPath: 'criticalPth',
   extendedPath: 'extendedPath',
   long: 'long',
   broken: 'broken' };
