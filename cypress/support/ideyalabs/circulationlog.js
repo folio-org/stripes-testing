@@ -4,6 +4,7 @@ import {
   MultiColumnListRow,
   PaneContent,
   Section,
+  TextField,
 } from '../../../interactors';
 import usersSearchPane from '../fragments/users/usersSearchPane';
 
@@ -20,6 +21,13 @@ export default {
         .click(),
       Button({ id: 'accordion-toggle-button-loansSection' }).click(),
       Section({ id: 'loansSection' }).find(Link('1 open loan')).click(),
+    ]);
+  },
+
+  checkIn: (barcode) => {
+    cy.do([
+      TextField('Item ID').fillIn(barcode),
+      Button('Enter').click(),
     ]);
   },
 };

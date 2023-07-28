@@ -33,6 +33,8 @@ export default {
       Checkbox({ id: 'clickable-filter-loan-checked-out' }).click(),
       cy.do(TextField({ name: 'itemBarcode' }).fillIn(data))
     ]);
+  },
+  verifyClosedloanlist() {
     cy.expect(MultiColumnListRow().exists());
   },
 
@@ -65,16 +67,14 @@ export default {
   searchByServicePoint(servicePoint) {
     cy.do([
       servicePointField.fillIn(servicePoint),
-      servicePointField.choose(servicePoint),
+      servicePointField.choose(servicePoint)
     ]);
   },
-  checkbarcode() {
+  checkBarcode() {
     cy.expect(Pane({ title: 'Circulation log' }).exists());
     cy.do([
       Accordion({ id: 'loan' }).clickHeader(),
-      Checkbox({
-        id: 'clickable-filter-loan-renewed-through-override',
-      }).click(),
+      Checkbox({ id:'clickable-filter-loan-renewed-through-override' }).click()
     ]);
     cy.do(Button({ id:'reset-receiving-filters' }).click());
     cy.do(TextField({ name: 'itemBarcode' }).fillIn('1040'));

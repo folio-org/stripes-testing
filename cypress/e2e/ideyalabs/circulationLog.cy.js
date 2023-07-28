@@ -1,37 +1,40 @@
-import circulationlog from '../../support/a_ideyalabs/circulationlog';
+import devTeams from '../../support/dictionary/devTeams';
+import testTypes from '../../support/dictionary/testTypes';
 import searchPane from '../../support/fragments/circulation-log/searchPane';
 import marcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import topMenu from '../../support/fragments/topMenu';
 import usersSearchPane from '../../support/fragments/users/usersSearchPane';
+import circulationlog from '../../support/ideyalabs/circulationlog';
 
-describe('Create a new MARC Holdings record for existing Instance record', () => {
-  before('login', () => {
+const testData = {
+  itemA: '4502015',
+  barcode: '43505853',
+  accordion: 'notice',
+  checkboxOption: 'Send',
+  resultsPaneHeadings: {
+    userBarcode: 'User barcode',
+    itemBarcode: 'Item barcode',
+    object: 'Object',
+    circAction: 'Circ action',
+    date: 'Date',
+    servicePoint: 'Service point',
+    source: 'Source',
+    description: 'Description'
+  },
+};
+
+describe('CirculationLog App', () => {
+  before('Login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
-  const testData = {
-    itemA: '4502015',
-    barcode: '43505853',
-    accordion: 'notice',
-    checkboxOption: 'Send',
-    resultsPaneHeadings: {
-      userBarcode: 'User barcode',
-      itemBarcode: 'Item barcode',
-      object: 'Object',
-      circAction: 'Circ action',
-      date: 'Date',
-      servicePoint: 'Service point',
-      source: 'Source',
-      description: 'Description',
-    },
-  };
-
-  it('C17092 Filter circulation log by (notice) send', () => {
+  it('C17092 Filter circulation log by (notice) send (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     cy.visit(topMenu.circulationLogPath);
     searchPane.setFilterOptionFromAccordion(
       testData.accordion,
       testData.checkboxOption
     );
+    searchPane.verifyResult(testData.checkboxOption);
     searchPane.resetFilters();
     searchPane.searchByItemBarcode(testData.barcode);
     marcAuthorities.checkColumnExists(testData.resultsPaneHeadings.userBarcode);
@@ -44,15 +47,17 @@ describe('Create a new MARC Holdings record for existing Instance record', () =>
     );
     marcAuthorities.checkColumnExists(testData.resultsPaneHeadings.source);
     marcAuthorities.checkColumnExists(testData.resultsPaneHeadings.description);
+    searchPane.verifyResult(testData.checkboxOption);
   });
 
-  it('C16999 Filter circulation log by Closed loan', () => {
+  it('C16999 Filter circulation log by Closed loan (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     cy.visit(topMenu.usersPath);
     usersSearchPane.searchByStatus('Active');
     circulationlog.clickOnStatus();
     cy.visit(topMenu.checkInPath);
-    cy.checkIn(testData.itemA);
+    circulationlog.checkIn(testData.itemA);
     cy.visit(topMenu.circulationLogPath);
     searchPane.searchByCheckedOut();
+    searchPane.verifyClosedloanlist();
   });
 });
