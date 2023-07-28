@@ -1,4 +1,6 @@
 import marc from '../../support/a_ideyalabs/marc';
+import devTeams from '../../support/dictionary/devTeams';
+import testTypes from '../../support/dictionary/testTypes';
 import inventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import inventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import marcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
@@ -21,67 +23,116 @@ const testData = {
   derive: {
     searchOption: 'Personal name',
     authority700FieldValue: 'Gibbons, Boyd',
-    tagValue: '700',
+    tag700: '700',
     rowIndex: 1,
-    accordion: 'Contributor'
-  },
-  link: {
-    searchOption: 'Personal name',
-    authority700FieldValue: 'Gibbons, Boyd',
-    tagValue: '700',
+    accordion: 'Contributor',
     content: ' ',
-    rowIndex: 1,
   },
 };
 
 describe('Feature MARC Authority', () => {
-  before('login', () => {
+  before('Login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
-  it('C375070 Link the 650 of MARC Bib field with 150 field of MARC Authority record.', () => {
-    cy.visit(topMenu.inventoryPath);
-    inventorySearchAndFilter.switchToHoldings();
-    inventorySearchAndFilter.bySource(testData.source);
-    inventorySearchAndFilter.selectSearchResultByRowIndex(
-      testData.derive.rowIndex
-    );
-    inventoryInstance.editMarcBibliographicRecord();
-    inventoryInstance.verifyAndClickLinkIcon(testData.tag.tag650);
-    marcAuthorities.switchToSearch();
-    inventoryInstance.verifySearchOptions();
-    marcAuthorities.clickReset();
-    inventoryInstance.searchResults(testData.authority650FieldValue);
-    marcAuthorities.clickLinkButton();
-    marcAuthority.checkLinkingAuthority650();
-    marc.saveAndClose();
-    inventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(testData.accordion);
-    inventoryInstance.viewSource();
-    marcAuthorities.closeMarcViewPane();
-    inventoryInstance.editMarcBibliographicRecord();
-    inventoryInstance.verifyAndClickUnlinkIcon(testData.tag.tag650);
-    marc.popupUnlinkButton();
-    marc.saveAndClose();
-    inventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(testData.accordion);
-    inventoryInstance.viewSource();
-  });
-
-  it('C365602 Derive Unlink MARC Bibliographic field from MARC Authority record and use the Save close button in deriving window', () => {
-    cy.visit(topMenu.inventoryPath);
-    inventorySearchAndFilter.switchToHoldings();
-    inventorySearchAndFilter.bySource(testData.source);
-    inventorySearchAndFilter.selectSearchResultByRowIndex(
-      testData.derive.rowIndex
-    );
-    inventoryInstance.editMarcBibliographicRecord();
-
-    const unlinkButton = inventoryInstance.verifyUnlinkIcon(
-      testData.derive.tagValue
-    );
-    if (unlinkButton) {
-      inventoryInstance.verifyAndClickLinkIcon(testData.derive.tagValue);
+  it(
+    'C375070 Link the ""650"" of ""MARC Bib"" field with ""150"" field of ""MARC Authority"" record. (spitfire)',
+    { tags: [testTypes.extendedPath, devTeams.spitfire] },
+    () => {
+      cy.visit(topMenu.inventoryPath);
+      inventorySearchAndFilter.switchToHoldings();
+      inventorySearchAndFilter.bySource(testData.source);
+      inventorySearchAndFilter.selectSearchResultByRowIndex(
+        testData.derive.rowIndex
+      );
+      inventoryInstance.editMarcBibliographicRecord();
+      inventoryInstance.verifyAndClickLinkIcon(testData.tag.tag650);
+      marcAuthorities.switchToSearch();
       inventoryInstance.verifySearchOptions();
       marcAuthorities.clickReset();
+      inventoryInstance.searchResults(testData.authority650FieldValue);
+      marcAuthorities.clickLinkButton();
+      marcAuthority.checkLinkingAuthority650();
+      marc.saveAndClose();
+      inventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(
+        testData.accordion
+      );
+      inventoryInstance.viewSource();
+      marcAuthorities.closeMarcViewPane();
+      inventoryInstance.editMarcBibliographicRecord();
+      inventoryInstance.verifyAndClickUnlinkIcon(testData.tag.tag650);
+      marc.popupUnlinkButton();
+      marc.saveAndClose();
+      inventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(
+        testData.accordion
+      );
+      inventoryInstance.viewSource();
+      marcAuthorities.checkFieldAndContentExistence(
+        testData.tag650,
+        `‡a ${testData.authority650FieldValue}`
+      );
+    }
+  );
+
+  it(
+    'C365602 Derive | Unlink ""MARC Bibliographic"" field from ""MARC Authority"" record and use the ""Save & close"" button in deriving window. (spitfire)',
+    { tags: [testTypes.extendedPath, devTeams.spitfire] },
+    () => {
+      cy.visit(topMenu.inventoryPath);
+      inventorySearchAndFilter.switchToHoldings();
+      inventorySearchAndFilter.bySource(testData.source);
+      inventorySearchAndFilter.selectSearchResultByRowIndex(
+        testData.derive.rowIndex
+      );
+      inventoryInstance.editMarcBibliographicRecord();
+
+      const unlinkButton = inventoryInstance.verifyUnlinkIcon(
+        testData.derive.tag700
+      );
+      if (unlinkButton) {
+        inventoryInstance.verifyAndClickLinkIcon(testData.derive.tag700);
+        inventoryInstance.verifySearchOptions();
+        marcAuthorities.clickReset();
+        marcAuthorities.searchBy(
+          testData.derive.searchOption,
+          testData.derive.authority700FieldValue
+        );
+        marcAuthorities.clickLinkButton();
+        marcAuthority.checkLinkingAuthority700();
+        marc.saveAndClose();
+      } else {
+        marc.closeEditMarc();
+      }
+      inventoryInstance.deriveNewMarcBibRecord();
+      marc.keepLinkingButton();
+      inventoryInstance.verifyAndClickUnlinkIcon(testData.derive.tag700);
+      marc.popupUnlinkButton();
+      marc.saveAndClose();
+      inventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(
+        testData.derive.accordion
+      );
+      inventoryInstance.editMarcBibliographicRecord();
+      inventoryInstance.verifyLinkIcon(testData.derive.tag700);
+    }
+  );
+
+  it(
+    'C380755 Link of empty MARC Bib field with ""MARC Authority"" record (spitfire)',
+    { tags: [testTypes.extendedPath, devTeams.spitfire] },
+    () => {
+      cy.visit(topMenu.inventoryPath);
+      inventorySearchAndFilter.switchToHoldings();
+      inventorySearchAndFilter.bySource(testData.source);
+      inventorySearchAndFilter.selectSearchResultByRowIndex(
+        testData.derive.rowIndex
+      );
+      inventoryInstance.editMarcBibliographicRecord();
+      inventoryInstance.verifyAndClickUnlinkIcon(testData.derive.tag700);
+      marc.popupUnlinkButton();
+      inventoryInstance.verifyAndClickLinkIcon(testData.derive.tag700);
+      marcAuthorities.switchToSearch();
+      inventoryInstance.verifySelectMarcAuthorityModal();
+      inventoryInstance.verifySearchOptions();
       marcAuthorities.searchBy(
         testData.derive.searchOption,
         testData.derive.authority700FieldValue
@@ -89,56 +140,36 @@ describe('Feature MARC Authority', () => {
       marcAuthorities.clickLinkButton();
       marcAuthority.checkLinkingAuthority700();
       marc.saveAndClose();
-    } else {
-      marc.closeEditMarc();
+      inventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(
+        testData.derive.accordion
+      );
     }
-    inventoryInstance.deriveNewMarcBibRecord();
-    marc.keepLinkingButton();
-    inventoryInstance.verifyAndClickUnlinkIcon(testData.derive.tagValue);
-    marc.popupUnlinkButton();
-    marc.saveAndClose();
-    inventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(testData.derive.accordion);
-    inventoryInstance.editMarcBibliographicRecord();
-    inventoryInstance.verifyLinkIcon(testData.derive.tagValue);
-  });
+  );
 
-  it('C380755 Link of empty MARC Bib field with MARC Authority record', () => {
-    cy.visit(topMenu.inventoryPath);
-    inventorySearchAndFilter.switchToHoldings();
-    inventorySearchAndFilter.bySource(testData.source);
-    inventorySearchAndFilter.selectSearchResultByRowIndex(
-      testData.link.rowIndex
-    );
-    inventoryInstance.editMarcBibliographicRecord();
-    inventoryInstance.verifyAndClickUnlinkIcon(testData.link.tagValue);
-    marc.popupUnlinkButton();
-    inventoryInstance.verifyAndClickLinkIcon(testData.link.tagValue);
-    marcAuthorities.switchToSearch();
-    inventoryInstance.verifySelectMarcAuthorityModal();
-    inventoryInstance.verifySearchOptions();
-    marcAuthorities.searchBy(testData.link.searchOption, testData.link.authority700FieldValue);
-    marcAuthorities.clickLinkButton();
-    marcAuthority.checkLinkingAuthority700();
-    marc.saveAndClose();
-    inventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(testData.derive.accordion);
-  });
+  it(
+    'C376987 User can print ""MARC authority"" record (spitfire)',
+    { tags: [testTypes.extendedPath, devTeams.spitfire] },
+    () => {
+      cy.visit(topMenu.marcAuthorities);
+      marcAuthorities.searchBeats(testData.marcRecord);
+      marcAuthorities.clickActionsButton();
+      inventoryInstance.selectRecord();
+      marcAuthoritiesDelete.clickprintButton();
+      cy.exec('java -jar sikuli_ide.jar -r printer.sikuli');
+    }
+  );
 
-  it('C376987:print marcfile', () => {
-    cy.visit(topMenu.marcAuthorities);
-    marcAuthorities.searchbeats(testData.marcRecord);
-    marcAuthorities.clickActionsButton();
-    inventoryInstance.selectRecord();
-    marcAuthoritiesDelete.clickprintButton();
-    cy.exec('java -jar sikuli_ide.jar -r printer.sikuli');
-  });
-
-  it('C388651 - 008 field updated when valid LDR 06-07 combinations entered when editing MARC bib record', () => {
-    cy.visit(topMenu.inventoryPath);
-    inventorySearchAndFilter.switchToHoldings();
-    inventorySearchAndFilter.bySource(testData.source);
-    inventorySearchAndFilter.selectSearchResultByRowIndex(
-      testData.derive.rowIndex
-    );
-    inventoryInstance.editMarcBibliographicRecord();
-  });
+  it(
+    'C388651 ""008"" field updated when valid LDR 06-07 combinations entered when editing ""MARC bib"" record ( Spitfire)',
+    { tags: [testTypes.extendedPath, devTeams.spitfire] },
+    () => {
+      cy.visit(topMenu.inventoryPath);
+      inventorySearchAndFilter.switchToHoldings();
+      inventorySearchAndFilter.bySource(testData.source);
+      inventorySearchAndFilter.selectSearchResultByRowIndex(
+        testData.derive.rowIndex
+      );
+      inventoryInstance.editMarcBibliographicRecord();
+    }
+  );
 });
