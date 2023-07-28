@@ -62,6 +62,8 @@ export default {
   inventoryCRUDHoldings: { internal: 'ui-inventory.holdings.delete', gui: 'Inventory: View, create, edit, delete holdings' },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui:'Tags: All permissions' },
+  uiViewTagsSettings: { internal: 'ui-tags.settings.view', gui:'Settings (Tags): Can view tags settings' },
+  uiUserCanEnableDisableTags: { internal: 'ui-tags.settings.all', gui:'Settings (Tags): Can enable or disable tags for all apps' },
   // Settings->Owners
   uiUsersSettingsAllFeeFinesRelated: { internal: 'ui-users.settings.feefines.all', gui:'Settings (Users): Can create, edit and remove all feefines-related entries' },
   uiUsersSettingsOwners: { internal: 'ui-users.settings.owners', gui: 'Settings (Users): Can create, edit and remove owners' },
