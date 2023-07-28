@@ -1,7 +1,8 @@
 import { Button, Checkbox, Heading } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 
-const SaveButton = Button('Save');
+const successCalloutMessage = 'Setting was successfully updated.';
+const saveButton = Button('Save');
 const enableTagsCheckbox = Checkbox({ name: 'tags_enabled' });
 
 export default {
@@ -20,18 +21,14 @@ export default {
         if (!checked && status === 'enable') {
           cy.expect(Checkbox({ id: 'tags_enabled', disabled: false }).exists());
           cy.do(enableTagsCheckbox.click());
-          cy.do(SaveButton.click());
-          this.checkUpdateTLRCalloutAppeared();
+          cy.do(saveButton.click());
+          InteractorsTools.checkCalloutMessage(successCalloutMessage);
         } else if (checked && status === 'disable') {
           cy.expect(Checkbox({ id: 'tags_enabled', disabled: false }).exists());
           cy.do(enableTagsCheckbox.click());
-          cy.do(SaveButton.click());
-          this.checkUpdateTLRCalloutAppeared();
+          cy.do(saveButton.click());
+          InteractorsTools.checkCalloutMessage(successCalloutMessage);
         }
       });
-  },
-
-  checkUpdateTLRCalloutAppeared() {
-    InteractorsTools.checkCalloutMessage('Setting was successfully updated.');
   },
 };
