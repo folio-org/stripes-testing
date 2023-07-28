@@ -1,13 +1,13 @@
-import { Button, HTML, ListItem, Modal, Section, including, or } from '../../../../interactors';
+import { Button, HTML, ListItem, Section, including, or } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
+import topMenu from '../topMenu';
 import eHoldingsNewCustomPackage from './eHoldingsNewCustomPackage';
-import eHoldingsPackage from './eHoldingsPackage';
+// eslint-disable-next-line import/no-cycle
+import eHoldingsPackagesSearch from './eHoldingsPackagesSearch';
+import eHoldingsProvidersSearch from './eHoldingsProvidersSearch';
+import eHoldingsSearch from './eHoldingsSearch';
 
 const resultSection = Section({ id: 'search-results' });
-const selectedText = "#packageShowHoldingStatus div[class^='headline']";
-const actionButton = Button('Actions');
-const deletePackage = Button('Delete package');
-const confirmModal = Modal('Delete custom package');
 
 export default {
   create: (packageName = `package_${getRandomPostfix()}`) => {
@@ -15,12 +15,6 @@ export default {
     eHoldingsNewCustomPackage.fillInRequiredProperties(packageName);
     eHoldingsNewCustomPackage.saveAndClose();
     return packageName;
-  },
-
-  deletePackage: () => {
-    cy.do([actionButton.click(),
-      deletePackage.click(),
-      confirmModal.find(Button('Yes, delete')).click()]);
   },
 
   waitLoading: () => {
@@ -95,20 +89,10 @@ export default {
     return cy.get('@packageId');
   },
 
-  updateProxy() {
-    cy.get(selectedText)
-      .invoke('text')
-      .then((text) => {
-        if (text === 'Selected') {
-          eHoldingsPackage.editactions();
-          eHoldingsPackage.changeProxy();
-          eHoldingsPackage.saveAndClose();
-        } else {
-          eHoldingsPackage.addToHodlings();
-          eHoldingsPackage.editactions();
-          eHoldingsPackage.changeProxy();
-          eHoldingsPackage.saveAndClose();
-        }
-      });
-  }
+  packageSearch() {
+    cy.visit(topMenu.eholdingsPath);
+    eHoldingsSearch.switchToPackages();
+    eHoldingsProvidersSearch.byProvider('VLeBooks');
+    eHoldingsPackagesSearch.bySelectionStatus('Selected');
+  },
 };

@@ -6,7 +6,6 @@ import eHoldingsPackages from '../../support/fragments/eholdings/eHoldingsPackag
 import topMenu from '../../support/fragments/topMenu';
 import dateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
-import eHoldings from '../../support/a_ideyalabs/eHolding';
 
 describe('Agreement', () => {
   const defaultAgreement = {
@@ -26,7 +25,7 @@ describe('Agreement', () => {
   });
   it('C1295 Create a new Agreement and attach a package (spitfire)', { tags: [testTypes.extendedPath, devTeams.spitfire] }, () => {
     cy.visit(topMenu.eholdingsPath);
-    eHoldings.packageSearch();
+    eHoldingsPackages.packageSearch();
     eHoldingsPackages.openPackage();
     newAgreement.newButton();
     newAgreement.fill(defaultAgreement);
