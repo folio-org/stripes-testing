@@ -207,7 +207,7 @@ export default {
         .find(PaneHeader({ id: 'paneHeaderorder-details' })
           .find(actionsButton)).click(),
       Button('Unopen').click(),
-      Button({ id:'clickable-order-unopen-confirmation-confirm-delete-holdings' }).click()
+      Button({ id: 'clickable-order-unopen-confirmation-confirm-delete-holdings' }).click()
     ]);
   },
 
@@ -238,8 +238,8 @@ export default {
     this.selectVendorOnUi(order.vendor);
     cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
     cy.do(Select('Order type*').choose(order.orderType));
-    if (isApproved) cy.do(Checkbox({ name:'approved' }).click());
-    if (isManual) cy.do(Checkbox({ name:'manualPo' }).click());
+    if (isApproved) cy.do(Checkbox({ name: 'approved' }).click());
+    if (isManual) cy.do(Checkbox({ name: 'manualPo' }).click());
     cy.do(saveAndClose.click());
     return cy.wait('@newOrderID', getLongDelay())
       .then(({ response }) => {
@@ -256,7 +256,7 @@ export default {
     this.selectVendorOnUi(order.vendor);
     cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
     cy.do(Select('Order type*').choose(order.orderType));
-    if (isManual) cy.do(Checkbox({ name:'manualPo' }).click());
+    if (isManual) cy.do(Checkbox({ name: 'manualPo' }).click());
     cy.do(saveAndClose.click());
     return cy.wait('@newOrderID', getLongDelay())
       .then(({ response }) => {
@@ -275,7 +275,7 @@ export default {
     this.selectVendorOnUi(order.vendor);
     cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
     cy.do(Select('Order type*').choose(order.orderType));
-    if (isManual) cy.do(Checkbox({ name:'manualPo' }).click());
+    if (isManual) cy.do(Checkbox({ name: 'manualPo' }).click());
     cy.do(saveAndClose.click());
     return cy.wait('@newOrderID', getLongDelay())
       .then(({ response }) => {
@@ -301,7 +301,7 @@ export default {
     this.selectVendorOnUi(order.vendor);
     cy.intercept('POST', '/orders/composite-orders**').as('newOrder');
     cy.do(Select('Order type*').choose(order.orderType));
-    if (isApproved) cy.do(Checkbox({ name:'approved' }).click());
+    if (isApproved) cy.do(Checkbox({ name: 'approved' }).click());
     cy.do(saveAndClose.click());
     return cy.wait('@newOrder', getLongDelay())
       .then(({ response }) => {
@@ -327,7 +327,7 @@ export default {
       MultiSelect({ id: 'order-acq-units' }).find(Button({ ariaLabel: 'open menu' })).click(),
       MultiSelectOption(AUName).click(),
     ]);
-    if (isApproved) cy.do(Checkbox({ name:'approved' }).click());
+    if (isApproved) cy.do(Checkbox({ name: 'approved' }).click());
     cy.do(saveAndClose.click());
     return cy.wait('@newOrderID', getLongDelay());
   },
@@ -394,7 +394,7 @@ export default {
   },
 
   selectFromResultsList(number) {
-    cy.do(MultiColumnList({ id:'orders-list' }).find(Link(number)).click());
+    cy.do(MultiColumnList({ id: 'orders-list' }).find(Link(number)).click());
   },
 
   deleteOrderViaActions: () => {
@@ -428,7 +428,7 @@ export default {
   },
 
   checkSearchResults: (orderNumber) => {
-    cy.expect(MultiColumnList({ id:'orders-list' }).find(Link(orderNumber)).exists());
+    cy.expect(MultiColumnList({ id: 'orders-list' }).find(Link(orderNumber)).exists());
   },
   checkSearchResultsWithClosedOrder: (orderNumber) => {
     cy.expect(MultiColumnList({ id: 'orders-list' })
@@ -643,7 +643,7 @@ export default {
     isDefaultSearchParamsRequired: false,
   }),
 
-  checkIsOrderCreated:(orderNumber) => {
+  checkIsOrderCreated: (orderNumber) => {
     cy.do(Checkbox({ id: 'clickable-filter-workflowStatus-pending' }).click());
     cy.expect(MultiColumnList({ id: 'orders-list' }).find(HTML(including(orderNumber))).exists());
   },
@@ -676,11 +676,11 @@ export default {
     });
   },
 
-  selectPendingStatusFilter:() => {
+  selectPendingStatusFilter: () => {
     cy.do(Checkbox({ id: 'clickable-filter-workflowStatus-pending' }).click());
   },
 
-  selectOngoingOrderTypeInPOForm:() => {
+  selectOngoingOrderTypeInPOForm: () => {
     cy.do(Select('Order type*').choose('Ongoing'));
   },
 
@@ -691,7 +691,7 @@ export default {
     cy.expect(orderDetailsAccordion.find(KeyValue({ value: 'Ongoing' })).exists());
   },
 
-  errorMessage:(modalName, errorContent) => {
+  errorMessage: (modalName, errorContent) => {
     cy.expect(Modal(modalName).content(errorContent));
   },
 
@@ -746,8 +746,8 @@ export default {
   selectFundIDFromthelist: () => {
     const buttonInteractor = Section({
       id: 'FundDistribution',
-    }).find(MultiColumnListCell({ row: 0, columnIndex:5 }));
-    cy.expect(buttonInteractor.exists());
+    }).find(MultiColumnListCell({ row: 0, columnIndex: 5 }))
+      .find(Button());
     cy.do([
       buttonInteractor.perform((interactor) => interactor.removeAttribute('target')),
       buttonInteractor.click(),
