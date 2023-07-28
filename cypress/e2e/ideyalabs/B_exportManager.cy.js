@@ -4,16 +4,16 @@ import testTypes from '../../support/dictionary/testTypes';
 import exportManagerSearchPane from '../../support/fragments/exportManager/exportManagerSearchPane';
 import topMenu from '../../support/fragments/topMenu';
 
-describe('Export Manager', () => {
-  const testData = {
-    integrationMethod: 'Integration name',
-    sucessStatus: 'Successful',
-    failedStatus: 'Failed',
-    exportMethod: 'Integration name',
-    fileName: 'AAA_Integration name_2023-06-20_14_36_04.edi',
-    jobFileName: 'AAA_Integration name_2023-06-20_14:36:04.edi',
-  };
+const testData = {
+  integrationMethod: 'Integration name',
+  sucessStatus: 'Successful',
+  failedStatus: 'Failed',
+  exportMethod: 'Integration name',
+  fileName: 'AAA_Integration name_2023-06-20_14_36_04.edi',
+  jobFileName: 'AAA_Integration name_2023-06-20_14:36:04.edi',
+};
 
+describe('Export Manager', () => {
   before('Login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
