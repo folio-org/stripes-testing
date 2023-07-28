@@ -1,3 +1,5 @@
+import devTeams from '../../support/dictionary/devTeams';
+import testTypes from '../../support/dictionary/testTypes';
 import agreementsDetails from '../../support/fragments/agreements/agreementsDetails';
 import eHoldingsProviders from '../../support/fragments/eholdings/eHoldingsProviders';
 import existingNoteEdit from '../../support/fragments/notes/existingNoteEdit';
@@ -10,7 +12,7 @@ import topMenu from '../../support/fragments/topMenu';
 import usersSearchPane from '../../support/fragments/users/usersSearchPane';
 import { randomFourDigitNumber } from '../../support/utils/stringTools';
 
-describe('Creating Permissions Set and Custom Fields', () => {
+describe('Settings', () => {
   const textFieldData = { fieldLabel: `Test${randomFourDigitNumber()}`, helpText: `Testdata${randomFourDigitNumber()}` };
   const testAreaData = { fieldLabel: `dataArea${randomFourDigitNumber()}`, helpText: `fillData${randomFourDigitNumber()}` };
   const checkboxData = { fieldLabel: `CheckBox${randomFourDigitNumber()}`, helpText: `testdata${randomFourDigitNumber()}` };
@@ -21,7 +23,7 @@ describe('Creating Permissions Set and Custom Fields', () => {
   before('login to Folio', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
-  it('C15693__Create a text field custom field', () => {
+  it('C15693 Create a text field custom field (volaris)', { tags: [testTypes.extendedPath, devTeams.volaris] }, () => {
     cy.visit(topMenu.customFieldsPath);
     customFields.addCustomTextField(textFieldData);
     cy.visit(topMenu.usersPath);
@@ -29,7 +31,7 @@ describe('Creating Permissions Set and Custom Fields', () => {
     usersSearchPane.selectFirstUser('Excel, Testing');
     usersSearchPane.verifyTextField(textFieldData.fieldLabel);
   });
-  it('C15694__Create a text area custom field and add help text', () => {
+  it('C15694 Create a text area custom field and add help text (volaris)', { tags: [testTypes.extendedPath, devTeams.volaris] }, () => {
     cy.visit(topMenu.customFieldsPath);
     customFields.addCustomTextArea(testAreaData);
     cy.visit(topMenu.usersPath);
@@ -37,7 +39,7 @@ describe('Creating Permissions Set and Custom Fields', () => {
     usersSearchPane.selectFirstUser('Excel, Testing');
     usersSearchPane.verifyTextArea(testAreaData.fieldLabel);
   });
-  it('C15695__Create a checkbox custom field', () => {
+  it('C15695 Create a checkbox custom field (volaris)', { tags: [testTypes.extendedPath, devTeams.volaris] }, () => {
     cy.visit(topMenu.customFieldsPath);
     customFields.addCustomCheckBox(checkboxData);
     cy.visit(topMenu.usersPath);
@@ -45,7 +47,7 @@ describe('Creating Permissions Set and Custom Fields', () => {
     usersSearchPane.selectFirstUser('Excel, Testing');
     usersSearchPane.verifyCheckBox(checkboxData.fieldLabel);
   });
-  it('C15696__Create a radio button custom field', () => {
+  it('C15696 Create a radio button custom field (volaris)', { tags: [testTypes.extendedPath, devTeams.volaris] }, () => {
     cy.visit(topMenu.customFieldsPath);
     customFields.addCustomRadioButton(radioButtonData);
     cy.visit(topMenu.usersPath);
@@ -53,7 +55,7 @@ describe('Creating Permissions Set and Custom Fields', () => {
     usersSearchPane.selectFirstUser('Excel, Testing');
     usersSearchPane.verifyRadioButton(radioButtonData.data.fieldLabel);
   });
-  it('C15697__Create a single select custom field', () => {
+  it('C15697 Create a single select custom field (volaris)', { tags: [testTypes.extendedPath, devTeams.volaris] }, () => {
     cy.visit(topMenu.customFieldsPath);
     customFields.addCustomSingleSelect(singleSelectData);
     cy.visit(topMenu.usersPath);
@@ -61,7 +63,7 @@ describe('Creating Permissions Set and Custom Fields', () => {
     usersSearchPane.selectFirstUser('Excel, Testing');
     usersSearchPane.verifySingleSelect(singleSelectData.data.fieldLabel, label2);
   });
-  it('C15701__Change custom fields order', () => {
+  it('C15701 Change custom fields order (volaris)', { tags: [testTypes.extendedPath, devTeams.volaris] }, () => {
     cy.visit(topMenu.customFieldsPath);
     customFields.editButton();
     usersSearchPane.dragAndDropCustomFields();
@@ -70,20 +72,20 @@ describe('Creating Permissions Set and Custom Fields', () => {
     usersSearchPane.selectFirstUser('Excel, Testing');
     usersSearchPane.verifyDragItem();
   });
-  it('C2234__Create new permission set', () => {
+  it('C2234 Create new permission set (volaris)', { tags: [testTypes.criticalPath, devTeams.volaris] }, () => {
     const testData = {
       name: `Administrator${randomFourDigitNumber()}`,
       description: `Hello${randomFourDigitNumber()}`,
     };
     cy.visit(topMenu.permissionSetPath);
-    customFields.clickONewButton();
+    customFields.clickOnNewButton();
     customFields.createPermission(testData);
     customFields.deletePermission(testData);
   });
-  it('C16985__Settings | Set up a note type', () => {
+  it('C16985 Settings | Set up a note type (spitfire)', { tags: [testTypes.extendedPath, devTeams.spitfire] }, () => {
     const noteData = `New Note${randomFourDigitNumber()}`;
     cy.visit(topMenu.notesPath);
-    newNote.clickOnNew(noteData);
+    newNote.fillNote(noteData);
     cy.visit(topMenu.agreementsPath);
     agreementsDetails.agreementListClick('2020 ACS Publications');
     agreementsDetails.openNotesSection();
@@ -91,7 +93,7 @@ describe('Creating Permissions Set and Custom Fields', () => {
     newNote.clickOnNoteType(noteData);
     newNote.deleteNote(noteData);
   });
-  it('C1304__Settings | Edit a note type', () => {
+  it('C1304 Settings | Edit a note type (spitfire)', { tags: [testTypes.extendedPath, devTeams.spitfire] }, () => {
     cy.visit(topMenu.notesPath);
     existingNoteEdit.clickEditButton(`Item${randomFourDigitNumber()}`);
     cy.visit(topMenu.agreementsPath);
@@ -106,7 +108,7 @@ describe('Creating Permissions Set and Custom Fields', () => {
     existingNoteView.gotoEdit();
     newNote.clickOnNoteType(`Item${randomFourDigitNumber()}`);
   });
-  it('C731__Create new categories', () => {
+  it('C731 Create new categories (thunderjet)', { tags: [testTypes.extendedPath, devTeams.thunderjet] }, () => {
     const categoryName = `Test${randomFourDigitNumber()}`;
     cy.visit(settingsMenu.organizationsPath);
     organizations.addNewCategory(categoryName);
@@ -118,11 +120,11 @@ describe('Creating Permissions Set and Custom Fields', () => {
     cy.visit(settingsMenu.organizationCategoryPath);
     organizations.deleteCreatedCategory(categoryName);
   });
-  it('C367970-Check that User can save changes while edit ""Fixed due date schedules"" without changing ""Fixed due date schedules name"" field', () => {
+  it('C367970 Check that User can save changes while edit ""Fixed due date schedules"" without changing ""Fixed due date schedules name"" field (vega)', { tags: [testTypes.criticalPath, devTeams.vega] }, () => {
     cy.visit(settingsMenu.circulationFixedDueDateSchedulesPath);
     eHoldingsProviders.editSchedule({ data: { name: 'Magnus test', description: `Test${randomFourDigitNumber()}` } });
   });
-  after('delete the test data', () => {
+  after('delete test data', () => {
     cy.visit(topMenu.customFieldsPath);
     customFields.editButton();
     customFields.deleteCustomField(`${textFieldData.fieldLabel} · Text field`);

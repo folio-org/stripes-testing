@@ -53,7 +53,7 @@ export default class NewNote {
     cy.do(this.#saveButton.click());
   }
 
-  static clickOnNew(name) {
+  static fillNote(name) {
     cy.do(newButton.click());
     cy.do(nameTextfield.fillIn(name));
     cy.do(saveButton.click());
