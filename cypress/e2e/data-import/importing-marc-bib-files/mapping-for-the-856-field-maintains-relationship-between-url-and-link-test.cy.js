@@ -23,6 +23,7 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import Users from '../../../support/fragments/users/users';
 import InstanceStatusTypes from '../../../support/fragments/settings/inventory/instances/instanceStatusTypes/instanceStatusTypes';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 
 describe('ui-data-import', () => {
   let user;
@@ -32,12 +33,26 @@ describe('ui-data-import', () => {
     filePath: 'marcFileForC400649.mrc',
     fileName: `C400649 autotestFile_${getRandomPostfix()}`
   };
-  const URLs = [
-    { url: 'https://muse.jhu.edu/book/67428', linkText: 'Project Muse' },
-    { url: 'https://muse.jhu.edu/book/74528', linkText: 'Project Muse' },
-    { url: 'https://www.jstor.org/stable/10.2307/j.ctv26d9pv', linkText: 'JSTOR' },
-    { url: 'https://www.jstor.org/stable/10.2307/j.ctvcwp01n', linkText: 'JSTOR' }
-  ];
+  const firstField = {
+    fieldNimberInFile: 0,
+    url: 'https://muse.jhu.edu/book/67428',
+    linkText: 'Project Muse'
+  };
+  const secondField = {
+    fieldNimberInFile: 1,
+    url: 'https://muse.jhu.edu/book/74528',
+    linkText: 'Project Muse'
+  };
+  const thirdField = {
+    fieldNimberInFile: 2,
+    url: 'https://www.jstor.org/stable/10.2307/j.ctv26d9pv',
+    linkText: 'JSTOR'
+  };
+  const forthField = {
+    fieldNimberInFile: 3,
+    url: 'https://www.jstor.org/stable/10.2307/j.ctvcwp01n',
+    linkText: 'JSTOR'
+  };
   const collectionOfMappingAndActionProfiles = [
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
@@ -154,9 +169,13 @@ describe('ui-data-import', () => {
       });
       FileDetails.openInstanceInInventory('Created');
       InventoryInstance.getAssignedHRID().then(hrId => { instanceHrid = hrId; });
-      InstanceRecordView.verifyElectronicAccess(URLs[0].url, URLs[0].linkText);
-      InstanceRecordView.verifyElectronicAccess(URLs[1].url, URLs[1].linkText, 1);
-      InstanceRecordView.verifyElectronicAccess(URLs[2].url, URLs[2].linkText, 2);
-      InstanceRecordView.verifyElectronicAccess(URLs[3].url, URLs[3].linkText, 3);
+      [firstField, secondField, thirdField, forthField].forEach(field => {
+        InstanceRecordView.verifyElectronicAccess(field.url, field.linkText, field.fieldNimberInFile);
+      });
+      InstanceRecordView.viewSource();
+      [firstField, secondField, thirdField, forthField].forEach(field => {
+        InventoryViewSource.verifyFieldInMARCBibSource('856', field.url);
+        InventoryViewSource.contains(field.linkText);
+      });
     });
 });
