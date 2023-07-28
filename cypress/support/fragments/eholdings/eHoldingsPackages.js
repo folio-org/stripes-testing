@@ -6,8 +6,9 @@ import eHoldingsPackage from './eHoldingsPackage';
 const resultSection = Section({ id: 'search-results' });
 const selectedText = "#packageShowHoldingStatus div[class^='headline']";
 const actionButton = Button('Actions');
-const deletePackageBtn = Button('Delete package');
+const deletePackageButton = Button('Delete package');
 const confirmModal = Modal('Delete custom package');
+
 export default {
   create: (packageName = `package_${getRandomPostfix()}`) => {
     cy.do(Button('New').click());
@@ -18,7 +19,7 @@ export default {
 
   deletePackage: () => {
     cy.do([actionButton.click(),
-      deletePackageBtn.click(),
+      deletePackageButton.click(),
       confirmModal.find(Button('Yes, delete')).click()]);
   },
 

@@ -144,9 +144,7 @@ export default {
   tagFilter: () => {
     cy.do([
       Section({ id: 'org-filter-tags' }).find(Button('Tags')).click(),
-
       Button({ className: 'multiSelectToggleButton---cD_fu' }).click(),
-
       MultiSelectOption('^').click(),
     ]);
   },
@@ -466,11 +464,7 @@ export default {
   },
 
   deleteContact: () => {
-    cy.do([
-      actionsButton.click(),
-      deleteButton.click(),
-      confirmButton.click(),
-    ]);
+    cy.do([actionsButton.click(), deleteButton.click(), confirmButton.click()]);
   },
 
   selectCategories: (category) => {
