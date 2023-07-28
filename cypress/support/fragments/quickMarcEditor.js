@@ -666,6 +666,8 @@ export default {
 
   checkDelete008Callout() {
     cy.expect(calloutDelete008Error.exists());
+    cy.do(calloutDelete008Error.dismiss());
+    cy.expect(calloutDelete008Error.absent());
   },
 
   check008FieldsEmptyHoldings() {
@@ -705,5 +707,11 @@ export default {
       calloutAfterSaveAndCloseNewRecord.exists(),
       instanceDetailsPane.exists(),
     ]);
+  },
+
+  verifyAndDismissRecordUpdatedCallout() {
+    cy.expect(calloutUpdatedRecord.exists());
+    cy.do(calloutUpdatedRecord.dismiss());
+    cy.expect(calloutUpdatedRecord.absent());
   }
 };
