@@ -93,7 +93,7 @@ export default {
       .click());
   },
 
-  SelectFundID: () => {
+  selectFundID: () => {
     cy.do([
       Section({ id: 'invoiceLineForm-fundDistribution' }).find(Button({ id: 'fundDistributions[0].fundId' })).click(),
       SelectionOption('Fund A (A)').click(),
@@ -102,19 +102,19 @@ export default {
     ]);
   },
 
-  SelectCurrentBudgerFromthelist: (Name) => {
+  selectCurrentBudgerFromthelist: (Name) => {
     cy.do([
       Section({ id: 'currentBudget' }).find(MultiColumnListCell(Name)).click()
     ]);
   },
 
-  ClickOnViewTransactionsHyperText: () => {
+  clickOnViewTransactionsHyperText: () => {
     cy.do([
       Section({ id: 'information' }).find(Link('View transactions')).click()
     ]);
   },
 
-  SelectFundIDFromthelist: () => {
+  selectFundIDFromthelist: () => {
     cy.xpath('//a[text()="Fund A(A)"]').invoke('removeAttr', 'target').click();
   },
 
@@ -138,7 +138,7 @@ export default {
     ]);
   },
 
-  TransactionListDetailsResultsFromCurrentBudget: () => {
+  transactionListDetailsResultsFromCurrentBudget: () => {
     cy.do([
       MultiColumnList({ id: 'transactions-list' }).find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
         .find(Link('3/6/2023, 7:48 AM'))
@@ -146,7 +146,7 @@ export default {
     ]);
   },
 
-  TransactionListDetailsResultsFromPreviousBudget: () => {
+  transactionListDetailsResultsFromPreviousBudget: () => {
     cy.do([
       MultiColumnList({ id: 'transactions-list' }).find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
         .find(Link('9/29/2021, 10:14 AM'))
@@ -154,7 +154,7 @@ export default {
     ]);
   },
 
-  TransactionListDetailsResultsFromEmbarance: (Name) => {
+  transactionListDetailsResultsFromEmbarance: (Name) => {
     cy.do([
       MultiColumnList({ id: 'transactions-list' }).find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
         .find(Link(Name))
@@ -162,14 +162,14 @@ export default {
     ]);
   },
 
-  TransactionListDetailsResultsFromRolledLogs: () => {
+  transactionListDetailsResultsFromRolledLogs: () => {
     cy.do([
       Section({ id: 'rollover-logs-results-pane' }).find(MultiColumnListCell({ row: 0, content: '07/14/2023-result' }))
         .click()
     ]);
   },
 
-  TransactionListDetailsResultsFromPreviousBudgetEmbrance: () => {
+  transactionListDetailsResultsFromPreviousBudgetEmbrance: () => {
     cy.do([
       MultiColumnList({ id: 'transactions-list' }).find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
         .find(Link('6/20/2023, 5:33 AM'))
@@ -177,7 +177,7 @@ export default {
     ]);
   },
 
-  CloseTwoXmarkInOneScreen: () => {
+  closeTwoXmarkInOneScreen: () => {
     cy.do([
       Section({ id: 'pane-transaction-details' }).find(Button({ icon: 'times' })).click(),
     ]);

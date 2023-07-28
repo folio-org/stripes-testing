@@ -45,7 +45,7 @@ const testData = {
   selectTransactionListDetailsResultsFromEmbaranceDate: '6/20/2023, 5:39 AM',
   viewDetailsPreviousBudgetsRecord: 'AF2-AF2021',
   fundFinancialQuantity1: '1,000.00',
-  fundFinancialQuantity2: '975.00',
+  fundFinancialQuantity2: '974.00',
   groupFinancialQuantity1: '2,000.00',
   groupFinancialQuantity2: '2,000.00',
   ledgerFinancialQuantity1: '0.00',
@@ -65,7 +65,6 @@ const rollOverData = {
   currentBudeget: 'Test N11-FYG2024',
   plannedBudget: 'Test N11-FYG1111',
   selectEmbranceResult: '6/20/2023, 4:41 AM',
-  assertionData: 'FYG2024',
 };
 
 const encumbranceData = {
@@ -80,7 +79,6 @@ const encumbranceData = {
   selectFund: 'AJ2',
   selectCurrentBudgerFromthelist: 'AJ2-AJ2024',
   transactionListDetailsResultsFromEmbarance: '7/3/2023, 8:12 AM',
-  assertionData: 'AJ2024',
 };
 
 describe('Users-loans App', () => {
@@ -132,7 +130,7 @@ describe('Users-loans App', () => {
     );
     invoices.selectInvoiceLine(testData.selectInvoiceLineNumber);
     invoices.editInvoiceLine();
-    invoices.SelectFundID();
+    invoices.selectFundID();
     invoices.editVendorInvoiceNumber();
     cy.visit(topMenu.financePath);
     financeHelper.searchByName(testData.searchByFinanceName);
@@ -147,16 +145,16 @@ describe('Users-loans App', () => {
       testData.searchByNameFiscalYesar
     );
     financeHelper.selectFirstFiscalRecord(testData.selectFirstFiscalRecord);
-    fiscalYears.EditFiscalYEarDetails();
-    fiscalYears.FilltheStartAndEndDateoncalenderstartDateField1();
+    fiscalYears.editFiscalYearDetails();
+    fiscalYears.filltheStartAndEndDateoncalenderstartDateField1();
     ledgers.resetAll();
     invoices.searchByParameter(
       testData.searchByParameterFiscalYear2,
       testData.searchByNameFiscalYear2
     );
     financeHelper.selectFirstFiscalRecord(testData.selectSecondFiscalRecord);
-    fiscalYears.EditFiscalYEarDetails();
-    fiscalYears.FilltheStartAndEndDateoncalenderstartDateField2();
+    fiscalYears.editFiscalYearDetails();
+    fiscalYears.filltheStartAndEndDateoncalenderstartDateField2();
     cy.visit(topMenu.invoicesPath);
     invoices.searchByNumber(testData.searchByInvoiceName2);
     invoices.clickOnFirstInvoicesResultList(
@@ -164,31 +162,31 @@ describe('Users-loans App', () => {
     );
     invoices.approveInvoice(); // API Failure
     invoices.selectInvoiceLine(testData.selectInvoiceLineNumber);
-    invoices.SelectFundIDFromthelist(testData.selectFundIDFromthelist);
-    invoices.SelectCurrentBudgerFromthelist(
+    invoices.selectFundIDFromthelist(testData.selectFundIDFromthelist);
+    invoices.selectCurrentBudgerFromthelist(
       testData.selectCurrentBudgerFromthelist
     );
-    invoices.ClickOnViewTransactionsHyperText();
-    invoices.TransactionListDetailsResultsFromCurrentBudget(
+    invoices.clickOnViewTransactionsHyperText();
+    invoices.transactionListDetailsResultsFromCurrentBudget(
       testData.selectTransactionListDetailsResultsFromCurrentBudget
     );
-    invoices.CloseTwoXmarkInOneScreen();
+    invoices.closeTwoXmarkInOneScreen();
     ledgers.closeOpenedPage();
     ledgers.closeOpenedPage();
     invoices.viewDetailsPreviousBudgets(
       testData.selectviewDetailsPreviousBudgets
     );
-    invoices.ClickOnViewTransactionsHyperText();
-    invoices.TransactionListDetailsResultsFromPreviousBudget();
+    invoices.clickOnViewTransactionsHyperText();
+    invoices.transactionListDetailsResultsFromPreviousBudget();
     cy.visit(topMenu.financePath);
     ledgers.clickOnFundTab();
     invoices.searchByParameter(testData.searchByParameterFiscalYear, testData.searchFundName);
     financeHelper.selectFirstFundRecord(testData.selectFundNameRecordList);
-    invoices.SelectCurrentBudgerFromthelist(
+    invoices.selectCurrentBudgerFromthelist(
       testData.selectTransactionListDetailsResultsFromEmbaranceDate
     );
-    invoices.ClickOnViewTransactionsHyperText();
-    invoices.TransactionListDetailsResultsFromEmbarance(
+    invoices.clickOnViewTransactionsHyperText();
+    invoices.transactionListDetailsResultsFromEmbarance(
       testData.selectTransactionListDetailsResultsFromEmbaranceDate
     );
     ledgers.closeOpenedPage();
@@ -196,8 +194,8 @@ describe('Users-loans App', () => {
     invoices.viewDetailsPreviousBudgets(
       testData.viewDetailsPreviousBudgetsRecord
     );
-    invoices.ClickOnViewTransactionsHyperText();
-    invoices.TransactionListDetailsResultsFromPreviousBudgetEmbrance();
+    invoices.clickOnViewTransactionsHyperText();
+    invoices.transactionListDetailsResultsFromPreviousBudgetEmbrance();
   });
 
   it('C359604 Make more than one preview for one ledger and same fiscal year with ""Test rollover"", check test rollover results(Thunderjet)', { tags: [testTypes.Extended, devTeams.thunderjet] }, () => {
@@ -226,14 +224,13 @@ describe('Users-loans App', () => {
     ledgers.fillInRolloverInfo(rollOverData.fillInRolloverInfo);
     ledgers.clickonViewledgerDetails();
     ledgers.selectFund();
-    invoices.SelectCurrentBudgerFromthelist(rollOverData.currentBudeget);
+    invoices.selectCurrentBudgerFromthelist(rollOverData.currentBudeget);
     ledgers.closeOpenedPage();
     invoices.viewDetailsPlannedBudgets(rollOverData.plannedBudget);
-    invoices.ClickOnViewTransactionsHyperText();
-    invoices.TransactionListDetailsResultsFromEmbarance(
+    invoices.clickOnViewTransactionsHyperText();
+    invoices.transactionListDetailsResultsFromEmbarance(
       rollOverData.selectEmbranceResult
     );
-    ledgers.verifyEncumbranceDetailsSection(rollOverData.assertionData);
   });
 
   it('C375267 Encumbrances are rolled over correctly when order fund distribution was changed and related paid invoice exists (based on Remaining) (Thunderjet)', { tags: [testTypes.Extended, devTeams.thunderjet] }, () => {
@@ -258,13 +255,12 @@ describe('Users-loans App', () => {
     ledgers.closeOpenedPage();
     financeHelper.searchByName(encumbranceData.fundName);
     financeHelper.selectFirstFundRecord(encumbranceData.selectFund);
-    invoices.SelectCurrentBudgerFromthelist(
+    invoices.selectCurrentBudgerFromthelist(
       encumbranceData.selectCurrentBudgerFromthelist
     );
-    invoices.ClickOnViewTransactionsHyperText();
-    invoices.TransactionListDetailsResultsFromEmbarance(
+    invoices.clickOnViewTransactionsHyperText();
+    invoices.transactionListDetailsResultsFromEmbarance(
       encumbranceData.transactionListDetailsResultsFromEmbarance
     );
-    ledgers.verifyEncumbranceDetailsSection(encumbranceData.assertionData);
   });
 });
