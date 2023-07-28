@@ -464,6 +464,37 @@ export default {
         .click()
     );
   },
+
+  voucherExportManualExport: (batchGroup) => {
+    cy.do([
+      PaneHeader({ id: 'paneHeaderinvoice-results-pane' })
+        .find(actionsButton)
+        .click(),
+      Button('Voucher export').click(),
+      Select().choose(batchGroup),
+      Button('Run manual export').click(),
+      Button({
+        id: 'clickable-run-manual-export-confirmation-confirm',
+      }).click(),
+    ]);
+    cy.wait(2000);
+  },
+
+  verifyDownloadButtonAndClick: () => {
+    cy.expect(MultiColumnList({ id: 'batch-voucher-exports' })
+      .find(MultiColumnListRow({ index: 0 }))
+      .find(MultiColumnListCell({ columnIndex: 3 }))
+      .find(Button({ icon: 'download' }))
+      .exists());
+    cy.do(
+      MultiColumnList({ id: 'batch-voucher-exports' })
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 3 }))
+        .find(Button({ icon: 'download' }))
+        .click()
+    );
+  },
+
   getSearchParamsMap(orderNumber, orderLine) {
     const searchParamsMap = new Map();
     searchParamsMap
