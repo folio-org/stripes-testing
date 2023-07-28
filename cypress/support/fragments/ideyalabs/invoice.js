@@ -231,7 +231,7 @@ export default {
     cy.expect(Section({ id: 'order-lines-details' }).exists());
   },
 
-  selectCurrentEncumbrance: () => {
+  clickOnViewTransactions: () => {
     const buttonInteractor = Section({ id: 'FundDistribution' })
       .find(MultiColumnListCell({ row: 0, columnIndex: 5 }))
       .find(Button());
@@ -250,7 +250,7 @@ export default {
     cy.expect(Section({ id: 'transaction-results-pane' }).exists());
   },
 
-  openStatusAndClickCheckbox() {
+  verifyTransactionsPane() {
     const buttonInteractor = fundDistributionSection
       .find(MultiColumnListCell({ row: 0, columnIndex: 5 }))
       .find(Button());
