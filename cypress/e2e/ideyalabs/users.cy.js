@@ -3,6 +3,8 @@ import topMenu from '../../support/fragments/topMenu';
 import users from '../../support/fragments/users/users';
 import usersSearchPane from '../../support/fragments/users/usersSearchPane';
 import getRandomPostfix, { getFourDigitRandomNumber } from '../../support/utils/stringTools';
+import testTypes from '../../support/dictionary/testTypes';
+import devTeams from '../../support/dictionary/devTeams';
 
 const barcodeNumber = getRandomPostfix();
 
@@ -69,7 +71,7 @@ describe('create a users', () => {
     users.checkZeroSearchResultsHeader();
   });
 
-  it('C421-Create: new user; required: contact info, email, phone, external system ID, address', () => {
+  it('C421 Create: new user; required: contact info, email, phone, external system ID, address (Prokopovych)', { tags: [testTypes.criticalPath, devTeams.prokopovych] }, () => {
     users.createViaUi(userOne);
     cy.visit(topMenu.usersPath);
     users.createViaUi(userTwo);
@@ -82,7 +84,7 @@ describe('create a users', () => {
     users.checkZeroSearchResultsHeader();
   });
 
-  it('C11096-Add Preferred first name and confirm its display in the User record View and Edit screens', () => {
+  it('C11096 Add Preferred first name and confirm its display in the User record View and Edit screens (Volaris)', { tags: [testTypes.Extended, devTeams.volaris] }, () => {
     users.createData(userThree);
     users.verifyPreferredfirstnameOnUserDetailsPane(
       verifyData.verifyPreferredfirstnameOnUserDetailsPane
