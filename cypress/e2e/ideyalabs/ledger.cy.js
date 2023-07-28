@@ -5,6 +5,8 @@ import groups from '../../support/fragments/finance/groups/groups';
 import ledgers from '../../support/fragments/finance/ledgers/ledgers';
 import invoices from '../../support/fragments/invoices/invoices';
 import topMenu from '../../support/fragments/topMenu';
+import testTypes from '../../support/dictionary/testTypes';
+import devTeams from '../../support/dictionary/devTeams';
 
 const testData = {
   fiscalName: 'Fiscal Year 2024',
@@ -82,11 +84,11 @@ const encumbranceData = {
 };
 
 describe('Users-loans App', () => {
-  it('login to Folio', () => {
+  before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
-  it('C377030-"Available balance" is displayed as a negative number when running a deficit', () => {
+  it('C377030 "Available balance" is displayed as a negative number when running a deficit(Thunderjet)', { tags: [testTypes.criticalPath, devTeams.thunderjet] }, () => {
     cy.visit(topMenu.financePath);
     fiscalYears.clickOnFiscalYear();
     financeHelper.searchByName(testData.fiscalName);
@@ -122,7 +124,7 @@ describe('Users-loans App', () => {
     );
   });
 
-  it('C396360-Save invoice fiscal year after fund distribution change to fund using different ledger if FY was undefined', () => {
+  it('C396360 Save invoice fiscal year after fund distribution change to fund using different ledger if FY was undefined(Thunderjet)', { tags: [testTypes.criticalPath, devTeams.thunderjet] }, () => {
     cy.visit(topMenu.invoicesPath);
     invoices.searchByNumber(testData.searchByInvoiceName);
     invoices.clickOnFirstInvoicesResultList(
@@ -198,7 +200,7 @@ describe('Users-loans App', () => {
     invoices.TransactionListDetailsResultsFromPreviousBudgetEmbrance();
   });
 
-  it('C359604-Make more than one preview for one ledger and same fiscal year with ""Test rollover"", check test rollover results', () => {
+  it('C359604 Make more than one preview for one ledger and same fiscal year with ""Test rollover"", check test rollover results(Thunderjet)', { tags: [testTypes.Extended, devTeams.thunderjet] }, () => {
     cy.visit(topMenu.financePath);
     financeHelper.searchByName(rollOverData.ledgerName);
     financeHelper.selectFirstLedger(rollOverData.selectLedger);
@@ -234,7 +236,7 @@ describe('Users-loans App', () => {
     ledgers.verifyEncumbranceDetailsSection(rollOverData.assertionData);
   });
 
-  it('C375267-Encumbrances are rolled over correctly when order fund distribution was changed and related paid invoice exists (based on Remaining)', () => {
+  it('C375267 Encumbrances are rolled over correctly when order fund distribution was changed and related paid invoice exists (based on Remaining) (Thunderjet)', { tags: [testTypes.Extended, devTeams.thunderjet] }, () => {
     cy.visit(topMenu.financePath);
     financeHelper.searchByName(encumbranceData.searchByName);
     financeHelper.selectFirstLedger(encumbranceData.selectFirstLedger);
