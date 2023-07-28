@@ -65,7 +65,7 @@ export default {
     cy.do([accordionClick.click(), accordionClick.click()]);
     cy.expect(Spinner().absent());
   },
-  packageButtonClick(name, open) {
+  verifyPackageButtonClick(name, open) {
     cy.expect(Button(name).exists());
     cy.do(Button(name).click());
     cy.expect([
@@ -77,7 +77,7 @@ export default {
     ]);
   },
 
-  create: () => {
+  createAndVerify: () => {
     cy.do(Button('New').click());
     eHoldingsNewCustomPackage.fillInRequiredProperties(packageName);
     eHoldingsNewCustomPackage.saveAndClose();
@@ -126,7 +126,7 @@ export default {
 
   getAlternateTitles: () => cy.then(() => KeyValue('Alternate title(s)').value()),
 
-  alternativesTitles() {
+  verifyAlternativesTitles() {
     this.getAlternateTitles().then((val) => {
       expect(val).to.include(';');
     });
@@ -239,7 +239,7 @@ export default {
 
   getAlternateRadio: () => cy.then(() => KeyValue('Show titles in package to patrons').value()),
 
-  alternativeRadio() {
+  verifyAlternativeRadio() {
     this.getAlternateRadio().then((val) => {
       const radioArray = ['Yes', 'No'];
       const newRadioArray = radioArray.filter((x) => !x.includes(val));
@@ -249,7 +249,7 @@ export default {
 
   getDatesValue: () => cy.then(() => KeyValue('Custom coverage dates').value()),
 
-  alternativeDates() {
+  verifyAlternativeDates() {
     this.getDatesValue().then((val) => {
       // eslint-disable-next-line no-unused-expressions
       expect(val).to.be.exist;
