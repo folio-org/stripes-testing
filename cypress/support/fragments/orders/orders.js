@@ -745,12 +745,11 @@ export default {
 
   selectFundIDFromthelist: () => {
     const buttonInteractor = Section({
-      id: "FundDistribution",
-    }).find(MultiColumnListCell({ row: 0,columnIndex:5 }));
+      id: 'FundDistribution',
+    }).find(MultiColumnListCell({ row: 0, columnIndex:5 }));
+    cy.expect(buttonInteractor.exists());
     cy.do([
-      buttonInteractor.perform((interactor) =>
-        interactor.removeAttribute("target")
-      ),
+      buttonInteractor.perform((interactor) => interactor.removeAttribute('target')),
       buttonInteractor.click(),
     ]);
   },

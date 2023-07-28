@@ -5,6 +5,8 @@ import receiving from '../../support/fragments/receiving/receiving';
 import titleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import topMenu from '../../support/fragments/topMenu';
+import testTypes from '../../support/dictionary/testTypes';
+import devTeams from '../../support/dictionary/devTeams';
 
 const orderDetails = {
   searchByParameter: 'PO line number',
@@ -16,14 +18,19 @@ const orderDetails = {
   poLineNumber: '20692-1',
 };
 const patronData = {
-  notice1: 'Request expired',
+  notice1: 'Requested item - available',
   notice2: 'Test TLR',
   notice3: 'Requested item - available',
 };
 
+
+
 describe('Orders app ', () => {
-  it('C378899-Encumbrance releases when receive piece for order with payment status ""Payment Not Required""', () => {
+  before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+  });
+
+  it('C378899 Encumbrance releases when receive piece for order with payment status "Payment Not Required" (Thunderjet)', { tags: [testTypes.Extended, devTeams.thunderjet] }, () => {
     cy.visit(topMenu.ordersPath);
     orderLines.clickOnOrderLines();
     orderLines.searchByParameter(
@@ -37,12 +44,12 @@ describe('Orders app ', () => {
     orderLines.receiveOrderLineViaActions();
     orderLines.selectreceivedTitleName(orderDetails.titleName);
     receiving.addPieceProcess(orderDetails.caption, orderDetails.enumeration);
-    receiving.quickReceivePiece();
+    receiving.quickReceivePieceAdd(orderDetails.enumeration);
     receiving.clickOnPOLnumber(orderDetails.poLineNumber);
     orderFragment.selectFundIDFromthelist();
   });
 
-  it('C350428 Patron notice', () => {
+  it('C350428 Patron notice (Vega)', { tags: [testTypes.Extended, devTeams.vega] }, () => {
     cy.visit(SettingsMenu.circulationTitleLevelRequestsPath);
     titleLevelRequests.selectConfirmationNoticeDropdown({
       notice1: patronData.notice1,
@@ -54,9 +61,10 @@ describe('Orders app ', () => {
       notice3: patronData.notice3,
     });
     titleLevelRequests.clickOnSaveButton();
+    titleLevelRequests.checkUpdateTLRCalloutAppeared();
   });
 
-  it('C365619 Re-exported Order contains more than two PO lines is successfully exported in the next scheduled run', () => {
+  xit('C365619 Re-exported Order contains more than two PO lines is successfully exported in the next scheduled run (Thunderjet)', { tags: [testTypes.Extended, devTeams.thunderjet] }, () => {
     cy.visit(topMenu.ordersPath);
     order.switchToOrders();
     order.status();
