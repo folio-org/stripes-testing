@@ -12,7 +12,7 @@ describe('Invoices: Settings(Invoices)', () => {
     cy.visit(`${SettingsMenu.invoiceBatchGroupsPath}`);
   });
 
-  it('C343345 Create and edit Batch groups (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
+  it('C10939 Configure batch group settings (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
     SettingsInvoices.waitBatchGroupsLoading();
     SettingsInvoices.createNewBatchGroup(batchGroup);
     SettingsInvoices.checkBatchGroup(batchGroup);
