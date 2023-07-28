@@ -273,6 +273,7 @@ describe('ui-data-import', () => {
           instanceHrids.push(hrId);
         });
       InstanceRecordView.verifyElectronicAccess(newUri);
+      InstanceRecordView.verifyElectronicAccessAbsent(1);
       InstanceRecordView.viewSource();
       InventoryViewSource.verifyFieldInMARCBibSource(testData.protectedField, newUri);
 
@@ -397,6 +398,7 @@ describe('ui-data-import', () => {
           instanceHrids.push(hrId);
         });
       InstanceRecordView.verifyElectronicAccess(newUri);
+      InstanceRecordView.verifyElectronicAccessAbsent(1);
       InstanceRecordView.viewSource();
       InventoryViewSource.verifyFieldInMARCBibSource(testData.protectedField, newUri);
 
@@ -564,6 +566,7 @@ describe('ui-data-import', () => {
           instanceHrids.push(hrId);
         });
       InstanceRecordView.verifyElectronicAccess(newUri);
+      InstanceRecordView.verifyElectronicAccessAbsent(1);
       InstanceRecordView.viewSource();
       InventoryViewSource.verifyFieldInMARCBibSource(testData.protectedField, newUri);
       InventoryViewSource.close();
