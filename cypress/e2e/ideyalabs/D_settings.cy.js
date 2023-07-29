@@ -12,14 +12,20 @@ import topMenu from '../../support/fragments/topMenu';
 import usersSearchPane from '../../support/fragments/users/usersSearchPane';
 import { randomFourDigitNumber } from '../../support/utils/stringTools';
 
-describe('Settings', () => {
-  const textFieldData = { fieldLabel: `Test${randomFourDigitNumber()}`, helpText: `Testdata${randomFourDigitNumber()}` };
-  const testAreaData = { fieldLabel: `dataArea${randomFourDigitNumber()}`, helpText: `fillData${randomFourDigitNumber()}` };
-  const checkboxData = { fieldLabel: `CheckBox${randomFourDigitNumber()}`, helpText: `testdata${randomFourDigitNumber()}` };
-  const radioButtonData = { data: { fieldLabel: `RadioButton${randomFourDigitNumber()}`, helpText: `testData${randomFourDigitNumber()}`, label1: `Radio1${randomFourDigitNumber()}`, label2: `Radio2${randomFourDigitNumber()}` } };
-  const label2 = `select${randomFourDigitNumber()}`;
-  const singleSelectData = { data: { fieldLabel: `Single Select Dropdown${randomFourDigitNumber()}`, helpText: 'select One Data', label1: `Select${randomFourDigitNumber()}`, label2 } };
+const textFieldData = { fieldLabel: `Test${randomFourDigitNumber()}`, helpText: `Testdata${randomFourDigitNumber()}` };
+const testAreaData = { fieldLabel: `dataArea${randomFourDigitNumber()}`, helpText: `fillData${randomFourDigitNumber()}` };
+const checkboxData = { fieldLabel: `CheckBox${randomFourDigitNumber()}`, helpText: `testdata${randomFourDigitNumber()}` };
+const radioButtonData = { data: { fieldLabel: `RadioButton${randomFourDigitNumber()}`, helpText: `testData${randomFourDigitNumber()}`, label1: `Radio1${randomFourDigitNumber()}`, label2: `Radio2${randomFourDigitNumber()}` } };
+const label2 = `select${randomFourDigitNumber()}`;
+const singleSelectData = { data: { fieldLabel: `Single Select Dropdown${randomFourDigitNumber()}`, helpText: 'select One Data', label1: `Select${randomFourDigitNumber()}`, label2 } };
+const testData = {
+  name: `Administrator${randomFourDigitNumber()}`,
+  description: `Hello${randomFourDigitNumber()}`,
+};
+const noteData = `New Note${randomFourDigitNumber()}`;
+const categoryName = `Test${randomFourDigitNumber()}`;
 
+describe('Settings', () => {
   before('login to Folio', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
@@ -73,17 +79,12 @@ describe('Settings', () => {
     usersSearchPane.verifyDragItem();
   });
   it('C2234 Create new permission set (volaris)', { tags: [testTypes.criticalPath, devTeams.volaris] }, () => {
-    const testData = {
-      name: `Administrator${randomFourDigitNumber()}`,
-      description: `Hello${randomFourDigitNumber()}`,
-    };
     cy.visit(topMenu.permissionSetPath);
     customFields.clickOnNewButton();
     customFields.createPermission(testData);
     customFields.deletePermission(testData);
   });
   it('C16985 Settings | Set up a note type (spitfire)', { tags: [testTypes.extendedPath, devTeams.spitfire] }, () => {
-    const noteData = `New Note${randomFourDigitNumber()}`;
     cy.visit(topMenu.notesPath);
     newNote.fillNote(noteData);
     cy.visit(topMenu.agreementsPath);
@@ -109,7 +110,6 @@ describe('Settings', () => {
     newNote.clickOnNoteType(`Item${randomFourDigitNumber()}`);
   });
   it('C731 Create new categories (thunderjet)', { tags: [testTypes.extendedPath, devTeams.thunderjet] }, () => {
-    const categoryName = `Test${randomFourDigitNumber()}`;
     cy.visit(settingsMenu.organizationsPath);
     organizations.addNewCategory(categoryName);
     cy.visit(topMenu.organizationsPath);
