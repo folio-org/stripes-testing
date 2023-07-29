@@ -32,11 +32,11 @@ const testData = {
   },
   search: {
     searchOption: 'Keyword',
-    value: 'starr',
+    value: 'personal',
   },
   search240: {
     searchOption: 'Keyword',
-    value: 'starr',
+    value: 'personal',
   },
   search730: {
     searchOption: 'Keyword',
