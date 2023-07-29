@@ -1,5 +1,7 @@
 import checkInItems from '../../support/a_ideyalabs/checkInItems';
 import serviceshift from '../../support/a_ideyalabs/serviceShift';
+import devTeams from '../../support/dictionary/devTeams';
+import testTypes from '../../support/dictionary/testTypes';
 import checkInActions from '../../support/fragments/check-in-actions/checkInActions';
 import searchPane from '../../support/fragments/circulation-log/searchPane';
 import topMenu from '../../support/fragments/topMenu';
@@ -21,7 +23,7 @@ describe('servicepoints shift', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
-  it('C589 Check in items at service points for effective location', () => {
+  it('C589 Check in items at service points for effective location (vega)', { tags: [testTypes.extendedPath, devTeams.vega] }, () => {
     serviceshift.servicePointsOne();
     cy.visit(topMenu.inventoryPath);
     checkInItems.createInstance(barcode);
@@ -41,10 +43,10 @@ describe('servicepoints shift', () => {
     checkInActions.openItemDetails();
     cy.visit(topMenu.checkInPath);
     checkInActions.checkInItem(barcode);
-    checkInItems.clickOnModal();
+    checkInItems.checkOnModal();
   });
 
-  it('C9194 Check in: confirm check in for item status', () => {
+  it('C9194 Check in: confirm check in for item status (vega)', { tags: [testTypes.criticalPath, devTeams.vega] }, () => {
     cy.visit(topMenu.circulationLogPath);
     checkInItems.declaredItem();
     cy.visit(topMenu.inventoryPath);
@@ -53,7 +55,7 @@ describe('servicepoints shift', () => {
     checkInItems.lostAndPaid();
   });
 
-  it('C17137 - Filter circulation log by renewed through override', () => {
+  it('C17137 - Filter circulation log by renewed through override (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     cy.visit(topMenu.circulationLogPath);
     searchPane.checkBarcode();
   });
