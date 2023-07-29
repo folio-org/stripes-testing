@@ -23,7 +23,7 @@ export default {
     cy.do(items).click();
   },
 
-  checkOnModal() {
+  checkModal() {
     cy.expect(Modal({ id: 'multipiece-modal' }).exists());
     cy.do(Modal({ id: 'multipiece-modal' }).find(Button('Check in')).click());
   },

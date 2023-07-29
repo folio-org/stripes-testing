@@ -1,5 +1,5 @@
 import checkInItems from '../../support/a_ideyalabs/checkInItems';
-import serviceshift from '../../support/a_ideyalabs/serviceShift';
+import serviceShift from '../../support/a_ideyalabs/serviceShift';
 import devTeams from '../../support/dictionary/devTeams';
 import testTypes from '../../support/dictionary/testTypes';
 import checkInActions from '../../support/fragments/check-in-actions/checkInActions';
@@ -24,26 +24,22 @@ describe('servicepoints shift', () => {
   });
 
   it('C589 Check in items at service points for effective location (vega)', { tags: [testTypes.extendedPath, devTeams.vega] }, () => {
-    serviceshift.servicePointsOne();
+    serviceShift.servicePointsOne();
     cy.visit(topMenu.inventoryPath);
-    checkInItems.createInstance(barcode);
+    checkInItems.createItem(barcode);
     cy.visit(topMenu.checkInPath);
     checkInActions.checkInItem(barcode);
-    serviceshift.clickClose();
+    serviceShift.clickClose();
     checkInActions.openItemDetails();
     cy.visit(topMenu.checkInPath);
     checkInActions.checkInItem(barcode);
-    checkInItems.clickOnModal();
-    serviceshift.servicePointsTwo();
+    checkInItems.checkModal();
+    serviceShift.servicePointsTwo();
     cy.visit(topMenu.inventoryPath);
-    checkInItems.createInstance(barcode);
+    checkInItems.createItem(barcode);
     cy.visit(topMenu.checkInPath);
     checkInActions.checkInItem(barcode);
-    serviceshift.clickClose();
-    checkInActions.openItemDetails();
-    cy.visit(topMenu.checkInPath);
-    checkInActions.checkInItem(barcode);
-    checkInItems.checkOnModal();
+    checkInItems.checkModal();
   });
 
   it('C9194 Check in: confirm check in for item status (vega)', { tags: [testTypes.criticalPath, devTeams.vega] }, () => {
