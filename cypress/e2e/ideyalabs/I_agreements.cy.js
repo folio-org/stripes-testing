@@ -7,15 +7,23 @@ import topMenu from '../../support/fragments/topMenu';
 import dateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
 
+const defaultAgreement = {
+  name: `autotest_agreement_${getRandomPostfix()}`,
+  status: 'Active',
+  startDate: dateTools.getCurrentDate()
+};
 describe('Agreement', () => {
-  const defaultAgreement = {
-    name: `autotest_agreement_${getRandomPostfix()}`,
-    status: 'Active',
-    startDate: dateTools.getCurrentDate()
-  };
   before('Login to Folio', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
+
+  after('Delete test data', () => {
+    newAgreement.findAgreement(defaultAgreement);
+    newAgreement.deleteAgreement();
+    newAgreement.searchAgreement();
+    agreementsDetails.remove();
+  });
+
   it('C757 Create an Agreement (ERM)', { tags: [testTypes.smoke, devTeams.erm] }, () => {
     cy.visit(topMenu.agreementsPath);
     newAgreement.newButtonClick();
@@ -23,6 +31,7 @@ describe('Agreement', () => {
     newAgreement.save();
     newAgreement.validateDateAndTime();
   });
+
   it('C1295 Create a new Agreement and attach a package (spitfire)', { tags: [testTypes.extendedPath, devTeams.spitfire] }, () => {
     cy.visit(topMenu.eholdingsPath);
     eHoldingsPackages.packageSearch();
@@ -31,11 +40,5 @@ describe('Agreement', () => {
     newAgreement.fill(defaultAgreement);
     newAgreement.save();
     newAgreement.agreementLine();
-  });
-  after('delete test data', () => {
-    newAgreement.findAgreement(defaultAgreement);
-    newAgreement.deleteAgreement();
-    newAgreement.searchAgreement();
-    agreementsDetails.remove();
   });
 });
