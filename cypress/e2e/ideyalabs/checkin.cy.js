@@ -60,7 +60,7 @@ describe('servicepoints shift', () => {
     searchPane.checkBarcode();
   });
 
-  it('C590 Check in: multipiece items', () => {
+  it('C590 Check in: multipiece items (vega)', { tags: [testTypes.extendedPath, devTeams.vega] }, () => {
     cy.visit(topMenu.checkInPath);
     checkInItems.checkIn(testData.itemA);
     checkInActions.openItemDetails(testData.itemA);
