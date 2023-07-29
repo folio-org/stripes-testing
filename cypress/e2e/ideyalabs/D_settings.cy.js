@@ -10,20 +10,21 @@ import customFields from '../../support/fragments/settings/users/customFields';
 import settingsMenu from '../../support/fragments/settingsMenu';
 import topMenu from '../../support/fragments/topMenu';
 import usersSearchPane from '../../support/fragments/users/usersSearchPane';
-import { randomFourDigitNumber } from '../../support/utils/stringTools';
+import { getFourDigitRandomNumber } from '../../support/utils/stringTools';
 
-const textFieldData = { fieldLabel: `Test${randomFourDigitNumber()}`, helpText: `Testdata${randomFourDigitNumber()}` };
-const testAreaData = { fieldLabel: `dataArea${randomFourDigitNumber()}`, helpText: `fillData${randomFourDigitNumber()}` };
-const checkboxData = { fieldLabel: `CheckBox${randomFourDigitNumber()}`, helpText: `testdata${randomFourDigitNumber()}` };
-const radioButtonData = { data: { fieldLabel: `RadioButton${randomFourDigitNumber()}`, helpText: `testData${randomFourDigitNumber()}`, label1: `Radio1${randomFourDigitNumber()}`, label2: `Radio2${randomFourDigitNumber()}` } };
-const label2 = `select${randomFourDigitNumber()}`;
-const singleSelectData = { data: { fieldLabel: `Single Select Dropdown${randomFourDigitNumber()}`, helpText: 'select One Data', label1: `Select${randomFourDigitNumber()}`, label2 } };
+const textFieldData = { fieldLabel: `Test${getFourDigitRandomNumber()}`, helpText: `Testdata${getFourDigitRandomNumber()}` };
+const testAreaData = { fieldLabel: `dataArea${getFourDigitRandomNumber()}`, helpText: `fillData${getFourDigitRandomNumber()}` };
+const checkboxData = { fieldLabel: `CheckBox${getFourDigitRandomNumber()}`, helpText: `testdata${getFourDigitRandomNumber()}` };
+const radioButtonData = { data: { fieldLabel: `RadioButton${getFourDigitRandomNumber()}`, helpText: `testData${getFourDigitRandomNumber()}`, label1: `Radio1${getFourDigitRandomNumber()}`, label2: `Radio2${getFourDigitRandomNumber()}` } };
+const label2 = `select${getFourDigitRandomNumber()}`;
+const singleSelectData = { data: { fieldLabel: `Single Select Dropdown${getFourDigitRandomNumber()}`, helpText: 'select One Data', label1: `Select${getFourDigitRandomNumber()}`, label2 } };
 const testData = {
-  name: `Administrator${randomFourDigitNumber()}`,
-  description: `Hello${randomFourDigitNumber()}`,
+  name: `Administrator${getFourDigitRandomNumber()}`,
+  description: `Hello${getFourDigitRandomNumber()}`,
 };
-const noteData = `New Note${randomFourDigitNumber()}`;
-const categoryName = `Test${randomFourDigitNumber()}`;
+const noteData = `New Note${getFourDigitRandomNumber()}`;
+const categoryName = `Test${getFourDigitRandomNumber()}`;
+const noteType = `Item${getFourDigitRandomNumber()}`;
 
 describe('Settings', () => {
   before('login to Folio', () => {
@@ -96,18 +97,18 @@ describe('Settings', () => {
   });
   it('C1304 Settings | Edit a note type (spitfire)', { tags: [testTypes.extendedPath, devTeams.spitfire] }, () => {
     cy.visit(topMenu.notesPath);
-    existingNoteEdit.clickEditButton(`Item${randomFourDigitNumber()}`);
+    existingNoteEdit.clickEditButton(noteType);
     cy.visit(topMenu.agreementsPath);
     agreementsDetails.agreementListClick('2020 ACS Publications');
     agreementsDetails.openNotesSection();
     agreementsDetails.clickOnNewButton();
-    newNote.clickOnNoteType(`Item${randomFourDigitNumber()}`);
+    newNote.clickOnNoteType(noteType);
     agreementsDetails.clickCancelButton();
     newNote.closeWithoutSaveButton();
     agreementsDetails.openNotesSection();
     agreementsDetails.clickOnNoteRecord();
     existingNoteView.gotoEdit();
-    newNote.clickOnNoteType(`Item${randomFourDigitNumber()}`);
+    newNote.clickOnNoteType(noteType);
   });
   it('C731 Create new categories (thunderjet)', { tags: [testTypes.extendedPath, devTeams.thunderjet] }, () => {
     cy.visit(settingsMenu.organizationsPath);
@@ -122,7 +123,7 @@ describe('Settings', () => {
   });
   it('C367970 Check that User can save changes while edit ""Fixed due date schedules"" without changing ""Fixed due date schedules name"" field (vega)', { tags: [testTypes.criticalPath, devTeams.vega] }, () => {
     cy.visit(settingsMenu.circulationFixedDueDateSchedulesPath);
-    eHoldingsProviders.editSchedule({ data: { name: 'Magnus test', description: `Test${randomFourDigitNumber()}` } });
+    eHoldingsProviders.editSchedule({ data: { name: 'Magnus test', description: `Test${getFourDigitRandomNumber()}` } });
   });
   after('delete test data', () => {
     cy.visit(topMenu.customFieldsPath);

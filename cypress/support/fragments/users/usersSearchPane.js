@@ -132,7 +132,7 @@ export default {
   },
 
   verifyDragItem() {
-    cy.expect(AdditionalInfo.exists());
-    cy.do(AdditionalInfo.click());
+    cy.expect(additionalInfo.exists());
+    cy.do(additionalInfo.click());
   }
 };
