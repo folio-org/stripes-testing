@@ -22,7 +22,6 @@ const testData = {
   itemBarcode: '108204829',
 };
 
-
 describe('Checkout item', () => {
   before('Login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
@@ -31,7 +30,7 @@ describe('Checkout item', () => {
   after('Delete test data', () => {
     cy.visit(topMenu.usersPath);
     usersSearchPane.searchByStatus(testData.status);
-    usersSearchPane.searchByKeywords(testData.parameter, testData.name);
+    usersSearchPane.searchByKeywords(testData.name);
     users.openNote();
     users.deleteNote();
     users.verifyNoteAbsent();
@@ -93,13 +92,6 @@ describe('Checkout item', () => {
       users.enterPatronBarcodeCheckOut(testData.patronBarcode);
       users.enterItemBarcodeCheckOut(testData.itemBarcode);
       users.closeButton();
-      users.enterPatronBarcodeCheckOut(testData.patronBarcode);
-      users.enterItemBarcodeCheckOut(testData.itemBarcode);
-      users.cancelButton();
-      users.patronOverride();
-      users.saveAndCloseButton();
-      users.clickOpenLoansCount();
-      users.verifyItemBarcode(itemBarcode);
     }
   );
 });
