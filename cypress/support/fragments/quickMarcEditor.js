@@ -713,5 +713,24 @@ export default {
     cy.expect(calloutUpdatedRecord.exists());
     cy.do(calloutUpdatedRecord.dismiss());
     cy.expect(calloutUpdatedRecord.absent());
-  }
+  },
+
+  checkFourthBoxDisabled(rowIndex) {
+    cy.expect(getRowInteractorByRowNumber(rowIndex).find(TextArea({ ariaLabel: 'Subfield' })).has({ disabled: true }));
+  },
+
+  verifyNoFieldWithContent(content) {
+    cy.expect(TextArea({ ariaLabel: 'Subfield', textContent: including(content) }).absent());
+  },
+
+  updateTagNameToLockedTag(rowIndex, newTagName) {
+    cy.get(`input[name="records[${rowIndex}].tag"`).type(newTagName);
+  },
+
+  checkEmptyFieldAdded(rowIndex, defaultContent) {
+    cy.expect([
+      QuickMarcEditorRow({ index: rowIndex }).find(quickMarcEditorRowContent).exists(),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ ariaLabel: 'Subfield' })).has({ textContent: defaultContent })
+    ]);
+  },
 };
