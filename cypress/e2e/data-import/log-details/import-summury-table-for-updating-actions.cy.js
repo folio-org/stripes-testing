@@ -242,7 +242,7 @@ describe('ui-data-import', () => {
         permanentLocationUI: LOCATION_NAMES.ONLINE_UI,
         callNumberType: CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS,
         callNumber: '050$a " " 050$b',
-        relationship: 'Resource',
+        relationship: '"Resource"',
         uri: '856$u' },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C356802 update holdings action profile ${Helper.getRandomBarcode()}`,
