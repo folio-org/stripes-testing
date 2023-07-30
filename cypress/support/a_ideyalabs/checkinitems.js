@@ -91,7 +91,7 @@ export default {
     cy.do([Checkbox({ id: 'clickable-filter-itemStatus-withdrawn' }).click()]);
     inventorySearchAndFilter.clickSearchResultItem();
     cy.visit(topMenu.checkInPath);
-    checkInActions.checkInItem(data);
+    checkInActions.checkInItem(itemBarcode);
     serviceShift.clickClose();
   },
 

@@ -26,19 +26,12 @@ describe('servicepoints shift', () => {
   it('C589 Check in items at service points for effective location (vega)', { tags: [testTypes.extendedPath, devTeams.vega] }, () => {
     serviceShift.servicePointsOne();
     cy.visit(topMenu.inventoryPath);
-    checkInItems.createItem(barcode);
     cy.visit(topMenu.checkInPath);
-    checkInActions.checkInItem(barcode);
-    serviceShift.clickClose();
-    checkInActions.openItemDetails();
-    cy.visit(topMenu.checkInPath);
-    checkInActions.checkInItem(barcode);
+    checkInActions.checkInItem(testData.itemA);
     checkInItems.checkModal();
     serviceShift.servicePointsTwo();
-    cy.visit(topMenu.inventoryPath);
-    checkInItems.createItem(barcode);
     cy.visit(topMenu.checkInPath);
-    checkInActions.checkInItem(barcode);
+    checkInActions.checkInItem(testData.itemB);
     checkInItems.checkModal();
   });
 
