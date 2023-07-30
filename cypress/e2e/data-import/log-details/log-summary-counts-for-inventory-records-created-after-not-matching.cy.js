@@ -178,6 +178,7 @@ describe('ui-data-import', () => {
       DataImport.checkIsLandingPageOpened();
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
+      cy.reload();
       DataImport.uploadFile('marcFileForC378901.mrc', marcFileName);
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
