@@ -638,6 +638,10 @@ export default {
     waitLoading();
   },
 
+  fillCallNumberPrefix:(prefix) => { cy.do(TextField('Call number prefix').fillIn(prefix)); },
+
+  fillcallNumberSuffix:(prefix) => { cy.do(TextField('Call number suffix').fillIn(prefix)); },
+
   fillStatus:(itemStatus) => {
     cy.do(TextField('Status').fillIn(`"${itemStatus}"`));
     waitLoading();
