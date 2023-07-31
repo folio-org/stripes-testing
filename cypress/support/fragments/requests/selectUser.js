@@ -9,8 +9,9 @@ export default {
     cy.expect(selectUserModal.find(HTML(including('1 record found'))).exists());
   },
 
-  selectUserFromList:(userName) => {
-    cy.do(selectUserModal.find(MultiColumnListCell(userName)).click());
+  selectUserFromList:() => {
+    cy.do(selectUserModal.click({ row: 0 }));
+    //cy.do(selectUserModal.find(MultiColumnListCell(userName)).click());
     cy.expect(selectUserModal.absent());
   }
 };
