@@ -63,6 +63,7 @@ describe('ui-data-import', () => {
 
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
+          cy.reload();
           DataImport.uploadFile('oneMarcAuthority.mrc', nameMarcFileForCreate);
           // need to wait until file will be uploaded in loop
           cy.wait(8000);

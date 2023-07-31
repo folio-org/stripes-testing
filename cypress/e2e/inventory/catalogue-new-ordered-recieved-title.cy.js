@@ -163,6 +163,8 @@ describe('orders: Receive piece from Order', () => {
       InventorySearchAndFilter.instanceTabIsDefault();
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', instanceTitle);
+      // TODO need to wait until result is displayed
+      cy.wait(1500);
       InventoryInstances.selectInstance();
       InventoryInstances.verifyInstanceDetailsView();
       InventoryInstance.openHoldings(effectiveLocation.name);
@@ -179,6 +181,8 @@ describe('orders: Receive piece from Order', () => {
       cy.visit(TopMenu.inventoryPath);
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', instanceTitle);
+      // TODO need to wait until result is displayed
+      cy.wait(1500);
       InventoryInstances.selectInstance();
       InventoryInstances.verifyInstanceDetailsView();
       InventoryInstance.openHoldings(effectiveLocation.name);
