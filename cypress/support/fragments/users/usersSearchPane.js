@@ -38,8 +38,8 @@ export default {
     waitClick();
   },
 
-  selectUserFromList: (userName) => {
-    cy.do(Pane({ id:'users-search-results-pane' }).find(MultiColumnListCell(userName)).click());
+  selectUserFromList: (rowNumber = 0) => {
+    cy.do(Pane({ id:'users-search-results-pane' }).click({ row: rowNumber }));
   },
 
   openUser(userId) {
