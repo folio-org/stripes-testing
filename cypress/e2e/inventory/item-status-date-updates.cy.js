@@ -145,6 +145,7 @@ describe('inventory', () => {
   const openItem = (title, itemLocation, barcode) => {
     cy.visit(TopMenu.inventoryPath);
     InventorySearchAndFilter.searchByParameter('Title (all)', title);
+    cy.wait(3000);
     InventoryInstances.selectInstance();
     InventoryInstance.openHoldings(itemLocation);
     InventoryInstance.openItemByBarcode(barcode);
