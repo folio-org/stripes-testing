@@ -16,14 +16,15 @@ import TopMenu from '../../support/fragments/topMenu';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
-import ItemRecordEdit from '../../support/fragments/inventory/itemRecordEdit';
+import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
+import ItemRecordEdit from '../../support/fragments/inventory/item/itemRecordEdit';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import SwitchServicePoint from '../../support/fragments/servicePoint/switchServicePoint';
 import CheckInModals from '../../support/fragments/check-in-actions/checkInModals';
 import Users from '../../support/fragments/users/users';
 import ServicePoint from '../../support/fragments/servicePoint/servicePoint';
 import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('orders: Receive piece from Order', () => {
   let effectiveLocation;
@@ -51,6 +52,21 @@ describe('orders: Receive piece from Order', () => {
             configName:'approvals',
             enabled:true,
             value:'{"isApprovalRequired":false}'
+          });
+        }
+      });
+    InventoryInteractionsDefaults
+      .getConfigurationInventoryInteractions({ query: '(module==ORDERS and configName==inventory-loanTypeName)' })
+      .then((body) => {
+        if (body.configs.length !== 0) {
+          const id = body.configs[0].id;
+
+          InventoryInteractionsDefaults.setConfigurationInventoryInteractions({
+            id,
+            module:'ORDERS',
+            configName:'inventory-loanTypeName',
+            enabled:true,
+            value:'Can circulate'
           });
         }
       });
@@ -147,10 +163,12 @@ describe('orders: Receive piece from Order', () => {
       InventorySearchAndFilter.instanceTabIsDefault();
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', instanceTitle);
+      // TODO need to wait until result is displayed
+      cy.wait(1500);
       InventoryInstances.selectInstance();
       InventoryInstances.verifyInstanceDetailsView();
       InventoryInstance.openHoldings(effectiveLocation.name);
-      InventoryInstance.checkHoldingsTable(effectiveLocation.name, 0, '-', barcode, 'Available');
+      InventoryInstance.checkHoldingsTable(effectiveLocation.name, 0, '-', barcode, ITEM_STATUS_NAMES.AVAILABLE);
       InventoryInstance.verifyLoan('Can circulate');
       InventoryInstance.openItemByBarcode(barcode);
       ItemRecordView.waitLoading();
@@ -163,6 +181,8 @@ describe('orders: Receive piece from Order', () => {
       cy.visit(TopMenu.inventoryPath);
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', instanceTitle);
+      // TODO need to wait until result is displayed
+      cy.wait(1500);
       InventoryInstances.selectInstance();
       InventoryInstances.verifyInstanceDetailsView();
       InventoryInstance.openHoldings(effectiveLocation.name);

@@ -1,12 +1,7 @@
 import { Button, Checkbox, Modal, MultiColumnListCell } from '../../../../interactors';
 
-function getModalCheckboxByRow(row) {
-  return Modal().find(MultiColumnListCell({ 'row': row, 'columnIndex': 0 })).find(Checkbox());
-}
-
-function buttonIsEnabled(name) {
-  return cy.expect(Modal().find(Button(name)).is({ disabled: false }));
-}
+function getModalCheckboxByRow(row) { return Modal().find(MultiColumnListCell({ 'row': row, 'columnIndex': 0 })).find(Checkbox()); }
+function buttonIsEnabled(name) { return cy.expect(Modal().find(Button(name)).is({ disabled: false })); }
 
 export default {
   verifySelectedRecords(elemCount) {
@@ -32,7 +27,5 @@ export default {
     }
   },
 
-  save() {
-    return cy.do(Modal().find(Button('Save & close')).click());
-  }
+  save() { return cy.do(Modal().find(Button('Save & close')).click()); }
 };

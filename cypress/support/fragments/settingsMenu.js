@@ -35,6 +35,7 @@ export default {
   inventoryPath: 'settings/inventory',
   materialTypePath: '/settings/inventory/materialtypes',
   targetProfilesPath: 'settings/inventory/targetProfiles',
+  urlRelationshipPath: 'settings/inventory/URLrelationship',
   // Invoice
   invoiceApprovalsPath: 'settings/invoice/approvals',
   invoiceAdjustmentsPath: 'settings/invoice/adjustments',
@@ -52,10 +53,13 @@ export default {
   ordersPath: 'settings/orders',
   organizationsPath: 'settings/organizations',
   remoteStoragePath: 'settings/remote-storage',
+  remoteStorageConfigurationPath: '/settings/remote-storage/configurations',
+  remoteStorageAccTablesPath: '/settings/remote-storage/accession-tables',
   tagsPath: 'settings/tags',
   tenantPath: 'settings/tenant-settings',
   tenantLocationsPath: 'settings/tenant-settings/location-locations',
   // Orders
+  approvalsPath: 'settings/orders/approvals',
   acquisitionMethodsPath: 'settings/orders/acquisition-methods',
   ordersOrderTemplatesPath: 'settings/orders/order-templates',
   ordersPONumberEditPath: 'settings/orders/po-number',
@@ -63,7 +67,12 @@ export default {
   ordersPurchaseOrderLinesLimit: 'settings/orders/polines-limit',
   ordersPrefixes: 'settings/orders/prefixes',
   ordersSuffixes: 'settings/orders/suffixes',
+  ordersInventoryInteractionsDefaultsPath: 'settings/orders/create-inventory',
+  ordersInstanceStatusPath: 'settings/orders/instance-status',
+  ordersInstanceTypePath: 'settings/orders/instance-type',
+  ordersLoanTypePath: 'settings/orders/loan-type',
   // Users
+  permissionSets: 'settings/users/perms',
   usersOwnersPath: 'settings/users/owners',
   usersPath: 'settings/users',
   manualCharges: 'settings/users/feefinestable',
@@ -72,6 +81,8 @@ export default {
   limitsPath: 'settings/users/limits',
   waiveReasons: 'settings/users/waivereasons',
   patronBlockTemplates: 'settings/users/manual-block-templates',
+  usersTransferCriteria: '/settings/users/transfer-criteria',
+  customFieldsPath: 'settings/users/custom-fields',
   // Data Import
   mappingProfilePath: 'settings/data-import/mapping-profiles',
   actionProfilePath: 'settings/data-import/action-profiles',

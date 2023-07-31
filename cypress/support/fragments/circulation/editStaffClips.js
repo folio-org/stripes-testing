@@ -1,4 +1,6 @@
-import { Button, TextArea, NavListItem, Checkbox, Modal, RichEditor } from '../../../../interactors';
+import { including } from 'bigtest';
+import { Button, TextArea, NavListItem, Checkbox, Modal, RichEditor, Pane } from '../../../../interactors';
+import InteractorsTools from '../../utils/interactorsTools';
 
 const editButton = Button({ id: 'clickable-edit-item' });
 const staffClipsDescripton = TextArea({ id: 'input-staff-slip-description' });
@@ -34,6 +36,13 @@ export default {
       editButton.click(),
     ]);
   },
+  addToken: (tokens) => {
+    cy.do(Button({ className: 'ql-token' }).click());
+    cy.wrap(tokens).each((token) => {
+      cy.do(Checkbox(token).click());
+    });
+    cy.do(Button('Add token').click());
+  },
   fillStaffClips: (editStaffClipsHold) => {
     cy.do([
       staffClipsDescripton.fillIn(editStaffClipsHold.description),
@@ -51,6 +60,14 @@ export default {
     ]);
     cy.expect(Modal({ id: 'preview-modal' }).exists(textCheck));
   },
+  checkPreview: (staffSlipType, displayText) => {
+    cy.do(Button('Preview').click());
+    cy.expect([
+      Modal(`Preview of staff slip - ${staffSlipType}`).exists(),
+      Modal({ content: including(displayText) }).exists()
+    ]);
+    cy.do(Button('Close').click());
+  },
   fillAndPreviewTemplate(editStaffClipsHold) {
     this.fillStaffClips(editStaffClipsHold);
     this.previewStaffClips();
@@ -59,6 +76,13 @@ export default {
     cy.do(staffClipsEditor.fillIn('{selectAll}{backspace}'));
     cy.do(staffClipsDescripton.fillIn('{selectAll}{backspace}'));
     cy.do(saveButton.click());
+  },
+  saveAndClose: () => {
+    cy.do(saveButton.click());
+  },
+  checkAfterUpdate(staffSlipType) {
+    InteractorsTools.checkCalloutMessage(`The Staff slip ${staffSlipType} was successfully updated.`);
+    cy.expect(Pane(staffSlipType).exists());
   },
   editAndClearHold() {
     this.editHold();

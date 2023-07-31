@@ -14,7 +14,12 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
-import { LOCALION_NAMES, LOAN_TYPE_NAMES, ITEM_STATUS_NAMES, FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { LOCATION_NAMES,
+  LOAN_TYPE_NAMES,
+  ITEM_STATUS_NAMES,
+  FOLIO_RECORD_TYPE,
+  MATERIAL_TYPE_NAMES,
+  JOB_STATUS_NAMES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let user;
@@ -41,8 +46,8 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: holdingsMappingProfileName,
-        pernanentLocation: `"${LOCALION_NAMES.ONLINE}"`,
-        pernanentLocationUI: LOCALION_NAMES.ONLINE_UI },
+        pernanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
+        pernanentLocationUI: LOCATION_NAMES.ONLINE_UI },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: holdingsActionProfileName }
     },
@@ -50,7 +55,8 @@ describe('ui-data-import', () => {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: itemMappingProfileName,
         permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-        status: ITEM_STATUS_NAMES.AVAILABLE },
+        status: ITEM_STATUS_NAMES.AVAILABLE,
+        materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: itemActionProfileName }
     }
@@ -104,7 +110,7 @@ describe('ui-data-import', () => {
 
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile);
-      NewFieldMappingProfile.fillMaterialType();
+      NewFieldMappingProfile.fillMaterialType(collectionOfMappingAndActionProfiles[2].mappingProfile.materialType);
       NewFieldMappingProfile.fillPermanentLoanType(collectionOfMappingAndActionProfiles[2].mappingProfile.permanentLoanType);
       NewFieldMappingProfile.fillStatus(collectionOfMappingAndActionProfiles[2].mappingProfile.status);
       FieldMappingProfiles.saveProfile();
@@ -128,13 +134,14 @@ describe('ui-data-import', () => {
 
       // upload a marc file for creating of the new instance, holding and item
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       cy.reload();
       DataImport.uploadFile('oneMarcBib.mrc', nameMarcFile);
       JobProfiles.searchJobProfileForImport(jobProfileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(nameMarcFile);
-      Logs.checkStatusOfJobProfile('Completed');
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(nameMarcFile);
 
       // check created instance
@@ -156,11 +163,11 @@ describe('ui-data-import', () => {
       ].forEach(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
       });
-      // check created counter in the Summary table
+      // check Created counter in the Summary table
       FileDetails.checkItemsQuantityInSummaryTable(0, quantityOfItems);
       // check Updated counter in the Summary table
       FileDetails.checkItemsQuantityInSummaryTable(1, '0');
-      // check Discarded counter in the Summary table
+      // check No action counter in the Summary table
       FileDetails.checkItemsQuantityInSummaryTable(2, '0');
       // check Error counter in the Summary table
       FileDetails.checkItemsQuantityInSummaryTable(3, '0');

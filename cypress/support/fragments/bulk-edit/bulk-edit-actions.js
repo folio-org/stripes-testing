@@ -23,6 +23,8 @@ const deleteBtn = Button({ icon: 'trash' });
 const keepEditingBtn = Button('Keep editing');
 const areYouSureForm = Modal('Are you sure?');
 const downloadPreviewBtn = Button('Download preview');
+const newBulkEditButton = Button('New bulk edit');
+const startBulkEditLocalButton = Button('Start bulk edit (Local)');
 
 function getEmailField() {
   // 2 the same selects without class, id or someone different attr
@@ -39,10 +41,11 @@ const bulkPageSelections = {
 
 export default {
   openStartBulkEditForm() {
-    cy.do(Button('Start bulk edit (CSV)').click());
+    cy.do(startBulkEditLocalButton.click());
   },
   openInAppStartBulkEditFrom() {
     cy.do(Button('Start bulk edit').click());
+    cy.wait(1000);
   },
   verifyBulkEditForm(rowIndex = 0) {
     cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'));
@@ -64,6 +67,8 @@ export default {
 
   downloadPreview() {
     cy.do(downloadPreviewBtn.click());
+    // Wait for file to download
+    cy.wait(3000);
   },
 
   clickKeepEditingBtn() {
@@ -78,6 +83,14 @@ export default {
 
   openActions() {
     cy.do(actionsBtn.click());
+  },
+
+  downloadMatchedRecordsExists() {
+    cy.expect(Button('Download matched records (CSV)').exists());
+  },
+
+  downloadErrorsExists() {
+    cy.expect(Button('Download errors (CSV)').exists());
   },
 
   verifyActionAfterChangingRecords() {
@@ -215,6 +228,21 @@ export default {
     ]);
   },
 
+  editItemsSuppressFromDiscovery(value, rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Suppress from discovery'),
+      RepeatableFieldItem({ index: rowIndex }).find(Select({ content: including('Set') })).choose(`Set ${value}`),
+    ]);
+  },
+
+  editHoldingsSuppressFromDiscovery(value, rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Suppress from discovery'),
+      RepeatableFieldItem({ index: rowIndex }).find(Select({ content: including('Set') })).choose(`Set ${value}`),
+    ]);
+    cy.expect(Checkbox('Apply to items records').has({ checked: value }));
+  },
+
   verifyNoMatchingOptionsForLocationFilter() {
     cy.expect(HTML('No matching options').exists());
   },
@@ -240,6 +268,11 @@ export default {
 
   downloadErrors() {
     cy.do(Button('Download errors (CSV)').click());
+    BulkEditSearchPane.waitingFileDownload();
+  },
+
+  downloadMatchedErrors() {
+    cy.do(Button('Download matched records (CSV)').click());
     BulkEditSearchPane.waitingFileDownload();
   },
 
@@ -280,10 +313,8 @@ export default {
     ]);
   },
 
-  newBulkEdit() {
-    cy.do(Button('New bulk edit').click());
-    // very fast reload bulk edit page
-    cy.wait(500);
+  verifyNoNewBulkEditButton() {
+    cy.expect(newBulkEditButton.absent());
   },
 
   verifyUsersActionDropdownItemsInCaseOfError() {

@@ -5,12 +5,13 @@ import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRec
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import TopMenu from '../../../support/fragments/topMenu';
 import GenerateItemBarcode from '../../../support/utils/generateItemBarcode';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Helper from '../../../support/fragments/finance/financeHelper';
+import { ITEM_STATUS_NAMES } from '../../../support/constants';
 
 describe('inventory', () => {
   const itemData = {
@@ -44,7 +45,7 @@ describe('inventory', () => {
           items: [
             {
               barcode: itemData.itemBarcode,
-              status: { name: 'Available' },
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
               permanentLoanType: { id: itemData.loanTypeId },
               materialType: { id: itemData.materialTypeId }
             }]
@@ -94,6 +95,6 @@ describe('inventory', () => {
       InventoryInstance.openHoldings([anotherPermanentLocation]);
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.searchByParameter('Barcode', itemData.itemBarcode);
-      ItemRecordView.verifyPermanentLocation(anotherPermanentLocation);
+      ItemRecordView.verifyEffectiveLocation(anotherPermanentLocation);
     });
 });

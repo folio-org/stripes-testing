@@ -3,14 +3,14 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import TestTypes from '../../../support/dictionary/testTypes';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import permissions from '../../../support/dictionary/permissions';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import devTeams from '../../../support/dictionary/devTeams';
 import users from '../../../support/fragments/users/users';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import { ITEM_STATUS_NAMES } from '../../../support/constants';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
@@ -56,7 +56,7 @@ describe('ui-inventory: location', () => {
                     barcode: ITEM_BARCODE,
                     missingPieces: '3',
                     numberOfMissingPieces: '3',
-                    status: { name: 'Available' },
+                    status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                     permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
                     materialType: { id: Cypress.env('materialTypes')[0].id },
                   },
@@ -64,7 +64,7 @@ describe('ui-inventory: location', () => {
                     barcode: `test${getRandomPostfix()}`,
                     missingPieces: '3',
                     numberOfMissingPieces: '3',
-                    status: { name: 'Available' },
+                    status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                     permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
                     materialType: { id: Cypress.env('materialTypes')[0].id },
                   }
@@ -94,9 +94,9 @@ describe('ui-inventory: location', () => {
     // select instance
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
-    InventoryInstances.selectInstance();
+    ItemRecordView.waitLoading();
     ItemRecordView.closeDetailView();
-    InventoryInstance.openHoldings([toBeEditedLocationName]);
+    InventoryInstance.openHoldings(['']);
     InventoryInstance.openItemByBarcode(ITEM_BARCODE);
 
     // edit instance
@@ -108,10 +108,10 @@ describe('ui-inventory: location', () => {
     // verify results
     InventoryInstance.checkHoldingsTable(
       toBeEditedLocationName,
-      0,
+      1,
       '-',
       ITEM_BARCODE,
-      'Available',
+      ITEM_STATUS_NAMES.AVAILABLE,
       editedLocationName
     );
   });
@@ -123,9 +123,9 @@ describe('ui-inventory: location', () => {
     // select instance
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
-    InventoryInstances.selectInstance();
+    ItemRecordView.waitLoading();
     ItemRecordView.closeDetailView();
-    InventoryInstance.openHoldings([editedLocationName]);
+    InventoryInstance.openHoldings(['']);
     InventoryInstance.openItemByBarcode(ITEM_BARCODE);
 
     // edit instance
@@ -137,10 +137,10 @@ describe('ui-inventory: location', () => {
     // verify results
     InventoryInstance.checkHoldingsTable(
       editedLocationName,
-      0,
+      1,
       '-',
       ITEM_BARCODE,
-      'Available',
+      ITEM_STATUS_NAMES.AVAILABLE,
       toBeEditedLocationName
     );
   });

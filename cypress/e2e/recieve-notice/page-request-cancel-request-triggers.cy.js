@@ -1,4 +1,6 @@
 import uuid from 'uuid';
+import moment from 'moment';
+import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import TestTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
@@ -43,6 +45,7 @@ describe('Request notice triggers', () => {
       category: 'Request',
       subject: getTestEntityValue(noticeName),
       body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
+      previewText: `Test email body The Wines of Italy ${moment().format('ll')}`,
     };
   };
   const noticeTemplates = {
@@ -72,8 +75,8 @@ describe('Request notice triggers', () => {
     description: 'Created by autotest team',
   };
   const requestPolicyBody = {
-    requestTypes: ['Page'],
-    name: `hold${getRandomPostfix()}`,
+    requestTypes: [REQUEST_TYPES.PAGE],
+    name: `page${getRandomPostfix()}`,
     id: uuid(),
   };
 
@@ -113,7 +116,7 @@ describe('Request notice triggers', () => {
           items: [
             {
               barcode: itemData.barcode,
-              status: { name: 'Available' },
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
               permanentLoanType: { id: testData.loanTypeId },
               materialType: { id: testData.materialTypeId },
             },
@@ -188,8 +191,10 @@ describe('Request notice triggers', () => {
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.pageRequest);
+      delete noticeTemplates.pageRequest.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.pageRequest);
       NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.cancelRequest);
+      delete noticeTemplates.cancelRequest.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.cancelRequest);
 
       cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
@@ -232,11 +237,12 @@ describe('Request notice triggers', () => {
       NewRequest.waitLoadingNewRequestPage();
       NewRequest.enterItemInfo(itemData.barcode);
       NewRequest.verifyItemInformation([itemData.barcode, itemData.title]);
-      NewRequest.verifyRequestInformation('Available');
       NewRequest.enterRequesterInfo({
         requesterBarcode: userData.barcode,
         pickupServicePoint: testData.userServicePoint.name,
       });
+      NewRequest.verifyRequestInformation(ITEM_STATUS_NAMES.AVAILABLE);
+      NewRequest.chooseRequestType(REQUEST_TYPES.PAGE);
       // needed to prevent from error "Cannot create a request without Instance ID"
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(3000);

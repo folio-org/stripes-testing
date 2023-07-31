@@ -16,14 +16,18 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import DefaultUser from '../../support/fragments/users/userDefaultObjects/defaultUser';
 import Checkout from '../../support/fragments/checkout/checkout';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+
 
 describe('Check Out - Actions ', () => {
   const userData = {
-    group: 'staff',
+    group: `staff${getRandomPostfix()}`,
     personal: {},
   };
+  let patronGroupId = '';
   const testActiveUser = { ...DefaultUser.defaultUiPatron.body };
-  testActiveUser.patronGroup = 'undergrad (Undergraduate Student)';
+  testActiveUser.patronGroup = userData.group;
   testActiveUser.personal.lastname = testActiveUser.personal.lastName;
   const itemData = {
     barcode: generateItemBarcode(),
@@ -51,6 +55,9 @@ describe('Check Out - Actions ', () => {
           itemData.materialTypeId = res.id;
           itemData.materialTypeName = res.name;
         });
+        PatronGroups.createViaApi(userData.group).then((patronGroupResponse) => {
+          patronGroupId = patronGroupResponse;
+        });
       })
       .then(() => {
         InventoryInstances.createFolioInstanceViaApi({
@@ -67,7 +74,7 @@ describe('Check Out - Actions ', () => {
           items: [
             {
               barcode: itemData.barcode,
-              status: { name: 'Available' },
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
               permanentLoanType: { id: itemData.loanTypeId },
               materialType: { id: itemData.materialTypeId },
             },
@@ -114,6 +121,7 @@ describe('Check Out - Actions ', () => {
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint.id]);
     Users.deleteViaApi(userData.userId);
     Users.deleteViaApi(testActiveUser.id);
+    PatronGroups.deleteViaApi(patronGroupId);
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       defaultLocation.institutionId,
       defaultLocation.campusId,
@@ -135,7 +143,7 @@ describe('Check Out - Actions ', () => {
     // without this waiter, the user will not be found by username
     cy.wait(4000);
     CheckOutActions.checkOutUser(testActiveUser.barcode, testActiveUser.username);
-    CheckOutActions.checkUserInfo(testActiveUser, testActiveUser.patronGroup.substring(0, testActiveUser.patronGroup.indexOf(' ')));
+    CheckOutActions.checkUserInfo(testActiveUser, testActiveUser.patronGroup);
     CheckOutActions.checkOutItem(itemData.barcode);
     CheckOutActions.checkItemInfo(itemData.barcode, itemData.instanceTitle);
   });

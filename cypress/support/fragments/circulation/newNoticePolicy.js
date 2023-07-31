@@ -61,20 +61,16 @@ export default {
   },
 
   addNotice(patronNoticePolicy, index = 0) {
-    return cy.do([
+    cy.do([
       Section({ id: `edit${patronNoticePolicy.noticeName}Notices` }).find(addNoticeButton).click(),
       Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].templateId` }).choose(patronNoticePolicy.templateName),
       Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].format` }).choose(patronNoticePolicy.format),
       Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].sendOptions.sendWhen` }).choose(patronNoticePolicy.action),
     ]);
     // add check for alert "div[role=alert]" 'Always sent at the end of a session and loans are bundled into a single notice for each patron.'
-  },
-
-  addFeeFineNotice(patronNoticePolicy, index = 0) {
-    this.addNotice(patronNoticePolicy, index);
     if (patronNoticePolicy.send !== undefined) {
       cy.do(Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].sendOptions.sendHow` }).choose(patronNoticePolicy.send));
-      if (patronNoticePolicy.send === 'After') {
+      if (patronNoticePolicy.send === 'After' || patronNoticePolicy.send === 'Before') {
         cy.do([
           TextField({ name: `${patronNoticePolicy.noticeId}Notices[${index}].sendOptions.sendBy.duration` }).fillIn(patronNoticePolicy.sendBy.duration),
           Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].sendOptions.sendBy.intervalId` }).choose(patronNoticePolicy.sendBy.interval),

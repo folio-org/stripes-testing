@@ -38,8 +38,8 @@ describe('settings: data-export', () => {
 	});
 
 	it('C15819 Transformation form (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-		ExportFieldMappingProfiles.goTofieldMappingProfilesTab();
-		ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, 'Item');
+		ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
+		ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, ['Item']);
 		ModalSelectTransformations.verifySearchAndFilterPane();
 		ModalSelectTransformations.searchText('text');
 		ModalSelectTransformations.verifySearchResultIncludes(['text']);

@@ -10,11 +10,12 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
-import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/z39.50TargetProfiles';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryEditMarcRecord from '../../../support/fragments/inventory/inventoryEditMarcRecord';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import Users from '../../../support/fragments/users/users';
+import { TARGET_PROFILE_NAMES, JOB_STATUS_NAMES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let user = null;
@@ -46,13 +47,14 @@ describe('ui-data-import', () => {
         const fileName = `C358968autotestFile.${getRandomPostfix()}.mrc`;
 
         Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
-        // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
         cy.reload();
         DataImport.uploadFile('marcFileForC358968.mrc', fileName);
         JobProfiles.searchJobProfileForImport(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);
-        Logs.checkStatusOfJobProfile('Completed');
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileName);
         [FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance].forEach(columnName => {
@@ -61,11 +63,11 @@ describe('ui-data-import', () => {
         FileDetails.checkSrsRecordQuantityInSummaryTable('1');
         FileDetails.checkInstanceQuantityInSummaryTable('1');
 
-        // get Instance HRID through API
-        InventorySearchAndFilter.getInstanceHRID()
-          .then(hrId => {
-            instanceHrid = hrId;
-          });
+        // open Instance for getting hrid
+        FileDetails.openInstanceInInventory('Created');
+        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+          instanceHrid = initialInstanceHrId;
+        });
       });
   });
 
@@ -91,8 +93,8 @@ describe('ui-data-import', () => {
       MarcFieldProtection.checkFieldProtectionIsCreated(protectedField);
 
       cy.visit(SettingsMenu.targetProfilesPath);
-      Z3950TargetProfiles.openOclcWorldCat();
-      Z3950TargetProfiles.editOclcWorldCat(authentication);
+      Z3950TargetProfiles.openTargetProfile();
+      Z3950TargetProfiles.editOclcWorldCat(authentication, TARGET_PROFILE_NAMES.OCLC_WORLDCAT);
       Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(authentication);
 
       cy.visit(TopMenu.inventoryPath);

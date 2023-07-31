@@ -1,7 +1,15 @@
 import uuid from 'uuid';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
-import { FOLIO_RECORD_TYPE, LOCALION_NAMES } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE,
+  LOCATION_NAMES,
+  ACCEPTED_DATA_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES,
+  ORDER_STATUSES,
+  ITEM_STATUS_NAMES,
+  VENDOR_NAMES,
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  HOLDINGS_TYPE_NAMES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import Orders from '../../../support/fragments/orders/orders';
@@ -15,7 +23,7 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import OrderView from '../../../support/fragments/orders/orderView';
@@ -93,7 +101,7 @@ describe('ui-data-import', () => {
           subfield:'a'
         },
         matchCriterion: 'Exactly matches',
-        existingRecordType: 'INSTANCE',
+        existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
         instanceOption: NewMatchProfile.optionsList.pol }
     },
     {
@@ -103,7 +111,7 @@ describe('ui-data-import', () => {
           subfield: 'a'
         },
         matchCriterion: 'Exactly matches',
-        existingRecordType: 'HOLDINGS',
+        existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
         holdingsOption: NewMatchProfile.optionsList.pol }
     },
     {
@@ -114,7 +122,7 @@ describe('ui-data-import', () => {
           subfield: 'a'
         },
         matchCriterion: 'Exactly matches',
-        existingRecordType: 'ITEM',
+        existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
         itemOption: NewMatchProfile.optionsList.pol
       }
     }
@@ -122,7 +130,7 @@ describe('ui-data-import', () => {
 
   const specialJobProfile = { ...NewJobProfile.defaultJobProfile,
     profileName: `C350590 autotestJobProf${Helper.getRandomBarcode()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc };
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC };
 
   before('create test data', () => {
     cy.createTempUser([
@@ -145,7 +153,7 @@ describe('ui-data-import', () => {
       .then(() => {
         cy.getAdminToken()
           .then(() => {
-            Organizations.getOrganizationViaApi({ query: 'name="GOBI Library Solutions"' })
+            Organizations.getOrganizationViaApi({ query: `name="${VENDOR_NAMES.GOBI}"` })
               .then(organization => {
                 vendorId = organization.id;
               });
@@ -153,7 +161,7 @@ describe('ui-data-import', () => {
               .then(materialType => {
                 materialTypeId = materialType.id;
               });
-            cy.getAcquisitionMethodsApi({ query: 'value="Purchase at vendor system"' })
+            cy.getAcquisitionMethodsApi({ query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"` })
               .then(params => {
                 acquisitionMethodId = params.body.acquisitionMethods[0].id;
               });
@@ -269,7 +277,7 @@ describe('ui-data-import', () => {
           Orders.checkIsOrderCreated(firstOrderNumber);
           // open the first PO with POL
           openOrder(firstOrderNumber);
-          OrderView.checkIsOrderOpened('Open');
+          OrderView.checkIsOrderOpened(ORDER_STATUSES.OPEN);
           OrderView.checkIsItemsInInventoryCreated(firstItem.title, location.name);
           // check receiving pieces are created
           checkReceivedPiece(firstOrderNumber, firstItem.title);
@@ -297,7 +305,7 @@ describe('ui-data-import', () => {
               Orders.checkIsOrderCreated(secondOrderNumber);
               // open the second PO
               openOrder(secondOrderNumber);
-              OrderView.checkIsOrderOpened('Open');
+              OrderView.checkIsOrderOpened(ORDER_STATUSES.OPEN);
               OrderView.checkIsItemsInInventoryCreated(secondItem.title, location.name);
               // check receiving pieces are created
               checkReceivedPiece(secondOrderNumber, secondItem.title);
@@ -333,7 +341,8 @@ describe('ui-data-import', () => {
 
       // upload .mrc file
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       cy.reload();
       DataImport.checkIsLandingPageOpened();
       DataImport.uploadFile(editedMarcFileName);
@@ -353,14 +362,14 @@ describe('ui-data-import', () => {
       FileDetails.openInstanceInInventory('Updated');
       InventoryInstance.checkIsInstanceUpdated();
       InventoryInstance.openHoldingView();
-      HoldingsRecordView.checkHoldingsType('Monograph');
+      HoldingsRecordView.checkHoldingsType(HOLDINGS_TYPE_NAMES.MONOGRAPH);
       HoldingsRecordView.checkCallNumberType('Library of Congress classification');
-      HoldingsRecordView.checkPermanentLocation(LOCALION_NAMES.MAIN_LIBRARY_UI);
+      HoldingsRecordView.checkPermanentLocation(LOCATION_NAMES.MAIN_LIBRARY_UI);
       HoldingsRecordView.close();
-      InventoryInstance.openHoldingsAccordion(LOCALION_NAMES.MAIN_LIBRARY_UI);
+      InventoryInstance.openHoldingsAccordion(LOCATION_NAMES.MAIN_LIBRARY_UI);
       InventoryInstance.openItemByBarcode(firstItem.barcode);
-      ItemRecordView.verifyItemStatus('In process');
-      ItemRecordView.checkEffectiveLocation(LOCALION_NAMES.MAIN_LIBRARY_UI);
+      ItemRecordView.verifyItemStatus(ITEM_STATUS_NAMES.IN_PROCESS);
+      ItemRecordView.verifyEffectiveLocation(LOCATION_NAMES.MAIN_LIBRARY_UI);
       ItemRecordView.closeDetailView();
       InventoryInstance.viewSource();
       InventoryViewSource.verifyBarcodeInMARCBibSource(firstItem.barcode);

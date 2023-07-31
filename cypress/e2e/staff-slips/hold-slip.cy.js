@@ -3,6 +3,7 @@ import moment from 'moment';
 import TestTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import TopMenu from '../../support/fragments/topMenu';
+import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
@@ -40,8 +41,8 @@ describe('Check In - Actions', () => {
     servicePoint: testData.userServicePoint.name,
   };
   const requestPolicyBody = {
-    requestTypes: ['Hold'],
-    name: `recall ${getRandomPostfix()}`,
+    requestTypes: [REQUEST_TYPES.HOLD],
+    name: `hold${getRandomPostfix()}`,
     id: uuid(),
   };
 
@@ -82,7 +83,7 @@ describe('Check In - Actions', () => {
           items: [
             {
               barcode: itemData.barcode,
-              status: { name: 'Available' },
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
               permanentLoanType: { id: testData.loanTypeId },
               materialType: { id: testData.materialTypeId },
             },
@@ -188,7 +189,7 @@ describe('Check In - Actions', () => {
         requesterBarcode: requestUserData.barcode,
         itemBarcode: itemData.barcode,
         pickupServicePoint: testData.userServicePoint.name,
-        requestType: 'Hold',
+        requestType: REQUEST_TYPES.HOLD,
       });
 
       cy.visit(TopMenu.checkInPath);

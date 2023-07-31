@@ -3,6 +3,7 @@ import SettingsActionProfiles from '../fragments/settings/dataImport/settingsAct
 import SettingsJobProfiles from '../fragments/settings/dataImport/settingsJobProfiles';
 import SettingsMappingProfiles from '../fragments/settings/dataImport/settingsMappingProfiles';
 import getRandomPostfix from '../utils/stringTools';
+import { ACCEPTED_DATA_TYPE_NAMES, PROFILE_TYPE_NAMES } from '../constants';
 
 Cypress.Commands.add('getId', () => {
   return cy.okapiRequest({
@@ -16,8 +17,8 @@ Cypress.Commands.add('getId', () => {
 
 const addJobProfileRelation = (expectedRelations, actionProfileId) => {
   const defaultJobProfileRelation = {
-    masterProfileType: 'JOB_PROFILE',
-    detailProfileType: 'ACTION_PROFILE'
+    masterProfileType: PROFILE_TYPE_NAMES.JOB_PROFILE,
+    detailProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE
   };
   const newJobProfileRelation = { ...defaultJobProfileRelation };
   newJobProfileRelation.order = expectedRelations.length;
@@ -27,8 +28,8 @@ const addJobProfileRelation = (expectedRelations, actionProfileId) => {
 
 Cypress.Commands.add('addJobProfileRelation', (expectedRelations, actionProfileId) => {
   const defaultJobProfileRelation = {
-    masterProfileType: 'JOB_PROFILE',
-    detailProfileType: 'ACTION_PROFILE'
+    masterProfileType: PROFILE_TYPE_NAMES.JOB_PROFILE,
+    detailProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE
   };
   const newJobProfileRelation = { ...defaultJobProfileRelation };
   newJobProfileRelation.order = expectedRelations.length;
@@ -44,7 +45,7 @@ Cypress.Commands.add('createLinkedProfiles', (testData) => {
   const jobProfile = {
     profile: {
       name: `autotest_job_profile_${getRandomPostfix()}`,
-      dataType: 'MARC'
+      dataType: ACCEPTED_DATA_TYPE_NAMES.MARC
     },
     addedRelations: [],
     deletedRelations: []

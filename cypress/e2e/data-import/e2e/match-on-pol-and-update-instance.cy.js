@@ -2,12 +2,18 @@ import uuid from 'uuid';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import {
-  LOAN_TYPE_NAMES,
+import { LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
   ITEM_STATUS_NAMES,
-  FOLIO_RECORD_TYPE
-} from '../../../support/constants';
+  FOLIO_RECORD_TYPE,
+  CALL_NUMBER_TYPE_NAMES,
+  ACCEPTED_DATA_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES,
+  ORDER_FORMAT_NAMES,
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  VENDOR_NAMES,
+  LOCATION_NAMES,
+  HOLDINGS_TYPE_NAMES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import Orders from '../../../support/fragments/orders/orders';
@@ -52,7 +58,8 @@ describe('ui-data-import', () => {
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `C350944 Create Holdings by POL match ${Helper.getRandomBarcode()}` },
+        name: `C350944 Create Holdings by POL match ${Helper.getRandomBarcode()}`,
+        callNumberType: `"${CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C350944 Create Holdings by POL match ${Helper.getRandomBarcode()}` }
     },
@@ -61,7 +68,7 @@ describe('ui-data-import', () => {
         name: `C350944 Create Item by POL match ${Helper.getRandomBarcode()}`,
         status: ITEM_STATUS_NAMES.AVAILABLE,
         permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-        materialType: MATERIAL_TYPE_NAMES.BOOK },
+        materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C350944 Create Item by POL match ${Helper.getRandomBarcode()}` }
     }
@@ -74,22 +81,22 @@ describe('ui-data-import', () => {
       subfield:'a'
     },
     matchCriterion: 'Exactly matches',
-    existingRecordType: 'INSTANCE',
+    existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
     instanceOption: NewMatchProfile.optionsList.pol
   };
 
   const jobProfile = { ...NewJobProfile.defaultJobProfile,
     profileName: `C350944 Update Instance, and create Holdings, Item based on POL match ${Helper.getRandomBarcode()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc };
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC };
 
   const order = { ...NewOrder.defaultOneTimeOrder,
-    vendor: 'GOBI Library Solutions',
+    vendor: VENDOR_NAMES.GOBI,
     orderType: 'One-time' };
 
   const pol = {
     title: 'Sport and sociology. Dominic Malcolm.',
-    acquisitionMethod: 'Purchase at vendor system',
-    orderFormat: 'Physical resource',
+    acquisitionMethod: ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM,
+    orderFormat: ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE,
     quantity: '1',
     price: '20',
     materialType: MATERIAL_TYPE_NAMES.BOOK,
@@ -154,9 +161,9 @@ describe('ui-data-import', () => {
   const createHoldingsMappingProfile = (holdingsMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
-    NewFieldMappingProfile.fillHoldingsType('Monograph');
+    NewFieldMappingProfile.fillHoldingsType(HOLDINGS_TYPE_NAMES.MONOGRAPH);
     NewFieldMappingProfile.fillPermanentLocation('980$a');
-    NewFieldMappingProfile.fillCallNumberType('Library of Congress classification');
+    NewFieldMappingProfile.fillCallNumberType(holdingsMappingProfile.callNumberType);
     NewFieldMappingProfile.fillCallNumber('980$b " " 980$c');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
@@ -218,7 +225,8 @@ describe('ui-data-import', () => {
 
       // upload a marc file for creating of the new instance, holding and item
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       cy.reload();
       DataImport.uploadFile('marcFileForC350944.mrc', nameMarcFileForCreate);
       JobProfiles.searchJobProfileForImport(jobProfileToRun);
@@ -247,7 +255,8 @@ describe('ui-data-import', () => {
       // upload .mrc file
       cy.visit(TopMenu.dataImportPath);
       DataImport.checkIsLandingPageOpened();
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       cy.reload();
       DataImport.uploadFile(editedMarcFileName, marcFileName);
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
@@ -255,13 +264,13 @@ describe('ui-data-import', () => {
       JobProfiles.waitFileIsImported(marcFileName);
       Logs.checkStatusOfJobProfile();
       Logs.openFileDetails(marcFileName);
-      FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.created, FileDetails.status.created]);
+      FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.created, FileDetails.status.created]);
       FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.noAction]);
 
       FileDetails.openInstanceInInventory('Updated');
       InventoryInstance.checkIsInstanceUpdated();
-      InventoryInstance.checkIsHoldingsCreated(['Main Library >']);
-      InventoryInstance.openHoldingsAccordion('Main Library >');
+      InventoryInstance.checkIsHoldingsCreated([`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`]);
+      InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
       InventoryInstance.checkIsItemCreated(itemBarcode);
       InventoryInstance.viewSource();
       InventoryViewSource.verifyBarcodeInMARCBibSource(itemBarcode);

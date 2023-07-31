@@ -20,6 +20,7 @@ import MarcAuthorities from '../marcAuthority/marcAuthorities';
 import FileManager from '../../utils/fileManager';
 import Logs from './logs/logs';
 import DataImportUploadFile from '../../../../interactors/dataImportUploadFile';
+import { ACCEPTED_DATA_TYPE_NAMES, JOB_STATUS_NAMES } from '../../constants';
 
 const sectionPaneJobsTitle = Section({ id: 'pane-jobs-title' });
 const actionsButton = Button('Actions');
@@ -33,9 +34,26 @@ const logsPane = Pane('Logs');
 const logsPaneHeader = PaneHeader({ id: 'paneHeaderpane-logs-title' });
 const jobsPane = Pane({ id: 'pane-jobs-title' });
 const orChooseFilesButton = Button('or choose files');
+const cancelImportJobModal = Modal('Cancel import job?');
+const yesButton = Button('Yes, cancel import job');
 
 const uploadFile = (filePathName, fileName) => {
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
+};
+
+const uploadBunchOfFiles = (editedFileName, numberOfFiles, finalFileName) => {
+  const arrayOfFiles = [];
+
+  for (let i = 0; i < numberOfFiles; i++) {
+    FileManager.readFile(`cypress/fixtures/${editedFileName}`)
+      .then((actualContent) => {
+        const fileName = `${finalFileName + i}.mrc`;
+
+        FileManager.createFile(`cypress/fixtures/${fileName}`, actualContent);
+        arrayOfFiles.push(fileName);
+      });
+  }
+  cy.get('input[type=file]').attachFile(arrayOfFiles);
 };
 
 const waitLoading = () => {
@@ -143,7 +161,7 @@ function processFile(uploadDefinitionId, fileId, sourcePath, jobExecutionId, uiK
       jobProfileInfo: {
         id: jobProfileId,
         name: 'Default - Create instance and SRS MARC Bib',
-        dataType: 'MARC'
+        dataType: ACCEPTED_DATA_TYPE_NAMES.MARC
       }
     },
     isDefaultSearchParamsRequired: false
@@ -153,6 +171,7 @@ function processFile(uploadDefinitionId, fileId, sourcePath, jobExecutionId, uiK
 export default {
   importFile,
   uploadFile,
+  uploadBunchOfFiles,
   waitLoading,
   uploadDefinitions,
   uploadBinaryMarcFile,
@@ -164,7 +183,7 @@ export default {
     JobProfiles.searchJobProfileForImport(profileName);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(fileName);
-    Logs.checkStatusOfJobProfile('Completed');
+    Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     Logs.openFileDetails(fileName);
   },
 
@@ -259,6 +278,21 @@ export default {
       });
   },
 
+  editMarcFileAddNewRecords(editedFileName, finalFileName, fileWithContentForEdit) {
+    FileManager.readFile(`cypress/fixtures/${editedFileName}`)
+      .then((actualContent) => {
+        const currentContent = actualContent;
+
+        FileManager.readFile(`cypress/fixtures/${fileWithContentForEdit}`)
+          .then((content) => {
+            const contentForEdit = content;
+            const newContent = currentContent.concat(contentForEdit);
+
+            FileManager.createFile(`cypress/fixtures/${finalFileName}`, newContent);
+          });
+      });
+  },
+
   uploadFileViaApi:(filePathName, fileName) => {
     const uiKeyValue = fileName;
 
@@ -341,5 +375,28 @@ export default {
         cy.allure().endStep();
       }
     });
+  },
+
+  deleteImportJob:(fileName) => {
+    cy.get('div[class^="listContainer-"]').contains('li[class^="job-"]', fileName).then(elem => {
+      elem.parent()[0].querySelector('button[icon="trash"]').click();
+    });
+  },
+
+  verifyCancelImportJobModal:() => {
+    cy.expect([
+      cancelImportJobModal.exists(),
+      cancelImportJobModal.find(yesButton).exists(),
+      cancelImportJobModal.find(Button('No, do not cancel import')).exists()
+    ]);
+  },
+
+  cancelImportJob:() => {
+    cy.do(cancelImportJobModal.find(yesButton).click());
+  },
+
+  waitFileIsUploaded:() => {
+    // TODO need to wait until big file is uploaded
+    cy.wait(10000);
   }
 };

@@ -1,6 +1,12 @@
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE, PAYMENT_METHOD, BATCH_GROUP } from '../../../support/constants';
+import {
+  FOLIO_RECORD_TYPE,
+  PAYMENT_METHOD,
+  BATCH_GROUP,
+  ACCEPTED_DATA_TYPE_NAMES,
+  VENDOR_NAMES
+} from '../../../support/constants';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -22,7 +28,7 @@ describe('ui-data-import', () => {
     existingRecordType:FOLIO_RECORD_TYPE.INVOICE,
     description:'',
     batchGroup: BATCH_GROUP.FOLIO,
-    organizationName: NewFieldMappingProfile.organization.harrassowitz,
+    organizationName: VENDOR_NAMES.HARRASSOWITZ,
     paymentMethod: PAYMENT_METHOD.CASH
   };
   const actionProfile = {
@@ -32,7 +38,7 @@ describe('ui-data-import', () => {
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
     profileName: `Create Large Harrassowitz serials invoice ${getRandomPostfix()}`,
-    acceptedType: NewJobProfile.acceptedDataType.edifact
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.EDIFACT
   };
 
   beforeEach('login', () => {
@@ -67,9 +73,11 @@ describe('ui-data-import', () => {
 
     // upload a marc file for creating of the new instance, holding and item
     cy.visit(TopMenu.dataImportPath);
-    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+    // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.verifyUploadState();
     cy.reload();
     DataImport.uploadFile('ediFileForC347615.edi', fileName);
+    DataImport.waitFileIsUploaded();
     JobProfiles.searchJobProfileForImport(jobProfile.profileName);
     JobProfiles.selectJobProfile();
     JobProfiles.runImportFile();

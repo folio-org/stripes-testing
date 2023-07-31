@@ -7,6 +7,7 @@ import InstanceRecordEdit from '../../support/fragments/inventory/instanceRecord
 import Helper from '../../support/fragments/finance/financeHelper';
 import TopMenu from '../../support/fragments/topMenu';
 import DevTeams from '../../support/dictionary/devTeams';
+import { INSTANCE_SOURCE_NAMES } from '../../support/constants';
 
 describe('inventory', () => {
   let instanceTitle;
@@ -26,7 +27,7 @@ describe('inventory', () => {
           instance: {
             instanceTypeId: Cypress.env('instanceTypes')[0].id,
             title: instanceTitle,
-            source: 'FOLIO',
+            source: INSTANCE_SOURCE_NAMES.FOLIO
           },
         }).then(specialInstanceId => { instanceId = specialInstanceId; });
       });

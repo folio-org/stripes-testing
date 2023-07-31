@@ -7,12 +7,16 @@ import {
   including,
   TextField,
   Pane,
-  Dropdown, DropdownMenu, Checkbox
+  Dropdown,
+  DropdownMenu,
+  Checkbox,
+  MultiSelect
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
 const dropdownButton = MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(Dropdown()).find(Button());
 const actionsButton = Button('Actions');
+const servicePointField = MultiSelect({ ariaLabelledby: 'accordion-toggle-button-servicePointId' });
 
 
 // TODO: will rework to interactor when we get section id
@@ -59,6 +63,13 @@ export default {
     ]);
   },
 
+  searchByServicePoint(servicePoint) {
+    cy.do([
+      servicePointField.fillIn(servicePoint),
+      servicePointField.choose(servicePoint),
+    ]);
+  },
+
   searchByClaimedReturned() {
     cy.do([
       Accordion({ id: 'loan' }).clickHeader(),
@@ -70,6 +81,14 @@ export default {
     cy.do([
       Accordion({ id: 'loan' }).clickHeader(),
       Checkbox({ id: 'clickable-filter-loan-marked-as-missing' }).click()
+    ]);
+  },
+
+  setFilterOptionFromAccordion(accordion, checkboxOption) {
+    // accordion = 'loan', 'notice', 'fee', 'request'
+    cy.do([
+      Accordion({ id: accordion }).clickHeader(),
+      Checkbox(checkboxOption).click()
     ]);
   },
 
@@ -165,5 +184,10 @@ export default {
       actionsButton.click(),
       Button('Export results (CSV)').click(),
     ]);
+  },
+
+  checkExportResultIsUnavailable() {
+    cy.do(actionsButton.click());
+    cy.expect(Button('Export results (CSV)', { disabled: true }).exists());
   },
 };

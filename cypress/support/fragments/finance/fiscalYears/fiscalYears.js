@@ -22,7 +22,7 @@ const agreements = Button('Agreements');
 const buttonNew = Button('New');
 const actions = Button('Actions');
 const deleteButton = Button('Delete');
-
+const resetButton = Button({ id: 'reset-fiscal-years-filters' });
 export default {
 
   defaultUiFiscalYear: {
@@ -138,7 +138,8 @@ export default {
   },
 
   resetFilters: () => {
-    cy.do(Button({ id: 'reset-fiscal-years-filters' }).click());
+    cy.do(resetButton.click());
+    cy.expect(resetButton.is({ disabled: true }));
   },
 
   deleteFiscalYearViaApi: (fiscalYearId) => cy.okapiRequest({

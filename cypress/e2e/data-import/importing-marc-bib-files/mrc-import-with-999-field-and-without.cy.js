@@ -9,6 +9,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import { JOB_STATUS_NAMES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let user;
@@ -37,13 +38,14 @@ describe('ui-data-import', () => {
 
   it('C359012 Checking the import of the MARC Bib file, that has records with 999 ff and without the 999 ff field (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       cy.reload();
       DataImport.uploadFile('marcFileForC359012.mrc', nameMarcFileForCreate);
       JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(nameMarcFileForCreate);
-      Logs.checkStatusOfJobProfile('Completed with errors');
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
       Logs.openFileDetails(nameMarcFileForCreate);
       // check that "SRS MARC" and "Instance" were created for record, that not contains 999 ff field
       FileDetails.checkSrsRecordQuantityInSummaryTable('1');

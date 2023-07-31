@@ -5,8 +5,9 @@ import {
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
   ITEM_STATUS_NAMES,
-  LOCALION_NAMES,
-  FOLIO_RECORD_TYPE
+  LOCATION_NAMES,
+  FOLIO_RECORD_TYPE,
+  ACCEPTED_DATA_TYPE_NAMES
 } from '../../../support/constants';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -35,14 +36,14 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `autotestMappingHoldings${getRandomPostfix()}`,
-        permanentLocation: `"${LOCALION_NAMES.ANNEX}"` },
+        permanentLocation: `"${LOCATION_NAMES.ANNEX}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `autotestActionHoldings${getRandomPostfix()}` }
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `autotestMappingItem${getRandomPostfix()}`,
-        materialType: MATERIAL_TYPE_NAMES.BOOK,
+        materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
         permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
         status: ITEM_STATUS_NAMES.AVAILABLE },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -52,7 +53,7 @@ describe('ui-data-import', () => {
 
   const specialJobProfile = { ...NewJobProfile.defaultJobProfile,
     profileName: `autotestJobProf${getRandomPostfix()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc };
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC };
 
   before('login', () => {
     cy.createTempUser([
@@ -127,7 +128,8 @@ describe('ui-data-import', () => {
     JobProfiles.checkJobProfilePresented(specialJobProfile.profileName);
 
     cy.visit(TopMenu.dataImportPath);
-    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+    // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.verifyUploadState();
     cy.reload();
     DataImport.uploadFile('oneMarcBib.mrc', fileName);
     JobProfiles.searchJobProfileForImport(specialJobProfile.profileName);

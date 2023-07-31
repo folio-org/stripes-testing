@@ -1,7 +1,7 @@
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE, ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -39,7 +39,7 @@ describe('ui-data-import', () => {
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
     profileName: `C350678 Create bib and instance, but remove some MARC fields first ${Helper.getRandomBarcode()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
   before('login', () => {
@@ -125,7 +125,8 @@ describe('ui-data-import', () => {
 
       // upload a marc file for creating of the new instance, holding and item
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       cy.reload();
       DataImport.uploadFile('marcFileForC350678.mrc', fileName);
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
@@ -139,18 +140,19 @@ describe('ui-data-import', () => {
       FileDetails.checkSrsRecordQuantityInSummaryTable('1', 0);
       FileDetails.checkInstanceQuantityInSummaryTable('1', 0);
 
-      // get Instance HRID through API
-      InventorySearchAndFilter.getInstanceHRID()
-        .then(hrId => {
-          instanceHrid = hrId[0];
-          // check fields are absent in the view source
-          cy.visit(TopMenu.inventoryPath);
-          InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-          // verify table data in marc bibliographic source
-          InventoryInstance.viewSource();
-          fieldsForDelete.forEach(fieldNumber => {
-            InventoryViewSource.notContains(`${fieldNumber}\t`);
-          });
+      // open Instance for getting hrid
+      FileDetails.openInstanceInInventory('Created');
+      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        instanceHrid = initialInstanceHrId;
+
+        // check fields are absent in the view source
+        cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+        // verify table data in marc bibliographic source
+        InventoryInstance.viewSource();
+        fieldsForDelete.forEach(fieldNumber => {
+          InventoryViewSource.notContains(`${fieldNumber}\t`);
         });
+      });
     });
 });

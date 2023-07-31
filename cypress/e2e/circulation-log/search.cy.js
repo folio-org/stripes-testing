@@ -16,7 +16,8 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import LoansPage from '../../support/fragments/loans/loansPage';
 import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
 import SearchResults from '../../support/fragments/circulation-log/searchResults';
-import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
@@ -69,7 +70,7 @@ describe('circulation-log', () => {
                   barcode: ITEM_BARCODE,
                   missingPieces: '3',
                   numberOfMissingPieces: '3',
-                  status: { name: 'Available' },
+                  status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                   permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
                   materialType: { id: Cypress.env('materialTypes')[0].id },
                 }],
@@ -100,7 +101,9 @@ describe('circulation-log', () => {
             InventoryInstance.deleteInstanceViaApi(instance.id);
           });
         cy.getBlockApi(userId).then(() => {
-          cy.deleteBlockApi(Cypress.env('blockIds')[0].id);
+          if (Cypress.env('blockIds')[0]) {
+            cy.deleteBlockApi(Cypress.env('blockIds')[0].id);
+          }
         });
         Users.deleteViaApi(userId);
       });
@@ -194,6 +197,11 @@ describe('circulation-log', () => {
 
     cy.visit(TopMenu.circulationLogPath);
     SearchPane.searchByChangedDueDate();
+    SearchPane.verifyResultCells();
+  });
+
+  it('C17010 Filter circulation log by service points (firebird)', { tags: [TestTypes.criticalPath, devTeams.firebird] }, () => {
+    SearchPane.searchByServicePoint('Circ Desk 2');
     SearchPane.verifyResultCells();
   });
 });

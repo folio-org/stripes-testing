@@ -55,7 +55,8 @@ describe('ui-data-import', () => {
 
       // upload a marc file for creating holdings
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       cy.reload();
       DataImport.uploadFile(editedMarcFileName);
       JobProfiles.searchJobProfileForImport('Default - Create Holdings and SRS MARC Holdings');
@@ -73,7 +74,7 @@ describe('ui-data-import', () => {
       // check created counter in the Summary table
       FileDetails.checkSrsRecordQuantityInSummaryTable('1');
       FileDetails.checkHoldingsQuantityInSummaryTable('1');
-      // check Discarded counter in the Summary table
+      // check No action counter in the Summary table
       FileDetails.checkSrsRecordQuantityInSummaryTable('3', 2);
       // check Error counter in the Summary table
       FileDetails.checkSrsRecordQuantityInSummaryTable('3', 3);

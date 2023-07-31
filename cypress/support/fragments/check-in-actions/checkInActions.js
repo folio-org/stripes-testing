@@ -9,11 +9,11 @@ import {
   Pane,
   Modal,
   PaneContent,
-  or,
+  or
 } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
-import ItemRecordView from '../inventory/itemRecordView';
+import ItemRecordView from '../inventory/item/itemRecordView';
 
 const loanDetailsButton = Button('Loan details');
 const patronDetailsButton = Button('Patron details');
@@ -47,6 +47,13 @@ const waitLoading = () => {
   cy.expect(Button('End session').exists());
 };
 
+const checkInItemGui = (barcode) => {
+  return cy.do([itemBarcodeField.exists(),
+    itemBarcodeField.fillIn(barcode),
+    addItemButton.click()
+  ]);
+};
+
 export default {
   waitLoading:() => {
     cy.expect(itemBarcodeField.exists());
@@ -61,13 +68,15 @@ export default {
     cy.wait('@getItems', getLongDelay());
     cy.wait(1000);
   },
-  checkInItemGui:(barcode) => {
-    return cy.do([
-      itemBarcodeField.exists(),
-      itemBarcodeField.fillIn(barcode),
-      addItemButton.click()
-    ]);
+  checkInItemGui,
+  getSessionIdAfterCheckInItem:(barcode) => {
+    cy.intercept('/inventory/items?*').as('getItems');
+    cy.intercept('circulation/check-in-by-barcode').as('getCheckInResponse');
+    checkInItemGui(barcode);
+    cy.wait('@getItems');
+    return cy.wait('@getCheckInResponse', getLongDelay()).its('request.body.sessionId');
   },
+
   confirmCheckInLostItem:() => {
     cy.do(Button('Confirm').click());
   },
@@ -169,6 +178,13 @@ export default {
     cy.expect(feeFinePane.find(HTML(including(loanPolicyName))).exists());
     cy.expect(feeFinePane.find(HTML(including(OverdueFinePolicyName))).exists());
     cy.expect(feeFinePane.find(HTML(including(LostItemFeePolicyName))).exists());
+  },
+
+  endCheckInSessionAndCheckDetailsOfCheckInAreCleared:() => {
+    cy.do(endSessionButton.click());
+    cy.expect(PaneContent({ id: 'check-in-content' })
+      .find(HTML(including('No items have been entered yet.')))
+      .exists());
   },
 
   backdateCheckInItem:(date, barcode) => {

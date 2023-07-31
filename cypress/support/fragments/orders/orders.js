@@ -19,6 +19,7 @@ import {
   MultiSelectOption,
   Link,
   Section,
+  Card,
 } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -50,16 +51,17 @@ const ordersFiltersPane = Pane({ id: 'orders-filters-pane' });
 const ordersResultsPane = Pane({ id: 'orders-results-pane' });
 const buttonAcquisitionMethodFilter = Button({ id: 'accordion-toggle-button-acquisitionMethod' });
 const purchaseOrderSection = Section({ id: 'purchaseOrder' });
-const searchByParameter = (parameter, value) => {
-  cy.do([
-    searchForm.selectIndex(parameter),
-    searchForm.fillIn(value),
-    Button('Search').click(),
-  ]);
-};
+const purchaseOrderLineLimitReachedModal = Modal({ id: 'data-test-lines-limit-modal' });
+const resetButton = Button('Reset all');
 
 export default {
-  searchByParameter,
+  searchByParameter(parameter, value) {
+    cy.do([
+      searchForm.selectIndex(parameter),
+      searchForm.fillIn(value),
+      Button('Search').click(),
+    ]);
+  },
   waitLoading() {
     cy.expect([
       ordersFiltersPane.exists(),
@@ -88,7 +90,7 @@ export default {
     return cy.get('@orderNumber');
   },
 
-  openOrder: () => {
+  openOrder() {
     cy.do([
       orderDetailsPane
         .find(PaneHeader({ id: 'paneHeaderorder-details' })
@@ -96,9 +98,11 @@ export default {
       Button('Open').click(),
       Button('Submit').click()
     ]);
+    // Need to wait,while order's data will be loaded
+    cy.wait(4000);
   },
 
-  editOrder: () => {
+  editOrder() {
     cy.do([
       orderDetailsPane
         .find(PaneHeader({ id: 'paneHeaderorder-details' })
@@ -107,9 +111,23 @@ export default {
     ]);
   },
 
+  approveOrder() {
+    cy.do([
+      Checkbox('Approved').click(),
+      saveAndClose.click()
+    ]);
+  },
+
+  approveOrderbyActions() {
+    cy.do([
+      PaneHeader({ id: 'paneHeaderorder-details' }).find(actionsButton).click(),
+      Button('Approve').click()
+    ]);
+  },
+
   editOrderNumber: (poNumber) => {
     cy.do([
-      TextField({ name: 'poNumber'}).fillIn(poNumber),
+      TextField({ name: 'poNumber' }).fillIn(poNumber),
       saveAndClose.click()
     ]);
   },
@@ -161,6 +179,29 @@ export default {
     InteractorsTools.checkCalloutMessage('Order was closed');
   },
 
+  cancelOrder: () => {
+    cy.do([
+      orderDetailsPane
+        .find(PaneHeader({ id: 'paneHeaderorder-details' })
+          .find(actionsButton)).click(),
+      Button('Cancel').click(),
+      Button('Submit').click(),
+    ]);
+    InteractorsTools.checkCalloutMessage('Order was closed');
+  },
+
+  editOrderToManual: (orderNumber) => {
+    cy.do([
+      orderDetailsPane
+        .find(PaneHeader({ id: 'paneHeaderorder-details' })
+          .find(actionsButton)).click(),
+      Button('Edit').click(),
+      Checkbox({ name: 'manualPo' }).click(),
+      saveAndClose.click()
+    ]);
+    InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully saved`);
+  },
+
   unOpenOrder: () => {
     cy.do([
       orderDetailsPane
@@ -179,7 +220,7 @@ export default {
       Button('Reopen').click(),
     ]);
   },
-  
+
   receiveOrderViaActions: () => {
     cy.do([
       orderDetailsPane
@@ -211,7 +252,7 @@ export default {
     cy.do([
       actionsButton.click(),
       newButton.click(),
-      TextField({ name: 'poNumber'}).fillIn(poNumber),
+      TextField({ name: 'poNumber' }).fillIn(poNumber),
     ]);
     this.selectVendorOnUi(order.vendor);
     cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
@@ -228,7 +269,7 @@ export default {
     cy.do([
       actionsButton.click(),
       newButton.click(),
-      TextField({ name: 'poNumber'}).fillIn(poNumber),
+      TextField({ name: 'poNumber' }).fillIn(poNumber),
       Select({ name: 'poNumberPrefix' }).choose(poPreffix),
       Select({ name: 'poNumberSuffix' }).choose(poSuffix),
     ]);
@@ -345,15 +386,15 @@ export default {
     cy.expect(Pane({ id: 'order-details' }).exists());
     cy.expect([
       orderDetailsAccordion
-      .find(KeyValue({ value: organization }))
-      .exists(),
+        .find(KeyValue({ value: organization }))
+        .exists(),
       orderDetailsAccordion
-      .find(KeyValue({ value: orderNumber }))
-      .exists(),
+        .find(KeyValue({ value: orderNumber }))
+        .exists(),
     ]);
   },
 
-  selectFromResultsList: (number) => {
+  selectFromResultsList(number) {
     cy.do(MultiColumnList({ id:'orders-list' }).find(Link(number)).click());
   },
 
@@ -366,7 +407,8 @@ export default {
   },
 
   resetFilters: () => {
-    cy.do(Button('Reset all').click());
+    cy.do(resetButton.click());
+    cy.expect(resetButton.is({ disabled: true }));
   },
 
   selectStatusInSearch: (orderStatus) => {
@@ -650,7 +692,55 @@ export default {
     cy.expect(orderDetailsAccordion.find(KeyValue({ value: 'Ongoing' })).exists());
   },
 
- errorMessage:(modalName, errorContent) => {
+  errorMessage:(modalName, errorContent) => {
     cy.expect(Modal(modalName).content(errorContent));
+  },
+
+  checkPurchaseOrderLineLimitReachedModal: () => {
+    cy.expect([
+      purchaseOrderLineLimitReachedModal.exists(),
+      purchaseOrderLineLimitReachedModal.find(Button('Ok')).exists(),
+      purchaseOrderLineLimitReachedModal.find(Button('Create new purchase order')).exists(),
+    ]);
+  },
+
+  openVersionHistory() {
+    cy.do(Section({ id: 'order-details' }).find(Button({ icon: 'clock' })).click());
+    cy.wait(2000);
+    cy.expect([
+      Section({ id: 'POListing' }).absent(),
+      Section({ id: 'relatedInvoices' }).absent(),
+      Section({ id: 'versions-history-pane-order' }).exists(),
+    ]);
+  },
+
+  checkVersionHistoryCard(date, textInformation) {
+    cy.expect([
+      Section({ id: 'versions-history-pane-order' }).find(Card({ headerStart: date })).has({ text: textInformation }),
+    ]);
+  },
+
+  selectVersionHistoryCard(date) {
+    cy.do([
+      Section({ id: 'versions-history-pane-order' }).find(Card({ headerStart: date })).find(Button({ icon: 'clock' })).click(),
+    ]);
+  },
+
+  closeVersionHistory: () => {
+    cy.do(Section({ id: 'versions-history-pane-order' }).find(Button({ icon: 'times' })).click());
+    cy.wait(2000);
+    cy.expect([
+      Section({ id: 'POListing' }).exists(),
+      Section({ id: 'relatedInvoices' }).exists(),
+      Section({ id: 'versions-history-pane-order' }).absent(),
+    ]);
+  },
+
+  checkOrderStatus(orderStatus) {
+    cy.expect(Section({ id: 'POSummary' }).find(KeyValue('Workflow status')).has({ value: orderStatus }));
+  },
+
+  checkReviewDateOnOngoingOrder() {
+    cy.expect(Section({ id: 'ongoing' }).find(KeyValue('Review date')).has({ value: 'No value set-' }));
   },
 };

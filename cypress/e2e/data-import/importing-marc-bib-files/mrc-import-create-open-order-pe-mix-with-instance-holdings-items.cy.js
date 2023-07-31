@@ -2,12 +2,16 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { LOCALION_NAMES,
+import { LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
   ITEM_STATUS_NAMES,
   ORDER_STATUSES,
   MATERIAL_TYPE_NAMES,
-  LOAN_TYPE_NAMES } from '../../../support/constants';
+  LOAN_TYPE_NAMES,
+  ORDER_FORMAT_NAMES_IN_PROFILE,
+  JOB_STATUS_NAMES,
+  VENDOR_NAMES,
+  ACQUISITION_METHOD_NAMES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -23,12 +27,13 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 
 describe('ui-data-import', () => {
   let user;
   let instanceHrid;
   const quantityOfItems = '1';
+  const filePathForCreateOrder = 'marcFileForCreateOrder.mrc';
   const marcFileName = `C380446 autotest file ${getRandomPostfix()}`;
 
   const collectionOfMappingAndActionProfiles = [
@@ -37,34 +42,34 @@ describe('ui-data-import', () => {
         typeValue: FOLIO_RECORD_TYPE.ORDER,
         orderStatus: ORDER_STATUSES.OPEN,
         approved: true,
-        vendor: 'GOBI Library Solutions',
+        vendor: VENDOR_NAMES.GOBI,
         title: '245$a',
-        acquisitionMethod: 'Approval Plan',
-        orderFormat: 'P/E Mix',
+        acquisitionMethod: ACQUISITION_METHOD_NAMES.APPROVAL_PLAN,
+        orderFormat: ORDER_FORMAT_NAMES_IN_PROFILE.PE_MIX,
         receivingWorkflow: 'Synchronized',
-        physicalUnitPrice: '20',
-        quantityPhysical: '1',
+        physicalUnitPrice: '"20"',
+        quantityPhysical: '"1"',
         currency: 'USD',
         electronicUnitPrice: '25',
-        quantityElectronic: '1',
-        locationName: LOCALION_NAMES.ANNEX,
-        locationQuantityPhysical: '1',
-        locationQuantityElectronic: '1' },
+        quantityElectronic: '"1"',
+        locationName: `"${LOCATION_NAMES.ANNEX}"`,
+        locationQuantityPhysical: '"1"',
+        locationQuantityElectronic: '"1"' },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ORDER,
         name: `C380446 Test P/E mix open order with instance, holdings, item ${getRandomPostfix()}` }
     },
     {
       mappingProfile: { name: `C380446 Create simple holdings for open order ${getRandomPostfix()}`,
         typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        permanentLocation: `"${LOCALION_NAMES.MAIN_LIBRARY}"`,
-        permanentLocationUI: LOCALION_NAMES.MAIN_LIBRARY_UI },
+        permanentLocation: `"${LOCATION_NAMES.MAIN_LIBRARY}"`,
+        permanentLocationUI: LOCATION_NAMES.MAIN_LIBRARY_UI },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C380446 Create simple holdings for open order ${getRandomPostfix()}` }
     },
     {
       mappingProfile: { name: `C380446 Create simple item for open order ${getRandomPostfix()}`,
         typeValue: FOLIO_RECORD_TYPE.ITEM,
-        materialType: MATERIAL_TYPE_NAMES.BOOK,
+        materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
         permanentLoanType: LOAN_TYPE_NAMES.COURSE_RESERVES,
         status: ITEM_STATUS_NAMES.ON_ORDER },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -109,9 +114,8 @@ describe('ui-data-import', () => {
   it('C380446 Import to create open orders: P/E mix with Instances, Holdings, Items (folijet)',
     { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
       // create mapping profiles
-      FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillOrderMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
-      FieldMappingProfiles.saveProfile();
+      FieldMappingProfiles.createOrderMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
+      FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
       FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
 
       FieldMappingProfiles.openNewMappingProfileForm();
@@ -146,13 +150,14 @@ describe('ui-data-import', () => {
       JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       cy.reload();
-      DataImport.uploadFile('marcFileForC380446.mrc', marcFileName);
+      DataImport.uploadFile(filePathForCreateOrder, marcFileName);
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(marcFileName);
-      Logs.checkStatusOfJobProfile('Completed');
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(marcFileName);
       [FileDetails.columnNameInResultList.srsMarc,
         FileDetails.columnNameInResultList.instance,
@@ -162,7 +167,7 @@ describe('ui-data-import', () => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
       });
       FileDetails.checkItemQuantityInSummaryTable(quantityOfItems);
-      FileDetails.openOrderInInventory('Created');
+      FileDetails.openOrder('Created');
 
       OrderLines.waitLoading();
       OrderLines.checkCreateInventory();
@@ -175,11 +180,11 @@ describe('ui-data-import', () => {
           instanceHrid = initialInstanceHrId;
         });
         InstanceRecordView.verifyHotlinkToPOL(polNumber);
-        InstanceRecordView.verifyIsHoldingsCreated(['Main Library >']);
+        InstanceRecordView.verifyIsHoldingsCreated([`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`]);
         InventoryInstance.openHoldingView();
         HoldingsRecordView.checkHoldingRecordViewOpened();
         HoldingsRecordView.close();
-        InventoryInstance.openHoldingsAccordion('Main Library >');
+        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
         InventoryInstance.openItemByBarcode('No barcode');
         ItemRecordView.waitLoading();
         ItemRecordView.checkHotlinksToCreatedPOL(polNumber);

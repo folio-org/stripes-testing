@@ -8,11 +8,11 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import { INSTANCE_SOURCE_NAMES, JOB_STATUS_NAMES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   const quantityOfItems = '15';
   const rowNumbers = [1, 4, 7, 14];
-  const instanceSource = 'MARC';
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const firstRecord = {
     title: 'ha-Maʻaśim li-vene Erets-Yiśraʼel : halakhah ṿe-hisṭoryah be-Erets-Yiśraʼel ha-Bizanṭit / Hilel Nyuman.',
@@ -28,7 +28,7 @@ describe('ui-data-import', () => {
     title: '8-15 shi ji zhong xi bu Xizang de li shi, wen hua yu yi shu / Airuika Fute [and four others] zhu bian = Tibet in dialogue with its neighbours : history, culture and art of central and western Tibet, 8th to 15th century / Erika Forte [and four others] eds.',
     firstAlternativeTitle: 'Tibet in dialogue with its neighbour : history, culture and art of central and western Tibet, 8th to 15th century',
     secondAlternativeTitle: '8-15世纪中西部西藏的历史, 文化与艺术',
-    contributerName: 'Forte, Erika,',
+    contributerName: 'Forte, Erika',
     firstPublisher: 'Zhongguo Zang xue chu ban she',
     secondPublisher: '中国藏学出版社',
     language: 'Chinese, English'
@@ -66,7 +66,7 @@ describe('ui-data-import', () => {
       JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(nameMarcFileForCreate);
-      Logs.checkStatusOfJobProfile('Completed');
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(nameMarcFileForCreate);
       rowNumbers.forEach(rowNumber => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc, rowNumber);
@@ -76,7 +76,7 @@ describe('ui-data-import', () => {
       FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems);
 
       FileDetails.openInstanceInInventory('Created', rowNumbers[0]);
-      InstanceRecordView.verifyInstanceSource(instanceSource);
+      InstanceRecordView.verifyInstanceSource(INSTANCE_SOURCE_NAMES.MARC);
       InventoryInstance.verifyInstanceTitle(firstRecord.title);
       InventoryInstance.verifyAlternativeTitle(0, 1, firstRecord.firstAlternativeTitle);
       InventoryInstance.verifyAlternativeTitle(1, 1, firstRecord.secondAlternativeTitle);
@@ -89,7 +89,7 @@ describe('ui-data-import', () => {
       cy.visit(TopMenu.dataImportPath);
       Logs.openFileDetails(nameMarcFileForCreate);
       FileDetails.openInstanceInInventory('Created', rowNumbers[1]);
-      InstanceRecordView.verifyInstanceSource(instanceSource);
+      InstanceRecordView.verifyInstanceSource(INSTANCE_SOURCE_NAMES.MARC);
       InventoryInstance.verifyInstanceTitle(secondRecord.title);
       InventoryInstance.verifyAlternativeTitle(0, 1, secondRecord.firstAlternativeTitle);
       InventoryInstance.verifyAlternativeTitle(1, 1, secondRecord.secondAlternativeTitle);
@@ -101,7 +101,7 @@ describe('ui-data-import', () => {
       cy.visit(TopMenu.dataImportPath);
       Logs.openFileDetails(nameMarcFileForCreate);
       FileDetails.openInstanceInInventory('Created', rowNumbers[2]);
-      InstanceRecordView.verifyInstanceSource(instanceSource);
+      InstanceRecordView.verifyInstanceSource(INSTANCE_SOURCE_NAMES.MARC);
       InventoryInstance.verifyInstanceTitle(thirdRecord.title);
       InventoryInstance.verifyAlternativeTitle(0, 1, thirdRecord.firstAlternativeTitle);
       InventoryInstance.verifyAlternativeTitle(3, 1, thirdRecord.secondAlternativeTitle);
@@ -114,7 +114,7 @@ describe('ui-data-import', () => {
       cy.visit(TopMenu.dataImportPath);
       Logs.openFileDetails(nameMarcFileForCreate);
       FileDetails.openInstanceInInventory('Created', rowNumbers[3]);
-      InstanceRecordView.verifyInstanceSource(instanceSource);
+      InstanceRecordView.verifyInstanceSource(INSTANCE_SOURCE_NAMES.MARC);
       InventoryInstance.verifyInstanceTitle(fourthRecord.title);
       InventoryInstance.verifyAlternativeTitle(0, 1, fourthRecord.firstAlternativeTitle);
       InventoryInstance.verifyAlternativeTitle(1, 1, fourthRecord.secondAlternativeTitle);

@@ -3,9 +3,16 @@ import DevTeams from '../../../support/dictionary/devTeams';
 import { LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
   ITEM_STATUS_NAMES,
-  LOCALION_NAMES,
+  LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
-  INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
+  INSTANCE_STATUS_TERM_NAMES,
+  CALL_NUMBER_TYPE_NAMES,
+  EXPORT_TRANSFORMATION_NAMES,
+  ACCEPTED_DATA_TYPE_NAMES,
+  PROFILE_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES,
+  JOB_STATUS_NAMES,
+  HOLDINGS_TYPE_NAMES } from '../../../support/constants';
 import DateTools from '../../../support/utils/dateTools';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
@@ -29,7 +36,7 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 
 describe('ui-data-import', () => {
   let instanceHrid;
@@ -49,7 +56,7 @@ describe('ui-data-import', () => {
       id: '',
       name: `C356802 create marcBib mapping profile ${Helper.getRandomBarcode()}`,
       incomingRecordType: recordType,
-      existingRecordType: recordType,
+      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
       mappingDetails: { name: 'holdings',
         recordType: 'MARC_BIBLIOGRAPHIC',
         marcMappingDetails: [{
@@ -74,7 +81,7 @@ describe('ui-data-import', () => {
       id: '',
       name: `C356802 create instance mapping profile ${Helper.getRandomBarcode()}`,
       incomingRecordType: recordType,
-      existingRecordType: 'INSTANCE',
+      existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
     }
   };
   const holdingsMappingProfileForCreate = {
@@ -82,7 +89,7 @@ describe('ui-data-import', () => {
       id: '',
       name: `C356802 create holdings mapping profile ${Helper.getRandomBarcode()}`,
       incomingRecordType: recordType,
-      existingRecordType: 'HOLDINGS',
+      existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
       mappingDetails: { name: 'holdings',
         recordType: 'HOLDINGS',
         mappingFields: [
@@ -97,7 +104,7 @@ describe('ui-data-import', () => {
       id: '',
       name: `C356802 create item mapping profile ${Helper.getRandomBarcode()}`,
       incomingRecordType: recordType,
-      existingRecordType: 'ITEM',
+      existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
       mappingDetails: { name: 'item',
         recordType: 'ITEM',
         mappingFields: [
@@ -126,9 +133,9 @@ describe('ui-data-import', () => {
     },
     addedRelations: [
       {
-        masterProfileType: 'ACTION_PROFILE',
+        masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
         detailProfileId: '',
-        detailProfileType: 'MAPPING_PROFILE'
+        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
       }
     ],
     deletedRelations: []
@@ -143,9 +150,9 @@ describe('ui-data-import', () => {
     addedRelations: [
       {
         masterProfileId: null,
-        masterProfileType: 'ACTION_PROFILE',
+        masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
         detailProfileId: '',
-        detailProfileType: 'MAPPING_PROFILE'
+        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
       }
     ],
     deletedRelations: []
@@ -160,9 +167,9 @@ describe('ui-data-import', () => {
     addedRelations: [
       {
         masterProfileId: null,
-        masterProfileType: 'ACTION_PROFILE',
+        masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
         detailProfileId: '',
-        detailProfileType: 'MAPPING_PROFILE'
+        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
       }
     ],
     deletedRelations: []
@@ -177,9 +184,9 @@ describe('ui-data-import', () => {
     addedRelations: [
       {
         masterProfileId: null,
-        masterProfileType: 'ACTION_PROFILE',
+        masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
         detailProfileId: '',
-        detailProfileType: 'MAPPING_PROFILE'
+        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
       }
     ],
     deletedRelations: []
@@ -187,7 +194,7 @@ describe('ui-data-import', () => {
   const jobProfileForCreate = {
     profile: {
       name: `C356802 create job profile ${Helper.getRandomBarcode()}`,
-      dataType: 'MARC'
+      dataType: ACCEPTED_DATA_TYPE_NAMES.MARC
     },
     addedRelations: [],
     deletedRelations: []
@@ -206,8 +213,10 @@ describe('ui-data-import', () => {
   // create Field mapping profile for export
   const exportMappingProfile = {
     name: `C356802 mapping profile ${Helper.getRandomBarcode()}`,
+    holdingsTransformation: EXPORT_TRANSFORMATION_NAMES.HOLDINGS_HRID,
     holdingsMarcField: '901',
     subfieldForHoldings:'$h',
+    itemTransformation: EXPORT_TRANSFORMATION_NAMES.ITEM_HRID,
     itemMarcField:'902',
     subfieldForItem:'$i'
   };
@@ -228,10 +237,10 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C356802 update holdings mapping profile ${Helper.getRandomBarcode()}`,
-        holdingsType: 'Electronic',
-        permanentLocation: `"${LOCALION_NAMES.ONLINE}"`,
-        permanentLocationUI: LOCALION_NAMES.ONLINE_UI,
-        callNumberType: 'Library of Congress classification',
+        holdingsType: HOLDINGS_TYPE_NAMES.ELECTRONIC,
+        permanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
+        permanentLocationUI: LOCATION_NAMES.ONLINE_UI,
+        callNumberType: CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS,
         callNumber: '050$a " " 050$b',
         relationship: 'Resource',
         uri: '856$u' },
@@ -264,7 +273,7 @@ describe('ui-data-import', () => {
           field: '001'
         },
         matchCriterion: 'Exactly matches',
-        existingRecordType: 'MARC_BIBLIOGRAPHIC' }
+        existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC }
     },
     {
       matchProfile: { profileName: `C356802 MARC-to-Holdings 901h to Holdings HRID match profile ${Helper.getRandomBarcode()}`,
@@ -273,7 +282,7 @@ describe('ui-data-import', () => {
           subfield: 'h'
         },
         matchCriterion: 'Exactly matches',
-        existingRecordType: 'HOLDINGS',
+        existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
         holdingsOption: NewMatchProfile.optionsList.holdingsHrid }
     },
     {
@@ -284,7 +293,7 @@ describe('ui-data-import', () => {
           subfield: 'i'
         },
         matchCriterion: 'Exactly matches',
-        existingRecordType: 'ITEM',
+        existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
         itemOption: NewMatchProfile.optionsList.itemHrid
       }
     }
@@ -292,7 +301,7 @@ describe('ui-data-import', () => {
   const jobProfileForUpdate = {
     ...NewJobProfile.defaultJobProfile,
     profileName: `C356802 update job profile ${Helper.getRandomBarcode()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
   before('login', () => {
@@ -348,11 +357,12 @@ describe('ui-data-import', () => {
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
+      cy.reload();
       DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);
       JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(nameMarcFileForImportCreate);
-      Logs.checkStatusOfJobProfile('Completed');
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(nameMarcFileForImportCreate);
 
       // check the instance is created
@@ -397,7 +407,7 @@ describe('ui-data-import', () => {
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
       NewFieldMappingProfile.fillHoldingsType(collectionOfMappingAndActionProfiles[1].mappingProfile.holdingsType);
       NewFieldMappingProfile.fillPermanentLocation(collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocation);
-      NewFieldMappingProfile.fillCallNumberType(collectionOfMappingAndActionProfiles[1].mappingProfile.callNumberType);
+      NewFieldMappingProfile.fillCallNumberType(`"${collectionOfMappingAndActionProfiles[1].mappingProfile.callNumberType}"`);
       NewFieldMappingProfile.fillCallNumber(collectionOfMappingAndActionProfiles[1].mappingProfile.callNumber);
       NewFieldMappingProfile.addElectronicAccess(collectionOfMappingAndActionProfiles[1].mappingProfile.relationship, collectionOfMappingAndActionProfiles[1].mappingProfile.uri);
       FieldMappingProfiles.saveProfile();
@@ -405,7 +415,7 @@ describe('ui-data-import', () => {
 
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile);
-      NewFieldMappingProfile.fillMaterialType(collectionOfMappingAndActionProfiles[2].mappingProfile.materialType);
+      NewFieldMappingProfile.fillMaterialType(`"${collectionOfMappingAndActionProfiles[2].mappingProfile.materialType}"`);
       NewFieldMappingProfile.addItemNotes(
         collectionOfMappingAndActionProfiles[2].mappingProfile.noteType,
         collectionOfMappingAndActionProfiles[2].mappingProfile.note,
@@ -434,14 +444,15 @@ describe('ui-data-import', () => {
       cy.visit(SettingsMenu.jobProfilePath);
       JobProfiles.createJobProfileWithLinkingProfilesForUpdate(jobProfileForUpdate);
       NewJobProfile.linkMatchAndActionProfilesForInstance(collectionOfMappingAndActionProfiles[0].actionProfile.name, collectionOfMatchProfiles[0].matchProfile.profileName, 0);
-      NewJobProfile.linkMatchAndActionProfilesForHoldings(collectionOfMappingAndActionProfiles[1].actionProfile.name, collectionOfMatchProfiles[1].matchProfile.profileName, 2);
-      NewJobProfile.linkMatchAndActionProfilesForItem(collectionOfMappingAndActionProfiles[2].actionProfile.name, collectionOfMatchProfiles[2].matchProfile.profileName, 4);
+      NewJobProfile.linkMatchAndActionProfilesForHoldings(collectionOfMappingAndActionProfiles[1].actionProfile.name, collectionOfMatchProfiles[1].matchProfile.profileName, 1);
+      NewJobProfile.linkMatchAndActionProfilesForItem(collectionOfMappingAndActionProfiles[2].actionProfile.name, collectionOfMatchProfiles[2].matchProfile.profileName, 2);
       NewJobProfile.saveAndClose();
 
       // upload the exported marc file
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
+      cy.reload();
       DataImport.uploadExportedFile(nameMarcFileForImportUpdate);
       JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
       JobProfiles.runImportFile();
@@ -458,7 +469,7 @@ describe('ui-data-import', () => {
       FileDetails.checkItemsQuantityInSummaryTable(0, '0');
       // check Updated counter in the Summary table
       FileDetails.checkItemsQuantityInSummaryTable(1, quantityOfItems);
-      // check Discarded counter in the Summary table
+      // check No action counter in the Summary table
       FileDetails.checkItemsQuantityInSummaryTable(2, '0');
       // check Error counter in the Summary table
       FileDetails.checkItemsQuantityInSummaryTable(3, '0');

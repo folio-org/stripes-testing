@@ -4,7 +4,7 @@ import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/z39.50TargetProfiles';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -12,6 +12,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Users from '../../../support/fragments/users/users';
+import { TARGET_PROFILE_NAMES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let user = {};
@@ -56,16 +57,17 @@ describe('ui-data-import', () => {
   it('C356824 Inventory single record import is not delayed when large data import jobs are running (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       cy.visit(SettingsMenu.targetProfilesPath);
-      Z3950TargetProfiles.openOclcWorldCat();
-      Z3950TargetProfiles.editOclcWorldCat(authentication);
+      Z3950TargetProfiles.openTargetProfile();
+      Z3950TargetProfiles.editOclcWorldCat(authentication, TARGET_PROFILE_NAMES.OCLC_WORLDCAT);
       Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(authentication);
 
       // import a file
       cy.visit(TopMenu.dataImportPath);
       DataImport.checkIsLandingPageOpened();
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       cy.reload();
-      DataImport.uploadFile('marcFileForC356824.mrc', fileName);
+      DataImport.uploadFile('oneThousandMarcBib.mrc', fileName);
       // wait until file will be uploaded
       cy.wait(10000);
       JobProfiles.searchJobProfileForImport(jobProfileToRun);
@@ -85,7 +87,7 @@ describe('ui-data-import', () => {
       InventoryInstance.verifyInstancePublisher(0, 0, updatedInstanceData.publisher);
       InventoryInstance.verifyInstancePublisher(0, 2, updatedInstanceData.placeOfPublication);
       InventoryInstance.verifyInstancePublisher(0, 3, updatedInstanceData.publicationDate);
-      InventoryInstance.verifyInstancePhisicalcyDescription(updatedInstanceData.physicalDescription);
+      InventoryInstance.verifyInstancePhysicalcyDescription(updatedInstanceData.physicalDescription);
       InventoryInstance.verifyInstanceSubject(0, 0, updatedInstanceData.subject);
       InventoryInstance.checkInstanceNotes(updatedInstanceData.notes.noteType, updatedInstanceData.notes.noteContent);
 

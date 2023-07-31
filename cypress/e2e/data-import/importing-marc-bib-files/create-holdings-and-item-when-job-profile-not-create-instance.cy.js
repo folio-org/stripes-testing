@@ -5,8 +5,11 @@ import {
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
   ITEM_STATUS_NAMES,
-  LOCALION_NAMES,
-  FOLIO_RECORD_TYPE
+  LOCATION_NAMES,
+  FOLIO_RECORD_TYPE,
+  ACCEPTED_DATA_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES,
+  JOB_STATUS_NAMES
 } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -26,7 +29,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import FileManager from '../../../support/utils/fileManager';
 
 describe('ui-data-import', () => {
@@ -39,7 +42,7 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C368009 Testing item for SRS MARC bib ${Helper.getRandomBarcode()}`,
-        materialType: MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE,
+        materialType: `"${MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE}"`,
         permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
         status: ITEM_STATUS_NAMES.AVAILABLE },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -48,7 +51,7 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C368009 Testing holding for SRS MARC bib ${Helper.getRandomBarcode()}`,
-        permanentLocation: `"${LOCALION_NAMES.ANNEX}"` },
+        permanentLocation: `"${LOCATION_NAMES.ANNEX}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C368009 Testing holding for SRS MARC bib ${Helper.getRandomBarcode()}` }
     }
@@ -59,12 +62,12 @@ describe('ui-data-import', () => {
       field: '001'
     },
     matchCriterion: 'Exactly matches',
-    existingRecordType: 'INSTANCE',
+    existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
     instanceOption: NewMatchProfile.optionsList.instanceHrid
   };
   const jobProfile = {
     profileName: `C368009 Testing SRS MARC bib ${Helper.getRandomBarcode()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
   before('create test data', () => {
@@ -85,7 +88,7 @@ describe('ui-data-import', () => {
         DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
         // get hrid of created instance
         JobProfiles.waitFileIsImported(fileName);
-        Logs.checkStatusOfJobProfile('Completed');
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileName);
         FileDetails.openInstanceInInventory('Created');
         InventoryInstance.getAssignedHRID().then(initialInstanceHrId => { instanceHrid = initialInstanceHrId; });
@@ -162,7 +165,7 @@ describe('ui-data-import', () => {
 
       const selectedRecords = 1;
       cy.visit(TopMenu.inventoryPath);
-      InventorySearchAndFilter.bySource('MARC');
+      InventorySearchAndFilter.bySource(ACCEPTED_DATA_TYPE_NAMES.MARC);
       InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
       InventorySearchAndFilter.closeInstanceDetailPane();
       InventorySearchAndFilter.selectResultCheckboxes(selectedRecords);
@@ -177,13 +180,14 @@ describe('ui-data-import', () => {
           ExportFile.downloadExportedMarcFile(exportedFileName);
           // upload the exported marc file
           cy.visit(TopMenu.dataImportPath);
-          // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+          DataImport.verifyUploadState();
           cy.reload();
           DataImport.uploadExportedFile(exportedFileName);
           JobProfiles.searchJobProfileForImport(jobProfile.profileName);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(exportedFileName);
-          Logs.checkStatusOfJobProfile('Completed');
+          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(exportedFileName);
           [FileDetails.columnNameInResultList.holdings,
             FileDetails.columnNameInResultList.item].forEach(columnName => {
@@ -194,7 +198,7 @@ describe('ui-data-import', () => {
 
           // check created items
           FileDetails.openHoldingsInInventory('Created');
-          HoldingsRecordView.checkPermanentLocation(LOCALION_NAMES.ANNEX_UI);
+          HoldingsRecordView.checkPermanentLocation(LOCATION_NAMES.ANNEX_UI);
           cy.go('back');
           FileDetails.openItemInInventory('Created');
           ItemRecordView.verifyMaterialType(MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE);

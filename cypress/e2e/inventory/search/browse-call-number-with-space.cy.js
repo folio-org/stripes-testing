@@ -24,6 +24,7 @@ describe('Inventory -> Call Number Browse', () => {
     volume: 'v.1',
     enumeration: 'e.2',
     chronology: 'ch.3',
+    shelvingOrderValue: 'PRT 3718 _V 11 E 12 CH 13 C 14 SUF',
   };
 
   const itemA1 = {
@@ -49,6 +50,20 @@ describe('Inventory -> Call Number Browse', () => {
     parameter: 'Keyword (title, contributor, identifier, HRID, UUID)',
   };
 
+  const notExistingCallNumber = `callNumber_${getRandomPostfix()}`;
+
+  let barcodes = [];
+  let itemCallNumbers = [];
+  let instances = [];
+
+  const createTestInstances = () => {
+    for (let i = 0; i < 10; i++) {
+      barcodes.push(`barcode_${getRandomPostfix()}`);
+      itemCallNumbers.push(`itemCallNumbers_${getRandomPostfix()}`);
+      instances.push(`instances_${getRandomPostfix()}`);
+    }
+  };
+
   const search = (query) => {
     BrowseCallNumber.clickBrowseBtn();
     InventorySearchAndFilter.verifyKeywordsAsDefault();
@@ -71,6 +86,12 @@ describe('Inventory -> Call Number Browse', () => {
         permissions.uiCallNumberBrowse.gui
       ]).then(userProperties => {
         testData.user = userProperties;
+
+        createTestInstances();
+
+        for (let i = 0; i < 10; i++) {
+          InventoryInstances.createInstanceViaApi(instances[i], barcodes[i], null, '1', itemCallNumbers[i]);
+        }
         InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode, item.publisher, item.holdingCallNumber, item.itemCallNumber);
         InventoryInstances.createInstanceViaApi(itemA1.instanceName, itemA1.itemBarcode, itemA1.publisher, itemA1.holdingCallNumber, itemA1.itemCallNumber);
         InventoryInstances.createInstanceViaApi(itemA2.instanceName, itemA2.itemBarcode, itemA2.publisher, itemA2.holdingCallNumber, itemA2.itemCallNumber);
@@ -83,6 +104,9 @@ describe('Inventory -> Call Number Browse', () => {
   });
 
   after('Deleting user and instance', () => {
+    barcodes.forEach((barcode) => {
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(barcode);
+    })
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemA1.itemBarcode);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemA2.itemBarcode);
@@ -117,10 +141,77 @@ describe('Inventory -> Call Number Browse', () => {
     InventoryInstance.addItemData(item.callNumber, item.copyNumber, item.callNumberSuffix);
     InventoryInstance.addEnumerationData(item.volume, item.enumeration, item.chronology);
     InventoryInstance.saveItemDataAndVerifyExistence(item.copyNumber);
-    search(item.callNumber);
+    BrowseCallNumber.clickBrowseBtn();
+    InventorySearchAndFilter.clickResetAllButton();
+    InventorySearchAndFilter.verifyKeywordsAsDefault();
+    InventorySearchAndFilter.selectBrowseCallNumbers();
+    InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
+    InventoryActions.actionsIsAbsent();
+    InventorySearchAndFilter.showsOnlyEffectiveLocation();
+    InventorySearchAndFilter.browseSubjectsSearch(item.callNumber);
     BrowseCallNumber.checkItemSearchResult(item.callNumber, item.callNumberSuffix);
     InventorySearchAndFilter.selectFoundItem(item.callNumber, item.callNumberSuffix);
-    InventorySearchAndFilter.verifyShelvingOrder();
+    InventorySearchAndFilter.verifyShelvingOrder(item.shelvingOrderValue);
     InventorySearchAndFilter.verifyInstanceDisplayed(item.instanceName);
+  });
+
+  it('C347906 Verify that look and list of available facets change according to search option (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    InventorySearchAndFilter.switchToBrowseTab();
+    InventorySearchAndFilter.clickResetAllButton();
+    InventorySearchAndFilter.verifyBrowseOptions();
+    InventorySearchAndFilter.selectBrowseCallNumbers();
+    InventorySearchAndFilter.byEffectiveLocation();
+    InventorySearchAndFilter.verifyCallNumberBrowseNotEmptyPane();
+
+    InventorySearchAndFilter.selectBrowseSubjects();
+    InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();      
+  });
+
+  it('C347910 Verify that "Actions" menu is displayed when searching by any search option except "Call numbers" (spitfire)', { tags: [DevTeams.spitfire, TestTypes.criticalPath] }, () => {
+    BrowseCallNumber.clickBrowseBtn();
+    InventorySearchAndFilter.selectBrowseCallNumbers();
+    InventoryActions.actionsIsAbsent();
+    InventorySearchAndFilter.showsOnlyEffectiveLocation();
+    InventorySearchAndFilter.browseSubjectsSearch(itemA1.itemCallNumber);
+    BrowseCallNumber.checkExactSearchResult(itemA1.itemCallNumber);
+    BrowseCallNumber.clickOnResult(itemA1.itemCallNumber);
+    InventorySearchAndFilter.verifyActionButtonOptions();
+  });
+
+  it('C347909 Verify browse call numbers function and result list (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    InventorySearchAndFilter.switchToBrowseTab();
+    InventorySearchAndFilter.verifyBrowseOptions();
+    InventorySearchAndFilter.selectBrowseCallNumbers();
+    InventorySearchAndFilter.browseSubjectsSearch(item.itemCallNumber);
+    BrowseCallNumber.checkExactSearchResult(item.itemCallNumber);
+    BrowseCallNumber.checkSearchResultsTable();
+    InventorySearchAndFilter.clickPreviousPaginationButton();
+    InventorySearchAndFilter.clickNextPaginationButton();
+    BrowseCallNumber.selectFoundCallNumber(item.itemCallNumber);
+    InventorySearchAndFilter.switchToBrowseTab();
+    InventorySearchAndFilter.clickResetAllButton();
+  });
+
+  it('C347916 Verify Browse with non-existent call number (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    InventorySearchAndFilter.switchToBrowseTab();
+    InventorySearchAndFilter.verifyBrowseOptions();
+    InventorySearchAndFilter.selectBrowseCallNumbers();
+    InventorySearchAndFilter.browseSubjectsSearch(notExistingCallNumber);
+    BrowseCallNumber.checkNotExistingCallNumber(notExistingCallNumber);
+    BrowseCallNumber.checkNotClickableResult(notExistingCallNumber);
+    InventorySearchAndFilter.clickResetAllButton();
+  });
+
+  it('C347918 Verify selecting row from browse result list (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    InventorySearchAndFilter.switchToBrowseTab();
+    InventorySearchAndFilter.verifyBrowseOptions();
+    InventorySearchAndFilter.selectBrowseCallNumbers();
+    InventorySearchAndFilter.browseSubjectsSearch(item.callNumber);
+    InventorySearchAndFilter.selectFoundItem(item.callNumber, item.callNumberSuffix);
+    InventorySearchAndFilter.verifyShelvingOrder(item.shelvingOrderValue);
+    InventorySearchAndFilter.verifyInstanceDisplayed(item.instanceName);
+
+    InventorySearchAndFilter.switchToBrowseTab();
+    InventorySearchAndFilter.clickResetAllButton();
   });
 });

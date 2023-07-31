@@ -7,7 +7,10 @@ import {
   MultiColumnListCell,
   Section,
   MultiColumnList,
-  Pane
+  Pane,
+  Select,
+  TextArea,
+  Link
 } from '../../../../interactors';
 import InventoryViewSource from './inventoryViewSource';
 import InventoryNewHoldings from './inventoryNewHoldings';
@@ -23,6 +26,10 @@ const deleteConfirmationModal = Modal({ id:'delete-confirmation-modal' });
 const holdingHrIdKeyValue = KeyValue('Holdings HRID');
 const closeButton = Button({ icon: 'times' });
 const electronicAccessAccordion = Accordion('Electronic access');
+const acquisitionAccordion = Accordion('Acquisition');
+const addElectronicAccessButton = Button('Add electronic access');
+const relationshipSelectDropdown = Select('Relationship');
+const uriTextarea = TextArea({ ariaLabel: 'URI' });
 
 function waitLoading() { cy.expect(actionsButton.exists()); }
 
@@ -105,6 +112,7 @@ export default {
   checkHrId: expectedHrId => cy.expect(holdingHrIdKeyValue.has({ value: expectedHrId })),
   checkPermanentLocation:expectedLocation => cy.expect(KeyValue('Permanent', { value: expectedLocation }).exists()),
   checkTemporaryLocation:expectedLocation => cy.expect(KeyValue('Temporary', { value: expectedLocation }).exists()),
+  checkEffectiveLocation:expectedLocation => cy.expect(KeyValue('Effective location for holdings', { value: expectedLocation }).exists()),
   checkReadOnlyFields:() => {},
   checkHoldingsType: type => cy.expect(KeyValue('Holdings type').has({ value: type })),
   checkCallNumberType: number => cy.expect(KeyValue('Call number type').has({ value: number })),
@@ -130,6 +138,9 @@ export default {
   checkMarkAsSuppressedFromDiscovery:() => cy.expect(root
     .find(HTML(including('Warning: Holdings is marked suppressed from discovery')))
     .exists()),
+  checkMarkAsSuppressedFromDiscoveryAbsent: () => cy.expect(root
+    .find(HTML(including('Warning: Holdings is marked suppressed from discovery')))
+    .absent()),
   checkElectronicAccess:(relationshipValue, uriValue) => {
     cy.expect(electronicAccessAccordion
       .find(MultiColumnListCell({ row: 0, columnIndex: 0, content: relationshipValue }))
@@ -141,11 +152,30 @@ export default {
   checkHoldingRecordViewOpened: () => {
     cy.expect(Pane({ id:'ui-inventory.holdingsRecordView' }).exists());
   },
-
+  checkHotlinkToPOL:(number) => {
+    cy.expect(acquisitionAccordion.find(MultiColumnListCell({ row: 0, content: number })).exists());
+    cy.expect(acquisitionAccordion.find(Link({ href: including('/orders/lines/view') })).exists());
+  },
+  addElectronicAccess: (type) => {
+    cy.expect(electronicAccessAccordion.exists());
+    cy.do([
+      addElectronicAccessButton.click(),
+      relationshipSelectDropdown.choose(type),
+      uriTextarea.fillIn(type),
+      Button('Save & close').click(),
+    ]);
+  },
   getHoldingsHrId: () => cy.then(() => holdingHrIdKeyValue.value()),
   getId:() => {
     // parse hodling record id from current url
     cy.url().then(url => cy.wrap(url.split('?')[0].split('/').at(-1)).as('holdingsRecorId'));
     return cy.get('@holdingsRecorId');
+  },
+  getHoldingsIDInDetailView() {
+    cy.url().then(url => {
+      const holdingsID = url.split('/')[6].split('?')[0];
+      cy.wrap(holdingsID).as('holdingsID');
+    });
+    return cy.get('@holdingsID');
   }
 };

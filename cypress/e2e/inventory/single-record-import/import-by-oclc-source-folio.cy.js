@@ -5,10 +5,11 @@ import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/z39.50TargetProfiles';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import DevTeams from '../../../support/dictionary/devTeams';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
 
 let user;
 let instanceRecord;
@@ -70,13 +71,13 @@ describe('ui-inventory: import by OCLC', () => {
     cy.wait(10000);
     InventoryInstance.waitInstanceRecordViewOpened(oclcRecordData.title);
     InventoryInstance.verifyLastUpdatedDate();
-    InstanceRecordView.verifyInstanceSource('MARC');
+    InstanceRecordView.verifyInstanceSource(INSTANCE_SOURCE_NAMES.MARC);
     InventoryInstance.verifyInstanceTitle(oclcRecordData.title);
     InventoryInstance.verifyInstanceLanguage(oclcRecordData.language);
     InventoryInstance.verifyInstancePublisher(0, 0, oclcRecordData.publisher);
     InventoryInstance.verifyInstancePublisher(0, 2, oclcRecordData.placeOfPublication);
     InventoryInstance.verifyInstancePublisher(0, 3, oclcRecordData.publicationDate);
-    InventoryInstance.verifyInstancePhisicalcyDescription(oclcRecordData.physicalDescription);
+    InventoryInstance.verifyInstancePhysicalcyDescription(oclcRecordData.physicalDescription);
     InventoryInstance.verifyResourceIdentifier('ISBN', oclcRecordData.isbn1, 4);
     InventoryInstance.verifyResourceIdentifier('ISBN', oclcRecordData.isbn2, 5);
     InventoryInstance.verifyInstanceSubject(0, 0, oclcRecordData.subject);

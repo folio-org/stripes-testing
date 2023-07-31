@@ -58,7 +58,7 @@ export default {
       Option({ value: 'contributors' }).exists(),
       contributorsOption.exists(),
     ]);
-    cy.then(() => Option('Call numbers').index()).then((callNumbersOptionIndex) => {
+    cy.then(() => Option('Call numbers (all)').index()).then((callNumbersOptionIndex) => {
         cy.then(() => contributorsOption.index()).then((contributorsOptionIndex) => {
             expect(contributorsOptionIndex).to.equal(callNumbersOptionIndex + 1);
         });
@@ -127,6 +127,32 @@ export default {
     MultiColumnListCell(record).has({ innerHTML: including(`<strong>${record}</strong>`) });
   },
 
+  verifyRecordWithBold(record) {
+    cy.expect(MultiColumnListCell(record).has({ innerHTML: including(`<strong>${record}</strong>`) }));
+  },
+
+  checkAuthorityIconAndValueDisplayed(value) {
+    cy.expect([
+      MultiColumnListCell({ row: 5, columnIndex: 0 }).has({ innerHTML: including(`<strong>${value}</strong>`) }),
+      MultiColumnListCell({ row: 5, columnIndex: 0 }).has({ innerHTML: including('<img') }),
+      MultiColumnListCell({ row: 5, columnIndex: 0 }).has({ innerHTML: including('alt="MARC Authorities module">') }),
+    ]);
+  },
+
+  checkAuthorityIconAndValueDisplayedForMultipleRows(rowCount, value) {
+    for (let i = 0; i < rowCount; i++) {
+      cy.expect([
+        MultiColumnListCell({ row: 5 + i, columnIndex: 0 }).has({ innerHTML: including(`<strong>${value}</strong>`) }),
+        MultiColumnListCell({ row: 5 + i, columnIndex: 0 }).has({ innerHTML: including('<img') }),
+        MultiColumnListCell({ row: 5 + i, columnIndex: 0 }).has({ innerHTML: including('alt="MARC Authorities module">') }),
+      ]);
+    }
+  },
+
+  checkSearchResultRow(contributorName, contributorNameType, contributorType, numberOfTitles) {
+    cy.expect(MultiColumnListRow(`${contributorName}${contributorNameType}${contributorType}${numberOfTitles}`).exists());
+  },
+
   checkContributorRowValues: (values) => {
     cy.intercept('GET', '/browse/contributors/instances?*').as('getInstances');
     cy.wait('@getInstances', { timeout: 10000 }).then(item => {
@@ -136,6 +162,10 @@ export default {
 
   openInstance(contributor) {
     cy.do(MultiColumnListCell(contributor.name).click());
+  },
+
+  openRecord(record) {
+    cy.do(Button(record).click());
   },
 
   checkInstance(instance) {

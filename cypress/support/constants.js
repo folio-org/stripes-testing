@@ -34,9 +34,14 @@ export const LOAN_TYPE_NAMES = {
 };
 
 export const MATERIAL_TYPE_NAMES = {
-  MICROFORM: 'microform',
   BOOK: 'book',
-  ELECTRONIC_RESOURCE: 'electronic resource'
+  DVD: 'dvd',
+  ELECTRONIC_RESOURCE: 'electronic resource',
+  MICROFORM: 'microform',
+  SOUND_RECORDING: 'sound recording',
+  TEXT: 'text',
+  UNSPECIFIED: 'unspecified',
+  VIDEO_RECORDING: 'video recording',
 };
 
 export const ITEM_STATUS_NAMES = {
@@ -85,13 +90,30 @@ export const LOAN_PROFILE = {
   ROLLING: 'Rolling',
 };
 
+export const FULFILMENT_PREFERENCES = {
+  HOLD_SHELF: 'Hold Shelf',
+  DELIVERY: 'Delivery'
+};
+
+export const REQUEST_LEVELS = {
+  ITEM: 'Item',
+  TITLE: 'Title',
+};
+
+export const REQUEST_TYPES = {
+  PAGE: 'Page',
+  HOLD: 'Hold',
+  RECALL: 'Recall',
+};
+
 export const FOLIO_RECORD_TYPE = {
   INSTANCE:'Instance',
   HOLDINGS:'Holdings',
   ITEM:'Item',
   ORDER:'Order',
   INVOICE:'Invoice',
-  MARCBIBLIOGRAPHIC:'MARC Bibliographic'
+  MARCBIBLIOGRAPHIC:'MARC Bibliographic',
+  MARCAUTHORITY: 'MARC Authority'
 };
 
 export const PAYMENT_METHOD = {
@@ -106,10 +128,59 @@ export const BATCH_GROUP = {
 
 export const ORDER_STATUSES = {
   OPEN: 'Open',
-  PENDING: 'Pending'
+  PENDING: 'Pending',
+  CLOSED: 'Closed'
 };
 
-export const LOCALION_NAMES = {
+export const ORDER_TYPES = {
+  ONE_TIME: 'One-Time',
+  ONGOING: 'Ongoing'
+};
+
+export const ORDER_FORMAT_NAMES = {
+  ELECTRONIC_RESOURCE: 'Electronic resource',
+  ELECTRONIC_RESOURCE_Check: 'Electronic Resource',
+  PE_MIX: 'P/E mix',
+  PE_MIX_Check: 'P/E Mix',
+  OTHER: 'Other',
+  PHYSICAL_RESOURCE: 'Physical resource',
+  PHYSICAL_RESOURCE_Check: 'Physical Resource',
+};
+
+export const ORDER_FORMAT_NAMES_IN_PROFILE = {
+  ELECTRONIC_RESOURCE: 'Electronic Resource',
+  PE_MIX: 'P/E Mix',
+  OTHER: 'Other',
+  PHYSICAL_RESOURCE: 'Physical Resource',
+};
+
+export const ACQUISITION_METHOD_NAMES_IN_PROFILE = {
+  APPROVAL_PLAN: 'Approval plan',
+  PURCHASE_AT_VENDOR_SYSTEM: 'Purchase at vendor system'
+};
+
+export const RECEIVING_WORKFLOW_NAMES = {
+  SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY: 'Synchronized order and receipt quantity',
+  INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY: 'Independent order and receipt quantity',
+};
+
+export const ACQUISITION_METHOD_NAMES = {
+  APPROVAL_PLAN: 'Approval plan',
+  DDA: 'Demand driven acquisitions (DDA)',
+  DEPOSITORY: 'Depository',
+  EBA:'Evidence based acquisitions (EBA)',
+  EXCHANGE: 'Exchange',
+  FREE: 'Free',
+  GIFT: 'Gift',
+  INTERNAL_TRANSFER: 'Internal transfer',
+  MEMBERSHIP: 'Membership',
+  OTHER: 'Other',
+  PURCHASE: 'Purchase',
+  PURCHASE_AT_VENDOR_SYSTEM: 'Purchase At Vendor System',
+  TECHNICAL: 'Technical'
+};
+
+export const LOCATION_NAMES = {
   ANNEX: 'Annex (KU/CC/DI/A)',
   ANNEX_UI: 'Annex',
   ONLINE: 'Online (E)',
@@ -121,5 +192,65 @@ export const LOCALION_NAMES = {
 export const INSTANCE_STATUS_TERM_NAMES = {
   BATCH_LOADED: 'Batch Loaded',
   CATALOGED: 'Cataloged',
-  UNCATALOGED: 'Uncataloged'
+  UNCATALOGED: 'Uncataloged',
+  OTHER: 'Other',
+  NOTYETASSIGNED: 'Not yet assigned',
+  ELECTRONIC_RESOURCE: 'Electronic Resource'
+};
+
+export const CALL_NUMBER_TYPE_NAMES = {
+  OTHER_SCHEME: 'Other scheme',
+  LIBRARY_OF_CONGRESS: 'Library of Congress classification',
+  LIBRARY_OF_MEDICINE: 'National Library of Medicine classification'
+};
+
+export const EXPORT_TRANSFORMATION_NAMES = {
+  ITEM_HRID: 'Item - HRID',
+  HOLDINGS_HRID: 'Holdings - HRID'
+};
+
+export const TARGET_PROFILE_NAMES = {
+  OCLC_WORLDCAT: '✓ OCLC WorldCat'
+};
+
+export const ACCEPTED_DATA_TYPE_NAMES = {
+  MARC: 'MARC',
+  EDIFACT: 'EDIFACT'
+};
+
+export const INSTANCE_SOURCE_NAMES = {
+  MARC: 'MARC',
+  FOLIO: 'FOLIO'
+};
+
+export const PROFILE_TYPE_NAMES = {
+  JOB_PROFILE: 'JOB_PROFILE',
+  MATCH_PROFILE: 'MATCH_PROFILE',
+  ACTION_PROFILE: 'ACTION_PROFILE',
+  MAPPING_PROFILE: 'MAPPING_PROFILE'
+};
+
+export const EXISTING_RECORDS_NAMES = {
+  INSTANCE: 'INSTANCE',
+  HOLDINGS: 'HOLDINGS',
+  ITEM: 'ITEM',
+  MARC_BIBLIOGRAPHIC: 'MARC_BIBLIOGRAPHIC',
+  MARC_AUTHORITY: 'MARC_AUTHORITY'
+};
+
+export const JOB_STATUS_NAMES = {
+  COMPLETED: 'Completed',
+  COMPLETED_WITH_ERRORS: 'Completed with errors',
+  FAILED: 'Failed'
+};
+
+export const VENDOR_NAMES = {
+  GOBI: 'GOBI Library Solutions',
+  HARRASSOWITZ: 'Otto Harrassowitz GmbH & Co. KG',
+  EBSCO:'EBSCO SUBSCRIPTION SERVICES'
+};
+
+export const HOLDINGS_TYPE_NAMES = {
+  ELECTRONIC: 'Electronic',
+  MONOGRAPH: 'Monograph'
 };

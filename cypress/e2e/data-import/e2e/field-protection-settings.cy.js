@@ -1,12 +1,15 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE,
+  INSTANCE_STATUS_TERM_NAMES,
+  ACCEPTED_DATA_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES,
+  JOB_STATUS_NAMES } from '../../../support/constants';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -14,7 +17,6 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
@@ -48,7 +50,7 @@ describe('ui-data-import', () => {
 
   const jobProfile = {
     profileName: `C17017 autotest JobProf${getRandomPostfix()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
   // profiles for update
@@ -68,13 +70,13 @@ describe('ui-data-import', () => {
       field: '001'
     },
     matchCriterion: 'Exactly matches',
-    existingRecordType: 'INSTANCE',
+    existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
     instanceOption: NewMatchProfile.optionsList.instanceHrid
   };
 
   const jobProfileUpdate = {
     profileName: `C17017 autotest update JobProf${getRandomPostfix()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
   beforeEach('create test data', () => {
@@ -153,35 +155,35 @@ describe('ui-data-import', () => {
     cy.visit(TopMenu.dataImportPath);
     // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
     DataImport.verifyUploadState();
+    cy.reload();
     DataImport.uploadFile('marcFileForC17017.mrc', nameMarcFileForCreate);
     JobProfiles.searchJobProfileForImport(jobProfile.profileName);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(nameMarcFileForCreate);
-    Logs.checkStatusOfJobProfile('Completed');
+    Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     Logs.openFileDetails(nameMarcFileForCreate);
     Logs.verifyInstanceStatus(0, 2, 'Created');
     Logs.verifyInstanceStatus(0, 3, 'Created');
     FileDetails.checkSrsRecordQuantityInSummaryTable('1');
     FileDetails.checkInstanceQuantityInSummaryTable('1');
     Logs.clickOnHotLink(0, 3, 'Created');
-    InstanceRecordView.viewSource();
-    InstanceRecordView.verifySrsMarcRecord();
-    InventoryViewSource.verifyFieldInMARCBibSource('500', dataForField500);
-    InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[0], dataForField507);
-    InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[1], dataForField920);
+    InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+      instanceHrid = initialInstanceHrId;
+      InstanceRecordView.viewSource();
+      InstanceRecordView.verifySrsMarcRecord();
+      InventoryViewSource.verifyFieldInMARCBibSource('500', dataForField500);
+      InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[0], dataForField507);
+      InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[1], dataForField920);
 
-    // get Instance HRID through API
-    InventorySearchAndFilter.getInstanceHRID()
-      .then(hrId => {
-        instanceHrid = hrId[0];
-        // change file using order number
-        DataImport.editMarcFile(
-          'marcFileForC17017.mrc',
-          editedMarcFileName,
-          [dataFromField001, dataForField500, dataForField507, dataForField920],
-          [instanceHrid, updateDataForField500, updateDataForField507, updateDataForField920]
-        );
-      });
+
+      // change file using order number
+      DataImport.editMarcFile(
+        'marcFileForC17017.mrc',
+        editedMarcFileName,
+        [dataFromField001, dataForField500, dataForField507, dataForField920],
+        [instanceHrid, updateDataForField500, updateDataForField507, updateDataForField920]
+      );
+    });
 
     // create mapping profile for update
     cy.visit(SettingsMenu.mappingProfilePath);
@@ -206,11 +208,12 @@ describe('ui-data-import', () => {
     cy.visit(TopMenu.dataImportPath);
     // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
     DataImport.verifyUploadState();
+    cy.reload();
     DataImport.uploadFile(editedMarcFileName, fileNameForUpdate);
     JobProfiles.searchJobProfileForImport(jobProfileUpdate.profileName);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(fileNameForUpdate);
-    Logs.checkStatusOfJobProfile('Completed');
+    Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     Logs.openFileDetails(fileNameForUpdate);
     Logs.verifyInstanceStatus(0, 2, 'Created');
     Logs.verifyInstanceStatus(0, 3, 'Updated');

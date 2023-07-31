@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import moment from 'moment';
 import TestTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
@@ -32,6 +33,7 @@ import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
 import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('Overdue fine', () => {
   let addedCirculationRule;
@@ -58,6 +60,7 @@ describe('Overdue fine', () => {
       category: 'Automated fee/fine charge',
       subject: `Autotest_${getRandomPostfix()}_${noticeName}`,
       body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
+      previewText: `Test email body The Wines of Italy ${moment().format('ll')}`,
     };
   };
   const noticeTemplates = {
@@ -197,7 +200,7 @@ describe('Overdue fine', () => {
           items: [
             {
               barcode: itemData.barcode,
-              status: { name: 'Available' },
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
               permanentLoanType: { id: testData.loanTypeId },
               materialType: { id: testData.materialTypeId },
             },
@@ -301,16 +304,19 @@ describe('Overdue fine', () => {
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.returnedUponAt);
+      delete noticeTemplates.returnedUponAt.previewText;
       NewNoticePolicyTemplate.checkAfterSaving({
         ...noticeTemplates.returnedUponAt,
         category: 'AutomatedFeeFineCharge',
       });
       NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.returnedAfterOnce);
+      delete noticeTemplates.returnedAfterOnce.previewText;
       NewNoticePolicyTemplate.checkAfterSaving({
         ...noticeTemplates.returnedAfterOnce,
         category: 'AutomatedFeeFineCharge',
       });
       NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.returnedAfterRecurring);
+      delete noticeTemplates.returnedAfterRecurring.previewText;
       NewNoticePolicyTemplate.checkAfterSaving({
         ...noticeTemplates.returnedAfterRecurring,
         category: 'AutomatedFeeFineCharge',
@@ -321,9 +327,9 @@ describe('Overdue fine', () => {
       NewNoticePolicy.startAdding();
       NewNoticePolicy.checkInitialState();
       NewNoticePolicy.fillGeneralInformation(noticePolicy);
-      NewNoticePolicy.addFeeFineNotice(selectOptions(noticeTemplates.returnedUponAt));
-      NewNoticePolicy.addFeeFineNotice(selectOptions(noticeTemplates.returnedAfterOnce), 1);
-      NewNoticePolicy.addFeeFineNotice(selectOptions(noticeTemplates.returnedAfterRecurring), 2);
+      NewNoticePolicy.addNotice(selectOptions(noticeTemplates.returnedUponAt));
+      NewNoticePolicy.addNotice(selectOptions(noticeTemplates.returnedAfterOnce), 1);
+      NewNoticePolicy.addNotice(selectOptions(noticeTemplates.returnedAfterRecurring), 2);
       NewNoticePolicy.save();
       NewNoticePolicy.waitLoading();
       NewNoticePolicy.checkPolicyName(noticePolicy);

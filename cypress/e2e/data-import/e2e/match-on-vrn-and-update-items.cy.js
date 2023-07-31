@@ -26,6 +26,13 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import {
+  ACCEPTED_DATA_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES,
+  ORDER_STATUSES,
+  VENDOR_NAMES,
+  ACQUISITION_METHOD_NAMES_IN_PROFILE
+} from '../../../support/constants';
 
 describe('ui-data-import', () => {
   const item = {
@@ -60,21 +67,21 @@ describe('ui-data-import', () => {
   const matchProfiles = [
     {
       name: instanceMatchProfileName,
-      existingRecordType: 'INSTANCE',
+      existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
     },
     {
       name: holdingsMatchProfileName,
-      existingRecordType: 'HOLDINGS',
+      existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
     },
     {
       name: itemMatchProfileName,
-      existingRecordType: 'ITEM',
+      existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
     },
   ];
 
   const jobProfilesData = {
     name: `C350591 Job profile ${Helper.getRandomBarcode()}`,
-    dataType: 'MARC',
+    dataType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     matches: [
       {
         matchName: instanceMatchProfileName,
@@ -112,7 +119,7 @@ describe('ui-data-import', () => {
       .then(() => {
         cy.getAdminToken()
           .then(() => {
-            Organizations.getOrganizationViaApi({ query: 'name="GOBI Library Solutions"' })
+            Organizations.getOrganizationViaApi({ query: `name="${VENDOR_NAMES.GOBI}"` })
               .then(organization => {
                 vendorId = organization.id;
               });
@@ -120,7 +127,7 @@ describe('ui-data-import', () => {
               .then(materialType => {
                 materialTypeId = materialType.id;
               });
-            cy.getAcquisitionMethodsApi({ query: 'value="Purchase at vendor system"' })
+            cy.getAcquisitionMethodsApi({ query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"` })
               .then(params => {
                 acquisitionMethodId = params.body.acquisitionMethods[0].id;
               });
@@ -189,7 +196,7 @@ describe('ui-data-import', () => {
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
           Orders.openOrder();
-          OrderView.checkIsOrderOpened('Open');
+          OrderView.checkIsOrderOpened(ORDER_STATUSES.OPEN);
           OrderView.checkIsItemsInInventoryCreated(item.title, 'Main Library');
           // check receiving pieces are created
           cy.visit(TopMenu.ordersPath);
@@ -231,7 +238,8 @@ describe('ui-data-import', () => {
 
       // import a file
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       cy.reload();
       DataImport.checkIsLandingPageOpened();
       DataImport.uploadFile(editedMarcFileName);

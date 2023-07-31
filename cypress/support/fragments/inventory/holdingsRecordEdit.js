@@ -1,4 +1,4 @@
-import { Button, including, HTML, TextField, Select, SelectionList } from '../../../../interactors';
+import { Button, including, HTML, TextField, Select, SelectionList, Accordion, TextArea } from '../../../../interactors';
 
 const rootForm = HTML({ className: including('holdingsForm-') });
 const holdingsHrId = rootForm.find(TextField({ name: 'hrid' }));
@@ -20,6 +20,19 @@ export default {
       Button({ id:'additem_permanentlocation' }).click(),
       SelectionList().filter(location),
       SelectionList().select(including(location)),
+    ]);
+  },
+  clearTemporaryLocation: () => {
+    cy.do([
+      Button({ id:'additem_temporarylocation' }).click(),
+      SelectionList().select('Select location'),
+    ]);
+  },
+  addHoldingsNotes: (text, type = 'Action note') => {
+    cy.do([
+      Accordion('Holdings notes').find(Button('Add note')).click(),
+      Select('Note type*').choose(type),
+      TextArea({ ariaLabel: 'Note' }).fillIn(text),
     ]);
   },
 };

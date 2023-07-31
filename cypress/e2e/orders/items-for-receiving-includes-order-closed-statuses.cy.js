@@ -13,15 +13,16 @@ import InventorySearchAndFilter from '../../support/fragments/inventory/inventor
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import OrderLines from '../../support/fragments/orders/orderLines';
-import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
-import ItemRecordEdit from '../../support/fragments/inventory/itemRecordEdit';
+import ItemRecordEdit from '../../support/fragments/inventory/item/itemRecordEdit';
 import SwitchServicePoint from '../../support/fragments/servicePoint/switchServicePoint';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../support/fragments/checkout/checkout';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 // import Users from '../../support/fragments/users/users';
 
 describe('orders: Receiving and Check-in', () => {
@@ -79,7 +80,7 @@ describe('orders: Receiving and Check-in', () => {
                 Orders.selectFromResultsList();
                 Orders.createPOLineViaActions();
                 OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
-                OrderLines.fillInPOLineInfoForExportWithLocationForPhisicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', locationResponse.institutionId, '4');
+                OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', locationResponse.institutionId, '4');
                 OrderLines.backToEditingOrder();
                 Orders.openOrder();
                 OrderLines.selectPOLInOrder(0);
@@ -194,11 +195,11 @@ describe('orders: Receiving and Check-in', () => {
     InventoryInstance.openHoldingsAccordion(location.name);
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', barcodeForFirstItem);
-    ItemRecordView.checkItemDetails(location.name, barcodeForFirstItem, 'Available');
+    ItemRecordView.checkItemDetails(location.name, barcodeForFirstItem, ITEM_STATUS_NAMES.AVAILABLE);
     ItemActions.closeItem();
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', barcodeForSecondItem);
-    ItemRecordView.checkItemDetails(location.name, barcodeForSecondItem, 'Available');
+    ItemRecordView.checkItemDetails(location.name, barcodeForSecondItem, ITEM_STATUS_NAMES.AVAILABLE);
     ItemActions.closeItem();
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', barcodeForThirdItem);

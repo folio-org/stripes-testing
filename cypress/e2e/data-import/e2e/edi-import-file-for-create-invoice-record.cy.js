@@ -2,7 +2,11 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE, PAYMENT_METHOD, BATCH_GROUP } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE,
+  PAYMENT_METHOD,
+  BATCH_GROUP,
+  ACCEPTED_DATA_TYPE_NAMES,
+  VENDOR_NAMES } from '../../../support/constants';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -28,7 +32,7 @@ describe('ui-data-import', () => {
     existingRecordType:FOLIO_RECORD_TYPE.INVOICE,
     description:'',
     batchGroup: BATCH_GROUP.FOLIO,
-    organizationName: NewFieldMappingProfile.organization.gobiLibrary,
+    organizationName: VENDOR_NAMES.GOBI,
     paymentMethod: PAYMENT_METHOD.CASH
   };
   const actionProfile = {
@@ -38,7 +42,7 @@ describe('ui-data-import', () => {
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
     profileName: `autoTestJobProf.${getRandomPostfix()}`,
-    acceptedType: NewJobProfile.acceptedDataType.edifact
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.EDIFACT
   };
 
   before('login', () => {
@@ -87,7 +91,8 @@ describe('ui-data-import', () => {
 
       // upload a marc file for creating of the new instance, holding and item
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       cy.reload();
       DataImport.uploadFile('ediFileForC343338.edi', fileName);
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);

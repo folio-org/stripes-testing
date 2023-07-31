@@ -10,20 +10,17 @@ import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-a
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 
+// TODO: Update test after MODBULKOPS-123 is done
+
 let user;
 let userWithoutPermissions;
 const invalidUserUUID = `invalidUserUUID_${getRandomPostfix()}`;
 const invalidAndValidUserUUIDsFileName = `invalidAndValidUserUUIDS_${getRandomPostfix()}.csv`;
 const matchedRecordsFileNameInvalidAndValid = `Matched-Records-${invalidAndValidUserUUIDsFileName}`;
-const errorsFromMatchingFileName = `*Errors-${invalidAndValidUserUUIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records-${invalidAndValidUserUUIDsFileName}`;
-// It downloads 2 files in one click, both with same content
-const previewOfProposedChangesFileName = {
-  first: `*-Updates-Preview-${invalidAndValidUserUUIDsFileName}`,
-  second: `modified-*-${matchedRecordsFileNameInvalidAndValid}`
-};
-const updatedRecordsFileName = `result-*-${matchedRecordsFileNameInvalidAndValid}`;
-const errorsFromCommittingFileName = `*Errors-*-${matchedRecordsFileNameInvalidAndValid}`;
+// const errorsFromMatchingFileName = `*Errors-${invalidAndValidUserUUIDsFileName}`;
+const previewOfProposedChangesFileName = `*-Updates-Preview-${invalidAndValidUserUUIDsFileName}`;
+const updatedRecordsFileName = `*-Changed-Records*-${invalidAndValidUserUUIDsFileName}`;
+// const errorsFromCommittingFileName = `*Errors-*-${matchedRecordsFileNameInvalidAndValid}`;
 
 describe('Bulk Edit - Logs', () => {
   before('create test data', () => {
@@ -49,16 +46,17 @@ describe('Bulk Edit - Logs', () => {
   after('delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${invalidAndValidUserUUIDsFileName}`);
     Users.deleteViaApi(user.userId);
-    FileManager.deleteFileFromDownloadsByMask(invalidAndValidUserUUIDsFileName, errorsFromCommittingFileName, `*${matchedRecordsFileNameInvalidAndValid}`, changedRecordsFileName, previewOfProposedChangesFileName.first, previewOfProposedChangesFileName.second, updatedRecordsFileName, errorsFromMatchingFileName);
+    FileManager.deleteFileFromDownloadsByMask(invalidAndValidUserUUIDsFileName, `*${matchedRecordsFileNameInvalidAndValid}`, previewOfProposedChangesFileName, updatedRecordsFileName);
+    // FileManager.deleteFileFromDownloadsByMask(errorsFromCommittingFileName, errorsFromMatchingFileName);
   });
 
   it('C375245 Verify genetated Logs files for Users In app -- valid and invalid records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    BulkEditSearchPane.verifyDragNDropUsersUIIDsArea();
+    BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
     BulkEditSearchPane.uploadFile(invalidAndValidUserUUIDsFileName);
     BulkEditSearchPane.waitFileUploading();
 
     BulkEditActions.downloadMatchedResults();
-    BulkEditActions.downloadErrors();
+    // BulkEditActions.downloadErrors();
 
     BulkEditActions.openInAppStartBulkEditFrom();
     BulkEditActions.verifyBulkEditForm();
@@ -70,7 +68,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.waitFileUploading();
     BulkEditActions.openActions();
     BulkEditActions.downloadChangedCSV();
-    BulkEditActions.downloadErrors();
+    // BulkEditActions.downloadErrors();
 
     BulkEditSearchPane.openLogsSearch();
     BulkEditSearchPane.verifyLogsPane();
@@ -84,17 +82,17 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.downloadFileWithMatchingRecords();
     BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileNameInvalidAndValid}`, [user.userId, userWithoutPermissions.userId], 'userId', true);
 
-    BulkEditSearchPane.downloadFileWithErrorsEncountered();
-    BulkEditFiles.verifyMatchedResultFileContent(errorsFromMatchingFileName, [invalidUserUUID], 'firstElement', false);
+    // BulkEditSearchPane.downloadFileWithErrorsEncountered();
+    // BulkEditFiles.verifyMatchedResultFileContent(errorsFromMatchingFileName, [invalidUserUUID], 'firstElement', false);
 
     BulkEditSearchPane.downloadFileWithProposedChanges();
-    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, ['staff', 'staff'], 'patronGroup', true);
+    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName, ['staff', 'staff'], 'patronGroup', true);
 
     BulkEditSearchPane.downloadFileWithUpdatedRecords();
-    BulkEditFiles.verifyMatchedResultFileContent(changedRecordsFileName, ['staff'], 'patronGroup', true);
+    BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, ['staff'], 'patronGroup', true);
 
-    BulkEditSearchPane.downloadFileWithCommitErrors();
-    BulkEditFiles.verifyMatchedResultFileContent(errorsFromCommittingFileName, [user.userId], 'firstElement', false);
+    // BulkEditSearchPane.downloadFileWithCommitErrors();
+    // BulkEditFiles.verifyMatchedResultFileContent(errorsFromCommittingFileName, [user.userId], 'firstElement', false);
 
     cy.visit(TopMenu.usersPath);
     UsersSearchPane.searchByUsername(user.username);

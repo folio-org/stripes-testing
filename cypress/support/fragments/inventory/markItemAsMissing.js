@@ -8,6 +8,7 @@ import {
   Section,
   TextField
 } from '../../../../interactors';
+import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
 import users from '../users/users';
 import InventoryHoldings from './holdings/inventoryHoldings';
@@ -72,7 +73,7 @@ export default {
     };
 
     return cy.wrap(Promise.resolve(true)).then(() => {
-      cy.getMaterialTypes({ limit: 1 }).then(materialType => {
+      cy.getMaterialTypes({ query: 'name="video recording"' }).then(materialType => {
         instanceRecordData.materialTypeId = materialType.id;
         materialTypeValue = materialType.name;
       });
@@ -134,14 +135,14 @@ export default {
     };
     const requestData = {
       id: uuid(),
-      requestType: 'Hold',
+      requestType: REQUEST_TYPES.HOLD,
       requesterId: null,
       holdingsRecordId: holdingId,
       instanceId,
-      requestLevel: 'Item',
+      requestLevel: REQUEST_LEVELS.ITEM,
       itemId: item.itemId,
       requestDate: new Date().toISOString(),
-      fulfilmentPreference: 'Hold Shelf',
+      fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
       pickupServicePointId: null,
       status: requestStatus,
     };

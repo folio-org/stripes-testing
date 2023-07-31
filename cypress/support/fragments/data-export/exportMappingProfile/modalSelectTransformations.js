@@ -1,5 +1,14 @@
 import { including } from '@interactors/html';
-import { Checkbox, Button, Modal, TextField, MultiColumnListRow, MultiColumnListCell, Pane, MultiColumnListHeader } from '../../../../../interactors';
+import {
+  Checkbox,
+  Button,
+  Modal,
+  TextField,
+  MultiColumnListRow,
+  MultiColumnListCell,
+  Pane,
+  MultiColumnListHeader
+} from '../../../../../interactors';
 
 const ModalTransformation = Modal('Select transformations');
 const instanceRecordTypeChechbox = Checkbox({ value: 'INSTANCE', name: 'filters.recordTypes' });
@@ -107,6 +116,9 @@ export default {
   checkUnselectedStatusChechbox() {
     cy.expect(unSelectedStatusChechbox.has({ checked: false }));
     cy.do(unSelectedStatusChechbox.click());
+  },
+  verifyCheckboxDisabled(name) {
+    cy.expect(Checkbox(name).has({ disabled: true }));
   },
   verifyTotalSelected(expectedTotalSelected) {
     cy.expect(Modal('Select transformations').has({ content: including(`Total selected: ${expectedTotalSelected}`) }));

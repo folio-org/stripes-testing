@@ -90,6 +90,10 @@ export default {
     cy.expect(userDetailsPane.find(KeyValue('First name')).has({ value: `${firstName}` }));
   },
 
+  verifyMiddleNameOnUserDetailsPane(firstName) {
+    cy.expect(userDetailsPane.find(KeyValue('Middle name')).has({ value: `${firstName}` }));
+  },
+
   verifyPatronGroupOnUserDetailsPane(patronGroup) {
     cy.expect(userDetailsPane.find(KeyValue('Patron group')).has({ value: `${patronGroup}` }));
   },
@@ -101,5 +105,9 @@ export default {
 
   verifyExpirationDateOnUserDetailsPane(expirationDate) {
     cy.expect(userDetailsPane.find(KeyValue('Expiration date')).has({ value: `${expirationDate}` }));
+  },
+
+  verifyCustomFieldOnUserDetailsPane(name, text) {
+    cy.expect(userDetailsPane.find(KeyValue(name)).has({ value: text }));
   },
 };

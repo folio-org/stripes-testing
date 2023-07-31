@@ -1,5 +1,18 @@
 import { including } from 'bigtest';
-import { Pane, Button, TextField, MultiColumnListCell, Accordion, Checkbox, Modal, SelectionOption, MultiColumnList, PaneHeader } from '../../../../interactors';
+import {
+  Pane,
+  Button,
+  TextField,
+  MultiColumnListCell,
+  Accordion,
+  Checkbox,
+  Modal,
+  SelectionOption,
+  MultiColumnList,
+  PaneHeader,
+  KeyValue,
+  HTML
+} from '../../../../interactors';
 
 const searchButton = Button({ type: 'submit' });
 const userSearchResults = Pane('User Search Results');
@@ -8,7 +21,7 @@ const endTimeAccordion = Accordion({ id: 'endTime' });
 const systemAccordion = Accordion({ id: 'isSystemSource' });
 const sourceAccordion = Accordion({ id: 'createdByUserId' });
 const jobTypeAccordion = Accordion({ id: 'type' });
-const statusAccordion = Accordion({ id: 'status' });
+const statusAccordion = Accordion('Status');
 const startDateTextfield = TextField({ name: 'startDate' });
 const endDateTextfield = TextField({ name: 'endDate' });
 const applyButton = Button('Apply');
@@ -20,13 +33,28 @@ const waitClick = () => { cy.wait(1000); };
 export default {
   getSearchResult,
   waitLoading() {
-    cy.expect(Pane('Export jobs').exists());
+    cy.expect([
+      Pane('Export jobs').exists(),
+      HTML('Choose a filter or enter a search query to show results.').exists()
+    ]);
   },
 
   selectJob(content) {
     return cy.do(MultiColumnListCell(including(content)).click());
   },
-  
+
+  selectJobByIndex(content, index) {
+    cy.get('div[class*=mclRow-]').contains(content).then(element => {
+      element.prevObject[index].click();
+    });
+  },
+
+  verifyJobAmount(text, amount) {
+    cy.get('div[class*=mclRow-]').contains(text).then(element => {
+      expect(element.prevObject.length).to.eq(amount);
+    });
+  },
+
   searchById(id) {
     cy.do([
       TextField().fillIn(id),
@@ -41,15 +69,6 @@ export default {
   selectJobByIntegrationInList(integrationName) {
     cy.wait(6000);
     cy.do(MultiColumnList({ id: 'export-edi-jobs-list' }).find(MultiColumnListCell(integrationName)).click());
-  },
-
-  selectFailedStatusCheckbox() {
-    cy.do(Checkbox({ id: 'clickable-filter-status-failed' }).click());
-  },
-
-  selectSuccessfulStatusCheckbox() {
-    cy.do(Checkbox({ id: 'clickable-filter-status-successful' }).click());
-    cy.wait(4000);
   },
 
   closeExportJobPane() {
@@ -95,6 +114,18 @@ export default {
     cy.expect(PaneHeader('Export job ').exists());
   },
 
+  clickJobIdInThirdPane() {
+    this.verifyThirdPaneExportJobExist();
+    cy.do(KeyValue('Job ID').clickLink());
+    // Wait for the file to download
+    cy.wait(5000);
+  },
+
+  verifyJobIdInThirdPaneHasNoLink() {
+    this.verifyThirdPaneExportJobExist();
+    cy.expect(KeyValue('Job ID').has({ hasLink: false }));
+  },
+
   searchByBulkEdit() {
     waitClick();
     cy.do(jobTypeAccordion.find(Checkbox({ id: 'clickable-filter-type-bulk-edit' })).click());
@@ -119,6 +150,7 @@ export default {
   },
 
   enterEndTime(fromDate, toDate) {
+    waitClick();
     cy.do([
       endTimeAccordion.clickHeader(),
       endTimeAccordion.find(startDateTextfield).fillIn(fromDate),
@@ -132,6 +164,7 @@ export default {
   },
 
   searchBySystemNo() {
+    waitClick();
     cy.do([
       systemAccordion.clickHeader(),
       systemAccordion.find(Checkbox({ label: 'No' })).click(),
@@ -154,7 +187,7 @@ export default {
 
   downloadLastCreatedJob(jobId) {
     // TODO: redesign to interactors
-    cy.get(`a:contains(${jobId})`).first().click()
+    cy.get(`a:contains(${jobId})`).first().click();
   },
 
   verifyUserSearchResult(username) {
@@ -189,5 +222,10 @@ export default {
     // Need to wait while Button will be loaded for click
     cy.wait(7000);
     cy.do(Button('Rerun').click());
+    cy.wait(7000);
+  },
+
+  verifyNoPermissionWarning() {
+    cy.expect(HTML('You don\'t have permission to view this app/record').exists());
   },
 };

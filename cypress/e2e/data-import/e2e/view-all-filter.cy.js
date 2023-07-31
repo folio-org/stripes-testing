@@ -6,6 +6,8 @@ import FileManager from '../../../support/utils/fileManager';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import Logs from '../../../support/fragments/data_import/logs/logs';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import { JOB_STATUS_NAMES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   // Path to static file in fixtures
@@ -30,11 +32,15 @@ describe('ui-data-import', () => {
     });
 
     cy.visit(TopMenu.dataImportPath);
-    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+    // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.verifyUploadState();
     cy.reload();
     // Upload files
     // runs with errors
     cy.uploadFileWithDefaultJobProfile(fileNameForFailedImport);
+    cy.reload();
+    // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.verifyUploadState();
     cy.reload();
     // runs successfully
     cy.uploadFileWithDefaultJobProfile(fileNameForSuccessfulImport);
@@ -62,10 +68,10 @@ describe('ui-data-import', () => {
 
     // FILTER By "Errors in Import"
     LogsViewAll.selectNofilterJobsByErrors();
-    LogsViewAll.checkByErrorsInImport('Completed');
+    LogsViewAll.checkByErrorsInImport(JOB_STATUS_NAMES.COMPLETED);
     LogsViewAll.resetAllFilters();
     LogsViewAll.selectYesfilterJobsByErrors();
-    LogsViewAll.checkByErrorsInImport('Completed with errors', 'Failed');
+    LogsViewAll.checkByErrorsInImport(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS, JOB_STATUS_NAMES.FAILED);
     LogsViewAll.resetAllFilters();
 
     // FILTER By "Date"
@@ -111,7 +117,7 @@ describe('ui-data-import', () => {
 
     LogsViewAll.selectNofilterJobsByErrors();
     LogsViewAll.filterJobsByUser(userFilterValue);
-    LogsViewAll.checkByErrorsInImportAndUser('Completed', userName);
+    LogsViewAll.checkByErrorsInImportAndUser(JOB_STATUS_NAMES.COMPLETED, userName);
     LogsViewAll.resetAllFilters();
   });
 });

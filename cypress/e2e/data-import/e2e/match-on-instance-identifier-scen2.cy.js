@@ -1,7 +1,11 @@
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TopMenu from '../../../support/fragments/topMenu';
-import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE,
+  INSTANCE_STATUS_TERM_NAMES,
+  ACCEPTED_DATA_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES,
+  JOB_STATUS_NAMES } from '../../../support/constants';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -41,7 +45,7 @@ describe('ui-data-import', () => {
       subfield: 'z'
     },
     matchCriterion: 'Exactly matches',
-    existingRecordType: 'INSTANCE',
+    existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
     instanceOption: 'Identifier: Invalid UPC',
   };
   const mappingProfile = {
@@ -59,8 +63,8 @@ describe('ui-data-import', () => {
   };
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: `C347829autotestActionProf${getRandomPostfix()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc
+    profileName: `C347829autotestJobProf${getRandomPostfix()}`,
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
   beforeEach('create test data', () => {
@@ -100,14 +104,15 @@ describe('ui-data-import', () => {
     Users.deleteViaApi(userId);
   });
 
-  it('C347829 Match on Instance identifier match meets both the Identifier type and Data requirements (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+  it('C347829 MODDICORE-231 "Match on Instance identifier match meets both the Identifier type and Data requirements" Scenario 2 (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+    // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.verifyUploadState();
     cy.reload();
     DataImport.uploadFile(filePathForCreateInstance, fileNameForCreateInstance);
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(fileNameForCreateInstance);
-    Logs.checkStatusOfJobProfile('Completed');
+    Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     Logs.openFileDetails(fileNameForCreateInstance);
     Logs.clickOnHotLink(0, 3, 'Created');
     InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[0].type, resourceIdentifiers[0].value, 6);
@@ -139,13 +144,14 @@ describe('ui-data-import', () => {
     JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
     cy.visit(TopMenu.dataImportPath);
-    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+    // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.verifyUploadState();
     cy.reload();
     DataImport.uploadFile(filePathForUpdateInstance, fileNameForUpdateInstance);
     JobProfiles.searchJobProfileForImport(jobProfile.profileName);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(fileNameForUpdateInstance);
-    Logs.checkStatusOfJobProfile('Completed');
+    Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     Logs.openFileDetails(fileNameForUpdateInstance);
     Logs.verifyInstanceStatus(0, 3, FileDetails.status.noAction);
     Logs.verifyInstanceStatus(1, 3, 'Updated');

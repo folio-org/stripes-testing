@@ -8,8 +8,9 @@ import Users from '../../../support/fragments/users/users';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
+import CirculationRules from '../../../support/fragments/circulation/circulation-rules';
 
 describe('inventory', () => {
   let user = {};
@@ -19,6 +20,24 @@ describe('inventory', () => {
   const createdRequestsIds = [];
   let createdItems = [];
   let materialType = '';
+  let addedCirculationRule;
+  let originalCirculationRules;
+
+  before(() => {
+    let materialBookId;
+    cy.getAdminToken();
+    cy.getMaterialTypes({ query: 'name="video recording"' }).then(type => {
+      materialBookId = type.id;
+    });
+    CirculationRules.getViaApi().then((circulationRule) => {
+      originalCirculationRules = circulationRule.rulesAsText;
+      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
+      const defaultProps = ` i ${ruleProps.i} r ${ruleProps.r} o ${ruleProps.o} n ${ruleProps.n} l ${ruleProps.l}`;
+      addedCirculationRule = ` \nm ${materialBookId}: ${defaultProps}`;
+      cy.updateCirculationRules({ rulesAsText: `${originalCirculationRules}${addedCirculationRule}` });
+    });
+  });
+
   beforeEach(() => {
     cy.getAdminToken()
       .then(() => {
@@ -58,6 +77,10 @@ describe('inventory', () => {
             });
           });
       });
+  });
+
+  after(() => {
+    CirculationRules.deleteRuleViaApi(addedCirculationRule);
   });
 
   afterEach(() => {

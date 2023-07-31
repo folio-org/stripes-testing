@@ -75,9 +75,30 @@ export default {
     waitCreatingMatchProfile();
   },
 
+  createMatchProfileWithQualifier:(profile) => {
+    openNewMatchProfileForm();
+    NewMatchProfile.fillMatchProfileWithQualifierInIncomingAndExistingRecords(profile);
+    saveAndClose();
+    waitCreatingMatchProfile();
+  },
+
+  createMatchProfileWithQualifierAndComparePart:(profile) => {
+    openNewMatchProfileForm();
+    NewMatchProfile.fillMatchProfileWithStaticValueAndComparePartValue(profile);
+    saveAndClose();
+    waitCreatingMatchProfile();
+  },
+
+  createMatchProfileWithQualifierAndExistingRecordField:(profile) => {
+    openNewMatchProfileForm();
+    NewMatchProfile.fillMatchProfileWithQualifierInIncomingRecordsAndValueInExistingRecord(profile);
+    saveAndClose();
+    waitCreatingMatchProfile();
+  },
+
   createMatchProfileWithStaticValue:(profile) => {
     openNewMatchProfileForm();
-    NewMatchProfile.fillMatchProfileStaticValue(profile);
+    NewMatchProfile.fillMatchProfileWithStaticValue(profile);
     saveAndClose();
     waitCreatingMatchProfile();
   },

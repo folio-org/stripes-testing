@@ -1,5 +1,6 @@
 import uuid from 'uuid';
 import moment from 'moment';
+import { FULFILMENT_PREFERENCES, ITEM_STATUS_NAMES, REQUEST_LEVELS, REQUEST_TYPES } from '../../../../support/constants';
 import TestTypes from '../../../../support/dictionary/testTypes';
 import devTeams from '../../../../support/dictionary/devTeams';
 import permissions from '../../../../support/dictionary/permissions';
@@ -67,7 +68,7 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
     },
   };
   const requestPolicyBody = {
-    requestTypes: ['Recall'],
+    requestTypes: [REQUEST_TYPES.RECALL],
     name: `recall_${getRandomPostfix()}`,
     id: uuid(),
   };
@@ -119,7 +120,7 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
             items: [
               {
                 barcode: item.barcode,
-                status: { name: 'Available' },
+                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                 permanentLoanType: { id: testData.loanTypeId },
                 materialType: { id: testData.materialTypeId },
               },
@@ -187,7 +188,7 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
             userBarcode: userData.barcode,
           }).then((checkoutResponse) => {
             Requests.createNewRequestViaApi({
-              fulfilmentPreference: 'Hold Shelf',
+              fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
               holdingsRecordId: testData.holdingTypeId,
               instanceId: item.instanceId,
               item: { barcode: item.barcode },
@@ -195,8 +196,8 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
               pickupServicePointId: testData.userServicePoint.id,
               requestDate: new Date(),
               requestExpirationDate: new Date(new Date().getTime() + 86400000),
-              requestLevel: 'Item',
-              requestType: 'Recall',
+              requestLevel: REQUEST_LEVELS.ITEM,
+              requestType: REQUEST_TYPES.RECALL,
               requesterId: recallUserData.userId,
             }).then((request) => {
               testData.requestsId.push(request.body.id);

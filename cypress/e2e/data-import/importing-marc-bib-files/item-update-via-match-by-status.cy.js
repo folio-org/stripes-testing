@@ -5,8 +5,10 @@ import permissions from '../../../support/dictionary/permissions';
 import {
   LOAN_TYPE_NAMES,
   ITEM_STATUS_NAMES,
-  LOCALION_NAMES,
-  FOLIO_RECORD_TYPE
+  LOCATION_NAMES,
+  FOLIO_RECORD_TYPE,
+  MATERIAL_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES
 } from '../../../support/constants';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -23,7 +25,7 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import TopMenu from '../../../support/fragments/topMenu';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
@@ -54,7 +56,7 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C357552 Create simple holdings ${Helper.getRandomBarcode()}`,
-        permanentLocation: LOCALION_NAMES.ONLINE },
+        permanentLocation: LOCATION_NAMES.ONLINE },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C357552 Create simple holdings ${Helper.getRandomBarcode()}` }
     },
@@ -62,7 +64,8 @@ describe('ui-data-import', () => {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C357552 Create simple items ${Helper.getRandomBarcode()}`,
         status: ITEM_STATUS_NAMES.AVAILABLE,
-        permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE },
+        permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
+        materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C357552 Create simple items ${Helper.getRandomBarcode()}` }
     },
@@ -86,7 +89,7 @@ describe('ui-data-import', () => {
       subfield: 'a'
     },
     matchCriterion: 'Exactly matches',
-    existingRecordType: 'ITEM',
+    existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
     itemOption: NewMatchProfile.optionsList.itemHrid
   };
 
@@ -94,8 +97,8 @@ describe('ui-data-import', () => {
     profileName: `C357552 Item status = Available ${Helper.getRandomBarcode()}`,
     incomingStaticValue: 'Available',
     matchCriterion: 'Exactly matches',
-    existingRecordType: 'ITEM',
-    itemOption: NewMatchProfile.optionsList.status,
+    existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
+    existingRecordOption: NewMatchProfile.optionsList.status,
   };
 
   const createJobProfile = {
@@ -168,7 +171,7 @@ describe('ui-data-import', () => {
   const mappingProfileForCreateItem = (itemMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfile);
-    NewFieldMappingProfile.fillMaterialType();
+    NewFieldMappingProfile.fillMaterialType(itemMappingProfile.materialType);
     NewFieldMappingProfile.addStatisticalCode(statisticalCode, 6);
     NewFieldMappingProfile.fillPermanentLoanType(itemMappingProfile.permanentLoanType);
     NewFieldMappingProfile.fillStatus(itemMappingProfile.status);
@@ -231,7 +234,8 @@ describe('ui-data-import', () => {
 
       // upload a marc file for creating of the new instance, holding and item
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       cy.reload();
       DataImport.uploadFile('marcFileForC357552.mrc', nameMarcFileForImportCreate);
       JobProfiles.searchJobProfileForImport(createJobProfile.profileName);
@@ -285,7 +289,8 @@ describe('ui-data-import', () => {
 
       // upload the exported marc file
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       cy.reload();
       DataImport.uploadExportedFile(nameMarcFileForUpdate);
       JobProfiles.searchJobProfileForImport(updateJobProfile.profileName);
@@ -302,7 +307,7 @@ describe('ui-data-import', () => {
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(nameMarcFileForUpdate);
       });
-      // check items what statuses were changed have Discarded status
+      // check items what statuses were changed have No action status
       titlesItemsStatusChanged.forEach(title => {
         FileDetails.checkStatusByTitle(title, FileDetails.status.noAction);
       });

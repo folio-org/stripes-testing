@@ -9,6 +9,7 @@ import TestTypes from '../../../support/dictionary/testTypes';
 import Users from '../../../support/fragments/users/users';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import DevTeams from '../../../support/dictionary/devTeams';
+import { INSTANCE_SOURCE_NAMES, LOCATION_NAMES } from '../../../support/constants';
 
 describe('inventory', () => {
   let firstUser;
@@ -17,8 +18,8 @@ describe('inventory', () => {
   const recordsData = {
     instanceTitle,
     permanentLocationOption: 'Online (E) ',
-    permanentLocationValue: 'Online',
-    source: 'FOLIO'
+    permanentLocationValue: LOCATION_NAMES.ONLINE_UI,
+    source: INSTANCE_SOURCE_NAMES.FOLIO
   };
 
   beforeEach(() => {

@@ -15,13 +15,9 @@ let user;
 const afterThreeMonthsDate = DateTools.getAfterThreeMonthsDateObj();
 const validUserBarcodesFileName = `validUserBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `Matched-Records-${validUserBarcodesFileName}`;
-const changedRecordsFileName = `*-Changed-Records*-${validUserBarcodesFileName}`;
-// It downloads 2 files in one click, both with same content
-const previewOfProposedChangesFileName = {
-  first: `*-Updates-Preview-${validUserBarcodesFileName}`,
-  second: `modified-*-${matchedRecordsFileName}`
-};
-const updatedRecordsFileName = `result-*-${matchedRecordsFileName}`;
+const previewOfProposedChangesFileName = `*-Updates-Preview-${validUserBarcodesFileName}`;
+const updatedRecordsFileName = `*-Changed-Records*-${validUserBarcodesFileName}`;
+
 const newExpirationDate = {
   date: afterThreeMonthsDate,
   dateWithSlashes: DateTools.getFormattedDateWithSlashes({ date: afterThreeMonthsDate }),
@@ -48,10 +44,10 @@ describe('Bulk Edit - Logs', () => {
   after('delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${validUserBarcodesFileName}`);
     Users.deleteViaApi(user.userId);
-    FileManager.deleteFileFromDownloadsByMask(validUserBarcodesFileName, `*${matchedRecordsFileName}`, changedRecordsFileName, previewOfProposedChangesFileName.first, previewOfProposedChangesFileName.second, updatedRecordsFileName);
+    FileManager.deleteFileFromDownloadsByMask(validUserBarcodesFileName, `*${matchedRecordsFileName}`, previewOfProposedChangesFileName, updatedRecordsFileName);
   });
 
-  it('C375244 Verify genetated Logs files for Users In app -- only valid (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C375244 Verify generated Logs files for Users In app -- only valid (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
     BulkEditSearchPane.uploadFile(validUserBarcodesFileName);
     BulkEditSearchPane.waitFileUploading();
@@ -82,8 +78,8 @@ describe('Bulk Edit - Logs', () => {
     BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileName}`, [user.barcode], 'userBarcode', true);
 
     BulkEditSearchPane.downloadFileWithProposedChanges();
-    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, ['graduate'], 'patronGroup', true);
-    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, [newExpirationDate.dateWithDashes], 'expirationDate', true);
+    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName, ['graduate'], 'patronGroup', true);
+    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName, [newExpirationDate.dateWithDashes], 'expirationDate', true);
 
     BulkEditSearchPane.downloadFileWithUpdatedRecords();
     BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, ['graduate'], 'patronGroup', true);

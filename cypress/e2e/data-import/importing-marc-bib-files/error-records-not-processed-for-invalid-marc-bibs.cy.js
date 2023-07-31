@@ -8,6 +8,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import Users from '../../../support/fragments/users/users';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import { JOB_STATUS_NAMES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let user;
@@ -37,13 +38,14 @@ describe('ui-data-import', () => {
 
   it('C350750 Error records not processed or saved for invalid MARC Bibs (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       cy.reload();
       DataImport.uploadFile('marcFileForC350750.mrc', nameMarcFileForImportCreate);
       JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(nameMarcFileForImportCreate);
-      Logs.checkStatusOfJobProfile('Completed with errors');
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
       Logs.openFileDetails(nameMarcFileForImportCreate);
       FileDetails.verifyTitle('No content', FileDetails.columnNameInResultList.title);
       FileDetails.checkStatusInColumn(FileDetails.status.noAction, FileDetails.columnNameInResultList.srsMarc);

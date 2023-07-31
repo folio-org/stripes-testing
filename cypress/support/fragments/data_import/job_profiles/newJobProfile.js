@@ -1,39 +1,84 @@
 import { HTML, including } from '@interactors/html';
 import { Accordion, Button, Select, TextField, Pane } from '../../../../../interactors';
 import ModalSelectProfile from './modalSelectProfile';
-
-const acceptedDataType = {
-  marc:'MARC',
-  edifact:'EDIFACT'
-};
+import { ACCEPTED_DATA_TYPE_NAMES, PROFILE_TYPE_NAMES } from '../../../constants';
 
 const defaultJobProfile = {
   profileName:  '',
-  acceptedType: acceptedDataType.marc,
+  acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
+};
+
+const getDefaultJobProfile = (name) => {
+  const defaultjobProfile = {
+    profile: {
+      name,
+      dataType: ACCEPTED_DATA_TYPE_NAMES.MARC
+    },
+    addedRelations: [],
+    deletedRelations: []
+  };
+  return defaultjobProfile;
 };
 
 const actionsButton = Button('Action');
 const matchButton = Button('Match');
 const saveAndCloseButton = Button('Save as profile & Close');
 
+function linkActionProfileByName(profileName) {
+  // TODO move to const and rewrite functions
+  cy.do(HTML({ className: including('linker-button'), id:'type-selector-dropdown-linker-root' }).find(Button()).click());
+  cy.do(actionsButton.click());
+  ModalSelectProfile.searchProfileByName(profileName);
+  ModalSelectProfile.selectProfile(profileName);
+  cy.expect(Accordion('Overview').find(HTML(including(profileName))).exists());
+}
+
+function linkMatchProfileForMatches(matchProfileName, forMatchesOrder = 0) {
+  cy.get('[id*="type-selector-dropdown-ROOT"]').eq(forMatchesOrder).click();
+  cy.do(matchButton.click());
+  ModalSelectProfile.searchProfileByName(matchProfileName, 'match');
+  ModalSelectProfile.selectProfile(matchProfileName);
+  cy.expect(Accordion('Overview').find(HTML(including(matchProfileName))).exists());
+}
+
+function linkMatchProfileForSubMatches(matchProfileName, forMatchesOrder = 0) {
+  cy.get('[id*="type-selector-dropdown-ROOT-MATCH"]').eq(forMatchesOrder).click();
+  cy.do(matchButton.click());
+  ModalSelectProfile.searchProfileByName(matchProfileName, 'match');
+  ModalSelectProfile.selectProfile(matchProfileName);
+  cy.expect(Accordion('Overview').find(HTML(including(matchProfileName))).exists());
+}
+
+function linkActionProfileForMatches(actionProfileName, forMatchesOrder = 0) {
+  cy.get('[id*="type-selector-dropdown-ROOT"]').eq(forMatchesOrder).click();
+  cy.do(actionsButton.click());
+  ModalSelectProfile.searchProfileByName(actionProfileName);
+  ModalSelectProfile.selectProfile(actionProfileName);
+  cy.expect(Accordion('Overview').find(HTML(including(actionProfileName))).exists());
+}
+
+function linkActionProfileForSubMatches(actionProfileName, forMatchesOrder = 0) {
+  cy.get('[id*="type-selector-dropdown-ROOT-MATCH-MATCH"]').eq(forMatchesOrder).click();
+  cy.do(actionsButton.click());
+  ModalSelectProfile.searchProfileByName(actionProfileName);
+  ModalSelectProfile.selectProfile(actionProfileName);
+  cy.expect(Accordion('Overview').find(HTML(including(actionProfileName))).exists());
+}
+
 export default {
+  getDefaultJobProfile,
+  linkActionProfileByName,
+  linkMatchProfileForMatches,
+  linkActionProfileForMatches,
+  linkMatchProfileForSubMatches,
+  linkActionProfileForSubMatches,
   defaultJobProfile,
-  acceptedDataType,
 
   fillJobProfile: (specialJobProfile = defaultJobProfile) => {
     cy.do(TextField({ name:'profile.name' }).fillIn(specialJobProfile.profileName));
     cy.expect(TextField({ name:'profile.name' }).has({ value: specialJobProfile.profileName }));
     cy.do(Select({ name:'profile.dataType' }).choose(specialJobProfile.acceptedType));
     cy.expect(Select({ name:'profile.dataType' }).has({ value: specialJobProfile.acceptedType }));
-  },
-
-  linkActionProfileByName(profileName) {
-    // TODO move to const and rewrite functions
-    cy.do(HTML({ className: including('linker-button'), id:'type-selector-dropdown-linker-root' }).find(Button()).click());
-    cy.do(actionsButton.click());
-    ModalSelectProfile.searchProfileByName(profileName);
-    ModalSelectProfile.selectProfile(profileName);
-    cy.expect(Accordion('Overview').find(HTML(including(profileName))).exists());
   },
 
   linkActionProfile(specialActionProfile) {
@@ -52,29 +97,28 @@ export default {
     cy.expect(Accordion('Overview').find(HTML(including(matchProfileName))).exists());
   },
 
-  linkProfileForNonMatches(actionProfileName, forMatchesOrder = 1) {
+  linkProfileForNonMatches(profileName, forMatchesOrder = 1) {
     // TODO move to const
     cy.get('[id*="type-selector-dropdown-ROOT"]').eq(forMatchesOrder).click();
     cy.do(actionsButton.click());
-    ModalSelectProfile.searchProfileByName(actionProfileName);
-    ModalSelectProfile.selectProfile(actionProfileName);
-    cy.expect(Accordion('Overview').find(HTML(including(actionProfileName))).exists());
+    ModalSelectProfile.searchProfileByName(profileName);
+    ModalSelectProfile.selectProfile(profileName);
+    cy.expect(Accordion('Overview').find(HTML(including(profileName))).exists());
   },
 
-  linkActionProfileForMatches(actionProfileName, forMatchesOrder = 0) {
-    cy.get('[id*="type-selector-dropdown-ROOT"]').eq(forMatchesOrder).click();
+  linkMatchAndActionProfilesForSubMatches(matchProfileName, actionProfileName, forMatchesOrder = 0) {
+    linkMatchProfileForMatches(matchProfileName);
+    cy.get('[id*="type-selector-dropdown-ROOT-MATCH"]').eq(forMatchesOrder).click();
     cy.do(actionsButton.click());
     ModalSelectProfile.searchProfileByName(actionProfileName);
     ModalSelectProfile.selectProfile(actionProfileName);
     cy.expect(Accordion('Overview').find(HTML(including(actionProfileName))).exists());
   },
 
-  linkMatchProfileForMatches(matchProfileName, forMatchesOrder = 0) {
-    cy.get('[id*="type-selector-dropdown-ROOT"]').eq(forMatchesOrder).click();
-    cy.do(matchButton.click());
-    ModalSelectProfile.searchProfileByName(matchProfileName, 'match');
-    ModalSelectProfile.selectProfile(matchProfileName);
-    cy.expect(Accordion('Overview').find(HTML(including(matchProfileName))).exists());
+  linkMatchAndTwoActionProfilesForSubMatches(matchProfileName, firstActionProfileName, secondActionProfileName) {
+    linkMatchProfileForSubMatches(matchProfileName);
+    linkActionProfileForSubMatches(firstActionProfileName);
+    linkActionProfileForSubMatches(secondActionProfileName);
   },
 
   linkMatchAndActionProfiles(matchProfileName, actionProfileName, forMatchesOrder = 0) {
@@ -190,7 +234,7 @@ export default {
     cy.expect(saveAndCloseButton.absent());
   },
 
-  createMatchProfileViaApi:(nameProfile, matchProfileId, actProfileId) => {
+  createJobProfileViaApi:(nameProfile, matchProfileId, actProfileId) => {
     return cy
       .okapiRequest({
         method: 'POST',
@@ -198,23 +242,48 @@ export default {
         body: {
           profile:{
             name: nameProfile,
-            dataType:'MARC'
+            dataType: ACCEPTED_DATA_TYPE_NAMES.MARC
           },
           addedRelations:[{
             masterProfileId:null,
-            masterProfileType:'JOB_PROFILE',
+            masterProfileType: PROFILE_TYPE_NAMES.JOB_PROFILE,
             detailProfileId:matchProfileId,
-            detailProfileType:'MATCH_PROFILE',
+            detailProfileType: PROFILE_TYPE_NAMES.MATCH_PROFILE,
             order:0
           },
           { masterProfileId:null,
-            masterProfileType:'JOB_PROFILE',
+            masterProfileType: PROFILE_TYPE_NAMES.JOB_PROFILE,
             detailProfileId:actProfileId,
-            detailProfileType:'ACTION_PROFILE',
+            detailProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
             order:1 }],
           deletedRelations:[]
         },
         isDefaultSearchParamsRequired: false,
+      });
+  },
+
+  createJobProfileWithLinkedActionProfileViaApi:(nameProfile, actProfileId) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/jobProfiles',
+        body: {
+          profile:{
+            name: nameProfile,
+            dataType: ACCEPTED_DATA_TYPE_NAMES.MARC
+          },
+          addedRelations:[
+            { masterProfileId:null,
+              masterProfileType: PROFILE_TYPE_NAMES.JOB_PROFILE,
+              detailProfileId:actProfileId,
+              detailProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
+              order:0 }],
+          deletedRelations:[]
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((responce) => {
+        return responce.body.id;
       });
   }
 };

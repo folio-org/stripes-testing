@@ -1,7 +1,12 @@
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { LOAN_TYPE_NAMES, ITEM_STATUS_NAMES, FOLIO_RECORD_TYPE, LOCALION_NAMES } from '../../../support/constants';
+import { LOAN_TYPE_NAMES,
+  ITEM_STATUS_NAMES,
+  FOLIO_RECORD_TYPE,
+  LOCATION_NAMES,
+  MATERIAL_TYPE_NAMES,
+  JOB_STATUS_NAMES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import Helper from '../../../support/fragments/finance/financeHelper';
@@ -16,7 +21,6 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('ui-data-import', () => {
@@ -29,7 +33,7 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C356841 holdings mapping profile ${Helper.getRandomBarcode()}`,
-        pernanentLocation: `"${LOCALION_NAMES.ONLINE}"` },
+        pernanentLocation: `"${LOCATION_NAMES.ONLINE}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C356841 holdings action profile ${Helper.getRandomBarcode()}` }
     },
@@ -37,7 +41,8 @@ describe('ui-data-import', () => {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C356841 item mapping profile ${Helper.getRandomBarcode()}`,
         permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-        status: ITEM_STATUS_NAMES.AVAILABLE },
+        status: ITEM_STATUS_NAMES.AVAILABLE,
+        materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
         name: `C356841 item action profile ${Helper.getRandomBarcode()}` }
     }
@@ -89,7 +94,7 @@ describe('ui-data-import', () => {
       // create mapping profiles
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
-      NewFieldMappingProfile.fillMaterialType();
+      NewFieldMappingProfile.fillMaterialType(collectionOfMappingAndActionProfiles[1].mappingProfile.materialType);
       NewFieldMappingProfile.fillPermanentLoanType(collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLoanType);
       NewFieldMappingProfile.fillStatus(collectionOfMappingAndActionProfiles[1].mappingProfile.status);
       FieldMappingProfiles.saveProfile();
@@ -135,13 +140,14 @@ describe('ui-data-import', () => {
       FileExtensions.verifyActionMenuAbsent();
 
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       cy.reload();
       DataImport.uploadFile('oneMarcBib.mrc', nameMarcFile);
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(nameMarcFile);
-      Logs.checkStatusOfJobProfile('Completed');
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(nameMarcFile);
       [FileDetails.columnNameInResultList.srsMarc,
         FileDetails.columnNameInResultList.instance,
@@ -152,10 +158,10 @@ describe('ui-data-import', () => {
       });
       FileDetails.checkItemQuantityInSummaryTable(quantityOfItems);
 
-      // get Instance HRID through API
-      InventorySearchAndFilter.getInstanceHRID()
-        .then(hrId => {
-          instanceHrid = hrId[0];
-        });
+      // open Instance to get hrid
+      FileDetails.openInstanceInInventory('Created');
+      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        instanceHrid = initialInstanceHrId;
+      });
     });
 });

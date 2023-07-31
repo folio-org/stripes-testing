@@ -94,9 +94,16 @@ export default {
   createInvoiceMappingProfile:(mappingProfile, defaultProfile) => {
     search(defaultProfile);
     duplicateMappingProfile();
-    NewFieldMappingProfile.fillMappingProfileForInvoice(mappingProfile);
+    NewFieldMappingProfile.fillInvoiceMappingProfile(mappingProfile);
     closeViewModeForMappingProfile(mappingProfile.name);
     cy.expect(actionsButton.exists());
+  },
+
+  createOrderMappingProfile:(mappingProfile) => {
+    openNewMappingProfileForm();
+    NewFieldMappingProfile.fillOrderMappingProfile(mappingProfile);
+    saveProfile();
+    closeViewModeForMappingProfile(mappingProfile.name);
   },
 
   deleteFieldMappingProfile,
@@ -113,6 +120,12 @@ export default {
   createMappingProfileForUpdatesMarc:(mappingProfile) => {
     openNewMappingProfileForm();
     NewFieldMappingProfile.fillMappingProfileForUpdatesMarc(mappingProfile);
+    cy.do(saveProfileButton.click());
+  },
+
+  createMappingProfileForUpdatesMarcAuthority:(mappingProfile) => {
+    openNewMappingProfileForm();
+    NewFieldMappingProfile.fillMappingProfileForUpdatesMarcAuthority(mappingProfile);
     cy.do(saveProfileButton.click());
   },
 

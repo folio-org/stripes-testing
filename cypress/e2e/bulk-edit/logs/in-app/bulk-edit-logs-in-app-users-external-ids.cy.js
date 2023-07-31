@@ -11,20 +11,12 @@ import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 
-// TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
-Cypress.on('uncaught:exception', () => false);
-
 let user;
 const externalId = getRandomPostfix();
 const userExternalIDsFileName = `userExternalIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `Matched-Records-${userExternalIDsFileName}`;
-const changedRecordsFileName = `*-Changed-Records*-${userExternalIDsFileName}`;
-// It downloads 2 files in one click, both with same content
-const previewOfProposedChangesFileName = {
-  first: `*-Updates-Preview-${userExternalIDsFileName}`,
-  second: `modified-*-${matchedRecordsFileName}`
-};
-const updatedRecordsFileName = `result-*-${matchedRecordsFileName}`;
+const previewOfProposedChangesFileName = `*-Updates-Preview-${userExternalIDsFileName}`;
+const updatedRecordsFileName = `*-Changed-Records*-${userExternalIDsFileName}`;
 
 describe('Bulk Edit - Logs', () => {
   before('create test data', () => {
@@ -44,7 +36,7 @@ describe('Bulk Edit - Logs', () => {
   after('delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${userExternalIDsFileName}`);
     Users.deleteViaApi(user.userId);
-    FileManager.deleteFileFromDownloadsByMask(userExternalIDsFileName, `*${matchedRecordsFileName}`, changedRecordsFileName, previewOfProposedChangesFileName.first, previewOfProposedChangesFileName.second, updatedRecordsFileName);
+    FileManager.deleteFileFromDownloadsByMask(userExternalIDsFileName, `*${matchedRecordsFileName}`, previewOfProposedChangesFileName, updatedRecordsFileName);
   });
 
   it('C375247 Verify genetated Logs files for Users In app -- only valid External IDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -85,7 +77,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileName}`, [user.barcode], 'userBarcode', true);
 
     BulkEditSearchPane.downloadFileWithProposedChanges();
-    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, [newEmailDomain], 'emailDomain', true);
+    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName, [newEmailDomain], 'emailDomain', true);
 
     BulkEditSearchPane.downloadFileWithUpdatedRecords();
     BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, [newEmailDomain], 'emailDomain', true);

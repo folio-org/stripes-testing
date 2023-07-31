@@ -81,9 +81,9 @@ describe('Fee/Fine history ', { retries: 1 }, () => {
               amount: 9,
               userId: userData.userId,
               feeFineType: feeFineType.name,
+              feeFineOwner: ownerData.name,
               createdAt: servicePointId,
               dateAction: moment.utc().format(),
-              feeFineOwner: ownerData.name,
               source: 'ADMINISTRATOR, DIKU'
             };
             NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {

@@ -2,7 +2,12 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { FOLIO_RECORD_TYPE,
+  ACCEPTED_DATA_TYPE_NAMES,
+  PROFILE_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES,
+  JOB_STATUS_NAMES,
+  LOCATION_NAMES } from '../../../support/constants';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -19,7 +24,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import FileManager from '../../../support/utils/fileManager';
 
 describe('ui-data-import', () => {
@@ -40,14 +45,14 @@ describe('ui-data-import', () => {
     profile:{
       name: `autotest_instance_mapping_profile_${getRandomPostfix()}`,
       incomingRecordType: recordType,
-      existingRecordType: 'INSTANCE',
+      existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
     }
   };
   const holdingsMappingProfileForCreate = {
     profile:{
       name: `autotest_holdings_mapping_profile_${getRandomPostfix()}`,
       incomingRecordType: recordType,
-      existingRecordType: 'HOLDINGS',
+      existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
       mappingDetails: { name: 'holdings',
         recordType: 'HOLDINGS',
         mappingFields: [
@@ -61,7 +66,7 @@ describe('ui-data-import', () => {
     profile:{
       name: `autotest_item_mapping_profile_${getRandomPostfix()}`,
       incomingRecordType: recordType,
-      existingRecordType: 'ITEM',
+      existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
       mappingDetails: { name: 'item',
         recordType: 'ITEM',
         mappingFields: [
@@ -95,9 +100,9 @@ describe('ui-data-import', () => {
     addedRelations: [
       {
         masterProfileId: null,
-        masterProfileType: 'ACTION_PROFILE',
+        masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
         detailProfileId: '',
-        detailProfileType: 'MAPPING_PROFILE'
+        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
       }
     ],
     deletedRelations: []
@@ -111,9 +116,9 @@ describe('ui-data-import', () => {
     addedRelations: [
       {
         masterProfileId: null,
-        masterProfileType: 'ACTION_PROFILE',
+        masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
         detailProfileId: '',
-        detailProfileType: 'MAPPING_PROFILE'
+        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
       }
     ],
     deletedRelations: []
@@ -127,9 +132,9 @@ describe('ui-data-import', () => {
     addedRelations: [
       {
         masterProfileId: null,
-        masterProfileType: 'ACTION_PROFILE',
+        masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
         detailProfileId: '',
-        detailProfileType: 'MAPPING_PROFILE'
+        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
       }
     ],
     deletedRelations: []
@@ -145,7 +150,7 @@ describe('ui-data-import', () => {
   const jobProfileForCreate = {
     profile: {
       name: `autotest_job_profile_${getRandomPostfix()}`,
-      dataType: 'MARC'
+      dataType: ACCEPTED_DATA_TYPE_NAMES.MARC
     },
     addedRelations: [],
     deletedRelations: []
@@ -162,7 +167,7 @@ describe('ui-data-import', () => {
           field: '001',
         },
         matchCriterion: 'Exactly matches',
-        existingRecordType: 'MARC_BIBLIOGRAPHIC' }
+        existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC }
     },
     {
       matchProfile: { profileName: `C17027 match profile Holdings Permanent location.${getRandomPostfix()}`,
@@ -171,7 +176,7 @@ describe('ui-data-import', () => {
           subfield: 'a'
         },
         matchCriterion: 'Exactly matches',
-        existingRecordType: 'HOLDINGS',
+        existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
         holdingsOption: NewMatchProfile.optionsList.holdingsPermLoc }
     },
     {
@@ -181,7 +186,7 @@ describe('ui-data-import', () => {
           subfield: 'b'
         },
         matchCriterion: 'Exactly matches',
-        existingRecordType: 'ITEM',
+        existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
         itemOption: NewMatchProfile.optionsList.itemPermLoc }
     },
   ];
@@ -206,7 +211,7 @@ describe('ui-data-import', () => {
   const jobProfileForUpdate = {
     ...NewJobProfile.defaultJobProfile,
     profileName: `C17027 job profile.${getRandomPostfix()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
   before('create test data', () => {
@@ -227,7 +232,8 @@ describe('ui-data-import', () => {
 
         // upload a marc file for creating of the new instance, holding and item
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
         cy.reload();
         DataImport.uploadFile('marcFileForC17027.mrc', marcFileForCreate);
         JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
@@ -336,13 +342,14 @@ describe('ui-data-import', () => {
 
     // upload a marc file
     cy.visit(TopMenu.dataImportPath);
-    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+    // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.verifyUploadState();
     cy.reload();
     DataImport.uploadFile(editedMarcFileName, fileNameAfterUpdate);
     JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(fileNameAfterUpdate);
-    Logs.checkStatusOfJobProfile('Completed');
+    Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     Logs.openFileDetails(fileNameAfterUpdate);
     rowNumbers.forEach(rowNumber => {
       FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.holdings, rowNumber);
@@ -358,7 +365,7 @@ describe('ui-data-import', () => {
       InventoryInstance.openHoldingView();
       HoldingsRecordView.checkAdministrativeNote(noteForHoldingsMappingProfile);
       HoldingsRecordView.close();
-      InventoryInstance.openHoldingsAccordion('Main Library >');
+      InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
       InventoryInstance.openItemByBarcode('No barcode');
       ItemRecordView.checkItemAdministrativeNote(noteForItemMappingProfile);
     });

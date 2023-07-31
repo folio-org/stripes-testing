@@ -19,6 +19,8 @@ const columnNameInResultList = {
   instance: resultsList.find(MultiColumnListHeader({ id:'list-column-instancestatus' })),
   holdings: resultsList.find(MultiColumnListHeader({ id:'list-column-holdingsstatus' })),
   item: resultsList.find(MultiColumnListHeader({ id:'list-column-itemstatus' })),
+  authority: resultsList.find(MultiColumnListHeader({ id:'list-column-authoritystatus' })),
+  order: resultsList.find(MultiColumnListHeader({ id:'list-column-orderstatus' })),
   invoice: resultsList.find(MultiColumnListHeader({ id:'list-column-invoicestatus' })),
   error: resultsList.find(MultiColumnListHeader({ id:'list-column-error' })),
   title: resultsList.find(MultiColumnListHeader({ id:'list-column-title' }))
@@ -36,7 +38,18 @@ const status = {
   updated: 'Updated',
   noAction: 'No action',
   dash: 'No value set-',
+  blank: 'No value set',
   error: 'Error'
+};
+
+const visibleColumnsInResultsList = {
+  RECORD: { columnIndex: 1 },
+  TITLE: { columnIndex: 2 },
+  SRS_MARC: { columnIndex: 3 },
+  INSTANCE: { columnIndex: 4 },
+  HOLDINGS: { columnIndex: 5 },
+  ITEM: { columnIndex: 6 },
+  ORDER: { columnIndex: 7 }
 };
 
 const checkSrsRecordQuantityInSummaryTable = (quantity, row = 0) => {
@@ -67,10 +80,24 @@ const checkItemQuantityInSummaryTable = (quantity, row = 0) => {
     .exists());
 };
 
+const checkAuthorityQuantityInSummaryTable = (quantity, row = 0) => {
+  cy.expect(jobSummaryTable
+    .find(MultiColumnListRow({ indexRow: `row-${row}` }))
+    .find(MultiColumnListCell({ columnIndex: 5, content: quantity }))
+    .exists());
+};
+
 const checkInvoiceInSummaryTable = (quantity, row = 0) => {
   cy.expect(jobSummaryTable
     .find(MultiColumnListRow({ indexRow: `row-${row}` }))
     .find(MultiColumnListCell({ columnIndex: 7, content: quantity }))
+    .exists());
+};
+
+const checkOrderQuantityInSummaryTable = (quantity, row = 0) => {
+  cy.expect(jobSummaryTable
+    .find(MultiColumnListRow({ indexRow: `row-${row}` }))
+    .find(MultiColumnListCell({ columnIndex: 6, content: quantity }))
     .exists());
 };
 
@@ -115,6 +142,12 @@ function checkItemsStatusesInResultList(rowIndex, itemStatuses) {
   });
 }
 
+function validateNumsAscendingOrder(prev) {
+  const itemsClone = [...prev];
+  itemsClone.sort((a, b) => a - b);
+  cy.expect(itemsClone).to.deep.equal(prev);
+}
+
 function getMultiColumnListCellsValues() {
   const cells = [];
   // get MultiColumnList rows and loop over
@@ -130,12 +163,6 @@ function getMultiColumnListCellsValues() {
     .then(() => cells);
 }
 
-function validateNumsAscendingOrder(prev) {
-  const itemsClone = [...prev];
-  itemsClone.sort((a, b) => a - b);
-  cy.expect(itemsClone).to.deep.equal(prev);
-}
-
 export default {
   columnNameInResultList,
   columnNameInSummuryTable,
@@ -146,11 +173,13 @@ export default {
   checkStatusInColumn,
   checkItemsStatusesInResultList,
   checkItemsQuantityInSummaryTable,
+  checkOrderQuantityInSummaryTable,
   checkInvoiceInSummaryTable,
   checkSrsRecordQuantityInSummaryTable,
   checkInstanceQuantityInSummaryTable,
   checkHoldingsQuantityInSummaryTable,
   checkItemQuantityInSummaryTable,
+  checkAuthorityQuantityInSummaryTable,
   checkErrorQuantityInSummaryTable,
   checkColumnsInSummaryTable,
 
@@ -172,7 +201,7 @@ export default {
       .click());
   },
 
-  openOrderInInventory:(itemStatus, rowNumber = 0) => {
+  openOrder:(itemStatus, rowNumber = 0) => {
     cy.do(resultsList.find(MultiColumnListCell({ row: rowNumber, columnIndex: 7 }))
       .find(Link(itemStatus))
       .click());
@@ -210,7 +239,7 @@ export default {
     ));
   },
 
-  verifyErrorMessage:(expectedError) => {
+  verifyErrorMessage:(expectedError, rowNumber = 0) => {
     return LogsViewAll.getSingleJobProfile() // get the first job id from job logs list
       .then(({ id }) => {
       // then, make request with the job id
@@ -225,7 +254,7 @@ export default {
           },
         })
           .then(({ body: { entries } }) => {
-            cy.expect(entries[0].error).to.eql(expectedError);
+            cy.expect(entries[rowNumber].error).to.eql(expectedError);
           });
       });
   },
@@ -237,6 +266,13 @@ export default {
         .has({ content: title })));
   },
 
+  verifyRecordsSortingOrder() {
+    getMultiColumnListCellsValues(1).then(cells => {
+      const dates = cells.map(cell => new Date(cell));
+      validateNumsAscendingOrder(dates);
+    });
+  },
+
   verifyQuantityOfRecordsWithError:(number) => {
     cy.expect(PaneHeader({ id:'paneHeaderpane-results' }).find(HTML(including(`${number} records found`))).exists());
   },
@@ -245,10 +281,43 @@ export default {
     cy.expect(jobSummaryTable.absent());
   },
 
-  verifyRecordsSortingOrder() {
-    getMultiColumnListCellsValues(1).then(cells => {
-      const dates = cells.map(cell => new Date(cell));
-      validateNumsAscendingOrder(dates);
-    });
+  getMultiColumnListCellsValuesInResultsList(cell) {
+    const cells = [];
+
+    // get MultiColumnList rows and loop over
+    return cy.get('#search-results-list')
+      .find('[data-row-index]').each($row => {
+      // from each row, choose specific cell
+        cy.get(`[class*="mclCell-"]:nth-child(${cell})`, { withinSubject: $row })
+        // extract its text content
+          .invoke('text')
+          .then(cellValue => {
+            cells.push(cellValue);
+          });
+      })
+      .then(() => cells);
+  },
+
+  verifyRecordColumnHasStandardSequentialNumberingForRecords() {
+    this.getMultiColumnListCellsValuesInResultsList(visibleColumnsInResultsList.RECORD.columnIndex)
+      .then(cells => {
+        validateNumsAscendingOrder(cells);
+      });
+  },
+
+  verifyStatusHasLinkToOrder:(rowNumber) => {
+    cy.expect(resultsList
+      .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
+      .find(MultiColumnListCell({ columnIndex: 7 }))
+      .find(Link({ href: including('/orders/lines/view') }))
+      .exists());
+  },
+
+  verifyTitleHasLinkToJsonFile:(rowNumber) => {
+    cy.expect(resultsList
+      .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
+      .find(MultiColumnListCell({ columnIndex: 1 }))
+      .find(Link({ href: including('/data-import/log') }))
+      .exists());
   }
 };

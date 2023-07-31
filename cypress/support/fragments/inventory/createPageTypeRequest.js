@@ -14,6 +14,7 @@ import {
 import MarkItemAsMissing from './markItemAsMissing';
 import Requests from '../requests/requests';
 import newRequest from '../requests/newRequest';
+import { ITEM_STATUS_NAMES } from '../../constants';
 
 const actionsButton = Button('Actions');
 const newRequestButton = Button('New Request');
@@ -23,11 +24,11 @@ const itemInfoSection = Section({ id: 'item-info' });
 const requestInfoSection = Section({ id: 'new-requester-info' });
 
 export default {
-  itemStatusesToCreate() { return ['Available']; },
+  itemStatusesToCreate() { return [ITEM_STATUS_NAMES.AVAILABLE]; },
 
-  filterRequesterLookup() {
+  filterRequesterLookup(patronGroupName = 'faculty') {
     cy.do([
-      Checkbox('faculty').click(),
+      Checkbox(patronGroupName).click(),
       Checkbox('Active').click()
     ]);
   },
@@ -72,9 +73,9 @@ export default {
     cy.expect(itemInfoSection.find(HTML('Paged')).exists());
   },
 
-  verifyRequesterDetailsPopulated(username) {
+  verifyRequesterDetailsPopulated(username, patronGroupName = 'faculty') {
     cy.expect(requestInfoSection.find(Link(including(username))).exists());
-    cy.expect(requestInfoSection.find(HTML('faculty')).exists());
+    cy.expect(requestInfoSection.find(HTML(patronGroupName)).exists());
   },
 
   checkModalExists(isExist) {
@@ -95,18 +96,18 @@ export default {
     this.verifyItemDetailsPrePopulated(itemBarcode);
   },
 
-  selectActiveFacultyUser(username) {
+  selectActiveFacultyUser(username, patronGroupName = 'faculty') {
     cy.do(Button('Requester look-up').click());
     this.checkModalExists(true);
-    this.filterRequesterLookup();
+    this.filterRequesterLookup(patronGroupName);
     this.selectUser(username);
     this.checkModalExists(false);
-    this.verifyRequesterDetailsPopulated(username);
+    this.verifyRequesterDetailsPopulated(username, patronGroupName);
   },
 
-  saveAndClose() {
+  saveAndClose(servicePointName = 'Circ Desk 1') {
     Requests.verifyFulfillmentPreference();
-    newRequest.choosepickupServicePoint('Circ Desk 1');
+    newRequest.choosepickupServicePoint(servicePointName);
     newRequest.saveRequestAndClose();
     Requests.verifyRequestsPage();
     this.verifyNewRequest();

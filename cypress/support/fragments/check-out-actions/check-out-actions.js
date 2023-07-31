@@ -108,8 +108,7 @@ export default {
   changeDueDateToPast(minutes) {
     const todayFormatted = {};
     const today = new Date();
-    const month = today.getMonth() < 9 ? 0 + (today.getMonth() + 1).toString() : today.getMonth() + 1;
-    todayFormatted.formattedDate = month + '/' + today.getDate() + '/' + today.getFullYear();
+    todayFormatted.formattedDate = (today.getMonth() + 1).toString().padStart(2, "0") + '/' + today.getDate().toString().padStart(2, "0") + '/' + today.getFullYear();
     today.setUTCMinutes(today.getMinutes() - minutes);
     todayFormatted.formattedTime = today.toLocaleTimeString('en-US', { timeZone: 'UTC', hour: '2-digit', minute: '2-digit' });
 
@@ -131,5 +130,22 @@ export default {
     cy.do(Button({ id: 'clickable-add-item' }).click());
     // waiters needs for check out item in loop
     cy.wait(1000);
+  },
+
+  closeForDeliveryRequestModal:() => {
+    cy.do(modalForDeliveryRequest.find(Checkbox('Print slip')).click());
+    cy.do(modalForDeliveryRequest.find(Button('Close and check out')).click());
+  },
+
+  openFeeFineLink:(value, userId) => {
+    cy.do(KeyValue({ value: including(value) }).find(Link({ href: including(`/users/${userId}/accounts/open`) })).click());
+  },
+  feeFineLinkIsNotClickable:(value, userId) => {
+    cy.expect(KeyValue({ value: including(value) }).find(Link({ href: including(`/users/${userId}/accounts/open`) })).absent());
+  },
+  checkDetailsOfCheckOUTAreCleared:() => {
+    cy.expect(Pane({ id: 'item-details' })
+      .find(HTML(including('No items have been entered yet')))
+      .exists());
   }
 };

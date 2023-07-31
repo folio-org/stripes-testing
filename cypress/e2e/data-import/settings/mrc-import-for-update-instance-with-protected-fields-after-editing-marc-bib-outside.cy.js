@@ -2,7 +2,12 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE, INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
+import {
+  FOLIO_RECORD_TYPE,
+  INSTANCE_STATUS_TERM_NAMES,
+  ACCEPTED_DATA_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES
+} from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
@@ -16,10 +21,10 @@ import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import FileManager from '../../../support/utils/fileManager';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
@@ -42,7 +47,7 @@ describe('ui-data-import', () => {
       field: '001'
     },
     matchCriterion: 'Exactly matches',
-    existingRecordType: 'INSTANCE',
+    existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
     instanceOption: NewMatchProfile.optionsList.instanceHrid
   };
   const mappingProfile = {
@@ -58,7 +63,7 @@ describe('ui-data-import', () => {
   };
   const jobProfile = {
     profileName: `C356830 Update instance and check field protections ${getRandomPostfix()}`,
-    acceptedType: NewJobProfile.acceptedDataType.marc
+    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
   before('create test user', () => {
@@ -149,7 +154,8 @@ describe('ui-data-import', () => {
 
       // upload a marc file for creating of the new instance
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       cy.reload();
       DataImport.uploadFile('marcFileForC356830.mrc', nameMarcFileForCreate);
       JobProfiles.searchJobProfileForImport(jobProfileToRun);
@@ -161,29 +167,30 @@ describe('ui-data-import', () => {
       });
       FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems, 0);
       FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 0);
+      FileDetails.openInstanceInInventory('Created');
 
-      // get Instance HRID through API
-      InventorySearchAndFilter.getInstanceHRID()
-        .then(hrId => {
-          instanceHrid = hrId[0];
+      // in cypress we can't delete fields in the file that's why using already created file
+      // need to get instance hrid and uuids for 999 field for changing file
+      InstanceRecordView.getAssignedHRID().then(initialInstanceHrId => {
+        instanceHrid = initialInstanceHrId;
 
-          cy.visit(TopMenu.inventoryPath);
-          InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-          InventoryInstance.viewSource();
-          InventoryViewSource.verifyFieldInMARCBibSource('650\t', 'Drawing, Dutch ‡y 21st century ‡v Exhibitions. ‡5 amb');
-          InventoryViewSource.verifyFieldInMARCBibSource('920\t', 'This field should be protected');
-
-          DataImport.editMarcFile(
-            'marcFileForC356830_rev.mrc',
-            editedMarcFileName,
-            ['in00000000022'],
-            [instanceHrid]
-          );
-        });
+        InventoryInstance.viewSource();
+        InventoryViewSource.extructDataFrom999Field()
+          .then(uuid => {
+            // change file using uuid for 999 field
+            DataImport.editMarcFile(
+              'marcFileForC356830_rev.mrc',
+              editedMarcFileName,
+              ['instanceHrid', 'srsUuid', 'instanceUuid'],
+              [instanceHrid, uuid[0], uuid[1]]
+            );
+          });
+      });
 
       // upload .mrc file
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       cy.reload();
       DataImport.checkIsLandingPageOpened();
       DataImport.uploadFile(editedMarcFileName);

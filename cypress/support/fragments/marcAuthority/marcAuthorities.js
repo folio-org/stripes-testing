@@ -1,4 +1,4 @@
-import { MultiColumnList, Modal, TextField, Callout, MultiSelect, QuickMarcEditorRow, PaneContent, PaneHeader, Select, Section, HTML, including, Button, MultiColumnListCell, MultiColumnListRow, SearchField, Accordion, Checkbox, ColumnHeader, AdvancedSearchRow } from '../../../../interactors';
+import { MultiColumnList, Modal, TextField, Callout, MultiSelect, MultiSelectOption, QuickMarcEditorRow, Pane, PaneContent, PaneHeader, Select, Section, HTML, including, Button, MultiColumnListCell, MultiColumnListRow, SearchField, Accordion, Checkbox, ColumnHeader, AdvancedSearchRow, Link } from '../../../../interactors';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const authoritiesList = rootSection.find(MultiColumnList({ id: 'authority-result-list' }));
@@ -25,8 +25,15 @@ const searchNav = Button({ id: 'segment-navigation-search' });
 const buttonLink = Button('Link');
 const buttonAdvancedSearch = Button('Advanced search');
 const modalAdvancedSearch = Modal('Advanced search');
-const buttonSearchInAdvancedModal = Button({ariaLabel: 'Search'});
-const buttonCancelInAdvancedModal = Button({ariaLabel: 'Cancel'});
+const buttonSearchInAdvancedModal = Button({ ariaLabel: 'Search' });
+const buttonCancelInAdvancedModal = Button({ ariaLabel: 'Cancel' });
+const buttonClose = Button({ icon: 'times' });
+const checkBoxAllRecords = Checkbox({ ariaLabel: 'Select all records on this page' });
+const resultPaneActionsButton = rootSection.find(Button('Actions'));
+const buttonExportSelected = Button('Export selected records (CSV/MARC)');
+const openAuthSourceMenuButton = Button({ ariaLabel: 'open menu' });
+const sourceFileAccordion = Section({ id: 'sourceFileId' });
+const marcAuthPaneHeader = PaneHeader('MARC authority');
 
 export default {
   waitLoading: () => cy.expect(rootSection.exists()),
@@ -57,7 +64,7 @@ export default {
   },
 
   checkCalloutAfterExport: (jobId) => {
-     cy.expect(Callout(including(`Authority headings updates report (Job ID ${jobId}) is being generated. Go to the Export manager app to download report. It may take a few minutes for the report to complete.`)).exists());
+    cy.expect(Callout(including(`Authority headings updates report (Job ID ${jobId}) is being generated. Go to the Export manager app to download report. It may take a few minutes for the report to complete.`)).exists());
   },
 
   checkResultsExistance: (type) => {
@@ -86,8 +93,19 @@ export default {
   selectTitle: (title) => cy.do(Button(title).click()),
 
   selectItem: (item) => {
-    cy.expect(MultiColumnListCell({content: item}).exists());
+    cy.expect(MultiColumnListCell({ content: item }).exists());
     cy.do(Button(including(item)).click());
+  },
+
+  clickOnNumberOfTitlesLink(columnIndex, linkValue) {
+    cy.wrap(MultiColumnListCell({columnIndex: columnIndex, content: linkValue }).find(Link()).href()).as('link');
+    cy.get('@link').then((link) => {
+      cy.visit(link);
+    });
+  },
+
+  verifyNumberOfTitles(columnIndex, linkValue) {
+    cy.expect(MultiColumnListCell({columnIndex: columnIndex, content: linkValue }).find(Link()).exists());
   },
 
   verifyFirstValueSaveSuccess(successMsg, txt) {
@@ -127,7 +145,7 @@ export default {
 
   searchByParameter(searchOption, value) {
     cy.do(searchInput.fillIn(value));
-    cy.expect(searchInput.has({ value: value }));
+    cy.expect(searchInput.has({ value }));
     cy.do(browseSearchAndFilterInput.choose(searchOption));
     cy.expect(enabledSearchButton.exists());
     cy.do(searchButton.click());
@@ -135,7 +153,7 @@ export default {
 
   searchAndVerify: (searchOption, value) => {
     cy.do(searchInput.fillIn(value));
-    cy.expect(searchInput.has({ value: value }));
+    cy.expect(searchInput.has({ value }));
     cy.do(browseSearchAndFilterInput.choose(searchOption));
     cy.expect(enabledSearchButton.exists());
     cy.do(searchButton.click());
@@ -143,13 +161,17 @@ export default {
     cy.expect(marcViewSection.exists());
   },
 
-   checkRecordDetailPageMarkedValue(markedValue) {
+  closeMarcViewPane() {
+    cy.do(buttonClose.click());
+  },
+
+  checkRecordDetailPageMarkedValue(markedValue) {
     cy.expect([
       marcViewSection.exists(),
       marcViewSection.has({ mark: markedValue }),
     ]);
   },
-  
+
   checkSearchOptions() {
     cy.do(selectField.click());
     cy.expect([
@@ -164,6 +186,13 @@ export default {
       selectField.has({ content: including('Children\'s subject heading') }),
       selectField.has({ content: including('Genre') }),
       selectField.has({ content: including('Advanced search') }),
+    ]);
+  },
+
+  checkAuthorizedReferenceColumn(authorized, reference) {
+    cy.expect([
+      MultiColumnListCell({ columnIndex: 1, content: authorized }).exists(),
+      MultiColumnListCell({ columnIndex: 1, content: reference }).exists(),
     ]);
   },
 
@@ -250,6 +279,15 @@ export default {
     });
   },
 
+  clickAccordionAndCheckResultList(accordion, record) {
+    cy.do(Accordion(accordion).clickHeader());
+    cy.expect(MultiColumnListCell({ content: including(record) }).exists())
+  },
+
+  chooseAuthoritySourceOption: (option) => {
+      cy.do(MultiSelect({ ariaLabelledby: 'sourceFileId-multiselect-label' }).select([including(option)]));
+  },
+
   clickActionsButton() {
     cy.do(rootSection.find(PaneHeader()).find(actionsButton).click());
   },
@@ -264,18 +302,29 @@ export default {
     cy.do(Checkbox(value).click());
   },
 
+  selectAllRecords() {
+    // need to wait until page loading
+    cy.wait(1000);
+    cy.do(checkBoxAllRecords.click());
+  },
+
+  exportSelected() {
+    cy.do(resultPaneActionsButton.click());
+    cy.do(buttonExportSelected.click());
+  },
+
   checkRowsContent(contents) {
     contents.forEach((content, rowIndex) => {
-      cy.expect(MultiColumnListCell({ row: rowIndex, content: content }).exists())
+      cy.expect(MultiColumnListCell({ row: rowIndex, content }).exists());
     });
   },
 
   checkColumnAbsent(content) {
-    cy.expect(ColumnHeader(content).absent())
+    cy.expect(ColumnHeader(content).absent());
   },
 
   checkColumnExists(content) {
-    cy.expect(ColumnHeader(content).exists())
+    cy.expect(ColumnHeader(content).exists());
   },
 
   chooseTypeOfHeadingAndCheck(headingType, headingTypeA, headingTypeB) {
@@ -290,7 +339,7 @@ export default {
     ]);
   },
 
-  checkRecordAbsence(absenceMessage) {
+  checkNoResultsMessage(absenceMessage) {
     cy.expect(rootSection.find(HTML(including(absenceMessage))).exists());
   },
 
@@ -310,7 +359,7 @@ export default {
   },
 
   checkSearchInput(value) {
-    cy.expect(searchInput.has({ value: value }));
+    cy.expect(searchInput.has({ value }));
   },
 
   clickCancelButton() {
@@ -324,18 +373,18 @@ export default {
   checkAdvancedSearchModalFields: (row, value, searchOption, boolean) => {
     cy.expect([
       modalAdvancedSearch.exists(),
-      AdvancedSearchRow({ index: 0 }).has({text: including('Search for')}),
-      AdvancedSearchRow({ index: row }).find(TextField()).has({value: including(value)}),
-      AdvancedSearchRow({ index: row }).has({text: including('in')}),
-      AdvancedSearchRow({ index: row }).find(Select({ label: 'Search options*' })).has({content: including(searchOption)}),
+      AdvancedSearchRow({ index: 0 }).has({ text: including('Search for') }),
+      AdvancedSearchRow({ index: row }).find(TextField()).has({ value: including(value) }),
+      AdvancedSearchRow({ index: row }).has({ text: including('in') }),
+      AdvancedSearchRow({ index: row }).find(Select({ label: 'Search options*' })).has({ content: including(searchOption) }),
       modalAdvancedSearch.find(buttonSearchInAdvancedModal).exists(),
       modalAdvancedSearch.find(buttonCancelInAdvancedModal).exists(),
     ]);
-    if (boolean) cy.expect([AdvancedSearchRow({ index: row }).find(Select({ label: 'Operator*' })).has({content: including(boolean)}),]);
+    if (boolean) cy.expect([AdvancedSearchRow({ index: row }).find(Select({ label: 'Operator*' })).has({ content: including(boolean) })]);
   },
 
   checkAdvancedSearchOption(rowIndex) {
-    cy.do( AdvancedSearchRow({ index: rowIndex }).find(Select({ label: 'Search options*' })).click());
+    cy.do(AdvancedSearchRow({ index: rowIndex }).find(Select({ label: 'Search options*' })).click());
     cy.expect([
       AdvancedSearchRow({ index: rowIndex }).find(Select({ label: 'Search options*' })).has({ content: including('Keyword') }),
       AdvancedSearchRow({ index: rowIndex }).find(Select({ label: 'Search options*' })).has({ content: including('Identifier (all)') }),
@@ -350,9 +399,63 @@ export default {
     ]);
   },
 
+  checkAuthoritySourceOptions() {
+    cy.do(sourceFileAccordion.find(openAuthSourceMenuButton).click());
+    cy.expect([
+      sourceFileAccordion.find(MultiSelectOption(including('LC Name Authority file (LCNAF)'))).exists(),
+      sourceFileAccordion.find(MultiSelectOption(including('LC Subject Headings (LCSH)'))).exists(),
+      sourceFileAccordion.find(MultiSelectOption(including('LC Children\'s Subject Headings'))).exists(),
+      sourceFileAccordion.find(MultiSelectOption(including('LC Genre/Form Terms (LCGFT)'))).exists(),
+      sourceFileAccordion.find(MultiSelectOption(including('LC Demographic Group Terms (LCFGT)'))).exists(),
+      sourceFileAccordion.find(MultiSelectOption(including('LC Medium of Performance Thesaurus for Music (LCMPT)'))).exists(),
+      sourceFileAccordion.find(MultiSelectOption(including('Faceted Application of Subject Terminology (FAST)'))).exists(),
+      sourceFileAccordion.find(MultiSelectOption(including('Medical Subject Headings (MeSH)'))).exists(),
+      sourceFileAccordion.find(MultiSelectOption(including('Thesaurus for Graphic Materials (TGM)'))).exists(),
+      sourceFileAccordion.find(MultiSelectOption(including('Rare Books and Manuscripts Section (RBMS)'))).exists(),
+      sourceFileAccordion.find(MultiSelectOption(including('Art & architecture thesaurus (AAT)'))).exists(),
+      sourceFileAccordion.find(MultiSelectOption(including('GSAFD Genre Terms (GSAFD)'))).exists(),
+      sourceFileAccordion.find(MultiSelectOption(including('Not specified'))).exists(),
+      sourceFileAccordion.find(MultiSelectOption({ innerHTML: including('class="totalRecordsLabel') })).exists(),
+    ]);
+  },
+
+  checkResultsListRecordsCountLowerThan(totalRecord) {
+    cy.expect(marcAuthPaneHeader.exists());
+    cy.intercept('GET', '/search/authorities?*').as('getItems');
+    cy.wait('@getItems', { timeout: 10000 }).then(item => {
+      cy.expect(Pane({ subtitle: `${item.response.body.totalRecords} records found` }).exists());
+      expect(item.response.body.totalRecords < totalRecord).to.be.true;
+    });
+  },
+
+  checkResultsListRecordsCountGreaterThan(totalRecord) {
+    cy.expect(marcAuthPaneHeader.exists());
+    cy.intercept('GET', '/search/authorities?*').as('getItems');
+    cy.wait('@getItems', { timeout: 10000 }).then(item => {
+      cy.expect(Pane({ subtitle: `${item.response.body.totalRecords} records found` }).exists());
+      expect(item.response.body.totalRecords > totalRecord).to.be.true;
+    });
+  },
+
+  checkSelectedAuthoritySource(option) {
+    cy.expect(sourceFileAccordion.find(MultiSelect({ selected: including(option) })).exists());
+  },
+
+  closeAuthoritySourceOption() {
+    cy.do(sourceFileAccordion.find(Button({ icon: 'times' })).click());
+  },
+
   checkResultList(records) {
     records.forEach(record => {
       cy.expect(MultiColumnListCell(record).exists());
     });
+  },
+
+  checkSearchOption(searchOption) {
+    cy.expect(browseSearchAndFilterInput.has({ value: searchOption }));
+  },
+
+  verifyEmptyNumberOfTitles() {
+    cy.expect(MultiColumnListCell({ columnIndex: 4 }).has({ content: '' }));
   },
 };

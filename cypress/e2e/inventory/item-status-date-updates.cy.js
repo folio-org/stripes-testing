@@ -1,12 +1,22 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import uuid from 'uuid';
 import getRandomPostfix from '../../support/utils/stringTools';
+import {
+  REQUEST_POLICY_NAMES,
+  NOTICE_POLICY_NAMES,
+  OVERDUE_FINE_POLICY_NAMES,
+  CY_ENV,
+  LOST_ITEM_FEES_POLICY_NAMES,
+  LOAN_POLICY_NAMES,
+  FULFILMENT_PREFERENCES,
+  REQUEST_TYPES
+} from '../../support/constants';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import TopMenu from '../../support/fragments/topMenu';
 import Helper from '../../support/fragments/finance/financeHelper';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
-import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
 import Receiving from '../../support/fragments/receiving/receiving';
 import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
@@ -110,7 +120,7 @@ describe('inventory', () => {
               defaultDeliveryAddressTypeId: '46ff3f08-8f41-485c-98d8-701ba8404f4f',
               defaultServicePointId: null,
               delivery: true,
-              fulfillment: 'Delivery',
+              fulfillment: FULFILMENT_PREFERENCES.DELIVERY,
               holdShelf: true,
               userId: userForDeliveryRequest.userId
             });
@@ -280,7 +290,7 @@ describe('inventory', () => {
     NewRequest.createDeliveryRequest({
       itemBarcode,
       requesterBarcode: userForDeliveryRequest.barcode,
-      requestType: 'Hold'
+      requestType: REQUEST_TYPES.HOLD
     });
     cy.wait(8000);
     cy.visit(TopMenu.checkInPath);

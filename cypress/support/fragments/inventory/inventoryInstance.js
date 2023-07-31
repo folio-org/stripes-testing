@@ -27,13 +27,14 @@ import {
   Modal,
   PaneHeader,
   or,
+  PaneContent,
 } from '../../../../interactors';
 import InstanceRecordEdit from './instanceRecordEdit';
 import InventoryViewSource from './inventoryViewSource';
 import InventoryNewHoldings from './inventoryNewHoldings';
 import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
 import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovement';
-import ItemRecordView from './itemRecordView';
+import ItemRecordView from './item/itemRecordView';
 import DateTools from '../../utils/dateTools';
 
 const section = Section({ id: 'pane-instancedetails' });
@@ -83,6 +84,7 @@ const createdDateAccordion = Section({ id: 'createdDate' });
 const updatedDateAccordion = Section({ id: 'updatedDate' });
 const searchTextArea = TextArea({ id: 'textarea-authorities-search' });
 const marcViewPane = Section({ id: 'marc-view-pane' });
+const marcViewPaneContent = PaneContent({ id: 'marc-view-pane-content' });
 const searchButton = Button({ type: 'submit' });
 const enabledSearchBtn = Button({ type: 'submit', disabled: false });
 const disabledResetAllBtn = Button({ id: 'clickable-reset-all', disabled: true });
@@ -109,6 +111,11 @@ const quickMarcEditorPane = Section({ id: 'quick-marc-editor-pane' });
 const filterPane = Section({ id: 'pane-filter' });
 const inputSearchField = TextField({ id: 'input-inventory-search' });
 const holdingsPane = Pane(including('Holdings'));
+const instancesButton = Button({ id: 'segment-navigation-instances' });
+const newMarcBibButton = Button({ id: 'clickable-newmarcrecord' });
+const quickMarcPaneHeader = PaneHeader({ id: 'paneHeaderquick-marc-editor-pane' });
+const detailsPaneContent = PaneContent({ id: 'pane-instancedetails-content' });
+const administrativeDataAccordion = Accordion('Administrative data');
 
 const validOCLC = { id:'176116217',
   // TODO: hardcoded count related with interactors getters issue. Redesign to cy.then(QuickMarkEditor().rowsCount()).then(rowsCount => {...}
@@ -118,7 +125,6 @@ const validOCLC = { id:'176116217',
   ldrValue: '01677cam\\a22003974a\\4500',
   tag008BytesProperties : {
     srce: { interactor:TextField('Srce'), defaultValue:'\\' },
-    ctrl : { interactor:TextField('Ctrl'), defaultValue:'' },
     lang : { interactor:TextField('Lang'), defaultValue:'rus' },
     form : { interactor:TextField('Form'), defaultValue:'\\' },
     ctry : { interactor:TextField('Ctry'), defaultValue:'ru\\' },
@@ -242,6 +248,21 @@ export default {
     InventoryViewSource.waitLoading();
   },
 
+  newMarcBibRecord() {
+    cy.do([
+      actionsBtn.click(),
+      newMarcBibButton.click(),
+    ]);
+    cy.expect([
+      quickMarcEditorPane.exists(),
+      quickMarcPaneHeader.has({ text: including('new') }),
+    ])
+  },
+
+  checkInstanceTitle(title) {
+    cy.expect(detailsPaneContent.has({ text: including(title) }));
+  },
+
   startOverlaySourceBibRecord:() => {
     cy.do(actionsButton.click());
     cy.do(overlaySourceBibRecord.click());
@@ -274,6 +295,47 @@ export default {
       filterPane.find(searchButton).click(),
     ]);
     cy.expect(MultiColumnListRow({ index: 0 }).exists());
+  },
+
+  clickViewAuthorityIconDisplayedInTagField(tag) {
+    cy.wrap(QuickMarcEditorRow({ tagValue: tag }).find(Link()).href()).as('link');
+    cy.get('@link').then((link) => {
+      cy.visit(link);
+    });
+  },
+
+  clickViewAuthorityIconDisplayedInInstanceDetailsPane(accordion) {
+    cy.wrap(Accordion(accordion).find(Link()).href()).as('link');
+    cy.get('@link').then((link) => {
+      cy.visit(link);
+    });
+  },
+
+  clickViewAuthorityIconDisplayedInMarcViewPane() {
+    cy.wrap(marcViewPaneContent.find(Link()).href()).as('link');
+    cy.get('@link').then((link) => {
+      cy.visit(link);
+    });
+  },
+
+  goToPreviousPage() {
+    cy.go('back');
+  },
+
+  checkExistanceOfAuthorityIconInInstanceDetailPane(accordion) {
+    cy.expect(Accordion(accordion).find(Link()).exists());
+  },
+
+  checkAbsenceOfAuthorityIconInInstanceDetailPane(accordion) {
+    cy.expect(Accordion(accordion).find(Link()).absent());
+  },
+
+  checkAbsenceOfAuthorityIconInMarcViewPane() {
+    cy.expect(marcViewPaneContent.find(Link()).absent());
+  },
+
+  checkExistanceOfAuthorityIconInMarcViewPane() {
+    cy.expect(marcViewPaneContent.find(Link()).exists());
   },
 
   verifyAndClickLinkIcon(tag) {
@@ -335,6 +397,19 @@ export default {
     cy.do(searchInput.fillIn(value));
     cy.expect(searchInput.has({ value }));
     cy.expect(enabledSearchBtn.exists());
+    cy.do(searchButton.click());
+    cy.expect(authoritySearchResults.exists());
+  },
+
+  searchResultsWithOption(option, value) {
+    cy.do([
+      selectField.choose(including(option)),
+      searchInput.fillIn(value)
+    ]);
+    cy.expect([
+      searchInput.has({ value }),
+      enabledSearchBtn.exists()
+    ]);
     cy.do(searchButton.click());
     cy.expect(authoritySearchResults.exists());
   },
@@ -609,7 +684,7 @@ export default {
 
   verifyResourceIdentifierAbsent:(value) => cy.expect(identifiersAccordion.find(MultiColumnListCell(including(value))).absent()),
   verifyInstanceLanguage:(language) => cy.expect(descriptiveDataAccordion.find(KeyValue('Language')).has({ value: language })),
-  verifyInstancePhisicalcyDescription:(description) => {
+  verifyInstancePhysicalcyDescription:(description) => {
     cy.expect(descriptiveDataAccordion.find(KeyValue('Physical description')).has({ value: description }));
   },
 
@@ -632,6 +707,7 @@ export default {
 
   openHoldingsAccordion:(location) => {
     cy.do(Button(including(location)).click());
+    cy.wait(6000);
   },
 
   verifyHoldingLocation(content) {
@@ -686,6 +762,18 @@ export default {
       .find(MultiColumnListCell(including(text))).exists());
   },
 
+  checkContributor: (text) => {
+    cy.expect(section.find(Button(including('Contributor'))).exists());
+    cy.expect(Accordion('Contributor')
+      .find(MultiColumnList({ id: 'list-contributors' }))
+      .find(MultiColumnListCell(including(text))).exists());
+  },
+
+  checkDetailViewOfInstance(accordion, value) {
+    cy.expect(section.find(Button(including(accordion))).exists());
+    cy.expect(Accordion(accordion).find(MultiColumnListCell(including(value))).exists());
+  },
+
   verifyLoan: (content) => cy.expect(MultiColumnListCell({ content }).exists()),
 
   verifyLoanInItemPage(barcode, value) {
@@ -713,4 +801,18 @@ export default {
       cy.expect(MultiColumnListCell({ content: itemContent }).exists());
     });
   },
+
+  checkInstanceButtonExistence() {
+    cy.expect(filterPane.find(instancesButton).exists());
+  },
+
+  verifyRecordStatus(text) {
+    cy.do(administrativeDataAccordion.find(Button(including('Record last updated'))).click());
+    cy.expect(administrativeDataAccordion.find(HTML(including(text))).exists());
+  },
+
+  checkValueAbsenceInDetailView(accordion, value) {
+    cy.expect(section.find(Button(including(accordion))).exists());
+    cy.expect(Accordion(accordion).find(MultiColumnListCell(including(value))).absent());
+  }
 };

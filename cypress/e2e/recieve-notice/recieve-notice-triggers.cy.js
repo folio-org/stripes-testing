@@ -26,6 +26,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import getRandomPostfix from '../../support/utils/stringTools';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('Triggers: Check Out, Loan due date change, Check in', () => {
   let addedCirculationRule;
@@ -34,6 +35,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
     description: 'Created by autotest team',
     body: 'Test_email_body',
     category: 'Loan',
+    previewText: 'Test_email_body'
   };
   const checkOutTemplate = { ...defaultTemplate };
   checkOutTemplate.name += ' Check out';
@@ -139,7 +141,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
             items: [
               {
                 barcode: item.barcode,
-                status: { name: 'Available' },
+                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                 permanentLoanType: { id: testData.loanTypeId },
                 materialType: { id: testData.materialTypeId },
               },
@@ -246,10 +248,13 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
     { tags: [TestTypes.smoke, devTeams.volaris] },
     () => {
       NewNoticePolicyTemplate.createPatronNoticeTemplate(checkOutTemplate);
+      delete checkOutTemplate.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(checkOutTemplate);
       NewNoticePolicyTemplate.createPatronNoticeTemplate(loanDueDateChangeTemplate);
+      delete loanDueDateChangeTemplate.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(loanDueDateChangeTemplate);
       NewNoticePolicyTemplate.createPatronNoticeTemplate(checkInTemplate);
+      delete checkInTemplate.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(checkInTemplate);
 
       cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);

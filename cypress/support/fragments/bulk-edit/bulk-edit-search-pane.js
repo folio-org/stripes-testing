@@ -17,8 +17,8 @@ import {
 } from '../../../../interactors';
 import { ListRow } from '../../../../interactors/multi-column-list';
 
-const logsStartDateAccordion = Accordion('Start date');
-const logsEndDateAccordion = Accordion('End date');
+const logsStartDateAccordion = Accordion('Started');
+const logsEndDateAccordion = Accordion('Ended');
 const applyBtn = Button('Apply');
 const logsResultPane = Pane({ id: 'bulk-edit-logs-pane' });
 const resultsAccordion = Accordion('Preview of record matched');
@@ -53,10 +53,16 @@ const updatedRecordBtn = DropdownMenu().find(Button('File with updated records')
 const errorsCommittingBtn = DropdownMenu().find(Button('File with errors encountered when committing the changes'));
 const buildQueryButton = Button('Build query');
 const buildQueryModal = Modal('Build query');
+const logsActionButton = Button({ icon: 'ellipsis' });
+const startBulkEditLocalButton = Button('Start bulk edit (Local)');
 
 export default {
   waitLoading() {
     cy.expect(bulkEditPane.exists());
+  },
+
+  verifyNoPermissionWarning() {
+    cy.expect(HTML('You don\'t have permission to view this app/record').exists());
   },
 
   searchBtnIsDisabled(isDisabled) {
@@ -69,6 +75,10 @@ export default {
 
   actionsIsAbsent() {
     cy.expect(actions.absent());
+  },
+
+  logActionsIsAbsent() {
+    cy.expect(logsActionButton.absent());
   },
 
   actionsIsShown() {
@@ -238,7 +248,7 @@ export default {
     ]);
   },
 
-  verifyDragNDropUsersUIIDsArea() {
+  verifyDragNDropUsersUUIDsArea() {
     this.checkUsersRadio();
     this.selectRecordIdentifier('User UUIDs');
     cy.expect([
@@ -361,8 +371,8 @@ export default {
       recordTypesAccordion.find(Checkbox('Users')).has({ checked: false }),
       recordTypesAccordion.find(Checkbox('Inventory - items')).has({ checked: false }),
       recordTypesAccordion.find(Checkbox('Inventory - holdings')).has({ checked: false }),
-      Accordion('Start date').has({ open: false }),
-      Accordion('End date').has({ open: false }),
+      logsStartDateAccordion.has({ open: false }),
+      logsEndDateAccordion.has({ open: false }),
       bulkEditPane.find(HTML('Enter search criteria to start search')).exists(),
       bulkEditPane.find(HTML('Choose a filter to show results.')).exists(),
     ]);
@@ -395,6 +405,10 @@ export default {
     ]);
   },
 
+  verifyRecordIdentifierDisabled() {
+    cy.expect(recordIdentifierDropdown.has({ disabled: true }));
+  },
+
   selectRecordIdentifier(value) {
     cy.do(recordIdentifierDropdown.choose(value));
   },
@@ -405,7 +419,7 @@ export default {
 
   verifyDefaultFilterState() {
     cy.expect([
-      Button('or choose file').has({ disabled: true }),
+      fileButton.has({ disabled: true }),
       HTML('Select record identifier').exists()
     ]);
     this.verifyBulkEditPaneItems();
@@ -464,7 +478,7 @@ export default {
   },
 
   uploadFile(fileName) {
-    cy.do(Button('or choose file').has({ disabled: false }));
+    cy.do(fileButton.has({ disabled: false }));
     cy.get('input[type=file]').attachFile(fileName, { allowEmpty: true });
   },
 
@@ -484,6 +498,12 @@ export default {
       cy.expect(resultsAccordion.find(MultiColumnListCell({ content: value })).exists());
     });
     cy.expect(resultsAccordion.has({ itemsAmount: (values.length).toString() }));
+  },
+
+  verifySpecificItemsMatched(...values) {
+    values.forEach(value => {
+      cy.expect(resultsAccordion.find(MultiColumnListCell({ content: including(value) })).exists());
+    });
   },
 
   matchedAccordionIsAbsent() {
@@ -514,6 +534,10 @@ export default {
     }
   },
 
+  verifyChangesUnderColumns(columnName, value) {
+    cy.expect(changesAccordion.find(MultiColumnListCell({ column: columnName, content: including(value) })).exists());
+  },
+
   verifyNonMatchedResults(...values) {
     cy.expect([
       errorsAccordion.find(MultiColumnListHeader('Record identifier')).exists(),
@@ -532,11 +556,15 @@ export default {
     cy.expect(Accordion('Errors').find(HTML(`${fileName}: ${validRecordCount + invalidRecordCount} entries * ${validRecordCount} records changed * ${invalidRecordCount} errors`)).exists());
   },
 
+  verifyReasonForError(errorText) {
+    cy.expect(Accordion('Errors').find(HTML(including(errorText))).exists());
+  },
+
   verifyActionsAfterConductedCSVUploading(errors = true) {
     cy.do(actions.click());
     cy.expect([
       Button('Download matched records (CSV)').exists(),
-      Button('Start bulk edit (CSV)').exists(),
+      startBulkEditLocalButton.exists(),
       DropdownMenu().find(HTML('Show columns')).exists(),
     ]);
     if (errors) {
@@ -554,6 +582,15 @@ export default {
     if (errors) {
       cy.expect(Button('Download errors (CSV)').exists());
     }
+  },
+
+  verifyActionsAfterChangingRecords() {
+    cy.do(actions.click());
+    cy.expect([
+      Button('Download matched records (CSV)').absent(),
+      Button('Start bulk edit').absent(),
+      DropdownMenu().find(HTML('Show columns')).exists(),
+    ]);
   },
 
   verifyUsersActionShowColumns() {
@@ -680,8 +717,8 @@ export default {
     ]);
   },
 
-  changeShowColumnCheckbox(name) {
-    cy.do(DropdownMenu().find(Checkbox(name)).click());
+  changeShowColumnCheckbox(...names) {
+    names.forEach(name => { cy.do(DropdownMenu().find(Checkbox(name)).click()); });
   },
 
   verifyResultColumTitles(title) {
@@ -714,11 +751,11 @@ export default {
   },
 
   clickActionsOnTheRow(row = 0) {
-    cy.do(MultiColumnListRow({ indexRow: `row-${row}` }).find(Button({ icon: 'ellipsis' })).click());
+    cy.do(MultiColumnListRow({ indexRow: `row-${row}` }).find(logsActionButton).click());
   },
 
   clickActionsRunBy(runByUsername) {
-    cy.do(ListRow({ text: including(runByUsername) }).find(Button({ icon: 'ellipsis' })).click());
+    cy.do(ListRow({ text: including(runByUsername) }).find(logsActionButton).click());
   },
 
   verifyTriggerLogsAction() {
@@ -795,15 +832,15 @@ export default {
 
   verifyLogsTableHeaders() {
     cy.expect([
-      MultiColumnListHeader('ID').exists(),
       MultiColumnListHeader('Record type').exists(),
       MultiColumnListHeader('Status').exists(),
-      MultiColumnListHeader('Run by').exists(),
-      MultiColumnListHeader('Started running').exists(),
-      MultiColumnListHeader('Ended running').exists(),
+      MultiColumnListHeader('Editing').exists(),
       MultiColumnListHeader('# of records').exists(),
       MultiColumnListHeader('Processed').exists(),
-      MultiColumnListHeader('Editing').exists(),
+      MultiColumnListHeader('Started').exists(),
+      MultiColumnListHeader('Ended').exists(),
+      MultiColumnListHeader('Run by').exists(),
+      MultiColumnListHeader('ID').exists(),
       MultiColumnListHeader('Actions').exists(),
     ]);
   },

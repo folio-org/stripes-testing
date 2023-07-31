@@ -14,7 +14,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -24,8 +24,10 @@ import {
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
   ITEM_STATUS_NAMES,
-  LOCALION_NAMES,
-  FOLIO_RECORD_TYPE
+  LOCATION_NAMES,
+  FOLIO_RECORD_TYPE,
+  EXISTING_RECORDS_NAMES,
+  JOB_STATUS_NAMES
 } from '../../../support/constants';
 
 describe('ui-data-import', () => {
@@ -44,11 +46,11 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { name: `C17033 holdings create mapping profile_${getRandomPostfix()}`,
         typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        permanentLocation: `"${LOCALION_NAMES.MAIN_LIBRARY}"`,
-        permanentLocationUI: LOCALION_NAMES.MAIN_LIBRARY_UI,
-        permanentLocationInHoldingsAccordion: 'Main Library >',
-        temporaryLocation: `"${LOCALION_NAMES.ONLINE}"`,
-        temporaryLocationUI: LOCALION_NAMES.ONLINE_UI,
+        permanentLocation: `"${LOCATION_NAMES.MAIN_LIBRARY}"`,
+        permanentLocationUI: LOCATION_NAMES.MAIN_LIBRARY_UI,
+        permanentLocationInHoldingsAccordion: `${LOCATION_NAMES.MAIN_LIBRARY_UI} >`,
+        temporaryLocation: `"${LOCATION_NAMES.ONLINE}"`,
+        temporaryLocationUI: LOCATION_NAMES.ONLINE_UI,
         illPolicy: 'Unknown lending policy',
         digitizationPolicy: '"Digitization policy"',
         digitizationPolicyUI: 'Digitization policy' },
@@ -85,7 +87,7 @@ describe('ui-data-import', () => {
           subfield: 'a'
         },
         matchCriterion: 'Exactly matches',
-        existingRecordType: 'HOLDINGS',
+        existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
         holdingsOption: NewMatchProfile.optionsList.holdingsHrid }
     },
     {
@@ -96,7 +98,7 @@ describe('ui-data-import', () => {
           subfield: 'a'
         },
         matchCriterion: 'Exactly matches',
-        existingRecordType: 'ITEM',
+        existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
         itemOption: NewMatchProfile.optionsList.barcode
       }
     }
@@ -174,7 +176,7 @@ describe('ui-data-import', () => {
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile);
       NewFieldMappingProfile.fillBarcode(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.barcode);
       NewFieldMappingProfile.fillAccessionNumber(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.accessionNumber);
-      NewFieldMappingProfile.fillMaterialType(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.materialType);
+      NewFieldMappingProfile.fillMaterialType(`"${collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.materialType}"`);
       NewFieldMappingProfile.fillNumberOfPieces(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.numberOfPieces);
       NewFieldMappingProfile.fillPermanentLoanType(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.permanentLoanType);
       NewFieldMappingProfile.fillTemporaryLoanType(collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.temporaryLoanType);
@@ -203,13 +205,14 @@ describe('ui-data-import', () => {
 
       // upload a marc file for creating
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
       cy.reload();
       DataImport.uploadFile(marcFileNameForCreate);
       JobProfiles.searchJobProfileForImport(jobProfileForCreate.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(marcFileNameForCreate);
-      Logs.checkStatusOfJobProfile('Completed');
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(marcFileNameForCreate);
       [FileDetails.columnNameInResultList.srsMarc,
         FileDetails.columnNameInResultList.instance,
@@ -278,19 +281,20 @@ describe('ui-data-import', () => {
           cy.visit(SettingsMenu.jobProfilePath);
           JobProfiles.createJobProfileWithLinkingProfilesForUpdate(jobProfileForUpdate);
           NewJobProfile.linkMatchAndActionProfilesForHoldings(collectionOfMappingAndActionProfilesForUpdate[0].actionProfile.name, collectionOfMatchProfiles[0].matchProfile.profileName, 0);
-          NewJobProfile.linkMatchAndActionProfilesForItem(collectionOfMappingAndActionProfilesForUpdate[1].actionProfile.name, collectionOfMatchProfiles[1].matchProfile.profileName, 2);
+          NewJobProfile.linkMatchAndActionProfilesForItem(collectionOfMappingAndActionProfilesForUpdate[1].actionProfile.name, collectionOfMatchProfiles[1].matchProfile.profileName, 1);
           NewJobProfile.saveAndClose();
           JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
 
           // upload a marc file for updating
           cy.visit(TopMenu.dataImportPath);
-          // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+          DataImport.verifyUploadState();
           cy.reload();
           DataImport.uploadFile(editedMarcFileName);
           JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(editedMarcFileName);
-          Logs.checkStatusOfJobProfile('Completed');
+          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(editedMarcFileName);
           [FileDetails.columnNameInResultList.holdings,
             FileDetails.columnNameInResultList.item

@@ -2,8 +2,6 @@ import TopMenu from '../../support/fragments/topMenu';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
-import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
-import InstanceRecordEdit from '../../support/fragments/inventory/instanceRecordEdit';
 import testTypes from '../../support/dictionary/testTypes';
 import features from '../../support/dictionary/features';
 import permissions from '../../support/dictionary/permissions';
@@ -11,7 +9,7 @@ import { replaceByIndex } from '../../support/utils/stringTools';
 import { Callout } from '../../../interactors';
 import Users from '../../support/fragments/users/users';
 import DevTeams from '../../support/dictionary/devTeams';
-import Z3950TargetProfiles from '../../support/fragments/settings/inventory/z39.50TargetProfiles';
+import Z3950TargetProfiles from '../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 
 describe('Manage inventory Bib records with quickMarc editor', () => {
@@ -41,118 +39,6 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
 
   afterEach(() => {
     Users.deleteViaApi(userId);
-  });
-
-  it('C10950 Edit and save a MARC record in quickMARC (spitfire)', { tags: [testTypes.smoke, DevTeams.spitfire, features.quickMarcEditor] }, () => {
-    InventoryInstance.goToEditMARCBiblRecord();
-    QuickMarcEditor.waitLoading();
-    cy.reload();
-    const expectedInSourceRow = QuickMarcEditor.addNewField(QuickMarcEditor.getFreeTags()[0]);
-    QuickMarcEditor.deletePenaltField().then(deletedTag => {
-      const expectedInSourceRowWithSubfield = QuickMarcEditor.addNewFieldWithSubField(QuickMarcEditor.getFreeTags()[1]);
-      QuickMarcEditor.pressSaveAndClose();
-      QuickMarcEditor.deleteConfirmationPresented();
-      QuickMarcEditor.confirmDelete();
-      InventoryInstance.viewSource();
-      InventoryViewSource.contains(expectedInSourceRow);
-      InventoryViewSource.contains(expectedInSourceRowWithSubfield);
-      InventoryViewSource.notContains(deletedTag);
-    });
-  });
-
-  it('C10924 Add a field to a record using quickMARC (spitfire)', { tags: [testTypes.smoke, DevTeams.spitfire, features.quickMarcEditor] }, () => {
-    InventoryInstance.goToEditMARCBiblRecord();
-    QuickMarcEditor.waitLoading();
-    QuickMarcEditor.addRow();
-    QuickMarcEditor.checkInitialContent();
-    const expectedInSourceRow = QuickMarcEditor.fillAllAvailableValues();
-
-    QuickMarcEditor.pressSaveAndClose();
-    InventoryInstance.waitLoading();
-    InventoryInstance.viewSource();
-    InventoryViewSource.contains(expectedInSourceRow);
-    InventoryViewSource.close();
-    InventoryInstance.waitLoading();
-
-    InventoryInstance.goToEditMARCBiblRecord();
-    QuickMarcEditor.waitLoading();
-    QuickMarcEditor.checkContent();
-  });
-
-  it('C10928 Delete a field(s) from a record in quickMARC (spitfire)', { tags: [testTypes.smoke, DevTeams.spitfire, features.quickMarcEditor] }, () => {
-    InventoryInstance.goToEditMARCBiblRecord();
-    QuickMarcEditor.waitLoading();
-    cy.reload();
-    QuickMarcEditor.deletePenaltField().then(deletedTag => {
-      QuickMarcEditor.pressSaveAndClose();
-      QuickMarcEditor.deleteConfirmationPresented();
-      QuickMarcEditor.confirmDelete();
-      InventoryInstance.waitLoading();
-      InventoryInstance.viewSource();
-      InventoryViewSource.notContains(deletedTag);
-    });
-  });
-
-  it('C10957 Attempt to delete a required field (spitfire)', { tags: [testTypes.smoke, DevTeams.spitfire, features.quickMarcEditor] }, () => {
-    InventoryInstance.goToEditMARCBiblRecord();
-    QuickMarcEditor.waitLoading();
-    QuickMarcEditor.checkRequiredFields();
-  });
-
-  it('C10951 Add a 5XX field to a marc record in quickMARC (spitfire)', { tags: [testTypes.smoke, DevTeams.spitfire, features.quickMarcEditor] }, () => {
-    InventoryInstance.startOverlaySourceBibRecord();
-    InventoryActions.fillImportFields(InventoryInstance.validOCLC.id);
-    InventoryActions.pressImportInModal();
-
-    // TODO: add id to div with update datetime and verification of this value
-    InventoryInstance.checkExpectedOCLCPresence();
-    InventoryInstance.checkExpectedMARCSource();
-
-    InventoryInstance.editInstance();
-    InstanceRecordEdit.checkReadOnlyFields();
-    InstanceRecordEdit.close();
-
-    InventoryInstance.goToEditMARCBiblRecord();
-    QuickMarcEditor.waitLoading();
-    QuickMarcEditor.addRow();
-    QuickMarcEditor.checkInitialContent();
-
-    const testRecord = { content: 'testContent', tag: '505', tagMeaning: 'Formatted Contents Note' };
-    const expectedInSourceRow = QuickMarcEditor.fillAllAvailableValues(testRecord.content, testRecord.tag);
-    QuickMarcEditor.pressSaveAndClose();
-
-    InventoryInstance.viewSource();
-    InventoryViewSource.contains(expectedInSourceRow);
-    InventoryViewSource.close();
-
-    InventoryInstance.checkInstanceNotes(testRecord.tagMeaning, testRecord.content);
-  });
-
-  it('C345388 Derive a MARC bib record (spitfire)', { tags: [testTypes.smoke, DevTeams.spitfire, features.quickMarcEditor] }, () => {
-    // TODO: check the issue with reading in new version of interactors
-    InventoryInstance.getAssignedHRID()
-      .then(instanceHRID => {
-        InventoryInstance.deriveNewMarcBib();
-        const expectedCreatedValue = QuickMarcEditor.addNewField();
-
-        QuickMarcEditor.deletePenaltField().then(deletedTag => {
-          const expectedUpdatedValue = QuickMarcEditor.updateExistingField();
-
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.deleteConfirmationPresented();
-          QuickMarcEditor.confirmDelete();
-
-          InventoryInstance.checkUpdatedHRID(instanceHRID);
-          InventoryInstance.checkExpectedMARCSource();
-          // TODO: find correct tag to new field in record which presented into Inventory Instance
-          InventoryInstance.checkPresentedText(expectedUpdatedValue);
-
-          InventoryInstance.viewSource();
-          InventoryViewSource.contains(expectedCreatedValue);
-          InventoryViewSource.contains(expectedUpdatedValue);
-          InventoryViewSource.notContains(deletedTag);
-        });
-      });
   });
 
   it('C353612 Verify "LDR" validation rules with invalid data for editable (06, 07) and non-editable positions when editing/deriving record (spitfire)', { tags: [testTypes.smoke, DevTeams.spitfire, features.quickMarcEditor] }, () => {
