@@ -32,7 +32,7 @@ const selectItemPane = Pane({ id: 'items-dialog-instance-items-list' });
 function addRequester(userName) {
   cy.do(Button({ id:'requestform-addrequest' }).click());
   SelectUser.searchUser(userName);
-  SelectUser.selectUserFromList(userName);
+  SelectUser.selectUserFromList();
 }
 
 function openNewRequestPane() {
@@ -83,24 +83,18 @@ export default {
 
   createNewRequest(newRequest) {
     openNewRequestPane();
-    fillRequiredFields(newRequest);
-    choosepickupServicePoint(newRequest.pickupServicePoint);
-    saveRequestAndClose();
-    waitLoading();
+    this.fillRequiredFields(newRequest);
+    this.choosepickupServicePoint(newRequest.pickupServicePoint);
+    this.saveRequestAndClose();
+    this.waitLoading();
   },
 
   createDeliveryRequest(newRequest) {
-    openNewRequestPane();
-    cy.do([itemBarcodeInput.fillIn(newRequest.itemBarcode),
-      enterItemBarcodeButton.click(),
-      selectRequestType.choose(newRequest.requestType),
-      requesterBarcodeInput.fillIn(newRequest.requesterBarcode),
-      enterRequesterBarcodeButton.click()
-    ]);
-    cy.expect(selectServicePoint.exists);
+    this.openNewRequestPane();
+    this.fillRequiredFields(newRequest);
     // need to wait until instanceId is uploaded
     cy.wait(2500);
-    saveRequestAndClose();
+    this.saveRequestAndClose();
   },
 
   createWithUserName(newRequest) {
@@ -117,12 +111,13 @@ export default {
     // need to wait until instanceId is uploaded
     cy.wait(2500);
     this.choosepickupServicePoint(newRequest.pickupServicePoint);
+    cy.do(selectRequestType.choose(newRequest.requestType));
     this.saveRequestAndClose();
     this.waitLoading();
   },
 
   enableTitleLevelRequest() {
-    //need to synchronize actions before click
+    // need to synchronize actions before click
     cy.wait(3000);
     cy.do(titleLevelRequest.click());
   },
@@ -196,6 +191,6 @@ export default {
     cy.do(enterRequesterBarcodeButton.click());
     cy.expect(selectServicePoint.exists());
     cy.wait('@getUsers');
-    choosepickupServicePoint(newRequest.pickupServicePoint);
+    this.choosepickupServicePoint(newRequest.pickupServicePoint);
   }
 };

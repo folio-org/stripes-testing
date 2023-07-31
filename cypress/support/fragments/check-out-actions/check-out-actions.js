@@ -20,7 +20,7 @@ const userPane = PaneContent({ id: 'patron-details-content' });
 function addPatron(userName) {
   cy.do(Button({ id:'clickable-find-user' }).click());
   SelectUser.searchUser(userName);
-  SelectUser.selectUserFromList(userName);
+  SelectUser.selectUserFromList();
 }
 
 export default {

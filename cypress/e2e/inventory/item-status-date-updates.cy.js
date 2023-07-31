@@ -64,43 +64,42 @@ describe('inventory', () => {
   before('create test data', () => {
     cy.loginAsAdmin();
     cy.getAdminToken();
-    NewMaterialType.createViaApi(NewMaterialType.getDefaultMaterialType())
-      .then(mtypes => {
-        materialTypeId = mtypes.body.id;
+    // NewMaterialType.createViaApi(NewMaterialType.getDefaultMaterialType())
+    //   .then(mtypes => {
+    //     materialTypeId = mtypes.body.id;
 
-        CirculationRules.getViaApi().then((circulationRule) => {
-          originalCirculationRules = circulationRule.rulesAsText;
-          const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-          const defaultProps = ` i ${ruleProps.i} r ${ruleProps.r} o ${ruleProps.o} n ${ruleProps.n} l ${ruleProps.l}`;
-
-          addedCirculationRule = ` \nm ${materialTypeId}:${defaultProps}`;
-          cy.updateCirculationRules({ rulesAsText: `${originalCirculationRules}${addedCirculationRule}` });
-        });
-        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' })
-          .then((servicePoints) => {
-            effectiveLocationServicePoint = servicePoints[0];
-            NewLocation.createViaApi(NewLocation.getDefaultLocation(effectiveLocationServicePoint.id))
-              .then((location) => {
-                effectiveLocation = location;
-                Orders.createOrderWithOrderLineViaApi(
-                  NewOrder.getDefaultOrder(),
-                  BasicOrderLine.getDefaultOrderLine(itemQuantity, instanceTitle, effectiveLocation.id, materialTypeId)
-                )
-                  .then(order => {
-                    orderNumber = order;
-                  });
+    //     CirculationRules.getViaApi()
+    //       .then((circulationRule) => {
+    //         originalCirculationRules = circulationRule.rulesAsText;
+    //         const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
+    //         const defaultProps = ` i ${ruleProps.i} r ${ruleProps.r} o ${ruleProps.o} n ${ruleProps.n} l ${ruleProps.l}`;
+    //         addedCirculationRule = ` \nm ${materialTypeId}: ${defaultProps}`;
+    //         cy.updateCirculationRules({ rulesAsText: `${originalCirculationRules}${addedCirculationRule}` });
+    //       });
+    ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' })
+      .then((servicePoints) => {
+        effectiveLocationServicePoint = servicePoints[0];
+        NewLocation.createViaApi(NewLocation.getDefaultLocation(effectiveLocationServicePoint.id))
+          .then((location) => {
+            effectiveLocation = location;
+            Orders.createOrderWithOrderLineViaApi(
+              NewOrder.getDefaultOrder(),
+              BasicOrderLine.getDefaultOrderLine(itemQuantity, instanceTitle, effectiveLocation.id, materialTypeId)
+            )
+              .then(order => {
+                orderNumber = order;
               });
-            UsersOwners.createViaApi({
-              id: ownerId,
-              owner: 'AutotestOwner' + getRandomPostfix(),
-              servicePointOwner: [
-                {
-                  value: effectiveLocationServicePoint.id,
-                  label: effectiveLocationServicePoint.name,
-                },
-              ],
-            });
           });
+        UsersOwners.createViaApi({
+          id: ownerId,
+          owner: 'AutotestOwner' + getRandomPostfix(),
+          servicePointOwner: [
+            {
+              value: effectiveLocationServicePoint.id,
+              label: effectiveLocationServicePoint.name,
+            },
+          ],
+        });
       });
     ServicePoints.getViaApi({ limit: 1, query: 'name=="Online"' })
       .then((servicePoints) => {
@@ -128,20 +127,20 @@ describe('inventory', () => {
       });
   });
 
-  afterEach('delete test data', () => {
-    Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
-      .then(order => Orders.deleteOrderViaApi(order[0].id));
-    UsersOwners.deleteViaApi(ownerId);
-    Users.deleteViaApi(userForDeliveryRequest.userId);
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
-    MaterialTypes.deleteApi(materialTypeId);
-    NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
-      effectiveLocation.institutionId,
-      effectiveLocation.campusId,
-      effectiveLocation.libraryId,
-      effectiveLocation.id
-    );
-  });
+  // afterEach('delete test data', () => {
+  //   Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
+  //     .then(order => Orders.deleteOrderViaApi(order[0].id));
+  //   UsersOwners.deleteViaApi(ownerId);
+  //   Users.deleteViaApi(userForDeliveryRequest.userId);
+  //   InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
+  //   MaterialTypes.deleteApi(materialTypeId);
+  //   NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+  //     effectiveLocation.institutionId,
+  //     effectiveLocation.campusId,
+  //     effectiveLocation.libraryId,
+  //     effectiveLocation.id
+  //   );
+  // });
 
   const openItem = (title, itemLocation, barcode) => {
     cy.visit(TopMenu.inventoryPath);
@@ -248,7 +247,8 @@ describe('inventory', () => {
     NewRequest.createWithUserName({
       itemBarcode,
       requesterName: userName,
-      pickupServicePoint: effectiveLocationServicePoint.name
+      pickupServicePoint: effectiveLocationServicePoint.name,
+      requestType: 'Page'
     });
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
     fullCheck(ItemRecordView.itemStatuses.paged);
@@ -268,6 +268,7 @@ describe('inventory', () => {
     openUser(userName);
     UserLoans.declareLoanLost(itemBarcode);
     ConfirmItemStatusModal.confirmItemStatus();
+    cy.wait(8000);
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
     fullCheck(ItemRecordView.itemStatuses.declaredLost);
 
@@ -276,6 +277,7 @@ describe('inventory', () => {
     UserLoans.renewItem(itemBarcode);
     RenewConfirmationModal.confirmRenewOverrideItem();
     OverrideAndRenewModal.confirmOverrideItem();
+    cy.wait(8000);
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
     fullCheck(ItemRecordView.itemStatuses.checkedOut);
 
@@ -303,10 +305,10 @@ describe('inventory', () => {
     cy.wait(8000);
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
     fullCheck(ItemRecordView.itemStatuses.awaitingDelivery);
-
+    cy.wait(8000);
     // check out item to user with delivery request
     checkOut(userForDeliveryRequest.username, itemBarcode, ItemRecordView.itemStatuses.checkedOut, CheckOutModals.confirmMultipieceCheckOut);
-
+    cy.wait(8000);
     // check in item at service point assigned to its effective location
     cy.visit(TopMenu.checkInPath);
     cy.wait(8000);
