@@ -1,4 +1,4 @@
-import { Button, Modal, TextField, HTML, including, MultiColumnListCell } from '../../../../interactors';
+import { Button, Modal, TextField, HTML, including, MultiColumnListRow } from '../../../../interactors';
 
 const selectUserModal = Modal('Select User');
 
@@ -10,8 +10,7 @@ export default {
   },
 
   selectUserFromList:() => {
-    cy.do(selectUserModal.click({ row: 0 }));
-    //cy.do(selectUserModal.find(MultiColumnListCell(userName)).click());
+    cy.do(selectUserModal.find(MultiColumnListRow({ indexRow: 'row-0' })).click());
     cy.expect(selectUserModal.absent());
   }
 };

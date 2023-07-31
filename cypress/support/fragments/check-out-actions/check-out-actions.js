@@ -14,16 +14,19 @@ import {
 } from '../../../../interactors';
 import SelectUser from './selectUser';
 
+const modal = Modal('Confirm multipiece check out');
 const endSessionButton = Button('End session');
 const userPane = PaneContent({ id: 'patron-details-content' });
+const modalForDeliveryRequest = Modal('Route for delivery request');
 
 function addPatron(userName) {
   cy.do(Button({ id:'clickable-find-user' }).click());
   SelectUser.searchUser(userName);
-  SelectUser.selectUserFromList();
+  SelectUser.selectUserFromList(userName);
 }
 
 export default {
+  modal,
   addPatron,
   checkOutUser(userBarcode, otherParameter) {
     return cy.do([
@@ -99,6 +102,16 @@ export default {
     cy.expect(MultiColumnList({ id:'list-items-checked-out' }).find(HTML(including(barcode))).absent());
   },
 
+  confirmMultipieceCheckOut(barcode) {
+    cy.do(modal.find(Button('Check out')).click());
+    cy.expect(MultiColumnList({ id: 'list-items-checked-out' }).find(HTML(including(barcode))).exists());
+  },
+
+  cancelMultipleCheckOutModal:() => {
+    cy.do(modal.find(Button('Cancel')).click());
+    cy.expect(modal.absent());
+  },
+
   openLoanDetails() {
     cy.do(Button({ id: 'available-item-actions-button' }).click());
     cy.do(Button('Loan details').click());
@@ -123,9 +136,13 @@ export default {
 
   checkOutItemWithUserName(userName, itemBarcode) {
     addPatron(userName);
+    cy.intercept('/circulation/loans?*').as('getLoans');
     cy.do(Button({ id: 'clickable-find-patron' }).click());
     cy.expect(KeyValue('Borrower').exists());
+    cy.wait('@getLoans');
+    cy.intercept('/circulation/requests?*').as('getRequests');
     cy.do(TextField({ name: 'item.barcode' }).fillIn(itemBarcode));
+    cy.wait('@getRequests');
     cy.wait(2000);
     cy.do(Button({ id: 'clickable-add-item' }).click());
     // waiters needs for check out item in loop
