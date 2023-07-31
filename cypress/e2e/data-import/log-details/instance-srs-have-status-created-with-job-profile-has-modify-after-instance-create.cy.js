@@ -20,7 +20,6 @@ import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
   let user;
-  let instanceHrid;
   const filePathForUpload = 'marcFileForC386867.mrc';
   const fileName = `C386867 autotestFileName${getRandomPostfix()}`;
   const mappingProfile = {
@@ -68,8 +67,6 @@ describe('ui-data-import', () => {
       NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
       NewFieldMappingProfile.addFieldMappingsForMarc();
       NewFieldMappingProfile.fillModificationSectionWithAdd(mappingProfile.modifications);
-      // TODO need to wait until row will be filled
-      cy.wait(2000);
       NewFieldMappingProfile.addNewFieldInModificationSection();
       NewFieldMappingProfile.fillModificationSectionWithDelete('Delete', '500', 1);
       FieldMappingProfiles.saveProfile();

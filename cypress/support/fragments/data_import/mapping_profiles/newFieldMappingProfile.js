@@ -758,7 +758,7 @@ export default {
     data,
     subaction,
     subfieldInd1,
-    subfieldInd2
+    subfieldData
   }) => {
     cy.do([
       Select({ name:'profile.mappingDetails.marcMappingDetails[0].action' }).choose(action),
@@ -768,11 +768,13 @@ export default {
       TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subfield' }).fillIn(subfield),
       TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].data.text' }).fillIn(data)
     ]);
+    // TODO need to wait until row will be filled
+    cy.wait(2000);
     if (subaction) {
       cy.do([
         Select({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subaction' }).choose(subaction),
-        TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].data.text' }).fillIn(subfieldInd1),
-        TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].subfield' }).fillIn(subfieldInd2),
+        TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].subfield' }).fillIn(subfieldInd1),
+        TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].data.text' }).fillIn(subfieldData)
       ]);
     }
   },
