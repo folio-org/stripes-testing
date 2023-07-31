@@ -267,19 +267,26 @@ describe('inventory', () => {
 
     // declare item lost
     openUser(userName);
+    cy.wait(3000);
     UserLoans.declareLoanLost(itemBarcode);
+    cy.wait(3000);
     ConfirmItemStatusModal.confirmItemStatus();
-    cy.wait(8000);
+    cy.wait(3000);
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    cy.wait(3000);
     fullCheck(ItemRecordView.itemStatuses.declaredLost);
 
     // renew item (through override)
     openUser(userName);
+    cy.wait(3000);
     UserLoans.renewItem(itemBarcode);
+    cy.wait(3000);
     RenewConfirmationModal.confirmRenewOverrideItem();
+    cy.wait(3000);
     OverrideAndRenewModal.confirmOverrideItem();
-    cy.wait(8000);
+    cy.wait(3000);
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    cy.wait(3000);
     fullCheck(ItemRecordView.itemStatuses.checkedOut);
 
     // edit item record so that it has multiple pieces
@@ -302,9 +309,11 @@ describe('inventory', () => {
     cy.wait(8000);
     cy.visit(TopMenu.checkOutPath);
     CheckOutActions.checkOutItemWithUserName(userName, itemBarcode);
+    cy.wait(3000);
     CheckOutModals.cancelMultipleCheckOut();
     cy.wait(8000);
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    cy.wait(3000);
     fullCheck(ItemRecordView.itemStatuses.awaitingDelivery);
     cy.wait(8000);
     // check out item to user with delivery request
@@ -317,6 +326,7 @@ describe('inventory', () => {
     CheckInModals.confirmMultipieceCheckIn();
     cy.wait(8000);
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    cy.wait(3000);
     fullCheck(ItemRecordView.itemStatuses.available);
   });
 });
