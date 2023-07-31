@@ -43,7 +43,7 @@ describe('bulk-edit', () => {
       FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);
     });
 
-    it('C357053 Negative: Verify enable type ahead in location look-up (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404480 Negative: Verify enable type ahead in location look-up (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
       BulkEditSearchPane.uploadFile(validItemBarcodesFileName);
@@ -59,7 +59,7 @@ describe('bulk-edit', () => {
       BulkEditActions.newBulkEdit();
     });
 
-    it('C356787 Verify enable type ahead in location look-up (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404479 Verify enable type ahead in location look-up (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
       BulkEditSearchPane.uploadFile(validItemBarcodesFileName);

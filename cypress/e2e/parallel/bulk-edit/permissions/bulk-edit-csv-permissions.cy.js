@@ -29,7 +29,7 @@ describe('bulk-edit', () => {
       users.deleteViaApi(userWithCsvViewPermission.userId);
     });
 
-    it('C350903 Verify "Bulk Edit: CSV - View" permissions (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404399 Verify "Bulk Edit: CSV - View" permissions (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       cy.login(userWithCsvViewPermission.username, userWithCsvViewPermission.password);
       cy.visit(TopMenu.bulkEditPath);
 
@@ -37,7 +37,7 @@ describe('bulk-edit', () => {
     });
 
     // TODO: think about dragging file without dropping
-    it('C353537 Verify label to the Drag and drop area -- CSV approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C405129 Verify label to the Drag and drop area -- CSV approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       cy.login(userWithCsvPermissions.username, userWithCsvPermissions.password);
       cy.visit(TopMenu.bulkEditPath);
 

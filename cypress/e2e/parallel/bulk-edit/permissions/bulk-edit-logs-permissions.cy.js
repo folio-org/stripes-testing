@@ -25,7 +25,7 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it('C368011 Verify that the "Logs" tab is added (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404406 Verify that the "Logs" tab is added (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.verifyBulkEditPaneItems();
       BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Logs');
       BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');

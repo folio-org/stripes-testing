@@ -48,7 +48,7 @@ describe('Bulk Edit - Logs', () => {
     cy.visit(TopMenu.bulkEditPath);
   });
 
-  it('C375214 Verify generated Logs files for Users CSV -- only valid (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C405496 Verify generated Logs files for Users CSV -- only valid (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     // Upload file with user UUIDs
     BulkEditSearchPane.verifyDragNDropUsersUIIDsArea();
     BulkEditSearchPane.uploadFile(userUUIDsFileName);
@@ -97,7 +97,7 @@ describe('Bulk Edit - Logs', () => {
     Users.verifyFirstNameOnUserDetailsPane(newName);
   });
 
-  it('C375217 Verify generated Logs files for Users CSV (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C405499 Verify generated Logs files for Users CSV (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
     BulkEditSearchPane.uploadFile(userUUIDsFileName);
     BulkEditSearchPane.waitLoading();

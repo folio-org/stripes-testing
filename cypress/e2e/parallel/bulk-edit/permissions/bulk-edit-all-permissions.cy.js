@@ -29,7 +29,7 @@ describe('bulk-edit', () => {
       users.deleteViaApi(user.userId);
     });
 
-    it('C360090 Verify switching between Inventory record types radio buttons (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404516 Verify switching between Inventory record types radio buttons (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.checkHoldingsRadio();
       BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
       BulkEditSearchPane.verifyInputLabel('Drag and drop or choose file with holdings UUIDs');
