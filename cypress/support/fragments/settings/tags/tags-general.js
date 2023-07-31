@@ -15,16 +15,16 @@ export default {
   },
 
   changeEnableTagsStatus(status) {
-    cy.get('input[id="tags_enabled"]')
+    cy.get('input[name="tags_enabled"]')
       .invoke('is', ':checked')
       .then((checked) => {
         if (!checked && status === 'enable') {
-          cy.expect(Checkbox({ id: 'tags_enabled', disabled: false }).exists());
+          cy.expect(Checkbox({ name: 'tags_enabled', disabled: false }).exists());
           cy.do(enableTagsCheckbox.click());
           cy.do(saveButton.click());
           InteractorsTools.checkCalloutMessage(successCalloutMessage);
         } else if (checked && status === 'disable') {
-          cy.expect(Checkbox({ id: 'tags_enabled', disabled: false }).exists());
+          cy.expect(Checkbox({ name: 'tags_enabled', disabled: false }).exists());
           cy.do(enableTagsCheckbox.click());
           cy.do(saveButton.click());
           InteractorsTools.checkCalloutMessage(successCalloutMessage);

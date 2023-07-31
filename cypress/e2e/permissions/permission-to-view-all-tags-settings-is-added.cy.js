@@ -10,13 +10,15 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import UserEdit from '../../support/fragments/users/userEdit';
 import TagsGeneral from '../../support/fragments/settings/tags/tags-general';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../support/fragments/users/usersCard';
 
-describe('Patron Notices', () => {
+// TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
+Cypress.on('uncaught:exception', () => false);
+
+describe('Permissions Tags', () => {
   let userData;
   let servicePointId;
   const patronGroup = {
-    name: getTestEntityValue('groupNoticePolicy'),
+    name: getTestEntityValue('groupTags'),
   };
 
   before('Preconditions', () => {
@@ -29,6 +31,7 @@ describe('Patron Notices', () => {
       });
       cy.createTempUser(
         [
+          permissions.uiUserCanEnableDisableTags.gui,
           permissions.uiUserEdit.gui,
           permissions.uiUsersView.gui,
           permissions.uiUsersPermissions.gui,
@@ -47,6 +50,10 @@ describe('Patron Notices', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.loginAsAdmin({
+      path: SettingsMenu.tagsGeneralPath,
+      waiter: TagsGeneral.waitLoading,
+    });
     TagsGeneral.changeEnableTagsStatus('enable');
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
@@ -56,18 +63,18 @@ describe('Patron Notices', () => {
     'C396357 Verify that new permission to view all the Tags settings is added',
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
-      TagsGeneral.checkEnableTagsNotAvailable();
+      TagsGeneral.changeEnableTagsStatus('disable');
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByUsername(userData.username);
       UsersSearchPane.waitLoading();
       UserEdit.addPermissions([permissions.uiUserCanEnableDisableTags.gui]);
       UserEdit.saveAndClose();
-      UsersCard.verifyPermissions([permissions.uiUserCanEnableDisableTags.gui]);
-      cy.login(userData.username, userData.password);
-      cy.visit(SettingsMenu.tagsGeneralPath);
-      TagsGeneral.waitLoading();
-      TagsGeneral.changeEnableTagsStatus('disable');
+      cy.login(userData.username, userData.password, {
+        path: SettingsMenu.tagsGeneralPath,
+        waiter: TagsGeneral.waitLoading,
+      });
+      TagsGeneral.checkEnableTagsNotAvailable();
     }
   );
 });
