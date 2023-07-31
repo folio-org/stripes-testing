@@ -13,6 +13,7 @@ import {
 } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
+import section from '../../../../interactors/section';
 
 const loanDetailsButton = Button('Loan details');
 const patronDetailsButton = Button('Patron details');
@@ -27,7 +28,7 @@ const addItemButton = Button({ id: 'clickable-add-item' });
 const availableActionsButton = Button({ id: 'available-actions-button-0' });
 const confirmModal = Modal('Confirm multipiece check in');
 const checkInButtonInModal = confirmModal.find(Button('Check in'));
-const endSessionButton = Button('End session');
+const endSessionButton = Button({ id: 'clickable-end-session' });
 const feeFineDetailsButton = Button('Fee/fine details');
 const feeFinePane = PaneContent({ id: 'pane-account-action-history-content' });
 const pieces = TextField({ id:'additem_numberofpieces' });
@@ -36,6 +37,7 @@ const numberOfMissingPieces = TextField({ name:'numberOfMissingPieces' });
 const descriptionOfmissingPieces = TextField({ name:'missingPieces' });
 const actionsButton = Button('Actions');
 const editButton = Button('Edit');
+const closeButton = Button({ icon: 'times' });
 const actionsButtons = {
   loanDetails: loanDetailsButton,
   patronDetails: patronDetailsButton,
@@ -62,7 +64,9 @@ export default {
     cy.expect(itemBarcodeField.exists());
     cy.expect(Button('End session').exists());
   },
-
+  clickonitem() {
+    cy.do(closeButton.click());
+  },
   editItemDetails: (pieces, missingPieces, missingPiecesDescription) => {
     cy.do([
       actionsButton.click(),
@@ -76,7 +80,10 @@ export default {
       Button('Save & close').click(),
     ]);
   },
-
+  endSession() {
+    cy.do(endSessionButton.click());
+    // cy.expect(section('No items have been entered yet.').exists())
+  },
   checkInItem:(barcode) => {
     waitLoading();
     cy.intercept('/inventory/items?*').as('getItems');
@@ -85,7 +92,10 @@ export default {
     cy.wait('@getItems', getLongDelay());
     cy.wait(1000);
   },
-
+  verifyCheckIn() {
+    cy.expect(checkInButtonInModal.exists());
+    cy.do(checkInButtonInModal.click());
+  },
   checkInItemGui,
   getSessionIdAfterCheckInItem:(barcode) => {
     cy.intercept('/inventory/items?*').as('getItems');
@@ -146,7 +156,8 @@ export default {
       Button('Actions').click(),
       Button('Edit').click(),
       pieces.fillIn(itemAnumberOfPieces),
-      Button('Save & close').click()
+      Button('Save & close').click(),
+
     ]);
   },
 
