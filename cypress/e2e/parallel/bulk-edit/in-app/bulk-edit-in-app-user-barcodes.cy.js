@@ -35,7 +35,7 @@ describe('bulk-edit', () => {
       cy.visit(TopMenu.bulkEditPath);
     });
 
-    it('C359248 Verify "Email" option in bulk edit (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404432 Verify "Email" option in bulk edit (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
 
       BulkEditSearchPane.uploadFile(userBarcodesFileName);
@@ -46,7 +46,7 @@ describe('bulk-edit', () => {
       BulkEditActions.verifyBulkEditForm();
     });
 
-    it('C359592 Verify updating Email in Bulk edit (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+    it('C404433 Verify updating Email in Bulk edit (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
 
       BulkEditSearchPane.uploadFile(userBarcodesFileName);
@@ -68,7 +68,7 @@ describe('bulk-edit', () => {
       UsersCard.verifyEmail(`test@${newEmailDomain}`);
     });
 
-    it('C359606 Negative -- Verify bulk edit Users emails (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+    it('C404434 Negative -- Verify bulk edit Users emails (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
 
       BulkEditSearchPane.uploadFile(userBarcodesFileName);

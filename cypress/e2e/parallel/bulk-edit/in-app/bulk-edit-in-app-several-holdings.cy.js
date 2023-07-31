@@ -83,7 +83,7 @@ describe('bulk-edit', { retries: 2 }, () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it('C365126 Verify confirmation page after bulk editing holdings locations (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404522 Verify confirmation page after bulk editing holdings locations (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
       BulkEditSearchPane.waitFileUploading();
       BulkEditSearchPane.verifyMatchedResults(item.hrid, item2.hrid);

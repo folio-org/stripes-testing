@@ -30,7 +30,7 @@ describe('bulk-edit', { retries: 1 }, () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it('C368013 Verify that the user with "Bulk edit - Can view logs" permission can access to the logs (firebird)', { tags: [testTypes.smoke, devTeams.firebird], retries: 1 }, () => {
+    it('C405495 Verify that the user with "Bulk edit - Can view logs" permission can access to the logs (firebird)', { tags: [testTypes.smoke, devTeams.firebird], retries: 1 }, () => {
       BulkEditSearchPane.verifyBulkEditPaneItems();
       BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
 

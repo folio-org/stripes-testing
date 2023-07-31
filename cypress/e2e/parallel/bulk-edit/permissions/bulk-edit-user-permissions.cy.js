@@ -26,7 +26,7 @@ describe('bulk-edit', () => {
       users.deleteViaApi(userWthViewEditPermissions.userId);
     });
 
-    it('C350765 Verify BULK EDIT permissions list (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C404398 Verify BULK EDIT permissions list (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       const permissionsToVerify = [
         permissions.bulkEditCsvView.gui,
         permissions.bulkEditCsvEdit.gui,
