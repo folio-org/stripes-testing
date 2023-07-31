@@ -727,9 +727,10 @@ export default {
     cy.get(`input[name="records[${rowIndex}].tag"`).type(newTagName);
   },
 
-  checkEmptyFieldAdded(rowIndex, defaultContent) {
+  checkEmptyFieldAdded(rowIndex, defaultContent = '$a') {
     cy.expect([
       QuickMarcEditorRow({ index: rowIndex }).find(quickMarcEditorRowContent).exists(),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: including('.tag') })).has({ textContent: '' }),
       QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ ariaLabel: 'Subfield' })).has({ textContent: defaultContent })
     ]);
   },

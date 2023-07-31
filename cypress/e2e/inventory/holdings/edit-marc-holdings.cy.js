@@ -25,7 +25,6 @@ describe('MARC -> MARC Holdings', () => {
     numOfRecords: 1,
   };
 
-  let user;
   const recordIDs = [];
 
   before('Creating user, data', () => {
@@ -34,7 +33,7 @@ describe('MARC -> MARC Holdings', () => {
       Permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
       Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
     ]).then(createdUserProperties => {
-      user = createdUserProperties;
+      testData.createdUserProperties = createdUserProperties;
 
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         DataImport.uploadFile(marcFile.marc, marcFile.fileName);
@@ -59,13 +58,13 @@ describe('MARC -> MARC Holdings', () => {
             });
           });
         });
-        cy.login(user.username, user.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+        cy.login(createdUserProperties.username, createdUserProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
       });
     });
   });
 
   after('Deleting created user, data', () => {
-    Users.deleteViaApi(user.userId);
+    Users.deleteViaApi(testData.createdUserProperties.userId);
     cy.deleteHoldingRecordViaApi(recordIDs[1]);
     InventoryInstance.deleteInstanceViaApi(recordIDs[0]);
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
@@ -86,7 +85,7 @@ describe('MARC -> MARC Holdings', () => {
     InventoryInstance.openHoldingView();
     HoldingsRecordView.editInQuickMarc();
     QuickMarcEditor.addEmptyFields(5);
-    QuickMarcEditor.checkEmptyFieldAdded(6, '$a ');
+    QuickMarcEditor.checkEmptyFieldAdded(6);
     QuickMarcEditor.updateExistingField('', testData.tag001value);
     QuickMarcEditor.updateTagNameToLockedTag(6, '001');
     QuickMarcEditor.checkFourthBoxDisabled(6);
