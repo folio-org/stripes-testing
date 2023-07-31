@@ -89,6 +89,7 @@ describe('ui-data-import', () => {
   it('C345423 Verify the possibility to modify MARC Bibliographic record (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
     DataImport.verifyUploadState();
+    cy.reload();
     // upload a marc file for creating of the new instance, holding and item
     DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
@@ -101,18 +102,18 @@ describe('ui-data-import', () => {
       FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
     });
 
-    // get Instance HRID through API
-    InventorySearchAndFilter.getInstanceHRID()
-      .then(hrId => {
-        instanceHRID = hrId[0];
+    // open Instance to get hrid
+    FileDetails.openInstanceInInventory('Created');
+    InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+      instanceHRID = initialInstanceHrId;
 
-        // download .csv file
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchInstanceByHRID(hrId[0]);
-        InventorySearchAndFilter.saveUUIDs();
-        ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
-        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-      });
+      // download .csv file
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
+      InventorySearchAndFilter.saveUUIDs();
+      ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    });
     // download exported marc file
     cy.visit(TopMenu.dataExportPath);
     ExportFile.uploadFile(nameForCSVFile);
@@ -148,6 +149,7 @@ describe('ui-data-import', () => {
     cy.visit(TopMenu.dataImportPath);
     // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
     DataImport.verifyUploadState();
+    cy.reload();
     DataImport.uploadFile(nameMarcFileForUpload);
     JobProfiles.searchJobProfileForImport(jobProfile.profileName);
     JobProfiles.runImportFile();

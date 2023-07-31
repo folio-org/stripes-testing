@@ -121,6 +121,7 @@ describe('ui-data-import', () => {
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
+      cy.reload();
       // upload a marc file for creating of the new instance
       DataImport.uploadFile('marcFileForC358138.mrc', fileForCreateFirstName);
       JobProfiles.searchJobProfileForImport(jobProfileToRun);
@@ -135,11 +136,11 @@ describe('ui-data-import', () => {
       FileDetails.checkSrsRecordQuantityInSummaryTable('1');
       FileDetails.checkInstanceQuantityInSummaryTable('1');
 
-      // get Instance HRID through API for delete instance
-      InventorySearchAndFilter.getInstanceHRID()
-        .then(hrId => {
-          firstInstanceHrid = hrId[0];
-        });
+      // open Instance for getting hrid
+      FileDetails.openInstanceInInventory('Created');
+      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        firstInstanceHrid = initialInstanceHrId;
+      });
 
       FileDetails.openInstanceInInventory('Created');
       InventoryInstance.verifyResourceIdentifier(resourceIdentifierForFirstInstance.type, resourceIdentifierForFirstInstance.value, 2);
@@ -175,6 +176,7 @@ describe('ui-data-import', () => {
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
+      cy.reload();
       DataImport.uploadFile('marcFileForC358138_rev.mrc', fileForUpdateFirstName);
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
@@ -198,6 +200,7 @@ describe('ui-data-import', () => {
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
+      cy.reload();
       DataImport.uploadFile('marcFileForC358138_with_035.mrc', fileForCreateSecondName);
       JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();
@@ -211,11 +214,11 @@ describe('ui-data-import', () => {
       FileDetails.checkSrsRecordQuantityInSummaryTable('1');
       FileDetails.checkInstanceQuantityInSummaryTable('1');
 
-      // get Instance HRID through API for delete instance
-      InventorySearchAndFilter.getInstanceHRID()
-        .then(hrId => {
-          secondInstanceHrid = hrId[0];
-        });
+      // open Instance for getting hrid
+      FileDetails.openInstanceInInventory('Created');
+      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        secondInstanceHrid = initialInstanceHrId;
+      });
 
       FileDetails.openInstanceInInventory('Created');
       InventoryInstance.verifyResourceIdentifier(resourceIdentifierForSecondInstance.type, resourceIdentifierForSecondInstance.value, 3);
@@ -227,6 +230,7 @@ describe('ui-data-import', () => {
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
+      cy.reload();
       DataImport.uploadFile('marcFileForC358138_with_035_rev.mrc', fileForUpdateSecondName);
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
