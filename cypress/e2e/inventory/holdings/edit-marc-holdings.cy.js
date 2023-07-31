@@ -20,7 +20,7 @@ describe('MARC -> MARC Holdings', () => {
 
   const marcFile = {
     marc: 'marcBibFileC387461.mrc',
-    fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+    fileName: `testMarcFile.C387461.${getRandomPostfix()}.mrc`,
     jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
     numOfRecords: 1,
   };
@@ -93,6 +93,6 @@ describe('MARC -> MARC Holdings', () => {
     QuickMarcEditor.checkAfterSaveHoldings();
     HoldingsRecordView.editInQuickMarc();
     QuickMarcEditor.checkReadOnlyTags();
-    QuickMarcEditor.verifyNoFieldWithContent('100', testData.tag001value);
+    QuickMarcEditor.verifyNoFieldWithContent(testData.tag001value);
   });
 });
