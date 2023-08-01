@@ -225,13 +225,10 @@ export default {
   settingsDataImportCanViewOnly:{ internal:'ui-data-import.settings.readOnly', gui:'Settings (Data import): Can view only' },
   settingsTenantViewLocation:{ internal:'ui - tenant - settings.settings.location.view', gui:'Settings (Tenant): View locations' },
   settingsUsersCRUD: { internal: 'ui-users.settings.transfers.all', gui: 'Settings (Users): Can create, edit and remove transfer accounts' },
-  // Tried to add below permissions based on testcase requirements
-  settingseHoldingsView: { internal: 'ui-eHoldings.settings.all', gui: 'Settings (eHoldings): Can view, edit, create and delete eHoldings' },
-  settingseHoldings: { internal: 'ui-eHoldings.settings', gui: 'Settings (eHoldings): Can view, edit, create and delete settings' },
-  settingseHoldingsCustomLabel:{ internal: 'ui-custom-labels.settings.all', gui: 'Settings (custom labels): Can view, edit, create and delete custom labels' },
-  uieHoldingsItemCreate:{ internal: 'ui-eholdings.item.create', gui: 'eHoldings: Can create a custom label' },
-  uieHoldingsItemView: { internal: 'ui-eholdings.item.view', gui: 'eHoldings: Can view a custom label' },
-  uieHoldingsItemEdit:{ internal: 'ui-eholdings.item.edit', gui: 'eHoldings: Can edit a custom label' },
+  // Added the below permissions for custom label creation
+
+  uiSettingseholdingsViewEditCreateDelete:{ internal: 'ui-eholdings.settings.all', gui: 'Settings (eholdings): Can create, edit, view, and delete custom labels' },
+
   // Timers
   okapiTimersPatch: { internal: 'okapi.proxy.self.timers.patch', gui: 'Okapi - patch timer for current tenant' },
   // Export manager
