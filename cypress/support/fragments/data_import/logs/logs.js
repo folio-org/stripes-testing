@@ -50,7 +50,11 @@ export default {
   },
 
   checkStatusOfJobProfile:(status = 'Completed') => cy.do(MultiColumnListCell({ row: 0, content: status }).exists()),
-  openFileDetails:(fileName) => cy.do(Link(fileName).click()),
+  openFileDetails:(fileName) => {
+    cy.do(Link(fileName).click());
+    // TODO need to wait until page is uploaded
+    cy.wait(3500);
+  },
   checkQuantityRecordsInFile:(quantityRecords) => cy.do(MultiColumnListCell({ row: 0, content: quantityRecords }).exists()),
 
   clickOnHotLink: (row = 0, columnIndex = 3, status = 'Created') => {
