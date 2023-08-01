@@ -563,7 +563,7 @@ export default {
       Select({ name:'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).focus(),
       Select({ name:'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).choose(actions.addTheseToExisting),
       Button('Add electronic access').click(),
-      TextField('Relationship').fillIn(`"${relationship}"`),
+      TextField('Relationship').fillIn(relationship),
       TextField('URI').fillIn(uri),
       TextField('Link text').fillIn(linkText),
       TextField('Materials specified').fillIn(materialsSpecified),
@@ -640,6 +640,10 @@ export default {
     cy.do(TextField('Call number type').fillIn(type));
     waitLoading();
   },
+
+  fillCallNumberPrefix:(prefix) => { cy.do(TextField('Call number prefix').fillIn(prefix)); },
+
+  fillcallNumberSuffix:(prefix) => { cy.do(TextField('Call number suffix').fillIn(prefix)); },
 
   fillStatus:(itemStatus) => {
     cy.do(TextField('Status').fillIn(`"${itemStatus}"`));
