@@ -35,9 +35,10 @@ describe('eHoldings -> Package', () => {
     EHoldingsPackages.createCustomPackage(testData.customPackageName);
     EHoldingsPackageView.waitLoading();
     EHoldingsPackageView.verifyPackageName(testData.customPackageName);
+    EHoldingsPackageView.verifyPackageType('Custom');
     EHoldingsPackageView.close();
     // wait for package to be available for search
-    cy.wait(5000);
+    cy.wait(15000);
     EHoldingsPackagesSearch.byName(testData.customPackageName);
     EHoldingsPackages.checkPackageInResults(testData.customPackageName);
   });

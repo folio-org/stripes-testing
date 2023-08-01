@@ -1,4 +1,4 @@
-import { Button, HTML, Pane, Section, including } from '../../../../interactors';
+import { Button, HTML, Pane, Section, KeyValue, including } from '../../../../interactors';
 import eHoldingsPackages from './eHoldingsPackages';
 
 export default {
@@ -19,5 +19,9 @@ export default {
       Pane({ title: packageName }).exists(),
       HTML(packageName, { className: including('headline') }).exists()
     ]);
+  },
+
+  verifyPackageType(packageType) {
+    cy.expect(KeyValue('Package type').has({ value: packageType }));
   }
 };
