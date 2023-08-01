@@ -90,6 +90,7 @@ describe('ui-data-import', () => {
     cy.visit(TopMenu.dataImportPath);
     // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
     DataImport.verifyUploadState();
+    cy.reload();
     DataImport.uploadFile('oneMarcBib.mrc', marcFileForCreate);
     JobProfiles.searchJobProfileForImport(jobProfile.profileName);
     JobProfiles.runImportFile();
@@ -104,18 +105,18 @@ describe('ui-data-import', () => {
     FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
     FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems);
 
-    // get Instance HRID through API
-    InventorySearchAndFilter.getInstanceHRID()
-      .then(hrId => {
-        instanceHrid = hrId[0];
+    // open Instance for getting hrid
+    FileDetails.openInstanceInInventory('Created');
+    InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+      instanceHrid = initialInstanceHrId;
 
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-        InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndSuppressed();
-        InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);
-        InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
-        InstanceRecordView.verifyStatisticalCode(mappingProfile.statisticalCodeUI);
-        InstanceRecordView.verifyNatureOfContent(mappingProfile.natureOfContent);
-      });
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+      InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndSuppressed();
+      InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);
+      InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
+      InstanceRecordView.verifyStatisticalCode(mappingProfile.statisticalCodeUI);
+      InstanceRecordView.verifyNatureOfContent(mappingProfile.natureOfContent);
+    });
   });
 });

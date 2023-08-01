@@ -49,6 +49,7 @@ describe('ui-data-import', () => {
         Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
+        cy.reload();
         DataImport.uploadFile('marcFileForC358968.mrc', fileName);
         JobProfiles.searchJobProfileForImport(jobProfileToRun);
         JobProfiles.runImportFile();
@@ -62,11 +63,11 @@ describe('ui-data-import', () => {
         FileDetails.checkSrsRecordQuantityInSummaryTable('1');
         FileDetails.checkInstanceQuantityInSummaryTable('1');
 
-        // get Instance HRID through API
-        InventorySearchAndFilter.getInstanceHRID()
-          .then(hrId => {
-            instanceHrid = hrId;
-          });
+        // open Instance for getting hrid
+        FileDetails.openInstanceInInventory('Created');
+        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+          instanceHrid = initialInstanceHrId;
+        });
       });
   });
 
