@@ -1,4 +1,4 @@
-import order from '../../support/a_ideyalabs/orders';
+import order from '../../support/ideyaLabs/orders';
 import orderFragment from '../../support/fragments/orders/orders';
 import orderLines from '../../support/fragments/orders/orderLines';
 import receiving from '../../support/fragments/receiving/receiving';
