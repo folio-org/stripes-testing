@@ -1,5 +1,7 @@
 import { HTML, including, Button, TextField } from '../../../../interactors';
 
+const calloutPackageCreatedText = 'Custom package created.';
+
 export default {
 
   waitLoading:() => {
@@ -11,5 +13,9 @@ export default {
   },
   saveAndClose:() => {
     cy.do(Button('Save & close').click());
+  },
+
+  checkPackageCreatedCallout() {
+    cy.expect(HTML(including(calloutPackageCreatedText)).exists());
   }
 };

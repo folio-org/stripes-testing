@@ -73,5 +73,17 @@ export default {
       cy.wrap([...new Set(initialPackageIds)][0]).as('packageId');
     });
     return cy.get('@packageId');
-  }
+  },
+
+  checkPackageInResults(packageName, rowNumber = 0) {
+    cy.expect(resultSection.find(ListItem({ className: including('list-item-'), index: rowNumber })).has({ h3Value: packageName }));
+  },
+
+  createCustomPackage(packageName) {
+    cy.do(Button('New').click());
+    eHoldingsNewCustomPackage.waitLoading();
+    eHoldingsNewCustomPackage.fillInRequiredProperties(packageName);
+    eHoldingsNewCustomPackage.saveAndClose();
+    eHoldingsNewCustomPackage.checkPackageCreatedCallout();
+  },
 };
