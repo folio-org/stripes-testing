@@ -128,6 +128,7 @@ export default {
     ModalSelectProfile.searchProfileByName(matchProfileName, 'match');
     ModalSelectProfile.selectProfile(matchProfileName, 'match');
     cy.expect(Accordion('Overview').find(HTML(including(matchProfileName))).exists());
+    cy.wait(3000);
     // link action profile to match profile
     cy.get('[id*="type-selector-dropdown-ROOT"]').eq(forMatchesOrder).click();
     cy.do(actionsButton.click());
@@ -143,6 +144,7 @@ export default {
     ModalSelectProfile.searchProfileByName(matchProfileName, 'match');
     ModalSelectProfile.selectProfile(matchProfileName, 'match');
     cy.expect(Accordion('Overview').find(HTML(including(matchProfileName))).exists());
+    cy.wait(3000);
     // link action profile to match profile
     cy.get('[id*="type-selector-dropdown-ROOT"]').eq(buttonIndex).click();
     cy.do(actionsButton.click());
@@ -158,6 +160,7 @@ export default {
     ModalSelectProfile.searchProfileByName(matchProfileName, 'match');
     ModalSelectProfile.selectProfile(matchProfileName, 'match');
     cy.expect(Accordion('Overview').find(HTML(including(matchProfileName))).exists());
+    cy.wait(3000);
     // link action profile to match profile
     cy.get('[id*="type-selector-dropdown-ROOT"]').eq(buttonIndex).click();
     cy.do(actionsButton.click());
@@ -173,6 +176,7 @@ export default {
     ModalSelectProfile.searchProfileByName(matchProfileName, 'match');
     ModalSelectProfile.selectProfile(matchProfileName, 'match');
     cy.expect(Accordion('Overview').find(HTML(including(matchProfileName))).exists());
+    cy.wait(3000);
     // link action profile to match profile
     cy.get('[id*="type-selector-dropdown-ROOT"]').eq(buttonIndex).click();
     cy.do(actionsButton.click());
