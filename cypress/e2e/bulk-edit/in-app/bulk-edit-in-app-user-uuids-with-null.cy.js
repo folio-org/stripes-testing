@@ -21,7 +21,7 @@ describe('bulk-edit', () => {
         permissions.bulkEditUpdateRecords.gui,
         permissions.uiUsersView.gui,
         permissions.uiUserEdit.gui,
-      ])
+      ], 'staff')
         .then(userProperties => {
           user = userProperties;
           FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, user.userId);
