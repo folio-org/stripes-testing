@@ -137,54 +137,6 @@ export default {
     cy.expect(Accordion('Overview').find(HTML(including(actionProfileName))).exists());
   },
 
-  linkMatchAndActionProfilesForInstance(actionProfileName, matchProfileName, buttonIndex = 0) {
-    // link match profile to job profile
-    cy.get('[id="type-selector-dropdown-linker-root"]').click();
-    cy.do(matchButton.click());
-    ModalSelectProfile.searchProfileByName(matchProfileName, 'match');
-    ModalSelectProfile.selectProfile(matchProfileName, 'match');
-    cy.expect(Accordion('Overview').find(HTML(including(matchProfileName))).exists());
-    cy.wait(3000);
-    // link action profile to match profile
-    cy.get('[id*="type-selector-dropdown-ROOT"]').eq(buttonIndex).click();
-    cy.do(actionsButton.click());
-    ModalSelectProfile.searchProfileByName(actionProfileName);
-    ModalSelectProfile.selectProfile(actionProfileName);
-    cy.expect(Accordion('Overview').find(HTML(including(actionProfileName))).exists());
-  },
-
-  linkMatchAndActionProfilesForHoldings(actionProfileName, matchProfileName, buttonIndex = 2) {
-    // link match profile to job profile
-    cy.get('[id="type-selector-dropdown-linker-root"]').click();
-    cy.do(matchButton.click());
-    ModalSelectProfile.searchProfileByName(matchProfileName, 'match');
-    ModalSelectProfile.selectProfile(matchProfileName, 'match');
-    cy.expect(Accordion('Overview').find(HTML(including(matchProfileName))).exists());
-    cy.wait(3000);
-    // link action profile to match profile
-    cy.get('[id*="type-selector-dropdown-ROOT"]').eq(buttonIndex).click();
-    cy.do(actionsButton.click());
-    ModalSelectProfile.searchProfileByName(actionProfileName);
-    ModalSelectProfile.selectProfile(actionProfileName);
-    cy.expect(Accordion('Overview').find(HTML(including(actionProfileName))).exists());
-  },
-
-  linkMatchAndActionProfilesForItem(actionProfileName, matchProfileName, buttonIndex = 4) {
-    // link match profile to job profile
-    cy.get('[id="type-selector-dropdown-linker-root"]').click();
-    cy.do(matchButton.click());
-    ModalSelectProfile.searchProfileByName(matchProfileName, 'match');
-    ModalSelectProfile.selectProfile(matchProfileName, 'match');
-    cy.expect(Accordion('Overview').find(HTML(including(matchProfileName))).exists());
-    cy.wait(3000);
-    // link action profile to match profile
-    cy.get('[id*="type-selector-dropdown-ROOT"]').eq(buttonIndex).click();
-    cy.do(actionsButton.click());
-    ModalSelectProfile.searchProfileByName(actionProfileName);
-    ModalSelectProfile.selectProfile(actionProfileName);
-    cy.expect(Accordion('Overview').find(HTML(including(actionProfileName))).exists());
-  },
-
   linkMatchAndTwoActionProfiles(matchProfileName, firstActionProfileName, secondActionProfileName, forMatchesOrder = 0) {
     // link match profile to job profile
     cy.get('[id="type-selector-dropdown-linker-root"]').click();

@@ -54,7 +54,7 @@ function fillIncomingRecordFields(value = '', selector) {
 function fillName(profileName) {
   cy.do(TextField('Name*').fillIn(profileName));
   // wait for data to be loaded
-  cy.wait(15000);
+  cy.wait(10000);
 }
 
 function selectExistingRecordType(existingRecordType) {

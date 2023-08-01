@@ -247,7 +247,7 @@ describe('ui-data-import', () => {
   const checkReceivedPiece = (number, title) => {
     cy.visit(TopMenu.ordersPath);
     Orders.resetFilters();
-    Orders.searchByParameter('PO number', number);
+    Orders.searchByParameter('PO number', `${number}-1`);
     Orders.selectFromResultsList(number);
     OrderView.openPolDetails(title);
     OrderLines.openReceiving();
@@ -334,9 +334,9 @@ describe('ui-data-import', () => {
       // create job profile
       cy.visit(SettingsMenu.jobProfilePath);
       JobProfiles.createJobProfileWithLinkingProfilesForUpdate(specialJobProfile);
-      NewJobProfile.linkMatchAndActionProfilesForInstance(collectionOfProfiles[0].actionProfile.name, collectionOfMatchProfiles[0].matchProfile.profileName, 0);
-      NewJobProfile.linkMatchAndActionProfilesForHoldings(collectionOfProfiles[1].actionProfile.name, collectionOfMatchProfiles[1].matchProfile.profileName, 2);
-      NewJobProfile.linkMatchAndActionProfilesForItem(collectionOfProfiles[2].actionProfile.name, collectionOfMatchProfiles[2].matchProfile.profileName, 4);
+      NewJobProfile.linkMatchAndActionProfiles(collectionOfMatchProfiles[0].matchProfile.profileName, collectionOfProfiles[0].actionProfile.name);
+      NewJobProfile.linkMatchAndActionProfiles(collectionOfMatchProfiles[1].matchProfile.profileName, collectionOfProfiles[1].actionProfile.name, 2);
+      NewJobProfile.linkMatchAndActionProfiles(collectionOfMatchProfiles[2].matchProfile.profileName, collectionOfProfiles[2].actionProfile.name, 4);
       NewJobProfile.saveAndClose();
 
       // upload .mrc file
