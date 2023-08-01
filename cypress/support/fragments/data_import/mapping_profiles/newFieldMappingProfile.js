@@ -563,7 +563,7 @@ export default {
       Select({ name:'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).focus(),
       Select({ name:'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).choose(actions.addTheseToExisting),
       Button('Add electronic access').click(),
-      TextField('Relationship').fillIn(`"${relationship}"`),
+      TextField('Relationship').fillIn(relationship),
       TextField('URI').fillIn(uri),
       TextField('Link text').fillIn(linkText),
       TextField('Materials specified').fillIn(materialsSpecified),
@@ -640,6 +640,10 @@ export default {
     cy.do(TextField('Call number type').fillIn(type));
     waitLoading();
   },
+
+  fillCallNumberPrefix:(prefix) => { cy.do(TextField('Call number prefix').fillIn(prefix)); },
+
+  fillcallNumberSuffix:(prefix) => { cy.do(TextField('Call number suffix').fillIn(prefix)); },
 
   fillStatus:(itemStatus) => {
     cy.do(TextField('Status').fillIn(`"${itemStatus}"`));
@@ -758,7 +762,7 @@ export default {
     data,
     subaction,
     subfieldInd1,
-    subfieldInd2
+    subfieldData
   }) => {
     cy.do([
       Select({ name:'profile.mappingDetails.marcMappingDetails[0].action' }).choose(action),
@@ -768,11 +772,13 @@ export default {
       TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subfield' }).fillIn(subfield),
       TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].data.text' }).fillIn(data)
     ]);
+    // TODO need to wait until row will be filled
+    cy.wait(2000);
     if (subaction) {
       cy.do([
         Select({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subaction' }).choose(subaction),
-        TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].data.text' }).fillIn(subfieldInd1),
-        TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].subfield' }).fillIn(subfieldInd2),
+        TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].subfield' }).fillIn(subfieldInd1),
+        TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].data.text' }).fillIn(subfieldData)
       ]);
     }
   },
