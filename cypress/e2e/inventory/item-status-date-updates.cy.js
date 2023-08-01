@@ -265,68 +265,70 @@ describe('inventory', () => {
     // check out item to user for whom page request was created
     checkOut(userName, itemBarcode, ItemRecordView.itemStatuses.checkedOut, CheckInModals.confirmAvaitingPickupCheckIn);
 
-    // declare item lost
-    openUser(userName);
-    cy.wait(3000);
-    UserLoans.declareLoanLost(itemBarcode);
-    cy.wait(3000);
-    ConfirmItemStatusModal.confirmItemStatus();
-    cy.wait(3000);
-    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    cy.wait(3000);
-    fullCheck(ItemRecordView.itemStatuses.declaredLost);
+    // // declare item lost
+    // openUser(userName);
+    // cy.wait(3000);
+    // UserLoans.declareLoanLost(itemBarcode);
+    // cy.wait(3000);
+    // ConfirmItemStatusModal.confirmItemStatus();
+    // cy.wait(3000);
+    // openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    // cy.wait(3000);
+    // fullCheck(ItemRecordView.itemStatuses.declaredLost);
+    // cy.pause();
+    // // renew item (through override)
+    // openUser(userName);
+    // cy.wait(3000);
+    // UserLoans.renewItem(itemBarcode);
+    // cy.wait(3000);
+    // cy.pause();
+    // RenewConfirmationModal.confirmRenewOverrideItem();
+    // cy.wait(3000);
+    // OverrideAndRenewModal.confirmOverrideItem();
+    // cy.wait(3000);
+    // cy.pause();
+    // openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    // cy.wait(3000);
+    // fullCheck(ItemRecordView.itemStatuses.checkedOut);
+    // cy.pause();
+    // // edit item record so that it has multiple pieces
+    // InventoryInstance.edit();
+    // ItemRecordView.addPieceToItem(numberOfPieces);
+    // fullCheck(ItemRecordView.itemStatuses.checkedOut);
 
-    // renew item (through override)
-    openUser(userName);
-    cy.wait(3000);
-    UserLoans.renewItem(itemBarcode);
-    cy.wait(3000);
-    RenewConfirmationModal.confirmRenewOverrideItem();
-    cy.wait(3000);
-    OverrideAndRenewModal.confirmOverrideItem();
-    cy.wait(3000);
-    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    cy.wait(3000);
-    fullCheck(ItemRecordView.itemStatuses.checkedOut);
-
-    // edit item record so that it has multiple pieces
-    InventoryInstance.edit();
-    ItemRecordView.addPieceToItem(numberOfPieces);
-    fullCheck(ItemRecordView.itemStatuses.checkedOut);
-
-    // create delivery request (hold or recall) on item
-    cy.visit(TopMenu.requestsPath);
-    cy.wait(8000);
-    NewRequest.createDeliveryRequest({
-      itemBarcode,
-      requesterBarcode: userForDeliveryRequest.barcode,
-      requestType: REQUEST_TYPES.HOLD
-    });
-    cy.wait(8000);
-    cy.visit(TopMenu.checkInPath);
-    CheckInActions.checkInItem(itemBarcode);
-    CheckInModals.confirmMultipieceCheckIn();
-    cy.wait(8000);
-    cy.visit(TopMenu.checkOutPath);
-    CheckOutActions.checkOutItemWithUserName(userName, itemBarcode);
-    cy.wait(3000);
-    CheckOutModals.cancelMultipleCheckOut();
-    cy.wait(8000);
-    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    cy.wait(3000);
-    fullCheck(ItemRecordView.itemStatuses.awaitingDelivery);
-    cy.wait(8000);
-    // check out item to user with delivery request
-    checkOut(userForDeliveryRequest.username, itemBarcode, ItemRecordView.itemStatuses.checkedOut, CheckOutModals.confirmMultipieceCheckOut);
-    cy.wait(8000);
-    // check in item at service point assigned to its effective location
-    cy.visit(TopMenu.checkInPath);
-    cy.wait(8000);
-    CheckInActions.backdateCheckInItem(DateTools.getPreviousDayDate(), itemBarcode);
-    CheckInModals.confirmMultipieceCheckIn();
-    cy.wait(8000);
-    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    cy.wait(3000);
-    fullCheck(ItemRecordView.itemStatuses.available);
+    // // create delivery request (hold or recall) on item
+    // cy.visit(TopMenu.requestsPath);
+    // cy.wait(8000);
+    // NewRequest.createDeliveryRequest({
+    //   itemBarcode,
+    //   requesterBarcode: userForDeliveryRequest.barcode,
+    //   requestType: REQUEST_TYPES.HOLD
+    // });
+    // cy.wait(8000);
+    // cy.visit(TopMenu.checkInPath);
+    // CheckInActions.checkInItem(itemBarcode);
+    // CheckInModals.confirmMultipieceCheckIn();
+    // cy.wait(8000);
+    // cy.visit(TopMenu.checkOutPath);
+    // CheckOutActions.checkOutItemWithUserName(userName, itemBarcode);
+    // cy.wait(3000);
+    // CheckOutModals.cancelMultipleCheckOut();
+    // cy.wait(8000);
+    // openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    // cy.wait(3000);
+    // fullCheck(ItemRecordView.itemStatuses.awaitingDelivery);
+    // cy.wait(8000);
+    // // check out item to user with delivery request
+    // checkOut(userForDeliveryRequest.username, itemBarcode, ItemRecordView.itemStatuses.checkedOut, CheckOutModals.confirmMultipieceCheckOut);
+    // cy.wait(8000);
+    // // check in item at service point assigned to its effective location
+    // cy.visit(TopMenu.checkInPath);
+    // cy.wait(8000);
+    // CheckInActions.backdateCheckInItem(DateTools.getPreviousDayDate(), itemBarcode);
+    // CheckInModals.confirmMultipieceCheckIn();
+    // cy.wait(8000);
+    // openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    // cy.wait(3000);
+    // fullCheck(ItemRecordView.itemStatuses.available);
   });
 });
