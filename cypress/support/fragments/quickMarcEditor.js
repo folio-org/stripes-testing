@@ -713,5 +713,18 @@ export default {
     cy.expect(calloutUpdatedRecord.exists());
     cy.do(calloutUpdatedRecord.dismiss());
     cy.expect(calloutUpdatedRecord.absent());
+  },
+
+  confirmUpdateLinkedBibs(linkedRecordsNumber) {
+    cy.do(saveButton.click());
+    cy.expect([
+      Callout(`Record has been updated. ${linkedRecordsNumber} linked bibliographic record(s) updates have begun.`).exists(),
+      rootSection.absent(),
+      viewMarcSection.exists()
+    ]);
+  },
+
+  checkPaneheaderContains(text) {
+    cy.expect(PaneHeader({ text: (including(text)) }).exists());
   }
 };
