@@ -366,7 +366,7 @@ describe('ui-data-import', () => {
     NewFieldMappingProfile.fillPermanentLocation(profile.permanentLocation);
     NewFieldMappingProfile.fillCallNumberType(profile.callNumberType);
     NewFieldMappingProfile.fillCallNumber('050$a " " 050$b');
-    NewFieldMappingProfile.addElectronicAccess('Resource', '856$u');
+    NewFieldMappingProfile.addElectronicAccess('"Resource"', '856$u');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
   };
