@@ -13,7 +13,6 @@ import {
   KeyValue,
   HTML,
   MultiColumnListRow,
-  Spinner
 } from '../../../../interactors';
 
 const searchButton = Button({ type: 'submit' });
