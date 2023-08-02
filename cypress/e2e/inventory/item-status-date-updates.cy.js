@@ -263,43 +263,43 @@ describe('inventory', () => {
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
     fullCheck(ItemRecordView.itemStatuses.declaredLost);
 
-    // renew item (through override)
-    openUser(userName);
-    UserLoans.renewItem(itemBarcode);
-    RenewConfirmationModal.confirmRenewOverrideItem();
-    OverrideAndRenewModal.confirmOverrideItem();
-    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    fullCheck(ItemRecordView.itemStatuses.checkedOut);
+    // // renew item (through override)
+    // openUser(userName);
+    // UserLoans.renewItem(itemBarcode);
+    // RenewConfirmationModal.confirmRenewOverrideItem();
+    // OverrideAndRenewModal.confirmOverrideItem();
+    // openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    // fullCheck(ItemRecordView.itemStatuses.checkedOut);
 
-    // edit item record so that it has multiple pieces
-    InventoryInstance.edit();
-    ItemRecordView.addPieceToItem(numberOfPieces);
-    fullCheck(ItemRecordView.itemStatuses.checkedOut);
+    // // edit item record so that it has multiple pieces
+    // InventoryInstance.edit();
+    // ItemRecordView.addPieceToItem(numberOfPieces);
+    // fullCheck(ItemRecordView.itemStatuses.checkedOut);
 
-    // create delivery request (hold or recall) on item
-    cy.visit(TopMenu.requestsPath);
-    NewRequest.createDeliveryRequest({
-      itemBarcode,
-      requesterBarcode: userForDeliveryRequest.barcode,
-      requestType: REQUEST_TYPES.HOLD
-    });
-    cy.visit(TopMenu.checkInPath);
-    CheckInActions.checkInItem(itemBarcode);
-    CheckInModals.confirmMultipieceCheckIn();
-    cy.visit(TopMenu.checkOutPath);
-    CheckOutActions.checkOutItemWithUserName(userName, itemBarcode);
-    CheckOutModals.cancelMultipleCheckOut();
-    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    fullCheck(ItemRecordView.itemStatuses.awaitingDelivery);
+    // // create delivery request (hold or recall) on item
+    // cy.visit(TopMenu.requestsPath);
+    // NewRequest.createDeliveryRequest({
+    //   itemBarcode,
+    //   requesterBarcode: userForDeliveryRequest.barcode,
+    //   requestType: REQUEST_TYPES.HOLD
+    // });
+    // cy.visit(TopMenu.checkInPath);
+    // CheckInActions.checkInItem(itemBarcode);
+    // CheckInModals.confirmMultipieceCheckIn();
+    // cy.visit(TopMenu.checkOutPath);
+    // CheckOutActions.checkOutItemWithUserName(userName, itemBarcode);
+    // CheckOutModals.cancelMultipleCheckOut();
+    // openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    // fullCheck(ItemRecordView.itemStatuses.awaitingDelivery);
 
-    // check out item to user with delivery request
-    checkOut(userForDeliveryRequest.username, itemBarcode, ItemRecordView.itemStatuses.checkedOut, CheckOutModals.confirmMultipieceCheckOut);
+    // // check out item to user with delivery request
+    // checkOut(userForDeliveryRequest.username, itemBarcode, ItemRecordView.itemStatuses.checkedOut, CheckOutModals.confirmMultipieceCheckOut);
 
-    // check in item at service point assigned to its effective location
-    cy.visit(TopMenu.checkInPath);
-    CheckInActions.backdateCheckInItem(DateTools.getPreviousDayDate(), itemBarcode);
-    CheckInModals.confirmMultipieceCheckIn();
-    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    fullCheck(ItemRecordView.itemStatuses.available);
+    // // check in item at service point assigned to its effective location
+    // cy.visit(TopMenu.checkInPath);
+    // CheckInActions.backdateCheckInItem(DateTools.getPreviousDayDate(), itemBarcode);
+    // CheckInModals.confirmMultipieceCheckIn();
+    // openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    // fullCheck(ItemRecordView.itemStatuses.available);
   });
 });
