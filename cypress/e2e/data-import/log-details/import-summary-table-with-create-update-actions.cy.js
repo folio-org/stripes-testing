@@ -310,7 +310,6 @@ describe('ui-data-import', () => {
       ExportFile.uploadFile(nameForCSVFile);
       ExportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
       ExportFile.downloadExportedMarcFile(exportedFileName);
-      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
 
       // edit marc file to add one record
       DataImport.editMarcFileAddNewRecords(exportedFileName, fileNameWithUpdatedContent, filePathWithUpdatedContent);

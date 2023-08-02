@@ -390,7 +390,6 @@ describe('ui-data-import', () => {
       ExportFile.uploadFile(nameForCSVFile);
       ExportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
       ExportFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
-      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
 
       // create mapping profiles
       cy.visit(SettingsMenu.mappingProfilePath);

@@ -338,8 +338,7 @@ describe('ui-data-import', () => {
     FieldMappingProfiles.deleteFieldMappingProfile(nameInstanceMappingProfile);
     FieldMappingProfiles.deleteFieldMappingProfile(nameHoldingsMappingProfile);
     FieldMappingProfiles.deleteFieldMappingProfile(nameItemMappingProfile);
-    // delete downloads folder and created files in fixtures
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    // delete created files in fixtures
     FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
     FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })

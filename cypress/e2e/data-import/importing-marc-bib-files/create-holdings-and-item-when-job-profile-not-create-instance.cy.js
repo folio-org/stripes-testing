@@ -104,8 +104,7 @@ describe('ui-data-import', () => {
       FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
     });
     Users.deleteViaApi(user.userId);
-    // delete downloads folder and created files in fixtures
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    // delete created files in fixtures
     FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
       .then((instance) => {

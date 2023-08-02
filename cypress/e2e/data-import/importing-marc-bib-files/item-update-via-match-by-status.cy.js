@@ -153,8 +153,7 @@ describe('ui-data-import', () => {
       ActionProfiles.deleteActionProfile(profile.actionProfile.name);
       FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
     });
-    // delete downloads folder and created files in fixtures
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    // delete created files in fixtures
     FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpdate}`);
     FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
   });
