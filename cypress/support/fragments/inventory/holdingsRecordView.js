@@ -116,7 +116,9 @@ export default {
   checkReadOnlyFields:() => {},
   checkHoldingsType: type => cy.expect(KeyValue('Holdings type').has({ value: type })),
   checkCallNumberType: number => cy.expect(KeyValue('Call number type').has({ value: number })),
-  checkCallNumber:callNumber => cy.expect(KeyValue('Call number').has({ value: callNumber })),
+  checkCallNumber: callNumber => cy.expect(KeyValue('Call number').has({ value: callNumber })),
+  checkCallNumberPrefix: prefix => cy.expect(KeyValue('Call number prefix').has({ value: prefix })),
+  checkCallNumberSuffix: prefix => cy.expect(KeyValue('Call number suffix').has({ value: prefix })),
   checkFormerHoldingsId: value => cy.expect(KeyValue('Former holdings ID', { value }).exists()),
   checkIllPolicy: value => cy.expect(KeyValue('ILL policy', { value }).exists()),
   checkDigitizationPolicy: expectedPolicy => cy.expect(KeyValue('Digitization policy', { value: expectedPolicy }).exists()),
@@ -138,12 +140,21 @@ export default {
   checkMarkAsSuppressedFromDiscovery:() => cy.expect(root
     .find(HTML(including('Warning: Holdings is marked suppressed from discovery')))
     .exists()),
-  checkElectronicAccess:(relationshipValue, uriValue) => {
+  checkMarkAsSuppressedFromDiscoveryAbsent: () => cy.expect(root
+    .find(HTML(including('Warning: Holdings is marked suppressed from discovery')))
+    .absent()),
+  checkElectronicAccess:(relationshipValue, uriValue, linkText = 'no value set', urlPublicNote = 'no value set') => {
     cy.expect(electronicAccessAccordion
       .find(MultiColumnListCell({ row: 0, columnIndex: 0, content: relationshipValue }))
       .exists());
     cy.expect(electronicAccessAccordion
       .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: uriValue }))
+      .exists());
+    cy.expect(electronicAccessAccordion
+      .find(MultiColumnListCell({ row: 0, columnIndex: 2, content: linkText }))
+      .exists());
+    cy.expect(electronicAccessAccordion
+      .find(MultiColumnListCell({ row: 0, columnIndex: 4, content: urlPublicNote }))
       .exists());
   },
   checkHoldingRecordViewOpened: () => {

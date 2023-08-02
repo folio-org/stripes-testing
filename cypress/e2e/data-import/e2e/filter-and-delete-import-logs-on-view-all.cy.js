@@ -11,7 +11,6 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import DevTeams from '../../../support/dictionary/devTeams';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import TestTypes from '../../../support/dictionary/testTypes';
-import Helper from '../../../support/fragments/finance/financeHelper';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
@@ -39,7 +38,7 @@ describe('ui-data-import', () => {
         });
         // Log list should contain at least 30-35 import jobs, run by different users, and using different import profiles
         for (let i = 0; i < 25; i++) {
-          const fileName = `oneMarcBib.mrc${Helper.getRandomBarcode()}`;
+          const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;
 
           DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
         }

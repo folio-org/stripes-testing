@@ -77,6 +77,7 @@ export default {
   usersPath: 'settings/users',
   manualCharges: 'settings/users/feefinestable',
   paymentsPath: 'settings/users/payments',
+  refundReasons: 'settings/users/refunds',
   conditionsPath: 'settings/users/conditions',
   limitsPath: 'settings/users/limits',
   waiveReasons: 'settings/users/waivereasons',
@@ -93,4 +94,8 @@ export default {
   // Data export
   exportMappingProfilePath: 'settings/data-export/mapping-profiles',
   exportJobProfilePath: 'settings/data-export/job-profiles',
+  // Organizations
+  organizationCategoryPath: 'settings/organizations/category',
+  // Tags
+  tagsGeneralPath: 'settings/tags/general',
 };

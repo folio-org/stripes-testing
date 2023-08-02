@@ -2,7 +2,6 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
-import Helper from '../../../support/fragments/finance/financeHelper';
 import TopMenu from '../../../support/fragments/topMenu';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import MatchOnVRN from '../../../support/fragments/data_import/matchOnVRN';
@@ -53,15 +52,15 @@ describe('ui-data-import', () => {
   let user = null;
   let orderNumber;
 
-  const instanceMappingProfileName = `C350591 Update Instance by VRN match ${Helper.getRandomBarcode()}`;
-  const holdingsMappingProfileName = `C350591 Update Holdings by VRN match ${Helper.getRandomBarcode()}`;
-  const itemMappingProfileName = `C350591 Update Item by VRN match ${Helper.getRandomBarcode()}`;
-  const instanceActionProfileName = `C350591 Action for Instance ${Helper.getRandomBarcode()}`;
-  const holdingsActionProfileName = `C350591 Action for Holdings ${Helper.getRandomBarcode()}`;
-  const itemActionProfileName = `C350591 Action for Item ${Helper.getRandomBarcode()}`;
-  const instanceMatchProfileName = `C350591 Match for Instance ${Helper.getRandomBarcode()}`;
-  const holdingsMatchProfileName = `C350591 Match for Holdings ${Helper.getRandomBarcode()}`;
-  const itemMatchProfileName = `C350591 Match for Item ${Helper.getRandomBarcode()}`;
+  const instanceMappingProfileName = `C350591 Update Instance by VRN match ${getRandomPostfix()}`;
+  const holdingsMappingProfileName = `C350591 Update Holdings by VRN match ${getRandomPostfix()}`;
+  const itemMappingProfileName = `C350591 Update Item by VRN match ${getRandomPostfix()}`;
+  const instanceActionProfileName = `C350591 Action for Instance ${getRandomPostfix()}`;
+  const holdingsActionProfileName = `C350591 Action for Holdings ${getRandomPostfix()}`;
+  const itemActionProfileName = `C350591 Action for Item ${getRandomPostfix()}`;
+  const instanceMatchProfileName = `C350591 Match for Instance ${getRandomPostfix()}`;
+  const holdingsMatchProfileName = `C350591 Match for Holdings ${getRandomPostfix()}`;
+  const itemMatchProfileName = `C350591 Match for Item ${getRandomPostfix()}`;
   const editedMarcFileName = `marcFileForC350591.${getRandomPostfix()}.mrc`;
 
   const matchProfiles = [
@@ -80,7 +79,7 @@ describe('ui-data-import', () => {
   ];
 
   const jobProfilesData = {
-    name: `C350591 Job profile ${Helper.getRandomBarcode()}`,
+    name: `C350591 Job profile ${getRandomPostfix()}`,
     dataType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     matches: [
       {

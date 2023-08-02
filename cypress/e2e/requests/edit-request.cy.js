@@ -47,7 +47,7 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
   });
 
   it('C556 Request: Edit requests. Make sure that edits are being saved. (vega)',
-    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+    { tags: [TestTypes.smoke, DevTeams.vega] }, () => {
       cy.visit(TopMenu.requestsPath);
       Object.values(EditRequest.requestStatuses).forEach(status => {
         EditRequest.checkIsEditsBeingSaved(requestData, instanceData, status);

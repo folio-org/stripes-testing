@@ -31,7 +31,11 @@ const exportManagerOrganizationsPath = 'export-manager/edi-jobs';
 const customFieldsPath = '/settings/users/custom-fields';
 const notesPath = '/settings/notes/general';
 const permissionSetPath = '/settings/users/perms?layer=add';
+<<<<<<< HEAD
 const customLabel = '/settings/eholdings'
+=======
+const customLabel = '/settings/eholdings';
+>>>>>>> 1d27afae6c0dc1141e384ec1b5e6373f53aa880f
 
 
 export default {

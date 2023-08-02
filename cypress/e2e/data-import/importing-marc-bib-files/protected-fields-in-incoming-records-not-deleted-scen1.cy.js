@@ -62,11 +62,11 @@ describe('ui-data-import', () => {
         FileDetails.checkSrsRecordQuantityInSummaryTable('1');
         FileDetails.checkInstanceQuantityInSummaryTable('1');
 
-        // get Instance HRID through API
-        InventorySearchAndFilter.getInstanceHRID()
-          .then(hrId => {
-            instanceHrid = hrId;
-          });
+        // open Instance for getting hrid
+        FileDetails.openInstanceInInventory('Created');
+        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+          instanceHrid = initialInstanceHrId;
+        });
       });
   });
 

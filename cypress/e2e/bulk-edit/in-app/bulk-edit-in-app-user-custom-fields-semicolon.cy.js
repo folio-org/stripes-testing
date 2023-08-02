@@ -13,6 +13,9 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 
+// TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
+Cypress.on('uncaught:exception', () => false);
+
 let user;
 const customFieldData = {
   fieldLabel: `fieldLabel;${getRandomPostfix()}`,

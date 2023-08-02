@@ -1,12 +1,12 @@
+import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TopMenu from '../../../support/fragments/topMenu';
-import Helper from '../../../support/fragments/finance/financeHelper';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
@@ -16,7 +16,7 @@ describe('ui-data-import', () => {
   let user;
   let instanceHrid;
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-  const fileName = `C353641 autotestFile.${Helper.getRandomBarcode()}.mrc`;
+  const fileName = `C353641 autotestFile.${getRandomPostfix}.mrc`;
 
   before('create test data', () => {
     cy.createTempUser([
@@ -45,8 +45,14 @@ describe('ui-data-import', () => {
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileName);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-      // get Instance HRID through API for delete instance
-      InventorySearchAndFilter.getInstanceHRID().then(hrId => { instanceHrid = hrId[0]; });
+      Logs.openFileDetails(fileName);
+      // open Instance to get hrid
+      FileDetails.openInstanceInInventory('Created');
+      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        instanceHrid = initialInstanceHrId;
+      });
+      cy.go('back');
+
       Logs.verifyCheckboxForMarkingLogsAbsent();
       Logs.actionsButtonClick();
       Logs.verifyDeleteSelectedLogsButtonAbsent();

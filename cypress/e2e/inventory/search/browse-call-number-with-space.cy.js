@@ -24,7 +24,7 @@ describe('Inventory -> Call Number Browse', () => {
     volume: 'v.1',
     enumeration: 'e.2',
     chronology: 'ch.3',
-    shelvingOrderValue: 'PRT 3718 _V 11 E 12 CH 13 C 14 SUF',
+    shelvingOrderValue: 'PRT 718 V.1 E.2 CH.3 C.4 SUF',
   };
 
   const itemA1 = {
@@ -134,7 +134,7 @@ describe('Inventory -> Call Number Browse', () => {
     BrowseCallNumber.checkExactSearchResult(itemA1.itemCallNumber);
   });
 
-  it('C359593 Verify that clicking on "Call number" value execute search for "Instance" record by "Shelving order" value (spitfire)', { tags: [DevTeams.spitfire, TestTypes.criticalPath] }, () => {
+  it('C405529 Verify that clicking on "Call number" value execute search for "Instance" record by "Shelving order" value (spitfire)', { tags: [DevTeams.spitfire, TestTypes.criticalPath] }, () => {
     searchAndOpenInstance(testData.parameter, item.instanceName);
     InventoryInstance.addItem();
     InventoryInstance.fillItemRequiredFields();

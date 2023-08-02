@@ -55,6 +55,21 @@ describe('orders: Receive piece from Order', () => {
           });
         }
       });
+    InventoryInteractionsDefaults
+      .getConfigurationInventoryInteractions({ query: '(module==ORDERS and configName==inventory-loanTypeName)' })
+      .then((body) => {
+        if (body.configs.length !== 0) {
+          const id = body.configs[0].id;
+
+          InventoryInteractionsDefaults.setConfigurationInventoryInteractions({
+            id,
+            module:'ORDERS',
+            configName:'inventory-loanTypeName',
+            enabled:true,
+            value:'Can circulate'
+          });
+        }
+      });
     cy.getMaterialTypes({ query: 'name="book"' })
       .then(materialType => {
         materialTypeId = materialType.id;
@@ -148,6 +163,8 @@ describe('orders: Receive piece from Order', () => {
       InventorySearchAndFilter.instanceTabIsDefault();
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', instanceTitle);
+      // TODO need to wait until result is displayed
+      cy.wait(1500);
       InventoryInstances.selectInstance();
       InventoryInstances.verifyInstanceDetailsView();
       InventoryInstance.openHoldings(effectiveLocation.name);
@@ -164,6 +181,8 @@ describe('orders: Receive piece from Order', () => {
       cy.visit(TopMenu.inventoryPath);
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', instanceTitle);
+      // TODO need to wait until result is displayed
+      cy.wait(1500);
       InventoryInstances.selectInstance();
       InventoryInstances.verifyInstanceDetailsView();
       InventoryInstance.openHoldings(effectiveLocation.name);

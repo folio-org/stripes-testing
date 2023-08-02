@@ -1,3 +1,4 @@
+import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import { FOLIO_RECORD_TYPE,
@@ -5,7 +6,6 @@ import { FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
   JOB_STATUS_NAMES } from '../../../support/constants';
-import Helper from '../../../support/fragments/finance/financeHelper';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -26,33 +26,33 @@ describe('ui-data-import', () => {
   let instanceHrid;
   const quantityOfItems = '1';
   // unique file names
-  const marcFileForCreate = `C17019 oneMarcBib.mrc${Helper.getRandomBarcode()}`;
-  const editedMarcFileName = `C17019 editedMarcFile.${Helper.getRandomBarcode()}.mrc`;
-  const fileNameForUpdate = `C17019 marcFileForUpdate.${Helper.getRandomBarcode()}.mrc`;
+  const marcFileForCreate = `C17019 oneMarcBib.mrc${getRandomPostfix}`;
+  const editedMarcFileName = `C17019 editedMarcFile.${getRandomPostfix}.mrc`;
+  const fileNameForUpdate = `C17019 marcFileForUpdate.${getRandomPostfix}.mrc`;
   // profiles for updating instance
   const instanceMappingProfile = {
-    name: `C17019 autotest instance mapping profile.${Helper.getRandomBarcode()}`,
+    name: `C17019 autotest instance mapping profile.${getRandomPostfix}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
     statisticalCodeUI: 'Book, print (books)',
     instanceStatus: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED
   };
   const marcBibMappingProfile = {
-    name: `C17019 autotest marc bib mapping profile.${Helper.getRandomBarcode()}`,
+    name: `C17019 autotest marc bib mapping profile.${getRandomPostfix}`,
     typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC
   };
   const instanceActionProfile = {
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-    name: `C17019 autotest instance action profile.${Helper.getRandomBarcode()}`,
+    name: `C17019 autotest instance action profile.${getRandomPostfix}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
   const marcBibActionProfile = {
     typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
-    name: `C17019 autotest marc bib action profile.${Helper.getRandomBarcode()}`,
+    name: `C17019 autotest marc bib action profile.${getRandomPostfix}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
   const matchProfile = {
-    profileName: `C17019 autotest match profile.${Helper.getRandomBarcode()}`,
+    profileName: `C17019 autotest match profile.${getRandomPostfix}`,
     incomingRecordFields: {
       field: '001'
     },
@@ -64,7 +64,7 @@ describe('ui-data-import', () => {
   };
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: `C17019 autotest job profile.${Helper.getRandomBarcode()}`,
+    profileName: `C17019 autotest job profile.${getRandomPostfix}`,
     acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 

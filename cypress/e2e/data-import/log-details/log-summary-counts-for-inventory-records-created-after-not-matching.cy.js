@@ -50,7 +50,7 @@ describe('ui-data-import', () => {
         permanentLocationUI: LOCATION_NAMES.ONLINE_UI,
         callNumberType: '852$t',
         callNumber: '852$h',
-        relationship: 'Resource',
+        relationship: '"Resource"',
         uri: '856$u',
         link: '856$y' },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,

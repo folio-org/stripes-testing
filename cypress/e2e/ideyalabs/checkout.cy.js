@@ -1,5 +1,4 @@
 import users from '../../support/a_ideyalabs/users';
-import devTeams from '../../support/dictionary/devTeams';
 import testTypes from '../../support/dictionary/testTypes';
 import topMenu from '../../support/fragments/topMenu';
 import userLoans from '../../support/fragments/users/loans/userLoans';
@@ -38,7 +37,7 @@ describe('Checkout item', () => {
 
   it(
     'C343243 Check out app: Display a pop-up note and Close note',
-    { tags: testTypes.extendedPath },
+    { tags: testTypes.ideaLabsTests },
     () => {
       cy.visit(topMenu.usersPath);
       usersSearchPane.searchByStatus(testData.status);
@@ -52,7 +51,7 @@ describe('Checkout item', () => {
 
   it(
     'C642 Cannot find the patron and item that meet circulation rule criteria (vega)',
-    { tags: [testTypes.extendedPath, devTeams.vega] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(topMenu.checkOutPath);
       users.enterPatronBarcodeCheckOut(testData.patronBarcodeOne);
@@ -65,7 +64,7 @@ describe('Checkout item', () => {
 
   it(
     'C646 Cannot find the patron and item that meet circulation rule criteria (vega)',
-    { tags: [testTypes.extendedPath, devTeams.vega] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(topMenu.checkOutPath);
       users.enterPatronBarcodeCheckOut(testData.patronBarcodeTwo);
@@ -79,7 +78,7 @@ describe('Checkout item', () => {
 
   it(
     'C777 Check out: override non-circulating items (vega)',
-    { tags: [testTypes.criticalPath, devTeams.vega] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(topMenu.checkOutPath);
       users.enterPatronBarcodeCheckOut(testData.patronBarcode);
