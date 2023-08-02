@@ -1,4 +1,4 @@
-import devTeams from '../../../support/dictionary/devTeams';
+import DevTeams from '../../../support/dictionary/devTeams';
 import TestTypes from '../../../support/dictionary/testTypes';
 import Organizations from '../../../support/fragments/organizations/organizations';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -14,7 +14,7 @@ describe('Settings', () => {
 
   it(
     'C731 Create new categories (thunderjet)',
-    { tags: [TestTypes.ideaLabsTests, devTeams.thunderjet] },
+    { tags: [TestTypes.ideaLabsTests, DevTeams.ideaLabsTests] },
     () => {
       cy.visit(SettingsMenu.organizationsPath);
       Organizations.addNewCategory(categoryName);

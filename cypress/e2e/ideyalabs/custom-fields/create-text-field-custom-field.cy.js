@@ -58,7 +58,7 @@ describe('Settings', () => {
 
   it(
     'C15693 Create a text field custom field (volaris)',
-    { tags: [TestTypes.ideaLabsTests, DevTeams.volaris] },
+    { tags: [TestTypes.ideaLabsTests, DevTeams.ideaLabsTests] },
     () => {
       cy.visit(TopMenu.customFieldsPath);
       CustomFields.addCustomTextField(textFieldData);
@@ -71,7 +71,7 @@ describe('Settings', () => {
 
   it(
     'C15694 Create a text area custom field and add help text (volaris)',
-    { tags: [TestTypes.ideaLabsTests, DevTeams.volaris] },
+    { tags: [TestTypes.ideaLabsTests, DevTeams.ideaLabsTests] },
     () => {
       cy.visit(TopMenu.customFieldsPath);
       CustomFields.addCustomTextArea(testAreaData);
@@ -84,7 +84,7 @@ describe('Settings', () => {
 
   it(
     'C15695 Create a checkbox custom field (volaris)',
-    { tags: [TestTypes.ideaLabsTests, DevTeams.volaris] },
+    { tags: [TestTypes.ideaLabsTests, DevTeams.ideaLabsTests] },
     () => {
       cy.visit(TopMenu.customFieldsPath);
       CustomFields.addCustomCheckBox(checkboxData);
@@ -97,7 +97,7 @@ describe('Settings', () => {
 
   it(
     'C15696 Create a radio button custom field (volaris)',
-    { tags: [TestTypes.ideaLabsTests, DevTeams.volaris] },
+    { tags: [TestTypes.ideaLabsTests, DevTeams.ideaLabsTests] },
     () => {
       cy.visit(TopMenu.customFieldsPath);
       CustomFields.addCustomRadioButton(radioButtonData);
@@ -110,7 +110,7 @@ describe('Settings', () => {
 
   it(
     'C15697 Create a single select custom field (volaris)',
-    { tags: [TestTypes.ideaLabsTests, DevTeams.volaris] },
+    { tags: [TestTypes.ideaLabsTests, DevTeams.ideaLabsTests] },
     () => {
       cy.visit(TopMenu.customFieldsPath);
       CustomFields.addCustomSingleSelect(singleSelectData);
@@ -123,7 +123,7 @@ describe('Settings', () => {
 
   it(
     'C15701 Change custom fields order (volaris)',
-    { tags: [TestTypes.ideaLabsTests, DevTeams.volaris] },
+    { tags: [TestTypes.ideaLabsTests, DevTeams.ideaLabsTests] },
     () => {
       cy.visit(TopMenu.customFieldsPath);
       CustomFields.editButton();
