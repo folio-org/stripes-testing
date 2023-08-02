@@ -1,5 +1,5 @@
 import permissions from '../../../support/dictionary/permissions';
-import Helper from '../../../support/fragments/finance/financeHelper';
+import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import { FOLIO_RECORD_TYPE,
@@ -32,13 +32,13 @@ describe('ui-data-import', () => {
   let firstInstanceHrid;
   let secondInstanceHrid;
   // unique file names
-  const fileForCreateFirstName = `C358138 firstAutotestFileForCreate.${Helper.getRandomBarcode()}.mrc`;
-  const fileForCreateSecondName = `C358138 secondAutotestFileForCreate.${Helper.getRandomBarcode()}.mrc`;
-  const fileForUpdateFirstName = `C358138 firstAutotestFileForUpdate.${Helper.getRandomBarcode()}.mrc`;
-  const fileForUpdateSecondName = `C358138 secondAutotestFileForUpdate.${Helper.getRandomBarcode()}.mrc`;
+  const fileForCreateFirstName = `C358138 firstAutotestFileForCreate.${getRandomPostfix}.mrc`;
+  const fileForCreateSecondName = `C358138 secondAutotestFileForCreate.${getRandomPostfix}.mrc`;
+  const fileForUpdateFirstName = `C358138 firstAutotestFileForUpdate.${getRandomPostfix}.mrc`;
+  const fileForUpdateSecondName = `C358138 secondAutotestFileForUpdate.${getRandomPostfix}.mrc`;
 
   const matchProfile = {
-    profileName: `C358138 Match on newly-created 035 ${Helper.getRandomBarcode()}`,
+    profileName: `C358138 Match on newly-created 035 ${getRandomPostfix}`,
     incomingRecordFields: {
       field: '035',
       in1: '*',
@@ -51,18 +51,18 @@ describe('ui-data-import', () => {
   };
 
   const mappingProfile = {
-    name: `C358138 Update instance via 035 ${Helper.getRandomBarcode()}`,
+    name: `C358138 Update instance via 035 ${getRandomPostfix}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE
   };
 
   const actionProfile = {
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-    name: `C358138 Update instance via 035 ${Helper.getRandomBarcode()}`,
+    name: `C358138 Update instance via 035 ${getRandomPostfix}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
 
   const jobProfile = {
-    profileName: `C358138 Update instance via 035 ${Helper.getRandomBarcode()}`,
+    profileName: `C358138 Update instance via 035 ${getRandomPostfix}`,
     acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
@@ -135,11 +135,11 @@ describe('ui-data-import', () => {
       FileDetails.checkSrsRecordQuantityInSummaryTable('1');
       FileDetails.checkInstanceQuantityInSummaryTable('1');
 
-      // get Instance HRID through API for delete instance
-      InventorySearchAndFilter.getInstanceHRID()
-        .then(hrId => {
-          firstInstanceHrid = hrId[0];
-        });
+      // open Instance for getting hrid
+      FileDetails.openInstanceInInventory('Created');
+      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        firstInstanceHrid = initialInstanceHrId;
+      });
 
       FileDetails.openInstanceInInventory('Created');
       InventoryInstance.verifyResourceIdentifier(resourceIdentifierForFirstInstance.type, resourceIdentifierForFirstInstance.value, 2);
@@ -211,11 +211,11 @@ describe('ui-data-import', () => {
       FileDetails.checkSrsRecordQuantityInSummaryTable('1');
       FileDetails.checkInstanceQuantityInSummaryTable('1');
 
-      // get Instance HRID through API for delete instance
-      InventorySearchAndFilter.getInstanceHRID()
-        .then(hrId => {
-          secondInstanceHrid = hrId[0];
-        });
+      // open Instance for getting hrid
+      FileDetails.openInstanceInInventory('Created');
+      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        secondInstanceHrid = initialInstanceHrId;
+      });
 
       FileDetails.openInstanceInInventory('Created');
       InventoryInstance.verifyResourceIdentifier(resourceIdentifierForSecondInstance.type, resourceIdentifierForSecondInstance.value, 3);

@@ -6,7 +6,8 @@ import { FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
   CALL_NUMBER_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
-  JOB_STATUS_NAMES } from '../../../support/constants';
+  JOB_STATUS_NAMES,
+  HOLDINGS_TYPE_NAMES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -48,7 +49,7 @@ describe('ui-data-import', () => {
     name: `C11110 autotest holdings mapping profile.${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
     formerHoldingsId: `autotestFormerHoldingsId.${getRandomPostfix()}`,
-    holdingsType: 'Monograph',
+    holdingsType: HOLDINGS_TYPE_NAMES.MONOGRAPH,
     statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
     statisticalCodeUI: 'Book, print (books)',
     adminNote: `autotestAdminNote.${getRandomPostfix()}`,

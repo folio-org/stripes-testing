@@ -1,5 +1,6 @@
 import uuid from 'uuid';
 import permissions from '../../../support/dictionary/permissions';
+import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import { FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
@@ -8,7 +9,8 @@ import { FOLIO_RECORD_TYPE,
   ORDER_STATUSES,
   ITEM_STATUS_NAMES,
   VENDOR_NAMES,
-  ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../../support/constants';
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  HOLDINGS_TYPE_NAMES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import Orders from '../../../support/fragments/orders/orders';
@@ -64,37 +66,37 @@ describe('ui-data-import', () => {
     quantity: '1',
     price: '20'
   };
-  const editedMarcFileName = `C350590 marcFileForMatchOnPol.${Helper.getRandomBarcode()}.mrc`;
+  const editedMarcFileName = `C350590 marcFileForMatchOnPol.${getRandomPostfix()}.mrc`;
   const collectionOfProfiles = [
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-        name: `C350590 Update Instance by POL match ${Helper.getRandomBarcode()}`,
+        name: `C350590 Update Instance by POL match ${getRandomPostfix()}`,
         update: true },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-        name: `C350590 Update Instance by POL match ${Helper.getRandomBarcode()}`,
+        name: `C350590 Update Instance by POL match ${getRandomPostfix()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `C350590 Update Holdings by POL match ${Helper.getRandomBarcode()}`,
+        name: `C350590 Update Holdings by POL match ${getRandomPostfix()}`,
         update: true },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `C350590 Update Holdings by POL match ${Helper.getRandomBarcode()}`,
+        name: `C350590 Update Holdings by POL match ${getRandomPostfix()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C350590 Update Item by POL match ${Helper.getRandomBarcode()}`,
+        name: `C350590 Update Item by POL match ${getRandomPostfix()}`,
         update: true },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C350590 Update Item by POL match ${Helper.getRandomBarcode()}`,
+        name: `C350590 Update Item by POL match ${getRandomPostfix()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     }
   ];
 
   const collectionOfMatchProfiles = [
     {
-      matchProfile: { profileName: `C350590 935 $a POL to Instance POL ${Helper.getRandomBarcode()}`,
+      matchProfile: { profileName: `C350590 935 $a POL to Instance POL ${getRandomPostfix()}`,
         incomingRecordFields: {
           field: '935',
           subfield:'a'
@@ -104,7 +106,7 @@ describe('ui-data-import', () => {
         instanceOption: NewMatchProfile.optionsList.pol }
     },
     {
-      matchProfile: { profileName: `C350590 935 $a POL to Holdings POL ${Helper.getRandomBarcode()}`,
+      matchProfile: { profileName: `C350590 935 $a POL to Holdings POL ${getRandomPostfix()}`,
         incomingRecordFields: {
           field: '935',
           subfield: 'a'
@@ -115,7 +117,7 @@ describe('ui-data-import', () => {
     },
     {
       matchProfile: {
-        profileName: `C350590 935 $a POL to Item POL ${Helper.getRandomBarcode()}`,
+        profileName: `C350590 935 $a POL to Item POL ${getRandomPostfix()}`,
         incomingRecordFields: {
           field: '935',
           subfield: 'a'
@@ -128,7 +130,7 @@ describe('ui-data-import', () => {
   ];
 
   const specialJobProfile = { ...NewJobProfile.defaultJobProfile,
-    profileName: `C350590 autotestJobProf${Helper.getRandomBarcode()}`,
+    profileName: `C350590 autotestJobProf${getRandomPostfix()}`,
     acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC };
 
   before('create test data', () => {
@@ -246,7 +248,7 @@ describe('ui-data-import', () => {
   const checkReceivedPiece = (number, title) => {
     cy.visit(TopMenu.ordersPath);
     Orders.resetFilters();
-    Orders.searchByParameter('PO number', number);
+    Orders.searchByParameter('PO number', `${number}-1`);
     Orders.selectFromResultsList(number);
     OrderView.openPolDetails(title);
     OrderLines.openReceiving();
@@ -333,9 +335,9 @@ describe('ui-data-import', () => {
       // create job profile
       cy.visit(SettingsMenu.jobProfilePath);
       JobProfiles.createJobProfileWithLinkingProfilesForUpdate(specialJobProfile);
-      NewJobProfile.linkMatchAndActionProfilesForInstance(collectionOfProfiles[0].actionProfile.name, collectionOfMatchProfiles[0].matchProfile.profileName, 0);
-      NewJobProfile.linkMatchAndActionProfilesForHoldings(collectionOfProfiles[1].actionProfile.name, collectionOfMatchProfiles[1].matchProfile.profileName, 2);
-      NewJobProfile.linkMatchAndActionProfilesForItem(collectionOfProfiles[2].actionProfile.name, collectionOfMatchProfiles[2].matchProfile.profileName, 4);
+      NewJobProfile.linkMatchAndActionProfiles(collectionOfMatchProfiles[0].matchProfile.profileName, collectionOfProfiles[0].actionProfile.name);
+      NewJobProfile.linkMatchAndActionProfiles(collectionOfMatchProfiles[1].matchProfile.profileName, collectionOfProfiles[1].actionProfile.name, 2);
+      NewJobProfile.linkMatchAndActionProfiles(collectionOfMatchProfiles[2].matchProfile.profileName, collectionOfProfiles[2].actionProfile.name, 4);
       NewJobProfile.saveAndClose();
 
       // upload .mrc file
@@ -360,7 +362,7 @@ describe('ui-data-import', () => {
       FileDetails.openInstanceInInventory('Updated');
       InventoryInstance.checkIsInstanceUpdated();
       InventoryInstance.openHoldingView();
-      HoldingsRecordView.checkHoldingsType('Monograph');
+      HoldingsRecordView.checkHoldingsType(HOLDINGS_TYPE_NAMES.MONOGRAPH);
       HoldingsRecordView.checkCallNumberType('Library of Congress classification');
       HoldingsRecordView.checkPermanentLocation(LOCATION_NAMES.MAIN_LIBRARY_UI);
       HoldingsRecordView.close();

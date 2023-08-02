@@ -25,7 +25,11 @@ const openNewMappingProfileForm = () => {
 };
 
 const closeViewModeForMappingProfile = (profileName) => cy.do(Pane({ title: profileName }).find(iconButton).click());
-const saveProfile = () => cy.do(saveProfileButton.click());
+const saveProfile = () => {
+  // TODO need to wait until profile to be filled
+  cy.wait(1500);
+  cy.do(saveProfileButton.click());
+};
 
 const mappingProfileForDuplicate = {
   gobi:'GOBI monograph invoice',
@@ -120,6 +124,12 @@ export default {
   createMappingProfileForUpdatesMarc:(mappingProfile) => {
     openNewMappingProfileForm();
     NewFieldMappingProfile.fillMappingProfileForUpdatesMarc(mappingProfile);
+    cy.do(saveProfileButton.click());
+  },
+
+  createMappingProfileForUpdatesMarcAuthority:(mappingProfile) => {
+    openNewMappingProfileForm();
+    NewFieldMappingProfile.fillMappingProfileForUpdatesMarcAuthority(mappingProfile);
     cy.do(saveProfileButton.click());
   },
 

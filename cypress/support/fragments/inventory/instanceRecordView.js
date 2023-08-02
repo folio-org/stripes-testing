@@ -12,15 +12,16 @@ import {
 } from '../../../../interactors';
 
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
+const instanceDetailsNotesSection = Section({ id: 'instance-details-notes' });
+const marcViewSection = Section({ id: 'marc-view-pane' });
 const catalogedDateKeyValue = KeyValue('Cataloged date');
 const sourceKeyValue = KeyValue('Source');
 const instanceStatusTermKeyValue = KeyValue('Instance status term');
-const instanceDetailsNotesSection = Section({ id: 'instance-details-notes' });
-const marcViewSection = Section({ id: 'marc-view-pane' });
 const actionsButton = Button('Actions');
 const viewSourceButton = Button('View source');
 const instanceAdministrativeNote = MultiColumnList({ id: 'administrative-note-list' });
 const instanceNote = MultiColumnList({ id: 'list-instance-notes-0' });
+const electronicAccessAccordion = Accordion('Electronic access');
 
 const verifyResourceTitle = value => {
   cy.expect(KeyValue('Resource title').has({ value }));
@@ -93,6 +94,21 @@ const verifyInstanceRecordViewOpened = () => {
   cy.expect(Pane({ id:'pane-instancedetails' }).exists());
 };
 
+const verifyElectronicAccess = (uriValue, linkText = 'No value set-', rowNumber = 0) => {
+  cy.expect(electronicAccessAccordion
+    .find(MultiColumnListCell({ row: rowNumber, columnIndex: 1, content: uriValue }))
+    .exists());
+  cy.expect(electronicAccessAccordion
+    .find(MultiColumnListCell({ row: rowNumber, columnIndex: 2, content: linkText }))
+    .exists());
+};
+
+const verifyElectronicAccessAbsent = (rowNumber = 0) => {
+  cy.expect(electronicAccessAccordion
+    .find(MultiColumnListCell({ row: rowNumber, columnIndex: 1 }))
+    .absent());
+};
+
 const waitLoading = () => cy.expect(actionsButton.exists());
 
 export default {
@@ -115,6 +131,8 @@ export default {
   verifyNatureOfContent,
   verifyInstanceSource,
   verifyInstanceRecordViewOpened,
+  verifyElectronicAccess,
+  verifyElectronicAccessAbsent,
   verifyHotlinkToPOL:(number) => {
     cy.expect(Accordion('Acquisition').find(MultiColumnListCell({ row: 0, content: number })).exists());
     cy.expect(Accordion('Acquisition').find(Link({ href: including('/orders/lines/view') })).exists());

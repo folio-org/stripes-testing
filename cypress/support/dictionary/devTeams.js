@@ -5,4 +5,5 @@ export default {
   thunderjet: 'thunderjet',
   folijet: 'folijet',
   volaris: 'volaris',
+  ideaLabsTests: 'ideaLabsTests'
 };

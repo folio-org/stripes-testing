@@ -1,16 +1,16 @@
 import permissions from '../../../support/dictionary/permissions';
+import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import Helper from '../../../support/fragments/finance/financeHelper';
 import Users from '../../../support/fragments/users/users';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 
 describe('ui-data-import', () => {
   let user = null;
-  const mappingProfileName = `C343284 invoice mapping profile ${Helper.getRandomBarcode()}`;
+  const mappingProfileName = `C343284 invoice mapping profile ${getRandomPostfix}`;
 
   before('login', () => {
     cy.createTempUser([

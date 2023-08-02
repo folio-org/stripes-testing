@@ -1,4 +1,5 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
+import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
@@ -10,7 +11,6 @@ import {
   MATERIAL_TYPE_NAMES,
   EXISTING_RECORDS_NAMES
 } from '../../../support/constants';
-import Helper from '../../../support/fragments/finance/financeHelper';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -46,42 +46,42 @@ describe('ui-data-import', () => {
     'Language, borders and identity / edited by Dominic Watt and Carmen Llamas.'
   ];
   const itemNote = 'THIS WAS UPDATED!';
-  const jobProfileNameForExport = `C357552 Bibs with Item HRIDs ${Helper.getRandomBarcode()}`;
+  const jobProfileNameForExport = `C357552 Bibs with Item HRIDs ${getRandomPostfix}`;
   // file names
-  const nameMarcFileForImportCreate = `C357552autotestFile.${Helper.getRandomBarcode()}.mrc`;
-  const nameForCSVFile = `C357552autotestFile${Helper.getRandomBarcode()}.csv`;
-  const nameMarcFileForUpdate = `C357552autotestFile${Helper.getRandomBarcode()}.mrc`;
+  const nameMarcFileForImportCreate = `C357552autotestFile.${getRandomPostfix}.mrc`;
+  const nameForCSVFile = `C357552autotestFile${getRandomPostfix}.csv`;
+  const nameMarcFileForUpdate = `C357552autotestFile${getRandomPostfix}.mrc`;
 
   const collectionOfMappingAndActionProfiles = [
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `C357552 Create simple holdings ${Helper.getRandomBarcode()}`,
+        name: `C357552 Create simple holdings ${getRandomPostfix}`,
         permanentLocation: LOCATION_NAMES.ONLINE },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `C357552 Create simple holdings ${Helper.getRandomBarcode()}` }
+        name: `C357552 Create simple holdings ${getRandomPostfix}` }
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C357552 Create simple items ${Helper.getRandomBarcode()}`,
+        name: `C357552 Create simple items ${getRandomPostfix}`,
         status: ITEM_STATUS_NAMES.AVAILABLE,
         permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
         materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C357552 Create simple items ${Helper.getRandomBarcode()}` }
+        name: `C357552 Create simple items ${getRandomPostfix}` }
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C357552 Update Item by POL match ${Helper.getRandomBarcode()}`,
+        name: `C357552 Update Item by POL match ${getRandomPostfix}`,
         status: ITEM_STATUS_NAMES.AVAILABLE,
         permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C357552 Update simple items ${Helper.getRandomBarcode()}`,
+        name: `C357552 Update simple items ${getRandomPostfix}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     }
   ];
 
   const matchProfileItemHrid = {
-    profileName: `C357552 Match 902$a to Item HRID ${Helper.getRandomBarcode()}`,
+    profileName: `C357552 Match 902$a to Item HRID ${getRandomPostfix}`,
     incomingRecordFields: {
       field: '902',
       in1: '*',
@@ -94,7 +94,7 @@ describe('ui-data-import', () => {
   };
 
   const matchProfileItemStatus = {
-    profileName: `C357552 Item status = Available ${Helper.getRandomBarcode()}`,
+    profileName: `C357552 Item status = Available ${getRandomPostfix}`,
     incomingStaticValue: 'Available',
     matchCriterion: 'Exactly matches',
     existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
@@ -103,16 +103,16 @@ describe('ui-data-import', () => {
 
   const createJobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: `C357552 Create simple instance, holdings, items ${Helper.getRandomBarcode()}`,
+    profileName: `C357552 Create simple instance, holdings, items ${getRandomPostfix}`,
   };
 
   const updateJobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: `C357552 Update item based on HRID and Status ${Helper.getRandomBarcode()}`,
+    profileName: `C357552 Update item based on HRID and Status ${getRandomPostfix}`,
   };
 
   const exportMappingProfile = {
-    name: `C357552 Item HRID ${Helper.getRandomBarcode()}`,
+    name: `C357552 Item HRID ${getRandomPostfix}`,
   };
 
   before('create test data', () => {
@@ -153,8 +153,7 @@ describe('ui-data-import', () => {
       ActionProfiles.deleteActionProfile(profile.actionProfile.name);
       FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
     });
-    // delete downloads folder and created files in fixtures
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    // delete created files in fixtures
     FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpdate}`);
     FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
   });

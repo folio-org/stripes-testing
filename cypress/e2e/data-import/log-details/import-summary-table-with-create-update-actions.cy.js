@@ -11,7 +11,8 @@ import { LOAN_TYPE_NAMES,
   EXPORT_TRANSFORMATION_NAMES,
   INSTANCE_STATUS_TERM_NAMES,
   CALL_NUMBER_TYPE_NAMES,
-  EXISTING_RECORDS_NAMES } from '../../../support/constants';
+  EXISTING_RECORDS_NAMES,
+  HOLDINGS_TYPE_NAMES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -117,7 +118,7 @@ describe('ui-data-import', () => {
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         name: `C356791 autotest holdings mapping profile.${getRandomPostfix()}`,
-        holdingsType: 'Electronic',
+        holdingsType: HOLDINGS_TYPE_NAMES.ELECTRONIC,
         permanetLocation: `"${LOCATION_NAMES.ONLINE}"`,
         permanetLocationUI: LOCATION_NAMES.ONLINE_UI,
         callNumberType: CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS,
@@ -309,7 +310,6 @@ describe('ui-data-import', () => {
       ExportFile.uploadFile(nameForCSVFile);
       ExportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
       ExportFile.downloadExportedMarcFile(exportedFileName);
-      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
 
       // edit marc file to add one record
       DataImport.editMarcFileAddNewRecords(exportedFileName, fileNameWithUpdatedContent, filePathWithUpdatedContent);
@@ -361,11 +361,11 @@ describe('ui-data-import', () => {
       // create job profile for updating
       cy.visit(SettingsMenu.jobProfilePath);
       JobProfiles.createJobProfileWithLinkingProfilesForUpdate(jobProfileForUpdate);
-      NewJobProfile.linkMatchAndActionProfilesForInstance(collectionOfProfilesForUpdate[0].actionProfile.name, collectionOfMatchProfiles[0].matchProfile.profileName, 0);
+      NewJobProfile.linkMatchAndActionProfiles(collectionOfMatchProfiles[0].matchProfile.profileName, collectionOfProfilesForUpdate[0].actionProfile.name);
       NewJobProfile.linkProfileForNonMatches(collectionOfProfilesForCreate[1].actionProfile.name);
-      NewJobProfile.linkMatchAndActionProfilesForHoldings(collectionOfProfilesForUpdate[1].actionProfile.name, collectionOfMatchProfiles[1].matchProfile.profileName, 2);
+      NewJobProfile.linkMatchAndActionProfiles(collectionOfMatchProfiles[1].matchProfile.profileName, collectionOfProfilesForUpdate[1].actionProfile.name, 2);
       NewJobProfile.linkProfileForNonMatches(collectionOfProfilesForCreate[2].actionProfile.name, 3);
-      NewJobProfile.linkMatchAndActionProfilesForItem(collectionOfProfilesForUpdate[2].actionProfile.name, collectionOfMatchProfiles[2].matchProfile.profileName, 4);
+      NewJobProfile.linkMatchAndActionProfiles(collectionOfMatchProfiles[2].matchProfile.profileName, collectionOfProfilesForUpdate[2].actionProfile.name, 4);
       NewJobProfile.linkProfileForNonMatches(collectionOfProfilesForCreate[3].actionProfile.name, 5);
       NewJobProfile.saveAndClose();
 

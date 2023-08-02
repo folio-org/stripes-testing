@@ -186,7 +186,7 @@ export default {
       .find(HTML(including('No items have been entered yet.')))
       .exists());
   },
-
+ 
   backdateCheckInItem:(date, barcode) => {
     cy.do(Button('today').click());
     cy.do(TextField({ name:'item.checkinDate' }).fillIn(date));

@@ -1,4 +1,5 @@
 import permissions from '../../../support/dictionary/permissions';
+import getRandomPostfix from '../../../support/utils/stringTools';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -7,7 +8,6 @@ import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll
 import DeleteDataImportLogsModal from '../../../support/fragments/data_import/logs/deleteDataImportLogsModal';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import Users from '../../../support/fragments/users/users';
-import Helper from '../../../support/fragments/finance/financeHelper';
 
 let user;
 const maxLogsQuantityOnPage = 100;
@@ -21,7 +21,7 @@ describe('ui-data-import', () => {
         user = userProperties;
 
         for (let i = 0; i < 101; i++) {
-          const fileName = `oneMarcBib.mrc${Helper.getRandomBarcode()}`;
+          const fileName = `oneMarcBib.mrc${getRandomPostfix}`;
 
           DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
         }
