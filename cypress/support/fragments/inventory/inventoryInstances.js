@@ -52,7 +52,7 @@ export default {
     cy.expect(or(inventoriesList.exists()),
       rootSection.find(HTML(including('No results found'))).exists());
     // need to wait until list to be formed
-    cy.wait(2000);
+    cy.wait(2500);
   },
 
   selectInstance: (rowNumber = 0) => {

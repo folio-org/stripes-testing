@@ -1,7 +1,7 @@
 import { not } from 'bigtest';
 import uuid from 'uuid';
 
-import { Button, Pane, Select, TextField, including, TextFieldIcon, MultiColumnListRow, MultiColumnListCell, Modal, HTML } from '../../../../../interactors';
+import { Button, Pane, Select, TextField, including, TextFieldIcon, MultiColumnListRow, MultiColumnListCell, Modal, HTML, EditableList } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
 const rootPane = Pane({ id: 'controlled-vocab-pane' });
@@ -21,13 +21,17 @@ const findRowIndex = (paymentMethodName) => cy.then(() => rootPane.find(MultiCol
 export default {
   defaultPaymentMethod,
   save,
+  waitLoading: () => {
+    cy.expect(newButton.exists());
+  },
   checkControls:() => {
     cy.expect([ownerSelect.exists(),
       newButton.exists(),
       rootPane.find(Select({ id:'select-owner' })).has({ value: not('') })]);
   },
-  waitLoading: () => {
-    cy.expect(newButton.exists());
+  checkPaymentMethodInTable:(ownerName, paymentMethodName) => {
+    cy.do(ownerSelect.choose(ownerName));
+    cy.expect(EditableList('editList-settings-payments').find(MultiColumnListCell(paymentMethodName)).exists());
   },
   pressNew:() => {
     cy.do(newButton.click());

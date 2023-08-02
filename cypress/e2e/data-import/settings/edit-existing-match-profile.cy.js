@@ -1,7 +1,7 @@
+import permissions from '../../../support/dictionary/permissions';
+import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import permissions from '../../../support/dictionary/permissions';
-import Helper from '../../../support/fragments/finance/financeHelper';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
@@ -14,7 +14,7 @@ import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
 describe('ui-data-import', () => {
   let user;
   const matchProfile = {
-    profileName: `C2339 autotest MatchProf${Helper.getRandomBarcode()}`,
+    profileName: `C2339 autotest MatchProf${getRandomPostfix}`,
     incomingRecordFields: {
       field: '001'
     },

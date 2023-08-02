@@ -218,7 +218,6 @@ describe.skip('ui-data-import', () => {
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        cy.reload();
         DataImport.uploadFile('oneMarcBib.mrc', marcFileForCreateFirstRecord);
         JobProfiles.searchJobProfileForImport(firstTestData.jobProfileForCreate.profile.name);
         JobProfiles.runImportFile();
@@ -247,7 +246,6 @@ describe.skip('ui-data-import', () => {
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        cy.reload();
         DataImport.uploadFile('oneMarcBib.mrc', marcFileForCreateSecondRecord);
         JobProfiles.searchJobProfileForImport(secondTestData.jobProfileForCreate.profile.name);
         JobProfiles.runImportFile();
@@ -395,7 +393,6 @@ describe.skip('ui-data-import', () => {
       InventorySearchAndFilter.searchInstanceByHRID(instanceHrids[0]);
       InventorySearchAndFilter.saveUUIDs();
       ExportFile.downloadCSVFile(csvFileNameForFirstRecord, 'SearchInstanceUUIDs*');
-      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
 
       // download exported marc file
       cy.visit(TopMenu.dataExportPath);
@@ -407,7 +404,6 @@ describe.skip('ui-data-import', () => {
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
-      cy.reload();
       DataImport.uploadExportedFile(marcFileNameForUpdateFirstRecord);
       JobProfiles.searchJobProfileForImport(jobProfileWithMatch.profileName);
       JobProfiles.runImportFile();
@@ -448,7 +444,6 @@ describe.skip('ui-data-import', () => {
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
-      cy.reload();
       DataImport.uploadExportedFile(marcFileNameForUpdateSecondRecord);
       JobProfiles.searchJobProfileForImport(jobProfileWithoutMatch.profileName);
       JobProfiles.runImportFile();

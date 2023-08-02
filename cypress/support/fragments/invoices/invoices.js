@@ -50,10 +50,6 @@ const fundCodeFilterSection = Section({ id: 'fundCode' });
 const fiscalYearFilterSection = Section({ id: 'fiscalYearId' });
 const invoiceDateFilterSection = Section({ id: 'invoiceDate' });
 const approvalDateFilterSection = Section({ id: 'approvalDate' });
-const newBlankLineButton = Button('New blank line');
-const polLookUpButton = Button('POL look-up');
-const selectOrderLinesModal = Modal('Select order lines');
-const fundInInvoiceSection = Section({ id: 'invoiceLineForm-fundDistribution' });
 
 export default {
 
@@ -81,7 +77,7 @@ export default {
       Selection('Batch group*').open(),
       SelectionList().select(invoice.batchGroup),
       Select({ id: 'invoice-payment-method' }).choose('Cash'),
-      Checkbox('Export to accounting').click()
+      Checkbox('Export to accounting').checked(false).click()
     ]);
     this.checkVendorPrimaryAddress(vendorPrimaryAddress);
     cy.do(saveAndClose.click());
@@ -131,6 +127,7 @@ export default {
     cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(invoiceStates.invoiceCreatedMessage);
   },
+
   selectVendorOnUi: (organizationName) => {
     cy.do([
       Button('Organization look-up').click(),
@@ -183,7 +180,7 @@ export default {
 
   createInvoiceLine: (invoiceLine) => {
     cy.do(Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click());
-    cy.do(newBlankLineButton.click());
+    cy.do(Button('New blank line').click());
     // TODO: update using interactors once we will be able to pass negative value into text field
     cy.xpath('//*[@id="subTotal"]').type(invoiceLine.subTotal);
     cy.do([
@@ -196,10 +193,10 @@ export default {
 
   createInvoiceLinePOLLookUp: (orderNumber) => {
     cy.do(Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click());
-    cy.do(newBlankLineButton.click());
+    cy.do(Button('New blank line').click());
     cy.do([
-      polLookUpButton.click(),
-      selectOrderLinesModal.find(SearchField({ id: searhInputId })).fillIn(orderNumber),
+      Button('POL look-up').click(),
+      Modal('Select order lines').find(SearchField({ id: searhInputId })).fillIn(orderNumber),
       searchButton.click()
     ]);
     Helper.selectFromResultsList();
@@ -207,31 +204,11 @@ export default {
     InteractorsTools.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage);
   },
 
-  createInvoiceLinePOLLookUWithSubTotal: (orderNumber, total) => {
-    cy.do([
-      Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click(),
-      newBlankLineButton.click()
-    ]);
-    cy.do([
-      polLookUpButton.click(),
-      selectOrderLinesModal.find(SearchField({ id: searhInputId })).fillIn(orderNumber),
-      searchButton.click()
-    ]);
-    Helper.selectFromResultsList();
-    cy.get('input[name="subTotal"]').clear().type(total);
-    cy.do([
-      fundInInvoiceSection.find(Button('%')).click(),
-      saveAndClose.click(),
-    ]);
-    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage);
-    cy.wait(4000);
-  },
-
   addLineFromPol: (orderNumber) => {
     cy.do([
       Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click(),
       Button('Add line from POL').click(),
-      selectOrderLinesModal.find(SearchField()).fillIn(orderNumber),
+      Modal('Select order lines').find(SearchField()).fillIn(orderNumber),
       MultiColumnListRow({ index: rowNumber = 0 }).click()
     ]);
   },
@@ -241,10 +218,10 @@ export default {
       Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click(),
       Button('Add line from POL').click()
     ]);
-    cy.expect(selectOrderLinesModal.exists());
+    cy.expect(Modal('Select order lines').exists());
     cy.do([
-      selectOrderLinesModal.find(SearchField({ id: searhInputId })).fillIn(orderNumber),
-      selectOrderLinesModal.find(searchButton).click(),
+      Modal('Select order lines').find(SearchField({ id: searhInputId })).fillIn(orderNumber),
+      Modal('Select order lines').find(searchButton).click(),
       Checkbox({ ariaLabel: `record ${rowNumber} checkbox` }).clickInput(),
       Button('Save').click()
     ]);
@@ -283,7 +260,7 @@ export default {
 
   deleteFundInInvoiceLine: () => {
     cy.do([
-      fundInInvoiceSection.find(Button({ icon: 'trash' })).click(),
+      Section({ id: 'invoiceLineForm-fundDistribution' }).find(Button({ icon: 'trash' })).click(),
       saveAndClose.click()
     ]);
     InteractorsTools.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage);
@@ -364,15 +341,15 @@ export default {
       Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click(),
       Button('Add line from POL').click()
     ]);
-    cy.expect(selectOrderLinesModal.exists());
+    cy.expect(Modal('Select order lines').exists());
   },
 
   checkSearchPolPlugin: (searchParamsMap, titleOrPackage) => {
     for (const [key, value] of searchParamsMap.entries()) {
       cy.do([
-        selectOrderLinesModal.find(SearchField({ id: searhInputId })).selectIndex(key),
-        selectOrderLinesModal.find(SearchField({ id: searhInputId })).fillIn(value),
-        selectOrderLinesModal.find(searchButton).click()
+        Modal('Select order lines').find(SearchField({ id: searhInputId })).selectIndex(key),
+        Modal('Select order lines').find(SearchField({ id: searhInputId })).fillIn(value),
+        Modal('Select order lines').find(searchButton).click()
       ]);
       // verify that first row in the result list contains related order line title
       cy.expect(MultiColumnList({ id: 'list-plugin-find-records' })
