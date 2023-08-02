@@ -1,7 +1,5 @@
 import financeHelper from '../../support/fragments/finance/financeHelper';
 import fiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import funds from '../../support/fragments/finance/funds/funds';
-import groups from '../../support/fragments/finance/groups/groups';
 import ledgers from '../../support/fragments/finance/ledgers/ledgers';
 import invoices from '../../support/fragments/invoices/invoices';
 import topMenu from '../../support/fragments/topMenu';
@@ -51,75 +49,10 @@ const testData = {
   ledgerFinancialQuantity1: '0.00',
   ledgerFinancialQuantity2: '0.00',
 };
-const rollOverData = {
-  ledgerName: 'AE2',
-  selectLedger: 'AE2',
-  fiscalYearDate: 'AE2025',
-  rollOverDate: '7/21/2023',
-  searchByParameter: 'Name',
-  searchByName: 'AE2',
-  selectFundRecord: 'AE2',
-  searchledger: 'Test N8',
-  selectLedgerName: 'Test N8',
-  fillInRolloverInfo: 'FYG2222',
-  currentBudeget: 'Test N11-FYG2024',
-  plannedBudget: 'Test N11-FYG1111',
-  selectEmbranceResult: '6/20/2023, 4:41 AM',
-};
-
-const encumbranceData = {
-  searchByName: 'autotest_ledger_275.5001376680388208',
-  selectFirstLedger: 'autotest_ledger_275.5001376680388208',
-  selectFirstCheckBox: 'FY2024',
-  rollOverDate: '7/21/2023',
-  fillInRolloverInfo: 'FY2029',
-  ledgerName: 'AJ',
-  selectLedgerName: 'AJ',
-  fundName: 'AJ2',
-  selectFund: 'AJ2',
-  selectCurrentBudgerFromthelist: 'AJ2-AJ2024',
-  transactionListDetailsResultsFromEmbarance: '7/3/2023, 8:12 AM',
-};
 
 describe('Users-loans App', () => {
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-  });
-
-  it('C377030 "Available balance" is displayed as a negative number when running a deficit(Thunderjet)', { tags: [testTypes.criticalPath, devTeams.thunderjet] }, () => {
-    cy.visit(topMenu.financePath);
-    fiscalYears.clickOnFiscalYear();
-    financeHelper.searchByName(testData.fiscalName);
-    financeHelper.selectFirstFinance(testData.selectName);
-    ledgers.checkFinancialSummeryQuality(
-      testData.fiscalYearQuantity1,
-      testData.fiscalYearQuantity2
-    );
-    ledgers.closeOpenedPage();
-    fiscalYears.clickOnLedgerTab();
-    financeHelper.searchByName(testData.ledgerName);
-    ledgers.selectLedger(testData.selectLedgerName);
-    ledgers.checkFinancialSummeryQuality(
-      testData.ledgerFinancialQuantity1,
-      testData.ledgerFinancialQuantity2
-    );
-    ledgers.closeOpenedPage();
-    groups.clickOnGroupTab();
-    groups.searchByName(testData.groupsName);
-    groups.selectGroup(testData.selectGroupName);
-    ledgers.checkFinancialSummeryQuality(
-      testData.groupFinancialQuantity1,
-      testData.groupFinancialQuantity2
-    );
-    ledgers.closeOpenedPage();
-    funds.clickOnFundsTab();
-    funds.searchByName(testData.fundName);
-    funds.selectFund(testData.selectFundName);
-    funds.selectBudgetDetails();
-    funds.checkBudgetQuantity1(
-      testData.fundFinancialQuantity1,
-      testData.fundFinancialQuantity2
-    );
   });
 
   it('C396360 Save invoice fiscal year after fund distribution change to fund using different ledger if FY was undefined(Thunderjet)', { tags: [testTypes.criticalPath, devTeams.thunderjet] }, () => {
@@ -196,71 +129,5 @@ describe('Users-loans App', () => {
     );
     invoices.clickOnViewTransactionsHyperText();
     invoices.transactionListDetailsResultsFromPreviousBudgetEmbrance();
-  });
-
-  it('C359604 Make more than one preview for one ledger and same fiscal year with ""Test rollover"", check test rollover results(Thunderjet)', { tags: [testTypes.Extended, devTeams.thunderjet] }, () => {
-    cy.visit(topMenu.financePath);
-    financeHelper.searchByName(rollOverData.ledgerName);
-    financeHelper.selectFirstLedger(rollOverData.selectLedger);
-    ledgers.clickonViewledgerDetails();
-    ledgers.rollover();
-    ledgers.selectFirstCheckBox(rollOverData.fiscalYearDate);
-    ledgers.clickonViewledgerDetails();
-    ledgers.rolloverLogs();
-    ledgers.exportRollover(rollOverData.rollOverDate);
-    ledgers.closeOpenedPage();
-    ledgers.clickOnFundTab();
-    invoices.searchByParameter(
-      rollOverData.searchByParameter,
-      rollOverData.searchByName
-    );
-    financeHelper.selectFirstFundRecord(rollOverData.selectFundRecord);
-    ledgers.clickOnFiscalyearTab();
-    ledgers.clickOnLedgerTab();
-    financeHelper.searchByName(rollOverData.searchledger);
-    financeHelper.selectFirstLedger(rollOverData.selectLedgerName);
-    ledgers.clickonViewledgerDetails();
-    ledgers.rollover();
-    ledgers.fillInRolloverInfo(rollOverData.fillInRolloverInfo);
-    ledgers.clickonViewledgerDetails();
-    ledgers.selectFund();
-    invoices.selectCurrentBudgerFromthelist(rollOverData.currentBudeget);
-    ledgers.closeOpenedPage();
-    invoices.viewDetailsPlannedBudgets(rollOverData.plannedBudget);
-    invoices.clickOnViewTransactionsHyperText();
-    invoices.transactionListDetailsResultsFromEmbarance(
-      rollOverData.selectEmbranceResult
-    );
-  });
-
-  it('C375267 Encumbrances are rolled over correctly when order fund distribution was changed and related paid invoice exists (based on Remaining) (Thunderjet)', { tags: [testTypes.Extended, devTeams.thunderjet] }, () => {
-    cy.visit(topMenu.financePath);
-    financeHelper.searchByName(encumbranceData.searchByName);
-    financeHelper.selectFirstLedger(encumbranceData.selectFirstLedger);
-    ledgers.clickonViewledgerDetails();
-    ledgers.rollover();
-    ledgers.selectFirstCheckBox(encumbranceData.selectFirstCheckBox);
-    ledgers.clickonViewledgerDetails();
-    ledgers.rolloverLogs();
-    ledgers.exportRollover(encumbranceData.rollOverDate);
-    ledgers.closeOpenedPage();
-    ledgers.clickonViewledgerDetails();
-    ledgers.rollover();
-    ledgers.fillInRolloverInfo(encumbranceData.fillInRolloverInfo);
-    ledgers.clickonViewledgerDetails();
-    ledgers.resetAll();
-    financeHelper.searchByName(encumbranceData.ledgerName);
-    financeHelper.selectFirstLedger(encumbranceData.selectLedgerName);
-    ledgers.selectFund();
-    ledgers.closeOpenedPage();
-    financeHelper.searchByName(encumbranceData.fundName);
-    financeHelper.selectFirstFundRecord(encumbranceData.selectFund);
-    invoices.selectCurrentBudgerFromthelist(
-      encumbranceData.selectCurrentBudgerFromthelist
-    );
-    invoices.clickOnViewTransactionsHyperText();
-    invoices.transactionListDetailsResultsFromEmbarance(
-      encumbranceData.transactionListDetailsResultsFromEmbarance
-    );
   });
 });

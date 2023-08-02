@@ -58,7 +58,7 @@ describe('bulk-edit', () => {
 
       BulkEditActions.downloadMatchedResults();
       BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.editSuppressFromDiscovery('Set true');
+      BulkEditActions.editItemsSuppressFromDiscovery(true);
       BulkEditActions.confirmChanges();
       BulkEditActions.downloadPreview();
       BulkEditActions.commitChanges();

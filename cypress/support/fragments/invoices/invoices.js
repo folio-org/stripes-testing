@@ -15,11 +15,9 @@ import {
   MultiColumnListRow,
   Select,
   Section,
-  FieldSet,
   Link,
   SelectionOption
 } from '../../../../interactors';
-import button from '../../../../interactors/button';
 import InteractorsTools from '../../utils/interactorsTools';
 import Helper from '../finance/financeHelper';
 
@@ -52,8 +50,7 @@ const fundCodeFilterSection = Section({ id: 'fundCode' });
 const fiscalYearFilterSection = Section({ id: 'fiscalYearId' });
 const invoiceDateFilterSection = Section({ id: 'invoiceDate' });
 const approvalDateFilterSection = Section({ id: 'approvalDate' });
-const ResultListFirstRecord = Section({ id: 'invoice-results-pane' });
-const value = FieldSet({ id: 'adjustments' });
+
 export default {
 
   checkZeroSearchResultsHeader: () => {
@@ -85,102 +82,6 @@ export default {
     this.checkVendorPrimaryAddress(vendorPrimaryAddress);
     cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(invoiceStates.invoiceCreatedMessage);
-  },
-
-  clickOnFirstInvoicesResultList: (invoiceNumber) => {
-    cy.do(ResultListFirstRecord.find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
-      .find(Link(invoiceNumber))
-      .click());
-  },
-
-  selectFundID: () => {
-    cy.do([
-      Section({ id: 'invoiceLineForm-fundDistribution' }).find(Button({ id: 'fundDistributions[0].fundId' })).click(),
-      SelectionOption('Fund A (A)').click(),
-      value.find(TextField({ id: 'adjustments[0].value' })).fillIn('1'),
-      saveAndClose.click(),
-    ]);
-  },
-
-  selectCurrentBudgerFromthelist: (Name) => {
-    cy.do([
-      Section({ id: 'currentBudget' }).find(MultiColumnListCell(Name)).click()
-    ]);
-  },
-
-  clickOnViewTransactionsHyperText: () => {
-    cy.do([
-      Section({ id: 'information' }).find(Link('View transactions')).click()
-    ]);
-  },
-
-  selectFundIDFromthelist: () => {
-    cy.xpath('//a[text()="Fund A(A)"]').invoke('removeAttr', 'target').click();
-  },
-
-  viewDetailsPreviousBudgets: (Name) => {
-    cy.do([
-      Section({ id: 'previousBudgets' }).find(MultiColumnListCell(Name)).click()
-    ]);
-  },
-
-  viewDetailsPlannedBudgets: (Name) => {
-    cy.do([
-      Section({ id: 'plannedBudget' }).find(MultiColumnListCell(Name)).click()
-    ]);
-  },
-
-  cancelInvoiceNumber: () => {
-    cy.do([
-      PaneHeader({ id: PaneHeaderpane - invoiceDetails })
-        .find(actionsButton).click(),
-      Button('Cancel').click(),
-    ]);
-  },
-
-  transactionListDetailsResultsFromCurrentBudget: () => {
-    cy.do([
-      MultiColumnList({ id: 'transactions-list' }).find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
-        .find(Link('3/6/2023, 7:48 AM'))
-        .click(),
-    ]);
-  },
-
-  transactionListDetailsResultsFromPreviousBudget: () => {
-    cy.do([
-      MultiColumnList({ id: 'transactions-list' }).find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
-        .find(Link('9/29/2021, 10:14 AM'))
-        .click(),
-    ]);
-  },
-
-  transactionListDetailsResultsFromEmbarance: (Name) => {
-    cy.do([
-      MultiColumnList({ id: 'transactions-list' }).find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
-        .find(Link(Name))
-        .click(),
-    ]);
-  },
-
-  transactionListDetailsResultsFromRolledLogs: () => {
-    cy.do([
-      Section({ id: 'rollover-logs-results-pane' }).find(MultiColumnListCell({ row: 0, content: '07/14/2023-result' }))
-        .click()
-    ]);
-  },
-
-  transactionListDetailsResultsFromPreviousBudgetEmbrance: () => {
-    cy.do([
-      MultiColumnList({ id: 'transactions-list' }).find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
-        .find(Link('6/20/2023, 5:33 AM'))
-        .click(),
-    ]);
-  },
-
-  closeTwoXmarkInOneScreen: () => {
-    cy.do([
-      Section({ id: 'pane-transaction-details' }).find(Button({ icon: 'times' })).click(),
-    ]);
   },
 
   createRolloverInvoice(invoice, organization) {
@@ -216,34 +117,12 @@ export default {
     ]);
     this.selectVendorOnUi(invoice.vendorName);
     cy.do([
-      Selection('Accounting code*').open(),
+      Selection('Accounting code').open(),
       SelectionList().select(`Default (${invoice.accountingCode})`),
       Selection('Batch group*').open(),
       SelectionList().select(invoice.batchGroup),
       Select({ id: 'invoice-payment-method' }).choose('Cash'),
       Checkbox('Export to accounting').click()
-    ]);
-    cy.do(saveAndClose.click());
-    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceCreatedMessage);
-  },
-  createVendorInvoice(invoice) {
-    cy.do(actionsButton.click());
-    cy.expect(buttonNew.exists());
-    cy.do([
-      buttonNew.click(),
-      Selection('Status*').open(),
-      SelectionList().select(invoice.status),
-      TextField('Invoice date*').fillIn(invoice.invoiceDate),
-      TextField('Vendor invoice number*').fillIn(invoice.invoiceNumber),
-    ]);
-    this.selectVendorOnUi(invoice.vendorName);
-    cy.do([
-      Selection('Accounting code*').open(),
-      SelectionList().select(`Default (${invoice.accountingCode})`),
-      Selection('Batch group*').open(),
-      SelectionList().select(invoice.batchGroup),
-      Select({ id: 'invoice-payment-method' }).choose('Cash'),
-      // Checkbox('Export to accounting').click()
     ]);
     cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(invoiceStates.invoiceCreatedMessage);
@@ -456,13 +335,6 @@ export default {
         cy.log(`No such currency short name like ${currencyShortName}`);
     }
   },
-  editVendorInvoiceNumber: () => {
-    cy.do([
-      PaneHeader({ id: 'paneHeaderpane-invoiceDetails' }).find(actionsButton).click(),
-      Button('Edit').click(),
-      Button('Cancel').click()
-    ]);
-  },
 
   openPolSearchPlugin: () => {
     cy.do([
@@ -494,15 +366,6 @@ export default {
 
   closeSearchPlugin: () => {
     cy.do(Button('Close').click());
-  },
-  searchfolio() {
-    cy.do([button({ id:'accordion-toggle-button-status' }).click(),
-      Checkbox({ id:'clickable-filter-status-paid' }).click(),
-      Checkbox({ id:'clickable-filter-status-approved' }).click(),
-      button({ id:'accordion-toggle-button-batchGroupId' }).click(),
-      button({ id:'batchGroupId-selection' }).click()
-    ]);
-    cy.xpath("//div[text()='FOLIO']").click();
   },
 
   voucherExport: (batchGroup) => {

@@ -46,11 +46,7 @@ describe('inventory', () => {
           testData.locationsId = locations.id;
         });
         cy.getLoanTypes({ limit: 1 }).then((res) => { itemData.loanTypeId = res[0].id; });
-        cy.getMaterialTypes({ limit: 1 }).then((res) => {
-          itemData.materialTypeId = res.id;
-          itemData.materialTypeName = res.name;
-          testData.push(`${itemData.instanceTitle} (${itemData.materialTypeName})`);
-        });
+        cy.getMaterialTypes({ limit: 1 }).then((res) => { itemData.materialTypeId = res.id; });
       }).then(() => {
         InventoryInstances.createFolioInstanceViaApi({ instance: {
           instanceTypeId: itemData.instanceTypeId,

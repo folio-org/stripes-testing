@@ -48,7 +48,7 @@ describe('ui-data-import', () => {
         typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
         permanentLocation: `"${LOCATION_NAMES.MAIN_LIBRARY}"`,
         permanentLocationUI: LOCATION_NAMES.MAIN_LIBRARY_UI,
-        permanentLocationInHoldingsAccordion: 'Main Library >',
+        permanentLocationInHoldingsAccordion: `${LOCATION_NAMES.MAIN_LIBRARY_UI} >`,
         temporaryLocation: `"${LOCATION_NAMES.ONLINE}"`,
         temporaryLocationUI: LOCATION_NAMES.ONLINE_UI,
         illPolicy: 'Unknown lending policy',
@@ -207,6 +207,7 @@ describe('ui-data-import', () => {
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
+      cy.reload();
       DataImport.uploadFile(marcFileNameForCreate);
       JobProfiles.searchJobProfileForImport(jobProfileForCreate.profileName);
       JobProfiles.runImportFile();
@@ -280,7 +281,7 @@ describe('ui-data-import', () => {
           cy.visit(SettingsMenu.jobProfilePath);
           JobProfiles.createJobProfileWithLinkingProfilesForUpdate(jobProfileForUpdate);
           NewJobProfile.linkMatchAndActionProfilesForHoldings(collectionOfMappingAndActionProfilesForUpdate[0].actionProfile.name, collectionOfMatchProfiles[0].matchProfile.profileName, 0);
-          NewJobProfile.linkMatchAndActionProfilesForItem(collectionOfMappingAndActionProfilesForUpdate[1].actionProfile.name, collectionOfMatchProfiles[1].matchProfile.profileName, 2);
+          NewJobProfile.linkMatchAndActionProfilesForItem(collectionOfMappingAndActionProfilesForUpdate[1].actionProfile.name, collectionOfMatchProfiles[1].matchProfile.profileName, 1);
           NewJobProfile.saveAndClose();
           JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
 
@@ -288,6 +289,7 @@ describe('ui-data-import', () => {
           cy.visit(TopMenu.dataImportPath);
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
+          cy.reload();
           DataImport.uploadFile(editedMarcFileName);
           JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
           JobProfiles.runImportFile();
