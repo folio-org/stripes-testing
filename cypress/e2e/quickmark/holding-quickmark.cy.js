@@ -54,6 +54,7 @@ describe('MARC -> MARC Holdings', () => {
     cy.login(testData.user.username, testData.user.password, { path: TopMenu.inventoryPath, waiter: InventorySearchAndFilter.waitLoading });
     InventorySearchAndFilter.searchInstanceByTitle(instanceID);
     InventorySearchAndFilter.selectViewHoldings();
+    //TODO: Delete below two lines of code after Actions -> View source of Holding's view works as expected.
     HoldingsRecordView.close();
     InventoryInstance.openHoldingView();
     HoldingsRecordView.editInQuickMarc();
