@@ -89,7 +89,7 @@ export default {
       Selection('Batch group*').open(),
       SelectionList().select(invoice.batchGroup),
       Select({ id: 'invoice-payment-method' }).choose('Cash'),
-      Checkbox('Export to accounting').click(),
+      Checkbox('Export to accounting').checked(false).click()
     ]);
     this.checkVendorPrimaryAddress(vendorPrimaryAddress);
     cy.do(saveAndClose.click());
@@ -139,6 +139,7 @@ export default {
     cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(invoiceStates.invoiceCreatedMessage);
   },
+
   selectVendorOnUi: (organizationName) => {
     cy.do([
       Button('Organization look-up').click(),

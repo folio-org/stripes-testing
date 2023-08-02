@@ -8,7 +8,8 @@ import { FOLIO_RECORD_TYPE,
   ORDER_STATUSES,
   ITEM_STATUS_NAMES,
   VENDOR_NAMES,
-  ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../../support/constants';
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  HOLDINGS_TYPE_NAMES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import Orders from '../../../support/fragments/orders/orders';
@@ -342,6 +343,7 @@ describe('ui-data-import', () => {
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
+      cy.reload();
       DataImport.checkIsLandingPageOpened();
       DataImport.uploadFile(editedMarcFileName);
       JobProfiles.searchJobProfileForImport(specialJobProfile.profileName);
@@ -360,7 +362,7 @@ describe('ui-data-import', () => {
       FileDetails.openInstanceInInventory('Updated');
       InventoryInstance.checkIsInstanceUpdated();
       InventoryInstance.openHoldingView();
-      HoldingsRecordView.checkHoldingsType('Monograph');
+      HoldingsRecordView.checkHoldingsType(HOLDINGS_TYPE_NAMES.MONOGRAPH);
       HoldingsRecordView.checkCallNumberType('Library of Congress classification');
       HoldingsRecordView.checkPermanentLocation(LOCATION_NAMES.MAIN_LIBRARY_UI);
       HoldingsRecordView.close();

@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import moment from 'moment';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import TestTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
@@ -44,6 +45,7 @@ describe('Request notice triggers', () => {
       category: 'Request',
       subject: getTestEntityValue(noticeName),
       body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
+      previewText: `Test email body The Wines of Italy ${moment().format('ll')}`,
     };
   };
   const noticeTemplates = {
@@ -189,8 +191,10 @@ describe('Request notice triggers', () => {
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.pageRequest);
+      delete noticeTemplates.pageRequest.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.pageRequest);
       NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.cancelRequest);
+      delete noticeTemplates.cancelRequest.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.cancelRequest);
 
       cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
@@ -233,11 +237,12 @@ describe('Request notice triggers', () => {
       NewRequest.waitLoadingNewRequestPage();
       NewRequest.enterItemInfo(itemData.barcode);
       NewRequest.verifyItemInformation([itemData.barcode, itemData.title]);
-      NewRequest.verifyRequestInformation(ITEM_STATUS_NAMES.AVAILABLE);
       NewRequest.enterRequesterInfo({
         requesterBarcode: userData.barcode,
         pickupServicePoint: testData.userServicePoint.name,
       });
+      NewRequest.verifyRequestInformation(ITEM_STATUS_NAMES.AVAILABLE);
+      NewRequest.chooseRequestType(REQUEST_TYPES.PAGE);
       // needed to prevent from error "Cannot create a request without Instance ID"
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(3000);

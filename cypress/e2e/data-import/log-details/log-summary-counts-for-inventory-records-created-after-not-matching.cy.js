@@ -50,7 +50,7 @@ describe('ui-data-import', () => {
         permanentLocationUI: LOCATION_NAMES.ONLINE_UI,
         callNumberType: '852$t',
         callNumber: '852$h',
-        relationship: 'Resource',
+        relationship: '"Resource"',
         uri: '856$u',
         link: '856$y' },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
@@ -178,6 +178,7 @@ describe('ui-data-import', () => {
       DataImport.checkIsLandingPageOpened();
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
+      cy.reload();
       DataImport.uploadFile('marcFileForC378901.mrc', marcFileName);
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();

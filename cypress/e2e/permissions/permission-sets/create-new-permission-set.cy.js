@@ -1,8 +1,8 @@
-import devTeams from '../../support/dictionary/devTeams';
-import { getTestEntityValue } from '../../support/utils/stringTools';
-import TestTypes from '../../support/dictionary/testTypes';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import PermissionSets from '../../support/fragments/settings/users/permissionSets';
+import devTeams from '../../../support/dictionary/devTeams';
+import { getTestEntityValue } from '../../../support/utils/stringTools';
+import TestTypes from '../../../support/dictionary/testTypes';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import PermissionSets from '../../../support/fragments/settings/users/permissionSets';
 
 describe('Permission Sets', () => {
   const newPermissionSet = {

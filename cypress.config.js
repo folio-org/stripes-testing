@@ -7,6 +7,10 @@ const fs = require('fs');
 const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 
 module.exports = defineConfig({
+  retries: {
+    runMode: 1,
+    openMode: 1,
+  },
   viewportWidth: 1920,
   viewportHeight: 1080,
   video: false,
@@ -26,15 +30,19 @@ module.exports = defineConfig({
   e2e: {
     async setupNodeEvents(on, config) {
       allureWriter(on, config);
+
       on('task', {
         async findFiles(mask) {
           if (!mask) {
             throw new Error('Missing a file mask to search');
           }
+
           const list = await globby(mask);
+
           if (!list.length) {
             return null;
           }
+
           return list;
         },
         downloadFile,
@@ -46,6 +54,7 @@ module.exports = defineConfig({
               if (err && err.code !== 'ENOENT') {
                 return reject(err);
               }
+
               resolve(null);
             });
           });
@@ -58,6 +67,7 @@ module.exports = defineConfig({
               if (err && err.code !== 'ENOENT') {
                 return reject(err);
               }
+
               resolve(null);
             });
           });
@@ -69,8 +79,10 @@ module.exports = defineConfig({
           return fs.readFileSync(filePath, 'utf-8');
         },
       });
+      
       // eslint-disable-next-line global-require
       await require('cypress-testrail-simple/src/plugin')(on, config);
+      
       return config;
     },
     baseUrl: 'https://folio-testing-cypress-diku.ci.folio.org',
