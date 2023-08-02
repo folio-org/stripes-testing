@@ -1,47 +1,66 @@
 import uuid from 'uuid';
-import permissions from '../../support/dictionary/permissions';
-import usersOwners from '../../support/fragments/settings/users/usersOwners';
-import settingsMenu from '../../support/fragments/settingsMenu';
-import users from '../../support/fragments/users/users';
-import eHoldingsPackage from '../../support/fragments/eholdings/eHoldingsPackage';
+import TestTypes from '../../support/dictionary/testTypes';
+import devTeams from '../../support/dictionary/devTeams';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import permissions from '../../support/dictionary/permissions';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import eHoldingsPackage from '../../support/fragments/eholdings/eHoldingsPackage';
+import settingsMenu from '../../support/fragments/settingsMenu';
 
-let user;
-
-describe('in-app approach', () => {
+describe('Creating custom labels', () => {
+  const userData = {};
   const testData = {
     servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation(
       'S',
       uuid()
     ),
   };
-  before('create test data', () => {
-    cy.getAdminToken()
-      .then(() => {
-        ServicePoints.createViaApi(testData.servicePointS);
-      });
+  before('Preconditions', () => {
+    cy.getAdminToken().then(() => {
+      ServicePoints.createViaApi(testData.servicePointS);
+      testData.defaultLocation = Location.getDefaultLocation(
+        testData.servicePointS.id
+      );
+    });
     cy.createTempUser([
       permissions.uiSettingseholdingsViewEditCreateDelete.gui,
-
+      permissions.uieHoldingsTitlesPackagesCreateDelete.gui,
     ])
-      .then(userProperties => {
-        cy.log(userProperties);
-        user = userProperties;
-        cy.login(user.username, user.password, { path: settingsMenu.eHoldingsPath, waiter: usersOwners.waitLoading });
+      .then((userProperties) => {
+        userData.username = userProperties.username;
+        userData.password = userProperties.password;
+        userData.userId = userProperties.userId;
+      })
+      .then(() => {
+        UserEdit.addServicePointsViaApi(
+          [testData.servicePointS.id],
+          userData.userId,
+          testData.servicePointS.id
+        );
+        cy.login(userData.username, userData.password);
       });
   });
 
-  after('delete test data', () => {
-    users.deleteViaApi(user.userProperties);
+  after('Deleting created entities', () => {
+    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [
+      testData.servicePointS.id,
+    ]);
     ServicePoints.deleteViaApi(testData.servicePointS.id);
+    Users.deleteViaApi(userData.userId);
   });
-
-  it('C380590 Verify bulk edit of User record that contains NULL values in reference data - CSV (firebird)', () => {
-    cy.visit(settingsMenu.eHoldingsPath);
-    eHoldingsPackage.customLabel({
-      labelOne: 'AutomatingTheFolioApplicationAndTestingApplication',
-      labelTwo: 'Test :',
-    });
-  });
+  it(
+    'C9236  Settings: Add/Edit a custom label(spitfire)',
+    { tags: [TestTypes.extendedPath, devTeams.spitfire] },
+    () => {
+      cy.visit(settingsMenu.eHoldingsPath);
+      eHoldingsPackage.customLabel({
+        labelOne: 'AutomatingTheFolioApplicationAndTestingApplication',
+        labelTwo: 'Test :',
+      });
+      cy.visit('/eholdings/resources/58-473-185972');
+      eHoldingsPackage.verifyCustomLabel();
+    }
+  );
 });
-

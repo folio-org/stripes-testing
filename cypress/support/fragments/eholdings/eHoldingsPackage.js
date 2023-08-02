@@ -11,6 +11,9 @@ import {
   MultiSelectOption,
   ValueChipRoot,
   Spinner,
+  NavList,
+  TextField,
+  Checkbox,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 import { getLongDelay } from '../../utils/cypressTools';
@@ -22,21 +25,23 @@ const actionsButton = Button('Actions');
 const removeFromHoldingsButton = Button('Remove from holdings');
 const confirmButton = Button('Yes, remove');
 const verifyCustomLabel = Section({ id: 'resourceShowCustomLabels' });
-
+const displayLabel = TextField({ name: 'customLabel1.displayLabel' });
+const displayLabelOne = TextField({ name: 'customLabel2.displayLabel' });
+const fullTextFinderCheckbox = Checkbox({
+name: 'customLabel2.displayOnFullTextFinder',
+});
+const saveButton = Button('Save');
 const filterStatuses = {
   all: 'All',
   selected: 'Selected',
   notSelected: 'Not selected',
 };
-
 const packageHoldingStatusSection = Section({ id: 'packageShowHoldingStatus' });
 const titlesSection = Section({ id: 'packageShowTitles' });
 const confirmationModal = Modal({ id: 'eholdings-confirmation-modal' });
-
 const getElementIdByName = (packageName) => packageName.replaceAll(' ', '-').toLowerCase();
-
 const waitTitlesLoading = () => cy.url().then((url) => {
-  const packageId = url.split('?')[0].split('/').at(-1);
+const packageId = url.split('?')[0].split('/').at(-1);
   cy.intercept(`eholdings/packages/${packageId}/resources?**`).as(
     'getTitles'
   );
@@ -52,7 +57,7 @@ export default {
 
   customLabel(name) {
     cy.do([
-      customLabelButton.click(),
+      NavList({ ariaLabel: 'Knowledge base' }).navTo('Custom labels'),
       displayLabel.fillIn(name.labelOne),
       displayLabelOne.fillIn(name.labelTwo),
       fullTextFinderCheckbox.click(),
@@ -78,6 +83,7 @@ export default {
     );
     cy.expect(confirmationModal.absent());
   },
+
   filterTitles: (selectionStatus = filterStatuses.notSelected) => {
     cy.do(titlesSection.find(Button({ icon: 'search' })).click());
     cy.expect(titlesFilterModal.exists());
