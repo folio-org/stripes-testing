@@ -3,6 +3,7 @@ import getRandomPostfix from '../../utils/stringTools';
 import topMenu from '../topMenu';
 import eHoldingsNewCustomPackage from './eHoldingsNewCustomPackage';
 // eslint-disable-next-line import/no-cycle
+import eHoldingsPackage from './eHoldingsPackage';
 import eHoldingsPackagesSearch from './eHoldingsPackagesSearch';
 import eHoldingsProvidersSearch from './eHoldingsProvidersSearch';
 import eHoldingsSearch from './eHoldingsSearch';
@@ -31,6 +32,7 @@ export default {
         cy.do(resultSection
           .find(ListItem({ className: including('list-item-'), index: rowNumber })
             .find(Button())).click());
+        eHoldingsPackage.waitLoading(specialPackage);
         cy.wrap(specialPackage).as('selectedPackage');
       });
     return cy.get('@selectedPackage');

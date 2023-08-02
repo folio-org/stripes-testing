@@ -3,7 +3,7 @@ import topMenu from '../../../../support/fragments/topMenu';
 import testTypes from '../../../../support/dictionary/testTypes';
 import devTeams from '../../../../support/dictionary/devTeams';
 
-describe('Orders: Receiving and Check-in ', () => {
+describe('Orders: Export in edifact format ', () => {
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
