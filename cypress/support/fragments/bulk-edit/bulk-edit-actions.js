@@ -174,6 +174,7 @@ export default {
 
   addNewBulkEditFilterString() {
     cy.do(plusBtn.click());
+    cy.wait(1000);
   },
 
   fillPatronGroup(group = 'staff (Staff Member)', rowIndex = 0) {
