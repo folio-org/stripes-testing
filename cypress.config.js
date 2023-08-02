@@ -74,9 +74,7 @@ module.exports = defineConfig({
         },
 
         readFileFromDownloads(filename) {
-          const downloadsFolder =
-            config.downloadsFolder ||
-            path.join(__dirname, '..', '..', 'Downloads');
+          const downloadsFolder = config.downloadsFolder || path.join(__dirname, '..', '..', 'Downloads');
           const filePath = path.join(downloadsFolder, filename);
           return fs.readFileSync(filePath, 'utf-8');
         },
