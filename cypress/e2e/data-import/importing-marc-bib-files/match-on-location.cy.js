@@ -6,7 +6,8 @@ import { FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
   PROFILE_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
-  JOB_STATUS_NAMES } from '../../../support/constants';
+  JOB_STATUS_NAMES,
+  LOCATION_NAMES } from '../../../support/constants';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -233,6 +234,7 @@ describe('ui-data-import', () => {
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
+        cy.reload();
         DataImport.uploadFile('marcFileForC17027.mrc', marcFileForCreate);
         JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
         JobProfiles.runImportFile();
@@ -342,6 +344,7 @@ describe('ui-data-import', () => {
     cy.visit(TopMenu.dataImportPath);
     // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
     DataImport.verifyUploadState();
+    cy.reload();
     DataImport.uploadFile(editedMarcFileName, fileNameAfterUpdate);
     JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
     JobProfiles.runImportFile();
@@ -362,7 +365,7 @@ describe('ui-data-import', () => {
       InventoryInstance.openHoldingView();
       HoldingsRecordView.checkAdministrativeNote(noteForHoldingsMappingProfile);
       HoldingsRecordView.close();
-      InventoryInstance.openHoldingsAccordion('Main Library >');
+      InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
       InventoryInstance.openItemByBarcode('No barcode');
       ItemRecordView.checkItemAdministrativeNote(noteForItemMappingProfile);
     });

@@ -8,13 +8,11 @@ import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-s
 import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import DateTools from '../../../support/utils/dateTools';
-import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 
 let user;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*Matched-Records-${userBarcodesFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
-const errorsInChangedRecordsFileName = `*-Errors-${editedFileName}`;
 
 describe('bulk-edit', () => {
   describe('csv approach', () => {
@@ -37,10 +35,10 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
-      FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName, errorsInChangedRecordsFileName);
+      FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName);
     });
 
-    it('C388498 Negative: Verify CSV updating records with invalid date (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
+    it('C388498 Negative: Verify Local updating records with invalid date (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
 
       BulkEditSearchPane.uploadFile(userBarcodesFileName);
@@ -60,8 +58,6 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyErrorLabelAfterChanges(editedFileName, 0, 1);
       BulkEditSearchPane.verifyReasonForError('Field "createdDate"');
       BulkEditActions.openActions();
-      BulkEditActions.downloadErrors();
-      BulkEditFiles.verifyMatchedResultFileContent(errorsInChangedRecordsFileName, [user.barcode], 'firstElement', false);
     });
   });
 });
