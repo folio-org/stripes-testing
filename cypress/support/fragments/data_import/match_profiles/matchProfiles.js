@@ -59,8 +59,6 @@ export default {
   createMatchProfile(profile) {
     openNewMatchProfileForm();
     NewMatchProfile.fillMatchProfileForm(profile);
-    // TODO need to wait until profile will be filled
-    cy.wait(1500);
     saveAndClose();
     waitCreatingMatchProfile();
   },

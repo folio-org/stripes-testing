@@ -63,7 +63,6 @@ describe('ui-data-import', () => {
       InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
         instanceHrid = initialInstanceHrId;
 
-        cy.reload();
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InventoryInstance.startOverlaySourceBibRecord();
         InventoryInstance.importWithOclc(oclcNumber);

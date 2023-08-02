@@ -226,7 +226,6 @@ describe('ui-data-import', () => {
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        cy.reload();
         DataImport.uploadFile('mrcFileForC11123.mrc', marcFileForCreate);
         JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
         JobProfiles.runImportFile();
@@ -325,7 +324,6 @@ describe('ui-data-import', () => {
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        cy.reload();
         DataImport.uploadFile(editedMarcFileName, nameMarcFileForUpdate);
         JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();

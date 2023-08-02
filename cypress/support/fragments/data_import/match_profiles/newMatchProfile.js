@@ -163,6 +163,8 @@ export default {
       cy.do(criterionValueTypeButton.click());
       cy.expect(criterionValueTypeList.exists());
       cy.do(criterionValueTypeList.find(SelectionOption(instanceOption)).click());
+      // TODO need to wait until profile will be filled
+      cy.wait(1500);
     } else if (existingRecordType === 'MARC_AUTHORITY') {
       selectExistingRecordType(existingRecordType);
       selectIncomingRecordType('MARC Authority');
@@ -190,6 +192,8 @@ export default {
       cy.do(criterionValueTypeButton.click());
       cy.expect(criterionValueTypeList.exists());
       cy.do(criterionValueTypeList.find(SelectionOption(holdingsOption)).click());
+      // TODO need to wait until profile will be filled
+      cy.wait(1500);
     } else {
       cy.do(matchProfileDetailsAccordion.find(Button({ dataId:'ITEM' })).click());
       fillIncomingRecordFields(incomingRecordFields.field, 'field');
@@ -202,11 +206,9 @@ export default {
       fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
       cy.do(criterionValueTypeButton.click());
       cy.expect(criterionValueTypeList.exists());
-      // wait for list will be loaded
-      cy.wait(2000);
       cy.do(criterionValueTypeList.find(SelectionOption(itemOption)).click());
-      // wait for list will be loaded
-      cy.wait(2000);
+      // TODO need to wait until profile will be filled
+      cy.wait(1500);
     }
   },
 

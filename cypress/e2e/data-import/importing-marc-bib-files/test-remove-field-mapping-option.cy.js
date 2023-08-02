@@ -207,7 +207,6 @@ describe('ui-data-import', () => {
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
-      cy.reload();
       DataImport.uploadFile(marcFileNameForCreate);
       JobProfiles.searchJobProfileForImport(jobProfileForCreate.profileName);
       JobProfiles.runImportFile();

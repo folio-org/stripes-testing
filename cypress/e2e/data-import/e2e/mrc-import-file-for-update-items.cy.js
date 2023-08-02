@@ -385,7 +385,6 @@ describe('ui-data-import', () => {
   it('C343335 MARC file upload with the update of instance, holding, and items (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
     DataImport.verifyUploadState();
-    cy.reload();
     // upload a marc file for creating of the new instance, holding and item
     DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);
     JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
@@ -460,7 +459,6 @@ describe('ui-data-import', () => {
     cy.visit(TopMenu.dataImportPath);
     // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
     DataImport.verifyUploadState();
-    cy.reload();
     DataImport.uploadExportedFile(nameMarcFileForImportUpdate);
     JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
     JobProfiles.runImportFile();
