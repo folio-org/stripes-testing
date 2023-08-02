@@ -1,7 +1,6 @@
 import invoice from '../../../support/fragments/ideyalabs/invoice';
 import topMenu from '../../../support/fragments/topMenu';
 import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 
 const searchInvoiceNumber = {
   parameter: 'Keyword',
@@ -18,7 +17,7 @@ describe('Orders', () => {
 
   it(
     'C368486 Editing fund distribution in PO line when related Reviewed invoice exists (thunderjet)',
-    { tags: [testTypes.ideaLabsTests, devTeams.thunderjet] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(topMenu.orderLinesPath);
       invoice.searchByParameter(
