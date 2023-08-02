@@ -11,7 +11,8 @@ import {
   EXPORT_TRANSFORMATION_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
   PROFILE_TYPE_NAMES,
-  EXISTING_RECORDS_NAMES
+  EXISTING_RECORDS_NAMES,
+  HOLDINGS_TYPE_NAMES
 } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -361,11 +362,11 @@ describe('ui-data-import', () => {
   const createHoldingsMappingProfile = (profile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
-    NewFieldMappingProfile.fillHoldingsType('Electronic');
+    NewFieldMappingProfile.fillHoldingsType(HOLDINGS_TYPE_NAMES.ELECTRONIC);
     NewFieldMappingProfile.fillPermanentLocation(profile.permanentLocation);
     NewFieldMappingProfile.fillCallNumberType(profile.callNumberType);
     NewFieldMappingProfile.fillCallNumber('050$a " " 050$b');
-    NewFieldMappingProfile.addElectronicAccess('Resource', '856$u');
+    NewFieldMappingProfile.addElectronicAccess('"Resource"', '856$u');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
   };
@@ -384,6 +385,7 @@ describe('ui-data-import', () => {
   it('C343335 MARC file upload with the update of instance, holding, and items (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
     DataImport.verifyUploadState();
+    cy.reload();
     // upload a marc file for creating of the new instance, holding and item
     DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);
     JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
@@ -399,17 +401,18 @@ describe('ui-data-import', () => {
     FileDetails.checkItemsQuantityInSummaryTable(0, '1');
     FileDetails.checkItemsQuantityInSummaryTable(1, '0');
 
-    // get Instance HRID through API
-    InventorySearchAndFilter.getInstanceHRID()
-      .then(hrId => {
-        instanceHRID = hrId[0];
-        // download .csv file
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchInstanceByHRID(hrId[0]);
-        InventorySearchAndFilter.saveUUIDs();
-        ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
-        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-      });
+    // open Instance for getting hrid
+    FileDetails.openInstanceInInventory('Created');
+    InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+      instanceHRID = initialInstanceHrId;
+
+      // download .csv file
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
+      InventorySearchAndFilter.saveUUIDs();
+      ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    });
 
     cy.visit(SettingsMenu.exportMappingProfilePath);
     ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
@@ -457,6 +460,7 @@ describe('ui-data-import', () => {
     cy.visit(TopMenu.dataImportPath);
     // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
     DataImport.verifyUploadState();
+    cy.reload();
     DataImport.uploadExportedFile(nameMarcFileForImportUpdate);
     JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
     JobProfiles.runImportFile();

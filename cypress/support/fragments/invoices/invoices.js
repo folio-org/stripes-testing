@@ -52,6 +52,10 @@ const fundCodeFilterSection = Section({ id: 'fundCode' });
 const fiscalYearFilterSection = Section({ id: 'fiscalYearId' });
 const invoiceDateFilterSection = Section({ id: 'invoiceDate' });
 const approvalDateFilterSection = Section({ id: 'approvalDate' });
+const newBlankLineButton = Button('New blank line');
+const polLookUpButton = Button('POL look-up');
+const selectOrderLinesModal = Modal('Select order lines');
+const fundInInvoiceSection = Section({ id: 'invoiceLineForm-fundDistribution' });
 
 export default {
   checkZeroSearchResultsHeader: () => {
@@ -255,6 +259,26 @@ export default {
     );
   },
 
+  createInvoiceLinePOLLookUWithSubTotal: (orderNumber, total) => {
+    cy.do([
+      Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click(),
+      newBlankLineButton.click()
+    ]);
+    cy.do([
+      polLookUpButton.click(),
+      selectOrderLinesModal.find(SearchField({ id: searhInputId })).fillIn(orderNumber),
+      searchButton.click()
+    ]);
+    Helper.selectFromResultsList();
+    cy.get('input[name="subTotal"]').clear().type(total);
+    cy.do([
+      fundInInvoiceSection.find(Button('%')).click(),
+      saveAndClose.click(),
+    ]);
+    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage);
+    cy.wait(4000);
+  },
+
   addLineFromPol: (orderNumber) => {
     cy.do([
       Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click(),
@@ -269,7 +293,7 @@ export default {
       Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click(),
       Button('Add line from POL').click(),
     ]);
-    cy.expect(Modal('Select order lines').exists());
+    cy.expect(selectOrderLinesModal.exists());
     cy.do([
       Modal('Select order lines')
         .find(SearchField({ id: searhInputId }))
@@ -433,7 +457,7 @@ export default {
       Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click(),
       Button('Add line from POL').click(),
     ]);
-    cy.expect(Modal('Select order lines').exists());
+    cy.expect(selectOrderLinesModal.exists());
   },
 
   checkSearchPolPlugin: (searchParamsMap, titleOrPackage) => {

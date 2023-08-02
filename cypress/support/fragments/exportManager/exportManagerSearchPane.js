@@ -11,7 +11,8 @@ import {
   MultiColumnList,
   PaneHeader,
   KeyValue,
-  HTML
+  HTML,
+  MultiColumnListRow,
 } from '../../../../interactors';
 
 const searchButton = Button({ type: 'submit' });
@@ -42,7 +43,10 @@ export default {
   selectJob(content) {
     return cy.do(MultiColumnListCell(including(content)).click());
   },
-
+  verifyResultAndClick(content) {
+    cy.expect(MultiColumnListCell(including(content)).exists());
+    cy.do(MultiColumnListRow({ index:0 }).click());
+  },
   selectJobByIndex(content, index) {
     cy.get('div[class*=mclRow-]').contains(content).then(element => {
       element.prevObject[index].click();
@@ -150,6 +154,7 @@ export default {
   },
 
   enterEndTime(fromDate, toDate) {
+    waitClick();
     cy.do([
       endTimeAccordion.clickHeader(),
       endTimeAccordion.find(startDateTextfield).fillIn(fromDate),
@@ -163,6 +168,7 @@ export default {
   },
 
   searchBySystemNo() {
+    waitClick();
     cy.do([
       systemAccordion.clickHeader(),
       systemAccordion.find(Checkbox({ label: 'No' })).click(),

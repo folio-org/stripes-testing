@@ -73,7 +73,7 @@ export default {
     };
 
     return cy.wrap(Promise.resolve(true)).then(() => {
-      cy.getMaterialTypes({ limit: 1 }).then(materialType => {
+      cy.getMaterialTypes({ query: 'name="video recording"' }).then(materialType => {
         instanceRecordData.materialTypeId = materialType.id;
         materialTypeValue = materialType.name;
       });

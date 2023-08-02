@@ -56,6 +56,7 @@ const fundingInformationMCList = MultiColumnList({ ariaRowCount: 7 });
 const FinancialActivityAndOveragesMCList = MultiColumnList({ ariaRowCount: 5 });
 const resetButton = Button({ id: 'reset-funds-filters' });
 const addTransferModal = Modal({ id: 'add-transfer-modal' });
+const closeWithoutSavingButton = Button('Close without saving');
 
 export default {
 
@@ -102,6 +103,30 @@ export default {
     this.waitForFundDetailsLoading();
   },
 
+  cancelCreatingFundWithTransfers(defaultFund, defaultLedger, firstFund, secondFund) {
+    cy.do([
+      newButton.click(),
+      nameField.fillIn(defaultFund.name),
+      codeField.fillIn(defaultFund.code),
+      ledgerSelection.open(),
+      SelectionList().select(defaultLedger),
+    ]);
+    // TO DO: change xpath to interactors when it would be possible
+    cy.get('[data-test-col-transfer-from="true"]').click();
+    cy.get('[data-test-col-transfer-from="true"] ul[role="listbox"]')
+      .contains(firstFund.name)
+      .click();
+    cy.get('[data-test-col-transfer-to="true"]').click();
+    cy.get('[data-test-col-transfer-to="true"] ul[role="listbox"]')
+      .contains(secondFund.name)
+      .click();
+    cy.do([
+      cancelButton.click(),
+      closeWithoutSavingButton.click()
+    ]);
+    this.waitLoading();
+  },
+
   createFundForWarningMessage(fund) {
     cy.do([
       newButton.click(),
@@ -117,6 +142,15 @@ export default {
       actionsButton.click(),
       Button('Edit').click(),
       MultiSelect({ label: 'Group' }).select([group]),
+      saveAndCloseButton.click()
+    ]);
+  },
+
+  addTrunsferTo: (fund) => {
+    cy.do([
+      actionsButton.click(),
+      Button('Edit').click(),
+      MultiSelect({ label: 'Transfer to' }).select([fund]),
       saveAndCloseButton.click()
     ]);
   },
@@ -149,7 +183,7 @@ export default {
       Button('Agreements').click(),
       Button('Keep editing').click,
       cancelButton.click(),
-      Button('Close without saving').click()
+      closeWithoutSavingButton.click()
     ]);
   },
 
@@ -174,6 +208,9 @@ export default {
     cy.expect(Modal('Current budget').exists());
     cy.do([
       Modal('Current budget').find(TextField({ name: 'allocated' })).fillIn(allocatedQuantity.toString()),
+    ]);
+    cy.wait(4000);
+    cy.do([
       Button('Save').click()
     ]);
   },
@@ -246,6 +283,23 @@ export default {
         .find(MultiColumnListRow({ index: 1 }))
         .find(MultiColumnListCell({ columnIndex: 5 }))
         .has({ content: 'PO line' })
+    ]);
+  },
+
+  checkInvoiceInTransactionList: (indexnumber, type, amount, source) => {
+    cy.expect([
+      transactionList
+        .find(MultiColumnListRow({ index: indexnumber }))
+        .find(MultiColumnListCell({ columnIndex: 1 }))
+        .has({ content: type }),
+      transactionList
+        .find(MultiColumnListRow({ index: indexnumber }))
+        .find(MultiColumnListCell({ columnIndex: 2 }))
+        .has({ content: `${amount}` }),
+      transactionList
+        .find(MultiColumnListRow({ index: indexnumber }))
+        .find(MultiColumnListCell({ columnIndex: 5 }))
+        .has({ content: source })
     ]);
   },
 
@@ -626,21 +680,19 @@ export default {
     cy.wait(4000);
   },
 
-  moveAllocationWithError: (firstFund, secondFund, amount) => {
+  moveAllocationWithError: (secondFund, amount) => {
     cy.do([
       actionsButton.click(),
       Button('Move allocation').click(),
-    ]);
-    cy.wait(4000);
-    cy.do([
       addTransferModal.find(Button({ name: 'fromFundId' })).click(),
-      MultiSelectOption(secondFund.name).click(),
-      addTransferModal.find(Button({ name: 'toFundId' })).click(),
-      MultiSelectOption(firstFund.name).click(),
+    ]);
+    cy.wait(6000);
+    cy.get('[role="option"]').contains(`${secondFund.name} (${secondFund.code})`).click();
+    cy.do([
       addTransferModal.find(TextField({ name: 'amount' })).fillIn(amount),
       addTransferModal.find(confirmButton).click(),
     ]);
-    InteractorsTools.checkCalloutErrorMessage(`$50.00 was not successfully allocated because ${secondFund.code} has no budget`);
+    InteractorsTools.checkCalloutErrorMessage(`$${amount}.00 was not successfully allocated because ${secondFund.code} has no budget`);
     cy.do(addTransferModal.find(cancelButton).click());
   },
 };
