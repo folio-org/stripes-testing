@@ -1,6 +1,5 @@
 import uuid from 'uuid';
 import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import permissions from '../../support/dictionary/permissions';
@@ -52,7 +51,7 @@ describe('Creating custom labels', () => {
   });
   it(
     'C9236  Settings: Add/Edit a custom label(spitfire)',
-    { tags: [TestTypes.extendedPath, devTeams.spitfire] },
+    { tags: [TestTypes.ideaLabsTests] },
     () => {
       cy.visit(settingsMenu.eHoldingsPath);
       eHoldingsPackage.customLabel({

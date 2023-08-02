@@ -37,7 +37,6 @@ describe('ui-data-import', () => {
     // Upload files
     // runs with errors
     cy.uploadFileWithDefaultJobProfile(fileNameForFailedImport);
-    cy.reload();
     // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
     DataImport.verifyUploadState();
     // runs successfully

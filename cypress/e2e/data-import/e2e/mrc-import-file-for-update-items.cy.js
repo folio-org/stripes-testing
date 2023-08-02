@@ -338,8 +338,7 @@ describe('ui-data-import', () => {
     FieldMappingProfiles.deleteFieldMappingProfile(nameInstanceMappingProfile);
     FieldMappingProfiles.deleteFieldMappingProfile(nameHoldingsMappingProfile);
     FieldMappingProfiles.deleteFieldMappingProfile(nameItemMappingProfile);
-    // delete downloads folder and created files in fixtures
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    // delete created files in fixtures
     FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
     FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
@@ -366,7 +365,7 @@ describe('ui-data-import', () => {
     NewFieldMappingProfile.fillPermanentLocation(profile.permanentLocation);
     NewFieldMappingProfile.fillCallNumberType(profile.callNumberType);
     NewFieldMappingProfile.fillCallNumber('050$a " " 050$b');
-    NewFieldMappingProfile.addElectronicAccess('Resource', '856$u');
+    NewFieldMappingProfile.addElectronicAccess('"Resource"', '856$u');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
   };
@@ -400,17 +399,18 @@ describe('ui-data-import', () => {
     FileDetails.checkItemsQuantityInSummaryTable(0, '1');
     FileDetails.checkItemsQuantityInSummaryTable(1, '0');
 
-    // get Instance HRID through API
-    InventorySearchAndFilter.getInstanceHRID()
-      .then(hrId => {
-        instanceHRID = hrId[0];
-        // download .csv file
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchInstanceByHRID(hrId[0]);
-        InventorySearchAndFilter.saveUUIDs();
-        ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
-        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-      });
+    // open Instance for getting hrid
+    FileDetails.openInstanceInInventory('Created');
+    InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+      instanceHRID = initialInstanceHrId;
+
+      // download .csv file
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
+      InventorySearchAndFilter.saveUUIDs();
+      ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    });
 
     cy.visit(SettingsMenu.exportMappingProfilePath);
     ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
@@ -449,9 +449,9 @@ describe('ui-data-import', () => {
     // create Job profile
     cy.visit(SettingsMenu.jobProfilePath);
     JobProfiles.createJobProfileWithLinkingProfilesForUpdate(jobProfileForUpdate);
-    NewJobProfile.linkMatchAndActionProfilesForInstance(collectionOfMappingAndActionProfiles[0].actionProfile.name, collectionOfMatchProfiles[0].matchProfile.profileName, 0);
-    NewJobProfile.linkMatchAndActionProfilesForHoldings(collectionOfMappingAndActionProfiles[1].actionProfile.name, collectionOfMatchProfiles[1].matchProfile.profileName, 2);
-    NewJobProfile.linkMatchAndActionProfilesForItem(collectionOfMappingAndActionProfiles[2].actionProfile.name, collectionOfMatchProfiles[2].matchProfile.profileName, 4);
+    NewJobProfile.linkMatchAndActionProfiles(collectionOfMatchProfiles[0].matchProfile.profileName, collectionOfMappingAndActionProfiles[0].actionProfile.name);
+    NewJobProfile.linkMatchAndActionProfiles(collectionOfMatchProfiles[1].matchProfile.profileName, collectionOfMappingAndActionProfiles[1].actionProfile.name, 2);
+    NewJobProfile.linkMatchAndActionProfiles(collectionOfMatchProfiles[2].matchProfile.profileName, collectionOfMappingAndActionProfiles[2].actionProfile.name, 4);
     NewJobProfile.saveAndClose();
 
     // upload the exported marc file

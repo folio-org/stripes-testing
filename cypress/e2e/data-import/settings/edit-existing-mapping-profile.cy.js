@@ -1,8 +1,8 @@
+import getRandomPostfix from '../../../support/utils/stringTools';
+import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import { FOLIO_RECORD_TYPE } from '../../../support/constants';
-import permissions from '../../../support/dictionary/permissions';
-import Helper from '../../../support/fragments/finance/financeHelper';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -14,7 +14,7 @@ import Users from '../../../support/fragments/users/users';
 describe('ui-data-import', () => {
   let user;
   const mappingProfile = {
-    name: `C2351 autotest mapping profile ${Helper.getRandomBarcode()}`,
+    name: `C2351 autotest mapping profile ${getRandomPostfix}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE
   };
   const instanceStatusTerm = '"Batch Loaded"';

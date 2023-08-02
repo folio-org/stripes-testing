@@ -55,7 +55,7 @@ describe('ui-data-import', () => {
         name: `Create ER Holdings ${getRandomPostfix()}`,
         holdingsType: HOLDINGS_TYPE_NAMES.ELECTRONIC,
         permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
-        relationship: 'Resource',
+        relationship: '"Resource"',
         uri: '856$u',
         linkText: '856$y',
         materialsSpecified: '856$3',

@@ -94,7 +94,7 @@ const verifyInstanceRecordViewOpened = () => {
   cy.expect(Pane({ id:'pane-instancedetails' }).exists());
 };
 
-const verifyElectronicAccess = (uriValue, linkText = '', rowNumber = 0) => {
+const verifyElectronicAccess = (uriValue, linkText = 'No value set-', rowNumber = 0) => {
   cy.expect(electronicAccessAccordion
     .find(MultiColumnListCell({ row: rowNumber, columnIndex: 1, content: uriValue }))
     .exists());

@@ -713,5 +713,38 @@ export default {
     cy.expect(calloutUpdatedRecord.exists());
     cy.do(calloutUpdatedRecord.dismiss());
     cy.expect(calloutUpdatedRecord.absent());
+  },
+
+  checkFourthBoxDisabled(rowIndex) {
+    cy.expect(getRowInteractorByRowNumber(rowIndex).find(TextArea({ ariaLabel: 'Subfield' })).has({ disabled: true }));
+  },
+
+  verifyNoFieldWithContent(content) {
+    cy.expect(TextArea({ ariaLabel: 'Subfield', textContent: including(content) }).absent());
+  },
+
+  updateTagNameToLockedTag(rowIndex, newTagName) {
+    cy.get(`input[name="records[${rowIndex}].tag"`).type(newTagName);
+  },
+
+  checkEmptyFieldAdded(rowIndex, defaultContent = '$a ') {
+    cy.expect([
+      QuickMarcEditorRow({ index: rowIndex }).find(quickMarcEditorRowContent).exists(),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: including('.tag') })).has({ value: '' }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ ariaLabel: 'Subfield' })).has({ textContent: defaultContent })
+    ]);
+  },
+
+  confirmUpdateLinkedBibs(linkedRecordsNumber) {
+    cy.do(saveButton.click());
+    cy.expect([
+      Callout(`Record has been updated. ${linkedRecordsNumber} linked bibliographic record(s) updates have begun.`).exists(),
+      rootSection.absent(),
+      viewMarcSection.exists()
+    ]);
+  },
+
+  checkPaneheaderContains(text) {
+    cy.expect(PaneHeader({ text: (including(text)) }).exists());
   }
 };

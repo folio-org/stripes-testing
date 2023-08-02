@@ -279,8 +279,8 @@ describe('ui-data-import', () => {
           // create Job profile
           cy.visit(SettingsMenu.jobProfilePath);
           JobProfiles.createJobProfileWithLinkingProfilesForUpdate(jobProfileForUpdate);
-          NewJobProfile.linkMatchAndActionProfilesForHoldings(collectionOfMappingAndActionProfilesForUpdate[0].actionProfile.name, collectionOfMatchProfiles[0].matchProfile.profileName, 0);
-          NewJobProfile.linkMatchAndActionProfilesForItem(collectionOfMappingAndActionProfilesForUpdate[1].actionProfile.name, collectionOfMatchProfiles[1].matchProfile.profileName, 2);
+          NewJobProfile.linkMatchAndActionProfiles(collectionOfMatchProfiles[0].matchProfile.profileName, collectionOfMappingAndActionProfilesForUpdate[0].actionProfile.name);
+          NewJobProfile.linkMatchAndActionProfiles(collectionOfMatchProfiles[1].matchProfile.profileName, collectionOfMappingAndActionProfilesForUpdate[1].actionProfile.name, 2);
           NewJobProfile.saveAndClose();
           JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
 

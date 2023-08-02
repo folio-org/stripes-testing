@@ -1,8 +1,8 @@
 import permissions from '../../../support/dictionary/permissions';
+import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import { FOLIO_RECORD_TYPE, ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
-import Helper from '../../../support/fragments/finance/financeHelper';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
@@ -25,20 +25,20 @@ describe('ui-data-import', () => {
   const fieldsForDelete = ['977', '978', '979'];
   const fieldsForDeleteIds = [];
   // unique file name to upload
-  const fileName = `C350678autotestFileProtection.${Helper.getRandomBarcode()}.mrc`;
+  const fileName = `C350678autotestFileProtection.${getRandomPostfix}.mrc`;
 
-  const mappingProfile = { name: `C350678 Remove extraneous MARC fields ${Helper.getRandomBarcode()}`,
+  const mappingProfile = { name: `C350678 Remove extraneous MARC fields ${getRandomPostfix}`,
     typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC };
 
   const actionProfile = {
     typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
-    name: `C350678 Remove extraneous MARC fields ${Helper.getRandomBarcode()}`,
+    name: `C350678 Remove extraneous MARC fields ${getRandomPostfix}`,
     action: 'Modify (MARC Bibliographic record type only)'
   };
 
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: `C350678 Create bib and instance, but remove some MARC fields first ${Helper.getRandomBarcode()}`,
+    profileName: `C350678 Create bib and instance, but remove some MARC fields first ${getRandomPostfix}`,
     acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
@@ -139,18 +139,19 @@ describe('ui-data-import', () => {
       FileDetails.checkSrsRecordQuantityInSummaryTable('1', 0);
       FileDetails.checkInstanceQuantityInSummaryTable('1', 0);
 
-      // get Instance HRID through API
-      InventorySearchAndFilter.getInstanceHRID()
-        .then(hrId => {
-          instanceHrid = hrId[0];
-          // check fields are absent in the view source
-          cy.visit(TopMenu.inventoryPath);
-          InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-          // verify table data in marc bibliographic source
-          InventoryInstance.viewSource();
-          fieldsForDelete.forEach(fieldNumber => {
-            InventoryViewSource.notContains(`${fieldNumber}\t`);
-          });
+      // open Instance for getting hrid
+      FileDetails.openInstanceInInventory('Created');
+      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        instanceHrid = initialInstanceHrId;
+
+        // check fields are absent in the view source
+        cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+        // verify table data in marc bibliographic source
+        InventoryInstance.viewSource();
+        fieldsForDelete.forEach(fieldNumber => {
+          InventoryViewSource.notContains(`${fieldNumber}\t`);
         });
+      });
     });
 });
