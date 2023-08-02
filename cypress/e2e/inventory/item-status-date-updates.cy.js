@@ -263,13 +263,13 @@ describe('inventory', () => {
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
     fullCheck(ItemRecordView.itemStatuses.declaredLost);
 
-    // // renew item (through override)
-    // openUser(userName);
-    // UserLoans.renewItem(itemBarcode);
-    // RenewConfirmationModal.confirmRenewOverrideItem();
-    // OverrideAndRenewModal.confirmOverrideItem();
-    // openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    // fullCheck(ItemRecordView.itemStatuses.checkedOut);
+    // renew item (through override)
+    openUser(userName);
+    UserLoans.renewItem(itemBarcode);
+    RenewConfirmationModal.confirmRenewOverrideItem();
+    OverrideAndRenewModal.confirmOverrideItem();
+    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    fullCheck(ItemRecordView.itemStatuses.checkedOut);
 
     // // edit item record so that it has multiple pieces
     // InventoryInstance.edit();
