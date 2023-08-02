@@ -6,6 +6,19 @@ import {
   Spinner,
   TextField,
   including,
+  Accordion,
+  Button,
+  Checkbox,
+  KeyValue,
+  Modal,
+  Section,
+  Select,
+  Spinner,
+  TextField,
+  including,
+  SearchField,
+  QuickMarcEditorRow,
+  Callout
 } from "../../../interactors";
 import holdingsRecordView from "../fragments/inventory/holdingsRecordView";
 
@@ -15,6 +28,8 @@ const saveAndCloseBtn = Button("Save & close");
 const closeButton = Button({
   ariaLabel: "Close The !!!Kung of Nyae Nyae / Lorna Marshall.",
 });
+const buttonLink = Button({ icon: 'unlink' });
+const editorSection = Section({ id: 'quick-marc-editor-pane' });
 const linkHeadingsButton = Button("Link headings");
 const searchButton = Button({ type: "submit" });
 const actionsButton = Button("Actions");
@@ -22,6 +37,20 @@ const deleteButton = Button("Delete");
 const deleteButtonInConfirmation = Button({
   id: "clickable-delete-confirmation-modal-confirm",
 });
+const availableProxies = ['Inherited - None', 'FOLIO-Bugfest', 'EZProxy'];
+const proxySelect = Select({ id: 'eholdings-proxy-id' });
+const customLabelButton = Button('Custom labels');
+const displayLabel = TextField({ name: 'customLabel1.displayLabel' });
+const displayLabelOne = TextField({ name: 'customLabel2.displayLabel' });
+const fullTextFinderCheckbox = Checkbox({
+  name: 'customLabel2.displayOnFullTextFinder',
+});
+const saveButton = Button('Save');
+const verifyCustomLabel = Section({ id: 'resourceShowCustomLabels' });
+const RandomValue = Math.floor(Math.random() * 2);
+cy.intercept(`eholdings/packages/${packageId}/resources?**`).as(
+  'getTitles'
+);
 
 export default {
   openCreatedHoldingView: () => {
@@ -124,5 +153,71 @@ export default {
         })
       );
     });
+  },
+
+  customLabel(name) {
+    cy.do([
+      customLabelButton.click(),
+      displayLabel.fillIn(name.labelOne),
+      displayLabelOne.fillIn(name.labelTwo),
+      fullTextFinderCheckbox.click(),
+      saveButton.click(),
+    ]);
+    cy.visit('/eholdings/resources/58-473-185972');
+  },
+
+  verifyCustomLabel: () => {
+    cy.expect(verifyCustomLabel.exists());
+  },
+
+  checkEmptyTitlesList: () => {
+    cy.expect(titlesSection.find(KeyValue('Records found', { value: '0' })));
+  },
+
+  editactions: () => {
+    cy.wait(2000);
+    cy.do(actionsButton.click());
+    cy.wait(2000);
+    cy.do(editButton.click());
+  },
+
+  changeProxy: () => {
+    cy.get('select#eholdings-proxy-id option:selected')
+      .invoke('text')
+      .then((text) => {
+        const options = availableProxies.filter((option) => option !== text);
+        cy.do(proxySelect.choose(options[RandomValue]));
+      });
+  },
+
+  saveAndClose: () => {
+    cy.do(Button('Save & close').click());
+  },
+
+  selectSearchResultByRowIndex(indexRow) {
+    cy.do(this.getSearchResult(indexRow, 0).click());
+    // must wait page render
+    cy.wait(2000);
+  },
+
+  searchBeats(value) {
+    cy.do((SearchField({ id: 'textarea-authorities-search' })).fillIn(value));
+    cy.do((Button({ id: 'submit-authorities-search' })).click());
+  },
+  checkFieldTagExists: () => {
+    cy.expect([
+      editorSection.exists(),
+      QuickMarcEditorRow({ tagValue: '625' }).exists()
+    ]);
+  },
+
+  checkLinkingAuthority650: () => {
+    cy.expect(buttonLink.exists());
+    cy.expect(Callout('Field 650 has been linked to a MARC authority record.').exists());
+  },
+
+  checkLinkingAuthority700: () => {
+    cy.expect(buttonLink.exists());
+    cy.expect(Callout('Field 700 has been linked to a MARC authority record.').exists());
   },
 };

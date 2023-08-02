@@ -1,4 +1,4 @@
-import { Button, Callout, HTML, Modal, Pane, PaneContent, PaneHeader, QuickMarcEditor, QuickMarcEditorRow, Section, TextArea, TextField, and, including, some } from '../../../interactors';
+import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Section, Button, Modal, Callout, TextField, and, some, Pane, HTML, including, PaneContent, PaneHeader } from '../../../interactors';
 import dateTools from '../utils/dateTools';
 import getRandomPostfix from '../utils/stringTools';
 import InventoryInstance from './inventory/inventoryInstance';
@@ -515,7 +515,7 @@ export default {
     validRecord.tag008AuthorityBytesProperties.getAllProperties().forEach(byteProperty => {
       cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).fillIn(byteProperty.newValue));
     });
-    QuickMarcEditor.pressSaveAndClose();
+    QuickmarcEditor.pressSaveAndClose();
     return validRecord.tag008AuthorityBytesProperties.getNewValueSourceLine();
   },
 
@@ -666,6 +666,8 @@ export default {
 
   checkDelete008Callout() {
     cy.expect(calloutDelete008Error.exists());
+    cy.do(calloutDelete008Error.dismiss());
+    cy.expect(calloutDelete008Error.absent());
   },
 
   check008FieldsEmptyHoldings() {
@@ -705,5 +707,44 @@ export default {
       calloutAfterSaveAndCloseNewRecord.exists(),
       instanceDetailsPane.exists(),
     ]);
+  },
+
+  verifyAndDismissRecordUpdatedCallout() {
+    cy.expect(calloutUpdatedRecord.exists());
+    cy.do(calloutUpdatedRecord.dismiss());
+    cy.expect(calloutUpdatedRecord.absent());
+  },
+
+  checkFourthBoxDisabled(rowIndex) {
+    cy.expect(getRowInteractorByRowNumber(rowIndex).find(TextArea({ ariaLabel: 'Subfield' })).has({ disabled: true }));
+  },
+
+  verifyNoFieldWithContent(content) {
+    cy.expect(TextArea({ ariaLabel: 'Subfield', textContent: including(content) }).absent());
+  },
+
+  updateTagNameToLockedTag(rowIndex, newTagName) {
+    cy.get(`input[name="records[${rowIndex}].tag"`).type(newTagName);
+  },
+
+  checkEmptyFieldAdded(rowIndex, defaultContent = '$a ') {
+    cy.expect([
+      QuickMarcEditorRow({ index: rowIndex }).find(quickMarcEditorRowContent).exists(),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: including('.tag') })).has({ value: '' }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ ariaLabel: 'Subfield' })).has({ textContent: defaultContent })
+    ]);
+  },
+
+  confirmUpdateLinkedBibs(linkedRecordsNumber) {
+    cy.do(saveButton.click());
+    cy.expect([
+      Callout(`Record has been updated. ${linkedRecordsNumber} linked bibliographic record(s) updates have begun.`).exists(),
+      rootSection.absent(),
+      viewMarcSection.exists()
+    ]);
+  },
+
+  checkPaneheaderContains(text) {
+    cy.expect(PaneHeader({ text: (including(text)) }).exists());
   }
 };

@@ -1,31 +1,30 @@
-import { HTML, including } from '@interactors/html';
 import uuid from 'uuid';
+import { HTML, including } from '@interactors/html';
 import {
-  Accordion,
-  Button,
-  Checkbox,
-  DropdownMenu,
-  Form,
-  KeyValue,
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListHeader,
-  MultiColumnListRow,
+  Pane,
+  Accordion,
+  Checkbox,
+  TextField,
+  Button,
+  SearchField,
+  Select,
+  Form,
+  TextInput,
+  KeyValue,
+  Section,
   MultiSelect,
   MultiSelectOption,
-  Pane,
-  SearchField,
-  Section,
-  Select,
-  Spinner,
-  TextField,
-  TextInput
+  MultiColumnListRow,
+  DropdownMenu
 } from '../../../../interactors';
-import DateTools from '../../utils/dateTools';
-import logsViewAll from '../data_import/logs/logsViewAll';
-import Helper from '../finance/financeHelper';
 import InventoryActions from './inventoryActions';
 import InventoryInstances from './inventoryInstances';
+import logsViewAll from '../data_import/logs/logsViewAll';
+import DateTools from '../../utils/dateTools';
+import Helper from '../finance/financeHelper';
 
 const searchAndFilterSection = Pane({ id: 'browse-inventory-filters-pane' });
 const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
@@ -58,6 +57,7 @@ const editInstanceButton = Button('Edit instance');
 const inventorySearchResultsPane = Section({ id: 'browse-inventory-results-pane' });
 const nextButton = Button({ id: 'browse-results-list-callNumbers-next-paging-button' });
 const previousButton = Button({ id: 'browse-results-list-callNumbers-prev-paging-button' });
+const instancesList = paneResultsSection.find(MultiColumnList({ id: 'list-inventory' }));
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -152,12 +152,6 @@ export default {
   effectiveLocation: {
     mainLibrary: { id: 'clickable-filter-effectiveLocation-main-library' }
   },
-  
-  selectSearchResultByRowIndex(indexRow) {
-    cy.do(this.getSearchResult(indexRow, 0).click());
-    // must wait page render
-    cy.wait(2000);
-  },
 
   language: {
     eng: { id: 'clickable-filter-language-english' }
@@ -172,7 +166,6 @@ export default {
   },
 
   selectSearchResultItem(indexRow = 0) {
-    cy.expect(Spinner().absent());
     cy.do(this.getSearchResult(indexRow, 0).click());
     // must wait page render
     cy.wait(2000);
@@ -194,7 +187,6 @@ export default {
   },
 
   bySource(source) {
-    cy.expect(Spinner().absent());
     cy.do([
       sourceAccordion.clickHeader(),
       sourceAccordion.find(Checkbox(source)).click()]);
@@ -414,7 +406,9 @@ export default {
 
   checkContributorRequest() {
     cy.intercept('GET', '/search/instances?*').as('getInstances');
+
     this.clickSearch();
+
     cy.wait('@getInstances').then(interception => {
       // checking that request contains '=' after 'contributors.name'
       expect(interception.request.url).to.include('contributors.name%3D');
@@ -588,5 +582,12 @@ export default {
     cy.wait(1000);
     holdingsPermanentLocationAccordion.find(TextField()).click();
     cy.do(holdingsPermanentLocationAccordion.find(Checkbox(location)).click());
+  },
+
+  checkRowsCount:(expectedRowsCount) => {
+    cy.expect([
+      instancesList.find(MultiColumnListRow({ index: expectedRowsCount - 1 })).exists(),
+      instancesList.find(MultiColumnListRow({ index: expectedRowsCount })).absent()
+    ]);
   }
 };

@@ -1,4 +1,4 @@
-import marc from '../../support/a_ideyalabs/marc';
+import marc from '../../support/ideyalabs/marc';
 import eHoldingsPackage from '../../support/fragments/eholdings/eHoldingsPackage';
 import holdingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
 import inventoryInstance from '../../support/fragments/inventory/inventoryInstance';
@@ -98,7 +98,7 @@ describe('New Marc Bib Record and new MARC Holdings record', () => {
     marc.deleteHolding();
   });
 
-  it('C9236 Settings: Add/Edit a custom label (spitfire)', { tags: [testTypes.extendedPath, devTeams.spitfire] }, () => {
+  it('C9236 Settings: Add/Edit a custom label (spitfire)', { tags: [testTypes.ideaLabsTests, devTeams.ideaLabsTests] }, () => {
     cy.visit(settingsMenu.eHoldingsPath);
     eHoldingsPackage.customLabel({
       labelOne: 'AutomatingTheFolioApplicationAndTestingApplication',
@@ -107,7 +107,7 @@ describe('New Marc Bib Record and new MARC Holdings record', () => {
     eHoldingsPackage.verifyCustomLabel();
   });
 
-  it('C380726 Link ""Contributor"" fields when creating ""MARC Bibliographic"" record (spitfire)', { tags: [testTypes.criticalPath, devTeams.spitfire] }, () => {
+  it('C380726 Link ""Contributor"" fields when creating ""MARC Bibliographic"" record (spitfire)', { tags: [testTypes.ideaLabsTests, devTeams.ideaLabsTests] }, () => {
     cy.visit(topMenu.inventoryPath);
     inventoryInstance.newMarcBibRecord();
     quickMarcEditor.updateExistingField(
@@ -157,7 +157,7 @@ describe('New Marc Bib Record and new MARC Holdings record', () => {
     browseContributors.checkSearchResultRecord(testData.contributor.name);
   });
 
-  it('C350646 Create a new MARC Holdings record for existing ""Instance"" record (Spitfire)', { tags: [testTypes.criticalPath, devTeams.spitfire] }, () => {
+  it('C350646 Create a new MARC Holdings record for existing ""Instance"" record (Spitfire)', { tags: [testTypes.ideaLabsTests, devTeams.ideaLabsTests] }, () => {
     cy.visit(topMenu.inventoryPath);
     inventorySearchAndFilter.switchToHoldings();
     inventorySearchAndFilter.bySource(testData.source);
@@ -182,7 +182,7 @@ describe('New Marc Bib Record and new MARC Holdings record', () => {
     marc.checkFieldContentMatch();
   });
 
-  it('C380747 Add non-controllable subfields to a linked field when creating ""MARC Bibliographic"" record (spitfire)', { tags: [testTypes.criticalPath, devTeams.spitfire] }, () => {
+  it('C380747 Add non-controllable subfields to a linked field when creating ""MARC Bibliographic"" record (spitfire)', { tags: [testTypes.ideaLabsTests, devTeams.ideaLabsTests] }, () => {
     cy.visit(topMenu.inventoryPath);
     inventoryInstance.newMarcBibRecord();
     quickMarcEditor.checkReadOnlyTags();
@@ -230,7 +230,7 @@ describe('New Marc Bib Record and new MARC Holdings record', () => {
     inventoryInstance.verifyUnlinkIcon(testData.tags.tag730);
   });
 
-  it('C389495 Auto-linking fields with multiple ""$0"" when creating new ""MARC Bib"" record (spitfire)', { tags: [testTypes.extendedPath, devTeams.spitfire] }, () => {
+  it('C389495 Auto-linking fields with multiple ""$0"" when creating new ""MARC Bib"" record (spitfire)', { tags: [testTypes.ideaLabsTests, devTeams.ideaLabsTests] }, () => {
     cy.visit(topMenu.inventoryPath);
     inventoryInstance.newMarcBibRecord();
     quickMarcEditor.updateExistingField(
@@ -255,7 +255,7 @@ describe('New Marc Bib Record and new MARC Holdings record', () => {
     inventoryInstance.viewSource();
   });
 
-  it('C380736 Search created ""MARC bib"" record by Title, OCLC number (spitfire)', { tags: [testTypes.criticalPath, devTeams.spitfire] }, () => {
+  it('C380736 Search created ""MARC bib"" record by Title, OCLC number (spitfire)', { tags: [testTypes.ideaLabsTests, devTeams.ideaLabsTests] }, () => {
     cy.visit(topMenu.inventoryPath);
     inventoryInstance.newMarcBibRecord();
     quickMarcEditor.updateExistingField(
