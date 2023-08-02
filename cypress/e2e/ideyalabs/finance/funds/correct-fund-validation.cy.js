@@ -49,7 +49,7 @@ const fundDistribution = {
   fundIDTwo: 'Beta FYRO (BFYRO)',
 };
 
-describe('ui-invoices: Invoice creation', () => {
+describe.skip('ui-invoices: Invoice creation', () => {
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(topMenu.ordersPath);

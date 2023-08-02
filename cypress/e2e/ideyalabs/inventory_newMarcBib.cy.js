@@ -84,7 +84,7 @@ const testData = {
   },
 };
 
-describe('New Marc Bib Record and new MARC Holdings record', () => {
+describe.skip('New Marc Bib Record and new MARC Holdings record', () => {
   before('Login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });

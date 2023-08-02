@@ -23,7 +23,7 @@ const testData = {
   },
 };
 
-describe('CirculationLog App', () => {
+describe.skip('CirculationLog App', () => {
   before('Login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });

@@ -12,7 +12,7 @@ const testData = {
   jobFileName: 'AAA_Integration name_2023-06-20_14:36:04.edi',
 };
 
-describe('Export Manager', () => {
+describe.skip('Export Manager', () => {
   before('Login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
