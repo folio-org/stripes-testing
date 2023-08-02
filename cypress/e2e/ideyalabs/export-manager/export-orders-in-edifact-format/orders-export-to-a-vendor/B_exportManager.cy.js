@@ -20,7 +20,7 @@ describe('Export Manager', () => {
 
   it(
     'C358971 Already exported order is not included repeatedly in next exports(thunderjet)',
-    { tags: [testTypes.extendedPath, devTeams.thunderjet] },
+    { tags: [testTypes.ideaLabsTests, devTeams.thunderjet] },
     () => {
       cy.visit(topMenu.exportManagerOrganizationsPath);
       exportManagerSearchPane.selectExportMethod(testData.integrationMethod);
