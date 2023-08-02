@@ -3,7 +3,6 @@ import ledgers from '../../../../support/fragments/finance/ledgers/ledgers';
 import invoices from '../../../../support/fragments/invoices/invoices';
 import topMenu from '../../../../support/fragments/topMenu';
 import testTypes from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
 
 const rollOverData = {
   ledgerName: 'AE2',
@@ -26,7 +25,7 @@ describe('Finance: Fiscal Year Rollover', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
-  it('C359604 Make more than one preview for one ledger and same fiscal year with ""Test rollover"", check test rollover results(Thunderjet)', { tags: [testTypes.ideaLabsTests, devTeams.thunderjet] }, () => {
+  it('C359604 Make more than one preview for one ledger and same fiscal year with ""Test rollover"", check test rollover results(Thunderjet)', { tags: [testTypes.ideaLabsTests] }, () => {
     cy.visit(topMenu.financePath);
     financeHelper.searchByName(rollOverData.ledgerName);
     financeHelper.selectFirstLedger(rollOverData.selectLedger);

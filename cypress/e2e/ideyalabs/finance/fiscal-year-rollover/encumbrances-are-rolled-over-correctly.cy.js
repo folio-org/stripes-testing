@@ -3,7 +3,6 @@ import ledgers from '../../../../support/fragments/finance/ledgers/ledgers';
 import invoices from '../../../../support/fragments/invoices/invoices';
 import topMenu from '../../../../support/fragments/topMenu';
 import testTypes from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
 
 const testData = {
   fiscalName: 'Fiscal Year 2024',
@@ -83,7 +82,7 @@ describe('Finance: Fiscal Year Rollover', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
-  it('C375267 Encumbrances are rolled over correctly when order fund distribution was changed and related paid invoice exists (based on Remaining) (Thunderjet)', { tags: [testTypes.ideaLabsTests, devTeams.thunderjet] }, () => {
+  it('C375267 Encumbrances are rolled over correctly when order fund distribution was changed and related paid invoice exists (based on Remaining) (Thunderjet)', { tags: [testTypes.ideaLabsTests] }, () => {
     cy.visit(topMenu.financePath);
     financeHelper.searchByName(encumbranceData.searchByName);
     financeHelper.selectFirstLedger(encumbranceData.selectFirstLedger);

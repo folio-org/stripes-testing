@@ -3,7 +3,6 @@ import orderLines from '../../../../support/fragments/orders/orderLines';
 import receiving from '../../../../support/fragments/receiving/receiving';
 import topMenu from '../../../../support/fragments/topMenu';
 import testTypes from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
 
 const orderDetails = {
   searchByParameter: 'PO line number',
@@ -23,7 +22,7 @@ describe('Orders: Receiving and Check-in ', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
-  it('C378899 Encumbrance releases when receive piece for order with payment status "Payment Not Required" (Thunderjet)', { tags: [testTypes.ideaLabsTests, devTeams.thunderjet] }, () => {
+  it('C378899 Encumbrance releases when receive piece for order with payment status "Payment Not Required" (Thunderjet)', { tags: [testTypes.ideaLabsTests] }, () => {
     cy.visit(topMenu.ordersPath);
     orderLines.clickOnOrderLines();
     orderLines.searchByParameter(
