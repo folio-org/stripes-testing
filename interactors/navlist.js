@@ -20,4 +20,3 @@ export const NavListItem = HTML.extend('Nav List Item')
     label,
     href: el => el.getAttribute('href'),
   });
-  
