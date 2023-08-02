@@ -1,8 +1,8 @@
+import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TopMenu from '../../../support/fragments/topMenu';
-import Helper from '../../../support/fragments/finance/financeHelper';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -16,7 +16,7 @@ describe('ui-data-import', () => {
   let user;
   let instanceHrid;
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-  const fileName = `C353641 autotestFile.${Helper.getRandomBarcode()}.mrc`;
+  const fileName = `C353641 autotestFile.${getRandomPostfix}.mrc`;
 
   before('create test data', () => {
     cy.createTempUser([
@@ -40,7 +40,6 @@ describe('ui-data-import', () => {
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
-      cy.reload();
       DataImport.uploadFile('oneMarcBib.mrc', fileName);
       JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();

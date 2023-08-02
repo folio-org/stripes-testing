@@ -944,6 +944,7 @@ export default {
   },
 
   openLinkedInstance() {
+    cy.do(Accordion('Linked instance').clickHeader());
     cy.do(Accordion('Linked instance')
       .find(Link({ href: including('/inventory/view') }))
       .click());
