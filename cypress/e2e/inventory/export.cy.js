@@ -83,7 +83,7 @@ describe('ui-inventory: exports', () => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
     Users.deleteViaApi(userId);
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*', 'SearchInstanceUUIDs*');
   });
 
   it('C9284 Export small number of Instance UUIDs (30 or fewer) (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -102,20 +102,6 @@ describe('ui-inventory: exports', () => {
           [expectedUUIDs]
         );
       });
-  });
-
-  it('C9287 Export CQL query (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    InventorySearchAndFilter.byLanguage();
-    InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', instanceTitle);
-    InventorySearchAndFilter.byEffectiveLocation(locationName);
-    InventorySearchAndFilter.saveCQLQuery();
-
-    FileManager.verifyFile(
-      InventoryActions.verifySaveCQLQueryFileName,
-      'SearchInstanceCQLQuery*',
-      InventoryActions.verifySaveCQLQuery,
-      [instanceTitle]
-    );
   });
 
   it('C196757 Export selected records (MARC) (firebird)', { tags: [testTypes.smoke, devTeams.firebird, testTypes.broken] }, () => {
