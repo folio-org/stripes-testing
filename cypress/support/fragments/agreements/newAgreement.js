@@ -4,12 +4,14 @@ import getRandomPostfix from '../../utils/stringTools';
 import topMenu from '../topMenu';
 
 export default class NewAgreement {
+
   // TODO: start to use interactors instead of selectors
   static #rootCss = 'section[id="pane-agreement-form"]'
   static #statusCss = `${this.#rootCss} select[id="edit-agreement-status"]`;
   static #nameField = TextField({ id: 'edit-agreement-name' });
   static #startDateField = TextField({ id: 'period-start-date-0' });
   static #saveButton = Button('Save & close');
+
   static #newButton = Section({ id: 'packageShowAgreements' }).find(Button('New'))
   static #agreementLine = Section({ id: 'lines' }).find(Button('Agreement lines'))
   static #agreementBadge = Section({ id: 'lines' })
@@ -34,17 +36,9 @@ export default class NewAgreement {
     active: 'Active',
   }
 
-  static #statusValues = {
-    active: 'Active',
-    closed: 'Closed',
-    inNegotiation: 'In Negotiation',
-    requested: 'Requested',
-    temporary: 'Temporary',
-  }
-
   static #defaultAgreement = {
     name: `autotest_agreement_${getRandomPostfix()}`,
-    status: this.#statusValues.active,
+    status: this.#statusValue.draft,
     startDate: DateTools.getCurrentDate()
   }
 
@@ -58,6 +52,14 @@ export default class NewAgreement {
       .select(specialAgreement.status)
       .should('have.value', specialAgreement.status.toLowerCase());
     cy.do(this.#startDateField.fillIn(specialAgreement.startDate));
+  }
+
+  static save() {
+    cy.do(this.#saveButton.click());
+  }
+
+  static waitLoading() {
+    cy.expect(this.#nameField.exists());
   }
 
   static searchAgreement(specialAgreement = this.#defaultAgreement) {
@@ -74,14 +76,6 @@ export default class NewAgreement {
       cy.expect(this.#recordLastUpdated.has({ text: including(`Record last updated: ${dateTimes}`) }));
       cy.expect(Accordion({ headline: 'Update information' }).has({ content: including(`Record created: ${dateTimes}`) }));
     });
-  }
-
-  static save() {
-    cy.do(this.#saveButton.click());
-  }
-
-  static waitLoading() {
-    cy.expect(this.#nameField.exists());
   }
 
   static newButton() {
