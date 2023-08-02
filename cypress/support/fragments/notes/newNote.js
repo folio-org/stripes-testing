@@ -4,7 +4,6 @@ import getRandomPostfix from '../../utils/stringTools';
 export default class NewNote {
   static #titleTextField = TextField('Note title*');
 
-
   static #saveButton = Button('Save & close');
 
   static #defaultNote = {

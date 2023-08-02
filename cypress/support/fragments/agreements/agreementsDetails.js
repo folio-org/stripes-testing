@@ -1,4 +1,4 @@
-import { Accordion, Badge, Button, Checkbox, HTML, Modal, MultiColumnList, MultiColumnListCell, MultiColumnListRow, SearchField, Section, SelectionOption, Spinner, including } from '../../../../interactors';
+import { Accordion, Button, including, HTML, Section, MultiColumnListCell, Badge, Modal, Checkbox, MultiColumnList, MultiColumnListRow, SelectionOption, SearchField, Spinner } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 import ExistingNoteEdit from '../notes/existingNoteEdit';
 import NewNote from '../notes/newNote';
@@ -149,4 +149,8 @@ export default {
       Button('Save & close').click()
     ]);
   },
+
+  agreementListClick(agreementName) {
+    cy.do(MultiColumnListCell(agreementName).click());
+  }
 };
