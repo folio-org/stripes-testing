@@ -135,7 +135,6 @@ describe('ui-data-import', () => {
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
-      cy.reload();
       DataImport.uploadFile(filePathForCreateOrder, marcFileName);
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
