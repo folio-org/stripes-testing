@@ -1,4 +1,4 @@
-import { Button, HTML, ListItem, Section, including, or } from '../../../../interactors';
+import { Button, HTML, ListItem, Modal, Section, including, or } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 import topMenu from '../topMenu';
 import eHoldingsNewCustomPackage from './eHoldingsNewCustomPackage';
@@ -9,6 +9,10 @@ import eHoldingsProvidersSearch from './eHoldingsProvidersSearch';
 import eHoldingsSearch from './eHoldingsSearch';
 
 const resultSection = Section({ id: 'search-results' });
+const selectedText = "#packageShowHoldingStatus div[class^='headline']";
+const actionButton = Button('Actions');
+const deletePackageButton = Button('Delete package');
+const confirmModal = Modal('Delete custom package');
 
 export default {
   create: (packageName = `package_${getRandomPostfix()}`) => {
@@ -16,6 +20,12 @@ export default {
     eHoldingsNewCustomPackage.fillInRequiredProperties(packageName);
     eHoldingsNewCustomPackage.saveAndClose();
     return packageName;
+  },
+
+  deletePackage: () => {
+    cy.do([actionButton.click(),
+      deletePackageButton.click(),
+      confirmModal.find(Button('Yes, delete')).click()]);
   },
 
   waitLoading: () => {
@@ -32,7 +42,6 @@ export default {
         cy.do(resultSection
           .find(ListItem({ className: including('list-item-'), index: rowNumber })
             .find(Button())).click());
-        eHoldingsPackage.waitLoading(specialPackage);
         cy.wrap(specialPackage).as('selectedPackage');
       });
     return cy.get('@selectedPackage');
@@ -89,6 +98,23 @@ export default {
       cy.wrap([...new Set(initialPackageIds)][0]).as('packageId');
     });
     return cy.get('@packageId');
+  },
+
+  updateProxy() {
+    cy.get(selectedText)
+      .invoke('text')
+      .then((text) => {
+        if (text === 'Selected') {
+          eHoldingsPackage.editProxyActions();
+          eHoldingsPackage.changeProxy();
+          eHoldingsPackage.saveAndClose();
+        } else {
+          eHoldingsPackage.addToHoldings();
+          eHoldingsPackage.editProxyActions();
+          eHoldingsPackage.changeProxy();
+          eHoldingsPackage.saveAndClose();
+        }
+      });
   },
 
   packageSearch() {
