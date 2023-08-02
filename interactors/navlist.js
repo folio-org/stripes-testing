@@ -6,10 +6,9 @@ function label(element) {
 }
 
 export default HTML.extend('Nav List')
-  .selector('[data-test-nav-list],[class^=navListSectionControl]')
+  .selector('[data-test-nav-list]')
   .filters({
     count: el => el.querySelectorAll('a').length,
-    ariaLabel: el => el.getAttribute('aria-label')
   })
   .actions({
     navTo: ({ find }, linkText) => find(Link(linkText)).click(),
@@ -21,6 +20,3 @@ export const NavListItem = HTML.extend('Nav List Item')
     label,
     href: el => el.getAttribute('href'),
   });
-
-
-
