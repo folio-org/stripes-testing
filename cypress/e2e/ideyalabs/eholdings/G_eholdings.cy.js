@@ -1,17 +1,17 @@
-import devTeams from '../../support/dictionary/devTeams';
-import testTypes from '../../support/dictionary/testTypes';
-import circulationRules from '../../support/fragments/circulation/circulation-rules';
-import eHoldingsNewCustomPackage from '../../support/fragments/eholdings/eHoldingsNewCustomPackage';
-import eHoldingsPackages from '../../support/fragments/eholdings/eHoldingsPackages';
-import eHoldingsPackagesSearch from '../../support/fragments/eholdings/eHoldingsPackagesSearch';
-import eHoldingsProviderEdit from '../../support/fragments/eholdings/eHoldingsProviderEdit';
-import eHoldingsProviders from '../../support/fragments/eholdings/eHoldingsProviders';
-import eHoldingsProvidersSearch from '../../support/fragments/eholdings/eHoldingsProvidersSearch';
-import eHoldingsSearch from '../../support/fragments/eholdings/eHoldingsSearch';
-import organizations from '../../support/fragments/organizations/organizations';
-import newRequest from '../../support/fragments/requests/newRequest';
-import settingsMenu from '../../support/fragments/settingsMenu';
-import topMenu from '../../support/fragments/topMenu';
+import devTeams from '../../../support/dictionary/devTeams';
+import testTypes from '../../../support/dictionary/testTypes';
+import circulationRules from '../../../support/fragments/circulation/circulation-rules';
+import eHoldingsNewCustomPackage from '../../../support/fragments/eholdings/eHoldingsNewCustomPackage';
+import eHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
+import eHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
+import eHoldingsProviderEdit from '../../../support/fragments/eholdings/eHoldingsProviderEdit';
+import eHoldingsProviders from '../../../support/fragments/eholdings/eHoldingsProviders';
+import eHoldingsProvidersSearch from '../../../support/fragments/eholdings/eHoldingsProvidersSearch';
+import eHoldingsSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
+import organizations from '../../../support/fragments/organizations/organizations';
+import newRequest from '../../../support/fragments/requests/newRequest';
+import settingsMenu from '../../../support/fragments/settingsMenu';
+import topMenu from '../../../support/fragments/topMenu';
 import eHolding from './eHolding';
 
 describe('Create a custom package', () => {
@@ -24,7 +24,7 @@ describe('Create a custom package', () => {
   });
   it(
     'C683 Search packages for [JSTOR]. Filter results to only show selected packages (spitfire)',
-    { tags: [testTypes.criticalPath, devTeams.spitfire] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       eHolding.switchToPackage();
       eHolding.verifyPackage();
@@ -32,7 +32,7 @@ describe('Create a custom package', () => {
   );
   it(
     'C692 Create a custom package',
-    { tags: [testTypes.criticalPath, devTeams.spitfire] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(topMenu.eholdingsPath);
       eHoldingsSearch.switchToPackages();
@@ -41,7 +41,7 @@ describe('Create a custom package', () => {
   );
   it(
     'C695 Package Record: Search all titles included in a package (spitfire)',
-    { tags: [testTypes.criticalPath, devTeams.spitfire] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       eHolding.switchToPackageAndSearch();
       eHoldingsPackages.openPackage();
@@ -52,7 +52,7 @@ describe('Create a custom package', () => {
   );
   it(
     'C17090 Title Record - Packages accordion - Filter packages list (spitfire)',
-    { tags: [testTypes.criticalPath, devTeams.spitfire] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(topMenu.eholdingsPath);
       eHoldingsSearch.switchToTitles();
@@ -69,7 +69,7 @@ describe('Create a custom package', () => {
   );
   it(
     'C157916 Title - Packages accordion - Filter by Holding Status (spitfire)',
-    { tags: [testTypes.criticalPath, devTeams.spitfire] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(topMenu.eholdingsPath);
       eHoldingsSearch.switchToTitles();
@@ -81,7 +81,7 @@ describe('Create a custom package', () => {
   );
   it(
     'C360543 Check the content of ""Title information"" accordion in ""Title"" detail record (spitfire)',
-    { tags: [testTypes.extendedPath, devTeams.spitfire] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(
         'https://bugfest-orchid.int.aws.folio.org/eholdings/titles/41327?searchType=titles&q=journal&offset=1'
@@ -91,7 +91,7 @@ describe('Create a custom package', () => {
   );
   it(
     'C367967 Verify that ""Packages"" accordion will return records after collapsing/expanding in ""Provider"" detail record (spitfire)',
-    { tags: [testTypes.extendedPath, devTeams.spitfire] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(topMenu.eholdingsPath);
       eHoldingsProvidersSearch.byProvider('Wiley');
@@ -104,7 +104,7 @@ describe('Create a custom package', () => {
   );
   it(
     'C703 Set [Show titles in package to patrons] to Hide (spitfire)',
-    { tags: [testTypes.extendedPath, devTeams.spitfire] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(topMenu.eholdingsPath);
       eHoldingsSearch.switchToPackages();
@@ -119,7 +119,7 @@ describe('Create a custom package', () => {
   );
   it(
     'C3464 Update Package Proxy (spitfire)',
-    { tags: [testTypes.criticalPath, devTeams.spitfire] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(topMenu.eholdingsPath);
       eHoldingsSearch.switchToPackages();
@@ -131,7 +131,7 @@ describe('Create a custom package', () => {
   );
   it(
     'C648 Closed Library Due Date (vega)',
-    { tags: [testTypes.extendedPath, devTeams.vega] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(topMenu.eholdingsPath);
       eHoldingsSearch.switchToTitles();
@@ -141,7 +141,7 @@ describe('Create a custom package', () => {
   );
   it(
     'C350418 Check that user can create ""Recall""  Item level request (vega)',
-    { tags: [testTypes.criticalPath, devTeams.vega] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(topMenu.requestsPath);
       newRequest.openNewRequestPane();
@@ -157,7 +157,7 @@ describe('Create a custom package', () => {
   );
   it(
     'C3466 Edit/Add a token to the Gale Academic OneFile (spitfire)',
-    { tags: [testTypes.extendedPath, devTeams.spitfire] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(topMenu.eholdingsPath);
       eHoldingsSearch.switchToPackages();
@@ -171,7 +171,7 @@ describe('Create a custom package', () => {
   );
   it(
     'C694 Search providers for [Gale | Cengage]. Then Search list of packages on Provider detail record for all selected packages (spitfire)',
-    { tags: [testTypes.criticalPath, devTeams.spitfire] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       eHolding.switchToPackages();
       eHoldingsPackages.openPackage();
@@ -181,7 +181,7 @@ describe('Create a custom package', () => {
   );
   it(
     'C654 Test behavior for incomplete vs complete circulation rules (i.e., all policy types must be present; else error (vega)',
-    { tags: [testTypes.extendedPath, devTeams.vega] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(topMenu.settingsPath);
       cy.visit(settingsMenu.circulationRulesPath);
@@ -200,7 +200,7 @@ describe('Create a custom package', () => {
   );
   it(
     'C656 Ensure interface alerts user of syntax errors in rules (vega)',
-    { tags: [testTypes.criticalPath, devTeams.vega] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       circulationRules.policyError({
         priorityType: 'g ',
@@ -213,7 +213,7 @@ describe('Create a custom package', () => {
   );
   it(
     'C699 Add or edit package custom coverage (spitfire)',
-    { tags: [testTypes.extendedPath, devTeams.spitfire] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(topMenu.eholdingsPath);
       eHolding.switchToPackage();
@@ -225,7 +225,7 @@ describe('Create a custom package', () => {
   );
   it(
     'C343241 Access eholdings app menu (spitfire)',
-    { tags: [testTypes.extendedPath, devTeams.spitfire] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(topMenu.eholdingsPath);
       eHoldingsNewCustomPackage.clickOneHoldingCarat();

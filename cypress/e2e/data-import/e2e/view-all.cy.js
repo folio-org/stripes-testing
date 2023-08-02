@@ -22,6 +22,7 @@ describe('ui-data-import', () => {
 
     // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
     DataImport.verifyUploadState();
+    cy.reload();
     // remove generated test file from fixtures after uploading
     cy.uploadFileWithDefaultJobProfile(uniqueFileName);
     FileManager.deleteFile(`cypress/fixtures/${uniqueFileName}`);

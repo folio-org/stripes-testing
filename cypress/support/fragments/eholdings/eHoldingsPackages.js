@@ -1,7 +1,12 @@
 import { Button, HTML, ListItem, Modal, Section, including, or } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
+import topMenu from '../topMenu';
 import eHoldingsNewCustomPackage from './eHoldingsNewCustomPackage';
+// eslint-disable-next-line import/no-cycle
 import eHoldingsPackage from './eHoldingsPackage';
+import eHoldingsPackagesSearch from './eHoldingsPackagesSearch';
+import eHoldingsProvidersSearch from './eHoldingsProvidersSearch';
+import eHoldingsSearch from './eHoldingsSearch';
 
 const resultSection = Section({ id: 'search-results' });
 const selectedText = "#packageShowHoldingStatus div[class^='headline']";
@@ -110,5 +115,12 @@ export default {
           eHoldingsPackage.saveAndClose();
         }
       });
-  }
+  },
+
+  packageSearch() {
+    cy.visit(topMenu.eholdingsPath);
+    eHoldingsSearch.switchToPackages();
+    eHoldingsProvidersSearch.byProvider('VLeBooks');
+    eHoldingsPackagesSearch.bySelectionStatus('Selected');
+  },
 };

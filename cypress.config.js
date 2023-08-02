@@ -7,6 +7,10 @@ const fs = require('fs');
 const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 
 module.exports = defineConfig({
+  retries: {
+    runMode: 1,
+    openMode: 1,
+  },
   viewportWidth: 1920,
   viewportHeight: 1080,
   video: false,
@@ -70,9 +74,7 @@ module.exports = defineConfig({
         },
 
         readFileFromDownloads(filename) {
-          const downloadsFolder =
-            config.downloadsFolder ||
-            path.join(__dirname, '..', '..', 'Downloads');
+          const downloadsFolder = config.downloadsFolder || path.join(__dirname, '..', '..', 'Downloads');
           const filePath = path.join(downloadsFolder, filename);
           return fs.readFileSync(filePath, 'utf-8');
         },

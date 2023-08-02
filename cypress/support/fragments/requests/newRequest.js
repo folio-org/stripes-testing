@@ -2,6 +2,7 @@
 import { Accordion, Button, Checkbox, HTML, MultiColumnListCell, Pane, Section, Select, Spinner, TextArea, TextField, including } from '../../../../interactors';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../constants';
 import dateTools from '../../utils/dateTools';
+import InteractorsTools from '../../utils/interactorsTools';
 import SelectUser from './selectUser';
 
 const actionsButton = Button('Actions');
@@ -30,9 +31,15 @@ function openNewRequestPane() {
   ]);
 }
 
+function printPickSlips() {
+  cy.do([actionsButton.click(), Button({ id: 'printPickSlipsBtn' }).click()]);
+  InteractorsTools.checkCalloutMessage('Print options loading in progress. It might take a few seconds, please be patient.');
+}
+
 export default {
   addRequester,
   openNewRequestPane,
+  printPickSlips,
 
   fillRequiredFields(newRequest) {
     if ('instanceHRID' in newRequest) {

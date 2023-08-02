@@ -66,6 +66,7 @@ describe('ui-data-import', () => {
       DataImport.checkIsLandingPageOpened();
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
+      cy.reload();
       DataImport.uploadFile('oneThousandMarcBib.mrc', fileName);
       // wait until file will be uploaded
       cy.wait(10000);
