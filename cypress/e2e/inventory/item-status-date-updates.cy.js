@@ -262,10 +262,10 @@ describe('inventory', () => {
     ConfirmItemStatusModal.confirmItemStatus();
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
     fullCheck(ItemRecordView.itemStatuses.declaredLost);
-    cy.wait(8000);
+
     // renew item (through override)
     openUser(userName);
-    UserLoans.renewItem(itemBarcode);
+    UserLoans.renewItem(itemBarcode, true);
     cy.wait(8000);
     RenewConfirmationModal.confirmRenewOverrideItem();
     OverrideAndRenewModal.confirmOverrideItem();
