@@ -84,8 +84,7 @@ describe('ui-data-import', () => {
     MatchProfiles.deleteMatchProfile(matchProfile.profileName);
     ActionProfiles.deleteActionProfile(actionProfile.name);
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileFieldsForModify.name);
-    // delete downloads folder and created files in fixtures
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    // delete created files in fixtures
     FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpload}`);
     FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
     Users.deleteViaApi(user.userId);
@@ -98,7 +97,6 @@ describe('ui-data-import', () => {
   it('C345423 Verify the possibility to modify MARC Bibliographic record (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
     DataImport.verifyUploadState();
-    cy.reload();
     // upload a marc file for creating of the new instance, holding and item
     DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
@@ -157,7 +155,6 @@ describe('ui-data-import', () => {
     cy.visit(TopMenu.dataImportPath);
     // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
     DataImport.verifyUploadState();
-    cy.reload();
     DataImport.uploadFile(nameMarcFileForUpload);
     JobProfiles.searchJobProfileForImport(jobProfile.profileName);
     JobProfiles.runImportFile();

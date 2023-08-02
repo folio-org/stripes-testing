@@ -169,7 +169,6 @@ describe('ui-data-import', () => {
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        cy.reload();
         DataImport.uploadFile(filePathToUpload, marcFileNameForCreate);
         JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
         JobProfiles.runImportFile();
@@ -199,8 +198,7 @@ describe('ui-data-import', () => {
   });
 
   after('delete test data', () => {
-    // delete downloads folder and created files in fixtures
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    // delete created files in fixtures
     FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
     JobProfiles.deleteJobProfile(jobProfileForCreate.profile.name);
     JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
@@ -280,7 +278,6 @@ describe('ui-data-import', () => {
           cy.visit(TopMenu.dataImportPath);
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
-          cy.reload();
           DataImport.uploadExportedFile(exportedFileName);
           JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
           JobProfiles.runImportFile();

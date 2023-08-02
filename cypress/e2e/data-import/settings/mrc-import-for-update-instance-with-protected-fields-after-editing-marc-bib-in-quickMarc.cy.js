@@ -160,7 +160,7 @@ describe('ui-data-import', () => {
       // create job profile
       cy.visit(SettingsMenu.jobProfilePath);
       JobProfiles.createJobProfile(jobProfile);
-      NewJobProfile.linkMatchAndActionProfilesForInstance(actionProfile.name, matchProfile.profileName);
+      NewJobProfile.linkMatchAndActionProfiles(matchProfile.profileName, actionProfile.name);
       NewJobProfile.saveAndClose();
       JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
@@ -201,7 +201,6 @@ describe('ui-data-import', () => {
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        cy.reload();
         DataImport.uploadFile(editedMarcFileName, nameMarcFileForUpload);
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
         JobProfiles.runImportFile();
