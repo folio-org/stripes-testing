@@ -1,10 +1,5 @@
 import { RichEditor, TextField, Button } from '../../../../interactors';
 
-const editButton = Button({ id: 'clickable-edit-noteTypes-1' });
-const nameTextfield = TextField('Note type 1');
-const saveButton = Button('Save');
-
-
 export default class ExistingNoteEdit {
     static #rootCss = 'section[id=notes-form]';
     static #nameCss = `${this.#rootCss} input[name=title]`;
@@ -33,11 +28,5 @@ export default class ExistingNoteEdit {
     static waitLoading() {
       cy.get(this.#rootCss).should('be.visible');
       cy.get(this.#detailsCss).should('be.visible');
-    }
-
-    static clickEditButton(name) {
-      cy.do(editButton.click());
-      cy.do(nameTextfield.fillIn(name));
-      cy.do(saveButton.click());
     }
 }

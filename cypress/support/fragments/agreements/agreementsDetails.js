@@ -65,7 +65,6 @@ export default {
 
   remove() {
     cy.do(actionsButton.click());
-    cy.expect(deleteButton.exists());
     cy.do(deleteButton.click());
     cy.expect(deleteConfirmationModal.exists());
     cy.do(deleteConfirmationModal.find(deleteButtonInConfirmation).click());

@@ -56,13 +56,6 @@ export default {
     waitClick();
   },
 
-  enterBarcodeSearchField(barcode) {
-    cy.do([
-      TextField({ id: 'input-item-barcode' }).fillIn(barcode),
-      Button({ id: 'clickable-add-item' }).click()
-    ]);
-  },
-
   selectFirstUser: (userName) => {
     cy.expect(Spinner().absent());
     cy.do(Pane({ id: 'users-search-results-pane' }).find(Link(userName)).click());
