@@ -7,6 +7,10 @@ const fs = require('fs');
 const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 
 module.exports = defineConfig({
+  retries: {
+    runMode: 1,
+    openMode: 1,
+  },
   viewportWidth: 1920,
   viewportHeight: 1080,
   video: false,

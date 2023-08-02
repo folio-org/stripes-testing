@@ -62,15 +62,10 @@ describe('Bulk Edit - Logs', () => {
 
     BulkEditSearchPane.uploadFile(validItemBarcodesFileName);
     BulkEditSearchPane.waitFileUploading();
-    BulkEditActions.openActions();
-    BulkEditActions.clickSuppressedFromDiscoveryCheckbox();
-    BulkEditSearchPane.verifyResultColumTitles('Suppressed from discovery');
-    BulkEditSearchPane.verifyResultColumnValue('true');
 
-    BulkEditActions.openActions();
     BulkEditActions.downloadMatchedResults();
     BulkEditActions.openInAppStartBulkEditFrom();
-    BulkEditActions.editSuppressFromDiscovery('Set false');
+    BulkEditActions.editItemsSuppressFromDiscovery(false);
     BulkEditActions.addNewBulkEditFilterString();
     BulkEditActions.fillPermanentLoanType('Selected', 1);
     BulkEditActions.confirmChanges();
@@ -78,6 +73,8 @@ describe('Bulk Edit - Logs', () => {
     BulkEditActions.commitChanges();
     BulkEditSearchPane.waitFileUploading();
     BulkEditActions.openActions();
+    BulkEditSearchPane.changeShowColumnCheckbox('Suppressed from discovery');
+    BulkEditSearchPane.verifyChangesUnderColumns('Suppressed from discovery', false);
     BulkEditActions.downloadChangedCSV();
 
     BulkEditSearchPane.openLogsSearch();

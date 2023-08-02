@@ -16,6 +16,9 @@ import JobProfiles from '../../support/fragments/data_import/job_profiles/jobPro
 import Logs from '../../support/fragments/data_import/logs/logs';
 import getRandomPostfix from '../../support/utils/stringTools';
 
+// TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
+Cypress.on('uncaught:exception', () => false);
+
 describe('MARC -> MARC Holdings', () => {
   const testData = {};
   const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;

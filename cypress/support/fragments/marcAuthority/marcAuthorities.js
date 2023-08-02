@@ -466,4 +466,8 @@ export default {
   checkSearchOption(searchOption) {
     cy.expect(browseSearchAndFilterInput.has({ value: searchOption }));
   },
+
+  verifyEmptyNumberOfTitles() {
+    cy.expect(MultiColumnListCell({ columnIndex: 4 }).has({ content: '' }));
+  },
 };
