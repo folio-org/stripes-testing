@@ -1,9 +1,9 @@
+import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import Helper from '../../../support/fragments/finance/financeHelper';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -26,44 +26,35 @@ describe('ui-data-import', () => {
   let instanceHrid;
   const quantityOfItems = '1';
   const instanceTitle = 'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)';
-  const nameMarcFile = `C356801autotestFile.${Helper.getRandomBarcode()}.mrc`;
-  // unique profile names
-  const instanceMappingProfileName = `C356801 instance mapping profile ${Helper.getRandomBarcode()}`;
-  const holdingsMappingProfileName = `C356801 holdings mapping profile ${Helper.getRandomBarcode()}`;
-  const itemMappingProfileName = `C356801 item mapping profile ${Helper.getRandomBarcode()}`;
-  const instanceActionProfileName = `C356801 instance action profile ${Helper.getRandomBarcode()}`;
-  const holdingsActionProfileName = `C356801 holdings action profile ${Helper.getRandomBarcode()}`;
-  const itemActionProfileName = `C356801 item action profile ${Helper.getRandomBarcode()}`;
-  const jobProfileName = `C356801 job profile ${Helper.getRandomBarcode()}`;
-
+  const nameMarcFile = `C356801autotestFile.${getRandomPostfix}.mrc`;
   const collectionOfMappingAndActionProfiles = [
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-        name: instanceMappingProfileName },
+        name: `C356801 instance mapping profile ${getRandomPostfix}` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-        name: instanceActionProfileName }
+        name: `C356801 instance action profile ${getRandomPostfix}` }
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: holdingsMappingProfileName,
+        name: `C356801 holdings mapping profile ${getRandomPostfix}`,
         pernanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
         pernanentLocationUI: LOCATION_NAMES.ONLINE_UI },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: holdingsActionProfileName }
+        name: `C356801 holdings action profile ${getRandomPostfix}` }
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: itemMappingProfileName,
+        name: `C356801 item mapping profile ${getRandomPostfix}`,
         permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
         status: ITEM_STATUS_NAMES.AVAILABLE,
         materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: itemActionProfileName }
+        name: `C356801 item action profile ${getRandomPostfix}` }
     }
   ];
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: jobProfileName
+    profileName: `C356801 job profile ${getRandomPostfix}`
   };
 
   before('create test data', () => {
@@ -80,7 +71,7 @@ describe('ui-data-import', () => {
   });
 
   after('delete test data', () => {
-    JobProfiles.deleteJobProfile(jobProfileName);
+    JobProfiles.deleteJobProfile(jobProfile.profileName);
     collectionOfMappingAndActionProfiles.forEach(profile => {
       ActionProfiles.deleteActionProfile(profile.actionProfile.name);
       FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
@@ -100,13 +91,13 @@ describe('ui-data-import', () => {
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
       FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfileName);
+      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
 
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
       NewFieldMappingProfile.fillPermanentLocation(collectionOfMappingAndActionProfiles[1].mappingProfile.pernanentLocation);
       FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfileName);
+      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile.name);
 
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile);
@@ -114,7 +105,7 @@ describe('ui-data-import', () => {
       NewFieldMappingProfile.fillPermanentLoanType(collectionOfMappingAndActionProfiles[2].mappingProfile.permanentLoanType);
       NewFieldMappingProfile.fillStatus(collectionOfMappingAndActionProfiles[2].mappingProfile.status);
       FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfileName);
+      FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile.name);
 
       // create action profiles
       collectionOfMappingAndActionProfiles.forEach(profile => {
@@ -130,14 +121,14 @@ describe('ui-data-import', () => {
       NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[1].actionProfile);
       NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[2].actionProfile);
       NewJobProfile.saveAndClose();
-      JobProfiles.checkJobProfilePresented(jobProfileName);
+      JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
       // upload a marc file for creating of the new instance, holding and item
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
       DataImport.uploadFile('oneMarcBib.mrc', nameMarcFile);
-      JobProfiles.searchJobProfileForImport(jobProfileName);
+      JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(nameMarcFile);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);

@@ -13,7 +13,6 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import Helper from '../../../support/fragments/finance/financeHelper';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
@@ -43,7 +42,7 @@ describe('ui-data-import', () => {
   const fileNameAfterUpload = `C17039 uploadedFile.${getRandomPostfix()}.mrc`;
 
   const matchProfile = {
-    profileName: `C17039 match profile ${Helper.getRandomBarcode()}`,
+    profileName: `C17039 match profile ${getRandomPostfix()}`,
     incomingRecordFields: {
       field: '999',
       in1: 'f',
@@ -56,18 +55,18 @@ describe('ui-data-import', () => {
   };
 
   const mappingProfile = {
-    name: `C17039 mapping profile ${Helper.getRandomBarcode()}`,
+    name: `C17039 mapping profile ${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE
   };
 
   const actionProfile = {
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-    name: `C17039 action profile ${Helper.getRandomBarcode()}`,
+    name: `C17039 action profile ${getRandomPostfix()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
 
   const jobProfile = {
-    profileName: `C17039 job profile ${Helper.getRandomBarcode()}`,
+    profileName: `C17039 job profile ${getRandomPostfix()}`,
     acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 

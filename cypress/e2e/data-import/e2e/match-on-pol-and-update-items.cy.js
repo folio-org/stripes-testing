@@ -1,5 +1,6 @@
 import uuid from 'uuid';
 import permissions from '../../../support/dictionary/permissions';
+import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import { FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
@@ -65,37 +66,37 @@ describe('ui-data-import', () => {
     quantity: '1',
     price: '20'
   };
-  const editedMarcFileName = `C350590 marcFileForMatchOnPol.${Helper.getRandomBarcode()}.mrc`;
+  const editedMarcFileName = `C350590 marcFileForMatchOnPol.${getRandomPostfix()}.mrc`;
   const collectionOfProfiles = [
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-        name: `C350590 Update Instance by POL match ${Helper.getRandomBarcode()}`,
+        name: `C350590 Update Instance by POL match ${getRandomPostfix()}`,
         update: true },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-        name: `C350590 Update Instance by POL match ${Helper.getRandomBarcode()}`,
+        name: `C350590 Update Instance by POL match ${getRandomPostfix()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `C350590 Update Holdings by POL match ${Helper.getRandomBarcode()}`,
+        name: `C350590 Update Holdings by POL match ${getRandomPostfix()}`,
         update: true },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `C350590 Update Holdings by POL match ${Helper.getRandomBarcode()}`,
+        name: `C350590 Update Holdings by POL match ${getRandomPostfix()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C350590 Update Item by POL match ${Helper.getRandomBarcode()}`,
+        name: `C350590 Update Item by POL match ${getRandomPostfix()}`,
         update: true },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C350590 Update Item by POL match ${Helper.getRandomBarcode()}`,
+        name: `C350590 Update Item by POL match ${getRandomPostfix()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     }
   ];
 
   const collectionOfMatchProfiles = [
     {
-      matchProfile: { profileName: `C350590 935 $a POL to Instance POL ${Helper.getRandomBarcode()}`,
+      matchProfile: { profileName: `C350590 935 $a POL to Instance POL ${getRandomPostfix()}`,
         incomingRecordFields: {
           field: '935',
           subfield:'a'
@@ -105,7 +106,7 @@ describe('ui-data-import', () => {
         instanceOption: NewMatchProfile.optionsList.pol }
     },
     {
-      matchProfile: { profileName: `C350590 935 $a POL to Holdings POL ${Helper.getRandomBarcode()}`,
+      matchProfile: { profileName: `C350590 935 $a POL to Holdings POL ${getRandomPostfix()}`,
         incomingRecordFields: {
           field: '935',
           subfield: 'a'
@@ -116,7 +117,7 @@ describe('ui-data-import', () => {
     },
     {
       matchProfile: {
-        profileName: `C350590 935 $a POL to Item POL ${Helper.getRandomBarcode()}`,
+        profileName: `C350590 935 $a POL to Item POL ${getRandomPostfix()}`,
         incomingRecordFields: {
           field: '935',
           subfield: 'a'
@@ -129,7 +130,7 @@ describe('ui-data-import', () => {
   ];
 
   const specialJobProfile = { ...NewJobProfile.defaultJobProfile,
-    profileName: `C350590 autotestJobProf${Helper.getRandomBarcode()}`,
+    profileName: `C350590 autotestJobProf${getRandomPostfix()}`,
     acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC };
 
   before('create test data', () => {

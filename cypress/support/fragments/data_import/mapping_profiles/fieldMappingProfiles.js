@@ -26,8 +26,9 @@ const openNewMappingProfileForm = () => {
 
 const closeViewModeForMappingProfile = (profileName) => cy.do(Pane({ title: profileName }).find(iconButton).click());
 const saveProfile = () => {
-  cy.do(saveProfileButton.click());
+  // TODO need to wait until profile to be filled
   cy.wait(1500);
+  cy.do(saveProfileButton.click());
 };
 
 const mappingProfileForDuplicate = {

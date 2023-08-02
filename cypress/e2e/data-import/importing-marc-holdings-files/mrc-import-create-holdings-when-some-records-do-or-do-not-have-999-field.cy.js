@@ -1,8 +1,8 @@
 import permissions from '../../../support/dictionary/permissions';
+import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TopMenu from '../../../support/fragments/topMenu';
-import Helper from '../../../support/fragments/finance/financeHelper';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -14,8 +14,8 @@ import FileManager from '../../../support/utils/fileManager';
 describe('ui-data-import', () => {
   let user;
   let instanceHrid;
-  const fileName = `oneMarcBib.mrc${Helper.getRandomBarcode()}`;
-  const editedMarcFileName = `C359209 editedMarcFile.${Helper.getRandomBarcode()}.mrc`;
+  const fileName = `oneMarcBib.mrc${getRandomPostfix}`;
+  const editedMarcFileName = `C359209 editedMarcFile.${getRandomPostfix}.mrc`;
   const error = '{"error":"A new MARC-Holding was not created because the incoming record already contained a 999ff$s or 999ff$i field"}';
 
   before('create test data', () => {

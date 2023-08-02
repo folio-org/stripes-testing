@@ -1,3 +1,4 @@
+import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
@@ -9,12 +10,11 @@ import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
-import Helper from '../../../support/fragments/finance/financeHelper';
 
 describe('ui-data-import', () => {
   let user;
   let instanceHrid;
-  const fileName = `oneMarcBib.mrc${Helper.getRandomBarcode()}`;
+  const fileName = `oneMarcBib.mrc${getRandomPostfix}`;
 
   before('create test data', () => {
     cy.getAdminToken()
