@@ -16,7 +16,7 @@ import {
 } from '../../../../interactors';
 
 // Cypress clicks before the UI loads, use when there is no way to attach waiter to element
-const waitClick = () => { cy.wait(1000); };
+const waitClick = () => { cy.wait(1000)};
 const actionButton = Section({ id: 'pane-userdetails' }).find(Button('Actions'));
 const editButton = Button('Edit');
 const additionalInfo = Button('Additional information');

@@ -1,8 +1,7 @@
 import { Accordion, Button, including, HTML, Section, MultiColumnListCell, Badge, Modal, Checkbox, MultiColumnList, MultiColumnListRow, SelectionOption, SearchField, Spinner } from '../../../../interactors';
-import NewNote from '../notes/newNote';
 import { getLongDelay } from '../../utils/cypressTools';
 import ExistingNoteEdit from '../notes/existingNoteEdit';
-
+import NewNote from '../notes/newNote';
 
 const rootXpath = '//section[@id="pane-view-agreement"]';
 const rootSection = Section({ id: 'pane-view-agreement' });

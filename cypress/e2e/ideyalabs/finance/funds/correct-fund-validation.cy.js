@@ -4,7 +4,6 @@ import topMenu from '../../../../support/fragments/topMenu';
 import dateTools from '../../../../support/utils/dateTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import testTypes from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
 
 const orderOne = {
   templateName: 'Adlibris book order (adlibris)',
@@ -58,7 +57,7 @@ describe('ui-invoices: Invoice creation', () => {
 
   it(
     'C353566 Correct fund validation to approve invoice (thunderjet)',
-    { tags: [testTypes.extendedPath, devTeams.thunderjet] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       invoice.createOrder(orderOne.orderType, orderOne.templateName);
       invoice.POLines(orderOnePOLine.title, orderOnePOLine.fundID);
