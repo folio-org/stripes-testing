@@ -1,7 +1,5 @@
 import invoice from '../../../support/fragments/ideyalabs/invoice';
 import topMenu from '../../../support/fragments/topMenu';
-import dateTools from '../../../support/utils/dateTools';
-import getRandomPostfix from '../../../support/utils/stringTools';
 import testTypes from '../../../support/dictionary/testTypes';
 import devTeams from '../../../support/dictionary/devTeams';
 
