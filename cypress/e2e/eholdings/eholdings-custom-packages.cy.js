@@ -26,8 +26,9 @@ describe('eHoldings -> Package', () => {
     });
   });
 
-  after('Deleting user', () => {
+  after('Deleting user, data', () => {
     Users.deleteViaApi(testData.userId);
+    EHoldingsPackages.deletePackageViaAPI(testData.customPackageName);
   });
 
   it('C692 Create a custom package (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
@@ -36,9 +37,8 @@ describe('eHoldings -> Package', () => {
     EHoldingsPackageView.waitLoading();
     EHoldingsPackageView.verifyPackageName(testData.customPackageName);
     EHoldingsPackageView.verifyPackageType('Custom');
+    EHoldingsPackages.checkPackageExistsViaAPI(testData.customPackageName, true);
     EHoldingsPackageView.close();
-    // wait for package to be available for search
-    cy.wait(15000);
     EHoldingsPackagesSearch.byName(testData.customPackageName);
     EHoldingsPackages.checkPackageInResults(testData.customPackageName);
   });

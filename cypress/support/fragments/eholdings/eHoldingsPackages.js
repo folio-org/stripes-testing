@@ -5,6 +5,8 @@ import eHoldingsPackage from './eHoldingsPackage';
 
 const resultSection = Section({ id: 'search-results' });
 
+let timeCounter = 0;
+
 export default {
   create:(packageName = `package_${getRandomPostfix()}`) => {
     cy.do(Button('New').click());
@@ -86,4 +88,33 @@ export default {
     eHoldingsNewCustomPackage.saveAndClose();
     eHoldingsNewCustomPackage.checkPackageCreatedCallout();
   },
+
+  checkPackageExistsViaAPI(packageName, isCustom = false, timeOutSeconds = 15) {
+    cy.okapiRequest({ path: 'eholdings/packages',
+      searchParams: { 'q': packageName },
+      isDefaultSearchParamsRequired : false }).then(({ body }) => {
+      if (body.data[0] || timeCounter >= timeOutSeconds) {
+        cy.expect(body.data[0].attributes.isCustom).equals(isCustom);
+      } else {
+        // wait 1 second before retrying request
+        cy.wait(1000);
+        this.checkPackageExistsViaAPI(packageName, isCustom);
+        timeCounter++;
+      }
+    });
+  },
+
+  deletePackageViaAPI(packageName) {
+    cy.okapiRequest({
+      path: 'eholdings/packages',
+      searchParams: { 'q': packageName },
+      isDefaultSearchParamsRequired : false
+    }).then(({ body }) => {
+      cy.okapiRequest({
+        method: 'DELETE',
+        path: `eholdings/packages/${body.data[0].id}`,
+        isDefaultSearchParamsRequired : false
+      });
+    });
+  }
 };
