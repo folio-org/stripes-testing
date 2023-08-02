@@ -50,7 +50,7 @@ describe('CirculationLog App', () => {
     searchPane.verifyResult(testData.checkboxOption);
   });
 
-  it('C16999 Filter circulation log by Closed loan (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+  it('C16999 Filter circulation log by Closed loan (firebird)', { tags: [testTypes.ideaLabsTests] }, () => {
     cy.visit(topMenu.usersPath);
     usersSearchPane.searchByStatus('Active');
     circulationlog.clickOnStatus();

@@ -17,12 +17,15 @@ import DateTools from '../../utils/dateTools';
 const dropdownButton = MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(Dropdown()).find(Button());
 const actionsButton = Button('Actions');
 const servicePointField = MultiSelect({ ariaLabelledby: 'accordion-toggle-button-servicePointId' });
-const data = '4502015';
+
+
+// TODO: will rework to interactor when we get section id
+function clickApplyMainFilter() {
+  cy.get('[class^="button-"][type="submit"]').first().click();
+}
+
 
 export default {
-  clickApplyMainFilter() {
-    cy.get('[class^="button-"][type="submit"]').first().click();
-  },
   waitLoading() {
     cy.expect(Pane('Circulation log').exists());
   },
@@ -30,12 +33,8 @@ export default {
   searchByCheckedOut() {
     cy.do([
       Accordion({ id: 'loan' }).clickHeader(),
-      Checkbox({ id: 'clickable-filter-loan-checked-out' }).click(),
-      cy.do(TextField({ name: 'itemBarcode' }).fillIn(data))
+      Checkbox({ id: 'clickable-filter-loan-checked-out' }).click()
     ]);
-  },
-  verifyClosedloanlist() {
-    cy.expect(MultiColumnListRow().exists());
   },
 
   verifyResult(content) {
@@ -44,7 +43,7 @@ export default {
 
   searchByItemBarcode(barcode) {
     cy.do(TextField({ name: 'itemBarcode' }).fillIn(barcode));
-    this.clickApplyMainFilter();
+    clickApplyMainFilter();
   },
 
   searchByUserBarcode(barcode) {
@@ -67,18 +66,8 @@ export default {
   searchByServicePoint(servicePoint) {
     cy.do([
       servicePointField.fillIn(servicePoint),
-      servicePointField.choose(servicePoint)
+      servicePointField.choose(servicePoint),
     ]);
-  },
-  checkBarcode() {
-    cy.expect(Pane({ title: 'Circulation log' }).exists());
-    cy.do([
-      Accordion({ id: 'loan' }).clickHeader(),
-      Checkbox({ id:'clickable-filter-loan-renewed-through-override' }).click()
-    ]);
-    cy.do(Button({ id:'reset-receiving-filters' }).click());
-    cy.do(TextField({ name: 'itemBarcode' }).fillIn('1040'));
-    this.clickApplyMainFilter();
   },
 
   searchByClaimedReturned() {
@@ -153,6 +142,7 @@ export default {
       }
     });
   },
+
   checkResultSearch(searchResults, rowIndex = 0) {
     return cy.wrap(Object.values(searchResults)).each(contentToCheck => {
       cy.expect(MultiColumnListRow({ indexRow: `row-${rowIndex}` }).find(MultiColumnListCell({ content: including(contentToCheck) })).exists());
