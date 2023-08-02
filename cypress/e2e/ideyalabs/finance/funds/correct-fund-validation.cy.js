@@ -58,7 +58,7 @@ describe('ui-invoices: Invoice creation', () => {
 
   it(
     'C353566 Correct fund validation to approve invoice (thunderjet)',
-    { tags: [testTypes.extendedPath, devTeams.thunderjet] },
+    { tags: [testTypes.ideaLabsTests, devTeams.thunderjet] },
     () => {
       invoice.createOrder(orderOne.orderType, orderOne.templateName);
       invoice.POLines(orderOnePOLine.title, orderOnePOLine.fundID);
