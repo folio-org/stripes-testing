@@ -39,8 +39,16 @@ export default {
   },
 
   rollover : () => {
+    cy.wait(8000);
+
     cy.do([
       Button('Actions').click(),
+
+    ]);
+    cy.wait(8000);
+
+    cy.do([
+
       rolloverButton.click()
     ]);
   },
@@ -62,7 +70,7 @@ export default {
   fillInRolloverInfo(fiscalYear) {
     cy.do(fiscalYearSelect.click());
     // Need to wait,while date of fiscal year will be loaded
-    cy.wait(3000);
+    cy.wait(8000);
     cy.do([
       fiscalYearSelect.choose(fiscalYear),
       rolloverAllocationCheckbox.click(),
@@ -72,8 +80,9 @@ export default {
       Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
       rolloverButton.click(),
     ]);
-    cy.wait(4000);
+    cy.wait(8000);
     this.continueRollover();
+    cy.wait(8000);
     cy.do([
       rolloverConfirmButton.click(),
     ]);
@@ -245,6 +254,8 @@ export default {
   }),
 
   selectLedger:(ledgerName) => {
+    cy.wait(8000);
+
     cy.do(Pane({ id: 'ledger-results-pane' }).find(Link(ledgerName)).click());
   },
 

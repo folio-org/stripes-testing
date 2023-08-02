@@ -4,6 +4,7 @@ import Features from '../../../support/dictionary/features';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import WaiveReasons from '../../../support/fragments/settings/users/waiveReasons';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import UsersSettingsGeneral from '../../../support/fragments/settings/users/usersSettingsGeneral';
 
 describe('Management of waive reasons', () => {
   beforeEach(() => {
@@ -23,14 +24,14 @@ describe('Management of waive reasons', () => {
       WaiveReasons.fillReasonParameters(testReason);
       WaiveReasons.checkSaveButtonState({ isDisabled: false });
       WaiveReasons.trySave();
-      WaiveReasons.checkReason(testReason);
+      UsersSettingsGeneral.checkEntityInTable(testReason);
       // update
       testReason.description = 'test description';
       WaiveReasons.startEdit(testReason.reason);
       WaiveReasons.fillReasonParameters(testReason);
       WaiveReasons.checkSaveButtonState({ isDisabled: false });
       WaiveReasons.trySave();
-      WaiveReasons.checkReason(testReason);
+      UsersSettingsGeneral.checkEntityInTable(testReason);
       // delete
       WaiveReasons.delete(testReason.reason);
     });
