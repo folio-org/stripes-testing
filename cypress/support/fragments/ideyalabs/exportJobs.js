@@ -10,9 +10,9 @@ import {
   RadioButton,
   Section,
   TextField,
-} from '../../../interactors';
-import exportManagerSearchPane from '../fragments/exportManager/exportManagerSearchPane';
-import topMenu from '../fragments/topMenu';
+} from '../../../../interactors';
+import exportManagerSearchPane from '../exportManager/exportManagerSearchPane';
+import topMenu from '../topMenu';
 
 const actionsButton = Button('Actions');
 const radioPackageFieldsToExport = RadioButton({

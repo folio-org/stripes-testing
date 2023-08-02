@@ -1,5 +1,4 @@
-import exportJobs from '../../support/a_ideyalabs/exportJobs';
-import devTeams from '../../support/dictionary/devTeams';
+import exportJobs from '../../support/fragments/ideyalabs/exportJobs';
 import testTypes from '../../support/dictionary/testTypes';
 import eHoldingsPackages from '../../support/fragments/eholdings/eHoldingsPackages';
 import eHoldingsPackagesSearch from '../../support/fragments/eholdings/eHoldingsPackagesSearch';
@@ -36,7 +35,7 @@ describe('Eholdings - exports', () => {
 
   it(
     'C356417 Export of selected ""Package"" without titles. User chooses ""Package"" fields to export. (spitfire)',
-    { tags: [testTypes.extendedPath, devTeams.spitfire] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(topMenu.eholdingsPath);
       eHoldingsSearch.switchToPackages();
@@ -60,7 +59,7 @@ describe('Eholdings - exports', () => {
 
   it(
     'C367972 Export button must be disabled when user tries to export Package record with more than 10k of Title records (spitfire)',
-    { tags: [testTypes.extendedPath, devTeams.spitfire] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(topMenu.eholdingsPath);
       eHoldingsSearch.switchToPackages();
@@ -103,7 +102,7 @@ describe('Eholdings - exports', () => {
 
   it(
     'C353217 Download batch export files from full screen view with Voucher export permission (FTP/JSON) - upload to server (thunderjet)',
-    { tags: [testTypes.extendedPath, devTeams.thunderjet] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(topMenu.invoicesPath);
       invoices.selectFolio();

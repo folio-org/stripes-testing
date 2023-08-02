@@ -79,10 +79,10 @@ module.exports = defineConfig({
           return fs.readFileSync(filePath, 'utf-8');
         },
       });
-      
+
       // eslint-disable-next-line global-require
       await require('cypress-testrail-simple/src/plugin')(on, config);
-      
+
       return config;
     },
     baseUrl: 'https://folio-testing-cypress-diku.ci.folio.org',
