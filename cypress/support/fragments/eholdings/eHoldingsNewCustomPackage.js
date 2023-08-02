@@ -19,18 +19,17 @@ export default {
   saveAndClose: () => {
     cy.do(Button('Save & close').click());
   },
-<<<<<<< HEAD
 
   checkPackageCreatedCallout() {
     cy.expect(HTML(including(calloutPackageCreatedText)).exists());
-=======
+  },
+
   clickOneHoldingCarat: () => {
     cy.do([caratButton.click(),
-    KBcontent.click(),
-    caratButton.click(),
-    systemStatus.click(),
-    caratButton.click(),
-    keyboardShortcut.click()]);
->>>>>>> master
+      KBcontent.click(),
+      caratButton.click(),
+      systemStatus.click(),
+      caratButton.click(),
+      keyboardShortcut.click()]);
   }
 };
