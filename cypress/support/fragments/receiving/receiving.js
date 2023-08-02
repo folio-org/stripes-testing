@@ -25,12 +25,12 @@ const unreceiveButton = Button('Unreceive');
 const addPieceModal = Modal({ id: 'add-piece-modal' });
 const searchByParameter = (parameter, value) => {
   cy.do(Select({ id: 'input-record-search-qindex' }).choose(parameter));
-  cy.do(TextField({ id:'input-record-search' }).fillIn(value));
+  cy.do(TextField({ id: 'input-record-search' }).fillIn(value));
   cy.do(Button('Search').click());
 };
 
 const filterOpenReceiving = () => {
-  cy.do(Pane({ id:'receiving-filters-pane' }).find(Button('Order status')).click());
+  cy.do(Pane({ id: 'receiving-filters-pane' }).find(Button('Order status')).click());
   cy.do(Checkbox({ id: 'clickable-filter-purchaseOrder.workflowStatus-open' }).click());
 };
 
@@ -72,6 +72,16 @@ export default {
       addPieceModal.find(Button('Save & close')).click(),
     ]);
     InteractorsTools.checkCalloutMessage('The piece was successfully saved');
+  },
+
+  addPieceProcess: (caption, enumeration) => {
+    cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
+    cy.do([
+      Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
+      Button('Add piece').click(),
+      addPieceModal.find(TextField('Caption')).fillIn(caption),
+      addPieceModal.find(TextField('Enumeration')).fillIn(enumeration),
+    ]);
   },
 
   selectPiece: (caption) => {
@@ -158,7 +168,7 @@ export default {
       .find(MultiColumnListCell({ content: caption })).exists());
   },
 
-  checkIsPiecesCreated:(title) => {
+  checkIsPiecesCreated: (title) => {
     filterOpenReceiving();
     cy.expect(Pane('Receiving')
       .find(MultiColumnList({ id: 'receivings-list' }))
@@ -166,30 +176,30 @@ export default {
       .exists());
   },
 
-  selectReceivingItem:(indexRow = 0) => {
+  selectReceivingItem: (indexRow = 0) => {
     cy.do(MultiColumnListCell({ 'row': indexRow, 'columnIndex': 0 }).click());
   },
 
-  selectInstanceInReceive:(instanceName) => {
+  selectInstanceInReceive: (instanceName) => {
     cy.do(Section({ id: 'pane-title-details' }).find(Link(instanceName)).click());
   },
 
-  selectPOLInReceive:(POLName) => {
+  selectPOLInReceive: (POLName) => {
     cy.do(Section({ id: 'receiving-results-pane' }).find(Link(POLName)).click());
   },
 
-  selectConnectedInEditPiece:() => {
+  selectConnectedInEditPiece: () => {
     cy.do(Modal('Edit piece').find(Link('Connected')).click());
   },
 
-  receiveFromExpectedSection:() => {
+  receiveFromExpectedSection: () => {
     cy.do([
       Section({ id: 'expected' }).find(actionsButton).click(),
       receiveButton.click()
     ]);
   },
 
-  receiveFromExpectedSectionWithClosePOL:() => {
+  receiveFromExpectedSectionWithClosePOL: () => {
     cy.do([
       Section({ id: 'expected' }).find(actionsButton).click(),
       receiveButton.click(),
@@ -197,15 +207,15 @@ export default {
     ]);
   },
 
-  unreceiveFromReceivedSection:() => {
+  unreceiveFromReceivedSection: () => {
     cy.do([
       Section({ id: 'received' }).find(actionsButton).click(),
       unreceiveButton.click()
     ]);
   },
 
-  selectFromResultsList: () => {
-    cy.do(MultiColumnList({ id:'receivings-list' }).find(Link()).click());
+  selectFromResultsList1: () => {
+    cy.do(MultiColumnList({ id: 'receivings-list' }).find(Link()).click());
   },
 
   receiveAll: () => {
@@ -216,11 +226,21 @@ export default {
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
   },
 
-  clickOnInstance:() => {
+  clickOnInstance: () => {
     cy.do([
       Button('Collapse all').click(),
       PaneContent({ id: 'pane-title-details-content' }).find(Link()).click()
     ]);
+  },
+
+  clickOnPOLnumber: (PolNumber) => {
+    cy.do([
+      PaneContent({ id: 'pane-title-details-content' }).find(Link(PolNumber)).click()
+    ]);
+  },
+
+  quickReceivePieceAdd: () => {
+    cy.do(addPieceModal.find(Button('Quick receive')).click());
   },
 
   receiveAllPhysicalItemsWithBarcodes: (firstBarcode, secondBarcode) => {

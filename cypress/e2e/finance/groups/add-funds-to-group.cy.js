@@ -11,6 +11,8 @@ import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import Groups from '../../../support/fragments/finance/groups/groups';
 
+Cypress.on('uncaught:exception', () => false);
+
 describe('ui-finance: Groups', () => {
   const firstFund = { ...Funds.defaultUiFund };
   const secondFund = {

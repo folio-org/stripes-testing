@@ -1,8 +1,8 @@
+import getRandomPostfix from '../../../support/utils/stringTools';
+import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import permissions from '../../../support/dictionary/permissions';
 import { FOLIO_RECORD_TYPE, ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
-import Helper from '../../../support/fragments/finance/financeHelper';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -17,15 +17,15 @@ import ConfirmChanges from '../../../support/fragments/data_import/action_profil
 describe('ui-data-import', () => {
   let user;
   const mappingProfile = {
-    name: `C367994 autotest mapping profile ${Helper.getRandomBarcode()}`,
+    name: `C367994 autotest mapping profile ${getRandomPostfix}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE
   };
   const actionProfile = {
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-    name: `C367994 autotest action profile ${Helper.getRandomBarcode()}`
+    name: `C367994 autotest action profile ${getRandomPostfix}`
   };
   const jobProfile = { ...NewJobProfile.defaultJobProfile,
-    profileName: `C367994 autotest job profile${Helper.getRandomBarcode()}`,
+    profileName: `C367994 autotest job profile${getRandomPostfix}`,
     acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC };
 
   before('create user', () => {

@@ -1,7 +1,7 @@
+import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import { FOLIO_RECORD_TYPE } from '../../../support/constants';
-import Helper from '../../../support/fragments/finance/financeHelper';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -13,12 +13,12 @@ import ConfirmRemoval from '../../../support/fragments/data_import/action_profil
 
 describe('ui-data-import', () => {
   const mappingProfile = {
-    name: `C11115 autotest mapping profile ${Helper.getRandomBarcode()}`,
+    name: `C11115 autotest mapping profile ${getRandomPostfix}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE
   };
 
   const actionProfile = {
-    name: `C11115 autotest action profile ${Helper.getRandomBarcode()}`,
+    name: `C11115 autotest action profile ${getRandomPostfix}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE
   };
 

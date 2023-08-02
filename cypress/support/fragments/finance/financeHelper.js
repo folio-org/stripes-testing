@@ -1,8 +1,12 @@
-import { Button, Checkbox, MultiColumnListRow, SearchField } from '../../../../interactors';
+import { Button, Checkbox, MultiColumnListRow, Link, SearchField, PaneContent } from '../../../../interactors';
 
 const searchField = SearchField({ id: 'input-record-search' });
 const noResultsMessageLabel = '//span[contains(@class,"noResultsMessageLabel")]';
 const chooseAFilterMessage = 'Choose a filter or enter a search query to show results.';
+const fiscalResultsList = PaneContent({ id : 'fiscal-year-results-pane-content' });
+const ledgerResultList = PaneContent({ id:'ledger-results-pane-content' });
+const FundResultList = PaneContent({ id:'fund-results-pane-content' });
+const FiscalYearResultList = PaneContent({ id:'fiscal-year-results-pane-content' });
 
 export default {
 
@@ -48,6 +52,18 @@ export default {
 
   selectCheckboxFromResultsList: (rowNumber = 0) => {
     cy.do(MultiColumnListRow({ index: rowNumber }).find(Checkbox()).click());
+  },
+  selectFirstFinance: (name) => {
+    cy.do(fiscalResultsList.find((Link(name))).click());
+  },
+  selectFirstLedger: (name) => {
+    cy.do(ledgerResultList.find((Link(name))).click());
+  },
+  selectFirstFundRecord: (name) => {
+    cy.do(FundResultList.find((Link(name))).click());
+  },
+  selectFirstFiscalRecord: (name) => {
+    cy.do(FiscalYearResultList.find((Link(name))).click());
   },
 
   checkZeroSearchResultsMessage : () => {
