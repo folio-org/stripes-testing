@@ -123,4 +123,11 @@ export default {
     eHoldingsProvidersSearch.byProvider('VLeBooks');
     eHoldingsPackagesSearch.bySelectionStatus('Selected');
   },
+
+  checkOnlySelectedPackagesInResults() {
+    cy.expect([
+      resultSection.find(ListItem({ text: including(eHoldingsPackage.filterStatuses.selected) })).exists(),
+      resultSection.find(ListItem({ text: including(eHoldingsPackage.filterStatuses.notSelected) })).absent()
+    ]);
+  }
 };
