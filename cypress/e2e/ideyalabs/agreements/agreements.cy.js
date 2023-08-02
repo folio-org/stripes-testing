@@ -1,4 +1,3 @@
-import devTeams from '../../../support/dictionary/devTeams';
 import testTypes from '../../../support/dictionary/testTypes';
 import agreementsDetails from '../../../support/fragments/agreements/agreementsDetails';
 import newAgreement from '../../../support/fragments/agreements/newAgreement';
@@ -24,7 +23,7 @@ describe('Agreement', () => {
     agreementsDetails.remove();
   });
 
-  it('C757 Create an Agreement (ERM)', { tags: [testTypes.ideaLabsTests, devTeams.erm] }, () => {
+  it('C757 Create an Agreement (ERM)', { tags: [testTypes.ideaLabsTests] }, () => {
     cy.visit(topMenu.agreementsPath);
     newAgreement.newButtonClick();
     newAgreement.fill();
@@ -32,7 +31,7 @@ describe('Agreement', () => {
     newAgreement.validateDateAndTime();
   });
 
-  it('C1295 Create a new Agreement and attach a package (spitfire)', { tags: [testTypes.ideaLabsTests, devTeams.spitfire] }, () => {
+  it('C1295 Create a new Agreement and attach a package (spitfire)', { tags: [testTypes.ideaLabsTests] }, () => {
     cy.visit(topMenu.eholdingsPath);
     eHoldingsPackages.packageSearch();
     eHoldingsPackages.openPackage();

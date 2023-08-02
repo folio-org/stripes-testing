@@ -1,5 +1,4 @@
 import exportJobs from '../../../../../support/ideyalabs/exportJobs';
-import devTeams from '../../../../../support/dictionary/devTeams';
 import testTypes from '../../../../../support/dictionary/testTypes';
 import exportManagerSearchPane from '../../../../../support/fragments/exportManager/exportManagerSearchPane';
 import topMenu from '../../../../../support/fragments/topMenu';
@@ -20,7 +19,7 @@ describe('Export Manager', () => {
 
   it(
     'C358971 Already exported order is not included repeatedly in next exports(thunderjet)',
-    { tags: [testTypes.ideaLabsTests, devTeams.thunderjet] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(topMenu.exportManagerOrganizationsPath);
       exportManagerSearchPane.selectExportMethod(testData.integrationMethod);
@@ -38,7 +37,7 @@ describe('Export Manager', () => {
 
   it(
     'C365123 Downloading the exact .edi file that was exported for a given export job with Successful status(thunderjet)',
-    { tags: [testTypes.extendedPath, devTeams.thunderjet] },
+    { tags: [testTypes.extendedPath] },
     () => {
       cy.visit(topMenu.exportManagerOrganizationsPath);
       exportManagerSearchPane.selectExportMethod(testData.exportMethod);

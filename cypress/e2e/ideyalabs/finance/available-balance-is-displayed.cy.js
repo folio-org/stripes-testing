@@ -5,7 +5,6 @@ import groups from '../../../support/fragments/finance/groups/groups';
 import ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import topMenu from '../../../support/fragments/topMenu';
 import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 
 const testData = {
   fiscalName: 'Fiscal Year 2024',
@@ -56,7 +55,7 @@ describe('Finance: Funds', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
-  it('C377030 "Available balance" is displayed as a negative number when running a deficit(Thunderjet)', { tags: [testTypes.ideaLabsTests, devTeams.thunderjet] }, () => {
+  it('C377030 "Available balance" is displayed as a negative number when running a deficit(Thunderjet)', { tags: [testTypes.ideaLabsTests] }, () => {
     cy.visit(topMenu.financePath);
     fiscalYears.clickOnFiscalYear();
     financeHelper.searchByName(testData.fiscalName);
