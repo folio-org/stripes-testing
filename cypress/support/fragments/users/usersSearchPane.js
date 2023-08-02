@@ -21,6 +21,7 @@ const actionButton = Section({ id: 'pane-userdetails' }).find(Button('Actions'))
 const editButton = Button('Edit');
 const additionalInfo = Button('Additional information');
 const saveAndClose = Button('Save & close');
+const openLoanSectionButton = Button({id: 'accordion-toggle-button-loansSection'});
 
 
 export default {
@@ -35,6 +36,14 @@ export default {
     return cy.do([
       TextField({ id: 'input-user-search' }).fillIn(keywords),
       Button({ id: 'submit-user-search' }).click()
+    ]);
+  },
+
+  searchByLastName(lastName) {
+    return cy.do([
+      Select({ id: 'input-user-search-qindex' }).choose('Last name'),
+      TextField({ id: 'input-user-search' }).fillIn(lastName),
+      Button({ id: 'submit-user-search' }).click(),
     ]);
   },
 
@@ -59,6 +68,10 @@ export default {
 
   openUser(userId) {
     return cy.do(Link({ href: including(userId) }).click());
+  },
+
+  openUserLoanSection: () => {
+    cy.do([openLoanSectionButton.click()]);
   },
 
   verifyTextField: (name) => {
@@ -109,6 +122,10 @@ export default {
         );
       }
     });
+  },
+
+  additionalInfoButton() {
+    cy.do(additionalInfo.click());
   },
 
   verifyDragItem() {

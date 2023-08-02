@@ -31,7 +31,7 @@ const exportManagerOrganizationsPath = 'export-manager/edi-jobs';
 const customFieldsPath = '/settings/users/custom-fields';
 const notesPath = '/settings/notes/general';
 const permissionSetPath = '/settings/users/perms?layer=add';
-const customLabel = '/settings/eholdings';
+const customLabel = '/settings/eholdings'
 
 
 export default {
@@ -65,8 +65,8 @@ export default {
   exportManagerPath,
   exportManagerOrganizationsPath,
   customFieldsPath,
-  notesPath,
-  permissionSetPath,
+  notesPath, 
+  permissionSetPath, 
   customLabel,
   openCheckInApp:() => {
     cy.do(Link({ href: including('/checkin') }).click());
