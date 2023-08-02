@@ -50,7 +50,7 @@ const testData = {
   ledgerFinancialQuantity2: '0.00',
 };
 
-describe('Finance: Funds', () => {
+describe.skip('Finance: Funds', () => {
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });

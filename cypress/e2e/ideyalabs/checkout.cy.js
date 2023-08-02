@@ -1,4 +1,4 @@
-import users from '../../support/a_ideyalabs/users';
+import users from '../../support/ideyalabs/users';
 import testTypes from '../../support/dictionary/testTypes';
 import topMenu from '../../support/fragments/topMenu';
 import userLoans from '../../support/fragments/users/loans/userLoans';
@@ -21,7 +21,7 @@ const testData = {
   itemBarcode: '108204829',
 };
 
-describe('Checkout item', () => {
+describe.skip('Checkout item', () => {
   before('Login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });

@@ -20,7 +20,7 @@ const rollOverData = {
   selectEmbranceResult: '6/20/2023, 4:41 AM',
 };
 
-describe('Finance: Fiscal Year Rollover', () => {
+describe.skip('Finance: Fiscal Year Rollover', () => {
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });

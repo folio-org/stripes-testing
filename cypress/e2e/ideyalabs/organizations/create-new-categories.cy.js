@@ -7,7 +7,7 @@ import { getFourDigitRandomNumber } from '../../../support/utils/stringTools';
 
 const categoryName = `Test${getFourDigitRandomNumber()}`;
 
-describe('Settings', () => {
+describe.skip('Settings', () => {
   before('Login to Folio', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });

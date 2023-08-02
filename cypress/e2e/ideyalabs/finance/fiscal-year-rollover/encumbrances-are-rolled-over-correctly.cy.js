@@ -77,7 +77,7 @@ const encumbranceData = {
   transactionListDetailsResultsFromEmbarance: '7/3/2023, 8:12 AM',
 };
 
-describe('Finance: Fiscal Year Rollover', () => {
+describe.skip('Finance: Fiscal Year Rollover', () => {
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });

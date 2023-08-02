@@ -28,7 +28,7 @@ describe('eHoldings packages management', () => {
       eHoldingsPackages.getNotSelectedPackageIdViaApi().then(specialPackage => {
         cy.login(userProperties.username, userProperties.password,
           { path: `${TopMenu.eholdingsPath}/packages/${specialPackage.id}`, waiter: () => eHoldingsPackage.waitLoading(specialPackage.name) });
-        eHoldingsPackage.addToHodlings();
+        eHoldingsPackage.addToHoldings();
         eHoldingsPackage.verifyHoldingStatus();
         eHoldingsPackage.filterTitles();
         eHoldingsPackage.checkEmptyTitlesList();
@@ -75,7 +75,7 @@ describe('eHoldings packages management', () => {
         eHoldingsPackage.filterTitles(eHoldingsPackage.filterStatuses.notSelected);
         eHoldingsPackage.checkEmptyTitlesList();
         // reset test data
-        eHoldingsPackage.addToHodlings();
+        eHoldingsPackage.addToHoldings();
       });
     });
   });

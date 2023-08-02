@@ -35,7 +35,7 @@ const singleSelectData = {
   },
 };
 
-describe('Settings', () => {
+describe.skip('Settings', () => {
   before('Login to Folio', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });

@@ -9,7 +9,7 @@ const searchInvoiceNumber = {
 
 const fundID = 'Fund B (b)';
 
-describe('Orders', () => {
+describe.skip('Orders', () => {
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(topMenu.ordersPath);

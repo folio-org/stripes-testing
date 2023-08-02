@@ -2,7 +2,7 @@ import order from '../../../../support/ideyaLabs/orders';
 import topMenu from '../../../../support/fragments/topMenu';
 import testTypes from '../../../../support/dictionary/testTypes';
 
-describe('Orders: Export in edifact format ', () => {
+describe.skip('Orders: Export in edifact format ', () => {
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });

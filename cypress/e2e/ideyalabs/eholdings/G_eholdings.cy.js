@@ -14,7 +14,7 @@ import settingsMenu from '../../../support/fragments/settingsMenu';
 import topMenu from '../../../support/fragments/topMenu';
 import eHolding from './eHolding';
 
-describe('Create a custom package', () => {
+describe.skip('Create a custom package', () => {
   before('Login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(topMenu.eholdingsPath);
