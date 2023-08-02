@@ -64,10 +64,11 @@ export default {
   },
 
   addFundToGroup: (fundName) => {
+    cy.wait(4000);
     cy.do([
       Section({ id: 'fund' }).find(Button('Add to group')).click(),
       fundModal.find(SearchField({ id: 'input-record-search' })).fillIn(fundName),
-      fundModal.find(Button({ type: 'submit'})).click(),
+      fundModal.find(Button({ type: 'submit' })).click(),
       MultiColumnList({ id: 'list-plugin-find-records' })
         .find(MultiColumnListHeader({ id:'list-column-ischecked' }))
         .find(Checkbox())
