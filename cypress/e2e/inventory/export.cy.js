@@ -16,7 +16,6 @@ import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 let userId;
 const instanceTitle = `Inventory export test ${Number(new Date())}`;
-let locationName = '';
 
 describe('ui-inventory: exports', () => {
   before('navigates to Inventory', () => {
