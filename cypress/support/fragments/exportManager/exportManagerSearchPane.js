@@ -101,7 +101,7 @@ export default {
   },
 
   searchBySuccessful() {
-    cy.expect(Spinner().absent());
+    waitClick();
     cy.do(statusAccordion.find(Checkbox({ id: 'clickable-filter-status-successful' })).click());
   },
 

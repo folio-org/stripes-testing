@@ -1,8 +1,8 @@
-import exportJobs from '../../support/a_ideyalabs/exportJobs';
-import devTeams from '../../support/dictionary/devTeams';
-import testTypes from '../../support/dictionary/testTypes';
-import exportManagerSearchPane from '../../support/fragments/exportManager/exportManagerSearchPane';
-import topMenu from '../../support/fragments/topMenu';
+import exportJobs from '../../../../../support/ideyalabs/exportJobs';
+import devTeams from '../../../../../support/dictionary/devTeams';
+import testTypes from '../../../../../support/dictionary/testTypes';
+import exportManagerSearchPane from '../../../../../support/fragments/exportManager/exportManagerSearchPane';
+import topMenu from '../../../../../support/fragments/topMenu';
 
 const testData = {
   integrationMethod: 'Integration name',
