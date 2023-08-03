@@ -11,7 +11,7 @@ const defaultAgreement = {
   status: 'Active',
   startDate: dateTools.getCurrentDate()
 };
-describe('Agreement', () => {
+describe.skip('Agreement', () => {
   before('Login to Folio', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });

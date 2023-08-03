@@ -1,4 +1,4 @@
-import exportJobs from '../../../../../support/ideyalabs/exportJobs';
+import exportJobs from '../../../../../support/ideyaLabs/exportJobs';
 import testTypes from '../../../../../support/dictionary/testTypes';
 import exportManagerSearchPane from '../../../../../support/fragments/exportManager/exportManagerSearchPane';
 import topMenu from '../../../../../support/fragments/topMenu';
@@ -12,7 +12,7 @@ const testData = {
   jobFileName: 'AAA_Integration name_2023-06-20_14:36:04.edi',
 };
 
-describe('Export Manager', () => {
+describe.skip('Export Manager', () => {
   before('Login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });

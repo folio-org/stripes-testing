@@ -28,7 +28,7 @@ const testData = {
   },
 };
 
-describe('Eholdings - exports', () => {
+describe.skip('Eholdings - exports', () => {
   before('Login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });

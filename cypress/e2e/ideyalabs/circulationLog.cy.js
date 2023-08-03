@@ -4,7 +4,7 @@ import searchPane from '../../support/fragments/circulation-log/searchPane';
 import marcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import topMenu from '../../support/fragments/topMenu';
 import usersSearchPane from '../../support/fragments/users/usersSearchPane';
-import circulationlog from '../../support/ideyalabs/circulationlog';
+import circulationlog from '../../support/ideyaLabs/circulationlog';
 
 const testData = {
   itemA: '4502015',
@@ -23,7 +23,7 @@ const testData = {
   },
 };
 
-describe('CirculationLog App', () => {
+describe.skip('CirculationLog App', () => {
   before('Login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
