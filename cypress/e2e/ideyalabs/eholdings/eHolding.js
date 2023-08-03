@@ -13,7 +13,7 @@ import {
   Spinner,
   TextArea,
   TextField,
-} from '../../../interactors';
+} from '../../../../interactors';
 import eHoldingsNewCustomPackage from '../../support/fragments/eholdings/eHoldingsNewCustomPackage';
 import eHoldingsPackages from '../../support/fragments/eholdings/eHoldingsPackages';
 import eholdingsPackagesSearch from '../../support/fragments/eholdings/eHoldingsPackagesSearch';

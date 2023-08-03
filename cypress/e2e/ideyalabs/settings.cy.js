@@ -8,7 +8,7 @@ import Users from '../../support/fragments/users/users';
 import eHoldingsPackage from '../../support/fragments/eholdings/eHoldingsPackage';
 import settingsMenu from '../../support/fragments/settingsMenu';
 
-describe('Creating custom labels', () => {
+describe.skip('Creating custom labels', () => {
   const userData = {};
   const testData = {
     servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation(

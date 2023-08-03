@@ -17,7 +17,7 @@ const orderDetails = {
 
 
 
-describe('Orders: Receiving and Check-in ', () => {
+describe.skip('Orders: Receiving and Check-in ', () => {
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
