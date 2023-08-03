@@ -5,6 +5,8 @@ const keyboardShortcut = Button('Keyboard shortcuts');
 const KBcontent = Button({ id: 'content-item' });
 const systemStatus = Button({ id: 'system-status-item' });
 
+const calloutPackageCreatedText = 'Custom package created.';
+
 export default {
 
   waitLoading: () => {
@@ -17,12 +19,17 @@ export default {
   saveAndClose: () => {
     cy.do(Button('Save & close').click());
   },
+
+  checkPackageCreatedCallout() {
+    cy.expect(HTML(including(calloutPackageCreatedText)).exists());
+  },
+
   clickOneHoldingCarat: () => {
     cy.do([caratButton.click(),
-    KBcontent.click(),
-    caratButton.click(),
-    systemStatus.click(),
-    caratButton.click(),
-    keyboardShortcut.click()]);
+      KBcontent.click(),
+      caratButton.click(),
+      systemStatus.click(),
+      caratButton.click(),
+      keyboardShortcut.click()]);
   }
 };

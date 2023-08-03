@@ -13,6 +13,7 @@ const selectedText = "#packageShowHoldingStatus div[class^='headline']";
 const actionButton = Button('Actions');
 const deletePackageButton = Button('Delete package');
 const confirmModal = Modal('Delete custom package');
+const addNewPackageButton = Button('New');
 
 export default {
   create: (packageName = `package_${getRandomPostfix()}`) => {
@@ -98,6 +99,51 @@ export default {
       cy.wrap([...new Set(initialPackageIds)][0]).as('packageId');
     });
     return cy.get('@packageId');
+  },
+
+  checkPackageInResults(packageName, rowNumber = 0) {
+    cy.expect(resultSection.find(ListItem({ className: including('list-item-'), index: rowNumber })).has({ h3Value: packageName }));
+  },
+
+  createCustomPackage(packageName) {
+    cy.do(addNewPackageButton.click());
+    eHoldingsNewCustomPackage.waitLoading();
+    eHoldingsNewCustomPackage.fillInRequiredProperties(packageName);
+    eHoldingsNewCustomPackage.saveAndClose();
+    eHoldingsNewCustomPackage.checkPackageCreatedCallout();
+  },
+
+  checkPackageExistsViaAPI(packageName, isCustom = false, timeOutSeconds = 15) {
+    let timeCounter = 0;
+    function checkPackage() {
+      cy.okapiRequest({ path: 'eholdings/packages',
+        searchParams: { 'q': packageName },
+        isDefaultSearchParamsRequired : false }).then(({ body }) => {
+        if (body.data[0] || timeCounter >= timeOutSeconds) {
+          cy.expect(body.data[0].attributes.isCustom).equals(isCustom);
+        } else {
+          // wait 1 second before retrying request
+          cy.wait(1000);
+          checkPackage();
+          timeCounter++;
+        }
+      });
+    }
+    checkPackage();
+  },
+
+  deletePackageViaAPI(packageName) {
+    cy.okapiRequest({
+      path: 'eholdings/packages',
+      searchParams: { 'q': packageName },
+      isDefaultSearchParamsRequired : false
+    }).then(({ body }) => {
+      cy.okapiRequest({
+        method: 'DELETE',
+        path: `eholdings/packages/${body.data[0].id}`,
+        isDefaultSearchParamsRequired : false
+      });
+    });
   },
 
   updateProxy() {
