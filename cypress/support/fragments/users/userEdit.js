@@ -43,6 +43,14 @@ const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) 
 export default {
   addServicePointsViaApi,
 
+  changeMiddleName(midName) {
+    cy.do([
+      userDetailsPane.find(actionsButton).click(),
+      editButton.click(),
+      TextField({ id: 'adduser_middlename' }).fillIn(midName),
+    ]);
+  },
+
   addPermissions(permissions) {
     cy.do([
       userDetailsPane.find(actionsButton).click(),
