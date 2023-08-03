@@ -183,8 +183,11 @@ describe('inventory', () => {
   const openUser = (name) => {
     cy.visit(TopMenu.usersPath);
     UsersSearchPane.searchByKeywords(name);
+    cy.wait(8000);
     UsersSearchPane.selectUserFromList(name);
+    cy.wait(8000);
     UsersCard.openLoansAccordion();
+    cy.wait(8000);
     UsersCard.showOpenedLoans();
   };
 
@@ -266,12 +269,12 @@ describe('inventory', () => {
     // renew item (through override)
     openUser(userName);
     UserLoans.renewItem(itemBarcode, true);
-    // cy.wait(8000);
-    // RenewConfirmationModal.confirmRenewOverrideItem();
-    // OverrideAndRenewModal.confirmOverrideItem();
-    // cy.wait(8000);
-    // openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    // fullCheck(ItemRecordView.itemStatuses.checkedOut);
+    cy.wait(8000);
+    RenewConfirmationModal.confirmRenewOverrideItem();
+    OverrideAndRenewModal.confirmOverrideItem();
+    cy.wait(8000);
+    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    fullCheck(ItemRecordView.itemStatuses.checkedOut);
 
     // // edit item record so that it has multiple pieces
     // InventoryInstance.edit();
