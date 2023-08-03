@@ -26,6 +26,7 @@ import InteractorsTools from '../../utils/interactorsTools';
 import { getLongDelay } from '../../utils/cypressTools';
 import DateTools from '../../utils/dateTools';
 import FileManager from '../../utils/fileManager';
+import { cy } from 'date-fns/locale';
 
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderorders-results-pane-subtitle"]/span';
 const zeroResultsFoundText = '0 records found';
@@ -57,9 +58,10 @@ export default {
   searchByParameter(parameter, value) {
     cy.do([
       searchForm.selectIndex(parameter),
-      searchForm.fillIn(value),
-      Button('Search').click(),
+      searchForm.fillIn(value)
     ]);
+    cy.wait(1000);
+    cy.do(Button('Search').click());
   },
   waitLoading() {
     cy.expect([

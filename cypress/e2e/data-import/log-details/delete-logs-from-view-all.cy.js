@@ -21,7 +21,7 @@ describe('ui-data-import', () => {
         user = userProperties;
 
         for (let i = 0; i < 101; i++) {
-          const fileName = `oneMarcBib.mrc${getRandomPostfix}`;
+          const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;
 
           DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
         }
@@ -33,9 +33,9 @@ describe('ui-data-import', () => {
       });
   });
 
-  after(() => {
-    Users.deleteViaApi(user.userId);
-  });
+  // after(() => {
+  //   Users.deleteViaApi(user.userId);
+  // });
 
   it('C367923 A user can delete logs from the Import app "View all" page (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {

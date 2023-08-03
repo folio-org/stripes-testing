@@ -143,7 +143,7 @@ export default {
   checkMarkAsSuppressedFromDiscoveryAbsent: () => cy.expect(root
     .find(HTML(including('Warning: Holdings is marked suppressed from discovery')))
     .absent()),
-  checkElectronicAccess:(relationshipValue, uriValue, linkText = 'no value set', urlPublicNote = 'no value set') => {
+  checkElectronicAccess:(relationshipValue, uriValue, linkText = '-', urlPublicNote = '-') => {
     cy.expect(electronicAccessAccordion
       .find(MultiColumnListCell({ row: 0, columnIndex: 0, content: relationshipValue }))
       .exists());

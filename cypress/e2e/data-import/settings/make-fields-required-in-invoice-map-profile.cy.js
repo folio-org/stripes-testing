@@ -10,7 +10,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 
 describe('ui-data-import', () => {
   let user = null;
-  const mappingProfileName = `C343284 invoice mapping profile ${getRandomPostfix}`;
+  const mappingProfileName = `C343284 invoice mapping profile ${getRandomPostfix()}`;
 
   before('login', () => {
     cy.createTempUser([
