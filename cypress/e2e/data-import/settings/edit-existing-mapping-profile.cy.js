@@ -14,7 +14,7 @@ import Users from '../../../support/fragments/users/users';
 describe('ui-data-import', () => {
   let user;
   const mappingProfile = {
-    name: `C2351 autotest mapping profile ${getRandomPostfix}`,
+    name: `C2351 autotest mapping profile ${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE
   };
   const instanceStatusTerm = '"Batch Loaded"';

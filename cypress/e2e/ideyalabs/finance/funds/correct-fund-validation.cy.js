@@ -11,7 +11,7 @@ const orderOne = {
 };
 
 const orderOnePOLine = {
-  title: `AutoTest_${getRandomPostfix}`,
+  title: `AutoTest_${getRandomPostfix()}`,
   fundID: 'Alpha FYRO (AFYRO)',
 };
 
@@ -21,7 +21,7 @@ const orderTwo = {
 };
 
 const orderTwoPOLine = {
-  title: `AutoTest_${getRandomPostfix}`,
+  title: `AutoTest_${getRandomPostfix()}`,
   fundID: 'PO Fund 1 (POF1)',
   price: '1',
   valueOne: '90',
