@@ -109,7 +109,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
     for (let i = 0; i < testData.LDRValues.validLDR07Values.length; i++) {
       const updatedLDRvalue = `${testData.LDRValues.validLDRvalue.substring(0, 6)}${testData.LDRValues.validLDR06Values[i]}${testData.LDRValues.validLDR07Values[i]}${testData.LDRValues.validLDRvalue.substring(8)}`;
       const updatedLDRmask = new RegExp(`\\d{5}${updatedLDRvalue.substring(5, 12).replace('\\', '\\\\')}\\d{5}${updatedLDRvalue.substring(17).replace('\\', '\\\\')}`);
-      const bibTitle = `Created_Bib_${getRandomPostfix()}`;
+      const bibTitle = `Created_Bib_C380704_${getRandomPostfix()}`;
 
       InventoryInstance.newMarcBibRecord();
       QuickMarcEditor.updateExistingField(testData.tags.tag245, `$a ${bibTitle}`);
@@ -119,7 +119,6 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
       QuickMarcEditor.check008FieldContent();
       QuickMarcEditor.updateExistingField(testData.tags.tagLDR, updatedLDRvalue);
       QuickMarcEditor.checkSubfieldsPresenceInTag008();
-
       QuickMarcEditor.pressSaveAndClose();
 
       if (i === 0) {
