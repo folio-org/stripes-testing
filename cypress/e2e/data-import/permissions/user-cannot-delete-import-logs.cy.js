@@ -6,9 +6,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
 
