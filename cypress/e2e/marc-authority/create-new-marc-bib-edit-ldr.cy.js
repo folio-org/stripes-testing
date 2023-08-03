@@ -6,7 +6,7 @@ import Users from '../../support/fragments/users/users';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import { replaceByIndex } from '../../support/utils/stringTools';
+import getRandomPostfix, { replaceByIndex } from '../../support/utils/stringTools';
 import { randomizeArray } from '../../support/utils/arrays';
 
 describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
@@ -17,7 +17,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
     },
 
     fieldContents: {
-      tag245Content: 'Create Bib, edit LDR test',
+      tag245Content: 'Created_Bib_C380707',
     },
 
     LDRValues: {
@@ -35,6 +35,28 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
       invalidLDR06Value: 'b'
     }
   };
+
+  function waitAndCheckFirstBibRecordCreated(marcBibTitle, timeOutSeconds = 15) {
+    let timeCounter = 0;
+    function checkBib() {
+      cy.okapiRequest({ path: 'instance-storage/instances',
+        searchParams: { 'query': `(title all "${marcBibTitle}")` },
+        isDefaultSearchParamsRequired : false }).then(({ body }) => {
+        if (body.instances[0] || timeCounter >= timeOutSeconds) {
+          cy.expect(body.instances[0].title).equals(marcBibTitle);
+        } else {
+          // wait 1 second before retrying request
+          cy.wait(1000);
+          checkBib();
+          timeCounter++;
+        }
+      });
+    }
+    checkBib();
+    cy.visit(TopMenu.inventoryPath);
+    InventoryInstance.searchByTitle(marcBibTitle);
+    InventoryInstances.selectInstance();
+  }
 
   const updatedLDRValuesArray = Object.values(testData.LDRValues.updatedLDRValues);
 
@@ -87,9 +109,10 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
     for (let i = 0; i < testData.LDRValues.validLDR07Values.length; i++) {
       const updatedLDRvalue = `${testData.LDRValues.validLDRvalue.substring(0, 6)}${testData.LDRValues.validLDR06Values[i]}${testData.LDRValues.validLDR07Values[i]}${testData.LDRValues.validLDRvalue.substring(8)}`;
       const updatedLDRmask = new RegExp(`\\d{5}${updatedLDRvalue.substring(5, 12).replace('\\', '\\\\')}\\d{5}${updatedLDRvalue.substring(17).replace('\\', '\\\\')}`);
+      const bibTitle = `Created_Bib_${getRandomPostfix()}`;
 
       InventoryInstance.newMarcBibRecord();
-      QuickMarcEditor.updateExistingField(testData.tags.tag245, `$a ${testData.fieldContents.tag245Content}`);
+      QuickMarcEditor.updateExistingField(testData.tags.tag245, `$a ${bibTitle}`);
       QuickMarcEditor.updateExistingField(testData.tags.tagLDR, replaceByIndex(testData.LDRValues.validLDRvalue, 6, testData.LDRValues.invalidLDR06Value));
       QuickMarcEditor.checkSubfieldsAbsenceInTag008();
       QuickMarcEditor.updateExistingField(testData.tags.tagLDR, testData.LDRValues.validLDRvalue);
@@ -98,12 +121,18 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
       QuickMarcEditor.checkSubfieldsPresenceInTag008();
 
       QuickMarcEditor.pressSaveAndClose();
-      QuickMarcEditor.checkAfterSaveAndClose();
+
+      if (i === 0) {
+        cy.expect(QuickMarcEditor.calloutAfterSaveAndClose.exists());
+        waitAndCheckFirstBibRecordCreated(bibTitle);
+      } else QuickMarcEditor.checkAfterSaveAndClose();
 
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.saveInstanceIdToArrayInQuickMarc(createdInstanceIDs);
       QuickMarcEditor.checkFieldContentMatch('textarea[name="records[0].content"]', updatedLDRmask);
       QuickMarcEditor.closeWithoutSaving();
+
+      if (i === 0) InventoryInstances.resetAllFilters();
     }
   });
 });

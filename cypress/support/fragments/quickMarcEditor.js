@@ -746,5 +746,7 @@ export default {
 
   checkPaneheaderContains(text) {
     cy.expect(PaneHeader({ text: (including(text)) }).exists());
-  }
+  },
+
+  calloutAfterSaveAndClose
 };
