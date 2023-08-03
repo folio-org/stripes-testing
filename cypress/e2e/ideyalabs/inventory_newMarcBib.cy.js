@@ -1,4 +1,4 @@
-import marc from '../../support/ideyalabs/marc';
+import marc from '../../support/ideyaLabs/marc';
 import eHoldingsPackage from '../../support/fragments/eholdings/eHoldingsPackage';
 import holdingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
 import inventoryInstance from '../../support/fragments/inventory/inventoryInstance';

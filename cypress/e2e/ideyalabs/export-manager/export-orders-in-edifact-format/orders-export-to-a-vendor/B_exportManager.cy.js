@@ -1,4 +1,4 @@
-import exportJobs from '../../../../../support/ideyalabs/exportJobs';
+import exportJobs from '../../../../../support/ideyaLabs/exportJobs';
 import testTypes from '../../../../../support/dictionary/testTypes';
 import exportManagerSearchPane from '../../../../../support/fragments/exportManager/exportManagerSearchPane';
 import topMenu from '../../../../../support/fragments/topMenu';

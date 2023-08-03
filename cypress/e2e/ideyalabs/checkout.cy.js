@@ -1,4 +1,4 @@
-import users from '../../support/ideyalabs/users';
+import users from '../../support/ideyaLabs/users';
 import testTypes from '../../support/dictionary/testTypes';
 import topMenu from '../../support/fragments/topMenu';
 import userLoans from '../../support/fragments/users/loans/userLoans';
