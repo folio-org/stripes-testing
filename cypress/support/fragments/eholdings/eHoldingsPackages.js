@@ -13,8 +13,7 @@ const selectedText = "#packageShowHoldingStatus div[class^='headline']";
 const actionButton = Button('Actions');
 const deletePackageButton = Button('Delete package');
 const confirmModal = Modal('Delete custom package');
-
-let timeCounter = 0;
+const addNewPackageButton = Button('New');
 
 export default {
   create: (packageName = `package_${getRandomPostfix()}`) => {
@@ -107,7 +106,7 @@ export default {
   },
 
   createCustomPackage(packageName) {
-    cy.do(Button('New').click());
+    cy.do(addNewPackageButton.click());
     eHoldingsNewCustomPackage.waitLoading();
     eHoldingsNewCustomPackage.fillInRequiredProperties(packageName);
     eHoldingsNewCustomPackage.saveAndClose();
@@ -115,18 +114,22 @@ export default {
   },
 
   checkPackageExistsViaAPI(packageName, isCustom = false, timeOutSeconds = 15) {
-    cy.okapiRequest({ path: 'eholdings/packages',
-      searchParams: { 'q': packageName },
-      isDefaultSearchParamsRequired : false }).then(({ body }) => {
-      if (body.data[0] || timeCounter >= timeOutSeconds) {
-        cy.expect(body.data[0].attributes.isCustom).equals(isCustom);
-      } else {
-        // wait 1 second before retrying request
-        cy.wait(1000);
-        this.checkPackageExistsViaAPI(packageName, isCustom);
-        timeCounter++;
-      }
-    });
+    let timeCounter = 0;
+    function checkPackage() {
+      cy.okapiRequest({ path: 'eholdings/packages',
+        searchParams: { 'q': packageName },
+        isDefaultSearchParamsRequired : false }).then(({ body }) => {
+        if (body.data[0] || timeCounter >= timeOutSeconds) {
+          cy.expect(body.data[0].attributes.isCustom).equals(isCustom);
+        } else {
+          // wait 1 second before retrying request
+          cy.wait(1000);
+          checkPackage();
+          timeCounter++;
+        }
+      });
+    }
+    checkPackage();
   },
 
   deletePackageViaAPI(packageName) {
