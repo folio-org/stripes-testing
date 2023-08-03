@@ -42,6 +42,7 @@ const fullTextFinderCheckbox = Checkbox({
 const saveButton = Button('Save');
 const verifyCustomLabel = Section({ id: 'resourceShowCustomLabels' });
 const RandomValue = Math.floor(Math.random() * 2);
+const packageId = null;
 cy.intercept(`eholdings/packages/${packageId}/resources?**`).as(
   'getTitles'
 );
