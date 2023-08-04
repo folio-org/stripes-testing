@@ -219,8 +219,7 @@ describe('ui-data-import', () => {
       cy.wait(2500);
       JobProfiles.createJobProfile(updateJobProfile);
       NewJobProfile.linkMatchProfile(matchProfileItemHrid.profileName);
-      NewJobProfile.linkMatchProfileForMatches(matchProfileItemStatus.profileName);
-      NewJobProfile.linkActionProfileForMatches(collectionOfMappingAndActionProfiles[2].actionProfile.name);
+      NewJobProfile.linkMatchAndActionProfilesForSubMatches(matchProfileItemStatus.profileName, collectionOfMappingAndActionProfiles[2].actionProfile.name);
       NewJobProfile.saveAndClose();
       JobProfiles.checkJobProfilePresented(updateJobProfile.profileName);
 
@@ -294,6 +293,7 @@ describe('ui-data-import', () => {
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(nameMarcFileForUpdate);
       Logs.openFileDetails(nameMarcFileForUpdate);
+      Logs.openFileDetails('C357552autotestFile225.05406383817862983.mrc');
       FileDetails.checkItemQuantityInSummaryTable('7', 1);
       FileDetails.checkItemQuantityInSummaryTable('3', 2);
       // check items what statuses were not changed have Updated status
