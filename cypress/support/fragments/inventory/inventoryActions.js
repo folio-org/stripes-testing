@@ -4,12 +4,12 @@ import InventoryInstance from './inventoryInstance';
 import FileManager from '../../utils/fileManager';
 
 const importButtonInActions = Button({ id: 'dropdown-clickable-import-record' });
-const reImportButtonInActions = Button({ id:'dropdown-clickable-reimport-record' });
+const reImportButtonInActions = Button({ id: 'dropdown-clickable-reimport-record' });
 const importButtonInModal = Button('Import');
 const OCLWorldCatIdentifierTextField = TextField({ name: 'externalIdentifier' });
-const importTypeSelect = Select({ name :'externalIdentifierType' });
+const importTypeSelect = Select({ name: 'externalIdentifierType' });
 
-function open() { cy.do(Section({ id:'pane-results' }).find(Button('Actions')).click()); }
+function open() { cy.do(Section({ id: 'pane-results' }).find(Button('Actions')).click()); }
 
 // TODO: merge inventoryActions and InventoryInstances
 export default {
@@ -25,8 +25,8 @@ export default {
   },
   openNewFastAddRecordForm() {
     cy.do([
-      Section({ id:'pane-results' }).find(Button('Actions')).click(),
-      Button({ id:'new-fast-add-record' }).click()
+      Section({ id: 'pane-results' }).find(Button('Actions')).click(),
+      Button({ id: 'new-fast-add-record' }).click()
     ]);
   },
   optionsIsDisabled: (array) => {
@@ -52,12 +52,12 @@ export default {
     InventoryInstance.checkExpectedMARCSource();
   },
 
-  openSingleReportImportModal:() => {
+  openSingleReportImportModal: () => {
     open();
     cy.do(importButtonInActions.click());
   },
 
-  openReImportModal:() => {
+  openReImportModal: () => {
     open();
     cy.do(reImportButtonInActions.click());
   },
@@ -66,8 +66,10 @@ export default {
   fillImportFields(specialOCLCWorldCatidentifier = InventoryInstance.validOCLC.id) {
     // TODO: remove in the future, now related with differenes in our environments
     if (Cypress.env('is_kiwi_release')) {
-      const oclcWorldCat = { text:'OCLC WorldCat',
-        value : '6f171ee7-7a0a-4dd4-8959-bd67ec07cc88' };
+      const oclcWorldCat = {
+        text: 'OCLC WorldCat',
+        value: '6f171ee7-7a0a-4dd4-8959-bd67ec07cc88'
+      };
 
       cy.do(importTypeSelect.choose(oclcWorldCat.text));
       cy.expect(importTypeSelect.has({ value: oclcWorldCat.value }));
@@ -103,23 +105,18 @@ export default {
     DateTools.verifyDate(actualDate);
   },
 
-  verifySaveCQLQuery(actualQuery, kw = '*', lang = 'eng') {
-    cy.url().then((url) => {
-      const params = new URLSearchParams(url.split('?')[1]);
-      const effectiveLocationId = /\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/gm.exec(params.get('filters'))[0];
+  verifySaveCQLQuery(actualQuery, locationId, kw = '*', lang = 'eng') {
+    const expectedKeywords = `keyword all "${kw}"`;
+    expect(actualQuery).to.have.string(expectedKeywords);
 
-      const expectedKeywords = `keyword all "${kw}"`;
-      expect(actualQuery).to.have.string(expectedKeywords);
+    const expectedISBN = `isbn="${kw}"`;
+    expect(actualQuery).to.have.string(expectedISBN);
 
-      const expectedISBN = `isbn="${kw}"`;
-      expect(actualQuery).to.have.string(expectedISBN);
+    const expectedLang = `languages=="${lang}"`;
+    expect(actualQuery).to.have.string(expectedLang);
 
-      const expectedLang = `languages=="${lang}"`;
-      expect(actualQuery).to.have.string(expectedLang);
-
-      const expectedEffectiveLocationId = `items.effectiveLocationId=="${effectiveLocationId}"`;
-      expect(actualQuery).to.have.string(expectedEffectiveLocationId);
-    });
+    const expectedEffectiveLocationId = `items.effectiveLocationId=="${locationId}"`;
+    expect(actualQuery).to.have.string(expectedEffectiveLocationId);
   },
 
   verifyInstancesMARCFileName(actualName) {

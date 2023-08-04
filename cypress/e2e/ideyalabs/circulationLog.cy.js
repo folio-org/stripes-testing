@@ -1,4 +1,3 @@
-import devTeams from '../../support/dictionary/devTeams';
 import testTypes from '../../support/dictionary/testTypes';
 import searchPane from '../../support/fragments/circulation-log/searchPane';
 import marcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';

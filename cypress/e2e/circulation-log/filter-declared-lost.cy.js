@@ -16,10 +16,6 @@ import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import SearchResults from '../../support/fragments/circulation-log/searchResults';
-import LoansPage from '../../support/fragments/loans/loansPage';
-import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
-import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 let user;
 const item = {

@@ -16,6 +16,8 @@ import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 let userId;
 const instanceTitle = `Inventory export test ${Number(new Date())}`;
+let locationName;
+let locationId;
 
 describe('ui-inventory: exports', () => {
   before('navigates to Inventory', () => {
@@ -39,6 +41,8 @@ describe('ui-inventory: exports', () => {
             source = InventoryHoldings.getHoldingSources({ limit: 1 });
           })
           .then(() => {
+            locationName = Cypress.env('locations')[0].name;
+            locationId = Cypress.env('locations')[0].id;
             cy.createInstance({
               instance: {
                 instanceTypeId: Cypress.env('instanceTypes')[0].id,
@@ -100,6 +104,20 @@ describe('ui-inventory: exports', () => {
           [expectedUUIDs]
         );
       });
+  });
+
+  it('C9287 Export CQL query (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    InventorySearchAndFilter.byLanguage();
+    InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', instanceTitle);
+    InventorySearchAndFilter.byEffectiveLocation(locationName);
+    InventorySearchAndFilter.saveCQLQuery();
+
+    FileManager.verifyFile(
+      InventoryActions.verifySaveCQLQueryFileName,
+      'SearchInstanceCQLQuery*',
+      InventoryActions.verifySaveCQLQuery,
+      [locationId, instanceTitle, 'eng']
+    );
   });
 
   it('C196757 Export selected records (MARC) (firebird)', { tags: [testTypes.smoke, devTeams.firebird, testTypes.broken] }, () => {
