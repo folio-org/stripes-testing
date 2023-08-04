@@ -111,15 +111,6 @@ describe('circulation-log', () => {
 
   it('C45934 Check the Actions button from filtering Circulation log by declared lost (firebird)', { tags: [TestTypes.criticalPath, devTeams.firebird] }, () => {
     SearchPane.setFilterOptionFromAccordion('loan', 'Declared lost');
-    SearchResults.chooseActionByRow(0, 'Loan details');
-    LoansPage.waitLoading();
-    TopMenuNavigation.navigateToApp('Circulation log');
-
-    SearchResults.chooseActionByRow(0, 'User details');
-    Users.verifyFirstNameOnUserDetailsPane(user.firstName);
-    TopMenuNavigation.navigateToApp('Circulation log');
-
-    SearchResults.clickOnCell(item.barcode, 0);
-    ItemRecordView.waitLoading();
+    SearchPane.checkActionButtonAfterFiltering(user.firstName, item.barcode);
   });
 });

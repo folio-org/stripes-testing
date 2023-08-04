@@ -85,10 +85,10 @@ describe('export manager', () => {
     InteractorsTools.checkCalloutMessage(jobCompletedCalloutMessage);
 
     cy.visit(TopMenu.exportManagerPath);
-    FileManager.deleteFileFromDownloadsByMask('CIRCULATION_LOG*');
   });
 
   after('check in item, delete instance, user and files', () => {
+    FileManager.deleteFileFromDownloadsByMask('CIRCULATION_LOG*');
     CheckInActions.checkinItemViaApi({
       checkInDate: moment.utc().format(),
       servicePointId: testData.servicepointId,

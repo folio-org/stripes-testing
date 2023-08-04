@@ -28,7 +28,7 @@ describe.skip('CirculationLog App', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
-  it('C17092 Filter circulation log by (notice) send (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+  it('C17092 Filter circulation log by (notice) send', { tags: [testTypes.criticalPath] }, () => {
     cy.visit(topMenu.circulationLogPath);
     searchPane.setFilterOptionFromAccordion(
       testData.accordion,

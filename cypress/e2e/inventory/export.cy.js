@@ -39,7 +39,6 @@ describe('ui-inventory: exports', () => {
             source = InventoryHoldings.getHoldingSources({ limit: 1 });
           })
           .then(() => {
-            locationName = Cypress.env('locations')[0].name;
             cy.createInstance({
               instance: {
                 instanceTypeId: Cypress.env('instanceTypes')[0].id,
