@@ -90,8 +90,8 @@ export default {
     cy.expect(userDetailsPane.find(KeyValue('First name')).has({ value: `${firstName}` }));
   },
 
-  verifyMiddleNameOnUserDetailsPane(firstName) {
-    cy.expect(userDetailsPane.find(KeyValue('Middle name')).has({ value: `${firstName}` }));
+  verifyMiddleNameOnUserDetailsPane(middleName) {
+    cy.expect(userDetailsPane.find(KeyValue('Middle name')).has({ value: `${middleName}` }));
   },
 
   verifyPatronGroupOnUserDetailsPane(patronGroup) {

@@ -158,6 +158,15 @@ export default {
     ]);
   },
 
+  addTrunsferTo: (fund) => {
+    cy.do([
+      actionsButton.click(),
+      Button('Edit').click(),
+      MultiSelect({ label: 'Transfer to' }).select([fund]),
+      saveAndCloseButton.click()
+    ]);
+  },
+
   checkAddGroupToFund: (group) => {
     cy.expect(Pane({ id: 'pane-fund-details' }).exists());
     cy.expect(
@@ -229,10 +238,11 @@ export default {
     cy.do(Accordion('Current budget').find(newButton).click());
     cy.expect(Modal('Current budget').exists());
     cy.do([
-      Modal('Current budget')
-        .find(TextField({ name: 'allocated' }))
-        .fillIn(allocatedQuantity.toString()),
-      Button('Save').click(),
+      Modal('Current budget').find(TextField({ name: 'allocated' })).fillIn(allocatedQuantity.toString()),
+    ]);
+    cy.wait(4000);
+    cy.do([
+      Button('Save').click()
     ]);
   },
 
@@ -850,10 +860,10 @@ export default {
     cy.wait(4000);
   },
 
-  moveAllocationWithError: (firstFund, secondFund, amount) => {
-    cy.do([actionsButton.click(), Button('Move allocation').click()]);
-    cy.wait(4000);
+  moveAllocationWithError: (secondFund, amount) => {
     cy.do([
+      actionsButton.click(),
+      Button('Move allocation').click(),
       addTransferModal.find(Button({ name: 'fromFundId' })).click(),
     ]);
     cy.wait(6000);
@@ -862,9 +872,7 @@ export default {
       addTransferModal.find(TextField({ name: 'amount' })).fillIn(amount),
       addTransferModal.find(confirmButton).click(),
     ]);
-    InteractorsTools.checkCalloutErrorMessage(
-      `$50.00 was not successfully allocated because ${secondFund.code} has no budget`
-    );
+    InteractorsTools.checkCalloutErrorMessage(`$${amount}.00 was not successfully allocated because ${secondFund.code} has no budget`);
     cy.do(addTransferModal.find(cancelButton).click());
   },
 };

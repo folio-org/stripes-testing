@@ -21,7 +21,7 @@ describe('ui-data-import', () => {
         user = userProperties;
 
         for (let i = 0; i < 101; i++) {
-          const fileName = `oneMarcBib.mrc${getRandomPostfix}`;
+          const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;
 
           DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
         }

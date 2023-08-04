@@ -46,15 +46,15 @@ describe('ui-data-import', () => {
   const quantityOfItems = '1';
   const instanceTitle = 'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)';
   // file names
-  const nameMarcFileForImportCreate = `C356802autotestFile.${getRandomPostfix}.mrc`;
-  const nameForCSVFile = `C356802autotestFile${getRandomPostfix}.csv`;
-  const nameMarcFileForImportUpdate = `C356802autotestFile${getRandomPostfix}.mrc`;
-  const jobProfileNameForExport = `C356802 job profile.${getRandomPostfix}`;
+  const nameMarcFileForImportCreate = `C356802autotestFile.${getRandomPostfix()}.mrc`;
+  const nameForCSVFile = `C356802autotestFile${getRandomPostfix()}.csv`;
+  const nameMarcFileForImportUpdate = `C356802autotestFile${getRandomPostfix()}.mrc`;
+  const jobProfileNameForExport = `C356802 job profile.${getRandomPostfix()}`;
   // profiles for creating instance, holdings, item
   const marcBibMappingProfileForCreate = {
     profile:{
       id: '',
-      name: `C356802 create marcBib mapping profile ${getRandomPostfix}`,
+      name: `C356802 create marcBib mapping profile ${getRandomPostfix()}`,
       incomingRecordType: recordType,
       existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
       mappingDetails: { name: 'holdings',
@@ -79,7 +79,7 @@ describe('ui-data-import', () => {
   const instanceMappingProfileForCreate = {
     profile:{
       id: '',
-      name: `C356802 create instance mapping profile ${getRandomPostfix}`,
+      name: `C356802 create instance mapping profile ${getRandomPostfix()}`,
       incomingRecordType: recordType,
       existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
     }
@@ -87,7 +87,7 @@ describe('ui-data-import', () => {
   const holdingsMappingProfileForCreate = {
     profile:{
       id: '',
-      name: `C356802 create holdings mapping profile ${getRandomPostfix}`,
+      name: `C356802 create holdings mapping profile ${getRandomPostfix()}`,
       incomingRecordType: recordType,
       existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
       mappingDetails: { name: 'holdings',
@@ -102,7 +102,7 @@ describe('ui-data-import', () => {
   const itemMappingProfileForCreate = {
     profile:{
       id: '',
-      name: `C356802 create item mapping profile ${getRandomPostfix}`,
+      name: `C356802 create item mapping profile ${getRandomPostfix()}`,
       incomingRecordType: recordType,
       existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
       mappingDetails: { name: 'item',
@@ -127,7 +127,7 @@ describe('ui-data-import', () => {
   const marcBibActionProfileForCreate = {
     profile: {
       id: '',
-      name: `C356802 create marcBib action profile ${getRandomPostfix}`,
+      name: `C356802 create marcBib action profile ${getRandomPostfix()}`,
       action: 'MODIFY',
       folioRecord: recordType
     },
@@ -143,7 +143,7 @@ describe('ui-data-import', () => {
   const instanceActionProfileForCreate = {
     profile: {
       id: '',
-      name: `C356802 create instance action profile ${getRandomPostfix}`,
+      name: `C356802 create instance action profile ${getRandomPostfix()}`,
       action: 'CREATE',
       folioRecord: 'INSTANCE'
     },
@@ -160,7 +160,7 @@ describe('ui-data-import', () => {
   const holdingsActionProfileForCreate = {
     profile: {
       id: '',
-      name: `C356802 create holdings action profile ${getRandomPostfix}`,
+      name: `C356802 create holdings action profile ${getRandomPostfix()}`,
       action: 'CREATE',
       folioRecord: 'HOLDINGS'
     },
@@ -177,7 +177,7 @@ describe('ui-data-import', () => {
   const itemActionProfileForCreate = {
     profile: {
       id: '',
-      name: `C356802 create item action profile ${getRandomPostfix}`,
+      name: `C356802 create item action profile ${getRandomPostfix()}`,
       action: 'CREATE',
       folioRecord: 'ITEM'
     },
@@ -193,7 +193,7 @@ describe('ui-data-import', () => {
   };
   const jobProfileForCreate = {
     profile: {
-      name: `C356802 create job profile ${getRandomPostfix}`,
+      name: `C356802 create job profile ${getRandomPostfix()}`,
       dataType: ACCEPTED_DATA_TYPE_NAMES.MARC
     },
     addedRelations: [],
@@ -212,7 +212,7 @@ describe('ui-data-import', () => {
   ];
   // create Field mapping profile for export
   const exportMappingProfile = {
-    name: `C356802 mapping profile ${getRandomPostfix}`,
+    name: `C356802 mapping profile ${getRandomPostfix()}`,
     holdingsTransformation: EXPORT_TRANSFORMATION_NAMES.HOLDINGS_HRID,
     holdingsMarcField: '901',
     subfieldForHoldings:'$h',
@@ -224,33 +224,33 @@ describe('ui-data-import', () => {
   const collectionOfMappingAndActionProfiles = [
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-        name: `C356802 update instance mapping profile ${getRandomPostfix}`,
+        name: `C356802 update instance mapping profile ${getRandomPostfix()}`,
         catalogedDate: '###TODAY###',
         catalogedDateUi: DateTools.getFormattedDate({ date: new Date() }),
         instanceStatus: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
         statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
         statisticalCodeUI: 'Book, print (books)' },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-        name: `C356802 update instance action profile ${getRandomPostfix}`,
+        name: `C356802 update instance action profile ${getRandomPostfix()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `C356802 update holdings mapping profile ${getRandomPostfix}`,
+        name: `C356802 update holdings mapping profile ${getRandomPostfix()}`,
         holdingsType: HOLDINGS_TYPE_NAMES.ELECTRONIC,
         permanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
         permanentLocationUI: LOCATION_NAMES.ONLINE_UI,
         callNumberType: CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS,
         callNumber: '050$a " " 050$b',
-        relationship: '"Resource"',
+        relationship: 'Resource',
         uri: '856$u' },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `C356802 update holdings action profile ${getRandomPostfix}`,
+        name: `C356802 update holdings action profile ${getRandomPostfix()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C356802 update item mapping profile ${getRandomPostfix}`,
+        name: `C356802 update item mapping profile ${getRandomPostfix()}`,
         materialType: MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE,
         noteType: '"Electronic bookplate"',
         note: '"Smith Family Foundation"',
@@ -259,13 +259,13 @@ describe('ui-data-import', () => {
         permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
         status: ITEM_STATUS_NAMES.AVAILABLE },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C356802 update item action profile ${getRandomPostfix}`,
+        name: `C356802 update item action profile ${getRandomPostfix()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     }
   ];
   const collectionOfMatchProfiles = [
     {
-      matchProfile: { profileName: `C356802 MARC-to-MARC 001 to 001 match profile ${getRandomPostfix}`,
+      matchProfile: { profileName: `C356802 MARC-to-MARC 001 to 001 match profile ${getRandomPostfix()}`,
         incomingRecordFields: {
           field: '001'
         },
@@ -276,7 +276,7 @@ describe('ui-data-import', () => {
         existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC }
     },
     {
-      matchProfile: { profileName: `C356802 MARC-to-Holdings 901h to Holdings HRID match profile ${getRandomPostfix}`,
+      matchProfile: { profileName: `C356802 MARC-to-Holdings 901h to Holdings HRID match profile ${getRandomPostfix()}`,
         incomingRecordFields: {
           field: '901',
           subfield: 'h'
@@ -287,7 +287,7 @@ describe('ui-data-import', () => {
     },
     {
       matchProfile: {
-        profileName: `C356802 MARC-to-Item 902i to Item HRID match profile ${getRandomPostfix}`,
+        profileName: `C356802 MARC-to-Item 902i to Item HRID match profile ${getRandomPostfix()}`,
         incomingRecordFields: {
           field: '902',
           subfield: 'i'
@@ -300,7 +300,7 @@ describe('ui-data-import', () => {
   ];
   const jobProfileForUpdate = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: `C356802 update job profile ${getRandomPostfix}`,
+    profileName: `C356802 update job profile ${getRandomPostfix()}`,
     acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
@@ -407,7 +407,7 @@ describe('ui-data-import', () => {
       NewFieldMappingProfile.fillPermanentLocation(collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocation);
       NewFieldMappingProfile.fillCallNumberType(`"${collectionOfMappingAndActionProfiles[1].mappingProfile.callNumberType}"`);
       NewFieldMappingProfile.fillCallNumber(collectionOfMappingAndActionProfiles[1].mappingProfile.callNumber);
-      NewFieldMappingProfile.addElectronicAccess(collectionOfMappingAndActionProfiles[1].mappingProfile.relationship, collectionOfMappingAndActionProfiles[1].mappingProfile.uri);
+      NewFieldMappingProfile.addElectronicAccess(`"${collectionOfMappingAndActionProfiles[1].mappingProfile.relationship}"`, collectionOfMappingAndActionProfiles[1].mappingProfile.uri);
       FieldMappingProfiles.saveProfile();
       FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile.name);
 

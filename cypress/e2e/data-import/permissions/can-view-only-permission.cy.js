@@ -14,7 +14,7 @@ import Users from '../../../support/fragments/users/users';
 describe('ui-data-import', () => {
   let user;
   let instanceHrid;
-  const fileName = `oneMarcBib.mrc${getRandomPostfix}`;
+  const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;
 
   before('create test data', () => {
     cy.getAdminToken()
