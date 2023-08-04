@@ -214,7 +214,7 @@ export default {
     ]);
   },
 
-  selectFromResultsList1: () => {
+  selectLinkFromResultsList: () => {
     cy.do(MultiColumnList({ id: 'receivings-list' }).find(Link()).click());
   },
 
