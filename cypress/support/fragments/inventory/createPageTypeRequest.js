@@ -14,10 +14,10 @@ import {
 import MarkItemAsMissing from './markItemAsMissing';
 import Requests from '../requests/requests';
 import newRequest from '../requests/newRequest';
-import { ITEM_STATUS_NAMES } from '../../constants';
+import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../constants';
 
 const actionsButton = Button('Actions');
-const newRequestButton = Button('New Request');
+const newRequestButton = Button('New request');
 const selectUserModal = Modal('Select User');
 const loanAndAvailabilitySection = Section({ id: 'acc06' });
 const itemInfoSection = Section({ id: 'item-info' });
@@ -108,6 +108,7 @@ export default {
   saveAndClose(servicePointName = 'Circ Desk 1') {
     Requests.verifyFulfillmentPreference();
     newRequest.choosepickupServicePoint(servicePointName);
+    newRequest.chooseRequestType(REQUEST_TYPES.PAGE);
     newRequest.saveRequestAndClose();
     Requests.verifyRequestsPage();
     this.verifyNewRequest();

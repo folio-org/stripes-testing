@@ -100,6 +100,9 @@ export default {
     // need to wait until instanceId is uploaded
     cy.wait(2500);
     this.choosepickupServicePoint(newRequest.pickupServicePoint);
+    // need to wait for loading dropdown options
+    cy.wait(1000);
+    this.chooseRequestType(REQUEST_TYPES.PAGE);
     this.saveRequestAndClose();
     this.waitLoading();
   },
@@ -154,7 +157,7 @@ export default {
   },
 
   verifyHridInformation: (allContentToCheck) => {
-    return allContentToCheck.forEach(contentToCheck => cy.expect(Section({ id: 'section-instance-info' }, including(contentToCheck)).exists()));
+    return allContentToCheck.forEach(contentToCheck => cy.expect(HTML({ id: 'section-instance-info' }, including(contentToCheck)).exists()));
   },
 
   verifyRequestInformation: (itemStatus) => {
