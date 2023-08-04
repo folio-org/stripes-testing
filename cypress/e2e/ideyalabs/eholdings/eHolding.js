@@ -14,17 +14,17 @@ import {
   TextArea,
   TextField,
 } from '../../../../interactors';
-import eHoldingsNewCustomPackage from '../../support/fragments/eholdings/eHoldingsNewCustomPackage';
-import eHoldingsPackages from '../../support/fragments/eholdings/eHoldingsPackages';
-import eholdingsPackagesSearch from '../../support/fragments/eholdings/eHoldingsPackagesSearch';
-import eHoldingsProvidersSearch from '../../support/fragments/eholdings/eHoldingsProvidersSearch';
-import eHoldingsSearch from '../../support/fragments/eholdings/eHoldingsSearch';
-import topMenu from '../../support/fragments/topMenu';
-import dateTools from '../../support/utils/dateTools';
+import eHoldingsNewCustomPackage from '../../../support/fragments/eholdings/eHoldingsNewCustomPackage';
+import eHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
+import eholdingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
+import eHoldingsProvidersSearch from '../../../support/fragments/eholdings/eHoldingsProvidersSearch';
+import eHoldingsSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
+import topMenu from '../../../support/fragments/topMenu';
+import dateTools from '../../../support/utils/dateTools';
 import getRandomPostfix, {
   randomFourDigitNumber,
   randomTwoDigitNumber,
-} from '../../support/utils/stringTools';
+} from '../../../support/utils/stringTools';
 
 const editButton = Button('Edit');
 const actionsButton = Button('Actions');
