@@ -59,17 +59,19 @@ export default {
     cy.do(Section({ id: 'pane-ledger-details' }).visible);
   },
 
-  rollover: () => {
-    cy.do([Button('Actions').click(), rolloverButton.click()]);
-  },
-  clickOnLedgerTab: () => {
-    cy.do([ledgertab.click()]);
-  },
-  clickOnFiscalyearTab: () => {
-    cy.do([fiscalYearTab.click()]);
-  },
-  clickOnFundTab: () => {
-    cy.do([fundtab.click()]);
+  rollover : () => {
+    cy.wait(8000);
+
+    cy.do([
+      Button('Actions').click(),
+
+    ]);
+    cy.wait(8000);
+
+    cy.do([
+
+      rolloverButton.click()
+    ]);
   },
 
   closeRolloverInfo: () => {
@@ -107,7 +109,7 @@ export default {
   fillInRolloverInfo(fiscalYear) {
     cy.do(fiscalYearSelect.click());
     // Need to wait,while date of fiscal year will be loaded
-    cy.wait(3000);
+    cy.wait(8000);
     cy.do([
       fiscalYearSelect.choose(fiscalYear),
       // rolloverAllocationCheckbox.click(),
@@ -119,9 +121,12 @@ export default {
       ),
       rolloverButton.click(),
     ]);
-    cy.wait(4000);
+    cy.wait(8000);
     this.continueRollover();
-    cy.do([rolloverConfirmButton.click()]);
+    cy.wait(8000);
+    cy.do([
+      rolloverConfirmButton.click(),
+    ]);
   },
 
   continueRollover: () => {
@@ -332,7 +337,9 @@ export default {
     isDefaultSearchParamsRequired: false,
   }),
 
-  selectLedger: (ledgerName) => {
+  selectLedger:(ledgerName) => {
+    cy.wait(8000);
+
     cy.do(Pane({ id: 'ledger-results-pane' }).find(Link(ledgerName)).click());
   },
 
