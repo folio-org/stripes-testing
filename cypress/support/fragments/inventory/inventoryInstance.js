@@ -810,4 +810,9 @@ export default {
     cy.do(administrativeDataAccordion.find(Button(including('Record last updated'))).click());
     cy.expect(administrativeDataAccordion.find(HTML(including(text))).exists());
   },
+
+  checkValueAbsenceInDetailView(accordion, value) {
+    cy.expect(section.find(Button(including(accordion))).exists());
+    cy.expect(Accordion(accordion).find(MultiColumnListCell(including(value))).absent());
+  }
 };

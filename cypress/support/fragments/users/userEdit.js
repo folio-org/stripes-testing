@@ -10,7 +10,8 @@ import {
   MultiColumnList,
   Select,
   MultiSelect,
-  TextArea
+  TextArea,
+  HTML
 } from '../../../../interactors';
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
@@ -24,6 +25,8 @@ const extendedInformationAccordion = Accordion('Extended information');
 const externalSystemIdTextfield = TextField('External system ID');
 const customFieldsAccordion = Accordion('Custom fields');
 const selectPermissionsModal = Modal('Select Permissions');
+const permissionsAccordion = Accordion({ id: 'permissions' });
+const addPermissionsButton = Button({ id: 'clickable-add-permission' });
 
 // servicePointIds is array of ids
 const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) => cy.okapiRequest({
@@ -40,12 +43,20 @@ const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) 
 export default {
   addServicePointsViaApi,
 
+  changeMiddleName(midName) {
+    cy.do([
+      userDetailsPane.find(actionsButton).click(),
+      editButton.click(),
+      TextField({ id: 'adduser_middlename' }).fillIn(midName),
+    ]);
+  },
+
   addPermissions(permissions) {
     cy.do([
       userDetailsPane.find(actionsButton).click(),
       editButton.click(),
-      Accordion({ id: 'permissions' }).clickHeader(),
-      Button({ id: 'clickable-add-permission' }).click()
+      permissionsAccordion.clickHeader(),
+      addPermissionsButton.click()
     ]);
 
     permissions.forEach(permission => {
@@ -56,6 +67,18 @@ export default {
       cy.do(Button('Search').click());
       cy.do(MultiColumnListRow({ index: 0 }).find(Checkbox()).click());
     });
+    cy.do(selectPermissionsModal.find(saveAndCloseBtn).click());
+  },
+
+  verifyPermissionDoesNotExist(permission) {
+    cy.do([
+      addPermissionsButton.click(),
+      userSearch.fillIn(permission)]);
+    cy.expect(userSearch.is({ value: permission }));
+    // wait is needed to avoid so fast robot clicks
+    cy.wait(1000);
+    cy.do(Button('Search').click());
+    cy.expect(selectPermissionsModal.find(HTML('The list contains no items')).exists());
     cy.do(selectPermissionsModal.find(saveAndCloseBtn).click());
   },
 

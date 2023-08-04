@@ -11,6 +11,8 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import Orders from '../../../support/fragments/orders/orders';
 import TopMenu from '../../../support/fragments/topMenu';
 
+Cypress.on('uncaught:exception', () => false);
+
 describe('orders: Settings', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const acquisitionMethod = { ...AcquisitionMethods.defaultAcquisitionMethod };

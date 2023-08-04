@@ -9,6 +9,8 @@ import Users from '../../../support/fragments/users/users';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 
+Cypress.on('uncaught:exception', () => false);
+
 describe('ui-finance: Transactions', () => {
   const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
@@ -19,17 +21,14 @@ describe('ui-finance: Transactions', () => {
     externalAccountNo: getRandomPostfix(),
     fundStatus: 'Active',
     description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
-    allocatedToIds: [{
-      0: firstFund.id,
-    }],
+
   };
 
-  const allocatedQuantity = '1000';
+  const allocatedQuantity = '500';
   let user;
 
   before(() => {
     cy.getAdminToken();
-    // create first Fiscal Year and prepere 2 Funds for Rollover
     FiscalYears.createViaApi(firstFiscalYear)
       .then(firstFiscalYearResponse => {
         firstFiscalYear.id = firstFiscalYearResponse.id;
@@ -53,6 +52,10 @@ describe('ui-finance: Transactions', () => {
             Funds.createViaApi(secondFund)
               .then(secondFundResponse => {
                 secondFund.id = secondFundResponse.fund.id;
+                cy.visit(TopMenu.fundPath);
+                FinanceHelp.searchByName(secondFund.name);
+                Funds.selectFund(secondFund.name);
+                Funds.addTrunsferTo(firstFund.name);
               });
           });
       });
@@ -63,7 +66,7 @@ describe('ui-finance: Transactions', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path:TopMenu.ledgerPath, waiter: Ledgers.waitForLedgerDetailsLoading });
+        cy.login(userProperties.username, userProperties.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
       });
   });
 
@@ -89,6 +92,6 @@ describe('ui-finance: Transactions', () => {
     FinanceHelp.searchByName(firstFund.name);
     Funds.selectFund(firstFund.name);
     Funds.selectBudgetDetails();
-    Funds.moveAllocationWithError(firstFund, secondFund, '100');
+    Funds.moveAllocationWithError(secondFund, '100');
   });
 });

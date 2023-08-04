@@ -1,4 +1,5 @@
 import permissions from '../../../support/dictionary/permissions';
+import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import {
@@ -13,7 +14,6 @@ import {
 } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Helper from '../../../support/fragments/finance/financeHelper';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -37,27 +37,27 @@ describe('ui-data-import', () => {
   let instanceHrid;
   let exportedFileName;
   const quantityOfItems = '1';
-  const fileName = `oneMarcBib.mrc${Helper.getRandomBarcode()}`;
+  const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;
   const collectionOfMappingAndActionProfiles = [
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C368009 Testing item for SRS MARC bib ${Helper.getRandomBarcode()}`,
+        name: `C368009 Testing item for SRS MARC bib ${getRandomPostfix()}`,
         materialType: `"${MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE}"`,
         permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
         status: ITEM_STATUS_NAMES.AVAILABLE },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C368009 Testing holding for SRS MARC bib ${Helper.getRandomBarcode()}` }
+        name: `C368009 Testing holding for SRS MARC bib ${getRandomPostfix()}` }
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `C368009 Testing holding for SRS MARC bib ${Helper.getRandomBarcode()}`,
+        name: `C368009 Testing holding for SRS MARC bib ${getRandomPostfix()}`,
         permanentLocation: `"${LOCATION_NAMES.ANNEX}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `C368009 Testing holding for SRS MARC bib ${Helper.getRandomBarcode()}` }
+        name: `C368009 Testing holding for SRS MARC bib ${getRandomPostfix()}` }
     }
   ];
   const matchProfile = {
-    profileName: `C368009 001 to Instance HRID ${Helper.getRandomBarcode()}`,
+    profileName: `C368009 001 to Instance HRID ${getRandomPostfix()}`,
     incomingRecordFields: {
       field: '001'
     },
@@ -66,7 +66,7 @@ describe('ui-data-import', () => {
     instanceOption: NewMatchProfile.optionsList.instanceHrid
   };
   const jobProfile = {
-    profileName: `C368009 Testing SRS MARC bib ${Helper.getRandomBarcode()}`,
+    profileName: `C368009 Testing SRS MARC bib ${getRandomPostfix()}`,
     acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
@@ -104,8 +104,7 @@ describe('ui-data-import', () => {
       FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
     });
     Users.deleteViaApi(user.userId);
-    // delete downloads folder and created files in fixtures
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    // delete created files in fixtures
     FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
       .then((instance) => {

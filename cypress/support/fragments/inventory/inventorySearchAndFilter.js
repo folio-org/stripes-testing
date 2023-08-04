@@ -57,13 +57,15 @@ const editInstanceButton = Button('Edit instance');
 const inventorySearchResultsPane = Section({ id: 'browse-inventory-results-pane' });
 const nextButton = Button({ id: 'browse-results-list-callNumbers-next-paging-button' });
 const previousButton = Button({ id: 'browse-results-list-callNumbers-prev-paging-button' });
+const instancesList = paneResultsSection.find(MultiColumnList({ id: 'list-inventory' }));
 
 const searchInstanceByHRID = (id) => {
   cy.do([
     Select({ id: 'input-inventory-search-qindex' }).choose('Instance HRID'),
-    TextField({ id: 'input-inventory-search' }).fillIn(id),
-    searchButton.click()
+    TextField({ id: 'input-inventory-search' }).fillIn(id)
   ]);
+  cy.wait(1000);
+  cy.do(searchButton.click());
   InventoryInstances.waitLoading();
 };
 
@@ -425,7 +427,7 @@ export default {
   clickNextPaginationButton() {
     cy.do(inventorySearchResultsPane.find(nextButton).click());
   },
-  
+
   clickPreviousPaginationButton() {
     cy.do(inventorySearchResultsPane.find(previousButton).click());
   },
@@ -573,7 +575,7 @@ export default {
   },
 
   filterHoldingsByPermanentLocation:(location) => {
-    cy.do(Button({id:'accordion-toggle-button-holdingsPermanentLocation'}).click());
+    cy.do(Button({ id:'accordion-toggle-button-holdingsPermanentLocation' }).click());
     // need to wait until data will be loaded
     cy.wait(1000);
     cy.do(holdingsPermanentLocationAccordion.find(TextField()).fillIn(location));
@@ -581,5 +583,12 @@ export default {
     cy.wait(1000);
     holdingsPermanentLocationAccordion.find(TextField()).click();
     cy.do(holdingsPermanentLocationAccordion.find(Checkbox(location)).click());
+  },
+
+  checkRowsCount:(expectedRowsCount) => {
+    cy.expect([
+      instancesList.find(MultiColumnListRow({ index: expectedRowsCount - 1 })).exists(),
+      instancesList.find(MultiColumnListRow({ index: expectedRowsCount })).absent()
+    ]);
   }
 };

@@ -47,7 +47,7 @@ describe('Permissions Bulk Edit', () => {
     FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName);
   });
 
-  it('C353969 Export manager -- Verify that user can view data in Export Manager based on permissions (CSV approach) (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+  it('C353969 Export manager -- Verify that user can view data in Export Manager based on permissions (Local approach) (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     ExportManagerSearchPane.waitLoading();
     ExportManagerSearchPane.searchByBulkEdit();
     ExportManagerSearchPane.selectJob(user.username);
