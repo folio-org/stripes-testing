@@ -35,8 +35,7 @@ describe('ui-data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadBunchOfFiles(filePathForUpload, upload.quantityOfFiles, upload.fileName);
-        // TODO wait until the file will be uploaded
-        cy.wait(8000);
+        DataImport.waitFileIsUploaded();
         JobProfiles.searchJobProfileForImport(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(upload.fileName);
@@ -45,6 +44,8 @@ describe('ui-data-import', () => {
         LogsViewAll.viewAllIsOpened();
         LogsViewAll.selectOption('Keyword (ID, File name)');
         LogsViewAll.searchWithTerm(upload.fileName);
+        // TODO need to wait until files are filtered
+        cy.wait(2000);
         LogsViewAll.verifyQuantityOfLogs(upload.quantityOfFiles);
       });
     });

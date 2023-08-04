@@ -62,6 +62,8 @@ export default {
   inventoryCRUDHoldings: { internal: 'ui-inventory.holdings.delete', gui: 'Inventory: View, create, edit, delete holdings' },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui:'Tags: All permissions' },
+  uiViewTagsSettings: { internal: 'ui-tags.settings.view', gui:'Settings (Tags): Can view tags settings' },
+  uiUserCanEnableDisableTags: { internal: 'ui-tags.settings.all', gui:'Settings (Tags): Can enable or disable tags for all apps' },
   // Settings->Owners
   uiUsersSettingsAllFeeFinesRelated: { internal: 'ui-users.settings.feefines.all', gui:'Settings (Users): Can create, edit and remove all feefines-related entries' },
   uiUsersSettingsOwners: { internal: 'ui-users.settings.owners', gui: 'Settings (Users): Can create, edit and remove owners' },
@@ -111,6 +113,7 @@ export default {
   uiUsersCreatePatronLimits: { internal: 'ui-users.settings.limits', gui: 'Settings (Users): Can create, edit and remove patron blocks limits' },
   uiUsersCreatePatronConditions: { internal: 'ui-users.settings.conditions', gui: 'Settings (Users): Can view and edit patron blocks conditions' },
   uiUsersCustomField: { internal: 'ui-users.settings.customfields.all', gui: 'Settings (Users): Can create, edit, view and delete custom fields' },
+  uiUsersViewAllSettings: { internal: 'ui-users.settings.view', gui: 'Settings (Users): View all settings' },
   // Remote Storage
   remoteStorageCRUD: { internal: 'ui-remote-storage.settings.remote-storages.edit', gui: 'Remote storage: Create, edit, delete' },
   remoteStorageView: { internal: 'ui-remote-storage.settings.remote-storages.view', gui: 'Remote storage: View' },
@@ -225,6 +228,10 @@ export default {
   settingsDataImportCanViewOnly:{ internal:'ui-data-import.settings.readOnly', gui:'Settings (Data import): Can view only' },
   settingsTenantViewLocation:{ internal:'ui - tenant - settings.settings.location.view', gui:'Settings (Tenant): View locations' },
   settingsUsersCRUD: { internal: 'ui-users.settings.transfers.all', gui: 'Settings (Users): Can create, edit and remove transfer accounts' },
+  // Added the below permissions for custom label creation
+
+  uiSettingseholdingsViewEditCreateDelete:{ internal: 'ui-eholdings.settings.all', gui: 'Settings (eholdings): Can create, edit, view, and delete custom labels' },
+
   // Timers
   okapiTimersPatch: { internal: 'okapi.proxy.self.timers.patch', gui: 'Okapi - patch timer for current tenant' },
   // Export manager

@@ -1,28 +1,43 @@
 import moment from 'moment';
 import getRandomStringCode from './genereteTextCode';
 
-const padWithZero = value => String(value).padStart(2, '0');
+const padWithZero = (value) => String(value).padStart(2, '0');
+const currentStartDate = new Date();
+currentStartDate.setDate(currentStartDate.getDate());
+const currentEndDate = new Date();
+currentEndDate.setDate(currentEndDate.getDate() + 4);
 
 export default {
   padWithZero,
   getCurrentDate: () => {
     const currentDate = new Date();
-    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(currentDate.getDate())}/${currentDate.getFullYear()}`;
+    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(
+      currentDate.getDate()
+    )}/${currentDate.getFullYear()}`;
   },
 
   getCurrentDateForFileNaming: () => {
     const currentDate = new Date();
-    return `${padWithZero(currentDate.getMonth() + 1)}_${padWithZero(currentDate.getDate())}_${currentDate.getFullYear()}`;
+    return `${padWithZero(currentDate.getMonth() + 1)}_${padWithZero(
+      currentDate.getDate()
+    )}_${currentDate.getFullYear()}`;
   },
 
   getCurrentDateForFiscalYear: () => {
     const currentDate = new Date();
-    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(currentDate.getDate())}`;
+    return `${currentDate.getFullYear()}-${padWithZero(
+      currentDate.getMonth() + 1
+    )}-${padWithZero(currentDate.getDate())}`;
   },
 
   getRandomFiscalYearCodeForRollover: (min, max) => {
     // returns random 4 digit code for the Fiscal Year
-    return 'FYTA' + Math.floor((Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.ceil(min))).toString();
+    return (
+      'FYTA' +
+      Math.floor(
+        Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.ceil(min)
+      ).toString()
+    );
   },
 
   getPreviousDayDate: () => {
@@ -37,7 +52,9 @@ export default {
     const month = yesterday.getMonth() + 1;
     const day = yesterday.getDate();
     const year = yesterday.getFullYear();
-    return `${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}/${year}`;
+    return `${month.toString().padStart(2, '0')}/${day
+      .toString()
+      .padStart(2, '0')}/${year}`;
   },
 
   getTomorrowDayDateForFiscalYear: () => {
@@ -52,22 +69,30 @@ export default {
     const month = tomorrow.getMonth() + 1;
     const day = tomorrow.getDate();
     const year = tomorrow.getFullYear();
-    return `${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}/${year}`;
+    return `${month.toString().padStart(2, '0')}/${day
+      .toString()
+      .padStart(2, '0')}/${year}`;
   },
 
   getDayAfterTomorrowDateForFiscalYear: () => {
     const currentDate = new Date();
-    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(currentDate.getDate() + 2)}`;
+    return `${currentDate.getFullYear()}-${padWithZero(
+      currentDate.getMonth() + 1
+    )}-${padWithZero(currentDate.getDate() + 2)}`;
   },
 
   getDayTomorrowDateForFiscalYear: () => {
     const currentDate = new Date();
-    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(currentDate.getDate() + 1)}`;
+    return `${currentDate.getFullYear()}-${padWithZero(
+      currentDate.getMonth() + 1
+    )}-${padWithZero(currentDate.getDate() + 1)}`;
   },
 
   getPreviousDayDateForFiscalYear: () => {
     const currentDate = new Date();
-    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(currentDate.getDate() - 1)}`;
+    return `${currentDate.getFullYear()}-${padWithZero(
+      currentDate.getMonth() + 1
+    )}-${padWithZero(currentDate.getDate() - 1)}`;
   },
 
   getPreviousFiscalYearCode: () => {
@@ -75,12 +100,17 @@ export default {
   },
 
   getCurrentFiscalYearCode: () => {
-    return 'FY' + (new Date().getFullYear()).toString();
+    return 'FY' + new Date().getFullYear().toString();
   },
 
   getRandomFiscalYearCode: (min, max) => {
     // returns random 4 digit code for the Fiscal Year
-    return (getRandomStringCode(4)) + Math.floor((Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.ceil(min))).toString();
+    return (
+      getRandomStringCode(4) +
+      Math.floor(
+        Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.ceil(min)
+      ).toString()
+    );
   },
 
   getDateRanges: (rangesCount = 1, isInDifferentYears = false) => {
@@ -91,9 +121,11 @@ export default {
     for (let i = 0; i < rangesCount; i++) {
       const specialRange = {
         startDay: new Date(currentDate),
-        endDay: new Date(currentDate)
+        endDay: new Date(currentDate),
       };
-      specialRange.startDay.setDate(currentDate.getDate() - ((i + 1) * rangeLength) + 1);
+      specialRange.startDay.setDate(
+        currentDate.getDate() - (i + 1) * rangeLength + 1
+      );
       specialRange.endDay.setDate(currentDate.getDate() - i * rangeLength);
       resultRanges.push(specialRange);
       if (isInDifferentYears) {
@@ -117,12 +149,18 @@ export default {
   // Formats date as YYYY-MM-DD or MM/DD/YYYY
   getFormattedDate({ date }, type = 'YYYY-MM-DD') {
     if (type === 'MM/DD/YYYY') {
-      return `${padWithZero(date.getMonth() + 1)}/${padWithZero(date.getDate())}/${date.getFullYear()}`;
+      return `${padWithZero(date.getMonth() + 1)}/${padWithZero(
+        date.getDate()
+      )}/${date.getFullYear()}`;
     }
     if (type === 'DD/MM/YYYY') {
-      return `${padWithZero(date.getDate())}/${padWithZero(date.getMonth() + 1)}/${date.getFullYear()}`;
+      return `${padWithZero(date.getDate())}/${padWithZero(
+        date.getMonth() + 1
+      )}/${date.getFullYear()}`;
     }
-    return `${date.getFullYear()}-${padWithZero(date.getMonth() + 1)}-${padWithZero(date.getDate())}`;
+    return `${date.getFullYear()}-${padWithZero(
+      date.getMonth() + 1
+    )}-${padWithZero(date.getDate())}`;
   },
   // Formats date as MM/DD/YYYY without zeros - used in settings
   getFormattedDateWithSlashes({ date }) {
@@ -180,7 +218,7 @@ export default {
       hour: 'numeric',
       minute: 'numeric',
       hour12: true,
-      timeZone: 'UTC'
+      timeZone: 'UTC',
     };
     const formattedTime = currentDate.toLocaleString('en-US', options);
     return formattedTime;
@@ -188,6 +226,23 @@ export default {
 
   getCurrentDateYYMMDD() {
     const initialCurrentDate = new Date();
-    return `${initialCurrentDate.getFullYear().toString().substring(2)}${padWithZero(initialCurrentDate.getMonth() + 1)}${padWithZero(initialCurrentDate.getDate())}`;
-  }
+    return `${initialCurrentDate
+      .getFullYear()
+      .toString()
+      .substring(2)}${padWithZero(
+      initialCurrentDate.getMonth() + 1
+    )}${padWithZero(initialCurrentDate.getDate())}`;
+  },
+
+  editFromDateRange() {
+    return `${(currentStartDate.getMonth() + 1).toString().padStart(2, '0')}
+                      ${currentStartDate.getDate().toString().padStart(2, '0')}/
+                      ${currentStartDate.getFullYear()}`;
+  },
+
+  editEndDateRange() {
+    return `${(currentEndDate.getMonth() + 1).toString().padStart(2, '0')}
+                      ${currentEndDate.getDate().toString().padStart(2, '0')}/
+                      ${currentEndDate.getFullYear()}`;
+  },
 };

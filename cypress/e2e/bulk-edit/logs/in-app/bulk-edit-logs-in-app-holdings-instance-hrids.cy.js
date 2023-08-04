@@ -95,8 +95,8 @@ describe('Bulk Edit - Logs', () => {
               instance.materialTypeId = res.id;
               instance2.materialTypeId = res.id;
             });
-            const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation(`servicePoint-${getRandomPostfix}`, uuid());
-            const servicePoint2 = ServicePoints.getDefaultServicePointWithPickUpLocation(`servicePoint2-${getRandomPostfix}`, uuid());
+            const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation(`servicePoint-${getRandomPostfix()}`, uuid());
+            const servicePoint2 = ServicePoints.getDefaultServicePointWithPickUpLocation(`servicePoint2-${getRandomPostfix()}`, uuid());
             instance.defaultLocation = Location.getDefaultLocation(servicePoint.id);
             instance2.defaultLocation = Location.getDefaultLocation(servicePoint2.id);
             Location.createViaApi(instance.defaultLocation);
