@@ -11,7 +11,7 @@ import Helper from '../../../support/fragments/finance/financeHelper';
 import DevTeams from '../../../support/dictionary/devTeams';
 import { INSTANCE_SOURCE_NAMES, LOCATION_NAMES } from '../../../support/constants';
 
-describe('ui-inventory: Create a Holdings record as another user than the one that created the Instance', () => {
+describe('inventory', () => {
   let firstUser;
   let secondUser;
   const instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;

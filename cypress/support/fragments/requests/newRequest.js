@@ -21,7 +21,7 @@ const selectItemPane = Pane({ id: 'items-dialog-instance-items-list' });
 function addRequester(userName) {
   cy.do(Button({ id: 'requestform-addrequest' }).click());
   SelectUser.searchUser(userName);
-  SelectUser.selectUserFromList(userName);
+  SelectUser.selectUserFromList();
 }
 
 function openNewRequestPane() {
@@ -100,12 +100,13 @@ export default {
     // need to wait until instanceId is uploaded
     cy.wait(2500);
     this.choosepickupServicePoint(newRequest.pickupServicePoint);
+    cy.do(selectRequestType.choose(newRequest.requestType));
     this.saveRequestAndClose();
     this.waitLoading();
   },
 
   enableTitleLevelRequest() {
-    //need to synchronize actions before click
+    // need to synchronize actions before click
     cy.wait(3000);
     cy.do(titleLevelRequest.click());
   },

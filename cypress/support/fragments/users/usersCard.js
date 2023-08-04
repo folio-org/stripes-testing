@@ -45,6 +45,10 @@ export default {
     cy.do(Accordion({ id : 'loansSection' }).clickHeader());
     return cy.wait('@getLoans', { requestTimeout: 10000 });
   },
+  openLoansAccordion() {
+    cy.do(Accordion({ id : 'loansSection' }).clickHeader());
+  },
+
   openFeeFines() {
     cy.do(feesFinesAccourdion.clickHeader());
   },

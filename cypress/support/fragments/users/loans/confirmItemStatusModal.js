@@ -9,14 +9,15 @@ const additionalInformationField = confirmModal.find(TextArea('Additional inform
 
 export default {
   confirmItemStatus:(reasonToChangeStatus = additionalInformation) => {
-    return cy.do([additionalInformationField.fillIn(reasonToChangeStatus),
-      confirmButton.click()]);
+    return cy.do([
+      additionalInformationField.fillIn(reasonToChangeStatus),
+      confirmButton.click()
+    ]);
   },
   verifyModalView:(titleToCheck) => {
     cy.do(additionalInformationField.exists());
     cy.expect(confirmButton.has({ disabled: true, visible: true }));
     cy.expect(Modal(including(titleToCheck)).exists());
     return cy.do(cancelButton.click());
-  },
-
+  }
 };

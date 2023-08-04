@@ -12,7 +12,7 @@ import DevTeams from '../../../support/dictionary/devTeams';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import CirculationRules from '../../../support/fragments/circulation/circulation-rules';
 
-describe('ui-inventory: Mark items as withdrawn', () => {
+describe('inventory', () => {
   let user = {};
   let defaultServicePointId = '';
   const requesterIds = [];
