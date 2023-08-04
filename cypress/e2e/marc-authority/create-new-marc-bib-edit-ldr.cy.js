@@ -36,7 +36,8 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
     }
   };
 
-  function waitAndCheckFirstBibRecordCreated(marcBibTitle, timeOutSeconds = 15) {
+  // this function waits until Bib record is created in back-end, and then opens it in search
+  function waitAndCheckFirstBibRecordCreated(marcBibTitle, timeOutSeconds = 120) {
     let timeCounter = 0;
     function checkBib() {
       cy.okapiRequest({ path: 'instance-storage/instances',
