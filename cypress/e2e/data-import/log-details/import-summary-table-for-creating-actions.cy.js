@@ -26,35 +26,35 @@ describe('ui-data-import', () => {
   let instanceHrid;
   const quantityOfItems = '1';
   const instanceTitle = 'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)';
-  const nameMarcFile = `C356801autotestFile.${getRandomPostfix}.mrc`;
+  const nameMarcFile = `C356801autotestFile.${getRandomPostfix()}.mrc`;
   const collectionOfMappingAndActionProfiles = [
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-        name: `C356801 instance mapping profile ${getRandomPostfix}` },
+        name: `C356801 instance mapping profile ${getRandomPostfix()}` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-        name: `C356801 instance action profile ${getRandomPostfix}` }
+        name: `C356801 instance action profile ${getRandomPostfix()}` }
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `C356801 holdings mapping profile ${getRandomPostfix}`,
+        name: `C356801 holdings mapping profile ${getRandomPostfix()}`,
         pernanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
         pernanentLocationUI: LOCATION_NAMES.ONLINE_UI },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `C356801 holdings action profile ${getRandomPostfix}` }
+        name: `C356801 holdings action profile ${getRandomPostfix()}` }
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C356801 item mapping profile ${getRandomPostfix}`,
+        name: `C356801 item mapping profile ${getRandomPostfix()}`,
         permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
         status: ITEM_STATUS_NAMES.AVAILABLE,
         materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C356801 item action profile ${getRandomPostfix}` }
+        name: `C356801 item action profile ${getRandomPostfix()}` }
     }
   ];
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: `C356801 job profile ${getRandomPostfix}`
+    profileName: `C356801 job profile ${getRandomPostfix()}`
   };
 
   before('create test data', () => {

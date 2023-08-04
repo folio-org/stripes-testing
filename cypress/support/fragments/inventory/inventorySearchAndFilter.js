@@ -62,9 +62,10 @@ const instancesList = paneResultsSection.find(MultiColumnList({ id: 'list-invent
 const searchInstanceByHRID = (id) => {
   cy.do([
     Select({ id: 'input-inventory-search-qindex' }).choose('Instance HRID'),
-    TextField({ id: 'input-inventory-search' }).fillIn(id),
-    searchButton.click()
+    TextField({ id: 'input-inventory-search' }).fillIn(id)
   ]);
+  cy.wait(1000);
+  cy.do(searchButton.click());
   InventoryInstances.waitLoading();
 };
 

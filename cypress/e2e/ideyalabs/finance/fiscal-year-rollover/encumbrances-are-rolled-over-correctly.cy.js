@@ -84,8 +84,8 @@ describe.skip('Finance: Fiscal Year Rollover', () => {
 
   it('C375267 Encumbrances are rolled over correctly when order fund distribution was changed and related paid invoice exists (based on Remaining) (Thunderjet)', { tags: [testTypes.ideaLabsTests] }, () => {
     cy.visit(topMenu.financePath);
-    financeHelper.searchByName(encumbranceData.searchByName);
-    financeHelper.selectFirstLedger(encumbranceData.selectFirstLedger);
+    financeHelper.searchByName(testData.searchByName);
+    financeHelper.selectFirstLedger(rollOverData.selectFirstLedger);
     ledgers.clickonViewledgerDetails();
     ledgers.rollover();
     ledgers.selectFirstCheckBox(encumbranceData.selectFirstCheckBox);

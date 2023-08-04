@@ -248,7 +248,7 @@ describe('ui-data-import', () => {
   const checkReceivedPiece = (number, title) => {
     cy.visit(TopMenu.ordersPath);
     Orders.resetFilters();
-    Orders.searchByParameter('PO number', `${number}-1`);
+    Orders.searchByParameter('PO number', number);
     Orders.selectFromResultsList(number);
     OrderView.openPolDetails(title);
     OrderLines.openReceiving();
