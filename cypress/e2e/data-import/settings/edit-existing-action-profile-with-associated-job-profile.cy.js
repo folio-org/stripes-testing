@@ -17,15 +17,15 @@ import ConfirmChanges from '../../../support/fragments/data_import/action_profil
 describe('ui-data-import', () => {
   let user;
   const mappingProfile = {
-    name: `C367994 autotest mapping profile ${getRandomPostfix}`,
+    name: `C367994 autotest mapping profile ${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE
   };
   const actionProfile = {
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-    name: `C367994 autotest action profile ${getRandomPostfix}`
+    name: `C367994 autotest action profile ${getRandomPostfix()}`
   };
   const jobProfile = { ...NewJobProfile.defaultJobProfile,
-    profileName: `C367994 autotest job profile${getRandomPostfix}`,
+    profileName: `C367994 autotest job profile${getRandomPostfix()}`,
     acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC };
 
   before('create user', () => {

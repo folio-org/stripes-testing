@@ -1,4 +1,3 @@
-import devTeams from '../../../support/dictionary/devTeams';
 import testTypes from '../../../support/dictionary/testTypes';
 import circulationRules from '../../../support/fragments/circulation/circulation-rules';
 import eHoldingsNewCustomPackage from '../../../support/fragments/eholdings/eHoldingsNewCustomPackage';

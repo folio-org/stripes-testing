@@ -13,12 +13,12 @@ import ConfirmRemoval from '../../../support/fragments/data_import/action_profil
 
 describe('ui-data-import', () => {
   const mappingProfile = {
-    name: `C11115 autotest mapping profile ${getRandomPostfix}`,
+    name: `C11115 autotest mapping profile ${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE
   };
 
   const actionProfile = {
-    name: `C11115 autotest action profile ${getRandomPostfix}`,
+    name: `C11115 autotest action profile ${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE
   };
 

@@ -89,7 +89,7 @@ describe('ui-invoices: Cancelling approved invoices', () => {
             Invoices.approveInvoice();
           });
       });
-
+cy.wait(10000);
     cy.createTempUser([
       permissions.uiFinanceViewFundAndBudget.gui,
       permissions.viewEditDeleteInvoiceInvoiceLine.gui,

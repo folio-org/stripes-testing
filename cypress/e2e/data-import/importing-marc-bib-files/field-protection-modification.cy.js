@@ -25,20 +25,20 @@ describe('ui-data-import', () => {
   const fieldsForDelete = ['977', '978', '979'];
   const fieldsForDeleteIds = [];
   // unique file name to upload
-  const fileName = `C350678autotestFileProtection.${getRandomPostfix}.mrc`;
+  const fileName = `C350678autotestFileProtection.${getRandomPostfix()}.mrc`;
 
-  const mappingProfile = { name: `C350678 Remove extraneous MARC fields ${getRandomPostfix}`,
+  const mappingProfile = { name: `C350678 Remove extraneous MARC fields ${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC };
 
   const actionProfile = {
     typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
-    name: `C350678 Remove extraneous MARC fields ${getRandomPostfix}`,
+    name: `C350678 Remove extraneous MARC fields ${getRandomPostfix()}`,
     action: 'Modify (MARC Bibliographic record type only)'
   };
 
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: `C350678 Create bib and instance, but remove some MARC fields first ${getRandomPostfix}`,
+    profileName: `C350678 Create bib and instance, but remove some MARC fields first ${getRandomPostfix()}`,
     acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 

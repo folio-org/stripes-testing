@@ -57,9 +57,10 @@ export default {
   searchByParameter(parameter, value) {
     cy.do([
       searchForm.selectIndex(parameter),
-      searchForm.fillIn(value),
-      Button('Search').click(),
+      searchForm.fillIn(value)
     ]);
+    cy.wait(1000);
+    cy.do(Button('Search').click());
   },
   waitLoading() {
     cy.expect([
