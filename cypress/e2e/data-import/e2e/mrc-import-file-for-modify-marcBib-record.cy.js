@@ -29,11 +29,20 @@ describe('ui-data-import', () => {
   const nameForCSVFile = `C345423autotestFile${getRandomPostfix()}.csv`;
   const nameMarcFileForUpload = `C345423autotestFile.${getRandomPostfix()}.mrc`;
   const mappingProfileFieldsForModify = { name: `autoTestMappingProf.${getRandomPostfix()}`,
-    typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC };
+    typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+    modifications: { action: 'Add',
+      field: '947',
+      ind1: '',
+      ind2: '',
+      subfield: 'a',
+      data: `Test.${getRandomPostfix()}`,
+      subaction: 'Add subfield',
+      subfieldInd1: 'b',
+      subfieldData: `Addition.${getRandomPostfix()}` } };
   const actionProfile = {
     name: `autoTestActionProf.${getRandomPostfix()}`,
     action: 'Modify (MARC Bibliographic record type only)',
-    typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+    typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC
   };
   const matchProfile = {
     profileName: `autoTestMatchProf.${getRandomPostfix()}`,
@@ -75,8 +84,7 @@ describe('ui-data-import', () => {
     MatchProfiles.deleteMatchProfile(matchProfile.profileName);
     ActionProfiles.deleteActionProfile(actionProfile.name);
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileFieldsForModify.name);
-    // delete downloads folder and created files in fixtures
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    // delete created files in fixtures
     FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpload}`);
     FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
     Users.deleteViaApi(user.userId);
@@ -89,7 +97,6 @@ describe('ui-data-import', () => {
   it('C345423 Verify the possibility to modify MARC Bibliographic record (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
     DataImport.verifyUploadState();
-    cy.reload();
     // upload a marc file for creating of the new instance, holding and item
     DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
@@ -126,11 +133,10 @@ describe('ui-data-import', () => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfileFieldsForModify);
     NewFieldMappingProfile.addFieldMappingsForMarc();
-    NewFieldMappingProfile.fillModificationSectionWithAdd('Add', '947', 'a', 'Add subfield', 'Test', 'b', 'Addition');
+    NewFieldMappingProfile.fillModificationSectionWithAdd(mappingProfileFieldsForModify.modifications);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfileFieldsForModify.name);
     FieldMappingProfiles.checkMappingProfilePresented(mappingProfileFieldsForModify.name);
-
     // create Action profile and link it to Field mapping profile
     cy.visit(SettingsMenu.actionProfilePath);
     ActionProfiles.create(actionProfile, mappingProfileFieldsForModify.name);
@@ -149,7 +155,6 @@ describe('ui-data-import', () => {
     cy.visit(TopMenu.dataImportPath);
     // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
     DataImport.verifyUploadState();
-    cy.reload();
     DataImport.uploadFile(nameMarcFileForUpload);
     JobProfiles.searchJobProfileForImport(jobProfile.profileName);
     JobProfiles.runImportFile();

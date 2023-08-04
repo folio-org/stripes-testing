@@ -105,7 +105,7 @@ describe('ui-data-import', () => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
     NewFieldMappingProfile.fillPermanentLocation(profile.permanentLocation);
-    NewFieldMappingProfile.addElectronicAccess('Resource', '856$u', '856$z');
+    NewFieldMappingProfile.addElectronicAccess('"Resource"', '856$u', '856$z');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
   };
@@ -155,7 +155,6 @@ describe('ui-data-import', () => {
     cy.visit(TopMenu.dataImportPath);
     // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
     DataImport.verifyUploadState();
-    cy.reload();
     DataImport.uploadFile('marcFileForC17025.mrc', nameForCreateMarcFile);
     JobProfiles.searchJobProfileForImport(createInstanceAndEHoldingsJobProfile.profileName);
     JobProfiles.runImportFile();
@@ -172,7 +171,6 @@ describe('ui-data-import', () => {
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
-      cy.reload();
       DataImport.uploadFile('marcFileForC17025.mrc', nameForUpdateCreateMarcFile);
       JobProfiles.searchJobProfileForImport(updateEHoldingsJobProfile.profileName);
       JobProfiles.runImportFile();
