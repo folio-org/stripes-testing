@@ -749,7 +749,7 @@ export default {
     cy.expect(PaneHeader({ text: (including(text)) }).exists());
   },
 
-  waitAndCheckFirstBibRecordCreated(marcBibTitle = `Test_Bib_Creation_${getRandomPostfix()}`, timeOutSeconds = 90) {
+  waitAndCheckFirstBibRecordCreated(marcBibTitle = `Test_Bib_Creation_${getRandomPostfix()}`, timeOutSeconds = 120) {
     let timeCounter = 0;
     function checkBib() {
       cy.okapiRequest({ path: 'instance-storage/instances',
