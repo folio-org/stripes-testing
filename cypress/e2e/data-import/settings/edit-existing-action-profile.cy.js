@@ -14,7 +14,7 @@ describe('ui-data-import', () => {
   let user;
   const actionProfile = {
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-    name: `C2348 autotest action profile ${getRandomPostfix}`
+    name: `C2348 autotest action profile ${getRandomPostfix()}`
   };
 
   before('create user', () => {

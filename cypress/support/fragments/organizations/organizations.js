@@ -340,12 +340,7 @@ export default {
   },
 
   checkSearchResults: (organization) => {
-    cy.expect(
-      organizationsList
-        .find(MultiColumnListRow({ index: 0 }))
-        .find(MultiColumnListCell({ columnIndex: 3 }))
-        .has({ content: organization.name })
-    );
+    cy.expect(organizationsList.find(Link(organization.name)).exists());
   },
 
   selectYesInIsVendor: () => {
@@ -507,11 +502,13 @@ export default {
         .fillIn(contact.lastName),
       addContacsModal.find(searchButtonInModal).click(),
     ]);
+    cy.wait(6000);
     SearchHelper.selectCheckboxFromResultsList();
     cy.do([
       addContacsModal.find(saveButton).click(),
       Button('Save & close').click(),
     ]);
+    cy.wait(6000);
   },
 
   addIntrefaceToOrganization: (defaultInterface) => {

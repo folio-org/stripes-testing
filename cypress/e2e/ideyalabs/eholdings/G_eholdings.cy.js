@@ -1,4 +1,3 @@
-import devTeams from '../../../support/dictionary/devTeams';
 import testTypes from '../../../support/dictionary/testTypes';
 import circulationRules from '../../../support/fragments/circulation/circulation-rules';
 import eHoldingsNewCustomPackage from '../../../support/fragments/eholdings/eHoldingsNewCustomPackage';
@@ -30,6 +29,8 @@ describe.skip('Create a custom package', () => {
       eHolding.verifyPackage();
     }
   );
+  // test below is implemented in scope of FAT-1303 in:
+  // cypress/e2e/eholdings/eholdings-packages-search.cy.js
   it(
     'C692 Create a custom package',
     { tags: [testTypes.ideaLabsTests] },
@@ -39,6 +40,8 @@ describe.skip('Create a custom package', () => {
       eHolding.createAndVerify();
     }
   );
+  // test below is implemented in scope of FAT-1306 in:
+  // cypress/e2e/eholdings/eholdings-custom-packages.cy.js
   it(
     'C695 Package Record: Search all titles included in a package (spitfire)',
     { tags: [testTypes.ideaLabsTests] },

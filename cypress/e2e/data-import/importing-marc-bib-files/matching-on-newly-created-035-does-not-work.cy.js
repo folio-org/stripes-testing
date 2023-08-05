@@ -32,13 +32,13 @@ describe('ui-data-import', () => {
   let firstInstanceHrid;
   let secondInstanceHrid;
   // unique file names
-  const fileForCreateFirstName = `C358138 firstAutotestFileForCreate.${getRandomPostfix}.mrc`;
-  const fileForCreateSecondName = `C358138 secondAutotestFileForCreate.${getRandomPostfix}.mrc`;
-  const fileForUpdateFirstName = `C358138 firstAutotestFileForUpdate.${getRandomPostfix}.mrc`;
-  const fileForUpdateSecondName = `C358138 secondAutotestFileForUpdate.${getRandomPostfix}.mrc`;
+  const fileForCreateFirstName = `C358138 firstAutotestFileForCreate.${getRandomPostfix()}.mrc`;
+  const fileForCreateSecondName = `C358138 secondAutotestFileForCreate.${getRandomPostfix()}.mrc`;
+  const fileForUpdateFirstName = `C358138 firstAutotestFileForUpdate.${getRandomPostfix()}.mrc`;
+  const fileForUpdateSecondName = `C358138 secondAutotestFileForUpdate.${getRandomPostfix()}.mrc`;
 
   const matchProfile = {
-    profileName: `C358138 Match on newly-created 035 ${getRandomPostfix}`,
+    profileName: `C358138 Match on newly-created 035 ${getRandomPostfix()}`,
     incomingRecordFields: {
       field: '035',
       in1: '*',
@@ -51,18 +51,18 @@ describe('ui-data-import', () => {
   };
 
   const mappingProfile = {
-    name: `C358138 Update instance via 035 ${getRandomPostfix}`,
+    name: `C358138 Update instance via 035 ${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE
   };
 
   const actionProfile = {
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-    name: `C358138 Update instance via 035 ${getRandomPostfix}`,
+    name: `C358138 Update instance via 035 ${getRandomPostfix()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
 
   const jobProfile = {
-    profileName: `C358138 Update instance via 035 ${getRandomPostfix}`,
+    profileName: `C358138 Update instance via 035 ${getRandomPostfix()}`,
     acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
@@ -140,8 +140,6 @@ describe('ui-data-import', () => {
       InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
         firstInstanceHrid = initialInstanceHrId;
       });
-
-      FileDetails.openInstanceInInventory('Created');
       InventoryInstance.verifyResourceIdentifier(resourceIdentifierForFirstInstance.type, resourceIdentifierForFirstInstance.value, 2);
       InventoryInstance.viewSource();
       InventoryViewSource.contains('035\t');
@@ -216,8 +214,6 @@ describe('ui-data-import', () => {
       InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
         secondInstanceHrid = initialInstanceHrId;
       });
-
-      FileDetails.openInstanceInInventory('Created');
       InventoryInstance.verifyResourceIdentifier(resourceIdentifierForSecondInstance.type, resourceIdentifierForSecondInstance.value, 3);
       InventoryInstance.viewSource();
       InventoryViewSource.contains('035\t');

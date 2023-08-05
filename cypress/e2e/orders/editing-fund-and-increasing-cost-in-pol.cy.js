@@ -100,7 +100,7 @@ describe('ui-orders: Orders', () => {
       orderNumber = orderResponse.poNumber;
       Orders.checkCreatedOrder(defaultOrder);
       OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
       OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(firstFund, '50', '1', '50', location.institutionId);
       OrderLines.backToEditingOrder();
       Orders.openOrder();
@@ -113,7 +113,7 @@ describe('ui-orders: Orders', () => {
       Invoices.payInvoice();
     });
     cy.createTempUser([
-      permissions.uiFinanceViewFundAndBudget.gui,
+      permissions.uiFinanceViewFundAndBudget.gui,permissions.uiFinanceViewEditFundAndBudget.gui,
       permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
       permissions.uiOrdersEdit.gui,
     ])

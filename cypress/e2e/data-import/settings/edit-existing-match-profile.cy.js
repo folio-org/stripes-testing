@@ -14,7 +14,7 @@ import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
 describe('ui-data-import', () => {
   let user;
   const matchProfile = {
-    profileName: `C2339 autotest MatchProf${getRandomPostfix}`,
+    profileName: `C2339 autotest MatchProf${getRandomPostfix()}`,
     incomingRecordFields: {
       field: '001'
     },

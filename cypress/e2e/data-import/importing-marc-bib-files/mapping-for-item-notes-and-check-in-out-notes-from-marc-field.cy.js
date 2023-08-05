@@ -29,7 +29,7 @@ describe('ui-data-import', () => {
   let user;
   const rowNumbers = [0, 1];
   const instanceHrids = [];
-  const marcFileName = `C368005 autotestFile.${getRandomPostfix}.mrc`;
+  const marcFileName = `C368005 autotestFile.${getRandomPostfix()}.mrc`;
   const itemNotes = {
     note: 'This is a plain note',
     checkInNoteForFirstItem: 'This is a check in note',
@@ -42,21 +42,21 @@ describe('ui-data-import', () => {
   const collectionOfProfiles = [
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-        name: `C368005 Create instance for mapping notes ${getRandomPostfix}`,
+        name: `C368005 Create instance for mapping notes ${getRandomPostfix()}`,
         catalogingDate: '###TODAY###' },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-        name: `C368005 Create instance for mapping notes ${getRandomPostfix}` }
+        name: `C368005 Create instance for mapping notes ${getRandomPostfix()}` }
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `C368005 Create holdings for mapping notes ${getRandomPostfix}`,
+        name: `C368005 Create holdings for mapping notes ${getRandomPostfix()}`,
         permanetLocation: `"${LOCATION_NAMES.ANNEX}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `C368005 Create holdings for mapping notes ${getRandomPostfix}` }
+        name: `C368005 Create holdings for mapping notes ${getRandomPostfix()}` }
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C368005 Create item for mapping notes ${getRandomPostfix}`,
+        name: `C368005 Create item for mapping notes ${getRandomPostfix()}`,
         materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
         noteType: '876$t',
         note: '876$n',
@@ -67,11 +67,11 @@ describe('ui-data-import', () => {
         permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
         status: ITEM_STATUS_NAMES.AVAILABLE },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C368005 Create items for mapping notes ${getRandomPostfix}` }
+        name: `C368005 Create items for mapping notes ${getRandomPostfix()}` }
     }
   ];
   const jobProfile = { ...NewJobProfile.defaultJobProfile,
-    profileName: `C368005 Create mappings for item notes ${getRandomPostfix}`,
+    profileName: `C368005 Create mappings for item notes ${getRandomPostfix()}`,
     acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC };
 
   before('create test data', () => {

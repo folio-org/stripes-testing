@@ -205,7 +205,7 @@ export default {
         id: 'clickable-delete-invoice-confirmation-confirm',
       }).click()
     );
-    InteractorsTools.checkCalloutMessage(invoiceStates.InvoiceDeletedMessage);
+    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceDeletedMessage);
   },
 
   createInvoiceLine: (invoiceLine) => {
@@ -339,7 +339,7 @@ export default {
       Button('Approve').click(),
       submitButton.click(),
     ]);
-    InteractorsTools.checkCalloutMessage(invoiceStates.InvoiceApprovedMessage);
+    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceApprovedMessage);
   },
 
   searchByNumber: (invoiceNumber) => {
@@ -364,7 +364,7 @@ export default {
       Button('Pay').click(),
       submitButton.click(),
     ]);
-    InteractorsTools.checkCalloutMessage(invoiceStates.InvoicePaidMessage);
+    InteractorsTools.checkCalloutMessage(invoiceStates.invoicePaidMessage);
   },
 
   updateCurrency: (currency) => {
