@@ -202,12 +202,10 @@ describe('ui-data-import', () => {
       });
 
       cy.visit(SettingsMenu.matchProfilePath);
-      cy.pause();
       MatchProfiles.createMatchProfile(matchProfileItemHrid);
-      //MatchProfiles.checkMatchProfilePresented(matchProfileItemHrid.profileName);
-      cy.pause();
+      MatchProfiles.checkMatchProfilePresented(matchProfileItemHrid.profileName);
       MatchProfiles.createMatchProfileWithStaticValue(matchProfileItemStatus);
-      //MatchProfiles.checkMatchProfilePresented(matchProfileItemStatus.profileName);
+      MatchProfiles.checkMatchProfilePresented(matchProfileItemStatus.profileName);
 
       cy.visit(SettingsMenu.jobProfilePath);
       JobProfiles.createJobProfile(createJobProfile);
