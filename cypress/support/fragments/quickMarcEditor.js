@@ -37,6 +37,7 @@ const calloutDelete008Error = Callout('Record cannot be saved without 008 field'
 const calloutAfterSaveAndCloseNewRecord = Callout('Record created.');
 const closeButton = Button({ icon: 'times' });
 const validRecord = InventoryInstance.validOCLC;
+const validNewMarBibLDR = '00000naa\\a2200000uu\\4500';
 const specRetInputNamesHoldings008 = ['records[3].content.Spec ret[0]',
   'records[3].content.Spec ret[1]',
   'records[3].content.Spec ret[2]'];
@@ -748,5 +749,27 @@ export default {
     cy.expect(PaneHeader({ text: (including(text)) }).exists());
   },
 
-  calloutAfterSaveAndClose
+  waitAndCheckFirstBibRecordCreated(marcBibTitle = `Test_Bib_Creation_${getRandomPostfix}`, timeOutSeconds = 90) {
+    let timeCounter = 0;
+    function checkBib() {
+      cy.okapiRequest({ path: 'instance-storage/instances',
+        searchParams: { 'query': `(title all "${marcBibTitle}")` },
+        isDefaultSearchParamsRequired : false }).then(({ body }) => {
+        if (body.instances[0] || timeCounter >= timeOutSeconds) {
+          cy.expect(body.instances[0].title).equals(marcBibTitle);
+        } else {
+          // wait 1 second before retrying request
+          cy.wait(1000);
+          checkBib();
+          timeCounter++;
+        }
+      });
+    }
+    InventoryInstance.newMarcBibRecord();
+    this.updateExistingField('245', `$a ${marcBibTitle}`);
+    this.updateExistingField('LDR', validNewMarBibLDR);
+    this.pressSaveAndClose();
+    cy.expect(calloutAfterSaveAndClose.exists());
+    checkBib();
+  }
 };
