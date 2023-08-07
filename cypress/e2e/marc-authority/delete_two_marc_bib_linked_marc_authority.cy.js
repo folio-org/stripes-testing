@@ -16,12 +16,9 @@ import MarcAuthoritiesDelete from '../../support/fragments/marcAuthority/marcAut
 
 describe('MARC -> MARC Authority', () => {
   const testData = {
-    tag: '110',
     marcValue: 'Chin, Staceyann, 1972-',
     markedValue: 'Chin, Staceyann,',
-    rowIndex: 33,
     searchOption: 'Personal name',
-    instanceTitle: 'The Beatles in mono.',
   };
 
   const marcFiles = [
@@ -132,14 +129,12 @@ describe('MARC -> MARC Authority', () => {
 
   after('Deleting created user', () => {
     Users.deleteViaApi(testData.userProperties.userId);
-    InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0])
-    InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[1])
+    for (let i = 0; i < 2; i++) {
+        InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[i])
+        
+    }
     MarcAuthority.deleteViaAPI(createdAuthorityIDs[2]);
-    MarcAuthority.deleteViaAPI(createdAuthorityIDs[3]);
-    // createdAuthorityIDs.forEach((id, index) => {
-    //   if (index) MarcAuthority.deleteViaAPI(id);
-    // });
-
+    
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     for (let i = 0; i < 2; i++) {
       DataImport.selectLog();
