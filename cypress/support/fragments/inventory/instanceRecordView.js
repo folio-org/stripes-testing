@@ -2,6 +2,7 @@ import { HTML, including } from '@interactors/html';
 import {
   KeyValue,
   MultiColumnList,
+  MultiColumnListRow,
   Section,
   MultiColumnListCell,
   Button,
@@ -150,8 +151,22 @@ export default {
       .exists());
   },
 
-  verifyItemsCount(...holdingToBeOpened, itemsCount) {
-    cy.expect(Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) })).find(Badge()).has({ value: itemsCount.toString() }));
+  verifyItemsCount(itemsCount, ...holdingToBeOpened) {
+    cy.wait(1000);
+    cy.expect(Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) }).find(Badge()).has({ value: itemsCount.toString() }));
+  },
+
+  verifyQuantityOfItemsOnPage(quantityOfItems, itemLoanType) {
+    for (let i = 0; i < 200; i++) {
+      cy.expect(MultiColumnList({ ariaRowCount: `${quantityOfItems} + 1` })
+      .find(MultiColumnListRow({rowIndexInParent: `row-${i}`}))
+        .find(MultiColumnListCell({ columnIndex: 3, content: itemLoanType }))
+        .exists());
+    }
+  },
+
+  clickNextPaginationButton() {
+    cy.do(Pane({ id:'pane-instancedetails' }).find(Button('Next')).click());
   },
 
   openHoldingView: () => {
