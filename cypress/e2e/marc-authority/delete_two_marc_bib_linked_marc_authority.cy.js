@@ -131,10 +131,9 @@ describe('MARC -> MARC Authority', () => {
     Users.deleteViaApi(testData.userProperties.userId);
     for (let i = 0; i < 2; i++) {
         InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[i])
-        
     }
     MarcAuthority.deleteViaAPI(createdAuthorityIDs[2]);
-    
+
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     for (let i = 0; i < 2; i++) {
       DataImport.selectLog();
