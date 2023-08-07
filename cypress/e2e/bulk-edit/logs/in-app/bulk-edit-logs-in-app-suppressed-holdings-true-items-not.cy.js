@@ -57,7 +57,7 @@ describe('Bulk Edit - Logs', () => {
           .then(body => {
             body.discoverySuppress = true;
             cy.updateInstance(body);
-          })
+          });
         cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${item.instanceId}"` })
           .then(instance => {
             item.instanceHRID = instance.hrid;

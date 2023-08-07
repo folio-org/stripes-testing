@@ -12,7 +12,6 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 
@@ -56,7 +55,7 @@ describe('Bulk Edit - Logs', () => {
           .then(body => {
             body.discoverySuppress = true;
             cy.updateInstance(body);
-          })
+          });
         cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${item.instanceId}"` })
           .then(instance => {
             item.instanceHRID = instance.hrid;
