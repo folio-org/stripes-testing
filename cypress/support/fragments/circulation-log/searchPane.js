@@ -13,6 +13,11 @@ import {
   MultiSelect
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
+import SearchResults from './searchResults';
+import LoansPage from '../loans/loansPage';
+import Users from '../users/users';
+import ItemRecordView from '../inventory/item/itemRecordView';
+import TopMenuNavigation from '../topMenuNavigation';
 
 const dropdownButton = MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(Dropdown()).find(Button());
 const actionsButton = Button('Actions');
@@ -189,5 +194,18 @@ export default {
   checkExportResultIsUnavailable() {
     cy.do(actionsButton.click());
     cy.expect(Button('Export results (CSV)', { disabled: true }).exists());
+  },
+
+  checkActionButtonAfterFiltering(name, barcode) {
+    SearchResults.chooseActionByRow(0, 'Loan details');
+    LoansPage.waitLoading();
+    TopMenuNavigation.navigateToApp('Circulation log');
+
+    SearchResults.chooseActionByRow(0, 'User details');
+    Users.verifyFirstNameOnUserDetailsPane(name);
+    TopMenuNavigation.navigateToApp('Circulation log');
+
+    SearchResults.clickOnCell(barcode, 0);
+    ItemRecordView.waitLoading();
   },
 };

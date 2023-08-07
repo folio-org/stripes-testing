@@ -393,7 +393,6 @@ describe.skip('ui-data-import', () => {
       InventorySearchAndFilter.searchInstanceByHRID(instanceHrids[0]);
       InventorySearchAndFilter.saveUUIDs();
       ExportFile.downloadCSVFile(csvFileNameForFirstRecord, 'SearchInstanceUUIDs*');
-      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
 
       // download exported marc file
       cy.visit(TopMenu.dataExportPath);

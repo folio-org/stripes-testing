@@ -198,8 +198,7 @@ describe('ui-data-import', () => {
   });
 
   after('delete test data', () => {
-    // delete downloads folder and created files in fixtures
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    // delete created files in fixtures
     FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
     JobProfiles.deleteJobProfile(jobProfileForCreate.profile.name);
     JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);

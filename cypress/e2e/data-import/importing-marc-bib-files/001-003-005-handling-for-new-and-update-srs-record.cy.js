@@ -13,7 +13,6 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import Helper from '../../../support/fragments/finance/financeHelper';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
@@ -43,7 +42,7 @@ describe('ui-data-import', () => {
   const fileNameAfterUpload = `C17039 uploadedFile.${getRandomPostfix()}.mrc`;
 
   const matchProfile = {
-    profileName: `C17039 match profile ${Helper.getRandomBarcode()}`,
+    profileName: `C17039 match profile ${getRandomPostfix()}`,
     incomingRecordFields: {
       field: '999',
       in1: 'f',
@@ -56,18 +55,18 @@ describe('ui-data-import', () => {
   };
 
   const mappingProfile = {
-    name: `C17039 mapping profile ${Helper.getRandomBarcode()}`,
+    name: `C17039 mapping profile ${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE
   };
 
   const actionProfile = {
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-    name: `C17039 action profile ${Helper.getRandomBarcode()}`,
+    name: `C17039 action profile ${getRandomPostfix()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
 
   const jobProfile = {
-    profileName: `C17039 job profile ${Helper.getRandomBarcode()}`,
+    profileName: `C17039 job profile ${getRandomPostfix()}`,
     acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
@@ -86,11 +85,11 @@ describe('ui-data-import', () => {
         JobProfiles.waitFileIsImported(fileName);
         Logs.openFileDetails(fileName);
 
-        // get Instance HRID through API
-        InventorySearchAndFilter.getInstanceHRID()
-          .then(hrId => {
-            instanceHridForReimport = hrId[0];
-          });
+        // open Instance for getting hrid
+        FileDetails.openInstanceInInventory('Created');
+        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+          instanceHridForReimport = initialInstanceHrId;
+        });
       });
   });
 
@@ -99,8 +98,7 @@ describe('ui-data-import', () => {
     MatchProfiles.deleteMatchProfile(matchProfile.profileName);
     ActionProfiles.deleteActionProfile(actionProfile.name);
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
-    // delete downloads folder and created files in fixtures
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    // delete created files in fixtures
     FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
     FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
@@ -131,82 +129,82 @@ describe('ui-data-import', () => {
     FileDetails.checkSrsRecordQuantityInSummaryTable('1');
     FileDetails.checkInstanceQuantityInSummaryTable('1');
 
-    // get Instance HRID through API
-    InventorySearchAndFilter.getInstanceHRID()
-      .then(hrId => {
-        instanceHrid = hrId[0];
-        // check fields are absent in the view source
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-        InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[0].type, resourceIdentifiers[0].value, 0);
-        InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[1].type, resourceIdentifiers[1].value, 1);
-        // verify table data in marc bibliographic source
-        InventoryInstance.viewSource();
-        InventoryViewSource.verifyFieldInMARCBibSource('001\t', instanceHrid);
-        InventoryViewSource.notContains('003\t');
-        InventoryViewSource.verifyFieldInMARCBibSource('035\t', '(ICU)1299036');
+    // open Instance for getting hrid
+    FileDetails.openInstanceInInventory('Created');
+    InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+      instanceHrid = initialInstanceHrId;
+      // check fields are absent in the view source
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+      InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[0].type, resourceIdentifiers[0].value, 0);
+      InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[1].type, resourceIdentifiers[1].value, 1);
+      // verify table data in marc bibliographic source
+      InventoryInstance.viewSource();
+      InventoryViewSource.verifyFieldInMARCBibSource('001\t', instanceHrid);
+      InventoryViewSource.notContains('003\t');
+      InventoryViewSource.verifyFieldInMARCBibSource('035\t', '(ICU)1299036');
 
-        InventoryViewSource.extructDataFrom999Field()
-          .then(uuid => {
-            // change file using uuid for 999 field
-            DataImport.editMarcFile(
-              'marcFilrForC17039With999Field.mrc',
-              editedMarcFileName,
-              ['srsUuid', 'instanceUuid'],
-              [uuid[0], uuid[1]]
-            );
-          });
+      InventoryViewSource.extructDataFrom999Field()
+        .then(uuid => {
+          // change file using uuid for 999 field
+          DataImport.editMarcFile(
+            'marcFilrForC17039With999Field.mrc',
+            editedMarcFileName,
+            ['srsUuid', 'instanceUuid'],
+            [uuid[0], uuid[1]]
+          );
+        });
 
-        // create match profile
-        cy.visit(SettingsMenu.matchProfilePath);
-        MatchProfiles.createMatchProfileWithExistingPart(matchProfile);
-        MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
+      // create match profile
+      cy.visit(SettingsMenu.matchProfilePath);
+      MatchProfiles.createMatchProfileWithExistingPart(matchProfile);
+      MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
 
-        // create mapping profiles
-        cy.visit(SettingsMenu.mappingProfilePath);
-        FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
-        NewFieldMappingProfile.fillInstanceStatusTerm(instanceStatusTerm);
-        NewFieldMappingProfile.fillCatalogedDate(catalogedDate);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
-        FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
+      // create mapping profiles
+      cy.visit(SettingsMenu.mappingProfilePath);
+      FieldMappingProfiles.openNewMappingProfileForm();
+      NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
+      NewFieldMappingProfile.fillInstanceStatusTerm(instanceStatusTerm);
+      NewFieldMappingProfile.fillCatalogedDate(catalogedDate);
+      FieldMappingProfiles.saveProfile();
+      FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+      FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
-        // create action profile
-        cy.visit(SettingsMenu.actionProfilePath);
-        ActionProfiles.create(actionProfile, mappingProfile.name);
-        ActionProfiles.checkActionProfilePresented(actionProfile.name);
+      // create action profile
+      cy.visit(SettingsMenu.actionProfilePath);
+      ActionProfiles.create(actionProfile, mappingProfile.name);
+      ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
-        // create job profile for update
-        cy.visit(SettingsMenu.jobProfilePath);
-        JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfile.name, matchProfile.profileName);
-        JobProfiles.checkJobProfilePresented(jobProfile.profileName);
+      // create job profile for update
+      cy.visit(SettingsMenu.jobProfilePath);
+      JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfile.name, matchProfile.profileName);
+      JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
-        // upload a marc file for updating already created instance
-        cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(editedMarcFileName, fileNameAfterUpload);
-        JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileNameAfterUpload);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(fileNameAfterUpload);
-        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc);
-        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance);
-        FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
-        FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
+      // upload a marc file for updating already created instance
+      cy.visit(TopMenu.dataImportPath);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
+      DataImport.uploadFile(editedMarcFileName, fileNameAfterUpload);
+      JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(fileNameAfterUpload);
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      Logs.openFileDetails(fileNameAfterUpload);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance);
+      FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
+      FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
 
-        // check instance is updated
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-        InventoryInstance.checkIsInstanceUpdated();
-        // verify table data in marc bibliographic source
-        InventoryInstance.viewSource();
-        InventoryViewSource.verifyFieldInMARCBibSource('001\t', instanceHrid);
-        InventoryViewSource.notContains('003\t');
-        InventoryViewSource.verifyFieldInMARCBibSource('035\t', '(ICU)1299036');
-      });
+      // check instance is updated
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+      InventoryInstance.checkIsInstanceUpdated();
+      // verify table data in marc bibliographic source
+      InventoryInstance.viewSource();
+      InventoryViewSource.verifyFieldInMARCBibSource('001\t', instanceHrid);
+      InventoryViewSource.notContains('003\t');
+      InventoryViewSource.verifyFieldInMARCBibSource('035\t', '(ICU)1299036');
+    });
 
     // export instance
     cy.visit(TopMenu.inventoryPath);

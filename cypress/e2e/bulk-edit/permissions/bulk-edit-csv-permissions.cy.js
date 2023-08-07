@@ -37,7 +37,7 @@ describe('bulk-edit', () => {
     });
 
     // TODO: think about dragging file without dropping
-    it('C353537 Verify label to the Drag and drop area -- CSV approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C353537 Verify label to the Drag and drop area -- Local approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       cy.login(userWithCsvPermissions.username, userWithCsvPermissions.password);
       cy.visit(TopMenu.bulkEditPath);
 
