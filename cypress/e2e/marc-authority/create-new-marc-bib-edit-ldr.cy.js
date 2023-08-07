@@ -37,9 +37,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
   };
 
   const updatedLDRValuesArray = Object.values(testData.LDRValues.updatedLDRValues);
-
   const createdInstanceIDs = [];
-
   const userData = {};
 
   before(() => {
