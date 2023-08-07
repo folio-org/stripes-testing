@@ -1,4 +1,3 @@
-import devTeams from '../../support/dictionary/devTeams';
 import testTypes from '../../support/dictionary/testTypes';
 import searchPane from '../../support/fragments/circulation-log/searchPane';
 import marcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
@@ -28,7 +27,7 @@ describe.skip('CirculationLog App', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
-  it('C17092 Filter circulation log by (notice) send (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+  it('C17092 Filter circulation log by (notice) send', { tags: [testTypes.criticalPath] }, () => {
     cy.visit(topMenu.circulationLogPath);
     searchPane.setFilterOptionFromAccordion(
       testData.accordion,

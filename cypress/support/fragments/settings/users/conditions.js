@@ -1,4 +1,4 @@
-import { Section, NavListItem, TextArea, Button } from '../../../../../interactors';
+import { Checkbox, Section, NavListItem, TextArea, Button } from '../../../../../interactors';
 import Condition from './condition';
 
 const rootPaneset = Section({ id:'app-settings-nav-pane' });
@@ -57,6 +57,16 @@ export default {
     path: 'patron-block-conditions',
     isDefaultSearchParamsRequired : false,
   }).then(response => response.body.patronBlockConditions),
+
+  verifyConditionsCantBeChanged: () => {
+    cy.expect([
+      Checkbox({ id: 'blockBorrowing' }).is({ disabled: true }),
+      Checkbox({ id: 'blockRenewals' }).is({ disabled: true }),
+      Checkbox({ id: 'blockRequests' }).is({ disabled: true }),
+      TextArea({ id: 'message' }).is({ disabled: true }),
+      Button('Save').is({ disabled: true }),
+    ]);
+  },
 
   setConditionState: (message, blockCheckboxes = [true, true, true]) => {
     cy.get('[class*="partonBlockForm"] input')
