@@ -256,7 +256,7 @@ export default {
     cy.expect([
       quickMarcEditorPane.exists(),
       quickMarcPaneHeader.has({ text: including('new') }),
-    ])
+    ]);
   },
 
   checkInstanceTitle(title) {

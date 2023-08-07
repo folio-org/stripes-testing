@@ -8,7 +8,8 @@ import {
   Accordion,
   Link,
   Pane,
-  Callout
+  Callout,
+  Badge
 } from '../../../../interactors';
 
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
@@ -147,6 +148,10 @@ export default {
   verifyCalloutMessage: (number) => {
     cy.expect(Callout({ textContent: including(`Record ${number} created. Results may take a few moments to become visible in Inventory`) })
       .exists());
+  },
+
+  verifyItemsCount(...holdingToBeOpened, itemsCount) {
+    cy.expect(Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) })).find(Badge()).has({ value: itemsCount.toString() }));
   },
 
   openHoldingView: () => {
