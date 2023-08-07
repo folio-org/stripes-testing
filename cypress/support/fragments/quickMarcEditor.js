@@ -746,5 +746,20 @@ export default {
 
   checkPaneheaderContains(text) {
     cy.expect(PaneHeader({ text: (including(text)) }).exists());
-  }
+  },
+
+  checkUpdateLinkedBibModalAbsent() {
+    cy.expect(updateLinkedBibFieldsModal.absent());
+  },
+
+  checkDeleteConfirmationModal(fieldsCount) {
+    cy.expect([
+      confirmationModal.exists(),
+      confirmationModal.has({ content: including(`By selecting Continue with save, then ${fieldsCount} field(s) will be deleted and this record will be updated. Are you sure you want to continue?`) }),
+      continueWithSaveButton.exists(),
+      restoreDeletedFieldsBtn.exists(),
+    ]);
+  },
+
+  clickSaveAndKeepEditingButton() { cy.do(saveAndKeepEditingBtn.click()); }
 };
