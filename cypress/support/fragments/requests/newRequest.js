@@ -1,6 +1,8 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import { Button, TextField, Pane, Select, HTML, including, Checkbox, Section, Accordion, TextArea, MultiColumnListCell } from '../../../../interactors';
+import { Accordion, Button, Checkbox, HTML, MultiColumnListCell, Pane, Section, Select, Spinner, TextArea, TextField, including } from '../../../../interactors';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../constants';
+import dateTools from '../../utils/dateTools';
+import InteractorsTools from '../../utils/interactorsTools';
 import SelectUser from './selectUser';
 
 const actionsButton = Button('Actions');
@@ -11,13 +13,13 @@ const requesterBarcodeInput = TextField({ name: 'requester.barcode' });
 const enterItemBarcodeButton = Button({ id: 'clickable-select-item' });
 const enterRequesterBarcodeButton = Button({ id: 'clickable-select-requester' });
 const saveAndCloseButton = Button('Save & close');
-const selectServicePoint = Select({ name:'pickupServicePointId' });
+const selectServicePoint = Select({ name: 'pickupServicePointId' });
 const selectRequestType = Select({ name: 'requestType' });
 const titleLevelRequest = Checkbox({ name: 'createTitleLevelRequest' });
 const selectItemPane = Pane({ id: 'items-dialog-instance-items-list' });
 
 function addRequester(userName) {
-  cy.do(Button({ id:'requestform-addrequest' }).click());
+  cy.do(Button({ id: 'requestform-addrequest' }).click());
   SelectUser.searchUser(userName);
   SelectUser.selectUserFromList(userName);
 }
@@ -29,9 +31,15 @@ function openNewRequestPane() {
   ]);
 }
 
+function printPickSlips() {
+  cy.do([actionsButton.click(), Button({ id: 'printPickSlipsBtn' }).click()]);
+  InteractorsTools.checkCalloutMessage('Print options loading in progress. It might take a few seconds, please be patient.');
+}
+
 export default {
   addRequester,
   openNewRequestPane,
+  printPickSlips,
 
   fillRequiredFields(newRequest) {
     if ('instanceHRID' in newRequest) {
@@ -59,8 +67,8 @@ export default {
     cy.expect(HTML(including(pickupServicePoint)).exists());
   },
 
-  saveRequestAndClose:() => cy.do(saveAndCloseButton.click()),
-  waitLoading:() => cy.expect(Pane({ title: 'Request Detail' }).exists()),
+  saveRequestAndClose: () => cy.do(saveAndCloseButton.click()),
+  waitLoading: () => cy.expect(Pane({ title: 'Request Detail' }).exists()),
 
   createNewRequest(newRequest) {
     openNewRequestPane();
@@ -92,6 +100,9 @@ export default {
     // need to wait until instanceId is uploaded
     cy.wait(2500);
     this.choosepickupServicePoint(newRequest.pickupServicePoint);
+    // need to wait for loading dropdown options
+    cy.wait(1000);
+    this.chooseRequestType(REQUEST_TYPES.PAGE);
     this.saveRequestAndClose();
     this.waitLoading();
   },
@@ -146,7 +157,7 @@ export default {
   },
 
   verifyHridInformation: (allContentToCheck) => {
-    return allContentToCheck.forEach(contentToCheck => cy.expect(Section({ id: 'section-instance-info' }, including(contentToCheck)).exists()));
+    return allContentToCheck.forEach(contentToCheck => cy.expect(HTML({ id: 'section-instance-info' }, including(contentToCheck)).exists()));
   },
 
   verifyRequestInformation: (itemStatus) => {
@@ -159,6 +170,13 @@ export default {
       TextField({ id: 'requestExpirationDate' }).exists(),
       TextArea({ id: 'patronComments' }).exists(),
     ]);
+  },
+
+  enterRequestAndPatron: (patron) => {
+    cy.do([TextField({ id: 'requestExpirationDate' }).fillIn(dateTools.getCurrentDate()),
+    TextArea({ id: 'patronComments' }).fillIn(patron),
+    Checkbox({ name: 'createTitleLevelRequest' }).click()])
+    cy.expect(Spinner().absent())
   },
 
   chooseRequestType(requestType) {

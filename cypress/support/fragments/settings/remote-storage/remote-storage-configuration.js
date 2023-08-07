@@ -16,10 +16,13 @@ const successfulCreateCalloutMessage = 'Remote storage configuration was success
 const successfulChangeCalloutMessage = 'Remote storage configuration was successfully changed.';
 const successfulDeleteCalloutMessage = 'Remote storage configuration was successfully deleted.';
 const configurationPane = Pane({ title: 'Configurations' });
-const verifyDataSynchronizationSettingsAccordion = Accordion('Data synchronization settings');
+const dataSynchronizationSettingsAccordion = Accordion('Data synchronization settings');
 const saveAndCloseBtn = Button('Save & close');
 const saveBtn = Button('Save');
 const actionsBtn = Button('Actions');
+const xButton = Button({ icon: 'times' });
+const newButton = Button('+ New');
+const generalInformationAccordion = Accordion({ label: 'General information' });
 const configurationFields = {
   nameInput: TextField({ name: 'name' }),
   urlInput: TextField({ name: 'url' }),
@@ -30,9 +33,9 @@ const configurationFields = {
 
 function fillGeneralInfo(fileName, providerName) {
   return cy.do([
-    Button('+ New').click(),
-    TextField({ name: 'name' }).fillIn(fileName),
-    Accordion({ label: 'General information' }).find(Select()).choose(including(providerName)),
+    newButton.click(),
+    configurationFields.nameInput.fillIn(fileName),
+    generalInformationAccordion.find(Select()).choose(including(providerName)),
   ]);
 }
 
@@ -57,7 +60,7 @@ const configurations = {
     title: 'Dematic StagingDirector',
     create(name) {
       fillGeneralInfo(name, this.title);
-      cy.do(TextField({ name: 'accessionDelay' }).fillIn('1'));
+      cy.do(configurationFields.timingInput.fillIn('1'));
       saveAndCloseForm();
     }
   },
@@ -142,7 +145,14 @@ export default {
   closeWithoutSaving() {
     return cy.do([
       Modal().find(Button('Cancel')).click(),
-      Pane({ title: including('Edit ') }).find(Button({ icon: 'times' })).click()
+      Pane({ title: including('Edit ') }).find(xButton).click()
+    ]);
+  },
+
+  closeCreateConfigurationWithoutSaving() {
+    return cy.do([
+      Pane('Create configuration').find(xButton).click(),
+      Modal('Are you sure?').find(Button('Close without saving')).click(),
     ]);
   },
 
@@ -163,7 +173,19 @@ export default {
   },
 
   verifyDataSynchronizationSettingsAccordion(exists) {
-    if (exists) cy.expect(verifyDataSynchronizationSettingsAccordion.exists());
-    else cy.expect(verifyDataSynchronizationSettingsAccordion.absent())
+    if (exists) cy.expect(dataSynchronizationSettingsAccordion.exists());
+    else cy.expect(dataSynchronizationSettingsAccordion.absent())
+  },
+
+  verifyProviderDataSynchronizationSettings() {
+    cy.do(newButton.click());
+    Object.keys(configurations).forEach(key => {
+      cy.do([
+        generalInformationAccordion.find(Select()).choose(including(configurations[key].title))
+      ]);
+      if (configurations[key].title === 'Dematic StagingDirector') this.verifyDataSynchronizationSettingsAccordion(true);
+      else this.verifyDataSynchronizationSettingsAccordion(false);
+    });
+    this.closeCreateConfigurationWithoutSaving();
   },
 };

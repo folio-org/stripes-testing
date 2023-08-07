@@ -27,7 +27,8 @@ const optionsList = {
   systemControlNumber: 'Identifier: System control number',
   status: 'Loan and availability: Status',
   barcode: 'Admin data: Barcode',
-  instanceStatusTerm: 'Admin data: Instance status term'
+  instanceStatusTerm: 'Admin data: Instance status term',
+  holdingsType: 'Admin data: Holdings type'
 };
 
 function fillExistingRecordFields(value = '', selector) {
@@ -53,7 +54,7 @@ function fillIncomingRecordFields(value = '', selector) {
 function fillName(profileName) {
   cy.do(TextField('Name*').fillIn(profileName));
   // wait for data to be loaded
-  cy.wait(15000);
+  cy.wait(10000);
 }
 
 function selectExistingRecordType(existingRecordType) {
@@ -105,7 +106,7 @@ function selectExistingRecordField(existingRecordOption) {
   cy.do(criterionValueTypeList
     .find(SelectionOption(existingRecordOption)).click());
   // TODO wait until option will be selected
-  cy.wait(5000);
+  cy.wait(1500);
 }
 
 function fillOnlyComparePartOfTheValue(value) {
@@ -162,6 +163,8 @@ export default {
       cy.do(criterionValueTypeButton.click());
       cy.expect(criterionValueTypeList.exists());
       cy.do(criterionValueTypeList.find(SelectionOption(instanceOption)).click());
+      // TODO need to wait until profile will be filled
+      cy.wait(1500);
     } else if (existingRecordType === 'MARC_AUTHORITY') {
       selectExistingRecordType(existingRecordType);
       selectIncomingRecordType('MARC Authority');
@@ -189,6 +192,8 @@ export default {
       cy.do(criterionValueTypeButton.click());
       cy.expect(criterionValueTypeList.exists());
       cy.do(criterionValueTypeList.find(SelectionOption(holdingsOption)).click());
+      // TODO need to wait until profile will be filled
+      cy.wait(1500);
     } else {
       cy.do(matchProfileDetailsAccordion.find(Button({ dataId:'ITEM' })).click());
       fillIncomingRecordFields(incomingRecordFields.field, 'field');
@@ -201,11 +206,9 @@ export default {
       fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
       cy.do(criterionValueTypeButton.click());
       cy.expect(criterionValueTypeList.exists());
-      // wait for list will be loaded
-      cy.wait(2000);
       cy.do(criterionValueTypeList.find(SelectionOption(itemOption)).click());
-      // wait for list will be loaded
-      cy.wait(2000);
+      // TODO need to wait until profile will be filled
+      cy.wait(1500);
     }
   },
 

@@ -93,10 +93,6 @@ export default {
     cy.expect(Button('Download errors (CSV)').exists());
   },
 
-  clickSuppressedFromDiscoveryCheckbox() {
-    cy.do(Checkbox('Suppressed from discovery').click());
-  },
-
   verifyActionAfterChangingRecords() {
     cy.do(actionsBtn.click());
     cy.expect([
@@ -178,6 +174,7 @@ export default {
 
   addNewBulkEditFilterString() {
     cy.do(plusBtn.click());
+    cy.wait(1000);
   },
 
   fillPatronGroup(group = 'staff (Staff Member)', rowIndex = 0) {
@@ -232,11 +229,23 @@ export default {
     ]);
   },
 
-  editSuppressFromDiscovery(value, rowIndex = 0) {
+  editItemsSuppressFromDiscovery(value, rowIndex = 0) {
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Suppress from discovery'),
-      RepeatableFieldItem({ index: rowIndex }).find(Select({ content: including('Set') })).choose(value),
+      RepeatableFieldItem({ index: rowIndex }).find(Select({ content: including('Set') })).choose(`Set ${value}`),
     ]);
+  },
+
+  editHoldingsSuppressFromDiscovery(value, rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Suppress from discovery'),
+      RepeatableFieldItem({ index: rowIndex }).find(Select({ content: including('Set') })).choose(`Set ${value}`),
+    ]);
+    cy.expect(Checkbox('Apply to items records').has({ checked: value }));
+  },
+
+  checkApplyToItemsRecordsCheckbox() {
+    cy.do(Checkbox('Apply to items records').click());
   },
 
   verifyNoMatchingOptionsForLocationFilter() {

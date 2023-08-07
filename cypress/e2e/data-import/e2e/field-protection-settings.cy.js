@@ -17,7 +17,6 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
@@ -167,24 +166,23 @@ describe('ui-data-import', () => {
     FileDetails.checkSrsRecordQuantityInSummaryTable('1');
     FileDetails.checkInstanceQuantityInSummaryTable('1');
     Logs.clickOnHotLink(0, 3, 'Created');
-    InstanceRecordView.viewSource();
-    InstanceRecordView.verifySrsMarcRecord();
-    InventoryViewSource.verifyFieldInMARCBibSource('500', dataForField500);
-    InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[0], dataForField507);
-    InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[1], dataForField920);
+    InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+      instanceHrid = initialInstanceHrId;
+      InstanceRecordView.viewSource();
+      InstanceRecordView.verifySrsMarcRecord();
+      InventoryViewSource.verifyFieldInMARCBibSource('500', dataForField500);
+      InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[0], dataForField507);
+      InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[1], dataForField920);
 
-    // get Instance HRID through API
-    InventorySearchAndFilter.getInstanceHRID()
-      .then(hrId => {
-        instanceHrid = hrId[0];
-        // change file using order number
-        DataImport.editMarcFile(
-          'marcFileForC17017.mrc',
-          editedMarcFileName,
-          [dataFromField001, dataForField500, dataForField507, dataForField920],
-          [instanceHrid, updateDataForField500, updateDataForField507, updateDataForField920]
-        );
-      });
+
+      // change file using order number
+      DataImport.editMarcFile(
+        'marcFileForC17017.mrc',
+        editedMarcFileName,
+        [dataFromField001, dataForField500, dataForField507, dataForField920],
+        [instanceHrid, updateDataForField500, updateDataForField507, updateDataForField920]
+      );
+    });
 
     // create mapping profile for update
     cy.visit(SettingsMenu.mappingProfilePath);

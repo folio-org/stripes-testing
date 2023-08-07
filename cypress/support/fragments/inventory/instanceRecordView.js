@@ -94,6 +94,21 @@ const verifyInstanceRecordViewOpened = () => {
   cy.expect(Pane({ id:'pane-instancedetails' }).exists());
 };
 
+const verifyElectronicAccess = (uriValue, linkText = 'No value set-', rowNumber = 0) => {
+  cy.expect(electronicAccessAccordion
+    .find(MultiColumnListCell({ row: rowNumber, columnIndex: 1, content: uriValue }))
+    .exists());
+  cy.expect(electronicAccessAccordion
+    .find(MultiColumnListCell({ row: rowNumber, columnIndex: 2, content: linkText }))
+    .exists());
+};
+
+const verifyElectronicAccessAbsent = (rowNumber = 0) => {
+  cy.expect(electronicAccessAccordion
+    .find(MultiColumnListCell({ row: rowNumber, columnIndex: 1 }))
+    .absent());
+};
+
 const waitLoading = () => cy.expect(actionsButton.exists());
 
 export default {
@@ -116,6 +131,8 @@ export default {
   verifyNatureOfContent,
   verifyInstanceSource,
   verifyInstanceRecordViewOpened,
+  verifyElectronicAccess,
+  verifyElectronicAccessAbsent,
   verifyHotlinkToPOL:(number) => {
     cy.expect(Accordion('Acquisition').find(MultiColumnListCell({ row: 0, content: number })).exists());
     cy.expect(Accordion('Acquisition').find(Link({ href: including('/orders/lines/view') })).exists());
@@ -130,23 +147,6 @@ export default {
   verifyCalloutMessage: (number) => {
     cy.expect(Callout({ textContent: including(`Record ${number} created. Results may take a few moments to become visible in Inventory`) })
       .exists());
-  },
-  verifyElectronicAccess:(uriValue) => {
-    cy.expect(electronicAccessAccordion
-      .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: uriValue }))
-      .exists());
-    cy.expect(electronicAccessAccordion
-      .find(MultiColumnListCell({ row: 1, columnIndex: 1 }))
-      .absent());
-  },
-
-  verifyElectronicAccess:(uriValue) => {
-    cy.expect(electronicAccessAccordion
-      .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: uriValue }))
-      .exists());
-    cy.expect(electronicAccessAccordion
-      .find(MultiColumnListCell({ row: 1, columnIndex: 1 }))
-      .absent());
   },
 
   openHoldingView: () => {

@@ -243,7 +243,6 @@ describe('ui-data-import', () => {
   });
 
   after('delete test data', () => {
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
     FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpload}`);
     FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
     JobProfiles.deleteJobProfile(jobProfileForCreate.profile.name);

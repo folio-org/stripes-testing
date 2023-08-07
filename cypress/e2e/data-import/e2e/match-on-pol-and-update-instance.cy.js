@@ -21,7 +21,6 @@ import NewFieldMappingProfile from '../../../support/fragments/data_import/mappi
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import Helper from '../../../support/fragments/finance/financeHelper';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -51,31 +50,31 @@ describe('ui-data-import', () => {
   const collectionOfProfiles = [
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-        name: `C350944 Update Instance by POL match ${Helper.getRandomBarcode()}` },
+        name: `C350944 Update Instance by POL match ${getRandomPostfix()}` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-        name: `C350944 Update Instance by POL match ${Helper.getRandomBarcode()}`,
+        name: `C350944 Update Instance by POL match ${getRandomPostfix()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `C350944 Create Holdings by POL match ${Helper.getRandomBarcode()}`,
+        name: `C350944 Create Holdings by POL match ${getRandomPostfix()}`,
         callNumberType: `"${CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `C350944 Create Holdings by POL match ${Helper.getRandomBarcode()}` }
+        name: `C350944 Create Holdings by POL match ${getRandomPostfix()}` }
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C350944 Create Item by POL match ${Helper.getRandomBarcode()}`,
+        name: `C350944 Create Item by POL match ${getRandomPostfix()}`,
         status: ITEM_STATUS_NAMES.AVAILABLE,
         permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
         materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C350944 Create Item by POL match ${Helper.getRandomBarcode()}` }
+        name: `C350944 Create Item by POL match ${getRandomPostfix()}` }
     }
   ];
 
   const matchProfile = {
-    profileName: `C350944 935 $a POL to Instance POL ${Helper.getRandomBarcode()}`,
+    profileName: `C350944 935 $a POL to Instance POL ${getRandomPostfix()}`,
     incomingRecordFields: {
       field: '935',
       subfield:'a'
@@ -86,7 +85,7 @@ describe('ui-data-import', () => {
   };
 
   const jobProfile = { ...NewJobProfile.defaultJobProfile,
-    profileName: `C350944 Update Instance, and create Holdings, Item based on POL match ${Helper.getRandomBarcode()}`,
+    profileName: `C350944 Update Instance, and create Holdings, Item based on POL match ${getRandomPostfix()}`,
     acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC };
 
   const order = { ...NewOrder.defaultOneTimeOrder,

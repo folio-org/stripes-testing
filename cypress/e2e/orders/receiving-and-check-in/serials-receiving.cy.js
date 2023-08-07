@@ -98,7 +98,7 @@ describe('Orders: Receiving and Check-in', () => {
     Orders.openOrder();
     OrderLines.selectPOLInOrder(0);
     OrderLines.receiveOrderLineViaActions();
-    Receiving.selectFromResultsList();
+    Receiving.selectLinkFromResultsList();
     Receiving.addPiece(firstPiece.caption, firstPiece.copyNumber, firstPiece.enumeration, firstPiece.chronology);
     Receiving.selectPiece(firstPiece.caption);
     Receiving.selectConnectedInEditPiece();
