@@ -72,6 +72,9 @@ export default {
   ordersInstanceTypePath: 'settings/orders/instance-type',
   ordersLoanTypePath: 'settings/orders/loan-type',
   // Users
+  patronGroups: 'settings/users/groups',
+  addressTypes: 'settings/users/addresstypes',
+  departments: 'settings/users/departments',
   permissionSets: 'settings/users/perms',
   usersOwnersPath: 'settings/users/owners',
   usersPath: 'settings/users',
