@@ -2,6 +2,7 @@ import uuid from 'uuid';
 import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
 import getRandomPostfix, { getTestEntityValue } from '../../../support/utils/stringTools';
+import Arrays from '../../../support/utils/arrays';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TestTypes from '../../../support/dictionary/testTypes';
 import Users from '../../../support/fragments/users/users';
@@ -14,6 +15,7 @@ import RefundReasons from '../../../support/fragments/settings/users/refundReaso
 import PaymentMethods from '../../../support/fragments/settings/users/paymentMethods';
 import UsersSettingsGeneral from '../../../support/fragments/settings/users/usersSettingsGeneral';
 import Departments from '../../../support/fragments/settings/users/departments';
+import Conditions from '../../../support/fragments/settings/users/conditions';
 
 describe('Permission Sets', () => {
   let userData;
@@ -97,6 +99,17 @@ describe('Permission Sets', () => {
       cy.visit(SettingsMenu.refundReasons);
       UsersSettingsGeneral.checkEntityInTable({ reason: refundReason.nameReason, description: refundReason.description });
       UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
+    }
+  );
+
+  it(
+    'C404383 Verify that "Settings(users):View all settings" works as expected Scenario 5 (volaris)',
+    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    () => {
+      cy.visit(SettingsMenu.conditionsPath);
+      Conditions.waitLoading();
+      Conditions.select(Arrays.getRandomElement(Conditions.conditionsValues));
+      Conditions.verifyConditionsCantBeChanged();
     }
   );
 
