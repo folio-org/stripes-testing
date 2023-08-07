@@ -19,6 +19,7 @@ export default {
     cy.expect(Modal(modalName).exists());
   },
   pressHotKey(hotKey) {
+    cy.wait(6000);
     cy.get('body').type(hotKey);
   },
   closeShortcuts() {

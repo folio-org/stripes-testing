@@ -14,8 +14,8 @@ import FileManager from '../../../support/utils/fileManager';
 describe('ui-data-import', () => {
   let user;
   let instanceHrid;
-  const fileName = `oneMarcBib.mrc${getRandomPostfix}`;
-  const editedMarcFileName = `C359209 editedMarcFile.${getRandomPostfix}.mrc`;
+  const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;
+  const editedMarcFileName = `C359209 editedMarcFile.${getRandomPostfix()}.mrc`;
   const error = '{"error":"A new MARC-Holding was not created because the incoming record already contained a 999ff$s or 999ff$i field"}';
 
   before('create test data', () => {

@@ -28,7 +28,8 @@ const optionsList = {
   status: 'Loan and availability: Status',
   barcode: 'Admin data: Barcode',
   instanceStatusTerm: 'Admin data: Instance status term',
-  holdingsType: 'Admin data: Holdings type'
+  holdingsType: 'Admin data: Holdings type',
+  identifierOCLC: 'Identifier: OCLC'
 };
 
 function fillExistingRecordFields(value = '', selector) {
@@ -73,6 +74,13 @@ function fillQualifierInIncomingPart(qualifierType, qualifierValue) {
     Select({ name:'profile.matchDetails[0].incomingMatchExpression.qualifier.qualifierType' }).choose(qualifierType),
     TextField({ name:'profile.matchDetails[0].incomingMatchExpression.qualifier.qualifierValue' }).fillIn(qualifierValue)
   ]);
+}
+
+function fillQualifierInExistingComparisonPart(compareValueInComparison) {
+  cy.contains('Existing Instance record').then(elem => {
+    elem.parent()[0].querySelectorAll('input[type="checkbox"]')[1].click();
+  });
+  cy.do(Select({ name: 'profile.matchDetails[0].existingMatchExpression.qualifier.comparisonPart' }).choose(compareValueInComparison));
 }
 
 function fillQualifierInExistingPart(qualifierType, qualifierValue) {
@@ -127,6 +135,7 @@ export default {
   selectExistingRecordField,
   fillStaticValue,
   fillOnlyComparePartOfTheValue,
+  fillQualifierInExistingComparisonPart,
 
   fillMatchProfileForm:({
     profileName,
@@ -251,7 +260,8 @@ export default {
     existingRecordType,
     compareValue,
     qualifierType,
-    qualifierValue
+    qualifierValue,
+    compareValueInComparison
   }) {
     fillName(profileName);
     selectExistingRecordType(existingRecordType);
@@ -264,6 +274,7 @@ export default {
     fillOnlyComparePartOfTheValue(compareValue);
     selectMatchCriterion(matchCriterion);
     selectExistingRecordField(existingRecordOption);
+    fillQualifierInExistingComparisonPart(compareValueInComparison);
   },
 
   fillMatchProfileWithQualifierInIncomingAndExistingRecords({

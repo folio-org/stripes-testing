@@ -46,42 +46,42 @@ describe('ui-data-import', () => {
     'Language, borders and identity / edited by Dominic Watt and Carmen Llamas.'
   ];
   const itemNote = 'THIS WAS UPDATED!';
-  const jobProfileNameForExport = `C357552 Bibs with Item HRIDs ${getRandomPostfix}`;
+  const jobProfileNameForExport = `C357552 Bibs with Item HRIDs ${getRandomPostfix()}`;
   // file names
-  const nameMarcFileForImportCreate = `C357552autotestFile.${getRandomPostfix}.mrc`;
-  const nameForCSVFile = `C357552autotestFile${getRandomPostfix}.csv`;
-  const nameMarcFileForUpdate = `C357552autotestFile${getRandomPostfix}.mrc`;
+  const nameMarcFileForImportCreate = `C357552autotestFile.${getRandomPostfix()}.mrc`;
+  const nameForCSVFile = `C357552autotestFile${getRandomPostfix()}.csv`;
+  const nameMarcFileForUpdate = `C357552autotestFile${getRandomPostfix()}.mrc`;
 
   const collectionOfMappingAndActionProfiles = [
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `C357552 Create simple holdings ${getRandomPostfix}`,
+        name: `C357552 Create simple holdings ${getRandomPostfix()}`,
         permanentLocation: LOCATION_NAMES.ONLINE },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `C357552 Create simple holdings ${getRandomPostfix}` }
+        name: `C357552 Create simple holdings ${getRandomPostfix()}` }
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C357552 Create simple items ${getRandomPostfix}`,
+        name: `C357552 Create simple items ${getRandomPostfix()}`,
         status: ITEM_STATUS_NAMES.AVAILABLE,
         permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
         materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C357552 Create simple items ${getRandomPostfix}` }
+        name: `C357552 Create simple items ${getRandomPostfix()}` }
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C357552 Update Item by POL match ${getRandomPostfix}`,
+        name: `C357552 Update Item by POL match ${getRandomPostfix()}`,
         status: ITEM_STATUS_NAMES.AVAILABLE,
         permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C357552 Update simple items ${getRandomPostfix}`,
+        name: `C357552 Update simple items ${getRandomPostfix()}`,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     }
   ];
 
   const matchProfileItemHrid = {
-    profileName: `C357552 Match 902$a to Item HRID ${getRandomPostfix}`,
+    profileName: `C357552 Match 902$a to Item HRID ${getRandomPostfix()}`,
     incomingRecordFields: {
       field: '902',
       in1: '*',
@@ -94,7 +94,7 @@ describe('ui-data-import', () => {
   };
 
   const matchProfileItemStatus = {
-    profileName: `C357552 Item status = Available ${getRandomPostfix}`,
+    profileName: `C357552 Item status = Available ${getRandomPostfix()}`,
     incomingStaticValue: 'Available',
     matchCriterion: 'Exactly matches',
     existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
@@ -103,16 +103,16 @@ describe('ui-data-import', () => {
 
   const createJobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: `C357552 Create simple instance, holdings, items ${getRandomPostfix}`,
+    profileName: `C357552 Create simple instance, holdings, items ${getRandomPostfix()}`,
   };
 
   const updateJobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: `C357552 Update item based on HRID and Status ${getRandomPostfix}`,
+    profileName: `C357552 Update item based on HRID and Status ${getRandomPostfix()}`,
   };
 
   const exportMappingProfile = {
-    name: `C357552 Item HRID ${getRandomPostfix}`,
+    name: `C357552 Item HRID ${getRandomPostfix()}`,
   };
 
   before('create test data', () => {
@@ -219,8 +219,7 @@ describe('ui-data-import', () => {
       cy.wait(2500);
       JobProfiles.createJobProfile(updateJobProfile);
       NewJobProfile.linkMatchProfile(matchProfileItemHrid.profileName);
-      NewJobProfile.linkMatchProfileForMatches(matchProfileItemStatus.profileName);
-      NewJobProfile.linkActionProfileForMatches(collectionOfMappingAndActionProfiles[2].actionProfile.name);
+      NewJobProfile.linkMatchAndActionProfilesForSubMatches(matchProfileItemStatus.profileName, collectionOfMappingAndActionProfiles[2].actionProfile.name);
       NewJobProfile.saveAndClose();
       JobProfiles.checkJobProfilePresented(updateJobProfile.profileName);
 
