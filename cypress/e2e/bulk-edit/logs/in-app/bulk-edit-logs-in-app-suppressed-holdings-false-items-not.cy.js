@@ -14,6 +14,7 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => false);
@@ -49,8 +50,6 @@ describe('Bulk Edit - Logs', () => {
           cy.updateHoldingRecord(holdings[0].id, {
             ...holdings[0],
             discoverySuppress: true,
-            permanentLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
-            temporaryLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87'
           });
         });
         cy.getInstanceById(item.instanceId)
@@ -73,23 +72,19 @@ describe('Bulk Edit - Logs', () => {
     FileManager.deleteFileFromDownloadsByMask(instanceHRIDFileName, `*${matchedRecordsFileName}`, previewOfProposedChangesFileName, updatedRecordsFileName);
   });
 
-  it('C402321 Verify "Suppress from discovery" option is set True in when Holdings are suppressed and associated Items are not (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+  it('C402326 Verify "Suppress from discovery" option is set to False when Holdings are suppressed and Items are not (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     BulkEditSearchPane.checkHoldingsRadio();
     BulkEditSearchPane.selectRecordIdentifier('Instance HRIDs');
     BulkEditSearchPane.uploadFile(instanceHRIDFileName);
     BulkEditSearchPane.waitFileUploading();
     BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID);
 
-    const suppressFromDiscovery = true;
-    const newLocation = 'Main Library';
+    const suppressFromDiscovery = false;
     BulkEditActions.openActions();
     BulkEditSearchPane.changeShowColumnCheckbox('Suppressed from discovery');
     BulkEditActions.openInAppStartBulkEditFrom();
     BulkEditActions.editHoldingsSuppressFromDiscovery(suppressFromDiscovery);
-    BulkEditActions.addNewBulkEditFilterString();
-    BulkEditActions.replacePermanentLocation(newLocation, 'holdings', 1);
-    BulkEditActions.addNewBulkEditFilterString();
-    BulkEditActions.replaceTemporaryLocation(newLocation, 'holdings', 2);
+    BulkEditActions.checkApplyToItemsRecordsCheckbox();
     BulkEditActions.confirmChanges();
     BulkEditActions.commitChanges();
 
@@ -113,19 +108,21 @@ describe('Bulk Edit - Logs', () => {
     BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, [item.instanceHRID], 'instanceHrid', true);
 
     TopMenuNavigation.navigateToApp('Inventory');
-    InventorySearchAndFilter.switchToItem();
-    InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
-    ItemRecordView.waitLoading();
-    ItemRecordView.closeDetailView();
-    InventorySearchAndFilter.selectViewHoldings();
-    InventoryInstance.verifyHoldingsPermanentLocation(newLocation);
-    InventoryInstance.verifyHoldingsTemporaryLocation(newLocation);
-    HoldingsRecordView.checkMarkAsSuppressedFromDiscovery();
+    InventorySearchAndFilter.searchInstanceByHRID(item.instanceHRID);
+    InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
 
     TopMenuNavigation.navigateToApp('Inventory');
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
     ItemRecordView.waitLoading();
-    ItemRecordView.suppressedAsDiscoveryIsPresent();
+    ItemRecordView.closeDetailView();
+    InventorySearchAndFilter.selectViewHoldings();
+    HoldingsRecordView.checkMarkAsSuppressedFromDiscoveryAbsent();
+
+    TopMenuNavigation.navigateToApp('Inventory');
+    InventorySearchAndFilter.switchToItem();
+    InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
+    ItemRecordView.waitLoading();
+    ItemRecordView.suppressedAsDiscoveryIsAbsent();
   });
 });
