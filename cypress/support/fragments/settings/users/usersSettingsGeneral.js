@@ -28,9 +28,9 @@ export default {
 
   checkEditDeleteNewButtonsNotDisplayed: () => {
     cy.expect([
-      Button({ id: including('clickable-add-settings') }).absent(),
-      Button({ id: including('clickable-edit-settings') }).absent(),
-      Button({ id: including('clickable-delete-settings') }).absent(),
+      rootSection.find(Button({ id: including('clickable-add') })).absent(),
+      rootSection.find(Button({ id: including('clickable-edit') })).absent(),
+      rootSection.find(Button({ id: including('clickable-delete') })).absent(),
     ]);
   },
 };

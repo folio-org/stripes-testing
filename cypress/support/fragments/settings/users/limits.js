@@ -17,18 +17,28 @@ export default {
       } }).then(response => response.body.id);
   },
 
-  selectGroup: (groupName) => {
+  getLimitIdViaApi(limitName) {
+    return Conditions.getConditionsViaApi().then(
+      (conditions) => conditions.find((condition) => condition.name === limitName).id
+    );
+  },
+
+  selectGroup(groupName) {
     cy.do(NavListItem(groupName).click());
   },
 
-  setLimit: (limitName, number) => {
-    Conditions.getConditionsViaApi().then(conditions => {
-      return conditions.find(condition => condition.name === limitName).id;
-    }).then((limitId) => {
-      cy.do([
-        TextField({ name: limitId }).fillIn(number),
-        saveButton.click(),
-      ]);
+  setLimit(limitName, number) {
+    this.getLimitIdViaApi(limitName).then((limitId) => {
+      cy.do([TextField({ name: limitId }).fillIn(number), saveButton.click()]);
     });
-  }
+  },
+
+  verifyLimitsCantBeChanged() {
+    cy.wrap(Conditions.conditionsValues).each((limitName) => {
+      this.getLimitIdViaApi(limitName).then((limitId) => {
+        cy.expect(TextField({ name: limitId }).is({ disabled: true }));
+      });
+    });
+    cy.expect(Button('Save').is({ disabled: true }));
+  },
 };
