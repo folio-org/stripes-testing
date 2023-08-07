@@ -14,6 +14,7 @@ import RefundReasons from '../../../support/fragments/settings/users/refundReaso
 import PaymentMethods from '../../../support/fragments/settings/users/paymentMethods';
 import UsersSettingsGeneral from '../../../support/fragments/settings/users/usersSettingsGeneral';
 import Departments from '../../../support/fragments/settings/users/departments';
+import Limits from '../../../support/fragments/settings/users/limits';
 
 describe('Permission Sets', () => {
   let userData;
@@ -101,7 +102,17 @@ describe('Permission Sets', () => {
   );
 
   it(
-    'C405545 Verify that "Settings(users):View all settings" works as expected Scenario 6 (volaris)',
+    'add Verify that "Settings(users): View all settings" works as expected Scenario 4 (volaris)',
+    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    () => {
+      cy.visit(SettingsMenu.limitsPath);
+      Limits.selectGroup('undergrad');
+      Limits.verifyLimitsCantBeChanged();
+    }
+  );
+
+  it(
+    'C405545 Verify that "Settings(users): View all settings" works as expected Scenario 6 (volaris)',
     { tags: [TestTypes.extendedPath, devTeams.volaris] },
     () => {
       cy.visit(SettingsMenu.patronGroups);
