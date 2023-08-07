@@ -183,6 +183,7 @@ describe('Title Level Request. Request Detail', () => {
         requesterBarcode: userData.barcode,
         pickupServicePoint: testData.userServicePoint.name,
       });
+      NewRequest.chooseRequestType(REQUEST_TYPES.PAGE);
       NewRequest.saveRequestAndClose();
       RequestDetail.waitLoading();
       cy.wait('@createRequest').then((intercept) => {
@@ -210,6 +211,7 @@ describe('Title Level Request. Request Detail', () => {
         requesterBarcode: userData.barcode,
         pickupServicePoint: testData.userServicePoint.name,
       });
+      NewRequest.chooseRequestType(REQUEST_TYPES.PAGE);
       NewRequest.saveRequestAndClose();
       RequestDetail.waitLoading();
       cy.wait('@createRequest').then((intercept) => {
