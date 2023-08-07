@@ -1,4 +1,5 @@
-import { Button, Modal, TextField, Select, Pane } from '../../../../interactors';
+import { el } from 'date-fns/locale';
+import { Button, Modal, TextField, Select, Pane, MultiSelect } from '../../../../interactors';
 
 const rootModal = Modal({ id: 'transfer-modal' });
 const amountTextfield = rootModal.find(TextField({ id: 'amount' }));
@@ -7,7 +8,7 @@ const transferAccountSelect = rootModal.find(Select({ name: 'method' }));
 const transferButton = rootModal.find(Button({ id: 'submit-button' }));
 const confirmModal = Modal('Confirm fee/fine transfer');
 const confirmButton = confirmModal.find(Button('Confirm'));
-const transferPane = Pane('Transfer criteria');
+const transferPane = Pane('Transfer configuration');
 
 export default {
   waitLoading: () => {
@@ -18,8 +19,28 @@ export default {
     cy.expect(transferPane.exists());
   },
 
-  selectTransferCriteriaSchedulePeriod(period = 'Days') {
-    cy.do(Select({ name: 'schedulePeriod' }).choose(period));
+  setTransferCriteriaScheduling(frequency, interval, time, weekDays) {
+    cy.do(Select({ name: 'scheduling.frequency' }).choose(frequency));
+
+    if (frequency === 'Weeks') {
+      cy.do([
+        TextField({ name: 'scheduling.time' }).fillIn(time)
+      ]);
+      cy.do([
+        TextField({ name: 'scheduling.interval' }).fillIn(interval)
+      ]);
+      cy.do([
+        Select({ name: 'scheduling.weekDays' }).choose(weekDays)
+      ]);
+    }
+    else if (frequency === 'Days') {
+      cy.do([
+        Select({ name: 'scheduling.interval' }).choose(interval)
+      ]);
+    }
+    else if (frequency === 'Hours') {
+    }
+    else return;
   },
 
   typeScheduleTime(time) {
@@ -33,6 +54,19 @@ export default {
 
   verifyScheduleTime(time) {
     cy.expect(TextField({ name: 'scheduleTime', value: time }).exists());
+  },
+
+  // All three of our acceptance tests use no criteria for the Criteria field
+  setCriteria(criteria) {
+    if (!criteria) {
+      cy.do(Select({ name: 'criteria.type' }).choose('No criteria (always run)'));
+    }
+  },
+  
+  // sectionName: string like 'Header', 'Account Data', 'Footer'
+  // dataFormat will be a list of options we config
+  setDataFormatSection(sectionName, dataFormat) {
+
   },
 
   setAmount: (amount) => cy.do(amountTextfield.fillIn(amount.toFixed(2))),
