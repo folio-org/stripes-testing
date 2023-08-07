@@ -86,4 +86,9 @@ describe('circulation-log', () => {
       circAction: 'Marked as missing',
     });
   });
+
+  it('C45934 Check the Actions button from filtering Circulation log by marked as missing (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+    SearchPane.searchByMarkedAsMissing();
+    SearchPane.checkActionButtonAfterFiltering(user.firstName, item.barcode);
+  });
 });

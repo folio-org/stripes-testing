@@ -47,7 +47,7 @@ describe('ui-data-import', () => {
     typeValue: FOLIO_RECORD_TYPE.ORDER };
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: `C375989 Test Order ${getRandomPostfix()}`,
+    profileName: `C380483 Test Order ${getRandomPostfix()}`,
   };
 
   before('login', () => {

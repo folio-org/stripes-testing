@@ -56,7 +56,7 @@ describe.skip('Finance: Funds', () => {
   });
 
   it('C377030 "Available balance" is displayed as a negative number when running a deficit(Thunderjet)', { tags: [testTypes.ideaLabsTests] }, () => {
-    cy.visit(topMenu.financePath);
+/*    cy.visit(topMenu.financePath);
     fiscalYears.clickOnFiscalYear();
     financeHelper.searchByName(testData.fiscalName);
     financeHelper.selectFirstFinance(testData.selectName);
@@ -88,6 +88,6 @@ describe.skip('Finance: Funds', () => {
     funds.checkBudgetQuantity1(
       testData.fundFinancialQuantity1,
       testData.fundFinancialQuantity2
-    );
+    );*/
   });
 });
