@@ -6,7 +6,7 @@ import Users from '../../support/fragments/users/users';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import { replaceByIndex } from '../../support/utils/stringTools';
+import getRandomPostfix, { replaceByIndex } from '../../support/utils/stringTools';
 import { randomizeArray } from '../../support/utils/arrays';
 
 describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
@@ -17,7 +17,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
     },
 
     fieldContents: {
-      tag245Content: 'Create Bib, edit LDR test',
+      tag245Content: `Created_Bib_${getRandomPostfix()}`
     },
 
     LDRValues: {
@@ -37,29 +37,30 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
   };
 
   const updatedLDRValuesArray = Object.values(testData.LDRValues.updatedLDRValues);
-
   const createdInstanceIDs = [];
-
-  const users = {};
+  const userData = {};
 
   before(() => {
     cy.createTempUser([
       Permissions.inventoryAll.gui,
       Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
     ]).then(createdUserProperties => {
-      users.C380707UserProperties = createdUserProperties;
+      userData.C380707UserProperties = createdUserProperties;
     });
     cy.createTempUser([
       Permissions.inventoryAll.gui,
       Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
       Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
     ]).then(createdUserProperties => {
-      users.C380704UserProperties = createdUserProperties;
+      userData.C380704UserProperties = createdUserProperties;
+      cy.loginAsAdmin({ path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading }).then(() => {
+        QuickMarcEditor.waitAndCheckFirstBibRecordCreated();
+      });
     });
   });
 
   after('Deleting created users, Instances', () => {
-    Object.values(users).forEach((user) => {
+    Object.values(userData).forEach((user) => {
       Users.deleteViaApi(user.userId);
     });
     createdInstanceIDs.forEach(instanceID => {
@@ -68,7 +69,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
   });
 
   it('C380707 Editing LDR 10, 11, 20-23 values when creating a new "MARC bib" record (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
-    cy.login(users.C380707UserProperties.username, users.C380707UserProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+    cy.login(userData.C380707UserProperties.username, userData.C380707UserProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
 
     InventoryInstance.newMarcBibRecord();
     QuickMarcEditor.updateExistingField(testData.tags.tagLDR, testData.LDRValues.validLDRvalue);
@@ -82,7 +83,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
   });
 
   it('C380704 Creating a new "MARC bib" record with valid LDR 06, 07 values. (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
-    cy.login(users.C380704UserProperties.username, users.C380704UserProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+    cy.login(userData.C380704UserProperties.username, userData.C380704UserProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
 
     for (let i = 0; i < testData.LDRValues.validLDR07Values.length; i++) {
       const updatedLDRvalue = `${testData.LDRValues.validLDRvalue.substring(0, 6)}${testData.LDRValues.validLDR06Values[i]}${testData.LDRValues.validLDR07Values[i]}${testData.LDRValues.validLDRvalue.substring(8)}`;
@@ -96,7 +97,6 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
       QuickMarcEditor.check008FieldContent();
       QuickMarcEditor.updateExistingField(testData.tags.tagLDR, updatedLDRvalue);
       QuickMarcEditor.checkSubfieldsPresenceInTag008();
-
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndClose();
 

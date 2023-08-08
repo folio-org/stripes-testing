@@ -458,4 +458,16 @@ export default {
   verifyEmptyNumberOfTitles() {
     cy.expect(MultiColumnListCell({ columnIndex: 4 }).has({ content: '' }));
   },
+
+  verifyAuthorityPropertiesAfterSearch(expectedProperties) {
+    cy.intercept('GET', '/search/authorities?**').as('get-authorities');
+    cy.wait('@get-authorities').its('response.statusCode').should('equal', 200);
+    cy.get('@get-authorities').then(data => {
+      data.response.body.authorities.forEach(authority => {
+        expectedProperties.forEach(expectedProperty => {
+          cy.expect(authority).to.have.property(expectedProperty);
+        });
+      });
+    });
+  }
 };
