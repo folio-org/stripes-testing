@@ -12,7 +12,7 @@ import ItemRecordView from '../../../support/fragments/inventory/item/itemRecord
 import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
 import CirculationRules from '../../../support/fragments/circulation/circulation-rules';
 
-describe('ui-inventory: Mark an item as Missing', () => {
+describe('ui-inventory: Item', () => {
   let user = {};
   let defaultServicePointId = '';
   const requesterIds = [];

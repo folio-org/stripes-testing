@@ -22,7 +22,7 @@ import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthor
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import { LOCATION_NAMES, FOLIO_RECORD_TYPE, ACCEPTED_DATA_TYPE_NAMES, EXISTING_RECORDS_NAMES } from '../../../support/constants';
 
-describe('Importing MARC Bib files', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   function replace999SubfieldsInPreupdatedFile(exportedFileName, preUpdatedFileName, finalFileName) {
     FileManager.readFile(`cypress/fixtures/${exportedFileName}`)
       .then((actualContent) => {

@@ -19,7 +19,7 @@ import Users from '../../../support/fragments/users/users';
 import DevTeams from '../../../support/dictionary/devTeams';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: End to end scenarios', () => {
   let user = {};
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   // unique file name to upload

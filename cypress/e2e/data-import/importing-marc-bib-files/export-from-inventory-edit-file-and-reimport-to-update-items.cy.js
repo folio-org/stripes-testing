@@ -26,7 +26,7 @@ import FileManager from '../../../support/utils/fileManager';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   let instanceHrid;
   const quantityOfItems = '1';
   const instance = {

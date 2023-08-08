@@ -22,7 +22,7 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FileManager from '../../../support/utils/fileManager';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   let instanceHrid;
   const quantityOfItems = '1';
   // unique file names

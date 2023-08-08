@@ -36,7 +36,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: End to end scenarios', () => {
   let user = null;
   let orderNumber;
   const itemBarcode = uuid();

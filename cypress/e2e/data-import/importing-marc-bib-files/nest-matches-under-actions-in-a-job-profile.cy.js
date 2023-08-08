@@ -31,7 +31,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   let user = null;
   let holdingsHrId = null;
   let exportedFileName = null;

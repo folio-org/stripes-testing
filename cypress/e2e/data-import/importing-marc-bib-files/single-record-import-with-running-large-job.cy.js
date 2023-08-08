@@ -14,7 +14,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import Users from '../../../support/fragments/users/users';
 import { TARGET_PROFILE_NAMES } from '../../../support/constants';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   let user = {};
   const authentication = '100473910/PAOLF';
   const fileName = `C356824autotestFile.${getRandomPostfix()}.mrc`;

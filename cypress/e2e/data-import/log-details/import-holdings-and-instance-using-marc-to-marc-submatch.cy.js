@@ -32,7 +32,7 @@ import InstanceStatusTypes from '../../../support/fragments/settings/inventory/i
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Log details', () => {
   const testData = {
     protectedField: '856',
     protectedFieldId: null,
@@ -415,7 +415,7 @@ describe('ui-data-import', () => {
     });
 
   it('C397383 Verify the ability to import Holdings and Instance using marc-to-marc submatch: 3 matches (folijet)',
-    { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
       const fileNameForCreate = `C397383 autotestFileForCreate.${getRandomPostfix()}.mrc`;
       const fileNameForUpdate = `C397383 autotestFileForUpdate.${getRandomPostfix()}.mrc`;
       const editedMarcFileNameForCreate = `C397383 editedAutotestFileForCreate.${getRandomPostfix()}.mrc`;

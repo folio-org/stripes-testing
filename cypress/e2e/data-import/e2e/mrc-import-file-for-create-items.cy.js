@@ -22,7 +22,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: End to end scenarios', () => {
   let user = {};
   const fileName = `C343334autotestFile.${getRandomPostfix()}.mrc`;
 

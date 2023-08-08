@@ -9,7 +9,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: End to end scenarios', () => {
   // Path to static file in fixtures
   const pathToStaticFile = 'oneMarcBib.mrc';
   // Create unique names for MARC files

@@ -27,7 +27,7 @@ const oclcRecordData = {
   notes: { noteType: 'General note', noteContent: 'Description based upon print version of record' }
 };
 
-describe('ui-inventory: import by OCLC', () => {
+describe('ui-inventory: Single record import', () => {
   before('create test data', () => {
     cy.getAdminToken()
       .then(() => {

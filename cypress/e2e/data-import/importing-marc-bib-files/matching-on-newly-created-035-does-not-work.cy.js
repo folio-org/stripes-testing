@@ -23,7 +23,7 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import Users from '../../../support/fragments/users/users';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   let user = null;
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const note = 'This instance was updated, plus a new subject heading was added';

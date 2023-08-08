@@ -24,7 +24,7 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 
-describe('ui-data-import', () => {
+describe('ui-data-importe: Importing MARC Bib files', () => {
   let user = null;
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   // unique file names

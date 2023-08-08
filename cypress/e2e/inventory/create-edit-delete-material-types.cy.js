@@ -7,7 +7,7 @@ import NewMaterialType from '../../support/fragments/settings/inventory/newMater
 import Users from '../../support/fragments/users/users';
 import DevTeams from '../../support/dictionary/devTeams';
 
-describe('ui-inventory: Create, edit, delete material types', () => {
+describe('ui-inventory: Permissions', () => {
   let userId;
   const materialTypeName = `autoTestMaterialType.${getRandomPostfix()}`;
   const newMaterialTypeName = `autoTestMaterialType.${getRandomPostfix()}`;

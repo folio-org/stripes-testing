@@ -17,7 +17,7 @@ import InventoryViewSource from '../../../support/fragments/inventory/inventoryV
 import Users from '../../../support/fragments/users/users';
 import { TARGET_PROFILE_NAMES, JOB_STATUS_NAMES } from '../../../support/constants';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   let user = null;
   let instanceHrid = null;
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';

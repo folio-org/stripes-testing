@@ -23,7 +23,7 @@ import InventoryViewSource from '../../../support/fragments/inventory/inventoryV
 import FileManager from '../../../support/utils/fileManager';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: End to end scenarios', () => {
   const marcFieldProtected = ['507', '920'];
   const marcFieldProtectionId = [];
   let instanceHrid = null;

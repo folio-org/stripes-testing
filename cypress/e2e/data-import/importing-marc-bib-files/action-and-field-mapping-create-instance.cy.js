@@ -19,7 +19,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   let instanceHrid;
   const quantityOfItems = '1';
   const marcFileForCreate = `C11103 autotestFile.${getRandomPostfix()}.mrc`;

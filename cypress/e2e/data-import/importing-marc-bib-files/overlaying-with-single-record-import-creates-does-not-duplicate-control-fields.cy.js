@@ -13,7 +13,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   let user;
   let instanceHrid;
   const oclcNumber = '42980246';
@@ -51,7 +51,7 @@ describe('ui-data-import', () => {
   });
 
   it('C347618 Overlaying with single record import creates does not duplicate control fields (folijet)',
-    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+    { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       InventoryActions.import(oclcNumber);
       InventoryInstance.checkCalloutMessage(`Record ${oclcNumber} created. Results may take a few moments to become visible in Inventory`);
       cy.visit(TopMenu.dataImportPath);

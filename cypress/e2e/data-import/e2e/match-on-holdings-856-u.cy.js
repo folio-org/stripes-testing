@@ -23,7 +23,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: End to end scenarios', () => {
   let instanceHRID = null;
   const nameForCreateMarcFile = `createFile${getRandomPostfix()}.mrc`;
   const nameForUpdateCreateMarcFile = `updateFile${getRandomPostfix()}.mrc`;

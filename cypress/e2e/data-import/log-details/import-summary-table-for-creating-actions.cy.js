@@ -21,7 +21,7 @@ import { LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
   JOB_STATUS_NAMES } from '../../../support/constants';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Log details', () => {
   let user;
   let instanceHrid;
   const quantityOfItems = '1';

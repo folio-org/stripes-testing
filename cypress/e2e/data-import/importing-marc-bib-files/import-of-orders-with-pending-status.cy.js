@@ -23,7 +23,7 @@ import OrderLines from '../../../support/fragments/orders/orderLines';
 import Users from '../../../support/fragments/users/users';
 import Orders from '../../../support/fragments/orders/orders';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   let user;
   let orderNumber;
   const quantityOfOrders = '2';

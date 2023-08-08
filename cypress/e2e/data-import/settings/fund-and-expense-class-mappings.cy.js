@@ -23,7 +23,7 @@ import FieldMappingProfileView from '../../../support/fragments/data_import/mapp
 import FieldMappingProfileEdit from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileEdit';
 import Orders from '../../../support/fragments/orders/orders';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Settings', () => {
   let user;
   const orderNumbers = [];
   const filePathForCreateOrder = 'marcFileForC376975.mrc';

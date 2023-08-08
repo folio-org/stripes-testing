@@ -25,7 +25,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   let user;
   const rowNumbers = [0, 1];
   const instanceHrids = [];

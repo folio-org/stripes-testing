@@ -19,7 +19,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import InvoiceView from '../../../support/fragments/invoices/invoiceView';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: End to end scenarios', () => {
   const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.harrassowitz;
   const fileName = `C347615autotestFile.${getRandomPostfix()}.edi`;
   const mappingProfile = {

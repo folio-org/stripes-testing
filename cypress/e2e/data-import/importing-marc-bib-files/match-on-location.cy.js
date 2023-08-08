@@ -27,7 +27,7 @@ import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRec
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import FileManager from '../../../support/utils/fileManager';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   const permanentLocation = 'Main Library (KU/CC/DI/M)';
   const recordType = 'MARC_BIBLIOGRAPHIC';
   const rowNumbers = [0, 1, 2];

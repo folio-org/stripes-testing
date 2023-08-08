@@ -13,7 +13,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import TestTypes from '../../../support/dictionary/testTypes';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: End to end scenarios', () => {
   const startedDate = new Date();
   const completedDate = startedDate;
   // format date as YYYY-MM-DD

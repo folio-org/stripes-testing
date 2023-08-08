@@ -11,7 +11,7 @@ import MatchProfileEdit from '../../../support/fragments/data_import/match_profi
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Settings', () => {
   let user;
   const matchProfile = {
     profileName: `C2339 autotest MatchProf${getRandomPostfix()}`,

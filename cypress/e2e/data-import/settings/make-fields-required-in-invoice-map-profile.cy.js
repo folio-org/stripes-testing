@@ -8,7 +8,7 @@ import Users from '../../../support/fragments/users/users';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Settings', () => {
   let user = null;
   const mappingProfileName = `C343284 invoice mapping profile ${getRandomPostfix()}`;
 

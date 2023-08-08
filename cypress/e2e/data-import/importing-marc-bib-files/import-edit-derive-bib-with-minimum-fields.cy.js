@@ -13,7 +13,7 @@ import { JOB_STATUS_NAMES } from '../../../support/constants';
 import InventorySteps from '../../../support/fragments/inventory/inventorySteps';
 import { getCurrentDateYYMMDD } from '../../../support/utils/dateTools';
 
-describe('Data Import: Importing MARC Bib files', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   const testData = {
     initialTitle: 'Bare Minimum Bib',
     updatedTitleEdit: 'Bare Minimum Bib (after edit)',

@@ -26,7 +26,7 @@ import ServicePoint from '../../support/fragments/servicePoint/servicePoint';
 import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 
-describe('orders: Receive piece from Order', () => {
+describe('ui-inventory: Cataloging', () => {
   let effectiveLocation;
   let orderNumber;
   let materialTypeId;

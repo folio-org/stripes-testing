@@ -11,7 +11,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Permissions', () => {
   let user;
   let instanceHrid;
   const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;

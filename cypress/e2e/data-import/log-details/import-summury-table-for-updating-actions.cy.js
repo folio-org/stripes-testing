@@ -38,7 +38,7 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Log details', () => {
   let instanceHrid;
   const recordType = 'MARC_BIBLIOGRAPHIC';
   const holdingsPermanentLocation = 'Annex';

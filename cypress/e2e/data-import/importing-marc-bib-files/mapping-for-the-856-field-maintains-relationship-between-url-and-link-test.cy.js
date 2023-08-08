@@ -25,7 +25,7 @@ import InstanceStatusTypes from '../../../support/fragments/settings/inventory/i
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   let user;
   let instanceHrid;
   const testData = {

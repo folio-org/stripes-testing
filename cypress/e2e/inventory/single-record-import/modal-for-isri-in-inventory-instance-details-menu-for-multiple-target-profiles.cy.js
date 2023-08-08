@@ -18,7 +18,7 @@ import InteractorsTools from '../../../support/utils/interactorsTools';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-inventory', () => {
+describe('ui-inventory: Single record import', () => {
   let user;
   let instanceHRID;
   let profileId;

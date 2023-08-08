@@ -11,7 +11,7 @@ import Users from '../../../support/fragments/users/users';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   let user;
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const instanceTitle = 'Mistapim in Cambodia [microform]. Photos. by the author.';

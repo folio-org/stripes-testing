@@ -27,7 +27,7 @@ import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRec
 import FileManager from '../../../support/utils/fileManager';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   let user;
   let instanceHrid;
   const holdingsElectronicAccessData = {

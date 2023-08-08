@@ -8,7 +8,7 @@ import NewTargetProfile from '../../../support/fragments/settings/inventory/inte
 import EditTargetProfile from '../../../support/fragments/settings/inventory/integrations/editTargetProfile';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-inventory', () => {
+describe('ui-inventory: Settings', () => {
   let user;
   const targetProfileName = `C374178 autotest targetProfileName ${getRandomPostfix()}`;
   const newTargetProfileName = `C374178 autotest targetProfileName ${getRandomPostfix()}`;

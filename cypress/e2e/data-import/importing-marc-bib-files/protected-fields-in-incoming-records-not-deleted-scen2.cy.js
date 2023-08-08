@@ -13,7 +13,7 @@ import Users from '../../../support/fragments/users/users';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import { TARGET_PROFILE_NAMES } from '../../../support/constants';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   let user = null;
   const authentication = '100473910/PAOLF';
   const oclcForImport = '19257462';

@@ -27,7 +27,7 @@ import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRec
 import Orders from '../../../support/fragments/orders/orders';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   let user;
   let orderNumber;
   let instanceHrid;

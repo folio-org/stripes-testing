@@ -11,7 +11,7 @@ import FieldMappingProfileView from '../../../support/fragments/data_import/mapp
 import ActionProfileEdit from '../../../support/fragments/data_import/action_profiles/actionProfileEdit';
 import ConfirmRemoval from '../../../support/fragments/data_import/action_profiles/modals/confirmRemoval';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Settings', () => {
   const mappingProfile = {
     name: `C11115 autotest mapping profile ${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE

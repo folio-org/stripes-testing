@@ -12,7 +12,7 @@ import Users from '../../../support/fragments/users/users';
 let user;
 const maxLogsQuantityOnPage = 100;
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Log details', () => {
   before(() => {
     cy.createTempUser([
       permissions.dataImportDeleteLogs.gui

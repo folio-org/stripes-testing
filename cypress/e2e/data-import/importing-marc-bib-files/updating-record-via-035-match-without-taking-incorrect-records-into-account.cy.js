@@ -24,7 +24,7 @@ import GenerateIdentifierCode from '../../../support/utils/generateIdentifierCod
 import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   let user;
   const randomIdentifierCode = GenerateIdentifierCode.getRandomIdentifierCode();
   const quantityOfItems = '1';

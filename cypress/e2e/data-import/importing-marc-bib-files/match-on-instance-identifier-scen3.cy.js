@@ -25,7 +25,7 @@ import permissions from '../../../support/dictionary/permissions';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   let userId = null;
   const randomIdentifierCode = `(OCoLC)847143${generateItemBarcode()}8`;
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';

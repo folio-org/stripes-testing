@@ -14,7 +14,7 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import ConfirmChanges from '../../../support/fragments/data_import/action_profiles/modals/confirmChanges';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Settings', () => {
   let user;
   const mappingProfile = {
     name: `C367994 autotest mapping profile ${getRandomPostfix()}`,

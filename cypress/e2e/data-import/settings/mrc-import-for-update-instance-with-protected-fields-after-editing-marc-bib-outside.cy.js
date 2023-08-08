@@ -27,7 +27,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Settings', () => {
   let user;
   let instanceHrid = null;
   const marcFieldProtectionId = [];

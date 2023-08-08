@@ -20,7 +20,7 @@ import NewFieldMappingProfile from '../../../support/fragments/data_import/mappi
 import InvoiceView from '../../../support/fragments/invoices/invoiceView';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: End to end scenarios', () => {
   const quantityOfItems = '1';
   const fileName = `C343338autotestFile.${getRandomPostfix()}.edi`;
   const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.gobi;

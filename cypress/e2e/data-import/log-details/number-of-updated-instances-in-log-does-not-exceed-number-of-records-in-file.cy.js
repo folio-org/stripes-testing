@@ -19,7 +19,7 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Log details', () => {
   let user;
   const fieldProtectionIds = [];
   let instanceHRID = null;

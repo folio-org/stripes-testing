@@ -20,7 +20,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Log details', () => {
   let user;
   const invoiceNumber = '1024200';
   const quantityOfItems = '1';

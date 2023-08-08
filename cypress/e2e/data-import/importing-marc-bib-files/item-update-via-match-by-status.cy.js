@@ -33,7 +33,7 @@ import FileManager from '../../../support/utils/fileManager';
 import StatisticalCodes from '../../../support/fragments/settings/inventory/instance-holdings-item/statisticalCodes';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   let user;
   let statisticalCode;
   const titlesItemsStatusChanged = [

@@ -19,7 +19,7 @@ import Users from '../../../support/fragments/users/users';
 import FilterItems from '../../../support/fragments/inventory/filterItems';
 import SwitchServicePoint from '../../../support/fragments/servicePoint/switchServicePoint';
 
-describe('inventory', () => {
+describe('ui-inventory: Item', () => {
   let user;
   const itemStatus = 'Checked out';
   const todayDate = moment(new Date()).format('M/D/YYYY');

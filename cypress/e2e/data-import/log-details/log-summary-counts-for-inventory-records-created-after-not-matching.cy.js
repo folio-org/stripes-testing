@@ -29,7 +29,7 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Log details', () => {
   let user;
   const marcFileName = `C378901autotestFile.${getRandomPostfix()}.mrc`;
   const barcodes = ['B(UMLLTTEST3)LLTAMGUT8UGUT_-UM', 'B(UMLLTTEST3)LLTAALIVIAUCO_-UM'];

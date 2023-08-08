@@ -10,7 +10,7 @@ import InteractorsTools from '../../../support/utils/interactorsTools';
 import Users from '../../../support/fragments/users/users';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   let user;
   const bigFileName = `C378883autotestFile.${getRandomPostfix()}.mrc`;
   const smallFileName = `C378883autotestFile.${getRandomPostfix()}.mrc`;

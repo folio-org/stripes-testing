@@ -7,7 +7,7 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   const filePathForUpload = 'oneMarcBib.mrc';
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
 

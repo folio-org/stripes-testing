@@ -10,7 +10,7 @@ import Users from '../../../support/fragments/users/users';
 import ActionProfileEdit from '../../../support/fragments/data_import/action_profiles/actionProfileEdit';
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Settings', () => {
   let user;
   const actionProfile = {
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,

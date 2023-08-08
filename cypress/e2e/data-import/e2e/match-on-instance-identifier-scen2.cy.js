@@ -23,7 +23,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: End to end scenarios', () => {
   let userId;
   const filePathForCreateInstance = 'marcFileForMatchOnIdentifierForCreate.mrc';
   const filePathForUpdateInstance = 'marcFileForMatchOnIdentifierForUpdate_2.mrc';

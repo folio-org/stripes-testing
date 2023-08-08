@@ -22,7 +22,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Permissions', () => {
   let firstUser;
   let secondUser;
   const quantityOfItems = '1';
@@ -81,7 +81,7 @@ describe('ui-data-import', () => {
   });
 
   it('C356841 Confirm a user with limited Data Import permissions can import a file (folijet)',
-    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+    { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       cy.login(firstUser.username, firstUser.password, { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
       // create mapping profiles
       FieldMappingProfiles.openNewMappingProfileForm();

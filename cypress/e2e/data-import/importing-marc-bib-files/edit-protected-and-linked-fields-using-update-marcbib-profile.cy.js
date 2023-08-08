@@ -23,7 +23,7 @@ import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import { LOCATION_NAMES, FOLIO_RECORD_TYPE, ACCEPTED_DATA_TYPE_NAMES, EXISTING_RECORDS_NAMES } from '../../../support/constants';
 
-describe('Importing MARC Bib files', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   const testData = {};
   let firstFieldId = null;
   let secondFieldId = null;

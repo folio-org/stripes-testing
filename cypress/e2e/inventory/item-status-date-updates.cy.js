@@ -42,7 +42,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import ServicePoint from '../../support/fragments/servicePoint/servicePoint';
 import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
 
-describe('ui-inventory: Item status date updates', () => {
+describe('ui-inventory: Item', () => {
   const instanceTitle = `autotestTitle ${Helper.getRandomBarcode()}`;
   const itemQuantity = '1';
   let orderNumber;

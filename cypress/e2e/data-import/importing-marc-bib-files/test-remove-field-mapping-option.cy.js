@@ -30,7 +30,7 @@ import {
   JOB_STATUS_NAMES
 } from '../../../support/constants';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   const itemBarcode = uuid();
   const quantityOfItems = '1';
   const marcFileNameForCreate = `C17033 autotestFile.${getRandomPostfix()}.mrc`;

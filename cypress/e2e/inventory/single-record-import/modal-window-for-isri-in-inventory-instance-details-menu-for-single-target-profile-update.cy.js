@@ -18,7 +18,7 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import Users from '../../../support/fragments/users/users';
 import ReImportModal from '../../../support/fragments/inventory/reImportModal';
 
-describe('ui-inventory', () => {
+describe('ui-inventory: Single record import', () => {
   let user;
   let instanceHRID;
   const profileForImport = 'Inventory Single Record - Default Update Instance (Default)';

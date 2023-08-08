@@ -10,7 +10,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import { INSTANCE_SOURCE_NAMES, JOB_STATUS_NAMES } from '../../../support/constants';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   const quantityOfItems = '15';
   const rowNumbers = [1, 4, 7, 14];
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';

@@ -17,7 +17,7 @@ import DevTeams from '../../../support/dictionary/devTeams';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import { LOCATION_NAMES, FOLIO_RECORD_TYPE, ACCEPTED_DATA_TYPE_NAMES, EXISTING_RECORDS_NAMES } from '../../../support/constants';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: End to end scenarios', () => {
   // unique file name to upload
   const nameForMarcFile = `C343343autotestFile${getRandomPostfix()}.mrc`;
   const nameForExportedMarcFile = `C343343autotestFile${getRandomPostfix()}.mrc`;

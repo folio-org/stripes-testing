@@ -27,7 +27,7 @@ import FileManager from '../../../support/utils/fileManager';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   const instanceTitle = 'The distant sound / Susan Philipsz.';
   const itemBarcode = uuid();
   const quantityOfItems = '1';

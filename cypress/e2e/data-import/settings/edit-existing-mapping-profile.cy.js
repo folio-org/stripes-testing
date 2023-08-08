@@ -11,7 +11,7 @@ import FieldMappingProfileEdit from '../../../support/fragments/data_import/mapp
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Settings', () => {
   let user;
   const mappingProfile = {
     name: `C2351 autotest mapping profile ${getRandomPostfix()}`,

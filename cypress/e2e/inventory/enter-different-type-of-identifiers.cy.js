@@ -9,7 +9,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import DevTeams from '../../support/dictionary/devTeams';
 import { INSTANCE_SOURCE_NAMES } from '../../support/constants';
 
-describe('ui-inventory: Enter different type of identifiers', () => {
+describe('ui-inventory: Instance', () => {
   let instanceTitle;
   let instanceId;
   let resourceIdentifier;

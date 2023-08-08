@@ -22,7 +22,7 @@ import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Log details', () => {
   let user;
   const orderNumbers = [];
   const quantityOfOrders = '7';

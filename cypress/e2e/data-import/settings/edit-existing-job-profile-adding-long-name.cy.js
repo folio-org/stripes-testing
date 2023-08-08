@@ -9,7 +9,7 @@ import JobProfileView from '../../../support/fragments/data_import/job_profiles/
 import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/jobProfileEdit';
 import { ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Settings', () => {
   const jobProfileLongName = `C2332_autotest_job_profile_long_name_${getRandomPostfix()}_${getRandomPostfix()}_${getRandomPostfix()}_${getRandomPostfix()}_${getRandomPostfix()}_${getRandomPostfix()}`;
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,

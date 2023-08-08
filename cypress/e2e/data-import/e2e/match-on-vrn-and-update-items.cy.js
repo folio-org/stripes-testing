@@ -33,7 +33,7 @@ import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE
 } from '../../../support/constants';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: End to end scenarios', () => {
   const item = {
     title: 'Agrarianism and capitalism in early Georgia, 1732-1743 / Jay Jordan Butler.',
     productId: `xyz${getRandomPostfix()}`,

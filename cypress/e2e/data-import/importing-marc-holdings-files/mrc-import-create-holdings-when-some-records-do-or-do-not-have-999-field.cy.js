@@ -11,7 +11,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Importing MARC Holdings files', () => {
   let user;
   let instanceHrid;
   const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;

@@ -22,7 +22,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import Users from '../../../support/fragments/users/users';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   let user;
   const quantityOfItems = '17';
   const marcFileName = `C375989 autotestFileName.${getRandomPostfix()}`;

@@ -27,7 +27,7 @@ import Helper from '../../../support/fragments/finance/financeHelper';
 import FileManager from '../../../support/utils/fileManager';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Importing MARC Bib files', () => {
   let instanceHrid;
   const quantityOfItems = '1';
   const marcFileNameForCreate = `C11110 autotestFile.${getRandomPostfix()}.mrc`;

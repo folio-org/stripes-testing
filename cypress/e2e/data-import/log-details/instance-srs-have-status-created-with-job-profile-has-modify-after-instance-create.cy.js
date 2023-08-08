@@ -18,7 +18,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Log details', () => {
   let user;
   const filePathForUpload = 'marcFileForC386867.mrc';
   const fileName = `C386867 autotestFileName${getRandomPostfix()}`;

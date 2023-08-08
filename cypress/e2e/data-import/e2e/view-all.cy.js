@@ -7,7 +7,7 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import DevTeams from '../../../support/dictionary/devTeams';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: End to end scenarios', () => {
   let id;
   // Create unique file name with given type to upload
   const fileType = 'mrc';

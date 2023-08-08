@@ -13,7 +13,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import Helper from '../../../support/fragments/finance/financeHelper';
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
 
-describe('ui-inventory: Update the effective location for the item', () => {
+describe('ui-inventory: Cataloging', () => {
   const itemData = {
     instanceTitle: `autoTestInstanceTitle ${Helper.getRandomBarcode()}`,
     itemBarcode: GenerateItemBarcode()

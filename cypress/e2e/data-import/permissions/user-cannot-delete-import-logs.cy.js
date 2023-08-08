@@ -10,7 +10,7 @@ import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll
 import Users from '../../../support/fragments/users/users';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: Permissions', () => {
   let user;
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const fileName = `C353641 autotestFile.${getRandomPostfix()}.mrc`;

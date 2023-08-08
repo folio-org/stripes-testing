@@ -21,7 +21,7 @@ import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordN
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import Users from '../../../support/fragments/users/users';
 
-describe('inventory', () => {
+describe('ui-inventory: Item', () => {
   let user;
   const itemData = {
     barcode: uuid(),

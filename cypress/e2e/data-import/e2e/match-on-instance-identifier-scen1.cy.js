@@ -22,7 +22,7 @@ import permissions from '../../../support/dictionary/permissions';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import', () => {
+describe('ui-data-import: End to end scenarios', () => {
   let userId;
   const fileNameForCreateInstance = `C347828autotestFile.${getRandomPostfix()}.mrc`;
   const fileNameForUpdateInstance = `C347828autotestFile.${getRandomPostfix()}.mrc`;

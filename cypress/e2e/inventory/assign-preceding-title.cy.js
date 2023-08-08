@@ -9,7 +9,7 @@ import TestTypes from '../../support/dictionary/testTypes';
 import DevTeams from '../../support/dictionary/devTeams';
 import { INSTANCE_SOURCE_NAMES } from '../../support/constants';
 
-describe('ui-inventory: Assign a Preceding title for an instance', () => {
+describe('ui-inventory: Instance', () => {
   const instanceIds = [];
   const instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
   const instanceTitle2 = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;

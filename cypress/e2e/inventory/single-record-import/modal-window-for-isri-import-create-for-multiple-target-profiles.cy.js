@@ -18,7 +18,7 @@ import FieldMappingProfiles from '../../../support/fragments/data_import/mapping
 import Users from '../../../support/fragments/users/users';
 import SingleRecordImportModal from '../../../support/fragments/inventory/singleRecordImportModal';
 
-describe('ui-inventory', () => {
+describe('ui-inventory: Single record import', () => {
   let user;
   let profileId;
   let createJobProfileId;
