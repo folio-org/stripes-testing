@@ -5,6 +5,7 @@ const deleteButton = DropdownMenu().find(Button('Delete'));
 const deleteConfirmModal = Modal({ id: 'confirm-delete-note' });
 const deleteConfirmModalHeader = Heading({ id: 'confirm-delete-note-label' });
 const confirmDeleteButton = deleteConfirmModal.find(Button('Delete'));
+const confirmCancelButton = deleteConfirmModal.find(Button('Cancel'));
 const searchResults = PaneContent({ id: 'authority-search-results-pane-content' });
 const searchResultPane = Section({ id: 'marc-view-pane' });
 
@@ -19,8 +20,20 @@ export default {
   checkDeleteModal() {
     cy.expect([
       deleteConfirmModalHeader.exists(),
-      deleteConfirmModal.find(Button('Cancel')).exists(),
+      confirmCancelButton.exists(),
       confirmDeleteButton.exists(),
+    ]);
+  },
+
+  checkDeleteModalMessage(message) {
+    cy.expect(deleteConfirmModal.has({ message: message }));
+  },
+
+  clickCancelButton() {
+    cy.do(confirmCancelButton.click());
+    cy.expect([
+      deleteConfirmModal.absent(),
+      actionsButton.exists()
     ]);
   },
 
