@@ -10,6 +10,7 @@ export default HTML.extend('modal')
     title,
     id: (el) => el.getAttribute('id'),
     content: (el) => el.textContent,
+    message: (el) => el.querySelector('[class^=modalContent]').textContent,
   })
   .actions({
     dismiss: (interactor) => interactor.find(Button({ ariaLabel: 'Dismiss modal' })).click(),
