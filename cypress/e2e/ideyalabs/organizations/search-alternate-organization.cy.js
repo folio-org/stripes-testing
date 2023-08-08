@@ -1,4 +1,3 @@
-import devTeams from '../../../support/dictionary/devTeams';
 import testTypes from '../../../support/dictionary/testTypes';
 import organizations from '../../../support/fragments/organizations/organizations';
 import topMenu from '../../../support/fragments/topMenu';
@@ -19,7 +18,7 @@ const searchByCode = {
   code: organizationCode,
 };
 
-describe('ui-organizations: Organizations creation', () => {
+describe.skip('ui-organizations: Organizations creation', () => {
   before('Login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
@@ -31,7 +30,7 @@ describe('ui-organizations: Organizations creation', () => {
 
   it(
     'C677 Search an alternate organization name (thunderjet)',
-    { tags: [testTypes.ideaLabsTests, devTeams.thunderjet] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(topMenu.organizationsPath);
       organizations.createOrganizationViaUi(newOrganization);

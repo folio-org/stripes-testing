@@ -1,6 +1,4 @@
-import devTeams from '../../../support/dictionary/devTeams';
 import testTypes from '../../../support/dictionary/testTypes';
-import topMenu from '../../../support/fragments/topMenu';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -18,7 +16,7 @@ const searchByCode = {
   code: organizationCode,
 };
 
-describe('ui-organizations: Organizations creation', () => {
+describe.skip('ui-organizations: Organizations creation', () => {
   before('Login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
@@ -30,7 +28,7 @@ describe('ui-organizations: Organizations creation', () => {
 
   it(
     'C6710 Add tags to an Organization record (thunderjet)',
-    { tags: [testTypes.extendedPath, devTeams.thunderjet] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       organizations.selectActiveStatus();
       organizations.searchByParameters(

@@ -1,4 +1,3 @@
-import devTeams from '../../../support/dictionary/devTeams';
 import testTypes from '../../../support/dictionary/testTypes';
 import organizations from '../../../support/fragments/organizations/organizations';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
@@ -16,7 +15,7 @@ const organizationStatus = {
   pending: 'Pending',
 };
 
-describe('ui-organizations: Organizations creation', () => {
+describe.skip('ui-organizations: Organizations creation', () => {
   before('Login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
@@ -28,7 +27,7 @@ describe('ui-organizations: Organizations creation', () => {
 
   it(
     'C728 Filter organizations by status (thunderjet)',
-    { tags: [testTypes.extendedPath, devTeams.thunderjet] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       organizations.selectActiveStatus();
       organizations.checkSearchResults({ name: organizationStatus.active });

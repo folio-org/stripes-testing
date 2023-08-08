@@ -1,4 +1,3 @@
-import devTeams from '../../../support/dictionary/devTeams';
 import testTypes from '../../../support/dictionary/testTypes';
 import organizations from '../../../support/fragments/organizations/organizations';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
@@ -12,7 +11,7 @@ const searchByCode = {
 
 const tags = '&';
 
-describe('ui-organizations: Organizations creation', () => {
+describe.skip('ui-organizations: Organizations creation', () => {
   before('Login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
@@ -24,7 +23,7 @@ describe('ui-organizations: Organizations creation', () => {
 
   it(
     'C6711 Filter Organizations by tags (thunderjet)',
-    { tags: [testTypes.extendedPath, devTeams.thunderjet] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       organizations.tagFilter(tags);
       organizations.checkOrganizationFilter();

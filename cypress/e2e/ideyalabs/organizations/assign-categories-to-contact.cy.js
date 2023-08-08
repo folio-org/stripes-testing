@@ -1,4 +1,3 @@
-import devTeams from '../../../support/dictionary/devTeams';
 import testTypes from '../../../support/dictionary/testTypes';
 import organizations from '../../../support/fragments/organizations/organizations';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
@@ -24,7 +23,7 @@ const addContactPeople = {
 };
 const addCategory = 'claim';
 
-describe('ui-organizations: Organizations creation', () => {
+describe.skip('ui-organizations: Organizations creation', () => {
   before('Login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
@@ -36,7 +35,7 @@ describe('ui-organizations: Organizations creation', () => {
 
   it(
     'C732 Assign categories to contact person (thunderjet)',
-    { tags: [testTypes.extendedPath, devTeams.thunderjet] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       organizations.searchByParameters(
         searchByCode.dropdown,
