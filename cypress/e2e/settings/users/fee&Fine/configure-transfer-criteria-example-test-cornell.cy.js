@@ -11,12 +11,6 @@ describe("Build the Cornell bursar transfer file", () => {
     });
   });
 
-  // Criteria: No criteria(always run)
-  it("should be able to set no criteria", () => {
-    TransferFeeFine.setCriteria(false);
-    
-  });
-
   it("should be able to set scheduling", () => {
     TransferFeeFine.setTransferCriteriaScheduling(
       "Weeks",
@@ -26,7 +20,15 @@ describe("Build the Cornell bursar transfer file", () => {
     );
   });
 
+  it("should be able to set no criteria", () => {
+    TransferFeeFine.setCriteria(false);
+    
+  });
+
   // Aggregate by patron: Box unchecked
+  it("should be able to set aggregate by patron", () => {
+    TransferFeeFine.setAggregateByPatron(false);
+  });
 
   // Header Format
   it("should be able to set header format", () => {
@@ -37,11 +39,11 @@ describe("Build the Cornell bursar transfer file", () => {
 
   // Footer Format
 
-  // Preview
 
-  // Transfer Account to
 
-  // Run manually/ save and run
+  it("should be able to run manually", () => {
+    TransferFeeFine.runManually();
+  });
 
   // Verify that the transfer was successful
 });

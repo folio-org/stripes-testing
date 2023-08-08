@@ -30,7 +30,9 @@ export default {
         TextField({ name: 'scheduling.interval' }).fillIn(interval)
       ]);
       cy.do([
-        Select({ name: 'scheduling.weekDays' }).choose(weekDays)
+        // get the multi-select element, then choose the weekday buttons
+        MultiSelect({ name: 'scheduling.weekdays' }).choose(weekDays)
+        
       ]);
     }
     else if (frequency === 'Days') {
@@ -41,6 +43,23 @@ export default {
     else if (frequency === 'Hours') {
     }
     else return;
+  },
+
+  setAggregateByPatron(aggregate) {
+    if (!aggregate) {
+      // check if the box is already unchecked
+      cy.expect(Button({ text: 'Group data by patron' }).exists());
+      // uncheck the box
+      cy.do([
+        Button({ text: 'Group data by patron' }).click()
+      ]);
+    }
+  },
+
+  runManually() {
+    cy.do([
+      Button({ text: 'Run manually' }).click(),
+    ]);
   },
 
   typeScheduleTime(time) {
