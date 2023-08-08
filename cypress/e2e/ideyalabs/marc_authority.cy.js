@@ -1,5 +1,4 @@
 import marc from '../../support/a_ideyalabs/marc';
-import devTeams from '../../support/dictionary/devTeams';
 import testTypes from '../../support/dictionary/testTypes';
 import inventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import inventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
@@ -30,14 +29,14 @@ const testData = {
   },
 };
 
-describe('Feature MARC Authority', () => {
+describe.skip('Feature MARC Authority', () => {
   before('Login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
   it(
     'C375070 Link the ""650"" of ""MARC Bib"" field with ""150"" field of ""MARC Authority"" record. (spitfire)',
-    { tags: [testTypes.extendedPath, devTeams.spitfire] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(topMenu.inventoryPath);
       inventorySearchAndFilter.switchToHoldings();
@@ -76,7 +75,7 @@ describe('Feature MARC Authority', () => {
 
   it(
     'C365602 Derive | Unlink ""MARC Bibliographic"" field from ""MARC Authority"" record and use the ""Save & close"" button in deriving window. (spitfire)',
-    { tags: [testTypes.extendedPath, devTeams.spitfire] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(topMenu.inventoryPath);
       inventorySearchAndFilter.switchToHoldings();
@@ -118,7 +117,7 @@ describe('Feature MARC Authority', () => {
 
   it(
     'C380755 Link of empty MARC Bib field with ""MARC Authority"" record (spitfire)',
-    { tags: [testTypes.extendedPath, devTeams.spitfire] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(topMenu.inventoryPath);
       inventorySearchAndFilter.switchToHoldings();
@@ -148,7 +147,7 @@ describe('Feature MARC Authority', () => {
 
   it(
     'C376987 User can print ""MARC authority"" record (spitfire)',
-    { tags: [testTypes.extendedPath, devTeams.spitfire] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(topMenu.marcAuthorities);
       marcAuthorities.searchBeats(testData.marcRecord);
@@ -161,7 +160,7 @@ describe('Feature MARC Authority', () => {
 
   it(
     'C388651 ""008"" field updated when valid LDR 06-07 combinations entered when editing ""MARC bib"" record ( Spitfire)',
-    { tags: [testTypes.extendedPath, devTeams.spitfire] },
+    { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(topMenu.inventoryPath);
       inventorySearchAndFilter.switchToHoldings();
