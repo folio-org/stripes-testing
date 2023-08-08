@@ -13,7 +13,6 @@ import {
 } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
-import ItemRecordView from '../inventory/item/itemRecordView';
 
 const loanDetailsButton = Button('Loan details');
 const patronDetailsButton = Button('Patron details');
@@ -28,10 +27,16 @@ const addItemButton = Button({ id: 'clickable-add-item' });
 const availableActionsButton = Button({ id: 'available-actions-button-0' });
 const confirmModal = Modal('Confirm multipiece check in');
 const checkInButtonInModal = confirmModal.find(Button('Check in'));
-const endSessionButton = Button('End session');
+const endSessionButton = Button({ id: 'clickable-end-session' });
 const feeFineDetailsButton = Button('Fee/fine details');
 const feeFinePane = PaneContent({ id: 'pane-account-action-history-content' });
-
+const pieces = TextField({ id:'additem_numberofpieces' });
+const numberOfPieces = TextField({ name:'numberOfPieces' });
+const numberOfMissingPieces = TextField({ name:'numberOfMissingPieces' });
+const descriptionOfmissingPieces = TextField({ name:'missingPieces' });
+const actionsButton = Button('Actions');
+const editButton = Button('Edit');
+const closeButton = Button({ icon: 'times' });
 const actionsButtons = {
   loanDetails: loanDetailsButton,
   patronDetails: patronDetailsButton,
@@ -41,12 +46,11 @@ const actionsButtons = {
   printTransitSlip: printTransitSlipButton,
   printHoldSlip: printHoldSlipButton,
 };
-
+const itemAnumberOfPieces = '2';
 const waitLoading = () => {
   cy.expect(TextField({ name: 'item.barcode' }).exists());
   cy.expect(Button('End session').exists());
 };
-
 const checkInItemGui = (barcode) => {
   return cy.do([itemBarcodeField.exists(),
     itemBarcodeField.fillIn(barcode),
@@ -59,7 +63,26 @@ export default {
     cy.expect(itemBarcodeField.exists());
     cy.expect(Button('End session').exists());
   },
-
+  clickonitem() {
+    cy.do(closeButton.click());
+  },
+  editItemDetails: (pieces, missingPieces, missingPiecesDescription) => {
+    cy.do([
+      actionsButton.click(),
+      editButton.click(),
+      numberOfPieces.click(),
+      numberOfPieces.fillIn(pieces),
+      numberOfMissingPieces.click(),
+      numberOfMissingPieces.fillIn(missingPieces),
+      descriptionOfmissingPieces.click(),
+      descriptionOfmissingPieces.fillIn(missingPiecesDescription),
+      Button('Save & close').click(),
+    ]);
+  },
+  endSession() {
+    cy.do(endSessionButton.click());
+    // cy.expect(section('No items have been entered yet.').exists())
+  },
   checkInItem:(barcode) => {
     waitLoading();
     cy.intercept('/inventory/items?*').as('getItems');
@@ -67,6 +90,10 @@ export default {
     cy.do(addItemButton.click());
     cy.wait('@getItems', getLongDelay());
     cy.wait(1000);
+  },
+  verifyCheckIn() {
+    cy.expect(checkInButtonInModal.exists());
+    cy.do(checkInButtonInModal.click());
   },
   checkInItemGui,
   getSessionIdAfterCheckInItem:(barcode) => {
@@ -80,6 +107,7 @@ export default {
   confirmCheckInLostItem:() => {
     cy.do(Button('Confirm').click());
   },
+
   openItemRecordInInventory:(status) => {
     cy.expect(MultiColumnListRow({ indexRow: 'row-0' }).find(HTML(including(status))).exists());
     cy.do(availableActionsButton.click());
@@ -89,6 +117,7 @@ export default {
     cy.wait('@getTags', getLongDelay());
     ItemRecordView.waitLoading();
   },
+
   checkActionsMenuOptions: (optionsToCheck = ['loanDetails', 'patronDetails', 'itemDetails', 'newFeeFine']) => {
     cy.expect(availableActionsButton.exists());
     cy.do(availableActionsButton.click());
@@ -97,9 +126,11 @@ export default {
     });
     cy.do(availableActionsButton.click());
   },
+
   openCheckInPane: () => {
     cy.do(checkInButton.click());
   },
+
   openLoanDetails: (username) => {
     cy.do([
       availableActionsButton.click(),
@@ -108,6 +139,7 @@ export default {
     cy.expect(Pane(including(username)).exists());
     cy.expect(Pane(including('Loan details')).exists());
   },
+
   openPatronDetails: (username) => {
     cy.do([
       availableActionsButton.click(),
@@ -115,6 +147,7 @@ export default {
     ]);
     cy.expect(Pane({ title: including(username) }).exists());
   },
+
   openItemDetails: (itemBarcode) => {
     cy.do([
       availableActionsButton.click(),
@@ -122,6 +155,18 @@ export default {
     ]);
     cy.expect(Pane(including(itemBarcode)).exists());
   },
+
+  openItemDetails2: () => {
+    cy.do([
+      availableActionsButton.click(),
+      itemDetailsButton.click(),
+      Button('Actions').click(),
+      Button('Edit').click(),
+      pieces.fillIn(itemAnumberOfPieces),
+      Button('Save & close').click(),
+    ]);
+  },
+
   openRequestDetails: (itemBarcode) => {
     cy.do([
       availableActionsButton.click(),
@@ -130,6 +175,7 @@ export default {
     cy.expect(Pane(including('Request Detail')).exists());
     cy.expect(HTML(including(itemBarcode)).exists());
   },
+
   openNewfeefinesPane: () => {
     cy.do([
       availableActionsButton.click(),
@@ -137,6 +183,7 @@ export default {
     ]);
     cy.expect(Modal(including('New fee/fine')).exists());
   },
+
   checkinItemViaApi: (body) => {
     return cy.okapiRequest({
       method: REQUEST_METHOD.POST,
@@ -148,15 +195,18 @@ export default {
       isDefaultSearchParamsRequired: false
     });
   },
+
   confirmMultipleItemsCheckin(barcode) {
     cy.do(checkInButtonInModal.click());
     cy.expect(MultiColumnList({ id:'list-items-checked-in' }).find(HTML(including(barcode))).exists());
   },
+
   verifyLastCheckInItem(itemBarcode) {
     return cy.expect(MultiColumnListRow({ indexRow: 'row-0' })
       .find(MultiColumnListCell({ content: including(itemBarcode) }))
       .exists());
   },
+
   endCheckInSession:() => {
     cy.do(endSessionButton.click());
     cy.intercept('/circulation/end-patron-action-session').as('end-patron-session');
@@ -164,6 +214,7 @@ export default {
       cy.wrap(xhr.response.statusCode).should('eq', 204);
     });
   },
+
   checkFeeFinesDetails(billedAmount, instanceBarcode, loanPolicyName, OverdueFinePolicyName, LostItemFeePolicyName) {
     cy.do(availableActionsButton.click());
     cy.do(feeFineDetailsButton.click());
