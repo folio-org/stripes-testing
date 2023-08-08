@@ -116,6 +116,7 @@ const newMarcBibButton = Button({ id: 'clickable-newmarcrecord' });
 const quickMarcPaneHeader = PaneHeader({ id: 'paneHeaderquick-marc-editor-pane' });
 const detailsPaneContent = PaneContent({ id: 'pane-instancedetails-content' });
 const administrativeDataAccordion = Accordion('Administrative data');
+const unlinkIconButton = Button({ icon: 'unlink' });
 
 const validOCLC = { id:'176116217',
   // TODO: hardcoded count related with interactors getters issue. Redesign to cy.then(QuickMarkEditor().rowsCount()).then(rowsCount => {...}
@@ -237,9 +238,29 @@ export default {
     cy.expect(section.find(HTML(including('FOLIO'))).absent());
   },
 
+  verifyUnlinkIcon(tag) {
+    // Waiter needed for the link to be loaded properly.
+    cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(unlinkIconButton).exists());
+  },
+
+  verifyLinkIcon(tag) {
+    // Waiter needed for the link to be loaded properly.
+    cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(linkIconButton).exists());
+  },
+
   goToEditMARCBiblRecord:() => {
     cy.do(actionsButton.click());
     cy.do(editMARCBibRecordButton.click());
+  },
+
+  selectTopRecord() {
+    cy.do(MultiColumnListRow({ index: 0 }).find(MultiColumnListCell({ columnIndex: 1 })).find(Button()).click());
+  },
+
+  deriveNewMarcBibRecord:() => {
+    cy.do(actionsButton.click());
+    cy.do(deriveNewMarcBibRecord.click());
+    cy.expect(QuickMarcEditor().exists());
   },
 
   viewSource: () => {
@@ -302,6 +323,12 @@ export default {
     cy.get('@link').then((link) => {
       cy.visit(link);
     });
+  },
+
+  verifyAndClickUnlinkIcon(tag) {
+    // Waiter needed for the link to be loaded properly.
+    cy.wait(1000);
+    cy.do(QuickMarcEditorRow({ tagValue: tag }).find(unlinkIconButton).click());
   },
 
   clickViewAuthorityIconDisplayedInInstanceDetailsPane(accordion) {
@@ -600,6 +627,7 @@ export default {
     InventoryInstanceSelectInstanceModal.selectInstance();
     InventoryInstancesMovement.move();
   },
+
   moveHoldingsToAnotherInstanceByItemTitle: (holdingName, title) => {
     cy.do(actionsButton.click());
     cy.do(moveHoldingsToAnotherInstanceButton.click());
@@ -608,6 +636,7 @@ export default {
     InventoryInstanceSelectInstanceModal.selectInstance();
     InventoryInstancesMovement.moveFromMultiple(holdingName, title);
   },
+
   checkAddItem:(holdingsRecordId) => {
     cy.expect(section.find(Section({ id:holdingsRecordId }))
       .find(Button({ id: `clickable-new-item-${holdingsRecordId}` }))

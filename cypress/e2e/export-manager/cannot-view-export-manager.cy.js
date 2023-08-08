@@ -11,7 +11,7 @@ describe('export manager', () => {
   before('create user', () => {
     cy.createTempUser([])
       .then(userProperties => {
-        user = userProperties
+        user = userProperties;
         cy.login(user.username, user.password);
       });
   });
