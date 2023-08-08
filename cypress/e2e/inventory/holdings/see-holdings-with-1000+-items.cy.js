@@ -17,8 +17,7 @@ describe('ui-inventory: holdings', () => {
   let user;
   let defaultLocation;
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation('autotestservicePoint', uuid());
-  // const quantityOfItems = 1005;
-  const quantityOfItems = 10;
+  const quantityOfItems = 1005;
   const testData = {
     instanceTitle: `Instance ${getRandomPostfix()}`
   };
@@ -76,13 +75,7 @@ describe('ui-inventory: holdings', () => {
     Users.deleteViaApi(user.userId);
     cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${testData.instanceTitle}"` })
       .then((instance) => {
-        instance.items.forEach(el => {
-          console.log(el);
-          cy.pause();
-          //cy.deleteItemViaApi(instance.items[el].id);
-        });
-        cy.pause();
-        // cy.deleteItemViaApi(instance.items[0].id);
+        instance.items.forEach(el => cy.deleteItemViaApi(el.id));
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
@@ -99,10 +92,10 @@ describe('ui-inventory: holdings', () => {
     { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
       InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', testData.instanceTitle);
       InstanceRecordView.verifyInstanceRecordViewOpened();
-      // InstanceRecordView.verifyItemsCount(quantityOfItems, defaultLocation.name);
-      // InventoryInstance.openHoldingsAccordion(`${defaultLocation.name} >`);
-      // InstanceRecordView.verifyQuantityOfItemsOnPage(quantityOfItems, testData.loanTypeName);
-      // InstanceRecordView.clickNextPaginationButton();
-      // InstanceRecordView.verifyQuantityOfItemsOnPage(quantityOfItems, testData.loanTypeName);
+      InstanceRecordView.verifyItemsCount(quantityOfItems, defaultLocation.name);
+      InventoryInstance.openHoldingsAccordion(`${defaultLocation.name} >`);
+      InstanceRecordView.verifyQuantityOfItemsOnPage(quantityOfItems, testData.loanTypeName);
+      InstanceRecordView.clickNextPaginationButton();
+      InstanceRecordView.verifyQuantityOfItemsOnPage(quantityOfItems, testData.loanTypeName);
     });
 });
