@@ -7,6 +7,9 @@ import testTypes from '../../../../support/dictionary/testTypes';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import FileManager from '../../../../support/utils/fileManager';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
+import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
+import UserEdit from '../../../../support/fragments/users/userEdit';
+import UsersCard from '../../../../support/fragments/users/usersCard';
 
 let user;
 const newName = `testName_${getRandomPostfix()}`;
@@ -21,6 +24,7 @@ describe('Bulk Edit - Logs', () => {
       permissions.bulkEditLogsView.gui,
       permissions.bulkEditCsvView.gui,
       permissions.bulkEditCsvEdit.gui,
+      permissions.uiUserEdit.gui,
     ])
       .then(userProperties => {
         user = userProperties;
@@ -57,6 +61,26 @@ describe('Bulk Edit - Logs', () => {
 
     BulkEditActions.openActions();
     BulkEditActions.downloadChangedCSV();
+
+    cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
+    UsersSearchPane.searchByUsername(user.username);
+    UsersSearchPane.openUser(user.username);
+    UserEdit.addPermissions([
+      permissions.uiUserEdit.gui
+    ]);
+    UserEdit.saveAndClose();
+    cy.pause();
+    UsersCard.verifyPermissions([
+      permissions.bulkEditLogsView.gui,
+      permissions.bulkEditCsvView.gui,
+      permissions.bulkEditCsvEdit.gui,
+    ]);
+
+    cy.login(user.username, user.password, {
+      path: TopMenu.bulkEditPath,
+      waiter: BulkEditSearchPane.waitLoading
+    });
+
     BulkEditSearchPane.openLogsSearch();
     BulkEditSearchPane.verifyLogsPane();
     BulkEditSearchPane.checkUsersCheckbox();

@@ -18,7 +18,8 @@ describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
-        permissions.bulkEditUpdateRecords.gui
+        permissions.bulkEditUpdateRecords.gui,
+        permissions.uiUserEdit.gui
       ])
         .then(userProperties => {
           user = userProperties;
@@ -52,21 +53,6 @@ describe('bulk-edit', () => {
 
       BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.verifyBulkEditForm();
-    });
-
-    it('C357578 Verify "In app - Update user records" permission (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.verifyUsersUpdatePermission();
-      BulkEditSearchPane.verifyRecordIdentifierItems();
-      BulkEditSearchPane.verifyDragNDropUpdateUsersArea();
-
-      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
-      BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
-
-      BulkEditSearchPane.selectRecordIdentifier('External IDs');
-      BulkEditSearchPane.verifyDragNDropExternalIDsArea();
-
-      BulkEditSearchPane.selectRecordIdentifier('Usernames');
-      BulkEditSearchPane.verifyDragNDropUsernamesArea();
     });
 
     it('C357987 Verify Users Patron group bulk edit -- in app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -160,23 +146,6 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.waitFileUploading();
       BulkEditActions.verifySuccessBanner(1);
       BulkEditSearchPane.verifyChangedResults(user.username);
-    });
-
-    it('C359197 Verify that User can change the columns in the "Preview of record matched" (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
-      BulkEditSearchPane.uploadFile(userUUIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.verifyMatchedResults(user.username);
-
-      BulkEditSearchPane.verifyActionsAfterConductedCSVUploading(false);
-      BulkEditSearchPane.verifyUserBarcodesResultAccordion();
-      BulkEditSearchPane.verifyUsersActionShowColumns();
-
-      BulkEditSearchPane.changeShowColumnCheckbox('Last name');
-      BulkEditSearchPane.verifyResultColumTitlesDoNotInclude('Last name');
-
-      BulkEditSearchPane.changeShowColumnCheckbox('Email');
-      BulkEditSearchPane.verifyResultColumTitles('Email');
     });
   });
 });

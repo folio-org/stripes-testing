@@ -94,6 +94,8 @@ export default {
   uiUserCreate: { internal: 'ui-users.create', gui: 'Users: Create users' },
   uiUsersCreate: { internal: 'ui-users.create', gui: 'Users: Can create new user' },
   uiUserEdit: { internal: 'ui-users.edit', gui: 'Users: Can edit user profile' },
+  uiUsersDelete: { internal: 'ui-users.delete', gui: 'Users: Can delete user profile if user does not have any open transactions' },
+  uiUsersCheckTransactions: { internal: 'ui-users.opentransactions', gui: 'Users: Can check open transactions' },
   uiUserAccounts: { internal: 'ui-users.accounts', gui: 'Fee/Fine History: Can create, edit and remove accounts' },
   uiUsersViewLoans: { internal: 'ui-users.loans.view', gui: 'Users: User loans view' },
   uiUserLoansAnonymize: { internal: 'ui-users.loans.anonymize', gui: 'Users: User loans anonymize' },
