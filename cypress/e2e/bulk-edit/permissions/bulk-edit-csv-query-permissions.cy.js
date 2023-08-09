@@ -66,7 +66,7 @@ describe('bulk-edit', () => {
 
       BulkEditSearchPane.openQuerySearch();
       BulkEditSearchPane.verifySpecificTabHighlighted('Query');
-      BulkEditSearchPane.usersRadioIsDisabled(true);
+      BulkEditSearchPane.usersRadioIsDisabled(false);
       BulkEditSearchPane.isBuildQueryButtonDisabled(false);
 
       BulkEditSearchPane.clickBuildQueryButton();
