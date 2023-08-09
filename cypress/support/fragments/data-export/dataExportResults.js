@@ -24,9 +24,9 @@ export default {
       exported: MultiColumnListCell({ 'row': 0, columnIndex: 3 }),
       failed: MultiColumnListCell({ 'row': 0, columnIndex: 4 }),
       jobProfile: MultiColumnListCell({ 'row': 0, columnIndex: 5 }),
-      endedRunning: MultiColumnListCell({ 'row': 0, columnIndex: 6 }),
-      runBy: MultiColumnListCell({ 'row': 0, columnIndex: 7 }),
-      id: MultiColumnListCell({ 'row': 0, columnIndex: 8 }),
+      endedRunning: MultiColumnListCell({ 'row': 0, columnIndex: 7 }),
+      runBy: MultiColumnListCell({ 'row': 0, columnIndex: 8 }),
+      id: MultiColumnListCell({ 'row': 0, columnIndex: 9 }),
     };
     cy.getAdminToken().then(() => {
       cy.getUsers({ limit: 1, query: `username=${userName || Cypress.env('diku_login')}` }).then(() => {
@@ -70,9 +70,9 @@ export default {
       exported: MultiColumnListCell({ 'row': 0, columnIndex: 3 }),
       failed: MultiColumnListCell({ 'row': 0, columnIndex: 4 }),
       jobProfile: MultiColumnListCell({ 'row': 0, columnIndex: 5 }),
-      endedRunning: MultiColumnListCell({ 'row': 0, columnIndex: 6 }),
-      runBy: MultiColumnListCell({ 'row': 0, columnIndex: 7 }),
-      id: MultiColumnListCell({ 'row': 0, columnIndex: 8 }),
+      endedRunning: MultiColumnListCell({ 'row': 0, columnIndex: 7 }),
+      runBy: MultiColumnListCell({ 'row': 0, columnIndex: 8 }),
+      id: MultiColumnListCell({ 'row': 0, columnIndex: 9 }),
     };
     cy.getAdminToken().then(() => {
       cy.getUsers({ limit: 1, query: `username=${userName || Cypress.env('diku_login')}` }).then(() => {

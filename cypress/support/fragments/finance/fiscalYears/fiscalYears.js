@@ -21,7 +21,10 @@ const saveAndClose = Button('Save & Close');
 const agreements = Button('Agreements');
 const buttonNew = Button('New');
 const actions = Button('Actions');
+const edit = Button('Edit');
 const deleteButton = Button('Delete');
+const fiscalYear = Button('Fiscal year');
+const Ledgertab = Button('Ledger');
 const resetButton = Button({ id: 'reset-fiscal-years-filters' });
 export default {
 
@@ -33,6 +36,7 @@ export default {
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
     series: 'FY'
   },
+
   defaultRolloverFiscalYear: {
     name: `autotest_year_${getRandomPostfix()}`,
     code: DateTools.getRandomFiscalYearCodeForRollover(2000, 9999),
@@ -42,7 +46,7 @@ export default {
     series: 'FYTA'
   },
 
-  waitForFiscalYearDetailsLoading : () => {
+  waitForFiscalYearDetailsLoading: () => {
     cy.do(Pane({ id: 'pane-fiscal-year-details' }).exists);
   },
 
@@ -65,6 +69,22 @@ export default {
   openAcquisitionAccordion() {
     cy.do(Button({ id: 'accordion-toggle-button-acqUnitIds' }).click());
   },
+  clickOnFiscalYear: () => {
+    cy.do([
+      fiscalYear.click()
+    ]);
+  },
+  clickOnLedgerTab: () => {
+    cy.do([
+      Ledgertab.click()
+    ]);
+  },
+  editFiscalYearDetails: () => {
+    cy.do([
+      actions.click(),
+      edit.click()
+    ]);
+  },
 
   selectNoAcquisitionUnit() {
     cy.do([Button({ id: 'acqUnitIds-selection' }).click(),
@@ -77,6 +97,24 @@ export default {
     cy.xpath(createdFiscalYearNameXpath)
       .should('be.visible')
       .and('have.text', fiscalYearName);
+  },
+  filltheStartAndEndDateoncalenderstartDateField1: () => {
+    cy.do([
+      TextField({ name: 'periodStart' }).clear(),
+      TextField({ name: 'periodStart' }).fillIn('01/01/2022'),
+      TextField({ name: 'periodEnd' }).clear(),
+      TextField({ name: 'periodEnd' }).fillIn('12/30/2022'),
+      saveAndClose.click()
+    ]);
+  },
+  filltheStartAndEndDateoncalenderstartDateField2: () => {
+    cy.do([
+      TextField({ name: 'periodStart' }).clear(),
+      TextField({ name: 'periodStart' }).fillIn('01/01/2024'),
+      TextField({ name: 'periodEnd' }).clear(),
+      TextField({ name: 'periodEnd' }).fillIn('12/30/2024'),
+      saveAndClose.click()
+    ]);
   },
 
   tryToCreateFiscalYearWithoutMandatoryFields: (fiscalYearName) => {
@@ -107,6 +145,10 @@ export default {
       .find(MultiColumnListCell(fiscalYear))
       .exists());
   },
+  checkSearchResults1: (fiscalYear) => {
+    cy.expect(MultiColumnList({ id: 'fiscal-years-list' })
+      .find(MultiColumnListCell(fiscalYear)).click());
+  },
 
   fiscalYearsDisplay: () => {
     cy.expect(MultiColumnList({ id: 'fiscal-years-list' }).exists());
@@ -120,7 +162,7 @@ export default {
     cy.do([
       actions.click(),
       deleteButton.click(),
-      Button('Delete', { id:'clickable-fiscal-year-remove-confirmation-confirm' }).click()
+      Button('Delete', { id: 'clickable-fiscal-year-remove-confirmation-confirm' }).click()
     ]);
   },
 
@@ -148,11 +190,11 @@ export default {
     isDefaultSearchParamsRequired: false,
   }),
 
-  selectFY:(FYName) => {
+  selectFY: (FYName) => {
     cy.do(Section({ id: 'fiscal-year-results-pane' }).find(Link(FYName)).click());
   },
 
-  expextFY:(FYName) => {
+  expextFY: (FYName) => {
     cy.expect(Section({ id: 'fiscal-year-results-pane' }).find(Link(FYName)).exists());
   },
 

@@ -9,7 +9,8 @@ import {
   MultiColumnList,
   Pane,
   Select,
-  TextArea
+  TextArea,
+  Link
 } from '../../../../interactors';
 import InventoryViewSource from './inventoryViewSource';
 import InventoryNewHoldings from './inventoryNewHoldings';
@@ -25,6 +26,7 @@ const deleteConfirmationModal = Modal({ id:'delete-confirmation-modal' });
 const holdingHrIdKeyValue = KeyValue('Holdings HRID');
 const closeButton = Button({ icon: 'times' });
 const electronicAccessAccordion = Accordion('Electronic access');
+const acquisitionAccordion = Accordion('Acquisition');
 const addElectronicAccessButton = Button('Add electronic access');
 const relationshipSelectDropdown = Select('Relationship');
 const uriTextarea = TextArea({ ariaLabel: 'URI' });
@@ -114,7 +116,9 @@ export default {
   checkReadOnlyFields:() => {},
   checkHoldingsType: type => cy.expect(KeyValue('Holdings type').has({ value: type })),
   checkCallNumberType: number => cy.expect(KeyValue('Call number type').has({ value: number })),
-  checkCallNumber:callNumber => cy.expect(KeyValue('Call number').has({ value: callNumber })),
+  checkCallNumber: callNumber => cy.expect(KeyValue('Call number').has({ value: callNumber })),
+  checkCallNumberPrefix: prefix => cy.expect(KeyValue('Call number prefix').has({ value: prefix })),
+  checkCallNumberSuffix: prefix => cy.expect(KeyValue('Call number suffix').has({ value: prefix })),
   checkFormerHoldingsId: value => cy.expect(KeyValue('Former holdings ID', { value }).exists()),
   checkIllPolicy: value => cy.expect(KeyValue('ILL policy', { value }).exists()),
   checkDigitizationPolicy: expectedPolicy => cy.expect(KeyValue('Digitization policy', { value: expectedPolicy }).exists()),
@@ -136,16 +140,29 @@ export default {
   checkMarkAsSuppressedFromDiscovery:() => cy.expect(root
     .find(HTML(including('Warning: Holdings is marked suppressed from discovery')))
     .exists()),
-  checkElectronicAccess:(relationshipValue, uriValue) => {
+  checkMarkAsSuppressedFromDiscoveryAbsent: () => cy.expect(root
+    .find(HTML(including('Warning: Holdings is marked suppressed from discovery')))
+    .absent()),
+  checkElectronicAccess:(relationshipValue, uriValue, linkText = '-', urlPublicNote = '-') => {
     cy.expect(electronicAccessAccordion
       .find(MultiColumnListCell({ row: 0, columnIndex: 0, content: relationshipValue }))
       .exists());
     cy.expect(electronicAccessAccordion
       .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: uriValue }))
       .exists());
+    cy.expect(electronicAccessAccordion
+      .find(MultiColumnListCell({ row: 0, columnIndex: 2, content: linkText }))
+      .exists());
+    cy.expect(electronicAccessAccordion
+      .find(MultiColumnListCell({ row: 0, columnIndex: 4, content: urlPublicNote }))
+      .exists());
   },
   checkHoldingRecordViewOpened: () => {
     cy.expect(Pane({ id:'ui-inventory.holdingsRecordView' }).exists());
+  },
+  checkHotlinkToPOL:(number) => {
+    cy.expect(acquisitionAccordion.find(MultiColumnListCell({ row: 0, content: number })).exists());
+    cy.expect(acquisitionAccordion.find(Link({ href: including('/orders/lines/view') })).exists());
   },
   addElectronicAccess: (type) => {
     cy.expect(electronicAccessAccordion.exists());
@@ -161,5 +178,12 @@ export default {
     // parse hodling record id from current url
     cy.url().then(url => cy.wrap(url.split('?')[0].split('/').at(-1)).as('holdingsRecorId'));
     return cy.get('@holdingsRecorId');
+  },
+  getHoldingsIDInDetailView() {
+    cy.url().then(url => {
+      const holdingsID = url.split('/')[6].split('?')[0];
+      cy.wrap(holdingsID).as('holdingsID');
+    });
+    return cy.get('@holdingsID');
   }
 };

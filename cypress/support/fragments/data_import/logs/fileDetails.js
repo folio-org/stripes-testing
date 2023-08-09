@@ -228,11 +228,12 @@ export default {
   },
 
   checkStatusByTitle:(title, itemStatus) => {
-    cy.do(MultiColumnListCell({ content: title }).perform(
+    cy.do(resultsList.find(MultiColumnListCell({ content: title })).perform(
       element => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
 
-        cy.expect(MultiColumnListRow({ indexRow: rowNumber })
+        cy.wait(1000);
+        cy.expect(resultsList.find(MultiColumnListRow({ indexRow: rowNumber }))
           .find(MultiColumnListCell({ columnIndex: 5 }))
           .has({ content: itemStatus }));
       }
@@ -286,15 +287,15 @@ export default {
 
     // get MultiColumnList rows and loop over
     return cy.get('#search-results-list')
-    .find('[data-row-index]').each($row => {
+      .find('[data-row-index]').each($row => {
       // from each row, choose specific cell
-      cy.get(`[class*="mclCell-"]:nth-child(${cell})`, { withinSubject: $row })
-      // extract its text content
-        .invoke('text')
-        .then(cellValue => {
-          cells.push(cellValue);
-        });
-    })
+        cy.get(`[class*="mclCell-"]:nth-child(${cell})`, { withinSubject: $row })
+        // extract its text content
+          .invoke('text')
+          .then(cellValue => {
+            cells.push(cellValue);
+          });
+      })
       .then(() => cells);
   },
 

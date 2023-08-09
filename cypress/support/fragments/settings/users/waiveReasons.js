@@ -1,5 +1,5 @@
 import { including } from 'bigtest';
-import { Button, MultiColumnListCell, MultiColumnListRow, PaneHeader, Section, TextField, Modal, MultiColumnListHeader } from '../../../../../interactors';
+import { Button, MultiColumnListCell, MultiColumnListRow, PaneHeader, Section, TextField, Modal } from '../../../../../interactors';
 import { getTestEntityValue } from '../../../utils/stringTools';
 
 
@@ -10,7 +10,6 @@ const reasonTextField = rootSection.find(TextField({ placeholder: 'nameReason' }
 const descriptionTextField = TextField({ placeholder: 'description' });
 
 const getRowByReason = (reason) => cy.then(() => rootSection.find(MultiColumnListCell(reason)).row());
-const getDescriptionColumnIdex = () => cy.then(() => rootSection.find(MultiColumnListHeader('Description')).index());
 
 export default {
   waitLoading:() => cy.expect(rootSection.find(PaneHeader('Fee/fine: Waive reasons')).exists()),
@@ -30,13 +29,6 @@ export default {
   },
   checkReasonValidatorMessage:() => {
     cy.expect(reasonTextField.has({ error: 'Please fill this in to continue' }));
-  },
-  checkReason:({ reason, description }) => {
-    getRowByReason(reason).then(row => {
-      getDescriptionColumnIdex().then(descriptionColumnIdex => {
-        cy.expect(rootSection.find(MultiColumnListRow({ ariaRowIndex: row })).find(MultiColumnListCell({ columnIndex: descriptionColumnIdex })).has({ text: description }));
-      });
-    });
   },
   startEdit:(reason) => {
     getRowByReason(reason).then(row => {

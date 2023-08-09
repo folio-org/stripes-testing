@@ -17,8 +17,8 @@ import {
 } from '../../../../interactors';
 import { ListRow } from '../../../../interactors/multi-column-list';
 
-const logsStartDateAccordion = Accordion('Start date');
-const logsEndDateAccordion = Accordion('End date');
+const logsStartDateAccordion = Accordion('Started');
+const logsEndDateAccordion = Accordion('Ended');
 const applyBtn = Button('Apply');
 const logsResultPane = Pane({ id: 'bulk-edit-logs-pane' });
 const resultsAccordion = Accordion('Preview of record matched');
@@ -54,6 +54,7 @@ const errorsCommittingBtn = DropdownMenu().find(Button('File with errors encount
 const buildQueryButton = Button('Build query');
 const buildQueryModal = Modal('Build query');
 const logsActionButton = Button({ icon: 'ellipsis' });
+const startBulkEditLocalButton = Button('Start bulk edit (Local)');
 
 export default {
   waitLoading() {
@@ -247,7 +248,7 @@ export default {
     ]);
   },
 
-  verifyDragNDropUsersUIIDsArea() {
+  verifyDragNDropUsersUUIDsArea() {
     this.checkUsersRadio();
     this.selectRecordIdentifier('User UUIDs');
     cy.expect([
@@ -370,8 +371,8 @@ export default {
       recordTypesAccordion.find(Checkbox('Users')).has({ checked: false }),
       recordTypesAccordion.find(Checkbox('Inventory - items')).has({ checked: false }),
       recordTypesAccordion.find(Checkbox('Inventory - holdings')).has({ checked: false }),
-      Accordion('Start date').has({ open: false }),
-      Accordion('End date').has({ open: false }),
+      logsStartDateAccordion.has({ open: false }),
+      logsEndDateAccordion.has({ open: false }),
       bulkEditPane.find(HTML('Enter search criteria to start search')).exists(),
       bulkEditPane.find(HTML('Choose a filter to show results.')).exists(),
     ]);
@@ -418,7 +419,7 @@ export default {
 
   verifyDefaultFilterState() {
     cy.expect([
-      Button('or choose file').has({ disabled: true }),
+      fileButton.has({ disabled: true }),
       HTML('Select record identifier').exists()
     ]);
     this.verifyBulkEditPaneItems();
@@ -477,7 +478,7 @@ export default {
   },
 
   uploadFile(fileName) {
-    cy.do(Button('or choose file').has({ disabled: false }));
+    cy.do(fileButton.has({ disabled: false }));
     cy.get('input[type=file]').attachFile(fileName, { allowEmpty: true });
   },
 
@@ -501,7 +502,7 @@ export default {
 
   verifySpecificItemsMatched(...values) {
     values.forEach(value => {
-      cy.expect(resultsAccordion.find(MultiColumnListCell({ content: value })).exists());
+      cy.expect(resultsAccordion.find(MultiColumnListCell({ content: including(value) })).exists());
     });
   },
 
@@ -563,7 +564,7 @@ export default {
     cy.do(actions.click());
     cy.expect([
       Button('Download matched records (CSV)').exists(),
-      Button('Start bulk edit (CSV)').exists(),
+      startBulkEditLocalButton.exists(),
       DropdownMenu().find(HTML('Show columns')).exists(),
     ]);
     if (errors) {
@@ -581,6 +582,15 @@ export default {
     if (errors) {
       cy.expect(Button('Download errors (CSV)').exists());
     }
+  },
+
+  verifyActionsAfterChangingRecords() {
+    cy.do(actions.click());
+    cy.expect([
+      Button('Download matched records (CSV)').absent(),
+      Button('Start bulk edit').absent(),
+      DropdownMenu().find(HTML('Show columns')).exists(),
+    ]);
   },
 
   verifyUsersActionShowColumns() {
@@ -713,10 +723,6 @@ export default {
 
   verifyResultColumTitles(title) {
     cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).exists());
-  },
-
-  verifyResultColumnValue(value) {
-    cy.expect(MultiColumnListCell(value).exists());
   },
 
   verifyResultColumTitlesDoNotInclude(title) {

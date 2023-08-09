@@ -1,3 +1,4 @@
+import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
@@ -9,7 +10,6 @@ import { LOAN_TYPE_NAMES,
   JOB_STATUS_NAMES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import Helper from '../../../support/fragments/finance/financeHelper';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -21,36 +21,33 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('ui-data-import', () => {
   let firstUser;
   let secondUser;
-  let instanceHrid;
   const quantityOfItems = '1';
-  const nameMarcFile = `C356841autotestFile.${Helper.getRandomBarcode()}.mrc`;
+  const nameMarcFile = `C356841autotestFile.${getRandomPostfix()}.mrc`;
   const collectionOfMappingAndActionProfiles = [
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `C356841 holdings mapping profile ${Helper.getRandomBarcode()}`,
+        name: `C356841 holdings mapping profile ${getRandomPostfix()}}`,
         pernanentLocation: `"${LOCATION_NAMES.ONLINE}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-        name: `C356841 holdings action profile ${Helper.getRandomBarcode()}` }
+        name: `C356841 holdings action profile ${getRandomPostfix()}` }
     },
     {
       mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C356841 item mapping profile ${Helper.getRandomBarcode()}`,
+        name: `C356841 item mapping profile ${getRandomPostfix()}`,
         permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
         status: ITEM_STATUS_NAMES.AVAILABLE,
         materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"` },
       actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-        name: `C356841 item action profile ${Helper.getRandomBarcode()}` }
+        name: `C356841 item action profile ${getRandomPostfix()}` }
     }
   ];
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: `C356841 job profile ${Helper.getRandomBarcode()}`
+    profileName: `C356841 job profile ${getRandomPostfix()}}`
   };
 
   before('create test data', () => {
@@ -81,12 +78,6 @@ describe('ui-data-import', () => {
       ActionProfiles.deleteActionProfile(profile.actionProfile.name);
       FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
     });
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-      .then((instance) => {
-        cy.deleteItemViaApi(instance.items[0].id);
-        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
   });
 
   it('C356841 Confirm a user with limited Data Import permissions can import a file (folijet)',
@@ -157,11 +148,5 @@ describe('ui-data-import', () => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
       });
       FileDetails.checkItemQuantityInSummaryTable(quantityOfItems);
-
-      // get Instance HRID through API
-      InventorySearchAndFilter.getInstanceHRID()
-        .then(hrId => {
-          instanceHrid = hrId[0];
-        });
     });
 });

@@ -112,7 +112,8 @@ export const FOLIO_RECORD_TYPE = {
   ITEM:'Item',
   ORDER:'Order',
   INVOICE:'Invoice',
-  MARCBIBLIOGRAPHIC:'MARC Bibliographic'
+  MARCBIBLIOGRAPHIC:'MARC Bibliographic',
+  MARCAUTHORITY: 'MARC Authority'
 };
 
 export const PAYMENT_METHOD = {
@@ -144,6 +145,18 @@ export const ORDER_FORMAT_NAMES = {
   OTHER: 'Other',
   PHYSICAL_RESOURCE: 'Physical resource',
   PHYSICAL_RESOURCE_Check: 'Physical Resource',
+};
+
+export const ORDER_FORMAT_NAMES_IN_PROFILE = {
+  ELECTRONIC_RESOURCE: 'Electronic Resource',
+  PE_MIX: 'P/E Mix',
+  OTHER: 'Other',
+  PHYSICAL_RESOURCE: 'Physical Resource',
+};
+
+export const ACQUISITION_METHOD_NAMES_IN_PROFILE = {
+  APPROVAL_PLAN: 'Approval plan',
+  PURCHASE_AT_VENDOR_SYSTEM: 'Purchase at vendor system'
 };
 
 export const RECEIVING_WORKFLOW_NAMES = {
@@ -181,7 +194,8 @@ export const INSTANCE_STATUS_TERM_NAMES = {
   CATALOGED: 'Cataloged',
   UNCATALOGED: 'Uncataloged',
   OTHER: 'Other',
-  NOTYETASSIGNED: 'Not yet assigned'
+  NOTYETASSIGNED: 'Not yet assigned',
+  ELECTRONIC_RESOURCE: 'Electronic Resource'
 };
 
 export const CALL_NUMBER_TYPE_NAMES = {
@@ -220,11 +234,23 @@ export const EXISTING_RECORDS_NAMES = {
   INSTANCE: 'INSTANCE',
   HOLDINGS: 'HOLDINGS',
   ITEM: 'ITEM',
-  MARC_BIBLIOGRAPHIC: 'MARC_BIBLIOGRAPHIC'
+  MARC_BIBLIOGRAPHIC: 'MARC_BIBLIOGRAPHIC',
+  MARC_AUTHORITY: 'MARC_AUTHORITY'
 };
 
 export const JOB_STATUS_NAMES = {
   COMPLETED: 'Completed',
   COMPLETED_WITH_ERRORS: 'Completed with errors',
   FAILED: 'Failed'
+};
+
+export const VENDOR_NAMES = {
+  GOBI: 'GOBI Library Solutions',
+  HARRASSOWITZ: 'Otto Harrassowitz GmbH & Co. KG',
+  EBSCO:'EBSCO SUBSCRIPTION SERVICES'
+};
+
+export const HOLDINGS_TYPE_NAMES = {
+  ELECTRONIC: 'Electronic',
+  MONOGRAPH: 'Monograph'
 };

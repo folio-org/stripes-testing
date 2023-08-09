@@ -287,3 +287,14 @@ Cypress.Commands.add('getProductIdTypes', (searchParams) => {
       return response.body.identifierTypes[0];
     });
 });
+
+Cypress.Commands.add('getRecordDataInEditorViaApi', (holdingsID) => {
+  cy
+    .okapiRequest({
+      method: 'GET',
+      path: `records-editor/records?externalId=${holdingsID}`,
+      isDefaultSearchParamsRequired: false
+    })
+    .then(({ body }) => cy.wrap(body).as('body'));
+  return cy.get('@body');
+});

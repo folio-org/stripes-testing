@@ -79,8 +79,8 @@ describe('orders: Receiving and Check-in', () => {
                 Orders.searchByParameter('PO number', orderNumber);
                 Orders.selectFromResultsList();
                 Orders.createPOLineViaActions();
-                OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
-                OrderLines.fillInPOLineInfoForExportWithLocationForPhisicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', locationResponse.institutionId, '4');
+                OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
+                OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', locationResponse.institutionId, '4');
                 OrderLines.backToEditingOrder();
                 Orders.openOrder();
                 OrderLines.selectPOLInOrder(0);

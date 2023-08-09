@@ -8,6 +8,7 @@ import devTeams from '../../../support/dictionary/devTeams';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import Users from '../../../support/fragments/users/users';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
 let holdingsHRID;
@@ -65,7 +66,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.waitFileUploading();
       BulkEditSearchPane.verifyMatchedResults(holdingsHRID);
       BulkEditActions.openActions();
-      BulkEditActions.newBulkEdit();
+      TopMenuNavigation.navigateToApp('Bulk edit');
 
       BulkEditSearchPane.checkHoldingsRadio();
       BulkEditSearchPane.selectRecordIdentifier('Instance HRIDs');
@@ -73,7 +74,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.waitFileUploading();
       BulkEditSearchPane.verifyMatchedResults(holdingsHRID);
       BulkEditActions.openActions();
-      BulkEditActions.newBulkEdit();
+      TopMenuNavigation.navigateToApp('Bulk edit');
 
       BulkEditSearchPane.checkHoldingsRadio();
       BulkEditSearchPane.selectRecordIdentifier('Item barcodes');
@@ -81,7 +82,6 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.waitFileUploading();
       BulkEditSearchPane.verifyNonMatchedResults(invalidItemBarcodes);
       BulkEditActions.openActions();
-      BulkEditActions.newBulkEdit();
     });
   });
 });

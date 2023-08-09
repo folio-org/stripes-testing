@@ -23,6 +23,7 @@ const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
 let source;
 let servicePointId;
+let firstName;
 
 describe('circulation-log', () => {
   before('create inventory instance', () => {
@@ -33,6 +34,7 @@ describe('circulation-log', () => {
     ])
       .then(userProperties => {
         userId = userProperties.userId;
+        firstName = userProperties.firstName;
         cy.login(userProperties.username, userProperties.password);
         cy.visit(TopMenu.circulationLogPath);
         cy.getAdminToken()
@@ -203,5 +205,11 @@ describe('circulation-log', () => {
   it('C17010 Filter circulation log by service points (firebird)', { tags: [TestTypes.criticalPath, devTeams.firebird] }, () => {
     SearchPane.searchByServicePoint('Circ Desk 2');
     SearchPane.verifyResultCells();
+  });
+
+  it('C16981 Check the Actions button from filtering Circulation log by changed due date (firebird)', { tags: [TestTypes.criticalPath, devTeams.firebird] }, () => {
+    cy.visit(TopMenu.circulationLogPath);
+    SearchPane.searchByChangedDueDate();
+    SearchPane.checkActionButtonAfterFiltering(firstName, ITEM_BARCODE);
   });
 });

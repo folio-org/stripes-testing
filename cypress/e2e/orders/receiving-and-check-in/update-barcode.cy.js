@@ -73,7 +73,7 @@ describe('Orders: Receiving and Check-in', () => {
                 Orders.selectFromResultsList(orderNumber);
                 Orders.createPOLineViaActions();
                 OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
-                OrderLines.fillInPOLineInfoForExportWithLocationForPhisicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', locationResponse.institutionId, '2');
+                OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', locationResponse.institutionId, '2');
                 OrderLines.backToEditingOrder();
               });
           });
@@ -95,7 +95,7 @@ describe('Orders: Receiving and Check-in', () => {
   after(() => {
     cy.loginAsAdmin({ path:TopMenu.receivingPath, waiter: Receiving.waitLoading });
     Orders.searchByParameter('PO number', orderNumber);
-    Receiving.selectFromResultsList();
+    Receiving.selectLinkFromResultsList();
     Receiving.unreceiveFromReceivedSection();
     cy.visit(TopMenu.ordersPath);
     Orders.searchByParameter('PO number', orderNumber);
@@ -114,7 +114,7 @@ describe('Orders: Receiving and Check-in', () => {
     Orders.selectFromResultsList(orderNumber);
     Orders.openOrder();
     Orders.receiveOrderViaActions();
-    Receiving.selectFromResultsList();
+    Receiving.selectLinkFromResultsList();
     Receiving.receiveFromExpectedSection();
     Receiving.receiveAllPhysicalItemsWithBarcodes(barcodeForFirstItem, barcodeForSecondItem);
     Receiving.clickOnInstance();

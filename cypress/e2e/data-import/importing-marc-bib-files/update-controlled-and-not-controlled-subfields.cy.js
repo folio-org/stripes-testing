@@ -193,13 +193,13 @@ describe('Importing MARC Bib files', () => {
     JobProfiles.waitFileIsImported(nameForUpdatedMarcFile);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(nameForUpdatedMarcFile);
-    
+
     cy.visit(TopMenu.inventoryPath);
     InventoryInstance.searchByTitle('Paradise of other side (updated title)');
     InventoryInstances.selectInstance();
     InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane('Contributor');
     InventoryInstance.editMarcBibliographicRecord();
-    QuickMarcEditor.verifyTagFieldAfterLinking(19, '100', '1', '\\', '$a Chin, Staceyann,  $d 1972-', '$e Producer $e Narrator  $u test', '$0 id.loc.gov/authorities/names/n2008052404', '$4 prf.');
+    QuickMarcEditor.verifyTagFieldAfterLinking(19, '100', '1', '\\', '$a Chin, Staceyann, $d 1972-', '$e Producer $e Narrator $u test', '$0 id.loc.gov/authorities/names/n2008052404', '$4 prf.');
     QuickMarcEditor.verifyTagFieldAfterUnlinking(20, '245', '1', '4', '$a Paradise of other side (updated title) : $b a memoir / $c Staceyann Chin.');
   });
 });

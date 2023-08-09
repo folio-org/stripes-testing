@@ -32,8 +32,12 @@ const unlinkButtonInsideModal = Button({ id: 'clickable-quick-marc-confirm-unlin
 const calloutAfterSaveAndClose = Callout('This record has successfully saved and is in process. Changes may not appear immediately.');
 const calloutUpdatedRecord = Callout('Record has been updated.');
 const calloutUpdatedLinkedBibRecord = Callout('Record has been updated. 2 linked bibliographic record(s) updates have begun.');
+const calloutNonEditableLdrBib = Callout('Record cannot be saved. Please check the Leader. Only positions 5, 6, 7, 8, 17, 18 and/or 19 can be edited in the Leader.');
+const calloutDelete008Error = Callout('Record cannot be saved without 008 field');
+const calloutAfterSaveAndCloseNewRecord = Callout('Record created.');
 const closeButton = Button({ icon: 'times' });
 const validRecord = InventoryInstance.validOCLC;
+const validNewMarBibLDR = '00000naa\\a2200000uu\\4500';
 const specRetInputNamesHoldings008 = ['records[3].content.Spec ret[0]',
   'records[3].content.Spec ret[1]',
   'records[3].content.Spec ret[2]'];
@@ -72,21 +76,21 @@ const tag008HoldingsBytesProperties = {
 };
 
 const tag008DefaultValues = [
-    { interactor:TextField('Srce'), defaultValue:'\\' },
-    { interactor:TextField('Audn'), defaultValue:'\\' },
-    { interactor:TextField('Lang'), defaultValue:'\\\\\\' },
-    { interactor:TextField('Form'), defaultValue:'\\' },
-    { interactor:TextField('Conf'), defaultValue:'\\' },
-    { interactor:TextField('Biog'), defaultValue:'\\' },
-    { interactor:TextField('MRec'), defaultValue:'\\' },
-    { interactor:TextField('Ctry'), defaultValue:'\\\\\\' },
-    { interactor:TextField('GPub'), defaultValue:'\\' },
-    { interactor:TextField('LitF'), defaultValue:'\\' },
-    { interactor:TextField('Indx'), defaultValue:'\\' },
-    { interactor:TextField('Fest'), defaultValue:'\\' },
-    { interactor:TextField('DtSt'), defaultValue:'\\' },
-    { interactor:TextField('Start date'), defaultValue:'\\\\\\\\' },
-    { interactor:TextField('End date'), defaultValue:'\\\\\\\\' }
+  { interactor:TextField('Srce'), defaultValue:'\\' },
+  { interactor:TextField('Audn'), defaultValue:'\\' },
+  { interactor:TextField('Lang'), defaultValue:'\\\\\\' },
+  { interactor:TextField('Form'), defaultValue:'\\' },
+  { interactor:TextField('Conf'), defaultValue:'\\' },
+  { interactor:TextField('Biog'), defaultValue:'\\' },
+  { interactor:TextField('MRec'), defaultValue:'\\' },
+  { interactor:TextField('Ctry'), defaultValue:'\\\\\\' },
+  { interactor:TextField('GPub'), defaultValue:'\\' },
+  { interactor:TextField('LitF'), defaultValue:'\\' },
+  { interactor:TextField('Indx'), defaultValue:'\\' },
+  { interactor:TextField('Fest'), defaultValue:'\\' },
+  { interactor:TextField('DtSt'), defaultValue:'\\' },
+  { interactor:TextField('Start date'), defaultValue:'\\\\\\\\' },
+  { interactor:TextField('End date'), defaultValue:'\\\\\\\\' }
 ];
 
 const defaultFieldValues = {
@@ -108,6 +112,23 @@ const getRowInteractorByRowNumber = (specialRowNumber) => QuickMarcEditor()
   .find(QuickMarcEditorRow({ index: specialRowNumber }));
 const getRowInteractorByTagName = (tagName) => QuickMarcEditor()
   .find(QuickMarcEditorRow({ tagValue: tagName }));
+
+const tag008DefaultValuesHoldings = [
+  { interactor:TextField('AcqStatus'), defaultValue:'\\' },
+  { interactor:TextField('AcqMethod'), defaultValue:'\\' },
+  { interactor:TextField('AcqEndDate'), defaultValue:'\\\\\\\\' },
+  { interactor:TextField('Gen ret'), defaultValue:'\\' },
+  { interactor:TextField('Spec ret', { name: 'records[3].content.Spec ret[0]' }), defaultValue:'\\' },
+  { interactor:TextField('Spec ret', { name: 'records[3].content.Spec ret[1]' }), defaultValue:'\\' },
+  { interactor:TextField('Spec ret', { name: 'records[3].content.Spec ret[2]' }), defaultValue:'\\' },
+  { interactor:TextField('Compl'), defaultValue:'\\' },
+  { interactor:TextField('Copies'), defaultValue:'\\\\\\' },
+  { interactor:TextField('Lend'), defaultValue:'\\' },
+  { interactor:TextField('Repro'), defaultValue:'\\' },
+  { interactor:TextField('Lang'), defaultValue:'\\\\\\' },
+  { interactor:TextField('Sep/comp'), defaultValue:'\\' },
+  { interactor:TextField('Rept date'), defaultValue:'\\\\\\\\\\\\' }
+];
 
 export default {
 
@@ -149,8 +170,8 @@ export default {
 
   pressSaveAndClose() { cy.do(saveAndCloseButton.click()); },
 
-  pressSaveAndKeepEditing(calloutMsg) { 
-    cy.do(saveAndKeepEditingBtn.click()); 
+  pressSaveAndKeepEditing(calloutMsg) {
+    cy.do(saveAndKeepEditingBtn.click());
     cy.expect(Callout(calloutMsg).exists());
   },
 
@@ -316,9 +337,9 @@ export default {
   },
 
   checkFieldContentMatch(selector, regExp) {
-   cy.get(selector).invoke('val').then(text => {
-    expect(text).to.match(regExp);
-   });
+    cy.get(selector).invoke('val').then(text => {
+      expect(text).to.match(regExp);
+    });
   },
 
   checkEmptyContent(tagName) {
@@ -344,33 +365,33 @@ export default {
 
   verifyTagFieldAfterLinking(rowIndex, tag, secondBox, thirdBox, content, eSubfield, zeroSubfield, seventhBox) {
     cy.expect([
-      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].tag` })).has({disabled: true, value: tag}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[0]` })).has({disabled: true, value: secondBox}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[1]` })).has({disabled: true, value: thirdBox}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].subfieldGroups.controlled` })).has({disabled: true, value: content}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledAlpha` })).has({disabled: false, value: eSubfield}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].subfieldGroups.zeroSubfield` })).has({disabled: true, value: zeroSubfield}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledNumber` })).has({disabled: false, value: seventhBox}),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].tag` })).has({ disabled: true, value: tag }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[0]` })).has({ disabled: true, value: secondBox }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[1]` })).has({ disabled: true, value: thirdBox }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].subfieldGroups.controlled` })).has({ disabled: true, value: content }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledAlpha` })).has({ disabled: false, value: eSubfield }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].subfieldGroups.zeroSubfield` })).has({ disabled: true, value: zeroSubfield }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledNumber` })).has({ disabled: false, value: seventhBox }),
       QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ value: '$9' })).absent(),
     ]);
   },
 
   verifyTagFieldAfterUnlinking(rowIndex, tag, secondBox, thirdBox, content) {
     cy.expect([
-      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].tag` })).has({value: tag}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[0]` })).has({value: secondBox}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[1]` })).has({value: thirdBox}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].content` })).has({value: content}),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].tag` })).has({ value: tag }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[0]` })).has({ value: secondBox }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[1]` })).has({ value: thirdBox }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].content` })).has({ value: content }),
     ]);
   },
 
   verifyTagField(rowIndex, tag, secondBox, thirdBox, subfieldS, subfieldI) {
     cy.expect([
-      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].tag` })).has({value: tag}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[0]` })).has({value: secondBox}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[1]` })).has({value: thirdBox}),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].content` })).has({value: including(subfieldS) }),
-      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].content` })).has({value: including(subfieldI) }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].tag` })).has({ value: tag }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[0]` })).has({ value: secondBox }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].indicators[1]` })).has({ value: thirdBox }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].content` })).has({ value: including(subfieldS) }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].content` })).has({ value: including(subfieldI) }),
     ]);
   },
 
@@ -512,11 +533,11 @@ export default {
       cy.expect(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).has({ value: byteProperty.replacedVoidValue }));
     });
   },
-  
+
   check008FieldContent() {
     tag008DefaultValues.forEach(field => {
-      cy.expect(field.interactor.has({ value: field.defaultValue }))
-    })
+      cy.expect(field.interactor.has({ value: field.defaultValue }));
+    });
   },
 
   getRegularTagContent(tag) {
@@ -618,5 +639,137 @@ export default {
 
   checkCallout(callout) {
     cy.expect(Callout(callout).exists());
+  },
+
+  checkNonEditableLdrCalloutBib() {
+    cy.expect([
+      calloutNonEditableLdrBib.exists(),
+      calloutNonEditableLdrBib.has({ type: 'error' })
+    ]);
+    cy.do(calloutNonEditableLdrBib.dismiss());
+    cy.expect(calloutNonEditableLdrBib.absent());
+  },
+
+  clearCertain008Boxes(...boxNames) {
+    boxNames.forEach(boxName => {
+      cy.do([
+        QuickMarcEditorRow({ tagValue: '008' }).find(TextField(boxName)).fillIn('')
+      ]);
+    });
+  },
+
+  checkAfterSaveHoldings() {
+    cy.expect([
+      calloutAfterSaveAndClose.exists(),
+      Button('Actions').exists()
+    ]);
+  },
+
+  checkDelete008Callout() {
+    cy.expect(calloutDelete008Error.exists());
+    cy.do(calloutDelete008Error.dismiss());
+    cy.expect(calloutDelete008Error.absent());
+  },
+
+  check008FieldsEmptyHoldings() {
+    tag008DefaultValuesHoldings.forEach(field => {
+      cy.expect(field.interactor.has({ value: field.defaultValue }));
+    });
+  },
+
+  checkSubfieldsAbsenceInTag008() {
+    cy.expect(getRowInteractorByTagName('008').find(quickMarcEditorRowContent)
+      .find(HTML({ className: including('bytesFieldRow-') })).absent());
+  },
+
+  saveInstanceIdToArrayInQuickMarc(IdArray) {
+    cy.url().then(url => {
+      const instanceId = IdArray.push(url.split('/')[6].split('?')[0]);
+      cy.wrap(instanceId).as('instanceId');
+    });
+    return cy.get('@instanceId');
+  },
+
+  checkFieldsExist(tags) {
+    tags.forEach(tag => {
+      cy.expect(getRowInteractorByTagName(tag).exists());
+    });
+  },
+
+  checkFieldsCount(expectedCount) {
+    cy.then(() => QuickMarcEditor().rowsCount())
+      .then(FieldsCount => {
+        cy.expect(FieldsCount).equal(expectedCount);
+      });
+  },
+
+  checkAfterSaveAndCloseDerive() {
+    cy.expect([
+      calloutAfterSaveAndCloseNewRecord.exists(),
+      instanceDetailsPane.exists(),
+    ]);
+  },
+
+  verifyAndDismissRecordUpdatedCallout() {
+    cy.expect(calloutUpdatedRecord.exists());
+    cy.do(calloutUpdatedRecord.dismiss());
+    cy.expect(calloutUpdatedRecord.absent());
+  },
+
+  checkFourthBoxDisabled(rowIndex) {
+    cy.expect(getRowInteractorByRowNumber(rowIndex).find(TextArea({ ariaLabel: 'Subfield' })).has({ disabled: true }));
+  },
+
+  verifyNoFieldWithContent(content) {
+    cy.expect(TextArea({ ariaLabel: 'Subfield', textContent: including(content) }).absent());
+  },
+
+  updateTagNameToLockedTag(rowIndex, newTagName) {
+    cy.get(`input[name="records[${rowIndex}].tag"`).type(newTagName);
+  },
+
+  checkEmptyFieldAdded(rowIndex, defaultContent = '$a ') {
+    cy.expect([
+      QuickMarcEditorRow({ index: rowIndex }).find(quickMarcEditorRowContent).exists(),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: including('.tag') })).has({ value: '' }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ ariaLabel: 'Subfield' })).has({ textContent: defaultContent })
+    ]);
+  },
+
+  confirmUpdateLinkedBibs(linkedRecordsNumber) {
+    cy.do(saveButton.click());
+    cy.expect([
+      Callout(`Record has been updated. ${linkedRecordsNumber} linked bibliographic record(s) updates have begun.`).exists(),
+      rootSection.absent(),
+      viewMarcSection.exists()
+    ]);
+  },
+
+  checkPaneheaderContains(text) {
+    cy.expect(PaneHeader({ text: (including(text)) }).exists());
+  },
+
+  waitAndCheckFirstBibRecordCreated(marcBibTitle = `Test_Bib_Creation_${getRandomPostfix()}`, timeOutSeconds = 120) {
+    let timeCounter = 0;
+    function checkBib() {
+      cy.okapiRequest({ path: 'instance-storage/instances',
+        searchParams: { 'query': `(title all "${marcBibTitle}")` },
+        isDefaultSearchParamsRequired : false }).then(({ body }) => {
+        if (body.instances[0] || timeCounter >= timeOutSeconds) {
+          cy.expect(body.instances[0].title).equals(marcBibTitle);
+        } else {
+          // wait 1 second before retrying request
+          cy.wait(1000);
+          checkBib();
+          timeCounter++;
+        }
+      });
+    }
+    InventoryInstance.newMarcBibRecord();
+    this.updateExistingField('245', `$a ${marcBibTitle}`);
+    this.updateExistingField('LDR', validNewMarBibLDR);
+    this.pressSaveAndClose();
+    cy.expect(calloutAfterSaveAndClose.exists());
+    checkBib();
   }
 };

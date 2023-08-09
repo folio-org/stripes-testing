@@ -2,30 +2,37 @@ import { matching } from 'bigtest';
 import {
   Accordion,
   Button,
-  MultiColumnListCell,
-  MultiColumnListRow,
-  including,
-  TextField,
-  Pane,
+  Checkbox,
   Dropdown,
   DropdownMenu,
-  Checkbox,
-  MultiSelect
+  MultiColumnListCell,
+  MultiColumnListRow,
+  MultiSelect,
+  Pane,
+  TextField,
+  including,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
+import SearchResults from './searchResults';
+import LoansPage from '../loans/loansPage';
+import Users from '../users/users';
+import ItemRecordView from '../inventory/item/itemRecordView';
+import TopMenuNavigation from '../topMenuNavigation';
 
-const dropdownButton = MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(Dropdown()).find(Button());
+const dropdownButton = MultiColumnListRow({ rowIndexInParent: 'row-0' })
+  .find(Dropdown())
+  .find(Button());
 const actionsButton = Button('Actions');
-const servicePointField = MultiSelect({ ariaLabelledby: 'accordion-toggle-button-servicePointId' });
-
-
-// TODO: will rework to interactor when we get section id
-function clickApplyMainFilter() {
-  cy.get('[class^="button-"][type="submit"]').first().click();
-}
-
+const servicePointField = MultiSelect({
+  ariaLabelledby: 'accordion-toggle-button-servicePointId',
+});
+const data = '4502015';
 
 export default {
+  // TODO: will rework to interactor when we get section id
+  clickApplyMainFilter() {
+    cy.get('[class^="button-"][type="submit"]').first().click();
+  },
   waitLoading() {
     cy.expect(Pane('Circulation log').exists());
   },
@@ -34,6 +41,7 @@ export default {
     cy.do([
       Accordion({ id: 'loan' }).clickHeader(),
       Checkbox({ id: 'clickable-filter-loan-checked-out' }).click()
+      //,cy.do(TextField({ name: 'itemBarcode' }).fillIn(data)),
     ]);
   },
 
@@ -43,23 +51,23 @@ export default {
 
   searchByItemBarcode(barcode) {
     cy.do(TextField({ name: 'itemBarcode' }).fillIn(barcode));
-    clickApplyMainFilter();
+    this.clickApplyMainFilter();
   },
 
   searchByUserBarcode(barcode) {
     cy.do(TextField({ name: 'userBarcode' }).fillIn(barcode));
-    clickApplyMainFilter();
+    this.clickApplyMainFilter();
   },
 
   searchByDescription(desc) {
     cy.do(TextField({ name: 'description' }).fillIn(desc));
-    clickApplyMainFilter();
+    this.clickApplyMainFilter();
   },
 
   searchByChangedDueDate() {
     cy.do([
       Accordion({ id: 'loan' }).clickHeader(),
-      Checkbox({ id: 'clickable-filter-loan-changed-due-date' }).click()
+      Checkbox({ id: 'clickable-filter-loan-changed-due-date' }).click(),
     ]);
   },
 
@@ -69,18 +77,41 @@ export default {
       servicePointField.choose(servicePoint),
     ]);
   },
+  checkBarcode() {
+    cy.expect(Pane({ title: 'Circulation log' }).exists());
+    cy.do([
+      Accordion({ id: 'loan' }).clickHeader(),
+      Checkbox({
+        id: 'clickable-filter-loan-renewed-through-override',
+      }).click(),
+      Button('Reset all').click(),
+      TextField({ name: 'itemBarcode' }).fillIn('1040'),
+    ]),
+    cy.get('[class^="button-"][type="submit"]').first().click();
+    cy.expect(MultiColumnListRow().exists());
+  },
+
+  checkElementText: () => {
+    cy.do([
+      Checkbox({
+        id: 'clickable-filter-loan-renewed-through-override',
+      }).click(),
+      TextField({ name: 'itemBarcode' }).fillIn(data),
+    ]);
+    this.clickApplyMainFilter();
+  },
 
   searchByClaimedReturned() {
     cy.do([
       Accordion({ id: 'loan' }).clickHeader(),
-      Checkbox({ id: 'clickable-filter-loan-claimed-returned' }).click()
+      Checkbox({ id: 'clickable-filter-loan-claimed-returned' }).click(),
     ]);
   },
 
   searchByMarkedAsMissing() {
     cy.do([
       Accordion({ id: 'loan' }).clickHeader(),
-      Checkbox({ id: 'clickable-filter-loan-marked-as-missing' }).click()
+      Checkbox({ id: 'clickable-filter-loan-marked-as-missing' }).click(),
     ]);
   },
 
@@ -88,7 +119,7 @@ export default {
     // accordion = 'loan', 'notice', 'fee', 'request'
     cy.do([
       Accordion({ id: accordion }).clickHeader(),
-      Checkbox(checkboxOption).click()
+      Checkbox(checkboxOption).click(),
     ]);
   },
 
@@ -98,7 +129,6 @@ export default {
 
   verifyResultCells(verifyDate = false) {
     const dateRegEx = /\d{1,2}\/\d{1,2}\/\d{4},\s\d{1,2}:\d{2}\s\w{2}/gm;
-
     function getResultRowByRowNumber(rowNumber) {
       return {
         userBarcode: MultiColumnListCell({ row: rowNumber, columnIndex: 0, content: matching(/\d|/) }),
@@ -113,10 +143,9 @@ export default {
     }
 
     // TODO: rework with interactor (now we don't have interactor for this)
-    return cy.get('#circulation-log-list').then(element => {
+    return cy.get('#circulation-log-list').then((element) => {
       // only 30 records shows on every page
       const resultCount = element.attr('data-total-count') > 29 ? 29 : element.attr('data-total-count');
-
       // verify every string in result table
       for (let i = 0; i < resultCount; i++) {
         const resultRow = getResultRowByRowNumber(i);
@@ -128,7 +157,7 @@ export default {
 
         if (verifyDate) {
           cy.do(
-            resultRow.date.perform(el => {
+            resultRow.date.perform((el) => {
               const actualDate = new Date(el.textContent);
               const lastWeek = DateTools.getLastWeekDateObj();
               const today = new Date();
@@ -169,10 +198,7 @@ export default {
   },
 
   goToUserDetails() {
-    cy.do([
-      dropdownButton.click(),
-      DropdownMenu().find(Button()).click()
-    ]);
+    cy.do([dropdownButton.click(), DropdownMenu().find(Button()).click()]);
   },
 
   userDetailIsOpen() {
@@ -180,14 +206,24 @@ export default {
   },
 
   exportResults() {
-    cy.do([
-      actionsButton.click(),
-      Button('Export results (CSV)').click(),
-    ]);
+    cy.do([actionsButton.click(), Button('Export results (CSV)').click()]);
   },
 
   checkExportResultIsUnavailable() {
     cy.do(actionsButton.click());
     cy.expect(Button('Export results (CSV)', { disabled: true }).exists());
+  },
+
+  checkActionButtonAfterFiltering(name, barcode) {
+    SearchResults.chooseActionByRow(0, 'Loan details');
+    LoansPage.waitLoading();
+    TopMenuNavigation.navigateToApp('Circulation log');
+
+    SearchResults.chooseActionByRow(0, 'User details');
+    Users.verifyFirstNameOnUserDetailsPane(name);
+    TopMenuNavigation.navigateToApp('Circulation log');
+
+    SearchResults.clickOnCell(barcode, 0);
+    ItemRecordView.waitLoading();
   },
 };

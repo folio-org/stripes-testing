@@ -47,11 +47,11 @@ const uploadBunchOfFiles = (editedFileName, numberOfFiles, finalFileName) => {
   for (let i = 0; i < numberOfFiles; i++) {
     FileManager.readFile(`cypress/fixtures/${editedFileName}`)
       .then((actualContent) => {
-        let fileName = `${finalFileName + i}.mrc`;
+        const fileName = `${finalFileName + i}.mrc`;
 
         FileManager.createFile(`cypress/fixtures/${fileName}`, actualContent);
         arrayOfFiles.push(fileName);
-    });
+      });
   }
   cy.get('input[type=file]').attachFile(arrayOfFiles);
 };
@@ -282,12 +282,12 @@ export default {
     FileManager.readFile(`cypress/fixtures/${editedFileName}`)
       .then((actualContent) => {
         const currentContent = actualContent;
-        
+
         FileManager.readFile(`cypress/fixtures/${fileWithContentForEdit}`)
           .then((content) => {
             const contentForEdit = content;
             const newContent = currentContent.concat(contentForEdit);
-            
+
             FileManager.createFile(`cypress/fixtures/${finalFileName}`, newContent);
           });
       });
@@ -397,6 +397,6 @@ export default {
 
   waitFileIsUploaded:() => {
     // TODO need to wait until big file is uploaded
-    cy.wait(5000);
+    cy.wait(10000);
   }
 };

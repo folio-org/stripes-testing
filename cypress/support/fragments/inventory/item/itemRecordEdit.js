@@ -1,5 +1,5 @@
 import { including } from '@interactors/html';
-import { Accordion, TextField, Pane, Button } from '../../../../../interactors';
+import { Accordion, TextField, Pane, Button, TextArea } from '../../../../../interactors';
 
 const cancelBtn = Button({ id: 'cancel-item-edit' });
 const saveAndCloseBtn = Button({ id: 'clickable-save-item' });
@@ -16,5 +16,12 @@ export default {
     cy.expect(saveAndCloseBtn.has({ disabled: false }));
   },
 
-  save:() => cy.do(saveAndCloseBtn.click())
+  save:() => cy.do(saveAndCloseBtn.click()),
+
+  addAdministrativeNote: (note) => {
+    cy.do([
+      Button('Add administrative note').click(),
+      TextArea({ ariaLabel: 'Administrative note' }).fillIn(note)
+    ]);
+  },
 };

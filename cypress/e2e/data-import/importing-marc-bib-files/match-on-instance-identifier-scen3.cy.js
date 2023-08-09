@@ -1,3 +1,4 @@
+import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -26,15 +27,18 @@ import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
   let userId = null;
+  const randomIdentifierCode = `(OCoLC)847143${generateItemBarcode()}8`;
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const filePathForCreateInstance = 'marcFileForMatchOnIdentifierForCreate.mrc';
   const filePathForUpdateInstance = 'marcFileForMatchOnIdentifierForUpdate_3.mrc';
+  const editedMarcFileNameForCreate = `C347830 marcFileForCreate.${getRandomPostfix()}.mrc`;
+  const editedMarcFileNameForUpdate = `C347830 marcFileForUpdate.${getRandomPostfix()}.mrc`;
   const fileNameForCreateInstance = `C347830autotestFile.${getRandomPostfix()}.mrc`;
   const fileNameForUpdateInstance = `C347830autotestFile.${getRandomPostfix()}.mrc`;
   const instanceGeneralNote = 'IDENTIFIER UPDATE 3';
   const resourceIdentifiers = [
     { type: 'UPC', value: 'ORD32671387-4' },
-    { type: 'OCLC', value: '(OCoLC)84714376518561876438' },
+    { type: 'OCLC', value: randomIdentifierCode },
     { type: 'Invalid UPC', value: 'ORD32671387-4' },
     { type: 'System control number', value: '(AMB)84714376518561876438' },
   ];
@@ -51,7 +55,8 @@ describe('ui-data-import', () => {
     qualifierValue: '(OCoLC)',
     compareValue: 'Numerics only',
     existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
-    existingRecordOption: NewMatchProfile.optionsList.systemControlNumber
+    existingRecordOption: NewMatchProfile.optionsList.identifierOCLC,
+    compareValueInComparison: 'Numerics only'
   };
   const mappingProfile = {
     name: `C347830 ID Match Test - Update3 (OCLC).${getRandomPostfix()}`,
@@ -121,63 +126,68 @@ describe('ui-data-import', () => {
   });
 
   it('C347830 Match on Instance identifier match meets both the Identifier type and Data requirements Scenario 3 (folijet)',
-  { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-    // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-    DataImport.verifyUploadState();
-    DataImport.uploadFile(filePathForCreateInstance, fileNameForCreateInstance);
-    JobProfiles.searchJobProfileForImport(jobProfileToRun);
-    JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(fileNameForCreateInstance);
-    Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-    Logs.openFileDetails(fileNameForCreateInstance);
-    Logs.clickOnHotLink(0, 3, 'Created');
-    InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[0].type, resourceIdentifiers[0].value, 6);
-    InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[1].type, resourceIdentifiers[1].value, 4);
-    cy.go('back');
-    Logs.clickOnHotLink(1, 3, 'Created');
-    InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[2].type, resourceIdentifiers[2].value, 0);
-    InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[3].type, resourceIdentifiers[3].value, 3);
+    { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+      DataImport.editMarcFile(filePathForCreateInstance, editedMarcFileNameForCreate,
+        ['(OCoLC)84714376518561876438'], [randomIdentifierCode]);
+      DataImport.editMarcFile(filePathForUpdateInstance, editedMarcFileNameForUpdate,
+        ['(OCoLC)84714376518561876438'], [randomIdentifierCode]);
 
-    cy.visit(SettingsMenu.matchProfilePath);
-    MatchProfiles.createMatchProfileWithQualifierAndComparePart(matchProfile);
-    MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
-    
-    cy.visit(SettingsMenu.mappingProfilePath);
-    FieldMappingProfiles.openNewMappingProfileForm();
-    NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
-    NewFieldMappingProfile.addStaffSuppress(mappingProfile.staffSuppress);
-    NewFieldMappingProfile.fillCatalogedDate(mappingProfile.catalogedDate);
-    NewFieldMappingProfile.fillInstanceStatusTerm(mappingProfile.instanceStatus);
-    FieldMappingProfiles.saveProfile();
-    FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
-    FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
+      DataImport.uploadFile(editedMarcFileNameForCreate, fileNameForCreateInstance);
+      JobProfiles.searchJobProfileForImport(jobProfileToRun);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(fileNameForCreateInstance);
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      Logs.openFileDetails(fileNameForCreateInstance);
+      Logs.clickOnHotLink(0, 3, 'Created');
+      InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[0].type, resourceIdentifiers[0].value, 6);
+      InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[1].type, resourceIdentifiers[1].value, 4);
+      cy.go('back');
+      Logs.clickOnHotLink(1, 3, 'Created');
+      InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[2].type, resourceIdentifiers[2].value, 0);
+      InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[3].type, resourceIdentifiers[3].value, 3);
 
-    cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.create(actionProfile, mappingProfile.name);
-    ActionProfiles.checkActionProfilePresented(actionProfile.name);
+      cy.visit(SettingsMenu.matchProfilePath);
+      MatchProfiles.createMatchProfileWithQualifierAndComparePart(matchProfile);
+      MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
 
-    cy.visit(SettingsMenu.jobProfilePath);
-    JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfile.name, matchProfile.profileName);
-    JobProfiles.checkJobProfilePresented(jobProfile.profileName);
+      cy.visit(SettingsMenu.mappingProfilePath);
+      FieldMappingProfiles.openNewMappingProfileForm();
+      NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
+      NewFieldMappingProfile.addStaffSuppress(mappingProfile.staffSuppress);
+      NewFieldMappingProfile.fillCatalogedDate(mappingProfile.catalogedDate);
+      NewFieldMappingProfile.fillInstanceStatusTerm(mappingProfile.instanceStatus);
+      FieldMappingProfiles.saveProfile();
+      FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+      FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
-    cy.visit(TopMenu.dataImportPath);
-    // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-    DataImport.verifyUploadState();
-    DataImport.uploadFile(filePathForUpdateInstance, fileNameForUpdateInstance);
-    JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-    JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(fileNameForUpdateInstance);
-    Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-    Logs.openFileDetails(fileNameForUpdateInstance);
-    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc);
-    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance);
-    FileDetails.checkStatusInColumn(FileDetails.status.dash, FileDetails.columnNameInResultList.srsMarc, 1);
-    FileDetails.checkStatusInColumn(FileDetails.status.noAction, FileDetails.columnNameInResultList.instance, 1);
+      cy.visit(SettingsMenu.actionProfilePath);
+      ActionProfiles.create(actionProfile, mappingProfile.name);
+      ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
-    // check updated instance in Inventory
-    FileDetails.openInstanceInInventory('Updated');
-    InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);
-    InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
-    InstanceRecordView.verifyGeneralNoteContent(instanceGeneralNote);
-  });
+      cy.visit(SettingsMenu.jobProfilePath);
+      JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfile.name, matchProfile.profileName);
+      JobProfiles.checkJobProfilePresented(jobProfile.profileName);
+
+      cy.visit(TopMenu.dataImportPath);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
+      DataImport.uploadFile(editedMarcFileNameForUpdate, fileNameForUpdateInstance);
+      JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(fileNameForUpdateInstance);
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      Logs.openFileDetails(fileNameForUpdateInstance);
+      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance);
+      FileDetails.checkStatusInColumn(FileDetails.status.dash, FileDetails.columnNameInResultList.srsMarc, 1);
+      FileDetails.checkStatusInColumn(FileDetails.status.noAction, FileDetails.columnNameInResultList.instance, 1);
+
+      // check updated instance in Inventory
+      FileDetails.openInstanceInInventory('Updated');
+      InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);
+      InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
+      InstanceRecordView.verifyGeneralNoteContent(instanceGeneralNote);
+    });
 });

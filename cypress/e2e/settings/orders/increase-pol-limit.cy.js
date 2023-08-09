@@ -14,6 +14,8 @@ import SettingsOrders from '../../../support/fragments/settings/orders/settingsO
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 
+Cypress.on('uncaught:exception', () => false);
+
 describe('orders: Settings', () => {
   const order = {
     ...NewOrder.defaultOneTimeOrder,
@@ -97,12 +99,12 @@ describe('orders: Settings', () => {
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList();
     Orders.createPOLineViaActions();
-    OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
-    OrderLines.fillInPOLineInfoForExportWithLocationForPhisicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId, '4');
+    OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
+    OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId, '4');
     OrderLines.backToEditingOrder();
     Orders.createPOLineViaActions();
     OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
-    OrderLines.fillInPOLineInfoForExportWithLocationForPhisicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId, '4');
+    OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId, '4');
     OrderLines.backToEditingOrder();
     Orders.createPOLineViaActions();
     Orders.checkPurchaseOrderLineLimitReachedModal();

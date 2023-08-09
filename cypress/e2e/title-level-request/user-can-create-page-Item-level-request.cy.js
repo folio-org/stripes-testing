@@ -159,6 +159,7 @@ describe('Create Item or Title level request', () => {
         requesterBarcode: userData.barcode,
         pickupServicePoint: testData.userServicePoint.name,
       });
+      NewRequest.chooseRequestType(REQUEST_TYPES.PAGE);
       NewRequest.saveRequestAndClose();
       NewRequest.waitLoading();
       cy.wait('@createRequest').then((intercept) => {

@@ -5,7 +5,6 @@ import ExistingNoteEdit from './existingNoteEdit';
 const section = Section({ id: 'pane-note-view' });
 const title = section.find(KeyValue('Note title'));
 const details = section.find(KeyValue('Details'));
-
 const closeButton = section.find(Button({ icon: 'times' }));
 const actionsButton = Button('Actions');
 const editButton = Button('Edit');

@@ -21,10 +21,10 @@ import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import FileManager from '../../../support/utils/fileManager';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
@@ -148,7 +148,7 @@ describe('ui-data-import', () => {
       // create job profile
       cy.visit(SettingsMenu.jobProfilePath);
       JobProfiles.createJobProfile(jobProfile);
-      NewJobProfile.linkMatchAndActionProfilesForInstance(actionProfile.name, matchProfile.profileName);
+      NewJobProfile.linkMatchAndActionProfiles(matchProfile.profileName, actionProfile.name);
       NewJobProfile.saveAndClose();
       JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
@@ -166,25 +166,25 @@ describe('ui-data-import', () => {
       });
       FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems, 0);
       FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 0);
+      FileDetails.openInstanceInInventory('Created');
 
-      // get Instance HRID through API
-      InventorySearchAndFilter.getInstanceHRID()
-        .then(hrId => {
-          instanceHrid = hrId[0];
+      // in cypress we can't delete fields in the file that's why using already created file
+      // need to get instance hrid and uuids for 999 field for changing file
+      InstanceRecordView.getAssignedHRID().then(initialInstanceHrId => {
+        instanceHrid = initialInstanceHrId;
 
-          cy.visit(TopMenu.inventoryPath);
-          InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-          InventoryInstance.viewSource();
-          InventoryViewSource.verifyFieldInMARCBibSource('650\t', 'Drawing, Dutch ‡y 21st century ‡v Exhibitions. ‡5 amb');
-          InventoryViewSource.verifyFieldInMARCBibSource('920\t', 'This field should be protected');
-
-          DataImport.editMarcFile(
-            'marcFileForC356830_rev.mrc',
-            editedMarcFileName,
-            ['in00000000022'],
-            [instanceHrid]
-          );
-        });
+        InventoryInstance.viewSource();
+        InventoryViewSource.extructDataFrom999Field()
+          .then(uuid => {
+            // change file using uuid for 999 field
+            DataImport.editMarcFile(
+              'marcFileForC356830_rev.mrc',
+              editedMarcFileName,
+              ['instanceHrid', 'srsUuid', 'instanceUuid'],
+              [instanceHrid, uuid[0], uuid[1]]
+            );
+          });
+      });
 
       // upload .mrc file
       cy.visit(TopMenu.dataImportPath);

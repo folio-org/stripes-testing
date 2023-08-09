@@ -23,6 +23,8 @@ const deleteBtn = Button({ icon: 'trash' });
 const keepEditingBtn = Button('Keep editing');
 const areYouSureForm = Modal('Are you sure?');
 const downloadPreviewBtn = Button('Download preview');
+const newBulkEditButton = Button('New bulk edit');
+const startBulkEditLocalButton = Button('Start bulk edit (Local)');
 
 function getEmailField() {
   // 2 the same selects without class, id or someone different attr
@@ -39,10 +41,11 @@ const bulkPageSelections = {
 
 export default {
   openStartBulkEditForm() {
-    cy.do(Button('Start bulk edit (CSV)').click());
+    cy.do(startBulkEditLocalButton.click());
   },
   openInAppStartBulkEditFrom() {
     cy.do(Button('Start bulk edit').click());
+    cy.wait(1000);
   },
   verifyBulkEditForm(rowIndex = 0) {
     cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'));
@@ -88,10 +91,6 @@ export default {
 
   downloadErrorsExists() {
     cy.expect(Button('Download errors (CSV)').exists());
-  },
-
-  clickSuppressedFromDiscoveryCheckbox() {
-    cy.do(Checkbox('Suppressed from discovery').click());
   },
 
   verifyActionAfterChangingRecords() {
@@ -175,6 +174,7 @@ export default {
 
   addNewBulkEditFilterString() {
     cy.do(plusBtn.click());
+    cy.wait(1000);
   },
 
   fillPatronGroup(group = 'staff (Staff Member)', rowIndex = 0) {
@@ -229,11 +229,23 @@ export default {
     ]);
   },
 
-  editSuppressFromDiscovery(value, rowIndex = 0) {
+  editItemsSuppressFromDiscovery(value, rowIndex = 0) {
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Suppress from discovery'),
-      RepeatableFieldItem({ index: rowIndex }).find(Select({ content: including('Set') })).choose(value),
+      RepeatableFieldItem({ index: rowIndex }).find(Select({ content: including('Set') })).choose(`Set ${value}`),
     ]);
+  },
+
+  editHoldingsSuppressFromDiscovery(value, rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Suppress from discovery'),
+      RepeatableFieldItem({ index: rowIndex }).find(Select({ content: including('Set') })).choose(`Set ${value}`),
+    ]);
+    cy.expect(Checkbox('Apply to items records').has({ checked: value }));
+  },
+
+  checkApplyToItemsRecordsCheckbox() {
+    cy.do(Checkbox('Apply to items records').click());
   },
 
   verifyNoMatchingOptionsForLocationFilter() {
@@ -306,10 +318,8 @@ export default {
     ]);
   },
 
-  newBulkEdit() {
-    cy.do(Button('New bulk edit').click());
-    // very fast reload bulk edit page
-    cy.wait(500);
+  verifyNoNewBulkEditButton() {
+    cy.expect(newBulkEditButton.absent());
   },
 
   verifyUsersActionDropdownItemsInCaseOfError() {

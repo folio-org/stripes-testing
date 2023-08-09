@@ -116,6 +116,7 @@ const newMarcBibButton = Button({ id: 'clickable-newmarcrecord' });
 const quickMarcPaneHeader = PaneHeader({ id: 'paneHeaderquick-marc-editor-pane' });
 const detailsPaneContent = PaneContent({ id: 'pane-instancedetails-content' });
 const administrativeDataAccordion = Accordion('Administrative data');
+const unlinkIconButton = Button({ icon: 'unlink' });
 
 const validOCLC = { id:'176116217',
   // TODO: hardcoded count related with interactors getters issue. Redesign to cy.then(QuickMarkEditor().rowsCount()).then(rowsCount => {...}
@@ -237,9 +238,29 @@ export default {
     cy.expect(section.find(HTML(including('FOLIO'))).absent());
   },
 
+  verifyUnlinkIcon(tag) {
+    // Waiter needed for the link to be loaded properly.
+    cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(unlinkIconButton).exists());
+  },
+
+  verifyLinkIcon(tag) {
+    // Waiter needed for the link to be loaded properly.
+    cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(linkIconButton).exists());
+  },
+
   goToEditMARCBiblRecord:() => {
     cy.do(actionsButton.click());
     cy.do(editMARCBibRecordButton.click());
+  },
+
+  selectTopRecord() {
+    cy.do(MultiColumnListRow({ index: 0 }).find(MultiColumnListCell({ columnIndex: 1 })).find(Button()).click());
+  },
+
+  deriveNewMarcBibRecord:() => {
+    cy.do(actionsButton.click());
+    cy.do(deriveNewMarcBibRecord.click());
+    cy.expect(QuickMarcEditor().exists());
   },
 
   viewSource: () => {
@@ -256,7 +277,7 @@ export default {
     cy.expect([
       quickMarcEditorPane.exists(),
       quickMarcPaneHeader.has({ text: including('new') }),
-    ])
+    ]);
   },
 
   checkInstanceTitle(title) {
@@ -302,6 +323,12 @@ export default {
     cy.get('@link').then((link) => {
       cy.visit(link);
     });
+  },
+
+  verifyAndClickUnlinkIcon(tag) {
+    // Waiter needed for the link to be loaded properly.
+    cy.wait(1000);
+    cy.do(QuickMarcEditorRow({ tagValue: tag }).find(unlinkIconButton).click());
   },
 
   clickViewAuthorityIconDisplayedInInstanceDetailsPane(accordion) {
@@ -397,6 +424,19 @@ export default {
     cy.do(searchInput.fillIn(value));
     cy.expect(searchInput.has({ value }));
     cy.expect(enabledSearchBtn.exists());
+    cy.do(searchButton.click());
+    cy.expect(authoritySearchResults.exists());
+  },
+
+  searchResultsWithOption(option, value) {
+    cy.do([
+      selectField.choose(including(option)),
+      searchInput.fillIn(value)
+    ]);
+    cy.expect([
+      searchInput.has({ value }),
+      enabledSearchBtn.exists()
+    ]);
     cy.do(searchButton.click());
     cy.expect(authoritySearchResults.exists());
   },
@@ -587,6 +627,7 @@ export default {
     InventoryInstanceSelectInstanceModal.selectInstance();
     InventoryInstancesMovement.move();
   },
+
   moveHoldingsToAnotherInstanceByItemTitle: (holdingName, title) => {
     cy.do(actionsButton.click());
     cy.do(moveHoldingsToAnotherInstanceButton.click());
@@ -595,6 +636,7 @@ export default {
     InventoryInstanceSelectInstanceModal.selectInstance();
     InventoryInstancesMovement.moveFromMultiple(holdingName, title);
   },
+
   checkAddItem:(holdingsRecordId) => {
     cy.expect(section.find(Section({ id:holdingsRecordId }))
       .find(Button({ id: `clickable-new-item-${holdingsRecordId}` }))
@@ -671,7 +713,7 @@ export default {
 
   verifyResourceIdentifierAbsent:(value) => cy.expect(identifiersAccordion.find(MultiColumnListCell(including(value))).absent()),
   verifyInstanceLanguage:(language) => cy.expect(descriptiveDataAccordion.find(KeyValue('Language')).has({ value: language })),
-  verifyInstancePhisicalcyDescription:(description) => {
+  verifyInstancePhysicalcyDescription:(description) => {
     cy.expect(descriptiveDataAccordion.find(KeyValue('Physical description')).has({ value: description }));
   },
 
@@ -797,4 +839,9 @@ export default {
     cy.do(administrativeDataAccordion.find(Button(including('Record last updated'))).click());
     cy.expect(administrativeDataAccordion.find(HTML(including(text))).exists());
   },
+
+  checkValueAbsenceInDetailView(accordion, value) {
+    cy.expect(section.find(Button(including(accordion))).exists());
+    cy.expect(Accordion(accordion).find(MultiColumnListCell(including(value))).absent());
+  }
 };

@@ -93,12 +93,12 @@ describe('Orders: Receiving and Check-in', () => {
     Orders.selectFromResultsList();
     Orders.createPOLineViaActions();
     OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
-    OrderLines.fillInPOLineInfoForExportWithLocationForPhisicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId, '2');
+    OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId, '2');
     OrderLines.backToEditingOrder();
     Orders.openOrder();
     OrderLines.selectPOLInOrder(0);
     OrderLines.receiveOrderLineViaActions();
-    Receiving.selectFromResultsList();
+    Receiving.selectLinkFromResultsList();
     Receiving.addPiece(firstPiece.caption, firstPiece.copyNumber, firstPiece.enumeration, firstPiece.chronology);
     Receiving.selectPiece(firstPiece.caption);
     Receiving.selectConnectedInEditPiece();

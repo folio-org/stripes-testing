@@ -45,7 +45,7 @@ describe('Subject Browse', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C350392 Verify placeholder for the missing match in subject browse (firebird)', { tags: [testTypes.criticalPath, devTeams.spitfire] }, () => {
+  it('C350392 Verify placeholder for the missing match in subject browse (spitfire)', { tags: [testTypes.criticalPath, devTeams.spitfire] }, () => {
     BrowseSubjects.searchBrowseSubjects(randomSearchString);
     BrowseSubjects.verifyNonExistentSearchResult(randomSearchString);
     BrowseSubjects.verifyClickTakesNowhere(randomSearchString);

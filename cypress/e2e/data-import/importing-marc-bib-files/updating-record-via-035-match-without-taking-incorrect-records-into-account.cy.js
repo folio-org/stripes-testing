@@ -20,12 +20,14 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import GenerateIdentifierCode from '../../../support/utils/generateIdentifierCode';
+import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
   let user;
+  const randomIdentifierCode = GenerateIdentifierCode.getRandomIdentifierCode();
   const quantityOfItems = '1';
-  const identifier = 'ccn00999523';
   const protectedFields = {
     firstField: '020',
     secondField: '514'
@@ -34,6 +36,7 @@ describe('ui-data-import', () => {
   const filePathToUpload = 'marcBibFileForC380390.mrc';
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const fileNameForCreate = `C380390 autotest file.${getRandomPostfix()}.mrc`;
+  const editedMarcFileName = `C380390 autotest file.${getRandomPostfix()}.mrc`;
   const fileNameForMatch = `C380390 autotest file.${getRandomPostfix()}.mrc`;
   const fileNameForUpdate = `C380390 autotest file.${getRandomPostfix()}.mrc`;
   const matchProfile = {
@@ -43,7 +46,7 @@ describe('ui-data-import', () => {
       subfield: 'a'
     },
     qualifierType: 'Begins with',
-    qualifierValue: 'ccn',
+    qualifierValue: `${randomIdentifierCode}`,
     existingRecordFields: {
       field: '035',
       subfield: 'a'
@@ -89,16 +92,7 @@ describe('ui-data-import', () => {
           source: 'USER',
           field: protectedFields.secondField
         })
-          .then((secondResp) =>  { protectedFieldIds.push(secondResp.id); });
-
-        InventorySearchAndFilter.getInstancesByIdentifierViaApi(identifier)
-          .then(instances => {
-            if (instances) {
-              instances.forEach(({ id }) => {
-                InventoryInstance.deleteInstanceViaApi(id);
-              });
-            }
-          });
+          .then((secondResp) => { protectedFieldIds.push(secondResp.id); });
       });
 
     cy.createTempUser([
@@ -112,33 +106,41 @@ describe('ui-data-import', () => {
       });
   });
 
-  after('delete test data', ()=>{
+  after('delete test data', () => {
     JobProfiles.deleteJobProfile(jobProfile.profileName);
     JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
     MatchProfiles.deleteMatchProfile(matchProfile.profileName);
     ActionProfiles.deleteActionProfile(actionProfile.name);
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+    // delete created files
+    FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
     Users.deleteViaApi(user.userId);
     protectedFieldIds.forEach(fieldId => MarcFieldProtection.deleteMarcFieldProtectionViaApi(fieldId));
-    InventorySearchAndFilter.getInstancesByIdentifierViaApi(identifier)
+    InventorySearchAndFilter.getInstancesByIdentifierViaApi(`${randomIdentifierCode}00999523`)
       .then(instances => {
-        instances.forEach(({ id }) => {
+        if (instances) {
+          instances.forEach(({ id }) => {
             InventoryInstance.deleteInstanceViaApi(id);
-        });
+          });
+        }
       });
   });
 
   it('C380390 Verify updating record via 035 match, without taking incorrect records into account (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+      // change files for create instance using random identifier code
+      DataImport.editMarcFile(filePathToUpload, editedMarcFileName,
+        ['ccn'], [randomIdentifierCode]);
+
       // upload a marc file
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
-      DataImport.uploadFile(filePathToUpload, fileNameForCreate);
+      DataImport.uploadFile(editedMarcFileName, fileNameForCreate);
       JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileNameForCreate);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-      
+
       // create match profile
       cy.visit(SettingsMenu.matchProfilePath);
       MatchProfiles.createMatchProfileWithQualifier(matchProfile);
@@ -156,7 +158,7 @@ describe('ui-data-import', () => {
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
-      DataImport.uploadFile(filePathToUpload, fileNameForMatch);
+      DataImport.uploadFile(editedMarcFileName, fileNameForMatch);
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileNameForMatch);
@@ -193,7 +195,7 @@ describe('ui-data-import', () => {
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
-      DataImport.uploadFile(filePathToUpload, fileNameForUpdate);
+      DataImport.uploadFile(editedMarcFileName, fileNameForUpdate);
       JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileNameForUpdate);
