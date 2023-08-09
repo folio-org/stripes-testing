@@ -3,13 +3,32 @@ import SettingsInvoices from '../../../support/fragments/invoices/settingsInvoic
 import TestType from '../../../support/dictionary/testTypes';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import devTeams from '../../../support/dictionary/devTeams';
+import permissions from '../../../support/dictionary/permissions';
+import Users from '../../../support/fragments/users/users';
 
 describe('Invoices: Settings(Invoices)', () => {
   const batchGroup = { ...NewBatchGroup.defaultUiBatchGroup };
   const newBatchGroup = { ...NewBatchGroup.defaultUiBatchGroup };
+  let user;
+
   before(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
+    cy.createTempUser([
+      permissions.uiFinanceExecuteFiscalYearRollover.gui,
+      permissions.uiFinanceViewFiscalYear.gui,
+      permissions.uiFinanceViewFundAndBudget.gui,
+      permissions.uiFinanceViewLedger.gui,
+      permissions.uiOrdersView.gui
+    ])
+      .then(userProperties => {
+        user = userProperties;
+        cy.login(userProperties.username, userProperties.password, { path:SettingsMenu.invoiceBatchGroupsPath, waiter: Ledgers.waitForLedgerDetailsLoading });
+      });
     cy.visit(`${SettingsMenu.invoiceBatchGroupsPath}`);
+  });
+
+  after(() => {
+    Users.deleteViaApi(user.userId);
   });
 
   it('C10939 Configure batch group settings (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
