@@ -749,6 +749,25 @@ export default {
     cy.expect(PaneHeader({ text: (including(text)) }).exists());
   },
 
+  checkUpdateLinkedBibModalAbsent() {
+    cy.expect(updateLinkedBibFieldsModal.absent());
+  },
+
+  checkDeleteModal(fieldsCount) {
+    cy.expect([
+      confirmationModal.exists(),
+      confirmationModal.has({ content: including(`By selecting Continue with save, then ${fieldsCount} field(s) will be deleted and this record will be updated. Are you sure you want to continue?`) }),
+      continueWithSaveButton.exists(),
+      restoreDeletedFieldsBtn.exists(),
+    ]);
+  },
+
+  checkDeleteModalClosed() {
+    cy.expect(confirmationModal.absent());
+  },
+
+  clickSaveAndKeepEditingButton() { cy.do(saveAndKeepEditingBtn.click()); },
+
   waitAndCheckFirstBibRecordCreated(marcBibTitle = `Test_Bib_Creation_${getRandomPostfix()}`, timeOutSeconds = 120) {
     let timeCounter = 0;
     function checkBib() {
