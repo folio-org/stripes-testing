@@ -1,7 +1,8 @@
 import uuid from 'uuid';
 import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
-import { getTestEntityValue } from '../../../support/utils/stringTools';
+import getRandomPostfix, { getTestEntityValue } from '../../../support/utils/stringTools';
+import Arrays from '../../../support/utils/arrays';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TestTypes from '../../../support/dictionary/testTypes';
 import Users from '../../../support/fragments/users/users';
@@ -13,6 +14,9 @@ import WaiveReasons from '../../../support/fragments/settings/users/waiveReasons
 import RefundReasons from '../../../support/fragments/settings/users/refundReasons';
 import PaymentMethods from '../../../support/fragments/settings/users/paymentMethods';
 import UsersSettingsGeneral from '../../../support/fragments/settings/users/usersSettingsGeneral';
+import Departments from '../../../support/fragments/settings/users/departments';
+import Conditions from '../../../support/fragments/settings/users/conditions';
+import Limits from '../../../support/fragments/settings/users/limits';
 
 describe('Permission Sets', () => {
   let userData;
@@ -21,6 +25,11 @@ describe('Permission Sets', () => {
   };
   const testData = {
     userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestPermissionSets', uuid()),
+  };
+  const departmentBody = {
+    code: getRandomPostfix(),
+    id: uuid(),
+    name: getTestEntityValue('PSDepartment'),
   };
   const ownerBody = {
     ...UsersOwners.getDefaultNewOwner(uuid()),
@@ -43,6 +52,7 @@ describe('Permission Sets', () => {
         testData.paymentMethodId = paymentRes.id;
         testData.paymentMethodName = paymentRes.name;
       });
+      Departments.createViaApi(departmentBody);
       RefundReasons.createViaApi(refundReason);
       PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
         patronGroup.id = patronGroupResponse;
@@ -64,6 +74,7 @@ describe('Permission Sets', () => {
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
+    Departments.deleteViaApi(departmentBody.id);
     RefundReasons.deleteViaApi(refundReason.id);
     WaiveReasons.deleteViaApi(waiveReason.id);
     PaymentMethods.deleteViaApi(testData.paymentMethodId);
@@ -71,7 +82,7 @@ describe('Permission Sets', () => {
   });
 
   it(
-    'C402752 Verify that "Setting (Users): View all settings" works as expected Scenario 2 (volaris)',
+    'C402752 Verify that "Settings (Users): View all settings" works as expected Scenario 2 (volaris)',
     { tags: [TestTypes.extendedPath, devTeams.volaris] },
     () => {
       cy.visit(SettingsMenu.usersOwnersPath);
@@ -88,6 +99,45 @@ describe('Permission Sets', () => {
 
       cy.visit(SettingsMenu.refundReasons);
       UsersSettingsGeneral.checkEntityInTable({ reason: refundReason.nameReason, description: refundReason.description });
+      UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
+    }
+  );
+
+  it(
+    'C404380 Verify that "Settings (Users): View all settings" works as expected Scenario 4 (volaris)',
+    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    () => {
+      cy.visit(SettingsMenu.limitsPath);
+      Limits.selectGroup('undergrad');
+      Limits.verifyLimitsCantBeChanged();
+    }
+  );
+
+  it(
+    'C404383 Verify that "Settings (Users): View all settings" works as expected Scenario 5 (volaris)',
+    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    () => {
+      cy.visit(SettingsMenu.conditionsPath);
+      Conditions.waitLoading();
+      Conditions.select(Arrays.getRandomElement(Conditions.conditionsValues));
+      Conditions.verifyConditionsCantBeChanged();
+    }
+  );
+
+  it(
+    'C405545 Verify that "Settings (Users): View all settings" works as expected Scenario 6 (volaris)',
+    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    () => {
+      cy.visit(SettingsMenu.patronGroups);
+      UsersSettingsGeneral.checkEntityInTable({ reason: 'undergrad', description: 'Undergraduate Student' });
+      UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
+
+      cy.visit(SettingsMenu.addressTypes);
+      UsersSettingsGeneral.checkEntityInTable({ reason: 'Work', description: 'Work Address' });
+      UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
+
+      cy.visit(SettingsMenu.departments);
+      Departments.waitLoading();
       UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
     }
   );

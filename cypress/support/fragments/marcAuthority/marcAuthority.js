@@ -95,6 +95,15 @@ export default {
       QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextArea({ name: `records[${rowIndex + 1}].content` })).fillIn(content),
     ]);
   },
+  checkLinkingAuthority650: () => {
+    cy.expect(buttonLink.exists());
+    cy.expect(Callout('Field 650 has been linked to a MARC authority record.').exists());
+  },
+
+  checkLinkingAuthority700: () => {
+    cy.expect(buttonLink.exists());
+    cy.expect(Callout('Field 700 has been linked to a MARC authority record.').exists());
+  },
   changeField: (tag, content) => {
     cy.do([
       QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).fillIn(content),
