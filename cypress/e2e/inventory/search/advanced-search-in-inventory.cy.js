@@ -13,12 +13,15 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import { JOB_STATUS_NAMES } from '../../../support/constants';
 
 describe('Inventory -> Advanced search', () => {
-  const testData = {};
+  const testData = {
+    advSearchOption: 'Advanced search',
+    expectedSearchResult: 'The Beatles in mono. Adv search 001'
+  };
   const createdRecordIDs = [];
 
   const marcFiles = [
     {
-      marc: 'marcBibFileC376596.mrc',
+      marc: 'marcBibFileC400610.mrc',
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       numberOfRecords: 2
@@ -37,10 +40,10 @@ describe('Inventory -> Advanced search', () => {
           JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(marcFile.fileName);
-          Logs.checkStatusOfJobProfile('Completed');
+          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(marcFile.fileName);
           for (let i = 0; i < marcFile.numberOfRecords; i++) {
-            Logs.getCreatedItemsID().then(link => {
+            Logs.getCreatedItemsID(i).then(link => {
               createdRecordIDs.push(link.split('/')[5]);
             });
           }
@@ -58,20 +61,21 @@ describe('Inventory -> Advanced search', () => {
   });
 
   it('C400610 Search Instances using advanced search with "AND" operator (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
-    // InventorySearchAndFilter.selectSearchOptions('Contributor', 'Sauguet, Henri');
-    // InventorySearchAndFilter.checkContributorRequest();
-    // InventorySearchAndFilter.checkContributorsColumResult('Sauguet');
-    // InventorySearchAndFilter.checkContributorsColumResult('Henri');
-    // // The resetAll button is used because the reset search input is very unstable
-    // InventorySearchAndFilter.resetAll();
-
-    // searchQueries.forEach(query => {
-    //   InventorySearchAndFilter.selectSearchOptions('Contributor', query);
-    //   InventorySearchAndFilter.clickSearch();
-    //   InventorySearchAndFilter.checkContributorsColumResult('Sauguet');
-    //   InventorySearchAndFilter.checkContributorsColumResult('Henri');
-    //   if (query.includes('1901-1989')) InventorySearchAndFilter.checkContributorsColumResult('Henri');
-    //   InventorySearchAndFilter.resetAll();
-    // });
+    InventoryInstances.clickAdvSearchButton();
+    InventoryInstances.checkAdvSearchInstancesModalFields(0);
+    InventoryInstances.checkAdvSearchInstancesModalFields(1);
+    InventoryInstances.checkAdvSearchInstancesModalFields(2);
+    InventoryInstances.checkAdvSearchInstancesModalFields(3);
+    InventoryInstances.checkAdvSearchInstancesModalFields(4);
+    InventoryInstances.checkAdvSearchInstancesModalFields(5);
+    InventoryInstances.fillAdvSearchRow(0, 'The Beatles Adv search keyword', 'Starts with', 'Keyword (title, contributor, identifier, HRID, UUID)');
+    InventoryInstances.checkAdvSearchModalValues(0, 'The Beatles Adv search keyword', 'Starts with', 'Keyword (title, contributor, identifier, HRID, UUID)');
+    InventoryInstances.fillAdvSearchRow(1, 'Rock music Adv search subj 001', 'Exact phrase', 'Subject', 'AND');
+    InventoryInstances.checkAdvSearchModalValues(1, 'Rock music Adv search subj 001', 'Exact phrase', 'Subject', 'AND');
+    InventoryInstances.clickSearchBtnInAdvSearchModal();
+    InventoryInstances.checkAdvSearchModalAbsence();
+    InventorySearchAndFilter.verifySelectedSearchOption(testData.advSearchOption);
+    InventorySearchAndFilter.verifySearchResult(testData.expectedSearchResult);
+    InventorySearchAndFilter.checkRowsCount(1);
   });
 });

@@ -17,6 +17,7 @@ import inventoryNewInstance from './inventoryNewInstance';
 import InventoryInstance from './inventoryInstance';
 import Arrays from '../../utils/arrays';
 import { ITEM_STATUS_NAMES } from '../../constants';
+import { AdvancedSearchModalInventory, AdvancedSearchRowInventory } from '../../../../interactors/advanced-search-inventory';
 
 const rootSection = Section({ id: 'pane-results' });
 const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
@@ -25,9 +26,28 @@ const singleRecordImportModal = Modal('Single record import');
 
 const advSearchButton = Button('Advanced search');
 const advSearchModal = Modal('Advanced search');
-const buttonSearchInAdvSearchModal = advSearchModal.find(Button({ ariaLabel: 'Search' }));
-const buttonCancelInAdvSearchModal = advSearchModal.find(Button({ ariaLabel: 'Cancel' }));
+const buttonSearchInAdvSearchModal = advSearchModal.find(Button({ ariaLabel: 'Search', disabled: false }));
+const buttonCancelInAdvSearchModal = advSearchModal.find(Button({ ariaLabel: 'Cancel', disabled: false }));
 
+const advSearchOperators = ['AND', 'OR', 'NOT'];
+const advSearchModifiers = ['Exact phrase', 'Contains all', 'Starts with'];
+const advSearchInstancesOptions = [
+  'Keyword (title, contributor, identifier, HRID, UUID)',
+  'Contributor',
+  'Title (all)',
+  'Identifier (all)',
+  'ISBN',
+  'ISSN',
+  'OCLC number, normalized',
+  'Instance notes (all)',
+  'Instance administrative notes',
+  'Subject',
+  'Effective call number (item), shelving order',
+  'Instance HRID',
+  'Instance UUID',
+  'Authority UUID',
+  'All'
+];
 
 const createInstanceViaAPI = (instanceWithSpecifiedNewId) => cy.okapiRequest({
   method: 'POST',
@@ -303,5 +323,63 @@ export default {
     cy.do(singleRecordImportModal.find(Button('Import')).click());
   },
 
-  verifyInstanceDetailsView:() => cy.expect(Section({ id: 'pane-instancedetails' }).exists())
+  verifyInstanceDetailsView:() => cy.expect(Section({ id: 'pane-instancedetails' }).exists()),
+
+  clickAdvSearchButton() {
+    cy.do(advSearchButton.click());
+    cy.expect([
+      AdvancedSearchModalInventory({ rowCount: 6 }).exists(),
+      buttonSearchInAdvSearchModal.exists(),
+      buttonCancelInAdvSearchModal.exists()
+    ]);
+  },
+
+  checkAdvSearchInstancesModalFields(rowIndex) {
+    if (rowIndex) {
+      cy.expect(AdvancedSearchRowInventory({ index: rowIndex }).find(Select({ label: 'Operator*' })).exists());
+      advSearchOperators.forEach(operator => {
+        cy.expect(AdvancedSearchRowInventory({ index: rowIndex }).find(Select({ label: 'Operator*' })).has({ content: including(operator) }));
+      });
+    } else {
+      cy.expect(AdvancedSearchRowInventory({ index: rowIndex }).has({ text: including('Search for') }));
+    }
+    cy.expect([
+      AdvancedSearchRowInventory({ index: rowIndex }).find(TextField()).exists(),
+      AdvancedSearchRowInventory({ index: rowIndex }).find(Select({ label: 'Match option*' })).exists(),
+      AdvancedSearchRowInventory({ index: rowIndex }).find(Select({ label: 'Search options*' })).exists(),
+    ]);
+    advSearchModifiers.forEach(modifier => {
+      cy.expect(AdvancedSearchRowInventory({ index: rowIndex }).find(Select({ label: 'Match option*' })).has({ content: including(modifier) }));
+    });
+    advSearchInstancesOptions.forEach(option => {
+      cy.expect(AdvancedSearchRowInventory({ index: rowIndex }).find(Select({ label: 'Search options*' })).has({ content: including(option) }));
+    });
+  },
+
+  fillAdvSearchRow(rowIndex, query, modifier, option, operator) {
+    cy.do([
+      AdvancedSearchRowInventory({ index: rowIndex }).fillQuery(query),
+      AdvancedSearchRowInventory({ index: rowIndex }).selectModifier(rowIndex, modifier),
+      AdvancedSearchRowInventory({ index: rowIndex }).selectSearchOption(rowIndex, option),
+    ]);
+    if (operator) cy.do(AdvancedSearchRowInventory({ index: rowIndex }).selectBoolean(rowIndex, operator));
+  },
+
+  checkAdvSearchModalAbsence() {
+    cy.expect(advSearchModal.absent());
+  },
+
+  checkAdvSearchModalValues: (rowIndex, query, modifier, option, operator) => {
+    cy.expect([
+      advSearchModal.exists(),
+      AdvancedSearchRowInventory({ index: rowIndex }).find(TextField()).has({ value: including(query) }),
+      AdvancedSearchRowInventory({ index: rowIndex }).find(Select({ label: 'Match option*' })).has({ content: including(modifier) }),
+      AdvancedSearchRowInventory({ index: rowIndex }).find(Select({ label: 'Search options*' })).has({ content: including(option) }),
+    ]);
+    if (operator) cy.expect(AdvancedSearchRowInventory({ index: rowIndex }).find(Select({ label: 'Operator*' })).has({ content: including(operator) }));
+  },
+
+  clickSearchBtnInAdvSearchModal() {
+    cy.do(buttonSearchInAdvSearchModal.click());
+  }
 };

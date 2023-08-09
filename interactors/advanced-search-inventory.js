@@ -23,7 +23,7 @@ export const AdvancedSearchRowInventory = HTML.extend('advanced search row inven
 
 const rows = el => [...el.querySelectorAll('[class*=AdvancedSearchRow-]')];
 
-export const AdvancedSearchModalInventory = HTML.extend('advanced search')
+export const AdvancedSearchModalInventory = HTML.extend('advanced search inventory')
   .selector('[id=advanced-search-modal]')
   .filters({
     rows,
