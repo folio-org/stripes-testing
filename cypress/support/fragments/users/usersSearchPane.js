@@ -55,6 +55,14 @@ export default {
     ]);
     waitClick();
   },
+  searchByLastName(lastName) {
+    cy.do([
+      Select({ id: 'input-user-search-qindex' }).choose('Last name'),
+      TextField({ id: 'input-user-search' }).fillIn(lastName),
+      Button({ id: 'submit-user-search' }).click()
+    ]);
+    waitClick();
+  },
 
   selectFirstUser: (userName) => {
     cy.expect(Spinner().absent());
@@ -64,6 +72,10 @@ export default {
 
   selectUserFromList: (userName) => {
     cy.do(Pane({ id: 'users-search-results-pane' }).find(MultiColumnListCell(userName)).click());
+  },
+  
+  selectUsersFromList: (userName) => {
+    cy.do(Pane({ id: 'users-search-results-pane' }).find(Link(userName)).click());
   },
 
   openUser(userId) {

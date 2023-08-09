@@ -1,4 +1,4 @@
-import { MultiColumnList, Modal, TextField, Callout, MultiSelect, MultiSelectOption, QuickMarcEditorRow, Pane, PaneContent, PaneHeader, Select, Section, HTML, including, Button, MultiColumnListCell, MultiColumnListRow, SearchField, Accordion, Checkbox, ColumnHeader, AdvancedSearchRow, Link } from '../../../../interactors';
+import { Accordion, AdvancedSearchRow, Button, Callout, Checkbox, ColumnHeader, HTML, Link, Modal, MultiColumnList, MultiColumnListCell, MultiColumnListRow, MultiSelect, MultiSelectOption, Pane, PaneContent, PaneHeader, QuickMarcEditorRow, SearchField, Section, Select, TextField, including } from '../../../../interactors';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const authoritiesList = rootSection.find(MultiColumnList({ id: 'authority-result-list' }));
@@ -51,6 +51,18 @@ export default {
     cy.do(searchNav.click());
   },
 
+  searchBeats(value) {
+    cy.do((SearchField({ id: 'textarea-authorities-search' })).fillIn(value));
+    cy.do((Button({ id: 'submit-authorities-search' })).click());
+  },
+
+  checkFieldTagExists: () => {
+    cy.expect([
+      editorSection.exists(),
+      QuickMarcEditorRow({ tagValue: '625' }).exists()
+    ]);
+  },
+
   fillReportModal: (today, tomorrow) => {
     cy.do([
       fromDate.fillIn(today),
@@ -98,14 +110,14 @@ export default {
   },
 
   clickOnNumberOfTitlesLink(columnIndex, linkValue) {
-    cy.wrap(MultiColumnListCell({columnIndex: columnIndex, content: linkValue }).find(Link()).href()).as('link');
+    cy.wrap(MultiColumnListCell({ columnIndex, content: linkValue }).find(Link()).href()).as('link');
     cy.get('@link').then((link) => {
       cy.visit(link);
     });
   },
 
   verifyNumberOfTitles(columnIndex, linkValue) {
-    cy.expect(MultiColumnListCell({columnIndex: columnIndex, content: linkValue }).find(Link()).exists());
+    cy.expect(MultiColumnListCell({ columnIndex, content: linkValue }).find(Link()).exists());
   },
 
   verifyFirstValueSaveSuccess(successMsg, txt) {
@@ -281,11 +293,11 @@ export default {
 
   clickAccordionAndCheckResultList(accordion, record) {
     cy.do(Accordion(accordion).clickHeader());
-    cy.expect(MultiColumnListCell({ content: including(record) }).exists())
+    cy.expect(MultiColumnListCell({ content: including(record) }).exists());
   },
 
   chooseAuthoritySourceOption: (option) => {
-      cy.do(MultiSelect({ ariaLabelledby: 'sourceFileId-multiselect-label' }).select([including(option)]));
+    cy.do(MultiSelect({ ariaLabelledby: 'sourceFileId-multiselect-label' }).select([including(option)]));
   },
 
   clickActionsButton() {
