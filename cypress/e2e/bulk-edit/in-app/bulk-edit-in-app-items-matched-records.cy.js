@@ -7,17 +7,17 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
-import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 
 let user;
+let hrid;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
-  itemBarcode: generateItemBarcode(),
+  itemBarcode: getRandomPostfix(),
 };
-const formerId = generateItemBarcode();
-const validItemFormerIdsFileName = `validItemFormerIds_${getRandomPostfix()}.csv`;
+const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
+const matchedRecordsFileName = `Matched-Records-${validHoldingUUIDsFileName}`;
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
@@ -34,41 +34,36 @@ describe('bulk-edit', () => {
             waiter: BulkEditSearchPane.waitLoading
           });
 
-          InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-
-          cy.getItems({ query: `"barcode"=="${item.itemBarcode}"` })
-            .then(inventoryItem => {
-              inventoryItem.formerIds = [formerId];
-              ItemActions.editItemViaApi(inventoryItem);
+          const instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+          cy.getHoldings({
+            limit: 1,
+            query: `"instanceId"="${instanceId}"`
+          })
+            .then(holdings => {
+              hrid = holdings[0].hrid;
+              FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, holdings[0].id);
             });
-
-          FileManager.createFile(`cypress/fixtures/${validItemFormerIdsFileName}`, formerId);
         });
     });
 
     after('delete test data', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       Users.deleteViaApi(user.userId);
-      FileManager.deleteFile(`cypress/fixtures/${validItemFormerIdsFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${validHoldingUUIDsFileName}`);
+      FileManager.deleteFileFromDownloadsByMask(`*${matchedRecordsFileName}`);
     });
 
-    it('C356808 Verify uploading file with Item former identifiers (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.checkItemsRadio();
-      BulkEditSearchPane.selectRecordIdentifier('Item former identifier');
+    // TODO actually check the list of items in matched file
+    it('C357052 Verify Downloaded matched records if identifiers return more than one item (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.checkHoldingsRadio();
+      BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
 
-      BulkEditSearchPane.uploadFile(validItemFormerIdsFileName);
+      BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
       BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.verifyMatchedResults(item.itemBarcode);
+      BulkEditSearchPane.verifyMatchedResults(hrid);
 
-      BulkEditActions.openActions();
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.replaceTemporaryLocation();
-      BulkEditActions.confirmChanges();
-      BulkEditActions.commitChanges();
-      BulkEditSearchPane.waitFileUploading();
-
-      BulkEditSearchPane.verifyChangedResults(item.itemBarcode);
-      BulkEditActions.verifySuccessBanner(1);
+      BulkEditActions.downloadMatchedResults();
+      BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileName}`, [hrid], 'hrid');
     });
   });
 });

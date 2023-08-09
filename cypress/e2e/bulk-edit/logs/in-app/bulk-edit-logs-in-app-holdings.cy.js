@@ -20,6 +20,7 @@ describe('Bulk Edit - Logs', () => {
       permissions.bulkEditLogsView.gui,
       permissions.bulkEditView.gui,
       permissions.bulkEditEdit.gui,
+      permissions.inventoryAll.gui
     ])
       .then(userProperties => {
         user = userProperties;
