@@ -28,14 +28,10 @@ describe('bulk-edit', () => {
       cy.createTempUser([
         permissions.bulkEditCsvView.gui,
         permissions.bulkEditEdit.gui,
+        permissions.uiInventoryViewCreateEditItems.gui
       ])
         .then(userProperties => {
           user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading
-          });
-
           let fileContent = '';
           items.forEach(item => {
             item.secondBarcode = 'secondBarcode_' + item.itemBarcode;
@@ -61,9 +57,7 @@ describe('bulk-edit', () => {
       FileManager.deleteFileFromDownloadsByMask(changedRecordsFileName);
     });
 
-    it('C388491 Verify that User with "Bulk Edit: (CSV) View" and "Bulk Edit: In app - Edit" permissions CAN\'T edit user records (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.isUsersRadioChecked();
-      BulkEditSearchPane.verifyRecordIdentifierDisabled();
+    it('C388491 Verify that User with "Bulk Edit: Local View" and "Bulk Edit: In app - Edit inventory" permissions CAN\'T edit user records (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
       BulkEditSearchPane.verifyItemIdentifiersDefaultState();
       BulkEditSearchPane.selectRecordIdentifier('Item barcode');
       BulkEditSearchPane.uploadFile(itemBarcodesFileName);
@@ -84,8 +78,9 @@ describe('bulk-edit', () => {
       BulkEditActions.downloadChangedCSV();
 
       TopMenuNavigation.navigateToApp('Bulk edit');
-      BulkEditSearchPane.isUsersRadioChecked();
-      BulkEditSearchPane.verifyRecordIdentifierDisabled();
+      BulkEditSearchPane.itemsRadioIsDisabled(false);
+      BulkEditSearchPane.holdingsRadioIsDisabled(false);
+      BulkEditSearchPane.verifyRadioHidden('Users');
     });
   });
 });
