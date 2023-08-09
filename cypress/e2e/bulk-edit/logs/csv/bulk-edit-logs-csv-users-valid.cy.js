@@ -28,7 +28,7 @@ describe('Bulk Edit - Logs', () => {
       permissions.bulkEditLogsView.gui,
       permissions.bulkEditCsvView.gui,
       permissions.bulkEditCsvEdit.gui,
-      permissions.uiUsersView.gui,
+      permissions.uiUserEdit.gui,
     ])
       .then(userProperties => {
         user = userProperties;

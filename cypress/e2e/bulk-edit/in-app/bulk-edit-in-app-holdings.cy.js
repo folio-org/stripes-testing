@@ -17,7 +17,6 @@ let hrid;
 const itemBarcode = getRandomPostfix();
 const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
 const validHoldingHRIDsFileName = `validHoldingHRIDs_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `Matched-Records-${validHoldingUUIDsFileName}`;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode1: itemBarcode,
@@ -30,6 +29,7 @@ describe('bulk-edit', () => {
       cy.createTempUser([
         permissions.bulkEditView.gui,
         permissions.bulkEditEdit.gui,
+        permissions.uiInventoryViewCreateEditHoldings.gui,
       ])
         .then(userProperties => {
           user = userProperties;
@@ -61,20 +61,39 @@ describe('bulk-edit', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode1);
       FileManager.deleteFile(`cypress/fixtures/${validHoldingUUIDsFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${validHoldingHRIDsFileName}`);
-      FileManager.deleteFileFromDownloadsByMask(`*${matchedRecordsFileName}`);
     });
 
     afterEach('open new bulk edit', () => {
       cy.visit(TopMenu.bulkEditPath);
     });
 
-    it('C357052 Verify Downloaded matched records if identifiers return more than one item (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.verifyMatchedResults(hrid);
-
-      BulkEditActions.downloadMatchedResults();
-      BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileName}`, [hrid], 'hrid');
+    it('C360089 Verify "Inventory - holdings" option on "Bulk edit" app (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      [
+        {
+          identifier: 'Holdings UUIDs',
+          label: 'Select a file with holdings UUIDs',
+          pageText: 'Drag and drop or choose file with holdings UUIDs',
+        },
+        {
+          identifier: 'Holdings HRIDs',
+          label: 'Select a file with holdings HRIDs',
+          pageText: 'Drag and drop or choose file with holdings HRIDs',
+        },
+        {
+          identifier: 'Instance HRIDs',
+          label: 'Select a file with instance HRIDs',
+          pageText: 'Drag and drop or choose file with instance HRIDs',
+        },
+        {
+          identifier: 'Item barcodes',
+          label: 'Select a file with item barcode',
+          pageText: 'Drag and drop or choose file with item barcode',
+        },
+      ].forEach(checker => {
+        BulkEditSearchPane.selectRecordIdentifier(checker.identifier);
+        BulkEditSearchPane.verifyInputLabel(checker.label);
+        BulkEditSearchPane.verifyInputLabel(checker.pageText);
+      });
     });
 
     it('C356810 Verify uploading file with holdings UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird], retries: 1 }, () => {

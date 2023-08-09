@@ -35,7 +35,7 @@ describe('Bulk Edit-- Users - in app approach', () => {
 
     cy.createTempUser([
       permissions.bulkEditUpdateRecords.gui,
-      permissions.uiUsersView.gui,
+      permissions.uiUserEdit.gui,
     ]).then(userProperties => { user = userProperties; })
       .then(() => {
         cy.loginAsAdmin({ path: SettingsMenu.customFieldsPath, waiter: CustomFields.waitLoading });

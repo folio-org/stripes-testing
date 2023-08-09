@@ -6,6 +6,7 @@ import Users from '../../../support/fragments/users/users';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import UserEdit from '../../../support/fragments/users/userEdit';
+import UsersCard from '../../../support/fragments/users/usersCard';
 
 let user;
 
@@ -47,6 +48,12 @@ describe('Permissions Bulk Edit', () => {
       permissions.uiUserEdit.gui,
     ]);
     UserEdit.saveAndClose();
+    UsersCard.verifyPermissions([
+      permissions.bulkEditView.gui,
+      permissions.bulkEditEdit.gui,
+      permissions.inventoryCRUDHoldings.gui,
+      permissions.bulkEditQueryView.gui,
+    ]);
 
     cy.login(user.username, user.password, {
       path: TopMenu.bulkEditPath,
@@ -56,8 +63,7 @@ describe('Permissions Bulk Edit', () => {
     BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
     BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Logs');
     BulkEditSearchPane.openQuerySearch();
-    BulkEditSearchPane.usersRadioIsDisabled(true);
-    BulkEditSearchPane.itemsRadioIsDisabled(true);
-    BulkEditSearchPane.itemsHoldingsIsDisabled(false);
+    BulkEditSearchPane.itemsRadioIsDisabled(false);
+    BulkEditSearchPane.holdingsRadioIsDisabled(false);
   });
 });

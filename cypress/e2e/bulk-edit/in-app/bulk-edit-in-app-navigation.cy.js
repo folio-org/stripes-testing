@@ -21,7 +21,7 @@ describe('bulk-edit', () => {
         permissions.bulkEditView.gui,
         permissions.bulkEditEdit.gui,
         permissions.bulkEditUpdateRecords.gui,
-        permissions.uiUsersView.gui,
+        permissions.uiUserEdit.gui,
       ])
         .then(userProperties => {
           user = userProperties;
