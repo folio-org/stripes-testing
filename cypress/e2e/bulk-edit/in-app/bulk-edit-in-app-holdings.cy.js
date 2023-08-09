@@ -7,7 +7,6 @@ import testTypes from '../../../support/dictionary/testTypes';
 import devTeams from '../../../support/dictionary/devTeams';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import Users from '../../../support/fragments/users/users';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';

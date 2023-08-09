@@ -7,18 +7,14 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
-import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 
 let user;
-let hrid;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
 };
 const invalidItemBarcodesFileName = `invalidItemBarcodes_${getRandomPostfix()}.csv`;
 const validItemBarcodeFileName = `validItemBarcodes_${getRandomPostfix()}.csv`;
-const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `Matched-Records-${validHoldingUUIDsFileName}`;
 const invalidBarcode = getRandomPostfix();
 
 describe('bulk-edit', () => {
