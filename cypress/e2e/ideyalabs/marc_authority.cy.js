@@ -1,4 +1,4 @@
-import marc from '../../support/a_ideyalabs/marc';
+import marc from '../../support/ideyaLabs/marc';
 import testTypes from '../../support/dictionary/testTypes';
 import inventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import inventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
@@ -7,29 +7,30 @@ import marcAuthoritiesDelete from '../../support/fragments/marcAuthority/marcAut
 import marcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
 import topMenu from '../../support/fragments/topMenu';
 
-const testData = {
-  source: 'MARC',
-  searchOption: 'Keyword',
-  authority650FieldValue: 'Speaking Oratory debating',
-  searchHoldingOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
-  holdingValue: 'The !!!Kung of Nyae Nyae / Lorna Marshall.',
-  record: 'Gibbons, Boyd',
-  accordion: 'Subject',
-  marcRecord: 'Beatles',
-  tag: {
-    tag650: '650',
-  },
-  derive: {
-    searchOption: 'Personal name',
-    authority700FieldValue: 'Gibbons, Boyd',
-    tag700: '700',
-    rowIndex: 1,
-    accordion: 'Contributor',
-    content: ' ',
-  },
-};
-
 describe.skip('Feature MARC Authority', () => {
+
+  const testData = {
+    source: 'MARC',
+    searchOption: 'Keyword',
+    authority650FieldValue: 'Speaking Oratory debating',
+    searchHoldingOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
+    holdingValue: 'The !!!Kung of Nyae Nyae / Lorna Marshall.',
+    record: 'Gibbons, Boyd',
+    accordion: 'Subject',
+    marcRecord: 'Beatles',
+    tag: {
+      tag650: '650',
+    },
+    derive: {
+      searchOption: 'Personal name',
+      authority700FieldValue: 'Gibbons, Boyd',
+      tag700: '700',
+      rowIndex: 1,
+      accordion: 'Contributor',
+      content: ' ',
+    },
+  };
+
   before('Login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
@@ -171,4 +172,6 @@ describe.skip('Feature MARC Authority', () => {
       inventoryInstance.editMarcBibliographicRecord();
     }
   );
+  
 });
+
