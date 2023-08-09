@@ -23,6 +23,12 @@ const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' 
 const actionsButton = rootSection.find(Button('Actions'));
 const singleRecordImportModal = Modal('Single record import');
 
+const advSearchButton = Button('Advanced search');
+const advSearchModal = Modal('Advanced search');
+const buttonSearchInAdvSearchModal = advSearchModal.find(Button({ ariaLabel: 'Search' }));
+const buttonCancelInAdvSearchModal = advSearchModal.find(Button({ ariaLabel: 'Cancel' }));
+
+
 const createInstanceViaAPI = (instanceWithSpecifiedNewId) => cy.okapiRequest({
   method: 'POST',
   path: 'inventory/instances',
