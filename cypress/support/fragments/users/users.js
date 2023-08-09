@@ -10,6 +10,7 @@ import {
   Section,
   Select,
   TextField,
+  Callout,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 
@@ -198,6 +199,10 @@ export default {
       deleteUser.click(),
       deleteYesButton.click()
     ]);
+  },
+
+  successMessageAfterDeletion(message) {
+    cy.expect(Callout(message).exists());
   },
 
   saveButton() {
