@@ -23,7 +23,8 @@ describe('bulk-edit', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditCsvView.gui,
-        permissions.bulkEditCsvEdit.gui
+        permissions.bulkEditCsvEdit.gui,
+        permissions.uiUserEdit.gui
       ])
         .then(userProperties => {
           user = userProperties;
@@ -61,8 +62,6 @@ describe('bulk-edit', () => {
       TopMenuNavigation.navigateToApp('Bulk edit');
       BulkEditSearchPane.verifyBulkEditPaneItems();
       BulkEditSearchPane.usersRadioIsDisabled(false);
-      BulkEditSearchPane.itemsRadioIsDisabled(true);
-      BulkEditSearchPane.itemsHoldingsIsDisabled(true);
       BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
       BulkEditSearchPane.verifyDefaultFilterState();
     });
@@ -78,8 +77,6 @@ describe('bulk-edit', () => {
 
       BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
       BulkEditSearchPane.usersRadioIsDisabled(false);
-      BulkEditSearchPane.itemsRadioIsDisabled(true);
-      BulkEditSearchPane.itemsHoldingsIsDisabled(true);
       BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
 
       BulkEditSearchPane.uploadFile(userBarcodesFileName);
@@ -99,8 +96,6 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyChangedResults(newUsername);
       BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
       BulkEditSearchPane.usersRadioIsDisabled(false);
-      BulkEditSearchPane.itemsRadioIsDisabled(true);
-      BulkEditSearchPane.itemsHoldingsIsDisabled(true);
       BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
       BulkEditSearchPane.verifyActionsAfterChangingRecords();
     });

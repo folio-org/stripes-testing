@@ -20,6 +20,7 @@ describe('bulk-edit', () => {
       cy.createTempUser([
         permissions.bulkEditCsvView.gui,
         permissions.bulkEditCsvEdit.gui,
+        permissions.uiUserEdit.gui
       ])
         .then(userProperties => {
           user = userProperties;
@@ -62,7 +63,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyChangedResults(newName);
     });
 
-    it('C357034 Verify elements of the bulk edit app -- CSV app (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C357034 Verify elements of the bulk edit app -- Local app (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
       BulkEditSearchPane.clickToBulkEditMainButton();

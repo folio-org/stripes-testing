@@ -182,6 +182,10 @@ export default {
     );
   },
 
+  verifyCustomFieldOnUserDetailsPane(name, text) {
+    cy.expect(userDetailsPane.find(KeyValue(name)).has({ value: text }));
+  },
+  
   clearTextField() {
     cy.do(TextField({ id: 'adduser_preferredname' }).clear());
   },
