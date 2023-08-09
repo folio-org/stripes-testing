@@ -228,11 +228,12 @@ export default {
   },
 
   checkStatusByTitle:(title, itemStatus) => {
-    cy.do(MultiColumnListCell({ content: title }).perform(
+    cy.do(resultsList.find(MultiColumnListCell({ content: title })).perform(
       element => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
 
-        cy.expect(MultiColumnListRow({ indexRow: rowNumber })
+        cy.wait(1000);
+        cy.expect(resultsList.find(MultiColumnListRow({ indexRow: rowNumber }))
           .find(MultiColumnListCell({ columnIndex: 5 }))
           .has({ content: itemStatus }));
       }

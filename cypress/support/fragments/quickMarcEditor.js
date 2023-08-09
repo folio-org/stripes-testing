@@ -37,6 +37,7 @@ const calloutDelete008Error = Callout('Record cannot be saved without 008 field'
 const calloutAfterSaveAndCloseNewRecord = Callout('Record created.');
 const closeButton = Button({ icon: 'times' });
 const validRecord = InventoryInstance.validOCLC;
+const validNewMarBibLDR = '00000naa\\a2200000uu\\4500';
 const specRetInputNamesHoldings008 = ['records[3].content.Spec ret[0]',
   'records[3].content.Spec ret[1]',
   'records[3].content.Spec ret[2]'];
@@ -715,6 +716,26 @@ export default {
     cy.expect(calloutUpdatedRecord.absent());
   },
 
+  checkFourthBoxDisabled(rowIndex) {
+    cy.expect(getRowInteractorByRowNumber(rowIndex).find(TextArea({ ariaLabel: 'Subfield' })).has({ disabled: true }));
+  },
+
+  verifyNoFieldWithContent(content) {
+    cy.expect(TextArea({ ariaLabel: 'Subfield', textContent: including(content) }).absent());
+  },
+
+  updateTagNameToLockedTag(rowIndex, newTagName) {
+    cy.get(`input[name="records[${rowIndex}].tag"`).type(newTagName);
+  },
+
+  checkEmptyFieldAdded(rowIndex, defaultContent = '$a ') {
+    cy.expect([
+      QuickMarcEditorRow({ index: rowIndex }).find(quickMarcEditorRowContent).exists(),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: including('.tag') })).has({ value: '' }),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ ariaLabel: 'Subfield' })).has({ textContent: defaultContent })
+    ]);
+  },
+
   confirmUpdateLinkedBibs(linkedRecordsNumber) {
     cy.do(saveButton.click());
     cy.expect([
@@ -726,5 +747,29 @@ export default {
 
   checkPaneheaderContains(text) {
     cy.expect(PaneHeader({ text: (including(text)) }).exists());
+  },
+
+  waitAndCheckFirstBibRecordCreated(marcBibTitle = `Test_Bib_Creation_${getRandomPostfix()}`, timeOutSeconds = 120) {
+    let timeCounter = 0;
+    function checkBib() {
+      cy.okapiRequest({ path: 'instance-storage/instances',
+        searchParams: { 'query': `(title all "${marcBibTitle}")` },
+        isDefaultSearchParamsRequired : false }).then(({ body }) => {
+        if (body.instances[0] || timeCounter >= timeOutSeconds) {
+          cy.expect(body.instances[0].title).equals(marcBibTitle);
+        } else {
+          // wait 1 second before retrying request
+          cy.wait(1000);
+          checkBib();
+          timeCounter++;
+        }
+      });
+    }
+    InventoryInstance.newMarcBibRecord();
+    this.updateExistingField('245', `$a ${marcBibTitle}`);
+    this.updateExistingField('LDR', validNewMarBibLDR);
+    this.pressSaveAndClose();
+    cy.expect(calloutAfterSaveAndClose.exists());
+    checkBib();
   }
 };

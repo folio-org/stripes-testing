@@ -20,11 +20,10 @@ describe('ui-orders: Orders', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
-  const defaultOrder = { ...NewOrder.defaultOneTimeOrder ,
+  const defaultOrder = { ...NewOrder.defaultOneTimeOrder,
     approved: true,
     reEncumber: true,
-    orderType: 'One-time',
-  };
+    orderType: 'One-time' };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const allocatedQuantity = '1000';
@@ -35,7 +34,7 @@ describe('ui-orders: Orders', () => {
 
   before(() => {
     cy.getAdminToken();
-    
+
     FiscalYears.createViaApi(defaultFiscalYear)
       .then(response => {
         defaultFiscalYear.id = response.id;
@@ -78,7 +77,7 @@ describe('ui-orders: Orders', () => {
       orderNumber = orderResponse.poNumber;
       Orders.checkCreatedOrder(defaultOrder);
       OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
       OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(defaultFund, '100', '1', '100', location.institutionId);
       OrderLines.backToEditingOrder();
       Orders.openOrder();

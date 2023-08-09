@@ -47,7 +47,7 @@ describe('ui-data-import', () => {
     typeValue: FOLIO_RECORD_TYPE.ORDER };
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
-    profileName: `C375989 Test Order ${getRandomPostfix()}`,
+    profileName: `C380483 Test Order ${getRandomPostfix()}`,
   };
 
   before('login', () => {
@@ -96,7 +96,6 @@ describe('ui-data-import', () => {
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
-      cy.reload();
       DataImport.uploadFile(filePathForCreateOrder, marcFileName);
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();

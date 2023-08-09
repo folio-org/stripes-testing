@@ -228,6 +228,10 @@ export default {
   settingsDataImportCanViewOnly:{ internal:'ui-data-import.settings.readOnly', gui:'Settings (Data import): Can view only' },
   settingsTenantViewLocation:{ internal:'ui - tenant - settings.settings.location.view', gui:'Settings (Tenant): View locations' },
   settingsUsersCRUD: { internal: 'ui-users.settings.transfers.all', gui: 'Settings (Users): Can create, edit and remove transfer accounts' },
+  // Added the below permissions for custom label creation
+
+  uiSettingseholdingsViewEditCreateDelete:{ internal: 'ui-eholdings.settings.all', gui: 'Settings (eholdings): Can create, edit, view, and delete custom labels' },
+
   // Timers
   okapiTimersPatch: { internal: 'okapi.proxy.self.timers.patch', gui: 'Okapi - patch timer for current tenant' },
   // Export manager

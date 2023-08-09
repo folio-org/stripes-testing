@@ -30,6 +30,8 @@ describe('ui-users-settings: Conditions in Patron blocks', () => {
         // If Borrowing and/or Renewals and/or Requests is check marked, then Message to be displayed
         specialCondition.clickByCheckbox(specialCheckBox);
         specialCondition.trySave();
+        // in order to get error message Save button should be clicked two times
+        specialCondition.trySave();
         specialCondition.checkRequiredMessageField();
         specialCondition.checkEmptyMessageValidation();
         // uncheck special checkbox
@@ -37,6 +39,8 @@ describe('ui-users-settings: Conditions in Patron blocks', () => {
 
         // If Message to be displayed is entered, then Borrowing and/or Renewals and/or Requests must be set selected;
         specialCondition.setMessage('Test message');
+        specialCondition.trySave();
+        // in order to get error message Save button should be clicked two times
         specialCondition.trySave();
         specialCondition.checkRequiredCheckboxValidation();
         // save change based on validator error message

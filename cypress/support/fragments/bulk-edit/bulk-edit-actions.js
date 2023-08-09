@@ -174,6 +174,7 @@ export default {
 
   addNewBulkEditFilterString() {
     cy.do(plusBtn.click());
+    cy.wait(1000);
   },
 
   fillPatronGroup(group = 'staff (Staff Member)', rowIndex = 0) {
@@ -241,6 +242,10 @@ export default {
       RepeatableFieldItem({ index: rowIndex }).find(Select({ content: including('Set') })).choose(`Set ${value}`),
     ]);
     cy.expect(Checkbox('Apply to items records').has({ checked: value }));
+  },
+
+  checkApplyToItemsRecordsCheckbox() {
+    cy.do(Checkbox('Apply to items records').click());
   },
 
   verifyNoMatchingOptionsForLocationFilter() {

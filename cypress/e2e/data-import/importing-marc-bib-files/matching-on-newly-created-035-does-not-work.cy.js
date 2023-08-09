@@ -1,5 +1,5 @@
 import permissions from '../../../support/dictionary/permissions';
-import Helper from '../../../support/fragments/finance/financeHelper';
+import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import { FOLIO_RECORD_TYPE,
@@ -32,13 +32,13 @@ describe('ui-data-import', () => {
   let firstInstanceHrid;
   let secondInstanceHrid;
   // unique file names
-  const fileForCreateFirstName = `C358138 firstAutotestFileForCreate.${Helper.getRandomBarcode()}.mrc`;
-  const fileForCreateSecondName = `C358138 secondAutotestFileForCreate.${Helper.getRandomBarcode()}.mrc`;
-  const fileForUpdateFirstName = `C358138 firstAutotestFileForUpdate.${Helper.getRandomBarcode()}.mrc`;
-  const fileForUpdateSecondName = `C358138 secondAutotestFileForUpdate.${Helper.getRandomBarcode()}.mrc`;
+  const fileForCreateFirstName = `C358138 firstAutotestFileForCreate.${getRandomPostfix()}.mrc`;
+  const fileForCreateSecondName = `C358138 secondAutotestFileForCreate.${getRandomPostfix()}.mrc`;
+  const fileForUpdateFirstName = `C358138 firstAutotestFileForUpdate.${getRandomPostfix()}.mrc`;
+  const fileForUpdateSecondName = `C358138 secondAutotestFileForUpdate.${getRandomPostfix()}.mrc`;
 
   const matchProfile = {
-    profileName: `C358138 Match on newly-created 035 ${Helper.getRandomBarcode()}`,
+    profileName: `C358138 Match on newly-created 035 ${getRandomPostfix()}`,
     incomingRecordFields: {
       field: '035',
       in1: '*',
@@ -51,18 +51,18 @@ describe('ui-data-import', () => {
   };
 
   const mappingProfile = {
-    name: `C358138 Update instance via 035 ${Helper.getRandomBarcode()}`,
+    name: `C358138 Update instance via 035 ${getRandomPostfix()}`,
     typeValue: FOLIO_RECORD_TYPE.INSTANCE
   };
 
   const actionProfile = {
     typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-    name: `C358138 Update instance via 035 ${Helper.getRandomBarcode()}`,
+    name: `C358138 Update instance via 035 ${getRandomPostfix()}`,
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
 
   const jobProfile = {
-    profileName: `C358138 Update instance via 035 ${Helper.getRandomBarcode()}`,
+    profileName: `C358138 Update instance via 035 ${getRandomPostfix()}`,
     acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
   };
 
@@ -121,7 +121,6 @@ describe('ui-data-import', () => {
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
-      cy.reload();
       // upload a marc file for creating of the new instance
       DataImport.uploadFile('marcFileForC358138.mrc', fileForCreateFirstName);
       JobProfiles.searchJobProfileForImport(jobProfileToRun);
@@ -141,8 +140,6 @@ describe('ui-data-import', () => {
       InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
         firstInstanceHrid = initialInstanceHrId;
       });
-
-      FileDetails.openInstanceInInventory('Created');
       InventoryInstance.verifyResourceIdentifier(resourceIdentifierForFirstInstance.type, resourceIdentifierForFirstInstance.value, 2);
       InventoryInstance.viewSource();
       InventoryViewSource.contains('035\t');
@@ -176,7 +173,6 @@ describe('ui-data-import', () => {
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
-      cy.reload();
       DataImport.uploadFile('marcFileForC358138_rev.mrc', fileForUpdateFirstName);
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
@@ -200,7 +196,6 @@ describe('ui-data-import', () => {
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
-      cy.reload();
       DataImport.uploadFile('marcFileForC358138_with_035.mrc', fileForCreateSecondName);
       JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();
@@ -219,8 +214,6 @@ describe('ui-data-import', () => {
       InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
         secondInstanceHrid = initialInstanceHrId;
       });
-
-      FileDetails.openInstanceInInventory('Created');
       InventoryInstance.verifyResourceIdentifier(resourceIdentifierForSecondInstance.type, resourceIdentifierForSecondInstance.value, 3);
       InventoryInstance.viewSource();
       InventoryViewSource.contains('035\t');
@@ -230,7 +223,6 @@ describe('ui-data-import', () => {
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
-      cy.reload();
       DataImport.uploadFile('marcFileForC358138_with_035_rev.mrc', fileForUpdateSecondName);
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();

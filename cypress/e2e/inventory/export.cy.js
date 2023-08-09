@@ -16,7 +16,8 @@ import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 let userId;
 const instanceTitle = `Inventory export test ${Number(new Date())}`;
-let locationName = '';
+let locationName;
+let locationId;
 
 describe('ui-inventory: exports', () => {
   before('navigates to Inventory', () => {
@@ -41,6 +42,7 @@ describe('ui-inventory: exports', () => {
           })
           .then(() => {
             locationName = Cypress.env('locations')[0].name;
+            locationId = Cypress.env('locations')[0].id;
             cy.createInstance({
               instance: {
                 instanceTypeId: Cypress.env('instanceTypes')[0].id,
@@ -83,7 +85,7 @@ describe('ui-inventory: exports', () => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
     Users.deleteViaApi(userId);
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*', 'SearchInstanceUUIDs*');
   });
 
   it('C9284 Export small number of Instance UUIDs (30 or fewer) (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -114,7 +116,7 @@ describe('ui-inventory: exports', () => {
       InventoryActions.verifySaveCQLQueryFileName,
       'SearchInstanceCQLQuery*',
       InventoryActions.verifySaveCQLQuery,
-      [instanceTitle]
+      [locationId, instanceTitle, 'eng']
     );
   });
 

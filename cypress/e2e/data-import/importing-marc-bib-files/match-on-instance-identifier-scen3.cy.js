@@ -1,3 +1,4 @@
+import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -26,15 +27,18 @@ import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
   let userId = null;
+  const randomIdentifierCode = `(OCoLC)847143${generateItemBarcode()}8`;
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const filePathForCreateInstance = 'marcFileForMatchOnIdentifierForCreate.mrc';
   const filePathForUpdateInstance = 'marcFileForMatchOnIdentifierForUpdate_3.mrc';
+  const editedMarcFileNameForCreate = `C347830 marcFileForCreate.${getRandomPostfix()}.mrc`;
+  const editedMarcFileNameForUpdate = `C347830 marcFileForUpdate.${getRandomPostfix()}.mrc`;
   const fileNameForCreateInstance = `C347830autotestFile.${getRandomPostfix()}.mrc`;
   const fileNameForUpdateInstance = `C347830autotestFile.${getRandomPostfix()}.mrc`;
   const instanceGeneralNote = 'IDENTIFIER UPDATE 3';
   const resourceIdentifiers = [
     { type: 'UPC', value: 'ORD32671387-4' },
-    { type: 'OCLC', value: '(OCoLC)84714376518561876438' },
+    { type: 'OCLC', value: randomIdentifierCode },
     { type: 'Invalid UPC', value: 'ORD32671387-4' },
     { type: 'System control number', value: '(AMB)84714376518561876438' },
   ];
@@ -51,7 +55,8 @@ describe('ui-data-import', () => {
     qualifierValue: '(OCoLC)',
     compareValue: 'Numerics only',
     existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
-    existingRecordOption: NewMatchProfile.optionsList.systemControlNumber
+    existingRecordOption: NewMatchProfile.optionsList.identifierOCLC,
+    compareValueInComparison: 'Numerics only'
   };
   const mappingProfile = {
     name: `C347830 ID Match Test - Update3 (OCLC).${getRandomPostfix()}`,
@@ -122,10 +127,14 @@ describe('ui-data-import', () => {
 
   it('C347830 Match on Instance identifier match meets both the Identifier type and Data requirements Scenario 3 (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-    // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.editMarcFile(filePathForCreateInstance, editedMarcFileNameForCreate,
+        ['(OCoLC)84714376518561876438'], [randomIdentifierCode]);
+      DataImport.editMarcFile(filePathForUpdateInstance, editedMarcFileNameForUpdate,
+        ['(OCoLC)84714376518561876438'], [randomIdentifierCode]);
+
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
-      cy.reload();
-      DataImport.uploadFile(filePathForCreateInstance, fileNameForCreateInstance);
+      DataImport.uploadFile(editedMarcFileNameForCreate, fileNameForCreateInstance);
       JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileNameForCreateInstance);
@@ -164,8 +173,7 @@ describe('ui-data-import', () => {
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
-      cy.reload();
-      DataImport.uploadFile(filePathForUpdateInstance, fileNameForUpdateInstance);
+      DataImport.uploadFile(editedMarcFileNameForUpdate, fileNameForUpdateInstance);
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileNameForUpdateInstance);

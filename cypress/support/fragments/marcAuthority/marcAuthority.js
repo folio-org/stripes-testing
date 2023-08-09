@@ -95,6 +95,15 @@ export default {
       QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextArea({ name: `records[${rowIndex + 1}].content` })).fillIn(content),
     ]);
   },
+  checkLinkingAuthority650: () => {
+    cy.expect(buttonLink.exists());
+    cy.expect(Callout('Field 650 has been linked to a MARC authority record.').exists());
+  },
+
+  checkLinkingAuthority700: () => {
+    cy.expect(buttonLink.exists());
+    cy.expect(Callout('Field 700 has been linked to a MARC authority record.').exists());
+  },
   changeField: (tag, content) => {
     cy.do([
       QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).fillIn(content),
@@ -125,7 +134,7 @@ export default {
     ]);
     cy.expect(Callout('Record cannot be saved. A MARC tag must contain three characters.').exists());
   },
-  
+
   checkAddNew1XXTag: (rowIndex, tag, content) => {
     cy.do([
       QuickMarcEditorRow({ index: rowIndex }).find(addFieldButton).click(),
@@ -168,8 +177,8 @@ export default {
     cy.do(saveAndCloseButton.click());
     cy.expect(Callout('Record has been updated.').exists());
   },
-  
-  deleteTag: (rowIndex) => { 
+
+  deleteTag: (rowIndex) => {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).click());
   },
 
