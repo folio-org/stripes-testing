@@ -10,52 +10,54 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import Users from '../../../support/fragments/users/users';
 import SingleRecordImportModal from '../../../support/fragments/inventory/singleRecordImportModal';
 
-describe('ui-inventory: Single record import', () => {
-  let user;
-  let instanceHRID;
-  const profileForImport = 'Inventory Single Record - Default Create Instance (Default)';
-  const testIdentifier = '1234567';
-  const instanceTitle = 'The Gospel according to Saint Mark : Evangelistib Markusib aglangit.';
+describe('inventory', () => {
+  describe('Single record import', () => {
+    let user;
+    let instanceHRID;
+    const profileForImport = 'Inventory Single Record - Default Create Instance (Default)';
+    const testIdentifier = '1234567';
+    const instanceTitle = 'The Gospel according to Saint Mark : Evangelistib Markusib aglangit.';
 
-  before('login', () => {
-    cy.createTempUser([
-      permissions.inventoryAll.gui,
-      permissions.uiInventorySingleRecordImport.gui,
-      permissions.settingsDataImportEnabled.gui
-    ])
-      .then(userProperties => {
-        user = userProperties;
+    before('login', () => {
+      cy.createTempUser([
+        permissions.inventoryAll.gui,
+        permissions.uiInventorySingleRecordImport.gui,
+        permissions.settingsDataImportEnabled.gui
+      ])
+        .then(userProperties => {
+          user = userProperties;
 
-        Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF');
+          Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF');
 
-        cy.login(user.username, user.password,
-          { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
-      });
-  });
-
-  after('delete test data', () => {
-    Users.deleteViaApi(user.userId);
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
-      .then((instance) => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
-  });
-
-  it('C375145 Verify the modal window for ISRI Import/Create in inventory main actions menu for single target profiles (folijet)',
-    { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      InventoryActions.openSingleReportImportModal();
-      SingleRecordImportModal.verifyInventorySingleRecordModalWithOneTargetProfile();
-      SingleRecordImportModal.verifySelectTheProfileToBeUsedField(profileForImport);
-      SingleRecordImportModal.selectTheProfileToBeUsed(profileForImport);
-      SingleRecordImportModal.fillEnterTestIdentifier(testIdentifier);
-      SingleRecordImportModal.import();
-      InstanceRecordView.verifyCalloutMessage(testIdentifier);
-      // need to wait because after the import the data in the instance is displayed for a long time
-      // https://issues.folio.org/browse/MODCPCT-73
-      cy.wait(10000);
-      InstanceRecordView.verifyIsInstanceOpened(instanceTitle);
-      InstanceRecordView.getAssignedHRID().then(initialInstanceHrId => {
-        instanceHRID = initialInstanceHrId;
-      });
+          cy.login(user.username, user.password,
+            { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+        });
     });
+
+    after('delete test data', () => {
+      Users.deleteViaApi(user.userId);
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
+        .then((instance) => {
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
+    });
+
+    it('C375145 Verify the modal window for ISRI Import/Create in inventory main actions menu for single target profiles (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+        InventoryActions.openSingleReportImportModal();
+        SingleRecordImportModal.verifyInventorySingleRecordModalWithOneTargetProfile();
+        SingleRecordImportModal.verifySelectTheProfileToBeUsedField(profileForImport);
+        SingleRecordImportModal.selectTheProfileToBeUsed(profileForImport);
+        SingleRecordImportModal.fillEnterTestIdentifier(testIdentifier);
+        SingleRecordImportModal.import();
+        InstanceRecordView.verifyCalloutMessage(testIdentifier);
+        // need to wait because after the import the data in the instance is displayed for a long time
+        // https://issues.folio.org/browse/MODCPCT-73
+        cy.wait(10000);
+        InstanceRecordView.verifyIsInstanceOpened(instanceTitle);
+        InstanceRecordView.getAssignedHRID().then(initialInstanceHrId => {
+          instanceHRID = initialInstanceHrId;
+        });
+      });
+  });
 });

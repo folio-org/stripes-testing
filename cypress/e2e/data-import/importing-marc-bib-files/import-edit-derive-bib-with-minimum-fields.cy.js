@@ -13,80 +13,82 @@ import { JOB_STATUS_NAMES } from '../../../support/constants';
 import InventorySteps from '../../../support/fragments/inventory/inventorySteps';
 import { getCurrentDateYYMMDD } from '../../../support/utils/dateTools';
 
-describe('ui-data-import: Importing MARC Bib files', () => {
-  const testData = {
-    initialTitle: 'Bare Minimum Bib',
-    updatedTitleEdit: 'Bare Minimum Bib (after edit)',
-    updatedTitleDerive: 'Bare Minimum Bib (after derive)',
-    initial008EnteredValue: '750907',
-    expectedFieldsInQuickMarc: ['LDR', '001', '008', '005', '245', '999'],
-    marcFile: {
-      marc: 'MARC_Bib_bare_minimum_C387435.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib'
-    }
-  };
+describe('data-import', () => {
+  describe('Importing MARC Bib files', () => {
+    const testData = {
+      initialTitle: 'Bare Minimum Bib',
+      updatedTitleEdit: 'Bare Minimum Bib (after edit)',
+      updatedTitleDerive: 'Bare Minimum Bib (after derive)',
+      initial008EnteredValue: '750907',
+      expectedFieldsInQuickMarc: ['LDR', '001', '008', '005', '245', '999'],
+      marcFile: {
+        marc: 'MARC_Bib_bare_minimum_C387435.mrc',
+        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+        jobProfileToRun: 'Default - Create instance and SRS MARC Bib'
+      }
+    };
 
-  const createdRecordIDs = [];
+    const createdRecordIDs = [];
 
-  before('Creating data', () => {
-    cy.createTempUser([
-      Permissions.inventoryAll.gui,
-      Permissions.moduleDataImportEnabled.gui,
-      Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-      Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui
-    ]).then(createdUserProperties => {
-      testData.userProperties = createdUserProperties;
-      cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
+    before('Creating data', () => {
+      cy.createTempUser([
+        Permissions.inventoryAll.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+        Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui
+      ]).then(createdUserProperties => {
+        testData.userProperties = createdUserProperties;
+        cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
+      });
     });
-  });
 
-  after('Deleting created user and data', () => {
-    Users.deleteViaApi(testData.userProperties.userId);
-    createdRecordIDs.forEach(recordID => {
-      InventoryInstance.deleteInstanceViaApi(recordID);
+    after('Deleting created user and data', () => {
+      Users.deleteViaApi(testData.userProperties.userId);
+      createdRecordIDs.forEach(recordID => {
+        InventoryInstance.deleteInstanceViaApi(recordID);
+      });
+      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
+      DataImport.selectLog();
+      DataImport.openDeleteImportLogsModal();
+      DataImport.confirmDeleteImportLogs();
     });
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    DataImport.selectLog();
-    DataImport.openDeleteImportLogsModal();
-    DataImport.confirmDeleteImportLogs();
-  });
 
-  it('C387435 Import and edit/derive "MARC Bib" record having only required fields (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
-    DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
-    JobProfiles.waitLoadingList();
-    JobProfiles.searchJobProfileForImport(testData.marcFile.jobProfileToRun);
-    JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(testData.marcFile.fileName);
-    Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-    Logs.openFileDetails(testData.marcFile.fileName);
-    Logs.getCreatedItemsID().then(link => {
-      createdRecordIDs.push(link.split('/')[5]);
-      Logs.goToTitleLink('Created');
-      InventoryInstance.checkInstanceTitle(testData.initialTitle);
+    it('C387435 Import and edit/derive "MARC Bib" record having only required fields (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+      DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
+      JobProfiles.waitLoadingList();
+      JobProfiles.searchJobProfileForImport(testData.marcFile.jobProfileToRun);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(testData.marcFile.fileName);
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      Logs.openFileDetails(testData.marcFile.fileName);
+      Logs.getCreatedItemsID().then(link => {
+        createdRecordIDs.push(link.split('/')[5]);
+        Logs.goToTitleLink('Created');
+        InventoryInstance.checkInstanceTitle(testData.initialTitle);
 
-      InventoryInstance.editMarcBibliographicRecord();
-      QuickMarcEditor.checkFieldsExist(testData.expectedFieldsInQuickMarc);
-      QuickMarcEditor.checkFieldsCount(testData.expectedFieldsInQuickMarc.length);
-      InventorySteps.verifyHiddenFieldValueIn008(createdRecordIDs[0], 'Entered', testData.initial008EnteredValue);
-      QuickMarcEditor.updateExistingField('245', '$a ' + testData.updatedTitleEdit);
-      QuickMarcEditor.pressSaveAndClose();
-      QuickMarcEditor.checkAfterSaveAndClose();
+        InventoryInstance.editMarcBibliographicRecord();
+        QuickMarcEditor.checkFieldsExist(testData.expectedFieldsInQuickMarc);
+        QuickMarcEditor.checkFieldsCount(testData.expectedFieldsInQuickMarc.length);
+        InventorySteps.verifyHiddenFieldValueIn008(createdRecordIDs[0], 'Entered', testData.initial008EnteredValue);
+        QuickMarcEditor.updateExistingField('245', '$a ' + testData.updatedTitleEdit);
+        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.checkAfterSaveAndClose();
 
-      InventoryInstance.deriveNewMarcBib();
-      QuickMarcEditor.checkFieldsExist(testData.expectedFieldsInQuickMarc);
-      QuickMarcEditor.checkFieldsCount(testData.expectedFieldsInQuickMarc.length);
-      QuickMarcEditor.checkContent('$a ' + testData.updatedTitleEdit, 4);
-      QuickMarcEditor.updateExistingField('245', testData.updatedTitleDerive);
-      QuickMarcEditor.pressSaveAndClose();
-      QuickMarcEditor.checkAfterSaveAndCloseDerive();
+        InventoryInstance.deriveNewMarcBib();
+        QuickMarcEditor.checkFieldsExist(testData.expectedFieldsInQuickMarc);
+        QuickMarcEditor.checkFieldsCount(testData.expectedFieldsInQuickMarc.length);
+        QuickMarcEditor.checkContent('$a ' + testData.updatedTitleEdit, 4);
+        QuickMarcEditor.updateExistingField('245', testData.updatedTitleDerive);
+        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.checkAfterSaveAndCloseDerive();
 
-      InventoryInstance.editMarcBibliographicRecord();
-      QuickMarcEditor.checkFieldsExist(testData.expectedFieldsInQuickMarc);
-      QuickMarcEditor.checkFieldsCount(testData.expectedFieldsInQuickMarc.length);
-      QuickMarcEditor.checkContent('$a ' + testData.updatedTitleDerive, 4);
-      QuickMarcEditor.saveInstanceIdToArrayInQuickMarc(createdRecordIDs).then(() => {
-        InventorySteps.verifyHiddenFieldValueIn008(createdRecordIDs[1], 'Entered', getCurrentDateYYMMDD());
+        InventoryInstance.editMarcBibliographicRecord();
+        QuickMarcEditor.checkFieldsExist(testData.expectedFieldsInQuickMarc);
+        QuickMarcEditor.checkFieldsCount(testData.expectedFieldsInQuickMarc.length);
+        QuickMarcEditor.checkContent('$a ' + testData.updatedTitleDerive, 4);
+        QuickMarcEditor.saveInstanceIdToArrayInQuickMarc(createdRecordIDs).then(() => {
+          InventorySteps.verifyHiddenFieldValueIn008(createdRecordIDs[1], 'Entered', getCurrentDateYYMMDD());
+        });
       });
     });
   });

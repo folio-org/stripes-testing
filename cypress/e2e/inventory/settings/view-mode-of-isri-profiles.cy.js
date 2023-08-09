@@ -45,77 +45,79 @@ const zdcProfile = {
   updateMappingProfile: `zdc autotest mappingProfile${getRandomPostfix()}`
 };
 
-describe('ui-inventory: Settings', () => {
-  let user;
-  const createJobProfileIds = [];
-  const updateJobProfileIds = [];
-  const targetProfileName = `C374176 autotest profile${getRandomPostfix()}`;
-  let profileId;
+describe('inventory', () => {
+  describe('Settings', () => {
+    let user;
+    const createJobProfileIds = [];
+    const updateJobProfileIds = [];
+    const targetProfileName = `C374176 autotest profile${getRandomPostfix()}`;
+    let profileId;
 
-  before('login', () => {
-    cy.getAdminToken()
-      .then(() => {
+    before('login', () => {
+      cy.getAdminToken()
+        .then(() => {
         // create job profiles for create
-        [zbcProfile, adcProfile, zdcProfile, abcProfile].forEach(profile => {
-          NewFieldMappingProfile.createMappingProfileViaApi(profile.createMappingProfile)
-            .then((mappingProfileResponse) => {
-              NewActionProfile.createActionProfileViaApi(profile.createActionProfile, mappingProfileResponse.body.id)
-                .then((actionProfileResponse) => {
-                  NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(profile.createJobProfile, actionProfileResponse.body.id);
-                }).then(id => createJobProfileIds.push(id));
-            });
-        });
-        // create job profile for update
-        [abcProfile, zbcProfile, zdcProfile, adcProfile].forEach(profile => {
-          NewFieldMappingProfile.createMappingProfileViaApi(profile.updateMappingProfile)
-            .then((mappingProfileResponse) => {
-              NewActionProfile.createActionProfileViaApi(profile.updateActionProfile, mappingProfileResponse.body.id, 'UPDATE')
-                .then((actionProfileResponse) => {
-                  NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(profile.updateJobProfile, actionProfileResponse.body.id);
-                }).then(id => {
-                  updateJobProfileIds.push(id);
-                });
-            });
-        });
-      })
-      .then(() => {
-        Z3950TargetProfiles.createNewZ3950TargetProfileViaApi(targetProfileName, createJobProfileIds, updateJobProfileIds)
-          .then(initialId => {
-            profileId = initialId;
+          [zbcProfile, adcProfile, zdcProfile, abcProfile].forEach(profile => {
+            NewFieldMappingProfile.createMappingProfileViaApi(profile.createMappingProfile)
+              .then((mappingProfileResponse) => {
+                NewActionProfile.createActionProfileViaApi(profile.createActionProfile, mappingProfileResponse.body.id)
+                  .then((actionProfileResponse) => {
+                    NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(profile.createJobProfile, actionProfileResponse.body.id);
+                  }).then(id => createJobProfileIds.push(id));
+              });
           });
+          // create job profile for update
+          [abcProfile, zbcProfile, zdcProfile, adcProfile].forEach(profile => {
+            NewFieldMappingProfile.createMappingProfileViaApi(profile.updateMappingProfile)
+              .then((mappingProfileResponse) => {
+                NewActionProfile.createActionProfileViaApi(profile.updateActionProfile, mappingProfileResponse.body.id, 'UPDATE')
+                  .then((actionProfileResponse) => {
+                    NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(profile.updateJobProfile, actionProfileResponse.body.id);
+                  }).then(id => {
+                    updateJobProfileIds.push(id);
+                  });
+              });
+          });
+        })
+        .then(() => {
+          Z3950TargetProfiles.createNewZ3950TargetProfileViaApi(targetProfileName, createJobProfileIds, updateJobProfileIds)
+            .then(initialId => {
+              profileId = initialId;
+            });
+        });
+
+      cy.createTempUser([
+        permissions.settingsDataImportEnabled.gui,
+        permissions.uiInventorySettingsConfigureSingleRecordImport.gui
+      ])
+        .then(userProperties => {
+          user = userProperties;
+
+          cy.login(user.username, user.password);
+        });
+    });
+
+    after('delete test data', () => {
+      [abcProfile, zbcProfile, zdcProfile, adcProfile].forEach(profile => {
+        JobProfiles.deleteJobProfile(profile.createJobProfile);
+        JobProfiles.deleteJobProfile(profile.updateJobProfile);
+        ActionProfiles.deleteActionProfile(profile.createActionProfile);
+        ActionProfiles.deleteActionProfile(profile.updateActionProfile);
+        FieldMappingProfiles.deleteFieldMappingProfile(profile.createMappingProfile);
+        FieldMappingProfiles.deleteFieldMappingProfile(profile.updateMappingProfile);
       });
+      Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);
+      Users.deleteViaApi(user.userId);
+    });
 
-    cy.createTempUser([
-      permissions.settingsDataImportEnabled.gui,
-      permissions.uiInventorySettingsConfigureSingleRecordImport.gui
-    ])
-      .then(userProperties => {
-        user = userProperties;
-
-        cy.login(user.username, user.password);
+    it('C374176 Verify the view mode of ISRI profiles (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+        cy.visit(SettingsMenu.targetProfilesPath);
+        Z3950TargetProfiles.verifyTargetProfileFormOpened();
+        Z3950TargetProfiles.openTargetProfile(profileId);
+        Z3950TargetProfiles.verifyTargetProfileForm();
+        Z3950TargetProfiles.verifyCreateInstanceJobProfileList(targetProfileName);
+        Z3950TargetProfiles.verifyUpdateInstanceJobProfileList(targetProfileName);
       });
   });
-
-  after('delete test data', () => {
-    [abcProfile, zbcProfile, zdcProfile, adcProfile].forEach(profile => {
-      JobProfiles.deleteJobProfile(profile.createJobProfile);
-      JobProfiles.deleteJobProfile(profile.updateJobProfile);
-      ActionProfiles.deleteActionProfile(profile.createActionProfile);
-      ActionProfiles.deleteActionProfile(profile.updateActionProfile);
-      FieldMappingProfiles.deleteFieldMappingProfile(profile.createMappingProfile);
-      FieldMappingProfiles.deleteFieldMappingProfile(profile.updateMappingProfile);
-    });
-    Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);
-    Users.deleteViaApi(user.userId);
-  });
-
-  it('C374176 Verify the view mode of ISRI profiles (folijet)',
-    { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      cy.visit(SettingsMenu.targetProfilesPath);
-      Z3950TargetProfiles.verifyTargetProfileFormOpened();
-      Z3950TargetProfiles.openTargetProfile(profileId);
-      Z3950TargetProfiles.verifyTargetProfileForm();
-      Z3950TargetProfiles.verifyCreateInstanceJobProfileList(targetProfileName);
-      Z3950TargetProfiles.verifyUpdateInstanceJobProfileList(targetProfileName);
-    });
 });
