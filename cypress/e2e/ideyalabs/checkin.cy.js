@@ -1,4 +1,4 @@
-import checkInItems from '../../support/ideyaLabs/checkInItems';
+import checkInItems from '../../support/ideyaLabs/checkinitems';
 import serviceShift from '../../support/ideyaLabs/serviceshift';
 import testTypes from '../../support/dictionary/testTypes';
 import checkInActions from '../../support/fragments/check-in-actions/checkInActions';
