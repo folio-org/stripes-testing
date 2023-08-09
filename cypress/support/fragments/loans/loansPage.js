@@ -21,6 +21,9 @@ export default {
   waitLoading: () => {
     cy.expect(PaneHeader({ id: 'paneHeaderpane-loandetails' }).exists());
   },
+  verifyFileName(actualName) {
+    expect(actualName).to.match(/^cypress\/downloads\/\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}_\d+_\d+-\d+_package\.csv$/);
+  },
   checkAll() {
     cy.do(CheckboxInTable({ name: 'check-all' }).click());
   },

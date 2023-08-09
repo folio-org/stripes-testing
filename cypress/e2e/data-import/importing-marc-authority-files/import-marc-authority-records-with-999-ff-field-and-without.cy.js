@@ -34,7 +34,7 @@ describe('ui-data-import', () => {
   it('C359207 Checking the import to Create MARC Authority records, when incoming records do and do not have 999 ff field (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
-      cy.reload();
+      DataImport.verifyUploadState();
       // upload the first .mrc file
       DataImport.uploadFile('marcAuthFileC359207.mrc', fileName);
       JobProfiles.searchJobProfileForImport(jobProfileToRun);

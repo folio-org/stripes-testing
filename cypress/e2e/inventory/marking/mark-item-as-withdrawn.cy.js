@@ -10,6 +10,7 @@ import ServicePoints from '../../../support/fragments/settings/tenant/servicePoi
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import DevTeams from '../../../support/dictionary/devTeams';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import CirculationRules from '../../../support/fragments/circulation/circulation-rules';
 
 describe('ui-inventory: Mark items as withdrawn', () => {
   let user = {};
@@ -19,6 +20,23 @@ describe('ui-inventory: Mark items as withdrawn', () => {
   const createdRequestsIds = [];
   let createdItems = [];
   let materialType = '';
+  let addedCirculationRule;
+  let originalCirculationRules;
+
+  before(() => {
+    let materialBookId;
+    cy.getAdminToken();
+    cy.getMaterialTypes({ query: 'name="video recording"' }).then(type => {
+      materialBookId = type.id;
+    });
+    CirculationRules.getViaApi().then((circulationRule) => {
+      originalCirculationRules = circulationRule.rulesAsText;
+      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
+      const defaultProps = ` i ${ruleProps.i} r ${ruleProps.r} o ${ruleProps.o} n ${ruleProps.n} l ${ruleProps.l}`;
+      addedCirculationRule = ` \nm ${materialBookId}: ${defaultProps}`;
+      cy.updateCirculationRules({ rulesAsText: `${originalCirculationRules}${addedCirculationRule}` });
+    });
+  });
 
   beforeEach(() => {
     cy.getAdminToken()
@@ -60,6 +78,10 @@ describe('ui-inventory: Mark items as withdrawn', () => {
             });
           });
       });
+  });
+
+  after(() => {
+    CirculationRules.deleteRuleViaApi(addedCirculationRule);
   });
 
   afterEach(() => {

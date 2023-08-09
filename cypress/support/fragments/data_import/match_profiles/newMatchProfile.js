@@ -28,7 +28,8 @@ const optionsList = {
   status: 'Loan and availability: Status',
   barcode: 'Admin data: Barcode',
   instanceStatusTerm: 'Admin data: Instance status term',
-  holdingsType: 'Admin data: Holdings type'
+  holdingsType: 'Admin data: Holdings type',
+  identifierOCLC: 'Identifier: OCLC'
 };
 
 function fillExistingRecordFields(value = '', selector) {
@@ -54,7 +55,7 @@ function fillIncomingRecordFields(value = '', selector) {
 function fillName(profileName) {
   cy.do(TextField('Name*').fillIn(profileName));
   // wait for data to be loaded
-  cy.wait(15000);
+  cy.wait(10000);
 }
 
 function selectExistingRecordType(existingRecordType) {
@@ -73,6 +74,13 @@ function fillQualifierInIncomingPart(qualifierType, qualifierValue) {
     Select({ name:'profile.matchDetails[0].incomingMatchExpression.qualifier.qualifierType' }).choose(qualifierType),
     TextField({ name:'profile.matchDetails[0].incomingMatchExpression.qualifier.qualifierValue' }).fillIn(qualifierValue)
   ]);
+}
+
+function fillQualifierInExistingComparisonPart(compareValueInComparison) {
+  cy.contains('Existing Instance record').then(elem => {
+    elem.parent()[0].querySelectorAll('input[type="checkbox"]')[1].click();
+  });
+  cy.do(Select({ name: 'profile.matchDetails[0].existingMatchExpression.qualifier.comparisonPart' }).choose(compareValueInComparison));
 }
 
 function fillQualifierInExistingPart(qualifierType, qualifierValue) {
@@ -127,6 +135,7 @@ export default {
   selectExistingRecordField,
   fillStaticValue,
   fillOnlyComparePartOfTheValue,
+  fillQualifierInExistingComparisonPart,
 
   fillMatchProfileForm:({
     profileName,
@@ -163,6 +172,8 @@ export default {
       cy.do(criterionValueTypeButton.click());
       cy.expect(criterionValueTypeList.exists());
       cy.do(criterionValueTypeList.find(SelectionOption(instanceOption)).click());
+      // TODO need to wait until profile will be filled
+      cy.wait(1500);
     } else if (existingRecordType === 'MARC_AUTHORITY') {
       selectExistingRecordType(existingRecordType);
       selectIncomingRecordType('MARC Authority');
@@ -190,6 +201,8 @@ export default {
       cy.do(criterionValueTypeButton.click());
       cy.expect(criterionValueTypeList.exists());
       cy.do(criterionValueTypeList.find(SelectionOption(holdingsOption)).click());
+      // TODO need to wait until profile will be filled
+      cy.wait(1500);
     } else {
       cy.do(matchProfileDetailsAccordion.find(Button({ dataId:'ITEM' })).click());
       fillIncomingRecordFields(incomingRecordFields.field, 'field');
@@ -202,11 +215,9 @@ export default {
       fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
       cy.do(criterionValueTypeButton.click());
       cy.expect(criterionValueTypeList.exists());
-      // wait for list will be loaded
-      cy.wait(2000);
       cy.do(criterionValueTypeList.find(SelectionOption(itemOption)).click());
-      // wait for list will be loaded
-      cy.wait(2000);
+      // TODO need to wait until profile will be filled
+      cy.wait(1500);
     }
   },
 
@@ -249,7 +260,8 @@ export default {
     existingRecordType,
     compareValue,
     qualifierType,
-    qualifierValue
+    qualifierValue,
+    compareValueInComparison
   }) {
     fillName(profileName);
     selectExistingRecordType(existingRecordType);
@@ -262,6 +274,7 @@ export default {
     fillOnlyComparePartOfTheValue(compareValue);
     selectMatchCriterion(matchCriterion);
     selectExistingRecordField(existingRecordOption);
+    fillQualifierInExistingComparisonPart(compareValueInComparison);
   },
 
   fillMatchProfileWithQualifierInIncomingAndExistingRecords({

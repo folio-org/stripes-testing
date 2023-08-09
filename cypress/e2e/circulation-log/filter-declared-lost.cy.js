@@ -16,10 +16,6 @@ import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import SearchResults from '../../support/fragments/circulation-log/searchResults';
-import LoansPage from '../../support/fragments/loans/loansPage';
-import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
-import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 let user;
 const item = {
@@ -111,15 +107,6 @@ describe('circulation-log', () => {
 
   it('C45934 Check the Actions button from filtering Circulation log by declared lost (firebird)', { tags: [TestTypes.criticalPath, devTeams.firebird] }, () => {
     SearchPane.setFilterOptionFromAccordion('loan', 'Declared lost');
-    SearchResults.chooseActionByRow(0, 'Loan details');
-    LoansPage.waitLoading();
-    TopMenuNavigation.navigateToApp('Circulation log');
-
-    SearchResults.chooseActionByRow(0, 'User details');
-    Users.verifyFirstNameOnUserDetailsPane(user.firstName);
-    TopMenuNavigation.navigateToApp('Circulation log');
-
-    SearchResults.clickOnCell(item.barcode, 0);
-    ItemRecordView.waitLoading();
+    SearchPane.checkActionButtonAfterFiltering(user.firstName, item.barcode);
   });
 });

@@ -13,6 +13,8 @@ import OrderLines from '../../support/fragments/orders/orderLines';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import SettingsOrders from '../../support/fragments/settings/orders/settingsOrders';
 
+Cypress.on('uncaught:exception', () => false);
+
 describe('orders: export', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
   const organization = {

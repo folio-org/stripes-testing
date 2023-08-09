@@ -45,7 +45,7 @@ export default {
 
   searchBy:(searchOption, value) => {
     cy.do(searchInput.fillIn(value));
-    cy.expect(searchInput.has({ value: value }));
+    cy.expect(searchInput.has({ value }));
     cy.do(browseSearchAndFilterInput.choose(searchOption));
     cy.get('#textarea-authorities-search-qindex').then((elem) => {
       expect(elem.text()).to.include(searchOption);
@@ -55,7 +55,7 @@ export default {
   },
 
   searchByChangingParameter(searchOption, value) {
-    cy.expect(searchInput.has({ value: value }));
+    cy.expect(searchInput.has({ value }));
     // Waiter required for the search option to be loaded.
     cy.wait(500);
     cy.do(browseSearchAndFilterInput.choose(searchOption));
@@ -71,7 +71,7 @@ export default {
       expect(elem.text()).to.include(searchOption);
     });
     cy.do(searchInput.fillIn(value));
-    cy.expect(searchInput.has({ value: value }));
+    cy.expect(searchInput.has({ value }));
     cy.expect(enabledSearchButton.exists());
     cy.do(searchButton.click());
   },
@@ -106,34 +106,34 @@ export default {
 
   checkResultWithValue(auth, value) {
     cy.expect([
-      MultiColumnListCell({content: auth}).exists(),
-      MultiColumnListCell({content: value}).exists(),
+      MultiColumnListCell({ content: auth }).exists(),
+      MultiColumnListCell({ content: value }).exists(),
     ]);
   },
 
   checkResultWithValueA(valueA, auth, valueAuth, ref, valueRef) {
     cy.expect([
-      MultiColumnListCell({content: `${valueA} would be here`}).exists(),
-      MultiColumnListCell({content: auth}).exists(),
-      MultiColumnListCell({content: valueAuth}).exists(),
-      MultiColumnListCell({content: ref}).exists(),
-      MultiColumnListCell({content: valueRef}).exists(),
+      MultiColumnListCell({ content: `${valueA} would be here` }).exists(),
+      MultiColumnListCell({ content: auth }).exists(),
+      MultiColumnListCell({ content: valueAuth }).exists(),
+      MultiColumnListCell({ content: ref }).exists(),
+      MultiColumnListCell({ content: valueRef }).exists(),
     ]);
   },
 
   checkResultWithValueB(auth, valueAuth, ref, valueRef) {
     cy.expect([
-      MultiColumnListCell({content: auth}).exists(),
-      MultiColumnListCell({content: valueAuth}).exists(),
-      MultiColumnListCell({content: ref}).exists(),
-      MultiColumnListCell({content: valueRef}).exists(),
+      MultiColumnListCell({ content: auth }).exists(),
+      MultiColumnListCell({ content: valueAuth }).exists(),
+      MultiColumnListCell({ content: ref }).exists(),
+      MultiColumnListCell({ content: valueRef }).exists(),
     ]);
   },
 
   checkHeadingReference: (headingReference) => {
     cy.expect([
-      rootSection.find(MultiColumnListRow({ rowIndexInParent: `row-0` })).find(MultiColumnListCell({ content: `${headingReference}\xa0would be here` })),
-      rootSection.find(MultiColumnListRow({ rowIndexInParent: `row-1` })).find(MultiColumnListCell({ content: headingReference })),
+      rootSection.find(MultiColumnListRow({ rowIndexInParent: 'row-0' })).find(MultiColumnListCell({ content: `${headingReference}\xa0would be here` })),
+      rootSection.find(MultiColumnListRow({ rowIndexInParent: 'row-1' })).find(MultiColumnListCell({ content: headingReference })),
     ]);
   },
 };
