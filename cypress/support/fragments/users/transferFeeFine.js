@@ -29,11 +29,6 @@ export default {
       cy.do([
         TextField({ name: 'scheduling.interval' }).fillIn(interval)
       ]);
-      cy.do([
-        // get the multi-select element, then choose the weekday buttons
-        MultiSelect({ name: 'scheduling.weekdays' }).choose(weekDays)
-        
-      ]);
     }
     else if (frequency === 'Days') {
       cy.do([
@@ -47,12 +42,10 @@ export default {
 
   setAggregateByPatron(aggregate) {
     if (!aggregate) {
-      // check if the box is already unchecked
-      cy.expect(Button({ text: 'Group data by patron' }).exists());
-      // uncheck the box
-      cy.do([
-        Button({ text: 'Group data by patron' }).click()
-      ]);
+      // it is an input checkbox wiht name aggregate
+      cy.get('input[name="aggregate"]').uncheck(
+        { force: true }
+      );
     }
   },
 
@@ -60,6 +53,7 @@ export default {
     cy.do([
       Button({ text: 'Run manually' }).click(),
     ]);
+    cy.get('@alert').should('have.been.calledOnceWith', 'Job has been scheduled')
   },
 
   typeScheduleTime(time) {
@@ -75,17 +69,27 @@ export default {
     cy.expect(TextField({ name: 'scheduleTime', value: time }).exists());
   },
 
-  // All three of our acceptance tests use no criteria for the Criteria field
   setCriteria(criteria) {
     if (!criteria) {
       cy.do(Select({ name: 'criteria.type' }).choose('No criteria (always run)'));
     }
   },
-  
-  // sectionName: string like 'Header', 'Account Data', 'Footer'
-  // dataFormat will be a list of options we config
-  setDataFormatSection(sectionName, dataFormat) {
 
+  openAllPanes() {
+    // see if you can find a button that says "Collapse all"
+    if (Button({ text: 'Collapse all' }).exists()) {
+      // if you can find it, click it then click the new button "Expand all"
+      cy.do([
+        Button({ text: 'Collapse all' }).click(),
+        Button({ text: 'Expand all' }).click()
+      ]);
+    }
+    else {
+      // if you can't find it, click the button "Expand all"
+      cy.do([
+        Button({ text: 'Expand all' }).click()
+      ]);
+    }
   },
 
   setAmount: (amount) => cy.do(amountTextfield.fillIn(amount.toFixed(2))),

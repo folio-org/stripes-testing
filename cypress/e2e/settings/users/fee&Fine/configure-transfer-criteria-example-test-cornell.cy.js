@@ -11,6 +11,10 @@ describe("Build the Cornell bursar transfer file", () => {
     });
   });
 
+  it("should be able to open all the panes", () => {
+    TransferFeeFine.openAllPanes();
+  });
+
   it("should be able to set scheduling", () => {
     TransferFeeFine.setTransferCriteriaScheduling(
       "Weeks",
@@ -22,7 +26,6 @@ describe("Build the Cornell bursar transfer file", () => {
 
   it("should be able to set no criteria", () => {
     TransferFeeFine.setCriteria(false);
-    
   });
 
   // Aggregate by patron: Box unchecked
@@ -32,7 +35,15 @@ describe("Build the Cornell bursar transfer file", () => {
 
   // Header Format
   it("should be able to set header format", () => {
-    TransferFeeFine.setDataFormatSection();
+    // get the parent element that contains text 'Header Format', then loop through its children and press the trash icon for each
+    cy.get('.dropdown-menu:has("Header format")').parent().within(() => {
+      cy.get("button[class^='iconButton']").each((el) => {
+        cy.wrap(el).click();
+      });
+    }
+    );
+
+
   });
 
   // Account Data Format
@@ -45,5 +56,4 @@ describe("Build the Cornell bursar transfer file", () => {
     TransferFeeFine.runManually();
   });
 
-  // Verify that the transfer was successful
 });
