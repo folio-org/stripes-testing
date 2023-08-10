@@ -13,6 +13,7 @@ import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
 
 let user;
 let instanceRecord;
+const OCLCAuthentication = '100481406/PAOLF';
 const oclcRecordData = {
   title: 'Cooking Light Soups & Stew [electronic resource].',
   language: 'English',
@@ -31,7 +32,7 @@ describe('ui-inventory: import by OCLC', () => {
   before('create test data', () => {
     cy.getAdminToken()
       .then(() => {
-        Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF');
+        Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
         InventorySearchAndFilter.createInstanceViaApi()
           .then(({ instanceData }) => {
             instanceRecord = instanceData;

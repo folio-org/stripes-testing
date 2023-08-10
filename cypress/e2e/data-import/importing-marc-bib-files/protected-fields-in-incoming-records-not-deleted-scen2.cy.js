@@ -15,7 +15,7 @@ import { TARGET_PROFILE_NAMES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let user = null;
-  const authentication = '100473910/PAOLF';
+  const OCLCAuthentication = '100481406/PAOLF';
   const oclcForImport = '19257462';
   const initialFields = {
     first580field: '‡a Merged with: Journal of the Chemical Society. Perkin transactions I; Journal of the Chemical Society. Perkin transactions II; and Journal of the Chemical Society. Dalton transactions, to form: Perkin 1; Perkin 2; and Dalton (Cambridge, England).',
@@ -87,8 +87,8 @@ describe('ui-data-import', () => {
 
       cy.visit(SettingsMenu.targetProfilesPath);
       Z3950TargetProfiles.openTargetProfile();
-      Z3950TargetProfiles.editOclcWorldCat(authentication, TARGET_PROFILE_NAMES.OCLC_WORLDCAT);
-      Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(authentication);
+      Z3950TargetProfiles.editOclcWorldCat(OCLCAuthentication, TARGET_PROFILE_NAMES.OCLC_WORLDCAT);
+      Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(OCLCAuthentication);
 
       cy.visit(TopMenu.inventoryPath);
       InventoryInstances.importWithOclc(oclcForImport);

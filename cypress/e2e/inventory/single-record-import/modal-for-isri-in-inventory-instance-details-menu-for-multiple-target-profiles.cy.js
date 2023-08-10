@@ -22,6 +22,7 @@ describe('ui-inventory', () => {
   let user;
   let instanceHRID;
   let profileId;
+  const OCLCAuthentication = '100481406/PAOLF';
   const fileName = `C375126 autotestFile.${getRandomPostfix()}.mrc`;
   const targetProfileName = `C375126 autotest profile${getRandomPostfix()}`;
   const defaultTargetProfileName = 'OCLC WorldCat';
@@ -29,7 +30,7 @@ describe('ui-inventory', () => {
   const targetProfile = {
     name: 'OCLC WorldCat',
     url: 'zcat.oclc.org/OLUCWorldCat',
-    authentification: '100473910/PAOLF',
+    authentification: OCLCAuthentication,
     externalId: '@attr 1=1211 $identifier',
     internalId: '999ff$i'
   };
@@ -47,7 +48,7 @@ describe('ui-inventory', () => {
       InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
         instanceHRID = initialInstanceHrId;
       });
-      Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF');
+      Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
       Z3950TargetProfiles.createNewZ3950TargetProfileViaApi(targetProfileName)
         .then(initialId => { profileId = initialId; });
       cy.visit(SettingsMenu.targetProfilesPath);

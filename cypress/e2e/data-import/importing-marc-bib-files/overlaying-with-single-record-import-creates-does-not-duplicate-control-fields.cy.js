@@ -17,6 +17,7 @@ describe('ui-data-import', () => {
   let user;
   let instanceHrid;
   const oclcNumber = '42980246';
+  const OCLCAuthentication = '100481406/PAOLF';
   const field005 = '20230427101124.9';
   const field035 = '‡a (OCoLC)ocm42980246';
   const notDuplicatedFieldsContent = {
@@ -36,7 +37,7 @@ describe('ui-data-import', () => {
       .then(userProperties => {
         user = userProperties;
 
-        Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF');
+        Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
         cy.login(user.username, user.password,
           { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
       });

@@ -22,7 +22,7 @@ describe('ui-data-import', () => {
   let instanceHrid = null;
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const protectedField = '856';
-  const authentication = '100473910/PAOLF';
+  const OCLCAuthentication = '100481406/PAOLF';
   const oclcForChanging = '466478385';
   const imported856Field = 'Notice et cote du catalogue de la Bibliothèque nationale de France ‡u http://catalogue.bnf.fr/ark:/12148/cb371881758';
 
@@ -93,8 +93,8 @@ describe('ui-data-import', () => {
 
       cy.visit(SettingsMenu.targetProfilesPath);
       Z3950TargetProfiles.openTargetProfile();
-      Z3950TargetProfiles.editOclcWorldCat(authentication, TARGET_PROFILE_NAMES.OCLC_WORLDCAT);
-      Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(authentication);
+      Z3950TargetProfiles.editOclcWorldCat(OCLCAuthentication, TARGET_PROFILE_NAMES.OCLC_WORLDCAT);
+      Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(OCLCAuthentication);
 
       cy.visit(TopMenu.inventoryPath);
       InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);

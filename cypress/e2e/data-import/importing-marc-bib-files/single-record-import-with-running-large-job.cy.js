@@ -16,7 +16,7 @@ import { TARGET_PROFILE_NAMES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
   let user = {};
-  const authentication = '100473910/PAOLF';
+  const OCLCAuthentication = '100481406/PAOLF';
   const fileName = `C356824autotestFile.${getRandomPostfix()}.mrc`;
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const oclcForImport = '912958093';
@@ -58,8 +58,8 @@ describe('ui-data-import', () => {
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       cy.visit(SettingsMenu.targetProfilesPath);
       Z3950TargetProfiles.openTargetProfile();
-      Z3950TargetProfiles.editOclcWorldCat(authentication, TARGET_PROFILE_NAMES.OCLC_WORLDCAT);
-      Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(authentication);
+      Z3950TargetProfiles.editOclcWorldCat(OCLCAuthentication, TARGET_PROFILE_NAMES.OCLC_WORLDCAT);
+      Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(OCLCAuthentication);
 
       // import a file
       cy.visit(TopMenu.dataImportPath);

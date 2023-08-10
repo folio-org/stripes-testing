@@ -14,10 +14,11 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 
 describe('Manage inventory Bib records with quickMarc editor', () => {
   let userId;
+  const OCLCAuthentication = '100481406/PAOLF';
 
   before(() => {
     cy.getAdminToken().then(() => {
-      Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF');
+      Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
     });
   });
 
