@@ -22,7 +22,6 @@ import SwitchServicePoint from '../../support/fragments/servicePoint/switchServi
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../support/fragments/checkout/checkout';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
-// import Users from '../../support/fragments/users/users';
 
 describe('orders: Receiving and Check-in', () => {
   const order = {
@@ -175,14 +174,6 @@ describe('orders: Receiving and Check-in', () => {
 
     Organizations.deleteOrganizationViaApi(organization.id);
     // TODO: Need to find solution to delete all data, becouse now i cant delete location and user
-    // NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
-    //     location.institutionId,
-    //     location.campusId,
-    //     location.libraryId,
-    //     location.id
-    //   );
-
-    // Users.deleteViaApi(user.userId);
   });
 
   it('C368044 Item statuses set to something other than "Order closed" or "On order" are NOT changed to "In process" upon receiving (items for receiving includes "Order closed" statuses) (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {

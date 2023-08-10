@@ -182,47 +182,6 @@ describe('orders: Receiving and Check-in', () => {
   });
 
   //     // TODO: Need to find solution to delete all data, becouse now i cant delete location and user
-  //   after(() => {
-  //     Checkout.checkoutItemViaApi({
-  //       id: uuid(),
-  //       itemBarcode: barcodeForFirstItem,
-  //       loanDate: moment.utc().format(),
-  //       servicePointId: effectiveLocationServicePoint.id,
-  //       userBarcode: user.barcode,
-  //     });
-  //     Checkout.checkoutItemViaApi({
-  //       id: uuid(),
-  //       itemBarcode: barcodeForSecondItem,
-  //       loanDate: moment.utc().format(),
-  //       servicePointId: effectiveLocationServicePoint.id,
-  //       userBarcode: user.barcode,
-  //     });
-  //     cy.loginAsAdmin({ path:TopMenu.receivingPath, waiter: Receiving.waitLoading });
-  //     Orders.searchByParameter('PO number', orderNumber);
-  //     Receiving.selectFromResultsList();
-  //     Receiving.unreceiveFromReceivedSection();
-  //     cy.visit(TopMenu.ordersPath);
-  //     Orders.searchByParameter('PO number', orderNumber);
-  //     Orders.selectFromResultsList();
-  //     Orders.reOpenOrder();
-  //     Orders.unOpenOrder(orderNumber);
-  //     OrderLines.selectPOLInOrder(0);
-  //     OrderLines.deleteOrderLine();
-  //     // Need to wait until the order is opened before deleting it
-  //     cy.wait(2000);
-  //     Orders.deleteOrderViaApi(order.id);
-
-  //     Organizations.deleteOrganizationViaApi(organization.id);
-  //     // TODO: Need to find solution to delete all data, becouse now i cant delete location and user
-  //     // NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
-  //     //     location.institutionId,
-  //     //     location.campusId,
-  //     //     location.libraryId,
-  //     //     location.id
-  //     //   );
-
-  //     // Users.deleteViaApi(user.userId);
-  //   });
 
   it('C367971 Item statuses are set to status other than "Order closed" or "On order" and are NOT changed to "In process" upon receiving (items for receiving includes "On order" statuses) (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
