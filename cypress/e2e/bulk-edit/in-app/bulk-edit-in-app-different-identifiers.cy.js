@@ -27,7 +27,7 @@ describe('bulk-edit', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditView.gui,
-        permissions.bulkEditEdit.gui,
+        permissions.uiInventoryViewCreateEditHoldings.gui
       ])
         .then(userProperties => {
           user = userProperties;
@@ -59,6 +59,7 @@ describe('bulk-edit', () => {
       FileManager.deleteFile(`cypress/fixtures/${invalidItemBarcodesFileName}`);
     });
 
+    // has to pass after UIBULKED-321
     it('C360119 Verify that different Holdings identifiers are supported for Bulk edit (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.checkHoldingsRadio();
       BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
