@@ -1,5 +1,3 @@
-// import moment from 'moment';
-// import uuid from 'uuid';
 import permissions from '../../../support/dictionary/permissions';
 import devTeams from '../../../support/dictionary/devTeams';
 import testType from '../../../support/dictionary/testTypes';
@@ -20,9 +18,7 @@ import ItemActions from '../../../support/fragments/inventory/inventoryItem/item
 import ItemRecordEdit from '../../../support/fragments/inventory/item/itemRecordEdit';
 import SwitchServicePoint from '../../../support/fragments/servicePoint/switchServicePoint';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
-// import Checkout from '../../../support/fragments/checkout/checkout';
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
-// import Users from '../../support/fragments/users/users';
 
 describe('orders: Receiving and Check-in', () => {
   const order = {
@@ -55,7 +51,6 @@ describe('orders: Receiving and Check-in', () => {
   const barcodeForSeventhItem = `7${Helper.getRandomBarcode()}`;
 
   let orderNumber;
-  let user;
   let circ2LocationServicePoint;
   let circ1LocationServicePoint;
   let location;
