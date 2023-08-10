@@ -3,7 +3,7 @@ import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import devTeams from '../../../support/dictionary/devTeams';
-import users from '../../../support/fragments/users/users';
+import Users from '../../../support/fragments/users/users';
 
 let user;
 let userCircAndLogsPermissions;
@@ -16,6 +16,8 @@ describe('bulk-edit', () => {
         permissions.bulkEditCsvEdit.gui,
         permissions.bulkEditView.gui,
         permissions.bulkEditEdit.gui,
+        permissions.uiUsersView.gui,
+        permissions.uiInventoryViewInstances.gui
       ])
         .then(userProperties => {
           user = userProperties;
@@ -39,8 +41,8 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
-      users.deleteViaApi(user.userId);
-      users.deleteViaApi(userCircAndLogsPermissions.userId);
+      Users.deleteViaApi(user.userId);
+      Users.deleteViaApi(userCircAndLogsPermissions.userId);
     });
 
     it('C360090 Verify switching between Inventory record types radio buttons (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -66,7 +68,10 @@ describe('bulk-edit', () => {
     });
 
     it('C347870 Verify that user with Bulk Edit: View and Edit permission can start bulk editing (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
-      cy.visit(TopMenu.bulkEditPath);
+      cy.login(userCircAndLogsPermissions.username, userCircAndLogsPermissions.password, {
+        path: TopMenu.bulkEditPath,
+        waiter: BulkEditSearchPane.waitLoading
+      });
       BulkEditSearchPane.actionsIsAbsent();
       BulkEditSearchPane.isDragAndDropAreaDisabled(true);
     });

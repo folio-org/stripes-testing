@@ -27,6 +27,7 @@ describe('bulk-edit', () => {
       cy.createTempUser([
         permissions.bulkEditView.gui,
         permissions.bulkEditEdit.gui,
+        permissions.uiInventoryViewCreateEditItems.gui
       ])
         .then(userProperties => {
           user = userProperties;
