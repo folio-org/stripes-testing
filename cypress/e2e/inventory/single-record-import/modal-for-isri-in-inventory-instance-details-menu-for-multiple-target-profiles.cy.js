@@ -86,6 +86,7 @@ describe('ui-inventory', () => {
 
   after('delete test data', () => {
     Users.deleteViaApi(user.userId);
+    Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
       .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
