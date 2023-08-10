@@ -603,6 +603,10 @@ export default {
     ]);
   },
 
+  confirmOrCancel(action) {
+    cy.do(Modal('Confirm move').find(Button(action)).click());
+  },
+
   returnItemToFirstHolding(firstHoldingName, secondHoldingName) {
     this.openHoldings(firstHoldingName, secondHoldingName);
 
