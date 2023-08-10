@@ -74,7 +74,7 @@ describe('Inventory -> Advanced search', () => {
     InventoryInstances.checkAdvSearchModalValues(1, 'Rock music Adv search subj 001', 'Exact phrase', 'Subject', 'AND');
     InventoryInstances.clickSearchBtnInAdvSearchModal();
     InventoryInstances.checkAdvSearchModalAbsence();
-    InventorySearchAndFilter.verifySelectedSearchOption(testData.advSearchOption);
+    InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
     InventorySearchAndFilter.verifySearchResult(testData.expectedSearchResult);
     InventorySearchAndFilter.checkRowsCount(1);
   });

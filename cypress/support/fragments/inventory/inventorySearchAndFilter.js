@@ -658,9 +658,5 @@ export default {
       instancesList.find(MultiColumnListRow({ index: expectedRowsCount - 1 })).exists(),
       instancesList.find(MultiColumnListRow({ index: expectedRowsCount })).absent()
     ]);
-  },
-
-  verifySelectedSearchOption(option) {
-    cy.expect(inventorySearchAndFilterInput.has({ content: including(option) }));
   }
 };
