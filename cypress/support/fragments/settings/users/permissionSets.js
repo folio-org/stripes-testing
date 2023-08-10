@@ -47,6 +47,7 @@ export default {
       generalInformation.find(KeyValue('Permission set name', { value: values.name })).exists(),
       generalInformation.find(KeyValue('Description', { value: values.description })).exists(),
     ]);
+    cy.do(Button({ id: 'accordion-toggle-button-assignedPermissions' }).click());
     cy.wrap(values.permissions).each((permission) => {
       cy.expect(Section({ id: 'assignedPermissions' }).find(ListItem(permission)).exists());
     });

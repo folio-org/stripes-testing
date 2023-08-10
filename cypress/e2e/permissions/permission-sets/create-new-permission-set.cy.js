@@ -3,12 +3,13 @@ import { getTestEntityValue } from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import PermissionSets from '../../../support/fragments/settings/users/permissionSets';
+import permissions from '../../../support/dictionary/permissions';
 
 describe('Permission Sets', () => {
   const newPermissionSet = {
     name: getTestEntityValue('NewPermissionSet'),
     description: getTestEntityValue('NewPermissionSetDescription'),
-    permissions: ['Agreements: Delete agreements'],
+    permissions: [permissions.uiUsersView.gui],
   };
 
   before('Preconditions', () => {
