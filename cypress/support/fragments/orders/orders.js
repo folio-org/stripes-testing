@@ -59,7 +59,7 @@ export default {
       searchForm.selectIndex(parameter),
       searchForm.fillIn(value)
     ]);
-    cy.wait(1000);
+    cy.wait(2000);
     cy.do(Button('Search').click());
   },
   waitLoading() {
