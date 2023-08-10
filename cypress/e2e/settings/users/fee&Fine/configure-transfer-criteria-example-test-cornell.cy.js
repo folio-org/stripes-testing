@@ -33,27 +33,31 @@ describe("Build the Cornell bursar transfer file", () => {
     TransferFeeFine.setAggregateByPatron(false);
   });
 
+    it("should be able to set transfer account data to", () => {
+    TransferFeeFine.setTransferAccount("Lost Item Fine Office", "acct");
+  });
+
   // Header Format
   it("should be able to set header format", () => {
-    // get the parent element that contains text 'Header Format', then loop through its children and press the trash icon for each
-    cy.get('.dropdown-menu:has("Header format")').parent().within(() => {
-      cy.get("button[class^='iconButton']").each((el) => {
-        cy.wrap(el).click();
-      });
-    }
-    );
-
-
+    // remove all current header options
+    cy.do([
+      Button({ icon: "trash" }).click(),
+      Button({ icon: "trash" }).click(),
+      Button({ icon: "trash" }).click(),
+    ]);
   });
 
   // Account Data Format
 
   // Footer Format
 
-
+  // Transer account data to
+  it("should be able to set transfer account data to", () => {
+    TransferFeeFine.setTransferAccount("Lost Item Fine Office", "acct");
+  });
 
   it("should be able to run manually", () => {
-    TransferFeeFine.runManually();
+    //TransferFeeFine.runManually();
   });
 
 });

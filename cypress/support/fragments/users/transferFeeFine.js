@@ -76,6 +76,13 @@ export default {
     // Currently don't have any test cases for criteria
   },
 
+  setTransferAccount(feeFineOwner, transferAccount) {
+    cy.do([
+      Select({ name: 'transferInfo.else.owner' }).choose(feeFineOwner),
+      Select({ name: 'transferInfo.else.account' }).choose(transferAccount)
+    ]);
+  },
+
   openAllPanes() {
     if (!Button({ text: 'Collapse all' }).exists()) {
       cy.do([
@@ -86,7 +93,6 @@ export default {
 
   setAmount: (amount) => cy.do(amountTextfield.fillIn(amount.toFixed(2))),
   setOwner: (owner) => cy.do(ownerSelect.choose(owner)),
-  setTransferAccount: (account) => cy.do(transferAccountSelect.choose(account)),
   transferAndConfirm: () => {
     cy.do([
       transferButton.click(),
