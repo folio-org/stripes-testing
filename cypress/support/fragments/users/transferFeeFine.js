@@ -42,11 +42,11 @@ export default {
 
   setAggregateByPatron(aggregate) {
     if (!aggregate) {
-      // it is an input checkbox wiht name aggregate
       cy.get('input[name="aggregate"]').uncheck(
         { force: true }
       );
     }
+    // Currently don't have any test cases for aggregate by patron
   },
 
   runManually() {
@@ -73,19 +73,11 @@ export default {
     if (!criteria) {
       cy.do(Select({ name: 'criteria.type' }).choose('No criteria (always run)'));
     }
+    // Currently don't have any test cases for criteria
   },
 
   openAllPanes() {
-    // see if you can find a button that says "Collapse all"
-    if (Button({ text: 'Collapse all' }).exists()) {
-      // if you can find it, click it then click the new button "Expand all"
-      cy.do([
-        Button({ text: 'Collapse all' }).click(),
-        Button({ text: 'Expand all' }).click()
-      ]);
-    }
-    else {
-      // if you can't find it, click the button "Expand all"
+    if (!Button({ text: 'Collapse all' }).exists()) {
       cy.do([
         Button({ text: 'Expand all' }).click()
       ]);
