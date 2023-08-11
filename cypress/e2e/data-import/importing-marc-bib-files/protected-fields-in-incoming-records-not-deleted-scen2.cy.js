@@ -108,7 +108,7 @@ describe('ui-data-import', () => {
       // overlay source bibliographic record
       InventoryInstance.startOverlaySourceBibRecord();
       InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();
-      InventoryInstance.importWithOclc(oclcForImport);
+      InventoryInstance.overlayWithOclc(oclcForImport);
       InventoryInstance.checkCalloutMessage(`Record ${oclcForImport} updated. Results may take a few moments to become visible in Inventory`);
 
       // need to wait because after the import the data in the instance is displayed for a long time

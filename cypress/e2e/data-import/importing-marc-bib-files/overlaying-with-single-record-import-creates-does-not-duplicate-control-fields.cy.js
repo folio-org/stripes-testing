@@ -4,7 +4,6 @@ import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
@@ -53,7 +52,7 @@ describe('ui-data-import', () => {
 
   it('C347618 Overlaying with single record import creates does not duplicate control fields (folijet)',
     { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-      InventoryActions.import(oclcNumber);
+      InventoryInstances.importWithOclc(oclcNumber);
       InventoryInstance.checkCalloutMessage(`Record ${oclcNumber} created. Results may take a few moments to become visible in Inventory`);
       cy.visit(TopMenu.dataImportPath);
       Logs.openViewAllLogs();
@@ -65,8 +64,10 @@ describe('ui-data-import', () => {
         instanceHrid = initialInstanceHrId;
 
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+        cy.wait(1000);
+        InventorySearchAndFilter.selectSearchResultItem();
         InventoryInstance.startOverlaySourceBibRecord();
-        InventoryInstance.importWithOclc(oclcNumber);
+        InventoryInstance.overlayWithOclc(oclcNumber);
         InventoryInstance.checkCalloutMessage(`Record ${oclcNumber} updated. Results may take a few moments to become visible in Inventory`);
         InventoryInstance.viewSource();
         InventoryViewSource.verifyRecordNotContainsDuplicatedContent(field035, 2);

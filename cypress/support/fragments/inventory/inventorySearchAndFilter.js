@@ -170,16 +170,6 @@ export default {
   effectiveLocation: {
     mainLibrary: { id: 'clickable-filter-effectiveLocation-main-library' },
   },
-  selectSearchResultByRowIndex(indexRow) {
-    cy.do(this.getSearchResult(indexRow, 0).click());
-    // must wait page render
-    cy.wait(2000);
-  },
-  selectSearchResultByRowIndex(indexRow) {
-    cy.expect(Spinner().absent());
-    cy.do(this.getSearchResult(indexRow, 0).click());
-    cy.expect(Spinner().absent());
-  },
 
   language: {
     eng: { id: 'clickable-filter-language-english' },
