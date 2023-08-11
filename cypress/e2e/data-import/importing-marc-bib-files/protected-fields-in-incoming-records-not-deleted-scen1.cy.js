@@ -22,7 +22,7 @@ describe('ui-data-import', () => {
   let instanceHrid = null;
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const protectedField = '856';
-  const authentication = '100473910/PAOLF';
+  const OCLCAuthentication = '100481406/PAOLF';
   const oclcForChanging = '466478385';
   const imported856Field = 'Notice et cote du catalogue de la Bibliothèque nationale de France ‡u http://catalogue.bnf.fr/ark:/12148/cb371881758';
 
@@ -93,11 +93,13 @@ describe('ui-data-import', () => {
 
       cy.visit(SettingsMenu.targetProfilesPath);
       Z3950TargetProfiles.openTargetProfile();
-      Z3950TargetProfiles.editOclcWorldCat(authentication, TARGET_PROFILE_NAMES.OCLC_WORLDCAT);
-      Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(authentication);
+      Z3950TargetProfiles.editOclcWorldCat(OCLCAuthentication, TARGET_PROFILE_NAMES.OCLC_WORLDCAT);
+      Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(OCLCAuthentication);
 
       cy.visit(TopMenu.inventoryPath);
       InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+      cy.wait(1000);
+      InventorySearchAndFilter.selectSearchResultItem();
       InventoryInstance.editMarcBibliographicRecord();
       InventoryEditMarcRecord.deleteField(29);
       InventoryEditMarcRecord.saveAndClose();
@@ -105,7 +107,7 @@ describe('ui-data-import', () => {
       InventoryInstance.checkElectronicAccess();
       InventoryInstance.startOverlaySourceBibRecord();
       InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();
-      InventoryInstance.importWithOclc(oclcForChanging);
+      InventoryInstance.overlayWithOclc(oclcForChanging);
       InventoryInstance.checkCalloutMessage(`Record ${oclcForChanging} updated. Results may take a few moments to become visible in Inventory`);
       InventoryInstance.viewSource();
       InventoryViewSource.contains(`${protectedField}\t`);
