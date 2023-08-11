@@ -11,6 +11,7 @@ import InteractorsTools from '../../support/utils/interactorsTools';
 import InventoryInstancesMovement from '../../support/fragments/inventory/holdingsMove/inventoryInstancesMovement';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
+import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
 
 let user;
 const item = {
@@ -54,12 +55,21 @@ describe('inventory', () => {
                 sourceId: holdingSources[1].id,
               }];
             item.instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode, null, '1', '2', 'test_number_1', item.holdings);
+          }).then(() => {
+            // Update item with non-remote effective location
+            cy.getItems({ query: `"barcode"=="${item.barcode}"` })
+              .then(res => {
+                const itemData = res;
+                itemData.effectiveLocation.id = item.secondLocationId;
+                itemData.effectiveLocation.name = item.secondLocationName;
+                ItemActions.editItemViaApi(itemData);
+              });
+          }).then(() => {
+            cy.login(user.username, user.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventorySearchAndFilter.waitLoading
+            });
           });
-
-        cy.login(user.username, user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventorySearchAndFilter.waitLoading
-        });
       });
   });
 
@@ -68,7 +78,7 @@ describe('inventory', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C163927 Move an item with remote effective location from remote storage locations to non-remote storage holding (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+  it('C191169 Move item with non remote effective location to a non remote holding (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
     InventorySearchAndFilter.selectSearchResultItem();
