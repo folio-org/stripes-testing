@@ -19,6 +19,7 @@ export default {
   },
 
   switchServicePoint:(servicePoint) => {
+    cy.wait(5000);
     cy.do([
       Dropdown('My profile').open(),
       Button('Switch service point').click()

@@ -209,7 +209,7 @@ const checkInstanceNotes = (noteType, noteContent) => {
 };
 
 const waitInstanceRecordViewOpened = (title) => {
-  cy.expect(Pane({ id:'pane-instancedetails' }).exists());
+  cy.expect(instanceDetailsPane.exists());
   cy.expect(Pane({ titleLabel: including(title) }).exists());
 };
 
@@ -779,7 +779,8 @@ export default {
 
   singleOverlaySourceBibRecordModalIsPresented:() => cy.expect(singleRecordImportModal.exists()),
 
-  importWithOclc:(oclc) => {
+  overlayWithOclc:(oclc) => {
+    cy.do(Select({ name:'selectedJobProfileId' }).choose('Inventory Single Record - Default Update Instance (Default)'));
     cy.do(singleRecordImportModal.find(TextField({ name:'externalIdentifier' })).fillIn(oclc));
     cy.do(singleRecordImportModal.find(Button('Import')).click());
   },
@@ -819,14 +820,8 @@ export default {
     cy.expect(MultiColumnListCell({ content: barcode }).exists());
   },
 
-  openItemByBarcodeAndIndex: (barcode, indexRowNumber, rowCountInList) => {
-    cy.do([
-      Button('Collapse all').click(),
-      Button('Acquisition').click(),
-      MultiColumnList({ columnCount: rowCountInList })
-        .find(MultiColumnListRow({ indexRow: indexRowNumber }))
-        .find(Link(barcode)).click()
-    ]);
+  openItemByBarcodeAndIndex: (barcode) => {
+    cy.get('[class^="mclCell-"]').contains(barcode).eq(0).click();
   },
 
   verifyCellsContent: (...content) => {
