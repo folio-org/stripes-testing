@@ -21,13 +21,14 @@ import ReImportModal from '../../../support/fragments/inventory/reImportModal';
 describe('ui-inventory', () => {
   let user;
   let instanceHRID;
+  const OCLCAuthentication = '100481406/PAOLF';
   const profileForImport = 'Inventory Single Record - Default Update Instance (Default)';
   const fileName = `C375146autotestFile.${getRandomPostfix()}.mrc`;
   const targetIdentifier = '1234567';
   const targetProfile = {
     name: 'OCLC WorldCat',
     url: 'zcat.oclc.org/OLUCWorldCat',
-    authentification: '100473910/PAOLF',
+    authentification: OCLCAuthentication,
     externalId: '@attr 1=1211 $identifier',
     internalId: '999ff$i'
   };
@@ -45,7 +46,7 @@ describe('ui-inventory', () => {
         InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
           instanceHRID = initialInstanceHrId;
         });
-        Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF');
+        Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
         cy.visit(SettingsMenu.targetProfilesPath);
         Z3950TargetProfiles.openTargetProfile();
         ViewTargetProfile.verifyTargetProfileForm(
@@ -81,6 +82,8 @@ describe('ui-inventory', () => {
   it('C375146 Verify the modal window for ISRI In inventory instance details menu for single target profile (update) (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
+      cy.wait(1000);
+      InventorySearchAndFilter.selectSearchResultItem();
       InventoryInstance.startOverlaySourceBibRecord();
       ReImportModal.verifyModalWithOneTargetProfile();
       ReImportModal.verifySelectTheProfileToBeUsedToOverlayTheCurrentDataField(profileForImport);
@@ -89,7 +92,7 @@ describe('ui-inventory', () => {
       ReImportModal.import();
       // need to wait because after the import the data in the instance is displayed for a long time
       // https://issues.folio.org/browse/MODCPCT-73
-      cy.wait(10000);
+      cy.wait(7000);
       InteractorsTools.checkCalloutMessage(successCalloutMessage);
       InstanceRecordView.verifyIsInstanceOpened(instanceTitle);
     });

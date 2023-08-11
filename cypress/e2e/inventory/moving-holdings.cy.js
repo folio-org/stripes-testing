@@ -81,7 +81,7 @@ describe('inventory', () => {
     Users.deleteViaApi(userId);
   });
 
-  it('C15187 Move some items with in a holdings record to another holdings associated with another instance', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+  it('C15187 Move some items with in a holdings record to another holdings associated with another instance (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
     InventorySearchAndFilter.selectSearchResultItem();

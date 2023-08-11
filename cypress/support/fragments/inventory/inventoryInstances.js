@@ -29,6 +29,9 @@ const advSearchModal = Modal('Advanced search');
 const buttonSearchInAdvSearchModal = advSearchModal.find(Button({ ariaLabel: 'Search', disabled: false }));
 const buttonCancelInAdvSearchModal = advSearchModal.find(Button({ ariaLabel: 'Cancel', disabled: false }));
 const inventorySearchAndFilterInput = Select({ id: 'input-inventory-search-qindex' });
+const advSearchOperatorSelect = Select({ label: 'Operator*' });
+const advSearchModifierSelect = Select({ label: 'Match option*' });
+const advSearchOptionSelect = Select({ label: 'Search options*' });
 
 const advSearchOperators = ['AND', 'OR', 'NOT'];
 const advSearchModifiers = ['Exact phrase', 'Contains all', 'Starts with'];
@@ -104,8 +107,6 @@ export default {
     cy.expect(rootSection.find(HTML(including('Loading…'))).absent());
     cy.expect(or(inventoriesList.exists()),
       rootSection.find(HTML(including('No results found'))).exists());
-    // need to wait until list to be formed
-    cy.wait(2500);
   },
 
   selectInstance: (rowNumber = 0) => {
@@ -363,23 +364,23 @@ export default {
 
   checkAdvSearchInstancesModalFields(rowIndex) {
     if (rowIndex) {
-      cy.expect(AdvancedSearchRowInventory({ index: rowIndex }).find(Select({ label: 'Operator*' })).exists());
+      cy.expect(AdvancedSearchRowInventory({ index: rowIndex }).find(advSearchOperatorSelect).exists());
       advSearchOperators.forEach(operator => {
-        cy.expect(AdvancedSearchRowInventory({ index: rowIndex }).find(Select({ label: 'Operator*' })).has({ content: including(operator) }));
+        cy.expect(AdvancedSearchRowInventory({ index: rowIndex }).find(advSearchOperatorSelect).has({ content: including(operator) }));
       });
     } else {
       cy.expect(AdvancedSearchRowInventory({ index: rowIndex }).has({ text: including('Search for') }));
     }
     cy.expect([
       AdvancedSearchRowInventory({ index: rowIndex }).find(TextField()).exists(),
-      AdvancedSearchRowInventory({ index: rowIndex }).find(Select({ label: 'Match option*' })).exists(),
-      AdvancedSearchRowInventory({ index: rowIndex }).find(Select({ label: 'Search options*' })).exists(),
+      AdvancedSearchRowInventory({ index: rowIndex }).find(advSearchModifierSelect).exists(),
+      AdvancedSearchRowInventory({ index: rowIndex }).find(advSearchOptionSelect).exists(),
     ]);
     advSearchModifiers.forEach(modifier => {
-      cy.expect(AdvancedSearchRowInventory({ index: rowIndex }).find(Select({ label: 'Match option*' })).has({ content: including(modifier) }));
+      cy.expect(AdvancedSearchRowInventory({ index: rowIndex }).find(advSearchModifierSelect).has({ content: including(modifier) }));
     });
     advSearchInstancesOptions.forEach(option => {
-      cy.expect(AdvancedSearchRowInventory({ index: rowIndex }).find(Select({ label: 'Search options*' })).has({ content: including(option) }));
+      cy.expect(AdvancedSearchRowInventory({ index: rowIndex }).find(advSearchOptionSelect).has({ content: including(option) }));
     });
   },
 
@@ -396,14 +397,14 @@ export default {
     cy.expect(advSearchModal.absent());
   },
 
-  checkAdvSearchModalValues(rowIndex, query, modifier, option, operator) {
+  checkAdvSearchModalValues: (rowIndex, query, modifier, option, operator) => {
     cy.expect([
       advSearchModal.exists(),
       AdvancedSearchRowInventory({ index: rowIndex }).find(TextField()).has({ value: including(query) }),
-      AdvancedSearchRowInventory({ index: rowIndex }).find(Select({ label: 'Match option*' })).has({ value: advSearchModifiersValues[advSearchModifiers.indexOf(modifier)] }),
-      AdvancedSearchRowInventory({ index: rowIndex }).find(Select({ label: 'Search options*' })).has({ value: advSearchInstancesOptionsValues[advSearchInstancesOptions.indexOf(option)] }),
+      AdvancedSearchRowInventory({ index: rowIndex }).find(advSearchModifierSelect).has({ value: advSearchModifiersValues[advSearchModifiers.indexOf(modifier)] }),
+      AdvancedSearchRowInventory({ index: rowIndex }).find(advSearchOptionSelect).has({ value: advSearchInstancesOptionsValues[advSearchInstancesOptions.indexOf(option)] }),
     ]);
-    if (operator) cy.expect(AdvancedSearchRowInventory({ index: rowIndex }).find(Select({ label: 'Operator*' })).has({ value: operator.toLowerCase() }));
+    if (operator) cy.expect(AdvancedSearchRowInventory({ index: rowIndex }).find(advSearchOperatorSelect).has({ value: operator.toLowerCase() }));
   },
 
   clickSearchBtnInAdvSearchModal() {
