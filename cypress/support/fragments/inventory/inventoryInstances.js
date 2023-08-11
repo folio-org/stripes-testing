@@ -396,7 +396,7 @@ export default {
     cy.expect(advSearchModal.absent());
   },
 
-  checkAdvSearchModalValues: (rowIndex, query, modifier, option, operator) => {
+  checkAdvSearchModalValues(rowIndex, query, modifier, option, operator) {
     cy.expect([
       advSearchModal.exists(),
       AdvancedSearchRowInventory({ index: rowIndex }).find(TextField()).has({ value: including(query) }),
