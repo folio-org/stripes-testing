@@ -26,7 +26,7 @@ describe('Bulk Edit - Logs', () => {
       permissions.bulkEditLogsView.gui,
       permissions.bulkEditCsvView.gui,
       permissions.bulkEditCsvEdit.gui,
-      permissions.uiUsersView.gui,
+      permissions.uiUserEdit.gui,
     ])
       .then(userProperties => {
         user = userProperties;
@@ -45,7 +45,7 @@ describe('Bulk Edit - Logs', () => {
     FileManager.deleteFileFromDownloadsByMask(userUUIDsFileName, `*${matchedRecordsFileName}`, changedRecordsFileName, previewOfProposedChangesFileName.first, previewOfProposedChangesFileName.second, updatedRecordsFileName);
   });
 
-  it('C375217 Verify generated Logs files for Users CSV (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C375217 Verify generated Logs files for Users Local (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
     BulkEditSearchPane.uploadFile(userUUIDsFileName);
     BulkEditSearchPane.waitLoading();

@@ -53,6 +53,11 @@ describe('Bulk Edit - Logs', () => {
             temporaryLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87'
           });
         });
+        cy.getInstanceById(item.instanceId)
+          .then(body => {
+            body.discoverySuppress = true;
+            cy.updateInstance(body);
+          });
         cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${item.instanceId}"` })
           .then(instance => {
             item.instanceHRID = instance.hrid;

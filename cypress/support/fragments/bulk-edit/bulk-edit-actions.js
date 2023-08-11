@@ -244,6 +244,10 @@ export default {
     cy.expect(Checkbox('Apply to items records').has({ checked: value }));
   },
 
+  checkApplyToItemsRecordsCheckbox() {
+    cy.do(Checkbox('Apply to items records').click());
+  },
+
   verifyNoMatchingOptionsForLocationFilter() {
     cy.expect(HTML('No matching options').exists());
   },

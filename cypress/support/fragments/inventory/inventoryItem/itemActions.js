@@ -11,6 +11,7 @@ export default {
   confirmMarkAsMissing,
   cancelMarkAsMissing,
   edit() {
+    cy.wait(5000);
     openActions();
     cy.do(Button('Edit').click());
   },
