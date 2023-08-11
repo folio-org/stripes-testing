@@ -30,11 +30,11 @@ describe('Manage holding records with MARC source', { retries: 2 }, () => {
     cy.wait(10000);
     HoldingsRecordView.getId().then(initialHoldindsRecordId => {
       HoldingsRecordView.checkSource('MARC');
-      HoldingsRecordView.checkActionsMenuOptionsInMarcSource();
-      HoldingsRecordView.tryToDelete();
       //TODO: Delete below two lines of code after Actions -> View source of Holding's view works as expected.
       HoldingsRecordView.close();
       InventoryInstance.openHoldingView();
+      HoldingsRecordView.checkActionsMenuOptionsInMarcSource();
+      HoldingsRecordView.tryToDelete();
       HoldingsRecordView.viewSource();
       InventoryViewSource.close();
       HoldingsRecordView.editInQuickMarc();
