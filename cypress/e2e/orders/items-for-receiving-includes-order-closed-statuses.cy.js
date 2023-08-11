@@ -9,7 +9,6 @@ import Orders from '../../support/fragments/orders/orders';
 import Receiving from '../../support/fragments/receiving/receiving';
 import TopMenu from '../../support/fragments/topMenu';
 import Helper from '../../support/fragments/finance/financeHelper';
-import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import OrderLines from '../../support/fragments/orders/orderLines';
@@ -23,7 +22,6 @@ import SwitchServicePoint from '../../support/fragments/servicePoint/switchServi
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../support/fragments/checkout/checkout';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
-// import Users from '../../support/fragments/users/users';
 
 describe('orders: Receiving and Check-in', () => {
   const order = {
@@ -88,37 +86,37 @@ describe('orders: Receiving and Check-in', () => {
                 OrderLines.openInstance();
                 InventoryInstance.openHoldingsAccordion(location.name);
                 // Need to wait,while instance will be loaded
-                cy.wait(3000);
-                InventoryInstance.openItemByBarcodeAndIndex('No barcode', 'row-0', 10);
+                cy.wait(5000);
+                InventoryInstance.openItemByBarcodeAndIndex('No barcode');
                 ItemActions.edit();
                 ItemRecordEdit.addBarcode(barcodeForFirstItem);
                 ItemRecordEdit.save();
                 // Need to wait,while instance will be saved
-                cy.wait(3000);
+                cy.wait(5000);
                 ItemActions.closeItem();
                 InventoryInstance.openHoldingsAccordion(location.name);
-                InventoryInstance.openItemByBarcodeAndIndex('No barcode', 'row-1', 10);
+                InventoryInstance.openItemByBarcodeAndIndex('No barcode');
                 ItemActions.edit();
                 ItemRecordEdit.addBarcode(barcodeForSecondItem);
                 ItemRecordEdit.save();
                 // Need to wait,while instance will be saved
-                cy.wait(3000);
+                cy.wait(5000);
                 ItemActions.closeItem();
                 InventoryInstance.openHoldingsAccordion(location.name);
-                InventoryInstance.openItemByBarcodeAndIndex('No barcode', 'row-2', 10);
+                InventoryInstance.openItemByBarcodeAndIndex('No barcode');
                 ItemActions.edit();
                 ItemRecordEdit.addBarcode(barcodeForThirdItem);
                 ItemRecordEdit.save();
                 // Need to wait,while instance will be saved
-                cy.wait(3000);
+                cy.wait(5000);
                 ItemActions.closeItem();
                 InventoryInstance.openHoldingsAccordion(location.name);
-                InventoryInstance.openItemByBarcodeAndIndex('No barcode', 'row-3', 10);
+                InventoryInstance.openItemByBarcodeAndIndex('No barcode');
                 ItemActions.edit();
                 ItemRecordEdit.addBarcode(barcodeForFourItem);
                 ItemRecordEdit.save();
                 // Need to wait,while instance will be saved
-                cy.wait(3000);
+                cy.wait(5000);
                 ItemActions.closeItem();
               });
 
@@ -176,14 +174,6 @@ describe('orders: Receiving and Check-in', () => {
 
     Organizations.deleteOrganizationViaApi(organization.id);
     // TODO: Need to find solution to delete all data, becouse now i cant delete location and user
-    // NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
-    //     location.institutionId,
-    //     location.campusId,
-    //     location.libraryId,
-    //     location.id
-    //   );
-
-    // Users.deleteViaApi(user.userId);
   });
 
   it('C368044 Item statuses set to something other than "Order closed" or "On order" are NOT changed to "In process" upon receiving (items for receiving includes "Order closed" statuses) (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
@@ -193,20 +183,19 @@ describe('orders: Receiving and Check-in', () => {
     Receiving.receiveAll();
     Receiving.clickOnInstance();
     InventoryInstance.openHoldingsAccordion(location.name);
-    InventorySearchAndFilter.switchToItem();
-    InventorySearchAndFilter.searchByParameter('Barcode', barcodeForFirstItem);
+    InventoryInstance.openItemByBarcodeAndIndex(barcodeForFirstItem);
     ItemRecordView.checkItemDetails(location.name, barcodeForFirstItem, ITEM_STATUS_NAMES.AVAILABLE);
     ItemActions.closeItem();
-    InventorySearchAndFilter.switchToItem();
-    InventorySearchAndFilter.searchByParameter('Barcode', barcodeForSecondItem);
+    InventoryInstance.openHoldingsAccordion(location.name);
+    InventoryInstance.openItemByBarcodeAndIndex(barcodeForSecondItem);
     ItemRecordView.checkItemDetails(location.name, barcodeForSecondItem, ITEM_STATUS_NAMES.AVAILABLE);
     ItemActions.closeItem();
-    InventorySearchAndFilter.switchToItem();
-    InventorySearchAndFilter.searchByParameter('Barcode', barcodeForThirdItem);
-    ItemRecordView.checkItemDetails(location.name, barcodeForThirdItem, 'In process');
+    InventoryInstance.openHoldingsAccordion(location.name);
+    InventoryInstance.openItemByBarcodeAndIndex(barcodeForFourItem);
+    ItemRecordView.checkItemDetails(location.name, barcodeForFourItem, ITEM_STATUS_NAMES.IN_PROCESS);
     ItemActions.closeItem();
-    InventorySearchAndFilter.switchToItem();
-    InventorySearchAndFilter.searchByParameter('Barcode', barcodeForFourItem);
-    ItemRecordView.checkItemDetails(location.name, barcodeForFourItem, 'In process');
+    InventoryInstance.openHoldingsAccordion(location.name);
+    InventoryInstance.openItemByBarcodeAndIndex(barcodeForThirdItem);
+    ItemRecordView.checkItemDetails(location.name, barcodeForThirdItem, ITEM_STATUS_NAMES.IN_PROCESS);
   });
 });
