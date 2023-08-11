@@ -209,7 +209,7 @@ const checkInstanceNotes = (noteType, noteContent) => {
 };
 
 const waitInstanceRecordViewOpened = (title) => {
-  cy.expect(Pane({ id:'pane-instancedetails' }).exists());
+  cy.expect(instanceDetailsPane.exists());
   cy.expect(Pane({ titleLabel: including(title) }).exists());
 };
 
@@ -603,6 +603,10 @@ export default {
     ]);
   },
 
+  confirmOrCancel(action) {
+    cy.do(Modal('Confirm move').find(Button(action)).click());
+  },
+
   returnItemToFirstHolding(firstHoldingName, secondHoldingName) {
     this.openHoldings(firstHoldingName, secondHoldingName);
 
@@ -775,7 +779,8 @@ export default {
 
   singleOverlaySourceBibRecordModalIsPresented:() => cy.expect(singleRecordImportModal.exists()),
 
-  importWithOclc:(oclc) => {
+  overlayWithOclc:(oclc) => {
+    cy.do(Select({ name:'selectedJobProfileId' }).choose('Inventory Single Record - Default Update Instance (Default)'));
     cy.do(singleRecordImportModal.find(TextField({ name:'externalIdentifier' })).fillIn(oclc));
     cy.do(singleRecordImportModal.find(Button('Import')).click());
   },
