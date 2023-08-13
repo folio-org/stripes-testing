@@ -15,6 +15,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import TopMenu from '../../../support/fragments/topMenu';
 import DevTeams from '../../../support/dictionary/devTeams';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import { LOCATION_NAMES, FOLIO_RECORD_TYPE, ACCEPTED_DATA_TYPE_NAMES, EXISTING_RECORDS_NAMES } from '../../../support/constants';
 
 describe('ui-data-import', () => {
@@ -124,6 +125,7 @@ describe('ui-data-import', () => {
       // download .csv file
       cy.visit(TopMenu.inventoryPath);
       InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
+      InstanceRecordView.verifyInstancePaneExists();
       InventorySearchAndFilter.saveUUIDs();
       ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
       FileManager.deleteFolder(Cypress.config('downloadsFolder'));
@@ -169,7 +171,7 @@ describe('ui-data-import', () => {
 
       cy.visit(TopMenu.inventoryPath);
       InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
-
+      InstanceRecordView.verifyInstancePaneExists();
       // ensure the fields created in Field mapping profile exists in inventory
       InventorySearchAndFilter.checkInstanceDetails();
     });

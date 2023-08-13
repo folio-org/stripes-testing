@@ -69,7 +69,7 @@ describe('ui-data-import', () => {
       });
   });
 
-  after(() => {
+  after('delete test data', () => {
     Users.deleteViaApi(firstUser.userId);
     Users.deleteViaApi(secondUser.userId);
     // delete generated profiles

@@ -22,6 +22,7 @@ import InventoryViewSource from '../../../support/fragments/inventory/inventoryV
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import FileManager from '../../../support/utils/fileManager';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
 describe('ui-data-import', () => {
   let instanceHrid = null;
@@ -136,6 +137,7 @@ describe('ui-data-import', () => {
       // check fields are absent in the view source
       cy.visit(TopMenu.inventoryPath);
       InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+      InstanceRecordView.verifyInstancePaneExists();
       InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[0].type, resourceIdentifiers[0].value, 0);
       InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[1].type, resourceIdentifiers[1].value, 1);
       // verify table data in marc bibliographic source
@@ -198,6 +200,7 @@ describe('ui-data-import', () => {
       // check instance is updated
       cy.visit(TopMenu.inventoryPath);
       InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+      InstanceRecordView.verifyInstancePaneExists();
       InventoryInstance.checkIsInstanceUpdated();
       // verify table data in marc bibliographic source
       InventoryInstance.viewSource();
@@ -209,6 +212,7 @@ describe('ui-data-import', () => {
     // export instance
     cy.visit(TopMenu.inventoryPath);
     InventorySearchAndFilter.searchInstanceByHRID(instanceHridForReimport);
+    InstanceRecordView.verifyInstancePaneExists();
     InventorySearchAndFilter.closeInstanceDetailPane();
     InventorySearchAndFilter.selectResultCheckboxes(1);
     InventorySearchAndFilter.exportInstanceAsMarc();
@@ -241,6 +245,7 @@ describe('ui-data-import', () => {
     // check instance is updated
     cy.visit(TopMenu.inventoryPath);
     InventorySearchAndFilter.searchInstanceByHRID(instanceHridForReimport);
+    InstanceRecordView.verifyInstancePaneExists();
     InventoryInstance.checkIsInstanceUpdated();
 
     // verify table data in marc bibliographic source

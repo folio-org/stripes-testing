@@ -22,6 +22,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
 describe('ui-data-import', () => {
   let instanceHRID = null;
@@ -162,10 +163,10 @@ describe('ui-data-import', () => {
     Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     Logs.openFileDetails(nameForCreateMarcFile);
     FileDetails.openInstanceInInventory('Created');
-    InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+    InstanceRecordView.getAssignedHRID().then(initialInstanceHrId => {
       instanceHRID = initialInstanceHrId;
 
-      InventoryInstance.openHoldingView();
+      InstanceRecordView.openHoldingView();
       HoldingsRecordView.checkURIIsNotEmpty();
 
       cy.visit(TopMenu.dataImportPath);
@@ -179,7 +180,8 @@ describe('ui-data-import', () => {
 
       cy.visit(TopMenu.inventoryPath);
       InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
-      InventoryInstance.openHoldingView();
+      InstanceRecordView.verifyInstancePaneExists();
+      InstanceRecordView.openHoldingView();
       HoldingsRecordView.checkCallNumber('ONLINE');
     });
   });

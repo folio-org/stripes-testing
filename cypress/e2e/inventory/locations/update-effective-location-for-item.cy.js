@@ -85,7 +85,7 @@ describe('ui-inventory: Update the effective location for the item', () => {
   it('C3501 An item is being moved from one library location to another. Update the effective location for the item (folijet) (prokopovych)',
     { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
       InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-      InventorySearchAndFilter.selectSearchResultItem();
+      InventoryInstance.waitInstanceRecordViewOpened(itemData.instanceTitle);
       InventoryInstance.openHoldingView();
       HoldingsRecordView.edit();
       HoldingsRecordEdit.changePermanentLocation(anotherPermanentLocation);

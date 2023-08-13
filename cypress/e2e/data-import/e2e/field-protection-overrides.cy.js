@@ -282,6 +282,7 @@ describe('ui-data-import', () => {
 
       cy.visit(TopMenu.inventoryPath);
       InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+      InstanceRecordView.verifyInstancePaneExists();
       InstanceRecordView.verifyAdministrativeNote(administrativeNote);
       InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[0].type, resourceIdentifiers[0].value, 0);
       InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[1].type, resourceIdentifiers[1].value, 2);
@@ -312,6 +313,7 @@ describe('ui-data-import', () => {
 
       cy.visit(TopMenu.inventoryPath);
       InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+      InstanceRecordView.verifyInstancePaneExists();
       InstanceRecordView.verifyAdministrativeNote(administrativeNote);
       InstanceRecordView.verifyAdministrativeNote(updatedAdministativeNote);
       resourceIdentifiers.forEach(element => {

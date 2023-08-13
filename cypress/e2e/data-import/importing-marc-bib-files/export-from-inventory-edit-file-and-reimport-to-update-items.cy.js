@@ -22,16 +22,18 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import FileManager from '../../../support/utils/fileManager';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import GenerateIdentifierCode from '../../../support/utils/generateIdentifierCode';
 
 describe('ui-data-import', () => {
   let instanceHrid;
   const quantityOfItems = '1';
   const instance = {
     instanceTitle: 'Love enough / Dionne Brand.',
-    instanceSubject: '35678123678',
+    instanceSubject: `35678123678${GenerateIdentifierCode.getRandomIdentifierCode()}`,
     holdingsLocation: `${LOCATION_NAMES.MAIN_LIBRARY_UI} >`,
     itemStatus: ITEM_STATUS_NAMES.AVAILABLE
   };
@@ -200,17 +202,6 @@ describe('ui-data-import', () => {
     cy.loginAsAdmin();
     cy.getAdminToken()
       .then(() => {
-        InventorySearchAndFilter.getInstancesBySubjectViaApi(instance.instanceSubject)
-          .then(instances => {
-            if (instances) {
-              instances.forEach(({ id }) => {
-                cy.deleteItemViaApi(instance.items[0].id);
-                cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-                InventoryInstance.deleteInstanceViaApi(id);
-              });
-            }
-          });
-
         testData.jobProfileForCreate = jobProfileForCreate;
 
         testData.forEach(specialPair => {
@@ -333,6 +324,7 @@ describe('ui-data-import', () => {
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+        InstanceRecordView.verifyInstancePaneExists();
         InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
         InventoryInstance.openItemByBarcode('No barcode');
         ItemRecordView.checkItemAdministrativeNote(note);
