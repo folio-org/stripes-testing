@@ -50,6 +50,7 @@ function linkMatchProfileForSubMatches(matchProfileName, forMatchesOrder = 0) {
 }
 
 function linkActionProfileForMatches(actionProfileName, forMatchesOrder = 0) {
+  cy.wait(3000);
   cy.get('[id*="type-selector-dropdown-ROOT"]').eq(forMatchesOrder).click();
   cy.do(actionsButton.click());
   ModalSelectProfile.searchProfileByName(actionProfileName);
