@@ -124,12 +124,6 @@ describe('Search in Inventory', () => {
       if (index > marcFiles[0].numberOfRecords - 1) MarcAuthority.deleteViaAPI(id);
       else InventoryInstance.deleteInstanceViaApi(id);
     });
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    for (let i = 0; i < marcFiles.length; i++) {
-      DataImport.selectLog(i);
-    }
-    DataImport.openDeleteImportLogsModal();
-    DataImport.confirmDeleteImportLogs();
   });
 
   it('C375256 Query search | Search by "Alternative title" field of linked "MARC Bib" records (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {

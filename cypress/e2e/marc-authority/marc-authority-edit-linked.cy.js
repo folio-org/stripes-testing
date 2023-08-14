@@ -114,6 +114,7 @@ describe('MARC Authority -> Edit linked Authority record', () => {
         InventoryInstances.waitContentLoading();
         InventoryInstance.searchByTitle(createdRecordIDs[0]);
         InventoryInstances.selectInstance();
+        cy.wait(1500);
         InventoryInstance.editMarcBibliographicRecord();
         InventoryInstance.verifyAndClickLinkIcon(testData.tag700);
         MarcAuthorities.switchToSearch();
@@ -127,6 +128,7 @@ describe('MARC Authority -> Edit linked Authority record', () => {
 
         InventoryInstance.searchByTitle(createdRecordIDs[1]);
         InventoryInstances.selectInstance();
+        cy.wait(1500);
         InventoryInstance.editMarcBibliographicRecord();
         InventoryInstance.verifyAndClickLinkIcon(testData.tag655);
         MarcAuthorities.switchToSearch();
@@ -140,6 +142,7 @@ describe('MARC Authority -> Edit linked Authority record', () => {
 
         InventoryInstance.searchByTitle(createdRecordIDs[2]);
         InventoryInstances.selectInstance();
+        cy.wait(1500);
         InventoryInstance.editMarcBibliographicRecord();
         InventoryInstance.verifyAndClickLinkIcon(testData.tag600);
         MarcAuthorities.switchToSearch();
@@ -230,6 +233,7 @@ describe('MARC Authority -> Edit linked Authority record', () => {
     QuickMarcEditor.checkButtonsEnabled();
     QuickMarcEditor.deleteFieldAndCheck(5, testData.updatedTagName);
     QuickMarcEditor.afterDeleteNotification(testData.updatedTagName);
+    cy.wait(1000);
     QuickMarcEditor.clickSaveAndCloseThenCheck(1);
     QuickMarcEditor.clickRestoreDeletedField();
     QuickMarcEditor.checkDeleteModalClosed();
