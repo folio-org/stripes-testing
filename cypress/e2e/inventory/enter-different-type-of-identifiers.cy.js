@@ -9,53 +9,55 @@ import TopMenu from '../../support/fragments/topMenu';
 import DevTeams from '../../support/dictionary/devTeams';
 import { INSTANCE_SOURCE_NAMES } from '../../support/constants';
 
-describe('ui-inventory: Enter different type of identifiers', () => {
-  let instanceTitle;
-  let instanceId;
-  let resourceIdentifier;
+describe('inventory', () => {
+  describe('Instance', () => {
+    let instanceTitle;
+    let instanceId;
+    let resourceIdentifier;
 
-  beforeEach('navigate to inventory', () => {
-    instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
-    cy.loginAsAdmin();
-    cy.getAdminToken()
-      .then(() => {
-        cy.getInstanceTypes({ limit: 1 });
-        cy.getInstanceIdentifierTypes({ limit: 1 });
-      })
-      .then(() => {
-        cy.createInstance({
-          instance: {
-            instanceTypeId: Cypress.env('instanceTypes')[0].id,
-            title: instanceTitle,
-            source: INSTANCE_SOURCE_NAMES.FOLIO
-          },
-        }).then(specialInstanceId => { instanceId = specialInstanceId; });
-      });
-  });
+    beforeEach('navigate to inventory', () => {
+      instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
+      cy.loginAsAdmin();
+      cy.getAdminToken()
+        .then(() => {
+          cy.getInstanceTypes({ limit: 1 });
+          cy.getInstanceIdentifierTypes({ limit: 1 });
+        })
+        .then(() => {
+          cy.createInstance({
+            instance: {
+              instanceTypeId: Cypress.env('instanceTypes')[0].id,
+              title: instanceTitle,
+              source: INSTANCE_SOURCE_NAMES.FOLIO
+            },
+          }).then(specialInstanceId => { instanceId = specialInstanceId; });
+        });
+    });
 
-  afterEach(() => {
-    InventoryInstance.deleteInstanceViaApi(instanceId);
-  });
+    afterEach(() => {
+      InventoryInstance.deleteInstanceViaApi(instanceId);
+    });
 
-  const searchAndOpenInstance = (parametr, title) => {
-    cy.visit(TopMenu.inventoryPath);
-    InventorySearchAndFilter.searchByParameter(parametr, title);
-    InventoryInstances.selectInstance();
-  };
+    const searchAndOpenInstance = (parametr, title) => {
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.searchByParameter(parametr, title);
+      InventoryInstances.selectInstance();
+    };
 
-  [
-    'ASIN',
-    'BNB'
-  ].forEach((identifier) => {
-    it('C609 In Accordion Identifiers --> enter different type of identifiers (folijet) (prokopovych)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-        resourceIdentifier = `testResourceIdentifier.${getRandomPostfix()}`;
+    [
+      'ASIN',
+      'BNB'
+    ].forEach((identifier) => {
+      it('C609 In Accordion Identifiers --> enter different type of identifiers (folijet) (prokopovych)',
+        { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+          resourceIdentifier = `testResourceIdentifier.${getRandomPostfix()}`;
 
-        searchAndOpenInstance('Title (all)', instanceTitle);
-        InventoryInstance.editInstance();
-        InstanceRecordEdit.addIdentifier(identifier, resourceIdentifier);
-        searchAndOpenInstance('Keyword (title, contributor, identifier, HRID, UUID)', resourceIdentifier);
-        InventoryInstance.checkInstanceIdentifier(resourceIdentifier);
-      });
+          searchAndOpenInstance('Title (all)', instanceTitle);
+          InventoryInstance.editInstance();
+          InstanceRecordEdit.addIdentifier(identifier, resourceIdentifier);
+          searchAndOpenInstance('Keyword (title, contributor, identifier, HRID, UUID)', resourceIdentifier);
+          InventoryInstance.checkInstanceIdentifier(resourceIdentifier);
+        });
+    });
   });
 });
