@@ -15,5 +15,21 @@ export default {
     cy.expect(saveAndCloseBtn.has({ disabled: false }));
   },
 
-  save:() => cy.do(saveAndCloseBtn.click())
+  save:() => cy.do(saveAndCloseBtn.click()),
+
+  createViaApi:(holdingsId, itemBarcode, materialTypeId, permanentLoanTypeId) => {
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'inventory/items',
+      body: {
+        status: { name: 'Available' },
+        holdingsRecordId: holdingsId,
+        boundWithTitles: [],
+        barcode: itemBarcode,
+        materialType: { id: materialTypeId },
+        permanentLoanType: { id: permanentLoanTypeId }
+      },
+      isDefaultSearchParamsRequired: false
+    });
+  }
 };
