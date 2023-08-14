@@ -20,6 +20,7 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Users from '../../../support/fragments/users/users';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -67,6 +68,13 @@ describe('data-import', () => {
         });
     });
 
+    after('delete test data', () => {
+      Users.deleteViaApi(user.userId);
+      JobProfiles.deleteJobProfile(jobProfile.profileName);
+      ActionProfiles.deleteActionProfile(actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+    });
+
     it('C400665 Verify that title appeared in log details when Instance is not updated due to non-match (folijet)',
       { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       // create match profile
@@ -108,6 +116,7 @@ describe('data-import', () => {
         FileDetails.verifyTitle(title, FileDetails.columnNameInResultList.title);
         FileDetails.checkStatusInColumn(FileDetails.status.dash, FileDetails.columnNameInResultList.srsMarc);
         FileDetails.checkStatusInColumn(FileDetails.status.noAction, FileDetails.columnNameInResultList.instance);
+        // the last step can't be automated because cypress can't work whit 2 tabs
       });
   });
 });
