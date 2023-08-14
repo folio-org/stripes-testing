@@ -1,9 +1,9 @@
-import TestTypes from "../../../../support/dictionary/testTypes";
-import DevTeams from "../../../../support/dictionary/devTeams";
-import settingsMenu from "../../../../support/fragments/settingsMenu";
-import TransferFeeFine from "../../../../support/fragments/users/transferFeeFine";
+import TestTypes from '../../../../support/dictionary/testTypes';
+import DevTeams from '../../../../support/dictionary/devTeams';
+import settingsMenu from '../../../../support/fragments/settingsMenu';
+import TransferFeeFine from '../../../../support/fragments/users/transferFeeFine';
 
-describe("Build the Cornell bursar transfer file", () => {
+describe('Build the Cornell bursar transfer file', () => {
   before(() => {
     cy.loginAsAdmin({
       path: settingsMenu.usersTransferCriteria,
@@ -11,39 +11,39 @@ describe("Build the Cornell bursar transfer file", () => {
     });
   });
 
-  it("should be able to open all the panes", () => {
+  it('should be able to open all the panes', () => {
     TransferFeeFine.openAllPanes();
     TransferFeeFine.verifyOpenAllPanes();
   });
 
-  it("should be able to set scheduling", () => {
+  it('should be able to set scheduling', () => {
     TransferFeeFine.setTransferCriteriaScheduling(
-      "Weeks",
-      "1",
-      "11:00 PM",
-      "Monday"
+      'Weeks',
+      '1',
+      '11:00 PM',
+      'Monday'
     );
     TransferFeeFine.verifyTransferCriteriaScheduling(
-      "Weeks",
-      "1",
-      "11:00 PM",
-      "Monday"
+      'Weeks',
+      '1',
+      '11:00 PM',
+      'Monday'
     );
   });
 
-  it("should be able to set no criteria", () => {
+  it('should be able to set no criteria', () => {
     TransferFeeFine.setCriteria(false);
     TransferFeeFine.verifyCriteria(false);
   });
 
   // Aggregate by patron: Box unchecked
-  it("should be able to set aggregate by patron", () => {
+  it('should be able to set aggregate by patron', () => {
     TransferFeeFine.setAggregateByPatron(false);
     TransferFeeFine.verifyAggregateByPatron(false);
   });
 
   // Header Format
-  it("should be able to set header format", () => {
+  it('should be able to set header format', () => {
     TransferFeeFine.removeHeaderFormat();
   });
 
@@ -52,12 +52,12 @@ describe("Build the Cornell bursar transfer file", () => {
   // Footer Format
 
   // Transer account data to
-  it("should be able to set transfer account data to", () => {
-    TransferFeeFine.setTransferAccount("Lost Item Fine Office", "acct");
-    TransferFeeFine.verifyTransferAccount("Lost Item Fine Office", "acct");
+  it('should be able to set transfer account data to', () => {
+    TransferFeeFine.setTransferAccount('Lost Item Fine Office', 'acct');
+    TransferFeeFine.verifyTransferAccount('Lost Item Fine Office', 'acct');
   });
 
-  it("should be able to run manually", () => {
+  it('should be able to run manually', () => {
     //TransferFeeFine.runManually();
   });
 
