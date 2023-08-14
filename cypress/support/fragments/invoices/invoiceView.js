@@ -1,4 +1,14 @@
-import { MultiColumnListCell, Section, including, KeyValue, Pane, HTML, MultiColumnList, Link } from '../../../../interactors';
+import {
+  MultiColumnListCell,
+  Section,
+  including,
+  KeyValue,
+  Pane,
+  HTML,
+  MultiColumnList,
+  Link,
+  Button,
+} from '../../../../interactors';
 import invoices from './invoices';
 import TopMenu from '../topMenu';
 
@@ -8,6 +18,15 @@ const expectedInvoiceStatus = 'Open';
 const expectedInvoiceSource = 'EDI';
 
 export default {
+  selectFirstInvoice: () => {
+    cy.do(
+      MultiColumnList({ id: 'invoices-list' })
+        .find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
+        .find(Link())
+        .click()
+    );
+  },
+
   checkInvoiceDetails:(invoiceNumber) => {
     cy.do(Section().find(MultiColumnListCell(including(invoiceNumber))).perform(element => {
       const invoiceOfNumber = element.innerText.split('-')[0];
@@ -31,6 +50,10 @@ export default {
 
   checkQuantityInvoiceLinesInRecord:() => {
     cy.expect(Pane({ id:'pane-results' }).find(HTML(including('1,104 records found'))).exists());
+  },
+
+  verifyTagsIsAbsent: () => {
+    cy.expect(Pane({ id: 'pane-invoiceDetails' }).find(Button({ icon: 'tag' })).absent());
   },
 
   vendorInvoiceNumber,
