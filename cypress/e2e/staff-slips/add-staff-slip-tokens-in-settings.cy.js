@@ -131,7 +131,7 @@ describe('Staff slips', () => {
   });
 
   it(
-    'C375293 Add "requester.patronGroup" as staff slip token in Settings',
+    'C375293 Add "requester.patronGroup" as staff slip token in Settings (volaris)',
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       cy.visit(SettingsMenu.circulationStaffSlipsPath);
@@ -145,7 +145,7 @@ describe('Staff slips', () => {
   );
 
   it(
-    'C387442 Add "Departments" as staff slip token in Settings',
+    'C387442 Add "Departments" as staff slip token in Settings (volaris)',
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       cy.visit(SettingsMenu.circulationStaffSlipsPath);
@@ -159,7 +159,7 @@ describe('Staff slips', () => {
   );
 
   it(
-    'C388508 Verify that token "currentDateTime" is populated in the pick slip',
+    'C388508 Verify that token "currentDateTime" is populated in the pick slip (volaris)',
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       cy.visit(SettingsMenu.circulationStaffSlipsPath);
