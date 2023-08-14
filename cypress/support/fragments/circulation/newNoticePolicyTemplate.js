@@ -1,6 +1,23 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import getRandomPostfix from '../../utils/stringTools';
-import { Button, TextField, TextArea, KeyValue, Checkbox, Link, Heading, Select, Pane, Modal, PaneContent, NavListItem, RichEditor, including } from '../../../../interactors';
+import {
+  Accordion,
+  Button,
+  TextField,
+  TextArea,
+  KeyValue,
+  Checkbox,
+  Link,
+  Heading,
+  Select,
+  Pane,
+  Modal,
+  PaneContent,
+  NavListItem,
+  RichEditor,
+  including,
+  MetaSection,
+} from '../../../../interactors';
 import richTextEditor from '../../../../interactors/rich-text-editor';
 import { NOTICE_CATEGORIES } from './notice-policy';
 import { actionsButtons } from './newNoticePolicy';
@@ -10,8 +27,11 @@ const titles = {
   newTemplate: 'New patron notice template',
   templates: 'Patron notice templates'
 };
+const patronNoticeTemplatePaneContent = PaneContent({ id: 'patron-notice-template-pane-content' });
 const saveButton = Button({ id: 'footer-save-entity' });
 const newButton = Button({ id: 'clickable-create-entry' });
+const activeCheckbox = Checkbox({ id: 'input-patron-notice-active' });
+const categorySelect = Select({ name: 'category' });
 const actionsButton = Button('Actions');
 const tokenButton = Button('{ }');
 const addTokenButton = Button(titles.addToken);
@@ -53,16 +73,34 @@ export default {
   },
 
   chooseCategory: (category) => {
-    cy.do(Select({ name: 'category' }).choose(category));
+    cy.do(categorySelect.choose(category));
   },
 
   checkPreview: (previewText) => {
-    cy.do(PaneContent({ id: 'patron-notice-template-pane-content' }).find(Button('Preview')).click());
+    cy.do(patronNoticeTemplatePaneContent.find(Button('Preview')).click());
     cy.expect([
       Modal(including('Preview of patron notice template')).exists(),
       Modal({ content: including(previewText) }).exists(),
     ]);
     cy.do(Button('Close').click());
+  },
+
+  verifyMetadataObjectIsVisible: (creator = 'Unknown user') => {
+    cy.expect([
+      patronNoticeTemplatePaneContent.find(Accordion({ label: 'General information' })).exists(),
+      patronNoticeTemplatePaneContent.find(Button('General information')).has({ ariaExpanded: 'true' }),
+    ]);
+    cy.do(patronNoticeTemplatePaneContent.find(Button(including('Record last updated'))).click());
+    cy.expect(patronNoticeTemplatePaneContent.find(MetaSection({ updatedByText: including(creator) })).exists());
+  },
+
+  verifyGeneralInformationForDuplicate: (template) => {
+    cy.expect([
+      nameField.has({ value: template.name, error: 'A patron notice with this name already exists' }),
+      activeCheckbox.has({ checked: true }),
+      descriptionField.has({ value: template.description }),
+      categorySelect.has({ value: template.category }),
+    ]);
   },
 
   startAdding() {
@@ -126,7 +164,7 @@ export default {
       bodyField.has({ value: '' }),
       Select({ id: 'input-patron-notice-subject' }).has({ value: 'Loan' }),
       Button({ id: 'accordion-toggle-button-email-template-form' }).has({ ariaExpanded: true }),
-      Checkbox({ id: 'input-patron-notice-active' }).has({ checked:'true' }),
+      activeCheckbox.has({ checked:'true' }),
       cy.get('select[name="category"]').get('option').each(($option, index) => {
         if (index <= 5) {
           expect($option).to.contain(Object.values(NOTICE_CATEGORIES)[index].name);

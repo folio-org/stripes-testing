@@ -21,37 +21,36 @@ import AcquisitionUnits from '../../../support/fragments/settings/acquisitionUni
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 
 describe('ui-acquisition units: Acquisition Units', () => {
-    const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
-    const defaultLedger = { ...Ledgers.defaultUiLedger };
-    const defaultFund = { ...Funds.defaultUiFund };
-    const defaultOrder = { ...NewOrder.defaultOneTimeOrder,
-      orderType: 'Ongoing',
-      ongoing: { isSubscription: false, manualRenewal: false },
-      approved: true,
-      reEncumber: true };
-    const organization = {...NewOrganization.defaultUiOrganizations,
-      accounts: [
-        {
-          accountNo: getRandomPostfix(),
-          accountStatus: 'Active',
-          acqUnitIds: [],
-          appSystemNo: '',
-          description: 'Main library account',
-          libraryCode: 'COB',
-          libraryEdiCode: getRandomPostfix(),
-          name: 'TestAccout1',
-          notes: '',
-          paymentMethod: 'Cash',
-        }
-      ]
-    };
-    const invoice = { ...NewInvoice.defaultUiInvoice };
-    const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
-    const allocatedQuantity = '100';
-    let effectiveLocationServicePoint;
-    let user;
-    let orderNumber;
-    let location;
+  const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
+  const defaultLedger = { ...Ledgers.defaultUiLedger };
+  const defaultFund = { ...Funds.defaultUiFund };
+  const defaultOrder = { ...NewOrder.defaultOneTimeOrder,
+    orderType: 'Ongoing',
+    ongoing: { isSubscription: false, manualRenewal: false },
+    approved: true,
+    reEncumber: true };
+  const organization = { ...NewOrganization.defaultUiOrganizations,
+    accounts: [
+      {
+        accountNo: getRandomPostfix(),
+        accountStatus: 'Active',
+        acqUnitIds: [],
+        appSystemNo: '',
+        description: 'Main library account',
+        libraryCode: 'COB',
+        libraryEdiCode: getRandomPostfix(),
+        name: 'TestAccout1',
+        notes: '',
+        paymentMethod: 'Cash',
+      }
+    ] };
+  const invoice = { ...NewInvoice.defaultUiInvoice };
+  const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
+  const allocatedQuantity = '100';
+  let effectiveLocationServicePoint;
+  let user;
+  let orderNumber;
+  let location;
 
   before(() => {
     cy.getAdminToken();
@@ -75,62 +74,62 @@ describe('ui-acquisition units: Acquisition Units', () => {
               });
           });
       });
-      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' })
+    ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' })
       .then((servicePoints) => {
         effectiveLocationServicePoint = servicePoints[0];
         NewLocation.createViaApi(NewLocation.getDefaultLocation(effectiveLocationServicePoint.id))
           .then((locationResponse) => {
             location = locationResponse;
 
-    Organizations.createOrganizationViaApi(organization)
-      .then(responseOrganizations => {
-        organization.id = responseOrganizations;
-        invoice.accountingCode = organization.erpCode;
+            Organizations.createOrganizationViaApi(organization)
+              .then(responseOrganizations => {
+                organization.id = responseOrganizations;
+                invoice.accountingCode = organization.erpCode;
+              });
+            defaultOrder.vendor = organization.name;
+            cy.visit(TopMenu.ordersPath);
+            Orders.createOrderForRollover(defaultOrder).then(orderResponse => {
+              defaultOrder.id = orderResponse.id;
+              orderNumber = orderResponse.poNumber;
+              Orders.checkCreatedOrder(defaultOrder);
+              OrderLines.addPOLine();
+              OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
+              OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId, '4'); OrderLines.backToEditingOrder();
+              cy.visit(TopMenu.invoicesPath);
+              Invoices.createRolloverInvoice(invoice, organization.name);
+              Invoices.createInvoiceLineFromPol(orderNumber);
+            });
+          });
       });
-    defaultOrder.vendor = organization.name;
-    cy.visit(TopMenu.ordersPath);
-    Orders.createOrderForRollover(defaultOrder).then(orderResponse => {
-      defaultOrder.id = orderResponse.id;
-      orderNumber = orderResponse.poNumber;
-      Orders.checkCreatedOrder(defaultOrder);
-      OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
-      OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId, '4');      OrderLines.backToEditingOrder();
-      cy.visit(TopMenu.invoicesPath);
-      Invoices.createRolloverInvoice(invoice, organization.name);
-      Invoices.createInvoiceLineFromPol(orderNumber);
-    });
-});
-});
     cy.createTempUser([
-        permissions.uiOrdersView.gui,
-        permissions.uiOrdersCreate.gui,
-        permissions.uiOrdersEdit.gui,
-        permissions.uiOrdersDelete.gui,
-        permissions.uiExportOrders.gui,
-        permissions.uiOrdersApprovePurchaseOrders.gui,
-        permissions.uiOrdersAssignAcquisitionUnitsToNewOrder.gui,
-        permissions.uiOrdersCancelOrderLines.gui,
-        permissions.uiOrdersCancelPurchaseOrders.gui,
-        permissions.uiOrdersManageAcquisitionUnits.gui,
-        permissions.uiOrdersReopenPurchaseOrders.gui,
-        permissions.uiOrdersShowAllHiddenFields.gui,
-        permissions.uiOrdersUnopenpurchaseorders.gui,
-        permissions.uiOrdersUpdateEncumbrances.gui,
-        permissions.viewEditDeleteInvoiceInvoiceLine.gui,
-        permissions.viewEditCreateInvoiceInvoiceLine.gui,
-        permissions.assignAcqUnitsToNewInvoice.gui,
-        permissions.uiInvoicesApproveInvoices.gui,
-        permissions.uiInvoicesPayInvoices.gui,
-        permissions.invoiceSettingsAll.gui,
-        permissions.uiInvoicesCancelInvoices.gui,
-        permissions.uiInvoicesCanViewAndEditInvoicesAndInvoiceLines.gui,
-        permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
-        permissions.uiInvoicesDownloadBatchFileFromInvoiceRecord.gui,
-        permissions.uiInvoicesExportSearchResults.gui,
-        permissions.uiInvoicesManageAcquisitionUnits.gui,
-        permissions.uiInvoicesVoucherExport.gui,
-        permissions.uiFinanceViewFundAndBudget.gui
+      permissions.uiOrdersView.gui,
+      permissions.uiOrdersCreate.gui,
+      permissions.uiOrdersEdit.gui,
+      permissions.uiOrdersDelete.gui,
+      permissions.uiExportOrders.gui,
+      permissions.uiOrdersApprovePurchaseOrders.gui,
+      permissions.uiOrdersAssignAcquisitionUnitsToNewOrder.gui,
+      permissions.uiOrdersCancelOrderLines.gui,
+      permissions.uiOrdersCancelPurchaseOrders.gui,
+      permissions.uiOrdersManageAcquisitionUnits.gui,
+      permissions.uiOrdersReopenPurchaseOrders.gui,
+      permissions.uiOrdersShowAllHiddenFields.gui,
+      permissions.uiOrdersUnopenpurchaseorders.gui,
+      permissions.uiOrdersUpdateEncumbrances.gui,
+      permissions.viewEditDeleteInvoiceInvoiceLine.gui,
+      permissions.viewEditCreateInvoiceInvoiceLine.gui,
+      permissions.assignAcqUnitsToNewInvoice.gui,
+      permissions.uiInvoicesApproveInvoices.gui,
+      permissions.uiInvoicesPayInvoices.gui,
+      permissions.invoiceSettingsAll.gui,
+      permissions.uiInvoicesCancelInvoices.gui,
+      permissions.uiInvoicesCanViewAndEditInvoicesAndInvoiceLines.gui,
+      permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
+      permissions.uiInvoicesDownloadBatchFileFromInvoiceRecord.gui,
+      permissions.uiInvoicesExportSearchResults.gui,
+      permissions.uiInvoicesManageAcquisitionUnits.gui,
+      permissions.uiInvoicesVoucherExport.gui,
+      permissions.uiFinanceViewFundAndBudget.gui
     ])
       .then(userProperties => {
         user = userProperties;
@@ -166,8 +165,6 @@ describe('ui-acquisition units: Acquisition Units', () => {
     cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
     AcquisitionUnits.newAcquisitionUnit();
     AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name);
-    // Need to wait,while data is load
-    cy.wait(2000);
     AcquisitionUnits.assignUser(user.username);
     cy.visit(TopMenu.fundPath);
     FinanceHelp.searchByName(defaultFund.name);

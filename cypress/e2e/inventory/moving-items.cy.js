@@ -22,6 +22,7 @@ import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('ui-inventory: moving items', { retries: 2 }, () => {
   const successCalloutMessage = '1 item has been successfully moved.';
+  const OCLCAuthentication = '100481406/PAOLF';
   let userId;
   let firstHolding = '';
   let secondHolding = '';
@@ -29,7 +30,7 @@ describe('ui-inventory: moving items', { retries: 2 }, () => {
 
   before(() => {
     cy.getAdminToken().then(() => {
-      Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF');
+      Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
     });
   });
 
@@ -145,7 +146,7 @@ describe('ui-inventory: moving items', { retries: 2 }, () => {
         InventoryInstances.selectInstance();
         InventoryInstance.openHoldingView();
         HoldingsRecordView.checkHrId(holdingsRecordhrId);
-        //TODO: Delete below two lines of code after Actions -> View source of Holding's view works as expected.
+        // TODO: Delete below two lines of code after Actions -> View source of Holding's view works as expected.
         HoldingsRecordView.close();
         InventoryInstance.openHoldingView();
         HoldingsRecordView.viewSource();

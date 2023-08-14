@@ -18,93 +18,99 @@ import InteractorsTools from '../../../support/utils/interactorsTools';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-inventory', () => {
-  let user;
-  let instanceHRID;
-  let profileId;
-  const fileName = `C375126 autotestFile.${getRandomPostfix()}.mrc`;
-  const targetProfileName = `C375126 autotest profile${getRandomPostfix()}`;
-  const defaultTargetProfileName = 'OCLC WorldCat';
-  const profileForOverlay = 'Inventory Single Record - Default Update Instance (Default)';
-  const targetProfile = {
-    name: 'OCLC WorldCat',
-    url: 'zcat.oclc.org/OLUCWorldCat',
-    authentification: '100473910/PAOLF',
-    externalId: '@attr 1=1211 $identifier',
-    internalId: '999ff$i'
-  };
-  const testIdentifier = '1234567';
-  const successCalloutMessage = 'Record 1234567 updated. Results may take a few moments to become visible in Inventory';
-  const instanceTitle = 'The Gospel according to Saint Mark : Evangelistib Markusib aglangit.';
+describe('inventory', () => {
+  describe('Single record import', () => {
+    let user;
+    let instanceHRID;
+    let profileId;
+    const OCLCAuthentication = '100481406/PAOLF';
+    const fileName = `C375126 autotestFile.${getRandomPostfix()}.mrc`;
+    const newTargetProfileName = `C375126 autotest profile${getRandomPostfix()}`;
+    const OCLCWorldCatTargetProfileName = 'OCLC WorldCat';
+    const profileForOverlay = 'Inventory Single Record - Default Update Instance (Default)';
+    const targetProfile = {
+      name: 'OCLC WorldCat',
+      url: 'zcat.oclc.org/OLUCWorldCat',
+      authentification: OCLCAuthentication,
+      externalId: '@attr 1=1211 $identifier',
+      internalId: '999ff$i'
+    };
+    const testIdentifier = '1234567';
+    const successCalloutMessage = 'Record 1234567 updated. Results may take a few moments to become visible in Inventory';
+    const instanceTitle = 'The Gospel according to Saint Mark : Evangelistib Markusib aglangit.';
 
-  before('create test data', () => {
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    cy.getAdminToken().then(() => {
-      DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
-      JobProfiles.waitFileIsImported(fileName);
-      Logs.openFileDetails(fileName);
-      FileDetails.openInstanceInInventory('Created');
-      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
-        instanceHRID = initialInstanceHrId;
+    before('create test data', () => {
+      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
+      cy.getAdminToken().then(() => {
+        DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
+        JobProfiles.waitFileIsImported(fileName);
+        Logs.openFileDetails(fileName);
+        FileDetails.openInstanceInInventory('Created');
+        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+          instanceHRID = initialInstanceHrId;
+        });
+        Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
+        Z3950TargetProfiles.createNewZ3950TargetProfileViaApi(newTargetProfileName)
+          .then(initialId => { profileId = initialId; });
+        cy.visit(SettingsMenu.targetProfilesPath);
+        Z3950TargetProfiles.openTargetProfile();
+        ViewTargetProfile.verifyTargetProfileForm(
+          targetProfile.name,
+          targetProfile.url,
+          targetProfile.authentification,
+          targetProfile.externalId,
+          targetProfile.internalId
+        );
+        Z3950TargetProfiles.openTargetProfile(profileId);
+        ViewTargetProfile.verifyTargetProfileForm(
+          targetProfile.name,
+          targetProfile.url,
+          targetProfile.authentification,
+          targetProfile.externalId,
+          targetProfile.internalId
+        );
       });
-      Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF');
-      Z3950TargetProfiles.createNewZ3950TargetProfileViaApi(targetProfileName)
-        .then(initialId => { profileId = initialId; });
-      cy.visit(SettingsMenu.targetProfilesPath);
-      Z3950TargetProfiles.openTargetProfile();
-      ViewTargetProfile.verifyTargetProfileForm(
-        targetProfile.name,
-        targetProfile.url,
-        targetProfile.authentification,
-        targetProfile.externalId,
-        targetProfile.internalId
-      );
-      Z3950TargetProfiles.openTargetProfile(profileId);
-      ViewTargetProfile.verifyTargetProfileForm(
-        targetProfile.name,
-        targetProfile.url,
-        targetProfile.authentification,
-        targetProfile.externalId,
-        targetProfile.internalId
-      );
+      cy.logout();
+
+      cy.createTempUser([
+        permissions.inventoryAll.gui,
+        permissions.uiInventorySingleRecordImport.gui,
+        permissions.settingsDataImportEnabled.gui
+      ])
+        .then(userProperties => {
+          user = userProperties;
+
+          cy.login(user.username, user.password,
+            { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+        });
     });
-    cy.logout();
 
-    cy.createTempUser([
-      permissions.inventoryAll.gui,
-      permissions.uiInventorySingleRecordImport.gui,
-      permissions.settingsDataImportEnabled.gui
-    ])
-      .then(userProperties => {
-        user = userProperties;
+    after('delete test data', () => {
+      Users.deleteViaApi(user.userId);
+      Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
+        .then((instance) => {
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
+    });
 
-        cy.login(user.username, user.password,
-          { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+    it('C375126 Verify the modal window for ISRI In inventory instance details menu for multiple target profiles (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+        InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
+        cy.wait(1000);
+        InventorySearchAndFilter.selectSearchResultItem();
+        InventoryInstance.startOverlaySourceBibRecord();
+        ReImportModal.verifyModalWithSeveralTargetProfiles();
+        ReImportModal.verifyExternalTargetField(newTargetProfileName);
+        ReImportModal.selectExternalTarget(OCLCWorldCatTargetProfileName);
+        ReImportModal.selectTheProfileToBeUsedToOverlayTheCurrentData(profileForOverlay);
+        ReImportModal.fillEnterTheTargetIdentifier(testIdentifier);
+        ReImportModal.import();
+        // need to wait because after the import the data in the instance is displayed for a long time
+        // https://issues.folio.org/browse/MODCPCT-73
+        cy.wait(7000);
+        InteractorsTools.checkCalloutMessage(successCalloutMessage);
+        InstanceRecordView.verifyIsInstanceOpened(instanceTitle);
       });
   });
-
-  after('delete test data', () => {
-    Users.deleteViaApi(user.userId);
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
-      .then((instance) => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
-  });
-
-  it('C375126 Verify the modal window for ISRI In inventory instance details menu for multiple target profiles (folijet)',
-    { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
-      InventoryInstance.startOverlaySourceBibRecord();
-      ReImportModal.verifyModalWithSeveralTargetProfiles();
-      ReImportModal.verifyExternalTargetField(targetProfileName);
-      ReImportModal.selectExternalTarget(defaultTargetProfileName);
-      ReImportModal.selectTheProfileToBeUsedToOverlayTheCurrentData(profileForOverlay);
-      ReImportModal.fillEnterTheTargetIdentifier(testIdentifier);
-      ReImportModal.import();
-      // need to wait because after the import the data in the instance is displayed for a long time
-      // https://issues.folio.org/browse/MODCPCT-73
-      cy.wait(10000);
-      InteractorsTools.checkCalloutMessage(successCalloutMessage);
-      InstanceRecordView.verifyIsInstanceOpened(instanceTitle);
-    });
 });

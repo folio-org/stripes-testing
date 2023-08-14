@@ -62,7 +62,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-    // clean up generated profiles
+      // clean up generated profiles
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
       FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
@@ -73,7 +73,7 @@ describe('data-import', () => {
 
     it('C343338 EDIFACT file import with creating of new invoice record (folijet)',
       { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-        // create Field mapping profile
+      // create Field mapping profile
         FieldMappingProfiles.waitLoading();
         FieldMappingProfiles.createInvoiceMappingProfile(mappingProfile, profileForDuplicate);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
