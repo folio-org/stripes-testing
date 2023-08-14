@@ -181,7 +181,7 @@ describe('orders: Receiving and Check-in', () => {
   it('C367971 Item statuses are set to status other than "Order closed" or "On order" and are NOT changed to "In process" upon receiving (items for receiving includes "On order" statuses) (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
     Receiving.selectLinkFromResultsList();
-    Receiving.receiveFromExpectedSectionWithClosePOL();
+    Receiving.receiveFromExpectedSection();
     Receiving.receiveAll();
     Receiving.clickOnInstance();
     InventoryInstance.openHoldingsAccordion(location.name);
