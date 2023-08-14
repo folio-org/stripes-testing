@@ -230,6 +230,7 @@ export default {
   settingsDataImportCanViewOnly:{ internal:'ui-data-import.settings.readOnly', gui:'Settings (Data import): Can view only' },
   settingsTenantViewLocation:{ internal:'ui - tenant - settings.settings.location.view', gui:'Settings (Tenant): View locations' },
   settingsUsersCRUD: { internal: 'ui-users.settings.transfers.all', gui: 'Settings (Users): Can create, edit and remove transfer accounts' },
+  uiSettingsCanChangeLoacalPassword: { internal: 'ui-myprofile.settings.change-password', gui: 'Settings (My profile): Can change your local password' },
   // Added the below permissions for custom label creation
 
   uiSettingseholdingsViewEditCreateDelete:{ internal: 'ui-eholdings.settings.all', gui: 'Settings (eholdings): Can create, edit, view, and delete custom labels' },
