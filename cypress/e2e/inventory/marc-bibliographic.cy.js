@@ -13,10 +13,11 @@ import Z3950TargetProfiles from '../../support/fragments/settings/inventory/inte
 
 describe('MARC -> MARC Bibliographic', () => {
   const testData = {};
+  const OCLCAuthentication = '100481406/PAOLF';
 
   before(() => {
     cy.getAdminToken().then(() => {
-      Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF');
+      Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
     });
 
     cy.createTempUser([

@@ -59,7 +59,7 @@ export default {
       searchForm.selectIndex(parameter),
       searchForm.fillIn(value)
     ]);
-    cy.wait(1000);
+    cy.wait(2000);
     cy.do(Button('Search').click());
   },
   waitLoading() {
@@ -289,6 +289,9 @@ export default {
       actionsButton.click(),
       newButton.click(),
       Button({ id: 'order-template' }).click(),
+    ]);
+    cy.wait(6000);
+    cy.do([
       SelectionOption(templateName).click(),
       saveAndClose.click()
     ]);

@@ -17,11 +17,67 @@ import inventoryNewInstance from './inventoryNewInstance';
 import InventoryInstance from './inventoryInstance';
 import Arrays from '../../utils/arrays';
 import { ITEM_STATUS_NAMES } from '../../constants';
+import { AdvancedSearchModalInventory, AdvancedSearchRowInventory } from '../../../../interactors/advanced-search-inventory';
 
 const rootSection = Section({ id: 'pane-results' });
 const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
 const actionsButton = rootSection.find(Button('Actions'));
 const singleRecordImportModal = Modal('Single record import');
+
+const advSearchButton = Button('Advanced search');
+const advSearchModal = Modal('Advanced search');
+const buttonSearchInAdvSearchModal = advSearchModal.find(Button({ ariaLabel: 'Search', disabled: false }));
+const buttonCancelInAdvSearchModal = advSearchModal.find(Button({ ariaLabel: 'Cancel', disabled: false }));
+const inventorySearchAndFilterInput = Select({ id: 'input-inventory-search-qindex' });
+const advSearchOperatorSelect = Select({ label: 'Operator*' });
+const advSearchModifierSelect = Select({ label: 'Match option*' });
+const advSearchOptionSelect = Select({ label: 'Search options*' });
+
+const advSearchOperators = ['AND', 'OR', 'NOT'];
+const advSearchModifiers = ['Exact phrase', 'Contains all', 'Starts with'];
+const advSearchModifiersValues = ['exactPhrase', 'containsAll', 'startsWith'];
+const searchInstancesOptions = [
+  'Keyword (title, contributor, identifier, HRID, UUID)',
+  'Contributor',
+  'Title (all)',
+  'Identifier (all)',
+  'ISBN',
+  'ISSN',
+  'OCLC number, normalized',
+  'Instance notes (all)',
+  'Instance administrative notes',
+  'Subject',
+  'Effective call number (item), shelving order',
+  'Instance HRID',
+  'Instance UUID',
+  'Authority UUID',
+  'All',
+  'Query search',
+  'Advanced search'
+];
+const searchInstancesOptionsValues = [
+  'all',
+  'contributor',
+  'title',
+  'identifier',
+  'isbn',
+  'issn',
+  'oclc',
+  'instanceNotes',
+  'instanceAdministrativeNotes',
+  'subject',
+  'callNumber',
+  'hrid',
+  'id',
+  'authorityId',
+  'allFields',
+  'querySearch',
+  'advancedSearch'
+];
+const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 14);
+const advSearchInstancesOptionsValues = searchInstancesOptionsValues
+  .map((option, index) => (index ? option : 'keyword'))
+  .filter((option, index) => index <= 14);
 
 const createInstanceViaAPI = (instanceWithSpecifiedNewId) => cy.okapiRequest({
   method: 'POST',
@@ -51,8 +107,6 @@ export default {
     cy.expect(rootSection.find(HTML(including('Loading…'))).absent());
     cy.expect(or(inventoriesList.exists()),
       rootSection.find(HTML(including('No results found'))).exists());
-    // need to wait until list to be formed
-    cy.wait(2500);
   },
 
   selectInstance: (rowNumber = 0) => {
@@ -297,5 +351,67 @@ export default {
     cy.do(singleRecordImportModal.find(Button('Import')).click());
   },
 
-  verifyInstanceDetailsView:() => cy.expect(Section({ id: 'pane-instancedetails' }).exists())
+  verifyInstanceDetailsView:() => cy.expect(Section({ id: 'pane-instancedetails' }).exists()),
+
+  clickAdvSearchButton() {
+    cy.do(advSearchButton.click());
+    cy.expect([
+      AdvancedSearchModalInventory({ rowCount: 6 }).exists(),
+      buttonSearchInAdvSearchModal.exists(),
+      buttonCancelInAdvSearchModal.exists()
+    ]);
+  },
+
+  checkAdvSearchInstancesModalFields(rowIndex) {
+    if (rowIndex) {
+      cy.expect(AdvancedSearchRowInventory({ index: rowIndex }).find(advSearchOperatorSelect).exists());
+      advSearchOperators.forEach(operator => {
+        cy.expect(AdvancedSearchRowInventory({ index: rowIndex }).find(advSearchOperatorSelect).has({ content: including(operator) }));
+      });
+    } else {
+      cy.expect(AdvancedSearchRowInventory({ index: rowIndex }).has({ text: including('Search for') }));
+    }
+    cy.expect([
+      AdvancedSearchRowInventory({ index: rowIndex }).find(TextField()).exists(),
+      AdvancedSearchRowInventory({ index: rowIndex }).find(advSearchModifierSelect).exists(),
+      AdvancedSearchRowInventory({ index: rowIndex }).find(advSearchOptionSelect).exists(),
+    ]);
+    advSearchModifiers.forEach(modifier => {
+      cy.expect(AdvancedSearchRowInventory({ index: rowIndex }).find(advSearchModifierSelect).has({ content: including(modifier) }));
+    });
+    advSearchInstancesOptions.forEach(option => {
+      cy.expect(AdvancedSearchRowInventory({ index: rowIndex }).find(advSearchOptionSelect).has({ content: including(option) }));
+    });
+  },
+
+  fillAdvSearchRow(rowIndex, query, modifier, option, operator) {
+    cy.do([
+      AdvancedSearchRowInventory({ index: rowIndex }).fillQuery(query),
+      AdvancedSearchRowInventory({ index: rowIndex }).selectModifier(rowIndex, modifier),
+      AdvancedSearchRowInventory({ index: rowIndex }).selectSearchOption(rowIndex, option),
+    ]);
+    if (operator) cy.do(AdvancedSearchRowInventory({ index: rowIndex }).selectBoolean(rowIndex, operator));
+  },
+
+  checkAdvSearchModalAbsence() {
+    cy.expect(advSearchModal.absent());
+  },
+
+  checkAdvSearchModalValues: (rowIndex, query, modifier, option, operator) => {
+    cy.expect([
+      advSearchModal.exists(),
+      AdvancedSearchRowInventory({ index: rowIndex }).find(TextField()).has({ value: including(query) }),
+      AdvancedSearchRowInventory({ index: rowIndex }).find(advSearchModifierSelect).has({ value: advSearchModifiersValues[advSearchModifiers.indexOf(modifier)] }),
+      AdvancedSearchRowInventory({ index: rowIndex }).find(advSearchOptionSelect).has({ value: advSearchInstancesOptionsValues[advSearchInstancesOptions.indexOf(option)] }),
+    ]);
+    if (operator) cy.expect(AdvancedSearchRowInventory({ index: rowIndex }).find(advSearchOperatorSelect).has({ value: operator.toLowerCase() }));
+  },
+
+  clickSearchBtnInAdvSearchModal() {
+    cy.do(buttonSearchInAdvSearchModal.click());
+  },
+
+  verifySelectedSearchOption(option) {
+    cy.expect(inventorySearchAndFilterInput.has({ value: searchInstancesOptionsValues[searchInstancesOptions.indexOf(option)] }));
+  }
 };

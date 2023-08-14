@@ -29,7 +29,7 @@ describe('bulk-edit', () => {
       users.deleteViaApi(userWithCsvViewPermission.userId);
     });
 
-    it('C350903 Verify "Bulk Edit: CSV - View" permissions (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C350903 Verify "Bulk Edit: Local - View user records" permissions (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       cy.login(userWithCsvViewPermission.username, userWithCsvViewPermission.password);
       cy.visit(TopMenu.bulkEditPath);
 

@@ -14,6 +14,7 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => false);
@@ -107,7 +108,8 @@ describe('Bulk Edit - Logs', () => {
     BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, [item.instanceHRID], 'instanceHrid', true);
 
     TopMenuNavigation.navigateToApp('Inventory');
-    InventorySearchAndFilter.searchInstanceByHRID(item.instanceHRID);
+    InventoryInstance.searchByTitle(item.instanceName);
+    InventoryInstances.selectInstance();
     InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
 
     TopMenuNavigation.navigateToApp('Inventory');

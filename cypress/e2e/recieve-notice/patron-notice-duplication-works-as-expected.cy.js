@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import { getTestEntityValue } from '../../support/utils/stringTools';
@@ -9,23 +8,20 @@ import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import NewNoticePolicyTemplate from '../../support/fragments/circulation/newNoticePolicyTemplate';
 import NoticePolicyTemplate from '../../support/fragments/circulation/notice-policy-template';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import UserEdit from '../../support/fragments/users/userEdit';
 
 describe('Patron Notices', () => {
   let userData;
-  const patronGroup = {
-    name: getTestEntityValue('groupNoticePolicy'),
-  };
-  const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestReceiveNotice', uuid()),
-  };
+  let servicePointId;
+  const testData = {};
+  const newNoticeTemplateName = getTestEntityValue('newNoticePolicy');
+  const patronGroup = { name: getTestEntityValue('groupNoticePolicy') };
 
   before('Preconditions', () => {
     cy.getAdminToken().then(() => {
-      ServicePoints.createViaApi(testData.userServicePoint);
-      testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
-      Location.createViaApi(testData.defaultLocation);
+      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
+        servicePointId = servicePoints[0].id;
+      });
       NoticePolicyTemplate.createViaApi('Loan').then((noticeTemplateResp) => {
         testData.noticeTemplateBody = noticeTemplateResp.body;
       });
@@ -35,11 +31,7 @@ describe('Patron Notices', () => {
       cy.createTempUser([permissions.uiCirculationSettingsNoticeTemplates.gui], patronGroup.name).then(
         (userProperties) => {
           userData = userProperties;
-          UserEdit.addServicePointViaApi(
-            testData.userServicePoint.id,
-            userData.userId,
-            testData.userServicePoint.id
-          );
+          UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
           cy.login(userData.username, userData.password, {
             path: SettingsMenu.circulationPatronNoticeTemplatesPath,
             waiter: NewNoticePolicyTemplate.waitLoading,
@@ -50,29 +42,30 @@ describe('Patron Notices', () => {
   });
 
   after('Deleting created entities', () => {
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
     NoticePolicyTemplate.deleteViaApi(testData.noticeTemplateBody.id);
-    ServicePoints.deleteViaApi(testData.userServicePoint.id);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
-      testData.defaultLocation.institutionId,
-      testData.defaultLocation.campusId,
-      testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
-    );
+    NoticePolicyTemplate.getViaApi({ query: `name=${newNoticeTemplateName}` }).then((templateId) => {
+      NoticePolicyTemplate.deleteViaApi(templateId);
+    });
   });
 
   it(
-    'C387434 Add "Discovery display name" as notice token in Settings',
+    'C396392 Verify that patron notice duplication works as expected (volaris)',
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
-      NewNoticePolicyTemplate.editTemplate(testData.noticeTemplateBody.name);
-      NewNoticePolicyTemplate.clearBody();
-      NewNoticePolicyTemplate.addToken('item.effectiveLocationDiscoveryDisplayName');
+      NewNoticePolicyTemplate.openToSide({ name: testData.noticeTemplateBody.name });
+      NewNoticePolicyTemplate.duplicateTemplate();
+      NewNoticePolicyTemplate.verifyMetadataObjectIsVisible();
+      NewNoticePolicyTemplate.verifyGeneralInformationForDuplicate(testData.noticeTemplateBody);
+      NewNoticePolicyTemplate.typeTemplateName(newNoticeTemplateName);
       NewNoticePolicyTemplate.saveAndClose();
       NewNoticePolicyTemplate.waitLoading();
-      NoticePolicyTemplate.checkPreview('Main Library');
+      NewNoticePolicyTemplate.checkAfterSaving({
+        name: newNoticeTemplateName,
+        description: testData.noticeTemplateBody.description,
+        category: testData.noticeTemplateBody.category,
+      });
     }
   );
 });

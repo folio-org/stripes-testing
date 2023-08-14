@@ -13,6 +13,7 @@ import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
 
 let user;
 let instanceRecord;
+const OCLCAuthentication = '100481406/PAOLF';
 const oclcRecordData = {
   title: 'Cooking Light Soups & Stew [electronic resource].',
   language: 'English',
@@ -31,7 +32,7 @@ describe('ui-inventory: import by OCLC', () => {
   before('create test data', () => {
     cy.getAdminToken()
       .then(() => {
-        Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF');
+        Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
         InventorySearchAndFilter.createInstanceViaApi()
           .then(({ instanceData }) => {
             instanceRecord = instanceData;
@@ -63,12 +64,9 @@ describe('ui-inventory: import by OCLC', () => {
     InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', instanceRecord.instanceTitle);
     InventorySearchAndFilter.selectSearchResultItem();
     InventoryInstance.startOverlaySourceBibRecord();
-    InventoryInstance.importWithOclc(oclcRecordData.oclc);
+    InventoryInstance.overlayWithOclc(oclcRecordData.oclc);
     InventoryInstance.checkCalloutMessage(`Record ${oclcRecordData.oclc} updated. Results may take a few moments to become visible in Inventory`);
-
-    // need to wait because after the import the data in the instance is displayed for a long time
-    // https://issues.folio.org/browse/MODCPCT-73
-    cy.wait(10000);
+    cy.reload();
     InventoryInstance.waitInstanceRecordViewOpened(oclcRecordData.title);
     InventoryInstance.verifyLastUpdatedDate();
     InstanceRecordView.verifyInstanceSource(INSTANCE_SOURCE_NAMES.MARC);

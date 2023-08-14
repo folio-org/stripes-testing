@@ -49,9 +49,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
       BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Logs');
       BulkEditSearchPane.openQuerySearch();
-      BulkEditSearchPane.usersRadioIsDisabled(true);
-      BulkEditSearchPane.itemsRadioIsDisabled(true);
-      BulkEditSearchPane.itemsHoldingsIsDisabled(true);
+      BulkEditSearchPane.verifyRecordTypesEmpty();
     });
   });
 });
