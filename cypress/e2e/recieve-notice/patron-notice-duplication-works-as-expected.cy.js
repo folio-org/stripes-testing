@@ -51,7 +51,7 @@ describe('Patron Notices', () => {
   });
 
   it(
-    'C396392 Verify that patron notice duplication works as expected',
+    'C396392 Verify that patron notice duplication works as expected (volaris)',
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       NewNoticePolicyTemplate.openToSide({ name: testData.noticeTemplateBody.name });
