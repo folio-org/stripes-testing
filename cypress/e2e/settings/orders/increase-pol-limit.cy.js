@@ -94,6 +94,7 @@ describe('orders: Settings', () => {
   });
 
   it('C15497 Increase purchase order lines limit (items for receiving includes "Order closed" statuses) (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
+    SettingsOrders.setPurchaseOrderLinesLimit(5);
     SettingsOrders.setPurchaseOrderLinesLimit(2);
     cy.visit(TopMenu.ordersPath);
     Orders.searchByParameter('PO number', orderNumber);

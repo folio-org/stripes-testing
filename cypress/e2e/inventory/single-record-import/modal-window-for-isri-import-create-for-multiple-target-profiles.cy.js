@@ -18,75 +18,77 @@ import FieldMappingProfiles from '../../../support/fragments/data_import/mapping
 import Users from '../../../support/fragments/users/users';
 import SingleRecordImportModal from '../../../support/fragments/inventory/singleRecordImportModal';
 
-describe('ui-inventory', () => {
-  let user;
-  let profileId;
-  let createJobProfileId;
-  let instanceHRID;
-  const profile = {
-    createJobProfile: `autotest jobProfileForCreate.${getRandomPostfix()}`,
-    createActionProfile: `autotest actionProfileForCreate${getRandomPostfix()}`,
-    createMappingProfile: `autotest mappingProfileForCreate${getRandomPostfix()}`,
-  };
-  const targetProfileName = `C375122 autotest profile${getRandomPostfix()}`;
-  const testIdentifier = '1234567';
-  const instanceTitle = 'The Gospel according to Saint Mark : Evangelistib Markusib aglangit.';
+describe('inventory', () => {
+  describe('Single record import', () => {
+    let user;
+    let profileId;
+    let createJobProfileId;
+    let instanceHRID;
+    const profile = {
+      createJobProfile: `autotest jobProfileForCreate.${getRandomPostfix()}`,
+      createActionProfile: `autotest actionProfileForCreate${getRandomPostfix()}`,
+      createMappingProfile: `autotest mappingProfileForCreate${getRandomPostfix()}`,
+    };
+    const targetProfileName = `C375122 autotest profile${getRandomPostfix()}`;
+    const testIdentifier = '1234567';
+    const instanceTitle = 'The Gospel according to Saint Mark : Evangelistib Markusib aglangit.';
 
-  before('create test data', () => {
-    cy.createTempUser([
-      permissions.inventoryAll.gui,
-      permissions.uiInventorySingleRecordImport.gui,
-      permissions.settingsDataImportEnabled.gui
-    ])
-      .then(userProperties => {
-        user = userProperties;
+    before('create test data', () => {
+      cy.createTempUser([
+        permissions.inventoryAll.gui,
+        permissions.uiInventorySingleRecordImport.gui,
+        permissions.settingsDataImportEnabled.gui
+      ])
+        .then(userProperties => {
+          user = userProperties;
 
-        // create job profile for create
-        NewFieldMappingProfile.createMappingProfileViaApi(profile.createMappingProfile)
-          .then((mappingProfileResponse) => {
-            NewActionProfile.createActionProfileViaApi(profile.createActionProfile, mappingProfileResponse.body.id)
-              .then((actionProfileResponse) => {
-                NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(profile.createJobProfile, actionProfileResponse.body.id);
-              }).then(id => {
-                createJobProfileId = id;
+          // create job profile for create
+          NewFieldMappingProfile.createMappingProfileViaApi(profile.createMappingProfile)
+            .then((mappingProfileResponse) => {
+              NewActionProfile.createActionProfileViaApi(profile.createActionProfile, mappingProfileResponse.body.id)
+                .then((actionProfileResponse) => {
+                  NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(profile.createJobProfile, actionProfileResponse.body.id);
+                }).then(id => {
+                  createJobProfileId = id;
 
-                Z3950TargetProfiles.createNewZ3950TargetProfileViaApi(targetProfileName, [createJobProfileId])
-                  .then(initialId => { profileId = initialId; });
-              });
+                  Z3950TargetProfiles.createNewZ3950TargetProfileViaApi(targetProfileName, [createJobProfileId])
+                    .then(initialId => { profileId = initialId; });
+                });
 
-            cy.login(user.username, user.password,
-              { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
-          });
-      });
-  });
-
-  after('delete test data', () => {
-    JobProfiles.deleteJobProfile(profile.createJobProfile);
-    ActionProfiles.deleteActionProfile(profile.createActionProfile);
-    FieldMappingProfiles.deleteFieldMappingProfile(profile.createMappingProfile);
-    Users.deleteViaApi(user.userId);
-    Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
-      .then((instance) => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
-  });
-
-  it('C375122 Verify the modal window for ISRI Import/Create in inventory main actions menu for multiple target profiles (folijet)',
-    { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      InventoryActions.openSingleReportImportModal();
-      SingleRecordImportModal.verifyInventorySingleRecordModalWithSeveralTargetProfiles();
-      SingleRecordImportModal.selectExternalTarget(targetProfileName);
-      SingleRecordImportModal.selectTheProfileToBeUsed(profile.createJobProfile);
-      SingleRecordImportModal.fillEnterTestIdentifier(testIdentifier);
-      SingleRecordImportModal.import();
-      InstanceRecordView.verifyCalloutMessage(testIdentifier);
-      // need to wait because after the import the data in the instance is displayed for a long time
-      // https://issues.folio.org/browse/MODCPCT-73
-      cy.wait(10000);
-      InstanceRecordView.verifyIsInstanceOpened(instanceTitle);
-      InstanceRecordView.getAssignedHRID().then(initialInstanceHrId => {
-        instanceHRID = initialInstanceHrId;
-      });
+              cy.login(user.username, user.password,
+                { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+            });
+        });
     });
+
+    after('delete test data', () => {
+      JobProfiles.deleteJobProfile(profile.createJobProfile);
+      ActionProfiles.deleteActionProfile(profile.createActionProfile);
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.createMappingProfile);
+      Users.deleteViaApi(user.userId);
+      Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
+        .then((instance) => {
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
+    });
+
+    it('C375122 Verify the modal window for ISRI Import/Create in inventory main actions menu for multiple target profiles (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+        InventoryActions.openSingleReportImportModal();
+        SingleRecordImportModal.verifyInventorySingleRecordModalWithSeveralTargetProfiles();
+        SingleRecordImportModal.selectExternalTarget(targetProfileName);
+        SingleRecordImportModal.selectTheProfileToBeUsed(profile.createJobProfile);
+        SingleRecordImportModal.fillEnterTestIdentifier(testIdentifier);
+        SingleRecordImportModal.import();
+        InstanceRecordView.verifyCalloutMessage(testIdentifier);
+        // need to wait because after the import the data in the instance is displayed for a long time
+        // https://issues.folio.org/browse/MODCPCT-73
+        cy.wait(10000);
+        InstanceRecordView.verifyIsInstanceOpened(instanceTitle);
+        InstanceRecordView.getAssignedHRID().then(initialInstanceHrId => {
+          instanceHRID = initialInstanceHrId;
+        });
+      });
+  });
 });

@@ -13,44 +13,46 @@ let user;
 const oclc = '1007797324';
 const OCLCAuthentication = '100481406/PAOLF';
 
-describe('ui-inventory: import by OCLC', () => {
-  before('create user', () => {
-    cy.createTempUser([
-      permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-      permissions.inventoryAll.gui,
-      permissions.uiInventorySingleRecordImport.gui,
-      permissions.settingsDataImportEnabled.gui
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(user.username, user.password);
+describe('inventory', () => {
+  describe('Single record import', () => {
+    before('create user', () => {
+      cy.createTempUser([
+        permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+        permissions.inventoryAll.gui,
+        permissions.uiInventorySingleRecordImport.gui,
+        permissions.settingsDataImportEnabled.gui
+      ])
+        .then(userProperties => {
+          user = userProperties;
+          cy.login(user.username, user.password);
 
-        Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
-      });
-  });
+          Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
+        });
+    });
 
-  beforeEach('navigate to inventory', () => {
-    cy.visit(TopMenu.inventoryPath);
-  });
+    beforeEach('navigate to inventory', () => {
+      cy.visit(TopMenu.inventoryPath);
+    });
 
-  after('delete test data', () => {
-    cy.getInstance({ limit: 1, expandAll: true, query: `"oclc"=="${oclc}"` })
-      .then(instance => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
-    Users.deleteViaApi(user.userId);
-  });
+    after('delete test data', () => {
+      cy.getInstance({ limit: 1, expandAll: true, query: `"oclc"=="${oclc}"` })
+        .then(instance => {
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
+      Users.deleteViaApi(user.userId);
+    });
 
-  it('C193953 Overlay existing Source = MARC Instance by import of single MARC Bib record from OCLC (folijet) (prokopovych))', { tags: [testTypes.smoke, DevTeams.folijet] }, () => {
-    InventoryActions.import(oclc);
-    InventoryInstance.viewSource();
-    InventoryViewSource.contains('999\tf f\t‡s');
-  });
+    it('C193953 Overlay existing Source = MARC Instance by import of single MARC Bib record from OCLC (folijet) (prokopovych))', { tags: [testTypes.smoke, DevTeams.folijet] }, () => {
+      InventoryActions.import(oclc);
+      InventoryInstance.viewSource();
+      InventoryViewSource.contains('999\tf f\t‡s');
+    });
 
-  it('C193952 Create Instance by import of single MARC Bib record from OCLC (folijet) (prokopovych)', { tags: [testTypes.smoke, DevTeams.folijet] }, () => {
-    InventorySearchAndFilter.searchByParameter('OCLC number, normalized', oclc);
-    InventorySearchAndFilter.selectSearchResultItem();
-    InventoryInstance.viewSource();
-    InventoryViewSource.contains('999\tf f\t‡s');
+    it('C193952 Create Instance by import of single MARC Bib record from OCLC (folijet) (prokopovych)', { tags: [testTypes.smoke, DevTeams.folijet] }, () => {
+      InventorySearchAndFilter.searchByParameter('OCLC number, normalized', oclc);
+      InventorySearchAndFilter.selectSearchResultItem();
+      InventoryInstance.viewSource();
+      InventoryViewSource.contains('999\tf f\t‡s');
+    });
   });
 });
