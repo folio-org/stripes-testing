@@ -88,6 +88,7 @@ describe('Search in Inventory', () => {
         InventoryInstances.waitContentLoading();
         InventoryInstance.searchByTitle(createdRecordIDs[0]);
         InventoryInstances.selectInstance();
+        cy.wait(1500);
         InventoryInstance.editMarcBibliographicRecord();
         InventoryInstance.verifyAndClickLinkIcon(testData.tag130);
         MarcAuthorities.switchToSearch();
@@ -100,6 +101,7 @@ describe('Search in Inventory', () => {
         QuickMarcEditor.checkAfterSaveAndClose();
         InventoryInstance.searchByTitle(createdRecordIDs[1]);
         InventoryInstances.selectInstance();
+        cy.wait(1500);
         InventoryInstance.editMarcBibliographicRecord();
         InventoryInstance.verifyAndClickLinkIcon(testData.tag240);
         MarcAuthorities.switchToSearch();
