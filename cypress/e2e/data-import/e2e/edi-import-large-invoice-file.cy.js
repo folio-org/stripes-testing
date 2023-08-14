@@ -20,6 +20,7 @@ import NewFieldMappingProfile from '../../../support/fragments/data_import/mappi
 import InvoiceView from '../../../support/fragments/invoices/invoiceView';
 
 describe('ui-data-import', () => {
+  const quantityOfInvoiceLines = '1,104';
   const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.harrassowitz;
   const fileName = `C347615autotestFile.${getRandomPostfix()}.edi`;
   const mappingProfile = {
@@ -85,6 +86,6 @@ describe('ui-data-import', () => {
     Logs.checkStatusOfJobProfile();
     Logs.checkQuantityRecordsInFile(Logs.quantityRecordsInInvoice.firstQuantity);
     Logs.openFileDetails(fileName);
-    InvoiceView.checkQuantityInvoiceLinesInRecord();
+    InvoiceView.checkQuantityInvoiceLinesInRecord(quantityOfInvoiceLines);
   });
 });

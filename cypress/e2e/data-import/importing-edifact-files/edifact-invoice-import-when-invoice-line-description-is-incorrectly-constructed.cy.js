@@ -18,20 +18,25 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
+import InvoiceView from '../../../support/fragments/invoices/invoiceView';
 
 describe('data-import', () => {
   describe('Importing EDIFACT files', () => {
     let user;
+    const quantityOfInvoices = '5';
+    const quantityOfInvoiceLines = '122';
+    const invoiceNumbers = ['263056', '263057', '263058', '263059', '263061'];
     const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.harrassowitz;
+    const filePathForUpload = 'ediFileForC347926.edi';
     const fileName = `C347926autotestFile.${getRandomPostfix()}.edi`;
     const mappingProfile = {
       name:`C347926 Import Harrassowitz invoice.${getRandomPostfix()}`,
       description: '',
       batchGroup: BATCH_GROUP.FOLIO,
       lockTotalAmount: 'MOA+9?4[2]',
-      organizationName: 'Harrassowitz',
+      organizationName: VENDOR_NAMES.HARRASSOWITZ,
       paymentMethod: PAYMENT_METHOD.CASH,
-      invoiceLinePol: '{POL_title}; else IMD++050+[4-5]',
+      invoiceLinePOlDescription: '{POL_title}; else IMD++050+[4-5]',
       polNumber: 'RFF+SNA[2]',
       polVendorReferenceNumber: 'RFF+SLI[2]',
       incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
@@ -60,6 +65,17 @@ describe('data-import', () => {
         });
     });
 
+    after('delete test data', () => {
+      JobProfiles.deleteJobProfile(jobProfile.profileName);
+      ActionProfiles.deleteActionProfile(actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+      invoiceNumbers.forEach(number => {
+        cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${number}"` })
+          .then(id => cy.deleteInvoiceFromStorageViaApi(id));
+      });
+      Users.deleteViaApi(user.userId);
+    });
+
     it('C347926 Check EDIFACT invoice import when Invoice line description is incorrectly constructed (folijet)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] }, () => {
         // create Field mapping profile
@@ -83,7 +99,7 @@ describe('data-import', () => {
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        DataImport.uploadFile('ediFileForC343338.edi', fileName);
+        DataImport.uploadFile(filePathForUpload, fileName);
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();
@@ -91,9 +107,13 @@ describe('data-import', () => {
         Logs.checkImportFile(jobProfile.profileName);
         Logs.checkStatusOfJobProfile();
         Logs.openFileDetails(fileName);
-        // FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.invoice);
-        // FileDetails.checkInvoiceInSummaryTable(quantityOfItems);
-        // InvoiceView.checkInvoiceDetails(InvoiceView.vendorInvoiceNumber);
+        FileDetails.verifyEachInvoiceStatusInColunm('Created');
+        FileDetails.verifyEachInvoiceTitleInColunm();
+        FileDetails.clickNextPaginationButton();
+        FileDetails.verifyEachInvoiceStatusInColunm('Created');
+        FileDetails.verifyEachInvoiceTitleInColunm();
+        Logs.checkQuantityRecordsInFile(quantityOfInvoices);
+        InvoiceView.checkQuantityInvoiceLinesInRecord(quantityOfInvoiceLines);
       });
   });
 });
