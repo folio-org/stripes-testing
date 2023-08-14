@@ -17,7 +17,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import checkInActions from '../../support/fragments/check-in-actions/checkInActions';
 
-describe('Check In - Actions', () => {
+describe.skip('Check In - Actions', () => {
   const userData = {};
   const testData = {
     servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation(

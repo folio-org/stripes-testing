@@ -10,6 +10,7 @@ import {
   Section,
   Select,
   TextField,
+  Callout,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 
@@ -181,6 +182,10 @@ export default {
     );
   },
 
+  verifyCustomFieldOnUserDetailsPane(name, text) {
+    cy.expect(userDetailsPane.find(KeyValue(name)).has({ value: text }));
+  },
+  
   clearTextField() {
     cy.do(TextField({ id: 'adduser_preferredname' }).clear());
   },
@@ -198,6 +203,10 @@ export default {
       deleteUser.click(),
       deleteYesButton.click()
     ]);
+  },
+
+  successMessageAfterDeletion(message) {
+    cy.expect(Callout(message).exists());
   },
 
   saveButton() {

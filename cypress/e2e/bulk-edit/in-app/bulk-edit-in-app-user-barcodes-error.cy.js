@@ -17,11 +17,12 @@ describe('bulk-edit', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditUpdateRecords.gui,
-        permissions.uiUsersView.gui,
+        permissions.uiUserEdit.gui
       ], 'faculty')
         .then(userProperties => {
           user = userProperties;
           cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
+          
           FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
           FileManager.createFile(`cypress/fixtures/${userBarcodesFileNameWithDuplicates}`,
             `${user.barcode}\r\n${user.barcode}\r\n${getRandomPostfix()}`);

@@ -29,7 +29,7 @@ describe('Bulk Edit - Logs', () => {
     cy.createTempUser([
       permissions.bulkEditLogsView.gui,
       permissions.bulkEditUpdateRecords.gui,
-      permissions.uiUsersView.gui,
+      permissions.uiUserEdit.gui,
     ])
       .then(userProperties => {
         user = userProperties;

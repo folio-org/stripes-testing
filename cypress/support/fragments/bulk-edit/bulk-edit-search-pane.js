@@ -135,6 +135,16 @@ export default {
     ]);
   },
 
+  verifyRecordIdentifierEmpty() {
+    cy.expect(recordIdentifierDropdown.find(HTML('')).exists());
+  },
+
+  verifyRecordTypesEmpty() {
+    cy.expect([
+      recordTypesAccordion.find(HTML('')).exists(),
+    ]);
+  },
+
   verifyRecordIdentifierItems() {
     this.checkUsersRadio();
     cy.expect([
@@ -380,7 +390,9 @@ export default {
 
   verifyCsvViewPermission() {
     cy.expect([
-      radioItems.has({ disabled: true }),
+      usersRadio.absent(),
+      itemsRadio.absent(),
+      holdingsRadio.absent(),
       recordIdentifierDropdown.has({ disabled: true }),
       fileButton.has({ disabled: true }),
       actions.absent()
@@ -389,7 +401,8 @@ export default {
 
   verifyUsersUpdatePermission() {
     cy.expect([
-      radioItems.has({ disabled: true }),
+      itemsRadio.absent(),
+      holdingsRadio.absent(),
       recordIdentifierDropdown.has({ disabled: false }),
       fileButton.has({ disabled: true }),
       actions.absent(),
@@ -398,7 +411,9 @@ export default {
 
   verifyInAppViewPermission() {
     cy.expect([
-      radioItems.has({ disabled: false }),
+      usersRadio.absent(),
+      itemsRadio.absent(),
+      holdingsRadio.absent(),
       recordIdentifierDropdown.has({ disabled: true }),
       fileButton.has({ disabled: true }),
       actions.absent()
@@ -469,12 +484,16 @@ export default {
     cy.do(usersCheckbox.click());
   },
 
-  itemsHoldingsIsDisabled(isDisabled) {
+  holdingsRadioIsDisabled(isDisabled) {
     cy.expect(holdingsRadio.has({ disabled: isDisabled }));
   },
 
   isHoldingsRadioChecked() {
     cy.expect(holdingsRadio.has({ checked: true }));
+  },
+
+  verifyRadioHidden(name) {
+    cy.expect(RadioButton(name).absent());
   },
 
   uploadFile(fileName) {
@@ -564,7 +583,6 @@ export default {
     cy.do(actions.click());
     cy.expect([
       Button('Download matched records (CSV)').exists(),
-      startBulkEditLocalButton.exists(),
       DropdownMenu().find(HTML('Show columns')).exists(),
     ]);
     if (errors) {

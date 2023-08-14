@@ -170,16 +170,6 @@ export default {
   effectiveLocation: {
     mainLibrary: { id: 'clickable-filter-effectiveLocation-main-library' },
   },
-  selectSearchResultByRowIndex(indexRow) {
-    cy.do(this.getSearchResult(indexRow, 0).click());
-    // must wait page render
-    cy.wait(2000);
-  },
-  selectSearchResultByRowIndex(indexRow) {
-    cy.expect(Spinner().absent());
-    cy.do(this.getSearchResult(indexRow, 0).click());
-    cy.expect(Spinner().absent());
-  },
 
   language: {
     eng: { id: 'clickable-filter-language-english' },
@@ -237,7 +227,7 @@ export default {
     // cypress can't draw selected option without wait
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000);
-    cy.do(Select('Search field index').choose('Call numbers'));
+    cy.do(Select('Search field index').choose('Call numbers (all)'));
     cy.expect(effectiveLocationInput.exists());
   },
 
@@ -284,7 +274,7 @@ export default {
   verifyBrowseOptions() {
     cy.do(browseSearchAndFilterInput.click());
     cy.expect([
-      browseSearchAndFilterInput.has({ content: including('Call numbers') }),
+      browseSearchAndFilterInput.has({ content: including('Call numbers (all)') }),
       browseSearchAndFilterInput.has({ content: including('Contributors') }),
       browseSearchAndFilterInput.has({ content: including('Subjects') }),
     ]);

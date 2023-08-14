@@ -4,7 +4,6 @@ import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
@@ -18,6 +17,7 @@ describe('data-import', () => {
     let user;
     let instanceHrid;
     const oclcNumber = '42980246';
+    const OCLCAuthentication = '100481406/PAOLF';
     const field005 = '20230427101124.9';
     const field035 = '‡a (OCoLC)ocm42980246';
     const notDuplicatedFieldsContent = {
@@ -37,7 +37,7 @@ describe('data-import', () => {
         .then(userProperties => {
           user = userProperties;
 
-          Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF');
+          Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
           cy.login(user.username, user.password,
             { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
         });
@@ -53,7 +53,7 @@ describe('data-import', () => {
 
     it('C347618 Overlaying with single record import creates does not duplicate control fields (folijet)',
       { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-        InventoryActions.import(oclcNumber);
+        InventoryInstances.importWithOclc(oclcNumber);
         InventoryInstance.checkCalloutMessage(`Record ${oclcNumber} created. Results may take a few moments to become visible in Inventory`);
         cy.visit(TopMenu.dataImportPath);
         Logs.openViewAllLogs();
@@ -65,8 +65,10 @@ describe('data-import', () => {
           instanceHrid = initialInstanceHrId;
 
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+          cy.wait(1000);
+          InventorySearchAndFilter.selectSearchResultItem();
           InventoryInstance.startOverlaySourceBibRecord();
-          InventoryInstance.importWithOclc(oclcNumber);
+          InventoryInstance.overlayWithOclc(oclcNumber);
           InventoryInstance.checkCalloutMessage(`Record ${oclcNumber} updated. Results may take a few moments to become visible in Inventory`);
           InventoryInstance.viewSource();
           InventoryViewSource.verifyRecordNotContainsDuplicatedContent(field035, 2);

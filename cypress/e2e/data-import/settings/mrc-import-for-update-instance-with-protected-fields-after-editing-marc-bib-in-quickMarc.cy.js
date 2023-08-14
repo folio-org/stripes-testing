@@ -37,7 +37,7 @@ describe('data-import', () => {
     let user = null;
     let instanceHrid;
     const marcFieldProtectionId = [];
-    const authentication = '100473910/PAOLF';
+    const OCLCAuthentication = '100481406/PAOLF';
     const protectedFields = {
       firstField: '*',
       secondField: '920'
@@ -110,8 +110,8 @@ describe('data-import', () => {
       { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
         cy.visit(SettingsMenu.targetProfilesPath);
         Z3950TargetProfiles.openTargetProfile();
-        Z3950TargetProfiles.editOclcWorldCat(authentication, TARGET_PROFILE_NAMES.OCLC_WORLDCAT);
-        Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(authentication);
+        Z3950TargetProfiles.editOclcWorldCat(OCLCAuthentication, TARGET_PROFILE_NAMES.OCLC_WORLDCAT);
+        Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(OCLCAuthentication);
 
         MarcFieldProtection.createMarcFieldProtectionViaApi({
           indicator1: '*',

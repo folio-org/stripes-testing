@@ -11,6 +11,7 @@ import DevTeams from '../../../support/dictionary/devTeams';
 
 let user;
 const oclc = '1007797324';
+const OCLCAuthentication = '100481406/PAOLF';
 
 describe('inventory', () => {
   describe('Single record import', () => {
@@ -25,7 +26,7 @@ describe('inventory', () => {
           user = userProperties;
           cy.login(user.username, user.password);
 
-          Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF');
+          Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
         });
     });
 

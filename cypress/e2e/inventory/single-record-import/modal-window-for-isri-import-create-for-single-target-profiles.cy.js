@@ -14,6 +14,7 @@ describe('inventory', () => {
   describe('Single record import', () => {
     let user;
     let instanceHRID;
+    const OCLCAuthentication = '100481406/PAOLF';
     const profileForImport = 'Inventory Single Record - Default Create Instance (Default)';
     const testIdentifier = '1234567';
     const instanceTitle = 'The Gospel according to Saint Mark : Evangelistib Markusib aglangit.';
@@ -27,7 +28,7 @@ describe('inventory', () => {
         .then(userProperties => {
           user = userProperties;
 
-          Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF');
+          Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
 
           cy.login(user.username, user.password,
             { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
