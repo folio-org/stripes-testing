@@ -289,6 +289,9 @@ export default {
       actionsButton.click(),
       newButton.click(),
       Button({ id: 'order-template' }).click(),
+    ]);
+    cy.wait(6000);
+    cy.do([
       SelectionOption(templateName).click(),
       saveAndClose.click()
     ]);

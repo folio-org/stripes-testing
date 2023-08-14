@@ -1,5 +1,3 @@
-import moment from 'moment';
-import uuid from 'uuid';
 import permissions from '../../support/dictionary/permissions';
 import devTeams from '../../support/dictionary/devTeams';
 import testType from '../../support/dictionary/testTypes';
@@ -20,7 +18,6 @@ import ItemActions from '../../support/fragments/inventory/inventoryItem/itemAct
 import ItemRecordEdit from '../../support/fragments/inventory/item/itemRecordEdit';
 import SwitchServicePoint from '../../support/fragments/servicePoint/switchServicePoint';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import Checkout from '../../support/fragments/checkout/checkout';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('orders: Receiving and Check-in', () => {
@@ -51,7 +48,6 @@ describe('orders: Receiving and Check-in', () => {
   const barcodeForFourItem = Helper.getRandomBarcode();
 
   let orderNumber;
-  let user;
   let effectiveLocationServicePoint;
   let location;
 
@@ -77,7 +73,7 @@ describe('orders: Receiving and Check-in', () => {
                 Orders.searchByParameter('PO number', orderNumber);
                 Orders.selectFromResultsList();
                 Orders.createPOLineViaActions();
-                OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
+                OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
                 OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', locationResponse.institutionId, '4');
                 OrderLines.backToEditingOrder();
                 Orders.openOrder();
@@ -137,48 +133,16 @@ describe('orders: Receiving and Check-in', () => {
 
     ])
       .then(userProperties => {
-        user = userProperties;
         cy.login(userProperties.username, userProperties.password, { path:TopMenu.receivingPath, waiter: Receiving.waitLoading });
       });
   });
 
-  after(() => {
-    Checkout.checkoutItemViaApi({
-      id: uuid(),
-      itemBarcode: barcodeForFirstItem,
-      loanDate: moment.utc().format(),
-      servicePointId: effectiveLocationServicePoint.id,
-      userBarcode: user.barcode,
-    });
-    Checkout.checkoutItemViaApi({
-      id: uuid(),
-      itemBarcode: barcodeForSecondItem,
-      loanDate: moment.utc().format(),
-      servicePointId: effectiveLocationServicePoint.id,
-      userBarcode: user.barcode,
-    });
-    cy.loginAsAdmin({ path:TopMenu.receivingPath, waiter: Receiving.waitLoading });
-    Orders.searchByParameter('PO number', orderNumber);
-    Receiving.selectFromResultsList();
-    Receiving.unreceiveFromReceivedSection();
-    cy.visit(TopMenu.ordersPath);
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList();
-    Orders.reOpenOrder();
-    Orders.unOpenOrder(orderNumber);
-    OrderLines.selectPOLInOrder(0);
-    OrderLines.deleteOrderLine();
-    // Need to wait until the order is opened before deleting it
-    cy.wait(2000);
-    Orders.deleteOrderViaApi(order.id);
+  // TODO: Need to find solution to delete all data, becouse now i cant delete location and user
 
-    Organizations.deleteOrganizationViaApi(organization.id);
-    // TODO: Need to find solution to delete all data, becouse now i cant delete location and user
-  });
 
   it('C368044 Item statuses set to something other than "Order closed" or "On order" are NOT changed to "In process" upon receiving (items for receiving includes "Order closed" statuses) (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
-    Receiving.selectFromResultsList();
+    Receiving.selectLinkFromResultsList();
     Receiving.receiveFromExpectedSectionWithClosePOL();
     Receiving.receiveAll();
     Receiving.clickOnInstance();

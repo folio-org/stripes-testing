@@ -14,9 +14,8 @@ describe('Patron Notices', () => {
   let userData;
   let servicePointId;
   const testData = {};
-  const patronGroup = {
-    name: getTestEntityValue('groupNoticePolicy'),
-  };
+  const newNoticeTemplateName = getTestEntityValue('newNoticePolicy');
+  const patronGroup = { name: getTestEntityValue('groupNoticePolicy') };
 
   before('Preconditions', () => {
     cy.getAdminToken().then(() => {
@@ -32,11 +31,7 @@ describe('Patron Notices', () => {
       cy.createTempUser([permissions.uiCirculationSettingsNoticeTemplates.gui], patronGroup.name).then(
         (userProperties) => {
           userData = userProperties;
-          UserEdit.addServicePointViaApi(
-            servicePointId,
-            userData.userId,
-            servicePointId
-          );
+          UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
           cy.login(userData.username, userData.password, {
             path: SettingsMenu.circulationPatronNoticeTemplatesPath,
             waiter: NewNoticePolicyTemplate.waitLoading,
@@ -50,31 +45,27 @@ describe('Patron Notices', () => {
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
     NoticePolicyTemplate.deleteViaApi(testData.noticeTemplateBody.id);
+    NoticePolicyTemplate.getViaApi({ query: `name=${newNoticeTemplateName}` }).then((templateId) => {
+      NoticePolicyTemplate.deleteViaApi(templateId);
+    });
   });
 
   it(
-    'C375248 Add "user.preferredFirstName" as staff slip token in Settings (volaris)',
+    'C396392 Verify that patron notice duplication works as expected (volaris)',
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
-      NewNoticePolicyTemplate.editTemplate(testData.noticeTemplateBody.name);
-      NewNoticePolicyTemplate.clearBody();
-      NewNoticePolicyTemplate.addToken('user.preferredFirstName');
+      NewNoticePolicyTemplate.openToSide({ name: testData.noticeTemplateBody.name });
+      NewNoticePolicyTemplate.duplicateTemplate();
+      NewNoticePolicyTemplate.verifyMetadataObjectIsVisible();
+      NewNoticePolicyTemplate.verifyGeneralInformationForDuplicate(testData.noticeTemplateBody);
+      NewNoticePolicyTemplate.typeTemplateName(newNoticeTemplateName);
       NewNoticePolicyTemplate.saveAndClose();
       NewNoticePolicyTemplate.waitLoading();
-      NoticePolicyTemplate.checkPreview('Paul');
-    }
-  );
-
-  it(
-    'C387434 Add "Discovery display name" as notice token in Settings (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
-    () => {
-      NewNoticePolicyTemplate.editTemplate(testData.noticeTemplateBody.name);
-      NewNoticePolicyTemplate.clearBody();
-      NewNoticePolicyTemplate.addToken('item.effectiveLocationDiscoveryDisplayName');
-      NewNoticePolicyTemplate.saveAndClose();
-      NewNoticePolicyTemplate.waitLoading();
-      NoticePolicyTemplate.checkPreview('Main Library');
+      NewNoticePolicyTemplate.checkAfterSaving({
+        name: newNoticeTemplateName,
+        description: testData.noticeTemplateBody.description,
+        category: testData.noticeTemplateBody.category,
+      });
     }
   );
 });

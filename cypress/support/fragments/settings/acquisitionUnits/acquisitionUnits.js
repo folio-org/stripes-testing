@@ -38,6 +38,8 @@ export default {
       saveAUButton.click(),
     ]);
     this.assignAdmin();
+    cy.wait(4000);
+
   },
 
   fillInAUInfo: (name) => {

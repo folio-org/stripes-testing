@@ -60,7 +60,7 @@ describe('Permissions Tags', () => {
   });
 
   it(
-    'C396357 Verify that new permission to view all the Tags settings is added',
+    'C396357 Verify that new permission to view all the Tags settings is added (volaris)',
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       TagsGeneral.changeEnableTagsStatus('disable');
