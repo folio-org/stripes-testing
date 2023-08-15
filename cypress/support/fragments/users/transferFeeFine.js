@@ -68,9 +68,7 @@ export default {
 
   setCriteria(criteria) {
     if (!criteria) {
-      cy.do(
-        Select({ name: 'criteria.type' }).choose('No criteria (always run)')
-      );
+      cy.do(Select({ name: 'criteria.type' }).choose('No criteria (always run)'));
     }
     // Currently don't have any test cases for criteria
   },
@@ -93,30 +91,17 @@ export default {
   },
  
   verifyTransferCriteriaScheduling(frequency, interval, time, weekDays) {
-    // should equal
-    cy.expect(Select({ name: 'scheduling.frequency'}).value()).to.equal(frequency);
-    return;
-    if (frequency === 'Weeks') {
-        cy.expect(TextField({ name: 'scheduling.time', value: time }).exists());
-        cy.expect(TextField({ name: 'scheduling.interval', value: interval }).exists());
-    } else if (frequency === 'Days') {
-        cy.expect(
-            Select({ name: 'scheduling.interval', value: interval }).exists()
-        );
-    } else if (frequency === 'Hours') {
-    } else return;
+    cy.expect(Select({ name: 'scheduling.frequency', value: frequency }).exists());
+    if (frequency === 'WEEK') {
+      cy.expect(TextField({ name: 'scheduling.time', value: time }).exists());
+      cy.expect(TextField({ name: 'scheduling.interval', value: interval }).exists());
+    }
   },
 
   verifyCriteria(criteria) {
     if (!criteria) {
-      cy.expect(
-        Select({
-          name: 'criteria.type',
-          value: 'No criteria (always run)',
-        }).exists()
-      );
+      cy.expect(Select({ name: 'criteria.type', value: 'Pass' }).exists());
     }
-    // Currently don't have any test cases for criteria
   },
 
   verifyTransferAccount(feeFineOwner, transferAccount) {
@@ -142,4 +127,18 @@ export default {
       }).exists()
     );
   },
+
+  verifyRunManually() {
+    cy.get('@alert').should(
+        'have.been.calledOnceWith',
+        'Job has been scheduled'
+    );
+    },
+
+    verifyAggregateByPatron(aggregate) {
+        if (!aggregate) {
+            // get checkbox value and verify it is unchecked
+            cy.get('input[name="aggregate"]').should('not.be.checked');
+        }
+    }
 };

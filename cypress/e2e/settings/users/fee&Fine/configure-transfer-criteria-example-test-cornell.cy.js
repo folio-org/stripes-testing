@@ -20,11 +20,11 @@ describe('Build the Cornell bursar transfer file', () => {
     TransferFeeFine.setTransferCriteriaScheduling(
       'Weeks',
       '1',
-      '11:00 PM',
+      '11:00 P',
       'Monday'
     );
     TransferFeeFine.verifyTransferCriteriaScheduling(
-      'Weeks',
+      'WEEK',
       '1',
       '11:00 PM',
       'Monday'
@@ -59,6 +59,7 @@ describe('Build the Cornell bursar transfer file', () => {
 
   it('should be able to run manually', () => {
     //TransferFeeFine.runManually();
+    TransferFeeFine.verifyRunManually();
   });
 
 });
