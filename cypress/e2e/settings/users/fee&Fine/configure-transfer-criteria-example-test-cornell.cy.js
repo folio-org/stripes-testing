@@ -45,16 +45,19 @@ describe('Build the Cornell bursar transfer file', () => {
   // Header Format
   it('should be able to set header format', () => {
     TransferFeeFine.clearFormat('header');
+    TransferFeeFine.verifyClearFormat('header');
   });
 
   // Account Data Format
   it('should be able to set account data format', () => {
     TransferFeeFine.clearFormat('data');
+    TransferFeeFine.verifyClearFormat('data');
   });
 
   // Footer Format
   it('should be able to set footer format', () => {
     TransferFeeFine.clearFormat('footer');
+    TransferFeeFine.verifyClearFormat('footer');
   });
 
   // Transer account data to
@@ -67,5 +70,4 @@ describe('Build the Cornell bursar transfer file', () => {
     TransferFeeFine.runManually();
     TransferFeeFine.verifyRunManually();
   });
-
 });

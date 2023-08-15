@@ -34,8 +34,7 @@ export default {
       cy.do([TextField({ name: 'scheduling.interval' }).fillIn(interval)]);
     } else if (frequency === 'Days') {
       cy.do([Select({ name: 'scheduling.interval' }).choose(interval)]);
-    } else if (frequency === 'Hours') {
-    } else return;
+    }
   },
 
   setAggregateByPatron(aggregate) {
@@ -86,9 +85,9 @@ export default {
 
   clearFormat(format) {
     let sectionName = '';
-    if (format == 'header') {
+    if (format === 'header') {
       sectionName = 'section[id="accordion_10"]';
-    } else if (format == 'data') {
+    } else if (format === 'data') {
       sectionName = 'section[id="accordion_11"]';
     } else {
       sectionName = 'section[id="accordion_12"]';
@@ -96,11 +95,7 @@ export default {
 
     // if section is empty, skip
     cy.get(sectionName).then(($section) => {
-      // check for button trash icon
-      if ($section.find('button[icon="trash"]').length == 0) {
-        return;
-      }
-      else {
+      if ($section.find('button[icon="trash"]').length !== 0) {
         cy.get(sectionName).within(() => {
           cy.get('button[icon="trash"]').then(($btn) => {
             for (let i = 0; i < $btn.length; i++) {
@@ -109,6 +104,21 @@ export default {
           });
         });
       }
+    });
+  },
+
+  verifyClearFormat(format) {
+    let sectionName = '';
+    if (format === 'header') {
+      sectionName = 'section[id="accordion_10"]';
+    } else if (format === 'data') {
+      sectionName = 'section[id="accordion_11"]';
+    } else {
+      sectionName = 'section[id="accordion_12"]';
+    }
+
+    cy.get(sectionName).then(($section) => {
+      cy.expect($section.find('button[icon="trash"]').length).to.equal(0);
     });
   },
 
@@ -132,18 +142,6 @@ export default {
     if (!criteria) {
       cy.expect(Select({ name: 'criteria.type', value: 'Pass' }).exists());
     }
-  },
-
-  verifyTransferAccount(feeFineOwner, transferAccount) {
-    cy.expect(
-      Select({ name: 'transferInfo.else.owner', value: feeFineOwner }).exists()
-    );
-    cy.expect(
-      Select({
-        name: 'transferInfo.else.account',
-        value: transferAccount,
-      }).exists()
-    );
   },
 
   verifyTransferAccount(feeFineOwner, transferAccount) {
