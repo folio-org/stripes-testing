@@ -11,60 +11,62 @@ import Helper from '../../../support/fragments/finance/financeHelper';
 import DevTeams from '../../../support/dictionary/devTeams';
 import { INSTANCE_SOURCE_NAMES, LOCATION_NAMES } from '../../../support/constants';
 
-describe('ui-inventory: Create a Holdings record as another user than the one that created the Instance', () => {
-  let firstUser;
-  let secondUser;
-  const instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
-  const recordsData = {
-    instanceTitle,
-    permanentLocationOption: 'Online (E) ',
-    permanentLocationValue: LOCATION_NAMES.ONLINE_UI,
-    source: INSTANCE_SOURCE_NAMES.FOLIO
-  };
+describe('inventory', () => {
+  describe('Holdings', () => {
+    let firstUser;
+    let secondUser;
+    const instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
+    const recordsData = {
+      instanceTitle,
+      permanentLocationOption: 'Online (E) ',
+      permanentLocationValue: LOCATION_NAMES.ONLINE_UI,
+      source: INSTANCE_SOURCE_NAMES.FOLIO
+    };
 
-  beforeEach(() => {
-    cy
-      .createTempUser([permissions.inventoryAll.gui])
-      .then((userProperties) => {
-        firstUser = userProperties;
-      });
+    beforeEach(() => {
+      cy
+        .createTempUser([permissions.inventoryAll.gui])
+        .then((userProperties) => {
+          firstUser = userProperties;
+        });
 
-    cy
-      .createTempUser([permissions.inventoryAll.gui])
-      .then(userProperties => {
-        secondUser = userProperties;
-        cy.login(secondUser.username, secondUser.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
-      });
-  });
-
-  afterEach(() => {
-    cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` })
-      .then((instance) => {
-        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
-    Users.deleteViaApi(firstUser.userId);
-    Users.deleteViaApi(secondUser.userId);
-  });
-
-  it('C1294: Create a Holdings record as another user than the one that created the Instance (folijet) (prokopovych)',
-    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-      InventoryInstances.add(recordsData.instanceTitle);
-      InventorySearchAndFilter.searchInstanceByTitle(recordsData.instanceTitle);
-      cy.expect(MultiColumnListCell({ row: 0, content: recordsData.instanceTitle }).exists());
-
-      // logout and login as a different user
-      cy.logout();
-      cy.login(firstUser.username, firstUser.password);
-
-      cy.visit(TopMenu.inventoryPath);
-      InventorySearchAndFilter.searchInstanceByTitle(recordsData.instanceTitle);
-      InventoryInstances.selectInstance();
-      InventoryInstance.waitLoading();
-      InventoryInstance.createHoldingsRecord(recordsData.permanentLocationOption);
-
-      InventoryInstance.openHoldingView();
-      HoldingsRecordView.checkSource(recordsData.source);
-      HoldingsRecordView.checkPermanentLocation(recordsData.permanentLocationValue);
+      cy
+        .createTempUser([permissions.inventoryAll.gui])
+        .then(userProperties => {
+          secondUser = userProperties;
+          cy.login(secondUser.username, secondUser.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+        });
     });
+
+    afterEach(() => {
+      cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` })
+        .then((instance) => {
+          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
+      Users.deleteViaApi(firstUser.userId);
+      Users.deleteViaApi(secondUser.userId);
+    });
+
+    it('C1294: Create a Holdings record as another user than the one that created the Instance (folijet) (prokopovych)',
+      { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+        InventoryInstances.add(recordsData.instanceTitle);
+        InventorySearchAndFilter.searchInstanceByTitle(recordsData.instanceTitle);
+        cy.expect(MultiColumnListCell({ row: 0, content: recordsData.instanceTitle }).exists());
+
+        // logout and login as a different user
+        cy.logout();
+        cy.login(firstUser.username, firstUser.password);
+
+        cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.searchInstanceByTitle(recordsData.instanceTitle);
+        InventoryInstances.selectInstance();
+        InventoryInstance.waitLoading();
+        InventoryInstance.createHoldingsRecord(recordsData.permanentLocationOption);
+
+        InventoryInstance.openHoldingView();
+        HoldingsRecordView.checkSource(recordsData.source);
+        HoldingsRecordView.checkPermanentLocation(recordsData.permanentLocationValue);
+      });
+  });
 });

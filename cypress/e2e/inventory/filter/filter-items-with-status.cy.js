@@ -19,7 +19,7 @@ const holdingId = uuid();
 const title = `Filter items with status test ${Number(new Date())}`;
 let source;
 
-describe('ui-inventory: items with status', () => {
+describe('ui-inventory: Search in Inventory', () => {
   before('create inventory instance', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
@@ -80,7 +80,7 @@ describe('ui-inventory: items with status', () => {
     users.deleteViaApi(userId);
   });
 
-  it('C11081: Verify item status filters retrieve items with that item status (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+  it('C11081: Verify item status filters retrieve items with that item status (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
     cy.intercept('GET', '/inventory/items?*').as('getItems');
     cy.intercept('GET', '/search/instances?*').as('getInstances');
     cy.intercept('GET', '/orders/titles?*').as('getTitles');

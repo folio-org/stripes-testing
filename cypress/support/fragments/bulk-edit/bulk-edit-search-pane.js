@@ -27,7 +27,6 @@ const errorsAccordion = Accordion('Errors');
 const recordIdentifierDropdown = Select('Record identifier');
 const recordTypesAccordion = Accordion({ label: 'Record types' });
 const actions = Button('Actions');
-const radioItems = RadioButton('Inventory - items');
 const fileButton = Button('or choose file');
 const bulkEditPane = Pane(including('Bulk edit'));
 const usersRadio = RadioButton('Users');
@@ -54,7 +53,6 @@ const errorsCommittingBtn = DropdownMenu().find(Button('File with errors encount
 const buildQueryButton = Button('Build query');
 const buildQueryModal = Modal('Build query');
 const logsActionButton = Button({ icon: 'ellipsis' });
-const startBulkEditLocalButton = Button('Start bulk edit (Local)');
 
 export default {
   waitLoading() {

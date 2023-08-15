@@ -53,7 +53,7 @@ describe('Patron Notices', () => {
   });
 
   it(
-    'C375248 Add "user.preferredFirstName" as staff slip token in Settings',
+    'C375248 Add "user.preferredFirstName" as staff slip token in Settings (volaris)',
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       NewNoticePolicyTemplate.editTemplate(testData.noticeTemplateBody.name);
@@ -66,7 +66,7 @@ describe('Patron Notices', () => {
   );
 
   it(
-    'C387434 Add "Discovery display name" as notice token in Settings',
+    'C387434 Add "Discovery display name" as notice token in Settings (volaris)',
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       NewNoticePolicyTemplate.editTemplate(testData.noticeTemplateBody.name);

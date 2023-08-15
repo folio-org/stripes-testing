@@ -27,9 +27,6 @@ const numberOfSearchResultsHeader =
 const rolloverButton = Button('Rollover');
 const continueButton = Button('Continue');
 const confirmButton = Button('Confirm');
-const ledgertab = Button('Ledger');
-const fundtab = Button('Fund');
-const fiscalYearTab = Button('Fiscal year');
 const zeroResultsFoundText = '0 records found';
 const fiscalYearCss = 'select[name^="fiscalYearOneId"]';
 const rolloverConfirmButton = Button({
