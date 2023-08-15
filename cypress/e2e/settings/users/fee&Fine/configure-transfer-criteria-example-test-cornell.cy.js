@@ -44,14 +44,17 @@ describe('Build the Cornell bursar transfer file', () => {
 
   // Header Format
   it('should be able to set header format', () => {
+    TransferFeeFine.clearFormat('header');
   });
 
   // Account Data Format
   it('should be able to set account data format', () => {
+    TransferFeeFine.clearFormat('data');
   });
 
   // Footer Format
   it('should be able to set footer format', () => {
+    TransferFeeFine.clearFormat('footer');
   });
 
   // Transer account data to

@@ -84,6 +84,34 @@ export default {
     }
   },
 
+  clearFormat(format) {
+    let sectionName = '';
+    if (format == 'header') {
+      sectionName = 'section[id="accordion_10"]';
+    } else if (format == 'data') {
+      sectionName = 'section[id="accordion_11"]';
+    } else {
+      sectionName = 'section[id="accordion_12"]';
+    }
+
+    // if section is empty, skip
+    cy.get(sectionName).then(($section) => {
+      // check for button trash icon
+      if ($section.find('button[icon="trash"]').length == 0) {
+        return;
+      }
+      else {
+        cy.get(sectionName).within(() => {
+          cy.get('button[icon="trash"]').then(($btn) => {
+            for (let i = 0; i < $btn.length; i++) {
+              cy.get('button[icon="trash"]').eq(0).click();
+            }
+          });
+        });
+      }
+    });
+  },
+
   verifyOpenAllPanes() {
     cy.expect(Button({ text: 'Collapse all' }).exists());
   },
@@ -132,9 +160,8 @@ export default {
 
   verifyRunManually() {
     cy.on('window:alert', (str) => {
-        expect(str).to.equal('Job has been scheduled');
-        }
-    );
+      expect(str).to.equal('Job has been scheduled');
+    });
   },
 
   verifyAggregateByPatron(aggregate) {
