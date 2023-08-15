@@ -128,7 +128,7 @@ const checkStatusInColumn = (specialStatus, specialColumnName, rowIndex = 0) => 
   cy.then(() => specialColumnName.index())
     .then((index) => cy.expect(resultsList.find(MultiColumnListRow({ index: rowIndex }))
       .find(MultiColumnListCell({ columnIndex: index }))
-      .has({ content: specialStatus })));
+      .has({ content: including(specialStatus) })));
 };
 
 function checkItemsStatusesInResultList(rowIndex, itemStatuses) {
