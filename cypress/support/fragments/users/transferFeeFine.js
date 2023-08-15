@@ -167,4 +167,52 @@ export default {
       cy.get('input[name="aggregate"]').should('not.be.checked');
     }
   },
+
+  addCornellHeaderFormat() {
+    cy.get('section[id="accordion_10"]').within(() => {
+      const numItems = 2;
+      for (let i = 0; i < numItems; i++) {
+        cy.get('button:contains("Add")').click();
+      }
+
+      cy.do(Select({ name: 'header[0].type' }).choose('Text'));
+      cy.do(TextField({ name: 'header[0].text' }).fillIn('LIB02'));
+
+      cy.do(Select({ name: 'header[1].type' }).choose('Newline (LF)'));
+    });
+  },
+
+  addCornellDataFormat() {
+    cy.get('section[id="accordion_11"]').within(() => {
+      const numItems = 8;
+      for (let i = 0; i < numItems; i++) {
+        cy.get('button:contains("Add")').click();
+      }
+    });
+
+    cy.do(Select({ name: 'data[0].type' }).choose('User info'));
+    cy.do(Select({ name: 'data[0].userAttribute' }).choose('First name'));
+    cy.do(TextField({ name: 'data[0].placeholder' }).fillIn('No name'));
+
+    cy.do(Select({ name: 'data[1].type' }).choose('Tab'));
+
+    cy.do(Select({ name: 'data[2].type' }).choose('Account amount'));
+    cy.get('input[name="data[2].decimal"]').check();
+
+    cy.do(Select({ name: 'data[3].type' }).choose('Tab'));
+
+    cy.do(Select({ name: 'data[4].type' }).choose('Account date'));
+    cy.do(Select({ name: 'data[4].dateProperty' }).choose('Creation date'));
+    cy.do(Select({ name: 'data[4].format' }).choose('Year (4-digit)'));
+    // There is two America/New_York in the list, so we need to find out the second one
+    // cy.do(Select({ name: 'data[4].timezone' }).choose('America/New_York'));
+    cy.do(TextField({ name: 'data[4].placeholder' }).fillIn(''));
+
+    cy.do(Select({ name: 'data[5].type' }).choose('Newline (LF)'));
+
+    cy.do(Select({ name: 'data[6].type' }).choose('Fee/fine type'));
+    cy.do(Select({ name: 'data[6].feeFineAttribute' }).choose('Type ID'));
+
+    cy.do(Select({ name: 'data[7].type' }).choose('Newline (LF)'));
+  }
 };
