@@ -179,6 +179,8 @@ export default {
     }
   },
 
+  // Cornell format Helper functions
+
   addCornellHeaderFormat() {
     cy.get('section[id="accordion_10"]').within(() => {
       const numItems = 2;
@@ -262,5 +264,15 @@ export default {
 
       cy.expect(Select({ name: 'data[7].type', value: 'Newline' }).exists());
     });
-  }
+  },
+
+  // Duke format Helper functions
+
+  addDukeHeaderFormat() {},
+
+  addDukeDataFormat() {},
+
+  verifyAddDukeHeaderFormat() {},
+
+  verifyAddDukeDataFormat() {},
 };
