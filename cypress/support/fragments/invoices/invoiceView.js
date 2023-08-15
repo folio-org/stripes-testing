@@ -29,8 +29,8 @@ export default {
     }));
   },
 
-  checkQuantityInvoiceLinesInRecord:() => {
-    cy.expect(Pane({ id:'pane-results' }).find(HTML(including('1,104 records found'))).exists());
+  checkQuantityInvoiceLinesInRecord:(quantity) => {
+    cy.expect(Pane({ id:'pane-results' }).find(HTML(including(`${quantity} records found`))).exists());
   },
 
   vendorInvoiceNumber,

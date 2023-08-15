@@ -21,6 +21,7 @@ import InvoiceView from '../../../support/fragments/invoices/invoiceView';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
+    const quantityOfInvoiceLines = '1,104';
     const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.harrassowitz;
     const fileName = `C347615autotestFile.${getRandomPostfix()}.edi`;
     const mappingProfile = {
@@ -86,7 +87,7 @@ describe('data-import', () => {
       Logs.checkStatusOfJobProfile();
       Logs.checkQuantityRecordsInFile(Logs.quantityRecordsInInvoice.firstQuantity);
       Logs.openFileDetails(fileName);
-      InvoiceView.checkQuantityInvoiceLinesInRecord();
+      InvoiceView.checkQuantityInvoiceLinesInRecord(quantityOfInvoiceLines);
     });
   });
 });
