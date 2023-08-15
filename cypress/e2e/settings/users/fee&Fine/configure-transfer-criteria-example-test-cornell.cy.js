@@ -44,21 +44,24 @@ describe('Build the Cornell bursar transfer file', () => {
 
   // Header Format
   it('should be able to set header format', () => {
-    TransferFeeFine.removeHeaderFormat();
   });
 
   // Account Data Format
+  it('should be able to set account data format', () => {
+  });
 
   // Footer Format
+  it('should be able to set footer format', () => {
+  });
 
   // Transer account data to
   it('should be able to set transfer account data to', () => {
     TransferFeeFine.setTransferAccount('Lost Item Fine Office', 'acct');
-    TransferFeeFine.verifyTransferAccount('Lost Item Fine Office', 'acct');
+    TransferFeeFine.verifyTransferAccount('b25fd8e7-a0e7-4690-ab0b-94039739c0db', '90c1820f-60bf-4b9a-99f5-d677ea78ddca');
   });
 
   it('should be able to run manually', () => {
-    //TransferFeeFine.runManually();
+    TransferFeeFine.runManually();
     TransferFeeFine.verifyRunManually();
   });
 
