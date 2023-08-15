@@ -32,9 +32,14 @@ export default {
     if (frequency === 'Weeks') {
       cy.do([TextField({ name: 'scheduling.time' }).fillIn(time)]);
       cy.do([TextField({ name: 'scheduling.interval' }).fillIn(interval)]);
+      weekDays.map((weekDay) => cy.do([
+        MultiSelect({ name: 'scheduling.weekdays' }).choose(weekDay),
+      ]));
     } else if (frequency === 'Days') {
       cy.do([Select({ name: 'scheduling.interval' }).choose(interval)]);
-    }
+    } else if (frequency === 'Hours') {
+      cy.do([TextField({ name: 'scheduling.interval' }).fillIn(interval)]);
+    } else ;
   },
 
   setAggregateByPatron(aggregate) {
@@ -126,16 +131,24 @@ export default {
     cy.expect(Button({ text: 'Collapse all' }).exists());
   },
 
+
   verifyTransferCriteriaScheduling(frequency, interval, time, weekDays) {
+    // should equal
     cy.expect(
       Select({ name: 'scheduling.frequency', value: frequency }).exists()
     );
+    cy.expect(Select({ name: 'scheduling.frequency' }).value()).to.equal(frequency);
     if (frequency === 'WEEK') {
       cy.expect(TextField({ name: 'scheduling.time', value: time }).exists());
+      cy.expect(TextField({ name: 'scheduling.interval', value: interval }).exists());
+      weekDays.map((weekDay) => cy.expect(MultiSelect({ name: 'scheduling.weekdays' }).value()).to.include(weekDay));
+    } else if (frequency === 'DAY') {
       cy.expect(
-        TextField({ name: 'scheduling.interval', value: interval }).exists()
+        Select({ name: 'scheduling.interval', value: interval }).exists()
       );
-    }
+    } else if (frequency === 'HOUR') {
+      cy.expect(TextField({ name: 'scheduling.interval', value: interval }).exists());
+    } else;
   },
 
   verifyCriteria(criteria) {
