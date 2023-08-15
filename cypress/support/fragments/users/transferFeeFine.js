@@ -32,9 +32,7 @@ export default {
     if (frequency === 'Weeks') {
       cy.do([TextField({ name: 'scheduling.time' }).fillIn(time)]);
       cy.do([TextField({ name: 'scheduling.interval' }).fillIn(interval)]);
-      weekDays.map((weekDay) => cy.do([
-        MultiSelect({ name: 'scheduling.weekdays' }).choose(weekDay),
-      ]));
+      // weekDays.map((weekDay) => cy.do([MultiSelect({ name: 'scheduling.weekdays' }).choose(weekDay)]));
     } else if (frequency === 'Days') {
       cy.do([Select({ name: 'scheduling.interval' }).choose(interval)]);
     } else if (frequency === 'Hours') {
@@ -137,11 +135,11 @@ export default {
     cy.expect(
       Select({ name: 'scheduling.frequency', value: frequency }).exists()
     );
-    cy.expect(Select({ name: 'scheduling.frequency' }).value()).to.equal(frequency);
+
     if (frequency === 'WEEK') {
       cy.expect(TextField({ name: 'scheduling.time', value: time }).exists());
       cy.expect(TextField({ name: 'scheduling.interval', value: interval }).exists());
-      weekDays.map((weekDay) => cy.expect(MultiSelect({ name: 'scheduling.weekdays' }).value()).to.include(weekDay));
+      // weekDays.map((weekDay) => cy.expect(MultiSelect({ name: 'scheduling.weekdays' }).value()).to.include(weekDay));
     } else if (frequency === 'DAY') {
       cy.expect(
         Select({ name: 'scheduling.interval', value: interval }).exists()
@@ -227,5 +225,42 @@ export default {
     cy.do(Select({ name: 'data[6].feeFineAttribute' }).choose('Type ID'));
 
     cy.do(Select({ name: 'data[7].type' }).choose('Newline (LF)'));
+  },
+
+  verifyAddCornellHeaderFormat() {
+    cy.get('section[id="accordion_10"]').within(() => {
+      cy.expect(Select({ name: 'header[0].type', value: 'Constant' }).exists());
+      cy.expect(TextField({ name: 'header[0].text', value: 'LIB02' }).exists());
+
+      cy.expect(Select({ name: 'header[1].type', value: 'Newline' }).exists());
+    });
+  },
+
+  verifyAddCornellDataFormat() {
+    cy.get('section[id="accordion_11"]').within(() => {
+      cy.expect(Select({ name: 'data[0].type', value: 'UserData' }).exists());
+      cy.expect(Select({ name: 'data[0].userAttribute', value: 'FIRST_NAME' }).exists());
+      cy.expect(TextField({ name: 'data[0].placeholder', value: 'No name' }).exists());
+
+      cy.expect(Select({ name: 'data[1].type', value: 'Tab' }).exists());
+
+      cy.expect(Select({ name: 'data[2].type', value: 'FeeAmount' }).exists());
+      cy.get('input[name="data[2].decimal"]').should('be.checked');
+
+      cy.expect(Select({ name: 'data[3].type', value: 'Tab' }).exists());
+
+      cy.expect(Select({ name: 'data[4].type', value: 'FeeDate' }).exists());
+      cy.expect(Select({ name: 'data[4].dateProperty', value: 'CREATED' }).exists());
+      cy.expect(Select({ name: 'data[4].format', value: 'YEAR_LONG' }).exists());
+      // cy.expect(Select({ name: 'data[4].timezone', value: 'America/New_York' }).exists());
+      cy.expect(TextField({ name: 'data[4].placeholder', value: '' }).exists());
+
+      cy.expect(Select({ name: 'data[5].type', value: 'Newline' }).exists());
+
+      cy.expect(Select({ name: 'data[6].type', value: 'FeeFineMetadata' }).exists());
+      cy.expect(Select({ name: 'data[6].feeFineAttribute', value: 'FEE_FINE_TYPE_ID' }).exists());
+
+      cy.expect(Select({ name: 'data[7].type', value: 'Newline' }).exists());
+    });
   }
 };

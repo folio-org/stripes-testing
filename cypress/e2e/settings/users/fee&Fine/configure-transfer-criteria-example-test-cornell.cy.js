@@ -47,6 +47,7 @@ describe('Build the Cornell bursar transfer file', () => {
     TransferFeeFine.clearFormat('header');
     TransferFeeFine.verifyClearFormat('header');
     TransferFeeFine.addCornellHeaderFormat();
+    TransferFeeFine.verifyAddCornellHeaderFormat();
   });
 
   // Account Data Format
@@ -54,6 +55,7 @@ describe('Build the Cornell bursar transfer file', () => {
     TransferFeeFine.clearFormat('data');
     TransferFeeFine.verifyClearFormat('data');
     TransferFeeFine.addCornellDataFormat();
+    TransferFeeFine.verifyAddCornellDataFormat();
   });
 
   // Footer Format
