@@ -22,7 +22,7 @@ import InvoiceView from '../../../support/fragments/invoices/invoiceView';
 describe('data-import', () => {
   describe('End to end scenarios', () => {
     const quantityOfInvoiceLines = '1,104';
-  const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.harrassowitz;
+    const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.harrassowitz;
     const fileName = `C347615autotestFile.${getRandomPostfix()}.edi`;
     const mappingProfile = {
       name:`Import Large Harrassowitz Serials Invoice ${getRandomPostfix()}`,
