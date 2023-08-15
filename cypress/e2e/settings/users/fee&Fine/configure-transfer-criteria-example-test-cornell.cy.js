@@ -21,13 +21,13 @@ describe('Build the Cornell bursar transfer file', () => {
       'Weeks',
       '1',
       '11:00 P',
-      'Monday'
+      ['Monday']
     );
     TransferFeeFine.verifyTransferCriteriaScheduling(
       'WEEK',
       '1',
       '11:00 PM',
-      'Monday'
+      ['Monday']
     );
   });
 
