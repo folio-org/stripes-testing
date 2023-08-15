@@ -38,13 +38,13 @@ describe('Search in Inventory', () => {
   const marcFiles = [
     {
       marc: 'marcBibFileC375256.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFileC375256.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       numberOfRecords: 4
     },
     {
       marc: 'marcAuthFileC375256_1.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFileC375256.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       authorityHeading: 'Bible. Polish. Biblia Płocka C375256',
       authority010FieldValue: 'n92085235375256',
@@ -52,7 +52,7 @@ describe('Search in Inventory', () => {
     },
     {
       marc: 'marcAuthFileC375256_2.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFileC375256.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       authorityHeading: 'Abraham, Angela, C375256 Hosanna Bible',
       authority010FieldValue: 'n99036055375256',

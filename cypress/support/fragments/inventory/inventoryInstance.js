@@ -260,7 +260,10 @@ export default {
   deriveNewMarcBibRecord:() => {
     cy.do(actionsButton.click());
     cy.do(deriveNewMarcBibRecord.click());
-    cy.expect(QuickMarcEditor().exists());
+    cy.expect([
+      QuickMarcEditor().exists(),
+      QuickMarcEditorRow({ tagValue: '999' }).exists()
+    ]);
   },
 
   viewSource: () => {
@@ -298,7 +301,7 @@ export default {
   editMarcBibliographicRecord:() => {
     cy.do(actionsButton.click());
     cy.do(editMARCBibRecordButton.click());
-    cy.expect(Pane({ id: 'quick-marc-editor-pane' }).exists());
+    cy.expect(QuickMarcEditorRow({ tagValue: '999' }).exists());
   },
 
   importInstance() {

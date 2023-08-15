@@ -41,32 +41,32 @@ describe('MARC Authority -> Edit linked Authority record', () => {
   const marcFiles = [
     {
       marc: 'marcBibFileC376596.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFileC376596.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       instanceTitle: 'The coronation of Queen Elizabeth II C376596'
     },
     {
       marc: 'marcBibFileC374159.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFileC374159.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       instanceTitle: 'Titanic / written and directed by James Cameron. C374159'
     },
     {
       marc: 'marcBibFileC375173.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFileC375173.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       instanceTitle: 'C375173 Farnese book of hours : MS M.69 of the Pierpont Morgan Library New York / commentary, William M. Voelkle, Ivan Golub.'
     },
     {
       marc: 'marcAuthFileC376596.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFileC376596.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       authorityHeading: 'Elizabeth C376596',
       authority010FieldValue: 'n80126296376596',
     },
     {
       marc: 'marcAuthFileC374159.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFileC374159.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       authorityHeading: 'Drama C374159',
       authority010FieldValue: 'gf2014026297374159',
@@ -74,7 +74,7 @@ describe('MARC Authority -> Edit linked Authority record', () => {
     },
     {
       marc: 'marcAuthFileC375173.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFileC375173.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       authorityHeading: 'C375173 Clovio, Giulio, 1498-1578',
       authority001FieldValue: 'n83073672375173',
@@ -225,14 +225,13 @@ describe('MARC Authority -> Edit linked Authority record', () => {
     MarcAuthorities.searchBy('Keyword', marcFiles[5].authorityHeading);
     MarcAuthorities.selectTitle(marcFiles[5].authorityHeading);
     MarcAuthority.edit();
-    // wait untill record is fully loaded
-    cy.wait(1500);
     QuickMarcEditor.updateExistingField(testData.tag100, testData.updated100FieldValue);
     QuickMarcEditor.updateExistingTagValue(5, testData.updatedTagName);
     QuickMarcEditor.checkContent(testData.updated100FieldValue, 8);
     QuickMarcEditor.checkButtonsEnabled();
     QuickMarcEditor.deleteFieldAndCheck(5, testData.updatedTagName);
     QuickMarcEditor.afterDeleteNotification(testData.updatedTagName);
+    // if clicked too fast, delete modal might not appear
     cy.wait(1000);
     QuickMarcEditor.clickSaveAndCloseThenCheck(1);
     QuickMarcEditor.clickRestoreDeletedField();
