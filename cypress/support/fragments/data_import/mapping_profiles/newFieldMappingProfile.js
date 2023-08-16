@@ -341,19 +341,35 @@ export default {
   },
 
   fillInvoiceMappingProfile:(profile) => {
+    // Summary section
     cy.do([
       nameField.fillIn(profile.name),
       incomingRecordTypeField.choose(profile.incomingRecordType),
       existingRecordType.choose(profile.existingRecordType),
-      TextArea({ name:'profile.description' }).fillIn(''),
-      batchGroupField.fillIn(profile.batchGroup),
-      organizationLookUpButton.click()
+      Accordion('Summary').find(TextArea({ name:'profile.description' })).fillIn('')
     ]);
+    // Invoice information section
+    cy.do(batchGroupField.fillIn(profile.batchGroup));
+    if (profile.lockTotalAmount) {
+      cy.do(TextField('Lock total amount').fillIn(profile.lockTotalAmount));
+    }
+    // Vendor information section
+    cy.do(organizationLookUpButton.click());
     selectOrganizationByName(profile.organizationName);
-    cy.do([
-      paymentMethodField.fillIn(profile.paymentMethod),
-      saveButton.click(),
-    ]);
+    // Extended information section
+    cy.do(paymentMethodField.fillIn(profile.paymentMethod));
+    // Invoice line information section
+    if (profile.invoiceLinePOlDescription) {
+      cy.do(Accordion('Invoice line information')
+        .find(TextField('Description*')).fillIn(profile.invoiceLinePOlDescription));
+    }
+    if (profile.polNumber) {
+      cy.do(TextField('PO line number').fillIn(profile.polNumber));
+    }
+    if (profile.polVendorReferenceNumber) {
+      cy.do(TextField('Vendor reference number').fillIn(profile.polVendorReferenceNumber));
+    }
+    cy.do(saveButton.click());
   },
 
   fillMappingProfileForMatch:(specialMappingProfile = defaultMappingProfile) => {
