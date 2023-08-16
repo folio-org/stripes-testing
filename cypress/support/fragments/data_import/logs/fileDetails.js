@@ -140,7 +140,7 @@ function checkItemsStatusesInResultList(rowIndex, itemStatuses) {
   itemStatuses.forEach((itemStatus, columnIndex) => {
     cy.expect(resultsList
       .find(MultiColumnListRow({ index: rowIndex }))
-      .find(MultiColumnListCell({ columnIndex: indexes[columnIndex], content: itemStatus }))
+      .find(MultiColumnListCell({ columnIndex: indexes[columnIndex], content: including(itemStatus) }))
       .exists());
   });
 }
