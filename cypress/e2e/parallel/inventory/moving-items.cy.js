@@ -28,7 +28,7 @@ describe('ui-inventory: moving items', { retries: 2 }, () => {
 
   before(() => {
     cy.getAdminToken().then(() => {
-      Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF');
+      Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100481406/PAOLF');
     });
   });
 

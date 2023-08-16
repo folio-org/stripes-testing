@@ -29,7 +29,7 @@ describe('ui-data-import', () => {
   let user = null;
   let instanceHrid;
   const marcFieldProtectionId = [];
-  const authentication = '100473910/PAOLF';
+  const authentication = '100481406/PAOLF';
   const protectedFields = {
     firstField: '*',
     secondField: '920'

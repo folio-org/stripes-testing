@@ -30,7 +30,7 @@ describe('ui-inventory: import by OCLC', () => {
   before('create test data', () => {
     cy.getAdminToken()
       .then(() => {
-        Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF');
+        Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100481406/PAOLF');
         InventorySearchAndFilter.createInstanceViaApi()
           .then(({ instanceData }) => {
             instanceRecord = instanceData;
