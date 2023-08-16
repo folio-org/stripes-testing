@@ -41,6 +41,16 @@ const uploadFile = (filePathName, fileName) => {
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
 };
 
+const uploadFileWithRetry = (filePathName, fileName) => {
+  try {
+    cy.get('input[type=file]', { timeout: 10000 }).attachFile({ filePath: filePathName, fileName });
+  } catch (error) {
+    cy.log(error);
+    cy.wait(2000);
+    uploadFileWithRetry(filePathName, fileName);
+  }
+};
+
 const uploadBunchOfFiles = (editedFileName, numberOfFiles, finalFileName) => {
   const arrayOfFiles = [];
 
