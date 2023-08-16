@@ -181,6 +181,7 @@ function processFile(uploadDefinitionId, fileId, sourcePath, jobExecutionId, uiK
 export default {
   importFile,
   uploadFile,
+  uploadFileWithRetry,
   uploadBunchOfFiles,
   waitLoading,
   uploadDefinitions,
