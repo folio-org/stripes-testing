@@ -69,8 +69,7 @@ describe('Search in Inventory', () => {
       testData.userProperties = createdUserProperties;
       marcFiles.forEach(marcFile => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-          JobProfiles.waitLoadingList();
+          DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
           JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(marcFile.fileName);
@@ -88,6 +87,7 @@ describe('Search in Inventory', () => {
         InventoryInstances.waitContentLoading();
         InventoryInstance.searchByTitle(createdRecordIDs[0]);
         InventoryInstances.selectInstance();
+        // here and below - wait for detail view to be fully loaded
         cy.wait(1500);
         InventoryInstance.editMarcBibliographicRecord();
         InventoryInstance.verifyAndClickLinkIcon(testData.tag130);
