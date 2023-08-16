@@ -17,7 +17,6 @@ import {
   SearchField,
   Section,
   Select,
-  Spinner,
   TextField,
   TextInput
 } from '../../../../interactors';
