@@ -15,6 +15,18 @@ describe('Build the Duke bursar transfer file', () => {
   });
 
   it('should be able to set scheduling', () => {
+    TransferFeeFine.setTransferCriteriaScheduling(
+      'Weeks',
+      '0',
+      '3:30 P',
+      ['Monday']
+    );
+    TransferFeeFine.verifyTransferCriteriaScheduling(
+      'WEEK',
+      '0',
+      '3:30 PM',
+      ['Monday']
+    );
   });
 
   it('should be able to set no criteria', () => {
@@ -52,6 +64,8 @@ describe('Build the Duke bursar transfer file', () => {
 
   // Transer account data to
   it('should be able to set transfer account data to', () => {
+    TransferFeeFine.setTransferAccount('Lost Item Fine Office', 'acct');
+    TransferFeeFine.verifyTransferAccount('b25fd8e7-a0e7-4690-ab0b-94039739c0db', '90c1820f-60bf-4b9a-99f5-d677ea78ddca');
   });
 
   it('should be able to run manually', () => {

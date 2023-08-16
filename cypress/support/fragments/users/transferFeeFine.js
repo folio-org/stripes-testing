@@ -268,9 +268,99 @@ export default {
 
   // Duke format Helper functions
 
-  addDukeHeaderFormat() {},
+  addDukeHeaderFormat() {
+    cy.get('section[id="accordion_10"]').within(() => {
+      const numItems = 11;
+      for (let i = 0; i < numItems; i++) {
+        cy.get('button:contains("Add")').click();
+      }
 
-  addDukeDataFormat() {},
+      cy.do(Select({ name: 'header[0].type' }).choose('Text'));
+      cy.do(TextField({ name: 'header[0].text' }).fillIn('Batch'));
+
+      cy.do(Select({ name: 'header[1].type' }).choose('Whitespace'));
+      // fill text in the input named header[1].repeat
+      cy.do(TextField({ name: 'header[1].repeat' }).fillIn('1'));
+
+      cy.do(Select({ name: 'header[2].type' }).choose('Current date'));
+      cy.do(Select({ name: 'header[2].format' }).choose('YYYYMMDD'));
+      // cy.do(Select({ name: 'header[2].timezone' }).choose('America/New_York'));
+
+      cy.do(Select({ name: 'header[3].type' }).choose('Whitespace'));
+      cy.do(TextField({ name: 'header[1].repeat' }).fillIn('1'));
+
+      cy.do(Select({ name: 'header[4].type' }).choose('Text'));
+      cy.do(TextField({ name: 'header[4].text' }).fillIn('DU LIBRARY'));
+
+      cy.do(Select({ name: 'header[5].type' }).choose('Whitespace'));
+      cy.do(TextField({ name: 'header[1].repeat' }).fillIn('1'));
+
+
+      cy.do(Select({ name: 'header[6].type' }).choose('Current date'));
+      cy.do(Select({ name: 'header[6].format' }).choose('Quarter'));
+      // cy.do(Select({ name: 'header[6].timezone' }).choose('America/New_York'));
+
+      cy.do(Select({ name: 'header[7].type' }).choose('Total amount'));
+      cy.get('input[name="header[7].decimal"]').check();
+
+      cy.do(Select({ name: 'header[8].type' }).choose('Text'));
+      cy.do(TextField({ name: 'header[8].text' }).fillIn('TXT_CNT'));
+
+      cy.do(Select({ name: 'header[9].type' }).choose('Text'));
+      cy.do(TextField({ name: 'header[9].text' }).fillIn('DU LIBRARIES DEBITS'));
+
+      cy.do(Select({ name: 'header[10].type' }).choose('Newline (LF)'));
+    });
+  },
+
+  addDukeDataFormat() {
+    cy.get('section[id="accordion_11"]').within(() => {
+      const numItems = 14;
+      for (let i = 0; i < numItems; i++) {
+        cy.get('button:contains("Add")').click();
+      }
+    });
+
+    cy.do(Select({ name: 'data[0].type' }).choose('User info'));
+    cy.do(Select({ name: 'data[0].userAttribute' }).choose('External ID'));
+
+    cy.do(Select({ name: 'data[1].type' }).choose('Tab'));
+
+    cy.do(Select({ name: 'data[2].type' }).choose('User info'));
+    cy.do(Select({ name: 'data[2].userAttribute' }).choose('Username'));
+    // click on gear icon within data[2] section
+
+    cy.do(Select({ name: 'data[3].type' }).choose('Tab'));
+
+    cy.do(Select({ name: 'data[4].type' }).choose('Account date'));
+    cy.do(Select({ name: 'data[4].dateProperty' }).choose('Item due date'));
+    cy.do(Select({ name: 'data[4].format' }).choose('YYYYMMDD'));
+    // There is two America/New_York in the list, so we need to find out the second one
+    // cy.do(Select({ name: 'data[4].timezone' }).choose('America/New_York'));
+
+    cy.do(Select({ name: 'data[5].type' }).choose('Tab'));
+
+    cy.do(Select({ name: 'data[6].type' }).choose('Current date'));
+    cy.do(Select({ name: 'data[6].format' }).choose('Quarter'));
+
+    cy.do(Select({ name: 'data[7].type' }).choose('Tab'));
+
+    cy.do(Select({ name: 'data[8].type' }).choose('Fee/fine type'));
+    cy.do(Select({ name: 'data[8].feeFineAttribute' }).choose('Type name'));
+    // gear icon
+
+    cy.do(Select({ name: 'data[9].type' }).choose('Tab'));
+
+    cy.do(Select({ name: 'data[10].type' }).choose('Account amount'));
+    cy.get('input[name="data[10].decimal"]').check({ force: true });
+
+    cy.do(Select({ name: 'data[11].type' }).choose('Tab'));
+
+    cy.do(Select({ name: 'data[12].type' }).choose('Fee/fine type'));
+    cy.do(Select({ name: 'data[12].feeFineAttribute' }).choose('Type ID'));
+
+    cy.do(Select({ name: 'data[13].type' }).choose('Newline (LF)'));
+  },
 
   verifyAddDukeHeaderFormat() {},
 
