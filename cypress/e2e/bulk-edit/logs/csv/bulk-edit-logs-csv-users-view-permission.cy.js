@@ -69,7 +69,6 @@ describe('Bulk Edit - Logs', () => {
       permissions.uiUserEdit.gui
     ]);
     UserEdit.saveAndClose();
-    cy.pause();
     UsersCard.verifyPermissions([
       permissions.bulkEditLogsView.gui,
       permissions.bulkEditCsvView.gui,

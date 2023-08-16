@@ -16,6 +16,7 @@ import UserLoans from '../../support/fragments/users/loans/userLoans';
 import ConfirmClaimReturnedModal from '../../support/fragments/users/loans/confirmClaimReturnedModal';
 import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
 
+let user;
 let userId;
 let servicePointId;
 const item = {
@@ -31,6 +32,7 @@ describe('circulation-log', () => {
       permissions.usersViewRequests.gui
     ])
       .then(userProperties => {
+        user = userProperties;
         userId = userProperties.userId;
         cy.login(userProperties.username, userProperties.password, { path: TopMenu.circulationLogPath, waiter: SearchPane.waitLoading });
         ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' })
@@ -90,5 +92,10 @@ describe('circulation-log', () => {
       itemBarcode: item.ITEM_BARCODE,
       circAction: 'Claimed returned',
     });
+  });
+
+  it('C16998 Check the Actions button from filtering Circulation log by claimed returned (firebird)', { tags: [TestTypes.criticalPath, devTeams.firebird] }, () => {
+    SearchPane.setFilterOptionFromAccordion('loan', 'Claimed returned');
+    SearchPane.checkActionButtonAfterFiltering(user.firstName, item.ITEM_BARCODE);
   });
 });
