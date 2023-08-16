@@ -95,23 +95,23 @@ describe('data-import', () => {
         });
     });
 
-  after('delete test data', () => {
-    JobProfiles.deleteJobProfile(jobProfile.profileName);
-    MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-    ActionProfiles.deleteActionProfile(actionProfile.name);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
-    // delete created files in fixtures
-    FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-    FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-      .then((instance) => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHridForReimport}"` })
-      .then((instance) => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
-  });
+    after('delete test data', () => {
+      JobProfiles.deleteJobProfile(jobProfile.profileName);
+      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+      ActionProfiles.deleteActionProfile(actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+      // delete created files in fixtures
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+        .then((instance) => {
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHridForReimport}"` })
+        .then((instance) => {
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
+    });
 
     it('C17039 Test 001/003/035 handling for New and Updated SRS records (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       // upload a marc file
@@ -157,7 +157,6 @@ describe('data-import', () => {
               [uuid[0], uuid[1]]
             );
           });
->>>>>>> 84442e6e19059dca80c25e5f4b001c1ef554944b
 
         // create match profile
         cy.visit(SettingsMenu.matchProfilePath);
