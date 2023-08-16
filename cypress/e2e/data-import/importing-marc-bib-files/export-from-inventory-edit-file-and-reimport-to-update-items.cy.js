@@ -31,9 +31,11 @@ import GenerateIdentifierCode from '../../../support/utils/generateIdentifierCod
 describe('ui-data-import', () => {
   let instanceHrid;
   const quantityOfItems = '1';
+  const uniqSubject = `35678123678${GenerateIdentifierCode.getRandomIdentifierCode()}`;
+  const filePathForUpload = 'mrcFileForC11123.mrc';
   const instance = {
     instanceTitle: 'Love enough / Dionne Brand.',
-    instanceSubject: `35678123678${GenerateIdentifierCode.getRandomIdentifierCode()}`,
+    instanceSubject: uniqSubject,
     holdingsLocation: `${LOCATION_NAMES.MAIN_LIBRARY_UI} >`,
     itemStatus: ITEM_STATUS_NAMES.AVAILABLE
   };
@@ -41,6 +43,7 @@ describe('ui-data-import', () => {
   const recordType = 'MARC_BIBLIOGRAPHIC';
   const note = 'Test administrative note for item';
   // unique file name
+  const editedMarcFileNameForCreate = `C11123 autotestFile.${getRandomPostfix()}.mrc`;
   const marcFileForCreate = `C11123 autoTestFile.${getRandomPostfix()}.mrc`;
   const nameForCSVFile = `C11123 autotestFile${getRandomPostfix()}.csv`;
   const nameMarcFileForUpload = `C11123 autotestFile.${getRandomPostfix()}.mrc`;
@@ -213,11 +216,16 @@ describe('ui-data-import', () => {
           .then((bodyWithjobProfile) => {
             testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
           });
+
+        // change file to add uniq subject
+        DataImport.editMarcFile(filePathForUpload, editedMarcFileNameForCreate,
+          ['35678123678'], [uniqSubject]);
+
         // upload a marc file for creating of the new instance, holding and item
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        DataImport.uploadFile('mrcFileForC11123.mrc', marcFileForCreate);
+        DataImport.uploadFile(editedMarcFileNameForCreate, marcFileForCreate);
         JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileForCreate);
@@ -268,6 +276,7 @@ describe('ui-data-import', () => {
 
           ItemRecordView.closeDetailView();
           InventorySearchAndFilter.searchByParameter('Subject', instance.instanceSubject);
+          InventorySearchAndFilter.selectResultCheckboxes(1);
           InventorySearchAndFilter.saveUUIDs();
           ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
 

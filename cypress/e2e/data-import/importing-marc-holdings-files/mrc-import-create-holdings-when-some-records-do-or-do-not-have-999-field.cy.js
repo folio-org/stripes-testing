@@ -14,11 +14,28 @@ import FileManager from '../../../support/utils/fileManager';
 describe('ui-data-import', () => {
   let user;
   let instanceHrid;
-  const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;
+  const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+  const filePathForUpload = 'oneMarcBib.mrc';
+  const fileName = `C359209 autotestFileName.${getRandomPostfix()}`;
   const editedMarcFileName = `C359209 editedMarcFile.${getRandomPostfix()}.mrc`;
   const error = '{"error":"A new MARC-Holding was not created because the incoming record already contained a 999ff$s or 999ff$i field"}';
 
   before('create test data', () => {
+    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
+    // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.verifyUploadState();
+    // upload a marc file for creating of the new instance, holding and item
+    DataImport.uploadFile(filePathForUpload, fileName);
+    JobProfiles.searchJobProfileForImport(jobProfileToRun);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileName);
+    Logs.openFileDetails(fileName);
+    FileDetails.openInstanceInInventory('Created');
+    InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+      instanceHrid = initialInstanceHrId;
+    });
+    cy.logout();
+
     cy.createTempUser([
       permissions.inventoryAll.gui,
       permissions.moduleDataImportEnabled.gui,
@@ -29,11 +46,7 @@ describe('ui-data-import', () => {
       .then(userProperties => {
         user = userProperties;
 
-        DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
         cy.login(user.username, user.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-        JobProfiles.waitFileIsImported(fileName);
-        Logs.openFileDetails(fileName);
-        FileDetails.openInstanceInInventory('Created');
       });
   });
 
@@ -44,14 +57,10 @@ describe('ui-data-import', () => {
 
   it('C359209 Checking the import to Create MARC Holdings records, when some incoming records do or do not have 999 ff fields (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
-        instanceHrid = initialInstanceHrId;
-
-        DataImport.editMarcFile('marcFileForC359209.mrc',
-          editedMarcFileName,
-          ['test1', 'test2', 'test3', 'test4'],
-          [instanceHrid, instanceHrid, instanceHrid, instanceHrid]);
-      });
+      DataImport.editMarcFile('marcFileForC359209.mrc',
+        editedMarcFileName,
+        ['test1', 'test2', 'test3', 'test4'],
+        [instanceHrid, instanceHrid, instanceHrid, instanceHrid]);
 
       // upload a marc file for creating holdings
       cy.visit(TopMenu.dataImportPath);
