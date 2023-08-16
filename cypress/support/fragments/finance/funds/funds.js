@@ -158,15 +158,6 @@ export default {
     ]);
   },
 
-  addTrunsferTo: (fund) => {
-    cy.do([
-      actionsButton.click(),
-      Button('Edit').click(),
-      MultiSelect({ label: 'Transfer to' }).select([fund]),
-      saveAndCloseButton.click()
-    ]);
-  },
-
   checkAddGroupToFund: (group) => {
     cy.expect(Pane({ id: 'pane-fund-details' }).exists());
     cy.expect(

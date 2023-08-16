@@ -20,140 +20,142 @@ import Users from '../../../support/fragments/users/users';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
-describe('ui-data-import', () => {
-  let user = null;
-  let instanceHrid = null;
-  const fieldsForDelete = ['977', '978', '979'];
-  const fieldsForDeleteIds = [];
-  // unique file name to upload
-  const fileName = `C350678autotestFileProtection.${getRandomPostfix()}.mrc`;
+describe('data-import', () => {
+  describe('Importing MARC Bib files', () => {
+    let user = null;
+    let instanceHrid = null;
+    const fieldsForDelete = ['977', '978', '979'];
+    const fieldsForDeleteIds = [];
+    // unique file name to upload
+    const fileName = `C350678autotestFileProtection.${getRandomPostfix()}.mrc`;
 
-  const mappingProfile = { name: `C350678 Remove extraneous MARC fields ${getRandomPostfix()}`,
-    typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC };
+    const mappingProfile = { name: `C350678 Remove extraneous MARC fields ${getRandomPostfix()}`,
+      typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC };
 
-  const actionProfile = {
-    typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
-    name: `C350678 Remove extraneous MARC fields ${getRandomPostfix()}`,
-    action: 'Modify (MARC Bibliographic record type only)'
-  };
+    const actionProfile = {
+      typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+      name: `C350678 Remove extraneous MARC fields ${getRandomPostfix()}`,
+      action: 'Modify (MARC Bibliographic record type only)'
+    };
 
-  const jobProfile = {
-    ...NewJobProfile.defaultJobProfile,
-    profileName: `C350678 Create bib and instance, but remove some MARC fields first ${getRandomPostfix()}`,
-    acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
-  };
+    const jobProfile = {
+      ...NewJobProfile.defaultJobProfile,
+      profileName: `C350678 Create bib and instance, but remove some MARC fields first ${getRandomPostfix()}`,
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
+    };
 
-  before('login', () => {
-    cy.createTempUser([
-      permissions.inventoryAll.gui,
-      permissions.moduleDataImportEnabled.gui,
-      permissions.settingsDataImportEnabled.gui,
-      permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui
-    ])
-      .then(userProperties => {
-        user = userProperties;
+    before('login', () => {
+      cy.createTempUser([
+        permissions.inventoryAll.gui,
+        permissions.moduleDataImportEnabled.gui,
+        permissions.settingsDataImportEnabled.gui,
+        permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui
+      ])
+        .then(userProperties => {
+          user = userProperties;
 
-        cy.login(user.username, user.password);
-      });
-  });
+          cy.login(user.username, user.password);
+        });
+    });
 
-  after('delete test data', () => {
-    fieldsForDeleteIds.forEach(fieldId => MarcFieldProtection.deleteMarcFieldProtectionViaApi(fieldId));
-    // delete profiles
-    JobProfiles.deleteJobProfile(jobProfile.profileName);
-    ActionProfiles.deleteActionProfile(actionProfile.name);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
-    Users.deleteViaApi(user.userId);
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-      .then((instance) => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
-  });
+    after('delete test data', () => {
+      fieldsForDeleteIds.forEach(fieldId => MarcFieldProtection.deleteMarcFieldProtectionViaApi(fieldId));
+      // delete profiles
+      JobProfiles.deleteJobProfile(jobProfile.profileName);
+      ActionProfiles.deleteActionProfile(actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+      Users.deleteViaApi(user.userId);
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+        .then((instance) => {
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
+    });
 
-  it('C350678 MARC field protections apply to MARC modifications of incoming records when they should not: Scenario 1 (folijet)',
-    { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-    // create protection fields
-      MarcFieldProtection.createMarcFieldProtectionViaApi({
-        field: '*',
-        indicator1: '*',
-        indicator2: '*',
-        subfield: '5',
-        data: 'NcD',
-        source: 'USER',
-      })
-        .then(resp => {
+    it('C350678 MARC field protections apply to MARC modifications of incoming records when they should not: Scenario 1 (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+        // create protection fields
+        MarcFieldProtection.createMarcFieldProtectionViaApi({
+          field: '*',
+          indicator1: '*',
+          indicator2: '*',
+          subfield: '5',
+          data: 'NcD',
+          source: 'USER',
+        })
+          .then(resp => {
+            const id = resp.id;
+            fieldsForDeleteIds.push(id);
+          });
+        MarcFieldProtection.createMarcFieldProtectionViaApi({
+          field: fieldsForDelete[2],
+          indicator1: '*',
+          indicator2: '*',
+          subfield: '*',
+          data: '*',
+          source: 'USER',
+        }).then(resp => {
           const id = resp.id;
           fieldsForDeleteIds.push(id);
         });
-      MarcFieldProtection.createMarcFieldProtectionViaApi({
-        field: fieldsForDelete[2],
-        indicator1: '*',
-        indicator2: '*',
-        subfield: '*',
-        data: '*',
-        source: 'USER',
-      }).then(resp => {
-        const id = resp.id;
-        fieldsForDeleteIds.push(id);
-      });
 
-      // create mapping profile
-      cy.visit(SettingsMenu.mappingProfilePath);
-      FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
-      NewFieldMappingProfile.addFieldMappingsForMarc();
-      NewFieldMappingProfile.fillModificationSectionWithDelete('Delete', fieldsForDelete[0], 0);
-      NewFieldMappingProfile.addNewFieldInModificationSection();
-      NewFieldMappingProfile.fillModificationSectionWithDelete('Delete', fieldsForDelete[1], 1);
-      NewFieldMappingProfile.addNewFieldInModificationSection();
-      NewFieldMappingProfile.fillModificationSectionWithDelete('Delete', fieldsForDelete[2], 2);
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
-      FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
+        // create mapping profile
+        cy.visit(SettingsMenu.mappingProfilePath);
+        FieldMappingProfiles.openNewMappingProfileForm();
+        NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
+        NewFieldMappingProfile.addFieldMappingsForMarc();
+        NewFieldMappingProfile.fillModificationSectionWithDelete('Delete', fieldsForDelete[0], 0);
+        NewFieldMappingProfile.addNewFieldInModificationSection();
+        NewFieldMappingProfile.fillModificationSectionWithDelete('Delete', fieldsForDelete[1], 1);
+        NewFieldMappingProfile.addNewFieldInModificationSection();
+        NewFieldMappingProfile.fillModificationSectionWithDelete('Delete', fieldsForDelete[2], 2);
+        FieldMappingProfiles.saveProfile();
+        FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+        FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
-      // create action profile
-      cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.create(actionProfile, mappingProfile.name);
-      ActionProfiles.checkActionProfilePresented(actionProfile.name);
+        // create action profile
+        cy.visit(SettingsMenu.actionProfilePath);
+        ActionProfiles.create(actionProfile, mappingProfile.name);
+        ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
-      // create job profile
-      cy.visit(SettingsMenu.jobProfilePath);
-      JobProfiles.createJobProfile(jobProfile);
-      NewJobProfile.linkActionProfileByName(actionProfile.name);
-      NewJobProfile.linkActionProfileByName('Default - Create instance');
-      NewJobProfile.saveAndClose();
-      JobProfiles.checkJobProfilePresented(jobProfile.profileName);
+        // create job profile
+        cy.visit(SettingsMenu.jobProfilePath);
+        JobProfiles.createJobProfile(jobProfile);
+        NewJobProfile.linkActionProfileByName(actionProfile.name);
+        NewJobProfile.linkActionProfileByName('Default - Create instance');
+        NewJobProfile.saveAndClose();
+        JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
-      // upload a marc file for creating of the new instance, holding and item
-      cy.visit(TopMenu.dataImportPath);
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.verifyUploadState();
-      DataImport.uploadFile('marcFileForC350678.mrc', fileName);
-      JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-      JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(fileName);
-      Logs.openFileDetails(fileName);
-      [FileDetails.columnNameInResultList.srsMarc,
-        FileDetails.columnNameInResultList.instance].forEach(columnName => {
-        FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
-      });
-      FileDetails.checkSrsRecordQuantityInSummaryTable('1', 0);
-      FileDetails.checkInstanceQuantityInSummaryTable('1', 0);
+        // upload a marc file for creating of the new instance, holding and item
+        cy.visit(TopMenu.dataImportPath);
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
+        DataImport.uploadFile('marcFileForC350678.mrc', fileName);
+        JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(fileName);
+        Logs.openFileDetails(fileName);
+        [FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.instance].forEach(columnName => {
+          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+        });
+        FileDetails.checkSrsRecordQuantityInSummaryTable('1', 0);
+        FileDetails.checkInstanceQuantityInSummaryTable('1', 0);
 
-      // open Instance for getting hrid
-      FileDetails.openInstanceInInventory('Created');
-      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
-        instanceHrid = initialInstanceHrId;
+        // open Instance for getting hrid
+        FileDetails.openInstanceInInventory('Created');
+        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+          instanceHrid = initialInstanceHrId;
 
-        // check fields are absent in the view source
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-        InstanceRecordView.verifyInstancePaneExists();
-        // verify table data in marc bibliographic source
-        InventoryInstance.viewSource();
-        fieldsForDelete.forEach(fieldNumber => {
-          InventoryViewSource.notContains(`${fieldNumber}\t`);
+          // check fields are absent in the view source
+          cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+          InstanceRecordView.verifyInstancePaneExists();
+          // verify table data in marc bibliographic source
+          InventoryInstance.viewSource();
+          fieldsForDelete.forEach(fieldNumber => {
+            InventoryViewSource.notContains(`${fieldNumber}\t`);
+          });
         });
       });
-    });
+  });
 });

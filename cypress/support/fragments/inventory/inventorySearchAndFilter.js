@@ -17,7 +17,6 @@ import {
   SearchField,
   Section,
   Select,
-  Spinner,
   TextField,
   TextInput
 } from '../../../../interactors';
@@ -190,12 +189,11 @@ export default {
   },
 
   byEffectiveLocation(values) {
-    return cy.do([
-      effectiveLocationInput.clickHeader(),
-      effectiveLocationInput
-        .find(Checkbox(values ?? this.effectiveLocation.mainLibrary))
-        .click(),
-    ]);
+    cy.do(effectiveLocationInput.clickHeader());
+    // wait to avoid robotic clicks
+    cy.wait(2000);
+    cy.do(effectiveLocationInput.find(Checkbox(values ?? this.effectiveLocation.mainLibrary)).click());
+    cy.expect(effectiveLocationInput.find(Checkbox(values ?? this.effectiveLocation.mainLibrary)).has({ checked: true }));
   },
 
   byLanguage(lang) {
@@ -628,8 +626,8 @@ export default {
     ]);
   },
 
-  filterHoldingsByPermanentLocation:(location) => {
-    cy.do(Button({ id:'accordion-toggle-button-holdingsPermanentLocation' }).click());
+  filterHoldingsByPermanentLocation: (location) => {
+    cy.do(Button({ id: 'accordion-toggle-button-holdingsPermanentLocation' }).click());
     // need to wait until data will be loaded
     cy.wait(1000);
     cy.do(
@@ -640,7 +638,7 @@ export default {
     holdingsPermanentLocationAccordion.find(TextField()).click();
     cy.do(holdingsPermanentLocationAccordion.find(Checkbox(location)).click());
   },
-  checkRowsCount:(expectedRowsCount) => {
+  checkRowsCount: (expectedRowsCount) => {
     cy.expect([
       instancesList.find(MultiColumnListRow({ index: expectedRowsCount - 1 })).exists(),
       instancesList.find(MultiColumnListRow({ index: expectedRowsCount })).absent()

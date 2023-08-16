@@ -115,6 +115,7 @@ export default {
   uiUsersCreatePatronLimits: { internal: 'ui-users.settings.limits', gui: 'Settings (Users): Can create, edit and remove patron blocks limits' },
   uiUsersCreatePatronConditions: { internal: 'ui-users.settings.conditions', gui: 'Settings (Users): Can view and edit patron blocks conditions' },
   uiUsersCustomField: { internal: 'ui-users.settings.customfields.all', gui: 'Settings (Users): Can create, edit, view and delete custom fields' },
+  uiUsersViewPermissionSets: { internal: 'ui-users.settings.permsets.view', gui: 'Settings (Users): Can view permission sets' },
   uiUsersViewAllSettings: { internal: 'ui-users.settings.view', gui: 'Settings (Users): View all settings' },
   // Remote Storage
   remoteStorageCRUD: { internal: 'ui-remote-storage.settings.remote-storages.edit', gui: 'Remote storage: Create, edit, delete' },
@@ -230,6 +231,7 @@ export default {
   settingsDataImportCanViewOnly:{ internal:'ui-data-import.settings.readOnly', gui:'Settings (Data import): Can view only' },
   settingsTenantViewLocation:{ internal:'ui - tenant - settings.settings.location.view', gui:'Settings (Tenant): View locations' },
   settingsUsersCRUD: { internal: 'ui-users.settings.transfers.all', gui: 'Settings (Users): Can create, edit and remove transfer accounts' },
+  uiSettingsCanChangeLoacalPassword: { internal: 'ui-myprofile.settings.change-password', gui: 'Settings (My profile): Can change your local password' },
   // Added the below permissions for custom label creation
 
   uiSettingseholdingsViewEditCreateDelete:{ internal: 'ui-eholdings.settings.all', gui: 'Settings (eholdings): Can create, edit, view, and delete custom labels' },

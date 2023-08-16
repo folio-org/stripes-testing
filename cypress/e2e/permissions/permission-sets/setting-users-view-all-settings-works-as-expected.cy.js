@@ -17,6 +17,7 @@ import UsersSettingsGeneral from '../../../support/fragments/settings/users/user
 import Departments from '../../../support/fragments/settings/users/departments';
 import Conditions from '../../../support/fragments/settings/users/conditions';
 import Limits from '../../../support/fragments/settings/users/limits';
+import PermissionSets from '../../../support/fragments/settings/users/permissionSets';
 
 describe('Permission Sets', () => {
   let userData;
@@ -42,6 +43,16 @@ describe('Permission Sets', () => {
   };
   const waiveReason = WaiveReasons.getDefaultNewWaiveReason(uuid());
   const refundReason = RefundReasons.getDefaultNewRefundReason(uuid());
+  const permissionSetBody = {
+    displayName: getTestEntityValue('setName'),
+    description: getTestEntityValue('setDescription'),
+    subPermissions: [
+      permissions.uiUsersViewPermissionSets.internal,
+      permissions.uiUsersViewAllSettings.internal,
+    ],
+    mutable: true,
+    id: uuid(),
+  };
 
   before('Preconditions', () => {
     cy.getAdminToken().then(() => {
@@ -57,6 +68,7 @@ describe('Permission Sets', () => {
       PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
         patronGroup.id = patronGroupResponse;
       });
+      PermissionSets.createPermissionSetViaApi(permissionSetBody);
       cy.createTempUser([permissions.uiUsersViewAllSettings.gui], patronGroup.name).then((userProperties) => {
         userData = userProperties;
         UserEdit.addServicePointViaApi(
@@ -70,6 +82,7 @@ describe('Permission Sets', () => {
   });
 
   after('Deleting created entities', () => {
+    PermissionSets.deletePermissionSetViaApi(permissionSetBody.id);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Users.deleteViaApi(userData.userId);
@@ -80,6 +93,23 @@ describe('Permission Sets', () => {
     PaymentMethods.deleteViaApi(testData.paymentMethodId);
     UsersOwners.deleteViaApi(ownerBody.id);
   });
+
+  it(
+    'C402342 Verify that Creating and Editing options are disabled for users with "Setting (Users): View all settings" permission scenario 1 (volaris)',
+    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    () => {
+      cy.visit(SettingsMenu.permissionSets);
+      PermissionSets.waitLoading();
+      PermissionSets.checkNewButtonNotAvailable();
+      PermissionSets.chooseFromList(permissionSetBody.displayName);
+      PermissionSets.checkPermissionSet({
+        name: permissionSetBody.displayName,
+        description: permissionSetBody.description,
+        permissions: [permissions.uiUsersViewPermissionSets.gui, permissions.uiUsersViewAllSettings.gui],
+      });
+      PermissionSets.checkEditButtonNotAvailable();
+    }
+  );
 
   it(
     'C402752 Verify that "Settings (Users): View all settings" works as expected Scenario 2 (volaris)',

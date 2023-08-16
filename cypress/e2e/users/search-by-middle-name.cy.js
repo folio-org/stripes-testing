@@ -71,7 +71,7 @@ describe('Users', () => {
     PatronGroups.deleteViaApi(patronGroup.id);
   });
 
-  it('C389464 Search by middle name', { tags: [TestTypes.criticalPath, devTeams.volaris] }, () => {
+  it('C389464 Search by middle name (volaris)', { tags: [TestTypes.criticalPath, devTeams.volaris] }, () => {
     UsersSearchPane.searchByKeywords(userData.middleName);
     Users.verifyMiddleNameOnUserDetailsPane(userData.middleName);
     cy.visit(TopMenu.checkOutPath);

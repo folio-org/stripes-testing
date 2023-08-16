@@ -5,7 +5,8 @@ import {
   MultiColumnListHeader,
   MultiColumnListRow,
   Link,
-  PaneHeader
+  PaneHeader,
+  Button
 } from '../../../../../interactors';
 import LogsViewAll from './logsViewAll';
 
@@ -13,6 +14,7 @@ const invoiceNumberFromEdifactFile = '94999';
 
 const resultsList = MultiColumnList({ id:'search-results-list' });
 const jobSummaryTable = MultiColumnList({ id: 'job-summary-table' });
+const nextButton = Button({ id:'search-results-list-next-paging-button' });
 
 const columnNameInResultList = {
   srsMarc: resultsList.find(MultiColumnListHeader({ id:'list-column-srsmarcstatus' })),
@@ -49,7 +51,8 @@ const visibleColumnsInResultsList = {
   INSTANCE: { columnIndex: 4 },
   HOLDINGS: { columnIndex: 5 },
   ITEM: { columnIndex: 6 },
-  ORDER: { columnIndex: 7 }
+  ORDER: { columnIndex: 7 },
+  INVOICE: { columnIndex: 8 }
 };
 
 const checkSrsRecordQuantityInSummaryTable = (quantity, row = 0) => {
@@ -227,6 +230,10 @@ export default {
       .click());
   },
 
+  clickNextPaginationButton:() => {
+    cy.do(nextButton.click());
+  },
+
   checkStatusByTitle:(title, itemStatus) => {
     cy.do(resultsList.find(MultiColumnListCell({ content: title })).perform(
       element => {
@@ -320,5 +327,25 @@ export default {
       .find(MultiColumnListCell({ columnIndex: 1 }))
       .find(Link({ href: including('/data-import/log') }))
       .exists());
+  },
+
+  verifyEachInvoiceTitleInColunm:() => {
+    // TODO redesign with interactors
+    cy.get('#search-results-list')
+      .find('[data-row-index]').each($row => {
+        cy.get('[class*="mclCell-"]:nth-child(2)', { withinSubject: $row })
+          .invoke('text')
+          .should('not.be.empty');
+      });
+  },
+
+  verifyEachInvoiceStatusInColunm:(invoiceStatus) => {
+    // TODO redesign with interactors
+    cy.get('#search-results-list')
+      .find('[data-row-index]').each($row => {
+        cy.get('[class*="mclCell-"]:nth-child(9)', { withinSubject: $row })
+          .invoke('text')
+          .should('eq', invoiceStatus);
+      });
   }
 };

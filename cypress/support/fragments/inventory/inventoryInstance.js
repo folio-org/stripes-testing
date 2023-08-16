@@ -117,6 +117,7 @@ const quickMarcPaneHeader = PaneHeader({ id: 'paneHeaderquick-marc-editor-pane' 
 const detailsPaneContent = PaneContent({ id: 'pane-instancedetails-content' });
 const administrativeDataAccordion = Accordion('Administrative data');
 const unlinkIconButton = Button({ icon: 'unlink' });
+const itemBarcodeField = TextField({ name: 'barcode' });
 
 const validOCLC = { id:'176116217',
   // TODO: hardcoded count related with interactors getters issue. Redesign to cy.then(QuickMarkEditor().rowsCount()).then(rowsCount => {...}
@@ -843,5 +844,9 @@ export default {
   checkValueAbsenceInDetailView(accordion, value) {
     cy.expect(section.find(Button(including(accordion))).exists());
     cy.expect(Accordion(accordion).find(MultiColumnListCell(including(value))).absent());
+  },
+
+  fillItemBarcode(barcodeValue) {
+    cy.do(itemBarcodeField.fillIn(barcodeValue));
   }
 };

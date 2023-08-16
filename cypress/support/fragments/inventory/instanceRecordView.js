@@ -2,13 +2,15 @@ import { HTML, including } from '@interactors/html';
 import {
   KeyValue,
   MultiColumnList,
+  MultiColumnListRow,
   Section,
   MultiColumnListCell,
   Button,
   Accordion,
   Link,
   Pane,
-  Callout
+  Callout,
+  Badge
 } from '../../../../interactors';
 
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
@@ -152,6 +154,24 @@ export default {
   verifyCalloutMessage: (number) => {
     cy.expect(Callout({ textContent: including(`Record ${number} created. Results may take a few moments to become visible in Inventory`) })
       .exists());
+  },
+
+  verifyItemsCount(itemsCount, ...holdingToBeOpened) {
+    cy.wait(1000);
+    cy.expect(Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) }).find(Badge()).has({ value: itemsCount.toString() }));
+  },
+
+  verifyQuantityOfItemsOnPage(quantityOfItems, itemLoanType) {
+    for (let i = 0; i < 200; i++) {
+      cy.expect(MultiColumnList({ ariaRowCount: `${quantityOfItems} + 1` })
+      .find(MultiColumnListRow({rowIndexInParent: `row-${i}`}))
+        .find(MultiColumnListCell({ columnIndex: 3, content: itemLoanType }))
+        .exists());
+    }
+  },
+
+  clickNextPaginationButton() {
+    cy.do(Pane({ id:'pane-instancedetails' }).find(Button('Next')).click());
   },
 
   openHoldingView: () => {
