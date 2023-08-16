@@ -49,6 +49,8 @@ describe('orders: Receiving and Check-in', () => {
   const barcodeForFifthItem = `5${Helper.getRandomBarcode()}`;
   const barcodeForSixthItem = `6${Helper.getRandomBarcode()}`;
   const barcodeForSeventhItem = `7${Helper.getRandomBarcode()}`;
+  const barcodeForEighthItem = `7${Helper.getRandomBarcode()}`;
+  const barcodeForNinthItem = `7${Helper.getRandomBarcode()}`;
 
   let orderNumber;
   let circ2LocationServicePoint;
@@ -144,6 +146,22 @@ describe('orders: Receiving and Check-in', () => {
                     // Need to wait,while instance will be saved
                     cy.wait(5000);
                     ItemActions.closeItem();
+                    InventoryInstance.openHoldingsAccordion(location.name);
+                    InventoryInstance.openItemByBarcodeAndIndex('No barcode');
+                    ItemActions.edit();
+                    ItemRecordEdit.addBarcode(barcodeForEighthItem);
+                    ItemRecordEdit.save();
+                    // Need to wait,while instance will be saved
+                    cy.wait(5000);
+                    ItemActions.closeItem();
+                    InventoryInstance.openHoldingsAccordion(location.name);
+                    InventoryInstance.openItemByBarcodeAndIndex('No barcode');
+                    ItemActions.edit();
+                    ItemRecordEdit.addBarcode(barcodeForNinthItem);
+                    ItemRecordEdit.save();
+                    // Need to wait,while instance will be saved
+                    cy.wait(5000);
+                    ItemActions.closeItem();
                   });
 
                 cy.visit(TopMenu.checkInPath);
@@ -171,7 +189,6 @@ describe('orders: Receiving and Check-in', () => {
 
     ])
       .then(userProperties => {
-        user = userProperties;
         cy.login(userProperties.username, userProperties.password, { path:TopMenu.receivingPath, waiter: Receiving.waitLoading });
       });
   });
@@ -207,5 +224,13 @@ describe('orders: Receiving and Check-in', () => {
     InventoryInstance.openHoldingsAccordion(location.name);
     InventoryInstance.openItemByBarcodeAndIndex(barcodeForSeventhItem);
     ItemRecordView.checkItemDetails(location.name, barcodeForSeventhItem, ITEM_STATUS_NAMES.IN_PROCESS);
+    ItemActions.closeItem();
+    InventoryInstance.openHoldingsAccordion(location.name);
+    InventoryInstance.openItemByBarcodeAndIndex(barcodeForEighthItem);
+    ItemRecordView.checkItemDetails(location.name, barcodeForEighthItem, ITEM_STATUS_NAMES.IN_PROCESS);
+    ItemActions.closeItem();
+    InventoryInstance.openHoldingsAccordion(location.name);
+    InventoryInstance.openItemByBarcodeAndIndex(barcodeForNinthItem);
+    ItemRecordView.checkItemDetails(location.name, barcodeForNinthItem, ITEM_STATUS_NAMES.IN_PROCESS);
   });
 });
