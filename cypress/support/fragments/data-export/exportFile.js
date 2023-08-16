@@ -86,13 +86,13 @@ export default {
     cy.get('input[type=file]', getLongDelay()).attachFile(fileName);
   },
 
-  exportWithDefaultJobProfile: (fileName, jobType = 'instances', selectType = 'Instances') => {
+  exportWithDefaultJobProfile: (fileName, jobType = 'instances', selectType = 'Instances', fileType = '.csv') => {
     cy.do([
       MultiColumnListCell({ content: `Default ${jobType} export job profile`, columnIndex: 0 }).click(),
       Modal({ id: 'choose-job-profile-confirmation-modal' }).find(Select()).choose(selectType),
       Button('Run').click(),
     ]);
-    cy.get('#job-logs-list').contains(fileName.replace('.csv', ''));
+    cy.get('#job-logs-list').contains(fileName.replace(fileType, ''));
   },
 
   exportWithCreatedJobProfile: (fileName, profileName) => {
