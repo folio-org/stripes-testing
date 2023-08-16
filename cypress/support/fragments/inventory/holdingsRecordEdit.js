@@ -4,6 +4,7 @@ const rootForm = HTML({ className: including('holdingsForm-') });
 const holdingsHrId = rootForm.find(TextField({ name: 'hrid' }));
 const sourceSelect = rootForm.find(Select({ name: 'sourceId' }));
 const readonlyFields = [holdingsHrId, sourceSelect];
+const callNumber = rootForm.find(TextArea({ name: 'callNumber' }));
 
 export default {
   saveAndClose : () => {
@@ -35,4 +36,7 @@ export default {
       TextArea({ ariaLabel: 'Note' }).fillIn(text),
     ]);
   },
+  fillCallNumber(callNumberValue) {
+    cy.do(callNumber.fillIn(callNumberValue));
+  }
 };
