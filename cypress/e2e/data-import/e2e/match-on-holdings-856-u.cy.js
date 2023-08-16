@@ -153,7 +153,6 @@ describe('data-import', () => {
       NewJobProfile.linkActionProfileForMatches(collectionOfMappingAndActionProfiles[2].actionProfile.name);
       NewJobProfile.saveAndClose();
       JobProfiles.checkJobProfilePresented(updateEHoldingsJobProfile.profileName);
->>>>>>> 84442e6e19059dca80c25e5f4b001c1ef554944b
 
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
