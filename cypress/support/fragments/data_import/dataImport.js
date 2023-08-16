@@ -403,6 +403,7 @@ export default {
   uploadFileAndRetry(filePathName, fileName, maxRetries = 10) {
     let retryCount = 0;
     function upload() {
+      waitLoading();
       cy.then(() => DataImportUploadFile().isDeleteFilesButtonExists()).then(isDeleteFilesButtonExists => {
         if (isDeleteFilesButtonExists && retryCount < maxRetries) {
           cy.reload();
