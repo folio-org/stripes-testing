@@ -33,8 +33,8 @@ describe('data-import', () => {
     let instanceHrid;
     const quantityOfItems = '1';
     const uniqSubject = `35678123678${GenerateIdentifierCode.getRandomIdentifierCode()}`;
-  const filePathForUpload = 'mrcFileForC11123.mrc';
-  const instance = {
+    const filePathForUpload = 'mrcFileForC11123.mrc';
+    const instance = {
       instanceTitle: 'Love enough / Dionne Brand.',
       instanceSubject: uniqSubject,
       holdingsLocation: `${LOCATION_NAMES.MAIN_LIBRARY_UI} >`,
@@ -45,7 +45,7 @@ describe('data-import', () => {
     const note = 'Test administrative note for item';
     // unique file name
     const editedMarcFileNameForCreate = `C11123 autotestFile.${getRandomPostfix()}.mrc`;
-  const marcFileForCreate = `C11123 autoTestFile.${getRandomPostfix()}.mrc`;
+    const marcFileForCreate = `C11123 autoTestFile.${getRandomPostfix()}.mrc`;
     const nameForCSVFile = `C11123 autotestFile${getRandomPostfix()}.csv`;
     const nameMarcFileForUpload = `C11123 autotestFile.${getRandomPostfix()}.mrc`;
     const editedMarcFileName = `C11123 fileWithItemHrid.${getRandomPostfix()}.mrc`;
@@ -202,11 +202,11 @@ describe('data-import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
     };
 
-  before('create test data', () => {
-    cy.loginAsAdmin();
-    cy.getAdminToken()
-      .then(() => {
-        testData.jobProfileForCreate = jobProfileForCreate;
+    before('create test data', () => {
+      cy.loginAsAdmin();
+      cy.getAdminToken()
+        .then(() => {
+          testData.jobProfileForCreate = jobProfileForCreate;
 
           testData.forEach(specialPair => {
             cy.createOnePairMappingAndActionProfiles(specialPair.mappingProfile, specialPair.actionProfile).then(idActionProfile => {
@@ -217,12 +217,12 @@ describe('data-import', () => {
             .then((bodyWithjobProfile) => {
               testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
             });
-  
-        // change file to add uniq subject
-        DataImport.editMarcFile(filePathForUpload, editedMarcFileNameForCreate,
-          ['35678123678'], [uniqSubject]);
 
-        // upload a marc file for creating of the new instance, holding and item
+          // change file to add uniq subject
+          DataImport.editMarcFile(filePathForUpload, editedMarcFileNameForCreate,
+            ['35678123678'], [uniqSubject]);
+
+          // upload a marc file for creating of the new instance, holding and item
           cy.visit(TopMenu.dataImportPath);
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
