@@ -100,10 +100,6 @@ describe('Browse in Inventory', () => {
     createdAuthorityIDs.forEach((id, index) => {
       if (index) MarcAuthority.deleteViaAPI(id);
     });
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    DataImport.selectLog();
-    DataImport.openDeleteImportLogsModal();
-    DataImport.confirmDeleteImportLogs();
   });
 
   it('C388531 Verify that contributors with the same "Name" , "Name type" and "authorityID" will display as one row (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
