@@ -9,6 +9,7 @@ import {
   MultiColumnListHeader,
   Callout
 } from '../../../../interactors';
+import QuickMarcEditorWindow from '../quickMarcEditor';
 
 const defaultCreateJobProfile = 'Default - Create SRS MARC Authority';
 const defaultUpdateJobProfile = 'Update authority by matching 010';
@@ -76,6 +77,7 @@ export default {
   edit:() => {
     cy.do(rootSection.find(Button('Actions')).click());
     cy.do(Button('Edit').click());
+    QuickMarcEditorWindow.waitLoading();
   },
   contains: (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).exists()),
   notContains: (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).absent()),

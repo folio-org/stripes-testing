@@ -42,11 +42,6 @@ describe('MARC -> MARC Bibliographic', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    DataImport.selectLog();
-    DataImport.openDeleteImportLogsModal();
-    DataImport.confirmDeleteImportLogs();
-
     if (createdInstanceID) InventoryInstance.deleteInstanceViaApi(createdInstanceID);
     Users.deleteViaApi(testData.userProperties.userId);
   });

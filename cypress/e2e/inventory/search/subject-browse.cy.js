@@ -51,10 +51,6 @@ describe('Inventory > Subject Browse', () => {
       InventoryInstance.deleteInstanceViaApi(id);
     });
     Users.deleteViaApi(testData.user.userId);
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    DataImport.selectLog();
-    DataImport.openDeleteImportLogsModal();
-    DataImport.confirmDeleteImportLogs();
   });
 
   it('C350387 Verify the "Browse subjects" result list (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {

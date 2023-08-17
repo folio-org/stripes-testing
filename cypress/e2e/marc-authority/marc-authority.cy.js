@@ -79,11 +79,6 @@ describe('Importing MARC Authority files', () => {
   });
 
   after('Deleting data', () => {
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    DataImport.selectLog();
-    DataImport.openDeleteImportLogsModal();
-    DataImport.confirmDeleteImportLogs();
-
     JobProfiles.deleteJobProfile(createdJobProfile.profileName);
     if (createdAuthorityID) MarcAuthority.deleteViaAPI(createdAuthorityID);
     Users.deleteViaApi(testData.userProperties.userId);

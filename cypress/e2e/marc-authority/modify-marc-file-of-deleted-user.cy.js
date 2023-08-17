@@ -79,11 +79,6 @@ describe('MARC -> MARC Authority', () => {
   after('Deleting created user', () => {
     Users.deleteViaApi(user.userBProperties.userId);
     MarcAuthority.deleteViaAPI(createdAuthorityIDs[0]);
-
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    DataImport.selectLog();
-    DataImport.openDeleteImportLogsModal();
-    DataImport.confirmDeleteImportLogs();
   });
 
   it('C358994 Verify that user has access to "quickMARC" when user who imported MARC record has been deleted (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {

@@ -74,11 +74,6 @@ describe('plug-in MARC authority | Search', () => {
     createdAuthorityIDs.forEach((id, index) => {
       if (index) MarcAuthority.deleteViaAPI(id);
     });
-
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    DataImport.selectLog();
-    DataImport.openDeleteImportLogsModal();
-    DataImport.confirmDeleteImportLogs();
   });
 
   it('C380572 MARC Authority plug-in | Search using "Genre" option (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
