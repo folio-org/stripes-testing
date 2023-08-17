@@ -171,7 +171,6 @@ describe('orders: Receiving and Check-in', () => {
 
     ])
       .then(userProperties => {
-        user = userProperties;
         cy.login(userProperties.username, userProperties.password, { path:TopMenu.receivingPath, waiter: Receiving.waitLoading });
       });
   });
