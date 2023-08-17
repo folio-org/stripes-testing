@@ -850,5 +850,12 @@ export default {
 
   fillItemBarcode(barcodeValue) {
     cy.do(itemBarcodeField.fillIn(barcodeValue));
+  },
+
+  verifyAndClickLinkIconByIndex(rowIndex) {
+    // Waiter needed for the link to be loaded properly.
+    cy.wait(1000);
+    cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(linkIconButton).exists());
+    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(linkIconButton).click());
   }
 };

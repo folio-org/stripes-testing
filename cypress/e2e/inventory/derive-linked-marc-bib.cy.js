@@ -19,7 +19,10 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
     tag001: '001',
     tag010: '010',
     tag240: '240',
-    tag650: '650'
+    tag650: '650',
+    tag240FifthBoxValue: '$m test',
+    tag650FifthBoxValue: '$b 123',
+    tag650SeventhBoxValue: '$b 123'
   };
 
   const marcFiles = [
@@ -73,10 +76,8 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
         InventoryInstances.waitContentLoading();
         InventoryInstance.searchByTitle(createdRecordIDs[0]);
         InventoryInstances.selectInstance();
-        // here and below - wait for detail view to be fully loaded
-        cy.wait(1500);
         InventoryInstance.editMarcBibliographicRecord();
-        InventoryInstance.verifyAndClickLinkIcon(testData.tag240);
+        InventoryInstance.verifyAndClickLinkIconByIndex(10);
         MarcAuthorities.switchToSearch();
         InventoryInstance.verifySelectMarcAuthorityModal();
         InventoryInstance.searchResults(marcFiles[1].authorityHeading);
@@ -87,13 +88,24 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
         QuickMarcEditor.checkAfterSaveAndClose();
 
         InventoryInstance.editMarcBibliographicRecord();
-        InventoryInstance.verifyAndClickLinkIcon(testData.tag650);
+        InventoryInstance.verifyAndClickLinkIconByIndex(16);
         MarcAuthorities.switchToSearch();
         InventoryInstance.verifySelectMarcAuthorityModal();
         InventoryInstance.searchResults(marcFiles[2].authorityHeading);
         MarcAuthorities.checkFieldAndContentExistence(testData.tag010, `‡a ${marcFiles[2].authority010FieldValue}`);
         InventoryInstance.clickLinkButton();
-        QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag650);
+        QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(16, testData.tag650);
+        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.checkAfterSaveAndClose();
+
+        InventoryInstance.editMarcBibliographicRecord();
+        InventoryInstance.verifyAndClickLinkIconByIndex(17);
+        MarcAuthorities.switchToSearch();
+        InventoryInstance.verifySelectMarcAuthorityModal();
+        InventoryInstance.searchResults(marcFiles[2].authorityHeading);
+        MarcAuthorities.checkFieldAndContentExistence(testData.tag010, `‡a ${marcFiles[2].authority010FieldValue}`);
+        InventoryInstance.clickLinkButton();
+        QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(17, testData.tag650);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
 
@@ -114,29 +126,10 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
     InventoryInstance.searchByTitle(createdRecordIDs[0]);
     InventoryInstances.selectInstance();
     InventoryInstance.deriveNewMarcBib();
-    cy.wait(10000);
-    // QuickMarcEditor.updateExistingField(testData.tags.tag245, `$a ${testData.fieldContents.tag245Content}`);
-    // QuickMarcEditor.updateExistingField(testData.tags.tagLDR, testData.fieldContents.tagLDRContent);
-    // MarcAuthority.addNewField(4, testData.tags.tag100, `$a ${testData.fieldContents.tag100Content}`);
-    // MarcAuthority.addNewField(5, testData.tags.tag600, `$a ${testData.fieldContents.tag600Content}`);
-    // MarcAuthority.addNewField(6, testData.tags.tag700, `$a ${testData.fieldContents.tag700Content}`);
-    // MarcAuthority.addNewField(7, testData.tags.tag800, `$a ${testData.fieldContents.tag800Content}`);
-    // MarcAuthority.addNewField(8, testData.tags.tag240, `$a ${testData.fieldContents.tag240Content}`);
-    // QuickMarcEditor.pressSaveAndClose();
-    // QuickMarcEditor.checkAfterSaveAndClose();
-
-    // InventoryInstance.getId().then(id => { importedInstanceID.push(id) });
-    // InventoryInstance.checkInstanceTitle(testData.fieldContents.tag245Content);
-    // InventoryInstance.checkDetailViewOfInstance(testData.accordions.contributor, testData.fieldContents.tag100Content);
-    // InventoryInstance.checkDetailViewOfInstance(testData.accordions.contributor, testData.fieldContents.tag700Content);
-    // InventoryInstance.checkDetailViewOfInstance(testData.accordions.subject, testData.fieldContents.tag600Content);
-    // InventoryInstance.checkDetailViewOfInstance(testData.accordions.titleData, testData.fieldContents.tag800Content);
-    // InventoryInstance.checkDetailViewOfInstance(testData.accordions.titleData, testData.fieldContents.tag240Content);
-    
-    // InventoryInstance.editMarcBibliographicRecord();
-    // QuickMarcEditor.check008FieldContent();
-    // QuickMarcEditor.checkFieldContentMatch('textarea[name="records[1].content"]', /in\d{11}/gm);
-    // QuickMarcEditor.checkFieldContentMatch('textarea[name="records[3].content"]', /\d{14}\.\d{1}/gm);
-    // QuickMarcEditor.verifyTagField(10, '999', 'f', 'f', '$s', '$i');
+    QuickMarcEditor.fillLinkedFieldBox(10, 5, testData.tag240FifthBoxValue);
+    QuickMarcEditor.fillLinkedFieldBox(16, 5, testData.tag650FifthBoxValue);
+    QuickMarcEditor.fillLinkedFieldBox(17, 7, testData.tag650SeventhBoxValue);
+    QuickMarcEditor.pressSaveAndClose();
+    QuickMarcEditor.verifyCalloutControlledFields(['240', '650']);
   });
 });
