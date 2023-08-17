@@ -14,7 +14,7 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 
 describe('ui-data-import', () => {
   let user = null;
-  const authentication = '100473910/PAOLF';
+  const authentication = '100481406/PAOLF';
   const oclcForImport = '19257462';
 
   const initialFields = {

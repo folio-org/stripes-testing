@@ -20,7 +20,7 @@ describe('ui-data-import', () => {
   let user = null;
   let instanceHrid = null;
   const protectedField = '856';
-  const authentication = '100473910/PAOLF';
+  const authentication = '100481406/PAOLF';
   const oclcForChanging = '466478385';
   const imported856Field = 'Notice et cote du catalogue de la Bibliothèque nationale de France ‡u http://catalogue.bnf.fr/ark:/12148/cb371881758';
 

@@ -15,7 +15,7 @@ import Users from '../../../../support/fragments/users/users';
 
 describe('ui-data-import', () => {
   let user = {};
-  const authentication = '100473910/PAOLF';
+  const authentication = '100481406/PAOLF';
   const fileName = `C356824autotestFile.${getRandomPostfix()}.mrc`;
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const oclcForImport = '912958093';
