@@ -72,9 +72,6 @@ const searchInstanceByHRID = (id) => {
     TextField({ id: 'input-inventory-search' }).fillIn(id),
     searchButton.click(),
   ]);
-  cy.wait(1000);
-  cy.do(searchButton.click());
-  InventoryInstances.waitLoading();
 };
 
 const searchHoldingsByHRID = (hrid) => {

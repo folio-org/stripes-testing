@@ -31,6 +31,7 @@ import FileManager from '../../../support/utils/fileManager';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -392,6 +393,7 @@ describe('data-import', () => {
         // update the first record
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrids[0]);
+        InstanceRecordView.verifyInstancePaneExists();
         InventorySearchAndFilter.saveUUIDs();
         ExportFile.downloadCSVFile(csvFileNameForFirstRecord, 'SearchInstanceUUIDs*');
 
@@ -431,6 +433,7 @@ describe('data-import', () => {
         // update the second record
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrids[1]);
+        InstanceRecordView.verifyInstancePaneExists();
         InventorySearchAndFilter.saveUUIDs();
         ExportFile.downloadCSVFile(csvFileNameForSecondRecord, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
