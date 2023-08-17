@@ -210,6 +210,7 @@ const checkInstanceNotes = (noteType, noteContent) => {
 };
 
 const waitInstanceRecordViewOpened = (title) => {
+  cy.wait(1500);
   cy.expect(instanceDetailsPane.exists());
   cy.expect(Pane({ titleLabel: including(title) }).exists());
 };

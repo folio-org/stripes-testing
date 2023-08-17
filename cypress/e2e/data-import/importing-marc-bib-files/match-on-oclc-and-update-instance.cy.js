@@ -166,6 +166,7 @@ describe('data-import', () => {
 
           cy.visit(TopMenu.inventoryPath);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+          InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyCatalogedDate(itemsForCreateInstance.catalogedDateUi);
           InstanceRecordView.verifyInstanceStatusTerm(itemsForCreateInstance.statusTerm);
           InstanceRecordView.verifyStatisticalCode(itemsForCreateInstance.statisticalCodeUI);
@@ -216,6 +217,7 @@ describe('data-import', () => {
 
           cy.visit(TopMenu.inventoryPath);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+          InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndSuppressed();
           InstanceRecordView.verifyInstanceStatusTerm(itemsForUpdateInstance.statusTerm);
           InstanceRecordView.verifyStatisticalCode(itemsForUpdateInstance.statisticalCodeUI);
