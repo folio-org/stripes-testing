@@ -47,10 +47,6 @@ describe('data-import', () => {
       createdRecordIDs.forEach(recordID => {
         InventoryInstance.deleteInstanceViaApi(recordID);
       });
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-      DataImport.selectLog();
-      DataImport.openDeleteImportLogsModal();
-      DataImport.confirmDeleteImportLogs();
     });
 
     it('C387435 Import and edit/derive "MARC Bib" record having only required fields (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {

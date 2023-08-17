@@ -80,11 +80,6 @@ describe('plug-in MARC authority | Search', () => {
     for (let i = 1; i < 65; i++) {
       MarcAuthority.deleteViaAPI(createdAuthorityIDs[i]);
     }
-
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    DataImport.selectLog();
-    DataImport.openDeleteImportLogsModal();
-    DataImport.confirmDeleteImportLogs();
   });
 
   it('C380571 MARC Authority plug-in | Search using "Subject" option (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {

@@ -80,11 +80,6 @@ describe('plug-in MARC authority | Search', () => {
     createdAuthorityIDs.forEach((id, index) => {
       if (index) MarcAuthority.deleteViaAPI(id);
     });
-
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    DataImport.selectLog();
-    DataImport.openDeleteImportLogsModal();
-    DataImport.confirmDeleteImportLogs();
   });
 
   it('C359233 MARC Authority plug-in | Search using "Children\'s subject heading" option (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {

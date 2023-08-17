@@ -31,11 +31,6 @@ describe('MARC Authority management', () => {
     Users.deleteViaApi(userData.id);
 
     InventoryInstance.deleteInstanceViaApi(instanceID);
-
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    DataImport.selectLog();
-    DataImport.openDeleteImportLogsModal();
-    DataImport.confirmDeleteImportLogs();
   });
 
   it('C350967 quickMARC: View MARC bibliographic record (spitfire)', { tags: [TestTypes.smoke, Features.authority, DevTeams.spitfire] }, () => {

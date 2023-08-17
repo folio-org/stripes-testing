@@ -37,13 +37,6 @@ describe('MARC Authority Delete', () => {
     cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
   });
 
-  afterEach('Deleting data', () => {
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    DataImport.selectLog();
-    DataImport.openDeleteImportLogsModal();
-    DataImport.confirmDeleteImportLogs();
-  });
-
   after('Deleting created user', () => {
     Users.deleteViaApi(testData.userProperties.userId);
   });
