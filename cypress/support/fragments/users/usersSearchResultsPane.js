@@ -29,4 +29,8 @@ export default {
   openFinancialTransactionDetailReportModal:() => {
     cy.do([actionsButtonInSearchResultsPane.click(), actionsButtons['financialTransactionsReport'].click()]);
   },
+
+  clickActionsButton:() => {
+    cy.do([actionsButtonInSearchResultsPane.click()]);
+  }
 };
