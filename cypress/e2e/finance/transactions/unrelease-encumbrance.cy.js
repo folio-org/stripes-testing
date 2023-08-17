@@ -76,7 +76,7 @@ describe('ui-finance: Transactions', () => {
       orderNumber = firstOrderResponse.poNumber;
       Orders.checkCreatedOrder(defaultOrder);
       OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
       OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(defaultFund, '100', '1', '100', location.institutionId);
       OrderLines.backToEditingOrder();
       Orders.openOrder();
