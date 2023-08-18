@@ -181,6 +181,7 @@ export default {
   },
 
   addIntegration: () => {
+    cy.wait(4000);
     cy.do([
       openintegrationDetailsSectionButton.click(),
       Button({ id: 'clickable-neworganization-integration' }).click(),
@@ -205,6 +206,7 @@ export default {
     acquisitionMethod,
     UTCTime
   ) => {
+    cy.wait(4000);
     cy.do([
       Section({ id: 'integrationInfo' })
         .find(TextField('Integration name*'))
@@ -327,6 +329,7 @@ export default {
   },
 
   searchByParameters: (parameter, value) => {
+    cy.wait(4000);
     cy.do([
       searchInput.selectIndex(parameter),
       searchInput.fillIn(value),
@@ -340,6 +343,7 @@ export default {
   },
 
   checkSearchResults: (organization) => {
+    cy.wait(4000);
     cy.expect(organizationsList.find(Link(organization.name)).exists());
   },
 
@@ -655,6 +659,7 @@ export default {
   },
 
   selectOrganization: (organizationName) => {
+    cy.wait(4000);
     cy.do(
       Pane({ id: 'organizations-results-pane' })
         .find(Link(organizationName))
