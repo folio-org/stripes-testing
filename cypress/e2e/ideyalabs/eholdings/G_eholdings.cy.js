@@ -21,6 +21,8 @@ describe.skip('Create a custom package', () => {
   after('Deleting created Package', () => {
     eHolding.deletePackage();
   });
+  // test below is implemented in scope of FAT-1303 in:
+  // cypress/e2e/eholdings/eholdings-packages-search.cy.js
   it(
     'C683 Search packages for [JSTOR]. Filter results to only show selected packages (spitfire)',
     { tags: [testTypes.ideaLabsTests] },

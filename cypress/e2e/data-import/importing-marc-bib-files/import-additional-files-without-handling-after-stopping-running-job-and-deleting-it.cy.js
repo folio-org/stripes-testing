@@ -58,7 +58,7 @@ describe('data-import', () => {
         DataImport.openDeleteImportLogsModal();
         DataImport.confirmDeleteImportLogs();
         InteractorsTools.checkCalloutMessage(`${numberOfLogsToDelete} data import logs have been successfully deleted.`);
-
+        cy.reload();
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('oneMarcBib.mrc', smallFileName);
