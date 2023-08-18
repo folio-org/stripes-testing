@@ -133,13 +133,6 @@ describe('MARC -> MARC Authority', () => {
         InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[i])
     }
     MarcAuthority.deleteViaAPI(createdAuthorityIDs[2]);
-
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    for (let i = 0; i < 2; i++) {
-      DataImport.selectLog();
-      DataImport.openDeleteImportLogsModal();
-      DataImport.confirmDeleteImportLogs();
-    }
   });
 
   it('C369084 Delete authorized "MARC Authority" record that has two linked field in different "MARC Bib" records (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {

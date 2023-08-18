@@ -77,13 +77,6 @@ describe('plug-in MARC authority | Browse', () => {
     createdAuthorityIDs.forEach((id, index) => {
       if (index) MarcAuthority.deleteViaAPI(id);
     });
-
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    for (let i = 0; i < 2; i++) {
-      DataImport.selectLog();
-      DataImport.openDeleteImportLogsModal();
-      DataImport.confirmDeleteImportLogs();        
-    }
   });
 
   it('C380556 MARC Authority plug-in | Browse using "Subject" option returns only records with the same "Type of heading" (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {

@@ -91,11 +91,6 @@ describe('MARC Authority -> Edit Authority record', () => {
   });
 
   after('', () => {
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    DataImport.selectLog();
-    DataImport.openDeleteImportLogsModal();
-    DataImport.confirmDeleteImportLogs();
-
     createdAuthorityID.forEach(id => { MarcAuthority.deleteViaAPI(id); });
     Users.deleteViaApi(testData.userProperties.userId);
     marcFieldProtectionRules.forEach(ruleID => {

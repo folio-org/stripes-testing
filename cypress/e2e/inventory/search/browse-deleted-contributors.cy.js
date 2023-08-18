@@ -54,11 +54,6 @@ describe('Inventory -> Contributors Browse', () => {
   after('Deleting created user and record', () => {
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(importedInstanceID[0]);
-    
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    DataImport.selectLog();
-    DataImport.openDeleteImportLogsModal();
-    DataImport.confirmDeleteImportLogs();
   });
 
   it('C357021 Verify that deleted Contributor from "MARC Bibliographic" record not displayed at browse result list (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {

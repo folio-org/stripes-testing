@@ -53,10 +53,6 @@ describe('Create holding records with MARC source', () => {
     Users.deleteViaApi(user.userId);
     cy.deleteHoldingRecordViaApi(recordIDs[1]);
     InventoryInstance.deleteInstanceViaApi(recordIDs[0]);
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    DataImport.selectLog();
-    DataImport.openDeleteImportLogsModal();
-    DataImport.confirmDeleteImportLogs();
   });
 
   it('C387450 "008" field existence validation when create new "MARC Holdings" (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire], retries: 1 }, () => {

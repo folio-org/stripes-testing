@@ -445,7 +445,10 @@ export default {
   },
 
   waitLoading() {
-    cy.expect(Pane({ id: 'quick-marc-editor-pane' }).exists());
+    cy.expect([
+      Pane({ id: 'quick-marc-editor-pane' }).exists(),
+      QuickMarcEditorRow({ tagValue: '999' }).exists()
+    ]);
   },
 
   getExistingLocation() {

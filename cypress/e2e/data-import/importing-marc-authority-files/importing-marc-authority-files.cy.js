@@ -47,13 +47,6 @@ describe('data-import', () => {
       cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     });
 
-    afterEach('Deleting data', () => {
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-      DataImport.selectLog();
-      DataImport.openDeleteImportLogsModal();
-      DataImport.confirmDeleteImportLogs();
-    });
-
     after('Deleting data', () => {
       createdAuthorityIDs.forEach(id => {
         MarcAuthority.deleteViaAPI(id);

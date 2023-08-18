@@ -94,11 +94,6 @@ describe('MARC Authority Sort', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    DataImport.selectLog();
-    DataImport.openDeleteImportLogsModal();
-    DataImport.confirmDeleteImportLogs();
-
     createdAuthorityIDs.forEach(id => { MarcAuthority.deleteViaAPI(id); });
     Users.deleteViaApi(testData.userProperties.userId);
   });

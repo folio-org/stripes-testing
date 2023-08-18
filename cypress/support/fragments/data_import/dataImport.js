@@ -398,5 +398,23 @@ export default {
   waitFileIsUploaded:() => {
     // TODO need to wait until big file is uploaded
     cy.wait(10000);
+  },
+
+  uploadFileAndRetry(filePathName, fileName, maxRetries = 10) {
+    let retryCount = 0;
+    function upload() {
+      waitLoading();
+      cy.then(() => DataImportUploadFile().isDeleteFilesButtonExists()).then(isDeleteFilesButtonExists => {
+        if (isDeleteFilesButtonExists && retryCount < maxRetries) {
+          cy.reload();
+          cy.wait(4000);
+          retryCount++;
+          upload();
+        } else {
+          uploadFile(filePathName, fileName);
+        }
+      });
+    }
+    upload();
   }
 };
