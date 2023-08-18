@@ -293,13 +293,13 @@ export default {
       // cy.do(Select({ name: 'header[2].timezone' }).choose('America/New_York'));
 
       cy.do(Select({ name: 'header[3].type' }).choose('Whitespace'));
-      cy.do(TextField({ name: 'header[1].repeat' }).fillIn('1'));
+      cy.do(TextField({ name: 'header[3].repeat' }).fillIn('1'));
 
       cy.do(Select({ name: 'header[4].type' }).choose('Text'));
       cy.do(TextField({ name: 'header[4].text' }).fillIn('DU LIBRARY'));
 
       cy.do(Select({ name: 'header[5].type' }).choose('Whitespace'));
-      cy.do(TextField({ name: 'header[1].repeat' }).fillIn('1'));
+      cy.do(TextField({ name: 'header[5].repeat' }).fillIn('1'));
 
 
       cy.do(Select({ name: 'header[6].type' }).choose('Current date'));
@@ -318,6 +318,45 @@ export default {
       cy.do(Select({ name: 'header[10].type' }).choose('Newline (LF)'));
     });
   },
+
+  verifyAddDukeHeaderFormat() {
+    cy.get('section[id="accordion_10"]').within(() => {
+      cy.expect(Select({ name: 'header[0].type', value: 'Constant' }).exists());
+      cy.expect(TextField({ name: 'header[0].text', value: 'Batch' }).exists());
+
+      cy.expect(Select({ name: 'header[1].type', value: 'Space' }).exists());
+      cy.expect(TextField({ name: 'header[1].repeat', value: '1' }).exists());
+
+      cy.expect(Select({ name: 'header[2].type', value: 'CurrentDate' }).exists());
+      cy.expect(Select({ name: 'header[2].format', value: 'YYYYMMDD' }).exists());
+      // cy.expect(Select({ name: 'header[2].timezone', value: 'America/New_York' }).exists());
+
+      cy.expect(Select({ name: 'header[3].type', value: 'Space' }).exists());
+      cy.expect(TextField({ name: 'header[3].repeat', value: '1' }).exists());
+
+      cy.expect(Select({ name: 'header[4].type', value: 'Constant' }).exists());
+      cy.expect(TextField({ name: 'header[4].text', value: 'DU LIBRARY' }).exists());
+
+      cy.expect(Select({ name: 'header[5].type', value: 'Space' }).exists());
+      cy.expect(TextField({ name: 'header[5].repeat', value: '1' }).exists());
+
+      cy.expect(Select({ name: 'header[6].type', value: 'CurrentDate' }).exists());
+      cy.expect(Select({ name: 'header[6].format', value: 'QUARTER' }).exists());
+      // cy.expect(Select({ name: 'header[6].timezone', value: 'America/New_York' }).exists());
+
+      cy.expect(Select({ name: 'header[7].type', value: 'AggregateTotal' }).exists());
+      cy.get('input[name="header[7].decimal"]').should('be.checked');
+
+      cy.expect(Select({ name: 'header[8].type', value: 'Constant' }).exists());
+      cy.expect(TextField({ name: 'header[8].text', value: 'TXT_CNT' }).exists());
+
+      cy.expect(Select({ name: 'header[9].type', value: 'Constant' }).exists());
+      cy.expect(TextField({ name: 'header[9].text', value: 'DU LIBRARIES DEBITS' }).exists());
+
+      cy.expect(Select({ name: 'header[10].type', value: 'Newline' }).exists());
+    });
+  },
+
 
   addDukeDataFormat() {
     cy.get('section[id="accordion_11"]').within(() => {
@@ -368,7 +407,45 @@ export default {
     cy.do(Select({ name: 'data[13].type' }).choose('Newline (LF)'));
   },
 
-  verifyAddDukeHeaderFormat() {},
+  verifyAddDukeDataFormat() {
+    cy.get('section[id="accordion_11"]').within(() => {
+      cy.expect(Select({ name: 'data[0].type', value: 'UserData' }).exists());
+      cy.expect(Select({ name: 'data[0].userAttribute', value: 'EXTERNAL_SYSTEM_ID' }).exists());
 
-  verifyAddDukeDataFormat() {},
+      cy.expect(Select({ name: 'data[1].type', value: 'Tab' }).exists());
+
+      cy.expect(Select({ name: 'data[2].type', value: 'UserData' }).exists());
+      cy.expect(Select({ name: 'data[2].userAttribute', value: 'USERNAME' }).exists());
+
+      cy.expect(Select({ name: 'data[3].type', value: 'Tab' }).exists());
+
+      cy.expect(Select({ name: 'data[4].type', value: 'FeeDate' }).exists());
+      cy.expect(Select({ name: 'data[4].dateProperty', value: 'DUE' }).exists());
+      cy.expect(Select({ name: 'data[4].format', value: 'YYYYMMDD' }).exists());
+      // cy.expect(Select({ name: 'data[4].timezone', value: 'America/New_York' }).exists());
+
+      cy.expect(Select({ name: 'data[5].type', value: 'Tab' }).exists());
+
+      cy.expect(Select({ name: 'data[6].type', value: 'CurrentDate' }).exists());
+      cy.expect(Select({ name: 'data[6].format', value: 'QUARTER' }).exists());
+      // cy.expect(Select({ name: 'data[6].timezone', value: 'America/New_York' }).exists());
+
+      cy.expect(Select({ name: 'data[7].type', value: 'Tab' }).exists());
+
+      cy.expect(Select({ name: 'data[8].type', value: 'FeeFineMetadata' }).exists());
+      cy.expect(Select({ name: 'data[8].feeFineAttribute', value: 'FEE_FINE_TYPE_NAME' }).exists());
+
+      cy.expect(Select({ name: 'data[9].type', value: 'Tab' }).exists());
+
+      cy.expect(Select({ name: 'data[10].type', value: 'FeeAmount' }).exists());
+      cy.get('input[name="data[10].decimal"]').should('be.checked');
+
+      cy.expect(Select({ name: 'data[11].type', value: 'Tab' }).exists());
+
+      cy.expect(Select({ name: 'data[12].type', value: 'FeeFineMetadata' }).exists());
+      cy.expect(Select({ name: 'data[12].feeFineAttribute', value: 'FEE_FINE_TYPE_ID' }).exists());
+
+      cy.expect(Select({ name: 'data[13].type', value: 'Newline' }).exists());
+    });
+  },
 };
