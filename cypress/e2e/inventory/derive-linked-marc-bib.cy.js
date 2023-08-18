@@ -130,6 +130,6 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
     QuickMarcEditor.fillLinkedFieldBox(16, 5, testData.tag650FifthBoxValue);
     QuickMarcEditor.fillLinkedFieldBox(17, 7, testData.tag650SeventhBoxValue);
     QuickMarcEditor.pressSaveAndClose();
-    QuickMarcEditor.verifyCalloutControlledFields(['240', '650']);
+    QuickMarcEditor.verifyCalloutControlledFields([testData.tag240, testData.tag650]);
   });
 });
