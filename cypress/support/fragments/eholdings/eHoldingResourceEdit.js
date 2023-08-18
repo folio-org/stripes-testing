@@ -1,4 +1,4 @@
-import { TextField, Button, RadioButton } from '../../../../interactors';
+import { TextField, Button, RadioButton, including, Accordion } from '../../../../interactors';
 
 const addNewRange = () => {
   cy.do(Button('Add date range').click());
@@ -8,6 +8,9 @@ const saveAndClose = () => {
 };
 
 const customCoveredDatesRadioButton = RadioButton('Custom coverage dates (enter multiple date ranges in descending order)');
+
+const customLabelsAccordion = Accordion('Custom labels');
+const customLabelInput = (label) => customLabelsAccordion.find(TextField({ label }));
 
 export default {
   // TODO: redesign to interactors after clarification of differences between edit and view pages
@@ -31,5 +34,8 @@ export default {
   removeExistingCustomeCoverageDates:() => {
     cy.do(RadioButton('Managed coverage dates').click());
     saveAndClose();
+  },
+  fillCustomLabelValue(labelName, value) {
+    cy.do(customLabelInput(labelName).fillIn(value));
   }
 };
