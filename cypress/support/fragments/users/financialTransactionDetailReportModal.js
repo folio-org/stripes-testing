@@ -30,6 +30,30 @@ export default {
     cy.do(financialReport.find(Button(including('Save'))).has({ disabled: false }));
   },
 
+  verifySaveButtonIsDisabled() {
+    cy.do(financialReport.find(Button(including('Save'))).has({ disabled: true }));
+  },
+
+  verifyCancelButtonIsEnabled() {
+    cy.do(financialReport.find(Button(including('Cancel'))).has({ disabled: false }));
+  },
+
+  verifyStartDateFieldIsEmpty() {
+    cy.do(financialReport.find(startDateTextfield).has({ value: '' }));
+  },
+
+  verifyEndDateFieldIsEmpty() {
+    cy.do(financialReport.find(endDateTextfield).has({ value: '' }));
+  },
+
+  verifyFeeFineOwnerSelect() {
+    cy.expect(financialReport.find(feeFineOwnerSelect).exists());
+  },
+
+  verifyAssociatedServicePointsMultiSelect() {
+    cy.expect(financialReport.find(MultiSelect({ label: 'Associated service points' })).exists());
+  },
+
   save() {
     cy.do(financialReport.find(Button(including('Save'))).click());
   },
@@ -41,4 +65,8 @@ export default {
   fillInServicePoints(servicePoints) {
     cy.do([financialReport.find(MultiSelect({ label: 'Associated service points' })).choose(servicePoints)]);
   },
+
+  verifyFinancialReportModalIsShown() {
+    cy.expect(financialReport.exists());
+  }
 };
