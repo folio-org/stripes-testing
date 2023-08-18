@@ -55,6 +55,7 @@ const resetButton = Button('Reset all');
 
 export default {
   searchByParameter(parameter, value) {
+    cy.wait(4000);
     cy.do([
       searchForm.selectIndex(parameter),
       searchForm.fillIn(value)
@@ -398,10 +399,12 @@ export default {
   },
 
   selectFromResultsList(number) {
+    cy.wait(4000);
     cy.do(MultiColumnList({ id: 'orders-list' }).find(Link(number)).click());
   },
 
   deleteOrderViaActions: () => {
+    cy.wait(4000);
     cy.do([
       PaneHeader({ id: 'paneHeaderorder-details' }).find(actionsButton).click(),
       Button('Delete').click(),
@@ -557,6 +560,7 @@ export default {
     cy.do(Button('Orders').click());
   },
   createPOLineViaActions: () => {
+    cy.wait(4000);
     cy.do([
       Accordion({ id: 'POListing' })
         .find(Button('Actions'))

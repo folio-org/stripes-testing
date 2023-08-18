@@ -67,10 +67,6 @@ describe('MARC -> MARC Holdings', () => {
     Users.deleteViaApi(testData.createdUserProperties.userId);
     cy.deleteHoldingRecordViaApi(recordIDs[1]);
     InventoryInstance.deleteInstanceViaApi(recordIDs[0]);
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    DataImport.selectLog();
-    DataImport.openDeleteImportLogsModal();
-    DataImport.confirmDeleteImportLogs();
   });
 
   it('C387461 Add multiple 001s when editing "MARC Holdings" record', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {

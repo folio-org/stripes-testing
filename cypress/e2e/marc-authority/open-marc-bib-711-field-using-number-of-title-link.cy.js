@@ -90,13 +90,6 @@ describe('MARC -> MARC Authority', () => {
     createdAuthorityIDs.forEach((id, index) => {
       if (index) MarcAuthority.deleteViaAPI(id);
     });
-
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    for (let i = 0; i < 2; i++) {
-      DataImport.selectLog();
-      DataImport.openDeleteImportLogsModal();
-      DataImport.confirmDeleteImportLogs();
-    }
   });
 
   it('C375265 "Number of titles" link in "MARC authority" app opens linked "MARC bib" record with controlled "711" field (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {

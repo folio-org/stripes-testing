@@ -152,12 +152,6 @@ describe('Data Import - Update MARC Authority files', () => {
     createdAuthorityIDs.forEach((id, index) => {
       if (index) MarcAuthority.deleteViaAPI(id);
     });
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    for (let i = 0; i < 2; i++) {
-      DataImport.selectLog();
-      DataImport.openDeleteImportLogsModal();
-      DataImport.confirmDeleteImportLogs();
-    }
 
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
     FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);

@@ -207,6 +207,7 @@ export default {
   },
 
   backToEditingOrder: () => {
+    cy.wait(4000);
     cy.do(Button({ id: 'clickable-backToPO' }).click());
     cy.wait(4000);
   },
@@ -601,6 +602,7 @@ export default {
   },
 
   fillInPOLineInfoForExportWithLocation(accountNumber, AUMethod, institutionId) {
+    cy.wait(4000);
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE),
       acquisitionMethodButton.click(),
@@ -857,6 +859,7 @@ export default {
   },
 
   selectRandomInstanceInTitleLookUP: (instanceName, rowNumber = 0) => {
+    cy.wait(4000);
     cy.do([
       Button({ id: 'find-instance-trigger' }).click(),
       selectInstanceModal.find(TextField({ name: 'query' })).fillIn(instanceName),
