@@ -234,6 +234,46 @@ export default {
     cy.do(nextButton.click());
   },
 
+  verifyMultipleHoldingsStatus:(arrayOfHoldingsStatuses) => {
+    cy.wait(1000);
+    cy.get('#search-results-list')
+      .find(('[class*="mclCell-"]:nth-child(5)'))
+      .then(elements => {
+        const string = [...elements].map(el => el.innerText);
+        const regex = /Created \([A-Z/]+\)/g;
+
+        const extractedMatches = string.map(content => {
+          const matches = content.match(regex);
+          return matches || []; // Return an empty array if no matches found
+        });
+
+        expect(arrayOfHoldingsStatuses).to.deep.eq(...extractedMatches);
+      });
+  },
+
+  verifyMultipleItemsStatus:(itemsQuantity) => {
+    cy.get('#search-results-list')
+      .find(('[class*="mclCell-"]:nth-child(6)'))
+      .then(elements => {
+        const string = [...elements].map(el => el.innerText);
+        const regexForStatusesAndHrids = /Created \((it\d+)\)/g;
+        const regexForStatuses = /Created/;
+
+        const extractedMatches = [];
+
+        string.forEach(content => {
+          const matches = content.match(regexForStatusesAndHrids);
+          if (matches) {
+            extractedMatches.push(...matches);
+          }
+        });
+        // verify all elements have status 'Created'
+        string.every(element => regexForStatuses.test(element));
+        // verify number of created items
+        expect(itemsQuantity).eq(extractedMatches.length);
+      });
+  },
+
   checkStatusByTitle:(title, itemStatus) => {
     cy.do(resultsList.find(MultiColumnListCell({ content: title })).perform(
       element => {

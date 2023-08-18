@@ -156,13 +156,24 @@ export default {
     cy.expect(Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) }).find(Badge()).has({ value: itemsCount.toString() }));
   },
 
+  // need to be updated regarding to verifyQuantityOfItemsRelatedtoHoldings function
   verifyQuantityOfItemsOnPage(quantityOfItems, itemLoanType) {
     for (let i = 0; i < 200; i++) {
-      cy.expect(MultiColumnList({ ariaRowCount: `${quantityOfItems} + 1` })
-      .find(MultiColumnListRow({rowIndexInParent: `row-${i}`}))
+      cy.expect(MultiColumnList({ ariaRowCount: `${quantityOfItems}` })
+        .find(MultiColumnListRow({ rowIndexInParent: `row-${i}` }))
         .find(MultiColumnListCell({ columnIndex: 3, content: itemLoanType }))
         .exists());
     }
+  },
+
+  verifyQuantityOfItemsRelatedtoHoldings(holdingToBeOpened, quantityOfItems) {
+    cy.do(
+      Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) })
+        .perform(el => {
+          const items = el.querySelectorAll('div[class^="mclRow-"]').length;
+          expect(quantityOfItems).to.eq(items);
+        })
+    );
   },
 
   clickNextPaginationButton() {
