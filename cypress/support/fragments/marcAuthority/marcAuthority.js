@@ -7,8 +7,7 @@ import {
   QuickMarcEditorRow,
   TextArea,
   MultiColumnListHeader,
-  Callout,
-  QuickMarcEditor
+  Callout
 } from '../../../../interactors';
 import QuickMarcEditorWindow from '../quickMarcEditor';
 
