@@ -234,21 +234,24 @@ export default {
     cy.do(nextButton.click());
   },
 
-  verifyMultipleHoldingsStatus:(arrayOfHoldingsStatuses) => {
-    cy.wait(1000);
-    cy.get('#search-results-list')
-      .find(('[class*="mclCell-"]:nth-child(5)'))
-      .then(elements => {
-        const string = [...elements].map(el => el.innerText);
-        const regex = /Created \([A-Z/]+\)/g;
-
-        const extractedMatches = string.map(content => {
-          const matches = content.match(regex);
-          return matches || []; // Return an empty array if no matches found
+  verifyMultipleHoldingsStatus:(arrayOfHoldingsStatuses, rowIndex = 0) => {
+    cy.do(resultsList
+      .find(MultiColumnListRow({ index: rowIndex }))
+      .find(MultiColumnListCell({ columnIndex: 4 }))
+      .perform(el => {
+        const items = el.querySelectorAll('div[class^="baselineCell-"]');
+        const statuses = [];
+        items.forEach(elem => {
+          statuses.push(elem.innerText);
         });
-
+        const allStatuses = Array.prototype.slice.call(statuses);
+        const extractedMatches = allStatuses.map(content => {
+          const regex = /Created \([A-Z/]+\)/g;
+          const matches = content.match(regex);
+          return matches;
+        });
         expect(arrayOfHoldingsStatuses).to.deep.eq(...extractedMatches);
-      });
+      }));
   },
 
   verifyMultipleItemsStatus:(itemsQuantity) => {
