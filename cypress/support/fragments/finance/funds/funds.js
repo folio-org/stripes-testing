@@ -305,6 +305,12 @@ export default {
     );
   },
 
+  checkStatusInTransactionDetails: (status) => {
+    cy.expect(
+      transactionDetailSection.find(KeyValue('Status')).has({ value: status })
+    );
+  },
+
   checkOrderInTransactionList: (fundCode, amount) => {
     cy.expect([
       transactionList
@@ -324,6 +330,14 @@ export default {
         .find(MultiColumnListCell({ columnIndex: 5 }))
         .has({ content: 'PO line' }),
     ]);
+  },
+
+  selectTransactionInList: (transactionType) => {
+    cy.get(`div[class*=mclCell-]:contains("${transactionType}")`)
+      .siblings('div[class*=mclCell-]')
+      .eq(0)
+      .find('a')
+      .click();
   },
 
   increaseAllocation: () => {
