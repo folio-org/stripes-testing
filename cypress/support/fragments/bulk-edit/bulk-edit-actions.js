@@ -9,7 +9,9 @@ import {
   MultiColumnListHeader,
   MultiColumnListCell,
   TextField,
-  RepeatableFieldItem, Select,
+  RepeatableFieldItem, 
+  Select, 
+  TextArea,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import BulkEditSearchPane from './bulk-edit-search-pane';
@@ -244,6 +246,55 @@ export default {
     cy.expect(Checkbox('Apply to items records').has({ checked: value }));
   },
 
+  verifyItemAdminstrativeNoteActions(rowIndex = 0) {
+    const options = [
+      'Add note',
+      'Remove all',
+      'Find',
+      'Change note type'
+    ];
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Administrative note'));
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).click());
+    this.verifyPossibleActions(options);
+  },
+
+  addItemNote(type, value, rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Add note'),
+      RepeatableFieldItem({ index: rowIndex }).find(TextArea()).fillIn(value)
+    ]);
+  },
+
+  verifyItemCheckInNoteActions(rowIndex = 0) {
+    const options = [
+      'Mark as staff only',
+      'Remove mark as staff only',
+      'Add note',
+      'Remove all',
+      'Find',
+      'Change note type',
+      'Duplicate to'
+    ];
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Check in note'));
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).click());
+    this.verifyPossibleActions(options);
+  },
+
+  verifyItemNoteActions(rowIndex = 0) {
+    const options = [
+      'Mark as staff only',
+      'Remove mark as staff only',
+      'Add note',
+      'Remove all',
+      'Find',
+      'Change note type',
+    ];
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Note'));
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).click());
+    this.verifyPossibleActions(options);
+  },
+
   checkApplyToItemsRecordsCheckbox() {
     cy.do(Checkbox('Apply to items records').click());
   },
@@ -415,5 +466,29 @@ export default {
     actions.forEach(action => {
       cy.expect(HTML(action).exists());
     });
-  }
+  },
+
+  verifyItemOptions(rowIndex = 0) {
+    const options = [
+      'Administrative note',
+      'Check in note',
+      'Check out note',
+      'Action note',
+      'Binding',
+      'Copy note',
+      'Electronic bookplate',
+      'Note',
+      'Provenance',
+      'Reproduction',
+      'Item status',
+      'Permanent loan type',
+      'Temporary loan type',
+      'Permanent item location',
+      'Temporary item location',
+      'Suppress from discovery'];
+
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).click());
+    this.verifyPossibleActions(options);
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).click());
+  },
 };
