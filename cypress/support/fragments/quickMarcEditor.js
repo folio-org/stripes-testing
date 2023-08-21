@@ -130,6 +130,14 @@ const tag008DefaultValuesHoldings = [
   { interactor:TextField('Rept date'), defaultValue:'\\\\\\\\\\\\' }
 ];
 
+const tagBox = TextField({ name: including('.tag') });
+const firstIndicatorBox = TextField({ name: including('.indicators[0]') });
+const secondIndicatorBox = TextField({ name: including('.indicators[0]') });
+const fourthBoxInLinkedField = TextArea({ name: including('.subfieldGroups.controlled') });
+const fifthBoxInLinkedField = TextArea({ name: including('.subfieldGroups.uncontrolledAlpha') });
+const sixthBoxInLinkedField = TextArea({ name: including('.subfieldGroups.zeroSubfield') });
+const seventhBoxInLinkedField = TextArea({ name: including('.subfieldGroups.uncontrolledNumber') });
+
 export default {
 
   getInitialRowsCount() { return validRecord.lastRowNumber; },
@@ -793,5 +801,33 @@ export default {
     this.pressSaveAndClose();
     cy.expect(calloutAfterSaveAndClose.exists());
     checkBib();
-  }
+  },
+
+  fillLinkedFieldBox(rowIndex, boxNumber = 4, value) {
+    const boxes = [tagBox, firstIndicatorBox, secondIndicatorBox, fourthBoxInLinkedField, fifthBoxInLinkedField, sixthBoxInLinkedField, seventhBoxInLinkedField];
+    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(boxes[boxNumber - 1]).fillIn(value));
+    // if other action performed immediately after input, it might not be registered
+    cy.wait(1000);
+    cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(boxes[boxNumber - 1]).has({ value }));
+  },
+
+  verifyCalloutControlledFields(tags) {
+    let tagsText = `MARC ${tags[0]}`;
+    if (tags.length === 2) tagsText += ` and MARC ${tags[1]}`;
+    else if (tags.length > 2) {
+      for (let i = 1; i <= tags.length - 2; i++) {
+        tagsText += `, MARC ${tags[i]}`;
+      }
+      tagsText += `, and MARC ${tags[tags.length - 1]}`;
+    }
+    cy.expect(Callout(tagsText + ' has a subfield(s) that cannot be saved because the fields are controlled by authority records.').exists());
+  },
+
+  verifyAfterLinkingAuthorityByIndex(rowIndex, tag) {
+    cy.expect([
+      Callout(`Field ${tag} has been linked to a MARC authority record.`).exists(),
+      QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).exists(),
+      QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorutyIconButton).exists(),
+    ]);
+  },
 };
