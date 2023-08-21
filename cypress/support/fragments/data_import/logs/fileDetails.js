@@ -9,6 +9,7 @@ import {
   Button
 } from '../../../../../interactors';
 import LogsViewAll from './logsViewAll';
+import arrays from '../../../utils/arrays';
 
 const invoiceNumberFromEdifactFile = '94999';
 
@@ -232,6 +233,30 @@ export default {
 
   clickNextPaginationButton:() => {
     cy.do(nextButton.click());
+  },
+
+  verifyMultipleHoldingsStatus:(expectedArray, rowNumber = 0) => {
+    cy.do(resultsList
+      .find(MultiColumnListRow({ index: rowNumber }))
+      .perform(element => {
+        const currentArray = Array
+          .from(element.querySelectorAll('[class*="mclCell-"]:nth-child(5) [style]'))
+          .map(el => el.innerText.replace(/\n/g, ''));
+        const result = arrays.compareArrays(expectedArray, currentArray);
+        expect(result).to.equal(true);
+      }));
+  },
+
+  verifyMultipleItemStatus:(expectedArrayOfHoldingsStatuses, rowNumber = 0) => {
+    cy.do(resultsList
+      .find(MultiColumnListRow({ index: rowNumber }))
+      .perform(element => {
+        const currentArrayOfHoldingsStatuses = Array
+          .from(element.querySelectorAll('[class*="mclCell-"]:nth-child(6) [style]'))
+          .map(el => el.innerText.replace(/\n/g, ''));
+        const result = arrays.compareArrays(expectedArrayOfHoldingsStatuses, currentArrayOfHoldingsStatuses);
+        expect(result).to.equal(true);
+      }));
   },
 
   checkStatusByTitle:(title, itemStatus) => {
