@@ -1,4 +1,4 @@
-import { TextField, Button, RadioButton, including, Accordion } from '../../../../interactors';
+import { TextField, Button, RadioButton, Accordion } from '../../../../interactors';
 
 const addNewRange = () => {
   cy.do(Button('Add date range').click());
