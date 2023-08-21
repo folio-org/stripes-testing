@@ -17,7 +17,7 @@ let user;
 const firstNote = {
   bulkEdit: 'first\nnote',
   inventory: 'first note'
-}
+};
 const secondNote = 'secondNote~!@#$%^&*()~{.[]<}>øÆ§';
 const thirdNote = 'third note';
 
