@@ -9,8 +9,8 @@ import {
   MultiColumnListHeader,
   MultiColumnListCell,
   TextField,
-  RepeatableFieldItem, 
-  Select, 
+  RepeatableFieldItem,
+  Select,
   TextArea,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
@@ -253,8 +253,10 @@ export default {
       'Find',
       'Change note type'
     ];
-    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Administrative note'));
-    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).click());
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Administrative note'),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).click(),
+    ]);
     this.verifyPossibleActions(options);
   },
 
@@ -276,8 +278,10 @@ export default {
       'Change note type',
       'Duplicate to'
     ];
-    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Check in note'));
-    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).click());
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Check in note'),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).click(),
+    ]);
     this.verifyPossibleActions(options);
   },
 
@@ -290,8 +294,10 @@ export default {
       'Find',
       'Change note type',
     ];
-    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Note'));
-    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).click());
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Note'),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).click(),
+    ]);
     this.verifyPossibleActions(options);
   },
 
@@ -489,6 +495,5 @@ export default {
 
     cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).click());
     this.verifyPossibleActions(options);
-    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).click());
   },
 };
