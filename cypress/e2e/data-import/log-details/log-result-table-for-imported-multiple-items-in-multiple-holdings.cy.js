@@ -37,6 +37,7 @@ describe('data-import', () => {
         itemsQuqntity: 1 }
     ];
     const quantityOfCreatedItems = 6;
+    const quantityOfCreatedHoldings = 3;
     const filePathForUpload = 'marcBibFileForC388505.mrc';
     const marcFileName = `C388505 autotestFileName.${getRandomPostfix()}`;
     const collectionOfMappingAndActionProfiles = [
@@ -137,7 +138,7 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.instance].forEach(columnName => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
         });
-        FileDetails.verifyMultipleHoldingsStatus(arrayOfHoldingsStatuses);
+        FileDetails.verifyMultipleHoldingsStatus(arrayOfHoldingsStatuses, quantityOfCreatedHoldings);
         FileDetails.verifyMultipleItemsStatus(quantityOfCreatedItems);
 
         FileDetails.openInstanceInInventory('Created');

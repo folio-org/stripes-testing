@@ -235,7 +235,7 @@ export default {
     cy.do(nextButton.click());
   },
 
-  verifyMultipleHoldingsStatus:(expectedArray, rowNumber = 0) => {
+  verifyMultipleHoldingsStatus:(expectedArray, expectedHoldingsQuantity, rowNumber = 0) => {
     cy.do(resultsList
       .find(MultiColumnListRow({ index: rowNumber }))
       .perform(element => {
@@ -243,6 +243,8 @@ export default {
           .from(element.querySelectorAll('[class*="mclCell-"]:nth-child(5) [style]'))
           .map(el => el.innerText.replace(/\n/g, ''));
         const result = arrays.compareArrays(expectedArray, currentArray);
+
+        expect(expectedHoldingsQuantity).to.equal(currentArray.length);
         expect(result).to.equal(true);
       }));
   },
