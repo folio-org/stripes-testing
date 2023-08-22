@@ -37,7 +37,7 @@ export default {
     cy.do([
       TextField({ name: 'items[0].value' }).fillIn(AMName),
       acquisitionMethodPane.find(saveButton).click()
-  ]);
+    ]);
   },
 
   checkcreatedAM: (AMName) => {
