@@ -123,5 +123,9 @@ export default {
     cy.wait(1000);
     cy.do(browseOptionSelect.choose('Subjects'));
     cy.expect(browseOptionSelect.has({ value: 'browseSubjects' }));
+  },
+
+  checkValueAbsentInRow(rowIndex, value) {
+    cy.expect(MultiColumnListCell({ row: rowIndex, columnIndex: 0, content: including(value) }).absent());
   }
 };
