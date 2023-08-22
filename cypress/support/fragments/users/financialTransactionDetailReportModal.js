@@ -1,5 +1,5 @@
 import DateTools from '../../utils/dateTools';
-import { Button, Modal, TextField, Select, including, MultiSelect } from '../../../../interactors';
+import { Button, Modal, TextField, Select, including, MultiSelect, HTML } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 
 const financialReport = Modal({ id: 'financial-transactions-report-modal' });
@@ -19,6 +19,11 @@ export default {
       cy.expect(financialReport.find(feeFineOwnerSelect).exists());
       cy.do(financialReport.find(feeFineOwnerSelect).choose(ownerName));
     }
+  },
+
+  fillInStartDate(startDate) {
+    if (startDate) cy.do(financialReport.find(startDateTextfield).fillIn(startDate));
+    else cy.do(financialReport.find(startDateTextfield).fillIn(currentDayOfMonth));
   },
 
   fillInEndDate(endDate) {
@@ -68,5 +73,37 @@ export default {
 
   verifyFinancialReportModalIsShown() {
     cy.expect(financialReport.exists());
+  },
+
+  verifyFinancialReportModalIsNotShown() {
+    cy.expect(financialReport.absent());
+  },
+
+  closeFinancialReportModalByEscButton() {
+    cy.get('#financial-transactions-report-modal').type('{esc}');
+  },
+
+  closeFinancialReportModalByXButton() {
+    cy.do(financialReport.find(Button({ id: 'financial-transactions-report-modal-close-button' })).click());
+  },
+
+  closeFinancialReportModalByCancelButton() {
+    cy.do(financialReport.find(Button(including('Cancel'))).click());
+  },
+
+  clickEndDateField() {
+    cy.do(financialReport.find(endDateTextfield).click());
+  },
+
+  verifyStartDateIsRequiredErrorMessage() {
+    cy.expect(financialReport.find(HTML(including('"Start date" is required'))).exists());
+  },
+
+  verifyStartDateIsRequiredIfEndDateEnteredErrorMessage() {
+    cy.expect(financialReport.find(HTML(including('"Start date" is required if "End date" entered'))).exists());
+  },
+
+  verifyEndDateMustBeGreaterThanOrEqualToStartDateErrorMessage() {
+    cy.expect(financialReport.find(HTML(including('"End date" must be greater than or equal to "Start date"'))).exists());
   }
 };
