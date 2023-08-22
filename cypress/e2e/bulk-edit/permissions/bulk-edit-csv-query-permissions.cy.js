@@ -60,15 +60,15 @@ describe('bulk-edit', () => {
       });
       BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
       BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
-      BulkEditSearchPane.usersRadioIsDisabled(false);
-      BulkEditSearchPane.isUsersRadioChecked();
+      BulkEditSearchPane.isUsersRadioChecked(false);
       BulkEditSearchPane.isDragAndDropAreaDisabled(true);
 
       BulkEditSearchPane.openQuerySearch();
       BulkEditSearchPane.verifySpecificTabHighlighted('Query');
       BulkEditSearchPane.usersRadioIsDisabled(false);
       BulkEditSearchPane.isBuildQueryButtonDisabled(false);
-
+      
+      BulkEditSearchPane.isUsersRadioChecked(false);
       BulkEditSearchPane.clickBuildQueryButton();
       BulkEditSearchPane.verifyBuildQueryModal();
     });

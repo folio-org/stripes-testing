@@ -59,17 +59,16 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
       BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
       BulkEditSearchPane.itemsRadioIsDisabled(false);
-      BulkEditSearchPane.isItemsRadioChecked();
+      BulkEditSearchPane.isItemsRadioChecked(false);
       BulkEditSearchPane.holdingsRadioIsDisabled(false);
       BulkEditSearchPane.isDragAndDropAreaDisabled(true);
 
       BulkEditSearchPane.openQuerySearch();
       BulkEditSearchPane.verifySpecificTabHighlighted('Query');
       BulkEditSearchPane.itemsRadioIsDisabled(false);
-      BulkEditSearchPane.isItemsRadioChecked();
+      BulkEditSearchPane.isItemsRadioChecked(false);
       BulkEditSearchPane.holdingsRadioIsDisabled(false);
       BulkEditSearchPane.isBuildQueryButtonDisabled(false);
-
       BulkEditSearchPane.clickBuildQueryButton();
       BulkEditSearchPane.verifyBuildQueryModal();
     });
