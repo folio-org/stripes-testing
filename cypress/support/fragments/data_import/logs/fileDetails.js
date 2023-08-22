@@ -9,6 +9,7 @@ import {
   Button
 } from '../../../../../interactors';
 import LogsViewAll from './logsViewAll';
+import arrays from '../../../utils/arrays';
 
 const invoiceNumberFromEdifactFile = '94999';
 
@@ -232,6 +233,36 @@ export default {
 
   clickNextPaginationButton:() => {
     cy.do(nextButton.click());
+  },
+
+  verifyMultipleHoldingsStatus:(expectedArray, expectedHoldingsQuantity, rowNumber = 0) => {
+    cy.do(resultsList
+      .find(MultiColumnListRow({ index: rowNumber }))
+      .perform(element => {
+        const currentArray = Array
+          .from(element.querySelectorAll('[class*="mclCell-"]:nth-child(5) [style]'))
+          .map(el => el.innerText.replace(/\n/g, ''));
+        const result = arrays.compareArrays(expectedArray, currentArray);
+
+        expect(expectedHoldingsQuantity).to.equal(currentArray.length);
+        expect(result).to.equal(true);
+      }));
+  },
+
+  verifyMultipleItemsStatus:(expectedItemsQuantity, rowNumber = 0) => {
+    cy.do(resultsList
+      .find(MultiColumnListRow({ index: rowNumber }))
+      .find(MultiColumnListCell({ columnIndex: 5 }))
+      .perform(element => {
+        const extractedMatches = [];
+        // get text contains e.g. 'Created (it00000000123)' and put it to an array
+        Array.from(element.querySelectorAll('[class*="baselineCell-"]'))
+          .map(el => extractedMatches.push(el.innerText.match(/Created \((it\d+)\)/g)));
+        // get the first element from an array
+        const currentItemsQuantity = Array.from(extractedMatches[0]);
+
+        expect(expectedItemsQuantity).to.equal(currentItemsQuantity.length);
+      }));
   },
 
   checkStatusByTitle:(title, itemStatus) => {
