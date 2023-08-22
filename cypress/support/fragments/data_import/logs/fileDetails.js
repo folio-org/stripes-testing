@@ -9,6 +9,7 @@ import {
   Button
 } from '../../../../../interactors';
 import LogsViewAll from './logsViewAll';
+import arrays from '../../../utils/arrays';
 
 const invoiceNumberFromEdifactFile = '94999';
 
@@ -234,47 +235,32 @@ export default {
     cy.do(nextButton.click());
   },
 
-  verifyMultipleHoldingsStatus:(arrayOfHoldingsStatuses, rowIndex = 0) => {
+  verifyMultipleHoldingsStatus:(expectedArray, rowNumber = 0) => {
     cy.do(resultsList
-      .find(MultiColumnListRow({ index: rowIndex }))
-      .find(MultiColumnListCell({ columnIndex: 4 }))
-      .perform(el => {
-        const items = el.querySelectorAll('div[class^="baselineCell-"]');
-        const statuses = [];
-        items.forEach(elem => {
-          statuses.push(elem.innerText);
-        });
-        const allStatuses = Array.prototype.slice.call(statuses);
-        const extractedMatches = allStatuses.map(content => {
-          const regex = /Created \([A-Z/]+\)/g;
-          const matches = content.match(regex);
-          return matches;
-        });
-        expect(arrayOfHoldingsStatuses).to.deep.eq(...extractedMatches);
+      .find(MultiColumnListRow({ index: rowNumber }))
+      .perform(element => {
+        const currentArray = Array
+          .from(element.querySelectorAll('[class*="mclCell-"]:nth-child(5) [style]'))
+          .map(el => el.innerText.replace(/\n/g, ''));
+        const result = arrays.compareArrays(expectedArray, currentArray);
+        expect(result).to.equal(true);
       }));
   },
 
-  verifyMultipleItemsStatus:(itemsQuantity) => {
-    cy.get('#search-results-list')
-      .find(('[class*="mclCell-"]:nth-child(6)'))
-      .then(elements => {
-        const string = [...elements].map(el => el.innerText);
-        const regexForStatusesAndHrids = /Created \((it\d+)\)/g;
-        const regexForStatuses = /Created/;
-
+  verifyMultipleItemsStatus:(expectedItemsQuantity, rowNumber = 0) => {
+    cy.do(resultsList
+      .find(MultiColumnListRow({ index: rowNumber }))
+      .find(MultiColumnListCell({ columnIndex: 5 }))
+      .perform(element => {
         const extractedMatches = [];
+        // get text contains e.g. 'Created (it00000000123)' and put it to an array
+        Array.from(element.querySelectorAll('[class*="baselineCell-"]'))
+          .map(el => extractedMatches.push(el.innerText.match(/Created \((it\d+)\)/g)));
+        // get the first element from an array
+        const currentItemsQuantity = Array.from(extractedMatches[0]);
 
-        string.forEach(content => {
-          const matches = content.match(regexForStatusesAndHrids);
-          if (matches) {
-            extractedMatches.push(...matches);
-          }
-        });
-        // verify all elements have status 'Created'
-        string.every(element => regexForStatuses.test(element));
-        // verify number of created items
-        expect(itemsQuantity).eq(extractedMatches.length);
-      });
+        expect(expectedItemsQuantity).to.equal(currentItemsQuantity.length);
+      }));
   },
 
   checkStatusByTitle:(title, itemStatus) => {
