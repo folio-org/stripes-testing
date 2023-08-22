@@ -28,7 +28,12 @@ describe('data-import', () => {
   describe('Log details', () => {
     let user;
     let instanceHRID;
+    const quantityOfCreatedHoldings = 5;
+    const quantityOfCreatedItems = 8;
+    const quantityOfErrors = 5;
     const arrayOfHoldingsStatuses = ['Created (KU/CC/DI/M)', 'Created (KU/CC/DI/A)', 'Created (E)', 'No action', 'No action'];
+    const holdingsData = { permanentLocation: LOCATION_NAMES.MAIN_LIBRARY_UI,
+      itemsQuqntity: 3 };
     const filePathForUpload = 'marcBibFileForC388506.mrc';
     const marcFileName = `C388506 autotestFileName.${getRandomPostfix()}`;
     const collectionOfMappingAndActionProfiles = [
@@ -67,20 +72,20 @@ describe('data-import', () => {
         });
     });
 
-    // after('delete test data', () => {
-    //   Users.deleteViaApi(user.userId);
-    //   JobProfiles.deleteJobProfile(jobProfile.profileName);
-    //   collectionOfMappingAndActionProfiles.forEach(profile => {
-    //     ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-    //     FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
-    //   });
-    //   cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
-    //     .then((instance) => {
-    //       instance.items.forEach(item => cy.deleteItemViaApi(item.id));
-    //       instance.holdings.forEach(holding => cy.deleteHoldingRecordViaApi(holding.id));
-    //       InventoryInstance.deleteInstanceViaApi(instance.id);
-    //     });
-    // });
+    after('delete test data', () => {
+      Users.deleteViaApi(user.userId);
+      JobProfiles.deleteJobProfile(jobProfile.profileName);
+      collectionOfMappingAndActionProfiles.forEach(profile => {
+        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+      });
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
+        .then((instance) => {
+          instance.items.forEach(item => cy.deleteItemViaApi(item.id));
+          instance.holdings.forEach(holding => cy.deleteHoldingRecordViaApi(holding.id));
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
+    });
 
     it('C388506 Check the log result table for imported multiple items with errors in multiple holdings (folijet)',
       { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
@@ -129,7 +134,17 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.instance].forEach(columnName => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
         });
-        FileDetails.verifyMultipleHoldingsStatus(arrayOfHoldingsStatuses);
+        FileDetails.verifyMultipleHoldingsStatus(arrayOfHoldingsStatuses, quantityOfCreatedHoldings);
+        FileDetails.verifyMultipleItemsStatus(quantityOfCreatedItems);
+        FileDetails.verifyMultipleErrorStatus(quantityOfErrors);
+
+        FileDetails.openInstanceInInventory('Created');
+        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+          instanceHRID = initialInstanceHrId;
+        });
+        InventoryInstance.checkIsHoldingsCreated([`${holdingsData.permanentLocation} >`]);
+        InventoryInstance.openHoldingsAccordion(`${holdingsData.permanentLocation} >`);
+        InstanceRecordView.verifyQuantityOfItemsRelatedtoHoldings(holdingsData.permanentLocation, holdingsData.itemsQuqntity);
       });
   });
 });
