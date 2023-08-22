@@ -106,7 +106,7 @@ export default {
   },
 
   checkRowValueIsBold(rowNumber, value) {
-    cy.expect(MultiColumnListCell({ row: rowNumber + 5, columnIndex: 0 }).has({ innerHTML: including(`<strong>${value}</strong>`) }));
+    cy.expect(MultiColumnListCell({ row: rowNumber, columnIndex: 0 }).has({ innerHTML: including(`<strong>${value}</strong>`) }));
   },
 
   browse(subjectName) {

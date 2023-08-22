@@ -94,10 +94,10 @@ describe('Inventory: Subject Browse', () => {
     InventorySearchAndFilter.verifyKeywordsAsDefault();
     BrowseSubjects.select();
     BrowseSubjects.browse(testData.subjectName);
-    BrowseSubjects.checkNoAuthorityIconDisplayedForRow(0, testData.subjectName);
-    BrowseSubjects.checkAuthorityIconAndValueDisplayedForRow(1, testData.subjectName);
-    BrowseSubjects.checkRowValueIsBold(0, testData.subjectName);
-    BrowseSubjects.checkRowValueIsBold(1, testData.subjectName);
+    BrowseSubjects.checkNoAuthorityIconDisplayedForRow(5, testData.subjectName);
+    BrowseSubjects.checkAuthorityIconAndValueDisplayedForRow(6, testData.subjectName);
+    BrowseSubjects.checkRowValueIsBold(5, testData.subjectName);
+    BrowseSubjects.checkRowValueIsBold(6, testData.subjectName);
     
 
 
