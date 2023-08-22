@@ -235,7 +235,7 @@ export default {
     cy.do(nextButton.click());
   },
 
-  verifyMultipleHoldingsStatus:(expectedArray, rowNumber = 0) => {
+  verifyMultipleHoldingsStatus:(expectedArray, expectedHoldingsQuantity, rowNumber = 0) => {
     cy.do(resultsList
       .find(MultiColumnListRow({ index: rowNumber }))
       .perform(element => {
@@ -243,19 +243,25 @@ export default {
           .from(element.querySelectorAll('[class*="mclCell-"]:nth-child(5) [style]'))
           .map(el => el.innerText.replace(/\n/g, ''));
         const result = arrays.compareArrays(expectedArray, currentArray);
+
+        expect(expectedHoldingsQuantity).to.equal(currentArray.length);
         expect(result).to.equal(true);
       }));
   },
 
-  verifyMultipleItemStatus:(expectedArrayOfHoldingsStatuses, rowNumber = 0) => {
+  verifyMultipleItemsStatus:(expectedItemsQuantity, rowNumber = 0) => {
     cy.do(resultsList
       .find(MultiColumnListRow({ index: rowNumber }))
+      .find(MultiColumnListCell({ columnIndex: 5 }))
       .perform(element => {
-        const currentArrayOfHoldingsStatuses = Array
-          .from(element.querySelectorAll('[class*="mclCell-"]:nth-child(6) [style]'))
-          .map(el => el.innerText.replace(/\n/g, ''));
-        const result = arrays.compareArrays(expectedArrayOfHoldingsStatuses, currentArrayOfHoldingsStatuses);
-        expect(result).to.equal(true);
+        const extractedMatches = [];
+        // get text contains e.g. 'Created (it00000000123)' and put it to an array
+        Array.from(element.querySelectorAll('[class*="baselineCell-"]'))
+          .map(el => extractedMatches.push(el.innerText.match(/Created \((it\d+)\)/g)));
+        // get the first element from an array
+        const currentItemsQuantity = Array.from(extractedMatches[0]);
+
+        expect(expectedItemsQuantity).to.equal(currentItemsQuantity.length);
       }));
   },
 
