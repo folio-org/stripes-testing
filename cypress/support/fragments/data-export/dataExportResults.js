@@ -68,7 +68,7 @@ export default {
     });
   },
 
-  verifyFailedExportResultCells(resultFileName, recordsCount, jobId, userName = null, jobType = 'instances') {
+  verifyFailedExportResultCells(resultFileName, recordsCount, jobId, userName = null, jobType = 'instances', invalidQuery = false) {
     getRowByContent(resultFileName).then((row) => {
       const exportRow = MultiColumnListRow({ index: row });
 
@@ -90,11 +90,13 @@ export default {
             resultRow.status.is({ content: 'Fail' }),
             resultRow.total.is({ content: recordsCount.toString() }),
             resultRow.exported.is({ content: '' }),
-            resultRow.failed.is({ content: recordsCount.toString() }),
             resultRow.jobProfile.is({ content: `Default ${jobType} export job profile` }),
             resultRow.runBy.is({ content: userNameToVerify }),
             resultRow.id.is({ content: jobId.toString() })
           ]);
+
+          if (invalidQuery) cy.do(resultRow.failed.is({ content: '' }));
+          else cy.do(resultRow.failed.is({ content: recordsCount.toString() }));
         });
       });
 

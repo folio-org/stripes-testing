@@ -22,6 +22,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
@@ -180,7 +181,8 @@ describe('data-import', () => {
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
-        InventoryInstance.openHoldingView();
+        InstanceRecordView.verifyInstancePaneExists();
+        InstanceRecordView.openHoldingView();
         HoldingsRecordView.checkCallNumber('ONLINE');
       });
     });

@@ -1,4 +1,4 @@
-import { Section, Pane, HTML, including, Button, Label, KeyValue, Modal } from '../../../../interactors';
+import { Section, Pane, HTML, including, Button, Label, KeyValue, Modal, Accordion } from '../../../../interactors';
 import dateTools from '../../utils/dateTools';
 import eHoldingResourceEdit from './eHoldingResourceEdit';
 
@@ -18,6 +18,9 @@ const openActionsMenu = () => {
       cy.do(Section({ id: resourceId }).find(Button('Actions')).click());
     });
 };
+
+const customLabelsAccordion = Accordion('Custom labels');
+const customLabelValue = (label) => customLabelsAccordion.find(KeyValue(label));
 
 export default {
   waitLoading: () => {
@@ -64,5 +67,9 @@ export default {
     cy.expect(addToHoldingButton.exists());
     openActionsMenu();
     cy.expect(Button('Add to holdings').exists());
+  },
+  verifyCustomLabelValue(labelName, value) {
+    this.waitLoading();
+    cy.expect(customLabelValue(labelName).has({ value }));
   }
 };

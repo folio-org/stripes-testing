@@ -30,13 +30,6 @@ describe('Search in Inventory', () => {
     cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
   });
 
-  afterEach('Deleting data', () => {
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    DataImport.selectLog();
-    DataImport.openDeleteImportLogsModal();
-    DataImport.confirmDeleteImportLogs();
-  });
-
   after('Deleting data', () => {
     Users.deleteViaApi(testData.userProperties.userId);
     createdInstanceIDs.forEach(id => {

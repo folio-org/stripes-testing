@@ -210,6 +210,7 @@ const checkInstanceNotes = (noteType, noteContent) => {
 };
 
 const waitInstanceRecordViewOpened = (title) => {
+  cy.wait(1500);
   cy.expect(instanceDetailsPane.exists());
   cy.expect(Pane({ titleLabel: including(title) }).exists());
 };
@@ -261,7 +262,10 @@ export default {
   deriveNewMarcBibRecord:() => {
     cy.do(actionsButton.click());
     cy.do(deriveNewMarcBibRecord.click());
-    cy.expect(QuickMarcEditor().exists());
+    cy.expect([
+      QuickMarcEditor().exists(),
+      QuickMarcEditorRow({ tagValue: '999' }).exists()
+    ]);
   },
 
   viewSource: () => {
@@ -299,7 +303,7 @@ export default {
   editMarcBibliographicRecord:() => {
     cy.do(actionsButton.click());
     cy.do(editMARCBibRecordButton.click());
-    cy.expect(Pane({ id: 'quick-marc-editor-pane' }).exists());
+    cy.expect(QuickMarcEditorRow({ tagValue: '999' }).exists());
   },
 
   importInstance() {
@@ -847,5 +851,12 @@ export default {
 
   fillItemBarcode(barcodeValue) {
     cy.do(itemBarcodeField.fillIn(barcodeValue));
+  },
+
+  verifyAndClickLinkIconByIndex(rowIndex) {
+    // Waiter needed for the link to be loaded properly.
+    cy.wait(1000);
+    cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(linkIconButton).exists());
+    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(linkIconButton).click());
   }
 };

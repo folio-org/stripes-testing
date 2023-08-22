@@ -18,6 +18,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import Users from '../../../support/fragments/users/users';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -148,6 +149,7 @@ describe('data-import', () => {
           // check fields are absent in the view source
           cy.visit(TopMenu.inventoryPath);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+          InstanceRecordView.verifyInstancePaneExists();
           // verify table data in marc bibliographic source
           InventoryInstance.viewSource();
           fieldsForDelete.forEach(fieldNumber => {

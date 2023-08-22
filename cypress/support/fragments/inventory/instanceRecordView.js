@@ -24,6 +24,7 @@ const viewSourceButton = Button('View source');
 const instanceAdministrativeNote = MultiColumnList({ id: 'administrative-note-list' });
 const instanceNote = MultiColumnList({ id: 'list-instance-notes-0' });
 const electronicAccessAccordion = Accordion('Electronic access');
+const instanceDetailsPane = Pane({ id:'pane-instancedetails' });
 
 const verifyResourceTitle = value => {
   cy.expect(KeyValue('Resource title').has({ value }));
@@ -93,7 +94,7 @@ const verifyNatureOfContent = (value) => {
 };
 
 const verifyInstanceRecordViewOpened = () => {
-  cy.expect(Pane({ id:'pane-instancedetails' }).exists());
+  cy.expect(instanceDetailsPane.exists());
 };
 
 const verifyElectronicAccess = (uriValue, linkText = 'No value set-', rowNumber = 0) => {
@@ -143,8 +144,12 @@ export default {
     cy.expect(Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) }).exists());
   },
   verifyIsInstanceOpened:(title) => {
-    cy.expect(Pane({ id:'pane-instancedetails' }).exists());
+    cy.expect(instanceDetailsPane.exists());
     cy.expect(Pane({ titleLabel: including(title) }).exists());
+  },
+  verifyInstancePaneExists:() => {
+    cy.wait(1500);
+    cy.expect(instanceDetailsPane.exists());
   },
   verifyCalloutMessage: (number) => {
     cy.expect(Callout({ textContent: including(`Record ${number} created. Results may take a few moments to become visible in Inventory`) })

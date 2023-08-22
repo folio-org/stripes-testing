@@ -41,6 +41,22 @@ describe('Financial Transactions Detail Report', () => {
     UsersSearchResultsPane.verifyOptionsInActionsMenu();
   });
 
+  it('C343306 Check that the "Financial transactions detail report" modal is display when selected "Financial transactions detail report (CSV)"', { tags: [TestTypes.criticalPath, DevTeams.vega] }, () => {
+    UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
+    FinancialTransactionDetailReportModal.verifyStartDateFieldIsEmpty();
+    FinancialTransactionDetailReportModal.verifyEndDateFieldIsEmpty();
+    FinancialTransactionDetailReportModal.verifyFeeFineOwnerSelect();
+    FinancialTransactionDetailReportModal.verifyAssociatedServicePointsMultiSelect();
+    FinancialTransactionDetailReportModal.verifySaveButtonIsDisabled();
+    FinancialTransactionDetailReportModal.verifyCancelButtonIsEnabled();
+  });
+
+  it('C343308 Check that the user can not close "Financial transactions detail report" modal when click on the outside the modal', { tags: [TestTypes.criticalPath, DevTeams.vega] }, () => {
+    UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
+    UsersSearchResultsPane.clickActionsButton();
+    FinancialTransactionDetailReportModal.verifyFinancialReportModalIsShown();
+  });
+
   it('C343316 Check that the "Save&close" button has become active after filling in all the required fields with valid data', { tags: [TestTypes.criticalPath, DevTeams.vega] }, () => {
     UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
     FinancialTransactionDetailReportModal.fillInRequiredFields({ startDate: false, ownerName: ownerData.name });
