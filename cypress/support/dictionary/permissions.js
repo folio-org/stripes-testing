@@ -60,6 +60,7 @@ export default {
   uiInventoryMarcItemUnknow:{ internal:'ui-inventory.items.mark-unknown', gui:'Inventory: Mark items unknown' },
   uiCreateEditDeleteURL: { internal:'ui-inventory.settings.electronic-access-relationships', gui:'Settings (Inventory): Create, edit, delete URL relationships' },
   inventoryCRUDHoldings: { internal: 'ui-inventory.holdings.delete', gui: 'Inventory: View, create, edit, delete holdings' },
+  inventoryCRUDItemNoteTypes: { internal: 'ui-inventory.settings.item-note-types', gui: 'Settings (Inventory): Create, edit, delete item note types' },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui:'Tags: All permissions' },
   uiViewTagsSettings: { internal: 'ui-tags.settings.view', gui:'Settings (Tags): Can view tags settings' },
