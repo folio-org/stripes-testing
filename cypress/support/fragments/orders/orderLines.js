@@ -96,9 +96,13 @@ const submitOrderLine = () => {
     }
   });
 };
+const checkQuantityPhysical = (quantity) => {
+  cy.expect(Accordion('Cost details').find(KeyValue('Quantity physical')).has({ value: quantity }));
+};
 
 export default {
   submitOrderLine,
+  checkQuantityPhysical,
   searchByParameter: (parameter, value) => {
     cy.do([
       searchForm.selectIndex(parameter),
@@ -1075,4 +1079,21 @@ export default {
     cy.wait(4000);
     InteractorsTools.checkCalloutErrorMessage(message);
   },
+
+  checkPhysicalQuantityInLocation:(quantity) => {
+    const arrayOfQuantityRows = [];
+    cy.get('#location')
+      .find('[class*="col-"]:nth-child(2)')
+      .each($row => {
+        cy.get('[class*="kvValue-"]', { withinSubject: $row })
+        // extract its text content
+          .invoke('text')
+          .then(cellValue => {
+            arrayOfQuantityRows.push(cellValue);
+          });
+      })
+      .then(() => {
+        expect(quantity).to.equal(arrayOfQuantityRows.length);
+      });
+  }
 };
