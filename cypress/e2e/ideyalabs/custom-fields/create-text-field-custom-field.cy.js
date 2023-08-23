@@ -3,34 +3,34 @@ import TestTypes from '../../../support/dictionary/testTypes';
 import CustomFields from '../../../support/fragments/settings/users/customFields';
 import TopMenu from '../../../support/fragments/topMenu';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
-import { getFourDigitRandomNumber } from '../../../support/utils/stringTools';
+import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
 const textFieldData = {
-  fieldLabel: `Test${getFourDigitRandomNumber()}`,
-  helpText: `Testdata${getFourDigitRandomNumber()}`,
+  fieldLabel: `Test${randomFourDigitNumber()}`,
+  helpText: `Testdata${randomFourDigitNumber()}`,
 };
 const testAreaData = {
-  fieldLabel: `dataArea${getFourDigitRandomNumber()}`,
-  helpText: `fillData${getFourDigitRandomNumber()}`,
+  fieldLabel: `dataArea${randomFourDigitNumber()}`,
+  helpText: `fillData${randomFourDigitNumber()}`,
 };
 const checkboxData = {
-  fieldLabel: `CheckBox${getFourDigitRandomNumber()}`,
-  helpText: `testdata${getFourDigitRandomNumber()}`,
+  fieldLabel: `CheckBox${randomFourDigitNumber()}`,
+  helpText: `testdata${randomFourDigitNumber()}`,
 };
 const radioButtonData = {
   data: {
-    fieldLabel: `RadioButton${getFourDigitRandomNumber()}`,
-    helpText: `testData${getFourDigitRandomNumber()}`,
-    label1: `Radio1${getFourDigitRandomNumber()}`,
-    label2: `Radio2${getFourDigitRandomNumber()}`,
+    fieldLabel: `RadioButton${randomFourDigitNumber()}`,
+    helpText: `testData${randomFourDigitNumber()}`,
+    label1: `Radio1${randomFourDigitNumber()}`,
+    label2: `Radio2${randomFourDigitNumber()}`,
   },
 };
-const label2 = `select${getFourDigitRandomNumber()}`;
+const label2 = `select${randomFourDigitNumber()}`;
 const singleSelectData = {
   data: {
-    fieldLabel: `Single Select Dropdown${getFourDigitRandomNumber()}`,
+    fieldLabel: `Single Select Dropdown${randomFourDigitNumber()}`,
     helpText: 'select One Data',
-    label1: `Select${getFourDigitRandomNumber()}`,
+    label1: `Select${randomFourDigitNumber()}`,
     label2,
   },
 };
