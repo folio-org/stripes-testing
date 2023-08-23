@@ -96,6 +96,7 @@ describe('bulk-edit', () => {
         path: TopMenu.bulkEditPath,
         waiter: BulkEditSearchPane.waitLoading
       });
+      BulkEditSearchPane.checkUsersRadio();
       BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
 
       cy.intercept('/bulk-operations/*').as('fileUpload2');

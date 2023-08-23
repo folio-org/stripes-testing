@@ -38,6 +38,7 @@ describe('bulk-edit', () => {
     });
 
     it('C347871 Uploading file with identifiers (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+      BulkEditSearchPane.checkUsersRadio();
       BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
 
       BulkEditSearchPane.uploadFile(userBarcodesFileName);
@@ -46,6 +47,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyMatchedResults(user.barcode);
 
       TopMenuNavigation.navigateToApp('Bulk edit');
+      BulkEditSearchPane.checkUsersRadio();
       BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
 
       BulkEditSearchPane.uploadFile('example.json');

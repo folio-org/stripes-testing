@@ -46,6 +46,7 @@ describe('Bulk Edit - Logs', () => {
   });
 
   it('C375217 Verify generated Logs files for Users Local (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    BulkEditSearchPane.checkUsersRadio();
     BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
     BulkEditSearchPane.uploadFile(userUUIDsFileName);
     BulkEditSearchPane.waitLoading();
