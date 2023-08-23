@@ -22,10 +22,10 @@ describe('Search in Inventory', () => {
     tag010: '010',
     querySearchOption: 'Query search',
     searchQueries: {
-      allRecords: 'alternativeTitles.alternativeTitle = "bible"',
-      secondLinkedRecord: 'alternativeTitles.alternativeTitle = "Hosanna Bible"',
-      bothLinkedRecords: 'alternativeTitles.alternativeTitle = "Hosanna Bible" OR alternativeTitles.alternativeTitle = "Bible. Polish."',
-      linkedAndFirstNotLinkedRecords: 'alternativeTitles.alternativeTitle = "Hosanna Bible" OR alternativeTitles.alternativeTitle = "Bible. Polish." OR alternativeTitles.alternativeTitle = "Bible1"'
+      allRecords: 'alternativeTitles.alternativeTitle = "bibleC375256"',
+      secondLinkedRecord: 'alternativeTitles.alternativeTitle = "Hosanna BibleC375256"',
+      bothLinkedRecords: 'alternativeTitles.alternativeTitle = "Hosanna BibleC375256" OR alternativeTitles.alternativeTitle = "BibleC375256. Polish."',
+      linkedAndFirstNotLinkedRecords: 'alternativeTitles.alternativeTitle = "Hosanna BibleC375256" OR alternativeTitles.alternativeTitle = "BibleC375256. Polish." OR alternativeTitles.alternativeTitle = "BibleC375256 1"'
     },
     searchResults: {
       firstLinkedRecord: 'Prayer Bible (Test record with 130 linked field).',
@@ -46,7 +46,7 @@ describe('Search in Inventory', () => {
       marc: 'marcAuthFileC375256_1.mrc',
       fileName: `testMarcFileC375256.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
-      authorityHeading: 'Bible. Polish. Biblia Płocka C375256',
+      authorityHeading: 'BibleC375256. Polish. Biblia Płocka C375256',
       authority010FieldValue: 'n92085235375256',
       numberOfRecords: 1
     },
@@ -54,7 +54,7 @@ describe('Search in Inventory', () => {
       marc: 'marcAuthFileC375256_2.mrc',
       fileName: `testMarcFileC375256.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
-      authorityHeading: 'Abraham, Angela, C375256 Hosanna Bible',
+      authorityHeading: 'Abraham, Angela, C375256 Hosanna',
       authority010FieldValue: 'n99036055375256',
       numberOfRecords: 1
     },

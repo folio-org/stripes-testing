@@ -1,8 +1,8 @@
-import { Button, MultiColumnListCell, Pane, TextField, Link, MultiColumnListHeader, MultiColumnListRow, Section } from '../../../../../interactors';
 import { including } from 'bigtest';
+import { Button, MultiColumnListCell, Pane, TextField, Link, MultiColumnListHeader, MultiColumnListRow, Section, TextInput, Select } from '../../../../../interactors';
 import InventorySearchAndFilter from '../inventorySearchAndFilter';
 
-const searchButton = Button('Search');
+const searchButton = Button('Search', { type: 'submit' });
 const browseInventoryPane = Pane('Browse inventory');
 const searchFilterPane = Pane('Search & filter');
 const inventorySearchResultsPane = Section({ id: 'browse-inventory-results-pane' });
@@ -10,6 +10,8 @@ const nextButton = Button({ id: 'browse-results-list-browseSubjects-next-paging-
 const previousButton = Button({ id: 'browse-results-list-browseSubjects-prev-paging-button' });
 const mclhSubjectTitle = MultiColumnListHeader({ id: 'list-column-subject' });
 const mclhNumberOfTTitle = MultiColumnListHeader({ id: 'list-column-numberoftitles' });
+const recordSearch = TextInput({ id: 'input-record-search' });
+const browseOptionSelect = Select('Search field index');
 
 export default {
   verifySearchButtonDisabled() {
@@ -65,7 +67,7 @@ export default {
   clickNextPaginationButton() {
     cy.do(inventorySearchResultsPane.find(nextButton).click());
   },
-  
+
   clickPreviousPaginationButton() {
     cy.do(inventorySearchResultsPane.find(previousButton).click());
   },
@@ -87,4 +89,43 @@ export default {
     this.verifySearchButtonDisabled();
     InventorySearchAndFilter.browseSearch(searchString);
   },
-}
+
+  checkAuthorityIconAndValueDisplayedForRow(rowIndex, value) {
+    cy.expect([
+      MultiColumnListCell({ row: rowIndex, columnIndex: 0 }).has({ content: including(`${value}`) }),
+      MultiColumnListCell({ row: rowIndex, columnIndex: 0 }).has({ innerHTML: including('<img') }),
+      MultiColumnListCell({ row: rowIndex, columnIndex: 0 }).has({ innerHTML: including('alt="MARC Authorities module">') }),
+    ]);
+  },
+
+  checkNoAuthorityIconDisplayedForRow(rowIndex, value) {
+    cy.expect([
+      MultiColumnListCell({ row: rowIndex, columnIndex: 0 }).has({ content: including(`${value}`) }),
+      MultiColumnListCell({ row: rowIndex, columnIndex: 0, innerHTML: including('alt="MARC Authorities module">') }).absent(),
+    ]);
+  },
+
+  checkRowValueIsBold(rowNumber, value) {
+    cy.expect(MultiColumnListCell({ row: rowNumber, columnIndex: 0 }).has({ innerHTML: including(`<strong>${value}</strong>`) }));
+  },
+
+  browse(subjectName) {
+    cy.do(recordSearch.fillIn(subjectName));
+    cy.expect([
+      recordSearch.has({ value: subjectName }),
+      searchButton.has({ disabled: false })
+    ]);
+    cy.do(searchButton.click());
+  },
+
+  select() {
+    // cypress can't draw selected option without wait
+    cy.wait(1000);
+    cy.do(browseOptionSelect.choose('Subjects'));
+    cy.expect(browseOptionSelect.has({ value: 'browseSubjects' }));
+  },
+
+  checkValueAbsentInRow(rowIndex, value) {
+    cy.expect(MultiColumnListCell({ row: rowIndex, columnIndex: 0, content: including(value) }).absent());
+  }
+};
