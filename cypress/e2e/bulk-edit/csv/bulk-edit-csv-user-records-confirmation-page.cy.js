@@ -41,6 +41,7 @@ describe('bulk-edit', () => {
     });
 
     it('C357982 Verify user records - in app permission - confirmation page (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.checkUsersRadio();
       BulkEditSearchPane.selectRecordIdentifier('Usernames');
 
       BulkEditSearchPane.uploadFile(userUUIDsFileName);

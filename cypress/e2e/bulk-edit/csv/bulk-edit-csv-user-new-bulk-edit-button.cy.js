@@ -33,6 +33,7 @@ describe('bulk-edit', () => {
           FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
         })
         .then(() => {
+          BulkEditSearchPane.checkUsersRadio();
           BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
           BulkEditSearchPane.uploadFile(userUUIDsFileName);
           BulkEditSearchPane.waitFileUploading();
@@ -61,12 +62,13 @@ describe('bulk-edit', () => {
       BulkEditActions.verifyNoNewBulkEditButton();
       TopMenuNavigation.navigateToApp('Bulk edit');
       BulkEditSearchPane.verifyBulkEditPaneItems();
-      BulkEditSearchPane.usersRadioIsDisabled(false);
+      BulkEditSearchPane.isUsersRadioChecked(false);
       BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
       BulkEditSearchPane.verifyDefaultFilterState();
     });
 
     it('C353650 Verify new bulk edit with changed identifiers (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
+      BulkEditSearchPane.checkUsersRadio();
       BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
       BulkEditSearchPane.uploadFile(userUUIDsFileName);
       BulkEditSearchPane.waitFileUploading();

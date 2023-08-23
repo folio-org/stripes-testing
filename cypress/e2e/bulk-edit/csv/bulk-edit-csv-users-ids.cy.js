@@ -36,13 +36,13 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    afterEach('reload bulk-edit page', () => {
+    beforeEach('go to bulk-edit page', () => {
       cy.visit(TopMenu.bulkEditPath);
+      BulkEditSearchPane.checkUsersRadio();
+      BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
     });
 
     it('C353233 Verify number of updated records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
-
       // Upload file
       BulkEditSearchPane.uploadFile(userUUIDsFileName);
       BulkEditSearchPane.waitFileUploading();
@@ -64,11 +64,10 @@ describe('bulk-edit', () => {
     });
 
     it('C357034 Verify elements of the bulk edit app -- Local app (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
-
       BulkEditSearchPane.clickToBulkEditMainButton();
       BulkEditSearchPane.verifyDefaultFilterState();
 
+      BulkEditSearchPane.checkUsersRadio();
       BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
       BulkEditSearchPane.uploadFile(userUUIDsFileName);

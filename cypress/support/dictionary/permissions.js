@@ -71,7 +71,7 @@ export default {
   uiUsersEdituserservicepoints: { internal: 'ui-users.edituserservicepoints', gui: 'Users: Can assign and unassign service points to users' },
   // Locations
   uiTenantSettingsSettingsLocation:{ internal: 'ui-tenant-settings.settings.location', gui:'Settings (tenant): Can create, edit and remove locations' },
-  uiTenantSettingsServicePointsCRUD:{ internal: 'ui-tenant-settings.settings.servicepoints', gui:'Settings (tenant):  Can create, edit and remove service points' },
+  uiTenantSettingsServicePointsCRUD:{ internal: 'ui-tenant-settings.settings.servicepoints', gui:'Settings (tenant): Can create, edit and remove service points' },
   // DataImport
   dataImportUploadAll:{ internal: 'data-import.upload.all', gui:'Data Import File Upload - all permissions' },
   moduleDataImportEnabled:{ internal: 'ui-data-import.settings.manage', gui:'Data import: Can upload files, import, and view logs' },

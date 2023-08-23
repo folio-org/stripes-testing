@@ -46,6 +46,7 @@ describe('Bulk Edit - Logs', () => {
 
     cy.visit(TopMenu.bulkEditPath);
     BulkEditSearchPane.waitLoading();
+    BulkEditSearchPane.checkUsersRadio();
     BulkEditSearchPane.selectRecordIdentifier('External IDs');
 
     BulkEditSearchPane.uploadFile(userExternalIDsFileName);
