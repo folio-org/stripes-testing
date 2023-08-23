@@ -895,6 +895,7 @@ export default {
 
   isBuildQueryButtonDisabled(isDisabled) {
     cy.expect((buildQueryButton).has({ disabled: isDisabled }));
+    cy.wait(2000);
   },
 
   clickBuildQueryButton() {

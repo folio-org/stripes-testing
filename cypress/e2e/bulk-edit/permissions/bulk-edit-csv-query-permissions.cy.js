@@ -52,8 +52,6 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyRecordTypesEmpty();
       BulkEditSearchPane.isBuildQueryButtonDisabled(true);
 
-      // Need to wait for verification to complete
-      cy.wait(2000);
       cy.login(userWithProfileView.username, userWithProfileView.password, {
         path: TopMenu.bulkEditPath,
         waiter: BulkEditSearchPane.waitLoading
@@ -67,7 +65,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifySpecificTabHighlighted('Query');
       BulkEditSearchPane.usersRadioIsDisabled(false);
       BulkEditSearchPane.isBuildQueryButtonDisabled(false);
-      
+
       BulkEditSearchPane.isUsersRadioChecked(false);
       BulkEditSearchPane.clickBuildQueryButton();
       BulkEditSearchPane.verifyBuildQueryModal();

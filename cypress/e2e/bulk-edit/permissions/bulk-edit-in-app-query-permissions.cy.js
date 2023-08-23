@@ -50,8 +50,6 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyRecordTypesEmpty();
       BulkEditSearchPane.isBuildQueryButtonDisabled(true);
 
-      // Need to wait for verification to complete
-      cy.wait(2000);
       cy.login(userWithInventoryView.username, userWithInventoryView.password, {
         path: TopMenu.bulkEditPath,
         waiter: BulkEditSearchPane.waitLoading
