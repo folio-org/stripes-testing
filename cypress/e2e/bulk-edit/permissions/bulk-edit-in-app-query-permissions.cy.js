@@ -50,8 +50,6 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyRecordTypesEmpty();
       BulkEditSearchPane.isBuildQueryButtonDisabled(true);
 
-      // Need to wait for verification to complete
-      cy.wait(2000);
       cy.login(userWithInventoryView.username, userWithInventoryView.password, {
         path: TopMenu.bulkEditPath,
         waiter: BulkEditSearchPane.waitLoading
@@ -59,17 +57,16 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
       BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
       BulkEditSearchPane.itemsRadioIsDisabled(false);
-      BulkEditSearchPane.isItemsRadioChecked();
+      BulkEditSearchPane.isItemsRadioChecked(false);
       BulkEditSearchPane.holdingsRadioIsDisabled(false);
       BulkEditSearchPane.isDragAndDropAreaDisabled(true);
 
       BulkEditSearchPane.openQuerySearch();
       BulkEditSearchPane.verifySpecificTabHighlighted('Query');
       BulkEditSearchPane.itemsRadioIsDisabled(false);
-      BulkEditSearchPane.isItemsRadioChecked();
+      BulkEditSearchPane.isItemsRadioChecked(false);
       BulkEditSearchPane.holdingsRadioIsDisabled(false);
       BulkEditSearchPane.isBuildQueryButtonDisabled(false);
-
       BulkEditSearchPane.clickBuildQueryButton();
       BulkEditSearchPane.verifyBuildQueryModal();
     });
