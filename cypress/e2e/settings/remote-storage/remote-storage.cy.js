@@ -1,11 +1,10 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import RemoteStorageHelper from '../../../support/fragments/settings/remote-storage/remote-storage-configuration';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
+import { DevTeams, TestTypes } from '../../../support/dictionary';
 import settingsMenu from '../../../support/fragments/settingsMenu';
 import CreateLocations from '../../../support/fragments/settings/tenant/locations/createLocations';
-import Locations from '../../../support/fragments/settings/tenant/locations/locations';
-import devTeams from '../../../support/dictionary/devTeams';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 
 describe('remote-storage-configuration', () => {
   beforeEach('login', () => {
@@ -22,7 +21,7 @@ describe('remote-storage-configuration', () => {
   ].forEach((configuration) => {
     it(
       'C163919 Configure remote storage (firebird)',
-      { tags: [TestTypes.smoke, devTeams.firebird] },
+      { tags: [TestTypes.smoke, DevTeams.firebird] },
       () => {
         const name = `AutotestConfigurationName${getRandomPostfix()}`;
 
@@ -38,7 +37,7 @@ describe('remote-storage-configuration', () => {
 
   it(
     'C163920 Edit remote storage configuration  (firebird)',
-    { tags: [TestTypes.smoke, devTeams.firebird] },
+    { tags: [TestTypes.smoke, DevTeams.firebird] },
     () => {
       const name = `AutotestConfigurationName${getRandomPostfix()}`;
       const configuration = RemoteStorageHelper.configurations.DematicStagingDirector;
@@ -65,7 +64,7 @@ describe('remote-storage-configuration', () => {
 
   it(
     'C163922 Flag a location as remote storage (firebird)',
-    { tags: [TestTypes.smoke, devTeams.firebird] },
+    { tags: [TestTypes.smoke, DevTeams.firebird] },
     () => {
       cy.visit(settingsMenu.tenantLocationsPath);
       const locationName = `loc_${getRandomPostfix()}`;
