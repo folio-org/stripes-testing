@@ -66,6 +66,8 @@ const nextButton = Button({ id: 'browse-results-list-callNumbers-next-paging-but
 const previousButton = Button({ id: 'browse-results-list-callNumbers-prev-paging-button' });
 const instancesList = paneResultsSection.find(MultiColumnList({ id: 'list-inventory' }));
 
+const searchToggleButton = Button({ id: 'mode-navigation-search' });
+
 const searchInstanceByHRID = (id) => {
   cy.do([
     Select({ id: 'input-inventory-search-qindex' }).choose('Instance HRID'),
@@ -638,10 +640,16 @@ export default {
     holdingsPermanentLocationAccordion.find(TextField()).click();
     cy.do(holdingsPermanentLocationAccordion.find(Checkbox(location)).click());
   },
+
   checkRowsCount: (expectedRowsCount) => {
     cy.expect([
       instancesList.find(MultiColumnListRow({ index: expectedRowsCount - 1 })).exists(),
       instancesList.find(MultiColumnListRow({ index: expectedRowsCount })).absent()
     ]);
+  },
+
+  switchToSearchTab() {
+    cy.do(searchToggleButton.click());
+    cy.expect(effectiveLocationInput.exists());
   }
 };

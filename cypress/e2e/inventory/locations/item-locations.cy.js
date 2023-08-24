@@ -108,7 +108,7 @@ describe('ui-inventory: location', () => {
     // verify results
     InventoryInstance.checkHoldingsTable(
       toBeEditedLocationName,
-      1,
+      0,
       '-',
       ITEM_BARCODE,
       ITEM_STATUS_NAMES.AVAILABLE,
@@ -137,7 +137,7 @@ describe('ui-inventory: location', () => {
     // verify results
     InventoryInstance.checkHoldingsTable(
       editedLocationName,
-      1,
+      0,
       '-',
       ITEM_BARCODE,
       ITEM_STATUS_NAMES.AVAILABLE,

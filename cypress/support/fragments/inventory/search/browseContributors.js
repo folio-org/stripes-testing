@@ -142,9 +142,9 @@ export default {
   checkAuthorityIconAndValueDisplayedForMultipleRows(rowCount, value) {
     for (let i = 0; i < rowCount; i++) {
       cy.expect([
-        MultiColumnListCell({ row: 5 + i, columnIndex: 0 }).has({ innerHTML: including(`<strong>${value}</strong>`) }),
-        MultiColumnListCell({ row: 5 + i, columnIndex: 0 }).has({ innerHTML: including('<img') }),
-        MultiColumnListCell({ row: 5 + i, columnIndex: 0 }).has({ innerHTML: including('alt="MARC Authorities module">') }),
+        MultiColumnListCell({ row: i + 5, columnIndex: 0 }).has({ innerHTML: including(`<strong>${value}</strong>`) }),
+        MultiColumnListCell({ row: i + 5, columnIndex: 0 }).has({ innerHTML: including('<img') }),
+        MultiColumnListCell({ row: i + 5, columnIndex: 0 }).has({ innerHTML: including('alt="MARC Authorities module">') }),
       ]);
     }
   },

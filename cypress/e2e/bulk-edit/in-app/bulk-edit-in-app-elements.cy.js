@@ -39,6 +39,8 @@ describe('bulk-edit', () => {
     });
 
     beforeEach('select item tab', () => {
+      cy.visit(TopMenu.bulkEditPath);
+      BulkEditSearchPane.checkItemsRadio();
       BulkEditSearchPane.selectRecordIdentifier('Item barcode');
     });
 
@@ -47,10 +49,6 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${invalidItemBarcodesFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${validItemBarcodeFileName}`);
-    });
-
-    afterEach('reload bulk-edit page', () => {
-      cy.visit(TopMenu.bulkEditPath);
     });
 
     it('C353232 Verify error accordion during matching (In app approach) (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {

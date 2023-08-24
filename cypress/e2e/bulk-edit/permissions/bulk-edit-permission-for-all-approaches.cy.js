@@ -57,7 +57,7 @@ describe('bulk-edit', () => {
       BulkEditActions.downloadErrorsExists();
 
       TopMenuNavigation.navigateToApp('Bulk edit');
-
+      BulkEditSearchPane.checkUsersRadio();
       BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
 
       BulkEditSearchPane.uploadFile(usersBarcodesFileName);

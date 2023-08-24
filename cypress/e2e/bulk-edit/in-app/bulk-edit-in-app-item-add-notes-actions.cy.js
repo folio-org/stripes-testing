@@ -8,17 +8,25 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 
 let user;
+const firstNote = {
+  bulkEdit: 'first\nnote',
+  inventory: 'first note'
+};
+const secondNote = 'secondNote~!@#$%^&*()~{.[]<}>øÆ§';
+const thirdNote = 'third note';
+
 const item = {
-  instanceName: `testBulkEdit_${getRandomPostfix()}`,
   barcode: getRandomPostfix(),
+  instanceName: `instance-${getRandomPostfix()}`,
 };
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
-const changedRecordsFileName = `*Changed-Records-${itemBarcodesFileName}`;
+const changedRecordsFileName = `*-Changed-Records-${itemBarcodesFileName}`;
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
@@ -27,6 +35,7 @@ describe('bulk-edit', () => {
         permissions.bulkEditView.gui,
         permissions.bulkEditEdit.gui,
         permissions.inventoryAll.gui,
+        permissions.inventoryCRUDItemNoteTypes.gui
       ])
         .then(userProperties => {
           user = userProperties;
@@ -46,26 +55,46 @@ describe('bulk-edit', () => {
       FileManager.deleteFileFromDownloadsByMask(changedRecordsFileName);
     });
 
-    it('C367922 Verify that User can update item status with "Intellectual item" (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+    it('C400662 Verify Bulk Edit actions for Items notes - add notes (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
       BulkEditSearchPane.checkItemsRadio();
       BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+
       BulkEditSearchPane.uploadFile(itemBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
+      BulkEditSearchPane.verifyMatchedResults(item.barcode);
 
       BulkEditActions.openActions();
+      BulkEditSearchPane.changeShowColumnCheckbox('Administrative notes', 'Notes', 'Circulation Notes');
       BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.replaceItemStatus('Intellectual item');
+
+      BulkEditActions.verifyItemOptions();
+      BulkEditActions.verifyItemAdminstrativeNoteActions();
+      BulkEditActions.addItemNote('Administrative note', firstNote.bulkEdit);
+      BulkEditActions.addNewBulkEditFilterString();
+      BulkEditActions.verifyItemCheckInNoteActions(1);
+      BulkEditActions.addItemNote('Check in note', secondNote, 1);
+      BulkEditActions.addNewBulkEditFilterString();
+      BulkEditActions.verifyItemNoteActions(2);
+      BulkEditActions.addItemNote('Note', thirdNote, 2);
+
       BulkEditActions.confirmChanges();
       BulkEditActions.commitChanges();
       BulkEditSearchPane.waitFileUploading();
       BulkEditActions.openActions();
       BulkEditActions.downloadChangedCSV();
-      BulkEditFiles.verifyMatchedResultFileContent(changedRecordsFileName, ['Intellectual item'], 'itemStatus', true);
+      ExportFile.verifyFileIncludes(changedRecordsFileName, [firstNote.bulkEdit, secondNote, thirdNote]);
 
-      cy.visit(TopMenu.inventoryPath);
+      BulkEditSearchPane.verifyChangesUnderColumns('Administrative notes', firstNote.bulkEdit);
+      BulkEditSearchPane.verifyChangesUnderColumns('Circulation Notes', secondNote);
+      BulkEditSearchPane.verifyChangesUnderColumns('Notes', thirdNote);
+
+      TopMenuNavigation.navigateToApp('Inventory');
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
-      ItemRecordView.checkStatus('Intellectual item');
+      ItemRecordView.waitLoading();
+      ItemRecordView.checkItemAdministrativeNote(firstNote.inventory);
+      ItemRecordView.checkCheckInNote(secondNote, 'No');
+      ItemRecordView.checkItemNote(thirdNote, 'No');
     });
   });
 });
