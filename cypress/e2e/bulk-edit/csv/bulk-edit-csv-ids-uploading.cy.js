@@ -36,11 +36,8 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    afterEach('reload bulk-edit page', () => {
-      cy.visit(TopMenu.bulkEditPath);
-    });
-
     it('C353956 Verify uploading file with User UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.checkUsersRadio();
       BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
       BulkEditSearchPane.uploadFile(userUUIDsFileName);
