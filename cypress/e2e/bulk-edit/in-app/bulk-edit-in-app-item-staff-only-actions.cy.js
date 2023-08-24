@@ -45,11 +45,11 @@ describe('bulk-edit', () => {
             .then((res) => {
               const itemData = res;
               // Adding check in note, check out note and action note
-              itemData.notes = [{ itemNoteTypeId: "0e40884c-3523-4c6d-8187-d578e3d2794e", note: actionNote, staffOnly: false }];
+              itemData.notes = [{ itemNoteTypeId: '0e40884c-3523-4c6d-8187-d578e3d2794e', note: actionNote, staffOnly: false }];
               itemData.circulationNotes = [
-                { noteType: "Check in", note: checkInNote, staffOnly: false },
-                { noteType: "Check out", note: checkOutNote, staffOnly: false }];
-              cy.updateItemViaApi(itemData)
+                { noteType: 'Check in', note: checkInNote, staffOnly: false },
+                { noteType: 'Check out', note: checkOutNote, staffOnly: false }];
+              cy.updateItemViaApi(itemData);
               FileManager.createFile(`cypress/fixtures/${itemUUIDsFileName}`, res.id);
             });
         });
