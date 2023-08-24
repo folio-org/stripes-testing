@@ -56,5 +56,9 @@ export default {
     cy.expect(Pane({ id: 'pane-invoiceDetails' }).find(Button({ icon: 'tag' })).absent());
   },
 
+  verifyAcquisitionUnits:(acquisitionUnitName) => {
+    cy.expect(Pane({ id:'pane-invoiceDetails' }).find(KeyValue('Invoice date').has({ value: acquisitionUnitName })));
+  },
+
   vendorInvoiceNumber,
 };

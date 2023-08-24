@@ -353,6 +353,9 @@ export default {
     if (profile.lockTotalAmount) {
       cy.do(TextField('Lock total amount').fillIn(profile.lockTotalAmount));
     }
+    if (profile.acquisitionsUnits) {
+      cy.do(TextField('Acquisitions units').fillIn(profile.acquisitionsUnits));
+    }
     // Vendor information section
     cy.do(organizationLookUpButton.click());
     selectOrganizationByName(profile.organizationName);
@@ -380,7 +383,7 @@ export default {
     ]);
     if (specialMappingProfile.typeValue === holdingsType) {
       cy.do(TextField('Holdings type').fillIn('"Monograph"'));
-      // wait accepted values to be filled
+      // wait accepted values to be filed
       cy.wait(1500);
       cy.do(permanentLocationField.fillIn('980$a'));
       cy.do(TextField('Call number type').fillIn('"Library of Congress classification"'));
