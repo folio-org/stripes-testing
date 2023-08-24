@@ -88,7 +88,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
     for (let i = 0; i < testData.LDRValues.validLDR07Values.length; i++) {
       const updatedLDRvalue = `${testData.LDRValues.validLDRvalue.substring(0, 6)}${testData.LDRValues.validLDR06Values[i]}${testData.LDRValues.validLDR07Values[i]}${testData.LDRValues.validLDRvalue.substring(8)}`;
       const updatedLDRmask = new RegExp(`\\d{5}${updatedLDRvalue.substring(5, 12).replace('\\', '\\\\')}\\d{5}${updatedLDRvalue.substring(17).replace('\\', '\\\\')}`);
-      const title = testData.tag245ContentPrefix + getRandomPostfix();
+      const title = testData.fieldContents.tag245ContentPrefix + getRandomPostfix();
 
       InventoryInstance.newMarcBibRecord();
       QuickMarcEditor.updateExistingField(testData.tags.tag245, `$a ${title}`);
