@@ -188,7 +188,7 @@ describe('data-import', () => {
           InventoryViewSource.extructDataFrom999Field()
             .then(uuid => {
               // change file using uuid for 999 field
-              DataImport.editMarcFile('mrcFileForC356829.mrc', editedMarcFileName, ['srsUuid', 'instanceUuid', 'hrid'], [uuid[0], uuid[1], instanceHrid]);
+              DataImport.editMarcFile('marcFileForC356829.mrc', editedMarcFileName, ['srsUuid', 'instanceUuid', 'hrid'], [uuid[0], uuid[1], instanceHrid]);
             });
           InventoryViewSource.close();
 

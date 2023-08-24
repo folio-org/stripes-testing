@@ -63,7 +63,7 @@ describe('data-import', () => {
       { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
         // upload a marc file for creating of the new instance
         cy.visit(TopMenu.dataImportPath);
-        DataImport.uploadFile('mrcFileForC6709.mrc', nameMarcFileForCreate);
+        DataImport.uploadFile('marcFileForC6709.mrc', nameMarcFileForCreate);
         JobProfiles.searchJobProfileForImport(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFileForCreate);

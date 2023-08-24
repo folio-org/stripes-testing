@@ -33,7 +33,7 @@ describe('data-import', () => {
     let instanceHrid;
     const quantityOfItems = '1';
     const uniqSubject = `35678123678${GenerateIdentifierCode.getRandomIdentifierCode()}`;
-    const filePathForUpload = 'mrcFileForC11123.mrc';
+    const filePathForUpload = 'marcFileForC11123.mrc';
     const instance = {
       instanceTitle: 'Love enough / Dionne Brand.',
       instanceSubject: uniqSubject,
