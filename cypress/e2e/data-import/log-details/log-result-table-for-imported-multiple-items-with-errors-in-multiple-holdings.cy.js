@@ -88,7 +88,7 @@ describe('data-import', () => {
     });
 
     it('C388506 Check the log result table for imported multiple items with errors in multiple holdings (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
         // create mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
