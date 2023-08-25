@@ -235,21 +235,20 @@ export default {
     cy.do(nextButton.click());
   },
 
-  verifyMultipleHoldingsStatus:(expectedArray, expectedHoldingsQuantity, rowNumber = 0) => {
+  verifyMultipleHoldingsStatus:(expectedArray, expectedQuantity, rowNumber = 0) => {
     cy.do(resultsList
       .find(MultiColumnListRow({ index: rowNumber }))
       .perform(element => {
         const currentArray = Array
           .from(element.querySelectorAll('[class*="mclCell-"]:nth-child(5) [style]'))
           .map(el => el.innerText.replace(/\n/g, ''));
-        const result = arrays.compareArrays(expectedArray, currentArray);
 
-        expect(expectedHoldingsQuantity).to.equal(currentArray.length);
-        expect(result).to.equal(true);
+        expect(expectedQuantity).to.equal(currentArray.length);
+        expect(arrays.compareArrays(expectedArray, currentArray)).to.equal(true);
       }));
   },
 
-  verifyMultipleItemsStatus:(expectedItemsQuantity, rowNumber = 0) => {
+  verifyMultipleItemsStatus:(expectedQuantity, rowNumber = 0) => {
     cy.do(resultsList
       .find(MultiColumnListRow({ index: rowNumber }))
       .find(MultiColumnListCell({ columnIndex: 5 }))
@@ -257,11 +256,28 @@ export default {
         const extractedMatches = [];
         // get text contains e.g. 'Created (it00000000123)' and put it to an array
         Array.from(element.querySelectorAll('[class*="baselineCell-"]'))
-          .map(el => extractedMatches.push(el.innerText.match(/Created \((it\d+)\)/g)));
+          .map(el => extractedMatches.push(el.innerText.match(/(Created \(it\d+\)|No action|-)/g)));
         // get the first element from an array
-        const currentItemsQuantity = Array.from(extractedMatches[0]);
+        const currentArray = Array.from(extractedMatches[0]);
 
-        expect(expectedItemsQuantity).to.equal(currentItemsQuantity.length);
+        expect(expectedQuantity).to.equal(currentArray.length);
+      }));
+  },
+
+  verifyMultipleErrorStatus:(expectedQuantity, rowNumber = 0) => {
+    cy.do(resultsList
+      .find(MultiColumnListRow({ index: rowNumber }))
+      .find(MultiColumnListCell({ columnIndex: 9 }))
+      .perform(element => {
+        console.log(element);
+        const extractedMatches = [];
+        // get text contains e.g. 'Error' and put it to an array
+        Array.from(element.querySelectorAll('[class*="baselineCell-"]'))
+          .map(el => extractedMatches.push(el.innerText.match(/(Error)/g)));
+        // get the first element from an array
+        const currentArray = Array.from(extractedMatches[0]);
+
+        expect(expectedQuantity).to.equal(currentArray.length);
       }));
   },
 
