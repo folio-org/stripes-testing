@@ -14,32 +14,32 @@ import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthor
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 
 describe('Manual Linking Bib field to Authority 1XX', () => {
-    const testData = {
-      tag100: '100',
-      tag010: '010',
-      tag240: '240',
-      authority100FieldValue: 'Coates, Ta-Nehisi',
-      authority010FieldValue: 'n 2008001084',
-      successMsg: 'This record has successfully saved and is in process. Changes may not appear immediately.',
-      accordion: 'Contributor',
-    };
-    
-    const marcFiles = [
-      {
-        marc: 'marcBibFileForC365134.mrc', 
-        fileName: `testMarcFile.${getRandomPostfix()}.mrc`, 
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-        numOfRecords: 1,
-      }, 
-      {
-        marc: 'marcFileForC365134.mrc', 
-        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
-        numOfRecords: 1,
-      },
-    ]
+  const testData = {
+    tag100: '100',
+    tag010: '010',
+    tag240: '240',
+    authority100FieldValue: 'Coates, Ta-Nehisi',
+    authority010FieldValue: 'n 2008001084',
+    successMsg: 'This record has successfully saved and is in process. Changes may not appear immediately.',
+    accordion: 'Contributor',
+  };
 
-    let createdAuthorityIDs = [];
+  const marcFiles = [
+    {
+      marc: 'marcBibFileForC365134.mrc',
+      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      numOfRecords: 1,
+    },
+    {
+      marc: 'marcFileForC365134.mrc',
+      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      jobProfileToRun: 'Default - Create SRS MARC Authority',
+      numOfRecords: 1,
+    },
+  ];
+
+  const createdAuthorityIDs = [];
 
   before('Creating user', () => {
     cy.createTempUser([
@@ -99,7 +99,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
     QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag100);
     QuickMarcEditor.verifyTagFieldAfterLinking(33, '100', '1', '\\', '$a Coates, Ta-Nehisi', '$e author.', '$0 id.loc.gov/authorities/names/n2008001084', '');
     QuickMarcEditor.pressSaveAndKeepEditing(testData.successMsg);
-   
+
     InventoryInstance.clickViewAuthorityIconDisplayedInTagField(testData.tag100);
     MarcAuthorities.checkRecordDetailPageMarkedValue(testData.authority100FieldValue);
 

@@ -32,13 +32,13 @@ describe('bulk-edit', () => {
       FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
     });
 
-    afterEach('open new bulk-edit form', () => {
+    beforeEach('go to bulk-edit page', () => {
       cy.visit(TopMenu.bulkEditPath);
+      BulkEditSearchPane.checkUsersRadio();
+      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
     });
 
     it('C359248 Verify "Email" option in bulk edit (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
-
       BulkEditSearchPane.uploadFile(userBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
 
@@ -48,8 +48,6 @@ describe('bulk-edit', () => {
     });
 
     it('C359592 Verify updating Email in Bulk edit (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
-
       BulkEditSearchPane.uploadFile(userBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
 
@@ -70,8 +68,6 @@ describe('bulk-edit', () => {
     });
 
     it('C359606 Negative -- Verify bulk edit Users emails (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
-
       BulkEditSearchPane.uploadFile(userBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
 

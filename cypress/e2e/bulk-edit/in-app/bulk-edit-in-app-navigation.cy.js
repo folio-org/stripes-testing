@@ -39,6 +39,7 @@ describe('bulk-edit', () => {
     });
 
     it('C374149 Verify Bulk edit state when navigating to another app and back -- In app approach (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+      BulkEditSearchPane.checkUsersRadio();
       BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
 
       BulkEditSearchPane.uploadFile(userBarcodesFileName);

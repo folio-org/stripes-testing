@@ -5,10 +5,10 @@ import ExistingNoteEdit from '../../../support/fragments/notes/existingNoteEdit'
 import ExistingNoteView from '../../../support/fragments/notes/existingNoteView';
 import NewNote from '../../../support/fragments/notes/newNote';
 import TopMenu from '../../../support/fragments/topMenu';
-import { getFourDigitRandomNumber } from '../../../support/utils/stringTools';
+import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
-const noteData = `New Note${getFourDigitRandomNumber()}`;
-const noteType = `Item${getFourDigitRandomNumber()}`;
+const noteData = `New Note${randomFourDigitNumber()}`;
+const noteType = `Item${randomFourDigitNumber()}`;
 
 describe.skip('Settings', () => {
   before('Login to Folio', () => {

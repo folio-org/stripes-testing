@@ -40,8 +40,8 @@ describe('bulk-edit', () => {
     });
 
     it('C353954 Verify uploading file with External IDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.checkUsersRadio();
       BulkEditSearchPane.selectRecordIdentifier('External IDs');
-
       BulkEditSearchPane.uploadFile(userExternalIDsFileName);
       BulkEditSearchPane.waitFileUploading();
 

@@ -36,13 +36,13 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    afterEach('reload bulk-edit page', () => {
+    beforeEach('go to bulk-edit page', () => {
       cy.visit(TopMenu.bulkEditPath);
+      BulkEditSearchPane.checkUsersRadio();
+      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
     });
 
     it('C359586 Negative --Verify populating "Errors" accordion (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
-
       BulkEditSearchPane.uploadFile(userBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
 
@@ -58,8 +58,6 @@ describe('bulk-edit', () => {
     });
 
     it('C347883 Error messages in submitted identifiers (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
-
       BulkEditSearchPane.uploadFile(userBarcodesFileNameWithDuplicates);
       BulkEditSearchPane.waitFileUploading();
 

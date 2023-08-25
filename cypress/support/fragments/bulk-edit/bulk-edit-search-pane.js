@@ -450,8 +450,8 @@ export default {
     cy.expect(usersRadio.has({ disabled: isDisabled }));
   },
 
-  isUsersRadioChecked() {
-    cy.expect(usersRadio.has({ checked: true }));
+  isUsersRadioChecked(checked = true) {
+    cy.expect(usersRadio.has({ checked }));
   },
 
   checkItemsRadio() {
@@ -462,8 +462,8 @@ export default {
     cy.expect(itemsRadio.has({ disabled: isDisabled }));
   },
 
-  isItemsRadioChecked() {
-    cy.expect(itemsRadio.has({ checked: true }));
+  isItemsRadioChecked(checked = true) {
+    cy.expect(itemsRadio.has({ checked }));
   },
 
   checkHoldingsRadio() {
@@ -886,6 +886,7 @@ export default {
 
   isBuildQueryButtonDisabled(isDisabled) {
     cy.expect((buildQueryButton).has({ disabled: isDisabled }));
+    cy.wait(2000);
   },
 
   clickBuildQueryButton() {
