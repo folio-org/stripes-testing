@@ -11,6 +11,11 @@ export default {
     cy.do(Button('Edit').click());
   },
 
+  duplicate:() => {
+    cy.do(viewPane.find(actionsButton).click());
+    cy.do(Button('Duplicate').click());
+  },
+
   verifyJobProfileOpened:() => {
     cy.expect(resultsPane.exists());
     cy.expect(viewPane.exists());

@@ -1,5 +1,5 @@
 import { HTML, including } from '@interactors/html';
-import { Accordion, Button, Select, TextField, Pane } from '../../../../../interactors';
+import { Accordion, Button, Select, TextField, Pane, TextArea, Callout } from '../../../../../interactors';
 import ModalSelectProfile from './modalSelectProfile';
 import { ACCEPTED_DATA_TYPE_NAMES, PROFILE_TYPE_NAMES } from '../../../constants';
 
@@ -74,6 +74,9 @@ export default {
   linkMatchProfileForSubMatches,
   linkActionProfileForSubMatches,
   defaultJobProfile,
+
+  fillProfileName:(profileName) => cy.do(TextField({ name:'profile.name' }).fillIn(profileName)),
+  fillDescription:(description) => cy.do(TextArea({ name:'profile.description' }).fillIn(description)),
 
   fillJobProfile: (specialJobProfile = defaultJobProfile) => {
     cy.do(TextField({ name:'profile.name' }).fillIn(specialJobProfile.profileName));
@@ -250,5 +253,10 @@ export default {
       .then((responce) => {
         return responce.body.id;
       });
+  },
+
+  checkCalloutMessage:(message) => {
+    cy.expect(Callout({ textContent: including(message) }).exists());
+    cy.do(Callout().find(Button({ icon:'times' })).click());
   }
 };
