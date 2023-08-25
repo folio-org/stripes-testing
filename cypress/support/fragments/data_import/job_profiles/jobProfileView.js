@@ -1,5 +1,5 @@
 import { HTML, including } from '@interactors/html';
-import { Button, Pane } from '../../../../../interactors';
+import { Button, Pane, Modal } from '../../../../../interactors';
 
 const viewPane = Pane({ id:'view-job-profile-pane' });
 const resultsPane = Pane({ id:'pane-results' });
@@ -9,6 +9,13 @@ export default {
   edit:() => {
     cy.do(viewPane.find(actionsButton).click());
     cy.do(Button('Edit').click());
+  },
+
+  delete:() => {
+    cy.do([viewPane.find(actionsButton).click(),
+      Button('Delete').click(),
+      Modal({ id:'delete-job-profile-modal' }).find(Button({ id:'clickable-delete-job-profile-modal-confirm' })).click()
+    ]);
   },
 
   verifyJobProfileOpened:() => {
