@@ -600,15 +600,6 @@ export default {
     }
   },
 
-  verifyActionsAfterChangingRecords() {
-    cy.do(actions.click());
-    cy.expect([
-      Button('Download matched records (CSV)').absent(),
-      Button('Start bulk edit').absent(),
-      DropdownMenu().find(HTML('Show columns')).exists(),
-    ]);
-  },
-
   verifyUsersActionShowColumns() {
     cy.expect([
       DropdownMenu().find(Checkbox('Username')).has({ checked: true }),

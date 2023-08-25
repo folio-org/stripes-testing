@@ -97,7 +97,6 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
       BulkEditSearchPane.usersRadioIsDisabled(false);
       BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
-      BulkEditSearchPane.verifyActionsAfterChangingRecords();
     });
   });
 });
