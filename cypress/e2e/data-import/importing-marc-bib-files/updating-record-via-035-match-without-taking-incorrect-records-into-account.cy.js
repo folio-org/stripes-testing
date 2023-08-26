@@ -151,7 +151,7 @@ describe('data-import', () => {
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkMatchProfile(matchProfile.profileName);
-        NewJobProfile.linkProfileForNonMatches('Default - Create instance');
+        NewJobProfile.linkActionProfileForNonMatches('Default - Create instance');
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
@@ -188,7 +188,7 @@ describe('data-import', () => {
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.createJobProfile(jobProfileForUpdate);
         NewJobProfile.linkMatchAndActionProfiles(matchProfile.profileName, actionProfile.name);
-        NewJobProfile.linkProfileForNonMatches('Default - Create instance');
+        NewJobProfile.linkActionProfileForNonMatches('Default - Create instance');
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
