@@ -85,7 +85,6 @@ describe('bulk-edit', () => {
 
       cy.visit(SettingsMenu.customFieldsPath);
       CustomFields.editMultiSelectCustomField(customFieldData, updatedCustomFieldData);
-      // cy.visit(TopMenu.bulkEditPath);
       cy.login(user.username, user.password, {
         path: TopMenu.bulkEditPath,
         waiter: BulkEditSearchPane.waitLoading
