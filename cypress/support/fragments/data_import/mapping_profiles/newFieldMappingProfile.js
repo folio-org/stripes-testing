@@ -360,6 +360,9 @@ export default {
     if (profile.invoiceNote) {
       cy.do(TextArea('Note').fillIn(profile.invoiceNote));
     }
+    if (profile.acquisitionsUnits) {
+      cy.do(TextField('Acquisitions units').fillIn(profile.acquisitionsUnits));
+    }
     // Vendor information section
     if (profile.organizationName) {
       cy.do(organizationLookUpButton.click());
@@ -406,7 +409,7 @@ export default {
     ]);
     if (specialMappingProfile.typeValue === holdingsType) {
       cy.do(TextField('Holdings type').fillIn('"Monograph"'));
-      // wait accepted values to be filled
+      // wait accepted values to be filed
       cy.wait(1500);
       cy.do(permanentLocationField.fillIn('980$a'));
       cy.do(TextField('Call number type').fillIn('"Library of Congress classification"'));

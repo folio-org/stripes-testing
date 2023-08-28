@@ -77,5 +77,9 @@ export default {
     cy.expect(Pane({ id:'pane-invoiceLineDetails' }).find(KeyValue('Comment')).has({ value: comment }));
   },
 
+  verifyAcquisitionUnits:(acquisitionUnitName) => {
+    cy.expect(Pane({ id:'pane-invoiceDetails' }).find(KeyValue('Acquisition units')).has({ value: acquisitionUnitName }));
+  },
+
   vendorInvoiceNumber,
 };

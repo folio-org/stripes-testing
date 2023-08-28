@@ -3,77 +3,95 @@ import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import { FOLIO_RECORD_TYPE,
-  PAYMENT_METHOD,
   BATCH_GROUP,
+  VENDOR_NAMES,
+  PAYMENT_METHOD,
   ACCEPTED_DATA_TYPE_NAMES,
-  VENDOR_NAMES } from '../../../support/constants';
+  JOB_STATUS_NAMES } from '../../../support/constants';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import AcquisitionUnits from '../../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import InvoiceView from '../../../support/fragments/invoices/invoiceView';
+import Invoices from '../../../support/fragments/invoices/invoices';
 import Users from '../../../support/fragments/users/users';
 
 describe('data-import', () => {
-  describe('End to end scenarios', () => {
-    const quantityOfItems = '1';
-    const fileName = `C343338 autotestFile.${getRandomPostfix()}.edi`;
+  describe('Settings', () => {
+    let user;
+    const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
     const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.gobi;
-    let user = {};
-
+    const filePathForUpload = 'ediFileForC345356.edi';
+    const fileName = `C345356 autotestFile.${getRandomPostfix()}.edi`;
+    const invoiceNumber = '19353';
+    const quantityOfItems = '1';
     const mappingProfile = {
-      name:`C343338 autoTestMappingProf.${getRandomPostfix()}`,
+      name:`C345356 GOBI invoice - Acq Units.${getRandomPostfix()}`,
       incomingRecordType:NewFieldMappingProfile.incomingRecordType.edifact,
       existingRecordType:FOLIO_RECORD_TYPE.INVOICE,
       description:'',
+      acquisitionsUnits: `"${defaultAcquisitionUnit.name}"`,
       batchGroup: BATCH_GROUP.FOLIO,
+      lockTotalAmount: 'MOA+86[2]',
       organizationName: VENDOR_NAMES.GOBI,
       paymentMethod: PAYMENT_METHOD.CASH
     };
     const actionProfile = {
-      name: `C343338 autoTestActionProf.${getRandomPostfix()}`,
+      name: `C345356 GOBI invoice - Acq Units.${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INVOICE
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
-      profileName: `C343338 autoTestJobProf.${getRandomPostfix()}`,
+      profileName: `C345356 GOBI invoice - Acq Units.${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.EDIFACT
     };
 
     before('login', () => {
       cy.createTempUser([
-        permissions.dataImportUploadAll.gui,
         permissions.moduleDataImportEnabled.gui,
-        permissions.settingsDataImportEnabled.gui,
-        permissions.uiOrganizationsView.gui,
-        permissions.viewEditDeleteInvoiceInvoiceLine.gui
+        permissions.assignAcqUnitsToNewInvoice.gui,
+        permissions.viewEditDeleteInvoiceInvoiceLine.gui,
+        permissions.uiSettingsAcquisitionUnitsViewEditCreateDelete.gui,
+        permissions.settingsDataImportEnabled.gui
       ])
         .then(userProperties => {
           user = userProperties;
+
           cy.login(userProperties.username, userProperties.password,
-            { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+            { path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
         });
     });
 
     after('delete test data', () => {
-      // clean up generated profiles
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
       FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
-      cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${FileDetails.invoiceNumberFromEdifactFile}"` })
-        .then(id => cy.deleteInvoiceFromStorageViaApi(id));
+      Invoices.deleteInvoiceViaActions();
+      Invoices.confirmInvoiceDeletion();
+      cy.visit(SettingsMenu.acquisitionUnitsPath);
+      AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
+      AcquisitionUnits.delete(defaultAcquisitionUnit.name);
       Users.deleteViaApi(user.userId);
     });
 
-    it('C343338 EDIFACT file import with creating of new invoice record (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-      // create Field mapping profile
+    it('C345336 Acquisitions unit causes Invoices to Import with errors (folijet)',
+      { tags: [TestTypes.extendedPath, DevTeams.folijet] }, () => {
+        AcquisitionUnits.newAcquisitionUnit();
+        AcquisitionUnits.fillInAUInfo(defaultAcquisitionUnit.name);
+        // Need to wait until data will be loaded
+        cy.wait(2000);
+        AcquisitionUnits.assignUser(user.username);
+
+
+        // create Field mapping profile
+        cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.waitLoading();
         FieldMappingProfiles.createInvoiceMappingProfile(mappingProfile, profileForDuplicate);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
@@ -90,21 +108,25 @@ describe('data-import', () => {
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
-        // upload a marc file
+        // upload a marc file for creating of the new instance, holding and item
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        DataImport.uploadFile('ediFileForC343338.edi', fileName);
+        DataImport.uploadFile(filePathForUpload, fileName);
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);
         Logs.checkImportFile(jobProfile.profileName);
-        Logs.checkStatusOfJobProfile();
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileName);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.invoice);
+        FileDetails.verifyEachInvoiceStatusInColunm('Created');
         FileDetails.checkInvoiceInSummaryTable(quantityOfItems);
-        InvoiceView.checkInvoiceDetails(InvoiceView.vendorInvoiceNumber);
+
+        cy.visit(TopMenu.invoicesPath);
+        Invoices.searchByNumber(invoiceNumber);
+        Invoices.selectInvoice(invoiceNumber);
+        InvoiceView.verifyAcquisitionUnits(defaultAcquisitionUnit.name);
       });
   });
 });
