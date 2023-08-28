@@ -1,5 +1,6 @@
 import devTeams from '../../../../support/dictionary/devTeams';
 import TestType from '../../../../support/dictionary/testTypes';
+import Parallelization from '../../../../support/dictionary/parallelization';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import CirculationRules from '../../../../support/fragments/circulation/circulation-rules';
 import OverdueFinePolicy, {
@@ -65,7 +66,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
     Users.deleteViaApi(newUserId);
   });
 
-  it('C2268: Add notice policy to circulation rules (vega)', { tags: [TestType.smoke, devTeams.vega] }, () => {
+  it('C2268: Add notice policy to circulation rules (vega)', { tags: [TestType.smoke, devTeams.vega, Parallelization.nonParallel] }, () => {
     CirculationRules.clearCirculationRules();
     CirculationRules.fillInPriority();
 
