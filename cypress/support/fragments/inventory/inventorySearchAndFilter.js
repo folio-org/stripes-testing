@@ -66,15 +66,14 @@ const nextButton = Button({ id: 'browse-results-list-callNumbers-next-paging-but
 const previousButton = Button({ id: 'browse-results-list-callNumbers-prev-paging-button' });
 const instancesList = paneResultsSection.find(MultiColumnList({ id: 'list-inventory' }));
 
+const searchToggleButton = Button({ id: 'mode-navigation-search' });
+
 const searchInstanceByHRID = (id) => {
   cy.do([
     Select({ id: 'input-inventory-search-qindex' }).choose('Instance HRID'),
     TextField({ id: 'input-inventory-search' }).fillIn(id),
     searchButton.click(),
   ]);
-  cy.wait(1000);
-  cy.do(searchButton.click());
-  InventoryInstances.waitLoading();
 };
 
 const searchHoldingsByHRID = (hrid) => {
@@ -192,12 +191,11 @@ export default {
   },
 
   byEffectiveLocation(values) {
-    return cy.do([
-      effectiveLocationInput.clickHeader(),
-      effectiveLocationInput
-        .find(Checkbox(values ?? this.effectiveLocation.mainLibrary))
-        .click(),
-    ]);
+    cy.do(effectiveLocationInput.clickHeader());
+    // wait to avoid robotic clicks
+    cy.wait(2000);
+    cy.do(effectiveLocationInput.find(Checkbox(values ?? this.effectiveLocation.mainLibrary)).click());
+    cy.expect(effectiveLocationInput.find(Checkbox(values ?? this.effectiveLocation.mainLibrary)).has({ checked: true }));
   },
 
   byLanguage(lang) {
@@ -630,8 +628,8 @@ export default {
     ]);
   },
 
-  filterHoldingsByPermanentLocation:(location) => {
-    cy.do(Button({ id:'accordion-toggle-button-holdingsPermanentLocation' }).click());
+  filterHoldingsByPermanentLocation: (location) => {
+    cy.do(Button({ id: 'accordion-toggle-button-holdingsPermanentLocation' }).click());
     // need to wait until data will be loaded
     cy.wait(1000);
     cy.do(
@@ -642,10 +640,16 @@ export default {
     holdingsPermanentLocationAccordion.find(TextField()).click();
     cy.do(holdingsPermanentLocationAccordion.find(Checkbox(location)).click());
   },
-  checkRowsCount:(expectedRowsCount) => {
+
+  checkRowsCount: (expectedRowsCount) => {
     cy.expect([
       instancesList.find(MultiColumnListRow({ index: expectedRowsCount - 1 })).exists(),
       instancesList.find(MultiColumnListRow({ index: expectedRowsCount })).absent()
     ]);
+  },
+
+  switchToSearchTab() {
+    cy.do(searchToggleButton.click());
+    cy.expect(effectiveLocationInput.exists());
   }
 };

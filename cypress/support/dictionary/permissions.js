@@ -60,6 +60,7 @@ export default {
   uiInventoryMarcItemUnknow:{ internal:'ui-inventory.items.mark-unknown', gui:'Inventory: Mark items unknown' },
   uiCreateEditDeleteURL: { internal:'ui-inventory.settings.electronic-access-relationships', gui:'Settings (Inventory): Create, edit, delete URL relationships' },
   inventoryCRUDHoldings: { internal: 'ui-inventory.holdings.delete', gui: 'Inventory: View, create, edit, delete holdings' },
+  inventoryCRUDItemNoteTypes: { internal: 'ui-inventory.settings.item-note-types', gui: 'Settings (Inventory): Create, edit, delete item note types' },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui:'Tags: All permissions' },
   uiViewTagsSettings: { internal: 'ui-tags.settings.view', gui:'Settings (Tags): Can view tags settings' },
@@ -70,7 +71,7 @@ export default {
   uiUsersEdituserservicepoints: { internal: 'ui-users.edituserservicepoints', gui: 'Users: Can assign and unassign service points to users' },
   // Locations
   uiTenantSettingsSettingsLocation:{ internal: 'ui-tenant-settings.settings.location', gui:'Settings (tenant): Can create, edit and remove locations' },
-  uiTenantSettingsServicePointsCRUD:{ internal: 'ui-tenant-settings.settings.servicepoints', gui:'Settings (tenant):  Can create, edit and remove service points' },
+  uiTenantSettingsServicePointsCRUD:{ internal: 'ui-tenant-settings.settings.servicepoints', gui:'Settings (tenant): Can create, edit and remove service points' },
   // DataImport
   dataImportUploadAll:{ internal: 'data-import.upload.all', gui:'Data Import File Upload - all permissions' },
   moduleDataImportEnabled:{ internal: 'ui-data-import.settings.manage', gui:'Data import: Can upload files, import, and view logs' },

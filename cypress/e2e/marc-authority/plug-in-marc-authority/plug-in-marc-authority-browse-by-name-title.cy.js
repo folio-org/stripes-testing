@@ -13,35 +13,35 @@ import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthorit
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 
 describe('plug-in MARC authority | Browse', () => {
-    const testData = {
-      searchOptionA: 'Name-title',
-      searchOptionB: 'Personal name',
-      typeOfHeadingA: 'Personal Name',
-      typeOfHeadingB: 'Corporate Name',
-      typeOfHeadingC: 'Conference Name',
-      value: 'Dabbāgh, ʻAbd al-Raḥmān ibn Muḥammad, 1208 or 1209-1299 or 1300. Mashāriq anwār al-qulūb wa-mafātiḥ asrār al-ghuyūb',
-      valueMarked: 'Dabbāgh, ʻAbd al-Raḥmān ibn Muḥammad,',
-      valueForNewSearch: 'United States. Truth in Lending Act',
-      authorized: 'Authorized',
-      reference: 'Reference',
-    };
-    
-    const marcFiles = [
-      {
-        marc: 'oneMarcBib.mrc', 
-        fileName: `testMarcFile.${getRandomPostfix()}.mrc`, 
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-        numOfRecords: 1,
-      }, 
-      {
-        marc: 'mrcFileForC380554.mrc', 
-        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
-        numOfRecords: 3,
-      },
-    ]
+  const testData = {
+    searchOptionA: 'Name-title',
+    searchOptionB: 'Personal name',
+    typeOfHeadingA: 'Personal Name',
+    typeOfHeadingB: 'Corporate Name',
+    typeOfHeadingC: 'Conference Name',
+    value: 'Dabbāgh, ʻAbd al-Raḥmān ibn Muḥammad, 1208 or 1209-1299 or 1300. Mashāriq anwār al-qulūb wa-mafātiḥ asrār al-ghuyūb',
+    valueMarked: 'Dabbāgh, ʻAbd al-Raḥmān ibn Muḥammad,',
+    valueForNewSearch: 'United States. Truth in Lending Act',
+    authorized: 'Authorized',
+    reference: 'Reference',
+  };
 
-    let createdAuthorityIDs = [];
+  const marcFiles = [
+    {
+      marc: 'oneMarcBib.mrc',
+      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      numOfRecords: 1,
+    },
+    {
+      marc: 'marcFileForC380554.mrc',
+      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      jobProfileToRun: 'Default - Create SRS MARC Authority',
+      numOfRecords: 3,
+    },
+  ];
+
+  const createdAuthorityIDs = [];
 
   before('Creating user', () => {
     cy.createTempUser([
@@ -82,11 +82,6 @@ describe('plug-in MARC authority | Browse', () => {
     createdAuthorityIDs.forEach((id, index) => {
       if (index) MarcAuthority.deleteViaAPI(id);
     });
-
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    DataImport.selectLog();
-    DataImport.openDeleteImportLogsModal();
-    DataImport.confirmDeleteImportLogs();
   });
 
   it('C380554 MARC Authority plug-in | Browse using "Name-title" option returns only records with the same "Type of heading" (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {

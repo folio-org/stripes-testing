@@ -71,11 +71,6 @@ describe('bulk-edit', { retries: 2 }, () => {
         });
     });
 
-    beforeEach('select holdings', () => {
-      BulkEditSearchPane.checkHoldingsRadio();
-      BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
-    });
-
     after('delete test data', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item2.itemBarcode);
@@ -84,6 +79,8 @@ describe('bulk-edit', { retries: 2 }, () => {
     });
 
     it('C365126 Verify confirmation page after bulk editing holdings locations (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.checkHoldingsRadio();
+      BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
       BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
       BulkEditSearchPane.waitFileUploading();
       BulkEditSearchPane.verifyMatchedResults(item.hrid, item2.hrid);

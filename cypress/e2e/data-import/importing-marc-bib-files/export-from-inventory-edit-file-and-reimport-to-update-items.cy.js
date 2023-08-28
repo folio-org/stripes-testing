@@ -22,17 +22,21 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import FileManager from '../../../support/utils/fileManager';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import GenerateIdentifierCode from '../../../support/utils/generateIdentifierCode';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     let instanceHrid;
     const quantityOfItems = '1';
+    const uniqSubject = `35678123678${GenerateIdentifierCode.getRandomIdentifierCode()}`;
+    const filePathForUpload = 'marcFileForC11123.mrc';
     const instance = {
       instanceTitle: 'Love enough / Dionne Brand.',
-      instanceSubject: '35678123678',
+      instanceSubject: uniqSubject,
       holdingsLocation: `${LOCATION_NAMES.MAIN_LIBRARY_UI} >`,
       itemStatus: ITEM_STATUS_NAMES.AVAILABLE
     };
@@ -40,6 +44,7 @@ describe('data-import', () => {
     const recordType = 'MARC_BIBLIOGRAPHIC';
     const note = 'Test administrative note for item';
     // unique file name
+    const editedMarcFileNameForCreate = `C11123 autotestFile.${getRandomPostfix()}.mrc`;
     const marcFileForCreate = `C11123 autoTestFile.${getRandomPostfix()}.mrc`;
     const nameForCSVFile = `C11123 autotestFile${getRandomPostfix()}.csv`;
     const nameMarcFileForUpload = `C11123 autotestFile.${getRandomPostfix()}.mrc`;
@@ -201,17 +206,6 @@ describe('data-import', () => {
       cy.loginAsAdmin();
       cy.getAdminToken()
         .then(() => {
-          InventorySearchAndFilter.getInstancesBySubjectViaApi(instance.instanceSubject)
-            .then(instances => {
-              if (instances) {
-                instances.forEach(({ id }) => {
-                  cy.deleteItemViaApi(instance.items[0].id);
-                  cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-                  InventoryInstance.deleteInstanceViaApi(id);
-                });
-              }
-            });
-
           testData.jobProfileForCreate = jobProfileForCreate;
 
           testData.forEach(specialPair => {
@@ -223,11 +217,16 @@ describe('data-import', () => {
             .then((bodyWithjobProfile) => {
               testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
             });
+
+          // change file to add uniq subject
+          DataImport.editMarcFile(filePathForUpload, editedMarcFileNameForCreate,
+            ['35678123678'], [uniqSubject]);
+
           // upload a marc file for creating of the new instance, holding and item
           cy.visit(TopMenu.dataImportPath);
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
-          DataImport.uploadFile('mrcFileForC11123.mrc', marcFileForCreate);
+          DataImport.uploadFile(editedMarcFileNameForCreate, marcFileForCreate);
           JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(marcFileForCreate);
@@ -278,6 +277,7 @@ describe('data-import', () => {
 
             ItemRecordView.closeDetailView();
             InventorySearchAndFilter.searchByParameter('Subject', instance.instanceSubject);
+            InventorySearchAndFilter.selectResultCheckboxes(1);
             InventorySearchAndFilter.saveUUIDs();
             ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
 
@@ -334,6 +334,7 @@ describe('data-import', () => {
 
           cy.visit(TopMenu.inventoryPath);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+          InstanceRecordView.verifyInstancePaneExists();
           InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
           InventoryInstance.openItemByBarcode('No barcode');
           ItemRecordView.checkItemAdministrativeNote(note);

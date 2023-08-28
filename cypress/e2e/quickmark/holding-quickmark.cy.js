@@ -61,12 +61,7 @@ describe('MARC -> MARC Holdings', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    DataImport.selectLog();
-    DataImport.openDeleteImportLogsModal();
-    DataImport.confirmDeleteImportLogs();
-
-    cy.visit(TopMenu.inventoryPath);
+    cy.loginAsAdmin({ path: TopMenu.inventoryPath, waiter: InventorySearchAndFilter.waitLoading });
     InventorySearchAndFilter.searchInstanceByTitle(instanceID);
     InventorySearchAndFilter.selectViewHoldings();
     HoldingsRecordView.delete();

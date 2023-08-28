@@ -22,10 +22,10 @@ describe('Search in Inventory', () => {
     tag010: '010',
     querySearchOption: 'Query search',
     searchQueries: {
-      allRecords: 'alternativeTitles.alternativeTitle = "bible"',
-      secondLinkedRecord: 'alternativeTitles.alternativeTitle = "Hosanna Bible"',
-      bothLinkedRecords: 'alternativeTitles.alternativeTitle = "Hosanna Bible" OR alternativeTitles.alternativeTitle = "Bible. Polish."',
-      linkedAndFirstNotLinkedRecords: 'alternativeTitles.alternativeTitle = "Hosanna Bible" OR alternativeTitles.alternativeTitle = "Bible. Polish." OR alternativeTitles.alternativeTitle = "Bible1"'
+      allRecords: 'alternativeTitles.alternativeTitle = "bibleC375256"',
+      secondLinkedRecord: 'alternativeTitles.alternativeTitle = "Hosanna BibleC375256"',
+      bothLinkedRecords: 'alternativeTitles.alternativeTitle = "Hosanna BibleC375256" OR alternativeTitles.alternativeTitle = "BibleC375256. Polish."',
+      linkedAndFirstNotLinkedRecords: 'alternativeTitles.alternativeTitle = "Hosanna BibleC375256" OR alternativeTitles.alternativeTitle = "BibleC375256. Polish." OR alternativeTitles.alternativeTitle = "BibleC375256 1"'
     },
     searchResults: {
       firstLinkedRecord: 'Prayer Bible (Test record with 130 linked field).',
@@ -38,23 +38,23 @@ describe('Search in Inventory', () => {
   const marcFiles = [
     {
       marc: 'marcBibFileC375256.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFileC375256.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       numberOfRecords: 4
     },
     {
       marc: 'marcAuthFileC375256_1.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFileC375256.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
-      authorityHeading: 'Bible. Polish. Biblia Płocka C375256',
+      authorityHeading: 'BibleC375256. Polish. Biblia Płocka C375256',
       authority010FieldValue: 'n92085235375256',
       numberOfRecords: 1
     },
     {
       marc: 'marcAuthFileC375256_2.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFileC375256.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
-      authorityHeading: 'Abraham, Angela, C375256 Hosanna Bible',
+      authorityHeading: 'Abraham, Angela, C375256 Hosanna',
       authority010FieldValue: 'n99036055375256',
       numberOfRecords: 1
     },
@@ -69,8 +69,7 @@ describe('Search in Inventory', () => {
       testData.userProperties = createdUserProperties;
       marcFiles.forEach(marcFile => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-          JobProfiles.waitLoadingList();
+          DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
           JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(marcFile.fileName);
@@ -88,6 +87,8 @@ describe('Search in Inventory', () => {
         InventoryInstances.waitContentLoading();
         InventoryInstance.searchByTitle(createdRecordIDs[0]);
         InventoryInstances.selectInstance();
+        // here and below - wait for detail view to be fully loaded
+        cy.wait(1500);
         InventoryInstance.editMarcBibliographicRecord();
         InventoryInstance.verifyAndClickLinkIcon(testData.tag130);
         MarcAuthorities.switchToSearch();
@@ -100,6 +101,7 @@ describe('Search in Inventory', () => {
         QuickMarcEditor.checkAfterSaveAndClose();
         InventoryInstance.searchByTitle(createdRecordIDs[1]);
         InventoryInstances.selectInstance();
+        cy.wait(1500);
         InventoryInstance.editMarcBibliographicRecord();
         InventoryInstance.verifyAndClickLinkIcon(testData.tag240);
         MarcAuthorities.switchToSearch();
@@ -122,12 +124,6 @@ describe('Search in Inventory', () => {
       if (index > marcFiles[0].numberOfRecords - 1) MarcAuthority.deleteViaAPI(id);
       else InventoryInstance.deleteInstanceViaApi(id);
     });
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    for (let i = 0; i < marcFiles.length; i++) {
-      DataImport.selectLog(i);
-    }
-    DataImport.openDeleteImportLogsModal();
-    DataImport.confirmDeleteImportLogs();
   });
 
   it('C375256 Query search | Search by "Alternative title" field of linked "MARC Bib" records (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {

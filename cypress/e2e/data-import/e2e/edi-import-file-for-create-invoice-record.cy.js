@@ -23,12 +23,12 @@ import Users from '../../../support/fragments/users/users';
 describe('data-import', () => {
   describe('End to end scenarios', () => {
     const quantityOfItems = '1';
-    const fileName = `C343338autotestFile.${getRandomPostfix()}.edi`;
+    const fileName = `C343338 autotestFile.${getRandomPostfix()}.edi`;
     const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.gobi;
     let user = {};
 
     const mappingProfile = {
-      name:`autoTestMappingProf.${getRandomPostfix()}`,
+      name:`C343338 autoTestMappingProf.${getRandomPostfix()}`,
       incomingRecordType:NewFieldMappingProfile.incomingRecordType.edifact,
       existingRecordType:FOLIO_RECORD_TYPE.INVOICE,
       description:'',
@@ -37,12 +37,12 @@ describe('data-import', () => {
       paymentMethod: PAYMENT_METHOD.CASH
     };
     const actionProfile = {
-      name: `autoTestActionProf.${getRandomPostfix()}`,
+      name: `C343338 autoTestActionProf.${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INVOICE
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
-      profileName: `autoTestJobProf.${getRandomPostfix()}`,
+      profileName: `C343338 autoTestJobProf.${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.EDIFACT
     };
 

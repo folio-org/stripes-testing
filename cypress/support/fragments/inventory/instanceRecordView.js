@@ -24,6 +24,7 @@ const viewSourceButton = Button('View source');
 const instanceAdministrativeNote = MultiColumnList({ id: 'administrative-note-list' });
 const instanceNote = MultiColumnList({ id: 'list-instance-notes-0' });
 const electronicAccessAccordion = Accordion('Electronic access');
+const instanceDetailsPane = Pane({ id:'pane-instancedetails' });
 
 const verifyResourceTitle = value => {
   cy.expect(KeyValue('Resource title').has({ value }));
@@ -93,7 +94,7 @@ const verifyNatureOfContent = (value) => {
 };
 
 const verifyInstanceRecordViewOpened = () => {
-  cy.expect(Pane({ id:'pane-instancedetails' }).exists());
+  cy.expect(instanceDetailsPane.exists());
 };
 
 const verifyElectronicAccess = (uriValue, linkText = 'No value set-', rowNumber = 0) => {
@@ -143,8 +144,12 @@ export default {
     cy.expect(Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) }).exists());
   },
   verifyIsInstanceOpened:(title) => {
-    cy.expect(Pane({ id:'pane-instancedetails' }).exists());
+    cy.expect(instanceDetailsPane.exists());
     cy.expect(Pane({ titleLabel: including(title) }).exists());
+  },
+  verifyInstancePaneExists:() => {
+    cy.wait(1500);
+    cy.expect(instanceDetailsPane.exists());
   },
   verifyCalloutMessage: (number) => {
     cy.expect(Callout({ textContent: including(`Record ${number} created. Results may take a few moments to become visible in Inventory`) })
@@ -156,13 +161,24 @@ export default {
     cy.expect(Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) }).find(Badge()).has({ value: itemsCount.toString() }));
   },
 
+  // need to be updated regarding to verifyQuantityOfItemsRelatedtoHoldings function
   verifyQuantityOfItemsOnPage(quantityOfItems, itemLoanType) {
     for (let i = 0; i < 200; i++) {
-      cy.expect(MultiColumnList({ ariaRowCount: `${quantityOfItems} + 1` })
-      .find(MultiColumnListRow({rowIndexInParent: `row-${i}`}))
+      cy.expect(MultiColumnList({ ariaRowCount: `${quantityOfItems}` })
+        .find(MultiColumnListRow({ rowIndexInParent: `row-${i}` }))
         .find(MultiColumnListCell({ columnIndex: 3, content: itemLoanType }))
         .exists());
     }
+  },
+
+  verifyQuantityOfItemsRelatedtoHoldings(holdingToBeOpened, quantityOfItems) {
+    cy.do(
+      Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) })
+        .perform(el => {
+          const items = el.querySelectorAll('div[class^="mclRow-"]').length;
+          expect(quantityOfItems).to.eq(items);
+        })
+    );
   },
 
   clickNextPaginationButton() {

@@ -110,12 +110,6 @@ describe('Inventory: Contributors Browse', () => {
     createdRecordIDs.forEach((id, index) => {
       if (index) MarcAuthority.deleteViaAPI(id);
     });
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    for (let i = 0; i < marcFiles.length; i++) {
-      DataImport.selectLog(i);
-    }
-    DataImport.openDeleteImportLogsModal();
-    DataImport.confirmDeleteImportLogs();
   });
 
   it('C359596 Verify that contributors with the same "Name", "Name type" and different "authorityID" will display in different rows in the response (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire], retries: 1 }, () => {

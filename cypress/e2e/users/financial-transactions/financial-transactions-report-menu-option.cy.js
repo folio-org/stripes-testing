@@ -41,6 +41,59 @@ describe('Financial Transactions Detail Report', () => {
     UsersSearchResultsPane.verifyOptionsInActionsMenu();
   });
 
+  it('C343306 Check that the "Financial transactions detail report" modal is display when selected "Financial transactions detail report (CSV)"', { tags: [TestTypes.criticalPath, DevTeams.vega] }, () => {
+    UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
+    FinancialTransactionDetailReportModal.verifyStartDateFieldIsEmpty();
+    FinancialTransactionDetailReportModal.verifyEndDateFieldIsEmpty();
+    FinancialTransactionDetailReportModal.verifyFeeFineOwnerSelect();
+    FinancialTransactionDetailReportModal.verifyAssociatedServicePointsMultiSelect();
+    FinancialTransactionDetailReportModal.verifySaveButtonIsDisabled();
+    FinancialTransactionDetailReportModal.verifyCancelButtonIsEnabled();
+  });
+
+  it('C343307 Check that the user returns to the "User search result" page when click in the "Cancel" button or "X" button on the "Financial transactions detail report" modal', { tags: [TestTypes.criticalPath, DevTeams.vega] }, () => {
+    UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
+    FinancialTransactionDetailReportModal.verifyFinancialReportModalIsShown();
+    FinancialTransactionDetailReportModal.closeFinancialReportModalByCancelButton();
+    FinancialTransactionDetailReportModal.verifyFinancialReportModalIsNotShown();
+    UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
+    FinancialTransactionDetailReportModal.verifyFinancialReportModalIsShown();
+    FinancialTransactionDetailReportModal.closeFinancialReportModalByXButton();
+    FinancialTransactionDetailReportModal.verifyFinancialReportModalIsNotShown();
+  });
+
+  it('C343308 Check that the user can not close "Financial transactions detail report" modal when click on the outside the modal', { tags: [TestTypes.criticalPath, DevTeams.vega] }, () => {
+    UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
+    UsersSearchResultsPane.clickActionsButton();
+    FinancialTransactionDetailReportModal.verifyFinancialReportModalIsShown();
+  });
+
+  it('C343309 Check that the user can close "Financial transactions detail report" modal when click on the "Esc" button', { tags: [TestTypes.criticalPath, DevTeams.vega] }, () => {
+    UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
+    FinancialTransactionDetailReportModal.verifyFinancialReportModalIsShown();
+    FinancialTransactionDetailReportModal.closeFinancialReportModalByEscButton();
+    FinancialTransactionDetailReportModal.verifyFinancialReportModalIsNotShown();
+  });
+
+  it('C343311 Check that the error message ""Start date" is required" is appears under Start date field', { tags: [TestTypes.criticalPath, DevTeams.vega] }, () => {
+    UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
+    FinancialTransactionDetailReportModal.clickEndDateField();
+    FinancialTransactionDetailReportModal.verifyStartDateIsRequiredErrorMessage();
+  });
+
+  it('C343312 Check that the error message ""Start date" is required if "End date" entered" is appears under Start date field and has red color when End date was selected', { tags: [TestTypes.criticalPath, DevTeams.vega] }, () => {
+    UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
+    FinancialTransactionDetailReportModal.fillInEndDate();
+    FinancialTransactionDetailReportModal.verifyStartDateIsRequiredIfEndDateEnteredErrorMessage();
+  });
+
+  it('C343313 Check that the "End date" must be greater than or equal to "Start date" error message is appears when End date is less than Start date', { tags: [TestTypes.criticalPath, DevTeams.vega] }, () => {
+    UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
+    FinancialTransactionDetailReportModal.fillInStartDate('01/20/2020');
+    FinancialTransactionDetailReportModal.fillInEndDate('01/10/2020');
+    FinancialTransactionDetailReportModal.verifyEndDateMustBeGreaterThanOrEqualToStartDateErrorMessage();
+  });
+
   it('C343316 Check that the "Save&close" button has become active after filling in all the required fields with valid data', { tags: [TestTypes.criticalPath, DevTeams.vega] }, () => {
     UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
     FinancialTransactionDetailReportModal.fillInRequiredFields({ startDate: false, ownerName: ownerData.name });

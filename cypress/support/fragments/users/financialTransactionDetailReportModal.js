@@ -1,5 +1,5 @@
 import DateTools from '../../utils/dateTools';
-import { Button, Modal, TextField, Select, including, MultiSelect } from '../../../../interactors';
+import { Button, Modal, TextField, Select, including, MultiSelect, HTML } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 
 const financialReport = Modal({ id: 'financial-transactions-report-modal' });
@@ -21,6 +21,11 @@ export default {
     }
   },
 
+  fillInStartDate(startDate) {
+    if (startDate) cy.do(financialReport.find(startDateTextfield).fillIn(startDate));
+    else cy.do(financialReport.find(startDateTextfield).fillIn(currentDayOfMonth));
+  },
+
   fillInEndDate(endDate) {
     if (endDate) cy.do(financialReport.find(endDateTextfield).fillIn(endDate));
     else cy.do(financialReport.find(endDateTextfield).fillIn(currentDayOfMonth));
@@ -28,6 +33,30 @@ export default {
 
   verifySaveButtonIsEnabled() {
     cy.do(financialReport.find(Button(including('Save'))).has({ disabled: false }));
+  },
+
+  verifySaveButtonIsDisabled() {
+    cy.do(financialReport.find(Button(including('Save'))).has({ disabled: true }));
+  },
+
+  verifyCancelButtonIsEnabled() {
+    cy.do(financialReport.find(Button(including('Cancel'))).has({ disabled: false }));
+  },
+
+  verifyStartDateFieldIsEmpty() {
+    cy.do(financialReport.find(startDateTextfield).has({ value: '' }));
+  },
+
+  verifyEndDateFieldIsEmpty() {
+    cy.do(financialReport.find(endDateTextfield).has({ value: '' }));
+  },
+
+  verifyFeeFineOwnerSelect() {
+    cy.expect(financialReport.find(feeFineOwnerSelect).exists());
+  },
+
+  verifyAssociatedServicePointsMultiSelect() {
+    cy.expect(financialReport.find(MultiSelect({ label: 'Associated service points' })).exists());
   },
 
   save() {
@@ -41,4 +70,40 @@ export default {
   fillInServicePoints(servicePoints) {
     cy.do([financialReport.find(MultiSelect({ label: 'Associated service points' })).choose(servicePoints)]);
   },
+
+  verifyFinancialReportModalIsShown() {
+    cy.expect(financialReport.exists());
+  },
+
+  verifyFinancialReportModalIsNotShown() {
+    cy.expect(financialReport.absent());
+  },
+
+  closeFinancialReportModalByEscButton() {
+    cy.get('#financial-transactions-report-modal').type('{esc}');
+  },
+
+  closeFinancialReportModalByXButton() {
+    cy.do(financialReport.find(Button({ id: 'financial-transactions-report-modal-close-button' })).click());
+  },
+
+  closeFinancialReportModalByCancelButton() {
+    cy.do(financialReport.find(Button(including('Cancel'))).click());
+  },
+
+  clickEndDateField() {
+    cy.do(financialReport.find(endDateTextfield).click());
+  },
+
+  verifyStartDateIsRequiredErrorMessage() {
+    cy.expect(financialReport.find(HTML(including('"Start date" is required'))).exists());
+  },
+
+  verifyStartDateIsRequiredIfEndDateEnteredErrorMessage() {
+    cy.expect(financialReport.find(HTML(including('"Start date" is required if "End date" entered'))).exists());
+  },
+
+  verifyEndDateMustBeGreaterThanOrEqualToStartDateErrorMessage() {
+    cy.expect(financialReport.find(HTML(including('"End date" must be greater than or equal to "Start date"'))).exists());
+  }
 };
