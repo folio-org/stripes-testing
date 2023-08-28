@@ -643,6 +643,8 @@ export default {
     InventoryInstanceSelectInstanceModal.waitLoading();
     InventoryInstanceSelectInstanceModal.searchByTitle(title);
     InventoryInstanceSelectInstanceModal.selectInstance();
+    // cypress clicks too fast
+    cy.wait(2000);
     InventoryInstancesMovement.moveFromMultiple(holdingName, title);
   },
 

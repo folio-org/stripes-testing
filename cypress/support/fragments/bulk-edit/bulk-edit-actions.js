@@ -285,7 +285,7 @@ export default {
     this.verifyPossibleActions(options);
   },
 
-  verifyItemNoteActions(rowIndex = 0) {
+  verifyItemNoteActions(type = 'Note', rowIndex = 0) {
     const options = [
       'Mark as staff only',
       'Remove mark as staff only',
@@ -295,10 +295,17 @@ export default {
       'Change note type',
     ];
     cy.do([
-      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Note'),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).click(),
     ]);
     this.verifyPossibleActions(options);
+  },
+
+  markAsStaffOnly(type, rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Mark as staff only'),
+    ]);
   },
 
   checkApplyToItemsRecordsCheckbox() {
