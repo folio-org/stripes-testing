@@ -95,6 +95,11 @@ export default {
     cy.do(financialReport.find(endDateTextfield).click());
   },
 
+  activateFeeFineOwnerSelect() {
+    cy.do(financialReport.find(feeFineOwnerSelect).focus());
+    cy.do(financialReport.click());
+  },
+
   verifyStartDateIsRequiredErrorMessage() {
     cy.expect(financialReport.find(HTML(including('"Start date" is required'))).exists());
   },
@@ -105,5 +110,9 @@ export default {
 
   verifyEndDateMustBeGreaterThanOrEqualToStartDateErrorMessage() {
     cy.expect(financialReport.find(HTML(including('"End date" must be greater than or equal to "Start date"'))).exists());
+  },
+
+  verifyFeeFineOwnerIsRequiredErrorMessage() {
+    cy.expect(financialReport.find(HTML(including('"Fee/fine owner" is required'))).exists());
   }
 };
