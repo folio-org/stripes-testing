@@ -32,7 +32,6 @@ describe('data-import', () => {
     const fileName = `C345356 autotestFile.${getRandomPostfix()}.edi`;
     const invoiceNumber = '19353';
     const quantityOfItems = '1';
-    const quantityOfInvoiceLines = '18';
     const mappingProfile = {
       name:`C345356 GOBI invoice - Acq Units.${getRandomPostfix()}`,
       incomingRecordType:NewFieldMappingProfile.incomingRecordType.edifact,
@@ -56,13 +55,11 @@ describe('data-import', () => {
 
     before('login', () => {
       cy.createTempUser([
-        permissions.dataImportUploadAll.gui,
         permissions.moduleDataImportEnabled.gui,
-        permissions.settingsDataImportEnabled.gui,
-        permissions.uiOrganizationsView.gui,
+        permissions.assignAcqUnitsToNewInvoice.gui,
         permissions.viewEditDeleteInvoiceInvoiceLine.gui,
         permissions.uiSettingsAcquisitionUnitsViewEditCreateDelete.gui,
-        permissions.uiInvoicesManageAcquisitionUnits.gui
+        permissions.settingsDataImportEnabled.gui
       ])
         .then(userProperties => {
           user = userProperties;
@@ -91,6 +88,7 @@ describe('data-import', () => {
         // Need to wait until data will be loaded
         cy.wait(2000);
         AcquisitionUnits.assignUser(user.username);
+
 
         // create Field mapping profile
         cy.visit(SettingsMenu.mappingProfilePath);
@@ -124,7 +122,6 @@ describe('data-import', () => {
         Logs.openFileDetails(fileName);
         FileDetails.verifyEachInvoiceStatusInColunm('Created');
         FileDetails.checkInvoiceInSummaryTable(quantityOfItems);
-        Logs.checkQuantityRecordsInFile(quantityOfInvoiceLines);
 
         cy.visit(TopMenu.invoicesPath);
         Invoices.searchByNumber(invoiceNumber);

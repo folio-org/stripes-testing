@@ -57,7 +57,7 @@ export default {
   },
 
   verifyAcquisitionUnits:(acquisitionUnitName) => {
-    cy.expect(Pane({ id:'pane-invoiceDetails' }).find(KeyValue('Invoice date')).has({ value: acquisitionUnitName }));
+    cy.expect(Pane({ id:'pane-invoiceDetails' }).find(KeyValue('Acquisition units')).has({ value: acquisitionUnitName }));
   },
 
   vendorInvoiceNumber,
