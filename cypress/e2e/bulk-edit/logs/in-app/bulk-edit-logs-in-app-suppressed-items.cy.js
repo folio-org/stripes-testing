@@ -73,8 +73,8 @@ describe('Bulk Edit - Logs', () => {
     BulkEditActions.commitChanges();
     BulkEditSearchPane.waitFileUploading();
     BulkEditActions.openActions();
-    BulkEditSearchPane.changeShowColumnCheckbox('Suppressed from discovery');
-    BulkEditSearchPane.verifyChangesUnderColumns('Suppressed from discovery', false);
+    BulkEditSearchPane.changeShowColumnCheckbox('Suppress from discovery');
+    BulkEditSearchPane.verifyChangesUnderColumns('Suppress from discovery', false);
     BulkEditActions.downloadChangedCSV();
 
     BulkEditSearchPane.openLogsSearch();
