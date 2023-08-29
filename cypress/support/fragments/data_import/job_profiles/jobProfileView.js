@@ -11,6 +11,9 @@ import { Accordion,
 const viewPane = Pane({ id:'view-job-profile-pane' });
 const resultsPane = Pane({ id:'pane-results' });
 const actionsButton = Button('Actions');
+const tagSelect = MultiSelect({ id:'input-tag' });
+const addTagForSelectOption = MultiSelectOption(including('Add tag for:'));
+const jobProfilesList = MultiColumnList({ id: 'job-profiles-list' });
 
 export default {
   edit:() => {
@@ -25,15 +28,15 @@ export default {
     }).as('getTags');
     cy.do(Accordion({ id:'tag-accordion' }).clickHeader());
     cy.wait('@getTags');
-    cy.expect(MultiSelect({ id:'input-tag' }).exists());
-    cy.do(MultiSelect({ id:'input-tag' }).choose(tag));
+    cy.expect(tagSelect.exists());
+    cy.do(tagSelect.choose(tag));
   },
 
   addNewTag:(newTag) => {
-    cy.expect(MultiSelect({ id:'input-tag' }).exists());
+    cy.expect(tagSelect.exists());
     cy.get('#input-tag-input').type(newTag);
-    cy.expect(MultiSelectOption(including('Add tag for:')).exists());
-    cy.do(MultiSelectOption(including('Add tag for:')).click());
+    cy.expect(addTagForSelectOption.exists());
+    cy.do(addTagForSelectOption.click());
   },
 
   removeTag:(tag) => {
@@ -48,16 +51,16 @@ export default {
   verifyAssignedTags:(tag, quantityOfTags = 1) => {
     cy.expect(MultiSelect({ selectedCount: quantityOfTags }).exists());
     cy.expect(ValueChipRoot(tag).exists());
-    cy.expect(Pane({ id:'pane-results' })
-      .find(MultiColumnList({ id: 'job-profiles-list' }))
+    cy.expect(resultsPane
+      .find(jobProfilesList)
       .find(MultiColumnListCell({ row: 0, columnIndex: 2, content: including(tag) }))
       .exists());
   },
   verifyAssignedTagsIsAbsent:(tag, quantityOfTags = 1) => {
     cy.expect(MultiSelect({ selectedCount: quantityOfTags }).exists());
     cy.expect(ValueChipRoot(tag).absent());
-    cy.expect(Pane({ id:'pane-results' })
-      .find(MultiColumnList({ id: 'job-profiles-list' }))
+    cy.expect(resultsPane
+      .find(jobProfilesList)
       .find(MultiColumnListCell({ row: 0, columnIndex: 2, content: including(tag) }))
       .absent());
   },
