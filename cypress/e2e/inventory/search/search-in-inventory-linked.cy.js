@@ -20,7 +20,9 @@ describe('Search in Inventory', () => {
     tag130: '130',
     tag240: '240',
     tag010: '010',
+    tag700: '700',
     querySearchOption: 'Query search',
+    authUUIDSearchOption: 'Authority UUID',
     searchQueries: {
       allRecords: 'alternativeTitles.alternativeTitle = "bibleC375256"',
       secondLinkedRecord: 'alternativeTitles.alternativeTitle = "Hosanna BibleC375256"',
@@ -32,7 +34,11 @@ describe('Search in Inventory', () => {
       secondLinkedRecord: 'Prayer Bible (Test record with 240 linked field).',
       firstNotLinkedRecord: 'Prayer Bible (Test record without linked field: 246).',
       secondNotLinkedRecord: 'Prayer Bible (Test record without linked field: 270).',
-    }
+    },
+    searchResultsC367974: [
+      'C367974 Aviator / Leonardo DiCaprio, Matt Damon, Jack Nicholson, Robert De Niro, Ray Liotta, Martin Scorsese, Barbara De Fina, Brad Grey, Alan Mak, Felix Chong, Nicholas Pileggi, William Monahan.',
+      'C367974 Titanic / written and directed by James Cameron.'
+    ]
   };
 
   const marcFiles = [
@@ -41,6 +47,12 @@ describe('Search in Inventory', () => {
       fileName: `testMarcFileC375256.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       numberOfRecords: 4
+    },
+    {
+      marc: 'marcBibFileC367974.mrc',
+      fileName: `testMarcFileC367974.${getRandomPostfix()}.mrc`,
+      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      numberOfRecords: 2
     },
     {
       marc: 'marcAuthFileC375256_1.mrc',
@@ -56,6 +68,14 @@ describe('Search in Inventory', () => {
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       authorityHeading: 'Abraham, Angela, C375256 Hosanna',
       authority010FieldValue: 'n99036055375256',
+      numberOfRecords: 1
+    },
+    {
+      marc: 'marcAuthFileC367974.mrc',
+      fileName: `testMarcFileC367974.${getRandomPostfix()}.mrc`,
+      jobProfileToRun: 'Default - Create SRS MARC Authority',
+      authorityHeading: 'DiCaprio, Leonardo C367974',
+      authority010FieldValue: 'n94000330367974',
       numberOfRecords: 1
     },
   ];
@@ -93,8 +113,8 @@ describe('Search in Inventory', () => {
         InventoryInstance.verifyAndClickLinkIcon(testData.tag130);
         MarcAuthorities.switchToSearch();
         InventoryInstance.verifySelectMarcAuthorityModal();
-        InventoryInstance.searchResults(marcFiles[1].authorityHeading);
-        MarcAuthorities.checkFieldAndContentExistence(testData.tag010, `‡a ${marcFiles[1].authority010FieldValue}`);
+        InventoryInstance.searchResults(marcFiles[2].authorityHeading);
+        MarcAuthorities.checkFieldAndContentExistence(testData.tag010, `‡a ${marcFiles[2].authority010FieldValue}`);
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag130);
         QuickMarcEditor.pressSaveAndClose();
@@ -106,22 +126,51 @@ describe('Search in Inventory', () => {
         InventoryInstance.verifyAndClickLinkIcon(testData.tag240);
         MarcAuthorities.switchToSearch();
         InventoryInstance.verifySelectMarcAuthorityModal();
-        InventoryInstance.searchResults(marcFiles[2].authorityHeading);
-        MarcAuthorities.checkFieldAndContentExistence(testData.tag010, `‡a ${marcFiles[2].authority010FieldValue}`);
+        InventoryInstance.searchResults(marcFiles[3].authorityHeading);
+        MarcAuthorities.checkFieldAndContentExistence(testData.tag010, `‡a ${marcFiles[3].authority010FieldValue}`);
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
 
-        cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+        InventoryInstance.searchByTitle(createdRecordIDs[5]);
+        InventoryInstances.selectInstance();
+        cy.wait(1500);
+        InventoryInstance.editMarcBibliographicRecord();
+        InventoryInstance.verifyAndClickLinkIconByIndex(22);
+        InventoryInstance.verifySelectMarcAuthorityModal();
+        MarcAuthorities.switchToSearch();
+        InventoryInstance.searchResults(marcFiles[4].authorityHeading);
+        MarcAuthorities.checkFieldAndContentExistence(testData.tag010, `‡a ${marcFiles[4].authority010FieldValue}`);
+        InventoryInstance.clickLinkButton();
+        QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(22, testData.tag700);
+        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.checkAfterSaveAndClose();
+        InventoryInstance.searchByTitle(createdRecordIDs[4]);
+        InventoryInstances.selectInstance();
+        cy.wait(1500);
+        InventoryInstance.editMarcBibliographicRecord();
+        InventoryInstance.verifyAndClickLinkIconByIndex(65);
+        InventoryInstance.verifySelectMarcAuthorityModal();
+        MarcAuthorities.switchToSearch();
+        InventoryInstance.searchResults(marcFiles[4].authorityHeading);
+        MarcAuthorities.checkFieldAndContentExistence(testData.tag010, `‡a ${marcFiles[4].authority010FieldValue}`);
+        InventoryInstance.clickLinkButton();
+        QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(65, testData.tag700);
+        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.checkAfterSaveAndClose();
       });
     });
+  });
+
+  beforeEach('Log in', () => {
+    cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
   });
 
   after('Deleting user, records', () => {
     Users.deleteViaApi(testData.userProperties.userId);
     createdRecordIDs.forEach((id, index) => {
-      if (index > marcFiles[0].numberOfRecords - 1) MarcAuthority.deleteViaAPI(id);
+      if (index > 5) MarcAuthority.deleteViaAPI(id);
       else InventoryInstance.deleteInstanceViaApi(id);
     });
   });
@@ -152,5 +201,14 @@ describe('Search in Inventory', () => {
     InventorySearchAndFilter.verifySearchResult(testData.searchResults.secondLinkedRecord);
     InventorySearchAndFilter.verifySearchResult(testData.searchResults.firstNotLinkedRecord);
     InventorySearchAndFilter.checkRowsCount(3);
+  });
+
+  it('C367974 Search for two "Instance" records by "Authority UUID" value of linked "MARC Authority" record (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    InventoryInstances.verifyInstanceSearchOptions();
+    InventoryInstances.searchInstancesWithOption(testData.authUUIDSearchOption, createdRecordIDs[8]);
+    testData.searchResultsC367974.forEach(expectedTitle => {
+      InventorySearchAndFilter.verifyInstanceDisplayed(expectedTitle);
+    });
+    InventorySearchAndFilter.checkRowsCount(2);
   });
 });

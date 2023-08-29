@@ -10,7 +10,8 @@ import {
   TextField,
   Checkbox,
   Modal,
-  Select
+  Select,
+  TextInput
 } from '../../../../interactors';
 import InventoryHoldings from './holdings/inventoryHoldings';
 import inventoryNewInstance from './inventoryNewInstance';
@@ -23,6 +24,8 @@ const rootSection = Section({ id: 'pane-results' });
 const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
 const actionsButton = rootSection.find(Button('Actions'));
 const singleRecordImportModal = Modal('Single record import');
+const inventorySearchInput = TextInput({ id: 'input-inventory-search' });
+const searchButton = Button('Search', { type: 'submit' });
 
 const advSearchButton = Button('Advanced search');
 const advSearchModal = Modal('Advanced search');
@@ -413,5 +416,25 @@ export default {
 
   verifySelectedSearchOption(option) {
     cy.expect(inventorySearchAndFilterInput.has({ value: searchInstancesOptionsValues[searchInstancesOptions.indexOf(option)] }));
+  },
+
+  searchInstancesWithOption(option = searchInstancesOptions[0], value) {
+    cy.do([
+      inventorySearchAndFilterInput.choose(including(option)),
+      inventorySearchInput.fillIn(value)
+    ]);
+    this.verifySelectedSearchOption(option);
+    cy.expect([
+      inventorySearchInput.has({ value }),
+      searchButton.has({ disabled: false })
+    ]);
+    cy.do(searchButton.click());
+    cy.expect(inventoriesList.exists());
+  },
+
+  verifyInstanceSearchOptions() {
+    searchInstancesOptions.forEach((searchOption) => {
+      cy.expect(inventorySearchAndFilterInput.has({ content: including(searchOption) }));
+    });
   }
 };
