@@ -49,8 +49,8 @@ describe('Fee/fine management', () => {
                 testData.userServicePoint = points.body.defaultServicePointId;
               },
             );
-            UsersOwners.createViaApi({ owner: uuid() }).then((owner) => {
-              testData.owner = { id: owner.id, name: owner.ownerName };
+            UsersOwners.createViaApi({ owner: uuid() }).then(({ id, owner }) => {
+              testData.owner = { id, name: owner };
               ManualCharges.createViaApi({
                 ...ManualCharges.defaultFeeFineType,
                 ownerId: owner.id,
@@ -172,6 +172,7 @@ describe('Fee/fine management', () => {
       // Scenario 3: CHARGING MANUAL FEE/FINES USING ELLIPSIS OPTION FROM OPEN/CLOSED LOANS
       // waiting cypress runner ti be able to get a command
       // without wait, randomly doesn't redirecting browser to the checkin page
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(2000);
       cy.visit(topMenu.checkOutPath);
 
@@ -188,6 +189,7 @@ describe('Fee/fine management', () => {
       // Scenario 4: CHARGING MANUAL FEE/FINES USING ELLIPSIS OPTION FROM CHECK-IN
       // waiting cypress runner ti be able to get a command
       // without wait, randomly doesn't redirecting browser to the checkin page
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(2000);
       cy.visit(topMenu.checkInPath);
       CheckInActions.waitLoading();

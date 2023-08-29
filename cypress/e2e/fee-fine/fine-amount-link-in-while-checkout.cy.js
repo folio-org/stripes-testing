@@ -41,9 +41,9 @@ describe('Fee fine amout link in checkout', () => {
       });
       ServicePoints.createViaApi(servicePoint);
 
-      UsersOwners.createViaApi(UsersOwners.getDefaultNewOwner(uuid(), 'owner'))
-        .then(({ id, ownerName }) => {
-          ownerData.name = ownerName;
+      UsersOwners.createViaApi(UsersOwners.getDefaultNewOwner())
+        .then(({ id, owner }) => {
+          ownerData.name = owner;
           ownerData.id = id;
         })
         .then(() => {
