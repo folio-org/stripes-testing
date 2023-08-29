@@ -43,7 +43,7 @@ export default {
         const itemAmount = element.attr('data-end-of-list');
         for (let i = 0; i < itemAmount; i++) {
           cy.expect(jobProfilesPane.find(MultiColumnListCell({ column: 'Name', content: including(text) })).exists());
-        };
+        }
       } else cy.expect(HTML('The list contains no items').exists());
     });
   },

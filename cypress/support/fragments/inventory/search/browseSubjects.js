@@ -92,7 +92,7 @@ export default {
 
   checkAuthorityIconAndValueDisplayedForRow(rowIndex, value) {
     cy.expect([
-      MultiColumnListCell({ row: rowIndex, columnIndex: 0 }).has({ content: including(`${value}`) }),
+      MultiColumnListCell({ row: rowIndex, columnIndex: 0 }).has({ content: including(value) }),
       MultiColumnListCell({ row: rowIndex, columnIndex: 0 }).has({ innerHTML: including('<img') }),
       MultiColumnListCell({ row: rowIndex, columnIndex: 0 }).has({ innerHTML: including('alt="MARC Authorities module">') }),
     ]);
@@ -100,7 +100,7 @@ export default {
 
   checkNoAuthorityIconDisplayedForRow(rowIndex, value) {
     cy.expect([
-      MultiColumnListCell({ row: rowIndex, columnIndex: 0 }).has({ content: including(`${value}`) }),
+      MultiColumnListCell({ row: rowIndex, columnIndex: 0 }).has({ content: including(value) }),
       MultiColumnListCell({ row: rowIndex, columnIndex: 0, innerHTML: including('alt="MARC Authorities module">') }).absent(),
     ]);
   },
@@ -127,5 +127,16 @@ export default {
 
   checkValueAbsentInRow(rowIndex, value) {
     cy.expect(MultiColumnListCell({ row: rowIndex, columnIndex: 0, content: including(value) }).absent());
-  }
+  },
+
+  checkRowWithValueAndNoAuthorityIconExists(value) {
+    cy.expect(MultiColumnListCell({ columnIndex: 0, content: value }).exists());
+  },
+
+  checkRowWithValueAndAuthorityIconExists(value) {
+    cy.expect(MultiColumnListCell({
+      columnIndex: 0,
+      content: 'Linked to MARC authority' + value
+    }).exists());
+  },
 };
