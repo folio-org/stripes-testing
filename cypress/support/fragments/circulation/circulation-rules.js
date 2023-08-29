@@ -49,10 +49,17 @@ export default {
 
   fillInNewLine() {
     this.fillInCirculationRules('\n');
+    cy.wait(2000);
+  },
+
+  moveCursorFocusToTheEnd() {
+    cy.get('.react-codemirror2').type('{moveToEnd}');
   },
 
   fillInFallbackPolicy(policyData) {
     this.fillInCirculationRules('fallback-policy: ');
+    cy.wait(2000);
+    this.moveCursorFocusToTheEnd();
     this.fillInPolicy(policyData);
   },
 
@@ -69,6 +76,7 @@ export default {
       this.fillInCirculationRules(priorityType);
       this.clickCirculationRulesHintItem(priorityTypeName);
       this.fillInCirculationRules(': ');
+      cy.wait(2000);
     }
     this.fillInCirculationRules('l ');
     this.clickCirculationRulesHintItem(loanPolicyName);
