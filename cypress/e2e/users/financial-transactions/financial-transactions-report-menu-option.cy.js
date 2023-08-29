@@ -94,6 +94,15 @@ describe('Financial Transactions Detail Report', () => {
     FinancialTransactionDetailReportModal.verifyEndDateMustBeGreaterThanOrEqualToStartDateErrorMessage();
   });
 
+  it('C343314 Check that the ""Fee/fine owner" is required" error message is appears when user is not selected "Fee/fine owner"', { tags: [TestTypes.criticalPath, DevTeams.vega] }, () => {
+    UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
+    FinancialTransactionDetailReportModal.fillInStartDate();
+    FinancialTransactionDetailReportModal.fillInEndDate();
+    FinancialTransactionDetailReportModal.verifyFeeFineOwnerSelect();
+    FinancialTransactionDetailReportModal.activateFeeFineOwnerSelect();
+    FinancialTransactionDetailReportModal.verifyFeeFineOwnerIsRequiredErrorMessage();
+  });
+
   it('C343316 Check that the "Save&close" button has become active after filling in all the required fields with valid data', { tags: [TestTypes.criticalPath, DevTeams.vega] }, () => {
     UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
     FinancialTransactionDetailReportModal.fillInRequiredFields({ startDate: false, ownerName: ownerData.name });

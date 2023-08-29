@@ -83,7 +83,7 @@ describe('Bulk Edit - Logs', () => {
     const suppressFromDiscovery = true;
     const newLocation = 'Main Library';
     BulkEditActions.openActions();
-    BulkEditSearchPane.changeShowColumnCheckbox('Suppressed from discovery');
+    BulkEditSearchPane.changeShowColumnCheckbox('Suppress from discovery');
     BulkEditActions.openInAppStartBulkEditFrom();
     BulkEditActions.editHoldingsSuppressFromDiscovery(suppressFromDiscovery);
     BulkEditActions.addNewBulkEditFilterString();
@@ -94,7 +94,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditActions.commitChanges();
 
     BulkEditSearchPane.waitFileUploading();
-    BulkEditSearchPane.verifyChangesUnderColumns('Suppressed from discovery', suppressFromDiscovery);
+    BulkEditSearchPane.verifyChangesUnderColumns('Suppress from discovery', suppressFromDiscovery);
 
     BulkEditSearchPane.openLogsSearch();
     BulkEditSearchPane.checkHoldingsCheckbox();
