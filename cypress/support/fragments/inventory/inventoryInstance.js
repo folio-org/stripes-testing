@@ -828,6 +828,7 @@ export default {
   },
 
   openItemByBarcodeAndIndex: (barcode) => {
+    cy.wait(2000);
     cy.get('[class^="mclCell-"]').contains(barcode).eq(0).click();
   },
 

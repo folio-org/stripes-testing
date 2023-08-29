@@ -145,6 +145,7 @@ export default {
   },
 
   checkItemDetails(location, barcode, status) {
+    cy.wait(4000);
     this.verifyEffectiveLocation(location);
     this.checkBarcode(barcode);
     this.checkStatus(status);

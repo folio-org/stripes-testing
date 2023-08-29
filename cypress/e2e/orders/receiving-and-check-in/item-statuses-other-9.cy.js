@@ -49,8 +49,8 @@ describe('orders: Receiving and Check-in', () => {
   const barcodeForFifthItem = `5${Helper.getRandomBarcode()}`;
   const barcodeForSixthItem = `6${Helper.getRandomBarcode()}`;
   const barcodeForSeventhItem = `7${Helper.getRandomBarcode()}`;
-  const barcodeForEighthItem = `7${Helper.getRandomBarcode()}`;
-  const barcodeForNinthItem = `7${Helper.getRandomBarcode()}`;
+  const barcodeForEighthItem = `8${Helper.getRandomBarcode()}`;
+  const barcodeForNinthItem = `9${Helper.getRandomBarcode()}`;
 
   let orderNumber;
   let circ2LocationServicePoint;
@@ -83,7 +83,7 @@ describe('orders: Receiving and Check-in', () => {
                     Orders.selectFromResultsList();
                     Orders.createPOLineViaActions();
                     OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
-                    OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', locationResponse.institutionId, '7');
+                    OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', locationResponse.institutionId, '9');
                     OrderLines.backToEditingOrder();
                     Orders.openOrder();
                     OrderLines.selectPOLInOrder(0);
