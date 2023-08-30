@@ -36,7 +36,8 @@ describe('MARC -> MARC Holdings', () => {
       testData.createdUserProperties = createdUserProperties;
 
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+        DataImport.verifyUploadState();
+        DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
         JobProfiles.waitLoadingList();
         JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
