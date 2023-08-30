@@ -51,8 +51,6 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
 
       cy.login(username, password);
     });
-
-   // cy.visit(SettingsMenu.circulationRulesPath);
   });
 
   beforeEach(() => {
