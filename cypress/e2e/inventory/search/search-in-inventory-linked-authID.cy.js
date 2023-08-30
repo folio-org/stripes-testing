@@ -52,6 +52,7 @@ describe('Search in Inventory', () => {
       testData.userProperties = createdUserProperties;
       marcFiles.forEach(marcFile => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
+          DataImport.verifyUploadState();
           DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
           JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();
