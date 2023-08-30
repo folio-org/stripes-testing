@@ -185,38 +185,6 @@ describe.skip('Create a custom package', () => {
     }
   );
   it(
-    'C654 Test behavior for incomplete vs complete circulation rules (i.e., all policy types must be present; else error (vega)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      cy.visit(topMenu.settingsPath);
-      cy.visit(settingsMenu.circulationRulesPath);
-      circulationRules.fillInPolicy({
-        priorityType: 'g ',
-        loanPolicyName: 'irina-loan-policy',
-        overdueFinePolicyName: 'no-overdue-fine',
-        lostItemFeePolicyName: 'lostsetfines',
-        requestPolicyName: 'allow-all',
-        noticePolicyName: 'julies-check-out-policy',
-        priorityTypeName: 'ip',
-      });
-      circulationRules.saveCirculationRules();
-      circulationRules.verifyToast();
-    }
-  );
-  it(
-    'C656 Ensure interface alerts user of syntax errors in rules (vega)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      circulationRules.policyError({
-        priorityType: 'g ',
-        priorityTypeName: 'ip',
-        loanPolicyName: 'irina-loan-policy',
-      });
-      circulationRules.saveCirculationRules();
-      circulationRules.verifyError();
-    }
-  );
-  it(
     'C699 Add or edit package custom coverage (spitfire)',
     { tags: [testTypes.ideaLabsTests] },
     () => {
