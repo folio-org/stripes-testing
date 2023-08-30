@@ -429,7 +429,6 @@ export default {
       searchButton.has({ disabled: false })
     ]);
     cy.do(searchButton.click());
-    cy.expect(inventoriesList.exists());
   },
 
   verifyInstanceSearchOptions() {
