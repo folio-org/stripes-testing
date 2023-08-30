@@ -17,24 +17,29 @@ import { JOB_STATUS_NAMES } from '../../support/constants';
 describe('MARC Authority -> Edit linked Authority record', () => {
   const testData = {
     tag010: '010',
-    tag700: '700',
-    subfieldZValue: 'n12345',
-    updatedSubfieldZValue: 'n12345678910'
+    tag155: '155',
+    tag655: '655',
+    updated155FieldValue: 'Drama C374159 cinema',
+    updated010FieldValue: 'gf20140262973741590',
+    autoUpdateUserName: 'Automated linking update',
+    subjectAccordion: 'Subject',
+    authorityIconText: 'Linked to MARC authority'
   };
 
   const marcFiles = [
     {
-      marc: 'marcBibFileC376596.mrc',
-      fileName: `testMarcFileC376596.${getRandomPostfix()}.mrc`,
+      marc: 'marcBibFileC374159.mrc',
+      fileName: `testMarcFileC374159.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-      instanceTitle: 'The coronation of Queen Elizabeth II C376596'
+      instanceTitle: 'Titanic / written and directed by James Cameron. C374159'
     },
     {
-      marc: 'marcAuthFileC376596.mrc',
-      fileName: `testMarcFileC376596.${getRandomPostfix()}.mrc`,
+      marc: 'marcAuthFileC374159.mrc',
+      fileName: `testMarcFileC374159.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
-      authorityHeading: 'Elizabeth C376596',
-      authority010FieldValue: 'n80126296376596',
+      authorityHeading: 'Drama C374159',
+      authority010FieldValue: 'gf2014026297374159',
+      authority555FieldValue: 'Literature C374159'
     }
   ];
 
@@ -72,13 +77,13 @@ describe('MARC Authority -> Edit linked Authority record', () => {
         // wait for detail view to be fully loaded
         cy.wait(1500);
         InventoryInstance.editMarcBibliographicRecord();
-        InventoryInstance.verifyAndClickLinkIcon(testData.tag700);
+        InventoryInstance.verifyAndClickLinkIcon(testData.tag655);
         MarcAuthorities.switchToSearch();
         InventoryInstance.verifySelectMarcAuthorityModal();
         InventoryInstance.searchResults(marcFiles[1].authorityHeading);
         MarcAuthorities.checkFieldAndContentExistence(testData.tag010, `‡a ${marcFiles[1].authority010FieldValue}`);
         InventoryInstance.clickLinkButton();
-        QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag700);
+        QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag655);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
       });
@@ -94,31 +99,28 @@ describe('MARC Authority -> Edit linked Authority record', () => {
     });
   });
 
-  it('C376596 Add/Edit/Delete "$z" subfield in "010" field of linked "MARC authority" record when "010" = "$0" (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
-    MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);
-    MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);
+  it('C374159 Edit values in "1XX" and "010" fields of linked "MARC Authority" record when "$0" = "010 $a" (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    MarcAuthorities.searchBy('Keyword', marcFiles[1].authority555FieldValue);
+    MarcAuthorities.selectTitle(marcFiles[1].authority555FieldValue);
     MarcAuthority.edit();
-    QuickMarcEditor.checkContent(`$a ${marcFiles[1].authority010FieldValue}`, 4);
-    QuickMarcEditor.updateExistingField(testData.tag010, `$a ${marcFiles[1].authority010FieldValue} $z ${testData.subfieldZValue}`);
+    QuickMarcEditor.updateExistingField(testData.tag155, `$a ${testData.updated155FieldValue}`);
     QuickMarcEditor.checkButtonsEnabled();
-    QuickMarcEditor.clickSaveAndKeepEditing();
-    QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
-    QuickMarcEditor.updateExistingField(testData.tag010, `$a ${marcFiles[1].authority010FieldValue} $z ${testData.updatedSubfieldZValue}`);
-    QuickMarcEditor.checkButtonsEnabled();
-    QuickMarcEditor.clickSaveAndKeepEditing();
-    QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
-    QuickMarcEditor.updateExistingField(testData.tag010, `$a ${marcFiles[1].authority010FieldValue}`);
-    QuickMarcEditor.checkButtonsEnabled();
-    QuickMarcEditor.pressSaveAndClose();
-    QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
-
-    MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);
+    QuickMarcEditor.updateExistingField(testData.tag010, `$a ${testData.updated010FieldValue}`);
+    QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
+    QuickMarcEditor.confirmUpdateLinkedBibs(1);
+    MarcAuthorities.searchBy('Keyword', testData.updated155FieldValue);
+    MarcAuthorities.checkResultList([testData.updated155FieldValue]);
     MarcAuthorities.verifyNumberOfTitles(4, '1');
     MarcAuthorities.clickOnNumberOfTitlesLink(4, '1');
 
+    InventoryInstance.checkInstanceTitle(marcFiles[0].instanceTitle);
+    InventoryInstance.verifyRecordStatus(testData.autoUpdateUserName);
+    InventoryInstance.verifyInstanceSubject(11, 0, `${testData.authorityIconText}${testData.updated155FieldValue}`);
+    InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(testData.subjectAccordion);
+
     InventoryInstance.editMarcBibliographicRecord();
-    QuickMarcEditor.verifyTagFieldAfterLinking(60, testData.tag700, '0', '\\',
-      `$a ${marcFiles[1].authorityHeading}`, '', `$0 id.loc.gov/authorities/names/${marcFiles[1].authority010FieldValue}`, '');
+    QuickMarcEditor.checkPaneheaderContains(`Source: ${testData.autoUpdateUserName}`);
+    QuickMarcEditor.verifyTagFieldAfterLinking(52, '655', '\\', '7', `$a ${testData.updated155FieldValue}`, '', `$0 id.loc.gov/authorities/genreForms/${testData.updated010FieldValue}`, '$2 fast');
   });
 });
 
