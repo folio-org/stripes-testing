@@ -30,7 +30,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
   let addedCirculationRule;
   let newUserId;
 
-  beforeEach(() => {
+  before(() => {
     cy.createTempUser([
       permissions.uiCirculationViewCreateEditDelete.gui,
     ]).then(({
@@ -52,10 +52,14 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
       cy.login(username, password);
     });
 
+   // cy.visit(SettingsMenu.circulationRulesPath);
+  });
+
+  beforeEach(() => {
     cy.visit(SettingsMenu.circulationRulesPath);
   });
 
-  afterEach(() => {
+  after(() => {
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
     MaterialTypes.deleteApi(defaultMaterialType.id);
     NoticePolicy.deleteViaApi(defaultNoticePolicy.id);
@@ -93,5 +97,49 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
 
     CirculationRules.checkUpdateCirculationRulesCalloutAppeared();
     CirculationRules.checkNoticePolicyAddedToCirculationRules(defaultNoticePolicy.id);
+  });
+
+  it('C654: Test behavior for incomplete vs complete circulation rules (i.e., all policy types must be present; else error)', { tags: [TestType.smoke, devTeams.vega, Parallelization.nonParallel] }, () => {
+    CirculationRules.clearCirculationRules();
+    CirculationRules.fillInPriority();
+
+    CirculationRules.fillInFallbackPolicy({
+      loanPolicyName: LOAN_POLICY_NAMES.EXAMPLE_LOAN,
+      overdueFinePolicyName: OVERDUE_FINE_POLICY_NAMES.OVERDUE_FINE_POLICY,
+      lostItemFeePolicyName: LOST_ITEM_FEES_POLICY_NAMES.LOST_ITEM_FEES_POLICY,
+      requestPolicyName: REQUEST_POLICY_NAMES.ALLOW_ALL,
+      noticePolicyName: NOTICE_POLICY_NAMES.SEND_NO_NOTICES,
+    });
+
+    CirculationRules.fillInPolicy({
+      priorityType: 'm ',
+      priorityTypeName: defaultMaterialType.name,
+      lostItemFeePolicyName: defaultLostItemFeePolicy.name,
+      loanPolicyName: defaultLoanPolicy.name,
+      requestPolicyName: defaultRequestPolicy.name,
+      overdueFinePolicyName: defaultOverdueFinePolicy.name,
+    });
+
+    CirculationRules.saveCirculationRules();
+    CirculationRules.verifyErrorMessageMissingNType();
+  });
+
+  it('C656: Ensure interface alerts user of syntax errors in rules', { tags: [TestType.smoke, devTeams.vega, Parallelization.nonParallel] }, () => {
+    CirculationRules.clearCirculationRules();
+    CirculationRules.fillInPriority();
+
+    CirculationRules.fillInFallbackPolicy({
+      loanPolicyName: LOAN_POLICY_NAMES.EXAMPLE_LOAN,
+      overdueFinePolicyName: OVERDUE_FINE_POLICY_NAMES.OVERDUE_FINE_POLICY,
+      lostItemFeePolicyName: LOST_ITEM_FEES_POLICY_NAMES.LOST_ITEM_FEES_POLICY,
+      requestPolicyName: REQUEST_POLICY_NAMES.ALLOW_ALL,
+      noticePolicyName: NOTICE_POLICY_NAMES.SEND_NO_NOTICES,
+    });
+
+    CirculationRules.fillInCirculationRules('wrong rules');
+    CirculationRules.moveCursorFocusToTheEnd();
+
+    CirculationRules.saveCirculationRules();
+    CirculationRules.verifyErrorMessageWrongInput();
   });
 });
