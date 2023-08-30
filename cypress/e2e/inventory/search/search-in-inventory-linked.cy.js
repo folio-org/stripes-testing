@@ -57,7 +57,7 @@ describe('Search in Inventory', () => {
       authorityHeading: 'Abraham, Angela, C375256 Hosanna',
       authority010FieldValue: 'n99036055375256',
       numberOfRecords: 1
-    },
+    }
   ];
 
   const createdRecordIDs = [];
