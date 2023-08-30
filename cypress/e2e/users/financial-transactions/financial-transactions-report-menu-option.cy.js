@@ -124,4 +124,13 @@ describe('Financial Transactions Detail Report', () => {
     FinancialTransactionDetailReportModal.save();
     FinancialTransactionDetailReportModal.verifyCalloutMessage();
   });
+
+  it('C343318 Check that the "Something went wrong" error toast appears when the user click on the "Save&close" button', { tags: [TestTypes.criticalPath, DevTeams.vega] }, () => {
+    UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
+    FinancialTransactionDetailReportModal.fillInRequiredFields({ startDate: false, ownerName: ownerData.name });
+    FinancialTransactionDetailReportModal.stubResponse500Error();
+    FinancialTransactionDetailReportModal.save();
+    FinancialTransactionDetailReportModal.verifyCalloutMessage();
+    FinancialTransactionDetailReportModal.verifyCalloutErrorMessage();
+  });
 });
