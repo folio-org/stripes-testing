@@ -201,7 +201,7 @@ export default {
 
   verifyPickedDate(date, rowIndex = 0) {
     const formattedDate = DateTools.getFormattedDate({ date }, 'MM/DD/YYYY');
-    // there is no aria-expanded attr when not expanded
+    // there is no aria-expanded attr when collapsed
     cy.expect([
       calendarButton.has({ ariaExpanded: null }),
       RepeatableFieldItem({ index: rowIndex }).find(TextField({ value: formattedDate })).exists()

@@ -7,8 +7,6 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import devTeams from '../../../support/dictionary/devTeams';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import Users from '../../../support/fragments/users/users';
-import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../../support/fragments/users/usersCard';
 import DateTools from '../../../support/utils/dateTools';
 
 let user;
@@ -47,7 +45,7 @@ describe('bulk-edit', () => {
       BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.fillExpirationDate(tomorrowDate);
       BulkEditActions.verifyPickedDate(tomorrowDate);
-      
+
       BulkEditActions.fillExpirationDate(nextWeekDate);
       BulkEditActions.verifyPickedDate(nextWeekDate);
       BulkEditActions.cancel();
