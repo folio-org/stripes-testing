@@ -27,6 +27,7 @@ const areYouSureForm = Modal('Are you sure?');
 const downloadPreviewBtn = Button('Download preview');
 const newBulkEditButton = Button('New bulk edit');
 const startBulkEditLocalButton = Button('Start bulk edit (Local)');
+const calendarButton = Button({ icon: 'calendar' });
 
 function getEmailField() {
   // 2 the same selects without class, id or someone different attr
@@ -191,17 +192,31 @@ export default {
     const formattedDate = DateTools.getFormattedDate({ date }, 'MM/DD/YYYY');
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Expiration date'),
-      Button({ icon: 'calendar' }).click(),
+      calendarButton.click(),
       TextField().fillIn(formattedDate),
     ]);
     // we don't have interactor for this element
     cy.get(`[aria-label="calendar"] [data-date="${formattedDate}"]`).click();
   },
 
+  verifyPickedDate(date, rowIndex = 0) {
+    const formattedDate = DateTools.getFormattedDate({ date }, 'MM/DD/YYYY');
+    // there is no aria-expanded attr when collapsed
+    cy.expect([
+      calendarButton.has({ ariaExpanded: null }),
+      RepeatableFieldItem({ index: rowIndex }).find(TextField({ value: formattedDate })).exists()
+    ]);
+  },
+
+  clearPickedDate(rowIndex = 0) {
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(Button({ ariaLabel: 'Clear field value' })).click());
+    cy.expect(RepeatableFieldItem({ index: rowIndex }).find(TextField({ value: '' })).exists());
+  },
+
   verifyCalendarItem(rowIndex = 0) {
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Expiration date'),
-      Button({ icon: 'calendar' }).click()
+      calendarButton.click()
     ]);
     // TODO: bulk edit calendar is not common datepicker like our interactor
     cy.get('[id^="datepicker-calendar-container"]').should('be.visible');
