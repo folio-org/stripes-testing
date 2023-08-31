@@ -52,10 +52,7 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
   };
   const testData = {
     requestsId: [],
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
-      'autotest overdue recalls limit',
-      uuid(),
-    ),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const loanPolicyBody = {
     id: uuid(),

@@ -13,7 +13,7 @@ import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckInPane from '../../support/fragments/check-in-actions/checkInPane';
-import SwitchServicePoint from '../../support/fragments/servicePoint/switchServicePoint';
+import SwitchServicePoint from '../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
 import InTransit from '../../support/fragments/checkin/modals/inTransit';
 import AwaitingPickupForARequest from '../../support/fragments/checkin/modals/awaitingPickupForARequest';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -38,8 +38,8 @@ describe('Check In - Actions', () => {
     name: `groupCheckIn ${getRandomPostfix()}`,
   };
   const testData = {
-    servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation('S', uuid()),
-    servicePointS1: ServicePoints.getDefaultServicePointWithPickUpLocation('S1', uuid()),
+    servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation(),
+    servicePointS1: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const checkInResultsData = {
     statusForS: [`In transit - ${testData.servicePointS1.name}`],

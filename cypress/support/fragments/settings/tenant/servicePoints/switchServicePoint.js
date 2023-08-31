@@ -1,11 +1,11 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import NewServicePoint from '../settings/tenant/servicePoints/newServicePoint';
-import { Dropdown, Button, including } from '../../../../interactors';
-import TopMenu from '../topMenu';
-import permissions from '../../dictionary/permissions';
-import UsersSearchPane from '../users/usersSearchPane';
+import NewServicePoint from './newServicePoint';
+import { Dropdown, Button, including } from '../../../../../../interactors';
+import TopMenu from '../../../topMenu';
+import permissions from '../../../../dictionary/permissions';
+import UsersSearchPane from '../../../users/usersSearchPane';
 import SelectServicePointModal from './selectServicePointModal';
-import UserEdit from '../users/userEdit';
+import UserEdit from '../../../users/userEdit';
 
 export default {
   addServicePointPermissions: (username) => {

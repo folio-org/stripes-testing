@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import permissions from '../../support/dictionary/permissions';
 import devTeams from '../../support/dictionary/devTeams';
 import { getTestEntityValue } from '../../support/utils/stringTools';
@@ -16,10 +15,7 @@ const patronGroup = {
 };
 let userData;
 const testData = {
-  userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
-    'autotestReceiveNotice',
-    uuid(),
-  ),
+  userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   ruleProps: {},
 };
 

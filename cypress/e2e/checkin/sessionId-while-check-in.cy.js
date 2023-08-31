@@ -29,10 +29,7 @@ describe('Check In - Actions ', () => {
     instanceTitle: `Instance ${getRandomPostfix()}`,
   };
   let defaultLocation;
-  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation(
-    'autotest basic checkin',
-    uuid(),
-  );
+  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
   let sessionId;
   before('Create New Item, New User and Check out item', () => {
     cy.getAdminToken()
