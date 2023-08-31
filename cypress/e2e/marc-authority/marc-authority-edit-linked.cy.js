@@ -13,6 +13,7 @@ import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import { JOB_STATUS_NAMES } from '../../support/constants';
+import Parallelization from '../../support/dictionary/parallelization';
 
 describe('MARC Authority -> Edit linked Authority record', () => {
   const testData = {
@@ -94,7 +95,7 @@ describe('MARC Authority -> Edit linked Authority record', () => {
     });
   });
 
-  it('C376596 Add/Edit/Delete "$z" subfield in "010" field of linked "MARC authority" record when "010" = "$0" (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+  it('C376596 Add/Edit/Delete "$z" subfield in "010" field of linked "MARC authority" record when "010" = "$0" (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] }, () => {
     MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);
     MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);
     MarcAuthority.edit();

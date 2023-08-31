@@ -11,6 +11,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Users from '../../../support/fragments/users/users';
 import Permissions from '../../../support/dictionary/permissions';
+import Parallelization from '../../../support/dictionary/parallelization';
 
 describe('MARC -> MARC Holdings', () => {
   const testData = {
@@ -70,7 +71,7 @@ describe('MARC -> MARC Holdings', () => {
     InventoryInstance.deleteInstanceViaApi(recordIDs[0]);
   });
 
-  it('C387461 Add multiple 001s when editing "MARC Holdings" record', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+  it('C387461 Add multiple 001s when editing "MARC Holdings" record', { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] }, () => {
     InventoryInstances.searchBySource('MARC');
     InventoryInstance.searchByTitle(recordIDs[0]);
     InventoryInstances.selectInstance();

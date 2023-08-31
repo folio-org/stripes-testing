@@ -14,6 +14,7 @@ import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthorit
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
+import Parallelization from '../../../support/dictionary/parallelization';
 
 describe('Search in Inventory', () => {
   const testData = {
@@ -126,7 +127,7 @@ describe('Search in Inventory', () => {
     });
   });
 
-  it('C375256 Query search | Search by "Alternative title" field of linked "MARC Bib" records (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+  it('C375256 Query search | Search by "Alternative title" field of linked "MARC Bib" records (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] }, () => {
     InventorySearchAndFilter.selectSearchOptions(testData.querySearchOption, testData.searchQueries.allRecords);
     InventorySearchAndFilter.clickSearch();
     InventorySearchAndFilter.verifySearchResult(testData.searchResults.firstLinkedRecord);

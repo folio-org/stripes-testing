@@ -14,6 +14,7 @@ import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthorit
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
+import Parallelization from '../../../support/dictionary/parallelization';
 
 describe('Search in Inventory', () => {
   const testData = {
@@ -109,7 +110,7 @@ describe('Search in Inventory', () => {
     });
   });
 
-  it('C367974 Search for two "Instance" records by "Authority UUID" value of linked "MARC Authority" record (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+  it('C367974 Search for two "Instance" records by "Authority UUID" value of linked "MARC Authority" record (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] }, () => {
     InventoryInstances.verifyInstanceSearchOptions();
     InventoryInstances.searchInstancesWithOption(testData.authUUIDSearchOption, createdRecordIDs[2]);
     testData.searchResultsC367974.forEach(expectedTitle => {
