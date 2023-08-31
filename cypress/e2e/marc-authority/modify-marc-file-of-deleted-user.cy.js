@@ -88,7 +88,7 @@ describe('MARC -> MARC Authority', () => {
     MarcAuthority.deleteViaAPI(createdAuthorityIDs[0]);
   });
 
-  it('C358994 Verify that user has access to "quickMARC" when user who imported MARC record has been deleted (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+  it('C358994 Verify that user has access to "quickMARC" when user who imported "MARC authority" record has been deleted (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     cy.login(user.userBProperties.username, user.userBProperties.password, { path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading});
     UsersSearchPane.searchByUsername(user.userAProperties.username);
     UsersSearchPane.openUser(user.userAProperties.username);
