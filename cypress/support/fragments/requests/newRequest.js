@@ -53,13 +53,13 @@ export default {
       cy.intercept('/circulation/loans?*').as('getLoans');
       cy.do(enterItemBarcodeButton.click());
     }
-    cy.do(selectRequestType.choose(newRequest.requestType));
     cy.wait('@getLoans');
     cy.do(requesterBarcodeInput.fillIn(newRequest.requesterBarcode));
     cy.intercept('/proxiesfor?*').as('getUsers');
     cy.do(enterRequesterBarcodeButton.click());
     cy.expect(selectServicePoint.exists);
     cy.wait('@getUsers');
+    cy.do(selectRequestType.choose(newRequest.requestType));
   },
 
   choosepickupServicePoint(pickupServicePoint) {
