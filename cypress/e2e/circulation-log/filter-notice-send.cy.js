@@ -134,8 +134,8 @@ describe('circulation-log', () => {
             NewNoticePolicy.checkAfterSaving(noticePolicy);
             NewNoticePolicy.checkNoticeActions(noticePolicy);
 
-            cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then(res => {
-              testData.ruleProps.n = res[0].id;
+            cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then(response => {
+              testData.ruleProps.n = response[0].id;
               addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + testData.ruleProps.i + ' l ' + testData.ruleProps.l + ' r ' + testData.ruleProps.r + ' o ' + testData.ruleProps.o + ' n ' + testData.ruleProps.n;
               CirculationRules.addRuleViaApi(testData.baseRules, testData.ruleProps, 't ', testData.loanTypeId);
             });
@@ -150,7 +150,7 @@ describe('circulation-log', () => {
             CheckInActions.checkInItem(item.barcode);
             CheckInActions.verifyLastCheckInItem(item.barcode);
             CheckInActions.endCheckInSession();
-            cy.visit(TopMenu.circulationLogPath);
+            cy.loginAsAdmin({ path: TopMenu.circulationLogPath, waiter: SearchPane.waitLoading });
           });
       });
   });
