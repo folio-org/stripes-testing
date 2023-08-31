@@ -1,6 +1,5 @@
 import testTypes from '../../support/dictionary/testTypes';
 import searchPane from '../../support/fragments/circulation-log/searchPane';
-import marcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import topMenu from '../../support/fragments/topMenu';
 import usersSearchPane from '../../support/fragments/users/usersSearchPane';
 import circulationlog from '../../support/ideyaLabs/circulationlog';

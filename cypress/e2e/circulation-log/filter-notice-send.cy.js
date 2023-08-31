@@ -154,7 +154,7 @@ describe('circulation-log', () => {
       });
   });
 
-  afterEach('delete test data', () => {
+  after('delete test data', () => {
     UserEdit.changeServicePointPreferenceViaApi(user.userId, [testData.userServicePoint.id]);
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
