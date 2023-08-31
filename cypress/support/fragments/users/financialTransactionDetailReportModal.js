@@ -1,6 +1,5 @@
 import DateTools from '../../utils/dateTools';
-import { Button, Modal, TextField, Select, including, MultiSelect, HTML } from '../../../../interactors';
-import InteractorsTools from '../../utils/interactorsTools';
+import { Button, Modal, TextField, Select, including, MultiSelect, HTML, Callout, calloutTypes } from '../../../../interactors';
 
 const financialReport = Modal({ id: 'financial-transactions-report-modal' });
 const startDateTextfield = TextField({ name: 'startDate' });
@@ -8,7 +7,8 @@ const endDateTextfield = TextField({ name: 'endDate' });
 const firstDayOfMonth = DateTools.getFormattedDate({ date: new Date(new Date().getFullYear(), new Date().getMonth(), 1) }, 'MM/DD/YYYY');
 const currentDayOfMonth = DateTools.getFormattedDate({ date: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()) }, 'MM/DD/YYYY');
 const feeFineOwnerSelect = Select({ content: including('Select fee/fine owner') });
-const calloutMessage = 'Export in progress';
+const calloutSuccessMessage = 'Export in progress';
+const calloutErrorMessage = 'Something went wrong.';
 
 export default {
   fillInRequiredFields({ startDate, ownerName }) {
@@ -63,8 +63,17 @@ export default {
     cy.do(financialReport.find(Button(including('Save'))).click());
   },
 
+  stubResponse500Error() {
+    cy.intercept('POST', '/feefine-reports/financial-transactions-detail', {
+      statusCode: 500
+    });
+  },
+
   verifyCalloutMessage() {
-    InteractorsTools.checkCalloutMessage(calloutMessage);
+    cy.expect(Callout({ type: calloutTypes.success }).is({ textContent: calloutSuccessMessage }));
+  },
+  verifyCalloutErrorMessage() {
+    cy.expect(Callout({ type: calloutTypes.error }).is({ textContent: calloutErrorMessage }));
   },
 
   fillInServicePoints(servicePoints) {
