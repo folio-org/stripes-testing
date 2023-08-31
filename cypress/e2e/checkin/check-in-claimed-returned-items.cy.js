@@ -28,7 +28,9 @@ describe('Check In - Actions', () => {
     name: `groupCheckIn ${getRandomPostfix()}`,
   };
   const testData = {
-    servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest check in', uuid()),
+    servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation({
+      name: 'autotest check in',
+    }),
   };
   const itemsData = {
     itemsWithSeparateInstance: [
@@ -38,7 +40,7 @@ describe('Check In - Actions', () => {
   };
 
   before('Preconditions', () => {
-    itemsData.itemsWithSeparateInstance.forEach(function (item, index) {
+    itemsData.itemsWithSeparateInstance.forEach((item, index) => {
       item.barcode = generateUniqueItemBarcodeWithShift(index);
     });
 
@@ -86,8 +88,10 @@ describe('Check In - Actions', () => {
             ],
           }).then((specialInstanceIds) => {
             itemsData.itemsWithSeparateInstance[index].instanceId = specialInstanceIds.instanceId;
-            itemsData.itemsWithSeparateInstance[index].holdingId = specialInstanceIds.holdingIds[0].id;
-            itemsData.itemsWithSeparateInstance[index].itemId = specialInstanceIds.holdingIds[0].itemIds;
+            itemsData.itemsWithSeparateInstance[index].holdingId =
+              specialInstanceIds.holdingIds[0].id;
+            itemsData.itemsWithSeparateInstance[index].itemId =
+              specialInstanceIds.holdingIds[0].itemIds;
             itemsData.itemsWithSeparateInstance[index].materialType = testData.materialType;
           });
         });
@@ -98,13 +102,7 @@ describe('Check In - Actions', () => {
       patronGroup.id = patronGroupResponse;
     });
 
-    cy.createTempUser(
-      [
-        permissions.checkinAll.gui,
-        permissions.loansView.gui,
-      ],
-      patronGroup.name
-    )
+    cy.createTempUser([permissions.checkinAll.gui, permissions.loansView.gui], patronGroup.name)
       .then((userProperties) => {
         userData.username = userProperties.username;
         userData.password = userProperties.password;
@@ -112,7 +110,11 @@ describe('Check In - Actions', () => {
         userData.barcode = userProperties.barcode;
       })
       .then(() => {
-        UserEdit.addServicePointViaApi(testData.servicePointS.id, userData.userId, testData.servicePointS.id);
+        UserEdit.addServicePointViaApi(
+          testData.servicePointS.id,
+          userData.userId,
+          testData.servicePointS.id,
+        );
 
         cy.get('@items').each((item) => {
           Checkout.checkoutItemViaApi({
@@ -126,7 +128,10 @@ describe('Check In - Actions', () => {
 
         UserLoans.getUserLoansIdViaApi(userData.userId).then((userLoans) => {
           userLoans.loans.forEach(({ id }) => {
-            UserLoans.claimItemReturnedViaApi({ itemClaimedReturnedDateTime: moment.utc().format() }, id);
+            UserLoans.claimItemReturnedViaApi(
+              { itemClaimedReturnedDateTime: moment.utc().format() },
+              id,
+            );
           });
         });
 
@@ -148,7 +153,7 @@ describe('Check In - Actions', () => {
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
+      testData.defaultLocation.id,
     );
     cy.deleteLoanType(testData.loanTypeId);
   });
@@ -193,6 +198,6 @@ describe('Check In - Actions', () => {
           });
         });
       });
-    }
+    },
   );
 });

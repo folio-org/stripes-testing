@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import TestTypes from '../../support/dictionary/testTypes';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
@@ -11,17 +10,12 @@ import settingsMenu from '../../support/fragments/settingsMenu';
 describe.skip('Creating custom labels', () => {
   const userData = {};
   const testData = {
-    servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation(
-      'S',
-      uuid()
-    ),
+    servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation({ name: 'S' }),
   };
   before('Preconditions', () => {
     cy.getAdminToken().then(() => {
       ServicePoints.createViaApi(testData.servicePointS);
-      testData.defaultLocation = Location.getDefaultLocation(
-        testData.servicePointS.id
-      );
+      testData.defaultLocation = Location.getDefaultLocation(testData.servicePointS.id);
     });
     cy.createTempUser([
       permissions.uiSettingseholdingsViewEditCreateDelete.gui,
@@ -36,16 +30,14 @@ describe.skip('Creating custom labels', () => {
         UserEdit.addServicePointsViaApi(
           [testData.servicePointS.id],
           userData.userId,
-          testData.servicePointS.id
+          testData.servicePointS.id,
         );
         cy.login(userData.username, userData.password);
       });
   });
 
   after('Deleting created entities', () => {
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [
-      testData.servicePointS.id,
-    ]);
+    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePointS.id]);
     ServicePoints.deleteViaApi(testData.servicePointS.id);
     Users.deleteViaApi(userData.userId);
   });
@@ -60,6 +52,6 @@ describe.skip('Creating custom labels', () => {
       });
       cy.visit('/eholdings/resources/58-473-185972');
       eHoldingsPackage.verifyCustomLabel();
-    }
+    },
   );
 });

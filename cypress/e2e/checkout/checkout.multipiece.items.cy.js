@@ -5,7 +5,6 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import Helper from '../../support/fragments/finance/financeHelper';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import ServicePoint from '../../support/fragments/servicePoint/servicePoint';
 import NewServicePoint from '../../support/fragments/settings/tenant/servicePoints/newServicePoint';
 import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipieceCheckOut';
 import Checkout from '../../support/fragments/checkout/checkout';
@@ -29,104 +28,120 @@ describe('Check Out', () => {
   const defautlDescription = `autotest_description_${getRandomPostfix()}`;
 
   beforeEach(() => {
-    cy.getAdminToken().then(() => {
-      cy.getLoanTypes({ limit: 1 });
-      cy.getMaterialTypes({ limit: 1 })
-        .then(({ id, name }) => {
+    cy.getAdminToken()
+      .then(() => {
+        cy.getLoanTypes({ limit: 1 });
+        cy.getMaterialTypes({ limit: 1 }).then(({ id, name }) => {
           materialTypeName = { id, name };
         });
-      cy.getLocations({ limit: 2 });
-      cy.getHoldingTypes({ limit: 2 });
-      cy.getInstanceTypes({ limit: 1 });
-    }).then(() => {
-      const getTestItem = (numberOfPieces, hasDiscription, hasMissingPieces) => {
-        const defaultItem = {
-          barcode: Helper.getRandomBarcode(),
-          status:  { name: ITEM_STATUS_NAMES.AVAILABLE },
-          permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
-          materialType: { id: materialTypeName.id },
-        };
-        if (numberOfPieces) {
-          defaultItem.numberOfPieces = numberOfPieces;
-        }
-        if (hasDiscription) {
-          defaultItem.descriptionOfPieces = defautlDescription;
-        }
-        if (hasMissingPieces) {
-          defaultItem.numberOfMissingPieces = 2;
-          defaultItem.missingPieces = defautlDescription;
-        }
-        return defaultItem;
-      };
-      testItems.push(getTestItem(1, false, false));
-      testItems.push(getTestItem(3, true, false));
-      testItems.push(getTestItem(2, true, true));
-      testItems.push(getTestItem(1, false, true));
-      InventoryInstances.createFolioInstanceViaApi({
-        instance: {
-          instanceTypeId: Cypress.env('instanceTypes')[0].id,
-          title: instanceTitle,
-        },
-        holdings: [{
-          holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
-          permanentLocationId: Cypress.env('locations')[0].id,
-        }],
-        items: testItems,
+        cy.getLocations({ limit: 2 });
+        cy.getHoldingTypes({ limit: 2 });
+        cy.getInstanceTypes({ limit: 1 });
       })
-        .then(specialInstanceIds => {
+      .then(() => {
+        const getTestItem = (numberOfPieces, hasDiscription, hasMissingPieces) => {
+          const defaultItem = {
+            barcode: Helper.getRandomBarcode(),
+            status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+            permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
+            materialType: { id: materialTypeName.id },
+          };
+          if (numberOfPieces) {
+            defaultItem.numberOfPieces = numberOfPieces;
+          }
+          if (hasDiscription) {
+            defaultItem.descriptionOfPieces = defautlDescription;
+          }
+          if (hasMissingPieces) {
+            defaultItem.numberOfMissingPieces = 2;
+            defaultItem.missingPieces = defautlDescription;
+          }
+          return defaultItem;
+        };
+        testItems.push(getTestItem(1, false, false));
+        testItems.push(getTestItem(3, true, false));
+        testItems.push(getTestItem(2, true, true));
+        testItems.push(getTestItem(1, false, true));
+        InventoryInstances.createFolioInstanceViaApi({
+          instance: {
+            instanceTypeId: Cypress.env('instanceTypes')[0].id,
+            title: instanceTitle,
+          },
+          holdings: [
+            {
+              holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
+              permanentLocationId: Cypress.env('locations')[0].id,
+            },
+          ],
+          items: testItems,
+        }).then((specialInstanceIds) => {
           testInstanceIds = specialInstanceIds;
         });
-    });
+      });
     OtherSettings.setOtherSettingsViaApi({ prefPatronIdentifier: 'barcode,username' });
-    cy.createTempUser([
-      permissions.checkoutCirculatingItems.gui,
-    ])
-      .then(userProperties => {
+    cy.createTempUser([permissions.checkoutCirculatingItems.gui])
+      .then((userProperties) => {
         user = userProperties;
         servicePoint = NewServicePoint.getDefaultServicePoint();
         ServicePoints.createViaApi(servicePoint);
-        UserEdit.addServicePointViaApi(servicePoint.id,
-          user.userId, servicePoint.id);
+        UserEdit.addServicePointViaApi(servicePoint.id, user.userId, servicePoint.id);
       })
       .then(() => {
-        cy.getUsers({ limit: 1, query: `"personal.lastName"="${user.username}" and "active"="true"` })
-          .then((users) => {
-            userBarcode = users[0].barcode;
-          });
+        cy.getUsers({
+          limit: 1,
+          query: `"personal.lastName"="${user.username}" and "active"="true"`,
+        }).then((users) => {
+          userBarcode = users[0].barcode;
+        });
         cy.login(user.username, user.password);
       });
   });
 
   after(() => {
-    cy.wrap(testItems.forEach(item => {
-      CheckInActions.checkinItemViaApi({
-        itemBarcode: item.barcode,
-        servicePointId: servicePoint.id,
-        checkInDate: new Date().toISOString(),
-      });
-    }))
-      .then(() => {
-        cy.wrap(testInstanceIds.holdingIds.forEach(holdingsId => {
-          cy.wrap(holdingsId.itemIds.forEach(itemId => {
-            cy.deleteItemViaApi(itemId);
-          })).then(() => {
+    cy.wrap(
+      testItems.forEach((item) => {
+        CheckInActions.checkinItemViaApi({
+          itemBarcode: item.barcode,
+          servicePointId: servicePoint.id,
+          checkInDate: new Date().toISOString(),
+        });
+      }),
+    ).then(() => {
+      cy.wrap(
+        testInstanceIds.holdingIds.forEach((holdingsId) => {
+          cy.wrap(
+            holdingsId.itemIds.forEach((itemId) => {
+              cy.deleteItemViaApi(itemId);
+            }),
+          ).then(() => {
             cy.deleteHoldingRecordViaApi(holdingsId.id);
           });
-        })).then(() => {
-          InventoryInstance.deleteInstanceViaApi(testInstanceIds.instanceId);
-        });
-        UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.id]).then(() => {
-          ServicePoint.deleteViaApi(servicePoint.id);
-          Users.deleteViaApi(user.userId);
-        });
+        }),
+      ).then(() => {
+        InventoryInstance.deleteInstanceViaApi(testInstanceIds.instanceId);
       });
+      UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.id]).then(() => {
+        ServicePoints.deleteViaApi(servicePoint.id);
+        Users.deleteViaApi(user.userId);
+      });
+    });
   });
 
-  const fullCheckOut = ({ barcode, numberOfPieces, descriptionOfPieces, numberOfMissingPieces, missingPieces }) => {
+  const fullCheckOut = ({
+    barcode,
+    numberOfPieces,
+    descriptionOfPieces,
+    numberOfMissingPieces,
+    missingPieces,
+  }) => {
     CheckOutActions.checkOutItem(barcode);
-    MultipieceCheckOut.checkContent(instanceTitle, materialTypeName.name, barcode,
-      { itemPieces : numberOfPieces, description : descriptionOfPieces },
-      { missingitemPieces : numberOfMissingPieces, missingDescription: missingPieces });
+    MultipieceCheckOut.checkContent(
+      instanceTitle,
+      materialTypeName.name,
+      barcode,
+      { itemPieces: numberOfPieces, description: descriptionOfPieces },
+      { missingitemPieces: numberOfMissingPieces, missingDescription: missingPieces },
+    );
   };
 
   it('C591 Check out: multipiece items (vega)', { tags: [TestTypes.smoke, DevTeams.vega] }, () => {

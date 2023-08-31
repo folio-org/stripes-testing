@@ -1,5 +1,9 @@
-import uuid from 'uuid';
-import { FULFILMENT_PREFERENCES, ITEM_STATUS_NAMES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
+import {
+  FULFILMENT_PREFERENCES,
+  ITEM_STATUS_NAMES,
+  REQUEST_LEVELS,
+  REQUEST_TYPES,
+} from '../../support/constants';
 import TestTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
@@ -27,7 +31,9 @@ describe('Title Level Request', () => {
     title: getTestEntityValue('InstanceTLR'),
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestTLR', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation({
+      name: 'autotestTLR',
+    }),
   };
 
   before('Preconditions', () => {
@@ -105,7 +111,7 @@ describe('Title Level Request', () => {
         UserEdit.addServicePointViaApi(
           testData.userServicePoint.id,
           userData.userId,
-          testData.userServicePoint.id
+          testData.userServicePoint.id,
         );
       })
       .then(() => {
@@ -142,7 +148,7 @@ describe('Title Level Request', () => {
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
+      testData.defaultLocation.id,
     );
     TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
@@ -164,6 +170,6 @@ describe('Title Level Request', () => {
           MoveRequest.checkIsRequestMovedSuccessfully();
         }
       });
-    }
+    },
   );
 });

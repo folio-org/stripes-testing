@@ -41,7 +41,9 @@ describe('TLR: Item renew', () => {
     title: `Instance ${getRandomPostfix()}`,
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestRenew', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation({
+      name: 'autotestRenew',
+    }),
   };
   const loanPolicyBody = {
     renewable: {
@@ -154,7 +156,9 @@ describe('TLR: Item renew', () => {
       const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
       const defaultProps = ` i ${ruleProps.i} r ${ruleProps.r} o ${ruleProps.o} n ${ruleProps.n}`;
       addedCirculationRule = ` \nm ${testData.materialBookId} + g ${patronGroup.id}: l ${loanPolicyBody.renewable.id} ${defaultProps} \nm ${testData.materialDvdId} + g ${patronGroup.id}: l ${loanPolicyBody.nonRenewable.id} ${defaultProps}`;
-      cy.updateCirculationRules({ rulesAsText: `${originalCirculationRules}${addedCirculationRule}` });
+      cy.updateCirculationRules({
+        rulesAsText: `${originalCirculationRules}${addedCirculationRule}`,
+      });
     });
 
     cy.createTempUser(
@@ -164,13 +168,13 @@ describe('TLR: Item renew', () => {
         permissions.loansRenew.gui,
         permissions.requestsAll.gui,
       ],
-      patronGroup.name
+      patronGroup.name,
     ).then((userProperties) => {
       userForRenew = userProperties;
       UserEdit.addServicePointViaApi(
         testData.userServicePoint.id,
         userForRenew.userId,
-        testData.userServicePoint.id
+        testData.userServicePoint.id,
       );
     });
 
@@ -180,7 +184,7 @@ describe('TLR: Item renew', () => {
         UserEdit.addServicePointViaApi(
           testData.userServicePoint.id,
           userForCheckOut.userId,
-          testData.userServicePoint.id
+          testData.userServicePoint.id,
         );
       })
       .then(() => {
@@ -193,7 +197,7 @@ describe('TLR: Item renew', () => {
     cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceData.instanceId}"` }).then(
       (instance) => {
         instanceHRID = instance.hrid;
-      }
+      },
     );
     cy.wrap(instanceData.itemsData).as('items');
     cy.get('@items').each((item) => {
@@ -220,8 +224,12 @@ describe('TLR: Item renew', () => {
     InventoryInstance.deleteInstanceViaApi(instanceData.instanceId);
     cy.deleteLoanPolicy(loanPolicyBody.renewable.id);
     cy.deleteLoanPolicy(loanPolicyBody.nonRenewable.id);
-    UserEdit.changeServicePointPreferenceViaApi(userForRenew.userId, [testData.userServicePoint.id]);
-    UserEdit.changeServicePointPreferenceViaApi(userForCheckOut.userId, [testData.userServicePoint.id]);
+    UserEdit.changeServicePointPreferenceViaApi(userForRenew.userId, [
+      testData.userServicePoint.id,
+    ]);
+    UserEdit.changeServicePointPreferenceViaApi(userForCheckOut.userId, [
+      testData.userServicePoint.id,
+    ]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Users.deleteViaApi(userForRenew.userId);
     Users.deleteViaApi(userForCheckOut.userId);
@@ -230,7 +238,7 @@ describe('TLR: Item renew', () => {
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
+      testData.defaultLocation.id,
     );
     TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
@@ -288,7 +296,7 @@ describe('TLR: Item renew', () => {
       UsersCard.showOpenedLoans();
       UserLoans.openLoan(instanceData.itemsData[1].barcode);
       Renewals.checkLoansPage();
-    }
+    },
   );
 
   it(
@@ -318,6 +326,6 @@ describe('TLR: Item renew', () => {
         UserLoans.openLoan(barcode);
       });
       Renewals.checkLoansPage();
-    }
+    },
   );
 });

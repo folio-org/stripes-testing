@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import { getTestEntityValue } from '../../support/utils/stringTools';
@@ -28,7 +27,9 @@ describe('Staff slips', () => {
     name: getTestEntityValue('groupStaffSlips'),
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestTLR', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation({
+      name: 'autotestTLR',
+    }),
     itemBarcode: generateItemBarcode(),
   };
   const instanceData = {
@@ -85,13 +86,13 @@ describe('Staff slips', () => {
         });
         cy.createTempUser(
           [permissions.uiCirculationCreateEditRemoveStaffSlips.gui, permissions.requestsAll.gui],
-          patronGroup.name
+          patronGroup.name,
         ).then((userProperties) => {
           userData = userProperties;
           UserEdit.addServicePointViaApi(
             testData.userServicePoint.id,
             userData.userId,
-            testData.userServicePoint.id
+            testData.userServicePoint.id,
           );
         });
       })
@@ -126,7 +127,7 @@ describe('Staff slips', () => {
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
+      testData.defaultLocation.id,
     );
   });
 
@@ -141,7 +142,7 @@ describe('Staff slips', () => {
       EditStaffClips.checkAfterUpdate('Transit');
       EditStaffClips.checkPreview('Transit', 'Undergraduate');
       EditStaffClips.editAndClearTransit();
-    }
+    },
   );
 
   it(
@@ -155,7 +156,7 @@ describe('Staff slips', () => {
       EditStaffClips.checkAfterUpdate('Transit');
       EditStaffClips.checkPreview('Transit', 'Library Technical Services; IT Operations');
       EditStaffClips.editAndClearTransit();
-    }
+    },
   );
 
   it(
@@ -172,6 +173,6 @@ describe('Staff slips', () => {
       cy.visit(SettingsMenu.circulationStaffSlipsPath);
       EditStaffClips.editPickslip();
       EditStaffClips.clearStaffClips();
-    }
+    },
   );
 });

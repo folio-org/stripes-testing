@@ -1,11 +1,11 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import NewServicePoint from '../settings/tenant/servicePoints/newServicePoint';
-import { Dropdown, Button, including } from '../../../../interactors';
-import TopMenu from '../topMenu';
-import permissions from '../../dictionary/permissions';
-import UsersSearchPane from '../users/usersSearchPane';
+import NewServicePoint from './newServicePoint';
+import { Dropdown, Button, including } from '../../../../../../interactors';
+import TopMenu from '../../../topMenu';
+import permissions from '../../../../dictionary/permissions';
+import UsersSearchPane from '../../../users/usersSearchPane';
 import SelectServicePointModal from './selectServicePointModal';
-import UserEdit from '../users/userEdit';
+import UserEdit from '../../../users/userEdit';
 
 export default {
   addServicePointPermissions: (username) => {
@@ -18,18 +18,19 @@ export default {
     UserEdit.saveAndClose();
   },
 
-  switchServicePoint:(servicePoint) => {
+  switchServicePoint: (servicePoint) => {
     cy.wait(5000);
-    cy.do([
-      Dropdown('My profile').open(),
-      Button('Switch service point').click()
-    ]);
+    cy.do([Dropdown('My profile').open(), Button('Switch service point').click()]);
     SelectServicePointModal.selectServicePoint(servicePoint);
     // wait for data to be loaded
     cy.wait(5000);
   },
 
   checkIsServicePointSwitched: (name) => {
-    cy.expect(Dropdown('My profile').find(Button(including(name))).exists());
+    cy.expect(
+      Dropdown('My profile')
+        .find(Button(including(name)))
+        .exists(),
+    );
   },
 };

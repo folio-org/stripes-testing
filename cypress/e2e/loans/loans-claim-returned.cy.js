@@ -43,7 +43,9 @@ describe('Loans ', () => {
   let defaultLocation;
   const reasonWhyItemIsClaimedOut = 'reason why the item is claimed out';
   const reasonWhyItemIsDeclaredLost = 'reason why the item is declared lost';
-  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation('autotest loans claim returned', uuid());
+  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation({
+    name: 'autotest loans claim returned',
+  });
   const testData = {};
   const userData = {};
   const ownerData = {};
@@ -53,21 +55,23 @@ describe('Loans ', () => {
     claimReturned: 'Claimed returned',
   };
   const itemsData = {
-    itemsWithSeparateInstance: [{
-      instanceTitle: `Instance ${getRandomPostfix()}`,
-    },
-    {
-      instanceTitle: `Instance ${getRandomPostfix()}`,
-    },
-    {
-      instanceTitle: `Instance ${getRandomPostfix()}`,
-    },
-    {
-      instanceTitle: `Instance ${getRandomPostfix()}`,
-    },
-    {
-      instanceTitle: `Instance ${getRandomPostfix()}`,
-    }]
+    itemsWithSeparateInstance: [
+      {
+        instanceTitle: `Instance ${getRandomPostfix()}`,
+      },
+      {
+        instanceTitle: `Instance ${getRandomPostfix()}`,
+      },
+      {
+        instanceTitle: `Instance ${getRandomPostfix()}`,
+      },
+      {
+        instanceTitle: `Instance ${getRandomPostfix()}`,
+      },
+      {
+        instanceTitle: `Instance ${getRandomPostfix()}`,
+      },
+    ],
   };
   const lostItemFeePolicyBody = {
     name: 'claim_returned' + getRandomPostfix(),
@@ -104,64 +108,104 @@ describe('Loans ', () => {
   };
 
   before('Create user, open and closed loans', () => {
-    itemsData.itemsWithSeparateInstance.forEach(function (item, index) { item.barcode = generateUniqueItemBarcodeWithShift(index); });
+    itemsData.itemsWithSeparateInstance.forEach((item, index) => {
+      item.barcode = generateUniqueItemBarcodeWithShift(index);
+    });
 
-    cy.getAdminToken().then(() => {
-      cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => { testData.instanceTypeId = instanceTypes[0].id; });
-      cy.getHoldingTypes({ limit: 1 }).then((res) => { testData.holdingTypeId = res[0].id; });
-      cy.createLoanType({ name: `type_${getRandomPostfix()}` }).then((loanType) => { testData.loanTypeId = loanType.id; });
-      cy.getMaterialTypes({ limit: 1 }).then((res) => { testData.materialTypeId = res.id; });
-      UsersOwners.createViaApi({ ...UsersOwners.getDefaultNewOwner(uuid(), 'owner'), servicePointOwner: [{ value: servicePoint.id, label: servicePoint.name }] }).then(({ id, ownerName }) => {
-        ownerData.name = ownerName;
-        ownerData.id = id;
-      });
-      ServicePoints.createViaApi(servicePoint);
-      defaultLocation = Location.getDefaultLocation(servicePoint.id);
-      Location.createViaApi(defaultLocation);
-    }).then(() => {
-      itemsData.itemsWithSeparateInstance.forEach((item, index) => {
-        InventoryInstances.createFolioInstanceViaApi({ instance: {
-          instanceTypeId: testData.instanceTypeId,
-          title: item.instanceTitle,
-        },
-        holdings: [{
-          holdingsTypeId: testData.holdingTypeId,
-          permanentLocationId: defaultLocation.id,
-        }],
-        items:[{
-          barcode: item.barcode,
-          status:  { name: ITEM_STATUS_NAMES.AVAILABLE },
-          permanentLoanType: { id: testData.loanTypeId },
-          materialType: { id: testData.materialTypeId },
-        }] }).then(specialInstanceIds => {
-          itemsData.itemsWithSeparateInstance[index].instanceId = specialInstanceIds.instanceId;
-          itemsData.itemsWithSeparateInstance[index].holdingId = specialInstanceIds.holdingIds[0].id;
-          itemsData.itemsWithSeparateInstance[index].itemId = specialInstanceIds.holdingIds[0].itemIds;
+    cy.getAdminToken()
+      .then(() => {
+        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+          testData.instanceTypeId = instanceTypes[0].id;
+        });
+        cy.getHoldingTypes({ limit: 1 }).then((res) => {
+          testData.holdingTypeId = res[0].id;
+        });
+        cy.createLoanType({ name: `type_${getRandomPostfix()}` }).then((loanType) => {
+          testData.loanTypeId = loanType.id;
+        });
+        cy.getMaterialTypes({ limit: 1 }).then((res) => {
+          testData.materialTypeId = res.id;
+        });
+        UsersOwners.createViaApi({
+          ...UsersOwners.getDefaultNewOwner(uuid(), 'owner'),
+          servicePointOwner: [{ value: servicePoint.id, label: servicePoint.name }],
+        }).then(({ id, ownerName }) => {
+          ownerData.name = ownerName;
+          ownerData.id = id;
+        });
+        ServicePoints.createViaApi(servicePoint);
+        defaultLocation = Location.getDefaultLocation(servicePoint.id);
+        Location.createViaApi(defaultLocation);
+      })
+      .then(() => {
+        itemsData.itemsWithSeparateInstance.forEach((item, index) => {
+          InventoryInstances.createFolioInstanceViaApi({
+            instance: {
+              instanceTypeId: testData.instanceTypeId,
+              title: item.instanceTitle,
+            },
+            holdings: [
+              {
+                holdingsTypeId: testData.holdingTypeId,
+                permanentLocationId: defaultLocation.id,
+              },
+            ],
+            items: [
+              {
+                barcode: item.barcode,
+                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                permanentLoanType: { id: testData.loanTypeId },
+                materialType: { id: testData.materialTypeId },
+              },
+            ],
+          }).then((specialInstanceIds) => {
+            itemsData.itemsWithSeparateInstance[index].instanceId = specialInstanceIds.instanceId;
+            itemsData.itemsWithSeparateInstance[index].holdingId =
+              specialInstanceIds.holdingIds[0].id;
+            itemsData.itemsWithSeparateInstance[index].itemId =
+              specialInstanceIds.holdingIds[0].itemIds;
+          });
         });
       });
-    });
     LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
     CirculationRules.getViaApi().then((circulationRule) => {
       originalCirculationRules = circulationRule.rulesAsText;
       const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
       ruleProps.i = lostItemFeePolicyBody.id;
-      addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + ruleProps.i + ' l ' + ruleProps.l + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
-      CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
+      addedCirculationRule =
+        't ' +
+        testData.loanTypeId +
+        ': i ' +
+        ruleProps.i +
+        ' l ' +
+        ruleProps.l +
+        ' r ' +
+        ruleProps.r +
+        ' o ' +
+        ruleProps.o +
+        ' n ' +
+        ruleProps.n;
+      CirculationRules.addRuleViaApi(
+        originalCirculationRules,
+        ruleProps,
+        't ',
+        testData.loanTypeId,
+      );
     });
-    cy.createTempUser([permissions.checkinAll.gui,
+    cy.createTempUser([
+      permissions.checkinAll.gui,
       permissions.uiUsersViewLoans.gui,
       permissions.uiUsersView.gui,
       permissions.uiUsersDeclareItemLost.gui,
-      permissions.uiUsersLoansClaimReturned.gui
+      permissions.uiUsersLoansClaimReturned.gui,
     ])
-      .then(userProperties => {
+      .then((userProperties) => {
         userData.username = userProperties.username;
         userData.password = userProperties.password;
         userData.userId = userProperties.userId;
         userData.barcode = userProperties.barcode;
         userData.firstName = userProperties.firstName;
-        UserEdit.addServicePointViaApi(servicePoint.id,
-          userData.userId, servicePoint.id);
+        UserEdit.addServicePointViaApi(servicePoint.id, userData.userId, servicePoint.id);
       })
       .then(() => {
         cy.loginAsAdmin();
@@ -190,16 +234,13 @@ describe('Loans ', () => {
     UsersOwners.deleteViaApi(ownerData.id);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint.id]);
     ServicePoints.deleteViaApi(servicePoint.id);
-    Users.deleteViaApi(userData.userId)
-      .then(
-        () => itemsData.itemsWithSeparateInstance.forEach(
-          (item, index) => {
-            cy.deleteItemViaApi(item.itemId);
-            cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
-            InventoryInstance.deleteInstanceViaApi(itemsData.itemsWithSeparateInstance[index].instanceId);
-          }
-        )
+    Users.deleteViaApi(userData.userId).then(() => itemsData.itemsWithSeparateInstance.forEach((item, index) => {
+      cy.deleteItemViaApi(item.itemId);
+      cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
+      InventoryInstance.deleteInstanceViaApi(
+        itemsData.itemsWithSeparateInstance[index].instanceId,
       );
+    }));
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
     LostItemFeePolicy.deleteViaApi(lostItemFeePolicyBody.id);
     cy.deleteLoanType(testData.loanTypeId);
@@ -207,7 +248,7 @@ describe('Loans ', () => {
       defaultLocation.institutionId,
       defaultLocation.campusId,
       defaultLocation.libraryId,
-      defaultLocation.id
+      defaultLocation.id,
     );
   });
 
@@ -215,7 +256,9 @@ describe('Loans ', () => {
     const selectedItems = [];
     let claimedReturnedLoansQuantity;
     const claimedReturnedModalTitle = 'Claimed returned';
-    let selectedItem = itemsData.itemsWithSeparateInstance.find(item => item.status === itemStatuses.checkedOut);
+    let selectedItem = itemsData.itemsWithSeparateInstance.find(
+      (item) => item.status === itemStatuses.checkedOut,
+    );
     cy.login(userData.username, userData.password);
     openOpenedUserLoans(userData, itemsData.itemsWithSeparateInstance.length);
     UserLoans.openLoan(selectedItem.barcode);
@@ -226,7 +269,7 @@ describe('Loans ', () => {
     });
     Loans.claimReturnedAndConfirm(reasonWhyItemIsClaimedOut).then(() => {
       Loans.resolveClaimedIsVisible();
-      itemsData.itemsWithSeparateInstance.find(function (item) {
+      itemsData.itemsWithSeparateInstance.find((item) => {
         if (item.barcode === selectedItem.barcode) {
           item.status = itemStatuses.claimReturned;
           return true;
@@ -235,11 +278,22 @@ describe('Loans ', () => {
       });
       Loans.checkItemStatus(itemStatuses.claimReturned);
       Loans.checkClaimReturnedDateTime();
-      Loans.verifyResultsInTheRow([itemStatuses.claimReturned, userData.firstName, reasonWhyItemIsClaimedOut]);
+      Loans.verifyResultsInTheRow([
+        itemStatuses.claimReturned,
+        userData.firstName,
+        reasonWhyItemIsClaimedOut,
+      ]);
       Loans.dismissPane().then(() => {
-        claimedReturnedLoansQuantity = getClaimedReturnedLoansQuantity(itemsData.itemsWithSeparateInstance);
-        UserLoans.verifyQuantityOpenAndClaimedReturnedLoans(itemsData.itemsWithSeparateInstance.length, claimedReturnedLoansQuantity);
-        selectedItem = itemsData.itemsWithSeparateInstance.find(item => item.status === itemStatuses.checkedOut);
+        claimedReturnedLoansQuantity = getClaimedReturnedLoansQuantity(
+          itemsData.itemsWithSeparateInstance,
+        );
+        UserLoans.verifyQuantityOpenAndClaimedReturnedLoans(
+          itemsData.itemsWithSeparateInstance.length,
+          claimedReturnedLoansQuantity,
+        );
+        selectedItem = itemsData.itemsWithSeparateInstance.find(
+          (item) => item.status === itemStatuses.checkedOut,
+        );
         UserLoans.openActionsMenuOfLoanByBarcode(selectedItem.barcode);
       });
     });
@@ -249,22 +303,31 @@ describe('Loans ', () => {
       UserLoans.openActionsMenuOfLoanByBarcode(selectedItem.barcode);
     });
     Loans.claimReturnedAndConfirm(reasonWhyItemIsClaimedOut).then(() => {
-      itemsData.itemsWithSeparateInstance.find(function (item) {
+      itemsData.itemsWithSeparateInstance.find((item) => {
         if (item.barcode === selectedItem.barcode) {
           item.status = itemStatuses.claimReturned;
           return true;
         }
         return false;
       });
-      claimedReturnedLoansQuantity = getClaimedReturnedLoansQuantity(itemsData.itemsWithSeparateInstance);
-      UserLoans.verifyQuantityOpenAndClaimedReturnedLoans(itemsData.itemsWithSeparateInstance.length, claimedReturnedLoansQuantity);
+      claimedReturnedLoansQuantity = getClaimedReturnedLoansQuantity(
+        itemsData.itemsWithSeparateInstance,
+      );
+      UserLoans.verifyQuantityOpenAndClaimedReturnedLoans(
+        itemsData.itemsWithSeparateInstance.length,
+        claimedReturnedLoansQuantity,
+      );
       UserLoans.checkResultsInTheRowByBarcode([itemStatuses.claimReturned], selectedItem.barcode);
     });
     UserLoans.openLoan(selectedItem.barcode);
     Loans.resolveClaimedIsVisible();
     Loans.checkItemStatus(itemStatuses.claimReturned);
     Loans.checkClaimReturnedDateTime();
-    Loans.verifyResultsInTheRow([itemStatuses.claimReturned, userData.firstName, reasonWhyItemIsClaimedOut]);
+    Loans.verifyResultsInTheRow([
+      itemStatuses.claimReturned,
+      userData.firstName,
+      reasonWhyItemIsClaimedOut,
+    ]);
     Loans.dismissPane().then(() => {
       Loans.claimReturnedButtonIsDisabled();
     });
@@ -272,12 +335,14 @@ describe('Loans ', () => {
     UserLoans.checkOffLoanByBarcode(selectedItem.barcode)
       .then(() => {
         UserLoans.verifyClaimReturnedButtonIsDisabled();
-        selectedItem = itemsData.itemsWithSeparateInstance.find((item) => item.status === itemStatuses.checkedOut);
+        selectedItem = itemsData.itemsWithSeparateInstance.find(
+          (item) => item.status === itemStatuses.checkedOut,
+        );
         selectedItems.push(selectedItem);
         UserLoans.checkOffLoanByBarcode(selectedItem.barcode);
       })
       .then(() => {
-        itemsData.itemsWithSeparateInstance.find(function (item) {
+        itemsData.itemsWithSeparateInstance.find((item) => {
           if (item.barcode === selectedItem.barcode) {
             item.status = itemStatuses.claimReturned;
             return true;
@@ -287,12 +352,14 @@ describe('Loans ', () => {
       })
       .then(() => {
         UserLoans.verifyClaimReturnedButtonIsVisible();
-        selectedItem = itemsData.itemsWithSeparateInstance.find((item) => item.status === itemStatuses.declaredLost);
+        selectedItem = itemsData.itemsWithSeparateInstance.find(
+          (item) => item.status === itemStatuses.declaredLost,
+        );
         selectedItems.push(selectedItem);
         UserLoans.checkOffLoanByBarcode(selectedItem.barcode);
       })
       .then(() => {
-        itemsData.itemsWithSeparateInstance.find(function (item) {
+        itemsData.itemsWithSeparateInstance.find((item) => {
           if (item.barcode === selectedItem.barcode) {
             item.status = itemStatuses.claimReturned;
             return true;
@@ -305,18 +372,22 @@ describe('Loans ', () => {
     ConfirmClaimReturnedModal.verifyModalView();
     UserLoans.openClaimReturnedPane();
     ConfirmClaimReturnedModal.confirmItemStatus(reasonWhyItemIsClaimedOut).then(() => {
-      selectedItems.forEach(item => {
+      selectedItems.forEach((item) => {
         UserLoans.checkResultsInTheRowByBarcode([item.status], item.barcode);
         UserLoans.openLoan(item.barcode);
         Loans.resolveClaimedIsVisible();
         Loans.checkItemStatus(itemStatuses.claimReturned);
         Loans.checkClaimReturnedDateTime();
-        Loans.verifyResultsInTheRow([itemStatuses.claimReturned, userData.firstName, reasonWhyItemIsClaimedOut]);
+        Loans.verifyResultsInTheRow([
+          itemStatuses.claimReturned,
+          userData.firstName,
+          reasonWhyItemIsClaimedOut,
+        ]);
         Loans.dismissPane();
       });
       cy.visit(TopMenu.checkInPath);
     });
-    cy.wrap(selectedItems).each(item => {
+    cy.wrap(selectedItems).each((item) => {
       CheckInActions.checkInItemGui(item.barcode).then(() => {
         if (item.status !== itemStatuses.declaredLost) {
           CheckInClaimedReturnedItemModal.chooseItemReturnedByPatron();
@@ -331,9 +402,12 @@ describe('Loans ', () => {
     showOpenedUserLoansInUserCard(userData);
     UsersCard.verifyQuantityOfOpenAndClaimReturnedLoans(2, 1);
     cy.visit(TopMenu.checkInPath).then(() => {
-      cy.wrap(itemsData.itemsWithSeparateInstance).each(item => {
-        if (item.barcode !== selectedItems[0].barcode && item.barcode !== selectedItems[1].barcode &&
-          item.barcode !== selectedItems[2].barcode) {
+      cy.wrap(itemsData.itemsWithSeparateInstance).each((item) => {
+        if (
+          item.barcode !== selectedItems[0].barcode &&
+          item.barcode !== selectedItems[1].barcode &&
+          item.barcode !== selectedItems[2].barcode
+        ) {
           CheckInActions.checkInItemGui(item.barcode).then(() => {
             if (item.status !== itemStatuses.declaredLost) {
               CheckInClaimedReturnedItemModal.chooseItemReturnedByPatron();
