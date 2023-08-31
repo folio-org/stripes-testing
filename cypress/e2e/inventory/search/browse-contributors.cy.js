@@ -101,7 +101,7 @@ describe('Inventory -> Contributors Browse', () => {
     BrowseContributors.select();
     BrowseContributors.browse(testData.contributor.name);
     BrowseContributors.checkSearchResultRecord(testData.contributor.name);
-    BrowseContributors.checkSearchResultRow(testData.contributor.name, testData.contributor.nameTypes.personal, `${testData.contributor.types.colorist}, ${testData.contributor.types.architect}, ${testData.contributor.types.dancer}`, '1');
+    BrowseContributors.checkSearchResultRow(testData.contributor.name, testData.contributor.nameTypes.personal, `${testData.contributor.types.dancer}, ${testData.contributor.types.architect}, ${testData.contributor.types.colorist}`, '1');
   });
 
   it('C356837 Verify that deleted Contributor on instance record with source = Folio does not display on browse result list (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
