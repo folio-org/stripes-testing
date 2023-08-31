@@ -13,6 +13,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../support/fragments/data_import/logs/logs';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
+import Parallelization from '../../support/dictionary/parallelization';
 
 describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
   const testData = {
@@ -60,6 +61,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
       testData.userProperties = createdUserProperties;
       marcFiles.forEach(marcFile => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
+          DataImport.verifyUploadState();
           DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
           JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();
@@ -122,7 +124,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
     });
   });
 
-  it('C375994 Add controllable subfields to multiple linked fields in "MARC bib" record when deriving record (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+  it('C375994 Add controllable subfields to multiple linked fields in "MARC bib" record when deriving record (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] }, () => {
     InventoryInstance.searchByTitle(createdRecordIDs[0]);
     InventoryInstances.selectInstance();
     InventoryInstance.deriveNewMarcBib();
