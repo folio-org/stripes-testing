@@ -57,7 +57,7 @@ export default {
   },
   checkAfterSaving(values) {
     InteractorsTools.checkCalloutMessage(`The permission set ${values.name} was successfully created.`);
-    this.checkPermissionSet();
+    this.checkPermissionSet(values);
   },
   checkNewButtonNotAvailable() {
     cy.expect(Button({ id: 'clickable-create-entry' }).absent());
