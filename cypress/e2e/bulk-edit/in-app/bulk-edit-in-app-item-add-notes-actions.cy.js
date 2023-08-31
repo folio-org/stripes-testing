@@ -74,7 +74,7 @@ describe('bulk-edit', () => {
       BulkEditActions.verifyItemCheckInNoteActions(1);
       BulkEditActions.addItemNote('Check in note', secondNote, 1);
       BulkEditActions.addNewBulkEditFilterString();
-      BulkEditActions.verifyItemNoteActions(2);
+      BulkEditActions.verifyItemNoteActions('Note', 2);
       BulkEditActions.addItemNote('Note', thirdNote, 2);
 
       BulkEditActions.confirmChanges();
