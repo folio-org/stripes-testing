@@ -908,10 +908,6 @@ export default {
     cy.do(Section({ id: 'itemDetails' }).find(Button({ icon: 'info' })).click());
   },
 
-  clickInstanceInPol: () => {
-    cy.do(Section({ id: 'itemDetails' }).find(Link()).click());
-  },
-
   selectCurrentEncumbrance: (currentEncumbrance) => {
     cy.do(fundDistributionSection.find(Link(currentEncumbrance)).click());
   },
