@@ -31,7 +31,7 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it('C359216 Verify selection expiration date in the past (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+    it('C359215 Verify date picker plugin for "Expiration date" option (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
       BulkEditSearchPane.checkUsersRadio();
       BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
       BulkEditSearchPane.uploadFile(userUUIDsFileName);
