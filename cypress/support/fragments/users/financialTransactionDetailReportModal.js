@@ -9,6 +9,8 @@ const firstDayOfMonth = DateTools.getFormattedDate({ date: new Date(new Date().g
 const currentDayOfMonth = DateTools.getFormattedDate({ date: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()) }, 'MM/DD/YYYY');
 const feeFineOwnerSelect = Select({ content: including('Select fee/fine owner') });
 const calloutMessage = 'Export in progress';
+const startDateFieldCalendarIconLocator = './/div[./*[@name="startDate"]]//*[@icon="calendar"]';
+const endDateFieldCalendarIconLocator = './/div[./*[@name="endDate"]]//*[@icon="calendar"]';
 
 export default {
   fillInRequiredFields({ startDate, ownerName }) {
@@ -29,6 +31,26 @@ export default {
   fillInEndDate(endDate) {
     if (endDate) cy.do(financialReport.find(endDateTextfield).fillIn(endDate));
     else cy.do(financialReport.find(endDateTextfield).fillIn(currentDayOfMonth));
+  },
+
+  verifyStartDateFieldCalendarIcon() {
+    cy.xpath(startDateFieldCalendarIconLocator).should('be.visible');
+  },
+
+  verifyEndDateFieldCalendarIcon() {
+    cy.xpath(endDateFieldCalendarIconLocator).should('be.visible');
+  },
+
+  verifyCalendarIsShown() {
+    cy.get('[id^="datepicker-calendar-container"]').should('be.visible');
+  },
+
+  openStartDateFieldCalendar() {
+    cy.xpath(startDateFieldCalendarIconLocator).click();
+  },
+
+  openEndDateFieldCalendar() {
+    cy.xpath(endDateFieldCalendarIconLocator).click();
   },
 
   verifySaveButtonIsEnabled() {
