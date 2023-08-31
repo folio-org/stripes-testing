@@ -35,40 +35,40 @@ const ownerBody = {
 describe('circulation-log', () => {
   before('create test data', () => {
     cy.createTempUser([]).then(userProperties => {
-        user = userProperties;
-        ServicePoints.createViaApi(testData.userServicePoint);
-        testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
-        Location.createViaApi(testData.defaultLocation);
-        UserEdit.addServicePointViaApi(testData.userServicePoint.id, user.userId);
+      user = userProperties;
+      ServicePoints.createViaApi(testData.userServicePoint);
+      testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
+      Location.createViaApi(testData.defaultLocation);
+      UserEdit.addServicePointViaApi(testData.userServicePoint.id, user.userId);
 
-        item.instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-        cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` })
-          .then((holdings) => {
-            cy.updateHoldingRecord(holdings[0].id, {
-              ...holdings[0],
-              permanentLocationId: testData.defaultLocation.id
-            });
-          });
-
-        Checkout.checkoutItemViaApi({
-          itemBarcode: item.barcode,
-          userBarcode: user.barcode,
-          servicePointId: testData.userServicePoint.id,
-        });
-
-        UsersOwners.createViaApi(ownerBody).then((ownerResponse) => {
-          testData.ownerId = ownerResponse.id;
-          PaymentMethods.createViaApi(testData.ownerId).then((paymentMethod) => {
-            testData.paymentMethodId = paymentMethod.id;
+      item.instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
+      cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` })
+        .then((holdings) => {
+          cy.updateHoldingRecord(holdings[0].id, {
+            ...holdings[0],
+            permanentLocationId: testData.defaultLocation.id
           });
         });
-        UserLoans.getUserLoansIdViaApi(user.userId).then((userLoans) => {
-          UserLoans.declareLoanLostViaApi({
-            servicePointId: testData.userServicePoint.id,
-            declaredLostDateTime: moment.utc().format(),
-          }, userLoans.loans[0].id);
+
+      Checkout.checkoutItemViaApi({
+        itemBarcode: item.barcode,
+        userBarcode: user.barcode,
+        servicePointId: testData.userServicePoint.id,
+      });
+
+      UsersOwners.createViaApi(ownerBody).then((ownerResponse) => {
+        testData.ownerId = ownerResponse.id;
+        PaymentMethods.createViaApi(testData.ownerId).then((paymentMethod) => {
+          testData.paymentMethodId = paymentMethod.id;
         });
       });
+      UserLoans.getUserLoansIdViaApi(user.userId).then((userLoans) => {
+        UserLoans.declareLoanLostViaApi({
+          servicePointId: testData.userServicePoint.id,
+          declaredLostDateTime: moment.utc().format(),
+        }, userLoans.loans[0].id);
+      });
+    });
     cy.loginAsAdmin({ path: TopMenu.circulationLogPath, waiter: SearchPane.waitLoading });
   });
 

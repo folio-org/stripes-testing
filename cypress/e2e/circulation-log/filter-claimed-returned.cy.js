@@ -47,7 +47,7 @@ describe('circulation-log', () => {
               servicePointId,
             });
           });
-          cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
+        cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
       });
   });
 

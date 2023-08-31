@@ -2,7 +2,6 @@ import uuid from 'uuid';
 import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import settingsMenu from '../../support/fragments/settingsMenu';
-import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
 import testTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -20,14 +19,13 @@ import NewNoticePolicyTemplate from '../../support/fragments/circulation/newNoti
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../support/fragments/checkout/checkout';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import getRandomPostfix from '../../support/utils/stringTools';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 let user;
 
-describe('Recieving notice: Checkout', () => {
+describe('circulation-log', () => {
   let addedCirculationRule;
   const noticePolicyTemplate = {
     ...NewNoticePolicyTemplate.defaultUi,
@@ -186,7 +184,7 @@ describe('Recieving notice: Checkout', () => {
       source: 'System',
       desc: `Template: ${noticePolicyTemplate.name}. Triggering event: Check in.`,
     };
-    
+
     SearchPane.setFilterOptionFromAccordion('notice', 'Send');
     SearchPane.verifyResultCells();
     SearchPane.checkResultSearch(searchResultsData);

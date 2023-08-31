@@ -41,7 +41,6 @@ export default {
     cy.do([
       Accordion({ id: 'loan' }).clickHeader(),
       Checkbox({ id: 'clickable-filter-loan-checked-out' }).click()
-      //,cy.do(TextField({ name: 'itemBarcode' }).fillIn(data)),
     ]);
   },
 

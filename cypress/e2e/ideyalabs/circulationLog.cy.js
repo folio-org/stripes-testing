@@ -7,46 +7,11 @@ import circulationlog from '../../support/ideyaLabs/circulationlog';
 
 const testData = {
   itemA: '4502015',
-  barcode: '43505853',
-  accordion: 'notice',
-  checkboxOption: 'Send',
-  resultsPaneHeadings: {
-    userBarcode: 'User barcode',
-    itemBarcode: 'Item barcode',
-    object: 'Object',
-    circAction: 'Circ action',
-    date: 'Date',
-    servicePoint: 'Service point',
-    source: 'Source',
-    description: 'Description'
-  },
 };
 
 describe.skip('CirculationLog App', () => {
   before('Login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-  });
-
-  it('C17092 Filter circulation log by (notice) send', { tags: [testTypes.criticalPath] }, () => {
-    cy.visit(topMenu.circulationLogPath);
-    searchPane.setFilterOptionFromAccordion(
-      testData.accordion,
-      testData.checkboxOption
-    );
-    searchPane.verifyResult(testData.checkboxOption);
-    searchPane.resetFilters();
-    searchPane.searchByItemBarcode(testData.barcode);
-    marcAuthorities.checkColumnExists(testData.resultsPaneHeadings.userBarcode);
-    marcAuthorities.checkColumnExists(testData.resultsPaneHeadings.itemBarcode);
-    marcAuthorities.checkColumnExists(testData.resultsPaneHeadings.object);
-    marcAuthorities.checkColumnExists(testData.resultsPaneHeadings.circAction);
-    marcAuthorities.checkColumnExists(testData.resultsPaneHeadings.date);
-    marcAuthorities.checkColumnExists(
-      testData.resultsPaneHeadings.servicePoint
-    );
-    marcAuthorities.checkColumnExists(testData.resultsPaneHeadings.source);
-    marcAuthorities.checkColumnExists(testData.resultsPaneHeadings.description);
-    searchPane.verifyResult(testData.checkboxOption);
   });
 
   it('C16999 Filter circulation log by Closed loan', { tags: [testTypes.ideaLabsTests] }, () => {
