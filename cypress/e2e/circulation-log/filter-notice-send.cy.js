@@ -94,11 +94,12 @@ describe('circulation-log', () => {
     PatronGroups.createViaApi(patronGroup.name)
       .then(res => {
         patronGroup.id = res;
-        cy.createTempUser([permissions.checkinAll.gui,
-        permissions.checkoutAll.gui,
-        permissions.circulationLogAll.gui,
-        permissions.uiCirculationSettingsNoticeTemplates.gui,
-        permissions.uiCirculationSettingsNoticePolicies.gui
+        cy.createTempUser([
+          permissions.checkinAll.gui,
+          permissions.checkoutAll.gui,
+          permissions.circulationLogAll.gui,
+          permissions.uiCirculationSettingsNoticeTemplates.gui,
+          permissions.uiCirculationSettingsNoticePolicies.gui
         ], patronGroup.name)
           .then(userProperties => {
             user = userProperties;
@@ -133,7 +134,7 @@ describe('circulation-log', () => {
             NewNoticePolicy.checkAfterSaving(noticePolicy);
             NewNoticePolicy.checkNoticeActions(noticePolicy);
 
-            cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
+            cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then(res => {
               testData.ruleProps.n = res[0].id;
               addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + testData.ruleProps.i + ' l ' + testData.ruleProps.l + ' r ' + testData.ruleProps.r + ' o ' + testData.ruleProps.o + ' n ' + testData.ruleProps.n;
               CirculationRules.addRuleViaApi(testData.baseRules, testData.ruleProps, 't ', testData.loanTypeId);
