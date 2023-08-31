@@ -5,7 +5,6 @@ import TestTypes from '../../support/dictionary/testTypes';
 import Users from '../../support/fragments/users/users';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import getRandomPostfix from '../../support/utils/stringTools';
-import permissions from '../../support/dictionary/permissions';
 import devTeams from '../../support/dictionary/devTeams';
 import UserEdit from '../../support/fragments/users/userEdit';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -35,12 +34,8 @@ const ownerBody = {
 
 describe('circulation-log', () => {
   before('create test data', () => {
-    cy.createTempUser([
-      permissions.circulationLogAll.gui,
-    ])
-      .then(userProperties => {
+    cy.createTempUser([]).then(userProperties => {
         user = userProperties;
-
         ServicePoints.createViaApi(testData.userServicePoint);
         testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
         Location.createViaApi(testData.defaultLocation);

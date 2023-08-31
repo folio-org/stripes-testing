@@ -2,7 +2,6 @@ import moment from 'moment';
 import TopMenu from '../../support/fragments/topMenu';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import getRandomPostfix from '../../support/utils/stringTools';
-import permissions from '../../support/dictionary/permissions';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
 import devTeams from '../../support/dictionary/devTeams';
@@ -24,15 +23,8 @@ const item = {
 
 describe('circulation-log', () => {
   before('creating user and checking out item', () => {
-    cy.createTempUser([
-      permissions.inventoryAll.gui,
-      permissions.circulationLogAll.gui,
-      permissions.checkoutAll.gui,
-      permissions.uiUsersViewLoans.gui,
-      permissions.uiUsersLoansClaimReturned.gui,
-    ])
-      .then(userProperties => {
-        user = { ...userProperties };
+    cy.createTempUser([]).then(userProperties => {
+        user = userProperties;
         ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' })
           .then((res) => {
             servicePointId = res[0].id;
