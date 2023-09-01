@@ -12,6 +12,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import DevTeams from '../../support/dictionary/devTeams';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
+import Parallelization from '../../support/dictionary/parallelization';
 
 describe('orders: Unreceive piece from Order', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
@@ -39,7 +40,7 @@ describe('orders: Unreceive piece from Order', () => {
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 
-  it('C10925 Unreceive piece (thunderjet)', { tags: [TestType.smoke, DevTeams.thunderjet] }, () => {
+  it('C10925 Unreceive piece (thunderjet)', { tags: [TestType.smoke, DevTeams.thunderjet, Parallelization.nonParallel] }, () => {
     const barcode = Helper.getRandomBarcode();
     const caption = 'autotestCaption';
     Orders.createOrderWithOrderLineViaApi(order, orderLine)
