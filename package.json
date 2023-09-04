@@ -35,7 +35,7 @@
   "dependencies": {
     "@interactors/html": "^1.0.0-rc1.4",
     "axe-core": "4.3.3",
-    "cypress": "12.17.4",
+    "cypress": "13.1.0",
     "cypress-testrail-simple": "^3.1.0",
     "date-fns": "^2.16.1",
     "debug": "^4.0.1",
@@ -52,7 +52,7 @@
     "bigtest": "^0.14.0",
     "cypress-downloadfile": "^1.2.1",
     "cypress-file-upload": "^5.0.8",
-    "cypress-grep": "^3.0.3",
+    "cypress-grep": "^4.0.0",
     "cypress-recurse": "^1.13.1",
     "cypress-xpath": "^1.6.2",
     "eslint": "^7.32.0",
@@ -67,6 +67,6 @@
     "uuid": "^3.4.0"
   },
   "resolutions": {
-    "cypress": "12.17.4"
+    "cypress": "13.1.0"
   }
 }
