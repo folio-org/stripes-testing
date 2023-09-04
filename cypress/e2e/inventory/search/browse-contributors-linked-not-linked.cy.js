@@ -26,12 +26,12 @@ describe('Inventory: Contributors Browse', () => {
   const marcFiles = [
     {
       marc: 'marcBibFileC359595.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFileC359595.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib'
     },
     {
       marc: 'marcAuthFileC359595.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFileC359595.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       naturalId: 'n8316359595'
     }
