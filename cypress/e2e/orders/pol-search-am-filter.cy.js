@@ -12,6 +12,7 @@ import InteractorsTools from '../../support/utils/interactorsTools';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import SettingsOrders from '../../support/fragments/settings/orders/settingsOrders';
+import Parallelization from '../../support/dictionary/parallelization';
 
 Cypress.on('uncaught:exception', () => false);
 
@@ -84,7 +85,7 @@ describe('orders: export', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C350603 Searching POL by specifying acquisition method (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
+  it('C350603 Searching POL by specifying acquisition method (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet, Parallelization.nonParallel] }, () => {
     cy.logout();
     cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
     order.orderType = 'Ongoing';
