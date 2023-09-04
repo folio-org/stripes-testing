@@ -67,6 +67,6 @@
     "uuid": "^3.4.0"
   },
   "resolutions": {
-    "cypress": "10.9.0"
+    "cypress": "12.17.4"
   }
 }
