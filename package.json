@@ -35,7 +35,7 @@
   "dependencies": {
     "@interactors/html": "^1.0.0-rc1.4",
     "axe-core": "4.3.3",
-    "cypress": "12.17.4",
+    "cypress": "10.9.0",
     "cypress-testrail-simple": "^3.1.0",
     "date-fns": "^2.16.1",
     "debug": "^4.0.1",
@@ -67,6 +67,6 @@
     "uuid": "^3.4.0"
   },
   "resolutions": {
-    "cypress": "12.17.4"
+    "cypress": "10.9.0"
   }
 }
