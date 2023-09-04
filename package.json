@@ -52,7 +52,7 @@
     "bigtest": "^0.14.0",
     "cypress-downloadfile": "^1.2.1",
     "cypress-file-upload": "^5.0.8",
-    "cypress-grep": "^3.0.3",
+    "cypress-grep": "^4.0.0",
     "cypress-recurse": "^1.13.1",
     "cypress-xpath": "^1.6.2",
     "eslint": "^7.32.0",
