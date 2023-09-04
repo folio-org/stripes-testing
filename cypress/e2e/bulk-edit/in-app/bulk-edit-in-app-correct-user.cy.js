@@ -1,6 +1,7 @@
 import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
 import testTypes from '../../../support/dictionary/testTypes';
+import parallelization from '../../../support/dictionary/parallelization';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -62,7 +63,7 @@ describe('bulk-edit', () => {
       FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
     });
 
-    it('C380393 Verify that bulk edit jobs run by correct user (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+    it('C380393 Verify that bulk edit jobs run by correct user (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird, parallelization.nonParallel] }, () => {
       BulkEditSearchPane.checkItemsRadio();
       BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');
 
