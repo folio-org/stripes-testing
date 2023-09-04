@@ -17,7 +17,8 @@ module.exports = defineConfig({
   defaultCommandTimeout: 101000,
   pageLoadTimeout: 120000,
   env: {
-    OKAPI_HOST: 'https://folio-testing-cypress-okapi.ci.folio.org',
+    // OKAPI_HOST: 'https://folio-testing-cypress-okapi.ci.folio.org',
+    OKAPI_HOST: 'https://folio-snapshot-2-okapi.dev.folio.org',
     OKAPI_TENANT: 'diku',
     diku_login: 'diku_admin',
     diku_password: 'admin',
@@ -74,7 +75,8 @@ module.exports = defineConfig({
         },
 
         readFileFromDownloads(filename) {
-          const downloadsFolder = config.downloadsFolder || path.join(__dirname, '..', '..', 'Downloads');
+          const downloadsFolder =
+            config.downloadsFolder || path.join(__dirname, '..', '..', 'Downloads');
           const filePath = path.join(downloadsFolder, filename);
           return fs.readFileSync(filePath, 'utf-8');
         },
@@ -85,6 +87,7 @@ module.exports = defineConfig({
 
       return config;
     },
-    baseUrl: 'https://folio-testing-cypress-diku.ci.folio.org',
+    // baseUrl: 'https://folio-testing-cypress-diku.ci.folio.org',
+    baseUrl: 'https://folio-snapshot-2.dev.folio.org/',
   },
 });
