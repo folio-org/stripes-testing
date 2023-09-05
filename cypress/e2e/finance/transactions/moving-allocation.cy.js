@@ -1,97 +1,96 @@
 import permissions from '../../../support/dictionary/permissions';
 import testType from '../../../support/dictionary/testTypes';
 import devTeams from '../../../support/dictionary/devTeams';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
+import {
+  FiscalYears,
+  Funds,
+  Budgets,
+  Ledgers,
+  FinanceHelp,
+} from '../../../support/fragments/finance';
 import TopMenu from '../../../support/fragments/topMenu';
-import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import Users from '../../../support/fragments/users/users';
-import Funds from '../../../support/fragments/finance/funds/funds';
-import FinanceHelp from '../../../support/fragments/finance/financeHelper';
+import InteractorsTools from '../../../support/utils/interactorsTools';
 
-Cypress.on('uncaught:exception', () => false);
-
-describe('ui-finance: Transactions', () => {
-  const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
-  const defaultLedger = { ...Ledgers.defaultUiLedger };
-  const firstFund = { ...Funds.defaultUiFund };
-  const secondFund = {
-    name: `autotest_fund2_${getRandomPostfix()}`,
-    code: getRandomPostfix(),
-    externalAccountNo: getRandomPostfix(),
-    fundStatus: 'Active',
-    description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
-
+describe('Finance: Transactions', () => {
+  const firstFiscalYear = FiscalYears.getDefaultFiscalYear();
+  const defaultLedger = Ledgers.getDefaultLedger();
+  const toFund = Funds.getDefaultFund();
+  const fromFund = {
+    ...Funds.getDefaultFund(),
+    allocatedToIds: [toFund.id],
+  };
+  const toBudget = {
+    ...Budgets.getDefaultBudget(),
+    allocated: 0,
   };
 
-  const allocatedQuantity = '500';
   let user;
 
   before(() => {
-    cy.getAdminToken();
-    FiscalYears.createViaApi(firstFiscalYear)
-      .then(firstFiscalYearResponse => {
-        firstFiscalYear.id = firstFiscalYearResponse.id;
-        defaultLedger.fiscalYearOneId = firstFiscalYear.id;
-        Ledgers.createViaApi(defaultLedger)
-          .then(ledgerResponse => {
-            defaultLedger.id = ledgerResponse.id;
-            firstFund.ledgerId = defaultLedger.id;
-            secondFund.ledgerId = defaultLedger.id;
-
-            Funds.createViaApi(firstFund)
-              .then(fundResponse => {
-                firstFund.id = fundResponse.fund.id;
-
-                cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
-                FinanceHelp.searchByName(firstFund.name);
-                Funds.selectFund(firstFund.name);
-                Funds.addBudget(allocatedQuantity);
-              });
-
-            Funds.createViaApi(secondFund)
-              .then(secondFundResponse => {
-                secondFund.id = secondFundResponse.fund.id;
-                cy.visit(TopMenu.fundPath);
-                FinanceHelp.searchByName(secondFund.name);
-                Funds.selectFund(secondFund.name);
-                Funds.addTrunsferTo(firstFund.name);
-              });
+    cy.getAdminToken().then(() => {
+      FiscalYears.createViaApi(firstFiscalYear).then(() => {
+        const ledgerProperties = {
+          ...defaultLedger,
+          fiscalYearOneId: firstFiscalYear.id,
+        };
+        Ledgers.createViaApi(ledgerProperties).then(() => {
+          const toFundProperties = {
+            ...toFund,
+            ledgerId: defaultLedger.id,
+          };
+          Funds.createViaApi(toFundProperties).then(() => {
+            Budgets.createViaApi({
+              ...toBudget,
+              fiscalYearId: firstFiscalYear.id,
+              fundId: toFund.id,
+            });
           });
+
+          const fromFundProperties = {
+            ...fromFund,
+            ledgerId: defaultLedger.id,
+          };
+          Funds.createViaApi(fromFundProperties);
+        });
       });
+    });
 
     cy.createTempUser([
       permissions.uiFinanceCreateAllocations.gui,
       permissions.uiFinanceViewFundAndBudget.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.fundPath,
+        waiter: Funds.waitLoading,
       });
+    });
   });
 
   after(() => {
-    cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
-    FinanceHelp.searchByName(firstFund.name);
-    Funds.selectFund(firstFund.name);
-    Funds.selectBudgetDetails();
-    Funds.deleteBudgetViaActions();
-    Funds.checkIsBudgetDeleted();
-
-    Funds.deleteFundViaApi(firstFund.id);
-    Funds.deleteFundViaApi(secondFund.id);
-
+    Budgets.deleteViaApi(toBudget.id);
+    Funds.deleteFundViaApi(toFund.id);
+    Funds.deleteFundViaApi(fromFund.id);
     Ledgers.deleteledgerViaApi(defaultLedger.id);
-
     FiscalYears.deleteFiscalYearViaApi(firstFiscalYear.id);
-
     Users.deleteViaApi(user.userId);
   });
 
-  it('C375175 Moving allocation is NOT successful if money was moved from fund having NO current budget (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    FinanceHelp.searchByName(firstFund.name);
-    Funds.selectFund(firstFund.name);
-    Funds.selectBudgetDetails();
-    Funds.moveAllocationWithError(secondFund, '100');
-  });
+  it(
+    'C375175 Moving allocation is NOT successful if money was moved from fund having NO current budget (thunderjet)',
+    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    () => {
+      FinanceHelp.searchByName(toFund.name);
+      Funds.selectFund(toFund.name);
+      Funds.selectBudgetDetails();
+
+      const amount = '10';
+      Funds.moveAllocation({ toFund, fromFund, amount });
+      InteractorsTools.checkCalloutErrorMessage(
+        `$${amount}.00 was not successfully allocated because ${fromFund.code} has no budget`,
+      );
+      Funds.closeTransferModal();
+    },
+  );
 });
