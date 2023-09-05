@@ -7,7 +7,8 @@ import { Accordion,
   MultiColumnList,
   MultiColumnListCell,
   MultiSelectOption,
-  Callout } from '../../../../../interactors';
+  Callout,
+  Modal } from '../../../../../interactors';
 
 const viewPane = Pane({ id:'view-job-profile-pane' });
 const resultsPane = Pane({ id:'pane-results' });
@@ -27,6 +28,16 @@ export default {
     waitLoading();
     cy.do(viewPane.find(actionsButton).click());
     cy.do(Button('Edit').click());
+  },
+  duplicate:() => {
+    cy.do(viewPane.find(actionsButton).click());
+    cy.do(Button('Duplicate').click());
+  },
+  delete:() => {
+    cy.do([viewPane.find(actionsButton).click(),
+      Button('Delete').click(),
+      Modal({ id:'delete-job-profile-modal' }).find(Button({ id:'clickable-delete-job-profile-modal-confirm' })).click()
+    ]);
   },
 
   addExistingTag:(tag) => {
@@ -50,11 +61,6 @@ export default {
   removeTag:(tag) => {
     cy.do(ValueChipRoot(tag).find(Button({ icon: 'times' })).click());
     cy.expect(ValueChipRoot(tag).absent());
-  },
-
-  duplicate:() => {
-    cy.do(viewPane.find(actionsButton).click());
-    cy.do(Button('Duplicate').click());
   },
 
   verifyJobProfileOpened:() => {

@@ -159,5 +159,6 @@ export default {
       .exists());
   },
 
-  verifyActionMenuAbsent:() => cy.expect(paneResults.find(actionsButton).absent())
+  verifyActionMenuAbsent:() => cy.expect(paneResults.find(actionsButton).absent()),
+  verifyJobProfileAbsent:() => cy.expect(paneResults.find(HTML(including('The list contains no items'))).exists())
 };
