@@ -80,12 +80,10 @@ export default {
     cy.expect(Pane({ title: 'Circulation log' }).exists());
     cy.do([
       Accordion({ id: 'loan' }).clickHeader(),
-      Checkbox({
-        id: 'clickable-filter-loan-renewed-through-override',
-      }).click(),
+      Checkbox({ id: 'clickable-filter-loan-renewed-through-override' }).click(),
       Button('Reset all').click(),
-      TextField({ name: 'itemBarcode' }).fillIn('1040'),
-    ]),
+      TextField({ name: 'itemBarcode' }).fillIn('1040')
+    ]);
     cy.get('[class^="button-"][type="submit"]').first().click();
     cy.expect(MultiColumnListRow().exists());
   },
