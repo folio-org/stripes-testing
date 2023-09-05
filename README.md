@@ -30,6 +30,7 @@ git clone git@github.com:folio-org/platform-core.git
 cd platform-core
 git checkout snapshot
 yarn
+yarn prepare
 yarn test-int
 ```
 This will start stripes at http://localhost:3000, run the platform's tests, and
