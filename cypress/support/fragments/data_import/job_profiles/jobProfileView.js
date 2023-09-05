@@ -1,12 +1,19 @@
 import { HTML, including } from '@interactors/html';
-import { Button, Pane, Callout, Accordion } from '../../../../../interactors';
+import { Button, Pane, Callout } from '../../../../../interactors';
 
 const viewPane = Pane({ id:'view-job-profile-pane' });
 const resultsPane = Pane({ id:'pane-results' });
 const actionsButton = Button('Actions');
 
+function waitLoading() {
+  // wait for the page to be fully loaded
+  cy.wait(1500);
+}
+
 export default {
+  waitLoading,
   edit:() => {
+    waitLoading();
     cy.do(viewPane.find(actionsButton).click());
     cy.do(Button('Edit').click());
   },
@@ -21,17 +28,37 @@ export default {
   },
   verifyJobProfileName:(profileName) => cy.expect(viewPane.find(HTML(including(profileName))).exists()),
   verifyActionMenuAbsent:() => cy.expect(viewPane.find(actionsButton).absent()),
-  verifyLinkedProfiles:() => {
-    cy.do(Pane({ id: 'view-job-profile-pane' }).find(Accordion('Overview')).perform(element => {
-      console.log(element.querySelectorAll('[data-test-profile-link]'));
-      // const currentArray = Array
-      //   .from(element.querySelectorAll('[data-test-profile-link]'))
-      //   .map(el => el.textContent);
+  getLinkedProfiles:() => {
+    waitLoading();
+    const profileNames = [];
 
+    return cy.get('[data-test-profile-link]').each($element => {
+      cy.wrap($element)
+        .invoke('text')
+        .then(name => {
+          profileNames.push(name);
+        });
+    }).then(() => {
+      return profileNames;
+    });
+  },
 
-      // console.log(currentArray);
-      // expect(expectedQuantity).to.equal(currentArray.length);
-      // expect(arrays.compareArrays(expectedArray, currentArray)).to.equal(true);
-    }));
+  verifyLinkedProfiles(arrayOfProfileNames, numberOfProfiles) {
+    waitLoading();
+    const profileNames = [];
+
+    cy.get('[data-test-profile-link]').each($element => {
+      cy.wrap($element)
+        .invoke('text')
+        .then(name => {
+          profileNames.push(name);
+        });
+    }).then(() => {
+      // Iterate through each element in profileNames
+      for (let i = 0; i < profileNames.length; i++) {
+        expect(profileNames[i]).to.include(arrayOfProfileNames[i]);
+      }
+      expect(numberOfProfiles).to.equal(profileNames.length);
+    });
   }
 };
