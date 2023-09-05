@@ -90,6 +90,8 @@ describe('Search in Inventory', () => {
   it('C369042 Search for "Instance" with "diacritic - Korean" symbol in the "Resource title" field using "Keyword" search option (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     testData.searchQueries.forEach((query, index) => {
       InventoryInstance.searchByTitle(query);
+      // wait for search results to be updated
+      cy.wait(1500);
       expectedTitles[index].forEach(expectedTitle => {
         InventorySearchAndFilter.verifyInstanceDisplayed(expectedTitle);
       });
