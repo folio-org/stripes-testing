@@ -21,18 +21,18 @@ let user;
 let addedCirculationRule;
 const templateBody = {
   active: true,
-  category: "Loan",
-  description: "Template created by autotest team",
+  category: 'Loan',
+  description: 'Template created by autotest team',
   id: uuid(),
   localizedTemplates: {
     en: {
-      body: "<div>Test_email_body{{item.title}}</div>",
-      header: "Subject_Test"
+      body: '<div>Test_email_body{{item.title}}</div>',
+      header: 'Subject_Test'
     }
   },
   name: `Test_template_${getRandomPostfix()}`,
-  outputFormats: ["text/html"],
-  templateResolver: "mustache",
+  outputFormats: ['text/html'],
+  templateResolver: 'mustache',
 }
 const noticePolicyName = `noticePolicy_${getRandomPostfix()}`;
 const item = {
@@ -57,7 +57,7 @@ describe('circulation-log', () => {
         }).then((loanType) => {
           testData.loanTypeId = loanType.id;
         });
-        
+
         UserEdit.addServicePointViaApi(testData.userServicePoint.id,
           user.userId, testData.userServicePoint.id);
 
