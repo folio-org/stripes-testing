@@ -19,6 +19,7 @@ import ItemRecordEdit from '../../../support/fragments/inventory/item/itemRecord
 import SwitchServicePoint from '../../../support/fragments/servicePoint/switchServicePoint';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
+import Parallelization from '../../../support/dictionary/parallelization';
 
 describe('orders: Receiving and Check-in', () => {
   const order = {
@@ -177,7 +178,7 @@ describe('orders: Receiving and Check-in', () => {
 
   //     // TODO: Need to find solution to delete all data, becouse now i cant delete location and user
 
-  it('C367971 Item statuses are set to status other than "Order closed" or "On order" and are NOT changed to "In process" upon receiving (items for receiving includes "On order" statuses) (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
+  it('C367971 Item statuses are set to status other than "Order closed" or "On order" and are NOT changed to "In process" upon receiving (items for receiving includes "On order" statuses) (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet, Parallelization.nonParallel] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
     Receiving.selectLinkFromResultsList();
     Receiving.receiveFromExpectedSection();

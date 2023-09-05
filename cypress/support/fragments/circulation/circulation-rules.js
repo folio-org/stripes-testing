@@ -1,5 +1,6 @@
 import { kebabCase } from 'lodash';
 import {
+  HTML,
   Button,
   CodeMirror,
   CodeMirrorHint,
@@ -9,6 +10,8 @@ import InteractorsTools from '../../utils/interactorsTools';
 
 const calloutMessages = {
   CIRCULATION_RULES_UPDATE_SUCCESS: 'Rules were successfully updated.',
+  CIRCULATION_RULES_ERROR_MISSING_N_TYPE: 'Must contain one of each policy type, missing type n',
+  CIRCULATION_RULES_ERROR_WRONG_INPUT: 'mismatched input \'wrong\' expecting {, CRITERIUM_LETTER, NEWLINE}',
 };
 
 export default {
@@ -16,8 +19,12 @@ export default {
     'rulesAsText': 'circulation policy'
   },
 
-  verifyError() {
-    cy.expect(cy.get("[class^='rule-error']").contains('Must contain one of each policy type, missing type r'));
+  verifyErrorMessageMissingNType() {
+    cy.expect(CodeMirror().find(HTML(calloutMessages.CIRCULATION_RULES_ERROR_MISSING_N_TYPE)).exists());
+  },
+
+  verifyErrorMessageWrongInput() {
+    cy.expect(CodeMirror().find(HTML(calloutMessages.CIRCULATION_RULES_ERROR_WRONG_INPUT)).exists());
   },
 
   policyError({
@@ -49,10 +56,17 @@ export default {
 
   fillInNewLine() {
     this.fillInCirculationRules('\n');
+    cy.wait(2000);
+  },
+
+  moveCursorFocusToTheEnd() {
+    cy.get('.react-codemirror2').type('{moveToEnd}');
   },
 
   fillInFallbackPolicy(policyData) {
     this.fillInCirculationRules('fallback-policy: ');
+    cy.wait(2000);
+    this.moveCursorFocusToTheEnd();
     this.fillInPolicy(policyData);
   },
 
@@ -69,6 +83,7 @@ export default {
       this.fillInCirculationRules(priorityType);
       this.clickCirculationRulesHintItem(priorityTypeName);
       this.fillInCirculationRules(': ');
+      cy.wait(2000);
     }
     this.fillInCirculationRules('l ');
     this.clickCirculationRulesHintItem(loanPolicyName);
@@ -78,8 +93,10 @@ export default {
     this.clickCirculationRulesHintItem(lostItemFeePolicyName);
     this.fillInCirculationRules('r ');
     this.clickCirculationRulesHintItem(requestPolicyName);
-    this.fillInCirculationRules('n ');
-    this.clickCirculationRulesHintItem(noticePolicyName);
+    if (noticePolicyName) {
+      this.fillInCirculationRules('n ');
+      this.clickCirculationRulesHintItem(noticePolicyName);
+    }
     this.fillInNewLine();
   },
 

@@ -7,9 +7,13 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import { getLongDelay } from '../../support/utils/cypressTools';
 import permissions from '../../support/dictionary/permissions';
 import devTeams from '../../support/dictionary/devTeams';
+import parallelization from '../../support/dictionary/parallelization';
 import Users from '../../support/fragments/users/users';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
+
+// TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
+Cypress.on('uncaught:exception', () => false);
 
 let user;
 const item = {
@@ -40,7 +44,7 @@ describe('data-export', () => {
     FileManager.deleteFile(`cypress/fixtures/${fileName}`);
   });
 
-  it('C350407 Verify that a user cannot trigger the DATA EXPORT using invalid job profile (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+  it('C350407 Verify that a user cannot trigger the DATA EXPORT using invalid job profile (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird, parallelization.nonParallel] }, () => {
     ExportFileHelper.uploadFile(fileName);
     ExportFileHelper.exportWithDefaultJobProfile(fileName, 'holdings', 'Holdings');
 

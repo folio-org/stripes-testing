@@ -276,7 +276,7 @@ export default {
 
   newMarcBibRecord() {
     cy.do([
-      actionsBtn.click(),
+      paneResultsSection.find(actionsBtn).click(),
       newMarcBibButton.click(),
     ]);
     cy.expect([

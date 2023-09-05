@@ -17,7 +17,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
     },
 
     fieldContents: {
-      tag245Content: `Created_Bib_${getRandomPostfix()}`
+      tag245ContentPrefix: 'Created_Bib_'
     },
 
     LDRValues: {
@@ -88,9 +88,10 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
     for (let i = 0; i < testData.LDRValues.validLDR07Values.length; i++) {
       const updatedLDRvalue = `${testData.LDRValues.validLDRvalue.substring(0, 6)}${testData.LDRValues.validLDR06Values[i]}${testData.LDRValues.validLDR07Values[i]}${testData.LDRValues.validLDRvalue.substring(8)}`;
       const updatedLDRmask = new RegExp(`\\d{5}${updatedLDRvalue.substring(5, 12).replace('\\', '\\\\')}\\d{5}${updatedLDRvalue.substring(17).replace('\\', '\\\\')}`);
+      const title = testData.fieldContents.tag245ContentPrefix + getRandomPostfix();
 
       InventoryInstance.newMarcBibRecord();
-      QuickMarcEditor.updateExistingField(testData.tags.tag245, `$a ${testData.fieldContents.tag245Content}`);
+      QuickMarcEditor.updateExistingField(testData.tags.tag245, `$a ${title}`);
       QuickMarcEditor.updateExistingField(testData.tags.tagLDR, replaceByIndex(testData.LDRValues.validLDRvalue, 6, testData.LDRValues.invalidLDR06Value));
       QuickMarcEditor.checkSubfieldsAbsenceInTag008();
       QuickMarcEditor.updateExistingField(testData.tags.tagLDR, testData.LDRValues.validLDRvalue);
@@ -99,6 +100,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
       QuickMarcEditor.checkSubfieldsPresenceInTag008();
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndClose();
+      InventoryInstance.checkInstanceTitle(title);
 
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.saveInstanceIdToArrayInQuickMarc(createdInstanceIDs);

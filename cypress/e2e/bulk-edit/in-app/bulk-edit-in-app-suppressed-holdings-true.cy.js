@@ -55,14 +55,14 @@ describe('bulk-edit', () => {
 
       const suppressFromDiscovery = true;
       BulkEditActions.openActions();
-      BulkEditSearchPane.changeShowColumnCheckbox('Suppressed from discovery');
+      BulkEditSearchPane.changeShowColumnCheckbox('Suppress from discovery');
       BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.editHoldingsSuppressFromDiscovery(suppressFromDiscovery);
       BulkEditActions.confirmChanges();
       BulkEditActions.commitChanges();
 
       BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.verifyChangesUnderColumns('Suppressed from discovery', suppressFromDiscovery);
+      BulkEditSearchPane.verifyChangesUnderColumns('Suppress from discovery', suppressFromDiscovery);
 
       cy.visit(TopMenu.inventoryPath);
       InventorySearchAndFilter.switchToItem();

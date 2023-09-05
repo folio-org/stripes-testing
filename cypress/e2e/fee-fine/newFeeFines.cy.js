@@ -1,6 +1,7 @@
 import uuid from 'uuid';
 import moment from 'moment';
 import TestType from '../../support/dictionary/testTypes';
+import Parallelization from '../../support/dictionary/parallelization';
 import Features from '../../support/dictionary/features';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import DefaultUser from '../../support/fragments/users/userDefaultObjects/defaultUser';
@@ -95,7 +96,7 @@ describe('Fee/fine management', () => {
     });
   });
 
-  it('C455 Verify "New fee/fine" behavior when "Charge & pay now" button pressed (vega)', { tags: [TestType.smoke, Features.feeFine, devTeams.vega] }, () => {
+  it('C455 Verify "New fee/fine" behavior when "Charge & pay now" button pressed (vega)', { tags: [TestType.smoke, Features.feeFine, devTeams.vega, Parallelization.nonParallel] }, () => {
     const feeInfo = [testData.owner.name, testData.feeFineType.feeFineTypeName, 'Paid fully'];
     const itemInfo = [testData.instanceTitle + ' (book)', itemBarcode];
     const initialCheckNewFeeFineFragment = () => {

@@ -39,7 +39,6 @@ export default {
     ]);
     this.assignAdmin();
     cy.wait(4000);
-
   },
 
   fillInAUInfo: (name) => {

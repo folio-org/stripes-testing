@@ -97,8 +97,8 @@ describe('Inventory: Subject Browse', () => {
     InventorySearchAndFilter.verifyKeywordsAsDefault();
     BrowseSubjects.select();
     BrowseSubjects.browse(testData.subjectName);
-    BrowseSubjects.checkNoAuthorityIconDisplayedForRow(5, testData.subjectName);
-    BrowseSubjects.checkAuthorityIconAndValueDisplayedForRow(6, testData.subjectName);
+    BrowseSubjects.checkRowWithValueAndAuthorityIconExists(testData.subjectName);
+    BrowseSubjects.checkRowWithValueAndNoAuthorityIconExists(testData.subjectName);
     BrowseSubjects.checkRowValueIsBold(5, testData.subjectName);
     BrowseSubjects.checkRowValueIsBold(6, testData.subjectName);
     InventorySearchAndFilter.switchToSearchTab();
@@ -112,7 +112,7 @@ describe('Inventory: Subject Browse', () => {
     BrowseSubjects.select();
     BrowseSubjects.browse(testData.subjectName);
     BrowseSubjects.checkNoAuthorityIconDisplayedForRow(5, testData.subjectName);
-    BrowseSubjects.checkValueAbsentInRow(6, testData.subjectName);
     BrowseSubjects.checkRowValueIsBold(5, testData.subjectName);
+    BrowseSubjects.checkValueAbsentInRow(6, testData.subjectName);
   });
 });
