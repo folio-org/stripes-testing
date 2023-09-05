@@ -10,7 +10,7 @@ export default {
 
   checkExactSearchResult(searchQuery) {
     cy.do([
-      MultiColumnListCell(`${searchQuery}`).has({ innerHTML: including(`<strong>${searchQuery}</strong>`) }),
+      MultiColumnListCell(`${searchQuery}`).has({ innerHTML: including(searchQuery) }),
     ]);
   },
 

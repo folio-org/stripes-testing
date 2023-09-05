@@ -85,6 +85,7 @@ const orderHistorySection = Section({ id: 'versions-history-pane-order-line' });
 const agreementLinesSection = Section({ id: 'relatedAgreementLines' });
 const invoiceLinesSection = Section({ id: 'relatedInvoiceLines' });
 const notesSection = Section({ id: 'notes' });
+const trashButton = Button({ icon: 'trash' });
 const submitOrderLine = () => {
   const submitButton = Button('Submit');
   cy.get('body').then($body => {
@@ -96,9 +97,13 @@ const submitOrderLine = () => {
     }
   });
 };
+const checkQuantityPhysical = (quantity) => {
+  cy.expect(Accordion('Cost details').find(KeyValue('Quantity physical')).has({ value: quantity }));
+};
 
 export default {
   submitOrderLine,
+  checkQuantityPhysical,
   searchByParameter: (parameter, value) => {
     cy.do([
       searchForm.selectIndex(parameter),
@@ -662,6 +667,27 @@ export default {
     submitOrderLine();
   },
 
+  edeiPOLineInfoAndChangeLocation(accountNumber, AUMethod, institutionName, quantity) {
+    cy.do([
+      locationSection.find(trashButton).click(),
+      addLocationButton.click(),
+      createNewLocationButton.click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionName);
+    cy.do([
+      selectPermanentLocationModal.find(saveButton).click(),
+      quantityPhysicalLocationField.fillIn(quantity),
+    ]);
+    cy.expect([
+      physicalUnitPriceTextField.has({ value: physicalUnitPrice }),
+      quantityPhysicalLocationField.has({ value: quantity }),
+    ]);
+    cy.do(saveAndClose.click());
+    // If purchase order line will be dublicate, Modal with button 'Submit' will be activated
+    cy.wait(2000);
+    submitOrderLine();
+  },
+
   fillInPOLineInfoWithLocationForPEMIXResource(accountNumber, AUMethod, institutionName, quantity) {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PE_MIX),
@@ -773,7 +799,7 @@ export default {
 
   deleteFundInPOL() {
     cy.do([
-      Section({ id: 'fundDistributionAccordion' }).find(Button({ icon: 'trash' })).click(),
+      Section({ id: 'fundDistributionAccordion' }).find(trashButton).click(),
       saveAndClose.click()
     ]);
     cy.wait(6000);
@@ -1075,4 +1101,21 @@ export default {
     cy.wait(4000);
     InteractorsTools.checkCalloutErrorMessage(message);
   },
+
+  checkPhysicalQuantityInLocation:(quantity) => {
+    const arrayOfQuantityRows = [];
+    cy.get('#location')
+      .find('[class*="col-"]:nth-child(2)')
+      .each($row => {
+        cy.get('[class*="kvValue-"]', { withinSubject: $row })
+        // extract its text content
+          .invoke('text')
+          .then(cellValue => {
+            arrayOfQuantityRows.push(cellValue);
+          });
+      })
+      .then(() => {
+        expect(quantity).to.equal(arrayOfQuantityRows.length);
+      });
+  }
 };

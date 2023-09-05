@@ -90,7 +90,7 @@ describe('data-import', () => {
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
-        // upload a marc file for creating of the new instance, holding and item
+        // upload a marc file
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();

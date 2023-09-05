@@ -43,6 +43,7 @@ describe('inventory', () => {
       InventorySearchAndFilter.openTagsField();
       InventorySearchAndFilter.verifyTagsView();
       InventorySearchAndFilter.addTag(testTag);
+      cy.reload();
       InventorySearchAndFilter.verifyTagCount(tagsCount);
       InventorySearchAndFilter.closeInstanceDetailPane();
       InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();

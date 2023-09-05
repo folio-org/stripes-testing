@@ -1,5 +1,6 @@
 import {
   MultiColumnListCell,
+  MultiColumnListRow,
   Section,
   including,
   KeyValue,
@@ -23,6 +24,14 @@ export default {
       MultiColumnList({ id: 'invoices-list' })
         .find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
         .find(Link())
+        .click()
+    );
+  },
+  selectInvoiceLine: () => {
+    cy.do(
+      Section({ id: 'invoiceLines' })
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
         .click()
     );
   },
@@ -54,6 +63,22 @@ export default {
 
   verifyTagsIsAbsent: () => {
     cy.expect(Pane({ id: 'pane-invoiceDetails' }).find(Button({ icon: 'tag' })).absent());
+  },
+
+  verifyInvoiceNote:(note) => {
+    cy.expect(Pane({ id:'pane-invoiceDetails' }).find(KeyValue('Note')).has({ value: note }));
+  },
+
+  verifyInvoiceLineSubscription:(subscription) => {
+    cy.expect(Pane({ id:'pane-invoiceLineDetails' }).find(KeyValue('Subscription info')).has({ value: subscription }));
+  },
+
+  verifyInvoiceLineComment:(comment) => {
+    cy.expect(Pane({ id:'pane-invoiceLineDetails' }).find(KeyValue('Comment')).has({ value: comment }));
+  },
+
+  verifyAcquisitionUnits:(acquisitionUnitName) => {
+    cy.expect(Pane({ id:'pane-invoiceDetails' }).find(KeyValue('Acquisition units')).has({ value: acquisitionUnitName }));
   },
 
   vendorInvoiceNumber,

@@ -345,19 +345,36 @@ export default {
     cy.do([
       nameField.fillIn(profile.name),
       incomingRecordTypeField.choose(profile.incomingRecordType),
-      existingRecordType.choose(profile.existingRecordType),
-      Accordion('Summary').find(TextArea({ name:'profile.description' })).fillIn('')
+      existingRecordType.choose(profile.existingRecordType)
     ]);
+    if (profile.description) {
+      cy.do(Accordion('Summary').find(TextArea({ name:'profile.description' })).fillIn(profile.description));
+    }
     // Invoice information section
-    cy.do(batchGroupField.fillIn(profile.batchGroup));
+    if (profile.batchGroup) {
+      cy.do(batchGroupField.fillIn(profile.batchGroup));
+    }
     if (profile.lockTotalAmount) {
       cy.do(TextField('Lock total amount').fillIn(profile.lockTotalAmount));
     }
+    if (profile.invoiceNote) {
+      cy.do(TextArea('Note').fillIn(profile.invoiceNote));
+    }
+    if (profile.acquisitionsUnits) {
+      cy.do(TextField('Acquisitions units').fillIn(profile.acquisitionsUnits));
+    }
     // Vendor information section
-    cy.do(organizationLookUpButton.click());
-    selectOrganizationByName(profile.organizationName);
+    if (profile.organizationName) {
+      cy.do(organizationLookUpButton.click());
+      selectOrganizationByName(profile.organizationName);
+    }
     // Extended information section
-    cy.do(paymentMethodField.fillIn(profile.paymentMethod));
+    if (profile.paymentMethod) {
+      cy.do(paymentMethodField.fillIn(profile.paymentMethod));
+    }
+    if (profile.currency) {
+      cy.do(currencyField.fillIn(`"${profile.currency}"`));
+    }
     // Invoice line information section
     if (profile.invoiceLinePOlDescription) {
       cy.do(Accordion('Invoice line information')
@@ -368,6 +385,18 @@ export default {
     }
     if (profile.polVendorReferenceNumber) {
       cy.do(TextField('Vendor reference number').fillIn(profile.polVendorReferenceNumber));
+    }
+    if (profile.subscriptionInfo) {
+      cy.do(TextField('Subscription info').fillIn(profile.subscriptionInfo));
+    }
+    if (profile.subscriptionStartDate) {
+      cy.do(TextField('Subscription start date').fillIn(profile.subscriptionStartDate));
+    }
+    if (profile.subscriptionEndDate) {
+      cy.do(TextField('Subscription end date').fillIn(profile.subscriptionEndDate));
+    }
+    if (profile.comment) {
+      cy.do(TextField('Comment').fillIn(profile.comment));
     }
     cy.do(saveButton.click());
   },
@@ -380,7 +409,7 @@ export default {
     ]);
     if (specialMappingProfile.typeValue === holdingsType) {
       cy.do(TextField('Holdings type').fillIn('"Monograph"'));
-      // wait accepted values to be filled
+      // wait accepted values to be filed
       cy.wait(1500);
       cy.do(permanentLocationField.fillIn('980$a'));
       cy.do(TextField('Call number type').fillIn('"Library of Congress classification"'));

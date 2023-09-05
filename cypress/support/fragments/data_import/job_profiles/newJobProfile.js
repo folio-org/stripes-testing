@@ -75,6 +75,9 @@ export default {
   linkActionProfileForSubMatches,
   defaultJobProfile,
 
+  fillProfileName:(profileName) => cy.do(TextField({ name:'profile.name' }).fillIn(profileName)),
+  fillDescription:(description) => cy.do(TextArea({ name:'profile.description' }).fillIn(description)),
+
   fillJobProfile: (specialJobProfile = defaultJobProfile) => {
     cy.do(TextField({ name:'profile.name' }).fillIn(specialJobProfile.profileName));
     cy.expect(TextField({ name:'profile.name' }).has({ value: specialJobProfile.profileName }));
