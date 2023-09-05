@@ -12,9 +12,6 @@ import { getLongDelay } from '../../support/utils/cypressTools';
 import DataExportResults from '../../support/fragments/data-export/dataExportResults';
 import ExportFile from '../../support/fragments/data-export/exportFile';
 
-// TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
-Cypress.on('uncaught:exception', () => false);
-
 let user;
 const item = {
   barcode: getRandomPostfix(),

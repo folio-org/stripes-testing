@@ -363,11 +363,11 @@ describe.skip('data-import', () => {
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.createJobProfileWithLinkingProfilesForUpdate(jobProfileForUpdate);
         NewJobProfile.linkMatchAndActionProfiles(collectionOfMatchProfiles[0].matchProfile.profileName, collectionOfProfilesForUpdate[0].actionProfile.name);
-        NewJobProfile.linkProfileForNonMatches(collectionOfProfilesForCreate[1].actionProfile.name);
+        NewJobProfile.linkActionProfileForNonMatches(collectionOfProfilesForCreate[1].actionProfile.name);
         NewJobProfile.linkMatchAndActionProfiles(collectionOfMatchProfiles[1].matchProfile.profileName, collectionOfProfilesForUpdate[1].actionProfile.name, 2);
-        NewJobProfile.linkProfileForNonMatches(collectionOfProfilesForCreate[2].actionProfile.name, 3);
+        NewJobProfile.linkActionProfileForNonMatches(collectionOfProfilesForCreate[2].actionProfile.name, 3);
         NewJobProfile.linkMatchAndActionProfiles(collectionOfMatchProfiles[2].matchProfile.profileName, collectionOfProfilesForUpdate[2].actionProfile.name, 4);
-        NewJobProfile.linkProfileForNonMatches(collectionOfProfilesForCreate[3].actionProfile.name, 5);
+        NewJobProfile.linkActionProfileForNonMatches(collectionOfProfilesForCreate[3].actionProfile.name, 5);
         NewJobProfile.saveAndClose();
 
         // upload the edited marc file
