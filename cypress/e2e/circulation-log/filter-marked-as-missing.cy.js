@@ -2,7 +2,6 @@ import moment from 'moment';
 import TopMenu from '../../support/fragments/topMenu';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import getRandomPostfix from '../../support/utils/stringTools';
-import permissions from '../../support/dictionary/permissions';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
 import devTeams from '../../support/dictionary/devTeams';
@@ -24,39 +23,32 @@ const item = {
 
 describe('circulation-log', () => {
   before('creating user and checking out item', () => {
-    cy.createTempUser([
-      permissions.inventoryAll.gui,
-      permissions.circulationLogAll.gui,
-      permissions.checkoutAll.gui,
-      permissions.uiUsersViewLoans.gui,
-      permissions.uiUsersLoansClaimReturned.gui,
-    ])
-      .then(userProperties => {
-        user = { ...userProperties };
-        ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' })
-          .then((res) => {
-            servicePointId = res[0].id;
-          })
-          .then(() => {
-            UserEdit.addServicePointViaApi(servicePointId, user.userId);
-            InventoryInstances.createInstanceViaApi(item.name, item.barcode);
-          })
-          .then(() => {
-            Checkout.checkoutItemViaApi({
-              itemBarcode: item.barcode,
-              userBarcode: user.barcode,
-              servicePointId,
-            });
-          })
-          .then(() => {
-            UserLoans.getUserLoansIdViaApi(user.userId).then((userLoans) => {
-              userLoans.loans.forEach(({ id }) => {
-                UserLoans.claimItemReturnedViaApi({ itemClaimedReturnedDateTime: moment.utc().format() }, id);
-              });
+    cy.createTempUser([]).then(userProperties => {
+      user = userProperties;
+      ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' })
+        .then((res) => {
+          servicePointId = res[0].id;
+        })
+        .then(() => {
+          UserEdit.addServicePointViaApi(servicePointId, user.userId);
+          InventoryInstances.createInstanceViaApi(item.name, item.barcode);
+        })
+        .then(() => {
+          Checkout.checkoutItemViaApi({
+            itemBarcode: item.barcode,
+            userBarcode: user.barcode,
+            servicePointId,
+          });
+        })
+        .then(() => {
+          UserLoans.getUserLoansIdViaApi(user.userId).then((userLoans) => {
+            userLoans.loans.forEach(({ id }) => {
+              UserLoans.claimItemReturnedViaApi({ itemClaimedReturnedDateTime: moment.utc().format() }, id);
             });
           });
-        cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
-      });
+        });
+      cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
+    });
   });
 
   after('cleaning up test data', () => {

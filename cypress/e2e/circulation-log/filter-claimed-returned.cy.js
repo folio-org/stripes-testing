@@ -2,7 +2,6 @@ import TopMenu from '../../support/fragments/topMenu';
 import TestTypes from '../../support/dictionary/testTypes';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import getRandomPostfix from '../../support/utils/stringTools';
-import permissions from '../../support/dictionary/permissions';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
 import devTeams from '../../support/dictionary/devTeams';
@@ -17,7 +16,6 @@ import ConfirmClaimReturnedModal from '../../support/fragments/users/loans/confi
 import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
 
 let user;
-let userId;
 let servicePointId;
 const item = {
   instanceName: `Barcode search test ${Number(new Date())}`,
@@ -26,15 +24,9 @@ const item = {
 
 describe('circulation-log', () => {
   before('create checked out item', () => {
-    cy.createTempUser([
-      permissions.inventoryAll.gui,
-      permissions.circulationLogAll.gui,
-      permissions.usersViewRequests.gui
-    ])
+    cy.createTempUser()
       .then(userProperties => {
         user = userProperties;
-        userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password, { path: TopMenu.circulationLogPath, waiter: SearchPane.waitLoading });
         ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' })
           .then((res) => {
             servicePointId = res[0].id;
@@ -44,7 +36,7 @@ describe('circulation-log', () => {
           query: `"personal.lastName"="${userProperties.username}" and "active"="true"`
         })
           .then(() => {
-            UserEdit.addServicePointViaApi(servicePointId, userId);
+            UserEdit.addServicePointViaApi(servicePointId, user.userId);
             cy.getUserServicePoints(Cypress.env('users')[0].id);
             InventoryInstances.createInstanceViaApi(item.instanceName, item.ITEM_BARCODE);
           })
@@ -55,22 +47,21 @@ describe('circulation-log', () => {
               servicePointId,
             });
           });
-        cy.loginAsAdmin();
-        cy.visit(TopMenu.usersPath);
+        cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
       });
   });
 
   after('delete test data', () => {
-    ItemActions.markItemAsMissingByUserIdViaApi(userId).then(() => {
+    ItemActions.markItemAsMissingByUserIdViaApi(user.userId).then(() => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.ITEM_BARCODE);
-      Users.deleteViaApi(userId);
+      Users.deleteViaApi(user.userId);
     });
   });
 
   it('C16997 Filter circulation log by Claimed returned (firebird)', { tags: [TestTypes.criticalPath, devTeams.firebird] }, () => {
     UsersSearchPane.searchByStatus('Active');
-    UsersSearchPane.searchByKeywords(userId);
-    UsersSearchPane.openUser(userId);
+    UsersSearchPane.searchByKeywords(user.userId);
+    UsersSearchPane.openUser(user.userId);
     UsersCard.openLoans();
     UsersCard.showOpenedLoans();
     LoansPage.checkAll();
