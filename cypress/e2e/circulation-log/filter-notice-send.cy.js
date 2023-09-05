@@ -33,7 +33,7 @@ const templateBody = {
   name: `Test_template_${getRandomPostfix()}`,
   outputFormats: ['text/html'],
   templateResolver: 'mustache',
-}
+};
 const noticePolicyName = `noticePolicy_${getRandomPostfix()}`;
 const item = {
   instanceTitle: `Instance ${getRandomPostfix()}`,
@@ -67,14 +67,14 @@ describe('circulation-log', () => {
         });
 
         NoticePolicyTemplateApi.createViaApi(templateBody).then(() => {
-          NoticePolicyApi.createWithTemplateApi(noticePolicyName, templateBody.id, 'Check out')
+          NoticePolicyApi.createWithTemplateApi(noticePolicyName, templateBody.id, 'Check out');
         });
 
         InventoryInstances.createInstanceViaApi(item.instanceTitle, item.barcode);
         cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` })
           .then((res) => {
-            res.permanentLoanType = { id: testData.loanTypeId }
-            cy.updateItemViaApi(res)
+            res.permanentLoanType = { id: testData.loanTypeId };
+            cy.updateItemViaApi(res);
           });
 
         cy.getNoticePolicy({ query: `name=="${noticePolicyName}"` }).then(response => {
