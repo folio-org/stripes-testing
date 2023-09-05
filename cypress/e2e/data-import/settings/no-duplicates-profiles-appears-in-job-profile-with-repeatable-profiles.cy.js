@@ -81,17 +81,6 @@ describe('data-import', () => {
           existingRecordOption: NewMatchProfile.optionsList.holdingsType }
       }
     ];
-    const linkedProfileNames = [
-      collectionOfMatchProfiles[1].matchProfile.profileName,
-      collectionOfMatchProfiles[2].matchProfile.profileName,
-      collectionOfMatchProfiles[3].matchProfile.profileName,
-      collectionOfMappingAndActionProfiles[0].actionProfile.name,
-      collectionOfMatchProfiles[0].matchProfile.profileName,
-      collectionOfMatchProfiles[2].matchProfile.profileName,
-      collectionOfMatchProfiles[3].matchProfile.profileName,
-      collectionOfMappingAndActionProfiles[0].actionProfile.name,
-      collectionOfMappingAndActionProfiles[1].actionProfile.name
-    ];
 
     before('create test data', () => {
       cy.createTempUser([
@@ -154,7 +143,18 @@ describe('data-import', () => {
     });
 
     it('C385653 Verify that no duplicates of match and actions profiles appear after editing job profile with repeatable profiles (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+      { tags: [TestTypes.extendedPath, DevTeams.folijet] }, () => {
+        const linkedProfileNames = [
+          collectionOfMatchProfiles[1].matchProfile.profileName,
+          collectionOfMatchProfiles[2].matchProfile.profileName,
+          collectionOfMatchProfiles[3].matchProfile.profileName,
+          collectionOfMappingAndActionProfiles[0].actionProfile.name,
+          collectionOfMatchProfiles[0].matchProfile.profileName,
+          collectionOfMatchProfiles[2].matchProfile.profileName,
+          collectionOfMatchProfiles[3].matchProfile.profileName,
+          collectionOfMappingAndActionProfiles[0].actionProfile.name,
+          collectionOfMappingAndActionProfiles[1].actionProfile.name
+        ];
         const jobProfile = {
           ...NewJobProfile.defaultJobProfile,
           profileName: `Import job profile with the same match and action profiles.${getRandomPostfix()}`,
@@ -187,6 +187,49 @@ describe('data-import', () => {
         JobProfileEdit.saveAndClose();
         JobProfileView.verifyJobProfileOpened();
         JobProfileView.verifyCalloutMessage(calloutMessage);
+        JobProfileView.verifyLinkedProfiles(linkedProfileNames, linkedProfileNames.length);
+
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+      });
+
+    it('C385629 Verify that no duplicates of match and actions profiles appear after saving job profile with repeatable match/action profiles (folijet)',
+      { tags: [TestTypes.extendedPath, DevTeams.folijet] }, () => {
+        const linkedProfileNames = [
+          collectionOfMatchProfiles[1].matchProfile.profileName,
+          collectionOfMatchProfiles[2].matchProfile.profileName,
+          collectionOfMatchProfiles[3].matchProfile.profileName,
+          collectionOfMappingAndActionProfiles[0].actionProfile.name,
+          collectionOfMappingAndActionProfiles[1].actionProfile.name,
+          collectionOfMatchProfiles[0].matchProfile.profileName,
+          collectionOfMatchProfiles[2].matchProfile.profileName,
+          collectionOfMatchProfiles[3].matchProfile.profileName,
+          collectionOfMappingAndActionProfiles[0].actionProfile.name,
+          collectionOfMappingAndActionProfiles[1].actionProfile.name
+        ];
+        const jobProfile = {
+          ...NewJobProfile.defaultJobProfile,
+          profileName: `Import job profile with the same match and action profiles.${getRandomPostfix()}`,
+          acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
+        };
+
+        // create Job profile
+        cy.visit(SettingsMenu.jobProfilePath);
+        JobProfiles.createJobProfile(jobProfile);
+        NewJobProfile.linkMatchProfile(collectionOfMatchProfiles[1].matchProfile.profileName);
+        NewJobProfile.linkMatchProfileForMatches(collectionOfMatchProfiles[2].matchProfile.profileName);
+        NewJobProfile.waitLoading();
+        NewJobProfile.linkMatchProfileForMatches(collectionOfMatchProfiles[3].matchProfile.profileName);
+        NewJobProfile.linkActionProfileForMatches(collectionOfMappingAndActionProfiles[0].actionProfile.name);
+        NewJobProfile.linkActionProfileForMatches(collectionOfMappingAndActionProfiles[1].actionProfile.name);
+        NewJobProfile.linkMatchProfileForNonMatches(collectionOfMatchProfiles[0].matchProfile.profileName, 5);
+        NewJobProfile.waitLoading();
+        NewJobProfile.linkMatchProfileForMatches(collectionOfMatchProfiles[2].matchProfile.profileName, 5);
+        NewJobProfile.waitLoading();
+        NewJobProfile.linkMatchProfileForMatches(collectionOfMatchProfiles[3].matchProfile.profileName, 5);
+        NewJobProfile.linkActionProfileForMatches(collectionOfMappingAndActionProfiles[0].actionProfile.name, 5);
+        NewJobProfile.linkActionProfileForMatches(collectionOfMappingAndActionProfiles[1].actionProfile.name, 5);
+        NewJobProfile.saveAndClose();
+        JobProfiles.checkJobProfilePresented(jobProfile.profileName);
         JobProfileView.verifyLinkedProfiles(linkedProfileNames, linkedProfileNames.length);
 
         JobProfiles.deleteJobProfile(jobProfile.profileName);
