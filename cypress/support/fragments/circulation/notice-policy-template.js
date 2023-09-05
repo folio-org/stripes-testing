@@ -5,6 +5,7 @@ import { Button, Modal, including } from '../../../../interactors';
 
 const defaultNoticeTemplateBody = {
   active: true,
+  category: "Loan",
   description: 'Notice_policy_template_description',
   id: uuid(),
   localizedTemplates: {
@@ -28,13 +29,11 @@ export default {
     ]);
     cy.do(Button('Close').click());
   },
-  createViaApi(noticeTemplateCategory) {
-    return cy.okapiRequest({ method: 'POST',
+  createViaApi(body = defaultNoticeTemplateBody) {
+    return cy.okapiRequest({ 
+      method: 'POST',
       path: 'templates',
-      body: {
-        category: noticeTemplateCategory,
-        ...defaultNoticeTemplateBody
-      },
+      body,
       searchParams:  {
         query: '(cq l.allRecords=1) and category=""',
         limit: 1000,
