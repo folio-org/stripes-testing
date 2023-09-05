@@ -379,10 +379,10 @@ export default {
     ]);
     cy.get('#rollover-logs-list')
       .find('div[role="gridcell"]')
-      .contains('result', `${dataFile}-result`);
+      .contains('a', `${dataFile}-result`);
     cy.get('#rollover-logs-list')
       .find('div[role="gridcell"]')
-      .contains('result', `${dataFile}-settings`);
+      .contains('a', `${dataFile}-settings`);
   },
 
   checkDownloadedFile(
