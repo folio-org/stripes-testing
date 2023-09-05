@@ -11,33 +11,33 @@ import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
 describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
   const testData = {
     tags: {
-        tag100: '100',
-        tag600: '600',
-        tag700: '700',
-        tag800: '800',
-        tag240: '240',
-        tag245: '245',
-        tagLDR: 'LDR',
+      tag100: '100',
+      tag600: '600',
+      tag700: '700',
+      tag800: '800',
+      tag240: '240',
+      tag245: '245',
+      tagLDR: 'LDR',
     },
 
     fieldContents: {
-        tag100Content: 'Author, Person',
-        tag600Content: 'New subject',
-        tag700Content: 'Co-author, Person',
-        tag800Content: 'New series',
-        tag240Content: 'New alt. title',
-        tag245Content: 'New title',
-        tagLDRContent: '00000naa\\a2200000uu\\4500',
+      tag100Content: 'Author, Person',
+      tag600Content: 'New subject',
+      tag700Content: 'Co-author, Person',
+      tag800Content: 'New series',
+      tag240Content: 'New alt. title',
+      tag245Content: 'New title',
+      tagLDRContent: '00000naa\\a2200000uu\\4500',
     },
 
     accordions: {
-        contributor: 'Contributor',
-        subject: 'Subject',
-        titleData: 'Title data',
+      contributor: 'Contributor',
+      subject: 'Subject',
+      titleData: 'Title data',
     }
   };
 
-  let importedInstanceID = [];
+  const importedInstanceID = [];
 
   before(() => {
     cy.createTempUser([
@@ -70,14 +70,14 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
     QuickMarcEditor.pressSaveAndClose();
     QuickMarcEditor.checkAfterSaveAndClose();
 
-    InventoryInstance.getId().then(id => { importedInstanceID.push(id) });
+    InventoryInstance.getId().then(id => { importedInstanceID.push(id); });
     InventoryInstance.checkInstanceTitle(testData.fieldContents.tag245Content);
     InventoryInstance.checkDetailViewOfInstance(testData.accordions.contributor, testData.fieldContents.tag100Content);
     InventoryInstance.checkDetailViewOfInstance(testData.accordions.contributor, testData.fieldContents.tag700Content);
     InventoryInstance.checkDetailViewOfInstance(testData.accordions.subject, testData.fieldContents.tag600Content);
     InventoryInstance.checkDetailViewOfInstance(testData.accordions.titleData, testData.fieldContents.tag800Content);
     InventoryInstance.checkDetailViewOfInstance(testData.accordions.titleData, testData.fieldContents.tag240Content);
-    
+
     InventoryInstance.editMarcBibliographicRecord();
     QuickMarcEditor.check008FieldContent();
     QuickMarcEditor.checkFieldContentMatch('textarea[name="records[1].content"]', /in\d{11}/gm);

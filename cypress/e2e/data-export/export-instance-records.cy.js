@@ -7,6 +7,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import { getLongDelay } from '../../support/utils/cypressTools';
 import permissions from '../../support/dictionary/permissions';
 import devTeams from '../../support/dictionary/devTeams';
+import parallelization from '../../support/dictionary/parallelization';
 import Users from '../../support/fragments/users/users';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
@@ -40,7 +41,7 @@ describe('data-export', () => {
     FileManager.deleteFile(`cypress/fixtures/${fileName}`);
   });
 
-  it('C9288 Export small number of instance records - default instance mapping profile (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
+  it('C9288 Export small number of instance records - default instance mapping profile (firebird)', { tags: [TestTypes.smoke, devTeams.firebird, parallelization.nonParallel] }, () => {
     ExportFileHelper.uploadFile(fileName);
     ExportFileHelper.exportWithDefaultJobProfile(fileName);
 

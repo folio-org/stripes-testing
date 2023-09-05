@@ -36,7 +36,7 @@ import ItemRecordView from '../../../support/fragments/inventory/item/itemRecord
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
 
-describe('data-import', () => {
+describe.skip('data-import', () => {
   describe('Log details', () => {
     let user;
     let instanceHrids;

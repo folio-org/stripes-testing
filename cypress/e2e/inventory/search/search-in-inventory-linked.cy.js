@@ -14,6 +14,7 @@ import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthorit
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
+import Parallelization from '../../../support/dictionary/parallelization';
 
 describe('Search in Inventory', () => {
   const testData = {
@@ -57,7 +58,7 @@ describe('Search in Inventory', () => {
       authorityHeading: 'Abraham, Angela, C375256 Hosanna',
       authority010FieldValue: 'n99036055375256',
       numberOfRecords: 1
-    },
+    }
   ];
 
   const createdRecordIDs = [];
@@ -69,6 +70,7 @@ describe('Search in Inventory', () => {
       testData.userProperties = createdUserProperties;
       marcFiles.forEach(marcFile => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
+          DataImport.verifyUploadState();
           DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
           JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();
@@ -112,21 +114,20 @@ describe('Search in Inventory', () => {
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
-
-        cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
       });
+      cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
     });
   });
 
   after('Deleting user, records', () => {
     Users.deleteViaApi(testData.userProperties.userId);
     createdRecordIDs.forEach((id, index) => {
-      if (index > marcFiles[0].numberOfRecords - 1) MarcAuthority.deleteViaAPI(id);
+      if (index > 3) MarcAuthority.deleteViaAPI(id);
       else InventoryInstance.deleteInstanceViaApi(id);
     });
   });
 
-  it('C375256 Query search | Search by "Alternative title" field of linked "MARC Bib" records (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+  it('C375256 Query search | Search by "Alternative title" field of linked "MARC Bib" records (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] }, () => {
     InventorySearchAndFilter.selectSearchOptions(testData.querySearchOption, testData.searchQueries.allRecords);
     InventorySearchAndFilter.clickSearch();
     InventorySearchAndFilter.verifySearchResult(testData.searchResults.firstLinkedRecord);
