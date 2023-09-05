@@ -76,16 +76,8 @@ export default {
   },
 
   rollover : () => {
-    cy.wait(8000);
-
     cy.do([
       Button('Actions').click(),
-
-    ]);
-    cy.wait(8000);
-
-    cy.do([
-
       rolloverButton.click()
     ]);
   },
@@ -125,25 +117,21 @@ export default {
   fillInRolloverInfo(fiscalYear) {
     cy.do(fiscalYearSelect.click());
     // Need to wait,while date of fiscal year will be loaded
-    cy.wait(8000);
     cy.do([
       fiscalYearSelect.choose(fiscalYear),
-      // rolloverAllocationCheckbox.click(),
+      rolloverAllocationCheckbox.click(),
       Checkbox({ name: 'encumbrancesRollover[0].rollover' }).click(),
       Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Expended'),
       Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
-      Select({ name: 'encumbrancesRollover[2].basedOn' }).choose(
-        'Initial encumbrance'
-      ),
-      rolloverButton.click(),
+      Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
     ]);
-    cy.wait(8000);
+    cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
     this.continueRollover();
-    cy.wait(8000);
     cy.do([
       rolloverConfirmButton.click(),
     ]);
   },
+
 
   continueRollover: () => {
     const continueButton = Button('Continue');
@@ -180,8 +168,8 @@ export default {
       rolloverAllocationCheckbox.click(),
       rolloverBudgetVelue.choose(rolloverBudgetValue),
       addAvailableToSelect.choose(rolloverValueAs),
-      rolloverButton.click(),
     ]);
+    cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
     cy.wait(4000);
     this.continueRollover();
     cy.do([rolloverConfirmButton.click()]);
@@ -213,8 +201,8 @@ export default {
       fiscalYearSelect.choose(fiscalYear),
       rolloverBudgetVelue.choose(rolloverBudgetValue),
       addAvailableToSelect.choose(rolloverValueAs),
-      rolloverButton.click(),
     ]);
+    cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
     cy.wait(4000);
     this.continueRollover();
     cy.do([rolloverConfirmButton.click()]);
@@ -233,8 +221,8 @@ export default {
       Checkbox({ name: 'budgetsRollover[0].rolloverAllocation' }).click(),
       rolloverBudgetVelue.choose(rolloverBudgetValue),
       addAvailableToSelect.choose(rolloverValueAs),
-      Button('Test rollover').click(),
     ]);
+    cy.get('button:contains("Test rollover")').eq(0).should('be.visible').trigger('click');
     cy.wait(2000);
     cy.do([
       Button({ id: 'clickable-test-rollover-confirmation-confirm' }).click(),
