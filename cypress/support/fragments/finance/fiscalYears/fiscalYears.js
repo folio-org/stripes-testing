@@ -23,9 +23,10 @@ const buttonNew = Button('New');
 const actions = Button('Actions');
 const edit = Button('Edit');
 const deleteButton = Button('Delete');
-const fiscalYear = Button('Fiscal year');
-const Ledgertab = Button('Ledger');
+const fiscalYearButton = Button('Fiscal year');
 const resetButton = Button({ id: 'reset-fiscal-years-filters' });
+const fiscalYearFiltersSection = Section({ id: 'fiscal-year-filters-pane' });
+
 export default {
 
   defaultUiFiscalYear: {
@@ -46,6 +47,10 @@ export default {
     series: 'FYTA'
   },
 
+  selectFisacalYear:(fiscalYear) => {
+    cy.do(Pane({ id: 'fiscal-year-results-pane' }).find(Link(fiscalYear)).click());
+  },
+
   waitForFiscalYearDetailsLoading: () => {
     cy.do(Pane({ id: 'pane-fiscal-year-details' }).exists);
   },
@@ -62,6 +67,13 @@ export default {
     this.waitForFiscalYearDetailsLoading();
   },
 
+  checkAvailableBalance(cashBalance, availableBalance) {
+    cy.get('div[class*=balanceWrapper-]').then(($element) => {
+      const text = $element.text();
+      expect(text).to.eq(`Cash balance: ${cashBalance}Available balance: ${availableBalance}`);
+    });
+  },
+
   closeThirdPane() {
     cy.do(PaneHeader({ id: 'paneHeaderpane-fiscal-year-details' }).find(Button({ icon: 'times' })).click());
   },
@@ -69,16 +81,31 @@ export default {
   openAcquisitionAccordion() {
     cy.do(Button({ id: 'accordion-toggle-button-acqUnitIds' }).click());
   },
+
   clickOnFiscalYear: () => {
     cy.do([
-      fiscalYear.click()
+      fiscalYearButton.click()
     ]);
   },
+
   clickOnLedgerTab: () => {
     cy.do([
-      Ledgertab.click()
+      fiscalYearFiltersSection.find(Button('Ledger')).click()
     ]);
   },
+
+  clickOnGroupTab: () => {
+    cy.do([
+      fiscalYearFiltersSection.find(Button('Group')).click()
+    ]);
+  },
+
+  clickOnFundTab: () => {
+    cy.do([
+      fiscalYearFiltersSection.find(Button('Fund')).click()
+    ]);
+  },
+
   editFiscalYearDetails: () => {
     cy.do([
       actions.click(),
@@ -98,6 +125,7 @@ export default {
       .should('be.visible')
       .and('have.text', fiscalYearName);
   },
+
   filltheStartAndEndDateoncalenderstartDateField1: () => {
     cy.do([
       TextField({ name: 'periodStart' }).clear(),
@@ -107,6 +135,7 @@ export default {
       saveAndClose.click()
     ]);
   },
+
   filltheStartAndEndDateoncalenderstartDateField2: () => {
     cy.do([
       TextField({ name: 'periodStart' }).clear(),
@@ -145,6 +174,7 @@ export default {
       .find(MultiColumnListCell(fiscalYear))
       .exists());
   },
+
   checkSearchResults1: (fiscalYear) => {
     cy.expect(MultiColumnList({ id: 'fiscal-years-list' })
       .find(MultiColumnListCell(fiscalYear)).click());
