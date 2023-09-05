@@ -41,6 +41,20 @@ describe('Financial Transactions Detail Report', () => {
     UsersSearchResultsPane.verifyOptionsInActionsMenu();
   });
 
+  it('C343320 Check that the icon calendar is displayed in the Start date and End date on the "Financial transactions detail report" modal', { tags: [TestTypes.criticalPath, DevTeams.vega] }, () => {
+    UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
+    FinancialTransactionDetailReportModal.verifyStartDateFieldCalendarIcon();
+    FinancialTransactionDetailReportModal.verifyEndDateFieldCalendarIcon();
+  });
+
+  it('C343321 Check when user click on the icon calendar appears "datepicker" and user can select any date', { tags: [TestTypes.criticalPath, DevTeams.vega] }, () => {
+    UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
+    FinancialTransactionDetailReportModal.openStartDateFieldCalendar();
+    FinancialTransactionDetailReportModal.verifyCalendarIsShown();
+    FinancialTransactionDetailReportModal.openEndDateFieldCalendar();
+    FinancialTransactionDetailReportModal.verifyCalendarIsShown();
+  });
+
   it('C343306 Check that the "Financial transactions detail report" modal is display when selected "Financial transactions detail report (CSV)"', { tags: [TestTypes.criticalPath, DevTeams.vega] }, () => {
     UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
     FinancialTransactionDetailReportModal.verifyStartDateFieldIsEmpty();
@@ -123,5 +137,14 @@ describe('Financial Transactions Detail Report', () => {
     FinancialTransactionDetailReportModal.fillInRequiredFields({ startDate: false, ownerName: ownerData.name });
     FinancialTransactionDetailReportModal.save();
     FinancialTransactionDetailReportModal.verifyCalloutMessage();
+  });
+
+  it('C343318 Check that the "Something went wrong" error toast appears when the user click on the "Save&close" button', { tags: [TestTypes.criticalPath, DevTeams.vega] }, () => {
+    UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
+    FinancialTransactionDetailReportModal.fillInRequiredFields({ startDate: false, ownerName: ownerData.name });
+    FinancialTransactionDetailReportModal.stubResponse500Error();
+    FinancialTransactionDetailReportModal.save();
+    FinancialTransactionDetailReportModal.verifyCalloutMessage();
+    FinancialTransactionDetailReportModal.verifyCalloutErrorMessage();
   });
 });

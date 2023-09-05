@@ -7,6 +7,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import { getLongDelay } from '../../support/utils/cypressTools';
 import permissions from '../../support/dictionary/permissions';
 import devTeams from '../../support/dictionary/devTeams';
+import parallelization from '../../support/dictionary/parallelization';
 import Users from '../../support/fragments/users/users';
 import DataExportLogs from '../../support/fragments/data-export/dataExportLogs';
 
@@ -35,7 +36,7 @@ describe('data-export', () => {
     FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
   });
 
-  it('C397323 Verify trigger Data export with invalid CQL (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+  it('C397323 Verify trigger Data export with invalid CQL (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird, parallelization.nonParallel] }, () => {
     ExportFileHelper.uploadFile(editedFileName);
     ExportFileHelper.exportWithDefaultJobProfile(editedFileName, 'instances', 'Instances', '.cql');
 
