@@ -28,6 +28,9 @@ const restoreDeletedFieldsBtn = Modal().find(Button({ id: 'clickable-quick-marc-
 const quickMarcEditorRowContent = HTML({ className: including('quickMarcEditorRowContent') });
 const instanceDetailsPane = Pane({ id:'pane-instancedetails' });
 const unlinkModal = Modal({ id: 'quick-marc-confirm-unlink-modal' });
+const removeLinkingModal = Modal({ id: 'quick-marc-remove-authority-linking-confirm-modal' });
+const keepLinkingButton = Button({ id: 'clickable-quick-marc-remove-authority-linking-confirm-modal-cancel' });
+const removeLinkingButton = Button({ id: 'clickable-quick-marc-remove-authority-linking-confirm-modal-confirm' });
 const unlinkButtonInsideModal = Button({ id: 'clickable-quick-marc-confirm-unlink-modal-confirm' });
 const calloutAfterSaveAndClose = Callout('This record has successfully saved and is in process. Changes may not appear immediately.');
 const calloutUpdatedRecord = Callout('Record has been updated.');
@@ -371,6 +374,13 @@ export default {
     ]);
   },
 
+  verifyUnlinkAndViewAuthorityButtons(rowIndex) {
+    cy.expect([
+      QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).exists(),
+      QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorutyIconButton).exists(),
+    ]);
+  },
+
   verifyTagFieldAfterLinking(rowIndex, tag, secondBox, thirdBox, content, eSubfield, zeroSubfield, seventhBox) {
     cy.expect([
       QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].tag` })).has({ disabled: true, value: tag }),
@@ -636,6 +646,10 @@ export default {
     cy.expect(getRowInteractorByTagName(tag).find(linkToMarcRecordButton).exists());
   },
 
+  checkLinkButtonExistByRowIndex(rowIndex) {
+    cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).exists());
+  },
+
   checkButtonSaveAndCloseEnable() {
     cy.expect(saveAndCloseButton.exists());
   },
@@ -829,5 +843,18 @@ export default {
       QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).exists(),
       QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorutyIconButton).exists(),
     ]);
+  },
+
+  verifyRemoveLinkingModal(contentText) {
+    cy.expect([
+      removeLinkingModal.exists(),
+      removeLinkingModal.find(removeLinkingButton).exists(),
+      removeLinkingModal.find(keepLinkingButton).exists(),
+      removeLinkingModal.has({ content: including(contentText) }),
+    ]);
+  },
+
+  clickKeepLinkingButton() {
+    cy.do(keepLinkingButton.click());
   },
 };
