@@ -55,7 +55,7 @@ describe('Search in Inventory', () => {
 
   const createdRecordIDs = [];
 
-  before('Importing data', () => {
+  before('Importing data, linking records', () => {
     cy.createTempUser([
       Permissions.inventoryAll.gui,
     ]).then(createdUserProperties => {
