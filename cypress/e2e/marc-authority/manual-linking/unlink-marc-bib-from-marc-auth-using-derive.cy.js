@@ -93,10 +93,6 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
     });
   });
 
-  beforeEach('Login to the application', () => {
-    cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
-  });
-
   after('Deleting created user', () => {
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
@@ -106,6 +102,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
   });
 
   it('C365602 Derive | Unlink "MARC Bibliographic" field from "MARC Authority" record and use the "Save & close" button in deriving window. (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
     InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
     InventoryInstances.selectInstance();
     InventoryInstance.deriveNewMarcBibRecord();
