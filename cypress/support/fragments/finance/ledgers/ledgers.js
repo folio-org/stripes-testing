@@ -440,8 +440,8 @@ export default {
       Select({ name: 'toFiscalYearId' }).choose(fiscalYear),
       rolloverBudgetVelue.choose(rolloverBudgetValue),
       addAvailableToSelect.choose(rolloverValueAs),
-      Button('Test rollover').click(),
     ]);
+    cy.get('button:contains("Test rollover")').eq(0).should('be.visible').trigger('click');
     cy.wait(2000);
     cy.do([
       Button({ id: 'clickable-test-rollover-confirmation-confirm' }).click(),
