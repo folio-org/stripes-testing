@@ -21,7 +21,6 @@ import Users from '../../../support/fragments/users/users';
 describe('data-import', () => {
   describe('Settings', () => {
     let user;
-    const numberOfProfiles = 9;
     const collectionOfMappingAndActionProfiles = [
       {
         mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
@@ -188,7 +187,7 @@ describe('data-import', () => {
         JobProfileEdit.saveAndClose();
         JobProfileView.verifyJobProfileOpened();
         JobProfileView.verifyCalloutMessage(calloutMessage);
-        JobProfileView.verifyLinkedProfiles(linkedProfileNames, numberOfProfiles);
+        JobProfileView.verifyLinkedProfiles(linkedProfileNames, linkedProfileNames.length);
 
         JobProfiles.deleteJobProfile(jobProfile.profileName);
       });
