@@ -16,6 +16,7 @@ import NewInvoice from '../../../support/fragments/invoices/newInvoice';
 import Invoices from '../../../support/fragments/invoices/invoices';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
+import Parallelization from '../../../support/dictionary/parallelization';
 
 describe('ui-finance: Transactions', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -104,7 +105,7 @@ describe('ui-finance: Transactions', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C375105 Unrelease encumbrance when cancelling approved invoice related to Ongoing order (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
+  it('C375105 Unrelease encumbrance when cancelling approved invoice related to Ongoing order (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet, Parallelization.nonParallel] }, () => {
     FinanceHelp.searchByName(defaultFund.name);
     Funds.selectFund(defaultFund.name);
     Funds.selectBudgetDetails();

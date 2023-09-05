@@ -23,7 +23,7 @@ describe('Patron Notices', () => {
       ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
         servicePointId = servicePoints[0].id;
       });
-      NoticePolicyTemplate.createViaApi('Loan').then((noticeTemplateResp) => {
+      NoticePolicyTemplate.createViaApi().then((noticeTemplateResp) => {
         testData.noticeTemplateBody = noticeTemplateResp.body;
       });
       PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {

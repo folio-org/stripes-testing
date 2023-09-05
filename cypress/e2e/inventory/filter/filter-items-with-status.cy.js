@@ -99,6 +99,8 @@ describe('ui-inventory: Search in Inventory', () => {
       FilterItems.selectInstance(title);
       FilterItems.waitItemsLoading();
 
+      // Waiter required for the pane to be loaded.
+      cy.wait(1000)
       FilterItems.toggleAccordionItemsButton(holdingId);
       cy.wait('@getItems');
       FilterItems.verifyItemWithStatusExists(holdingId, status);
