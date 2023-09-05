@@ -1,9 +1,5 @@
-describe('t4', () => {
-  it('ttt41', { tags: ['tg2', 'npr'] }, () => {
-    cy.wait(1000);
-  });
-
-  it('ttt42', { tags: ['tg20'] }, () => {
+describe('test4', () => {
+  it('test4 parallel', { tags: ['testSmoke'] }, () => {
     cy.wait(1000);
   });
 });
