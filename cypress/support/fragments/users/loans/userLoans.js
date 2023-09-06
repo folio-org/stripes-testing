@@ -72,6 +72,12 @@ export default {
     body: apiBody,
     isDefaultSearchParamsRequired: false
   }),
+  renewItemViaApi:(apiBody) => cy.okapiRequest({
+    method: 'POST',
+    path: `circulation/renew-by-barcode`,
+    body: apiBody,
+    isDefaultSearchParamsRequired: false
+  }),
   changeDueDateViaApi: (apiBody, loanId) => cy.okapiRequest({
     method: 'PUT',
     path: `circulation/loans/${loanId}`,

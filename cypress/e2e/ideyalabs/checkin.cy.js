@@ -41,11 +41,6 @@ describe.skip('servicepoints shift', () => {
     checkInItems.lostAndPaid();
   });
 
-  it('C17137 - Filter circulation log by renewed through override (firebird)', { tags: [testTypes.ideaLabsTests] }, () => {
-    cy.visit(topMenu.circulationLogPath);
-    searchPane.checkBarcode();
-  });
-
   it('C590 Check in: multipiece items (vega)', { tags: [testTypes.ideaLabsTests] }, () => {
     cy.visit(topMenu.checkInPath);
     checkInItems.checkIn(testData.itemA);
