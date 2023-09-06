@@ -75,48 +75,6 @@ describe.skip('Feature MARC Authority', () => {
   );
 
   it(
-    'C365602 Derive | Unlink ""MARC Bibliographic"" field from ""MARC Authority"" record and use the ""Save & close"" button in deriving window. (spitfire)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      cy.visit(topMenu.inventoryPath);
-      inventorySearchAndFilter.switchToHoldings();
-      inventorySearchAndFilter.bySource(testData.source);
-      inventorySearchAndFilter.selectSearchResultByRowIndex(
-        testData.derive.rowIndex
-      );
-      inventoryInstance.editMarcBibliographicRecord();
-
-      const unlinkButton = inventoryInstance.verifyUnlinkIcon(
-        testData.derive.tag700
-      );
-      if (unlinkButton) {
-        inventoryInstance.verifyAndClickLinkIcon(testData.derive.tag700);
-        inventoryInstance.verifySearchOptions();
-        marcAuthorities.clickReset();
-        marcAuthorities.searchBy(
-          testData.derive.searchOption,
-          testData.derive.authority700FieldValue
-        );
-        marcAuthorities.clickLinkButton();
-        marcAuthority.checkLinkingAuthority700();
-        marc.saveAndClose();
-      } else {
-        marc.closeEditMarc();
-      }
-      inventoryInstance.deriveNewMarcBibRecord();
-      marc.keepLinkingButton();
-      inventoryInstance.verifyAndClickUnlinkIcon(testData.derive.tag700);
-      marc.popupUnlinkButton();
-      marc.saveAndClose();
-      inventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(
-        testData.derive.accordion
-      );
-      inventoryInstance.editMarcBibliographicRecord();
-      inventoryInstance.verifyLinkIcon(testData.derive.tag700);
-    }
-  );
-
-  it(
     'C380755 Link of empty MARC Bib field with ""MARC Authority"" record (spitfire)',
     { tags: [testTypes.ideaLabsTests] },
     () => {
