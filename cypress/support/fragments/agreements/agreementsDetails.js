@@ -172,7 +172,7 @@ export default {
     cy.do(MultiColumnListCell(agreementName).click());
   },
 
-  verifyNotesIsEmpty(count) {
+  verifyNotesIsEmpty() {
     cy.expect(notesList.absent());
   },
 

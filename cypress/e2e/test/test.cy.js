@@ -1,4 +1,4 @@
-import getRandomPostfix, { randomFourDigitNumber } from '../../support/utils/stringTools';
+import getRandomPostfix from '../../support/utils/stringTools';
 import DateTools from '../../support/utils/dateTools';
 import Agreements from '../../support/fragments/agreements/agreements';
 import Notes from '../../support/fragments/settings/notes/notes';
