@@ -148,7 +148,7 @@ describe.skip('Check In - Actions', () => {
     cy.deleteLoanType(testData.loanTypeId);
   });
   it(
-    'C7148 Check In: item with at least one open request (vega)',
+    'C7148 Check In: item with at least one open request (vega) deprecated',
     { tags: [TestTypes.criticalPath, devTeams.vega] },
     () => {
       cy.visit(TopMenu.checkInPath);

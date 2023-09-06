@@ -28,6 +28,9 @@ const restoreDeletedFieldsBtn = Modal().find(Button({ id: 'clickable-quick-marc-
 const quickMarcEditorRowContent = HTML({ className: including('quickMarcEditorRowContent') });
 const instanceDetailsPane = Pane({ id:'pane-instancedetails' });
 const unlinkModal = Modal({ id: 'quick-marc-confirm-unlink-modal' });
+const removeLinkingModal = Modal({ id: 'quick-marc-remove-authority-linking-confirm-modal' });
+const keepLinkingButton = Button({ id: 'clickable-quick-marc-remove-authority-linking-confirm-modal-cancel' });
+const removeLinkingButton = Button({ id: 'clickable-quick-marc-remove-authority-linking-confirm-modal-confirm' });
 const unlinkButtonInsideModal = Button({ id: 'clickable-quick-marc-confirm-unlink-modal-confirm' });
 const calloutAfterSaveAndClose = Callout('This record has successfully saved and is in process. Changes may not appear immediately.');
 const calloutUpdatedRecord = Callout('Record has been updated.');
@@ -35,6 +38,12 @@ const calloutUpdatedLinkedBibRecord = Callout('Record has been updated. 2 linked
 const calloutNonEditableLdrBib = Callout('Record cannot be saved. Please check the Leader. Only positions 5, 6, 7, 8, 17, 18 and/or 19 can be edited in the Leader.');
 const calloutDelete008Error = Callout('Record cannot be saved without 008 field');
 const calloutAfterSaveAndCloseNewRecord = Callout('Record created.');
+const calloutMarcTagWrongLength = Callout('Record cannot be saved. A MARC tag must contain three characters.');
+const calloutInvalidMarcTag = Callout('Invalid MARC tag. Please try again.');
+const calloutNo245MarcTag = Callout('Record cannot be saved without field 245.');
+const calloutMultiple245MarcTags = Callout('Record cannot be saved with more than one field 245.');
+const calloutMultiple001MarcTags = Callout('Record cannot be saved. Can only have one MARC 001.');
+
 const closeButton = Button({ icon: 'times' });
 const validRecord = InventoryInstance.validOCLC;
 const validNewMarBibLDR = '00000naa\\a2200000uu\\4500';
@@ -371,6 +380,13 @@ export default {
     ]);
   },
 
+  verifyUnlinkAndViewAuthorityButtons(rowIndex) {
+    cy.expect([
+      QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).exists(),
+      QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorutyIconButton).exists(),
+    ]);
+  },
+
   verifyTagFieldAfterLinking(rowIndex, tag, secondBox, thirdBox, content, eSubfield, zeroSubfield, seventhBox) {
     cy.expect([
       QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].tag` })).has({ disabled: true, value: tag }),
@@ -636,6 +652,10 @@ export default {
     cy.expect(getRowInteractorByTagName(tag).find(linkToMarcRecordButton).exists());
   },
 
+  checkLinkButtonExistByRowIndex(rowIndex) {
+    cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).exists());
+  },
+
   checkButtonSaveAndCloseEnable() {
     cy.expect(saveAndCloseButton.exists());
   },
@@ -736,7 +756,7 @@ export default {
   },
 
   updateTagNameToLockedTag(rowIndex, newTagName) {
-    cy.get(`input[name="records[${rowIndex}].tag"`).type(newTagName);
+    cy.get(`input[name="records[${rowIndex}].tag"`).type(newTagName, { delay: 200 });
   },
 
   checkEmptyFieldAdded(rowIndex, defaultContent = '$a ') {
@@ -830,4 +850,43 @@ export default {
       QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorutyIconButton).exists(),
     ]);
   },
+
+  verifyRemoveLinkingModal(contentText) {
+    cy.expect([
+      removeLinkingModal.exists(),
+      removeLinkingModal.find(removeLinkingButton).exists(),
+      removeLinkingModal.find(keepLinkingButton).exists(),
+      removeLinkingModal.has({ content: including(contentText) }),
+    ]);
+  },
+
+  clickKeepLinkingButton() {
+    cy.do(keepLinkingButton.click());
+  },
+  
+  verifyAndDismissWrongTagLengthCallout() {
+    cy.expect(calloutMarcTagWrongLength.exists());
+    cy.do(calloutMarcTagWrongLength.dismiss());
+    cy.expect(calloutMarcTagWrongLength.absent());
+  },
+
+  verifyTagValue(rowIndex, tagValue) {
+    cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: including('.tag') })).has({ value: tagValue }));
+  },
+
+  verifyInvalidTagCallout() {
+    cy.expect(calloutInvalidMarcTag.exists());
+  },
+
+  verifyNo245TagCallout() {
+    cy.expect(calloutNo245MarcTag.exists());
+  },
+
+  verifyMultiple245TagCallout() {
+    cy.expect(calloutMultiple245MarcTags.exists());
+  },
+
+  verifyMultiple001TagCallout() {
+    cy.expect(calloutMultiple001MarcTags.exists());
+  }
 };

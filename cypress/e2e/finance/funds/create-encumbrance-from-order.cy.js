@@ -14,6 +14,7 @@ import NewOrganization from '../../../support/fragments/organizations/newOrganiz
 import Orders from '../../../support/fragments/orders/orders';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import OrderLines from '../../../support/fragments/orders/orderLines';
+import Parallelization from '../../../support/dictionary/parallelization';
 
 describe('ui-finance: Transactions', () => {
   const defaultFund = { ...Funds.defaultUiFund };
@@ -93,7 +94,7 @@ describe('ui-finance: Transactions', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C6705 Create encumbrance from Order  (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
+  it('C6705 Create encumbrance from Order  (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet, Parallelization.nonParallel] }, () => {
     Orders.createPOLineViaActions();
     OrderLines.fillInPOLineInfoWithFund(defaultFund);
     OrderLines.backToEditingOrder();
