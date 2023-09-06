@@ -1,5 +1,6 @@
 import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
+import parallelization from '../../support/dictionary/parallelization';
 import DataExportLogs from '../../support/fragments/data-export/dataExportLogs';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -55,7 +56,7 @@ describe('Data Export - Holdings records export', () => {
     FileManager.deleteFile(`cypress/fixtures/${fileName}`);
   });
 
-  it('C376962 Verify that Default mapping profile for holdings maps instance HRID to "004" field (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C376962 Verify that Default mapping profile for holdings maps instance HRID to "004" field (firebird)', { tags: [testTypes.smoke, devTeams.firebird, parallelization.nonParallel] }, () => {
     ExportFile.uploadFile(fileName);
     ExportFile.exportWithDefaultJobProfile(fileName, 'holdings', 'Holdings');
 

@@ -43,6 +43,7 @@ const addAvailableToSelect = Select({
   name: 'budgetsRollover[0].addAvailableTo',
 });
 const resetButton = Button({ id: 'reset-ledgers-filters' });
+const ledgersFiltersSection = Section({ id: 'ledger-filters-pane' });
 
 export default {
   defaultUiLedger: {
@@ -54,6 +55,24 @@ export default {
 
   waitForLedgerDetailsLoading: () => {
     cy.do(Section({ id: 'pane-ledger-details' }).visible);
+  },
+
+  clickOnFiscalYearTab: () => {
+    cy.do([
+      ledgersFiltersSection.find(Button('Fiscal year')).click()
+    ]);
+  },
+
+  clickOnGroupTab: () => {
+    cy.do([
+      ledgersFiltersSection.find(Button('Group')).click()
+    ]);
+  },
+
+  clickOnFundTab: () => {
+    cy.do([
+      ledgersFiltersSection.find(Button('Fund')).click()
+    ]);
   },
 
   rollover : () => {

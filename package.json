@@ -18,7 +18,8 @@
     "lint": "eslint . --ext=js",
     "lint:fix": "eslint --fix --quiet",
     "prettier": "prettier .",
-    "prettier:fix": "prettier --write"
+    "prettier:fix": "prettier --write",
+    "prepare": "husky install"
   },
   "husky": {
     "hooks": {

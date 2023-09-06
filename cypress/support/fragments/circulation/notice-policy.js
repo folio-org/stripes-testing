@@ -33,29 +33,21 @@ export const NOTICE_CATEGORIES = {
   }
 };
 
-const defaultNotice = {
-  'format': 'Email',
-  'realTime': false,
-};
-
-export const defaultNoticePolicy = {
-  name: getTestEntityValue(),
-  description: 'description',
-  active: true,
-  id: uuid(),
-};
-
 export default {
-  createWithTemplateApi(createdTemplateId, sendWhenOption) {
+  createWithTemplateApi(policyName, createdTemplateId, sendWhenOption) {
     return cy
       .okapiRequest({
         method: 'POST',
         path: 'patron-notice-policy-storage/patron-notice-policies',
         body: {
-          ...defaultNoticePolicy,
+          name: policyName,
+          description: 'description',
+          active: true,
+          id: uuid(),
           loanNotices:
             [{
-              ...defaultNotice,
+              'format': 'Email',
+              'realTime': false,
               templateId: createdTemplateId,
               sendOptions: {
                 sendWhen: sendWhenOption,

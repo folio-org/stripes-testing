@@ -38,6 +38,12 @@ const calloutUpdatedLinkedBibRecord = Callout('Record has been updated. 2 linked
 const calloutNonEditableLdrBib = Callout('Record cannot be saved. Please check the Leader. Only positions 5, 6, 7, 8, 17, 18 and/or 19 can be edited in the Leader.');
 const calloutDelete008Error = Callout('Record cannot be saved without 008 field');
 const calloutAfterSaveAndCloseNewRecord = Callout('Record created.');
+const calloutMarcTagWrongLength = Callout('Record cannot be saved. A MARC tag must contain three characters.');
+const calloutInvalidMarcTag = Callout('Invalid MARC tag. Please try again.');
+const calloutNo245MarcTag = Callout('Record cannot be saved without field 245.');
+const calloutMultiple245MarcTags = Callout('Record cannot be saved with more than one field 245.');
+const calloutMultiple001MarcTags = Callout('Record cannot be saved. Can only have one MARC 001.');
+
 const closeButton = Button({ icon: 'times' });
 const validRecord = InventoryInstance.validOCLC;
 const validNewMarBibLDR = '00000naa\\a2200000uu\\4500';
@@ -750,7 +756,7 @@ export default {
   },
 
   updateTagNameToLockedTag(rowIndex, newTagName) {
-    cy.get(`input[name="records[${rowIndex}].tag"`).type(newTagName);
+    cy.get(`input[name="records[${rowIndex}].tag"`).type(newTagName, { delay: 200 });
   },
 
   checkEmptyFieldAdded(rowIndex, defaultContent = '$a ') {
@@ -857,4 +863,30 @@ export default {
   clickKeepLinkingButton() {
     cy.do(keepLinkingButton.click());
   },
+  
+  verifyAndDismissWrongTagLengthCallout() {
+    cy.expect(calloutMarcTagWrongLength.exists());
+    cy.do(calloutMarcTagWrongLength.dismiss());
+    cy.expect(calloutMarcTagWrongLength.absent());
+  },
+
+  verifyTagValue(rowIndex, tagValue) {
+    cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: including('.tag') })).has({ value: tagValue }));
+  },
+
+  verifyInvalidTagCallout() {
+    cy.expect(calloutInvalidMarcTag.exists());
+  },
+
+  verifyNo245TagCallout() {
+    cy.expect(calloutNo245MarcTag.exists());
+  },
+
+  verifyMultiple245TagCallout() {
+    cy.expect(calloutMultiple245MarcTags.exists());
+  },
+
+  verifyMultiple001TagCallout() {
+    cy.expect(calloutMultiple001MarcTags.exists());
+  }
 };
