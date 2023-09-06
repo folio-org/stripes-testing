@@ -1,17 +1,34 @@
 import DateTools from '../../utils/dateTools';
-import { Button, Modal, TextField, Select, including, MultiSelect, HTML, Callout, calloutTypes } from '../../../../interactors';
+import {
+  Button,
+  Modal,
+  TextField,
+  Select,
+  including,
+  MultiSelect,
+  HTML,
+  Callout,
+  calloutTypes,
+} from '../../../../interactors';
 
 const financialReport = Modal({ id: 'financial-transactions-report-modal' });
 const startDateTextfield = TextField({ name: 'startDate' });
 const endDateTextfield = TextField({ name: 'endDate' });
-const firstDayOfMonth = DateTools.getFormattedDate({ date: new Date(new Date().getFullYear(), new Date().getMonth(), 1) }, 'MM/DD/YYYY');
-const currentDayOfMonth = DateTools.getFormattedDate({ date: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()) }, 'MM/DD/YYYY');
+const firstDayOfMonth = DateTools.getFormattedDate(
+  { date: new Date(new Date().getFullYear(), new Date().getMonth(), 1) },
+  'MM/DD/YYYY',
+);
+const currentDayOfMonth = DateTools.getFormattedDate(
+  { date: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()) },
+  'MM/DD/YYYY',
+);
 const feeFineOwnerSelect = Select({ content: including('Select fee/fine owner') });
 
 const startDateFieldCalendarIconLocator = './/div[./*[@name="startDate"]]//*[@icon="calendar"]';
 const endDateFieldCalendarIconLocator = './/div[./*[@name="endDate"]]//*[@icon="calendar"]';
 const calloutSuccessMessage = 'Export in progress';
 const calloutErrorMessage = 'Something went wrong.';
+const calloutNoItemsFoundMessage = 'No items found.';
 
 export default {
   fillInRequiredFields({ startDate, ownerName }) {
@@ -88,7 +105,7 @@ export default {
 
   stubResponse500Error() {
     cy.intercept('POST', '/feefine-reports/financial-transactions-detail', {
-      statusCode: 500
+      statusCode: 500,
     });
   },
 
@@ -98,9 +115,18 @@ export default {
   verifyCalloutErrorMessage() {
     cy.expect(Callout({ type: calloutTypes.error }).is({ textContent: calloutErrorMessage }));
   },
+  verifyCalloutNoItemsFoundMessage() {
+    cy.expect(
+      Callout({ type: calloutTypes.error }).is({ textContent: calloutNoItemsFoundMessage }),
+    );
+  },
 
   fillInServicePoints(servicePoints) {
-    cy.do([financialReport.find(MultiSelect({ label: 'Associated service points' })).choose(servicePoints)]);
+    cy.do([
+      financialReport
+        .find(MultiSelect({ label: 'Associated service points' }))
+        .choose(servicePoints),
+    ]);
   },
 
   verifyFinancialReportModalIsShown() {
@@ -116,7 +142,11 @@ export default {
   },
 
   closeFinancialReportModalByXButton() {
-    cy.do(financialReport.find(Button({ id: 'financial-transactions-report-modal-close-button' })).click());
+    cy.do(
+      financialReport
+        .find(Button({ id: 'financial-transactions-report-modal-close-button' }))
+        .click(),
+    );
   },
 
   closeFinancialReportModalByCancelButton() {
@@ -137,14 +167,22 @@ export default {
   },
 
   verifyStartDateIsRequiredIfEndDateEnteredErrorMessage() {
-    cy.expect(financialReport.find(HTML(including('"Start date" is required if "End date" entered'))).exists());
+    cy.expect(
+      financialReport
+        .find(HTML(including('"Start date" is required if "End date" entered')))
+        .exists(),
+    );
   },
 
   verifyEndDateMustBeGreaterThanOrEqualToStartDateErrorMessage() {
-    cy.expect(financialReport.find(HTML(including('"End date" must be greater than or equal to "Start date"'))).exists());
+    cy.expect(
+      financialReport
+        .find(HTML(including('"End date" must be greater than or equal to "Start date"')))
+        .exists(),
+    );
   },
 
   verifyFeeFineOwnerIsRequiredErrorMessage() {
     cy.expect(financialReport.find(HTML(including('"Fee/fine owner" is required'))).exists());
-  }
+  },
 };

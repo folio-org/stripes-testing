@@ -13,6 +13,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import { JOB_STATUS_NAMES } from '../../../support/constants';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
+import Parallelization from '../../../support/dictionary/parallelization';
 
 describe('Inventory -> Advanced search', () => {
   const testData = {
@@ -93,7 +94,7 @@ describe('Inventory -> Advanced search', () => {
     });
   });
 
-  it('C400610 Search Instances using advanced search with "AND" operator (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+  it('C400610 Search Instances using advanced search with "AND" operator (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] }, () => {
     InventoryInstances.clickAdvSearchButton();
     InventoryInstances.checkAdvSearchInstancesModalFields(0);
     InventoryInstances.checkAdvSearchInstancesModalFields(1);
@@ -112,7 +113,7 @@ describe('Inventory -> Advanced search', () => {
     InventorySearchAndFilter.checkRowsCount(1);
   });
 
-  it('C400616 Search Instances using advanced search with a combination of operators (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+  it('C400616 Search Instances using advanced search with a combination of operators (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] }, () => {
     InventoryInstances.clickAdvSearchButton();
     InventoryInstances.fillAdvSearchRow(0, '(OCoLC)on1100023840001116', 'Exact phrase', 'OCLC number, normalized');
     InventoryInstances.checkAdvSearchModalValues(0, '(OCoLC)on1100023840001116', 'Exact phrase', 'OCLC number, normalized');
