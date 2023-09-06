@@ -185,5 +185,10 @@ export default {
       cy.wrap(holdingsID).as('holdingsID');
     });
     return cy.get('@holdingsID');
+  },
+  closeSourceView() {
+    cy.do(closeButton.click());
+    cy.expect(root.exists());
+    this.waitLoading();
   }
 };

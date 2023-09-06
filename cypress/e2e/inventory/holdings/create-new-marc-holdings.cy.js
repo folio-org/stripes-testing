@@ -15,12 +15,23 @@ import InventorySteps from '../../../support/fragments/inventory/inventorySteps'
 import { getCurrentDateYYMMDD } from '../../../support/utils/dateTools';
 
 describe('Create holding records with MARC source', () => {
-  const marcFile = {
-    marc: 'oneMarcBib.mrc',
-    fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-    jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-    numOfRecords: 1,
+  const testData = {
+    tag852: '852',
+    tag866: '866',
+    tag866Value: 'Test'
   };
+  const marcFiles = [
+    {
+      marc: 'oneMarcBib.mrc',
+      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      jobProfileToRun: 'Default - Create instance and SRS MARC Bib'
+    },
+    {
+      marc: 'oneMarcBib.mrc',
+      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      jobProfileToRun: 'Default - Create instance and SRS MARC Bib'
+    }
+  ];
 
   let user;
   const recordIDs = [];
@@ -33,26 +44,34 @@ describe('Create holding records with MARC source', () => {
     ]).then(createdUserProperties => {
       user = createdUserProperties;
 
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-        JobProfiles.waitLoadingList();
-        JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFile.fileName);
-        Logs.checkStatusOfJobProfile('Completed');
-        Logs.openFileDetails(marcFile.fileName);
-        Logs.getCreatedItemsID().then(link => {
-          recordIDs.push(link.split('/')[5]);
+      marcFiles.forEach(marcFile => {
+        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
+          DataImport.verifyUploadState();
+          DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+          JobProfiles.waitLoadingList();
+          JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(marcFile.fileName);
+          Logs.checkStatusOfJobProfile('Completed');
+          Logs.openFileDetails(marcFile.fileName);
+          Logs.getCreatedItemsID().then(link => {
+            recordIDs.push(link.split('/')[5]);
+          });
         });
-        cy.login(user.username, user.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
       });
     });
   });
 
+  beforeEach('Login', () => {
+    cy.login(user.username, user.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+  });
+
   after('Deleting created user, data', () => {
     Users.deleteViaApi(user.userId);
-    cy.deleteHoldingRecordViaApi(recordIDs[1]);
+    cy.deleteHoldingRecordViaApi(recordIDs[2]);
+    cy.deleteHoldingRecordViaApi(recordIDs[3]);
     InventoryInstance.deleteInstanceViaApi(recordIDs[0]);
+    InventoryInstance.deleteInstanceViaApi(recordIDs[1]);
   });
 
   it('C387450 "008" field existence validation when create new "MARC Holdings" (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire], retries: 1 }, () => {
@@ -82,6 +101,30 @@ describe('Create holding records with MARC source', () => {
       QuickMarcEditor.check008FieldsEmptyHoldings();
       InventorySteps.verifyHiddenFieldValueIn008(holdingsID, 'Date Ent', getCurrentDateYYMMDD());
       recordIDs.push(holdingsID);
+    });
+  });
+
+  it('C350646 Create a new MARC Holdings record for existing "Instance" record (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    InventoryInstances.searchBySource('MARC');
+    InventoryInstance.searchByTitle(recordIDs[1]);
+    InventoryInstance.checkExpectedMARCSource();
+    InventoryInstance.goToMarcHoldingRecordAdding();
+    QuickMarcEditor.waitLoading();
+    QuickMarcEditor.updateExistingField(testData.tag852, QuickMarcEditor.getExistingLocation());
+    QuickMarcEditor.addEmptyFields(5);
+    QuickMarcEditor.updateExistingTagValue(6, testData.tag866);
+    QuickMarcEditor.updateExistingField(testData.tag866, testData.tag866Value);
+    QuickMarcEditor.pressSaveAndClose();
+    QuickMarcEditor.checkAfterSaveHoldings();
+    HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
+      recordIDs.push(holdingsID);
+      HoldingsRecordView.close();
+      InventoryInstance.openHoldingView();
+      HoldingsRecordView.viewSource();
+      HoldingsRecordView.closeSourceView();
+      InventoryInstance.verifyLastUpdatedDate();
+      InventoryInstance.verifyRecordStatus(`Source: ${user.lastName}, ${user.firstName}`);
+      
     });
   });
 });
