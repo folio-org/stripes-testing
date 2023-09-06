@@ -57,6 +57,8 @@ describe('MARC -> MARC Bibliographic', () => {
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.deleteConfirmationPresented();
       QuickMarcEditor.confirmDelete();
+      //Wait for the content to be loaded.
+      cy.wait(4000);
       InventoryInstance.viewSource();
       InventoryViewSource.contains(expectedInSourceRow);
       InventoryViewSource.contains(expectedInSourceRowWithSubfield);
@@ -75,6 +77,8 @@ describe('MARC -> MARC Bibliographic', () => {
 
     QuickMarcEditor.pressSaveAndClose();
     InventoryInstance.waitLoading();
+    //Wait for the content to be loaded.
+    cy.wait(4000);
     InventoryInstance.viewSource();
     InventoryViewSource.contains(expectedInSourceRow);
     InventoryViewSource.close();
@@ -96,6 +100,8 @@ describe('MARC -> MARC Bibliographic', () => {
       QuickMarcEditor.deleteConfirmationPresented();
       QuickMarcEditor.confirmDelete();
       InventoryInstance.waitLoading();
+      //Wait for the content to be loaded.
+      cy.wait(4000);
       InventoryInstance.viewSource();
       InventoryViewSource.notContains(deletedTag);
     });
@@ -131,7 +137,8 @@ describe('MARC -> MARC Bibliographic', () => {
     const testRecord = { content: 'testContent', tag: '505', tagMeaning: 'Formatted Contents Note' };
     const expectedInSourceRow = QuickMarcEditor.fillAllAvailableValues(testRecord.content, testRecord.tag);
     QuickMarcEditor.pressSaveAndClose();
-
+    //Wait for the content to be loaded.
+    cy.wait(4000);
     InventoryInstance.viewSource();
     InventoryViewSource.contains(expectedInSourceRow);
     InventoryViewSource.close();
@@ -158,6 +165,8 @@ describe('MARC -> MARC Bibliographic', () => {
           InventoryInstance.checkExpectedMARCSource();
           InventoryInstance.checkPresentedText(expectedUpdatedValue);
 
+          //Wait for the content to be loaded.
+          cy.wait(4000);
           InventoryInstance.viewSource();
           InventoryViewSource.contains(expectedCreatedValue);
           InventoryViewSource.contains(expectedUpdatedValue);

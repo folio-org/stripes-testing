@@ -106,6 +106,7 @@ describe('MARC Authority -> Edit Authority record', () => {
     QuickMarcEditor.updateExistingTagValue(14, '150');
     MarcAuthority.checkAddNew1XXTag(14, '100', '$a');
     QuickMarcEditor.closeWithoutSavingAfterChange();
+    MarcAuthorities.selectTitle(testData.authority.title);
     MarcAuthority.contains(testData.authority.title);
   });
 

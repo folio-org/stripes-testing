@@ -16,7 +16,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 describe('plug-in MARC authority | Browse', () => {
   const testData = {
     searchOption: 'Genre',
-    value: 'Peplum films',
+    value: 'Peplum films C380557',
   };
 
   const marcFiles = [
@@ -27,7 +27,7 @@ describe('plug-in MARC authority | Browse', () => {
       numOfRecords: 1,
     },
     {
-      marc: 'marcFileForC380572.mrc', 
+      marc: 'marcFileForC380557.mrc', 
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numOfRecords: 1,
