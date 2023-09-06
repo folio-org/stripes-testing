@@ -22,7 +22,24 @@ export default {
     NewAgreement.save();
     waitLoading();
   },
-
+  createViaApi: (agreement) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'erm/sas',
+        body: agreement,
+        isDefaultSearchParamsRequired: false
+      })
+      .then(response => response.body.id);
+  },
+  deleteViaApi: (agreementId) => {
+    return cy
+      .okapiRequest({
+        method: 'DELETE',
+        path: `erm/sas/${agreementId}`,
+        isDefaultSearchParamsRequired: false
+      });
+  },
   selectRecord: (agreementTitle) => {
     cy.do(section.find(MultiColumnListCell(agreementTitle)).click());
     AgreementDetails.waitLoading();
