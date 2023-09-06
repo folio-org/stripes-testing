@@ -28,11 +28,9 @@ describe('circulation-log', () => {
       user = userProperties;
 
       ServicePoints.createViaApi(testData.userServicePoint);
-      UserEdit.addServicePointViaApi(testData.userServicePoint.id,
-        user.userId, testData.userServicePoint.id);
+      UserEdit.addServicePointViaApi(testData.userServicePoint.id, user.userId, testData.userServicePoint.id);
 
       InventoryInstances.createInstanceViaApi(item.instanceTitle, item.barcode);
-      cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` });
       Checkout.checkoutItemViaApi({
         id: uuid(),
         itemBarcode: item.barcode,

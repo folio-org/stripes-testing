@@ -2,7 +2,6 @@ import checkInItems from '../../support/ideyaLabs/checkinitems';
 import serviceShift from '../../support/ideyaLabs/serviceshift';
 import testTypes from '../../support/dictionary/testTypes';
 import checkInActions from '../../support/fragments/check-in-actions/checkInActions';
-import searchPane from '../../support/fragments/circulation-log/searchPane';
 import topMenu from '../../support/fragments/topMenu';
 
 const testData = {
