@@ -91,7 +91,7 @@ describe('data-import', () => {
     const linkingTagAndValues = [
       {
         rowIndex: 75,
-        value: 'Chin, Staceyann'
+        value: 'Chin, Staceyann C385665'
       },
       {
         rowIndex: 76,
@@ -233,7 +233,7 @@ describe('data-import', () => {
         InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
-        QuickMarcEditor.verifyTagFieldAfterLinking(75, '700', '1', '\\', '$a Chin, Staceyann, $d 1972-', '$e letterer.', '$0 id.loc.gov/authorities/names/n2008052404', '');
+        QuickMarcEditor.verifyTagFieldAfterLinking(75, '700', '1', '\\', '$a Chin, Staceyann C385665', '$e letterer.', '$0 id.loc.gov/authorities/names/n2008052404', '');
         QuickMarcEditor.verifyTagFieldAfterLinking(76, '700', '1', '\\', '$a Lee, Stan, $d 1922-2018', '$e creator', '$0 id.loc.gov/authorities/names/n83169267', '');
         QuickMarcEditor.verifyTagFieldAfterUnlinking(77, '700', '1', '\\', '$a Kirby, Steve, $e creator. $0 id.loc.gov/authorities/names/n77020008test');
       });

@@ -10,6 +10,7 @@ import Users from '../../support/fragments/users/users';
 import DevTeams from '../../support/dictionary/devTeams';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import Z3950TargetProfiles from '../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
+import Parallelization from '../../support/dictionary/parallelization';
 
 describe('MARC -> MARC Bibliographic', () => {
   const testData = {};
@@ -45,7 +46,7 @@ describe('MARC -> MARC Bibliographic', () => {
     InventoryInstance.deleteInstanceViaApi(testData.instanceID);
   });
 
-  it('C10950 Edit and save a MARC record in quickMARC (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
+  it('C10950 Edit and save a MARC record in quickMARC (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] }, () => {
     InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
 
     InventoryInstance.goToEditMARCBiblRecord();
@@ -57,6 +58,8 @@ describe('MARC -> MARC Bibliographic', () => {
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.deleteConfirmationPresented();
       QuickMarcEditor.confirmDelete();
+      //Wait for the content to be loaded.
+      cy.wait(4000);
       InventoryInstance.viewSource();
       InventoryViewSource.contains(expectedInSourceRow);
       InventoryViewSource.contains(expectedInSourceRowWithSubfield);
@@ -75,6 +78,8 @@ describe('MARC -> MARC Bibliographic', () => {
 
     QuickMarcEditor.pressSaveAndClose();
     InventoryInstance.waitLoading();
+    //Wait for the content to be loaded.
+    cy.wait(4000);
     InventoryInstance.viewSource();
     InventoryViewSource.contains(expectedInSourceRow);
     InventoryViewSource.close();
@@ -96,6 +101,8 @@ describe('MARC -> MARC Bibliographic', () => {
       QuickMarcEditor.deleteConfirmationPresented();
       QuickMarcEditor.confirmDelete();
       InventoryInstance.waitLoading();
+      //Wait for the content to be loaded.
+      cy.wait(4000);
       InventoryInstance.viewSource();
       InventoryViewSource.notContains(deletedTag);
     });
@@ -131,7 +138,8 @@ describe('MARC -> MARC Bibliographic', () => {
     const testRecord = { content: 'testContent', tag: '505', tagMeaning: 'Formatted Contents Note' };
     const expectedInSourceRow = QuickMarcEditor.fillAllAvailableValues(testRecord.content, testRecord.tag);
     QuickMarcEditor.pressSaveAndClose();
-
+    //Wait for the content to be loaded.
+    cy.wait(4000);
     InventoryInstance.viewSource();
     InventoryViewSource.contains(expectedInSourceRow);
     InventoryViewSource.close();
@@ -158,6 +166,8 @@ describe('MARC -> MARC Bibliographic', () => {
           InventoryInstance.checkExpectedMARCSource();
           InventoryInstance.checkPresentedText(expectedUpdatedValue);
 
+          //Wait for the content to be loaded.
+          cy.wait(4000);
           InventoryInstance.viewSource();
           InventoryViewSource.contains(expectedCreatedValue);
           InventoryViewSource.contains(expectedUpdatedValue);

@@ -14,6 +14,7 @@ import BrowseContributors from '../../../support/fragments/inventory/search/brow
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
+import Parallelization from '../../../support/dictionary/parallelization';
 
 describe('Browse in Inventory', () => {
   const testData = {
@@ -102,7 +103,7 @@ describe('Browse in Inventory', () => {
     });
   });
 
-  it('C388531 Verify that contributors with the same "Name" , "Name type" and "authorityID" will display as one row (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+  it('C388531 Verify that contributors with the same "Name" , "Name type" and "authorityID" will display as one row (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] }, () => {
     InventorySearchAndFilter.switchToBrowseTab();
     InventorySearchAndFilter.verifyKeywordsAsDefault();
     BrowseContributors.select();

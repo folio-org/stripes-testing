@@ -15,7 +15,7 @@ import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthor
 describe('plug-in MARC authority | Browse', () => {
   const testData = {
     searchOption: 'Geographic name',
-    value: 'Gulf Stream',
+    value: 'Gulf Stream C380553',
   };
 
   const marcFiles = [
@@ -26,7 +26,7 @@ describe('plug-in MARC authority | Browse', () => {
       numOfRecords: 1,
     },
     {
-      marc: 'marcFileForC359229.mrc', 
+      marc: 'marcFileForC380553.mrc', 
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numOfRecords: 2,
@@ -90,8 +90,8 @@ describe('plug-in MARC authority | Browse', () => {
     MarcAuthorities.selectTitle(testData.value);
     MarcAuthorities.checkFieldAndContentExistence('151', testData.value);
     InventoryInstance.checkRecordDetailPage(testData.value);
-    MarcAuthorities.searchBy('Personal name', 'North End (Boston, Mass.)');
-    MarcAuthorities.selectTitle('North End (Boston, Mass.)');
-    InventoryInstance.checkRecordDetailPage('North End (Boston, Mass.)');
+    MarcAuthorities.searchBy('Personal name', 'North End (Boston, Mass.) C380553');
+    MarcAuthorities.selectTitle('North End (Boston, Mass.) C380553');
+    InventoryInstance.checkRecordDetailPage('North End (Boston, Mass.) C380553');
   });
 });

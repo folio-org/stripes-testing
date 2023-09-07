@@ -123,6 +123,7 @@ export default {
     ]);
   },
   saveAndClose: () => {
+    cy.wait(1500);
     cy.do(saveAndCloseButton.click());
     cy.expect(actionsButton.exists());
   },
