@@ -301,20 +301,31 @@ export default {
       });
   },
 
+  fetchLoanTypes: (searchParams) => {
+    return cy
+      .okapiRequest({
+        path: 'loan-types',
+        searchParams,
+      })
+      .then(({ body }) => {
+        return body.loantypes;
+      });
+  },
+
   createFolioInstanceViaApi: ({ instance, holdings = [], items = [] }) => {
     InventoryHoldings.getHoldingsFolioSource()
       .then(folioSource => {
         const ids = {};
-        const instanceWithSpecifiedNewId = { ...instance, id: uuid(), source: folioSource.name };
+        const instanceWithSpecifiedNewId = { ...instance, id: instance.id || uuid(), source: folioSource.name };
         ids.instanceId = instanceWithSpecifiedNewId.id;
         createInstanceViaAPI(instanceWithSpecifiedNewId).then(() => {
           ids.holdingIds = [];
           cy.wrap(holdings.forEach(holding => {
-            const holdingWithIds = { ...holding, id: uuid(), instanceId: instanceWithSpecifiedNewId.id, sourceId: folioSource.id };
+            const holdingWithIds = { ...holding, id: holding.id || uuid(), instanceId: instanceWithSpecifiedNewId.id, sourceId: folioSource.id };
             createHoldingViaAPI(holdingWithIds).then(() => {
               const itemIds = [];
               cy.wrap(items.forEach(item => {
-                const itemWithIds = { ...item, id: uuid(), holdingsRecordId: holdingWithIds.id };
+                const itemWithIds = { ...item, id: item.id || uuid(), holdingsRecordId: holdingWithIds.id };
                 itemIds.push(itemWithIds.id);
                 createItemViaAPI(itemWithIds);
               })).then(() => {
