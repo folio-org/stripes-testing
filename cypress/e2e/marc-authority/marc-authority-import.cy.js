@@ -11,6 +11,7 @@ import JobProfiles from '../../support/fragments/data_import/job_profiles/jobPro
 import Logs from '../../support/fragments/data_import/logs/logs';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthorityBrowse from '../../support/fragments/marcAuthority/MarcAuthorityBrowse';
+import Parallelization from '../../support/dictionary/parallelization';
 
 describe('Data Import - Importing MARC Authority files', () => {
   const testData = {
@@ -50,7 +51,7 @@ describe('Data Import - Importing MARC Authority files', () => {
     });
   });
 
-  it('C360520 Import of "MARC Authority" record with valid prefix in "001" field only (spitfire)', { tags: [TestTypes.smoke, Features.authority, DevTeams.spitfire] }, () => {
+  it('C360520 Import of "MARC Authority" record with valid prefix in "001" field only (spitfire)', { tags: [TestTypes.smoke, Features.authority, DevTeams.spitfire, Parallelization.nonParallel] }, () => {
     DataImport.uploadFile('marcFileForC360520.mrc', fileName);
     JobProfiles.waitLoadingList();
     JobProfiles.searchJobProfileForImport(jobProfileToRun);

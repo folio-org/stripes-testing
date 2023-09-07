@@ -14,7 +14,8 @@ import { JOB_STATUS_NAMES } from '../../../support/constants';
 describe('Search in Inventory', () => {
   const testData = {};
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-  const fileName = `testInventoryFile.${getRandomPostfix()}.mrc`;
+  const fileNameForC360548 = `testInventoryFile.${getRandomPostfix()}.mrc`;
+  const fileNameForC360555 = `testInventoryFile.${getRandomPostfix()}.mrc`;
   const createdInstanceIDs = [];
 
   before('Creating data', () => {
@@ -40,13 +41,13 @@ describe('Search in Inventory', () => {
   it('C360548 Verify that operator "=" is used when user search for "Instance" by "Contributor" search option. (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     const searchQueries = ['Henri Sauguet', 'Sauguet, Henri, 1901-1989', 'Henri Sauguet 1901-1989'];
 
-    DataImport.uploadFile('Sauguet_Henri_5_Bib_records.mrc', fileName);
+    DataImport.uploadFile('Sauguet_Henri_5_Bib_records.mrc', fileNameForC360548);
     JobProfiles.waitLoadingList();
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
     JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(fileName);
+    JobProfiles.waitFileIsImported(fileNameForC360548);
     Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-    Logs.openFileDetails(fileName);
+    Logs.openFileDetails(fileNameForC360548);
     for (let i = 0; i < 5; i++) {
       Logs.getCreatedItemsID(i).then(link => {
         createdInstanceIDs.push(link.split('/')[5]);
@@ -75,13 +76,13 @@ describe('Search in Inventory', () => {
   it('C360555 Verify that search for "Instance" records by "Keyword" option with "<ISBN with dashes>" query will only return the records with matched identifier value. (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     const searchQueries = ['978-92-8000-565-9', '978-92-8011-565-9'];
 
-    DataImport.uploadFile('two_bib_records_with_isbn_search_by_keyword.mrc', fileName);
+    DataImport.uploadFile('two_bib_records_with_isbn_search_by_keyword.mrc', fileNameForC360555);
     JobProfiles.waitLoadingList();
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
     JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(fileName);
+    JobProfiles.waitFileIsImported(fileNameForC360555);
     Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-    Logs.openFileDetails(fileName);
+    Logs.openFileDetails(fileNameForC360555);
     for (let i = 0; i < 2; i++) {
       Logs.getCreatedItemsID(i).then(link => {
         createdInstanceIDs.push(link.split('/')[5]);
