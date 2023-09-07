@@ -863,7 +863,7 @@ export default {
   clickKeepLinkingButton() {
     cy.do(keepLinkingButton.click());
   },
-  
+
   verifyAndDismissWrongTagLengthCallout() {
     cy.expect(calloutMarcTagWrongLength.exists());
     cy.do(calloutMarcTagWrongLength.dismiss());
@@ -888,5 +888,9 @@ export default {
 
   verifyMultiple001TagCallout() {
     cy.expect(calloutMultiple001MarcTags.exists());
+  },
+
+  checkUserNameInHeader(firstName, lastName) {
+    cy.expect(PaneHeader().find(HTML(including(`Source: ${lastName}, ${firstName}`))).exists());
   }
 };

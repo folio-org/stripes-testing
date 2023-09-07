@@ -8,6 +8,7 @@ import {
   Section,
   MultiColumnList,
   Pane,
+  PaneHeader,
   Select,
   TextArea,
   Link
@@ -187,7 +188,7 @@ export default {
     return cy.get('@holdingsID');
   },
   closeSourceView() {
-    cy.do(closeButton.click());
+    cy.do(PaneHeader().find(closeButton).click());
     cy.expect(root.exists());
     this.waitLoading();
   }

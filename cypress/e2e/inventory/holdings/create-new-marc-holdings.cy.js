@@ -124,7 +124,9 @@ describe('Create holding records with MARC source', () => {
       HoldingsRecordView.closeSourceView();
       InventoryInstance.verifyLastUpdatedDate();
       InventoryInstance.verifyRecordStatus(`Source: ${user.lastName}, ${user.firstName}`);
-      
+      HoldingsRecordView.editInQuickMarc();
+      QuickMarcEditor.waitLoading();
+      QuickMarcEditor.checkUserNameInHeader(user.firstName, user.lastName);
     });
   });
 });
