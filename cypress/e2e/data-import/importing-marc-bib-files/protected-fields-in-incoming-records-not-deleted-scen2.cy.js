@@ -95,6 +95,7 @@ describe('data-import', () => {
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.importWithOclc(oclcForImport);
         // check fields is presented in .mrc file
+        InstanceRecordView.waitLoading();
         InstanceRecordView.verifyInstancePaneExists();
         InventoryInstance.viewSource();
         Object.values(initialFields).forEach((field) => InventoryViewSource.contains(field));
