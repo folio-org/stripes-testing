@@ -21,6 +21,11 @@ const instanceId = uuid();
 const holdingId = uuid();
 const itemId = uuid();
 let loanTypes;
+let materialTypes;
+let locations;
+let holdingTypes;
+let instanceTypes;
+let users;
 
 describe('circulation-log loan period', () => {
   before('create inventory instance', () => {
@@ -35,36 +40,50 @@ describe('circulation-log loan period', () => {
       cy.visit(TopMenu.circulationLogPath);
       cy.getAdminToken()
         .then(() => {
-          InventoryInstances.fetchLoanTypes({ limit: 1, query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` })
+          InventoryInstances.getLoanTypes({ limit: 1, query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` })
             .then((loanTypesRes) => {
               loanTypes = loanTypesRes;
             });
-          cy.getMaterialTypes({ limit: 1 });
-          cy.getLocations({ limit: 1 });
-          cy.getHoldingTypes({ limit: 1 });
-          cy.getInstanceTypes({ limit: 1 });
+          InventoryInstances.getMaterialTypes({ limit: 1 })
+            .then((materialTypesRes) => {
+              materialTypes = materialTypesRes;
+            });
+          InventoryInstances.getLocations({ limit: 1 })
+            .then((locationsRes) => {
+              locations = locationsRes;
+            });
+          InventoryInstances.getHoldingTypes({ limit: 1 })
+            .then((holdingTypesRes) => {
+              holdingTypes = holdingTypesRes;
+            });
+          InventoryInstances.getInstanceTypes({ limit: 1 })
+            .then((instanceTypesRes) => {
+              instanceTypes = instanceTypesRes;
+            });
           ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' }).then((res) => {
             servicePointId = res[0].id;
           });
-          cy.getUsers({
+          Users.getUsers({
             limit: 1,
             query: `"personal.lastName"="${userProperties.username}" and "active"="true"`,
+          }).then((usersRes) => {
+            users = usersRes;
           });
         })
         .then(() => {
           UserEdit.addServicePointViaApi(servicePointId, userId);
-          cy.getUserServicePoints(Cypress.env('users')[0].id);
+          cy.getUserServicePoints(users[0].id);
           InventoryInstances.createFolioInstanceViaApi({
             instance: {
               id: instanceId,
-              instanceTypeId: Cypress.env('instanceTypes')[0].id,
+              instanceTypeId: instanceTypes[0].id,
               title: `Barcode search test ${Number(new Date())}`,
             },
             holdings: [
               {
                 id: holdingId,
-                holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
-                permanentLocationId: Cypress.env('locations')[0].id,
+                holdingsTypeId: holdingTypes[0].id,
+                permanentLocationId: locations[0].id,
               },
             ],
             items: [
@@ -75,7 +94,7 @@ describe('circulation-log loan period', () => {
                 numberOfMissingPieces: '3',
                 status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                 permanentLoanType: { id: loanTypes[0].id },
-                materialType: { id: Cypress.env('materialTypes')[0].id },
+                materialType: { id: materialTypes[0].id },
               },
             ],
           })
@@ -90,7 +109,7 @@ describe('circulation-log loan period', () => {
         .then(() => {
           cy.login(userProperties.username, userProperties.password);
           cy.visit(TopMenu.checkOutPath);
-          CheckOutActions.checkOutItemUser(Cypress.env('users')[0].barcode, ITEM_BARCODE);
+          CheckOutActions.checkOutItemUser(users[0].barcode, ITEM_BARCODE);
           MultipieceCheckOut.confirmMultipleCheckOut(ITEM_BARCODE);
         });
     });

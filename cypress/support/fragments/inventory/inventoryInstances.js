@@ -301,7 +301,7 @@ export default {
       });
   },
 
-  fetchLoanTypes: (searchParams) => {
+  getLoanTypes: (searchParams) => {
     return cy
       .okapiRequest({
         path: 'loan-types',
@@ -309,6 +309,52 @@ export default {
       })
       .then(({ body }) => {
         return body.loantypes;
+      });
+  },
+
+  getMaterialTypes: (searchParams) => {
+    return cy
+      .okapiRequest({
+        path: 'material-types',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => {
+        return body.mtypes;
+      });
+  },
+
+  getLocations: (searchParams) => {
+    return cy
+      .okapiRequest({
+        path: 'locations',
+        searchParams,
+        isDefaultSearchParamsRequired: false
+      })
+      .then(({ body }) => {
+        return body.locations;
+      });
+  },
+
+  getHoldingTypes: (searchParams) => {
+    return cy
+      .okapiRequest({
+        path: 'holdings-types',
+        searchParams,
+      })
+      .then(({ body }) => {
+        return body.holdingsTypes;
+      });
+  },
+
+  getInstanceTypes: (searchParams) => {
+    return cy
+      .okapiRequest({
+        path: 'instance-types',
+        searchParams,
+      })
+      .then(({ body }) => {
+        return body.instanceTypes;
       });
   },
 

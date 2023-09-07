@@ -63,6 +63,18 @@ export default {
     isDefaultSearchParamsRequired: false,
   }),
 
+  getUsers: (searchParams) => {
+    return cy
+      .okapiRequest({
+        path: 'users',
+        searchParams,
+        isDefaultSearchParamsRequired: false
+      })
+      .then(({ body }) => {
+        return body.users;
+      });
+  },
+
   createViaUi: (userData) => {
     return cy.do([
       Dropdown('Actions').find(Button()).click(),
@@ -185,7 +197,7 @@ export default {
   verifyCustomFieldOnUserDetailsPane(name, text) {
     cy.expect(userDetailsPane.find(KeyValue(name)).has({ value: text }));
   },
-  
+
   clearTextField() {
     cy.do(TextField({ id: 'adduser_preferredname' }).clear());
   },
