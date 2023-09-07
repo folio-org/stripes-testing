@@ -77,16 +77,6 @@ export default {
     ]);
   },
 
-  checkElementText: () => {
-    cy.do([
-      Checkbox({
-        id: 'clickable-filter-loan-renewed-through-override',
-      }).click(),
-      TextField({ name: 'itemBarcode' }).fillIn(data),
-    ]);
-    this.clickApplyMainFilter();
-  },
-
   searchByClaimedReturned() {
     cy.do([
       Accordion({ id: 'loan' }).clickHeader(),
