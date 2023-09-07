@@ -18,7 +18,7 @@ describe('MARC Authority Delete', () => {
   const testData = {
     uniqueFileName: `C350643autotestFile.${getRandomPostfix()}.mrc`,
     fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-    record: 'Angelou, Maya. And still I rise',
+    record: 'Angelou, Maya. And still I rise C357549',
     searchOption: 'Name-title',
   };
 

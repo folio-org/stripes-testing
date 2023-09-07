@@ -2,7 +2,6 @@ import checkInItems from '../../support/ideyaLabs/checkinitems';
 import serviceShift from '../../support/ideyaLabs/serviceshift';
 import testTypes from '../../support/dictionary/testTypes';
 import checkInActions from '../../support/fragments/check-in-actions/checkInActions';
-import searchPane from '../../support/fragments/circulation-log/searchPane';
 import topMenu from '../../support/fragments/topMenu';
 
 const testData = {
@@ -39,11 +38,6 @@ describe.skip('servicepoints shift', () => {
     checkInItems.withdrawn();
     cy.visit(topMenu.inventoryPath);
     checkInItems.lostAndPaid();
-  });
-
-  it('C17137 - Filter circulation log by renewed through override (firebird)', { tags: [testTypes.ideaLabsTests] }, () => {
-    cy.visit(topMenu.circulationLogPath);
-    searchPane.checkBarcode();
   });
 
   it('C590 Check in: multipiece items (vega)', { tags: [testTypes.ideaLabsTests] }, () => {

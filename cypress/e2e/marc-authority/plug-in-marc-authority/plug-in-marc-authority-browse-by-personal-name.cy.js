@@ -16,7 +16,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 describe('plug-in MARC authority | Browse', () => {
   const testData = {
     searchOption: 'Personal name',
-    value: 'Erbil, H. Yıldırım',
+    value: 'Erbil, H. Yıldırım C380551',
   };
 
   const marcFiles = [
@@ -27,7 +27,7 @@ describe('plug-in MARC authority | Browse', () => {
       numOfRecords: 1,
     },
     {
-      marc: 'marcFileForC359206.mrc', 
+      marc: 'marcFileForC380551.mrc',
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numOfRecords: 2,

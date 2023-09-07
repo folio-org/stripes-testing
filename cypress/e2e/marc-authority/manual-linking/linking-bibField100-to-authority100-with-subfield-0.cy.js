@@ -110,6 +110,8 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
     MarcAuthorities.checkRecordDetailPageMarkedValue(testData.authority100FieldValue);
     InventoryInstance.goToPreviousPage();
 
+    //Wait for the content to be loaded.
+    cy.wait(6000);
     InventoryInstance.viewSource();
     InventoryInstance.clickViewAuthorityIconDisplayedInMarcViewPane();
     MarcAuthorities.checkRecordDetailPageMarkedValue(testData.authority100FieldValue);
