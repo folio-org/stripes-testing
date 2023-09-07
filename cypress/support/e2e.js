@@ -1,4 +1,6 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { setInteractorTimeout } from '@interactors/globals';
+import registerCypressGrep from '@cypress/grep/src/support';
 
 // adding of methods do and expect
 import '@interactors/with-cypress';
@@ -20,10 +22,12 @@ import './commands';
 setInteractorTimeout(100_000);
 
 require('cypress-xpath');
-require('cypress-grep')();
+
+registerCypressGrep();
+
 require('@shelex/cypress-allure-plugin');
 
 // try to fix the issue with cached location in cypress
-Cypress.on('window:before:load', window => {
+Cypress.on('window:before:load', (window) => {
   Object.defineProperty(window.navigator, 'language', { value: 'en' });
 });

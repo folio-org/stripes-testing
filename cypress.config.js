@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 const { defineConfig } = require('cypress');
 const path = require('path');
 const globby = require('globby');
@@ -5,6 +6,7 @@ const { rmdir, unlink } = require('fs');
 const { downloadFile } = require('cypress-downloadfile/lib/addPlugin');
 const fs = require('fs');
 const allureWriter = require('@shelex/cypress-allure-plugin/writer');
+const { cloudPlugin } = require('cypress-cloud/plugin');
 
 module.exports = defineConfig({
   retries: {
@@ -74,7 +76,8 @@ module.exports = defineConfig({
         },
 
         readFileFromDownloads(filename) {
-          const downloadsFolder = config.downloadsFolder || path.join(__dirname, '..', '..', 'Downloads');
+          const downloadsFolder =
+            config.downloadsFolder || path.join(__dirname, '..', '..', 'Downloads');
           const filePath = path.join(downloadsFolder, filename);
           return fs.readFileSync(filePath, 'utf-8');
         },
@@ -82,6 +85,11 @@ module.exports = defineConfig({
 
       // eslint-disable-next-line global-require
       await require('cypress-testrail-simple/src/plugin')(on, config);
+      // await require('cypress-cloud/plugin')(on, config);
+      await cloudPlugin(on, config);
+
+      // eslint-disable-next-line import/no-extraneous-dependencies, global-require
+      await require('@cypress/grep/src/plugin')(config);
 
       return config;
     },
