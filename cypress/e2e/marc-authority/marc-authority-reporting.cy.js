@@ -15,6 +15,7 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import DateTools from '../../support/utils/dateTools';
 import ExportManagerSearchPane from '../../support/fragments/exportManager/exportManagerSearchPane';
 import FileManager from '../../support/utils/fileManager';
+import Parallelization from '../../support/dictionary/parallelization';
 
 describe('MARC Authority -> Reporting | MARC authority', () => {
   const testData = {
@@ -83,7 +84,7 @@ describe('MARC Authority -> Reporting | MARC authority', () => {
     Users.deleteViaApi(testData.userProperties.userId);
   });
 
-  it('C375231 "MARC authority headings updates (CSV)" report includes correct number of linked "MARC bib" records (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
+  it('C375231 "MARC authority headings updates (CSV)" report includes correct number of linked "MARC bib" records (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] }, () => {
     const dataForC375231 = [
       {
           recordTitle: createdAuthorityID[0],

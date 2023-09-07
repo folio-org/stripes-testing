@@ -16,7 +16,7 @@ import MarcAuthoritiesDelete from '../../support/fragments/marcAuthority/marcAut
 
 describe('MARC -> MARC Authority', () => {
   const testData = {
-    marcValue: 'Chin, Staceyann, 1972-',
+    marcValue: 'Chin, Staceyann, 1972- C369084',
     markedValue: 'Chin, Staceyann,',
     searchOption: 'Personal name',
   };
@@ -41,12 +41,12 @@ describe('MARC -> MARC Authority', () => {
   const linkingTagForFirstMarcBib = [
     {
       rowIndex: 17,
-      value: 'Chin, Staceyann, 1972-',
+      value: 'Chin, Staceyann, 1972- C369084',
       tag: 100
     },
     {
       rowIndex: 28,
-      value: 'Chin, Staceyann, 1972-',
+      value: 'Chin, Staceyann, 1972- C369084',
       tag: 600
     },
   ];
@@ -54,12 +54,12 @@ describe('MARC -> MARC Authority', () => {
   const linkingTagForSecondMarcBib = [
     {
       rowIndex: 11,
-      value: 'Chin, Staceyann, 1972-',
+      value: 'Chin, Staceyann, 1972- C369084',
       tag: 100
     },
     {
       rowIndex: 19,
-      value: 'Feminist poetry',
+      value: 'Feminist poetry C369084',
       tag: 650
     },
   ];
@@ -158,8 +158,8 @@ describe('MARC -> MARC Authority', () => {
     InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane('Contributor');
     InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane('Subject');
     InventoryInstance.editMarcBibliographicRecord();
-    QuickMarcEditor.verifyTagFieldAfterUnlinking(11, '100', '1', '\\', '$a Chin, Staceyann, $d 1972- $e Author $e Narrator $0 id.loc.gov/authorities/names/n2008052404 $1 http://viaf.org/viaf/24074052');
-    QuickMarcEditor.verifyTagFieldAfterLinking(19, '650', '\\', '0', '$a Feminist poetry', '', '$0 id.loc.gov/authorities/subjects/sh85047755', '');
+    QuickMarcEditor.verifyTagFieldAfterUnlinking(11, '100', '1', '\\', '$a Chin, Staceyann, $d 1972- C369084 $e Author $e Narrator $0 id.loc.gov/authorities/names/n2008052404 $1 http://viaf.org/viaf/24074052');
+    QuickMarcEditor.verifyTagFieldAfterLinking(19, '650', '\\', '0', '$a Feminist poetry C369084', '', '$0 id.loc.gov/authorities/subjects/sh85047755', '');
     QuickMarcEditor.checkLinkButtonExist('100');
 
     QuickMarcEditor.closeEditorPane();
@@ -168,10 +168,12 @@ describe('MARC -> MARC Authority', () => {
     InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane('Contributor');
     InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane('Subject');
     InventoryInstance.editMarcBibliographicRecord();
-    QuickMarcEditor.verifyTagFieldAfterUnlinking(17, '100', '1', '\\', '$a Chin, Staceyann, $d 1972- $e author. $0 id.loc.gov/authorities/names/n2008052404');
-    QuickMarcEditor.verifyTagFieldAfterUnlinking(28, '600', '1', '0', '$a Chin, Staceyann, $d 1972- $x Childhood and youth. $0 id.loc.gov/authorities/names/n2008052404');
+    QuickMarcEditor.verifyTagFieldAfterUnlinking(17, '100', '1', '\\', '$a Chin, Staceyann, $d 1972- C369084 $e author. $0 id.loc.gov/authorities/names/n2008052404');
+    QuickMarcEditor.verifyTagFieldAfterUnlinking(28, '600', '1', '0', '$a Chin, Staceyann, $d 1972- C369084 $x Childhood and youth. $0 id.loc.gov/authorities/names/n2008052404');
     QuickMarcEditor.pressCancel();
 
+    //Wait for the content to be loaded.
+    cy.wait(4000);
     InventoryInstance.viewSource();
     InventoryInstance.checkAbsenceOfAuthorityIconInMarcViewPane();
   });

@@ -10,6 +10,7 @@ import BrowseSubjects from '../../../support/fragments/inventory/search/browseSu
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import Parallelization from '../../../support/dictionary/parallelization';
 
 describe('Inventory > Subject Browse', () => {
   const testData = {
@@ -53,7 +54,7 @@ describe('Inventory > Subject Browse', () => {
     Users.deleteViaApi(testData.user.userId);
   });
 
-  it('C350387 Verify the "Browse subjects" result list (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+  it('C350387 Verify the "Browse subjects" result list (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] }, () => {
     InventorySearchAndFilter.switchToBrowseTab();
     BrowseSubjects.searchBrowseSubjects(testData.testValue);
     BrowseSubjects.checkSearchResultsTable();

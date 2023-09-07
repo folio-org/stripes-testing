@@ -19,6 +19,7 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import FileManager from '../../../support/utils/fileManager';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
+import Parallelization from '../../../support/dictionary/parallelization';
 import { LOCATION_NAMES, FOLIO_RECORD_TYPE, ACCEPTED_DATA_TYPE_NAMES, EXISTING_RECORDS_NAMES } from '../../../support/constants';
 
 describe('Data Import - Update MARC Authority files', () => {
@@ -159,7 +160,7 @@ describe('Data Import - Update MARC Authority files', () => {
     FileManager.deleteFile(`cypress/fixtures/${testData.csvFile}`);
   });
 
-  it('C374186 Update "1XX" field value (edit controlling field) of linked "MARC Authority" record (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+  it('C374186 Update "1XX" field value (edit controlling field) of linked "MARC Authority" record (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] }, () => {
     cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
     InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
     InventoryInstances.selectInstance();

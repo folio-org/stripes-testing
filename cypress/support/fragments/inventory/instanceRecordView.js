@@ -72,10 +72,13 @@ const verifyImportedFieldExists = (field) => {
   cy.expect(marcViewSection.find(HTML(including(field))).exists());
 };
 
-const viewSource = () => cy.do([
-  instanceDetailsSection.find(actionsButton).click(),
-  viewSourceButton.click(),
-]);
+const viewSource = () => {
+  cy.wait(1500);
+  cy.do([
+    instanceDetailsSection.find(actionsButton).click(),
+    viewSourceButton.click(),
+  ]);
+};
 
 const verifyAdministrativeNote = (value) => {
   cy.expect(instanceAdministrativeNote.find(MultiColumnListCell({ content: value })).exists());

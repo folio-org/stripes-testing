@@ -15,7 +15,7 @@ import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthor
 describe('plug-in MARC authority | Browse', () => {
   const testData = {
     searchOption: 'Uniform title',
-    value: 'Marvel comics',
+    value: 'Marvel comics C380555',
   };
 
   const marcFiles = [
@@ -26,7 +26,7 @@ describe('plug-in MARC authority | Browse', () => {
       numOfRecords: 1,
     },
     {
-      marc: 'marcFileForC359231.mrc', 
+      marc: 'marcFileForC380555.mrc', 
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numOfRecords: 1,
