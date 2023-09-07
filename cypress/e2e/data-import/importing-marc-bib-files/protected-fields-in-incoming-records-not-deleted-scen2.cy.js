@@ -12,6 +12,7 @@ import InventoryViewSource from '../../../support/fragments/inventory/inventoryV
 import Users from '../../../support/fragments/users/users';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import { TARGET_PROFILE_NAMES } from '../../../support/constants';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -94,6 +95,8 @@ describe('data-import', () => {
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.importWithOclc(oclcForImport);
         // check fields is presented in .mrc file
+        InstanceRecordView.waitLoading();
+        InstanceRecordView.verifyInstancePaneExists();
         InventoryInstance.viewSource();
         Object.values(initialFields).forEach((field) => InventoryViewSource.contains(field));
         cy.intercept('GET', '/orders/titles?*').as('getOrdersTitles');

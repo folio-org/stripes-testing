@@ -8,6 +8,7 @@ import InventoryViewSource from '../../../support/fragments/inventory/inventoryV
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import DevTeams from '../../../support/dictionary/devTeams';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
 let user;
 const oclc = '1007797324';
@@ -44,6 +45,7 @@ describe('inventory', () => {
 
     it('C193953 Overlay existing Source = MARC Instance by import of single MARC Bib record from OCLC (folijet) (prokopovych))', { tags: [testTypes.smoke, DevTeams.folijet] }, () => {
       InventoryActions.import(oclc);
+      InstanceRecordView.waitLoading();
       InventoryInstance.viewSource();
       InventoryViewSource.contains('999\tf f\t‡s');
     });
