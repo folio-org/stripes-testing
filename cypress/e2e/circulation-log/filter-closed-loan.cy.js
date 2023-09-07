@@ -11,7 +11,6 @@ import CheckInActions from '../../support/fragments/check-in-actions/checkInActi
 import Checkout from '../../support/fragments/checkout/checkout';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import getRandomPostfix from '../../support/utils/stringTools';
-import UserLoans from '../../support/fragments/users/loans/userLoans';
 
 let user;
 const item = {
