@@ -39,6 +39,8 @@ describe('MARC Authority management', () => {
     InventoryInstances.selectInstance();
     InventoryInstance.getId().then(id => { instanceID = id; });
     InventoryInstance.checkExpectedMARCSource();
+    //Wait for the content to be loaded.
+    cy.wait(2000);
     InventoryInstance.checkMARCSourceAtNewPane();
   });
 });

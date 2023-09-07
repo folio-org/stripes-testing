@@ -75,36 +75,6 @@ describe.skip('Feature MARC Authority', () => {
   );
 
   it(
-    'C380755 Link of empty MARC Bib field with ""MARC Authority"" record (spitfire)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      cy.visit(topMenu.inventoryPath);
-      inventorySearchAndFilter.switchToHoldings();
-      inventorySearchAndFilter.bySource(testData.source);
-      inventorySearchAndFilter.selectSearchResultByRowIndex(
-        testData.derive.rowIndex
-      );
-      inventoryInstance.editMarcBibliographicRecord();
-      inventoryInstance.verifyAndClickUnlinkIcon(testData.derive.tag700);
-      marc.popupUnlinkButton();
-      inventoryInstance.verifyAndClickLinkIcon(testData.derive.tag700);
-      marcAuthorities.switchToSearch();
-      inventoryInstance.verifySelectMarcAuthorityModal();
-      inventoryInstance.verifySearchOptions();
-      marcAuthorities.searchBy(
-        testData.derive.searchOption,
-        testData.derive.authority700FieldValue
-      );
-      marcAuthorities.clickLinkButton();
-      marcAuthority.checkLinkingAuthority700();
-      marc.saveAndClose();
-      inventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(
-        testData.derive.accordion
-      );
-    }
-  );
-
-  it(
     'C376987 User can print ""MARC authority"" record (spitfire)',
     { tags: [testTypes.ideaLabsTests] },
     () => {

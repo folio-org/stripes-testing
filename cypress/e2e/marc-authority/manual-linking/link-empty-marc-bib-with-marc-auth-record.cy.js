@@ -11,36 +11,37 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import getRandomPostfix from '../../../support/utils/stringTools';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 
-describe('plug-in MARC authority | Browse', () => {
-  const testData = {
-    searchOption: 'Genre',
-    value: 'Peplum films C380557',
-  };
+describe('Manual Linking Empty Bib field to Authority 1XX', () => {
+    const testData = {
+      searchOption: 'Personal name',
+      marcValue: 'C380755 Lee, Stan, 1922-2018',
+      markedValue: 'C380755 Lee, Stan,',
+    };
+    
+    const marcFiles = [
+      {
+        marc: 'marcBibFileForC380755.mrc', 
+        fileName: `testMarcFile.${getRandomPostfix()}.mrc`, 
+        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+        numOfRecords: 1,
+      },
+      {
+        marc: 'marcAuthFileForC380755.mrc',
+        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        numOfRecords: 1,
+      },
+    ]
 
-  const marcFiles = [
-    {
-      marc: 'marcBibFileForC380572.mrc',
-      fileName: `marcFileOneBib.${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-      numOfRecords: 1,
-    },
-    {
-      marc: 'marcFileForC380557.mrc', 
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create SRS MARC Authority',
-      numOfRecords: 1,
-    },
-  ]
+    let createdAuthorityIDs = [];
 
-  let createdAuthorityIDs = [];
-
-  before('Creating user', () => {
+  before('Creating user and records', () => {
     cy.createTempUser([
       Permissions.inventoryAll.gui,
+      Permissions.moduleDataImportEnabled.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-      Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
       Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
     ]).then(createdUserProperties => {
@@ -62,37 +63,39 @@ describe('plug-in MARC authority | Browse', () => {
           }
         });
       });
+      
+      cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
     });
   });
 
-  beforeEach('Login to the application', () => {
-    cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
-  });
-
-  after('Deleting created user', () => {
+  after('Deleting created user and records', () => {
     Users.deleteViaApi(testData.userProperties.userId);
-    if (createdAuthorityIDs[0]) InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
-    createdAuthorityIDs.forEach((id, index) => {
-      if (index) MarcAuthority.deleteViaAPI(id);
-    });
+    InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
+    MarcAuthority.deleteViaAPI(createdAuthorityIDs[1]);
   });
 
-  it('C380557 MARC Authority plug-in | Browse using "Genre" option returns only records with the same "Type of heading" (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+  it('C380755 Link of empty MARC Bib field with "MARC Authority" record (spitfire)', { tags: [TestTypes.extendedPath, DevTeams.spitfire] }, () => {
     InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
-    InventoryInstance.verifyAndClickLinkIcon('700');
+
+    QuickMarcEditor.checkLinkButtonExistByRowIndex(79);
+    QuickMarcEditor.updateExistingFieldContent(79, '');
+    QuickMarcEditor.clickLinkIconInTagField(79);
 
     MarcAuthorities.switchToBrowse();
-    MarcAuthorities.clickReset();
     MarcAuthorities.checkDefaultBrowseOptions();
-    MarcAuthorities.searchByParameter(testData.searchOption, testData.value);
-    MarcAuthorities.checkResultsExistance('Authorized');
-    MarcAuthorities.selectTitle(testData.value);
-    MarcAuthorities.checkFieldAndContentExistence('155', testData.value);
-    InventoryInstance.checkRecordDetailPage(testData.value);
-    
-    MarcAuthorities.searchBy('Personal name', '1');
-    InventorySearchAndFilter.verifySearchResult(`1 would be here`);
-    });
+    MarcAuthorities.searchByParameter(testData.searchOption, testData.marcValue);
+    MarcAuthorities.selectTitle(testData.marcValue);
+    MarcAuthorities.checkRecordDetailPageMarkedValue(testData.markedValue);
+    InventoryInstance.clickLinkButton();
+
+    QuickMarcEditor.verifyAfterLinkingUsingRowIndex('700', 79);
+    QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(79);
+    QuickMarcEditor.verifyTagFieldAfterLinking(79, '700', '1', '\\', '$a C380755 Lee, Stan, $d 1922-2018', '', '$0 id.loc.gov/authorities/names/n83169267', '');
+
+    QuickMarcEditor.pressSaveAndClose();
+    QuickMarcEditor.checkAfterSaveAndClose();
+    InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane('Contributor');    
+  });
 });
