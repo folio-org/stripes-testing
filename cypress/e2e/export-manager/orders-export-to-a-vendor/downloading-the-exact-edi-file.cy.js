@@ -123,12 +123,12 @@ describe('Export Orders in EDIFACT format: Orders Export to a Vendor', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(user.username, user.password, { path:TopMenu.exportManagerOrganizationsPath, waiter: Orders.waitLoading });
+        cy.login(user.username, user.password, { path:TopMenu.exportManagerOrganizationsPath, waiter: ExportManagerSearchPane.waitLoading });
       });
   });
 
   after(() => {
-    cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: ExportManagerSearchPane.waitLoading });
+    cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList();
     Orders.unOpenOrder(orderNumber);
@@ -150,7 +150,6 @@ describe('Export Orders in EDIFACT format: Orders Export to a Vendor', () => {
     cy.visit(TopMenu.exportManagerOrganizationsPath);
     ExportManagerSearchPane.selectOrganizationsSearch();
     ExportManagerSearchPane.selectExportMethod(integrationName1);
-    ExportManagerSearchPane.selectJobByIntegrationInList(integrationName1);
     ExportManagerSearchPane.verifyResult('Successful');
     ExportManagerSearchPane.selectJob('Successful');
     ExportManagerSearchPane.downloadJob();
