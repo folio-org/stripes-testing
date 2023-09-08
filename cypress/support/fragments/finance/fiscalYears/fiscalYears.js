@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import {
   Button,
   TextField,
@@ -8,12 +9,13 @@ import {
   MultiColumnListCell,
   SelectionOption,
   Link,
-  Section
+  Section,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 import DateTools from '../../../utils/dateTools';
 
-const createdFiscalYearNameXpath = '//*[@id="paneHeaderpane-fiscal-year-details-pane-title"]/h2/span';
+const createdFiscalYearNameXpath =
+  '//*[@id="paneHeaderpane-fiscal-year-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfiscal-year-results-pane-subtitle"]/span';
 const zeroResultsFoundText = '0 records found';
 // TODO: move all same buttons to one place related to Finance module
@@ -28,14 +30,13 @@ const resetButton = Button({ id: 'reset-fiscal-years-filters' });
 const fiscalYearFiltersSection = Section({ id: 'fiscal-year-filters-pane' });
 
 export default {
-
   defaultUiFiscalYear: {
     name: `autotest_year_${getRandomPostfix()}`,
     code: DateTools.getRandomFiscalYearCode(2000, 9999),
     periodStart: `${DateTools.getPreviousDayDateForFiscalYear()}T00:00:00.000+00:00`,
     periodEnd: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
-    series: 'FY'
+    series: 'FY',
   },
 
   defaultRolloverFiscalYear: {
@@ -44,10 +45,20 @@ export default {
     periodStart: `${DateTools.getPreviousDayDateForFiscalYear()}T00:00:00.000+00:00`,
     periodEnd: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
-    series: 'FYTA'
+    series: 'FYTA',
   },
-
-  selectFisacalYear:(fiscalYear) => {
+  getDefaultFiscalYear() {
+    return {
+      id: uuid(),
+      name: `autotest_year_${getRandomPostfix()}`,
+      code: DateTools.getRandomFiscalYearCode(2000, 9999),
+      periodStart: `${DateTools.getPreviousDayDateForFiscalYear()}T00:00:00.000+00:00`,
+      periodEnd: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
+      description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
+      series: 'FY',
+    };
+  },
+  selectFisacalYear: (fiscalYear) => {
     cy.do(Pane({ id: 'fiscal-year-results-pane' }).find(Link(fiscalYear)).click());
   },
 
@@ -62,7 +73,7 @@ export default {
       TextField('Code*').fillIn(fiscalYear.code),
       TextField({ name: 'periodStart' }).fillIn(fiscalYear.periodBeginDate),
       TextField({ name: 'periodEnd' }).fillIn(fiscalYear.periodEndDate),
-      saveAndClose.click()
+      saveAndClose.click(),
     ]);
     this.waitForFiscalYearDetailsLoading();
   },
@@ -75,7 +86,11 @@ export default {
   },
 
   closeThirdPane() {
-    cy.do(PaneHeader({ id: 'paneHeaderpane-fiscal-year-details' }).find(Button({ icon: 'times' })).click());
+    cy.do(
+      PaneHeader({ id: 'paneHeaderpane-fiscal-year-details' })
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
   },
 
   openAcquisitionAccordion() {
@@ -83,47 +98,34 @@ export default {
   },
 
   clickOnFiscalYear: () => {
-    cy.do([
-      fiscalYearButton.click()
-    ]);
+    cy.do([fiscalYearButton.click()]);
   },
 
   clickOnLedgerTab: () => {
-    cy.do([
-      fiscalYearFiltersSection.find(Button('Ledger')).click()
-    ]);
+    cy.do([fiscalYearFiltersSection.find(Button('Ledger')).click()]);
   },
 
   clickOnGroupTab: () => {
-    cy.do([
-      fiscalYearFiltersSection.find(Button('Group')).click()
-    ]);
+    cy.do([fiscalYearFiltersSection.find(Button('Group')).click()]);
   },
 
   clickOnFundTab: () => {
-    cy.do([
-      fiscalYearFiltersSection.find(Button('Fund')).click()
-    ]);
+    cy.do([fiscalYearFiltersSection.find(Button('Fund')).click()]);
   },
 
   editFiscalYearDetails: () => {
-    cy.do([
-      actions.click(),
-      edit.click()
-    ]);
+    cy.do([actions.click(), edit.click()]);
   },
 
   selectNoAcquisitionUnit() {
-    cy.do([Button({ id: 'acqUnitIds-selection' }).click(),
+    cy.do([
+      Button({ id: 'acqUnitIds-selection' }).click(),
       SelectionOption('No acquisition unit').click(),
     ]);
   },
 
-
   checkCreatedFiscalYear: (fiscalYearName) => {
-    cy.xpath(createdFiscalYearNameXpath)
-      .should('be.visible')
-      .and('have.text', fiscalYearName);
+    cy.xpath(createdFiscalYearNameXpath).should('be.visible').and('have.text', fiscalYearName);
   },
 
   filltheStartAndEndDateoncalenderstartDateField1: () => {
@@ -132,7 +134,7 @@ export default {
       TextField({ name: 'periodStart' }).fillIn('01/01/2022'),
       TextField({ name: 'periodEnd' }).clear(),
       TextField({ name: 'periodEnd' }).fillIn('12/30/2022'),
-      saveAndClose.click()
+      saveAndClose.click(),
     ]);
   },
 
@@ -142,7 +144,7 @@ export default {
       TextField({ name: 'periodStart' }).fillIn('01/01/2024'),
       TextField({ name: 'periodEnd' }).clear(),
       TextField({ name: 'periodEnd' }).fillIn('12/30/2024'),
-      saveAndClose.click()
+      saveAndClose.click(),
     ]);
   },
 
@@ -159,7 +161,7 @@ export default {
       agreements.click(),
       Button('Keep editing').click(),
       Button('Cancel').click(),
-      Button('Close without saving').click()
+      Button('Close without saving').click(),
     ]);
   },
 
@@ -170,14 +172,15 @@ export default {
   },
 
   checkSearchResults: (fiscalYear) => {
-    cy.expect(MultiColumnList({ id: 'fiscal-years-list' })
-      .find(MultiColumnListCell(fiscalYear))
-      .exists());
+    cy.expect(
+      MultiColumnList({ id: 'fiscal-years-list' }).find(MultiColumnListCell(fiscalYear)).exists(),
+    );
   },
 
   checkSearchResults1: (fiscalYear) => {
-    cy.expect(MultiColumnList({ id: 'fiscal-years-list' })
-      .find(MultiColumnListCell(fiscalYear)).click());
+    cy.expect(
+      MultiColumnList({ id: 'fiscal-years-list' }).find(MultiColumnListCell(fiscalYear)).click(),
+    );
   },
 
   fiscalYearsDisplay: () => {
@@ -192,7 +195,7 @@ export default {
     cy.do([
       actions.click(),
       deleteButton.click(),
-      Button('Delete', { id: 'clickable-fiscal-year-remove-confirmation-confirm' }).click()
+      Button('Delete', { id: 'clickable-fiscal-year-remove-confirmation-confirm' }).click(),
     ]);
   },
 
@@ -227,5 +230,4 @@ export default {
   expextFY: (FYName) => {
     cy.expect(Section({ id: 'fiscal-year-results-pane' }).find(Link(FYName)).exists());
   },
-
 };

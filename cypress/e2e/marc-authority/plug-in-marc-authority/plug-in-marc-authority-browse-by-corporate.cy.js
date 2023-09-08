@@ -19,7 +19,7 @@ describe('plug-in MARC authority | Browse', () => {
       typeB: 'Reference',
       typeOfHeadingA: 'Corporate Name',
       typeOfHeadingB: 'Conference Name',
-      title: 'Apple Academic Press',
+      title: 'Apple Academic Press C380552',
     };
     
     const marcFiles = [
@@ -30,7 +30,7 @@ describe('plug-in MARC authority | Browse', () => {
         numOfRecords: 1,
       }, 
       {
-        marc: 'marcFileForC359228.mrc', 
+        marc: 'marcFileForC380552.mrc', 
         fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numOfRecords: 5,

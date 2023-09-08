@@ -13,7 +13,7 @@ import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthorit
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 
-describe('Manual Linking Bib field to Authority 1XX', () => {
+describe('Manual Unlinking Bib field from Authority 1XX', () => {
     const testData = {};
     
     const marcFiles = [
@@ -46,7 +46,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
 
     let createdAuthorityIDs = [];
 
-  before('Creating user', () => {
+  before('Creating user and records', () => {
     cy.createTempUser([
       Permissions.inventoryAll.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -93,7 +93,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
     });
   });
 
-  after('Deleting created user', () => {
+  after('Deleting created user and records', () => {
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
     createdAuthorityIDs.forEach((id, index) => {
@@ -101,7 +101,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
     });
   });
 
-  it('C365602 Derive | Unlink "MARC Bibliographic" field from "MARC Authority" record and use the "Save & close" button in deriving window. (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+  it('C365602 Derive | Unlink "MARC Bibliographic" field from "MARC Authority" record and use the "Save & close" button in deriving window. (spitfire)', { tags: [TestTypes.extendedPath, DevTeams.spitfire] }, () => {
     cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
     InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
     InventoryInstances.selectInstance();
