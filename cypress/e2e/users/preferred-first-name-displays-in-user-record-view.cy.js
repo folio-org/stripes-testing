@@ -12,7 +12,6 @@ import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 describe('Permissions Tags', () => {
   let userData;
   let servicePointId;
-  const newMiddleName = getTestEntityValue('newMiddleName');
   const patronGroup = {
     name: getTestEntityValue('groupUserChange'),
   };
@@ -30,6 +29,8 @@ describe('Permissions Tags', () => {
         patronGroup.name,
       ).then((userProperties) => {
         userData = userProperties;
+        userData.middleName = getTestEntityValue('MiddleName');
+        userData.preferredFirstName = getTestEntityValue('PreferredFirstName');
         UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
         cy.login(userData.username, userData.password, {
           path: TopMenu.usersPath,
@@ -45,14 +46,28 @@ describe('Permissions Tags', () => {
   });
 
   it(
-    'C398021 Verify that user is able to edit user records without error messages (volaris)',
+    'C11096 Add Preferred first name and confirm its display in the User record View and Edit screens (volaris)',
     { tags: [TestTypes.extendedPath, devTeams.volaris] },
     () => {
+      cy.visit(TopMenu.usersPath);
       UsersSearchPane.searchByUsername(userData.username);
       UserEdit.openUserEdit();
-      UserEdit.changeMiddleName(newMiddleName);
+      UserEdit.changeMiddleName(userData.middleName);
+      UserEdit.changePreferredFirstName(userData.preferredFirstName);
       UserEdit.saveAndClose();
-      Users.verifyMiddleNameOnUserDetailsPane(newMiddleName);
+      UsersSearchPane.waitLoading();
+      Users.verifyFullNameIsDisplayedCorrectly(
+        `${userData.lastName}, ${userData.preferredFirstName} ${userData.middleName}`,
+      );
+
+      UserEdit.openUserEdit();
+      UserEdit.changeMiddleName(userData.middleName);
+      UserEdit.changePreferredFirstName('');
+      UserEdit.saveAndClose();
+      UsersSearchPane.waitLoading();
+      Users.verifyFullNameIsDisplayedCorrectly(
+        `${userData.lastName}, ${userData.firstName} ${userData.middleName}`,
+      );
     },
   );
 });
