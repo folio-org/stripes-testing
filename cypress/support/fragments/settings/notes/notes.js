@@ -11,13 +11,13 @@ export default {
         name: noteTypeName,
       },
     })
-      .then(response => response.body.id);
+      .then((response) => response.body);
   },
 
   deleteNoteTypeViaApi: (noteTypeId) => {
     return cy
       .okapiRequest({
-        method: 'DELETE',
+        method: REQUEST_METHOD.DELETE,
         path: `note-types/${noteTypeId}`,
         isDefaultSearchParamsRequired: false
       });

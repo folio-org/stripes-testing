@@ -1,33 +1,23 @@
-import getRandomPostfix from '../../support/utils/stringTools';
-import DateTools from '../../support/utils/dateTools';
-import Agreements from '../../support/fragments/agreements/agreements';
-import Notes from '../../support/fragments/settings/notes/notes';
-import TopMenu from '../../support/fragments/topMenu';
-import AgreementsDetails from '../../support/fragments/agreements/agreementsDetails';
-import NewNote from '../../support/fragments/notes/newNote';
+import { randomFourDigitNumber } from '../../../support/utils/stringTools';
+import Agreements from '../../../support/fragments/agreements/agreements';
+import Notes from '../../../support/fragments/settings/notes/notes';
+import TopMenu from '../../../support/fragments/topMenu';
+import AgreementsDetails from '../../../support/fragments/agreements/agreementsDetails';
+import NewNote from '../../../support/fragments/notes/newNote';
 
-const agreementBody = {
-  periods: [
-    {
-      startDate: DateTools.getCurrentDateForFiscalYear(),
-    }
-  ],
-  name: 'AutotestAgreement' + getRandomPostfix(),
-  agreementStatus: 'active'
-};
 let agreementId;
 let noteTypeId;
-const noteType = 'NoteType' + getRandomPostfix();
+const noteType = `NoteType ${randomFourDigitNumber()}`;
 describe('Agreement Notes', () => {
   before(() => {
     cy.getAdminToken();
-    Agreements.createViaApi(agreementBody)
+    Agreements.createViaApi()
       .then((agreement) => {
-        agreementId = agreement;
+        agreementId = agreement.id;
       });
     Notes.createNoteTypeViaApi(noteType)
       .then((note) => {
-        noteTypeId = note;
+        noteTypeId = note.id;
       });
     cy.loginAsAdmin();
     cy.visit(TopMenu.agreementsPath);
@@ -40,7 +30,7 @@ describe('Agreement Notes', () => {
   });
 
   it('C1308 Create a note for an Agreement record', () => {
-    AgreementsDetails.agreementListClick(agreementBody.name);
+    AgreementsDetails.agreementListClick(Agreements.defaultAgreement.name);
     AgreementsDetails.openNotesSection();
     AgreementsDetails.verifyNotesIsEmpty();
 
@@ -51,7 +41,7 @@ describe('Agreement Notes', () => {
     NewNote.fill();
     NewNote.save();
     NewNote.verifyNewNoteIsNotDisplayed();
-    AgreementsDetails.verifyAgreementDetailsIsDisplayedByTitle(agreementBody.name);
+    AgreementsDetails.verifyAgreementDetailsIsDisplayedByTitle(Agreements.defaultAgreement.name);
     AgreementsDetails.verifyNotesCount('1');
 
     AgreementsDetails.openNotesSection();
