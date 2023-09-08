@@ -331,7 +331,7 @@ export default {
     cy.do(addTransferModal.find(confirmButton).click());
   },
 
-  transfer: (toFund, fromFund) => {
+  transfer(toFund, fromFund) {
     cy.do([actionsButton.click(), transferButton.click()]);
     this.fillAllocationFields({ toFund, fromFund, amount: '10' });
   },
