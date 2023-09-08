@@ -12,7 +12,6 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
-import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 
@@ -58,9 +57,6 @@ describe('circulation-log', () => {
 
       UsersOwners.createViaApi(ownerBody).then((ownerResponse) => {
         testData.ownerId = ownerResponse.id;
-        PaymentMethods.createViaApi(testData.ownerId).then((paymentMethod) => {
-          testData.paymentMethodId = paymentMethod.id;
-        });
       });
       UserLoans.getUserLoansIdViaApi(user.userId).then((userLoans) => {
         UserLoans.declareLoanLostViaApi({
@@ -79,7 +75,6 @@ describe('circulation-log', () => {
       checkInDate: new Date().toISOString(),
     });
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
-    PaymentMethods.deleteViaApi(testData.paymentMethodId);
     Users.deleteViaApi(user.userId);
     UsersOwners.deleteViaApi(testData.ownerId);
   });
