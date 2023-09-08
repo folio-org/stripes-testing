@@ -12,32 +12,50 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import getRandomPostfix from '../../support/utils/stringTools';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 
 let user;
 const item = {
-  instanceTitle: `Instance ${getRandomPostfix()}`,
-  barcode: `item-${getRandomPostfix()}`
+  instanceName: `instance-name-${getRandomPostfix()}`,
+  barcode: `barcode-${getRandomPostfix()}`,
 };
 const testData = {
-  userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest receive notice check in', uuid()),
+  userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest lost items', uuid()),
+};
+const ownerBody = {
+  owner: 'AutotestOwner' + getRandomPostfix(),
+  servicePointOwner: [{
+    value: testData.userServicePoint.id,
+    label: testData.userServicePoint.name,
+  }],
 };
 
 describe('circulation-log', () => {
   before('create test data', () => {
     cy.createTempUser([]).then(userProperties => {
       user = userProperties;
-
       ServicePoints.createViaApi(testData.userServicePoint);
-      UserEdit.addServicePointViaApi(testData.userServicePoint.id, user.userId, testData.userServicePoint.id);
+      testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
+      Location.createViaApi(testData.defaultLocation);
+      UserEdit.addServicePointViaApi(testData.userServicePoint.id, user.userId);
 
-      InventoryInstances.createInstanceViaApi(item.instanceTitle, item.barcode);
+      item.instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
+      cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` })
+        .then((holdings) => {
+          cy.updateHoldingRecord(holdings[0].id, {
+            ...holdings[0],
+            permanentLocationId: testData.defaultLocation.id
+          });
+        });
+
       Checkout.checkoutItemViaApi({
-        id: uuid(),
         itemBarcode: item.barcode,
-        loanDate: moment.utc().format(),
-        servicePointId: testData.userServicePoint.id,
         userBarcode: user.barcode,
+        servicePointId: testData.userServicePoint.id,
       });
+
+      UsersOwners.createViaApi(ownerBody);
 
       const renewBody = {
         id: uuid(),
