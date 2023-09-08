@@ -93,6 +93,7 @@ describe('Export Orders in EDIFACT format: Orders Export to a Vendor', () => {
         orderNumber = response.body.poNumber;
         // Need to wait while first job will be runing
         cy.wait(70000);
+        cy.visit(TopMenu.ordersPath);
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList();
         Orders.createPOLineViaActions();
@@ -122,12 +123,12 @@ describe('Export Orders in EDIFACT format: Orders Export to a Vendor', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+        cy.login(user.username, user.password, { path:TopMenu.exportManagerOrganizationsPath, waiter: Orders.waitLoading });
       });
   });
 
   after(() => {
-    cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: ExportManagerSearchPane.waitLoading });
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList();
     Orders.unOpenOrder(orderNumber);
