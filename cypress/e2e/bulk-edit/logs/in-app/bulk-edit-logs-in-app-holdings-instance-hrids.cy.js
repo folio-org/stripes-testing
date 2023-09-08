@@ -169,11 +169,11 @@ describe('Bulk Edit - Logs', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item2.barcode);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${validAndInvalidInstanceHRIDsFileName}`);
-    FileManager.deleteFileFromDownloadsByMask(validAndInvalidInstanceHRIDsFileName, 
-      `*${matchedRecordsFileName}`, 
-      previewOfProposedChangesFileName, 
+    FileManager.deleteFileFromDownloadsByMask(validAndInvalidInstanceHRIDsFileName,
+      `*${matchedRecordsFileName}`,
+      previewOfProposedChangesFileName,
       updatedRecordsFileName,
-      errorsFromCommittingFileName, 
+      errorsFromCommittingFileName,
       errorsFromMatchingFileName,
       otherErrors);
   });

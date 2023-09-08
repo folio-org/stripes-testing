@@ -125,11 +125,11 @@ describe('Bulk Edit - Logs', () => {
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${itemHRIDsFileName}`);
     FileManager.deleteFileFromDownloadsByMask(
-      itemHRIDsFileName, 
-      `*${matchedRecordsFileNameInvalidAndValid}`, 
-      previewOfProposedChangesFileName, 
+      itemHRIDsFileName,
+      `*${matchedRecordsFileNameInvalidAndValid}`,
+      previewOfProposedChangesFileName,
       updatedRecordsFileName,
-      errorsFromCommittingFileName, 
+      errorsFromCommittingFileName,
       errorsFromMatchingFileName,
       otherError);
   });

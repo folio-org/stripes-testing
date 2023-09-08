@@ -45,11 +45,11 @@ describe('Bulk Edit - Logs', () => {
   after('delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${invalidAndValidUserUUIDsFileName}`);
     Users.deleteViaApi(user.userId);
-    FileManager.deleteFileFromDownloadsByMask(invalidAndValidUserUUIDsFileName, 
-      `*${matchedRecordsFileNameInvalidAndValid}`, 
-      previewOfProposedChangesFileName, 
+    FileManager.deleteFileFromDownloadsByMask(invalidAndValidUserUUIDsFileName,
+      `*${matchedRecordsFileNameInvalidAndValid}`,
+      previewOfProposedChangesFileName,
       updatedRecordsFileName,
-      errorsFromCommittingFileName, 
+      errorsFromCommittingFileName,
       errorsFromMatchingFileName,
       otherError);
   });

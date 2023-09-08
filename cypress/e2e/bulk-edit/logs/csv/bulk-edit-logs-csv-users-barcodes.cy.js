@@ -66,7 +66,8 @@ describe('Bulk Edit - Logs', () => {
       errorsFromCommittingFileName,
       errorsFromMatchingFileName,
       otherErrors.first,
-      otherErrors.second);
+      otherErrors.second
+    );
   });
 
   it('C375215 Verify generated Logs files for Users CSV - with errors (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
