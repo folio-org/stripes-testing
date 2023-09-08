@@ -25,7 +25,6 @@ const headerXpath = `${rootXpath}//div[@id="pane-view-agreement-content"]//h2`;
 const rootCss = 'section[id=pane-view-agreement]';
 const notesSectionXpath = `${rootXpath}//section[@id="notes"]`;
 const noteTitleXpath = `${notesSectionXpath}//strong[contains(.,'Title')]/..`;
-// const noteDetailsXpath = `${notesSectionXpath}//strong[contains(.,'Details')]/..`;
 const notesAccordionXpath = `${notesSectionXpath}//button[@id="accordion-toggle-button-notes"]`;
 const newNoteButton = Button('New', { id: 'note-create-button' });
 const actionsButton = Button('Actions');
