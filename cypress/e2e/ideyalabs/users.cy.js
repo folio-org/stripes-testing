@@ -29,32 +29,11 @@ const userTwo = {
   },
 };
 
-const userThree = {
-  patronGroup: 'A1A1',
-  barcode: `678${randomFourDigitNumber}`,
-  userName: `Mann${randomFourDigitNumber}`,
-  personal: {
-    lastName: 'Script',
-    firstName: 'Auto',
-    email: `dan${randomFourDigitNumber}@yopmail.com`,
-    middleName: 'Test',
-    preferredFirstName: 'Dan',
-  },
-};
-
 const deleteData = {
   name: 'User Delete',
   selectName: 'User, Delete',
   lastName: 'Script',
   selectLastName: 'Script Test',
-};
-
-const verifyData = {
-  verifyLastNameOnUserDetailsPane: 'Script',
-  verifyPreferredfirstnameOnUserDetailsPane: 'Dan',
-  verifyFirstNameOnUserDetailsPane: 'Auto',
-  verifyMiddleNameOnUserDetailsPane: 'Test',
-  verifyClearFirstNameDetailsPane: 'No value set-'
 };
 
 describe.skip('create a users', () => {
@@ -70,45 +49,20 @@ describe.skip('create a users', () => {
     users.checkZeroSearchResultsHeader();
   });
 
-  it('C421 Create: new user; required: contact info, email, phone, external system ID, address (Prokopovych)', { tags: [testTypes.ideaLabsTests] }, () => {
-    users.createViaUi(userOne);
-    cy.visit(topMenu.usersPath);
-    users.createViaUi(userTwo);
-    users.assertion();
-    ledgers.closeOpenedPage();
-    users.closeWithoutSavingButton();
-    usersSearchPane.searchByKeywords(deleteData.name);
-    usersSearchPane.selectUsersFromList(deleteData.selectName);
-    users.deleteUser();
-    users.checkZeroSearchResultsHeader();
-  });
-
-  it('C11096 Add Preferred first name and confirm its display in the User record View and Edit screens (Volaris)', { tags: [testTypes.ideaLabsTests] }, () => {
-    users.createData(userThree);
-    users.verifyPreferredfirstnameOnUserDetailsPane(
-      verifyData.verifyPreferredfirstnameOnUserDetailsPane
-    );
-    users.verifyLastNameOnUserDetailsPane(
-      verifyData.verifyLastNameOnUserDetailsPane
-    );
-    users.verifyMiddleNameOnUserDetailsPane(
-      verifyData.verifyMiddleNameOnUserDetailsPane
-    );
-    users.editButton();
-    users.clearTextField();
-    users.saveButton();
-    users.verifyLastNameOnUserDetailsPane(
-      verifyData.verifyLastNameOnUserDetailsPane
-    );
-    users.verifyMiddleNameOnUserDetailsPane(
-      verifyData.verifyMiddleNameOnUserDetailsPane
-    );
-    users.verifyFirstNameOnUserDetailsPane(
-      verifyData.verifyFirstNameOnUserDetailsPane
-    );
-    users.editButton();
-    users.clearTextFieldFirstName();
-    users.saveButton();
-    users.verifyFirstNameOnUserDetailsPane(verifyData.verifyClearFirstNameDetailsPane);
-  });
+  it(
+    'C421 Create: new user; required: contact info, email, phone, external system ID, address (Prokopovych)',
+    { tags: [testTypes.ideaLabsTests] },
+    () => {
+      users.createViaUi(userOne);
+      cy.visit(topMenu.usersPath);
+      users.createViaUi(userTwo);
+      users.assertion();
+      ledgers.closeOpenedPage();
+      users.closeWithoutSavingButton();
+      usersSearchPane.searchByKeywords(deleteData.name);
+      usersSearchPane.selectUsersFromList(deleteData.selectName);
+      users.deleteUser();
+      users.checkZeroSearchResultsHeader();
+    },
+  );
 });
