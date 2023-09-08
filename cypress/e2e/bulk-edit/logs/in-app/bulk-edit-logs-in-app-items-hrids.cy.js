@@ -131,7 +131,8 @@ describe('Bulk Edit - Logs', () => {
       updatedRecordsFileName,
       errorsFromCommittingFileName,
       errorsFromMatchingFileName,
-      otherError);
+      otherError
+    );
   });
 
   it('C375281 Verify generated Logs files for Items In app -- valid and invalid records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
