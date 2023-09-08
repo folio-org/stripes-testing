@@ -56,7 +56,9 @@ describe('bulk-edit', () => {
           });
           [items[0].instanceName, items[1].instanceName].forEach(instance => {
             InventorySearchAndFilter.searchInstanceByTitle(instance);
-            InventorySearchAndFilter.selectViewHoldings();
+            InventoryInstances.selectInstance();
+            InventoryInstance.waitLoading();
+            InventoryInstance.openHoldingView();
             HoldingsRecordView.edit();
             HoldingsRecordEdit.addHoldingsNotes(holdingsNote);
             HoldingsRecordEdit.saveAndClose();
@@ -104,7 +106,9 @@ describe('bulk-edit', () => {
       cy.visit(TopMenu.inventoryPath);
       items.forEach(item => {
         InventorySearchAndFilter.searchInstanceByTitle(item.instanceName);
-        InventorySearchAndFilter.selectViewHoldings();
+        InventoryInstances.selectInstance();
+        InventoryInstance.waitLoading();
+        InventoryInstance.openHoldingView();
         InventoryInstance.verifyHoldingsTemporaryLocation(location);
         InventoryInstance.closeHoldingsView();
       });

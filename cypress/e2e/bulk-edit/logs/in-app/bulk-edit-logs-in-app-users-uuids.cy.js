@@ -10,17 +10,16 @@ import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-a
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 
-// TODO: Update test after MODBULKOPS-123 is done
-
 let user;
 let userWithoutPermissions;
 const invalidUserUUID = `invalidUserUUID_${getRandomPostfix()}`;
 const invalidAndValidUserUUIDsFileName = `invalidAndValidUserUUIDS_${getRandomPostfix()}.csv`;
 const matchedRecordsFileNameInvalidAndValid = `Matched-Records-${invalidAndValidUserUUIDsFileName}`;
-// const errorsFromMatchingFileName = `*Errors-${invalidAndValidUserUUIDsFileName}`;
+const errorsFromMatchingFileName = `*-Matching-Records-Errors-${invalidAndValidUserUUIDsFileName}`;
 const previewOfProposedChangesFileName = `*-Updates-Preview-${invalidAndValidUserUUIDsFileName}`;
 const updatedRecordsFileName = `*-Changed-Records*-${invalidAndValidUserUUIDsFileName}`;
-// const errorsFromCommittingFileName = `*Errors-*-${matchedRecordsFileNameInvalidAndValid}`;
+const errorsFromCommittingFileName = `*-Committing-changes-Errors-${invalidAndValidUserUUIDsFileName}`;
+const otherError = `*-Errors-${invalidAndValidUserUUIDsFileName}`;
 
 describe('Bulk Edit - Logs', () => {
   before('create test data', () => {
@@ -46,8 +45,13 @@ describe('Bulk Edit - Logs', () => {
   after('delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${invalidAndValidUserUUIDsFileName}`);
     Users.deleteViaApi(user.userId);
-    FileManager.deleteFileFromDownloadsByMask(invalidAndValidUserUUIDsFileName, `*${matchedRecordsFileNameInvalidAndValid}`, previewOfProposedChangesFileName, updatedRecordsFileName);
-    // FileManager.deleteFileFromDownloadsByMask(errorsFromCommittingFileName, errorsFromMatchingFileName);
+    FileManager.deleteFileFromDownloadsByMask(invalidAndValidUserUUIDsFileName, 
+      `*${matchedRecordsFileNameInvalidAndValid}`, 
+      previewOfProposedChangesFileName, 
+      updatedRecordsFileName,
+      errorsFromCommittingFileName, 
+      errorsFromMatchingFileName,
+      otherError);
   });
 
   it('C375245 Verify genetated Logs files for Users In app -- valid and invalid records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -56,7 +60,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.waitFileUploading();
 
     BulkEditActions.downloadMatchedResults();
-    // BulkEditActions.downloadErrors();
+    BulkEditActions.downloadErrors();
 
     BulkEditActions.openInAppStartBulkEditFrom();
     BulkEditActions.verifyBulkEditForm();
@@ -68,7 +72,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.waitFileUploading();
     BulkEditActions.openActions();
     BulkEditActions.downloadChangedCSV();
-    // BulkEditActions.downloadErrors();
+    BulkEditActions.downloadErrors();
 
     BulkEditSearchPane.openLogsSearch();
     BulkEditSearchPane.verifyLogsPane();
@@ -82,8 +86,8 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.downloadFileWithMatchingRecords();
     BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileNameInvalidAndValid}`, [user.userId, userWithoutPermissions.userId], 'userId', true);
 
-    // BulkEditSearchPane.downloadFileWithErrorsEncountered();
-    // BulkEditFiles.verifyMatchedResultFileContent(errorsFromMatchingFileName, [invalidUserUUID], 'firstElement', false);
+    BulkEditSearchPane.downloadFileWithErrorsEncountered();
+    BulkEditFiles.verifyMatchedResultFileContent(errorsFromMatchingFileName, [invalidUserUUID], 'firstElement', false);
 
     BulkEditSearchPane.downloadFileWithProposedChanges();
     BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName, ['staff', 'staff'], 'patronGroup', true);
@@ -91,8 +95,8 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.downloadFileWithUpdatedRecords();
     BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, ['staff'], 'patronGroup', true);
 
-    // BulkEditSearchPane.downloadFileWithCommitErrors();
-    // BulkEditFiles.verifyMatchedResultFileContent(errorsFromCommittingFileName, [user.userId], 'firstElement', false);
+    BulkEditSearchPane.downloadFileWithCommitErrors();
+    BulkEditFiles.verifyMatchedResultFileContent(errorsFromCommittingFileName, [user.userId], 'firstElement', false);
 
     cy.visit(TopMenu.usersPath);
     UsersSearchPane.searchByUsername(user.username);

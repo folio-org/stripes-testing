@@ -11,7 +11,8 @@ import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-fil
 
 let user;
 const itemBarcodesFileName = `invalidItemBarcodes_${getRandomPostfix()}.csv`;
-const errorsFromMatchingFileName = `*Errors-${itemBarcodesFileName}*`;
+const errorsFromMatchingFileName = `*-Matching-Records-Errors-${itemBarcodesFileName}*`;
+const otherError = `*-Errors-${itemBarcodesFileName}`;
 
 const invalidItemBrcode = getRandomPostfix();
 
@@ -37,7 +38,7 @@ describe('Bulk Edit - Logs', () => {
   after('delete test data', () => {
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
-    FileManager.deleteFileFromDownloadsByMask(errorsFromMatchingFileName, itemBarcodesFileName);
+    FileManager.deleteFileFromDownloadsByMask(errorsFromMatchingFileName, itemBarcodesFileName, otherError);
   });
 
   it('C375284 Verify generated Logs files for Items In app -- only invalid records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {

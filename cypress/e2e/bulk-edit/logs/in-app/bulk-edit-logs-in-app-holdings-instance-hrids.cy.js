@@ -16,16 +16,15 @@ import ServicePoints from '../../../../support/fragments/settings/tenant/service
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 
-// TODO: Update test after MODBULKOPS-123 is done
-
 let user;
 const invalidInstanceHRID = `123-${getRandomPostfix()}`;
 const validAndInvalidInstanceHRIDsFileName = `validAndInvalidInstanceHRIDS-${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `Matched-Records-${validAndInvalidInstanceHRIDsFileName}`;
-// const errorsFromMatchingFileName = `*Errors-${validAndInvalidInstanceHRIDsFileName}`;
+const errorsFromMatchingFileName = `*-Matching-Records-Errors-${validAndInvalidInstanceHRIDsFileName}`;
 const previewOfProposedChangesFileName = `*-Updates-Preview-${validAndInvalidInstanceHRIDsFileName}`;
 const updatedRecordsFileName = `*-Changed-Records*-${validAndInvalidInstanceHRIDsFileName}`;
-// const errorsFromCommittingFileName = `*Errors-*-${matchedRecordsFileName}`;
+const errorsFromCommittingFileName = `*-Committing-changes-Errors-${validAndInvalidInstanceHRIDsFileName}`;
+const otherErrors = `*-Errors-${validAndInvalidInstanceHRIDsFileName}`;
 
 const item = {
   barcode: `456-${getRandomPostfix()}`
@@ -170,8 +169,13 @@ describe('Bulk Edit - Logs', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item2.barcode);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${validAndInvalidInstanceHRIDsFileName}`);
-    FileManager.deleteFileFromDownloadsByMask(validAndInvalidInstanceHRIDsFileName, `*${matchedRecordsFileName}`, previewOfProposedChangesFileName, updatedRecordsFileName);
-    // FileManager.deleteFileFromDownloadsByMask(errorsFromCommittingFileName, errorsFromMatchingFileName);
+    FileManager.deleteFileFromDownloadsByMask(validAndInvalidInstanceHRIDsFileName, 
+      `*${matchedRecordsFileName}`, 
+      previewOfProposedChangesFileName, 
+      updatedRecordsFileName,
+      errorsFromCommittingFileName, 
+      errorsFromMatchingFileName,
+      otherErrors);
   });
 
   it('C375298 Verify generated Logs files for Holdings In app -- valid and invalid records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -181,7 +185,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.uploadFile(validAndInvalidInstanceHRIDsFileName);
     BulkEditSearchPane.waitFileUploading();
     BulkEditActions.downloadMatchedResults();
-    // BulkEditActions.downloadErrors();
+    BulkEditActions.downloadErrors();
     BulkEditActions.openInAppStartBulkEditFrom();
     BulkEditActions.clearTemporaryLocation('holdings', 0);
     BulkEditActions.addNewBulkEditFilterString();
@@ -193,7 +197,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.waitFileUploading();
     BulkEditActions.openActions();
     BulkEditActions.downloadChangedCSV();
-    // BulkEditActions.downloadErrors();
+    BulkEditActions.downloadErrors();
 
     BulkEditSearchPane.openLogsSearch();
     BulkEditSearchPane.checkHoldingsCheckbox();
@@ -206,8 +210,8 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.downloadFileWithMatchingRecords();
     BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileName}`, [instance.hrid, instance2.hrid], 'instanceHrid', true);
 
-    // BulkEditSearchPane.downloadFileWithErrorsEncountered();
-    // BulkEditFiles.verifyMatchedResultFileContent(errorsFromMatchingFileName, [invalidInstanceHRID], 'firstElement', false);
+    BulkEditSearchPane.downloadFileWithErrorsEncountered();
+    BulkEditFiles.verifyMatchedResultFileContent(errorsFromMatchingFileName, [invalidInstanceHRID], 'firstElement', false);
 
     BulkEditSearchPane.downloadFileWithProposedChanges();
     BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName, ['', ''], 'temporaryLocation', true);
@@ -217,8 +221,8 @@ describe('Bulk Edit - Logs', () => {
     BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, ['', ''], 'temporaryLocation', true);
     BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, [instance.defaultLocation.name], 'permanentLocation', true);
 
-    // BulkEditSearchPane.downloadFileWithCommitErrors();
-    // BulkEditFiles.verifyMatchedResultFileContent(errorsFromCommittingFileName, [instance.hrid], 'firstElement', false);
+    BulkEditSearchPane.downloadFileWithCommitErrors();
+    BulkEditFiles.verifyMatchedResultFileContent(errorsFromCommittingFileName, [instance.hrid], 'firstElement', false);
 
     // Go to inventory app and verify changes
     cy.visit(TopMenu.inventoryPath);

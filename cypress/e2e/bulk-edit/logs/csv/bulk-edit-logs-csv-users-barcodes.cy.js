@@ -9,24 +9,25 @@ import FileManager from '../../../../support/utils/fileManager';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 
-// TODO: Update test after MODBULKOPS-123 is done
-
 let user;
 let userWithoutPermissions;
 const newFirstName = `testNewFirstName_${getRandomPostfix()}`;
 const invalidUserBarcode = getRandomPostfix();
 const invalidAndValidUserBarcodesFileName = `invalidAndValidUserBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `Matched-Records-${invalidAndValidUserBarcodesFileName}`;
-// const errorsFromMatchingFileName = `*Errors-${invalidAndValidUserBarcodesFileName}`;
+const errorsFromMatchingFileName = `*-Matching-Records-Errors-${invalidAndValidUserBarcodesFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 const changedRecordsFileName = `*-Changed-Records-${editedFileName}`;
-// const errorsInChangedRecordsFileName = `*-Errors-${editedFileName}`;
+const otherErrors = {
+  first: `*-Errors-${invalidAndValidUserBarcodesFileName}`,
+  second: `*-Errors-${editedFileName}`
+};
 const previewOfProposedChangesFileName = {
   first: `*-Updates-Preview-${invalidAndValidUserBarcodesFileName}`,
   second: `*-Updates-Preview-${editedFileName}`
 };
 const updatedRecordsFileName = `*-Changed-Records*-${invalidAndValidUserBarcodesFileName}`;
-// const errorsFromCommittingFileName = `*Errors-*-${matchedRecordsFileName}`;
+const errorsFromCommittingFileName = `*-Committing-changes-Errors-${invalidAndValidUserBarcodesFileName}`;
 
 describe('Bulk Edit - Logs', () => {
   before('create test data', () => {
@@ -55,8 +56,17 @@ describe('Bulk Edit - Logs', () => {
     FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
     Users.deleteViaApi(user.userId);
     Users.deleteViaApi(userWithoutPermissions.userId);
-    FileManager.deleteFileFromDownloadsByMask(invalidAndValidUserBarcodesFileName, `*${matchedRecordsFileName}`, changedRecordsFileName, previewOfProposedChangesFileName.first, previewOfProposedChangesFileName.second, updatedRecordsFileName);
-    // FileManager.deleteFileFromDownloadsByMask(errorsFromCommittingFileName, errorsInChangedRecordsFileName, errorsFromMatchingFileName);
+    FileManager.deleteFileFromDownloadsByMask(
+      invalidAndValidUserBarcodesFileName,
+      `*${matchedRecordsFileName}`,
+      changedRecordsFileName,
+      previewOfProposedChangesFileName.first,
+      previewOfProposedChangesFileName.second,
+      updatedRecordsFileName,
+      errorsFromCommittingFileName,
+      errorsFromMatchingFileName,
+      otherErrors.first,
+      otherErrors.second);
   });
 
   it('C375215 Verify generated Logs files for Users CSV - with errors (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -65,7 +75,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.waitFileUploading();
 
     BulkEditActions.downloadMatchedResults();
-    // BulkEditActions.downloadErrors();
+    BulkEditActions.downloadErrors();
 
     BulkEditActions.prepareValidBulkEditFile(matchedRecordsFileName, editedFileName, user.firstName, newFirstName);
 
@@ -78,7 +88,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.verifyChangedResults(newFirstName);
     BulkEditActions.openActions();
     BulkEditActions.downloadChangedCSV();
-    // BulkEditActions.downloadErrors();
+    BulkEditActions.downloadErrors();
 
     BulkEditSearchPane.openLogsSearch();
     BulkEditSearchPane.verifyLogsPane();
@@ -92,8 +102,8 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.downloadFileWithMatchingRecords();
     BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileName}`, [user.barcode, userWithoutPermissions.barcode], 'userBarcode', true);
 
-    // BulkEditSearchPane.downloadFileWithErrorsEncountered();
-    // BulkEditFiles.verifyMatchedResultFileContent(errorsFromMatchingFileName, [invalidUserBarcode], 'firstElement', false);
+    BulkEditSearchPane.downloadFileWithErrorsEncountered();
+    BulkEditFiles.verifyMatchedResultFileContent(errorsFromMatchingFileName, [invalidUserBarcode], 'firstElement', false);
 
     BulkEditSearchPane.downloadFileWithProposedChanges();
     BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, [newFirstName, userWithoutPermissions.firstName], 'firstName', true);
@@ -101,7 +111,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.downloadFileWithUpdatedRecords();
     BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, [newFirstName, userWithoutPermissions.firstName], 'firstName', true);
 
-    // BulkEditSearchPane.downloadFileWithCommitErrors();
-    // BulkEditFiles.verifyMatchedResultFileContent(errorsFromCommittingFileName, [userWithoutPermissions.barcode], 'firstElement', false);
+    BulkEditSearchPane.downloadFileWithCommitErrors();
+    BulkEditFiles.verifyMatchedResultFileContent(errorsFromCommittingFileName, [userWithoutPermissions.barcode], 'firstElement', false);
   });
 });
