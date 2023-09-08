@@ -12,7 +12,7 @@ import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-a
 let user;
 const invalidUsername = `username${getRandomPostfix()}`;
 const invalidUsernamesFileName = `invalidUserUUIDs_${getRandomPostfix()}.csv`;
-const errorsFromMatchingFileName = `*-Committing-changes-Errors-${invalidUsernamesFileName}*`;
+const errorsFromMatchingFileName = `*-Matching-Records-Errors-${invalidUsernamesFileName}*`;
 const otherError = `*-Errors-${invalidUsernamesFileName}`;
 
 describe('Bulk Edit - Logs', () => {
