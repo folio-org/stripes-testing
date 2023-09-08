@@ -10,7 +10,7 @@ import NewNoticePolicyTemplate from '../../../../support/fragments/circulation/n
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import NoticePolicyTemplate from '../../../../support/fragments/circulation/notice-policy-template';
 
-describe('Permissions Tags', () => {
+describe('Patron Notices', () => {
   let userData;
   let servicePointId;
   const testData = {};
