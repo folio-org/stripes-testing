@@ -61,7 +61,6 @@ describe('Permissions Tags', () => {
       );
 
       UserEdit.openUserEdit();
-      UserEdit.changeMiddleName(userData.middleName);
       UserEdit.changePreferredFirstName('');
       UserEdit.saveAndClose();
       UsersSearchPane.waitLoading();
