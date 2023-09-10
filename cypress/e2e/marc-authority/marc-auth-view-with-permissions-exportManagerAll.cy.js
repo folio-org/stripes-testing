@@ -17,10 +17,13 @@ describe('MARC -> MARC Authority', () => {
       Permissions.uiInventoryViewCreateEditInstances.gui,
       Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       Permissions.exportManagerAll.gui,
-    ]).then(createdUserProperties => {
+    ]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
 
-      cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.marcAuthorities, waiter: MarcAuthorities.waitLoading });
+      cy.login(testData.userProperties.username, testData.userProperties.password, {
+        path: TopMenu.marcAuthorities,
+        waiter: MarcAuthorities.waitLoading,
+      });
     });
   });
 
@@ -28,7 +31,11 @@ describe('MARC -> MARC Authority', () => {
     Users.deleteViaApi(testData.userProperties.userId);
   });
 
-  it('C375134 User with "Export manager: All" permission can view report options for "MARC authority" records (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
-    MarcAuthorities.clickActionsAndReportsButtons();
-  });
+  it(
+    'C375134 User with "Export manager: All" permission can view report options for "MARC authority" records (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      MarcAuthorities.clickActionsAndReportsButtons();
+    },
+  );
 });

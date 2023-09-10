@@ -2,10 +2,9 @@ import uuid from 'uuid';
 import getRandomPostfix from '../../utils/stringTools';
 import { Button, Modal, including } from '../../../../interactors';
 
-
 const defaultNoticeTemplateBody = {
   active: true,
-  category: "Loan",
+  category: 'Loan',
   description: 'Notice_policy_template_description',
   id: uuid(),
   localizedTemplates: {
@@ -30,30 +29,37 @@ export default {
     cy.do(Button('Close').click());
   },
   createViaApi(body = defaultNoticeTemplateBody) {
-    return cy.okapiRequest({ 
-      method: 'POST',
-      path: 'templates',
-      body,
-      searchParams:  {
-        query: '(cq l.allRecords=1) and category=""',
-        limit: 1000,
-      } }).then(({ res }) => {
-      return res;
-    });
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'templates',
+        body,
+        searchParams: {
+          query: '(cq l.allRecords=1) and category=""',
+          limit: 1000,
+        },
+      })
+      .then(({ res }) => {
+        return res;
+      });
   },
   getViaApi(query) {
-    return cy.okapiRequest({
-      path: 'templates',
-      searchParams: query
-    }).then((res) => {
-      return res.body.templates[0].id;
-    });
+    return cy
+      .okapiRequest({
+        path: 'templates',
+        searchParams: query,
+      })
+      .then((res) => {
+        return res.body.templates[0].id;
+      });
   },
   deleteViaApi(templateId) {
-    return cy.okapiRequest({ method: 'DELETE',
+    return cy.okapiRequest({
+      method: 'DELETE',
       path: `templates/${templateId}`,
       searchParams: {
-        query: '(cql.allRecords=1) and category=""'
-      } });
+        query: '(cql.allRecords=1) and category=""',
+      },
+    });
   },
 };

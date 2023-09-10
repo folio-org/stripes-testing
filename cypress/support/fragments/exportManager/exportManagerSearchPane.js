@@ -26,17 +26,19 @@ const statusAccordion = Accordion('Status');
 const startDateTextfield = TextField({ name: 'startDate' });
 const endDateTextfield = TextField({ name: 'endDate' });
 const applyButton = Button('Apply');
-const getSearchResult = (row = 0, col = 0) => MultiColumnListCell({ 'row': row, 'columnIndex': col });
+const getSearchResult = (row = 0, col = 0) => MultiColumnListCell({ row, columnIndex: col });
 
 // Cypress clicks before the UI loads, use when there is no way to attach waiter to element
-const waitClick = () => { cy.wait(1000); };
+const waitClick = () => {
+  cy.wait(1000);
+};
 
 export default {
   getSearchResult,
   waitLoading() {
     cy.expect([
       Pane('Export jobs').exists(),
-      HTML('Choose a filter or enter a search query to show results.').exists()
+      HTML('Choose a filter or enter a search query to show results.').exists(),
     ]);
   },
 
@@ -45,25 +47,26 @@ export default {
   },
   verifyResultAndClick(content) {
     cy.expect(MultiColumnListCell(including(content)).exists());
-    cy.do(MultiColumnListRow({ index:0 }).click());
+    cy.do(MultiColumnListRow({ index: 0 }).click());
   },
   selectJobByIndex(content, index) {
-    cy.get('div[class*=mclRow-]').contains(content).then(element => {
-      element.prevObject[index].click();
-    });
+    cy.get('div[class*=mclRow-]')
+      .contains(content)
+      .then((element) => {
+        element.prevObject[index].click();
+      });
   },
 
   verifyJobAmount(text, amount) {
-    cy.get('div[class*=mclRow-]').contains(text).then(element => {
-      expect(element.prevObject.length).to.eq(amount);
-    });
+    cy.get('div[class*=mclRow-]')
+      .contains(text)
+      .then((element) => {
+        expect(element.prevObject.length).to.eq(amount);
+      });
   },
 
   searchById(id) {
-    cy.do([
-      TextField().fillIn(id),
-      searchButton.click(),
-    ]);
+    cy.do([TextField().fillIn(id), searchButton.click()]);
   },
 
   selectSearchResultItem(indexRow = 0) {
@@ -72,7 +75,11 @@ export default {
 
   selectJobByIntegrationInList(integrationName) {
     cy.wait(6000);
-    cy.do(MultiColumnList({ id: 'export-edi-jobs-list' }).find(MultiColumnListCell(integrationName)).click());
+    cy.do(
+      MultiColumnList({ id: 'export-edi-jobs-list' })
+        .find(MultiColumnListCell(integrationName))
+        .click(),
+    );
   },
 
   closeExportJobPane() {
@@ -150,7 +157,11 @@ export default {
   },
 
   resetStartTime() {
-    cy.do(startTimeAccordion.find(Button({ ariaLabel: 'Clear selected filters for "[object Object]"' })).click());
+    cy.do(
+      startTimeAccordion
+        .find(Button({ ariaLabel: 'Clear selected filters for "[object Object]"' }))
+        .click(),
+    );
   },
 
   enterEndTime(fromDate, toDate) {
@@ -164,15 +175,16 @@ export default {
   },
 
   resetEndTime() {
-    cy.do(endTimeAccordion.find(Button({ ariaLabel: 'Clear selected filters for "[object Object]"' })).click());
+    cy.do(
+      endTimeAccordion
+        .find(Button({ ariaLabel: 'Clear selected filters for "[object Object]"' }))
+        .click(),
+    );
   },
 
   searchBySystemNo() {
     waitClick();
-    cy.do([
-      systemAccordion.clickHeader(),
-      systemAccordion.find(Checkbox({ label: 'No' })).click(),
-    ]);
+    cy.do([systemAccordion.clickHeader(), systemAccordion.find(Checkbox({ label: 'No' })).click()]);
   },
 
   searchBySourceUserName(username) {
@@ -186,7 +198,11 @@ export default {
 
   searchByAuthorityControl() {
     waitClick();
-    cy.do(jobTypeAccordion.find(Checkbox({ id: 'clickable-filter-type-auth-headings-updates' })).click());
+    cy.do(
+      jobTypeAccordion
+        .find(Checkbox({ id: 'clickable-filter-type-auth-headings-updates' }))
+        .click(),
+    );
   },
 
   downloadLastCreatedJob(jobId) {
@@ -230,6 +246,6 @@ export default {
   },
 
   verifyNoPermissionWarning() {
-    cy.expect(HTML('You don\'t have permission to view this app/record').exists());
+    cy.expect(HTML("You don't have permission to view this app/record").exists());
   },
 };

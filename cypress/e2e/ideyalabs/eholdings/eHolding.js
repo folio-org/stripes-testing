@@ -33,7 +33,7 @@ const description = TextArea({ name: 'description' });
 const SaveAndClose = Button('Save & close');
 const availableProxies = ['Inherited - None', 'FOLIO-Bugfest', 'EZProxy'];
 const SearchButton = Section({ id: 'providerShowProviderList' }).find(
-  Button({ ariaLabel: 'Toggle filters pane' })
+  Button({ ariaLabel: 'Toggle filters pane' }),
 );
 const iconSearch = Button({ icon: 'search' });
 const proxySelect = Select({ id: 'eholdings-proxy-id' });
@@ -45,7 +45,7 @@ const accordionClick = Button({
   id: 'accordion-toggle-button-providerShowProviderList',
 });
 const patronRadioButton = FieldSet('Show titles in package to patrons').find(
-  RadioButton({ checked: false })
+  RadioButton({ checked: false }),
 );
 const tagsClick = Button({ id: 'accordion-toggle-button-providerShowTags' });
 const providerClick = Button({
@@ -188,12 +188,14 @@ export default {
     ]);
   },
 
-  packageSearch() {
-    cy.visit(topMenu.eholdingsPath);
-    eHoldingsSearch.switchToPackages();
-    eHoldingsProvidersSearch.byProvider('VLeBooks');
-    eholdingsPackagesSearch.bySelectionStatus('Selected');
-  },
+  // eslint-disable-next-line spaced-comment
+  //packageSearch() {
+  //  cy.visit(topMenu.eholdingsPath);
+  //  eHoldingsSearch.switchToPackages();
+  //  eHoldingsProvidersSearch.byProvider('VLeBooks');
+  //  eholdingsPackagesSearch.bySelectionStatus('Selected');
+  // eslint-disable-next-line spaced-comment
+  //},
 
   packageButton: () => {
     cy.expect(SearchButton.exists());
@@ -210,11 +212,7 @@ export default {
   },
 
   providerToken() {
-    cy.do(
-      TextArea({ name: 'providerTokenValue' }).fillIn(
-        `Test${randomFourDigitNumber()}`
-      )
-    );
+    cy.do(TextArea({ name: 'providerTokenValue' }).fillIn(`Test${randomFourDigitNumber()}`));
     cy.expect(SaveAndClose.exists());
     cy.do(SaveAndClose.click());
   },

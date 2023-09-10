@@ -19,7 +19,6 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 
-
 describe('Check Out - Actions ', () => {
   const userData = {
     group: `staff${getRandomPostfix()}`,
@@ -34,7 +33,10 @@ describe('Check Out - Actions ', () => {
     instanceTitle: `Instance ${getRandomPostfix()}`,
   };
   let defaultLocation;
-  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation('autotest basic checkin', uuid());
+  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation(
+    'autotest basic checkin',
+    uuid(),
+  );
 
   before('Create New Item and New User', () => {
     cy.getAdminToken()
@@ -92,7 +94,7 @@ describe('Check Out - Actions ', () => {
         permissions.inventoryAll.gui,
         permissions.checkoutCirculatingItems.gui,
       ],
-      userData.group
+      userData.group,
     )
       .then((userProperties) => {
         userData.personal.lastname = userProperties.username;
@@ -126,25 +128,29 @@ describe('Check Out - Actions ', () => {
       defaultLocation.institutionId,
       defaultLocation.campusId,
       defaultLocation.libraryId,
-      defaultLocation.id
+      defaultLocation.id,
     );
     ServicePoints.deleteViaApi(servicePoint.id);
   });
 
-  it('C356772 An active user with barcode can Check out item (vega)', { tags: [TestTypes.smoke, devTeams.vega] }, () => {
-    OtherSettings.selectPatronIdsForCheckoutScanning(['Username'], '3');
-    cy.visit(TopMenu.usersPath);
-    Users.createViaUi(testActiveUser).then((id) => {
-      testActiveUser.id = id;
-    });
-    Users.checkIsUserCreated(testActiveUser);
-    cy.visit(TopMenu.checkOutPath);
-    Checkout.waitLoading();
-    // without this waiter, the user will not be found by username
-    cy.wait(4000);
-    CheckOutActions.checkOutUser(testActiveUser.barcode, testActiveUser.username);
-    CheckOutActions.checkUserInfo(testActiveUser, testActiveUser.patronGroup);
-    CheckOutActions.checkOutItem(itemData.barcode);
-    CheckOutActions.checkItemInfo(itemData.barcode, itemData.instanceTitle);
-  });
+  it(
+    'C356772 An active user with barcode can Check out item (vega)',
+    { tags: [TestTypes.smoke, devTeams.vega] },
+    () => {
+      OtherSettings.selectPatronIdsForCheckoutScanning(['Username'], '3');
+      cy.visit(TopMenu.usersPath);
+      Users.createViaUi(testActiveUser).then((id) => {
+        testActiveUser.id = id;
+      });
+      Users.checkIsUserCreated(testActiveUser);
+      cy.visit(TopMenu.checkOutPath);
+      Checkout.waitLoading();
+      // without this waiter, the user will not be found by username
+      cy.wait(4000);
+      CheckOutActions.checkOutUser(testActiveUser.barcode, testActiveUser.username);
+      CheckOutActions.checkUserInfo(testActiveUser, testActiveUser.patronGroup);
+      CheckOutActions.checkOutItem(itemData.barcode);
+      CheckOutActions.checkItemInfo(itemData.barcode, itemData.instanceTitle);
+    },
+  );
 });

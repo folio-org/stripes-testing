@@ -1,21 +1,20 @@
 # Nightmare for FOLIO UI
 
-* [Develop tests for a UI module](#develop-tests-for-a-ui-module)
-* [The test context object](#the-test-context-object)
-* [helpers](#helpers)
-* [namegen (helpers.js)](#namegen-helpersjs)
-* [openApp (helpers.js)](#openapp-helpersjs)
-* [Writing testable code](#writing-testable-code)
-  * [Provide unique identifiers on UI elements](#provide-unique-identifiers-on-ui-Elements)
-* [Writing robust tests](#writing-robust-tests)
-  * [Avoid timers](#avoid-timers)
-  * [Do not manipulate the DOM in `evaluate`](#do-not-manipulate-the-dom-in-evaluate)
-  * [Do not use XPath](#do-not-use-xpath)
-  * [Extract text from the DOM using .evaluate()](#extract-text-from-the-dom-using-evaluate)
-  * [Waiting for text in the DOM](#waiting-for-text-in-the-dom)
-  * [Be careful with barcodes](#be-careful-with-barcodes)
-  * [Be careful with `<MultiSelection>`](#be-careful-with-multiselection)
-
+- [Develop tests for a UI module](#develop-tests-for-a-ui-module)
+- [The test context object](#the-test-context-object)
+- [helpers](#helpers)
+- [namegen (helpers.js)](#namegen-helpersjs)
+- [openApp (helpers.js)](#openapp-helpersjs)
+- [Writing testable code](#writing-testable-code)
+  - [Provide unique identifiers on UI elements](#provide-unique-identifiers-on-ui-Elements)
+- [Writing robust tests](#writing-robust-tests)
+  - [Avoid timers](#avoid-timers)
+  - [Do not manipulate the DOM in `evaluate`](#do-not-manipulate-the-dom-in-evaluate)
+  - [Do not use XPath](#do-not-use-xpath)
+  - [Extract text from the DOM using .evaluate()](#extract-text-from-the-dom-using-evaluate)
+  - [Waiting for text in the DOM](#waiting-for-text-in-the-dom)
+  - [Be careful with barcodes](#be-careful-with-barcodes)
+  - [Be careful with `<MultiSelection>`](#be-careful-with-multiselection)
 
 ## Develop tests for a UI module
 
@@ -31,26 +30,29 @@ This is an example of a minimal test that logs in and evaluates if a module
 named 'app' opens:
 
 ```js
-module.exports.test = function(uiTestCtx) {
-  describe('Module test: app:minimal', function() {
-    const { config, helpers: { login, openApp, logout }, meta: { testVersion } } = uiTestCtx;
+module.exports.test = function (uiTestCtx) {
+  describe('Module test: app:minimal', function () {
+    const {
+      config,
+      helpers: { login, openApp, logout },
+      meta: { testVersion },
+    } = uiTestCtx;
     const nightmare = new Nightmare(config.nightmare);
 
     describe('Login > Open module "App" > Logout', () => {
-      before( done => {
-        login(nightmare, config, done);  // logs in with the default admin credentials
+      before((done) => {
+        login(nightmare, config, done); // logs in with the default admin credentials
       });
 
-      after( done => {
+      after((done) => {
         logout(nightmare, config, done);
       });
 
-      it('should open module "App" and find version tag ', done => {
+      it('should open module "App" and find version tag ', (done) => {
         nightmare
-        .use(openApp(nightmare, config, done, 'app', testVersion))
-        .then(result => result )
+          .use(openApp(nightmare, config, done, 'app', testVersion))
+          .then((result) => result);
       });
-
     });
   });
 };
@@ -62,10 +64,10 @@ This script might be invoked from `test/ui-testig/test.js`:
 const minimal = require('./minimal.js');
 const extensive = require('./extensive.js');
 
-module.exports.test = function(uiTestCtx) {
+module.exports.test = function (uiTestCtx) {
   minimal.test(uiTestCtx);
   extensive.test(uiTestCtx);
-}
+};
 ```
 
 ## The test context object
@@ -185,24 +187,26 @@ Examples of identifiers in a UI:
 and usage in a test script:
 
 ```js
-it('should show error when scanning item before patron card', done => {
+it('should show error when scanning item before patron card', (done) => {
   nightmare
-  .wait('#clickable-checkout-module')
-  .click('#clickable-checkout-module')
-  .wait('#input-item-barcode')
-  .insert('#input-item-barcode',"some-item-barcode")
-  .wait('#clickable-add-item')
-  .click('#clickable-add-item')
-  .wait('#section-patron div[class^="textfieldError"]')
-  .evaluate(function() {
-    var errorText = document.querySelector('#section-patron div[class^="textfieldError"]').innerText;
-    if (!errorText.startsWith("Please fill")) {
-      throw new Error("Error message not found for item entered before patron found");
-    }
-  })
-  .then(done)
-  .catch(done)
-})
+    .wait('#clickable-checkout-module')
+    .click('#clickable-checkout-module')
+    .wait('#input-item-barcode')
+    .insert('#input-item-barcode', 'some-item-barcode')
+    .wait('#clickable-add-item')
+    .click('#clickable-add-item')
+    .wait('#section-patron div[class^="textfieldError"]')
+    .evaluate(function () {
+      var errorText = document.querySelector(
+        '#section-patron div[class^="textfieldError"]',
+      ).innerText;
+      if (!errorText.startsWith('Please fill')) {
+        throw new Error('Error message not found for item entered before patron found');
+      }
+    })
+    .then(done)
+    .catch(done);
+});
 ```
 
 ## Writing robust tests
@@ -244,13 +248,11 @@ the value back to Nightmare for use in an `:nth-of-type(${theIndex})` selector.
 Just remember that JavaScript uses 0-based arrays and CSS uses 1-based arrays
 so you have to add one to the return value to find the right element.
 
-
 ### Do not use XPath
 
 Along these lines, be careful with XPath queries. Use them to extract text
 from the DOM but not to interact with it, i.e. avoid helper functions like
 `xclick` as they appear to have harmful side-effects.
-
 
 ### Extract text from the DOM using .evaluate()
 
@@ -280,8 +282,7 @@ evaluate((pn) => {
     .wait(`#ModuleContainer div.hasEntries a:nth-of-type(${entryIndex})`)
     .click(`#ModuleContainer div.hasEntries a:nth-of-type(${entryIndex})`)
     ...
-````
-
+```
 
 ### Waiting for text in the DOM
 
@@ -290,11 +291,11 @@ in much the same way you can extract text by passing a function to `.evaluate()`
 
 ```js
 const contentWait = (string) => {
-  return !!(Array.from(
-    document.querySelectorAll('#list-inventory div[role="row"] > a > div')
-  ).find(e => `${string}` === e.textContent));
+  return !!Array.from(document.querySelectorAll('#list-inventory div[role="row"] > a > div')).find(
+    (e) => `${string}` === e.textContent,
+  );
 };
-````
+```
 
 ### Be careful with barcodes
 
@@ -303,13 +304,14 @@ be treated like strings. Use string interpolation to force string context:
 
 ```js
 if (e.textContent === `${fbarcode}`)
-````
+```
 
 ### Be careful with `<MultiSelection>`
 
 [`<MultiSelection>`](https://github.com/folio-org/stripes-components/blob/master/lib/MultiSelection/)
 is basically a `<select multiple>`, except it's a _really nice_
 `<select multiple>`. It renders HTML roughly like this:
+
 ```
 <div role="listbox">
   <ul>
@@ -320,12 +322,14 @@ is basically a `<select multiple>`, except it's a _really nice_
   </ul>
 </div>
 ```
+
 There are two important things to know about `<MultiSelection>`:
+
 1. It renders the `<div>` containing its list of options to different parent
-elements depending on the width of the screen: on a narrow screen <= 800px,
-it uses a portal and renders them under an `#OverlayContainer`; on a wider
-screen it renders them inline in the DOM under the component containing the
-`<MultiSelection>` element.
+   elements depending on the width of the screen: on a narrow screen <= 800px,
+   it uses a portal and renders them under an `#OverlayContainer`; on a wider
+   screen it renders them inline in the DOM under the component containing the
+   `<MultiSelection>` element.
 2. That `<div>` is hidden by default by way of the `hidden` attribute.
 
 And there is one important thing to know about Nightmare in this context:

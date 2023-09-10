@@ -25,38 +25,37 @@ describe.skip('Finance: Fiscal Year Rollover', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
-  it('C359604 Make more than one preview for one ledger and same fiscal year with ""Test rollover"", check test rollover results(Thunderjet)', { tags: [testTypes.ideaLabsTests] }, () => {
-    cy.visit(topMenu.financePath);
-    financeHelper.searchByName(rollOverData.ledgerName);
-    financeHelper.selectFirstLedger(rollOverData.selectLedger);
-    ledgers.clickonViewledgerDetails();
-    ledgers.rollover();
-    ledgers.selectFirstCheckBox(rollOverData.fiscalYearDate);
-    ledgers.clickonViewledgerDetails();
-    ledgers.rolloverLogs();
-    ledgers.exportRollover(rollOverData.rollOverDate);
-    ledgers.closeOpenedPage();
-    ledgers.clickOnFundTab();
-    invoices.searchByParameter(
-      rollOverData.searchByParameter,
-      rollOverData.searchByName
-    );
-    financeHelper.selectFirstFundRecord(rollOverData.selectFundRecord);
-    ledgers.clickOnFiscalyearTab();
-    ledgers.clickOnLedgerTab();
-    financeHelper.searchByName(rollOverData.searchledger);
-    financeHelper.selectFirstLedger(rollOverData.selectLedgerName);
-    ledgers.clickonViewledgerDetails();
-    ledgers.rollover();
-    ledgers.fillInRolloverInfo(rollOverData.fillInRolloverInfo);
-    ledgers.clickonViewledgerDetails();
-    ledgers.selectFund();
-    invoices.selectCurrentBudgerFromthelist(rollOverData.currentBudeget);
-    ledgers.closeOpenedPage();
-    invoices.viewDetailsPlannedBudgets(rollOverData.plannedBudget);
-    invoices.clickOnViewTransactionsHyperText();
-    invoices.transactionListDetailsResultsFromEmbarance(
-      rollOverData.selectEmbranceResult
-    );
-  });
+  it(
+    'C359604 Make more than one preview for one ledger and same fiscal year with ""Test rollover"", check test rollover results(Thunderjet)',
+    { tags: [testTypes.ideaLabsTests] },
+    () => {
+      cy.visit(topMenu.financePath);
+      financeHelper.searchByName(rollOverData.ledgerName);
+      financeHelper.selectFirstLedger(rollOverData.selectLedger);
+      ledgers.clickonViewledgerDetails();
+      ledgers.rollover();
+      ledgers.selectFirstCheckBox(rollOverData.fiscalYearDate);
+      ledgers.clickonViewledgerDetails();
+      ledgers.rolloverLogs();
+      ledgers.exportRollover(rollOverData.rollOverDate);
+      ledgers.closeOpenedPage();
+      ledgers.clickOnFundTab();
+      invoices.searchByParameter(rollOverData.searchByParameter, rollOverData.searchByName);
+      financeHelper.selectFirstFundRecord(rollOverData.selectFundRecord);
+      ledgers.clickOnFiscalyearTab();
+      ledgers.clickOnLedgerTab();
+      financeHelper.searchByName(rollOverData.searchledger);
+      financeHelper.selectFirstLedger(rollOverData.selectLedgerName);
+      ledgers.clickonViewledgerDetails();
+      ledgers.rollover();
+      ledgers.fillInRolloverInfo(rollOverData.fillInRolloverInfo);
+      ledgers.clickonViewledgerDetails();
+      ledgers.selectFund();
+      invoices.selectCurrentBudgerFromthelist(rollOverData.currentBudeget);
+      ledgers.closeOpenedPage();
+      invoices.viewDetailsPlannedBudgets(rollOverData.plannedBudget);
+      invoices.clickOnViewTransactionsHyperText();
+      invoices.transactionListDetailsResultsFromEmbarance(rollOverData.selectEmbranceResult);
+    },
+  );
 });

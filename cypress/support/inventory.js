@@ -5,6 +5,6 @@ Cypress.Commands.add('searchMARC', (name) => {
     // NOTE: aria-label has trailing space
     TextField('Search ').fillIn(name),
     Button('Source').click(),
-    Checkbox('MARC').click()
+    Checkbox('MARC').click(),
   ]);
 });

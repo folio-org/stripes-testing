@@ -1,7 +1,7 @@
 import { Button, Modal } from '../../../../../interactors';
 
 export default {
-  deleteMaterialType:() => {
+  deleteMaterialType: () => {
     cy.do(Modal('Delete Material type').find(Button('Delete')).click());
   },
 };

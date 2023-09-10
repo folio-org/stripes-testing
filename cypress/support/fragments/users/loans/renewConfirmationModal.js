@@ -3,11 +3,11 @@ import { Button, Modal } from '../../../../../interactors';
 const rootModal = Modal({ id: 'bulk-renewal-modal' });
 
 export default {
-  waitLoading:() => {
+  waitLoading: () => {
     cy.expect(rootModal.exists());
   },
 
-  confirmRenewOverrideItem:() => {
+  confirmRenewOverrideItem: () => {
     cy.do(Modal('Renew Confirmation').find(Button('Override')).click());
   },
 };

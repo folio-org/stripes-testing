@@ -35,8 +35,8 @@ describe('Orders: Receiving and Check-in', () => {
         name: 'TestAccout1',
         notes: '',
         paymentMethod: 'Cash',
-      }
-    ]
+      },
+    ],
   };
   const firstPiece = {
     copyNumber: Helper.getRandomBarcode(),
@@ -53,23 +53,21 @@ describe('Orders: Receiving and Check-in', () => {
   before(() => {
     cy.getAdminToken();
 
-    ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' })
-      .then((servicePoints) => {
-        effectiveLocationServicePoint = servicePoints[0];
-        NewLocation.createViaApi(NewLocation.getDefaultLocation(effectiveLocationServicePoint.id))
-          .then((locationResponse) => {
-            location = locationResponse;
-            Organizations.createOrganizationViaApi(organization)
-              .then(organizationsResponse => {
-                organization.id = organizationsResponse;
-                order.vendor = organizationsResponse;
-              });
-            cy.createOrderApi(order)
-              .then((response) => {
-                orderNumber = response.body.poNumber;
-              });
-          });
+    ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
+      effectiveLocationServicePoint = servicePoints[0];
+      NewLocation.createViaApi(
+        NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
+      ).then((locationResponse) => {
+        location = locationResponse;
+        Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
+          organization.id = organizationsResponse;
+          order.vendor = organizationsResponse;
+        });
+        cy.createOrderApi(order).then((response) => {
+          orderNumber = response.body.poNumber;
+        });
       });
+    });
 
     cy.createTempUser([
       permissions.uiInventoryViewInstances.gui,
@@ -77,31 +75,47 @@ describe('Orders: Receiving and Check-in', () => {
       permissions.uiOrdersCreate.gui,
       permissions.uiOrdersView.gui,
       permissions.uiReceivingViewEditCreate.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
       });
+    });
   });
 
   after(() => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C739 Serials receiving - "Receiving workflow" and create items in inventory from receiving area (items for receiving includes "Order closed" statuses) (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList();
-    Orders.createPOLineViaActions();
-    OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
-    OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId, '2');
-    OrderLines.backToEditingOrder();
-    Orders.openOrder();
-    OrderLines.selectPOLInOrder(0);
-    OrderLines.receiveOrderLineViaActions();
-    Receiving.selectLinkFromResultsList();
-    Receiving.addPiece(firstPiece.caption, firstPiece.copyNumber, firstPiece.enumeration, firstPiece.chronology);
-    Receiving.selectPiece(firstPiece.caption);
-    Receiving.selectConnectedInEditPiece();
-    ItemRecordView.checkStatus(ITEM_STATUS_NAMES.ON_ORDER);
-  });
+  it(
+    'C739 Serials receiving - "Receiving workflow" and create items in inventory from receiving area (items for receiving includes "Order closed" statuses) (thunderjet)',
+    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    () => {
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList();
+      Orders.createPOLineViaActions();
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
+      OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
+        `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
+        'Purchase',
+        location.institutionId,
+        '2',
+      );
+      OrderLines.backToEditingOrder();
+      Orders.openOrder();
+      OrderLines.selectPOLInOrder(0);
+      OrderLines.receiveOrderLineViaActions();
+      Receiving.selectLinkFromResultsList();
+      Receiving.addPiece(
+        firstPiece.caption,
+        firstPiece.copyNumber,
+        firstPiece.enumeration,
+        firstPiece.chronology,
+      );
+      Receiving.selectPiece(firstPiece.caption);
+      Receiving.selectConnectedInEditPiece();
+      ItemRecordView.checkStatus(ITEM_STATUS_NAMES.ON_ORDER);
+    },
+  );
 });

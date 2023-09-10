@@ -68,7 +68,7 @@ describe.skip('ui-invoices: Invoice creation', () => {
         orderTwoPOLine.price,
         orderTwoPOLine.fundID,
         orderTwoPOLine.valueOne,
-        orderTwoPOLine.valueTwo
+        orderTwoPOLine.valueTwo,
       );
       invoice.purchaseAnotherOrder();
       cy.visit(topMenu.invoicesPath);
@@ -91,6 +91,6 @@ describe.skip('ui-invoices: Invoice creation', () => {
       invoice.addFundDistributionToLine4(fundDistribution.fundIDTwo);
       invoice.adjustments();
       invoice.approveInvoice(); // Approve API failure
-    }
+    },
   );
 });

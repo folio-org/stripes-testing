@@ -8,9 +8,13 @@ describe('data-export', () => {
     cy.loginAsAdmin({ path: TopMenu.dataExportPath, waiter: ExportFileHelper.waitLoading });
   });
 
-  it('C9292 Negative test - invalid file extension (firebird)', { tags: [TestTypes.extendedPath, devTeams.firebird] }, () => {
-    ExportFileHelper.uploadFile('example.json');
-    ExportFileHelper.verifyWarningWithInvalidFileExtension();
-    ExportFileHelper.clickCancelButton();
-  });
+  it(
+    'C9292 Negative test - invalid file extension (firebird)',
+    { tags: [TestTypes.extendedPath, devTeams.firebird] },
+    () => {
+      ExportFileHelper.uploadFile('example.json');
+      ExportFileHelper.verifyWarningWithInvalidFileExtension();
+      ExportFileHelper.clickCancelButton();
+    },
+  );
 });

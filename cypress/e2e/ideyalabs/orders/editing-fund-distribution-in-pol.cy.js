@@ -20,16 +20,13 @@ describe.skip('Orders', () => {
     { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(topMenu.orderLinesPath);
-      invoice.searchByParameter(
-        searchInvoiceNumber.parameter,
-        searchInvoiceNumber.value
-      );
+      invoice.searchByParameter(searchInvoiceNumber.parameter, searchInvoiceNumber.value);
       invoice.orderLinesResults();
       invoice.orderList(searchInvoiceNumber.value);
       invoice.PODetails(fundID); // API getting failed while changing Fund ID in bugfest ENV
       invoice.clickOnViewTransactions();
       cy.visit(topMenu.invoicesPath);
       invoice.verifyTransactionsPane();
-    }
+    },
   );
 });

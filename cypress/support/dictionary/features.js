@@ -1,7 +1,7 @@
 export default {
   quickMarcEditor: 'quickMarcEditor',
   notes: 'notes',
-  eHoldings:'eHoldings',
+  eHoldings: 'eHoldings',
   tags: 'tags',
   holdingsRecord: 'holdingsRecord',
   instanceRecord: 'instanceRecord',
@@ -11,5 +11,5 @@ export default {
   // users
   patronBlocks: 'Patron blocks',
   waiveReasons: 'Waive reasons',
-  feeFine: 'Fee/fine'
+  feeFine: 'Fee/fine',
 };

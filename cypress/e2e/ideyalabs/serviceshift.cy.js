@@ -5,7 +5,6 @@ import devTeams from '../../support/dictionary/devTeams';
 import TopMenu from '../../support/fragments/topMenu';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import SwitchServicePoint from '../../support/fragments/servicePoint/switchServicePoint';
 import InTransit from '../../support/fragments/checkin/modals/inTransit';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -20,14 +19,8 @@ import checkInActions from '../../support/fragments/check-in-actions/checkInActi
 describe.skip('Check In - Actions', () => {
   const userData = {};
   const testData = {
-    servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation(
-      'S',
-      uuid()
-    ),
-    servicePointS1: ServicePoints.getDefaultServicePointWithPickUpLocation(
-      'S1',
-      uuid()
-    ),
+    servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation('S', uuid()),
+    servicePointS1: ServicePoints.getDefaultServicePointWithPickUpLocation('S1', uuid()),
   };
   const itemData = {
     barcode: generateItemBarcode() + 10,
@@ -43,9 +36,7 @@ describe.skip('Check In - Actions', () => {
       .then(() => {
         ServicePoints.createViaApi(testData.servicePointS);
         ServicePoints.createViaApi(testData.servicePointS1);
-        testData.defaultLocation = Location.getDefaultLocation(
-          testData.servicePointS.id
-        );
+        testData.defaultLocation = Location.getDefaultLocation(testData.servicePointS.id);
         Location.createViaApi(testData.defaultLocation);
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
           testData.instanceTypeId = instanceTypes[0].id;
@@ -60,8 +51,7 @@ describe.skip('Check In - Actions', () => {
         });
         cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
           testData.materialTypeId = materialTypes.id;
-          itemData.materialType =
-            materialTypes.name[0].toUpperCase() + materialTypes.name.slice(1);
+          itemData.materialType = materialTypes.name[0].toUpperCase() + materialTypes.name.slice(1);
         });
       })
       .then(() => {
@@ -116,14 +106,14 @@ describe.skip('Check In - Actions', () => {
         UserEdit.addServicePointsViaApi(
           [testData.servicePointS.id, testData.servicePointS1.id],
           userData.userId,
-          testData.servicePointS.id
+          testData.servicePointS.id,
         );
         cy.login(userData.username, userData.password);
       });
   });
 
   after('Deleting created entities', () => {
-    CheckInActions.checkinItemViaApi({
+    checkInActions.checkinItemViaApi({
       itemBarcode: itemData.barcode,
       servicePointId: testData.servicePointS.id,
       checkInDate: new Date().toISOString(),
@@ -143,7 +133,7 @@ describe.skip('Check In - Actions', () => {
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
+      testData.defaultLocation.id,
     );
     cy.deleteLoanType(testData.loanTypeId);
   });
@@ -152,29 +142,27 @@ describe.skip('Check In - Actions', () => {
     { tags: [TestTypes.criticalPath, devTeams.vega] },
     () => {
       cy.visit(TopMenu.checkInPath);
-      CheckInActions.waitLoading();
+      checkInActions.waitLoading();
       SwitchServicePoint.switchServicePoint(testData.servicePointS.name);
-      SwitchServicePoint.checkIsServicePointSwitched(
-        testData.servicePointS.name
-      );
-      CheckInActions.checkInItemGui(itemData.barcode);
+      SwitchServicePoint.checkIsServicePointSwitched(testData.servicePointS.name);
+      checkInActions.checkInItemGui(itemData.barcode);
       checkInActions.openItemDetails();
       cy.visit(TopMenu.checkInPath);
-      CheckInActions.checkInItemGui(itemData.barcode);
+      checkInActions.checkInItemGui(itemData.barcode);
       checkInActions.verifyCheckIn();
 
       cy.visit(TopMenu.checkInPath);
-      CheckInActions.waitLoading();
+      checkInActions.waitLoading();
       SwitchServicePoint.switchServicePoint(testData.servicePointS1.name);
-      CheckInActions.checkInItemGui(itemData1.barcode);
+      checkInActions.checkInItemGui(itemData1.barcode);
       InTransit.unselectCheckboxPrintSlip();
       InTransit.closeModal();
       checkInActions.openItemDetails();
       cy.visit(TopMenu.checkInPath);
-      CheckInActions.checkInItemGui(itemData1.barcode);
+      checkInActions.checkInItemGui(itemData1.barcode);
       checkInActions.verifyCheckIn();
       InTransit.unselectCheckboxPrintSlip();
       InTransit.closeModal();
-    }
+    },
   );
 });

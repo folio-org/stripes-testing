@@ -42,7 +42,11 @@ export default {
       if (element) {
         const itemAmount = element.attr('data-end-of-list');
         for (let i = 0; i < itemAmount; i++) {
-          cy.expect(jobProfilesPane.find(MultiColumnListCell({ column: 'Name', content: including(text) })).exists());
+          cy.expect(
+            jobProfilesPane
+              .find(MultiColumnListCell({ column: 'Name', content: including(text) }))
+              .exists(),
+          );
         }
       } else cy.expect(HTML('The list contains no items').exists());
     });
@@ -57,7 +61,7 @@ export default {
       .okapiRequest({
         path: 'data-export/job-profiles',
         searchParams,
-        isDefaultSearchParamsRequired: false
+        isDefaultSearchParamsRequired: false,
       })
       .then((response) => {
         return response.body.jobProfiles[0];
@@ -67,7 +71,7 @@ export default {
   deleteJobProfileViaApi: (id) => cy.okapiRequest({
     method: 'DELETE',
     path: `data-export/job-profiles/${id}`,
-    isDefaultSearchParamsRequired: false
+    isDefaultSearchParamsRequired: false,
   }),
 
   verifyDefaultProfiles() {

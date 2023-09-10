@@ -14,25 +14,31 @@ describe('inventory', () => {
     const newMaterialTypeName = `autoTestMaterialType.${getRandomPostfix()}`;
 
     before(() => {
-      cy.createTempUser([permissions.uiCreateEditDeleteMaterialTypes.gui]).then(userProperties => {
-        userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password);
-      });
+      cy.createTempUser([permissions.uiCreateEditDeleteMaterialTypes.gui]).then(
+        (userProperties) => {
+          userId = userProperties.userId;
+          cy.login(userProperties.username, userProperties.password);
+        },
+      );
     });
 
     after(() => {
       Users.deleteViaApi(userId);
     });
 
-    it('C505 Settings (Inventory): Create, edit, delete material types (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-      cy.visit(SettingsMenu.materialTypePath);
-      MaterialTypes.checkAvailableOptions();
-      NewMaterialType.create(materialTypeName);
-      MaterialTypes.isPresented(materialTypeName);
-      MaterialTypes.edit(materialTypeName, newMaterialTypeName);
-      MaterialTypes.delete(newMaterialTypeName);
-      MaterialTypes.checkIsDeleted(newMaterialTypeName);
-      MaterialTypes.verifyMessageOfDeteted(newMaterialTypeName);
-    });
+    it(
+      'C505 Settings (Inventory): Create, edit, delete material types (folijet) (prokopovych)',
+      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      () => {
+        cy.visit(SettingsMenu.materialTypePath);
+        MaterialTypes.checkAvailableOptions();
+        NewMaterialType.create(materialTypeName);
+        MaterialTypes.isPresented(materialTypeName);
+        MaterialTypes.edit(materialTypeName, newMaterialTypeName);
+        MaterialTypes.delete(newMaterialTypeName);
+        MaterialTypes.checkIsDeleted(newMaterialTypeName);
+        MaterialTypes.verifyMessageOfDeteted(newMaterialTypeName);
+      },
+    );
   });
 });

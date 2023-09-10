@@ -82,34 +82,36 @@ describe.skip('Finance: Fiscal Year Rollover', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
-  it('C375267 Encumbrances are rolled over correctly when order fund distribution was changed and related paid invoice exists (based on Remaining) (Thunderjet)', { tags: [testTypes.ideaLabsTests] }, () => {
-    cy.visit(topMenu.financePath);
-    financeHelper.searchByName(testData.searchByName);
-    financeHelper.selectFirstLedger(rollOverData.selectFirstLedger);
-    ledgers.clickonViewledgerDetails();
-    ledgers.rollover();
-    ledgers.selectFirstCheckBox(encumbranceData.selectFirstCheckBox);
-    ledgers.clickonViewledgerDetails();
-    ledgers.rolloverLogs();
-    ledgers.exportRollover(encumbranceData.rollOverDate);
-    ledgers.closeOpenedPage();
-    ledgers.clickonViewledgerDetails();
-    ledgers.rollover();
-    ledgers.fillInRolloverInfo(encumbranceData.fillInRolloverInfo);
-    ledgers.clickonViewledgerDetails();
-    ledgers.resetAll();
-    financeHelper.searchByName(encumbranceData.ledgerName);
-    financeHelper.selectFirstLedger(encumbranceData.selectLedgerName);
-    ledgers.selectFund();
-    ledgers.closeOpenedPage();
-    financeHelper.searchByName(encumbranceData.fundName);
-    financeHelper.selectFirstFundRecord(encumbranceData.selectFund);
-    invoices.selectCurrentBudgerFromthelist(
-      encumbranceData.selectCurrentBudgerFromthelist
-    );
-    invoices.clickOnViewTransactionsHyperText();
-    invoices.transactionListDetailsResultsFromEmbarance(
-      encumbranceData.transactionListDetailsResultsFromEmbarance
-    );
-  });
+  it(
+    'C375267 Encumbrances are rolled over correctly when order fund distribution was changed and related paid invoice exists (based on Remaining) (Thunderjet)',
+    { tags: [testTypes.ideaLabsTests] },
+    () => {
+      cy.visit(topMenu.financePath);
+      financeHelper.searchByName(testData.searchByName);
+      financeHelper.selectFirstLedger(rollOverData.selectFirstLedger);
+      ledgers.clickonViewledgerDetails();
+      ledgers.rollover();
+      ledgers.selectFirstCheckBox(encumbranceData.selectFirstCheckBox);
+      ledgers.clickonViewledgerDetails();
+      ledgers.rolloverLogs();
+      ledgers.exportRollover(encumbranceData.rollOverDate);
+      ledgers.closeOpenedPage();
+      ledgers.clickonViewledgerDetails();
+      ledgers.rollover();
+      ledgers.fillInRolloverInfo(encumbranceData.fillInRolloverInfo);
+      ledgers.clickonViewledgerDetails();
+      ledgers.resetAll();
+      financeHelper.searchByName(encumbranceData.ledgerName);
+      financeHelper.selectFirstLedger(encumbranceData.selectLedgerName);
+      ledgers.selectFund();
+      ledgers.closeOpenedPage();
+      financeHelper.searchByName(encumbranceData.fundName);
+      financeHelper.selectFirstFundRecord(encumbranceData.selectFund);
+      invoices.selectCurrentBudgerFromthelist(encumbranceData.selectCurrentBudgerFromthelist);
+      invoices.clickOnViewTransactionsHyperText();
+      invoices.transactionListDetailsResultsFromEmbarance(
+        encumbranceData.transactionListDetailsResultsFromEmbarance,
+      );
+    },
+  );
 });

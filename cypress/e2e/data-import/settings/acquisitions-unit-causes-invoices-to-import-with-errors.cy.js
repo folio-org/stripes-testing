@@ -2,12 +2,14 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE,
+import {
+  FOLIO_RECORD_TYPE,
   BATCH_GROUP,
   VENDOR_NAMES,
   PAYMENT_METHOD,
   ACCEPTED_DATA_TYPE_NAMES,
-  JOB_STATUS_NAMES } from '../../../support/constants';
+  JOB_STATUS_NAMES,
+} from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -33,24 +35,24 @@ describe('data-import', () => {
     const invoiceNumber = '19353';
     const quantityOfItems = '1';
     const mappingProfile = {
-      name:`C345356 GOBI invoice - Acq Units.${getRandomPostfix()}`,
-      incomingRecordType:NewFieldMappingProfile.incomingRecordType.edifact,
-      existingRecordType:FOLIO_RECORD_TYPE.INVOICE,
-      description:'',
+      name: `C345356 GOBI invoice - Acq Units.${getRandomPostfix()}`,
+      incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
+      existingRecordType: FOLIO_RECORD_TYPE.INVOICE,
+      description: '',
       acquisitionsUnits: `"${defaultAcquisitionUnit.name}"`,
       batchGroup: BATCH_GROUP.FOLIO,
       lockTotalAmount: 'MOA+86[2]',
       organizationName: VENDOR_NAMES.GOBI,
-      paymentMethod: PAYMENT_METHOD.CASH
+      paymentMethod: PAYMENT_METHOD.CASH,
     };
     const actionProfile = {
       name: `C345356 GOBI invoice - Acq Units.${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.INVOICE
+      typeValue: FOLIO_RECORD_TYPE.INVOICE,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
       profileName: `C345356 GOBI invoice - Acq Units.${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.EDIFACT
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.EDIFACT,
     };
 
     before('login', () => {
@@ -59,14 +61,15 @@ describe('data-import', () => {
         permissions.assignAcqUnitsToNewInvoice.gui,
         permissions.viewEditDeleteInvoiceInvoiceLine.gui,
         permissions.uiSettingsAcquisitionUnitsViewEditCreateDelete.gui,
-        permissions.settingsDataImportEnabled.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+        permissions.settingsDataImportEnabled.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          cy.login(userProperties.username, userProperties.password,
-            { path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
+        cy.login(userProperties.username, userProperties.password, {
+          path: SettingsMenu.acquisitionUnitsPath,
+          waiter: AcquisitionUnits.waitLoading,
         });
+      });
     });
 
     after('delete test data', () => {
@@ -81,14 +84,15 @@ describe('data-import', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it('C345336 Acquisitions unit causes Invoices to Import with errors (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] }, () => {
+    it(
+      'C345336 Acquisitions unit causes Invoices to Import with errors (folijet)',
+      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      () => {
         AcquisitionUnits.newAcquisitionUnit();
         AcquisitionUnits.fillInAUInfo(defaultAcquisitionUnit.name);
         // Need to wait until data will be loaded
         cy.wait(2000);
         AcquisitionUnits.assignUser(user.username);
-
 
         // create Field mapping profile
         cy.visit(SettingsMenu.mappingProfilePath);
@@ -127,6 +131,7 @@ describe('data-import', () => {
         Invoices.searchByNumber(invoiceNumber);
         Invoices.selectInvoice(invoiceNumber);
         InvoiceView.verifyAcquisitionUnits(defaultAcquisitionUnit.name);
-      });
+      },
+    );
   });
 });

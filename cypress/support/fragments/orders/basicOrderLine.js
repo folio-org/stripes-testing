@@ -11,7 +11,7 @@ const getDefaultOrderLine = (
   listUnitPrice = '1.0',
   poLineEstimatedPrice = '1.0',
   productIds = [],
-  referenceNumbers = []
+  referenceNumbers = [],
 ) => {
   const defaultOrderLine = {
     id: uuid(),
@@ -25,11 +25,11 @@ const getDefaultOrderLine = (
       currency: 'USD',
       discountType: 'percentage',
       quantityPhysical: quantity,
-      poLineEstimatedPrice
+      poLineEstimatedPrice,
     },
     details: {
       productIds,
-      subscriptionInterval: 0
+      subscriptionInterval: 0,
     },
     fundDistribution: [],
     isPackage: false,
@@ -37,8 +37,8 @@ const getDefaultOrderLine = (
       {
         locationId: spesialLocationId,
         quantity,
-        quantityPhysical: quantity
-      }
+        quantityPhysical: quantity,
+      },
     ],
     orderFormat: 'Physical Resource',
     paymentStatus: 'Pending',
@@ -46,13 +46,13 @@ const getDefaultOrderLine = (
       createInventory: 'Instance, Holding, Item',
       materialType: specialMaterialTypeId,
       materialSupplier: null,
-      volumes: []
+      volumes: [],
     },
     eresource: {
       activated: false,
       createInventory: 'None',
       trial: false,
-      accessProvider: null
+      accessProvider: null,
     },
     purchaseOrderId: '',
     receiptStatus: 'Pending',
@@ -62,14 +62,13 @@ const getDefaultOrderLine = (
     vendorDetail: {
       instructions: '',
       vendorAccount: '1234',
-      referenceNumbers
-    }
+      referenceNumbers,
+    },
   };
   if (!defaultOrderLine.physical.materialType) {
-    NewMaterialType.createViaApi(NewMaterialType.getDefaultMaterialType())
-      .then(mtypes => {
-        defaultOrderLine.physical.materialType = mtypes.body.id;
-      });
+    NewMaterialType.createViaApi(NewMaterialType.getDefaultMaterialType()).then((mtypes) => {
+      defaultOrderLine.physical.materialType = mtypes.body.id;
+    });
   }
   return defaultOrderLine;
 };
@@ -89,11 +88,11 @@ export default {
       currency: 'USD',
       discountType: 'percentage',
       quantityPhysical: 2,
-      poLineEstimatedPrice: 1.0
+      poLineEstimatedPrice: 1.0,
     },
     details: {
       productIds: [],
-      subscriptionInterval: 0
+      subscriptionInterval: 0,
     },
     fundDistribution: [],
     isPackage: false,
@@ -101,8 +100,8 @@ export default {
       {
         locationId: '',
         quantity: 2,
-        quantityPhysical: 2
-      }
+        quantityPhysical: 2,
+      },
     ],
     orderFormat: 'Physical Resource',
     paymentStatus: 'Pending',
@@ -110,13 +109,13 @@ export default {
       createInventory: 'Instance, Holding, Item',
       materialType: '',
       materialSupplier: '',
-      volumes: []
+      volumes: [],
     },
     eresource: {
       activated: false,
       createInventory: 'None',
       trial: false,
-      accessProvider: ''
+      accessProvider: '',
     },
     purchaseOrderId: '',
     receiptStatus: 'Pending',
@@ -125,7 +124,7 @@ export default {
     titleOrPackage: `autotest_title_${getRandomPostfix()}`,
     vendorDetail: {
       instructions: '',
-      vendorAccount: '1234'
-    }
+      vendorAccount: '1234',
+    },
   },
 };

@@ -15,31 +15,30 @@ const maxLogsQuantityOnPage = 100;
 describe('data-import', () => {
   describe('Log details', () => {
     before(() => {
-      cy.createTempUser([
-        permissions.dataImportDeleteLogs.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+      cy.createTempUser([permissions.dataImportDeleteLogs.gui]).then((userProperties) => {
+        user = userProperties;
 
-          for (let i = 0; i < 101; i++) {
-            const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;
+        for (let i = 0; i < 101; i++) {
+          const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;
 
-            DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
-          }
+          DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
+        }
 
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.dataImportPath,
-            waiter: DataImport.waitLoading
-          });
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
         });
+      });
     });
 
     after(() => {
       Users.deleteViaApi(user.userId);
     });
 
-    it('C367923 A user can delete logs from the Import app "View all" page (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+    it(
+      'C367923 A user can delete logs from the Import app "View all" page (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();
         LogsViewAll.selectAllLogs();
@@ -54,6 +53,7 @@ describe('data-import', () => {
         DeleteDataImportLogsModal.confirmDelete(maxLogsQuantityOnPage);
         LogsViewAll.verifyMessageOfDeleted(maxLogsQuantityOnPage);
         LogsViewAll.modalIsAbsent();
-      });
+      },
+    );
   });
 });

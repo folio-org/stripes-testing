@@ -15,7 +15,9 @@ import Location from '../../support/fragments/settings/tenant/locations/newLocat
 import Users from '../../support/fragments/users/users';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import NoticePolicyApi, { NOTICE_CATEGORIES } from '../../support/fragments/circulation/notice-policy';
+import NoticePolicyApi, {
+  NOTICE_CATEGORIES,
+} from '../../support/fragments/circulation/notice-policy';
 import NoticePolicyTemplateApi from '../../support/fragments/circulation/notice-policy-template';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import NewNoticePolicy from '../../support/fragments/circulation/newNoticePolicy';
@@ -35,7 +37,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
     description: 'Created by autotest team',
     body: 'Test_email_body',
     category: 'Loan',
-    previewText: 'Test_email_body'
+    previewText: 'Test_email_body',
   };
   const checkOutTemplate = { ...defaultTemplate };
   checkOutTemplate.name += ' Check out';
@@ -80,7 +82,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
   const testData = {
     userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
       'autotest receive notice triggers',
-      uuid()
+      uuid(),
     ),
   };
   const searchResultsData = {
@@ -100,7 +102,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
   };
 
   before('Preconditions', () => {
-    itemsData.itemsWithSeparateInstance.forEach(function (item, index) {
+    itemsData.itemsWithSeparateInstance.forEach((item, index) => {
       item.barcode = generateUniqueItemBarcodeWithShift(index);
     });
 
@@ -148,8 +150,10 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
             ],
           }).then((specialInstanceIds) => {
             itemsData.itemsWithSeparateInstance[index].instanceId = specialInstanceIds.instanceId;
-            itemsData.itemsWithSeparateInstance[index].holdingId = specialInstanceIds.holdingIds[0].id;
-            itemsData.itemsWithSeparateInstance[index].itemId = specialInstanceIds.holdingIds[0].itemIds;
+            itemsData.itemsWithSeparateInstance[index].holdingId =
+              specialInstanceIds.holdingIds[0].id;
+            itemsData.itemsWithSeparateInstance[index].itemId =
+              specialInstanceIds.holdingIds[0].itemIds;
           });
         });
         cy.wrap(itemsData.itemsWithSeparateInstance).as('items');
@@ -186,7 +190,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
           permissions.uiCirculationSettingsNoticePolicies.gui,
           permissions.loansAll.gui,
         ],
-        patronGroup.name
+        patronGroup.name,
       )
         .then((userProperties) => {
           userData.username = userProperties.username;
@@ -197,7 +201,11 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
           searchResultsData.userBarcode = userProperties.barcode;
         })
         .then(() => {
-          UserEdit.addServicePointViaApi(testData.userServicePoint.id, userData.userId, testData.userServicePoint.id);
+          UserEdit.addServicePointViaApi(
+            testData.userServicePoint.id,
+            userData.userId,
+            testData.userServicePoint.id,
+          );
 
           cy.getCirculationRules().then((response) => {
             testData.baseRules = response.rulesAsText;
@@ -230,17 +238,23 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
+      testData.defaultLocation.id,
     );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${checkOutTemplate.name}` }).then((templateId) => {
-      NoticePolicyTemplateApi.deleteViaApi(templateId);
-    });
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${loanDueDateChangeTemplate.name}` }).then((templateId) => {
-      NoticePolicyTemplateApi.deleteViaApi(templateId);
-    });
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${checkInTemplate.name}` }).then((templateId) => {
-      NoticePolicyTemplateApi.deleteViaApi(templateId);
-    });
+    NoticePolicyTemplateApi.getViaApi({ query: `name=${checkOutTemplate.name}` }).then(
+      (templateId) => {
+        NoticePolicyTemplateApi.deleteViaApi(templateId);
+      },
+    );
+    NoticePolicyTemplateApi.getViaApi({ query: `name=${loanDueDateChangeTemplate.name}` }).then(
+      (templateId) => {
+        NoticePolicyTemplateApi.deleteViaApi(templateId);
+      },
+    );
+    NoticePolicyTemplateApi.getViaApi({ query: `name=${checkInTemplate.name}` }).then(
+      (templateId) => {
+        NoticePolicyTemplateApi.deleteViaApi(templateId);
+      },
+    );
   });
 
   it(
@@ -272,8 +286,25 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
       cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
         testData.ruleProps.n = res[0].id;
         testData.ruleProps.l = loanPolicyId;
-        addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + testData.ruleProps.i + ' l ' + testData.ruleProps.l + ' r ' + testData.ruleProps.r + ' o ' + testData.ruleProps.o + ' n ' + testData.ruleProps.n;
-        CirculationRules.addRuleViaApi(testData.baseRules, testData.ruleProps, 't ', testData.loanTypeId);
+        addedCirculationRule =
+          't ' +
+          testData.loanTypeId +
+          ': i ' +
+          testData.ruleProps.i +
+          ' l ' +
+          testData.ruleProps.l +
+          ' r ' +
+          testData.ruleProps.r +
+          ' o ' +
+          testData.ruleProps.o +
+          ' n ' +
+          testData.ruleProps.n;
+        CirculationRules.addRuleViaApi(
+          testData.baseRules,
+          testData.ruleProps,
+          't ',
+          testData.loanTypeId,
+        );
       });
 
       cy.visit(TopMenu.checkOutPath);
@@ -302,6 +333,6 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
       CheckInActions.endCheckInSession();
       searchResultsData.desc = `Template: ${checkInTemplate.name}. Triggering event: Check in.`;
       checkNoticeIsSent(searchResultsData);
-    }
+    },
   );
 });

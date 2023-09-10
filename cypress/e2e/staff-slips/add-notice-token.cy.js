@@ -29,20 +29,17 @@ describe('Patron Notices', () => {
       PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
         patronGroup.id = patronGroupResponse;
       });
-      cy.createTempUser([permissions.uiCirculationSettingsNoticeTemplates.gui], patronGroup.name).then(
-        (userProperties) => {
-          userData = userProperties;
-          UserEdit.addServicePointViaApi(
-            servicePointId,
-            userData.userId,
-            servicePointId
-          );
-          cy.login(userData.username, userData.password, {
-            path: SettingsMenu.circulationPatronNoticeTemplatesPath,
-            waiter: NewNoticePolicyTemplate.waitLoading,
-          });
-        }
-      );
+      cy.createTempUser(
+        [permissions.uiCirculationSettingsNoticeTemplates.gui],
+        patronGroup.name,
+      ).then((userProperties) => {
+        userData = userProperties;
+        UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
+        cy.login(userData.username, userData.password, {
+          path: SettingsMenu.circulationPatronNoticeTemplatesPath,
+          waiter: NewNoticePolicyTemplate.waitLoading,
+        });
+      });
     });
   });
 
@@ -62,7 +59,7 @@ describe('Patron Notices', () => {
       NewNoticePolicyTemplate.saveAndClose();
       NewNoticePolicyTemplate.waitLoading();
       NoticePolicyTemplate.checkPreview('Paul');
-    }
+    },
   );
 
   it(
@@ -75,6 +72,6 @@ describe('Patron Notices', () => {
       NewNoticePolicyTemplate.saveAndClose();
       NewNoticePolicyTemplate.waitLoading();
       NoticePolicyTemplate.checkPreview('Main Library');
-    }
+    },
   );
 });

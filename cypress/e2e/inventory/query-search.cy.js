@@ -13,18 +13,23 @@ const item = {
   itemBarcode: `987${getRandomPostfix()}`,
   publisher: `publisherName${getRandomPostfix()}`,
   holdingCallNumber: getRandomPostfix(),
-  itemCallNumber: getRandomPostfix()
+  itemCallNumber: getRandomPostfix(),
 };
 
 describe('ui-inventory: query search', () => {
   before('create inventory instance', () => {
-    cy.createTempUser([permissions.inventoryAll.gui])
-      .then(userProperties => {
-        userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password);
-        InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode, item.publisher, item.holdingCallNumber, item.itemCallNumber);
-        cy.visit(TopMenu.inventoryPath);
-      });
+    cy.createTempUser([permissions.inventoryAll.gui]).then((userProperties) => {
+      userId = userProperties.userId;
+      cy.login(userProperties.username, userProperties.password);
+      InventoryInstances.createInstanceViaApi(
+        item.instanceName,
+        item.itemBarcode,
+        item.publisher,
+        item.holdingCallNumber,
+        item.itemCallNumber,
+      );
+      cy.visit(TopMenu.inventoryPath);
+    });
   });
 
   after('Delete all data', () => {
@@ -37,16 +42,31 @@ describe('ui-inventory: query search', () => {
   });
 
   [
-    { searchTab: InventorySearchAndFilter.switchToInstance, value: `uniformTitle all ${item.instanceName}` },
-    { searchTab: InventorySearchAndFilter.switchToInstance, value: `publisher all ${item.publisher}` },
-    { searchTab: InventorySearchAndFilter.switchToHoldings, value: `holdingsNormalizedCallNumbers="${item.holdingCallNumber}"` },
-    { searchTab: InventorySearchAndFilter.switchToItem, value: `itemNormalizedCallNumbers="${item.itemCallNumber}"` },
-  ].forEach(searcher => {
-    it('C9202 Test search field working for Query Search in Instance, Holdings and Item segment (spitfire)',
-      { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
+    {
+      searchTab: InventorySearchAndFilter.switchToInstance,
+      value: `uniformTitle all ${item.instanceName}`,
+    },
+    {
+      searchTab: InventorySearchAndFilter.switchToInstance,
+      value: `publisher all ${item.publisher}`,
+    },
+    {
+      searchTab: InventorySearchAndFilter.switchToHoldings,
+      value: `holdingsNormalizedCallNumbers="${item.holdingCallNumber}"`,
+    },
+    {
+      searchTab: InventorySearchAndFilter.switchToItem,
+      value: `itemNormalizedCallNumbers="${item.itemCallNumber}"`,
+    },
+  ].forEach((searcher) => {
+    it(
+      'C9202 Test search field working for Query Search in Instance, Holdings and Item segment (spitfire)',
+      { tags: [TestTypes.smoke, DevTeams.spitfire] },
+      () => {
         searcher.searchTab();
         InventorySearchAndFilter.searchByParameter('Query search', searcher.value);
         InventorySearchAndFilter.verifySearchResult(item.instanceName);
-      });
+      },
+    );
   });
 });

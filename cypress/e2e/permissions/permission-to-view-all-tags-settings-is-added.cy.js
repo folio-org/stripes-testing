@@ -37,7 +37,7 @@ describe('Permissions Tags', () => {
           permissions.uiUsersPermissions.gui,
           permissions.uiViewTagsSettings.gui,
         ],
-        patronGroup.name
+        patronGroup.name,
       ).then((userProperties) => {
         userData = userProperties;
         UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
@@ -75,6 +75,6 @@ describe('Permissions Tags', () => {
         waiter: TagsGeneral.waitLoading,
       });
       TagsGeneral.checkEnableTagsNotAvailable();
-    }
+    },
   );
 });

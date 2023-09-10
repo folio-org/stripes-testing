@@ -32,7 +32,7 @@ describe.skip('Export Manager', () => {
       exportManagerSearchPane.rerunJob();
       cy.reload();
       exportManagerSearchPane.verifyResult(testData.failedStatus);
-    }
+    },
   );
 
   it(
@@ -50,6 +50,6 @@ describe.skip('Export Manager', () => {
       cy.exec('java -jar sikuli_ide.jar -r ss.sikuli');
       // Used sikuli to Navigate to local directory for downloaded files and open downloaded file with ""Notepad""
       // Based on the Testcase we need to change the PNG in the sikuli folder as it changes from the system to system
-    }
+    },
   );
 });

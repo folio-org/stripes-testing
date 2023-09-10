@@ -16,7 +16,7 @@ const getDefaultMaterialType = () => {
 export default {
   getDefaultMaterialType,
 
-  create:(materialTypeName) => {
+  create: (materialTypeName) => {
     cy.do(Button('+ New').click());
     cy.do(TextField({ placeholder: 'name' }).fillIn(materialTypeName));
     cy.do(Button('Save').click());
@@ -38,6 +38,6 @@ export default {
   defaultMaterialType: {
     id: uuid(),
     name: '',
-    source: 'local'
+    source: 'local',
   },
 };

@@ -18,14 +18,12 @@ describe('Inventory > Subject Browse', () => {
   };
 
   const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
-  const jobProfileToRun = 'Default - Create instance and SRS MARC Bib'
+  const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
 
-  let createdInstanceIDs = [];
+  const createdInstanceIDs = [];
 
   before('Creating user and instance', () => {
-    cy.createTempUser([
-        permissions.uiSubjectBrowse.gui
-    ]).then(userProperties => {
+    cy.createTempUser([permissions.uiSubjectBrowse.gui]).then((userProperties) => {
       testData.user = userProperties;
 
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
@@ -37,13 +35,16 @@ describe('Inventory > Subject Browse', () => {
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(fileName);
         for (let i = 0; i < 2; i++) {
-          Logs.getCreatedItemsID(i).then(link => {
+          Logs.getCreatedItemsID(i).then((link) => {
             createdInstanceIDs.push(link.split('/')[5]);
           });
         }
       });
 
-    cy.login(testData.user.username, testData.user.password, { path: TopMenu.inventoryPath, waiter: InventorySearchAndFilter.waitLoading });
+      cy.login(testData.user.username, testData.user.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventorySearchAndFilter.waitLoading,
+      });
     });
   });
 
@@ -54,17 +55,21 @@ describe('Inventory > Subject Browse', () => {
     Users.deleteViaApi(testData.user.userId);
   });
 
-  it('C350387 Verify the "Browse subjects" result list (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] }, () => {
-    InventorySearchAndFilter.switchToBrowseTab();
-    BrowseSubjects.searchBrowseSubjects(testData.testValue);
-    BrowseSubjects.checkSearchResultsTable();
-    BrowseSubjects.checkResultAndItsRow(5, `${testData.testValue}would be here`);
-    BrowseSubjects.checkPaginationButtons();
+  it(
+    'C350387 Verify the "Browse subjects" result list (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    () => {
+      InventorySearchAndFilter.switchToBrowseTab();
+      BrowseSubjects.searchBrowseSubjects(testData.testValue);
+      BrowseSubjects.checkSearchResultsTable();
+      BrowseSubjects.checkResultAndItsRow(5, `${testData.testValue}would be here`);
+      BrowseSubjects.checkPaginationButtons();
 
-    BrowseSubjects.clickPreviousPaginationButton();
-    BrowseSubjects.checkAbsenceOfResultAndItsRow(5, `${testData.testValue}would be here`)
+      BrowseSubjects.clickPreviousPaginationButton();
+      BrowseSubjects.checkAbsenceOfResultAndItsRow(5, `${testData.testValue}would be here`);
 
-    BrowseSubjects.clickNextPaginationButton();
-    BrowseSubjects.checkResultAndItsRow(5, `${testData.testValue}would be here`);
-  });
+      BrowseSubjects.clickNextPaginationButton();
+      BrowseSubjects.checkResultAndItsRow(5, `${testData.testValue}would be here`);
+    },
+  );
 });

@@ -17,10 +17,13 @@ describe('eHoldings -> Package', () => {
   before('Creating user, logging in', () => {
     cy.createTempUser([
       Permissions.moduleeHoldingsEnabled.gui,
-      Permissions.exportManagerAll.gui
-    ]).then(userProperties => {
+      Permissions.exportManagerAll.gui,
+    ]).then((userProperties) => {
       testData.userId = userProperties.userId;
-      cy.login(userProperties.username, userProperties.password, { path: TopMenu.eholdingsPath, waiter: EHoldingsTitlesSearch.waitLoading }).then(() => {
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.eholdingsPath,
+        waiter: EHoldingsTitlesSearch.waitLoading,
+      }).then(() => {
         EHoldingSearch.switchToPackages();
       });
     });
@@ -30,15 +33,19 @@ describe('eHoldings -> Package', () => {
     Users.deleteViaApi(testData.userId);
   });
 
-  it('C354002 Verify that "Export" button become disabled when user doesn\'t choose any fields to export (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
-    EHoldingsPackagesSearch.byName(testData.packageName);
-    EHoldingsPackages.checkPackageInResults(testData.packageName);
-    EHoldingsPackages.openPackage();
-    EHoldingsPackageView.waitLoading();
-    EHoldingsPackageView.openExportModal();
-    EHoldingsPackageView.clickExportSelectedPackageFields();
-    EHoldingsPackageView.clickExportSelectedTitleFields();
-    EHoldingsPackageView.checkExportButtonInModalDisabled();
-    EHoldingsPackageView.closeExportModalViaCancel();
-  });
+  it(
+    'C354002 Verify that "Export" button become disabled when user doesn\'t choose any fields to export (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      EHoldingsPackagesSearch.byName(testData.packageName);
+      EHoldingsPackages.checkPackageInResults(testData.packageName);
+      EHoldingsPackages.openPackage();
+      EHoldingsPackageView.waitLoading();
+      EHoldingsPackageView.openExportModal();
+      EHoldingsPackageView.clickExportSelectedPackageFields();
+      EHoldingsPackageView.clickExportSelectedTitleFields();
+      EHoldingsPackageView.checkExportButtonInModalDisabled();
+      EHoldingsPackageView.closeExportModalViaCancel();
+    },
+  );
 });

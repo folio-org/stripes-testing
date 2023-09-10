@@ -7,7 +7,7 @@ import {
   Section,
   Spinner,
   TextField,
-  including
+  including,
 } from '../../../../interactors';
 import eHoldingsProviderView from './eHoldingsProviderView';
 // eslint-disable-next-line import/no-cycle
@@ -23,23 +23,17 @@ export default {
   waitLoading: () => {
     cy.expect(
       resultSection
-        .find(
-          ListItem({ className: including('list-item-'), index: 1 }).find(
-            Button()
-          )
-        )
-        .exists()
+        .find(ListItem({ className: including('list-item-'), index: 1 }).find(Button()))
+        .exists(),
     );
   },
 
   viewProvider: (rowNumber = 0) => {
     cy.do(
       resultSection
-        .find(
-          ListItem({ className: including('list-item-'), index: rowNumber })
-        )
+        .find(ListItem({ className: including('list-item-'), index: rowNumber }))
         .find(Button())
-        .click()
+        .click(),
     );
     eHoldingsProviderView.waitLoading();
   },
@@ -53,11 +47,9 @@ export default {
   clickSearchTitles: (rowNumber = 0) => {
     cy.do(
       packageList
-        .find(
-          ListItem({ className: including('list-item-'), index: rowNumber })
-        )
+        .find(ListItem({ className: including('list-item-'), index: rowNumber }))
         .find(Button())
-        .click()
+        .click(),
     );
   },
 
@@ -73,21 +65,16 @@ export default {
     cy.expect(Button({ icon: 'search' }).exists());
     cy.do(Button({ icon: 'search' }).click());
     cy.expect(TextField({ id: 'eholdings-search' }).exists());
-    cy.do([
-      TextField({ id: 'eholdings-search' }).fillIn('engineering'),
-      searchButton.click(),
-    ]);
+    cy.do([TextField({ id: 'eholdings-search' }).fillIn('engineering'), searchButton.click()]);
   },
 
   viewPackage: (rowNumber = 0) => {
     cy.expect(Spinner().absent);
     cy.do(
       resultSection
-        .find(
-          ListItem({ className: including('list-item-'), index: rowNumber })
-        )
+        .find(ListItem({ className: including('list-item-'), index: rowNumber }))
         .find(Button())
-        .click()
+        .click(),
     );
   },
 

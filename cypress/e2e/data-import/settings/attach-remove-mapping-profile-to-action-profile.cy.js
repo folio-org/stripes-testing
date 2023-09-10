@@ -15,12 +15,12 @@ describe('data-import', () => {
   describe('Settings', () => {
     const mappingProfile = {
       name: `C11115 autotest mapping profile ${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.INSTANCE
+      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     };
 
     const actionProfile = {
       name: `C11115 autotest action profile ${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.INSTANCE
+      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     };
 
     before('login', () => {
@@ -33,33 +33,37 @@ describe('data-import', () => {
       FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
     });
 
-    it('C11115 Attach/Remove a field mapping profile to an action profile (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      cy.visit(SettingsMenu.mappingProfilePath);
-      FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
-      FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
+    it(
+      'C11115 Attach/Remove a field mapping profile to an action profile (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
+        cy.visit(SettingsMenu.mappingProfilePath);
+        FieldMappingProfiles.openNewMappingProfileForm();
+        NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
+        FieldMappingProfiles.saveProfile();
+        FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+        FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
-      cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.create(actionProfile, mappingProfile.name);
-      ActionProfiles.checkActionProfilePresented(actionProfile.name);
+        cy.visit(SettingsMenu.actionProfilePath);
+        ActionProfiles.create(actionProfile, mappingProfile.name);
+        ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
-      ActionProfileView.verifyLinkedFieldMappingProfile(mappingProfile.name);
-      ActionProfileView.openFieldMappingProfileView();
-      FieldMappingProfileView.verifyLinkedActionProfile(actionProfile.name);
-      FieldMappingProfileView.openAssociatedActionProfile();
-      ActionProfiles.verifyActionProfileOpened();
+        ActionProfileView.verifyLinkedFieldMappingProfile(mappingProfile.name);
+        ActionProfileView.openFieldMappingProfileView();
+        FieldMappingProfileView.verifyLinkedActionProfile(actionProfile.name);
+        FieldMappingProfileView.openAssociatedActionProfile();
+        ActionProfiles.verifyActionProfileOpened();
 
-      ActionProfileView.edit();
-      ActionProfileEdit.unlinkFieldMappingProfile();
-      ConfirmRemoval.cancelRemoveFieldMappingProfile();
-      ActionProfileEdit.fieldMappingProfilePresented(mappingProfile.name);
-      ActionProfileEdit.unlinkFieldMappingProfile();
-      ConfirmRemoval.confirmRemovefieldMappingProfile();
-      ActionProfileEdit.fieldMappingProfileAbsent();
-      ActionProfileEdit.save();
-      ActionProfileView.verifyLinkedFieldMappingProfileAbsent(mappingProfile.name);
-    });
+        ActionProfileView.edit();
+        ActionProfileEdit.unlinkFieldMappingProfile();
+        ConfirmRemoval.cancelRemoveFieldMappingProfile();
+        ActionProfileEdit.fieldMappingProfilePresented(mappingProfile.name);
+        ActionProfileEdit.unlinkFieldMappingProfile();
+        ConfirmRemoval.confirmRemovefieldMappingProfile();
+        ActionProfileEdit.fieldMappingProfileAbsent();
+        ActionProfileEdit.save();
+        ActionProfileView.verifyLinkedFieldMappingProfileAbsent(mappingProfile.name);
+      },
+    );
   });
 });

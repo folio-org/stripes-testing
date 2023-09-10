@@ -13,17 +13,17 @@ const getDefaultInstanceActionProfile = (name) => {
     profile: {
       name,
       action: 'CREATE',
-      folioRecord: 'INSTANCE'
+      folioRecord: 'INSTANCE',
     },
     addedRelations: [
       {
         masterProfileId: null,
         masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
         detailProfileId: '',
-        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
-      }
+        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE,
+      },
     ],
-    deletedRelations: []
+    deletedRelations: [],
   };
   return defaultInstanceActionProfile;
 };
@@ -32,17 +32,17 @@ const getDefaultHoldingsActionProfile = (name) => {
     profile: {
       name,
       action: 'CREATE',
-      folioRecord: 'HOLDINGS'
+      folioRecord: 'HOLDINGS',
     },
     addedRelations: [
       {
         masterProfileId: null,
         masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
         detailProfileId: '',
-        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
-      }
+        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE,
+      },
     ],
-    deletedRelations: []
+    deletedRelations: [],
   };
   return defaultHoldingsActionProfile;
 };
@@ -51,17 +51,17 @@ const getDefaultItemActionProfile = (name) => {
     profile: {
       name,
       action: 'CREATE',
-      folioRecord: 'ITEM'
+      folioRecord: 'ITEM',
     },
     addedRelations: [
       {
         masterProfileId: null,
         masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
         detailProfileId: '',
-        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
-      }
+        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE,
+      },
     ],
-    deletedRelations: []
+    deletedRelations: [],
   };
   return defaultItemActionProfile;
 };
@@ -72,9 +72,11 @@ export default {
   getDefaultItemActionProfile,
   fill: (specialActionProfile = defaultActionProfile) => {
     cy.do([
-      TextField({ name:'profile.name' }).fillIn(specialActionProfile.name),
-      Select({ name:'profile.action' }).choose(specialActionProfile.action || action),
-      Select({ name:'profile.folioRecord' }).choose(specialActionProfile.typeValue || FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC),
+      TextField({ name: 'profile.name' }).fillIn(specialActionProfile.name),
+      Select({ name: 'profile.action' }).choose(specialActionProfile.action || action),
+      Select({ name: 'profile.folioRecord' }).choose(
+        specialActionProfile.typeValue || FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+      ),
     ]);
   },
 
@@ -82,12 +84,16 @@ export default {
     cy.do(Button('Link Profile').click());
     SelectMappingProfile.searchMappingProfileByName(specialMappingProfileName);
     SelectMappingProfile.selectMappingProfile(specialMappingProfileName);
-    cy.expect(Section({ id:'actionProfileFormAssociatedMappingProfileAccordion' }).find(Button('Link Profile')).has({ disabled : true }));
+    cy.expect(
+      Section({ id: 'actionProfileFormAssociatedMappingProfileAccordion' })
+        .find(Button('Link Profile'))
+        .has({ disabled: true }),
+    );
     cy.do(Button('Save as profile & Close').click());
     cy.expect(Pane('Action profiles').find(Button('Actions')).exists());
   },
 
-  createActionProfileViaApi:(nameMapProfile, mapProfileId, profileAction = 'CREATE') => {
+  createActionProfileViaApi: (nameMapProfile, mapProfileId, profileAction = 'CREATE') => {
     return cy
       .okapiRequest({
         method: 'POST',
@@ -96,17 +102,17 @@ export default {
           profile: {
             name: nameMapProfile,
             action: profileAction,
-            folioRecord: 'INSTANCE'
+            folioRecord: 'INSTANCE',
           },
           addedRelations: [
             {
               masterProfileId: null,
               masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
               detailProfileId: mapProfileId,
-              detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
-            }
+              detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE,
+            },
           ],
-          deletedRelations: []
+          deletedRelations: [],
         },
         isDefaultSearchParamsRequired: false,
       })
@@ -115,27 +121,31 @@ export default {
       });
   },
 
-  createActionProfileViaApiMarc: (name, action, folioRecordType, mapProfileId) => {
-    return cy.okapiRequest({
-      method: 'POST',
-      path: 'data-import-profiles/actionProfiles',
-      body: {
-        profile: {
-          name,
-          action,
-          folioRecord: folioRecordType
+  createActionProfileViaApiMarc: (name, actionToSet, folioRecordType, mapProfileId) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/actionProfiles',
+        body: {
+          profile: {
+            name,
+            actionToSet,
+            folioRecord: folioRecordType,
+          },
+          addedRelations: [
+            {
+              masterProfileId: null,
+              masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
+              detailProfileId: mapProfileId,
+              detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE,
+            },
+          ],
+          deletedRelations: [],
         },
-        addedRelations: [{
-          masterProfileId: null,
-          masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
-          detailProfileId: mapProfileId,
-          detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
-        }],
-        deletedRelations: []
-      },
-      isDefaultSearchParamsRequired: false,
-    }).then(({ response }) => {
-      return response;
-    });
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
   },
 };

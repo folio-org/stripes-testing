@@ -1,5 +1,18 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import { Accordion, Button, Checkbox, HTML, MultiColumnListCell, Pane, Section, Select, Spinner, TextArea, TextField, including } from '../../../../interactors';
+import {
+  Accordion,
+  Button,
+  Checkbox,
+  HTML,
+  MultiColumnListCell,
+  Pane,
+  Section,
+  Select,
+  Spinner,
+  TextArea,
+  TextField,
+  including,
+} from '../../../../interactors';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../constants';
 import dateTools from '../../utils/dateTools';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -25,15 +38,14 @@ function addRequester(userName) {
 }
 
 function openNewRequestPane() {
-  cy.do([
-    actionsButton.click(),
-    newRequestButton.click()
-  ]);
+  cy.do([actionsButton.click(), newRequestButton.click()]);
 }
 
 function printPickSlips() {
   cy.do([actionsButton.click(), Button({ id: 'printPickSlipsBtn' }).click()]);
-  InteractorsTools.checkCalloutMessage('Print options loading in progress. It might take a few seconds, please be patient.');
+  InteractorsTools.checkCalloutMessage(
+    'Print options loading in progress. It might take a few seconds, please be patient.',
+  );
 }
 
 export default {
@@ -108,7 +120,7 @@ export default {
   },
 
   enableTitleLevelRequest() {
-    //need to synchronize actions before click
+    // need to synchronize actions before click
     cy.wait(3000);
     cy.do(titleLevelRequest.click());
   },
@@ -119,15 +131,12 @@ export default {
     cy.expect([
       Accordion('Item information').exists(),
       Accordion('Request information').exists(),
-      Accordion('Requester information').exists()
+      Accordion('Requester information').exists(),
     ]);
   },
 
   enterItemInfo(barcode) {
-    cy.do([
-      itemBarcodeInput.fillIn(barcode),
-      enterItemBarcodeButton.click()
-    ]);
+    cy.do([itemBarcodeInput.fillIn(barcode), enterItemBarcodeButton.click()]);
   },
 
   enterHridInfo(hrid) {
@@ -148,7 +157,7 @@ export default {
   },
 
   verifyItemInformation: (allContentToCheck) => {
-    return allContentToCheck.forEach(contentToCheck => cy.expect(Section({ id: 'new-item-info' }, including(contentToCheck)).exists()));
+    return allContentToCheck.forEach((contentToCheck) => cy.expect(Section({ id: 'new-item-info' }, including(contentToCheck)).exists()));
   },
 
   chooseItemInSelectItemPane: (itemBarcode) => {
@@ -157,7 +166,7 @@ export default {
   },
 
   verifyHridInformation: (allContentToCheck) => {
-    return allContentToCheck.forEach(contentToCheck => cy.expect(HTML({ id: 'section-instance-info' }, including(contentToCheck)).exists()));
+    return allContentToCheck.forEach((contentToCheck) => cy.expect(HTML({ id: 'section-instance-info' }, including(contentToCheck)).exists()));
   },
 
   verifyRequestInformation: (itemStatus) => {
@@ -173,10 +182,12 @@ export default {
   },
 
   enterRequestAndPatron: (patron) => {
-    cy.do([TextField({ id: 'requestExpirationDate' }).fillIn(dateTools.getCurrentDate()),
-    TextArea({ id: 'patronComments' }).fillIn(patron),
-    Checkbox({ name: 'createTitleLevelRequest' }).click()])
-    cy.expect(Spinner().absent())
+    cy.do([
+      TextField({ id: 'requestExpirationDate' }).fillIn(dateTools.getCurrentDate()),
+      TextArea({ id: 'patronComments' }).fillIn(patron),
+      Checkbox({ name: 'createTitleLevelRequest' }).click(),
+    ]);
+    cy.expect(Spinner().absent());
   },
 
   chooseRequestType(requestType) {
@@ -190,5 +201,5 @@ export default {
     cy.expect(selectServicePoint.exists());
     cy.wait('@getUsers');
     this.choosepickupServicePoint(newRequest.pickupServicePoint);
-  }
+  },
 };

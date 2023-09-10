@@ -18,12 +18,12 @@ export default {
       .okapiRequest({
         method: 'POST',
         path: 'overdue-fines-policies',
-        body: body,
+        body,
         isDefaultSearchParamsRequired: false,
       })
-      .then(({ body }) => {
-        Cypress.env('overdueFinePolicy', body);
-        return body;
+      .then(({ bd }) => {
+        Cypress.env('overdueFinePolicy', bd);
+        return bd;
       });
   },
   deleteViaApi(id) {

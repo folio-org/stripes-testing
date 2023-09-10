@@ -10,10 +10,9 @@ describe('ui-organizations: Filtering organization', () => {
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-      });
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+    });
   });
 
   after(() => {
@@ -26,13 +25,17 @@ describe('ui-organizations: Filtering organization', () => {
     { filterActions: Organizations.selectLanguageFilter },
     { filterActions: Organizations.selectCashInPaymentMethod },
   ].forEach((filter) => {
-    it('C6713: Test the Organizations app filters (except Tags) (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
-      cy.visit(TopMenu.organizationsPath);
-      filter.filterActions();
-      Organizations.checkOrganizationFilter();
-      Organizations.selectOrganization(organization.name);
-      Organizations.checkOpenOrganizationInfo(organization);
-      Organizations.resetFilters();
-    });
+    it(
+      'C6713: Test the Organizations app filters (except Tags) (thunderjet)',
+      { tags: [TestType.smoke, devTeams.thunderjet] },
+      () => {
+        cy.visit(TopMenu.organizationsPath);
+        filter.filterActions();
+        Organizations.checkOrganizationFilter();
+        Organizations.selectOrganization(organization.name);
+        Organizations.checkOpenOrganizationInfo(organization);
+        Organizations.resetFilters();
+      },
+    );
   });
 });

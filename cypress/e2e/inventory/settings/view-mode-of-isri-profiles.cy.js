@@ -18,7 +18,7 @@ const abcProfile = {
   createMappingProfile: `abc autotest mappingProfile${getRandomPostfix()}`,
   updateJobProfile: `abc updateJobProfile.${getRandomPostfix()}`,
   updateActionProfile: `abc autotest actionProfile${getRandomPostfix()}`,
-  updateMappingProfile: `abc autotest mappingProfile${getRandomPostfix()}`
+  updateMappingProfile: `abc autotest mappingProfile${getRandomPostfix()}`,
 };
 const adcProfile = {
   createJobProfile: `adc createJobProfile.${getRandomPostfix()}`,
@@ -26,7 +26,7 @@ const adcProfile = {
   createMappingProfile: `adc autotest mappingProfile${getRandomPostfix()}`,
   updateJobProfile: `adc updateJobProfile.${getRandomPostfix()}`,
   updateActionProfile: `adc autotest actionProfile${getRandomPostfix()}`,
-  updateMappingProfile: `adc autotest mappingProfile${getRandomPostfix()}`
+  updateMappingProfile: `adc autotest mappingProfile${getRandomPostfix()}`,
 };
 const zbcProfile = {
   createJobProfile: `zbc createJobProfile.${getRandomPostfix()}`,
@@ -34,7 +34,7 @@ const zbcProfile = {
   createMappingProfile: `zbc autotest mappingProfile${getRandomPostfix()}`,
   updateJobProfile: `zbc updateJobProfile.${getRandomPostfix()}`,
   updateActionProfile: `zbc autotest actionProfile${getRandomPostfix()}`,
-  updateMappingProfile: `zbc autotest mappingProfile${getRandomPostfix()}`
+  updateMappingProfile: `zbc autotest mappingProfile${getRandomPostfix()}`,
 };
 const zdcProfile = {
   createJobProfile: `zdc createJobProfile.${getRandomPostfix()}`,
@@ -42,7 +42,7 @@ const zdcProfile = {
   createMappingProfile: `zdc autotest mappingProfile${getRandomPostfix()}`,
   updateJobProfile: `zdc updateJobProfile.${getRandomPostfix()}`,
   updateActionProfile: `zdc autotest actionProfile${getRandomPostfix()}`,
-  updateMappingProfile: `zdc autotest mappingProfile${getRandomPostfix()}`
+  updateMappingProfile: `zdc autotest mappingProfile${getRandomPostfix()}`,
 };
 
 describe('inventory', () => {
@@ -56,49 +56,68 @@ describe('inventory', () => {
     before('login', () => {
       cy.getAdminToken()
         .then(() => {
-        // create job profiles for create
-          [zbcProfile, adcProfile, zdcProfile, abcProfile].forEach(profile => {
-            NewFieldMappingProfile.createMappingProfileViaApi(profile.createMappingProfile)
-              .then((mappingProfileResponse) => {
-                NewActionProfile.createActionProfileViaApi(profile.createActionProfile, mappingProfileResponse.body.id)
+          // create job profiles for create
+          [zbcProfile, adcProfile, zdcProfile, abcProfile].forEach((profile) => {
+            NewFieldMappingProfile.createMappingProfileViaApi(profile.createMappingProfile).then(
+              (mappingProfileResponse) => {
+                NewActionProfile.createActionProfileViaApi(
+                  profile.createActionProfile,
+                  mappingProfileResponse.body.id,
+                )
                   .then((actionProfileResponse) => {
-                    NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(profile.createJobProfile, actionProfileResponse.body.id);
-                  }).then(id => createJobProfileIds.push(id));
-              });
+                    NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(
+                      profile.createJobProfile,
+                      actionProfileResponse.body.id,
+                    );
+                  })
+                  .then((id) => createJobProfileIds.push(id));
+              },
+            );
           });
           // create job profile for update
-          [abcProfile, zbcProfile, zdcProfile, adcProfile].forEach(profile => {
-            NewFieldMappingProfile.createMappingProfileViaApi(profile.updateMappingProfile)
-              .then((mappingProfileResponse) => {
-                NewActionProfile.createActionProfileViaApi(profile.updateActionProfile, mappingProfileResponse.body.id, 'UPDATE')
+          [abcProfile, zbcProfile, zdcProfile, adcProfile].forEach((profile) => {
+            NewFieldMappingProfile.createMappingProfileViaApi(profile.updateMappingProfile).then(
+              (mappingProfileResponse) => {
+                NewActionProfile.createActionProfileViaApi(
+                  profile.updateActionProfile,
+                  mappingProfileResponse.body.id,
+                  'UPDATE',
+                )
                   .then((actionProfileResponse) => {
-                    NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(profile.updateJobProfile, actionProfileResponse.body.id);
-                  }).then(id => {
+                    NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(
+                      profile.updateJobProfile,
+                      actionProfileResponse.body.id,
+                    );
+                  })
+                  .then((id) => {
                     updateJobProfileIds.push(id);
                   });
-              });
+              },
+            );
           });
         })
         .then(() => {
-          Z3950TargetProfiles.createNewZ3950TargetProfileViaApi(targetProfileName, createJobProfileIds, updateJobProfileIds)
-            .then(initialId => {
-              profileId = initialId;
-            });
+          Z3950TargetProfiles.createNewZ3950TargetProfileViaApi(
+            targetProfileName,
+            createJobProfileIds,
+            updateJobProfileIds,
+          ).then((initialId) => {
+            profileId = initialId;
+          });
         });
 
       cy.createTempUser([
         permissions.settingsDataImportEnabled.gui,
-        permissions.uiInventorySettingsConfigureSingleRecordImport.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+        permissions.uiInventorySettingsConfigureSingleRecordImport.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          cy.login(user.username, user.password);
-        });
+        cy.login(user.username, user.password);
+      });
     });
 
     after('delete test data', () => {
-      [abcProfile, zbcProfile, zdcProfile, adcProfile].forEach(profile => {
+      [abcProfile, zbcProfile, zdcProfile, adcProfile].forEach((profile) => {
         JobProfiles.deleteJobProfile(profile.createJobProfile);
         JobProfiles.deleteJobProfile(profile.updateJobProfile);
         ActionProfiles.deleteActionProfile(profile.createActionProfile);
@@ -110,14 +129,17 @@ describe('inventory', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it('C374176 Verify the view mode of ISRI profiles (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+    it(
+      'C374176 Verify the view mode of ISRI profiles (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
         cy.visit(SettingsMenu.targetProfilesPath);
         Z3950TargetProfiles.verifyTargetProfileFormOpened();
         Z3950TargetProfiles.openTargetProfile(profileId);
         Z3950TargetProfiles.verifyTargetProfileForm();
         Z3950TargetProfiles.verifyCreateInstanceJobProfileList(targetProfileName);
         Z3950TargetProfiles.verifyUpdateInstanceJobProfileList(targetProfileName);
-      });
+      },
+    );
   });
 });
