@@ -1,6 +1,11 @@
 import uuid from 'uuid';
 import moment from 'moment';
-import { FULFILMENT_PREFERENCES, ITEM_STATUS_NAMES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
+import {
+  FULFILMENT_PREFERENCES,
+  ITEM_STATUS_NAMES,
+  REQUEST_LEVELS,
+  REQUEST_TYPES,
+} from '../../support/constants';
 import TestTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import TopMenu from '../../support/fragments/topMenu';
@@ -108,11 +113,31 @@ describe('Check In - Actions', () => {
       originalCirculationRules = circulationRule.rulesAsText;
       const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
       ruleProps.r = requestPolicyBody.id;
-      addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + ruleProps.i + ' l ' + ruleProps.l + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
-      CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
+      addedCirculationRule =
+        't ' +
+        testData.loanTypeId +
+        ': i ' +
+        ruleProps.i +
+        ' l ' +
+        ruleProps.l +
+        ' r ' +
+        ruleProps.r +
+        ' o ' +
+        ruleProps.o +
+        ' n ' +
+        ruleProps.n;
+      CirculationRules.addRuleViaApi(
+        originalCirculationRules,
+        ruleProps,
+        't ',
+        testData.loanTypeId,
+      );
     });
 
-    cy.createTempUser([permissions.checkinAll.gui, permissions.uiRequestsView.gui], patronGroup.name)
+    cy.createTempUser(
+      [permissions.checkinAll.gui, permissions.uiRequestsView.gui],
+      patronGroup.name,
+    )
       .then((userProperties) => {
         userData.username = userProperties.username;
         userData.password = userProperties.password;
@@ -123,15 +148,21 @@ describe('Check In - Actions', () => {
         UserEdit.addServicePointsViaApi(
           [testData.servicePointS.id, testData.servicePointS1.id],
           userData.userId,
-          testData.servicePointS.id
+          testData.servicePointS.id,
         );
 
-        cy.createTempUser([permissions.requestsAll.gui], patronGroup.name).then((userProperties) => {
-          requestUserData.username = userProperties.username;
-          requestUserData.userId = userProperties.userId;
-          requestUserData.barcode = userProperties.barcode;
-          UserEdit.addServicePointViaApi(testData.servicePointS1.id, requestUserData.userId, testData.servicePointS1.id);
-        });
+        cy.createTempUser([permissions.requestsAll.gui], patronGroup.name).then(
+          (userProperties) => {
+            requestUserData.username = userProperties.username;
+            requestUserData.userId = userProperties.userId;
+            requestUserData.barcode = userProperties.barcode;
+            UserEdit.addServicePointViaApi(
+              testData.servicePointS1.id,
+              requestUserData.userId,
+              testData.servicePointS1.id,
+            );
+          },
+        );
 
         Checkout.checkoutItemViaApi({
           id: uuid(),
@@ -168,8 +199,13 @@ describe('Check In - Actions', () => {
       checkInDate: new Date().toISOString(),
     });
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePointS.id, testData.servicePointS1.id]);
-    UserEdit.changeServicePointPreferenceViaApi(requestUserData.userId, [testData.servicePointS1.id]);
+    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [
+      testData.servicePointS.id,
+      testData.servicePointS1.id,
+    ]);
+    UserEdit.changeServicePointPreferenceViaApi(requestUserData.userId, [
+      testData.servicePointS1.id,
+    ]);
     ServicePoints.deleteViaApi(testData.servicePointS.id);
     ServicePoints.deleteViaApi(testData.servicePointS1.id);
     Requests.deleteRequestViaApi(testData.requestsId);
@@ -183,7 +219,7 @@ describe('Check In - Actions', () => {
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
+      testData.defaultLocation.id,
     );
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
     cy.deleteLoanType(testData.loanTypeId);
@@ -218,6 +254,6 @@ describe('Check In - Actions', () => {
 
       CheckInActions.checkActionsMenuOptions(['printHoldSlip', 'requestDetails']);
       CheckInActions.openRequestDetails(itemData.barcode);
-    }
+    },
   );
 });

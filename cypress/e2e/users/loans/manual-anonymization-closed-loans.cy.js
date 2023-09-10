@@ -98,8 +98,25 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
             ruleProps.r = policyIds.request;
             ruleProps.o = policyIds.overdueFine;
             ruleProps.n = policyIds.notice;
-            addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + ruleProps.i + ' l ' + ruleProps.l + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
-            CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
+            addedCirculationRule =
+              't ' +
+              testData.loanTypeId +
+              ': i ' +
+              ruleProps.i +
+              ' l ' +
+              ruleProps.l +
+              ' r ' +
+              ruleProps.r +
+              ' o ' +
+              ruleProps.o +
+              ' n ' +
+              ruleProps.n;
+            CirculationRules.addRuleViaApi(
+              originalCirculationRules,
+              ruleProps,
+              't ',
+              testData.loanTypeId,
+            );
           });
         });
         source = InventoryHoldings.getHoldingSources({ limit: 1 });
@@ -150,21 +167,25 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
                 testData.itemIds = specialInstanceIds.holdingIds[0].itemIds;
               })
               .then(() => {
-                cy.wrap([newFirstItemData.barcode, newSecondItemData.barcode]).each((itemBarcode) => {
-                  Checkout.checkoutItemViaApi({
-                    itemBarcode,
-                    userBarcode,
-                    servicePointId,
-                  });
-                });
+                cy.wrap([newFirstItemData.barcode, newSecondItemData.barcode]).each(
+                  (itemBarcode) => {
+                    Checkout.checkoutItemViaApi({
+                      itemBarcode,
+                      userBarcode,
+                      servicePointId,
+                    });
+                  },
+                );
 
-                cy.wrap([newFirstItemData.barcode, newSecondItemData.barcode]).each((itemBarcode) => {
-                  checkInActions.checkinItemViaApi({
-                    itemBarcode,
-                    servicePointId,
-                    checkInDate: moment.utc().format(),
-                  });
-                });
+                cy.wrap([newFirstItemData.barcode, newSecondItemData.barcode]).each(
+                  (itemBarcode) => {
+                    checkInActions.checkinItemViaApi({
+                      itemBarcode,
+                      servicePointId,
+                      checkInDate: moment.utc().format(),
+                    });
+                  },
+                );
 
                 cy.login(username, password, {
                   path: AppPaths.getClosedLoansPath(userId),
@@ -222,6 +243,6 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
       LoanDetails.checkAnonymizeModalOpen();
       LoanDetails.closeAnonymizeModal();
       LoanDetails.checkLoanAbsent(newFirstItemData.barcode);
-    }
+    },
   );
 });

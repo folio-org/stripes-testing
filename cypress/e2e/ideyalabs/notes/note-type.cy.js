@@ -27,7 +27,7 @@ describe.skip('Settings', () => {
       AgreementsDetails.clickOnNewButton();
       NewNote.clickOnNoteType(noteData);
       NewNote.deleteNote(noteData);
-    }
+    },
   );
 
   it(
@@ -47,6 +47,6 @@ describe.skip('Settings', () => {
       AgreementsDetails.clickOnNoteRecord();
       ExistingNoteView.gotoEdit();
       NewNote.clickOnNoteType(noteType);
-    }
+    },
   );
 });

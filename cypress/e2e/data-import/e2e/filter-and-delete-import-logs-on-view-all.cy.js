@@ -28,50 +28,48 @@ describe('data-import', () => {
     before(() => {
       cy.createTempUser([
         permissions.moduleDataImportEnabled.gui,
-        permissions.dataImportDeleteLogs.gui
-      ])
-        .then(userProperties => {
-          firstUser = userProperties;
+        permissions.dataImportDeleteLogs.gui,
+      ]).then((userProperties) => {
+        firstUser = userProperties;
 
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.dataImportPath,
-            waiter: DataImport.waitLoading
-          });
-          // Log list should contain at least 30-35 import jobs, run by different users, and using different import profiles
-          for (let i = 0; i < 25; i++) {
-            const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;
-
-            DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
-          }
-
-          cy.logout();
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
         });
+        // Log list should contain at least 30-35 import jobs, run by different users, and using different import profiles
+        for (let i = 0; i < 25; i++) {
+          const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;
+
+          DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
+        }
+
+        cy.logout();
+      });
 
       cy.createTempUser([
         permissions.moduleDataImportEnabled.gui,
-        permissions.dataImportDeleteLogs.gui
-      ])
-        .then(userProperties => {
-          secondUser = userProperties;
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.dataImportPath,
-            waiter: DataImport.waitLoading
-          });
-          // Log list should contain at least 30-35 import jobs
-          for (let i = 0; i < 8; i++) {
-            const nameMarcFileForCreate = `C358136autotestFile.${getRandomPostfix()}.mrc`;
-
-            // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-            DataImport.verifyUploadState();
-            DataImport.uploadFile('oneMarcAuthority.mrc', nameMarcFileForCreate);
-            // need to wait until file will be uploaded in loop
-            cy.wait(8000);
-            JobProfiles.searchJobProfileForImport('Default - Create SRS MARC Authority');
-            JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(nameMarcFileForCreate);
-            Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-          }
+        permissions.dataImportDeleteLogs.gui,
+      ]).then((userProperties) => {
+        secondUser = userProperties;
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
         });
+        // Log list should contain at least 30-35 import jobs
+        for (let i = 0; i < 8; i++) {
+          const nameMarcFileForCreate = `C358136autotestFile.${getRandomPostfix()}.mrc`;
+
+          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+          DataImport.verifyUploadState();
+          DataImport.uploadFile('oneMarcAuthority.mrc', nameMarcFileForCreate);
+          // need to wait until file will be uploaded in loop
+          cy.wait(8000);
+          JobProfiles.searchJobProfileForImport('Default - Create SRS MARC Authority');
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(nameMarcFileForCreate);
+          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        }
+      });
     });
 
     after(() => {
@@ -80,8 +78,10 @@ describe('data-import', () => {
       // TODO delete all created instances
     });
 
-    it('C358136 A user can filter and delete import logs from the "View all" page (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+    it(
+      'C358136 A user can filter and delete import logs from the "View all" page (folijet)',
+      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      () => {
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();
         LogsViewAll.filterJobsByJobProfile('Default - Create SRS MARC Authority');
@@ -89,19 +89,22 @@ describe('data-import', () => {
 
         const formattedEnd = DateTools.getFormattedDate({ date: completedDate });
 
-        LogsViewAll.checkByDateAndJobProfile({ from: formattedStart, end: formattedEnd }, jobProfileId)
-          .then((count) => {
-            LogsViewAll.selectAllLogs();
-            LogsViewAll.checkIsLogsSelected(count);
-            LogsViewAll.unmarcCheckbox(0);
-            LogsViewAll.checkmarkAllLogsIsRemoved();
-            LogsViewAll.deleteLog();
+        LogsViewAll.checkByDateAndJobProfile(
+          { from: formattedStart, end: formattedEnd },
+          jobProfileId,
+        ).then((count) => {
+          LogsViewAll.selectAllLogs();
+          LogsViewAll.checkIsLogsSelected(count);
+          LogsViewAll.unmarcCheckbox(0);
+          LogsViewAll.checkmarkAllLogsIsRemoved();
+          LogsViewAll.deleteLog();
 
-            const countOfLogsForDelete = (count - 1);
-            DeleteDataImportLogsModal.confirmDelete(countOfLogsForDelete);
-            LogsViewAll.verifyMessageOfDeleted(countOfLogsForDelete);
-            LogsViewAll.modalIsAbsent();
-          });
-      });
+          const countOfLogsForDelete = count - 1;
+          DeleteDataImportLogsModal.confirmDelete(countOfLogsForDelete);
+          LogsViewAll.verifyMessageOfDeleted(countOfLogsForDelete);
+          LogsViewAll.modalIsAbsent();
+        });
+      },
+    );
   });
 });

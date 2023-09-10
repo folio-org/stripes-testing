@@ -15,12 +15,9 @@ export default {
     cy.do(Select('Remote storage*').choose(value));
   },
   selectServicePoint(value = 'Online') {
-    cy.do([
-      Select('Service point(s)').choose(value),
-      Button('Add service point').click()
-    ]);
+    cy.do([Select('Service point(s)').choose(value), Button('Add service point').click()]);
   },
   saveAndClose() {
     cy.do(Button({ id: 'clickable-save-location' }).click());
-  }
+  },
 };

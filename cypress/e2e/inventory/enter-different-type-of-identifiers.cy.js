@@ -28,9 +28,11 @@ describe('inventory', () => {
             instance: {
               instanceTypeId: Cypress.env('instanceTypes')[0].id,
               title: instanceTitle,
-              source: INSTANCE_SOURCE_NAMES.FOLIO
+              source: INSTANCE_SOURCE_NAMES.FOLIO,
             },
-          }).then(specialInstanceId => { instanceId = specialInstanceId; });
+          }).then((specialInstanceId) => {
+            instanceId = specialInstanceId;
+          });
         });
     });
 
@@ -44,20 +46,23 @@ describe('inventory', () => {
       InventoryInstances.selectInstance();
     };
 
-    [
-      'ASIN',
-      'BNB'
-    ].forEach((identifier) => {
-      it('C609 In Accordion Identifiers --> enter different type of identifiers (folijet) (prokopovych)',
-        { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+    ['ASIN', 'BNB'].forEach((identifier) => {
+      it(
+        'C609 In Accordion Identifiers --> enter different type of identifiers (folijet) (prokopovych)',
+        { tags: [TestTypes.smoke, DevTeams.folijet] },
+        () => {
           resourceIdentifier = `testResourceIdentifier.${getRandomPostfix()}`;
 
           searchAndOpenInstance('Title (all)', instanceTitle);
           InventoryInstance.editInstance();
           InstanceRecordEdit.addIdentifier(identifier, resourceIdentifier);
-          searchAndOpenInstance('Keyword (title, contributor, identifier, HRID, UUID)', resourceIdentifier);
+          searchAndOpenInstance(
+            'Keyword (title, contributor, identifier, HRID, UUID)',
+            resourceIdentifier,
+          );
           InventoryInstance.checkInstanceIdentifier(resourceIdentifier);
-        });
+        },
+      );
     });
   });
 });

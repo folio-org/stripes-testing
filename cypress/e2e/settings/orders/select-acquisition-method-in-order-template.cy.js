@@ -18,17 +18,19 @@ describe('orders: Settings', () => {
   before(() => {
     cy.getAdminToken();
 
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-      });
-    AcquisitionMethods.createNewAcquisitionMethodViaAPI(acquisitionMethod);
-    cy.createTempUser([
-      permissions.uiSettingsOrdersCanViewEditCreateNewOrderTemplates.gui,
-    ]).then(userProperties => {
-      user = userProperties;
-      cy.login(user.username, user.password, { path:SettingsMenu.ordersOrderTemplatesPath, waiter: OrderTemplate.waitLoading });
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
     });
+    AcquisitionMethods.createNewAcquisitionMethodViaAPI(acquisitionMethod);
+    cy.createTempUser([permissions.uiSettingsOrdersCanViewEditCreateNewOrderTemplates.gui]).then(
+      (userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: SettingsMenu.ordersOrderTemplatesPath,
+          waiter: OrderTemplate.waitLoading,
+        });
+      },
+    );
   });
 
   after(() => {
@@ -37,10 +39,18 @@ describe('orders: Settings', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C350602 Select Acquisition Method in Order Template (thunderjet)', { tags: [TestType.criticalPath, devTeams.thunderjet] }, () => {
-    OrderTemplate.newTemplate();
-    OrderTemplate.fillTemplateInformationWithAcquisitionMethod(orderTemplateName, organization.name, acquisitionMethod.value);
-    OrderTemplate.saveTemplate();
-    OrderTemplate.checkTemplateCreated(orderTemplateName);
-  });
+  it(
+    'C350602 Select Acquisition Method in Order Template (thunderjet)',
+    { tags: [TestType.criticalPath, devTeams.thunderjet] },
+    () => {
+      OrderTemplate.newTemplate();
+      OrderTemplate.fillTemplateInformationWithAcquisitionMethod(
+        orderTemplateName,
+        organization.name,
+        acquisitionMethod.value,
+      );
+      OrderTemplate.saveTemplate();
+      OrderTemplate.checkTemplateCreated(orderTemplateName);
+    },
+  );
 });

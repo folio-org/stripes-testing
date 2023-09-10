@@ -1,8 +1,5 @@
 import { HTML, including } from '@interactors/html';
-import {
-  Button,
-  Modal,
-} from '../../../../interactors';
+import { Button, Modal } from '../../../../interactors';
 
 const actionsButton = Button('Actions');
 const confirmItemWithdrawnModal = Modal('Confirm item status: Withdrawn');
@@ -29,7 +26,9 @@ export default {
     'Checked out',
   ],
 
-  itemStatusesToCreate() { return [...this.itemsToMarkAsMissing, ...this.itemsNotToMarkAsMissing]; },
+  itemStatusesToCreate() {
+    return [...this.itemsToMarkAsMissing, ...this.itemsNotToMarkAsMissing];
+  },
 
   withdrawItemButton: Button('Withdrawn'),
   newRequestButton: Button('New Request'),

@@ -17,7 +17,7 @@ describe('data-import', () => {
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
       profileName: `C2331 autotest job profile.${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
     before('create test data', () => {
@@ -35,8 +35,10 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfile.profileName);
     });
 
-    it('C2331 Add tags to a job profile, then remove tags from it (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] }, () => {
+    it(
+      'C2331 Add tags to a job profile, then remove tags from it (folijet)',
+      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      () => {
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
         JobProfileView.addExistingTag(tag);
         JobProfileView.verifyAssignedTags(tag);
@@ -47,6 +49,7 @@ describe('data-import', () => {
 
         JobProfileView.removeTag(tag);
         JobProfileView.verifyAssignedTagsIsAbsent(tag);
-      });
+      },
+    );
   });
 });

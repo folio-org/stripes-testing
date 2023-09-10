@@ -17,15 +17,16 @@ const matchedRecordsFileName = `Matched-Records-${userUUIDsFileName}`;
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
-      cy.createTempUser([
-        permissions.bulkEditUpdateRecords.gui,
-        permissions.uiUserEdit.gui
-      ])
-        .then(userProperties => {
+      cy.createTempUser([permissions.bulkEditUpdateRecords.gui, permissions.uiUserEdit.gui]).then(
+        (userProperties) => {
           user = userProperties;
-          cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
           FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, user.userId);
-        });
+        },
+      );
     });
 
     beforeEach('select User', () => {
@@ -42,110 +43,134 @@ describe('bulk-edit', () => {
       cy.visit(TopMenu.bulkEditPath);
     });
 
-    it('C357579 Bulk edit: In app - Update user records permission enabled - Preview of records matched (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+    it(
+      'C357579 Bulk edit: In app - Update user records permission enabled - Preview of records matched (firebird)',
+      { tags: [testTypes.smoke, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
-      BulkEditSearchPane.uploadFile(userUUIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.uploadFile(userUUIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
 
-      BulkEditActions.downloadMatchedResults();
-      BulkEditSearchPane.verifyUserBarcodesResultAccordion();
+        BulkEditActions.downloadMatchedResults();
+        BulkEditSearchPane.verifyUserBarcodesResultAccordion();
 
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.verifyBulkEditForm();
-    });
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.verifyBulkEditForm();
+      },
+    );
 
-    it('C357987 Verify Users Patron group bulk edit -- in app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+    it(
+      'C357987 Verify Users Patron group bulk edit -- in app approach (firebird)',
+      { tags: [testTypes.smoke, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
-      BulkEditSearchPane.uploadFile(userUUIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.uploadFile(userUUIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
 
-      BulkEditActions.openActions();
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.fillPatronGroup('graduate (Graduate Student)');
-      BulkEditActions.confirmChanges();
-      BulkEditActions.commitChanges();
-      BulkEditSearchPane.waitFileUploading();
+        BulkEditActions.openActions();
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.fillPatronGroup('graduate (Graduate Student)');
+        BulkEditActions.confirmChanges();
+        BulkEditActions.commitChanges();
+        BulkEditSearchPane.waitFileUploading();
 
-      cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
-      UsersSearchPane.searchByKeywords(user.username);
-      UsersSearchPane.openUser(user.username);
-      UsersCard.verifyPatronBlockValue('graduate');
-    });
+        cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
+        UsersSearchPane.searchByKeywords(user.username);
+        UsersSearchPane.openUser(user.username);
+        UsersCard.verifyPatronBlockValue('graduate');
+      },
+    );
 
-    it('C359213 Verify elements "Are you sure form?" -- Users-in app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+    it(
+      'C359213 Verify elements "Are you sure form?" -- Users-in app approach (firebird)',
+      { tags: [testTypes.smoke, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
-      BulkEditSearchPane.uploadFile(userUUIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.uploadFile(userUUIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
 
-      BulkEditActions.openActions();
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.fillPatronGroup('staff (Staff Member)');
+        BulkEditActions.openActions();
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.fillPatronGroup('staff (Staff Member)');
 
-      BulkEditActions.confirmChanges();
-      BulkEditActions.verifyAreYouSureForm(1, user.username);
-      BulkEditActions.clickKeepEditingBtn();
+        BulkEditActions.confirmChanges();
+        BulkEditActions.verifyAreYouSureForm(1, user.username);
+        BulkEditActions.clickKeepEditingBtn();
 
-      BulkEditActions.confirmChanges();
-      BulkEditActions.commitChanges();
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditActions.verifySuccessBanner(1);
-      BulkEditSearchPane.verifyChangedResults('staff');
-    });
+        BulkEditActions.confirmChanges();
+        BulkEditActions.commitChanges();
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditActions.verifySuccessBanner(1);
+        BulkEditSearchPane.verifyChangedResults('staff');
+      },
+    );
 
-    it('C359214 Verify expiration date updates in In-app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      const todayDate = new Date();
+    it(
+      'C359214 Verify expiration date updates in In-app approach (firebird)',
+      { tags: [testTypes.smoke, devTeams.firebird] },
+      () => {
+        const todayDate = new Date();
 
-      BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+        BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
-      BulkEditSearchPane.uploadFile(userUUIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.uploadFile(userUUIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
 
-      BulkEditActions.openActions();
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.fillExpirationDate(todayDate);
-      BulkEditActions.confirmChanges();
-      BulkEditActions.commitChanges();
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditActions.verifySuccessBanner(1);
+        BulkEditActions.openActions();
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.fillExpirationDate(todayDate);
+        BulkEditActions.confirmChanges();
+        BulkEditActions.commitChanges();
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditActions.verifySuccessBanner(1);
 
-      cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
-      UsersSearchPane.searchByKeywords(user.username);
-      UsersSearchPane.openUser(user.username);
-      UsersCard.verifyExpirationDate(todayDate);
-    });
+        cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
+        UsersSearchPane.searchByKeywords(user.username);
+        UsersSearchPane.openUser(user.username);
+        UsersCard.verifyExpirationDate(todayDate);
+      },
+    );
 
-    it('C359237 Verify "Expiration date" option in the dropdown (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+    it(
+      'C359237 Verify "Expiration date" option in the dropdown (firebird)',
+      { tags: [testTypes.smoke, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
-      BulkEditSearchPane.uploadFile(userUUIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.uploadFile(userUUIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
 
-      BulkEditActions.openActions();
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.verifyCalendarItem();
-    });
+        BulkEditActions.openActions();
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.verifyCalendarItem();
+      },
+    );
 
-    it('C359585 Verify clicking on the "Commit changes" button (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+    it(
+      'C359585 Verify clicking on the "Commit changes" button (firebird)',
+      { tags: [testTypes.smoke, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
-      BulkEditSearchPane.uploadFile(userUUIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.uploadFile(userUUIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
 
-      BulkEditActions.openActions();
-      BulkEditActions.verifyCheckedDropdownMenuItem();
-      BulkEditActions.verifyUncheckedDropdownMenuItem();
+        BulkEditActions.openActions();
+        BulkEditActions.verifyCheckedDropdownMenuItem();
+        BulkEditActions.verifyUncheckedDropdownMenuItem();
 
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.fillPatronGroup('graduate (Graduate Student)');
-      BulkEditActions.confirmChanges();
-      BulkEditActions.verifyAreYouSureForm(1, user.username);
-      BulkEditActions.commitChanges();
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditActions.verifySuccessBanner(1);
-      BulkEditSearchPane.verifyChangedResults(user.username);
-    });
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.fillPatronGroup('graduate (Graduate Student)');
+        BulkEditActions.confirmChanges();
+        BulkEditActions.verifyAreYouSureForm(1, user.username);
+        BulkEditActions.commitChanges();
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditActions.verifySuccessBanner(1);
+        BulkEditSearchPane.verifyChangedResults(user.username);
+      },
+    );
   });
 });

@@ -14,7 +14,7 @@ const validHoldingHRIDsFileName = `validHoldingHRIDs_${getRandomPostfix()}.csv`;
 const inventoryEntity = {
   instanceName: `testBulkEditWithSpecial:;Chars_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
-  holdingHRID: ''
+  holdingHRID: '',
 };
 
 describe('bulk-edit', () => {
@@ -24,51 +24,61 @@ describe('bulk-edit', () => {
         permissions.bulkEditView.gui,
         permissions.bulkEditEdit.gui,
         permissions.inventoryAll.gui,
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading
-          });
-
-          const instanceId = InventoryInstances.createInstanceViaApi(inventoryEntity.instanceName, inventoryEntity.itemBarcode);
-          cy.getHoldings({
-            limit: 1,
-            query: `"instanceId"="${instanceId}"`
-          })
-            .then(holdings => {
-              inventoryEntity.holdingHRID = holdings[0].hrid;
-              FileManager.createFile(`cypress/fixtures/${validHoldingHRIDsFileName}`, inventoryEntity.holdingHRID);
-            });
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
+
+        const instanceId = InventoryInstances.createInstanceViaApi(
+          inventoryEntity.instanceName,
+          inventoryEntity.itemBarcode,
+        );
+        cy.getHoldings({
+          limit: 1,
+          query: `"instanceId"="${instanceId}"`,
+        }).then((holdings) => {
+          inventoryEntity.holdingHRID = holdings[0].hrid;
+          FileManager.createFile(
+            `cypress/fixtures/${validHoldingHRIDsFileName}`,
+            inventoryEntity.holdingHRID,
+          );
+        });
+      });
     });
 
     after('delete test data', () => {
       Users.deleteViaApi(user.userId);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(inventoryEntity.itemBarcode);
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
+        inventoryEntity.itemBarcode,
+      );
       FileManager.deleteFile(`cypress/fixtures/${validHoldingHRIDsFileName}`);
     });
 
-    it('C366548 Verify that Holdings with special characters in title can be bulk edited (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.checkHoldingsRadio();
-      BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
+    it(
+      'C366548 Verify that Holdings with special characters in title can be bulk edited (firebird)',
+      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.checkHoldingsRadio();
+        BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
 
-      BulkEditSearchPane.uploadFile(validHoldingHRIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.verifyMatchedResults(inventoryEntity.holdingHRID);
+        BulkEditSearchPane.uploadFile(validHoldingHRIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyMatchedResults(inventoryEntity.holdingHRID);
 
-      const tempLocation = 'Annex';
+        const tempLocation = 'Annex';
 
-      BulkEditActions.openActions();
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.replaceTemporaryLocation(tempLocation, 'holdings', 0);
-      BulkEditActions.confirmChanges();
-      BulkEditActions.commitChanges();
-      BulkEditSearchPane.waitFileUploading();
+        BulkEditActions.openActions();
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.replaceTemporaryLocation(tempLocation, 'holdings', 0);
+        BulkEditActions.confirmChanges();
+        BulkEditActions.commitChanges();
+        BulkEditSearchPane.waitFileUploading();
 
-      BulkEditSearchPane.verifyChangedResults(tempLocation);
-      BulkEditActions.verifySuccessBanner(1);
-    });
+        BulkEditSearchPane.verifyChangedResults(tempLocation);
+        BulkEditActions.verifySuccessBanner(1);
+      },
+    );
   });
 });

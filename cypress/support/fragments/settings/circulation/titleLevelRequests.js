@@ -4,8 +4,8 @@ import InteractorsTools from '../../../utils/interactorsTools';
 const saveButton = Button('Save');
 const TLRCheckbox = Checkbox({ name: 'titleLevelRequestsFeatureEnabled' });
 const confirmationNotice = Select({ name: 'confirmationPatronNoticeTemplateId' });
-const cancellationNotice = Select({ name:'cancellationPatronNoticeTemplateId' });
-const expirationNotice = Select({ name:'expirationPatronNoticeTemplateId' });
+const cancellationNotice = Select({ name: 'cancellationPatronNoticeTemplateId' });
+const expirationNotice = Select({ name: 'expirationPatronNoticeTemplateId' });
 
 export default {
   waitLoading() {
@@ -13,7 +13,9 @@ export default {
   },
 
   checkCirculationHasTLR() {
-    cy.expect(Pane({ id: 'app-settings-nav-pane' }).find(NavListItem('Title level requests')).exists());
+    cy.expect(
+      Pane({ id: 'app-settings-nav-pane' }).find(NavListItem('Title level requests')).exists(),
+    );
   },
   selectConfirmationNoticeDropdown: (notice) => {
     cy.do(confirmationNotice.choose(notice.notice1));
@@ -27,7 +29,7 @@ export default {
     cy.do(expirationNotice.choose(notice.notice3));
   },
 
-  clickOnSaveButton:() => {
+  clickOnSaveButton: () => {
     cy.do(saveButton.click());
   },
 
@@ -36,12 +38,16 @@ export default {
       .invoke('is', ':checked')
       .then((checked) => {
         if (!checked && status === 'allow') {
-          cy.expect(Checkbox({ name: 'titleLevelRequestsFeatureEnabled', disabled: false }).exists());
+          cy.expect(
+            Checkbox({ name: 'titleLevelRequestsFeatureEnabled', disabled: false }).exists(),
+          );
           cy.do(TLRCheckbox.click());
           cy.do(saveButton.click());
           this.checkUpdateTLRCalloutAppeared();
         } else if (checked && status === 'forbid') {
-          cy.expect(Checkbox({ name: 'titleLevelRequestsFeatureEnabled', disabled: false }).exists());
+          cy.expect(
+            Checkbox({ name: 'titleLevelRequestsFeatureEnabled', disabled: false }).exists(),
+          );
           cy.do(TLRCheckbox.click());
           // need to wait if the popup module appears
           // eslint-disable-next-line cypress/no-unnecessary-waiting

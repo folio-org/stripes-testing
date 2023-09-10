@@ -24,21 +24,21 @@ describe('bulk-edit', () => {
       cy.createTempUser([
         permissions.bulkEditView.gui,
         permissions.bulkEditEdit.gui,
-        permissions.uiInventoryViewCreateEditItems.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading
-          });
-          InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-          cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` })
-            .then((res) => {
-              item.hrid = res.hrid;
-              FileManager.createFile(`cypress/fixtures/${itemHRIDsFileName}`, item.hrid);
-            });
+        permissions.uiInventoryViewCreateEditItems.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
+        InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
+        cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
+          (res) => {
+            item.hrid = res.hrid;
+            FileManager.createFile(`cypress/fixtures/${itemHRIDsFileName}`, item.hrid);
+          },
+        );
+      });
     });
 
     after('delete test data', () => {
@@ -47,19 +47,23 @@ describe('bulk-edit', () => {
       FileManager.deleteFile(`cypress/fixtures/${itemHRIDsFileName}`);
     });
 
-    it('C353622 Verify uploading file with Item HRIDs (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.checkItemsRadio();
-      BulkEditSearchPane.selectRecordIdentifier('Item HRIDs');
+    it(
+      'C353622 Verify uploading file with Item HRIDs (firebird)',
+      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.checkItemsRadio();
+        BulkEditSearchPane.selectRecordIdentifier('Item HRIDs');
 
-      BulkEditSearchPane.uploadFile(itemHRIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.uploadFile(itemHRIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
 
-      BulkEditActions.openActions();
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.replaceItemStatus('Intellectual item');
-      BulkEditActions.confirmChanges();
-      BulkEditActions.commitChanges();
-      BulkEditSearchPane.waitFileUploading();
-    });
+        BulkEditActions.openActions();
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.replaceItemStatus('Intellectual item');
+        BulkEditActions.confirmChanges();
+        BulkEditActions.commitChanges();
+        BulkEditSearchPane.waitFileUploading();
+      },
+    );
   });
 });

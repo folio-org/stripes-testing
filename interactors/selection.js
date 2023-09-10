@@ -8,8 +8,8 @@ export const SelectionOption = HTML.extend('selection option')
   .locator((el) => el.textContent)
   .filters({
     index: (el) => {
-      return [...el.parentNode.querySelectorAll('li')].filter((o => o === el)).length;
-    }
+      return [...el.parentNode.querySelectorAll('li')].filter((o) => o === el).length;
+    },
   })
   .actions({
     click: ({ perform }) => perform((el) => el.click()),
@@ -18,21 +18,26 @@ export const SelectionOption = HTML.extend('selection option')
 export const SelectionList = HTML.extend('selection list')
   .selector('[class^=selectionListRoot]:not([hidden])')
   .filters({
-    id: el => el.id,
+    id: (el) => el.id,
     optionCount: (el) => [...el.querySelectorAll('li')].length,
   })
   .actions({
-    filter: ({ find }, value) => find(TextField())
-      .perform((el) => {
-        el.focus();
-        const property = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value');
-        property.set.call(el, value);
-        el.dispatchEvent(new InputEvent('input', { inputType: 'insertFromPaste', bubbles: true, cancelable: false }));
-      }),
-    focusFilter: ({ perform }) => perform(el => el.querySelector('[class^=selectionFilter]').focus()),
+    filter: ({ find }, value) => find(TextField()).perform((el) => {
+      el.focus();
+      const property = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value');
+      property.set.call(el, value);
+      el.dispatchEvent(
+        new InputEvent('input', {
+          inputType: 'insertFromPaste',
+          bubbles: true,
+          cancelable: false,
+        }),
+      );
+    }),
+    focusFilter: ({ perform }) => perform((el) => el.querySelector('[class^=selectionFilter]').focus()),
     select: async (interactor, value) => {
       await interactor.find(SelectionOption(value)).click();
-    }
+    },
   });
 
 export default HTML.extend('selection')
@@ -44,7 +49,7 @@ export default HTML.extend('selection')
   .filters({
     id: (el) => el.querySelector('[class^=selectionControl-]').id,
     value: (el) => el.querySelector('button').textContent,
-    singleValue:(el) => el.querySelector('button [class^=singleValue-]').textContent,
+    singleValue: (el) => el.querySelector('button [class^=singleValue-]').textContent,
     error: (el) => el.querySelector('[class^=feedbackError]').textContent,
     warning: (el) => el.querySelector('[class^=feedbackWarning]').textContent,
     open: (el) => {
@@ -71,5 +76,5 @@ export default HTML.extend('selection')
       }
       return perform(() => SelectionList().find(SelectionOption(value)).click());
     },
-    focus: ({ perform }) => perform((el) => el.querySelector('button').focus())
+    focus: ({ perform }) => perform((el) => el.querySelector('button').focus()),
   });

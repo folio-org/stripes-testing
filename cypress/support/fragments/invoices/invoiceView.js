@@ -24,7 +24,7 @@ export default {
       MultiColumnList({ id: 'invoices-list' })
         .find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
         .find(Link())
-        .click()
+        .click(),
     );
   },
   selectInvoiceLine: () => {
@@ -32,53 +32,77 @@ export default {
       Section({ id: 'invoiceLines' })
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 0 }))
-        .click()
+        .click(),
     );
   },
 
-  checkInvoiceDetails:(invoiceNumber) => {
-    cy.do(Section().find(MultiColumnListCell(including(invoiceNumber))).perform(element => {
-      const invoiceOfNumber = element.innerText.split('-')[0];
+  checkInvoiceDetails: (invoiceNumber) => {
+    cy.do(
+      Section()
+        .find(MultiColumnListCell(including(invoiceNumber)))
+        .perform((element) => {
+          const invoiceOfNumber = element.innerText.split('-')[0];
 
-      cy.visit(TopMenu.invoicesPath);
-      invoices.searchByNumber(invoiceOfNumber);
-      cy.do(MultiColumnList({ id:'invoices-list' })
-        .find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
-        .find(Link(invoiceNumber))
-        .click());
+          cy.visit(TopMenu.invoicesPath);
+          invoices.searchByNumber(invoiceOfNumber);
+          cy.do(
+            MultiColumnList({ id: 'invoices-list' })
+              .find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
+              .find(Link(invoiceNumber))
+              .click(),
+          );
 
-      const invoiceDate = KeyValue('Invoice date');
-      const invoiceStatus = KeyValue('Status');
-      const invoiceSource = KeyValue('Source');
+          const invoiceDate = KeyValue('Invoice date');
+          const invoiceStatus = KeyValue('Status');
+          const invoiceSource = KeyValue('Source');
 
-      cy.expect(invoiceDate.has({ value: expectedInvoiceDate }));
-      cy.expect(invoiceStatus.has({ value: expectedInvoiceStatus }));
-      cy.expect(invoiceSource.has({ value: expectedInvoiceSource }));
-    }));
+          cy.expect(invoiceDate.has({ value: expectedInvoiceDate }));
+          cy.expect(invoiceStatus.has({ value: expectedInvoiceStatus }));
+          cy.expect(invoiceSource.has({ value: expectedInvoiceSource }));
+        }),
+    );
   },
 
-  checkQuantityInvoiceLinesInRecord:(quantity) => {
-    cy.expect(Pane({ id:'pane-results' }).find(HTML(including(`${quantity} records found`))).exists());
+  checkQuantityInvoiceLinesInRecord: (quantity) => {
+    cy.expect(
+      Pane({ id: 'pane-results' })
+        .find(HTML(including(`${quantity} records found`)))
+        .exists(),
+    );
   },
 
   verifyTagsIsAbsent: () => {
-    cy.expect(Pane({ id: 'pane-invoiceDetails' }).find(Button({ icon: 'tag' })).absent());
+    cy.expect(
+      Pane({ id: 'pane-invoiceDetails' })
+        .find(Button({ icon: 'tag' }))
+        .absent(),
+    );
   },
 
-  verifyInvoiceNote:(note) => {
-    cy.expect(Pane({ id:'pane-invoiceDetails' }).find(KeyValue('Note')).has({ value: note }));
+  verifyInvoiceNote: (note) => {
+    cy.expect(Pane({ id: 'pane-invoiceDetails' }).find(KeyValue('Note')).has({ value: note }));
   },
 
-  verifyInvoiceLineSubscription:(subscription) => {
-    cy.expect(Pane({ id:'pane-invoiceLineDetails' }).find(KeyValue('Subscription info')).has({ value: subscription }));
+  verifyInvoiceLineSubscription: (subscription) => {
+    cy.expect(
+      Pane({ id: 'pane-invoiceLineDetails' })
+        .find(KeyValue('Subscription info'))
+        .has({ value: subscription }),
+    );
   },
 
-  verifyInvoiceLineComment:(comment) => {
-    cy.expect(Pane({ id:'pane-invoiceLineDetails' }).find(KeyValue('Comment')).has({ value: comment }));
+  verifyInvoiceLineComment: (comment) => {
+    cy.expect(
+      Pane({ id: 'pane-invoiceLineDetails' }).find(KeyValue('Comment')).has({ value: comment }),
+    );
   },
 
-  verifyAcquisitionUnits:(acquisitionUnitName) => {
-    cy.expect(Pane({ id:'pane-invoiceDetails' }).find(KeyValue('Acquisition units')).has({ value: acquisitionUnitName }));
+  verifyAcquisitionUnits: (acquisitionUnitName) => {
+    cy.expect(
+      Pane({ id: 'pane-invoiceDetails' })
+        .find(KeyValue('Acquisition units'))
+        .has({ value: acquisitionUnitName }),
+    );
   },
 
   vendorInvoiceNumber,

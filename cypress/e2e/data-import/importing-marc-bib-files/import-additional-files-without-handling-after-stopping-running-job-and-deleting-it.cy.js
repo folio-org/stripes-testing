@@ -21,24 +21,25 @@ describe('data-import', () => {
     before('login', () => {
       cy.createTempUser([
         permissions.moduleDataImportEnabled.gui,
-        permissions.dataImportDeleteLogs.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+        permissions.dataImportDeleteLogs.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.dataImportPath,
-            waiter: DataImport.waitLoading
-          });
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
         });
+      });
     });
 
     after('delete user', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it('C378883 Verify the ability to import additional files without hanging after stopping a running job and deleting it (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+    it(
+      'C378883 Verify the ability to import additional files without hanging after stopping a running job and deleting it (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
@@ -57,7 +58,9 @@ describe('data-import', () => {
         DataImport.selectLog();
         DataImport.openDeleteImportLogsModal();
         DataImport.confirmDeleteImportLogs();
-        InteractorsTools.checkCalloutMessage(`${numberOfLogsToDelete} data import logs have been successfully deleted.`);
+        InteractorsTools.checkCalloutMessage(
+          `${numberOfLogsToDelete} data import logs have been successfully deleted.`,
+        );
         cy.reload();
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
@@ -67,6 +70,7 @@ describe('data-import', () => {
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(smallFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-      });
+      },
+    );
   });
 });

@@ -40,8 +40,8 @@ describe('Orders: Inventory interaction', () => {
         name: 'TestAccout1',
         notes: '',
         paymentMethod: 'Cash',
-      }
-    ]
+      },
+    ],
   };
   const barcodeForFirstItem = Helper.getRandomBarcode();
   const barcodeForSecondItem = Helper.getRandomBarcode();
@@ -57,42 +57,49 @@ describe('Orders: Inventory interaction', () => {
     cy.getAdminToken();
     InventorySearchAndFilter.createInstanceViaApi().then(({ instanceData }) => {
       instanceRecord = instanceData;
-      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' })
-        .then((servicePoints) => {
-          effectiveLocationServicePoint = servicePoints[0];
-          NewLocation.createViaApi(NewLocation.getDefaultLocation(effectiveLocationServicePoint.id))
-            .then((firstLocationResponse) => {
-              firstLocation = firstLocationResponse;
-              Organizations.createOrganizationViaApi(organization)
-                .then(organizationsResponse => {
-                  organization.id = organizationsResponse;
-                  order.vendor = organizationsResponse;
-                });
-              NewLocation.createViaApi(NewLocation.getDefaultLocation(effectiveLocationServicePoint.id))
-                .then((secondLocationResponse) => {
-                  secondLocation = secondLocationResponse;
-                  cy.loginAsAdmin(); cy.visit(TopMenu.inventoryPath).then(() => {
-                    InventoryInstance.searchByTitle(`${instanceRecord.instanceTitle}`);
-                    InventoryInstances.selectInstance();
-                    InventoryInstance.pressAddHoldingsButton();
-                    InventoryNewHoldings.fillRequiredFields(`${firstLocation.name} (${firstLocation.code}) `);
-                    InventoryNewHoldings.saveAndClose();
-                    InventoryInstance.waitLoading();
-                  });
-                  cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-                  cy.createOrderApi(order)
-                    .then((response) => {
-                      orderNumber = response.body.poNumber;
-                      Orders.searchByParameter('PO number', orderNumber);
-                      Orders.selectFromResultsList(orderNumber);
-                      Orders.createPOLineViaActions();
-                      OrderLines.selectRandomInstanceInTitleLookUP(`${instanceRecord.instanceTitle}`, 0);
-                      OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', firstLocation.institutionId, '2');
-                      OrderLines.backToEditingOrder();
-                    });
-                });
+      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
+        effectiveLocationServicePoint = servicePoints[0];
+        NewLocation.createViaApi(
+          NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
+        ).then((firstLocationResponse) => {
+          firstLocation = firstLocationResponse;
+          Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
+            organization.id = organizationsResponse;
+            order.vendor = organizationsResponse;
+          });
+          NewLocation.createViaApi(
+            NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
+          ).then((secondLocationResponse) => {
+            secondLocation = secondLocationResponse;
+            cy.loginAsAdmin();
+            cy.visit(TopMenu.inventoryPath).then(() => {
+              InventoryInstance.searchByTitle(`${instanceRecord.instanceTitle}`);
+              InventoryInstances.selectInstance();
+              InventoryInstance.pressAddHoldingsButton();
+              InventoryNewHoldings.fillRequiredFields(
+                `${firstLocation.name} (${firstLocation.code}) `,
+              );
+              InventoryNewHoldings.saveAndClose();
+              InventoryInstance.waitLoading();
             });
+            cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+            cy.createOrderApi(order).then((response) => {
+              orderNumber = response.body.poNumber;
+              Orders.searchByParameter('PO number', orderNumber);
+              Orders.selectFromResultsList(orderNumber);
+              Orders.createPOLineViaActions();
+              OrderLines.selectRandomInstanceInTitleLookUP(`${instanceRecord.instanceTitle}`, 0);
+              OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
+                `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
+                'Purchase',
+                firstLocation.institutionId,
+                '2',
+              );
+              OrderLines.backToEditingOrder();
+            });
+          });
         });
+      });
     });
     cy.createTempUser([
       permissions.uiInventoryViewInstances.gui,
@@ -100,53 +107,72 @@ describe('Orders: Inventory interaction', () => {
       permissions.uiOrdersApprovePurchaseOrders.gui,
       permissions.uiInventoryViewCreateEditInstances.gui,
       permissions.uiInventoryViewCreateEditItems.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
       });
+    });
   });
 
   after(() => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C375238 Create new holdings for already existing location when editing an order line (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList(orderNumber);
-    OrderLines.selectPOLInOrder(0);
-    OrderLines.editPOLInOrder();
-    OrderLines.selectRandomInstanceInTitleLookUP(`${instanceRecord.instanceTitle}`, 0);
-    OrderLines.edeiPOLineInfoAndChangeLocation(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', secondLocation.institutionId, '2');
-    OrderLines.backToEditingOrder();
-    Orders.openOrder();
-    OrderLines.selectPOLInOrder(0);
-    OrderLines.openLinkedInstance();
-    InventoryInstance.checkIsHoldingsCreated([`${firstLocation.name} >`]);
-    InventoryInstance.checkIsHoldingsCreated([`${secondLocation.name} >`]);
-    InventoryInstance.openHoldingsAccordion(secondLocation.name);
-    InventoryInstance.openItemByBarcodeAndIndex('No barcode');
-    ItemActions.edit();
-    ItemRecordEdit.addBarcode(barcodeForFirstItem);
-    ItemRecordEdit.save();
-    // Need to wait,while instance will be saved
-    cy.wait(5000);
-    ItemActions.closeItem();
-    InventoryInstance.openHoldingsAccordion(secondLocation.name);
-    InventoryInstance.openItemByBarcodeAndIndex('No barcode');
-    ItemActions.edit();
-    ItemRecordEdit.addBarcode(barcodeForSecondItem);
-    ItemRecordEdit.save();
-    // Need to wait,while instance will be saved
-    cy.wait(5000);
-    ItemActions.closeItem();
-    InventoryInstance.openHoldingsAccordion(secondLocation.name);
-    InventoryInstance.openItemByBarcodeAndIndex(barcodeForFirstItem);
-    ItemRecordView.checkItemDetails(secondLocation.name, barcodeForFirstItem, ITEM_STATUS_NAMES.ON_ORDER);
-    ItemActions.closeItem();
-    InventoryInstance.openHoldingsAccordion(secondLocation.name);
-    InventoryInstance.openItemByBarcodeAndIndex(barcodeForSecondItem);
-    ItemRecordView.checkItemDetails(secondLocation.name, barcodeForSecondItem, ITEM_STATUS_NAMES.ON_ORDER);
-    ItemActions.closeItem();
-  });
+  it(
+    'C375238 Create new holdings for already existing location when editing an order line (thunderjet)',
+    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    () => {
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList(orderNumber);
+      OrderLines.selectPOLInOrder(0);
+      OrderLines.editPOLInOrder();
+      OrderLines.selectRandomInstanceInTitleLookUP(`${instanceRecord.instanceTitle}`, 0);
+      OrderLines.edeiPOLineInfoAndChangeLocation(
+        `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
+        'Purchase',
+        secondLocation.institutionId,
+        '2',
+      );
+      OrderLines.backToEditingOrder();
+      Orders.openOrder();
+      OrderLines.selectPOLInOrder(0);
+      OrderLines.openLinkedInstance();
+      InventoryInstance.checkIsHoldingsCreated([`${firstLocation.name} >`]);
+      InventoryInstance.checkIsHoldingsCreated([`${secondLocation.name} >`]);
+      InventoryInstance.openHoldingsAccordion(secondLocation.name);
+      InventoryInstance.openItemByBarcodeAndIndex('No barcode');
+      ItemActions.edit();
+      ItemRecordEdit.addBarcode(barcodeForFirstItem);
+      ItemRecordEdit.save();
+      // Need to wait,while instance will be saved
+      cy.wait(5000);
+      ItemActions.closeItem();
+      InventoryInstance.openHoldingsAccordion(secondLocation.name);
+      InventoryInstance.openItemByBarcodeAndIndex('No barcode');
+      ItemActions.edit();
+      ItemRecordEdit.addBarcode(barcodeForSecondItem);
+      ItemRecordEdit.save();
+      // Need to wait,while instance will be saved
+      cy.wait(5000);
+      ItemActions.closeItem();
+      InventoryInstance.openHoldingsAccordion(secondLocation.name);
+      InventoryInstance.openItemByBarcodeAndIndex(barcodeForFirstItem);
+      ItemRecordView.checkItemDetails(
+        secondLocation.name,
+        barcodeForFirstItem,
+        ITEM_STATUS_NAMES.ON_ORDER,
+      );
+      ItemActions.closeItem();
+      InventoryInstance.openHoldingsAccordion(secondLocation.name);
+      InventoryInstance.openItemByBarcodeAndIndex(barcodeForSecondItem);
+      ItemRecordView.checkItemDetails(
+        secondLocation.name,
+        barcodeForSecondItem,
+        ITEM_STATUS_NAMES.ON_ORDER,
+      );
+      ItemActions.closeItem();
+    },
+  );
 });

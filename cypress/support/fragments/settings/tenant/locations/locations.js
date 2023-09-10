@@ -20,10 +20,12 @@ export default {
   },
   deleteLocation(name) {
     cy.do([
-      Pane('Locations').find(MultiColumnListCell({ content: name })).click(),
+      Pane('Locations')
+        .find(MultiColumnListCell({ content: name }))
+        .click(),
       Button('Actions').click(),
       Button('Delete').click(),
-      Button({ id: 'clickable-deletelocation-confirmation-confirm' }).click()
+      Button({ id: 'clickable-deletelocation-confirmation-confirm' }).click(),
     ]);
   },
 };

@@ -29,7 +29,7 @@ describe('orders: export', () => {
         notes: '',
         paymentMethod: 'Cash',
       },
-    ]
+    ],
   };
   const integrationName = `FirstIntegrationName${getRandomPostfix()}`;
   const integartionDescription = 'Test Integation descripton1';
@@ -39,18 +39,24 @@ describe('orders: export', () => {
 
   before(() => {
     cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-        order.vendor = organization.name;
-        order.orderType = 'One-time';
-      });
-    cy.loginAsAdmin({ path:TopMenu.organizationsPath, waiter: Organizations.waitLoading });
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+      order.vendor = organization.name;
+      order.orderType = 'One-time';
+    });
+    cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
     Organizations.searchByParameters('Name', organization.name);
     Organizations.checkSearchResults(organization);
     Organizations.selectOrganization(organization.name);
     Organizations.addIntegration();
-    Organizations.fillIntegrationInformationWithoutScheduling(integrationName, integartionDescription, vendorEDICodeFor1Integration, libraryEDICodeFor1Integration, organization.accounts[0].accountNo, 'Purchase');
+    Organizations.fillIntegrationInformationWithoutScheduling(
+      integrationName,
+      integartionDescription,
+      vendorEDICodeFor1Integration,
+      libraryEDICodeFor1Integration,
+      organization.accounts[0].accountNo,
+      'Purchase',
+    );
     InteractorsTools.checkCalloutMessage('Integration was saved');
     cy.createTempUser([
       permissions.uiOrdersView.gui,
@@ -61,11 +67,13 @@ describe('orders: export', () => {
       permissions.uiOrganizationsView.gui,
       permissions.uiExportOrders.gui,
       permissions.exportManagerAll.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
       });
+    });
   });
 
   after(() => {
@@ -74,15 +82,22 @@ describe('orders: export', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C350398: Verify that Order is not exported to a definite Vendor if Automatic export option in Order PO Line is disabled (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
-    Orders.createOrder(order, true, true).then(orderId => {
-      order.id = orderId;
-      Orders.createPOLineViaActions();
-      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase');
-      OrderLines.backToEditingOrder();
-      Orders.openOrder();
-      cy.visit(TopMenu.exportManagerPath);
-      ExportManagerSearchPane.searchById('Gobi Library Solutions');
-    });
-  });
+  it(
+    'C350398: Verify that Order is not exported to a definite Vendor if Automatic export option in Order PO Line is disabled (thunderjet)',
+    { tags: [TestTypes.smoke, devTeams.thunderjet] },
+    () => {
+      Orders.createOrder(order, true, true).then((orderId) => {
+        order.id = orderId;
+        Orders.createPOLineViaActions();
+        OrderLines.fillInPOLineInfoForExport(
+          `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
+          'Purchase',
+        );
+        OrderLines.backToEditingOrder();
+        Orders.openOrder();
+        cy.visit(TopMenu.exportManagerPath);
+        ExportManagerSearchPane.searchById('Gobi Library Solutions');
+      });
+    },
+  );
 });

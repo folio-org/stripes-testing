@@ -1,4 +1,19 @@
-import { Accordion, Button, including, HTML, Section, MultiColumnListCell, Badge, Modal, Checkbox, MultiColumnList, MultiColumnListRow, SelectionOption, SearchField, Spinner } from '../../../../interactors';
+import {
+  Accordion,
+  Button,
+  including,
+  HTML,
+  Section,
+  MultiColumnListCell,
+  Badge,
+  Modal,
+  Checkbox,
+  MultiColumnList,
+  MultiColumnListRow,
+  SelectionOption,
+  SearchField,
+  Spinner,
+} from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 import ExistingNoteEdit from '../notes/existingNoteEdit';
 import NewNote from '../notes/newNote';
@@ -13,7 +28,9 @@ const notesAccordionXpath = `${notesSectionXpath}//button[@id="accordion-toggle-
 const newNoteButton = Button('New', { id: 'note-create-button' });
 const actionsButton = Button('Actions');
 const deleteButton = Button('Delete');
-const deleteButtonInConfirmation = Button('Delete', { id: 'clickable-delete-agreement-confirmation-confirm' });
+const deleteButtonInConfirmation = Button('Delete', {
+  id: 'clickable-delete-agreement-confirmation-confirm',
+});
 const showMoreLink = Button('Show more');
 const notesAccordion = rootSection.find(Accordion({ id: 'notes' }));
 const deleteConfirmationModal = Modal({ id: 'delete-agreement-confirmation' });
@@ -29,11 +46,22 @@ export default {
 
   waitLoadingWithExistingNote(title) {
     waitLoading();
-    cy.expect(rootSection.find(Section({ id: 'notes' })).find(MultiColumnListCell({ columnIndex: 1 })).find(HTML(including(title))).exists());
+    cy.expect(
+      rootSection
+        .find(Section({ id: 'notes' }))
+        .find(MultiColumnListCell({ columnIndex: 1 }))
+        .find(HTML(including(title)))
+        .exists(),
+    );
   },
 
   openNotesSection() {
-    cy.do(rootSection.find(Section({ id: 'notes' })).find(Button({ id: 'accordion-toggle-button-notes' })).click());
+    cy.do(
+      rootSection
+        .find(Section({ id: 'notes' }))
+        .find(Button({ id: 'accordion-toggle-button-notes' }))
+        .click(),
+    );
     cy.expect(rootSection.find(newNoteButton).exists());
   },
 
@@ -45,7 +73,7 @@ export default {
 
   clickOnNoteRecord() {
     cy.expect(Spinner().absent());
-    cy.do((MultiColumnList({ id: 'notes-list' }).click({ row: 0 })));
+    cy.do(MultiColumnList({ id: 'notes-list' }).click({ row: 0 }));
   },
 
   clickOnNewButton() {
@@ -54,12 +82,15 @@ export default {
   },
 
   checkNotesCount(notesCount) {
-    cy.expect(rootSection.find(Section({ id: 'notes' }).find(Badge())).has({ value: notesCount.toString() }));
+    cy.expect(
+      rootSection
+        .find(Section({ id: 'notes' }).find(Badge()))
+        .has({ value: notesCount.toString() }),
+    );
   },
 
   specialNotePresented(noteTitle = NewNote.defaultNote.title) {
-    cy.xpath(noteTitleXpath)
-      .should('contains.text', noteTitle);
+    cy.xpath(noteTitleXpath).should('contains.text', noteTitle);
   },
 
   remove() {
@@ -76,21 +107,18 @@ export default {
   },
 
   editNote(originalNoteTitle, newNote) {
-    cy.xpath(`${noteTitleXpath}/../div[contains(.,'${originalNoteTitle}')]/../div/button`)
-      .click();
+    cy.xpath(`${noteTitleXpath}/../div[contains(.,'${originalNoteTitle}')]/../div/button`).click();
     ExistingNoteEdit.fill(newNote);
     ExistingNoteEdit.save();
   },
 
   checkNoteShowMoreLink(specialNoteDetails) {
     cy.do(showMoreLink.click());
-    cy.expect(notesAccordion
-      .find(HTML(including(specialNoteDetails))).exists());
+    cy.expect(notesAccordion.find(HTML(including(specialNoteDetails))).exists());
   },
 
   checkShortedNoteDetails(specialShortNoteDetails) {
-    cy.expect(notesAccordion
-      .find(HTML(including(specialShortNoteDetails))).exists());
+    cy.expect(notesAccordion.find(HTML(including(specialShortNoteDetails))).exists());
   },
 
   openNoteView(specialNote) {
@@ -102,17 +130,25 @@ export default {
   },
 
   clickCancelButton() {
-    cy.expect((cancelButton).exists());
+    cy.expect(cancelButton.exists());
     cy.do(cancelButton.click());
   },
 
   selectCurrentStatusInPackages() {
     cy.wait(4000);
-    cy.do(Section({ id: 'filter-accordion-status' }).find(Checkbox({ id: 'clickable-filter-status-current' })).click());
+    cy.do(
+      Section({ id: 'filter-accordion-status' })
+        .find(Checkbox({ id: 'clickable-filter-status-current' }))
+        .click(),
+    );
   },
 
   selectPackageFromList(row = 0) {
-    cy.do(MultiColumnList({ id: 'list-packages' }).find(MultiColumnListRow({ indexRow: `row-${row}` })).click());
+    cy.do(
+      MultiColumnList({ id: 'list-packages' })
+        .find(MultiColumnListRow({ indexRow: `row-${row}` }))
+        .click(),
+    );
   },
 
   addPackageToBusket() {
@@ -141,16 +177,21 @@ export default {
       Button('Link selected e-resource').click(),
       Button('Add PO line').click(),
       Button('Link PO line').click(),
-      Modal('Select order lines').find(SearchField({ id: 'input-record-search' })).fillIn(orderLine),
-      Modal('Select order lines').find(Button({ type: 'submit' })).click(),
-      Modal('Select order lines').find(MultiColumnList({ id: 'list-plugin-find-records' }))
+      Modal('Select order lines')
+        .find(SearchField({ id: 'input-record-search' }))
+        .fillIn(orderLine),
+      Modal('Select order lines')
+        .find(Button({ type: 'submit' }))
+        .click(),
+      Modal('Select order lines')
+        .find(MultiColumnList({ id: 'list-plugin-find-records' }))
         .find(MultiColumnListRow({ indexRow: 'row-0' }))
         .click(),
-      Button('Save & close').click()
+      Button('Save & close').click(),
     ]);
   },
 
   agreementListClick(agreementName) {
     cy.do(MultiColumnListCell(agreementName).click());
-  }
+  },
 };

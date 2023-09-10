@@ -21,19 +21,24 @@ const item = {
   barcode: `barcode-${getRandomPostfix()}`,
 };
 const testData = {
-  userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest lost items', uuid()),
+  userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
+    'autotest lost items',
+    uuid(),
+  ),
 };
 const ownerBody = {
   owner: 'AutotestOwner' + getRandomPostfix(),
-  servicePointOwner: [{
-    value: testData.userServicePoint.id,
-    label: testData.userServicePoint.name,
-  }],
+  servicePointOwner: [
+    {
+      value: testData.userServicePoint.id,
+      label: testData.userServicePoint.name,
+    },
+  ],
 };
 
 describe('circulation-log', () => {
   before('create test data', () => {
-    cy.createTempUser([]).then(userProperties => {
+    cy.createTempUser([]).then((userProperties) => {
       user = userProperties;
       ServicePoints.createViaApi(testData.userServicePoint);
       testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
@@ -41,13 +46,12 @@ describe('circulation-log', () => {
       UserEdit.addServicePointViaApi(testData.userServicePoint.id, user.userId);
 
       item.instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-      cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` })
-        .then((holdings) => {
-          cy.updateHoldingRecord(holdings[0].id, {
-            ...holdings[0],
-            permanentLocationId: testData.defaultLocation.id
-          });
+      cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then((holdings) => {
+        cy.updateHoldingRecord(holdings[0].id, {
+          ...holdings[0],
+          permanentLocationId: testData.defaultLocation.id,
         });
+      });
 
       Checkout.checkoutItemViaApi({
         itemBarcode: item.barcode,
@@ -62,20 +66,22 @@ describe('circulation-log', () => {
         itemBarcode: item.barcode,
         overrideBlocks: {
           comment: `override-message-${getRandomPostfix()}`,
-          renewalBlock: {}
+          renewalBlock: {},
         },
         servicePointId: testData.userServicePoint.id,
         userBarcode: user.barcode,
       };
 
       UserLoans.getUserLoansIdViaApi(user.userId).then((userLoans) => {
-        UserLoans.declareLoanLostViaApi({
-          servicePointId: testData.userServicePoint.id,
-          declaredLostDateTime: moment.utc().format(),
-        }, userLoans.loans[0].id)
-          .then(() => {
-            UserLoans.renewItemViaApi(renewBody);
-          });
+        UserLoans.declareLoanLostViaApi(
+          {
+            servicePointId: testData.userServicePoint.id,
+            declaredLostDateTime: moment.utc().format(),
+          },
+          userLoans.loans[0].id,
+        ).then(() => {
+          UserLoans.renewItemViaApi(renewBody);
+        });
       });
     });
     cy.loginAsAdmin({ path: TopMenu.circulationLogPath, waiter: SearchPane.waitLoading });
@@ -93,21 +99,25 @@ describe('circulation-log', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C17137 Filter circulation log by renewed through override (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    const searchResultsData = {
-      userBarcode: user.barcode,
-      itemBarcode: item.barcode,
-      object: 'Loan',
-      circAction: 'Renewed through override',
-      servicePoint: testData.userServicePoint.name,
-      source: 'ADMINISTRATOR, DIKU',
-    };
-    SearchPane.setFilterOptionFromAccordion('loan', 'Renewed through override');
-    SearchPane.verifyResultCells();
-    SearchPane.checkResultSearch(searchResultsData);
+  it(
+    'C17137 Filter circulation log by renewed through override (firebird)',
+    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    () => {
+      const searchResultsData = {
+        userBarcode: user.barcode,
+        itemBarcode: item.barcode,
+        object: 'Loan',
+        circAction: 'Renewed through override',
+        servicePoint: testData.userServicePoint.name,
+        source: 'ADMINISTRATOR, DIKU',
+      };
+      SearchPane.setFilterOptionFromAccordion('loan', 'Renewed through override');
+      SearchPane.verifyResultCells();
+      SearchPane.checkResultSearch(searchResultsData);
 
-    SearchPane.searchByItemBarcode(item.barcode);
-    SearchPane.verifyResultCells();
-    SearchPane.checkResultSearch(searchResultsData);
-  });
+      SearchPane.searchByItemBarcode(item.barcode);
+      SearchPane.verifyResultCells();
+      SearchPane.checkResultSearch(searchResultsData);
+    },
+  );
 });

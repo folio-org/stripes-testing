@@ -4,13 +4,11 @@ export default {
       .okapiRequest({
         method: 'POST',
         path: 'instance-statuses',
-        body: { source: 'local',
-          name: 'Electronic Resource',
-          code: 'elRes' },
+        body: { source: 'local', name: 'Electronic Resource', code: 'elRes' },
         isDefaultSearchParamsRequired: false,
       })
       .then(({ response }) => {
         return response;
       });
-  }
+  },
 };

@@ -29,11 +29,11 @@ describe('bulk-edit', () => {
         permissions.uiUserEdit.gui,
         permissions.exportManagerAll.gui,
       ])
-        .then(userProperties => {
+        .then((userProperties) => {
           user = userProperties;
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading
+            waiter: BulkEditSearchPane.waitLoading,
           });
         })
         .then(() => {
@@ -51,36 +51,37 @@ describe('bulk-edit', () => {
       FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName);
     });
 
-    it('C353978 Verify that user can view data in Export Manager based on permissions (Negative) (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-      cy.visit(TopMenu.exportManagerPath);
-      ExportManagerSearchPane.searchByBulkEdit();
-      ExportManagerSearchPane.selectJob(user.username);
-      ExportManagerSearchPane.clickJobIdInThirdPane();
+    it(
+      'C353978 Verify that user can view data in Export Manager based on permissions (Negative) (firebird)',
+      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      () => {
+        cy.visit(TopMenu.exportManagerPath);
+        ExportManagerSearchPane.searchByBulkEdit();
+        ExportManagerSearchPane.selectJob(user.username);
+        ExportManagerSearchPane.clickJobIdInThirdPane();
 
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.searchByUsername(user.username);
-      UsersSearchPane.waitLoading();
-      UserEdit.addPermissions([
-        permissions.bulkEditCsvView.gui,
-        permissions.bulkEditCsvEdit.gui,
-        permissions.uiUsersView.gui,
-        permissions.uiUsersPermissions.gui,
-        permissions.uiUserEdit.gui,
-      ]);
-      UserEdit.saveAndClose();
-      UserEdit.addPermissions([
-        permissions.bulkEditView.gui,
-        permissions.bulkEditEdit.gui,
-      ]);
-      UserEdit.saveAndClose();
+        cy.visit(TopMenu.usersPath);
+        UsersSearchPane.searchByUsername(user.username);
+        UsersSearchPane.waitLoading();
+        UserEdit.addPermissions([
+          permissions.bulkEditCsvView.gui,
+          permissions.bulkEditCsvEdit.gui,
+          permissions.uiUsersView.gui,
+          permissions.uiUsersPermissions.gui,
+          permissions.uiUserEdit.gui,
+        ]);
+        UserEdit.saveAndClose();
+        UserEdit.addPermissions([permissions.bulkEditView.gui, permissions.bulkEditEdit.gui]);
+        UserEdit.saveAndClose();
 
-      cy.login(user.username, user.password, {
-        path: TopMenu.exportManagerPath,
-        waiter: ExportManagerSearchPane.waitLoading
-      });
-      ExportManagerSearchPane.searchByBulkEdit();
-      ExportManagerSearchPane.selectJob(user.username);
-      ExportManagerSearchPane.verifyJobIdInThirdPaneHasNoLink();
-    });
+        cy.login(user.username, user.password, {
+          path: TopMenu.exportManagerPath,
+          waiter: ExportManagerSearchPane.waitLoading,
+        });
+        ExportManagerSearchPane.searchByBulkEdit();
+        ExportManagerSearchPane.selectJob(user.username);
+        ExportManagerSearchPane.verifyJobIdInThirdPaneHasNoLink();
+      },
+    );
   });
 });

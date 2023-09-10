@@ -24,12 +24,15 @@ describe('ui-acquisition units: Acquisition Units', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
-  const defaultOrder = { ...NewOrder.defaultOneTimeOrder,
+  const defaultOrder = {
+    ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',
     ongoing: { isSubscription: false, manualRenewal: false },
     approved: true,
-    reEncumber: true };
-  const organization = { ...NewOrganization.defaultUiOrganizations,
+    reEncumber: true,
+  };
+  const organization = {
+    ...NewOrganization.defaultUiOrganizations,
     accounts: [
       {
         accountNo: getRandomPostfix(),
@@ -42,8 +45,9 @@ describe('ui-acquisition units: Acquisition Units', () => {
         name: 'TestAccout1',
         notes: '',
         paymentMethod: 'Cash',
-      }
-    ] };
+      },
+    ],
+  };
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
   const allocatedQuantity = '100';
@@ -54,53 +58,55 @@ describe('ui-acquisition units: Acquisition Units', () => {
 
   before(() => {
     cy.getAdminToken();
-    FiscalYears.createViaApi(defaultFiscalYear)
-      .then(firstFiscalYearResponse => {
-        defaultFiscalYear.id = firstFiscalYearResponse.id;
-        defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-        Ledgers.createViaApi(defaultLedger)
-          .then(ledgerResponse => {
-            defaultLedger.id = ledgerResponse.id;
-            defaultFund.ledgerId = defaultLedger.id;
+    FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
+      defaultFiscalYear.id = firstFiscalYearResponse.id;
+      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+        defaultLedger.id = ledgerResponse.id;
+        defaultFund.ledgerId = defaultLedger.id;
 
-            Funds.createViaApi(defaultFund)
-              .then(fundResponse => {
-                defaultFund.id = fundResponse.fund.id;
+        Funds.createViaApi(defaultFund).then((fundResponse) => {
+          defaultFund.id = fundResponse.fund.id;
 
-                cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
-                FinanceHelp.searchByName(defaultFund.name);
-                Funds.selectFund(defaultFund.name);
-                Funds.addBudget(allocatedQuantity);
-              });
-          });
+          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+          FinanceHelp.searchByName(defaultFund.name);
+          Funds.selectFund(defaultFund.name);
+          Funds.addBudget(allocatedQuantity);
+        });
       });
-    ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' })
-      .then((servicePoints) => {
-        effectiveLocationServicePoint = servicePoints[0];
-        NewLocation.createViaApi(NewLocation.getDefaultLocation(effectiveLocationServicePoint.id))
-          .then((locationResponse) => {
-            location = locationResponse;
+    });
+    ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
+      effectiveLocationServicePoint = servicePoints[0];
+      NewLocation.createViaApi(
+        NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
+      ).then((locationResponse) => {
+        location = locationResponse;
 
-            Organizations.createOrganizationViaApi(organization)
-              .then(responseOrganizations => {
-                organization.id = responseOrganizations;
-                invoice.accountingCode = organization.erpCode;
-              });
-            defaultOrder.vendor = organization.name;
-            cy.visit(TopMenu.ordersPath);
-            Orders.createOrderForRollover(defaultOrder).then(orderResponse => {
-              defaultOrder.id = orderResponse.id;
-              orderNumber = orderResponse.poNumber;
-              Orders.checkCreatedOrder(defaultOrder);
-              OrderLines.addPOLine();
-              OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
-              OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId, '4'); OrderLines.backToEditingOrder();
-              cy.visit(TopMenu.invoicesPath);
-              Invoices.createRolloverInvoice(invoice, organization.name);
-              Invoices.createInvoiceLineFromPol(orderNumber);
-            });
-          });
+        Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
+          organization.id = responseOrganizations;
+          invoice.accountingCode = organization.erpCode;
+        });
+        defaultOrder.vendor = organization.name;
+        cy.visit(TopMenu.ordersPath);
+        Orders.createOrderForRollover(defaultOrder).then((orderResponse) => {
+          defaultOrder.id = orderResponse.id;
+          orderNumber = orderResponse.poNumber;
+          Orders.checkCreatedOrder(defaultOrder);
+          OrderLines.addPOLine();
+          OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
+          OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
+            `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
+            'Purchase',
+            location.institutionId,
+            '4',
+          );
+          OrderLines.backToEditingOrder();
+          cy.visit(TopMenu.invoicesPath);
+          Invoices.createRolloverInvoice(invoice, organization.name);
+          Invoices.createInvoiceLineFromPol(orderNumber);
+        });
       });
+    });
     cy.createTempUser([
       permissions.uiOrdersView.gui,
       permissions.uiOrdersCreate.gui,
@@ -129,15 +135,14 @@ describe('ui-acquisition units: Acquisition Units', () => {
       permissions.uiInvoicesExportSearchResults.gui,
       permissions.uiInvoicesManageAcquisitionUnits.gui,
       permissions.uiInvoicesVoucherExport.gui,
-      permissions.uiFinanceViewFundAndBudget.gui
-    ])
-      .then(userProperties => {
-        user = userProperties;
-      });
+      permissions.uiFinanceViewFundAndBudget.gui,
+    ]).then((userProperties) => {
+      user = userProperties;
+    });
   });
 
   after(() => {
-    cy.loginAsAdmin({ path:TopMenu.invoicesPath, waiter: Invoices.waitLoading });
+    cy.loginAsAdmin({ path: TopMenu.invoicesPath, waiter: Invoices.waitLoading });
     Invoices.searchByNumber(invoice.invoiceNumber);
     Invoices.selectInvoice(invoice.invoiceNumber);
     Invoices.deleteInvoiceViaActions();
@@ -161,41 +166,54 @@ describe('ui-acquisition units: Acquisition Units', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C163931 Test acquisition unit restrictions for apply Funds to orders or Invoices (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
-    AcquisitionUnits.newAcquisitionUnit();
-    AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name);
-    AcquisitionUnits.assignUser(user.username);
-    cy.visit(TopMenu.fundPath);
-    FinanceHelp.searchByName(defaultFund.name);
-    Funds.selectFund(defaultFund.name);
-    Funds.addAUToFund(defaultAcquisitionUnit.name);
+  it(
+    'C163931 Test acquisition unit restrictions for apply Funds to orders or Invoices (thunderjet)',
+    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    () => {
+      cy.loginAsAdmin({
+        path: SettingsMenu.acquisitionUnitsPath,
+        waiter: AcquisitionUnits.waitLoading,
+      });
+      AcquisitionUnits.newAcquisitionUnit();
+      AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name);
+      AcquisitionUnits.assignUser(user.username);
+      cy.visit(TopMenu.fundPath);
+      FinanceHelp.searchByName(defaultFund.name);
+      Funds.selectFund(defaultFund.name);
+      Funds.addAUToFund(defaultAcquisitionUnit.name);
 
-    cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList(orderNumber);
-    OrderLines.selectPOLInOrder(0);
-    OrderLines.editPOLInOrder();
-    OrderLines.addFundToPOL(defaultFund, '40');
-    OrderLines.editPOLInOrder();
-    OrderLines.deleteFundInPOL();
-    OrderLines.backToEditingOrder();
+      cy.login(user.username, user.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
+      });
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList(orderNumber);
+      OrderLines.selectPOLInOrder(0);
+      OrderLines.editPOLInOrder();
+      OrderLines.addFundToPOL(defaultFund, '40');
+      OrderLines.editPOLInOrder();
+      OrderLines.deleteFundInPOL();
+      OrderLines.backToEditingOrder();
 
-    cy.visit(TopMenu.invoicesPath);
-    Invoices.searchByNumber(invoice.invoiceNumber);
-    Invoices.selectInvoice(invoice.invoiceNumber);
-    Invoices.selectInvoiceLine();
-    Invoices.editInvoiceLine();
-    Invoices.addFundToLine(defaultFund);
-    Invoices.selectInvoiceLine();
-    Invoices.editInvoiceLine();
-    Invoices.deleteFundInInvoiceLine();
+      cy.visit(TopMenu.invoicesPath);
+      Invoices.searchByNumber(invoice.invoiceNumber);
+      Invoices.selectInvoice(invoice.invoiceNumber);
+      Invoices.selectInvoiceLine();
+      Invoices.editInvoiceLine();
+      Invoices.addFundToLine(defaultFund);
+      Invoices.selectInvoiceLine();
+      Invoices.editInvoiceLine();
+      Invoices.deleteFundInInvoiceLine();
 
-    cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
-    AcquisitionUnits.unAssignUser(defaultAcquisitionUnit.name);
+      cy.loginAsAdmin({
+        path: SettingsMenu.acquisitionUnitsPath,
+        waiter: AcquisitionUnits.waitLoading,
+      });
+      AcquisitionUnits.unAssignUser(defaultAcquisitionUnit.name);
 
-    cy.login(user.username, user.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
-    FinanceHelp.searchByName(defaultFund.name);
-    Funds.checkZeroSearchResultsHeader();
-  });
+      cy.login(user.username, user.password, { path: TopMenu.fundPath, waiter: Funds.waitLoading });
+      FinanceHelp.searchByName(defaultFund.name);
+      Funds.checkZeroSearchResultsHeader();
+    },
+  );
 });

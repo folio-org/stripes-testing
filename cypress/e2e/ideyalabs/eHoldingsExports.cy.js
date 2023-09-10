@@ -52,9 +52,9 @@ describe.skip('Eholdings - exports', () => {
         loansPage.verifyFileName,
         testData.fileNameMask,
         loansPage.verifyContentOfExportFileName,
-        ['Package Holdings Status', 'Selected']
+        ['Package Holdings Status', 'Selected'],
       );
-    }
+    },
   );
 
   it(
@@ -66,12 +66,8 @@ describe.skip('Eholdings - exports', () => {
       eHoldingsPackagesSearch.byName(testData.data.packageName);
       eHoldingsPackages.openPackage();
       exportJobs.exportsPackageCSVClick();
-      exportJobs.packageFieldsSelectFromExportDropdown(
-        testData.packageFields.packageOne
-      );
-      exportJobs.packageFieldsSelectFromExportDropdown(
-        testData.packageFields.packageTwo
-      );
+      exportJobs.packageFieldsSelectFromExportDropdown(testData.packageFields.packageOne);
+      exportJobs.packageFieldsSelectFromExportDropdown(testData.packageFields.packageTwo);
       exportJobs.allPackageFieldsToExportRadioButton();
       exportJobs.titleFieldsToExportDropDown(testData.titleFields.titleOne);
       exportJobs.titleFieldsToExportDropDown(testData.titleFields.titleTwo);
@@ -79,12 +75,8 @@ describe.skip('Eholdings - exports', () => {
       exportJobs.clickCancelButton();
       exportJobs.filterTitles(testData.data.title);
       exportJobs.exportsPackageCSVClick();
-      exportJobs.packageFieldsSelectFromExportDropdown(
-        testData.packageFields.packageOne
-      );
-      exportJobs.packageFieldsSelectFromExportDropdown(
-        testData.packageFields.packageTwo
-      );
+      exportJobs.packageFieldsSelectFromExportDropdown(testData.packageFields.packageOne);
+      exportJobs.packageFieldsSelectFromExportDropdown(testData.packageFields.packageTwo);
       exportJobs.allPackageFieldsToExportRadioButton();
       exportJobs.titleFieldsToExportDropDown(testData.titleFields.titleOne);
       exportJobs.titleFieldsToExportDropDown(testData.titleFields.titleTwo);
@@ -95,9 +87,9 @@ describe.skip('Eholdings - exports', () => {
         loansPage.verifyFileName,
         testData.fileNameMask,
         loansPage.verifyContentOfExportFileName,
-        ['Package Holdings Status', 'Selected']
+        ['Package Holdings Status', 'Selected'],
       );
-    }
+    },
   );
 
   it(
@@ -109,6 +101,6 @@ describe.skip('Eholdings - exports', () => {
       invoices.voucherExportManualExport(testData.batchGroup);
       invoices.verifyDownloadButtonAndClick();
       // In Voucher Export screen, when performing Run Manual Export Voucher, Export record status = 'Error' due to that download button is not visible.
-    }
+    },
   );
 });
