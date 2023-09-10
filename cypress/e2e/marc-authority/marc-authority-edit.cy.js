@@ -12,6 +12,7 @@ import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthoriti
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import MarcFieldProtection from '../../support/fragments/settings/dataImport/marcFieldProtection';
 import { replaceByIndex } from '../../support/utils/stringTools';
+import Parallelization from '../../support/dictionary/parallelization';
 
 describe('MARC Authority -> Edit Authority record', () => {
   const testData = {
@@ -98,7 +99,7 @@ describe('MARC Authority -> Edit Authority record', () => {
     });
   });
 
-  it('C350901 Add multiple / delete 1XX tag of "MARC Authority" record (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+  it('C350901 Add multiple / delete 1XX tag of "MARC Authority" record (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] }, () => {
     MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
     MarcAuthorities.selectTitle(testData.authority.title);
     MarcAuthority.edit();
@@ -106,6 +107,7 @@ describe('MARC Authority -> Edit Authority record', () => {
     QuickMarcEditor.updateExistingTagValue(14, '150');
     MarcAuthority.checkAddNew1XXTag(14, '100', '$a');
     QuickMarcEditor.closeWithoutSavingAfterChange();
+    MarcAuthorities.selectTitle(testData.authority.title);
     MarcAuthority.contains(testData.authority.title);
   });
 

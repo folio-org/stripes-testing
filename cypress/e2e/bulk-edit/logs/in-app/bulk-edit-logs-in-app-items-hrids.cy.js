@@ -17,15 +17,14 @@ import ItemRecordView from '../../../../support/fragments/inventory/item/itemRec
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 
-// TODO: Update test after MODBULKOPS-123 is done
-
 let user;
 const itemHRIDsFileName = `validItemHRIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileNameInvalidAndValid = `Matched-Records-${itemHRIDsFileName}`;
-// const errorsFromMatchingFileName = `*Errors-${itemHRIDsFileName}`;
+const errorsFromMatchingFileName = `*-Matching-Records-Errors-${itemHRIDsFileName}`;
 const previewOfProposedChangesFileName = `*-Updates-Preview-${itemHRIDsFileName}`;
 const updatedRecordsFileName = `*-Changed-Records*-${itemHRIDsFileName}`;
-// const errorsFromCommittingFileName = `*Errors-*-${matchedRecordsFileNameInvalidAndValid}`;
+const errorsFromCommittingFileName = `*-Committing-changes-Errors-${itemHRIDsFileName}`;
+const otherError = `*-Errors-${itemHRIDsFileName}`;
 
 const invalidItemHRID = getRandomPostfix();
 const instance = {
@@ -125,8 +124,15 @@ describe('Bulk Edit - Logs', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item1.barcode);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${itemHRIDsFileName}`);
-    FileManager.deleteFileFromDownloadsByMask(itemHRIDsFileName, `*${matchedRecordsFileNameInvalidAndValid}`, previewOfProposedChangesFileName, updatedRecordsFileName);
-    // FileManager.deleteFileFromDownloadsByMask(errorsFromCommittingFileName, errorsFromMatchingFileName);
+    FileManager.deleteFileFromDownloadsByMask(
+      itemHRIDsFileName,
+      `*${matchedRecordsFileNameInvalidAndValid}`,
+      previewOfProposedChangesFileName,
+      updatedRecordsFileName,
+      errorsFromCommittingFileName,
+      errorsFromMatchingFileName,
+      otherError
+    );
   });
 
   it('C375281 Verify generated Logs files for Items In app -- valid and invalid records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -136,7 +142,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.uploadFile(itemHRIDsFileName);
     BulkEditSearchPane.waitFileUploading();
     BulkEditActions.downloadMatchedResults();
-    // BulkEditActions.downloadErrors();
+    BulkEditActions.downloadErrors();
 
     BulkEditActions.openInAppStartBulkEditFrom();
     BulkEditActions.clearPermanentLocation('item', 0);
@@ -150,7 +156,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.waitFileUploading();
     BulkEditActions.openActions();
     BulkEditActions.downloadChangedCSV();
-    // BulkEditActions.downloadErrors();
+    BulkEditActions.downloadErrors();
 
     BulkEditSearchPane.openLogsSearch();
     BulkEditSearchPane.checkItemsCheckbox();
@@ -163,8 +169,8 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.downloadFileWithMatchingRecords();
     BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileNameInvalidAndValid}`, [item1.hrid, item2.hrid], 'hrid', true);
 
-    // BulkEditSearchPane.downloadFileWithErrorsEncountered();
-    // BulkEditFiles.verifyMatchedResultFileContent(errorsFromMatchingFileName, [invalidItemHRID], 'firstElement', false);
+    BulkEditSearchPane.downloadFileWithErrorsEncountered();
+    BulkEditFiles.verifyMatchedResultFileContent(errorsFromMatchingFileName, [invalidItemHRID], 'firstElement', false);
 
     BulkEditSearchPane.downloadFileWithProposedChanges();
     BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName, [item1.id, item2.id], 'firstElement', true);
@@ -172,8 +178,8 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.downloadFileWithUpdatedRecords();
     BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, [item1.id, item2.id], 'firstElement', true);
 
-    // BulkEditSearchPane.downloadFileWithCommitErrors();
-    // BulkEditFiles.verifyMatchedResultFileContent(errorsFromCommittingFileName, [item2.hrid], 'firstElement', false);
+    BulkEditSearchPane.downloadFileWithCommitErrors();
+    BulkEditFiles.verifyMatchedResultFileContent(errorsFromCommittingFileName, [item2.hrid], 'firstElement', false);
 
     cy.visit(TopMenu.inventoryPath);
     InventorySearchAndFilter.switchToItem();

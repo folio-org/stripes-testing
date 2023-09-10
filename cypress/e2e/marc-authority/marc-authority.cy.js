@@ -12,6 +12,7 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthorityBrowse from '../../support/fragments/marcAuthority/MarcAuthorityBrowse';
+import Parallelization from '../../support/dictionary/parallelization';
 
 describe('Importing MARC Authority files', () => {
   const testData = {
@@ -84,7 +85,7 @@ describe('Importing MARC Authority files', () => {
     Users.deleteViaApi(testData.userProperties.userId);
   });
 
-  it('C350667 Update a MARC authority record via data import. Record match with 010 $a (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
+  it('C350667 Update a MARC authority record via data import. Record match with 010 $a (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] }, () => {
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('test-auth-file.mrc', fileName);
     JobProfiles.waitLoadingList();

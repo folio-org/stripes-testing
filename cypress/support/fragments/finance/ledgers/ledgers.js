@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import {
   Button,
   Accordion,
@@ -20,10 +21,8 @@ import {
 import FinanceHelper from '../financeHelper';
 import getRandomPostfix from '../../../utils/stringTools';
 
-const createdLedgerNameXpath =
-  '//*[@id="paneHeaderpane-ledger-details-pane-title"]/h2/span';
-const numberOfSearchResultsHeader =
-  '//*[@id="paneHeaderledger-results-pane-subtitle"]/span';
+const createdLedgerNameXpath = '//*[@id="paneHeaderpane-ledger-details-pane-title"]/h2/span';
+const numberOfSearchResultsHeader = '//*[@id="paneHeaderledger-results-pane-subtitle"]/span';
 const rolloverButton = Button('Rollover');
 const continueButton = Button('Continue');
 const confirmButton = Button('Confirm');
@@ -43,6 +42,7 @@ const addAvailableToSelect = Select({
   name: 'budgetsRollover[0].addAvailableTo',
 });
 const resetButton = Button({ id: 'reset-ledgers-filters' });
+const ledgersFiltersSection = Section({ id: 'ledger-filters-pane' });
 
 export default {
   defaultUiLedger: {
@@ -51,22 +51,34 @@ export default {
     code: `test_automation_code_${getRandomPostfix()}`,
     description: 'This is ledger created by E2E test automation script',
   },
-
+  getDefaultLedger() {
+    return {
+      id: uuid(),
+      name: `autotest_ledger_${getRandomPostfix()}`,
+      ledgerStatus: 'Active',
+      code: `test_automation_code_${getRandomPostfix()}`,
+      description: 'This is ledger created by E2E test automation script',
+    };
+  },
   waitForLedgerDetailsLoading: () => {
     cy.do(Section({ id: 'pane-ledger-details' }).visible);
   },
 
-  rollover : () => {
-    cy.wait(8000);
+  clickOnFiscalYearTab: () => {
+    cy.do([ledgersFiltersSection.find(Button('Fiscal year')).click()]);
+  },
 
+  clickOnGroupTab: () => {
+    cy.do([ledgersFiltersSection.find(Button('Group')).click()]);
+  },
+
+  clickOnFundTab: () => {
+    cy.do([ledgersFiltersSection.find(Button('Fund')).click()]);
+  },
+
+  rollover : () => {
     cy.do([
       Button('Actions').click(),
-
-    ]);
-    cy.wait(8000);
-
-    cy.do([
-
       rolloverButton.click()
     ]);
   },
@@ -81,15 +93,14 @@ export default {
   selectFirstCheckBox: (fiscalYear) => {
     cy.do(fiscalYearSelect.click());
     // Need to wait,while date of fiscal year will be loaded
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(3000);
     cy.do([
       fiscalYearSelect.choose(fiscalYear),
       Checkbox({ name: 'encumbrancesRollover[0].rollover' }).click(),
       Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Expended'),
       Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
-      Select({ name: 'encumbrancesRollover[2].basedOn' }).choose(
-        'Initial encumbrance'
-      ),
+      Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
       Button('Test rollover').click(),
       continueButton.click(),
       confirmButton.click(),
@@ -106,36 +117,28 @@ export default {
   fillInRolloverInfo(fiscalYear) {
     cy.do(fiscalYearSelect.click());
     // Need to wait,while date of fiscal year will be loaded
-    cy.wait(8000);
     cy.do([
       fiscalYearSelect.choose(fiscalYear),
-      // rolloverAllocationCheckbox.click(),
+      rolloverAllocationCheckbox.click(),
       Checkbox({ name: 'encumbrancesRollover[0].rollover' }).click(),
       Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Expended'),
       Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
-      Select({ name: 'encumbrancesRollover[2].basedOn' }).choose(
-        'Initial encumbrance'
-      ),
-      rolloverButton.click(),
+      Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
     ]);
-    cy.wait(8000);
+    cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
     this.continueRollover();
-    cy.wait(8000);
     cy.do([
       rolloverConfirmButton.click(),
     ]);
   },
 
+
   continueRollover: () => {
-    const continueButton = Button('Continue');
     cy.get('body').then(($body) => {
       if ($body.find('[id=unpaid-invoice-list-modal]').length) {
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(4000);
-        cy.do(
-          Modal({ id: 'unpaid-invoice-list-modal' })
-            .find(continueButton)
-            .click()
-        );
+        cy.do(Modal({ id: 'unpaid-invoice-list-modal' }).find(continueButton).click());
       } else {
         // do nothing if modal is not displayed
       }
@@ -148,21 +151,18 @@ export default {
     cy.do(Button('Reset all').click());
   },
 
-  fillInRolloverForCashBalance(
-    fiscalYear,
-    rolloverBudgetValue,
-    rolloverValueAs
-  ) {
+  fillInRolloverForCashBalance(fiscalYear, rolloverBudgetValue, rolloverValueAs) {
     cy.do(fiscalYearSelect.click());
     // Need to wait,while date of fiscal year will be loaded
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(3000);
     cy.do([
       fiscalYearSelect.choose(fiscalYear),
       rolloverAllocationCheckbox.click(),
       rolloverBudgetVelue.choose(rolloverBudgetValue),
       addAvailableToSelect.choose(rolloverValueAs),
-      rolloverButton.click(),
     ]);
+    cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
     cy.wait(4000);
     this.continueRollover();
     cy.do([rolloverConfirmButton.click()]);
@@ -171,55 +171,51 @@ export default {
     cy.do(
       Section({ id: 'fund' })
         .find(MultiColumnListRow({ index: 0 }))
-        .click()
+        .click(),
     );
   },
   selectSecondFund: () => {
     cy.do(
       Section({ id: 'fund' })
         .find(MultiColumnListRow({ index: 1 }))
-        .click()
+        .click(),
     );
   },
 
   fillInRolloverForCashBalanceWithNotActiveAllocation(
     fiscalYear,
     rolloverBudgetValue,
-    rolloverValueAs
+    rolloverValueAs,
   ) {
     cy.do(fiscalYearSelect.click());
     // Need to wait,while date of fiscal year will be loaded
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(3000);
     cy.do([
       fiscalYearSelect.choose(fiscalYear),
       rolloverBudgetVelue.choose(rolloverBudgetValue),
       addAvailableToSelect.choose(rolloverValueAs),
-      rolloverButton.click(),
     ]);
+    cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
     cy.wait(4000);
     this.continueRollover();
     cy.do([rolloverConfirmButton.click()]);
   },
 
-  fillInTestRolloverInfoCashBalance: (
-    fiscalYear,
-    rolloverBudgetValue,
-    rolloverValueAs
-  ) => {
+  fillInTestRolloverInfoCashBalance: (fiscalYear, rolloverBudgetValue, rolloverValueAs) => {
     cy.do(fiscalYearSelect.click());
     // Need to wait,while date of fiscal year will be loaded
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(3000);
     cy.do([
       Select({ name: 'toFiscalYearId' }).choose(fiscalYear),
       Checkbox({ name: 'budgetsRollover[0].rolloverAllocation' }).click(),
       rolloverBudgetVelue.choose(rolloverBudgetValue),
       addAvailableToSelect.choose(rolloverValueAs),
-      Button('Test rollover').click(),
     ]);
+    cy.get('button:contains("Test rollover")').eq(0).should('be.visible').trigger('click');
     cy.wait(2000);
-    cy.do([
-      Button({ id: 'clickable-test-rollover-confirmation-confirm' }).click(),
-    ]);
+    cy.do([Button({ id: 'clickable-test-rollover-confirmation-confirm' }).click()]);
   },
 
   checkZeroSearchResultsHeader: () => {
@@ -229,9 +225,7 @@ export default {
   },
 
   checkCreatedLedgerName: (ledger) => {
-    cy.xpath(createdLedgerNameXpath)
-      .should('be.visible')
-      .and('have.text', ledger.name);
+    cy.xpath(createdLedgerNameXpath).should('be.visible').and('have.text', ledger.name);
   },
 
   createDefaultLedger(defaultLedger) {
@@ -278,16 +272,12 @@ export default {
 
   searchByStatusUnitsAndName(status, acquisitionUnitsName, ledgerName) {
     // TODO: check how it can be achieved with interactors
-    cy.xpath('//*[@id="accordion-toggle-button-ledgerStatus"]').should(
-      'be.visible'
-    );
+    cy.xpath('//*[@id="accordion-toggle-button-ledgerStatus"]').should('be.visible');
     this.selectStatusInSearch(status);
     cy.do([
       Accordion({ id: 'acqUnitIds' }).clickHeader(),
       Selection({ id: 'acqUnitIds-selection' }).open(),
-      SelectionList({ id: 'sl-container-acqUnitIds-selection' }).select(
-        acquisitionUnitsName
-      ),
+      SelectionList({ id: 'sl-container-acqUnitIds-selection' }).select(acquisitionUnitsName),
       SearchField({ id: 'input-record-search' }).fillIn(ledgerName),
       Button('Search').click(),
     ]);
@@ -303,16 +293,10 @@ export default {
         cy.do(Checkbox({ id: 'clickable-filter-ledgerStatus-active' }).click());
         break;
       case FinanceHelper.statusInactive:
-        cy.do(
-          Checkbox({ id: 'clickable-filter-ledgerStatus-inactive' }).click()
-        );
+        cy.do(Checkbox({ id: 'clickable-filter-ledgerStatus-inactive' }).click());
         break;
       default:
-        cy.log(
-          'No such status like ' +
-            ledgerStatus +
-            '. Please use frozen, active or inactive'
-        );
+        cy.log('No such status like ' + ledgerStatus + '. Please use frozen, active or inactive');
     }
   },
 
@@ -334,7 +318,8 @@ export default {
     isDefaultSearchParamsRequired: false,
   }),
 
-  selectLedger:(ledgerName) => {
+  selectLedger: (ledgerName) => {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(8000);
 
     cy.do(Pane({ id: 'ledger-results-pane' }).find(Link(ledgerName)).click());
@@ -348,12 +333,12 @@ export default {
     cy.expect(
       Section({ id: 'financial-summary' })
         .find(HTML(including('Cash balance: $' + quantityValue1)))
-        .exists()
+        .exists(),
     );
     cy.expect(
       Section({ id: 'financial-summary' })
         .find(HTML(including('Available balance: $' + quantityValue2)))
-        .exists()
+        .exists(),
     );
   },
 
@@ -372,10 +357,10 @@ export default {
     ]);
     cy.get('#rollover-logs-list')
       .find('div[role="gridcell"]')
-      .contains('result', `${dataFile}-result`);
+      .contains('a', `${dataFile}-result`);
     cy.get('#rollover-logs-list')
       .find('div[role="gridcell"]')
-      .contains('result', `${dataFile}-settings`);
+      .contains('a', `${dataFile}-settings`);
   },
 
   checkDownloadedFile(
@@ -388,24 +373,23 @@ export default {
     totalAllocation,
     totalFunding,
     cashBalance,
-    available
+    available,
   ) {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(3000); // wait for the file to load
     cy.readFile(`cypress/downloads/${fileName}`).then((fileContent) => {
       // Split the contents of a file into lines
       const fileRows = fileContent.split('\n');
 
       expect(fileRows[0].trim()).to.equal(
-        '"Name (Fund)","Code (Fund)","Status (Fund)","Type","Group (Code)","Acquisition unit","Transfer from","Transfer to","External account number","Description","Name (Budget)","Status (Budget)","Allowable encumbrance","Allowable expenditure","Initial allocation","Increase","Decrease","Total allocation","Transfers","Total Funding","Encumbered (Budget)","Awaiting payment (Budget)","Expended (Budget)","Unavailable","Over encumbered","Over expended","Cash balance","Available","Name (Exp Class)","Code (Exp Class)","Status (Exp Class)","Encumbered (Exp Class)","Awaiting payment (Exp Class)","Expended (Exp Class)","Percentage of total expended"'
+        '"Name (Fund)","Code (Fund)","Status (Fund)","Type","Group (Code)","Acquisition unit","Transfer from","Transfer to","External account number","Description","Name (Budget)","Status (Budget)","Allowable encumbrance","Allowable expenditure","Initial allocation","Increase","Decrease","Total allocation","Transfers","Total Funding","Encumbered (Budget)","Awaiting payment (Budget)","Expended (Budget)","Unavailable","Over encumbered","Over expended","Cash balance","Available","Name (Exp Class)","Code (Exp Class)","Status (Exp Class)","Encumbered (Exp Class)","Awaiting payment (Exp Class)","Expended (Exp Class)","Percentage of total expended"',
       );
 
       const actualData = fileRows[1].trim().split(',');
       expect(actualData[0]).to.equal(`"${fund.name}"`);
       expect(actualData[1]).to.equal(`"${fund.code}"`);
       expect(actualData[9]).to.equal(`"${fund.description}"`);
-      expect(actualData[10]).to.equal(
-        `"${fund.code}-${secondFiscalYear.code}"`
-      );
+      expect(actualData[10]).to.equal(`"${fund.code}-${secondFiscalYear.code}"`);
       expect(actualData[12]).to.equal(allowableEncumbrance);
       expect(actualData[13]).to.equal(allowableExpenditure);
       expect(actualData[14]).to.equal(initialAllocation);
@@ -424,20 +408,19 @@ export default {
   fillInTestRolloverInfoCashBalanceWithNotActiveAllocation: (
     fiscalYear,
     rolloverBudgetValue,
-    rolloverValueAs
+    rolloverValueAs,
   ) => {
     cy.do(fiscalYearSelect.click());
     // Need to wait,while date of fiscal year will be loaded
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(3000);
     cy.do([
       Select({ name: 'toFiscalYearId' }).choose(fiscalYear),
       rolloverBudgetVelue.choose(rolloverBudgetValue),
       addAvailableToSelect.choose(rolloverValueAs),
-      Button('Test rollover').click(),
     ]);
+    cy.get('button:contains("Test rollover")').eq(0).should('be.visible').trigger('click');
     cy.wait(2000);
-    cy.do([
-      Button({ id: 'clickable-test-rollover-confirmation-confirm' }).click(),
-    ]);
+    cy.do([Button({ id: 'clickable-test-rollover-confirmation-confirm' }).click()]);
   },
 };
