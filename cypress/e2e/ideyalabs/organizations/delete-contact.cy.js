@@ -27,22 +27,15 @@ describe.skip('ui-organizations: Organizations creation', () => {
     organizations.checkZeroSearchResultsHeader();
   });
 
-  it(
-    'C729 Delete a contact person (thunderjet)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      organizations.searchByParameters(
-        searchByCode.dropdown,
-        searchByCode.code
-      );
-      organizations.selectOrganization(newOrganization.name);
-      organizations.editOrganization();
-      organizations.openContactPeopleSection();
-      organizations.selectContact(addContactPeople);
-      organizations.deleteContact();
-      organizations.verifyDeletedContact();
-      organizations.closeDetailsPane();
-    }
-  );
-
+  it('C729 Delete a contact person (thunderjet)', { tags: [testTypes.ideaLabsTests] }, () => {
+    organizations.searchByParameters(searchByCode.dropdown, searchByCode.code);
+    organizations.selectOrganization(newOrganization.name);
+    organizations.editOrganization();
+    organizations.openContactPeopleSection();
+    // eslint-disable-next-line no-undef
+    organizations.selectContact(addContactPeople);
+    organizations.deleteContact();
+    organizations.verifyDeletedContact();
+    organizations.closeDetailsPane();
+  });
 });

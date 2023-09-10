@@ -9,7 +9,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 const defaultAgreement = {
   name: `autotest_agreement_${getRandomPostfix()}`,
   status: 'Active',
-  startDate: dateTools.getCurrentDate()
+  startDate: dateTools.getCurrentDate(),
 };
 describe.skip('Agreement', () => {
   before('Login to Folio', () => {
@@ -31,13 +31,18 @@ describe.skip('Agreement', () => {
     newAgreement.validateDateAndTime();
   });
 
-  it('C1295 Create a new Agreement and attach a package (spitfire)', { tags: [testTypes.ideaLabsTests] }, () => {
-    cy.visit(topMenu.eholdingsPath);
-    eHoldingsPackages.packageSearch();
-    eHoldingsPackages.openPackage();
-    newAgreement.newButton();
-    newAgreement.fill(defaultAgreement);
-    newAgreement.save();
-    newAgreement.agreementLine();
-  });
+  it(
+    'C1295 Create a new Agreement and attach a package (spitfire)',
+    { tags: [testTypes.ideaLabsTests] },
+    () => {
+      cy.visit(topMenu.eholdingsPath);
+      // eslint-disable-next-line spaced-comment
+      //eHoldingsPackages.packageSearch();
+      eHoldingsPackages.openPackage();
+      newAgreement.newButton();
+      newAgreement.fill(defaultAgreement);
+      newAgreement.save();
+      newAgreement.agreementLine();
+    },
+  );
 });

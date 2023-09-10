@@ -1,23 +1,20 @@
-import {
-  Button,
-  Modal,
-} from '../../../../interactors';
+import { Button, Modal } from '../../../../interactors';
 
 const rootModal = Modal({ id: 'warning-modal' });
 
 const confirmButton = Button({ id: 'warningTransferContinue' });
 
 export default {
-  waitLoading:() => {
+  waitLoading: () => {
     cy.expect(rootModal.exists());
   },
-  uncheckDeselectToContinue:() => {
+  uncheckDeselectToContinue: () => {
     cy.get('#warning-mcl')
       .find('[data-row-index="row-0"]')
-      .find('[class*="mclCell-"]:first-child').click()
+      .find('[class*="mclCell-"]:first-child')
+      .click();
   },
-  isConfirmActive:(isActive) => cy.expect(confirmButton.has({ disabled: !isActive })),
-  confirm:() => cy.do(confirmButton.click()),
-  cancel:() => cy.do(Button({ id: 'warningTransferCancel' }).click()),
+  isConfirmActive: (isActive) => cy.expect(confirmButton.has({ disabled: !isActive })),
+  confirm: () => cy.do(confirmButton.click()),
+  cancel: () => cy.do(Button({ id: 'warningTransferCancel' }).click()),
 };
-

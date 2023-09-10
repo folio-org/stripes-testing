@@ -27,31 +27,35 @@ describe('Manage holding records with MARC source', { retries: 2 }, () => {
     InventorySteps.addMarcHoldingRecord();
   });
 
-  it('C345409 MARC instance record + MARC holdings record (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
-    // waiting until page loading
-    cy.wait(10000);
-    HoldingsRecordView.getId().then(initialHoldindsRecordId => {
-      HoldingsRecordView.checkSource('MARC');
-      //TODO: Delete below two lines of code after Actions -> View source of Holding's view works as expected.
-      HoldingsRecordView.close();
-      InventoryInstance.openHoldingView();
-      HoldingsRecordView.checkActionsMenuOptionsInMarcSource();
-      HoldingsRecordView.tryToDelete();
-      HoldingsRecordView.viewSource();
-      InventoryViewSource.close();
-      HoldingsRecordView.editInQuickMarc();
-      QuickmarcEditor.waitLoading();
-      QuickmarcEditor.closeWithoutSaving();
-      HoldingsRecordView.duplicate();
-      InventoryNewHoldings.checkSource();
-      InventoryNewHoldings.saveAndClose();
-      HoldingsRecordView.waitLoading();
-      HoldingsRecordView.getId().then(newHoldindsRecordId => {
+  it(
+    'C345409 MARC instance record + MARC holdings record (spitfire)',
+    { tags: [TestTypes.smoke, DevTeams.spitfire] },
+    () => {
+      // waiting until page loading
+      cy.wait(10000);
+      HoldingsRecordView.getId().then((initialHoldindsRecordId) => {
+        HoldingsRecordView.checkSource('MARC');
+        // TODO: Delete below two lines of code after Actions -> View source of Holding's view works as expected.
         HoldingsRecordView.close();
-        InventoryInstance.waitLoading();
-        InventoryInstance.checkAddItem(initialHoldindsRecordId);
-        InventoryInstance.checkAddItem(newHoldindsRecordId);
+        InventoryInstance.openHoldingView();
+        HoldingsRecordView.checkActionsMenuOptionsInMarcSource();
+        HoldingsRecordView.tryToDelete();
+        HoldingsRecordView.viewSource();
+        InventoryViewSource.close();
+        HoldingsRecordView.editInQuickMarc();
+        QuickmarcEditor.waitLoading();
+        QuickmarcEditor.closeWithoutSaving();
+        HoldingsRecordView.duplicate();
+        InventoryNewHoldings.checkSource();
+        InventoryNewHoldings.saveAndClose();
+        HoldingsRecordView.waitLoading();
+        HoldingsRecordView.getId().then((newHoldindsRecordId) => {
+          HoldingsRecordView.close();
+          InventoryInstance.waitLoading();
+          InventoryInstance.checkAddItem(initialHoldindsRecordId);
+          InventoryInstance.checkAddItem(newHoldindsRecordId);
+        });
       });
-    });
-  });
+    },
+  );
 });
