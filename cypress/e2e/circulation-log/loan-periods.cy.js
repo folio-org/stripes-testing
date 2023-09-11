@@ -13,6 +13,8 @@ import CheckOutActions from '../../support/fragments/check-out-actions/check-out
 import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipieceCheckOut';
 import DateTools from '../../support/utils/dateTools';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
@@ -27,7 +29,7 @@ let holdingTypes;
 let instanceTypes;
 let users;
 
-describe('circulation-log loan period', () => {
+describe('circulation-log loan period (vega) { tags: [TestTypes.criticalPath, devTeams.vega] }', () => {
   before('create inventory instance', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
@@ -40,26 +42,24 @@ describe('circulation-log loan period', () => {
       cy.visit(TopMenu.circulationLogPath);
       cy.getAdminToken()
         .then(() => {
-          InventoryInstances.getLoanTypes({ limit: 1, query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` })
-            .then((loanTypesRes) => {
-              loanTypes = loanTypesRes;
-            });
-          InventoryInstances.getMaterialTypes({ limit: 1 })
-            .then((materialTypesRes) => {
-              materialTypes = materialTypesRes;
-            });
-          InventoryInstances.getLocations({ limit: 1 })
-            .then((locationsRes) => {
-              locations = locationsRes;
-            });
-          InventoryInstances.getHoldingTypes({ limit: 1 })
-            .then((holdingTypesRes) => {
-              holdingTypes = holdingTypesRes;
-            });
-          InventoryInstances.getInstanceTypes({ limit: 1 })
-            .then((instanceTypesRes) => {
-              instanceTypes = instanceTypesRes;
-            });
+          InventoryInstances.getLoanTypes({
+            limit: 1,
+            query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"`,
+          }).then((loanTypesRes) => {
+            loanTypes = loanTypesRes;
+          });
+          InventoryInstances.getMaterialTypes({ limit: 1 }).then((materialTypesRes) => {
+            materialTypes = materialTypesRes;
+          });
+          InventoryInstances.getLocations({ limit: 1 }).then((locationsRes) => {
+            locations = locationsRes;
+          });
+          InventoryInstances.getHoldingTypes({ limit: 1 }).then((holdingTypesRes) => {
+            holdingTypes = holdingTypesRes;
+          });
+          InventoryInstances.getInstanceTypes({ limit: 1 }).then((instanceTypesRes) => {
+            instanceTypes = instanceTypesRes;
+          });
           ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' }).then((res) => {
             servicePointId = res[0].id;
           });
@@ -121,8 +121,8 @@ describe('circulation-log loan period', () => {
       servicePointId,
       checkInDate: new Date().toISOString(),
     }).then(() => {
-      cy.deleteItemViaApi(itemId);
-      cy.deleteHoldingRecordViaApi(holdingId);
+      ItemActions.deleteItemViaApi(itemId);
+      InventoryHoldings.deleteHoldingRecordViaApi(holdingId);
       InventoryInstance.deleteInstanceViaApi(instanceId);
       Users.deleteViaApi(userId);
     });
