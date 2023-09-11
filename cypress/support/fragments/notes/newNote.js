@@ -1,4 +1,4 @@
-import { RichEditor, TextField, Button } from '../../../../interactors';
+import { RichEditor, TextField, Button, Select } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 
 export default class NewNote {
@@ -14,6 +14,8 @@ export default class NewNote {
     },
   };
 
+  static #selectNoteType = Select({ name: 'type' });
+
   static get defaultNote() {
     return this.#defaultNote;
   }
@@ -27,5 +29,16 @@ export default class NewNote {
 
   static save() {
     cy.do(this.#saveButton.click());
+    cy.expect(this.#titleTextField.absent());
+  }
+
+  static chooseSelectTypeByTitle(TypeTitle) {
+    cy.do([
+      this.#selectNoteType.choose(TypeTitle),
+    ]);
+  }
+
+  static verifyNewNoteIsDisplayed() {
+    cy.expect(this.#titleTextField.exists());
   }
 }
