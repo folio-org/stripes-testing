@@ -60,7 +60,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
 
   let instanceID = [];
 
-  before('', () => {
+  before('Create user and data', () => {
     cy.createTempUser([
       Permissions.inventoryAll.gui,
       Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
@@ -83,7 +83,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
     });
   });
 
-  after('', () => {
+  after('Delete user and data', () => {
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(instanceID[0]);
   });
