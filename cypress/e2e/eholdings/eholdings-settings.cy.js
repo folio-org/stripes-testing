@@ -36,11 +36,11 @@ describe('Creating custom labels', () => {
   });
 
   after('Deleting user, data', () => {
-    cy.visit(SettingsMenu.eHoldingsPath);
-    EHoldingsPackage.updateCustomLabelInSettings(testData.label1OriginalValue, 1);
-    EHoldingsPackage.updateCustomLabelInSettings(testData.label2OriginalValue, 2);
-    EHoldingsPackage.setFullTextFinderForLabel(2);
-
+    cy.visit(SettingsMenu.eHoldingsPath).then(() => {
+      EHoldingsPackage.updateCustomLabelInSettings(testData.label1OriginalValue, 1);
+      EHoldingsPackage.updateCustomLabelInSettings(testData.label2OriginalValue, 2);
+      EHoldingsPackage.setFullTextFinderForLabel(2);
+    });
     UserEdit.changeServicePointPreferenceViaApi(testData.userProperties.userId, [
       testData.servicePoint.id,
     ]);
@@ -52,13 +52,16 @@ describe('Creating custom labels', () => {
     'C9236 Settings: Add/Edit a custom label(spitfire)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
-      cy.visit(SettingsMenu.eHoldingsPath);
-      EHoldingsPackage.updateCustomLabelInSettings(testData.label1Value, 1);
-      EHoldingsPackage.updateCustomLabelInSettings(testData.label2Value, 2);
-      EHoldingsPackage.setFullTextFinderForLabel(2);
-      cy.visit(testData.resourseUrl);
-      EHoldingsResourceView.verifyCustomLabelValue(testData.label1Value);
-      EHoldingsResourceView.verifyCustomLabelValue(testData.label2Value);
+      cy.visit(SettingsMenu.eHoldingsPath).then(() => {
+        EHoldingsPackage.updateCustomLabelInSettings(testData.label1Value, 1);
+        EHoldingsPackage.updateCustomLabelInSettings(testData.label2Value, 2);
+        EHoldingsPackage.setFullTextFinderForLabel(2);
+
+        cy.visit(testData.resourseUrl).then(() => {
+          EHoldingsResourceView.verifyCustomLabelValue(testData.label1Value);
+          EHoldingsResourceView.verifyCustomLabelValue(testData.label2Value);
+        });
+      });
     },
   );
 });
