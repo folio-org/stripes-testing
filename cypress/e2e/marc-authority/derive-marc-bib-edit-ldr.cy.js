@@ -25,8 +25,12 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
       tagLDR: 'LDR',
     },
 
+    absent008Fields: ['ELvl', 'Desc'],
+
     fieldContents: {
       tag245ContentPrefix: 'Derived_Bib_',
+      originalTitle:
+        'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)',
     },
 
     LDRValues: {
@@ -102,10 +106,12 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
     'C357566 Verify "LDR" validation rules with valid data for positions 05, 08, 17, 18, 19 when deriving record (spitfire)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
-      for (let i = 0; i < testData.LDRValues.validLDR18Values.length; i++) {
+      for (let i = 0; i < 5; i++) {
         InventoryInstance.searchByTitle(createdInstanceIDs[0]);
+        InventoryInstance.checkInstanceTitle(testData.fieldContents.originalTitle);
         InventoryInstance.deriveNewMarcBib();
-        QuickMarcEditor.getRegularTagContent('LDR').then((content) => {
+        QuickMarcEditor.check008FieldsAbsent(...testData.absent008Fields);
+        QuickMarcEditor.getRegularTagContent(testData.tags.tagLDR).then((content) => {
           const updatedLDRvalue = `${content.substring(0, 5)}${
             testData.LDRValues.validLDR05Values[i]
           }${content.substring(6, 8)}${testData.LDRValues.validLDR08Values[i]}${content.substring(
@@ -115,7 +121,6 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
             testData.LDRValues.validLDR19Values[i]
           }${content.substring(20)}`;
           const title = testData.fieldContents.tag245ContentPrefix + getRandomPostfix();
-
           QuickMarcEditor.updateExistingField(testData.tags.tag245, `$a ${title}`);
           QuickMarcEditor.updateExistingField(testData.tags.tagLDR, updatedLDRvalue);
           QuickMarcEditor.checkContent(updatedLDRvalue, 0);
