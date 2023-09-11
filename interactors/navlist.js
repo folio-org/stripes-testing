@@ -8,7 +8,7 @@ function label(element) {
 export default HTML.extend('Nav List')
   .selector('[data-test-nav-list]')
   .filters({
-    count: el => el.querySelectorAll('a').length,
+    count: (el) => el.querySelectorAll('a').length,
   })
   .actions({
     navTo: ({ find }, linkText) => find(Link(linkText)).click(),
@@ -18,5 +18,5 @@ export const NavListItem = HTML.extend('Nav List Item')
   .selector('[class^=NavListItem]')
   .filters({
     label,
-    href: el => el.getAttribute('href'),
+    href: (el) => el.getAttribute('href'),
   });

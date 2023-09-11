@@ -33,7 +33,7 @@ describe('Permissions --> My Profile', () => {
           userData = userProperties;
           UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
           cy.login(userData.username, userData.password);
-        }
+        },
       );
     });
   });
@@ -80,6 +80,6 @@ describe('Permissions --> My Profile', () => {
       ChangePassword.saveNewPassword();
 
       cy.login(userData.username, newPassword);
-    }
+    },
   );
 });

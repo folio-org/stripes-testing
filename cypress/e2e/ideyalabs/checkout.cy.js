@@ -46,7 +46,7 @@ describe.skip('Checkout item', () => {
       users.getUserBarcode();
       users.editNote(testData.note.editTitle, testData.note.details);
       users.verifyNoteExist();
-    }
+    },
   );
 
   it(
@@ -59,7 +59,7 @@ describe.skip('Checkout item', () => {
       userLoans.checkOffLoanByBarcode(testData.loanBarcode);
       users.renewButton();
       users.checkRenewConfirmationModal();
-    }
+    },
   );
 
   it(
@@ -73,7 +73,7 @@ describe.skip('Checkout item', () => {
       users.clickOpenLoansCount();
       users.dueDate();
       users.verifyItemBarcode(testData.itemBarcodeOne);
-    }
+    },
   );
 
   it(
@@ -91,6 +91,6 @@ describe.skip('Checkout item', () => {
       users.enterPatronBarcodeCheckOut(testData.patronBarcode);
       users.enterItemBarcodeCheckOut(testData.itemBarcode);
       users.closeButton();
-    }
+    },
   );
 });

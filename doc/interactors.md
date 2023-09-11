@@ -36,7 +36,6 @@ include the DOM under test such as Selenium, or Nightmare.
 See the [general guide for working with
 interactors](https://frontside.com/interactors) for more information
 
-
 ### How do I write interactors for my own application?
 
 The simplest answer to this question is that in the vast majority of
@@ -84,6 +83,7 @@ and make a pull request to this package.
 ### Table of Contents
 
 #### Stripes-components
+
 - [`Accordion`](#accordion)
 - [`AutoSuggest`](#autosuggest)
 - [`Avatar`](#avatar)
@@ -111,6 +111,7 @@ and make a pull request to this package.
 - [`Tooltip`](#tooltip)
 
 #### Stripes-smart-components
+
 - [`AddressList`](#addresslist)
 - [`AddressEdit`](#addressedit)
 - [`EditableList`](#editablelist)
@@ -159,6 +160,7 @@ Accordion('Categories').exists();
   set.
 
 #### AddressList
+
 Renders a fieldgroup of common address form fields.
 
 Related: [AddressEdit](#addressedit), [AddressView](#addressview)
@@ -175,7 +177,7 @@ AddressList().toggleMore();
 AddressList().addAddress();
 
 // assert that Address list displays 2 addresses
-AddressList().has({ count: 3});
+AddressList().has({ count: 3 });
 ```
 
 ##### actions
@@ -203,7 +205,7 @@ AddressEdit({ index: 1 });
 AddressEdit({ error: true });
 
 // save the values (click the save button on the address form)
-AddressEdit().save()
+AddressEdit().save();
 ```
 
 ##### Actions
@@ -288,9 +290,11 @@ Badge.has({ value: 2 });
 ```
 
 ##### Locator
+
 Locate via the text content/number within the badge.
 
 ##### Filters
+
 - `color`: _string_ = one of `primary`, `red`, `default` - use with `including` or `matches`
 - `value`: _string_ = text rendered within the badge.
 
@@ -377,6 +381,7 @@ Callout.has({ type: calloutType.error });
 Card is a presentational component representing a box of related information.
 
 ##### Synopsis
+
 ```js
 Card().exists();
 // card with certain text exists...
@@ -436,11 +441,13 @@ Checkbox('Label').exists();
 - `feedbackText`: _string_ = the text related to the validation warning or error
 - `hasWarning`: _boolean_ = `true` if the checkbox has a warning [class]
 - `hasError`: _boolean_ = `true` if the checkbox has an error [class]
+
 #### Datepicker
 
 The datepicker and related elements
 
 ##### Datepicker (input element)
+
 ###### Synopsis
 
 ```javascript
@@ -485,6 +492,7 @@ Datepicker('Start Date').is({ visible: true });
 - `required`: _boolean_ = `true` if the input is a required field
 
 ##### Calendar Widget
+
 ###### Synopsis
 
 ```javascript
@@ -562,8 +570,11 @@ EditableList().find(ColumnHeader('name')).exists();
 EditableList().has({ editDisabled: true });
 
 // Fill in a value...
-EditableListRow().find(TextField(including('name'))).fillIn('test');
+EditableListRow()
+  .find(TextField(including('name')))
+  .fillIn('test');
 ```
+
 ##### Filters
 
 - `rowCount`: _number_ the number of rows in the table (includes editable rows)
@@ -575,9 +586,11 @@ EditableListRow().find(TextField(including('name'))).fillIn('test');
 - `deleteButtons`: _boolean_ Whether or not the Delete buttons are present.
 
 ##### Actions
+
 - `add`: clicks the add button, addint an item to the list.
 
 #### EditableListRow
+
 For use within the Editable list...
 
 ```
@@ -619,11 +632,14 @@ EntryForm('Central Office').save();
 ```
 
 ##### Actions
+
 ###### EntryManager
+
 - navTo: _string_ clicks the link in the EntryManager's navigation list with the supplied text.
 - createEntry: clicks the button to create a new entry.
 
 ###### EntryForm
+
 - save: clicks the EntryForm's 'save' button.
 
 #### IconButton
@@ -866,7 +882,7 @@ The MultiSelect element with autocompletion
 
 ```js
 import { MultiSelect } from '@folio/stripes-testing';
-MultiSelect('Tags').select(['important', 'urgent'])
+MultiSelect('Tags').select(['important', 'urgent']);
 ```
 
 ##### Locator
@@ -874,7 +890,7 @@ MultiSelect('Tags').select(['important', 'urgent'])
 The MultiSelect is located by the label.
 
 ```js
-MultiSelect('Tags')
+MultiSelect('Tags');
 ```
 
 ##### Actions
@@ -1041,6 +1057,7 @@ RadioButtonGroups are primarily selected from their `label` prop (rendered as a 
 - `feedbackText`: _string_ = interact/assert against error text.
 
 ##### Actions
+
 - `choose`: _string_ = chooses option at corresponding label.
 - `focus`: _string_ = focuses the radio button at the corresponding label.
 - `blur`: blurs the focus from the currently focused radio button.
@@ -1129,7 +1146,7 @@ SearchField().has({ id: 'searchFieldTest' });
 
 ##### Locator
 
-A SearchField is located by ___. For example:
+A SearchField is located by \_\_\_. For example:
 
 ```js
 SearchField('Label').exists();

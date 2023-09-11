@@ -22,7 +22,9 @@ export default {
 
   checkTableWithoutColumns(columns) {
     return cy.wrap(Object.values(columns)).each((columnToCheck) => {
-      cy.expect(resultTable.find(MultiColumnListHeader({ content: including(columnToCheck) })).absent());
+      cy.expect(
+        resultTable.find(MultiColumnListHeader({ content: including(columnToCheck) })).absent(),
+      );
     });
   },
 

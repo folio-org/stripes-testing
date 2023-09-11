@@ -24,7 +24,7 @@ const expirationDates = [...new Array(5)].map((_, i) => {
   const date = add(new Date(), { years: 1, days: i + 1 });
   return {
     formValue: DateTools.getFormattedDate({ date }),
-    uiValue: DateTools.getFormattedDateWithSlashes({ date })
+    uiValue: DateTools.getFormattedDateWithSlashes({ date }),
   };
 });
 
@@ -86,7 +86,9 @@ export default {
     cy.do(requestExpirationDateInput.fillIn(this.expirationDates[isTransit].formValue));
     cy.do(pickupServicePointSelect.choose(this.servicePoint));
     this.saveAndClose();
-    cy.expect(requestExpirationDateKeyValue.has({ value: this.expirationDates[isTransit].uiValue }));
+    cy.expect(
+      requestExpirationDateKeyValue.has({ value: this.expirationDates[isTransit].uiValue }),
+    );
     cy.expect(pickupServicePointKeyValue.has({ value: this.servicePoint }));
   },
 
@@ -103,7 +105,9 @@ export default {
     this.saveAndClose();
     cy.expect(pickupServicePointKeyValue.has({ value: this.servicePoint }));
     cy.expect(requestExpirationDateKeyValue.has({ value: this.expirationDates[2].uiValue }));
-    cy.expect(holdShelfExpirationDateKeyValue.has({ value: including(this.expirationDates[3].uiValue) }));
+    cy.expect(
+      holdShelfExpirationDateKeyValue.has({ value: including(this.expirationDates[3].uiValue) }),
+    );
   },
 
   editAndCheckAwaitingDeliveryRequest(instanceRecordData, request) {
@@ -156,5 +160,5 @@ export default {
     // after updating request via API, reloading page is necessary
     cy.reload();
     cy.expect(paneResultsSection.exists());
-  }
+  },
 };

@@ -25,7 +25,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
         notes: '',
         paymentMethod: 'Cash',
       },
-    ]
+    ],
   };
   const integrationName = `FirstIntegrationName${getRandomPostfix()}`;
   const integartionDescription = 'Test Integation descripton1';
@@ -33,15 +33,13 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
   const libraryEDICodeFor1Integration = getRandomPostfix();
 
   before(() => {
-    cy.createTempUser([permissions.uiOrganizationsViewEditCreate.gui])
-      .then(userProperties => {
-        userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password);
-      });
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-      });
+    cy.createTempUser([permissions.uiOrganizationsViewEditCreate.gui]).then((userProperties) => {
+      userId = userProperties.userId;
+      cy.login(userProperties.username, userProperties.password);
+    });
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+    });
     cy.visit(TopMenu.organizationsPath);
   });
 
@@ -50,17 +48,28 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 
-  it('C350758: Verify if a User can set/edit EDI convention in Organization Integration (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
-    Organizations.searchByParameters('Name', organization.name);
-    Organizations.checkSearchResults(organization);
-    Organizations.selectOrganization(organization.name);
+  it(
+    'C350758: Verify if a User can set/edit EDI convention in Organization Integration (thunderjet)',
+    { tags: [TestTypes.smoke, devTeams.thunderjet] },
+    () => {
+      Organizations.searchByParameters('Name', organization.name);
+      Organizations.checkSearchResults(organization);
+      Organizations.selectOrganization(organization.name);
 
-    Organizations.addIntegration();
-    Organizations.fillIntegrationInformationWithoutScheduling(integrationName, integartionDescription, vendorEDICodeFor1Integration, libraryEDICodeFor1Integration, organization.accounts[0].accountNo, 'Purchase');
-    InteractorsTools.checkCalloutMessage('Integration was saved');
+      Organizations.addIntegration();
+      Organizations.fillIntegrationInformationWithoutScheduling(
+        integrationName,
+        integartionDescription,
+        vendorEDICodeFor1Integration,
+        libraryEDICodeFor1Integration,
+        organization.accounts[0].accountNo,
+        'Purchase',
+      );
+      InteractorsTools.checkCalloutMessage('Integration was saved');
 
-    Organizations.selectIntegration(integrationName);
-    Organizations.editIntegrationInformation();
-    InteractorsTools.checkCalloutMessage('Integration was saved');
-  });
+      Organizations.selectIntegration(integrationName);
+      Organizations.editIntegrationInformation();
+      InteractorsTools.checkCalloutMessage('Integration was saved');
+    },
+  );
 });

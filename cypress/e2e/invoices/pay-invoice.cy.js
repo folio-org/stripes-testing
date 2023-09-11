@@ -29,74 +29,91 @@ describe('ui-invoices: Approve invoice', () => {
 
   before(() => {
     cy.getAdminToken();
-    cy.loginAsAdmin({ path:SettingsMenu.invoiceApprovalsPath, waiter: SettingsInvoices.waitApprovalsLoading });
+    cy.loginAsAdmin({
+      path: SettingsMenu.invoiceApprovalsPath,
+      waiter: SettingsInvoices.waitApprovalsLoading,
+    });
     SettingsInvoices.checkApproveAndPayCheckboxIsDisabled();
 
-    Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` })
-      .then(organization => {
+    Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` }).then(
+      (organization) => {
         invoice.accountingCode = organization.erpCode;
-        Object.assign(vendorPrimaryAddress,
-          organization.addresses.find(address => address.isPrimary === true));
-        cy.getBatchGroups()
-          .then(batchGroup => {
-            invoice.batchGroup = batchGroup.name;
-            FiscalYears.createViaApi(defaultFiscalYear)
-              .then(firstFiscalYearResponse => {
-                defaultFiscalYear.id = firstFiscalYearResponse.id;
-                defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-                Ledgers.createViaApi(defaultLedger)
-                  .then(ledgerResponse => {
-                    defaultLedger.id = ledgerResponse.id;
-                    defaultFund.ledgerId = defaultLedger.id;
+        Object.assign(
+          vendorPrimaryAddress,
+          organization.addresses.find((address) => address.isPrimary === true),
+        );
+        cy.getBatchGroups().then((batchGroup) => {
+          invoice.batchGroup = batchGroup.name;
+          FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
+            defaultFiscalYear.id = firstFiscalYearResponse.id;
+            defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+            Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+              defaultLedger.id = ledgerResponse.id;
+              defaultFund.ledgerId = defaultLedger.id;
 
-                    Funds.createViaApi(defaultFund)
-                      .then(fundResponse => {
-                        defaultFund.id = fundResponse.fund.id;
+              Funds.createViaApi(defaultFund).then((fundResponse) => {
+                defaultFund.id = fundResponse.fund.id;
 
-                        cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
-                        Helper.searchByName(defaultFund.name);
-                        Funds.selectFund(defaultFund.name);
-                        Funds.addBudget(allocatedQuantity);
-                        invoiceLine.subTotal = -subtotalValue;
-                        cy.visit(TopMenu.invoicesPath);
-                        Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
-                        Invoices.createInvoiceLine(invoiceLine);
-                        Invoices.addFundDistributionToLine(invoiceLine, defaultFund);
-                        Invoices.approveInvoice();
-                      });
-                  });
+                cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+                Helper.searchByName(defaultFund.name);
+                Funds.selectFund(defaultFund.name);
+                Funds.addBudget(allocatedQuantity);
+                invoiceLine.subTotal = -subtotalValue;
+                cy.visit(TopMenu.invoicesPath);
+                Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
+                Invoices.createInvoiceLine(invoiceLine);
+                Invoices.addFundDistributionToLine(invoiceLine, defaultFund);
+                Invoices.approveInvoice();
               });
+            });
           });
+        });
         cy.createTempUser([
           permissions.uiFinanceViewFundAndBudget.gui,
           permissions.viewEditCreateInvoiceInvoiceLine.gui,
           permissions.uiInvoicesApproveInvoices.gui,
           permissions.uiInvoicesPayInvoices.gui,
-
-        ])
-          .then(userProperties => {
-            user = userProperties;
-            cy.login(userProperties.username, userProperties.password, { path:TopMenu.invoicesPath, waiter: Invoices.waitLoading });
+        ]).then((userProperties) => {
+          user = userProperties;
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.invoicesPath,
+            waiter: Invoices.waitLoading,
           });
-      });
+        });
+      },
+    );
   });
 
   after(() => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C3453 Pay invoice (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    const transactionFactory = new Transaction();
-    const valueInTransactionTable = `$${subtotalValue.toFixed(2)}`;
-    Invoices.searchByNumber(invoice.invoiceNumber);
-    Invoices.selectInvoice(invoice.invoiceNumber);
-    Invoices.payInvoice();
-    // check transactions after payment
-    cy.visit(TopMenu.fundPath);
-    Helper.searchByName(defaultFund.name);
-    Funds.selectFund(defaultFund.name);
-    Funds.selectBudgetDetails();
-    Funds.openTransactions();
-    Funds.checkTransaction(1, transactionFactory.create('credit', valueInTransactionTable, defaultFund.code, '', 'Invoice', ''));
-  });
+  it(
+    'C3453 Pay invoice (thunderjet)',
+    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    () => {
+      const transactionFactory = new Transaction();
+      const valueInTransactionTable = `$${subtotalValue.toFixed(2)}`;
+      Invoices.searchByNumber(invoice.invoiceNumber);
+      Invoices.selectInvoice(invoice.invoiceNumber);
+      Invoices.payInvoice();
+      // check transactions after payment
+      cy.visit(TopMenu.fundPath);
+      Helper.searchByName(defaultFund.name);
+      Funds.selectFund(defaultFund.name);
+      Funds.selectBudgetDetails();
+      Funds.openTransactions();
+      Funds.checkTransaction(
+        1,
+        transactionFactory.create(
+          'credit',
+          valueInTransactionTable,
+          defaultFund.code,
+          '',
+          'Invoice',
+          '',
+        ),
+      );
+    },
+  );
 });

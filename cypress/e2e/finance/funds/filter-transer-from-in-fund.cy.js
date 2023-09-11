@@ -34,45 +34,43 @@ describe('ui-finance: Funds', () => {
   before(() => {
     cy.getAdminToken();
     // create first Fiscal Year and prepere 2 Funds for Rollover
-    FiscalYears.createViaApi(firstFiscalYear)
-      .then(firstFiscalYearResponse => {
-        firstFiscalYear.id = firstFiscalYearResponse.id;
-        defaultLedger.fiscalYearOneId = firstFiscalYear.id;
-        Ledgers.createViaApi(defaultLedger)
-          .then(ledgerResponse => {
-            defaultLedger.id = ledgerResponse.id;
-            firstFund.ledgerId = defaultLedger.id;
-            secondFund.ledgerId = defaultLedger.id;
+    FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
+      firstFiscalYear.id = firstFiscalYearResponse.id;
+      defaultLedger.fiscalYearOneId = firstFiscalYear.id;
+      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+        defaultLedger.id = ledgerResponse.id;
+        firstFund.ledgerId = defaultLedger.id;
+        secondFund.ledgerId = defaultLedger.id;
 
-            Funds.createViaApi(firstFund)
-              .then(fundResponse => {
-                firstFund.id = fundResponse.fund.id;
+        Funds.createViaApi(firstFund).then((fundResponse) => {
+          firstFund.id = fundResponse.fund.id;
 
-                cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
-                FinanceHelp.searchByName(firstFund.name);
-                Funds.selectFund(firstFund.name);
-                Funds.addBudget(allocatedQuantity);
-              });
+          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+          FinanceHelp.searchByName(firstFund.name);
+          Funds.selectFund(firstFund.name);
+          Funds.addBudget(allocatedQuantity);
+        });
 
-            Funds.createViaApi(secondFund)
-              .then(secondFundResponse => {
-                secondFund.id = secondFundResponse.fund.id;
-              });
-          });
+        Funds.createViaApi(secondFund).then((secondFundResponse) => {
+          secondFund.id = secondFundResponse.fund.id;
+        });
       });
+    });
 
     cy.createTempUser([
       permissions.uiFinanceViewEditCreateFundAndBudget.gui,
       permissions.uiFinanceViewLedger.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.fundPath,
+        waiter: Funds.waitLoading,
       });
+    });
   });
 
   after(() => {
-    cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
+    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
     FinanceHelp.searchByName(firstFund.name);
     Funds.selectFund(firstFund.name);
     Funds.selectBudgetDetails();
@@ -89,7 +87,11 @@ describe('ui-finance: Funds', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C380708 Filter in "Transfer from" and "Transfer to" fields works correctly when creating a new fund (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    Funds.cancelCreatingFundWithTransfers(thirdFund, defaultLedger.name, firstFund, secondFund);
-  });
+  it(
+    'C380708 Filter in "Transfer from" and "Transfer to" fields works correctly when creating a new fund (thunderjet)',
+    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    () => {
+      Funds.cancelCreatingFundWithTransfers(thirdFund, defaultLedger.name, firstFund, secondFund);
+    },
+  );
 });

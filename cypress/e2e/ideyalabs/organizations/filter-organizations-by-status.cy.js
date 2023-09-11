@@ -41,6 +41,6 @@ describe.skip('ui-organizations: Organizations creation', () => {
       });
       organizations.resetFilters();
       organizations.verifyResetFilters();
-    }
+    },
   );
 });

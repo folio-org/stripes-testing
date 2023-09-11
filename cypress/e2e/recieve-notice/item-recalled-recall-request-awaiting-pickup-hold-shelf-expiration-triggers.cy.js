@@ -213,13 +213,19 @@ describe('Request notice triggers', () => {
     RequestPolicy.createViaApi(requestPolicyBody);
     PatronGroups.createViaApi(patronGroup.name).then((res) => {
       patronGroup.id = res;
-      cy.createTempUser([permissions.checkoutAll.gui], patronGroup.name).then((userProperties) => {
-        userForCheckOut.userId = userProperties.userId;
-        userForCheckOut.barcode = userProperties.barcode;
-        userForCheckOut.personal.lastname = userProperties.lastName;
-      }).then(() => {
-        UserEdit.addServicePointViaApi(testData.userServicePoint.id, userForCheckOut.userId, testData.userServicePoint.id);
-      });
+      cy.createTempUser([permissions.checkoutAll.gui], patronGroup.name)
+        .then((userProperties) => {
+          userForCheckOut.userId = userProperties.userId;
+          userForCheckOut.barcode = userProperties.barcode;
+          userForCheckOut.personal.lastname = userProperties.lastName;
+        })
+        .then(() => {
+          UserEdit.addServicePointViaApi(
+            testData.userServicePoint.id,
+            userForCheckOut.userId,
+            testData.userServicePoint.id,
+          );
+        });
       cy.createTempUser(
         [
           permissions.requestsAll.gui,
@@ -230,7 +236,7 @@ describe('Request notice triggers', () => {
           permissions.okapiTimersPatch.gui,
           permissions.checkinAll.gui,
         ],
-        patronGroup.name
+        patronGroup.name,
       )
         .then((userProperties) => {
           userForRequest = userProperties;
@@ -239,7 +245,7 @@ describe('Request notice triggers', () => {
           UserEdit.addServicePointViaApi(
             testData.userServicePoint.id,
             userForRequest.userId,
-            testData.userServicePoint.id
+            testData.userServicePoint.id,
           );
           cy.login(userForRequest.username, userForRequest.password, {
             path: SettingsMenu.circulationPatronNoticeTemplatesPath,
@@ -251,11 +257,17 @@ describe('Request notice triggers', () => {
 
   after('Deleting created entities', () => {
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
-    Requests.getRequestApi({ query: `(item.barcode=="${instanceData.itemBarcode}")` }).then((requestResponse) => {
-      Requests.deleteRequestViaApi(requestResponse[0].id);
-    });
-    UserEdit.changeServicePointPreferenceViaApi(userForRequest.userId, [testData.userServicePoint.id]);
-    UserEdit.changeServicePointPreferenceViaApi(userForCheckOut.userId, [testData.userServicePoint.id]);
+    Requests.getRequestApi({ query: `(item.barcode=="${instanceData.itemBarcode}")` }).then(
+      (requestResponse) => {
+        Requests.deleteRequestViaApi(requestResponse[0].id);
+      },
+    );
+    UserEdit.changeServicePointPreferenceViaApi(userForRequest.userId, [
+      testData.userServicePoint.id,
+    ]);
+    UserEdit.changeServicePointPreferenceViaApi(userForCheckOut.userId, [
+      testData.userServicePoint.id,
+    ]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Users.deleteViaApi(userForRequest.userId);
     Users.deleteViaApi(userForCheckOut.userId);
@@ -267,36 +279,38 @@ describe('Request notice triggers', () => {
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
+      testData.defaultLocation.id,
     );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.itemRecaled.name}` }).then((templateId) => {
-      NoticePolicyTemplateApi.deleteViaApi(templateId);
-    });
+    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.itemRecaled.name}` }).then(
+      (templateId) => {
+        NoticePolicyTemplateApi.deleteViaApi(templateId);
+      },
+    );
     NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.recallRequest.name}` }).then(
       (templateId) => {
         NoticePolicyTemplateApi.deleteViaApi(templateId);
-      }
+      },
     );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.awaitingPickUp.name}` }).then(
-      (templateId) => {
-        NoticePolicyTemplateApi.deleteViaApi(templateId);
-      }
-    );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.holdShelfBeforeOnce.name}` }).then(
-      (templateId) => {
-        NoticePolicyTemplateApi.deleteViaApi(templateId);
-      }
-    );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.holdShelfBeforeRecurring.name}` }).then(
-      (templateId) => {
-        NoticePolicyTemplateApi.deleteViaApi(templateId);
-      }
-    );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.holdShelfUponAt.name}` }).then(
-      (templateId) => {
-        NoticePolicyTemplateApi.deleteViaApi(templateId);
-      }
-    );
+    NoticePolicyTemplateApi.getViaApi({
+      query: `name=${noticeTemplates.awaitingPickUp.name}`,
+    }).then((templateId) => {
+      NoticePolicyTemplateApi.deleteViaApi(templateId);
+    });
+    NoticePolicyTemplateApi.getViaApi({
+      query: `name=${noticeTemplates.holdShelfBeforeOnce.name}`,
+    }).then((templateId) => {
+      NoticePolicyTemplateApi.deleteViaApi(templateId);
+    });
+    NoticePolicyTemplateApi.getViaApi({
+      query: `name=${noticeTemplates.holdShelfBeforeRecurring.name}`,
+    }).then((templateId) => {
+      NoticePolicyTemplateApi.deleteViaApi(templateId);
+    });
+    NoticePolicyTemplateApi.getViaApi({
+      query: `name=${noticeTemplates.holdShelfUponAt.name}`,
+    }).then((templateId) => {
+      NoticePolicyTemplateApi.deleteViaApi(templateId);
+    });
     cy.deleteLoanType(testData.loanTypeId);
   });
 
@@ -316,7 +330,9 @@ describe('Request notice triggers', () => {
       NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.holdShelfBeforeOnce);
       delete noticeTemplates.holdShelfBeforeOnce.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.holdShelfBeforeOnce);
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.holdShelfBeforeRecurring);
+      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(
+        noticeTemplates.holdShelfBeforeRecurring,
+      );
       delete noticeTemplates.holdShelfBeforeRecurring.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.holdShelfBeforeRecurring);
       NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.holdShelfUponAt);
@@ -344,8 +360,25 @@ describe('Request notice triggers', () => {
         cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
           testData.ruleProps.n = noticePolicyRes[0].id;
           testData.ruleProps.r = requestPolicyBody.id;
-          addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + testData.ruleProps.i + ' l ' + testData.ruleProps.l + ' r ' + testData.ruleProps.r + ' o ' + testData.ruleProps.o + ' n ' + testData.ruleProps.n;
-          CirculationRules.addRuleViaApi(testData.baseRules, testData.ruleProps, 't ', testData.loanTypeId);
+          addedCirculationRule =
+            't ' +
+            testData.loanTypeId +
+            ': i ' +
+            testData.ruleProps.i +
+            ' l ' +
+            testData.ruleProps.l +
+            ' r ' +
+            testData.ruleProps.r +
+            ' o ' +
+            testData.ruleProps.o +
+            ' n ' +
+            testData.ruleProps.n;
+          CirculationRules.addRuleViaApi(
+            testData.baseRules,
+            testData.ruleProps,
+            't ',
+            testData.loanTypeId,
+          );
         });
       });
 
@@ -395,6 +428,6 @@ describe('Request notice triggers', () => {
       checkNoticeIsSent(searchResultsData(noticeTemplates.holdShelfBeforeOnce.name));
       checkNoticeIsSent(searchResultsData(noticeTemplates.holdShelfBeforeRecurring.name));
       checkNoticeIsSent(searchResultsData(noticeTemplates.holdShelfUponAt.name));
-    }
+    },
   );
 });

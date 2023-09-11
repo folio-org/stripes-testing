@@ -12,27 +12,33 @@ describe('ui-eholdings: Provider manage', () => {
   let userId;
 
   beforeEach(() => {
-    cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
-      permissions.moduleeHoldingsEnabled.gui]).then(userProperties => {
+    cy.createTempUser([
+      permissions.uieHoldingsRecordsEdit.gui,
+      permissions.moduleeHoldingsEnabled.gui,
+    ]).then((userProperties) => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
       cy.visit(TopMenu.eholdingsPath);
     });
   });
-  it('C696 Edit proxy setting (spitfire)', { tags: [testTypes.smoke, devTeams.spitfire, testTypes.broken] }, () => {
-    const specialProvider = 'Johns Hopkins University Press';
-    eHoldingsProvidersSearch.byProvider(specialProvider);
-    eHoldingsProviders.viewProvider();
-    eHoldingsProviderView.edit(specialProvider);
-    eHoldingsProviderEdit.waitLoading(specialProvider);
-    eHoldingsProviderEdit.changeProxy().then(newProxy => {
-      eHoldingsProviderEdit.saveAndClose();
-      // additional delay related with update of proxy information in ebsco services
-      cy.wait(10000);
-      cy.reload();
-      eHoldingsProviderView.checkProxy(newProxy);
-    });
-  });
+  it(
+    'C696 Edit proxy setting (spitfire)',
+    { tags: [testTypes.smoke, devTeams.spitfire, testTypes.broken] },
+    () => {
+      const specialProvider = 'Johns Hopkins University Press';
+      eHoldingsProvidersSearch.byProvider(specialProvider);
+      eHoldingsProviders.viewProvider();
+      eHoldingsProviderView.edit(specialProvider);
+      eHoldingsProviderEdit.waitLoading(specialProvider);
+      eHoldingsProviderEdit.changeProxy().then((newProxy) => {
+        eHoldingsProviderEdit.saveAndClose();
+        // additional delay related with update of proxy information in ebsco services
+        cy.wait(10000);
+        cy.reload();
+        eHoldingsProviderView.checkProxy(newProxy);
+      });
+    },
+  );
   afterEach(() => {
     users.deleteViaApi(userId);
   });

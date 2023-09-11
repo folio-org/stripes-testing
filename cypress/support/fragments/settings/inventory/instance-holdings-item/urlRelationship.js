@@ -1,5 +1,5 @@
-import { Button, MultiColumnListRow, Pane, TextField, Modal } from "../../../../../../interactors"
-import { including } from "bigtest";
+import { including } from 'bigtest';
+import { Button, MultiColumnListRow, Pane, TextField, Modal } from '../../../../../../interactors';
 
 const urlRelationshipPane = Pane('URL relationship');
 const newButton = Button('+ New');
@@ -8,7 +8,6 @@ const saveButton = Button('Save');
 const deleteIcon = Button({ icon: 'trash' });
 const deleteButton = Button('Delete');
 const deleteUrlRelationshipModal = Modal('Delete URL relationship term');
-
 
 export default {
   waitloading() {
@@ -20,7 +19,7 @@ export default {
   },
 
   fillInName(name) {
-    cy.do(nameTextfield.fillIn(name))
+    cy.do(nameTextfield.fillIn(name));
   },
 
   clickSaveButton() {

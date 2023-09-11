@@ -17,15 +17,16 @@ const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
-      cy.createTempUser([
-        permissions.bulkEditUpdateRecords.gui,
-        permissions.uiUserEdit.gui
-      ])
-        .then(userProperties => {
+      cy.createTempUser([permissions.bulkEditUpdateRecords.gui, permissions.uiUserEdit.gui]).then(
+        (userProperties) => {
           user = userProperties;
-          cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
           FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, user.userId);
-        });
+        },
+      );
     });
 
     after('delete test data', () => {
@@ -33,28 +34,32 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it('C359216 Verify selection expiration date in the past (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.checkUsersRadio();
-      BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
-      BulkEditSearchPane.uploadFile(userUUIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
+    it(
+      'C359216 Verify selection expiration date in the past (firebird)',
+      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.checkUsersRadio();
+        BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+        BulkEditSearchPane.uploadFile(userUUIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
 
-      const pastDate = DateTools.getLastWeekDateObj();
+        const pastDate = DateTools.getLastWeekDateObj();
 
-      BulkEditActions.openActions();
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.fillExpirationDate(pastDate);
-      BulkEditActions.confirmChanges();
-      BulkEditActions.commitChanges();
-      BulkEditSearchPane.waitFileUploading();
+        BulkEditActions.openActions();
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.fillExpirationDate(pastDate);
+        BulkEditActions.confirmChanges();
+        BulkEditActions.commitChanges();
+        BulkEditSearchPane.waitFileUploading();
 
-      BulkEditActions.verifySuccessBanner(1);
-      BulkEditSearchPane.verifyChangedResults(user.username);
+        BulkEditActions.verifySuccessBanner(1);
+        BulkEditSearchPane.verifyChangedResults(user.username);
 
-      cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
-      UsersSearchPane.searchByKeywords(user.username);
-      UsersSearchPane.openUser(user.username);
-      UsersCard.verifyExpirationDate(pastDate);
-    });
+        cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
+        UsersSearchPane.searchByKeywords(user.username);
+        UsersSearchPane.openUser(user.username);
+        UsersCard.verifyExpirationDate(pastDate);
+      },
+    );
   });
 });

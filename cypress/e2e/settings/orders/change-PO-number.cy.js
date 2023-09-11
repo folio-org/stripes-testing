@@ -21,46 +21,62 @@ describe('orders: Settings', () => {
   beforeEach(() => {
     cy.getAdminToken();
 
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-      });
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+    });
     order.vendor = organization.name;
     order.orderType = 'One-time';
-    cy.loginAsAdmin({ path:SettingsMenu.ordersPONumberEditPath, waiter: SettingsOrders.waitLoadingEditPONumber });
+    cy.loginAsAdmin({
+      path: SettingsMenu.ordersPONumberEditPath,
+      waiter: SettingsOrders.waitLoadingEditPONumber,
+    });
     SettingsOrders.userCanEditPONumber();
 
     cy.createTempUser([
       permissions.uiSettingsOrdersCanViewAllSettings.gui,
       permissions.uiOrdersCreate.gui,
       permissions.uiOrdersEdit.gui,
-    ]).then(userProperties => {
+    ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+      cy.login(user.username, user.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
+      });
     });
   });
 
   afterEach(() => {
-    cy.loginAsAdmin({ path:SettingsMenu.ordersPONumberEditPath, waiter: SettingsOrders.waitLoadingEditPONumber });
+    cy.loginAsAdmin({
+      path: SettingsMenu.ordersPONumberEditPath,
+      waiter: SettingsOrders.waitLoadingEditPONumber,
+    });
     SettingsOrders.userCanNotEditPONumber();
     Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
     Users.deleteViaApi(user.userId);
   });
 
-  it('C670 Change the PO number setting from editable to non-editable, then create a couple POs to test it (thunderjet)', { tags: [TestType.criticalPath, devTeams.thunderjet] }, () => {
-    Orders.createOrderWithPONumber(orderNumber, order, false).then(orderId => {
-      order.id = orderId;
-      Orders.checkCreatedOrderWithOrderNumber(organization.name, orderNumber);
-    });
-  });
-  it('C15493 Allow users to edit PO number (thunderjet)', { tags: [TestType.criticalPath, devTeams.thunderjet] }, () => {
-    Orders.createOrderWithPONumber(orderNumber, order, false).then(orderId => {
-      order.id = orderId;
-      Orders.checkCreatedOrderWithOrderNumber(organization.name, orderNumber);
-      Orders.editOrder();
-      Orders.editOrderNumber(editedOrderNumber);
-      Orders.checkCreatedOrderWithOrderNumber(organization.name, editedOrderNumber);
-    });
-  });
+  it(
+    'C670 Change the PO number setting from editable to non-editable, then create a couple POs to test it (thunderjet)',
+    { tags: [TestType.criticalPath, devTeams.thunderjet] },
+    () => {
+      Orders.createOrderWithPONumber(orderNumber, order, false).then((orderId) => {
+        order.id = orderId;
+        Orders.checkCreatedOrderWithOrderNumber(organization.name, orderNumber);
+      });
+    },
+  );
+  it(
+    'C15493 Allow users to edit PO number (thunderjet)',
+    { tags: [TestType.criticalPath, devTeams.thunderjet] },
+    () => {
+      Orders.createOrderWithPONumber(orderNumber, order, false).then((orderId) => {
+        order.id = orderId;
+        Orders.checkCreatedOrderWithOrderNumber(organization.name, orderNumber);
+        Orders.editOrder();
+        Orders.editOrderNumber(editedOrderNumber);
+        Orders.checkCreatedOrderWithOrderNumber(organization.name, editedOrderNumber);
+      });
+    },
+  );
 });

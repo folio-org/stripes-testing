@@ -2,7 +2,6 @@ import checkInItems from '../../support/ideyaLabs/checkinitems';
 import serviceShift from '../../support/ideyaLabs/serviceshift';
 import testTypes from '../../support/dictionary/testTypes';
 import checkInActions from '../../support/fragments/check-in-actions/checkInActions';
-import searchPane from '../../support/fragments/circulation-log/searchPane';
 import topMenu from '../../support/fragments/topMenu';
 
 const testData = {
@@ -20,31 +19,34 @@ describe.skip('servicepoints shift', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
-  it('C589 Check in items at service points for effective location (vega)', { tags: [testTypes.ideaLabsTests] }, () => {
-    serviceShift.servicePointsOne();
-    cy.visit(topMenu.inventoryPath);
-    cy.visit(topMenu.checkInPath);
-    checkInActions.checkInItem(testData.itemA);
-    checkInItems.checkModal();
-    serviceShift.servicePointsTwo();
-    cy.visit(topMenu.checkInPath);
-    checkInActions.checkInItem(testData.itemB);
-    checkInItems.checkModal();
-  });
+  it(
+    'C589 Check in items at service points for effective location (vega)',
+    { tags: [testTypes.ideaLabsTests] },
+    () => {
+      serviceShift.servicePointsOne();
+      cy.visit(topMenu.inventoryPath);
+      cy.visit(topMenu.checkInPath);
+      checkInActions.checkInItem(testData.itemA);
+      checkInItems.checkModal();
+      serviceShift.servicePointsTwo();
+      cy.visit(topMenu.checkInPath);
+      checkInActions.checkInItem(testData.itemB);
+      checkInItems.checkModal();
+    },
+  );
 
-  it('C9194 Check in: confirm check in for item status (vega)', { tags: [testTypes.ideaLabsTests] }, () => {
-    cy.visit(topMenu.circulationLogPath);
-    checkInItems.declaredItem();
-    cy.visit(topMenu.inventoryPath);
-    checkInItems.withdrawn();
-    cy.visit(topMenu.inventoryPath);
-    checkInItems.lostAndPaid();
-  });
-
-  it('C17137 - Filter circulation log by renewed through override (firebird)', { tags: [testTypes.ideaLabsTests] }, () => {
-    cy.visit(topMenu.circulationLogPath);
-    searchPane.checkBarcode();
-  });
+  it(
+    'C9194 Check in: confirm check in for item status (vega)',
+    { tags: [testTypes.ideaLabsTests] },
+    () => {
+      cy.visit(topMenu.circulationLogPath);
+      checkInItems.declaredItem();
+      cy.visit(topMenu.inventoryPath);
+      checkInItems.withdrawn();
+      cy.visit(topMenu.inventoryPath);
+      checkInItems.lostAndPaid();
+    },
+  );
 
   it('C590 Check in: multipiece items (vega)', { tags: [testTypes.ideaLabsTests] }, () => {
     cy.visit(topMenu.checkInPath);
@@ -55,11 +57,7 @@ describe.skip('servicepoints shift', () => {
     checkInItems.cancelCheckInMultipleItem(testData.itemB);
     checkInItems.checkIn(testData.itemB);
     checkInActions.openItemDetails(testData.itemB);
-    checkInActions.editItemDetails(
-      testData.numberOfPiecesItemA,
-      '',
-      testData.description
-    );
+    checkInActions.editItemDetails(testData.numberOfPiecesItemA, '', testData.description);
     cy.visit(topMenu.checkInPath);
     checkInItems.checkInMultipleItem(testData.itemB);
     checkInItems.checkIn(testData.itemC);
@@ -67,17 +65,13 @@ describe.skip('servicepoints shift', () => {
     checkInActions.editItemDetails(
       testData.numberOfPiecesItemB,
       testData.numberOfPiecesItemA,
-      testData.description
+      testData.description,
     );
     cy.visit(topMenu.checkInPath);
     checkInItems.checkInMultipleItem(testData.itemC);
     checkInItems.checkIn(testData.itemD);
     checkInActions.openItemDetails(testData.itemD);
-    checkInActions.editItemDetails(
-      '',
-      testData.numberOfPiecesItemA,
-      testData.description
-    );
+    checkInActions.editItemDetails('', testData.numberOfPiecesItemA, testData.description);
     cy.visit(topMenu.checkInPath);
     checkInItems.checkInMultipleItem(testData.itemD);
   });

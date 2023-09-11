@@ -37,16 +37,13 @@ describe.skip('ui-organizations: Organizations creation', () => {
     'C732 Assign categories to contact person (thunderjet)',
     { tags: [testTypes.ideaLabsTests] },
     () => {
-      organizations.searchByParameters(
-        searchByCode.dropdown,
-        searchByCode.code
-      );
+      organizations.searchByParameters(searchByCode.dropdown, searchByCode.code);
       organizations.selectOrganization(newOrganization.name);
       organizations.editOrganization();
       organizations.openContactPeopleSection();
       organizations.selectContact(addContactPeople);
       organizations.editOrganization();
       organizations.selectAndVerifyCategories(addCategory);
-    }
+    },
   );
 });

@@ -6,19 +6,15 @@ export default {
     description: getTestEntityValue(desc),
     id,
   }),
-  createViaApi: (refundReason) => (
-    cy.okapiRequest({
-      method: 'POST',
-      path: 'refunds',
-      body: refundReason,
-      isDefaultSearchParamsRequired: false
-    })
-  ),
-  deleteViaApi: (id) => (
-    cy.okapiRequest({
-      method: 'DELETE',
-      path: `refunds/${id}`,
-      isDefaultSearchParamsRequired: false,
-    })
-  ),
+  createViaApi: (refundReason) => cy.okapiRequest({
+    method: 'POST',
+    path: 'refunds',
+    body: refundReason,
+    isDefaultSearchParamsRequired: false,
+  }),
+  deleteViaApi: (id) => cy.okapiRequest({
+    method: 'DELETE',
+    path: `refunds/${id}`,
+    isDefaultSearchParamsRequired: false,
+  }),
 };

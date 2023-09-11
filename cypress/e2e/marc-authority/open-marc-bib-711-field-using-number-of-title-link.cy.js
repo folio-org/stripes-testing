@@ -20,7 +20,8 @@ describe('MARC -> MARC Authority', () => {
     marcValue: 'Mostly Mozart Festival. sonet',
     rowIndex: 29,
     searchOption: 'Keyword',
-    instanceTitle: 'Clarinet concerto no. 1, op. 73 [sound recording] / Weber. Andante, K. 315 / Mozart. Theme & variations / Rossini.',
+    instanceTitle:
+      'Clarinet concerto no. 1, op. 73 [sound recording] / Weber. Andante, K. 315 / Mozart. Theme & variations / Rossini.',
   };
 
   const marcFiles = [
@@ -35,7 +36,7 @@ describe('MARC -> MARC Authority', () => {
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numOfRecords: 1,
-    }
+    },
   ];
 
   const createdAuthorityIDs = [];
@@ -44,24 +45,26 @@ describe('MARC -> MARC Authority', () => {
     cy.createTempUser([
       Permissions.inventoryAll.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-    ]).then(createdUserProperties => {
+    ]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
 
-      marcFiles.forEach(marcFile => {
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-          JobProfiles.waitLoadingList();
-          JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(marcFile.fileName);
-          Logs.checkStatusOfJobProfile('Completed');
-          Logs.openFileDetails(marcFile.fileName);
-          for (let i = 0; i < marcFile.numOfRecords; i++) {
-            Logs.getCreatedItemsID(i).then(link => {
-              createdAuthorityIDs.push(link.split('/')[5]);
-            });
-          }
-        });
+      marcFiles.forEach((marcFile) => {
+        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
+          () => {
+            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+            JobProfiles.waitLoadingList();
+            JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
+            JobProfiles.runImportFile();
+            JobProfiles.waitFileIsImported(marcFile.fileName);
+            Logs.checkStatusOfJobProfile('Completed');
+            Logs.openFileDetails(marcFile.fileName);
+            for (let i = 0; i < marcFile.numOfRecords; i++) {
+              Logs.getCreatedItemsID(i).then((link) => {
+                createdAuthorityIDs.push(link.split('/')[5]);
+              });
+            }
+          },
+        );
       });
 
       cy.visit(TopMenu.inventoryPath).then(() => {
@@ -78,9 +81,12 @@ describe('MARC -> MARC Authority', () => {
         QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag, testData.rowIndex);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
-      })
+      });
 
-      cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.marcAuthorities, waiter: MarcAuthorities.waitLoading });
+      cy.login(testData.userProperties.username, testData.userProperties.password, {
+        path: TopMenu.marcAuthorities,
+        waiter: MarcAuthorities.waitLoading,
+      });
     });
   });
 
@@ -92,12 +98,16 @@ describe('MARC -> MARC Authority', () => {
     });
   });
 
-  it('C375265 "Number of titles" link in "MARC authority" app opens linked "MARC bib" record with controlled "711" field (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
-    MarcAuthorities.searchByParameter(testData.searchOption, testData.marcValue);
-    MarcAuthorities.checkRow(testData.marcValue);
-    MarcAuthorities.verifyNumberOfTitles(4, '1');
-    MarcAuthorities.clickOnNumberOfTitlesLink(4, '1');
-    InventorySearchAndFilter.verifySearchResult(testData.instanceTitle);
-    InventoryInstance.checkPresentedText(testData.instanceTitle);
-  });
+  it(
+    'C375265 "Number of titles" link in "MARC authority" app opens linked "MARC bib" record with controlled "711" field (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      MarcAuthorities.searchByParameter(testData.searchOption, testData.marcValue);
+      MarcAuthorities.checkRow(testData.marcValue);
+      MarcAuthorities.verifyNumberOfTitles(4, '1');
+      MarcAuthorities.clickOnNumberOfTitlesLink(4, '1');
+      InventorySearchAndFilter.verifySearchResult(testData.instanceTitle);
+      InventoryInstance.checkPresentedText(testData.instanceTitle);
+    },
+  );
 });

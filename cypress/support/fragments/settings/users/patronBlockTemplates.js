@@ -1,7 +1,13 @@
-import { Button, Section, TextField, TextArea, Checkbox, NavListItem } from '../../../../../interactors';
+import {
+  Button,
+  Section,
+  TextField,
+  TextArea,
+  Checkbox,
+  NavListItem,
+} from '../../../../../interactors';
 
 export default {
-
   newPatronTemlate() {
     cy.do(Button({ id: 'clickable-create-entry' }).click());
   },
@@ -9,9 +15,11 @@ export default {
   fillInPatronTemlateInformation(name, description) {
     cy.do([
       TextField({ name: 'name' }).fillIn(name),
-      Section({ id: 'blockInformation' }).find(TextArea({ name: 'blockTemplate.desc' })).fillIn(description),
+      Section({ id: 'blockInformation' })
+        .find(TextArea({ name: 'blockTemplate.desc' }))
+        .fillIn(description),
       Checkbox('Borrowing').click(),
-      Button('Save & close').click()
+      Button('Save & close').click(),
     ]);
   },
 
@@ -29,5 +37,4 @@ export default {
       Button({ id: 'clickable-delete-block-template-confirmation-confirm' }).click(),
     ]);
   },
-
 };

@@ -14,9 +14,12 @@ const dematicStagingDirector = RemoteStorageHelper.configurations.DematicStaging
 
 describe('remote-storage-configuration', () => {
   before('create test data', () => {
-    cy.createTempUser([permissions.remoteStorageCRUD.gui]).then(userProperties => {
+    cy.createTempUser([permissions.remoteStorageCRUD.gui]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, { path: SettingsMenu.remoteStorageConfigurationPath, waiter: RemoteStorageHelper.waitLoading });
+      cy.login(user.username, user.password, {
+        path: SettingsMenu.remoteStorageConfigurationPath,
+        waiter: RemoteStorageHelper.waitLoading,
+      });
     });
   });
 
@@ -24,32 +27,42 @@ describe('remote-storage-configuration', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C343219 Check “Accession tables” page without configurations with CaiaSoft provider (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    const name = `AutotestConfigurationName${getRandomPostfix()}`;
+  it(
+    'C343219 Check “Accession tables” page without configurations with CaiaSoft provider (firebird)',
+    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    () => {
+      const name = `AutotestConfigurationName${getRandomPostfix()}`;
 
-    dematicEMS.create(name);
-    RemoteStorageHelper.verifyCreatedConfiguration(name, dematicEMS);
+      dematicEMS.create(name);
+      RemoteStorageHelper.verifyCreatedConfiguration(name, dematicEMS);
 
-    RemoteStorageHelper.editConfiguration(name, { provider: caiaSoft.title });
-    RemoteStorageHelper.closeWithSaving();
-    RemoteStorageHelper.verifyEditedConfiguration(name, { provider: caiaSoft.title });
-    RemoteStorageHelper.verifyDataSynchronizationSettingsAccordion(false);
+      RemoteStorageHelper.editConfiguration(name, { provider: caiaSoft.title });
+      RemoteStorageHelper.closeWithSaving();
+      RemoteStorageHelper.verifyEditedConfiguration(name, { provider: caiaSoft.title });
+      RemoteStorageHelper.verifyDataSynchronizationSettingsAccordion(false);
 
-    RemoteStorageHelper.editConfiguration(name, { provider: dematicStagingDirector.title });
-    RemoteStorageHelper.closeWithSaving();
-    RemoteStorageHelper.verifyEditedConfiguration(name, { provider: `${dematicStagingDirector.title} (TCP/IP)` });
-    RemoteStorageHelper.verifyDataSynchronizationSettingsAccordion(true);
+      RemoteStorageHelper.editConfiguration(name, { provider: dematicStagingDirector.title });
+      RemoteStorageHelper.closeWithSaving();
+      RemoteStorageHelper.verifyEditedConfiguration(name, {
+        provider: `${dematicStagingDirector.title} (TCP/IP)`,
+      });
+      RemoteStorageHelper.verifyDataSynchronizationSettingsAccordion(true);
 
-    RemoteStorageHelper.deleteRemoteStorage(name);
-  });
+      RemoteStorageHelper.deleteRemoteStorage(name);
+    },
+  );
 
-  it('C343287 Data synchronization settings field must be undefined for any provider except Dematic StagingDirector (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    const name = `AutotestConfigurationName${getRandomPostfix()}`;
+  it(
+    'C343287 Data synchronization settings field must be undefined for any provider except Dematic StagingDirector (firebird)',
+    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    () => {
+      const name = `AutotestConfigurationName${getRandomPostfix()}`;
 
-    RemoteStorageHelper.verifyProviderDataSynchronizationSettings();
-    dematicStagingDirector.create(name);
-    RemoteStorageHelper.verifyCreatedConfiguration(name, dematicStagingDirector);
+      RemoteStorageHelper.verifyProviderDataSynchronizationSettings();
+      dematicStagingDirector.create(name);
+      RemoteStorageHelper.verifyCreatedConfiguration(name, dematicStagingDirector);
 
-    RemoteStorageHelper.deleteRemoteStorage(name);
-  });
+      RemoteStorageHelper.deleteRemoteStorage(name);
+    },
+  );
 });

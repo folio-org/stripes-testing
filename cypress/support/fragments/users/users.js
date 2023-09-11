@@ -11,6 +11,7 @@ import {
   Select,
   TextField,
   Callout,
+  HTML,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 
@@ -45,17 +46,21 @@ const defaultUser = {
 
 export default {
   defaultUser,
-  createViaApi: (user) => cy.okapiRequest({
-    method: 'POST',
-    path: 'users',
-    body: user,
-    isDefaultSearchParamsRequired: false
-  }).then(response => ({ id: response.body.id,
-    username: response.body.username,
-    barcode:  response.body.barcode,
-    lastName: response.body.personal.lastName,
-    firstName : response.body.personal.firstName,
-    middleName : response.body.personal.middleName })),
+  createViaApi: (user) => cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'users',
+      body: user,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((response) => ({
+      id: response.body.id,
+      username: response.body.username,
+      barcode: response.body.barcode,
+      lastName: response.body.personal.lastName,
+      firstName: response.body.personal.firstName,
+      middleName: response.body.personal.middleName,
+    })),
 
   deleteViaApi: (userId) => cy.okapiRequest({
     method: 'DELETE',
@@ -68,7 +73,7 @@ export default {
       .okapiRequest({
         path: 'users',
         searchParams,
-        isDefaultSearchParamsRequired: false
+        isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => {
         return body.users;
@@ -76,18 +81,21 @@ export default {
   },
 
   createViaUi: (userData) => {
-    return cy.do([
-      Dropdown('Actions').find(Button()).click(),
-      Button({ id: 'clickable-newuser' }).click(),
-      TextField({ id: 'adduser_lastname' }).fillIn(userData.personal.lastName),
-      Select({ id: 'adduser_group' }).choose(userData.patronGroup),
-      TextField({ name: 'barcode' }).fillIn(userData.barcode),
-      TextField({ name: 'username' }).fillIn(userData.username),
-      TextField({ id: 'adduser_email' }).fillIn(userData.personal.email),
-      Button({ id: 'clickable-save' }).click()]).then(() => {
-      cy.intercept('/users').as('user');
-      return cy.wait('@user', { timeout: 80000 }).then((xhr) => xhr.response.body.id);
-    });
+    return cy
+      .do([
+        Dropdown('Actions').find(Button()).click(),
+        Button({ id: 'clickable-newuser' }).click(),
+        TextField({ id: 'adduser_lastname' }).fillIn(userData.personal.lastName),
+        Select({ id: 'adduser_group' }).choose(userData.patronGroup),
+        TextField({ name: 'barcode' }).fillIn(userData.barcode),
+        TextField({ name: 'username' }).fillIn(userData.username),
+        TextField({ id: 'adduser_email' }).fillIn(userData.personal.email),
+        Button({ id: 'clickable-save' }).click(),
+      ])
+      .then(() => {
+        cy.intercept('/users').as('user');
+        return cy.wait('@user', { timeout: 80000 }).then((xhr) => xhr.response.body.id);
+      });
   },
 
   assertion: () => {
@@ -103,19 +111,13 @@ export default {
       Dropdown('Actions').find(Button()).click(),
       Button({ id: 'clickable-newuser' }).click(),
       TextField({ id: 'adduser_lastname' }).fillIn(userData.personal.lastName),
-      TextField({ id: 'adduser_middlename' }).fillIn(
-        userData.personal.middleName
-      ),
-      TextField({ id: 'adduser_firstname' }).fillIn(
-        userData.personal.firstName
-      ),
+      TextField({ id: 'adduser_middlename' }).fillIn(userData.personal.middleName),
+      TextField({ id: 'adduser_firstname' }).fillIn(userData.personal.firstName),
       Select({ id: 'adduser_group' }).choose(userData.patronGroup),
       TextField({ name: 'barcode' }).fillIn(userData.barcode),
       TextField({ name: 'username' }).fillIn(userData.userName),
       TextField({ id: 'adduser_email' }).fillIn(userData.personal.email),
-      TextField({ id: 'adduser_preferredname' }).fillIn(
-        userData.personal.preferredFirstName
-      ),
+      TextField({ id: 'adduser_preferredname' }).fillIn(userData.personal.preferredFirstName),
       Button({ id: 'clickable-save' }).click(),
     ]);
   },
@@ -139,58 +141,42 @@ export default {
     });
   },
 
+  verifyFullNameIsDisplayedCorrectly(fullName) {
+    cy.expect(Section({ id: 'pane-userdetails' }).find(HTML(fullName)).exists());
+  },
+
   verifyFirstNameOnUserDetailsPane(firstName) {
-    cy.expect(
-      userDetailsPane
-        .find(KeyValue('First name'))
-        .has({ value: `${firstName}` })
-    );
+    cy.expect(userDetailsPane.find(KeyValue('First name')).has({ value: `${firstName}` }));
   },
 
   verifyLastNameOnUserDetailsPane(lastName) {
-    cy.expect(
-      userDetailsPane.find(KeyValue('Last name')).has({ value: `${lastName}` })
-    );
+    cy.expect(userDetailsPane.find(KeyValue('Last name')).has({ value: `${lastName}` }));
   },
 
   verifyMiddleNameOnUserDetailsPane(middleName) {
-    cy.expect(
-      userDetailsPane
-        .find(KeyValue('Middle name'))
-        .has({ value: `${middleName}` })
-    );
+    cy.expect(userDetailsPane.find(KeyValue('Middle name')).has({ value: `${middleName}` }));
   },
 
   verifyPreferredfirstnameOnUserDetailsPane(Preferredfirstname) {
     cy.expect(
       userDetailsPane
         .find(KeyValue('Preferred first name'))
-        .has({ value: `${Preferredfirstname}` })
+        .has({ value: `${Preferredfirstname}` }),
     );
   },
 
   verifyPatronGroupOnUserDetailsPane(patronGroup) {
-    cy.expect(
-      userDetailsPane
-        .find(KeyValue('Patron group'))
-        .has({ value: `${patronGroup}` })
-    );
+    cy.expect(userDetailsPane.find(KeyValue('Patron group')).has({ value: `${patronGroup}` }));
   },
 
   verifyEmailDomainOnUserDetailsPane(emailDomain) {
     cy.do(contactInformationAccordion.clickHeader());
-    cy.expect(
-      userDetailsPane
-        .find(KeyValue('Email'))
-        .has({ value: including(`@${emailDomain}`) })
-    );
+    cy.expect(userDetailsPane.find(KeyValue('Email')).has({ value: including(`@${emailDomain}`) }));
   },
 
   verifyExpirationDateOnUserDetailsPane(expirationDate) {
     cy.expect(
-      userDetailsPane
-        .find(KeyValue('Expiration date'))
-        .has({ value: `${expirationDate}` })
+      userDetailsPane.find(KeyValue('Expiration date')).has({ value: `${expirationDate}` }),
     );
   },
 
@@ -213,7 +199,7 @@ export default {
         .find(Button('Actions'))
         .click(),
       deleteUser.click(),
-      deleteYesButton.click()
+      deleteYesButton.click(),
     ]);
   },
 

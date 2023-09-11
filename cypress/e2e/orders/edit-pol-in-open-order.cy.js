@@ -20,10 +20,12 @@ describe('ui-orders: Orders', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
-  const defaultOrder = { ...NewOrder.defaultOneTimeOrder,
+  const defaultOrder = {
+    ...NewOrder.defaultOneTimeOrder,
     approved: true,
     reEncumber: true,
-    orderType: 'One-time' };
+    orderType: 'One-time',
+  };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const allocatedQuantity = '1000';
@@ -35,73 +37,78 @@ describe('ui-orders: Orders', () => {
   before(() => {
     cy.getAdminToken();
 
-    FiscalYears.createViaApi(defaultFiscalYear)
-      .then(response => {
-        defaultFiscalYear.id = response.id;
-        defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-        Ledgers.createViaApi(defaultLedger)
-          .then(ledgerResponse => {
-            defaultLedger.id = ledgerResponse.id;
-            defaultFund.ledgerId = defaultLedger.id;
-            Funds.createViaApi(defaultFund)
-              .then(fundResponse => {
-                defaultFund.id = fundResponse.fund.id;
+    FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
+      defaultFiscalYear.id = response.id;
+      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+        defaultLedger.id = ledgerResponse.id;
+        defaultFund.ledgerId = defaultLedger.id;
+        Funds.createViaApi(defaultFund).then((fundResponse) => {
+          defaultFund.id = fundResponse.fund.id;
 
-                cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
-                FinanceHelp.searchByName(defaultFund.name);
-                Funds.selectFund(defaultFund.name);
-                Funds.addBudget(allocatedQuantity);
-              });
-          });
+          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+          FinanceHelp.searchByName(defaultFund.name);
+          Funds.selectFund(defaultFund.name);
+          Funds.addBudget(allocatedQuantity);
+        });
       });
+    });
 
-    ServicePoints.getViaApi()
-      .then((servicePoint) => {
-        servicePointId = servicePoint[0].id;
-        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
-          .then(res => {
-            location = res;
-          });
+    ServicePoints.getViaApi().then((servicePoint) => {
+      servicePointId = servicePoint[0].id;
+      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+        location = res;
       });
+    });
 
-    Organizations.createOrganizationViaApi(organization)
-      .then(responseOrganizations => {
-        organization.id = responseOrganizations;
-        invoice.accountingCode = organization.erpCode;
-        defaultOrder.vendor = organization.name;
-      });
+    Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
+      organization.id = responseOrganizations;
+      invoice.accountingCode = organization.erpCode;
+      defaultOrder.vendor = organization.name;
+    });
     defaultOrder.vendor = organization.name;
     cy.visit(TopMenu.ordersPath);
-    Orders.createOrderForRollover(defaultOrder, true, false).then(orderResponse => {
+    Orders.createOrderForRollover(defaultOrder, true, false).then((orderResponse) => {
       defaultOrder.id = orderResponse.id;
       orderNumber = orderResponse.poNumber;
       Orders.checkCreatedOrder(defaultOrder);
       OrderLines.addPOLine();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
-      OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(defaultFund, '100', '1', '100', location.institutionId);
+      OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
+        defaultFund,
+        '100',
+        '1',
+        '100',
+        location.institutionId,
+      );
       OrderLines.backToEditingOrder();
       Orders.openOrder();
     });
-    cy.createTempUser([
-      permissions.uiOrdersEdit.gui,
-      permissions.uiOrdersView.gui,
-    ])
-      .then(userProperties => {
+    cy.createTempUser([permissions.uiOrdersEdit.gui, permissions.uiOrdersView.gui]).then(
+      (userProperties) => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-      });
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
+      },
+    );
   });
 
   after(() => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C16984 Edit cost/fund distribution of POL on an "Open" order (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList(orderNumber);
-    OrderLines.selectPOLInOrder(0);
-    OrderLines.editPOLInOrder();
-    OrderLines.editFundInPOL(defaultFund, '200', '200');
-    OrderLines.checkCurrencyInPOL('200.00');
-  });
+  it(
+    'C16984 Edit cost/fund distribution of POL on an "Open" order (thunderjet)',
+    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    () => {
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList(orderNumber);
+      OrderLines.selectPOLInOrder(0);
+      OrderLines.editPOLInOrder();
+      OrderLines.editFundInPOL(defaultFund, '200', '200');
+      OrderLines.checkCurrencyInPOL('200.00');
+    },
+  );
 });

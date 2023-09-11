@@ -7,7 +7,8 @@ import {
   Pane,
   MultiColumnListCell,
   Modal,
-  KeyValue, MultiColumnListHeader
+  KeyValue,
+  MultiColumnListHeader,
 } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 import DateTools from '../../../utils/dateTools';
@@ -30,7 +31,6 @@ const configurationFields = {
   provider: Select({ name: 'providerName' }),
 };
 
-
 function fillGeneralInfo(fileName, providerName) {
   return cy.do([
     newButton.click(),
@@ -40,10 +40,7 @@ function fillGeneralInfo(fileName, providerName) {
 }
 
 function saveAndCloseForm() {
-  cy.do([
-    saveAndCloseBtn.click(),
-    saveBtn.click()
-  ]);
+  cy.do([saveAndCloseBtn.click(), saveBtn.click()]);
   // time for saving on back-end side
   cy.wait(2000);
 }
@@ -54,7 +51,7 @@ const configurations = {
     create(name) {
       fillGeneralInfo(name, this.title);
       saveAndCloseForm();
-    }
+    },
   },
   DematicStagingDirector: {
     title: 'Dematic StagingDirector',
@@ -62,19 +59,23 @@ const configurations = {
       fillGeneralInfo(name, this.title);
       cy.do(configurationFields.timingInput.fillIn('1'));
       saveAndCloseForm();
-    }
+    },
   },
   CaiaSoft: {
     title: 'CaiaSoft',
     create(name) {
       fillGeneralInfo(name, this.title);
       cy.do([
-        Accordion({ label: 'Accession holding workflow preference' }).find(Select()).choose('Change permanent location'),
-        Accordion({ label: 'Returning workflow preference' }).find(Select()).choose('Items received at remote storage scanned into FOLIO'),
+        Accordion({ label: 'Accession holding workflow preference' })
+          .find(Select())
+          .choose('Change permanent location'),
+        Accordion({ label: 'Returning workflow preference' })
+          .find(Select())
+          .choose('Items received at remote storage scanned into FOLIO'),
       ]);
       saveAndCloseForm();
-    }
-  }
+    },
+  },
 };
 
 export default {
@@ -89,7 +90,9 @@ export default {
       MultiColumnListCell({ content: name }).click(),
       Pane({ title: name }).find(actionsBtn).click(),
       Button({ id: 'clickable-delete-storage' }).click(),
-      Modal({ title: `Remove ${name}` }).find(Button('Delete')).click()
+      Modal({ title: `Remove ${name}` })
+        .find(Button('Delete'))
+        .click(),
     ]);
     InteractorsTools.checkCalloutMessage(successfulDeleteCalloutMessage);
     cy.expect(configurationPane.find(MultiColumnListCell({ content: name })).absent());
@@ -101,7 +104,11 @@ export default {
     const date = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
 
     cy.expect(configurationPane.find(MultiColumnListCell({ content: name })).exists());
-    cy.expect(configurationPane.find(MultiColumnListCell({ content: including(configuration.title) })).exists());
+    cy.expect(
+      configurationPane
+        .find(MultiColumnListCell({ content: including(configuration.title) }))
+        .exists(),
+    );
     cy.expect(configurationPane.find(MultiColumnListCell({ content: date })).exists());
   },
 
@@ -135,7 +142,11 @@ export default {
 
     for (const param in configuration) {
       if (param === 'timingInput') {
-        cy.expect(paneWithConfiguration.find(KeyValue({ value: including(`Runs every ${configuration.timingInput} min`) })).exists());
+        cy.expect(
+          paneWithConfiguration
+            .find(KeyValue({ value: including(`Runs every ${configuration.timingInput} min`) }))
+            .exists(),
+        );
       } else {
         cy.expect(paneWithConfiguration.find(KeyValue({ value: configuration[param] })).exists());
       }
@@ -145,7 +156,9 @@ export default {
   closeWithoutSaving() {
     return cy.do([
       Modal().find(Button('Cancel')).click(),
-      Pane({ title: including('Edit ') }).find(xButton).click()
+      Pane({ title: including('Edit ') })
+        .find(xButton)
+        .click(),
     ]);
   },
 
@@ -161,7 +174,11 @@ export default {
   },
 
   verifyCaiaSoftWarning() {
-    cy.expect(HTML('CaiaSoft Accession tables are available after remote storage has been configured.').exists());
+    cy.expect(
+      HTML(
+        'CaiaSoft Accession tables are available after remote storage has been configured.',
+      ).exists(),
+    );
   },
 
   verifyAccessionTablePane() {
@@ -174,14 +191,14 @@ export default {
 
   verifyDataSynchronizationSettingsAccordion(exists) {
     if (exists) cy.expect(dataSynchronizationSettingsAccordion.exists());
-    else cy.expect(dataSynchronizationSettingsAccordion.absent())
+    else cy.expect(dataSynchronizationSettingsAccordion.absent());
   },
 
   verifyProviderDataSynchronizationSettings() {
     cy.do(newButton.click());
-    Object.keys(configurations).forEach(key => {
+    Object.keys(configurations).forEach((key) => {
       cy.do([
-        generalInformationAccordion.find(Select()).choose(including(configurations[key].title))
+        generalInformationAccordion.find(Select()).choose(including(configurations[key].title)),
       ]);
       if (configurations[key].title === 'Dematic StagingDirector') this.verifyDataSynchronizationSettingsAccordion(true);
       else this.verifyDataSynchronizationSettingsAccordion(false);

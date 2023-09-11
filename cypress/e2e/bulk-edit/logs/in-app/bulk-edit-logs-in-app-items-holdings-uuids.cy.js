@@ -35,7 +35,7 @@ const inventoryEntity = {
       id: '',
       name: '',
     },
-  }
+  },
 };
 
 describe('Bulk Edit - Logs', () => {
@@ -44,85 +44,133 @@ describe('Bulk Edit - Logs', () => {
       permissions.bulkEditLogsView.gui,
       permissions.bulkEditView.gui,
       permissions.bulkEditEdit.gui,
-      permissions.inventoryAll.gui
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading
-        });
-
-        inventoryEntity.instance.id = InventoryInstances.createInstanceViaApi(inventoryEntity.instance.name, inventoryEntity.item.barcode);
-        cy.getHoldings({
-          limit: 1,
-          query: `"instanceId"="${inventoryEntity.instance.id}"`
-        })
-          .then(holdings => {
-            inventoryEntity.holdingId = holdings[0].id;
-            inventoryEntity.locations.permanent.id = holdings[0].permanentLocationId;
-            FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, inventoryEntity.holdingId);
-
-            cy.getLocations({ limit: 1, query: `id="${inventoryEntity.locations.permanent.id}"` })
-              .then(loc => { inventoryEntity.locations.permanent.name = loc.name; });
-            cy.getItems({ query: `"barcode"=="${inventoryEntity.item.barcode}"` })
-              .then(inventoryItem => { inventoryEntity.item.id = inventoryItem.id; });
-            cy.getItems({ query: `"barcode"=="secondBarcode_${inventoryEntity.item.barcode}"` })
-              .then(inventoryItem => { inventoryEntity.item.id2 = inventoryItem.id; });
-          });
+      permissions.inventoryAll.gui,
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.bulkEditPath,
+        waiter: BulkEditSearchPane.waitLoading,
       });
+
+      inventoryEntity.instance.id = InventoryInstances.createInstanceViaApi(
+        inventoryEntity.instance.name,
+        inventoryEntity.item.barcode,
+      );
+      cy.getHoldings({
+        limit: 1,
+        query: `"instanceId"="${inventoryEntity.instance.id}"`,
+      }).then((holdings) => {
+        inventoryEntity.holdingId = holdings[0].id;
+        inventoryEntity.locations.permanent.id = holdings[0].permanentLocationId;
+        FileManager.createFile(
+          `cypress/fixtures/${validHoldingUUIDsFileName}`,
+          inventoryEntity.holdingId,
+        );
+
+        cy.getLocations({ limit: 1, query: `id="${inventoryEntity.locations.permanent.id}"` }).then(
+          (loc) => {
+            inventoryEntity.locations.permanent.name = loc.name;
+          },
+        );
+        cy.getItems({ query: `"barcode"=="${inventoryEntity.item.barcode}"` }).then(
+          (inventoryItem) => {
+            inventoryEntity.item.id = inventoryItem.id;
+          },
+        );
+        cy.getItems({ query: `"barcode"=="secondBarcode_${inventoryEntity.item.barcode}"` }).then(
+          (inventoryItem) => {
+            inventoryEntity.item.id2 = inventoryItem.id;
+          },
+        );
+      });
+    });
   });
 
   after('delete test data', () => {
     Users.deleteViaApi(user.userId);
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(inventoryEntity.item.barcode);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
+      inventoryEntity.item.barcode,
+    );
     FileManager.deleteFile(`cypress/fixtures/${validHoldingUUIDsFileName}`);
-    FileManager.deleteFileFromDownloadsByMask(validHoldingUUIDsFileName, `*${matchedRecordsFileNameValid}`, previewOfProposedChangesFileName, updatedRecordsFileName);
+    FileManager.deleteFileFromDownloadsByMask(
+      validHoldingUUIDsFileName,
+      `*${matchedRecordsFileNameValid}`,
+      previewOfProposedChangesFileName,
+      updatedRecordsFileName,
+    );
   });
 
-  it('C375288 Verify generated Logs files for Items In app -- only valid Holdings UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    BulkEditSearchPane.checkItemsRadio();
-    BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
+  it(
+    'C375288 Verify generated Logs files for Items In app -- only valid Holdings UUIDs (firebird)',
+    { tags: [testTypes.smoke, devTeams.firebird] },
+    () => {
+      BulkEditSearchPane.checkItemsRadio();
+      BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
 
-    BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
-    BulkEditSearchPane.waitFileUploading();
-    BulkEditActions.downloadMatchedResults();
-    BulkEditActions.openInAppStartBulkEditFrom();
+      BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
+      BulkEditSearchPane.waitFileUploading();
+      BulkEditActions.downloadMatchedResults();
+      BulkEditActions.openInAppStartBulkEditFrom();
 
-    BulkEditActions.clearTemporaryLocation();
-    BulkEditActions.addNewBulkEditFilterString();
-    BulkEditActions.replacePermanentLocation(inventoryEntity.locations.permanent.name, 'item', 1);
-    BulkEditActions.addNewBulkEditFilterString();
-    BulkEditActions.replaceItemStatus(ITEM_STATUS_NAMES.AVAILABLE, 2);
+      BulkEditActions.clearTemporaryLocation();
+      BulkEditActions.addNewBulkEditFilterString();
+      BulkEditActions.replacePermanentLocation(inventoryEntity.locations.permanent.name, 'item', 1);
+      BulkEditActions.addNewBulkEditFilterString();
+      BulkEditActions.replaceItemStatus(ITEM_STATUS_NAMES.AVAILABLE, 2);
 
-    BulkEditActions.confirmChanges();
-    BulkEditActions.downloadPreview();
-    BulkEditActions.commitChanges();
-    BulkEditSearchPane.waitFileUploading();
-    BulkEditActions.openActions();
-    BulkEditActions.downloadChangedCSV();
+      BulkEditActions.confirmChanges();
+      BulkEditActions.downloadPreview();
+      BulkEditActions.commitChanges();
+      BulkEditSearchPane.waitFileUploading();
+      BulkEditActions.openActions();
+      BulkEditActions.downloadChangedCSV();
 
-    BulkEditSearchPane.openLogsSearch();
-    BulkEditSearchPane.checkItemsCheckbox();
-    BulkEditSearchPane.clickActionsRunBy(user.username);
-    BulkEditSearchPane.verifyLogsRowActionWhenCompleted();
+      BulkEditSearchPane.openLogsSearch();
+      BulkEditSearchPane.checkItemsCheckbox();
+      BulkEditSearchPane.clickActionsRunBy(user.username);
+      BulkEditSearchPane.verifyLogsRowActionWhenCompleted();
 
-    BulkEditSearchPane.downloadFileUsedToTrigger();
-    BulkEditFiles.verifyCSVFileRows(validHoldingUUIDsFileName, [inventoryEntity.holdingId]);
+      BulkEditSearchPane.downloadFileUsedToTrigger();
+      BulkEditFiles.verifyCSVFileRows(validHoldingUUIDsFileName, [inventoryEntity.holdingId]);
 
-    BulkEditSearchPane.downloadFileWithMatchingRecords();
-    BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileNameValid}`, [inventoryEntity.item.id, inventoryEntity.item.id2], 'firstElement', true);
+      BulkEditSearchPane.downloadFileWithMatchingRecords();
+      BulkEditFiles.verifyMatchedResultFileContent(
+        `*${matchedRecordsFileNameValid}`,
+        [inventoryEntity.item.id, inventoryEntity.item.id2],
+        'firstElement',
+        true,
+      );
 
-    BulkEditSearchPane.downloadFileWithProposedChanges();
-    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName, ['', ''], 'temporaryLocation', true);
-    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName, ['', ''], 'temporaryLocation', true);
+      BulkEditSearchPane.downloadFileWithProposedChanges();
+      BulkEditFiles.verifyMatchedResultFileContent(
+        previewOfProposedChangesFileName,
+        ['', ''],
+        'temporaryLocation',
+        true,
+      );
+      BulkEditFiles.verifyMatchedResultFileContent(
+        previewOfProposedChangesFileName,
+        ['', ''],
+        'temporaryLocation',
+        true,
+      );
 
-    BulkEditSearchPane.downloadFileWithUpdatedRecords();
-    BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, ['', ''], 'temporaryLocation', true);
+      BulkEditSearchPane.downloadFileWithUpdatedRecords();
+      BulkEditFiles.verifyMatchedResultFileContent(
+        updatedRecordsFileName,
+        ['', ''],
+        'temporaryLocation',
+        true,
+      );
 
-    cy.visit(TopMenu.inventoryPath);
-    InventorySearchAndFilter.switchToItem();
-    InventorySearchAndFilter.searchByParameter('Barcode', inventoryEntity.item.barcode);
-    ItemRecordView.checkItemDetails(inventoryEntity.locations.permanent.name, inventoryEntity.item.barcode, ITEM_STATUS_NAMES.AVAILABLE);
-  });
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.switchToItem();
+      InventorySearchAndFilter.searchByParameter('Barcode', inventoryEntity.item.barcode);
+      ItemRecordView.checkItemDetails(
+        inventoryEntity.locations.permanent.name,
+        inventoryEntity.item.barcode,
+        ITEM_STATUS_NAMES.AVAILABLE,
+      );
+    },
+  );
 });

@@ -9,7 +9,7 @@ import {
   LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
   MATERIAL_TYPE_NAMES,
-  EXISTING_RECORDS_NAMES
+  EXISTING_RECORDS_NAMES,
 } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
@@ -40,11 +40,11 @@ describe('data-import', () => {
     const titlesItemsStatusChanged = [
       'Making the news popular : mobilizing U.S. news audiences / Anthony M. Nadler.',
       'Genius : the game / Leopoldo Gout.',
-      'Animal philosophy : essential readings in continental thought / edited by Matthew Calarco and Peter Atterton.'
+      'Animal philosophy : essential readings in continental thought / edited by Matthew Calarco and Peter Atterton.',
     ];
     const titlesItemStatusNotChanged = [
       'Political communication in the age of dissemination.',
-      'Language, borders and identity / edited by Dominic Watt and Carmen Llamas.'
+      'Language, borders and identity / edited by Dominic Watt and Carmen Llamas.',
     ];
     const itemNote = 'THIS WAS UPDATED!';
     const jobProfileNameForExport = `C357552 Bibs with Item HRIDs ${getRandomPostfix()}`;
@@ -55,30 +55,42 @@ describe('data-import', () => {
 
     const collectionOfMappingAndActionProfiles = [
       {
-        mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        mappingProfile: {
+          typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C357552 Create simple holdings ${getRandomPostfix()}`,
-          permanentLocation: LOCATION_NAMES.ONLINE },
-        actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-          name: `C357552 Create simple holdings ${getRandomPostfix()}` }
+          permanentLocation: LOCATION_NAMES.ONLINE,
+        },
+        actionProfile: {
+          typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+          name: `C357552 Create simple holdings ${getRandomPostfix()}`,
+        },
       },
       {
-        mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
+        mappingProfile: {
+          typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C357552 Create simple items ${getRandomPostfix()}`,
           status: ITEM_STATUS_NAMES.AVAILABLE,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"` },
-        actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-          name: `C357552 Create simple items ${getRandomPostfix()}` }
+          materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
+        },
+        actionProfile: {
+          typeValue: FOLIO_RECORD_TYPE.ITEM,
+          name: `C357552 Create simple items ${getRandomPostfix()}`,
+        },
       },
       {
-        mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
+        mappingProfile: {
+          typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C357552 Update Item by POL match ${getRandomPostfix()}`,
           status: ITEM_STATUS_NAMES.AVAILABLE,
-          permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE },
-        actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
+          permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
+        },
+        actionProfile: {
+          typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C357552 Update simple items ${getRandomPostfix()}`,
-          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
-      }
+          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+        },
+      },
     ];
 
     const matchProfileItemHrid = {
@@ -87,11 +99,11 @@ describe('data-import', () => {
         field: '902',
         in1: '*',
         in2: '*',
-        subfield: 'a'
+        subfield: 'a',
       },
       matchCriterion: 'Exactly matches',
       existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
-      itemOption: NewMatchProfile.optionsList.itemHrid
+      itemOption: NewMatchProfile.optionsList.itemHrid,
     };
 
     const matchProfileItemStatus = {
@@ -130,17 +142,18 @@ describe('data-import', () => {
         permissions.uiInventoryMarcItemUnknow.gui,
         permissions.uiInventoryMarkItemsWithdrawn.gui,
         permissions.dataExportEnableApp.gui,
-        permissions.settingsDataImportEnabled.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+        permissions.settingsDataImportEnabled.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          StatisticalCodes.createViaApi().then((resp) => {
-            statisticalCode = `ARL (Collection stats): ${resp.code} - ${resp.name}`;
-          });
-          cy.login(user.username, user.password,
-            { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+        StatisticalCodes.createViaApi().then((resp) => {
+          statisticalCode = `ARL (Collection stats): ${resp.code} - ${resp.name}`;
         });
+        cy.login(user.username, user.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
+        });
+      });
     });
 
     after('delete test data', () => {
@@ -150,7 +163,7 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(updateJobProfile.profileName);
       MatchProfiles.deleteMatchProfile(matchProfileItemHrid.profileName);
       MatchProfiles.deleteMatchProfile(matchProfileItemStatus.profileName);
-      collectionOfMappingAndActionProfiles.forEach(profile => {
+      collectionOfMappingAndActionProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
         FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
       });
@@ -182,21 +195,33 @@ describe('data-import', () => {
     const mappingProfileForUpdateItem = (itemMappingProfile) => {
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfile);
-      NewFieldMappingProfile.addItemNotes('"Note"', `"${itemNote}"`, 'Mark for all affected records');
+      NewFieldMappingProfile.addItemNotes(
+        '"Note"',
+        `"${itemNote}"`,
+        'Mark for all affected records',
+      );
       FieldMappingProfiles.saveProfile();
       FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfile.name);
     };
 
-    it('C357552 Check item update via match by status (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+    it(
+      'C357552 Check item update via match by status (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
         mappingProfileForCreateHoldings(collectionOfMappingAndActionProfiles[0].mappingProfile);
-        FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfMappingAndActionProfiles[0].mappingProfile.name,
+        );
         mappingProfileForCreateItem(collectionOfMappingAndActionProfiles[1].mappingProfile);
-        FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[1].mappingProfile.name);
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfMappingAndActionProfiles[1].mappingProfile.name,
+        );
         mappingProfileForUpdateItem(collectionOfMappingAndActionProfiles[2].mappingProfile);
-        FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[2].mappingProfile.name);
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfMappingAndActionProfiles[2].mappingProfile.name,
+        );
 
-        collectionOfMappingAndActionProfiles.forEach(profile => {
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
           cy.visit(SettingsMenu.actionProfilePath);
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
@@ -220,7 +245,10 @@ describe('data-import', () => {
         cy.wait(2500);
         JobProfiles.createJobProfile(updateJobProfile);
         NewJobProfile.linkMatchProfile(matchProfileItemHrid.profileName);
-        NewJobProfile.linkMatchAndActionProfilesForSubMatches(matchProfileItemStatus.profileName, collectionOfMappingAndActionProfiles[2].actionProfile.name);
+        NewJobProfile.linkMatchAndActionProfilesForSubMatches(
+          matchProfileItemStatus.profileName,
+          collectionOfMappingAndActionProfiles[2].actionProfile.name,
+        );
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(updateJobProfile.profileName);
 
@@ -241,10 +269,12 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(nameMarcFileForImportCreate);
         Logs.openFileDetails(nameMarcFileForImportCreate);
         for (let i = 0; i < 9; i++) {
-          [FileDetails.columnNameInResultList.srsMarc,
+          [
+            FileDetails.columnNameInResultList.srsMarc,
             FileDetails.columnNameInResultList.instance,
             FileDetails.columnNameInResultList.holdings,
-            FileDetails.columnNameInResultList.item].forEach(columnName => {
+            FileDetails.columnNameInResultList.item,
+          ].forEach((columnName) => {
             FileDetails.checkStatusInColumn(FileDetails.status.created, columnName, i);
           });
         }
@@ -252,19 +282,19 @@ describe('data-import', () => {
           {
             lineNumber: 0,
             markFunction: ItemActions.markAsWithdrawn,
-            status: 'Withdrawn'
+            status: 'Withdrawn',
           },
           {
             lineNumber: 3,
             markFunction: ItemActions.markAsInProcess,
-            status: 'In process (non-requestable)'
+            status: 'In process (non-requestable)',
           },
           {
             lineNumber: 7,
             markFunction: ItemActions.markAsUnknown,
-            status: 'Unknown'
-          }
-        ].forEach(marker => {
+            status: 'Unknown',
+          },
+        ].forEach((marker) => {
           Logs.clickOnHotLink(marker.lineNumber, 5, 'Created');
           ItemRecordView.waitLoading();
           marker.markFunction();
@@ -297,7 +327,7 @@ describe('data-import', () => {
         FileDetails.checkItemQuantityInSummaryTable('7', 1);
         FileDetails.checkItemQuantityInSummaryTable('3', 2);
         // check items what statuses were not changed have Updated status
-        titlesItemStatusNotChanged.forEach(title => {
+        titlesItemStatusNotChanged.forEach((title) => {
           FileDetails.openItemInInventoryByTitle(title);
           ItemRecordView.waitLoading();
           ItemRecordView.checkItemNote(itemNote);
@@ -305,9 +335,10 @@ describe('data-import', () => {
           Logs.openFileDetails(nameMarcFileForUpdate);
         });
         // check items what statuses were changed have No action status
-        titlesItemsStatusChanged.forEach(title => {
+        titlesItemsStatusChanged.forEach((title) => {
           FileDetails.checkStatusByTitle(title, FileDetails.status.noAction);
         });
-      });
+      },
+    );
   });
 });

@@ -8,7 +8,7 @@ export default {
       KeyValue('Authentication').has({ value: authentification }),
       KeyValue('External ID query map').has({ value: externalId }),
       KeyValue('Internal ID embed path').has({ value: internalId }),
-      KeyValue('Enabled').has({ value: '✓' })
+      KeyValue('Enabled').has({ value: '✓' }),
     ]);
-  }
+  },
 };

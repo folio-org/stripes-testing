@@ -18,7 +18,7 @@ import {
   Section,
   Select,
   TextField,
-  TextInput
+  TextInput,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import logsViewAll from '../data_import/logs/logsViewAll';
@@ -50,8 +50,7 @@ const instancesTagsSection = Section({ id: 'instancesTags' });
 const tagsPane = Pane('Tags');
 const tagsButton = Button({ id: 'clickable-show-tags' });
 const tagsAccordionButton = instancesTagsSection.find(Button('Tags'));
-const emptyResultsMessage =
-  'Choose a filter or enter a search query to show results.';
+const emptyResultsMessage = 'Choose a filter or enter a search query to show results.';
 const browseButton = Button({ id: 'mode-navigation-browse' });
 const viewHoldingButton = Button('View holdings');
 const statisticalCodeAccordion = Accordion({ id: 'itemsStatisticalCodeIds' });
@@ -86,39 +85,41 @@ const searchHoldingsByHRID = (hrid) => {
 };
 
 const searchInstanceByTitle = (title) => {
-  cy.do([
-    TextField({ id: 'input-inventory-search' }).fillIn(title),
-    searchButton.click(),
-  ]);
+  cy.do([TextField({ id: 'input-inventory-search' }).fillIn(title), searchButton.click()]);
   InventoryInstances.waitLoading();
 };
 
 const getInstanceHRID = () => {
-  return logsViewAll.getSingleJobProfile() // get the first job id from job logs list
+  return logsViewAll
+    .getSingleJobProfile() // get the first job id from job logs list
     .then(({ id }) => {
       // then, make request with the job id
       // and get the only record id inside the uploaded file
       const queryString = 'limit=1000&order=asc';
-      return cy.request({
-        method: 'GET',
-        url: `${Cypress.env('OKAPI_HOST')}/metadata-provider/jobLogEntries/${id}?${queryString}`,
-        headers: {
-          'x-okapi-tenant': Cypress.env('OKAPI_TENANT'),
-          'x-okapi-token': Cypress.env('token'),
-        },
-      })
+      return cy
+        .request({
+          method: 'GET',
+          url: `${Cypress.env('OKAPI_HOST')}/metadata-provider/jobLogEntries/${id}?${queryString}`,
+          headers: {
+            'x-okapi-tenant': Cypress.env('OKAPI_TENANT'),
+            'x-okapi-token': Cypress.env('token'),
+          },
+        })
         .then(({ body: { entries } }) => {
           // then, make request with the job id and the record id
           // and get Instance HRID
           const recordId = entries[0].sourceRecordId;
-          return cy.request({
-            method: 'GET',
-            url: `${Cypress.env('OKAPI_HOST')}/metadata-provider/jobLogEntries/${id}/records/${recordId}`,
-            headers: {
-              'x-okapi-tenant': Cypress.env('OKAPI_TENANT'),
-              'x-okapi-token': Cypress.env('token'),
-            },
-          })
+          return cy
+            .request({
+              method: 'GET',
+              url: `${Cypress.env(
+                'OKAPI_HOST',
+              )}/metadata-provider/jobLogEntries/${id}/records/${recordId}`,
+              headers: {
+                'x-okapi-tenant': Cypress.env('OKAPI_TENANT'),
+                'x-okapi-token': Cypress.env('token'),
+              },
+            })
             .then(({ body: { relatedInstanceInfo } }) => {
               return relatedInstanceInfo.hridList;
             });
@@ -140,7 +141,7 @@ const checkInstanceDetails = () => {
   cy.do(
     Pane({ id: 'pane-results' })
       .find(MultiColumnListCell({ row: 0, columnIndex: 1 }))
-      .click()
+      .click(),
   );
   const catalogedDate = KeyValue('Cataloged date');
   const instanceStatusTerm = KeyValue('Instance status term');
@@ -158,9 +159,7 @@ export default {
   getInstanceHRID,
   checkInstanceDetails,
   getAllSearchResults: () => MultiColumnList(),
-  getSearchResult: (row = 0, col = 0) => paneResultsSection.find(
-    MultiColumnListCell({ row, columnIndex: col })
-  ),
+  getSearchResult: (row = 0, col = 0) => paneResultsSection.find(MultiColumnListCell({ row, columnIndex: col })),
   waitLoading: () => cy.expect([Form().find(inventorySearchAndFilter).exists()]),
   browseCallNumberIsAbsent: () => cy.expect(HTML('Browse call numbers').absent()),
   browseSubjectIsAbsent: () => cy.expect(HTML('Browse subjects').absent()),
@@ -194,8 +193,14 @@ export default {
     cy.do(effectiveLocationInput.clickHeader());
     // wait to avoid robotic clicks
     cy.wait(2000);
-    cy.do(effectiveLocationInput.find(Checkbox(values ?? this.effectiveLocation.mainLibrary)).click());
-    cy.expect(effectiveLocationInput.find(Checkbox(values ?? this.effectiveLocation.mainLibrary)).has({ checked: true }));
+    cy.do(
+      effectiveLocationInput.find(Checkbox(values ?? this.effectiveLocation.mainLibrary)).click(),
+    );
+    cy.expect(
+      effectiveLocationInput
+        .find(Checkbox(values ?? this.effectiveLocation.mainLibrary))
+        .has({ checked: true }),
+    );
   },
 
   byLanguage(lang) {
@@ -207,10 +212,7 @@ export default {
   },
 
   bySource(source) {
-    cy.do([
-      sourceAccordion.clickHeader(),
-      sourceAccordion.find(Checkbox(source)).click(),
-    ]);
+    cy.do([sourceAccordion.clickHeader(), sourceAccordion.find(Checkbox(source)).click()]);
     cy.expect(MultiColumnListRow().exists());
   },
 
@@ -293,12 +295,10 @@ export default {
     cy.expect(
       callNumberBrowsePane.has({
         subtitle: 'Enter search criteria to start browsing',
-      })
+      }),
     );
     cy.expect(
-      HTML(
-        including('Browse for results entering a query or choosing a filter.')
-      ).exists()
+      HTML(including('Browse for results entering a query or choosing a filter.')).exists(),
     );
   },
 
@@ -306,9 +306,7 @@ export default {
     cy.expect([
       callNumberBrowsePane.exists(),
       Pane({ subtitle: 'Enter search criteria to start browsing' }).absent(),
-      HTML(
-        including('Browse for results entering a query or choosing a filter.')
-      ).absent(),
+      HTML(including('Browse for results entering a query or choosing a filter.')).absent(),
     ]);
   },
 
@@ -321,7 +319,7 @@ export default {
       callNumberBrowsePane
         .find(MultiColumnList({ id: 'browse-results-list-browseSubjects' }))
         .find(MultiColumnListRow({ indexRow: 'row-0' }))
-        .exists()
+        .exists(),
     );
   },
 
@@ -330,7 +328,7 @@ export default {
       callNumberBrowsePane
         .find(MultiColumnList({ id: 'browse-results-list-callNumbers' }))
         .find(MultiColumnListCell(item))
-        .exists()
+        .exists(),
     );
   },
 
@@ -366,7 +364,7 @@ export default {
     cy.expect(
       Pane('Inventory').is({
         subtitle: including(`records found${selected} records selected`),
-      })
+      }),
     );
   },
 
@@ -384,7 +382,7 @@ export default {
     cy.do(
       navigationInstancesButton.perform((element) => {
         expect(element.classList[2]).to.include('primary');
-      })
+      }),
     );
   },
 
@@ -394,11 +392,7 @@ export default {
       TextField({ id: 'input-record-search' }).fillIn(searchString),
       searchButton.click(),
     ]);
-    cy.expect(
-      Pane({ id: 'browse-inventory-results-pane' })
-        .find(MultiColumnListHeader())
-        .exists()
-    );
+    cy.expect(Pane({ id: 'browse-inventory-results-pane' }).find(MultiColumnListHeader()).exists());
   },
 
   verifySearchResult: (cellContent) => cy.expect(MultiColumnListCell({ content: cellContent }).exists()),
@@ -438,10 +432,7 @@ export default {
   },
 
   selectSearchOptions(searchOption, text) {
-    cy.do([
-      inventorySearchAndFilterInput.choose(searchOption),
-      keywordInput.fillIn(text),
-    ]);
+    cy.do([inventorySearchAndFilterInput.choose(searchOption), keywordInput.fillIn(text)]);
   },
 
   clickSearch() {
@@ -477,7 +468,7 @@ export default {
     cy.expect(
       MultiColumnList({ id: 'list-inventory' })
         .find(MultiColumnListCell(including(cellContent)))
-        .exists()
+        .exists(),
     );
   },
 
@@ -500,9 +491,7 @@ export default {
 
   resetAllAndVerifyNoResultsAppear() {
     cy.do(resetAllButton.click());
-    cy.expect(
-      paneResultsSection.find(HTML(including(emptyResultsMessage))).exists()
-    );
+    cy.expect(paneResultsSection.find(HTML(including(emptyResultsMessage))).exists());
   },
 
   closeInstanceDetailPane() {
@@ -555,9 +544,7 @@ export default {
 
   verifyShelvingOrder(val) {
     cy.get('#input-inventory-search-qindex').then((elem) => {
-      expect(elem.text()).to.include(
-        'Effective call number (item), shelving order'
-      );
+      expect(elem.text()).to.include('Effective call number (item), shelving order');
     });
     cy.expect(inventorySearchAndFilter.has({ value: val }));
   },
@@ -594,9 +581,7 @@ export default {
   selectViewHoldings: () => cy.do(viewHoldingButton.click()),
 
   filterItemByStatisticalCode: (code) => {
-    cy.do(
-      Button({ id: 'accordion-toggle-button-itemsStatisticalCodeIds' }).click()
-    );
+    cy.do(Button({ id: 'accordion-toggle-button-itemsStatisticalCodeIds' }).click());
     // need to wait until data will be loaded
     cy.wait(1000);
     cy.do(statisticalCodeAccordion.find(TextField()).fillIn(code));
@@ -607,34 +592,23 @@ export default {
   },
 
   browseSearch(searchValue) {
-    cy.do([
-      TextField({ id: 'input-record-search' }).fillIn(searchValue),
-      searchButton.click(),
-    ]);
+    cy.do([TextField({ id: 'input-record-search' }).fillIn(searchValue), searchButton.click()]);
   },
 
   clickEditInstance() {
-    cy.do([
-      instanceDetailsSection.find(actionsButton).click(),
-      editInstanceButton.click(),
-    ]);
+    cy.do([instanceDetailsSection.find(actionsButton).click(), editInstanceButton.click()]);
   },
 
   verifyActionButtonOptions() {
     cy.do(paneResultsSection.find(actionsButton).click());
-    cy.expect([
-      Button('New').exists(),
-      DropdownMenu().find(HTML('Show columns')).exists(),
-    ]);
+    cy.expect([Button('New').exists(), DropdownMenu().find(HTML('Show columns')).exists()]);
   },
 
   filterHoldingsByPermanentLocation: (location) => {
     cy.do(Button({ id: 'accordion-toggle-button-holdingsPermanentLocation' }).click());
     // need to wait until data will be loaded
     cy.wait(1000);
-    cy.do(
-      holdingsPermanentLocationAccordion.find(TextField()).fillIn(location)
-    );
+    cy.do(holdingsPermanentLocationAccordion.find(TextField()).fillIn(location));
     // need to wait until data will be loaded
     cy.wait(1000);
     holdingsPermanentLocationAccordion.find(TextField()).click();
@@ -644,12 +618,12 @@ export default {
   checkRowsCount: (expectedRowsCount) => {
     cy.expect([
       instancesList.find(MultiColumnListRow({ index: expectedRowsCount - 1 })).exists(),
-      instancesList.find(MultiColumnListRow({ index: expectedRowsCount })).absent()
+      instancesList.find(MultiColumnListRow({ index: expectedRowsCount })).absent(),
     ]);
   },
 
   switchToSearchTab() {
     cy.do(searchToggleButton.click());
     cy.expect(effectiveLocationInput.exists());
-  }
+  },
 };

@@ -33,7 +33,10 @@ describe('Check In - Actions', () => {
     name: `groupChekIn ${getRandomPostfix()}`,
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest check in', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
+      'autotest check in',
+      uuid(),
+    ),
   };
   const itemData = {
     barcode: generateItemBarcode(),
@@ -104,13 +107,30 @@ describe('Check In - Actions', () => {
       originalCirculationRules = circulationRule.rulesAsText;
       const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
       ruleProps.r = requestPolicyBody.id;
-      addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + ruleProps.i + ' l ' + ruleProps.l + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
-      CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
+      addedCirculationRule =
+        't ' +
+        testData.loanTypeId +
+        ': i ' +
+        ruleProps.i +
+        ' l ' +
+        ruleProps.l +
+        ' r ' +
+        ruleProps.r +
+        ' o ' +
+        ruleProps.o +
+        ' n ' +
+        ruleProps.n;
+      CirculationRules.addRuleViaApi(
+        originalCirculationRules,
+        ruleProps,
+        't ',
+        testData.loanTypeId,
+      );
     });
 
     cy.createTempUser(
       [permissions.checkinAll.gui, permissions.checkoutAll.gui, permissions.requestsAll.gui],
-      patronGroup.name
+      patronGroup.name,
     )
       .then((userProperties) => {
         userData.username = userProperties.username;
@@ -119,18 +139,24 @@ describe('Check In - Actions', () => {
         userData.barcode = userProperties.barcode;
       })
       .then(() => {
-        UserEdit.addServicePointViaApi(testData.userServicePoint.id, userData.userId, testData.userServicePoint.id);
+        UserEdit.addServicePointViaApi(
+          testData.userServicePoint.id,
+          userData.userId,
+          testData.userServicePoint.id,
+        );
 
-        cy.createTempUser([permissions.requestsAll.gui], patronGroup.name).then((userProperties) => {
-          requestUserData.username = userProperties.username;
-          requestUserData.userId = userProperties.userId;
-          requestUserData.barcode = userProperties.barcode;
-          UserEdit.addServicePointViaApi(
-            testData.userServicePoint.id,
-            requestUserData.userId,
-            testData.userServicePoint.id
-          );
-        });
+        cy.createTempUser([permissions.requestsAll.gui], patronGroup.name).then(
+          (userProperties) => {
+            requestUserData.username = userProperties.username;
+            requestUserData.userId = userProperties.userId;
+            requestUserData.barcode = userProperties.barcode;
+            UserEdit.addServicePointViaApi(
+              testData.userServicePoint.id,
+              requestUserData.userId,
+              testData.userServicePoint.id,
+            );
+          },
+        );
 
         Checkout.checkoutItemViaApi({
           id: uuid(),
@@ -153,11 +179,15 @@ describe('Check In - Actions', () => {
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
-    UserEdit.changeServicePointPreferenceViaApi(requestUserData.userId, [testData.userServicePoint.id]);
+    UserEdit.changeServicePointPreferenceViaApi(requestUserData.userId, [
+      testData.userServicePoint.id,
+    ]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
-    Requests.getRequestApi({ query: `(item.barcode=="${itemData.barcode}")` }).then((requestResponse) => {
-      Requests.deleteRequestViaApi(requestResponse[0].id);
-    });
+    Requests.getRequestApi({ query: `(item.barcode=="${itemData.barcode}")` }).then(
+      (requestResponse) => {
+        Requests.deleteRequestViaApi(requestResponse[0].id);
+      },
+    );
     Users.deleteViaApi(userData.userId);
     Users.deleteViaApi(requestUserData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
@@ -168,36 +198,32 @@ describe('Check In - Actions', () => {
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
+      testData.defaultLocation.id,
     );
     cy.deleteLoanType(testData.loanTypeId);
   });
-  it(
-    'C347898 Hold slip (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
-    () => {
-      cy.visit(TopMenu.checkOutPath);
-      Checkout.waitLoading();
-      // without this waiter, the user will not be found
-      cy.wait(3000);
-      CheckOutActions.checkOutUser(userData.barcode, userData.username);
-      CheckOutActions.checkOutItem(itemData.barcode);
-      CheckOutActions.endCheckOutSession();
+  it('C347898 Hold slip (vega)', { tags: [TestTypes.criticalPath, devTeams.vega] }, () => {
+    cy.visit(TopMenu.checkOutPath);
+    Checkout.waitLoading();
+    // without this waiter, the user will not be found
+    cy.wait(3000);
+    CheckOutActions.checkOutUser(userData.barcode, userData.username);
+    CheckOutActions.checkOutItem(itemData.barcode);
+    CheckOutActions.endCheckOutSession();
 
-      cy.visit(TopMenu.requestsPath);
-      NewRequest.createNewRequest({
-        requesterBarcode: requestUserData.barcode,
-        itemBarcode: itemData.barcode,
-        pickupServicePoint: testData.userServicePoint.name,
-        requestType: REQUEST_TYPES.HOLD,
-      });
+    cy.visit(TopMenu.requestsPath);
+    NewRequest.createNewRequest({
+      requesterBarcode: requestUserData.barcode,
+      itemBarcode: itemData.barcode,
+      pickupServicePoint: testData.userServicePoint.name,
+      requestType: REQUEST_TYPES.HOLD,
+    });
 
-      cy.visit(TopMenu.checkInPath);
-      CheckInActions.checkInItemGui(itemData.barcode);
-      AwaitingPickupForARequest.verifyModalTitle();
-      AwaitingPickupForARequest.unselectCheckboxPrintSlip();
-      AwaitingPickupForARequest.checkModalMessage(itemData);
-      AwaitingPickupForARequest.closeModal();
-    }
-  );
+    cy.visit(TopMenu.checkInPath);
+    CheckInActions.checkInItemGui(itemData.barcode);
+    AwaitingPickupForARequest.verifyModalTitle();
+    AwaitingPickupForARequest.unselectCheckboxPrintSlip();
+    AwaitingPickupForARequest.checkModalMessage(itemData);
+    AwaitingPickupForARequest.closeModal();
+  });
 });

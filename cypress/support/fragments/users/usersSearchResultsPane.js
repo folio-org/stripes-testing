@@ -1,19 +1,17 @@
-import {
-  Button,
-  PaneHeader,
-  Pane,
-} from '../../../../interactors';
+import { Button, PaneHeader, Pane } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 
 const financialTransactionsReportButton = Button({ id: 'financial-transaction-report' });
-const actionsButtonInSearchResultsPane = Pane({ id: 'users-search-results-pane' }).find(Button('Actions'));
+const actionsButtonInSearchResultsPane = Pane({ id: 'users-search-results-pane' }).find(
+  Button('Actions'),
+);
 
 const actionsButtons = {
   financialTransactionsReport: financialTransactionsReportButton,
 };
 
 export default {
-  waitLoading:() => {
+  waitLoading: () => {
     cy.intercept('/owners*').as('getOwners');
     // this waiter is needed at least for the reports creation
     cy.wait('@getOwners', getLongDelay());
@@ -26,11 +24,14 @@ export default {
       cy.expect(actionsButtons[option].exists());
     });
   },
-  openFinancialTransactionDetailReportModal:() => {
-    cy.do([actionsButtonInSearchResultsPane.click(), actionsButtons['financialTransactionsReport'].click()]);
+  openFinancialTransactionDetailReportModal: () => {
+    cy.do([
+      actionsButtonInSearchResultsPane.click(),
+      actionsButtons.financialTransactionsReport.click(),
+    ]);
   },
 
-  clickActionsButton:() => {
+  clickActionsButton: () => {
     cy.do([actionsButtonInSearchResultsPane.click()]);
-  }
+  },
 };
