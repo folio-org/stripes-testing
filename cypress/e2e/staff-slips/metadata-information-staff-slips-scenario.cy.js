@@ -1,18 +1,17 @@
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import { getTestEntityValue } from '../../support/utils/stringTools';
-import TopMenu from '../../support/fragments/topMenu';
 import TestTypes from '../../support/dictionary/testTypes';
 import Users from '../../support/fragments/users/users';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../support/fragments/users/userEdit';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import EditStaffClips from '../../support/fragments/circulation/editStaffClips';
 
-describe('Permissions Tags', () => {
+describe('Staff slips', () => {
   let userData;
   let servicePointId;
-  const newMiddleName = getTestEntityValue('newMiddleName');
   const patronGroup = {
     name: getTestEntityValue('groupUserChange'),
   };
@@ -26,15 +25,12 @@ describe('Permissions Tags', () => {
         patronGroup.id = patronGroupResponse;
       });
       cy.createTempUser(
-        [permissions.uiUserEdit.gui, permissions.uiUsersPermissionsView.gui],
+        [permissions.uiCirculationCreateEditRemoveStaffSlips.gui],
         patronGroup.name,
       ).then((userProperties) => {
         userData = userProperties;
         UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
-        cy.login(userData.username, userData.password, {
-          path: TopMenu.usersPath,
-          waiter: UsersSearchPane.waitLoading,
-        });
+        cy.login(userData.username, userData.password);
       });
     });
   });
@@ -45,14 +41,14 @@ describe('Permissions Tags', () => {
   });
 
   it(
-    'C398021 Verify that user is able to edit user records without error messages (volaris)',
+    'C387437 Add metadata information to view of Staff Slips scenario 1,4,5 (volaris)',
     { tags: [TestTypes.extendedPath, devTeams.volaris] },
     () => {
-      UsersSearchPane.searchByUsername(userData.username);
-      UserEdit.openUserEdit();
-      UserEdit.changeMiddleName(newMiddleName);
-      UserEdit.saveAndClose();
-      Users.verifyMiddleNameOnUserDetailsPane(newMiddleName);
+      cy.visit(SettingsMenu.circulationStaffSlipsPath);
+      EditStaffClips.chooseStaffClip('Hold');
+      EditStaffClips.openLastUpdateInfo();
+      EditStaffClips.collapseAll();
+      EditStaffClips.expandAll();
     },
   );
 });

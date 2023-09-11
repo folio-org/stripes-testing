@@ -12,7 +12,8 @@ import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-a
 let user;
 const invalidHoldingHRID = getRandomPostfix();
 const invalidHoldingHRIDsFileName = `invalidHoldingHRIDs_${getRandomPostfix()}.csv`;
-const errorsFromMatchingFileName = `*Errors-${invalidHoldingHRIDsFileName}`;
+const errorsFromMatchingFileName = `*-Matching-Records-Errors-${invalidHoldingHRIDsFileName}*`;
+const otherError = `*-Errors-${invalidHoldingHRIDsFileName}`;
 
 describe('Bulk Edit - Logs', () => {
   before('create test data', () => {
@@ -35,7 +36,7 @@ describe('Bulk Edit - Logs', () => {
   after('delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${invalidHoldingHRIDsFileName}`);
     Users.deleteViaApi(user.userId);
-    FileManager.deleteFileFromDownloadsByMask(invalidHoldingHRIDsFileName, errorsFromMatchingFileName);
+    FileManager.deleteFileFromDownloadsByMask(invalidHoldingHRIDsFileName, errorsFromMatchingFileName, otherError);
   });
 
   it('C375299 Verify generated Logs files for Holdings In app -- only invalid records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {

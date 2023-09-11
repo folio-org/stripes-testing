@@ -12,7 +12,8 @@ import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-a
 let user;
 const invalidUsername = `username${getRandomPostfix()}`;
 const invalidUsernamesFileName = `invalidUserUUIDs_${getRandomPostfix()}.csv`;
-const errorsFromMatchingFileName = `*Errors-${invalidUsernamesFileName}*`;
+const errorsFromMatchingFileName = `*-Matching-Records-Errors-${invalidUsernamesFileName}*`;
+const otherError = `*-Errors-${invalidUsernamesFileName}`;
 
 describe('Bulk Edit - Logs', () => {
   before('create test data', () => {
@@ -35,7 +36,7 @@ describe('Bulk Edit - Logs', () => {
   after('delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${invalidUsernamesFileName}`);
     Users.deleteViaApi(user.userId);
-    FileManager.deleteFileFromDownloadsByMask(invalidUsernamesFileName, errorsFromMatchingFileName);
+    FileManager.deleteFileFromDownloadsByMask(invalidUsernamesFileName, errorsFromMatchingFileName, otherError);
   });
 
   it('C375216 Verify generated Logs files for Users CSV -- only errors (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
