@@ -59,7 +59,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
     jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
   };
 
-  let instanceID = [];
+  const instanceID = [];
 
   before('Create user and data', () => {
     cy.createTempUser([
@@ -103,7 +103,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
 
       changesForLDR.forEach((change) => {
         for (let i = 0; i < change.position6.length; i++) {
-          let newContent = replaceByIndex(
+          const newContent = replaceByIndex(
             replaceByIndex(initialLDRValue, 6, change.position6[i]), 7, change.position7[i],
           );
           QuickMarcEditor.updateExistingField('LDR', newContent);
