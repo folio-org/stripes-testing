@@ -16,7 +16,7 @@ describe('Creating custom labels', () => {
     label2Value: 'Label: custom',
     label1OriginalValue: 'simple',
     label2OriginalValue: '145',
-    packageUrl: '/eholdings/resources/58-473-185972',
+    resourseUrl: '/eholdings/resources/58-473-185972',
   };
 
   before('Creating user, data', () => {
@@ -56,7 +56,7 @@ describe('Creating custom labels', () => {
       EHoldingsPackage.updateCustomLabelInSettings(testData.label1Value, 1);
       EHoldingsPackage.updateCustomLabelInSettings(testData.label2Value, 2);
       EHoldingsPackage.setFullTextFinderForLabel(2);
-      cy.visit(testData.packageUrl);
+      cy.visit(testData.resourseUrl);
       EHoldingsResourceView.verifyCustomLabelValue(testData.label1Value);
       EHoldingsResourceView.verifyCustomLabelValue(testData.label2Value);
     },
