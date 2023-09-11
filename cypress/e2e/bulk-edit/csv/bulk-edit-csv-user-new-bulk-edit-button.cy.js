@@ -24,11 +24,14 @@ describe('bulk-edit', () => {
       cy.createTempUser([
         permissions.bulkEditCsvView.gui,
         permissions.bulkEditCsvEdit.gui,
-        permissions.uiUserEdit.gui
+        permissions.uiUserEdit.gui,
       ])
-        .then(userProperties => {
+        .then((userProperties) => {
           user = userProperties;
-          cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
           FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, user.userId);
           FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
         })
@@ -39,7 +42,12 @@ describe('bulk-edit', () => {
           BulkEditSearchPane.waitFileUploading();
           const newFirstName = `testFirstName_${getRandomPostfix()}`;
           BulkEditActions.downloadMatchedResults();
-          BulkEditActions.prepareValidBulkEditFile(uuidMatchedRecordsFileName, uuidEditedFileName, 'testPermFirst', newFirstName);
+          BulkEditActions.prepareValidBulkEditFile(
+            uuidMatchedRecordsFileName,
+            uuidEditedFileName,
+            'testPermFirst',
+            newFirstName,
+          );
           BulkEditActions.openStartBulkEditForm();
           BulkEditSearchPane.uploadFile(uuidEditedFileName);
           BulkEditSearchPane.waitFileUploading();
@@ -54,51 +62,77 @@ describe('bulk-edit', () => {
       FileManager.deleteFile(`cypress/fixtures/${uuidEditedFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${barcodeEditedFileName}`);
-      FileManager.deleteFileFromDownloadsByMask(uuidMatchedRecordsFileName, barcodeMatchedRecordsFileName);
+      FileManager.deleteFileFromDownloadsByMask(
+        uuidMatchedRecordsFileName,
+        barcodeMatchedRecordsFileName,
+      );
       Users.deleteViaApi(user.userId);
     });
 
-    it('C353551 Verify absence of "New bulk edit" button (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
-      BulkEditActions.verifyNoNewBulkEditButton();
-      TopMenuNavigation.navigateToApp('Bulk edit');
-      BulkEditSearchPane.verifyBulkEditPaneItems();
-      BulkEditSearchPane.isUsersRadioChecked(false);
-      BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
-      BulkEditSearchPane.verifyDefaultFilterState();
-    });
+    it(
+      'C353551 Verify absence of "New bulk edit" button (firebird)',
+      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      () => {
+        BulkEditActions.verifyNoNewBulkEditButton();
+        TopMenuNavigation.navigateToApp('Bulk edit');
+        BulkEditSearchPane.verifyBulkEditPaneItems();
+        BulkEditSearchPane.isUsersRadioChecked(false);
+        BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
+        BulkEditSearchPane.verifyDefaultFilterState();
+      },
+    );
 
-    it('C353650 Verify new bulk edit with changed identifiers (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.checkUsersRadio();
-      BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
-      BulkEditSearchPane.uploadFile(userUUIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.verifyMatchedResults(user.username);
-      BulkEditActions.verifyNoNewBulkEditButton();
-      BulkEditActions.downloadMatchedResults();
-      BulkEditFiles.verifyMatchedResultFileContent(uuidMatchedRecordsFileName, [user.userId], 'userId', true);
+    it(
+      'C353650 Verify new bulk edit with changed identifiers (firebird)',
+      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.checkUsersRadio();
+        BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+        BulkEditSearchPane.uploadFile(userUUIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyMatchedResults(user.username);
+        BulkEditActions.verifyNoNewBulkEditButton();
+        BulkEditActions.downloadMatchedResults();
+        BulkEditFiles.verifyMatchedResultFileContent(
+          uuidMatchedRecordsFileName,
+          [user.userId],
+          'userId',
+          true,
+        );
 
-      BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
-      BulkEditSearchPane.usersRadioIsDisabled(false);
-      BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
+        BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
+        BulkEditSearchPane.usersRadioIsDisabled(false);
+        BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
 
-      BulkEditSearchPane.uploadFile(userBarcodesFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.verifyMatchedResults(user.barcode);
-      BulkEditActions.verifyNoNewBulkEditButton();
-      BulkEditActions.downloadMatchedResults();
-      BulkEditFiles.verifyMatchedResultFileContent(barcodeMatchedRecordsFileName, [user.barcode], 'userBarcode', true);
-      const newUsername = `testUserName_${getRandomPostfix()}`;
-      BulkEditActions.prepareValidBulkEditFile(barcodeMatchedRecordsFileName, barcodeEditedFileName, user.username, newUsername);
-      BulkEditActions.openStartBulkEditForm();
-      BulkEditSearchPane.uploadFile(barcodeEditedFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditActions.clickNext();
-      BulkEditActions.commitChanges();
+        BulkEditSearchPane.uploadFile(userBarcodesFileName);
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyMatchedResults(user.barcode);
+        BulkEditActions.verifyNoNewBulkEditButton();
+        BulkEditActions.downloadMatchedResults();
+        BulkEditFiles.verifyMatchedResultFileContent(
+          barcodeMatchedRecordsFileName,
+          [user.barcode],
+          'userBarcode',
+          true,
+        );
+        const newUsername = `testUserName_${getRandomPostfix()}`;
+        BulkEditActions.prepareValidBulkEditFile(
+          barcodeMatchedRecordsFileName,
+          barcodeEditedFileName,
+          user.username,
+          newUsername,
+        );
+        BulkEditActions.openStartBulkEditForm();
+        BulkEditSearchPane.uploadFile(barcodeEditedFileName);
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditActions.clickNext();
+        BulkEditActions.commitChanges();
 
-      BulkEditSearchPane.verifyChangedResults(newUsername);
-      BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
-      BulkEditSearchPane.usersRadioIsDisabled(false);
-      BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
-    });
+        BulkEditSearchPane.verifyChangedResults(newUsername);
+        BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
+        BulkEditSearchPane.usersRadioIsDisabled(false);
+        BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
+      },
+    );
   });
 });

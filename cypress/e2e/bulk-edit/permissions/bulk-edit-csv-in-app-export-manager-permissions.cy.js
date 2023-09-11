@@ -31,13 +31,13 @@ describe('bulk-edit', () => {
         permissions.bulkEditView.gui,
         permissions.uiUsersView.gui,
         permissions.exportManagerAll.gui,
-        permissions.inventoryAll.gui
+        permissions.inventoryAll.gui,
       ])
-        .then(userProperties => {
+        .then((userProperties) => {
           user = userProperties;
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading
+            waiter: BulkEditSearchPane.waitLoading,
           });
         })
         .then(() => {
@@ -65,20 +65,37 @@ describe('bulk-edit', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
-      FileManager.deleteFileFromDownloadsByMask(itemMatchedRecordsFileName, userMatchedRecordsFileName);
+      FileManager.deleteFileFromDownloadsByMask(
+        itemMatchedRecordsFileName,
+        userMatchedRecordsFileName,
+      );
     });
 
-    it('C353972 Verify that user can view data in Export Manager(CSV and In-app approach) (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-      ExportManagerSearchPane.waitLoading();
-      ExportManagerSearchPane.searchByBulkEdit();
-      ExportManagerSearchPane.verifyJobAmount(user.username, 2);
-      ExportManagerSearchPane.selectJobByIndex(user.username, 0);
-      ExportManagerSearchPane.clickJobIdInThirdPane();
-      BulkEditFiles.verifyMatchedResultFileContent(itemMatchedRecordsFileName, [item.itemBarcode], 'barcode', true);
+    it(
+      'C353972 Verify that user can view data in Export Manager(CSV and In-app approach) (firebird)',
+      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      () => {
+        ExportManagerSearchPane.waitLoading();
+        ExportManagerSearchPane.searchByBulkEdit();
+        ExportManagerSearchPane.verifyJobAmount(user.username, 2);
+        ExportManagerSearchPane.selectJobByIndex(user.username, 0);
+        ExportManagerSearchPane.clickJobIdInThirdPane();
+        BulkEditFiles.verifyMatchedResultFileContent(
+          itemMatchedRecordsFileName,
+          [item.itemBarcode],
+          'barcode',
+          true,
+        );
 
-      ExportManagerSearchPane.selectJobByIndex(user.username, 1);
-      ExportManagerSearchPane.clickJobIdInThirdPane();
-      BulkEditFiles.verifyMatchedResultFileContent(userMatchedRecordsFileName, [user.userId], 'userId', true);
-    });
+        ExportManagerSearchPane.selectJobByIndex(user.username, 1);
+        ExportManagerSearchPane.clickJobIdInThirdPane();
+        BulkEditFiles.verifyMatchedResultFileContent(
+          userMatchedRecordsFileName,
+          [user.userId],
+          'userId',
+          true,
+        );
+      },
+    );
   });
 });

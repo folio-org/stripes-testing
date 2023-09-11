@@ -12,7 +12,7 @@ import {
   Selection,
   SelectionList,
   TextArea,
-  TextField
+  TextField,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
@@ -20,7 +20,7 @@ const rootSection = Section({ id: 'pane-userdetails' });
 const permissionAccordion = Accordion({ id: 'permissionsSection' });
 const actionsButton = rootSection.find(Button('Actions'));
 const errors = {
-  patronHasBlocksInPlace: 'Patron has block(s) in place'
+  patronHasBlocksInPlace: 'Patron has block(s) in place',
 };
 const feesFinesAccourdion = rootSection.find(Accordion({ id: 'accountsSection' }));
 
@@ -35,14 +35,14 @@ export default {
     cy.expect([
       Section({ id: 'patronBlocksSection' })
         .find(Button({ id: 'accordion-toggle-button-patronBlocksSection' }))
-        .has({ ariaExpanded: 'false' })
+        .has({ ariaExpanded: 'false' }),
     ]);
   },
 
   openLoans() {
     cy.reload();
     cy.intercept('/circulation/loans?*').as('getLoans');
-    cy.do(Accordion({ id : 'loansSection' }).clickHeader());
+    cy.do(Accordion({ id: 'loansSection' }).clickHeader());
     return cy.wait('@getLoans', { requestTimeout: 10000 });
   },
   openFeeFines() {
@@ -76,7 +76,11 @@ export default {
 
   selectTodayExpirationDate() {
     const today = new Date();
-    cy.do(TextField({ name: 'expirationDate' }).fillIn(DateTools.getFormattedDate({ date: today }, 'YYYY-MM-DD')));
+    cy.do(
+      TextField({ name: 'expirationDate' }).fillIn(
+        DateTools.getFormattedDate({ date: today }, 'YYYY-MM-DD'),
+      ),
+    );
   },
 
   openLastUpdatedInfo() {
@@ -85,20 +89,30 @@ export default {
 
   selectTomorrowExpirationDate() {
     const tomorrow = DateTools.getTomorrowDay();
-    cy.do(TextField({ name: 'expirationDate' }).fillIn(DateTools.getFormattedDate({ date: tomorrow }, 'YYYY-MM-DD')));
+    cy.do(
+      TextField({ name: 'expirationDate' }).fillIn(
+        DateTools.getFormattedDate({ date: tomorrow }, 'YYYY-MM-DD'),
+      ),
+    );
   },
 
   submitWrongExpirationDate() {
     cy.do(Button('Keep editing').click());
-    cy.expect(Pane({ id: 'title-patron-block' }).find(TextField({ error: 'Expiration date must be in the future' })).exists());
+    cy.expect(
+      Pane({ id: 'title-patron-block' })
+        .find(TextField({ error: 'Expiration date must be in the future' }))
+        .exists(),
+    );
   },
 
   submitPatronInformation(text) {
-    cy.expect(Accordion({ id: 'patronBlocksSection' })
-      .find(MultiColumnList({ id: 'patron-block-mcl' }))
-      .find(MultiColumnListRow({ index: 0 }))
-      .find(MultiColumnListCell({ columnIndex: 1 }))
-      .has({ content: text }));
+    cy.expect(
+      Accordion({ id: 'patronBlocksSection' })
+        .find(MultiColumnList({ id: 'patron-block-mcl' }))
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 1 }))
+        .has({ content: text }),
+    );
   },
 
   submitNewBlockPageOpen() {
@@ -115,22 +129,26 @@ export default {
   },
 
   selectPatronBlock(text) {
-    cy.do(Accordion({ id: 'patronBlocksSection' })
-      .find(MultiColumnList({ id: 'patron-block-mcl' }))
-      .find(MultiColumnListRow({ index: 0 }))
-      .find(MultiColumnListCell({ columnIndex: 1, content: text }))
-      .click());
+    cy.do(
+      Accordion({ id: 'patronBlocksSection' })
+        .find(MultiColumnList({ id: 'patron-block-mcl' }))
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 1, content: text }))
+        .click(),
+    );
   },
 
   deletePatronBlock() {
     cy.do([
       Button({ id: 'patron-block-delete' }).click(),
-      Button({ id: 'clickable-patron-block-confirmation-modal-confirm' }).click()
+      Button({ id: 'clickable-patron-block-confirmation-modal-confirm' }).click(),
     ]);
   },
 
   submitThatUserHasPatrons() {
-    cy.expect(TextField({ id: 'patron-block-place' }).has({ value: 'Patron has block(s) in place' }));
+    cy.expect(
+      TextField({ id: 'patron-block-place' }).has({ value: 'Patron has block(s) in place' }),
+    );
   },
 
   fillDescription(text) {
@@ -138,10 +156,7 @@ export default {
   },
 
   selectTemplate(templateName) {
-    cy.do([
-      Selection().open(),
-      SelectionList().select(templateName)
-    ]);
+    cy.do([Selection().open(), SelectionList().select(templateName)]);
   },
 
   saveAndClose() {
@@ -160,7 +175,7 @@ export default {
 
   verifyPermissions(permissions) {
     cy.do(permissionAccordion.clickHeader());
-    permissions.forEach(permission => {
+    permissions.forEach((permission) => {
       cy.expect(permissionAccordion.find(HTML(including(permission))).exists());
     });
   },
@@ -175,12 +190,26 @@ export default {
   hasSaveError: (errorMessage) => cy.expect(rootSection.find(TextField({ value: errorMessage })).exists()),
 
   startFeeFineAdding: () => cy.do(feesFinesAccourdion.find(Button('Create fee/fine')).click()),
-  viewAllFeesFines:() => cy.do(feesFinesAccourdion.find(Button({ id: 'clickable-viewallaccounts' })).click()),
+  viewAllFeesFines: () => cy.do(feesFinesAccourdion.find(Button({ id: 'clickable-viewallaccounts' })).click()),
   verifyQuantityOfOpenAndClaimReturnedLoans(quantityOfOpenLoans, quantityOfClaimReturnedLoans) {
     if (quantityOfClaimReturnedLoans > 0) {
-      return cy.expect(Section({ id: 'loansSection' }).find(HTML(including(`${quantityOfOpenLoans} open loans (${quantityOfClaimReturnedLoans} claimed returned)`))).exists());
+      return cy.expect(
+        Section({ id: 'loansSection' })
+          .find(
+            HTML(
+              including(
+                `${quantityOfOpenLoans} open loans (${quantityOfClaimReturnedLoans} claimed returned)`,
+              ),
+            ),
+          )
+          .exists(),
+      );
     } else {
-      return cy.expect(Section({ id: 'loansSection' }).find(HTML(including(`${quantityOfOpenLoans} open loans`))).exists());
+      return cy.expect(
+        Section({ id: 'loansSection' })
+          .find(HTML(including(`${quantityOfOpenLoans} open loans`)))
+          .exists(),
+      );
     }
   },
 

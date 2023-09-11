@@ -10,18 +10,18 @@ const getDefaultServicePoint = (specialName = servicePointName) => {
     id: uuid(),
     name: specialName,
     pickupLocation: true,
-    holdShelfExpiryPeriod:{ intervalId:'Hours', 'duration':1 }
+    holdShelfExpiryPeriod: { intervalId: 'Hours', duration: 1 },
   };
   return defaultUiServicePoint;
 };
 
 const defaultUiServicePoint = {
-  body:{
+  body: {
     code: `autotest_code_${getRandomPostfix()}`,
     discoveryDisplayName: `autotest_discovery_display_name_${getRandomPostfix()}`,
     id: uuid(),
     name: servicePointName,
-  }
+  },
 };
 
 export default {

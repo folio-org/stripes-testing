@@ -11,16 +11,19 @@ import DevTeams from '../../support/dictionary/devTeams';
 describe('eHoldings -> Package', () => {
   const testData = {
     searchQuery: 'JSTOR',
-    selectedStatus: 'Selected'
+    selectedStatus: 'Selected',
   };
 
   before('Creating user, logging in', () => {
     cy.createTempUser([
       Permissions.moduleeHoldingsEnabled.gui,
-      Permissions.uieHoldingsRecordsEdit.gui
-    ]).then(userProperties => {
+      Permissions.uieHoldingsRecordsEdit.gui,
+    ]).then((userProperties) => {
       testData.userId = userProperties.userId;
-      cy.login(userProperties.username, userProperties.password, { path: TopMenu.eholdingsPath, waiter: EHoldingsTitlesSearch.waitLoading });
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.eholdingsPath,
+        waiter: EHoldingsTitlesSearch.waitLoading,
+      });
     });
   });
 
@@ -28,10 +31,14 @@ describe('eHoldings -> Package', () => {
     Users.deleteViaApi(testData.userId);
   });
 
-  it('C683 Search packages for [JSTOR]. Filter results to only show selected packages (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
-    EHoldingSearch.switchToPackages();
-    EHoldingsPackagesSearch.byName(testData.searchQuery);
-    EHoldingsPackagesSearch.bySelectionStatus(testData.selectedStatus);
-    EHoldingsPackages.checkOnlySelectedPackagesInResults();
-  });
+  it(
+    'C683 Search packages for [JSTOR]. Filter results to only show selected packages (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      EHoldingSearch.switchToPackages();
+      EHoldingsPackagesSearch.byName(testData.searchQuery);
+      EHoldingsPackagesSearch.bySelectionStatus(testData.selectedStatus);
+      EHoldingsPackages.checkOnlySelectedPackagesInResults();
+    },
+  );
 });

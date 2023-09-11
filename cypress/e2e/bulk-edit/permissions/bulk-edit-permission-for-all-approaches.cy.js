@@ -30,14 +30,22 @@ describe('bulk-edit', () => {
         permissions.inventoryAll.gui,
         permissions.uiUserEdit.gui,
         permissions.uiUsersView.gui,
-      ])
-        .then(userProperties => {
-          InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-          user = userProperties;
-          cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
-          FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, `${item.itemBarcode}\r\n${getRandomPostfix()}`);
-          FileManager.createFile(`cypress/fixtures/${usersBarcodesFileName}`, `${user.barcode}\r\n${getRandomPostfix()}`);
+      ]).then((userProperties) => {
+        InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
+        FileManager.createFile(
+          `cypress/fixtures/${itemBarcodesFileName}`,
+          `${item.itemBarcode}\r\n${getRandomPostfix()}`,
+        );
+        FileManager.createFile(
+          `cypress/fixtures/${usersBarcodesFileName}`,
+          `${user.barcode}\r\n${getRandomPostfix()}`,
+        );
+      });
     });
 
     after('delete test data', () => {
@@ -46,26 +54,30 @@ describe('bulk-edit', () => {
       FileManager.deleteFile(`cypress/fixtures/${usersBarcodesFileName}`);
     });
 
-    it('C353561 Verify "Actions" menu elements with CSV and In app permissions (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.checkItemsRadio();
-      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-      BulkEditSearchPane.uploadFile(itemBarcodesFileName);
-      BulkEditSearchPane.waitFileUploading();
+    it(
+      'C353561 Verify "Actions" menu elements with CSV and In app permissions (firebird)',
+      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.checkItemsRadio();
+        BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+        BulkEditSearchPane.uploadFile(itemBarcodesFileName);
+        BulkEditSearchPane.waitFileUploading();
 
-      BulkEditActions.openActions();
-      BulkEditActions.downloadMatchedRecordsExists();
-      BulkEditActions.downloadErrorsExists();
+        BulkEditActions.openActions();
+        BulkEditActions.downloadMatchedRecordsExists();
+        BulkEditActions.downloadErrorsExists();
 
-      TopMenuNavigation.navigateToApp('Bulk edit');
-      BulkEditSearchPane.checkUsersRadio();
-      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
+        TopMenuNavigation.navigateToApp('Bulk edit');
+        BulkEditSearchPane.checkUsersRadio();
+        BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
 
-      BulkEditSearchPane.uploadFile(usersBarcodesFileName);
-      BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.uploadFile(usersBarcodesFileName);
+        BulkEditSearchPane.waitFileUploading();
 
-      BulkEditActions.openActions();
-      BulkEditActions.downloadMatchedRecordsExists();
-      BulkEditActions.downloadErrorsExists();
-    });
+        BulkEditActions.openActions();
+        BulkEditActions.downloadMatchedRecordsExists();
+        BulkEditActions.downloadErrorsExists();
+      },
+    );
   });
 });

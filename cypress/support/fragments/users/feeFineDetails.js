@@ -16,9 +16,6 @@ export default {
   checkNewStaffInfo: (info) => cy.expect(HTML('STAFF : ' + info).exists()),
   openActions: () => cy.do(Button('Actions').click()),
   confirmFeeFineCancellation: (comment) => {
-    cy.do([
-      TextArea({ name: 'comment' }).fillIn(comment),
-      Button({ type: 'submit' }).click(),
-    ]);
+    cy.do([TextArea({ name: 'comment' }).fillIn(comment), Button({ type: 'submit' }).click()]);
   },
 };

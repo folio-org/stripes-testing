@@ -51,6 +51,6 @@ describe('ui-users-settings: Conditions in Patron blocks', () => {
         Conditions.resetCondition(conditionValue);
         cy.reload();
       });
-    }
+    },
   );
 });

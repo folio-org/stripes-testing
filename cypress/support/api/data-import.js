@@ -10,7 +10,7 @@ Cypress.Commands.add('getId', () => {
     path: 'data-import/uploadDefinitions',
     searchParams: {
       query: '(status==("NEW" OR "IN_PROGRESS" OR "LOADED")) sortBy createdDate/sort.descending',
-      limit: 1
+      limit: 1,
     },
   });
 });
@@ -18,7 +18,7 @@ Cypress.Commands.add('getId', () => {
 const addJobProfileRelation = (expectedRelations, actionProfileId) => {
   const defaultJobProfileRelation = {
     masterProfileType: PROFILE_TYPE_NAMES.JOB_PROFILE,
-    detailProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE
+    detailProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
   };
   const newJobProfileRelation = { ...defaultJobProfileRelation };
   newJobProfileRelation.order = expectedRelations.length;
@@ -29,7 +29,7 @@ const addJobProfileRelation = (expectedRelations, actionProfileId) => {
 Cypress.Commands.add('addJobProfileRelation', (expectedRelations, actionProfileId) => {
   const defaultJobProfileRelation = {
     masterProfileType: PROFILE_TYPE_NAMES.JOB_PROFILE,
-    detailProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE
+    detailProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
   };
   const newJobProfileRelation = { ...defaultJobProfileRelation };
   newJobProfileRelation.order = expectedRelations.length;
@@ -45,46 +45,78 @@ Cypress.Commands.add('createLinkedProfiles', (testData) => {
   const jobProfile = {
     profile: {
       name: `autotest_job_profile_${getRandomPostfix()}`,
-      dataType: ACCEPTED_DATA_TYPE_NAMES.MARC
+      dataType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     },
     addedRelations: [],
-    deletedRelations: []
+    deletedRelations: [],
   };
 
   testData.jobProfileForCreate = jobProfile;
 
-  SettingsMappingProfiles.createMappingProfileApi(testData.marcBibMappingProfile).then((bodyWithMappingProfile) => {
-    testData.marcBibActionProfile.addedRelations[0].detailProfileId = bodyWithMappingProfile.body.id;
-    SettingsActionProfiles.createActionProfileApi(testData.marcBibActionProfile).then((bodyWithActionProfile) => {
-      addJobProfileRelation(testData.jobProfileForCreate.addedRelations, bodyWithActionProfile.body.id);
-    });
-  });
+  SettingsMappingProfiles.createMappingProfileApi(testData.marcBibMappingProfile).then(
+    (bodyWithMappingProfile) => {
+      testData.marcBibActionProfile.addedRelations[0].detailProfileId =
+        bodyWithMappingProfile.body.id;
+      SettingsActionProfiles.createActionProfileApi(testData.marcBibActionProfile).then(
+        (bodyWithActionProfile) => {
+          addJobProfileRelation(
+            testData.jobProfileForCreate.addedRelations,
+            bodyWithActionProfile.body.id,
+          );
+        },
+      );
+    },
+  );
 
-  SettingsMappingProfiles.createMappingProfileApi(testData.instanceMappingProfile).then((bodyWithMappingProfile) => {
-    testData.instanceActionProfile.addedRelations[0].detailProfileId = bodyWithMappingProfile.body.id;
-    SettingsActionProfiles.createActionProfileApi(testData.instanceActionProfile).then((bodyWithActionProfile) => {
-      addJobProfileRelation(testData.jobProfileForCreate.addedRelations, bodyWithActionProfile.body.id);
-    });
-  });
+  SettingsMappingProfiles.createMappingProfileApi(testData.instanceMappingProfile).then(
+    (bodyWithMappingProfile) => {
+      testData.instanceActionProfile.addedRelations[0].detailProfileId =
+        bodyWithMappingProfile.body.id;
+      SettingsActionProfiles.createActionProfileApi(testData.instanceActionProfile).then(
+        (bodyWithActionProfile) => {
+          addJobProfileRelation(
+            testData.jobProfileForCreate.addedRelations,
+            bodyWithActionProfile.body.id,
+          );
+        },
+      );
+    },
+  );
 
-  SettingsMappingProfiles.createMappingProfileApi(testData.holdingsMappingProfile).then((bodyWithMappingProfile) => {
-    testData.holdingsActionProfile.addedRelations[0].detailProfileId = bodyWithMappingProfile.body.id;
-    SettingsActionProfiles.createActionProfileApi(testData.holdingsActionProfile).then((bodyWithActionProfile) => {
-      addJobProfileRelation(testData.jobProfileForCreate.addedRelations, bodyWithActionProfile.body.id);
-    });
-  });
+  SettingsMappingProfiles.createMappingProfileApi(testData.holdingsMappingProfile).then(
+    (bodyWithMappingProfile) => {
+      testData.holdingsActionProfile.addedRelations[0].detailProfileId =
+        bodyWithMappingProfile.body.id;
+      SettingsActionProfiles.createActionProfileApi(testData.holdingsActionProfile).then(
+        (bodyWithActionProfile) => {
+          addJobProfileRelation(
+            testData.jobProfileForCreate.addedRelations,
+            bodyWithActionProfile.body.id,
+          );
+        },
+      );
+    },
+  );
 
-  SettingsMappingProfiles.createMappingProfileApi(testData.itemMappingProfile).then((bodyWithMappingProfile) => {
-    testData.itemActionProfile.addedRelations[0].detailProfileId = bodyWithMappingProfile.body.id;
-    SettingsActionProfiles.createActionProfileApi(testData.itemActionProfile).then((bodyWithActionProfile) => {
-      addJobProfileRelation(testData.jobProfileForCreate.addedRelations, bodyWithActionProfile.body.id);
-    });
-  });
+  SettingsMappingProfiles.createMappingProfileApi(testData.itemMappingProfile).then(
+    (bodyWithMappingProfile) => {
+      testData.itemActionProfile.addedRelations[0].detailProfileId = bodyWithMappingProfile.body.id;
+      SettingsActionProfiles.createActionProfileApi(testData.itemActionProfile).then(
+        (bodyWithActionProfile) => {
+          addJobProfileRelation(
+            testData.jobProfileForCreate.addedRelations,
+            bodyWithActionProfile.body.id,
+          );
+        },
+      );
+    },
+  );
 
-  SettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate)
-    .then((bodyWithjobProfile) => {
+  SettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate).then(
+    (bodyWithjobProfile) => {
       testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
-    });
+    },
+  );
 });
 
 Cypress.Commands.add('createOnePairMappingAndActionProfiles', (mappingProfile, actionProfile) => {

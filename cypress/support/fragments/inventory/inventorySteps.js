@@ -2,7 +2,7 @@ import InventoryInstance from './inventoryInstance';
 import QuickMarcEditor from '../quickMarcEditor';
 
 export default {
-  addMarcHoldingRecord:() => {
+  addMarcHoldingRecord: () => {
     InventoryInstance.goToMarcHoldingRecordAdding();
     QuickMarcEditor.waitLoading();
     QuickMarcEditor.updateExistingField('852', QuickMarcEditor.getExistingLocation());
@@ -10,8 +10,10 @@ export default {
   },
 
   verifyHiddenFieldValueIn008(recordID, fieldLabel, expectedValue) {
-    cy.getRecordDataInEditorViaApi(recordID).then(recordData => {
-      cy.expect(recordData.fields.filter(field => field.tag === '008')[0].content[fieldLabel]).equal(expectedValue);
+    cy.getRecordDataInEditorViaApi(recordID).then((recordData) => {
+      cy.expect(
+        recordData.fields.filter((field) => field.tag === '008')[0].content[fieldLabel],
+      ).equal(expectedValue);
     });
-  }
+  },
 };

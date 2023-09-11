@@ -30,25 +30,32 @@ describe('bulk-edit', () => {
         permissions.inventoryAll.gui,
         permissions.bulkEditView.gui,
         permissions.bulkEditEdit.gui,
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading
-          });
-
-          inventoryEntity.instanceId = InventoryInstances.createInstanceViaApi(inventoryEntity.instanceName, inventoryEntity.barcode);
-          cy.getHoldings({ query: `"instanceId"="${inventoryEntity.instanceId}"` }).then(holdings => {
-            inventoryEntity.holdingHRID = holdings[0].hrid;
-            FileManager.createFile(`cypress/fixtures/${holdingHRIDsFileName}`, inventoryEntity.holdingHRID);
-          });
-
-          cy.getItems({ query: `"barcode"=="${inventoryEntity.barcode}"` }).then(inventoryItem => {
-            inventoryItem.discoverySuppress = true;
-            ItemActions.editItemViaApi(inventoryItem);
-          });
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
+
+        inventoryEntity.instanceId = InventoryInstances.createInstanceViaApi(
+          inventoryEntity.instanceName,
+          inventoryEntity.barcode,
+        );
+        cy.getHoldings({ query: `"instanceId"="${inventoryEntity.instanceId}"` }).then(
+          (holdings) => {
+            inventoryEntity.holdingHRID = holdings[0].hrid;
+            FileManager.createFile(
+              `cypress/fixtures/${holdingHRIDsFileName}`,
+              inventoryEntity.holdingHRID,
+            );
+          },
+        );
+
+        cy.getItems({ query: `"barcode"=="${inventoryEntity.barcode}"` }).then((inventoryItem) => {
+          inventoryItem.discoverySuppress = true;
+          ItemActions.editItemViaApi(inventoryItem);
+        });
+      });
     });
 
     after('delete test data', () => {
@@ -57,42 +64,49 @@ describe('bulk-edit', () => {
       FileManager.deleteFile(`cypress/fixtures/${holdingHRIDsFileName}`);
     });
 
-    it('C399061 Verify "Suppress from discovery" (Set false) option in Bulk Editing Holdings (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.checkHoldingsRadio();
-      BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
-      BulkEditSearchPane.uploadFile(holdingHRIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
+    it(
+      'C399061 Verify "Suppress from discovery" (Set false) option in Bulk Editing Holdings (firebird)',
+      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.checkHoldingsRadio();
+        BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
+        BulkEditSearchPane.uploadFile(holdingHRIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
 
-      const suppressFromDiscovery = false;
-      BulkEditActions.openActions();
-      BulkEditSearchPane.changeShowColumnCheckbox('Suppress from discovery');
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.editHoldingsSuppressFromDiscovery(suppressFromDiscovery);
-      BulkEditActions.confirmChanges();
-      BulkEditActions.commitChanges();
+        const suppressFromDiscovery = false;
+        BulkEditActions.openActions();
+        BulkEditSearchPane.changeShowColumnCheckbox('Suppress from discovery');
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.editHoldingsSuppressFromDiscovery(suppressFromDiscovery);
+        BulkEditActions.confirmChanges();
+        BulkEditActions.commitChanges();
 
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.verifyChangesUnderColumns('Suppress from discovery', suppressFromDiscovery);
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyChangesUnderColumns(
+          'Suppress from discovery',
+          suppressFromDiscovery,
+        );
 
-      TopMenuNavigation.navigateToApp('Inventory');
-      InventorySearchAndFilter.switchToItem();
-      InventorySearchAndFilter.searchByParameter('Barcode', inventoryEntity.barcode);
-      ItemRecordView.waitLoading();
-      ItemRecordView.closeDetailView();
-      InventorySearchAndFilter.selectViewHoldings();
-      HoldingsRecordView.checkMarkAsSuppressedFromDiscoveryAbsent();
+        TopMenuNavigation.navigateToApp('Inventory');
+        InventorySearchAndFilter.switchToItem();
+        InventorySearchAndFilter.searchByParameter('Barcode', inventoryEntity.barcode);
+        ItemRecordView.waitLoading();
+        ItemRecordView.closeDetailView();
+        InventorySearchAndFilter.selectViewHoldings();
+        HoldingsRecordView.checkMarkAsSuppressedFromDiscoveryAbsent();
 
-      TopMenuNavigation.navigateToApp('Inventory');
-      InventorySearchAndFilter.switchToItem();
-      InventorySearchAndFilter.searchByParameter('Barcode', inventoryEntity.barcode);
-      ItemRecordView.waitLoading();
-      ItemRecordView.suppressedAsDiscoveryIsPresent();
+        TopMenuNavigation.navigateToApp('Inventory');
+        InventorySearchAndFilter.switchToItem();
+        InventorySearchAndFilter.searchByParameter('Barcode', inventoryEntity.barcode);
+        ItemRecordView.waitLoading();
+        ItemRecordView.suppressedAsDiscoveryIsPresent();
 
-      TopMenuNavigation.navigateToApp('Inventory');
-      InventorySearchAndFilter.switchToItem();
-      InventorySearchAndFilter.searchByParameter('Barcode', inventoryEntity.secondBarcode);
-      ItemRecordView.waitLoading();
-      ItemRecordView.suppressedAsDiscoveryIsAbsent();
-    });
+        TopMenuNavigation.navigateToApp('Inventory');
+        InventorySearchAndFilter.switchToItem();
+        InventorySearchAndFilter.searchByParameter('Barcode', inventoryEntity.secondBarcode);
+        ItemRecordView.waitLoading();
+        ItemRecordView.suppressedAsDiscoveryIsAbsent();
+      },
+    );
   });
 });

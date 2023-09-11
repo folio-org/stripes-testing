@@ -25,14 +25,16 @@ describe('data-export', () => {
       permissions.inventoryAll.gui,
       permissions.dataExportAll.gui,
       permissions.dataExportEnableModule.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(user.username, user.password);
-        cy.visit(TopMenu.dataExportPath);
-        const instanceID = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-        FileManager.createFile(`cypress/fixtures/${fileName}`, instanceID);
-      });
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password);
+      cy.visit(TopMenu.dataExportPath);
+      const instanceID = InventoryInstances.createInstanceViaApi(
+        item.instanceName,
+        item.itemBarcode,
+      );
+      FileManager.createFile(`cypress/fixtures/${fileName}`, instanceID);
+    });
   });
 
   after('delete test data', () => {
@@ -41,19 +43,28 @@ describe('data-export', () => {
     FileManager.deleteFile(`cypress/fixtures/${fileName}`);
   });
 
-  it('C9288 Export small number of instance records - default instance mapping profile (firebird)', { tags: [TestTypes.smoke, devTeams.firebird, parallelization.nonParallel] }, () => {
-    ExportFileHelper.uploadFile(fileName);
-    ExportFileHelper.exportWithDefaultJobProfile(fileName);
+  it(
+    'C9288 Export small number of instance records - default instance mapping profile (firebird)',
+    { tags: [TestTypes.smoke, devTeams.firebird, parallelization.nonParallel] },
+    () => {
+      ExportFileHelper.uploadFile(fileName);
+      ExportFileHelper.exportWithDefaultJobProfile(fileName);
 
-    // collect expected results and verify actual result
-    cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
-    cy.wait('@getInfo', getLongDelay()).then((interception) => {
-      const job = interception.response.body.jobExecutions[0];
-      const resultFileName = job.exportedFiles[0].fileName;
-      const recordsCount = job.progress.total;
-      const jobId = job.hrId;
+      // collect expected results and verify actual result
+      cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
+      cy.wait('@getInfo', getLongDelay()).then((interception) => {
+        const job = interception.response.body.jobExecutions[0];
+        const resultFileName = job.exportedFiles[0].fileName;
+        const recordsCount = job.progress.total;
+        const jobId = job.hrId;
 
-      DataExportResults.verifySuccessExportResultCells(resultFileName, recordsCount, jobId, user.username);
-    });
-  });
+        DataExportResults.verifySuccessExportResultCells(
+          resultFileName,
+          recordsCount,
+          jobId,
+          user.username,
+        );
+      });
+    },
+  );
 });

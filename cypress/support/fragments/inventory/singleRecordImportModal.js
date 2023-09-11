@@ -1,24 +1,25 @@
 import { including } from '@interactors/html';
 import { Button, Modal, Select, TextField } from '../../../../interactors';
 
-const externalIdentifierType = Select({ name:'externalIdentifierType' });
-const selectedJobProfile = Select({ name:'selectedJobProfileId' });
-const externalIdentifierField = TextField({ name:'externalIdentifier' });
+const externalIdentifierType = Select({ name: 'externalIdentifierType' });
+const selectedJobProfile = Select({ name: 'selectedJobProfileId' });
+const externalIdentifierField = TextField({ name: 'externalIdentifier' });
 const importButton = Button('Import');
 const singleReportImportModal = Modal('Single record import');
 
 function verifyListIsSortedInAlhpabeticalOrder() {
   const optionsArray = [];
-  cy.get('[name="selectedJobProfileId"] option').each(($el, index) => {
-    optionsArray[index] = $el.text();
-  })
+  cy.get('[name="selectedJobProfileId"] option')
+    .each(($el, index) => {
+      optionsArray[index] = $el.text();
+    })
     .then(() => {
-      expect(optionsArray).to.deep.equal(optionsArray.sort());  // note deep for arrays
+      expect(optionsArray).to.deep.equal(optionsArray.sort()); // note deep for arrays
     });
 }
 
 export default {
-  verifyInventorySingleRecordModalWithSeveralTargetProfiles:() => {
+  verifyInventorySingleRecordModalWithSeveralTargetProfiles: () => {
     cy.expect([
       singleReportImportModal.exists(),
       externalIdentifierType.exists(),
@@ -26,28 +27,32 @@ export default {
       selectedJobProfile.exists(),
       externalIdentifierField.exists(),
       Button('Cancel').exists(),
-      importButton.has({ visible: false })
+      importButton.has({ visible: false }),
     ]);
   },
 
-  verifyInventorySingleRecordModalWithOneTargetProfile:() => {
+  verifyInventorySingleRecordModalWithOneTargetProfile: () => {
     cy.expect([
       singleReportImportModal.exists(),
       selectedJobProfile.exists(),
       externalIdentifierField.exists(),
       Button('Cancel').exists(),
-      importButton.has({ visible: false })
+      importButton.has({ visible: false }),
     ]);
   },
 
   selectExternalTarget(profileName) {
     cy.do(singleReportImportModal.find(externalIdentifierType).choose(profileName));
-    cy.expect(singleReportImportModal.find(TextField(`Enter the ${profileName} identifier`)).exists());
+    cy.expect(
+      singleReportImportModal.find(TextField(`Enter the ${profileName} identifier`)).exists(),
+    );
   },
 
   selectTheProfileToBeUsed(profileName) {
     cy.do(singleReportImportModal.find(selectedJobProfile).choose(profileName));
-    cy.expect(singleReportImportModal.find(selectedJobProfile).has({ content: including(profileName) }));
+    cy.expect(
+      singleReportImportModal.find(selectedJobProfile).has({ content: including(profileName) }),
+    );
   },
 
   fillEnterTestIdentifier(identifier) {
@@ -61,7 +66,9 @@ export default {
   },
 
   verifySelectTheProfileToBeUsedField(profileName) {
-    cy.expect(singleReportImportModal.find(selectedJobProfile).has({ content: including(profileName) }));
+    cy.expect(
+      singleReportImportModal.find(selectedJobProfile).has({ content: including(profileName) }),
+    );
     verifyListIsSortedInAlhpabeticalOrder();
-  }
+  },
 };

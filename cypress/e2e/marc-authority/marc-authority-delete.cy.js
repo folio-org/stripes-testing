@@ -27,53 +27,64 @@ describe('MARC Authority Delete', () => {
       Permissions.settingsDataImportView.gui,
       Permissions.moduleDataImportEnabled.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-      Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui
-    ]).then(createdUserProperties => {
+      Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,
+    ]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
     });
   });
 
   beforeEach('Login to the application', () => {
-    cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
+    cy.login(testData.userProperties.username, testData.userProperties.password, {
+      path: TopMenu.dataImportPath,
+      waiter: DataImport.waitLoading,
+    });
   });
 
   after('Deleting created user', () => {
     Users.deleteViaApi(testData.userProperties.userId);
   });
 
-  it('C350643 Delete a "MARC Authority" record via "MARC Authority" app (spitfire)', { tags: [TestTypes.criticalPath, Features.authority, DevTeams.spitfire] }, () => {
-    DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName);
-    JobProfiles.waitLoadingList();
-    JobProfiles.searchJobProfileForImport('Default - Create SRS MARC Authority');
-    JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(testData.fileName);
-    Logs.checkStatusOfJobProfile('Completed');
+  it(
+    'C350643 Delete a "MARC Authority" record via "MARC Authority" app (spitfire)',
+    { tags: [TestTypes.criticalPath, Features.authority, DevTeams.spitfire] },
+    () => {
+      DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName);
+      JobProfiles.waitLoadingList();
+      JobProfiles.searchJobProfileForImport('Default - Create SRS MARC Authority');
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(testData.fileName);
+      Logs.checkStatusOfJobProfile('Completed');
 
-    cy.visit(TopMenu.marcAuthorities);
-    MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.record);
-    MarcAuthorities.selectItem(testData.record);
-    MarcAuthority.waitLoading();
+      cy.visit(TopMenu.marcAuthorities);
+      MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.record);
+      MarcAuthorities.selectItem(testData.record);
+      MarcAuthority.waitLoading();
 
-    MarcAuthoritiesDelete.clickDeleteButton();
-    MarcAuthoritiesDelete.checkDeleteModal();
-    MarcAuthoritiesDelete.confirmDelete();
-    MarcAuthoritiesDelete.checkDelete(testData.record);
-    cy.visit(TopMenu.marcAuthorities);
-    MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.record);
-    MarcAuthoritiesDelete.checkEmptySearchResults(testData.record);
-  });
+      MarcAuthoritiesDelete.clickDeleteButton();
+      MarcAuthoritiesDelete.checkDeleteModal();
+      MarcAuthoritiesDelete.confirmDelete();
+      MarcAuthoritiesDelete.checkDelete(testData.record);
+      cy.visit(TopMenu.marcAuthorities);
+      MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.record);
+      MarcAuthoritiesDelete.checkEmptySearchResults(testData.record);
+    },
+  );
 
-  it('C357549 Delete a "MARC Authority" record (from browse result list) (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
-    DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName);
-    DataImport.importFileForBrowse(MarcAuthority.defaultCreateJobProfile, testData.fileName);
-    cy.visit(TopMenu.marcAuthorities);
-    MarcAuthorities.switchToBrowse();
-    MarcAuthorityBrowse.searchBy(testData.searchOption, testData.record);
-    MarcAuthorities.selectItem(testData.record);
-    MarcAuthority.waitLoading();
-    MarcAuthoritiesDelete.clickDeleteButton();
-    MarcAuthoritiesDelete.checkDeleteModal();
-    MarcAuthoritiesDelete.confirmDelete();
-    MarcAuthoritiesDelete.checkAfterDeletion(testData.record);
-  });
+  it(
+    'C357549 Delete a "MARC Authority" record (from browse result list) (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName);
+      DataImport.importFileForBrowse(MarcAuthority.defaultCreateJobProfile, testData.fileName);
+      cy.visit(TopMenu.marcAuthorities);
+      MarcAuthorities.switchToBrowse();
+      MarcAuthorityBrowse.searchBy(testData.searchOption, testData.record);
+      MarcAuthorities.selectItem(testData.record);
+      MarcAuthority.waitLoading();
+      MarcAuthoritiesDelete.clickDeleteButton();
+      MarcAuthoritiesDelete.checkDeleteModal();
+      MarcAuthoritiesDelete.confirmDelete();
+      MarcAuthoritiesDelete.checkAfterDeletion(testData.record);
+    },
+  );
 });

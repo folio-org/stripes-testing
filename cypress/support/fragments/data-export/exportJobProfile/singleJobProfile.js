@@ -1,12 +1,12 @@
-import { including } from "bigtest";
+import { including } from 'bigtest';
 import {
   Accordion,
   PaneHeader,
   Button,
   TextField,
   TextArea,
-  Select
-} from "../../../../../interactors";
+  Select,
+} from '../../../../../interactors';
 
 const actionsButton = Button('Actions');
 const editButton = Button('Edit');
@@ -28,7 +28,11 @@ export default {
   },
 
   verifySource(source) {
-    cy.expect(Accordion({ headline: 'Update information' }).has({ content: including(`Source: ${source}`) }));
+    cy.expect(
+      Accordion({ headline: 'Update information' }).has({
+        content: including(`Source: ${source}`),
+      }),
+    );
   },
 
   openActions() {
@@ -48,9 +52,6 @@ export default {
   },
 
   editJobProfile(newName) {
-    cy.do([
-      nameTextfield.clear(),
-      nameTextfield.fillIn(newName),
-    ]);
+    cy.do([nameTextfield.clear(), nameTextfield.fillIn(newName)]);
   },
-}
+};

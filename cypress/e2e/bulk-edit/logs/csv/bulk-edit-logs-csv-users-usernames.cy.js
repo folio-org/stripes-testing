@@ -22,40 +22,52 @@ describe('Bulk Edit - Logs', () => {
       permissions.bulkEditCsvView.gui,
       permissions.bulkEditCsvEdit.gui,
       permissions.uiUsersView.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
-        FileManager.createFile(`cypress/fixtures/${invalidUsernamesFileName}`, invalidUsername);
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.bulkEditPath,
+        waiter: BulkEditSearchPane.waitLoading,
       });
+      FileManager.createFile(`cypress/fixtures/${invalidUsernamesFileName}`, invalidUsername);
+    });
   });
 
   after('delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${invalidUsernamesFileName}`);
     Users.deleteViaApi(user.userId);
-    FileManager.deleteFileFromDownloadsByMask(invalidUsernamesFileName, errorsFromMatchingFileName, otherError);
+    FileManager.deleteFileFromDownloadsByMask(
+      invalidUsernamesFileName,
+      errorsFromMatchingFileName,
+      otherError,
+    );
   });
 
-  it('C375216 Verify generated Logs files for Users CSV -- only errors (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    BulkEditSearchPane.verifyDragNDropUsernamesArea();
-    BulkEditSearchPane.uploadFile(invalidUsernamesFileName);
-    BulkEditSearchPane.waitFileUploading();
-    BulkEditActions.openActions();
-    BulkEditActions.downloadErrors();
+  it(
+    'C375216 Verify generated Logs files for Users CSV -- only errors (firebird)',
+    { tags: [testTypes.smoke, devTeams.firebird] },
+    () => {
+      BulkEditSearchPane.verifyDragNDropUsernamesArea();
+      BulkEditSearchPane.uploadFile(invalidUsernamesFileName);
+      BulkEditSearchPane.waitFileUploading();
+      BulkEditActions.openActions();
+      BulkEditActions.downloadErrors();
 
-    BulkEditSearchPane.openLogsSearch();
-    BulkEditSearchPane.verifyLogsPane();
-    BulkEditSearchPane.checkUsersCheckbox();
-    BulkEditSearchPane.clickActionsRunBy(user.username);
-    BulkEditSearchPane.verifyLogsRowActionWhenCompletedWithErrorsWithoutModification();
+      BulkEditSearchPane.openLogsSearch();
+      BulkEditSearchPane.verifyLogsPane();
+      BulkEditSearchPane.checkUsersCheckbox();
+      BulkEditSearchPane.clickActionsRunBy(user.username);
+      BulkEditSearchPane.verifyLogsRowActionWhenCompletedWithErrorsWithoutModification();
 
-    BulkEditSearchPane.downloadFileUsedToTrigger();
-    BulkEditFiles.verifyCSVFileRows(invalidUsernamesFileName, [invalidUsername]);
+      BulkEditSearchPane.downloadFileUsedToTrigger();
+      BulkEditFiles.verifyCSVFileRows(invalidUsernamesFileName, [invalidUsername]);
 
-    BulkEditSearchPane.downloadFileWithErrorsEncountered();
-    BulkEditFiles.verifyMatchedResultFileContent(errorsFromMatchingFileName, [invalidUsername], 'firstElement', false);
-  });
+      BulkEditSearchPane.downloadFileWithErrorsEncountered();
+      BulkEditFiles.verifyMatchedResultFileContent(
+        errorsFromMatchingFileName,
+        [invalidUsername],
+        'firstElement',
+        false,
+      );
+    },
+  );
 });

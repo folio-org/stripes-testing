@@ -15,18 +15,22 @@ const userBarcodesFileNameWithDuplicates = `userBarcodesDuplicates_${getRandomPo
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
-      cy.createTempUser([
-        permissions.bulkEditUpdateRecords.gui,
-        permissions.uiUserEdit.gui
-      ], 'faculty')
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
-
-          FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
-          FileManager.createFile(`cypress/fixtures/${userBarcodesFileNameWithDuplicates}`,
-            `${user.barcode}\r\n${user.barcode}\r\n${getRandomPostfix()}`);
+      cy.createTempUser(
+        [permissions.bulkEditUpdateRecords.gui, permissions.uiUserEdit.gui],
+        'faculty',
+      ).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
+
+        FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
+        FileManager.createFile(
+          `cypress/fixtures/${userBarcodesFileNameWithDuplicates}`,
+          `${user.barcode}\r\n${user.barcode}\r\n${getRandomPostfix()}`,
+        );
+      });
     });
 
     after('delete test data', () => {
@@ -42,27 +46,35 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
     });
 
-    it('C359586 Negative --Verify populating "Errors" accordion (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.uploadFile(userBarcodesFileName);
-      BulkEditSearchPane.waitFileUploading();
+    it(
+      'C359586 Negative --Verify populating "Errors" accordion (firebird)',
+      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.uploadFile(userBarcodesFileName);
+        BulkEditSearchPane.waitFileUploading();
 
-      BulkEditActions.openActions();
-      BulkEditSearchPane.changeShowColumnCheckbox('Username');
-      BulkEditSearchPane.verifyResultColumTitlesDoNotInclude('Username');
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.fillPatronGroup('faculty (Faculty Member)');
-      BulkEditActions.confirmChanges();
-      BulkEditActions.commitChanges();
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.verifyErrorLabelAfterChanges(userBarcodesFileName, 0, 1);
-    });
+        BulkEditActions.openActions();
+        BulkEditSearchPane.changeShowColumnCheckbox('Username');
+        BulkEditSearchPane.verifyResultColumTitlesDoNotInclude('Username');
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.fillPatronGroup('faculty (Faculty Member)');
+        BulkEditActions.confirmChanges();
+        BulkEditActions.commitChanges();
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyErrorLabelAfterChanges(userBarcodesFileName, 0, 1);
+      },
+    );
 
-    it('C347883 Error messages in submitted identifiers (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.uploadFile(userBarcodesFileNameWithDuplicates);
-      BulkEditSearchPane.waitFileUploading();
+    it(
+      'C347883 Error messages in submitted identifiers (firebird)',
+      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.uploadFile(userBarcodesFileNameWithDuplicates);
+        BulkEditSearchPane.waitFileUploading();
 
-      BulkEditActions.openActions();
-      BulkEditActions.downloadErrors();
-    });
+        BulkEditActions.openActions();
+        BulkEditActions.downloadErrors();
+      },
+    );
   });
 });

@@ -23,18 +23,18 @@ describe('Browse in Inventory', () => {
 
   const marcFiles = [
     {
-      marc: 'marcBibFileForC388531.mrc', 
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`, 
+      marc: 'marcBibFileForC388531.mrc',
+      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       numOfRecords: 1,
-    }, 
+    },
     {
-      marc: 'marcFileForC388531.mrc', 
+      marc: 'marcFileForC388531.mrc',
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numOfRecords: 1,
     },
-  ]
+  ];
 
   const tagInfo = [
     {
@@ -42,39 +42,42 @@ describe('Browse in Inventory', () => {
     },
     {
       rowIndex: 26,
-    }
-  ]
+    },
+  ];
 
-  let createdAuthorityIDs = [];
+  const createdAuthorityIDs = [];
 
   before('Creating data', () => {
-    cy.createTempUser([
-      Permissions.inventoryAll.gui,     
-    ]).then(createdUserProperties => {
+    cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
 
-      marcFiles.forEach(marcFile => {
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-          JobProfiles.waitLoadingList();
-          JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(marcFile.fileName);
-          Logs.checkStatusOfJobProfile('Completed');
-          Logs.openFileDetails(marcFile.fileName);
-          for (let i = 0; i < marcFile.numOfRecords; i++) {
-            Logs.getCreatedItemsID(i).then(link => {
-              createdAuthorityIDs.push(link.split('/')[5]);
-            });
-          }
-        });
+      marcFiles.forEach((marcFile) => {
+        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
+          () => {
+            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+            JobProfiles.waitLoadingList();
+            JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
+            JobProfiles.runImportFile();
+            JobProfiles.waitFileIsImported(marcFile.fileName);
+            Logs.checkStatusOfJobProfile('Completed');
+            Logs.openFileDetails(marcFile.fileName);
+            for (let i = 0; i < marcFile.numOfRecords; i++) {
+              Logs.getCreatedItemsID(i).then((link) => {
+                createdAuthorityIDs.push(link.split('/')[5]);
+              });
+            }
+          },
+        );
       });
-      
-      cy.loginAsAdmin({ path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading }).then(() => {
+
+      cy.loginAsAdmin({
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      }).then(() => {
         InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
-        tagInfo.forEach(tag => {
+        tagInfo.forEach((tag) => {
           QuickMarcEditor.clickLinkIconInTagField(tag.rowIndex);
           MarcAuthorities.switchToSearch();
           InventoryInstance.verifySelectMarcAuthorityModal();
@@ -87,12 +90,14 @@ describe('Browse in Inventory', () => {
         QuickMarcEditor.pressSaveAndClose();
         InventoryInstance.waitLoading();
       });
-
     });
   });
 
   beforeEach('Login to the application', () => {
-    cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+    cy.login(testData.userProperties.username, testData.userProperties.password, {
+      path: TopMenu.inventoryPath,
+      waiter: InventoryInstances.waitContentLoading,
+    });
   });
 
   after('Deleting created user and data', () => {
@@ -103,11 +108,15 @@ describe('Browse in Inventory', () => {
     });
   });
 
-  it('C388531 Verify that contributors with the same "Name" , "Name type" and "authorityID" will display as one row (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] }, () => {
-    InventorySearchAndFilter.switchToBrowseTab();
-    InventorySearchAndFilter.verifyKeywordsAsDefault();
-    BrowseContributors.select();
-    BrowseContributors.browse(testData.contributorName);
-    BrowseContributors.checkAuthorityIconAndValueDisplayed(testData.contributorName);
-  });
+  it(
+    'C388531 Verify that contributors with the same "Name" , "Name type" and "authorityID" will display as one row (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    () => {
+      InventorySearchAndFilter.switchToBrowseTab();
+      InventorySearchAndFilter.verifyKeywordsAsDefault();
+      BrowseContributors.select();
+      BrowseContributors.browse(testData.contributorName);
+      BrowseContributors.checkAuthorityIconAndValueDisplayed(testData.contributorName);
+    },
+  );
 });

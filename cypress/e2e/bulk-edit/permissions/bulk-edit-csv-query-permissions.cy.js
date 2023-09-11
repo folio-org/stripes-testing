@@ -17,23 +17,21 @@ describe('bulk-edit', () => {
         permissions.bulkEditUpdateRecords.gui,
         permissions.bulkEditQueryView.gui,
         permissions.uiUsersView.gui,
-      ])
-        .then(userProperties => {
-          userWithProfileView = userProperties;
-        });
+      ]).then((userProperties) => {
+        userWithProfileView = userProperties;
+      });
       cy.createTempUser([
         permissions.bulkEditCsvView.gui,
         permissions.bulkEditCsvEdit.gui,
         permissions.bulkEditUpdateRecords.gui,
         permissions.bulkEditQueryView.gui,
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading
-          });
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
+      });
     });
 
     after('delete test data', () => {
@@ -41,34 +39,38 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(userWithProfileView.userId);
     });
 
-    it('C366072 Verify Bulk edit elements in the left pane -- Users Local & In app (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
-      BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
-      BulkEditSearchPane.verifyRecordIdentifierEmpty();
-      BulkEditSearchPane.isDragAndDropAreaDisabled(true);
+    it(
+      'C366072 Verify Bulk edit elements in the left pane -- Users Local & In app (firebird)',
+      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
+        BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
+        BulkEditSearchPane.verifyRecordIdentifierEmpty();
+        BulkEditSearchPane.isDragAndDropAreaDisabled(true);
 
-      BulkEditSearchPane.openQuerySearch();
-      BulkEditSearchPane.verifySpecificTabHighlighted('Query');
-      BulkEditSearchPane.verifyRecordTypesEmpty();
-      BulkEditSearchPane.isBuildQueryButtonDisabled(true);
+        BulkEditSearchPane.openQuerySearch();
+        BulkEditSearchPane.verifySpecificTabHighlighted('Query');
+        BulkEditSearchPane.verifyRecordTypesEmpty();
+        BulkEditSearchPane.isBuildQueryButtonDisabled(true);
 
-      cy.login(userWithProfileView.username, userWithProfileView.password, {
-        path: TopMenu.bulkEditPath,
-        waiter: BulkEditSearchPane.waitLoading
-      });
-      BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
-      BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
-      BulkEditSearchPane.isUsersRadioChecked(false);
-      BulkEditSearchPane.isDragAndDropAreaDisabled(true);
+        cy.login(userWithProfileView.username, userWithProfileView.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
+        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
+        BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
+        BulkEditSearchPane.isUsersRadioChecked(false);
+        BulkEditSearchPane.isDragAndDropAreaDisabled(true);
 
-      BulkEditSearchPane.openQuerySearch();
-      BulkEditSearchPane.verifySpecificTabHighlighted('Query');
-      BulkEditSearchPane.usersRadioIsDisabled(false);
-      BulkEditSearchPane.isBuildQueryButtonDisabled(false);
+        BulkEditSearchPane.openQuerySearch();
+        BulkEditSearchPane.verifySpecificTabHighlighted('Query');
+        BulkEditSearchPane.usersRadioIsDisabled(false);
+        BulkEditSearchPane.isBuildQueryButtonDisabled(false);
 
-      BulkEditSearchPane.isUsersRadioChecked(false);
-      BulkEditSearchPane.clickBuildQueryButton();
-      BulkEditSearchPane.verifyBuildQueryModal();
-    });
+        BulkEditSearchPane.isUsersRadioChecked(false);
+        BulkEditSearchPane.clickBuildQueryButton();
+        BulkEditSearchPane.verifyBuildQueryModal();
+      },
+    );
   });
 });

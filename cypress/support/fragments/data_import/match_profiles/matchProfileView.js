@@ -2,11 +2,11 @@
 import { HTML, including } from '@interactors/html';
 import { Button, Pane, Accordion } from '../../../../../interactors';
 
-const viewPane = Pane({ id:'view-match-profile-pane' });
+const viewPane = Pane({ id: 'view-match-profile-pane' });
 const actionsButton = Button('Actions');
 
 export default {
-  edit:() => {
+  edit: () => {
     // wait is needed to avoid so fast robot clicks
     cy.wait(1500);
     cy.do(viewPane.find(actionsButton).click());
@@ -16,15 +16,15 @@ export default {
     cy.expect(Accordion('Match criterion').exists());
   },
 
-  closeViewModeForMatchProfile:() => cy.do(viewPane.find(Button({ icon: 'times' })).click()),
+  closeViewModeForMatchProfile: () => cy.do(viewPane.find(Button({ icon: 'times' })).click()),
 
-  verifyExistingInstanceRecordField:() => {
+  verifyExistingInstanceRecordField: () => {
     cy.expect(viewPane.find(HTML(including('Admin data: Instance UUID'))).exists());
   },
-  verifyMatchProfileOpened:() => {
-    cy.expect(Pane({ id:'pane-results' }).exists());
+  verifyMatchProfileOpened: () => {
+    cy.expect(Pane({ id: 'pane-results' }).exists());
     cy.expect(viewPane.exists());
   },
 
-  verifyActionMenuAbsent:() => cy.expect(viewPane.find(actionsButton).absent())
+  verifyActionMenuAbsent: () => cy.expect(viewPane.find(actionsButton).absent()),
 };

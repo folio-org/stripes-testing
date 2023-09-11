@@ -16,7 +16,7 @@ import {
 } from '../../../../interactors';
 import eHoldingsNewCustomPackage from '../../../support/fragments/eholdings/eHoldingsNewCustomPackage';
 import eHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
-import eholdingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
+import eHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
 import eHoldingsProvidersSearch from '../../../support/fragments/eholdings/eHoldingsProvidersSearch';
 import eHoldingsSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
 import topMenu from '../../../support/fragments/topMenu';
@@ -33,7 +33,7 @@ const description = TextArea({ name: 'description' });
 const SaveAndClose = Button('Save & close');
 const availableProxies = ['Inherited - None', 'FOLIO-Bugfest', 'EZProxy'];
 const SearchButton = Section({ id: 'providerShowProviderList' }).find(
-  Button({ ariaLabel: 'Toggle filters pane' })
+  Button({ ariaLabel: 'Toggle filters pane' }),
 );
 const iconSearch = Button({ icon: 'search' });
 const proxySelect = Select({ id: 'eholdings-proxy-id' });
@@ -45,7 +45,7 @@ const accordionClick = Button({
   id: 'accordion-toggle-button-providerShowProviderList',
 });
 const patronRadioButton = FieldSet('Show titles in package to patrons').find(
-  RadioButton({ checked: false })
+  RadioButton({ checked: false }),
 );
 const tagsClick = Button({ id: 'accordion-toggle-button-providerShowTags' });
 const providerClick = Button({
@@ -98,7 +98,7 @@ export default {
   switchToPackage() {
     eHoldingsSearch.switchToPackages();
     eHoldingsProvidersSearch.byProvider('JSTOR');
-    eholdingsPackagesSearch.bySelectionStatus('Selected');
+    eHoldingsPackagesSearch.bySelectionStatus('Selected');
   },
 
   verifyPackage() {
@@ -114,7 +114,7 @@ export default {
     cy.visit(topMenu.eholdingsPath);
     eHoldingsSearch.switchToPackages();
     eHoldingsProvidersSearch.byProvider('Wiley Online Library');
-    eholdingsPackagesSearch.bySelectionStatus('Selected');
+    eHoldingsPackagesSearch.bySelectionStatus('Selected');
   },
 
   editActions: () => {
@@ -192,7 +192,7 @@ export default {
     cy.visit(topMenu.eholdingsPath);
     eHoldingsSearch.switchToPackages();
     eHoldingsProvidersSearch.byProvider('VLeBooks');
-    eholdingsPackagesSearch.bySelectionStatus('Selected');
+    eHoldingsPackagesSearch.bySelectionStatus('Selected');
   },
 
   packageButton: () => {
@@ -210,11 +210,7 @@ export default {
   },
 
   providerToken() {
-    cy.do(
-      TextArea({ name: 'providerTokenValue' }).fillIn(
-        `Test${randomFourDigitNumber()}`
-      )
-    );
+    cy.do(TextArea({ name: 'providerTokenValue' }).fillIn(`Test${randomFourDigitNumber()}`));
     cy.expect(SaveAndClose.exists());
     cy.do(SaveAndClose.click());
   },

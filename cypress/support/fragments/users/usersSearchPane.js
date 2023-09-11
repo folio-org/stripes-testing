@@ -12,17 +12,18 @@ import {
   Select,
   Spinner,
   TextArea,
-  TextField
+  TextField,
 } from '../../../../interactors';
 
 // Cypress clicks before the UI loads, use when there is no way to attach waiter to element
-const waitClick = () => { cy.wait(1000)};
+const waitClick = () => {
+  cy.wait(1000);
+};
 const actionButton = Section({ id: 'pane-userdetails' }).find(Button('Actions'));
 const editButton = Button('Edit');
 const additionalInfo = Button('Additional information');
 const saveAndClose = Button('Save & close');
-const openLoanSectionButton = Button({id: 'accordion-toggle-button-loansSection'});
-
+const openLoanSectionButton = Button({ id: 'accordion-toggle-button-loansSection' });
 
 export default {
   waitLoading: () => cy.expect(PaneHeader('User search').exists()),
@@ -35,14 +36,6 @@ export default {
   searchByKeywords(keywords) {
     return cy.do([
       TextField({ id: 'input-user-search' }).fillIn(keywords),
-      Button({ id: 'submit-user-search' }).click()
-    ]);
-  },
-
-  searchByLastName(lastName) {
-    return cy.do([
-      Select({ id: 'input-user-search-qindex' }).choose('Last name'),
-      TextField({ id: 'input-user-search' }).fillIn(lastName),
       Button({ id: 'submit-user-search' }).click(),
     ]);
   },
@@ -51,15 +44,16 @@ export default {
     cy.do([
       Select({ id: 'input-user-search-qindex' }).choose('Username'),
       TextField({ id: 'input-user-search' }).fillIn(username),
-      Button({ id: 'submit-user-search' }).click()
+      Button({ id: 'submit-user-search' }).click(),
     ]);
     waitClick();
   },
+
   searchByLastName(lastName) {
     cy.do([
       Select({ id: 'input-user-search-qindex' }).choose('Last name'),
       TextField({ id: 'input-user-search' }).fillIn(lastName),
-      Button({ id: 'submit-user-search' }).click()
+      Button({ id: 'submit-user-search' }).click(),
     ]);
     waitClick();
   },
@@ -69,11 +63,10 @@ export default {
     cy.do(Pane({ id: 'users-search-results-pane' }).find(Link(userName)).click());
   },
 
-
   selectUserFromList: (userName) => {
     cy.do(Pane({ id: 'users-search-results-pane' }).find(MultiColumnListCell(userName)).click());
   },
-  
+
   selectUsersFromList: (userName) => {
     cy.do(Pane({ id: 'users-search-results-pane' }).find(Link(userName)).click());
   },
@@ -87,39 +80,32 @@ export default {
   },
 
   verifyTextField: (name) => {
-    cy.do([actionButton.click(),
-      editButton.click(),
-    ]);
+    cy.do([actionButton.click(), editButton.click()]);
     cy.expect(TextField(name).exists());
   },
 
   verifyTextArea: (name) => {
-    cy.do([actionButton.click(),
-      editButton.click(),
-    ]);
+    cy.do([actionButton.click(), editButton.click()]);
     cy.expect(TextArea(name).exists());
   },
 
   verifyCheckBox: (name) => {
-    cy.do([actionButton.click(),
-      editButton.click(),
-    ]);
+    cy.do([actionButton.click(), editButton.click()]);
     cy.expect(Checkbox(name).exists());
   },
 
   verifyRadioButton: (name) => {
-    cy.do([actionButton.click(),
-      editButton.click(),
-    ]);
+    cy.do([actionButton.click(), editButton.click()]);
     cy.expect(RadioButtonGroup(name).exists());
   },
 
   verifySingleSelect: (name, label) => {
-    cy.do([actionButton.click(),
+    cy.do([
+      actionButton.click(),
       editButton.click(),
       Select(name).choose(label),
       saveAndClose.click(),
-      additionalInfo.click()
+      additionalInfo.click(),
     ]);
   },
 
@@ -128,10 +114,7 @@ export default {
       const draggableElement = elements[0];
       const targetElement = elements[1];
       if (targetElement) {
-        cy.get(draggableElement).dragAndDrop(
-          draggableElement,
-          targetElement
-        );
+        cy.get(draggableElement).dragAndDrop(draggableElement, targetElement);
       }
     });
   },
@@ -143,5 +126,5 @@ export default {
   verifyDragItem() {
     cy.expect(additionalInfo.exists());
     cy.do(additionalInfo.click());
-  }
+  },
 };

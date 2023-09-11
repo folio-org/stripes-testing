@@ -19,7 +19,7 @@ describe('MARC -> MARC Authority', () => {
     valueForUpdate: '$a Cartoons & Animations',
     valueAfterUpdate: 'Cartoons & Animations',
     calloutMessage: 'Record has been updated.',
-  }
+  };
 
   const user = {};
 
@@ -29,7 +29,7 @@ describe('MARC -> MARC Authority', () => {
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numOfRecords: 1,
-    }
+    },
   ];
 
   const createdAuthorityIDs = [];
@@ -40,11 +40,14 @@ describe('MARC -> MARC Authority', () => {
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
       Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-    ]).then(createdUserProperties => {
+    ]).then((createdUserProperties) => {
       user.userAProperties = createdUserProperties;
 
-      marcFiles.forEach(marcFile => {
-        cy.login(user.userAProperties.username, user.userAProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
+      marcFiles.forEach((marcFile) => {
+        cy.login(user.userAProperties.username, user.userAProperties.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
+        }).then(() => {
           DataImport.uploadFile(marcFile.marc, marcFile.fileName);
           JobProfiles.waitLoadingList();
           JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
@@ -53,11 +56,11 @@ describe('MARC -> MARC Authority', () => {
           Logs.checkStatusOfJobProfile('Completed');
           Logs.openFileDetails(marcFile.fileName);
           for (let i = 0; i < marcFile.numOfRecords; i++) {
-            Logs.getCreatedItemsID(i).then(link => {
+            Logs.getCreatedItemsID(i).then((link) => {
               createdAuthorityIDs.push(link.split('/')[5]);
             });
           }
-        }); 
+        });
       });
     });
 
@@ -69,7 +72,7 @@ describe('MARC -> MARC Authority', () => {
       Permissions.uiUsersDelete.gui,
       Permissions.uiUserEdit.gui,
       Permissions.uiUsersView.gui,
-    ]).then(createdUserProperties => {
+    ]).then((createdUserProperties) => {
       user.userBProperties = createdUserProperties;
     });
 
@@ -78,7 +81,7 @@ describe('MARC -> MARC Authority', () => {
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
       Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-    ]).then(createdUserProperties => {
+    ]).then((createdUserProperties) => {
       user.userCProperties = createdUserProperties;
     });
   });
@@ -88,46 +91,67 @@ describe('MARC -> MARC Authority', () => {
     MarcAuthority.deleteViaAPI(createdAuthorityIDs[0]);
   });
 
-  it('C358994 Verify that user has access to "quickMARC" when user who imported "MARC authority" record has been deleted (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
-    cy.login(user.userBProperties.username, user.userBProperties.password, { path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading});
-    UsersSearchPane.searchByUsername(user.userAProperties.username);
-    UsersSearchPane.openUser(user.userAProperties.username);
-    Users.deleteUser();
-    Users.successMessageAfterDeletion(`User ${user.userAProperties.username}, testPermFirst testMiddleName deleted successfully.`)
+  it(
+    'C358994 Verify that user has access to "quickMARC" when user who imported "MARC authority" record has been deleted (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      cy.login(user.userBProperties.username, user.userBProperties.password, {
+        path: TopMenu.usersPath,
+        waiter: UsersSearchPane.waitLoading,
+      });
+      UsersSearchPane.searchByUsername(user.userAProperties.username);
+      UsersSearchPane.openUser(user.userAProperties.username);
+      Users.deleteUser();
+      Users.successMessageAfterDeletion(
+        `User ${user.userAProperties.username}, testPermFirst testMiddleName deleted successfully.`,
+      );
 
-    cy.visit(TopMenu.marcAuthorities);
-    MarcAuthorities.searchBy(testData.searchOption, testData.marcValue);
-    MarcAuthorities.selectTitle(testData.marcValue);
-    MarcAuthority.edit();
-    QuickMarcEditor.updateExistingFieldContent(7, testData.valueForUpdate);
-    QuickMarcEditor.pressSaveAndClose();
-    QuickMarcEditor.checkCallout(testData.calloutMessage);
-    MarcAuthorities.checkRecordDetailPageMarkedValue(testData.valueAfterUpdate);
-  });
+      cy.visit(TopMenu.marcAuthorities);
+      MarcAuthorities.searchBy(testData.searchOption, testData.marcValue);
+      MarcAuthorities.selectTitle(testData.marcValue);
+      MarcAuthority.edit();
+      QuickMarcEditor.updateExistingFieldContent(7, testData.valueForUpdate);
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.checkCallout(testData.calloutMessage);
+      MarcAuthorities.checkRecordDetailPageMarkedValue(testData.valueAfterUpdate);
+    },
+  );
 
-  it('C358995 Verify that user has access to "quickMARC" when user who edited MARC record has been deleted (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
-    cy.login(user.userCProperties.username, user.userCProperties.password, { path: TopMenu.marcAuthorities, waiter: MarcAuthorities.waitLoading});
-    MarcAuthorities.searchBy(testData.searchOption, testData.valueAfterUpdate);
-    MarcAuthorities.selectTitle(testData.valueAfterUpdate);
-    MarcAuthority.edit();
-    QuickMarcEditor.updateExistingFieldContent(7, `$a ${testData.marcValue}`);
-    QuickMarcEditor.pressSaveAndClose();
-    QuickMarcEditor.checkCallout(testData.calloutMessage);
-    MarcAuthorities.checkRecordDetailPageMarkedValue(testData.marcValue);
+  it(
+    'C358995 Verify that user has access to "quickMARC" when user who edited MARC record has been deleted (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      cy.login(user.userCProperties.username, user.userCProperties.password, {
+        path: TopMenu.marcAuthorities,
+        waiter: MarcAuthorities.waitLoading,
+      });
+      MarcAuthorities.searchBy(testData.searchOption, testData.valueAfterUpdate);
+      MarcAuthorities.selectTitle(testData.valueAfterUpdate);
+      MarcAuthority.edit();
+      QuickMarcEditor.updateExistingFieldContent(7, `$a ${testData.marcValue}`);
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.checkCallout(testData.calloutMessage);
+      MarcAuthorities.checkRecordDetailPageMarkedValue(testData.marcValue);
 
-    cy.login(user.userBProperties.username, user.userBProperties.password, { path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading});
-    UsersSearchPane.searchByUsername(user.userCProperties.username);
-    UsersSearchPane.openUser(user.userCProperties.username);
-    Users.deleteUser();
-    Users.successMessageAfterDeletion(`User ${user.userCProperties.username}, testPermFirst testMiddleName deleted successfully.`)
+      cy.login(user.userBProperties.username, user.userBProperties.password, {
+        path: TopMenu.usersPath,
+        waiter: UsersSearchPane.waitLoading,
+      });
+      UsersSearchPane.searchByUsername(user.userCProperties.username);
+      UsersSearchPane.openUser(user.userCProperties.username);
+      Users.deleteUser();
+      Users.successMessageAfterDeletion(
+        `User ${user.userCProperties.username}, testPermFirst testMiddleName deleted successfully.`,
+      );
 
-    cy.visit(TopMenu.marcAuthorities);
-    MarcAuthorities.searchBy(testData.searchOption, testData.marcValue);
-    MarcAuthorities.selectTitle(testData.marcValue);
-    MarcAuthority.edit();
-    QuickMarcEditor.updateExistingFieldContent(7, testData.valueForUpdate);
-    QuickMarcEditor.pressSaveAndClose();
-    QuickMarcEditor.checkCallout(testData.calloutMessage);
-    MarcAuthorities.checkRecordDetailPageMarkedValue(testData.valueAfterUpdate);
-  });
+      cy.visit(TopMenu.marcAuthorities);
+      MarcAuthorities.searchBy(testData.searchOption, testData.marcValue);
+      MarcAuthorities.selectTitle(testData.marcValue);
+      MarcAuthority.edit();
+      QuickMarcEditor.updateExistingFieldContent(7, testData.valueForUpdate);
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.checkCallout(testData.calloutMessage);
+      MarcAuthorities.checkRecordDetailPageMarkedValue(testData.valueAfterUpdate);
+    },
+  );
 });

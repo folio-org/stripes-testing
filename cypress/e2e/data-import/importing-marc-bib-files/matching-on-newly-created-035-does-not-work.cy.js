@@ -2,10 +2,12 @@ import permissions from '../../../support/dictionary/permissions';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE,
+import {
+  FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
-  JOB_STATUS_NAMES } from '../../../support/constants';
+  JOB_STATUS_NAMES,
+} from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -28,8 +30,14 @@ describe('data-import', () => {
     let user = null;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const note = 'This instance was updated, plus a new subject heading was added';
-    const resourceIdentifierForFirstInstance = { type: 'System control number', value: '(NhFolYBP)2304396' };
-    const resourceIdentifierForSecondInstance = { type: 'System control number', value: '(NhFolYBP)2345942-321678' };
+    const resourceIdentifierForFirstInstance = {
+      type: 'System control number',
+      value: '(NhFolYBP)2304396',
+    };
+    const resourceIdentifierForSecondInstance = {
+      type: 'System control number',
+      value: '(NhFolYBP)2345942-321678',
+    };
     let firstInstanceHrid;
     let secondInstanceHrid;
     // unique file names
@@ -44,47 +52,49 @@ describe('data-import', () => {
         field: '035',
         in1: '*',
         in2: '*',
-        subfield: 'a'
+        subfield: 'a',
       },
       matchCriterion: 'Exactly matches',
       existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
-      existingRecordOption: NewMatchProfile.optionsList.systemControlNumber
+      existingRecordOption: NewMatchProfile.optionsList.systemControlNumber,
     };
 
     const mappingProfile = {
       name: `C358138 Update instance via 035 ${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.INSTANCE
+      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     };
 
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       name: `C358138 Update instance via 035 ${getRandomPostfix()}`,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
     };
 
     const jobProfile = {
       profileName: `C358138 Update instance via 035 ${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
     before('create test data', () => {
       cy.getAdminToken().then(() => {
-        InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifierForFirstInstance.value)
-          .then(listOfInstancesWithFirstIdentifiers => {
-            if (listOfInstancesWithFirstIdentifiers) {
-              listOfInstancesWithFirstIdentifiers.forEach(({ id }) => {
-                InventoryInstance.deleteInstanceViaApi(id);
-              });
-            }
-          });
-        InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifierForSecondInstance.value)
-          .then(listOfInstancesWithSecondIdentifiers => {
-            if (listOfInstancesWithSecondIdentifiers) {
-              listOfInstancesWithSecondIdentifiers.forEach(({ id }) => {
-                InventoryInstance.deleteInstanceViaApi(id);
-              });
-            }
-          });
+        InventorySearchAndFilter.getInstancesByIdentifierViaApi(
+          resourceIdentifierForFirstInstance.value,
+        ).then((listOfInstancesWithFirstIdentifiers) => {
+          if (listOfInstancesWithFirstIdentifiers) {
+            listOfInstancesWithFirstIdentifiers.forEach(({ id }) => {
+              InventoryInstance.deleteInstanceViaApi(id);
+            });
+          }
+        });
+        InventorySearchAndFilter.getInstancesByIdentifierViaApi(
+          resourceIdentifierForSecondInstance.value,
+        ).then((listOfInstancesWithSecondIdentifiers) => {
+          if (listOfInstancesWithSecondIdentifiers) {
+            listOfInstancesWithSecondIdentifiers.forEach(({ id }) => {
+              InventoryInstance.deleteInstanceViaApi(id);
+            });
+          }
+        });
       });
 
       cy.createTempUser([
@@ -92,13 +102,15 @@ describe('data-import', () => {
         permissions.settingsDataImportEnabled.gui,
         permissions.inventoryAll.gui,
         permissions.uiInventorySingleRecordImport,
-        permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+        permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          cy.login(user.username, user.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
+        cy.login(user.username, user.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
         });
+      });
     });
 
     after('delete test data', () => {
@@ -108,19 +120,23 @@ describe('data-import', () => {
       ActionProfiles.deleteActionProfile(actionProfile.name);
       FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
       Users.deleteViaApi(user.userId);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${firstInstanceHrid}"` })
-        .then((instance) => {
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${firstInstanceHrid}"` }).then(
+        (instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${secondInstanceHrid}"` })
-        .then((instance) => {
+        },
+      );
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${secondInstanceHrid}"` }).then(
+        (instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
+        },
+      );
     });
 
-    it('C358138 Matching on newly-created 035 does not work (regression) (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+    it(
+      'C358138 Matching on newly-created 035 does not work (regression) (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         // upload a marc file for creating of the new instance
         DataImport.uploadFile('marcFileForC358138.mrc', fileForCreateFirstName);
@@ -129,8 +145,10 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(fileForCreateFirstName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileForCreateFirstName);
-        [FileDetails.columnNameInResultList.srsMarc,
-          FileDetails.columnNameInResultList.instance].forEach(columnName => {
+        [
+          FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.instance,
+        ].forEach((columnName) => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable('1');
@@ -138,10 +156,14 @@ describe('data-import', () => {
 
         // open Instance for getting hrid
         FileDetails.openInstanceInInventory('Created');
-        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           firstInstanceHrid = initialInstanceHrId;
         });
-        InventoryInstance.verifyResourceIdentifier(resourceIdentifierForFirstInstance.type, resourceIdentifierForFirstInstance.value, 2);
+        InventoryInstance.verifyResourceIdentifier(
+          resourceIdentifierForFirstInstance.type,
+          resourceIdentifierForFirstInstance.value,
+          2,
+        );
         InventoryInstance.viewSource();
         InventoryViewSource.contains('035\t');
         InventoryViewSource.contains(resourceIdentifierForFirstInstance.value);
@@ -167,7 +189,11 @@ describe('data-import', () => {
 
         // create job profile for update
         cy.visit(SettingsMenu.jobProfilePath);
-        JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfile.name, matchProfile.profileName);
+        JobProfiles.createJobProfileWithLinkingProfiles(
+          jobProfile,
+          actionProfile.name,
+          matchProfile.profileName,
+        );
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         // upload a marc file for updating already created instance
@@ -180,8 +206,14 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(fileForUpdateFirstName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileForUpdateFirstName);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc);
-        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance);
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.created,
+          FileDetails.columnNameInResultList.srsMarc,
+        );
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.updated,
+          FileDetails.columnNameInResultList.instance,
+        );
         FileDetails.checkSrsRecordQuantityInSummaryTable('1');
         FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
 
@@ -203,8 +235,10 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(fileForCreateSecondName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileForCreateSecondName);
-        [FileDetails.columnNameInResultList.srsMarc,
-          FileDetails.columnNameInResultList.instance].forEach(columnName => {
+        [
+          FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.instance,
+        ].forEach((columnName) => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable('1');
@@ -212,10 +246,14 @@ describe('data-import', () => {
 
         // open Instance for getting hrid
         FileDetails.openInstanceInInventory('Created');
-        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           secondInstanceHrid = initialInstanceHrId;
         });
-        InventoryInstance.verifyResourceIdentifier(resourceIdentifierForSecondInstance.type, resourceIdentifierForSecondInstance.value, 3);
+        InventoryInstance.verifyResourceIdentifier(
+          resourceIdentifierForSecondInstance.type,
+          resourceIdentifierForSecondInstance.value,
+          3,
+        );
         InventoryInstance.viewSource();
         InventoryViewSource.contains('035\t');
         InventoryViewSource.contains(resourceIdentifierForSecondInstance.value);
@@ -230,8 +268,14 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(fileForUpdateSecondName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileForUpdateSecondName);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc);
-        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance);
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.created,
+          FileDetails.columnNameInResultList.srsMarc,
+        );
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.updated,
+          FileDetails.columnNameInResultList.instance,
+        );
         FileDetails.checkSrsRecordQuantityInSummaryTable('1');
         FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
 
@@ -242,6 +286,7 @@ describe('data-import', () => {
         InventoryViewSource.contains(resourceIdentifierForSecondInstance.value);
         InventoryViewSource.contains('650\t');
         InventoryViewSource.contains('Symposia');
-      });
+      },
+    );
   });
 });

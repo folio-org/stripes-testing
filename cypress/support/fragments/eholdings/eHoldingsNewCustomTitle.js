@@ -1,7 +1,14 @@
-import { HTML, including, Button, TextField, Selection, SelectionList } from '../../../../interactors';
+import {
+  HTML,
+  including,
+  Button,
+  TextField,
+  Selection,
+  SelectionList,
+} from '../../../../interactors';
 
 export default {
-  waitLoading:() => {
+  waitLoading: () => {
     cy.expect(HTML(including('New custom title')).exists());
   },
 
@@ -11,7 +18,7 @@ export default {
     cy.do(SelectionList().filter(packageName));
     cy.do(SelectionList().select(packageName));
   },
-  saveAndClose:() => {
+  saveAndClose: () => {
     cy.do(Button('Save & close').click());
-  }
+  },
 };

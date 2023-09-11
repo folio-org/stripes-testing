@@ -34,7 +34,10 @@ describe('Overdue fine', () => {
   };
   const userData = {};
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestReceiveNotice', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
+      'autotestReceiveNotice',
+      uuid(),
+    ),
   };
   const createNoticeTemplate = (noticeName, noticeCategory) => {
     return {
@@ -50,7 +53,7 @@ describe('Overdue fine', () => {
     manualFeeFineCharge: createNoticeTemplate('Manual_fee_fine_charge', 'Manual fee/fine charge'),
     manualFeeFineAction: createNoticeTemplate(
       'Manual_fee_fine_action',
-      'Manual fee/fine action (pay, waive, refund, transfer or cancel/error)'
+      'Manual fee/fine action (pay, waive, refund, transfer or cancel/error)',
     ),
   };
   const openUserFeeFine = (userId, feeFineId) => {
@@ -112,7 +115,7 @@ describe('Overdue fine', () => {
           permissions.uiUsersfeefinesCRUD.gui,
           permissions.uiUserAccounts.gui,
         ],
-        patronGroup.name
+        patronGroup.name,
       )
         .then((userProperties) => {
           userData.username = userProperties.username;
@@ -124,7 +127,7 @@ describe('Overdue fine', () => {
           UserEdit.addServicePointViaApi(
             testData.userServicePoint.id,
             userData.userId,
-            testData.userServicePoint.id
+            testData.userServicePoint.id,
           );
 
           cy.login(userData.username, userData.password, {
@@ -150,16 +153,16 @@ describe('Overdue fine', () => {
     PaymentMethods.deleteViaApi(testData.paymentMethodId);
     UsersOwners.deleteViaApi(userOwnerBody.id);
 
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.manualFeeFineCharge.name}` }).then(
-      (templateId) => {
-        NoticePolicyTemplateApi.deleteViaApi(templateId);
-      }
-    );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.manualFeeFineAction.name}` }).then(
-      (templateId) => {
-        NoticePolicyTemplateApi.deleteViaApi(templateId);
-      }
-    );
+    NoticePolicyTemplateApi.getViaApi({
+      query: `name=${noticeTemplates.manualFeeFineCharge.name}`,
+    }).then((templateId) => {
+      NoticePolicyTemplateApi.deleteViaApi(templateId);
+    });
+    NoticePolicyTemplateApi.getViaApi({
+      query: `name=${noticeTemplates.manualFeeFineAction.name}`,
+    }).then((templateId) => {
+      NoticePolicyTemplateApi.deleteViaApi(templateId);
+    });
   });
 
   it(
@@ -304,6 +307,6 @@ describe('Overdue fine', () => {
           },
         ]);
       });
-    }
+    },
   );
 });

@@ -21,40 +21,52 @@ describe('Bulk Edit - Logs', () => {
       permissions.bulkEditLogsView.gui,
       permissions.bulkEditView.gui,
       permissions.bulkEditEdit.gui,
-      permissions.inventoryAll.gui
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
-        FileManager.createFile(`cypress/fixtures/${invalidHoldingHRIDsFileName}`, invalidHoldingHRID);
+      permissions.inventoryAll.gui,
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.bulkEditPath,
+        waiter: BulkEditSearchPane.waitLoading,
       });
+      FileManager.createFile(`cypress/fixtures/${invalidHoldingHRIDsFileName}`, invalidHoldingHRID);
+    });
   });
 
   after('delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${invalidHoldingHRIDsFileName}`);
     Users.deleteViaApi(user.userId);
-    FileManager.deleteFileFromDownloadsByMask(invalidHoldingHRIDsFileName, errorsFromMatchingFileName, otherError);
+    FileManager.deleteFileFromDownloadsByMask(
+      invalidHoldingHRIDsFileName,
+      errorsFromMatchingFileName,
+      otherError,
+    );
   });
 
-  it('C375299 Verify generated Logs files for Holdings In app -- only invalid records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    BulkEditSearchPane.verifyDragNDropHoldingsHRIDsArea();
-    BulkEditSearchPane.uploadFile(invalidHoldingHRIDsFileName);
-    BulkEditActions.openActions();
-    BulkEditActions.downloadErrors();
+  it(
+    'C375299 Verify generated Logs files for Holdings In app -- only invalid records (firebird)',
+    { tags: [testTypes.smoke, devTeams.firebird] },
+    () => {
+      BulkEditSearchPane.verifyDragNDropHoldingsHRIDsArea();
+      BulkEditSearchPane.uploadFile(invalidHoldingHRIDsFileName);
+      BulkEditActions.openActions();
+      BulkEditActions.downloadErrors();
 
-    BulkEditSearchPane.openLogsSearch();
-    BulkEditSearchPane.verifyLogsPane();
-    BulkEditSearchPane.checkHoldingsCheckbox();
-    BulkEditSearchPane.clickActionsRunBy(user.username);
-    BulkEditSearchPane.verifyLogsRowAction();
+      BulkEditSearchPane.openLogsSearch();
+      BulkEditSearchPane.verifyLogsPane();
+      BulkEditSearchPane.checkHoldingsCheckbox();
+      BulkEditSearchPane.clickActionsRunBy(user.username);
+      BulkEditSearchPane.verifyLogsRowAction();
 
-    BulkEditSearchPane.downloadFileUsedToTrigger();
-    BulkEditFiles.verifyCSVFileRows(invalidHoldingHRIDsFileName, [invalidHoldingHRID]);
+      BulkEditSearchPane.downloadFileUsedToTrigger();
+      BulkEditFiles.verifyCSVFileRows(invalidHoldingHRIDsFileName, [invalidHoldingHRID]);
 
-    BulkEditSearchPane.downloadFileWithErrorsEncountered();
-    BulkEditFiles.verifyMatchedResultFileContent(errorsFromMatchingFileName, [invalidHoldingHRID], 'firstElement', false);
-  });
+      BulkEditSearchPane.downloadFileWithErrorsEncountered();
+      BulkEditFiles.verifyMatchedResultFileContent(
+        errorsFromMatchingFileName,
+        [invalidHoldingHRID],
+        'firstElement',
+        false,
+      );
+    },
+  );
 });
