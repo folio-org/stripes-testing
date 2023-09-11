@@ -57,6 +57,7 @@ export default {
   remoteStorageAccTablesPath: '/settings/remote-storage/accession-tables',
   tagsPath: 'settings/tags',
   tenantPath: 'settings/tenant-settings',
+  tenantLibrariesPath: 'settings/tenant-settings/location-libraries',
   tenantLocationsPath: 'settings/tenant-settings/location-locations',
   // Orders
   approvalsPath: 'settings/orders/approvals',
