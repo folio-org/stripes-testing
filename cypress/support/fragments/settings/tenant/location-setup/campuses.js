@@ -11,8 +11,8 @@ export default {
   viewTable() {
     selectInstitution();
   },
-  getDefaultCampuse() {
-    return getDefaultTenant({ institutionId: '' });
+  getDefaultCampuse({ id, institutionId = '' } = {}) {
+    return getDefaultTenant({ id, institutionId });
   },
   defaultUiCampuses: {
     body: getDefaultTenant({ institutionId: uuid() }),

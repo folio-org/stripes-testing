@@ -3,7 +3,7 @@ import SettingsPane, { rootPane } from '../settingsPane';
 import { Select, including } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
-export const getDefaultTenant = (props) => ({
+export const getDefaultTenant = (props = {}) => ({
   code: `autotest_code_${getRandomPostfix()}`,
   id: uuid(),
   name: `autotest_name_${getRandomPostfix()}`,
