@@ -8,7 +8,7 @@ import {
   ITEM_STATUS_NAMES,
   LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
-  ACCEPTED_DATA_TYPE_NAMES
+  ACCEPTED_DATA_TYPE_NAMES,
 } from '../../../support/constants';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -30,32 +30,46 @@ describe('data-import', () => {
 
     const collectionOfProfiles = [
       {
-        mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-          name: `autotestMappingInstance${getRandomPostfix()}` },
-        actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-          name: `autotestActionInstance${getRandomPostfix()}` }
+        mappingProfile: {
+          typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+          name: `autotestMappingInstance${getRandomPostfix()}`,
+        },
+        actionProfile: {
+          typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+          name: `autotestActionInstance${getRandomPostfix()}`,
+        },
       },
       {
-        mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        mappingProfile: {
+          typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `autotestMappingHoldings${getRandomPostfix()}`,
-          permanentLocation: `"${LOCATION_NAMES.ANNEX}"` },
-        actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-          name: `autotestActionHoldings${getRandomPostfix()}` }
+          permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
+        },
+        actionProfile: {
+          typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+          name: `autotestActionHoldings${getRandomPostfix()}`,
+        },
       },
       {
-        mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
+        mappingProfile: {
+          typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `autotestMappingItem${getRandomPostfix()}`,
           materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: ITEM_STATUS_NAMES.AVAILABLE },
-        actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-          name: `autotestActionItem${getRandomPostfix()}` }
-      }
+          status: ITEM_STATUS_NAMES.AVAILABLE,
+        },
+        actionProfile: {
+          typeValue: FOLIO_RECORD_TYPE.ITEM,
+          name: `autotestActionItem${getRandomPostfix()}`,
+        },
+      },
     ];
 
-    const specialJobProfile = { ...NewJobProfile.defaultJobProfile,
+    const specialJobProfile = {
+      ...NewJobProfile.defaultJobProfile,
       profileName: `autotestJobProf${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC };
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
+    };
 
     before('login', () => {
       cy.createTempUser([
@@ -63,11 +77,10 @@ describe('data-import', () => {
         permissions.moduleDataImportEnabled.gui,
         permissions.settingsDataImportEnabled.gui,
         permissions.uiInventoryViewInstances.gui,
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(userProperties.username, userProperties.password);
-        });
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(userProperties.username, userProperties.password);
+      });
     });
 
     const createInstanceMappingProfile = (instanceMappingProfile) => {
@@ -99,22 +112,30 @@ describe('data-import', () => {
       Users.deleteViaApi(user.userId);
       // delete generated profiles
       JobProfiles.deleteJobProfile(specialJobProfile.profileName);
-      collectionOfProfiles.forEach(profile => {
+      collectionOfProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
         FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
       });
     });
 
-    it('C343334 MARC file import with creating a new mapping profiles, action profiles and job profile (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] }, () => {
-      // create mapping profiles
+    it(
+      'C343334 MARC file import with creating a new mapping profiles, action profiles and job profile (folijet)',
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
+      () => {
+        // create mapping profiles
         cy.visit(SettingsMenu.mappingProfilePath);
         createInstanceMappingProfile(collectionOfProfiles[0].mappingProfile);
-        FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[0].mappingProfile.name);
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfProfiles[0].mappingProfile.name,
+        );
         createHoldingsMappingProfile(collectionOfProfiles[1].mappingProfile);
-        FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[1].mappingProfile.name);
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfProfiles[1].mappingProfile.name,
+        );
         createItemMappingProfile(collectionOfProfiles[2].mappingProfile);
-        FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[2].mappingProfile.name);
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfProfiles[2].mappingProfile.name,
+        );
 
         collectionOfProfiles.forEach(profile => {
           cy.visit(SettingsMenu.actionProfilePath);
@@ -148,6 +169,7 @@ describe('data-import', () => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
         });
         FileDetails.checkItemsQuantityInSummaryTable(0, '1');
-      });
+      }
+    );
   });
 });

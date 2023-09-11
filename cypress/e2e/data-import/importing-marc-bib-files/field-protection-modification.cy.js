@@ -29,19 +29,21 @@ describe('data-import', () => {
     // unique file name to upload
     const fileName = `C350678autotestFileProtection.${getRandomPostfix()}.mrc`;
 
-    const mappingProfile = { name: `C350678 Remove extraneous MARC fields ${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC };
+    const mappingProfile = {
+      name: `C350678 Remove extraneous MARC fields ${getRandomPostfix()}`,
+      typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+    };
 
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
       name: `C350678 Remove extraneous MARC fields ${getRandomPostfix()}`,
-      action: 'Modify (MARC Bibliographic record type only)'
+      action: 'Modify (MARC Bibliographic record type only)',
     };
 
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
       profileName: `C350678 Create bib and instance, but remove some MARC fields first ${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
     before('login', () => {
@@ -49,30 +51,32 @@ describe('data-import', () => {
         permissions.inventoryAll.gui,
         permissions.moduleDataImportEnabled.gui,
         permissions.settingsDataImportEnabled.gui,
-        permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+        permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          cy.login(user.username, user.password);
-        });
+        cy.login(user.username, user.password);
+      });
     });
 
     after('delete test data', () => {
-      fieldsForDeleteIds.forEach(fieldId => MarcFieldProtection.deleteMarcFieldProtectionViaApi(fieldId));
+      fieldsForDeleteIds.forEach((fieldId) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(fieldId));
       // delete profiles
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
       FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
       Users.deleteViaApi(user.userId);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-        .then((instance) => {
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+        (instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
+        },
+      );
     });
 
-    it('C350678 MARC field protections apply to MARC modifications of incoming records when they should not: Scenario 1 (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+    it(
+      'C350678 MARC field protections apply to MARC modifications of incoming records when they should not: Scenario 1 (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
         // create protection fields
         MarcFieldProtection.createMarcFieldProtectionViaApi({
           field: '*',
@@ -81,11 +85,10 @@ describe('data-import', () => {
           subfield: '5',
           data: 'NcD',
           source: 'USER',
-        })
-          .then(resp => {
-            const id = resp.id;
-            fieldsForDeleteIds.push(id);
-          });
+        }).then((resp) => {
+          const id = resp.id;
+          fieldsForDeleteIds.push(id);
+        });
         MarcFieldProtection.createMarcFieldProtectionViaApi({
           field: fieldsForDelete[2],
           indicator1: '*',
@@ -93,7 +96,7 @@ describe('data-import', () => {
           subfield: '*',
           data: '*',
           source: 'USER',
-        }).then(resp => {
+        }).then((resp) => {
           const id = resp.id;
           fieldsForDeleteIds.push(id);
         });
@@ -134,8 +137,10 @@ describe('data-import', () => {
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);
         Logs.openFileDetails(fileName);
-        [FileDetails.columnNameInResultList.srsMarc,
-          FileDetails.columnNameInResultList.instance].forEach(columnName => {
+        [
+          FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.instance,
+        ].forEach((columnName) => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable('1', 0);
@@ -143,7 +148,7 @@ describe('data-import', () => {
 
         // open Instance for getting hrid
         FileDetails.openInstanceInInventory('Created');
-        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
 
           // check fields are absent in the view source
@@ -156,6 +161,7 @@ describe('data-import', () => {
             InventoryViewSource.notContains(`${fieldNumber}\t`);
           });
         });
-      });
+      },
+    );
   });
 });

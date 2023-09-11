@@ -17,21 +17,25 @@ describe('data-import', () => {
       cy.createTempUser([
         permissions.moduleDataImportEnabled.gui,
         permissions.settingsDataImportEnabled.gui,
-        permissions.uiOrganizationsView.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+        permissions.uiOrganizationsView.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          cy.login(user.username, user.password, { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+        cy.login(user.username, user.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
         });
+      });
     });
 
     after('delete user', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it('C343284 Make some of the fields on the Invoice field mapping profile required (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+    it(
+      'C343284 Make some of the fields on the Invoice field mapping profile required (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
         FieldMappingProfiles.checkListOfExistingProfilesIsDisplayed();
         FieldMappingProfiles.openNewMappingProfileForm();
         FieldMappingProfiles.checkNewMappingProfileFormIsOpened();
@@ -79,6 +83,7 @@ describe('data-import', () => {
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
 
         FieldMappingProfileView.deleteMappingProfile(mappingProfileName);
-      });
+      },
+    );
   });
 });

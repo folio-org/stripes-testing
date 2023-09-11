@@ -20,26 +20,25 @@ export default {
         path: 'location-units/campuses',
         body: campusesProperties,
         method: 'POST',
-        isDefaultSearchParamsRequired: false
+        isDefaultSearchParamsRequired: false,
       })
       .then((response) => {
         return response.body;
       });
   },
-  defaultUiCampuses : {
+  defaultUiCampuses: {
     body: {
       code: `autotest_code_${getRandomPostfix()}`,
       id: uuid(),
       institutionId: uuid(),
       name: `autotest_name_${getRandomPostfix()}`,
-    }
+    },
   },
   deleteViaApi: (campusId) => {
-    return cy
-      .okapiRequest({
-        path: `location-units/campuses/${campusId}`,
-        method: 'DELETE',
-        isDefaultSearchParamsRequired: false
-      });
+    return cy.okapiRequest({
+      path: `location-units/campuses/${campusId}`,
+      method: 'DELETE',
+      isDefaultSearchParamsRequired: false,
+    });
   },
 };

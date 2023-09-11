@@ -18,40 +18,48 @@ describe('ui-invoices: Invoice Line creation - based on POL', () => {
   const invoiceLine = { ...NewInvoiceLine.defaultUiInvoiceLine };
   const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLine = { ...basicOrderLine.defaultOrderLine };
-  const organization = { ...NewOrganization.defaultUiOrganizations,
-    addresses:[{
-      addressLine1: '1 Centerpiece Blvd.',
-      addressLine2: 'P.O. Box 15550',
-      city: 'New Castle',
-      stateRegion: 'DE',
-      zipCode: '19720-5550',
-      country: 'USA',
-      isPrimary: true,
-      categories: [],
-      language: 'English'
-    }] };
+  const organization = {
+    ...NewOrganization.defaultUiOrganizations,
+    addresses: [
+      {
+        addressLine1: '1 Centerpiece Blvd.',
+        addressLine2: 'P.O. Box 15550',
+        city: 'New Castle',
+        stateRegion: 'DE',
+        zipCode: '19720-5550',
+        country: 'USA',
+        isPrimary: true,
+        categories: [],
+        language: 'English',
+      },
+    ],
+  };
   const euroCurrency = 'Euro (EUR)';
   const euroSign = '€';
 
   before(() => {
     cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-        order.vendor = organization.id;
-        orderLine.physical.materialSupplier = organization.id;
-        orderLine.eresource.accessProvider = organization.id;
-      });
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+      order.vendor = organization.id;
+      orderLine.physical.materialSupplier = organization.id;
+      orderLine.eresource.accessProvider = organization.id;
+    });
     invoice.accountingCode = organization.erpCode;
     invoice.vendorName = organization.name;
-    Object.assign(vendorPrimaryAddress,
-      organization.addresses.find(address => address.isPrimary === true));
-    cy.getBatchGroups()
-      .then(batchGroup => { invoice.batchGroup = batchGroup.name; });
-    cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` })
-      .then(location => { orderLine.locations[0].locationId = location.id; });
-    cy.getMaterialTypes({ query: 'name="book"' })
-      .then(materialType => { orderLine.physical.materialType = materialType.id; });
+    Object.assign(
+      vendorPrimaryAddress,
+      organization.addresses.find((address) => address.isPrimary === true),
+    );
+    cy.getBatchGroups().then((batchGroup) => {
+      invoice.batchGroup = batchGroup.name;
+    });
+    cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` }).then((location) => {
+      orderLine.locations[0].locationId = location.id;
+    });
+    cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
+      orderLine.physical.materialType = materialType.id;
+    });
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     // set up invoice Line object
     invoiceLine.description = orderLine.titleOrPackage;
@@ -63,9 +71,11 @@ describe('ui-invoices: Invoice Line creation - based on POL', () => {
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 
-  it('C2327 Create invoice line based on purchase order line (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
-    Orders.createOrderWithOrderLineViaApi(order, orderLine)
-      .then(orderNumber => {
+  it(
+    'C2327 Create invoice line based on purchase order line (thunderjet)',
+    { tags: [testType.smoke, devTeams.thunderjet] },
+    () => {
+      Orders.createOrderWithOrderLineViaApi(order, orderLine).then((orderNumber) => {
         cy.visit(TopMenu.invoicesPath);
         Invoices.createSpecialInvoice(invoice, vendorPrimaryAddress);
         Invoices.checkInvoiceCurrency(orderLine.cost.currency);
@@ -80,5 +90,6 @@ describe('ui-invoices: Invoice Line creation - based on POL', () => {
         Invoices.deleteInvoiceViaActions();
         Invoices.confirmInvoiceDeletion();
       });
-  });
+    },
+  );
 });

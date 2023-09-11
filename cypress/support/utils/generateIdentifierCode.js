@@ -8,5 +8,5 @@ export default {
       str += lettersUC.substring(position, position + 1);
     }
     return str;
-  }
+  },
 };

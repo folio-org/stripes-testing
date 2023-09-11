@@ -1,9 +1,11 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { FOLIO_RECORD_TYPE,
+import {
+  FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
-  JOB_STATUS_NAMES } from '../../../support/constants';
+  JOB_STATUS_NAMES,
+} from '../../../support/constants';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import Parallelization from '../../../support/dictionary/parallelization';
@@ -34,7 +36,7 @@ describe('data-import', () => {
     // resource identifiers
     const resourceIdentifiers = [
       { type: 'OCLC', value: '(OCoLC)26493177' },
-      { type: 'System control number', value: '(ICU)1299036' }
+      { type: 'System control number', value: '(ICU)1299036' },
     ];
     const instanceStatusTerm = INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED;
     const catalogedDate = '###TODAY###';
@@ -50,50 +52,49 @@ describe('data-import', () => {
         field: '999',
         in1: 'f',
         in2: 'f',
-        subfield: 'i'
+        subfield: 'i',
       },
       matchCriterion: 'Exactly matches',
       existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
-      existingRecordOption: NewMatchProfile.optionsList.instanceUuid
+      existingRecordOption: NewMatchProfile.optionsList.instanceUuid,
     };
 
     const mappingProfile = {
       name: `C17039 mapping profile ${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.INSTANCE
+      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     };
 
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       name: `C17039 action profile ${getRandomPostfix()}`,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
     };
 
     const jobProfile = {
       profileName: `C17039 job profile ${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
     before('create test data', () => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-      cy.getAdminToken()
-        .then(() => {
-          const fileName = `C17039autotestFile.${getRandomPostfix()}.mrc`;
+      cy.getAdminToken().then(() => {
+        const fileName = `C17039autotestFile.${getRandomPostfix()}.mrc`;
 
-          cy.visit(TopMenu.dataImportPath);
-          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-          DataImport.verifyUploadState();
-          DataImport.uploadFile('oneMarcBib.mrc', fileName);
-          JobProfiles.searchJobProfileForImport(jobProfileToRun);
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(fileName);
-          Logs.openFileDetails(fileName);
+        cy.visit(TopMenu.dataImportPath);
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
+        DataImport.uploadFile('oneMarcBib.mrc', fileName);
+        JobProfiles.searchJobProfileForImport(jobProfileToRun);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(fileName);
+        Logs.openFileDetails(fileName);
 
-          // open Instance for getting hrid
-          FileDetails.openInstanceInInventory('Created');
-          InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
-            instanceHridForReimport = initialInstanceHrId;
-          });
+        // open Instance for getting hrid
+        FileDetails.openInstanceInInventory('Created');
+        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
+          instanceHridForReimport = initialInstanceHrId;
         });
+      });
     });
 
     after('delete test data', () => {
@@ -104,19 +105,25 @@ describe('data-import', () => {
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-        .then((instance) => {
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+        (instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHridForReimport}"` })
-        .then((instance) => {
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
+        },
+      );
+      cy.getInstance({
+        limit: 1,
+        expandAll: true,
+        query: `"hrid"=="${instanceHridForReimport}"`,
+      }).then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
     });
 
-    it('C17039 Test 001/003/035 handling for New and Updated SRS records (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] }, () => {
-      // upload a marc file
+    it(
+      'C17039 Test 001/003/035 handling for New and Updated SRS records (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      () => {
+        // upload a marc file
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
@@ -126,8 +133,10 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(nameMarcFileForCreate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameMarcFileForCreate);
-        [FileDetails.columnNameInResultList.srsMarc,
-          FileDetails.columnNameInResultList.instance].forEach(columnName => {
+        [
+          FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.instance,
+        ].forEach((columnName) => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable('1');
@@ -254,6 +263,7 @@ describe('data-import', () => {
         InventoryInstance.viewSource();
         InventoryViewSource.verifyFieldInMARCBibSource('001\t', instanceHridForReimport);
         InventoryViewSource.notContains(`\\$a${instanceHridForReimport}`);
-      });
+      }
+    );
   });
 });

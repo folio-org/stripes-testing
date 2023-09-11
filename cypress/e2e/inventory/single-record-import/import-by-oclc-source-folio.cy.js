@@ -26,20 +26,21 @@ const oclcRecordData = {
   isbn2: '9781547854745',
   oclc: '1202462670',
   subject: 'Soups',
-  notes: { noteType: 'General note', noteContent: 'Description based upon print version of record' }
+  notes: {
+    noteType: 'General note',
+    noteContent: 'Description based upon print version of record',
+  },
 };
 
 describe('inventory', () => {
   describe('Single record import', () => {
     before('create test data', () => {
-      cy.getAdminToken()
-        .then(() => {
-          Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
-          InventorySearchAndFilter.createInstanceViaApi()
-            .then(({ instanceData }) => {
-              instanceRecord = instanceData;
-            });
+      cy.getAdminToken().then(() => {
+        Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
+        InventorySearchAndFilter.createInstanceViaApi().then(({ instanceData }) => {
+          instanceRecord = instanceData;
         });
+      });
 
       cy.createTempUser([
         permissions.uiInventoryViewCreateEditInstances.gui,
@@ -47,12 +48,11 @@ describe('inventory', () => {
         permissions.uiInventorySettingsConfigureSingleRecordImport.gui,
         permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         permissions.remoteStorageView.gui,
-        permissions.settingsDataImportEnabled.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password);
-        });
+        permissions.settingsDataImportEnabled.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password);
+      });
     });
 
     after('delete test data', () => {
@@ -61,14 +61,21 @@ describe('inventory', () => {
       Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
     });
 
-    it('C343349 Overlay existing Source = FOLIO Instance by import of single MARC Bib record from OCLC (folijet)',
-      { tags: [testTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] }, () => {
+    it(
+      'C343349 Overlay existing Source = FOLIO Instance by import of single MARC Bib record from OCLC (folijet)',
+      { tags: [testTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
+      () => {
         cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', instanceRecord.instanceTitle);
+        InventorySearchAndFilter.searchByParameter(
+          'Keyword (title, contributor, identifier, HRID, UUID)',
+          instanceRecord.instanceTitle,
+        );
         InventorySearchAndFilter.selectSearchResultItem();
         InventoryInstance.startOverlaySourceBibRecord();
         InventoryInstance.overlayWithOclc(oclcRecordData.oclc);
-        InventoryInstance.checkCalloutMessage(`Record ${oclcRecordData.oclc} updated. Results may take a few moments to become visible in Inventory`);
+        InventoryInstance.checkCalloutMessage(
+          `Record ${oclcRecordData.oclc} updated. Results may take a few moments to become visible in Inventory`,
+        );
 
         cy.reload();
         InventoryInstance.waitInstanceRecordViewOpened(oclcRecordData.title);
@@ -83,7 +90,10 @@ describe('inventory', () => {
         InventoryInstance.verifyResourceIdentifier('ISBN', oclcRecordData.isbn1, 4);
         InventoryInstance.verifyResourceIdentifier('ISBN', oclcRecordData.isbn2, 5);
         InventoryInstance.verifyInstanceSubject(0, 0, oclcRecordData.subject);
-        InventoryInstance.checkInstanceNotes(oclcRecordData.notes.noteType, oclcRecordData.notes.noteContent);
+        InventoryInstance.checkInstanceNotes(
+          oclcRecordData.notes.noteType,
+          oclcRecordData.notes.noteContent,
+        );
 
         InstanceRecordView.viewSource();
         InventoryViewSource.contains('020\t');
@@ -96,6 +106,7 @@ describe('inventory', () => {
         InventoryViewSource.contains(oclcRecordData.physicalDescription);
         InventoryViewSource.contains('650\t');
         InventoryViewSource.contains(oclcRecordData.subject);
-      });
+      },
+    );
   });
 });

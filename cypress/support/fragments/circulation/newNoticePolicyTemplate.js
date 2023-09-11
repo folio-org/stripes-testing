@@ -25,7 +25,7 @@ import { actionsButtons } from './newNoticePolicy';
 const titles = {
   addToken: 'Add token',
   newTemplate: 'New patron notice template',
-  templates: 'Patron notice templates'
+  templates: 'Patron notice templates',
 };
 const patronNoticeTemplatePaneContent = PaneContent({ id: 'patron-notice-template-pane-content' });
 const saveButton = Button({ id: 'footer-save-entity' });
@@ -44,7 +44,7 @@ const defaultUi = {
   active: 'Yes',
   description: 'Template created by autotest team',
   subject: 'Subject_Test',
-  body: 'Test_email_body'
+  body: 'Test_email_body',
 };
 
 export default {
@@ -69,7 +69,9 @@ export default {
       descriptionField.has({ value: noticePolicyTemplate.description }),
       subjectField.has({ value: noticePolicyTemplate.subject }),
     ]);
-    if (autoSave) { cy.get('#footer-save-entity').click(); }
+    if (autoSave) {
+      cy.get('#footer-save-entity').click();
+    }
   },
 
   chooseCategory: (category) => {
@@ -88,15 +90,24 @@ export default {
   verifyMetadataObjectIsVisible: (creator = 'Unknown user') => {
     cy.expect([
       patronNoticeTemplatePaneContent.find(Accordion({ label: 'General information' })).exists(),
-      patronNoticeTemplatePaneContent.find(Button('General information')).has({ ariaExpanded: 'true' }),
+      patronNoticeTemplatePaneContent
+        .find(Button('General information'))
+        .has({ ariaExpanded: 'true' }),
     ]);
     cy.do(patronNoticeTemplatePaneContent.find(Button(including('Record last updated'))).click());
-    cy.expect(patronNoticeTemplatePaneContent.find(MetaSection({ updatedByText: including(creator) })).exists());
+    cy.expect(
+      patronNoticeTemplatePaneContent
+        .find(MetaSection({ updatedByText: including(creator) }))
+        .exists(),
+    );
   },
 
   verifyGeneralInformationForDuplicate: (template) => {
     cy.expect([
-      nameField.has({ value: template.name, error: 'A patron notice with this name already exists' }),
+      nameField.has({
+        value: template.name,
+        error: 'A patron notice with this name already exists',
+      }),
       activeCheckbox.has({ checked: true }),
       descriptionField.has({ value: template.description }),
       categorySelect.has({ value: template.category }),
@@ -125,16 +136,11 @@ export default {
   },
 
   saveAndClose() {
-    return cy.do([saveButton.has({ disabled: false }),
-      saveButton.click(),
-    ]);
+    return cy.do([saveButton.has({ disabled: false }), saveButton.click()]);
   },
 
   checkNewButton() {
-    cy.expect([
-      newButton.exists(),
-      newButton.should('not.be.disabled')
-    ]);
+    cy.expect([newButton.exists(), newButton.should('not.be.disabled')]);
   },
 
   checkTemplateActions() {
@@ -164,17 +170,24 @@ export default {
       bodyField.has({ value: '' }),
       Select({ id: 'input-patron-notice-subject' }).has({ value: 'Loan' }),
       Button({ id: 'accordion-toggle-button-email-template-form' }).has({ ariaExpanded: true }),
-      activeCheckbox.has({ checked:'true' }),
-      cy.get('select[name="category"]').get('option').each(($option, index) => {
-        if (index <= 5) {
-          expect($option).to.contain(Object.values(NOTICE_CATEGORIES)[index].name);
-        }
-      })
+      activeCheckbox.has({ checked: 'true' }),
+      cy
+        .get('select[name="category"]')
+        .get('option')
+        .each(($option, index) => {
+          if (index <= 5) {
+            expect($option).to.contain(Object.values(NOTICE_CATEGORIES)[index].name);
+          }
+        }),
     ]);
   },
 
   checkAfterSaving: (noticePolicyTemplate) => {
-    Object.values(noticePolicyTemplate).forEach((prop) => cy.expect(Pane(noticePolicyTemplate.name).find(KeyValue({ value: prop })).exists()));
+    Object.values(noticePolicyTemplate).forEach((prop) => cy.expect(
+      Pane(noticePolicyTemplate.name)
+        .find(KeyValue({ value: prop }))
+        .exists(),
+    ));
   },
 
   delete: () => {
@@ -186,18 +199,11 @@ export default {
   },
 
   duplicateTemplate: () => {
-    cy.do([
-      actionsButton.click(),
-      actionsButtons.duplicate.click(),
-    ]);
+    cy.do([actionsButton.click(), actionsButtons.duplicate.click()]);
   },
 
   editTemplate(name) {
-    cy.do([
-      NavListItem(name).click(),
-      actionsButton.click(),
-      actionsButtons.edit.click(),
-    ]);
+    cy.do([NavListItem(name).click(), actionsButton.click(), actionsButtons.edit.click()]);
   },
 
   typeTemplateName: (noticePolicytemplateName) => {

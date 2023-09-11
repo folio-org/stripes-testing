@@ -17,12 +17,17 @@ import {
   including,
   Section,
   KeyValue,
-  Card
+  Card,
 } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import getRandomPostfix from '../../utils/stringTools';
 import SelectInstanceModal from './selectInstanceModal';
-import { ORDER_FORMAT_NAMES, ACQUISITION_METHOD_NAMES, RECEIVING_WORKFLOW_NAMES, MATERIAL_TYPE_NAMES } from '../../constants';
+import {
+  ORDER_FORMAT_NAMES,
+  ACQUISITION_METHOD_NAMES,
+  RECEIVING_WORKFLOW_NAMES,
+  MATERIAL_TYPE_NAMES,
+} from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 
 const path = require('path');
@@ -88,7 +93,7 @@ const notesSection = Section({ id: 'notes' });
 const trashButton = Button({ icon: 'trash' });
 const submitOrderLine = () => {
   const submitButton = Button('Submit');
-  cy.get('body').then($body => {
+  cy.get('body').then(($body) => {
     if ($body.find('[id=line-is-not-unique-confirmation]').length) {
       cy.wait(4000);
       cy.do(Modal({ id: 'line-is-not-unique-confirmation' }).find(submitButton).click());
@@ -105,17 +110,11 @@ export default {
   submitOrderLine,
   checkQuantityPhysical,
   searchByParameter: (parameter, value) => {
-    cy.do([
-      searchForm.selectIndex(parameter),
-      searchForm.fillIn(value),
-      searchButton.click(),
-    ]);
+    cy.do([searchForm.selectIndex(parameter), searchForm.fillIn(value), searchButton.click()]);
   },
 
   clickOnOrderLines: () => {
-    cy.do([
-      orderLineButton.click(),
-    ]);
+    cy.do([orderLineButton.click()]);
   },
   waitLoading() {
     cy.expect([
@@ -133,17 +132,21 @@ export default {
   },
 
   checkOrderlineSearchResults: (orderLineNumber) => {
-    cy.expect(MultiColumnList({ id: 'order-line-list' })
-      .find(MultiColumnListRow({ index: 0 }))
-      .find(MultiColumnListCell({ columnIndex: 0 }))
-      .has({ content: orderLineNumber }));
+    cy.expect(
+      MultiColumnList({ id: 'order-line-list' })
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .has({ content: orderLineNumber }),
+    );
   },
 
   checkCreatedPOLinePhysicalResource: (orderLineTitleName, fund) => {
     cy.expect([
       orderLineInfoPage.exists(),
       itemDetailsSection.find(KeyValue({ value: orderLineTitleName })).exists(),
-      poLineInfoSection.find(KeyValue({ value: ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE_Check })).exists(),
+      poLineInfoSection
+        .find(KeyValue({ value: ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE_Check }))
+        .exists(),
       fundDistributionSection
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 0 }))
@@ -168,7 +171,9 @@ export default {
     cy.expect([
       orderLineInfoPage.exists(),
       itemDetailsSection.find(KeyValue({ value: orderLineTitleName })).exists(),
-      poLineInfoSection.find(KeyValue({ value: ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE_Check })).exists(),
+      poLineInfoSection
+        .find(KeyValue({ value: ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE_Check }))
+        .exists(),
       fundDistributionSection
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 0 }))
@@ -178,24 +183,25 @@ export default {
   },
 
   closeThirdPane: () => {
-    cy.do(PaneHeader({ id: 'paneHeaderorder-details' }).find(Button({ icon: 'times' })).click());
+    cy.do(
+      PaneHeader({ id: 'paneHeaderorder-details' })
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
   },
 
   getSearchParamsMap(orderNumber, currentDate) {
     const searchParamsMap = new Map();
     // 'date opened' parameter verified separately due to different condition
-    searchParamsMap.set('PO number', orderNumber)
+    searchParamsMap
+      .set('PO number', orderNumber)
       .set('Keyword', orderNumber)
       .set('Date created', currentDate);
     return searchParamsMap;
   },
   checkPoSearch(searchParamsMap, orderNumber) {
     for (const [key, value] of searchParamsMap.entries()) {
-      cy.do([
-        searchField.selectIndex(key),
-        searchField.fillIn(value),
-        searchButton.click(),
-      ]);
+      cy.do([searchField.selectIndex(key), searchField.fillIn(value), searchButton.click()]);
       // verify that first row in the result list contains related order line title
       this.checkSearchResults(orderNumber);
       this.resetFilters();
@@ -205,10 +211,7 @@ export default {
   },
 
   addPOLine: () => {
-    cy.do([
-      polListingAccordion.find(actionsButton).click(),
-      Button('Add PO line').click()
-    ]);
+    cy.do([polListingAccordion.find(actionsButton).click(), Button('Add PO line').click()]);
   },
 
   backToEditingOrder: () => {
@@ -218,7 +221,11 @@ export default {
   },
 
   openVersionHistory() {
-    cy.do(Section({ id: 'order-lines-details' }).find(Button({ icon: 'clock' })).click());
+    cy.do(
+      Section({ id: 'order-lines-details' })
+        .find(Button({ icon: 'clock' }))
+        .click(),
+    );
     cy.wait(2000);
     cy.expect([
       agreementLinesSection.absent(),
@@ -236,7 +243,10 @@ export default {
 
   selectVersionHistoryCard(date) {
     cy.do([
-      orderHistorySection.find(Card({ headerStart: date })).find(Button({ icon: 'clock' })).click(),
+      orderHistorySection
+        .find(Card({ headerStart: date }))
+        .find(Button({ icon: 'clock' }))
+        .click(),
     ]);
   },
 
@@ -255,7 +265,7 @@ export default {
     cy.do([
       paneHeaderOrderLinesDetailes.find(actionsButton).click(),
       Button('Delete').click(),
-      Button({ id: 'clickable-delete-line-confirmation-confirm' }).click()
+      Button({ id: 'clickable-delete-line-confirmation-confirm' }).click(),
     ]);
   },
 
@@ -265,7 +275,9 @@ export default {
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
-      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
+      ),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
@@ -273,7 +285,7 @@ export default {
       locationSelect.click(),
       onlineLocationOption.click(),
       quantityPhysicalLocationField.fillIn(quantityPhysical),
-      saveAndClose.click()
+      saveAndClose.click(),
     ]);
   },
 
@@ -283,7 +295,9 @@ export default {
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
-      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
+      ),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn('1'),
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
@@ -291,7 +305,7 @@ export default {
       locationSelect.click(),
       onlineLocationOption.click(),
       quantityPhysicalLocationField.fillIn('1'),
-      saveAndClose.click()
+      saveAndClose.click(),
     ]);
   },
   POLineInfodorPhysicalMaterialWithLocation: (orderLineTitleName, institutionId) => {
@@ -300,7 +314,9 @@ export default {
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
-      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
+      ),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
@@ -311,7 +327,7 @@ export default {
     cy.do([
       selectPermanentLocationModal.find(saveButton).click(),
       quantityPhysicalLocationField.fillIn(quantityPhysical),
-      saveAndClose.click()
+      saveAndClose.click(),
     ]);
   },
 
@@ -321,7 +337,9 @@ export default {
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
-      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY,
+      ),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
@@ -333,7 +351,7 @@ export default {
       locationSelect.click(),
       onlineLocationOption.click(),
       quantityPhysicalLocationField.fillIn(quantityPhysical),
-      saveAndClose.click()
+      saveAndClose.click(),
     ]);
   },
 
@@ -343,7 +361,9 @@ export default {
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.OTHER),
       acquisitionMethodButton.click(),
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
-      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY,
+      ),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
@@ -355,7 +375,7 @@ export default {
       locationSelect.click(),
       onlineLocationOption.click(),
       quantityPhysicalLocationField.fillIn(quantityPhysical),
-      saveAndClose.click()
+      saveAndClose.click(),
     ]);
   },
 
@@ -367,7 +387,9 @@ export default {
     cy.wait(2000);
     cy.do([
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
-      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
+      ),
       physicalUnitPriceTextField.fillIn(unitPrice),
       quantityPhysicalTextField.fillIn(quantity),
       addFundDistributionButton.click(),
@@ -383,7 +405,7 @@ export default {
     cy.do([
       selectPermanentLocationModal.find(saveButton).click(),
       quantityPhysicalLocationField.fillIn(quantity),
-      saveAndClose.click()
+      saveAndClose.click(),
     ]);
     cy.wait(4000);
     submitOrderLine();
@@ -395,7 +417,7 @@ export default {
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
       fundDistributionField.fillIn(value),
-      saveAndClose.click()
+      saveAndClose.click(),
     ]);
     cy.wait(6000);
     submitOrderLine();
@@ -405,7 +427,7 @@ export default {
     cy.do(Pane({ id: 'order-lines-results-pane' }).find(Link(POlinenumber)).click());
   },
   selectreceivedTitleName: (title) => {
-    cy.do(receivedtitleDetails.find((Link(title))).click());
+    cy.do(receivedtitleDetails.find(Link(title)).click());
   },
 
   addFundToPOL(fund, value) {
@@ -415,19 +437,27 @@ export default {
       SelectionOption(`${fund.name} (${fund.code})`).click(),
       Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
       fundDistributionField.fillIn(value),
-      saveAndClose.click()
+      saveAndClose.click(),
     ]);
     cy.wait(6000);
     submitOrderLine();
   },
 
-  rolloverPOLineInfoforElectronicResourceWithFund: (orderLineTitleName, fund, unitPrice, quantity, value) => {
+  rolloverPOLineInfoforElectronicResourceWithFund: (
+    orderLineTitleName,
+    fund,
+    unitPrice,
+    quantity,
+    value,
+  ) => {
     cy.do([
       orderLineTitleField.fillIn(orderLineTitleName),
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE),
       acquisitionMethodButton.click(),
       SelectionOption(ORDER_FORMAT_NAMES.OTHER).click(),
-      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
+      ),
       electronicUnitPriceTextField.fillIn(unitPrice),
       quantityElectronicTextField.fillIn(quantity),
       addFundDistributionButton.click(),
@@ -439,7 +469,7 @@ export default {
       locationSelect.click(),
       onlineLocationOption.click(),
       quantityElectronicField.fillIn(quantity),
-      saveAndClose.click()
+      saveAndClose.click(),
     ]);
   },
 
@@ -449,7 +479,9 @@ export default {
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE),
       acquisitionMethodButton.click(),
       SelectionOption(ORDER_FORMAT_NAMES.OTHER).click(),
-      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
+      ),
       electronicUnitPriceTextField.fillIn(electronicUnitPrice),
       quantityElectronicTextField.fillIn(quantityElectronic),
       addFundDistributionButton.click(),
@@ -460,7 +492,7 @@ export default {
       locationSelect.click(),
       onlineLocationOption.click(),
       quantityElectronicField.fillIn(quantityElectronic),
-      saveAndClose.click()
+      saveAndClose.click(),
     ]);
   },
 
@@ -481,7 +513,7 @@ export default {
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
       fundDistributionField.fillIn('100'),
-      saveAndClose.click()
+      saveAndClose.click(),
     ]);
   },
 
@@ -493,7 +525,9 @@ export default {
     cy.wait(2000);
     cy.do([
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
-      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
+      ),
       physicalUnitPriceTextField.fillIn(unitPrice),
       quantityPhysicalTextField.fillIn(quantity),
       Button({ id: 'currency' }).click(),
@@ -510,7 +544,7 @@ export default {
     cy.do([
       selectPermanentLocationModal.find(saveButton).click(),
       quantityPhysicalLocationField.fillIn(quantity),
-      saveAndClose.click()
+      saveAndClose.click(),
     ]);
     cy.wait(4000);
     submitOrderLine();
@@ -524,7 +558,9 @@ export default {
     cy.wait(2000);
     cy.do([
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
-      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
+      ),
       physicalUnitPriceTextField.fillIn(unitPrice),
       quantityPhysicalTextField.fillIn(quantity),
       Button({ id: 'currency' }).click(),
@@ -541,7 +577,7 @@ export default {
     cy.do([
       selectPermanentLocationModal.find(saveButton).click(),
       quantityPhysicalLocationField.fillIn(quantity),
-      saveAndClose.click()
+      saveAndClose.click(),
     ]);
     cy.wait(4000);
     submitOrderLine();
@@ -554,7 +590,9 @@ export default {
       acquisitionMethodButton.click(),
       acquisitionMethodButton.click(),
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
-      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY,
+      ),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
       electronicUnitPriceTextField.fillIn(electronicUnitPrice),
@@ -582,7 +620,9 @@ export default {
       acquisitionMethodButton.click(),
       acquisitionMethodButton.click(),
       SelectionOption(AUMethod).click(),
-      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY,
+      ),
       Select({ name: 'vendorDetail.vendorAccount' }).choose(accountNumber),
     ]);
     cy.do([
@@ -637,7 +677,12 @@ export default {
     submitOrderLine();
   },
 
-  fillInPOLineInfoForExportWithLocationForPhysicalResource(accountNumber, AUMethod, institutionName, quantity) {
+  fillInPOLineInfoForExportWithLocationForPhysicalResource(
+    accountNumber,
+    AUMethod,
+    institutionName,
+    quantity,
+  ) {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
@@ -697,7 +742,9 @@ export default {
       Select({ name: 'vendorDetail.vendorAccount' }).choose(accountNumber),
     ]);
     cy.do([
-      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
+      ),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantity),
       electronicUnitPriceTextField.fillIn(electronicUnitPrice),
@@ -712,9 +759,13 @@ export default {
       selectPermanentLocationModal.find(saveButton).click(),
       quantityPhysicalLocationField.fillIn(quantity),
       quantityElectronicField.fillIn(quantity),
-      physicalResourceDetailsAccordion.find(Select({ name: 'physical.createInventory' })).choose('Instance, holdings, item'),
-      eResourcesDetails.find(Select({ name: 'eresource.createInventory' })).choose('Instance, holdings'),
-      saveAndClose.click()
+      physicalResourceDetailsAccordion
+        .find(Select({ name: 'physical.createInventory' }))
+        .choose('Instance, holdings, item'),
+      eResourcesDetails
+        .find(Select({ name: 'eresource.createInventory' }))
+        .choose('Instance, holdings'),
+      saveAndClose.click(),
     ]);
     // If purchase order line will be dublicate, Modal with button 'Submit' will be activated
     cy.wait(2000);
@@ -754,7 +805,9 @@ export default {
     cy.do([
       buttonFVendorFilter.click(),
       Button({ id: 'purchaseOrder.vendor-button' }).click(),
-      Modal('Select Organization').find(SearchField({ id: searhInputId })).fillIn(invoice.vendorName),
+      Modal('Select Organization')
+        .find(SearchField({ id: searhInputId }))
+        .fillIn(invoice.vendorName),
       searchButton.click(),
     ]);
     SearchHelper.selectFromResultsList();
@@ -784,15 +837,18 @@ export default {
   },
 
   selectPOLInOrder: (indexNumber) => {
-    cy.do(polListingAccordion
-      .find(MultiColumnListRow({ index: indexNumber }))
-      .find(MultiColumnListCell({ columnIndex: 0 }))
-      .click());
+    cy.do(
+      polListingAccordion
+        .find(MultiColumnListRow({ index: indexNumber }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .click(),
+    );
   },
 
   editPOLInOrder: () => {
-    cy.do([orderLineDetailsPane.find(paneHeaderOrderLinesDetailes.find(actionsButton)).click(),
-      Button('Edit').click()
+    cy.do([
+      orderLineDetailsPane.find(paneHeaderOrderLinesDetailes.find(actionsButton)).click(),
+      Button('Edit').click(),
     ]);
     cy.wait(4000);
   },
@@ -800,7 +856,7 @@ export default {
   deleteFundInPOL() {
     cy.do([
       Section({ id: 'fundDistributionAccordion' }).find(trashButton).click(),
-      saveAndClose.click()
+      saveAndClose.click(),
     ]);
     cy.wait(6000);
     submitOrderLine();
@@ -810,7 +866,7 @@ export default {
     cy.do([
       Button('Add contributor').click(),
       TextField('Contributor*').fillIn(contibutor),
-      Select('Contributor type*').choose('Personal name')
+      Select('Contributor type*').choose('Personal name'),
     ]);
   },
 
@@ -819,14 +875,15 @@ export default {
   },
 
   openInstance: () => {
-    cy.do(Section({ id: 'ItemDetails' }).find(Link({ href: including('/inventory/view/') })).click());
+    cy.do(
+      Section({ id: 'ItemDetails' })
+        .find(Link({ href: including('/inventory/view/') }))
+        .click(),
+    );
   },
 
   openReceiving: () => {
-    cy.do([
-      paneHeaderOrderLinesDetailes.find(actionsButton).click(),
-      Button('Receive').click()
-    ]);
+    cy.do([paneHeaderOrderLinesDetailes.find(actionsButton).click(), Button('Receive').click()]);
   },
 
   fillPolByLinkTitle: (instanceTitle) => {
@@ -872,7 +929,9 @@ export default {
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.OTHER),
       acquisitionMethodButton.click(),
       SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
-      receivingWorkflowSelect.choose(RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
+      ),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
@@ -880,7 +939,7 @@ export default {
       locationSelect.click(),
       onlineLocationOption.click(),
       quantityPhysicalLocationField.fillIn(quantityPhysical),
-      saveAndClose.click()
+      saveAndClose.click(),
     ]);
   },
 
@@ -890,7 +949,7 @@ export default {
       Button({ id: 'find-instance-trigger' }).click(),
       selectInstanceModal.find(TextField({ name: 'query' })).fillIn(instanceName),
       selectInstanceModal.find(searchButton).click(),
-      selectInstanceModal.find(MultiColumnListRow({ index: rowNumber })).click()
+      selectInstanceModal.find(MultiColumnListRow({ index: rowNumber })).click(),
     ]);
     // Need to wait,while entering data loading on page
     cy.wait(2000);
@@ -905,7 +964,11 @@ export default {
   },
 
   clickNotConnectionInfoButton: () => {
-    cy.do(Section({ id: 'itemDetails' }).find(Button({ icon: 'info' })).click());
+    cy.do(
+      Section({ id: 'itemDetails' })
+        .find(Button({ icon: 'info' }))
+        .click(),
+    );
   },
 
   selectCurrentEncumbrance: (currentEncumbrance) => {
@@ -914,11 +977,9 @@ export default {
 
   cancelPOL: () => {
     cy.do([
-      orderLineDetailsPane
-        .find(paneHeaderOrderLinesDetailes
-          .find(actionsButton)).click(),
+      orderLineDetailsPane.find(paneHeaderOrderLinesDetailes.find(actionsButton)).click(),
       Button('Cancel').click(),
-      Button('Cancel order line').click()
+      Button('Cancel order line').click(),
     ]);
   },
 
@@ -926,7 +987,7 @@ export default {
     cy.do([
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
-      saveAndClose.click()
+      saveAndClose.click(),
     ]);
   },
 
@@ -941,23 +1002,26 @@ export default {
   checkDownloadedFile() {
     cy.wait(10000);
     // Get the path to the Downloads folder
-    const downloadsFolder = Cypress.config('downloadsFolder') || Cypress.env('downloadsFolder') || 'Downloads';
+    const downloadsFolder =
+      Cypress.config('downloadsFolder') || Cypress.env('downloadsFolder') || 'Downloads';
 
     // Find the most recently downloaded file
     cy.task('findFiles', `${downloadsFolder}/*.csv`, {
       sortBy: 'modified',
       sortOrder: 'desc',
       recursive: true,
-      timeout: 15000
+      timeout: 15000,
     }).then((files) => {
       if (files.length === 0) {
         throw new Error(`No files found in ${downloadsFolder}`);
       }
       const fileName = path.basename(files[0]);
       const filePath = `${downloadsFolder}\\${fileName}`;
-      cy.readFile(filePath).then(fileContent => {
+      cy.readFile(filePath).then((fileContent) => {
         const fileRows = fileContent.split('\n');
-        expect(fileRows[0].trim()).to.equal('"PO number prefix","PO number","PO number suffix","Vendor","Organization type","Order type","Acquisitions units","Approval date","Assigned to","Bill to","Ship to","Manual","Re-encumber","Created by","Created on","Note","Workflow status","Approved","Renewal interval","Subscription","Manual renewal","Ongoing notes","Review period","Renewal date","Review date","PO tags","POLine number","Title","Instance UUID","Subscription from","Subscription to","Subscription interval","Receiving note","Publisher","Edition","Linked package","Contributor, Contributor type","Product ID, Qualifier, Product ID type","Internal note","Acquisition method","Order format","Created on (PO Line)","Receipt date","Receipt status","Payment status","Source","Donor","Selector","Requester","Cancellation restriction","Cancellation description","Rush","Collection","Line description","Vendor reference number, reference type","Instructions to vendor","Account number","Physical unit price","Quantity physical","Electronic unit price","Quantity electronic","Discount","Estimated price","Currency","Fund code, Expense class, Value, Amount","Location, Quantity P, Quantity E","Material supplier","Receipt due","Expected receipt date","Volumes","Create inventory","Material type","Access provider","Activation status","Activation due","Create inventory E","Material type E","Trial","Expected activation","User limit","URL","POLine tags","Renewal note"');
+        expect(fileRows[0].trim()).to.equal(
+          '"PO number prefix","PO number","PO number suffix","Vendor","Organization type","Order type","Acquisitions units","Approval date","Assigned to","Bill to","Ship to","Manual","Re-encumber","Created by","Created on","Note","Workflow status","Approved","Renewal interval","Subscription","Manual renewal","Ongoing notes","Review period","Renewal date","Review date","PO tags","POLine number","Title","Instance UUID","Subscription from","Subscription to","Subscription interval","Receiving note","Publisher","Edition","Linked package","Contributor, Contributor type","Product ID, Qualifier, Product ID type","Internal note","Acquisition method","Order format","Created on (PO Line)","Receipt date","Receipt status","Payment status","Source","Donor","Selector","Requester","Cancellation restriction","Cancellation description","Rush","Collection","Line description","Vendor reference number, reference type","Instructions to vendor","Account number","Physical unit price","Quantity physical","Electronic unit price","Quantity electronic","Discount","Estimated price","Currency","Fund code, Expense class, Value, Amount","Location, Quantity P, Quantity E","Material supplier","Receipt due","Expected receipt date","Volumes","Create inventory","Material type","Access provider","Activation status","Activation due","Create inventory E","Material type E","Trial","Expected activation","User limit","URL","POLine tags","Renewal note"',
+        );
       });
     });
   },
@@ -968,24 +1032,26 @@ export default {
 
   checkCreateInventory() {
     cy.expect([
-      physicalResourceDetailsAccordion.find(KeyValue({ value: 'Instance, Holding, Item' })).exists(),
-      eResourcesDetails.find(KeyValue({ value: 'Instance, Holding, Item' })).exists()
+      physicalResourceDetailsAccordion
+        .find(KeyValue({ value: 'Instance, Holding, Item' }))
+        .exists(),
+      eResourcesDetails.find(KeyValue({ value: 'Instance, Holding, Item' })).exists(),
     ]);
   },
 
   openLinkedInstance() {
     cy.do(Accordion('Linked instance').clickHeader());
-    cy.do(Accordion('Linked instance')
-      .find(Link({ href: including('/inventory/view') }))
-      .click());
+    cy.do(
+      Accordion('Linked instance')
+        .find(Link({ href: including('/inventory/view') }))
+        .click(),
+    );
   },
 
   getAssignedPOLNumber: () => cy.then(() => Accordion('Purchase order line').find(KeyValue('POL number')).value()),
 
   verifyPOLDetailsIsOpened: () => {
-    cy.expect(orderLineDetailsPane
-      .find(paneHeaderOrderLinesDetailes)
-      .exists());
+    cy.expect(orderLineDetailsPane.find(paneHeaderOrderLinesDetailes).exists());
   },
 
   verifyOrderTitle(title) {
@@ -994,33 +1060,36 @@ export default {
 
   addNewNote() {
     cy.do([
-      Section({ id: 'notes' }).find(Button({ id: 'note-create-button' })).click(),
+      Section({ id: 'notes' })
+        .find(Button({ id: 'note-create-button' }))
+        .click(),
       TextField({ name: 'title' }).fillIn(noteTitle),
-      saveAndClose.click()
+      saveAndClose.click(),
     ]);
     cy.wait(4000);
   },
 
   receiveOrderLineViaActions() {
-    cy.do([PaneHeader({ id: 'paneHeaderorder-lines-details' })
-      .find(actionsButton).click(),
-    Button('Receive').click(),
+    cy.do([
+      PaneHeader({ id: 'paneHeaderorder-lines-details' }).find(actionsButton).click(),
+      Button('Receive').click(),
     ]);
   },
 
   checkCreatedInventoryInPhysicalRecourceDetails: (value) => {
-    cy.expect(Accordion('Physical resource details')
-      .find(KeyValue('Create inventory')).has({ value }));
+    cy.expect(
+      Accordion('Physical resource details').find(KeyValue('Create inventory')).has({ value }),
+    );
   },
 
   checkCreatedInventoryInElectronicRecourceDetails: (value) => {
-    cy.expect(Accordion('E-resources details')
-      .find(KeyValue('Create inventory')).has({ value }));
+    cy.expect(Accordion('E-resources details').find(KeyValue('Create inventory')).has({ value }));
   },
 
   checkCreatedInventoryInOtherRecourceDetails: (value) => {
-    cy.expect(Accordion('Other resource details')
-      .find(KeyValue('Create inventory')).has({ value }));
+    cy.expect(
+      Accordion('Other resource details').find(KeyValue('Create inventory')).has({ value }),
+    );
   },
 
   checkIsOrderCreatedWithDataFromImportedFile: (orderData) => {
@@ -1038,63 +1107,102 @@ export default {
       KeyValue('Receiving workflow').has({ value: orderData.receivingWorkflow }),
       KeyValue('Account number').has({ value: orderData.accountNumber }),
       KeyValue('Physical unit price').has({ value: orderData.physicalUnitPrice }),
-      Accordion('Cost details').find(KeyValue('Quantity physical')).has({ value: orderData.quantityPhysical }),
+      Accordion('Cost details')
+        .find(KeyValue('Quantity physical'))
+        .has({ value: orderData.quantityPhysical }),
       KeyValue('Currency').has({ value: orderData.currency }),
       KeyValue('Material supplier').has({ value: orderData.materialSupplier }),
       KeyValue('Create inventory').has({ value: orderData.createInventory }),
-      KeyValue('Material type').has({ value: orderData.materialType })
+      KeyValue('Material type').has({ value: orderData.materialType }),
     ]);
-    cy.expect(MultiColumnList({ id: 'list-item-contributors' })
-      .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 0 }))
-      .has({ content: orderData.contributor }));
-    cy.expect(MultiColumnList({ id: 'list-item-contributors' })
-      .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 1 }))
-      .has({ content: orderData.contributorType }));
-    cy.expect(MultiColumnList({ id: 'list-product-ids' })
-      .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 0 }))
-      .has({ content: orderData.productId }));
-    cy.expect(MultiColumnList({ id: 'list-product-ids' })
-      .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 2 }))
-      .has({ content: orderData.productIDType }));
-    cy.expect(MultiColumnList({ id: 'list-item-reference-numbers' })
-      .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 0 }))
-      .has({ content: orderData.vendorReferenceNumber }));
-    cy.expect(MultiColumnList({ id: 'list-item-reference-numbers' })
-      .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 1 }))
-      .has({ content: orderData.vendorReferenceType }));
+    cy.expect(
+      MultiColumnList({ id: 'list-item-contributors' })
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .has({ content: orderData.contributor }),
+    );
+    cy.expect(
+      MultiColumnList({ id: 'list-item-contributors' })
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 1 }))
+        .has({ content: orderData.contributorType }),
+    );
+    cy.expect(
+      MultiColumnList({ id: 'list-product-ids' })
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .has({ content: orderData.productId }),
+    );
+    cy.expect(
+      MultiColumnList({ id: 'list-product-ids' })
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 2 }))
+        .has({ content: orderData.productIDType }),
+    );
+    cy.expect(
+      MultiColumnList({ id: 'list-item-reference-numbers' })
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .has({ content: orderData.vendorReferenceNumber }),
+    );
+    cy.expect(
+      MultiColumnList({ id: 'list-item-reference-numbers' })
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 1 }))
+        .has({ content: orderData.vendorReferenceType }),
+    );
     cy.expect([
       KeyValue('Name (code)').has({ value: orderData.locationName }),
-      Pane({ id: 'order-lines-details' }).find(Accordion('Location'))
+      Pane({ id: 'order-lines-details' })
+        .find(Accordion('Location'))
         .find(KeyValue('Quantity physical'))
-        .has({ value: orderData.locationQuantityPhysical })
+        .has({ value: orderData.locationQuantityPhysical }),
     ]);
-    cy.expect(fundDistributionAccordion
-      .find(MultiColumnList())
-      .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 0 }))
-      .has({ content: orderData.fund }));
-    cy.expect(fundDistributionAccordion
-      .find(MultiColumnList())
-      .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 2 }))
-      .has({ content: orderData.value }));
+    cy.expect(
+      fundDistributionAccordion
+        .find(MultiColumnList())
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .has({ content: orderData.fund }),
+    );
+    cy.expect(
+      fundDistributionAccordion
+        .find(MultiColumnList())
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 2 }))
+        .has({ content: orderData.value }),
+    );
   },
 
   checkFundAndExpenseClassPopulated(fundInformation) {
-    cy.expect(fundDistributionAccordion
-      .find(MultiColumnList())
-      .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 0 }))
-      .has({ content: fundInformation.fund }));
-    cy.expect(fundDistributionAccordion
-      .find(MultiColumnList())
-      .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 1 }))
-      .has({ content: fundInformation.expenseClass }));
-    cy.expect(fundDistributionAccordion
-      .find(MultiColumnList())
-      .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 2 }))
-      .has({ content: fundInformation.value }));
-    cy.expect(fundDistributionAccordion
-      .find(MultiColumnList())
-      .find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ columnIndex: 3 }))
-      .has({ content: fundInformation.amount }));
+    cy.expect(
+      fundDistributionAccordion
+        .find(MultiColumnList())
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .has({ content: fundInformation.fund }),
+    );
+    cy.expect(
+      fundDistributionAccordion
+        .find(MultiColumnList())
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 1 }))
+        .has({ content: fundInformation.expenseClass }),
+    );
+    cy.expect(
+      fundDistributionAccordion
+        .find(MultiColumnList())
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 2 }))
+        .has({ content: fundInformation.value }),
+    );
+    cy.expect(
+      fundDistributionAccordion
+        .find(MultiColumnList())
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 3 }))
+        .has({ content: fundInformation.amount }),
+    );
   },
 
   checkErrorToastMessage: (message) => {
@@ -1102,20 +1210,20 @@ export default {
     InteractorsTools.checkCalloutErrorMessage(message);
   },
 
-  checkPhysicalQuantityInLocation:(quantity) => {
+  checkPhysicalQuantityInLocation: (quantity) => {
     const arrayOfQuantityRows = [];
     cy.get('#location')
       .find('[class*="col-"]:nth-child(2)')
-      .each($row => {
+      .each(($row) => {
         cy.get('[class*="kvValue-"]', { withinSubject: $row })
-        // extract its text content
+          // extract its text content
           .invoke('text')
-          .then(cellValue => {
+          .then((cellValue) => {
             arrayOfQuantityRows.push(cellValue);
           });
       })
       .then(() => {
         expect(quantity).to.equal(arrayOfQuantityRows.length);
       });
-  }
+  },
 };

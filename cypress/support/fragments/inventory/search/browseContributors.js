@@ -1,5 +1,23 @@
 import uuid from 'uuid';
-import { Select, TextInput, Heading, PaneHeader, Form, Button, Option, Section, PaneContent, HTML, including, MultiColumnListCell, Pane, MultiColumnListHeader, MultiColumnListRow, Image, or } from '../../../../../interactors';
+import {
+  Select,
+  TextInput,
+  Heading,
+  PaneHeader,
+  Form,
+  Button,
+  Option,
+  Section,
+  PaneContent,
+  HTML,
+  including,
+  MultiColumnListCell,
+  Pane,
+  MultiColumnListHeader,
+  MultiColumnListRow,
+  Image,
+  or,
+} from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
 const defaultInstanceAWithContributor = {
@@ -9,9 +27,9 @@ const defaultInstanceAWithContributor = {
     {
       name: `__A_test_contributor_${getRandomPostfix()}`,
       primary: false,
-    }
+    },
   ],
-  id: uuid()
+  id: uuid(),
 };
 
 const defaultInstanceZWithContributor = {
@@ -21,9 +39,9 @@ const defaultInstanceZWithContributor = {
     {
       name: `__Z_test_contributor_${getRandomPostfix()}`,
       primary: false,
-    }
+    },
   ],
-  id: uuid()
+  id: uuid(),
 };
 
 const paneIntanceDetails = PaneContent({ id: 'browse-inventory-results-pane-content' });
@@ -34,7 +52,10 @@ const browseButton = Button({ id: 'mode-navigation-browse' });
 const searchButton = Button({ type: 'submit' });
 const resetAllButton = Button('Reset all');
 const searchButtonDisabled = Button({ type: 'submit', disabled: true });
-const resetAllButtonDisabled = Button({ className: including('resetButton---n7KP9'), disabled: true });
+const resetAllButtonDisabled = Button({
+  className: including('resetButton---n7KP9'),
+  disabled: true,
+});
 const nameTypeAccordion = Button({ id: 'accordion-toggle-button-nameType' });
 const rowContributorName = (ContributorName, contributorNameType) => MultiColumnListRow(`${ContributorName}${contributorNameType}1`);
 
@@ -54,14 +75,11 @@ export default {
   },
 
   checkBrowseOptions() {
-    cy.expect([
-      Option({ value: 'contributors' }).exists(),
-      contributorsOption.exists(),
-    ]);
+    cy.expect([Option({ value: 'contributors' }).exists(), contributorsOption.exists()]);
     cy.then(() => Option('Call numbers (all)').index()).then((callNumbersOptionIndex) => {
-        cy.then(() => contributorsOption.index()).then((contributorsOptionIndex) => {
-            expect(contributorsOptionIndex).to.equal(callNumbersOptionIndex + 1);
-        });
+      cy.then(() => contributorsOption.index()).then((contributorsOptionIndex) => {
+        expect(contributorsOptionIndex).to.equal(callNumbersOptionIndex + 1);
+      });
     });
   },
 
@@ -78,9 +96,14 @@ export default {
       Section({ id: 'browse-inventory-filters-pane' }).find(resetAllButtonDisabled).exists(),
       // TODO add check for Relator term accordeon button after product updates
       Section({ id: 'browse-inventory-results-pane' }).find(Heading('Browse inventory')).exists(),
-      Image({ alt: 'View and manage instance records, holdings records and item records' }).exists(),
-      PaneHeader({ id: 'paneHeaderbrowse-inventory-results-pane' }).find(HTML('Enter search criteria to start browsing')).exists(),
-      PaneContent('Browse for results entering a query or choosing a filter.').exists(),[]
+      Image({
+        alt: 'View and manage instance records, holdings records and item records',
+      }).exists(),
+      PaneHeader({ id: 'paneHeaderbrowse-inventory-results-pane' })
+        .find(HTML('Enter search criteria to start browsing'))
+        .exists(),
+      PaneContent('Browse for results entering a query or choosing a filter.').exists(),
+      [],
     ]);
   },
 
@@ -95,14 +118,16 @@ export default {
       MultiColumnListHeader({ id: 'list-column-contributor' }).has({ content: 'Contributor' }),
       MultiColumnListHeader({ id: 'list-column-contributortype' }).has({ content: 'Type' }),
       MultiColumnListHeader({ id: 'list-column-relatorterm' }).has({ content: 'Relator term' }),
-      MultiColumnListHeader({ id: 'list-column-numberoftitles' }).has({ content: 'Number of titles' }),
+      MultiColumnListHeader({ id: 'list-column-numberoftitles' }).has({
+        content: 'Number of titles',
+      }),
     ]);
     cy.expect([
       Pane({ id: 'pane-results' }).find(MultiColumnListHeader()).exists(),
       Button('Previous').is({ visible: true, disabled: true }),
       or(
         Button('Next').is({ visible: true, disabled: true }),
-        Button('Next').is({ visible: true, disabled: false })
+        Button('Next').is({ visible: true, disabled: false }),
       ),
     ]);
   },
@@ -117,7 +142,9 @@ export default {
 
   checkExactSearchResult(contributorA, contributorZ) {
     cy.expect([
-      MultiColumnListCell(contributorA.name).has({ innerHTML: including(`<strong>${contributorA.name}</strong>`) }),
+      MultiColumnListCell(contributorA.name).has({
+        innerHTML: including(`<strong>${contributorA.name}</strong>`),
+      }),
       rowContributorName(contributorA.name, contributorA.contributorNameType).exists(),
       rowContributorName(contributorZ.name, contributorZ.contributorNameType).exists(),
     ]);
@@ -128,34 +155,48 @@ export default {
   },
 
   verifyRecordWithBold(record) {
-    cy.expect(MultiColumnListCell(record).has({ innerHTML: including(`<strong>${record}</strong>`) }));
+    cy.expect(
+      MultiColumnListCell(record).has({ innerHTML: including(`<strong>${record}</strong>`) }),
+    );
   },
 
   checkAuthorityIconAndValueDisplayed(value) {
     cy.expect([
-      MultiColumnListCell({ row: 5, columnIndex: 0 }).has({ innerHTML: including(`<strong>${value}</strong>`) }),
+      MultiColumnListCell({ row: 5, columnIndex: 0 }).has({
+        innerHTML: including(`<strong>${value}</strong>`),
+      }),
       MultiColumnListCell({ row: 5, columnIndex: 0 }).has({ innerHTML: including('<img') }),
-      MultiColumnListCell({ row: 5, columnIndex: 0 }).has({ innerHTML: including('alt="MARC Authorities module">') }),
+      MultiColumnListCell({ row: 5, columnIndex: 0 }).has({
+        innerHTML: including('alt="MARC Authorities module">'),
+      }),
     ]);
   },
 
   checkAuthorityIconAndValueDisplayedForMultipleRows(rowCount, value) {
     for (let i = 0; i < rowCount; i++) {
       cy.expect([
-        MultiColumnListCell({ row: i + 5, columnIndex: 0 }).has({ innerHTML: including(`<strong>${value}</strong>`) }),
+        MultiColumnListCell({ row: i + 5, columnIndex: 0 }).has({
+          innerHTML: including(`<strong>${value}</strong>`),
+        }),
         MultiColumnListCell({ row: i + 5, columnIndex: 0 }).has({ innerHTML: including('<img') }),
-        MultiColumnListCell({ row: i + 5, columnIndex: 0 }).has({ innerHTML: including('alt="MARC Authorities module">') }),
+        MultiColumnListCell({ row: i + 5, columnIndex: 0 }).has({
+          innerHTML: including('alt="MARC Authorities module">'),
+        }),
       ]);
     }
   },
 
   checkSearchResultRow(contributorName, contributorNameType, contributorType, numberOfTitles) {
-    cy.expect(MultiColumnListRow(`${contributorName}${contributorNameType}${contributorType}${numberOfTitles}`).exists());
+    cy.expect(
+      MultiColumnListRow(
+        `${contributorName}${contributorNameType}${contributorType}${numberOfTitles}`,
+      ).exists(),
+    );
   },
 
   checkContributorRowValues: (values) => {
     cy.intercept('GET', '/browse/contributors/instances?*').as('getInstances');
-    cy.wait('@getInstances', { timeout: 10000 }).then(item => {
+    cy.wait('@getInstances', { timeout: 10000 }).then((item) => {
       cy.expect(item.response.body.items[5]).to.include(values);
     });
   },
@@ -175,7 +216,9 @@ export default {
     ]);
     cy.expect([
       recordSelect.has({ value: 'contributors' }),
-      paneIntanceDetails.find(MultiColumnListCell(instance.contributors[0].contributorTypeText)).exists(),
+      paneIntanceDetails
+        .find(MultiColumnListCell(instance.contributors[0].contributorTypeText))
+        .exists(),
       paneIntanceDetails.find(MultiColumnListCell(instance.contributors[0].name)).exists(),
     ]);
   },
@@ -196,7 +239,7 @@ export default {
       method: 'POST',
       path: 'inventory/instances',
       body: instanceWithContributor,
-      isDefaultSearchParamsRequired : false
+      isDefaultSearchParamsRequired: false,
     });
   },
 };

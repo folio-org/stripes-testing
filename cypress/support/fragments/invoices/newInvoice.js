@@ -3,13 +3,13 @@ import DateTools from '../../utils/dateTools';
 import FinanceHelper from '../finance/financeHelper';
 
 export default {
-  defaultUiInvoice : {
+  defaultUiInvoice: {
     id: uuid(),
     status: 'Open',
     invoiceDate: DateTools.getCurrentDate(),
     vendorName: 'Amazon.com',
     accountingCode: '',
     batchGroup: '',
-    invoiceNumber: FinanceHelper.getRandomInvoiceNumber()
-  }
+    invoiceNumber: FinanceHelper.getRandomInvoiceNumber(),
+  },
 };

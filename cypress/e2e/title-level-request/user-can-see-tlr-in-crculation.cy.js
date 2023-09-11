@@ -33,7 +33,7 @@ describe('Create Item or Title level request', () => {
           UserEdit.addServicePointViaApi(
             testData.userServicePoint.id,
             userData.userId,
-            testData.userServicePoint.id
+            testData.userServicePoint.id,
           );
         });
       })
@@ -55,6 +55,6 @@ describe('Create Item or Title level request', () => {
       cy.visit(SettingsMenu.circulationTitleLevelRequestsPath);
       TitleLevelRequests.waitLoading();
       TitleLevelRequests.checkCirculationHasTLR();
-    }
+    },
   );
 });

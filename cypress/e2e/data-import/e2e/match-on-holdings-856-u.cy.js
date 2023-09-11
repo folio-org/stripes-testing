@@ -3,11 +3,13 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TestTypes from '../../../support/dictionary/testTypes';
 import Parallelization from '../../../support/dictionary/parallelization';
-import { LOCATION_NAMES,
+import {
+  LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
   CALL_NUMBER_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
-  JOB_STATUS_NAMES } from '../../../support/constants';
+  JOB_STATUS_NAMES,
+} from '../../../support/constants';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -32,26 +34,38 @@ describe('data-import', () => {
     const nameForUpdateCreateMarcFile = `updateFile${getRandomPostfix()}.mrc`;
     const collectionOfMappingAndActionProfiles = [
       {
-        mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-          name: `createInstanceMappingProf${getRandomPostfix()}` },
-        actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-          name: `createInstanceActionProf${getRandomPostfix()}` }
+        mappingProfile: {
+          typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+          name: `createInstanceMappingProf${getRandomPostfix()}`,
+        },
+        actionProfile: {
+          typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+          name: `createInstanceActionProf${getRandomPostfix()}`,
+        },
       },
       {
-        mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        mappingProfile: {
+          typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `createEHoldingsMappingProf${getRandomPostfix()}`,
-          permanentLocation: `"${LOCATION_NAMES.ONLINE}"` },
-        actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-          name: `createEHoldingsActionProf${getRandomPostfix()}` }
+          permanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
+        },
+        actionProfile: {
+          typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+          name: `createEHoldingsActionProf${getRandomPostfix()}`,
+        },
       },
       {
-        mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        mappingProfile: {
+          typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `updateEHoldingsMappingProf${getRandomPostfix()}`,
-          callNumberType: `"${CALL_NUMBER_TYPE_NAMES.OTHER_SCHEME}"` },
-        actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+          callNumberType: `"${CALL_NUMBER_TYPE_NAMES.OTHER_SCHEME}"`,
+        },
+        actionProfile: {
+          typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `updateEHoldingsActionProf${getRandomPostfix()}`,
-          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
-      }
+          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+        },
+      },
     ];
 
     const matchProfile = {
@@ -60,7 +74,7 @@ describe('data-import', () => {
         field: '856',
         in1: '4',
         in2: '0',
-        subfield: 'u'
+        subfield: 'u',
       },
       matchCriterion: 'Exactly matches',
       existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
@@ -77,7 +91,10 @@ describe('data-import', () => {
     };
 
     before('login', () => {
-      cy.loginAsAdmin({ path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+      cy.loginAsAdmin({
+        path: SettingsMenu.mappingProfilePath,
+        waiter: FieldMappingProfiles.waitLoading,
+      });
       cy.getAdminToken();
     });
 
@@ -85,15 +102,16 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(createInstanceAndEHoldingsJobProfile.profileName);
       JobProfiles.deleteJobProfile(updateEHoldingsJobProfile.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      collectionOfMappingAndActionProfiles.forEach(profile => {
+      collectionOfMappingAndActionProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
         FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
       });
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
-        .then((instance) => {
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
+        (instance) => {
           cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
           InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
+        },
+      );
     });
 
     const createInstanceMappingProfile = (profile) => {
@@ -123,14 +141,22 @@ describe('data-import', () => {
       FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
     };
 
-    it('C17025 Match on Holdings 856 $u (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] }, () => {
+    it(
+      'C17025 Match on Holdings 856 $u (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      () => {
         createInstanceMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
-        FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfMappingAndActionProfiles[0].mappingProfile.name,
+        );
         createHoldingsMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
-        FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[1].mappingProfile.name);
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfMappingAndActionProfiles[1].mappingProfile.name,
+        );
         updateHoldingsMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile);
-        FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[2].mappingProfile.name);
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfMappingAndActionProfiles[2].mappingProfile.name,
+        );
 
         collectionOfMappingAndActionProfiles.forEach(profile => {
           cy.visit(SettingsMenu.actionProfilePath);
@@ -187,6 +213,7 @@ describe('data-import', () => {
           InstanceRecordView.openHoldingView();
           HoldingsRecordView.checkCallNumber('ONLINE');
         });
-      });
+      }
+    );
   });
 });

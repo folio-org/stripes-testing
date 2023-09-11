@@ -6,7 +6,10 @@ import SettingsMenu from '../../../../support/fragments/settingsMenu';
 describe('ui-circulation-settings: create patron notice policies', () => {
   const noticePolicy = { ...NewNoticePolicy.defaultUi };
   beforeEach('login', () => {
-    cy.loginAsAdmin({ path: SettingsMenu.circulationPatronNoticePoliciesPath, waiter: NewNoticePolicy.waitLoading });
+    cy.loginAsAdmin({
+      path: SettingsMenu.circulationPatronNoticePoliciesPath,
+      waiter: NewNoticePolicy.waitLoading,
+    });
   });
 
   it('C6530 Create notice policy (vega)', { tags: [TestType.smoke, devTeams.vega] }, () => {

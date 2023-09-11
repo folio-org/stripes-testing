@@ -9,7 +9,7 @@ export default {
     cy.expect([
       Pane('Other settings').exists(),
       checkoutForm.exists(),
-      checkoutForm.find(Label('Patron id(s) for checkout scanning*')).exists()
+      checkoutForm.find(Label('Patron id(s) for checkout scanning*')).exists(),
     ]);
   },
 
@@ -27,7 +27,7 @@ export default {
   },
 
   selectPatronIdsForCheckoutScanning(optionsNames, checkoutTimeoutDuration) {
-    cy.wrap(optionsNames).each(optionName => {
+    cy.wrap(optionsNames).each((optionName) => {
       if (optionName === 'Barcode') {
         this.verifyCheckboxIsChecked('#barcode-checkbox', 'checkbox');
       } else if (optionName === 'Username') {
@@ -41,10 +41,13 @@ export default {
       timeoutDurationTextField.fillIn(''),
       timeoutDurationTextField.fillIn((+checkoutTimeoutDuration + 1).toString()),
       saveButton.exists(),
-      saveButton.click()]);
-    cy.reload().then(() => cy.do([timeoutDurationTextField.fillIn(''),
+      saveButton.click(),
+    ]);
+    cy.reload().then(() => cy.do([
+      timeoutDurationTextField.fillIn(''),
       timeoutDurationTextField.fillIn(checkoutTimeoutDuration),
-      saveButton.click()]));
+      saveButton.click(),
+    ]));
   },
 
   setOtherSettingsViaApi(params) {

@@ -11,7 +11,7 @@ import {
   Select,
   MultiSelect,
   TextArea,
-  HTML
+  HTML,
 } from '../../../../interactors';
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
@@ -43,12 +43,16 @@ const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) 
 export default {
   addServicePointsViaApi,
 
+  openUserEdit() {
+    cy.do([userDetailsPane.find(actionsButton).click(), editButton.click()]);
+  },
+
   changeMiddleName(midName) {
-    cy.do([
-      userDetailsPane.find(actionsButton).click(),
-      editButton.click(),
-      TextField({ id: 'adduser_middlename' }).fillIn(midName),
-    ]);
+    cy.do(TextField({ id: 'adduser_middlename' }).fillIn(midName));
+  },
+
+  changePreferredFirstName(prefName) {
+    cy.do(TextField({ id: 'adduser_preferredname' }).fillIn(prefName));
   },
 
   addPermissions(permissions) {
@@ -56,10 +60,10 @@ export default {
       userDetailsPane.find(actionsButton).click(),
       editButton.click(),
       permissionsAccordion.clickHeader(),
-      addPermissionsButton.click()
+      addPermissionsButton.click(),
     ]);
 
-    permissions.forEach(permission => {
+    permissions.forEach((permission) => {
       cy.do(userSearch.fillIn(permission));
       cy.expect(userSearch.is({ value: permission }));
       // wait is needed to avoid so fast robot clicks
@@ -71,9 +75,7 @@ export default {
   },
 
   verifyPermissionDoesNotExist(permission) {
-    cy.do([
-      addPermissionsButton.click(),
-      userSearch.fillIn(permission)]);
+    cy.do([addPermissionsButton.click(), userSearch.fillIn(permission)]);
     cy.expect(userSearch.is({ value: permission }));
     // wait is needed to avoid so fast robot clicks
     cy.wait(1000);
@@ -88,7 +90,7 @@ export default {
       Button({ id: 'add-service-point-btn' }).click(),
     ]);
 
-    points.forEach(point => {
+    points.forEach((point) => {
       cy.do(MultiColumnListRow({ content: point, isContainer: true }).find(Checkbox()).click());
     });
 
@@ -114,11 +116,12 @@ export default {
     cy.do(Button({ id: 'clickable-save' }).click());
   },
 
-  changeServicePointPreferenceViaApi: (userId, servicePointIds, defaultServicePointId = null) => cy.okapiRequest({
-    method: 'GET',
-    path: `service-points-users?query="userId"="${userId}"`,
-    isDefaultSearchParamsRequired: false,
-  })
+  changeServicePointPreferenceViaApi: (userId, servicePointIds, defaultServicePointId = null) => cy
+    .okapiRequest({
+      method: 'GET',
+      path: `service-points-users?query="userId"="${userId}"`,
+      isDefaultSearchParamsRequired: false,
+    })
     .then((servicePointsUsers) => {
       cy.okapiRequest({
         method: 'PUT',
@@ -135,7 +138,7 @@ export default {
   updateExternalIdViaApi(user, externalSystemId) {
     cy.updateUser({
       ...user,
-      externalSystemId
+      externalSystemId,
     });
   },
 

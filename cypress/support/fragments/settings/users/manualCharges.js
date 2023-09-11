@@ -1,7 +1,14 @@
 import getRandomPostfix from '../../../utils/stringTools';
-import { Select, Button, TextField, MultiColumnListCell, Section, PaneHeader } from '../../../../../interactors';
+import {
+  Select,
+  Button,
+  TextField,
+  MultiColumnListCell,
+  Section,
+  PaneHeader,
+} from '../../../../../interactors';
 
-const rootSection = Section({ id:'controlled-vocab-pane' });
+const rootSection = Section({ id: 'controlled-vocab-pane' });
 
 const defaultFeeFineType = {
   // required field
@@ -9,29 +16,30 @@ const defaultFeeFineType = {
   // required field
   // id: undefined,
   feeFineType: `testFeeFineType${getRandomPostfix()}`,
-  defaultAmount: 100.00,
+  defaultAmount: 100.0,
   automatic: false,
 };
 
-
 export default {
   defaultFeeFineType,
-  waitLoading:() => cy.expect(rootSection.find(PaneHeader('Fee/fine: Manual charges')).exists()),
-  createViaApi : (ownerIdfeeFineTypeProperties) => cy.okapiRequest({
-    method: 'POST',
-    path: 'feefines',
-    isDefaultSearchParamsRequired : false,
-    body: ownerIdfeeFineTypeProperties
-  }).then(response => ({
-    id: response.body.id,
-    feeFineType: response.body.feeFineType,
-    amount: response.body.defaultAmount,
-  })),
+  waitLoading: () => cy.expect(rootSection.find(PaneHeader('Fee/fine: Manual charges')).exists()),
+  createViaApi: (ownerIdfeeFineTypeProperties) => cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'feefines',
+      isDefaultSearchParamsRequired: false,
+      body: ownerIdfeeFineTypeProperties,
+    })
+    .then((response) => ({
+      id: response.body.id,
+      feeFineType: response.body.feeFineType,
+      amount: response.body.defaultAmount,
+    })),
   deleteViaApi: (manualChargeId) => {
     cy.okapiRequest({
       method: 'DELETE',
       path: `feefines/${manualChargeId}`,
-      isDefaultSearchParamsRequired : false
+      isDefaultSearchParamsRequired: false,
     });
   },
   fillInFields(data, index = 0) {

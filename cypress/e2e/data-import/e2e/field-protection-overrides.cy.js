@@ -3,10 +3,12 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import Parallelization from '../../../support/dictionary/parallelization';
-import { FOLIO_RECORD_TYPE,
+import {
+  FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
-  JOB_STATUS_NAMES } from '../../../support/constants';
+  JOB_STATUS_NAMES,
+} from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
@@ -42,131 +44,137 @@ describe('data-import', () => {
 
     const protectedFields = {
       firstField: '020',
-      secondField: '514'
+      secondField: '514',
     };
 
     // notes for mapping profiles
-    const noteForUpdateInstanceMappingProfile = 'This note was added when the MARC Bib was updated to check field protections';
-    const noteForOverrideInstanceMappingProfile = 'This note was added when the MARC Bib was updated to check field protection OVERRIDES';
+    const noteForUpdateInstanceMappingProfile =
+      'This note was added when the MARC Bib was updated to check field protections';
+    const noteForOverrideInstanceMappingProfile =
+      'This note was added when the MARC Bib was updated to check field protection OVERRIDES';
 
     // unique name for notes
-    const administrativeNote = 'This note was added when the MARC Bib was updated to check field protections';
+    const administrativeNote =
+      'This note was added when the MARC Bib was updated to check field protections';
     const instanceNote = 'This is the ORIGINAL version of the non-repeatable 514 note';
-    const updatedAdministativeNote = 'This note was added when the MARC Bib was updated to check field protection OVERRIDES';
-    const updatedInstanceNote = 'This is the UPDATE 2 version of the non-repeatable 514 note, which should replace the UPDATE 1 version';
+    const updatedAdministativeNote =
+      'This note was added when the MARC Bib was updated to check field protection OVERRIDES';
+    const updatedInstanceNote =
+      'This is the UPDATE 2 version of the non-repeatable 514 note, which should replace the UPDATE 1 version';
     const instanceHridFromFile = 'in00000000331';
 
     // resource identifiers in uploading files
     const resourceIdentifiers = [
       { type: 'ISBN', value: '0866985522' },
       { type: 'ISBN', value: '9782617632537' },
-      { type: 'ISBN', value: '4934691323219 (paperback)' }
+      { type: 'ISBN', value: '4934691323219 (paperback)' },
     ];
     const marcBibMappingProfile = {
       name: `C17018 Update MARC Bib with protections.${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC
+      typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
     };
 
     const instanceMappingProfile = {
       name: `C17018 Update instance 1.${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.INSTANCE
+      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     };
 
     const marcBibMappingProfileOverride = {
       name: `C17018 Update MARC Bib with protection OVERRIDES.${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC
+      typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
     };
 
     const instanceMappingProfileOverride = {
       name: `C17018 Update instance 2.${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.INSTANCE
+      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     };
 
     const marcBibActionProfile = {
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
       name: `C17018 Update MARC Bib with protections.${getRandomPostfix()}`,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
     };
 
     const instanceActionProfile = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       name: `C17018 Update instance 1.${getRandomPostfix()}`,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
     };
 
     const marcBibActionProfileOverride = {
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
       name: `C17018 Update MARC Bib with protection OVERRIDES.${getRandomPostfix()}`,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
     };
 
     const instanceActionProfileOverride = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       name: `C17018 Update MARC Bib with protection OVERRIDES.${getRandomPostfix()}`,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
     };
 
-    const matchProfile = { profileName: `C17018 001 to 001 MARC Bib.${getRandomPostfix()}`,
+    const matchProfile = {
+      profileName: `C17018 001 to 001 MARC Bib.${getRandomPostfix()}`,
       incomingRecordFields: {
-        field: '001'
+        field: '001',
       },
       existingRecordFields: {
-        field: '001'
+        field: '001',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC };
+      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+    };
 
     const jobProfileForUpdate = {
       ...NewJobProfile.defaultJobProfile,
       profileName: `C17018 Update 1: MARC Bib with protections.${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
     const jobProfileForOverride = {
       ...NewJobProfile.defaultJobProfile,
       profileName: `C17018 Update 2: MARC Bib with protections.${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
     beforeEach('create test data', () => {
       cy.loginAsAdmin();
-      cy.getAdminToken()
-        .then(() => {
-          MarcFieldProtection.getListOfMarcFieldProtectionViaApi({ query: `"field"=="${protectedFields.firstField}"` })
-            .then(list => {
-              if (list) {
-                list.forEach(({ id }) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(id));
-              }
-            });
-          MarcFieldProtection.getListOfMarcFieldProtectionViaApi({ query: `"field"=="${protectedFields.secondField}"` })
-            .then(list => {
-              if (list) {
-                list.forEach(({ id }) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(id));
-              }
-            });
-          MarcFieldProtection.createMarcFieldProtectionViaApi({
-            indicator1: '*',
-            indicator2: '*',
-            subfield: 'a',
-            data: '*',
-            source: 'USER',
-            field: protectedFields.firstField
-          })
-            .then((resp) => {
-              firstFieldId = resp.id;
-            });
-          MarcFieldProtection.createMarcFieldProtectionViaApi({
-            indicator1: '*',
-            indicator2: '*',
-            subfield: '*',
-            data: '*',
-            source: 'USER',
-            field: protectedFields.secondField
-          })
-            .then((resp) => {
-              secondFieldId = resp.id;
-            });
+      cy.getAdminToken().then(() => {
+        MarcFieldProtection.getListOfMarcFieldProtectionViaApi({
+          query: `"field"=="${protectedFields.firstField}"`,
+        }).then((list) => {
+          if (list) {
+            list.forEach(({ id }) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(id));
+          }
         });
+        MarcFieldProtection.getListOfMarcFieldProtectionViaApi({
+          query: `"field"=="${protectedFields.secondField}"`,
+        }).then((list) => {
+          if (list) {
+            list.forEach(({ id }) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(id));
+          }
+        });
+        MarcFieldProtection.createMarcFieldProtectionViaApi({
+          indicator1: '*',
+          indicator2: '*',
+          subfield: 'a',
+          data: '*',
+          source: 'USER',
+          field: protectedFields.firstField,
+        }).then((resp) => {
+          firstFieldId = resp.id;
+        });
+        MarcFieldProtection.createMarcFieldProtectionViaApi({
+          indicator1: '*',
+          indicator2: '*',
+          subfield: '*',
+          data: '*',
+          source: 'USER',
+          field: protectedFields.secondField,
+        }).then((resp) => {
+          secondFieldId = resp.id;
+        });
+      });
     });
 
     after('delete test data', () => {
@@ -187,18 +195,26 @@ describe('data-import', () => {
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev1}`);
       FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-        .then((instance) => {
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+        (instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
+        },
+      );
     });
 
-    it('C17018 Check that field protection overrides work properly during data import (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] }, () => {
-      // create Field mapping profiles
+    it(
+      'C17018 Check that field protection overrides work properly during data import (folijet)',
+
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      () => {
+        // create Field mapping profiles
         cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.createMappingProfileForUpdatesMarc(marcBibMappingProfile);
-        FieldMappingProfileView.checkCreatedMappingProfile(marcBibMappingProfile.name, protectedFields.firstField, protectedFields.secondField);
+        FieldMappingProfileView.checkCreatedMappingProfile(
+          marcBibMappingProfile.name,
+          protectedFields.firstField,
+          protectedFields.secondField,
+        );
         FieldMappingProfiles.checkMappingProfilePresented(marcBibMappingProfile.name);
 
         FieldMappingProfiles.createMappingProfileWithNotes(instanceMappingProfile, noteForUpdateInstanceMappingProfile);
@@ -292,7 +308,7 @@ describe('data-import', () => {
           InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[2].type, resourceIdentifiers[2].value, 1);
           InstanceRecordView.verifyInstanceNote(instanceNote);
           // verify table data in marc bibliographic source
-          InstanceRecordView.viewSource();
+          InventoryInstance.viewSource();
           resourceIdentifiers.forEach(element => {
             InventoryViewSource.verifyFieldInMARCBibSource(protectedFields.firstField, element.value);
           });
@@ -324,10 +340,11 @@ describe('data-import', () => {
           });
           InstanceRecordView.verifyInstanceNote(updatedInstanceNote);
           // verify table data in marc bibliographic source
-          InstanceRecordView.viewSource();
+          InventoryInstance.viewSource();
           InventoryViewSource.notContains(`${protectedFields.firstField}\t`);
           InventoryViewSource.verifyFieldInMARCBibSource(protectedFields.secondField, updatedInstanceNote);
         });
-      });
+      }
+    );
   });
 });

@@ -28,7 +28,7 @@ describe('data-import', () => {
       // Create files dynamically with given name and content in fixtures
       FileManager.createFile(`cypress/fixtures/${fileNameForFailedImport}`);
       // read contents of static file in fixtures
-      cy.readFile(`cypress/fixtures/${pathToStaticFile}`).then(content => {
+      cy.readFile(`cypress/fixtures/${pathToStaticFile}`).then((content) => {
         // and write its contents to the file which runs successfully and create it
         FileManager.createFile(`cypress/fixtures/${fileNameForSuccessfulImport}`, content);
       });
@@ -51,18 +51,17 @@ describe('data-import', () => {
 
     beforeEach(() => {
       LogsViewAll.getSingleJobProfile().then(({ jobProfileInfo, runBy }) => {
-        const {
-          firstName,
-          lastName,
-        } = runBy;
+        const { firstName, lastName } = runBy;
         jobProfileName = jobProfileInfo.name;
         userFilterValue = `${firstName} ${lastName}`;
         userName = firstName ? `${firstName} ${lastName}` : `${lastName}`;
       });
     });
 
-    it('C11113 Filter the "View all" log screen (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] }, () => {
+    it(
+      'C11113 Filter the "View all" log screen (folijet)',
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
+      () => {
         Logs.openViewAllLogs();
         LogsViewAll.checkByReverseChronologicalOrder();
 
@@ -72,6 +71,16 @@ describe('data-import', () => {
         LogsViewAll.resetAllFilters();
         LogsViewAll.selectYesfilterJobsByErrors();
         LogsViewAll.checkByErrorsInImport(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS, JOB_STATUS_NAMES.FAILED);
+        LogsViewAll.resetAllFilters();
+        // FILTER By "Errors in Import"
+        LogsViewAll.selectNofilterJobsByErrors();
+        LogsViewAll.checkByErrorsInImport(JOB_STATUS_NAMES.COMPLETED);
+        LogsViewAll.resetAllFilters();
+        LogsViewAll.selectYesfilterJobsByErrors();
+        LogsViewAll.checkByErrorsInImport(
+          JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS,
+          JOB_STATUS_NAMES.FAILED,
+        );
         LogsViewAll.resetAllFilters();
 
         // FILTER By "Date"
@@ -111,6 +120,15 @@ describe('data-import', () => {
           LogsViewAll.checkByInventorySingleRecord(filter);
           LogsViewAll.resetAllFilters();
         });
+        // FILTER By "Inventory single record imports"
+        LogsViewAll.openInventorysingleRecordImportsAccordion();
+        LogsViewAll.singleRecordImportsStatuses.forEach((filter) => {
+          // need some waiting until checkboxes become clickable after resetting filters
+          cy.wait(1000); // eslint-disable-line cypress/no-unnecessary-waiting
+          LogsViewAll.filterJobsByInventorySingleRecordImports(filter);
+          LogsViewAll.checkByInventorySingleRecord(filter);
+          LogsViewAll.resetAllFilters();
+        });
 
         // FILTER By more than one filter
         // in this case, filter by "User" and "Errors in Import"
@@ -119,6 +137,7 @@ describe('data-import', () => {
         LogsViewAll.filterJobsByUser(userFilterValue);
         LogsViewAll.checkByErrorsInImportAndUser(JOB_STATUS_NAMES.COMPLETED, userName);
         LogsViewAll.resetAllFilters();
-      });
+      }
+    );
   });
 });

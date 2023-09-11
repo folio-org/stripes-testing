@@ -77,14 +77,7 @@ export default {
   },
 
   rollover: () => {
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(8000);
-
-    cy.do([Button('Actions').click()]);
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(8000);
-
-    cy.do([rolloverButton.click()]);
+    cy.do([Button('Actions').click(), rolloverButton.click()]);
   },
 
   closeRolloverInfo: () => {
@@ -121,22 +114,16 @@ export default {
   fillInRolloverInfo(fiscalYear) {
     cy.do(fiscalYearSelect.click());
     // Need to wait,while date of fiscal year will be loaded
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(8000);
     cy.do([
       fiscalYearSelect.choose(fiscalYear),
-      // rolloverAllocationCheckbox.click(),
+      rolloverAllocationCheckbox.click(),
       Checkbox({ name: 'encumbrancesRollover[0].rollover' }).click(),
       Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Expended'),
       Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
       Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
-      rolloverButton.click(),
     ]);
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(8000);
+    cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
     this.continueRollover();
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(8000);
     cy.do([rolloverConfirmButton.click()]);
   },
 
@@ -168,9 +155,8 @@ export default {
       rolloverAllocationCheckbox.click(),
       rolloverBudgetVelue.choose(rolloverBudgetValue),
       addAvailableToSelect.choose(rolloverValueAs),
-      rolloverButton.click(),
     ]);
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
     cy.wait(4000);
     this.continueRollover();
     cy.do([rolloverConfirmButton.click()]);
@@ -203,9 +189,8 @@ export default {
       fiscalYearSelect.choose(fiscalYear),
       rolloverBudgetVelue.choose(rolloverBudgetValue),
       addAvailableToSelect.choose(rolloverValueAs),
-      rolloverButton.click(),
     ]);
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
     cy.wait(4000);
     this.continueRollover();
     cy.do([rolloverConfirmButton.click()]);
@@ -221,9 +206,8 @@ export default {
       Checkbox({ name: 'budgetsRollover[0].rolloverAllocation' }).click(),
       rolloverBudgetVelue.choose(rolloverBudgetValue),
       addAvailableToSelect.choose(rolloverValueAs),
-      Button('Test rollover').click(),
     ]);
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.get('button:contains("Test rollover")').eq(0).should('be.visible').trigger('click');
     cy.wait(2000);
     cy.do([Button({ id: 'clickable-test-rollover-confirmation-confirm' }).click()]);
   },
@@ -365,12 +349,10 @@ export default {
         .find(MultiColumnListCell('Successful'))
         .exists(),
     ]);
+    cy.get('#rollover-logs-list').find('div[role="gridcell"]').contains('a', `${dataFile}-result`);
     cy.get('#rollover-logs-list')
       .find('div[role="gridcell"]')
-      .contains('result', `${dataFile}-result`);
-    cy.get('#rollover-logs-list')
-      .find('div[role="gridcell"]')
-      .contains('result', `${dataFile}-settings`);
+      .contains('a', `${dataFile}-settings`);
   },
 
   checkDownloadedFile(
@@ -428,9 +410,8 @@ export default {
       Select({ name: 'toFiscalYearId' }).choose(fiscalYear),
       rolloverBudgetVelue.choose(rolloverBudgetValue),
       addAvailableToSelect.choose(rolloverValueAs),
-      Button('Test rollover').click(),
     ]);
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.get('button:contains("Test rollover")').eq(0).should('be.visible').trigger('click');
     cy.wait(2000);
     cy.do([Button({ id: 'clickable-test-rollover-confirmation-confirm' }).click()]);
   },

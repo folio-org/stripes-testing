@@ -1,6 +1,6 @@
 import HTML from './baseHTML';
 
-const ariaLabel = el => el.ariaLabel;
+const ariaLabel = (el) => el.ariaLabel;
 
 export default HTML.extend('icon button')
   .selector('[class^=iconButton]')
@@ -11,8 +11,8 @@ export default HTML.extend('icon button')
     icon: (el) => el.getAttribute('icon'),
     button: (el) => el.tagName.toLowerCase() === 'button',
     anchor: (el) => el.tagName.toLowerCase() === 'a',
-    ariaLabel
+    ariaLabel,
   })
   .actions({
-    click: ({ perform }) => perform(el => el.click()),
+    click: ({ perform }) => perform((el) => el.click()),
   });

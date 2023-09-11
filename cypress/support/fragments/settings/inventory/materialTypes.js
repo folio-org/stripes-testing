@@ -5,7 +5,7 @@ import {
   HTML,
   including,
   Modal,
-  NavListItem
+  NavListItem,
 } from '../../../../../interactors';
 import ModalDeleteMaterialType from './modalDeleteMaterialType';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -21,7 +21,9 @@ const checkIsDeleted = (newMaterialTypeName) => {
 };
 
 const verifyMessageOfDeteted = (newMaterialTypeName) => {
-  InteractorsTools.checkCalloutMessage(`The Material type ${newMaterialTypeName} was successfully deleted`);
+  InteractorsTools.checkCalloutMessage(
+    `The Material type ${newMaterialTypeName} was successfully deleted`,
+  );
   InteractorsTools.closeCalloutMessage();
 };
 
@@ -37,23 +39,23 @@ export default {
     });
   },
 
-  edit:(materialTypeName, newMaterialTypeName) => {
-    cy.contains(materialTypeName).then(elem => {
+  edit: (materialTypeName, newMaterialTypeName) => {
+    cy.contains(materialTypeName).then((elem) => {
       elem.parent()[0].querySelector('button[icon="edit"]').click();
     });
     cy.do(TextField({ placeholder: 'name' }).fillIn(newMaterialTypeName));
     cy.do(Button('Save').click());
   },
 
-  delete:(newMaterialTypeName) => {
-    cy.contains(newMaterialTypeName).then(elem => {
+  delete: (newMaterialTypeName) => {
+    cy.contains(newMaterialTypeName).then((elem) => {
       elem.parent()[0].querySelector('button[icon="trash"]').click();
     });
     ModalDeleteMaterialType.deleteMaterialType();
     cy.expect(Modal('Delete Material type').absent());
   },
 
-  checkAvailableOptions:() => {
+  checkAvailableOptions: () => {
     cy.expect(Pane('Inventory').find(NavListItem('Material types')).exists());
-  }
+  },
 };

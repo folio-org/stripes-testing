@@ -10,23 +10,26 @@ const close = () => cy.do(closeButton.click());
 const contains = (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).exists());
 
 function extructDataFrom999Field() {
-  return cy.get('tbody tr').last().then($el => {
-    const srsUuid = $el[0].innerText.split('\t')[3].trim().split(' ')[1];
-    const instanceUuid = $el[0].innerText.split('\t')[3].trim().split(' ')[3];
-    return [srsUuid, instanceUuid];
-  });
+  return cy
+    .get('tbody tr')
+    .last()
+    .then(($el) => {
+      const srsUuid = $el[0].innerText.split('\t')[3].trim().split(' ')[1];
+      const instanceUuid = $el[0].innerText.split('\t')[3].trim().split(' ')[3];
+      return [srsUuid, instanceUuid];
+    });
 }
 
 export default {
   close,
   contains,
   extructDataFrom999Field,
-  notContains:(notExpectedText) => cy.expect(rootSection.find(HTML(including(notExpectedText))).absent()),
+  notContains: (notExpectedText) => cy.expect(rootSection.find(HTML(including(notExpectedText))).absent()),
   waitInstanceLoading: () => cy.expect(rootSection.find(HTML(including(instanceTitle))).exists()),
   waitHoldingLoading: () => cy.expect(rootSection.find(HTML(including(holdingTitle))).exists()),
-  waitLoading:() => cy.expect(rootSection.exists()),
+  waitLoading: () => cy.expect(rootSection.exists()),
 
-  verifyBarcodeInMARCBibSource:(itemBarcode) => {
+  verifyBarcodeInMARCBibSource: (itemBarcode) => {
     contains('980\t');
     contains('KU/CC/DI/M');
     contains('981\t');
@@ -34,20 +37,16 @@ export default {
     close();
   },
 
-  verifyFieldInMARCBibSource:(fieldNumber, content) => {
+  verifyFieldInMARCBibSource: (fieldNumber, content) => {
     contains(fieldNumber);
     contains(content);
   },
 
-  verifyRecordNotContainsDuplicatedContent:(value) => {
-    cy.get(`td:contains("${value}")`).then(
-      elements => elements.length === 1
-    );
+  verifyRecordNotContainsDuplicatedContent: (value) => {
+    cy.get(`td:contains("${value}")`).then((elements) => elements.length === 1);
   },
 
-  verifyRecordContainsDuplicatedContent:(value, quantity) => {
-    cy.get(`td:contains("${value}")`).then(
-      elements => elements.length === quantity
-    );
-  }
+  verifyRecordContainsDuplicatedContent: (value, quantity) => {
+    cy.get(`td:contains("${value}")`).then((elements) => elements.length === quantity);
+  },
 };

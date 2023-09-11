@@ -19,25 +19,29 @@ describe('Manage holding records of instance records created through marc file u
     cy.getAdminToken();
   });
 
-  it('C345408 MARC instance record + FOLIO holdings record (Regression) (spitfire)', { tags: [testTypes.smoke, DevTeams.spitfire, features.holdingsRecord, testTypes.broken] }, () => {
-    DataImport.uploadMarcBib().then(instanceRecordHrId => {
-      cy.visit(TopMenu.inventoryPath);
-      InventorySearchAndFilter.searchInstanceByHRID(instanceRecordHrId);
-      InventoryInstances.selectInstance();
-      InventoryInstance.waitLoading();
-      InventoryInstance.createHoldingsRecord();
-      InventoryInstance.openHoldingView();
-      HoldingsRecordView.checkSource('FOLIO');
-      HoldingsRecordView.checkActionsMenuOptionsInFolioSource();
-      HoldingsRecordView.edit();
-      HoldingsRecordEdit.waitLoading();
-      HoldingsRecordEdit.checkReadOnlyFields();
-      HoldingsRecordEdit.closeWithoutSave();
-      HoldingsRecordView.checkReadOnlyFields();
-      HoldingsRecordView.tryToDelete();
-      HoldingsRecordView.duplicate();
-      InventoryNewHoldings.checkSource();
-      // TODO: clarify what is "Verify that you are able to add or access an item" and "Behavior is no different than what FOLIO currently supports" in TestRail
-    });
-  });
+  it(
+    'C345408 MARC instance record + FOLIO holdings record (Regression) (spitfire)',
+    { tags: [testTypes.smoke, DevTeams.spitfire, features.holdingsRecord, testTypes.broken] },
+    () => {
+      DataImport.uploadMarcBib().then((instanceRecordHrId) => {
+        cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.searchInstanceByHRID(instanceRecordHrId);
+        InventoryInstances.selectInstance();
+        InventoryInstance.waitLoading();
+        InventoryInstance.createHoldingsRecord();
+        InventoryInstance.openHoldingView();
+        HoldingsRecordView.checkSource('FOLIO');
+        HoldingsRecordView.checkActionsMenuOptionsInFolioSource();
+        HoldingsRecordView.edit();
+        HoldingsRecordEdit.waitLoading();
+        HoldingsRecordEdit.checkReadOnlyFields();
+        HoldingsRecordEdit.closeWithoutSave();
+        HoldingsRecordView.checkReadOnlyFields();
+        HoldingsRecordView.tryToDelete();
+        HoldingsRecordView.duplicate();
+        InventoryNewHoldings.checkSource();
+        // TODO: clarify what is "Verify that you are able to add or access an item" and "Behavior is no different than what FOLIO currently supports" in TestRail
+      });
+    },
+  );
 });

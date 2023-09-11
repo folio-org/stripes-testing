@@ -51,18 +51,17 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
     cy.createLoanType({ name: `autotest_loan_type${getRandomPostfix()}` }).then((type) => {
       loanType = type;
     });
-    ServicePoints.createViaApi(servicePoint)
-      .then(() => {
-        defaultLocation = Location.getDefaultLocation(servicePoint.id);
-        Location.createViaApi(defaultLocation);
-      });
+    ServicePoints.createViaApi(servicePoint).then(() => {
+      defaultLocation = Location.getDefaultLocation(servicePoint.id);
+      Location.createViaApi(defaultLocation);
+    });
     LoanPolicyActions.createViaApi({
       loanable: true,
       loansPolicy: {
         closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE_TIME',
         period: {
           duration: 5,
-          intervalId: 'Minutes'
+          intervalId: 'Minutes',
         },
         profileId: 'Rolling',
       },
@@ -81,67 +80,60 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
         const defaultProps = ` i ${ruleProps.i} r ${ruleProps.r} o ${ruleProps.o} n ${ruleProps.n}`;
 
         addedCirculationRule = `\nm ${materialType.id}: l ${loanPolicy.id} ${defaultProps}`;
-        cy.updateCirculationRules({ rulesAsText: `${originalCirculationRules}${addedCirculationRule}` });
+        cy.updateCirculationRules({
+          rulesAsText: `${originalCirculationRules}${addedCirculationRule}`,
+        });
       });
     });
 
-    cy.createTempUser([
-      permissions.loansView.gui,
-      permissions.loansRenew.gui,
-    ]).then(({
-      username,
-      password,
-      userId,
-      barcode: userBarcode,
-    }) => {
-      firstUser = {
-        username,
-        password,
-        userId,
-      };
-      UserEdit.addServicePointViaApi(servicePoint.id, userId).then(() => {
-        InventoryInstances.createFolioInstanceViaApi({
-          instance: {
-            instanceTypeId: Cypress.env('instanceTypes')[0].id,
-            title: getTestEntityValue(),
-          },
-          holdings: [{
-            holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
-            permanentLocationId: defaultLocation.id,
-            sourceId: holdingsSourceId,
-          }],
-          items: [
-            {
-              ...newFirstItemData,
-              permanentLoanType: { id: loanType.id },
-              materialType: { id: Cypress.env('materialTypes')[0].id },
-            }
-          ],
-        })
-          .then(specialInstanceIds => {
-            firstInstanceIds = specialInstanceIds;
+    cy.createTempUser([permissions.loansView.gui, permissions.loansRenew.gui]).then(
+      ({ username, password, userId, barcode: userBarcode }) => {
+        firstUser = {
+          username,
+          password,
+          userId,
+        };
+        UserEdit.addServicePointViaApi(servicePoint.id, userId).then(() => {
+          InventoryInstances.createFolioInstanceViaApi({
+            instance: {
+              instanceTypeId: Cypress.env('instanceTypes')[0].id,
+              title: getTestEntityValue(),
+            },
+            holdings: [
+              {
+                holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
+                permanentLocationId: defaultLocation.id,
+                sourceId: holdingsSourceId,
+              },
+            ],
+            items: [
+              {
+                ...newFirstItemData,
+                permanentLoanType: { id: loanType.id },
+                materialType: { id: Cypress.env('materialTypes')[0].id },
+              },
+            ],
           })
-          .then(() => {
-            [newFirstItemData.barcode].forEach((itemBarcode) => {
-              Checkout.checkoutItemViaApi({
-                itemBarcode,
-                userBarcode,
-                servicePointId: servicePoint.id,
+            .then((specialInstanceIds) => {
+              firstInstanceIds = specialInstanceIds;
+            })
+            .then(() => {
+              [newFirstItemData.barcode].forEach((itemBarcode) => {
+                Checkout.checkoutItemViaApi({
+                  itemBarcode,
+                  userBarcode,
+                  servicePointId: servicePoint.id,
+                });
               });
             });
-          });
-      });
-    });
+        });
+      },
+    );
     cy.createTempUser([
       permissions.loansView.gui,
       permissions.loansRenew.gui,
       permissions.loansRenewOverride.gui,
-    ]).then(({
-      username,
-      password,
-      userId,
-      barcode: userBarcode,
-    }) => {
+    ]).then(({ username, password, userId, barcode: userBarcode }) => {
       secondUser = {
         username,
         password,
@@ -153,20 +145,22 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
             instanceTypeId: Cypress.env('instanceTypes')[0].id,
             title: getTestEntityValue(),
           },
-          holdings: [{
-            holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
-            permanentLocationId: defaultLocation.id,
-            sourceId: holdingsSourceId,
-          }],
+          holdings: [
+            {
+              holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
+              permanentLocationId: defaultLocation.id,
+              sourceId: holdingsSourceId,
+            },
+          ],
           items: [
             {
               ...newSecondItemData,
               permanentLoanType: { id: loanType.id },
               materialType: { id: Cypress.env('materialTypes')[0].id },
-            }
+            },
           ],
         })
-          .then(specialInstanceIds => {
+          .then((specialInstanceIds) => {
             secondInstanceIds = specialInstanceIds;
           })
           .then(() => {
@@ -183,10 +177,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
   });
 
   afterEach(() => {
-    [
-      newFirstItemData,
-      newSecondItemData,
-    ].forEach(item => {
+    [newFirstItemData, newSecondItemData].forEach((item) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,
         servicePointId: servicePoint.id,
@@ -194,22 +185,30 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
       });
     });
 
-    cy.wrap(firstInstanceIds.holdingIds.forEach(holdingsId => {
-      cy.wrap(holdingsId.itemIds.forEach(itemId => {
-        cy.deleteItemViaApi(itemId);
-      })).then(() => {
-        cy.deleteHoldingRecordViaApi(holdingsId.id);
-      });
-    })).then(() => {
+    cy.wrap(
+      firstInstanceIds.holdingIds.forEach((holdingsId) => {
+        cy.wrap(
+          holdingsId.itemIds.forEach((itemId) => {
+            cy.deleteItemViaApi(itemId);
+          }),
+        ).then(() => {
+          cy.deleteHoldingRecordViaApi(holdingsId.id);
+        });
+      }),
+    ).then(() => {
       InventoryInstance.deleteInstanceViaApi(firstInstanceIds.instanceId);
     });
-    cy.wrap(secondInstanceIds.holdingIds.forEach(holdingsId => {
-      cy.wrap(holdingsId.itemIds.forEach(itemId => {
-        cy.deleteItemViaApi(itemId);
-      })).then(() => {
-        cy.deleteHoldingRecordViaApi(holdingsId.id);
-      });
-    })).then(() => {
+    cy.wrap(
+      secondInstanceIds.holdingIds.forEach((holdingsId) => {
+        cy.wrap(
+          holdingsId.itemIds.forEach((itemId) => {
+            cy.deleteItemViaApi(itemId);
+          }),
+        ).then(() => {
+          cy.deleteHoldingRecordViaApi(holdingsId.id);
+        });
+      }),
+    ).then(() => {
       InventoryInstance.deleteInstanceViaApi(secondInstanceIds.instanceId);
     });
     cy.deleteLoanType(loanType.id);
@@ -223,35 +222,37 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
       defaultLocation.institutionId,
       defaultLocation.campusId,
       defaultLocation.libraryId,
-      defaultLocation.id
+      defaultLocation.id,
     );
     ServicePoints.deleteViaApi(servicePoint.id);
   });
 
-  it('C569: renewal failure because loan has reached maximum renewals (vega)', { tags: [testTypes.smoke, DevTeams.vega] }, () => {
-    cy.login(
-      firstUser.username,
-      firstUser.password,
-      { path: AppPaths.getOpenLoansPath(firstUser.userId), waiter: LoanDetails.waitLoading },
-    );
+  it(
+    'C569: renewal failure because loan has reached maximum renewals (vega)',
+    { tags: [testTypes.smoke, DevTeams.vega] },
+    () => {
+      cy.login(firstUser.username, firstUser.password, {
+        path: AppPaths.getOpenLoansPath(firstUser.userId),
+        waiter: LoanDetails.waitLoading,
+      });
 
-    LoansPage.renewalMessageCheck('Renew Confirmation');
-    LoansPage.checkOverrideButtonHidden();
-    LoansPage.closePage();
+      LoansPage.renewalMessageCheck('Renew Confirmation');
+      LoansPage.checkOverrideButtonHidden();
+      LoansPage.closePage();
 
-    cy.login(
-      secondUser.username,
-      secondUser.password,
-      { path: AppPaths.getOpenLoansPath(secondUser.userId), waiter: LoanDetails.waitLoading },
-    );
+      cy.login(secondUser.username, secondUser.password, {
+        path: AppPaths.getOpenLoansPath(secondUser.userId),
+        waiter: LoanDetails.waitLoading,
+      });
 
-    LoansPage.renewalMessageCheck('Renew Confirmation');
-    LoansPage.checkOverrideButtonVisible();
-    RenewConfirmationModal.confirmRenewOverrideItem();
-    OverrideAndRenewModal.confirmOverrideItem();
-    Loans.getLoanDetails(newSecondItemData.barcode);
-    LoanDetails.checkStatusCheckedOut();
-    LoanDetails.checkRenewalCount();
-    LoanDetails.checkAction(0, 'Renewed through override');
-  });
+      LoansPage.renewalMessageCheck('Renew Confirmation');
+      LoansPage.checkOverrideButtonVisible();
+      RenewConfirmationModal.confirmRenewOverrideItem();
+      OverrideAndRenewModal.confirmOverrideItem();
+      Loans.getLoanDetails(newSecondItemData.barcode);
+      LoanDetails.checkStatusCheckedOut();
+      LoanDetails.checkRenewalCount();
+      LoanDetails.checkAction(0, 'Renewed through override');
+    },
+  );
 });

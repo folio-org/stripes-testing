@@ -36,8 +36,10 @@ describe('data-import', () => {
       });
     });
 
-    it('C11112 Search the "View all" log screen (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] }, () => {
+    it(
+      'C11112 Search the "View all" log screen (folijet)',
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
+      () => {
         Logs.openViewAllLogs();
 
         LogsViewAll.options.forEach((option) => {
@@ -55,6 +57,7 @@ describe('data-import', () => {
             LogsViewAll.checkRowsCount(1);
           }
         });
-      });
+      }
+    );
   });
 });

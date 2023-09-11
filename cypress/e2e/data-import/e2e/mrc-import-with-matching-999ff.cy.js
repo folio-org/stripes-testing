@@ -17,7 +17,12 @@ import DevTeams from '../../../support/dictionary/devTeams';
 import Parallelization from '../../../support/dictionary/parallelization';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import { LOCATION_NAMES, FOLIO_RECORD_TYPE, ACCEPTED_DATA_TYPE_NAMES, EXISTING_RECORDS_NAMES } from '../../../support/constants';
+import {
+  LOCATION_NAMES,
+  FOLIO_RECORD_TYPE,
+  ACCEPTED_DATA_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES,
+} from '../../../support/constants';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
@@ -33,22 +38,22 @@ describe('data-import', () => {
     };
     const actionProfileForExport = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-      name: `autotestActionProf${getRandomPostfix()}`
+      name: `autotestActionProf${getRandomPostfix()}`,
     };
     const jobProfileForExport = {
       ...NewJobProfile.defaultJobProfile,
-      profileName: `autotestJobProf${getRandomPostfix()}`
+      profileName: `autotestJobProf${getRandomPostfix()}`,
     };
     const mappingProfile = {
       name: `autotestMappingProf${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       update: true,
-      permanentLocation: `"${LOCATION_NAMES.ANNEX}"`
+      permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
     };
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       name: `autotestActionProf${getRandomPostfix()}`,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
     };
     const matchProfile = {
       profileName: `autotestMatchProf${getRandomPostfix()}`,
@@ -56,21 +61,21 @@ describe('data-import', () => {
         field: '999',
         in1: 'f',
         in2: 'f',
-        subfield: 's'
+        subfield: 's',
       },
       existingRecordFields: {
         field: '999',
         in1: 'f',
         in2: 'f',
-        subfield: 's'
+        subfield: 's',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC
+      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
       profileName: `autotestJobProf${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
     before('login', () => {
@@ -92,9 +97,11 @@ describe('data-import', () => {
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
     });
 
-    it('C343343 MARC file import with matching for 999 ff field (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] }, () => {
-      // create Field mapping profile for export
+    it(
+      'C343343 MARC file import with matching for 999 ff field (folijet)',
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
+      () => {
+        // create Field mapping profile for export
         cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.createMappingProfile(mappingProfileForExport);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfileForExport.name);
@@ -178,6 +185,7 @@ describe('data-import', () => {
           // ensure the fields created in Field mapping profile exists in inventory
           InventorySearchAndFilter.checkInstanceDetails();
         });
-      });
+      }
+    );
   });
 });

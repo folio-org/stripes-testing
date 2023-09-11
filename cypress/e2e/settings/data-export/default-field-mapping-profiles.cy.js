@@ -15,11 +15,13 @@ describe('settings: data-export', () => {
     cy.createTempUser([
       permissions.dataExportEnableSettings.gui,
       permissions.dataExportEnableApp.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(user.username, user.password, { path: TopMenu.settingsPath, waiter: SettingsPane.waitLoading });
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.settingsPath,
+        waiter: SettingsPane.waitLoading,
       });
+    });
   });
 
   beforeEach('go to page', () => {
@@ -30,20 +32,32 @@ describe('settings: data-export', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C10982 "Settings" > "Data export" > "Field mapping profiles" page (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    ExportFieldMappingProfiles.verifyFieldMappingProfilesPane();
-    ExportFieldMappingProfiles.verifyDefaultProfiles();
-  });
+  it(
+    'C10982 "Settings" > "Data export" > "Field mapping profiles" page (firebird)',
+    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    () => {
+      ExportFieldMappingProfiles.verifyFieldMappingProfilesPane();
+      ExportFieldMappingProfiles.verifyDefaultProfiles();
+    },
+  );
 
-  it('C15822 Preventing changes to the default instance mapping profile (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    SingleFieldMappingProfilePane.clickProfileNameFromTheList('Default instance mapping profile');
-    SingleFieldMappingProfilePane.waitLoading('Default instance mapping profile');
-    SingleFieldMappingProfilePane.verifyOnlyDuplicateOptionAvailable();
-  });
+  it(
+    'C15822 Preventing changes to the default instance mapping profile (firebird)',
+    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    () => {
+      SingleFieldMappingProfilePane.clickProfileNameFromTheList('Default instance mapping profile');
+      SingleFieldMappingProfilePane.waitLoading('Default instance mapping profile');
+      SingleFieldMappingProfilePane.verifyOnlyDuplicateOptionAvailable();
+    },
+  );
 
-  it('C15825 Profiles that cannot be edited or deleted (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    SingleFieldMappingProfilePane.clickProfileNameFromTheList('Default holdings mapping profile');
-    SingleFieldMappingProfilePane.waitLoading('Default holdings mapping profile');
-    SingleFieldMappingProfilePane.verifyOnlyDuplicateOptionAvailable();
-  });
+  it(
+    'C15825 Profiles that cannot be edited or deleted (firebird)',
+    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    () => {
+      SingleFieldMappingProfilePane.clickProfileNameFromTheList('Default holdings mapping profile');
+      SingleFieldMappingProfilePane.waitLoading('Default holdings mapping profile');
+      SingleFieldMappingProfilePane.verifyOnlyDuplicateOptionAvailable();
+    },
+  );
 });
