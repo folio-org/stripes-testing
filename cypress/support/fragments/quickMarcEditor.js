@@ -668,6 +668,12 @@ export default {
     cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).absent());
   },
 
+  check008FieldLabels(labels) {
+    labels.forEach(label => {
+      cy.expect(TextField(label).exists());
+    });
+  },
+
   checkCallout(callout) {
     cy.expect(Callout(callout).exists());
   },
