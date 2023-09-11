@@ -79,16 +79,4 @@ describe.skip('Feature MARC Authority', () => {
       cy.exec('java -jar sikuli_ide.jar -r printer.sikuli');
     },
   );
-
-  it(
-    'C388651 ""008"" field updated when valid LDR 06-07 combinations entered when editing ""MARC bib"" record ( Spitfire)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      cy.visit(topMenu.inventoryPath);
-      inventorySearchAndFilter.switchToHoldings();
-      inventorySearchAndFilter.bySource(testData.source);
-      inventorySearchAndFilter.selectSearchResultByRowIndex(testData.derive.rowIndex);
-      inventoryInstance.editMarcBibliographicRecord();
-    },
-  );
 });
