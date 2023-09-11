@@ -66,7 +66,7 @@ describe('data-import', () => {
 
     it(
       'C358137 A user can delete import logs with "Data import: Can delete import logs" permission on Landing page (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         Logs.openFileDetails(fileNameToUpload);
         Logs.clickOnHotLink();

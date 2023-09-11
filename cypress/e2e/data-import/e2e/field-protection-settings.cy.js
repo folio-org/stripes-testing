@@ -150,7 +150,6 @@ describe('data-import', () => {
 
     it(
       'C17017 Check that field protection settings work properly during data import (folijet)',
-
       { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         // create mapping profile
@@ -178,13 +177,19 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(nameMarcFileForCreate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameMarcFileForCreate);
-        Logs.verifyInstanceStatus(0, 2, 'Created');
-        Logs.verifyInstanceStatus(0, 3, 'Created');
+        [
+          FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.instance,
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+        });
         FileDetails.checkSrsRecordQuantityInSummaryTable('1');
         FileDetails.checkInstanceQuantityInSummaryTable('1');
-        Logs.clickOnHotLink(0, 3, 'Created');
+        FileDetails.openInstanceInInventory('Created');
         InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
           instanceHrid = initialInstanceHrId;
+
+          InstanceRecordView.waitLoading();
           InstanceRecordView.viewSource();
           InstanceRecordView.verifySrsMarcRecord();
           InventoryViewSource.verifyFieldInMARCBibSource('500', dataForField500);
@@ -230,9 +235,16 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(fileNameForUpdate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForUpdate);
-        Logs.verifyInstanceStatus(0, 2, 'Created');
-        Logs.verifyInstanceStatus(0, 3, 'Updated');
-        Logs.clickOnHotLink(0, 3, 'Updated');
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.created,
+          FileDetails.columnNameInResultList.srsMarc,
+        );
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.updated,
+          FileDetails.columnNameInResultList.instance,
+        );
+        FileDetails.openInstanceInInventory('Updated');
+        InstanceRecordView.waitLoading();
         InstanceRecordView.viewSource();
 
         InstanceRecordView.verifySrsMarcRecord();
