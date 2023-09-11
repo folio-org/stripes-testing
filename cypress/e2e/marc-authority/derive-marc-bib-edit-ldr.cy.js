@@ -85,9 +85,6 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
           createdInstanceIDs.push(link.split('/')[5]);
         });
       });
-      // cy.loginAsAdmin({ path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading }).then(() => {
-      //   QuickMarcEditor.waitAndCheckFirstBibRecordCreated();
-      // });
       cy.login(testData.userProperties.username, testData.userProperties.password, {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
@@ -109,6 +106,8 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
       for (let i = 0; i < 5; i++) {
         InventoryInstance.searchByTitle(createdInstanceIDs[0]);
         InventoryInstance.checkInstanceTitle(testData.fieldContents.originalTitle);
+        // if derive clicked too fast, sometimes original record is opened after derive
+        cy.wait(2000);
         InventoryInstance.deriveNewMarcBib();
         QuickMarcEditor.check008FieldsAbsent(...testData.absent008Fields);
         QuickMarcEditor.getRegularTagContent(testData.tags.tagLDR).then((content) => {
