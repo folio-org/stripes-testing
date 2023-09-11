@@ -270,6 +270,7 @@ export default {
 
   viewSource: () => {
     cy.do(actionsButton.click());
+    cy.wait(1500);
     cy.do(viewSourceButton.click());
     InventoryViewSource.waitLoading();
   },

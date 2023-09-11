@@ -292,7 +292,7 @@ describe('data-import', () => {
           InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[2].type, resourceIdentifiers[2].value, 1);
           InstanceRecordView.verifyInstanceNote(instanceNote);
           // verify table data in marc bibliographic source
-          InventoryInstance.viewSource();
+          InstanceRecordView.viewSource();
           resourceIdentifiers.forEach(element => {
             InventoryViewSource.verifyFieldInMARCBibSource(protectedFields.firstField, element.value);
           });
@@ -324,7 +324,7 @@ describe('data-import', () => {
           });
           InstanceRecordView.verifyInstanceNote(updatedInstanceNote);
           // verify table data in marc bibliographic source
-          InventoryInstance.viewSource();
+          InstanceRecordView.viewSource();
           InventoryViewSource.notContains(`${protectedFields.firstField}\t`);
           InventoryViewSource.verifyFieldInMARCBibSource(protectedFields.secondField, updatedInstanceNote);
         });

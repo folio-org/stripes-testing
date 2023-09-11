@@ -85,7 +85,7 @@ describe('inventory', () => {
         InventoryInstance.verifyInstanceSubject(0, 0, oclcRecordData.subject);
         InventoryInstance.checkInstanceNotes(oclcRecordData.notes.noteType, oclcRecordData.notes.noteContent);
 
-        InventoryInstance.viewSource();
+        InstanceRecordView.viewSource();
         InventoryViewSource.contains('020\t');
         InventoryViewSource.contains(oclcRecordData.isbn1);
         InventoryViewSource.contains('020\t');

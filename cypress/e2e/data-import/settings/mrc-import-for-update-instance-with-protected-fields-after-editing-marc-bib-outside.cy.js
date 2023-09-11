@@ -175,7 +175,7 @@ describe('data-import', () => {
         InstanceRecordView.getAssignedHRID().then(initialInstanceHrId => {
           instanceHrid = initialInstanceHrId;
 
-          InventoryInstance.viewSource();
+          InstanceRecordView.viewSource();
           InventoryViewSource.extructDataFrom999Field()
             .then(uuid => {
             // change file using uuid for 999 field
@@ -206,7 +206,7 @@ describe('data-import', () => {
         FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 1);
 
         FileDetails.openInstanceInInventory('Updated');
-        InventoryInstance.viewSource();
+        InstanceRecordView.viewSource();
         InventoryViewSource.verifyFieldInMARCBibSource('650\t', 'Drawing, Dutch ‡y 21st century ‡v Exhibitions. ‡5 amb');
         InventoryViewSource.verifyFieldInMARCBibSource('920\t', 'This field should be protected');
       });

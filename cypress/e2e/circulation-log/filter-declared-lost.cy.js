@@ -100,8 +100,9 @@ describe('circulation-log', () => {
     });
   });
 
-  it('C45934 Check the Actions button from filtering Circulation log by declared lost (firebird)', { tags: [TestTypes.criticalPath, devTeams.firebird] }, () => {
-    SearchPane.setFilterOptionFromAccordion('loan', 'Declared lost');
-    SearchPane.checkActionButtonAfterFiltering(user.firstName, item.barcode);
-  });
+  it('C45934 Check the Actions button from filtering Circulation log by declared lost (firebird)',
+    { tags: [TestTypes.criticalPath, devTeams.firebird] }, () => {
+      SearchPane.setFilterOptionFromAccordion('loan', 'Declared lost');
+      SearchPane.checkActionButtonAfterFiltering(user.firstName, item.barcode);
+    });
 });

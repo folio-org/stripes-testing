@@ -79,8 +79,9 @@ describe('circulation-log', () => {
     });
   });
 
-  it('C45934 Check the Actions button from filtering Circulation log by marked as missing (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    SearchPane.searchByMarkedAsMissing();
-    SearchPane.checkActionButtonAfterFiltering(user.firstName, item.barcode);
-  });
+  it('C17002 Check the Actions button from filtering Circulation log by marked as missing (firebird)',
+    { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+      SearchPane.searchByMarkedAsMissing();
+      SearchPane.checkActionButtonAfterFiltering(user.firstName, item.barcode);
+    });
 });

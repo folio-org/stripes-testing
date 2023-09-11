@@ -223,7 +223,7 @@ describe('data-import', () => {
       QuickMarcEditor.verifyTagFieldAfterLinking(76, '700', '1', '\\', '$a Lee, Stan, $d 1922-2018', '$e AUTHOR $e creator', '$0 id.loc.gov/authorities/names/n83169267', '');
 
       QuickMarcEditor.closeEditorPane();
-      //Wait for the content to be loaded.
+      // Wait for the content to be loaded.
       cy.wait(4000);
       InventoryInstance.viewSource();
       InventoryInstance.checkExistanceOfAuthorityIconInMarcViewPane();

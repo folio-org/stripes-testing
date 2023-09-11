@@ -143,7 +143,7 @@ describe('data-import', () => {
           firstInstanceHrid = initialInstanceHrId;
         });
         InventoryInstance.verifyResourceIdentifier(resourceIdentifierForFirstInstance.type, resourceIdentifierForFirstInstance.value, 2);
-        InventoryInstance.viewSource();
+        InstanceRecordView.viewSource();
         InventoryViewSource.contains('035\t');
         InventoryViewSource.contains(resourceIdentifierForFirstInstance.value);
 
@@ -188,7 +188,7 @@ describe('data-import', () => {
 
         FileDetails.openInstanceInInventory('Updated');
         InstanceRecordView.verifyAdministrativeNote(note);
-        InventoryInstance.viewSource();
+        InstanceRecordView.viewSource();
         InventoryViewSource.contains('035\t');
         InventoryViewSource.contains(resourceIdentifierForFirstInstance.value);
         InventoryViewSource.contains('650\t');
@@ -217,7 +217,7 @@ describe('data-import', () => {
           secondInstanceHrid = initialInstanceHrId;
         });
         InventoryInstance.verifyResourceIdentifier(resourceIdentifierForSecondInstance.type, resourceIdentifierForSecondInstance.value, 3);
-        InventoryInstance.viewSource();
+        InstanceRecordView.viewSource();
         InventoryViewSource.contains('035\t');
         InventoryViewSource.contains(resourceIdentifierForSecondInstance.value);
 
@@ -238,7 +238,7 @@ describe('data-import', () => {
 
         FileDetails.openInstanceInInventory('Updated');
         InstanceRecordView.verifyAdministrativeNote(note);
-        InventoryInstance.viewSource();
+        InstanceRecordView.viewSource();
         InventoryViewSource.contains('035\t');
         InventoryViewSource.contains(resourceIdentifierForSecondInstance.value);
         InventoryViewSource.contains('650\t');

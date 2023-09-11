@@ -151,7 +151,7 @@ describe('data-import', () => {
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();
           // verify table data in marc bibliographic source
-          InventoryInstance.viewSource();
+          InstanceRecordView.viewSource();
           fieldsForDelete.forEach(fieldNumber => {
             InventoryViewSource.notContains(`${fieldNumber}\t`);
           });

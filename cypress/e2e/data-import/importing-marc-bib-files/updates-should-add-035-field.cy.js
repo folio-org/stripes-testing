@@ -106,7 +106,7 @@ describe('data-import', () => {
         InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
           const instanceHrId = initialInstanceHrId;
 
-          InventoryInstance.viewSource();
+          InstanceRecordView.viewSource();
           // changing the first file
           InventoryViewSource.extructDataFrom999Field()
             .then(uuid => {
@@ -161,7 +161,7 @@ describe('data-import', () => {
           FileDetails.openInstanceInInventory('Updated');
           InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatusTerm);
           InstanceRecordView.verifyStatisticalCode(mappingProfile.statisticalCodeUI);
-          InventoryInstance.viewSource();
+          InstanceRecordView.viewSource();
           InventoryViewSource.contains('001\t');
           InventoryViewSource.contains(instanceHrId);
           InventoryViewSource.notContains('003\t');
@@ -221,7 +221,7 @@ describe('data-import', () => {
           Logs.openFileDetails(secondMarcFileNameForCreate);
           FileDetails.openInstanceInInventory('Created', row.rowNumber);
           cy.wait(8000);
-          InventoryInstance.viewSource();
+          InstanceRecordView.viewSource();
           // changing the second file
           InventoryViewSource.extructDataFrom999Field()
             .then(uuid => {
@@ -296,7 +296,7 @@ describe('data-import', () => {
           InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
             const instanceHrid = initialInstanceHrId;
 
-            InventoryInstance.viewSource();
+            InstanceRecordView.viewSource();
             InventoryViewSource.contains('001\t');
             InventoryViewSource.contains(instanceHrid);
             InventoryViewSource.notContains('003\t');

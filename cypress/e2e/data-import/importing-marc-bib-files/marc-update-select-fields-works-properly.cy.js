@@ -162,7 +162,7 @@ describe('data-import', () => {
         FileDetails.openInstanceInInventory('Updated');
         InstanceRecordView.verifyStatisticalCode(instanceMappingProfile.statisticalCodeUI);
         InstanceRecordView.verifyInstanceStatusTerm(instanceMappingProfile.instanceStatus);
-        InventoryInstance.viewSource();
+        InstanceRecordView.viewSource();
       });
   });
 });
