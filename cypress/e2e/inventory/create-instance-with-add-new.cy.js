@@ -12,22 +12,30 @@ describe('inventory', () => {
     const instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
 
     before('navigate to Inventory', () => {
-      cy.loginAsAdmin({ path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+      cy.loginAsAdmin({
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
       cy.getAdminToken();
     });
 
     after(() => {
-      InventoryInstances.getInstanceIdApi({ limit: 1, query: `title="${instanceTitle}"` })
-        .then((id) => {
+      InventoryInstances.getInstanceIdApi({ limit: 1, query: `title="${instanceTitle}"` }).then(
+        (id) => {
           InventoryInstance.deleteInstanceViaApi(id);
-        });
+        },
+      );
     });
 
-    it('C598 Create new instance with add "New" (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-      InventoryInstances.add(instanceTitle);
-      InventorySearchAndFilter.searchInstanceByTitle(instanceTitle);
+    it(
+      'C598 Create new instance with add "New" (folijet) (prokopovych)',
+      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      () => {
+        InventoryInstances.add(instanceTitle);
+        InventorySearchAndFilter.searchInstanceByTitle(instanceTitle);
 
-      cy.expect(MultiColumnListCell({ row: 0, content: instanceTitle }).exists());
-    });
+        cy.expect(MultiColumnListCell({ row: 0, content: instanceTitle }).exists());
+      },
+    );
   });
 });

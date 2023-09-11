@@ -10,10 +10,7 @@
     "ecmaVersion": 6,
     "sourceType": "module"
   },
-  "plugins": [
-    "cypress",
-    "import"
-  ],
+  "plugins": ["cypress", "import"],
   "rules": {
     "cypress/no-assigning-return-values": "error",
     "cypress/assertion-before-screenshot": "warn",

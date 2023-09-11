@@ -22,23 +22,32 @@ describe('orders: Settings', () => {
   before(() => {
     cy.getAdminToken();
 
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-      });
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+    });
     AcquisitionMethods.createNewAcquisitionMethodViaAPI(acquisitionMethod);
-    cy.loginAsAdmin({ path:SettingsMenu.ordersOrderTemplatesPath, waiter: OrderTemplate.waitLoading });
+    cy.loginAsAdmin({
+      path: SettingsMenu.ordersOrderTemplatesPath,
+      waiter: OrderTemplate.waitLoading,
+    });
     OrderTemplate.newTemplate();
-    OrderTemplate.fillTemplateInformationWithAcquisitionMethod(orderTemplateName, organization.name, acquisitionMethod.value);
+    OrderTemplate.fillTemplateInformationWithAcquisitionMethod(
+      orderTemplateName,
+      organization.name,
+      acquisitionMethod.value,
+    );
     OrderTemplate.saveTemplate();
     OrderTemplate.checkTemplateCreated(orderTemplateName);
     cy.createTempUser([
       permissions.uiSettingsOrdersCanViewEditOrderTemplates.gui,
       permissions.uiSettingsOrdersCanViewEditDeleteOrderTemplates.gui,
-      permissions.uiOrdersCreate.gui
-    ]).then(userProperties => {
+      permissions.uiOrdersCreate.gui,
+    ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, { path:SettingsMenu.ordersOrderTemplatesPath, waiter: OrderTemplate.waitLoading });
+      cy.login(user.username, user.password, {
+        path: SettingsMenu.ordersOrderTemplatesPath,
+        waiter: OrderTemplate.waitLoading,
+      });
     });
   });
 
@@ -48,14 +57,18 @@ describe('orders: Settings', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C6726 Edit existing order template (thunderjet)', { tags: [TestType.criticalPath, devTeams.thunderjet] }, () => {
-    OrderTemplate.selectTemplate(orderTemplateName);
-    OrderTemplate.editTemplate(orderTemplateName);
-    OrderTemplate.checkTemplateCreated(`${orderTemplateName}-edited`);
-    cy.visit(TopMenu.ordersPath);
-    Orders.createOrderByTemplate(`${orderTemplateName}-edited`);
-    Orders.checkCreatedOrderFromTemplate(organization.name);
-    cy.visit(SettingsMenu.ordersOrderTemplatesPath);
-    OrderTemplate.deleteTemplate(`${orderTemplateName}-edited`);
-  });
+  it(
+    'C6726 Edit existing order template (thunderjet)',
+    { tags: [TestType.criticalPath, devTeams.thunderjet] },
+    () => {
+      OrderTemplate.selectTemplate(orderTemplateName);
+      OrderTemplate.editTemplate(orderTemplateName);
+      OrderTemplate.checkTemplateCreated(`${orderTemplateName}-edited`);
+      cy.visit(TopMenu.ordersPath);
+      Orders.createOrderByTemplate(`${orderTemplateName}-edited`);
+      Orders.checkCreatedOrderFromTemplate(organization.name);
+      cy.visit(SettingsMenu.ordersOrderTemplatesPath);
+      OrderTemplate.deleteTemplate(`${orderTemplateName}-edited`);
+    },
+  );
 });

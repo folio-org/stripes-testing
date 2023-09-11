@@ -19,10 +19,13 @@ describe('eHoldings -> Package', () => {
     cy.createTempUser([
       permissions.uieHoldingsTitlesPackagesCreateDelete.gui,
       permissions.uieHoldingsRecordsEdit.gui,
-      permissions.uieHoldingsPackageTitleSelectUnselect.gui
-    ]).then(userProperties => {
+      permissions.uieHoldingsPackageTitleSelectUnselect.gui,
+    ]).then((userProperties) => {
       testData.userId = userProperties.userId;
-      cy.login(userProperties.username, userProperties.password, { path: TopMenu.eholdingsPath, waiter: EHoldingsTitlesSearch.waitLoading });
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.eholdingsPath,
+        waiter: EHoldingsTitlesSearch.waitLoading,
+      });
     });
   });
 
@@ -31,15 +34,19 @@ describe('eHoldings -> Package', () => {
     EHoldingsPackages.deletePackageViaAPI(testData.customPackageName);
   });
 
-  it('C692 Create a custom package (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
-    EHoldingSearch.switchToPackages();
-    EHoldingsPackages.createCustomPackage(testData.customPackageName);
-    EHoldingsPackageView.waitLoading();
-    EHoldingsPackageView.verifyPackageName(testData.customPackageName);
-    EHoldingsPackageView.verifyPackageType('Custom');
-    EHoldingsPackages.checkPackageExistsViaAPI(testData.customPackageName, true);
-    EHoldingsPackageView.close();
-    EHoldingsPackagesSearch.byName(testData.customPackageName);
-    EHoldingsPackages.checkPackageInResults(testData.customPackageName);
-  });
+  it(
+    'C692 Create a custom package (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      EHoldingSearch.switchToPackages();
+      EHoldingsPackages.createCustomPackage(testData.customPackageName);
+      EHoldingsPackageView.waitLoading();
+      EHoldingsPackageView.verifyPackageName(testData.customPackageName);
+      EHoldingsPackageView.verifyPackageType('Custom');
+      EHoldingsPackages.checkPackageExistsViaAPI(testData.customPackageName, true);
+      EHoldingsPackageView.close();
+      EHoldingsPackagesSearch.byName(testData.customPackageName);
+      EHoldingsPackages.checkPackageInResults(testData.customPackageName);
+    },
+  );
 });

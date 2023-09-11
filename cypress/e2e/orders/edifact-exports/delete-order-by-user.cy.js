@@ -34,7 +34,7 @@ describe('orders: Edifact export', () => {
         notes: '',
         paymentMethod: 'Cash',
       },
-    ]
+    ],
   };
   const integrationName1 = `FirstIntegrationName${getRandomPostfix()}`;
   const integartionDescription1 = 'Test Integation descripton1';
@@ -49,48 +49,58 @@ describe('orders: Edifact export', () => {
   before(() => {
     cy.getAdminToken();
 
-    ServicePoints.getViaApi()
-      .then((servicePoint) => {
-        servicePointId = servicePoint[0].id;
-        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
-          .then(res => {
-            location = res;
-          });
+    ServicePoints.getViaApi().then((servicePoint) => {
+      servicePointId = servicePoint[0].id;
+      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+        location = res;
       });
+    });
 
-    Organizations.createOrganizationViaApi(organization)
-      .then(organizationsResponse => {
-        organization.id = organizationsResponse;
-        order.vendor = organizationsResponse;
-      });
-    cy.loginAsAdmin({ path:TopMenu.organizationsPath, waiter: Organizations.waitLoading });
+    Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
+      organization.id = organizationsResponse;
+      order.vendor = organizationsResponse;
+    });
+    cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
     Organizations.searchByParameters('Name', organization.name);
     Organizations.checkSearchResults(organization);
     Organizations.selectOrganization(organization.name);
     Organizations.addIntegration();
-    Organizations.fillIntegrationInformation(integrationName1, integartionDescription1, vendorEDICodeFor1Integration, libraryEDICodeFor1Integration, organization.accounts[0].accountNo, 'Purchase', UTCTime);
+    Organizations.fillIntegrationInformation(
+      integrationName1,
+      integartionDescription1,
+      vendorEDICodeFor1Integration,
+      libraryEDICodeFor1Integration,
+      organization.accounts[0].accountNo,
+      'Purchase',
+      UTCTime,
+    );
 
-    cy.createOrderApi(order)
-      .then((response) => {
-        orderNumber = response.body.poNumber;
-        cy.visit(TopMenu.ordersPath);
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList();
-        Orders.createPOLineViaActions();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
-        OrderLines.fillInPOLineInfoForExportWithLocation(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId);
-        OrderLines.backToEditingOrder();
-      });
+    cy.createOrderApi(order).then((response) => {
+      orderNumber = response.body.poNumber;
+      cy.visit(TopMenu.ordersPath);
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList();
+      Orders.createPOLineViaActions();
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
+      OrderLines.fillInPOLineInfoForExportWithLocation(
+        `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
+        'Purchase',
+        location.institutionId,
+      );
+      OrderLines.backToEditingOrder();
+    });
 
     cy.createTempUser([
       permissions.uiOrdersDelete.gui,
       permissions.uiOrdersCreate.gui,
       permissions.uiOrdersEdit.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
       });
+    });
   });
 
   after(() => {
@@ -101,15 +111,21 @@ describe('orders: Edifact export', () => {
       location.institutionId,
       location.campusId,
       location.libraryId,
-      location.id
+      location.id,
     );
     Users.deleteViaApi(user.userId);
   });
 
-  it('C350404: Verify that User can delete created Order (thunderjet)', { tags: [TestTypes.criticalPath, devTeams.thunderjet] }, () => {
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList();
-    Orders.deleteOrderViaActions();
-    InteractorsTools.checkCalloutMessage(`The purchase order ${orderNumber} was successfully deleted`);
-  });
+  it(
+    'C350404: Verify that User can delete created Order (thunderjet)',
+    { tags: [TestTypes.criticalPath, devTeams.thunderjet] },
+    () => {
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList();
+      Orders.deleteOrderViaActions();
+      InteractorsTools.checkCalloutMessage(
+        `The purchase order ${orderNumber} was successfully deleted`,
+      );
+    },
+  );
 });

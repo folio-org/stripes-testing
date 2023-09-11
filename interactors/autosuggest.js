@@ -27,11 +27,11 @@ const clearInput = (element) => {
 
 const AutoSuggestOption = HTML.extend('auto-suggest option')
   .selector('[role=option]')
-  .locator(el => el.textContent || '');
+  .locator((el) => el.textContent || '');
 
 export default HTML.extend('auto-suggest')
   .selector('[class^=downshift-]')
-  .locator(el => el.querySelector('label').textContent)
+  .locator((el) => el.querySelector('label').textContent)
   .filters({
     open,
     selected: (element) => {
@@ -40,19 +40,19 @@ export default HTML.extend('auto-suggest')
       if (!valueList) return [];
 
       return Array.from(valueList.querySelectorAll('[role=option]'))
-        .map(option => option.textContent || '')
+        .map((option) => option.textContent || '')
         .filter(Boolean);
     },
-    value: (el => el.querySelector('input').value),
+    value: (el) => el.querySelector('input').value,
   })
   .actions({
     fillIn: ({ find }, value) => find(TextField()).fillIn(value),
-    enterFilter: ({ perform }, value) => perform((el => fillInput(el, value))),
+    enterFilter: ({ perform }, value) => perform((el) => fillInput(el, value)),
     select: async (interactor, value) => {
       if (interactor.is({ open: false })) {
         await interactor.perform(clearInput);
-        await interactor.perform(el => fillInput(el, value));
+        await interactor.perform((el) => fillInput(el, value));
       }
       await interactor.find(AutoSuggestOption(value)).click();
-    }
+    },
   });

@@ -14,12 +14,12 @@ import NewLocation from '../../support/fragments/settings/tenant/locations/newLo
 import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('orders: create', () => {
-  
-  const order = { ...NewOrder.defaultOneTimeOrder,
+  const order = {
+    ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',
     ongoing: { isSubscription: false, manualRenewal: false },
     approved: true,
-   };
+  };
   const organization = {
     ...NewOrganization.defaultUiOrganizations,
     accounts: [
@@ -35,7 +35,7 @@ describe('orders: create', () => {
         notes: '',
         paymentMethod: 'Cash',
       },
-    ]
+    ],
   };
   let user;
   let location;
@@ -45,58 +45,68 @@ describe('orders: create', () => {
   before(() => {
     cy.getAdminToken();
 
-    ServicePoints.getViaApi()
-    .then((servicePoint) => {
+    ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
-        .then(res => {
-          location = res;
-        });
-    });
-    Organizations.createOrganizationViaApi(organization)
-      .then(organizationsResponse => {
-        organization.id = organizationsResponse;
-        order.vendor = organizationsResponse;
+      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+        location = res;
       });
-    cy.createOrderApi(order)
-      .then((response) => {
+    });
+    Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
+      organization.id = organizationsResponse;
+      order.vendor = organizationsResponse;
+    });
+    cy.createOrderApi(order).then((response) => {
       orderNumber = response.body.poNumber;
-      cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+      cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList();
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
-      OrderLines.fillInPOLineInfoForExportWithLocation(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId);
+      OrderLines.fillInPOLineInfoForExportWithLocation(
+        `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
+        'Purchase',
+        location.institutionId,
+      );
     });
 
-    cy.createTempUser([
-      permissions.uiOrdersEdit.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    cy.createTempUser([permissions.uiOrdersEdit.gui]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
       });
+    });
   });
 
   after(() => {
     Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
     NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
-        location.institutionId,
-        location.campusId,
-        location.libraryId,
-        location.id
-      );
+      location.institutionId,
+      location.campusId,
+      location.libraryId,
+      location.id,
+    );
     Users.deleteViaApi(user.userId);
   });
 
-  it('C665: Edit an existing PO Line on a "Pending" order (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
-    Orders.selectPendingStatusFilter();
-    Orders.selectFromResultsList(orderNumber);
-    OrderLines.selectPOLInOrder(0);
-    OrderLines.editPOLInOrder();
-    OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
-    OrderLines.fillInPOLineInfoForExportWithLocation(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId);
-    InteractorsTools.checkCalloutMessage(`The purchase order line ${orderNumber}-1 was successfully updated`)
-  });
+  it(
+    'C665: Edit an existing PO Line on a "Pending" order (thunderjet)',
+    { tags: [TestTypes.smoke, devTeams.thunderjet] },
+    () => {
+      Orders.selectPendingStatusFilter();
+      Orders.selectFromResultsList(orderNumber);
+      OrderLines.selectPOLInOrder(0);
+      OrderLines.editPOLInOrder();
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
+      OrderLines.fillInPOLineInfoForExportWithLocation(
+        `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
+        'Purchase',
+        location.institutionId,
+      );
+      InteractorsTools.checkCalloutMessage(
+        `The purchase order line ${orderNumber}-1 was successfully updated`,
+      );
+    },
+  );
 });

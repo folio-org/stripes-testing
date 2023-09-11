@@ -18,22 +18,23 @@ import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
 
 describe('orders: Unopen order', () => {
-  const order = { ...NewOrder.defaultOngoingTimeOrder,
-    approved: true,
-    reEncumber: true,
+  const order = { ...NewOrder.defaultOngoingTimeOrder, approved: true, reEncumber: true };
+  const organization = {
+    ...NewOrganization.defaultUiOrganizations,
+    addresses: [
+      {
+        addressLine1: '1 Centerpiece Blvd.',
+        addressLine2: 'P.O. Box 15550',
+        city: 'New Castle',
+        stateRegion: 'DE',
+        zipCode: '19720-5550',
+        country: 'USA',
+        isPrimary: true,
+        categories: [],
+        language: 'English',
+      },
+    ],
   };
-  const organization = { ...NewOrganization.defaultUiOrganizations,
-    addresses:[{
-      addressLine1: '1 Centerpiece Blvd.',
-      addressLine2: 'P.O. Box 15550',
-      city: 'New Castle',
-      stateRegion: 'DE',
-      zipCode: '19720-5550',
-      country: 'USA',
-      isPrimary: true,
-      categories: [],
-      language: 'English'
-    }] };
   const firstFund = { ...Funds.defaultUiFund };
   const secondFund = {
     name: `autotest_fund2_${getRandomPostfix()}`,
@@ -55,71 +56,66 @@ describe('orders: Unopen order', () => {
   before(() => {
     cy.getAdminToken();
 
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-        order.vendor = organization.id;
-      });
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+      order.vendor = organization.id;
+    });
     invoice.accountingCode = organization.erpCode;
     invoice.vendorName = organization.name;
-    Object.assign(vendorPrimaryAddress,
-      organization.addresses.find(address => address.isPrimary === true));
+    Object.assign(
+      vendorPrimaryAddress,
+      organization.addresses.find((address) => address.isPrimary === true),
+    );
     invoice.batchGroup = 'FOLIO';
 
-
-    FiscalYears.createViaApi(defaultFiscalYear)
-    .then(response => {
+    FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
       defaultFiscalYear.id = response.id;
       defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
 
-      Ledgers.createViaApi(defaultLedger)
-        .then(ledgerResponse => {
-          defaultLedger.id = ledgerResponse.id;
-          firstFund.ledgerId = defaultLedger.id;
-          secondFund.ledgerId = defaultLedger.id;
+      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+        defaultLedger.id = ledgerResponse.id;
+        firstFund.ledgerId = defaultLedger.id;
+        secondFund.ledgerId = defaultLedger.id;
 
-          Funds.createViaApi(firstFund)
-            .then(fundResponse => {
-              firstFund.id = fundResponse.fund.id;
-              cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
-              FinanceHelp.searchByName(firstFund.name);
-              Funds.selectFund(firstFund.name);
-              Funds.addBudget(allocatedQuantityForFistFund);
-            });
-
-          Funds.createViaApi(secondFund)
-            .then(secondFundResponse => {
-              secondFund.id = secondFundResponse.fund.id;
-              cy.visit(TopMenu.fundPath);
-              FinanceHelp.searchByName(secondFund.name);
-              Funds.selectFund(secondFund.name);
-              Funds.addBudget(allocatedQuantityForSecondFund);
-            });
+        Funds.createViaApi(firstFund).then((fundResponse) => {
+          firstFund.id = fundResponse.fund.id;
+          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+          FinanceHelp.searchByName(firstFund.name);
+          Funds.selectFund(firstFund.name);
+          Funds.addBudget(allocatedQuantityForFistFund);
         });
+
+        Funds.createViaApi(secondFund).then((secondFundResponse) => {
+          secondFund.id = secondFundResponse.fund.id;
+          cy.visit(TopMenu.fundPath);
+          FinanceHelp.searchByName(secondFund.name);
+          Funds.selectFund(secondFund.name);
+          Funds.addBudget(allocatedQuantityForSecondFund);
+        });
+      });
     });
 
-    cy.createOrderApi(order)
-      .then((response) => {
-        orderNumber = response.body.poNumber;
-        cy.visit(TopMenu.ordersPath);
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList(orderNumber);
-        OrderLines.addPOLine();
-        OrderLines.fillInPOLineInfoWithFund(firstFund);
-        OrderLines.backToEditingOrder();
-        Orders.openOrder();
-        cy.visit(TopMenu.invoicesPath);
-        Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
-        Invoices.createInvoiceLinePOLLookUp(orderNumber);
-        Invoices.approveInvoice();
-        Invoices.payInvoice();
-        cy.visit(TopMenu.ordersPath);
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList(orderNumber);
-        OrderLines.selectPOLInOrder(0);
-        OrderLines.editPOLInOrder();
-        OrderLines.changeFundInPOL(secondFund);
-      });
+    cy.createOrderApi(order).then((response) => {
+      orderNumber = response.body.poNumber;
+      cy.visit(TopMenu.ordersPath);
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList(orderNumber);
+      OrderLines.addPOLine();
+      OrderLines.fillInPOLineInfoWithFund(firstFund);
+      OrderLines.backToEditingOrder();
+      Orders.openOrder();
+      cy.visit(TopMenu.invoicesPath);
+      Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
+      Invoices.createInvoiceLinePOLLookUp(orderNumber);
+      Invoices.approveInvoice();
+      Invoices.payInvoice();
+      cy.visit(TopMenu.ordersPath);
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList(orderNumber);
+      OrderLines.selectPOLInOrder(0);
+      OrderLines.editPOLInOrder();
+      OrderLines.changeFundInPOL(secondFund);
+    });
 
     cy.createTempUser([
       permissions.uiFinanceViewFundAndBudget.gui,
@@ -128,44 +124,57 @@ describe('orders: Unopen order', () => {
       permissions.uiOrdersEdit.gui,
       permissions.uiOrdersReopenPurchaseOrders.gui,
       permissions.uiOrdersUnopenpurchaseorders.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
+    ]).then((userProperties) => {
+      user = userProperties;
 
-        cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+      cy.login(user.username, user.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
       });
+    });
   });
 
   after(() => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C375106 Unopen order with changed Fund distribution when related paid invoice exists (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList(orderNumber);
-    Orders.unOpenOrder();
-    OrderLines.selectPOLInOrder(0);
-    cy.wait(5000);
-    OrderLines.checkFundInPOL(secondFund);
-    OrderLines.backToEditingOrder();
-    Orders.openOrder();
-    OrderLines.selectPOLInOrder(0);
-    OrderLines.checkFundInPOL(secondFund);
-    cy.visit(TopMenu.fundPath);
-    FinanceHelp.searchByName(secondFund.name);
-    Funds.selectFund(secondFund.name);
-    Funds.selectBudgetDetails();
-    Funds.viewTransactions();
-    Funds.checkOrderInTransactionList(`${secondFund.code}`, '$0.00');
-    cy.visit(TopMenu.invoicesPath);
-    Invoices.searchByNumber(invoice.invoiceNumber);
-    Invoices.selectInvoice(invoice.invoiceNumber);
-    Invoices.selectInvoiceLine();
-    cy.visit(TopMenu.fundPath);
-    FinanceHelp.searchByName(firstFund.name);
-    Funds.selectFund(firstFund.name);
-    Funds.selectBudgetDetails();
-    Funds.viewTransactions();
-    Funds.checkTransactionDetails(1, defaultFiscalYear.code,'($20.00)', invoice.invoiceNumber, 'Payment', `${firstFund.name} (${firstFund.code})`);
-  });
+  it(
+    'C375106 Unopen order with changed Fund distribution when related paid invoice exists (thunderjet)',
+    { tags: [testType.smoke, devTeams.thunderjet] },
+    () => {
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList(orderNumber);
+      Orders.unOpenOrder();
+      OrderLines.selectPOLInOrder(0);
+      cy.wait(5000);
+      OrderLines.checkFundInPOL(secondFund);
+      OrderLines.backToEditingOrder();
+      Orders.openOrder();
+      OrderLines.selectPOLInOrder(0);
+      OrderLines.checkFundInPOL(secondFund);
+      cy.visit(TopMenu.fundPath);
+      FinanceHelp.searchByName(secondFund.name);
+      Funds.selectFund(secondFund.name);
+      Funds.selectBudgetDetails();
+      Funds.viewTransactions();
+      Funds.checkOrderInTransactionList(`${secondFund.code}`, '$0.00');
+      cy.visit(TopMenu.invoicesPath);
+      Invoices.searchByNumber(invoice.invoiceNumber);
+      Invoices.selectInvoice(invoice.invoiceNumber);
+      Invoices.selectInvoiceLine();
+      cy.visit(TopMenu.fundPath);
+      FinanceHelp.searchByName(firstFund.name);
+      Funds.selectFund(firstFund.name);
+      Funds.selectBudgetDetails();
+      Funds.viewTransactions();
+      Funds.checkTransactionDetails(
+        1,
+        defaultFiscalYear.code,
+        '($20.00)',
+        invoice.invoiceNumber,
+        'Payment',
+        `${firstFund.name} (${firstFund.code})`,
+      );
+    },
+  );
 });

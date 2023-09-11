@@ -10,7 +10,7 @@ import {
   ORDER_FORMAT_NAMES_IN_PROFILE,
   ACQUISITION_METHOD_NAMES,
   JOB_STATUS_NAMES,
-  VENDOR_NAMES
+  VENDOR_NAMES,
 } from '../../../support/constants';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -66,10 +66,12 @@ describe('data-import', () => {
       value: '100',
       type: '%',
       locationName: '049$a',
-      locationQuantityElectronic: '980$g'
+      locationQuantityElectronic: '980$g',
     };
-    const actionProfile = { name: `C375989 Test Order action profile ${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.ORDER };
+    const actionProfile = {
+      name: `C375989 Test Order action profile ${getRandomPostfix()}`,
+      typeValue: FOLIO_RECORD_TYPE.ORDER,
+    };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
       profileName: `C375989 Test Order ${getRandomPostfix()}`,
@@ -81,14 +83,15 @@ describe('data-import', () => {
         permissions.moduleDataImportEnabled.gui,
         permissions.uiOrganizationsView.gui,
         permissions.inventoryAll.gui,
-        permissions.uiOrdersView.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+        permissions.uiOrdersView.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          cy.login(userProperties.username, userProperties.password,
-            { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+        cy.login(userProperties.username, userProperties.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
         });
+      });
     });
 
     after('delete test data', () => {
@@ -98,9 +101,11 @@ describe('data-import', () => {
       FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
     });
 
-    it('C375989 Verify the importing of eBook orders with open status (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      // create mapping profile
+    it(
+      'C375989 Verify the importing of eBook orders with open status (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
+        // create mapping profile
         FieldMappingProfiles.createOrderMappingProfile(mappingProfile);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
@@ -129,6 +134,7 @@ describe('data-import', () => {
         FileDetails.checkOrderQuantityInSummaryTable(quantityOfItems);
         FileDetails.openOrder('Created');
         OrderLines.verifyPOLDetailsIsOpened();
-      });
+      },
+    );
   });
 });

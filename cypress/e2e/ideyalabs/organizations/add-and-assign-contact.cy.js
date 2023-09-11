@@ -36,18 +36,15 @@ describe.skip('ui-organizations: Organizations creation', () => {
     'C725 Add new contact and assign to an organization record (thunderjet)',
     { tags: [testTypes.ideaLabsTests] },
     () => {
-      organizations.searchByParameters(
-        searchByCode.dropdown,
-        searchByCode.code
-      );
+      organizations.searchByParameters(searchByCode.dropdown, searchByCode.code);
       organizations.selectOrganization(newOrganization.name);
       organizations.editOrganization();
       organizations.addNewContact(addContactPeople);
       organizations.closeDetailsPane();
       organizations.addContactToOrganization(addContactPeople);
       organizations.verifySavedContactToOrganization(
-        `${addContactPeople.lastName}, ${addContactPeople.firstName}`
+        `${addContactPeople.lastName}, ${addContactPeople.firstName}`,
       );
-    }
+    },
   );
 });

@@ -12,7 +12,7 @@ import ModalSelectTransformations from '../../../support/fragments/data-export/e
 import InteractorsTools from '../../../support/utils/interactorsTools';
 
 let user;
-let fieldMappingProfileName = getTestEntityValue('fieldMappingProfile');
+const fieldMappingProfileName = getTestEntityValue('fieldMappingProfile');
 const newTransformationCalloutMessage = '1 transformation has been successfully added';
 const newFieldMappingProfileCalloutMessage = `The field mapping profile ${fieldMappingProfileName} has been successfully created`;
 
@@ -21,35 +21,42 @@ describe('setting: data-export', () => {
     cy.createTempUser([
       permissions.dataExportEnableSettings.gui,
       permissions.dataExportEnableApp.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(user.username, user.password, { path: TopMenu.settingsPath, waiter: SettingsPane.waitLoading });
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.settingsPath,
+        waiter: SettingsPane.waitLoading,
       });
+    });
   });
 
   after('delete test data', () => {
-    ExportFieldMappingProfiles.getFieldMappingProfile({ query: `"name"=="${fieldMappingProfileName}"` })
-    .then(response => {
+    ExportFieldMappingProfiles.getFieldMappingProfile({
+      query: `"name"=="${fieldMappingProfileName}"`,
+    }).then((response) => {
       DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(response.id);
     });
     Users.deleteViaApi(user.userId);
   });
 
-  it('C10984 New mapping profile form (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
-    ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, ['Item']);
-    ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
-    ModalSelectTransformations.uncheckInstanceRecordTypeChechbox();
-    ModalSelectTransformations.clickNthCheckbox();
-    ModalSelectTransformations.fillInTransformationsTextfields('123', '1', '2', '$a');
+  it(
+    'C10984 New mapping profile form (firebird)',
+    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    () => {
+      ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
+      ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, ['Item']);
+      ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
+      ModalSelectTransformations.uncheckInstanceRecordTypeChechbox();
+      ModalSelectTransformations.clickNthCheckbox();
+      ModalSelectTransformations.fillInTransformationsTextfields('123', '1', '2', '$a');
 
-    ModalSelectTransformations.clickTransformationsSaveAndCloseButton();
-    InteractorsTools.checkCalloutMessage(newTransformationCalloutMessage);
+      ModalSelectTransformations.clickTransformationsSaveAndCloseButton();
+      InteractorsTools.checkCalloutMessage(newTransformationCalloutMessage);
 
-    ExportFieldMappingProfiles.saveMappingProfile();
-    InteractorsTools.checkCalloutMessage(newFieldMappingProfileCalloutMessage);
+      ExportFieldMappingProfiles.saveMappingProfile();
+      InteractorsTools.checkCalloutMessage(newFieldMappingProfileCalloutMessage);
 
-    ExportFieldMappingProfiles.verifyProfileNameOnTheList(fieldMappingProfileName);
-  });
+      ExportFieldMappingProfiles.verifyProfileNameOnTheList(fieldMappingProfileName);
+    },
+  );
 });

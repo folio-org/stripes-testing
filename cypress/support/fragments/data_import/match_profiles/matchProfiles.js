@@ -1,5 +1,13 @@
 import { including } from '@interactors/html';
-import { Button, MultiColumnListCell, Section, Pane, DropdownMenu, HTML, Callout } from '../../../../../interactors';
+import {
+  Button,
+  MultiColumnListCell,
+  Section,
+  Pane,
+  DropdownMenu,
+  HTML,
+  Callout,
+} from '../../../../../interactors';
 import NewMatchProfile from './newMatchProfile';
 
 const actionsButton = Button('Actions');
@@ -15,27 +23,23 @@ const openNewMatchProfileForm = () => {
 
 const deleteMatchProfile = (profileName) => {
   // get all match profiles
-  cy
-    .okapiRequest({
-      path: 'data-import-profiles/matchProfiles',
-      searchParams: {
-        query: '(cql.allRecords=1) sortby name',
-        limit: 1000
-      },
-    })
-    .then(({ body: { matchProfiles } }) => {
-      // find profile to delete
-      const profileToDelete = matchProfiles.find(profile => profile.name === profileName);
-      // delete profile with its id
-      cy
-        .okapiRequest({
-          method: 'DELETE',
-          path: `data-import-profiles/matchProfiles/${profileToDelete.id}`,
-        })
-        .then(({ status }) => {
-          if (status === 204) cy.log('###DELETED MATCH PROFILE###');
-        });
+  cy.okapiRequest({
+    path: 'data-import-profiles/matchProfiles',
+    searchParams: {
+      query: '(cql.allRecords=1) sortby name',
+      limit: 1000,
+    },
+  }).then(({ body: { matchProfiles } }) => {
+    // find profile to delete
+    const profileToDelete = matchProfiles.find((profile) => profile.name === profileName);
+    // delete profile with its id
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `data-import-profiles/matchProfiles/${profileToDelete.id}`,
+    }).then(({ status }) => {
+      if (status === 204) cy.log('###DELETED MATCH PROFILE###');
     });
+  });
 };
 
 const waitCreatingMatchProfile = () => {
@@ -63,40 +67,40 @@ export default {
     waitCreatingMatchProfile();
   },
 
-  checkMatchProfilePresented:(profileName) => {
+  checkMatchProfilePresented: (profileName) => {
     search(profileName);
     cy.expect(MultiColumnListCell(profileName).exists());
   },
 
-  createMatchProfileWithExistingPart:(profile) => {
+  createMatchProfileWithExistingPart: (profile) => {
     openNewMatchProfileForm();
     NewMatchProfile.fillMatchProfileWithExistingPart(profile);
     saveAndClose();
     waitCreatingMatchProfile();
   },
 
-  createMatchProfileWithQualifier:(profile) => {
+  createMatchProfileWithQualifier: (profile) => {
     openNewMatchProfileForm();
     NewMatchProfile.fillMatchProfileWithQualifierInIncomingAndExistingRecords(profile);
     saveAndClose();
     waitCreatingMatchProfile();
   },
 
-  createMatchProfileWithQualifierAndComparePart:(profile) => {
+  createMatchProfileWithQualifierAndComparePart: (profile) => {
     openNewMatchProfileForm();
     NewMatchProfile.fillMatchProfileWithStaticValueAndComparePartValue(profile);
     saveAndClose();
     waitCreatingMatchProfile();
   },
 
-  createMatchProfileWithQualifierAndExistingRecordField:(profile) => {
+  createMatchProfileWithQualifierAndExistingRecordField: (profile) => {
     openNewMatchProfileForm();
     NewMatchProfile.fillMatchProfileWithQualifierInIncomingRecordsAndValueInExistingRecord(profile);
     saveAndClose();
     waitCreatingMatchProfile();
   },
 
-  createMatchProfileWithStaticValue:(profile) => {
+  createMatchProfileWithStaticValue: (profile) => {
     openNewMatchProfileForm();
     NewMatchProfile.fillMatchProfileWithStaticValue(profile);
     saveAndClose();
@@ -104,11 +108,14 @@ export default {
   },
 
   checkCalloutMessage: (profileName) => {
-    cy.expect(Callout({ textContent: including(`The match profile "${profileName}" was successfully updated`) })
-      .exists());
+    cy.expect(
+      Callout({
+        textContent: including(`The match profile "${profileName}" was successfully updated`),
+      }).exists(),
+    );
   },
 
-  checkListOfExistingProfilesIsDisplayed:() => cy.expect(resultsPane.exists()),
-  selectMatchProfileFromList:(profileName) => cy.do(MultiColumnListCell(profileName).click()),
-  verifyActionMenuAbsent:() => cy.expect(resultsPane.find(actionsButton).absent())
+  checkListOfExistingProfilesIsDisplayed: () => cy.expect(resultsPane.exists()),
+  selectMatchProfileFromList: (profileName) => cy.do(MultiColumnListCell(profileName).click()),
+  verifyActionMenuAbsent: () => cy.expect(resultsPane.find(actionsButton).absent()),
 };

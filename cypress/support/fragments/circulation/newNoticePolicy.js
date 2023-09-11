@@ -11,7 +11,7 @@ import {
   Heading,
   PaneSet,
   KeyValue,
-  TextField
+  TextField,
 } from '../../../../interactors';
 
 const actionsButton = Button('Actions');
@@ -50,9 +50,7 @@ export default {
     cy.do([
       nameField.fillIn(patronNoticePolicy.name),
       activeCheckbox.click(),
-      descriptionField.fillIn(
-        patronNoticePolicy.description
-      ),
+      descriptionField.fillIn(patronNoticePolicy.description),
     ]);
   },
 
@@ -62,24 +60,46 @@ export default {
 
   addNotice(patronNoticePolicy, index = 0) {
     cy.do([
-      Section({ id: `edit${patronNoticePolicy.noticeName}Notices` }).find(addNoticeButton).click(),
-      Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].templateId` }).choose(patronNoticePolicy.templateName),
-      Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].format` }).choose(patronNoticePolicy.format),
-      Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].sendOptions.sendWhen` }).choose(patronNoticePolicy.action),
+      Section({ id: `edit${patronNoticePolicy.noticeName}Notices` })
+        .find(addNoticeButton)
+        .click(),
+      Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].templateId` }).choose(
+        patronNoticePolicy.templateName,
+      ),
+      Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].format` }).choose(
+        patronNoticePolicy.format,
+      ),
+      Select({
+        name: `${patronNoticePolicy.noticeId}Notices[${index}].sendOptions.sendWhen`,
+      }).choose(patronNoticePolicy.action),
     ]);
     // add check for alert "div[role=alert]" 'Always sent at the end of a session and loans are bundled into a single notice for each patron.'
     if (patronNoticePolicy.send !== undefined) {
-      cy.do(Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].sendOptions.sendHow` }).choose(patronNoticePolicy.send));
+      cy.do(
+        Select({
+          name: `${patronNoticePolicy.noticeId}Notices[${index}].sendOptions.sendHow`,
+        }).choose(patronNoticePolicy.send),
+      );
       if (patronNoticePolicy.send === 'After' || patronNoticePolicy.send === 'Before') {
         cy.do([
-          TextField({ name: `${patronNoticePolicy.noticeId}Notices[${index}].sendOptions.sendBy.duration` }).fillIn(patronNoticePolicy.sendBy.duration),
-          Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].sendOptions.sendBy.intervalId` }).choose(patronNoticePolicy.sendBy.interval),
-          Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].frequency` }).choose(patronNoticePolicy.frequency),
+          TextField({
+            name: `${patronNoticePolicy.noticeId}Notices[${index}].sendOptions.sendBy.duration`,
+          }).fillIn(patronNoticePolicy.sendBy.duration),
+          Select({
+            name: `${patronNoticePolicy.noticeId}Notices[${index}].sendOptions.sendBy.intervalId`,
+          }).choose(patronNoticePolicy.sendBy.interval),
+          Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].frequency` }).choose(
+            patronNoticePolicy.frequency,
+          ),
         ]);
         if (patronNoticePolicy.frequency === 'Recurring') {
           cy.do([
-            TextField({ name: `${patronNoticePolicy.noticeId}Notices[${index}].sendOptions.sendEvery.duration` }).fillIn(patronNoticePolicy.sendEvery.duration),
-            Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].sendOptions.sendEvery.intervalId` }).choose(patronNoticePolicy.sendEvery.interval),
+            TextField({
+              name: `${patronNoticePolicy.noticeId}Notices[${index}].sendOptions.sendEvery.duration`,
+            }).fillIn(patronNoticePolicy.sendEvery.duration),
+            Select({
+              name: `${patronNoticePolicy.noticeId}Notices[${index}].sendOptions.sendEvery.intervalId`,
+            }).choose(patronNoticePolicy.sendEvery.interval),
           ]);
         }
       }
@@ -97,7 +117,7 @@ export default {
       nameField.has({ value: '' }),
       descriptionField.exists(),
       descriptionField.has({ value: '' }),
-      activeCheckbox.has({ checked:false }),
+      activeCheckbox.has({ checked: false }),
     ]);
     Object.values(sections).forEach((specialSection) => cy.expect(specialSection.find(addNoticeButton).has({ disabled: false, visible: true })));
   },
@@ -119,9 +139,7 @@ export default {
   },
 
   save: () => {
-    cy.do([
-      Button({ id: 'footer-save-entity' }).click(),
-    ]);
+    cy.do([Button({ id: 'footer-save-entity' }).click()]);
   },
 
   choosePolicy: (patronNoticePolicy) => {

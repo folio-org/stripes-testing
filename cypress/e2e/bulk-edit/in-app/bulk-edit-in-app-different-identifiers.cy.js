@@ -27,28 +27,36 @@ describe('bulk-edit', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.bulkEditView.gui,
-        permissions.uiInventoryViewCreateEditHoldings.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading
-          });
-
-          const instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-          cy.getHoldings({ limit: 1, query: `"instanceId"="${instanceId}"` })
-            .then(holdings => {
-              holdingsHRID = holdings[0].hrid;
-              FileManager.createFile(`cypress/fixtures/${validHoldingsHRIDFileName}`, holdingsHRID);
-            });
-          cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceId}"` })
-            .then(instance => {
-              instanceHRID = instance.hrid;
-              FileManager.createFile(`cypress/fixtures/${instanceHRIDFileName}`, `${instanceHRID}\r\n${getRandomPostfix()}`);
-            });
-          FileManager.createFile(`cypress/fixtures/${invalidItemBarcodesFileName}`, invalidItemBarcodes);
+        permissions.uiInventoryViewCreateEditHoldings.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
+
+        const instanceId = InventoryInstances.createInstanceViaApi(
+          item.instanceName,
+          item.itemBarcode,
+        );
+        cy.getHoldings({ limit: 1, query: `"instanceId"="${instanceId}"` }).then((holdings) => {
+          holdingsHRID = holdings[0].hrid;
+          FileManager.createFile(`cypress/fixtures/${validHoldingsHRIDFileName}`, holdingsHRID);
+        });
+        cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceId}"` }).then(
+          (instance) => {
+            instanceHRID = instance.hrid;
+            FileManager.createFile(
+              `cypress/fixtures/${instanceHRIDFileName}`,
+              `${instanceHRID}\r\n${getRandomPostfix()}`,
+            );
+          },
+        );
+        FileManager.createFile(
+          `cypress/fixtures/${invalidItemBarcodesFileName}`,
+          invalidItemBarcodes,
+        );
+      });
     });
 
     after('delete test data', () => {
@@ -60,29 +68,33 @@ describe('bulk-edit', () => {
     });
 
     // has to pass after UIBULKED-321
-    it('C360119 Verify that different Holdings identifiers are supported for Bulk edit (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.checkHoldingsRadio();
-      BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
-      BulkEditSearchPane.uploadFile(validHoldingsHRIDFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.verifyMatchedResults(holdingsHRID);
-      BulkEditActions.openActions();
-      TopMenuNavigation.navigateToApp('Bulk edit');
+    it(
+      'C360119 Verify that different Holdings identifiers are supported for Bulk edit (firebird)',
+      { tags: [testTypes.smoke, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.checkHoldingsRadio();
+        BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
+        BulkEditSearchPane.uploadFile(validHoldingsHRIDFileName);
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyMatchedResults(holdingsHRID);
+        BulkEditActions.openActions();
+        TopMenuNavigation.navigateToApp('Bulk edit');
 
-      BulkEditSearchPane.checkHoldingsRadio();
-      BulkEditSearchPane.selectRecordIdentifier('Instance HRIDs');
-      BulkEditSearchPane.uploadFile(instanceHRIDFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.verifyMatchedResults(holdingsHRID);
-      BulkEditActions.openActions();
-      TopMenuNavigation.navigateToApp('Bulk edit');
+        BulkEditSearchPane.checkHoldingsRadio();
+        BulkEditSearchPane.selectRecordIdentifier('Instance HRIDs');
+        BulkEditSearchPane.uploadFile(instanceHRIDFileName);
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyMatchedResults(holdingsHRID);
+        BulkEditActions.openActions();
+        TopMenuNavigation.navigateToApp('Bulk edit');
 
-      BulkEditSearchPane.checkHoldingsRadio();
-      BulkEditSearchPane.selectRecordIdentifier('Item barcodes');
-      BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.verifyNonMatchedResults(invalidItemBarcodes);
-      BulkEditActions.openActions();
-    });
+        BulkEditSearchPane.checkHoldingsRadio();
+        BulkEditSearchPane.selectRecordIdentifier('Item barcodes');
+        BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyNonMatchedResults(invalidItemBarcodes);
+        BulkEditActions.openActions();
+      },
+    );
   });
 });

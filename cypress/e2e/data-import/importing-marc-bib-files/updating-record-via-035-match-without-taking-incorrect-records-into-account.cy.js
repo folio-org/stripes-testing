@@ -6,10 +6,12 @@ import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import { EXISTING_RECORDS_NAMES,
+import {
+  EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
-  ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
+  ACCEPTED_DATA_TYPE_NAMES,
+} from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -31,7 +33,7 @@ describe('data-import', () => {
     const quantityOfItems = '1';
     const protectedFields = {
       firstField: '020',
-      secondField: '514'
+      secondField: '514',
     };
     const protectedFieldIds = [];
     const filePathToUpload = 'marcBibFileForC380390.mrc';
@@ -44,24 +46,24 @@ describe('data-import', () => {
       profileName: `C380390 ccn MARC match ${getRandomPostfix()}`,
       incomingRecordFields: {
         field: '035',
-        subfield: 'a'
+        subfield: 'a',
       },
       qualifierType: 'Begins with',
       qualifierValue: `${randomIdentifierCode}`,
       existingRecordFields: {
         field: '035',
-        subfield: 'a'
+        subfield: 'a',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC
+      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
-      profileName: `C380390 Reject based on ccn.${getRandomPostfix()}`
+      profileName: `C380390 Reject based on ccn.${getRandomPostfix()}`,
     };
     const mappingProfile = {
       name: `C380390 New or update on ccn.${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC
+      typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
     };
     const actionProfile = {
       name: `C380390 New or update on ccn.${getRandomPostfix()}`,
@@ -70,41 +72,43 @@ describe('data-import', () => {
     };
     const jobProfileForUpdate = {
       profileName: `C380390 New or update on ccn.${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
     before('create user and login', () => {
-      cy.getAdminToken()
-        .then(() => {
-          MarcFieldProtection.createMarcFieldProtectionViaApi({
-            indicator1: '*',
-            indicator2: '*',
-            subfield: '*',
-            data: '*',
-            source: 'USER',
-            field: protectedFields.firstField
-          })
-            .then((firstResp) => { protectedFieldIds.push(firstResp.id); });
-          MarcFieldProtection.createMarcFieldProtectionViaApi({
-            indicator1: '*',
-            indicator2: '*',
-            subfield: '*',
-            data: '*',
-            source: 'USER',
-            field: protectedFields.secondField
-          })
-            .then((secondResp) => { protectedFieldIds.push(secondResp.id); });
+      cy.getAdminToken().then(() => {
+        MarcFieldProtection.createMarcFieldProtectionViaApi({
+          indicator1: '*',
+          indicator2: '*',
+          subfield: '*',
+          data: '*',
+          source: 'USER',
+          field: protectedFields.firstField,
+        }).then((firstResp) => {
+          protectedFieldIds.push(firstResp.id);
         });
+        MarcFieldProtection.createMarcFieldProtectionViaApi({
+          indicator1: '*',
+          indicator2: '*',
+          subfield: '*',
+          data: '*',
+          source: 'USER',
+          field: protectedFields.secondField,
+        }).then((secondResp) => {
+          protectedFieldIds.push(secondResp.id);
+        });
+      });
 
       cy.createTempUser([
         permissions.settingsDataImportEnabled.gui,
-        permissions.moduleDataImportEnabled.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password,
-            { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
+        permissions.moduleDataImportEnabled.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
         });
+      });
     });
 
     after('delete test data', () => {
@@ -116,22 +120,29 @@ describe('data-import', () => {
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       Users.deleteViaApi(user.userId);
-      protectedFieldIds.forEach(fieldId => MarcFieldProtection.deleteMarcFieldProtectionViaApi(fieldId));
-      InventorySearchAndFilter.getInstancesByIdentifierViaApi(`${randomIdentifierCode}00999523`)
-        .then(instances => {
-          if (instances) {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
-            });
-          }
-        });
+      protectedFieldIds.forEach((fieldId) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(fieldId));
+      InventorySearchAndFilter.getInstancesByIdentifierViaApi(
+        `${randomIdentifierCode}00999523`,
+      ).then((instances) => {
+        if (instances) {
+          instances.forEach(({ id }) => {
+            InventoryInstance.deleteInstanceViaApi(id);
+          });
+        }
+      });
     });
 
-    it('C380390 Verify updating record via 035 match, without taking incorrect records into account (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      // change files for create instance using random identifier code
-        DataImport.editMarcFile(filePathToUpload, editedMarcFileName,
-          ['ccn'], [randomIdentifierCode]);
+    it(
+      'C380390 Verify updating record via 035 match, without taking incorrect records into account (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
+        // change files for create instance using random identifier code
+        DataImport.editMarcFile(
+          filePathToUpload,
+          editedMarcFileName,
+          ['ccn'],
+          [randomIdentifierCode],
+        );
 
         // upload a marc file
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
@@ -166,8 +177,14 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForMatch);
         FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.srsMarc);
-        FileDetails.checkStatusInColumn(FileDetails.status.dash, FileDetails.columnNameInResultList.instance);
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.created,
+          FileDetails.columnNameInResultList.srsMarc,
+        );
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.dash,
+          FileDetails.columnNameInResultList.instance,
+        );
 
         // create mapping profile
         cy.visit(SettingsMenu.mappingProfilePath);
@@ -202,11 +219,15 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(fileNameForUpdate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForUpdate);
-        [FileDetails.columnNameInResultList.srsMarc, FileDetails.columnNameInResultList.instance].forEach(columnName => {
+        [
+          FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.instance,
+        ].forEach((columnName) => {
           FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable('1', 1);
         FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
-      });
+      },
+    );
   });
 });

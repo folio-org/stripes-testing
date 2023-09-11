@@ -20,7 +20,7 @@ export default {
           rootSection
             .find(MultiColumnListRow({ ariaRowIndex: row }))
             .find(MultiColumnListCell({ columnIndex: descriptionColumnIdex }))
-            .has({ text: description })
+            .has({ text: description }),
         );
       });
     });

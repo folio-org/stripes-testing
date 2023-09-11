@@ -20,26 +20,25 @@ export default {
         path: 'location-units/libraries',
         body: librariesProperties,
         method: 'POST',
-        isDefaultSearchParamsRequired: false
+        isDefaultSearchParamsRequired: false,
       })
       .then((response) => {
         return response.body;
       });
   },
-  defaultUiLibraries : {
+  defaultUiLibraries: {
     body: {
       campusId: uuid(),
       code: `autotest_code_${getRandomPostfix()}`,
       id: uuid(),
       name: `autotest_name_${getRandomPostfix()}`,
-    }
+    },
   },
   deleteViaApi: (libraryId) => {
-    return cy
-      .okapiRequest({
-        path: `location-units/libraries/${libraryId}`,
-        method: 'DELETE',
-        isDefaultSearchParamsRequired: false
-      });
+    return cy.okapiRequest({
+      path: `location-units/libraries/${libraryId}`,
+      method: 'DELETE',
+      isDefaultSearchParamsRequired: false,
+    });
   },
 };

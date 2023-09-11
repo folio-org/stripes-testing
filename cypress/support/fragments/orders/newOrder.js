@@ -6,13 +6,14 @@ const getDefaultOrder = (vendorId, number) => {
     id: uuid(),
     poNumber: number,
     vendor: vendorId,
-    orderType: 'One-Time'
+    orderType: 'One-Time',
   };
   if (!vendorId) {
-    NewOrganization.createViaApi(NewOrganization.getDefaultOrganization())
-      .then(newOrganization => {
+    NewOrganization.createViaApi(NewOrganization.getDefaultOrganization()).then(
+      (newOrganization) => {
         defaultOrder.vendor = newOrganization.id;
-      });
+      },
+    );
   }
   return defaultOrder;
 };
@@ -22,7 +23,7 @@ export default {
   defaultOneTimeOrder: {
     id: uuid(),
     vendor: '',
-    orderType: 'One-Time'
+    orderType: 'One-Time',
   },
   defaultOngoingTimeOrder: {
     id: uuid(),
@@ -31,6 +32,6 @@ export default {
       isSubscription: false,
       manualRenewal: false,
     },
-    orderType: 'Ongoing'
-  }
+    orderType: 'Ongoing',
+  },
 };

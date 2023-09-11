@@ -10,7 +10,7 @@ import {
   MultiColumnList,
   MultiColumnListCell,
   PaneContent,
-  Checkbox
+  Checkbox,
 } from '../../../../interactors';
 import SelectUser from './selectUser';
 
@@ -20,7 +20,7 @@ const userPane = PaneContent({ id: 'patron-details-content' });
 const modalForDeliveryRequest = Modal('Route for delivery request');
 
 function addPatron(userName) {
-  cy.do(Button({ id:'clickable-find-user' }).click());
+  cy.do(Button({ id: 'clickable-find-user' }).click());
   SelectUser.searchUser(userName);
   SelectUser.selectUserFromList(userName);
 }
@@ -74,40 +74,48 @@ export default {
     cy.wait(1500);
   },
 
-  endCheckOutSession:() => {
+  endCheckOutSession: () => {
     cy.do(endSessionButton.click());
     cy.expect(endSessionButton.absent());
   },
 
-  endCheckOutSessionAutomatically:() => {
+  endCheckOutSessionAutomatically: () => {
     // this timeout is needed to wait 60 seconds until the action is automatically done
     cy.intercept('/circulation/end-patron-action-session').as('end-patron-session');
-    cy.wait('@end-patron-session', { timeout: 99000 }).then(xhr => {
+    cy.wait('@end-patron-session', { timeout: 99000 }).then((xhr) => {
       cy.wrap(xhr.response.statusCode).should('eq', 204);
     });
     cy.expect(endSessionButton.absent());
   },
 
-  checkIsInterfacesOpened:() => {
+  checkIsInterfacesOpened: () => {
     cy.expect(Pane('Scan patron card').exists());
     cy.expect(Pane('Scan items').exists());
   },
 
-  checkPatronInformation:() => {
+  checkPatronInformation: () => {
     cy.expect(KeyValue('Borrower').exists());
     cy.expect(KeyValue('Status').exists());
   },
 
-  checkItem:(barcode) => {
-    cy.expect(MultiColumnList({ id:'list-items-checked-out' }).find(HTML(including(barcode))).absent());
+  checkItem: (barcode) => {
+    cy.expect(
+      MultiColumnList({ id: 'list-items-checked-out' })
+        .find(HTML(including(barcode)))
+        .absent(),
+    );
   },
 
   confirmMultipieceCheckOut(barcode) {
     cy.do(modal.find(Button('Check out')).click());
-    cy.expect(MultiColumnList({ id: 'list-items-checked-out' }).find(HTML(including(barcode))).exists());
+    cy.expect(
+      MultiColumnList({ id: 'list-items-checked-out' })
+        .find(HTML(including(barcode)))
+        .exists(),
+    );
   },
 
-  cancelMultipleCheckOutModal:() => {
+  cancelMultipleCheckOutModal: () => {
     cy.do(modal.find(Button('Cancel')).click());
     cy.expect(modal.absent());
   },
@@ -121,9 +129,18 @@ export default {
   changeDueDateToPast(minutes) {
     const todayFormatted = {};
     const today = new Date();
-    todayFormatted.formattedDate = (today.getMonth() + 1).toString().padStart(2, "0") + '/' + today.getDate().toString().padStart(2, "0") + '/' + today.getFullYear();
+    todayFormatted.formattedDate =
+      (today.getMonth() + 1).toString().padStart(2, '0') +
+      '/' +
+      today.getDate().toString().padStart(2, '0') +
+      '/' +
+      today.getFullYear();
     today.setUTCMinutes(today.getMinutes() - minutes);
-    todayFormatted.formattedTime = today.toLocaleTimeString('en-US', { timeZone: 'UTC', hour: '2-digit', minute: '2-digit' });
+    todayFormatted.formattedTime = today.toLocaleTimeString('en-US', {
+      timeZone: 'UTC',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
 
     cy.do([
       Button({ text: 'Change due date' }).click(),
@@ -149,20 +166,30 @@ export default {
     cy.wait(1000);
   },
 
-  closeForDeliveryRequestModal:() => {
+  closeForDeliveryRequestModal: () => {
     cy.do(modalForDeliveryRequest.find(Checkbox('Print slip')).click());
     cy.do(modalForDeliveryRequest.find(Button('Close and check out')).click());
   },
 
-  openFeeFineLink:(value, userId) => {
-    cy.do(KeyValue({ value: including(value) }).find(Link({ href: including(`/users/${userId}/accounts/open`) })).click());
+  openFeeFineLink: (value, userId) => {
+    cy.do(
+      KeyValue({ value: including(value) })
+        .find(Link({ href: including(`/users/${userId}/accounts/open`) }))
+        .click(),
+    );
   },
-  feeFineLinkIsNotClickable:(value, userId) => {
-    cy.expect(KeyValue({ value: including(value) }).find(Link({ href: including(`/users/${userId}/accounts/open`) })).absent());
+  feeFineLinkIsNotClickable: (value, userId) => {
+    cy.expect(
+      KeyValue({ value: including(value) })
+        .find(Link({ href: including(`/users/${userId}/accounts/open`) }))
+        .absent(),
+    );
   },
-  checkDetailsOfCheckOUTAreCleared:() => {
-    cy.expect(Pane({ id: 'item-details' })
-      .find(HTML(including('No items have been entered yet')))
-      .exists());
-  }
+  checkDetailsOfCheckOUTAreCleared: () => {
+    cy.expect(
+      Pane({ id: 'item-details' })
+        .find(HTML(including('No items have been entered yet')))
+        .exists(),
+    );
+  },
 };

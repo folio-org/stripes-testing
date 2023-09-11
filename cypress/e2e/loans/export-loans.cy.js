@@ -23,70 +23,98 @@ describe('Export Loans ', () => {
   const testData = {};
   const userData = {};
   const itemsData = {
-    itemsWithSeparateInstance: [{
-      barcode: generateItemBarcode() - Math.round(getRandomPostfix()),
-      instanceTitle: `Instance ${getRandomPostfix()}`,
-    },
-    {
-      barcode: generateItemBarcode() - Math.round(getRandomPostfix()),
-      instanceTitle: `Instance ${getRandomPostfix()}`,
-    },
-    {
-      barcode: generateItemBarcode() - Math.round(getRandomPostfix()),
-      instanceTitle: `Instance ${getRandomPostfix()}`,
-    },
-    {
-      barcode: generateItemBarcode() - Math.round(getRandomPostfix()),
-      instanceTitle: `Instance ${getRandomPostfix()}`,
-    }]
+    itemsWithSeparateInstance: [
+      {
+        barcode: generateItemBarcode() - Math.round(getRandomPostfix()),
+        instanceTitle: `Instance ${getRandomPostfix()}`,
+      },
+      {
+        barcode: generateItemBarcode() - Math.round(getRandomPostfix()),
+        instanceTitle: `Instance ${getRandomPostfix()}`,
+      },
+      {
+        barcode: generateItemBarcode() - Math.round(getRandomPostfix()),
+        instanceTitle: `Instance ${getRandomPostfix()}`,
+      },
+      {
+        barcode: generateItemBarcode() - Math.round(getRandomPostfix()),
+        instanceTitle: `Instance ${getRandomPostfix()}`,
+      },
+    ],
   };
 
   before('Create user, open and closed loans', () => {
-    cy.getAdminToken().then(() => {
-      cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => { testData.instanceTypeId = instanceTypes[0].id; });
-      cy.getHoldingTypes({ limit: 1 }).then((res) => { testData.holdingTypeId = res[0].id; });
-      cy.getLocations({ limit: 1 }).then((res) => { testData.locationId = res.id; });
-      cy.getLoanTypes({ limit: 1 }).then((res) => { testData.loanTypeId = res[0].id; });
-      cy.getMaterialTypes({ limit: 1 }).then((res) => { testData.materialTypeId = res.id; });
-      ServicePoints.getViaApi({ limit: 1 }).then((servicePoints) => { testData.servicepointId = servicePoints[0].id; });
-    }).then(() => {
-      itemsData.itemsWithSeparateInstance.forEach((item, index) => {
-        InventoryInstances.createFolioInstanceViaApi({ instance: {
-          instanceTypeId: testData.instanceTypeId,
-          title: item.instanceTitle,
-        },
-        holdings: [{
-          holdingsTypeId: testData.holdingTypeId,
-          permanentLocationId: testData.locationId,
-        }],
-        items:[{
-          barcode: item.barcode,
-          status:  { name: ITEM_STATUS_NAMES.AVAILABLE },
-          permanentLoanType: { id: testData.loanTypeId },
-          materialType: { id: testData.materialTypeId },
-        }] })
-          .then(specialInstanceIds => {
+    cy.getAdminToken()
+      .then(() => {
+        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+          testData.instanceTypeId = instanceTypes[0].id;
+        });
+        cy.getHoldingTypes({ limit: 1 }).then((res) => {
+          testData.holdingTypeId = res[0].id;
+        });
+        cy.getLocations({ limit: 1 }).then((res) => {
+          testData.locationId = res.id;
+        });
+        cy.getLoanTypes({ limit: 1 }).then((res) => {
+          testData.loanTypeId = res[0].id;
+        });
+        cy.getMaterialTypes({ limit: 1 }).then((res) => {
+          testData.materialTypeId = res.id;
+        });
+        ServicePoints.getViaApi({ limit: 1 }).then((servicePoints) => {
+          testData.servicepointId = servicePoints[0].id;
+        });
+      })
+      .then(() => {
+        itemsData.itemsWithSeparateInstance.forEach((item, index) => {
+          InventoryInstances.createFolioInstanceViaApi({
+            instance: {
+              instanceTypeId: testData.instanceTypeId,
+              title: item.instanceTitle,
+            },
+            holdings: [
+              {
+                holdingsTypeId: testData.holdingTypeId,
+                permanentLocationId: testData.locationId,
+              },
+            ],
+            items: [
+              {
+                barcode: item.barcode,
+                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                permanentLoanType: { id: testData.loanTypeId },
+                materialType: { id: testData.materialTypeId },
+              },
+            ],
+          }).then((specialInstanceIds) => {
             itemsData.itemsWithSeparateInstance[index].instanceId = specialInstanceIds.instanceId;
-            itemsData.itemsWithSeparateInstance[index].holdingId = specialInstanceIds.holdingIds[0].id;
-            itemsData.itemsWithSeparateInstance[index].itemId = specialInstanceIds.holdingIds[0].itemIds;
+            itemsData.itemsWithSeparateInstance[index].holdingId =
+              specialInstanceIds.holdingIds[0].id;
+            itemsData.itemsWithSeparateInstance[index].itemId =
+              specialInstanceIds.holdingIds[0].itemIds;
           });
+        });
       });
-    });
-    cy.createTempUser([permissions.checkinAll.gui,
+    cy.createTempUser([
+      permissions.checkinAll.gui,
       permissions.uiUsersViewLoans.gui,
       permissions.uiUsersView.gui,
-      permissions.uiInventoryViewInstances.gui])
-      .then(userProperties => {
+      permissions.uiInventoryViewInstances.gui,
+    ])
+      .then((userProperties) => {
         userData.username = userProperties.username;
         userData.password = userProperties.password;
         userData.userId = userProperties.userId;
         userData.barcode = userProperties.barcode;
         userData.firstName = userProperties.firstName;
-        UserEdit.addServicePointViaApi(testData.servicepointId,
-          userData.userId, testData.servicepointId);
+        UserEdit.addServicePointViaApi(
+          testData.servicepointId,
+          userData.userId,
+          testData.servicepointId,
+        );
       })
       .then(() => {
-        itemsData.itemsWithSeparateInstance.forEach(item => {
+        itemsData.itemsWithSeparateInstance.forEach((item) => {
           Checkout.checkoutItemViaApi({
             id: uuid(),
             itemBarcode: item.barcode,
@@ -121,15 +149,13 @@ describe('Export Loans ', () => {
       servicePointId: testData.servicepointId,
       itemBarcode: itemsData.itemsWithSeparateInstance[3].barcode,
     });
-    Users.deleteViaApi(userData.userId).then(
-      () => itemsData.itemsWithSeparateInstance.forEach(
-        (item, index) => {
-          cy.deleteItemViaApi(item.itemId);
-          cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
-          InventoryInstance.deleteInstanceViaApi(itemsData.itemsWithSeparateInstance[index].instanceId);
-        }
-      )
-    );
+    Users.deleteViaApi(userData.userId).then(() => itemsData.itemsWithSeparateInstance.forEach((item, index) => {
+      cy.deleteItemViaApi(item.itemId);
+      cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
+      InventoryInstance.deleteInstanceViaApi(
+        itemsData.itemsWithSeparateInstance[index].instanceId,
+      );
+    }));
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
@@ -153,8 +179,8 @@ describe('Export Loans ', () => {
         itemsData.itemsWithSeparateInstance[2].instanceTitle,
         itemsData.itemsWithSeparateInstance[3].instanceTitle,
         itemsData.itemsWithSeparateInstance[2].holdingId,
-        itemsData.itemsWithSeparateInstance[3].holdingId
-      ]
+        itemsData.itemsWithSeparateInstance[3].holdingId,
+      ],
     );
     FileManager.renameFile('export*', 'ExportOpenLoans.csv');
     cy.visit(AppPaths.getClosedLoansPath(userData.userId));
@@ -172,8 +198,8 @@ describe('Export Loans ', () => {
         itemsData.itemsWithSeparateInstance[0].instanceTitle,
         itemsData.itemsWithSeparateInstance[1].instanceTitle,
         itemsData.itemsWithSeparateInstance[0].holdingId,
-        itemsData.itemsWithSeparateInstance[1].holdingId
-      ]
+        itemsData.itemsWithSeparateInstance[1].holdingId,
+      ],
     );
   });
 });

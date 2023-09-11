@@ -114,7 +114,9 @@ export default {
       receiveButton.click(),
       Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
       TextField({ name: `${recievingFieldName}.caption` }).fillIn(caption),
-      MultiColumnListRow({ indexRow: `row-${rowNumber}` }).find(Button('Assign a different location')).click(),
+      MultiColumnListRow({ indexRow: `row-${rowNumber}` })
+        .find(Button('Assign a different location'))
+        .click(),
     ]);
     cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
     cy.do([
@@ -127,9 +129,12 @@ export default {
   },
 
   checkReceived: (rowNumber, caption) => {
-    cy.expect(Accordion({ id: receivedPiecesAccordionId })
-      .find(MultiColumnListRow({ index: rowNumber }))
-      .find(MultiColumnListCell({ content: caption })).exists());
+    cy.expect(
+      Accordion({ id: receivedPiecesAccordionId })
+        .find(MultiColumnListRow({ index: rowNumber }))
+        .find(MultiColumnListCell({ content: caption }))
+        .exists(),
+    );
   },
 
   checkReceivedPiece: (rowNumber, caption, barcode) => {
@@ -139,10 +144,12 @@ export default {
     cy.expect([
       Accordion({ id: receivedPiecesAccordionId })
         .find(MultiColumnListRow({ index: rowNumber }))
-        .find(MultiColumnListCell({ content: barcode })).exists(),
+        .find(MultiColumnListCell({ content: barcode }))
+        .exists(),
       Accordion({ id: receivedPiecesAccordionId })
         .find(MultiColumnListRow({ index: rowNumber }))
-        .find(MultiColumnListCell({ content: caption })).exists()
+        .find(MultiColumnListCell({ content: caption }))
+        .exists(),
     ]);
   },
 
@@ -163,21 +170,26 @@ export default {
   checkUnreceivedPiece: (rowNumber = 0, caption) => {
     // Need to wait, while data will be loaded before start checking
     cy.wait(2000);
-    cy.expect(Accordion({ id: expectedPiecesAccordionId })
-      .find(MultiColumnListRow({ index: rowNumber }))
-      .find(MultiColumnListCell({ content: caption })).exists());
+    cy.expect(
+      Accordion({ id: expectedPiecesAccordionId })
+        .find(MultiColumnListRow({ index: rowNumber }))
+        .find(MultiColumnListCell({ content: caption }))
+        .exists(),
+    );
   },
 
   checkIsPiecesCreated: (title) => {
     filterOpenReceiving();
-    cy.expect(Pane('Receiving')
-      .find(MultiColumnList({ id: 'receivings-list' }))
-      .find(MultiColumnListCell({ content: title }))
-      .exists());
+    cy.expect(
+      Pane('Receiving')
+        .find(MultiColumnList({ id: 'receivings-list' }))
+        .find(MultiColumnListCell({ content: title }))
+        .exists(),
+    );
   },
 
   selectReceivingItem: (indexRow = 0) => {
-    cy.do(MultiColumnListCell({ 'row': indexRow, 'columnIndex': 0 }).click());
+    cy.do(MultiColumnListCell({ row: indexRow, columnIndex: 0 }).click());
   },
 
   selectInstanceInReceive: (instanceName) => {
@@ -193,25 +205,19 @@ export default {
   },
 
   receiveFromExpectedSection: () => {
-    cy.do([
-      Section({ id: 'expected' }).find(actionsButton).click(),
-      receiveButton.click()
-    ]);
+    cy.do([Section({ id: 'expected' }).find(actionsButton).click(), receiveButton.click()]);
   },
 
   receiveFromExpectedSectionWithClosePOL: () => {
     cy.do([
       Section({ id: 'expected' }).find(actionsButton).click(),
       receiveButton.click(),
-      Button('Continue').click()
+      Button('Continue').click(),
     ]);
   },
 
   unreceiveFromReceivedSection: () => {
-    cy.do([
-      Section({ id: 'received' }).find(actionsButton).click(),
-      unreceiveButton.click()
-    ]);
+    cy.do([Section({ id: 'received' }).find(actionsButton).click(), unreceiveButton.click()]);
   },
 
   selectLinkFromResultsList: () => {
@@ -219,24 +225,19 @@ export default {
   },
 
   receiveAll: () => {
-    cy.do([
-      Checkbox({ ariaLabel: 'Select all pieces' }).clickInput(),
-      receiveButton.click(),
-    ]);
+    cy.do([Checkbox({ ariaLabel: 'Select all pieces' }).clickInput(), receiveButton.click()]);
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
   },
 
   clickOnInstance: () => {
     cy.do([
       Button('Collapse all').click(),
-      PaneContent({ id: 'pane-title-details-content' }).find(Link()).click()
+      PaneContent({ id: 'pane-title-details-content' }).find(Link()).click(),
     ]);
   },
 
   clickOnPOLnumber: (PolNumber) => {
-    cy.do([
-      PaneContent({ id: 'pane-title-details-content' }).find(Link(PolNumber)).click()
-    ]);
+    cy.do([PaneContent({ id: 'pane-title-details-content' }).find(Link(PolNumber)).click()]);
   },
 
   quickReceivePieceAdd: () => {
