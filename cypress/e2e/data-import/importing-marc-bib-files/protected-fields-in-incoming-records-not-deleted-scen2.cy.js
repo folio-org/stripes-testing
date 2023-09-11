@@ -14,7 +14,6 @@ import Users from '../../../support/fragments/users/users';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import { TARGET_PROFILE_NAMES } from '../../../support/constants';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {

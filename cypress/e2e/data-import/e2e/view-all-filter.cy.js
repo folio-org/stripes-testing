@@ -70,13 +70,6 @@ describe('data-import', () => {
         LogsViewAll.checkByErrorsInImport(JOB_STATUS_NAMES.COMPLETED);
         LogsViewAll.resetAllFilters();
         LogsViewAll.selectYesfilterJobsByErrors();
-        LogsViewAll.checkByErrorsInImport(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS, JOB_STATUS_NAMES.FAILED);
-        LogsViewAll.resetAllFilters();
-        // FILTER By "Errors in Import"
-        LogsViewAll.selectNofilterJobsByErrors();
-        LogsViewAll.checkByErrorsInImport(JOB_STATUS_NAMES.COMPLETED);
-        LogsViewAll.resetAllFilters();
-        LogsViewAll.selectYesfilterJobsByErrors();
         LogsViewAll.checkByErrorsInImport(
           JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS,
           JOB_STATUS_NAMES.FAILED,
@@ -115,15 +108,6 @@ describe('data-import', () => {
         LogsViewAll.openInventorysingleRecordImportsAccordion();
         LogsViewAll.singleRecordImportsStatuses.forEach(filter => {
         // need some waiting until checkboxes become clickable after resetting filters
-          cy.wait(1000); // eslint-disable-line cypress/no-unnecessary-waiting
-          LogsViewAll.filterJobsByInventorySingleRecordImports(filter);
-          LogsViewAll.checkByInventorySingleRecord(filter);
-          LogsViewAll.resetAllFilters();
-        });
-        // FILTER By "Inventory single record imports"
-        LogsViewAll.openInventorysingleRecordImportsAccordion();
-        LogsViewAll.singleRecordImportsStatuses.forEach((filter) => {
-          // need some waiting until checkboxes become clickable after resetting filters
           cy.wait(1000); // eslint-disable-line cypress/no-unnecessary-waiting
           LogsViewAll.filterJobsByInventorySingleRecordImports(filter);
           LogsViewAll.checkByInventorySingleRecord(filter);
