@@ -1,5 +1,6 @@
 import DevTeams from '../../../support/dictionary/devTeams';
 import TestTypes from '../../../support/dictionary/testTypes';
+import Parallelization from '../../../support/dictionary/parallelization';
 import permissions from '../../../support/dictionary/permissions';
 import MarkItemAsMissing from '../../../support/fragments/inventory/markItemAsMissing';
 import Requests from '../../../support/fragments/requests/requests';
@@ -97,39 +98,40 @@ describe('inventory', () => {
       requesterIds.forEach(id => Users.deleteViaApi(id));
     });
 
-    it('C714 Mark an item as Missing (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-      cy.visit(TopMenu.inventoryPath);
-      MarkItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
-      MarkItemAsMissing.getItemsToMarkAsMissing(createdItems).forEach(item => {
-        MarkItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
-        MarkItemAsMissing.openItem(item.barcode);
-        MarkItemAsMissing.checkIsMarkAsMissingExist(true);
-        ItemActions.markAsMissing();
-        MarkItemAsMissing.checkIsConfirmItemMissingModalExist(instanceData.instanceTitle, item.barcode, materialType);
-        ItemActions.cancelMarkAsMissing();
-        ItemRecordView.verifyItemStatusInPane(item.status.name);
-        ItemActions.markAsMissing();
-        ItemActions.confirmMarkAsMissing();
-        ItemRecordView.verifyItemStatusInPane('Missing');
-        MarkItemAsMissing.verifyItemStatusUpdatedDate();
-        ItemRecordView.closeDetailView();
-      });
+    it('C714 Mark an item as Missing (folijet) (prokopovych)',
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] }, () => {
+        cy.visit(TopMenu.inventoryPath);
+        MarkItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
+        MarkItemAsMissing.getItemsToMarkAsMissing(createdItems).forEach(item => {
+          MarkItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
+          MarkItemAsMissing.openItem(item.barcode);
+          MarkItemAsMissing.checkIsMarkAsMissingExist(true);
+          ItemActions.markAsMissing();
+          MarkItemAsMissing.checkIsConfirmItemMissingModalExist(instanceData.instanceTitle, item.barcode, materialType);
+          ItemActions.cancelMarkAsMissing();
+          ItemRecordView.verifyItemStatusInPane(item.status.name);
+          ItemActions.markAsMissing();
+          ItemActions.confirmMarkAsMissing();
+          ItemRecordView.verifyItemStatusInPane('Missing');
+          MarkItemAsMissing.verifyItemStatusUpdatedDate();
+          ItemRecordView.closeDetailView();
+        });
 
-      cy.visit(TopMenu.requestsPath);
-      MarkItemAsMissing.getItemsToCreateRequests(createdItems).forEach(item => {
-        Requests.findCreatedRequest(item.barcode);
-        Requests.selectFirstRequest(item.barcode);
-        MarkItemAsMissing.verifyRequestStatus('Open - Not yet filled');
-      });
+        cy.visit(TopMenu.requestsPath);
+        MarkItemAsMissing.getItemsToCreateRequests(createdItems).forEach(item => {
+          Requests.findCreatedRequest(item.barcode);
+          Requests.selectFirstRequest(item.barcode);
+          MarkItemAsMissing.verifyRequestStatus('Open - Not yet filled');
+        });
 
-      cy.visit(TopMenu.inventoryPath);
-      MarkItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
-      MarkItemAsMissing.getItemsNotToMarkAsMissing(createdItems).forEach(item => {
-        MarkItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
-        MarkItemAsMissing.openItem(item.barcode);
-        MarkItemAsMissing.checkIsMarkAsMissingExist(false);
-        ItemRecordView.closeDetailView();
+        cy.visit(TopMenu.inventoryPath);
+        MarkItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
+        MarkItemAsMissing.getItemsNotToMarkAsMissing(createdItems).forEach(item => {
+          MarkItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
+          MarkItemAsMissing.openItem(item.barcode);
+          MarkItemAsMissing.checkIsMarkAsMissingExist(false);
+          ItemRecordView.closeDetailView();
+        });
       });
-    });
   });
 });

@@ -2,6 +2,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import Parallelization from '../../../support/dictionary/parallelization';
 import { FOLIO_RECORD_TYPE,
   ORDER_STATUSES,
   MATERIAL_TYPE_NAMES,
@@ -116,7 +117,7 @@ describe('data-import', () => {
     });
 
     it('C380474 Import to create open orders: Physical resource with Instances, Holdings, Items (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] }, () => {
       // create mapping profiles
         FieldMappingProfiles.createOrderMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
         FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[0].mappingProfile.name);

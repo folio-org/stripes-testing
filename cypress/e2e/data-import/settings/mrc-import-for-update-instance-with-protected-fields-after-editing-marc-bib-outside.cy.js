@@ -2,6 +2,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import Parallelization from '../../../support/dictionary/parallelization';
 import {
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
@@ -100,7 +101,7 @@ describe('data-import', () => {
     });
 
     it('C356830 Test field protections when importing to update instance, after editing the MARC Bib outside of FOLIO (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] }, () => {
         MarcFieldProtection.createMarcFieldProtectionViaApi({
           indicator1: '*',
           indicator2: '*',

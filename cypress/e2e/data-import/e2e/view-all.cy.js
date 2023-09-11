@@ -5,6 +5,7 @@ import TestTypes from '../../../support/dictionary/testTypes';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import DevTeams from '../../../support/dictionary/devTeams';
+import Parallelization from '../../../support/dictionary/parallelization';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 
 describe('data-import', () => {
@@ -35,24 +36,25 @@ describe('data-import', () => {
       });
     });
 
-    it('C11112 Search the "View all" log screen (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-      Logs.openViewAllLogs();
+    it('C11112 Search the "View all" log screen (folijet)',
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] }, () => {
+        Logs.openViewAllLogs();
 
-      LogsViewAll.options.forEach((option) => {
-        LogsViewAll.selectOption(option);
-        // when option is "ID", search with hrId otherwise, with file name
-        const term = option === 'ID' ? `${id}` : uniqueFileName;
+        LogsViewAll.options.forEach((option) => {
+          LogsViewAll.selectOption(option);
+          // when option is "ID", search with hrId otherwise, with file name
+          const term = option === 'ID' ? `${id}` : uniqueFileName;
 
-        LogsViewAll.searchWithTerm(term);
+          LogsViewAll.searchWithTerm(term);
 
-        if (option === 'ID') {
-          LogsViewAll.checkById({ id });
-        } else {
+          if (option === 'ID') {
+            LogsViewAll.checkById({ id });
+          } else {
           // file name is always unique
           // so, there is always one row
-          LogsViewAll.checkRowsCount(1);
-        }
+            LogsViewAll.checkRowsCount(1);
+          }
+        });
       });
-    });
   });
 });

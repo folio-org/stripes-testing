@@ -2,6 +2,7 @@
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import Parallelization from '../../../support/dictionary/parallelization';
 import TopMenu from '../../../support/fragments/topMenu';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
@@ -79,7 +80,7 @@ describe('data-import', () => {
     });
 
     it('C359189 Check that protected fields in incoming records are not deleted during import: Scenario 2 (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] }, () => {
         cy.visit(SettingsMenu.marcFieldProtectionPath);
         MarcFieldProtection.checkListOfExistingProfilesIsDisplayed();
         MarcFieldProtection.createNewMarcFieldProtection();

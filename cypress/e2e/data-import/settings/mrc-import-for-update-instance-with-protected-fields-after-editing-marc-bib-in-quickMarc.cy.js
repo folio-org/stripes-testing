@@ -2,6 +2,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import Parallelization from '../../../support/dictionary/parallelization';
 import {
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
@@ -107,7 +108,7 @@ describe('data-import', () => {
     });
 
     it('C356829 Test field protections when importing to update instance, after editing the MARC Bib in quickMARC (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] }, () => {
         cy.visit(SettingsMenu.targetProfilesPath);
         Z3950TargetProfiles.openTargetProfile();
         Z3950TargetProfiles.editOclcWorldCat(OCLCAuthentication, TARGET_PROFILE_NAMES.OCLC_WORLDCAT);

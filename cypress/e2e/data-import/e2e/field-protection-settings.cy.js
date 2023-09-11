@@ -1,6 +1,7 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import Parallelization from '../../../support/dictionary/parallelization';
 import { FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
@@ -136,94 +137,95 @@ describe('data-import', () => {
       FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfile.name);
     };
 
-    it('C17017 Check that field protection settings work properly during data import (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+    it('C17017 Check that field protection settings work properly during data import (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] }, () => {
       // create mapping profile
-      cy.visit(SettingsMenu.mappingProfilePath);
-      createInstanceMappingProfileForCreate(mappingProfile);
-      FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
+        cy.visit(SettingsMenu.mappingProfilePath);
+        createInstanceMappingProfileForCreate(mappingProfile);
+        FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
-      // create action profile
-      cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.create(actionProfile, mappingProfile.name);
-      ActionProfiles.checkActionProfilePresented(actionProfile.name);
+        // create action profile
+        cy.visit(SettingsMenu.actionProfilePath);
+        ActionProfiles.create(actionProfile, mappingProfile.name);
+        ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
-      // create job profile
-      cy.visit(SettingsMenu.jobProfilePath);
-      JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfile.name);
-      JobProfiles.checkJobProfilePresented(jobProfile.profileName);
+        // create job profile
+        cy.visit(SettingsMenu.jobProfilePath);
+        JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfile.name);
+        JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
-      // upload a marc file for creating of the new instance
-      cy.visit(TopMenu.dataImportPath);
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.verifyUploadState();
-      DataImport.uploadFile('marcFileForC17017.mrc', nameMarcFileForCreate);
-      JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-      JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(nameMarcFileForCreate);
-      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-      Logs.openFileDetails(nameMarcFileForCreate);
-      Logs.verifyInstanceStatus(0, 2, 'Created');
-      Logs.verifyInstanceStatus(0, 3, 'Created');
-      FileDetails.checkSrsRecordQuantityInSummaryTable('1');
-      FileDetails.checkInstanceQuantityInSummaryTable('1');
-      Logs.clickOnHotLink(0, 3, 'Created');
-      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
-        instanceHrid = initialInstanceHrId;
+        // upload a marc file for creating of the new instance
+        cy.visit(TopMenu.dataImportPath);
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
+        DataImport.uploadFile('marcFileForC17017.mrc', nameMarcFileForCreate);
+        JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(nameMarcFileForCreate);
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(nameMarcFileForCreate);
+        Logs.verifyInstanceStatus(0, 2, 'Created');
+        Logs.verifyInstanceStatus(0, 3, 'Created');
+        FileDetails.checkSrsRecordQuantityInSummaryTable('1');
+        FileDetails.checkInstanceQuantityInSummaryTable('1');
+        Logs.clickOnHotLink(0, 3, 'Created');
+        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+          instanceHrid = initialInstanceHrId;
+          InstanceRecordView.viewSource();
+          InstanceRecordView.verifySrsMarcRecord();
+          InventoryViewSource.verifyFieldInMARCBibSource('500', dataForField500);
+          InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[0], dataForField507);
+          InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[1], dataForField920);
+
+
+          // change file using order number
+          DataImport.editMarcFile(
+            'marcFileForC17017.mrc',
+            editedMarcFileName,
+            [dataFromField001, dataForField500, dataForField507, dataForField920],
+            [instanceHrid, updateDataForField500, updateDataForField507, updateDataForField920]
+          );
+        });
+
+        // create mapping profile for update
+        cy.visit(SettingsMenu.mappingProfilePath);
+        createInstanceMappingProfileForUpdate(mappingProfileUpdate);
+        FieldMappingProfiles.checkMappingProfilePresented(mappingProfileUpdate.name);
+
+        // create action profile for update
+        cy.visit(SettingsMenu.actionProfilePath);
+        ActionProfiles.create(actionProfileUpdate, mappingProfileUpdate.name);
+        ActionProfiles.checkActionProfilePresented(actionProfileUpdate.name);
+
+        // create match profile for update
+        cy.visit(SettingsMenu.matchProfilePath);
+        MatchProfiles.createMatchProfile(matchProfile);
+
+        // create job profile for update
+        cy.visit(SettingsMenu.jobProfilePath);
+        JobProfiles.createJobProfileWithLinkingProfiles(jobProfileUpdate, actionProfileUpdate.name, matchProfile.profileName);
+        JobProfiles.checkJobProfilePresented(jobProfileUpdate.profileName);
+
+        // upload a marc file for updating already created instance
+        cy.visit(TopMenu.dataImportPath);
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
+        DataImport.uploadFile(editedMarcFileName, fileNameForUpdate);
+        JobProfiles.searchJobProfileForImport(jobProfileUpdate.profileName);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(fileNameForUpdate);
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(fileNameForUpdate);
+        Logs.verifyInstanceStatus(0, 2, 'Created');
+        Logs.verifyInstanceStatus(0, 3, 'Updated');
+        Logs.clickOnHotLink(0, 3, 'Updated');
         InstanceRecordView.viewSource();
+
         InstanceRecordView.verifySrsMarcRecord();
         InventoryViewSource.verifyFieldInMARCBibSource('500', dataForField500);
         InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[0], dataForField507);
         InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[1], dataForField920);
-
-
-        // change file using order number
-        DataImport.editMarcFile(
-          'marcFileForC17017.mrc',
-          editedMarcFileName,
-          [dataFromField001, dataForField500, dataForField507, dataForField920],
-          [instanceHrid, updateDataForField500, updateDataForField507, updateDataForField920]
-        );
+        InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[1], updateDataForField920);
       });
-
-      // create mapping profile for update
-      cy.visit(SettingsMenu.mappingProfilePath);
-      createInstanceMappingProfileForUpdate(mappingProfileUpdate);
-      FieldMappingProfiles.checkMappingProfilePresented(mappingProfileUpdate.name);
-
-      // create action profile for update
-      cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.create(actionProfileUpdate, mappingProfileUpdate.name);
-      ActionProfiles.checkActionProfilePresented(actionProfileUpdate.name);
-
-      // create match profile for update
-      cy.visit(SettingsMenu.matchProfilePath);
-      MatchProfiles.createMatchProfile(matchProfile);
-
-      // create job profile for update
-      cy.visit(SettingsMenu.jobProfilePath);
-      JobProfiles.createJobProfileWithLinkingProfiles(jobProfileUpdate, actionProfileUpdate.name, matchProfile.profileName);
-      JobProfiles.checkJobProfilePresented(jobProfileUpdate.profileName);
-
-      // upload a marc file for updating already created instance
-      cy.visit(TopMenu.dataImportPath);
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.verifyUploadState();
-      DataImport.uploadFile(editedMarcFileName, fileNameForUpdate);
-      JobProfiles.searchJobProfileForImport(jobProfileUpdate.profileName);
-      JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(fileNameForUpdate);
-      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-      Logs.openFileDetails(fileNameForUpdate);
-      Logs.verifyInstanceStatus(0, 2, 'Created');
-      Logs.verifyInstanceStatus(0, 3, 'Updated');
-      Logs.clickOnHotLink(0, 3, 'Updated');
-      InstanceRecordView.viewSource();
-
-      InstanceRecordView.verifySrsMarcRecord();
-      InventoryViewSource.verifyFieldInMARCBibSource('500', dataForField500);
-      InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[0], dataForField507);
-      InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[1], dataForField920);
-      InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[1], updateDataForField920);
-    });
   });
 });

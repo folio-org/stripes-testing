@@ -1,6 +1,7 @@
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import Parallelization from '../../../support/dictionary/parallelization';
 import {
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
@@ -104,48 +105,49 @@ describe('data-import', () => {
       });
     });
 
-    it('C343334 MARC file import with creating a new mapping profiles, action profiles and job profile (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+    it('C343334 MARC file import with creating a new mapping profiles, action profiles and job profile (folijet)',
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] }, () => {
       // create mapping profiles
-      cy.visit(SettingsMenu.mappingProfilePath);
-      createInstanceMappingProfile(collectionOfProfiles[0].mappingProfile);
-      FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[0].mappingProfile.name);
-      createHoldingsMappingProfile(collectionOfProfiles[1].mappingProfile);
-      FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[1].mappingProfile.name);
-      createItemMappingProfile(collectionOfProfiles[2].mappingProfile);
-      FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[2].mappingProfile.name);
+        cy.visit(SettingsMenu.mappingProfilePath);
+        createInstanceMappingProfile(collectionOfProfiles[0].mappingProfile);
+        FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[0].mappingProfile.name);
+        createHoldingsMappingProfile(collectionOfProfiles[1].mappingProfile);
+        FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[1].mappingProfile.name);
+        createItemMappingProfile(collectionOfProfiles[2].mappingProfile);
+        FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[2].mappingProfile.name);
 
-      collectionOfProfiles.forEach(profile => {
-        cy.visit(SettingsMenu.actionProfilePath);
-        ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-        ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+        collectionOfProfiles.forEach(profile => {
+          cy.visit(SettingsMenu.actionProfilePath);
+          ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
+          ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+        });
+
+        cy.visit(SettingsMenu.jobProfilePath);
+        JobProfiles.createJobProfile(specialJobProfile);
+        collectionOfProfiles.forEach(profile => {
+          NewJobProfile.linkActionProfile(profile.actionProfile);
+        });
+        NewJobProfile.saveAndClose();
+        JobProfiles.checkJobProfilePresented(specialJobProfile.profileName);
+
+        cy.visit(TopMenu.dataImportPath);
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
+        DataImport.uploadFile('oneMarcBib.mrc', fileName);
+        JobProfiles.searchJobProfileForImport(specialJobProfile.profileName);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(fileName);
+        Logs.checkStatusOfJobProfile();
+        Logs.checkImportFile(specialJobProfile.profileName);
+        Logs.openFileDetails(fileName);
+
+        [FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.instance,
+          FileDetails.columnNameInResultList.holdings,
+          FileDetails.columnNameInResultList.item].forEach(columnName => {
+          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+        });
+        FileDetails.checkItemsQuantityInSummaryTable(0, '1');
       });
-
-      cy.visit(SettingsMenu.jobProfilePath);
-      JobProfiles.createJobProfile(specialJobProfile);
-      collectionOfProfiles.forEach(profile => {
-        NewJobProfile.linkActionProfile(profile.actionProfile);
-      });
-      NewJobProfile.saveAndClose();
-      JobProfiles.checkJobProfilePresented(specialJobProfile.profileName);
-
-      cy.visit(TopMenu.dataImportPath);
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.verifyUploadState();
-      DataImport.uploadFile('oneMarcBib.mrc', fileName);
-      JobProfiles.searchJobProfileForImport(specialJobProfile.profileName);
-      JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(fileName);
-      Logs.checkStatusOfJobProfile();
-      Logs.checkImportFile(specialJobProfile.profileName);
-      Logs.openFileDetails(fileName);
-
-      [FileDetails.columnNameInResultList.srsMarc,
-        FileDetails.columnNameInResultList.instance,
-        FileDetails.columnNameInResultList.holdings,
-        FileDetails.columnNameInResultList.item].forEach(columnName => {
-        FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
-      });
-      FileDetails.checkItemsQuantityInSummaryTable(0, '1');
-    });
   });
 });

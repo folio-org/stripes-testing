@@ -2,6 +2,7 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import Parallelization from '../../../support/dictionary/parallelization';
 import { FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
@@ -192,140 +193,141 @@ describe('data-import', () => {
         });
     });
 
-    it('C17018 Check that field protection overrides work properly during data import (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+    it('C17018 Check that field protection overrides work properly during data import (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] }, () => {
       // create Field mapping profiles
-      cy.visit(SettingsMenu.mappingProfilePath);
-      FieldMappingProfiles.createMappingProfileForUpdatesMarc(marcBibMappingProfile);
-      FieldMappingProfileView.checkCreatedMappingProfile(marcBibMappingProfile.name, protectedFields.firstField, protectedFields.secondField);
-      FieldMappingProfiles.checkMappingProfilePresented(marcBibMappingProfile.name);
+        cy.visit(SettingsMenu.mappingProfilePath);
+        FieldMappingProfiles.createMappingProfileForUpdatesMarc(marcBibMappingProfile);
+        FieldMappingProfileView.checkCreatedMappingProfile(marcBibMappingProfile.name, protectedFields.firstField, protectedFields.secondField);
+        FieldMappingProfiles.checkMappingProfilePresented(marcBibMappingProfile.name);
 
-      FieldMappingProfiles.createMappingProfileWithNotes(instanceMappingProfile, noteForUpdateInstanceMappingProfile);
-      FieldMappingProfiles.checkMappingProfilePresented(instanceMappingProfile.name);
+        FieldMappingProfiles.createMappingProfileWithNotes(instanceMappingProfile, noteForUpdateInstanceMappingProfile);
+        FieldMappingProfiles.checkMappingProfilePresented(instanceMappingProfile.name);
 
-      FieldMappingProfiles.createMappingProfileForUpdatesAndOverrideMarc(marcBibMappingProfileOverride, protectedFields.firstField, protectedFields.secondField);
-      FieldMappingProfileView.checkCreatedMappingProfile(marcBibMappingProfileOverride.name, protectedFields.firstField, protectedFields.secondField);
-      FieldMappingProfiles.checkMappingProfilePresented(marcBibMappingProfileOverride.name);
+        FieldMappingProfiles.createMappingProfileForUpdatesAndOverrideMarc(marcBibMappingProfileOverride, protectedFields.firstField, protectedFields.secondField);
+        FieldMappingProfileView.checkCreatedMappingProfile(marcBibMappingProfileOverride.name, protectedFields.firstField, protectedFields.secondField);
+        FieldMappingProfiles.checkMappingProfilePresented(marcBibMappingProfileOverride.name);
 
-      FieldMappingProfiles.createMappingProfileWithNotes(instanceMappingProfileOverride, noteForOverrideInstanceMappingProfile);
-      FieldMappingProfiles.checkMappingProfilePresented(instanceMappingProfileOverride.name);
+        FieldMappingProfiles.createMappingProfileWithNotes(instanceMappingProfileOverride, noteForOverrideInstanceMappingProfile);
+        FieldMappingProfiles.checkMappingProfilePresented(instanceMappingProfileOverride.name);
 
-      // create Action profiles
-      cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.create(marcBibActionProfile, marcBibMappingProfile.name);
-      ActionProfiles.checkActionProfilePresented(marcBibActionProfile.name);
+        // create Action profiles
+        cy.visit(SettingsMenu.actionProfilePath);
+        ActionProfiles.create(marcBibActionProfile, marcBibMappingProfile.name);
+        ActionProfiles.checkActionProfilePresented(marcBibActionProfile.name);
 
-      ActionProfiles.create(instanceActionProfile, instanceMappingProfile.name);
-      ActionProfiles.checkActionProfilePresented(instanceActionProfile.name);
+        ActionProfiles.create(instanceActionProfile, instanceMappingProfile.name);
+        ActionProfiles.checkActionProfilePresented(instanceActionProfile.name);
 
-      ActionProfiles.create(marcBibActionProfileOverride, marcBibMappingProfileOverride.name);
-      ActionProfiles.checkActionProfilePresented(marcBibActionProfileOverride.name);
+        ActionProfiles.create(marcBibActionProfileOverride, marcBibMappingProfileOverride.name);
+        ActionProfiles.checkActionProfilePresented(marcBibActionProfileOverride.name);
 
-      ActionProfiles.create(instanceActionProfileOverride, instanceMappingProfileOverride.name);
-      ActionProfiles.checkActionProfilePresented(instanceActionProfileOverride.name);
+        ActionProfiles.create(instanceActionProfileOverride, instanceMappingProfileOverride.name);
+        ActionProfiles.checkActionProfilePresented(instanceActionProfileOverride.name);
 
-      // create Match profile
-      cy.visit(SettingsMenu.matchProfilePath);
-      MatchProfiles.createMatchProfile(matchProfile);
-      MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
+        // create Match profile
+        cy.visit(SettingsMenu.matchProfilePath);
+        MatchProfiles.createMatchProfile(matchProfile);
+        MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
 
-      // create Job profiles
-      cy.visit(SettingsMenu.jobProfilePath);
-      JobProfiles.createJobProfile(jobProfileForUpdate);
-      NewJobProfile.linkMatchAndTwoActionProfiles(matchProfile.profileName, marcBibActionProfile.name, instanceActionProfile.name);
-      NewJobProfile.saveAndClose();
-      JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
+        // create Job profiles
+        cy.visit(SettingsMenu.jobProfilePath);
+        JobProfiles.createJobProfile(jobProfileForUpdate);
+        NewJobProfile.linkMatchAndTwoActionProfiles(matchProfile.profileName, marcBibActionProfile.name, instanceActionProfile.name);
+        NewJobProfile.saveAndClose();
+        JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
 
-      // need to wait until the first job profile will be created
-      cy.wait(2500);
-      JobProfiles.createJobProfile(jobProfileForOverride);
-      NewJobProfile.linkMatchAndTwoActionProfiles(matchProfile.profileName, marcBibActionProfileOverride.name, instanceActionProfileOverride.name);
-      NewJobProfile.saveAndClose();
-      JobProfiles.checkJobProfilePresented(jobProfileForOverride.profileName);
-
-      // upload a marc file
-      cy.visit(TopMenu.dataImportPath);
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.verifyUploadState();
-      DataImport.uploadFile('marcFileForC17018-BeforeOverride.mrc', fileNameForCreatingInstance);
-      JobProfiles.searchJobProfileForImport(jobProfileToRun);
-      JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(fileNameForCreatingInstance);
-      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-      Logs.openFileDetails(fileNameForCreatingInstance);
-      [FileDetails.columnNameInResultList.srsMarc, FileDetails.columnNameInResultList.instance].forEach(columnName => {
-        FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
-      });
-      FileDetails.checkSrsRecordQuantityInSummaryTable('1', 0);
-      FileDetails.checkInstanceQuantityInSummaryTable('1', 0);
-      // open Instance for getting hrid
-      FileDetails.openInstanceInInventory('Created');
-      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
-        instanceHrid = initialInstanceHrId;
-
-        DataImport.editMarcFile(fileForEditRev1, editedFileNameRev1, [instanceHridFromFile], [instanceHrid]);
-        DataImport.editMarcFile(fileForEditRev2, editedFileNameRev2, [instanceHridFromFile], [instanceHrid]);
+        // need to wait until the first job profile will be created
+        cy.wait(2500);
+        JobProfiles.createJobProfile(jobProfileForOverride);
+        NewJobProfile.linkMatchAndTwoActionProfiles(matchProfile.profileName, marcBibActionProfileOverride.name, instanceActionProfileOverride.name);
+        NewJobProfile.saveAndClose();
+        JobProfiles.checkJobProfilePresented(jobProfileForOverride.profileName);
 
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        DataImport.uploadFile(editedFileNameRev1, fileNameForProtect);
-        JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
+        DataImport.uploadFile('marcFileForC17018-BeforeOverride.mrc', fileNameForCreatingInstance);
+        JobProfiles.searchJobProfileForImport(jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileNameForProtect);
+        JobProfiles.waitFileIsImported(fileNameForCreatingInstance);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(fileNameForProtect);
+        Logs.openFileDetails(fileNameForCreatingInstance);
         [FileDetails.columnNameInResultList.srsMarc, FileDetails.columnNameInResultList.instance].forEach(columnName => {
-          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
         });
-        FileDetails.checkSrsRecordQuantityInSummaryTable('1', 1);
-        FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
+        FileDetails.checkSrsRecordQuantityInSummaryTable('1', 0);
+        FileDetails.checkInstanceQuantityInSummaryTable('1', 0);
+        // open Instance for getting hrid
+        FileDetails.openInstanceInInventory('Created');
+        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+          instanceHrid = initialInstanceHrId;
 
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-        InstanceRecordView.verifyInstancePaneExists();
-        InstanceRecordView.verifyAdministrativeNote(administrativeNote);
-        InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[0].type, resourceIdentifiers[0].value, 0);
-        InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[1].type, resourceIdentifiers[1].value, 2);
-        InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[2].type, resourceIdentifiers[2].value, 1);
-        InstanceRecordView.verifyInstanceNote(instanceNote);
-        // verify table data in marc bibliographic source
-        InventoryInstance.viewSource();
-        resourceIdentifiers.forEach(element => {
-          InventoryViewSource.verifyFieldInMARCBibSource(protectedFields.firstField, element.value);
-        });
-        InventoryViewSource.verifyFieldInMARCBibSource(protectedFields.secondField, instanceNote);
+          DataImport.editMarcFile(fileForEditRev1, editedFileNameRev1, [instanceHridFromFile], [instanceHrid]);
+          DataImport.editMarcFile(fileForEditRev2, editedFileNameRev2, [instanceHridFromFile], [instanceHrid]);
 
-        // upload a marc file
-        cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(editedFileNameRev2, fileNameForOverride);
-        JobProfiles.searchJobProfileForImport(jobProfileForOverride.profileName);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileNameForOverride);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(fileNameForOverride);
-        [FileDetails.columnNameInResultList.srsMarc, FileDetails.columnNameInResultList.instance].forEach(columnName => {
-          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
-        });
-        FileDetails.checkSrsRecordQuantityInSummaryTable('1', 1);
-        FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
+          // upload a marc file
+          cy.visit(TopMenu.dataImportPath);
+          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+          DataImport.verifyUploadState();
+          DataImport.uploadFile(editedFileNameRev1, fileNameForProtect);
+          JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(fileNameForProtect);
+          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          Logs.openFileDetails(fileNameForProtect);
+          [FileDetails.columnNameInResultList.srsMarc, FileDetails.columnNameInResultList.instance].forEach(columnName => {
+            FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+          });
+          FileDetails.checkSrsRecordQuantityInSummaryTable('1', 1);
+          FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
 
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-        InstanceRecordView.verifyInstancePaneExists();
-        InstanceRecordView.verifyAdministrativeNote(administrativeNote);
-        InstanceRecordView.verifyAdministrativeNote(updatedAdministativeNote);
-        resourceIdentifiers.forEach(element => {
-          InventoryInstance.verifyResourceIdentifierAbsent(element.value);
+          cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+          InstanceRecordView.verifyInstancePaneExists();
+          InstanceRecordView.verifyAdministrativeNote(administrativeNote);
+          InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[0].type, resourceIdentifiers[0].value, 0);
+          InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[1].type, resourceIdentifiers[1].value, 2);
+          InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[2].type, resourceIdentifiers[2].value, 1);
+          InstanceRecordView.verifyInstanceNote(instanceNote);
+          // verify table data in marc bibliographic source
+          InventoryInstance.viewSource();
+          resourceIdentifiers.forEach(element => {
+            InventoryViewSource.verifyFieldInMARCBibSource(protectedFields.firstField, element.value);
+          });
+          InventoryViewSource.verifyFieldInMARCBibSource(protectedFields.secondField, instanceNote);
+
+          // upload a marc file
+          cy.visit(TopMenu.dataImportPath);
+          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+          DataImport.verifyUploadState();
+          DataImport.uploadFile(editedFileNameRev2, fileNameForOverride);
+          JobProfiles.searchJobProfileForImport(jobProfileForOverride.profileName);
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(fileNameForOverride);
+          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          Logs.openFileDetails(fileNameForOverride);
+          [FileDetails.columnNameInResultList.srsMarc, FileDetails.columnNameInResultList.instance].forEach(columnName => {
+            FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+          });
+          FileDetails.checkSrsRecordQuantityInSummaryTable('1', 1);
+          FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
+
+          cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+          InstanceRecordView.verifyInstancePaneExists();
+          InstanceRecordView.verifyAdministrativeNote(administrativeNote);
+          InstanceRecordView.verifyAdministrativeNote(updatedAdministativeNote);
+          resourceIdentifiers.forEach(element => {
+            InventoryInstance.verifyResourceIdentifierAbsent(element.value);
+          });
+          InstanceRecordView.verifyInstanceNote(updatedInstanceNote);
+          // verify table data in marc bibliographic source
+          InventoryInstance.viewSource();
+          InventoryViewSource.notContains(`${protectedFields.firstField}\t`);
+          InventoryViewSource.verifyFieldInMARCBibSource(protectedFields.secondField, updatedInstanceNote);
         });
-        InstanceRecordView.verifyInstanceNote(updatedInstanceNote);
-        // verify table data in marc bibliographic source
-        InventoryInstance.viewSource();
-        InventoryViewSource.notContains(`${protectedFields.firstField}\t`);
-        InventoryViewSource.verifyFieldInMARCBibSource(protectedFields.secondField, updatedInstanceNote);
       });
-    });
   });
 });

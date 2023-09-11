@@ -1,6 +1,7 @@
 import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import Parallelization from '../../../support/dictionary/parallelization';
 import TopMenu from '../../../support/fragments/topMenu';
 import { FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
@@ -127,7 +128,7 @@ describe('data-import', () => {
     });
 
     it('C347830 Match on Instance identifier match meets both the Identifier type and Data requirements Scenario 3 (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] }, () => {
         DataImport.editMarcFile(filePathForCreateInstance, editedMarcFileNameForCreate,
           ['(OCoLC)84714376518561876438'], [randomIdentifierCode]);
         DataImport.editMarcFile(filePathForUpdateInstance, editedMarcFileNameForUpdate,
