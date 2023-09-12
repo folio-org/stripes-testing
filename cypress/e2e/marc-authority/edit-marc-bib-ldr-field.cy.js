@@ -1,4 +1,3 @@
-import getRandomPostfix from '../../support/utils/stringTools';
 import TestTypes from '../../support/dictionary/testTypes';
 import DevTeams from '../../support/dictionary/devTeams';
 import Permissions from '../../support/dictionary/permissions';
@@ -8,7 +7,7 @@ import Users from '../../support/fragments/users/users';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../support/fragments/data_import/logs/logs';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
-import { replaceByIndex } from '../../support/utils/stringTools';
+import getRandomPostfix, { replaceByIndex } from '../../support/utils/stringTools';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
