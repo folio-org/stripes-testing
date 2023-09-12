@@ -1,4 +1,12 @@
-import { Button, Pane, Section, EditableList, EditableListRow } from '../../../../interactors';
+import { REQUEST_METHOD } from '../../constants';
+import {
+  Button,
+  Pane,
+  Section,
+  EditableList,
+  EditableListRow,
+  ColumnHeader,
+} from '../../../../interactors';
 
 export const SETTINGS = {
   TENANT: 'Tenant',
@@ -37,5 +45,36 @@ export default {
   },
   clickDeleteBtn({ rowIndex } = {}) {
     clickActionBtn({ rowIndex, locator: { icon: 'trash' } });
+  },
+  checkAddNewBtnAbsent() {
+    cy.expect(addButton.absent());
+  },
+  checkColumnAbsent(content) {
+    cy.expect(table.find(ColumnHeader()).exists());
+    cy.expect(table.find(ColumnHeader(content)).absent());
+  },
+  checkColumnExists(content) {
+    cy.expect(table.find(ColumnHeader(content)).exists());
+  },
+  createViaApi: ({ path, body, searchParams }) => {
+    return cy
+      .okapiRequest({
+        path,
+        body,
+        searchParams,
+        method: REQUEST_METHOD.POST,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body;
+      });
+  },
+  deleteViaApi: ({ path, searchParams }) => {
+    return cy.okapiRequest({
+      path,
+      searchParams,
+      method: REQUEST_METHOD.DELETE,
+      isDefaultSearchParamsRequired: false,
+    });
   },
 };

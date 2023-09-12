@@ -1,7 +1,7 @@
 import { REQUEST_METHOD } from '../../constants';
 import DefaultInstanceHoldingItem from '../inventory/holdingsMove/defaultInstanceHoldingItem';
-import Campuses from '../settings/tenant/campuses';
-import Institutions from '../settings/tenant/institutions';
+import Campuses from '../settings/tenant/location-setup/campuses';
+import Institutions from '../settings/tenant/location-setup/institutions';
 import NewServicePoint from '../settings/tenant/servicePoints/newServicePoint';
 
 export default {
