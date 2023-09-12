@@ -15,6 +15,8 @@ import DateTools from '../../support/utils/dateTools';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
+import TestTypes from '../../support/dictionary/testTypes';
+import DevTeams from '../../support/dictionary/devTeams';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
@@ -29,7 +31,7 @@ let holdingTypes;
 let instanceTypes;
 let users;
 
-describe('circulation-log loan period (vega) { tags: [TestTypes.criticalPath, devTeams.vega] }', () => {
+describe('circulation-log loan period', () => {
   before('create inventory instance', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
@@ -128,8 +130,14 @@ describe('circulation-log loan period (vega) { tags: [TestTypes.criticalPath, de
     });
   });
 
-  it('C645 Test "Days" loan period', () => {
-    const itemDueDate = new Date(loanTypes[0].metadata.createdDate);
-    CheckOutActions.checkItemDueDate(DateTools.getFormattedDateWithSlashes({ date: itemDueDate }));
-  });
+  it(
+    'C645 Test "Days" loan period (vega)',
+    { tags: [TestTypes.criticalPath, DevTeams.vega] },
+    () => {
+      const itemDueDate = new Date(loanTypes[0].metadata.createdDate);
+      CheckOutActions.checkItemDueDate(
+        DateTools.getFormattedDateWithSlashes({ date: itemDueDate }),
+      );
+    },
+  );
 });
