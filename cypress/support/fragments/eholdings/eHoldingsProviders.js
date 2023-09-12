@@ -1,19 +1,15 @@
 import {
   Accordion,
   Button,
-  KeyValue,
   ListItem,
   RadioButton,
   Section,
   Spinner,
-  TextField,
   including,
 } from '../../../../interactors';
 import eHoldingsProviderView from './eHoldingsProviderView';
 // eslint-disable-next-line import/no-cycle
 const resultSection = Section({ id: 'search-results' });
-const searchButton = Button('Search');
-const packageList = Section({ id: 'packageShowTitles' });
 const selectionStatusSection = Section({ id: 'filter-packages-selected' });
 const selectionStatusAccordion = Accordion({
   id: 'accordion-toggle-button-filter-packages-selected',

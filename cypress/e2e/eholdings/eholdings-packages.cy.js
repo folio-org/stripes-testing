@@ -10,7 +10,6 @@ import features from '../../support/dictionary/features';
 import users from '../../support/fragments/users/users';
 import devTeams from '../../support/dictionary/devTeams';
 import eHoldingsProvidersSearch from '../../support/fragments/eholdings/eHoldingsProvidersSearch';
-import eHoldingsSearch from '../../support/fragments/eholdings/eHoldingsSearch';
 
 describe('eHoldings packages management', () => {
   let userId;
@@ -112,7 +111,7 @@ describe('eHoldings packages management', () => {
           waiter: eHoldingsPackages.waitLoading,
         });
 
-        eHoldingsSearch.switchToPackages();
+        eHoldingSearch.switchToPackages();
         eHoldingsProvidersSearch.byProvider('Wiley Online Library');
         eHoldingsPackagesSearch.bySelectionStatus('Selected');
         eHoldingsPackages.openPackage();
