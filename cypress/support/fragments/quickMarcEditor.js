@@ -809,6 +809,12 @@ export default {
       .join('');
   },
 
+  check008FieldLabels(labels) {
+    labels.forEach(label => {
+      cy.expect(TextField(label).exists());
+    });
+  },
+
   checkReplacedVoidValuesInTag008Holdings() {
     tag008HoldingsBytesProperties.getAllProperties().forEach((byteProperty) => {
       cy.expect(
