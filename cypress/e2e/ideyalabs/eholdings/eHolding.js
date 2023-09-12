@@ -110,13 +110,6 @@ export default {
     eHoldingsProvidersSearch.byProvider('Gale Cengage');
   },
 
-  switchToPackageAndSearch() {
-    cy.visit(topMenu.eholdingsPath);
-    eHoldingsSearch.switchToPackages();
-    eHoldingsProvidersSearch.byProvider('Wiley Online Library');
-    eHoldingsPackagesSearch.bySelectionStatus('Selected');
-  },
-
   editActions: () => {
     cy.expect(Spinner().absent());
     cy.do(actionsButton.click());
