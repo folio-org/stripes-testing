@@ -200,4 +200,19 @@ export default {
         .exists(),
     );
   },
+  checkUserNote: ({ title, details }) => {
+    cy.expect(
+      Modal({ id: 'popup-note-modal' })
+        .find(HTML(including(`Title: ${title}`)))
+        .exists(),
+    );
+    cy.expect(
+      Modal({ id: 'popup-note-modal' })
+        .find(HTML(including(details)))
+        .exists(),
+    );
+  },
+  deleteNote: () => {
+    cy.do(Button('Delete note').click());
+  },
 };
