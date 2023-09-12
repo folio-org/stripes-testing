@@ -207,11 +207,8 @@ export default {
     );
   },
 
-  getSubjectValue: () => cy.then(() => KeyValue('Subjects').value()),
   subjectsAssertion() {
-    this.getSubjectValue().then((val) => {
-      expect(val).to.be.exist;
-    });
+    cy.expect(KeyValue('Subjects').exists());
   },
 
   titlesSearch: (searchParameter, searchValue) => {
