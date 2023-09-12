@@ -305,9 +305,9 @@ export default {
     ]);
   },
 
-  verifyKeywordsAsDefault(keyword = 'Select a browse option') {
+  verifyKeywordsAsDefault() {
     cy.get('#input-record-search-qindex').then((elem) => {
-      expect(elem.text()).to.include(keyword);
+      expect(elem.text()).to.include('Select a browse option');
     });
     cy.expect(browseSearchAndFilterInput.exists());
   },
