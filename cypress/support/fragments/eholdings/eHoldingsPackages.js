@@ -14,6 +14,7 @@ const packageList = Section({ id: 'packageShowTitles' });
 const searchIcon = Button({ icon: 'search' });
 const searchField = TextField({ id: 'eholdings-search' });
 const chooseParameterField = Select('Select a field to search');
+const subjectKeyValue = KeyValue('Subjects');
 
 export default {
   create: (packageName = `package_${getRandomPostfix()}`) => {
@@ -208,7 +209,7 @@ export default {
   },
 
   subjectsAssertion() {
-    cy.expect(KeyValue('Subjects').exists());
+    cy.expect(subjectKeyValue.exists());
   },
 
   titlesSearch: (searchParameter, searchValue) => {
