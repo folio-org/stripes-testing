@@ -9,6 +9,8 @@ import permissions from '../../support/dictionary/permissions';
 import features from '../../support/dictionary/features';
 import users from '../../support/fragments/users/users';
 import devTeams from '../../support/dictionary/devTeams';
+import eHoldingsProvidersSearch from '../../support/fragments/eholdings/eHoldingsProvidersSearch';
+import eHoldingsSearch from '../../support/fragments/eholdings/eHoldingsSearch';
 
 describe('eHoldings packages management', () => {
   let userId;
@@ -93,6 +95,30 @@ describe('eHoldings packages management', () => {
           // reset test data
           eHoldingsPackage.addToHoldings();
         });
+      });
+    },
+  );
+
+  it(
+    'C695 Package Record: Search all titles included in a package (spitfire)',
+    { tags: [testType.criticalPath, devTeams.spitfire, features.eHoldings] },
+    () => {
+      cy.createTempUser([
+        permissions.uieHoldingsRecordsEdit.gui
+      ]).then((userProperties) => {
+        userId = userProperties.userId;
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.eholdingsPath,
+          waiter: eHoldingsPackages.waitLoading,
+        });
+
+        eHoldingsSearch.switchToPackages();
+        eHoldingsProvidersSearch.byProvider('Wiley Online Library');
+        eHoldingsPackagesSearch.bySelectionStatus('Selected');
+        eHoldingsPackages.openPackage();
+        eHoldingsPackages.titlesSearch('Subject', 'engineering');
+        eHoldingsPackages.clickSearchTitles();
+        eHoldingsPackages.subjectsAssertion();
       });
     },
   );

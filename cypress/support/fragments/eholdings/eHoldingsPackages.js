@@ -1,4 +1,4 @@
-import { Button, HTML, ListItem, Modal, Section, including, or } from '../../../../interactors';
+import { Button, HTML, ListItem, Modal, Section, including, or, TextField, KeyValue, Select } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 import eHoldingsNewCustomPackage from './eHoldingsNewCustomPackage';
 import eHoldingsPackage from './eHoldingsPackage';
@@ -9,6 +9,11 @@ const actionButton = Button('Actions');
 const deletePackageButton = Button('Delete package');
 const confirmModal = Modal('Delete custom package');
 const addNewPackageButton = Button('New');
+const searchButton = Button('Search');
+const packageList = Section({ id: 'packageShowTitles' });
+const searchIcon = Button({ icon: 'search' });
+const searchField = TextField({ id: 'eholdings-search' });
+const chooseParameterField = Select('Select a field to search');
 
 export default {
   create: (packageName = `package_${getRandomPostfix()}`) => {
@@ -191,5 +196,30 @@ export default {
         .find(ListItem({ text: including(eHoldingsPackage.filterStatuses.notSelected) }))
         .absent(),
     ]);
+  },
+
+  clickSearchTitles: (rowNumber = 0) => {
+    cy.do(
+      packageList
+        .find(ListItem({ className: including('list-item-'), index: rowNumber }))
+        .find(Button())
+        .click(),
+    );
+  },
+
+  getSubjectValue: () => cy.then(() => KeyValue('Subjects').value()),
+  subjectsAssertion() {
+    this.getSubjectValue().then((val) => {
+      expect(val).to.be.exist;
+    });
+  },
+
+  titlesSearch: (searchParameter, searchValue) => {
+    cy.expect(searchIcon.exists());
+    // wait for titles section to be loaded
+    cy.wait(2000);
+    cy.do([searchIcon.click(), chooseParameterField.choose(searchParameter)]);
+    cy.expect([Select({ value: searchParameter.toLowerCase() }).exists(), searchField.exists()]);
+    cy.do([searchField.fillIn(searchValue), searchButton.click()]);
   },
 };
