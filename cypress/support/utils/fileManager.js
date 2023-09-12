@@ -33,11 +33,10 @@ export default {
   },
 
   deleteFileFromDownloadsByMask(...fileNameMasks) {
-    fileNameMasks.forEach(fileNameMask => {
-      this.findDownloadedFilesByMask(fileNameMask)
-        .then((fileName) => {
-          cy.task('deleteFile', fileName[0]);
-        });
+    fileNameMasks.forEach((fileNameMask) => {
+      this.findDownloadedFilesByMask(fileNameMask).then((fileName) => {
+        cy.task('deleteFile', fileName[0]);
+      });
     });
   },
 
@@ -52,16 +51,14 @@ export default {
     // Need time for download file TODO: think about how it can be fixed
     cy.wait(Cypress.env('downloadTimeout'));
 
-    this.findDownloadedFilesByMask(fileNameMask)
-      .then((downloadedFilenames) => {
-        const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
-        verifyNameFunc(lastDownloadedFilename);
+    this.findDownloadedFilesByMask(fileNameMask).then((downloadedFilenames) => {
+      const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
+      verifyNameFunc(lastDownloadedFilename);
 
-        this.readFile(lastDownloadedFilename)
-          .then((actualContent) => {
-            verifyContentFunc(actualContent, ...verifyContentFuncArgs);
-          });
+      this.readFile(lastDownloadedFilename).then((actualContent) => {
+        verifyContentFunc(actualContent, ...verifyContentFuncArgs);
       });
+    });
   },
 
   getFileNameFromFilePath(path) {
@@ -77,14 +74,12 @@ export default {
     // Need time for download file TODO: think about how it can be fixed
     cy.wait(Cypress.env('downloadTimeout'));
 
-    return this.findDownloadedFilesByMask(fileNameMask)
-      .then((downloadedFilenames) => {
-        const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
+    return this.findDownloadedFilesByMask(fileNameMask).then((downloadedFilenames) => {
+      const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
 
-        this.readFile(lastDownloadedFilename)
-          .then((actualContent) => {
-            return this.createFile(`${downloadsFolder}/${fileName}`, actualContent).then(() => (this.deleteFile(lastDownloadedFilename)));
-          });
+      this.readFile(lastDownloadedFilename).then((actualContent) => {
+        return this.createFile(`${downloadsFolder}/${fileName}`, actualContent).then(() => this.deleteFile(lastDownloadedFilename));
       });
-  }
+    });
+  },
 };

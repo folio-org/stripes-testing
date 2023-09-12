@@ -27,7 +27,7 @@ export default {
     cy.do([
       TextField({ name: 'scheduleTime' }).fillIn(time),
       Button({ icon: 'clock' }).click(),
-      Button('Set time').click()
+      Button('Set time').click(),
     ]);
   },
 
@@ -39,16 +39,13 @@ export default {
   setOwner: (owner) => cy.do(ownerSelect.choose(owner)),
   setTransferAccount: (account) => cy.do(transferAccountSelect.choose(account)),
   transferAndConfirm: () => {
-    cy.do([
-      transferButton.click(),
-      confirmButton.click(),
-    ]);
+    cy.do([transferButton.click(), confirmButton.click()]);
   },
 
-  transferFeeFineViaApi:(apiBody, feeFineId) => cy.okapiRequest({
+  transferFeeFineViaApi: (apiBody, feeFineId) => cy.okapiRequest({
     method: 'POST',
     path: `accounts/${feeFineId}/transfer`,
     body: apiBody,
-    isDefaultSearchParamsRequired: false
+    isDefaultSearchParamsRequired: false,
   }),
 };

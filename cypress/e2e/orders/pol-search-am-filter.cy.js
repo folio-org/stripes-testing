@@ -33,7 +33,7 @@ describe('orders: export', () => {
         notes: '',
         paymentMethod: 'Cash',
       },
-    ]
+    ],
   };
   const integrationName = `FirstIntegrationName${getRandomPostfix()}`;
   const integartionDescription = 'Test Integation descripton1';
@@ -44,18 +44,24 @@ describe('orders: export', () => {
 
   before(() => {
     cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-        order.vendor = organization.name;
-        order.orderType = 'One-time';
-      });
-    cy.loginAsAdmin({ path:TopMenu.organizationsPath, waiter: Organizations.waitLoading });
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+      order.vendor = organization.name;
+      order.orderType = 'One-time';
+    });
+    cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
     Organizations.searchByParameters('Name', organization.name);
     Organizations.checkSearchResults(organization);
     Organizations.selectOrganization(organization.name);
     Organizations.addIntegration();
-    Organizations.fillIntegrationInformationWithoutScheduling(integrationName, integartionDescription, vendorEDICodeFor1Integration, libraryEDICodeFor1Integration, organization.accounts[0].accountNo, 'Purchase');
+    Organizations.fillIntegrationInformationWithoutScheduling(
+      integrationName,
+      integartionDescription,
+      vendorEDICodeFor1Integration,
+      libraryEDICodeFor1Integration,
+      organization.accounts[0].accountNo,
+      'Purchase',
+    );
     InteractorsTools.checkCalloutMessage('Integration was saved');
     cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
     SettingsOrders.waitLoadingPurchaseOrderLinesLimit();
@@ -69,11 +75,13 @@ describe('orders: export', () => {
       permissions.uiOrganizationsView.gui,
       permissions.uiExportOrders.gui,
       permissions.exportManagerAll.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
       });
+    });
   });
 
   after(() => {
@@ -85,25 +93,39 @@ describe('orders: export', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C350603 Searching POL by specifying acquisition method (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet, Parallelization.nonParallel] }, () => {
-    cy.logout();
-    cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-    order.orderType = 'Ongoing';
-    Orders.createOrder(order, true, false).then(orderId => {
-      order.id = orderId;
-      Orders.createPOLineViaActions();
-      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase');
-      OrderLines.backToEditingOrder();
-      Orders.createPOLineViaActions();
-      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase at vendor system');
-      OrderLines.backToEditingOrder();
-      Orders.createPOLineViaActions();
-      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Depository');
-      Orders.getOrdersApi({ limit: 1, query: `"id"=="${orderId}"` })
-        .then(response => {
+  it(
+    'C350603 Searching POL by specifying acquisition method (thunderjet)',
+    { tags: [TestTypes.smoke, devTeams.thunderjet, Parallelization.nonParallel] },
+    () => {
+      cy.logout();
+      cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+      order.orderType = 'Ongoing';
+      Orders.createOrder(order, true, false).then((orderId) => {
+        order.id = orderId;
+        Orders.createPOLineViaActions();
+        OrderLines.fillInPOLineInfoForExport(
+          `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
+          'Purchase',
+        );
+        OrderLines.backToEditingOrder();
+        Orders.createPOLineViaActions();
+        OrderLines.fillInPOLineInfoForExport(
+          `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
+          'Purchase at vendor system',
+        );
+        OrderLines.backToEditingOrder();
+        Orders.createPOLineViaActions();
+        OrderLines.fillInPOLineInfoForExport(
+          `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
+          'Depository',
+        );
+        Orders.getOrdersApi({ limit: 1, query: `"id"=="${orderId}"` }).then((response) => {
           orderNumber = response[0].poNumber;
 
-          cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+          cy.login(user.username, user.password, {
+            path: TopMenu.ordersPath,
+            waiter: Orders.waitLoading,
+          });
           Orders.selectOrderLines();
           Orders.selectFilterAcquisitionMethod('Purchase');
           Orders.checkOrderlineSearchResults(`${orderNumber}-1`);
@@ -114,6 +136,7 @@ describe('orders: export', () => {
           Orders.selectFilterAcquisitionMethod('Depository');
           Orders.checkOrderlineSearchResults(`${orderNumber}-3`);
         });
-    });
-  });
+      });
+    },
+  );
 });

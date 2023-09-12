@@ -28,16 +28,17 @@ describe('Patron Notices', () => {
       PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
         patronGroup.id = patronGroupResponse;
       });
-      cy.createTempUser([permissions.uiCirculationSettingsNoticeTemplates.gui], patronGroup.name).then(
-        (userProperties) => {
-          userData = userProperties;
-          UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
-          cy.login(userData.username, userData.password, {
-            path: SettingsMenu.circulationPatronNoticeTemplatesPath,
-            waiter: NewNoticePolicyTemplate.waitLoading,
-          });
-        }
-      );
+      cy.createTempUser(
+        [permissions.uiCirculationSettingsNoticeTemplates.gui],
+        patronGroup.name,
+      ).then((userProperties) => {
+        userData = userProperties;
+        UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
+        cy.login(userData.username, userData.password, {
+          path: SettingsMenu.circulationPatronNoticeTemplatesPath,
+          waiter: NewNoticePolicyTemplate.waitLoading,
+        });
+      });
     });
   });
 
@@ -45,9 +46,11 @@ describe('Patron Notices', () => {
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
     NoticePolicyTemplate.deleteViaApi(testData.noticeTemplateBody.id);
-    NoticePolicyTemplate.getViaApi({ query: `name=${newNoticeTemplateName}` }).then((templateId) => {
-      NoticePolicyTemplate.deleteViaApi(templateId);
-    });
+    NoticePolicyTemplate.getViaApi({ query: `name=${newNoticeTemplateName}` }).then(
+      (templateId) => {
+        NoticePolicyTemplate.deleteViaApi(templateId);
+      },
+    );
   });
 
   it(
@@ -66,6 +69,6 @@ describe('Patron Notices', () => {
         description: testData.noticeTemplateBody.description,
         category: testData.noticeTemplateBody.category,
       });
-    }
+    },
   );
 });

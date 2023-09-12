@@ -3,9 +3,7 @@ import { getTestEntityValue } from '../../utils/stringTools';
 import { REQUEST_TYPES } from '../../constants';
 
 export const defaultRequestPolicy = {
-  requestTypes: [
-    REQUEST_TYPES.HOLD,
-  ],
+  requestTypes: [REQUEST_TYPES.HOLD],
   name: getTestEntityValue(),
   description: 'description',
   id: uuid(),

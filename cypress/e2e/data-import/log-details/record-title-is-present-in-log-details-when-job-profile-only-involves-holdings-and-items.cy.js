@@ -7,11 +7,13 @@ import ExportFieldMappingProfiles from '../../../support/fragments/data-export/e
 import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import { FOLIO_RECORD_TYPE,
+import {
+  FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
-  JOB_STATUS_NAMES } from '../../../support/constants';
+  JOB_STATUS_NAMES,
+} from '../../../support/constants';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
@@ -37,7 +39,8 @@ describe('data-import', () => {
   describe('Log details', () => {
     let user;
     const instanceHrids = [];
-    const instanceTitle = 'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)';
+    const instanceTitle =
+      'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)';
     const exportJobProfileName = `Testing titles for import.${getRandomPostfix()}`;
     const marcFileForCreateFirstRecord = `C375109 marcFile.${getRandomPostfix()}.mrc`;
     const marcFileForCreateSecondRecord = `C375109 marcFile.${getRandomPostfix()}.mrc`;
@@ -53,7 +56,7 @@ describe('data-import', () => {
       instanceActionProfileName: `C375109 instance action profile.${getRandomPostfix()}`,
       holdingsActionProfileName: `C375109 holdings action profile.${getRandomPostfix()}`,
       itemActionProfileName: `C375109 item action profile.${getRandomPostfix()}`,
-      jobProfileName: `C375109 job profile.${getRandomPostfix()}`
+      jobProfileName: `C375109 job profile.${getRandomPostfix()}`,
     };
     const secondRecord = {
       instanceMappingProfileName: `C375109 instance mapping profile.${getRandomPostfix()}`,
@@ -63,216 +66,303 @@ describe('data-import', () => {
       instanceActionProfileName: `C375109 instance action profile.${getRandomPostfix()}`,
       holdingsActionProfileName: `C375109 holdings action profile.${getRandomPostfix()}`,
       itemActionProfileName: `C375109 item action profile.${getRandomPostfix()}`,
-      jobProfileName: `C375109 job profile.${getRandomPostfix()}`
+      jobProfileName: `C375109 job profile.${getRandomPostfix()}`,
     };
     // profiles for creating the first record
-    const firstInstanceMappingProfileForCreate = NewFieldMappingProfile.getDefaultInstanceMappingProfile(firstRecord.instanceMappingProfileName);
-    const firstHoldingsMappingProfileForCreate = NewFieldMappingProfile.getDefaultHoldingsMappingProfile(firstRecord.holdingsMappingProfileName, firstRecord.permanentLocation);
-    const firstItemMappingProfileForCreate = NewFieldMappingProfile.getDefaultItemMappingProfile(firstRecord.itemMappingProfileName);
-    const firstInstanceActionProfileForCreate = NewActionProfile.getDefaultInstanceActionProfile(firstRecord.instanceActionProfileName);
-    const firstHoldingsActionProfileForCreate = NewActionProfile.getDefaultHoldingsActionProfile(firstRecord.holdingsActionProfileName);
-    const firstItemActionProfileForCreate = NewActionProfile.getDefaultItemActionProfile(firstRecord.itemActionProfileName);
+    const firstInstanceMappingProfileForCreate =
+      NewFieldMappingProfile.getDefaultInstanceMappingProfile(
+        firstRecord.instanceMappingProfileName,
+      );
+    const firstHoldingsMappingProfileForCreate =
+      NewFieldMappingProfile.getDefaultHoldingsMappingProfile(
+        firstRecord.holdingsMappingProfileName,
+        firstRecord.permanentLocation,
+      );
+    const firstItemMappingProfileForCreate = NewFieldMappingProfile.getDefaultItemMappingProfile(
+      firstRecord.itemMappingProfileName,
+    );
+    const firstInstanceActionProfileForCreate = NewActionProfile.getDefaultInstanceActionProfile(
+      firstRecord.instanceActionProfileName,
+    );
+    const firstHoldingsActionProfileForCreate = NewActionProfile.getDefaultHoldingsActionProfile(
+      firstRecord.holdingsActionProfileName,
+    );
+    const firstItemActionProfileForCreate = NewActionProfile.getDefaultItemActionProfile(
+      firstRecord.itemActionProfileName,
+    );
     const firstJobProfileForCreate = NewJobProfile.getDefaultJobProfile(firstRecord.jobProfileName);
     const firstTestData = [
-      { mappingProfile: firstInstanceMappingProfileForCreate,
-        actionProfile: firstInstanceActionProfileForCreate },
-      { mappingProfile: firstHoldingsMappingProfileForCreate,
-        actionProfile: firstHoldingsActionProfileForCreate },
-      { mappingProfile: firstItemMappingProfileForCreate,
-        actionProfile: firstItemActionProfileForCreate },
+      {
+        mappingProfile: firstInstanceMappingProfileForCreate,
+        actionProfile: firstInstanceActionProfileForCreate,
+      },
+      {
+        mappingProfile: firstHoldingsMappingProfileForCreate,
+        actionProfile: firstHoldingsActionProfileForCreate,
+      },
+      {
+        mappingProfile: firstItemMappingProfileForCreate,
+        actionProfile: firstItemActionProfileForCreate,
+      },
     ];
     // profiles for creating the first record
-    const secondInstanceMappingProfileForCreate = NewFieldMappingProfile.getDefaultInstanceMappingProfile(secondRecord.instanceMappingProfileName);
-    const secondHoldingsMappingProfileForCreate = NewFieldMappingProfile.getDefaultHoldingsMappingProfile(secondRecord.holdingsMappingProfileName, firstRecord.permanentLocation);
-    const secondItemMappingProfileForCreate = NewFieldMappingProfile.getDefaultItemMappingProfile(secondRecord.itemMappingProfileName);
-    const secondInstanceActionProfileForCreate = NewActionProfile.getDefaultInstanceActionProfile(secondRecord.instanceActionProfileName);
-    const secondHoldingsActionProfileForCreate = NewActionProfile.getDefaultHoldingsActionProfile(secondRecord.holdingsActionProfileName);
-    const secondItemActionProfileForCreate = NewActionProfile.getDefaultItemActionProfile(secondRecord.itemActionProfileName);
-    const secondJobProfileForCreate = NewJobProfile.getDefaultJobProfile(secondRecord.jobProfileName);
+    const secondInstanceMappingProfileForCreate =
+      NewFieldMappingProfile.getDefaultInstanceMappingProfile(
+        secondRecord.instanceMappingProfileName,
+      );
+    const secondHoldingsMappingProfileForCreate =
+      NewFieldMappingProfile.getDefaultHoldingsMappingProfile(
+        secondRecord.holdingsMappingProfileName,
+        firstRecord.permanentLocation,
+      );
+    const secondItemMappingProfileForCreate = NewFieldMappingProfile.getDefaultItemMappingProfile(
+      secondRecord.itemMappingProfileName,
+    );
+    const secondInstanceActionProfileForCreate = NewActionProfile.getDefaultInstanceActionProfile(
+      secondRecord.instanceActionProfileName,
+    );
+    const secondHoldingsActionProfileForCreate = NewActionProfile.getDefaultHoldingsActionProfile(
+      secondRecord.holdingsActionProfileName,
+    );
+    const secondItemActionProfileForCreate = NewActionProfile.getDefaultItemActionProfile(
+      secondRecord.itemActionProfileName,
+    );
+    const secondJobProfileForCreate = NewJobProfile.getDefaultJobProfile(
+      secondRecord.jobProfileName,
+    );
     const secondTestData = [
-      { mappingProfile: secondInstanceMappingProfileForCreate,
-        actionProfile: secondInstanceActionProfileForCreate },
-      { mappingProfile: secondHoldingsMappingProfileForCreate,
-        actionProfile: secondHoldingsActionProfileForCreate },
-      { mappingProfile: secondItemMappingProfileForCreate,
-        actionProfile: secondItemActionProfileForCreate },
+      {
+        mappingProfile: secondInstanceMappingProfileForCreate,
+        actionProfile: secondInstanceActionProfileForCreate,
+      },
+      {
+        mappingProfile: secondHoldingsMappingProfileForCreate,
+        actionProfile: secondHoldingsActionProfileForCreate,
+      },
+      {
+        mappingProfile: secondItemMappingProfileForCreate,
+        actionProfile: secondItemActionProfileForCreate,
+      },
     ];
     const exportMappingProfile = {
       name: `Testing titles for import.${getRandomPostfix()}`,
       holdingsTransformation: 'Holdings - HRID',
       holdingsMarcField: '911',
-      subfieldForHoldings:'$h',
+      subfieldForHoldings: '$h',
       itemTransformation: 'Item - HRID',
-      itemMarcField:'911',
-      subfieldForItem:'$i'
+      itemMarcField: '911',
+      subfieldForItem: '$i',
     };
     const collectionOfMappingAndActionProfiles = [
       {
-        mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
+        mappingProfile: {
+          typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `WITH instance match item.${getRandomPostfix()}`,
           itemNote: 'Add this to existing',
           noteType: 'Provenance',
           note: 'Acquired in 2022 from the Arceneaux Trust for Cajun History',
-          staffOnly: 'Unmark for all affected records' },
-        actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
+          staffOnly: 'Unmark for all affected records',
+        },
+        actionProfile: {
+          typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `WITH instance match item.${getRandomPostfix()}`,
-          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
+          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+        },
       },
       {
-        mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-          name: `WITHOUT instance match item.${getRandomPostfix()}` },
-        actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
+        mappingProfile: {
+          typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `WITHOUT instance match item.${getRandomPostfix()}`,
-          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
+        },
+        actionProfile: {
+          typeValue: FOLIO_RECORD_TYPE.ITEM,
+          name: `WITHOUT instance match item.${getRandomPostfix()}`,
+          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+        },
       },
       {
-        mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        mappingProfile: {
+          typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `WITH instance match holdings.${getRandomPostfix()}`,
-          adminNote: 'Purchased with grant funds for Cajun folklore materials; see item record for additional details' },
-        actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+          adminNote:
+            'Purchased with grant funds for Cajun folklore materials; see item record for additional details',
+        },
+        actionProfile: {
+          typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `WITH instance match holdings.${getRandomPostfix()}`,
-          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
+          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+        },
       },
       {
-        mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-          name: `WITHOUT instance match holdings.${getRandomPostfix()}` },
-        actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        mappingProfile: {
+          typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `WITHOUT instance match holdings.${getRandomPostfix()}`,
-          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
+        },
+        actionProfile: {
+          typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+          name: `WITHOUT instance match holdings.${getRandomPostfix()}`,
+          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+        },
       },
     ];
     const collectionOfMatchProfiles = [
       {
-        matchProfile: { profileName: `WITH instance match instance.${getRandomPostfix()}`,
+        matchProfile: {
+          profileName: `WITH instance match instance.${getRandomPostfix()}`,
           incomingRecordFields: {
-            field: '001'
+            field: '001',
           },
           matchCriterion: 'Exactly matches',
           existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
-          instanceOption: NewMatchProfile.optionsList.instanceHrid }
+          instanceOption: NewMatchProfile.optionsList.instanceHrid,
+        },
       },
       {
-        matchProfile: { profileName: `WITH instance match holdings.${getRandomPostfix()}`,
+        matchProfile: {
+          profileName: `WITH instance match holdings.${getRandomPostfix()}`,
           incomingRecordFields: {
             field: '911',
-            subfield: 'h'
+            subfield: 'h',
           },
           matchCriterion: 'Exactly matches',
           existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
-          holdingsOption: NewMatchProfile.optionsList.holdingsHrid }
+          holdingsOption: NewMatchProfile.optionsList.holdingsHrid,
+        },
       },
       {
-        matchProfile: { profileName: `WITH instance match item.${getRandomPostfix()}`,
+        matchProfile: {
+          profileName: `WITH instance match item.${getRandomPostfix()}`,
           incomingRecordFields: {
             field: '911',
-            subfield: 'i'
+            subfield: 'i',
           },
           matchCriterion: 'Exactly matches',
           existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
-          itemOption: NewMatchProfile.optionsList.itemHrid }
+          itemOption: NewMatchProfile.optionsList.itemHrid,
+        },
       },
       {
-        matchProfile: { profileName: `WITHOUT instance match holdings.${getRandomPostfix()}`,
+        matchProfile: {
+          profileName: `WITHOUT instance match holdings.${getRandomPostfix()}`,
           incomingRecordFields: {
             field: '911',
-            subfield: 'h'
+            subfield: 'h',
           },
           matchCriterion: 'Exactly matches',
           existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
-          holdingsOption: NewMatchProfile.optionsList.holdingsHrid }
+          holdingsOption: NewMatchProfile.optionsList.holdingsHrid,
+        },
       },
       {
-        matchProfile: { profileName: `WITHOUT instance match item.${getRandomPostfix()}`,
+        matchProfile: {
+          profileName: `WITHOUT instance match item.${getRandomPostfix()}`,
           incomingRecordFields: {
             field: '911',
-            subfield: 'i'
+            subfield: 'i',
           },
           matchCriterion: 'Exactly matches',
           existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
-          itemOption: NewMatchProfile.optionsList.itemHrid }
-      }
+          itemOption: NewMatchProfile.optionsList.itemHrid,
+        },
+      },
     ];
-    const jobProfileWithMatch = { ...NewJobProfile.defaultJobProfile,
+    const jobProfileWithMatch = {
+      ...NewJobProfile.defaultJobProfile,
       profileName: `WITH instance match.${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC };
-    const jobProfileWithoutMatch = { ...NewJobProfile.defaultJobProfile,
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
+    };
+    const jobProfileWithoutMatch = {
+      ...NewJobProfile.defaultJobProfile,
       profileName: `WITHOUT instance match.${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC };
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
+    };
 
     before(() => {
       cy.loginAsAdmin();
-      cy.getAdminToken()
-        .then(() => {
+      cy.getAdminToken().then(() => {
         // create the first instance
-          firstTestData.jobProfileForCreate = firstJobProfileForCreate;
+        firstTestData.jobProfileForCreate = firstJobProfileForCreate;
 
-          cy.wrap(firstTestData).each(specialPair => {
-            cy.createOnePairMappingAndActionProfiles(specialPair.mappingProfile, specialPair.actionProfile).then(idActionProfile => {
-              cy.addJobProfileRelation(firstTestData.jobProfileForCreate.addedRelations, idActionProfile);
-            });
+        cy.wrap(firstTestData).each((specialPair) => {
+          cy.createOnePairMappingAndActionProfiles(
+            specialPair.mappingProfile,
+            specialPair.actionProfile,
+          ).then((idActionProfile) => {
+            cy.addJobProfileRelation(
+              firstTestData.jobProfileForCreate.addedRelations,
+              idActionProfile,
+            );
           });
-          SettingsJobProfiles.createJobProfileApi(firstTestData.jobProfileForCreate)
-            .then((bodyWithjobProfile) => {
-              firstTestData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
-            });
-
-          // upload a marc file for creating of the first new instance, holding and item
-          cy.visit(TopMenu.dataImportPath);
-          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-          DataImport.verifyUploadState();
-          DataImport.uploadFile('oneMarcBib.mrc', marcFileForCreateFirstRecord);
-          JobProfiles.searchJobProfileForImport(firstTestData.jobProfileForCreate.profile.name);
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(marcFileForCreateFirstRecord);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-          Logs.openFileDetails(marcFileForCreateFirstRecord);
-          FileDetails.openInstanceInInventory('Created');
-          InventoryInstance.getAssignedHRID().then(firstInstanceHrId => {
-            instanceHrids.push(firstInstanceHrId);
-          });
-
-          // create the second instance
-          secondTestData.jobProfileForCreate = secondJobProfileForCreate;
-
-          cy.wrap(secondTestData).each(specialPair => {
-            cy.createOnePairMappingAndActionProfiles(specialPair.mappingProfile, specialPair.actionProfile).then(idActionProfile => {
-              cy.addJobProfileRelation(secondTestData.jobProfileForCreate.addedRelations, idActionProfile);
-            });
-          });
-          SettingsJobProfiles.createJobProfileApi(secondTestData.jobProfileForCreate)
-            .then((bodyWithjobProfile) => {
-              secondTestData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
-            });
-
-          // upload a marc file for creating of the first new instance, holding and item
-          cy.visit(TopMenu.dataImportPath);
-          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-          DataImport.verifyUploadState();
-          DataImport.uploadFile('oneMarcBib.mrc', marcFileForCreateSecondRecord);
-          JobProfiles.searchJobProfileForImport(secondTestData.jobProfileForCreate.profile.name);
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(marcFileForCreateSecondRecord);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-          Logs.openFileDetails(marcFileForCreateSecondRecord);
-          FileDetails.openInstanceInInventory('Created');
-          InventoryInstance.getAssignedHRID().then(secondInstanceHrId => {
-            instanceHrids.push(secondInstanceHrId);
-          });
-          cy.logout();
         });
+        SettingsJobProfiles.createJobProfileApi(firstTestData.jobProfileForCreate).then(
+          (bodyWithjobProfile) => {
+            firstTestData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
+          },
+        );
+
+        // upload a marc file for creating of the first new instance, holding and item
+        cy.visit(TopMenu.dataImportPath);
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
+        DataImport.uploadFile('oneMarcBib.mrc', marcFileForCreateFirstRecord);
+        JobProfiles.searchJobProfileForImport(firstTestData.jobProfileForCreate.profile.name);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(marcFileForCreateFirstRecord);
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(marcFileForCreateFirstRecord);
+        FileDetails.openInstanceInInventory('Created');
+        InventoryInstance.getAssignedHRID().then((firstInstanceHrId) => {
+          instanceHrids.push(firstInstanceHrId);
+        });
+
+        // create the second instance
+        secondTestData.jobProfileForCreate = secondJobProfileForCreate;
+
+        cy.wrap(secondTestData).each((specialPair) => {
+          cy.createOnePairMappingAndActionProfiles(
+            specialPair.mappingProfile,
+            specialPair.actionProfile,
+          ).then((idActionProfile) => {
+            cy.addJobProfileRelation(
+              secondTestData.jobProfileForCreate.addedRelations,
+              idActionProfile,
+            );
+          });
+        });
+        SettingsJobProfiles.createJobProfileApi(secondTestData.jobProfileForCreate).then(
+          (bodyWithjobProfile) => {
+            secondTestData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
+          },
+        );
+
+        // upload a marc file for creating of the first new instance, holding and item
+        cy.visit(TopMenu.dataImportPath);
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
+        DataImport.uploadFile('oneMarcBib.mrc', marcFileForCreateSecondRecord);
+        JobProfiles.searchJobProfileForImport(secondTestData.jobProfileForCreate.profile.name);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(marcFileForCreateSecondRecord);
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(marcFileForCreateSecondRecord);
+        FileDetails.openInstanceInInventory('Created');
+        InventoryInstance.getAssignedHRID().then((secondInstanceHrId) => {
+          instanceHrids.push(secondInstanceHrId);
+        });
+        cy.logout();
+      });
 
       cy.createTempUser([
         permissions.moduleDataImportEnabled.gui,
         permissions.inventoryAll.gui,
         permissions.dataExportEnableSettings.gui,
         permissions.settingsDataImportEnabled.gui,
-        permissions.dataExportEnableApp.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+        permissions.dataExportEnableApp.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          cy.login(userProperties.username, userProperties.password);
-        });
+        cy.login(userProperties.username, userProperties.password);
+      });
     });
 
     after('delete test data', () => {
@@ -292,10 +382,10 @@ describe('data-import', () => {
       FieldMappingProfiles.deleteFieldMappingProfile(secondRecord.itemMappingProfileName);
       JobProfiles.deleteJobProfile(jobProfileWithMatch.profileName);
       JobProfiles.deleteJobProfile(jobProfileWithoutMatch.profileName);
-      cy.wrap(collectionOfMatchProfiles).each(profile => {
+      cy.wrap(collectionOfMatchProfiles).each((profile) => {
         MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
       });
-      cy.wrap(collectionOfMappingAndActionProfiles).each(profile => {
+      cy.wrap(collectionOfMappingAndActionProfiles).each((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
         FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
       });
@@ -304,19 +394,22 @@ describe('data-import', () => {
       FileManager.deleteFile(`cypress/fixtures/${csvFileNameForFirstRecord}`);
       FileManager.deleteFile(`cypress/fixtures/${csvFileNameForSecondRecord}`);
       Users.deleteViaApi(user.userId);
-      cy.wrap(instanceHrids).each(hrid => {
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` })
-          .then((instance) => {
+      cy.wrap(instanceHrids).each((hrid) => {
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` }).then(
+          (instance) => {
             cy.deleteItemViaApi(instance.items[0].id);
             cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
             InventoryInstance.deleteInstanceViaApi(instance.id);
-          });
+          },
+        );
       });
     });
 
-    it('C375109 When MARC Bib job profile only involves holdings and items, verify that the record title is present in the log details (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      // create Field mapping profile for export
+    it(
+      'C375109 When MARC Bib job profile only involves holdings and items, verify that the record title is present in the log details (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
+        // create Field mapping profile for export
         cy.visit(SettingsMenu.exportMappingProfilePath);
         ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
 
@@ -327,33 +420,54 @@ describe('data-import', () => {
         // create mapping profiles
         cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile);
-        NewFieldMappingProfile.addAdministrativeNote(collectionOfMappingAndActionProfiles[2].mappingProfile.adminNote, 5);
+        NewFieldMappingProfile.fillSummaryInMappingProfile(
+          collectionOfMappingAndActionProfiles[2].mappingProfile,
+        );
+        NewFieldMappingProfile.addAdministrativeNote(
+          collectionOfMappingAndActionProfiles[2].mappingProfile.adminNote,
+          5,
+        );
         FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile.name);
-        FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[2].mappingProfile.name);
+        FieldMappingProfiles.closeViewModeForMappingProfile(
+          collectionOfMappingAndActionProfiles[2].mappingProfile.name,
+        );
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfMappingAndActionProfiles[2].mappingProfile.name,
+        );
         FieldMappingProfileView.duplicate();
         NewFieldMappingProfile.addName(collectionOfMappingAndActionProfiles[3].mappingProfile.name);
         FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[3].mappingProfile.name);
+        FieldMappingProfiles.closeViewModeForMappingProfile(
+          collectionOfMappingAndActionProfiles[3].mappingProfile.name,
+        );
 
         FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
+        NewFieldMappingProfile.fillSummaryInMappingProfile(
+          collectionOfMappingAndActionProfiles[0].mappingProfile,
+        );
         NewFieldMappingProfile.addItemNotes(
           `"${collectionOfMappingAndActionProfiles[0].mappingProfile.noteType}"`,
           `"${collectionOfMappingAndActionProfiles[0].mappingProfile.note}"`,
-          collectionOfMappingAndActionProfiles[0].mappingProfile.staffOnly
+          collectionOfMappingAndActionProfiles[0].mappingProfile.staffOnly,
         );
         FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
-        FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
+        FieldMappingProfiles.closeViewModeForMappingProfile(
+          collectionOfMappingAndActionProfiles[0].mappingProfile.name,
+        );
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfMappingAndActionProfiles[0].mappingProfile.name,
+        );
         FieldMappingProfileView.duplicate();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
+        NewFieldMappingProfile.fillSummaryInMappingProfile(
+          collectionOfMappingAndActionProfiles[1].mappingProfile,
+        );
         FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile.name);
+        FieldMappingProfiles.closeViewModeForMappingProfile(
+          collectionOfMappingAndActionProfiles[1].mappingProfile.name,
+        );
 
         // create action profiles
-        cy.wrap(collectionOfMappingAndActionProfiles).each(profile => {
+        cy.wrap(collectionOfMappingAndActionProfiles).each((profile) => {
           cy.visit(SettingsMenu.actionProfilePath);
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
@@ -361,8 +475,8 @@ describe('data-import', () => {
 
         // create match profiles
         cy.visit(SettingsMenu.matchProfilePath);
-        collectionOfMatchProfiles.forEach(profile => {
-        // TODO need to wait until profile will be created in loop
+        collectionOfMatchProfiles.forEach((profile) => {
+          // TODO need to wait until profile will be created in loop
           cy.wait(8000);
           MatchProfiles.createMatchProfile(profile.matchProfile);
           // TODO need to wait until profile will be created in loop
@@ -374,9 +488,15 @@ describe('data-import', () => {
         JobProfiles.createJobProfile(jobProfileWithMatch);
         NewJobProfile.linkMatchProfile(collectionOfMatchProfiles[0].matchProfile.profileName);
         NewJobProfile.linkMatchProfile(collectionOfMatchProfiles[1].matchProfile.profileName);
-        NewJobProfile.linkActionProfileForMatches(collectionOfMappingAndActionProfiles[2].actionProfile.name, 2);
+        NewJobProfile.linkActionProfileForMatches(
+          collectionOfMappingAndActionProfiles[2].actionProfile.name,
+          2,
+        );
         NewJobProfile.linkMatchProfile(collectionOfMatchProfiles[2].matchProfile.profileName);
-        NewJobProfile.linkActionProfileForMatches(collectionOfMappingAndActionProfiles[0].actionProfile.name, 4);
+        NewJobProfile.linkActionProfileForMatches(
+          collectionOfMappingAndActionProfiles[0].actionProfile.name,
+          4,
+        );
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfileWithMatch.profileName);
 
@@ -384,9 +504,14 @@ describe('data-import', () => {
         cy.wait(2500);
         JobProfiles.createJobProfile(jobProfileWithoutMatch);
         NewJobProfile.linkMatchProfile(collectionOfMatchProfiles[3].matchProfile.profileName);
-        NewJobProfile.linkActionProfileForMatches(collectionOfMappingAndActionProfiles[3].actionProfile.name);
+        NewJobProfile.linkActionProfileForMatches(
+          collectionOfMappingAndActionProfiles[3].actionProfile.name,
+        );
         NewJobProfile.linkMatchProfile(collectionOfMatchProfiles[4].matchProfile.profileName);
-        NewJobProfile.linkActionProfileForMatches(collectionOfMappingAndActionProfiles[1].actionProfile.name, 2);
+        NewJobProfile.linkActionProfileForMatches(
+          collectionOfMappingAndActionProfiles[1].actionProfile.name,
+          2,
+        );
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfileWithoutMatch.profileName);
 
@@ -414,20 +539,34 @@ describe('data-import', () => {
         Logs.openFileDetails(marcFileNameForUpdateFirstRecord);
         FileDetails.checkHoldingsQuantityInSummaryTable('1', 1);
         FileDetails.checkItemQuantityInSummaryTable('1', 1);
-        FileDetails.checkStatusInColumn(FileDetails.status.dash, FileDetails.columnNameInResultList.srsMarc);
-        FileDetails.checkStatusInColumn(FileDetails.status.dash, FileDetails.columnNameInResultList.instance);
-        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.holdings);
-        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.item);
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.dash,
+          FileDetails.columnNameInResultList.srsMarc,
+        );
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.dash,
+          FileDetails.columnNameInResultList.instance,
+        );
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.updated,
+          FileDetails.columnNameInResultList.holdings,
+        );
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.updated,
+          FileDetails.columnNameInResultList.item,
+        );
         FileDetails.verifyTitle(instanceTitle, FileDetails.columnNameInResultList.title);
 
         FileDetails.openHoldingsInInventory('Updated');
-        HoldingsRecordView.checkAdministrativeNote(collectionOfMappingAndActionProfiles[2].mappingProfile.adminNote);
+        HoldingsRecordView.checkAdministrativeNote(
+          collectionOfMappingAndActionProfiles[2].mappingProfile.adminNote,
+        );
         cy.go('back');
         FileDetails.openItemInInventory('Updated');
         ItemRecordView.checkItemNote(
           collectionOfMappingAndActionProfiles[0].mappingProfile.note,
           'No',
-          collectionOfMappingAndActionProfiles[0].mappingProfile.noteType
+          collectionOfMappingAndActionProfiles[0].mappingProfile.noteType,
         );
 
         // update the second record
@@ -455,21 +594,36 @@ describe('data-import', () => {
         Logs.openFileDetails(marcFileNameForUpdateSecondRecord);
         FileDetails.checkHoldingsQuantityInSummaryTable('1', 1);
         FileDetails.checkItemQuantityInSummaryTable('1', 1);
-        FileDetails.checkStatusInColumn(FileDetails.status.dash, FileDetails.columnNameInResultList.srsMarc);
-        FileDetails.checkStatusInColumn(FileDetails.status.dash, FileDetails.columnNameInResultList.instance);
-        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.holdings);
-        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.item);
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.dash,
+          FileDetails.columnNameInResultList.srsMarc,
+        );
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.dash,
+          FileDetails.columnNameInResultList.instance,
+        );
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.updated,
+          FileDetails.columnNameInResultList.holdings,
+        );
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.updated,
+          FileDetails.columnNameInResultList.item,
+        );
         FileDetails.verifyTitle(instanceTitle, FileDetails.columnNameInResultList.title);
 
         FileDetails.openHoldingsInInventory('Updated');
-        HoldingsRecordView.checkAdministrativeNote(collectionOfMappingAndActionProfiles[2].mappingProfile.adminNote);
+        HoldingsRecordView.checkAdministrativeNote(
+          collectionOfMappingAndActionProfiles[2].mappingProfile.adminNote,
+        );
         cy.go('back');
         FileDetails.openItemInInventory('Updated');
         ItemRecordView.checkItemNote(
           collectionOfMappingAndActionProfiles[0].mappingProfile.note,
           'No',
-          collectionOfMappingAndActionProfiles[0].mappingProfile.noteType
+          collectionOfMappingAndActionProfiles[0].mappingProfile.noteType,
         );
-      });
+      },
+    );
   });
 });

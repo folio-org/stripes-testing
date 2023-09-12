@@ -23,9 +23,8 @@ Cypress.Commands.add('createServicePoint', (servicePoint) => {
       },
       ...servicePoint,
     },
-  })
-    .then(newServicePoint => {
-      Cypress.env(CY_ENV.NEW_SERVICE_POINT, newServicePoint.body);
-      return newServicePoint.body;
-    });
+  }).then((newServicePoint) => {
+    Cypress.env(CY_ENV.NEW_SERVICE_POINT, newServicePoint.body);
+    return newServicePoint.body;
+  });
 });

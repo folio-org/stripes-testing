@@ -18,18 +18,19 @@ export default {
     UserEdit.saveAndClose();
   },
 
-  switchServicePoint:(servicePoint) => {
+  switchServicePoint: (servicePoint) => {
     cy.wait(5000);
-    cy.do([
-      Dropdown('My profile').open(),
-      Button('Switch service point').click()
-    ]);
+    cy.do([Dropdown('My profile').open(), Button('Switch service point').click()]);
     SelectServicePointModal.selectServicePoint(servicePoint);
     // wait for data to be loaded
     cy.wait(5000);
   },
 
   checkIsServicePointSwitched: (name) => {
-    cy.expect(Dropdown('My profile').find(Button(including(name))).exists());
+    cy.expect(
+      Dropdown('My profile')
+        .find(Button(including(name)))
+        .exists(),
+    );
   },
 };

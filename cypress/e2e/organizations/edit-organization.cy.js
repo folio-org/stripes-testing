@@ -12,15 +12,16 @@ describe('Organizations', () => {
 
   before(() => {
     cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+    });
+    cy.createTempUser([permissions.uiOrganizationsViewEditCreate.gui]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.organizationsPath,
+        waiter: Organizations.waitLoading,
       });
-    cy.createTempUser([permissions.uiOrganizationsViewEditCreate.gui])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(user.username, user.password, { path:TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-      });
+    });
   });
 
   after(() => {
@@ -28,12 +29,16 @@ describe('Organizations', () => {
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 
-  it('C673 Edit existing organization record (thunderjet)', { tags: [TestType.criticalPath, devTeams.thunderjet] }, () => {
-    Organizations.searchByParameters('Name', organization.name);
-    Organizations.selectOrganization(organization.name);
-    Organizations.editOrganization();
-    Organizations.editOrganizationName(organization);
-    organization.name = `${organization.name}-edited`;
-    Organizations.checkCreatedOrganization(organization);
-  });
+  it(
+    'C673 Edit existing organization record (thunderjet)',
+    { tags: [TestType.criticalPath, devTeams.thunderjet] },
+    () => {
+      Organizations.searchByParameters('Name', organization.name);
+      Organizations.selectOrganization(organization.name);
+      Organizations.editOrganization();
+      Organizations.editOrganizationName(organization);
+      organization.name = `${organization.name}-edited`;
+      Organizations.checkCreatedOrganization(organization);
+    },
+  );
 });

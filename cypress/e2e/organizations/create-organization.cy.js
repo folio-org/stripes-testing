@@ -14,14 +14,19 @@ describe('ui-organizations: Creating organization', () => {
   });
 
   afterEach(() => {
-    Organizations.getOrganizationViaApi({ query: `name="${organization.name}"` })
-      .then(returnedOrganization => {
+    Organizations.getOrganizationViaApi({ query: `name="${organization.name}"` }).then(
+      (returnedOrganization) => {
         Organizations.deleteOrganizationViaApi(returnedOrganization.id);
-      });
+      },
+    );
   });
 
-  it('C675 Create new organization record (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
-    Organizations.createOrganizationViaUi(organization);
-    Organizations.checkCreatedOrganization(organization);
-  });
+  it(
+    'C675 Create new organization record (thunderjet)',
+    { tags: [TestType.smoke, devTeams.thunderjet] },
+    () => {
+      Organizations.createOrganizationViaUi(organization);
+      Organizations.checkCreatedOrganization(organization);
+    },
+  );
 });

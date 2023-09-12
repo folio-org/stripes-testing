@@ -8,7 +8,7 @@ import {
   LOST_ITEM_FEES_POLICY_NAMES,
   LOAN_POLICY_NAMES,
   FULFILMENT_PREFERENCES,
-  REQUEST_TYPES
+  REQUEST_TYPES,
 } from '../../support/constants';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrder from '../../support/fragments/orders/newOrder';
@@ -61,82 +61,90 @@ describe('inventory', () => {
           cy.getLoanPolicy({ query: `name=="${LOAN_POLICY_NAMES.EXAMPLE_LOAN}"` });
           cy.getRequestPolicy({ query: `name=="${REQUEST_POLICY_NAMES.ALLOW_ALL}"` });
           cy.getNoticePolicy({ query: `name=="${NOTICE_POLICY_NAMES.SEND_NO_NOTICES}"` });
-          cy.getOverdueFinePolicy({ query: `name=="${OVERDUE_FINE_POLICY_NAMES.OVERDUE_FINE_POLICY}"` });
-          cy.getLostItemFeesPolicy({ query: `name=="${LOST_ITEM_FEES_POLICY_NAMES.LOST_ITEM_FEES_POLICY}"` });
-        }).then(() => {
+          cy.getOverdueFinePolicy({
+            query: `name=="${OVERDUE_FINE_POLICY_NAMES.OVERDUE_FINE_POLICY}"`,
+          });
+          cy.getLostItemFeesPolicy({
+            query: `name=="${LOST_ITEM_FEES_POLICY_NAMES.LOST_ITEM_FEES_POLICY}"`,
+          });
+        })
+        .then(() => {
           const loanPolicy = Cypress.env(CY_ENV.LOAN_POLICY).id;
           const requestPolicyId = Cypress.env(CY_ENV.REQUEST_POLICY)[0].id;
           const noticePolicyId = Cypress.env(CY_ENV.NOTICE_POLICY)[0].id;
           const overdueFinePolicyId = Cypress.env(CY_ENV.OVERDUE_FINE_POLICY)[0].id;
           const lostItemFeesPolicyId = Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY)[0].id;
           const policy = `l ${loanPolicy} r ${requestPolicyId} n ${noticePolicyId} o ${overdueFinePolicyId} i ${lostItemFeesPolicyId}`;
-          const priority = 'priority: number-of-criteria, criterium (t, s, c, b, a, m, g), last-line';
+          const priority =
+            'priority: number-of-criteria, criterium (t, s, c, b, a, m, g), last-line';
           const newRule = `${priority}\nfallback-policy: ${policy}`;
 
           cy.updateCirculationRules({
             rulesAsText: newRule,
           });
-          ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' })
-            .then((servicePoints) => {
+          ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then(
+            (servicePoints) => {
               effectiveLocationServicePoint = servicePoints[0];
-              NewLocation.createViaApi(NewLocation.getDefaultLocation(effectiveLocationServicePoint.id))
-                .then((location) => {
-                  effectiveLocation = location;
-                  Orders.createOrderWithOrderLineViaApi(
-                    NewOrder.getDefaultOrder(),
-                    BasicOrderLine.getDefaultOrderLine(itemQuantity, instanceTitle, effectiveLocation.id)
-                  )
-                    .then(order => {
-                      orderNumber = order;
-                    });
+              NewLocation.createViaApi(
+                NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
+              ).then((location) => {
+                effectiveLocation = location;
+                Orders.createOrderWithOrderLineViaApi(
+                  NewOrder.getDefaultOrder(),
+                  BasicOrderLine.getDefaultOrderLine(
+                    itemQuantity,
+                    instanceTitle,
+                    effectiveLocation.id,
+                  ),
+                ).then((order) => {
+                  orderNumber = order;
                 });
-            });
-          ServicePoints.getViaApi({ limit: 1, query: 'name=="Online"' })
-            .then((servicePoints) => {
-              notEffectiveLocationServicePoint = servicePoints[0];
-            });
+              });
+            },
+          );
+          ServicePoints.getViaApi({ limit: 1, query: 'name=="Online"' }).then((servicePoints) => {
+            notEffectiveLocationServicePoint = servicePoints[0];
+          });
         });
 
-      cy.createTempUser([
-        permissions.checkoutAll.gui,
-        permissions.requestsAll.gui,
-      ])
-        .then(userProperties => {
+      cy.createTempUser([permissions.checkoutAll.gui, permissions.requestsAll.gui]).then(
+        (userProperties) => {
           userForDeliveryRequest = userProperties;
 
-          cy.getRequestPreference({ limit: 1, query: `"userId"="${userForDeliveryRequest.userId}"` })
-            .then((response) => {
-              cy.updateRequestPreference(response.body.requestPreferences[0].id, {
-                defaultDeliveryAddressTypeId: '46ff3f08-8f41-485c-98d8-701ba8404f4f',
-                defaultServicePointId: null,
-                delivery: true,
-                fulfillment: FULFILMENT_PREFERENCES.DELIVERY,
-                holdShelf: true,
-                userId: userForDeliveryRequest.userId
-              });
+          cy.getRequestPreference({
+            limit: 1,
+            query: `"userId"="${userForDeliveryRequest.userId}"`,
+          }).then((response) => {
+            cy.updateRequestPreference(response.body.requestPreferences[0].id, {
+              defaultDeliveryAddressTypeId: '46ff3f08-8f41-485c-98d8-701ba8404f4f',
+              defaultServicePointId: null,
+              delivery: true,
+              fulfillment: FULFILMENT_PREFERENCES.DELIVERY,
+              holdShelf: true,
+              userId: userForDeliveryRequest.userId,
             });
-        });
+          });
+        },
+      );
     });
 
     afterEach(() => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
-      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
-        .then(order => Orders.deleteOrderViaApi(order[0].id));
-      UserEdit.changeServicePointPreferenceViaApi(
-        userForDeliveryRequest.userId,
-        [effectiveLocationServicePoint.id, notEffectiveLocationServicePoint.id]
-      )
-        .then(() => {
-          ServicePoint.deleteViaApi(effectiveLocationServicePoint.id);
-          ServicePoint.deleteViaApi(notEffectiveLocationServicePoint.id);
-          Users.deleteViaApi(userForDeliveryRequest.userId);
-        });
+      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((order) => Orders.deleteOrderViaApi(order[0].id));
+      UserEdit.changeServicePointPreferenceViaApi(userForDeliveryRequest.userId, [
+        effectiveLocationServicePoint.id,
+        notEffectiveLocationServicePoint.id,
+      ]).then(() => {
+        ServicePoint.deleteViaApi(effectiveLocationServicePoint.id);
+        ServicePoint.deleteViaApi(notEffectiveLocationServicePoint.id);
+        Users.deleteViaApi(userForDeliveryRequest.userId);
+      });
 
       NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
         effectiveLocation.institutionId,
         effectiveLocation.campusId,
         effectiveLocation.libraryId,
-        effectiveLocation.id
+        effectiveLocation.id,
       );
     });
 
@@ -226,17 +234,29 @@ describe('inventory', () => {
       fullCheck(ItemRecordView.itemStatuses.missing);
 
       // check in item at service point assigned to its effective location
-      checkIn(itemBarcode, ItemRecordView.itemStatuses.available, ConfirmItemInModal.confirmMissingModal);
+      checkIn(
+        itemBarcode,
+        ItemRecordView.itemStatuses.available,
+        ConfirmItemInModal.confirmMissingModal,
+      );
 
       // check in item at service point assigned to its effective location
       checkIn(itemBarcode, ItemRecordView.itemStatuses.available);
 
       // check in item at service point not assigned to its effective location
       SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePoint.name);
-      checkIn(itemBarcode, ItemRecordView.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
+      checkIn(
+        itemBarcode,
+        ItemRecordView.itemStatuses.inTransit,
+        ConfirmItemInModal.confirmInTransitModal,
+      );
 
       // check in item at service point not assigned to its effective location
-      checkIn(itemBarcode, ItemRecordView.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
+      checkIn(
+        itemBarcode,
+        ItemRecordView.itemStatuses.inTransit,
+        ConfirmItemInModal.confirmInTransitModal,
+      );
 
       // check in item at service point assigned to its effective location
       SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
@@ -247,21 +267,34 @@ describe('inventory', () => {
       NewRequest.createWithUserName({
         itemBarcode,
         requesterName: userName,
-        pickupServicePoint: effectiveLocationServicePoint.name
+        pickupServicePoint: effectiveLocationServicePoint.name,
       });
       openItem(instanceTitle, effectiveLocation.name, itemBarcode);
       fullCheck(ItemRecordView.itemStatuses.paged);
 
       // check in item at a service point other than the pickup service point for the request
       SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePoint.name);
-      checkIn(itemBarcode, ItemRecordView.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
+      checkIn(
+        itemBarcode,
+        ItemRecordView.itemStatuses.inTransit,
+        ConfirmItemInModal.confirmInTransitModal,
+      );
 
       // check in item at the pickup service point for the page request
       SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
-      checkIn(itemBarcode, ItemRecordView.itemStatuses.awaitingPickup, ConfirmItemInModal.confirmAvaitingPickUpModal);
+      checkIn(
+        itemBarcode,
+        ItemRecordView.itemStatuses.awaitingPickup,
+        ConfirmItemInModal.confirmAvaitingPickUpModal,
+      );
 
       // check out item to user for whom page request was created
-      checkOut(userName, itemBarcode, ItemRecordView.itemStatuses.checkedOut, ConfirmItemInModal.confirmAvaitingPickupCheckInModal);
+      checkOut(
+        userName,
+        itemBarcode,
+        ItemRecordView.itemStatuses.checkedOut,
+        ConfirmItemInModal.confirmAvaitingPickupCheckInModal,
+      );
 
       // declare item lost
       openUser(userName);
@@ -289,7 +322,7 @@ describe('inventory', () => {
         itemBarcode,
         itemTitle: null,
         requesterBarcode: userForDeliveryRequest.barcode,
-        requestType: REQUEST_TYPES.HOLD
+        requestType: REQUEST_TYPES.HOLD,
       });
       cy.visit(TopMenu.checkInPath);
       CheckInActions.checkInItem(itemBarcode);
@@ -301,7 +334,11 @@ describe('inventory', () => {
       fullCheck(ItemRecordView.itemStatuses.awaitingDelivery);
 
       // check out item to user with delivery request
-      checkOut(userForDeliveryRequest.username, itemBarcode, ItemRecordView.itemStatuses.checkedOut);
+      checkOut(
+        userForDeliveryRequest.username,
+        itemBarcode,
+        ItemRecordView.itemStatuses.checkedOut,
+      );
 
       // check in item at service point assigned to its effective location
       SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);

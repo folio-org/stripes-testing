@@ -20,29 +20,31 @@ const getDefaultServicePointWithPickUpLocation = (servicePointName, id) => {
     id,
     name: getTestEntityValue(servicePointName),
     pickupLocation: true,
-    holdShelfExpiryPeriod:{ intervalId:'Hours', 'duration':1 }
+    holdShelfExpiryPeriod: { intervalId: 'Hours', duration: 1 },
   };
 };
 
 export default {
   defaultServicePoint,
   getDefaultServicePointWithPickUpLocation,
-  getViaApi: (searchParams) => cy.okapiRequest({
-    path: 'service-points',
-    searchParams,
-  }).then(({ body }) => body.servicepoints),
+  getViaApi: (searchParams) => cy
+    .okapiRequest({
+      path: 'service-points',
+      searchParams,
+    })
+    .then(({ body }) => body.servicepoints),
 
-  createViaApi : (servicePointParameters) => cy.okapiRequest({
+  createViaApi: (servicePointParameters) => cy.okapiRequest({
     path: 'service-points',
     body: servicePointParameters,
     method: 'POST',
-    isDefaultSearchParamsRequired: false
+    isDefaultSearchParamsRequired: false,
   }),
 
-  deleteViaApi : (servicePointId) => cy.okapiRequest({
+  deleteViaApi: (servicePointId) => cy.okapiRequest({
     path: `service-points/${servicePointId}`,
     method: 'DELETE',
-    isDefaultSearchParamsRequired: false
+    isDefaultSearchParamsRequired: false,
   }),
 
   goToServicePointsTab() {

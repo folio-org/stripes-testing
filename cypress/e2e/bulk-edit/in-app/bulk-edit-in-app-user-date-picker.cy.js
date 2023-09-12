@@ -15,15 +15,16 @@ const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
-      cy.createTempUser([
-        permissions.bulkEditUpdateRecords.gui,
-        permissions.uiUserEdit.gui
-      ])
-        .then(userProperties => {
+      cy.createTempUser([permissions.bulkEditUpdateRecords.gui, permissions.uiUserEdit.gui]).then(
+        (userProperties) => {
           user = userProperties;
-          cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
           FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, user.userId);
-        });
+        },
+      );
     });
 
     after('delete test data', () => {
@@ -31,31 +32,35 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it('C359215 Verify date picker plugin for "Expiration date" option (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.checkUsersRadio();
-      BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
-      BulkEditSearchPane.uploadFile(userUUIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.verifyMatchedResults(user.username);
+    it(
+      'C359215 Verify date picker plugin for "Expiration date" option (firebird)',
+      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.checkUsersRadio();
+        BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+        BulkEditSearchPane.uploadFile(userUUIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyMatchedResults(user.username);
 
-      const tomorrowDate = DateTools.getTomorrowDay();
-      const nextWeekDate = DateTools.getFutureWeekDateObj();
+        const tomorrowDate = DateTools.getTomorrowDay();
+        const nextWeekDate = DateTools.getFutureWeekDateObj();
 
-      BulkEditActions.openActions();
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.fillExpirationDate(tomorrowDate);
-      BulkEditActions.verifyPickedDate(tomorrowDate);
+        BulkEditActions.openActions();
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.fillExpirationDate(tomorrowDate);
+        BulkEditActions.verifyPickedDate(tomorrowDate);
 
-      BulkEditActions.fillExpirationDate(nextWeekDate);
-      BulkEditActions.verifyPickedDate(nextWeekDate);
-      BulkEditActions.cancel();
-      BulkEditSearchPane.verifyMatchedResults(user.username);
+        BulkEditActions.fillExpirationDate(nextWeekDate);
+        BulkEditActions.verifyPickedDate(nextWeekDate);
+        BulkEditActions.cancel();
+        BulkEditSearchPane.verifyMatchedResults(user.username);
 
-      BulkEditActions.openActions();
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.fillExpirationDate(tomorrowDate);
-      BulkEditActions.verifyPickedDate(tomorrowDate);
-      BulkEditActions.clearPickedDate();
-    });
+        BulkEditActions.openActions();
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.fillExpirationDate(tomorrowDate);
+        BulkEditActions.verifyPickedDate(tomorrowDate);
+        BulkEditActions.clearPickedDate();
+      },
+    );
   });
 });

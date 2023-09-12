@@ -1,9 +1,4 @@
-import {
-  Pane,
-  Button,
-  Select,
-  Option
-} from "../../../../interactors"
+import { Pane, Button, Select, Option } from '../../../../interactors';
 
 const behaviorPane = Pane('Behavior');
 const deletedRecordsSupportDropdown = Select('Deleted records support');
@@ -11,9 +6,8 @@ const suppressedRecordsProcessingDropdown = Select('Suppressed records processin
 const oaipmhErrorsProcessingDropdown = Select('OAI-PMH errors processing');
 const recordSourceDropdown = Select('Record source');
 
-
 export default {
-verifyBehaviorPane() {
+  verifyBehaviorPane() {
     cy.expect([
       behaviorPane.exists(),
       behaviorPane.find(deletedRecordsSupportDropdown).exists(),
@@ -36,10 +30,10 @@ verifyBehaviorPane() {
   },
 
   verifyRecordSourceDropdownDefaultValue(value) {
-    cy.expect(recordSourceDropdown.has({ value: value }));
+    cy.expect(recordSourceDropdown.has({ value }));
   },
 
   clickSave() {
     cy.do(Button('Save').click());
   },
-}
+};

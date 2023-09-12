@@ -14,9 +14,8 @@ export default HTML.extend('callout')
   .filters({
     id: (el) => el.id,
     textContent: (el) => el.querySelector('[class^=message-]').textContent,
-    type: (el) => ['success', 'info', 'error', 'warning']
-      .filter((t) => el.className.includes(t))[0]
+    type: (el) => ['success', 'info', 'error', 'warning'].filter((t) => el.className.includes(t))[0],
   })
   .actions({
-    dismiss: ({ find }) => find(IconButton('times')).click()
+    dismiss: ({ find }) => find(IconButton('times')).click(),
   });

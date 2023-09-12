@@ -8,7 +8,6 @@ import marcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
 import topMenu from '../../support/fragments/topMenu';
 
 describe.skip('Feature MARC Authority', () => {
-
   const testData = {
     source: 'MARC',
     searchOption: 'Keyword',
@@ -42,9 +41,7 @@ describe.skip('Feature MARC Authority', () => {
       cy.visit(topMenu.inventoryPath);
       inventorySearchAndFilter.switchToHoldings();
       inventorySearchAndFilter.bySource(testData.source);
-      inventorySearchAndFilter.selectSearchResultByRowIndex(
-        testData.derive.rowIndex
-      );
+      inventorySearchAndFilter.selectSearchResultByRowIndex(testData.derive.rowIndex);
       inventoryInstance.editMarcBibliographicRecord();
       inventoryInstance.verifyAndClickLinkIcon(testData.tag.tag650);
       marcAuthorities.switchToSearch();
@@ -54,24 +51,20 @@ describe.skip('Feature MARC Authority', () => {
       marcAuthorities.clickLinkButton();
       marcAuthority.checkLinkingAuthority650();
       marc.saveAndClose();
-      inventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(
-        testData.accordion
-      );
+      inventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(testData.accordion);
       inventoryInstance.viewSource();
       marcAuthorities.closeMarcViewPane();
       inventoryInstance.editMarcBibliographicRecord();
       inventoryInstance.verifyAndClickUnlinkIcon(testData.tag.tag650);
       marc.popupUnlinkButton();
       marc.saveAndClose();
-      inventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(
-        testData.accordion
-      );
+      inventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(testData.accordion);
       inventoryInstance.viewSource();
       marcAuthorities.checkFieldAndContentExistence(
         testData.tag650,
-        `‡a ${testData.authority650FieldValue}`
+        `‡a ${testData.authority650FieldValue}`,
       );
-    }
+    },
   );
 
   it(
@@ -84,22 +77,6 @@ describe.skip('Feature MARC Authority', () => {
       inventoryInstance.selectRecord();
       marcAuthoritiesDelete.clickprintButton();
       cy.exec('java -jar sikuli_ide.jar -r printer.sikuli');
-    }
+    },
   );
-
-  it(
-    'C388651 ""008"" field updated when valid LDR 06-07 combinations entered when editing ""MARC bib"" record ( Spitfire)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      cy.visit(topMenu.inventoryPath);
-      inventorySearchAndFilter.switchToHoldings();
-      inventorySearchAndFilter.bySource(testData.source);
-      inventorySearchAndFilter.selectSearchResultByRowIndex(
-        testData.derive.rowIndex
-      );
-      inventoryInstance.editMarcBibliographicRecord();
-    }
-  );
-  
 });
-

@@ -1,6 +1,5 @@
 import { Button, TextField, PaneContent } from '../../../../interactors';
 
-
 export default {
   byProvider(provider) {
     cy.do(TextField({ id: 'eholdings-search' }).fillIn(provider));
@@ -11,5 +10,5 @@ export default {
 
   verifyTitleSearch() {
     cy.expect(PaneContent({ id: 'search-results-content' }).exists());
-  }
+  },
 };

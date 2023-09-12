@@ -2,12 +2,14 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE,
+import {
+  FOLIO_RECORD_TYPE,
   ORDER_STATUSES,
   ORDER_FORMAT_NAMES_IN_PROFILE,
   ACQUISITION_METHOD_NAMES,
   JOB_STATUS_NAMES,
-  VENDOR_NAMES } from '../../../support/constants';
+  VENDOR_NAMES,
+} from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -37,31 +39,31 @@ describe('data-import', () => {
         fund: 'History(HIST)',
         expenseClass: 'No value set-',
         value: '100%',
-        amount: '$19.95'
+        amount: '$19.95',
       },
       {
         fund: 'African History(AFRICAHIST)',
         expenseClass: 'Electronic',
         value: '100%',
-        amount: '$19.95'
-      }
+        amount: '$19.95',
+      },
     ];
     const dataForChangeFundAndExpenseClass = [
       {
         fundId: '981$b',
         expenseClass: '"Electronic (Elec)"',
-        value: '100'
+        value: '100',
       },
       {
         fundId: '982$b; else "History (HIST)"',
         expenseClass: '982$c',
-        value: '100'
+        value: '100',
       },
       {
         fundId: '"African History (AFRICAHIST)"',
         expenseClass: '982$c; else "Electronic (Elec)"',
-        value: '100'
-      }
+        value: '100',
+      },
     ];
     const mappingProfile = {
       name: `C376975 Check fund & expense class mappings in Orders ${getRandomPostfix()}`,
@@ -90,11 +92,11 @@ describe('data-import', () => {
       fundId: '981$b',
       expenseClass: '981$c',
       value: '100',
-      type: '%'
+      type: '%',
     };
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.ORDER,
-      name: `C376975 Check fund & expense class mappings in Orders ${getRandomPostfix()}`
+      name: `C376975 Check fund & expense class mappings in Orders ${getRandomPostfix()}`,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
@@ -108,13 +110,14 @@ describe('data-import', () => {
         permissions.inventoryAll.gui,
         permissions.uiOrdersApprovePurchaseOrders.gui,
         permissions.uiOrdersCreate.gui,
-        permissions.uiOrganizationsView.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(userProperties.username, userProperties.password,
-            { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+        permissions.uiOrganizationsView.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(userProperties.username, userProperties.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
         });
+      });
     });
 
     after('delete test data', () => {
@@ -122,17 +125,18 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
       FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
-      cy.wrap(orderNumbers).each(number => {
-        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` })
-          .then(orderId => {
-            Orders.deleteOrderViaApi(orderId[0].id);
-          });
+      cy.wrap(orderNumbers).each((number) => {
+        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` }).then((orderId) => {
+          Orders.deleteOrderViaApi(orderId[0].id);
+        });
       });
     });
 
-    it('C376975 Order field mapping profile: Check fund and expense class mappings (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      // create mapping profile
+    it(
+      'C376975 Order field mapping profile: Check fund and expense class mappings (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
+        // create mapping profile
         FieldMappingProfiles.createOrderMappingProfile(mappingProfile);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
@@ -160,23 +164,21 @@ describe('data-import', () => {
         // check Fund and Expense class populated in the first POL
         FileDetails.openOrder('Created');
         OrderLines.waitLoading();
-        OrderLines.getAssignedPOLNumber()
-          .then(initialNumber => {
-            const orderNumber = initialNumber.replace('-1', '');
+        OrderLines.getAssignedPOLNumber().then((initialNumber) => {
+          const orderNumber = initialNumber.replace('-1', '');
 
-            orderNumbers.push(orderNumber);
-          });
+          orderNumbers.push(orderNumber);
+        });
         OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[0]);
         cy.go('back');
         // check Fund and Expense class populated in the second POL
         FileDetails.openOrder('Created', 1);
         OrderLines.waitLoading();
-        OrderLines.getAssignedPOLNumber()
-          .then(initialNumber => {
-            const orderNumber = initialNumber.replace('-1', '');
+        OrderLines.getAssignedPOLNumber().then((initialNumber) => {
+          const orderNumber = initialNumber.replace('-1', '');
 
-            orderNumbers.push(orderNumber);
-          });
+          orderNumbers.push(orderNumber);
+        });
         OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[1]);
 
         cy.visit(SettingsMenu.mappingProfilePath);
@@ -194,18 +196,24 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(secondMarcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(secondMarcFileName);
-        FileDetails.checkStatusInColumn(FileDetails.status.noAction, FileDetails.columnNameInResultList.order);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.order, 1);
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.noAction,
+          FileDetails.columnNameInResultList.order,
+        );
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.created,
+          FileDetails.columnNameInResultList.order,
+          1,
+        );
 
         // check Fund and Expense class populated in the second POL
         FileDetails.openOrder('Created', 1);
         OrderLines.waitLoading();
-        OrderLines.getAssignedPOLNumber()
-          .then(initialNumber => {
-            const orderNumber = initialNumber.replace('-1', '');
+        OrderLines.getAssignedPOLNumber().then((initialNumber) => {
+          const orderNumber = initialNumber.replace('-1', '');
 
-            orderNumbers.push(orderNumber);
-          });
+          orderNumbers.push(orderNumber);
+        });
         OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[1]);
 
         cy.visit(SettingsMenu.mappingProfilePath);
@@ -223,28 +231,33 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(thirdMarcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(thirdMarcFileName);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.order);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.order, 1);
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.created,
+          FileDetails.columnNameInResultList.order,
+        );
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.created,
+          FileDetails.columnNameInResultList.order,
+          1,
+        );
         // check Fund and Expense class populated in the first POL
         FileDetails.openOrder('Created');
         OrderLines.waitLoading();
-        OrderLines.getAssignedPOLNumber()
-          .then(initialNumber => {
-            const orderNumber = initialNumber.replace('-1', '');
+        OrderLines.getAssignedPOLNumber().then((initialNumber) => {
+          const orderNumber = initialNumber.replace('-1', '');
 
-            orderNumbers.push(orderNumber);
-          });
+          orderNumbers.push(orderNumber);
+        });
         OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[0]);
         cy.go('back');
         // check Fund and Expense class populated in the second POL
         FileDetails.openOrder('Created', 1);
         OrderLines.waitLoading();
-        OrderLines.getAssignedPOLNumber()
-          .then(initialNumber => {
-            const orderNumber = initialNumber.replace('-1', '');
+        OrderLines.getAssignedPOLNumber().then((initialNumber) => {
+          const orderNumber = initialNumber.replace('-1', '');
 
-            orderNumbers.push(orderNumber);
-          });
+          orderNumbers.push(orderNumber);
+        });
         OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[0]);
 
         cy.visit(SettingsMenu.mappingProfilePath);
@@ -262,29 +275,35 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(forthMarcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(forthMarcFileName);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.order);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.order, 1);
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.created,
+          FileDetails.columnNameInResultList.order,
+        );
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.created,
+          FileDetails.columnNameInResultList.order,
+          1,
+        );
         // check Fund and Expense class populated in the first POL
         FileDetails.openOrder('Created');
         OrderLines.waitLoading();
-        OrderLines.getAssignedPOLNumber()
-          .then(initialNumber => {
-            const orderNumber = initialNumber.replace('-1', '');
+        OrderLines.getAssignedPOLNumber().then((initialNumber) => {
+          const orderNumber = initialNumber.replace('-1', '');
 
-            orderNumbers.push(orderNumber);
-          });
+          orderNumbers.push(orderNumber);
+        });
         OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[1]);
         cy.go('back');
         // check Fund and Expense class populated in the second POL
         FileDetails.openOrder('Created', 1);
         OrderLines.waitLoading();
-        OrderLines.getAssignedPOLNumber()
-          .then(initialNumber => {
-            const orderNumber = initialNumber.replace('-1', '');
+        OrderLines.getAssignedPOLNumber().then((initialNumber) => {
+          const orderNumber = initialNumber.replace('-1', '');
 
-            orderNumbers.push(orderNumber);
-          });
+          orderNumbers.push(orderNumber);
+        });
         OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[1]);
-      });
+      },
+    );
   });
 });

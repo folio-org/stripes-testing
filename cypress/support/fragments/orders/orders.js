@@ -56,18 +56,12 @@ const resetButton = Button('Reset all');
 export default {
   searchByParameter(parameter, value) {
     cy.wait(4000);
-    cy.do([
-      searchForm.selectIndex(parameter),
-      searchForm.fillIn(value)
-    ]);
+    cy.do([searchForm.selectIndex(parameter), searchForm.fillIn(value)]);
     cy.wait(2000);
     cy.do(Button('Search').click());
   },
   waitLoading() {
-    cy.expect([
-      ordersFiltersPane.exists(),
-      ordersResultsPane.exists(),
-    ]);
+    cy.expect([ordersFiltersPane.exists(), ordersResultsPane.exists()]);
   },
 
   waitSettingsPageLoading() {
@@ -78,26 +72,24 @@ export default {
   },
 
   createOrderWithOrderLineViaApi(order, orderLine) {
-    cy.createOrderApi(order)
-      .then((response) => {
-        cy.wrap(response.body.poNumber).as('orderNumber');
-        cy.getAcquisitionMethodsApi({ query: 'value="Other"' })
-          .then(({ body }) => {
-            orderLine.acquisitionMethod = body.acquisitionMethods[0].id;
-            orderLine.purchaseOrderId = order.id;
-            cy.createOrderLineApi(orderLine);
-          });
+    cy.createOrderApi(order).then((response) => {
+      cy.wrap(response.body.poNumber).as('orderNumber');
+      cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then(({ body }) => {
+        orderLine.acquisitionMethod = body.acquisitionMethods[0].id;
+        orderLine.purchaseOrderId = order.id;
+        cy.createOrderLineApi(orderLine);
       });
+    });
     return cy.get('@orderNumber');
   },
 
   openOrder() {
     cy.do([
       orderDetailsPane
-        .find(PaneHeader({ id: 'paneHeaderorder-details' })
-          .find(actionsButton)).click(),
+        .find(PaneHeader({ id: 'paneHeaderorder-details' }).find(actionsButton))
+        .click(),
       Button('Open').click(),
-      Button('Submit').click()
+      Button('Submit').click(),
     ]);
     // Need to wait,while order's data will be loaded
     cy.wait(4000);
@@ -106,38 +98,32 @@ export default {
   editOrder() {
     cy.do([
       orderDetailsPane
-        .find(PaneHeader({ id: 'paneHeaderorder-details' })
-          .find(actionsButton)).click(),
+        .find(PaneHeader({ id: 'paneHeaderorder-details' }).find(actionsButton))
+        .click(),
       Button('Edit').click(),
     ]);
   },
 
   approveOrder() {
-    cy.do([
-      Checkbox('Approved').click(),
-      saveAndClose.click()
-    ]);
+    cy.do([Checkbox('Approved').click(), saveAndClose.click()]);
   },
 
   approveOrderbyActions() {
     cy.do([
       PaneHeader({ id: 'paneHeaderorder-details' }).find(actionsButton).click(),
-      Button('Approve').click()
+      Button('Approve').click(),
     ]);
   },
 
   editOrderNumber: (poNumber) => {
-    cy.do([
-      TextField({ name: 'poNumber' }).fillIn(poNumber),
-      saveAndClose.click()
-    ]);
+    cy.do([TextField({ name: 'poNumber' }).fillIn(poNumber), saveAndClose.click()]);
   },
 
   duplicateOrder() {
     cy.do([
       orderDetailsPane
-        .find(PaneHeader({ id: 'paneHeaderorder-details' })
-          .find(actionsButton)).click(),
+        .find(PaneHeader({ id: 'paneHeaderorder-details' }).find(actionsButton))
+        .click(),
       Button('Duplicate').click(),
       Button({ id: 'clickable-order-clone-confirmation-confirm' }).click(),
     ]);
@@ -171,8 +157,8 @@ export default {
   closeOrder: (reason) => {
     cy.do([
       orderDetailsPane
-        .find(PaneHeader({ id: 'paneHeaderorder-details' })
-          .find(actionsButton)).click(),
+        .find(PaneHeader({ id: 'paneHeaderorder-details' }).find(actionsButton))
+        .click(),
       Button('Close order').click(),
       Select('Reason').choose(reason),
       Button('Submit').click(),
@@ -183,8 +169,8 @@ export default {
   cancelOrder: () => {
     cy.do([
       orderDetailsPane
-        .find(PaneHeader({ id: 'paneHeaderorder-details' })
-          .find(actionsButton)).click(),
+        .find(PaneHeader({ id: 'paneHeaderorder-details' }).find(actionsButton))
+        .click(),
       Button('Cancel').click(),
       Button('Submit').click(),
     ]);
@@ -194,30 +180,32 @@ export default {
   editOrderToManual: (orderNumber) => {
     cy.do([
       orderDetailsPane
-        .find(PaneHeader({ id: 'paneHeaderorder-details' })
-          .find(actionsButton)).click(),
+        .find(PaneHeader({ id: 'paneHeaderorder-details' }).find(actionsButton))
+        .click(),
       Button('Edit').click(),
       Checkbox({ name: 'manualPo' }).click(),
-      saveAndClose.click()
+      saveAndClose.click(),
     ]);
-    InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully saved`);
+    InteractorsTools.checkCalloutMessage(
+      `The Purchase order - ${orderNumber} has been successfully saved`,
+    );
   },
 
   unOpenOrder: () => {
     cy.do([
       orderDetailsPane
-        .find(PaneHeader({ id: 'paneHeaderorder-details' })
-          .find(actionsButton)).click(),
+        .find(PaneHeader({ id: 'paneHeaderorder-details' }).find(actionsButton))
+        .click(),
       Button('Unopen').click(),
-      Button({ id: 'clickable-order-unopen-confirmation-confirm-delete-holdings' }).click()
+      Button({ id: 'clickable-order-unopen-confirmation-confirm-delete-holdings' }).click(),
     ]);
   },
 
   reOpenOrder: () => {
     cy.do([
       orderDetailsPane
-        .find(PaneHeader({ id: 'paneHeaderorder-details' })
-          .find(actionsButton)).click(),
+        .find(PaneHeader({ id: 'paneHeaderorder-details' }).find(actionsButton))
+        .click(),
       Button('Reopen').click(),
     ]);
   },
@@ -225,28 +213,24 @@ export default {
   receiveOrderViaActions: () => {
     cy.do([
       orderDetailsPane
-        .find(PaneHeader({ id: 'paneHeaderorder-details' })
-          .find(actionsButton)).click(),
+        .find(PaneHeader({ id: 'paneHeaderorder-details' }).find(actionsButton))
+        .click(),
       Button('Receive').click(),
-      PaneHeader('Receiving').is({ visible: true })
+      PaneHeader('Receiving').is({ visible: true }),
     ]);
   },
 
   createOrder(order, isApproved = false, isManual = false) {
-    cy.do([
-      actionsButton.click(),
-      newButton.click()
-    ]);
+    cy.do([actionsButton.click(), newButton.click()]);
     this.selectVendorOnUi(order.vendor);
     cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
     cy.do(Select('Order type*').choose(order.orderType));
     if (isApproved) cy.do(Checkbox({ name: 'approved' }).click());
     if (isManual) cy.do(Checkbox({ name: 'manualPo' }).click());
     cy.do(saveAndClose.click());
-    return cy.wait('@newOrderID', getLongDelay())
-      .then(({ response }) => {
-        return response.body.id;
-      });
+    return cy.wait('@newOrderID', getLongDelay()).then(({ response }) => {
+      return response.body.id;
+    });
   },
 
   createOrderWithPONumber(poNumber, order, isManual = false) {
@@ -260,10 +244,9 @@ export default {
     cy.do(Select('Order type*').choose(order.orderType));
     if (isManual) cy.do(Checkbox({ name: 'manualPo' }).click());
     cy.do(saveAndClose.click());
-    return cy.wait('@newOrderID', getLongDelay())
-      .then(({ response }) => {
-        return response.body.id;
-      });
+    return cy.wait('@newOrderID', getLongDelay()).then(({ response }) => {
+      return response.body.id;
+    });
   },
 
   createOrderWithPONumberPreffixSuffix(poPreffix, poSuffix, poNumber, order, isManual = false) {
@@ -279,39 +262,27 @@ export default {
     cy.do(Select('Order type*').choose(order.orderType));
     if (isManual) cy.do(Checkbox({ name: 'manualPo' }).click());
     cy.do(saveAndClose.click());
-    return cy.wait('@newOrderID', getLongDelay())
-      .then(({ response }) => {
-        return response.body.id;
-      });
+    return cy.wait('@newOrderID', getLongDelay()).then(({ response }) => {
+      return response.body.id;
+    });
   },
 
   createOrderByTemplate(templateName) {
-    cy.do([
-      actionsButton.click(),
-      newButton.click(),
-      Button({ id: 'order-template' }).click(),
-    ]);
+    cy.do([actionsButton.click(), newButton.click(), Button({ id: 'order-template' }).click()]);
     cy.wait(6000);
-    cy.do([
-      SelectionOption(templateName).click(),
-      saveAndClose.click()
-    ]);
+    cy.do([SelectionOption(templateName).click(), saveAndClose.click()]);
   },
 
   createOrderForRollover(order, isApproved = false) {
-    cy.do([
-      actionsButton.click(),
-      newButton.click()
-    ]);
+    cy.do([actionsButton.click(), newButton.click()]);
     this.selectVendorOnUi(order.vendor);
     cy.intercept('POST', '/orders/composite-orders**').as('newOrder');
     cy.do(Select('Order type*').choose(order.orderType));
     if (isApproved) cy.do(Checkbox({ name: 'approved' }).click());
     cy.do(saveAndClose.click());
-    return cy.wait('@newOrder', getLongDelay())
-      .then(({ response }) => {
-        return response.body;
-      });
+    return cy.wait('@newOrder', getLongDelay()).then(({ response }) => {
+      return response.body;
+    });
   },
 
   checkZeroSearchResultsHeader: () => {
@@ -321,15 +292,14 @@ export default {
   },
 
   createOrderWithAU(order, AUName, poNumber, isApproved = false) {
-    cy.do([
-      actionsButton.click(),
-      newButton.click()
-    ]);
+    cy.do([actionsButton.click(), newButton.click()]);
     this.selectVendorOnUi(order.vendor);
     cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
     cy.do(Select('Order type*').choose(order.orderType));
     cy.do([
-      MultiSelect({ id: 'order-acq-units' }).find(Button({ ariaLabel: 'open menu' })).click(),
+      MultiSelect({ id: 'order-acq-units' })
+        .find(Button({ ariaLabel: 'open menu' }))
+        .click(),
       MultiSelectOption(AUName).click(),
     ]);
     if (isApproved) cy.do(Checkbox({ name: 'approved' }).click());
@@ -341,60 +311,44 @@ export default {
     cy.do([
       Button('Organization look-up').click(),
       SearchField({ id: searhInputId }).fillIn(organizationName),
-      searchButton.click()
+      searchButton.click(),
     ]);
     SearchHelper.selectFromResultsList();
   },
 
   checkCreatedOrder: (order) => {
     cy.expect(Pane({ id: 'order-details' }).exists());
-    cy.expect(orderDetailsAccordion
-      .find(KeyValue({ value: order.vendor }))
-      .exists());
-    cy.expect(orderDetailsAccordion
-      .find(KeyValue({ value: createdByAdmin }))
-      .exists());
+    cy.expect(orderDetailsAccordion.find(KeyValue({ value: order.vendor })).exists());
+    cy.expect(orderDetailsAccordion.find(KeyValue({ value: createdByAdmin })).exists());
   },
 
   checkCreatedOngoingOrder: (order) => {
     cy.expect(Pane({ id: 'order-details' }).exists());
-    cy.expect(orderDetailsAccordion
-      .find(KeyValue({ value: order.vendor }))
-      .exists());
-    cy.expect(orderDetailsAccordion
-      .find(KeyValue({ value: order.orderType }))
-      .exists());
+    cy.expect(orderDetailsAccordion.find(KeyValue({ value: order.vendor })).exists());
+    cy.expect(orderDetailsAccordion.find(KeyValue({ value: order.orderType })).exists());
   },
 
   checkDuplicatedOrder: (organization, user) => {
     cy.expect(Pane({ id: 'order-details' }).exists());
-    cy.expect(Section({ id: 'POSummary' })
-      .find(KeyValue({ value: 'Pending' }))
-      .exists());
-    cy.expect(purchaseOrderSection
-      .find(KeyValue({ value: organization }))
-      .exists());
-    cy.expect(purchaseOrderSection
-      .find(KeyValue({ value: user }))
-      .exists());
+    cy.expect(
+      Section({ id: 'POSummary' })
+        .find(KeyValue({ value: 'Pending' }))
+        .exists(),
+    );
+    cy.expect(purchaseOrderSection.find(KeyValue({ value: organization })).exists());
+    cy.expect(purchaseOrderSection.find(KeyValue({ value: user })).exists());
   },
 
   checkCreatedOrderFromTemplate: (organization) => {
     cy.expect(Pane({ id: 'order-details' }).exists());
-    cy.expect(orderDetailsAccordion
-      .find(KeyValue({ value: organization }))
-      .exists());
+    cy.expect(orderDetailsAccordion.find(KeyValue({ value: organization })).exists());
   },
 
   checkCreatedOrderWithOrderNumber: (organization, orderNumber) => {
     cy.expect(Pane({ id: 'order-details' }).exists());
     cy.expect([
-      orderDetailsAccordion
-        .find(KeyValue({ value: organization }))
-        .exists(),
-      orderDetailsAccordion
-        .find(KeyValue({ value: orderNumber }))
-        .exists(),
+      orderDetailsAccordion.find(KeyValue({ value: organization })).exists(),
+      orderDetailsAccordion.find(KeyValue({ value: orderNumber })).exists(),
     ]);
   },
 
@@ -408,7 +362,7 @@ export default {
     cy.do([
       PaneHeader({ id: 'paneHeaderorder-details' }).find(actionsButton).click(),
       Button('Delete').click(),
-      Button({ id: 'clickable-delete-order-confirmation-confirm' }).click()
+      Button({ id: 'clickable-delete-order-confirmation-confirm' }).click(),
     ]);
   },
 
@@ -438,43 +392,45 @@ export default {
     cy.expect(MultiColumnList({ id: 'orders-list' }).find(Link(orderNumber)).exists());
   },
   checkSearchResultsWithClosedOrder: (orderNumber) => {
-    cy.expect(MultiColumnList({ id: 'orders-list' })
-      .find(MultiColumnListRow({ index: 0 }))
-      .find(MultiColumnListCell({ columnIndex: 0 }))
-      .has({ content: `${orderNumber}\u00a0Canceled` }));
+    cy.expect(
+      MultiColumnList({ id: 'orders-list' })
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .has({ content: `${orderNumber}\u00a0Canceled` }),
+    );
   },
   checkOrderlineSearchResults: (orderLineNumber) => {
-    cy.expect(MultiColumnList({ id: 'order-line-list' })
-      .find(MultiColumnListRow({ index: 0 }))
-      .find(MultiColumnListCell({ columnIndex: 0 }))
-      .has({ content: orderLineNumber }));
+    cy.expect(
+      MultiColumnList({ id: 'order-line-list' })
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .has({ content: orderLineNumber }),
+    );
   },
   checkOrderlineFilterInList: (orderLineNumber) => {
-    cy.expect(MultiColumnList({ id: 'order-line-list' })
-      .has(Link(orderLineNumber)));
+    cy.expect(MultiColumnList({ id: 'order-line-list' }).has(Link(orderLineNumber)));
   },
   closeThirdPane: () => {
     cy.do([
       Button('Collapse all').click(),
-      PaneHeader({ id: 'paneHeaderorder-details' }).find(Button({ icon: 'times' })).click()
+      PaneHeader({ id: 'paneHeaderorder-details' })
+        .find(Button({ icon: 'times' }))
+        .click(),
     ]);
   },
 
   getSearchParamsMap(orderNumber, currentDate) {
     const searchParamsMap = new Map();
     // 'date opened' parameter verified separately due to different condition
-    searchParamsMap.set('PO number', orderNumber)
+    searchParamsMap
+      .set('PO number', orderNumber)
       .set('Keyword', orderNumber)
       .set('Date created', currentDate);
     return searchParamsMap;
   },
   checkPoSearch(searchParamsMap, orderNumber) {
     for (const [key, value] of searchParamsMap.entries()) {
-      cy.do([
-        searchField.selectIndex(key),
-        searchField.fillIn(value),
-        Button('Search').click(),
-      ]);
+      cy.do([searchField.selectIndex(key), searchField.fillIn(value), Button('Search').click()]);
       // verify that first row in the result list contains related order line title
       this.checkSearchResults(orderNumber);
       this.resetFilters();
@@ -520,7 +476,9 @@ export default {
     cy.do([
       Button({ id: 'accordion-toggle-button-filter-vendor' }).click(),
       Button('Organization look-up').click(),
-      Modal('Select Organization').find(SearchField({ id: searhInputId })).fillIn(invoice.vendorName),
+      Modal('Select Organization')
+        .find(SearchField({ id: searhInputId }))
+        .fillIn(invoice.vendorName),
       searchButton.click(),
     ]);
     SearchHelper.selectFromResultsList();
@@ -550,7 +508,9 @@ export default {
     cy.do([
       Button({ id: 'accordion-toggle-button-billTo' }).click(),
       Button({ id: 'billTo-selection' }).click(),
-      SelectionOption({ id: 'option-billTo-selection-0-72e1b584-d345-43e4-964c-d7bbb59d1f02' }).click(),
+      SelectionOption({
+        id: 'option-billTo-selection-0-72e1b584-d345-43e4-964c-d7bbb59d1f02',
+      }).click(),
     ]);
   },
   selectOrderLines: () => {
@@ -562,10 +522,8 @@ export default {
   createPOLineViaActions: () => {
     cy.wait(4000);
     cy.do([
-      Accordion({ id: 'POListing' })
-        .find(Button('Actions'))
-        .click(),
-      Button('Add PO line').click()
+      Accordion({ id: 'POListing' }).find(Button('Actions')).click(),
+      Button('Add PO line').click(),
     ]);
   },
 
@@ -611,7 +569,9 @@ export default {
     cy.do([
       buttonFVendorFilter.click(),
       Button({ id: 'purchaseOrder.vendor-button' }).click(),
-      Modal('Select Organization').find(SearchField({ id: searhInputId })).fillIn(invoice.vendorName),
+      Modal('Select Organization')
+        .find(SearchField({ id: searhInputId }))
+        .fillIn(invoice.vendorName),
       searchButton.click(),
     ]);
     SearchHelper.selectFromResultsList();
@@ -638,7 +598,7 @@ export default {
       .okapiRequest({
         path: 'orders/composite-orders',
         searchParams,
-        isDefaultSearchParamsRequired: false
+        isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => {
         return body.purchaseOrders;
@@ -653,7 +613,11 @@ export default {
 
   checkIsOrderCreated: (orderNumber) => {
     cy.do(Checkbox({ id: 'clickable-filter-workflowStatus-pending' }).click());
-    cy.expect(MultiColumnList({ id: 'orders-list' }).find(HTML(including(orderNumber))).exists());
+    cy.expect(
+      MultiColumnList({ id: 'orders-list' })
+        .find(HTML(including(orderNumber)))
+        .exists(),
+    );
   },
 
   exportResoultsCSV: () => {
@@ -712,7 +676,11 @@ export default {
   },
 
   openVersionHistory() {
-    cy.do(Section({ id: 'order-details' }).find(Button({ icon: 'clock' })).click());
+    cy.do(
+      Section({ id: 'order-details' })
+        .find(Button({ icon: 'clock' }))
+        .click(),
+    );
     cy.wait(2000);
     cy.expect([
       Section({ id: 'POListing' }).absent(),
@@ -723,18 +691,27 @@ export default {
 
   checkVersionHistoryCard(date, textInformation) {
     cy.expect([
-      Section({ id: 'versions-history-pane-order' }).find(Card({ headerStart: date })).has({ text: textInformation }),
+      Section({ id: 'versions-history-pane-order' })
+        .find(Card({ headerStart: date }))
+        .has({ text: textInformation }),
     ]);
   },
 
   selectVersionHistoryCard(date) {
     cy.do([
-      Section({ id: 'versions-history-pane-order' }).find(Card({ headerStart: date })).find(Button({ icon: 'clock' })).click(),
+      Section({ id: 'versions-history-pane-order' })
+        .find(Card({ headerStart: date }))
+        .find(Button({ icon: 'clock' }))
+        .click(),
     ]);
   },
 
   closeVersionHistory: () => {
-    cy.do(Section({ id: 'versions-history-pane-order' }).find(Button({ icon: 'times' })).click());
+    cy.do(
+      Section({ id: 'versions-history-pane-order' })
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
     cy.wait(2000);
     cy.expect([
       Section({ id: 'POListing' }).exists(),
@@ -744,17 +721,22 @@ export default {
   },
 
   checkOrderStatus(orderStatus) {
-    cy.expect(Section({ id: 'POSummary' }).find(KeyValue('Workflow status')).has({ value: orderStatus }));
+    cy.expect(
+      Section({ id: 'POSummary' }).find(KeyValue('Workflow status')).has({ value: orderStatus }),
+    );
   },
 
   checkReviewDateOnOngoingOrder() {
-    cy.expect(Section({ id: 'ongoing' }).find(KeyValue('Review date')).has({ value: 'No value set-' }));
+    cy.expect(
+      Section({ id: 'ongoing' }).find(KeyValue('Review date')).has({ value: 'No value set-' }),
+    );
   },
 
   selectFundIDFromthelist: () => {
     const buttonInteractor = Section({
       id: 'FundDistribution',
-    }).find(MultiColumnListCell({ row: 0, columnIndex: 5 }))
+    })
+      .find(MultiColumnListCell({ row: 0, columnIndex: 5 }))
       .find(Button());
     cy.do([
       buttonInteractor.perform((interactor) => interactor.removeAttribute('target')),

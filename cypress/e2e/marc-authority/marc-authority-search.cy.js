@@ -20,14 +20,14 @@ describe('MARC -› MARC Authority', () => {
       'id',
       'naturalId',
       'sourceFileId',
-    ]
+    ],
   };
 
   const marcFile = {
     marc: 'marcAuthFileC360532.mrc',
     fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
     jobProfileToRun: 'Default - Create SRS MARC Authority',
-    authorityHeading: 'C360532 Cartoons & Comics'
+    authorityHeading: 'C360532 Cartoons & Comics',
   };
 
   before('Creating user, importing record', () => {
@@ -37,7 +37,7 @@ describe('MARC -› MARC Authority', () => {
       Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
       Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
       Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-    ]).then(createdUserProperties => {
+    ]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
 
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
@@ -48,7 +48,7 @@ describe('MARC -› MARC Authority', () => {
         JobProfiles.waitFileIsImported(marcFile.fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFile.fileName);
-        Logs.getCreatedItemsID().then(link => {
+        Logs.getCreatedItemsID().then((link) => {
           testData.createdRecordID = link.split('/')[5];
         });
       });
@@ -56,7 +56,10 @@ describe('MARC -› MARC Authority', () => {
   });
 
   before('Login', () => {
-    cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.marcAuthorities, waiter: MarcAuthorities.waitLoading });
+    cy.login(testData.userProperties.username, testData.userProperties.password, {
+      path: TopMenu.marcAuthorities,
+      waiter: MarcAuthorities.waitLoading,
+    });
   });
 
   after('Deleting user, record', () => {
@@ -64,9 +67,12 @@ describe('MARC -› MARC Authority', () => {
     MarcAuthority.deleteViaAPI(testData.createdRecordID);
   });
 
-  it('C360532 Verify that "sourceFileId" and "naturalId" fields exist in response to search "MARC Authority" records. (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
-    MarcAuthorities.searchBy('Keyword', 'Cartoons & Comics');
-    MarcAuthorities.verifyAuthorityPropertiesAfterSearch(testData.expectedProperties);
-  });
+  it(
+    'C360532 Verify that "sourceFileId" and "naturalId" fields exist in response to search "MARC Authority" records. (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      MarcAuthorities.searchBy('Keyword', 'Cartoons & Comics');
+      MarcAuthorities.verifyAuthorityPropertiesAfterSearch(testData.expectedProperties);
+    },
+  );
 });
-

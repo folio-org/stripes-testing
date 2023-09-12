@@ -22,17 +22,21 @@ export default {
 
   getInventorySingleRecordImportsQueryString({ filter }) {
     if (filter === 'Yes') {
-      return 'limit=100&' +
+      return (
+        'limit=100&' +
         'profileIdAny=d0ebb7b0-2f0f-11eb-adc1-0242ac120002&' +
         'profileIdAny=91f9b8d6-d80e-4727-9783-73fb53e3c786&' +
         'sortBy=completed_date%2Cdesc&' +
-        'statusAny=COMMITTED&statusAny=ERROR&statusAny=CANCELLED';
+        'statusAny=COMMITTED&statusAny=ERROR&statusAny=CANCELLED'
+      );
     }
-    return 'limit=100&' +
+    return (
+      'limit=100&' +
       'profileIdNotAny=d0ebb7b0-2f0f-11eb-adc1-0242ac120002&' +
       'profileIdNotAny=91f9b8d6-d80e-4727-9783-73fb53e3c786&' +
       'sortBy=completed_date%2Cdesc&' +
-      'statusAny=COMMITTED&statusAny=ERROR&statusAny=CANCELLED';
+      'statusAny=COMMITTED&statusAny=ERROR&statusAny=CANCELLED'
+    );
   },
 
   getErrorsInImportAndUserQueryString({ filter, userId }) {
@@ -42,5 +46,5 @@ export default {
 
   getSearchByIdQueryString({ id }) {
     return `hrId=${id}%2A&limit=100&sortBy=completed_date%2Cdesc&statusAny=COMMITTED&statusAny=ERROR&statusAny=CANCELLED`;
-  }
+  },
 };

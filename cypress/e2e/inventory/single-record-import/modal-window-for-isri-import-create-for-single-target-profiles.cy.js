@@ -23,28 +23,32 @@ describe('inventory', () => {
       cy.createTempUser([
         permissions.inventoryAll.gui,
         permissions.uiInventorySingleRecordImport.gui,
-        permissions.settingsDataImportEnabled.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+        permissions.settingsDataImportEnabled.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
+        Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
 
-          cy.login(user.username, user.password,
-            { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
         });
+      });
     });
 
     after('delete test data', () => {
       Users.deleteViaApi(user.userId);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
-        .then((instance) => {
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
+        (instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
+        },
+      );
     });
 
-    it('C375145 Verify the modal window for ISRI Import/Create in inventory main actions menu for single target profiles (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+    it(
+      'C375145 Verify the modal window for ISRI Import/Create in inventory main actions menu for single target profiles (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
         InventoryActions.openSingleReportImportModal();
         SingleRecordImportModal.verifyInventorySingleRecordModalWithOneTargetProfile();
         SingleRecordImportModal.verifySelectTheProfileToBeUsedField(profileForImport);
@@ -56,9 +60,10 @@ describe('inventory', () => {
         // https://issues.folio.org/browse/MODCPCT-73
         cy.wait(10000);
         InstanceRecordView.verifyIsInstanceOpened(instanceTitle);
-        InstanceRecordView.getAssignedHRID().then(initialInstanceHrId => {
+        InstanceRecordView.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHRID = initialInstanceHrId;
         });
-      });
+      },
+    );
   });
 });

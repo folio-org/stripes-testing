@@ -17,7 +17,7 @@ const fieldLabels = {
   date: 'Date*',
   time: 'Time*',
   additionalInfo: 'Additional information*',
-  comment: 'Comment*'
+  comment: 'Comment*',
 };
 const overrideData = {
   date: dateTools.getCurrentDate(),
@@ -86,33 +86,31 @@ const checkModalTable = (modalTitle, itemData) => {
   const modal = Modal(modalTitle);
   cy.expect([
     modal
-      .find(MultiColumnListCell({ content: including(renewConfirmationTable.content.status) })).exists(),
+      .find(MultiColumnListCell({ content: including(renewConfirmationTable.content.status) }))
+      .exists(),
     modal
-      .find(MultiColumnListCell({ content: including(renewConfirmationTable.content.statusDetails) })).exists(),
+      .find(
+        MultiColumnListCell({ content: including(renewConfirmationTable.content.statusDetails) }),
+      )
+      .exists(),
     MultiColumnListHeader(renewConfirmationTable.headers.renewalStatus).exists(),
     MultiColumnListHeader(renewConfirmationTable.headers.title).exists(),
     MultiColumnListHeader(renewConfirmationTable.headers.itemStatus).exists(),
     MultiColumnListHeader(renewConfirmationTable.headers.dueDate).exists(),
-    modal
-      .find(MultiColumnListCell({ content: itemData.title, row: 0 })).exists(),
-    modal
-      .find(MultiColumnListCell({ content: itemData.status, row: 0 })).exists(),
-    modal
-      .find(MultiColumnListCell({ content: itemData.requests, row: 0 })).exists(),
+    modal.find(MultiColumnListCell({ content: itemData.title, row: 0 })).exists(),
+    modal.find(MultiColumnListCell({ content: itemData.status, row: 0 })).exists(),
+    modal.find(MultiColumnListCell({ content: itemData.requests, row: 0 })).exists(),
   ]);
 
-  cy.do(modal.find(MultiColumnList())
-    .scrollBy(scrollParams));
+  cy.do(modal.find(MultiColumnList()).scrollBy(scrollParams));
 
   cy.expect([
     MultiColumnListHeader(renewConfirmationTable.headers.requests).exists(),
     MultiColumnListHeader(renewConfirmationTable.headers.barcode).exists(),
     MultiColumnListHeader(renewConfirmationTable.headers.callNumber).exists(),
     MultiColumnListHeader(renewConfirmationTable.headers.loanPolicy).exists(),
-    modal
-      .find(MultiColumnListCell({ content: itemData.barcode, row: 0 })).exists(),
-    modal
-      .find(MultiColumnListCell({ content: itemData.loanPolicy, row: 0 })).exists(),
+    modal.find(MultiColumnListCell({ content: itemData.barcode, row: 0 })).exists(),
+    modal.find(MultiColumnListCell({ content: itemData.loanPolicy, row: 0 })).exists(),
   ]);
 };
 
@@ -138,10 +136,7 @@ export default {
 
     checkModalTable(headers.renewConfirmation, itemData);
 
-    cy.expect([
-      Button(buttonLabels.override).exists(),
-      Button(buttonLabels.close).exists()
-    ]);
+    cy.expect([Button(buttonLabels.override).exists(), Button(buttonLabels.close).exists()]);
   },
 
   startOverriding(itemData) {
@@ -153,7 +148,8 @@ export default {
       TextField(fieldLabels.time).exists(),
       MultiColumnListHeader(overrideTable.headers.newDueDate).exists(),
       Modal(headers.override)
-        .find(MultiColumnListCell({ content: including(overrideTable.content.selectDueDate) })).exists(),
+        .find(MultiColumnListCell({ content: including(overrideTable.content.selectDueDate) }))
+        .exists(),
     ]);
 
     checkModalTable(headers.override, itemData);
@@ -222,5 +218,5 @@ export default {
       TextArea(fieldLabels.comment).fillIn(commentText),
       Button(buttonLabels.saveAndClose).click(),
     ]);
-  }
+  },
 };

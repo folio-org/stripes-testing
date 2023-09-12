@@ -1,12 +1,13 @@
 import FinanceHelper from '../../finance/financeHelper';
+
 export default {
-  defaultPreffix : {
+  defaultPreffix: {
     name: `TP${FinanceHelper.getRandomPreffixSuffix()}`,
     description: 'Automation_Test_Preffix',
   },
 
-  defaultSuffix : {
+  defaultSuffix: {
     name: `TS${FinanceHelper.getRandomPreffixSuffix()}`,
     description: 'Automation_Test_Suffix',
-  }
+  },
 };

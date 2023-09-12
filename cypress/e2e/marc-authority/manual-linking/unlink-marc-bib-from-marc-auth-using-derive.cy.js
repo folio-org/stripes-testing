@@ -14,37 +14,37 @@ import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthor
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 
 describe('Manual Unlinking Bib field from Authority 1XX', () => {
-    const testData = {};
-    
-    const marcFiles = [
-      {
-        marc: 'marcBibFileForC365602.mrc', 
-        fileName: `testMarcFile.${getRandomPostfix()}.mrc`, 
-        jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-        numOfRecords: 1,
-      },
-      {
-        marc: 'marcAuthFileForC365602.mrc',
-        fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
-        numOfRecords: 2,
-      },
-    ]
+  const testData = {};
 
-    const linkingTagAndValues = [
-      {
-        rowIndex: 76,
-        value: 'Sprouse, Chris',
-        tag: 700
-      },
-      {
-        rowIndex: 77,
-        value: 'Martin, Laura',
-        tag: 700
-      },
-    ];
+  const marcFiles = [
+    {
+      marc: 'marcBibFileForC365602.mrc',
+      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      numOfRecords: 1,
+    },
+    {
+      marc: 'marcAuthFileForC365602.mrc',
+      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      jobProfileToRun: 'Default - Create SRS MARC Authority',
+      numOfRecords: 2,
+    },
+  ];
 
-    let createdAuthorityIDs = [];
+  const linkingTagAndValues = [
+    {
+      rowIndex: 76,
+      value: 'Sprouse, Chris',
+      tag: 700,
+    },
+    {
+      rowIndex: 77,
+      value: 'Martin, Laura',
+      tag: 700,
+    },
+  ];
+
+  const createdAuthorityIDs = [];
 
   before('Creating user and records', () => {
     cy.createTempUser([
@@ -54,31 +54,33 @@ describe('Manual Unlinking Bib field from Authority 1XX', () => {
       Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
       Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
-    ]).then(createdUserProperties => {
+    ]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
 
-      marcFiles.forEach(marcFile => {
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-          JobProfiles.waitLoadingList();
-          JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(marcFile.fileName);
-          Logs.checkStatusOfJobProfile('Completed');
-          Logs.openFileDetails(marcFile.fileName);
-          for (let i = 0; i < marcFile.numOfRecords; i++) {
-            Logs.getCreatedItemsID(i).then(link => {
-              createdAuthorityIDs.push(link.split('/')[5]);
-            });
-          }
-        });
+      marcFiles.forEach((marcFile) => {
+        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
+          () => {
+            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+            JobProfiles.waitLoadingList();
+            JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
+            JobProfiles.runImportFile();
+            JobProfiles.waitFileIsImported(marcFile.fileName);
+            Logs.checkStatusOfJobProfile('Completed');
+            Logs.openFileDetails(marcFile.fileName);
+            for (let i = 0; i < marcFile.numOfRecords; i++) {
+              Logs.getCreatedItemsID(i).then((link) => {
+                createdAuthorityIDs.push(link.split('/')[5]);
+              });
+            }
+          },
+        );
       });
 
       cy.visit(TopMenu.inventoryPath).then(() => {
         InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
-        linkingTagAndValues.forEach(linking => {
+        linkingTagAndValues.forEach((linking) => {
           QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
           MarcAuthorities.switchToSearch();
           InventoryInstance.verifySelectMarcAuthorityModal();
@@ -101,25 +103,49 @@ describe('Manual Unlinking Bib field from Authority 1XX', () => {
     });
   });
 
-  it('C365602 Derive | Unlink "MARC Bibliographic" field from "MARC Authority" record and use the "Save & close" button in deriving window. (spitfire)', { tags: [TestTypes.extendedPath, DevTeams.spitfire] }, () => {
-    cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
-    InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
-    InventoryInstances.selectInstance();
-    InventoryInstance.deriveNewMarcBibRecord();
-    QuickMarcEditor.verifyRemoveLinkingModal('Do you want to remove authority linking for this new bibliographic record?');
-    
-    QuickMarcEditor.clickKeepLinkingButton();
-    QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(76);
-    QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(77);
-    QuickMarcEditor.checkButtonSaveAndCloseEnable();
-    QuickMarcEditor.verifyTagFieldAfterLinking(76, '700', '1', '\\', '$a Sprouse, Chris', '$e artist.', '$0 1357871', '');
+  it(
+    'C365602 Derive | Unlink "MARC Bibliographic" field from "MARC Authority" record and use the "Save & close" button in deriving window. (spitfire)',
+    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    () => {
+      cy.login(testData.userProperties.username, testData.userProperties.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
+      InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+      InventoryInstances.selectInstance();
+      InventoryInstance.deriveNewMarcBibRecord();
+      QuickMarcEditor.verifyRemoveLinkingModal(
+        'Do you want to remove authority linking for this new bibliographic record?',
+      );
 
-    QuickMarcEditor.clickUnlinkIconInTagField(76);
-    QuickMarcEditor.verifyTagFieldAfterUnlinking(76, '700', '1', '\\', '$a Sprouse, Chris $e artist. $0 1357871');
-    
-    QuickMarcEditor.pressSaveAndClose();
-    QuickMarcEditor.checkCallout('Creating record may take several seconds.');
-    QuickMarcEditor.checkCallout('Record created.');
-    InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane('Contributor');
-  });
+      QuickMarcEditor.clickKeepLinkingButton();
+      QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(76);
+      QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(77);
+      QuickMarcEditor.checkButtonSaveAndCloseEnable();
+      QuickMarcEditor.verifyTagFieldAfterLinking(
+        76,
+        '700',
+        '1',
+        '\\',
+        '$a Sprouse, Chris',
+        '$e artist.',
+        '$0 1357871',
+        '',
+      );
+
+      QuickMarcEditor.clickUnlinkIconInTagField(76);
+      QuickMarcEditor.verifyTagFieldAfterUnlinking(
+        76,
+        '700',
+        '1',
+        '\\',
+        '$a Sprouse, Chris $e artist. $0 1357871',
+      );
+
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.checkCallout('Creating record may take several seconds.');
+      QuickMarcEditor.checkCallout('Record created.');
+      InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane('Contributor');
+    },
+  );
 });

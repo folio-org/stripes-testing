@@ -11,9 +11,8 @@ export const MessageBannerTypes = {
 export default HTML.extend('MessageBanner')
   .selector('[data-test-message-banner]')
   .filters({
-    type: (el) => MessageBannerTypes.keys()
-      .filter((t) => el.className.includes(t))[0]
+    type: (el) => MessageBannerTypes.keys().filter((t) => el.className.includes(t))[0],
   })
   .actions({
-    dismiss: ({ find }) => find(IconButtonInteractor({ icon: 'times' })).click()
+    dismiss: ({ find }) => find(IconButtonInteractor({ icon: 'times' })).click(),
   });

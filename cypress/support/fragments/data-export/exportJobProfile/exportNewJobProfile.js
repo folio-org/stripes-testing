@@ -1,4 +1,13 @@
-import { Button, PaneHeader, TextField, Select, TextArea, TextFieldIcon, TextInput, HTML } from '../../../../../interactors';
+import {
+  Button,
+  PaneHeader,
+  TextField,
+  Select,
+  TextArea,
+  TextFieldIcon,
+  TextInput,
+  HTML,
+} from '../../../../../interactors';
 
 const paneHeader = PaneHeader('New job profile');
 const XButton = paneHeader.find(Button({ icon: 'times' }));
@@ -16,7 +25,7 @@ export default {
     ]);
   },
 
-  saveJobProfile:() => {
+  saveJobProfile: () => {
     cy.do(saveAndCloseButton.click());
   },
 
@@ -76,14 +85,18 @@ export default {
     cy.do(descriptionTextarea.fillIn(descriptionText));
   },
   createNewJobProfileViaApi: (name, mappingProfileId) => {
-    return cy.okapiRequest({
-      method: 'POST',
-      path: 'data-export/job-profiles',
-      body: {
-        mappingProfileId: mappingProfileId,
-        name: name,
-      },
-      isDefaultSearchParamsRequired: false,
-    }).then(({ response }) => { return response; });
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-export/job-profiles',
+        body: {
+          mappingProfileId,
+          name,
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
   },
 };

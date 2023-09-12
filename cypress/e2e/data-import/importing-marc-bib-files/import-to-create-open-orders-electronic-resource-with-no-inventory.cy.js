@@ -2,12 +2,14 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE,
+import {
+  FOLIO_RECORD_TYPE,
   ORDER_STATUSES,
   ORDER_FORMAT_NAMES,
   ACQUISITION_METHOD_NAMES,
   JOB_STATUS_NAMES,
-  LOCATION_NAMES } from '../../../support/constants';
+  LOCATION_NAMES,
+} from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -42,10 +44,12 @@ describe('data-import', () => {
       electronicUnitPrice: '"25"',
       quantityElectronic: '"1"',
       locationName: `"${LOCATION_NAMES.ANNEX}"`,
-      locationQuantityElectronic: '"1"'
+      locationQuantityElectronic: '"1"',
     };
-    const actionProfile = { name: `C380483 Test Electronic resource open order ${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.ORDER };
+    const actionProfile = {
+      name: `C380483 Test Electronic resource open order ${getRandomPostfix()}`,
+      typeValue: FOLIO_RECORD_TYPE.ORDER,
+    };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
       profileName: `C380483 Test Order ${getRandomPostfix()}`,
@@ -57,14 +61,15 @@ describe('data-import', () => {
         permissions.moduleDataImportEnabled.gui,
         permissions.uiOrganizationsView.gui,
         permissions.inventoryAll.gui,
-        permissions.uiOrdersView.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+        permissions.uiOrdersView.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          cy.login(userProperties.username, userProperties.password,
-            { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+        cy.login(userProperties.username, userProperties.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
         });
+      });
     });
 
     after('delete test data', () => {
@@ -72,13 +77,16 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
       FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
-      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
-        .then(orderId => { Orders.deleteOrderViaApi(orderId[0].id); });
+      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
+        Orders.deleteOrderViaApi(orderId[0].id);
+      });
     });
 
-    it('C380483 Import to create open orders: Electronic resource with NO inventory (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      // create mapping profile
+    it(
+      'C380483 Import to create open orders: Electronic resource with NO inventory (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
+        // create mapping profile
         FieldMappingProfiles.createOrderMappingProfile(mappingProfile);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
@@ -107,9 +115,11 @@ describe('data-import', () => {
         FileDetails.checkOrderQuantityInSummaryTable(quantityOfItems);
         FileDetails.openOrder('Created');
         OrderLines.waitLoading();
-        OrderLines.getAssignedPOLNumber()
-          .then(initialNumber => { orderNumber = initialNumber.replace('-1', ''); });
+        OrderLines.getAssignedPOLNumber().then((initialNumber) => {
+          orderNumber = initialNumber.replace('-1', '');
+        });
         OrderLines.checkCreatedInventoryInElectronicRecourceDetails('None');
-      });
+      },
+    );
   });
 });
