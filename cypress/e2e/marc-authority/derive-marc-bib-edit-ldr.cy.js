@@ -52,7 +52,6 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
   };
 
   const createdInstanceIDs = [];
-  const userData = {};
 
   const marcFile = {
     marc: 'oneMarcBib.mrc',
@@ -66,13 +65,6 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
       Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
     ]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
-    });
-    cy.createTempUser([
-      Permissions.inventoryAll.gui,
-      Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
-      Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-    ]).then((createdUserProperties) => {
-      userData.C380704UserProperties = createdUserProperties;
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
