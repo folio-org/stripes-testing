@@ -103,11 +103,9 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
     'C357566 Verify "LDR" validation rules with valid data for positions 05, 08, 17, 18, 19 when deriving record (spitfire)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
-      for (let i = 0; i < 5; i++) {
-        InventoryInstance.searchByTitle(createdInstanceIDs[0]);
+      for (let i = 0; i < testData.LDRValues.validLDR18Values.length; i++) {
+        cy.visit(`${TopMenu.inventoryPath}/view/${createdInstanceIDs[0]}`);
         InventoryInstance.checkInstanceTitle(testData.fieldContents.originalTitle);
-        // if derive clicked too fast, sometimes original record is opened after derive
-        cy.wait(2000);
         InventoryInstance.deriveNewMarcBib();
         QuickMarcEditor.check008FieldsAbsent(...testData.absent008Fields);
         QuickMarcEditor.getRegularTagContent(testData.tags.tagLDR).then((content) => {
