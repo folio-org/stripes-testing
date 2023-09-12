@@ -45,6 +45,7 @@ const defaultInstanceZWithContributor = {
 };
 
 const paneIntanceDetails = PaneContent({ id: 'browse-inventory-results-pane-content' });
+const resultsPaneHeader = PaneHeader({ id: 'paneHeaderpane-results' });
 const recordSelect = Select({ id: 'input-record-search-qindex' });
 const recordSearch = TextInput({ id: 'input-record-search' });
 const contributorsOption = Option('Contributors');
@@ -57,6 +58,7 @@ const resetAllButtonDisabled = Button({
   disabled: true,
 });
 const nameTypeAccordion = Button({ id: 'accordion-toggle-button-nameType' });
+const actionsButton = Button('Actions');
 const rowContributorName = (ContributorName, contributorNameType) => MultiColumnListRow(`${ContributorName}${contributorNameType}1`);
 
 export default {
@@ -113,6 +115,10 @@ export default {
     cy.do(searchButton.click());
   },
 
+  verifySearchTerm(contributorName) {
+    cy.expect(recordSearch.has({ value: contributorName }));
+  },
+
   checkSearchResultsTable() {
     cy.do([
       MultiColumnListHeader({ id: 'list-column-contributor' }).has({ content: 'Contributor' }),
@@ -160,6 +166,14 @@ export default {
     );
   },
 
+  checkActionsButton(state = 'exists') {
+    cy.expect(actionsButton[state]());
+  },
+
+  checkSearchResultCount(text) {
+    cy.expect(resultsPaneHeader.find(HTML(including(text))).exists());
+  },
+
   checkAuthorityIconAndValueDisplayed(value) {
     cy.expect([
       MultiColumnListCell({ row: 5, columnIndex: 0 }).has({
@@ -202,7 +216,7 @@ export default {
   },
 
   openInstance(contributor) {
-    cy.do(MultiColumnListCell(contributor.name).click());
+    cy.do(MultiColumnListCell(contributor.name).hrefClick());
   },
 
   openRecord(record) {
