@@ -42,6 +42,7 @@ describe.skip('Creating custom labels', () => {
     ServicePoints.deleteViaApi(testData.servicePointS.id);
     Users.deleteViaApi(userData.userId);
   });
+  // re-implemented in FAT-7733 (cypress/e2e/eholdings/eholdings-settings.cy.js)
   it(
     'C9236  Settings: Add/Edit a custom label(spitfire)',
     { tags: [TestTypes.ideaLabsTests] },
