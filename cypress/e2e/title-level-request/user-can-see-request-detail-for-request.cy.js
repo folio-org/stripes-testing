@@ -2,7 +2,12 @@ import uuid from 'uuid';
 import testTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
-import { FULFILMENT_PREFERENCES, ITEM_STATUS_NAMES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
+import {
+  FULFILMENT_PREFERENCES,
+  ITEM_STATUS_NAMES,
+  REQUEST_LEVELS,
+  REQUEST_TYPES,
+} from '../../support/constants';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
@@ -32,7 +37,7 @@ describe('Title Level Request. Request Detail', () => {
     title: `Instance ${getRandomPostfix()}`,
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestTLR', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     itemBarcode: generateItemBarcode(),
   };
   const requestPolicyBody = {
@@ -99,8 +104,25 @@ describe('Title Level Request. Request Detail', () => {
       originalCirculationRules = circulationRule.rulesAsText;
       const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
       ruleProps.r = requestPolicyBody.id;
-      addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + ruleProps.i + ' l ' + ruleProps.l + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
-      CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
+      addedCirculationRule =
+        't ' +
+        testData.loanTypeId +
+        ': i ' +
+        ruleProps.i +
+        ' l ' +
+        ruleProps.l +
+        ' r ' +
+        ruleProps.r +
+        ' o ' +
+        ruleProps.o +
+        ' n ' +
+        ruleProps.n;
+      CirculationRules.addRuleViaApi(
+        originalCirculationRules,
+        ruleProps,
+        't ',
+        testData.loanTypeId,
+      );
     });
 
     cy.createTempUser([permissions.requestsAll.gui], patronGroup.name).then((userProperties) => {
@@ -108,7 +130,7 @@ describe('Title Level Request. Request Detail', () => {
       UserEdit.addServicePointViaApi(
         testData.userServicePoint.id,
         userForTLR.userId,
-        testData.userServicePoint.id
+        testData.userServicePoint.id,
       );
     });
 
@@ -120,14 +142,14 @@ describe('Title Level Request. Request Detail', () => {
         permissions.requestsAll.gui,
         permissions.uiNotesItemView.gui,
       ],
-      patronGroup.name
+      patronGroup.name,
     ).then((userProperties) => {
       cy.log(JSON.stringify(userProperties));
       userData = userProperties;
       UserEdit.addServicePointViaApi(
         testData.userServicePoint.id,
         userData.userId,
-        testData.userServicePoint.id
+        testData.userServicePoint.id,
       );
       TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
       Requests.createNewRequestViaApi({
@@ -188,7 +210,7 @@ describe('Title Level Request. Request Detail', () => {
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
+      testData.defaultLocation.id,
     );
     TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
@@ -227,7 +249,7 @@ describe('Title Level Request. Request Detail', () => {
         preference: FULFILMENT_PREFERENCES.HOLD_SHELF,
         pickupSP: testData.userServicePoint.name,
       });
-    }
+    },
   );
 
   it(
@@ -259,6 +281,6 @@ describe('Title Level Request. Request Detail', () => {
         preference: FULFILMENT_PREFERENCES.HOLD_SHELF,
         pickupSP: testData.userServicePoint.name,
       });
-    }
+    },
   );
 });

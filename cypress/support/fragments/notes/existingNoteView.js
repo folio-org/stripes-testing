@@ -31,5 +31,5 @@ export default {
     cy.do(closeButton.click());
     cy.expect(section.absent());
     AgreementDetails.waitLoading();
-  }
+  },
 };

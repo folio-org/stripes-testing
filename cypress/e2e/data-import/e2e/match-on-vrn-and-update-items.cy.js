@@ -30,7 +30,7 @@ import {
   EXISTING_RECORDS_NAMES,
   ORDER_STATUSES,
   VENDOR_NAMES,
-  ACQUISITION_METHOD_NAMES_IN_PROFILE
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
 } from '../../../support/constants';
 
 describe('data-import', () => {
@@ -42,7 +42,7 @@ describe('data-import', () => {
       vrnType: 'Vendor order reference number',
       physicalUnitPrice: '20',
       quantityPhysical: '1',
-      createInventory: 'Instance, holdings, item'
+      createInventory: 'Instance, holdings, item',
     };
     const itemBarcode = uuid();
     let vendorId;
@@ -95,7 +95,7 @@ describe('data-import', () => {
           matchName: itemMatchProfileName,
           actionName: itemActionProfileName,
         },
-      ]
+      ],
     };
 
     before('create test data', () => {
@@ -112,45 +112,47 @@ describe('data-import', () => {
         permissions.uiInventoryViewInstances.gui,
         permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
         permissions.uiInventoryStorageModule.gui,
-        permissions.remoteStorageView.gui
-      ]).then(userProperties => {
-        user = userProperties;
-      })
+        permissions.remoteStorageView.gui,
+      ])
+        .then((userProperties) => {
+          user = userProperties;
+        })
         .then(() => {
           cy.getAdminToken()
             .then(() => {
-              Organizations.getOrganizationViaApi({ query: `name="${VENDOR_NAMES.GOBI}"` })
-                .then(organization => {
+              Organizations.getOrganizationViaApi({ query: `name="${VENDOR_NAMES.GOBI}"` }).then(
+                (organization) => {
                   vendorId = organization.id;
-                });
-              cy.getMaterialTypes({ query: 'name="book"' })
-                .then(materialType => {
-                  materialTypeId = materialType.id;
-                });
-              cy.getAcquisitionMethodsApi({ query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"` })
-                .then(params => {
-                  acquisitionMethodId = params.body.acquisitionMethods[0].id;
-                });
-              cy.getProductIdTypes({ query: 'name=="ISSN"' })
-                .then(productIdType => {
-                  productIdTypeId = productIdType.id;
-                });
-              cy.getLocations({ query: 'name="Main Library"' })
-                .then(res => {
-                  locationId = res.id;
-                });
+                },
+              );
+              cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
+                materialTypeId = materialType.id;
+              });
+              cy.getAcquisitionMethodsApi({
+                query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+              }).then((params) => {
+                acquisitionMethodId = params.body.acquisitionMethods[0].id;
+              });
+              cy.getProductIdTypes({ query: 'name=="ISSN"' }).then((productIdType) => {
+                productIdTypeId = productIdType.id;
+              });
+              cy.getLocations({ query: 'name="Main Library"' }).then((res) => {
+                locationId = res.id;
+              });
             })
             .then(() => {
-              cy.login(user.username, user.password, { path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+              cy.login(user.username, user.password, {
+                path: TopMenu.ordersPath,
+                waiter: Orders.waitLoading,
+              });
             });
         });
     });
 
     after('delete test data', () => {
-      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
-        .then(order => {
-          Orders.deleteOrderViaApi(order[0].id);
-        });
+      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((order) => {
+        Orders.deleteOrderViaApi(order[0].id);
+      });
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       // delete generated profiles
@@ -167,10 +169,13 @@ describe('data-import', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
     });
 
-    it('C350591 Match on VRN and update related Instance, Holdings, Item (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-      // create order with POL
-        Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId),
+    it(
+      'C350591 Match on VRN and update related Instance, Holdings, Item (folijet)',
+      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      () => {
+        // create order with POL
+        Orders.createOrderWithOrderLineViaApi(
+          NewOrder.getDefaultOrder(vendorId),
           BasicOrderLine.getDefaultOrderLine(
             item.quantityPhysical,
             item.title,
@@ -179,56 +184,74 @@ describe('data-import', () => {
             acquisitionMethodId,
             item.physicalUnitPrice,
             item.physicalUnitPrice,
-            [{
-              productId: item.productId,
-              productIdType: productIdTypeId
-            }],
-            [{
-              refNumberType: item.vrnType,
-              refNumber: item.vrn
-            }]
-          ))
-          .then(res => {
-            orderNumber = res;
+            [
+              {
+                productId: item.productId,
+                productIdType: productIdTypeId,
+              },
+            ],
+            [
+              {
+                refNumberType: item.vrnType,
+                refNumber: item.vrn,
+              },
+            ],
+          ),
+        ).then((res) => {
+          orderNumber = res;
 
-            Orders.checkIsOrderCreated(orderNumber);
-            // open the first PO with POL
-            Orders.searchByParameter('PO number', orderNumber);
-            Orders.selectFromResultsList(orderNumber);
-            Orders.openOrder();
-            OrderView.checkIsOrderOpened(ORDER_STATUSES.OPEN);
-            OrderView.checkIsItemsInInventoryCreated(item.title, 'Main Library');
-            // check receiving pieces are created
-            cy.visit(TopMenu.ordersPath);
-            Orders.resetFilters();
-            Orders.searchByParameter('PO number', orderNumber);
-            Orders.selectFromResultsList(orderNumber);
-            OrderView.openPolDetails(item.title);
-            OrderLines.openReceiving();
-            Receiving.checkIsPiecesCreated(item.title);
-          });
+          Orders.checkIsOrderCreated(orderNumber);
+          // open the first PO with POL
+          Orders.searchByParameter('PO number', orderNumber);
+          Orders.selectFromResultsList(orderNumber);
+          Orders.openOrder();
+          OrderView.checkIsOrderOpened(ORDER_STATUSES.OPEN);
+          OrderView.checkIsItemsInInventoryCreated(item.title, 'Main Library');
+          // check receiving pieces are created
+          cy.visit(TopMenu.ordersPath);
+          Orders.resetFilters();
+          Orders.searchByParameter('PO number', orderNumber);
+          Orders.selectFromResultsList(orderNumber);
+          OrderView.openPolDetails(item.title);
+          OrderLines.openReceiving();
+          Receiving.checkIsPiecesCreated(item.title);
+        });
 
-        DataImport.editMarcFile('marcFileForC350591.mrc', editedMarcFileName, ['14567-1', 'xyzt124245271818912626262'], [item.vrn, itemBarcode]);
+        DataImport.editMarcFile(
+          'marcFileForC350591.mrc',
+          editedMarcFileName,
+          ['14567-1', 'xyzt124245271818912626262'],
+          [item.vrn, itemBarcode],
+        );
 
         // create field mapping profiles
         cy.visit(SettingsMenu.mappingProfilePath);
         MatchOnVRN.creatMappingProfilesForInstance(instanceMappingProfileName)
           .then(() => {
             MatchOnVRN.creatMappingProfilesForHoldings(holdingsMappingProfileName);
-          }).then(() => {
+          })
+          .then(() => {
             MatchOnVRN.creatMappingProfilesForItem(itemMappingProfileName);
           });
 
         // create action profiles
         cy.visit(SettingsMenu.actionProfilePath);
-        MatchOnVRN.createActionProfileForVRN(instanceActionProfileName, 'Instance', instanceMappingProfileName);
-        MatchOnVRN.createActionProfileForVRN(holdingsActionProfileName, 'Holdings', holdingsMappingProfileName);
+        MatchOnVRN.createActionProfileForVRN(
+          instanceActionProfileName,
+          'Instance',
+          instanceMappingProfileName,
+        );
+        MatchOnVRN.createActionProfileForVRN(
+          holdingsActionProfileName,
+          'Holdings',
+          holdingsMappingProfileName,
+        );
         MatchOnVRN.createActionProfileForVRN(itemActionProfileName, 'Item', itemMappingProfileName);
 
         // create match profiles
         cy.visit(SettingsMenu.matchProfilePath);
         MatchOnVRN.waitJSONSchemasLoad();
-        matchProfiles.forEach(match => {
+        matchProfiles.forEach((match) => {
           MatchOnVRN.createMatchProfileForVRN(match);
         });
 
@@ -247,8 +270,18 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(editedMarcFileName);
         Logs.checkStatusOfJobProfile();
         Logs.openFileDetails(editedMarcFileName);
-        FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);
-        FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.noAction, FileDetails.status.noAction, FileDetails.status.noAction]);
+        FileDetails.checkItemsStatusesInResultList(0, [
+          FileDetails.status.created,
+          FileDetails.status.updated,
+          FileDetails.status.updated,
+          FileDetails.status.updated,
+        ]);
+        FileDetails.checkItemsStatusesInResultList(1, [
+          FileDetails.status.dash,
+          FileDetails.status.noAction,
+          FileDetails.status.noAction,
+          FileDetails.status.noAction,
+        ]);
 
         // verify Instance, Holdings and Item details
         MatchOnVRN.clickOnUpdatedHotlink();
@@ -257,6 +290,7 @@ describe('data-import', () => {
         MatchOnVRN.verifyHoldingsUpdated();
         MatchOnVRN.verifyItemUpdated(itemBarcode);
         MatchOnVRN.verifyMARCBibSource(itemBarcode);
-      });
+      },
+    );
   });
 });

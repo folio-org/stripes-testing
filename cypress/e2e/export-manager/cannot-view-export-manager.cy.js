@@ -9,20 +9,23 @@ let user;
 
 describe('export manager', () => {
   before('create user', () => {
-    cy.createTempUser([])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(user.username, user.password);
-      });
+    cy.createTempUser([]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password);
+    });
   });
 
   after('delete user', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C350764 Verify that user without Export Manager permissions: cannot view Export Manager (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    TopMenuNavigation.isAbsent();
-    cy.visit(TopMenu.exportManagerPath);
-    ExportManagerSearchPane.verifyNoPermissionWarning();
-  });
+  it(
+    'C350764 Verify that user without Export Manager permissions: cannot view Export Manager (firebird)',
+    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    () => {
+      TopMenuNavigation.isAbsent();
+      cy.visit(TopMenu.exportManagerPath);
+      ExportManagerSearchPane.verifyNoPermissionWarning();
+    },
+  );
 });

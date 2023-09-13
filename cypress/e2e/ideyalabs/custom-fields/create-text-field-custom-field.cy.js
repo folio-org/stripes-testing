@@ -66,7 +66,7 @@ describe.skip('Settings', () => {
       UsersSearchPane.searchByKeywords('testing');
       UsersSearchPane.selectFirstUser('Excel, Testing');
       UsersSearchPane.verifyTextField(textFieldData.fieldLabel);
-    }
+    },
   );
 
   it(
@@ -79,7 +79,7 @@ describe.skip('Settings', () => {
       UsersSearchPane.searchByKeywords('testing');
       UsersSearchPane.selectFirstUser('Excel, Testing');
       UsersSearchPane.verifyTextArea(testAreaData.fieldLabel);
-    }
+    },
   );
 
   it(
@@ -92,7 +92,7 @@ describe.skip('Settings', () => {
       UsersSearchPane.searchByKeywords('testing');
       UsersSearchPane.selectFirstUser('Excel, Testing');
       UsersSearchPane.verifyCheckBox(checkboxData.fieldLabel);
-    }
+    },
   );
 
   it(
@@ -105,7 +105,7 @@ describe.skip('Settings', () => {
       UsersSearchPane.searchByKeywords('testing');
       UsersSearchPane.selectFirstUser('Excel, Testing');
       UsersSearchPane.verifyRadioButton(radioButtonData.data.fieldLabel);
-    }
+    },
   );
 
   it(
@@ -118,7 +118,7 @@ describe.skip('Settings', () => {
       UsersSearchPane.searchByKeywords('testing');
       UsersSearchPane.selectFirstUser('Excel, Testing');
       UsersSearchPane.verifySingleSelect(singleSelectData.data.fieldLabel, label2);
-    }
+    },
   );
 
   it(
@@ -132,6 +132,6 @@ describe.skip('Settings', () => {
       UsersSearchPane.searchByKeywords('testing');
       UsersSearchPane.selectFirstUser('Excel, Testing');
       UsersSearchPane.verifyDragItem();
-    }
+    },
   );
 });

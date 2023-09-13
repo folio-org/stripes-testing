@@ -52,7 +52,7 @@ describe('Overdue fine', () => {
     title: `Instance ${getRandomPostfix()}`,
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestReceiveNotice', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     ruleProps: {},
   };
   const createNoticeTemplate = (noticeName) => {
@@ -69,7 +69,7 @@ describe('Overdue fine', () => {
     returnedUponAt: createNoticeTemplate('Overdue_fine_renewed_upon_at'),
     returnedAfterOnce: createNoticeTemplate('Overdue_fine_renewed_after_once'),
     returnedAfterRecurring: createNoticeTemplate(
-      `Autotest_${getRandomPostfix()}_Overdue_fine_renewed_after_recurring`
+      `Autotest_${getRandomPostfix()}_Overdue_fine_renewed_after_recurring`,
     ),
   };
   const selectOptions = (template) => {
@@ -240,7 +240,7 @@ describe('Overdue fine', () => {
           permissions.uiUsersfeefinesCRUD.gui,
           permissions.uiUserAccounts.gui,
         ],
-        patronGroup.name
+        patronGroup.name,
       )
         .then((userProperties) => {
           userData.username = userProperties.username;
@@ -253,7 +253,7 @@ describe('Overdue fine', () => {
           UserEdit.addServicePointViaApi(
             testData.userServicePoint.id,
             userData.userId,
-            testData.userServicePoint.id
+            testData.userServicePoint.id,
           );
 
           cy.getCirculationRules().then((response) => {
@@ -298,23 +298,23 @@ describe('Overdue fine', () => {
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
+      testData.defaultLocation.id,
     );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.returnedUponAt.name}` }).then(
-      (templateId) => {
-        NoticePolicyTemplateApi.deleteViaApi(templateId);
-      }
-    );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.returnedAfterOnce.name}` }).then(
-      (templateId) => {
-        NoticePolicyTemplateApi.deleteViaApi(templateId);
-      }
-    );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.returnedAfterRecurring.name}` }).then(
-      (templateId) => {
-        NoticePolicyTemplateApi.deleteViaApi(templateId);
-      }
-    );
+    NoticePolicyTemplateApi.getViaApi({
+      query: `name=${noticeTemplates.returnedUponAt.name}`,
+    }).then((templateId) => {
+      NoticePolicyTemplateApi.deleteViaApi(templateId);
+    });
+    NoticePolicyTemplateApi.getViaApi({
+      query: `name=${noticeTemplates.returnedAfterOnce.name}`,
+    }).then((templateId) => {
+      NoticePolicyTemplateApi.deleteViaApi(templateId);
+    });
+    NoticePolicyTemplateApi.getViaApi({
+      query: `name=${noticeTemplates.returnedAfterRecurring.name}`,
+    }).then((templateId) => {
+      NoticePolicyTemplateApi.deleteViaApi(templateId);
+    });
     cy.deleteLoanType(testData.loanTypeId);
   });
 
@@ -357,8 +357,25 @@ describe('Overdue fine', () => {
         testData.ruleProps.n = noticePolicyRes[0].id;
         testData.ruleProps.l = loanPolicyBody.id;
         testData.ruleProps.o = overdueFinePolicyBody.id;
-        addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + testData.ruleProps.i + ' l ' + testData.ruleProps.l + ' r ' + testData.ruleProps.r + ' o ' + testData.ruleProps.o + ' n ' + testData.ruleProps.n;
-        CirculationRules.addRuleViaApi(testData.baseRules, testData.ruleProps, 't ', testData.loanTypeId);
+        addedCirculationRule =
+          't ' +
+          testData.loanTypeId +
+          ': i ' +
+          testData.ruleProps.i +
+          ' l ' +
+          testData.ruleProps.l +
+          ' r ' +
+          testData.ruleProps.r +
+          ' o ' +
+          testData.ruleProps.o +
+          ' n ' +
+          testData.ruleProps.n;
+        CirculationRules.addRuleViaApi(
+          testData.baseRules,
+          testData.ruleProps,
+          't ',
+          testData.loanTypeId,
+        );
       });
 
       cy.visit(TopMenu.checkOutPath);
@@ -406,6 +423,6 @@ describe('Overdue fine', () => {
       cy.wait(100000);
       SearchPane.searchByUserBarcode(userData.barcode);
       SearchPane.checkResultSearch({ object: 'Fee/fine', circAction: 'Paid fully' }, 0);
-    }
+    },
   );
 });

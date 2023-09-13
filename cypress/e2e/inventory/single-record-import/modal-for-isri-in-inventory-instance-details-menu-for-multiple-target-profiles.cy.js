@@ -33,10 +33,11 @@ describe('inventory', () => {
       url: 'zcat.oclc.org/OLUCWorldCat',
       authentification: OCLCAuthentication,
       externalId: '@attr 1=1211 $identifier',
-      internalId: '999ff$i'
+      internalId: '999ff$i',
     };
     const testIdentifier = '1234567';
-    const successCalloutMessage = 'Record 1234567 updated. Results may take a few moments to become visible in Inventory';
+    const successCalloutMessage =
+      'Record 1234567 updated. Results may take a few moments to become visible in Inventory';
     const instanceTitle = 'The Gospel according to Saint Mark : Evangelistib Markusib aglangit.';
 
     before('create test data', () => {
@@ -46,12 +47,15 @@ describe('inventory', () => {
         JobProfiles.waitFileIsImported(fileName);
         Logs.openFileDetails(fileName);
         FileDetails.openInstanceInInventory('Created');
-        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHRID = initialInstanceHrId;
         });
         Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
-        Z3950TargetProfiles.createNewZ3950TargetProfileViaApi(newTargetProfileName)
-          .then(initialId => { profileId = initialId; });
+        Z3950TargetProfiles.createNewZ3950TargetProfileViaApi(newTargetProfileName).then(
+          (initialId) => {
+            profileId = initialId;
+          },
+        );
         cy.visit(SettingsMenu.targetProfilesPath);
         Z3950TargetProfiles.openTargetProfile();
         ViewTargetProfile.verifyTargetProfileForm(
@@ -59,7 +63,7 @@ describe('inventory', () => {
           targetProfile.url,
           targetProfile.authentification,
           targetProfile.externalId,
-          targetProfile.internalId
+          targetProfile.internalId,
         );
         Z3950TargetProfiles.openTargetProfile(profileId);
         ViewTargetProfile.verifyTargetProfileForm(
@@ -67,7 +71,7 @@ describe('inventory', () => {
           targetProfile.url,
           targetProfile.authentification,
           targetProfile.externalId,
-          targetProfile.internalId
+          targetProfile.internalId,
         );
       });
       cy.logout();
@@ -75,27 +79,31 @@ describe('inventory', () => {
       cy.createTempUser([
         permissions.inventoryAll.gui,
         permissions.uiInventorySingleRecordImport.gui,
-        permissions.settingsDataImportEnabled.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+        permissions.settingsDataImportEnabled.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          cy.login(user.username, user.password,
-            { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
         });
+      });
     });
 
     after('delete test data', () => {
       Users.deleteViaApi(user.userId);
       Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
-        .then((instance) => {
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
+        (instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
+        },
+      );
     });
 
-    it('C375126 Verify the modal window for ISRI In inventory instance details menu for multiple target profiles (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+    it(
+      'C375126 Verify the modal window for ISRI In inventory instance details menu for multiple target profiles (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
         cy.wait(1000);
         InventorySearchAndFilter.selectSearchResultItem();
@@ -111,6 +119,7 @@ describe('inventory', () => {
         cy.wait(7000);
         InteractorsTools.checkCalloutMessage(successCalloutMessage);
         InstanceRecordView.verifyIsInstanceOpened(instanceTitle);
-      });
+      },
+    );
   });
 });

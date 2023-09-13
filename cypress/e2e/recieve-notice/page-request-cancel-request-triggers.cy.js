@@ -35,7 +35,7 @@ describe('Request notice triggers', () => {
     title: `Instance ${getRandomPostfix()}`,
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestReceiveNotice', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     ruleProps: {},
   };
   const createNoticeTemplate = (noticeName) => {
@@ -138,7 +138,7 @@ describe('Request notice triggers', () => {
           permissions.uiCirculationSettingsNoticePolicies.gui,
           permissions.requestsAll.gui,
         ],
-        patronGroup.name
+        patronGroup.name,
       )
         .then((userProperties) => {
           userData = userProperties;
@@ -147,7 +147,7 @@ describe('Request notice triggers', () => {
           UserEdit.addServicePointViaApi(
             testData.userServicePoint.id,
             userData.userId,
-            testData.userServicePoint.id
+            testData.userServicePoint.id,
           );
 
           cy.login(userData.username, userData.password, {
@@ -171,17 +171,17 @@ describe('Request notice triggers', () => {
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
+      testData.defaultLocation.id,
     );
     NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.pageRequest.name}` }).then(
       (templateId) => {
         NoticePolicyTemplateApi.deleteViaApi(templateId);
-      }
+      },
     );
     NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.cancelRequest.name}` }).then(
       (templateId) => {
         NoticePolicyTemplateApi.deleteViaApi(templateId);
-      }
+      },
     );
     cy.deleteLoanType(testData.loanTypeId);
   });
@@ -209,13 +209,16 @@ describe('Request notice triggers', () => {
         format: 'Email',
         action: 'Page request',
       });
-      NewNoticePolicy.addNotice({
-        noticeName: 'Request',
-        noticeId: 'request',
-        templateName: noticeTemplates.cancelRequest.name,
-        format: 'Email',
-        action: 'Cancel request',
-      }, 1);
+      NewNoticePolicy.addNotice(
+        {
+          noticeName: 'Request',
+          noticeId: 'request',
+          templateName: noticeTemplates.cancelRequest.name,
+          format: 'Email',
+          action: 'Cancel request',
+        },
+        1,
+      );
       NewNoticePolicy.save();
       NewNoticePolicy.waitLoading();
       NewNoticePolicy.checkPolicyName(noticePolicy);
@@ -226,8 +229,25 @@ describe('Request notice triggers', () => {
         cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
           testData.ruleProps.n = noticePolicyRes[0].id;
           testData.ruleProps.r = requestPolicyBody.id;
-          addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + testData.ruleProps.i + ' l ' + testData.ruleProps.l + ' r ' + testData.ruleProps.r + ' o ' + testData.ruleProps.o + ' n ' + testData.ruleProps.n;
-          CirculationRules.addRuleViaApi(testData.baseRules, testData.ruleProps, 't ', testData.loanTypeId);
+          addedCirculationRule =
+            't ' +
+            testData.loanTypeId +
+            ': i ' +
+            testData.ruleProps.i +
+            ' l ' +
+            testData.ruleProps.l +
+            ' r ' +
+            testData.ruleProps.r +
+            ' o ' +
+            testData.ruleProps.o +
+            ' n ' +
+            testData.ruleProps.n;
+          CirculationRules.addRuleViaApi(
+            testData.baseRules,
+            testData.ruleProps,
+            't ',
+            testData.loanTypeId,
+          );
         });
       });
 
@@ -250,7 +270,11 @@ describe('Request notice triggers', () => {
       NewRequest.waitLoading();
 
       cy.visit(TopMenu.circulationLogPath);
-      checkNoticeIsSent(searchResultsData(`Template: ${noticeTemplates.pageRequest.name}. Triggering event: Paging request.`));
+      checkNoticeIsSent(
+        searchResultsData(
+          `Template: ${noticeTemplates.pageRequest.name}. Triggering event: Paging request.`,
+        ),
+      );
 
       cy.visit(TopMenu.requestsPath);
       Requests.waitLoading();
@@ -259,7 +283,11 @@ describe('Request notice triggers', () => {
       Requests.cancelRequest();
 
       cy.visit(TopMenu.circulationLogPath);
-      checkNoticeIsSent(searchResultsData(`Template: ${noticeTemplates.cancelRequest.name}. Triggering event: Request cancellation.`));
-    }
+      checkNoticeIsSent(
+        searchResultsData(
+          `Template: ${noticeTemplates.cancelRequest.name}. Triggering event: Request cancellation.`,
+        ),
+      );
+    },
   );
 });

@@ -7,5 +7,5 @@ export default HTML.extend('button group')
     buttonCount: (el) => el.querySelectorAll('button, a').length,
   })
   .actions({
-    click: ({ find }, label) => find(Button(label)).perform(el => el.click()),
+    click: ({ find }, label) => find(Button(label)).perform((el) => el.click()),
   });

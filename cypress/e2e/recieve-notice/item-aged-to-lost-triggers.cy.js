@@ -42,7 +42,7 @@ describe('Loan notice triggers', () => {
     title: getTestEntityValue('InstanceNotice'),
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestReceiveNotice', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     ruleProps: {},
   };
   const createNoticeTemplate = (noticeName) => {
@@ -166,7 +166,6 @@ describe('Loan notice triggers', () => {
     id: uuid(),
   };
 
-
   before('Preconditions', () => {
     cy.getAdminToken()
       .then(() => {
@@ -206,7 +205,7 @@ describe('Loan notice triggers', () => {
               status: { name: ITEM_STATUS_NAMES.AVAILABLE },
               permanentLoanType: { id: testData.loanTypeId },
               materialType: { id: testData.materialTypeId },
-            }
+            },
           ],
         });
       });
@@ -224,7 +223,7 @@ describe('Loan notice triggers', () => {
           permissions.okapiTimersPatch.gui,
           permissions.checkinAll.gui,
         ],
-        patronGroup.name
+        patronGroup.name,
       )
         .then((userProperties) => {
           userData.username = userProperties.username;
@@ -237,7 +236,7 @@ describe('Loan notice triggers', () => {
           UserEdit.addServicePointViaApi(
             testData.userServicePoint.id,
             userData.userId,
-            testData.userServicePoint.id
+            testData.userServicePoint.id,
           );
           cy.getToken(userData.username, userData.password);
           UserLoans.updateTimerForAgedToLost('minute');
@@ -267,23 +266,23 @@ describe('Loan notice triggers', () => {
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
+      testData.defaultLocation.id,
     );
     NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.uponAt.name}` }).then(
       (templateId) => {
         NoticePolicyTemplateApi.deleteViaApi(templateId);
-      }
+      },
     );
     NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.afterOnce.name}` }).then(
       (templateId) => {
         NoticePolicyTemplateApi.deleteViaApi(templateId);
-      }
+      },
     );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.afterRecurring.name}` }).then(
-      (templateId) => {
-        NoticePolicyTemplateApi.deleteViaApi(templateId);
-      }
-    );
+    NoticePolicyTemplateApi.getViaApi({
+      query: `name=${noticeTemplates.afterRecurring.name}`,
+    }).then((templateId) => {
+      NoticePolicyTemplateApi.deleteViaApi(templateId);
+    });
     cy.deleteLoanType(testData.loanTypeId);
   });
 
@@ -320,8 +319,25 @@ describe('Loan notice triggers', () => {
           testData.ruleProps.n = noticePolicyRes[0].id;
           testData.ruleProps.l = loanPolicyBody.id;
           testData.ruleProps.i = lostItemFeePolicyBody.id;
-          addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + testData.ruleProps.i + ' l ' + testData.ruleProps.l + ' r ' + testData.ruleProps.r + ' o ' + testData.ruleProps.o + ' n ' + testData.ruleProps.n;
-          CirculationRules.addRuleViaApi(testData.baseRules, testData.ruleProps, 't ', testData.loanTypeId);
+          addedCirculationRule =
+            't ' +
+            testData.loanTypeId +
+            ': i ' +
+            testData.ruleProps.i +
+            ' l ' +
+            testData.ruleProps.l +
+            ' r ' +
+            testData.ruleProps.r +
+            ' o ' +
+            testData.ruleProps.o +
+            ' n ' +
+            testData.ruleProps.n;
+          CirculationRules.addRuleViaApi(
+            testData.baseRules,
+            testData.ruleProps,
+            't ',
+            testData.loanTypeId,
+          );
         });
       });
 
@@ -339,8 +355,12 @@ describe('Loan notice triggers', () => {
       cy.wait(250000);
       cy.reload();
       checkNoticeIsSent(searchResultsData(noticeTemplates.uponAt.name, instanceData.itemBarcode));
-      checkNoticeIsSent(searchResultsData(noticeTemplates.afterOnce.name, instanceData.itemBarcode));
-      checkNoticeIsSent(searchResultsData(noticeTemplates.afterRecurring.name, instanceData.itemBarcode));
+      checkNoticeIsSent(
+        searchResultsData(noticeTemplates.afterOnce.name, instanceData.itemBarcode),
+      );
+      checkNoticeIsSent(
+        searchResultsData(noticeTemplates.afterRecurring.name, instanceData.itemBarcode),
+      );
 
       cy.visit(TopMenu.checkInPath);
       CheckInActions.checkInItemGui(instanceData.itemBarcode);
@@ -348,13 +368,12 @@ describe('Loan notice triggers', () => {
       CheckInActions.verifyLastCheckInItem(instanceData.itemBarcode);
       CheckInActions.endCheckInSession();
 
-
       cy.visit(TopMenu.circulationLogPath);
       // wait to check that we don't get new "Item aged to lost - after - recurring" notice because item was returned
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(100000);
       SearchPane.searchByUserBarcode(userData.barcode);
       SearchPane.checkResultSearch({ object: 'Loan', circAction: 'Closed loan' }, 0);
-    }
+    },
   );
 });

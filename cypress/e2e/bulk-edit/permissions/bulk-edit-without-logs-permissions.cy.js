@@ -10,24 +10,29 @@ let user;
 describe('bulk-edit', () => {
   describe('permissions', () => {
     before('create test data', () => {
-      cy.createTempUser([
-        permissions.bulkEditView.gui,
-        permissions.bulkEditCsvView.gui,
-      ])
-        .then(userProperties => {
+      cy.createTempUser([permissions.bulkEditView.gui, permissions.bulkEditCsvView.gui]).then(
+        (userProperties) => {
           user = userProperties;
-          cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
-        });
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
+        },
+      );
     });
 
     after('delete test data', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it('C368012 Verify that the user without "Bulk edit - Can view logs" permission cannot access to the logs. (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.verifyBulkEditPaneItems();
-      BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
-      BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Logs');
-    });
+    it(
+      'C368012 Verify that the user without "Bulk edit - Can view logs" permission cannot access to the logs. (firebird)',
+      { tags: [testTypes.smoke, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.verifyBulkEditPaneItems();
+        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
+        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Logs');
+      },
+    );
   });
 });

@@ -35,8 +35,7 @@ const checkDeclareLostButtonActivity = (disabled) => {
 };
 
 export default {
-
-  waitLoading:() => {
+  waitLoading: () => {
     cy.expect(Pane({ id: 'pane-loanshistory' }).exists());
   },
   checkDeclareLostButtonDisabled() {
@@ -46,19 +45,12 @@ export default {
     checkDeclareLostButtonActivity(false);
   },
   startDeclareLost() {
-    cy.do(
-      DeclareLostButton
-        .click()
-    );
+    cy.do(DeclareLostButton.click());
   },
   finishDeclareLost(additionalInformation) {
     cy.do([
-      DeclareLostModal
-        .find(TextArea('Additional information*'))
-        .fillIn(additionalInformation),
-      DeclareLostModal
-        .find(Button('Confirm'))
-        .click(),
+      DeclareLostModal.find(TextArea('Additional information*')).fillIn(additionalInformation),
+      DeclareLostModal.find(Button('Confirm')).click(),
     ]);
 
     this.checkDeclareLostModalAbsent();
@@ -87,15 +79,11 @@ export default {
     this.checkStatus(ITEM_STATUS_NAMES.CHECKED_OUT);
   },
   checkStatusInList(row, status) {
-    cy.then(() => MultiColumnListHeader({ id: 'list-column-itemstatus' }).index()).then((columnIndex) => {
-      cy.expect(
-        LoanActionsList
-          .find(
-            MultiColumnListCell(status, { row, columnIndex })
-          )
-          .exists()
-      );
-    });
+    cy.then(() => MultiColumnListHeader({ id: 'list-column-itemstatus' }).index()).then(
+      (columnIndex) => {
+        cy.expect(LoanActionsList.find(MultiColumnListCell(status, { row, columnIndex })).exists());
+      },
+    );
   },
   checkStatusDeclaredLostInList(row) {
     this.checkStatusInList(row, ITEM_STATUS_NAMES.DECLARED_LOST);
@@ -137,35 +125,32 @@ export default {
     cy.expect(KeyValue(title).absent());
   },
   checkAction(row, action) {
-    cy.then(() => MultiColumnListHeader({ id: 'list-column-action' }).index()).then((columnIndex) => {
-      cy.expect(
-        LoanActionsList
-          .find(
-            MultiColumnListCell(action, { row, columnIndex })
-          )
-          .exists()
-      );
-    });
+    cy.then(() => MultiColumnListHeader({ id: 'list-column-action' }).index()).then(
+      (columnIndex) => {
+        cy.expect(LoanActionsList.find(MultiColumnListCell(action, { row, columnIndex })).exists());
+      },
+    );
   },
   checkDateValid(date) {
     // TODO: clarify the reason of eslint warning
+    // eslint-disable-next-line no-unused-expressions
     expect(moment(date).isValid()).to.be.true;
   },
   checkActionDate(row, actionDate) {
     this.checkDateValid(actionDate);
 
-    cy.then(() => MultiColumnListHeader({ id: 'list-column-actiondate' }).index()).then((columnIndex) => {
-      cy.expect(
-        LoanActionsList
-          .find(
-            MultiColumnListCell(
-              DateTools.getFormattedDateWithTime(actionDate),
-              { row, columnIndex }
-            )
-          )
-          .exists()
-      );
-    });
+    cy.then(() => MultiColumnListHeader({ id: 'list-column-actiondate' }).index()).then(
+      (columnIndex) => {
+        cy.expect(
+          LoanActionsList.find(
+            MultiColumnListCell(DateTools.getFormattedDateWithTime(actionDate), {
+              row,
+              columnIndex,
+            }),
+          ).exists(),
+        );
+      },
+    );
   },
   checkActionDeclaredLost(row) {
     this.checkAction(row, ITEM_STATUS_NAMES.DECLARED_LOST);
@@ -175,55 +160,44 @@ export default {
 
     const expectedDueDate = DateTools.getFormattedDateWithTime(dueDate);
 
-    cy.then(() => MultiColumnListHeader({ id: 'list-column-duedate' }).index()).then((columnIndex) => {
-      cy.expect(
-        LoanActionsList
-          .find(
-            MultiColumnListCell(
-              expectedDueDate,
-              { row: firstRow, columnIndex }
-            )
-          )
-          .exists()
-      );
-      cy.expect(
-        LoanActionsList
-          .find(
-            MultiColumnListCell(
-              expectedDueDate,
-              { row: secondRow, columnIndex }
-            )
-          )
-          .exists()
-      );
-    });
+    cy.then(() => MultiColumnListHeader({ id: 'list-column-duedate' }).index()).then(
+      (columnIndex) => {
+        cy.expect(
+          LoanActionsList.find(
+            MultiColumnListCell(expectedDueDate, { row: firstRow, columnIndex }),
+          ).exists(),
+        );
+        cy.expect(
+          LoanActionsList.find(
+            MultiColumnListCell(expectedDueDate, { row: secondRow, columnIndex }),
+          ).exists(),
+        );
+      },
+    );
   },
   checkSource(row, user) {
-    cy.then(() => MultiColumnListHeader({ id: 'list-column-source' }).index()).then((columnIndex) => {
-      cy.expect(
-        LoanActionsList
-          .find(
+    cy.then(() => MultiColumnListHeader({ id: 'list-column-source' }).index()).then(
+      (columnIndex) => {
+        cy.expect(
+          LoanActionsList.find(
             MultiColumnListCell({
               row,
               columnIndex,
-            })
+            }),
           )
-          .find(
-            Link(getFullName(user), { href: including(`/users/view/${user.id}`) })
-          )
-          .exists()
-      );
-    });
+            .find(Link(getFullName(user), { href: including(`/users/view/${user.id}`) }))
+            .exists(),
+        );
+      },
+    );
   },
   checkComments(row, comment) {
-    cy.then(() => MultiColumnListHeader({ id: 'list-column-comments' }).index()).then((columnIndex) => {
-      cy.expect(
-        LoanActionsList
-          .find(
-            MultiColumnListCell(comment, { row, columnIndex })
-          )
-          .exists()
-      );
-    });
+    cy.then(() => MultiColumnListHeader({ id: 'list-column-comments' }).index()).then(
+      (columnIndex) => {
+        cy.expect(
+          LoanActionsList.find(MultiColumnListCell(comment, { row, columnIndex })).exists(),
+        );
+      },
+    );
   },
 };

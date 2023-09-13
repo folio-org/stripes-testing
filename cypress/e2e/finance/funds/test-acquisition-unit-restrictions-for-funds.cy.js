@@ -19,16 +19,14 @@ describe('ui-finance: Funds', () => {
 
   before(() => {
     cy.getAdminToken();
-    FiscalYears.createViaApi(defaultFiscalYear)
-      .then(response => {
-        defaultFiscalYear.id = response.id;
-        defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+    FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
+      defaultFiscalYear.id = response.id;
+      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
 
-        Ledgers.createViaApi(defaultLedger)
-          .then(ledgerResponse => {
-            defaultLedger.id = ledgerResponse.id;
-          });
+      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+        defaultLedger.id = ledgerResponse.id;
       });
+    });
     cy.createTempUser([
       permissions.uiFinanceFinanceViewGroup.gui,
       permissions.uiFinanceCreateAllocations.gui,
@@ -53,15 +51,14 @@ describe('ui-finance: Funds', () => {
       permissions.uiFinanceViewEditDeletFundBudget.gui,
       permissions.uiFinanceViewEditDeletGroups.gui,
       permissions.uiFinanceViewEditDeleteLedger.gui,
-      permissions.uiFinanceAssignAcquisitionUnitsToNewRecord.gui
-    ])
-      .then(userProperties => {
-        user = userProperties;
-      });
+      permissions.uiFinanceAssignAcquisitionUnitsToNewRecord.gui,
+    ]).then((userProperties) => {
+      user = userProperties;
+    });
   });
 
   after(() => {
-    cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
+    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
     FinanceHelp.searchByName(defaultfund.name);
     Funds.selectFund(defaultfund.name);
     Funds.deleteFundViaActions();
@@ -77,25 +74,38 @@ describe('ui-finance: Funds', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C163928 Test acquisition unit restrictions for Fund records (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
-    AcquisitionUnits.newAcquisitionUnit();
-    AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name);
-    // Need to wait,while data is load
-    cy.wait(2000);
-    AcquisitionUnits.assignUser(user.username);
-    cy.login(user.username, user.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
-    Funds.createFundWithAU(defaultfund, defaultLedger, defaultAcquisitionUnit.name);
-    cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
-    AcquisitionUnits.unAssignUser(defaultAcquisitionUnit.name);
-    cy.login(user.username, user.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
-    FinanceHelp.searchByName(defaultfund.name);
-    Funds.checkZeroSearchResultsHeader();
-    cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
-    AcquisitionUnits.edit(defaultAcquisitionUnit.name);
-    AcquisitionUnits.selectViewCheckbox();
-    cy.login(user.username, user.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
-    FinanceHelp.searchByName(defaultfund.name);
-    Funds.selectFund(defaultfund.name);
-  });
+  it(
+    'C163928 Test acquisition unit restrictions for Fund records (thunderjet)',
+    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    () => {
+      cy.loginAsAdmin({
+        path: SettingsMenu.acquisitionUnitsPath,
+        waiter: AcquisitionUnits.waitLoading,
+      });
+      AcquisitionUnits.newAcquisitionUnit();
+      AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name);
+      // Need to wait,while data is load
+      cy.wait(2000);
+      AcquisitionUnits.assignUser(user.username);
+      cy.login(user.username, user.password, { path: TopMenu.fundPath, waiter: Funds.waitLoading });
+      Funds.createFundWithAU(defaultfund, defaultLedger, defaultAcquisitionUnit.name);
+      cy.loginAsAdmin({
+        path: SettingsMenu.acquisitionUnitsPath,
+        waiter: AcquisitionUnits.waitLoading,
+      });
+      AcquisitionUnits.unAssignUser(defaultAcquisitionUnit.name);
+      cy.login(user.username, user.password, { path: TopMenu.fundPath, waiter: Funds.waitLoading });
+      FinanceHelp.searchByName(defaultfund.name);
+      Funds.checkZeroSearchResultsHeader();
+      cy.loginAsAdmin({
+        path: SettingsMenu.acquisitionUnitsPath,
+        waiter: AcquisitionUnits.waitLoading,
+      });
+      AcquisitionUnits.edit(defaultAcquisitionUnit.name);
+      AcquisitionUnits.selectViewCheckbox();
+      cy.login(user.username, user.password, { path: TopMenu.fundPath, waiter: Funds.waitLoading });
+      FinanceHelp.searchByName(defaultfund.name);
+      Funds.selectFund(defaultfund.name);
+    },
+  );
 });

@@ -15,17 +15,15 @@ describe('orders: Test PO search', () => {
 
   before(() => {
     cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-        order.vendor = response;
-      });
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+      order.vendor = response;
+    });
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.createOrderApi(order)
-      .then((response) => {
-        orderNumber = response.body.poNumber;
-        cy.visit(TopMenu.ordersPath);
-      });
+    cy.createOrderApi(order).then((response) => {
+      orderNumber = response.body.poNumber;
+      cy.visit(TopMenu.ordersPath);
+    });
   });
 
   afterEach(() => {
@@ -33,11 +31,15 @@ describe('orders: Test PO search', () => {
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 
-  it('C343242 Create an order line for format = P/E mix (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList(orderNumber);
-    Orders.createPOLineViaActions();
-    OrderLines.fillInPOLineInfoViaUi();
-    interactorsTools.checkCalloutMessage('The purchase order line was successfully created');
-  });
+  it(
+    'C343242 Create an order line for format = P/E mix (thunderjet)',
+    { tags: [TestType.smoke, devTeams.thunderjet] },
+    () => {
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList(orderNumber);
+      Orders.createPOLineViaActions();
+      OrderLines.fillInPOLineInfoViaUi();
+      interactorsTools.checkCalloutMessage('The purchase order line was successfully created');
+    },
+  );
 });

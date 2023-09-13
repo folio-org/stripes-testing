@@ -1,10 +1,15 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../../../utils/stringTools';
-import Institutions from '../institutions';
-import Campuses from '../campuses';
-import Libraries from '../libraries';
+import Institutions from '../location-setup/institutions';
+import Campuses from '../location-setup/campuses';
+import Libraries from '../location-setup/libraries';
 
-const getDefaultLocation = (specialServicePointId, specialInstitutionId, specialCampusId, specialLibraryId) => {
+const getDefaultLocation = (
+  specialServicePointId,
+  specialInstitutionId,
+  specialCampusId,
+  specialLibraryId,
+) => {
   const defaultLocation = {
     id: uuid(),
     isActive: true,
@@ -23,22 +28,25 @@ const getDefaultLocation = (specialServicePointId, specialInstitutionId, special
     primaryServicePoint: specialServicePointId,
   };
   if (!defaultLocation.institutionId) {
-    Institutions.createViaApi(Institutions.getDefaultInstitutions())
-      .then(locinsts => {
-        defaultLocation.institutionId = locinsts.id;
-        if (!defaultLocation.campusId) {
-          Campuses.createViaApi({ ...Campuses.getDefaultCampuse(), institutionId: defaultLocation.institutionId })
-            .then(loccamps => {
-              defaultLocation.campusId = loccamps.id;
-              if (!defaultLocation.libraryId) {
-                Libraries.createViaApi({ ...Libraries.getDefaultLibrary(), campusId: defaultLocation.campusId })
-                  .then(loclibs => {
-                    defaultLocation.libraryId = loclibs.id;
-                  });
-              }
+    Institutions.createViaApi(Institutions.getDefaultInstitutions()).then((locinsts) => {
+      defaultLocation.institutionId = locinsts.id;
+      if (!defaultLocation.campusId) {
+        Campuses.createViaApi({
+          ...Campuses.getDefaultCampuse(),
+          institutionId: defaultLocation.institutionId,
+        }).then((loccamps) => {
+          defaultLocation.campusId = loccamps.id;
+          if (!defaultLocation.libraryId) {
+            Libraries.createViaApi({
+              ...Libraries.getDefaultLibrary(),
+              campusId: defaultLocation.campusId,
+            }).then((loclibs) => {
+              defaultLocation.libraryId = loclibs.id;
             });
-        }
-      });
+          }
+        });
+      }
+    });
   }
   return defaultLocation;
 };
@@ -52,15 +60,15 @@ export default {
         path: 'locations',
         body: locationProperties,
         method: 'POST',
-        isDefaultSearchParamsRequired: false
+        isDefaultSearchParamsRequired: false,
       })
       .then((response) => {
         return response.body;
       });
   },
 
-  getDefaultUiLocation:(institutionId, campusId, libraryId) => (
-    { body: {
+  getDefaultUiLocation: (institutionId, campusId, libraryId) => ({
+    body: {
       id: uuid(),
       name: `autotest_location_${getRandomPostfix()}`,
       code: uuid(),
@@ -70,18 +78,23 @@ export default {
       campusId,
       libraryId,
       servicePointIds: [],
-      primaryServicePoint: ''
-    } }),
+      primaryServicePoint: '',
+    },
+  }),
 
-  deleteViaApiIncludingInstitutionCampusLibrary: (institutionId, campusId, libraryId, locationId) => {
-    cy
-      .okapiRequest({
-        path: `locations/${locationId}`,
-        method: 'DELETE',
-        isDefaultSearchParamsRequired: false
-      });
+  deleteViaApiIncludingInstitutionCampusLibrary: (
+    institutionId,
+    campusId,
+    libraryId,
+    locationId,
+  ) => {
+    cy.okapiRequest({
+      path: `locations/${locationId}`,
+      method: 'DELETE',
+      isDefaultSearchParamsRequired: false,
+    });
     Libraries.deleteViaApi(libraryId);
     Campuses.deleteViaApi(campusId);
     Institutions.deleteViaApi(institutionId);
-  }
+  },
 };

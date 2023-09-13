@@ -31,26 +31,25 @@ describe('bulk-edit', () => {
       cy.createTempUser([
         permissions.bulkEditView.gui,
         permissions.bulkEditEdit.gui,
-        permissions.uiInventoryViewCreateEditItems.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading
-          });
-
-          items.forEach(item => {
-            fileContent += `${item.itemBarcode}\n`;
-            InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-          });
-
-          FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, fileContent);
+        permissions.uiInventoryViewCreateEditItems.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
+
+        items.forEach((item) => {
+          fileContent += `${item.itemBarcode}\n`;
+          InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+        });
+
+        FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, fileContent);
+      });
     });
 
     after('delete test data', () => {
-      items.forEach(item => {
+      items.forEach((item) => {
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       });
       Users.deleteViaApi(user.userId);
@@ -58,18 +57,27 @@ describe('bulk-edit', () => {
       FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName);
     });
 
-    it('C358942 Verify that number of records matched for file with less than 10 item barcodes (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.checkItemsRadio();
-      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-      BulkEditSearchPane.uploadFile(itemBarcodesFileName);
-      BulkEditSearchPane.waitFileUploading();
-      items.forEach(item => {
-        BulkEditSearchPane.verifySpecificItemsMatched(item.itemBarcode);
-      });
-      BulkEditActions.downloadMatchedResults();
+    it(
+      'C358942 Verify that number of records matched for file with less than 10 item barcodes (firebird)',
+      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.checkItemsRadio();
+        BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+        BulkEditSearchPane.uploadFile(itemBarcodesFileName);
+        BulkEditSearchPane.waitFileUploading();
+        items.forEach((item) => {
+          BulkEditSearchPane.verifySpecificItemsMatched(item.itemBarcode);
+        });
+        BulkEditActions.downloadMatchedResults();
 
-      const values = BulkEditFiles.getValuesFromCSVFile(fileContent);
-      BulkEditFiles.verifyMatchedResultFileContent(matchedRecordsFileName, values, 'barcode', true);
-    });
+        const values = BulkEditFiles.getValuesFromCSVFile(fileContent);
+        BulkEditFiles.verifyMatchedResultFileContent(
+          matchedRecordsFileName,
+          values,
+          'barcode',
+          true,
+        );
+      },
+    );
   });
 });

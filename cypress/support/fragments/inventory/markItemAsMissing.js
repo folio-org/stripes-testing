@@ -4,9 +4,10 @@ import {
   Button,
   KeyValue,
   Modal,
-  MultiColumnListCell, PaneHeader,
+  MultiColumnListCell,
+  PaneHeader,
   Section,
-  TextField
+  TextField,
 } from '../../../../interactors';
 import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
@@ -27,7 +28,7 @@ export default {
     'Awaiting pickup',
     'Awaiting delivery',
     'In transit',
-    'Withdrawn'
+    'Withdrawn',
   ],
 
   itemsNotToMarkAsMissing: [
@@ -38,12 +39,14 @@ export default {
     'Order closed',
   ],
 
-  itemStatusesToCreate() { return this.itemsToMarkAsMissing.concat(this.itemsNotToMarkAsMissing); },
+  itemStatusesToCreate() {
+    return this.itemsToMarkAsMissing.concat(this.itemsNotToMarkAsMissing);
+  },
 
   itemToRequestMap: {
     'Awaiting pickup': 'Open - awaiting pickup',
     'Awaiting delivery': 'Open - awaiting delivery',
-    'In transit': 'Open - in transit'
+    'In transit': 'Open - in transit',
   },
 
   getItemsToCreateRequests(items) {
@@ -69,54 +72,59 @@ export default {
       permanentLocationId: null,
       sourceId: null,
       permanentLoanTypeId: null,
-      materialTypeId: null
+      materialTypeId: null,
     };
 
-    return cy.wrap(Promise.resolve(true)).then(() => {
-      cy.getMaterialTypes({ query: 'name="video recording"' }).then(materialType => {
-        instanceRecordData.materialTypeId = materialType.id;
-        materialTypeValue = materialType.name;
-      });
-      cy.getLoanTypes({ limit: 1 }).then(loanTypes => {
-        instanceRecordData.permanentLoanTypeId = loanTypes[0].id;
-      });
-      cy.getHoldingTypes({ limit: 1 }).then(holdingsTypes => {
-        instanceRecordData.holdingsTypeId = holdingsTypes[0].id;
-      });
-      cy.getLocations({ limit: 1 }).then(location => {
-        instanceRecordData.permanentLocationId = location.id;
-      });
-      InventoryHoldings.getHoldingSources({ limit: 1 }).then(holdingsSources => {
-        instanceRecordData.sourceId = holdingsSources[0].id;
-      });
-      cy.getInstanceTypes({ limit: 1 }).then(instanceTypes => {
-        instanceRecordData.instanceTypeId = instanceTypes[0].id;
-      });
-    }).then(() => {
-      const items = this.itemStatusesToCreate().map(status => ({
-        itemId: uuid(),
-        barcode: uuid(),
-        status: { name: status },
-        permanentLoanType: { id: instanceRecordData.permanentLoanTypeId },
-        materialType: { id: instanceRecordData.materialTypeId },
-      }));
+    return cy
+      .wrap(Promise.resolve(true))
+      .then(() => {
+        cy.getMaterialTypes({ query: 'name="video recording"' }).then((materialType) => {
+          instanceRecordData.materialTypeId = materialType.id;
+          materialTypeValue = materialType.name;
+        });
+        cy.getLoanTypes({ limit: 1 }).then((loanTypes) => {
+          instanceRecordData.permanentLoanTypeId = loanTypes[0].id;
+        });
+        cy.getHoldingTypes({ limit: 1 }).then((holdingsTypes) => {
+          instanceRecordData.holdingsTypeId = holdingsTypes[0].id;
+        });
+        cy.getLocations({ limit: 1 }).then((location) => {
+          instanceRecordData.permanentLocationId = location.id;
+        });
+        InventoryHoldings.getHoldingSources({ limit: 1 }).then((holdingsSources) => {
+          instanceRecordData.sourceId = holdingsSources[0].id;
+        });
+        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+          instanceRecordData.instanceTypeId = instanceTypes[0].id;
+        });
+      })
+      .then(() => {
+        const items = this.itemStatusesToCreate().map((status) => ({
+          itemId: uuid(),
+          barcode: uuid(),
+          status: { name: status },
+          permanentLoanType: { id: instanceRecordData.permanentLoanTypeId },
+          materialType: { id: instanceRecordData.materialTypeId },
+        }));
 
-      cy.createInstance({
-        instance: {
-          instanceId: instanceRecordData.instanceId,
-          instanceTypeId: instanceRecordData.instanceTypeId,
-          title: instanceRecordData.instanceTitle,
-        },
-        holdings: [{
-          holdingId: instanceRecordData.holdingId,
-          holdingsTypeId: instanceRecordData.holdingsTypeId,
-          permanentLocationId: instanceRecordData.permanentLocationId,
-          sourceId: instanceRecordData.sourceId,
-        }],
-        items: [items],
+        cy.createInstance({
+          instance: {
+            instanceId: instanceRecordData.instanceId,
+            instanceTypeId: instanceRecordData.instanceTypeId,
+            title: instanceRecordData.instanceTitle,
+          },
+          holdings: [
+            {
+              holdingId: instanceRecordData.holdingId,
+              holdingsTypeId: instanceRecordData.holdingsTypeId,
+              permanentLocationId: instanceRecordData.permanentLocationId,
+              sourceId: instanceRecordData.sourceId,
+            },
+          ],
+          items: [items],
+        });
+        cy.wrap({ items, instanceRecordData, materialTypeValue });
       });
-      cy.wrap({ items, instanceRecordData, materialTypeValue });
-    });
   },
 
   createRequestForGivenItemApi(item, { holdingId, instanceId }, requestStatus) {
@@ -146,17 +154,20 @@ export default {
       pickupServicePointId: null,
       status: requestStatus,
     };
-    return cy.wrap(Promise.resolve(true))
+    return cy
+      .wrap(Promise.resolve(true))
       .then(() => {
-        ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' }).then(servicePoints => {
-          requestData.pickupServicePointId = servicePoints[0].id;
-        });
-        cy.getUserGroups({ limit: 1 }).then(patronGroup => {
+        ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' }).then(
+          (servicePoints) => {
+            requestData.pickupServicePointId = servicePoints[0].id;
+          },
+        );
+        cy.getUserGroups({ limit: 1 }).then((patronGroup) => {
           userData.patronGroup = patronGroup;
         });
       })
       .then(() => {
-        users.createViaApi(userData).then(user => {
+        users.createViaApi(userData).then((user) => {
           createdUserId = user.id;
           requestData.requesterId = user.id;
         });
@@ -220,13 +231,13 @@ export default {
   },
 
   verifyItemStatusUpdatedDate() {
-    this.getStatusUpdatedValue().then(value => {
+    this.getStatusUpdatedValue().then((value) => {
       const now = new Date();
       now.setHours(
         now.getUTCHours(),
         now.getUTCMinutes(),
         now.getUTCSeconds(),
-        now.getUTCMilliseconds()
+        now.getUTCMilliseconds(),
       );
 
       const statusDateInMs = new Date(value).getTime();
@@ -239,5 +250,5 @@ export default {
 
   verifyRequestStatus(value) {
     cy.expect(KeyValue('Request status').has({ value }));
-  }
+  },
 };

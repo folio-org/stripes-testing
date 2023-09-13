@@ -41,7 +41,7 @@ describe('Circulation log', () => {
     title: getTestEntityValue('InstanceCircLog'),
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestCircLog', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const requestPolicyBody = {
     requestTypes: [REQUEST_TYPES.RECALL],
@@ -137,7 +137,12 @@ describe('Circulation log', () => {
         ruleProps.o +
         ' n ' +
         ruleProps.n;
-      CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
+      CirculationRules.addRuleViaApi(
+        originalCirculationRules,
+        ruleProps,
+        't ',
+        testData.loanTypeId,
+      );
     });
 
     cy.createTempUser([permissions.circulationLogAll.gui], patronGroup.name)
@@ -148,16 +153,18 @@ describe('Circulation log', () => {
         UserEdit.addServicePointViaApi(
           testData.userServicePoint.id,
           userData.userId,
-          testData.userServicePoint.id
+          testData.userServicePoint.id,
         );
-        cy.createTempUser([permissions.requestsAll.gui], patronGroup.name).then((userProperties) => {
-          userForRequest = userProperties;
-          UserEdit.addServicePointViaApi(
-            testData.userServicePoint.id,
-            userForRequest.userId,
-            testData.userServicePoint.id
-          );
-        });
+        cy.createTempUser([permissions.requestsAll.gui], patronGroup.name).then(
+          (userProperties) => {
+            userForRequest = userProperties;
+            UserEdit.addServicePointViaApi(
+              testData.userServicePoint.id,
+              userForRequest.userId,
+              testData.userServicePoint.id,
+            );
+          },
+        );
       });
   });
 
@@ -201,7 +208,9 @@ describe('Circulation log', () => {
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
-    UserEdit.changeServicePointPreferenceViaApi(userForRequest.userId, [testData.userServicePoint.id]);
+    UserEdit.changeServicePointPreferenceViaApi(userForRequest.userId, [
+      testData.userServicePoint.id,
+    ]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Users.deleteViaApi(userData.userId);
     Users.deleteViaApi(userForRequest.userId);
@@ -211,7 +220,7 @@ describe('Circulation log', () => {
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
+      testData.defaultLocation.id,
     );
     cy.deleteLoanType(testData.loanTypeId);
   });
@@ -221,6 +230,6 @@ describe('Circulation log', () => {
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       checkActionsButton('Recall requested');
-    }
+    },
   );
 });

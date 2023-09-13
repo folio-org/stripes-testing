@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import permissions from '../../support/dictionary/permissions';
 import devTeams from '../../support/dictionary/devTeams';
 import { getTestEntityValue } from '../../support/utils/stringTools';
@@ -16,7 +15,7 @@ const patronGroup = {
 };
 let userData;
 const testData = {
-  userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestReceiveNotice', uuid()),
+  userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   ruleProps: {},
 };
 
@@ -34,7 +33,7 @@ describe('Circulation log', () => {
             UserEdit.addServicePointViaApi(
               testData.userServicePoint.id,
               userData.userId,
-              testData.userServicePoint.id
+              testData.userServicePoint.id,
             );
             cy.login(userData.username, userData.password, {
               path: TopMenu.circulationLogPath,
@@ -93,6 +92,6 @@ describe('Circulation log', () => {
       SearchPane.setFilterOptionFromAccordion('request', 'Created');
       SearchPane.checkResultSearch({ object: 'Request' });
       SearchPane.checkExportResultIsUnavailable();
-    }
+    },
   );
 });

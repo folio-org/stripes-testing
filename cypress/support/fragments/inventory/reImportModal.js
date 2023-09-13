@@ -1,19 +1,20 @@
 import { including } from '@interactors/html';
 import { Button, Modal, Select, TextField } from '../../../../interactors';
 
-const externalIdentifierType = Select({ name:'externalIdentifierType' });
-const selectedJobProfile = Select({ name:'selectedJobProfileId' });
-const externalIdentifierField = TextField({ name:'externalIdentifier' });
+const externalIdentifierType = Select({ name: 'externalIdentifierType' });
+const selectedJobProfile = Select({ name: 'selectedJobProfileId' });
+const externalIdentifierField = TextField({ name: 'externalIdentifier' });
 const importButton = Button('Import');
 const reImportModal = Modal('Re-import');
 
 function verifyListIsSortedInAlhpabeticalOrder() {
   const optionsArray = [];
-  cy.get('[name="selectedJobProfileId"] option').each(($el, index) => {
-    optionsArray[index] = $el.text();
-  })
+  cy.get('[name="selectedJobProfileId"] option')
+    .each(($el, index) => {
+      optionsArray[index] = $el.text();
+    })
     .then(() => {
-      expect(optionsArray).to.deep.equal(optionsArray.sort());  // note deep for arrays
+      expect(optionsArray).to.deep.equal(optionsArray.sort()); // note deep for arrays
     });
 }
 
@@ -38,24 +39,24 @@ export default {
     cy.expect(reImportModal.absent());
   },
 
-  verifyModalWithOneTargetProfile:() => {
+  verifyModalWithOneTargetProfile: () => {
     cy.expect([
       reImportModal.exists(),
       selectedJobProfile.exists(),
       externalIdentifierField.exists(),
       Button('Cancel').exists(),
-      importButton.has({ visible: false })
+      importButton.has({ visible: false }),
     ]);
   },
 
-  verifyModalWithSeveralTargetProfiles:() => {
+  verifyModalWithSeveralTargetProfiles: () => {
     cy.expect([
       reImportModal.exists(),
       externalIdentifierType.exists(),
       selectedJobProfile.exists(),
       externalIdentifierField.exists(),
       Button('Cancel').exists(),
-      importButton.has({ visible: false })
+      importButton.has({ visible: false }),
     ]);
   },
 
@@ -67,5 +68,5 @@ export default {
   verifyExternalTargetField(profileName) {
     cy.expect(reImportModal.find(externalIdentifierType).has({ content: including(profileName) }));
     verifyListIsSortedInAlhpabeticalOrder();
-  }
+  },
 };

@@ -31,13 +31,16 @@ describe('bulk-edit', () => {
         permissions.inventoryAll.gui,
         permissions.exportManagerAll.gui,
       ])
-        .then(userProperties => {
+        .then((userProperties) => {
           user = userProperties;
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading
+            waiter: BulkEditSearchPane.waitLoading,
           });
-          item.instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+          item.instanceId = InventoryInstances.createInstanceViaApi(
+            item.instanceName,
+            item.itemBarcode,
+          );
           FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.itemBarcode);
         })
         .then(() => {
@@ -55,12 +58,21 @@ describe('bulk-edit', () => {
       FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName);
     });
 
-    it('C353971 Verify that user can view data in Export Manager based on permissions (In-app approach) (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-      cy.visit(TopMenu.exportManagerPath);
-      ExportManagerSearchPane.searchByBulkEdit();
-      ExportManagerSearchPane.selectJob(user.username);
-      ExportManagerSearchPane.clickJobIdInThirdPane();
-      BulkEditFiles.verifyMatchedResultFileContent(matchedRecordsFileName, [item.itemBarcode], 'barcode', true);
-    });
+    it(
+      'C353971 Verify that user can view data in Export Manager based on permissions (In-app approach) (firebird)',
+      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      () => {
+        cy.visit(TopMenu.exportManagerPath);
+        ExportManagerSearchPane.searchByBulkEdit();
+        ExportManagerSearchPane.selectJob(user.username);
+        ExportManagerSearchPane.clickJobIdInThirdPane();
+        BulkEditFiles.verifyMatchedResultFileContent(
+          matchedRecordsFileName,
+          [item.itemBarcode],
+          'barcode',
+          true,
+        );
+      },
+    );
   });
 });

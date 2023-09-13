@@ -1,8 +1,13 @@
 import {
-  Button, including, matching, MultiColumnList, not, Page, Pane,
+  Button,
+  including,
+  matching,
+  MultiColumnList,
+  not,
+  Page,
+  Pane,
 } from '../../../interactors';
 import getLongDelay from '../../support/utils/cypressTools';
-
 
 describe('ui-inventory: MARC', () => {
   beforeEach('navigates to Inventory', () => {
@@ -23,7 +28,7 @@ describe('ui-inventory: MARC', () => {
           MultiColumnList().click({ row: 0, content: 'Robert C. Klove papers.' }),
           Pane(including('Instance')).find(Button('Actions')).click(),
           // FIXME: This button is disabled for unknown reason
-          Button('Derive new MARC bibliographic record').click()
+          Button('Derive new MARC bibliographic record').click(),
         ]);
       });
 
@@ -45,7 +50,7 @@ describe('ui-inventory: MARC', () => {
         MultiColumnList().click({ row: 0, content: 'Robert C. Klove papers.' }),
         Pane(including('Instance')).find(Button('Actions')).click(),
         // FIXME: This button is disabled for unknown reason
-        Button('Edit in quickMARC').click()
+        Button('Edit in quickMARC').click(),
       ]);
     });
 
@@ -63,14 +68,16 @@ describe('ui-inventory: MARC', () => {
         });
 
         it('should add default $a subfield', () => {
-          newField.find('textarea')
-            .should(textArea => expect(textArea.value).to.eq('$a '));
+          newField.find('textarea').should((textArea) => expect(textArea.value).to.eq('$a '));
         });
 
         describe('adding some data to new field and saving', () => {
           beforeEach(() => {
-            cy.get('[class*="quickMarcEditorRow--"]:last-child').find('textarea').type('Some test data');
-            cy.get('[class*="quickMarcEditorRow--"]:last-child').find('input')
+            cy.get('[class*="quickMarcEditorRow--"]:last-child')
+              .find('textarea')
+              .type('Some test data');
+            cy.get('[class*="quickMarcEditorRow--"]:last-child')
+              .find('input')
               .then(([tag, indicator1, indicator2]) => {
                 cy.wrap(tag).type('650');
                 cy.wrap(indicator1).type('\\');
@@ -94,7 +101,8 @@ describe('ui-inventory: MARC', () => {
       beforeEach('and adding a 006/00 field', () => {
         cy.get('.quickMarcEditorAddField:last').click();
 
-        cy.get('[class*="quickMarcEditorRow--"]:last-child').find('input')
+        cy.get('[class*="quickMarcEditorRow--"]:last-child')
+          .find('input')
           .then(([tag]) => {
             cy.wrap(tag).type('006');
           });
@@ -120,7 +128,7 @@ describe('ui-inventory: MARC', () => {
           cy.do([
             Button('Save & close').click(),
             Pane(including('Instance')).find(Button('Actions')).click(),
-            Button('View source').click()
+            Button('View source').click(),
           ]);
         });
 

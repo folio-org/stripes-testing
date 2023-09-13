@@ -15,7 +15,7 @@ describe('data-import', () => {
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
       profileName: `C2332 autotest job profile ${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
     before('create test data', () => {
@@ -34,16 +34,20 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfileLongName);
     });
 
-    it('C2332 Edit an existing job profile by adding a long name (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      JobProfiles.checkListOfExistingProfilesIsDisplayed();
-      JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-      JobProfileView.edit();
-      JobProfileEdit.verifyScreenName(jobProfile.profileName);
-      JobProfileEdit.changeProfileName(jobProfileLongName);
-      JobProfileEdit.saveAndClose();
-      JobProfileView.verifyJobProfileOpened();
-      JobProfileView.verifyJobProfileName(jobProfileLongName);
-      JobProfiles.checkCalloutMessage(jobProfileLongName);
-    });
+    it(
+      'C2332 Edit an existing job profile by adding a long name (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
+        JobProfiles.checkListOfExistingProfilesIsDisplayed();
+        JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+        JobProfileView.edit();
+        JobProfileEdit.verifyScreenName(jobProfile.profileName);
+        JobProfileEdit.changeProfileName(jobProfileLongName);
+        JobProfileEdit.saveAndClose();
+        JobProfileView.verifyJobProfileOpened();
+        JobProfileView.verifyJobProfileName(jobProfileLongName);
+        JobProfiles.checkCalloutMessage(jobProfileLongName);
+      },
+    );
   });
 });

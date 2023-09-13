@@ -1,7 +1,4 @@
-import {
-  Pane,
-  including,
-} from '../../../interactors';
+import { Pane, including } from '../../../interactors';
 import users from '../../support/fragments/users/users';
 
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
@@ -19,16 +16,16 @@ describe('Creating user', () => {
   });
 
   afterEach(() => {
-    cy.getUsers({ query: `personal.lastName="${lastName}"` })
-      .then(() => {
-        Cypress.env('users').forEach(user => {
-          users.deleteViaApi(user.id);
-        });
+    cy.getUsers({ query: `personal.lastName="${lastName}"` }).then(() => {
+      Cypress.env('users').forEach((user) => {
+        users.deleteViaApi(user.id);
       });
+    });
   });
 
-  it('should be possible by filling the "Create user" form and submitting it', function () {
-    const userGroupOption = Cypress.env('userGroups')[0].group + ' (' + Cypress.env('userGroups')[0].desc + ')';
+  it('should be possible by filling the "Create user" form and submitting it', () => {
+    const userGroupOption =
+      Cypress.env('userGroups')[0].group + ' (' + Cypress.env('userGroups')[0].desc + ')';
 
     cy.visit('/users/create');
     cy.createUser(lastName, userGroupOption, 'test@folio.org');

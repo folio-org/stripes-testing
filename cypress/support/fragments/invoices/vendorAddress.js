@@ -1,5 +1,5 @@
 export default {
-  vendorAddress : {
+  vendorAddress: {
     addressLine1: '',
     addressLine2: '',
     city: '',
@@ -8,6 +8,6 @@ export default {
     country: '',
     isPrimary: true,
     categories: [],
-    language: ''
-  }
+    language: '',
+  },
 };

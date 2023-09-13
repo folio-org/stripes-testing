@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import testTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
@@ -16,7 +15,7 @@ describe('Create Item or Title level request', () => {
     name: 'groupToTLR' + getRandomPostfix(),
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestTLR', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
 
   before('Preconditions', () => {
@@ -33,7 +32,7 @@ describe('Create Item or Title level request', () => {
           UserEdit.addServicePointViaApi(
             testData.userServicePoint.id,
             userData.userId,
-            testData.userServicePoint.id
+            testData.userServicePoint.id,
           );
         });
       })
@@ -55,6 +54,6 @@ describe('Create Item or Title level request', () => {
       cy.visit(SettingsMenu.circulationTitleLevelRequestsPath);
       TitleLevelRequests.waitLoading();
       TitleLevelRequests.checkCirculationHasTLR();
-    }
+    },
   );
 });

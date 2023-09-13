@@ -36,8 +36,8 @@ describe('orders: Settings', () => {
         name: 'TestAccout1',
         notes: '',
         paymentMethod: 'Cash',
-      }
-    ]
+      },
+    ],
   };
   const orderLineTitle = BasicOrderLine.defaultOrderLine.titleOrPackage;
   const instanceStatus = 'Cataloged';
@@ -55,45 +55,48 @@ describe('orders: Settings', () => {
   before(() => {
     cy.getAdminToken();
 
-    ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' })
-      .then((servicePoints) => {
-        effectiveLocationServicePoint = servicePoints[0];
-        NewLocation.createViaApi(NewLocation.getDefaultLocation(effectiveLocationServicePoint.id))
-          .then((locationResponse) => {
-            location = locationResponse;
-            Organizations.createOrganizationViaApi(organization)
-              .then(organizationsResponse => {
-                organization.id = organizationsResponse;
-                order.vendor = organizationsResponse;
-              });
+    ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
+      effectiveLocationServicePoint = servicePoints[0];
+      NewLocation.createViaApi(
+        NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
+      ).then((locationResponse) => {
+        location = locationResponse;
+        Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
+          organization.id = organizationsResponse;
+          order.vendor = organizationsResponse;
+        });
 
-            cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-            cy.createOrderApi(order)
-              .then((response) => {
-                orderNumber = response.body.poNumber;
-                Orders.searchByParameter('PO number', orderNumber);
-                Orders.selectFromResultsList();
-                Orders.createPOLineViaActions();
-                OrderLines.POLineInfodorPhysicalMaterialWithLocation(orderLineTitle, locationResponse.institutionId);
-                OrderLines.backToEditingOrder();
-              });
-          });
+        cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+        cy.createOrderApi(order).then((response) => {
+          orderNumber = response.body.poNumber;
+          Orders.searchByParameter('PO number', orderNumber);
+          Orders.selectFromResultsList();
+          Orders.createPOLineViaActions();
+          OrderLines.POLineInfodorPhysicalMaterialWithLocation(
+            orderLineTitle,
+            locationResponse.institutionId,
+          );
+          OrderLines.backToEditingOrder();
+        });
       });
+    });
 
     cy.createTempUser([
       permissions.uiOrdersReopenPurchaseOrders.gui,
       permissions.uiOrdersView.gui,
       permissions.uiSettingsOrdersCanViewAndEditAllSettings.gui,
-      permissions.uiInventoryViewInstances.gui
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path:SettingsMenu.ordersInstanceStatusPath, waiter: SettingsOrders.waitLoadingInstanceStatus });
+      permissions.uiInventoryViewInstances.gui,
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(userProperties.username, userProperties.password, {
+        path: SettingsMenu.ordersInstanceStatusPath,
+        waiter: SettingsOrders.waitLoadingInstanceStatus,
       });
+    });
   });
 
   after(() => {
-    cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList();
     Orders.unOpenOrder();
@@ -108,7 +111,7 @@ describe('orders: Settings', () => {
       location.institutionId,
       location.campusId,
       location.libraryId,
-      location.id
+      location.id,
     );
     cy.visit(SettingsMenu.ordersInstanceStatusPath);
     SettingsOrders.selectInstanceStatus(otherInstanceStatus);
@@ -119,21 +122,25 @@ describe('orders: Settings', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C9219 Adjust Instance status, instance type and loan type defaults (items for receiving includes "Order closed" statuses) (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
-    SettingsOrders.selectInstanceStatus(instanceStatus);
-    cy.visit(SettingsMenu.ordersInstanceTypePath);
-    SettingsOrders.selectInstanceType(instanceType);
-    cy.visit(SettingsMenu.ordersLoanTypePath);
-    SettingsOrders.selectLoanType(loanType);
-    cy.visit(TopMenu.ordersPath);
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList(orderNumber);
-    Orders.openOrder();
-    OrderLines.selectPOLInOrder(0);
-    OrderLines.openInstance();
-    InventoryInstance.openHoldingsAccordion(location.name);
-    InventoryInstance.verifyLoan(loanType);
-    InstanceRecordView.verifyResourceType(instanceType);
-    InstanceRecordView.verifyInstanceStatusTerm(instanceStatus);
-  });
+  it(
+    'C9219 Adjust Instance status, instance type and loan type defaults (items for receiving includes "Order closed" statuses) (thunderjet)',
+    { tags: [testType.smoke, devTeams.thunderjet] },
+    () => {
+      SettingsOrders.selectInstanceStatus(instanceStatus);
+      cy.visit(SettingsMenu.ordersInstanceTypePath);
+      SettingsOrders.selectInstanceType(instanceType);
+      cy.visit(SettingsMenu.ordersLoanTypePath);
+      SettingsOrders.selectLoanType(loanType);
+      cy.visit(TopMenu.ordersPath);
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList(orderNumber);
+      Orders.openOrder();
+      OrderLines.selectPOLInOrder(0);
+      OrderLines.openInstance();
+      InventoryInstance.openHoldingsAccordion(location.name);
+      InventoryInstance.verifyLoan(loanType);
+      InstanceRecordView.verifyResourceType(instanceType);
+      InstanceRecordView.verifyInstanceStatusTerm(instanceStatus);
+    },
+  );
 });
