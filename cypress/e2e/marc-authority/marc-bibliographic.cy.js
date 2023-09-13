@@ -13,7 +13,6 @@ import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 describe('MARC -> MARC Bibliographic', () => {
   const testData = {};
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-  const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
   const tagArray = [
     '100',
     '110',
@@ -37,12 +36,15 @@ describe('MARC -> MARC Bibliographic', () => {
     '830',
   ];
   let createdInstanceID;
+  let fileName;
 
-  before(() => {
+  beforeEach(() => {
+    fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
     cy.createTempUser([
       Permissions.inventoryAll.gui,
       Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
       Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+      Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       Permissions.moduleDataImportEnabled.gui,
     ]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
@@ -65,10 +67,22 @@ describe('MARC -> MARC Bibliographic', () => {
     });
   });
 
-  after(() => {
+  afterEach(() => {
     if (createdInstanceID) InventoryInstance.deleteInstanceViaApi(createdInstanceID);
     Users.deleteViaApi(testData.userProperties.userId);
   });
+
+  it(
+    'C360541 Verify that "Link to MARC Authority record" icon displays next to MARC fields when editing Bib record (spitfire)',
+    { tags: [TestTypes.smoke, DevTeams.spitfire] },
+    () => {
+      InventoryInstance.editMarcBibliographicRecord();
+      tagArray.forEach((tag) => {
+        QuickMarcEditor.checkLinkButtonExist(tag);
+      });
+      QuickMarcEditor.checkLinkButtonToolTipText('Link to MARC Authority record');
+    },
+  );
 
   it(
     'C360542 Verify that "Link to MARC Authority record" icon displays next to MARC fields when deriving Bib record (spitfire)',
