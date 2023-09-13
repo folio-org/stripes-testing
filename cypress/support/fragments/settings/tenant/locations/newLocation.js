@@ -1,8 +1,8 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../../../utils/stringTools';
-import Institutions from '../institutions';
-import Campuses from '../campuses';
-import Libraries from '../libraries';
+import Institutions from '../location-setup/institutions';
+import Campuses from '../location-setup/campuses';
+import Libraries from '../location-setup/libraries';
 
 const getDefaultLocation = (
   specialServicePointId,

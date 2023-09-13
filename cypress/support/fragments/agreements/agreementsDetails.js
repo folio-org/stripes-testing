@@ -13,6 +13,7 @@ import {
   SelectionOption,
   SearchField,
   Spinner,
+  Pane
 } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 import ExistingNoteEdit from '../notes/existingNoteEdit';
@@ -35,6 +36,7 @@ const showMoreLink = Button('Show more');
 const notesAccordion = rootSection.find(Accordion({ id: 'notes' }));
 const deleteConfirmationModal = Modal({ id: 'delete-agreement-confirmation' });
 const cancelButton = Button('Cancel');
+const notesList = MultiColumnList({ id: 'notes-list' });
 
 function waitLoading() {
   cy.xpath(headerXpath).should('be.visible');
@@ -73,7 +75,7 @@ export default {
 
   clickOnNoteRecord() {
     cy.expect(Spinner().absent());
-    cy.do(MultiColumnList({ id: 'notes-list' }).click({ row: 0 }));
+    cy.do((notesList.click({ row: 0 })));
   },
 
   clickOnNewButton() {
@@ -193,5 +195,26 @@ export default {
 
   agreementListClick(agreementName) {
     cy.do(MultiColumnListCell(agreementName).click());
+  },
+
+  verifyNotesIsEmpty() {
+    cy.expect(notesList.absent());
+  },
+
+  verifyNotesCount(itemCount) {
+    cy.expect(Accordion({ label: including('Notes') }).find(Badge()).has({ text: itemCount }));
+  },
+
+  verifyAgreementDetailsIsDisplayedByTitle(agreementTitle) {
+    cy.expect(Pane(agreementTitle).exists());
+  },
+
+  verifySpecialNotesRow(title, details, type) {
+    cy.expect([
+      notesList.exists(),
+    ]);
+    cy.expect(notesList.find(MultiColumnListCell({ column: 'Title and details', content: including(title) })).exists());
+    cy.expect(notesList.find(MultiColumnListCell({ column: 'Title and details', content: including(details) })).exists());
+    cy.expect(notesList.find(MultiColumnListCell({ column: 'Type', content: including(type) })).exists());
   },
 };

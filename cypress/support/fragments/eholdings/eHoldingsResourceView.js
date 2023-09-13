@@ -87,7 +87,7 @@ export default {
     openActionsMenu();
     cy.expect(Button('Add to holdings').exists());
   },
-  verifyCustomLabelValue(labelName, value) {
+  verifyCustomLabelValue(labelName, value = 'No value set-') {
     this.waitLoading();
     cy.expect(customLabelValue(labelName).has({ value }));
   },

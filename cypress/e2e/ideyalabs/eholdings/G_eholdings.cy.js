@@ -1,5 +1,4 @@
 import testTypes from '../../../support/dictionary/testTypes';
-import circulationRules from '../../../support/fragments/circulation/circulation-rules';
 import eHoldingsNewCustomPackage from '../../../support/fragments/eholdings/eHoldingsNewCustomPackage';
 import eHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
 import eHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
@@ -9,7 +8,6 @@ import eHoldingsProvidersSearch from '../../../support/fragments/eholdings/eHold
 import eHoldingsSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
 import organizations from '../../../support/fragments/organizations/organizations';
 import newRequest from '../../../support/fragments/requests/newRequest';
-import settingsMenu from '../../../support/fragments/settingsMenu';
 import topMenu from '../../../support/fragments/topMenu';
 import eHolding from './eHolding';
 
@@ -31,26 +29,13 @@ describe.skip('Create a custom package', () => {
       eHolding.verifyPackage();
     },
   );
-  // test below is implemented in scope of FAT-1303 in:
+  // test below is implemented in scope of FAT-1306 in:
   // cypress/e2e/eholdings/eholdings-packages-search.cy.js
   it('C692 Create a custom package', { tags: [testTypes.ideaLabsTests] }, () => {
     cy.visit(topMenu.eholdingsPath);
     eHoldingsSearch.switchToPackages();
     eHolding.createAndVerify();
   });
-  // test below is implemented in scope of FAT-1306 in:
-  // cypress/e2e/eholdings/eholdings-custom-packages.cy.js
-  it(
-    'C695 Package Record: Search all titles included in a package (spitfire)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      eHolding.switchToPackageAndSearch();
-      eHoldingsPackages.openPackage();
-      eHoldingsProviders.titlesSearch();
-      eHoldingsProviders.clickSearchTitles();
-      eHoldingsProviders.subjectsAssertion();
-    },
-  );
   it(
     'C17090 Title Record - Packages accordion - Filter packages list (spitfire)',
     { tags: [testTypes.ideaLabsTests] },
