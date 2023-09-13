@@ -24,4 +24,4 @@ export default HTML.extend('button')
       },
       default: false,
     },
-  });
+  }).actions({ hoverMouse: ({ perform }) => perform((el) => el.dispatchEvent(new Event('mouseover'))) });

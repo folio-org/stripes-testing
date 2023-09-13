@@ -13,7 +13,7 @@ import {
   HTML,
   including,
   PaneContent,
-  PaneHeader,
+  PaneHeader, Tooltip,
 } from '../../../interactors';
 import dateTools from '../utils/dateTools';
 import getRandomPostfix from '../utils/stringTools';
@@ -962,6 +962,11 @@ export default {
 
   checkLinkButtonExist(tag) {
     cy.expect(getRowInteractorByTagName(tag).find(linkToMarcRecordButton).exists());
+  },
+
+  checkLinkButtonToolTipText(text) {
+    cy.do(getRowInteractorByTagName('100').find(linkToMarcRecordButton).hoverMouse());
+    cy.expect(Tooltip().has({ text }));
   },
 
   checkLinkButtonExistByRowIndex(rowIndex) {
