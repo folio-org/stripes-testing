@@ -105,11 +105,6 @@ export default {
     cy.expect(PaneContent({ id: 'search-results-content' }).exists());
   },
 
-  switchToPackages() {
-    cy.visit(topMenu.eholdingsPath);
-    eHoldingsProvidersSearch.byProvider('Gale Cengage');
-  },
-
   editActions: () => {
     cy.expect(Spinner().absent());
     cy.do(actionsButton.click());
@@ -165,12 +160,6 @@ export default {
     cy.do(selectionStatusSection.find(RadioButton(selectionStatus)).click());
   },
 
-  bySelectionStatusOpen(selectionStatus) {
-    cy.do(selectionStatusSection.find(Button('Selection status')).click());
-    cy.do(selectionStatusSection.find(RadioButton(selectionStatus)).click());
-    cy.do(Button('Search').click());
-  },
-
   editSchedule({ data }) {
     cy.do([
       NavListItem(data.name).click(),
@@ -186,11 +175,6 @@ export default {
     eHoldingsSearch.switchToPackages();
     eHoldingsProvidersSearch.byProvider('VLeBooks');
     eHoldingsPackagesSearch.bySelectionStatus('Selected');
-  },
-
-  packageButton: () => {
-    cy.expect(SearchButton.exists());
-    cy.do(SearchButton.click());
   },
 
   searchButton() {
