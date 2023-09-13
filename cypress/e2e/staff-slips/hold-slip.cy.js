@@ -33,10 +33,7 @@ describe('Check In - Actions', () => {
     name: `groupChekIn ${getRandomPostfix()}`,
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
-      'autotest check in',
-      uuid(),
-    ),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const itemData = {
     barcode: generateItemBarcode(),
@@ -206,6 +203,7 @@ describe('Check In - Actions', () => {
     cy.visit(TopMenu.checkOutPath);
     Checkout.waitLoading();
     // without this waiter, the user will not be found
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(3000);
     CheckOutActions.checkOutUser(userData.barcode, userData.username);
     CheckOutActions.checkOutItem(itemData.barcode);

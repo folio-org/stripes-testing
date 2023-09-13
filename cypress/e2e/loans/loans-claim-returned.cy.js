@@ -43,10 +43,7 @@ describe('Loans ', () => {
   let defaultLocation;
   const reasonWhyItemIsClaimedOut = 'reason why the item is claimed out';
   const reasonWhyItemIsDeclaredLost = 'reason why the item is declared lost';
-  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation(
-    'autotest loans claim returned',
-    uuid(),
-  );
+  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
   const testData = {};
   const userData = {};
   const ownerData = {};

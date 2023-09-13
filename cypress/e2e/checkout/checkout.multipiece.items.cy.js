@@ -5,7 +5,6 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import Helper from '../../support/fragments/finance/financeHelper';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import ServicePoint from '../../support/fragments/servicePoint/servicePoint';
 import NewServicePoint from '../../support/fragments/settings/tenant/servicePoints/newServicePoint';
 import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipieceCheckOut';
 import Checkout from '../../support/fragments/checkout/checkout';
@@ -122,7 +121,7 @@ describe('Check Out', () => {
         InventoryInstance.deleteInstanceViaApi(testInstanceIds.instanceId);
       });
       UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.id]).then(() => {
-        ServicePoint.deleteViaApi(servicePoint.id);
+        ServicePoints.deleteViaApi(servicePoint.id);
         Users.deleteViaApi(user.userId);
       });
     });
