@@ -13,7 +13,8 @@ import {
   HTML,
   including,
   PaneContent,
-  PaneHeader, Tooltip,
+  PaneHeader,
+  Tooltip,
 } from '../../../interactors';
 import dateTools from '../utils/dateTools';
 import getRandomPostfix from '../utils/stringTools';
