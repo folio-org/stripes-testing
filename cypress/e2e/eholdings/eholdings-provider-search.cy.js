@@ -7,7 +7,7 @@ import users from '../../support/fragments/users/users';
 import devTeams from '../../support/dictionary/devTeams';
 import eHoldingsPackages from '../../support/fragments/eholdings/eHoldingsPackages';
 
-describe('ui-eholdings: Provider manage', () => {
+describe('eHoldings -> Provider', () => {
   let userId;
 
   before(() => {
