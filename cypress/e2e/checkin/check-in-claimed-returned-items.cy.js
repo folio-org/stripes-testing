@@ -28,10 +28,7 @@ describe('Check In - Actions', () => {
     name: `groupCheckIn ${getRandomPostfix()}`,
   };
   const testData = {
-    servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation(
-      'autotest check in',
-      uuid(),
-    ),
+    servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const itemsData = {
     itemsWithSeparateInstance: [

@@ -16,7 +16,7 @@ import NewLocation from '../../../support/fragments/settings/tenant/locations/ne
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
 import ItemRecordEdit from '../../../support/fragments/inventory/item/itemRecordEdit';
-import SwitchServicePoint from '../../../support/fragments/servicePoint/switchServicePoint';
+import SwitchServicePoint from '../../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
 import Parallelization from '../../../support/dictionary/parallelization';
@@ -92,12 +92,14 @@ describe('orders: Receiving and Check-in', () => {
               OrderLines.openInstance();
               InventoryInstance.openHoldingsAccordion(location.name);
               // Need to wait,while instance will be loaded
+              // eslint-disable-next-line cypress/no-unnecessary-waiting
               cy.wait(5000);
               InventoryInstance.openItemByBarcodeAndIndex('No barcode');
               ItemActions.edit();
               ItemRecordEdit.addBarcode(barcodeForFirstItem);
               ItemRecordEdit.save();
               // Need to wait,while instance will be saved
+              // eslint-disable-next-line cypress/no-unnecessary-waiting
               cy.wait(5000);
               ItemActions.closeItem();
               InventoryInstance.openHoldingsAccordion(location.name);
@@ -106,6 +108,7 @@ describe('orders: Receiving and Check-in', () => {
               ItemRecordEdit.addBarcode(barcodeForSecondItem);
               ItemRecordEdit.save();
               // Need to wait,while instance will be saved
+              // eslint-disable-next-line cypress/no-unnecessary-waiting
               cy.wait(5000);
               ItemActions.closeItem();
               InventoryInstance.openHoldingsAccordion(location.name);
@@ -114,6 +117,7 @@ describe('orders: Receiving and Check-in', () => {
               ItemRecordEdit.addBarcode(barcodeForThirdItem);
               ItemRecordEdit.save();
               // Need to wait,while instance will be saved
+              // eslint-disable-next-line cypress/no-unnecessary-waiting
               cy.wait(5000);
               ItemActions.closeItem();
               InventoryInstance.openHoldingsAccordion(location.name);
@@ -122,6 +126,7 @@ describe('orders: Receiving and Check-in', () => {
               ItemRecordEdit.addBarcode(barcodeForFourItem);
               ItemRecordEdit.save();
               // Need to wait,while instance will be saved
+              // eslint-disable-next-line cypress/no-unnecessary-waiting
               cy.wait(5000);
               ItemActions.closeItem();
               InventoryInstance.openHoldingsAccordion(location.name);
@@ -130,6 +135,7 @@ describe('orders: Receiving and Check-in', () => {
               ItemRecordEdit.addBarcode(barcodeForFifthItem);
               ItemRecordEdit.save();
               // Need to wait,while instance will be saved
+              // eslint-disable-next-line cypress/no-unnecessary-waiting
               cy.wait(5000);
               ItemActions.closeItem();
               InventoryInstance.openHoldingsAccordion(location.name);
@@ -138,6 +144,7 @@ describe('orders: Receiving and Check-in', () => {
               ItemRecordEdit.addBarcode(barcodeForSixthItem);
               ItemRecordEdit.save();
               // Need to wait,while instance will be saved
+              // eslint-disable-next-line cypress/no-unnecessary-waiting
               cy.wait(5000);
               ItemActions.closeItem();
               InventoryInstance.openHoldingsAccordion(location.name);
@@ -146,6 +153,7 @@ describe('orders: Receiving and Check-in', () => {
               ItemRecordEdit.addBarcode(barcodeForSeventhItem);
               ItemRecordEdit.save();
               // Need to wait,while instance will be saved
+              // eslint-disable-next-line cypress/no-unnecessary-waiting
               cy.wait(5000);
               ItemActions.closeItem();
             });
@@ -154,15 +162,19 @@ describe('orders: Receiving and Check-in', () => {
             SwitchServicePoint.switchServicePoint(circ2LocationServicePoint.name);
             SwitchServicePoint.checkIsServicePointSwitched(circ2LocationServicePoint.name);
             // Need to wait,while Checkin page will be loaded in same location
+            // eslint-disable-next-line cypress/no-unnecessary-waiting
             cy.wait(2000);
             CheckInActions.checkInItemGui(barcodeForFirstItem);
+            // eslint-disable-next-line cypress/no-unnecessary-waiting
             cy.wait(2000);
             CheckInActions.checkInItemGui(barcodeForSecondItem);
             SwitchServicePoint.switchServicePoint(circ1LocationServicePoint.name);
             SwitchServicePoint.checkIsServicePointSwitched(circ1LocationServicePoint.name);
             // Need to wait,while Checkin page will be loaded in same location
+            // eslint-disable-next-line cypress/no-unnecessary-waiting
             cy.wait(2000);
             CheckInActions.checkInItemGui(barcodeForThirdItem);
+            // eslint-disable-next-line cypress/no-unnecessary-waiting
             cy.wait(2000);
             CheckInActions.checkInItemGui(barcodeForFourItem);
           });

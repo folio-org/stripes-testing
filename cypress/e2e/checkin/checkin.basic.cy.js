@@ -31,10 +31,7 @@ describe('Check In - Actions ', () => {
     instanceTitle: `Instance ${getRandomPostfix()}`,
   };
   let defaultLocation;
-  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation(
-    'autotest basic checkin',
-    uuid(),
-  );
+  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
   const checkInResultsData = [ITEM_STATUS_NAMES.AVAILABLE, itemData.barcode];
 
   before('Create New Item, New User and Check out item', () => {
@@ -122,6 +119,7 @@ describe('Check In - Actions ', () => {
   });
 
   it('C347631 Check in: Basic check in (vega)', { tags: [TestTypes.smoke, devTeams.vega] }, () => {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(10000);
     cy.visit(TopMenu.checkInPath);
     CheckInActions.waitLoading();

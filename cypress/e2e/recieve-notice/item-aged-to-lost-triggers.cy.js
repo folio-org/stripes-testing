@@ -42,10 +42,7 @@ describe('Loan notice triggers', () => {
     title: getTestEntityValue('InstanceNotice'),
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
-      'autotestReceiveNotice',
-      uuid(),
-    ),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     ruleProps: {},
   };
   const createNoticeTemplate = (noticeName) => {
