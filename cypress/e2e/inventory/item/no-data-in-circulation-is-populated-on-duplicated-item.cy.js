@@ -29,10 +29,7 @@ describe('inventory', () => {
       instanceTitle: `autotestInstance ${getRandomPostfix()}`,
     };
     const holdingsPermanentLocation = LOCATION_NAMES.ONLINE_UI;
-    const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation(
-      'servicePoint',
-      uuid(),
-    );
+    const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
     const testData = [ITEM_STATUS_NAMES.IN_TRANSIT, itemData.barcode];
     const newItemBarcode = uuid();
     const todayDate = moment(new Date()).format('M/D/YYYY');
@@ -121,6 +118,7 @@ describe('inventory', () => {
         cy.visit(TopMenu.checkOutPath);
         Checkout.waitLoading();
         // without this waiter, the user will not be found by username
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(4000);
         CheckOutActions.checkOutUser(user.barcode, user.username);
         CheckOutActions.checkOutItem(itemData.barcode);

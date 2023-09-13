@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import TopMenu from '../../../../support/fragments/topMenu';
 import testTypes from '../../../../support/dictionary/testTypes';
 import permissions from '../../../../support/dictionary/permissions';
@@ -80,7 +79,7 @@ describe('Bulk Edit - Logs', () => {
           cy.getMaterialTypes({ limit: 1 }).then((res) => {
             instance.materialTypeId = res.id;
           });
-          const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation('S', uuid());
+          const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
           instance.defaultLocation = Location.getDefaultLocation(servicePoint.id);
           Location.createViaApi(instance.defaultLocation);
           ServicePoints.getViaApi({ limit: 1 }).then((servicePoints) => {

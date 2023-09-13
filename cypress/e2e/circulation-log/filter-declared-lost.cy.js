@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import moment from 'moment';
 import TopMenu from '../../support/fragments/topMenu';
 import TestTypes from '../../support/dictionary/testTypes';
@@ -21,10 +20,7 @@ const item = {
   barcode: `barcode-${getRandomPostfix()}`,
 };
 const testData = {
-  userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
-    'autotest lost items',
-    uuid(),
-  ),
+  userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
 };
 const ownerBody = {
   owner: 'AutotestOwner' + getRandomPostfix(),

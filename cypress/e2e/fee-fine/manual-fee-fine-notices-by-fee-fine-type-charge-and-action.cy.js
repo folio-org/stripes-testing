@@ -34,10 +34,7 @@ describe('Overdue fine', () => {
   };
   const userData = {};
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
-      'autotestReceiveNotice',
-      uuid(),
-    ),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const createNoticeTemplate = (noticeName, noticeCategory) => {
     return {

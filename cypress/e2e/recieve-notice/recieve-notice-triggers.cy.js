@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import TestTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
@@ -80,10 +79,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
     ],
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
-      'autotest receive notice triggers',
-      uuid(),
-    ),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const searchResultsData = {
     userBarcode: null,
