@@ -30,10 +30,7 @@ describe('ui-users-loans: Loans', () => {
   const FIRST_ACTION_ROW_INDEX = 0;
   const SECOND_ACTION_ROW_INDEX = 1;
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
-      'autotestDeclareLost',
-      uuid(),
-    ),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const itemsData = {};
   let originalCirculationRules;

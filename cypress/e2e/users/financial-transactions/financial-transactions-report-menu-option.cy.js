@@ -9,14 +9,8 @@ import ServicePoints from '../../../support/fragments/settings/tenant/servicePoi
 
 describe('Financial Transactions Detail Report', () => {
   const ownerData = {};
-  const servicePoint1 = ServicePoints.getDefaultServicePointWithPickUpLocation(
-    'autotest transaction',
-    uuid(),
-  );
-  const servicePoint2 = ServicePoints.getDefaultServicePointWithPickUpLocation(
-    'autotest transaction',
-    uuid(),
-  );
+  const servicePoint1 = ServicePoints.getDefaultServicePointWithPickUpLocation();
+  const servicePoint2 = ServicePoints.getDefaultServicePointWithPickUpLocation();
 
   before('UserOwner is created', () => {
     // the login with admin, visiting the path and the waiter are separated to get the fetch request to get owners

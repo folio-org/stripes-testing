@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 import TestTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
@@ -6,7 +5,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import SwitchServicePoint from '../../support/fragments/servicePoint/switchServicePoint';
+import SwitchServicePoint from '../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
 import InTransit from '../../support/fragments/checkin/modals/inTransit';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
@@ -19,8 +18,8 @@ import Users from '../../support/fragments/users/users';
 describe.skip('Check In - Actions', () => {
   const userData = {};
   const testData = {
-    servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation('S', uuid()),
-    servicePointS1: ServicePoints.getDefaultServicePointWithPickUpLocation('S1', uuid()),
+    servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation(),
+    servicePointS1: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const itemData = {
     barcode: generateItemBarcode() + 10,

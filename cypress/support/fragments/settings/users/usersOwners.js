@@ -15,7 +15,7 @@ import { getLongDelay } from '../../../utils/cypressTools';
 import { getTestEntityValue } from '../../../utils/stringTools';
 import SettingsPane, {
   startRowIndex,
-  rootPaneSet,
+  rootPane,
   addButton,
   table as tableWithOwners,
 } from '../settingsPane';
@@ -59,7 +59,7 @@ export default {
     cy.wait('@getServicePoints', getLongDelay());
     cy.expect(PaneHeader('Fee/fine: Owners').exists());
     cy.expect(addButton.exists());
-    cy.expect(rootPaneSet.find(HTML({ className: including('spinner') })).absent());
+    cy.expect(rootPane.find(HTML({ className: including('spinner') })).absent());
     // TODO: clarify the reason of extra waiting
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(500);
@@ -195,7 +195,7 @@ export default {
     });
   },
   checkValidatorError({ placeholder = 'owner', error }) {
-    cy.expect(rootPaneSet.find(TextField({ placeholder })).has({ error }));
+    cy.expect(rootPane.find(TextField({ placeholder })).has({ error }));
   },
   addServicePointsViaApi(owner, servicePoints) {
     return cy.okapiRequest({

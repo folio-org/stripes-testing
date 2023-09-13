@@ -45,7 +45,7 @@ describe('Request notice triggers', () => {
   };
   const testData = {
     userServicePoint: {
-      ...ServicePoints.getDefaultServicePointWithPickUpLocation('autotestReceiveNotice', uuid()),
+      ...ServicePoints.getDefaultServicePointWithPickUpLocation(),
       holdShelfExpiryPeriod: { intervalId: 'Minutes', duration: '1' },
     },
     ruleProps: {},

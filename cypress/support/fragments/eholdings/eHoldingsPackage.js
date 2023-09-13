@@ -36,11 +36,10 @@ const confirmationModal = Modal({ id: 'eholdings-confirmation-modal' });
 const availableProxies = ['Inherited - None', 'FOLIO-Bugfest', 'EZProxy'];
 const proxySelect = Select({ id: 'eholdings-proxy-id' });
 const customLabelButton = Button('Custom labels');
-const displayLabel = TextField({ name: 'customLabel1.displayLabel' });
-const displayLabel1 = TextField({ name: 'customLabel2.displayLabel' });
-const fullTextFinderCheckbox = Checkbox({ name: 'customLabel2.displayOnFullTextFinder' });
+const displayLabel = (number) => TextField({ name: `customLabel${number}.displayLabel` });
+const fullTextFinderCheckbox = (number) => Checkbox({ name: `customLabel${number}.displayOnFullTextFinder` });
 const saveButton = Button('Save');
-const verifyCustomLabel = Section({ id: 'resourceShowCustomLabels' });
+const calloutEditLabelSettings = HTML(including('Custom labels have been updated'));
 const getElementIdByName = (packageName) => packageName.replaceAll(' ', '-').toLowerCase();
 const waitTitlesLoading = () => cy.url().then((url) => {
   const packageId = url.split('?')[0].split('/').at(-1);
@@ -89,16 +88,26 @@ export default {
     });
   },
 
-  customLabel(name) {
+  updateCustomLabelInSettings(labelName, labelNumber) {
     cy.do([
       customLabelButton.click(),
-      displayLabel.fillIn(name.label1),
-      displayLabel1.fillIn(name.label2),
-      fullTextFinderCheckbox.click(),
+      displayLabel(labelNumber).fillIn(labelName),
       saveButton.click(),
     ]);
-    cy.visit('/eholdings/resources/58-473-185972');
-    cy.expect(verifyCustomLabel.exists());
+    // wait for setting to apply
+    cy.wait(1500);
+    cy.expect([
+      calloutEditLabelSettings.exists(),
+      displayLabel(labelNumber).has({ value: labelName }),
+      saveButton.has({ disabled: true }),
+    ]);
+  },
+
+  setFullTextFinderForLabel(labelIndex) {
+    cy.do([fullTextFinderCheckbox(labelIndex).click(), saveButton.click()]);
+    // wait for setting to apply
+    cy.wait(1500);
+    cy.expect(calloutEditLabelSettings.exists());
   },
 
   checkEmptyTitlesList: () => {

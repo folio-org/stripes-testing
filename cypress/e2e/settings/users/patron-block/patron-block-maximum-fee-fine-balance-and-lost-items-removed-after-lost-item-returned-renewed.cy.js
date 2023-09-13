@@ -50,10 +50,7 @@ describe('Patron Block: Lost items', () => {
     ],
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
-      'autotest lost items',
-      uuid(),
-    ),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const ownerBody = {
     owner: 'AutotestOwner' + getRandomPostfix(),
