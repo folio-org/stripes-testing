@@ -19,10 +19,9 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
 import ItemRecordEdit from '../../support/fragments/inventory/item/itemRecordEdit';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import SwitchServicePoint from '../../support/fragments/servicePoint/switchServicePoint';
+import SwitchServicePoint from '../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
 import ConfirmItemInModal from '../../support/fragments/check-in-actions/confirmItemInModal';
 import Users from '../../support/fragments/users/users';
-import ServicePoint from '../../support/fragments/servicePoint/servicePoint';
 import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 
@@ -141,8 +140,8 @@ describe('inventory', () => {
         firstServicePoint.id,
         secondServicePoint.id,
       ]).then(() => {
-        ServicePoint.deleteViaApi(firstServicePoint.id);
-        ServicePoint.deleteViaApi(secondServicePoint.id);
+        ServicePoints.deleteViaApi(firstServicePoint.id);
+        ServicePoints.deleteViaApi(secondServicePoint.id);
         Users.deleteViaApi(userId);
       });
       NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
@@ -183,6 +182,7 @@ describe('inventory', () => {
           instanceTitle,
         );
         // TODO need to wait until result is displayed
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(1500);
         InventoryInstances.selectInstance();
         InventoryInstances.verifyInstanceDetailsView();
@@ -210,6 +210,7 @@ describe('inventory', () => {
           instanceTitle,
         );
         // TODO need to wait until result is displayed
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(1500);
         InventoryInstances.selectInstance();
         InventoryInstances.verifyInstanceDetailsView();

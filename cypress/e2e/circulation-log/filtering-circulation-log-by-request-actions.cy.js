@@ -41,10 +41,7 @@ describe('Circulation log', () => {
     title: getTestEntityValue('InstanceCircLog'),
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
-      'autotestCircLog',
-      uuid(),
-    ),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const requestPolicyBody = {
     requestTypes: [REQUEST_TYPES.RECALL],
