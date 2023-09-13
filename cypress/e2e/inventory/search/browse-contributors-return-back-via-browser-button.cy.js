@@ -45,7 +45,7 @@ describe('Inventory: UI navigation', () => {
 
   it(
     'C353653 Return back to "Browse inventory" pane via the web-browser "Back" button (exact match query)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire] },
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
       InventorySearchAndFilter.switchToBrowseTab();
       InventorySearchAndFilter.verifyKeywordsAsDefault();
