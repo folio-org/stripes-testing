@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import { getTestEntityValue } from '../../../../utils/stringTools';
 import { NavListItem, Pane, Button, TextField } from '../../../../../../interactors';
 
@@ -13,7 +14,10 @@ const defaultServicePoint = {
   name: undefined,
 };
 
-const getDefaultServicePointWithPickUpLocation = (servicePointName, id) => {
+const getDefaultServicePointWithPickUpLocation = (
+  servicePointName = 'autotestReceiveNotice',
+  id = uuid(),
+) => {
   return {
     ...defaultServicePoint,
     code: getTestEntityValue(servicePointName),
@@ -57,6 +61,7 @@ export default {
   createNewServicePoint({ name, code, displayName }) {
     cy.do(Button('+ New').click());
     // UI renders 2 times. There is no way to create good waiter
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
     cy.do([
       TextField({ name: 'name' }).fillIn(name),

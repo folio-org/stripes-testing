@@ -6,16 +6,18 @@ import {
   EditableList,
   EditableListRow,
   ColumnHeader,
+  MultiColumnListHeader,
+  MultiColumnListCell,
+  HTML,
+  including,
+  or,
 } from '../../../../interactors';
 
-export const SETTINGS = {
-  TENANT: 'Tenant',
-};
-
 export const startRowIndex = 2;
-export const rootPaneSet = Section({ id: 'controlled-vocab-pane' });
-export const addButton = rootPaneSet.find(Button('+ New'));
-export const table = rootPaneSet.find(EditableList());
+export const rootPane = Section({ id: 'controlled-vocab-pane' });
+export const paneContent = HTML({ id: 'controlled-vocab-pane-content' });
+export const addButton = rootPane.find(Button('+ New'));
+export const table = rootPane.find(EditableList());
 
 const clickActionBtn = ({ rowIndex = startRowIndex, locator }) => {
   // filter index implemented based on parent-child relations.
@@ -25,8 +27,8 @@ const clickActionBtn = ({ rowIndex = startRowIndex, locator }) => {
 };
 
 export default {
-  waitLoading(section = 'Settings') {
-    cy.expect(Pane(section).exists());
+  waitLoading(header = 'Settings') {
+    cy.expect(Pane(header).exists());
   },
   clickAddNewBtn() {
     cy.do(addButton.click());
@@ -46,6 +48,40 @@ export default {
   clickDeleteBtn({ rowIndex } = {}) {
     clickActionBtn({ rowIndex, locator: { icon: 'trash' } });
   },
+  checkEmptyTableContent(messages) {
+    const [primary, secondary] = messages;
+    cy.expect([
+      paneContent.exists(),
+      paneContent.find(HTML(or(including(primary), including(secondary)))).exists(),
+    ]);
+  },
+  checkResultsTableColumns(columns = [], rootNode = paneContent) {
+    columns.forEach((column) => {
+      cy.expect(rootNode.find(MultiColumnListHeader(column)).exists());
+    });
+  },
+  checkResultsTableContent(records = [], columnIndex = 0) {
+    cy.expect(addButton.has({ disabled: false }));
+
+    records
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .forEach((record, index) => {
+        cy.expect([
+          EditableListRow({ index })
+            .find(MultiColumnListCell({ columnIndex }))
+            .has({ content: record.name }),
+          EditableListRow({ index })
+            .find(MultiColumnListCell({ columnIndex: columnIndex + 1 }))
+            .has({ content: record.code }),
+          EditableListRow({ index })
+            .find(Button({ icon: 'edit' }))
+            .exists(),
+          EditableListRow({ index })
+            .find(Button({ icon: 'trash' }))
+            .exists(),
+        ]);
+      });
+  },
   checkAddNewBtnAbsent() {
     cy.expect(addButton.absent());
   },
@@ -55,6 +91,16 @@ export default {
   },
   checkColumnExists(content) {
     cy.expect(table.find(ColumnHeader(content)).exists());
+  },
+  getViaApi({ path, searchParams } = {}) {
+    return cy
+      .okapiRequest({
+        path,
+        searchParams,
+      })
+      .then((response) => {
+        return response.body;
+      });
   },
   createViaApi: ({ path, body, searchParams }) => {
     return cy
