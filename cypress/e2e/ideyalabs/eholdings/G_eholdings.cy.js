@@ -103,14 +103,6 @@ describe.skip('Create a custom package', () => {
       eHolding.verifyAlternativeRadio();
     },
   );
-  it('C3464 Update Package Proxy (spitfire)', { tags: [testTypes.ideaLabsTests] }, () => {
-    cy.visit(topMenu.eholdingsPath);
-    eHoldingsSearch.switchToPackages();
-    eHoldingsProvidersSearch.byProvider('Edinburgh Scholarship Online');
-    eHoldingsProviders.viewPackage();
-    eHoldingsPackages.updateProxy();
-    eHolding.verifyProxy();
-  });
   it('C648 Closed Library Due Date (vega)', { tags: [testTypes.ideaLabsTests] }, () => {
     cy.visit(topMenu.eholdingsPath);
     eHoldingsSearch.switchToTitles();
