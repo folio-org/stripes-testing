@@ -25,7 +25,7 @@ const rootSection = Section({ id: 'pane-view-agreement' });
 const deleteButton = Button('Delete');
 const agreementLine = Section({ id: 'lines' }).find(Button('Agreement lines'));
 const agreementLinesBadge = Section({ id: 'lines' }).find(Badge());
-const actionsButton = rootSection.find(Button('Actions'));
+const actionsButton = Button('Actions');
 const deleteConfirmationModal = Modal({ id: 'delete-agreement-confirmation' });
 const agreementLineDeleteModel = Modal({ id: 'delete-agreement-line-confirmation' });
 const newNoteButton = Button('New', { id: 'note-create-button' });
@@ -36,6 +36,8 @@ const deleteButtonInConfirmation = Button('Delete', {
 const showMoreLink = Button('Show more');
 const notesAccordion = rootSection.find(Accordion({ id: 'notes' }));
 const cancelButton = Button('Cancel');
+const calloutSuccess = Callout({ type: 'success' });
+const notesSection = Section({ id: 'notes' });
 
 function openAgreementLineAccordion() {
   cy.do(agreementLine.click());
@@ -57,30 +59,24 @@ export default {
     openAgreementLineAccordion();
     selectAgreementLine();
     cy.do([
-      Section({ id: 'pane-view-agreement-line' }).find(Button('Actions')).click(),
-      Button('Delete').click(),
+      Section({ id: 'pane-view-agreement-line' }).find(actionsButton).click(),
+      deleteButton.click(),
       agreementLineDeleteModel.find(deleteButton).click(),
     ]);
-    cy.expect([
-      Callout({ type: 'success' }).exists(),
-      Callout({ type: 'success' }).has({ text: 'Agreement line deleted' }),
-    ]);
+    cy.expect([calloutSuccess.exists(), calloutSuccess.has({ text: 'Agreement line deleted' })]);
     cy.expect(agreementLinesBadge.has({ value: '0' }));
-    cy.do(actionsButton.click());
+    cy.do(rootSection.find(actionsButton).click());
     cy.expect(deleteButton.exists());
     cy.do(deleteButton.click());
     cy.expect(deleteButton.exists());
     cy.do(deleteConfirmationModal.find(deleteButton).click());
-    cy.expect([
-      Callout({ type: 'success' }).exists(),
-      Callout({ type: 'success' }).has({ text: 'Agreement line deleted' }),
-    ]);
+    cy.expect([calloutSuccess.exists(), calloutSuccess.has({ text: 'Agreement line deleted' })]);
   },
 
   waitLoadingWithExistingNote(title) {
     cy.expect(
       rootSection
-        .find(Section({ id: 'notes' }))
+        .find(notesSection)
         .find(MultiColumnListCell({ columnIndex: 1 }))
         .find(HTML(including(title)))
         .exists(),
@@ -90,7 +86,7 @@ export default {
   openNotesSection() {
     cy.do(
       rootSection
-        .find(Section({ id: 'notes' }))
+        .find(notesSection)
         .find(Button({ id: 'accordion-toggle-button-notes' }))
         .click(),
     );
@@ -113,8 +109,7 @@ export default {
   },
 
   delete() {
-    cy.do(actionsButton.click());
-    cy.do(deleteButton.click());
+    cy.do([rootSection.find(actionsButton).click(), deleteButton.click()]);
     cy.expect(deleteConfirmationModal.exists());
     cy.do(deleteConfirmationModal.find(deleteButtonInConfirmation).click());
     cy.expect(Pane({ id: 'pane-view-agreement' }), getLongDelay()).absent();
@@ -175,19 +170,19 @@ export default {
     cy.do(Section({ id: 'lines' }).find(Button('Agreement lines')).click());
   },
 
-  newAgreementLine(orderLine) {
+  newAgreementLine(orderLineNumber) {
     cy.do(Section({ id: 'lines' }).find(actionsButton).click());
     cy.wait(4000);
     cy.do([
       Button('New agreement line').click(),
       Button({ id: 'linkedResource-basket-selector' }).click(),
-      SelectionOption('Accounting Finance and Economics eJournal collection').click(),
+      SelectionOption('ACM Digtal Library').click(),
       Button('Link selected e-resource').click(),
       Button('Add PO line').click(),
       Button('Link PO line').click(),
       Modal('Select order lines')
         .find(SearchField({ id: 'input-record-search' }))
-        .fillIn(orderLine),
+        .fillIn(orderLineNumber),
       Modal('Select order lines')
         .find(Button({ type: 'submit' }))
         .click(),
