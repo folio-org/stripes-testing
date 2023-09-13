@@ -32,9 +32,6 @@ const searchButton = Button('Search');
 const description = TextArea({ name: 'description' });
 const SaveAndClose = Button('Save & close');
 const availableProxies = ['Inherited - None', 'FOLIO-Bugfest', 'EZProxy'];
-const SearchButton = Section({ id: 'providerShowProviderList' }).find(
-  Button({ ariaLabel: 'Toggle filters pane' }),
-);
 const iconSearch = Button({ icon: 'search' });
 const proxySelect = Select({ id: 'eholdings-proxy-id' });
 const selectionStatusAccordion = Accordion({
