@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import { getTestEntityValue } from '../../support/utils/stringTools';
@@ -28,7 +27,7 @@ describe('Staff slips', () => {
     name: getTestEntityValue('groupStaffSlips'),
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestTLR', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     itemBarcode: generateItemBarcode(),
   };
   const instanceData = {

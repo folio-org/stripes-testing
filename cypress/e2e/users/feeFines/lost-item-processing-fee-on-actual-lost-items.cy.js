@@ -31,10 +31,7 @@ describe('ui-users-loans: Loans', () => {
   const newFirstItemData = getNewItem();
   const declareLostComments = getTestEntityValue('Some additional information');
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
-      'autotestActualCostFeeFine',
-      uuid(),
-    ),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const itemsData = {};
   let originalCirculationRules;

@@ -15,6 +15,8 @@ const searchIcon = Button({ icon: 'search' });
 const searchField = TextField({ id: 'eholdings-search' });
 const chooseParameterField = Select('Select a field to search');
 const subjectKeyValue = KeyValue('Subjects');
+const availableProxies = ['chalmers', 'Inherited - ezproxY-T', 'None', 'MJProxy'];
+const proxySelect = Select('Proxy');
 
 export default {
   create: (packageName = `package_${getRandomPostfix()}`) => {
@@ -220,4 +222,19 @@ export default {
     cy.expect([Select({ value: searchParameter.toLowerCase() }).exists(), searchField.exists()]);
     cy.do([searchField.fillIn(searchValue), searchButton.click()]);
   },
+
+  changePackageRecordProxy: () => {
+    return cy
+      .then(() => proxySelect.value())
+      .then((selectedProxy) => {
+        const notSelectedProxy = availableProxies.filter(
+          (availableProxy) => availableProxy.toLowerCase() !== selectedProxy,
+        )[0];
+        cy.do(proxySelect.choose(notSelectedProxy));
+        cy.expect(proxySelect.find(HTML(including(notSelectedProxy))).exists());
+        return cy.wrap(notSelectedProxy);
+      });
+  },
+
+  checkPackageRecordProxy: (proxyName) => cy.expect(KeyValue('Proxy', { value: proxyName }).exists()),
 };

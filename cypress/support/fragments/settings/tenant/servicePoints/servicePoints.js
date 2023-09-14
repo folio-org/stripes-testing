@@ -1,35 +1,24 @@
 import uuid from 'uuid';
-import { getTestEntityValue } from '../../../../utils/stringTools';
+import getRandomPostfix, { getTestEntityValue } from '../../../../utils/stringTools';
 import { NavListItem, Pane, Button, TextField } from '../../../../../../interactors';
 
 const servicePointsPane = Pane('Service points');
 
-const defaultServicePoint = {
-  // required parameter
-  code: undefined,
-  discoveryDisplayName: getTestEntityValue('discovery_display_name'),
-  // required parameter
-  id: undefined,
-  // required parameter
-  name: undefined,
-};
-
-const getDefaultServicePointWithPickUpLocation = (
-  servicePointName = 'autotestReceiveNotice',
+const getDefaultServicePointWithPickUpLocation = ({
+  name = `servicePoint-${getRandomPostfix()}`,
   id = uuid(),
-) => {
+} = {}) => {
   return {
-    ...defaultServicePoint,
-    code: getTestEntityValue(servicePointName),
+    code: getTestEntityValue(name),
+    discoveryDisplayName: `Discovery_display_name-${getRandomPostfix()}`,
     id,
-    name: getTestEntityValue(servicePointName),
+    name: getTestEntityValue(name),
     pickupLocation: true,
     holdShelfExpiryPeriod: { intervalId: 'Hours', duration: 1 },
   };
 };
 
 export default {
-  defaultServicePoint,
   getDefaultServicePointWithPickUpLocation,
   getViaApi: (searchParams) => cy
     .okapiRequest({
