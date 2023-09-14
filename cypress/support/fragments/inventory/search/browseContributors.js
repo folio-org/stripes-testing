@@ -47,6 +47,7 @@ const defaultInstanceZWithContributor = {
 };
 
 const paneIntanceDetails = PaneContent({ id: 'browse-inventory-results-pane-content' });
+const resultsPaneHeader = PaneHeader({ id: 'paneHeaderpane-results' });
 const recordSelect = Select({ id: 'input-record-search-qindex' });
 const recordSearch = TextInput({ id: 'input-record-search' });
 const contributorsOption = Option('Contributors');
@@ -59,6 +60,13 @@ const nameTypeButton = typeSelect.find(Button('Name type'));
 const nameTypeSearch = typeSelect.find(MultiSelect());
 const nameTypeClear = typeSelect.find(Button({ icon: 'times-circle-solid' }));
 
+const searchButtonDisabled = Button({ type: 'submit', disabled: true });
+const resetAllButtonDisabled = Button({
+  className: including('resetButton---n7KP9'),
+  disabled: true,
+});
+const nameTypeAccordion = Button({ id: 'accordion-toggle-button-nameType' });
+const actionsButton = Button('Actions');
 const rowContributorName = (ContributorName, contributorNameType) => MultiColumnListRow(`${ContributorName}${contributorNameType}1`);
 
 export default {
@@ -192,6 +200,11 @@ export default {
     cy.expect(recordSearch.has({ value: recordName }));
     cy.do(searchButton.click());
   },
+
+  verifySearchTerm(contributorName) {
+    cy.expect(recordSearch.has({ value: contributorName }));
+  },
+
   checkSearchResultsTable() {
     cy.expect([
       paneIntanceDetails.find(MultiColumnListHeader('Contributor')).exists(),
@@ -232,6 +245,14 @@ export default {
       HTML({ className: including('missingMatchError') }).has({ text: record }),
       HTML('would be here').exists(),
     ]);
+  },
+
+  checkActionsButton(state = 'exists') {
+    cy.expect(actionsButton[state]());
+  },
+
+  checkSearchResultCount(text) {
+    cy.expect(resultsPaneHeader.find(HTML(including(text))).exists());
   },
 
   checkAuthorityIconAndValueDisplayed(value) {
@@ -276,7 +297,7 @@ export default {
   },
 
   openInstance(contributor) {
-    cy.do(MultiColumnListCell(contributor.name).click());
+    cy.do(MultiColumnListCell(contributor.name).hrefClick());
   },
 
   openRecord(record) {

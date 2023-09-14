@@ -72,12 +72,8 @@ export default {
 
   checkOnlySelectedPackagesInResults() {
     cy.expect([
-      packagesSection
-        .find(ListItem({ text: including(filterStatuses.selected) }))
-        .exists(),
-      packagesSection
-        .find(ListItem({ text: including(filterStatuses.notSelected) }))
-        .absent(),
+      packagesSection.find(ListItem({ text: including(filterStatuses.selected) })).exists(),
+      packagesSection.find(ListItem({ text: including(filterStatuses.notSelected) })).absent(),
     ]);
   },
 };
