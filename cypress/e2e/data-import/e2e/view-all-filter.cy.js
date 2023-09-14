@@ -1,10 +1,9 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { DevTeams, TestTypes } from '../../../support/dictionary';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import DateTools from '../../../support/utils/dateTools';
 import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import { JOB_STATUS_NAMES } from '../../../support/constants';

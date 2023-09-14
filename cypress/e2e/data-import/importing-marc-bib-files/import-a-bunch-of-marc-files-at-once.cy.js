@@ -1,6 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { DevTeams, TestTypes } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';

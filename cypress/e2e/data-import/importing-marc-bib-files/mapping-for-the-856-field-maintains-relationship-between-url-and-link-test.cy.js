@@ -1,7 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -94,10 +92,10 @@ describe('data-import', () => {
 
     before('login', () => {
       cy.createTempUser([
-        permissions.moduleDataImportEnabled.gui,
-        permissions.settingsDataImportEnabled.gui,
-        permissions.inventoryAll.gui,
-        permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
 

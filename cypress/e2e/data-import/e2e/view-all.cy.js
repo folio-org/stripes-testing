@@ -1,10 +1,9 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { DevTeams, TestTypes } from '../../../support/dictionary';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import FileManager from '../../../support/utils/fileManager';
-import TestTypes from '../../../support/dictionary/testTypes';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import DevTeams from '../../../support/dictionary/devTeams';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 
 describe('data-import', () => {

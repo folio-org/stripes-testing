@@ -1,5 +1,4 @@
-import TestTypes from '../../../support/dictionary/testTypes';
-import permissions from '../../../support/dictionary/permissions';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import markItemAsWithdrawn from '../../../support/fragments/inventory/markItemAsWithdrawn';
 import markItemAsMissing from '../../../support/fragments/inventory/markItemAsMissing';
 import Requests from '../../../support/fragments/requests/requests';
@@ -8,7 +7,6 @@ import Users from '../../../support/fragments/users/users';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import DevTeams from '../../../support/dictionary/devTeams';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import CirculationRules from '../../../support/fragments/circulation/circulation-rules';
 
@@ -50,9 +48,9 @@ describe('inventory', () => {
         })
         .then(() => {
           cy.createTempUser([
-            permissions.uiInventoryMarkItemsWithdrawn.gui,
-            permissions.uiRequestsCreate.gui,
-            permissions.uiInventoryViewInstances.gui,
+            Permissions.uiInventoryMarkItemsWithdrawn.gui,
+            Permissions.uiRequestsCreate.gui,
+            Permissions.uiInventoryViewInstances.gui,
           ]);
         })
         .then((userProperties) => {

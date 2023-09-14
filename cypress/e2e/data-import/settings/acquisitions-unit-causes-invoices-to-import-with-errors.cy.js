@@ -1,7 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import {
   FOLIO_RECORD_TYPE,
   BATCH_GROUP,
@@ -57,11 +55,11 @@ describe('data-import', () => {
 
     before('login', () => {
       cy.createTempUser([
-        permissions.moduleDataImportEnabled.gui,
-        permissions.assignAcqUnitsToNewInvoice.gui,
-        permissions.viewEditDeleteInvoiceInvoiceLine.gui,
-        permissions.uiSettingsAcquisitionUnitsViewEditCreateDelete.gui,
-        permissions.settingsDataImportEnabled.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.assignAcqUnitsToNewInvoice.gui,
+        Permissions.viewEditDeleteInvoiceInvoiceLine.gui,
+        Permissions.uiSettingsAcquisitionUnitsViewEditCreateDelete.gui,
+        Permissions.settingsDataImportEnabled.gui,
       ]).then((userProperties) => {
         user = userProperties;
 

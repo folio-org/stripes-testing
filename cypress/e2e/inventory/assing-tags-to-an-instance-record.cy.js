@@ -1,11 +1,10 @@
 import uuid from 'uuid';
-import TestTypes from '../../support/dictionary/testTypes';
+import { DevTeams, TestTypes } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import Helper from '../../support/fragments/finance/financeHelper';
-import DevTeams from '../../support/dictionary/devTeams';
 import { INSTANCE_SOURCE_NAMES } from '../../support/constants';
 
 describe('inventory', () => {

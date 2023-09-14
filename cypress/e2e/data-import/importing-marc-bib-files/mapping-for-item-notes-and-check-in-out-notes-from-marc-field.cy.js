@@ -1,7 +1,5 @@
-import permissions from '../../../support/dictionary/permissions';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import {
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
@@ -91,10 +89,10 @@ describe('data-import', () => {
 
     before('create test data', () => {
       cy.createTempUser([
-        permissions.moduleDataImportEnabled.gui,
-        permissions.inventoryAll.gui,
-        permissions.settingsDataImportEnabled.gui,
-        permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
       ]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {

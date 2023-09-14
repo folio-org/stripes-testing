@@ -1,6 +1,4 @@
-import DevTeams from '../../../support/dictionary/devTeams';
-import TestTypes from '../../../support/dictionary/testTypes';
-import permissions from '../../../support/dictionary/permissions';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import MarkItemAsMissing from '../../../support/fragments/inventory/markItemAsMissing';
 import Requests from '../../../support/fragments/requests/requests';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -50,8 +48,8 @@ describe('inventory', () => {
         })
         .then(() => {
           cy.createTempUser([
-            permissions.uiInventoryMarkAsMissing.gui,
-            permissions.uiRequestsView.gui,
+            Permissions.uiInventoryMarkAsMissing.gui,
+            Permissions.uiRequestsView.gui,
           ]);
         })
         .then((userProperties) => {
