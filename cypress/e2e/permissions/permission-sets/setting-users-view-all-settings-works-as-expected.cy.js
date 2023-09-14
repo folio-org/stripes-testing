@@ -25,10 +25,7 @@ describe('Permission Sets', () => {
     name: getTestEntityValue('GroupPermissionSets'),
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
-      'autotestPermissionSets',
-      uuid(),
-    ),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const departmentBody = {
     code: getRandomPostfix(),
@@ -36,7 +33,7 @@ describe('Permission Sets', () => {
     name: getTestEntityValue('PSDepartment'),
   };
   const ownerBody = {
-    ...UsersOwners.getDefaultNewOwner(uuid()),
+    ...UsersOwners.getDefaultNewOwner(),
     servicePointOwner: [
       {
         value: testData.userServicePoint.id,

@@ -43,10 +43,7 @@ describe('Loans ', () => {
   let defaultLocation;
   const reasonWhyItemIsClaimedOut = 'reason why the item is claimed out';
   const reasonWhyItemIsDeclaredLost = 'reason why the item is declared lost';
-  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation(
-    'autotest loans claim returned',
-    uuid(),
-  );
+  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
   const testData = {};
   const userData = {};
   const ownerData = {};
@@ -128,10 +125,10 @@ describe('Loans ', () => {
           testData.materialTypeId = res.id;
         });
         UsersOwners.createViaApi({
-          ...UsersOwners.getDefaultNewOwner(uuid(), 'owner'),
+          ...UsersOwners.getDefaultNewOwner(),
           servicePointOwner: [{ value: servicePoint.id, label: servicePoint.name }],
-        }).then(({ id, ownerName }) => {
-          ownerData.name = ownerName;
+        }).then(({ id, owner }) => {
+          ownerData.name = owner;
           ownerData.id = id;
         });
         ServicePoints.createViaApi(servicePoint);

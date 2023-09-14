@@ -54,7 +54,7 @@ describe('Deleting user', () => {
   });
 
   afterEach(() => {
-    // TODO: clarify the reason of issue with 404 responce code
+    // TODO: clarify the reason of issue with 404 response code
     Users.deleteViaApi(specialUserId);
   });
 
@@ -200,8 +200,8 @@ describe('Deleting user', () => {
 
   it('should be unable in case the user has open fees/fines', () => {
     UsersOwners.createViaApi({ owner: uuid() })
-      .then((ownerId) => {
-        specialOwnerId = ownerId;
+      .then(({ id }) => {
+        specialOwnerId = id;
         cy.createFeesFinesTypeApi({
           feeFineType: uuid(),
           ownerId: specialOwnerId,

@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import {
   PaneHeader,
   Button,
@@ -15,7 +16,7 @@ import { getLongDelay } from '../../../utils/cypressTools';
 import { getTestEntityValue } from '../../../utils/stringTools';
 import SettingsPane, {
   startRowIndex,
-  rootPaneSet,
+  rootPane,
   addButton,
   table as tableWithOwners,
 } from '../settingsPane';
@@ -59,22 +60,19 @@ export default {
     cy.wait('@getServicePoints', getLongDelay());
     cy.expect(PaneHeader('Fee/fine: Owners').exists());
     cy.expect(addButton.exists());
-    cy.expect(rootPaneSet.find(HTML({ className: including('spinner') })).absent());
+    cy.expect(rootPane.find(HTML({ className: including('spinner') })).absent());
     // TODO: clarify the reason of extra waiting
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(500);
   },
-  getDefaultNewOwner(id, name, desc) {
+  getDefaultNewOwner({ id = uuid(), name = 'owner', desc } = {}) {
     return {
+      id,
       owner: getTestEntityValue(name),
       desc: getTestEntityValue(desc),
-      // required field
-      id,
     };
   },
-  startNewLineAdding() {
-    SettingsPane.clickAddNewBtn();
-  },
+  startNewLineAdding: () => SettingsPane.clickAddNewBtn(),
   defaultServicePoints,
   getUsedServicePoints() {
     cy.then(() => tableWithOwners.isPresented()).then((isPresented) => {
@@ -171,14 +169,9 @@ export default {
     SettingsPane.clickCancelBtn({ rowIndex });
   },
   createViaApi(owner) {
-    cy.okapiRequest({
-      method: 'POST',
-      path: 'owners',
-      body: owner,
-      isDefaultSearchParamsRequired: false,
-    }).then((response) => ({ id: response.body.id, ownerName: response.body.owner }));
+    return SettingsPane.createViaApi({ path: 'owners', body: owner });
   },
-  getOwnerViaApi(searchParams) {
+  getOwnerViaApi: (searchParams) => {
     cy.okapiRequest({
       path: 'owners',
       searchParams,
@@ -188,14 +181,10 @@ export default {
     return cy.get('@owner');
   },
   deleteViaApi(ownerId) {
-    cy.okapiRequest({
-      method: 'DELETE',
-      path: `owners/${ownerId}`,
-      isDefaultSearchParamsRequired: false,
-    });
+    return SettingsPane.deleteViaApi({ path: `owners/${ownerId}` });
   },
   checkValidatorError({ placeholder = 'owner', error }) {
-    cy.expect(rootPaneSet.find(TextField({ placeholder })).has({ error }));
+    cy.expect(rootPane.find(TextField({ placeholder })).has({ error }));
   },
   addServicePointsViaApi(owner, servicePoints) {
     return cy.okapiRequest({

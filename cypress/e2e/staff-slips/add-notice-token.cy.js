@@ -5,8 +5,8 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import TestTypes from '../../support/dictionary/testTypes';
 import Users from '../../support/fragments/users/users';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import NewNoticePolicyTemplate from '../../support/fragments/circulation/newNoticePolicyTemplate';
-import NoticePolicyTemplate from '../../support/fragments/circulation/notice-policy-template';
+import NewNoticePolicyTemplate from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
+import NoticePolicyTemplate from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../support/fragments/users/userEdit';
 
@@ -24,7 +24,7 @@ describe('Patron Notices', () => {
         servicePointId = servicePoints[0].id;
       });
       NoticePolicyTemplate.createViaApi().then((noticeTemplateResp) => {
-        testData.noticeTemplateBody = noticeTemplateResp.body;
+        testData.noticeTemplateBody = noticeTemplateResp;
       });
       PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
         patronGroup.id = patronGroupResponse;

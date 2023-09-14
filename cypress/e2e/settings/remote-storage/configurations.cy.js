@@ -1,4 +1,4 @@
-import RemoteStorageHelper from '../../../support/fragments/settings/remote-storage/remote-storage-configuration';
+import { Configurations } from '../../../support/fragments/settings/remote-storage';
 import Users from '../../../support/fragments/users/users';
 import testTypes from '../../../support/dictionary/testTypes';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -8,9 +8,9 @@ import permissions from '../../../support/dictionary/permissions';
 
 let user;
 
-const dematicEMS = RemoteStorageHelper.configurations.DematicEMS;
-const caiaSoft = RemoteStorageHelper.configurations.CaiaSoft;
-const dematicStagingDirector = RemoteStorageHelper.configurations.DematicStagingDirector;
+const dematicEMS = Configurations.configurations.DematicEMS;
+const caiaSoft = Configurations.configurations.CaiaSoft;
+const dematicStagingDirector = Configurations.configurations.DematicStagingDirector;
 
 describe('remote-storage-configuration', () => {
   before('create test data', () => {
@@ -18,7 +18,7 @@ describe('remote-storage-configuration', () => {
       user = userProperties;
       cy.login(user.username, user.password, {
         path: SettingsMenu.remoteStorageConfigurationPath,
-        waiter: RemoteStorageHelper.waitLoading,
+        waiter: Configurations.waitLoading,
       });
     });
   });
@@ -34,21 +34,21 @@ describe('remote-storage-configuration', () => {
       const name = `AutotestConfigurationName${getRandomPostfix()}`;
 
       dematicEMS.create(name);
-      RemoteStorageHelper.verifyCreatedConfiguration(name, dematicEMS);
+      Configurations.verifyCreatedConfiguration(name, dematicEMS);
 
-      RemoteStorageHelper.editConfiguration(name, { provider: caiaSoft.title });
-      RemoteStorageHelper.closeWithSaving();
-      RemoteStorageHelper.verifyEditedConfiguration(name, { provider: caiaSoft.title });
-      RemoteStorageHelper.verifyDataSynchronizationSettingsAccordion(false);
+      Configurations.editConfiguration(name, { provider: caiaSoft.title });
+      Configurations.closeWithSaving();
+      Configurations.verifyEditedConfiguration(name, { provider: caiaSoft.title });
+      Configurations.verifyDataSynchronizationSettingsAccordion(false);
 
-      RemoteStorageHelper.editConfiguration(name, { provider: dematicStagingDirector.title });
-      RemoteStorageHelper.closeWithSaving();
-      RemoteStorageHelper.verifyEditedConfiguration(name, {
+      Configurations.editConfiguration(name, { provider: dematicStagingDirector.title });
+      Configurations.closeWithSaving();
+      Configurations.verifyEditedConfiguration(name, {
         provider: `${dematicStagingDirector.title} (TCP/IP)`,
       });
-      RemoteStorageHelper.verifyDataSynchronizationSettingsAccordion(true);
+      Configurations.verifyDataSynchronizationSettingsAccordion(true);
 
-      RemoteStorageHelper.deleteRemoteStorage(name);
+      Configurations.deleteRemoteStorage(name);
     },
   );
 
@@ -58,11 +58,11 @@ describe('remote-storage-configuration', () => {
     () => {
       const name = `AutotestConfigurationName${getRandomPostfix()}`;
 
-      RemoteStorageHelper.verifyProviderDataSynchronizationSettings();
+      Configurations.verifyProviderDataSynchronizationSettings();
       dematicStagingDirector.create(name);
-      RemoteStorageHelper.verifyCreatedConfiguration(name, dematicStagingDirector);
+      Configurations.verifyCreatedConfiguration(name, dematicStagingDirector);
 
-      RemoteStorageHelper.deleteRemoteStorage(name);
+      Configurations.deleteRemoteStorage(name);
     },
   );
 });

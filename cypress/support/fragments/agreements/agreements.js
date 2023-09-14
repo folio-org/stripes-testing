@@ -1,3 +1,4 @@
+import { HTML } from '@interactors/html';
 import {
   Button,
   MultiColumnListCell,
@@ -5,13 +6,13 @@ import {
   Section,
   or,
   including,
-  HTML,
 } from '../../../../interactors';
 import NewAgreement from './newAgreement';
-import AgreementDetails from './agreementsDetails';
+import SearchAndFilterAgreements from './searchAndFilterAgreements';
 
 const section = Section({ id: 'pane-agreement-list' });
 const newButton = Button('New');
+
 const waitLoading = () => {
   cy.expect(
     or(
@@ -30,13 +31,16 @@ export default {
     NewAgreement.waitLoading();
     NewAgreement.fill(specialAgreement);
     NewAgreement.save();
-    waitLoading();
   },
 
   selectRecord: (agreementTitle) => {
     cy.do(section.find(MultiColumnListCell(agreementTitle)).click());
-    AgreementDetails.waitLoading();
   },
 
   agreementNotVisible: (agreementTitle) => cy.expect(section.find(MultiColumnListCell(agreementTitle)).absent()),
+
+  checkAgreementPresented: (name) => {
+    SearchAndFilterAgreements.search(name);
+    cy.expect(MultiColumnListCell(name).exists());
+  },
 };

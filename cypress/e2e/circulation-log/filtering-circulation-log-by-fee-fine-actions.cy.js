@@ -42,10 +42,7 @@ describe('Circulation log', () => {
   const refundReason = RefundReasons.getDefaultNewRefundReason(uuid());
   const transferAccount = TransferAccounts.getDefaultNewTransferAccount(uuid());
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
-      'autotestCircLog',
-      uuid(),
-    ),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     manualChargeName: null,
   };
   const waiveBody = (amount) => ({

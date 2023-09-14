@@ -17,7 +17,7 @@ import LoanPolicy, {
 } from '../../../../support/fragments/circulation/loan-policy';
 import NoticePolicy, {
   defaultNoticePolicy,
-} from '../../../../support/fragments/circulation/notice-policy';
+} from '../../../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 import MaterialTypes from '../../../../support/fragments/settings/inventory/materialTypes';
 import permissions from '../../../../support/dictionary/permissions';
 import Users from '../../../../support/fragments/users/users';

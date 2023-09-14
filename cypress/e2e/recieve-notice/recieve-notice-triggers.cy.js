@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import TestTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
@@ -17,11 +16,11 @@ import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import NoticePolicyApi, {
   NOTICE_CATEGORIES,
-} from '../../support/fragments/circulation/notice-policy';
-import NoticePolicyTemplateApi from '../../support/fragments/circulation/notice-policy-template';
+} from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
+import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import NewNoticePolicy from '../../support/fragments/circulation/newNoticePolicy';
-import NewNoticePolicyTemplate from '../../support/fragments/circulation/newNoticePolicyTemplate';
+import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
+import NewNoticePolicyTemplate from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../support/fragments/checkout/checkout';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -80,10 +79,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
     ],
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
-      'autotest receive notice triggers',
-      uuid(),
-    ),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const searchResultsData = {
     userBarcode: null,

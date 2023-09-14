@@ -1,8 +1,8 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../../../utils/stringTools';
-import Institutions from '../institutions';
-import Campuses from '../campuses';
-import Libraries from '../libraries';
+import Institutions from '../location-setup/institutions';
+import Campuses from '../location-setup/campuses';
+import Libraries from '../location-setup/libraries';
 
 const getDefaultLocation = (
   specialServicePointId,
@@ -10,15 +10,15 @@ const getDefaultLocation = (
   specialCampusId,
   specialLibraryId,
 ) => {
-  const defaultLocation = {
+  const location = {
     id: uuid(),
     isActive: true,
     // requared field
-    institutionId: specialInstitutionId,
+    institutionId: specialInstitutionId || uuid(),
     // requared field
-    campusId: specialCampusId,
+    campusId: specialCampusId || uuid(),
     // requared field
-    libraryId: specialLibraryId,
+    libraryId: specialLibraryId || uuid(),
     // servicePointIds must have real Servi point id
     servicePointIds: [specialServicePointId],
     name: `autotest_location_name_${getRandomPostfix()}`,
@@ -27,34 +27,31 @@ const getDefaultLocation = (
     // servicePointIds must have real Servis point id
     primaryServicePoint: specialServicePointId,
   };
-  if (!defaultLocation.institutionId) {
-    Institutions.createViaApi(Institutions.getDefaultInstitutions()).then((locinsts) => {
-      defaultLocation.institutionId = locinsts.id;
-      if (!defaultLocation.campusId) {
-        Campuses.createViaApi({
-          ...Campuses.getDefaultCampuse(),
-          institutionId: defaultLocation.institutionId,
-        }).then((loccamps) => {
-          defaultLocation.campusId = loccamps.id;
-          if (!defaultLocation.libraryId) {
-            Libraries.createViaApi({
-              ...Libraries.getDefaultLibrary(),
-              campusId: defaultLocation.campusId,
-            }).then((loclibs) => {
-              defaultLocation.libraryId = loclibs.id;
-            });
-          }
-        });
-      }
+
+  Institutions.createViaApi(
+    Institutions.getDefaultInstitutions({ id: location.institutionId }),
+  ).then(() => {
+    Campuses.createViaApi(
+      Campuses.getDefaultCampuse({
+        id: location.campusId,
+        institutionId: location.institutionId,
+      }),
+    ).then(() => {
+      Libraries.createViaApi(
+        Libraries.getDefaultLibrary({
+          id: location.libraryId,
+          campusId: location.campusId,
+        }),
+      );
     });
-  }
-  return defaultLocation;
+  });
+  return location;
 };
 
 export default {
   getDefaultLocation,
 
-  createViaApi: (locationProperties = getDefaultLocation) => {
+  createViaApi: (locationProperties) => {
     return cy
       .okapiRequest({
         path: 'locations',

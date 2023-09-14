@@ -60,6 +60,14 @@ export default {
     ]);
   },
 
+  checkItemDueDate(date) {
+    cy.expect(
+      MultiColumnList({ rowCount: 1 })
+        .find(HTML(including(date)))
+        .exists(),
+    );
+  },
+
   checkOutItemUser(userBarcode, itemBarcode) {
     cy.do(TextField({ name: 'patron.identifier' }).fillIn(userBarcode));
     cy.intercept('/circulation/loans?*').as('getLoans');
@@ -191,5 +199,20 @@ export default {
         .find(HTML(including('No items have been entered yet')))
         .exists(),
     );
+  },
+  checkUserNote: ({ title, details }) => {
+    cy.expect(
+      Modal({ id: 'popup-note-modal' })
+        .find(HTML(including(`Title: ${title}`)))
+        .exists(),
+    );
+    cy.expect(
+      Modal({ id: 'popup-note-modal' })
+        .find(HTML(including(details)))
+        .exists(),
+    );
+  },
+  deleteNote: () => {
+    cy.do(Button('Delete note').click());
   },
 };

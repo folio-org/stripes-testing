@@ -1,6 +1,6 @@
 import devTeams from '../../../../support/dictionary/devTeams';
 import TestType from '../../../../support/dictionary/testTypes';
-import NewNoticePolicyTemplate from '../../../../support/fragments/circulation/newNoticePolicyTemplate';
+import NewNoticePolicyTemplate from '../../../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 
 describe('ui-circulation-settings: create patron notice template', () => {

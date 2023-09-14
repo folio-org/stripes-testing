@@ -28,10 +28,7 @@ describe('Fee fine amout link in checkout', () => {
   const paymentMethod = {};
   let feeFineAccount;
   const ownerData = {};
-  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation(
-    'autotest transaction',
-    uuid(),
-  );
+  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
 
   before('Users, owners, fee fines are created', () => {
     // the login with admin, visiting the path and the waiter are separated to get the fetch request to get owners
@@ -44,9 +41,9 @@ describe('Fee fine amout link in checkout', () => {
       });
       ServicePoints.createViaApi(servicePoint);
 
-      UsersOwners.createViaApi(UsersOwners.getDefaultNewOwner(uuid(), 'owner'))
-        .then(({ id, ownerName }) => {
-          ownerData.name = ownerName;
+      UsersOwners.createViaApi(UsersOwners.getDefaultNewOwner())
+        .then(({ id, owner }) => {
+          ownerData.name = owner;
           ownerData.id = id;
         })
         .then(() => {
@@ -99,6 +96,7 @@ describe('Fee fine amout link in checkout', () => {
     cy.visit(TopMenu.checkOutPath);
     Checkout.waitLoading();
     // without this waiter, the user will not be found by username
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(4000);
     CheckOutActions.checkOutUser(userData.barcode);
     CheckOutActions.openFeeFineLink('9.00', userData.userId);
@@ -126,6 +124,7 @@ describe('Fee fine amout link in checkout', () => {
       cy.visit(TopMenu.checkOutPath);
       Checkout.waitLoading();
       // without this waiter, the user will not be found by username
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(4000);
       CheckOutActions.checkOutUser(userData.barcode);
       CheckOutActions.feeFineLinkIsNotClickable('9.00', userData.userId);

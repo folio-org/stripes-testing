@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import moment from 'moment';
 import permissions from '../../support/dictionary/permissions';
 import topMenu from '../../support/fragments/topMenu';
@@ -16,11 +15,11 @@ import CirculationRules from '../../support/fragments/circulation/circulation-ru
 import NoticePolicyApi, {
   NOTICE_CATEGORIES,
   NOTICE_ACTIONS,
-} from '../../support/fragments/circulation/notice-policy';
-import NoticePolicyTemplateApi from '../../support/fragments/circulation/notice-policy-template';
+} from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
+import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import NewNoticePolicy from '../../support/fragments/circulation/newNoticePolicy';
-import NewNoticePolicyTemplate from '../../support/fragments/circulation/newNoticePolicyTemplate';
+import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
+import NewNoticePolicyTemplate from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../support/fragments/checkout/checkout';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -72,10 +71,7 @@ describe('Recieving notice: Checkout', () => {
   };
   const testData = {
     noticePolicyTemplateToken: 'item.title',
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
-      'autotest receive notice checkout',
-      uuid(),
-    ),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const searchResultsData = {
     userBarcode: null,

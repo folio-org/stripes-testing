@@ -13,7 +13,7 @@ import NewLocation from '../../support/fragments/settings/tenant/locations/newLo
 import DateTools from '../../support/utils/dateTools';
 import Users from '../../support/fragments/users/users';
 import NewAgreement from '../../support/fragments/agreements/newAgreement';
-import AgreementsDetails from '../../support/fragments/agreements/agreementsDetails';
+import AgreementsDetails from '../../support/fragments/agreements/agreementViewDetails';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
 import Funds from '../../support/fragments/finance/funds/funds';

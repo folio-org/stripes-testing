@@ -6,4 +6,5 @@ export default {
   folijet: 'folijet',
   volaris: 'volaris',
   ideaLabsTests: 'ideaLabsTests',
+  erm: 'erm',
 };
