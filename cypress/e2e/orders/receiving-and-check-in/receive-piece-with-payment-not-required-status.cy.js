@@ -7,17 +7,15 @@ import Orders from '../../../support/fragments/orders/orders';
 import Receiving from '../../../support/fragments/receiving/receiving';
 import TopMenu from '../../../support/fragments/topMenu';
 import Helper from '../../../support/fragments/finance/financeHelper';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import Organizations from '../../../support/fragments/organizations/organizations';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import OrderLines from '../../../support/fragments/orders/orderLines';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
-import { ITEM_STATUS_NAMES } from '../../../support/constants';
 import Users from '../../../support/fragments/users/users';
+import Funds from '../../../support/fragments/finance/funds/funds';
+import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
+import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 
 describe('Orders: Receiving and Check-in', () => {
   const order = {
@@ -41,9 +39,10 @@ describe('Orders: Receiving and Check-in', () => {
       },
     ],
   };
-  const barcodeForFirstItem = Helper.getRandomBarcode();
-  const barcodeForSecondItem = Helper.getRandomBarcode();
-
+  const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
+  const defaultLedger = { ...Ledgers.defaultUiLedger };
+  const defaultFund = { ...Funds.defaultUiFund };
+  const allocatedQuantity = '1000';
   let orderNumber;
   let user;
   let effectiveLocationServicePoint;
@@ -51,7 +50,22 @@ describe('Orders: Receiving and Check-in', () => {
 
   before(() => {
     cy.getAdminToken();
+    FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
+      firstFiscalYear.id = firstFiscalYearResponse.id;
+      defaultLedger.fiscalYearOneId = firstFiscalYear.id;
+      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+        defaultLedger.id = ledgerResponse.id;
+        defaultFund.ledgerId = defaultLedger.id;
+        Funds.createViaApi(defaultFund).then((fundResponse) => {
+          defaultFund.id = fundResponse.fund.id;
 
+          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+          Helper.searchByName(defaultFund.name);
+          Funds.selectFund(defaultFund.name);
+          Funds.addBudget(allocatedQuantity);
+        });
+      });
+    });
     ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
       effectiveLocationServicePoint = servicePoints[0];
       NewLocation.createViaApi(
@@ -63,18 +77,19 @@ describe('Orders: Receiving and Check-in', () => {
           order.vendor = organizationsResponse;
         });
 
-        cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+        cy.visit(TopMenu.ordersPath);
         cy.createOrderApi(order).then((response) => {
           orderNumber = response.body.poNumber;
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList();
           Orders.createPOLineViaActions();
           OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
-          OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
-            `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
-            'Payment not required',
-            locationResponse.institutionId,
+          OrderLines.fillInPOLineInfoForPhysicalResourceWithPaymentNotRequired(
+            defaultFund,
+            '100',
             '1',
+            '100',
+            location.institutionId,
           );
           OrderLines.backToEditingOrder();
           Orders.openOrder();
@@ -104,7 +119,6 @@ describe('Orders: Receiving and Check-in', () => {
     cy.visit(TopMenu.ordersPath);
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList();
-    Orders.unOpenOrder(orderNumber);
     OrderLines.selectPOLInOrder(0);
     OrderLines.deleteOrderLine();
     // Need to wait until the order is opened before deleting it
@@ -121,27 +135,19 @@ describe('Orders: Receiving and Check-in', () => {
       Orders.selectFromResultsList(orderNumber);
       Orders.receiveOrderViaActions();
       Receiving.selectLinkFromResultsList();
-      Receiving.receiveFromExpectedSection();
-      Receiving.receiveAllPhysicalItemsWithBarcodes(barcodeForFirstItem, barcodeForSecondItem);
-      Receiving.clickOnInstance();
-      InventoryInstance.openHoldingsAccordion(location.name);
-      InventorySearchAndFilter.switchToItem();
-      InventorySearchAndFilter.searchByParameter('Barcode', barcodeForFirstItem);
-      ItemRecordView.checkItemDetails(
-        location.name,
-        barcodeForFirstItem,
-        ITEM_STATUS_NAMES.IN_PROCESS,
+      Receiving.selectPiece('Physical');
+      Receiving.quickReceivePieceAdd();
+      Receiving.clickOnPOLnumber(`${orderNumber}-1`);
+      Orders.selectFundIDFromthelist();
+      Funds.checkTransactionDetails(
+        1,
+        firstFiscalYear.code,
+        '$0.00',
+        `${orderNumber}-1`,
+        'Encumbrance',
+        `${defaultFund.name} (${defaultFund.code})`,
+        'Released',
       );
-      ItemActions.closeItem();
-      InventorySearchAndFilter.switchToItem();
-      InventorySearchAndFilter.searchByParameter('Barcode', barcodeForSecondItem);
-      ItemRecordView.checkItemDetails(
-        location.name,
-        barcodeForSecondItem,
-        ITEM_STATUS_NAMES.IN_PROCESS,
-      );
-      ItemActions.closeItem();
-      InventorySearchAndFilter.switchToItem();
     },
   );
 });
