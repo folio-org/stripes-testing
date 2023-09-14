@@ -189,15 +189,6 @@ export default {
     cy.do(SaveAndClose.click());
   },
 
-  getProxyValue: () => cy.then(() => KeyValue('Proxy').value()),
-
-  verifyProxy() {
-    this.getProxyValue().then((val) => {
-      // eslint-disable-next-line no-unused-expressions
-      expect(val).to.be.exist;
-    });
-  },
-
   getToken: () => cy.then(() => KeyValue('Provider token').value()),
 
   checkToken() {

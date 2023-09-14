@@ -73,6 +73,33 @@ describe('eHoldings packages management', () => {
   );
 
   it(
+    'C3464 Update package proxy (spitfire)',
+    { tags: [testType.criticalPath, devTeams.spitfire, features.eHoldings] },
+    () => {
+      cy.createTempUser([
+        permissions.uieHoldingsRecordsEdit.gui
+      ]).then((userProperties) => {
+        userId = userProperties.userId;
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.eholdingsPath,
+          waiter: eHoldingsPackages.waitLoading,
+        });
+
+        eHoldingSearch.switchToPackages();
+        eHoldingsProvidersSearch.byProvider('Edinburgh Scholarship Online');
+        eHoldingsPackages.openPackage();
+        eHoldingsPackage.editProxyActions();
+        eHoldingsPackages.changePackageRecordProxy().then((newProxy) => {
+          eHoldingsPackage.saveAndClose();
+          // additional delay related with update of proxy information in ebsco services
+          cy.wait(10000);
+          eHoldingsPackages.checkPackageRecordProxy(newProxy);
+        });
+      });
+    },
+  );
+
+  it(
     'C690 Remove a package from your holdings (spitfire)',
     { tags: [testType.smoke, devTeams.spitfire, features.eHoldings] },
     () => {
