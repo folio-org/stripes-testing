@@ -17,10 +17,9 @@ describe('Agreement Notes', () => {
       .then((agreement) => {
         agreementId = agreement.id;
       });
-    Notes.createNoteTypeViaApi(noteType)
-      .then((note) => {
-        noteTypeId = note.id;
-      });
+    Notes.createNoteTypeViaApi(noteType).then((note) => {
+      noteTypeId = note.id;
+    });
     cy.loginAsAdmin();
     cy.visit(TopMenu.agreementsPath);
     Agreements.waitLoading();
@@ -31,21 +30,29 @@ describe('Agreement Notes', () => {
     Notes.deleteNoteTypeViaApi(noteTypeId);
   });
 
-  it('C1308 Create a note for an Agreement record (erm)', { tags: [testTypes.extendedPath, devTeams.erm] }, () => {
-    AgreementsDetails.agreementListClick(Agreements.defaultAgreement.name);
-    AgreementsDetails.openNotesSection();
-    AgreementsDetails.verifyNotesIsEmpty();
+  it(
+    'C1308 Create a note for an Agreement record (erm)',
+    { tags: [testTypes.extendedPath, devTeams.erm] },
+    () => {
+      AgreementsDetails.agreementListClick(Agreements.defaultAgreement.name);
+      AgreementsDetails.openNotesSection();
+      AgreementsDetails.verifyNotesIsEmpty();
 
-    AgreementsDetails.clickOnNewButton();
-    NewNote.verifyNewNoteIsDisplayed();
+      AgreementsDetails.clickOnNewButton();
+      NewNote.verifyNewNoteIsDisplayed();
 
-    NewNote.chooseSelectTypeByTitle(noteType);
-    NewNote.fill();
-    NewNote.save();
-    AgreementsDetails.verifyAgreementDetailsIsDisplayedByTitle(Agreements.defaultAgreement.name);
-    AgreementsDetails.verifyNotesCount('1');
+      NewNote.chooseSelectTypeByTitle(noteType);
+      NewNote.fill();
+      NewNote.save();
+      AgreementsDetails.verifyAgreementDetailsIsDisplayedByTitle(Agreements.defaultAgreement.name);
+      AgreementsDetails.verifyNotesCount('1');
 
-    AgreementsDetails.openNotesSection();
-    AgreementsDetails.verifySpecialNotesRow(NewNote.defaultNote.title, NewNote.defaultNote.details, noteType);
-  });
+      AgreementsDetails.openNotesSection();
+      AgreementsDetails.verifySpecialNotesRow(
+        NewNote.defaultNote.title,
+        NewNote.defaultNote.details,
+        noteType,
+      );
+    },
+  );
 });
