@@ -170,14 +170,15 @@ export default {
   cancelAdding(rowIndex = 2) {
     SettingsPane.clickCancelBtn({ rowIndex });
   },
-  createViaApi(owner) {
-    cy.okapiRequest({
+  createViaApi: (owner) => cy
+    .okapiRequest({
       method: 'POST',
       path: 'owners',
       body: owner,
       isDefaultSearchParamsRequired: false,
-    }).then((response) => ({ id: response.body.id, ownerName: response.body.owner }));
-  },
+    })
+    .then((response) => ({ id: response.body.id, ownerName: response.body.owner })),
+
   getOwnerViaApi(searchParams) {
     cy.okapiRequest({
       path: 'owners',
