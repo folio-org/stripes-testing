@@ -1,4 +1,4 @@
-import getRandomPostfix from '../../utils/stringTools';
+import getRandomPostfix from '../../../../utils/stringTools';
 import {
   Button,
   TextArea,
@@ -12,7 +12,7 @@ import {
   PaneSet,
   KeyValue,
   TextField,
-} from '../../../../interactors';
+} from '../../../../../../interactors';
 
 const actionsButton = Button('Actions');
 const addNoticeButton = Button('Add notice');

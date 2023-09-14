@@ -1,4 +1,15 @@
-import { Button, HTML, ListItem, Modal, Section, including, or, TextField, KeyValue, Select } from '../../../../interactors';
+import {
+  Button,
+  HTML,
+  ListItem,
+  Modal,
+  Section,
+  including,
+  or,
+  TextField,
+  KeyValue,
+  Select,
+} from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 import eHoldingsNewCustomPackage from './eHoldingsNewCustomPackage';
 import eHoldingsPackage from './eHoldingsPackage';

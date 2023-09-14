@@ -38,9 +38,9 @@ describe('Fee/Fine history ', { retries: 1 }, () => {
         servicePointId = servicePoints[0].id;
       });
 
-      UsersOwners.createViaApi(UsersOwners.getDefaultNewOwner(uuid(), 'owner'))
-        .then(({ id, ownerName }) => {
-          ownerData.name = ownerName;
+      UsersOwners.createViaApi(UsersOwners.getDefaultNewOwner())
+        .then(({ id, owner }) => {
+          ownerData.name = owner;
           ownerData.id = id;
         })
         .then(() => {
@@ -122,6 +122,7 @@ describe('Fee/Fine history ', { retries: 1 }, () => {
     { tags: [TestTypes.smoke, devTeams.vega] },
     () => {
       // the bug for this flaky issue is created FAT-2442. As temporary fix for this bug we need a waiter to be sure that the fee-fine is created before opening its page.
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(30000);
       cy.visit(AppPaths.getFeeFineDetailsPath(userData.userId, feeFineAccount.id));
       FeeFinesDetails.waitLoading();

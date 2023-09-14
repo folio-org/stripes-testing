@@ -1,44 +1,43 @@
 import { RichEditor, TextField, Button, Select } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 
-export default class NewNote {
-  static #titleTextField = TextField('Note title*');
+const titleTextField = TextField('Note title*');
+const saveButton = Button('Save & close');
+const selectNoteType = Select({ name: 'type' });
 
-  static #saveButton = Button('Save & close');
+const defaultNote = {
+  title: `autotest_title_${getRandomPostfix()}`,
+  details: `autotest_details_${getRandomPostfix()}`,
+  getShortDetails() {
+    return this.details.substring(0, 255);
+  },
+};
 
-  static #defaultNote = {
-    title: `autotest_title_${getRandomPostfix()}`,
-    details: `autotest_details_${getRandomPostfix()}`,
-    getShortDetails() {
-      return this.details.substring(0, 255);
-    },
-  };
+function getDefaultNote() {
+  return defaultNote;
+}
 
-  static #selectNoteType = Select({ name: 'type' });
+export default {
+  defaultNote,
+  getDefaultNote,
 
-  static get defaultNote() {
-    return this.#defaultNote;
-  }
-
-  static fill(specialNote = this.#defaultNote) {
+  fill(specialNote = defaultNote) {
     cy.do([
-      this.#titleTextField.fillIn(specialNote.title),
+      titleTextField.fillIn(specialNote.title),
       RichEditor('Details').fillIn(specialNote.details),
     ]);
-  }
+  },
 
-  static save() {
-    cy.do(this.#saveButton.click());
-    cy.expect(this.#titleTextField.absent());
-  }
+  save() {
+    cy.do(saveButton.click());
+    cy.expect(titleTextField.absent());
+  },
 
-  static chooseSelectTypeByTitle(TypeTitle) {
-    cy.do([
-      this.#selectNoteType.choose(TypeTitle),
-    ]);
-  }
+  chooseSelectTypeByTitle(TypeTitle) {
+    cy.do(selectNoteType.choose(TypeTitle));
+  },
 
-  static verifyNewNoteIsDisplayed() {
-    cy.expect(this.#titleTextField.exists());
-  }
-}
+  verifyNewNoteIsDisplayed() {
+    cy.expect(titleTextField.exists());
+  },
+};
