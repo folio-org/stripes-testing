@@ -1,6 +1,6 @@
 import DevTeams from '../../../support/dictionary/devTeams';
 import TestTypes from '../../../support/dictionary/testTypes';
-import AgreementsDetails from '../../../support/fragments/agreements/agreementsDetails';
+import AgreementsDetails from '../../../support/fragments/agreements/agreementViewDetails';
 import ExistingNoteEdit from '../../../support/fragments/notes/existingNoteEdit';
 import ExistingNoteView from '../../../support/fragments/notes/existingNoteView';
 import NewNote from '../../../support/fragments/notes/newNote';
