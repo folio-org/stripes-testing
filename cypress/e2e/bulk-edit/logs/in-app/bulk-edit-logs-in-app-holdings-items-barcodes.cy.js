@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import permissions from '../../../../support/dictionary/permissions';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -92,22 +91,10 @@ describe('Bulk Edit - Logs', () => {
             instance.materialTypeId = res.id;
             instance2.materialTypeId = res.id;
           });
-          const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation(
-            `servicePoint-${getRandomPostfix()}`,
-            uuid(),
-          );
-          const servicePoint2 = ServicePoints.getDefaultServicePointWithPickUpLocation(
-            `servicePoint2-${getRandomPostfix()}`,
-            uuid(),
-          );
-          tempLocation = ServicePoints.getDefaultServicePointWithPickUpLocation(
-            `tempLocation-${getRandomPostfix()}`,
-            uuid(),
-          );
-          tempLocation2 = ServicePoints.getDefaultServicePointWithPickUpLocation(
-            `tempLocation2-${getRandomPostfix()}`,
-            uuid(),
-          );
+          const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
+          const servicePoint2 = ServicePoints.getDefaultServicePointWithPickUpLocation();
+          tempLocation = ServicePoints.getDefaultServicePointWithPickUpLocation();
+          tempLocation2 = ServicePoints.getDefaultServicePointWithPickUpLocation();
           instance.defaultLocation = Location.getDefaultLocation(servicePoint.id);
           instance2.defaultLocation = Location.getDefaultLocation(servicePoint2.id);
           tempLocation = Location.getDefaultLocation(tempLocation.id);

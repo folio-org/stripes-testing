@@ -31,8 +31,8 @@ export default {
     selectInstitution();
     selectCampus();
   },
-  getDefaultLibrary() {
-    return getDefaultTenant({ campusId: uuid() });
+  getDefaultLibrary({ id, campusId } = {}) {
+    return getDefaultTenant({ id, campusId });
   },
   defaultUiLibraries: {
     body: getDefaultTenant({ campusId: uuid() }),

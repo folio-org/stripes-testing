@@ -37,10 +37,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
   let addedCirculationRule;
   const minutes = 5;
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
-      'autotestRequest',
-      uuid(),
-    ),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const instanceData = {
     title: `Instance ${getRandomPostfix()}`,

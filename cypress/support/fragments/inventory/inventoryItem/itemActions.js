@@ -89,4 +89,12 @@ export default {
   closeItem() {
     cy.do(Button({ icon: 'times' }).click());
   },
+
+  deleteItemViaApi: (itemId) => {
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `inventory/items/${itemId}`,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
 };

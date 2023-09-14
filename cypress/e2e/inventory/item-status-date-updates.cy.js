@@ -19,7 +19,7 @@ import ItemRecordView from '../../support/fragments/inventory/item/itemRecordVie
 import Receiving from '../../support/fragments/receiving/receiving';
 import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import SwitchServicePoint from '../../support/fragments/servicePoint/switchServicePoint';
+import SwitchServicePoint from '../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
 import NewRequest from '../../support/fragments/requests/newRequest';
 import CheckOut from '../../support/fragments/checkout/checkout';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
@@ -39,7 +39,6 @@ import CheckOutActions from '../../support/fragments/check-out-actions/check-out
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import DateTools from '../../support/utils/dateTools';
 import UserEdit from '../../support/fragments/users/userEdit';
-import ServicePoint from '../../support/fragments/servicePoint/servicePoint';
 import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
 
 describe('inventory', () => {
@@ -135,8 +134,8 @@ describe('inventory', () => {
         effectiveLocationServicePoint.id,
         notEffectiveLocationServicePoint.id,
       ]).then(() => {
-        ServicePoint.deleteViaApi(effectiveLocationServicePoint.id);
-        ServicePoint.deleteViaApi(notEffectiveLocationServicePoint.id);
+        ServicePoints.deleteViaApi(effectiveLocationServicePoint.id);
+        ServicePoints.deleteViaApi(notEffectiveLocationServicePoint.id);
         Users.deleteViaApi(userForDeliveryRequest.userId);
       });
 

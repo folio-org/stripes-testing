@@ -1,4 +1,4 @@
-import { HTML, including } from '@interactors/html';
+import uuid from 'uuid';
 import {
   Accordion,
   Button,
@@ -8,8 +8,11 @@ import {
   MultiColumnListCell,
   Modal,
   KeyValue,
-  MultiColumnListHeader,
+  HTML,
+  including,
 } from '../../../../../interactors';
+import Mappings from './mappings';
+import getRandomPostfix from '../../../utils/stringTools';
 import InteractorsTools from '../../../utils/interactorsTools';
 import DateTools from '../../../utils/dateTools';
 
@@ -78,13 +81,47 @@ const configurations = {
   },
 };
 
+const getDefaultConfiguration = ({ id = uuid(), providerName = 'CAIA_SOFT' } = {}) => ({
+  id,
+  providerName,
+  name: `autotest_${providerName}_${getRandomPostfix()}`,
+  accessionWorkflowDetails: 'Change permanent location',
+  returningWorkflowDetails: 'Scanned to folio',
+});
+
 export default {
   configurations,
 
   waitLoading() {
-    cy.expect(Pane('Remote storage').exists());
+    cy.expect(Pane('Configurations').exists());
   },
+  createViaApi(configuration = getDefaultConfiguration()) {
+    return cy
+      .okapiRequest({
+        path: 'remote-storage/configurations',
+        body: configuration,
+        method: 'POST',
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body;
+      });
+  },
+  deleteViaApi(configurationId) {
+    return cy.okapiRequest({
+      path: `remote-storage/configurations/${configurationId}`,
+      method: 'DELETE',
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+  createConfigurationWithMapping({ folioLocationId } = {}) {
+    const configuration = getDefaultConfiguration();
+    this.createViaApi(configuration).then(({ id: configurationId }) => {
+      Mappings.createViaApi({ configurationId, folioLocationId });
+    });
 
+    return configuration;
+  },
   deleteRemoteStorage(name) {
     cy.do([
       MultiColumnListCell({ content: name }).click(),
@@ -179,14 +216,6 @@ export default {
         'CaiaSoft Accession tables are available after remote storage has been configured.',
       ).exists(),
     );
-  },
-
-  verifyAccessionTablePane() {
-    cy.expect([
-      MultiColumnListHeader('Original location').exists(),
-      MultiColumnListHeader('Final location (Remote)').exists(),
-      MultiColumnListHeader('Actions').exists(),
-    ]);
   },
 
   verifyDataSynchronizationSettingsAccordion(exists) {

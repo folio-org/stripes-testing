@@ -14,6 +14,13 @@ const selectionStatusSection = Section({ id: 'filter-packages-selected' });
 const selectionStatusAccordion = Accordion({
   id: 'accordion-toggle-button-filter-packages-selected',
 });
+const searchIcon = Button({ icon: 'search' });
+const packagesSection = Section({ id: 'providerShowProviderList' });
+const filterStatuses = {
+  all: 'All',
+  selected: 'Selected',
+  notSelected: 'Not selected',
+};
 
 export default {
   waitLoading: () => {
@@ -32,6 +39,13 @@ export default {
         .click(),
     );
     eHoldingsProviderView.waitLoading();
+  },
+
+  clickSearchIcon() {
+    cy.expect(searchIcon.exists());
+    // wait for titles section to be loaded
+    cy.wait(2000);
+    cy.do(searchIcon.click());
   },
 
   bySelectionStatus(selectionStatus) {
@@ -54,5 +68,12 @@ export default {
     cy.do(selectionStatusSection.find(Button('Selection status')).click());
     cy.do(selectionStatusSection.find(RadioButton(selectionStatus)).click());
     cy.do(Button('Search').click());
+  },
+
+  checkOnlySelectedPackagesInResults() {
+    cy.expect([
+      packagesSection.find(ListItem({ text: including(filterStatuses.selected) })).exists(),
+      packagesSection.find(ListItem({ text: including(filterStatuses.notSelected) })).absent(),
+    ]);
   },
 };

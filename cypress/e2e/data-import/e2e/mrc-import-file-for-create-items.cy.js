@@ -1,6 +1,7 @@
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import Parallelization from '../../../support/dictionary/parallelization';
 import {
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
@@ -119,7 +120,7 @@ describe('data-import', () => {
 
     it(
       'C343334 MARC file import with creating a new mapping profiles, action profiles and job profile (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         // create mapping profiles
         cy.visit(SettingsMenu.mappingProfilePath);
@@ -136,7 +137,7 @@ describe('data-import', () => {
           collectionOfProfiles[2].mappingProfile.name,
         );
 
-        collectionOfProfiles.forEach((profile) => {
+        collectionOfProfiles.forEach(profile => {
           cy.visit(SettingsMenu.actionProfilePath);
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
@@ -144,7 +145,7 @@ describe('data-import', () => {
 
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.createJobProfile(specialJobProfile);
-        collectionOfProfiles.forEach((profile) => {
+        collectionOfProfiles.forEach(profile => {
           NewJobProfile.linkActionProfile(profile.actionProfile);
         });
         NewJobProfile.saveAndClose();
@@ -161,16 +162,14 @@ describe('data-import', () => {
         Logs.checkImportFile(specialJobProfile.profileName);
         Logs.openFileDetails(fileName);
 
-        [
-          FileDetails.columnNameInResultList.srsMarc,
+        [FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
           FileDetails.columnNameInResultList.holdings,
-          FileDetails.columnNameInResultList.item,
-        ].forEach((columnName) => {
+          FileDetails.columnNameInResultList.item].forEach(columnName => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
         });
         FileDetails.checkItemsQuantityInSummaryTable(0, '1');
-      },
+      }
     );
   });
 });
