@@ -74,7 +74,7 @@ describe('MARC -> MARC Bibliographic', () => {
 
   it(
     'C360541 Verify that "Link to MARC Authority record" icon displays next to MARC fields when editing Bib record (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire] },
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
       InventoryInstance.editMarcBibliographicRecord();
       tagArray.forEach((tag) => {
