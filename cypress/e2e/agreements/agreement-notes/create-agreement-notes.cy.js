@@ -13,10 +13,9 @@ const noteType = `NoteType ${randomFourDigitNumber()}`;
 describe('Agreement Notes', () => {
   before(() => {
     cy.getAdminToken();
-    Agreements.createViaApi()
-      .then((agreement) => {
-        agreementId = agreement.id;
-      });
+    Agreements.createViaApi().then((agreement) => {
+      agreementId = agreement.id;
+    });
     Notes.createNoteTypeViaApi(noteType).then((note) => {
       noteTypeId = note.id;
     });
