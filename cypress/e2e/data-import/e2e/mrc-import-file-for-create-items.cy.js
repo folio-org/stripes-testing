@@ -137,7 +137,7 @@ describe('data-import', () => {
           collectionOfProfiles[2].mappingProfile.name,
         );
 
-        collectionOfProfiles.forEach(profile => {
+        collectionOfProfiles.forEach((profile) => {
           cy.visit(SettingsMenu.actionProfilePath);
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
@@ -145,7 +145,7 @@ describe('data-import', () => {
 
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.createJobProfile(specialJobProfile);
-        collectionOfProfiles.forEach(profile => {
+        collectionOfProfiles.forEach((profile) => {
           NewJobProfile.linkActionProfile(profile.actionProfile);
         });
         NewJobProfile.saveAndClose();
@@ -162,14 +162,16 @@ describe('data-import', () => {
         Logs.checkImportFile(specialJobProfile.profileName);
         Logs.openFileDetails(fileName);
 
-        [FileDetails.columnNameInResultList.srsMarc,
+        [
+          FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
           FileDetails.columnNameInResultList.holdings,
-          FileDetails.columnNameInResultList.item].forEach(columnName => {
+          FileDetails.columnNameInResultList.item,
+        ].forEach((columnName) => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
         });
         FileDetails.checkItemsQuantityInSummaryTable(0, '1');
-      }
+      },
     );
   });
 });

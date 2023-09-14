@@ -27,6 +27,7 @@ import {
   ACQUISITION_METHOD_NAMES,
   RECEIVING_WORKFLOW_NAMES,
   MATERIAL_TYPE_NAMES,
+  ORDER_PAYMENT_STATUS,
 } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 
@@ -709,6 +710,45 @@ export default {
     cy.do(saveAndClose.click());
     // If purchase order line will be dublicate, Modal with button 'Submit' will be activated
     cy.wait(2000);
+    submitOrderLine();
+  },
+
+  fillInPOLineInfoForPhysicalResourceWithPaymentNotRequired(
+    fund,
+    unitPrice,
+    quantity,
+    value,
+    institutionId,
+  ) {
+    cy.do([
+      orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
+      acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
+      Select({ name: 'paymentStatus' }).choose(ORDER_PAYMENT_STATUS.PAYMENT_NOT_REQUIRED),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
+      ),
+      physicalUnitPriceTextField.fillIn(unitPrice),
+      quantityPhysicalTextField.fillIn(quantity),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
+      fundDistributionField.fillIn(value),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
+      addLocationButton.click(),
+      createNewLocationButton.click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+    cy.do([
+      selectPermanentLocationModal.find(saveButton).click(),
+      quantityPhysicalLocationField.fillIn(quantity),
+      saveAndClose.click(),
+    ]);
+    cy.wait(4000);
     submitOrderLine();
   },
 

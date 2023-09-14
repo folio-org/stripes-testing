@@ -52,12 +52,12 @@ describe('data-import', () => {
           if (option === 'ID') {
             LogsViewAll.checkById({ id });
           } else {
-          // file name is always unique
-          // so, there is always one row
+            // file name is always unique
+            // so, there is always one row
             LogsViewAll.checkRowsCount(1);
           }
         });
-      }
+      },
     );
   });
 });

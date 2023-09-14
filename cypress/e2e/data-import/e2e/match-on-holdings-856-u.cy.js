@@ -158,7 +158,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[2].mappingProfile.name,
         );
 
-        collectionOfMappingAndActionProfiles.forEach(profile => {
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
           cy.visit(SettingsMenu.actionProfilePath);
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
@@ -178,7 +178,9 @@ describe('data-import', () => {
         cy.wait(2500);
         JobProfiles.createJobProfile(updateEHoldingsJobProfile);
         NewJobProfile.linkMatchProfile(matchProfile.profileName);
-        NewJobProfile.linkActionProfileForMatches(collectionOfMappingAndActionProfiles[2].actionProfile.name);
+        NewJobProfile.linkActionProfileForMatches(
+          collectionOfMappingAndActionProfiles[2].actionProfile.name,
+        );
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(updateEHoldingsJobProfile.profileName);
 
@@ -192,7 +194,7 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameForCreateMarcFile);
         FileDetails.openInstanceInInventory('Created');
-        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHRID = initialInstanceHrId;
 
           InventoryInstance.openHoldingView();
@@ -213,7 +215,7 @@ describe('data-import', () => {
           InstanceRecordView.openHoldingView();
           HoldingsRecordView.checkCallNumber('ONLINE');
         });
-      }
+      },
     );
   });
 });

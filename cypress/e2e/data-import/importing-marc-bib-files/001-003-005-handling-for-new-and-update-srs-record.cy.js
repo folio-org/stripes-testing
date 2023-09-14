@@ -144,30 +144,37 @@ describe('data-import', () => {
 
         // open Instance for getting hrid
         FileDetails.openInstanceInInventory('Created');
-        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
           // check fields are absent in the view source
           cy.visit(TopMenu.inventoryPath);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();
-          InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[0].type, resourceIdentifiers[0].value, 0);
-          InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[1].type, resourceIdentifiers[1].value, 1);
+          InventoryInstance.verifyResourceIdentifier(
+            resourceIdentifiers[0].type,
+            resourceIdentifiers[0].value,
+            0,
+          );
+          InventoryInstance.verifyResourceIdentifier(
+            resourceIdentifiers[1].type,
+            resourceIdentifiers[1].value,
+            1,
+          );
           // verify table data in marc bibliographic source
           InventoryInstance.viewSource();
           InventoryViewSource.verifyFieldInMARCBibSource('001\t', instanceHrid);
           InventoryViewSource.notContains('003\t');
           InventoryViewSource.verifyFieldInMARCBibSource('035\t', '(ICU)1299036');
 
-          InventoryViewSource.extructDataFrom999Field()
-            .then(uuid => {
+          InventoryViewSource.extructDataFrom999Field().then((uuid) => {
             // change file using uuid for 999 field
-              DataImport.editMarcFile(
-                'marcFilrForC17039With999Field.mrc',
-                editedMarcFileName,
-                ['srsUuid', 'instanceUuid'],
-                [uuid[0], uuid[1]]
-              );
-            });
+            DataImport.editMarcFile(
+              'marcFilrForC17039With999Field.mrc',
+              editedMarcFileName,
+              ['srsUuid', 'instanceUuid'],
+              [uuid[0], uuid[1]],
+            );
+          });
 
           // create match profile
           cy.visit(SettingsMenu.matchProfilePath);
@@ -191,7 +198,11 @@ describe('data-import', () => {
 
           // create job profile for update
           cy.visit(SettingsMenu.jobProfilePath);
-          JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfile.name, matchProfile.profileName);
+          JobProfiles.createJobProfileWithLinkingProfiles(
+            jobProfile,
+            actionProfile.name,
+            matchProfile.profileName,
+          );
           JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
           // upload a marc file for updating already created instance
@@ -204,8 +215,14 @@ describe('data-import', () => {
           JobProfiles.waitFileIsImported(fileNameAfterUpload);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(fileNameAfterUpload);
-          FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.srsMarc);
-          FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance);
+          FileDetails.checkStatusInColumn(
+            FileDetails.status.updated,
+            FileDetails.columnNameInResultList.srsMarc,
+          );
+          FileDetails.checkStatusInColumn(
+            FileDetails.status.updated,
+            FileDetails.columnNameInResultList.instance,
+          );
           FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
           FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
 
@@ -231,28 +248,29 @@ describe('data-import', () => {
 
         // download exported marc file
         cy.visit(TopMenu.dataExportPath);
-        ExportFile.getExportedFileNameViaApi()
-          .then(name => {
-            exportedFileName = name;
+        ExportFile.getExportedFileNameViaApi().then((name) => {
+          exportedFileName = name;
 
-            ExportFile.downloadExportedMarcFile(exportedFileName);
-            // upload the exported marc file
-            cy.visit(TopMenu.dataImportPath);
-            // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-            DataImport.verifyUploadState();
-            DataImport.uploadExportedFile(exportedFileName);
-            JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-            JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(exportedFileName);
-            Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-            Logs.openFileDetails(exportedFileName);
-            [FileDetails.columnNameInResultList.srsMarc,
-              FileDetails.columnNameInResultList.instance].forEach(columnName => {
-              FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
-            });
-            FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
-            FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
+          ExportFile.downloadExportedMarcFile(exportedFileName);
+          // upload the exported marc file
+          cy.visit(TopMenu.dataImportPath);
+          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+          DataImport.verifyUploadState();
+          DataImport.uploadExportedFile(exportedFileName);
+          JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(exportedFileName);
+          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          Logs.openFileDetails(exportedFileName);
+          [
+            FileDetails.columnNameInResultList.srsMarc,
+            FileDetails.columnNameInResultList.instance,
+          ].forEach((columnName) => {
+            FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
           });
+          FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
+          FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
+        });
 
         // check instance is updated
         cy.visit(TopMenu.inventoryPath);
@@ -263,7 +281,7 @@ describe('data-import', () => {
         InventoryInstance.viewSource();
         InventoryViewSource.verifyFieldInMARCBibSource('001\t', instanceHridForReimport);
         InventoryViewSource.notContains(`\\$a${instanceHridForReimport}`);
-      }
+      },
     );
   });
 });

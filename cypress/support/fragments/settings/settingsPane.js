@@ -8,6 +8,8 @@ import {
   ColumnHeader,
   MultiColumnListHeader,
   MultiColumnListCell,
+  Modal,
+  TextField,
   HTML,
   including,
   or,
@@ -22,7 +24,7 @@ export const table = rootPane.find(EditableList());
 const clickActionBtn = ({ rowIndex = startRowIndex, locator }) => {
   // filter index implemented based on parent-child relations.
   // aria-rowindex calculated started from 2. Need to count it.
-  const currentRow = table.find(EditableListRow({ index: rowIndex - startRowIndex }));
+  const currentRow = rootPane.find(EditableListRow({ index: rowIndex - startRowIndex }));
   cy.do(currentRow.find(Button(locator)).click());
 };
 
@@ -47,6 +49,9 @@ export default {
   },
   clickDeleteBtn({ rowIndex } = {}) {
     clickActionBtn({ rowIndex, locator: { icon: 'trash' } });
+  },
+  checkValidatorError({ placeholder, error }) {
+    cy.expect(rootPane.find(TextField({ placeholder })).has({ error }));
   },
   checkEmptyTableContent(messages) {
     const [primary, secondary] = messages;
@@ -91,6 +96,26 @@ export default {
   },
   checkColumnExists(content) {
     cy.expect(table.find(ColumnHeader(content)).exists());
+  },
+  editViaUi(record) {
+    if (record) {
+      cy.then(() => rootPane.find(MultiColumnListCell(record)).row()).then((rowIndex) => {
+        this.clickEditBtn({ rowIndex });
+      });
+    } else {
+      this.clickEditBtn();
+    }
+  },
+  deleteViaUi({ record, modalHeader } = {}) {
+    if (record) {
+      cy.then(() => rootPane.find(MultiColumnListCell(record)).row()).then((rowIndex) => {
+        this.clickDeleteBtn({ rowIndex });
+      });
+    } else {
+      this.clickDeleteBtn();
+    }
+    cy.do(Modal(modalHeader).find(Button('Delete')).click());
+    cy.expect(Modal(modalHeader).absent());
   },
   getViaApi({ path, searchParams } = {}) {
     return cy
