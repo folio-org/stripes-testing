@@ -29,6 +29,7 @@ const deleteFieldButton = Button({ ariaLabel: 'trash' });
 const linkToMarcRecordButton = Button({ ariaLabel: 'link' });
 const unlinkIconButton = Button({ ariaLabel: 'unlink' });
 const viewAuthorutyIconButton = Button({ ariaLabel: 'eye-open' });
+const arrowUpButton = Button({ ariaLabel: 'arrow-up' });
 const saveAndCloseButton = Button({ id: 'quick-marc-record-save' });
 const saveAndKeepEditingBtn = Button({ id: 'quick-marc-record-save-edit' });
 const saveAndCloseButtonEnabled = Button({ id: 'quick-marc-record-save', disabled: false });
@@ -511,6 +512,10 @@ export default {
     );
   },
 
+  moveFieldUp(rowNumber) {
+    cy.do(QuickMarcEditorRow({ index: rowNumber }).find(arrowUpButton).click());
+  },
+
   checkFieldContentMatch(selector, regExp) {
     cy.get(selector)
       .invoke('val')
@@ -811,7 +816,7 @@ export default {
   },
 
   check008FieldLabels(labels) {
-    labels.forEach(label => {
+    labels.forEach((label) => {
       cy.expect(TextField(label).exists());
     });
   },
