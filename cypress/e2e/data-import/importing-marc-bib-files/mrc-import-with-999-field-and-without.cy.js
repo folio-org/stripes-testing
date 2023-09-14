@@ -2,6 +2,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import Parallelization from '../../../support/dictionary/parallelization';
 import TopMenu from '../../../support/fragments/topMenu';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -41,7 +42,7 @@ describe('data-import', () => {
 
     it(
       'C359012 Checking the import of the MARC Bib file, that has records with 999 ff and without the 999 ff field (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();

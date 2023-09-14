@@ -1,6 +1,7 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import Parallelization from '../../../support/dictionary/parallelization';
 import {
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
@@ -94,7 +95,7 @@ describe('data-import', () => {
 
     it(
       'C17019 Check that MARC Update select fields works properly (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         DataImport.uploadFileViaApi('oneMarcBib.mrc', marcFileForCreate);
         JobProfiles.waitFileIsImported(marcFileForCreate);
@@ -177,8 +178,8 @@ describe('data-import', () => {
         FileDetails.openInstanceInInventory('Updated');
         InstanceRecordView.verifyStatisticalCode(instanceMappingProfile.statisticalCodeUI);
         InstanceRecordView.verifyInstanceStatusTerm(instanceMappingProfile.instanceStatus);
-        InventoryInstance.viewSource();
-      },
+        InstanceRecordView.viewSource();
+      }
     );
   });
 });
