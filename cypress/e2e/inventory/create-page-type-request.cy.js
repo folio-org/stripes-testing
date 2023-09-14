@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import TestTypes from '../../support/dictionary/testTypes';
 import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
@@ -23,10 +22,7 @@ describe('ui-inventory: Create page type request', () => {
     name: `testGroup${getRandomPostfix()}`,
     id: '',
   };
-  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation(
-    'autotest basic checkin',
-    uuid(),
-  );
+  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
 
   beforeEach(() => {
     cy.getAdminToken()

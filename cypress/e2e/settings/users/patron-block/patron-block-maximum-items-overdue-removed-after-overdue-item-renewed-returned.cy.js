@@ -47,10 +47,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
     ],
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
-      'autotest fee/fine limit',
-      uuid(),
-    ),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const owner = {
     body: {

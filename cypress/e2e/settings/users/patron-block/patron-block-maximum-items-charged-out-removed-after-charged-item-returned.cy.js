@@ -37,10 +37,7 @@ describe('Patron Block: Maximum number of items charged out', () => {
     ],
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
-      'autotest charged out limit',
-      uuid(),
-    ),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
 
   before('Preconditions', () => {
