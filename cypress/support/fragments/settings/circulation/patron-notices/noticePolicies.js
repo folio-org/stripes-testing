@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { getTestEntityValue } from '../../utils/stringTools';
+import getRandomPostfix, { getTestEntityValue } from '../../../../utils/stringTools';
 
 export const NOTICE_ACTIONS = {
   checkin: 'Check in',
@@ -13,54 +13,58 @@ export const defaultNoticePolicy = {
   id: uuid(),
 };
 
+export const getDefaultNoticePolicy = ({ id = uuid(), name, templateId } = {}) => ({
+  id,
+  name: name || `Policy_name_${getRandomPostfix()}`,
+  description: `Policy_description_${getRandomPostfix()}`,
+  active: true,
+  loanNotices: templateId
+    ? [
+      {
+        templateId,
+        format: 'Email',
+        realTime: false,
+        sendOptions: {
+          sendWhen: 'Check out',
+        },
+      },
+    ]
+    : [],
+});
+
 export const NOTICE_CATEGORIES = {
   loan: {
     name: 'Loan',
-    id: 'loan',
+    id: 'Loan',
   },
   request: {
     name: 'Request',
-    id: 'request',
+    id: 'Request',
   },
   AutomatedFeeFineCharge: {
     name: 'Automated fee/fine charge',
-    id: 'automatedFeeFineCharge',
+    id: 'AutomatedFeeFineCharge',
   },
   AutomatedFeeFineAdjustment: {
     name: 'Automated fee/fine adjustment (refund or cancel)',
-    id: 'automatedFeeFineAdjustment',
+    id: 'AutomatedFeeFineAdjustment',
   },
   FeeFineCharge: {
     name: 'Manual fee/fine charge',
-    id: 'feeFineCharge',
+    id: 'FeeFineCharge',
   },
   FeeFineAction: {
     name: 'Manual fee/fine action (pay, waive, refund, transfer or cancel/error)',
-    id: 'feeFineAction',
+    id: 'FeeFineAction',
   },
 };
 
 export default {
-  createWithTemplateApi(policyName, createdTemplateId, sendWhenOption) {
+  createWithTemplateApi(policyProps = getDefaultNoticePolicy()) {
     return cy.okapiRequest({
       method: 'POST',
       path: 'patron-notice-policy-storage/patron-notice-policies',
-      body: {
-        name: policyName,
-        description: 'description',
-        active: true,
-        id: uuid(),
-        loanNotices: [
-          {
-            format: 'Email',
-            realTime: false,
-            templateId: createdTemplateId,
-            sendOptions: {
-              sendWhen: sendWhenOption,
-            },
-          },
-        ],
-      },
+      body: policyProps,
     });
   },
   createApi() {
