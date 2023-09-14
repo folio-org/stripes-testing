@@ -2,6 +2,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import Parallelization from '../../../support/dictionary/parallelization';
 import {
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
@@ -104,7 +105,7 @@ describe('data-import', () => {
 
     it(
       'C356830 Test field protections when importing to update instance, after editing the MARC Bib outside of FOLIO (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         MarcFieldProtection.createMarcFieldProtectionViaApi({
           indicator1: '*',
@@ -180,16 +181,17 @@ describe('data-import', () => {
         InstanceRecordView.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
 
-          InventoryInstance.viewSource();
-          InventoryViewSource.extructDataFrom999Field().then((uuid) => {
+          InstanceRecordView.viewSource();
+          InventoryViewSource.extructDataFrom999Field()
+            .then(uuid => {
             // change file using uuid for 999 field
-            DataImport.editMarcFile(
-              'marcFileForC356830_rev.mrc',
-              editedMarcFileName,
-              ['instanceHrid', 'srsUuid', 'instanceUuid'],
-              [instanceHrid, uuid[0], uuid[1]],
-            );
-          });
+              DataImport.editMarcFile(
+                'marcFileForC356830_rev.mrc',
+                editedMarcFileName,
+                ['instanceHrid', 'srsUuid', 'instanceUuid'],
+                [instanceHrid, uuid[0], uuid[1]],
+              );
+            });
         });
 
         // upload .mrc file
@@ -213,11 +215,8 @@ describe('data-import', () => {
         FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 1);
 
         FileDetails.openInstanceInInventory('Updated');
-        InventoryInstance.viewSource();
-        InventoryViewSource.verifyFieldInMARCBibSource(
-          '650\t',
-          'Drawing, Dutch ‡y 21st century ‡v Exhibitions. ‡5 amb',
-        );
+        InstanceRecordView.viewSource();
+        InventoryViewSource.verifyFieldInMARCBibSource('650\t', 'Drawing, Dutch ‡y 21st century ‡v Exhibitions. ‡5 amb');
         InventoryViewSource.verifyFieldInMARCBibSource('920\t', 'This field should be protected');
       },
     );

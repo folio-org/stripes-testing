@@ -322,8 +322,8 @@ export default {
         .find(MultiColumnListRow({ index: rowNumber }))
         .find(MultiColumnListCell({ columnIndex: 9 }))
         .perform((element) => {
-          console.log(element);
           const extractedMatches = [];
+
           // get text contains e.g. 'Error' and put it to an array
           Array.from(element.querySelectorAll('[class*="baselineCell-"]')).map((el) => extractedMatches.push(el.innerText.match(/(Error)/g)));
           // get the first element from an array
