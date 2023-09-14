@@ -8,8 +8,8 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import Users from '../../support/fragments/users/users';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
-import NoticePolicyTemplateApi from '../../support/fragments/circulation/notice-policy-template';
-import NewNoticePolicyTemplate from '../../support/fragments/circulation/newNoticePolicyTemplate';
+import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
+import NewNoticePolicyTemplate from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import getRandomPostfix from '../../support/utils/stringTools';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
@@ -81,9 +81,10 @@ describe('Overdue fine', () => {
   const refundReason = RefundReasons.getDefaultNewRefundReason(uuid());
   const waiveReason = WaiveReasons.getDefaultNewWaiveReason(uuid());
   const manualCharge = {
-    feeFineOwnerName: userOwnerBody.owner,
+    owner: userOwnerBody.owner,
+    id: userOwnerBody.id,
     feeFineType: 'Charge' + getRandomPostfix(),
-    defaultAmount: '10.00',
+    amount: '10.00',
     chargeNoticeId: noticeTemplates.manualFeeFineCharge.name,
     actionNoticeId: noticeTemplates.manualFeeFineAction.name,
   };
@@ -200,6 +201,7 @@ describe('Overdue fine', () => {
       cy.visit(SettingsMenu.manualCharges);
       ManualCharges.waitLoading();
       cy.intercept('POST', '/feefines').as('manualChargeCreate');
+      ManualCharges.selectOwner(userOwnerBody);
       ManualCharges.createViaUi(manualCharge);
       cy.wait('@manualChargeCreate').then((intercept) => {
         cy.wrap(intercept.response.body.id).as('manualChargeId');

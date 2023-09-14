@@ -1,4 +1,4 @@
-import { RichEditor, TextField, Button, Select } from '../../../../interactors';
+import { RichEditor, TextField, Button, Select, Label } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 
 const titleTextField = TextField('Note title*');
@@ -26,6 +26,11 @@ export default {
       titleTextField.fillIn(specialNote.title),
       RichEditor('Details').fillIn(specialNote.details),
     ]);
+
+    cy.wait(100);
+
+    if (specialNote.checkoutApp) cy.do(Label('Check out app').click());
+    if (specialNote.usersApp) cy.do(Label('Users app').click());
   },
 
   save() {

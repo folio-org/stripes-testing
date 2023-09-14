@@ -22,7 +22,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 
 describe('ui-users-loans: Loans', () => {
   let addedCirculationRule;
-  const newOwnerData = UsersOwners.getDefaultNewOwner(uuid());
+  const newOwnerData = UsersOwners.getDefaultNewOwner();
   const newFirstItemData = getNewItem();
   const newSecondItemData = getNewItem();
   const DECLARE_LOST_ADDITIONAL_INFORMATION = getTestEntityValue('Some additional information');

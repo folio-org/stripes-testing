@@ -27,7 +27,7 @@ import PaymentMethods from '../../../support/fragments/settings/users/paymentMet
 describe('ui-users-loans: Loans', () => {
   let addedCirculationRule;
   const paymentMethod = {};
-  const newOwnerData = UsersOwners.getDefaultNewOwner(uuid());
+  const newOwnerData = UsersOwners.getDefaultNewOwner();
   const newFirstItemData = getNewItem();
   const declareLostComments = getTestEntityValue('Some additional information');
   const testData = {

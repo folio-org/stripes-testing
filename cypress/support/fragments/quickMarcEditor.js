@@ -14,6 +14,7 @@ import {
   including,
   PaneContent,
   PaneHeader,
+  Tooltip,
 } from '../../../interactors';
 import dateTools from '../utils/dateTools';
 import getRandomPostfix from '../utils/stringTools';
@@ -810,7 +811,7 @@ export default {
   },
 
   check008FieldLabels(labels) {
-    labels.forEach(label => {
+    labels.forEach((label) => {
       cy.expect(TextField(label).exists());
     });
   },
@@ -962,6 +963,11 @@ export default {
 
   checkLinkButtonExist(tag) {
     cy.expect(getRowInteractorByTagName(tag).find(linkToMarcRecordButton).exists());
+  },
+
+  checkLinkButtonToolTipText(text) {
+    cy.do(getRowInteractorByTagName('100').find(linkToMarcRecordButton).hoverMouse());
+    cy.expect(Tooltip().has({ text }));
   },
 
   checkLinkButtonExistByRowIndex(rowIndex) {

@@ -49,6 +49,10 @@ export default {
     cy.do(feesFinesAccourdion.clickHeader());
   },
 
+  openNotesSection() {
+    cy.do(Accordion({ id: 'notesAccordion' }).clickHeader());
+  },
+
   showOpenedLoans() {
     return cy.do(Link({ id: 'clickable-viewcurrentloans' }).click());
   },
