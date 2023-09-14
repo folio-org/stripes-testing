@@ -140,16 +140,6 @@ describe.skip('Create a custom package', () => {
     },
   );
   it(
-    'C694 Search providers for [Gale | Cengage]. Then Search list of packages on Provider detail record for all selected packages (spitfire)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      eHolding.switchToPackages();
-      eHoldingsPackages.openPackage();
-      eHolding.packageButton();
-      eHolding.bySelectionStatusOpen('Selected');
-    },
-  );
-  it(
     'C699 Add or edit package custom coverage (spitfire)',
     { tags: [testTypes.ideaLabsTests] },
     () => {
