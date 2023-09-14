@@ -11,7 +11,7 @@ import BrowseSearch from '../../../support/fragments/inventory/search/browseSubj
 const testData = {};
 const instance = BrowseContributors.defaultInstanceAWithContributor;
 
-describe('Inventory: UI navigation', () => {
+describe('Inventory › Contributors Browse', () => {
   before('Create inventory instance with contributor', () => {
     cy.getAdminToken().then(() => {
       cy.getInstanceTypes({ limit: 1 }).then((res) => {
@@ -44,7 +44,7 @@ describe('Inventory: UI navigation', () => {
   });
 
   it(
-    'C353653 Return back to "Browse inventory" pane via the web-browser "Back" button (exact match query)',
+    'C353653 Return back to "Browse inventory" pane via the web-browser "Back" button (exact match query)(Spitfire)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
       InventorySearchAndFilter.switchToBrowseTab();
