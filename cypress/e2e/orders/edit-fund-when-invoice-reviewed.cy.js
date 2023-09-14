@@ -1,23 +1,23 @@
-import permissions from '../../../support/dictionary/permissions';
-import devTeams from '../../../support/dictionary/devTeams';
-import testType from '../../../support/dictionary/testTypes';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import NewOrder from '../../../support/fragments/orders/newOrder';
-import Orders from '../../../support/fragments/orders/orders';
-import Receiving from '../../../support/fragments/receiving/receiving';
-import TopMenu from '../../../support/fragments/topMenu';
-import Helper from '../../../support/fragments/finance/financeHelper';
-import Organizations from '../../../support/fragments/organizations/organizations';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../../support/fragments/users/users';
-import Funds from '../../../support/fragments/finance/funds/funds';
-import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
-import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
+import permissions from '../../support/dictionary/permissions';
+import devTeams from '../../support/dictionary/devTeams';
+import testType from '../../support/dictionary/testTypes';
+import getRandomPostfix from '../../support/utils/stringTools';
+import NewOrder from '../../support/fragments/orders/newOrder';
+import Orders from '../../support/fragments/orders/orders';
+import Receiving from '../../support/fragments/receiving/receiving';
+import TopMenu from '../../support/fragments/topMenu';
+import Helper from '../../support/fragments/finance/financeHelper';
+import Organizations from '../../support/fragments/organizations/organizations';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import OrderLines from '../../support/fragments/orders/orderLines';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
+import Users from '../../support/fragments/users/users';
+import Funds from '../../support/fragments/finance/funds/funds';
+import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
+import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
 
-describe('Orders: Receiving and Check-in', () => {
+describe('Orders', () => {
   const order = {
     ...NewOrder.defaultOneTimeOrder,
     approved: true,
@@ -98,10 +98,9 @@ describe('Orders: Receiving and Check-in', () => {
     });
 
     cy.createTempUser([
-      permissions.uiInventoryViewInstances.gui,
       permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiOrdersView.gui,
-      permissions.uiReceivingViewEditCreate.gui,
+      permissions.uiOrdersEdit.gui,
+      permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
@@ -128,7 +127,7 @@ describe('Orders: Receiving and Check-in', () => {
   });
 
   it(
-    'C378899 Encumbrance releases when receive piece for order with payment status "Payment Not Required" (thunderjet)',
+    'C368486 Editing fund distribution in PO line when related Reviewed invoice exists (thunderjet)',
     { tags: [testType.criticalPath, devTeams.thunderjet] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
