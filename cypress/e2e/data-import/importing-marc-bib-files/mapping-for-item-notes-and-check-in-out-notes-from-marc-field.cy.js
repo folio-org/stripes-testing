@@ -1,5 +1,6 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import Parallelization from '../../../support/dictionary/parallelization';
 import {
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
@@ -123,7 +124,7 @@ describe('data-import', () => {
 
     it(
       'C368005 Verify the mapping for item record notes and check in/out notes from MARC field (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         // create Field mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();

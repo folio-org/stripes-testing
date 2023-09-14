@@ -1,4 +1,5 @@
 import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import Parallelization from '../../../support/dictionary/parallelization';
 import {
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
@@ -117,7 +118,7 @@ describe('data-import', () => {
 
     it(
       'C343334 MARC file import with creating a new mapping profiles, action profiles and job profile (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         // create mapping profiles
         cy.visit(SettingsMenu.mappingProfilePath);

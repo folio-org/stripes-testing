@@ -1,5 +1,6 @@
 import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import Parallelization from '../../../support/dictionary/parallelization';
 import TopMenu from '../../../support/fragments/topMenu';
 import {
   FOLIO_RECORD_TYPE,
@@ -128,7 +129,7 @@ describe('data-import', () => {
 
     it(
       'C347830 Match on Instance identifier match meets both the Identifier type and Data requirements Scenario 3 (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         DataImport.editMarcFile(
           filePathForCreateInstance,

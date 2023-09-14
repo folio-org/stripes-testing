@@ -112,7 +112,7 @@ describe('data-import', () => {
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           const instanceHrId = initialInstanceHrId;
 
-          InventoryInstance.viewSource();
+          InstanceRecordView.viewSource();
           // changing the first file
           InventoryViewSource.extructDataFrom999Field().then((uuid) => {
             // change file using uuid for 999 field
@@ -176,7 +176,7 @@ describe('data-import', () => {
           FileDetails.openInstanceInInventory('Updated');
           InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatusTerm);
           InstanceRecordView.verifyStatisticalCode(mappingProfile.statisticalCodeUI);
-          InventoryInstance.viewSource();
+          InstanceRecordView.viewSource();
           InventoryViewSource.contains('001\t');
           InventoryViewSource.contains(instanceHrId);
           InventoryViewSource.notContains('003\t');
@@ -349,7 +349,7 @@ describe('data-import', () => {
           InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
             const instanceHrid = initialInstanceHrId;
 
-            InventoryInstance.viewSource();
+            InstanceRecordView.viewSource();
             InventoryViewSource.contains('001\t');
             InventoryViewSource.contains(instanceHrid);
             InventoryViewSource.notContains('003\t');

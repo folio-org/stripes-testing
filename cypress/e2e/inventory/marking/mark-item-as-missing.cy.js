@@ -1,4 +1,5 @@
 import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import Parallelization from '../../../support/dictionary/parallelization';
 import MarkItemAsMissing from '../../../support/fragments/inventory/markItemAsMissing';
 import Requests from '../../../support/fragments/requests/requests';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -100,7 +101,8 @@ describe('inventory', () => {
 
     it(
       'C714 Mark an item as Missing (folijet) (prokopovych)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         cy.visit(TopMenu.inventoryPath);
         MarkItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);

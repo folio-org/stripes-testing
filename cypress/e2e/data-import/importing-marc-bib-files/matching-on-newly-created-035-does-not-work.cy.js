@@ -1,5 +1,6 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import Parallelization from '../../../support/dictionary/parallelization';
 import {
   FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
@@ -132,7 +133,7 @@ describe('data-import', () => {
 
     it(
       'C358138 Matching on newly-created 035 does not work (regression) (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
@@ -217,7 +218,7 @@ describe('data-import', () => {
 
         FileDetails.openInstanceInInventory('Updated');
         InstanceRecordView.verifyAdministrativeNote(note);
-        InventoryInstance.viewSource();
+        InstanceRecordView.viewSource();
         InventoryViewSource.contains('035\t');
         InventoryViewSource.contains(resourceIdentifierForFirstInstance.value);
         InventoryViewSource.contains('650\t');
@@ -279,7 +280,7 @@ describe('data-import', () => {
 
         FileDetails.openInstanceInInventory('Updated');
         InstanceRecordView.verifyAdministrativeNote(note);
-        InventoryInstance.viewSource();
+        InstanceRecordView.viewSource();
         InventoryViewSource.contains('035\t');
         InventoryViewSource.contains(resourceIdentifierForSecondInstance.value);
         InventoryViewSource.contains('650\t');

@@ -1,5 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import Parallelization from '../../../support/dictionary/parallelization';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -63,7 +64,7 @@ describe('data-import', () => {
 
     it(
       'C358137 A user can delete import logs with "Data import: Can delete import logs" permission on Landing page (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         Logs.openFileDetails(fileNameToUpload);
         Logs.clickOnHotLink();

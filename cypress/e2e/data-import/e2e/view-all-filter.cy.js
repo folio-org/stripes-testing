@@ -4,6 +4,7 @@ import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll
 import DateTools from '../../../support/utils/dateTools';
 import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
+import Parallelization from '../../../support/dictionary/parallelization';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
@@ -58,7 +59,7 @@ describe('data-import', () => {
 
     it(
       'C11113 Filter the "View all" log screen (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.checkByReverseChronologicalOrder();

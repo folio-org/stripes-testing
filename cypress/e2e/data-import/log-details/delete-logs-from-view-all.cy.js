@@ -1,5 +1,6 @@
 import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import Parallelization from '../../../support/dictionary/parallelization';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import TopMenu from '../../../support/fragments/topMenu';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
@@ -35,7 +36,7 @@ describe('data-import', () => {
 
     it(
       'C367923 A user can delete logs from the Import app "View all" page (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();

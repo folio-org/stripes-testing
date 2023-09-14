@@ -204,18 +204,6 @@ export default {
     );
   },
 
-  // need to be updated regarding to verifyQuantityOfItemsRelatedtoHoldings function
-  verifyQuantityOfItemsOnPage(quantityOfItems, itemLoanType) {
-    for (let i = 0; i < 200; i++) {
-      cy.expect(
-        MultiColumnList({ ariaRowCount: `${quantityOfItems}` })
-          .find(MultiColumnListRow({ rowIndexInParent: `row-${i}` }))
-          .find(MultiColumnListCell({ columnIndex: 3, content: itemLoanType }))
-          .exists(),
-      );
-    }
-  },
-
   verifyQuantityOfItemsRelatedtoHoldings(holdingToBeOpened, quantityOfItems) {
     cy.do(
       Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) }).perform((el) => {

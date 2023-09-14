@@ -4,6 +4,7 @@ import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll
 import FileManager from '../../../support/utils/fileManager';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
+import Parallelization from '../../../support/dictionary/parallelization';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 
 describe('data-import', () => {
@@ -36,7 +37,7 @@ describe('data-import', () => {
 
     it(
       'C11112 Search the "View all" log screen (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         Logs.openViewAllLogs();
 

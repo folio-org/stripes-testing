@@ -5,6 +5,7 @@ import Users from '../../../support/fragments/users/users';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
+import Parallelization from '../../../support/dictionary/parallelization';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
@@ -60,7 +61,7 @@ describe('inventory', () => {
 
     it(
       'C343349 Overlay existing Source = FOLIO Instance by import of single MARC Bib record from OCLC (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchByParameter(
@@ -92,7 +93,7 @@ describe('inventory', () => {
           oclcRecordData.notes.noteContent,
         );
 
-        InventoryInstance.viewSource();
+        InstanceRecordView.viewSource();
         InventoryViewSource.contains('020\t');
         InventoryViewSource.contains(oclcRecordData.isbn1);
         InventoryViewSource.contains('020\t');

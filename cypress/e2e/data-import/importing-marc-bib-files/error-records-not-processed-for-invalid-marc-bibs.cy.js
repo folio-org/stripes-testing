@@ -1,5 +1,6 @@
 import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import Parallelization from '../../../support/dictionary/parallelization';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import TopMenu from '../../../support/fragments/topMenu';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -37,7 +38,7 @@ describe('data-import', () => {
 
     it(
       'C350750 Error records not processed or saved for invalid MARC Bibs (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();

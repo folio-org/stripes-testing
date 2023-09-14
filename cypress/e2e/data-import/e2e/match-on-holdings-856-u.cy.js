@@ -1,6 +1,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { DevTeams, TestTypes } from '../../../support/dictionary';
+import Parallelization from '../../../support/dictionary/parallelization';
 import {
   LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
@@ -141,7 +142,7 @@ describe('data-import', () => {
 
     it(
       'C17025 Match on Holdings 856 $u (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         createInstanceMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
         FieldMappingProfiles.checkMappingProfilePresented(

@@ -9,6 +9,7 @@ import DeleteDataImportLogsModal from '../../../support/fragments/data_import/lo
 import Users from '../../../support/fragments/users/users';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
+import Parallelization from '../../../support/dictionary/parallelization';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
 
 describe('data-import', () => {
@@ -78,7 +79,7 @@ describe('data-import', () => {
 
     it(
       'C358136 A user can filter and delete import logs from the "View all" page (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();

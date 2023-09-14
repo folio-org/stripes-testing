@@ -1,6 +1,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { DevTeams, TestTypes } from '../../../support/dictionary';
+import Parallelization from '../../../support/dictionary/parallelization';
 import {
   FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
@@ -202,7 +203,7 @@ describe('data-import', () => {
 
     it(
       'C17018 Check that field protection overrides work properly during data import (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         // create Field mapping profiles
         cy.visit(SettingsMenu.mappingProfilePath);
