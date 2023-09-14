@@ -179,7 +179,7 @@ describe('data-import', () => {
         InstanceRecordView.verifyStatisticalCode(instanceMappingProfile.statisticalCodeUI);
         InstanceRecordView.verifyInstanceStatusTerm(instanceMappingProfile.instanceStatus);
         InstanceRecordView.viewSource();
-      }
+      },
     );
   });
 });

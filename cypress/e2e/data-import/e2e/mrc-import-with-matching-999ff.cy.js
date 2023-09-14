@@ -113,7 +113,10 @@ describe('data-import', () => {
 
         // create job profile for export
         cy.visit(SettingsMenu.jobProfilePath);
-        JobProfiles.createJobProfileWithLinkingProfiles(jobProfileForExport, actionProfileForExport.name);
+        JobProfiles.createJobProfileWithLinkingProfiles(
+          jobProfileForExport,
+          actionProfileForExport.name,
+        );
         JobProfiles.checkJobProfilePresented(jobProfileForExport.profileName);
 
         // upload a marc file for export
@@ -125,11 +128,14 @@ describe('data-import', () => {
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameForMarcFile);
         Logs.openFileDetails(nameForMarcFile);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance);
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.created,
+          FileDetails.columnNameInResultList.instance,
+        );
 
         // open Instance for getting hrid
         FileDetails.openInstanceInInventory('Created');
-        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           const instanceHRID = initialInstanceHrId;
 
           // download .csv file
@@ -165,7 +171,11 @@ describe('data-import', () => {
 
           // create Job profile
           cy.visit(SettingsMenu.jobProfilePath);
-          JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfile.name, matchProfile.profileName);
+          JobProfiles.createJobProfileWithLinkingProfiles(
+            jobProfile,
+            actionProfile.name,
+            matchProfile.profileName,
+          );
           JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
           // upload the exported marc file with 999.f.f.s fields
@@ -177,7 +187,10 @@ describe('data-import', () => {
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(nameForExportedMarcFile);
           Logs.openFileDetails(nameForExportedMarcFile);
-          FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance);
+          FileDetails.checkStatusInColumn(
+            FileDetails.status.updated,
+            FileDetails.columnNameInResultList.instance,
+          );
 
           cy.visit(TopMenu.inventoryPath);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
@@ -185,7 +198,7 @@ describe('data-import', () => {
           // ensure the fields created in Field mapping profile exists in inventory
           InventorySearchAndFilter.checkInstanceDetails();
         });
-      }
+      },
     );
   });
 });

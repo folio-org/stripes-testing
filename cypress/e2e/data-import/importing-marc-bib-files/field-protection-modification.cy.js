@@ -157,7 +157,7 @@ describe('data-import', () => {
           InstanceRecordView.verifyInstancePaneExists();
           // verify table data in marc bibliographic source
           InstanceRecordView.viewSource();
-          fieldsForDelete.forEach(fieldNumber => {
+          fieldsForDelete.forEach((fieldNumber) => {
             InventoryViewSource.notContains(`${fieldNumber}\t`);
           });
         });

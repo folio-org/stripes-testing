@@ -186,7 +186,7 @@ describe('data-import', () => {
         FileDetails.checkSrsRecordQuantityInSummaryTable('1');
         FileDetails.checkInstanceQuantityInSummaryTable('1');
         FileDetails.openInstanceInInventory('Created');
-        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
 
           InstanceRecordView.waitLoading();
@@ -196,13 +196,12 @@ describe('data-import', () => {
           InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[0], dataForField507);
           InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[1], dataForField920);
 
-
           // change file using order number
           DataImport.editMarcFile(
             'marcFileForC17017.mrc',
             editedMarcFileName,
             [dataFromField001, dataForField500, dataForField507, dataForField920],
-            [instanceHrid, updateDataForField500, updateDataForField507, updateDataForField920]
+            [instanceHrid, updateDataForField500, updateDataForField507, updateDataForField920],
           );
         });
 
@@ -222,7 +221,11 @@ describe('data-import', () => {
 
         // create job profile for update
         cy.visit(SettingsMenu.jobProfilePath);
-        JobProfiles.createJobProfileWithLinkingProfiles(jobProfileUpdate, actionProfileUpdate.name, matchProfile.profileName);
+        JobProfiles.createJobProfileWithLinkingProfiles(
+          jobProfileUpdate,
+          actionProfileUpdate.name,
+          matchProfile.profileName,
+        );
         JobProfiles.checkJobProfilePresented(jobProfileUpdate.profileName);
 
         // upload a marc file for updating already created instance
@@ -251,8 +254,11 @@ describe('data-import', () => {
         InventoryViewSource.verifyFieldInMARCBibSource('500', dataForField500);
         InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[0], dataForField507);
         InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[1], dataForField920);
-        InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[1], updateDataForField920);
-      }
+        InventoryViewSource.verifyFieldInMARCBibSource(
+          marcFieldProtected[1],
+          updateDataForField920,
+        );
+      },
     );
   });
 });

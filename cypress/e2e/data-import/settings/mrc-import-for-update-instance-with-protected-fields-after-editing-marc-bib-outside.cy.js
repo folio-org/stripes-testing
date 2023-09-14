@@ -182,16 +182,15 @@ describe('data-import', () => {
           instanceHrid = initialInstanceHrId;
 
           InstanceRecordView.viewSource();
-          InventoryViewSource.extructDataFrom999Field()
-            .then(uuid => {
+          InventoryViewSource.extructDataFrom999Field().then((uuid) => {
             // change file using uuid for 999 field
-              DataImport.editMarcFile(
-                'marcFileForC356830_rev.mrc',
-                editedMarcFileName,
-                ['instanceHrid', 'srsUuid', 'instanceUuid'],
-                [instanceHrid, uuid[0], uuid[1]],
-              );
-            });
+            DataImport.editMarcFile(
+              'marcFileForC356830_rev.mrc',
+              editedMarcFileName,
+              ['instanceHrid', 'srsUuid', 'instanceUuid'],
+              [instanceHrid, uuid[0], uuid[1]],
+            );
+          });
         });
 
         // upload .mrc file
@@ -216,7 +215,10 @@ describe('data-import', () => {
 
         FileDetails.openInstanceInInventory('Updated');
         InstanceRecordView.viewSource();
-        InventoryViewSource.verifyFieldInMARCBibSource('650\t', 'Drawing, Dutch ‡y 21st century ‡v Exhibitions. ‡5 amb');
+        InventoryViewSource.verifyFieldInMARCBibSource(
+          '650\t',
+          'Drawing, Dutch ‡y 21st century ‡v Exhibitions. ‡5 amb',
+        );
         InventoryViewSource.verifyFieldInMARCBibSource('920\t', 'This field should be protected');
       },
     );

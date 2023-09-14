@@ -162,7 +162,11 @@ describe('data-import', () => {
         ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
         cy.visit(SettingsMenu.jobProfilePath);
-        JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfile.name, matchProfile.profileName);
+        JobProfiles.createJobProfileWithLinkingProfiles(
+          jobProfile,
+          actionProfile.name,
+          matchProfile.profileName,
+        );
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         cy.visit(TopMenu.dataImportPath);
@@ -181,7 +185,7 @@ describe('data-import', () => {
         InstanceRecordView.verifyMarkAsSuppressed();
         InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);
         InstanceRecordView.verifyGeneralNoteContent(instanceGeneralNote);
-      }
+      },
     );
   });
 });

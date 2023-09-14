@@ -7,7 +7,7 @@ import {
   FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
-  JOB_STATUS_NAMES
+  JOB_STATUS_NAMES,
 } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
@@ -216,14 +216,28 @@ describe('data-import', () => {
         );
         FieldMappingProfiles.checkMappingProfilePresented(marcBibMappingProfile.name);
 
-        FieldMappingProfiles.createMappingProfileWithNotes(instanceMappingProfile, noteForUpdateInstanceMappingProfile);
+        FieldMappingProfiles.createMappingProfileWithNotes(
+          instanceMappingProfile,
+          noteForUpdateInstanceMappingProfile,
+        );
         FieldMappingProfiles.checkMappingProfilePresented(instanceMappingProfile.name);
 
-        FieldMappingProfiles.createMappingProfileForUpdatesAndOverrideMarc(marcBibMappingProfileOverride, protectedFields.firstField, protectedFields.secondField);
-        FieldMappingProfileView.checkCreatedMappingProfile(marcBibMappingProfileOverride.name, protectedFields.firstField, protectedFields.secondField);
+        FieldMappingProfiles.createMappingProfileForUpdatesAndOverrideMarc(
+          marcBibMappingProfileOverride,
+          protectedFields.firstField,
+          protectedFields.secondField,
+        );
+        FieldMappingProfileView.checkCreatedMappingProfile(
+          marcBibMappingProfileOverride.name,
+          protectedFields.firstField,
+          protectedFields.secondField,
+        );
         FieldMappingProfiles.checkMappingProfilePresented(marcBibMappingProfileOverride.name);
 
-        FieldMappingProfiles.createMappingProfileWithNotes(instanceMappingProfileOverride, noteForOverrideInstanceMappingProfile);
+        FieldMappingProfiles.createMappingProfileWithNotes(
+          instanceMappingProfileOverride,
+          noteForOverrideInstanceMappingProfile,
+        );
         FieldMappingProfiles.checkMappingProfilePresented(instanceMappingProfileOverride.name);
 
         // create Action profiles
@@ -248,14 +262,22 @@ describe('data-import', () => {
         // create Job profiles
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.createJobProfile(jobProfileForUpdate);
-        NewJobProfile.linkMatchAndTwoActionProfiles(matchProfile.profileName, marcBibActionProfile.name, instanceActionProfile.name);
+        NewJobProfile.linkMatchAndTwoActionProfiles(
+          matchProfile.profileName,
+          marcBibActionProfile.name,
+          instanceActionProfile.name,
+        );
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
 
         // need to wait until the first job profile will be created
         cy.wait(2500);
         JobProfiles.createJobProfile(jobProfileForOverride);
-        NewJobProfile.linkMatchAndTwoActionProfiles(matchProfile.profileName, marcBibActionProfileOverride.name, instanceActionProfileOverride.name);
+        NewJobProfile.linkMatchAndTwoActionProfiles(
+          matchProfile.profileName,
+          marcBibActionProfileOverride.name,
+          instanceActionProfileOverride.name,
+        );
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfileForOverride.profileName);
 
@@ -269,18 +291,31 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(fileNameForCreatingInstance);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForCreatingInstance);
-        [FileDetails.columnNameInResultList.srsMarc, FileDetails.columnNameInResultList.instance].forEach(columnName => {
+        [
+          FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.instance,
+        ].forEach((columnName) => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable('1', 0);
         FileDetails.checkInstanceQuantityInSummaryTable('1', 0);
         // open Instance for getting hrid
         FileDetails.openInstanceInInventory('Created');
-        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
 
-          DataImport.editMarcFile(fileForEditRev1, editedFileNameRev1, [instanceHridFromFile], [instanceHrid]);
-          DataImport.editMarcFile(fileForEditRev2, editedFileNameRev2, [instanceHridFromFile], [instanceHrid]);
+          DataImport.editMarcFile(
+            fileForEditRev1,
+            editedFileNameRev1,
+            [instanceHridFromFile],
+            [instanceHrid],
+          );
+          DataImport.editMarcFile(
+            fileForEditRev2,
+            editedFileNameRev2,
+            [instanceHridFromFile],
+            [instanceHrid],
+          );
 
           // upload a marc file
           cy.visit(TopMenu.dataImportPath);
@@ -292,7 +327,10 @@ describe('data-import', () => {
           JobProfiles.waitFileIsImported(fileNameForProtect);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(fileNameForProtect);
-          [FileDetails.columnNameInResultList.srsMarc, FileDetails.columnNameInResultList.instance].forEach(columnName => {
+          [
+            FileDetails.columnNameInResultList.srsMarc,
+            FileDetails.columnNameInResultList.instance,
+          ].forEach((columnName) => {
             FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
           });
           FileDetails.checkSrsRecordQuantityInSummaryTable('1', 1);
@@ -302,14 +340,29 @@ describe('data-import', () => {
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyAdministrativeNote(administrativeNote);
-          InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[0].type, resourceIdentifiers[0].value, 0);
-          InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[1].type, resourceIdentifiers[1].value, 2);
-          InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[2].type, resourceIdentifiers[2].value, 1);
+          InventoryInstance.verifyResourceIdentifier(
+            resourceIdentifiers[0].type,
+            resourceIdentifiers[0].value,
+            0,
+          );
+          InventoryInstance.verifyResourceIdentifier(
+            resourceIdentifiers[1].type,
+            resourceIdentifiers[1].value,
+            2,
+          );
+          InventoryInstance.verifyResourceIdentifier(
+            resourceIdentifiers[2].type,
+            resourceIdentifiers[2].value,
+            1,
+          );
           InstanceRecordView.verifyInstanceNote(instanceNote);
           // verify table data in marc bibliographic source
           InventoryInstance.viewSource();
-          resourceIdentifiers.forEach(element => {
-            InventoryViewSource.verifyFieldInMARCBibSource(protectedFields.firstField, element.value);
+          resourceIdentifiers.forEach((element) => {
+            InventoryViewSource.verifyFieldInMARCBibSource(
+              protectedFields.firstField,
+              element.value,
+            );
           });
           InventoryViewSource.verifyFieldInMARCBibSource(protectedFields.secondField, instanceNote);
 
@@ -323,7 +376,10 @@ describe('data-import', () => {
           JobProfiles.waitFileIsImported(fileNameForOverride);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(fileNameForOverride);
-          [FileDetails.columnNameInResultList.srsMarc, FileDetails.columnNameInResultList.instance].forEach(columnName => {
+          [
+            FileDetails.columnNameInResultList.srsMarc,
+            FileDetails.columnNameInResultList.instance,
+          ].forEach((columnName) => {
             FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
           });
           FileDetails.checkSrsRecordQuantityInSummaryTable('1', 1);
@@ -334,16 +390,19 @@ describe('data-import', () => {
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyAdministrativeNote(administrativeNote);
           InstanceRecordView.verifyAdministrativeNote(updatedAdministativeNote);
-          resourceIdentifiers.forEach(element => {
+          resourceIdentifiers.forEach((element) => {
             InventoryInstance.verifyResourceIdentifierAbsent(element.value);
           });
           InstanceRecordView.verifyInstanceNote(updatedInstanceNote);
           // verify table data in marc bibliographic source
           InventoryInstance.viewSource();
           InventoryViewSource.notContains(`${protectedFields.firstField}\t`);
-          InventoryViewSource.verifyFieldInMARCBibSource(protectedFields.secondField, updatedInstanceNote);
+          InventoryViewSource.verifyFieldInMARCBibSource(
+            protectedFields.secondField,
+            updatedInstanceNote,
+          );
         });
-      }
+      },
     );
   });
 });
