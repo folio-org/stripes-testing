@@ -50,10 +50,7 @@ describe('Overdue fine', () => {
     title: `Instance ${getRandomPostfix()}`,
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
-      'autotestReceiveNotice',
-      uuid(),
-    ),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     ruleProps: {},
   };
   const createNoticeTemplate = (noticeName) => {

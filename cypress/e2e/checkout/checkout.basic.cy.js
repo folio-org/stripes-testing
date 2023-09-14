@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import permissions from '../../support/dictionary/permissions';
 import TestTypes from '../../support/dictionary/testTypes';
 import TopMenu from '../../support/fragments/topMenu';
@@ -33,10 +32,7 @@ describe('Check Out - Actions ', () => {
     instanceTitle: `Instance ${getRandomPostfix()}`,
   };
   let defaultLocation;
-  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation(
-    'autotest basic checkin',
-    uuid(),
-  );
+  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
 
   before('Create New Item and New User', () => {
     cy.getAdminToken()

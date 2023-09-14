@@ -17,7 +17,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import Users from '../../../support/fragments/users/users';
 import FilterItems from '../../../support/fragments/inventory/filterItems';
-import SwitchServicePoint from '../../../support/fragments/servicePoint/switchServicePoint';
+import SwitchServicePoint from '../../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
 
 describe('inventory', () => {
   describe('Item', () => {
@@ -29,14 +29,8 @@ describe('inventory', () => {
       instanceTitle: `autotestInstance ${getRandomPostfix()}`,
     };
     const holdingsPermanentLocation = LOCATION_NAMES.ONLINE_UI;
-    const firstServicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation(
-      'firstServicePoint',
-      uuid(),
-    );
-    const secondServicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation(
-      'secondServicePoint',
-      uuid(),
-    );
+    const firstServicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
+    const secondServicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
     const testData = [ITEM_STATUS_NAMES.AVAILABLE, itemData.barcode];
 
     before('create test data and login', () => {

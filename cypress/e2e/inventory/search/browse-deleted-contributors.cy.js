@@ -90,8 +90,8 @@ describe('Inventory -> Contributors Browse', () => {
 
       InventorySearchAndFilter.switchToBrowseTab();
       BrowseContributors.select();
-      BrowseContributors.browse(testData.contributorName);
-      BrowseContributors.verifyRecordWithBold(testData.contributorName);
+      BrowseContributors.searchRecordByName(testData.contributorName);
+      BrowseContributors.checkSearchResultRecord(testData.contributorName);
 
       BrowseContributors.openRecord(testData.contributorName);
       InventoryInstance.checkInstanceButtonExistence();

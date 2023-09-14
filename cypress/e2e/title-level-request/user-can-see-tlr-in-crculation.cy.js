@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import testTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
@@ -16,7 +15,7 @@ describe('Create Item or Title level request', () => {
     name: 'groupToTLR' + getRandomPostfix(),
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestTLR', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
 
   before('Preconditions', () => {
