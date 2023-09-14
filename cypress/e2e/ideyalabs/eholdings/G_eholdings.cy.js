@@ -103,14 +103,6 @@ describe.skip('Create a custom package', () => {
       eHolding.verifyAlternativeRadio();
     },
   );
-  it('C3464 Update Package Proxy (spitfire)', { tags: [testTypes.ideaLabsTests] }, () => {
-    cy.visit(topMenu.eholdingsPath);
-    eHoldingsSearch.switchToPackages();
-    eHoldingsProvidersSearch.byProvider('Edinburgh Scholarship Online');
-    eHoldingsProviders.viewPackage();
-    eHoldingsPackages.updateProxy();
-    eHolding.verifyProxy();
-  });
   it('C648 Closed Library Due Date (vega)', { tags: [testTypes.ideaLabsTests] }, () => {
     cy.visit(topMenu.eholdingsPath);
     eHoldingsSearch.switchToTitles();
@@ -145,16 +137,6 @@ describe.skip('Create a custom package', () => {
       eHolding.editActions();
       eHolding.providerToken();
       eHolding.checkToken();
-    },
-  );
-  it(
-    'C694 Search providers for [Gale | Cengage]. Then Search list of packages on Provider detail record for all selected packages (spitfire)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      eHolding.switchToPackages();
-      eHoldingsPackages.openPackage();
-      eHolding.packageButton();
-      eHolding.bySelectionStatusOpen('Selected');
     },
   );
   it(

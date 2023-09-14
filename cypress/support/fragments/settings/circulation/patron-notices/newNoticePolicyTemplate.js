@@ -1,5 +1,5 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import getRandomPostfix from '../../utils/stringTools';
+import getRandomPostfix from '../../../../utils/stringTools';
 import {
   Accordion,
   Button,
@@ -17,9 +17,9 @@ import {
   RichEditor,
   including,
   MetaSection,
-} from '../../../../interactors';
-import richTextEditor from '../../../../interactors/rich-text-editor';
-import { NOTICE_CATEGORIES } from './notice-policy';
+} from '../../../../../../interactors';
+import richTextEditor from '../../../../../../interactors/rich-text-editor';
+import { NOTICE_CATEGORIES } from './noticePolicies';
 import { actionsButtons } from './newNoticePolicy';
 
 const titles = {

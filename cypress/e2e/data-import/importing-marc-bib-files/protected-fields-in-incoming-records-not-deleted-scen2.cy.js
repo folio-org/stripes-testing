@@ -2,6 +2,7 @@
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import Parallelization from '../../../support/dictionary/parallelization';
 import TopMenu from '../../../support/fragments/topMenu';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
@@ -11,8 +12,8 @@ import InventoryEditMarcRecord from '../../../support/fragments/inventory/invent
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import { TARGET_PROFILE_NAMES } from '../../../support/constants';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import { TARGET_PROFILE_NAMES } from '../../../support/constants';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -96,7 +97,7 @@ describe('data-import', () => {
 
     it(
       'C359189 Check that protected fields in incoming records are not deleted during import: Scenario 2 (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         cy.visit(SettingsMenu.marcFieldProtectionPath);
         MarcFieldProtection.checkListOfExistingProfilesIsDisplayed();
@@ -114,10 +115,12 @@ describe('data-import', () => {
 
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.importWithOclc(oclcForImport);
+        InstanceRecordView.verifyInstancePaneExists();
+        cy.wait(2000);
         // check fields is presented in .mrc file
         InstanceRecordView.waitLoading();
         InstanceRecordView.verifyInstancePaneExists();
-        InventoryInstance.viewSource();
+        InstanceRecordView.viewSource();
         Object.values(initialFields).forEach((field) => InventoryViewSource.contains(field));
         cy.intercept('GET', '/orders/titles?*').as('getOrdersTitles');
         InventoryViewSource.close();
@@ -140,7 +143,7 @@ describe('data-import', () => {
         // need to wait because after the import the data in the instance is displayed for a long time
         // https://issues.folio.org/browse/MODCPCT-73
         cy.wait(10000);
-        InventoryInstance.viewSource();
+        InstanceRecordView.viewSource();
         // check fields without NcD is presented in .mrc file
         Object.values(initialFields).forEach((field) => InventoryViewSource.contains(field));
 

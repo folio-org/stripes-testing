@@ -1,18 +1,25 @@
 import uuid from 'uuid';
-import getRandomPostfix, { getTestEntityValue } from '../../../../utils/stringTools';
+import getRandomPostfix from '../../../../utils/stringTools';
 import { NavListItem, Pane, Button, TextField } from '../../../../../../interactors';
 
 const servicePointsPane = Pane('Service points');
 
+const defaultServicePoint = {
+  code: `autotest_code_${getRandomPostfix()}`,
+  id: uuid(),
+  discoveryDisplayName: `autotest_discovery_display_name_${getRandomPostfix()}`,
+  name: `autotest_service_point_name_${getRandomPostfix()}`,
+};
+
 const getDefaultServicePointWithPickUpLocation = ({
-  name = `servicePoint-${getRandomPostfix()}`,
+  name = `autotest_service_point_name_${getRandomPostfix()}`,
   id = uuid(),
 } = {}) => {
   return {
-    code: getTestEntityValue(name),
-    discoveryDisplayName: `Discovery_display_name-${getRandomPostfix()}`,
     id,
-    name: getTestEntityValue(name),
+    name,
+    code: `autotest_code_${getRandomPostfix()}`,
+    discoveryDisplayName: `autotest_discovery_display_name_${getRandomPostfix()}`,
     pickupLocation: true,
     holdShelfExpiryPeriod: { intervalId: 'Hours', duration: 1 },
   };
@@ -27,7 +34,7 @@ export default {
     })
     .then(({ body }) => body.servicepoints),
 
-  createViaApi: (servicePointParameters) => cy.okapiRequest({
+  createViaApi: (servicePointParameters = defaultServicePoint) => cy.okapiRequest({
     path: 'service-points',
     body: servicePointParameters,
     method: 'POST',

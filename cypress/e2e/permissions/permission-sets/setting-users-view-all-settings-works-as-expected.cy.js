@@ -33,7 +33,7 @@ describe('Permission Sets', () => {
     name: getTestEntityValue('PSDepartment'),
   };
   const ownerBody = {
-    ...UsersOwners.getDefaultNewOwner(uuid()),
+    ...UsersOwners.getDefaultNewOwner(),
     servicePointOwner: [
       {
         value: testData.userServicePoint.id,

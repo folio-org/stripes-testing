@@ -60,6 +60,14 @@ export default {
     ]);
   },
 
+  checkItemDueDate(date) {
+    cy.expect(
+      MultiColumnList({ rowCount: 1 })
+        .find(HTML(including(date)))
+        .exists(),
+    );
+  },
+
   checkOutItemUser(userBarcode, itemBarcode) {
     cy.do(TextField({ name: 'patron.identifier' }).fillIn(userBarcode));
     cy.intercept('/circulation/loans?*').as('getLoans');

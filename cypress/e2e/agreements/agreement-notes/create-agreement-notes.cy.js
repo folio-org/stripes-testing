@@ -2,50 +2,58 @@ import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 import Agreements from '../../../support/fragments/agreements/agreements';
 import Notes from '../../../support/fragments/settings/notes/notes';
 import TopMenu from '../../../support/fragments/topMenu';
-import AgreementsDetails from '../../../support/fragments/agreements/agreementsDetails';
+import AgreementViewDetails from '../../../support/fragments/agreements/agreementViewDetails';
 import NewNote from '../../../support/fragments/notes/newNote';
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
+import TestTypes from '../../../support/dictionary/testTypes';
+import DevTeams from '../../../support/dictionary/devTeams';
+import AgreementsApi from '../../../support/api/agreements';
 
 let agreementId;
 let noteTypeId;
 const noteType = `NoteType ${randomFourDigitNumber()}`;
+
 describe('Agreement Notes', () => {
-  before(() => {
+  before('create test data', () => {
     cy.getAdminToken();
-    Agreements.createViaApi()
-      .then((agreement) => {
-        agreementId = agreement.id;
-      });
-    Notes.createNoteTypeViaApi(noteType)
-      .then((note) => {
-        noteTypeId = note.id;
-      });
-    cy.loginAsAdmin();
-    cy.visit(TopMenu.agreementsPath);
-    Agreements.waitLoading();
+    AgreementsApi.createViaApi().then((agreement) => {
+      agreementId = agreement.id;
+    });
+    Notes.createNoteTypeViaApi(noteType).then((note) => {
+      noteTypeId = note.id;
+    });
+    cy.loginAsAdmin({ path: TopMenu.agreementsPath, waiter: Agreements.waitLoading });
   });
 
-  after(() => {
-    Agreements.deleteViaApi(agreementId);
+  after('delete test data', () => {
+    AgreementsApi.deleteViaApi(agreementId);
     Notes.deleteNoteTypeViaApi(noteTypeId);
   });
 
-  it('C1308 Create a note for an Agreement record (erm)', { tags: [testTypes.extendedPath, devTeams.erm] }, () => {
-    AgreementsDetails.agreementListClick(Agreements.defaultAgreement.name);
-    AgreementsDetails.openNotesSection();
-    AgreementsDetails.verifyNotesIsEmpty();
+  it(
+    'C1308 Create a note for an Agreement record (erm)',
+    { tags: [TestTypes.extendedPath, DevTeams.erm] },
+    () => {
+      AgreementViewDetails.agreementListClick(AgreementsApi.defaultAgreement.name);
+      AgreementViewDetails.openNotesSection();
+      AgreementViewDetails.verifyNotesIsEmpty();
 
-    AgreementsDetails.clickOnNewButton();
-    NewNote.verifyNewNoteIsDisplayed();
+      AgreementViewDetails.addNewNote();
+      NewNote.verifyNewNoteIsDisplayed();
 
-    NewNote.chooseSelectTypeByTitle(noteType);
-    NewNote.fill();
-    NewNote.save();
-    AgreementsDetails.verifyAgreementDetailsIsDisplayedByTitle(Agreements.defaultAgreement.name);
-    AgreementsDetails.verifyNotesCount('1');
+      NewNote.chooseSelectTypeByTitle(noteType);
+      NewNote.fill();
+      NewNote.save();
+      AgreementViewDetails.verifyAgreementDetailsIsDisplayedByTitle(
+        AgreementsApi.defaultAgreement.name,
+      );
+      AgreementViewDetails.verifyNotesCount('1');
 
-    AgreementsDetails.openNotesSection();
-    AgreementsDetails.verifySpecialNotesRow(NewNote.defaultNote.title, NewNote.defaultNote.details, noteType);
-  });
+      AgreementViewDetails.openNotesSection();
+      AgreementViewDetails.verifySpecialNotesRow(
+        NewNote.defaultNote.title,
+        NewNote.defaultNote.details,
+        noteType,
+      );
+    },
+  );
 });

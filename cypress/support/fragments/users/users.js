@@ -68,6 +68,18 @@ export default {
     isDefaultSearchParamsRequired: false,
   }),
 
+  getUsers: (searchParams) => {
+    return cy
+      .okapiRequest({
+        path: 'users',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => {
+        return body.users;
+      });
+  },
+
   createViaUi: (userData) => {
     return cy
       .do([

@@ -1,5 +1,5 @@
 import testTypes from '../../../support/dictionary/testTypes';
-import agreementsDetails from '../../../support/fragments/agreements/agreementsDetails';
+import agreementsDetails from '../../../support/fragments/agreements/agreementViewDetails';
 import newAgreement from '../../../support/fragments/agreements/newAgreement';
 import eHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
 import topMenu from '../../../support/fragments/topMenu';
@@ -21,14 +21,6 @@ describe.skip('Agreement', () => {
     newAgreement.deleteAgreement();
     newAgreement.searchAgreement();
     agreementsDetails.remove();
-  });
-
-  it('C757 Create an Agreement (ERM)', { tags: [testTypes.ideaLabsTests] }, () => {
-    cy.visit(topMenu.agreementsPath);
-    newAgreement.newButtonClick();
-    newAgreement.fill();
-    newAgreement.save();
-    newAgreement.validateDateAndTime();
   });
 
   it(

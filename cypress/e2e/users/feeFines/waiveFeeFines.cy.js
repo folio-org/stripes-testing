@@ -52,12 +52,12 @@ describe('ui-users: C465 Verify that library staff can fully and partially waive
 
           for (let i = 0; i < feeFinesNumber; i++) {
             const item = {};
-            UsersOwners.createViaApi({ owner: uuid() }).then((owner) => {
-              item.owner = { id: owner.id, name: owner.ownerName };
+            UsersOwners.createViaApi({ owner: uuid() }).then((response) => {
+              item.owner = { id: response.id, name: response.owner };
 
               ManualCharges.createViaApi({
                 ...ManualCharges.defaultFeeFineType,
-                ownerId: owner.id,
+                ownerId: response.id,
               }).then((manualCharge) => {
                 item.feeFineType = {
                   id: manualCharge.id,
@@ -65,8 +65,8 @@ describe('ui-users: C465 Verify that library staff can fully and partially waive
                 };
 
                 WaiveReasons.createViaApi({ id: uuid(), nameReason: waiveReason }).then(
-                  (waiveRsn) => {
-                    item.waiveReason = { id: waiveRsn.id, nameReason: waiveRsn.nameReason };
+                  (reason) => {
+                    item.waiveReason = { id: reason.id, nameReason: reason.nameReason };
                   },
                 );
               });

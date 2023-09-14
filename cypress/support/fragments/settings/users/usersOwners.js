@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import {
   PaneHeader,
   Button,
@@ -64,17 +65,14 @@ export default {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(500);
   },
-  getDefaultNewOwner(id, name, desc) {
+  getDefaultNewOwner({ id = uuid(), name = 'owner', desc } = {}) {
     return {
+      id,
       owner: getTestEntityValue(name),
       desc: getTestEntityValue(desc),
-      // required field
-      id,
     };
   },
-  startNewLineAdding() {
-    SettingsPane.clickAddNewBtn();
-  },
+  startNewLineAdding: () => SettingsPane.clickAddNewBtn(),
   defaultServicePoints,
   getUsedServicePoints() {
     cy.then(() => tableWithOwners.isPresented()).then((isPresented) => {
@@ -170,16 +168,10 @@ export default {
   cancelAdding(rowIndex = 2) {
     SettingsPane.clickCancelBtn({ rowIndex });
   },
-  createViaApi: (owner) => cy
-    .okapiRequest({
-      method: 'POST',
-      path: 'owners',
-      body: owner,
-      isDefaultSearchParamsRequired: false,
-    })
-    .then((response) => ({ id: response.body.id, ownerName: response.body.owner })),
-
-  getOwnerViaApi(searchParams) {
+  createViaApi(owner) {
+    return SettingsPane.createViaApi({ path: 'owners', body: owner });
+  },
+  getOwnerViaApi: (searchParams) => {
     cy.okapiRequest({
       path: 'owners',
       searchParams,
@@ -189,11 +181,7 @@ export default {
     return cy.get('@owner');
   },
   deleteViaApi(ownerId) {
-    cy.okapiRequest({
-      method: 'DELETE',
-      path: `owners/${ownerId}`,
-      isDefaultSearchParamsRequired: false,
-    });
+    return SettingsPane.deleteViaApi({ path: `owners/${ownerId}` });
   },
   checkValidatorError({ placeholder = 'owner', error }) {
     cy.expect(rootPane.find(TextField({ placeholder })).has({ error }));
