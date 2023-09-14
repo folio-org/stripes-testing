@@ -2,6 +2,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import Parallelization from '../../../support/dictionary/parallelization';
 import TopMenu from '../../../support/fragments/topMenu';
 import {
   FOLIO_RECORD_TYPE,
@@ -109,7 +110,7 @@ describe('data-import', () => {
 
     it(
       'C347829 MODDICORE-231 "Match on Instance identifier match meets both the Identifier type and Data requirements" Scenario 2 (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
@@ -161,11 +162,7 @@ describe('data-import', () => {
         ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
         cy.visit(SettingsMenu.jobProfilePath);
-        JobProfiles.createJobProfileWithLinkingProfiles(
-          jobProfile,
-          actionProfile.name,
-          matchProfile.profileName,
-        );
+        JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfile.name, matchProfile.profileName);
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         cy.visit(TopMenu.dataImportPath);
@@ -184,7 +181,7 @@ describe('data-import', () => {
         InstanceRecordView.verifyMarkAsSuppressed();
         InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);
         InstanceRecordView.verifyGeneralNoteContent(instanceGeneralNote);
-      },
+      }
     );
   });
 });

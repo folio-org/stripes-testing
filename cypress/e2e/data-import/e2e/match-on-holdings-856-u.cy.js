@@ -2,6 +2,7 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TestTypes from '../../../support/dictionary/testTypes';
+import Parallelization from '../../../support/dictionary/parallelization';
 import {
   LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
@@ -142,7 +143,7 @@ describe('data-import', () => {
 
     it(
       'C17025 Match on Holdings 856 $u (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         createInstanceMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
         FieldMappingProfiles.checkMappingProfilePresented(
@@ -157,7 +158,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[2].mappingProfile.name,
         );
 
-        collectionOfMappingAndActionProfiles.forEach((profile) => {
+        collectionOfMappingAndActionProfiles.forEach(profile => {
           cy.visit(SettingsMenu.actionProfilePath);
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
@@ -177,9 +178,7 @@ describe('data-import', () => {
         cy.wait(2500);
         JobProfiles.createJobProfile(updateEHoldingsJobProfile);
         NewJobProfile.linkMatchProfile(matchProfile.profileName);
-        NewJobProfile.linkActionProfileForMatches(
-          collectionOfMappingAndActionProfiles[2].actionProfile.name,
-        );
+        NewJobProfile.linkActionProfileForMatches(collectionOfMappingAndActionProfiles[2].actionProfile.name);
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(updateEHoldingsJobProfile.profileName);
 
@@ -193,7 +192,7 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameForCreateMarcFile);
         FileDetails.openInstanceInInventory('Created');
-        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
+        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
           instanceHRID = initialInstanceHrId;
 
           InventoryInstance.openHoldingView();
@@ -214,7 +213,7 @@ describe('data-import', () => {
           InstanceRecordView.openHoldingView();
           HoldingsRecordView.checkCallNumber('ONLINE');
         });
-      },
+      }
     );
   });
 });
