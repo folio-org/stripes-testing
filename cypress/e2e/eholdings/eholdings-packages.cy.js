@@ -102,9 +102,7 @@ describe('eHoldings packages management', () => {
     'C695 Package Record: Search all titles included in a package (spitfire)',
     { tags: [testType.criticalPath, devTeams.spitfire, features.eHoldings] },
     () => {
-      cy.createTempUser([
-        permissions.uieHoldingsRecordsEdit.gui
-      ]).then((userProperties) => {
+      cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
         userId = userProperties.userId;
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.eholdingsPath,

@@ -13,7 +13,7 @@ import {
   SelectionOption,
   SearchField,
   Spinner,
-  Pane
+  Pane,
 } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 import ExistingNoteEdit from '../notes/existingNoteEdit';
@@ -75,7 +75,7 @@ export default {
 
   clickOnNoteRecord() {
     cy.expect(Spinner().absent());
-    cy.do((notesList.click({ row: 0 })));
+    cy.do(notesList.click({ row: 0 }));
   },
 
   clickOnNewButton() {
@@ -202,7 +202,11 @@ export default {
   },
 
   verifyNotesCount(itemCount) {
-    cy.expect(Accordion({ label: including('Notes') }).find(Badge()).has({ text: itemCount }));
+    cy.expect(
+      Accordion({ label: including('Notes') })
+        .find(Badge())
+        .has({ text: itemCount }),
+    );
   },
 
   verifyAgreementDetailsIsDisplayedByTitle(agreementTitle) {
@@ -210,11 +214,19 @@ export default {
   },
 
   verifySpecialNotesRow(title, details, type) {
-    cy.expect([
-      notesList.exists(),
-    ]);
-    cy.expect(notesList.find(MultiColumnListCell({ column: 'Title and details', content: including(title) })).exists());
-    cy.expect(notesList.find(MultiColumnListCell({ column: 'Title and details', content: including(details) })).exists());
-    cy.expect(notesList.find(MultiColumnListCell({ column: 'Type', content: including(type) })).exists());
+    cy.expect([notesList.exists()]);
+    cy.expect(
+      notesList
+        .find(MultiColumnListCell({ column: 'Title and details', content: including(title) }))
+        .exists(),
+    );
+    cy.expect(
+      notesList
+        .find(MultiColumnListCell({ column: 'Title and details', content: including(details) }))
+        .exists(),
+    );
+    cy.expect(
+      notesList.find(MultiColumnListCell({ column: 'Type', content: including(type) })).exists(),
+    );
   },
 };

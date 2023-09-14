@@ -17,7 +17,7 @@
     "build-mod-descriptor": "stripes mod descriptor --full --strict | jq '.[]' > module-descriptor.json ",
     "lint": "eslint . --ext=js",
     "lint:fix": "eslint --fix --quiet",
-    "prettier": "prettier .",
+    "prettier": "prettier . --write",
     "prettier:fix": "prettier --write",
     "prepare": "husky install"
   },

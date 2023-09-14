@@ -29,10 +29,10 @@ const defaultAgreement = {
   periods: [
     {
       startDate: DateTools.getCurrentDateForFiscalYear(),
-    }
+    },
   ],
   name: `AutotestAgreement' ${randomFourDigitNumber()}`,
-  agreementStatus: 'active'
+  agreementStatus: 'active',
 };
 
 export default {
@@ -53,18 +53,17 @@ export default {
         method: REQUEST_METHOD.POST,
         path: 'erm/sas',
         body: agreement,
-        isDefaultSearchParamsRequired: false
+        isDefaultSearchParamsRequired: false,
       })
       .then((response) => response.body);
   },
 
   deleteViaApi: (agreementId) => {
-    return cy
-      .okapiRequest({
-        method: REQUEST_METHOD.DELETE,
-        path: `erm/sas/${agreementId}`,
-        isDefaultSearchParamsRequired: false
-      });
+    return cy.okapiRequest({
+      method: REQUEST_METHOD.DELETE,
+      path: `erm/sas/${agreementId}`,
+      isDefaultSearchParamsRequired: false,
+    });
   },
   selectRecord: (agreementTitle) => {
     cy.do(section.find(MultiColumnListCell(agreementTitle)).click());

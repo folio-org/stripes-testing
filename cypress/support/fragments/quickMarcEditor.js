@@ -810,7 +810,7 @@ export default {
   },
 
   check008FieldLabels(labels) {
-    labels.forEach(label => {
+    labels.forEach((label) => {
       cy.expect(TextField(label).exists());
     });
   },

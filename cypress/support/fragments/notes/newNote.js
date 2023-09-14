@@ -33,9 +33,7 @@ export default class NewNote {
   }
 
   static chooseSelectTypeByTitle(TypeTitle) {
-    cy.do([
-      this.#selectNoteType.choose(TypeTitle),
-    ]);
+    cy.do([this.#selectNoteType.choose(TypeTitle)]);
   }
 
   static verifyNewNoteIsDisplayed() {
