@@ -26,6 +26,7 @@ import Helper from '../finance/financeHelper';
 import InventoryActions from './inventoryActions';
 import InventoryInstances from './inventoryInstances';
 
+const ONE_SECOND = 1000;
 const searchAndFilterSection = Pane({ id: 'browse-inventory-filters-pane' });
 const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
 const sourceAccordion = Accordion('Source');
@@ -225,7 +226,7 @@ export default {
     cy.do(browseButton.click());
     // cypress can't draw selected option without wait
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1000);
+    cy.wait(ONE_SECOND);
     cy.do(Select('Search field index').choose('Call numbers (all)'));
     cy.expect(effectiveLocationInput.exists());
   },
@@ -234,8 +235,33 @@ export default {
     cy.do(browseButton.click());
     // cypress can't draw selected option without wait
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1000);
+    cy.wait(ONE_SECOND);
     cy.do(Select('Search field index').choose('Subjects'));
+  },
+
+  selectBrowseContributors() {
+    cy.do(browseButton.click());
+    // cypress can not pick up an option without wait
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(ONE_SECOND);
+    cy.do(Select('Search field index').choose('Contributors'));
+  },
+
+  showsOnlyNameTypeAccordion() {
+    cy.expect(Accordion({ id: 'nameType' }).exists());
+    cy.expect(Accordion({ id: 'effectiveLocation' }).absent());
+    cy.expect(Accordion({ id: 'language' }).absent());
+    cy.expect(Accordion({ id: 'resource' }).absent());
+    cy.expect(Accordion({ id: 'format' }).absent());
+    cy.expect(Accordion({ id: 'mode' }).absent());
+    cy.expect(Accordion({ id: 'natureOfContent' }).absent());
+    cy.expect(Accordion({ id: 'staffSuppress' }).absent());
+    cy.expect(Accordion({ id: 'instancesDiscoverySuppress' }).absent());
+    cy.expect(Accordion({ id: 'statisticalCodeIds' }).absent());
+    cy.expect(Accordion({ id: 'createdDate' }).absent());
+    cy.expect(Accordion({ id: 'updatedDate' }).absent());
+    cy.expect(Accordion({ id: 'source' }).absent());
+    cy.expect(Accordion({ id: 'instancesTags' }).absent());
   },
 
   showsOnlyEffectiveLocation() {
@@ -583,10 +609,10 @@ export default {
   filterItemByStatisticalCode: (code) => {
     cy.do(Button({ id: 'accordion-toggle-button-itemsStatisticalCodeIds' }).click());
     // need to wait until data will be loaded
-    cy.wait(1000);
+    cy.wait(ONE_SECOND);
     cy.do(statisticalCodeAccordion.find(TextField()).fillIn(code));
     // need to wait until data will be loaded
-    cy.wait(1000);
+    cy.wait(ONE_SECOND);
     statisticalCodeAccordion.find(TextField()).click();
     cy.do(statisticalCodeAccordion.find(Checkbox(code)).click());
   },
@@ -607,10 +633,10 @@ export default {
   filterHoldingsByPermanentLocation: (location) => {
     cy.do(Button({ id: 'accordion-toggle-button-holdingsPermanentLocation' }).click());
     // need to wait until data will be loaded
-    cy.wait(1000);
+    cy.wait(ONE_SECOND);
     cy.do(holdingsPermanentLocationAccordion.find(TextField()).fillIn(location));
     // need to wait until data will be loaded
-    cy.wait(1000);
+    cy.wait(ONE_SECOND);
     holdingsPermanentLocationAccordion.find(TextField()).click();
     cy.do(holdingsPermanentLocationAccordion.find(Checkbox(location)).click());
   },

@@ -14,6 +14,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import TopMenu from '../../../support/fragments/topMenu';
 import DevTeams from '../../../support/dictionary/devTeams';
+import Parallelization from '../../../support/dictionary/parallelization';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import {
@@ -98,7 +99,7 @@ describe('data-import', () => {
 
     it(
       'C343343 MARC file import with matching for 999 ff field (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         // create Field mapping profile for export
         cy.visit(SettingsMenu.mappingProfilePath);
@@ -112,10 +113,7 @@ describe('data-import', () => {
 
         // create job profile for export
         cy.visit(SettingsMenu.jobProfilePath);
-        JobProfiles.createJobProfileWithLinkingProfiles(
-          jobProfileForExport,
-          actionProfileForExport.name,
-        );
+        JobProfiles.createJobProfileWithLinkingProfiles(jobProfileForExport, actionProfileForExport.name);
         JobProfiles.checkJobProfilePresented(jobProfileForExport.profileName);
 
         // upload a marc file for export
@@ -127,14 +125,11 @@ describe('data-import', () => {
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameForMarcFile);
         Logs.openFileDetails(nameForMarcFile);
-        FileDetails.checkStatusInColumn(
-          FileDetails.status.created,
-          FileDetails.columnNameInResultList.instance,
-        );
+        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.instance);
 
         // open Instance for getting hrid
         FileDetails.openInstanceInInventory('Created');
-        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
+        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
           const instanceHRID = initialInstanceHrId;
 
           // download .csv file
@@ -170,11 +165,7 @@ describe('data-import', () => {
 
           // create Job profile
           cy.visit(SettingsMenu.jobProfilePath);
-          JobProfiles.createJobProfileWithLinkingProfiles(
-            jobProfile,
-            actionProfile.name,
-            matchProfile.profileName,
-          );
+          JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfile.name, matchProfile.profileName);
           JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
           // upload the exported marc file with 999.f.f.s fields
@@ -186,10 +177,7 @@ describe('data-import', () => {
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(nameForExportedMarcFile);
           Logs.openFileDetails(nameForExportedMarcFile);
-          FileDetails.checkStatusInColumn(
-            FileDetails.status.updated,
-            FileDetails.columnNameInResultList.instance,
-          );
+          FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.instance);
 
           cy.visit(TopMenu.inventoryPath);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
@@ -197,7 +185,7 @@ describe('data-import', () => {
           // ensure the fields created in Field mapping profile exists in inventory
           InventorySearchAndFilter.checkInstanceDetails();
         });
-      },
+      }
     );
   });
 });

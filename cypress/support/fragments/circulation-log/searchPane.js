@@ -26,7 +26,6 @@ const actionsButton = Button('Actions');
 const servicePointField = MultiSelect({
   ariaLabelledby: 'accordion-toggle-button-servicePointId',
 });
-const data = '4502015';
 
 export default {
   // TODO: will rework to interactor when we get section id
