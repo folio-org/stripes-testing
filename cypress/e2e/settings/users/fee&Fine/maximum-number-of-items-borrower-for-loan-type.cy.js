@@ -3,7 +3,6 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import permissions from '../../../../support/dictionary/permissions';
 import Helper from '../../../../support/fragments/finance/financeHelper';
 import NewServicePoint from '../../../../support/fragments/settings/tenant/servicePoints/newServicePoint';
-import ServicePoint from '../../../../support/fragments/servicePoint/servicePoint';
 import TopMenu from '../../../../support/fragments/topMenu';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import LoanPolicyActions from '../../../../support/fragments/circulation/loan-policy';
@@ -189,7 +188,7 @@ describe('ui-users: Verify that maximum number of items borrowed for loan type (
     cy.deleteLoanPolicy(loanPolicyForReadingRoom.id);
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
     UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.id]).then(() => {
-      ServicePoint.deleteViaApi(servicePoint.id);
+      ServicePoints.deleteViaApi(servicePoint.id);
       Users.deleteViaApi(user.userId);
     });
   });

@@ -1,4 +1,4 @@
-import { Button, Modal } from '../../../../interactors';
+import { Button, Modal } from '../../../../../../interactors';
 
 export default {
   selectServicePoint: (servicePoint) => {
