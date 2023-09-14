@@ -13,11 +13,11 @@ import Users from '../../../support/fragments/users/users';
 import Permissions from '../../../support/dictionary/permissions';
 import Parallelization from '../../../support/dictionary/parallelization';
 import FileManager from '../../../support/utils/fileManager';
+import { JOB_STATUS_NAMES } from '../../../support/constants';
 
 describe('MARC -> MARC Holdings', () => {
   const testData = {
-    tag001: '001',
-    tag001value: '$a Second 001 field',
+    tag852: '852',
     editedHoldingsFileName: 'C389500EditedHoldingsFile.mrc',
     holdingsHRIDPlaceholders: [
       'oo10000000000',
@@ -28,6 +28,38 @@ describe('MARC -> MARC Holdings', () => {
       'oo60000000000',
     ],
   };
+
+  const callNumberTypes = {
+    typeNLM: 'National Library of Medicine classification',
+    typeDewey: 'Dewey Decimal classification',
+    typeNone: '-',
+    typeSuDoc: 'Superintendent of Documents classification',
+    typeTitle: 'Title',
+    typeShelved: 'Shelved separately',
+    typeShelving: 'Shelving control number',
+    typeOther: 'Other scheme',
+    typeLC: 'Library of Congress classification',
+    typeSubfield: 'Source specified in subfield $2',
+  };
+
+  const originalTypes = [
+    callNumberTypes.typeLC,
+    callNumberTypes.typeDewey,
+    callNumberTypes.typeSuDoc,
+    callNumberTypes.typeShelved,
+    callNumberTypes.typeSubfield,
+    callNumberTypes.typeNone,
+  ];
+  const updatedTypes = [
+    callNumberTypes.typeNLM,
+    callNumberTypes.typeNone,
+    callNumberTypes.typeTitle,
+    callNumberTypes.typeNone,
+    callNumberTypes.typeOther,
+    callNumberTypes.typeShelving,
+  ];
+  const originalIndicators = ['0', '1', '3', '6', '7', '9'];
+  const updatedIndicators = ['2', 'd', '5', '\\', '8', '4'];
 
   const instanceFile = {
     marc: 'marcBibFileC389500.mrc',
@@ -60,7 +92,7 @@ describe('MARC -> MARC Holdings', () => {
         JobProfiles.searchJobProfileForImport(instanceFile.jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(instanceFile.fileName);
-        Logs.checkStatusOfJobProfile('Completed');
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(instanceFile.fileName);
         Logs.getCreatedItemsID().then((link) => {
           recordIDs.push(link.split('/')[5]);
@@ -79,8 +111,10 @@ describe('MARC -> MARC Holdings', () => {
             JobProfiles.searchJobProfileForImport(holdingsFile.jobProfileToRun);
             JobProfiles.runImportFile();
             JobProfiles.waitFileIsImported(holdingsFile.fileName);
-            Logs.checkStatusOfJobProfile('Completed');
+            Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
             Logs.openFileDetails(holdingsFile.fileName);
+            // additional wait for holdings list to load
+            cy.wait(2000);
             for (let i = 0; i < holdingsFile.numOfRecords; i++) {
               Logs.getCreatedItemsID(i).then((createdLink) => {
                 recordIDs.push(createdLink.split('/')[6]);
@@ -110,6 +144,20 @@ describe('MARC -> MARC Holdings', () => {
     { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       InventoryInstance.searchByTitle(recordIDs[0]);
+      for (let i = 0; i < holdingsFile.numOfRecords; i++) {
+        InventoryInstance.openHoldingViewByID(recordIDs[i + 1]);
+        HoldingsRecordView.waitLoading();
+        HoldingsRecordView.checkCallNumberType(originalTypes[i]);
+        HoldingsRecordView.close();
+        InventoryInstance.openHoldingViewByID(recordIDs[i + 1]);
+        HoldingsRecordView.editInQuickMarc();
+        QuickMarcEditor.verifyIndicatorValue(testData.tag852, originalIndicators[i]);
+        QuickMarcEditor.updateIndicatorValue(testData.tag852, updatedIndicators[i]);
+        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.checkAfterSaveHoldings();
+        HoldingsRecordView.checkCallNumberType(updatedTypes[i]);
+        HoldingsRecordView.close();
+      }
     },
   );
 });
