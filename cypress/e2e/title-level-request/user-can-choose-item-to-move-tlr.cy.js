@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import {
   FULFILMENT_PREFERENCES,
   ITEM_STATUS_NAMES,
@@ -32,7 +31,7 @@ describe('Title Level Request', () => {
     title: getTestEntityValue('InstanceTLR'),
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestTLR', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
 
   before('Preconditions', () => {

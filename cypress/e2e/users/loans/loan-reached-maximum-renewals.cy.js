@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
 import { getNewItem } from '../../../support/fragments/inventory/item';
@@ -26,7 +25,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
   let loanType;
   const newFirstItemData = getNewItem();
   const newSecondItemData = getNewItem();
-  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation('autotest', uuid());
+  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
   let loanPolicy;
   let materialType;
   let holdingsSourceId;

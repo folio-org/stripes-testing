@@ -5,6 +5,7 @@ import {
   Callout,
   Checkbox,
   ColumnHeader,
+  DropdownMenu,
   HTML,
   Link,
   Modal,
@@ -25,25 +26,32 @@ import {
 } from '../../../../interactors';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
+const actionsButton = rootSection.find(Button('Actions'));
 const authoritiesList = rootSection.find(MultiColumnList({ id: 'authority-result-list' }));
 const filtersSection = Section({ id: 'pane-authorities-filters' });
 const marcViewSectionContent = PaneContent({ id: 'marc-view-pane-content' });
 const searchInput = SearchField({ id: 'textarea-authorities-search' });
 const searchButton = Button({ id: 'submit-authorities-search' });
-const enabledSearchButton = Button({ id: 'submit-authorities-search', disabled: false });
 const browseSearchAndFilterInput = Select('Search field index');
 const marcViewSection = Section({ id: 'marc-view-pane' });
 const editorSection = Section({ id: 'quick-marc-editor-pane' });
-const actionsButton = Button('Actions');
-const marcAuthUpdatesCsvBtn = Button('MARC authority headings updates (CSV)');
+
+// actions dropdown window
+const authorityActionsDropDown = DropdownMenu();
+const buttonExportSelected = authorityActionsDropDown.find(
+  Button('Export selected records (CSV/MARC)'),
+);
+const marcAuthUpdatesCsvBtn = authorityActionsDropDown.find(
+  Button('MARC authority headings updates (CSV)'),
+);
+
+// auth report modal
 const authReportModal = Modal({ id: 'authorities-report-modal' });
-const fromDate = TextField({ name: 'fromDate' });
-const toDate = TextField({ name: 'toDate' });
-const exportButton = Button('Export');
+const exportButton = authReportModal.find(Button('Export'));
+
 const resetButton = Button('Reset all');
 const selectField = Select({ id: 'textarea-authorities-search-qindex' });
 const headinfTypeAccordion = Accordion('Type of heading');
-const authoritySearchResults = Section({ id: 'authority-search-results-pane' });
 const nextButton = Button({ id: 'authority-result-list-next-paging-button' });
 const searchNav = Button({ id: 'segment-navigation-search' });
 const buttonLink = Button('Link');
@@ -53,44 +61,56 @@ const buttonSearchInAdvancedModal = Button({ ariaLabel: 'Search' });
 const buttonCancelInAdvancedModal = Button({ ariaLabel: 'Cancel' });
 const buttonClose = Button({ icon: 'times' });
 const checkBoxAllRecords = Checkbox({ ariaLabel: 'Select all records on this page' });
-const resultPaneActionsButton = rootSection.find(Button('Actions'));
-const buttonExportSelected = Button('Export selected records (CSV/MARC)');
 const openAuthSourceMenuButton = Button({ ariaLabel: 'open menu' });
 const sourceFileAccordion = Section({ id: 'sourceFileId' });
-const marcAuthPaneHeader = PaneHeader('MARC authority');
 
 export default {
-  waitLoading: () => cy.expect(rootSection.exists()),
-
-  waitRows: () => cy.expect(rootSection.find(PaneHeader()).find(HTML(including('found')))),
-
-  clickActionsAndReportsButtons: () => {
-    cy.do(rootSection.find(PaneHeader()).find(actionsButton).click());
-    cy.expect(marcAuthUpdatesCsvBtn.exists());
-    cy.do(marcAuthUpdatesCsvBtn.click());
-    cy.expect(authReportModal.exists());
+  waitLoading() {
+    cy.expect(PaneHeader('MARC authority').exists());
   },
-
-  switchToSearch: () => {
+  clickActionsAndReportsButtons() {
+    cy.do([actionsButton.click(), marcAuthUpdatesCsvBtn.click()]);
+    cy.expect([authReportModal.exists(), exportButton.has({ disabled: true })]);
+  },
+  fillReportModal(today, tomorrow) {
+    cy.do([
+      authReportModal.find(TextField({ name: 'fromDate' })).fillIn(today),
+      authReportModal.find(TextField({ name: 'toDate' })).fillIn(tomorrow),
+    ]);
+  },
+  clickClearFieldIcon({ name }) {
+    cy.do(
+      authReportModal
+        .find(TextField({ name }))
+        .find(Button({ icon: 'times-circle-solid' }))
+        .click(),
+    );
+    cy.expect(exportButton.has({ disabled: true }));
+  },
+  clickExportButton() {
+    cy.do(exportButton.click());
+  },
+  checkValidationError({ name, error }) {
+    cy.expect([
+      authReportModal.find(TextField({ name })).has({ error }),
+      exportButton.has({ disabled: true }),
+    ]);
+  },
+  checkNoValidationErrors() {
+    cy.expect([
+      // authReportModal.find(TextField({ name })).has({ error }),
+      exportButton.has({ disabled: false }),
+    ]);
+  },
+  switchToSearch() {
     cy.do(searchNav.click());
   },
-
   searchBeats(value) {
-    cy.do(SearchField({ id: 'textarea-authorities-search' }).fillIn(value));
-    cy.do(Button({ id: 'submit-authorities-search' }).click());
+    cy.do(searchInput.fillIn(value));
+    cy.do(searchButton.click());
   },
-
   checkFieldTagExists: () => {
     cy.expect([editorSection.exists(), QuickMarcEditorRow({ tagValue: '625' }).exists()]);
-  },
-
-  fillReportModal: (today, tomorrow) => {
-    cy.do([fromDate.fillIn(today), toDate.fillIn(tomorrow)]);
-    cy.expect(authReportModal.find(exportButton).exists());
-  },
-
-  clickExportButton: () => {
-    cy.do(authReportModal.find(exportButton).click());
   },
 
   checkCalloutAfterExport: (jobId) => {
@@ -105,7 +125,7 @@ export default {
 
   checkResultsExistance: (type) => {
     cy.expect([
-      authoritySearchResults.exists(),
+      rootSection.exists(),
       MultiColumnListCell({ columnIndex: 1, content: type }).exists(),
     ]);
   },
@@ -184,20 +204,16 @@ export default {
   },
 
   searchBy: (parameter, value) => {
-    cy.do(
-      filtersSection
-        .find(SearchField({ id: 'textarea-authorities-search' }))
-        .selectIndex(parameter),
-    );
-    cy.do(filtersSection.find(SearchField({ id: 'textarea-authorities-search' })).fillIn(value));
-    cy.do(filtersSection.find(Button({ id: 'submit-authorities-search' })).click());
+    cy.do(filtersSection.find(searchInput).selectIndex(parameter));
+    cy.do(filtersSection.find(searchInput).fillIn(value));
+    cy.do(filtersSection.find(searchButton).click());
   },
 
   searchByParameter(searchOption, value) {
     cy.do(searchInput.fillIn(value));
     cy.expect(searchInput.has({ value }));
     cy.do(browseSearchAndFilterInput.choose(searchOption));
-    cy.expect(enabledSearchButton.exists());
+    cy.expect(searchButton.is({ disabled: false }));
     cy.do(searchButton.click());
   },
 
@@ -205,7 +221,7 @@ export default {
     cy.do(searchInput.fillIn(value));
     cy.expect(searchInput.has({ value }));
     cy.do(browseSearchAndFilterInput.choose(searchOption));
-    cy.expect(enabledSearchButton.exists());
+    cy.expect(searchButton.is({ disabled: false }));
     cy.do(searchButton.click());
     cy.expect(
       MultiColumnListRow({ index: 0 })
@@ -287,7 +303,7 @@ export default {
   },
 
   clickNextPagination() {
-    cy.do(authoritySearchResults.find(nextButton).click());
+    cy.do(rootSection.find(nextButton).click());
   },
 
   clickLinkButton() {
@@ -345,12 +361,13 @@ export default {
   },
 
   clickActionsButton() {
-    cy.do(rootSection.find(PaneHeader()).find(actionsButton).click());
+    cy.do(actionsButton.click());
   },
 
   actionsSortBy(value) {
     cy.do(Select({ dataTestID: 'sort-by-selection' }).choose(value));
     // need to wait until content will be sorted
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000);
   },
 
@@ -360,12 +377,13 @@ export default {
 
   selectAllRecords() {
     // need to wait until page loading
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000);
     cy.do(checkBoxAllRecords.click());
   },
 
   exportSelected() {
-    cy.do(resultPaneActionsButton.click());
+    cy.do(actionsButton.click());
     cy.do(buttonExportSelected.click());
   },
 
@@ -534,22 +552,22 @@ export default {
   },
 
   checkResultsListRecordsCountLowerThan(totalRecord) {
-    cy.expect(marcAuthPaneHeader.exists());
+    this.waitLoading();
     cy.intercept('GET', '/search/authorities?*').as('getItems');
     cy.wait('@getItems', { timeout: 10000 }).then((item) => {
-      cy.expect(Pane({ subtitle: `${item.response.body.totalRecords} records found` }).exists());
-      // eslint-disable-next-line no-unused-expressions
-      expect(item.response.body.totalRecords < totalRecord).to.be.true;
+      const { totalRecords } = item.response.body;
+      cy.expect(Pane({ subtitle: `${totalRecords} records found` }).exists());
+      expect(totalRecords).lessThan(totalRecord);
     });
   },
 
   checkResultsListRecordsCountGreaterThan(totalRecord) {
-    cy.expect(marcAuthPaneHeader.exists());
+    this.waitLoading();
     cy.intercept('GET', '/search/authorities?*').as('getItems');
     cy.wait('@getItems', { timeout: 10000 }).then((item) => {
-      cy.expect(Pane({ subtitle: `${item.response.body.totalRecords} records found` }).exists());
-      // eslint-disable-next-line no-unused-expressions
-      expect(item.response.body.totalRecords > totalRecord).to.be.true;
+      const { totalRecords } = item.response.body;
+      cy.expect(Pane({ subtitle: `${totalRecords} records found` }).exists());
+      expect(totalRecords).greaterThan(totalRecord);
     });
   },
 

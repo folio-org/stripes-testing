@@ -17,15 +17,27 @@ export default {
   defaultUiCampuses: {
     body: getDefaultTenant({ institutionId: uuid() }),
   },
-  createViaApi: (campusesProperties) => {
-    return TenantPane.createViaApi({
-      path: 'location-units/campuses',
-      body: campusesProperties,
-    });
+  checkResultsTableContent(records) {
+    TenantPane.checkResultsTableColumns([
+      'Campus',
+      'Code',
+      'Last updated',
+      '# of Libraries',
+      'Actions',
+    ]);
+    TenantPane.checkResultsTableContent(records);
   },
-  deleteViaApi: (campusId) => {
-    return TenantPane.deleteViaApi({
-      path: `location-units/campuses/${campusId}`,
-    });
+  checkEmptyTableContent() {
+    const messages = ['Please select an institution to continue.', 'There are no Campuses'];
+    TenantPane.checkEmptyTableContent(messages);
+  },
+  getViaApi() {
+    return TenantPane.getViaApi({ path: 'location-units/campuses' });
+  },
+  createViaApi(campusesProperties = getDefaultTenant({ institutionId: uuid() })) {
+    return TenantPane.createViaApi({ path: 'location-units/campuses', body: campusesProperties });
+  },
+  deleteViaApi(campusId) {
+    return TenantPane.deleteViaApi({ path: `location-units/campuses/${campusId}` });
   },
 };

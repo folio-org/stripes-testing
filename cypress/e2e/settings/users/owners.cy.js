@@ -6,7 +6,7 @@ import Permissions from '../../../support/dictionary/permissions';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import Features from '../../../support/dictionary/features';
 import users from '../../../support/fragments/users/users';
-import ServicePoint from '../../../support/fragments/servicePoint/servicePoint';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => false);
@@ -18,19 +18,24 @@ describe('ui-users-settings: Owners', () => {
 
     beforeEach(() => {
       cy.getAdminToken().then(() => {
-        cy.createServicePoint().then((newServicePoint) => {
-          servicePoints.push(newServicePoint);
-        });
-        cy.createServicePoint().then((newServicePoint) => {
-          servicePoints.push(newServicePoint);
-        });
+        ServicePoints.createViaApi(ServicePoints.getDefaultServicePointWithPickUpLocation()).then(
+          (response) => {
+            servicePoints.push(response.body);
+          },
+        );
+        ServicePoints.createViaApi(ServicePoints.getDefaultServicePointWithPickUpLocation()).then(
+          (response) => {
+            servicePoints.push(response.body);
+          },
+        );
+
         cy.loginAsAdmin({ path: SettingsMenu.usersOwnersPath, waiter: UsersOwners.waitLoading });
       });
     });
 
     after(() => {
       servicePoints.forEach((servicePointId) => {
-        ServicePoint.deleteViaApi(servicePointId.id);
+        ServicePoints.deleteViaApi(servicePointId.id);
       });
 
       ownerNames.forEach((ownerName) => {
