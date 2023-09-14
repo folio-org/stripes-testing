@@ -37,13 +37,13 @@ describe('eHoldings', () => {
       { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
       () => {
         EHoldingsPackagesSearch.byName(testData.packageName);
-        EHoldingsPackages.checkPackageInResults(testData.packageName);
+        EHoldingsPackages.verifyPackageInResults(testData.packageName);
         EHoldingsPackages.openPackage();
         EHoldingsPackageView.waitLoading();
         EHoldingsPackageView.openExportModal();
         EHoldingsPackageView.clickExportSelectedPackageFields();
         EHoldingsPackageView.clickExportSelectedTitleFields();
-        EHoldingsPackageView.checkExportButtonInModalDisabled();
+        EHoldingsPackageView.verifyExportButtonInModalDisabled();
         EHoldingsPackageView.closeExportModalViaCancel();
       },
     );

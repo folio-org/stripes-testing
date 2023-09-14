@@ -39,14 +39,14 @@ describe('eHoldings', () => {
       { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
       () => {
         EHoldingSearch.switchToPackages();
-        EHoldingsPackages.createCustomPackage(testData.customPackageName);
+        EHoldingsPackages.verifyCustomPackage(testData.customPackageName);
         EHoldingsPackageView.waitLoading();
         EHoldingsPackageView.verifyPackageName(testData.customPackageName);
         EHoldingsPackageView.verifyPackageType('Custom');
-        EHoldingsPackages.checkPackageExistsViaAPI(testData.customPackageName, true);
+        EHoldingsPackages.verifyPackageExistsViaAPI(testData.customPackageName, true);
         EHoldingsPackageView.close();
         EHoldingsPackagesSearch.byName(testData.customPackageName);
-        EHoldingsPackages.checkPackageInResults(testData.customPackageName);
+        EHoldingsPackages.verifyPackageInResults(testData.customPackageName);
       },
     );
   });

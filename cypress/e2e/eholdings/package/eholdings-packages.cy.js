@@ -89,7 +89,7 @@ describe('eHoldings', () => {
             EHoldingsPackage.saveAndClose();
             // additional delay related with update of proxy information in ebsco services
             cy.wait(10000);
-            EHoldingsPackages.checkPackageRecordProxy(newProxy);
+            EHoldingsPackages.verifyPackageRecordProxy(newProxy);
           });
         });
       },

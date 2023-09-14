@@ -7,6 +7,8 @@ import {
   including,
   Modal,
   RadioButton,
+  Accordion,
+  MultiColumnListCell,
 } from '../../../../interactors';
 import eHoldingsPackages from './eHoldingsPackages';
 
@@ -58,7 +60,7 @@ export default {
     cy.do(selectedTitleFieldsRadioButton.click());
   },
 
-  checkExportButtonInModalDisabled() {
+  verifyExportButtonInModalDisabled() {
     cy.expect(exportButtonInModal.has({ disabled: true }));
   },
 
@@ -66,5 +68,17 @@ export default {
     cy.do(cancelButtonInModal.click());
     cy.expect(exportModal.absent());
     this.waitLoading();
+  },
+
+  createNewAgreement() {
+    cy.do(Accordion({ id: 'packageShowAgreements' }).find(Button('New')).click());
+  },
+
+  verifyLinkedAgreement(agreementName) {
+    cy.expect(
+      Accordion('Agreements')
+        .find(MultiColumnListCell({ content: agreementName }))
+        .exists(),
+    );
   },
 };

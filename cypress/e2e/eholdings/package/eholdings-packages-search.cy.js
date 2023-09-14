@@ -37,7 +37,7 @@ describe('eHoldings', () => {
         EHoldingSearch.switchToPackages();
         EHoldingsPackagesSearch.byName(testData.searchQuery);
         EHoldingsPackagesSearch.bySelectionStatus(testData.selectedStatus);
-        EHoldingsPackages.checkOnlySelectedPackagesInResults();
+        EHoldingsPackages.verifyOnlySelectedPackagesInResults();
       },
     );
   });

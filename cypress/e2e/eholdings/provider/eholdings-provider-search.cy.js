@@ -34,7 +34,7 @@ describe('eHoldings', () => {
         EHoldingsProviders.viewProvider();
         EHoldingsProviders.clickSearchIcon();
         EHoldingsProviders.bySelectionStatusOpen('Selected');
-        EHoldingsProviders.checkOnlySelectedPackagesInResults();
+        EHoldingsProviders.verifyOnlySelectedPackagesInResults();
       },
     );
   });
