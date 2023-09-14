@@ -4,19 +4,21 @@ import {
   TextInput,
   Heading,
   PaneHeader,
-  Form,
   Button,
   Option,
   Section,
   PaneContent,
   HTML,
   including,
+  or,
   MultiColumnListCell,
-  Pane,
   MultiColumnListHeader,
   MultiColumnListRow,
+  MultiSelect,
+  MultiSelectMenu,
+  MultiSelectOption,
+  ValueChipRoot,
   Image,
-  or,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
@@ -51,23 +53,104 @@ const contributorsOption = Option('Contributors');
 const browseButton = Button({ id: 'mode-navigation-browse' });
 const searchButton = Button({ type: 'submit' });
 const resetAllButton = Button('Reset all');
-const searchButtonDisabled = Button({ type: 'submit', disabled: true });
-const resetAllButtonDisabled = Button({
-  className: including('resetButton---n7KP9'),
-  disabled: true,
-});
-const nameTypeAccordion = Button({ id: 'accordion-toggle-button-nameType' });
+
+const typeSelect = Section({ id: 'nameType' });
+const nameTypeButton = typeSelect.find(Button('Name type'));
+const nameTypeSearch = typeSelect.find(MultiSelect());
+const nameTypeClear = typeSelect.find(Button({ icon: 'times-circle-solid' }));
+
 const rowContributorName = (ContributorName, contributorNameType) => MultiColumnListRow(`${ContributorName}${contributorNameType}1`);
 
 export default {
   defaultInstanceAWithContributor,
   defaultInstanceZWithContributor,
+  getInstancesWithContributor(titles = ['_a_', '_z_']) {
+    return titles.map((title) => {
+      const postfix = `${title}_${getRandomPostfix()}`;
+      return {
+        id: uuid(),
+        title: `Test_record_${postfix}`,
+        contributors: [
+          {
+            name: `Test_contributor_${postfix}`,
+            primary: false,
+          },
+        ],
+        source: 'FOLIO',
+      };
+    });
+  },
+  createInstancesWithContributor() {
+    const instances = this.getInstancesWithContributor();
 
+    cy.getAdminToken();
+    cy.getInstanceTypes({ limit: 1 }).then((res) => {
+      instances.forEach((instance) => {
+        instance.instanceTypeId = res[0].id;
+      });
+    });
+
+    this.getContributorNameTypes().then((res) => {
+      const { id, name } = res.body.contributorNameTypes[0];
+      instances.forEach((instance) => {
+        instance.contributors[0].contributorNameTypeId = id;
+        instance.contributors[0].contributorNameType = name;
+        instance.contributors[0].contributorTypeText = name;
+
+        this.createInstanceWithContributorViaApi(instance);
+      });
+    });
+
+    return instances;
+  },
+  selectContributorsOption() {
+    cy.do(recordSelect.choose('Contributors'));
+    cy.expect([recordSelect.has({ value: 'contributors' }), nameTypeButton.exists()]);
+  },
+  expandNameTypeSection() {
+    cy.do(nameTypeButton.click());
+  },
+  expandNameTypeMenu() {
+    cy.do(nameTypeSearch.find(Button({ ariaLabel: 'open menu' })).click());
+  },
+  clearNameTypeOptions() {
+    cy.do(nameTypeClear.click());
+    cy.expect(nameTypeSearch.find(ValueChipRoot()).absent());
+  },
+  selectNameTypeOption(option) {
+    cy.do(
+      MultiSelectMenu()
+        .find(MultiSelectOption(including(option)))
+        .click(),
+    );
+    cy.expect(nameTypeSearch.find(ValueChipRoot(option)).exists());
+  },
+  unselectNameTypeOption(option) {
+    cy.do(
+      MultiSelectMenu()
+        .find(MultiSelectOption(including(option)))
+        .click(),
+    );
+    cy.expect(nameTypeSearch.find(ValueChipRoot(option)).absent());
+  },
+  removeNameTypeOption(option) {
+    cy.do(
+      nameTypeSearch
+        .find(ValueChipRoot(option))
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+    cy.expect(nameTypeSearch.find(ValueChipRoot(option)).absent());
+  },
+  typeNameTypeOption(option) {
+    cy.get('#nameType-multiselect-input').type(`${option}{enter}`);
+    cy.expect(nameTypeSearch.find(ValueChipRoot(option)).exists());
+  },
   select() {
     // cypress can't draw selected option without wait
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000);
-    cy.do(Select('Search field index').choose('Contributors'));
-    cy.expect(nameTypeAccordion.exists());
+    this.selectContributorsOption();
   },
 
   clickBrowseBtn() {
@@ -82,18 +165,12 @@ export default {
       });
     });
   },
-
   checkSearch() {
-    cy.do([
-      recordSelect.has({ value: 'contributors' }),
-      Select('Search field index').choose('Contributors'),
-      recordSearch.fillIn(' '),
-    ]);
     cy.expect([
-      Form().find(recordSearch).exists(),
-      Form().find(searchButtonDisabled).exists(),
-      Button({ id: 'accordion-toggle-button-nameType' }).exists(),
-      Section({ id: 'browse-inventory-filters-pane' }).find(resetAllButtonDisabled).exists(),
+      recordSearch.exists(),
+      searchButton.has({ disabled: true }),
+      nameTypeButton.exists(),
+      Section({ id: 'browse-inventory-filters-pane' }).find(resetAllButton).has({ disabled: true }),
       // TODO add check for Relator term accordeon button after product updates
       Section({ id: 'browse-inventory-results-pane' }).find(Heading('Browse inventory')).exists(),
       Image({
@@ -108,27 +185,21 @@ export default {
   },
 
   browse(contributorName) {
-    cy.do(recordSearch.fillIn(contributorName));
-    cy.expect(recordSearch.has({ value: contributorName }));
+    this.searchRecordByName(contributorName);
+  },
+  searchRecordByName(recordName) {
+    cy.do(recordSearch.fillIn(recordName));
+    cy.expect(recordSearch.has({ value: recordName }));
     cy.do(searchButton.click());
   },
-
   checkSearchResultsTable() {
-    cy.do([
-      MultiColumnListHeader({ id: 'list-column-contributor' }).has({ content: 'Contributor' }),
-      MultiColumnListHeader({ id: 'list-column-contributortype' }).has({ content: 'Type' }),
-      MultiColumnListHeader({ id: 'list-column-relatorterm' }).has({ content: 'Relator term' }),
-      MultiColumnListHeader({ id: 'list-column-numberoftitles' }).has({
-        content: 'Number of titles',
-      }),
-    ]);
     cy.expect([
-      Pane({ id: 'pane-results' }).find(MultiColumnListHeader()).exists(),
-      Button('Previous').is({ visible: true, disabled: true }),
-      or(
-        Button('Next').is({ visible: true, disabled: true }),
-        Button('Next').is({ visible: true, disabled: false }),
-      ),
+      paneIntanceDetails.find(MultiColumnListHeader('Contributor')).exists(),
+      paneIntanceDetails.find(MultiColumnListHeader('Type')).exists(),
+      paneIntanceDetails.find(MultiColumnListHeader('Relator term')).exists(),
+      paneIntanceDetails.find(MultiColumnListHeader('Number of titles')).exists(),
+      paneIntanceDetails.find(Button('Previous')).has({ disabled: false }),
+      paneIntanceDetails.find(Button('Next')).has({ disabled: or(true, false) }),
     ]);
   },
 
@@ -151,13 +222,16 @@ export default {
   },
 
   checkSearchResultRecord(record) {
-    MultiColumnListCell(record).has({ innerHTML: including(`<strong>${record}</strong>`) });
-  },
-
-  verifyRecordWithBold(record) {
     cy.expect(
       MultiColumnListCell(record).has({ innerHTML: including(`<strong>${record}</strong>`) }),
     );
+  },
+
+  checkMissedMatchSearchResultRecord(record) {
+    cy.expect([
+      HTML({ className: including('missingMatchError') }).has({ text: record }),
+      HTML('would be here').exists(),
+    ]);
   },
 
   checkAuthorityIconAndValueDisplayed(value) {
@@ -227,10 +301,10 @@ export default {
     cy.do(resetAllButton.click());
   },
 
-  getContributorNameTypes() {
+  getContributorNameTypes({ searchParams = { limit: 1 } } = {}) {
     return cy.okapiRequest({
       path: 'contributor-name-types',
-      searchParams: { limit: 1 },
+      searchParams,
     });
   },
 
