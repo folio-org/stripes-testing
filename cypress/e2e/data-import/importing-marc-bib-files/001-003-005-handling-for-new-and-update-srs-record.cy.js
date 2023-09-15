@@ -8,6 +8,7 @@ import {
 } from '../../../support/constants';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
+import Parallelization from '../../../support/dictionary/parallelization';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -120,7 +121,7 @@ describe('data-import', () => {
 
     it(
       'C17039 Test 001/003/035 handling for New and Updated SRS records (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);

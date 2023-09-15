@@ -183,8 +183,8 @@ describe('Patron Block: Lost items', () => {
         });
       });
 
-    UsersOwners.createViaApi(ownerBody).then((ownerResponse) => {
-      testData.ownerId = ownerResponse.id;
+    UsersOwners.createViaApi(ownerBody).then(({ id }) => {
+      testData.ownerId = id;
       PaymentMethods.createViaApi(testData.ownerId).then((paymentMethod) => {
         testData.paymentMethodId = paymentMethod.id;
       });

@@ -47,7 +47,8 @@ export const MultiColumnListCell = HTML.extend('multi column list cell')
     inputTextFieldNames: (el) => [...el.querySelectorAll('input')].map((input) => input.name),
     liValues: (el) => [...el.querySelectorAll('li')].map((li) => li.textContent),
     innerHTML: (el) => el.innerHTML,
-  });
+  })
+  .actions({ hrefClick: ({ perform }) => perform((el) => el.querySelector('a').click()) });
 
 export const MultiColumnListHeader = HTML.extend('multi column list header')
   .selector('div[class*=mclHeader-]')

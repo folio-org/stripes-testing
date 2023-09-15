@@ -16,6 +16,7 @@ import InventorySearchAndFilter from '../inventorySearchAndFilter';
 
 const searchButton = Button('Search', { type: 'submit' });
 const browseInventoryPane = Pane('Browse inventory');
+const inventoryPane = Pane('Inventory');
 const searchFilterPane = Pane('Search & filter');
 const inventorySearchResultsPane = Section({ id: 'browse-inventory-results-pane' });
 const nextButton = Button({ id: 'browse-results-list-browseSubjects-next-paging-button' });
@@ -41,6 +42,10 @@ export default {
 
   verifyBrowseInventoryPane() {
     cy.expect([browseInventoryPane.exists(), searchFilterPane.exists()]);
+  },
+
+  verifyInventoryPane() {
+    cy.expect(inventoryPane.exists());
   },
 
   verifyClickTakesNowhere(text) {
@@ -140,6 +145,10 @@ export default {
         innerHTML: including(`<strong>${value}</strong>`),
       }),
     );
+  },
+
+  checkValueIsBold(value) {
+    cy.expect(MultiColumnListCell({ innerHTML: including(`<strong>${value}</strong>`) }).exists());
   },
 
   browse(subjectName) {

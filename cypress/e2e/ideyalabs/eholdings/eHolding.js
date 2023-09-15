@@ -4,7 +4,6 @@ import {
   FieldSet,
   KeyValue,
   Modal,
-  MultiSelect,
   NavListItem,
   PaneContent,
   RadioButton,
@@ -28,14 +27,9 @@ import getRandomPostfix, {
 
 const editButton = Button('Edit');
 const actionsButton = Button('Actions');
-const searchButton = Button('Search');
 const description = TextArea({ name: 'description' });
 const SaveAndClose = Button('Save & close');
 const availableProxies = ['Inherited - None', 'FOLIO-Bugfest', 'EZProxy'];
-const SearchButton = Section({ id: 'providerShowProviderList' }).find(
-  Button({ ariaLabel: 'Toggle filters pane' }),
-);
-const iconSearch = Button({ icon: 'search' });
 const proxySelect = Select({ id: 'eholdings-proxy-id' });
 const selectionStatusAccordion = Accordion({
   id: 'accordion-toggle-button-filter-packages-selected',
@@ -105,11 +99,6 @@ export default {
     cy.expect(PaneContent({ id: 'search-results-content' }).exists());
   },
 
-  switchToPackages() {
-    cy.visit(topMenu.eholdingsPath);
-    eHoldingsProvidersSearch.byProvider('Gale Cengage');
-  },
-
   editActions: () => {
     cy.expect(Spinner().absent());
     cy.do(actionsButton.click());
@@ -123,15 +112,6 @@ export default {
     this.getAlternateTitles().then((val) => {
       expect(val).to.include(';');
     });
-  },
-
-  searchActions() {
-    cy.expect(searchButton.exists());
-    cy.do(searchButton.click());
-  },
-
-  verifyFilterPackages() {
-    cy.expect(Section({ id: 'titleShowPackages' }).exists());
   },
 
   patronRadioButton: () => {
@@ -148,11 +128,6 @@ export default {
       });
   },
 
-  dropdownValuesSelect(names) {
-    cy.expect(MultiSelect().exists());
-    cy.do(MultiSelect().select(names));
-  },
-
   bySelectionStatus(selectionStatus) {
     cy.expect(selectionStatusAccordion.exists());
     cy.do(selectionStatusAccordion.clickHeader());
@@ -163,12 +138,6 @@ export default {
   bySelectionStatusSection(selectionStatus) {
     cy.expect(selectionStatusSection.exists());
     cy.do(selectionStatusSection.find(RadioButton(selectionStatus)).click());
-  },
-
-  bySelectionStatusOpen(selectionStatus) {
-    cy.do(selectionStatusSection.find(Button('Selection status')).click());
-    cy.do(selectionStatusSection.find(RadioButton(selectionStatus)).click());
-    cy.do(Button('Search').click());
   },
 
   editSchedule({ data }) {
@@ -188,16 +157,6 @@ export default {
     eHoldingsPackagesSearch.bySelectionStatus('Selected');
   },
 
-  packageButton: () => {
-    cy.expect(SearchButton.exists());
-    cy.do(SearchButton.click());
-  },
-
-  searchButton() {
-    cy.expect(iconSearch.exists());
-    cy.do(iconSearch.click());
-  },
-
   modelSearch() {
     cy.do(Modal({ id: 'package-filter-modal' }).find(Button('Search').click()));
   },
@@ -206,15 +165,6 @@ export default {
     cy.do(TextArea({ name: 'providerTokenValue' }).fillIn(`Test${randomFourDigitNumber()}`));
     cy.expect(SaveAndClose.exists());
     cy.do(SaveAndClose.click());
-  },
-
-  getProxyValue: () => cy.then(() => KeyValue('Proxy').value()),
-
-  verifyProxy() {
-    this.getProxyValue().then((val) => {
-      // eslint-disable-next-line no-unused-expressions
-      expect(val).to.be.exist;
-    });
   },
 
   getToken: () => cy.then(() => KeyValue('Provider token').value()),

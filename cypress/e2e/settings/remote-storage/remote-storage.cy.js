@@ -1,5 +1,5 @@
 import TopMenu from '../../../support/fragments/topMenu';
-import RemoteStorageHelper from '../../../support/fragments/settings/remote-storage/remote-storage-configuration';
+import Configurations from '../../../support/fragments/settings/remote-storage/configurations';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { DevTeams, TestTypes } from '../../../support/dictionary';
 import settingsMenu from '../../../support/fragments/settingsMenu';
@@ -15,9 +15,9 @@ describe('remote-storage-configuration', () => {
 
   // parametrized providers
   [
-    RemoteStorageHelper.configurations.CaiaSoft,
-    RemoteStorageHelper.configurations.DematicEMS,
-    RemoteStorageHelper.configurations.DematicStagingDirector,
+    Configurations.configurations.CaiaSoft,
+    Configurations.configurations.DematicEMS,
+    Configurations.configurations.DematicStagingDirector,
   ].forEach((configuration) => {
     it(
       'C163919 Configure remote storage (firebird)',
@@ -26,11 +26,11 @@ describe('remote-storage-configuration', () => {
         const name = `AutotestConfigurationName${getRandomPostfix()}`;
 
         configuration.create(name);
-        RemoteStorageHelper.verifyCreatedConfiguration(name, configuration);
-        RemoteStorageHelper.editConfiguration(name, { nameInput: 'newAutotestConfigurationName' });
-        RemoteStorageHelper.closeWithoutSaving();
-        RemoteStorageHelper.verifyCreatedConfiguration(name, configuration);
-        RemoteStorageHelper.deleteRemoteStorage(name);
+        Configurations.verifyCreatedConfiguration(name, configuration);
+        Configurations.editConfiguration(name, { nameInput: 'newAutotestConfigurationName' });
+        Configurations.closeWithoutSaving();
+        Configurations.verifyCreatedConfiguration(name, configuration);
+        Configurations.deleteRemoteStorage(name);
       },
     );
   });
@@ -40,25 +40,25 @@ describe('remote-storage-configuration', () => {
     { tags: [TestTypes.smoke, DevTeams.firebird] },
     () => {
       const name = `AutotestConfigurationName${getRandomPostfix()}`;
-      const configuration = RemoteStorageHelper.configurations.DematicStagingDirector;
+      const configuration = Configurations.configurations.DematicStagingDirector;
       const urlToEdit = 'newTestUrl';
       const timingToEdit = '7';
 
       configuration.create(name);
-      RemoteStorageHelper.verifyCreatedConfiguration(name, configuration);
+      Configurations.verifyCreatedConfiguration(name, configuration);
 
       // edit and verify url
-      RemoteStorageHelper.editConfiguration(name, { urlInput: urlToEdit });
-      RemoteStorageHelper.closeWithSaving();
-      RemoteStorageHelper.verifyEditedConfiguration(name, { urlInput: urlToEdit });
+      Configurations.editConfiguration(name, { urlInput: urlToEdit });
+      Configurations.closeWithSaving();
+      Configurations.verifyEditedConfiguration(name, { urlInput: urlToEdit });
 
       // edit and verify timing
-      RemoteStorageHelper.editConfiguration(name, { timingInput: timingToEdit });
-      RemoteStorageHelper.closeWithoutSaving();
-      RemoteStorageHelper.editConfiguration(name, { urlInput: urlToEdit, timingInput: '1' });
+      Configurations.editConfiguration(name, { timingInput: timingToEdit });
+      Configurations.closeWithoutSaving();
+      Configurations.editConfiguration(name, { urlInput: urlToEdit, timingInput: '1' });
 
       // delete created configuration
-      RemoteStorageHelper.deleteRemoteStorage(name);
+      Configurations.deleteRemoteStorage(name);
     },
   );
 

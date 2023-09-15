@@ -147,6 +147,11 @@ export const ORDER_FORMAT_NAMES = {
   PHYSICAL_RESOURCE_Check: 'Physical Resource',
 };
 
+export const ORDER_PAYMENT_STATUS = {
+  PENDING: 'Pending',
+  PAYMENT_NOT_REQUIRED: 'Payment not required',
+};
+
 export const ORDER_FORMAT_NAMES_IN_PROFILE = {
   ELECTRONIC_RESOURCE: 'Electronic Resource',
   PE_MIX: 'P/E Mix',

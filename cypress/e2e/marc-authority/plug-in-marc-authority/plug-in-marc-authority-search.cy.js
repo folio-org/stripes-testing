@@ -176,7 +176,7 @@ describe('plug-in MARC authority | Search', () => {
 
   it(
     'C359206 MARC Authority plug-in | Search using "Identifier (all)" option (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
       InventoryInstances.selectInstance();
@@ -202,7 +202,7 @@ describe('plug-in MARC authority | Search', () => {
 
   it(
     'C380567 MARC Authority plug-in | Search using "Corporate/Conference name" option (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
       InventoryInstances.selectInstance();
@@ -230,7 +230,7 @@ describe('plug-in MARC authority | Search', () => {
 
   it(
     'C380568 MARC Authority plug-in | Search using "Geographic name" option (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
       InventoryInstances.selectInstance();
@@ -248,7 +248,7 @@ describe('plug-in MARC authority | Search', () => {
 
   it(
     'C380569 MARC Authority plug-in | Search using "Name-title" option (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
       InventoryInstances.selectInstance();
@@ -277,7 +277,7 @@ describe('plug-in MARC authority | Search', () => {
 
   it(
     'C380566 MARC Authority plug-in | Search using "Personal name" option (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
       InventoryInstances.selectInstance();
@@ -292,7 +292,7 @@ describe('plug-in MARC authority | Search', () => {
 
   it(
     'C380570 MARC Authority plug-in | Search using "Uniform title" option (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
       InventoryInstances.selectInstance();

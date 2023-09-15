@@ -1,44 +1,48 @@
-import { RichEditor, TextField, Button, Select } from '../../../../interactors';
+import { RichEditor, TextField, Button, Select, Label } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 
-export default class NewNote {
-  static #titleTextField = TextField('Note title*');
+const titleTextField = TextField('Note title*');
+const saveButton = Button('Save & close');
+const selectNoteType = Select({ name: 'type' });
 
-  static #saveButton = Button('Save & close');
+const defaultNote = {
+  title: `autotest_title_${getRandomPostfix()}`,
+  details: `autotest_details_${getRandomPostfix()}`,
+  getShortDetails() {
+    return this.details.substring(0, 255);
+  },
+};
 
-  static #defaultNote = {
-    title: `autotest_title_${getRandomPostfix()}`,
-    details: `autotest_details_${getRandomPostfix()}`,
-    getShortDetails() {
-      return this.details.substring(0, 255);
-    },
-  };
+function getDefaultNote() {
+  return defaultNote;
+}
 
-  static #selectNoteType = Select({ name: 'type' });
+export default {
+  defaultNote,
+  getDefaultNote,
 
-  static get defaultNote() {
-    return this.#defaultNote;
-  }
-
-  static fill(specialNote = this.#defaultNote) {
+  fill(specialNote = defaultNote) {
     cy.do([
-      this.#titleTextField.fillIn(specialNote.title),
+      titleTextField.fillIn(specialNote.title),
       RichEditor('Details').fillIn(specialNote.details),
     ]);
-  }
 
-  static save() {
-    cy.do(this.#saveButton.click());
-    cy.expect(this.#titleTextField.absent());
-  }
+    cy.wait(100);
 
-  static chooseSelectTypeByTitle(TypeTitle) {
-    cy.do([
-      this.#selectNoteType.choose(TypeTitle),
-    ]);
-  }
+    if (specialNote.checkoutApp) cy.do(Label('Check out app').click());
+    if (specialNote.usersApp) cy.do(Label('Users app').click());
+  },
 
-  static verifyNewNoteIsDisplayed() {
-    cy.expect(this.#titleTextField.exists());
-  }
-}
+  save() {
+    cy.do(saveButton.click());
+    cy.expect(titleTextField.absent());
+  },
+
+  chooseSelectTypeByTitle(TypeTitle) {
+    cy.do(selectNoteType.choose(TypeTitle));
+  },
+
+  verifyNewNoteIsDisplayed() {
+    cy.expect(titleTextField.exists());
+  },
+};

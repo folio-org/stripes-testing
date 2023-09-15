@@ -45,11 +45,11 @@ describe('Patron blocks relations with users, conditions', () => {
                 testData.chargeAmount - 0.01,
               );
 
-              UsersOwners.createViaApi({ owner: uuid() }).then((owner) => {
-                testData.ownerId = owner.id;
+              UsersOwners.createViaApi({ owner: uuid() }).then(({ id, owner }) => {
+                testData.ownerId = id;
                 ManualCharges.createViaApi({
                   ...ManualCharges.defaultFeeFineType,
-                  ownerId: owner.id,
+                  ownerId: id,
                   defaultAmount: testData.chargeAmount,
                 }).then((manualCharge) => {
                   testData.manualChargeId = manualCharge.id;
@@ -60,7 +60,7 @@ describe('Patron blocks relations with users, conditions', () => {
                   // TODO: clarify the reason of extra reloading
                   cy.reload();
                   UsersCard.startFeeFine();
-                  UserCharge.fillRequiredFields(owner.ownerName, manualCharge.feeFineType);
+                  UserCharge.fillRequiredFields(owner, manualCharge.feeFineType);
                   UserCharge.chargeOnly();
                   // TODO: clarify the issue when error message is not presented in cypress env time to time
                   UsersCard.hasSaveError(UsersCard.errors.patronHasBlocksInPlace);
