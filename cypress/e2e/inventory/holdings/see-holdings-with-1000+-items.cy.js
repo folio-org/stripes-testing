@@ -16,6 +16,7 @@ describe('inventory', () => {
   describe('Holdings', () => {
     let user;
     const quantityOfItems = 1005;
+    const quantityOfItemsOnPage = 200;
     const testData = {
       instanceTitle: `Instance ${getRandomPostfix()}`,
     };
@@ -101,9 +102,15 @@ describe('inventory', () => {
         InstanceRecordView.verifyInstanceRecordViewOpened();
         InstanceRecordView.verifyItemsCount(quantityOfItems, LOCATION_NAMES.MAIN_LIBRARY_UI);
         InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
-        InstanceRecordView.verifyQuantityOfItemsOnPage(quantityOfItems, testData.loanTypeName);
+        InstanceRecordView.verifyQuantityOfItemsRelatedtoHoldings(
+          `${LOCATION_NAMES.MAIN_LIBRARY_UI} >`,
+          quantityOfItemsOnPage,
+        );
         InstanceRecordView.clickNextPaginationButton();
-        InstanceRecordView.verifyQuantityOfItemsOnPage(quantityOfItems, testData.loanTypeName);
+        InstanceRecordView.verifyQuantityOfItemsRelatedtoHoldings(
+          `${LOCATION_NAMES.MAIN_LIBRARY_UI} >`,
+          quantityOfItemsOnPage,
+        );
       },
     );
   });

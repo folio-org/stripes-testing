@@ -9,8 +9,10 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import Users from '../../support/fragments/users/users';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import NoticePolicyApi from '../../support/fragments/circulation/notice-policy';
-import NoticePolicyTemplateApi from '../../support/fragments/circulation/notice-policy-template';
+import NoticePolicyApi, {
+  getDefaultNoticePolicy,
+} from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
+import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../support/fragments/checkout/checkout';
@@ -34,7 +36,7 @@ const templateBody = {
   outputFormats: ['text/html'],
   templateResolver: 'mustache',
 };
-const noticePolicyName = `noticePolicy_${getRandomPostfix()}`;
+const noticePolicy = getDefaultNoticePolicy({ templateId: templateBody.id });
 const item = {
   instanceTitle: `Instance ${getRandomPostfix()}`,
   barcode: `item-${getRandomPostfix()}`,
@@ -70,7 +72,7 @@ describe('circulation-log', () => {
       });
 
       NoticePolicyTemplateApi.createViaApi(templateBody).then(() => {
-        NoticePolicyApi.createWithTemplateApi(noticePolicyName, templateBody.id, 'Check out');
+        NoticePolicyApi.createWithTemplateApi(noticePolicy);
       });
 
       InventoryInstances.createInstanceViaApi(item.instanceTitle, item.barcode);
@@ -81,7 +83,7 @@ describe('circulation-log', () => {
         },
       );
 
-      cy.getNoticePolicy({ query: `name=="${noticePolicyName}"` }).then((response) => {
+      cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((response) => {
         testData.ruleProps.n = response[0].id;
         addedCirculationRule =
           't ' +

@@ -1,5 +1,5 @@
 import { Button, KeyValue, Section } from '../../../../interactors';
-import AgreementDetails from '../agreements/agreementsDetails';
+import AgreementDetails from '../agreements/agreementViewDetails';
 import ExistingNoteEdit from './existingNoteEdit';
 
 const section = Section({ id: 'pane-note-view' });

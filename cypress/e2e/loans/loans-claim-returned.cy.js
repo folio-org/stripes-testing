@@ -125,10 +125,10 @@ describe('Loans ', () => {
           testData.materialTypeId = res.id;
         });
         UsersOwners.createViaApi({
-          ...UsersOwners.getDefaultNewOwner(uuid(), 'owner'),
+          ...UsersOwners.getDefaultNewOwner(),
           servicePointOwner: [{ value: servicePoint.id, label: servicePoint.name }],
-        }).then(({ id, ownerName }) => {
-          ownerData.name = ownerName;
+        }).then(({ id, owner }) => {
+          ownerData.name = owner;
           ownerData.id = id;
         });
         ServicePoints.createViaApi(servicePoint);

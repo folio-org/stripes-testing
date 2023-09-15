@@ -1,4 +1,6 @@
 import TestTypes from '../../../support/dictionary/testTypes';
+import DevTeams from '../../../support/dictionary/devTeams';
+import Parallelization from '../../../support/dictionary/parallelization';
 import permissions from '../../../support/dictionary/permissions';
 import markItemAsWithdrawn from '../../../support/fragments/inventory/markItemAsWithdrawn';
 import markItemAsMissing from '../../../support/fragments/inventory/markItemAsMissing';
@@ -8,7 +10,6 @@ import Users from '../../../support/fragments/users/users';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import DevTeams from '../../../support/dictionary/devTeams';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import CirculationRules from '../../../support/fragments/circulation/circulation-rules';
 
@@ -101,7 +102,8 @@ describe('inventory', () => {
 
     it(
       'C10930: Mark items as withdrawn (folijet) (prokopovych)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         cy.visit(TopMenu.inventoryPath);
         markItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
