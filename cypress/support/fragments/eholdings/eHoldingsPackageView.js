@@ -27,7 +27,7 @@ const selectedTitleFieldsRadioButton = RadioButton({
 });
 
 export default {
-  close: () => {
+  close() {
     cy.do(Button({ icon: 'times' }).click());
     eHoldingsPackages.waitLoading();
   },

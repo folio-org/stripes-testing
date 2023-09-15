@@ -45,7 +45,7 @@ describe('eHoldings', () => {
       { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
       () => {
         EHoldingSearch.switchToPackages();
-        cy.wait(7000);
+        cy.wait(8000);
         EHoldingsPackagesSearch.byName(testData.defaultPackage.data.attributes.name);
         EHoldingsPackages.verifyPackageInResults(testData.defaultPackage.data.attributes.name);
         EHoldingsPackages.openPackage();
@@ -56,11 +56,10 @@ describe('eHoldings', () => {
         AgreementViewDetails.verifyAgreementDetailsIsDisplayedByTitle(
           testData.defaultAgreement.name,
         );
-        AgreementViewDetails.openAgreementLines();
-        AgreementViewDetails.verifyCreatedAgreementLine(
+        AgreementViewDetails.openAgreementLinesSection();
+        AgreementViewDetails.verifyAgreementLinePresented(
           testData.defaultPackage.data.attributes.name,
         );
-
         cy.visit(TopMenu.eholdingsPath);
         EHoldingSearch.switchToPackages();
         EHoldingsPackagesSearch.byName(testData.defaultPackage.data.attributes.name);

@@ -142,7 +142,7 @@ describe('Orders: orders', () => {
       AgreementsDetails.createNewAgreementInBusket();
       NewAgreement.fill(defaultAgreement);
       NewAgreement.save();
-      AgreementsDetails.openAgreementLines();
+      AgreementsDetails.openAgreementLinesSection();
       AgreementsDetails.newAgreementLine(`${orderNumber}-1`);
     });
     cy.createTempUser([permissions.uiOrdersView.gui, permissions.uiNotesItemView.gui]).then(

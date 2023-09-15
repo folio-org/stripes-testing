@@ -45,6 +45,7 @@ describe('eHoldings', () => {
         EHoldingsPackageView.verifyPackageType('Custom');
         EHoldingsPackages.verifyPackageExistsViaAPI(testData.customPackageName, true);
         EHoldingsPackageView.close();
+        EHoldingSearch.switchToPackages();
         EHoldingsPackagesSearch.byName(testData.customPackageName);
         EHoldingsPackages.verifyPackageInResults(testData.customPackageName);
       },

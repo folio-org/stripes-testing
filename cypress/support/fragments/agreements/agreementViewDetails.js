@@ -16,6 +16,7 @@ import {
   Checkbox,
   SelectionOption,
   SearchField,
+  Link,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import NewNote from '../notes/newNote';
@@ -163,7 +164,7 @@ export default {
     cy.do(Button('Create new agreement').click());
   },
 
-  openAgreementLines() {
+  openAgreementLinesSection() {
     cy.do(Section({ id: 'lines' }).find(Button('Agreement lines')).click());
   },
 
@@ -193,6 +194,16 @@ export default {
 
   agreementListClick(agreementName) {
     cy.do(MultiColumnListCell(agreementName).click());
+  },
+
+  openEHoldingsPackageFromAgreementLine(name, rowNumber = 0) {
+    cy.do(
+      viewAgreementPane
+        .find(Accordion('Agreement lines'))
+        .find(MultiColumnListCell({ row: rowNumber, columnIndex: 0 }))
+        .find(Link(name))
+        .click(),
+    );
   },
 
   verifyNotesIsEmpty() {
@@ -251,7 +262,7 @@ export default {
     );
   },
 
-  verifyCreatedAgreementLine(name) {
+  verifyAgreementLinePresented(name) {
     cy.expect(viewAgreementPane.find(MultiColumnListCell({ content: name, row: 0 })).exists());
   },
 };
