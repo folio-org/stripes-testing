@@ -85,6 +85,10 @@ export default {
     );
   },
 
+  waitLoading() {
+    cy.expect(rootSection.exists());
+  },
+
   openNotesSection() {
     cy.do(
       rootSection
@@ -104,6 +108,27 @@ export default {
   clickOnNoteRecord() {
     cy.expect(Spinner().absent());
     cy.do(notesList.click({ row: 0 }));
+  },
+
+  clickOnNoteRecordByTitle(title) {
+    cy.do(
+      notesList
+        .find(MultiColumnListCell({ column: 'Title and details', content: including(title) }))
+        .click(),
+    );
+  },
+
+  clickOnNewButton() {
+    cy.expect(rootSection.exists());
+    cy.do(rootSection.find(newNoteButton).click());
+  },
+
+  checkNotesCount(notesCount) {
+    cy.expect(
+      rootSection
+        .find(Section({ id: 'notes' }).find(Badge()))
+        .has({ value: notesCount.toString() }),
+    );
   },
 
   specialNotePresented(noteTitle = NewNote.defaultNote.title) {
@@ -222,21 +247,17 @@ export default {
     cy.expect(Pane(agreementTitle).exists());
   },
 
-  verifySpecialNotesRow(title, details, type) {
-    cy.expect([notesList.exists()]);
-    cy.expect(
+  verifySpecialNotesRow({ title, details, type }) {
+    cy.expect([
+      notesList.exists(),
       notesList
         .find(MultiColumnListCell({ column: 'Title and details', content: including(title) }))
         .exists(),
-    );
-    cy.expect(
       notesList
         .find(MultiColumnListCell({ column: 'Title and details', content: including(details) }))
         .exists(),
-    );
-    cy.expect(
       notesList.find(MultiColumnListCell({ column: 'Type', content: including(type) })).exists(),
-    );
+    ]);
   },
 
   verifyAgreementDetails(defaultAgreement) {
