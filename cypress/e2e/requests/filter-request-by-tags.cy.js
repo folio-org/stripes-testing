@@ -50,9 +50,11 @@ describe('ui-requests: Filter requests by tags', () => {
     userIds.forEach((id) => {
       Users.deleteViaApi(id);
     });
+    Requests.updateCirculationRulesApi(oldRulesText);
+    Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
-  it('C9320 Filter requests by tags', { tags: [testType.smoke, DevTeams.vega] }, () => {
+  it('C9320 Filter requests by tags (vega)', { tags: [testType.extended, DevTeams.vega] }, () => {
     cy.visit(TopMenu.requestsPath);
     instances.forEach((instance, index) => {
       Requests.findCreatedRequest(instance.instanceTitle);
