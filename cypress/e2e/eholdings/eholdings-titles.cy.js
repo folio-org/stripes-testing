@@ -169,6 +169,31 @@ describe('eHoldings titles management', () => {
     },
   );
 
+  it(
+    'C157916 Title - Packages accordion - Filter by Holding Status (spitfire)',
+    { tags: [testTypes.criticalPath, devTeams.spitfire, features.eHoldings] },
+    () => {
+      cy.createTempUser([
+        permissions.uieHoldingsRecordsEdit.gui,
+      ]).then((userProperties) => {
+        userId = userProperties.userId;
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.eholdingsPath,
+          waiter: eHoldingsTitlesSearch.waitLoading,
+        });
+
+        const title = 'Journal of Fish Biology';
+        eHoldingSearch.switchToTitles();
+        eHoldingsTitle.searchTitle(title);
+        eHoldingsTitlesSearch.openTitle(title);
+        eHoldingsTitle.waitPackagesLoading();
+        eHoldingsTitle.filterPackages(eHoldingsPackage.filterStatuses.selected);
+        eHoldingsTitle.waitPackagesLoading();
+        eHoldingsTitle.checkOnlySelectedPackagesInResults();
+      });
+    },
+  );
+
   afterEach(() => {
     users.deleteViaApi(userId);
   });
