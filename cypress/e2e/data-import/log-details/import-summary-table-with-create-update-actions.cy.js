@@ -339,7 +339,7 @@ describe.skip('data-import', () => {
         // create job profile for creating
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.createJobProfile(jobProfileForCreate);
-        collectionOfProfilesForCreate.forEach((profile) => {
+        cy.wrap(collectionOfProfilesForCreate).each((profile) => {
           NewJobProfile.linkActionProfile(profile.actionProfile);
         });
         NewJobProfile.saveAndClose();
@@ -512,7 +512,7 @@ describe.skip('data-import', () => {
         FileDetails.checkItemQuantityInSummaryTable(quantityOfUpdatedItems, 1);
 
         // check items is updated in Inventory
-        [0, 1].forEach((rowNumber) => {
+        cy.wrap([0, 1]).each((rowNumber) => {
           FileDetails.checkItemsStatusesInResultList(rowNumber, [
             FileDetails.status.updated,
             FileDetails.status.updated,
