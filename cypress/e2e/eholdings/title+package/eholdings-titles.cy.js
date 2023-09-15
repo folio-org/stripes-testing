@@ -1,21 +1,21 @@
 /// <reference types="cypress" />
 
-import eHoldingSearch from '../../support/fragments/eholdings/eHoldingsSearch';
-import eHoldingsTitle from '../../support/fragments/eholdings/eHoldingsTitle';
-import eHoldingsPackage from '../../support/fragments/eholdings/eHoldingsPackage';
-import eHoldingsTitles from '../../support/fragments/eholdings/eHoldingsTitles';
-import eHoldingsPackages from '../../support/fragments/eholdings/eHoldingsPackages';
-import eHoldingsTitlesSearch from '../../support/fragments/eholdings/eHoldingsTitlesSearch';
-import eHoldingsResourceView from '../../support/fragments/eholdings/eHoldingsResourceView';
-import TopMenu from '../../support/fragments/topMenu';
-import { Pane, Section, Button } from '../../../interactors';
-import eHoldingsResourceEdit from '../../support/fragments/eholdings/eHoldingResourceEdit';
-import dateTools from '../../support/utils/dateTools';
-import testTypes from '../../support/dictionary/testTypes';
-import features from '../../support/dictionary/features';
-import permissions from '../../support/dictionary/permissions';
-import users from '../../support/fragments/users/users';
-import devTeams from '../../support/dictionary/devTeams';
+import eHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
+import eHoldingsTitle from '../../../support/fragments/eholdings/eHoldingsTitle';
+import eHoldingsPackage from '../../../support/fragments/eholdings/eHoldingsPackage';
+import eHoldingsTitles from '../../../support/fragments/eholdings/eHoldingsTitles';
+import eHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
+import eHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
+import eHoldingsResourceView from '../../../support/fragments/eholdings/eHoldingsResourceView';
+import TopMenu from '../../../support/fragments/topMenu';
+import { Pane, Section, Button } from '../../../../interactors';
+import eHoldingsResourceEdit from '../../../support/fragments/eholdings/eHoldingResourceEdit';
+import dateTools from '../../../support/utils/dateTools';
+import testTypes from '../../../support/dictionary/testTypes';
+import features from '../../../support/dictionary/features';
+import permissions from '../../../support/dictionary/permissions';
+import users from '../../../support/fragments/users/users';
+import devTeams from '../../../support/dictionary/devTeams';
 
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => false);
