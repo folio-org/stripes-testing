@@ -54,18 +54,6 @@ describe.skip('Create a custom package', () => {
     },
   );
   it(
-    'C157916 Title - Packages accordion - Filter by Holding Status (spitfire)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      cy.visit(topMenu.eholdingsPath);
-      eHoldingsSearch.switchToTitles();
-      eHoldingsProvidersSearch.byProvider('Journal of Fish Biology');
-      eHoldingsProviders.viewPackage();
-      eHolding.searchButton();
-      eHolding.bySelectionStatusSection('Selected');
-    },
-  );
-  it(
     'C360543 Check the content of ""Title information"" accordion in ""Title"" detail record (spitfire)',
     { tags: [testTypes.ideaLabsTests] },
     () => {

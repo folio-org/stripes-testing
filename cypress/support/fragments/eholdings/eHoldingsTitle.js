@@ -9,11 +9,14 @@ import {
   including,
   Pane,
   MultiSelect,
+  TextField,
 } from '../../../../interactors';
 import eHoldingsResourceView from './eHoldingsResourceView';
 
 const packagesSection = Section({ id: 'titleShowPackages' });
 const packageFilterModal = Modal({ id: 'package-filter-modal' });
+const titleSearchField = TextField({ id: 'eholdings-search' });
+const titleSearchButton = Button('Search');
 
 const filterStatuses = {
   all: 'All',
@@ -79,5 +82,17 @@ export default {
       .forEach((notExpectedStatus) => cy.expect(
         packagesSection.find(HTML(including(filterStatuses[notExpectedStatus]))).absent(),
       ));
+  },
+
+  searchTitle(title) {
+    cy.do([titleSearchField.fillIn(title), titleSearchButton.click()]);
+  },
+
+  checkOnlySelectedPackagesInResults() {
+    cy.expect([
+      packagesSection.find(ListItem({ text: including(filterStatuses.selected) })).exists(),
+      packagesSection.find(ListItem({ text: including(filterStatuses.notSelected) })).absent(),
+      packagesSection.find(ListItem({ text: including(filterStatuses.all) })).absent(),
+    ]);
   },
 };
