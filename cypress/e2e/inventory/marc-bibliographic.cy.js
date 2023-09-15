@@ -83,7 +83,7 @@ describe('MARC -> MARC Bibliographic', () => {
 
   it(
     'C10924 Add a field to a record using quickMARC (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire] },
+    { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
 
@@ -110,7 +110,7 @@ describe('MARC -> MARC Bibliographic', () => {
 
   it(
     'C10928 Delete a field(s) from a record in quickMARC (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire] },
+    { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
 
@@ -132,7 +132,7 @@ describe('MARC -> MARC Bibliographic', () => {
 
   it(
     'C10957 Attempt to delete a required field (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire] },
+    { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
 
@@ -144,7 +144,7 @@ describe('MARC -> MARC Bibliographic', () => {
 
   it(
     'C10951 Add a 5XX field to a marc record in quickMARC (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire] },
+    { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
 
@@ -186,7 +186,7 @@ describe('MARC -> MARC Bibliographic', () => {
 
   it(
     'C345388 Derive a MARC bib record (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire] },
+    { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
 

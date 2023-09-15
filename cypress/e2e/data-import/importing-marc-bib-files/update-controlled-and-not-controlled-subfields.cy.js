@@ -18,6 +18,7 @@ import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthorit
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
+import Parallelization from '../../../support/dictionary/parallelization';
 import {
   LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
@@ -162,7 +163,7 @@ describe('data-import', () => {
 
     it(
       'C375098 Update controlled and not controlled subfields of linked "MARC Bib" field which is controlled by "MARC Authority" record (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
       () => {
         InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

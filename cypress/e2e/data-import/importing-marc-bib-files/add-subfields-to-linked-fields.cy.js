@@ -18,6 +18,7 @@ import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthorit
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
+import Parallelization from '../../../support/dictionary/parallelization';
 import {
   LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
@@ -182,7 +183,7 @@ describe('data-import', () => {
 
     it(
       'C385673 Add controllable, non-controllable subfields to one of the linked repeatable (multiple repeatable fields with same indicators) and not repeatable fields (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
       () => {
         InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

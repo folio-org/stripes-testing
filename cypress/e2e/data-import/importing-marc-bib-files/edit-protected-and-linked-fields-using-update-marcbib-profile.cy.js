@@ -19,6 +19,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
+import Parallelization from '../../../support/dictionary/parallelization';
 import {
   LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
@@ -239,7 +240,7 @@ describe('data-import', () => {
 
     it(
       'C380511 Edit protected and linked fields using update MARC Bib profile (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
       () => {
         InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

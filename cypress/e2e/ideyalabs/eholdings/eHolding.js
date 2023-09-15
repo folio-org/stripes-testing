@@ -4,7 +4,6 @@ import {
   FieldSet,
   KeyValue,
   Modal,
-  MultiSelect,
   NavListItem,
   PaneContent,
   RadioButton,
@@ -28,7 +27,6 @@ import getRandomPostfix, {
 
 const editButton = Button('Edit');
 const actionsButton = Button('Actions');
-const searchButton = Button('Search');
 const description = TextArea({ name: 'description' });
 const SaveAndClose = Button('Save & close');
 const availableProxies = ['Inherited - None', 'FOLIO-Bugfest', 'EZProxy'];
@@ -116,15 +114,6 @@ export default {
     });
   },
 
-  searchActions() {
-    cy.expect(searchButton.exists());
-    cy.do(searchButton.click());
-  },
-
-  verifyFilterPackages() {
-    cy.expect(Section({ id: 'titleShowPackages' }).exists());
-  },
-
   patronRadioButton: () => {
     cy.expect(patronRadioButton.exists());
     cy.do(patronRadioButton.click());
@@ -137,11 +126,6 @@ export default {
         const options = availableProxies.filter((option) => option !== text);
         cy.do(proxySelect.choose(options[randomTwoDigitNumber()]));
       });
-  },
-
-  dropdownValuesSelect(names) {
-    cy.expect(MultiSelect().exists());
-    cy.do(MultiSelect().select(names));
   },
 
   bySelectionStatus(selectionStatus) {
