@@ -1,7 +1,7 @@
 export default {
-  smoke: 'smoke',
-  criticalPath: 'criticalPth',
-  extendedPath: 'extendedPath',
+  smoke: 'testsmoke',
+  criticalPath: 'testcriticalPth',
+  extendedPath: 'testextendedPath',
   long: 'long',
   broken: 'broken',
   ideaLabsTests: 'ideaLabsTests',

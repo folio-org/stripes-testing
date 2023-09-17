@@ -6,7 +6,7 @@ const { downloadFile } = require('cypress-downloadfile/lib/addPlugin');
 const fs = require('fs');
 const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 // eslint-disable-next-line import/no-extraneous-dependencies
-const { cloudPlugin } = require('cypress-cloud/plugin');
+// const { cloudPlugin } = require('cypress-cloud/plugin');
 
 module.exports = defineConfig({
   retries: {
@@ -86,7 +86,7 @@ module.exports = defineConfig({
       // eslint-disable-next-line global-require
       await require('cypress-testrail-simple/src/plugin')(on, config);
 
-      await cloudPlugin(on, config);
+      // await cloudPlugin(on, config);
 
       return config;
     },

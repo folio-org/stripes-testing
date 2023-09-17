@@ -65,7 +65,7 @@ describe('bulk-edit', () => {
 
     it(
       'C389570 In app | Verify bulk edit Users records with recently updated Custom fields (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird, parallelization.nonParallel] },
+      { tags: [testTypes.criticalPath, devTeams.firebird, 'nonParallel'] },
       () => {
         cy.visit(TopMenu.bulkEditPath);
         BulkEditSearchPane.checkUsersRadio();

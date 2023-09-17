@@ -68,7 +68,7 @@ describe('bulk-edit', () => {
 
     it(
       'C380393 Verify that bulk edit jobs run by correct user (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird, parallelization.nonParallel] },
+      { tags: ['smoke', devTeams.firebird, 'nonParallel'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');
