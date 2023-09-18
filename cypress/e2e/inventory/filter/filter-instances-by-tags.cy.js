@@ -33,8 +33,8 @@ describe('inventory', () => {
     });
 
     it(
-      'C343215 Filter instances by tags (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      'C343215 Filter instances by tags (volaris)',
+      { tags: [TestTypes.smoke, DevTeams.volaris] },
       () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.verifyPanesExist();
