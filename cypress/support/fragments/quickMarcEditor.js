@@ -24,11 +24,13 @@ const rootSection = Section({ id: 'quick-marc-editor-pane' });
 const viewMarcSection = Section({ id: 'marc-view-pane' });
 const cancelButton = Button('Cancel');
 const closeWithoutSavingBtn = Button('Close without saving');
+const xButton = Button({ ariaLabel: 'Close ' });
 const addFieldButton = Button({ ariaLabel: 'plus-sign' });
 const deleteFieldButton = Button({ ariaLabel: 'trash' });
 const linkToMarcRecordButton = Button({ ariaLabel: 'link' });
 const unlinkIconButton = Button({ ariaLabel: 'unlink' });
 const viewAuthorutyIconButton = Button({ ariaLabel: 'eye-open' });
+const arrowUpButton = Button({ ariaLabel: 'arrow-up' });
 const saveAndCloseButton = Button({ id: 'quick-marc-record-save' });
 const saveAndKeepEditingBtn = Button({ id: 'quick-marc-record-save-edit' });
 const saveAndCloseButtonEnabled = Button({ id: 'quick-marc-record-save', disabled: false });
@@ -511,6 +513,10 @@ export default {
     );
   },
 
+  moveFieldUp(rowNumber) {
+    cy.do(QuickMarcEditorRow({ index: rowNumber }).find(arrowUpButton).click());
+  },
+
   checkFieldContentMatch(selector, regExp) {
     cy.get(selector)
       .invoke('val')
@@ -850,6 +856,10 @@ export default {
 
   closeWithoutSaving() {
     cy.do(cancelButton.click());
+  },
+
+  closeUsingCrossButton() {
+    cy.do(xButton.click());
   },
 
   closeWithoutSavingAfterChange() {

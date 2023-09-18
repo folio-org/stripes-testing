@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import TopMenu from '../../../support/fragments/topMenu';
 import UsersSearchResultsPane from '../../../support/fragments/users/usersSearchResultsPane';
 import FinancialTransactionDetailReportModal from '../../../support/fragments/users/financialTransactionDetailReportModal';

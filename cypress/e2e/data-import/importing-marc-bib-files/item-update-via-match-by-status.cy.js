@@ -1,8 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
-import permissions from '../../../support/dictionary/permissions';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import {
   LOAN_TYPE_NAMES,
   ITEM_STATUS_NAMES,
@@ -130,19 +128,19 @@ describe('data-import', () => {
 
     before('create test data', () => {
       cy.createTempUser([
-        permissions.moduleDataImportEnabled.gui,
-        permissions.settingsDataImportEnabled.gui,
-        permissions.dataExportEnableSettings.gui,
-        permissions.inventoryAll.gui,
-        permissions.uiInventoryMarcItemInProcess.gui,
-        permissions.uiInventoryMarcItemIntellectual.gui,
-        permissions.uiInventoryMarcItemLongMissing.gui,
-        permissions.uiInventoryMarcItemRestricted.gui,
-        permissions.uiInventoryMarcItemUnavailable.gui,
-        permissions.uiInventoryMarcItemUnknow.gui,
-        permissions.uiInventoryMarkItemsWithdrawn.gui,
-        permissions.dataExportEnableApp.gui,
-        permissions.settingsDataImportEnabled.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.dataExportEnableSettings.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiInventoryMarcItemInProcess.gui,
+        Permissions.uiInventoryMarcItemIntellectual.gui,
+        Permissions.uiInventoryMarcItemLongMissing.gui,
+        Permissions.uiInventoryMarcItemRestricted.gui,
+        Permissions.uiInventoryMarcItemUnavailable.gui,
+        Permissions.uiInventoryMarcItemUnknow.gui,
+        Permissions.uiInventoryMarkItemsWithdrawn.gui,
+        Permissions.dataExportEnableApp.gui,
+        Permissions.settingsDataImportEnabled.gui,
       ]).then((userProperties) => {
         user = userProperties;
 

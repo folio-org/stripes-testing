@@ -1,7 +1,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import uuid from 'uuid';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import MatchOnVRN from '../../../support/fragments/data_import/matchOnVRN';
@@ -9,8 +9,6 @@ import FileManager from '../../../support/utils/fileManager';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Orders from '../../../support/fragments/orders/orders';
 import Users from '../../../support/fragments/users/users';
-import permissions from '../../../support/dictionary/permissions';
-import DevTeams from '../../../support/dictionary/devTeams';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../../support/fragments/orders/newOrder';
@@ -100,19 +98,19 @@ describe('data-import', () => {
 
     before('create test data', () => {
       cy.createTempUser([
-        permissions.uiOrdersView.gui,
-        permissions.uiOrdersCreate.gui,
-        permissions.uiOrdersEdit.gui,
-        permissions.uiOrdersDelete.gui,
-        permissions.inventoryAll.gui,
-        permissions.moduleDataImportEnabled.gui,
-        permissions.settingsDataImportEnabled.gui,
-        permissions.dataImportDeleteLogs.gui,
-        permissions.uiReceivingViewEditCreate.gui,
-        permissions.uiInventoryViewInstances.gui,
-        permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
-        permissions.uiInventoryStorageModule.gui,
-        permissions.remoteStorageView.gui,
+        Permissions.uiOrdersView.gui,
+        Permissions.uiOrdersCreate.gui,
+        Permissions.uiOrdersEdit.gui,
+        Permissions.uiOrdersDelete.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.dataImportDeleteLogs.gui,
+        Permissions.uiReceivingViewEditCreate.gui,
+        Permissions.uiInventoryViewInstances.gui,
+        Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
+        Permissions.uiInventoryStorageModule.gui,
+        Permissions.remoteStorageView.gui,
       ])
         .then((userProperties) => {
           user = userProperties;
