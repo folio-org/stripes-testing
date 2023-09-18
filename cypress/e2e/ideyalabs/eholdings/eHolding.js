@@ -4,7 +4,6 @@ import {
   FieldSet,
   KeyValue,
   Modal,
-  MultiSelect,
   NavListItem,
   PaneContent,
   RadioButton,
@@ -28,11 +27,9 @@ import getRandomPostfix, {
 
 const editButton = Button('Edit');
 const actionsButton = Button('Actions');
-const searchButton = Button('Search');
 const description = TextArea({ name: 'description' });
 const SaveAndClose = Button('Save & close');
 const availableProxies = ['Inherited - None', 'FOLIO-Bugfest', 'EZProxy'];
-const iconSearch = Button({ icon: 'search' });
 const proxySelect = Select({ id: 'eholdings-proxy-id' });
 const selectionStatusAccordion = Accordion({
   id: 'accordion-toggle-button-filter-packages-selected',
@@ -117,15 +114,6 @@ export default {
     });
   },
 
-  searchActions() {
-    cy.expect(searchButton.exists());
-    cy.do(searchButton.click());
-  },
-
-  verifyFilterPackages() {
-    cy.expect(Section({ id: 'titleShowPackages' }).exists());
-  },
-
   patronRadioButton: () => {
     cy.expect(patronRadioButton.exists());
     cy.do(patronRadioButton.click());
@@ -138,11 +126,6 @@ export default {
         const options = availableProxies.filter((option) => option !== text);
         cy.do(proxySelect.choose(options[randomTwoDigitNumber()]));
       });
-  },
-
-  dropdownValuesSelect(names) {
-    cy.expect(MultiSelect().exists());
-    cy.do(MultiSelect().select(names));
   },
 
   bySelectionStatus(selectionStatus) {
@@ -172,11 +155,6 @@ export default {
     eHoldingsSearch.switchToPackages();
     eHoldingsProvidersSearch.byProvider('VLeBooks');
     eHoldingsPackagesSearch.bySelectionStatus('Selected');
-  },
-
-  searchButton() {
-    cy.expect(iconSearch.exists());
-    cy.do(iconSearch.click());
   },
 
   modelSearch() {

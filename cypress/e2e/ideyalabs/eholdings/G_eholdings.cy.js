@@ -37,35 +37,6 @@ describe.skip('Create a custom package', () => {
     eHolding.createAndVerify();
   });
   it(
-    'C17090 Title Record - Packages accordion - Filter packages list (spitfire)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      cy.visit(topMenu.eholdingsPath);
-      eHoldingsSearch.switchToTitles();
-      eHoldingsProvidersSearch.byProvider('Journal of Fish Biology');
-      eHoldingsProviders.viewPackage();
-      eHolding.searchButton();
-      eHolding.dropdownValuesSelect([
-        'Agricultural & Environmental Science Database (DRAA)',
-        'Biological Sciences Database (DRAA)',
-      ]);
-      eHolding.searchActions();
-      eHolding.verifyFilterPackages();
-    },
-  );
-  it(
-    'C157916 Title - Packages accordion - Filter by Holding Status (spitfire)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      cy.visit(topMenu.eholdingsPath);
-      eHoldingsSearch.switchToTitles();
-      eHoldingsProvidersSearch.byProvider('Journal of Fish Biology');
-      eHoldingsProviders.viewPackage();
-      eHolding.searchButton();
-      eHolding.bySelectionStatusSection('Selected');
-    },
-  );
-  it(
     'C360543 Check the content of ""Title information"" accordion in ""Title"" detail record (spitfire)',
     { tags: [testTypes.ideaLabsTests] },
     () => {
