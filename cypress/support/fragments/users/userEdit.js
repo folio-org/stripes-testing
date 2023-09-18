@@ -172,4 +172,14 @@ export default {
     ]);
     this.saveAndClose();
   },
+
+  verifyCustomFieldPresented(fieldData) {
+    cy.expect(TextField(fieldData.fieldLabel).exists());
+    cy.do(
+      TextField(fieldData.fieldLabel)
+        .find(Button({ ariaLabel: 'info' }))
+        .click(),
+    );
+    cy.expect(HTML(fieldData.helpText).exists());
+  },
 };
