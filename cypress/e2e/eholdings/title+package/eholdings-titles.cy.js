@@ -193,6 +193,33 @@ describe('eHoldings', () => {
       },
     );
 
+    it(
+      'C17090 Title Record - Packages accordion - Filter packages list (spitfire)',
+      { tags: [testTypes.criticalPath, devTeams.spitfire, features.eHoldings] },
+      () => {
+        cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
+          userId = userProperties.userId;
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.eholdingsPath,
+            waiter: eHoldingsTitlesSearch.waitLoading,
+          });
+  
+          const selectedResource = {
+            title: 'Journal of Fish Biology',
+            package: 'Wiley Online Library',
+          };
+          eHoldingSearch.switchToTitles();
+          eHoldingsTitle.searchTitle(selectedResource.title);
+          eHoldingsTitlesSearch.openTitle(selectedResource.title);
+          eHoldingsTitle.waitPackagesLoading();
+          eHoldingsTitle.filterPackages(
+            eHoldingsPackage.filterStatuses.all,
+            selectedResource.package,
+          );
+        });
+      },
+    );
+
     afterEach(() => {
       users.deleteViaApi(userId);
     });
