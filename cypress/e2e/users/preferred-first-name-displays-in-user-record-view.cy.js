@@ -51,7 +51,7 @@ describe('Permissions Tags', () => {
     () => {
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.searchByUsername(userData.username);
-      UserEdit.openUserEdit();
+      UserEdit.openEdit();
       UserEdit.changeMiddleName(userData.middleName);
       UserEdit.changePreferredFirstName(userData.preferredFirstName);
       UserEdit.saveAndClose();
@@ -60,7 +60,7 @@ describe('Permissions Tags', () => {
         `${userData.lastName}, ${userData.preferredFirstName} ${userData.middleName}`,
       );
 
-      UserEdit.openUserEdit();
+      UserEdit.openEdit();
       UserEdit.changePreferredFirstName('');
       UserEdit.saveAndClose();
       UsersSearchPane.waitLoading();

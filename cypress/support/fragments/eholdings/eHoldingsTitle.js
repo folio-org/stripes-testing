@@ -9,7 +9,7 @@ import {
   including,
   Pane,
   MultiSelect,
-  TextField
+  TextField,
 } from '../../../../interactors';
 import eHoldingsResourceView from './eHoldingsResourceView';
 
@@ -85,23 +85,14 @@ export default {
   },
 
   searchTitle(title) {
-    cy.do([
-      titleSearchField.fillIn(title),
-      titleSearchButton.click()
-    ]);
+    cy.do([titleSearchField.fillIn(title), titleSearchButton.click()]);
   },
 
   checkOnlySelectedPackagesInResults() {
     cy.expect([
-      packagesSection
-        .find(ListItem({ text: including(filterStatuses.selected) }))
-        .exists(),
-      packagesSection
-        .find(ListItem({ text: including(filterStatuses.notSelected) }))
-        .absent(),
-      packagesSection
-        .find(ListItem({ text: including(filterStatuses.all) }))
-        .absent(),
+      packagesSection.find(ListItem({ text: including(filterStatuses.selected) })).exists(),
+      packagesSection.find(ListItem({ text: including(filterStatuses.notSelected) })).absent(),
+      packagesSection.find(ListItem({ text: including(filterStatuses.all) })).absent(),
     ]);
   },
 };
