@@ -1264,4 +1264,19 @@ export default {
     const indicator = indicatorIndex ? secondIndicatorBox : firstIndicatorBox;
     cy.expect(getRowInteractorByTagName(tag).find(indicator).has({ value: indicatorValue }));
   },
+
+  updateValuesIn008Boxes(valuesArray) {
+    valuesArray.forEach((value, index) => {
+      cy.do(tag008DefaultValues[index].interactor.fillIn(value));
+    });
+    valuesArray.forEach((value, index) => {
+      cy.expect(tag008DefaultValues[index].interactor.has({ value }));
+    });
+  },
+
+  checkValuesIn008Boxes(valuesArray) {
+    valuesArray.forEach((value, index) => {
+      cy.expect(tag008DefaultValues[index].interactor.has({ value }));
+    });
+  },
 };
