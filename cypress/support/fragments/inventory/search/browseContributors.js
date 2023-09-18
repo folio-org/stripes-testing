@@ -59,13 +59,6 @@ const typeSelect = Section({ id: 'nameType' });
 const nameTypeButton = typeSelect.find(Button('Name type'));
 const nameTypeSearch = typeSelect.find(MultiSelect());
 const nameTypeClear = typeSelect.find(Button({ icon: 'times-circle-solid' }));
-
-const searchButtonDisabled = Button({ type: 'submit', disabled: true });
-const resetAllButtonDisabled = Button({
-  className: including('resetButton---n7KP9'),
-  disabled: true,
-});
-const nameTypeAccordion = Button({ id: 'accordion-toggle-button-nameType' });
 const actionsButton = Button('Actions');
 const rowContributorName = (ContributorName, contributorNameType) => MultiColumnListRow(`${ContributorName}${contributorNameType}1`);
 

@@ -1,5 +1,4 @@
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { DevTeams, TestTypes } from '../../../support/dictionary';
 import {
   FOLIO_RECORD_TYPE,
   PAYMENT_METHOD,
