@@ -5,7 +5,6 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import TestTypes from '../../../support/dictionary/testTypes';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import FileManager from '../../../support/utils/fileManager';
@@ -13,8 +12,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import TopMenu from '../../../support/fragments/topMenu';
-import DevTeams from '../../../support/dictionary/devTeams';
-import Parallelization from '../../../support/dictionary/parallelization';
+import { DevTeams, TestTypes, Parallelization } from '../../../support/dictionary';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import {

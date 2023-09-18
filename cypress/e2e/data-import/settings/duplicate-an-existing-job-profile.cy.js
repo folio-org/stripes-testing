@@ -1,7 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -24,7 +22,7 @@ describe('data-import', () => {
     const succsessCalloutMessage = `The job profile "${jobProfileName}" was successfully created`;
 
     before('create test data', () => {
-      cy.createTempUser([permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
+      cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
         cy.login(userProperties.username, userProperties.password);
         // create Job profile

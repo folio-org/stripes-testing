@@ -21,6 +21,7 @@ import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import Invoices from '../../support/fragments/invoices/invoices';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
 import { ORDER_TYPES } from '../../support/constants';
+import Agreements from '../../support/fragments/agreements/agreements';
 
 describe('Orders: orders', () => {
   const order = {
@@ -133,7 +134,7 @@ describe('Orders: orders', () => {
       Invoices.createRolloverInvoice(invoice, organization.name);
       Invoices.createInvoiceLineFromPol(orderNumber);
       cy.visit(TopMenu.agreementsPath);
-      AgreementsDetails.switchToLocalKBSearch();
+      Agreements.switchToLocalKBSearch();
       AgreementsDetails.selectCurrentStatusInPackages();
       AgreementsDetails.selectPackageFromList();
       AgreementsDetails.addPackageToBusket();
@@ -141,7 +142,7 @@ describe('Orders: orders', () => {
       AgreementsDetails.createNewAgreementInBusket();
       NewAgreement.fill(defaultAgreement);
       NewAgreement.save();
-      AgreementsDetails.openAgreementLines();
+      AgreementsDetails.openAgreementLinesSection();
       AgreementsDetails.newAgreementLine(`${orderNumber}-1`);
     });
     cy.createTempUser([permissions.uiOrdersView.gui, permissions.uiNotesItemView.gui]).then(

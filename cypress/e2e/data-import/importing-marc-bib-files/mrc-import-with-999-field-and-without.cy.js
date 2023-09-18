@@ -1,8 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
-import Parallelization from '../../../support/dictionary/parallelization';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -22,7 +19,7 @@ describe('data-import', () => {
     const nameMarcFileForCreate = `C359012 autotestFile.${getRandomPostfix()}.mrc`;
 
     before('create test data', () => {
-      cy.createTempUser([permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+      cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
