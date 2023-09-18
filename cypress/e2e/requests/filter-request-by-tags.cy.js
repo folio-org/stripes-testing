@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import testType from '../../support/dictionary/testTypes';
 import TopMenu from '../../support/fragments/topMenu';
 import Requests from '../../support/fragments/requests/requests';
@@ -13,7 +14,24 @@ describe('ui-requests: Filter requests by tags', () => {
   const requestTypes = { PAGE: 'Page', HOLD: 'Hold', RECALL: 'Recall' };
   let oldRulesText;
   let requestPolicyId;
-  const tags = ['[', '(', 'test_aqa'];
+  const tagIDs = [];
+  const tags = [
+    {
+      id: uuid(),
+      description: uuid(),
+      label: `aqa1_${uuid()}`,
+    },
+    {
+      id: uuid(),
+      description: uuid(),
+      label: `aqa2_${uuid()}`,
+    },
+    {
+      id: uuid(),
+      description: uuid(),
+      label: `aqa3_${uuid()}`,
+    },
+  ];
 
   beforeEach(() => {
     cy.loginAsAdmin();
@@ -36,6 +54,9 @@ describe('ui-requests: Filter requests by tags', () => {
         );
       });
     });
+    tags.forEach((tag) => {
+      cy.createTagApi(tag).then((tagID) => tagIDs.push(tagID));
+    });
   });
 
   afterEach(() => {
@@ -52,6 +73,9 @@ describe('ui-requests: Filter requests by tags', () => {
     });
     Requests.updateCirculationRulesApi(oldRulesText);
     Requests.deleteRequestPolicyApi(requestPolicyId);
+    tagIDs.forEach((tagID) => {
+      cy.deleteTagApi(tagID);
+    });
   });
 
   it('C9320 Filter requests by tags (vega)', { tags: [testType.extended, DevTeams.vega] }, () => {
@@ -60,14 +84,14 @@ describe('ui-requests: Filter requests by tags', () => {
       Requests.findCreatedRequest(instance.instanceTitle);
       Requests.selectFirstRequest(instance.instanceTitle);
       Requests.openTagsPane();
-      Requests.addTag(tags[index]);
+      Requests.addTag(tags[index].label);
       Requests.closePane('Tags');
       Requests.closePane('Request Detail');
       Requests.resetAllFilters();
-      Requests.filterRequestsByTag(tags[index]);
+      Requests.filterRequestsByTag(tags[index].label);
       Requests.selectFirstRequest(instance.instanceTitle);
       Requests.openTagsPane();
-      Requests.verifyAssignedTags(tags[index]);
+      Requests.verifyAssignedTags(tags[index].label);
       Requests.closePane('Tags');
       Requests.closePane('Request Detail');
       Requests.resetAllFilters();
