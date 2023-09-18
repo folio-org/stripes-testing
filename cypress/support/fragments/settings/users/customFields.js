@@ -45,15 +45,6 @@ export default {
     cy.wait(15000);
   },
 
-  addTextAreaCustomField(text) {
-    cy.do([
-      editNewButton.click(),
-      addCustomFieldDropdown.choose('Text area'),
-      TextField('Field label*').fillIn(text),
-      saveAndCloseButton.click(),
-    ]);
-  },
-
   deleteCustomField(name) {
     cy.do([
       editNewButton.click(),
@@ -87,6 +78,15 @@ export default {
     ]);
     cy.expect(saveAndCloseButton.absent());
     cy.expect(Accordion(`${data.fieldLabel} · Text area`).exists());
+  },
+
+  addTextAreaCustomField(text) {
+    cy.do([
+      editNewButton.click(),
+      addCustomFieldDropdown.choose('Text area'),
+      TextField('Field label*').fillIn(text),
+      saveAndCloseButton.click(),
+    ]);
   },
 
   addCustomCheckBox(data) {
