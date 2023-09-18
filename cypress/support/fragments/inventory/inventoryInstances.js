@@ -350,6 +350,25 @@ export default {
     );
   },
 
+  createLoanType: (loanType) => {
+    return cy
+      .okapiRequest({
+        path: 'loan-types',
+        method: 'POST',
+        body: loanType,
+      })
+      .then(({ body }) => {
+        return body;
+      });
+  },
+
+  deleteLoanType: (loanId) => {
+    return cy.okapiRequest({
+      path: `loan-types/${loanId}`,
+      method: 'DELETE',
+    });
+  },
+
   getLoanTypes: (searchParams) => {
     return cy
       .okapiRequest({
