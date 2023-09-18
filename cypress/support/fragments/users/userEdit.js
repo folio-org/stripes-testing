@@ -195,4 +195,23 @@ export default {
     );
     cy.expect(HTML(fieldData.helpText).exists());
   },
+
+  verifySingleSelectPresented({ data }) {
+    cy.do(
+      Accordion('Custom fields')
+        .find(Select({ label: data.fieldLabel }))
+        .exists(),
+    );
+    cy.do(
+      Accordion('Custom fields')
+        .find(Select({ label: data.fieldLabel }))
+        .find(Button({ ariaLabel: 'info' }))
+        .click(),
+    );
+    cy.expect(HTML(data.helpText).exists());
+  },
+
+  selectSingleSelectValue: ({ data }) => {
+    cy.do(Select({ label: data.fieldLabel }).choose(data.firstLabel));
+  },
 };

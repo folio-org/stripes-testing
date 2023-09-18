@@ -53,6 +53,10 @@ export default {
     cy.do(Accordion({ id: 'notesAccordion' }).clickHeader());
   },
 
+  openCustomFieldsSection() {
+    cy.do(Accordion({ id: 'customFields' }).clickHeader());
+  },
+
   showOpenedLoans() {
     return cy.do(Link({ id: 'clickable-viewcurrentloans' }).click());
   },
@@ -219,6 +223,10 @@ export default {
 
   verifyPatronBlockValue(value = '') {
     cy.expect(KeyValue('Patron group').has({ value: including(value) }));
+  },
+
+  verifySingleSelectValue({ data }) {
+    cy.expect(KeyValue(data.fieldLabel).has({ value: including(data.firstLabel) }));
   },
 
   verifyExpirationDate(date) {
