@@ -19,7 +19,7 @@ const item = {
 };
 const fileName = `autoTestFile${getRandomPostfix()}.csv`;
 
-describe.skip('data-export', () => {
+describe('data-export', () => {
   beforeEach('create test data', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,

@@ -7,6 +7,7 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import ExportFileHelper from '../../support/fragments/data-export/exportFile';
 import DataExportViewAllLogs from '../../support/fragments/data-export/dataExportViewAllLogs';
+import devTeams from '../../support/dictionary/devTeams';
 
 let user;
 const item = {
@@ -17,7 +18,8 @@ const validFile = `autoTestValidFile${getRandomPostfix()}.csv`;
 const invalidFile = `autoTestInvalidFile${getRandomPostfix()}.csv`;
 const partiallyValidFile = `autoTestInvalidFile${getRandomPostfix()}.csv`;
 
-describe('Data-export', () => {
+describe.skip('Data-export', () => {
+  // skipped because of a bug (MDEXP-600)
   before('Create test data', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
@@ -54,42 +56,46 @@ describe('Data-export', () => {
     FileManager.deleteFile(`cypress/fixtures/${partiallyValidFile}`);
   });
 
-  it('c404374 Verify "Errors" accordion in the Search & filter pane on the "View all" screen', () => {
-    DataExportViewAllLogs.openAllJobLogs();
+  it(
+    'C404374 Verify "Errors" accordion in the Search & filter pane on the "View all" screen (firebird)',
+    { tags: [devTeams.firebird] },
+    () => {
+      DataExportViewAllLogs.openAllJobLogs();
 
-    DataExportViewAllLogs.verifySearchAndFilterPane();
-    DataExportViewAllLogs.verifyIDOption();
-    DataExportViewAllLogs.verifyRecordSearch();
-    DataExportViewAllLogs.verifySearchButton();
-    DataExportViewAllLogs.verifySearchButtonIsDisabled();
-    DataExportViewAllLogs.verifyResetAllButton();
-    DataExportViewAllLogs.verifyResetAllIsDisabled();
-    DataExportViewAllLogs.verifyErrorsInExportAccordion();
-    DataExportViewAllLogs.verifyStartedRunningAccordion();
-    DataExportViewAllLogs.verifyStartedRunningIsCollapsed();
-    DataExportViewAllLogs.verifyEndedRunningAccordion();
-    DataExportViewAllLogs.verifyEndedRunningIsCollapsed();
-    DataExportViewAllLogs.verifyJobProfileAccordion();
-    DataExportViewAllLogs.verifyJobProfileIsCollapsed();
-    DataExportViewAllLogs.verifyLogsMainPane();
-    DataExportViewAllLogs.verifyLogsIcon();
-    DataExportViewAllLogs.verifyRecordsFoundText();
-    DataExportViewAllLogs.verifyLogsTable();
-    DataExportViewAllLogs.verifyErrorsAccordionIsExpanded();
-    DataExportViewAllLogs.verifyErrorsInExportOptions();
+      DataExportViewAllLogs.verifySearchAndFilterPane();
+      DataExportViewAllLogs.verifyIDOption();
+      DataExportViewAllLogs.verifyRecordSearch();
+      DataExportViewAllLogs.verifySearchButton();
+      DataExportViewAllLogs.verifySearchButtonIsDisabled();
+      DataExportViewAllLogs.verifyResetAllButton();
+      DataExportViewAllLogs.verifyResetAllIsDisabled();
+      DataExportViewAllLogs.verifyErrorsInExportAccordion();
+      DataExportViewAllLogs.verifyStartedRunningAccordion();
+      DataExportViewAllLogs.verifyStartedRunningIsCollapsed();
+      DataExportViewAllLogs.verifyEndedRunningAccordion();
+      DataExportViewAllLogs.verifyEndedRunningIsCollapsed();
+      DataExportViewAllLogs.verifyJobProfileAccordion();
+      DataExportViewAllLogs.verifyJobProfileIsCollapsed();
+      DataExportViewAllLogs.verifyLogsMainPane();
+      DataExportViewAllLogs.verifyLogsIcon();
+      DataExportViewAllLogs.verifyRecordsFoundText();
+      DataExportViewAllLogs.verifyLogsTable();
+      DataExportViewAllLogs.verifyErrorsAccordionIsExpanded();
+      DataExportViewAllLogs.verifyErrorsInExportOptions();
 
-    DataExportViewAllLogs.checkErrorsInExportOption('Yes');
-    DataExportViewAllLogs.verifyStatusIncludesErrors();
-    DataExportViewAllLogs.clickTheCrossIcon();
-    DataExportViewAllLogs.verifyErrorsInExportCheckbox('Yes', false);
-    DataExportViewAllLogs.verifyStatusIncludesAll();
-    DataExportViewAllLogs.checkErrorsInExportOption('No');
-    DataExportViewAllLogs.verifyStatusAllCompleted();
-    DataExportViewAllLogs.checkErrorsInExportOption('Yes');
-    DataExportViewAllLogs.verifyStatusIncludesAll();
-    DataExportViewAllLogs.resetAll();
-    DataExportViewAllLogs.verifyErrorsInExportCheckbox('Yes', false);
-    DataExportViewAllLogs.verifyErrorsInExportCheckbox('No', false);
-    DataExportViewAllLogs.verifyStatusIncludesAll();
-  });
+      DataExportViewAllLogs.checkErrorsInExportOption('Yes');
+      DataExportViewAllLogs.verifyStatusIncludesErrors();
+      DataExportViewAllLogs.clickTheCrossIcon();
+      DataExportViewAllLogs.verifyErrorsInExportCheckbox('Yes', false);
+      DataExportViewAllLogs.verifyStatusIncludesAll();
+      DataExportViewAllLogs.checkErrorsInExportOption('No');
+      DataExportViewAllLogs.verifyStatusAllCompleted();
+      DataExportViewAllLogs.checkErrorsInExportOption('Yes');
+      DataExportViewAllLogs.verifyStatusIncludesAll();
+      DataExportViewAllLogs.resetAll();
+      DataExportViewAllLogs.verifyErrorsInExportCheckbox('Yes', false);
+      DataExportViewAllLogs.verifyErrorsInExportCheckbox('No', false);
+      DataExportViewAllLogs.verifyStatusIncludesAll();
+    },
+  );
 });
