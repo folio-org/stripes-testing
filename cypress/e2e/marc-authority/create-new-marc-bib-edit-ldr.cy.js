@@ -106,75 +106,75 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
     });
   });
 
-  // it(
-  //   'C380707 Editing LDR 10, 11, 20-23 values when creating a new "MARC bib" record (spitfire)',
-  //   { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
-  //   () => {
-  //     cy.login(userData.C380707UserProperties.username, userData.C380707UserProperties.password, {
-  //       path: TopMenu.inventoryPath,
-  //       waiter: InventoryInstances.waitContentLoading,
-  //     });
+  it(
+    'C380707 Editing LDR 10, 11, 20-23 values when creating a new "MARC bib" record (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      cy.login(userData.C380707UserProperties.username, userData.C380707UserProperties.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
 
-  //     InventoryInstance.newMarcBibRecord();
-  //     QuickMarcEditor.updateExistingField(testData.tags.tagLDR, testData.LDRValues.validLDRvalue);
-  //     QuickMarcEditor.updateExistingField(
-  //       testData.tags.tag245,
-  //       `$a ${testData.fieldContents.tag245ContentPrefix + getRandomPostfix()}`,
-  //     );
+      InventoryInstance.newMarcBibRecord();
+      QuickMarcEditor.updateExistingField(testData.tags.tagLDR, testData.LDRValues.validLDRvalue);
+      QuickMarcEditor.updateExistingField(
+        testData.tags.tag245,
+        `$a ${testData.fieldContents.tag245ContentPrefix + getRandomPostfix()}`,
+      );
 
-  //     updatedLDRValuesArray.forEach((LDRValue) => {
-  //       QuickMarcEditor.updateExistingField(testData.tags.tagLDR, LDRValue);
-  //       QuickMarcEditor.pressSaveAndClose();
-  //       QuickMarcEditor.checkNonEditableLdrCalloutBib();
-  //     });
-  //   },
-  // );
+      updatedLDRValuesArray.forEach((LDRValue) => {
+        QuickMarcEditor.updateExistingField(testData.tags.tagLDR, LDRValue);
+        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.checkNonEditableLdrCalloutBib();
+      });
+    },
+  );
 
-  // it(
-  //   'C380704 Creating a new "MARC bib" record with valid LDR 06, 07 values. (spitfire)',
-  //   { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
-  //   () => {
-  //     cy.login(userData.C380704UserProperties.username, userData.C380704UserProperties.password, {
-  //       path: TopMenu.inventoryPath,
-  //       waiter: InventoryInstances.waitContentLoading,
-  //     });
+  it(
+    'C380704 Creating a new "MARC bib" record with valid LDR 06, 07 values. (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      cy.login(userData.C380704UserProperties.username, userData.C380704UserProperties.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
 
-  //     for (let i = 0; i < testData.LDRValues.validLDR07Values.length; i++) {
-  //       const updatedLDRvalue = `${testData.LDRValues.validLDRvalue.substring(0, 6)}${
-  //         testData.LDRValues.validLDR06Values[i]
-  //       }${testData.LDRValues.validLDR07Values[i]}${testData.LDRValues.validLDRvalue.substring(8)}`;
-  //       const updatedLDRmask = new RegExp(
-  //         `\\d{5}${updatedLDRvalue.substring(5, 12).replace('\\', '\\\\')}\\d{5}${updatedLDRvalue
-  //           .substring(17)
-  //           .replace('\\', '\\\\')}`,
-  //       );
-  //       const title = testData.fieldContents.tag245ContentPrefix + getRandomPostfix();
+      for (let i = 0; i < testData.LDRValues.validLDR07Values.length; i++) {
+        const updatedLDRvalue = `${testData.LDRValues.validLDRvalue.substring(0, 6)}${
+          testData.LDRValues.validLDR06Values[i]
+        }${testData.LDRValues.validLDR07Values[i]}${testData.LDRValues.validLDRvalue.substring(8)}`;
+        const updatedLDRmask = new RegExp(
+          `\\d{5}${updatedLDRvalue.substring(5, 12).replace('\\', '\\\\')}\\d{5}${updatedLDRvalue
+            .substring(17)
+            .replace('\\', '\\\\')}`,
+        );
+        const title = testData.fieldContents.tag245ContentPrefix + getRandomPostfix();
 
-  //       InventoryInstance.newMarcBibRecord();
-  //       QuickMarcEditor.updateExistingField(testData.tags.tag245, `$a ${title}`);
-  //       QuickMarcEditor.updateExistingField(
-  //         testData.tags.tagLDR,
-  //         replaceByIndex(testData.LDRValues.validLDRvalue, 6, testData.LDRValues.invalidLDR06Value),
-  //       );
-  //       QuickMarcEditor.checkSubfieldsAbsenceInTag008();
-  //       QuickMarcEditor.updateExistingField(testData.tags.tagLDR, testData.LDRValues.validLDRvalue);
-  //       QuickMarcEditor.check008FieldContent();
-  //       QuickMarcEditor.updateExistingField(testData.tags.tagLDR, updatedLDRvalue);
-  //       QuickMarcEditor.checkSubfieldsPresenceInTag008();
-  //       QuickMarcEditor.pressSaveAndClose();
-  //       QuickMarcEditor.checkAfterSaveAndClose();
-  //       InventoryInstance.checkInstanceTitle(title);
+        InventoryInstance.newMarcBibRecord();
+        QuickMarcEditor.updateExistingField(testData.tags.tag245, `$a ${title}`);
+        QuickMarcEditor.updateExistingField(
+          testData.tags.tagLDR,
+          replaceByIndex(testData.LDRValues.validLDRvalue, 6, testData.LDRValues.invalidLDR06Value),
+        );
+        QuickMarcEditor.checkSubfieldsAbsenceInTag008();
+        QuickMarcEditor.updateExistingField(testData.tags.tagLDR, testData.LDRValues.validLDRvalue);
+        QuickMarcEditor.check008FieldContent();
+        QuickMarcEditor.updateExistingField(testData.tags.tagLDR, updatedLDRvalue);
+        QuickMarcEditor.checkSubfieldsPresenceInTag008();
+        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.checkAfterSaveAndClose();
+        InventoryInstance.checkInstanceTitle(title);
 
-  //       InventoryInstance.editMarcBibliographicRecord();
-  //       QuickMarcEditor.saveInstanceIdToArrayInQuickMarc(createdInstanceIDs);
-  //       QuickMarcEditor.checkFieldContentMatch(
-  //         'textarea[name="records[0].content"]',
-  //         updatedLDRmask,
-  //       );
-  //       QuickMarcEditor.closeWithoutSaving();
-  //     }
-  //   },
-  // );
+        InventoryInstance.editMarcBibliographicRecord();
+        QuickMarcEditor.saveInstanceIdToArrayInQuickMarc(createdInstanceIDs);
+        QuickMarcEditor.checkFieldContentMatch(
+          'textarea[name="records[0].content"]',
+          updatedLDRmask,
+        );
+        QuickMarcEditor.closeWithoutSaving();
+      }
+    },
+  );
 
   it(
     'C380711 Add all possible "245" subfields when creating a new "MARC bib" record (spitfire)',
