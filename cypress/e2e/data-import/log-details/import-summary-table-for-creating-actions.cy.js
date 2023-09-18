@@ -1,6 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import Parallelization from '../../../support/dictionary/parallelization';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';

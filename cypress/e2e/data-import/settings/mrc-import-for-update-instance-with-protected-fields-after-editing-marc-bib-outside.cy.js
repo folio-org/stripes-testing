@@ -1,6 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import Parallelization from '../../../support/dictionary/parallelization';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import {
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,

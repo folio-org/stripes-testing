@@ -1,6 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import Parallelization from '../../../support/dictionary/parallelization';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import {
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,

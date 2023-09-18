@@ -1,6 +1,5 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import Parallelization from '../../../support/dictionary/parallelization';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';

@@ -1,11 +1,10 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import TopMenu from '../../../support/fragments/topMenu';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import Parallelization from '../../../support/dictionary/parallelization';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';

@@ -1,6 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import TopMenu from '../../../support/fragments/topMenu';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
@@ -9,7 +9,6 @@ import DeleteDataImportLogsModal from '../../../support/fragments/data_import/lo
 import Users from '../../../support/fragments/users/users';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import Parallelization from '../../../support/dictionary/parallelization';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
 
 describe('data-import', () => {

@@ -1,5 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import Parallelization from '../../../support/dictionary/parallelization';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import MarkItemAsMissing from '../../../support/fragments/inventory/markItemAsMissing';
 import Requests from '../../../support/fragments/requests/requests';
 import TopMenu from '../../../support/fragments/topMenu';

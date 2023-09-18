@@ -1,6 +1,5 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import Parallelization from '../../../support/dictionary/parallelization';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import TopMenu from '../../../support/fragments/topMenu';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';

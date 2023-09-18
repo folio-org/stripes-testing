@@ -1,6 +1,5 @@
 import generateItemBarcode from '../../../support/utils/generateItemBarcode';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import Parallelization from '../../../support/dictionary/parallelization';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import {
   FOLIO_RECORD_TYPE,

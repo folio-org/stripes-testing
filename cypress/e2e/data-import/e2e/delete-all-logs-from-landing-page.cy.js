@@ -1,6 +1,5 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import Parallelization from '../../../support/dictionary/parallelization';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import getRandomPostfix from '../../../support/utils/stringTools';
