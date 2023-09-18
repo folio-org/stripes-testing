@@ -16,6 +16,7 @@ import {
   Checkbox,
   SelectionOption,
   SearchField,
+  Link,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import NewNote from '../notes/newNote';
@@ -38,6 +39,7 @@ const notesAccordion = rootSection.find(Accordion({ id: 'notes' }));
 const cancelButton = Button('Cancel');
 const calloutSuccess = Callout({ type: 'success' });
 const notesSection = Section({ id: 'notes' });
+const viewAgreementPane = Pane({ id: 'pane-view-agreement' });
 
 function openAgreementLineAccordion() {
   cy.do(agreementLine.click());
@@ -112,7 +114,7 @@ export default {
     cy.do([rootSection.find(actionsButton).click(), deleteButton.click()]);
     cy.expect(deleteConfirmationModal.exists());
     cy.do(deleteConfirmationModal.find(deleteButtonInConfirmation).click());
-    cy.expect(Pane({ id: 'pane-view-agreement' }), getLongDelay()).absent();
+    cy.expect(viewAgreementPane, getLongDelay()).absent();
   },
 
   verifyNoteShowMoreLink(specialNoteDetails) {
@@ -126,10 +128,6 @@ export default {
 
   openNoteView(specialNote) {
     cy.do(notesAccordion.find(MultiColumnListCell(including(specialNote.details))).click());
-  },
-
-  switchToLocalKBSearch() {
-    cy.do(Button('Local KB search').click());
   },
 
   clickCancelButton() {
@@ -166,7 +164,7 @@ export default {
     cy.do(Button('Create new agreement').click());
   },
 
-  openAgreementLines() {
+  openAgreementLinesSection() {
     cy.do(Section({ id: 'lines' }).find(Button('Agreement lines')).click());
   },
 
@@ -196,6 +194,16 @@ export default {
 
   agreementListClick(agreementName) {
     cy.do(MultiColumnListCell(agreementName).click());
+  },
+
+  openEHoldingsPackageFromAgreementLine(name, rowNumber = 0) {
+    cy.do(
+      viewAgreementPane
+        .find(Accordion('Agreement lines'))
+        .find(MultiColumnListCell({ row: rowNumber, columnIndex: 0 }))
+        .find(Link(name))
+        .click(),
+    );
   },
 
   verifyNotesIsEmpty() {
@@ -233,9 +241,7 @@ export default {
 
   verifyAgreementDetails(defaultAgreement) {
     cy.expect([
-      Pane({ id: 'pane-view-agreement' })
-        .find(HTML(including(defaultAgreement.name)))
-        .exists(),
+      viewAgreementPane.find(HTML(including(defaultAgreement.name))).exists(),
       KeyValue('Status').has({ value: defaultAgreement.status }),
       KeyValue('Period start').has({
         value: DateTools.getFormattedDateWithSlashes({ date: new Date() }),
@@ -247,14 +253,16 @@ export default {
     const updatedDate = DateTools.getFormattedDateWithSlashes({ date: new Date() });
 
     cy.expect(
-      Pane({ id: 'pane-view-agreement' })
-        .find(HTML(including(`Record last updated: ${updatedDate}`)))
-        .exists(),
+      viewAgreementPane.find(HTML(including(`Record last updated: ${updatedDate}`))).exists(),
     );
     cy.expect(
       Accordion({ headline: 'Update information' }).has({
         content: including(`Record created: ${updatedDate}`),
       }),
     );
+  },
+
+  verifyAgreementLinePresented(name) {
+    cy.expect(viewAgreementPane.find(MultiColumnListCell({ content: name, row: 0 })).exists());
   },
 };

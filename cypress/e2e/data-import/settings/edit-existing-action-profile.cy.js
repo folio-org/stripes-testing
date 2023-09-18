@@ -1,7 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -19,7 +17,7 @@ describe('data-import', () => {
     };
 
     before('create user', () => {
-      cy.createTempUser([permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
+      cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {
           path: SettingsMenu.actionProfilePath,

@@ -1,7 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
-import permissions from '../../../support/dictionary/permissions';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import NewTargetProfile from '../../../support/fragments/settings/inventory/integrations/newTargetProfile';
@@ -24,9 +22,9 @@ describe('inventory', () => {
 
     before('create test data', () => {
       cy.createTempUser([
-        permissions.uiInventorySingleRecordImport.gui,
-        permissions.settingsDataImportEnabled.gui,
-        permissions.uiInventorySettingsConfigureSingleRecordImport.gui,
+        Permissions.uiInventorySingleRecordImport.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.uiInventorySettingsConfigureSingleRecordImport.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
