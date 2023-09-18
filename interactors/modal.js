@@ -12,6 +12,7 @@ export default HTML.extend('modal')
     title,
     id: (el) => el.getAttribute('id'),
     content: (el) => el.textContent,
+    header: (el) => el.querySelector('[class^=modalHeader]').textContent,
     message: (el) => el.querySelector('[class^=modalContent]').textContent,
   })
   .actions({

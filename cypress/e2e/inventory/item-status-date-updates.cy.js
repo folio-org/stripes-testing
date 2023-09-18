@@ -199,8 +199,7 @@ describe.skip('inventory', () => {
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.searchByKeywords(name);
       UsersSearchPane.selectUserFromList(name);
-      UsersCard.openLoans();
-      UsersCard.showOpenedLoans();
+      UsersCard.viewCurrentLoans();
     };
 
     // test is looping
