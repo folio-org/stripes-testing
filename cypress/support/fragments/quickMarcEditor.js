@@ -24,6 +24,7 @@ const rootSection = Section({ id: 'quick-marc-editor-pane' });
 const viewMarcSection = Section({ id: 'marc-view-pane' });
 const cancelButton = Button('Cancel');
 const closeWithoutSavingBtn = Button('Close without saving');
+const xButton = Button({ ariaLabel: 'Close ' });
 const addFieldButton = Button({ ariaLabel: 'plus-sign' });
 const deleteFieldButton = Button({ ariaLabel: 'trash' });
 const linkToMarcRecordButton = Button({ ariaLabel: 'link' });
@@ -855,6 +856,10 @@ export default {
 
   closeWithoutSaving() {
     cy.do(cancelButton.click());
+  },
+
+  closeUsingCrossButton() {
+    cy.do(xButton.click());
   },
 
   closeWithoutSavingAfterChange() {
