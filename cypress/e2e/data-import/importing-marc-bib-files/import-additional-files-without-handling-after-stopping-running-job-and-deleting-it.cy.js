@@ -1,7 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import DevTeams from '../../../support/dictionary/devTeams';
-import TestTypes from '../../../support/dictionary/testTypes';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import TopMenu from '../../../support/fragments/topMenu';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -20,8 +18,8 @@ describe('data-import', () => {
 
     before('login', () => {
       cy.createTempUser([
-        permissions.moduleDataImportEnabled.gui,
-        permissions.dataImportDeleteLogs.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.dataImportDeleteLogs.gui,
       ]).then((userProperties) => {
         user = userProperties;
 

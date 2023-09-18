@@ -1,8 +1,5 @@
-import permissions from '../../../support/dictionary/permissions';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import DevTeams from '../../../support/dictionary/devTeams';
-import TestTypes from '../../../support/dictionary/testTypes';
-import Parallelization from '../../../support/dictionary/parallelization';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import TopMenu from '../../../support/fragments/topMenu';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
@@ -16,7 +13,7 @@ const maxLogsQuantityOnPage = 100;
 describe('data-import', () => {
   describe('Log details', () => {
     before(() => {
-      cy.createTempUser([permissions.dataImportDeleteLogs.gui]).then((userProperties) => {
+      cy.createTempUser([Permissions.dataImportDeleteLogs.gui]).then((userProperties) => {
         user = userProperties;
 
         for (let i = 0; i < 101; i++) {

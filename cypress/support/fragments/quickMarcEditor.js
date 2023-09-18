@@ -29,6 +29,7 @@ const deleteFieldButton = Button({ ariaLabel: 'trash' });
 const linkToMarcRecordButton = Button({ ariaLabel: 'link' });
 const unlinkIconButton = Button({ ariaLabel: 'unlink' });
 const viewAuthorutyIconButton = Button({ ariaLabel: 'eye-open' });
+const arrowUpButton = Button({ ariaLabel: 'arrow-up' });
 const saveAndCloseButton = Button({ id: 'quick-marc-record-save' });
 const saveAndKeepEditingBtn = Button({ id: 'quick-marc-record-save-edit' });
 const saveAndCloseButtonEnabled = Button({ id: 'quick-marc-record-save', disabled: false });
@@ -509,6 +510,10 @@ export default {
         .find(TextArea({ name: `records[${rowNumber ?? this.getInitialRowsCount() + 1}].content` }))
         .has({ value: content ?? defaultFieldValues.contentWithSubfield }),
     );
+  },
+
+  moveFieldUp(rowNumber) {
+    cy.do(QuickMarcEditorRow({ index: rowNumber }).find(arrowUpButton).click());
   },
 
   checkFieldContentMatch(selector, regExp) {
@@ -1252,5 +1257,16 @@ export default {
         .find(HTML(including(`Source: ${lastName}, ${firstName}`)))
         .exists(),
     );
+  },
+
+  updateIndicatorValue(tag, newValue, indicatorIndex = 0) {
+    const indicator = indicatorIndex ? secondIndicatorBox : firstIndicatorBox;
+    cy.do(getRowInteractorByTagName(tag).find(indicator).fillIn(newValue));
+    cy.expect(getRowInteractorByTagName(tag).find(indicator).has({ value: newValue }));
+  },
+
+  verifyIndicatorValue(tag, indicatorValue, indicatorIndex = 0) {
+    const indicator = indicatorIndex ? secondIndicatorBox : firstIndicatorBox;
+    cy.expect(getRowInteractorByTagName(tag).find(indicator).has({ value: indicatorValue }));
   },
 };

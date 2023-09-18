@@ -1,7 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import DevTeams from '../../../support/dictionary/devTeams';
-import TestTypes from '../../../support/dictionary/testTypes';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import {
@@ -108,8 +106,8 @@ describe('data-import', () => {
       JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
       cy.createTempUser([
-        permissions.settingsDataImportEnabled.gui,
-        permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.moduleDataImportEnabled.gui,
       ]).then((userProperties) => {
         user = userProperties;
 

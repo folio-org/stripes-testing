@@ -1,3 +1,5 @@
+import { Select } from '@interactors/html';
+
 import { matching } from 'bigtest';
 import {
   Button,
@@ -9,8 +11,10 @@ import {
   CheckboxInTable,
   DropdownMenu,
   PaneHeader,
+  MultiColumnList,
 } from '../../../../interactors';
 import ConfirmItemStatusModal from '../users/loans/confirmItemStatusModal';
+import { ListRow } from '../../../../interactors/multi-column-list';
 
 const claimReturnedButton = Button('Claim returned');
 const changeDueDateButton = Button('Change due date');
@@ -107,5 +111,23 @@ export default {
       markAsMissingButton.click(),
     ]);
     ConfirmItemStatusModal.confirmItemStatus(reasonWhyItemChangesStatus);
+  },
+  createNewFeeFine(ownerId, feeFineType) {
+    cy.do([
+      MultiColumnList({ rowCount: 1 })
+        .find(MultiColumnListCell({ columnIndex: 10 }).find(Button()))
+        .click(),
+      Button('New fee/fine').click(),
+      Select({ id: 'ownerId' }).choose(ownerId),
+      Select({ id: 'feeFineType' }).choose(feeFineType),
+      Button('Charge only').click(),
+    ]);
+  },
+  openLoanDetails() {
+    cy.do(MultiColumnList().find(ListRow()).click());
+  },
+  verifyLinkRedirectsCorrectPage: (link, pageTitle) => {
+    cy.do(link.click());
+    cy.expect(PaneHeader(including(pageTitle)).exists());
   },
 };
