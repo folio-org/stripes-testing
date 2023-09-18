@@ -1,6 +1,4 @@
-import permissions from '../../../support/dictionary/permissions';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -68,7 +66,7 @@ describe('inventory', () => {
           });
         });
 
-      cy.createTempUser([permissions.inventoryAll.gui, permissions.remoteStorageView.gui]).then(
+      cy.createTempUser([Permissions.inventoryAll.gui, Permissions.remoteStorageView.gui]).then(
         (userProperties) => {
           user = userProperties;
 

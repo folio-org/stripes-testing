@@ -1,7 +1,5 @@
-import permissions from '../../../support/dictionary/permissions';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import {
   FOLIO_RECORD_TYPE,
@@ -83,10 +81,10 @@ describe('data-import', () => {
 
     before('login', () => {
       cy.createTempUser([
-        permissions.settingsDataImportEnabled.gui,
-        permissions.moduleDataImportEnabled.gui,
-        permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
-        permissions.inventoryAll.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
+        Permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {

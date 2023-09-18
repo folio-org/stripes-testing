@@ -33,6 +33,10 @@ export default {
     NewAgreement.save();
   },
 
+  switchToLocalKBSearch() {
+    cy.do(Button('Local KB search').click());
+  },
+
   selectRecord: (agreementTitle) => {
     cy.do(section.find(MultiColumnListCell(agreementTitle)).click());
   },

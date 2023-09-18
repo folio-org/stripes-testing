@@ -48,6 +48,14 @@ export default {
     internal: 'ui-agreements.agreements.delete',
     gui: 'Agreements: Delete agreements',
   },
+  uiAgreementsSearchAndView: {
+    internal: 'ui-agreements.agreements.view',
+    gui: 'Agreements: Search & view agreements',
+  },
+  uiAgreementsSearch: {
+    internal: 'ui-plugin-find-agreement.search',
+    gui: 'Find Agreement Plugin: Search agreements',
+  },
   // QuickMarc
   uiQuickMarcQuickMarcHoldingsEditorCreate: {
     internal: 'ui-quick-marc.quick-marc-holdings-editor.create',
