@@ -437,7 +437,7 @@ export default {
 
   clickSaveAndKeepEditing() {
     cy.do(saveAndKeepEditingBtn.click());
-    cy.expect(calloutUpdatedRecord.exists());
+    cy.expect(calloutAfterSaveAndClose.exists());
     cy.expect(rootSection.exists());
   },
 
@@ -1052,9 +1052,9 @@ export default {
   },
 
   verifyAndDismissRecordUpdatedCallout() {
-    cy.expect(calloutUpdatedRecord.exists());
-    cy.do(calloutUpdatedRecord.dismiss());
-    cy.expect(calloutUpdatedRecord.absent());
+    cy.expect(calloutAfterSaveAndClose.exists());
+    cy.do(calloutAfterSaveAndClose.dismiss());
+    cy.expect(calloutAfterSaveAndClose.absent());
   },
 
   checkFourthBoxDisabled(rowIndex) {
