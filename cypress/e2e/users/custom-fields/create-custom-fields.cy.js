@@ -8,29 +8,18 @@ import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 
 let user;
-const fieldData = {
-  fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
-  helpText: `autotestHelpText_${getRandomPostfix()}`,
-};
 
 describe('ui-users: Custom Fields', () => {
   before('login', () => {
-    cy.createTempUser([
-      Permissions.uiUsersCustomField.gui,
-      Permissions.uiUsersView.gui,
-      Permissions.uiUserEdit.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(user.username, user.password, {
-        path: SettingsMenu.customFieldsPath,
-        waiter: CustomFields.waitLoading,
-      });
-    });
+    cy.createTempUser([Permissions.uiUsersCustomField.gui, Permissions.uiUserEdit.gui]).then(
+      (userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password);
+      },
+    );
   });
 
   after('delete test data', () => {
-    cy.visit(SettingsMenu.customFieldsPath);
-    CustomFields.deleteCustomField(fieldData.fieldLabel);
     Users.deleteViaApi(user.userId);
   });
 
@@ -38,11 +27,41 @@ describe('ui-users: Custom Fields', () => {
     'C15693 Create a text field custom field (volaris)',
     { tags: [TestTypes.extendedPath, DevTeams.volaris] },
     () => {
+      const fieldData = {
+        fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
+        helpText: `autotestHelpText_${getRandomPostfix()}`,
+      };
+
+      cy.visit(TopMenu.customFieldsPath);
       CustomFields.addCustomTextField(fieldData);
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.searchByKeywords(user.username);
-      UserEdit.openUserEdit();
-      UserEdit.verifyCustomFieldPresented(fieldData);
+      UserEdit.openEdit();
+      UserEdit.verifyTextFieldPresented(fieldData);
+
+      cy.visit(SettingsMenu.customFieldsPath);
+      CustomFields.deleteCustomField(fieldData.fieldLabel);
+    },
+  );
+
+  it(
+    'C15694 Create a text area custom field and add help text (volaris)',
+    { tags: [TestTypes.extendedPath, DevTeams.volaris] },
+    () => {
+      const fieldData = {
+        fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
+        helpText: `autotestHelpText_${getRandomPostfix()}`,
+      };
+
+      cy.visit(TopMenu.customFieldsPath);
+      CustomFields.addCustomTextArea(fieldData);
+      cy.visit(TopMenu.usersPath);
+      UsersSearchPane.searchByKeywords(user.username);
+      UserEdit.openEdit();
+      UserEdit.verifyAreaFieldPresented(fieldData);
+
+      cy.visit(SettingsMenu.customFieldsPath);
+      CustomFields.deleteCustomField(fieldData.fieldLabel);
     },
   );
 });
