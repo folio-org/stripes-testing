@@ -70,7 +70,7 @@ export default {
     cy.do(Button('Search').click());
   },
 
-  checkOnlySelectedPackagesInResults() {
+  verifyOnlySelectedPackagesInResults() {
     cy.expect([
       packagesSection.find(ListItem({ text: including(filterStatuses.selected) })).exists(),
       packagesSection.find(ListItem({ text: including(filterStatuses.notSelected) })).absent(),

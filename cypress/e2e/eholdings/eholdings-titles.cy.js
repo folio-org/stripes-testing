@@ -173,9 +173,7 @@ describe('eHoldings titles management', () => {
     'C157916 Title - Packages accordion - Filter by Holding Status (spitfire)',
     { tags: [testTypes.criticalPath, devTeams.spitfire, features.eHoldings] },
     () => {
-      cy.createTempUser([
-        permissions.uieHoldingsRecordsEdit.gui,
-      ]).then((userProperties) => {
+      cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
         userId = userProperties.userId;
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.eholdingsPath,
@@ -198,9 +196,7 @@ describe('eHoldings titles management', () => {
     'C17090 Title Record - Packages accordion - Filter packages list (spitfire)',
     { tags: [testTypes.criticalPath, devTeams.spitfire, features.eHoldings] },
     () => {
-      cy.createTempUser([
-        permissions.uieHoldingsRecordsEdit.gui,
-      ]).then((userProperties) => {
+      cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
         userId = userProperties.userId;
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.eholdingsPath,
@@ -215,7 +211,10 @@ describe('eHoldings titles management', () => {
         eHoldingsTitle.searchTitle(selectedResource.title);
         eHoldingsTitlesSearch.openTitle(selectedResource.title);
         eHoldingsTitle.waitPackagesLoading();
-        eHoldingsTitle.filterPackages(eHoldingsPackage.filterStatuses.all, selectedResource.package);
+        eHoldingsTitle.filterPackages(
+          eHoldingsPackage.filterStatuses.all,
+          selectedResource.package,
+        );
       });
     },
   );
