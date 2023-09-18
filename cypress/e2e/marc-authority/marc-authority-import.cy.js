@@ -177,7 +177,7 @@ describe('Data Import - Importing MARC Authority files', () => {
 
   it(
     'C356766 Browse for record without subfield "t" (personalNameTitle and sftPersonalName) (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       DataImport.uploadFile('marcFileForC356766.mrc', fileName);
       JobProfiles.waitLoadingList();
@@ -205,7 +205,7 @@ describe('Data Import - Importing MARC Authority files', () => {
 
   it(
     'C356765 Search for record without subfield "t" (personalNameTitle and sftPersonalName) (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       DataImport.uploadFile('marcFileForC356765.mrc', fileName);
       JobProfiles.waitLoadingList();

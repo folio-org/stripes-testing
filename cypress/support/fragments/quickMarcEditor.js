@@ -1253,4 +1253,15 @@ export default {
         .exists(),
     );
   },
+
+  updateIndicatorValue(tag, newValue, indicatorIndex = 0) {
+    const indicator = indicatorIndex ? secondIndicatorBox : firstIndicatorBox;
+    cy.do(getRowInteractorByTagName(tag).find(indicator).fillIn(newValue));
+    cy.expect(getRowInteractorByTagName(tag).find(indicator).has({ value: newValue }));
+  },
+
+  verifyIndicatorValue(tag, indicatorValue, indicatorIndex = 0) {
+    const indicator = indicatorIndex ? secondIndicatorBox : firstIndicatorBox;
+    cy.expect(getRowInteractorByTagName(tag).find(indicator).has({ value: indicatorValue }));
+  },
 };
