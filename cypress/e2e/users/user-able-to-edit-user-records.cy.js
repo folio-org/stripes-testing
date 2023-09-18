@@ -49,7 +49,7 @@ describe('Permissions Tags', () => {
     { tags: [TestTypes.extendedPath, devTeams.volaris] },
     () => {
       UsersSearchPane.searchByUsername(userData.username);
-      UserEdit.openUserEdit();
+      UserEdit.openEdit();
       UserEdit.changeMiddleName(newMiddleName);
       UserEdit.saveAndClose();
       Users.verifyMiddleNameOnUserDetailsPane(newMiddleName);
