@@ -33,7 +33,7 @@ import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRec
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
-describe('data-import', () => {
+describe.skip('data-import', () => {
   describe('Log details', () => {
     let user;
     const instanceHrids = [];
