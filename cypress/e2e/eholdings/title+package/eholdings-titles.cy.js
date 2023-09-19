@@ -203,7 +203,7 @@ describe('eHoldings', () => {
             path: TopMenu.eholdingsPath,
             waiter: eHoldingsTitlesSearch.waitLoading,
           });
-  
+
           const selectedResource = {
             title: 'Journal of Fish Biology',
             package: 'Wiley Online Library',

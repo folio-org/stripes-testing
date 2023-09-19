@@ -18,6 +18,8 @@ export default {
   verifyModalView: () => {
     cy.do(additionalInformationField.exists());
     cy.expect([confirmButton.has({ disabled: true, visible: true }), confirmModal.exists()]);
+  },
+  closeModal: () => {
     return cy.do(cancelButton.click());
   },
   verifyNumberOfItemsToBeClaimReturned: (quantityOfItemsToBeClaimReturned) => {

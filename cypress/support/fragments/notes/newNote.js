@@ -45,4 +45,8 @@ export default {
   verifyNewNoteIsDisplayed() {
     cy.expect(titleTextField.exists());
   },
+
+  verifyNewNoteIsNotDisplayed() {
+    cy.expect(titleTextField.absent());
+  },
 };
