@@ -12,8 +12,6 @@ describe('ui-requests: Filter requests by tags', () => {
   const requests = [];
   const instances = [];
   const requestTypes = { PAGE: 'Page', HOLD: 'Hold', RECALL: 'Recall' };
-  let oldRulesText;
-  let requestPolicyId;
   const tagIDs = [];
   const tags = [
     {
@@ -36,10 +34,6 @@ describe('ui-requests: Filter requests by tags', () => {
   beforeEach(() => {
     cy.loginAsAdmin();
     cy.getAdminToken().then(() => {
-      Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {
-        oldRulesText = oldRulesAsText;
-        requestPolicyId = policy.id;
-      });
       Object.values(requestTypes).forEach((requestType) => {
         const itemStatus =
           requestType === REQUEST_TYPES.PAGE
@@ -71,8 +65,6 @@ describe('ui-requests: Filter requests by tags', () => {
     userIds.forEach((id) => {
       Users.deleteViaApi(id);
     });
-    Requests.updateCirculationRulesApi(oldRulesText);
-    Requests.deleteRequestPolicyApi(requestPolicyId);
     tagIDs.forEach((tagID) => {
       cy.deleteTagApi(tagID);
     });
