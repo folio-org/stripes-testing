@@ -57,19 +57,6 @@ describe.skip('Settings', () => {
   });
 
   it(
-    'C15695 Create a checkbox custom field (volaris)',
-    { tags: [TestTypes.ideaLabsTests, DevTeams.ideaLabsTests] },
-    () => {
-      cy.visit(TopMenu.customFieldsPath);
-      CustomFields.addCustomCheckBox(checkboxData);
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.searchByKeywords('testing');
-      UsersSearchPane.selectFirstUser('Excel, Testing');
-      UsersSearchPane.verifyCheckBox(checkboxData.fieldLabel);
-    },
-  );
-
-  it(
     'C15696 Create a radio button custom field (volaris)',
     { tags: [TestTypes.ideaLabsTests, DevTeams.ideaLabsTests] },
     () => {

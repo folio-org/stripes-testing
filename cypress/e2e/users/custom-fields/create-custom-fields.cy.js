@@ -64,4 +64,24 @@ describe('ui-users: Custom Fields', () => {
       CustomFields.deleteCustomField(fieldData.fieldLabel);
     },
   );
+
+  it(
+    'C15695 Create a checkbox custom field (volaris)',
+    { tags: [TestTypes.extendedPath, DevTeams.volaris] },
+    () => {
+      const checkboxData = {
+        fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
+        helpText: `autotestHelpText_${getRandomPostfix()}`,
+      };
+      cy.visit(TopMenu.customFieldsPath);
+      CustomFields.addCustomCheckBox(checkboxData);
+      cy.visit(TopMenu.usersPath);
+      UsersSearchPane.searchByKeywords(user.username);
+      UserEdit.openEdit();
+      UserEdit.verifyCheckboxPresented(checkboxData);
+
+      cy.visit(SettingsMenu.customFieldsPath);
+      CustomFields.deleteCustomField(checkboxData.fieldLabel);
+    },
+  );
 });

@@ -195,4 +195,15 @@ export default {
     );
     cy.expect(HTML(fieldData.helpText).exists());
   },
+
+  verifyCheckboxPresented(fieldData) {
+    cy.expect(Accordion('Custom fields').find(Checkbox(fieldData.fieldLabel)).exists());
+    cy.do(
+      Accordion('Custom fields')
+        .find(Checkbox(fieldData.fieldLabel))
+        .find(Button({ ariaLabel: 'info' }))
+        .click(),
+    );
+    cy.expect(HTML(fieldData.helpText).exists());
+  },
 };
