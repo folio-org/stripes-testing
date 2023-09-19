@@ -5,26 +5,6 @@ import TopMenu from '../../../support/fragments/topMenu';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
-const textFieldData = {
-  fieldLabel: `Test${randomFourDigitNumber()}`,
-  helpText: `Testdata${randomFourDigitNumber()}`,
-};
-const testAreaData = {
-  fieldLabel: `dataArea${randomFourDigitNumber()}`,
-  helpText: `fillData${randomFourDigitNumber()}`,
-};
-const checkboxData = {
-  fieldLabel: `CheckBox${randomFourDigitNumber()}`,
-  helpText: `testdata${randomFourDigitNumber()}`,
-};
-const radioButtonData = {
-  data: {
-    fieldLabel: `RadioButton${randomFourDigitNumber()}`,
-    helpText: `testData${randomFourDigitNumber()}`,
-    label1: `Radio1${randomFourDigitNumber()}`,
-    label2: `Radio2${randomFourDigitNumber()}`,
-  },
-};
 const label2 = `select${randomFourDigitNumber()}`;
 const singleSelectData = {
   data: {
@@ -36,39 +16,6 @@ const singleSelectData = {
 };
 
 describe.skip('Settings', () => {
-  before('Login to Folio', () => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-  });
-
-  after('Delete test data', () => {
-    cy.visit(TopMenu.customFieldsPath);
-    CustomFields.editButton();
-    CustomFields.deleteCustomField(`${textFieldData.fieldLabel} · Text field`);
-    CustomFields.deleteCustomField(`${testAreaData.fieldLabel} · Text area`);
-    CustomFields.deleteCustomField(`${checkboxData.fieldLabel} · Checkbox`);
-    CustomFields.deleteCustomField(`${radioButtonData.data.fieldLabel} · Radio button set`);
-    CustomFields.deleteCustomField(`${singleSelectData.data.fieldLabel} · Single select`);
-    CustomFields.confirmDeletion();
-    CustomFields.verifyDeletedCustomFields(`${textFieldData.fieldLabel} · Text field`);
-    CustomFields.verifyDeletedCustomFields(`${testAreaData.fieldLabel} · Text area`);
-    CustomFields.verifyDeletedCustomFields(`${checkboxData.fieldLabel} · Checkbox`);
-    CustomFields.verifyDeletedCustomFields(`${radioButtonData.data.fieldLabel} · Radio button set`);
-    CustomFields.verifyDeletedCustomFields(`${singleSelectData.data.fieldLabel} · Single select`);
-  });
-
-  it(
-    'C15696 Create a radio button custom field (volaris)',
-    { tags: [TestTypes.ideaLabsTests, DevTeams.ideaLabsTests] },
-    () => {
-      cy.visit(TopMenu.customFieldsPath);
-      CustomFields.addCustomRadioButton(radioButtonData);
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.searchByKeywords('testing');
-      UsersSearchPane.selectFirstUser('Excel, Testing');
-      UsersSearchPane.verifyRadioButton(radioButtonData.data.fieldLabel);
-    },
-  );
-
   it(
     'C15697 Create a single select custom field (volaris)',
     { tags: [TestTypes.ideaLabsTests, DevTeams.ideaLabsTests] },

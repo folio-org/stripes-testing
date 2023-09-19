@@ -84,4 +84,29 @@ describe('ui-users: Custom Fields', () => {
       CustomFields.deleteCustomField(checkboxData.fieldLabel);
     },
   );
+
+  it(
+    'C15696 Create a radio button custom field (volaris)',
+    { tags: [TestTypes.extendedPath, DevTeams.volaris] },
+    () => {
+      const radioButtonData = {
+        data: {
+          fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
+          helpText: `autotestHelpText_${getRandomPostfix()}`,
+          label1: `autotestRadio1_${getRandomPostfix()}`,
+          label2: `autotestRadio2_${getRandomPostfix()}`,
+        },
+      };
+
+      cy.visit(TopMenu.customFieldsPath);
+      CustomFields.addCustomRadioButton(radioButtonData);
+      cy.visit(TopMenu.usersPath);
+      UsersSearchPane.searchByKeywords(user.username);
+      UserEdit.openEdit();
+      UserEdit.verifyRadioButtonPresented(radioButtonData);
+
+      cy.visit(SettingsMenu.customFieldsPath);
+      CustomFields.deleteCustomField(radioButtonData.data.fieldLabel);
+    },
+  );
 });

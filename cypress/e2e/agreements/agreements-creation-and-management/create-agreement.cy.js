@@ -5,7 +5,6 @@ import Agreements from '../../../support/fragments/agreements/agreements';
 import NewAgreement from '../../../support/fragments/agreements/newAgreement';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import AgreementViewDetails from '../../../support/fragments/agreements/agreementViewDetails';
-import AgreementsApi from '../../../support/api/agreements';
 
 describe('Agreements', () => {
   describe('Agreements Creation and Management', () => {
@@ -21,9 +20,9 @@ describe('Agreements', () => {
     });
 
     after('delete test data', () => {
-      AgreementsApi.getIdViaApi({ limit: 1000, query: `"name"=="${defaultAgreement.name}"` }).then(
+      Agreements.getIdViaApi({ limit: 1000, query: `"name"=="${defaultAgreement.name}"` }).then(
         (id) => {
-          AgreementsApi.deleteViaApi(id);
+          Agreements.deleteViaApi(id);
         },
       );
     });

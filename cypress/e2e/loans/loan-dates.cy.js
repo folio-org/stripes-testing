@@ -1,6 +1,6 @@
 import TopMenu from '../../support/fragments/topMenu';
 import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
+import { REQUEST_TYPES } from '../../support/constants';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
 import LoansPage from '../../support/fragments/loans/loansPage';
