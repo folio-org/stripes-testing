@@ -35,27 +35,33 @@ export const getDefaultNoticePolicy = ({ id = uuid(), name, templateId } = {}) =
 export const NOTICE_CATEGORIES = {
   loan: {
     name: 'Loan',
-    id: 'Loan',
+    id: 'loan',
+    requestId: 'Loan',
   },
   request: {
     name: 'Request',
-    id: 'Request',
+    id: 'request',
+    requestId: 'Request',
   },
   AutomatedFeeFineCharge: {
     name: 'Automated fee/fine charge',
-    id: 'AutomatedFeeFineCharge',
+    id: 'automatedFeeFineCharge',
+    requestId: 'AutomatedFeeFineCharge',
   },
   AutomatedFeeFineAdjustment: {
     name: 'Automated fee/fine adjustment (refund or cancel)',
-    id: 'AutomatedFeeFineAdjustment',
+    id: 'automatedFeeFineAdjustment',
+    requestId: 'AutomatedFeeFineAdjustment',
   },
   FeeFineCharge: {
     name: 'Manual fee/fine charge',
-    id: 'FeeFineCharge',
+    id: 'feeFineCharge',
+    requestId: 'FeeFineCharge',
   },
   FeeFineAction: {
     name: 'Manual fee/fine action (pay, waive, refund, transfer or cancel/error)',
-    id: 'FeeFineAction',
+    id: 'feeFineAction',
+    requestId: 'FeeFineAction',
   },
 };
 

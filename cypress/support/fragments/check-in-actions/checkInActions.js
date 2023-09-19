@@ -99,6 +99,12 @@ export default {
     cy.do(checkInButtonInModal.click());
   },
   checkInItemGui,
+  checkInItemByBarcode(barcode) {
+    this.checkInItemGui(barcode);
+    this.confirmCheckInLostItem();
+    this.verifyLastCheckInItem(barcode);
+    this.endCheckInSession();
+  },
   getSessionIdAfterCheckInItem: (barcode) => {
     cy.intercept('/inventory/items?*').as('getItems');
     cy.intercept('circulation/check-in-by-barcode').as('getCheckInResponse');
