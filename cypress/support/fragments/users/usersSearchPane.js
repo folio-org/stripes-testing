@@ -63,8 +63,12 @@ export default {
     cy.do(Pane({ id: 'users-search-results-pane' }).find(Link(userName)).click());
   },
 
-  openUser(userId) {
-    return cy.do(Link({ href: including(userId) }).click());
+  openUser(userName) {
+    return cy.do(Link({ href: including(userName) }).click());
+  },
+  openUserCard(userName) {
+    this.searchByUsername(userName);
+    this.openUser(userName);
   },
 
   openUserLoanSection: () => {

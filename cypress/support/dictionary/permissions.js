@@ -317,6 +317,10 @@ export default {
     internal: 'ui-users.loans.claim-item-returned',
     gui: 'Users: User loans claim returned',
   },
+  uiUsersLoansClaimReturnedMissing: {
+    internal: 'ui-users.loans.declare-claimed-returned-item-as-missing',
+    gui: 'Users: User loans mark claimed returned missing',
+  },
   uiUsersDeclareItemLost: {
     internal: 'ui-users.loans.declare-item-lost',
     gui: 'Users: User loans declare lost',
