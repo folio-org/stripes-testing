@@ -1,3 +1,4 @@
+import { HTML, including, Link } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -12,9 +13,6 @@ import {
   SelectionList,
   TextArea,
   TextField,
-  Link,
-  HTML,
-  including,
   and,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
@@ -242,6 +240,10 @@ export default {
   },
   verifyPatronBlockValue(value = '') {
     cy.expect(KeyValue('Patron group').has({ value: including(value) }));
+  },
+
+  verifySingleSelectValue({ data }) {
+    cy.expect(KeyValue(data.fieldLabel).has({ value: including(data.firstLabel) }));
   },
 
   verifyExpirationDate(date) {
