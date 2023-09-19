@@ -900,6 +900,7 @@ export default {
     ]);
     cy.wait(6000);
     submitOrderLine();
+    cy.wait(4000);
   },
 
   addContributorToPOL: () => {

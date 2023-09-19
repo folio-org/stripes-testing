@@ -1,6 +1,4 @@
-import permissions from '../../support/dictionary/permissions';
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
+import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import Helper from '../../support/fragments/finance/financeHelper';
@@ -97,12 +95,12 @@ describe('inventory', () => {
       ServicePoints.createViaApi(secondServicePoint);
 
       cy.createTempUser([
-        permissions.checkinAll.gui,
-        permissions.uiInventoryViewInstances.gui,
-        permissions.uiInventoryViewCreateEditItems.gui,
-        permissions.uiOrdersView.gui,
-        permissions.uiOrdersEdit.gui,
-        permissions.uiReceivingViewEditCreate.gui,
+        Permissions.checkinAll.gui,
+        Permissions.uiInventoryViewInstances.gui,
+        Permissions.uiInventoryViewCreateEditItems.gui,
+        Permissions.uiOrdersView.gui,
+        Permissions.uiOrdersEdit.gui,
+        Permissions.uiReceivingViewEditCreate.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
 

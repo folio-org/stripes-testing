@@ -485,6 +485,16 @@ export default {
     });
   },
 
+  checkAbsentTransaction: (transaction) => {
+    cy.wait(4000);
+    cy.expect(
+      Pane({ id: transactionResultPaneId })
+        // .find(MultiColumnListRow({ index: rowNumber }))
+        .find(MultiColumnListCell({ content: transaction }))
+        .absent(),
+    );
+  },
+
   transferAmount: (amount, fundFrom, fundTo) => {
     cy.do([actionsButton.click(), transferButton.click()]);
     cy.expect(Modal('Transfer').exists());

@@ -30,6 +30,27 @@ describe('Search in Inventory', () => {
       "Han'guk yŏnghwa 100-sŏn : yŏnghwa hakcha, p'yŏngnon'ga ka ppobŭn Han'guk yŏnghwa taep'yojak : \"Ch'ŏngch'un ŭi sipcharo\" esŏ \"P'iet'a\" kkaji / Han'guk Yŏngsang Charyowŏn p'yŏn.",
       "Han'guk yŏnghwa 100-yŏn, yŏnghwa kwanggo 100-sŏn / P'yŏnjippu yŏkkŭm.",
     ],
+    searchQueriesC368038: [
+      "Mrs. Lirriper's legacy the extra Christmas number of All the year round conducted by (Charles Dickens for Christmas, 1864).",
+      "Mrs. Lirriper's legacy & the extra Christmas number of All the year round; conducted by Charles-Dickens, for Christmas 1864",
+      "Mrs. Lirriper's legacy : the extra Christmas number of All the year round conducted by Charles Dickens, for Christmas 1864",
+      '"Mrs. Lirriper\'s legacy" / the extra Christmas number of All the year round {conducted by Charles Dickens, for Christmas 1864}',
+      "Mrs. Lirriper's legacy the extra&Christmas number: of All the year round conducted by/ Charles Dickens for Christmas, 1864",
+      "Christmas 1864 : Charles Dickens Mrs. Lirriper's legacy the extra Christmas",
+      "Mrs. Lirriper's legacy and the extra Christmas number of All the year round conducted by Charles Dickens, for Christmas 1864.",
+      "Mrs. Lirriper's legacy & the extra Christmas : number of All the year round / conducted by writer (Charles Dickens for Christmas, 1864).",
+      ".Mrs. Lirriper's legacy - the extra Christmas number of All the year round conducted by [Charles Dickens], for Christmas, 1864 !",
+    ],
+    titlesC368038: [
+      'MSEARCH-466 Title 1 Search by "Alternative title" field which has special characters',
+      'MSEARCH-466 Title 2 Search by "Alternative title" field which has special characters',
+      'MSEARCH-466 Title 3 Search by "Alternative title" field which has special characters',
+      'MSEARCH-466 Title 4 Search by "Alternative title" field which has special characters',
+      'MSEARCH-466 Title 5 Search by "Alternative title" field which has special characters.',
+      'MSEARCH-466 Title 6 Search by "Alternative title" field which has special characters.',
+      'MSEARCH-466 Title 7 Search by "Alternative title" field which has special characters.',
+      'MSEARCH-466 Title 8 Search by "Alternative title" field which has special characters.',
+    ],
   };
 
   const expectedTitles = [
@@ -44,6 +65,17 @@ describe('Search in Inventory', () => {
     [testData.titles[1]],
   ];
 
+  const expectedTitlesC368038 = [
+    testData.titlesC368038,
+    testData.titlesC368038,
+    testData.titlesC368038,
+    testData.titlesC368038,
+    testData.titlesC368038,
+    testData.titlesC368038,
+    [testData.titlesC368038[0], testData.titlesC368038[1], testData.titlesC368038[5]],
+    [testData.titlesC368038[5]],
+  ];
+
   const marcFiles = [
     {
       marc: 'marcBibFileC369042.mrc',
@@ -51,11 +83,17 @@ describe('Search in Inventory', () => {
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       numberOfRecords: 3,
     },
+    {
+      marc: 'marcBibFileC368038.mrc',
+      fileName: `testMarcFileC368038.${getRandomPostfix()}.mrc`,
+      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      numberOfRecords: 8,
+    },
   ];
 
   const createdRecordIDs = [];
 
-  before('Importing data, linking records', () => {
+  before('Importing data', () => {
     cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
       marcFiles.forEach((marcFile) => {
@@ -103,6 +141,26 @@ describe('Search in Inventory', () => {
         });
         InventorySearchAndFilter.checkRowsCount(expectedTitles[index].length);
       });
+    },
+  );
+
+  it(
+    'C368038 Search for "Instance" by "Alternative title" field with special characters using "Keyword" search option (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      expectedTitlesC368038.forEach((expectedTitlesSet, index) => {
+        InventoryInstance.searchByTitle(testData.searchQueriesC368038[index]);
+        // wait for search results to be updated
+        cy.wait(1500);
+        expectedTitlesSet.forEach((expectedTitle) => {
+          InventorySearchAndFilter.verifyInstanceDisplayed(expectedTitle);
+        });
+        InventorySearchAndFilter.checkRowsCount(expectedTitlesSet.length);
+      });
+      InventoryInstance.searchByTitle(testData.searchQueriesC368038[8]);
+      // wait for search results to be updated
+      cy.wait(1500);
+      InventorySearchAndFilter.verifyNoRecordsFound();
     },
   );
 });

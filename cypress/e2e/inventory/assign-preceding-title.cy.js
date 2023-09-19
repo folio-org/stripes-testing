@@ -5,8 +5,7 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InstanceRecordEdit from '../../support/fragments/inventory/instanceRecordEdit';
 import Helper from '../../support/fragments/finance/financeHelper';
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
+import { DevTeams, TestTypes } from '../../support/dictionary';
 import { INSTANCE_SOURCE_NAMES } from '../../support/constants';
 
 describe('inventory', () => {

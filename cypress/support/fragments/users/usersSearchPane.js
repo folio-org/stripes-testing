@@ -9,7 +9,6 @@ import {
   PaneHeader,
   Section,
   Select,
-  Spinner,
   TextField,
 } from '../../../../interactors';
 
@@ -56,11 +55,6 @@ export default {
     waitClick();
   },
 
-  selectFirstUser: (userName) => {
-    cy.expect(Spinner().absent());
-    cy.do(Pane({ id: 'users-search-results-pane' }).find(Link(userName)).click());
-  },
-
   selectUserFromList: (userName) => {
     cy.do(Pane({ id: 'users-search-results-pane' }).find(MultiColumnListCell(userName)).click());
   },
@@ -69,8 +63,12 @@ export default {
     cy.do(Pane({ id: 'users-search-results-pane' }).find(Link(userName)).click());
   },
 
-  openUser(userId) {
-    return cy.do(Link({ href: including(userId) }).click());
+  openUser(userName) {
+    return cy.do(Link({ href: including(userName) }).click());
+  },
+  openUserCard(userName) {
+    this.searchByUsername(userName);
+    this.openUser(userName);
   },
 
   openUserLoanSection: () => {

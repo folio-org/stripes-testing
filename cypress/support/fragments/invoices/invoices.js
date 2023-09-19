@@ -2,6 +2,8 @@ import {
   Accordion,
   Button,
   Checkbox,
+  HTML,
+  including,
   KeyValue,
   Link,
   Modal,
@@ -257,6 +259,7 @@ export default {
       Checkbox({ ariaLabel: `record ${rowNumber} checkbox` }).clickInput(),
       Button('Save').click(),
     ]);
+    cy.wait(4000);
   },
 
   checkInvoiceLine: (invoiceLine, currency = '$') => {
@@ -503,6 +506,14 @@ export default {
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 0 }))
         .click(),
+    );
+  },
+
+  checkFundListIsEmpty: () => {
+    cy.expect(
+      Section({ id: 'invoiceLineFundDistribution' })
+        .find(HTML(including('The list contains no items')))
+        .exists(),
     );
   },
 

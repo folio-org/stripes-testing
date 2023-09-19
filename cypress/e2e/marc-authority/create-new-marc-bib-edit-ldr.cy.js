@@ -18,6 +18,26 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
 
     fieldContents: {
       tag245ContentPrefix: 'Created_Bib_',
+      valid008Values: [
+        'a',
+        'b',
+        'ccc',
+        'd',
+        'e',
+        'f',
+        'g',
+        'hhh',
+        'i',
+        'j',
+        'k',
+        'l',
+        'm',
+        '1111',
+        '2222',
+      ],
+      tag245ValueWithAllSubfields:
+        '$a testA $b testB $c testC $f testF $g testG $h testH $k testK $n testN $p testP $s testS $6 test6 $7 test7 $8 test8',
+      instanceTitleWithSubfields: 'testA testB testC testF testG testH testK testN testP testS',
     },
 
     LDRValues: {
@@ -99,7 +119,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
       QuickMarcEditor.updateExistingField(testData.tags.tagLDR, testData.LDRValues.validLDRvalue);
       QuickMarcEditor.updateExistingField(
         testData.tags.tag245,
-        `$a ${testData.fieldContents.tag245Content}`,
+        `$a ${testData.fieldContents.tag245ContentPrefix + getRandomPostfix()}`,
       );
 
       updatedLDRValuesArray.forEach((LDRValue) => {
@@ -153,6 +173,31 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
         );
         QuickMarcEditor.closeWithoutSaving();
       }
+    },
+  );
+
+  it(
+    'C380711 Add all possible "245" subfields when creating a new "MARC bib" record (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      cy.login(userData.C380704UserProperties.username, userData.C380704UserProperties.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
+      InventoryInstance.newMarcBibRecord();
+      QuickMarcEditor.updateExistingField(testData.tags.tagLDR, testData.LDRValues.validLDRvalue);
+      QuickMarcEditor.updateValuesIn008Boxes(testData.fieldContents.valid008Values);
+      QuickMarcEditor.updateExistingField(
+        testData.tags.tag245,
+        testData.fieldContents.tag245ValueWithAllSubfields,
+      );
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.checkAfterSaveAndClose();
+      InventoryInstance.checkInstanceTitle(testData.fieldContents.instanceTitleWithSubfields);
+      InventoryInstance.editMarcBibliographicRecord();
+      QuickMarcEditor.saveInstanceIdToArrayInQuickMarc(createdInstanceIDs);
+      QuickMarcEditor.checkContent(testData.fieldContents.tag245ValueWithAllSubfields, 4);
+      QuickMarcEditor.checkValuesIn008Boxes(testData.fieldContents.valid008Values);
     },
   );
 });

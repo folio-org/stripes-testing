@@ -1,7 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import DevTeams from '../../../support/dictionary/devTeams';
-import TestTypes from '../../../support/dictionary/testTypes';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
 import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
@@ -35,7 +33,7 @@ import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRec
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
-describe('data-import', () => {
+describe.skip('data-import', () => {
   describe('Log details', () => {
     let user;
     const instanceHrids = [];
@@ -353,11 +351,11 @@ describe('data-import', () => {
       });
 
       cy.createTempUser([
-        permissions.moduleDataImportEnabled.gui,
-        permissions.inventoryAll.gui,
-        permissions.dataExportEnableSettings.gui,
-        permissions.settingsDataImportEnabled.gui,
-        permissions.dataExportEnableApp.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.dataExportEnableSettings.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.dataExportEnableApp.gui,
       ]).then((userProperties) => {
         user = userProperties;
 

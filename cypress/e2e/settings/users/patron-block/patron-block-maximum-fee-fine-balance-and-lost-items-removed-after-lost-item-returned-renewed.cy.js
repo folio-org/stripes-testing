@@ -360,9 +360,8 @@ describe('Patron Block: Lost items', () => {
       Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
 
       const itemForRenew = itemsData.itemsWithSeparateInstance[Math.floor(Math.random() * 5)];
-      UsersCard.openLoans();
-      UsersCard.showOpenedLoans();
-      UserLoans.openLoan(itemForRenew.barcode);
+      UsersCard.viewCurrentLoans();
+      UserLoans.openLoanDetails(itemForRenew.barcode);
       UserLoans.renewItem(itemForRenew.barcode, true);
       Renewals.renewBlockedPatron(renewComment);
       RenewConfirmationModal.waitLoading();
@@ -406,9 +405,8 @@ describe('Patron Block: Lost items', () => {
       Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
 
       const itemForRenew = itemsData.itemsWithSeparateInstance[Math.floor(Math.random() * 5)];
-      UsersCard.openLoans();
-      UsersCard.showOpenedLoans();
-      UserLoans.openLoan(itemForRenew.barcode);
+      UsersCard.viewCurrentLoans();
+      UserLoans.openLoanDetails(itemForRenew.barcode);
       UserLoans.renewItem(itemForRenew.barcode, true);
       Renewals.renewBlockedPatron(renewComment);
       RenewConfirmationModal.waitLoading();
