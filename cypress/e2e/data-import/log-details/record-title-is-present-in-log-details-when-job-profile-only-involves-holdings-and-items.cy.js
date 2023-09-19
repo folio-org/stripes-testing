@@ -473,7 +473,7 @@ describe.skip('data-import', () => {
 
         // create match profiles
         cy.visit(SettingsMenu.matchProfilePath);
-        collectionOfMatchProfiles.forEach((profile) => {
+        cy.wrap(collectionOfMatchProfiles).each((profile) => {
           // TODO need to wait until profile will be created in loop
           cy.wait(8000);
           MatchProfiles.createMatchProfile(profile.matchProfile);
@@ -537,22 +537,18 @@ describe.skip('data-import', () => {
         Logs.openFileDetails(marcFileNameForUpdateFirstRecord);
         FileDetails.checkHoldingsQuantityInSummaryTable('1', 1);
         FileDetails.checkItemQuantityInSummaryTable('1', 1);
-        FileDetails.checkStatusInColumn(
-          FileDetails.status.dash,
+        [
           FileDetails.columnNameInResultList.srsMarc,
-        );
-        FileDetails.checkStatusInColumn(
-          FileDetails.status.dash,
           FileDetails.columnNameInResultList.instance,
-        );
-        FileDetails.checkStatusInColumn(
-          FileDetails.status.updated,
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(FileDetails.status.dash, columnName);
+        });
+        [
           FileDetails.columnNameInResultList.holdings,
-        );
-        FileDetails.checkStatusInColumn(
-          FileDetails.status.updated,
-          FileDetails.columnNameInResultList.item,
-        );
+          FileDetails.columnNameInResultList.holdings,
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+        });
         FileDetails.verifyTitle(instanceTitle, FileDetails.columnNameInResultList.title);
 
         FileDetails.openHoldingsInInventory('Updated');
