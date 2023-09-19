@@ -31,17 +31,23 @@ export default {
     cy.wait(5000);
     cy.do(Button({ href: `/users/${id}/loans/open` }).click());
   },
-  checkoutItemViaApi(body) {
-    const checkoutId = uuid();
-
+  checkoutItemViaApi({
+    id = uuid(),
+    loanDate = moment.utc().format(),
+    itemBarcode,
+    servicePointId,
+    userBarcode,
+  }) {
     return cy
       .okapiRequest({
         method: REQUEST_METHOD.POST,
         path: 'circulation/check-out-by-barcode',
         body: {
-          id: checkoutId,
-          loanDate: moment.utc(),
-          ...body,
+          id,
+          loanDate,
+          itemBarcode,
+          servicePointId,
+          userBarcode,
         },
       })
       .then((checkedOutItem) => {

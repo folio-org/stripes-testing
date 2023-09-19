@@ -10,7 +10,6 @@ import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Checkout from '../../support/fragments/checkout/checkout';
-import LoansPage from '../../support/fragments/loans/loansPage';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
 
@@ -65,9 +64,9 @@ describe('circulation-log', () => {
     () => {
       UsersSearchPane.searchByKeywords(user.userId);
       UsersSearchPane.openUser(user.userId);
-      UsersCard.openLoans();
-      UsersCard.showOpenedLoans();
-      LoansPage.markItemAsMissing(item.barcode, 'this is a test');
+      UsersCard.viewCurrentLoans();
+      const ConfirmItemStatusModal = UserLoans.markAsMissing(item.barcode);
+      ConfirmItemStatusModal.confirmItemStatus('this is a test');
 
       cy.visit(TopMenu.circulationLogPath);
       SearchPane.searchByMarkedAsMissing();

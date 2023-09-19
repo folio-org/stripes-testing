@@ -1,7 +1,6 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import {
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
@@ -16,7 +15,6 @@ import {
   LOCATION_NAMES,
   HOLDINGS_TYPE_NAMES,
 } from '../../../support/constants';
-import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import Orders from '../../../support/fragments/orders/orders';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -124,17 +122,17 @@ describe('data-import', () => {
 
     before('login', () => {
       cy.createTempUser([
-        permissions.moduleDataImportEnabled.gui,
-        permissions.settingsDataImportEnabled.gui,
-        permissions.uiOrdersCreate.gui,
-        permissions.uiOrdersView.gui,
-        permissions.uiOrdersEdit.gui,
-        permissions.uiOrdersApprovePurchaseOrders.gui,
-        permissions.uiInventoryViewCreateEditHoldings.gui,
-        permissions.uiInventoryViewCreateEditInstances.gui,
-        permissions.uiInventoryViewCreateEditItems,
-        permissions.uiInventoryViewInstances.gui,
-        permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.uiOrdersCreate.gui,
+        Permissions.uiOrdersView.gui,
+        Permissions.uiOrdersEdit.gui,
+        Permissions.uiOrdersApprovePurchaseOrders.gui,
+        Permissions.uiInventoryViewCreateEditHoldings.gui,
+        Permissions.uiInventoryViewCreateEditInstances.gui,
+        Permissions.uiInventoryViewCreateEditItems,
+        Permissions.uiInventoryViewInstances.gui,
+        Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
       ]).then((userProperties) => {
         user = userProperties;
 

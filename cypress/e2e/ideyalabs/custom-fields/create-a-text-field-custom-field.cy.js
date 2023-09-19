@@ -57,32 +57,6 @@ describe.skip('Settings', () => {
   });
 
   it(
-    'C15693 Create a text field custom field (volaris)',
-    { tags: [TestTypes.ideaLabsTests, DevTeams.ideaLabsTests] },
-    () => {
-      cy.visit(TopMenu.customFieldsPath);
-      CustomFields.addCustomTextField(textFieldData);
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.searchByKeywords('testing');
-      UsersSearchPane.selectFirstUser('Excel, Testing');
-      UsersSearchPane.verifyTextField(textFieldData.fieldLabel);
-    },
-  );
-
-  it(
-    'C15694 Create a text area custom field and add help text (volaris)',
-    { tags: [TestTypes.ideaLabsTests, DevTeams.ideaLabsTests] },
-    () => {
-      cy.visit(TopMenu.customFieldsPath);
-      CustomFields.addCustomTextArea(testAreaData);
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.searchByKeywords('testing');
-      UsersSearchPane.selectFirstUser('Excel, Testing');
-      UsersSearchPane.verifyTextArea(testAreaData.fieldLabel);
-    },
-  );
-
-  it(
     'C15695 Create a checkbox custom field (volaris)',
     { tags: [TestTypes.ideaLabsTests, DevTeams.ideaLabsTests] },
     () => {
