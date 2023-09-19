@@ -7,11 +7,8 @@ import {
   MultiColumnListCell,
   Pane,
   PaneHeader,
-  RadioButtonGroup,
   Section,
   Select,
-  Spinner,
-  TextArea,
   TextField,
 } from '../../../../interactors';
 
@@ -58,11 +55,6 @@ export default {
     waitClick();
   },
 
-  selectFirstUser: (userName) => {
-    cy.expect(Spinner().absent());
-    cy.do(Pane({ id: 'users-search-results-pane' }).find(Link(userName)).click());
-  },
-
   selectUserFromList: (userName) => {
     cy.do(Pane({ id: 'users-search-results-pane' }).find(MultiColumnListCell(userName)).click());
   },
@@ -81,26 +73,6 @@ export default {
 
   openUserLoanSection: () => {
     cy.do([openLoanSectionButton.click()]);
-  },
-
-  verifyTextField: (name) => {
-    cy.do([actionButton.click(), editButton.click()]);
-    cy.expect(TextField(name).exists());
-  },
-
-  verifyTextArea: (name) => {
-    cy.do([actionButton.click(), editButton.click()]);
-    cy.expect(TextArea(name).exists());
-  },
-
-  verifyCheckBox: (name) => {
-    cy.do([actionButton.click(), editButton.click()]);
-    cy.expect(Checkbox(name).exists());
-  },
-
-  verifyRadioButton: (name) => {
-    cy.do([actionButton.click(), editButton.click()]);
-    cy.expect(RadioButtonGroup(name).exists());
   },
 
   verifySingleSelect: (name, label) => {
