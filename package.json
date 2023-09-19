@@ -44,6 +44,7 @@
     "moment": "^2.29.3"
   },
   "devDependencies": {
+    "@4tw/cypress-drag-drop": "^2.2.5",
     "@babel/core": "^7.19.3",
     "@babel/eslint-parser": "^7.19.1",
     "@cypress/request": "2.88.7",

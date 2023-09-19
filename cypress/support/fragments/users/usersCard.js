@@ -53,6 +53,10 @@ export default {
     cy.do(Accordion({ id: 'notesAccordion' }).clickHeader());
   },
 
+  openCustomFieldsSection() {
+    cy.do(Accordion({ id: 'customFields' }).clickHeader());
+  },
+
   showOpenedLoans() {
     return cy.do(Link({ id: 'clickable-viewcurrentloans' }).click());
   },

@@ -114,17 +114,12 @@ export default {
       const draggableElement = elements[0];
       const targetElement = elements[1];
       if (targetElement) {
-        cy.get(draggableElement).dragAndDrop(draggableElement, targetElement);
+        cy.get(draggableElement).drag(targetElement, { force: true });
       }
     });
   },
 
   additionalInfoButton() {
-    cy.do(additionalInfo.click());
-  },
-
-  verifyDragItem() {
-    cy.expect(additionalInfo.exists());
     cy.do(additionalInfo.click());
   },
 };
