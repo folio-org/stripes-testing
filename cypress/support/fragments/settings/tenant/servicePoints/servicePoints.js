@@ -26,6 +26,7 @@ const getDefaultServicePointWithPickUpLocation = ({
 };
 
 export default {
+  defaultServicePoint,
   getDefaultServicePointWithPickUpLocation,
   getViaApi: (searchParams) => cy
     .okapiRequest({
