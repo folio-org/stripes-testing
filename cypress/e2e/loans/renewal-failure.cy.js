@@ -1,5 +1,4 @@
 import uuid from 'uuid';
-import moment from 'moment';
 import getRandomPostfix from '../../support/utils/stringTools';
 import TestType from '../../support/dictionary/testTypes';
 import DevTeams from '../../support/dictionary/devTeams';
@@ -156,7 +155,6 @@ describe('Renewal', () => {
     CheckinActions.checkinItemViaApi({
       itemBarcode: itemData.barcode,
       servicePointId,
-      checkInDate: moment.utc().format(),
     }).then(() => {
       Users.deleteViaApi(renewUserData.id);
       Users.deleteViaApi(renewOverrideUserData.id);

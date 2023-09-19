@@ -1,6 +1,5 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import uuid from 'uuid';
-import moment from 'moment';
 import TestType from '../../support/dictionary/testTypes';
 import DevTeams from '../../support/dictionary/devTeams';
 import RenewalActions from '../../support/fragments/loans/renewals';
@@ -159,12 +158,10 @@ describe('Renewal', () => {
     CheckinActions.checkinItemViaApi({
       itemBarcode: itemData.barcode,
       servicePointId,
-      checkInDate: moment.utc().format(),
     });
     CheckinActions.checkinItemViaApi({
       itemBarcode: secondItemBarcode,
       servicePointId,
-      checkInDate: moment.utc().format(),
     }).then(() => {
       users.deleteViaApi(renewUserData.id);
       cy.getInstance({
@@ -194,8 +191,7 @@ describe('Renewal', () => {
       cy.wait('@getEntries');
       // wait few seconds, that the user will be displayed
       cy.wait(2000);
-      UsersCard.openLoans();
-      UsersCard.showOpenedLoans();
+      UsersCard.viewCurrentLoans();
       RenewalActions.renewAllLoans();
       RenewalActions.confirmRenewalsSuccess();
     },

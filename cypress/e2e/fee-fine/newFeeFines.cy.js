@@ -179,8 +179,7 @@ describe('Fee/fine management', () => {
       cy.checkOutItem(testData.userProperties.barcode, itemBarcode);
       cy.verifyItemCheckOut();
       cy.visit(AppPaths.getUserPreviewPath(testData.userProperties.id));
-      UsersCard.openLoans();
-      UsersCard.showOpenedLoans();
+      UsersCard.viewCurrentLoans();
       NewFeeFine.openFromLoanDetails();
 
       initialCheckNewFeeFineFragment(testData.owner.name);
