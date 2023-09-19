@@ -121,8 +121,8 @@ export default {
       addCustomFieldDropdown.choose('Single select'),
       fieldLabel.fillIn(data.fieldLabel),
       helpText.fillIn(data.helpText),
-      MultiColumnListRow({ indexRow: 'row-1' }).find(TextField()).fillIn(data.label1),
-      MultiColumnListRow({ indexRow: 'row-2' }).find(TextField()).fillIn(data.label2),
+      MultiColumnListRow({ indexRow: 'row-1' }).find(TextField()).fillIn(data.firstLabel),
+      MultiColumnListRow({ indexRow: 'row-2' }).find(TextField()).fillIn(data.secondLabel),
       saveAndCloseButton.click(),
     ]);
     cy.expect(saveAndCloseButton.absent());

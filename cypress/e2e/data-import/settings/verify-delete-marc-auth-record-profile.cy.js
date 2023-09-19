@@ -13,7 +13,12 @@ describe('data-import', () => {
   describe('Settings', () => {
     let user;
 
-    const profiles = ['Job profiles', 'Match profiles', 'Action profiles', 'Field mapping profiles'];
+    const profiles = [
+      'Job profiles',
+      'Match profiles',
+      'Action profiles',
+      'Field mapping profiles',
+    ];
     const profileName = 'MARC Authority - Default Delete Authorities';
 
     before('create user', () => {
@@ -35,7 +40,7 @@ describe('data-import', () => {
       { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
       () => {
         cy.visit(SettingsMenu.dataImportSettingsPath);
-        profiles.forEach(profile => {
+        profiles.forEach((profile) => {
           DataImport.verifyDataImportProfiles(profile);
         });
 

@@ -42,7 +42,8 @@ describe('MARC Authority -> Edit Authority record', () => {
     ['655', '*', '*', '*', 'Added row (must indicate)'],
   ];
   const initialLDRValue = String.raw`04112cz\\a2200589n\\4500`;
-  const changesSavedCallout = 'This record has successfully saved and is in process. Changes may not appear immediately.';
+  const changesSavedCallout =
+    'This record has successfully saved and is in process. Changes may not appear immediately.';
   let changedLDRs = [
     {
       newContent: replaceByIndex(

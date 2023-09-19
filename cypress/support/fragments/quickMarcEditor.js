@@ -64,7 +64,9 @@ const unlinkButtonInsideModal = Button({ id: 'clickable-quick-marc-confirm-unlin
 const calloutAfterSaveAndClose = Callout(
   'This record has successfully saved and is in process. Changes may not appear immediately.',
 );
-const calloutUpdatedRecord = Callout('This record has successfully saved and is in process. Changes may not appear immediately.');
+const calloutUpdatedRecord = Callout(
+  'This record has successfully saved and is in process. Changes may not appear immediately.',
+);
 const calloutUpdatedLinkedBibRecord = Callout(
   'Record has been updated. 2 linked bibliographic record(s) updates have begun.',
 );
@@ -1099,7 +1101,7 @@ export default {
     cy.do(saveButton.click());
     cy.expect([
       Callout(
-        `This record has successfully saved and is in process. ${linkedRecordsNumber} linked bibliographic record(s) updates have begun.`
+        `This record has successfully saved and is in process. ${linkedRecordsNumber} linked bibliographic record(s) updates have begun.`,
       ).exists(),
       rootSection.absent(),
       viewMarcSection.exists(),

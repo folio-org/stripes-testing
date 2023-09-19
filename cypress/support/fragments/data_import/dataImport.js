@@ -449,8 +449,6 @@ export default {
   },
 
   verifyDataImportProfiles(profiles) {
-    cy.expect(
-      dataImportNavSection.find(NavListItem(profiles)).exists(),
-    );
+    cy.expect(dataImportNavSection.find(NavListItem(profiles)).exists());
   },
 };

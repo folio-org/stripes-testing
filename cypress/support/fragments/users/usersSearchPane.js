@@ -7,7 +7,6 @@ import {
   MultiColumnListCell,
   Pane,
   PaneHeader,
-  Section,
   Select,
   TextField,
 } from '../../../../interactors';
@@ -16,11 +15,6 @@ import {
 const waitClick = () => {
   cy.wait(1000);
 };
-const actionButton = Section({ id: 'pane-userdetails' }).find(Button('Actions'));
-const editButton = Button('Edit');
-const additionalInfo = Button('Additional information');
-const saveAndClose = Button('Save & close');
-const openLoanSectionButton = Button({ id: 'accordion-toggle-button-loansSection' });
 
 export default {
   waitLoading: () => cy.expect(PaneHeader('User search').exists()),
@@ -59,48 +53,12 @@ export default {
     cy.do(Pane({ id: 'users-search-results-pane' }).find(MultiColumnListCell(userName)).click());
   },
 
-  selectUsersFromList: (userName) => {
-    cy.do(Pane({ id: 'users-search-results-pane' }).find(Link(userName)).click());
-  },
-
   openUser(userName) {
     return cy.do(Link({ href: including(userName) }).click());
   },
+
   openUserCard(userName) {
     this.searchByUsername(userName);
     this.openUser(userName);
-  },
-
-  openUserLoanSection: () => {
-    cy.do([openLoanSectionButton.click()]);
-  },
-
-  verifySingleSelect: (name, label) => {
-    cy.do([
-      actionButton.click(),
-      editButton.click(),
-      Select(name).choose(label),
-      saveAndClose.click(),
-      additionalInfo.click(),
-    ]);
-  },
-
-  dragAndDropCustomFields: () => {
-    cy.get('[class^=FieldAccordionDraggableWrapper---]').then((elements) => {
-      const draggableElement = elements[0];
-      const targetElement = elements[1];
-      if (targetElement) {
-        cy.get(draggableElement).dragAndDrop(draggableElement, targetElement);
-      }
-    });
-  },
-
-  additionalInfoButton() {
-    cy.do(additionalInfo.click());
-  },
-
-  verifyDragItem() {
-    cy.expect(additionalInfo.exists());
-    cy.do(additionalInfo.click());
   },
 };
