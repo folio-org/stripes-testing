@@ -142,4 +142,23 @@ export default {
   verifyDeletedCustomFields(field) {
     cy.expect(Accordion(field).absent());
   },
+
+  dragAndDropCustomFields() {
+    cy.get('div[class^=accordionsWrapper-] [icon=drag-drop]').then((elements) => {
+      const draggableElement = elements[0];
+      const targetElement = elements[1];
+      // const draggableRect = draggableElement.getBoundingClientRect();
+      const targetRect = targetElement.getBoundingClientRect();
+
+      // Calculate the drag start and end points (center of elements)
+      // const startX = draggableRect.left + draggableRect.width / 2;
+      // const startY = draggableRect.top + draggableRect.height / 2;
+      const endX = targetRect.left + targetRect.width / 2;
+      const endY = targetRect.top + targetRect.height / 2;
+
+      if (targetElement) {
+        cy.get(draggableElement).drag(targetElement, { pageX: endX, pageY: endY, force: true });
+      }
+    });
+  },
 };

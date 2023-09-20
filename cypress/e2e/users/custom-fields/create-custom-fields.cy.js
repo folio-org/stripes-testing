@@ -20,62 +20,49 @@ describe('ui-users: Custom Fields', () => {
     );
   });
 
-  // after('delete test data', () => {
-  //   Users.deleteViaApi(user.userId);
-  // });
-
-  // it(
-  //   'C15693 Create a text field custom field (volaris)',
-  //   { tags: [TestTypes.extendedPath, DevTeams.volaris] },
-  //   () => {
-  //     const fieldData = {
-  //       fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
-  //       helpText: `autotestHelpText_${getRandomPostfix()}`,
-  //     };
-
-  //     cy.visit(TopMenu.customFieldsPath);
-  //     CustomFields.addCustomTextField(fieldData);
-  //     cy.visit(TopMenu.usersPath);
-  //     UsersSearchPane.searchByKeywords(user.username);
-  //     UserEdit.openEdit();
-  //     UserEdit.verifyTextFieldPresented(fieldData);
-
-  //     cy.visit(SettingsMenu.customFieldsPath);
-  //     CustomFields.deleteCustomField(fieldData.fieldLabel);
-  //   },
-  // );
-
-  // it(
-  //   'C15694 Create a text area custom field and add help text (volaris)',
-  //   { tags: [TestTypes.extendedPath, DevTeams.volaris] },
-  //   () => {
-  //     const fieldData = {
-  //       fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
-  //       helpText: `autotestHelpText_${getRandomPostfix()}`,
-  //     };
-
-  //     cy.visit(TopMenu.customFieldsPath);
-  //     CustomFields.addCustomTextArea(fieldData);
-  //     cy.visit(TopMenu.usersPath);
-  //     UsersSearchPane.searchByKeywords(user.username);
-  //     UserEdit.openEdit();
-  //     UserEdit.verifyAreaFieldPresented(fieldData);
-
-  //     cy.visit(SettingsMenu.customFieldsPath);
-  //     CustomFields.deleteCustomField(fieldData.fieldLabel);
-  //   },
-  // );
+  after('delete test data', () => {
+    Users.deleteViaApi(user.userId);
+  });
 
   it(
-    'C15701 Change custom fields order (volaris)',
-    { tags: [TestTypes.ideaLabsTests, DevTeams.ideaLabsTests] },
+    'C15693 Create a text field custom field (volaris)',
+    { tags: [TestTypes.extendedPath, DevTeams.volaris] },
     () => {
+      const fieldData = {
+        fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
+        helpText: `autotestHelpText_${getRandomPostfix()}`,
+      };
+
       cy.visit(TopMenu.customFieldsPath);
-      CustomFields.editButton();
-      UsersSearchPane.dragAndDropCustomFields();
+      CustomFields.addCustomTextField(fieldData);
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.searchByKeywords(user.username);
-      UsersCard.openCustomFieldsSection();
+      UserEdit.openEdit();
+      UserEdit.verifyTextFieldPresented(fieldData);
+
+      cy.visit(SettingsMenu.customFieldsPath);
+      CustomFields.deleteCustomField(fieldData.fieldLabel);
+    },
+  );
+
+  it(
+    'C15694 Create a text area custom field and add help text (volaris)',
+    { tags: [TestTypes.extendedPath, DevTeams.volaris] },
+    () => {
+      const fieldData = {
+        fieldLabel: `autotestFieldLabel_${getRandomPostfix()}`,
+        helpText: `autotestHelpText_${getRandomPostfix()}`,
+      };
+
+      cy.visit(TopMenu.customFieldsPath);
+      CustomFields.addCustomTextArea(fieldData);
+      cy.visit(TopMenu.usersPath);
+      UsersSearchPane.searchByKeywords(user.username);
+      UserEdit.openEdit();
+      UserEdit.verifyAreaFieldPresented(fieldData);
+
+      cy.visit(SettingsMenu.customFieldsPath);
+      CustomFields.deleteCustomField(fieldData.fieldLabel);
     },
   );
 
@@ -150,6 +137,20 @@ describe('ui-users: Custom Fields', () => {
 
       cy.visit(SettingsMenu.customFieldsPath);
       CustomFields.deleteCustomField(singleSelectData.data.fieldLabel);
+    },
+  );
+
+  it(
+    'C15701 Change custom fields order (volaris)',
+    { tags: [TestTypes.ideaLabsTests, DevTeams.ideaLabsTests] },
+    () => {
+      cy.visit(TopMenu.customFieldsPath);
+      CustomFields.editButton();
+      CustomFields.dragAndDropCustomFields();
+      // cy.pause();
+      // cy.visit(TopMenu.usersPath);
+      // UsersSearchPane.searchByKeywords(user.username);
+      // UsersCard.openCustomFieldsSection();
     },
   );
 });
