@@ -48,6 +48,12 @@
     "uuid": "^3.4.0"
   },
   "resolutions": {
-    "cypress": "^9.1.0"
+    "cypress": "10.9.0",
+    "chromedriver": "116.0.0"
+  },
+  "overrides": {
+    "bigtest": {
+      "chromedriver": "116.0.0"
+    }
   }
 }
