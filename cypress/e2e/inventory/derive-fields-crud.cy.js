@@ -51,7 +51,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
   before(() => {
     cy.createTempUser([
       Permissions.inventoryAll.gui,
-      Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+      Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
     ]).then((createdUserProperties) => {
       testUser = createdUserProperties;

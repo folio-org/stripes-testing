@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import { HTML, including } from '@interactors/html';
 import {
   Pane,
   Button,
@@ -11,7 +12,8 @@ import {
   Select,
   MultiSelect,
   TextArea,
-  HTML,
+  RadioButtonGroup,
+  RadioButton,
 } from '../../../../interactors';
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
@@ -188,11 +190,64 @@ export default {
   verifyAreaFieldPresented(fieldData) {
     cy.expect(TextArea(fieldData.fieldLabel).exists());
     cy.do(
-      Accordion('Custom fields')
+      customFieldsAccordion
         .find(TextArea(fieldData.fieldLabel))
         .find(Button({ ariaLabel: 'info' }))
         .click(),
     );
     cy.expect(HTML(fieldData.helpText).exists());
+  },
+
+  verifyCheckboxPresented(fieldData) {
+    cy.expect(customFieldsAccordion.find(Checkbox(fieldData.fieldLabel)).exists());
+    cy.do(
+      customFieldsAccordion
+        .find(Checkbox(fieldData.fieldLabel))
+        .find(Button({ ariaLabel: 'info' }))
+        .click(),
+    );
+    cy.expect(HTML(fieldData.helpText).exists());
+  },
+
+  verifyRadioButtonPresented(fieldData) {
+    cy.expect(RadioButtonGroup({ label: including(fieldData.data.fieldLabel) }).exists());
+    cy.expect(
+      customFieldsAccordion
+        .find(RadioButtonGroup(including(fieldData.data.fieldLabel)))
+        .find(RadioButton(fieldData.data.label1))
+        .exists(),
+    );
+    cy.expect(
+      customFieldsAccordion
+        .find(RadioButtonGroup(including(fieldData.data.fieldLabel)))
+        .find(RadioButton(fieldData.data.label2))
+        .exists(),
+    );
+    cy.do(
+      customFieldsAccordion
+        .find(RadioButtonGroup(fieldData.data.fieldLabel))
+        .find(Button({ ariaLabel: 'info' }))
+        .click(),
+    );
+    cy.expect(HTML(fieldData.data.helpText).exists());
+  },
+
+  verifySingleSelectPresented({ data }) {
+    cy.do(
+      Accordion('Custom fields')
+        .find(Select({ label: data.fieldLabel }))
+        .exists(),
+    );
+    cy.do(
+      Accordion('Custom fields')
+        .find(Select({ label: data.fieldLabel }))
+        .find(Button({ ariaLabel: 'info' }))
+        .click(),
+    );
+    cy.expect(HTML(data.helpText).exists());
+  },
+
+  selectSingleSelectValue: ({ data }) => {
+    cy.do(Select({ label: data.fieldLabel }).choose(data.firstLabel));
   },
 };

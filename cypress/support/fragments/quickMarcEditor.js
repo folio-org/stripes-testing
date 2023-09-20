@@ -64,9 +64,11 @@ const unlinkButtonInsideModal = Button({ id: 'clickable-quick-marc-confirm-unlin
 const calloutAfterSaveAndClose = Callout(
   'This record has successfully saved and is in process. Changes may not appear immediately.',
 );
+const calloutUpdatedRecord = Callout(
+  'This record has successfully saved and is in process. Changes may not appear immediately.',
+);
 const calloutOnDeriveFirst = Callout('Creating record may take several seconds.');
 const calloutOnDeriveSecond = Callout('Record created.');
-const calloutUpdatedRecord = Callout('Record has been updated.');
 const calloutUpdatedLinkedBibRecord = Callout(
   'Record has been updated. 2 linked bibliographic record(s) updates have begun.',
 );
@@ -241,16 +243,19 @@ const defaultFieldValues = {
 };
 defaultFieldValues.initialSubField = `${defaultFieldValues.subfieldPrefixInEditor}a `;
 defaultFieldValues.contentWithSubfield = `${defaultFieldValues.initialSubField}${defaultFieldValues.content}`;
-defaultFieldValues.getSourceContent = (contentInQuickMarcEditor) => contentInQuickMarcEditor.replace(
-  defaultFieldValues.subfieldPrefixInEditor,
-  defaultFieldValues.subfieldPrefixInSource,
-);
+defaultFieldValues.getSourceContent = (contentInQuickMarcEditor) =>
+  contentInQuickMarcEditor.replace(
+    defaultFieldValues.subfieldPrefixInEditor,
+    defaultFieldValues.subfieldPrefixInSource,
+  );
 
 const requiredRowsTags = ['LDR', '001', '005', '008', '999'];
 const readOnlyAuthorityTags = ['LDR', '001', '005', '999'];
 
-const getRowInteractorByRowNumber = (specialRowNumber) => QuickMarcEditor().find(QuickMarcEditorRow({ index: specialRowNumber }));
-const getRowInteractorByTagName = (tagName) => QuickMarcEditor().find(QuickMarcEditorRow({ tagValue: tagName }));
+const getRowInteractorByRowNumber = (specialRowNumber) =>
+  QuickMarcEditor().find(QuickMarcEditorRow({ index: specialRowNumber }));
+const getRowInteractorByTagName = (tagName) =>
+  QuickMarcEditor().find(QuickMarcEditorRow({ tagValue: tagName }));
 
 const tag008DefaultValuesHoldings = [
   { interactor: TextField('AcqStatus'), defaultValue: '\\' },
@@ -454,7 +459,7 @@ export default {
 
   clickSaveAndKeepEditing() {
     cy.do(saveAndKeepEditingBtn.click());
-    cy.expect(calloutUpdatedRecord.exists());
+    cy.expect(calloutAfterSaveAndClose.exists());
     cy.expect(rootSection.exists());
   },
 
@@ -681,9 +686,11 @@ export default {
     cy.then(() => QuickMarcEditor().presentedRowsProperties()).then((presentedRowsProperties) => {
       // TODO: move comparing logic into custome interactors matcher
       if (
-        !requiredRowsTags.every((tag) => presentedRowsProperties.find(
-          (rowProperties) => rowProperties.tag === tag && !rowProperties.isDeleteButtonExist,
-        ))
+        !requiredRowsTags.every((tag) =>
+          presentedRowsProperties.find(
+            (rowProperties) => rowProperties.tag === tag && !rowProperties.isDeleteButtonExist,
+          ),
+        )
       ) {
         assert.fail('Button Delete is presented into required row');
       }
@@ -888,24 +895,31 @@ export default {
   },
 
   checkNotDeletableTags(...tags) {
-    cy.then(() => QuickMarcEditor().presentedRowsProperties()).then((presentedRowsProperties) => presentedRowsProperties
-      .filter((rowProperties) => tags.includes(rowProperties.tag))
-      .forEach(
-        (specialRowsProperties) => cy.expect(specialRowsProperties.isDeleteButtonExist).to.be.false,
-      ));
+    cy.then(() => QuickMarcEditor().presentedRowsProperties()).then((presentedRowsProperties) =>
+      presentedRowsProperties
+        .filter((rowProperties) => tags.includes(rowProperties.tag))
+        .forEach(
+          (specialRowsProperties) =>
+            cy.expect(specialRowsProperties.isDeleteButtonExist).to.be.false,
+        ),
+    );
   },
 
   checkInitialInstance008Content() {
-    Object.values(validRecord.tag008BytesProperties).forEach((property) => cy.expect(property.interactor.has({ value: property.defaultValue })));
+    Object.values(validRecord.tag008BytesProperties).forEach((property) =>
+      cy.expect(property.interactor.has({ value: property.defaultValue })),
+    );
   },
 
   check008FieldsAbsent(...subfieldNames) {
-    subfieldNames.forEach((subfieldName) => cy.expect(
-      getRowInteractorByTagName('008')
-        .find(quickMarcEditorRowContent)
-        .find(TextField(subfieldName))
-        .absent(),
-    ));
+    subfieldNames.forEach((subfieldName) =>
+      cy.expect(
+        getRowInteractorByTagName('008')
+          .find(quickMarcEditorRowContent)
+          .find(TextField(subfieldName))
+          .absent(),
+      ),
+    );
   },
 
   checkSubfieldsPresenceInTag008() {
@@ -1077,9 +1091,9 @@ export default {
   },
 
   verifyAndDismissRecordUpdatedCallout() {
-    cy.expect(calloutUpdatedRecord.exists());
-    cy.do(calloutUpdatedRecord.dismiss());
-    cy.expect(calloutUpdatedRecord.absent());
+    cy.expect(calloutAfterSaveAndClose.exists());
+    cy.do(calloutAfterSaveAndClose.dismiss());
+    cy.expect(calloutAfterSaveAndClose.absent());
   },
 
   checkFourthBoxDisabled(rowIndex) {
@@ -1114,7 +1128,7 @@ export default {
     cy.do(saveButton.click());
     cy.expect([
       Callout(
-        `Record has been updated. ${linkedRecordsNumber} linked bibliographic record(s) updates have begun.`,
+        `This record has successfully saved and is in process. ${linkedRecordsNumber} linked bibliographic record(s) updates have begun.`,
       ).exists(),
       rootSection.absent(),
       viewMarcSection.exists(),
@@ -1288,5 +1302,20 @@ export default {
   verifyIndicatorValue(tag, indicatorValue, indicatorIndex = 0) {
     const indicator = indicatorIndex ? secondIndicatorBox : firstIndicatorBox;
     cy.expect(getRowInteractorByTagName(tag).find(indicator).has({ value: indicatorValue }));
+  },
+
+  updateValuesIn008Boxes(valuesArray) {
+    valuesArray.forEach((value, index) => {
+      cy.do(tag008DefaultValues[index].interactor.fillIn(value));
+    });
+    valuesArray.forEach((value, index) => {
+      cy.expect(tag008DefaultValues[index].interactor.has({ value }));
+    });
+  },
+
+  checkValuesIn008Boxes(valuesArray) {
+    valuesArray.forEach((value, index) => {
+      cy.expect(tag008DefaultValues[index].interactor.has({ value }));
+    });
   },
 };

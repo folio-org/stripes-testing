@@ -1,48 +1,23 @@
 import uuid from 'uuid';
-
-import moment from 'moment';
-import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
+import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
 import { getTestEntityValue } from '../../support/utils/stringTools';
-import {
-  ITEM_STATUS_NAMES,
-  REQUEST_TYPES,
-  REQUEST_LEVELS,
-  FULFILMENT_PREFERENCES,
-} from '../../support/constants';
+import { REQUEST_TYPES, REQUEST_LEVELS, FULFILMENT_PREFERENCES } from '../../support/constants';
 import RequestPolicy from '../../support/fragments/circulation/request-policy';
-import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import Checkout from '../../support/fragments/checkout/checkout';
 import Requests from '../../support/fragments/requests/requests';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import TestTypes from '../../support/dictionary/testTypes';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
-import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import AppPaths from '../../support/fragments/app-paths';
+import UserLoans from '../../support/fragments/users/loans/userLoans';
 import LoansPage from '../../support/fragments/loans/loansPage';
-import {
-  Button,
-  including,
-  Link,
-  MultiColumnList,
-  MultiColumnListCell,
-} from '../../../interactors';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import ManualCharges from '../../support/fragments/settings/users/manualCharges';
 
 describe('Loan Details', () => {
-  const instanceId = uuid();
-  const holdingId = uuid();
-  const itemId = uuid();
-  let addedCirculationRule;
   const feeFineType = {};
   const ownerData = {};
   const patronGroup = {
@@ -50,15 +25,10 @@ describe('Loan Details', () => {
   };
   let userData;
   let userForRequest;
-  const itemData = {
-    barcode: generateItemBarcode(),
-    title: getTestEntityValue('InstanceCircLog'),
-  };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
-      'autotestCircLog',
-      uuid(),
-    ),
+    folioInstances: InventoryInstances.generateFolioInstances(),
+    servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
+    requestsId: '',
   };
   const requestPolicyBody = {
     requestTypes: [REQUEST_TYPES.RECALL],
@@ -66,67 +36,30 @@ describe('Loan Details', () => {
     id: uuid(),
   };
 
-  before('Preconditions', () => {
-    cy.getAdminToken()
-      .then(() => {
-        ServicePoints.createViaApi(testData.userServicePoint);
-        testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
-        Location.createViaApi(testData.defaultLocation);
-        InventoryInstances.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
-          testData.instanceTypeId = instanceTypes[0].id;
-        });
-        InventoryInstances.getHoldingTypes({ limit: 1 }).then((holdingTypes) => {
-          testData.holdingTypeId = holdingTypes[0].id;
-        });
-        InventoryInstances.createLoanType({
-          name: getTestEntityValue('typeForCL'),
-        }).then((loanType) => {
-          testData.loanTypeId = loanType.id;
-        });
-        InventoryInstances.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
-          testData.materialTypeId = materialTypes[0].id;
-        });
-      })
-      .then(() => {
-        InventoryInstances.createFolioInstanceViaApi({
-          instance: {
-            id: instanceId,
-            instanceTypeId: testData.instanceTypeId,
-            title: itemData.title,
-          },
-          holdings: [
-            {
-              id: holdingId,
-              holdingsTypeId: testData.holdingTypeId,
-              permanentLocationId: testData.defaultLocation.id,
-            },
-          ],
-          items: [
-            {
-              id: itemId,
-              barcode: itemData.barcode,
-              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-              permanentLoanType: { id: testData.loanTypeId },
-              materialType: { id: testData.materialTypeId },
-            },
-          ],
-        }).then((specialInstanceIds) => {
-          itemData.instanceId = specialInstanceIds.instanceId;
+  before('Create test data', () => {
+    cy.getAdminToken().then(() => {
+      ServicePoints.createViaApi(testData.servicePoint);
+      testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
+      Location.createViaApi(testData.defaultLocation).then((location) => {
+        InventoryInstances.createFolioInstancesViaApi({
+          folioInstances: testData.folioInstances,
+          location,
         });
       });
+    });
 
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
     RequestPolicy.createViaApi(requestPolicyBody);
 
-    UsersOwners.createViaApi(UsersOwners.getDefaultNewOwner(uuid(), 'owner'))
-      .then(({ id, desc }) => {
-        ownerData.name = desc;
+    UsersOwners.createViaApi(UsersOwners.getDefaultNewOwner())
+      .then(({ id, owner }) => {
         ownerData.id = id;
+        ownerData.name = owner;
       })
       .then(() => {
-        UsersOwners.addServicePointsViaApi(ownerData, [testData.userServicePoint]);
+        UsersOwners.addServicePointsViaApi(ownerData, [testData.servicePoint]);
         ManualCharges.createViaApi({
           ...ManualCharges.defaultFeeFineType,
           ownerId: ownerData.id,
@@ -139,10 +72,10 @@ describe('Loan Details', () => {
 
     cy.createTempUser(
       [
-        permissions.uiUsersViewLoans.gui,
-        permissions.requestsAll.gui,
-        permissions.uiUsersfeefinesView.gui,
-        permissions.inventoryAll.gui,
+        Permissions.uiUsersViewLoans.gui,
+        Permissions.requestsAll.gui,
+        Permissions.uiUsersfeefinesView.gui,
+        Permissions.inventoryAll.gui,
       ],
       patronGroup.name,
     )
@@ -150,171 +83,137 @@ describe('Loan Details', () => {
         userData = userProperties;
       })
       .then(() => {
-        UserEdit.addServicePointViaApi(testData.userServicePoint.id, userData.userId);
-        cy.createTempUser([permissions.requestsAll.gui], patronGroup.name).then(
+        UserEdit.addServicePointViaApi(testData.servicePoint.id, userData.userId);
+
+        cy.createTempUser([Permissions.requestsAll.gui], patronGroup.name).then(
           (userProperties) => {
             userForRequest = userProperties;
-            UserEdit.addServicePointViaApi(
-              testData.userServicePoint.id,
-              userForRequest.userId,
-              testData.userServicePoint.id,
-            );
+            UserEdit.addServicePointViaApi(testData.servicePoint.id, userForRequest.userId);
+
+            Checkout.checkoutItemViaApi({
+              itemBarcode: testData.folioInstances[0].barcodes[0],
+              servicePointId: testData.servicePoint.id,
+              userBarcode: userData.barcode,
+            }).then((checkoutResponse) => {
+              Requests.createNewRequestViaApi({
+                fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
+                holdingsRecordId: testData.folioInstances[0].holdingId,
+                instanceId: testData.folioInstances[0].instanceId,
+                item: { barcode: testData.folioInstances[0].barcodes[0] },
+                itemId: checkoutResponse.itemId,
+                pickupServicePointId: testData.servicePoint.id,
+                requestDate: new Date(),
+                requestExpirationDate: new Date(new Date().getTime() + 86400000),
+                requestLevel: REQUEST_LEVELS.ITEM,
+                requestType: REQUEST_TYPES.RECALL,
+                requesterId: userForRequest.userId,
+              }).then((request) => {
+                testData.requestsId = request.body.id;
+              });
+            });
           },
         );
+
+        // TODO: should run with created user
+        cy.loginAsAdmin();
+        // cy.login(userData.username, userData.password);
       });
   });
 
-  beforeEach('Create Request', () => {
-    Checkout.checkoutItemViaApi({
-      id: uuid(),
-      itemBarcode: itemData.barcode,
-      loanDate: moment.utc().format(),
-      servicePointId: testData.userServicePoint.id,
-      userBarcode: userData.barcode,
-    }).then((checkoutResponse) => {
-      Requests.createNewRequestViaApi({
-        fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
-        holdingsRecordId: testData.holdingTypeId,
-        instanceId: itemData.instanceId,
-        item: { barcode: itemData.barcode },
-        itemId: checkoutResponse.itemId,
-        pickupServicePointId: testData.userServicePoint.id,
-        requestDate: new Date(),
-        requestExpirationDate: new Date(new Date().getTime() + 86400000),
-        requestLevel: REQUEST_LEVELS.ITEM,
-        requestType: REQUEST_TYPES.RECALL,
-        requesterId: userForRequest.userId,
-      }).then((request) => {
-        testData.requestsId = request.body.id;
-      });
-    });
-    cy.loginAsAdmin();
-  });
-
-  afterEach('Delete Request', () => {
-    CheckInActions.checkinItemViaApi({
-      itemBarcode: itemData.barcode,
-      servicePointId: testData.userServicePoint.id,
-      checkInDate: new Date().toISOString(),
-    });
+  after('Delete test data', () => {
     Requests.deleteRequestViaApi(testData.requestsId);
-  });
-
-  after('Deleting created entities', () => {
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
-    UserEdit.changeServicePointPreferenceViaApi(userForRequest.userId, [
-      testData.userServicePoint.id,
-    ]);
+    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
+    UserEdit.changeServicePointPreferenceViaApi(userForRequest.userId, [testData.servicePoint.id]);
     ManualCharges.deleteViaApi(feeFineType.id);
     UsersOwners.deleteViaApi(ownerData.id);
-    ItemActions.deleteItemViaApi(itemId);
-    InventoryHoldings.deleteHoldingRecordViaApi(holdingId);
-    ServicePoints.deleteViaApi(testData.userServicePoint.id);
-    Users.deleteViaApi(userForRequest.userId);
-    InventoryInstance.deleteInstanceViaApi(instanceId);
+    ServicePoints.deleteViaApi(testData.servicePoint.id);
+    testData.folioInstances.forEach((item) => {
+      InventoryInstances.deleteInstanceViaApi({
+        instance: item,
+        servicePoint: testData.servicePoint,
+        shouldCheckIn: true,
+      });
+    });
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    InventoryInstances.deleteLoanType(testData.loanTypeId);
+    Users.deleteViaApi(userForRequest.userId);
+    // TODO: should deleted created user
+    // Users.deleteViaApi(userData.userId);
   });
 
   it(
     'C561 Loan details: test links (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    { tags: [TestTypes.criticalPath, DevTeams.vega] },
     () => {
+      const itemBarcode = testData.folioInstances[0].barcodes[0];
       cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-      LoansPage.createNewFeeFine(ownerData.name, feeFineType.name);
+      UserLoans.createNewFeeFine(itemBarcode, ownerData.name, feeFineType.name);
+
       // Click linked value for item title
-      cy.do(
-        MultiColumnList()
-          .find(MultiColumnListCell(including(itemData.barcode)))
-          .click(),
-      );
-      LoansPage.verifyLinkRedirectsCorrectPage(Link(including(itemData.title)), 'Instance');
+      UserLoans.openLoanDetails(itemBarcode);
+      LoansPage.verifyLinkRedirectsCorrectPage({
+        title: testData.folioInstances[0].instanceTitle,
+        expectedPage: 'Instance',
+      });
 
       // Click linked value for barcode
       cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-      cy.do(
-        MultiColumnList()
-          .find(MultiColumnListCell(including(itemData.barcode)))
-          .click(),
-      );
-      LoansPage.verifyLinkRedirectsCorrectPage(Link(including(itemData.barcode)), 'Item');
+      UserLoans.openLoanDetails(itemBarcode);
+      LoansPage.verifyLinkRedirectsCorrectPage({
+        title: itemBarcode,
+        expectedPage: 'Item',
+      });
 
       // Click linked value for Loan policy
       cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-      cy.do(
-        MultiColumnList()
-          .find(MultiColumnListCell(including(itemData.barcode)))
-          .click(),
-      );
-      LoansPage.verifyLinkRedirectsCorrectPage(
-        Link({ href: including('/settings/circulation/loan-policies') }),
-        'Loan policies',
-      );
+      UserLoans.openLoanDetails(itemBarcode);
+      LoansPage.verifyLinkRedirectsCorrectPage({
+        href: '/settings/circulation/loan-policies',
+        expectedPage: 'Loan policies',
+      });
 
       // Click on linked value for Fine incurred
       cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-      cy.do(
-        MultiColumnList()
-          .find(MultiColumnListCell(including(itemData.barcode)))
-          .click(),
-      );
-      LoansPage.verifyLinkRedirectsCorrectPage(
-        Button({ className: including('feefineButton') }),
-        'Fee/fine details',
-      );
+      UserLoans.openLoanDetails(itemBarcode);
+      LoansPage.verifyButtonRedirectsToCorrectPage({
+        title: '100.00',
+        expectedPage: 'Fee/fine details',
+      });
 
       // Add another fee/fine to loan and click linked value for Fine incurred
       cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-      LoansPage.createNewFeeFine(ownerData.name, feeFineType.name);
-      cy.do(
-        MultiColumnList()
-          .find(MultiColumnListCell(including(itemData.barcode)))
-          .click(),
-      );
-      LoansPage.verifyLinkRedirectsCorrectPage(
-        Button({ className: including('feefineButton') }),
-        'Fees/fines',
-      );
+      UserLoans.createNewFeeFine(itemBarcode, ownerData.name, feeFineType.name);
+      UserLoans.openLoanDetails(itemBarcode);
+      LoansPage.verifyButtonRedirectsToCorrectPage({
+        title: '200.00',
+        expectedPage: 'Fees/fines',
+      });
 
       // Click on linked value for overdue policy
       cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-      cy.do(
-        MultiColumnList()
-          .find(MultiColumnListCell(including(itemData.barcode)))
-          .click(),
-      );
-      LoansPage.verifyLinkRedirectsCorrectPage(
-        Link(including('Overdue fine policy')),
-        'Overdue fine policies',
-      );
+      UserLoans.openLoanDetails(itemBarcode);
+      LoansPage.verifyLinkRedirectsCorrectPage({
+        href: '/settings/circulation/fine-policies',
+        expectedPage: 'Overdue fine policies',
+      });
 
       // Click on linked value for lost item policy
       cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-      cy.do(
-        MultiColumnList()
-          .find(MultiColumnListCell(including(itemData.barcode)))
-          .click(),
-      );
-      LoansPage.verifyLinkRedirectsCorrectPage(
-        Link(including('Lost item fee policy')),
-        'Lost item fee policies',
-      );
+      UserLoans.openLoanDetails(itemBarcode);
+      LoansPage.verifyLinkRedirectsCorrectPage({
+        href: '/settings/circulation/lost-item-fee-policy',
+        expectedPage: 'Lost item fee policies',
+      });
 
       // Click on linked value for Request queue
       cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-      cy.do(
-        MultiColumnList()
-          .find(MultiColumnListCell(including(itemData.barcode)))
-          .click(),
-      );
-      LoansPage.verifyLinkRedirectsCorrectPage(Link('1'), 'Requests');
+      UserLoans.openLoanDetails(itemBarcode);
+      LoansPage.verifyLinkRedirectsCorrectPage({ href: '/requests?', expectedPage: 'Requests' });
     },
   );
 });
