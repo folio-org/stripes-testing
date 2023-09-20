@@ -201,13 +201,16 @@ export default {
     ]);
   },
 
-  reOpenOrder: () => {
+  reOpenOrder: (orderNumber) => {
     cy.do([
       orderDetailsPane
         .find(PaneHeader({ id: 'paneHeaderorder-details' }).find(actionsButton))
         .click(),
       Button('Reopen').click(),
     ]);
+    InteractorsTools.checkCalloutMessage(
+      `The Purchase order - ${orderNumber} has been successfully reopened`,
+    );
   },
 
   receiveOrderViaActions: () => {
