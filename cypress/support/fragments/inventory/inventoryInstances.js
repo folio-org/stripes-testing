@@ -428,12 +428,14 @@ export default {
     count = 1,
     status = ITEM_STATUS_NAMES.AVAILABLE,
     properties = {},
+    materialTypes,
   } = {}) {
     return [...Array(count)].map((index) => ({
       instanceTitle: `Instance-${getRandomPostfix()}`,
       barcodes: [generateUniqueItemBarcodeWithShift(index)],
       status,
       properties,
+      materialTypes,
     }));
   },
   createFolioInstancesViaApi({ folioInstances = [], location = {}, sourceId } = {}) {
@@ -475,7 +477,11 @@ export default {
             barcode,
             status: { name: item.status },
             permanentLoanType: { id: types.loanTypeId },
-            materialType: { id: types.materialTypeId },
+            materialType: {
+              id: folioInstances[index].materialTypes
+                ? folioInstances[index].materialTypes[index].id
+                : types.materialTypeId,
+            },
             ...item.properties,
           })),
         };

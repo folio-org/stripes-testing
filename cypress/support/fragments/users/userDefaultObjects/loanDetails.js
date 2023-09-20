@@ -200,4 +200,18 @@ export default {
       },
     );
   },
+  openFeeFine(amount) {
+    cy.do(Button({ className: including('feefineButton-') }, including(amount)).click());
+  },
+  checkSourceName(row, sourceName) {
+    cy.then(() => MultiColumnListHeader({ id: 'list-column-source' }).index()).then(
+      (columnIndex) => {
+        cy.expect(
+          LoanActionsList.find(
+            MultiColumnListCell(including(sourceName), { row, columnIndex }),
+          ).exists(),
+        );
+      },
+    );
+  },
 };
