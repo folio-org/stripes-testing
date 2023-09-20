@@ -1,15 +1,12 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import TestTypes from '../../../support/dictionary/testTypes';
-import Parallelization from '../../../support/dictionary/parallelization';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InteractorsTools from '../../../support/utils/interactorsTools';
-import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import DevTeams from '../../../support/dictionary/devTeams';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
@@ -25,8 +22,8 @@ describe('data-import', () => {
 
     before('create test data', () => {
       cy.createTempUser([
-        permissions.moduleDataImportEnabled.gui,
-        permissions.dataImportDeleteLogs.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.dataImportDeleteLogs.gui,
       ])
         .then((userProperties) => {
           userId = userProperties.userId;

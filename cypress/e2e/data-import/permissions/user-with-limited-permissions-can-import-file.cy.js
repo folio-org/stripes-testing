@@ -1,8 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
-import Parallelization from '../../../support/dictionary/parallelization';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import {
   LOAN_TYPE_NAMES,
   ITEM_STATUS_NAMES,
@@ -64,16 +61,16 @@ describe('data-import', () => {
 
     before('create test data', () => {
       cy.createTempUser([
-        permissions.inventoryAll.gui,
-        permissions.moduleDataImportEnabled.gui,
-        permissions.settingsDataImportEnabled.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
       ]).then((userProperties) => {
         firstUser = userProperties;
       });
 
       cy.createTempUser([
-        permissions.moduleDataImportEnabled.gui,
-        permissions.settingsDataImportCanViewOnly.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportCanViewOnly.gui,
       ]).then((userProperties) => {
         secondUser = userProperties;
       });

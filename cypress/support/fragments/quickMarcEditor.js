@@ -24,11 +24,13 @@ const rootSection = Section({ id: 'quick-marc-editor-pane' });
 const viewMarcSection = Section({ id: 'marc-view-pane' });
 const cancelButton = Button('Cancel');
 const closeWithoutSavingBtn = Button('Close without saving');
+const xButton = Button({ ariaLabel: 'Close ' });
 const addFieldButton = Button({ ariaLabel: 'plus-sign' });
 const deleteFieldButton = Button({ ariaLabel: 'trash' });
 const linkToMarcRecordButton = Button({ ariaLabel: 'link' });
 const unlinkIconButton = Button({ ariaLabel: 'unlink' });
 const viewAuthorutyIconButton = Button({ ariaLabel: 'eye-open' });
+const arrowUpButton = Button({ ariaLabel: 'arrow-up' });
 const saveAndCloseButton = Button({ id: 'quick-marc-record-save' });
 const saveAndKeepEditingBtn = Button({ id: 'quick-marc-record-save-edit' });
 const saveAndCloseButtonEnabled = Button({ id: 'quick-marc-record-save', disabled: false });
@@ -62,7 +64,9 @@ const unlinkButtonInsideModal = Button({ id: 'clickable-quick-marc-confirm-unlin
 const calloutAfterSaveAndClose = Callout(
   'This record has successfully saved and is in process. Changes may not appear immediately.',
 );
-const calloutUpdatedRecord = Callout('Record has been updated.');
+const calloutUpdatedRecord = Callout(
+  'This record has successfully saved and is in process. Changes may not appear immediately.',
+);
 const calloutUpdatedLinkedBibRecord = Callout(
   'Record has been updated. 2 linked bibliographic record(s) updates have begun.',
 );
@@ -437,7 +441,7 @@ export default {
 
   clickSaveAndKeepEditing() {
     cy.do(saveAndKeepEditingBtn.click());
-    cy.expect(calloutUpdatedRecord.exists());
+    cy.expect(calloutAfterSaveAndClose.exists());
     cy.expect(rootSection.exists());
   },
 
@@ -509,6 +513,10 @@ export default {
         .find(TextArea({ name: `records[${rowNumber ?? this.getInitialRowsCount() + 1}].content` }))
         .has({ value: content ?? defaultFieldValues.contentWithSubfield }),
     );
+  },
+
+  moveFieldUp(rowNumber) {
+    cy.do(QuickMarcEditorRow({ index: rowNumber }).find(arrowUpButton).click());
   },
 
   checkFieldContentMatch(selector, regExp) {
@@ -852,6 +860,10 @@ export default {
     cy.do(cancelButton.click());
   },
 
+  closeUsingCrossButton() {
+    cy.do(xButton.click());
+  },
+
   closeWithoutSavingAfterChange() {
     cy.do(cancelButton.click());
     cy.expect(closeWithoutSavingBtn.exists());
@@ -1052,9 +1064,9 @@ export default {
   },
 
   verifyAndDismissRecordUpdatedCallout() {
-    cy.expect(calloutUpdatedRecord.exists());
-    cy.do(calloutUpdatedRecord.dismiss());
-    cy.expect(calloutUpdatedRecord.absent());
+    cy.expect(calloutAfterSaveAndClose.exists());
+    cy.do(calloutAfterSaveAndClose.dismiss());
+    cy.expect(calloutAfterSaveAndClose.absent());
   },
 
   checkFourthBoxDisabled(rowIndex) {
@@ -1089,7 +1101,7 @@ export default {
     cy.do(saveButton.click());
     cy.expect([
       Callout(
-        `Record has been updated. ${linkedRecordsNumber} linked bibliographic record(s) updates have begun.`,
+        `This record has successfully saved and is in process. ${linkedRecordsNumber} linked bibliographic record(s) updates have begun.`,
       ).exists(),
       rootSection.absent(),
       viewMarcSection.exists(),
@@ -1263,5 +1275,20 @@ export default {
   verifyIndicatorValue(tag, indicatorValue, indicatorIndex = 0) {
     const indicator = indicatorIndex ? secondIndicatorBox : firstIndicatorBox;
     cy.expect(getRowInteractorByTagName(tag).find(indicator).has({ value: indicatorValue }));
+  },
+
+  updateValuesIn008Boxes(valuesArray) {
+    valuesArray.forEach((value, index) => {
+      cy.do(tag008DefaultValues[index].interactor.fillIn(value));
+    });
+    valuesArray.forEach((value, index) => {
+      cy.expect(tag008DefaultValues[index].interactor.has({ value }));
+    });
+  },
+
+  checkValuesIn008Boxes(valuesArray) {
+    valuesArray.forEach((value, index) => {
+      cy.expect(tag008DefaultValues[index].interactor.has({ value }));
+    });
   },
 };

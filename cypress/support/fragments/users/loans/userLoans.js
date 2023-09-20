@@ -1,19 +1,27 @@
+import moment from 'moment';
 import { matching } from 'bigtest';
 import {
   Pane,
   MultiColumnListRow,
   MultiColumnListCell,
+  Select,
   HTML,
   including,
   Button,
   KeyValue,
+  PaneHeader,
 } from '../../../../../interactors';
 import ItemRecordView from '../../inventory/item/itemRecordView';
 import { REQUEST_METHOD } from '../../../constants';
+import LoansPage from '../../loans/loansPage';
+import ConfirmItemStatusModal from './confirmItemStatusModal';
 
+const loansHistoryPane = PaneHeader({ id: 'paneHeaderpane-loanshistory' });
 const claimReturnedButton = Button('Claim returned');
 const declaredLostButton = Button('Declare lost');
 const itemDetailsButton = Button('Item details');
+const markAsMissingButton = Button('Mark as missing');
+const newFeeFineButton = Button('New fee/fine');
 const renewButton = Button('Renew');
 const ellipsisButton = Button({ icon: 'ellipsis' });
 const rowInList = MultiColumnListRow({ indexRow: 'row-0' });
@@ -45,12 +53,6 @@ export default {
   verifyClaimReturnedButtonIsVisible() {
     return cy.expect(claimReturnedButton.exists());
   },
-  claimItemReturnedViaApi: (apiBody, loanId) => cy.okapiRequest({
-    method: 'POST',
-    path: `circulation/loans/${loanId}/claim-item-returned`,
-    body: apiBody,
-    isDefaultSearchParamsRequired: false,
-  }),
   checkOffLoanByBarcode: (itemBarcode) => {
     // interactors don't allow to find element inside the cell column
     return cy
@@ -63,22 +65,78 @@ export default {
   selectLoan: (barcode) => {
     cy.do(rowInList.find(HTML(including(barcode))).click());
   },
-  openLoan: (itemBarcode) => {
-    return cy.do(MultiColumnListRow({ text: matching(itemBarcode), isContainer: false }).click());
+  openLoanDetails: (itemBarcode) => {
+    cy.do(MultiColumnListRow({ text: matching(itemBarcode), isContainer: false }).click());
+    return LoansPage;
   },
-  declareLoanLost: (barcode) => {
+  closeLoansHistory() {
+    cy.do(loansHistoryPane.find(Button({ ariaLabel: 'Close ' })).click());
+  },
+  expandActionsMenu(barcode) {
     cy.get('div[class^="mclRow--"]')
       .contains('div[class^="mclCell-"]', barcode)
       .then((elem) => {
         elem.parent()[0].querySelector('button[icon="ellipsis"]').click();
       });
-    cy.expect(declaredLostButton.exists());
-    return cy.do(declaredLostButton.click());
   },
-  declareLoanLostViaApi: (apiBody, loanId) => cy.okapiRequest({
+  declareLoanLost(barcode) {
+    this.expandActionsMenu(barcode);
+    cy.expect(declaredLostButton.exists());
+    cy.do(declaredLostButton.click());
+
+    return ConfirmItemStatusModal;
+  },
+  markAsMissing(barcode) {
+    this.expandActionsMenu(barcode);
+    cy.expect(markAsMissingButton.exists());
+    cy.do(markAsMissingButton.click());
+
+    return ConfirmItemStatusModal;
+  },
+  createNewFeeFine(barcode, ownerId, feeFineType) {
+    this.expandActionsMenu(barcode);
+    cy.do([
+      newFeeFineButton.click(),
+      Select({ id: 'ownerId' }).choose(ownerId),
+      Select({ id: 'feeFineType' }).choose(feeFineType),
+    ]);
+    cy.expect(Button('Charge only').has({ disabled: false }));
+    cy.do(Button('Charge only').click());
+  },
+  declareLoanLostViaApi: (
+    {
+      comment = 'Reason why the item is declared lost',
+      declaredLostDateTime = moment.utc().format(),
+      id,
+      servicePointId,
+    } = {},
+    loanId,
+  ) => cy.okapiRequest({
     method: 'POST',
     path: `circulation/loans/${loanId}/declare-item-lost`,
-    body: apiBody,
+    body: {
+      comment,
+      declaredLostDateTime,
+      id,
+      servicePointId,
+    },
+    isDefaultSearchParamsRequired: false,
+  }),
+  claimItemReturnedViaApi: (
+    {
+      comment = 'Reason why the item is claime returned',
+      itemClaimedReturnedDateTime = moment.utc().format(),
+      id,
+    },
+    loanId,
+  ) => cy.okapiRequest({
+    method: 'POST',
+    path: `circulation/loans/${loanId}/claim-item-returned`,
+    body: {
+      comment,
+      itemClaimedReturnedDateTime,
+      id,
+    },
     isDefaultSearchParamsRequired: false,
   }),
   renewItemViaApi: (apiBody) => cy.okapiRequest({
@@ -111,10 +169,6 @@ export default {
     });
   },
   openActionsMenuOfLoanByBarcode,
-  declareLoanLostByBarcode: (itemBarcode) => {
-    openActionsMenuOfLoanByBarcode(itemBarcode);
-    return cy.do(declaredLostButton.click());
-  },
   openItemRecordInInventory: (barcode) => {
     cy.get('div[class^="mclRow--"]')
       .contains('div[class^="mclCell-"]', barcode)

@@ -1,13 +1,10 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
-import permissions from '../../../support/dictionary/permissions';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import DevTeams from '../../../support/dictionary/devTeams';
-import Parallelization from '../../../support/dictionary/parallelization';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
@@ -43,12 +40,12 @@ describe('inventory', () => {
       });
 
       cy.createTempUser([
-        permissions.uiInventoryViewCreateEditInstances.gui,
-        permissions.uiInventorySingleRecordImport.gui,
-        permissions.uiInventorySettingsConfigureSingleRecordImport.gui,
-        permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        permissions.remoteStorageView.gui,
-        permissions.settingsDataImportEnabled.gui,
+        Permissions.uiInventoryViewCreateEditInstances.gui,
+        Permissions.uiInventorySingleRecordImport.gui,
+        Permissions.uiInventorySettingsConfigureSingleRecordImport.gui,
+        Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+        Permissions.remoteStorageView.gui,
+        Permissions.settingsDataImportEnabled.gui,
       ]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password);
@@ -63,7 +60,7 @@ describe('inventory', () => {
 
     it(
       'C343349 Overlay existing Source = FOLIO Instance by import of single MARC Bib record from OCLC (folijet)',
-      { tags: [testTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchByParameter(
