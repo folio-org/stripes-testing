@@ -22,7 +22,7 @@ describe('Data-export', () => {
   });
 
   it(
-    'C389473 Verify that "Settings (Data export): display list of settings pages" permission is searchable and renamed',
+    'C389473 Verify that "Settings (Data export): display list of settings pages" permission is searchable and renamed (firebird) (Taas)',
     { tags: [devTeams.firebird] },
     () => {
       dataExportPermission.openUsersMenu();
