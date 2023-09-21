@@ -1,11 +1,12 @@
 import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../constants';
+import { randomFourDigitNumber } from '../../utils/stringTools';
 
 const defaultNote = ({ typeId, agreementId }) => {
   return {
     domain: 'agreements',
     typeId,
-    title: 'Default Note Title',
+    title: `Default Note Title ${randomFourDigitNumber()}`,
     content: 'Default Note Details',
     links: [
       {
@@ -17,8 +18,19 @@ const defaultNote = ({ typeId, agreementId }) => {
   };
 };
 
+const defaultUnassignedNote = ({ typeId }) => {
+  return {
+    domain: 'agreements',
+    typeId,
+    title: `Default  Unassigned Note Title ${randomFourDigitNumber()}`,
+    content: 'Default Note Details',
+    id: uuid(),
+  };
+};
+
 export default {
   defaultNote,
+  defaultUnassignedNote,
 
   createViaApi: (note) => {
     return cy
