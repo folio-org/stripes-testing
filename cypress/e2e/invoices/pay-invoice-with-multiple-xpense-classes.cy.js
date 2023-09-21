@@ -105,9 +105,9 @@ describe('Invoices', () => {
     });
   });
 
-  // after(() => {
-  //   Users.deleteViaApi(user.userId);
-  // });
+  after(() => {
+    Users.deleteViaApi(user.userId);
+  });
 
   it(
     'C15859 Pay an invoice with multiple "Expense classes" assigned to it (thunderjet)',
