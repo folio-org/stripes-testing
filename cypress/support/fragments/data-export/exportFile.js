@@ -7,6 +7,7 @@ import {
   Pane,
   MultiColumnListCell,
   PaneHeader,
+  MultiColumnList,
 } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 import FileManager from '../../utils/fileManager';
@@ -168,5 +169,10 @@ export default {
 
   clickCancelButton() {
     cy.do(Button('Cancel').click());
+  },
+
+  verifyPaneWithRecords() {
+    cy.expect(Pane('Logs').exists());
+    cy.expect(MultiColumnList({ id: 'job-logs-list' }).exists());
   },
 };
