@@ -18,7 +18,8 @@ describe('MARC -> MARC Authority', () => {
     marcValue: 'Cartoons & Comics',
     valueForUpdate: '$a Cartoons & Animations',
     valueAfterUpdate: 'Cartoons & Animations',
-    calloutMessage: 'Record has been updated.',
+    calloutMessage:
+      'This record has successfully saved and is in process. Changes may not appear immediately.',
   };
 
   const user = {};

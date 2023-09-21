@@ -214,10 +214,9 @@ describe('ui-users-loans: Loans', () => {
       UsersSearchPane.searchByKeywords(testData.userId);
       UsersSearchPane.openUser(testData.userId);
       UsersCard.waitLoading();
-      UsersCard.openLoans();
-      UsersCard.showOpenedLoans();
+      UsersCard.viewCurrentLoans();
 
-      UserLoans.openLoan(newFirstItemData.barcode);
+      UserLoans.openLoanDetails(newFirstItemData.barcode);
 
       LoanDetails.checkAction(0, 'Checked out');
       LoanDetails.startDeclareLost();

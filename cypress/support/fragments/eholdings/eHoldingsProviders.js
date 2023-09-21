@@ -2,6 +2,7 @@ import {
   Accordion,
   Button,
   ListItem,
+  PaneHeader,
   RadioButton,
   Section,
   Spinner,
@@ -75,5 +76,9 @@ export default {
       packagesSection.find(ListItem({ text: including(filterStatuses.selected) })).exists(),
       packagesSection.find(ListItem({ text: including(filterStatuses.notSelected) })).absent(),
     ]);
+  },
+
+  verifyProviderHeaderTitle: (title) => {
+    cy.expect(PaneHeader(title).exists());
   },
 };

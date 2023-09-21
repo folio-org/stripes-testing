@@ -273,9 +273,8 @@ describe('Patron Block: Maximum number of overdue items', () => {
       Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
 
       const itemForRenew = itemsData.itemsWithSeparateInstance[0];
-      UsersCard.openLoans();
-      UsersCard.showOpenedLoans();
-      UserLoans.openLoan(itemForRenew.barcode);
+      UsersCard.viewCurrentLoans();
+      UserLoans.openLoanDetails(itemForRenew.barcode);
       UserLoans.renewItem(itemForRenew.barcode, true);
       Renewals.renewBlockedPatron(renewComment);
 

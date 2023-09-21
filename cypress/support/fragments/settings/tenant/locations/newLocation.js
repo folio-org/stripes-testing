@@ -13,12 +13,12 @@ const getDefaultLocation = (
   const location = {
     id: uuid(),
     isActive: true,
-    // requared field
     institutionId: specialInstitutionId || uuid(),
-    // requared field
+    institutionName: `autotest_institution_${getRandomPostfix()}`,
     campusId: specialCampusId || uuid(),
-    // requared field
+    campusName: `autotest_campuse_${getRandomPostfix()}`,
     libraryId: specialLibraryId || uuid(),
+    libraryName: `autotest_library_${getRandomPostfix()}`,
     // servicePointIds must have real Servi point id
     servicePointIds: [specialServicePointId],
     name: `autotest_location_name_${getRandomPostfix()}`,
@@ -29,17 +29,22 @@ const getDefaultLocation = (
   };
 
   Institutions.createViaApi(
-    Institutions.getDefaultInstitutions({ id: location.institutionId }),
+    Institutions.getDefaultInstitutions({
+      id: location.institutionId,
+      name: location.institutionName,
+    }),
   ).then(() => {
     Campuses.createViaApi(
       Campuses.getDefaultCampuse({
         id: location.campusId,
+        name: location.campusName,
         institutionId: location.institutionId,
       }),
     ).then(() => {
       Libraries.createViaApi(
         Libraries.getDefaultLibrary({
           id: location.libraryId,
+          name: location.libraryName,
           campusId: location.campusId,
         }),
       );
@@ -51,11 +56,33 @@ const getDefaultLocation = (
 export default {
   getDefaultLocation,
 
-  createViaApi: (locationProperties) => {
+  createViaApi: ({
+    id,
+    code,
+    name,
+    isActive,
+    institutionId,
+    campusId,
+    libraryId,
+    discoveryDisplayName,
+    servicePointIds,
+    primaryServicePoint,
+  }) => {
     return cy
       .okapiRequest({
         path: 'locations',
-        body: locationProperties,
+        body: {
+          id,
+          code,
+          name,
+          isActive,
+          institutionId,
+          campusId,
+          libraryId,
+          discoveryDisplayName,
+          servicePointIds,
+          primaryServicePoint,
+        },
         method: 'POST',
         isDefaultSearchParamsRequired: false,
       })
@@ -63,21 +90,6 @@ export default {
         return response.body;
       });
   },
-
-  getDefaultUiLocation: (institutionId, campusId, libraryId) => ({
-    body: {
-      id: uuid(),
-      name: `autotest_location_${getRandomPostfix()}`,
-      code: uuid(),
-      discoveryDisplayName: `autotest_discovery_display_name_${getRandomPostfix()}`,
-      isActive: true,
-      institutionId,
-      campusId,
-      libraryId,
-      servicePointIds: [],
-      primaryServicePoint: '',
-    },
-  }),
 
   deleteViaApiIncludingInstitutionCampusLibrary: (
     institutionId,

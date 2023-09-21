@@ -64,7 +64,9 @@ const unlinkButtonInsideModal = Button({ id: 'clickable-quick-marc-confirm-unlin
 const calloutAfterSaveAndClose = Callout(
   'This record has successfully saved and is in process. Changes may not appear immediately.',
 );
-const calloutUpdatedRecord = Callout('Record has been updated.');
+const calloutUpdatedRecord = Callout(
+  'This record has successfully saved and is in process. Changes may not appear immediately.',
+);
 const calloutUpdatedLinkedBibRecord = Callout(
   'Record has been updated. 2 linked bibliographic record(s) updates have begun.',
 );
@@ -439,7 +441,7 @@ export default {
 
   clickSaveAndKeepEditing() {
     cy.do(saveAndKeepEditingBtn.click());
-    cy.expect(calloutUpdatedRecord.exists());
+    cy.expect(calloutAfterSaveAndClose.exists());
     cy.expect(rootSection.exists());
   },
 
@@ -1062,9 +1064,9 @@ export default {
   },
 
   verifyAndDismissRecordUpdatedCallout() {
-    cy.expect(calloutUpdatedRecord.exists());
-    cy.do(calloutUpdatedRecord.dismiss());
-    cy.expect(calloutUpdatedRecord.absent());
+    cy.expect(calloutAfterSaveAndClose.exists());
+    cy.do(calloutAfterSaveAndClose.dismiss());
+    cy.expect(calloutAfterSaveAndClose.absent());
   },
 
   checkFourthBoxDisabled(rowIndex) {
@@ -1099,7 +1101,7 @@ export default {
     cy.do(saveButton.click());
     cy.expect([
       Callout(
-        `Record has been updated. ${linkedRecordsNumber} linked bibliographic record(s) updates have begun.`,
+        `This record has successfully saved and is in process. ${linkedRecordsNumber} linked bibliographic record(s) updates have begun.`,
       ).exists(),
       rootSection.absent(),
       viewMarcSection.exists(),
@@ -1273,5 +1275,20 @@ export default {
   verifyIndicatorValue(tag, indicatorValue, indicatorIndex = 0) {
     const indicator = indicatorIndex ? secondIndicatorBox : firstIndicatorBox;
     cy.expect(getRowInteractorByTagName(tag).find(indicator).has({ value: indicatorValue }));
+  },
+
+  updateValuesIn008Boxes(valuesArray) {
+    valuesArray.forEach((value, index) => {
+      cy.do(tag008DefaultValues[index].interactor.fillIn(value));
+    });
+    valuesArray.forEach((value, index) => {
+      cy.expect(tag008DefaultValues[index].interactor.has({ value }));
+    });
+  },
+
+  checkValuesIn008Boxes(valuesArray) {
+    valuesArray.forEach((value, index) => {
+      cy.expect(tag008DefaultValues[index].interactor.has({ value }));
+    });
   },
 };

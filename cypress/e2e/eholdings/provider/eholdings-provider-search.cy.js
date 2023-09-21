@@ -9,7 +9,7 @@ describe('eHoldings', () => {
   describe('Provider', () => {
     let userId;
 
-    before(() => {
+    beforeEach(() => {
       cy.createTempUser([
         Permissions.uieHoldingsRecordsEdit.gui,
         Permissions.moduleeHoldingsEnabled.gui,
@@ -22,7 +22,7 @@ describe('eHoldings', () => {
       });
     });
 
-    after(() => {
+    afterEach(() => {
       Users.deleteViaApi(userId);
     });
 
@@ -35,6 +35,17 @@ describe('eHoldings', () => {
         EHoldingsProviders.clickSearchIcon();
         EHoldingsProviders.bySelectionStatusOpen('Selected');
         EHoldingsProviders.verifyOnlySelectedPackagesInResults();
+      },
+    );
+
+    it(
+      'C682 Search providers for [Sage] (spitfire)',
+      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      () => {
+        const providerTitle = 'SAGE';
+        EHoldingsProvidersSearch.byProvider(providerTitle);
+        EHoldingsProviders.viewProvider();
+        EHoldingsProviders.verifyProviderHeaderTitle(providerTitle);
       },
     );
   });

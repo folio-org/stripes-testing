@@ -326,6 +326,14 @@ export default {
     this.selectNotYetFilledRequest();
   },
 
+  filterRequestsByTag(tag) {
+    cy.do(
+      Pane({ title: 'Search & filter' })
+        .find(MultiSelect({ ariaLabelledby: 'tags' }))
+        .select(tag),
+    );
+  },
+
   addTag(tag) {
     waitLoadingTags();
     cy.do(tagsPane.find(MultiSelect({ ariaLabelledby: 'input-tag-label' })).choose(tag));
