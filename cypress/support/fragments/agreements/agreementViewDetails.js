@@ -30,6 +30,7 @@ const actionsButton = Button('Actions');
 const deleteConfirmationModal = Modal({ id: 'delete-agreement-confirmation' });
 const agreementLineDeleteModel = Modal({ id: 'delete-agreement-line-confirmation' });
 const newNoteButton = Button('New', { id: 'note-create-button' });
+const assignUnassignButton = Button('Assign / Unassign', { id: 'note-assign-button' });
 const notesList = MultiColumnList({ id: 'notes-list' });
 const deleteButtonInConfirmation = Button('Delete', {
   id: 'clickable-delete-agreement-confirmation-confirm',
@@ -121,6 +122,11 @@ export default {
   clickOnNewButton() {
     cy.expect(rootSection.exists());
     cy.do(rootSection.find(newNoteButton).click());
+  },
+
+  clickOnAssignUnassignButton() {
+    cy.expect(rootSection.exists());
+    cy.do(rootSection.find(assignUnassignButton).click());
   },
 
   checkNotesCount(notesCount) {
