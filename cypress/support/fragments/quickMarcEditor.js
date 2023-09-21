@@ -67,6 +67,8 @@ const calloutAfterSaveAndClose = Callout(
 const calloutUpdatedRecord = Callout(
   'This record has successfully saved and is in process. Changes may not appear immediately.',
 );
+const calloutOnDeriveFirst = Callout('Creating record may take several seconds.');
+const calloutOnDeriveSecond = Callout('Record created.');
 const calloutUpdatedLinkedBibRecord = Callout(
   'Record has been updated. 2 linked bibliographic record(s) updates have begun.',
 );
@@ -241,16 +243,19 @@ const defaultFieldValues = {
 };
 defaultFieldValues.initialSubField = `${defaultFieldValues.subfieldPrefixInEditor}a `;
 defaultFieldValues.contentWithSubfield = `${defaultFieldValues.initialSubField}${defaultFieldValues.content}`;
-defaultFieldValues.getSourceContent = (contentInQuickMarcEditor) => contentInQuickMarcEditor.replace(
-  defaultFieldValues.subfieldPrefixInEditor,
-  defaultFieldValues.subfieldPrefixInSource,
-);
+defaultFieldValues.getSourceContent = (contentInQuickMarcEditor) =>
+  contentInQuickMarcEditor.replace(
+    defaultFieldValues.subfieldPrefixInEditor,
+    defaultFieldValues.subfieldPrefixInSource,
+  );
 
 const requiredRowsTags = ['LDR', '001', '005', '008', '999'];
 const readOnlyAuthorityTags = ['LDR', '001', '005', '999'];
 
-const getRowInteractorByRowNumber = (specialRowNumber) => QuickMarcEditor().find(QuickMarcEditorRow({ index: specialRowNumber }));
-const getRowInteractorByTagName = (tagName) => QuickMarcEditor().find(QuickMarcEditorRow({ tagValue: tagName }));
+const getRowInteractorByRowNumber = (specialRowNumber) =>
+  QuickMarcEditor().find(QuickMarcEditorRow({ index: specialRowNumber }));
+const getRowInteractorByTagName = (tagName) =>
+  QuickMarcEditor().find(QuickMarcEditorRow({ tagValue: tagName }));
 
 const tag008DefaultValuesHoldings = [
   { interactor: TextField('AcqStatus'), defaultValue: '\\' },
@@ -291,9 +296,13 @@ export default {
     return validRecord.lastRowNumber;
   },
 
-  addNewField(tag = defaultFieldValues.freeTags[0], fieldContent = defaultFieldValues.content) {
-    this.addRow();
-    return this.fillAllAvailableValues(fieldContent, tag);
+  addNewField(
+    tag = defaultFieldValues.freeTags[0],
+    fieldContent = defaultFieldValues.content,
+    rowNumber,
+  ) {
+    this.addRow(rowNumber);
+    return this.fillAllAvailableValues(fieldContent, tag, rowNumber);
   },
 
   addNewFieldWithSubField(tag) {
@@ -405,6 +414,15 @@ export default {
       calloutAfterSaveAndClose.exists(),
       rootSection.absent(),
       instanceDetailsPane.exists(),
+    ]);
+  },
+
+  continueWithSaveAndCheckNewInstanceCreated() {
+    cy.do(continueWithSaveButton.click());
+    cy.expect([
+      calloutOnDeriveFirst.exists(),
+      calloutOnDeriveSecond.exists(),
+      rootSection.absent(),
     ]);
   },
 
@@ -668,9 +686,11 @@ export default {
     cy.then(() => QuickMarcEditor().presentedRowsProperties()).then((presentedRowsProperties) => {
       // TODO: move comparing logic into custome interactors matcher
       if (
-        !requiredRowsTags.every((tag) => presentedRowsProperties.find(
-          (rowProperties) => rowProperties.tag === tag && !rowProperties.isDeleteButtonExist,
-        ))
+        !requiredRowsTags.every((tag) =>
+          presentedRowsProperties.find(
+            (rowProperties) => rowProperties.tag === tag && !rowProperties.isDeleteButtonExist,
+          ),
+        )
       ) {
         assert.fail('Button Delete is presented into required row');
       }
@@ -875,24 +895,31 @@ export default {
   },
 
   checkNotDeletableTags(...tags) {
-    cy.then(() => QuickMarcEditor().presentedRowsProperties()).then((presentedRowsProperties) => presentedRowsProperties
-      .filter((rowProperties) => tags.includes(rowProperties.tag))
-      .forEach(
-        (specialRowsProperties) => cy.expect(specialRowsProperties.isDeleteButtonExist).to.be.false,
-      ));
+    cy.then(() => QuickMarcEditor().presentedRowsProperties()).then((presentedRowsProperties) =>
+      presentedRowsProperties
+        .filter((rowProperties) => tags.includes(rowProperties.tag))
+        .forEach(
+          (specialRowsProperties) =>
+            cy.expect(specialRowsProperties.isDeleteButtonExist).to.be.false,
+        ),
+    );
   },
 
   checkInitialInstance008Content() {
-    Object.values(validRecord.tag008BytesProperties).forEach((property) => cy.expect(property.interactor.has({ value: property.defaultValue })));
+    Object.values(validRecord.tag008BytesProperties).forEach((property) =>
+      cy.expect(property.interactor.has({ value: property.defaultValue })),
+    );
   },
 
   check008FieldsAbsent(...subfieldNames) {
-    subfieldNames.forEach((subfieldName) => cy.expect(
-      getRowInteractorByTagName('008')
-        .find(quickMarcEditorRowContent)
-        .find(TextField(subfieldName))
-        .absent(),
-    ));
+    subfieldNames.forEach((subfieldName) =>
+      cy.expect(
+        getRowInteractorByTagName('008')
+          .find(quickMarcEditorRowContent)
+          .find(TextField(subfieldName))
+          .absent(),
+      ),
+    );
   },
 
   checkSubfieldsPresenceInTag008() {
