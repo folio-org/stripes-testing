@@ -2,7 +2,6 @@ import moment from 'moment';
 import { matching } from 'bigtest';
 import {
   Pane,
-  MultiColumnList,
   MultiColumnListRow,
   MultiColumnListCell,
   Select,
