@@ -25,9 +25,8 @@ describe('data-import', () => {
   describe('Log details', () => {
     let user;
     let instanceHrid;
-    const quantityOfItems = '1';
-    const instanceTitle =
-      'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)';
+    const quantityOfItems = '11';
+    const instanceTitle = 'Protozoological abstracts.';
     const nameMarcFile = `C356801autotestFile.${getRandomPostfix()}.mrc`;
     const collectionOfMappingAndActionProfiles = [
       {

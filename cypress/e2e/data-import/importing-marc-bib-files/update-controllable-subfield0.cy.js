@@ -30,9 +30,9 @@ describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     const testData = {};
     // unique file name to upload
-    const nameForUpdatedMarcFile = `C375098autotestFile${getRandomPostfix()}.mrc`;
-    const nameForExportedMarcFile = `C375098autotestFile${getRandomPostfix()}.mrc`;
-    const nameForCSVFile = `C375098autotestFile${getRandomPostfix()}.csv`;
+    const nameForUpdatedMarcFile = `C385665autotestFile${getRandomPostfix()}.mrc`;
+    const nameForExportedMarcFile = `C385665autotestFile${getRandomPostfix()}.mrc`;
+    const nameForCSVFile = `C385665autotestFile${getRandomPostfix()}.csv`;
     const mappingProfile = {
       name: 'Update MARC Bib records by matching 999 ff $s subfield value',
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
