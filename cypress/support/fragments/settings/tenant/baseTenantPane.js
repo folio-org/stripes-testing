@@ -13,9 +13,6 @@ export const getDefaultTenant = (props = {}) => ({
 export default {
   ...SettingsPane,
   rootPane,
-  viewTable() {
-    // should be overriden in child modules
-  },
   checkNoActionButtons() {
     SettingsPane.checkAddNewBtnAbsent();
     SettingsPane.checkColumnAbsent('Actions');

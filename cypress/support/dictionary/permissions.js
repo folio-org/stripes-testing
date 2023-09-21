@@ -379,6 +379,10 @@ export default {
     internal: 'ui-users.settings.view',
     gui: 'Settings (Users): View all settings',
   },
+  uiUserLoansChangeDueDate: {
+    internal: 'ui-users.loans.change-due-date',
+    gui: 'Users: User loans change due date',
+  },
   // Remote Storage
   remoteStorageCRUD: {
     internal: 'ui-remote-storage.settings.remote-storages.edit',
