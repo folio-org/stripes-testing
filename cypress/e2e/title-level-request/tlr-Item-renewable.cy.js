@@ -280,9 +280,8 @@ describe('TLR: Item renew', () => {
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userForCheckOut.barcode);
       UsersCard.waitLoading();
-      UsersCard.openLoans();
-      UsersCard.showOpenedLoans();
-      UserLoans.openLoan(instanceData.itemsData[0].barcode);
+      UsersCard.viewCurrentLoans();
+      UserLoans.openLoanDetails(instanceData.itemsData[0].barcode);
       UserLoans.renewItem(instanceData.itemsData[0].barcode, true);
       LoanDetails.checkAction(0, 'Renewed');
 
@@ -290,9 +289,8 @@ describe('TLR: Item renew', () => {
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userForCheckOut.barcode);
       UsersCard.waitLoading();
-      UsersCard.openLoans();
-      UsersCard.showOpenedLoans();
-      UserLoans.openLoan(instanceData.itemsData[1].barcode);
+      UsersCard.viewCurrentLoans();
+      UserLoans.openLoanDetails(instanceData.itemsData[1].barcode);
       Renewals.checkLoansPage();
     },
   );
@@ -318,10 +316,9 @@ describe('TLR: Item renew', () => {
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userForCheckOut.barcode);
       UsersCard.waitLoading();
-      UsersCard.openLoans();
-      UsersCard.showOpenedLoans();
+      UsersCard.viewCurrentLoans();
       cy.get('@itemBarcode').then((barcode) => {
-        UserLoans.openLoan(barcode);
+        UserLoans.openLoanDetails(barcode);
       });
       Renewals.checkLoansPage();
     },

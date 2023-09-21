@@ -22,6 +22,7 @@ import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
 import devTeams from '../../support/dictionary/devTeams';
+// eslint-disable-next-line no-unused-vars
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 
@@ -53,7 +54,7 @@ describe('Fee/fine management', () => {
               testData.owner = { id, name: owner };
               ManualCharges.createViaApi({
                 ...ManualCharges.defaultFeeFineType,
-                ownerId: owner.id,
+                ownerId: id,
               }).then((manualCharge) => {
                 testData.feeFineType = {
                   id: manualCharge.id,
@@ -64,10 +65,8 @@ describe('Fee/fine management', () => {
                     id: createdPaymentMethod.id,
                     name: createdPaymentMethod.name,
                   };
-                  // providing path in the login function doesn't working
-                  // TODO: investigate
                   cy.loginAsAdmin();
-                  cy.visit(AppPaths.getUserPreviewPath(testData.userProperties.id));
+                  cy.visit(AppPaths.getUserPreviewPathWithQuery(testData.userProperties.id));
                   UsersCard.waitLoading();
                 });
               });
@@ -93,7 +92,8 @@ describe('Fee/fine management', () => {
             });
           })
           .then(() => {
-            OtherSettings.setOtherSettingsViaApi({ prefPatronIdentifier: 'barcode,username' });
+            // eslint-disable-next-line spaced-comment
+            // OtherSettings.setOtherSettingsViaApi({ prefPatronIdentifier: 'barcode,username' });
             cy.createInstance({
               instance: {
                 instanceTypeId: testData.instanceType,
@@ -152,7 +152,6 @@ describe('Fee/fine management', () => {
 
         PayFeeFaine.submitAndConfirm();
       };
-
       // Scenario 1: CHARGING MANUAL FEE/FINE USING BUTTON FROM USER INFORMATION
       UsersCard.openFeeFines();
       UsersCard.startFeeFineAdding();
@@ -160,7 +159,6 @@ describe('Fee/fine management', () => {
 
       initialCheckNewFeeFineFragment();
       createFee();
-
       // Scenario 2: CHARGING MANUAL FEE/FINE USING BUTTON ON "FEES/FINES HISTORY"
       UsersCard.openFeeFines();
       UsersCard.viewAllFeesFines();
@@ -168,24 +166,19 @@ describe('Fee/fine management', () => {
 
       initialCheckNewFeeFineFragment(testData.owner.name);
       createFee();
-
       // Scenario 3: CHARGING MANUAL FEE/FINES USING ELLIPSIS OPTION FROM OPEN/CLOSED LOANS
       // waiting cypress runner ti be able to get a command
       // without wait, randomly doesn't redirecting browser to the checkin page
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(2000);
       cy.visit(topMenu.checkOutPath);
-
       cy.checkOutItem(testData.userProperties.barcode, itemBarcode);
       cy.verifyItemCheckOut();
-      cy.visit(AppPaths.getUserPreviewPath(testData.userProperties.id));
-      UsersCard.openLoans();
-      UsersCard.showOpenedLoans();
+      cy.visit(AppPaths.getUserPreviewPathWithQuery(testData.userProperties.id));
+      UsersCard.viewCurrentLoans();
       NewFeeFine.openFromLoanDetails();
-
       initialCheckNewFeeFineFragment(testData.owner.name);
       createFee();
-
       // Scenario 4: CHARGING MANUAL FEE/FINES USING ELLIPSIS OPTION FROM CHECK-IN
       // waiting cypress runner ti be able to get a command
       // without wait, randomly doesn't redirecting browser to the checkin page

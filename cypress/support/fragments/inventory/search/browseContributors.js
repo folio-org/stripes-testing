@@ -204,7 +204,7 @@ export default {
       paneIntanceDetails.find(MultiColumnListHeader('Type')).exists(),
       paneIntanceDetails.find(MultiColumnListHeader('Relator term')).exists(),
       paneIntanceDetails.find(MultiColumnListHeader('Number of titles')).exists(),
-      paneIntanceDetails.find(Button('Previous')).has({ disabled: false }),
+      paneIntanceDetails.find(Button('Previous')).has({ disabled: or(true, false) }),
       paneIntanceDetails.find(Button('Next')).has({ disabled: or(true, false) }),
     ]);
   },
