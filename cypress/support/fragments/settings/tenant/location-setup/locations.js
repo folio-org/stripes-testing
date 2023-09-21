@@ -11,13 +11,9 @@ import {
   MultiColumnListCell,
   MultiColumnListRow,
   Pane,
+  Select,
+  including,
 } from '../../../../../../interactors';
-
-const selectInstitution = () => TenantPane.selectOption('Institution', 'KU');
-
-const selectCampus = () => TenantPane.selectOption('Campus', '(E)');
-
-const selectLibrary = () => TenantPane.selectOption('Library', '(E)');
 
 const addButton = Button('New');
 const table = MultiColumnList({ id: 'locations-list' });
@@ -42,11 +38,6 @@ export default {
   waitLoading() {
     TenantPane.waitLoading('Locations');
   },
-  viewTable() {
-    selectInstitution();
-    selectCampus();
-    selectLibrary();
-  },
   checkNoActionButtons() {
     cy.expect(addButton.absent());
 
@@ -54,9 +45,15 @@ export default {
     cy.expect(detailsPane.exists());
     cy.expect(actionsBtn.absent());
   },
-  selectInstitution,
-  selectCampus,
-  selectLibrary,
+  selectInstitution() {
+    cy.do(Select('Institution').choose(including('KU')));
+  },
+  selectCampus() {
+    cy.do(Select('Campus').choose(including('E)')));
+  },
+  selectLibrary() {
+    cy.do(Select('Library').choose(including('E)')));
+  },
   createNewLocation() {
     cy.do(addButton.click());
   },
