@@ -7,6 +7,7 @@ import {
   MultiColumnListRow,
   Callout,
   PaneContent,
+  HTML,
 } from '../../../../../interactors';
 import NewActionProfile from './newActionProfile';
 
@@ -88,4 +89,5 @@ export default {
 
   checkListOfExistingProfilesIsDisplayed: () => cy.expect(PaneContent({ id: 'pane-results-content' }).exists()),
   verifyActionMenuAbsent: () => cy.expect(resultsPane.find(actionsButton).absent()),
+  verifyActionProfileAbsent: () => cy.expect(resultsPane.find(HTML(including('The list contains no items'))).exists()),
 };

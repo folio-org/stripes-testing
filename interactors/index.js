@@ -72,6 +72,7 @@ export { default as Section } from './section';
 export { default as Select } from './select';
 export { default as Selection, SelectionList, SelectionOption } from './selection';
 export { default as Spinner } from './spinner';
+export { default as TableRow } from './tableRow';
 export { default as TextField, TextFieldIcon } from './text-field';
 export { default as TextArea } from './textarea';
 export { Tooltip, TooltipProximity } from './tooltip';

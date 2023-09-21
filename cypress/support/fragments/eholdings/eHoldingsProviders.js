@@ -78,7 +78,7 @@ export default {
     ]);
   },
 
-  verifyProviderHeaderTitle: title => {
+  verifyProviderHeaderTitle: (title) => {
     cy.expect(PaneHeader(title).exists());
-  }
+  },
 };
