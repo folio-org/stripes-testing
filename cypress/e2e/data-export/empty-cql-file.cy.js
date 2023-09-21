@@ -53,7 +53,7 @@ describe('Data-export', () => {
   });
 
   it(
-    'C399097 Verify trigger Data export with an empty .cql file',
+    'C399097 Verify trigger Data export with an empty .cql file (firebird) (Taas)',
     { tags: [devTeams.firebird] },
     () => {
       ExportFileHelper.verifyPaneWithRecords();
