@@ -51,4 +51,20 @@ export default {
   verifyRecordContainsDuplicatedContent: (value, quantity) => {
     cy.get(`td:contains("${value}")`).then((elements) => elements.length === quantity);
   },
+
+  checkFieldContentMatch(tag, regExp) {
+    if (tag === 'LDR') {
+      cy.xpath('//td[text()[contains(.,"LEADER")]]')
+        .invoke('text')
+        .then((text) => {
+          expect(text).to.match(regExp);
+        });
+    } else {
+      cy.xpath(`//td[text()="${tag}"]/following-sibling::td`)
+        .invoke('text')
+        .then((text) => {
+          expect(text).to.match(regExp);
+        });
+    }
+  },
 };

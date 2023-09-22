@@ -39,7 +39,7 @@ describe('Recieving notice: Checkout', () => {
     format: 'Email',
     action: NOTICE_ACTIONS.checkin,
     noticeName: NOTICE_CATEGORIES.loan.name,
-    noticeId: NOTICE_CATEGORIES.loan.id,
+    noticeId: 'loan',
   };
   const patronGroup = {
     name: 'groupToTestNoticeCheckout' + getRandomPostfix(),

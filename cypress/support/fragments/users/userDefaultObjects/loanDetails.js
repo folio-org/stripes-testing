@@ -18,6 +18,8 @@ import {
 import { ITEM_STATUS_NAMES } from '../../../constants';
 import DateTools from '../../../utils/dateTools';
 import { getFullName } from '../../../utils/users';
+import FeeFinesDetails from '../feeFineDetails';
+import PayFeeFaine from '../payFeeFaine';
 
 const DECLARE_LOST_MODAL_TITLE = 'Confirm item status: Declared lost';
 const LOAN_ACTIONS_LIST_ID = 'list-loanactions';
@@ -175,19 +177,27 @@ export default {
       },
     );
   },
-  checkSource(row, user) {
+  checkSource(row, source) {
     cy.then(() => MultiColumnListHeader({ id: 'list-column-source' }).index()).then(
       (columnIndex) => {
-        cy.expect(
-          LoanActionsList.find(
-            MultiColumnListCell({
-              row,
-              columnIndex,
-            }),
-          )
-            .find(Link(getFullName(user), { href: including(`/users/view/${user.id}`) }))
-            .exists(),
-        );
+        if (typeof source === 'string') {
+          cy.expect(
+            LoanActionsList.find(
+              MultiColumnListCell(including(source), { row, columnIndex }),
+            ).exists(),
+          );
+        } else {
+          cy.expect(
+            LoanActionsList.find(
+              MultiColumnListCell({
+                row,
+                columnIndex,
+              }),
+            )
+              .find(Link(getFullName(source), { href: including(`/users/view/${source.id}`) }))
+              .exists(),
+          );
+        }
       },
     );
   },
@@ -199,5 +209,29 @@ export default {
         );
       },
     );
+  },
+  openFeeFine(amount) {
+    cy.do(Button({ className: including('feefineButton-') }, including(amount)).click());
+  },
+  declareItemLost(comment) {
+    this.checkAction(0, 'Checked out');
+    this.startDeclareLost();
+    this.finishDeclareLost(comment);
+  },
+  checkLoanClosed() {
+    this.checkAction(0, 'Closed loan');
+    this.checkStatusInList(0, 'Lost and paid');
+    this.checkSource(0, 'System');
+    this.checkComments(0, '-');
+  },
+  payFeeFine(amount, paymentMethod) {
+    FeeFinesDetails.openActions().then(() => {
+      FeeFinesDetails.openPayModal();
+    });
+    PayFeeFaine.checkAmount(amount);
+    PayFeeFaine.setPaymentMethod(paymentMethod);
+    PayFeeFaine.setAmount(amount);
+    PayFeeFaine.checkRestOfPay(amount);
+    PayFeeFaine.submitAndConfirm();
   },
 };
