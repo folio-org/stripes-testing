@@ -233,4 +233,16 @@ export default {
       Select({ name: 'fulfillmentPreference' }, including(Option({ value: preference }))).exists(),
     );
   },
+
+  enterRequesterInfoWithRequestType(newRequest) {
+    cy.do(requesterBarcodeInput.fillIn(newRequest.requesterBarcode));
+    cy.intercept('/proxiesfor?*').as('getUsers');
+    cy.wait(2000);
+    cy.do(enterRequesterBarcodeButton.click());
+    cy.wait(1000);
+    this.chooseRequestType(REQUEST_TYPES.PAGE);
+    cy.expect(selectServicePoint.exists());
+    cy.wait('@getUsers');
+    this.choosepickupServicePoint(newRequest.pickupServicePoint);
+  },
 };
