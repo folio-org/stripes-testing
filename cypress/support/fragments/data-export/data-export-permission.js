@@ -6,7 +6,7 @@ import {
   PaneContent,
   Modal,
   SearchField,
-  HTML,
+  MultiColumnList,
 } from '../../../../interactors';
 import TopMenu from '../topMenu';
 
@@ -16,14 +16,17 @@ const userDetailsPane = Pane({ id: 'pane-userdetails' });
 const activeStatusCheckboxId = '#clickable-filter-active-active';
 const resultsPaneContent = PaneContent({ id: 'users-search-results-pane-content' });
 const editOption = Button('Edit');
+const permissionsToggleButton = Button({ id: 'accordion-toggle-button-permissions' });
 const userPermissionsAccordion = Accordion({ id: 'permissions' });
 const addPermissionButton = Button('Add permission');
 const selectPermissionsModal = Modal({ id: 'permissions-modal' });
 const permissionsSearch = SearchField();
 const searchButton = Button('Search');
 const resetAllButton = Button('Reset all');
+const permissionsList = MultiColumnList({ id: '#list-permissions' });
 const actionsButtonLocator =
   '#paneHeaderpane-userdetails > .last---PgcVW > .paneMenu---DWlKD > .dropdown---MS9PB';
+const gridCellLink = '[role="gridcell"]>a';
 let totalRows;
 
 export default {
@@ -38,7 +41,7 @@ export default {
   },
 
   openUsersProfile() {
-    cy.get('[role="gridcell"]>a').then((elements) => {
+    cy.get(gridCellLink).then((elements) => {
       const lastEl = elements[elements.length - 1];
       lastEl.click();
     });
@@ -60,7 +63,7 @@ export default {
   },
 
   openSelectPermissions() {
-    cy.get('#accordion-toggle-button-permissions').scrollIntoView();
+    permissionsToggleButton.perform((el) => el.scrollIntoView());
     cy.do(userPermissionsAccordion.clickHeader());
     cy.do(addPermissionButton.click());
     cy.expect(selectPermissionsModal.exists());
@@ -73,30 +76,30 @@ export default {
   },
 
   verifyPermissionsFiltered(permission) {
-    cy.get('#list-permissions')
-      .invoke('attr', 'aria-rowcount')
-      .then((rowCount) => {
+    permissionsList.perform((el) => {
+      el.invoke('attr', 'aria-rowcount').then((rowCount) => {
         for (let i = 0; i < rowCount - 1; i++) {
           const statusField = MultiColumnListCell({ row: i, columnIndex: 1 });
           cy.expect(statusField.has({ content: permission[i] }));
         }
       });
+    });
   },
 
   resetAll() {
     cy.do(resetAllButton.click());
-    cy.get('#list-permissions')
-      .invoke('attr', 'aria-rowcount')
-      .then((rowCount) => {
+    permissionsList.perform((el) => {
+      el.invoke('attr', 'aria-rowcount').then((rowCount) => {
         expect(rowCount).to.equal(totalRows);
       });
+    });
   },
 
   permissionsCount() {
-    cy.get('#list-permissions')
-      .invoke('attr', 'aria-rowcount')
-      .then((rowCount) => {
+    permissionsList.perform((el) => {
+      el.invoke('attr', 'aria-rowcount').then((rowCount) => {
         totalRows = rowCount;
       });
+    });
   },
 };
