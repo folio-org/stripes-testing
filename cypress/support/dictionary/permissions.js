@@ -383,6 +383,10 @@ export default {
     internal: 'ui-users.loans.change-due-date',
     gui: 'Users: User loans change due date',
   },
+  uiUserFinancialTransactionReport: {
+    internal: 'ui-users.financialTransactionReport',
+    gui: 'Users: Create and download Financial transaction detail report',
+  },
   // Remote Storage
   remoteStorageCRUD: {
     internal: 'ui-remote-storage.settings.remote-storages.edit',

@@ -15,7 +15,7 @@ import RefundReasons from '../../support/fragments/settings/users/refundReasons'
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
 import AppPaths from '../../support/fragments/app-paths';
 import FeeFinesDetails from '../../support/fragments/users/feeFineDetails';
-import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
+import PayFeeFine from '../../support/fragments/users/payFeeFaine';
 import AddNewStaffInfo from '../../support/fragments/users/addNewStaffInfo';
 
 describe('Fee/Fine history ', { retries: 1 }, () => {
@@ -128,12 +128,12 @@ describe('Fee/Fine history ', { retries: 1 }, () => {
       FeeFinesDetails.waitLoading();
       FeeFinesDetails.openActions();
       FeeFinesDetails.openPayModal();
-      PayFeeFaine.checkAmount(feeFineAccount.amount);
-      PayFeeFaine.setAmount(feeFineAccount.amount - 2);
-      PayFeeFaine.checkRestOfPay(2);
-      PayFeeFaine.setPaymentMethod(paymentMethod);
-      PayFeeFaine.submitAndConfirm();
-      PayFeeFaine.checkConfirmModalClosed();
+      PayFeeFine.checkAmount(feeFineAccount.amount);
+      PayFeeFine.setAmount(feeFineAccount.amount - 2);
+      PayFeeFine.checkRestOfPay(2);
+      PayFeeFine.setPaymentMethod(paymentMethod);
+      PayFeeFine.submitAndConfirm();
+      PayFeeFine.checkConfirmModalClosed();
       FeeFinesDetails.waitLoading();
       FeeFinesDetails.openNewStaffInfo();
       AddNewStaffInfo.waitLoading();
@@ -145,11 +145,11 @@ describe('Fee/Fine history ', { retries: 1 }, () => {
       FeeFinesDetails.openActions().then(() => {
         FeeFinesDetails.openPayModal();
       });
-      PayFeeFaine.checkAmount(2);
-      PayFeeFaine.setPaymentMethod(paymentMethod);
-      PayFeeFaine.setAmount(2);
-      PayFeeFaine.checkRestOfPay(0);
-      PayFeeFaine.submitAndConfirm();
+      PayFeeFine.checkAmount(2);
+      PayFeeFine.setPaymentMethod(paymentMethod);
+      PayFeeFine.setAmount(2);
+      PayFeeFine.checkRestOfPay(0);
+      PayFeeFine.submitAndConfirm();
     },
   );
 });
