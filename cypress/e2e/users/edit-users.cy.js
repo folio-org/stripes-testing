@@ -31,11 +31,14 @@ describe('Permissions Tags', () => {
       ).then((userProperties) => {
         userData = userProperties;
         UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
-        cy.login(userData.username, userData.password, {
-          path: TopMenu.usersPath,
-          waiter: UsersSearchPane.waitLoading,
-        });
       });
+    });
+  });
+
+  beforeEach('Login', () => {
+    cy.login(userData.username, userData.password, {
+      path: TopMenu.usersPath,
+      waiter: UsersSearchPane.waitLoading,
     });
   });
 
@@ -53,6 +56,24 @@ describe('Permissions Tags', () => {
       UserEdit.changeMiddleName(newMiddleName);
       UserEdit.saveAndClose();
       Users.verifyMiddleNameOnUserDetailsPane(newMiddleName);
+    },
+  );
+
+  it(
+    'C407662 "User search results" pane results remain after canceling user\'s profile editing (volaris)',
+    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    () => {
+      userData.middleName = newMiddleName;
+      UsersSearchPane.searchByUsername(userData.username);
+      UserEdit.openEdit();
+      UserEdit.verifySaveAndColseIsDisabled(true);
+      UserEdit.changeMiddleName(getTestEntityValue('newName'));
+      UserEdit.verifySaveAndColseIsDisabled(false);
+      UserEdit.cancelChanges();
+      Users.verifyMiddleNameOnUserDetailsPane(userData.middleName);
+      Users.verifyFullNameIsDisplayedCorrectly(
+        `${userData.lastName}, ${userData.firstName} ${userData.middleName}`,
+      );
     },
   );
 });
