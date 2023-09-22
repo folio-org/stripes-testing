@@ -2,9 +2,10 @@ import uuid from 'uuid';
 import getRandomPostfix from '../../utils/stringTools';
 import NewMaterialType from '../settings/inventory/newMaterialType';
 
-const getDefaultOrderLine = (
+const getDefaultOrderLine = ({
   quantity,
   title,
+  instanceId,
   spesialLocationId,
   specialMaterialTypeId,
   acquisitionMethod = '',
@@ -12,10 +13,12 @@ const getDefaultOrderLine = (
   poLineEstimatedPrice = '1.0',
   productIds = [],
   referenceNumbers = [],
-) => {
+  vendorAccount = '1234',
+}) => {
   const defaultOrderLine = {
     id: uuid(),
     checkinItems: false,
+    instanceId,
     acquisitionMethod,
     alerts: [],
     claims: [],
@@ -61,7 +64,7 @@ const getDefaultOrderLine = (
     titleOrPackage: title,
     vendorDetail: {
       instructions: '',
-      vendorAccount: '1234',
+      vendorAccount,
       referenceNumbers,
     },
   };
