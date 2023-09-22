@@ -67,6 +67,8 @@ const calloutAfterSaveAndClose = Callout(
 const calloutUpdatedRecord = Callout(
   'This record has successfully saved and is in process. Changes may not appear immediately.',
 );
+const calloutOnDeriveFirst = Callout('Creating record may take several seconds.');
+const calloutOnDeriveSecond = Callout('Record created.');
 const calloutUpdatedLinkedBibRecord = Callout(
   'Record has been updated. 2 linked bibliographic record(s) updates have begun.',
 );
@@ -291,7 +293,11 @@ export default {
     return validRecord.lastRowNumber;
   },
 
-  addNewField(tag = defaultFieldValues.freeTags[0], fieldContent = defaultFieldValues.content, rowNumber) {
+  addNewField(
+    tag = defaultFieldValues.freeTags[0],
+    fieldContent = defaultFieldValues.content,
+    rowNumber,
+  ) {
     this.addRow(rowNumber);
     return this.fillAllAvailableValues(fieldContent, tag, rowNumber);
   },
@@ -405,6 +411,15 @@ export default {
       calloutAfterSaveAndClose.exists(),
       rootSection.absent(),
       instanceDetailsPane.exists(),
+    ]);
+  },
+
+  continueWithSaveAndCheckNewInstanceCreated() {
+    cy.do(continueWithSaveButton.click());
+    cy.expect([
+      calloutOnDeriveFirst.exists(),
+      calloutOnDeriveSecond.exists(),
+      rootSection.absent(),
     ]);
   },
 

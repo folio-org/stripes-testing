@@ -36,7 +36,7 @@ const searchButton = Button('Search');
 const newButton = Button('New');
 const saveAndClose = Button('Save & close');
 const orderDetailsAccordion = Accordion({ id: 'purchaseOrder' });
-const createdByAdmin = 'ADMINISTRATOR, DIKU ';
+const createdByAdmin = 'ADMINISTRATOR, Diku_admin ';
 const searchField = SearchField({ id: 'input-record-search' });
 const admin = 'administrator';
 const buttonLocationFilter = Button({ id: 'accordion-toggle-button-pol-location-filter' });
@@ -201,13 +201,16 @@ export default {
     ]);
   },
 
-  reOpenOrder: () => {
+  reOpenOrder: (orderNumber) => {
     cy.do([
       orderDetailsPane
         .find(PaneHeader({ id: 'paneHeaderorder-details' }).find(actionsButton))
         .click(),
       Button('Reopen').click(),
     ]);
+    InteractorsTools.checkCalloutMessage(
+      `The Purchase order - ${orderNumber} has been successfully reopened`,
+    );
   },
 
   receiveOrderViaActions: () => {
@@ -364,6 +367,12 @@ export default {
       Button('Delete').click(),
       Button({ id: 'clickable-delete-order-confirmation-confirm' }).click(),
     ]);
+  },
+
+  checkDeletedErrorMassage: () => {
+    InteractorsTools.checkCalloutErrorMessage(
+      'This order or order line is linked to Invoice(s) and can not be deleted',
+    );
   },
 
   resetFilters: () => {
