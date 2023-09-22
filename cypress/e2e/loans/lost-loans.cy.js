@@ -16,13 +16,10 @@ import ManualCharges from '../../support/fragments/settings/users/manualCharges'
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
 import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
-import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
-import FeeFinesDetails from '../../support/fragments/users/feeFineDetails';
 import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
 
-let userId;
 const ownerData = {};
 const feeFineType = {};
 let materialTypes;
@@ -88,18 +85,16 @@ describe('Lost loan', () => {
       Permissions.uiUsersfeefinesView.gui,
     ]).then((userProperties) => {
       userData = userProperties;
-      userId = userProperties.userId;
-      cy.login(userProperties.username, userProperties.password);
+
       cy.getAdminToken().then(async () => {
         InventoryInstances.getMaterialTypes({ limit: 4 })
           .then((materialTypesRes) => {
             materialTypes = materialTypesRes;
-          })
-          .then(() => {
+
             testData = {
               folioInstances: InventoryInstances.generateFolioInstances({
                 count: 4,
-                materialTypes,
+                properties: materialTypes.map(({ id }) => ({ materialType: { id } })),
               }),
               servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
               requestsId: '',
@@ -114,7 +109,7 @@ describe('Lost loan', () => {
             });
           })
           .then(() => {
-            UserEdit.addServicePointViaApi(testData.servicePoint.id, userId);
+            UserEdit.addServicePointViaApi(testData.servicePoint.id, userData.userId);
           })
           .then(() => {
             lostItemFeePolicies.forEach((policy) => LostItemFeePolicy.createViaApi(policy));
@@ -212,75 +207,46 @@ describe('Lost loan', () => {
     () => {
       const comment = 'Declare lost';
       // Navigate to open loan "A".
-      cy.visit(AppPaths.getOpenLoansPath(userId));
+      cy.visit(AppPaths.getOpenLoansPath(userData.userId));
       UserLoans.openLoanDetails(testData.folioInstances[0].barcodes[0]);
       // Declare item lost.
-      LoanDetails.checkAction(0, 'Checked out');
-      LoanDetails.startDeclareLost();
-      LoanDetails.finishDeclareLost(comment);
+      LoanDetails.declareItemLost(comment);
       // Navigate to the loan details for loan "A" and check closed loan details.
-      LoanDetails.checkAction(0, 'Closed loan');
-      LoanDetails.checkStatusInList(0, 'Lost and paid');
-      LoanDetails.checkSourceName(0, 'System');
-      LoanDetails.checkComments(0, '-');
+      LoanDetails.checkLoanClosed();
 
       // Navigate to open loan "B".
-      cy.visit(AppPaths.getOpenLoansPath(userId));
+      cy.visit(AppPaths.getOpenLoansPath(userData.userId));
       UserLoans.openLoanDetails(testData.folioInstances[1].barcodes[0]);
       // Declare item lost.
-      LoanDetails.checkAction(0, 'Checked out');
-      LoanDetails.startDeclareLost();
-      LoanDetails.finishDeclareLost(comment);
+      LoanDetails.declareItemLost(comment);
       // Navigate to the loan details for loan "B" and check loan declared lost.
       LoanDetails.checkAction(0, 'Declared lost');
       LoanDetails.checkStatusInList(0, 'Declared lost');
-      LoanDetails.checkSourceName(0, userData.username);
+      LoanDetails.checkSource(0, userData.username);
       LoanDetails.checkComments(0, comment);
       // Navigate to the fee and pay the total amount.
       LoanDetails.openFeeFine();
-      FeeFinesDetails.openActions().then(() => {
-        FeeFinesDetails.openPayModal();
-      });
-      PayFeeFaine.checkAmount(lostItemFeePolicies[1].lostItemProcessingFee);
-      PayFeeFaine.setPaymentMethod(testData.paymentMethod);
-      PayFeeFaine.setAmount(lostItemFeePolicies[1].lostItemProcessingFee);
-      PayFeeFaine.checkRestOfPay(lostItemFeePolicies[1].lostItemProcessingFee);
-      PayFeeFaine.submitAndConfirm();
+      LoanDetails.payFeeFine(lostItemFeePolicies[1].lostItemProcessingFee, testData.paymentMethod);
       // Navigate to closed loan details for loan "B" and check closed loan details.
-      cy.visit(AppPaths.getClosedLoansPath(userId));
+      cy.visit(AppPaths.getClosedLoansPath(userData.userId));
       UserLoans.openLoanDetails(testData.folioInstances[1].barcodes[0]);
-      LoanDetails.checkAction(0, 'Closed loan');
-      LoanDetails.checkStatusInList(0, 'Lost and paid');
-      LoanDetails.checkSourceName(0, 'System');
-      LoanDetails.checkComments(0, '-');
+      LoanDetails.checkLoanClosed();
 
       // Navigate to loan "C".
-      cy.visit(AppPaths.getOpenLoansPath(userId));
+      cy.visit(AppPaths.getOpenLoansPath(userData.userId));
       UserLoans.openLoanDetails(testData.folioInstances[2].barcodes[0]);
       // Declare item lost.
-      LoanDetails.checkAction(0, 'Checked out');
-      LoanDetails.startDeclareLost();
-      LoanDetails.finishDeclareLost(comment);
+      LoanDetails.declareItemLost(comment);
       // Navigate to the fee and pay the total amount.
       LoanDetails.openFeeFine();
-      FeeFinesDetails.openActions().then(() => {
-        FeeFinesDetails.openPayModal();
-      });
-      PayFeeFaine.checkAmount(lostItemFeePolicies[2].lostItemProcessingFee);
-      PayFeeFaine.setPaymentMethod(testData.paymentMethod);
-      PayFeeFaine.setAmount(lostItemFeePolicies[2].lostItemProcessingFee);
-      PayFeeFaine.checkRestOfPay(lostItemFeePolicies[2].lostItemProcessingFee);
-      PayFeeFaine.submitAndConfirm();
+      LoanDetails.payFeeFine(lostItemFeePolicies[2].lostItemProcessingFee, testData.paymentMethod);
       // Navigate to closed loan details for loan "C" and check closed loan details.
-      cy.visit(AppPaths.getClosedLoansPath(userId));
+      cy.visit(AppPaths.getClosedLoansPath(userData.userId));
       UserLoans.openLoanDetails(testData.folioInstances[2].barcodes[0]);
-      LoanDetails.checkAction(0, 'Closed loan');
-      LoanDetails.checkStatusInList(0, 'Lost and paid');
-      LoanDetails.checkSourceName(0, 'System');
-      LoanDetails.checkComments(0, '-');
+      LoanDetails.checkLoanClosed();
 
       // Navigate to loan "D".
-      cy.visit(AppPaths.getOpenLoansPath(userId));
+      cy.visit(AppPaths.getOpenLoansPath(userData.userId));
       UserLoans.createNewFeeFine(
         testData.folioInstances[3].barcodes[0],
         ownerData.name,
@@ -288,29 +254,17 @@ describe('Lost loan', () => {
       );
       UserLoans.openLoanDetails(testData.folioInstances[3].barcodes[0]);
       // Declare item lost.
-      LoanDetails.checkAction(0, 'Checked out');
-      LoanDetails.startDeclareLost();
-      LoanDetails.finishDeclareLost(comment);
+      LoanDetails.declareItemLost(comment);
       LoanDetails.checkKeyValue('Fees/fines incurred', `${totalAmount}.00`);
       // Navigate to the fee and pay the total combined amount.
       LoanDetails.openFeeFine();
       cy.wait(1000);
       UserAllFeesFines.selectAllFeeFines();
-      FeeFinesDetails.openActions().then(() => {
-        FeeFinesDetails.openPayModal();
-      });
-      PayFeeFaine.checkAmount(totalAmount);
-      PayFeeFaine.setPaymentMethod(testData.paymentMethod);
-      PayFeeFaine.setAmount(totalAmount);
-      PayFeeFaine.checkRestOfPay(totalAmount);
-      PayFeeFaine.submitAndConfirm();
+      LoanDetails.payFeeFine(totalAmount, testData.paymentMethod);
       // Navigate to closed loan details for loan "D" and check closed loan details.
-      cy.visit(AppPaths.getClosedLoansPath(userId));
+      cy.visit(AppPaths.getClosedLoansPath(userData.userId));
       UserLoans.openLoanDetails(testData.folioInstances[3].barcodes[0]);
-      LoanDetails.checkAction(0, 'Closed loan');
-      LoanDetails.checkStatusInList(0, 'Lost and paid');
-      LoanDetails.checkSourceName(0, 'System');
-      LoanDetails.checkComments(0, '-');
+      LoanDetails.checkLoanClosed();
     },
   );
 });
