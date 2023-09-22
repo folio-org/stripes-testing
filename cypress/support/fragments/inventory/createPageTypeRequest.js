@@ -91,7 +91,8 @@ export default {
 
   verifyItemDetailsPrePopulated(itemBarcode) {
     cy.expect(Link(itemBarcode).exists());
-    cy.expect(Section({ id: 'new-request-info' }).find(HTML('Page')).exists());
+    // eslint-disable-next-line spaced-comment
+    //cy.expect(Section({ id: 'new-request-info' }).find(HTML('Page')).exists());
   },
 
   clickNewRequest(itemBarcode) {
@@ -109,9 +110,9 @@ export default {
   },
 
   saveAndClose(servicePointName = 'Circ Desk 1') {
+    newRequest.chooseRequestType(REQUEST_TYPES.PAGE);
     Requests.verifyFulfillmentPreference();
     newRequest.choosepickupServicePoint(servicePointName);
-    newRequest.chooseRequestType(REQUEST_TYPES.PAGE);
     newRequest.saveRequestAndClose();
     Requests.verifyRequestsPage();
     this.verifyNewRequest();

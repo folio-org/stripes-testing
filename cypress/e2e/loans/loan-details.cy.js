@@ -147,7 +147,7 @@ describe('Loan Details', () => {
   });
 
   it(
-    'C561 Loan details: test links (vega)',
+    'C561 Loan details: test links (vega) (TaaS)',
     { tags: [TestTypes.criticalPath, DevTeams.vega] },
     () => {
       const itemBarcode = testData.folioInstances[0].barcodes[0];
