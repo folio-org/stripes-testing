@@ -198,8 +198,9 @@ export default {
     fileName,
     action,
     actionAmount,
-    rowNumber,
+    columnNumber,
     data,
+    rowNumber = 1,
     header = financialTransactionDetailReportHeader,
   ) {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
@@ -210,10 +211,10 @@ export default {
 
       expect(fileRows[0].trim()).to.equal(header);
 
-      const actualData = fileRows[1].trim().split('","');
+      const actualData = fileRows[rowNumber].trim().split('","');
       expect(actualData[7]).to.equal(action);
       expect(Number(actualData[8])).to.equal(Number(actionAmount));
-      expect(actualData[rowNumber]).to.equal(data);
+      expect(actualData[columnNumber]).to.equal(data);
     });
   },
 
