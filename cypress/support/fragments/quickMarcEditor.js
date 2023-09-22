@@ -291,9 +291,9 @@ export default {
     return validRecord.lastRowNumber;
   },
 
-  addNewField(tag = defaultFieldValues.freeTags[0], fieldContent = defaultFieldValues.content) {
-    this.addRow();
-    return this.fillAllAvailableValues(fieldContent, tag);
+  addNewField(tag = defaultFieldValues.freeTags[0], fieldContent = defaultFieldValues.content, rowNumber) {
+    this.addRow(rowNumber);
+    return this.fillAllAvailableValues(fieldContent, tag, rowNumber);
   },
 
   addNewFieldWithSubField(tag) {
