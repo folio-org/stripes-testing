@@ -1,9 +1,9 @@
-import { Pane, Button } from '../../../../interactors';
+import { Pane, Button, MultiColumnList, PaneHeader, TextFieldIcon } from '../../../../interactors';
 
-const searchResults = '#search-results-list';
-const jobRolesFoundText = '#paneHeaderpane-results-subtitle>span';
+const searchResults = MultiColumnList({ id: 'search-results-list' });
+const jobProfilesPaneHeader = PaneHeader({ id: 'paneHeaderpane-results-subtitle' });
 const searchField = '[class^=formControl]';
-const searchIcon = '[class^=textFieldIcon---Gij5r]';
+const searchIcon = TextFieldIcon();
 const searchButton = Button('Search', { disabled: true });
 
 export default {
@@ -12,11 +12,11 @@ export default {
   },
 
   verifyExistingJobProfiles() {
-    cy.get(searchResults)
-      .invoke('attr', 'data-total-count')
-      .then((num) => {
-        cy.get(jobRolesFoundText).should('have.text', `${num} job profiles`);
+    searchResults.perform((el) => {
+      el.invoke('attr', 'data-total-count').then((num) => {
+        jobProfilesPaneHeader.find('span').should('have.text', `${num} job profiles`);
       });
+    });
   },
 
   verifySearchBox() {

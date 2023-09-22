@@ -1,4 +1,4 @@
-import { MultiColumnListCell, MultiColumnListRow } from '../../../../interactors';
+import { MultiColumnListCell, MultiColumnListRow, matching, every } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
 const getSearchResult = (row = 0, col = 0) => MultiColumnListCell({ row, columnIndex: col });
@@ -143,12 +143,9 @@ export default {
 
     cy.do([result.status.is({ content: status })]);
 
-    cy.do(
-      result.fileName.perform((element) => {
-        const regex = new RegExp(`${fileName.slice(0, -4)}-\\d+.mrc`);
-        expect(element.innerText).to.match(regex);
-      }),
-    );
+    const regex = new RegExp(`${fileName.slice(0, -4)}-\\d+.mrc`);
+
+    cy.expect(result.fileName.has({ content: matching(regex) }));
   },
 
   verifyFileNameIsDisabled(rowNum) {

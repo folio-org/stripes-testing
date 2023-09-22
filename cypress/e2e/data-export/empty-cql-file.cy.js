@@ -7,6 +7,7 @@ import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import ExportFileHelper from '../../support/fragments/data-export/exportFile';
 import devTeams from '../../support/dictionary/devTeams';
+import testTypes from '../../support/dictionary/testTypes';
 import SelectJobProfile from '../../support/fragments/data-export/selectJobProfile';
 import DataExportResults from '../../support/fragments/data-export/dataExportResults';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
@@ -23,26 +24,24 @@ const emptyFile = `autoTestEmptyFile${getRandomPostfix()}.cql`;
 
 describe('Data-export', () => {
   before('Create test data', () => {
-    cy.createTempUser([
-      permissions.inventoryAll.gui,
-      permissions.dataExportAll.gui,
-      permissions.dataExportEnableModule.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(user.username, user.password);
-      cy.visit(TopMenu.dataExportPath);
+    cy.createTempUser([permissions.inventoryAll.gui, permissions.dataExportEnableApp.gui]).then(
+      (userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password);
+        cy.visit(TopMenu.dataExportPath);
 
-      const instanceID = InventoryInstances.createInstanceViaApi(
-        item.instanceName,
-        item.itemBarcode,
-      );
+        const instanceID = InventoryInstances.createInstanceViaApi(
+          item.instanceName,
+          item.itemBarcode,
+        );
 
-      FileManager.createFile(`cypress/fixtures/${validFile}`, instanceID);
-      FileManager.createFile(`cypress/fixtures/${emptyFile}`, ' ');
+        FileManager.createFile(`cypress/fixtures/${validFile}`, instanceID);
+        FileManager.createFile(`cypress/fixtures/${emptyFile}`, ' ');
 
-      ExportFileHelper.uploadFile(validFile);
-      ExportFileHelper.exportWithDefaultJobProfile(validFile, 'instances', 'Instances', '.csv');
-    });
+        ExportFileHelper.uploadFile(validFile);
+        ExportFileHelper.exportWithDefaultJobProfile(validFile, 'instances', 'Instances', '.csv');
+      },
+    );
   });
 
   after('delete test data', () => {
@@ -54,7 +53,7 @@ describe('Data-export', () => {
 
   it(
     'C399097 Verify trigger Data export with an empty .cql file (firebird) (Taas)',
-    { tags: [devTeams.firebird] },
+    { tags: [devTeams.firebird, testTypes.extendedPath] },
     () => {
       ExportFileHelper.verifyPaneWithRecords();
       ExportFileHelper.uploadFile(emptyFile);
