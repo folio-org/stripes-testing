@@ -13,14 +13,49 @@ import Users from '../../../support/fragments/users/users';
 import Permissions from '../../../support/dictionary/permissions';
 import InventorySteps from '../../../support/fragments/inventory/inventorySteps';
 import DateTools from '../../../support/utils/dateTools';
+import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 
 describe('Create holding records with MARC source', () => {
   const testData = {
+    tagLDR: 'LDR',
+    tag001: '001',
+    tag004: '004',
+    tag005: '005',
     tag852: '852',
     tag866: '866',
+    tag999: '999',
     tag866Value: 'Test',
+    headerTitle: 'Create a new MARC Holdings record',
+    headerSubtitle: 'New',
+    defaultLDRmask: /00000nu.{2}\\.{7}un\\4500/,
+    tagLDRValueInSourceMask: /LEADER\s\d{5}[c,d,n][u,v,x,y]\s{3}22\d{5}[1,2,3,4,5,m,u,z].\s4500/,
+    tag001ValueInSourceMask: /[a-z]+\d+/,
+    tag004ValueInSourceMask: /[a-z]+\d+/,
+    tag005ValueInSourceMask: /\d+.\d+/,
+    tag999ValueInSourceMask: /f\sf‡s\s.+\s‡i\s.+\S/,
+    default008BoxesValues: [
+      '0',
+      'u',
+      '\\\\\\\\',
+      '0',
+      '\\',
+      '\\',
+      '\\',
+      '0',
+      '\\\\\\',
+      'u',
+      'u',
+      'eng',
+      '0',
+      '\\\\\\\\\\\\',
+    ],
   };
   const marcFiles = [
+    {
+      marc: 'oneMarcBib.mrc',
+      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+    },
     {
       marc: 'oneMarcBib.mrc',
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
@@ -73,10 +108,12 @@ describe('Create holding records with MARC source', () => {
 
   after('Deleting created user, data', () => {
     Users.deleteViaApi(user.userId);
-    cy.deleteHoldingRecordViaApi(recordIDs[2]);
     cy.deleteHoldingRecordViaApi(recordIDs[3]);
+    cy.deleteHoldingRecordViaApi(recordIDs[4]);
+    cy.deleteHoldingRecordViaApi(recordIDs[5]);
     InventoryInstance.deleteInstanceViaApi(recordIDs[0]);
     InventoryInstance.deleteInstanceViaApi(recordIDs[1]);
+    InventoryInstance.deleteInstanceViaApi(recordIDs[2]);
   });
 
   it(
@@ -152,6 +189,56 @@ describe('Create holding records with MARC source', () => {
         HoldingsRecordView.editInQuickMarc();
         QuickMarcEditor.waitLoading();
         QuickMarcEditor.checkUserNameInHeader(user.firstName, user.lastName);
+      });
+    },
+  );
+
+  it(
+    'C350757 MARC fields behavior when creating "MARC Holdings" record (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      InventoryInstance.searchByTitle(recordIDs[2]);
+      InventoryInstance.goToMarcHoldingRecordAdding();
+      QuickMarcEditor.waitLoading();
+      QuickMarcEditor.checkPaneheaderContains(testData.headerTitle);
+      QuickMarcEditor.checkPaneheaderContains(testData.headerSubtitle);
+      QuickMarcEditor.checkFieldContentMatch(
+        'textarea[name="records[0].content"]',
+        testData.defaultLDRmask,
+      );
+      QuickMarcEditor.checkReadOnlyHoldingsTags();
+      QuickMarcEditor.verifyHoldingsDefault008BoxesValues(testData.default008BoxesValues);
+      QuickMarcEditor.verifyTagValue(5, testData.tag852);
+      QuickMarcEditor.verifyTagValue(6, testData.tag999);
+      QuickMarcEditor.checkContent('', 5);
+      QuickMarcEditor.updateExistingField(testData.tag852, QuickMarcEditor.getExistingLocation());
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.checkAfterSaveHoldings();
+      HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
+        recordIDs.push(holdingsID);
+        HoldingsRecordView.close();
+        InventoryInstance.openHoldingView();
+        HoldingsRecordView.viewSource();
+        InventoryViewSource.checkFieldContentMatch(
+          testData.tag001,
+          testData.tag001ValueInSourceMask,
+        );
+        InventoryViewSource.checkFieldContentMatch(
+          testData.tag004,
+          testData.tag004ValueInSourceMask,
+        );
+        InventoryViewSource.checkFieldContentMatch(
+          testData.tag005,
+          testData.tag005ValueInSourceMask,
+        );
+        InventoryViewSource.checkFieldContentMatch(
+          testData.tag999,
+          testData.tag999ValueInSourceMask,
+        );
+        InventoryViewSource.checkFieldContentMatch(
+          testData.tagLDR,
+          testData.tagLDRValueInSourceMask,
+        );
       });
     },
   );
