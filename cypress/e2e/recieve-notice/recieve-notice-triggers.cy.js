@@ -57,7 +57,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
     selectOptions(template) {
       return {
         noticeName: NOTICE_CATEGORIES.loan.name,
-        noticeId: NOTICE_CATEGORIES.loan.id,
+        noticeId: 'loan',
         templateName: template.name,
         format: 'Email',
         action: template.name.substring(template.name.indexOf(' ') + 1),
