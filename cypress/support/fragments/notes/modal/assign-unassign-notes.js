@@ -15,6 +15,7 @@ const notesList = MultiColumnList({ id: 'notes-modal-notes-list' });
 const assignNoteCheckbox = Checkbox({ className: including('notes-assign-checkbox') });
 const cancelButton = Button('Cancel');
 const saveButton = Button('Save');
+const asignedCheckbox = Checkbox('Assigned');
 
 export default {
   verifyModalIsShown() {
@@ -34,7 +35,7 @@ export default {
     ]);
   },
 
-  selectCheckboxForNote(noteTitle) {
+  clickCheckboxForNote(noteTitle) {
     cy.expect(notesList.exists());
     cy.do([
       notesList
@@ -42,6 +43,25 @@ export default {
         .find(assignNoteCheckbox)
         .click(),
     ]);
+  },
+
+  verifyNoteCheckbox(noteTitle, isChecked = false) {
+    cy.expect(notesList.exists());
+    if (isChecked) {
+      cy.expect(
+        notesList
+          .find(MultiColumnListRow({ content: including(noteTitle), isContainer: true }))
+          .find(assignNoteCheckbox)
+          .has({ checked: true }),
+      );
+    } else {
+      cy.expect(
+        notesList
+          .find(MultiColumnListRow({ content: including(noteTitle), isContainer: true }))
+          .find(assignNoteCheckbox)
+          .has({ checked: false }),
+      );
+    }
   },
 
   clickCancelButton() {
@@ -52,5 +72,10 @@ export default {
   clickSaveButton() {
     cy.expect(saveButton.exists());
     cy.do(saveButton.click());
+  },
+
+  selectAssignedNoteStatusCheckbox() {
+    cy.do(asignedCheckbox.checkIfNotSelected());
+    cy.expect(asignedCheckbox.has({ checked: true }));
   },
 };

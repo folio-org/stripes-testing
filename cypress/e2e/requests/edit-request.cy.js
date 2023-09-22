@@ -4,6 +4,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Requests from '../../support/fragments/requests/requests';
 import Users from '../../support/fragments/users/users';
 import DevTeams from '../../support/dictionary/devTeams';
+import Parallelization from '../../support/dictionary/parallelization';
 
 describe('ui-requests: Request: Edit requests. Make sure that edits are being saved.', () => {
   let userId;
@@ -45,7 +46,7 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
 
   it(
     'C556 Request: Edit requests. Make sure that edits are being saved. (vega)',
-    { tags: [TestTypes.smoke, DevTeams.vega] },
+    { tags: [TestTypes.smoke, DevTeams.vega, Parallelization.nonParallel] },
     () => {
       cy.visit(TopMenu.requestsPath);
       Object.values(EditRequest.requestStatuses).forEach((status) => {

@@ -28,9 +28,30 @@ const defaultUnassignedNote = ({ typeId }) => {
   };
 };
 
+const defaultTwoAssignedNote = ({ typeId, firstAgreementId, secondAgreementId }) => {
+  return {
+    domain: 'agreements',
+    typeId,
+    title: `Default  TwoAassigned Note Title ${randomFourDigitNumber()}`,
+    content: 'Default TwoAassigned Note Details',
+    links: [
+      {
+        type: 'agreement',
+        id: firstAgreementId,
+      },
+      {
+        type: 'agreement',
+        id: secondAgreementId,
+      },
+    ],
+    id: uuid(),
+  };
+};
+
 export default {
   defaultNote,
   defaultUnassignedNote,
+  defaultTwoAssignedNote,
 
   createViaApi: (note) => {
     return cy
@@ -41,5 +62,13 @@ export default {
         isDefaultSearchParamsRequired: false,
       })
       .then((response) => response.body);
+  },
+
+  deleteViaApi: (noteId) => {
+    return cy.okapiRequest({
+      method: REQUEST_METHOD.DELETE,
+      path: `notes/${noteId}`,
+      isDefaultSearchParamsRequired: false,
+    });
   },
 };
