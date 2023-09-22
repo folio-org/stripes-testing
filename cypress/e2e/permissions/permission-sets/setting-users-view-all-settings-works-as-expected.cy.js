@@ -122,14 +122,14 @@ describe('Permission Sets', () => {
     () => {
       cy.visit(SettingsMenu.usersOwnersPath);
       UsersSettingsGeneral.checkEntityInTable({
-        reason: ownerBody.owner,
+        name: ownerBody.owner,
         description: ownerBody.desc,
       });
       UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
 
       cy.visit(SettingsMenu.waiveReasons);
       UsersSettingsGeneral.checkEntityInTable({
-        reason: waiveReason.nameReason,
+        name: waiveReason.nameReason,
         description: waiveReason.description,
       });
       UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
@@ -140,7 +140,7 @@ describe('Permission Sets', () => {
 
       cy.visit(SettingsMenu.refundReasons);
       UsersSettingsGeneral.checkEntityInTable({
-        reason: refundReason.nameReason,
+        name: refundReason.nameReason,
         description: refundReason.description,
       });
       UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
@@ -174,7 +174,7 @@ describe('Permission Sets', () => {
     () => {
       cy.visit(SettingsMenu.patronGroups);
       UsersSettingsGeneral.checkEntityInTable({
-        reason: 'undergrad',
+        name: 'undergrad',
         description: 'Undergraduate Student',
       });
       UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
