@@ -38,6 +38,10 @@ export const Checkbox = HTML.extend('checkbox')
       el.querySelector('input').click();
       dispatchFocusout(el.querySelector('input'));
     }),
+    checkIfNotSelected: ({ perform }) => perform((el) => {
+      const input = el.querySelector('input');
+      if (!input.checked) input.click();
+    }),
   });
 
 export const CheckboxInTable = HTML.extend('checkboxInTable')

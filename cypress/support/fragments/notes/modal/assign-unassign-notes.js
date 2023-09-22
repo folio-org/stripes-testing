@@ -1,10 +1,11 @@
 import {
-  Button, Checkbox,
+  Button,
+  Checkbox,
   including,
   Modal,
   MultiColumnList,
   MultiColumnListRow,
-  TextField
+  TextField,
 } from '../../../../../interactors';
 
 const assignUnassignModal = Modal('Assign / Unassign note');
@@ -14,6 +15,7 @@ const notesList = MultiColumnList({ id: 'notes-modal-notes-list' });
 const assignNoteCheckbox = Checkbox({ className: including('notes-assign-checkbox') });
 const cancelButton = Button('Cancel');
 const saveButton = Button('Save');
+const asignedCheckbox = Checkbox('Assigned');
 
 export default {
   verifyModalIsShown() {
@@ -21,36 +23,59 @@ export default {
   },
 
   searchForNote(noteTitle) {
-    cy.do([
-      searchField.fillIn(noteTitle),
-      searchButton.click(),
-    ]);
+    cy.do([searchField.fillIn(noteTitle), searchButton.click()]);
   },
 
   verifyDesiredNoteIsShown(noteTitle) {
     cy.expect(notesList.exists());
     cy.do([
-      notesList.find(MultiColumnListRow({ content: including(noteTitle), isContainer: true })).exists()
+      notesList
+        .find(MultiColumnListRow({ content: including(noteTitle), isContainer: true }))
+        .exists(),
     ]);
   },
 
-  selectCheckboxForNote(noteTitle) {
+  clickCheckboxForNote(noteTitle) {
     cy.expect(notesList.exists());
     cy.do([
       notesList
         .find(MultiColumnListRow({ content: including(noteTitle), isContainer: true }))
         .find(assignNoteCheckbox)
-        .click()
+        .click(),
     ]);
   },
 
+  verifyNoteCheckbox(noteTitle, isChecked = false) {
+    cy.expect(notesList.exists());
+    if (isChecked) {
+      cy.expect(
+        notesList
+          .find(MultiColumnListRow({ content: including(noteTitle), isContainer: true }))
+          .find(assignNoteCheckbox)
+          .has({ checked: true }),
+      );
+    } else {
+      cy.expect(
+        notesList
+          .find(MultiColumnListRow({ content: including(noteTitle), isContainer: true }))
+          .find(assignNoteCheckbox)
+          .has({ checked: false }),
+      );
+    }
+  },
+
   clickCancelButton() {
-    cy.expect((cancelButton).exists());
+    cy.expect(cancelButton.exists());
     cy.do(cancelButton.click());
   },
 
   clickSaveButton() {
-    cy.expect((saveButton).exists());
+    cy.expect(saveButton.exists());
     cy.do(saveButton.click());
+  },
+
+  selectAssignedNoteStatusCheckbox() {
+    cy.do(asignedCheckbox.checkIfNotSelected());
+    cy.expect(asignedCheckbox.has({ checked: true }));
   },
 };
