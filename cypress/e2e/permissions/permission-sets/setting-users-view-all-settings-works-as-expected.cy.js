@@ -180,7 +180,7 @@ describe('Permission Sets', () => {
       UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
 
       cy.visit(SettingsMenu.addressTypes);
-      UsersSettingsGeneral.checkEntityInTable({ reason: 'Work', description: 'Work Address' });
+      UsersSettingsGeneral.checkEntityInTable({ name: 'Work', description: 'Work Address' });
       UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
 
       cy.visit(SettingsMenu.departments);
