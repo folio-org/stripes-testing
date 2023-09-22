@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+
 import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 import { REQUEST_TYPES, REQUEST_LEVELS, FULFILMENT_PREFERENCES } from '../../support/constants';
@@ -15,7 +16,11 @@ import AppPaths from '../../support/fragments/app-paths';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
 import LoansPage from '../../support/fragments/loans/loansPage';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
+import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
 import ManualCharges from '../../support/fragments/settings/users/manualCharges';
+import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
+import FeeFinesDetails from '../../support/fragments/users/feeFineDetails';
+import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
 
 describe('Loan Details', () => {
   const feeFineType = {};
@@ -59,6 +64,9 @@ describe('Loan Details', () => {
         ownerData.name = owner;
       })
       .then(() => {
+        PaymentMethods.createViaApi(ownerData.id).then((paymentMethodRes) => {
+          testData.paymentMethod = paymentMethodRes;
+        });
         UsersOwners.addServicePointsViaApi(ownerData, [testData.servicePoint]);
         ManualCharges.createViaApi({
           ...ManualCharges.defaultFeeFineType,
@@ -72,10 +80,15 @@ describe('Loan Details', () => {
 
     cy.createTempUser(
       [
-        Permissions.uiUsersViewLoans.gui,
         Permissions.requestsAll.gui,
-        Permissions.uiUsersfeefinesView.gui,
         Permissions.inventoryAll.gui,
+        Permissions.settingsLoanPoliciesAll.gui,
+        Permissions.uiFeeFines.gui,
+        Permissions.uiUsersfeefinesView.gui,
+        Permissions.uiUsersViewLoans.gui,
+        Permissions.uiUsersViewAllSettings.gui,
+        Permissions.uiCirculationSettingsOverdueFinesPolicies.gui,
+        Permissions.uiCirculationSettingsLostItemFeesPolicies.gui,
       ],
       patronGroup.name,
     )
@@ -114,9 +127,7 @@ describe('Loan Details', () => {
           },
         );
 
-        // TODO: should run with created user
-        cy.loginAsAdmin();
-        // cy.login(userData.username, userData.password);
+        cy.login(userData.username, userData.password);
       });
   });
 
@@ -125,6 +136,7 @@ describe('Loan Details', () => {
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
     UserEdit.changeServicePointPreferenceViaApi(userForRequest.userId, [testData.servicePoint.id]);
+    PaymentMethods.deleteViaApi(testData.paymentMethod.id);
     ManualCharges.deleteViaApi(feeFineType.id);
     UsersOwners.deleteViaApi(ownerData.id);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
@@ -142,12 +154,11 @@ describe('Loan Details', () => {
       testData.defaultLocation.id,
     );
     Users.deleteViaApi(userForRequest.userId);
-    // TODO: should deleted created user
-    // Users.deleteViaApi(userData.userId);
+    Users.deleteViaApi(userData.userId);
   });
 
   it(
-    'C561 Loan details: test links (vega)',
+    'C561 Loan details: test links (vega) (TaaS)',
     { tags: [TestTypes.criticalPath, DevTeams.vega] },
     () => {
       const itemBarcode = testData.folioInstances[0].barcodes[0];
@@ -193,6 +204,18 @@ describe('Loan Details', () => {
         title: '200.00',
         expectedPage: 'Fees/fines',
       });
+
+      // Pay fee fines
+      UserAllFeesFines.goToOpenFeeFines();
+      UserAllFeesFines.selectAllFeeFines();
+      FeeFinesDetails.openActions().then(() => {
+        FeeFinesDetails.openPayModal();
+      });
+      PayFeeFaine.checkAmount(200);
+      PayFeeFaine.setPaymentMethod(testData.paymentMethod);
+      PayFeeFaine.setAmount(200);
+      PayFeeFaine.checkRestOfPay(200);
+      PayFeeFaine.submitAndConfirm();
 
       // Click on linked value for overdue policy
       cy.visit(AppPaths.getOpenLoansPath(userData.userId));

@@ -111,7 +111,7 @@ describe('Orders: orders', () => {
       );
       cy.then(() => {
         firstDate = DateTools.getCurrentUTCTime();
-        firstCard = `${firstDate}\nView this version\nSource: ADMINISTRATOR, DIKU\nOriginal version`;
+        firstCard = `${firstDate}\nView this version\nSource: ADMINISTRATOR, Diku_admin\nOriginal version`;
       });
       // Need to wait for the next card in the order history to be created with a difference of a minute.
       cy.wait(60000);
@@ -120,7 +120,7 @@ describe('Orders: orders', () => {
       OrderLines.addNewNote();
       cy.then(() => {
         secondDate = DateTools.getCurrentUTCTime();
-        secondCard = `${secondDate}\nView this version\nSource: ADMINISTRATOR, DIKU\nChanged\nEstimated price\nPhysical unit price\nValue`;
+        secondCard = `${secondDate}\nView this version\nSource: ADMINISTRATOR, Diku_admin\nChanged\nEstimated price\nPhysical unit price\nValue`;
       });
       // Need to wait for the next card in the order history to be created with a difference of a minute.
       cy.wait(60000);
@@ -128,7 +128,7 @@ describe('Orders: orders', () => {
       Orders.openOrder();
       cy.then(() => {
         thirdDate = DateTools.getCurrentUTCTime();
-        thirdCard = `${thirdDate}\nView this version\nSource: ADMINISTRATOR, DIKU\nCurrent version\nChanged\nCurrent encumbrance\nHolding\nName (code)\nPayment status\nReceipt status`;
+        thirdCard = `${thirdDate}\nView this version\nSource: ADMINISTRATOR, Diku_admin\nCurrent version\nChanged\nCurrent encumbrance\nHolding\nName (code)\nPayment status\nReceipt status`;
       });
       cy.visit(TopMenu.invoicesPath);
       Invoices.createRolloverInvoice(invoice, organization.name);
