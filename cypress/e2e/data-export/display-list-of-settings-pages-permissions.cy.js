@@ -2,6 +2,7 @@ import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import devTeams from '../../support/dictionary/devTeams';
+import testTypes from '../../support/dictionary/testTypes';
 import dataExportPermission from '../../support/fragments/data-export/data-export-permission';
 
 let user;
@@ -23,7 +24,7 @@ describe('Data-export', () => {
 
   it(
     'C389473 Verify that "Settings (Data export): display list of settings pages" permission is searchable and renamed (firebird) (Taas)',
-    { tags: [devTeams.firebird] },
+    { tags: [devTeams.firebird, testTypes.extendedPath] },
     () => {
       dataExportPermission.openUsersMenu();
       dataExportPermission.selectActiveStatus();
