@@ -3,6 +3,8 @@ import TenantPane from '../baseTenantPane';
 import Libraries from './libraries';
 import Campuses from './campuses';
 import Institutions from './institutions';
+import LocationDetails from '../locations/locationDetails';
+import LocationEditForm from '../locations/locationEditForm';
 import getRandomPostfix from '../../../../utils/stringTools';
 import {
   Button,
@@ -17,8 +19,6 @@ import {
 
 const addButton = Button('New');
 const table = MultiColumnList({ id: 'locations-list' });
-const detailsPane = Pane({ id: 'location-details' });
-const actionsBtn = detailsPane.find(Button('Actions'));
 
 const getDefaultLocation = ({ institutionId, campusId, libraryId, servicePointId } = {}) => ({
   id: uuid(),
@@ -42,8 +42,8 @@ export default {
     cy.expect(addButton.absent());
 
     cy.do(table.click({ row: 0 }));
-    cy.expect(detailsPane.exists());
-    cy.expect(actionsBtn.absent());
+    LocationDetails.waitLoading();
+    LocationDetails.checkActionButtonAbsent();
   },
   selectInstitution() {
     cy.do(Select('Institution').choose(including('KU')));
@@ -54,9 +54,31 @@ export default {
   selectLibrary() {
     cy.do(Select('Library').choose(including('E)')));
   },
+  viewLocations(location) {
+    TenantPane.selectOptions([
+      {
+        label: 'Institution',
+        option: { name: location.institutionName, id: location.institutionId },
+      },
+      { label: 'Campus', option: { name: location.campusName, id: location.campusId } },
+      { label: 'Library', option: { name: location.libraryName, id: location.libraryId } },
+    ]);
+  },
+  openLocationDetails(location) {
+    cy.do(table.find(MultiColumnListCell(location)).click());
+    LocationDetails.waitLoading();
+
+    return LocationDetails;
+  },
+  editLocation(location, values) {
+    this.openLocationDetails(location);
+    LocationDetails.openEditLocationForm();
+    LocationEditForm.fillLocationForm(values);
+  },
   createNewLocation() {
     cy.do(addButton.click());
   },
+
   getDefaultLocation,
   verifyRemoteStorageValue(value = 'RS1') {
     cy.expect(KeyValue('Remote storage').has({ value }));
