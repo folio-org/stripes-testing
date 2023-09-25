@@ -71,6 +71,26 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
   });
 
   it(
+    'C650: Test adding fallback policies (loan, request, notice, overdue, lost item) (vega) (TaaS)',
+    { tags: [TestType.criticalPath, devTeams.vega, Parallelization.nonParallel] },
+    () => {
+      // Delete Circulation Rules
+      CirculationRules.clearCirculationRules();
+      // Fill in priority
+      CirculationRules.fillInPriority();
+
+      // Enter fallback-policy: and Choose each policy in turn and choose a value for each policy
+      CirculationRules.fillInFallbackPolicy({
+        loanPolicyName: LOAN_POLICY_NAMES.EXAMPLE_LOAN,
+        overdueFinePolicyName: OVERDUE_FINE_POLICY_NAMES.OVERDUE_FINE_POLICY,
+        lostItemFeePolicyName: LOST_ITEM_FEES_POLICY_NAMES.LOST_ITEM_FEES_POLICY,
+        requestPolicyName: REQUEST_POLICY_NAMES.ALLOW_ALL,
+        noticePolicyName: NOTICE_POLICY_NAMES.SEND_NO_NOTICES,
+      });
+    },
+  );
+
+  it(
     'C2268: Add notice policy to circulation rules (vega)',
     { tags: [TestType.smoke, devTeams.vega, Parallelization.nonParallel] },
     () => {
