@@ -20,35 +20,28 @@ const item = {
   itemBarcode: generateItemBarcode(),
 };
 
-const validFile = `autoTestValidFile${getRandomPostfix()}.csv`;
 const emptyFile = `autoTestEmptyFile${getRandomPostfix()}.cql`;
 
-describe('Data-export', () => {
+describe('data-export', () => {
   before('Create test data', () => {
     cy.createTempUser([permissions.inventoryAll.gui, permissions.dataExportEnableApp.gui]).then(
       (userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password);
-        cy.visit(TopMenu.dataExportPath);
+        cy.login(user.username, user.password, {
+          path: TopMenu.dataExportPath,
+          waiter: DataExportLogs.waitLoading,
+        });
 
-        const instanceID = InventoryInstances.createInstanceViaApi(
-          item.instanceName,
-          item.itemBarcode,
-        );
+        InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
 
-        FileManager.createFile(`cypress/fixtures/${validFile}`, instanceID);
         FileManager.createFile(`cypress/fixtures/${emptyFile}`, ' ');
-
-        ExportFileHelper.uploadFile(validFile);
-        ExportFileHelper.exportWithDefaultJobProfile(validFile, 'instances', 'Instances', '.csv');
       },
     );
   });
 
-  after('delete test data', () => {
+  after('Delete test data', () => {
     Users.deleteViaApi(user.userId);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-    FileManager.deleteFile(`cypress/fixtures/${validFile}`);
     FileManager.deleteFile(`cypress/fixtures/${emptyFile}`);
   });
 

@@ -7,7 +7,6 @@ import {
   Pane,
   MultiColumnListCell,
   PaneHeader,
-  MultiColumnList,
 } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 import FileManager from '../../utils/fileManager';
