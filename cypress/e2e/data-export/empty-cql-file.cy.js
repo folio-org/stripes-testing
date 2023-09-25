@@ -11,6 +11,7 @@ import testTypes from '../../support/dictionary/testTypes';
 import SelectJobProfile from '../../support/fragments/data-export/selectJobProfile';
 import DataExportResults from '../../support/fragments/data-export/dataExportResults';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import DataExportLogs from '../../support/fragments/data-export/dataExportLogs';
 
 let user;
 
@@ -55,7 +56,7 @@ describe('Data-export', () => {
     'C399097 Verify trigger Data export with an empty .cql file (firebird) (Taas)',
     { tags: [devTeams.firebird, testTypes.extendedPath] },
     () => {
-      ExportFileHelper.verifyPaneWithRecords();
+      DataExportLogs.waitLoading();
       ExportFileHelper.uploadFile(emptyFile);
       SelectJobProfile.verifySelectJobPane();
       SelectJobProfile.verifyExistingJobProfiles();
@@ -63,12 +64,12 @@ describe('Data-export', () => {
       SelectJobProfile.verifySearchButton();
       ExportFileHelper.exportWithDefaultJobProfile(emptyFile, 'instances', 'Instances', '.cql');
 
-      ExportFileHelper.verifyPaneWithRecords();
+      DataExportLogs.waitLoading();
       DataExportResults.verifyLastLog(emptyFile, 'Fail');
       DataExportResults.verifyFileNameIsDisabled(0);
       DataExportResults.verifyErrorMessage(0, emptyFile);
       TopMenuNavigation.navigateToApp('Data export');
-      ExportFileHelper.verifyPaneWithRecords();
+      DataExportLogs.waitLoading();
     },
   );
 });

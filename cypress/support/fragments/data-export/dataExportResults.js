@@ -1,4 +1,4 @@
-import { MultiColumnListCell, MultiColumnListRow, matching, every } from '../../../../interactors';
+import { MultiColumnListCell, MultiColumnListRow, matching } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
 const getSearchResult = (row = 0, col = 0) => MultiColumnListCell({ row, columnIndex: col });

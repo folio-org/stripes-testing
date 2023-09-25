@@ -170,9 +170,4 @@ export default {
   clickCancelButton() {
     cy.do(Button('Cancel').click());
   },
-
-  verifyPaneWithRecords() {
-    cy.expect(Pane('Logs').exists());
-    cy.expect(MultiColumnList({ id: 'job-logs-list' }).exists());
-  },
 };
