@@ -60,12 +60,12 @@ describe('Settings: Location', () => {
       // Select "Libraries" option on the "Location setup" subsection
       // Select any existing institution from the  "Select institution" dropdown
       const Libraries = TenantPane.selectTenant(TENANTS.LIBRARIES);
-      Campuses.selectOption('Institution', {
+      Libraries.selectOption('Institution', {
         name: testData.location.institutionName,
         id: testData.location.institutionId,
       });
       // Select any existing campus from the  "Select campus" dropdown
-      Campuses.selectOption('Campus', {
+      Libraries.selectOption('Campus', {
         name: testData.location.campusName,
         id: testData.location.campusId,
       });
@@ -74,17 +74,17 @@ describe('Settings: Location', () => {
       // Select "Locations" option on the "Location setup" subsection
       // Select any existing institution from the  "Select institution" dropdown
       const Locations = TenantPane.selectTenant(TENANTS.LOCATIONS);
-      Campuses.selectOption('Institution', {
+      Locations.selectOption('Institution', {
         name: testData.location.institutionName,
         id: testData.location.institutionId,
       });
       // Select any existing campus from the  "Select campus" dropdown
-      Campuses.selectOption('Campus', {
+      Locations.selectOption('Campus', {
         name: testData.location.campusName,
         id: testData.location.campusId,
       });
       // Select any existing library from the  "Select library" dropdown
-      Campuses.selectOption('Library', {
+      Locations.selectOption('Library', {
         name: testData.location.libraryName,
         id: testData.location.libraryId,
       });

@@ -94,7 +94,6 @@ export default {
         isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => {
-        Cypress.env('lostItemFeesPolicy', body);
         return body;
       });
   },
