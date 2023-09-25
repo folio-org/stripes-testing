@@ -18,20 +18,31 @@ const getDefaultOrder = (vendorId, number) => {
   return defaultOrder;
 };
 
+const defaultOneTimeOrder = {
+  id: uuid(),
+  vendor: '',
+  orderType: 'One-Time',
+};
+const defaultOngoingTimeOrder = {
+  id: uuid(),
+  vendor: '',
+  ongoing: {
+    isSubscription: false,
+    manualRenewal: false,
+  },
+  orderType: 'Ongoing',
+};
+
 export default {
   getDefaultOrder,
-  defaultOneTimeOrder: {
-    id: uuid(),
-    vendor: '',
-    orderType: 'One-Time',
-  },
-  defaultOngoingTimeOrder: {
-    id: uuid(),
-    vendor: '',
-    ongoing: {
-      isSubscription: false,
-      manualRenewal: false,
-    },
-    orderType: 'Ongoing',
+  defaultOneTimeOrder,
+  defaultOngoingTimeOrder,
+  createViaApi(order = defaultOneTimeOrder) {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: 'orders/composite-orders',
+      body: order,
+      isDefaultSearchParamsRequired: false,
+    });
   },
 };

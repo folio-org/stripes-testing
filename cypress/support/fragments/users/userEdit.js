@@ -106,6 +106,14 @@ export default {
     cy.do(Modal().find(saveAndCloseBtn).click());
   },
 
+  verifySaveAndColseIsDisabled: (status) => {
+    cy.expect(saveAndCloseBtn.has({ disabled: status }));
+  },
+
+  cancelChanges() {
+    cy.do([Button('Cancel').click(), Button('Close without saving').click()]);
+  },
+
   saveAndClose() {
     cy.do(saveAndCloseBtn.click());
   },

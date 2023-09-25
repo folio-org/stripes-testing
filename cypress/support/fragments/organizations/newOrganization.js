@@ -1,12 +1,25 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../utils/stringTools';
 
-const getDefaultOrganization = () => {
+const getDefaultOrganization = ({ id = uuid(), accounts = 0 } = {}) => {
   const defaultUiOrganizations = {
+    id,
     name: `autotest_name_${getRandomPostfix()}`,
     status: 'Active',
     code: `autotest_code_${getRandomPostfix()}`,
     isVendor: true,
+    accounts: [...Array(accounts)].map(() => ({
+      accountNo: getRandomPostfix(),
+      accountStatus: 'Active',
+      acqUnitIds: [],
+      appSystemNo: '',
+      description: 'Main library account',
+      libraryCode: 'COB',
+      libraryEdiCode: getRandomPostfix(),
+      name: 'TestAccout1',
+      notes: '',
+      paymentMethod: 'Cash',
+    })),
   };
   return defaultUiOrganizations;
 };
