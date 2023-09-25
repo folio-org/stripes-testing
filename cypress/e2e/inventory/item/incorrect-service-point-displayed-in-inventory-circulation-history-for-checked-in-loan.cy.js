@@ -1,9 +1,7 @@
 import uuid from 'uuid';
 import moment from 'moment';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import DevTeams from '../../../support/dictionary/devTeams';
-import TestTypes from '../../../support/dictionary/testTypes';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -89,8 +87,8 @@ describe('inventory', () => {
         });
 
       cy.createTempUser([
-        permissions.uiInventoryViewInstances.gui,
-        permissions.checkinAll.gui,
+        Permissions.uiInventoryViewInstances.gui,
+        Permissions.checkinAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
 

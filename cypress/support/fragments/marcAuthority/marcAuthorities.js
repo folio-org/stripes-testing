@@ -63,6 +63,7 @@ const buttonClose = Button({ icon: 'times' });
 const checkBoxAllRecords = Checkbox({ ariaLabel: 'Select all records on this page' });
 const openAuthSourceMenuButton = Button({ ariaLabel: 'open menu' });
 const sourceFileAccordion = Section({ id: 'sourceFileId' });
+const cancelButton = Button('Cancel');
 
 export default {
   waitLoading() {
@@ -71,6 +72,9 @@ export default {
   clickActionsAndReportsButtons() {
     cy.do([actionsButton.click(), marcAuthUpdatesCsvBtn.click()]);
     cy.expect([authReportModal.exists(), exportButton.has({ disabled: true })]);
+  },
+  clickHeadingsUpdatesButton() {
+    cy.do([actionsButton.click(), marcAuthUpdatesCsvBtn.click()]);
   },
   fillReportModal(today, tomorrow) {
     cy.do([
@@ -90,6 +94,9 @@ export default {
   clickExportButton() {
     cy.do(exportButton.click());
   },
+  clickCancelButtonOfReportModal() {
+    cy.do(authReportModal.find(cancelButton).click());
+  },
   checkValidationError({ name, error }) {
     cy.expect([
       authReportModal.find(TextField({ name })).has({ error }),
@@ -101,6 +108,9 @@ export default {
       // authReportModal.find(TextField({ name })).has({ error }),
       exportButton.has({ disabled: false }),
     ]);
+  },
+  closeAuthReportModalUsingESC() {
+    cy.get('#authorities-report-modal').type('{esc}');
   },
   switchToSearch() {
     cy.do(searchNav.click());

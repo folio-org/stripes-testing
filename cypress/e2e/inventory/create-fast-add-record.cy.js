@@ -1,5 +1,5 @@
 import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
+import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import FastAddNewRecord from '../../support/fragments/inventory/fastAddNewRecord';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
@@ -7,9 +7,7 @@ import ItemRecordView from '../../support/fragments/inventory/item/itemRecordVie
 import InstanceRecordView from '../../support/fragments/inventory/instanceRecordView';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import { getLongDelay } from '../../support/utils/cypressTools';
-import permissions from '../../support/dictionary/permissions';
 import Users from '../../support/fragments/users/users';
-import DevTeams from '../../support/dictionary/devTeams';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import FastAdd from '../../support/fragments/settings/inventory/instance-holdings-item/fastAdd';
@@ -26,8 +24,8 @@ describe('inventory', () => {
 
     beforeEach(() => {
       cy.createTempUser([
-        permissions.inventoryAll.gui,
-        permissions.uiInventorySettingsFastAdd.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiInventorySettingsFastAdd.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
         cy.login(userProperties.username, userProperties.password);

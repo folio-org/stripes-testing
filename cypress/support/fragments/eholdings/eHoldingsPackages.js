@@ -9,6 +9,7 @@ import {
   TextField,
   KeyValue,
   Select,
+  Pane,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 import eHoldingsNewCustomPackage from './eHoldingsNewCustomPackage';
@@ -29,7 +30,20 @@ const subjectKeyValue = KeyValue('Subjects');
 const availableProxies = ['chalmers', 'Inherited - ezproxY-T', 'None', 'MJProxy'];
 const proxySelect = Select('Proxy');
 
+const defaultPackage = {
+  data: {
+    type: 'packages',
+    attributes: { name: `autotestEHoldingsPackage_${getRandomPostfix()}`, contentType: 'E-Book' },
+  },
+};
+
+const getdefaultPackage = () => {
+  return defaultPackage;
+};
+
 export default {
+  defaultPackage,
+  getdefaultPackage,
   create: (packageName = `package_${getRandomPostfix()}`) => {
     cy.do(Button('New').click());
     eHoldingsNewCustomPackage.fillInRequiredProperties(packageName);
@@ -133,7 +147,7 @@ export default {
     return cy.get('@packageId');
   },
 
-  checkPackageInResults(packageName, rowNumber = 0) {
+  verifyPackageInResults(packageName, rowNumber = 0) {
     cy.expect(
       resultSection
         .find(ListItem({ className: including('list-item-'), index: rowNumber }))
@@ -141,7 +155,7 @@ export default {
     );
   },
 
-  createCustomPackage(packageName) {
+  verifyCustomPackage(packageName) {
     cy.do(addNewPackageButton.click());
     eHoldingsNewCustomPackage.waitLoading();
     eHoldingsNewCustomPackage.fillInRequiredProperties(packageName);
@@ -149,7 +163,7 @@ export default {
     eHoldingsNewCustomPackage.checkPackageCreatedCallout();
   },
 
-  checkPackageExistsViaAPI(packageName, isCustom = false, timeOutSeconds = 15) {
+  verifyPackageExistsViaAPI(packageName, isCustom = false, timeOutSeconds = 15) {
     let timeCounter = 0;
     function checkPackage() {
       cy.okapiRequest({
@@ -184,6 +198,18 @@ export default {
     });
   },
 
+  createPackageViaAPI(packageBody = defaultPackage) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'eholdings/packages',
+        contentTypeHeader: 'application/vnd.api+json',
+        body: packageBody,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => response.body);
+  },
+
   updateProxy() {
     cy.get(selectedText)
       .invoke('text')
@@ -201,7 +227,7 @@ export default {
       });
   },
 
-  checkOnlySelectedPackagesInResults() {
+  verifyOnlySelectedPackagesInResults() {
     cy.expect([
       resultSection
         .find(ListItem({ text: including(eHoldingsPackage.filterStatuses.selected) }))
@@ -247,5 +273,9 @@ export default {
       });
   },
 
-  checkPackageRecordProxy: (proxyName) => cy.expect(KeyValue('Proxy', { value: proxyName }).exists()),
+  verifyPackageRecordProxy: (proxyName) => cy.expect(KeyValue('Proxy', { value: proxyName }).exists()),
+
+  verifyDetailsPaneAbsent: (packageName) => {
+    cy.expect(Pane(including(packageName)).absent());
+  },
 };

@@ -2,6 +2,7 @@ import uuid from 'uuid';
 import moment from 'moment';
 import TestTypes from '../../../../support/dictionary/testTypes';
 import devTeams from '../../../../support/dictionary/devTeams';
+import parallelization from '../../../../support/dictionary/parallelization';
 import permissions from '../../../../support/dictionary/permissions';
 import UserEdit from '../../../../support/fragments/users/userEdit';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -266,16 +267,15 @@ describe('Patron Block: Maximum number of overdue items', () => {
   });
   it(
     'C350654 Verify automated patron block "Maximum number of overdue items" removed after overdue item renewed (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    { tags: [TestTypes.criticalPath, devTeams.vega, parallelization.nonParallel] },
     () => {
       findPatron();
       UsersCard.waitLoading();
       Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
 
       const itemForRenew = itemsData.itemsWithSeparateInstance[0];
-      UsersCard.openLoans();
-      UsersCard.showOpenedLoans();
-      UserLoans.openLoan(itemForRenew.barcode);
+      UsersCard.viewCurrentLoans();
+      UserLoans.openLoanDetails(itemForRenew.barcode);
       UserLoans.renewItem(itemForRenew.barcode, true);
       Renewals.renewBlockedPatron(renewComment);
 
@@ -286,7 +286,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
 
   it(
     'C350649 Verify automated patron block "Maximum number of overdue items" removed after overdue item returned (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    { tags: [TestTypes.criticalPath, devTeams.vega, parallelization.nonParallel] },
     () => {
       findPatron();
       UsersCard.waitLoading();

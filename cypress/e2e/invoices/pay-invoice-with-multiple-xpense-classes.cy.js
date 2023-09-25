@@ -89,21 +89,18 @@ describe('Invoices', () => {
         OrderLines.backToEditingOrder();
         Orders.openOrder();
       });
-      // Need to wait, while data will be loaded
-      cy.visit(TopMenu.ordersPath);
     });
 
     cy.createTempUser([
-      permissions.uiFinanceExecuteFiscalYearRollover.gui,
-      permissions.uiFinanceViewFiscalYear.gui,
+      permissions.uiInvoicesApproveInvoices.gui,
+      permissions.viewEditCreateInvoiceInvoiceLine.gui,
       permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiFinanceViewLedger.gui,
-      permissions.uiOrdersView.gui,
+      permissions.uiInvoicesPayInvoices.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ledgerPath,
-        waiter: Ledgers.waitForLedgerDetailsLoading,
+        path: TopMenu.invoicesPath,
+        waiter: Invoices.waitLoading,
       });
     });
   });

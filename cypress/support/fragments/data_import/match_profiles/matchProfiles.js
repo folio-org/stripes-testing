@@ -118,4 +118,5 @@ export default {
   checkListOfExistingProfilesIsDisplayed: () => cy.expect(resultsPane.exists()),
   selectMatchProfileFromList: (profileName) => cy.do(MultiColumnListCell(profileName).click()),
   verifyActionMenuAbsent: () => cy.expect(resultsPane.find(actionsButton).absent()),
+  verifyMatchProfileAbsent: () => cy.expect(resultsPane.find(HTML(including('The list contains no items'))).exists()),
 };

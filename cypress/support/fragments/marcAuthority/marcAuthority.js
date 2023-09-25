@@ -223,7 +223,11 @@ export default {
         .has({ disabled: true }),
     );
     cy.do(saveAndCloseButton.click());
-    cy.expect(Callout('Record has been updated.').exists());
+    cy.expect(
+      Callout(
+        'This record has successfully saved and is in process. Changes may not appear immediately.',
+      ).exists(),
+    );
   },
 
   deleteTag: (rowIndex) => {

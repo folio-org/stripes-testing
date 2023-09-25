@@ -53,7 +53,9 @@ export const ITEM_STATUS_NAMES = {
   PAGED: 'Paged',
   AWAITING_PICKUP: 'Awaiting pickup',
   CHECKED_OUT: 'Checked out',
+  CLAIMED_RETURNED: 'Claimed returned',
   DECLARED_LOST: 'Declared lost',
+  MARKED_AS_MISSING: 'Marked as missing',
   AWAITING_DELIVERY: 'Awaiting delivery',
 };
 

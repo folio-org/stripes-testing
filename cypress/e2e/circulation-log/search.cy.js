@@ -225,8 +225,7 @@ describe('circulation-log', () => {
       UsersSearchPane.searchByStatus('Active');
       UsersSearchPane.searchByKeywords(userId);
       UsersSearchPane.openUser(userId);
-      UsersCard.openLoans();
-      UsersCard.showOpenedLoans();
+      UsersCard.viewCurrentLoans();
       LoansPage.checkAll();
       LoansPage.openChangeDueDateForm();
       ChangeDueDateForm.fillDate('04/19/2030');

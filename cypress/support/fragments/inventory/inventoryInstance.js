@@ -127,6 +127,7 @@ const detailsPaneContent = PaneContent({ id: 'pane-instancedetails-content' });
 const administrativeDataAccordion = Accordion('Administrative data');
 const unlinkIconButton = Button({ icon: 'unlink' });
 const itemBarcodeField = TextField({ name: 'barcode' });
+const viewHoldingsButtonByID = (holdingsID) => Section({ id: holdingsID }).find(viewHoldingsButton);
 
 const validOCLC = {
   id: '176116217',
@@ -303,8 +304,9 @@ export default {
   },
 
   viewSource: () => {
-    cy.wait(1500);
-    cy.do([actionsButton.click(), viewSourceButton.click()]);
+    cy.do(actionsButton.click());
+    cy.wait(2000);
+    cy.do(viewSourceButton.click());
     InventoryViewSource.waitLoading();
   },
 
@@ -945,5 +947,10 @@ export default {
     cy.wait(1000);
     cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(linkIconButton).exists());
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(linkIconButton).click());
+  },
+
+  openHoldingViewByID: (holdingsID) => {
+    cy.do(viewHoldingsButtonByID(holdingsID).click());
+    cy.expect(Button('Actions').exists());
   },
 };

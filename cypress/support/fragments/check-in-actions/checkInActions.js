@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import moment from 'moment';
 import { HTML, including } from '@interactors/html';
 import {
   Button,
@@ -183,6 +184,7 @@ export default {
       path: 'circulation/check-in-by-barcode',
       body: {
         id: uuid(),
+        checkInDate: moment.utc().format(),
         ...body,
       },
       isDefaultSearchParamsRequired: false,

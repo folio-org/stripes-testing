@@ -30,7 +30,11 @@ const calloutSuccessMessage = 'Export in progress';
 const calloutErrorMessage = 'Something went wrong.';
 const calloutNoItemsFoundMessage = 'No items found.';
 
+const financialTransactionDetailReportHeader =
+  '"Fee/fine owner","Fee/fine type","Fee/fine billed amount","Fee/fine billed date/time","Fee/fine created at","Fee/fine source","Fee/fine details","Action","Action amount","Action date/time","Action created at","Action source","Action status","Action additional staff information","Action additional patron information","Payment method","Payment transaction information","Waive reason","Refund reason","Transfer account","Patron name","Patron barcode","Patron group","Patron email address","Instance","Contributors","Item barcode","Call number","Effective location","Loan date/time","Due date/time","Return date/time","Loan policy","Overdue policy","Lost item policy","Loan details"';
+
 export default {
+  financialTransactionDetailReportHeader,
   fillInRequiredFields({ startDate, ownerName }) {
     if (startDate) {
       cy.do(financialReport.find(startDateTextfield).fillIn(startDate));
@@ -184,5 +188,38 @@ export default {
 
   verifyFeeFineOwnerIsRequiredErrorMessage() {
     cy.expect(financialReport.find(HTML(including('"Fee/fine owner" is required'))).exists());
+  },
+
+  verifyFileExists(fileName) {
+    cy.readFile(`cypress/downloads/${fileName}`);
+  },
+
+  checkDownloadedFile(
+    fileName,
+    action,
+    actionAmount,
+    columnNumber,
+    data,
+    rowNumber = 1,
+    header = financialTransactionDetailReportHeader,
+  ) {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000); // wait for the file to load
+    cy.readFile(`cypress/downloads/${fileName}`).then((fileContent) => {
+      // Split the contents of a file into lines
+      const fileRows = fileContent.split('\n');
+
+      expect(fileRows[0].trim()).to.equal(header);
+
+      const actualData = fileRows[rowNumber].trim().split('","');
+      expect(actualData[7]).to.equal(action);
+      expect(Number(actualData[8])).to.equal(Number(actionAmount));
+      expect(actualData[columnNumber]).to.equal(data);
+    });
+  },
+
+  deleteDownloadedFile(fileName) {
+    const filePath = `cypress\\downloads\\${fileName}`;
+    cy.exec(`del "${filePath}"`, { failOnNonZeroExit: false });
   },
 };

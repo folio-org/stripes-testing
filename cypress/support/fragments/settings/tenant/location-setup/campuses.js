@@ -1,18 +1,13 @@
 import uuid from 'uuid';
 import TenantPane, { getDefaultTenant } from '../baseTenantPane';
 
-const selectInstitution = () => TenantPane.selectOption('Institution', 'KU');
-
 export default {
   ...TenantPane,
   waitLoading() {
     TenantPane.waitLoading('Campuses');
   },
-  viewTable() {
-    selectInstitution();
-  },
-  getDefaultCampuse({ id, institutionId = '' } = {}) {
-    return getDefaultTenant({ id, institutionId });
+  getDefaultCampuse({ id, name, institutionId = '' } = {}) {
+    return getDefaultTenant({ id, name, institutionId });
   },
   defaultUiCampuses: {
     body: getDefaultTenant({ institutionId: uuid() }),

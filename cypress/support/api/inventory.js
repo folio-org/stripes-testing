@@ -269,3 +269,13 @@ Cypress.Commands.add('getRecordDataInEditorViaApi', (holdingsID) => {
   }).then(({ body }) => cy.wrap(body).as('body'));
   return cy.get('@body');
 });
+
+Cypress.Commands.add('getInstanceHRID', (instanceUUID) => {
+  return cy
+    .okapiRequest({
+      path: `inventory/instances/${instanceUUID}`,
+    })
+    .then(({ body }) => {
+      return body.hrid;
+    });
+});

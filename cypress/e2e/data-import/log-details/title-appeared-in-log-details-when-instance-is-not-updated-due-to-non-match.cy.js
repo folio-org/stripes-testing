@@ -1,8 +1,6 @@
-import permissions from '../../../support/dictionary/permissions';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import DateTools from '../../../support/utils/dateTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import {
   INSTANCE_STATUS_TERM_NAMES,
@@ -63,8 +61,8 @@ describe('data-import', () => {
 
     before('login', () => {
       cy.createTempUser([
-        permissions.settingsDataImportEnabled.gui,
-        permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.moduleDataImportEnabled.gui,
       ]).then((userProperties) => {
         user = userProperties;
 

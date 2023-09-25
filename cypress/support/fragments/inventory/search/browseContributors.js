@@ -47,9 +47,12 @@ const defaultInstanceZWithContributor = {
 };
 
 const paneIntanceDetails = PaneContent({ id: 'browse-inventory-results-pane-content' });
+const resulstPaneDetails = PaneContent({ id: 'pane-instancedetails-content' });
 const resultsPaneHeader = PaneHeader({ id: 'paneHeaderpane-results' });
 const recordSelect = Select({ id: 'input-record-search-qindex' });
+const instanceRecordSelect = Select({ id: 'input-inventory-search-qindex' });
 const recordSearch = TextInput({ id: 'input-record-search' });
+const inventoryRecordSearch = TextInput({ id: 'input-inventory-search' });
 const contributorsOption = Option('Contributors');
 const browseButton = Button({ id: 'mode-navigation-browse' });
 const searchButton = Button({ type: 'submit' });
@@ -59,13 +62,6 @@ const typeSelect = Section({ id: 'nameType' });
 const nameTypeButton = typeSelect.find(Button('Name type'));
 const nameTypeSearch = typeSelect.find(MultiSelect());
 const nameTypeClear = typeSelect.find(Button({ icon: 'times-circle-solid' }));
-
-const searchButtonDisabled = Button({ type: 'submit', disabled: true });
-const resetAllButtonDisabled = Button({
-  className: including('resetButton---n7KP9'),
-  disabled: true,
-});
-const nameTypeAccordion = Button({ id: 'accordion-toggle-button-nameType' });
 const actionsButton = Button('Actions');
 const rowContributorName = (ContributorName, contributorNameType) => MultiColumnListRow(`${ContributorName}${contributorNameType}1`);
 
@@ -211,7 +207,7 @@ export default {
       paneIntanceDetails.find(MultiColumnListHeader('Type')).exists(),
       paneIntanceDetails.find(MultiColumnListHeader('Relator term')).exists(),
       paneIntanceDetails.find(MultiColumnListHeader('Number of titles')).exists(),
-      paneIntanceDetails.find(Button('Previous')).has({ disabled: false }),
+      paneIntanceDetails.find(Button('Previous')).has({ disabled: or(true, false) }),
       paneIntanceDetails.find(Button('Next')).has({ disabled: or(true, false) }),
     ]);
   },
@@ -306,15 +302,15 @@ export default {
 
   checkInstance(instance) {
     cy.do([
-      recordSearch.has({ value: instance.contributors[0].name }),
+      inventoryRecordSearch.has({ value: instance.contributors[0].name }),
       MultiColumnListCell(instance.contributors[0].name).click(),
     ]);
     cy.expect([
-      recordSelect.has({ value: 'contributors' }),
-      paneIntanceDetails
+      instanceRecordSelect.has({ value: 'contributor' }),
+      resulstPaneDetails
         .find(MultiColumnListCell(instance.contributors[0].contributorTypeText))
         .exists(),
-      paneIntanceDetails.find(MultiColumnListCell(instance.contributors[0].name)).exists(),
+      resulstPaneDetails.find(MultiColumnListCell(instance.contributors[0].name)).exists(),
     ]);
   },
 

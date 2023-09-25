@@ -1,7 +1,4 @@
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
-import Parallelization from '../../../support/dictionary/parallelization';
-import permissions from '../../../support/dictionary/permissions';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import markItemAsWithdrawn from '../../../support/fragments/inventory/markItemAsWithdrawn';
 import markItemAsMissing from '../../../support/fragments/inventory/markItemAsMissing';
 import Requests from '../../../support/fragments/requests/requests';
@@ -51,9 +48,9 @@ describe('inventory', () => {
         })
         .then(() => {
           cy.createTempUser([
-            permissions.uiInventoryMarkItemsWithdrawn.gui,
-            permissions.uiRequestsCreate.gui,
-            permissions.uiInventoryViewInstances.gui,
+            Permissions.uiInventoryMarkItemsWithdrawn.gui,
+            Permissions.uiRequestsCreate.gui,
+            Permissions.uiInventoryViewInstances.gui,
           ]);
         })
         .then((userProperties) => {

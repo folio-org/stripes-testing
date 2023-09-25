@@ -7,15 +7,19 @@ import {
   MultiColumnListRow,
   MultiColumnListCell,
   CheckboxInTable,
+  Dropdown,
   DropdownMenu,
   PaneHeader,
+  Link,
 } from '../../../../interactors';
 import ConfirmItemStatusModal from '../users/loans/confirmItemStatusModal';
 
+const DECLARE_LOST_ACTION_NAME = 'Declare lost';
+const MARK_AS_MISSING_ACTION_NAME = 'Mark as missing';
+
 const claimReturnedButton = Button('Claim returned');
 const changeDueDateButton = Button('Change due date');
-const resolveClaimButton = Button('Resolve claim');
-const markAsMissingButton = Button('Mark as missing');
+const resolveClaimButton = Dropdown('Resolve claim');
 
 export default {
   waitLoading: () => {
@@ -54,6 +58,19 @@ export default {
   claimReturnedButtonIsDisabled() {
     return cy.expect(claimReturnedButton.absent());
   },
+  claimResolveButtonIsAbsent() {
+    return cy.expect(resolveClaimButton.absent());
+  },
+  openDeclareLostModal() {
+    cy.expect(resolveClaimButton.exists());
+    cy.do(resolveClaimButton.choose(DECLARE_LOST_ACTION_NAME));
+    return ConfirmItemStatusModal;
+  },
+  openMarkAsMissingModal() {
+    cy.expect(resolveClaimButton.exists());
+    cy.do(resolveClaimButton.choose(MARK_AS_MISSING_ACTION_NAME));
+    return ConfirmItemStatusModal;
+  },
   renewLoan() {
     cy.do([Button({ icon: 'ellipsis' }).click(), Button('Renew').click()]);
   },
@@ -70,9 +87,9 @@ export default {
   dismissPane() {
     return cy.do(Pane(including('Loan details')).dismiss());
   },
-  closePage() {
+  closeLoanDetails() {
     cy.do(
-      Pane({ id: 'pane-loanshistory' })
+      PaneHeader()
         .find(Button({ ariaLabel: 'Close ' }))
         .click(),
     );
@@ -87,7 +104,7 @@ export default {
     cy.expect(KeyValue('Claimed returned', { value: matching(/\d{1,2}:\d{2}\s\w{2}/gm) }).exists());
   },
   verifyExportFileName(actualName) {
-    const expectedFileNameMask = /export\.csv/gm; //
+    const expectedFileNameMask = /export\.csv/gm;
     expect(actualName).to.match(expectedFileNameMask);
   },
   verifyContentOfExportFileName(actual, ...expectedArray) {
@@ -100,12 +117,16 @@ export default {
         .exists(),
     ));
   },
-  markItemAsMissing: (barcode, reasonWhyItemChangesStatus) => {
-    cy.do([
-      MultiColumnListCell({ content: including(barcode) }).click(),
-      resolveClaimButton.click(),
-      markAsMissingButton.click(),
-    ]);
-    ConfirmItemStatusModal.confirmItemStatus(reasonWhyItemChangesStatus);
+  verifyButtonRedirectsToCorrectPage({ title = '', expectedPage }) {
+    cy.do(Button(including(title)).click());
+    cy.expect(PaneHeader(including(expectedPage)).exists());
+  },
+  verifyLinkRedirectsCorrectPage({ title = '', href = '', expectedPage }) {
+    if (title) {
+      cy.do(Link(including(title)).click());
+    } else {
+      cy.do(Link({ href: including(href) }).click());
+    }
+    cy.expect(PaneHeader(including(expectedPage)).exists());
   },
 };

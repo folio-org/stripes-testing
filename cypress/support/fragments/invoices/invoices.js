@@ -2,6 +2,8 @@ import {
   Accordion,
   Button,
   Checkbox,
+  HTML,
+  including,
   KeyValue,
   Link,
   Modal,
@@ -51,6 +53,11 @@ const fundCodeFilterSection = Section({ id: 'fundCode' });
 const fiscalYearFilterSection = Section({ id: 'fiscalYearId' });
 const invoiceDateFilterSection = Section({ id: 'invoiceDate' });
 const approvalDateFilterSection = Section({ id: 'approvalDate' });
+const newBlankLineButton = Button('New blank line');
+const polLookUpButton = Button('POL look-up');
+const selectOrderLinesModal = Modal('Select order lines');
+const fundInInvoiceSection = Section({ id: 'invoiceLineForm-fundDistribution' });
+const searhInputId = 'input-record-search';
 
 export default {
   selectFolio() {
@@ -62,6 +69,23 @@ export default {
       Button({ id: 'batchGroupId-selection' }).click(),
       SelectionList().select('FOLIO'),
     ]);
+  },
+
+  createInvoiceLinePOLLookUWithSubTotal: (orderNumber, total) => {
+    cy.do([
+      Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click(),
+      newBlankLineButton.click(),
+    ]);
+    cy.do([
+      polLookUpButton.click(),
+      selectOrderLinesModal.find(SearchField({ id: searhInputId })).fillIn(orderNumber),
+      searchButton.click(),
+    ]);
+    Helper.selectFromResultsList();
+    cy.get('input[name="subTotal"]').clear().type(total);
+    cy.do([fundInInvoiceSection.find(Button('%')).click(), saveAndClose.click()]);
+    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage);
+    cy.wait(4000);
   },
 
   checkZeroSearchResultsHeader: () => {
@@ -257,6 +281,7 @@ export default {
       Checkbox({ ariaLabel: `record ${rowNumber} checkbox` }).clickInput(),
       Button('Save').click(),
     ]);
+    cy.wait(4000);
   },
 
   checkInvoiceLine: (invoiceLine, currency = '$') => {
@@ -503,6 +528,14 @@ export default {
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 0 }))
         .click(),
+    );
+  },
+
+  checkFundListIsEmpty: () => {
+    cy.expect(
+      Section({ id: 'invoiceLineFundDistribution' })
+        .find(HTML(including('The list contains no items')))
+        .exists(),
     );
   },
 

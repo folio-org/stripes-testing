@@ -13,11 +13,14 @@ import {
   Select,
   TextInput,
 } from '../../../../interactors';
+import CheckinActions from '../check-in-actions/checkInActions';
 import InventoryHoldings from './holdings/inventoryHoldings';
 import inventoryNewInstance from './inventoryNewInstance';
 import InventoryInstance from './inventoryInstance';
 import Arrays from '../../utils/arrays';
 import { ITEM_STATUS_NAMES } from '../../constants';
+import getRandomPostfix from '../../utils/stringTools';
+import generateUniqueItemBarcodeWithShift from '../../utils/generateUniqueItemBarcodeWithShift';
 import {
   AdvancedSearchModalInventory,
   AdvancedSearchRowInventory,
@@ -264,7 +267,7 @@ export default {
     let alternativeTitleTypeId = '';
     let holdingSourceId = '';
     const instanceId = uuid();
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
+    cy.getAdminToken()
       .then(() => {
         cy.getLoanTypes({ limit: 1 });
         cy.getMaterialTypes({ limit: 1 });
@@ -350,7 +353,26 @@ export default {
     );
   },
 
-  getLoanTypes: (searchParams) => {
+  createLoanType: (loanType) => {
+    return cy
+      .okapiRequest({
+        path: 'loan-types',
+        method: 'POST',
+        body: loanType,
+      })
+      .then(({ body }) => {
+        return body;
+      });
+  },
+
+  deleteLoanType: (loanId) => {
+    return cy.okapiRequest({
+      path: `loan-types/${loanId}`,
+      method: 'DELETE',
+    });
+  },
+
+  getLoanTypes(searchParams = { limit: 1 }) {
     return cy
       .okapiRequest({
         path: 'loan-types',
@@ -360,8 +382,7 @@ export default {
         return body.loantypes;
       });
   },
-
-  getMaterialTypes: (searchParams) => {
+  getMaterialTypes(searchParams = { limit: 1 }) {
     return cy
       .okapiRequest({
         path: 'material-types',
@@ -372,8 +393,7 @@ export default {
         return body.mtypes;
       });
   },
-
-  getLocations: (searchParams) => {
+  getLocations(searchParams = { limit: 1 }) {
     return cy
       .okapiRequest({
         path: 'locations',
@@ -384,8 +404,7 @@ export default {
         return body.locations;
       });
   },
-
-  getHoldingTypes: (searchParams) => {
+  getHoldingTypes(searchParams = { limit: 1 }) {
     return cy
       .okapiRequest({
         path: 'holdings-types',
@@ -395,8 +414,7 @@ export default {
         return body.holdingsTypes;
       });
   },
-
-  getInstanceTypes: (searchParams) => {
+  getInstanceTypes(searchParams = { limit: 1 }) {
     return cy
       .okapiRequest({
         path: 'instance-types',
@@ -406,18 +424,84 @@ export default {
         return body.instanceTypes;
       });
   },
+  generateFolioInstances({
+    count = 1,
+    status = ITEM_STATUS_NAMES.AVAILABLE,
+    properties = {},
+  } = {}) {
+    return [...Array(count).keys()].map((index) => ({
+      instanceTitle: `Instance-${getRandomPostfix()}`,
+      barcodes: [generateUniqueItemBarcodeWithShift(index)],
+      status,
+      properties: Array.isArray(properties) ? properties[index] : properties,
+    }));
+  },
+  createFolioInstancesViaApi({ folioInstances = [], location = {}, sourceId } = {}) {
+    const types = {
+      instanceTypeId: '',
+      holdingTypeId: '',
+      loanTypeId: '',
+      materialTypeId: '',
+    };
 
+    cy.then(() => {
+      this.getInstanceTypes().then((instanceTypes) => {
+        types.instanceTypeId = instanceTypes[0].id;
+      });
+      this.getHoldingTypes().then((holdingTypes) => {
+        types.holdingTypeId = holdingTypes[0].id;
+      });
+      this.getLoanTypes().then((loanTypes) => {
+        types.loanTypeId = loanTypes[0].id;
+      });
+      this.getMaterialTypes().then((materialTypes) => {
+        types.materialTypeId = materialTypes[0].id;
+      });
+    }).then(() => {
+      folioInstances.forEach((item, index) => {
+        const instance = {
+          instance: {
+            instanceTypeId: types.instanceTypeId,
+            title: item.instanceTitle,
+          },
+          holdings: [
+            {
+              holdingsTypeId: types.holdingTypeId,
+              permanentLocationId: location.id,
+              sourceId,
+            },
+          ],
+          items: item.barcodes.map((barcode) => ({
+            barcode,
+            status: { name: item.status },
+            permanentLoanType: { id: types.loanTypeId },
+            materialType: {
+              id: types.materialTypeId,
+            },
+            ...item.properties,
+          })),
+        };
+
+        this.createFolioInstanceViaApi(instance).then(({ instanceId, holdingIds }) => {
+          folioInstances[index].instanceId = instanceId;
+          folioInstances[index].holdingId = holdingIds[0].id;
+          folioInstances[index].itemIds = holdingIds[0].itemIds;
+        });
+      });
+    });
+  },
   createFolioInstanceViaApi: ({ instance, holdings = [], items = [] }) => {
     InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
-      const ids = {};
       const instanceWithSpecifiedNewId = {
         ...instance,
         id: instance.id || uuid(),
         source: folioSource.name,
       };
-      ids.instanceId = instanceWithSpecifiedNewId.id;
+      const ids = {
+        instanceId: instanceWithSpecifiedNewId.id,
+        holdingIds: [],
+      };
       createInstanceViaAPI(instanceWithSpecifiedNewId).then(() => {
-        ids.holdingIds = [];
         cy.wrap(
           holdings.forEach((holding) => {
             const holdingWithIds = {
@@ -462,7 +546,23 @@ export default {
         return res.body.instances[0].id;
       });
   },
+  deleteInstanceViaApi({ instance, servicePoint, shouldCheckIn = false }) {
+    if (shouldCheckIn) {
+      instance.barcodes.forEach((barcode) => {
+        CheckinActions.checkinItemViaApi({
+          itemBarcode: barcode,
+          claimedReturnedResolution: 'Returned by patron',
+          servicePointId: servicePoint.id,
+        });
+      });
+    }
 
+    instance.itemIds.forEach((id) => {
+      cy.deleteItemViaApi(id);
+    });
+    cy.deleteHoldingRecordViaApi(instance.holdingId);
+    InventoryInstance.deleteInstanceViaApi(instance.instanceId);
+  },
   searchBySource: (source) => {
     cy.do(Button({ id: 'accordion-toggle-button-source' }).click());
     cy.do(Checkbox(source).click());

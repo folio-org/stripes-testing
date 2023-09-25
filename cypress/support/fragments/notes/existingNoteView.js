@@ -1,5 +1,5 @@
 import { Button, KeyValue, Section } from '../../../../interactors';
-import AgreementDetails from '../agreements/agreementViewDetails';
+import AgreementViewDetails from '../agreements/agreementViewDetails';
 import ExistingNoteEdit from './existingNoteEdit';
 
 const section = Section({ id: 'pane-note-view' });
@@ -30,6 +30,6 @@ export default {
   close: () => {
     cy.do(closeButton.click());
     cy.expect(section.absent());
-    AgreementDetails.waitLoading();
+    AgreementViewDetails.waitLoading();
   },
 };

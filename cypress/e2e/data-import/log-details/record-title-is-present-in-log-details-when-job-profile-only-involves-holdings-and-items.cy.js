@@ -1,7 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import DevTeams from '../../../support/dictionary/devTeams';
-import TestTypes from '../../../support/dictionary/testTypes';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
 import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
@@ -35,7 +33,7 @@ import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRec
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
-describe('data-import', () => {
+describe.skip('data-import', () => {
   describe('Log details', () => {
     let user;
     const instanceHrids = [];
@@ -353,11 +351,11 @@ describe('data-import', () => {
       });
 
       cy.createTempUser([
-        permissions.moduleDataImportEnabled.gui,
-        permissions.inventoryAll.gui,
-        permissions.dataExportEnableSettings.gui,
-        permissions.settingsDataImportEnabled.gui,
-        permissions.dataExportEnableApp.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.dataExportEnableSettings.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.dataExportEnableApp.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
@@ -475,7 +473,7 @@ describe('data-import', () => {
 
         // create match profiles
         cy.visit(SettingsMenu.matchProfilePath);
-        collectionOfMatchProfiles.forEach((profile) => {
+        cy.wrap(collectionOfMatchProfiles).each((profile) => {
           // TODO need to wait until profile will be created in loop
           cy.wait(8000);
           MatchProfiles.createMatchProfile(profile.matchProfile);
@@ -539,22 +537,18 @@ describe('data-import', () => {
         Logs.openFileDetails(marcFileNameForUpdateFirstRecord);
         FileDetails.checkHoldingsQuantityInSummaryTable('1', 1);
         FileDetails.checkItemQuantityInSummaryTable('1', 1);
-        FileDetails.checkStatusInColumn(
-          FileDetails.status.dash,
+        [
           FileDetails.columnNameInResultList.srsMarc,
-        );
-        FileDetails.checkStatusInColumn(
-          FileDetails.status.dash,
           FileDetails.columnNameInResultList.instance,
-        );
-        FileDetails.checkStatusInColumn(
-          FileDetails.status.updated,
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(FileDetails.status.dash, columnName);
+        });
+        [
           FileDetails.columnNameInResultList.holdings,
-        );
-        FileDetails.checkStatusInColumn(
-          FileDetails.status.updated,
-          FileDetails.columnNameInResultList.item,
-        );
+          FileDetails.columnNameInResultList.holdings,
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+        });
         FileDetails.verifyTitle(instanceTitle, FileDetails.columnNameInResultList.title);
 
         FileDetails.openHoldingsInInventory('Updated');

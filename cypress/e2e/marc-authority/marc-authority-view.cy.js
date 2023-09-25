@@ -7,6 +7,7 @@ import Users from '../../support/fragments/users/users';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import DataImport from '../../support/fragments/data_import/dataImport';
+import Parallelization from '../../support/dictionary/parallelization';
 
 describe('MARC Authority management', () => {
   const userData = {};
@@ -35,7 +36,7 @@ describe('MARC Authority management', () => {
 
   it(
     'C350967 quickMARC: View MARC bibliographic record (spitfire)',
-    { tags: [TestTypes.smoke, Features.authority, DevTeams.spitfire] },
+    { tags: [TestTypes.smoke, Features.authority, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       cy.login(userData.name, userData.password, {
         path: TopMenu.inventoryPath,

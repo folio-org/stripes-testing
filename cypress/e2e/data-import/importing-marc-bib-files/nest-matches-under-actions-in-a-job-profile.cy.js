@@ -1,7 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import {
   FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
@@ -203,11 +201,11 @@ describe('data-import', () => {
       cy.logout();
 
       cy.createTempUser([
-        permissions.moduleDataImportEnabled.gui,
-        permissions.inventoryAll.gui,
-        permissions.dataExportEnableSettings.gui,
-        permissions.settingsDataImportEnabled.gui,
-        permissions.dataExportEnableApp.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.dataExportEnableSettings.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.dataExportEnableApp.gui,
       ]).then((userProperties) => {
         user = userProperties;
 

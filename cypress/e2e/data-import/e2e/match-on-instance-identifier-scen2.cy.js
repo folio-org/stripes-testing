@@ -1,8 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
-import Parallelization from '../../../support/dictionary/parallelization';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import {
   FOLIO_RECORD_TYPE,
@@ -73,15 +70,15 @@ describe('data-import', () => {
 
     beforeEach('create test data', () => {
       cy.createTempUser([
-        permissions.moduleDataImportEnabled.gui,
-        permissions.dataImportDeleteLogs.gui,
-        permissions.inventoryAll.gui,
-        permissions.settingsDataImportEnabled.gui,
-        permissions.viewEditDeleteInvoiceInvoiceLine.gui,
-        permissions.viewEditCreateInvoiceInvoiceLine.gui,
-        permissions.assignAcqUnitsToNewInvoice.gui,
-        permissions.invoiceSettingsAll.gui,
-        permissions.remoteStorageView.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.dataImportDeleteLogs.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.viewEditDeleteInvoiceInvoiceLine.gui,
+        Permissions.viewEditCreateInvoiceInvoiceLine.gui,
+        Permissions.assignAcqUnitsToNewInvoice.gui,
+        Permissions.invoiceSettingsAll.gui,
+        Permissions.remoteStorageView.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
         cy.login(userProperties.username, userProperties.password, {

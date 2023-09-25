@@ -652,4 +652,11 @@ export default {
     cy.do(searchToggleButton.click());
     cy.expect(effectiveLocationInput.exists());
   },
+
+  verifyNoRecordsFound() {
+    cy.expect([
+      paneResultsSection.find(HTML(including('No results found for'))).exists(),
+      instancesList.absent(),
+    ]);
+  },
 };

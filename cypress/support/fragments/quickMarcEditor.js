@@ -24,11 +24,13 @@ const rootSection = Section({ id: 'quick-marc-editor-pane' });
 const viewMarcSection = Section({ id: 'marc-view-pane' });
 const cancelButton = Button('Cancel');
 const closeWithoutSavingBtn = Button('Close without saving');
+const xButton = Button({ ariaLabel: 'Close ' });
 const addFieldButton = Button({ ariaLabel: 'plus-sign' });
 const deleteFieldButton = Button({ ariaLabel: 'trash' });
 const linkToMarcRecordButton = Button({ ariaLabel: 'link' });
 const unlinkIconButton = Button({ ariaLabel: 'unlink' });
 const viewAuthorutyIconButton = Button({ ariaLabel: 'eye-open' });
+const arrowUpButton = Button({ ariaLabel: 'arrow-up' });
 const saveAndCloseButton = Button({ id: 'quick-marc-record-save' });
 const saveAndKeepEditingBtn = Button({ id: 'quick-marc-record-save-edit' });
 const saveAndCloseButtonEnabled = Button({ id: 'quick-marc-record-save', disabled: false });
@@ -62,7 +64,11 @@ const unlinkButtonInsideModal = Button({ id: 'clickable-quick-marc-confirm-unlin
 const calloutAfterSaveAndClose = Callout(
   'This record has successfully saved and is in process. Changes may not appear immediately.',
 );
-const calloutUpdatedRecord = Callout('Record has been updated.');
+const calloutUpdatedRecord = Callout(
+  'This record has successfully saved and is in process. Changes may not appear immediately.',
+);
+const calloutOnDeriveFirst = Callout('Creating record may take several seconds.');
+const calloutOnDeriveSecond = Callout('Record created.');
 const calloutUpdatedLinkedBibRecord = Callout(
   'Record has been updated. 2 linked bibliographic record(s) updates have begun.',
 );
@@ -244,6 +250,7 @@ defaultFieldValues.getSourceContent = (contentInQuickMarcEditor) => contentInQui
 
 const requiredRowsTags = ['LDR', '001', '005', '008', '999'];
 const readOnlyAuthorityTags = ['LDR', '001', '005', '999'];
+const readOnlyHoldingsTags = ['001', '004', '005', '999'];
 
 const getRowInteractorByRowNumber = (specialRowNumber) => QuickMarcEditor().find(QuickMarcEditorRow({ index: specialRowNumber }));
 const getRowInteractorByTagName = (tagName) => QuickMarcEditor().find(QuickMarcEditorRow({ tagValue: tagName }));
@@ -282,14 +289,35 @@ const fifthBoxInLinkedField = TextArea({ name: including('.subfieldGroups.uncont
 const sixthBoxInLinkedField = TextArea({ name: including('.subfieldGroups.zeroSubfield') });
 const seventhBoxInLinkedField = TextArea({ name: including('.subfieldGroups.uncontrolledNumber') });
 
+const default008BoxesHoldings = [
+  TextField('AcqStatus'),
+  TextField('AcqMethod'),
+  TextField('AcqEndDate'),
+  TextField('Gen ret'),
+  TextField('Spec ret', { name: including('Spec ret[0]') }),
+  TextField('Spec ret', { name: including('Spec ret[1]') }),
+  TextField('Spec ret', { name: including('Spec ret[2]') }),
+  TextField('Compl'),
+  TextField('Copies'),
+  TextField('Lend'),
+  TextField('Repro'),
+  TextField('Lang'),
+  TextField('Sep/comp'),
+  TextField('Rept date'),
+];
+
 export default {
   getInitialRowsCount() {
     return validRecord.lastRowNumber;
   },
 
-  addNewField(tag = defaultFieldValues.freeTags[0], fieldContent = defaultFieldValues.content) {
-    this.addRow();
-    return this.fillAllAvailableValues(fieldContent, tag);
+  addNewField(
+    tag = defaultFieldValues.freeTags[0],
+    fieldContent = defaultFieldValues.content,
+    rowNumber,
+  ) {
+    this.addRow(rowNumber);
+    return this.fillAllAvailableValues(fieldContent, tag, rowNumber);
   },
 
   addNewFieldWithSubField(tag) {
@@ -404,6 +432,15 @@ export default {
     ]);
   },
 
+  continueWithSaveAndCheckNewInstanceCreated() {
+    cy.do(continueWithSaveButton.click());
+    cy.expect([
+      calloutOnDeriveFirst.exists(),
+      calloutOnDeriveSecond.exists(),
+      rootSection.absent(),
+    ]);
+  },
+
   saveAndCloseUpdatedLinkedBibField() {
     cy.do(saveAndCloseButton.click());
     cy.expect([updateLinkedBibFieldsModal.exists(), saveButton.exists()]);
@@ -437,7 +474,7 @@ export default {
 
   clickSaveAndKeepEditing() {
     cy.do(saveAndKeepEditingBtn.click());
-    cy.expect(calloutUpdatedRecord.exists());
+    cy.expect(calloutAfterSaveAndClose.exists());
     cy.expect(rootSection.exists());
   },
 
@@ -509,6 +546,10 @@ export default {
         .find(TextArea({ name: `records[${rowNumber ?? this.getInitialRowsCount() + 1}].content` }))
         .has({ value: content ?? defaultFieldValues.contentWithSubfield }),
     );
+  },
+
+  moveFieldUp(rowNumber) {
+    cy.do(QuickMarcEditorRow({ index: rowNumber }).find(arrowUpButton).click());
   },
 
   checkFieldContentMatch(selector, regExp) {
@@ -852,6 +893,10 @@ export default {
     cy.do(cancelButton.click());
   },
 
+  closeUsingCrossButton() {
+    cy.do(xButton.click());
+  },
+
   closeWithoutSavingAfterChange() {
     cy.do(cancelButton.click());
     cy.expect(closeWithoutSavingBtn.exists());
@@ -1052,9 +1097,9 @@ export default {
   },
 
   verifyAndDismissRecordUpdatedCallout() {
-    cy.expect(calloutUpdatedRecord.exists());
-    cy.do(calloutUpdatedRecord.dismiss());
-    cy.expect(calloutUpdatedRecord.absent());
+    cy.expect(calloutAfterSaveAndClose.exists());
+    cy.do(calloutAfterSaveAndClose.dismiss());
+    cy.expect(calloutAfterSaveAndClose.absent());
   },
 
   checkFourthBoxDisabled(rowIndex) {
@@ -1089,7 +1134,7 @@ export default {
     cy.do(saveButton.click());
     cy.expect([
       Callout(
-        `Record has been updated. ${linkedRecordsNumber} linked bibliographic record(s) updates have begun.`,
+        `This record has successfully saved and is in process. ${linkedRecordsNumber} linked bibliographic record(s) updates have begun.`,
       ).exists(),
       rootSection.absent(),
       viewMarcSection.exists(),
@@ -1252,5 +1297,60 @@ export default {
         .find(HTML(including(`Source: ${lastName}, ${firstName}`)))
         .exists(),
     );
+  },
+
+  updateIndicatorValue(tag, newValue, indicatorIndex = 0) {
+    const indicator = indicatorIndex ? secondIndicatorBox : firstIndicatorBox;
+    cy.do(getRowInteractorByTagName(tag).find(indicator).fillIn(newValue));
+    cy.expect(getRowInteractorByTagName(tag).find(indicator).has({ value: newValue }));
+  },
+
+  verifyIndicatorValue(tag, indicatorValue, indicatorIndex = 0) {
+    const indicator = indicatorIndex ? secondIndicatorBox : firstIndicatorBox;
+    cy.expect(getRowInteractorByTagName(tag).find(indicator).has({ value: indicatorValue }));
+  },
+
+  updateValuesIn008Boxes(valuesArray) {
+    valuesArray.forEach((value, index) => {
+      cy.do(tag008DefaultValues[index].interactor.fillIn(value));
+    });
+    valuesArray.forEach((value, index) => {
+      cy.expect(tag008DefaultValues[index].interactor.has({ value }));
+    });
+  },
+
+  checkValuesIn008Boxes(valuesArray) {
+    valuesArray.forEach((value, index) => {
+      cy.expect(tag008DefaultValues[index].interactor.has({ value }));
+    });
+  },
+
+  checkReadOnlyHoldingsTags() {
+    readOnlyHoldingsTags.forEach((readOnlyTag) => {
+      cy.expect([
+        getRowInteractorByTagName(readOnlyTag).find(TextField('Field')).has({ disabled: true }),
+        getRowInteractorByTagName(readOnlyTag)
+          .find(TextArea({ ariaLabel: 'Subfield' }))
+          .has({ disabled: true }),
+      ]);
+      if (readOnlyTag === '999') {
+        cy.expect(
+          getRowInteractorByTagName(readOnlyTag)
+            .find(TextField('Indicator', { name: including('.indicators[0]') }))
+            .has({ disabled: true }),
+        );
+        cy.expect(
+          getRowInteractorByTagName(readOnlyTag)
+            .find(TextField('Indicator', { name: including('.indicators[1]') }))
+            .has({ disabled: true }),
+        );
+      }
+    });
+  },
+
+  verifyHoldingsDefault008BoxesValues(expectedValues) {
+    default008BoxesHoldings.forEach((box, index) => {
+      cy.expect(box.has({ value: expectedValues[index] }));
+    });
   },
 };

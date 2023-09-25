@@ -11,7 +11,7 @@ const defaultServicePoint = {
   name: `autotest_service_point_name_${getRandomPostfix()}`,
 };
 
-const getDefaultServicePointWithPickUpLocation = ({
+const getDefaultServicePoint = ({
   name = `autotest_service_point_name_${getRandomPostfix()}`,
   id = uuid(),
 } = {}) => {
@@ -20,12 +20,20 @@ const getDefaultServicePointWithPickUpLocation = ({
     name,
     code: `autotest_code_${getRandomPostfix()}`,
     discoveryDisplayName: `autotest_discovery_display_name_${getRandomPostfix()}`,
+  };
+};
+
+const getDefaultServicePointWithPickUpLocation = ({ name, id } = {}) => {
+  return {
+    ...getDefaultServicePoint({ name, id }),
     pickupLocation: true,
     holdShelfExpiryPeriod: { intervalId: 'Hours', duration: 1 },
   };
 };
 
 export default {
+  defaultServicePoint,
+  getDefaultServicePoint,
   getDefaultServicePointWithPickUpLocation,
   getViaApi: (searchParams) => cy
     .okapiRequest({

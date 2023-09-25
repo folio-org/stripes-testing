@@ -8,6 +8,7 @@ import {
   Modal,
   MultiColumnList,
   MultiColumnListCell,
+  NavListItem,
 } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 import getRandomPostfix from '../../utils/stringTools';
@@ -36,6 +37,7 @@ const jobsPane = Pane({ id: 'pane-jobs-title' });
 const orChooseFilesButton = Button('or choose files');
 const cancelImportJobModal = Modal('Cancel import job?');
 const yesButton = Button('Yes, cancel import job');
+const dataImportNavSection = Pane({ id: 'app-settings-nav-pane' });
 
 const uploadFile = (filePathName, fileName) => {
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
@@ -444,5 +446,9 @@ export default {
       );
     }
     upload();
+  },
+
+  verifyDataImportProfiles(profiles) {
+    cy.expect(dataImportNavSection.find(NavListItem(profiles)).exists());
   },
 };

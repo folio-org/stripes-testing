@@ -3,7 +3,7 @@ import { HTML, including } from '@interactors/html';
 import Permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import AgreementsDetails from '../../support/fragments/agreements/agreementsDetails';
+import AgreementsDetails from '../../support/fragments/agreements/agreementViewDetails';
 import usersCard from '../../support/fragments/users/usersCard';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import NewServicePoint from '../../support/fragments/settings/tenant/servicePoints/newServicePoint';

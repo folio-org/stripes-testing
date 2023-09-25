@@ -1,4 +1,4 @@
-import TestTypes from '../../support/dictionary/testTypes';
+import { DevTeams, TestTypes } from '../../support/dictionary';
 import getRandomPostfix from '../../support/utils/stringTools';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -6,7 +6,6 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import InstanceRecordEdit from '../../support/fragments/inventory/instanceRecordEdit';
 import Helper from '../../support/fragments/finance/financeHelper';
 import TopMenu from '../../support/fragments/topMenu';
-import DevTeams from '../../support/dictionary/devTeams';
 import { INSTANCE_SOURCE_NAMES } from '../../support/constants';
 
 describe('inventory', () => {

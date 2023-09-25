@@ -1,4 +1,4 @@
-import TestTypes from '../../../support/dictionary/testTypes';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import {
   FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
@@ -19,9 +19,7 @@ import ExportFile from '../../../support/fragments/data-export/exportFile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import TopMenu from '../../../support/fragments/topMenu';
-import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
-import DevTeams from '../../../support/dictionary/devTeams';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('data-import', () => {
@@ -72,11 +70,11 @@ describe('data-import', () => {
 
     before('login', () => {
       cy.createTempUser([
-        permissions.dataImportUploadAll.gui,
-        permissions.moduleDataImportEnabled.gui,
-        permissions.settingsDataImportEnabled.gui,
-        permissions.uiInventoryViewInstances.gui,
-        permissions.dataExportEnableModule.gui,
+        Permissions.dataImportUploadAll.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.uiInventoryViewInstances.gui,
+        Permissions.dataExportEnableModule.gui,
       ]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {

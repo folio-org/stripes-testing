@@ -1,7 +1,6 @@
 import uuid from 'uuid';
-import permissions from '../../../support/dictionary/permissions';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import {
   FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
@@ -38,7 +37,6 @@ import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRec
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import Organizations from '../../../support/fragments/organizations/organizations';
-import DevTeams from '../../../support/dictionary/devTeams';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import FileManager from '../../../support/utils/fileManager';
@@ -156,18 +154,18 @@ describe('data-import', () => {
 
     before('create test data', () => {
       cy.createTempUser([
-        permissions.uiOrdersCreate.gui,
-        permissions.uiOrdersView.gui,
-        permissions.uiOrdersEdit.gui,
-        permissions.uiInventoryViewCreateEditHoldings.gui,
-        permissions.uiInventoryViewCreateEditInstances.gui,
-        permissions.uiInventoryViewCreateEditItems,
-        permissions.settingsDataImportEnabled.gui,
-        permissions.moduleDataImportEnabled.gui,
-        permissions.uiReceivingViewEditCreate.gui,
-        permissions.uiInventoryViewInstances.gui,
-        permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
-        permissions.remoteStorageView.gui,
+        Permissions.uiOrdersCreate.gui,
+        Permissions.uiOrdersView.gui,
+        Permissions.uiOrdersEdit.gui,
+        Permissions.uiInventoryViewCreateEditHoldings.gui,
+        Permissions.uiInventoryViewCreateEditInstances.gui,
+        Permissions.uiInventoryViewCreateEditItems,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.uiReceivingViewEditCreate.gui,
+        Permissions.uiInventoryViewInstances.gui,
+        Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
+        Permissions.remoteStorageView.gui,
       ])
         .then((userProperties) => {
           user = userProperties;
@@ -281,7 +279,7 @@ describe('data-import', () => {
 
     it(
       'C350590 Match on POL and update related Instance, Holdings, Item (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         // create the first PO with POL
         Orders.createOrderWithOrderLineViaApi(

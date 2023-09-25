@@ -237,7 +237,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
 
       LoansPage.renewalMessageCheck('Renew Confirmation');
       LoansPage.checkOverrideButtonHidden();
-      LoansPage.closePage();
+      LoansPage.closeLoanDetails();
 
       cy.login(secondUser.username, secondUser.password, {
         path: AppPaths.getOpenLoansPath(secondUser.userId),

@@ -11,6 +11,7 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import getRandomPostfix from '../../../support/utils/stringTools';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
+import Parallelization from '../../../support/dictionary/parallelization';
 
 describe('plug-in MARC authority | Search', () => {
   const testData = {
@@ -90,7 +91,7 @@ describe('plug-in MARC authority | Search', () => {
 
   it(
     'C359233 MARC Authority plug-in | Search using "Children\'s subject heading" option (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
       InventoryInstances.selectInstance();

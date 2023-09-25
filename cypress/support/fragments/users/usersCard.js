@@ -13,11 +13,17 @@ import {
   SelectionList,
   TextArea,
   TextField,
+  and,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
 const rootSection = Section({ id: 'pane-userdetails' });
+const loansSection = rootSection.find(Accordion({ id: 'loansSection' }));
+const currentLoansLink = loansSection.find(Link({ id: 'clickable-viewcurrentloans' }));
+const returnedLoansSpan = loansSection.find(HTML({ id: 'claimed-returned-count' }));
+const patronBlocksSection = Accordion({ id: 'patronBlocksSection' });
 const permissionAccordion = Accordion({ id: 'permissionsSection' });
+const notesSection = Accordion('Notes');
 const actionsButton = rootSection.find(Button('Actions'));
 const errors = {
   patronHasBlocksInPlace: 'Patron has block(s) in place',
@@ -28,22 +34,50 @@ export default {
   errors,
 
   openPatronBlocks() {
-    cy.do(Accordion({ id: 'patronBlocksSection' }).clickHeader());
+    cy.do(patronBlocksSection.clickHeader());
   },
 
   patronBlocksAccordionCovered() {
     cy.expect([
-      Section({ id: 'patronBlocksSection' })
+      patronBlocksSection
         .find(Button({ id: 'accordion-toggle-button-patronBlocksSection' }))
         .has({ ariaExpanded: 'false' }),
     ]);
   },
 
-  openLoans() {
-    cy.reload();
-    cy.intercept('/circulation/loans?*').as('getLoans');
-    cy.do(Accordion({ id: 'loansSection' }).clickHeader());
-    return cy.wait('@getLoans', { requestTimeout: 10000 });
+  expandLoansSection(openLoans, returnedLoans) {
+    cy.do(loansSection.clickHeader());
+
+    return openLoans && this.verifyQuantityOfOpenAndClaimReturnedLoans(openLoans, returnedLoans);
+  },
+  expandNotesSection({ details = '' } = {}) {
+    cy.do(notesSection.clickHeader());
+
+    return details && this.verifyNoteDetails({ details });
+  },
+  verifyNoteDetails({ details = '' } = {}) {
+    cy.expect([
+      notesSection
+        .find(MultiColumnListRow({ index: 0 }).find(MultiColumnListCell({ columnIndex: 1 })))
+        .has({ content: and(including(`Title: ${details}`), including(`Details: ${details}`)) }),
+      notesSection
+        .find(MultiColumnListRow({ index: 0 }).find(MultiColumnListCell({ columnIndex: 2 })))
+        .has({ content: 'General note' }),
+    ]);
+  },
+  verifyQuantityOfOpenAndClaimReturnedLoans(openLoans, returnedLoans) {
+    cy.expect(currentLoansLink.has({ text: `${openLoans} open loan${openLoans > 1 ? 's' : ''}` }));
+
+    if (returnedLoans) {
+      cy.expect(returnedLoansSpan.has({ text: ` (${returnedLoans} claimed returned)` }));
+    }
+  },
+  clickCurrentLoansLink() {
+    cy.do(currentLoansLink.click());
+  },
+  viewCurrentLoans({ openLoans, returnedLoans } = {}) {
+    this.expandLoansSection(openLoans, returnedLoans);
+    this.clickCurrentLoansLink();
   },
   openFeeFines() {
     cy.do(feesFinesAccourdion.clickHeader());
@@ -51,6 +85,10 @@ export default {
 
   openNotesSection() {
     cy.do(Accordion({ id: 'notesAccordion' }).clickHeader());
+  },
+
+  openCustomFieldsSection() {
+    cy.do(Accordion({ id: 'customFields' }).clickHeader());
   },
 
   showOpenedLoans() {
@@ -111,7 +149,7 @@ export default {
 
   submitPatronInformation(text) {
     cy.expect(
-      Accordion({ id: 'patronBlocksSection' })
+      patronBlocksSection
         .find(MultiColumnList({ id: 'patron-block-mcl' }))
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 1 }))
@@ -134,7 +172,7 @@ export default {
 
   selectPatronBlock(text) {
     cy.do(
-      Accordion({ id: 'patronBlocksSection' })
+      patronBlocksSection
         .find(MultiColumnList({ id: 'patron-block-mcl' }))
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 1, content: text }))
@@ -191,34 +229,21 @@ export default {
     cy.do(Button('Create fee/fine').click());
   },
 
-  hasSaveError: (errorMessage) => cy.expect(rootSection.find(TextField({ value: errorMessage })).exists()),
-
-  startFeeFineAdding: () => cy.do(feesFinesAccourdion.find(Button('Create fee/fine')).click()),
-  viewAllFeesFines: () => cy.do(feesFinesAccourdion.find(Button({ id: 'clickable-viewallaccounts' })).click()),
-  verifyQuantityOfOpenAndClaimReturnedLoans(quantityOfOpenLoans, quantityOfClaimReturnedLoans) {
-    if (quantityOfClaimReturnedLoans > 0) {
-      return cy.expect(
-        Section({ id: 'loansSection' })
-          .find(
-            HTML(
-              including(
-                `${quantityOfOpenLoans} open loans (${quantityOfClaimReturnedLoans} claimed returned)`,
-              ),
-            ),
-          )
-          .exists(),
-      );
-    } else {
-      return cy.expect(
-        Section({ id: 'loansSection' })
-          .find(HTML(including(`${quantityOfOpenLoans} open loans`)))
-          .exists(),
-      );
-    }
+  hasSaveError(errorMessage) {
+    cy.expect(rootSection.find(TextField({ value: errorMessage })).exists());
   },
-
+  startFeeFineAdding() {
+    cy.do(feesFinesAccourdion.find(Button('Create fee/fine')).click());
+  },
+  viewAllFeesFines() {
+    cy.do(feesFinesAccourdion.find(Button({ id: 'clickable-viewallaccounts' })).click());
+  },
   verifyPatronBlockValue(value = '') {
     cy.expect(KeyValue('Patron group').has({ value: including(value) }));
+  },
+
+  verifySingleSelectValue({ data }) {
+    cy.expect(KeyValue(data.fieldLabel).has({ value: including(data.firstLabel) }));
   },
 
   verifyExpirationDate(date) {

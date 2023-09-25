@@ -13,12 +13,14 @@ export const getDefaultTenant = (props = {}) => ({
 export default {
   ...SettingsPane,
   rootPane,
-  viewTable() {
-    // should be overriden in child modules
-  },
   checkNoActionButtons() {
     SettingsPane.checkAddNewBtnAbsent();
     SettingsPane.checkColumnAbsent('Actions');
+  },
+  selectOptions(options = []) {
+    options.forEach(({ label, option }) => {
+      this.selectOption(label, option);
+    });
   },
   selectOption(label, option) {
     cy.do(Select(label).choose(including(option.name)));

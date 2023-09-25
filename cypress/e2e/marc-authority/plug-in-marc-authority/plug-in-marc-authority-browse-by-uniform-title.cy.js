@@ -11,6 +11,7 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import getRandomPostfix from '../../../support/utils/stringTools';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
+import Parallelization from '../../../support/dictionary/parallelization';
 
 describe('plug-in MARC authority | Browse', () => {
   const testData = {
@@ -83,7 +84,7 @@ describe('plug-in MARC authority | Browse', () => {
 
   it(
     'C380555 MARC Authority plug-in | Browse using "Uniform title" option returns only records with the same "Type of heading" (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
       InventoryInstances.selectInstance();

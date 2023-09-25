@@ -1,10 +1,9 @@
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
+import { DevTeams, TestTypes } from '../../support/dictionary';
 import Helper from '../../support/fragments/finance/financeHelper';
 import { MultiColumnListCell } from '../../../interactors';
-import DevTeams from '../../support/dictionary/devTeams';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 describe('inventory', () => {

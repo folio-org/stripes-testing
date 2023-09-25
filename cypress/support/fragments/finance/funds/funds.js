@@ -91,6 +91,23 @@ export default {
     cy.expect(MultiColumnList({ id: 'funds-list' }).has({ rowCount: 1 }));
   },
 
+  checkInvoiceInTransactionList: (indexnumber, type, amount, source) => {
+    cy.expect([
+      transactionList
+        .find(MultiColumnListRow({ index: indexnumber }))
+        .find(MultiColumnListCell({ columnIndex: 1 }))
+        .has({ content: type }),
+      transactionList
+        .find(MultiColumnListRow({ index: indexnumber }))
+        .find(MultiColumnListCell({ columnIndex: 2 }))
+        .has({ content: `${amount}` }),
+      transactionList
+        .find(MultiColumnListRow({ index: indexnumber }))
+        .find(MultiColumnListCell({ columnIndex: 5 }))
+        .has({ content: source }),
+    ]);
+  },
+
   waitForFundDetailsLoading: () => {
     cy.do(fundDetailsPane.visible());
   },
@@ -485,6 +502,16 @@ export default {
     });
   },
 
+  checkAbsentTransaction: (transaction) => {
+    cy.wait(4000);
+    cy.expect(
+      Pane({ id: transactionResultPaneId })
+        // .find(MultiColumnListRow({ index: rowNumber }))
+        .find(MultiColumnListCell({ content: transaction }))
+        .absent(),
+    );
+  },
+
   transferAmount: (amount, fundFrom, fundTo) => {
     cy.do([actionsButton.click(), transferButton.click()]);
     cy.expect(Modal('Transfer').exists());
@@ -675,6 +702,7 @@ export default {
   },
 
   editBudget: () => {
+    cy.wait(4000);
     cy.do([actionsButton.click(), Button('Edit').click()]);
   },
 

@@ -372,7 +372,9 @@ function verifyItemUpdated(itemBarcode) {
 }
 
 function verifyMARCBibSource(itemBarcode) {
-  cy.do([instanceDetailsSection.find(actionButton).click(), viewSourceButton.click()]);
+  cy.do(instanceDetailsSection.find(actionButton).click());
+  cy.wait(2000);
+  cy.do(viewSourceButton.click());
   // verify table data in marc bibliographic source
   InventoryViewSource.contains('980\t');
   InventoryViewSource.contains('KU/CC/DI/M');

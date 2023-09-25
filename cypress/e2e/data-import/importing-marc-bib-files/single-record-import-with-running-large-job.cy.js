@@ -1,8 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -40,11 +38,11 @@ describe('data-import', () => {
     before('create test data', () => {
       cy.getAdminToken();
       cy.createTempUser([
-        permissions.moduleDataImportEnabled.gui,
-        permissions.uiInventorySingleRecordImport.gui,
-        permissions.uiInventorySettingsConfigureSingleRecordImport.gui,
-        permissions.settingsDataImportEnabled.gui,
-        permissions.remoteStorageView.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.uiInventorySingleRecordImport.gui,
+        Permissions.uiInventorySettingsConfigureSingleRecordImport.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.remoteStorageView.gui,
       ]).then((userProperties) => {
         user = userProperties;
 

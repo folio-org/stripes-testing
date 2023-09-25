@@ -2,7 +2,6 @@ import { HTML, including } from '@interactors/html';
 import {
   KeyValue,
   MultiColumnList,
-  MultiColumnListRow,
   Section,
   MultiColumnListCell,
   Button,
@@ -89,8 +88,9 @@ const verifyImportedFieldExists = (field) => {
 };
 
 const viewSource = () => {
-  cy.wait(1500);
-  cy.do([instanceDetailsSection.find(actionsButton).click(), viewSourceButton.click()]);
+  cy.do(instanceDetailsSection.find(actionsButton).click());
+  cy.wait(2000);
+  cy.do(viewSourceButton.click());
 };
 
 const verifyAdministrativeNote = (value) => {

@@ -1,3 +1,4 @@
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -16,12 +17,9 @@ import ActionProfiles from '../../../support/fragments/data_import/action_profil
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import FileManager from '../../../support/utils/fileManager';
-import TestTypes from '../../../support/dictionary/testTypes';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
-import DevTeams from '../../../support/dictionary/devTeams';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('data-import', () => {
@@ -62,11 +60,11 @@ describe('data-import', () => {
 
     before('login', () => {
       cy.createTempUser([
-        permissions.dataImportUploadAll.gui,
-        permissions.moduleDataImportEnabled.gui,
-        permissions.settingsDataImportEnabled.gui,
-        permissions.inventoryAll.gui,
-        permissions.dataExportEnableModule.gui,
+        Permissions.dataImportUploadAll.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.dataExportEnableModule.gui,
       ]).then((userProperties) => {
         user = userProperties;
         cy.login(userProperties.username, userProperties.password, {

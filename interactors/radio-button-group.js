@@ -23,6 +23,7 @@ export default HTML.extend('radio button group')
       return input.checked;
     },
     feedbackText: (el) => el.querySelector('[class^=radioFeedback]').textContent,
+    label: (el) => el.textContent,
   })
   .actions({
     choose: ({ find }, label) => find(RadioButton(label)).choose(),

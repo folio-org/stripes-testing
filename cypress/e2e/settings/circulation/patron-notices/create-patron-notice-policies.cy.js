@@ -1,6 +1,6 @@
 import devTeams from '../../../../support/dictionary/devTeams';
 import TestType from '../../../../support/dictionary/testTypes';
-import NewNoticePolicy from '../../../../support/fragments/circulation/newNoticePolicy';
+import NewNoticePolicy from '../../../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 // TO DO: update test with duplicate and edit methods, after PO will review test case.
 describe('ui-circulation-settings: create patron notice policies', () => {

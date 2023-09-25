@@ -1,5 +1,5 @@
 import { HTML, including } from '@interactors/html';
-import { Button, Section } from '../../../../interactors';
+import { Button, Section, TableRow } from '../../../../interactors';
 
 const instanceTitle = 'MARC bibliographic record';
 const holdingTitle = 'Holdings record';
@@ -8,6 +8,7 @@ const rootSection = Section({ id: 'marc-view-pane' });
 
 const close = () => cy.do(closeButton.click());
 const contains = (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).exists());
+const rowEquals = (rowIndex, expectedText) => cy.expect(rootSection.find(TableRow({ index: rowIndex, innerText: expectedText })).exists());
 
 function extructDataFrom999Field() {
   return cy
@@ -23,6 +24,7 @@ function extructDataFrom999Field() {
 export default {
   close,
   contains,
+  rowEquals,
   extructDataFrom999Field,
   notContains: (notExpectedText) => cy.expect(rootSection.find(HTML(including(notExpectedText))).absent()),
   waitInstanceLoading: () => cy.expect(rootSection.find(HTML(including(instanceTitle))).exists()),
@@ -48,5 +50,21 @@ export default {
 
   verifyRecordContainsDuplicatedContent: (value, quantity) => {
     cy.get(`td:contains("${value}")`).then((elements) => elements.length === quantity);
+  },
+
+  checkFieldContentMatch(tag, regExp) {
+    if (tag === 'LDR') {
+      cy.xpath('//td[text()[contains(.,"LEADER")]]')
+        .invoke('text')
+        .then((text) => {
+          expect(text).to.match(regExp);
+        });
+    } else {
+      cy.xpath(`//td[text()="${tag}"]/following-sibling::td`)
+        .invoke('text')
+        .then((text) => {
+          expect(text).to.match(regExp);
+        });
+    }
   },
 };

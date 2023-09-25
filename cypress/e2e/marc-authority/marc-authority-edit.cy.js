@@ -11,7 +11,6 @@ import Logs from '../../support/fragments/data_import/logs/logs';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import MarcFieldProtection from '../../support/fragments/settings/dataImport/marcFieldProtection';
-
 import Parallelization from '../../support/dictionary/parallelization';
 
 describe('MARC Authority -> Edit Authority record', () => {
@@ -43,7 +42,8 @@ describe('MARC Authority -> Edit Authority record', () => {
     ['655', '*', '*', '*', 'Added row (must indicate)'],
   ];
   const initialLDRValue = String.raw`04112cz\\a2200589n\\4500`;
-  const changesSavedCallout = 'Record has been updated.';
+  const changesSavedCallout =
+    'This record has successfully saved and is in process. Changes may not appear immediately.';
   let changedLDRs = [
     {
       newContent: replaceByIndex(
@@ -164,7 +164,7 @@ describe('MARC Authority -> Edit Authority record', () => {
 
   it(
     'C375120 User cannot delete "1XX" field of "MARC authority" record (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       const rowIndexTag1XX = 14;
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
@@ -189,7 +189,7 @@ describe('MARC Authority -> Edit Authority record', () => {
 
   it(
     'C387460 Add multiple 001s when editing "MARC Authority" record (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
       MarcAuthorities.selectTitle(testData.authority.title);
@@ -203,7 +203,7 @@ describe('MARC Authority -> Edit Authority record', () => {
 
   it(
     'C353533 Protection of specified fields when editing "MARC Authority" record (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
       MarcAuthorities.selectTitle(testData.authority.title);
@@ -238,7 +238,7 @@ describe('MARC Authority -> Edit Authority record', () => {
 
   it(
     'C353585 Verify LDR validation rules with invalid data (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       const wrongPositionError =
         'Record cannot be saved. Please check the Leader. Only positions 5, 17, 18 can be edited in the Leader.';
@@ -274,7 +274,7 @@ describe('MARC Authority -> Edit Authority record', () => {
 
   it(
     'C353583 Verify LDR validation rules with valid data (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
       MarcAuthorities.selectTitle(testData.authority.title);
@@ -290,7 +290,7 @@ describe('MARC Authority -> Edit Authority record', () => {
 
   it(
     'C356840 Verify that the "Save & close" button enabled when user make changes in the record. (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
       MarcAuthorities.selectTitle(testData.authority.title);
@@ -317,7 +317,7 @@ describe('MARC Authority -> Edit Authority record', () => {
 
   it(
     'C375141 Add/edit/delete "010" field of "MARC authority" record not linked to a "MARC bibliographic" record (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       MarcAuthorities.searchAndVerify(testData.authorityB.searchOption, testData.authorityB.title);
       MarcAuthority.edit();
@@ -339,7 +339,7 @@ describe('MARC Authority -> Edit Authority record', () => {
 
   it(
     'C359238 MARC Authority | Displaying of placeholder message when user deletes a row (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       MarcAuthorities.searchAndVerify(testData.authorityB.searchOption, testData.authorityB.title);
       MarcAuthority.edit();
@@ -396,7 +396,7 @@ describe('MARC Authority -> Edit Authority record', () => {
 
   it(
     'C375172 Save "MARC authority" record with deleted field and updated fields (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
       MarcAuthorities.selectTitle(testData.authority.title);

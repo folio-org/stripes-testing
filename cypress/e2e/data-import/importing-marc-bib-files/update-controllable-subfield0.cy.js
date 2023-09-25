@@ -5,21 +5,20 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import TestTypes from '../../../support/dictionary/testTypes';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
-import Permissions from '../../../support/dictionary/permissions';
-import DevTeams from '../../../support/dictionary/devTeams';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
+import Parallelization from '../../../support/dictionary/parallelization';
 import {
   LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
@@ -31,9 +30,9 @@ describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     const testData = {};
     // unique file name to upload
-    const nameForUpdatedMarcFile = `C375098autotestFile${getRandomPostfix()}.mrc`;
-    const nameForExportedMarcFile = `C375098autotestFile${getRandomPostfix()}.mrc`;
-    const nameForCSVFile = `C375098autotestFile${getRandomPostfix()}.csv`;
+    const nameForUpdatedMarcFile = `C385665autotestFile${getRandomPostfix()}.mrc`;
+    const nameForExportedMarcFile = `C385665autotestFile${getRandomPostfix()}.mrc`;
+    const nameForCSVFile = `C385665autotestFile${getRandomPostfix()}.csv`;
     const mappingProfile = {
       name: 'Update MARC Bib records by matching 999 ff $s subfield value',
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
@@ -192,7 +191,7 @@ describe('data-import', () => {
 
     it(
       'C385665 Update controllable subfield, "$0" in one of the linked repeatable fields (multiple repeatable fields with same indicators) (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
       () => {
         InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

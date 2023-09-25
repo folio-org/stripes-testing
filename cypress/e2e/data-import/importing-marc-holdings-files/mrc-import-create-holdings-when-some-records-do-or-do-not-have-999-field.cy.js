@@ -1,7 +1,5 @@
-import permissions from '../../../support/dictionary/permissions';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -39,11 +37,11 @@ describe('data-import', () => {
       cy.logout();
 
       cy.createTempUser([
-        permissions.inventoryAll.gui,
-        permissions.moduleDataImportEnabled.gui,
-        permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
-        permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
-        permissions.settingsTenantViewLocation.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
+        Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
+        Permissions.settingsTenantViewLocation.gui,
       ]).then((userProperties) => {
         user = userProperties;
 

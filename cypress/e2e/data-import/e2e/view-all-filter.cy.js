@@ -1,14 +1,14 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { DevTeams, TestTypes, Parallelization } from '../../../support/dictionary';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import DateTools from '../../../support/utils/dateTools';
 import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
-import Parallelization from '../../../support/dictionary/parallelization';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
@@ -17,6 +17,8 @@ describe('data-import', () => {
     // Create unique names for MARC files
     const fileNameForFailedImport = `C11113test${getRandomPostfix()}.mrc`;
     const fileNameForSuccessfulImport = `C11113test${getRandomPostfix()}.mrc`;
+    const oclcNumber = '1234567';
+    const OCLCAuthentication = '100481406/PAOLF';
     let userName;
     let jobProfileName;
     let userFilterValue;
@@ -32,6 +34,11 @@ describe('data-import', () => {
         // and write its contents to the file which runs successfully and create it
         FileManager.createFile(`cypress/fixtures/${fileNameForSuccessfulImport}`, content);
       });
+
+      // import with Single record import
+      Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
+      cy.visit(TopMenu.inventoryPath);
+      InventoryInstances.importWithOclc(oclcNumber);
 
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691

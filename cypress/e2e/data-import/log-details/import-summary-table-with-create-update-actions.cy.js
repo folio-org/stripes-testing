@@ -1,7 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import {
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
@@ -222,12 +220,12 @@ describe.skip('data-import', () => {
 
     before('create and login user', () => {
       cy.createTempUser([
-        permissions.moduleDataImportEnabled.gui,
-        permissions.settingsDataImportEnabled.gui,
-        permissions.inventoryAll.gui,
-        permissions.uiInventoryViewCreateEditInstances.gui,
-        permissions.dataExportEnableApp.gui,
-        permissions.dataExportEnableSettings.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiInventoryViewCreateEditInstances.gui,
+        Permissions.dataExportEnableApp.gui,
+        Permissions.dataExportEnableSettings.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
@@ -339,7 +337,7 @@ describe.skip('data-import', () => {
         // create job profile for creating
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.createJobProfile(jobProfileForCreate);
-        collectionOfProfilesForCreate.forEach((profile) => {
+        cy.wrap(collectionOfProfilesForCreate).each((profile) => {
           NewJobProfile.linkActionProfile(profile.actionProfile);
         });
         NewJobProfile.saveAndClose();
@@ -512,7 +510,7 @@ describe.skip('data-import', () => {
         FileDetails.checkItemQuantityInSummaryTable(quantityOfUpdatedItems, 1);
 
         // check items is updated in Inventory
-        [0, 1].forEach((rowNumber) => {
+        cy.wrap([0, 1]).each((rowNumber) => {
           FileDetails.checkItemsStatusesInResultList(rowNumber, [
             FileDetails.status.updated,
             FileDetails.status.updated,

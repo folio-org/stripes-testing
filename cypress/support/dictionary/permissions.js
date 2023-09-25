@@ -48,6 +48,14 @@ export default {
     internal: 'ui-agreements.agreements.delete',
     gui: 'Agreements: Delete agreements',
   },
+  uiAgreementsSearchAndView: {
+    internal: 'ui-agreements.agreements.view',
+    gui: 'Agreements: Search & view agreements',
+  },
+  uiAgreementsSearch: {
+    internal: 'ui-plugin-find-agreement.search',
+    gui: 'Find Agreement Plugin: Search agreements',
+  },
   // QuickMarc
   uiQuickMarcQuickMarcHoldingsEditorCreate: {
     internal: 'ui-quick-marc.quick-marc-holdings-editor.create',
@@ -309,6 +317,10 @@ export default {
     internal: 'ui-users.loans.claim-item-returned',
     gui: 'Users: User loans claim returned',
   },
+  uiUsersLoansClaimReturnedMissing: {
+    internal: 'ui-users.loans.declare-claimed-returned-item-as-missing',
+    gui: 'Users: User loans mark claimed returned missing',
+  },
   uiUsersDeclareItemLost: {
     internal: 'ui-users.loans.declare-item-lost',
     gui: 'Users: User loans declare lost',
@@ -366,6 +378,14 @@ export default {
   uiUsersViewAllSettings: {
     internal: 'ui-users.settings.view',
     gui: 'Settings (Users): View all settings',
+  },
+  uiUserLoansChangeDueDate: {
+    internal: 'ui-users.loans.change-due-date',
+    gui: 'Users: User loans change due date',
+  },
+  uiUserFinancialTransactionReport: {
+    internal: 'ui-users.financialTransactionReport',
+    gui: 'Users: Create and download Financial transaction detail report',
   },
   // Remote Storage
   remoteStorageCRUD: {
@@ -757,5 +777,17 @@ export default {
   oaipmhSettingsEdit: {
     internal: 'ui-oai-pmh.edit',
     gui: 'Settings (OAI-PMH): Can view and edit settings',
+  },
+  uiCirculationSettingsOverdueFinesPolicies: {
+    internal: 'ui-circulation.settings.overdue-fines-policies',
+    gui: 'Settings (Circ): Can create, edit and remove overdue fine policies',
+  },
+  uiCirculationSettingsLostItemFeesPolicies: {
+    internal: 'ui-circulation.settings.lost-item-fees-policies',
+    gui: 'Settings (Circ): Can create, edit and remove lost item fee policies',
+  },
+  settingsLoanPoliciesAll: {
+    internal: 'settings.loan-policies.all',
+    gui: 'Settings (Circ): Can create, edit and remove loan policies [LEGACY]',
   },
 };

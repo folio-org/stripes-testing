@@ -77,7 +77,7 @@ describe('Orders: orders', () => {
     });
     cy.then(() => {
       firstDate = DateTools.getCurrentUTCTime();
-      firstCard = `${firstDate}\nView this version\nSource: ADMINISTRATOR, DIKU\nCurrent version\nChanged\nApproved\nnextPolNumber`;
+      firstCard = `${firstDate}\nView this version\nSource: ADMINISTRATOR, Diku_admin\nCurrent version\nChanged\nApproved\nnextPolNumber`;
     });
     // Need to wait for the next card in the order history to be created with a difference of a minute.
     cy.wait(70000);

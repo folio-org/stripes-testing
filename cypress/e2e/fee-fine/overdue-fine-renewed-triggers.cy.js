@@ -391,9 +391,8 @@ describe('Overdue fine', () => {
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userData.barcode);
       UsersCard.waitLoading();
-      UsersCard.openLoans();
-      UsersCard.showOpenedLoans();
-      UserLoans.openLoan(itemData.barcode);
+      UsersCard.viewCurrentLoans();
+      UserLoans.openLoanDetails(itemData.barcode);
       UserLoans.renewItem(itemData.barcode, true);
       LoanDetails.checkAction(0, 'Renewed');
 

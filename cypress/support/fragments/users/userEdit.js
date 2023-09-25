@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import { HTML, including } from '@interactors/html';
 import {
   Pane,
   Button,
@@ -11,7 +12,8 @@ import {
   Select,
   MultiSelect,
   TextArea,
-  HTML,
+  RadioButtonGroup,
+  RadioButton,
 } from '../../../../interactors';
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
@@ -43,7 +45,7 @@ const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) 
 export default {
   addServicePointsViaApi,
 
-  openUserEdit() {
+  openEdit() {
     cy.do([userDetailsPane.find(actionsButton).click(), editButton.click()]);
   },
 
@@ -97,6 +99,14 @@ export default {
     cy.do(Modal().find(saveAndCloseBtn).click());
   },
 
+  verifySaveAndColseIsDisabled: (status) => {
+    cy.expect(saveAndCloseBtn.has({ disabled: status }));
+  },
+
+  cancelChanges() {
+    cy.do([Button('Cancel').click(), Button('Close without saving').click()]);
+  },
+
   saveAndClose() {
     cy.do(saveAndCloseBtn.click());
   },
@@ -106,14 +116,16 @@ export default {
   // we can remove the service point if it is not Preference
   changeServicePointPreference: (userName = defaultUser.defaultUiPatron.body.userName) => {
     cy.visit(TopMenu.usersPath);
-    cy.do(TextField({ id: 'input-user-search' }).fillIn(userName));
-    cy.do(Button('Search').click());
-    cy.do(MultiColumnList().click({ row: 0, column: 'Active' }));
-    cy.do(userDetailsPane.find(actionsButton).click());
-    cy.do(Button({ id: 'clickable-edituser' }).click());
-    cy.do(Button({ id: 'accordion-toggle-button-servicePoints' }).click());
-    cy.do(Select({ id: 'servicePointPreference' }).choose('None'));
-    cy.do(Button({ id: 'clickable-save' }).click());
+    cy.do([
+      TextField({ id: 'input-user-search' }).fillIn(userName),
+      Button('Search').click(),
+      MultiColumnList().click({ row: 0, column: 'Active' }),
+      userDetailsPane.find(actionsButton).click(),
+      Button({ id: 'clickable-edituser' }).click(),
+      Button({ id: 'accordion-toggle-button-servicePoints' }).click(),
+      Select({ id: 'servicePointPreference' }).choose('None'),
+      Button({ id: 'clickable-save' }).click(),
+    ]);
   },
 
   changeServicePointPreferenceViaApi: (userId, servicePointIds, defaultServicePointId = null) => cy
@@ -171,5 +183,79 @@ export default {
       customFieldsAccordion.find(TextArea({ label: customFieldName })).fillIn(customFieldText),
     ]);
     this.saveAndClose();
+  },
+
+  verifyTextFieldPresented(fieldData) {
+    cy.expect(TextField(fieldData.fieldLabel).exists());
+    cy.do(
+      TextField(fieldData.fieldLabel)
+        .find(Button({ ariaLabel: 'info' }))
+        .click(),
+    );
+    cy.expect(HTML(fieldData.helpText).exists());
+  },
+
+  verifyAreaFieldPresented(fieldData) {
+    cy.expect(TextArea(fieldData.fieldLabel).exists());
+    cy.do(
+      customFieldsAccordion
+        .find(TextArea(fieldData.fieldLabel))
+        .find(Button({ ariaLabel: 'info' }))
+        .click(),
+    );
+    cy.expect(HTML(fieldData.helpText).exists());
+  },
+
+  verifyCheckboxPresented(fieldData) {
+    cy.expect(customFieldsAccordion.find(Checkbox(fieldData.fieldLabel)).exists());
+    cy.do(
+      customFieldsAccordion
+        .find(Checkbox(fieldData.fieldLabel))
+        .find(Button({ ariaLabel: 'info' }))
+        .click(),
+    );
+    cy.expect(HTML(fieldData.helpText).exists());
+  },
+
+  verifyRadioButtonPresented(fieldData) {
+    cy.expect(RadioButtonGroup({ label: including(fieldData.data.fieldLabel) }).exists());
+    cy.expect(
+      customFieldsAccordion
+        .find(RadioButtonGroup(including(fieldData.data.fieldLabel)))
+        .find(RadioButton(fieldData.data.label1))
+        .exists(),
+    );
+    cy.expect(
+      customFieldsAccordion
+        .find(RadioButtonGroup(including(fieldData.data.fieldLabel)))
+        .find(RadioButton(fieldData.data.label2))
+        .exists(),
+    );
+    cy.do(
+      customFieldsAccordion
+        .find(RadioButtonGroup(fieldData.data.fieldLabel))
+        .find(Button({ ariaLabel: 'info' }))
+        .click(),
+    );
+    cy.expect(HTML(fieldData.data.helpText).exists());
+  },
+
+  verifySingleSelectPresented({ data }) {
+    cy.do(
+      Accordion('Custom fields')
+        .find(Select({ label: data.fieldLabel }))
+        .exists(),
+    );
+    cy.do(
+      Accordion('Custom fields')
+        .find(Select({ label: data.fieldLabel }))
+        .find(Button({ ariaLabel: 'info' }))
+        .click(),
+    );
+    cy.expect(HTML(data.helpText).exists());
+  },
+
+  selectSingleSelectValue: ({ data }) => {
+    cy.do(Select({ label: data.fieldLabel }).choose(data.firstLabel));
   },
 };

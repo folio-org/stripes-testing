@@ -63,8 +63,7 @@ describe('circulation-log', () => {
       UsersSearchPane.searchByStatus('Active');
       UsersSearchPane.searchByKeywords(user.userId);
       UsersSearchPane.openUser(user.userId);
-      UsersCard.openLoans();
-      UsersCard.showOpenedLoans();
+      UsersCard.viewCurrentLoans();
       LoansPage.checkAll();
       UserLoans.openClaimReturnedPane();
       ConfirmClaimReturnedModal.confirmItemStatus(
