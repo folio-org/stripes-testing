@@ -22,7 +22,7 @@ import {
 } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import getRandomPostfix from '../../utils/stringTools';
-import SelectInstanceModal from './selectInstanceModal';
+import SelectInstanceModal from './modals/selectInstanceModal';
 import {
   ORDER_FORMAT_NAMES,
   ACQUISITION_METHOD_NAMES,
@@ -31,7 +31,7 @@ import {
   ORDER_PAYMENT_STATUS,
 } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
-import selectLocationModal from './selectLocationModal';
+import selectLocationModal from './modals/selectLocationModal';
 
 const path = require('path');
 
@@ -977,10 +977,10 @@ export default {
     ]);
   },
 
-  selectPOLInOrder: (indexNumber) => {
+  selectPOLInOrder: (index = 0) => {
     cy.do(
       polListingAccordion
-        .find(MultiColumnListRow({ index: indexNumber }))
+        .find(MultiColumnListRow({ index }))
         .find(MultiColumnListCell({ columnIndex: 0 }))
         .click(),
     );
