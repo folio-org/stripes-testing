@@ -84,7 +84,7 @@ describe('MARC Authority -> Reporting | MARC authority', () => {
       MarcAuthorities.fillReportModal(today, tomorrow);
       MarcAuthorities.checkNoValidationErrors();
       MarcAuthorities.clickCancelButtonOfReportModal();
-      
+
       MarcAuthorities.clickHeadingsUpdatesButton();
       MarcAuthorities.fillReportModal('03/02/202', '03/32/2023');
       MarcAuthorities.checkValidationError({ name: 'fromDate', error: '"Start date" is required' });
