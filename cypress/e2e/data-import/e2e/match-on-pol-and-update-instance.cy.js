@@ -197,18 +197,6 @@ describe('data-import', () => {
       FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfile.name);
     };
 
-    const addPolToOrder = (title, method, format, price, quantity, inventory, type) => {
-      OrderLines.addPOLine();
-      OrderLines.fillPolByLinkTitle(title);
-      OrderLines.addAcquisitionMethod(method);
-      OrderLines.addOrderFormat(format);
-      OrderLines.fillPhysicalUnitPrice(price);
-      OrderLines.fillPhysicalUnitQuantity(quantity);
-      OrderLines.addCreateInventory(inventory);
-      OrderLines.addMaterialType(type);
-      OrderLines.savePol();
-    };
-
     it(
       'C350944 Match on POL and update related Instance with source MARC, create Holdings, Item records. (folijet)',
       { tags: [TestTypes.criticalPath, DevTeams.folijet] },
@@ -276,15 +264,15 @@ describe('data-import', () => {
           Orders.getOrdersApi({ limit: 1, query: `"id"=="${orderId}"` }).then((res) => {
             orderNumber = res[0].poNumber;
             Orders.checkIsOrderCreated(orderNumber);
-            addPolToOrder(
-              pol.title,
-              pol.acquisitionMethod,
-              pol.orderFormat,
-              pol.price,
-              pol.quantity,
-              pol.createInventory,
-              pol.materialType,
-            );
+            OrderLines.addPolToOrder({
+              title: pol.title,
+              method: pol.acquisitionMethod,
+              format: pol.orderFormat,
+              price: pol.price,
+              quantity: pol.quantity,
+              inventory: pol.createInventory,
+              materialType: pol.materialType,
+            });
             OrderLines.backToEditingOrder();
             Orders.openOrder();
 

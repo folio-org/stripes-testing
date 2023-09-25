@@ -174,27 +174,27 @@ describe('data-import', () => {
         // create order with POL
         Orders.createOrderWithOrderLineViaApi(
           NewOrder.getDefaultOrder(vendorId),
-          BasicOrderLine.getDefaultOrderLine(
-            item.quantityPhysical,
-            item.title,
-            locationId,
-            materialTypeId,
-            acquisitionMethodId,
-            item.physicalUnitPrice,
-            item.physicalUnitPrice,
-            [
+          BasicOrderLine.getDefaultOrderLine({
+            quantity: item.quantityPhysical,
+            title: item.title,
+            spesialLocationId: locationId,
+            specialMaterialTypeId: materialTypeId,
+            acquisitionMethod: acquisitionMethodId,
+            listUnitPrice: item.physicalUnitPrice,
+            poLineEstimatedPrice: item.physicalUnitPrice,
+            productIds: [
               {
                 productId: item.productId,
                 productIdType: productIdTypeId,
               },
             ],
-            [
+            referenceNumbers: [
               {
                 refNumberType: item.vrnType,
                 refNumber: item.vrn,
               },
             ],
-          ),
+          }),
         ).then((res) => {
           orderNumber = res;
 
