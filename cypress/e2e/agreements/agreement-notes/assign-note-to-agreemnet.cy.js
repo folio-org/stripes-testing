@@ -53,7 +53,7 @@ describe('Agreement Notes', () => {
       AssignNote.searchForNote(defaultUnassignedNote.title);
       AssignNote.verifyDesiredNoteIsShown(defaultUnassignedNote.title);
 
-      AssignNote.selectCheckboxForNote(defaultUnassignedNote.title);
+      AssignNote.clickCheckboxForNote(defaultUnassignedNote.title);
       AssignNote.clickSaveButton();
       AgreementViewDetails.verifyAgreementDetailsIsDisplayedByTitle(
         Agreements.defaultAgreement.name,

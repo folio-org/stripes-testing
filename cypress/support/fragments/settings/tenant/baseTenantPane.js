@@ -17,6 +17,11 @@ export default {
     SettingsPane.checkAddNewBtnAbsent();
     SettingsPane.checkColumnAbsent('Actions');
   },
+  selectOptions(options = []) {
+    options.forEach(({ label, option }) => {
+      this.selectOption(label, option);
+    });
+  },
   selectOption(label, option) {
     cy.do(Select(label).choose(including(option.name)));
     this.checkOptionSelected(label, option);
