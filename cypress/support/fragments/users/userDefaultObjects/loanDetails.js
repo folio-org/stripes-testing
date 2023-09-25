@@ -138,6 +138,37 @@ export default {
     // eslint-disable-next-line no-unused-expressions
     expect(moment(date).isValid()).to.be.true;
   },
+  checkActionDueDate(row, actionDueDate) {
+    cy.then(() => MultiColumnListHeader({ id: 'list-column-duedate' }).index()).then(
+      (columnIndex) => {
+        cy.expect(
+          LoanActionsList.find(
+            MultiColumnListCell(DateTools.getFormattedEndDateWithTime(actionDueDate), {
+              row,
+              columnIndex,
+            }),
+          ).exists(),
+        );
+      },
+    );
+  },
+  checkActionDueDate1(row, actionDueDate) {
+    this.checkDateValid(actionDueDate);
+
+    cy.then(() => MultiColumnListHeader({ id: 'list-column-duedate' }).index()).then(
+      (columnIndex) => {
+        cy.expect(
+          LoanActionsList.find(
+            MultiColumnListCell(DateTools.getFormattedEndDateWithTime({ date: actionDueDate }), {
+              row,
+              columnIndex,
+            }),
+          ).exists(),
+        );
+      },
+    );
+  },
+
   checkActionDate(row, actionDate) {
     this.checkDateValid(actionDate);
 

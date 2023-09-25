@@ -169,6 +169,10 @@ export default {
     return new Date().getDate().toString();
   },
 
+  getCurrentEndOfDay() {
+    return moment.utc().endOf('day');
+  },
+
   getTomorrowDay() {
     const today = new Date();
     return new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
@@ -186,6 +190,11 @@ export default {
 
   getFormattedDateWithTime(date) {
     return moment.utc(date).format('M/D/YYYY, h:mm A');
+  },
+
+  getFormattedEndDateWithTime(date) {
+    const momentObj = moment(date);
+    return momentObj.format('M/D/YYYY, h:mm A');
   },
 
   getUTCDateForScheduling() {
