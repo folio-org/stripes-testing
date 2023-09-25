@@ -66,6 +66,7 @@ describe('MARC -› MARC Bibliographic -› Derive MARC bib', () => {
       InventoryInstances.selectInstance();
       InventoryInstance.deriveNewMarcBib();
       QuickMarcEditor.checkSubfieldsPresenceInTag008();
+      cy.wait(2000);
       QuickMarcEditor.updateExistingField(testData.tag245, testData.newTitle);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndCloseDerive();
