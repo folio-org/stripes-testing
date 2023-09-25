@@ -565,4 +565,15 @@ export default {
     body: requestBody,
     isDefaultSearchParamsRequired: false,
   }),
+
+  /* for miltiselect 'Pickup service point' we have to predefine attribute 'aria-labelledby' to make it unique,
+  because there are 4 elements with same 'aria-labelledby' on the page so the function 'createInteractor()'
+   in interactors\multi-select.js takes as argument the first one and it's not we needed
+   */
+  fillInServicePoints(servicePoint) {
+    cy.get('#req-pickup-service-point-filter')
+      .find('[aria-labelledby=\'accordion-toggle-button-pickupServicePoints\']')
+      .invoke('attr', 'aria-labelledby', 'pickupServicePoints');
+    cy.do(MultiSelect({ ariaLabelledby: 'pickupServicePoints' }).select(servicePoint));
+  },
 };
