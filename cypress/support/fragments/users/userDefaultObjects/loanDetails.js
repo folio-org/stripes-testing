@@ -152,23 +152,6 @@ export default {
       },
     );
   },
-  checkActionDueDate1(row, actionDueDate) {
-    this.checkDateValid(actionDueDate);
-
-    cy.then(() => MultiColumnListHeader({ id: 'list-column-duedate' }).index()).then(
-      (columnIndex) => {
-        cy.expect(
-          LoanActionsList.find(
-            MultiColumnListCell(DateTools.getFormattedEndDateWithTime({ date: actionDueDate }), {
-              row,
-              columnIndex,
-            }),
-          ).exists(),
-        );
-      },
-    );
-  },
-
   checkActionDate(row, actionDate) {
     this.checkDateValid(actionDate);
 
