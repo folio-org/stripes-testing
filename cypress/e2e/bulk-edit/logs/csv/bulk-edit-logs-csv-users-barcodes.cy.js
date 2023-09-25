@@ -17,7 +17,6 @@ const invalidAndValidUserBarcodesFileName = `invalidAndValidUserBarcodes_${getRa
 const matchedRecordsFileName = `Matched-Records-${invalidAndValidUserBarcodesFileName}`;
 const errorsFromMatchingFileName = `*-Matching-Records-Errors-${invalidAndValidUserBarcodesFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
-const changedRecordsFileName = `*-Changed-Records-${editedFileName}`;
 const otherErrors = {
   first: `*-Errors-${invalidAndValidUserBarcodesFileName}`,
   second: `*-Errors-${editedFileName}`,
@@ -60,7 +59,6 @@ describe('Bulk Edit - Logs', () => {
     FileManager.deleteFileFromDownloadsByMask(
       invalidAndValidUserBarcodesFileName,
       `*${matchedRecordsFileName}`,
-      changedRecordsFileName,
       previewOfProposedChangesFileName.first,
       previewOfProposedChangesFileName.second,
       updatedRecordsFileName,
