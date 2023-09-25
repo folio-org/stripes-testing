@@ -82,6 +82,7 @@ export default {
   manualCharges: 'settings/users/feefinestable',
   paymentsPath: 'settings/users/payments',
   refundReasons: 'settings/users/refunds',
+  transferAccounts: 'settings/users/transfers',
   conditionsPath: 'settings/users/conditions',
   limitsPath: 'settings/users/limits',
   waiveReasons: 'settings/users/waivereasons',

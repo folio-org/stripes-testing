@@ -369,6 +369,12 @@ export default {
     ]);
   },
 
+  checkDeletedErrorMassage: () => {
+    InteractorsTools.checkCalloutErrorMessage(
+      'This order or order line is linked to Invoice(s) and can not be deleted',
+    );
+  },
+
   resetFilters: () => {
     cy.do(resetButton.click());
     cy.expect(resetButton.is({ disabled: true }));

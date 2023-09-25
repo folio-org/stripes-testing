@@ -383,6 +383,10 @@ export default {
     internal: 'ui-users.loans.change-due-date',
     gui: 'Users: User loans change due date',
   },
+  uiUserFinancialTransactionReport: {
+    internal: 'ui-users.financialTransactionReport',
+    gui: 'Users: Create and download Financial transaction detail report',
+  },
   // Remote Storage
   remoteStorageCRUD: {
     internal: 'ui-remote-storage.settings.remote-storages.edit',
@@ -773,5 +777,17 @@ export default {
   oaipmhSettingsEdit: {
     internal: 'ui-oai-pmh.edit',
     gui: 'Settings (OAI-PMH): Can view and edit settings',
+  },
+  uiCirculationSettingsOverdueFinesPolicies: {
+    internal: 'ui-circulation.settings.overdue-fines-policies',
+    gui: 'Settings (Circ): Can create, edit and remove overdue fine policies',
+  },
+  uiCirculationSettingsLostItemFeesPolicies: {
+    internal: 'ui-circulation.settings.lost-item-fees-policies',
+    gui: 'Settings (Circ): Can create, edit and remove lost item fee policies',
+  },
+  settingsLoanPoliciesAll: {
+    internal: 'settings.loan-policies.all',
+    gui: 'Settings (Circ): Can create, edit and remove loan policies [LEGACY]',
   },
 };

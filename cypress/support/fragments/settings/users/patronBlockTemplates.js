@@ -6,8 +6,24 @@ import {
   Checkbox,
   NavListItem,
 } from '../../../../../interactors';
+import { REQUEST_METHOD } from '../../../constants';
 
 export default {
+  createViaApi: (templateBody) => cy
+    .okapiRequest({
+      method: REQUEST_METHOD.POST,
+      path: 'manual-block-templates',
+      body: templateBody,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((response) => response.body),
+
+  deleteViaApi: (id) => cy.okapiRequest({
+    method: REQUEST_METHOD.DELETE,
+    path: `manual-block-templates/${id}`,
+    isDefaultSearchParamsRequired: false,
+  }),
+
   newPatronTemlate() {
     cy.do(Button({ id: 'clickable-create-entry' }).click());
   },
