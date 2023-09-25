@@ -20,7 +20,6 @@ describe('Create holding records with MARC source', () => {
     tag852: '852',
     existingLocation: QuickMarcEditor.getExistingLocation(),
     LDRValues: {
-      defaultLDRValue: '',
       validLDR05Values: randomizeArray(['c', 'd', 'n', 'c', 'd', 'n', 'c', 'd', 'n']),
       validLDR06Values: randomizeArray(['u', 'v', 'x', 'y', 'u', 'v', 'x', 'y']),
       validLDR17Values: randomizeArray(['1', '2', '3', '4', '5', 'm', 'u', 'z']),
