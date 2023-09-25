@@ -205,12 +205,14 @@ describe('Create Item or Title level request', () => {
       NewRequest.waitLoadingNewRequestPage(true);
       NewRequest.enterHridInfo(testData.instanceHRID);
       NewRequest.verifyHridInformation([instanceData.title]);
-      NewRequest.chooseRequestType(REQUEST_TYPES.HOLD);
+      NewRequest.enterRequesterInfoWithRequestType(
+        {
+          requesterBarcode: userForHold.barcode,
+          pickupServicePoint: testData.userServicePoint.name,
+        },
+        REQUEST_TYPES.HOLD,
+      );
       NewRequest.verifyRequestInformation(REQUEST_TYPES.HOLD);
-      NewRequest.enterRequesterInfo({
-        requesterBarcode: userForHold.barcode,
-        pickupServicePoint: testData.userServicePoint.name,
-      });
       NewRequest.saveRequestAndClose();
       NewRequest.waitLoading();
       cy.wait('@createRequest').then((intercept) => {
