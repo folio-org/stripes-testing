@@ -6,11 +6,13 @@ import {
   HTML,
   MultiColumnListCell,
   Pane,
+  Link,
   Section,
   Select,
   Spinner,
   TextArea,
   TextField,
+  Option,
   including,
 } from '../../../../interactors';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../constants';
@@ -30,6 +32,7 @@ const selectServicePoint = Select({ name: 'pickupServicePointId' });
 const selectRequestType = Select({ name: 'requestType' });
 const titleLevelRequest = Checkbox({ name: 'createTitleLevelRequest' });
 const selectItemPane = Pane({ id: 'items-dialog-instance-items-list' });
+const requestInfoSection = Section({ id: 'new-requester-info' });
 
 function addRequester(userName) {
   cy.do(Button({ id: 'requestform-addrequest' }).click());
@@ -181,6 +184,12 @@ export default {
     ]);
   },
 
+  verifyRequesterInformation: (userName, userBarcode, patronGroupName) => {
+    cy.expect(requestInfoSection.find(Link(including(userName))).exists());
+    cy.expect(requestInfoSection.find(Link(including(userBarcode))).exists());
+    cy.expect(requestInfoSection.find(HTML(patronGroupName)).exists());
+  },
+
   enterRequestAndPatron: (patron) => {
     cy.do([
       TextField({ id: 'requestExpirationDate' }).fillIn(dateTools.getCurrentDate()),
@@ -201,6 +210,28 @@ export default {
     cy.expect(selectServicePoint.exists());
     cy.wait('@getUsers');
     this.choosepickupServicePoint(newRequest.pickupServicePoint);
+  },
+
+  enterRequesterBarcode: (requesterBarcode) => {
+    cy.do(requesterBarcodeInput.fillIn(requesterBarcode));
+    cy.do(enterRequesterBarcodeButton.click());
+    // wait untill requestType select become enabled
+    cy.wait(2000);
+    // check is requestType select 'enabled', if 'disabled' - click [Enter] button for [Requestr barcode] again
+    cy.get('[name="requestType"]')
+      .invoke('is', ':enabled')
+      .then((state) => {
+        cy.log(state);
+        if (!state) {
+          cy.do(enterRequesterBarcodeButton.click());
+        }
+      });
+  },
+
+  verifyFulfillmentPreference: (preference) => {
+    cy.expect(
+      Select({ name: 'fulfillmentPreference' }, including(Option({ value: preference }))).exists(),
+    );
   },
 
   enterRequesterInfoWithRequestType(newRequest) {
