@@ -234,11 +234,10 @@ describe('Title Level Request. Request Detail', () => {
       ]);
       NewRequest.verifyRequestInformation(ITEM_STATUS_NAMES.AVAILABLE);
 
-      NewRequest.enterRequesterInfo({
+      NewRequest.enterRequesterInfoWithRequestType({
         requesterBarcode: userData.barcode,
         pickupServicePoint: testData.userServicePoint.name,
       });
-      NewRequest.chooseRequestType(REQUEST_TYPES.PAGE);
       NewRequest.saveRequestAndClose();
       RequestDetail.waitLoading();
       cy.wait('@createRequest').then((intercept) => {
