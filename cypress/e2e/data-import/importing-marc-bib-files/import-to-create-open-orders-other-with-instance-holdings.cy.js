@@ -26,6 +26,7 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import Orders from '../../../support/fragments/orders/orders';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -97,7 +98,7 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       collectionOfMappingAndActionProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
         Orders.deleteOrderViaApi(orderId[0].id);
@@ -129,8 +130,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillPermanentLocation(
           collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocation,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(
           collectionOfMappingAndActionProfiles[1].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(

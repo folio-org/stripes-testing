@@ -21,6 +21,7 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Permissions', () => {
@@ -83,7 +84,7 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       collectionOfMappingAndActionProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
     });
 
@@ -109,8 +110,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillStatus(
           collectionOfMappingAndActionProfiles[1].mappingProfile.status,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(
           collectionOfMappingAndActionProfiles[1].mappingProfile.name,
         );
 
@@ -121,8 +122,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillPermanentLocation(
           collectionOfMappingAndActionProfiles[0].mappingProfile.pernanentLocation,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(
           collectionOfMappingAndActionProfiles[0].mappingProfile.name,
         );
 

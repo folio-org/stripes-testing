@@ -368,16 +368,16 @@ describe.skip('data-import', () => {
       ActionProfiles.deleteActionProfile(firstRecord.instanceActionProfileName);
       ActionProfiles.deleteActionProfile(firstRecord.holdingsActionProfileName);
       ActionProfiles.deleteActionProfile(firstRecord.itemActionProfileName);
-      FieldMappingProfiles.deleteFieldMappingProfile(firstRecord.instanceMappingProfileName);
-      FieldMappingProfiles.deleteFieldMappingProfile(firstRecord.holdingsMappingProfileName);
-      FieldMappingProfiles.deleteFieldMappingProfile(firstRecord.itemMappingProfileName);
+      FieldMappingProfileView.deleteViaApi(firstRecord.instanceMappingProfileName);
+      FieldMappingProfileView.deleteViaApi(firstRecord.holdingsMappingProfileName);
+      FieldMappingProfileView.deleteViaApi(firstRecord.itemMappingProfileName);
       JobProfiles.deleteJobProfile(secondRecord.jobProfileName);
       ActionProfiles.deleteActionProfile(secondRecord.instanceActionProfileName);
       ActionProfiles.deleteActionProfile(secondRecord.holdingsActionProfileName);
       ActionProfiles.deleteActionProfile(secondRecord.itemActionProfileName);
-      FieldMappingProfiles.deleteFieldMappingProfile(secondRecord.instanceMappingProfileName);
-      FieldMappingProfiles.deleteFieldMappingProfile(secondRecord.holdingsMappingProfileName);
-      FieldMappingProfiles.deleteFieldMappingProfile(secondRecord.itemMappingProfileName);
+      FieldMappingProfileView.deleteViaApi(secondRecord.instanceMappingProfileName);
+      FieldMappingProfileView.deleteViaApi(secondRecord.holdingsMappingProfileName);
+      FieldMappingProfileView.deleteViaApi(secondRecord.itemMappingProfileName);
       JobProfiles.deleteJobProfile(jobProfileWithMatch.profileName);
       JobProfiles.deleteJobProfile(jobProfileWithoutMatch.profileName);
       cy.wrap(collectionOfMatchProfiles).each((profile) => {
@@ -385,7 +385,7 @@ describe.skip('data-import', () => {
       });
       cy.wrap(collectionOfMappingAndActionProfiles).each((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       FileManager.deleteFile(`cypress/fixtures/${marcFileNameForUpdateFirstRecord}`);
       FileManager.deleteFile(`cypress/fixtures/${marcFileNameForUpdateSecondRecord}`);
@@ -425,8 +425,8 @@ describe.skip('data-import', () => {
           collectionOfMappingAndActionProfiles[2].mappingProfile.adminNote,
           5,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(
           collectionOfMappingAndActionProfiles[2].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(
@@ -434,8 +434,8 @@ describe.skip('data-import', () => {
         );
         FieldMappingProfileView.duplicate();
         NewFieldMappingProfile.addName(collectionOfMappingAndActionProfiles[3].mappingProfile.name);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(
           collectionOfMappingAndActionProfiles[3].mappingProfile.name,
         );
 
@@ -448,8 +448,8 @@ describe.skip('data-import', () => {
           `"${collectionOfMappingAndActionProfiles[0].mappingProfile.note}"`,
           collectionOfMappingAndActionProfiles[0].mappingProfile.staffOnly,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(
           collectionOfMappingAndActionProfiles[0].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(
@@ -459,8 +459,8 @@ describe.skip('data-import', () => {
         NewFieldMappingProfile.fillSummaryInMappingProfile(
           collectionOfMappingAndActionProfiles[1].mappingProfile,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(
           collectionOfMappingAndActionProfiles[1].mappingProfile.name,
         );
 

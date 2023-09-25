@@ -20,6 +20,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import Users from '../../../support/fragments/users/users';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -87,7 +88,7 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       collectionOfMappingAndActionProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
         (instance) => {
@@ -110,8 +111,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillPermanentLocation(
           collectionOfMappingAndActionProfiles[0].mappingProfile.permanentLocation,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(
           collectionOfMappingAndActionProfiles[0].mappingProfile.name,
         );
 
@@ -128,8 +129,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillStatus(
           collectionOfMappingAndActionProfiles[1].mappingProfile.status,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(
           collectionOfMappingAndActionProfiles[1].mappingProfile.name,
         );
 

@@ -26,6 +26,7 @@ import Users from '../../../support/fragments/users/users';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -118,7 +119,7 @@ describe('data-import', () => {
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       collectionOfMappingAndActionProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(barcodes[0]);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(barcodes[1]);
@@ -129,8 +130,8 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
       NewFieldMappingProfile.fillCatalogedDate(profile.catalogedDate);
       NewFieldMappingProfile.fillInstanceStatusTerm();
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
+      NewFieldMappingProfile.save();
+      FieldMappingProfileView.closeViewModeForMappingProfile(profile.name);
     };
     const createHoldingsMappingProfile = (profile) => {
       FieldMappingProfiles.openNewMappingProfileForm();
@@ -139,8 +140,8 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillCallNumberType(profile.callNumberType);
       NewFieldMappingProfile.fillCallNumber(profile.callNumber);
       NewFieldMappingProfile.addElectronicAccess(profile.relationship, profile.uri, profile.link);
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
+      NewFieldMappingProfile.save();
+      FieldMappingProfileView.closeViewModeForMappingProfile(profile.name);
     };
     const createItemMappingProfile = (profile) => {
       FieldMappingProfiles.openNewMappingProfileForm();
@@ -149,8 +150,8 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillMaterialType(profile.materialType);
       NewFieldMappingProfile.fillPermanentLoanType(profile.permanentLoanType);
       NewFieldMappingProfile.fillStatus(profile.status);
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
+      NewFieldMappingProfile.save();
+      FieldMappingProfileView.closeViewModeForMappingProfile(profile.name);
     };
 
     it(

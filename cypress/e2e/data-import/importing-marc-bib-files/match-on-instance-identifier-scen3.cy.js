@@ -24,6 +24,7 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -115,7 +116,7 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
       Users.deleteViaApi(userId);
       InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value).then(
         (instances) => {
@@ -185,8 +186,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.addStaffSuppress(mappingProfile.staffSuppress);
         NewFieldMappingProfile.fillCatalogedDate(mappingProfile.catalogedDate);
         NewFieldMappingProfile.fillInstanceStatusTerm(mappingProfile.instanceStatus);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         cy.visit(SettingsMenu.actionProfilePath);

@@ -38,6 +38,7 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -364,13 +365,13 @@ describe('data-import', () => {
       ActionProfiles.deleteActionProfile(instanceActionProfileForCreate.profile.name);
       ActionProfiles.deleteActionProfile(holdingsActionProfileForCreate.profile.name);
       ActionProfiles.deleteActionProfile(itemActionProfileForCreate.profile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(marcBibMappingProfileForCreate.profile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileForCreate.profile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileForCreate.profile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileForCreate.profile.name);
+      FieldMappingProfileView.deleteViaApi(marcBibMappingProfileForCreate.profile.name);
+      FieldMappingProfileView.deleteViaApi(instanceMappingProfileForCreate.profile.name);
+      FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForCreate.profile.name);
+      FieldMappingProfileView.deleteViaApi(itemMappingProfileForCreate.profile.name);
       collectionOfMappingAndActionProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
         (instance) => {
@@ -461,8 +462,8 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[0].mappingProfile.statisticalCode,
           8,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(
           collectionOfMappingAndActionProfiles[0].mappingProfile.name,
         );
 
@@ -486,8 +487,8 @@ describe('data-import', () => {
           `"${collectionOfMappingAndActionProfiles[1].mappingProfile.relationship}"`,
           collectionOfMappingAndActionProfiles[1].mappingProfile.uri,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(
           collectionOfMappingAndActionProfiles[1].mappingProfile.name,
         );
 
@@ -509,8 +510,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillStatus(
           collectionOfMappingAndActionProfiles[2].mappingProfile.status,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(
           collectionOfMappingAndActionProfiles[2].mappingProfile.name,
         );
 

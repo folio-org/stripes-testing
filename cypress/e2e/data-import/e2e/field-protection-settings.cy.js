@@ -23,6 +23,7 @@ import NewMatchProfile from '../../../support/fragments/data_import/match_profil
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import FileManager from '../../../support/utils/fileManager';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
@@ -115,8 +116,8 @@ describe('data-import', () => {
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
       ActionProfiles.deleteActionProfile(actionProfileUpdate.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileUpdate.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfileUpdate.name);
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${fileNameForUpdate}`);
@@ -130,8 +131,8 @@ describe('data-import', () => {
     const createInstanceMappingProfileForCreate = (instanceMappingProfile) => {
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(instanceMappingProfile);
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfile.name);
+      NewFieldMappingProfile.save();
+      FieldMappingProfileView.closeViewModeForMappingProfile(instanceMappingProfile.name);
     };
 
     const createInstanceMappingProfileForUpdate = (instanceMappingProfile) => {
@@ -142,8 +143,8 @@ describe('data-import', () => {
         'ARL (Collection stats): books - Book, print (books)',
         8,
       );
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfile.name);
+      NewFieldMappingProfile.save();
+      FieldMappingProfileView.closeViewModeForMappingProfile(instanceMappingProfile.name);
     };
 
     it(

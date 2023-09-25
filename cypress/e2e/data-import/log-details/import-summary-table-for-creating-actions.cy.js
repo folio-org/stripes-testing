@@ -20,6 +20,7 @@ import {
   MATERIAL_TYPE_NAMES,
   JOB_STATUS_NAMES,
 } from '../../../support/constants';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -88,7 +89,7 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       collectionOfMappingAndActionProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       Users.deleteViaApi(user.userId);
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
@@ -109,8 +110,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillSummaryInMappingProfile(
           collectionOfMappingAndActionProfiles[0].mappingProfile,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(
           collectionOfMappingAndActionProfiles[0].mappingProfile.name,
         );
 
@@ -121,8 +122,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillPermanentLocation(
           collectionOfMappingAndActionProfiles[1].mappingProfile.pernanentLocation,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(
           collectionOfMappingAndActionProfiles[1].mappingProfile.name,
         );
 
@@ -139,8 +140,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillStatus(
           collectionOfMappingAndActionProfiles[2].mappingProfile.status,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(
           collectionOfMappingAndActionProfiles[2].mappingProfile.name,
         );
 

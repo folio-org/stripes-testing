@@ -11,6 +11,7 @@ import ActionProfileView from '../../../support/fragments/data_import/action_pro
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import ConfirmChanges from '../../../support/fragments/data_import/action_profiles/modals/confirmChanges';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -40,7 +41,7 @@ describe('data-import', () => {
         // create Field mapping profile
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
-        FieldMappingProfiles.saveProfile();
+        NewFieldMappingProfile.save();
 
         // create Action profile
         cy.visit(SettingsMenu.actionProfilePath);
@@ -60,7 +61,7 @@ describe('data-import', () => {
       Users.deleteViaApi(user.userId);
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
     });
 
     it(

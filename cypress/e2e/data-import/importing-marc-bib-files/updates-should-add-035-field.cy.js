@@ -23,6 +23,7 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -129,8 +130,8 @@ describe('data-import', () => {
           NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
           NewFieldMappingProfile.fillInstanceStatusTerm(mappingProfile.instanceStatusTerm);
           NewFieldMappingProfile.addStatisticalCode(mappingProfile.statisticalCode, 8);
-          FieldMappingProfiles.saveProfile();
-          FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+          NewFieldMappingProfile.save();
+          FieldMappingProfileView.closeViewModeForMappingProfile(mappingProfile.name);
           FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
           // create action profile
@@ -186,7 +187,7 @@ describe('data-import', () => {
           JobProfiles.deleteJobProfile(jobProfile.profileName);
           MatchProfiles.deleteMatchProfile(matchProfile.profileName);
           ActionProfiles.deleteActionProfile(actionProfile.name);
-          FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+          FieldMappingProfileView.deleteViaApi(mappingProfile.name);
           Users.deleteViaApi(user.userId);
           // delete downloads folder and created files in fixtures
           FileManager.deleteFile(`cypress/fixtures/${firstMarcFileNameForUpdate}`);
@@ -288,8 +289,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
         NewFieldMappingProfile.fillInstanceStatusTerm(mappingProfile.instanceStatusTerm);
         NewFieldMappingProfile.addStatisticalCode(mappingProfile.statisticalCode, 8);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         // create action profile
@@ -362,7 +363,7 @@ describe('data-import', () => {
         JobProfiles.deleteJobProfile(jobProfile.profileName);
         MatchProfiles.deleteMatchProfile(matchProfile.profileName);
         ActionProfiles.deleteActionProfile(actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
         Users.deleteViaApi(user.userId);
         // delete downloads folder and created files in fixtures
         FileManager.deleteFile(`cypress/fixtures/${firstMarcFileNameForUpdate}`);

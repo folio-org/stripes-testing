@@ -21,6 +21,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
@@ -89,7 +90,7 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileFieldsForModify.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfileFieldsForModify.name);
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpload}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
@@ -147,8 +148,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillModificationSectionWithAdd(
           mappingProfileFieldsForModify.modifications,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfileFieldsForModify.name);
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(mappingProfileFieldsForModify.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfileFieldsForModify.name);
         // create Action profile and link it to Field mapping profile
         cy.visit(SettingsMenu.actionProfilePath);

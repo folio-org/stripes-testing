@@ -26,6 +26,7 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
 } from '../../../support/constants';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('Data Import - Update MARC Authority files', () => {
   const testData = {
@@ -124,7 +125,7 @@ describe('Data Import - Update MARC Authority files', () => {
       // create Field mapping profile
       cy.visit(SettingsMenu.mappingProfilePath);
       FieldMappingProfiles.createMappingProfileForUpdatesMarcAuthority(mappingProfile);
-      FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+      FieldMappingProfileView.closeViewModeForMappingProfile(mappingProfile.name);
       FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
       // create Action profile and link it to Field mapping profile
       cy.visit(SettingsMenu.actionProfilePath);
@@ -152,7 +153,7 @@ describe('Data Import - Update MARC Authority files', () => {
     JobProfiles.deleteJobProfile(jobProfile.profileName);
     MatchProfiles.deleteMatchProfile(matchProfile.profileName);
     ActionProfiles.deleteActionProfile(actionProfile.name);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+    FieldMappingProfileView.deleteViaApi(mappingProfile.name);
 
     if (createdAuthorityIDs[0]) InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
     createdAuthorityIDs.forEach((id, index) => {

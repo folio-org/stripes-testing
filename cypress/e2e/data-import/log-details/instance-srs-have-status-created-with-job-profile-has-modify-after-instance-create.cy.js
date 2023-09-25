@@ -12,6 +12,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -58,7 +59,7 @@ describe('data-import', () => {
       Users.deleteViaApi(user.userId);
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
     });
 
     it(
@@ -72,8 +73,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillModificationSectionWithAdd(mappingProfile.modifications);
         NewFieldMappingProfile.addNewFieldInModificationSection();
         NewFieldMappingProfile.fillModificationSectionWithDelete('Delete', '500', 1);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         // create Action profile and link it to Field mapping profile

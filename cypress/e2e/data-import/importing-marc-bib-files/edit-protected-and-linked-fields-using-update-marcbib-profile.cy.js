@@ -26,6 +26,8 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
 } from '../../../support/constants';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -158,7 +160,7 @@ describe('data-import', () => {
           // create Field mapping profile
           cy.visit(SettingsMenu.mappingProfilePath);
           FieldMappingProfiles.createMappingProfileForUpdatesMarc(mappingProfile);
-          FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+          FieldMappingProfileView.closeViewModeForMappingProfile(mappingProfile.name);
           FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
           // create Action profile and link it to Field mapping profile
           cy.visit(SettingsMenu.actionProfilePath);
@@ -231,7 +233,7 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);

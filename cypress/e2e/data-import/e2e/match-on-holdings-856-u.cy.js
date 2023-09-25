@@ -24,6 +24,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
@@ -102,7 +103,7 @@ describe('data-import', () => {
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       collectionOfMappingAndActionProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
         (instance) => {
@@ -116,8 +117,8 @@ describe('data-import', () => {
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
       NewFieldMappingProfile.fillCatalogedDate('###TODAY###');
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
+      NewFieldMappingProfile.save();
+      FieldMappingProfileView.closeViewModeForMappingProfile(profile.name);
     };
 
     const createHoldingsMappingProfile = (profile) => {
@@ -125,8 +126,8 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
       NewFieldMappingProfile.fillPermanentLocation(profile.permanentLocation);
       NewFieldMappingProfile.addElectronicAccess('"Resource"', '856$u', '856$z');
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
+      NewFieldMappingProfile.save();
+      FieldMappingProfileView.closeViewModeForMappingProfile(profile.name);
     };
 
     const updateHoldingsMappingProfile = (profile) => {
@@ -135,8 +136,8 @@ describe('data-import', () => {
       NewFieldMappingProfile.addSuppressFromDiscovery('Mark for all affected records');
       NewFieldMappingProfile.fillCallNumberType(profile.callNumberType);
       NewFieldMappingProfile.fillCallNumber('"ONLINE"');
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
+      NewFieldMappingProfile.save();
+      FieldMappingProfileView.closeViewModeForMappingProfile(profile.name);
     };
 
     it(

@@ -27,6 +27,7 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -117,7 +118,7 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       collectionOfMappingAndActionProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
         (instance) => {
@@ -150,8 +151,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillPermanentLocation(
           collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocation,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(
           collectionOfMappingAndActionProfiles[1].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(
@@ -171,8 +172,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillStatus(
           collectionOfMappingAndActionProfiles[2].mappingProfile.status,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(
           collectionOfMappingAndActionProfiles[2].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(

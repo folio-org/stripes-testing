@@ -29,7 +29,7 @@ describe('data-import', () => {
 
     after('delete test data', () => {
       ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
     });
 
     it(
@@ -39,8 +39,8 @@ describe('data-import', () => {
         cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         cy.visit(SettingsMenu.actionProfilePath);

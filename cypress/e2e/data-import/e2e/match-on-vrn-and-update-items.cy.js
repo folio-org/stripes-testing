@@ -21,7 +21,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import {
   ACCEPTED_DATA_TYPE_NAMES,
@@ -161,9 +161,9 @@ describe('data-import', () => {
       ActionProfiles.deleteActionProfile(instanceActionProfileName);
       ActionProfiles.deleteActionProfile(holdingsActionProfileName);
       ActionProfiles.deleteActionProfile(itemActionProfileName);
-      FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileName);
-      FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileName);
-      FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileName);
+      FieldMappingProfileView.deleteViaApi(instanceMappingProfileName);
+      FieldMappingProfileView.deleteViaApi(holdingsMappingProfileName);
+      FieldMappingProfileView.deleteViaApi(itemMappingProfileName);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
     });
 

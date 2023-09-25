@@ -35,6 +35,7 @@ import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRec
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe.skip('data-import', () => {
   describe('Log details', () => {
@@ -248,11 +249,11 @@ describe.skip('data-import', () => {
       });
       collectionOfProfilesForCreate.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       collectionOfProfilesForUpdate.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       Users.deleteViaApi(user.userId);
       cy.wrap(instanceHrids).each((hrid) => {
@@ -279,8 +280,8 @@ describe.skip('data-import', () => {
         NewFieldMappingProfile.fillModificationSectionWithAdd(
           collectionOfProfilesForCreate[0].mappingProfile.modifications,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(
           collectionOfProfilesForCreate[0].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(
@@ -291,8 +292,8 @@ describe.skip('data-import', () => {
         NewFieldMappingProfile.fillSummaryInMappingProfile(
           collectionOfProfilesForCreate[1].mappingProfile,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(
           collectionOfProfilesForCreate[1].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(
@@ -306,8 +307,8 @@ describe.skip('data-import', () => {
         NewFieldMappingProfile.fillPermanentLocation(
           collectionOfProfilesForCreate[2].mappingProfile.permanentLocation,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(
           collectionOfProfilesForCreate[2].mappingProfile.name,
         );
 
@@ -322,8 +323,8 @@ describe.skip('data-import', () => {
           collectionOfProfilesForCreate[3].mappingProfile.permanentLoanType,
         );
         NewFieldMappingProfile.fillStatus(collectionOfProfilesForCreate[3].mappingProfile.status);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(
           collectionOfProfilesForCreate[3].mappingProfile.name,
         );
 
@@ -402,8 +403,8 @@ describe.skip('data-import', () => {
           collectionOfProfilesForUpdate[0].mappingProfile.statisticalCode,
           8,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(
           collectionOfProfilesForUpdate[0].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(
@@ -417,8 +418,8 @@ describe.skip('data-import', () => {
         NewFieldMappingProfile.fillPermanentLocation(
           collectionOfProfilesForUpdate[1].mappingProfile.permanetLocation,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(
           collectionOfProfilesForUpdate[1].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(
@@ -441,8 +442,8 @@ describe.skip('data-import', () => {
           collectionOfProfilesForUpdate[2].mappingProfile.permanentLoanType,
         );
         NewFieldMappingProfile.fillStatus(collectionOfProfilesForUpdate[2].mappingProfile.status);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(
           collectionOfProfilesForUpdate[2].mappingProfile.name,
         );
 

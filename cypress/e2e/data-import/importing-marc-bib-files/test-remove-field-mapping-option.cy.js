@@ -28,6 +28,7 @@ import {
   EXISTING_RECORDS_NAMES,
   JOB_STATUS_NAMES,
 } from '../../../support/constants';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -168,11 +169,11 @@ describe('data-import', () => {
       });
       collectionOfMappingAndActionProfilesForCreate.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       collectionOfMappingAndActionProfilesForUpdate.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${marcFileNameForCreate}`);
@@ -189,8 +190,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillSummaryInMappingProfile(
           collectionOfMappingAndActionProfilesForCreate[0].mappingProfile,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(
           collectionOfMappingAndActionProfilesForCreate[0].mappingProfile.name,
         );
 
@@ -210,8 +211,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillDigitizationPolicy(
           collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.digitizationPolicy,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(
           collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.name,
         );
 
@@ -240,8 +241,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillStatus(
           collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.status,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(
           collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.name,
         );
 
@@ -365,8 +366,8 @@ describe('data-import', () => {
             NewFieldMappingProfile.fillDigitizationPolicy(
               collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.digitizationPolicy,
             );
-            FieldMappingProfiles.saveProfile();
-            FieldMappingProfiles.closeViewModeForMappingProfile(
+            NewFieldMappingProfile.save();
+            FieldMappingProfileView.closeViewModeForMappingProfile(
               collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.name,
             );
 
@@ -383,8 +384,8 @@ describe('data-import', () => {
             NewFieldMappingProfile.fillTemporaryLoanType(
               collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.temporaryLoanType,
             );
-            FieldMappingProfiles.saveProfile();
-            FieldMappingProfiles.closeViewModeForMappingProfile(
+            NewFieldMappingProfile.save();
+            FieldMappingProfileView.closeViewModeForMappingProfile(
               collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.name,
             );
 

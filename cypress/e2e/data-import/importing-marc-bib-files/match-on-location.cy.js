@@ -27,6 +27,7 @@ import NewFieldMappingProfile from '../../../support/fragments/data_import/mappi
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import FileManager from '../../../support/utils/fileManager';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -315,11 +316,11 @@ describe('data-import', () => {
       ActionProfiles.deleteActionProfile(itemActionProfileForCreate.profile.name);
       ActionProfiles.deleteActionProfile(holdingsActionProfileForUpdate.name);
       ActionProfiles.deleteActionProfile(itemActionProfileForUpdate.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileForCreate.profile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileForCreate.profile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileForCreate.profile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileForUpdate.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileForUpdate.name);
+      FieldMappingProfileView.deleteViaApi(instanceMappingProfileForCreate.profile.name);
+      FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForCreate.profile.name);
+      FieldMappingProfileView.deleteViaApi(itemMappingProfileForCreate.profile.name);
+      FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForUpdate.name);
+      FieldMappingProfileView.deleteViaApi(itemMappingProfileForUpdate.name);
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${fileNameAfterUpdate}`);
@@ -358,14 +359,16 @@ describe('data-import', () => {
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfileForUpdate);
         NewFieldMappingProfile.addAdministrativeNote(noteForHoldingsMappingProfile, 5);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfileForUpdate.name);
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(
+          holdingsMappingProfileForUpdate.name,
+        );
         FieldMappingProfiles.checkMappingProfilePresented(holdingsMappingProfileForUpdate.name);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfileForUpdate);
         NewFieldMappingProfile.addAdministrativeNote(noteForItemMappingProfile, 7);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfileForUpdate.name);
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewModeForMappingProfile(itemMappingProfileForUpdate.name);
         FieldMappingProfiles.checkMappingProfilePresented(itemMappingProfileForUpdate.name);
 
         // create Action profiles

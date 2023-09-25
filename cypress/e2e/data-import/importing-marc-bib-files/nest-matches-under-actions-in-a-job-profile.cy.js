@@ -28,6 +28,7 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -225,12 +226,12 @@ describe('data-import', () => {
       MatchProfiles.deleteMatchProfile(holdingsMatchProfile.profileName);
       collectionOfMappingAndActionProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       ActionProfiles.deleteActionProfile(instanceActionProfileForCreate.profile.name);
       ActionProfiles.deleteActionProfile(holdingsActionProfileForCreate.profile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileForCreate.profile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileForCreate.profile.name);
+      FieldMappingProfileView.deleteViaApi(instanceMappingProfileForCreate.profile.name);
+      FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForCreate.profile.name);
       Users.deleteViaApi(user.userId);
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
         (instance) => {
@@ -273,8 +274,8 @@ describe('data-import', () => {
           NewFieldMappingProfile.addSuppressFromDiscovery(
             collectionOfMappingAndActionProfiles[0].mappingProfile.suppressFromDiscavery,
           );
-          FieldMappingProfiles.saveProfile();
-          FieldMappingProfiles.closeViewModeForMappingProfile(
+          NewFieldMappingProfile.save();
+          FieldMappingProfileView.closeViewModeForMappingProfile(
             collectionOfMappingAndActionProfiles[0].mappingProfile.name,
           );
           FieldMappingProfiles.checkMappingProfilePresented(
@@ -288,8 +289,8 @@ describe('data-import', () => {
           NewFieldMappingProfile.addSuppressFromDiscovery(
             collectionOfMappingAndActionProfiles[1].mappingProfile.suppressFromDiscavery,
           );
-          FieldMappingProfiles.saveProfile();
-          FieldMappingProfiles.closeViewModeForMappingProfile(
+          NewFieldMappingProfile.save();
+          FieldMappingProfileView.closeViewModeForMappingProfile(
             collectionOfMappingAndActionProfiles[1].mappingProfile.name,
           );
           FieldMappingProfiles.checkMappingProfilePresented(
