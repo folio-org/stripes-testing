@@ -14,6 +14,8 @@ import DateTools from '../../support/utils/dateTools';
 
 describe('MARC -› MARC Bibliographic -› Derive MARC bib', () => {
   const testData = {
+    tag245: '245',
+    newTitle: `Derived_Bib_${getRandomPostfix()}`,
     marcFile: {
       marc: 'marcBibFileC396356.mrc',
       fileName: `testMarcFileC396356.${getRandomPostfix()}.mrc`,
@@ -64,8 +66,10 @@ describe('MARC -› MARC Bibliographic -› Derive MARC bib', () => {
       InventoryInstances.selectInstance();
       InventoryInstance.deriveNewMarcBib();
       QuickMarcEditor.checkSubfieldsPresenceInTag008();
+      QuickMarcEditor.updateExistingField(testData.tag245, testData.newTitle);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndCloseDerive();
+      InventoryInstance.checkInstanceTitle(testData.newTitle);
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.checkSubfieldsPresenceInTag008();
       QuickMarcEditor.saveInstanceIdToArrayInQuickMarc(createdRecordIDs).then(() => {
