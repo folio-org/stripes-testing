@@ -20,7 +20,7 @@ import PaymentMethods from '../../support/fragments/settings/users/paymentMethod
 import ManualCharges from '../../support/fragments/settings/users/manualCharges';
 import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
 import FeeFinesDetails from '../../support/fragments/users/feeFineDetails';
-import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
+import PayFeeFine from '../../support/fragments/users/payFeeFaine';
 
 describe('Loan Details', () => {
   const feeFineType = {};
@@ -211,11 +211,11 @@ describe('Loan Details', () => {
       FeeFinesDetails.openActions().then(() => {
         FeeFinesDetails.openPayModal();
       });
-      PayFeeFaine.checkAmount(200);
-      PayFeeFaine.setPaymentMethod(testData.paymentMethod);
-      PayFeeFaine.setAmount(200);
-      PayFeeFaine.checkRestOfPay(200);
-      PayFeeFaine.submitAndConfirm();
+      PayFeeFine.checkAmount(200);
+      PayFeeFine.setPaymentMethod(testData.paymentMethod);
+      PayFeeFine.setAmount(200);
+      PayFeeFine.checkRestOfPay(200);
+      PayFeeFine.submitAndConfirm();
 
       // Click on linked value for overdue policy
       cy.visit(AppPaths.getOpenLoansPath(userData.userId));
