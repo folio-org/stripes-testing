@@ -237,14 +237,12 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(fileNameForUpdate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForUpdate);
-        FileDetails.checkStatusInColumn(
-          FileDetails.status.created,
+        [
           FileDetails.columnNameInResultList.srsMarc,
-        );
-        FileDetails.checkStatusInColumn(
-          FileDetails.status.updated,
           FileDetails.columnNameInResultList.instance,
-        );
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+        });
         FileDetails.openInstanceInInventory('Updated');
         InstanceRecordView.waitLoading();
         InstanceRecordView.viewSource();

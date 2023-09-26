@@ -205,14 +205,12 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(fileForUpdateFirstName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileForUpdateFirstName);
-        FileDetails.checkStatusInColumn(
-          FileDetails.status.created,
+        [
           FileDetails.columnNameInResultList.srsMarc,
-        );
-        FileDetails.checkStatusInColumn(
-          FileDetails.status.updated,
           FileDetails.columnNameInResultList.instance,
-        );
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+        });
         FileDetails.checkSrsRecordQuantityInSummaryTable('1');
         FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
 

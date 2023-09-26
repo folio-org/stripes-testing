@@ -311,7 +311,7 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile();
         Logs.openFileDetails(marcFileName);
         FileDetails.checkItemsStatusesInResultList(0, [
-          FileDetails.status.created,
+          FileDetails.status.updated,
           FileDetails.status.updated,
           FileDetails.status.created,
           FileDetails.status.created,

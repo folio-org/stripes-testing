@@ -211,14 +211,12 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(fileNameForUpdateInstance);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForUpdateInstance);
-        FileDetails.checkStatusInColumn(
-          FileDetails.status.created,
+        [
           FileDetails.columnNameInResultList.srsMarc,
-        );
-        FileDetails.checkStatusInColumn(
-          FileDetails.status.updated,
           FileDetails.columnNameInResultList.instance,
-        );
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+        });
         FileDetails.checkStatusInColumn(
           FileDetails.status.dash,
           FileDetails.columnNameInResultList.srsMarc,

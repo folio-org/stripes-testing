@@ -220,16 +220,12 @@ describe('data-import', () => {
           FileDetails.status.noAction,
           FileDetails.columnNameInResultList.instance,
         );
-        FileDetails.checkStatusInColumn(
-          FileDetails.status.created,
+        [
           FileDetails.columnNameInResultList.srsMarc,
-          1,
-        );
-        FileDetails.checkStatusInColumn(
-          FileDetails.status.updated,
           FileDetails.columnNameInResultList.instance,
-          1,
-        );
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName, 1);
+        });
 
         // check updated instance in Inventory
         FileDetails.openInstanceInInventory('Updated', 1);

@@ -255,14 +255,12 @@ describe('data-import', () => {
           JobProfiles.waitFileIsImported(nameMarcFileForUpdate);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(nameMarcFileForUpdate);
-          FileDetails.checkStatusInColumn(
-            FileDetails.status.created,
+          [
             FileDetails.columnNameInResultList.srsMarc,
-          );
-          FileDetails.checkStatusInColumn(
-            FileDetails.status.updated,
             FileDetails.columnNameInResultList.instance,
-          );
+          ].forEach((columnName) => {
+            FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+          });
           FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
           FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 1);
 
