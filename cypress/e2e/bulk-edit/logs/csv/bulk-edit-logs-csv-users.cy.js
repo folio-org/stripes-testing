@@ -17,7 +17,7 @@ const previewOfProposedChangesFileName = {
   first: `*-Updates-Preview-${userUUIDsFileName}`,
   second: `*-Updates-Preview-${editedFileName}`,
 };
-const updatedRecordsFileName = `*-Changed-Records*-${userUUIDsFileName}`; 
+const updatedRecordsFileName = `*-Changed-Records*-${userUUIDsFileName}`;
 
 describe('Bulk Edit - Logs', () => {
   before('create test data', () => {
