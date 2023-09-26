@@ -614,4 +614,22 @@ export default {
       });
     });
   },
+  verifyHeadingsUpdatesDataViaAPI(startDate, endDate, expectedDataObject) {
+    cy.getAuthorityHeadingsUpdatesViaAPI(startDate, endDate).then((updatesData) => {
+      const selectedUpdate = updatesData.filter(
+        (update) => update.headingNew === expectedDataObject.headingNew,
+      );
+      cy.expect([
+        selectedUpdate.naturalIdOld.equals(expectedDataObject.naturalIdOld),
+        selectedUpdate.naturalIdNew.equals(expectedDataObject.naturalIdNew),
+        selectedUpdate.headingNew.equals(expectedDataObject.headingNew),
+        selectedUpdate.headingOld.equals(expectedDataObject.headingOld),
+        selectedUpdate.sourceFileNew.equals(expectedDataObject.sourceFileNew),
+        selectedUpdate.sourceFileOld.equals(expectedDataObject.sourceFileOld),
+        selectedUpdate.ldTotal.equals(expectedDataObject.lbTotal),
+        selectedUpdate.lbUpdated.equals(expectedDataObject.lbUpdated),
+        // updatesData.startedAt.equals(expectedDataObject.naturalIdOld),
+      ]);
+    });
+  },
 };
