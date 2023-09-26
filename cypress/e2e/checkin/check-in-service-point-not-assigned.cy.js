@@ -11,7 +11,6 @@ import Location from '../../support/fragments/settings/tenant/locations/newLocat
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import permissions from '../../support/dictionary/permissions';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
@@ -90,7 +89,7 @@ describe('Check In - Actions', () => {
       patronGroup.id = patronGroupResponse;
     });
 
-    cy.createTempUser([Permissions.checkinAll.gui, permissions.loansView.gui], patronGroup.name)
+    cy.createTempUser([Permissions.checkinAll.gui, Permissions.loansView.gui], patronGroup.name)
       .then((userProperties) => {
         userData = userProperties;
       })
