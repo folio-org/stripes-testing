@@ -119,9 +119,9 @@ describe('data-import', () => {
         NewFieldMappingProfile.addStatisticalCode(instanceMappingProfile.statisticalCode, 8);
         NewFieldMappingProfile.fillInstanceStatusTerm(instanceMappingProfile.statusTerm);
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(instanceMappingProfile.name);
+        FieldMappingProfileView.closeViewMode(instanceMappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(instanceMappingProfile.name);
-        FieldMappingProfileView.closeViewModeForMappingProfile(instanceMappingProfile.name);
+        FieldMappingProfileView.closeViewMode(instanceMappingProfile.name);
 
         FieldMappingProfiles.openNewMappingProfileForm();
         FieldMappingProfiles.createMappingProfileForUpdatesMarc(marcBibMappingProfile);

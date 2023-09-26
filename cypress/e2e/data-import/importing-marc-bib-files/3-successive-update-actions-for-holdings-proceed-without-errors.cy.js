@@ -165,7 +165,7 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
         NewFieldMappingProfile.fillPermanentLocation(holdingsMappingProfile.permanentLocation);
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(holdingsMappingProfile.name);
+        FieldMappingProfileView.closeViewMode(holdingsMappingProfile.name);
 
         // create action profile
         cy.visit(SettingsMenu.actionProfilePath);
@@ -226,7 +226,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.holdingsType,
         );
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(
@@ -250,7 +250,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.callNumberSuffix,
         );
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(
@@ -269,7 +269,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfilesForUpdate[2].mappingProfile.urlPublicNote,
         );
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfilesForUpdate[2].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(

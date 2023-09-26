@@ -389,7 +389,7 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillCatalogedDate('###TODAY###');
       NewFieldMappingProfile.fillInstanceStatusTerm();
       NewFieldMappingProfile.save();
-      FieldMappingProfileView.closeViewModeForMappingProfile(profile.name);
+      FieldMappingProfileView.closeViewMode(profile.name);
     };
 
     const createHoldingsMappingProfile = (profile) => {
@@ -401,7 +401,7 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillCallNumber('050$a " " 050$b');
       NewFieldMappingProfile.addElectronicAccess('"Resource"', '856$u');
       NewFieldMappingProfile.save();
-      FieldMappingProfileView.closeViewModeForMappingProfile(profile.name);
+      FieldMappingProfileView.closeViewMode(profile.name);
     };
 
     const createItemMappingProfile = (profile) => {
@@ -416,7 +416,7 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillPermanentLoanType(profile.permanentLoanType);
       NewFieldMappingProfile.fillStatus(profile.status);
       NewFieldMappingProfile.save();
-      FieldMappingProfileView.closeViewModeForMappingProfile(profile.name);
+      FieldMappingProfileView.closeViewMode(profile.name);
     };
 
     it(

@@ -121,7 +121,7 @@ describe('data-import', () => {
           9,
         );
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfiles[0].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(
@@ -137,7 +137,7 @@ describe('data-import', () => {
           5,
         );
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfiles[1].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(

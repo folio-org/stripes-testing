@@ -187,7 +187,7 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillCatalogedDate(mappingProfile.catalogedDate);
         NewFieldMappingProfile.fillInstanceStatusTerm(mappingProfile.instanceStatus);
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(mappingProfile.name);
+        FieldMappingProfileView.closeViewMode(mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         cy.visit(SettingsMenu.actionProfilePath);

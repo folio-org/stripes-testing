@@ -191,7 +191,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfilesForCreate[0].mappingProfile,
         );
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfilesForCreate[0].mappingProfile.name,
         );
 
@@ -212,7 +212,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.digitizationPolicy,
         );
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.name,
         );
 
@@ -242,7 +242,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.status,
         );
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.name,
         );
 
@@ -367,7 +367,7 @@ describe('data-import', () => {
               collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.digitizationPolicy,
             );
             NewFieldMappingProfile.save();
-            FieldMappingProfileView.closeViewModeForMappingProfile(
+            FieldMappingProfileView.closeViewMode(
               collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.name,
             );
 
@@ -385,7 +385,7 @@ describe('data-import', () => {
               collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.temporaryLoanType,
             );
             NewFieldMappingProfile.save();
-            FieldMappingProfileView.closeViewModeForMappingProfile(
+            FieldMappingProfileView.closeViewMode(
               collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.name,
             );
 

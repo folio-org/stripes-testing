@@ -132,7 +132,7 @@ describe('data-import', () => {
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(instanceMappingProfile);
       NewFieldMappingProfile.save();
-      FieldMappingProfileView.closeViewModeForMappingProfile(instanceMappingProfile.name);
+      FieldMappingProfileView.closeViewMode(instanceMappingProfile.name);
     };
 
     const createInstanceMappingProfileForUpdate = (instanceMappingProfile) => {
@@ -144,7 +144,7 @@ describe('data-import', () => {
         8,
       );
       NewFieldMappingProfile.save();
-      FieldMappingProfileView.closeViewModeForMappingProfile(instanceMappingProfile.name);
+      FieldMappingProfileView.closeViewMode(instanceMappingProfile.name);
     };
 
     it(

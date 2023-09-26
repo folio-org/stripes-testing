@@ -144,7 +144,7 @@ describe('data-import', () => {
         FieldMappingProfiles.createMappingProfileForUpdatesMarc(
           collectionOfMappingAndActionProfiles[0].mappingProfile,
         );
-        FieldMappingProfileView.closeViewModeForMappingProfile(
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfiles[0].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(

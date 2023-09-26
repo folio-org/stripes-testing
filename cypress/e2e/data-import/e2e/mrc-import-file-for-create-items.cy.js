@@ -85,7 +85,7 @@ describe('data-import', () => {
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(instanceMappingProfile);
       NewFieldMappingProfile.save();
-      FieldMappingProfileView.closeViewModeForMappingProfile(instanceMappingProfile.name);
+      FieldMappingProfileView.closeViewMode(instanceMappingProfile.name);
     };
 
     const createHoldingsMappingProfile = (holdingsMappingProfile) => {
@@ -93,7 +93,7 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
       NewFieldMappingProfile.fillPermanentLocation(holdingsMappingProfile.permanentLocation);
       NewFieldMappingProfile.save();
-      FieldMappingProfileView.closeViewModeForMappingProfile(holdingsMappingProfile.name);
+      FieldMappingProfileView.closeViewMode(holdingsMappingProfile.name);
     };
 
     const createItemMappingProfile = (itemMappingProfile) => {
@@ -103,7 +103,7 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillPermanentLoanType(itemMappingProfile.permanentLoanType);
       NewFieldMappingProfile.fillStatus(itemMappingProfile.status);
       NewFieldMappingProfile.save();
-      FieldMappingProfileView.closeViewModeForMappingProfile(itemMappingProfile.name);
+      FieldMappingProfileView.closeViewMode(itemMappingProfile.name);
     };
 
     after('delete test data', () => {

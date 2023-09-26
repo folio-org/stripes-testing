@@ -177,7 +177,7 @@ describe('data-import', () => {
       NewFieldMappingProfile.addStatisticalCode(statisticalCode, 4);
       NewFieldMappingProfile.fillPermanentLocation(`"${holdingsMappingProfile.permanentLocation}"`);
       NewFieldMappingProfile.save();
-      FieldMappingProfileView.closeViewModeForMappingProfile(holdingsMappingProfile.name);
+      FieldMappingProfileView.closeViewMode(holdingsMappingProfile.name);
     };
 
     const mappingProfileForCreateItem = (itemMappingProfile) => {
@@ -188,7 +188,7 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillPermanentLoanType(itemMappingProfile.permanentLoanType);
       NewFieldMappingProfile.fillStatus(itemMappingProfile.status);
       NewFieldMappingProfile.save();
-      FieldMappingProfileView.closeViewModeForMappingProfile(itemMappingProfile.name);
+      FieldMappingProfileView.closeViewMode(itemMappingProfile.name);
     };
 
     const mappingProfileForUpdateItem = (itemMappingProfile) => {
@@ -200,7 +200,7 @@ describe('data-import', () => {
         'Mark for all affected records',
       );
       NewFieldMappingProfile.save();
-      FieldMappingProfileView.closeViewModeForMappingProfile(itemMappingProfile.name);
+      FieldMappingProfileView.closeViewMode(itemMappingProfile.name);
     };
 
     it(

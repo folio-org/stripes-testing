@@ -131,7 +131,7 @@ describe('data-import', () => {
           NewFieldMappingProfile.fillInstanceStatusTerm(mappingProfile.instanceStatusTerm);
           NewFieldMappingProfile.addStatisticalCode(mappingProfile.statisticalCode, 8);
           NewFieldMappingProfile.save();
-          FieldMappingProfileView.closeViewModeForMappingProfile(mappingProfile.name);
+          FieldMappingProfileView.closeViewMode(mappingProfile.name);
           FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
           // create action profile
@@ -290,7 +290,7 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillInstanceStatusTerm(mappingProfile.instanceStatusTerm);
         NewFieldMappingProfile.addStatisticalCode(mappingProfile.statisticalCode, 8);
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(mappingProfile.name);
+        FieldMappingProfileView.closeViewMode(mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         // create action profile

@@ -275,7 +275,7 @@ describe('data-import', () => {
             collectionOfMappingAndActionProfiles[0].mappingProfile.suppressFromDiscavery,
           );
           NewFieldMappingProfile.save();
-          FieldMappingProfileView.closeViewModeForMappingProfile(
+          FieldMappingProfileView.closeViewMode(
             collectionOfMappingAndActionProfiles[0].mappingProfile.name,
           );
           FieldMappingProfiles.checkMappingProfilePresented(
@@ -290,7 +290,7 @@ describe('data-import', () => {
             collectionOfMappingAndActionProfiles[1].mappingProfile.suppressFromDiscavery,
           );
           NewFieldMappingProfile.save();
-          FieldMappingProfileView.closeViewModeForMappingProfile(
+          FieldMappingProfileView.closeViewMode(
             collectionOfMappingAndActionProfiles[1].mappingProfile.name,
           );
           FieldMappingProfiles.checkMappingProfilePresented(

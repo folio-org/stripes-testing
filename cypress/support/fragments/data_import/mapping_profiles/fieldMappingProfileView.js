@@ -21,7 +21,7 @@ const fullScreenView = Pane({ id: 'full-screen-view' });
 const associatedList = MultiColumnList({ id: 'associated-actionProfiles-list' });
 const overrideProtectedSectionAccordoin = Accordion({ id: 'override-protected-section' });
 
-const closeViewModeForMappingProfile = (profileName) => {
+const closeViewMode = (profileName) => {
   cy.do(
     Pane({ title: profileName })
       .find(Button({ icon: 'times' }))
@@ -79,7 +79,7 @@ const deleteViaApi = (profileName) => {
 export default {
   checkUpdatesSectionOfMappingProfile,
   checkOverrideSectionOfMappingProfile,
-  closeViewModeForMappingProfile,
+  closeViewMode,
   deleteViaApi,
 
   checkCreatedMappingProfile: (
@@ -93,13 +93,13 @@ export default {
     cy.do(overrideProtectedSectionAccordoin.clickHeader());
     checkOverrideSectionOfMappingProfile(firstField, firstFieldStatus);
     checkOverrideSectionOfMappingProfile(secondField, secondFieldStatus);
-    closeViewModeForMappingProfile(profileName);
+    closeViewMode(profileName);
   },
 
   checkOverrideProtectedSection: (profileName) => {
     cy.do(overrideProtectedSectionAccordoin.clickHeader());
     cy.expect(overrideProtectedSectionAccordoin.find(HTML({ text: matching(/[-]|\d*/) })).exists());
-    closeViewModeForMappingProfile(profileName);
+    closeViewMode(profileName);
   },
 
   edit: () => {

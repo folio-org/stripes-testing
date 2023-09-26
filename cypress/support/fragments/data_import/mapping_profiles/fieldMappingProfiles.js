@@ -48,7 +48,7 @@ export default {
   createMappingProfile: (mappingProfile) => {
     openNewMappingProfileForm();
     NewFieldMappingProfile.fillMappingProfile(mappingProfile);
-    FieldMappingProfileView.closeViewModeForMappingProfile(mappingProfile.name);
+    FieldMappingProfileView.closeViewMode(mappingProfile.name);
     cy.expect(actionsButton.exists());
   },
   createInvoiceMappingProfile: (mappingProfile, defaultProfile) => {
@@ -56,19 +56,19 @@ export default {
     duplicate();
     cy.wait(1000);
     NewFieldMappingProfile.fillInvoiceMappingProfile(mappingProfile);
-    FieldMappingProfileView.closeViewModeForMappingProfile(mappingProfile.name);
+    FieldMappingProfileView.closeViewMode(mappingProfile.name);
     cy.expect(actionsButton.exists());
   },
   createOrderMappingProfile: (mappingProfile) => {
     openNewMappingProfileForm();
     NewFieldMappingProfile.fillOrderMappingProfile(mappingProfile);
     NewFieldMappingProfile.save();
-    FieldMappingProfileView.closeViewModeForMappingProfile(mappingProfile.name);
+    FieldMappingProfileView.closeViewMode(mappingProfile.name);
   },
   createMappingProfileForMatch: (mappingProfile) => {
     openNewMappingProfileForm();
     NewFieldMappingProfile.fillMappingProfileForMatch(mappingProfile);
-    FieldMappingProfileView.closeViewModeForMappingProfile(mappingProfile.name);
+    FieldMappingProfileView.closeViewMode(mappingProfile.name);
     cy.expect(actionsButton.exists());
   },
   createMappingProfileForUpdatesMarc: (mappingProfile) => {
@@ -97,7 +97,7 @@ export default {
     NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
     NewFieldMappingProfile.addAdministrativeNote(note, 9);
     NewFieldMappingProfile.save();
-    FieldMappingProfileView.closeViewModeForMappingProfile(mappingProfile.name);
+    FieldMappingProfileView.closeViewMode(mappingProfile.name);
     cy.expect(actionsButton.exists());
   },
   selectMappingProfileFromList: (profileName) => cy.do(MultiColumnListCell(profileName).click()),

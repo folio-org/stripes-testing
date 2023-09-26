@@ -152,7 +152,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocation,
         );
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfiles[1].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(
@@ -173,7 +173,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[2].mappingProfile.status,
         );
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfiles[2].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(

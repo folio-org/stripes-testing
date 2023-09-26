@@ -147,9 +147,7 @@ describe('data-import', () => {
         );
         NewFieldMappingProfile.fillStatus(collectionOfProfiles[2].mappingProfile.status);
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
-          collectionOfProfiles[2].mappingProfile.name,
-        );
+        FieldMappingProfileView.closeViewMode(collectionOfProfiles[2].mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(
           collectionOfProfiles[2].mappingProfile.name,
         );
@@ -160,9 +158,7 @@ describe('data-import', () => {
           collectionOfProfiles[1].mappingProfile.permanetLocation,
         );
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
-          collectionOfProfiles[1].mappingProfile.name,
-        );
+        FieldMappingProfileView.closeViewMode(collectionOfProfiles[1].mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(
           collectionOfProfiles[1].mappingProfile.name,
         );
@@ -173,9 +169,7 @@ describe('data-import', () => {
           collectionOfProfiles[0].mappingProfile.catalogingDate,
         );
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
-          collectionOfProfiles[0].mappingProfile.name,
-        );
+        FieldMappingProfileView.closeViewMode(collectionOfProfiles[0].mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(
           collectionOfProfiles[0].mappingProfile.name,
         );

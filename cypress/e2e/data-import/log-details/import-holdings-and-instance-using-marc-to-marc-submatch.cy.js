@@ -116,7 +116,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfilesForCreate[0].mappingProfile.instanceStatusTerm,
         );
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfilesForCreate[0].mappingProfile.name,
         );
 
@@ -138,7 +138,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.urlPublicNote,
         );
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.name,
         );
 
@@ -279,7 +279,7 @@ describe('data-import', () => {
         );
         NewFieldMappingProfile.markFieldForProtection(testData.protectedField);
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.name,
         );
 
@@ -437,7 +437,7 @@ describe('data-import', () => {
         );
         NewFieldMappingProfile.markFieldForProtection(testData.protectedField);
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.name,
         );
 
@@ -621,7 +621,7 @@ describe('data-import', () => {
         );
         NewFieldMappingProfile.markFieldForProtection(testData.protectedField);
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(
@@ -639,7 +639,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.permanentLocation,
         );
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(

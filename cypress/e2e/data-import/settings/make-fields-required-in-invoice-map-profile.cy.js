@@ -77,7 +77,7 @@ describe('data-import', () => {
         FieldMappingProfileView.checkErrorMessageIsPresented('Invoice date*');
         NewFieldMappingProfile.fillInvoiceDate('###TODAY###');
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(mappingProfileName);
+        FieldMappingProfileView.closeViewMode(mappingProfileName);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
 
         FieldMappingProfileView.delete(mappingProfileName);

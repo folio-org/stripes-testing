@@ -74,7 +74,7 @@ describe('data-import', () => {
         NewFieldMappingProfile.addNewFieldInModificationSection();
         NewFieldMappingProfile.fillModificationSectionWithDelete('Delete', '500', 1);
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(mappingProfile.name);
+        FieldMappingProfileView.closeViewMode(mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         // create Action profile and link it to Field mapping profile

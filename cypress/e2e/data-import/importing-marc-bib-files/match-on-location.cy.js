@@ -360,15 +360,13 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfileForUpdate);
         NewFieldMappingProfile.addAdministrativeNote(noteForHoldingsMappingProfile, 5);
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
-          holdingsMappingProfileForUpdate.name,
-        );
+        FieldMappingProfileView.closeViewMode(holdingsMappingProfileForUpdate.name);
         FieldMappingProfiles.checkMappingProfilePresented(holdingsMappingProfileForUpdate.name);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfileForUpdate);
         NewFieldMappingProfile.addAdministrativeNote(noteForItemMappingProfile, 7);
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(itemMappingProfileForUpdate.name);
+        FieldMappingProfileView.closeViewMode(itemMappingProfileForUpdate.name);
         FieldMappingProfiles.checkMappingProfilePresented(itemMappingProfileForUpdate.name);
 
         // create Action profiles

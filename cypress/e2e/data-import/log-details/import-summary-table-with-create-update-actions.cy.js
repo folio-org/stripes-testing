@@ -281,9 +281,7 @@ describe.skip('data-import', () => {
           collectionOfProfilesForCreate[0].mappingProfile.modifications,
         );
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
-          collectionOfProfilesForCreate[0].mappingProfile.name,
-        );
+        FieldMappingProfileView.closeViewMode(collectionOfProfilesForCreate[0].mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(
           collectionOfProfilesForCreate[0].mappingProfile.name,
         );
@@ -293,9 +291,7 @@ describe.skip('data-import', () => {
           collectionOfProfilesForCreate[1].mappingProfile,
         );
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
-          collectionOfProfilesForCreate[1].mappingProfile.name,
-        );
+        FieldMappingProfileView.closeViewMode(collectionOfProfilesForCreate[1].mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(
           collectionOfProfilesForCreate[1].mappingProfile.name,
         );
@@ -308,9 +304,7 @@ describe.skip('data-import', () => {
           collectionOfProfilesForCreate[2].mappingProfile.permanentLocation,
         );
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
-          collectionOfProfilesForCreate[2].mappingProfile.name,
-        );
+        FieldMappingProfileView.closeViewMode(collectionOfProfilesForCreate[2].mappingProfile.name);
 
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(
@@ -324,9 +318,7 @@ describe.skip('data-import', () => {
         );
         NewFieldMappingProfile.fillStatus(collectionOfProfilesForCreate[3].mappingProfile.status);
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
-          collectionOfProfilesForCreate[3].mappingProfile.name,
-        );
+        FieldMappingProfileView.closeViewMode(collectionOfProfilesForCreate[3].mappingProfile.name);
 
         // create action profiles for creating
         collectionOfProfilesForCreate.forEach((profile) => {
@@ -404,9 +396,7 @@ describe.skip('data-import', () => {
           8,
         );
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
-          collectionOfProfilesForUpdate[0].mappingProfile.name,
-        );
+        FieldMappingProfileView.closeViewMode(collectionOfProfilesForUpdate[0].mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(
           collectionOfProfilesForUpdate[0].mappingProfile.name,
         );
@@ -419,9 +409,7 @@ describe.skip('data-import', () => {
           collectionOfProfilesForUpdate[1].mappingProfile.permanetLocation,
         );
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
-          collectionOfProfilesForUpdate[1].mappingProfile.name,
-        );
+        FieldMappingProfileView.closeViewMode(collectionOfProfilesForUpdate[1].mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(
           collectionOfProfilesForUpdate[1].mappingProfile.name,
         );
@@ -443,9 +431,7 @@ describe.skip('data-import', () => {
         );
         NewFieldMappingProfile.fillStatus(collectionOfProfilesForUpdate[2].mappingProfile.status);
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
-          collectionOfProfilesForUpdate[2].mappingProfile.name,
-        );
+        FieldMappingProfileView.closeViewMode(collectionOfProfilesForUpdate[2].mappingProfile.name);
 
         // create action profiles for updating
         collectionOfProfilesForUpdate.forEach((profile) => {

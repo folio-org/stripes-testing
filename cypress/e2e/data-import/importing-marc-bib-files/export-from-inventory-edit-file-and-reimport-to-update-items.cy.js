@@ -335,7 +335,7 @@ describe('data-import', () => {
           NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfileForUpdate);
           NewFieldMappingProfile.addAdministrativeNote(note, 7);
           NewFieldMappingProfile.save();
-          FieldMappingProfileView.closeViewModeForMappingProfile(itemMappingProfileForUpdate.name);
+          FieldMappingProfileView.closeViewMode(itemMappingProfileForUpdate.name);
           FieldMappingProfiles.checkMappingProfilePresented(itemMappingProfileForUpdate.name);
 
           // create action profile for update

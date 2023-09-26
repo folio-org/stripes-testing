@@ -172,9 +172,7 @@ describe('data-import', () => {
           instanceMappingProfileForCreate.natureOfContent,
         );
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
-          instanceMappingProfileForCreate.name,
-        );
+        FieldMappingProfileView.closeViewMode(instanceMappingProfileForCreate.name);
         FieldMappingProfiles.checkMappingProfilePresented(instanceMappingProfileForCreate.name);
 
         FieldMappingProfiles.openNewMappingProfileForm();
@@ -206,9 +204,7 @@ describe('data-import', () => {
           holdingsMappingProfileForCreate.staffOnly,
         );
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
-          holdingsMappingProfileForCreate.name,
-        );
+        FieldMappingProfileView.closeViewMode(holdingsMappingProfileForCreate.name);
         FieldMappingProfiles.checkMappingProfilePresented(holdingsMappingProfileForCreate.name);
 
         // create action profiles
@@ -312,9 +308,7 @@ describe('data-import', () => {
           );
           NewFieldMappingProfile.fillIllPolicy(holdingsMappingProfileForUpdate.illPolicy);
           NewFieldMappingProfile.save();
-          FieldMappingProfileView.closeViewModeForMappingProfile(
-            holdingsMappingProfileForUpdate.name,
-          );
+          FieldMappingProfileView.closeViewMode(holdingsMappingProfileForUpdate.name);
           FieldMappingProfiles.checkMappingProfilePresented(holdingsMappingProfileForUpdate.name);
 
           // create action profile

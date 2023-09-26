@@ -172,7 +172,7 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillCatalogedDate('###TODAY###');
       NewFieldMappingProfile.fillInstanceStatusTerm();
       NewFieldMappingProfile.save();
-      FieldMappingProfileView.closeViewModeForMappingProfile(instanceMappingProfile.name);
+      FieldMappingProfileView.closeViewMode(instanceMappingProfile.name);
     };
 
     const createHoldingsMappingProfile = (holdingsMappingProfile) => {
@@ -183,7 +183,7 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillCallNumberType(holdingsMappingProfile.callNumberType);
       NewFieldMappingProfile.fillCallNumber('980$b " " 980$c');
       NewFieldMappingProfile.save();
-      FieldMappingProfileView.closeViewModeForMappingProfile(holdingsMappingProfile.name);
+      FieldMappingProfileView.closeViewMode(holdingsMappingProfile.name);
     };
 
     const createItemMappingProfile = (itemMappingProfile) => {
@@ -195,7 +195,7 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillPermanentLoanType(itemMappingProfile.permanentLoanType);
       NewFieldMappingProfile.fillMaterialType(itemMappingProfile.materialType);
       NewFieldMappingProfile.save();
-      FieldMappingProfileView.closeViewModeForMappingProfile(itemMappingProfile.name);
+      FieldMappingProfileView.closeViewMode(itemMappingProfile.name);
     };
 
     it(

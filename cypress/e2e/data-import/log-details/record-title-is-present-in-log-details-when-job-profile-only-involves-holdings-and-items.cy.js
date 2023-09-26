@@ -426,7 +426,7 @@ describe.skip('data-import', () => {
           5,
         );
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfiles[2].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(
@@ -435,7 +435,7 @@ describe.skip('data-import', () => {
         FieldMappingProfileView.duplicate();
         NewFieldMappingProfile.addName(collectionOfMappingAndActionProfiles[3].mappingProfile.name);
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfiles[3].mappingProfile.name,
         );
 
@@ -449,7 +449,7 @@ describe.skip('data-import', () => {
           collectionOfMappingAndActionProfiles[0].mappingProfile.staffOnly,
         );
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfiles[0].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(
@@ -460,7 +460,7 @@ describe.skip('data-import', () => {
           collectionOfMappingAndActionProfiles[1].mappingProfile,
         );
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfiles[1].mappingProfile.name,
         );
 

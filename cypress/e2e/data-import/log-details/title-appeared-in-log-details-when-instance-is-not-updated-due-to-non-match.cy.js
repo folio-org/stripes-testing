@@ -94,7 +94,7 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillCatalogedDate(mappingProfile.catalogingDate);
         NewFieldMappingProfile.fillInstanceStatusTerm(mappingProfile.instanceStatusTerm);
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(mappingProfile.name);
+        FieldMappingProfileView.closeViewMode(mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         // create action profile

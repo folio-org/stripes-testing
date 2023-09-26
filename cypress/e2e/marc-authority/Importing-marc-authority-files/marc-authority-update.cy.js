@@ -125,7 +125,7 @@ describe('Data Import - Update MARC Authority files', () => {
       // create Field mapping profile
       cy.visit(SettingsMenu.mappingProfilePath);
       FieldMappingProfiles.createMappingProfileForUpdatesMarcAuthority(mappingProfile);
-      FieldMappingProfileView.closeViewModeForMappingProfile(mappingProfile.name);
+      FieldMappingProfileView.closeViewMode(mappingProfile.name);
       FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
       // create Action profile and link it to Field mapping profile
       cy.visit(SettingsMenu.actionProfilePath);

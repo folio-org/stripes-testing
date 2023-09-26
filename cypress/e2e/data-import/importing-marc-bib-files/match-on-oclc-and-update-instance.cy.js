@@ -147,7 +147,7 @@ describe('data-import', () => {
         NewFieldMappingProfile.addStatisticalCode(itemsForCreateInstance.statisticalCode, 8);
         NewFieldMappingProfile.addNatureOfContentTerms('bibliography');
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfiles[0].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(
@@ -213,7 +213,7 @@ describe('data-import', () => {
           NewFieldMappingProfile.fillInstanceStatusTerm(itemsForUpdateInstance.statusTerm);
           NewFieldMappingProfile.addStatisticalCode(itemsForUpdateInstance.statisticalCode, 8);
           NewFieldMappingProfile.save();
-          FieldMappingProfileView.closeViewModeForMappingProfile(
+          FieldMappingProfileView.closeViewMode(
             collectionOfMappingAndActionProfiles[1].mappingProfile.name,
           );
           FieldMappingProfiles.checkMappingProfilePresented(

@@ -118,7 +118,7 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
       NewFieldMappingProfile.fillCatalogedDate('###TODAY###');
       NewFieldMappingProfile.save();
-      FieldMappingProfileView.closeViewModeForMappingProfile(profile.name);
+      FieldMappingProfileView.closeViewMode(profile.name);
     };
 
     const createHoldingsMappingProfile = (profile) => {
@@ -127,7 +127,7 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillPermanentLocation(profile.permanentLocation);
       NewFieldMappingProfile.addElectronicAccess('"Resource"', '856$u', '856$z');
       NewFieldMappingProfile.save();
-      FieldMappingProfileView.closeViewModeForMappingProfile(profile.name);
+      FieldMappingProfileView.closeViewMode(profile.name);
     };
 
     const updateHoldingsMappingProfile = (profile) => {
@@ -137,7 +137,7 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillCallNumberType(profile.callNumberType);
       NewFieldMappingProfile.fillCallNumber('"ONLINE"');
       NewFieldMappingProfile.save();
-      FieldMappingProfileView.closeViewModeForMappingProfile(profile.name);
+      FieldMappingProfileView.closeViewMode(profile.name);
     };
 
     it(

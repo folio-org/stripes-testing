@@ -149,7 +149,7 @@ describe('data-import', () => {
           mappingProfileFieldsForModify.modifications,
         );
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(mappingProfileFieldsForModify.name);
+        FieldMappingProfileView.closeViewMode(mappingProfileFieldsForModify.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfileFieldsForModify.name);
         // create Action profile and link it to Field mapping profile
         cy.visit(SettingsMenu.actionProfilePath);

@@ -131,7 +131,7 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillCatalogedDate(profile.catalogedDate);
       NewFieldMappingProfile.fillInstanceStatusTerm();
       NewFieldMappingProfile.save();
-      FieldMappingProfileView.closeViewModeForMappingProfile(profile.name);
+      FieldMappingProfileView.closeViewMode(profile.name);
     };
     const createHoldingsMappingProfile = (profile) => {
       FieldMappingProfiles.openNewMappingProfileForm();
@@ -141,7 +141,7 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillCallNumber(profile.callNumber);
       NewFieldMappingProfile.addElectronicAccess(profile.relationship, profile.uri, profile.link);
       NewFieldMappingProfile.save();
-      FieldMappingProfileView.closeViewModeForMappingProfile(profile.name);
+      FieldMappingProfileView.closeViewMode(profile.name);
     };
     const createItemMappingProfile = (profile) => {
       FieldMappingProfiles.openNewMappingProfileForm();
@@ -151,7 +151,7 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillPermanentLoanType(profile.permanentLoanType);
       NewFieldMappingProfile.fillStatus(profile.status);
       NewFieldMappingProfile.save();
-      FieldMappingProfileView.closeViewModeForMappingProfile(profile.name);
+      FieldMappingProfileView.closeViewMode(profile.name);
     };
 
     it(

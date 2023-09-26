@@ -81,7 +81,7 @@ describe('data-import', () => {
         NewFieldMappingProfile.addStatisticalCode(mappingProfile.statisticalCode, 8);
         NewFieldMappingProfile.addNatureOfContentTerms(mappingProfile.natureOfContent);
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewModeForMappingProfile(mappingProfile.name);
+        FieldMappingProfileView.closeViewMode(mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         // create action profile
