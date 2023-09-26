@@ -6,7 +6,7 @@ import {
   Select,
   SelectionList,
   Accordion,
-  TextArea,
+  TextArea, Callout, calloutTypes, Spinner,
 } from '../../../../interactors';
 
 const rootForm = HTML({ className: including('holdingsForm-') });
@@ -22,6 +22,8 @@ export default {
   },
   waitLoading: () => {
     cy.expect(rootForm.exists());
+    cy.expect(Spinner().absent());
+    cy.expect(callNumber.exists());
   },
   checkReadOnlyFields: () => readonlyFields.forEach((element) => cy.expect(element.has({ disabled: true }))),
   closeWithoutSave: () => cy.do(rootForm.find(Button('Cancel')).click()),
@@ -47,5 +49,8 @@ export default {
   },
   fillCallNumber(callNumberValue) {
     cy.do(callNumber.fillIn(callNumberValue));
+  },
+  verifyNoCalloutErrorMessage() {
+    cy.expect(Callout({ type: calloutTypes.error }).absent());
   },
 };
