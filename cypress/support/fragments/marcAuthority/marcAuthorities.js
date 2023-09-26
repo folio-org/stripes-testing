@@ -619,17 +619,21 @@ export default {
       const selectedUpdate = updatesData.filter(
         (update) => update.headingNew === expectedDataObject.headingNew,
       );
-      cy.expect([
-        selectedUpdate.naturalIdOld.equals(expectedDataObject.naturalIdOld),
-        selectedUpdate.naturalIdNew.equals(expectedDataObject.naturalIdNew),
-        selectedUpdate.headingNew.equals(expectedDataObject.headingNew),
-        selectedUpdate.headingOld.equals(expectedDataObject.headingOld),
-        selectedUpdate.sourceFileNew.equals(expectedDataObject.sourceFileNew),
-        selectedUpdate.sourceFileOld.equals(expectedDataObject.sourceFileOld),
-        selectedUpdate.ldTotal.equals(expectedDataObject.lbTotal),
-        selectedUpdate.lbUpdated.equals(expectedDataObject.lbUpdated),
-        // updatesData.startedAt.equals(expectedDataObject.naturalIdOld),
-      ]);
+      cy.expect(selectedUpdate[0].naturalIdOld).to.equal(expectedDataObject.naturalIdOld);
+      cy.expect(selectedUpdate[0].naturalIdNew).to.equal(expectedDataObject.naturalIdNew);
+      cy.expect(selectedUpdate[0].headingNew).to.equal(expectedDataObject.headingNew);
+      cy.expect(selectedUpdate[0].headingOld).to.equal(expectedDataObject.headingOld);
+      cy.expect(selectedUpdate[0].sourceFileNew).to.equal(expectedDataObject.sourceFileNew);
+      cy.expect(selectedUpdate[0].sourceFileOld).to.equal(expectedDataObject.sourceFileOld);
+      cy.expect(selectedUpdate[0].lbTotal).to.equal(expectedDataObject.lbTotal);
+      cy.expect(selectedUpdate[0].lbUpdated).to.equal(expectedDataObject.lbUpdated);
+      cy.expect(selectedUpdate[0].metadata.startedAt).to.have.string(expectedDataObject.startedAt);
+      cy.expect(selectedUpdate[0].metadata.startedByUserFirstName).to.equal(
+        expectedDataObject.startedByUserFirstName,
+      );
+      cy.expect(selectedUpdate[0].metadata.startedByUserLastName).to.equal(
+        expectedDataObject.startedByUserLastName,
+      );
     });
   },
 };

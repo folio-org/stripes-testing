@@ -142,8 +142,8 @@ describe('MARC Authority -> Reporting | MARC authority', () => {
         headingOld: marcFiles[1].authorityHeading,
         sourceFileNew: testData.sourceFileName,
         sourceFileOld: testData.sourceFileName,
-        lbTotal: '1',
-        ldUpdated: '1',
+        lbTotal: 1,
+        lbUpdated: 1,
         startedAt: today,
         startedByUserFirstName: testData.userProperties.firstName,
         startedByUserLastName: testData.userProperties.lastName,
@@ -172,9 +172,6 @@ describe('MARC Authority -> Reporting | MARC authority', () => {
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndCloseAuthority();
       MarcAuthorities.verifyHeadingsUpdatesDataViaAPI(today, tomorrow, expectedFirstUpdateData);
-      // cy.getAuthorityHeadingsUpdatesViaAPI(today, tomorrow).then(updatesData => {
-      //   cy.log(JSON.stringify(updatesData));
-      // });
     },
   );
 });
