@@ -225,4 +225,8 @@ export default {
       .should('be.visible')
       .and('have.text', zeroResultsFoundText);
   },
+
+  verifyUserDetailsPane() {
+    cy.expect(userDetailsPane.exists());
+  },
 };
