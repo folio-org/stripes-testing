@@ -218,6 +218,7 @@ describe('data-import', () => {
           // check created items
           FileDetails.openHoldingsInInventory('Created');
           HoldingsRecordView.checkPermanentLocation(LOCATION_NAMES.ANNEX_UI);
+          cy.wait(2000);
           cy.go('back');
           FileDetails.openItemInInventory('Created');
           ItemRecordView.verifyMaterialType(MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE);

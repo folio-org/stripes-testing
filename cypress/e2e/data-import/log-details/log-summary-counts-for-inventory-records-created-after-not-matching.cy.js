@@ -227,11 +227,13 @@ describe('data-import', () => {
 
         FileDetails.openInstanceInInventory('Created');
         InstanceRecordView.verifyIsInstanceOpened(firstInstanceTitle);
+        cy.wait(2000);
         cy.go('back');
         FileDetails.openHoldingsInInventory('Created');
         HoldingsRecordView.checkPermanentLocation(
           collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocationUI,
         );
+        cy.wait(2000);
         cy.go('back');
         FileDetails.openItemInInventory('Created');
         ItemRecordView.verifyItemStatus(

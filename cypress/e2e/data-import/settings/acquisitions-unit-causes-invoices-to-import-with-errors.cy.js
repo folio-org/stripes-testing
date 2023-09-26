@@ -84,7 +84,7 @@ describe('data-import', () => {
     });
 
     it(
-      'C345336 Acquisitions unit causes Invoices to Import with errors (folijet)',
+      'C345356 Acquisitions unit causes Invoices to Import with errors (folijet)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
         AcquisitionUnits.newAcquisitionUnit();

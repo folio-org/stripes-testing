@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
+import { DevTeams, TestTypes, Parallelization } from '../../../support/dictionary';
 import {
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
@@ -384,7 +384,7 @@ describe('data-import', () => {
 
     it(
       'C356802 Check import summary table with "Updated" actions for instance, holding and item (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         // create profiles via API
         testData.jobProfileForCreate = jobProfileForCreate;
@@ -424,6 +424,7 @@ describe('data-import', () => {
             holdingsPermanentLocation,
             itemStatus,
           );
+          cy.wait(2000);
           cy.go('back');
 
           cy.visit(SettingsMenu.exportMappingProfilePath);
@@ -586,6 +587,7 @@ describe('data-import', () => {
         InstanceRecordView.verifyStatisticalCode(
           collectionOfMappingAndActionProfiles[0].mappingProfile.statisticalCodeUI,
         );
+        cy.wait(2000);
         cy.go('back');
         FileDetails.openHoldingsInInventory(FileDetails.status.updated);
         HoldingsRecordView.checkHoldingsType(
@@ -603,6 +605,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[1].mappingProfile.relationship,
           'https://www.test.org/bro/10.230',
         );
+        cy.wait(2000);
         cy.go('back');
         FileDetails.openItemInInventory(FileDetails.status.updated);
         ItemRecordView.verifyMaterialType(

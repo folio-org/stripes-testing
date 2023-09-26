@@ -230,6 +230,7 @@ describe('data-import', () => {
         FileDetails.openItemInInventory('Created');
         ItemRecordView.checkItemNote(itemNotes.note, itemNotes.staffOnly);
         ItemRecordView.checkCheckInNote(itemNotes.checkInNoteForFirstItem);
+        cy.wait(2000);
         cy.go('back');
         FileDetails.openItemInInventory('Created', 1);
         ItemRecordView.checkBindingNote(itemNotes.blindingNote);

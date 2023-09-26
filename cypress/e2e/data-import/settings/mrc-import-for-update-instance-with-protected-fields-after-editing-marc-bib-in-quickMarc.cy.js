@@ -173,10 +173,7 @@ describe('data-import', () => {
         [18, 19, 20, 21, 22, 23, 24, 25, 26].forEach((fieldNumber) => {
           InventoryEditMarcRecord.deleteField(fieldNumber);
         });
-        InventoryEditMarcRecord.editField(
-          '$a Louisiana. $2 fast $0 (OCoLC)fst01207035',
-          '$a Louisiana. $2 fast $0 (OCoLC)fst01207035 $5 amb',
-        );
+        InventoryEditMarcRecord.editField('$a Louisiana $2 fast', '$a Louisiana $2 fast $5 amb');
         InventoryEditMarcRecord.addField('920', 'This should be a protected field', 28);
         InventoryEditMarcRecord.saveAndClose();
         InventoryEditMarcRecord.confirmDeletingField();
@@ -185,7 +182,7 @@ describe('data-import', () => {
 
           InventoryInstance.viewSource();
           InventoryViewSource.contains('651\t');
-          InventoryViewSource.contains('‡a Louisiana. ‡2 fast ‡0 (OCoLC)fst01207035 ‡5 amb');
+          InventoryViewSource.contains('‡a Louisiana ‡2 fast ‡5 amb');
           InventoryViewSource.contains('920\t');
           InventoryViewSource.contains('‡a This should be a protected field');
           // The prepared file without fields 651 and 920 is used because it is very difficult
@@ -231,7 +228,7 @@ describe('data-import', () => {
         InventoryInstance.checkIsInstanceUpdated();
         InventoryInstance.viewSource();
         InventoryViewSource.contains('651\t');
-        InventoryViewSource.contains('‡a Louisiana. ‡2 fast ‡0 (OCoLC)fst01207035 ‡5 amb');
+        InventoryViewSource.contains('‡a Louisiana ‡2 fast ‡5 amb');
         InventoryViewSource.contains('920\t');
         InventoryViewSource.contains('‡a This should be a protected field');
       },
