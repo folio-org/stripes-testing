@@ -27,6 +27,8 @@ const startDateTextfield = TextField({ name: 'startDate' });
 const endDateTextfield = TextField({ name: 'endDate' });
 const applyButton = Button('Apply');
 const getSearchResult = (row = 0, col = 0) => MultiColumnListCell({ row, columnIndex: col });
+const exportJobsList = MultiColumnList({ id: 'export-jobs-list' });
+const jobDetailsPane = Pane('Export job ');
 
 // Cypress clicks before the UI loads, use when there is no way to attach waiter to element
 const waitClick = () => {
@@ -247,5 +249,32 @@ export default {
 
   verifyNoPermissionWarning() {
     cy.expect(HTML("You don't have permission to view this app/record").exists());
+  },
+
+  verifyJobDataInResults(expectedValuesArray) {
+    expectedValuesArray.forEach((expectedValue) => {
+      cy.expect(
+        exportJobsList
+          .find(MultiColumnListRow({ index: 0 }))
+          .has({ content: including(expectedValue) }),
+      );
+    });
+  },
+
+  verifyJobDataInDetailView(expectedValuesObject) {
+    cy.expect([
+      jobDetailsPane.find(KeyValue('Job ID')).has({ value: expectedValuesObject.jobID }),
+      jobDetailsPane.find(KeyValue('Status')).has({ value: expectedValuesObject.status }),
+      jobDetailsPane.find(KeyValue('Job type')).has({ value: expectedValuesObject.jobType }),
+      jobDetailsPane.find(KeyValue('Description')).has({ value: expectedValuesObject.description }),
+      jobDetailsPane.find(KeyValue('Output type')).has({ value: expectedValuesObject.outputType }),
+      jobDetailsPane.find(KeyValue('Source')).has({ value: expectedValuesObject.source }),
+      jobDetailsPane
+        .find(KeyValue('Start time'))
+        .has({ value: including(expectedValuesObject.startDate) }),
+      jobDetailsPane
+        .find(KeyValue('End time'))
+        .has({ value: including(expectedValuesObject.startDate) }),
+    ]);
   },
 };
