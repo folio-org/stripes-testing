@@ -14,10 +14,13 @@ import {
   TextArea,
   RadioButtonGroup,
   RadioButton,
+  SearchField,
+  MultiColumnListCell,
 } from '../../../../interactors';
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
 
+const permissionsList = MultiColumnList({ id: '#list-permissions' });
 const userSearch = TextField('User search');
 const saveAndCloseBtn = Button('Save & close');
 const actionsButton = Button('Actions');
@@ -29,6 +32,10 @@ const customFieldsAccordion = Accordion('Custom fields');
 const selectPermissionsModal = Modal('Select Permissions');
 const permissionsAccordion = Accordion({ id: 'permissions' });
 const addPermissionsButton = Button({ id: 'clickable-add-permission' });
+const permissionsSearch = SearchField();
+const searchButton = Button('Search');
+const resetAllButton = Button('Reset all');
+let totalRows;
 
 // servicePointIds is array of ids
 const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) => cy.okapiRequest({
@@ -257,5 +264,50 @@ export default {
 
   selectSingleSelectValue: ({ data }) => {
     cy.do(Select({ label: data.fieldLabel }).choose(data.firstLabel));
+  },
+
+  verifyUserPermissionsAccordion() {
+    cy.expect(permissionsAccordion.exists());
+    cy.expect(permissionsAccordion.has({ open: false }));
+  },
+
+  permissionsCount() {
+    permissionsList.perform((el) => {
+      el.invoke('attr', 'aria-rowcount').then((rowCount) => {
+        totalRows = rowCount;
+      });
+    });
+  },
+
+  openSelectPermissions() {
+    cy.do(permissionsAccordion.clickHeader());
+    cy.do(addPermissionsButton.click());
+    cy.expect(selectPermissionsModal.exists());
+    this.permissionsCount();
+  },
+
+  searchForPermission(permission) {
+    cy.do(permissionsSearch.fillIn(permission));
+    cy.do(searchButton.click());
+  },
+
+  verifyPermissionsFiltered(permission) {
+    permissionsList.perform((el) => {
+      el.invoke('attr', 'aria-rowcount').then((rowCount) => {
+        for (let i = 0; i < rowCount - 1; i++) {
+          const statusField = MultiColumnListCell({ row: i, columnIndex: 1 });
+          cy.expect(statusField.has({ content: permission[i] }));
+        }
+      });
+    });
+  },
+
+  resetAll() {
+    cy.do(resetAllButton.click());
+    permissionsList.perform((el) => {
+      el.invoke('attr', 'aria-rowcount').then((rowCount) => {
+        expect(rowCount).to.equal(totalRows);
+      });
+    });
   },
 };
