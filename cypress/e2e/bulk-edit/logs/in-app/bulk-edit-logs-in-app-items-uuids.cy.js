@@ -45,14 +45,13 @@ describe('Bulk Edit - Logs', () => {
         item.instanceName,
         item.itemBarcode,
       );
-      cy.getInstance({
-        limit: 1,
-        expandAll: true,
-        query: `"items.barcode"=="${item.itemBarcode}"`,
-      }).then((instance) => {
-        item.itemId = instance.items[0].id;
-        FileManager.createFile(`cypress/fixtures/${validItemUUIDsFileName}`, item.itemId);
-      });
+
+      cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.itemBarcode}"` }).then(
+        (res) => {
+          item.itemId = res.id;
+          FileManager.createFile(`cypress/fixtures/${validItemUUIDsFileName}`, res.id);
+        },
+      );
     });
   });
 

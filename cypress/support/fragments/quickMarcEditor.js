@@ -250,6 +250,7 @@ defaultFieldValues.getSourceContent = (contentInQuickMarcEditor) => contentInQui
 
 const requiredRowsTags = ['LDR', '001', '005', '008', '999'];
 const readOnlyAuthorityTags = ['LDR', '001', '005', '999'];
+const readOnlyHoldingsTags = ['001', '004', '005', '999'];
 
 const getRowInteractorByRowNumber = (specialRowNumber) => QuickMarcEditor().find(QuickMarcEditorRow({ index: specialRowNumber }));
 const getRowInteractorByTagName = (tagName) => QuickMarcEditor().find(QuickMarcEditorRow({ tagValue: tagName }));
@@ -287,6 +288,23 @@ const fourthBoxInLinkedField = TextArea({ name: including('.subfieldGroups.contr
 const fifthBoxInLinkedField = TextArea({ name: including('.subfieldGroups.uncontrolledAlpha') });
 const sixthBoxInLinkedField = TextArea({ name: including('.subfieldGroups.zeroSubfield') });
 const seventhBoxInLinkedField = TextArea({ name: including('.subfieldGroups.uncontrolledNumber') });
+
+const default008BoxesHoldings = [
+  TextField('AcqStatus'),
+  TextField('AcqMethod'),
+  TextField('AcqEndDate'),
+  TextField('Gen ret'),
+  TextField('Spec ret', { name: including('Spec ret[0]') }),
+  TextField('Spec ret', { name: including('Spec ret[1]') }),
+  TextField('Spec ret', { name: including('Spec ret[2]') }),
+  TextField('Compl'),
+  TextField('Copies'),
+  TextField('Lend'),
+  TextField('Repro'),
+  TextField('Lang'),
+  TextField('Sep/comp'),
+  TextField('Rept date'),
+];
 
 export default {
   getInitialRowsCount() {
@@ -1304,6 +1322,35 @@ export default {
   checkValuesIn008Boxes(valuesArray) {
     valuesArray.forEach((value, index) => {
       cy.expect(tag008DefaultValues[index].interactor.has({ value }));
+    });
+  },
+
+  checkReadOnlyHoldingsTags() {
+    readOnlyHoldingsTags.forEach((readOnlyTag) => {
+      cy.expect([
+        getRowInteractorByTagName(readOnlyTag).find(TextField('Field')).has({ disabled: true }),
+        getRowInteractorByTagName(readOnlyTag)
+          .find(TextArea({ ariaLabel: 'Subfield' }))
+          .has({ disabled: true }),
+      ]);
+      if (readOnlyTag === '999') {
+        cy.expect(
+          getRowInteractorByTagName(readOnlyTag)
+            .find(TextField('Indicator', { name: including('.indicators[0]') }))
+            .has({ disabled: true }),
+        );
+        cy.expect(
+          getRowInteractorByTagName(readOnlyTag)
+            .find(TextField('Indicator', { name: including('.indicators[1]') }))
+            .has({ disabled: true }),
+        );
+      }
+    });
+  },
+
+  verifyHoldingsDefault008BoxesValues(expectedValues) {
+    default008BoxesHoldings.forEach((box, index) => {
+      cy.expect(box.has({ value: expectedValues[index] }));
     });
   },
 };

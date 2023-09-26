@@ -16,7 +16,7 @@ const newName = `testName_${getRandomPostfix()}`;
 const userUUIDsFileName = `userUUIDs-${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `Matched-Records-${userUUIDsFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
-const changedRecordsFileName = `*-Changed-Records*-${editedFileName}`;
+const changedRecordsFileName = `*-Changed-Records*-${userUUIDsFileName}`;
 
 describe('Bulk Edit - Logs', () => {
   before('create test data', () => {

@@ -15,7 +15,6 @@ const newName = `testName_${getRandomPostfix()}`;
 const userUUIDsFileName = `userUUIDs-${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `Matched-Records-${userUUIDsFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
-const changedRecordsFileName = `*-Changed-Records*-${editedFileName}`;
 const previewOfProposedChangesFileName = {
   first: `*-Updates-Preview-${userUUIDsFileName}`,
   second: `*-Updates-Preview-${editedFileName}`,
@@ -46,7 +45,6 @@ describe('Bulk Edit - Logs', () => {
     FileManager.deleteFileFromDownloadsByMask(
       userUUIDsFileName,
       `*${matchedRecordsFileName}`,
-      changedRecordsFileName,
       previewOfProposedChangesFileName.first,
       previewOfProposedChangesFileName.second,
       updatedRecordsFileName,
