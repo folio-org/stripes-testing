@@ -17,10 +17,6 @@ const invalidAndValidUserBarcodesFileName = `invalidAndValidUserBarcodes_${getRa
 const matchedRecordsFileName = `Matched-Records-${invalidAndValidUserBarcodesFileName}`;
 const errorsFromMatchingFileName = `*-Matching-Records-Errors-${invalidAndValidUserBarcodesFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
-const otherErrors = {
-  first: `*-Errors-${invalidAndValidUserBarcodesFileName}`,
-  second: `*-Errors-${editedFileName}`,
-};
 const previewOfProposedChangesFileName = {
   first: `*-Updates-Preview-${invalidAndValidUserBarcodesFileName}`,
   second: `*-Updates-Preview-${editedFileName}`,
@@ -64,8 +60,6 @@ describe('Bulk Edit - Logs', () => {
       updatedRecordsFileName,
       errorsFromCommittingFileName,
       errorsFromMatchingFileName,
-      otherErrors.first,
-      otherErrors.second,
     );
   });
 
