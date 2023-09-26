@@ -81,12 +81,12 @@ describe('inventory', () => {
           effectiveLocation = location;
           Orders.createOrderWithOrderLineViaApi(
             NewOrder.getDefaultOrder(),
-            BasicOrderLine.getDefaultOrderLine(
-              itemQuantity,
-              instanceTitle,
-              effectiveLocation.id,
-              materialTypeId,
-            ),
+            BasicOrderLine.getDefaultOrderLine({
+              quantity: itemQuantity,
+              title: instanceTitle,
+              spesialLocationId: effectiveLocation.id,
+              specialMaterialTypeId: materialTypeId,
+            }),
           ).then((order) => {
             orderNumber = order;
           });

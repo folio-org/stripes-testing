@@ -98,11 +98,15 @@ const createInstanceViaAPI = (instanceWithSpecifiedNewId) => cy.okapiRequest({
   body: instanceWithSpecifiedNewId,
 });
 
-const createHoldingViaAPI = (holdingWithIds) => cy.okapiRequest({
-  method: 'POST',
-  path: 'holdings-storage/holdings',
-  body: holdingWithIds,
-});
+const createHoldingViaAPI = (holdingWithIds) => {
+  return cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'holdings-storage/holdings',
+      body: holdingWithIds,
+    })
+    .then(({ body }) => body);
+};
 
 const createItemViaAPI = (itemWithIds) => cy.okapiRequest({
   method: 'POST',
@@ -430,6 +434,7 @@ export default {
     properties = {},
   } = {}) {
     return [...Array(count).keys()].map((index) => ({
+      instanceId: uuid(),
       instanceTitle: `Instance-${getRandomPostfix()}`,
       barcodes: [generateUniqueItemBarcodeWithShift(index)],
       status,
@@ -463,6 +468,7 @@ export default {
           instance: {
             instanceTypeId: types.instanceTypeId,
             title: item.instanceTitle,
+            id: item.instanceId,
           },
           holdings: [
             {
@@ -534,7 +540,7 @@ export default {
     });
     return cy.get('@ids');
   },
-
+  createHoldingViaAPI,
   getInstanceIdApi: (searchParams) => {
     return cy
       .okapiRequest({

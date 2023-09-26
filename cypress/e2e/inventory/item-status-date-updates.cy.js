@@ -91,11 +91,11 @@ describe.skip('inventory', () => {
                 effectiveLocation = location;
                 Orders.createOrderWithOrderLineViaApi(
                   NewOrder.getDefaultOrder(),
-                  BasicOrderLine.getDefaultOrderLine(
-                    itemQuantity,
-                    instanceTitle,
-                    effectiveLocation.id,
-                  ),
+                  BasicOrderLine.getDefaultOrderLine({
+                    quantity: itemQuantity,
+                    title: instanceTitle,
+                    spesialLocationId: effectiveLocation.id,
+                  }),
                 ).then((order) => {
                   orderNumber = order;
                 });

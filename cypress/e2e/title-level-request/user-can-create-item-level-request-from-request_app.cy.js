@@ -1,5 +1,3 @@
-import uuid from 'uuid';
-import moment from 'moment';
 import testTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
@@ -11,25 +9,18 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import Users from '../../support/fragments/users/users';
-import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import getRandomPostfix from '../../support/utils/stringTools';
-import NewRequest from '../../support/fragments/requests/newRequest';
-import RequestPolicy from '../../support/fragments/circulation/request-policy';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import Requests from '../../support/fragments/requests/requests';
-import Checkout from '../../support/fragments/checkout/checkout';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import RequestsSearchResultsPane from '../../support/fragments/requests/requestsSearchResultsPane';
+import NewRequest from '../../support/fragments/requests/newRequest';
 
-describe('Create Item or Title level request', () => {
-  let addedCirculationRule;
-  let originalCirculationRules;
+describe('Title Level Request. Create Item or Title level request', () => {
+  const tlrCheckboxExists = true;
+  let requestId;
   let userData = {};
-  let userForHold = {};
-  const patronGroup = {
-    name: 'groupToTLR' + getRandomPostfix(),
-  };
   const instanceData = {
     title: `Instance ${getRandomPostfix()}`,
   };
@@ -37,18 +28,19 @@ describe('Create Item or Title level request', () => {
     userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     itemBarcode: generateItemBarcode(),
   };
-  const requestPolicyBody = {
-    requestTypes: [REQUEST_TYPES.HOLD],
-    name: `hold${getRandomPostfix()}`,
-    id: uuid(),
+  const patronGroup = {
+    name: 'groupTLR' + getRandomPostfix(),
   };
-  before('Preconditions', () => {
+  const fulfillmentPreference = 'Hold Shelf';
+
+  before('Preconditions:', () => {
     cy.getAdminToken()
       .then(() => {
         cy.loginAsAdmin({
           path: SettingsMenu.circulationTitleLevelRequestsPath,
           waiter: TitleLevelRequests.waitLoading,
         });
+        TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
         ServicePoints.createViaApi(testData.userServicePoint);
         testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
         Location.createViaApi(testData.defaultLocation);
@@ -87,52 +79,17 @@ describe('Create Item or Title level request', () => {
               materialType: { id: testData.materialTypeId },
             },
           ],
-        }).then((specialInstanceIds) => {
-          instanceData.instanceId = specialInstanceIds.instanceId;
         });
       });
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
-    RequestPolicy.createViaApi(requestPolicyBody);
-    CirculationRules.getViaApi().then((circulationRule) => {
-      originalCirculationRules = circulationRule.rulesAsText;
-      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-      ruleProps.r = requestPolicyBody.id;
-      addedCirculationRule =
-        't ' +
-        testData.loanTypeId +
-        ': i ' +
-        ruleProps.i +
-        ' l ' +
-        ruleProps.l +
-        ' r ' +
-        ruleProps.r +
-        ' o ' +
-        ruleProps.o +
-        ' n ' +
-        ruleProps.n;
-      CirculationRules.addRuleViaApi(
-        originalCirculationRules,
-        ruleProps,
-        't ',
-        testData.loanTypeId,
-      );
-    });
-
-    cy.createTempUser([permissions.requestsAll.gui], patronGroup.name).then((userProperties) => {
-      userForHold = userProperties;
-      UserEdit.addServicePointViaApi(
-        testData.userServicePoint.id,
-        userForHold.userId,
-        testData.userServicePoint.id,
-      );
-    });
 
     cy.createTempUser(
       [
-        permissions.uiUsersfeefinesCRUD.gui,
-        permissions.uiUsersfeefinesView.gui,
+        permissions.uiRequestsCreate.gui,
+        permissions.uiRequestsView.gui,
+        permissions.uiRequestsEdit.gui,
         permissions.requestsAll.gui,
       ],
       patronGroup.name,
@@ -143,49 +100,19 @@ describe('Create Item or Title level request', () => {
         userData.userId,
         testData.userServicePoint.id,
       );
-      TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
-      cy.getInstance({
-        limit: 1,
-        expandAll: true,
-        query: `"id"=="${instanceData.instanceId}"`,
-      }).then((instance) => {
-        testData.instanceHRID = instance.hrid;
-      });
-      Checkout.checkoutItemViaApi({
-        id: uuid(),
-        itemBarcode: testData.itemBarcode,
-        loanDate: moment.utc().format(),
-        servicePointId: testData.userServicePoint.id,
-        userBarcode: userData.barcode,
-      });
       cy.login(userData.username, userData.password, {
         path: TopMenu.requestsPath,
-        waiter: Requests.waitLoading,
+        waiter: RequestsSearchResultsPane.waitLoading,
       });
     });
   });
 
   after('Deleting created entities', () => {
-    cy.loginAsAdmin({
-      path: SettingsMenu.circulationTitleLevelRequestsPath,
-      waiter: TitleLevelRequests.waitLoading,
-    });
-    CheckInActions.checkinItemViaApi({
-      itemBarcode: testData.itemBarcode,
-      servicePointId: testData.userServicePoint.id,
-      checkInDate: new Date().toISOString(),
-    });
-    cy.get('@requestId').then((id) => {
-      Requests.deleteRequestViaApi(id);
-    });
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
-    RequestPolicy.deleteViaApi(requestPolicyBody.id);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
-    cy.deleteLoanType(testData.loanTypeId);
-    UserEdit.changeServicePointPreferenceViaApi(userForHold.userId, [testData.userServicePoint.id]);
+    cy.log(`REQUEST ID:    ${requestId}`);
+    Requests.deleteRequestViaApi(requestId);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
-    Users.deleteViaApi(userForHold.userId);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
@@ -194,29 +121,34 @@ describe('Create Item or Title level request', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
+
   it(
-    'C350417 Check that user can create "Hold" Title level request (vega)',
+    'C347886 Check that user can create Item level request from Request app (vega) (TaaS)',
     { tags: [testTypes.criticalPath, devTeams.vega] },
     () => {
-      cy.intercept('POST', 'circulation/requests').as('createRequest');
+      cy.log(`userServicePoint  : ${testData.userServicePoint.name}`);
       NewRequest.openNewRequestPane();
-      NewRequest.waitLoadingNewRequestPage(true);
-      NewRequest.enterHridInfo(testData.instanceHRID);
-      NewRequest.verifyHridInformation([instanceData.title]);
-      NewRequest.enterRequesterInfoWithRequestType(
-        {
-          requesterBarcode: userForHold.barcode,
-          pickupServicePoint: testData.userServicePoint.name,
-        },
-        REQUEST_TYPES.HOLD,
-      );
-      NewRequest.verifyRequestInformation(REQUEST_TYPES.HOLD);
+      NewRequest.waitLoadingNewRequestPage(tlrCheckboxExists);
+      NewRequest.verifyTitleLevelRequestsCheckbox();
+      NewRequest.enterItemInfo(testData.itemBarcode);
+      NewRequest.verifyItemInformation([
+        testData.itemBarcode,
+        instanceData.title,
+        testData.defaultLocation.name,
+        ITEM_STATUS_NAMES.AVAILABLE,
+      ]);
+      NewRequest.enterRequesterBarcode(userData.barcode);
+      NewRequest.verifyRequesterInformation(userData.username, userData.barcode, patronGroup.name);
+      NewRequest.chooseRequestType(REQUEST_TYPES.PAGE);
+      NewRequest.verifyRequestInformation(ITEM_STATUS_NAMES.AVAILABLE);
+      NewRequest.verifyFulfillmentPreference(fulfillmentPreference);
+      NewRequest.choosepickupServicePoint(testData.userServicePoint.name);
       NewRequest.saveRequestAndClose();
-      NewRequest.waitLoading();
+      cy.intercept('POST', 'circulation/requests').as('createRequest');
       cy.wait('@createRequest').then((intercept) => {
-        cy.wrap(intercept.response.body.id).as('requestId');
+        requestId = intercept.response.body.id;
+        cy.location('pathname').should('eq', `/requests/view/${requestId}`);
       });
     },
   );
