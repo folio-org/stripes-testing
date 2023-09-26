@@ -13,7 +13,6 @@ let user;
 const invalidHoldingHRID = getRandomPostfix();
 const invalidHoldingHRIDsFileName = `invalidHoldingHRIDs_${getRandomPostfix()}.csv`;
 const errorsFromMatchingFileName = `*-Matching-Records-Errors-${invalidHoldingHRIDsFileName}*`;
-const otherError = `*-Errors-${invalidHoldingHRIDsFileName}`;
 
 describe('Bulk Edit - Logs', () => {
   before('create test data', () => {
@@ -38,7 +37,6 @@ describe('Bulk Edit - Logs', () => {
     FileManager.deleteFileFromDownloadsByMask(
       invalidHoldingHRIDsFileName,
       errorsFromMatchingFileName,
-      otherError,
     );
   });
 
