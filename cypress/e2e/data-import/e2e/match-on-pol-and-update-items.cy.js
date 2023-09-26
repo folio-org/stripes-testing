@@ -42,6 +42,7 @@ import NewLocation from '../../../support/fragments/settings/tenant/locations/ne
 import FileManager from '../../../support/utils/fileManager';
 import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
@@ -230,7 +231,7 @@ describe('data-import', () => {
       });
       collectionOfProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(firstItem.barcode);
       cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${secondItem.title}"` }).then(

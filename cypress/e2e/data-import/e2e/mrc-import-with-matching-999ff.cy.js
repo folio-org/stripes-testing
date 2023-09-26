@@ -21,6 +21,7 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
 } from '../../../support/constants';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
@@ -88,8 +89,8 @@ describe('data-import', () => {
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
       ActionProfiles.deleteActionProfile(actionProfileForExport.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileForExport.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfileForExport.name);
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);

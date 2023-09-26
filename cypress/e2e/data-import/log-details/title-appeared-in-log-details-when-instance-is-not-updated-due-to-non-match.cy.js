@@ -21,6 +21,7 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -75,7 +76,7 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
     });
 
     it(
@@ -92,8 +93,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
         NewFieldMappingProfile.fillCatalogedDate(mappingProfile.catalogingDate);
         NewFieldMappingProfile.fillInstanceStatusTerm(mappingProfile.instanceStatusTerm);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         // create action profile

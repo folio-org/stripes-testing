@@ -12,7 +12,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import Users from '../../../support/fragments/users/users';
 import SingleRecordImportModal from '../../../support/fragments/inventory/singleRecordImportModal';
 
@@ -74,7 +74,7 @@ describe('inventory', () => {
     after('delete test data', () => {
       JobProfiles.deleteJobProfile(profile.createJobProfile);
       ActionProfiles.deleteActionProfile(profile.createActionProfile);
-      FieldMappingProfiles.deleteFieldMappingProfile(profile.createMappingProfile);
+      FieldMappingProfileView.deleteViaApi(profile.createMappingProfile);
       Users.deleteViaApi(user.userId);
       Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(

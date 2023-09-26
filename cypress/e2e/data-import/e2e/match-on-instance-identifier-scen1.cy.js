@@ -21,6 +21,7 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
@@ -98,7 +99,7 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
     });
 
     it(
@@ -150,8 +151,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.addSuppressFromDiscovery(mappingProfile.suppressFromDiscavery);
         NewFieldMappingProfile.fillCatalogedDate(mappingProfile.catalogedDate);
         NewFieldMappingProfile.fillInstanceStatusTerm(mappingProfile.instanceStatus);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         cy.visit(SettingsMenu.actionProfilePath);

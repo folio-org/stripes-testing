@@ -31,6 +31,7 @@ import Users from '../../../support/fragments/users/users';
 import InstanceStatusTypes from '../../../support/fragments/settings/inventory/instances/instanceStatusTypes/instanceStatusTypes';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -114,8 +115,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillInstanceStatusTerm(
           collectionOfMappingAndActionProfilesForCreate[0].mappingProfile.instanceStatusTerm,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfilesForCreate[0].mappingProfile.name,
         );
 
@@ -136,8 +137,8 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.materialsSpecified,
           collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.urlPublicNote,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.name,
         );
 
@@ -168,7 +169,7 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
       collectionOfMappingAndActionProfilesForCreate.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       Users.deleteViaApi(user.userId);
       instanceHrids.forEach((hrid) => {
@@ -277,8 +278,8 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile,
         );
         NewFieldMappingProfile.markFieldForProtection(testData.protectedField);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.name,
         );
 
@@ -344,7 +345,7 @@ describe('data-import', () => {
         MatchProfiles.deleteMatchProfile(collectionOfMatchProfiles[0].matchProfile.profileName);
         collectionOfMappingAndActionProfilesForUpdate.forEach((profile) => {
           ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-          FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
         });
         // delete created files
         FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForCreate}`);
@@ -435,8 +436,8 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile,
         );
         NewFieldMappingProfile.markFieldForProtection(testData.protectedField);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.name,
         );
 
@@ -493,7 +494,7 @@ describe('data-import', () => {
         MatchProfiles.deleteMatchProfile(matchProfile.profileName);
         collectionOfMappingAndActionProfilesForUpdate.forEach((profile) => {
           ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-          FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
         });
         // delete created files
         FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForCreate}`);
@@ -619,8 +620,8 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile,
         );
         NewFieldMappingProfile.markFieldForProtection(testData.protectedField);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(
@@ -637,8 +638,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillPermanentLocation(
           collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.permanentLocation,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(
@@ -719,7 +720,7 @@ describe('data-import', () => {
         });
         collectionOfMappingAndActionProfilesForUpdate.forEach((profile) => {
           ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-          FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
         });
         // delete created files
         FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForCreate}`);

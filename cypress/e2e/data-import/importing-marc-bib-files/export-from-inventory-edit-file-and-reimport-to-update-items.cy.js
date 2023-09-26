@@ -28,6 +28,7 @@ import FileManager from '../../../support/utils/fileManager';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import GenerateIdentifierCode from '../../../support/utils/generateIdentifierCode';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -277,10 +278,10 @@ describe('data-import', () => {
       ActionProfiles.deleteActionProfile(holdingsActionProfileForCreate.profile.name);
       ActionProfiles.deleteActionProfile(itemActionProfileForCreate.profile.name);
       ActionProfiles.deleteActionProfile(itemActionProfileForUpdate.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileForCreate.profile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileForCreate.profile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileForCreate.profile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileForUpdate.name);
+      FieldMappingProfileView.deleteViaApi(instanceMappingProfileForCreate.profile.name);
+      FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForCreate.profile.name);
+      FieldMappingProfileView.deleteViaApi(itemMappingProfileForCreate.profile.name);
+      FieldMappingProfileView.deleteViaApi(itemMappingProfileForUpdate.name);
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
         (initialInstance) => {
           cy.deleteItemViaApi(initialInstance.items[0].id);
@@ -333,8 +334,8 @@ describe('data-import', () => {
           FieldMappingProfiles.openNewMappingProfileForm();
           NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfileForUpdate);
           NewFieldMappingProfile.addAdministrativeNote(note, 7);
-          FieldMappingProfiles.saveProfile();
-          FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfileForUpdate.name);
+          NewFieldMappingProfile.save();
+          FieldMappingProfileView.closeViewMode(itemMappingProfileForUpdate.name);
           FieldMappingProfiles.checkMappingProfilePresented(itemMappingProfileForUpdate.name);
 
           // create action profile for update
