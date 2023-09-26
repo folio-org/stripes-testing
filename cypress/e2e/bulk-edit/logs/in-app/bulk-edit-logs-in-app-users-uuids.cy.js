@@ -19,7 +19,6 @@ const errorsFromMatchingFileName = `*-Matching-Records-Errors-${invalidAndValidU
 const previewOfProposedChangesFileName = `*-Updates-Preview-${invalidAndValidUserUUIDsFileName}`;
 const updatedRecordsFileName = `*-Changed-Records*-${invalidAndValidUserUUIDsFileName}`;
 const errorsFromCommittingFileName = `*-Committing-changes-Errors-${invalidAndValidUserUUIDsFileName}`;
-const otherError = `*-Errors-${invalidAndValidUserUUIDsFileName}`;
 
 describe('Bulk Edit - Logs', () => {
   before('create test data', () => {
@@ -56,7 +55,6 @@ describe('Bulk Edit - Logs', () => {
       updatedRecordsFileName,
       errorsFromCommittingFileName,
       errorsFromMatchingFileName,
-      otherError,
     );
   });
 

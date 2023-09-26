@@ -215,9 +215,9 @@ export default {
   enterRequesterBarcode: (requesterBarcode) => {
     cy.do(requesterBarcodeInput.fillIn(requesterBarcode));
     cy.do(enterRequesterBarcodeButton.click());
-    // wait untill requestType select become enabled
+    // wait until requestType select become enabled
     cy.wait(2000);
-    // check is requestType select 'enabled', if 'disabled' - click [Enter] button for [Requestr barcode] again
+    // check is requestType select 'enabled', if 'disabled' - click [Enter] button for [Requester barcode] again
     cy.get('[name="requestType"]')
       .invoke('is', ':enabled')
       .then((state) => {
@@ -234,13 +234,13 @@ export default {
     );
   },
 
-  enterRequesterInfoWithRequestType(newRequest) {
+  enterRequesterInfoWithRequestType(newRequest, requestType = REQUEST_TYPES.PAGE) {
     cy.do(requesterBarcodeInput.fillIn(newRequest.requesterBarcode));
     cy.intercept('/proxiesfor?*').as('getUsers');
     cy.wait(2000);
     cy.do(enterRequesterBarcodeButton.click());
     cy.wait(1000);
-    this.chooseRequestType(REQUEST_TYPES.PAGE);
+    this.chooseRequestType(requestType);
     cy.expect(selectServicePoint.exists());
     cy.wait('@getUsers');
     this.choosepickupServicePoint(newRequest.pickupServicePoint);

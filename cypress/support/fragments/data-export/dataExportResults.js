@@ -1,4 +1,4 @@
-import { MultiColumnListCell } from '../../../../interactors';
+import { MultiColumnListCell, MultiColumnListRow, matching } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
 const getSearchResult = (row = 0, col = 0) => MultiColumnListCell({ row, columnIndex: col });
@@ -102,7 +102,7 @@ export default {
           cy.do([
             resultRow.status.is({ content: 'Fail' }),
             resultRow.total.is({ content: recordsCount.toString() }),
-            resultRow.exported.is({ content: '' }),
+            resultRow.exported.is({ content: 0 }),
             resultRow.jobProfile.is({ content: `Default ${jobType} export job profile` }),
             resultRow.runBy.is({ content: userNameToVerify }),
             resultRow.id.is({ content: jobId.toString() }),
@@ -133,5 +133,41 @@ export default {
         DateTools.verifyDate(dateWithUTC, 180000);
       }),
     );
+  },
+
+  verifyLastLog(fileName, status) {
+    const result = {
+      fileName: MultiColumnListCell({ row: 0, columnIndex: 0 }),
+      status: MultiColumnListCell({ row: 0, columnIndex: 1 }),
+    };
+
+    cy.do(result.status.is({ content: status }));
+
+    const regex = new RegExp(`${fileName.slice(0, -4)}-\\d+.mrc`);
+
+    cy.expect(result.fileName.has({ content: matching(regex) }));
+  },
+
+  verifyFileNameIsDisabled(rowNum) {
+    const cellLocator = `[data-row-inner="${rowNum}"]>div>span`;
+
+    cy.get(cellLocator).then((element) => {
+      expect(element).to.have.class('disabledFileName---OYGpD');
+    });
+  },
+
+  verifyErrorMessage(rowNum, fileName) {
+    const row = MultiColumnListRow({ index: rowNum });
+    const regex = new RegExp(`.+ERROR Invalid CQL syntax in ${fileName.slice(0, -4)}\\.\\w{3}`);
+    const errorLogLocator = '[data-test-error-log-info="true"]';
+    cy.do(row.click());
+    cy.get(errorLogLocator)
+      .invoke('text')
+      .then((text) => {
+        const datePart = text.split(' ')[0];
+        const date = new Date(datePart);
+        DateTools.verifyDate(date.getTime());
+      })
+      .should('match', regex);
   },
 };

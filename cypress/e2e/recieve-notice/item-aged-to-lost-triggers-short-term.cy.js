@@ -1,17 +1,15 @@
 import uuid from 'uuid';
 import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import { ITEM_STATUS_NAMES } from '../../support/constants';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
 import SettingsMenu from '../../support/fragments/settingsMenu';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import Users from '../../support/fragments/users/users';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import NoticePolicyApi from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
+import NoticePolicies from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
 import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
 import NewNoticePolicyTemplate, {
@@ -26,54 +24,79 @@ import LoanPolicy from '../../support/fragments/circulation/loan-policy';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
 
-describe('Loan notice triggers', () => {
+// Test is skipped because implementation is not completed
+describe.skip('Loan notice triggers', () => {
   let addedCirculationRule;
   const patronGroup = {
     name: getTestEntityValue('groupToTestNotices'),
   };
-  const instanceData = {
-    itemBarcode: generateItemBarcode(),
-    title: getTestEntityValue('InstanceNotice'),
-  };
   const testData = {
+    folioInstances: InventoryInstances.generateFolioInstances(),
     userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
-    ruleProps: {},
     user: {},
+    ruleProps: {},
   };
   const noticeTemplates = [
     createNoticeTemplate({
-      name: 'Item_aged_to_lost_upon_at_template',
+      name: 'before-once-short_term',
       noticeOptions: {
-        send: 'Upon/At',
-      },
-    }),
-    createNoticeTemplate({
-      name: 'Item_aged_to_lost_after_once_template',
-      noticeOptions: {
-        send: 'After',
+        send: 'Before',
         sendBy: {
-          duration: '1',
+          duration: '25',
           interval: 'Minute(s)',
         },
         frequency: 'One Time',
       },
     }),
     createNoticeTemplate({
-      name: 'Item_aged_to_lost_after_recurring_template',
+      name: 'before-recurring-short_term',
       noticeOptions: {
-        send: 'After',
+        send: 'Before',
         sendBy: {
-          duration: '1',
+          duration: '25',
           interval: 'Minute(s)',
         },
         frequency: 'Recurring',
         sendEvery: {
-          duration: '1',
+          duration: '5',
+          interval: 'Minute(s)',
+        },
+      },
+    }),
+    createNoticeTemplate({
+      name: 'upon/at-short_term',
+      noticeOptions: {
+        send: 'Upon/At',
+      },
+    }),
+    createNoticeTemplate({
+      name: 'after-once-short_term',
+      noticeOptions: {
+        send: 'After',
+        sendBy: {
+          duration: '5',
+          interval: 'Minute(s)',
+        },
+        frequency: 'One Time',
+      },
+    }),
+    createNoticeTemplate({
+      name: 'after-recurring-short_term',
+      noticeOptions: {
+        send: 'After',
+        sendBy: {
+          duration: '5',
+          interval: 'Minute(s)',
+        },
+        frequency: 'Recurring',
+        sendEvery: {
+          duration: '5',
           interval: 'Minute(s)',
         },
       },
     }),
   ];
+
   const noticePolicy = {
     name: getTestEntityValue('Overdue fine, returned'),
     description: 'Created by autotest team',
@@ -122,49 +145,54 @@ describe('Loan notice triggers', () => {
     id: uuid(),
   };
 
-  before('Preconditions', () => {
-    cy.getAdminToken()
-      .then(() => {
-        ServicePoints.createViaApi(testData.userServicePoint);
-        testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
-        Location.createViaApi(testData.defaultLocation);
-        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
-          testData.instanceTypeId = instanceTypes[0].id;
-        });
-        cy.getHoldingTypes({ limit: 1 }).then((holdingTypes) => {
-          testData.holdingTypeId = holdingTypes[0].id;
-        });
-        cy.createLoanType({
-          name: getTestEntityValue('type'),
-        }).then((loanType) => {
-          testData.loanTypeId = loanType.id;
-        });
-        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
-          testData.materialTypeId = materialTypes.id;
-        });
-      })
-      .then(() => {
-        InventoryInstances.createFolioInstanceViaApi({
-          instance: {
-            instanceTypeId: testData.instanceTypeId,
-            title: instanceData.title,
-          },
-          holdings: [
-            {
-              holdingsTypeId: testData.holdingTypeId,
-              permanentLocationId: testData.defaultLocation.id,
-            },
-          ],
-          items: [
-            {
-              barcode: instanceData.itemBarcode,
-              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-              permanentLoanType: { id: testData.loanTypeId },
-              materialType: { id: testData.materialTypeId },
-            },
-          ],
+  const createCirculationRule = () => {
+    CirculationRules.getViaApi().then((response) => {
+      testData.baseRules = response.rulesAsText;
+      testData.ruleProps = CirculationRules.getRuleProps(response.rulesAsText);
+      cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
+        testData.ruleProps.n = noticePolicyRes[0].id;
+        testData.ruleProps.l = loanPolicyBody.id;
+        testData.ruleProps.i = lostItemFeePolicyBody.id;
+        addedCirculationRule =
+          't ' +
+          testData.loanTypeId +
+          ': i ' +
+          testData.ruleProps.i +
+          ' l ' +
+          testData.ruleProps.l +
+          ' r ' +
+          testData.ruleProps.r +
+          ' o ' +
+          testData.ruleProps.o +
+          ' n ' +
+          testData.ruleProps.n;
+        CirculationRules.addRuleViaApi(
+          testData.baseRules,
+          testData.ruleProps,
+          't ',
+          testData.loanTypeId,
+        );
+      });
+    });
+  };
+
+  before('Create test data', () => {
+    cy.getAdminToken().then(() => {
+      cy.createLoanType({
+        name: getTestEntityValue('type'),
+      }).then((loanType) => {
+        testData.loanTypeId = loanType.id;
+      });
+
+      ServicePoints.createViaApi(testData.userServicePoint);
+      testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
+      Location.createViaApi(testData.defaultLocation).then((location) => {
+        InventoryInstances.createFolioInstancesViaApi({
+          folioInstances: testData.folioInstances,
+          location,
         });
       });
+    });
 
     LoanPolicy.createViaApi(loanPolicyBody);
     LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
@@ -173,11 +201,11 @@ describe('Loan notice triggers', () => {
       cy.createTempUser(
         [
           Permissions.circulationLogAll.gui,
+          Permissions.checkoutAll.gui,
+          Permissions.checkinAll.gui,
+          Permissions.okapiTimersPatch.gui,
           Permissions.uiCirculationSettingsNoticeTemplates.gui,
           Permissions.uiCirculationSettingsNoticePolicies.gui,
-          Permissions.checkoutAll.gui,
-          Permissions.okapiTimersPatch.gui,
-          Permissions.checkinAll.gui,
         ],
         patronGroup.name,
       )
@@ -205,17 +233,19 @@ describe('Loan notice triggers', () => {
     cy.getToken(testData.user.username, testData.user.password);
     UserLoans.updateTimerForAgedToLost('reset');
     cy.getAdminToken();
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    CirculationRules.deleteRuleViaApi(addedCirculationRule); // TODO: remove
     UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [
       testData.userServicePoint.id,
     ]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     cy.deleteLoanPolicy(loanPolicyBody.id);
     LostItemFeePolicy.deleteViaApi(lostItemFeePolicyBody.id);
-    NoticePolicyApi.deleteViaApi(testData.ruleProps.n);
+    NoticePolicies.deleteViaApi(testData.ruleProps.n); // TODO: remove
     Users.deleteViaApi(testData.user.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(instanceData.itemBarcode);
+    testData.folioInstances.forEach((instance) => {
+      InventoryInstances.deleteInstanceViaApi({ instance });
+    });
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
@@ -231,8 +261,8 @@ describe('Loan notice triggers', () => {
   });
 
   it(
-    'C347865: Item aged to lost triggers (volaris)',
-    { tags: [TestTypes.criticalPath, DevTeams.volaris] },
+    'C347864: Loan due date/time triggers: short term (vega)',
+    { tags: [TestTypes.criticalPath, DevTeams.vega] },
     () => {
       noticeTemplates.forEach((template, index) => {
         NewNoticePolicyTemplate.createPatronNoticeTemplate(template, !!index);
@@ -245,51 +275,23 @@ describe('Loan notice triggers', () => {
       NewNoticePolicy.createPolicy({ noticePolicy, noticeTemplates });
       NewNoticePolicy.checkPolicyName(noticePolicy);
 
-      CirculationRules.getViaApi().then((response) => {
-        testData.baseRules = response.rulesAsText;
-        testData.ruleProps = CirculationRules.getRuleProps(response.rulesAsText);
-        cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
-          testData.ruleProps.n = noticePolicyRes[0].id;
-          testData.ruleProps.l = loanPolicyBody.id;
-          testData.ruleProps.i = lostItemFeePolicyBody.id;
-          addedCirculationRule =
-            't ' +
-            testData.loanTypeId +
-            ': i ' +
-            testData.ruleProps.i +
-            ' l ' +
-            testData.ruleProps.l +
-            ' r ' +
-            testData.ruleProps.r +
-            ' o ' +
-            testData.ruleProps.o +
-            ' n ' +
-            testData.ruleProps.n;
-          CirculationRules.addRuleViaApi(
-            testData.baseRules,
-            testData.ruleProps,
-            't ',
-            testData.loanTypeId,
-          );
-        });
-      });
+      createCirculationRule();
 
+      const itemBarcode = testData.folioInstances[0].barcodes[0];
       cy.visit(TopMenu.checkOutPath);
       CheckOutActions.checkOutUserByBarcode({ ...testData.user, patronGroup });
-      CheckOutActions.checkOutItem(instanceData.itemBarcode);
-      Checkout.verifyResultsInTheRow([instanceData.itemBarcode]);
+      CheckOutActions.checkOutItem(itemBarcode);
+      Checkout.verifyResultsInTheRow([itemBarcode]);
       CheckOutActions.endCheckOutSession();
       UserLoans.changeDueDateForAllOpenPatronLoans(testData.user.userId, -1);
 
       cy.visit(TopMenu.circulationLogPath);
       // wait to get "Item aged to lost - after - once" and "Item aged to lost - after - recurring" notices
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(250000);
-      cy.reload();
       noticeTemplates.forEach((template) => {
         const searchResults = {
           userBarcode: testData.user.barcode,
-          itemBarcode: instanceData.itemBarcode,
+          itemBarcode,
           object: 'Notice',
           circAction: 'Send',
           // TODO: add check for date with format <C6/8/2022, 6:46 AM>
@@ -297,16 +299,15 @@ describe('Loan notice triggers', () => {
           source: 'System',
           desc: `Template: ${template.name}. Triggering event: Aged to lost.`,
         };
-        SearchPane.checkSearchResultByBarcode({ barcode: instanceData.itemBarcode, searchResults });
+        SearchPane.checkSearchResultByBarcode({ barcode: itemBarcode, searchResults });
       });
 
       cy.visit(TopMenu.checkInPath);
-      CheckInActions.checkInItemByBarcode(instanceData.itemBarcode);
+      CheckInActions.checkInItemByBarcode(itemBarcode);
 
       cy.visit(TopMenu.circulationLogPath);
       // wait to check that we don't get new "Item aged to lost - after - recurring" notice because item was returned
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(100000);
+      cy.wait(10000);
       SearchPane.searchByUserBarcode(testData.user.barcode);
       SearchPane.checkResultSearch({ object: 'Loan', circAction: 'Closed loan' }, 0);
     },

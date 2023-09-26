@@ -1,5 +1,4 @@
 import uuid from 'uuid';
-import moment from 'moment';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import TestTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
@@ -14,10 +13,14 @@ import Location from '../../support/fragments/settings/tenant/locations/newLocat
 import Users from '../../support/fragments/users/users';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import NoticePolicyApi from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
+import NoticePolicyApi, {
+  NOTICE_CATEGORIES,
+} from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
 import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
-import NewNoticePolicyTemplate from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
+import NewNoticePolicyTemplate, {
+  createNoticeTemplate,
+} from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
 import RequestPolicy from '../../support/fragments/circulation/request-policy';
@@ -38,19 +41,15 @@ describe('Request notice triggers', () => {
     userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     ruleProps: {},
   };
-  const createNoticeTemplate = (noticeName) => {
-    return {
-      name: getTestEntityValue(noticeName),
-      description: 'Created by autotest team',
-      category: 'Request',
-      subject: getTestEntityValue(noticeName),
-      body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
-      previewText: `Test email body The Wines of Italy ${moment().format('ll')}`,
-    };
-  };
   const noticeTemplates = {
-    pageRequest: createNoticeTemplate('Page_request'),
-    cancelRequest: createNoticeTemplate('Cancel_request'),
+    pageRequest: createNoticeTemplate({
+      name: 'Page_request',
+      category: NOTICE_CATEGORIES.request,
+    }),
+    cancelRequest: createNoticeTemplate({
+      name: 'Cancel_request',
+      category: NOTICE_CATEGORIES.request,
+    }),
   };
   const searchResultsData = (description) => {
     return {
@@ -191,10 +190,10 @@ describe('Request notice triggers', () => {
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.pageRequest);
-      delete noticeTemplates.pageRequest.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.pageRequest);
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.cancelRequest);
-      delete noticeTemplates.cancelRequest.previewText;
+
+      const dublicate = true;
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.cancelRequest, dublicate);
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.cancelRequest);
 
       cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);

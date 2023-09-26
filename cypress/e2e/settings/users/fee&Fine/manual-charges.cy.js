@@ -8,8 +8,8 @@ import NoticeTemplates from '../../../../support/fragments/settings/circulation/
 describe('Users: Manual charges', () => {
   const owners = [UsersOwners.getDefaultNewOwner(), UsersOwners.getDefaultNewOwner()];
   const templates = [
-    NoticeTemplates.getDefaultTemplate({ category: NOTICE_CATEGORIES.FeeFineCharge.id }),
-    NoticeTemplates.getDefaultTemplate({ category: NOTICE_CATEGORIES.FeeFineAction.id }),
+    NoticeTemplates.getDefaultTemplate({ category: NOTICE_CATEGORIES.FeeFineCharge }),
+    NoticeTemplates.getDefaultTemplate({ category: NOTICE_CATEGORIES.FeeFineAction }),
   ];
   const manualCharge = ManualCharges.getManualCharge({
     owner: owners[0],
