@@ -53,7 +53,7 @@ describe('ui-requests: Filter requests by pickup service point', () => {
     { tags: [testType.criticalPath, DevTeams.vega] },
     () => {
       cy.visit(TopMenu.requestsPath);
-      Requests.fillInServicePoints(servicePointName);
+      Requests.filterRequestsByServicePoints(servicePointName);
       Requests.selectFirstRequest(instanceData.instanceTitle);
       RequestDetail.checkRequesterInformation({
         lastName: requestData.requester.lastName,
