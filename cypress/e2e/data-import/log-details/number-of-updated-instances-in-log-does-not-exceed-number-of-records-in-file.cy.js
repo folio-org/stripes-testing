@@ -20,6 +20,8 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -102,7 +104,7 @@ describe('data-import', () => {
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       collectionOfMappingAndActionProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       // delete created file in fixtures
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
@@ -142,7 +144,7 @@ describe('data-import', () => {
         FieldMappingProfiles.createMappingProfileForUpdatesMarc(
           collectionOfMappingAndActionProfiles[0].mappingProfile,
         );
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfiles[0].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(

@@ -41,46 +41,46 @@ describe('data-import', () => {
         NewFieldMappingProfile.addName(mappingProfileName);
         NewFieldMappingProfile.addIncomingRecordType('EDIFACT invoice');
         NewFieldMappingProfile.addFolioRecordType('Invoice');
-        NewFieldMappingProfile.saveProfile();
+        NewFieldMappingProfile.save();
         FieldMappingProfileView.checkErrorMessageIsPresented('Batch group*');
 
         NewFieldMappingProfile.fillBatchGroup('"FOLIO"');
-        NewFieldMappingProfile.saveProfile();
+        NewFieldMappingProfile.save();
         FieldMappingProfileView.checkErrorMessageIsPresented('Vendor invoice number*');
 
         NewFieldMappingProfile.fillVendorInvoiceNumber('123');
-        NewFieldMappingProfile.saveProfile();
+        NewFieldMappingProfile.save();
         FieldMappingProfileView.checkErrorMessageIsPresented('Payment method*');
 
         NewFieldMappingProfile.fillPaymentMethod('"Cash"');
-        NewFieldMappingProfile.saveProfile();
+        NewFieldMappingProfile.save();
         FieldMappingProfileView.checkErrorMessageIsPresented('Currency*');
 
         NewFieldMappingProfile.fillCurrency('"USD"');
-        NewFieldMappingProfile.saveProfile();
+        NewFieldMappingProfile.save();
         FieldMappingProfileView.checkErrorMessageIsPresented('Description*');
 
         NewFieldMappingProfile.fillDescription('abc');
-        NewFieldMappingProfile.saveProfile();
+        NewFieldMappingProfile.save();
         FieldMappingProfileView.checkErrorMessageIsPresented('Quantity*');
 
         NewFieldMappingProfile.fillQuantity('1');
-        NewFieldMappingProfile.saveProfile();
+        NewFieldMappingProfile.save();
         FieldMappingProfileView.checkErrorMessageIsPresented('Sub-total*');
 
         NewFieldMappingProfile.fillSubTotal('10.00');
-        NewFieldMappingProfile.saveProfile();
+        NewFieldMappingProfile.save();
         FieldMappingProfileView.checkErrorMessageIsPresented('Vendor name*');
 
         NewFieldMappingProfile.fillVendorName('EBSCO');
-        NewFieldMappingProfile.saveProfile();
+        NewFieldMappingProfile.save();
         FieldMappingProfileView.checkErrorMessageIsPresented('Invoice date*');
         NewFieldMappingProfile.fillInvoiceDate('###TODAY###');
-        NewFieldMappingProfile.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfileName);
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(mappingProfileName);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
 
-        FieldMappingProfileView.deleteMappingProfile(mappingProfileName);
+        FieldMappingProfileView.delete(mappingProfileName);
       },
     );
   });

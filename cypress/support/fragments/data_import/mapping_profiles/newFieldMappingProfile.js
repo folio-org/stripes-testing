@@ -100,13 +100,21 @@ const defaultMappingProfile = {
   fillProfile: '',
 };
 
+const save = () => {
+  // TODO need to wait until profile to be filled
+  cy.wait(1000);
+  cy.do(saveButton.click());
+};
 const selectOrganizationByName = (organizationName) => {
+  cy.do(organizationLookUpButton.click());
+  cy.expect(organizationModal.exists());
   cy.do([
     organizationModal.find(searchField).fillIn(organizationName),
     organizationModal.find(searchButton).click(),
     organizationModal.find(HTML(including('1 record found'))).exists(),
     MultiColumnListCell(organizationName).click({ row: 0, columnIndex: 0 }),
   ]);
+  cy.expect(TextField({ value: `"${organizationName}"` }).exists());
 };
 
 const waitLoading = () => {
@@ -197,7 +205,13 @@ const addVolume = (profile) => {
     ]);
   }
 };
-
+const fillSummaryInMappingProfile = (specialMappingProfile = defaultMappingProfile) => {
+  cy.do([
+    nameField.fillIn(specialMappingProfile.name),
+    incomingRecordTypeField.choose(incomingRecordType.marcBib),
+    existingRecordType.choose(specialMappingProfile.typeValue),
+  ]);
+};
 const getDefaultInstanceMappingProfile = (name) => {
   const defaultInstanceMappingProfile = {
     profile: {
@@ -289,13 +303,12 @@ export default {
   addVolume,
   selectFromResultsList,
   waitLoading,
+  fillSummaryInMappingProfile,
+  selectOrganizationByName,
+  save,
 
   fillMappingProfile: (specialMappingProfile = defaultMappingProfile) => {
-    cy.do([
-      nameField.fillIn(specialMappingProfile.name),
-      incomingRecordTypeField.choose(incomingRecordType.marcBib),
-      existingRecordType.choose(specialMappingProfile.typeValue),
-    ]);
+    fillSummaryInMappingProfile(specialMappingProfile);
     if (specialMappingProfile.typeValue === holdingsType) {
       if (specialMappingProfile.permanentLocation) {
         cy.do(permanentLocationField.fillIn(specialMappingProfile.permanentLocation));
@@ -348,27 +361,19 @@ export default {
         cy.do(catalogedDateField.fillIn(catalogedDate));
       }
     }
-    cy.do(saveButton.click());
+    save();
   },
 
   fillMappingProfileForUpdate: (specialMappingProfile = defaultMappingProfile) => {
-    cy.do([
-      nameField.fillIn(specialMappingProfile.name),
-      incomingRecordTypeField.choose(incomingRecordType.marcBib),
-      existingRecordType.choose(specialMappingProfile.typeValue),
-    ]);
+    fillSummaryInMappingProfile(specialMappingProfile);
     specialMappingProfile.fillProfile();
-    cy.do(saveButton.click());
+    save();
     cy.expect(saveButton.absent());
   },
 
   fillInvoiceMappingProfile: (profile) => {
     // Summary section
-    cy.do([
-      nameField.fillIn(profile.name),
-      incomingRecordTypeField.choose(profile.incomingRecordType),
-      existingRecordType.choose(profile.existingRecordType),
-    ]);
+    fillSummaryInMappingProfile(profile);
     if (profile.description) {
       cy.do(
         Accordion('Summary')
@@ -391,7 +396,6 @@ export default {
     }
     // Vendor information section
     if (profile.organizationName) {
-      cy.do(organizationLookUpButton.click());
       selectOrganizationByName(profile.organizationName);
     }
     // Extended information section
@@ -427,15 +431,11 @@ export default {
     if (profile.comment) {
       cy.do(TextField('Comment').fillIn(profile.comment));
     }
-    cy.do(saveButton.click());
+    save();
   },
 
   fillMappingProfileForMatch: (specialMappingProfile = defaultMappingProfile) => {
-    cy.do([
-      nameField.fillIn(specialMappingProfile.name),
-      incomingRecordTypeField.choose(incomingRecordType.marcBib),
-      existingRecordType.choose(specialMappingProfile.typeValue),
-    ]);
+    fillSummaryInMappingProfile(specialMappingProfile);
     if (specialMappingProfile.typeValue === holdingsType) {
       cy.do(TextField('Holdings type').fillIn('"Monograph"'));
       // wait accepted values to be filed
@@ -460,16 +460,12 @@ export default {
         cy.wait(1800);
       }
     }
-    cy.do(saveButton.click());
+    save();
   },
 
   fillOrderMappingProfile: (profile) => {
     // Summary section
-    cy.do([
-      nameField.fillIn(profile.name),
-      incomingRecordTypeField.choose(incomingRecordType.marcBib),
-      existingRecordType.choose(profile.typeValue),
-    ]);
+    fillSummaryInMappingProfile(profile);
     // Order information section
     cy.do([
       purchaseOrderStatus.fillIn(`"${profile.orderStatus}"`),
@@ -573,10 +569,6 @@ export default {
   addName: (name) => cy.do(nameField.fillIn(name)),
   addIncomingRecordType: (type) => cy.do(incomingRecordTypeField.choose(type)),
   addFolioRecordType: (folioType) => cy.do(existingRecordType.choose(folioType)),
-  saveProfile: () => {
-    cy.wait(1000);
-    cy.do(saveButton.click());
-  },
   fillTemporaryLocation: (location) => cy.do(TextField('Temporary').fillIn(location)),
   fillDigitizationPolicy: (policy) => cy.do(TextField('Digitization policy').fillIn(policy)),
   fillCallNumber: (number) => cy.do(TextField('Call number').fillIn(number)),
@@ -586,38 +578,32 @@ export default {
   fillAccessionNumber: (number) => cy.do(TextField('Accession number').fillIn(number)),
   fillCopyNumber: (number) => cy.do(TextField('Copy number').fillIn(number)),
   fillVendorInvoiceNumber: (number) => cy.do(TextField('Vendor invoice number*').fillIn(number)),
-  fillDescription: (text) => cy.do(TextField('Description*').fillIn(text)),
+  fillDescription: (text) => {
+    cy.do(
+      Accordion('Summary')
+        .find(TextArea({ name: 'profile.description' }))
+        .fillIn(text),
+    );
+  },
   fillQuantity: (quantity) => cy.do(TextField('Quantity*').fillIn(quantity)),
   fillSubTotal: (number) => cy.do(TextField('Sub-total*').fillIn(number)),
 
   fillMappingProfileForUpdatesMarc: (specialMappingProfile = defaultMappingProfile) => {
-    cy.do([
-      nameField.fillIn(specialMappingProfile.name),
-      incomingRecordTypeField.choose(incomingRecordType.marcBib),
-      existingRecordType.choose(specialMappingProfile.typeValue),
+    fillSummaryInMappingProfile(specialMappingProfile);
+    cy.do(
       Select({ name: 'profile.mappingDetails.marcMappingOption' }).choose(
         actionsFieldMappingsForMarc.update,
       ),
-    ]);
+    );
   },
 
   fillMappingProfileForUpdatesMarcAuthority: (specialMappingProfile = defaultMappingProfile) => {
-    cy.do([
-      nameField.fillIn(specialMappingProfile.name),
-      incomingRecordTypeField.choose(incomingRecordType.marcAuth),
-      existingRecordType.choose(specialMappingProfile.typeValue),
+    fillSummaryInMappingProfile(specialMappingProfile);
+    cy.do(
       Select({ name: 'profile.mappingDetails.marcMappingOption' }).choose(
         actionsFieldMappingsForMarc.update,
       ),
-    ]);
-  },
-
-  fillSummaryInMappingProfile: (specialMappingProfile = defaultMappingProfile) => {
-    cy.do([
-      nameField.fillIn(specialMappingProfile.name),
-      incomingRecordTypeField.choose(incomingRecordType.marcBib),
-      existingRecordType.choose(specialMappingProfile.typeValue),
-    ]);
+    );
   },
 
   addStatisticalCode: (name, number, action = actions.addTheseToExisting) => {
