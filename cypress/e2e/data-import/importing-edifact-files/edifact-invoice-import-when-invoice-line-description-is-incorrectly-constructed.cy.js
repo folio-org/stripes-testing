@@ -19,6 +19,7 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
 import InvoiceView from '../../../support/fragments/invoices/invoiceView';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Importing EDIFACT files', () => {
@@ -69,7 +70,7 @@ describe('data-import', () => {
     after('delete test data', () => {
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
       invoiceNumbers.forEach((number) => {
         cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${number}"` }).then((id) => cy.deleteInvoiceFromStorageViaApi(id));
       });

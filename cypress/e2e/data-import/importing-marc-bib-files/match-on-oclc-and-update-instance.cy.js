@@ -22,6 +22,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -119,7 +120,7 @@ describe('data-import', () => {
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       collectionOfMappingAndActionProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
         (instance) => {
@@ -145,8 +146,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillInstanceStatusTerm(itemsForCreateInstance.statusTerm);
         NewFieldMappingProfile.addStatisticalCode(itemsForCreateInstance.statisticalCode, 8);
         NewFieldMappingProfile.addNatureOfContentTerms('bibliography');
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfiles[0].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(
@@ -211,8 +212,8 @@ describe('data-import', () => {
           );
           NewFieldMappingProfile.fillInstanceStatusTerm(itemsForUpdateInstance.statusTerm);
           NewFieldMappingProfile.addStatisticalCode(itemsForUpdateInstance.statisticalCode, 8);
-          FieldMappingProfiles.saveProfile();
-          FieldMappingProfiles.closeViewModeForMappingProfile(
+          NewFieldMappingProfile.save();
+          FieldMappingProfileView.closeViewMode(
             collectionOfMappingAndActionProfiles[1].mappingProfile.name,
           );
           FieldMappingProfiles.checkMappingProfilePresented(
@@ -254,14 +255,12 @@ describe('data-import', () => {
           JobProfiles.waitFileIsImported(nameMarcFileForUpdate);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(nameMarcFileForUpdate);
-          FileDetails.checkStatusInColumn(
-            FileDetails.status.created,
+          [
             FileDetails.columnNameInResultList.srsMarc,
-          );
-          FileDetails.checkStatusInColumn(
-            FileDetails.status.updated,
             FileDetails.columnNameInResultList.instance,
-          );
+          ].forEach((columnName) => {
+            FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+          });
           FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
           FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 1);
 

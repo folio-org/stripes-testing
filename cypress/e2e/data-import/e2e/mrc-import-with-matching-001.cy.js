@@ -21,6 +21,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
@@ -80,7 +81,7 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);

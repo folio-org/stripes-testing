@@ -22,6 +22,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import InvoiceView from '../../../support/fragments/invoices/invoiceView';
 import Invoices from '../../../support/fragments/invoices/invoices';
 import Users from '../../../support/fragments/users/users';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -73,7 +74,7 @@ describe('data-import', () => {
     after('delete test data', () => {
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
       Invoices.deleteInvoiceViaActions();
       Invoices.confirmInvoiceDeletion();
       cy.visit(SettingsMenu.acquisitionUnitsPath);
@@ -83,7 +84,7 @@ describe('data-import', () => {
     });
 
     it(
-      'C345336 Acquisitions unit causes Invoices to Import with errors (folijet)',
+      'C345356 Acquisitions unit causes Invoices to Import with errors (folijet)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
         AcquisitionUnits.newAcquisitionUnit();
