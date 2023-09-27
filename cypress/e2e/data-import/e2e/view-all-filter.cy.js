@@ -67,7 +67,7 @@ describe('data-import', () => {
 
     it(
       'C11113 Filter the "View all" log screen (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.parallel] },
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.checkByReverseChronologicalOrder();
