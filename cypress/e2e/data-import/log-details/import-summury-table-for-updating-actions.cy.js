@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
+import { DevTeams, TestTypes, Parallelization } from '../../../support/dictionary';
 import {
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
@@ -38,6 +38,7 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -364,13 +365,13 @@ describe('data-import', () => {
       ActionProfiles.deleteActionProfile(instanceActionProfileForCreate.profile.name);
       ActionProfiles.deleteActionProfile(holdingsActionProfileForCreate.profile.name);
       ActionProfiles.deleteActionProfile(itemActionProfileForCreate.profile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(marcBibMappingProfileForCreate.profile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileForCreate.profile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileForCreate.profile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileForCreate.profile.name);
+      FieldMappingProfileView.deleteViaApi(marcBibMappingProfileForCreate.profile.name);
+      FieldMappingProfileView.deleteViaApi(instanceMappingProfileForCreate.profile.name);
+      FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForCreate.profile.name);
+      FieldMappingProfileView.deleteViaApi(itemMappingProfileForCreate.profile.name);
       collectionOfMappingAndActionProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
         (instance) => {
@@ -383,7 +384,7 @@ describe('data-import', () => {
 
     it(
       'C356802 Check import summary table with "Updated" actions for instance, holding and item (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         // create profiles via API
         testData.jobProfileForCreate = jobProfileForCreate;
@@ -423,6 +424,7 @@ describe('data-import', () => {
             holdingsPermanentLocation,
             itemStatus,
           );
+          cy.wait(2000);
           cy.go('back');
 
           cy.visit(SettingsMenu.exportMappingProfilePath);
@@ -461,8 +463,8 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[0].mappingProfile.statisticalCode,
           8,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfiles[0].mappingProfile.name,
         );
 
@@ -486,8 +488,8 @@ describe('data-import', () => {
           `"${collectionOfMappingAndActionProfiles[1].mappingProfile.relationship}"`,
           collectionOfMappingAndActionProfiles[1].mappingProfile.uri,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfiles[1].mappingProfile.name,
         );
 
@@ -509,8 +511,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillStatus(
           collectionOfMappingAndActionProfiles[2].mappingProfile.status,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfiles[2].mappingProfile.name,
         );
 
@@ -585,6 +587,7 @@ describe('data-import', () => {
         InstanceRecordView.verifyStatisticalCode(
           collectionOfMappingAndActionProfiles[0].mappingProfile.statisticalCodeUI,
         );
+        cy.wait(2000);
         cy.go('back');
         FileDetails.openHoldingsInInventory(FileDetails.status.updated);
         HoldingsRecordView.checkHoldingsType(
@@ -602,6 +605,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[1].mappingProfile.relationship,
           'https://www.test.org/bro/10.230',
         );
+        cy.wait(2000);
         cy.go('back');
         FileDetails.openItemInInventory(FileDetails.status.updated);
         ItemRecordView.verifyMaterialType(

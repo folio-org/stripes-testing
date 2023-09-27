@@ -80,8 +80,8 @@ describe('data-import', () => {
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       ActionProfiles.deleteActionProfile(instanceActionProfile.name);
       ActionProfiles.deleteActionProfile(marcBibActionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(marcBibMappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(instanceMappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(marcBibMappingProfile.name);
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
@@ -118,10 +118,10 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillSummaryInMappingProfile(instanceMappingProfile);
         NewFieldMappingProfile.addStatisticalCode(instanceMappingProfile.statisticalCode, 8);
         NewFieldMappingProfile.fillInstanceStatusTerm(instanceMappingProfile.statusTerm);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfile.name);
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(instanceMappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(instanceMappingProfile.name);
-        FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfile.name);
+        FieldMappingProfileView.closeViewMode(instanceMappingProfile.name);
 
         FieldMappingProfiles.openNewMappingProfileForm();
         FieldMappingProfiles.createMappingProfileForUpdatesMarc(marcBibMappingProfile);
