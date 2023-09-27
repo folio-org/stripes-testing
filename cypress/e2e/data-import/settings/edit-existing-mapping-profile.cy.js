@@ -29,15 +29,15 @@ describe('data-import', () => {
         // create field mapping profile
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
-        FieldMappingProfiles.saveProfile();
+        NewFieldMappingProfile.save();
         InteractorsTools.closeCalloutMessage();
-        FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+        FieldMappingProfileView.closeViewMode(mappingProfile.name);
       });
     });
 
     after('delete test data', () => {
       Users.deleteViaApi(user.userId);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
     });
 
     it(
@@ -45,7 +45,7 @@ describe('data-import', () => {
       { tags: [TestTypes.criticalPath, DevTeams.folijet] },
       () => {
         FieldMappingProfiles.search(mappingProfile.name);
-        FieldMappingProfileView.editMappingProfile();
+        FieldMappingProfileView.edit();
         FieldMappingProfileEdit.verifyScreenName(mappingProfile.name);
         FieldMappingProfileEdit.fillInstanceStatusTerm(instanceStatusTerm);
         FieldMappingProfileEdit.save();

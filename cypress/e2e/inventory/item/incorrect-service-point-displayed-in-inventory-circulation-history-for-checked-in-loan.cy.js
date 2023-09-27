@@ -119,6 +119,7 @@ describe('inventory', () => {
       () => {
         InventorySearchAndFilter.waitLoading();
         InventorySearchAndFilter.switchToItem();
+        cy.wait(1000);
         FilterItems.toggleItemStatusAccordion();
         FilterItems.toggleStatus(itemStatus);
         InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
@@ -128,6 +129,7 @@ describe('inventory', () => {
         CheckInActions.waitLoading();
         CheckInActions.checkInItemGui(itemData.barcode);
         ConfirmItemInModal.confirmInTransitModal();
+        cy.wait(2000);
         cy.go('back');
         InventoryInstance.waitInstanceRecordViewOpened(itemData.instanceTitle);
         InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ONLINE_UI} >`);
@@ -144,6 +146,7 @@ describe('inventory', () => {
         SwitchServicePoint.switchServicePoint(secondServicePoint.name);
         CheckInActions.checkInItemGui(itemData.barcode);
         ConfirmItemInModal.confirmInTransitModal();
+        cy.wait(2000);
         cy.go('back');
         ItemRecordView.waitLoading();
         ItemRecordView.checkItemCirculationHistory(

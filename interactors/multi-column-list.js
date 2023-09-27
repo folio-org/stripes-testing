@@ -69,7 +69,7 @@ export const MultiColumnList = HTML.extend('multi column list')
   .locator((el) => el.id)
   .filters({
     columns,
-    id: (el) => el.id,
+    id: (el) => el.querySelector('[role=grid]').id,
     columnCount: (el) => columns(el).length,
     rowCount: (el) => el.querySelectorAll('[class*=mclRow-]').length,
     height: (el) => el.offsetHeight,
@@ -79,7 +79,7 @@ export const MultiColumnList = HTML.extend('multi column list')
       (d) => !!d.querySelector('[data-test-clickable-header]'),
     ),
     visible: (el) => isVisible(el),
-    ariaRowCount: (el) => +el.getAttribute('aria-rowcount'),
+    ariaRowCount: (el) => el.querySelector('[role=grid]').getAttribute('aria-rowcount'),
   })
   .actions({
     clickHeader: (interactor, header) => interactor.find(MultiColumnListHeader(header)).click(),

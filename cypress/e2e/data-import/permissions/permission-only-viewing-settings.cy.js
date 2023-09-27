@@ -64,7 +64,7 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfileName);
       MatchProfiles.deleteMatchProfile(matchProfileName);
       ActionProfiles.deleteActionProfile(actionProfileName);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+      FieldMappingProfileView.deleteViaApi(mappingProfileName);
       Users.deleteViaApi(user.userId);
     });
 
