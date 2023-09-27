@@ -384,7 +384,7 @@ describe('data-import', () => {
 
     it(
       'C356802 Check import summary table with "Updated" actions for instance, holding and item (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.parallel] },
       () => {
         // create profiles via API
         testData.jobProfileForCreate = jobProfileForCreate;

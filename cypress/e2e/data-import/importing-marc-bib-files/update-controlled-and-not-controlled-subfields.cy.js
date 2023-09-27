@@ -165,7 +165,7 @@ describe('data-import', () => {
 
     it(
       'C375098 Update controlled and not controlled subfields of linked "MARC Bib" field which is controlled by "MARC Authority" record (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+      { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.parallel] },
       () => {
         InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
