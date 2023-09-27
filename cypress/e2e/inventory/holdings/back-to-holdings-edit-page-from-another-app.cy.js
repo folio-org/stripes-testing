@@ -66,7 +66,7 @@ describe('Holdings', () => {
 
   it(
     '397327 Verify that no error appears after switch from Holdings Edit screen to another app and back',
-    { tags: [testTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: [testTypes.extendedPath, DevTeams.folijet] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.instanceTitle);
       InventorySearchAndFilter.selectViewHoldings();
