@@ -13,8 +13,6 @@ import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import DateTools from '../../../support/utils/dateTools';
-import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
-import Parallelization from '../../../support/dictionary/parallelization';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
 
 describe('MARC Authority -> Reporting | MARC authority', () => {
@@ -23,25 +21,23 @@ describe('MARC Authority -> Reporting | MARC authority', () => {
     tag100: '100',
     tag111: '111',
     tag240: '240',
-    // tag700: '700',
     updatedTag100Value1:
-      '$a C357996 Beethoven, Ludwig the Greatest $d 1770-1827. $t Variations, $m piano, violin, cello, $n op. 44, $r E♭ major',
+      '$a C380529 Beethoven, Ludwig the Greatest $d 1770-1827. $t Variations, $m piano, violin, cello, $n op. 44, $r E♭ major',
     updatedTag100Value2:
-      '$a C357996 Beethoven, Ludwig the Loudest $d 1770-1827. $t Variations, $m piano, violin, cello, $n op. 44, $r E♭ major',
+      '$a C380529 Beethoven, Ludwig the Loudest $d 1770-1827. $t Variations, $m piano, violin, cello, $n op. 44, $r E♭ major',
     updatedTag111Value:
-      'C380529 Delaware TEST $t Delaware symposia on language studies $f 1985 $j test $1 ert',
+      '$a C380529 Delaware TEST $t Delaware symposia on language studies $f 1985 $j test $1 ert',
+    updatedHeading1:
+      'C380529 Beethoven, Ludwig the Greatest 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
+    updatedHeading2:
+      'C380529 Beethoven, Ludwig the Loudest 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
+    updatedHeading3: 'C380529 Delaware TEST Delaware symposia on language studies 1985',
     searchOption: 'Keyword',
     sourceFileName: 'LC Name Authority file (LCNAF)',
   };
 
   const today = DateTools.getCurrentDateForFiscalYear();
   const tomorrow = DateTools.getDayTomorrowDateForFiscalYear();
-  // const expectedJobValues = {
-  //   status: 'Successful',
-  //   jobType: 'MARC authority headings updates',
-  //   description: 'List of updated MARC authority (1XX) headings',
-  //   outputType: 'MARC authority headings updates (CSV)',
-  // };
 
   const marcFiles = [
     {
@@ -138,8 +134,21 @@ describe('MARC Authority -> Reporting | MARC authority', () => {
       const expectedFirstUpdateData = {
         naturalIdOld: marcFiles[1].authority010FieldValue,
         naturalIdNew: marcFiles[1].authority010FieldValue,
-        headingNew: testData.updatedTag100Value1,
+        headingNew: testData.updatedHeading1,
         headingOld: marcFiles[1].authorityHeading,
+        sourceFileNew: testData.sourceFileName,
+        sourceFileOld: testData.sourceFileName,
+        lbTotal: 1,
+        lbUpdated: 1,
+        startedAt: today,
+        startedByUserFirstName: testData.userProperties.firstName,
+        startedByUserLastName: testData.userProperties.lastName,
+      };
+      const expectedSecondUpdateData = {
+        naturalIdOld: marcFiles[1].authority010FieldValue,
+        naturalIdNew: marcFiles[1].authority010FieldValue,
+        headingNew: testData.updatedHeading2,
+        headingOld: testData.updatedHeading1,
         sourceFileNew: testData.sourceFileName,
         sourceFileOld: testData.sourceFileName,
         lbTotal: 1,
@@ -172,6 +181,10 @@ describe('MARC Authority -> Reporting | MARC authority', () => {
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndCloseAuthority();
       MarcAuthorities.verifyHeadingsUpdatesDataViaAPI(today, tomorrow, expectedFirstUpdateData);
+      MarcAuthorities.verifyHeadingsUpdatesDataViaAPI(today, tomorrow, expectedSecondUpdateData);
+      MarcAuthorities.verifyHeadingsUpdateExistsViaAPI(today, tomorrow, testData.updatedHeading3);
+      MarcAuthorities.verifyHeadingsUpdatesCountAndStructureViaAPI(today, tomorrow, '1');
+      MarcAuthorities.verifyHeadingsUpdatesCountAndStructureViaAPI(today, tomorrow, '2');
     },
   );
 });

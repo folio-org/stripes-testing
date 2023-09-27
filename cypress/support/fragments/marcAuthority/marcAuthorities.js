@@ -614,6 +614,7 @@ export default {
       });
     });
   },
+
   verifyHeadingsUpdatesDataViaAPI(startDate, endDate, expectedDataObject) {
     cy.getAuthorityHeadingsUpdatesViaAPI(startDate, endDate).then((updatesData) => {
       const selectedUpdate = updatesData.filter(
@@ -634,6 +635,33 @@ export default {
       cy.expect(selectedUpdate[0].metadata.startedByUserLastName).to.equal(
         expectedDataObject.startedByUserLastName,
       );
+    });
+  },
+
+  verifyHeadingsUpdateExistsViaAPI(startDate, endDate, newHeading, matchesCounter = 1) {
+    cy.getAuthorityHeadingsUpdatesViaAPI(startDate, endDate).then((updatesData) => {
+      const selectedUpdate = updatesData.filter((update) => update.headingNew === newHeading);
+      cy.expect(selectedUpdate.length).to.be.at.least(matchesCounter);
+    });
+  },
+
+  verifyHeadingsUpdatesCountAndStructureViaAPI(startDate, endDate, limit) {
+    cy.getAuthorityHeadingsUpdatesViaAPI(startDate, endDate, limit).then((updatesData) => {
+      cy.expect(updatesData.length).to.equal(Number(limit));
+      updatesData.forEach((update) => {
+        cy.expect(update).to.have.property('naturalIdOld');
+        cy.expect(update).to.have.property('naturalIdNew');
+        cy.expect(update).to.have.property('headingNew');
+        cy.expect(update).to.have.property('headingOld');
+        cy.expect(update).to.have.property('sourceFileNew');
+        cy.expect(update).to.have.property('sourceFileOld');
+        cy.expect(update).to.have.property('lbTotal');
+        cy.expect(update).to.have.property('lbUpdated');
+        cy.expect(update).to.have.property('metadata');
+        cy.expect(update.metadata).to.have.property('startedAt');
+        cy.expect(update.metadata).to.have.property('startedByUserFirstName');
+        cy.expect(update.metadata).to.have.property('startedByUserLastName');
+      });
     });
   },
 };
