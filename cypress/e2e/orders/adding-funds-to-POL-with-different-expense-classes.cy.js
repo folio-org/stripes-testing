@@ -19,16 +19,9 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 
 describe('Orders', () => {
-  const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
+  const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
-  const firstFund = { ...Funds.defaultUiFund };
-  const secondFund = {
-    name: `autotest_fund2_${getRandomPostfix()}`,
-    code: getRandomPostfix(),
-    externalAccountNo: getRandomPostfix(),
-    fundStatus: 'Active',
-    description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
-  };
+  const defaultFund = { ...Funds.defaultUiFund };
   const firstOrder = {
     ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',
@@ -40,7 +33,7 @@ describe('Orders', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const errorToastMessage =
     'The purchase order line fund distribution can not be changed because the order line is linked to an invoice line that currently has the "approved" status';
-  const allocatedQuantity = '1000';
+  const allocatedQuantity = '100';
   let user;
   let orderNumber;
   let servicePointId;
@@ -49,30 +42,22 @@ describe('Orders', () => {
   before(() => {
     cy.getAdminToken();
 
-    FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
-      firstFiscalYear.id = firstFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = firstFiscalYear.id;
+    FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
+      defaultFiscalYear.id = firstFiscalYearResponse.id;
+      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
-        firstFund.ledgerId = defaultLedger.id;
-        secondFund.ledgerId = defaultLedger.id;
+        defaultFund.ledgerId = defaultLedger.id;
 
-        Funds.createViaApi(firstFund).then((fundResponse) => {
-          firstFund.id = fundResponse.fund.id;
+        Funds.createViaApi(defaultFund).then((fundResponse) => {
+          defaultFund.id = fundResponse.fund.id;
 
           cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(firstFund.name);
-          Funds.selectFund(firstFund.name);
+          FinanceHelp.searchByName(defaultFund.name);
+          Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
-        });
-
-        Funds.createViaApi(secondFund).then((secondFundResponse) => {
-          secondFund.id = secondFundResponse.fund.id;
-
-          cy.visit(TopMenu.fundPath);
-          FinanceHelp.searchByName(secondFund.name);
-          Funds.selectFund(secondFund.name);
-          Funds.addBudget(allocatedQuantity);
+          Funds.editBudget();
+          Funds.addTwoExpensesClass('Electronic', 'Print');
         });
       });
     });
@@ -95,25 +80,21 @@ describe('Orders', () => {
       Orders.checkCreatedOrder(firstOrder);
       OrderLines.addPOLine();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
-      OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
-        firstFund,
-        '100',
+      OrderLines.fillInPOLineInfoforPhysicalMaterialWithFundAndEC(
+        defaultFund,
+        '20',
         '1',
-        '100',
+        'Electronic',
+        '20',
         location.institutionId,
       );
       OrderLines.backToEditingOrder();
       Orders.openOrder();
-      cy.visit(TopMenu.invoicesPath);
-      Invoices.createRolloverInvoice(invoice, organization.name);
-      Invoices.createInvoiceLineFromPol(orderNumber);
-      // Need to wait, while data will be loaded
-      cy.wait(4000);
-      Invoices.approveInvoice();
     });
 
     cy.createTempUser([
-      permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
+      permissions.uiOrdersUnopenpurchaseorders.gui,
+      permissions.uiOrdersApprovePurchaseOrders.gui,
       permissions.uiOrdersEdit.gui,
       permissions.uiFinanceViewFundAndBudget.gui,
     ]).then((userProperties) => {
@@ -135,10 +116,23 @@ describe('Orders', () => {
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
+      Orders.unOpenOrder();
       OrderLines.selectPOLInOrder(0);
       OrderLines.editPOLInOrder();
-      OrderLines.editFundInPOL(secondFund, '200', '200');
-      OrderLines.checkErrorToastMessage(errorToastMessage);
+      OrderLines.addTwoFundsToPOLinPercent(defaultFund, '50', 'Electronic', 'Print', '50');
+      Orders.backToPO();
+      Orders.openOrder();
+      cy.visit(TopMenu.fundPath);
+      FinanceHelp.searchByName(defaultFund.name);
+      Funds.selectFund(defaultFund.name);
+      Funds.selectBudgetDetails();
+      Funds.viewTransactions();
+      Funds.selectTransaction('row-1');
+      Funds.checkStatusInTransactionDetails('Unreleased');
+      Funds.checkEncumbrance(orderNumber, '($10.00)');
+      Funds.selectTransaction('row-2');
+      Funds.checkStatusInTransactionDetails('Unreleased');
+      Funds.checkEncumbrance(orderNumber, '($10.00)');
     },
   );
 });
