@@ -91,7 +91,7 @@ describe('data-import', () => {
 
     after('delete test data', () => {
       FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-      marcFieldProtectionId.forEach((field) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(field));
+      marcFieldProtectionId.forEach((field) => MarcFieldProtection.deleteViaApi(field));
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
         (instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);
@@ -117,7 +117,7 @@ describe('data-import', () => {
         );
         Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(OCLCAuthentication);
 
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
+        MarcFieldProtection.createViaApi({
           indicator1: '*',
           indicator2: '*',
           subfield: '5',
@@ -128,7 +128,7 @@ describe('data-import', () => {
           const id = resp.id;
           marcFieldProtectionId.push = id;
         });
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
+        MarcFieldProtection.createViaApi({
           indicator1: '*',
           indicator2: '*',
           subfield: '*',

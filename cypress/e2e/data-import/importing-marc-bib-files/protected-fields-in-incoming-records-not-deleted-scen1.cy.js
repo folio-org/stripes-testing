@@ -76,10 +76,10 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      MarcFieldProtection.getListOfMarcFieldProtectionViaApi({
+      MarcFieldProtection.getListViaApi({
         query: `"field"=="${protectedField}"`,
       }).then((list) => {
-        list.forEach(({ id }) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(id));
+        list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
       });
       Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
       Users.deleteViaApi(user.userId);
@@ -95,10 +95,9 @@ describe('data-import', () => {
       { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.parallel] },
       () => {
         cy.visit(SettingsMenu.marcFieldProtectionPath);
-        MarcFieldProtection.checkListOfExistingProfilesIsDisplayed();
-        MarcFieldProtection.createNewMarcFieldProtection();
-        MarcFieldProtection.fillMarcFieldProtection(protectedField);
-        MarcFieldProtection.checkFieldProtectionIsCreated(protectedField);
+        MarcFieldProtection.verifyListOfExistingProfilesIsDisplayed();
+        MarcFieldProtection.create(protectedField);
+        MarcFieldProtection.verifyFieldProtectionIsCreated(protectedField);
 
         cy.visit(SettingsMenu.targetProfilesPath);
         Z3950TargetProfiles.openTargetProfile();

@@ -181,7 +181,7 @@ describe('data-import', () => {
 
         cy.loginAsAdmin();
         cy.getAdminToken().then(() => {
-          MarcFieldProtection.createMarcFieldProtectionViaApi({
+          MarcFieldProtection.createViaApi({
             indicator1: '*',
             indicator2: '*',
             subfield: '0',
@@ -191,7 +191,7 @@ describe('data-import', () => {
           }).then((resp) => {
             firstFieldId = resp.id;
           });
-          MarcFieldProtection.createMarcFieldProtectionViaApi({
+          MarcFieldProtection.createViaApi({
             indicator1: '*',
             indicator2: '*',
             subfield: '0',
@@ -201,7 +201,7 @@ describe('data-import', () => {
           }).then((resp) => {
             secondFieldId = resp.id;
           });
-          MarcFieldProtection.createMarcFieldProtectionViaApi({
+          MarcFieldProtection.createViaApi({
             indicator1: '*',
             indicator2: '*',
             subfield: '9',
@@ -226,9 +226,9 @@ describe('data-import', () => {
       createdAuthorityIDs.forEach((id, index) => {
         if (index) MarcAuthority.deleteViaAPI(id);
       });
-      MarcFieldProtection.deleteMarcFieldProtectionViaApi(firstFieldId);
-      MarcFieldProtection.deleteMarcFieldProtectionViaApi(secondFieldId);
-      MarcFieldProtection.deleteMarcFieldProtectionViaApi(thirdFieldId);
+      MarcFieldProtection.deleteViaApi(firstFieldId);
+      MarcFieldProtection.deleteViaApi(secondFieldId);
+      MarcFieldProtection.deleteViaApi(thirdFieldId);
       // clean up generated profiles
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
