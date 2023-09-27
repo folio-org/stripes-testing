@@ -126,6 +126,20 @@ export default {
   checkLoanAbsent(title) {
     cy.expect(KeyValue(title).absent());
   },
+  checkActionDueDate(row, actionDueDate) {
+    cy.then(() => MultiColumnListHeader({ id: 'list-column-duedate' }).index()).then(
+      (columnIndex) => {
+        cy.expect(
+          LoanActionsList.find(
+            MultiColumnListCell(DateTools.getFormattedEndDateWithTime(actionDueDate), {
+              row,
+              columnIndex,
+            }),
+          ).exists(),
+        );
+      },
+    );
+  },
   checkAction(row, action) {
     cy.then(() => MultiColumnListHeader({ id: 'list-column-action' }).index()).then(
       (columnIndex) => {

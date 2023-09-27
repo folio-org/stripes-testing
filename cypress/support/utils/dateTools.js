@@ -187,7 +187,10 @@ export default {
   getFormattedDateWithTime(date) {
     return moment.utc(date).format('M/D/YYYY, h:mm A');
   },
-
+  getFormattedEndDateWithTime(date) {
+    const momentObj = moment(date);
+    return momentObj.format('M/D/YYYY, h:mm A');
+  },
   getUTCDateForScheduling() {
     const today = new Date();
     let hours = today.getUTCHours();
@@ -213,7 +216,9 @@ export default {
     const formattedTime = currentDate.toLocaleString('en-US', options);
     return formattedTime;
   },
-
+  getCurrentEndOfDay() {
+    return moment.utc().endOf('day');
+  },
   getCurrentDateYYMMDD() {
     const initialCurrentDate = new Date();
     return `${initialCurrentDate.getFullYear().toString().substring(2)}${padWithZero(
