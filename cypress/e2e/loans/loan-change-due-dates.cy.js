@@ -113,8 +113,8 @@ describe('change loan due dates', () => {
       ChangeDueDateForm.fillDate(loanDueDateAfterChanged.format('MM/DD/YYYY'));
       ChangeDueDateForm.saveAndClose();
       UserLoans.openLoanDetails(itemBarcode);
-      // LoanDetails.checkActionDueDate(FIRST_ACTION_ROW_INDEX, loanDueDateAfterChanged);
-      LoanDetails.checkStatusCheckedOut();
+      LoanDetails.checkActionDueDate(FIRST_ACTION_ROW_INDEX, loanDueDateAfterChanged);
+      LoanDetails.checkStatusInList(FIRST_ACTION_ROW_INDEX, 'Checked out');
       UsersCard.getApi(checkOutUser.userId).then((user) => {
         Loans.getApi(checkOutUser.userId).then(([foundByLibraryLoan]) => {
           cy.getLoanHistory(foundByLibraryLoan.id).then(([loanHistoryFirstAction]) => {
