@@ -13,7 +13,6 @@ let user;
 const invalidUsername = `invalidUsername_${getRandomPostfix()}`;
 const invalidUsernamesFilename = `invalidUsername_${getRandomPostfix()}.csv`;
 const errorsFromMatchingFileName = `*-Matching-Records-Errors-${invalidUsernamesFilename}*`;
-const otherError = `*-Errors-${invalidUsernamesFilename}`;
 
 describe('Bulk Edit - Logs', () => {
   before('create test data', () => {
@@ -37,7 +36,6 @@ describe('Bulk Edit - Logs', () => {
     FileManager.deleteFileFromDownloadsByMask(
       invalidUsernamesFilename,
       errorsFromMatchingFileName,
-      otherError,
     );
   });
 

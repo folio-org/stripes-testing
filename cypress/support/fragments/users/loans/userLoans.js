@@ -101,7 +101,9 @@ export default {
       Select({ id: 'feeFineType' }).choose(feeFineType),
     ]);
     cy.expect(Button('Charge only').has({ disabled: false }));
+    cy.wait(2000);
     cy.do(Button('Charge only').click());
+    cy.wait(1000);
   },
   declareLoanLostViaApi: (
     {

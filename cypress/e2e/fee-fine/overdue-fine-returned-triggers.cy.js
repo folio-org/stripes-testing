@@ -17,7 +17,9 @@ import NoticePolicyApi from '../../support/fragments/settings/circulation/patron
 import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
-import NewNoticePolicyTemplate from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
+import NewNoticePolicyTemplate, {
+  createNoticeTemplate,
+} from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../support/fragments/checkout/checkout';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -53,48 +55,32 @@ describe('Overdue fine', () => {
     userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     ruleProps: {},
   };
-  const createNoticeTemplate = (noticeName) => {
-    return {
-      name: `Autotest_${getRandomPostfix()}_${noticeName}`,
-      description: 'Created by autotest team',
-      category: 'Automated fee/fine charge',
-      subject: `Autotest_${getRandomPostfix()}_${noticeName}`,
-      body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
-      previewText: `Test email body The Wines of Italy ${moment().format('ll')}`,
-    };
-  };
-  const noticeTemplates = {
-    returnedUponAt: createNoticeTemplate('Overdue_fine_returned_upon_at'),
-    returnedAfterOnce: createNoticeTemplate('Overdue_fine_returned_after_once'),
-    returnedAfterRecurring: createNoticeTemplate(
-      `Autotest_${getRandomPostfix()}_Overdue_fine_returned_after_recurring`,
-    ),
-  };
-  const selectOptions = (template) => {
-    const generalOptions = {
-      noticeName: 'FeeFine',
-      noticeId: 'feeFine',
-      format: 'Email',
-      action: 'Overdue fine, returned',
-      templateName: template.name,
-    };
-    if (template.name === noticeTemplates.returnedUponAt.name) {
-      return {
-        send: 'Upon/At',
-        ...generalOptions,
-      };
-    } else if (template.name === noticeTemplates.returnedAfterOnce.name) {
-      return {
+  const noticeTemplates = [
+    createNoticeTemplate({
+      name: 'Overdue_fine_returned_upon_at',
+      category: { name: 'Automated fee/fine charge' },
+      noticeOptions: { noticeName: 'FeeFine', noticeId: 'feeFine', send: 'Upon/At' },
+    }),
+    createNoticeTemplate({
+      name: 'Overdue_fine_returned_after_once',
+      category: { name: 'Automated fee/fine charge' },
+      noticeOptions: {
+        noticeName: 'FeeFine',
+        noticeId: 'feeFine',
         send: 'After',
         sendBy: {
           duration: '1',
           interval: 'Minute(s)',
         },
         frequency: 'One Time',
-        ...generalOptions,
-      };
-    } else if (template.name === noticeTemplates.returnedAfterRecurring.name) {
-      return {
+      },
+    }),
+    createNoticeTemplate({
+      name: `Autotest_${getRandomPostfix()}_Overdue_fine_returned_after_recurring`,
+      category: { name: 'Automated fee/fine charge' },
+      noticeOptions: {
+        noticeName: 'FeeFine',
+        noticeId: 'feeFine',
         send: 'After',
         sendBy: {
           duration: '1',
@@ -105,11 +91,9 @@ describe('Overdue fine', () => {
           duration: '1',
           interval: 'Minute(s)',
         },
-        ...generalOptions,
-      };
-    }
-    return generalOptions;
-  };
+      },
+    }),
+  ];
   const searchResultsData = (templateName) => {
     return {
       userBarcode: userData.barcode,
@@ -281,20 +265,12 @@ describe('Overdue fine', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    NoticePolicyTemplateApi.getViaApi({
-      query: `name=${noticeTemplates.returnedUponAt.name}`,
-    }).then((templateId) => {
-      NoticePolicyTemplateApi.deleteViaApi(templateId);
-    });
-    NoticePolicyTemplateApi.getViaApi({
-      query: `name=${noticeTemplates.returnedAfterOnce.name}`,
-    }).then((templateId) => {
-      NoticePolicyTemplateApi.deleteViaApi(templateId);
-    });
-    NoticePolicyTemplateApi.getViaApi({
-      query: `name=${noticeTemplates.returnedAfterRecurring.name}`,
-    }).then((templateId) => {
-      NoticePolicyTemplateApi.deleteViaApi(templateId);
+    noticeTemplates.forEach((template) => {
+      NoticePolicyTemplateApi.getViaApi({
+        query: `name=${template.name}`,
+      }).then((templateId) => {
+        NoticePolicyTemplateApi.deleteViaApi(templateId);
+      });
     });
     cy.deleteLoanType(testData.loanTypeId);
   });
@@ -303,35 +279,18 @@ describe('Overdue fine', () => {
     'C347874 Overdue fine, returned triggers (volaris)',
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
-      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.returnedUponAt);
-      delete noticeTemplates.returnedUponAt.previewText;
-      NewNoticePolicyTemplate.checkAfterSaving({
-        ...noticeTemplates.returnedUponAt,
-        category: 'AutomatedFeeFineCharge',
-      });
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.returnedAfterOnce);
-      delete noticeTemplates.returnedAfterOnce.previewText;
-      NewNoticePolicyTemplate.checkAfterSaving({
-        ...noticeTemplates.returnedAfterOnce,
-        category: 'AutomatedFeeFineCharge',
-      });
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.returnedAfterRecurring);
-      delete noticeTemplates.returnedAfterRecurring.previewText;
-      NewNoticePolicyTemplate.checkAfterSaving({
-        ...noticeTemplates.returnedAfterRecurring,
-        category: 'AutomatedFeeFineCharge',
+      noticeTemplates.forEach((template, index) => {
+        NewNoticePolicyTemplate.createPatronNoticeTemplate(template, !!index);
+        NewNoticePolicyTemplate.checkAfterSaving({
+          ...template,
+          category: 'AutomatedFeeFineCharge',
+        });
       });
 
       cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
       NewNoticePolicy.waitLoading();
-      NewNoticePolicy.startAdding();
-      NewNoticePolicy.checkInitialState();
-      NewNoticePolicy.fillGeneralInformation(noticePolicy);
-      NewNoticePolicy.addNotice(selectOptions(noticeTemplates.returnedUponAt));
-      NewNoticePolicy.addNotice(selectOptions(noticeTemplates.returnedAfterOnce), 1);
-      NewNoticePolicy.addNotice(selectOptions(noticeTemplates.returnedAfterRecurring), 2);
-      NewNoticePolicy.save();
-      NewNoticePolicy.waitLoading();
+
+      NewNoticePolicy.createPolicy({ noticePolicy, noticeTemplates });
       NewNoticePolicy.checkPolicyName(noticePolicy);
 
       cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
@@ -378,9 +337,10 @@ describe('Overdue fine', () => {
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(200000);
       cy.reload();
-      checkNoticeIsSent(searchResultsData(noticeTemplates.returnedAfterRecurring.name));
-      checkNoticeIsSent(searchResultsData(noticeTemplates.returnedAfterOnce.name));
-      checkNoticeIsSent(searchResultsData(noticeTemplates.returnedUponAt.name));
+
+      noticeTemplates.forEach((template) => {
+        checkNoticeIsSent(searchResultsData(template.name));
+      });
 
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();

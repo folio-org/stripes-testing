@@ -168,7 +168,7 @@ function saveProfile() {
   cy.do(saveProfileButton.click());
 }
 
-const closeViewModeForMappingProfile = (profileName) => {
+const closeViewMode = (profileName) => {
   cy.do(Pane({ title: profileName }).find(closeButton).click());
 };
 
@@ -190,7 +190,7 @@ function creatMappingProfilesForInstance(name) {
         instanceStatusTermField.fillIn('"Batch Loaded"'),
       ]);
       saveProfile();
-      closeViewModeForMappingProfile(name);
+      closeViewMode(name);
     });
 }
 
@@ -215,7 +215,7 @@ function creatMappingProfilesForHoldings(name) {
         callNumberTypeField.fillIn('"Library of Congress classification"'),
       ]);
       saveProfile();
-      closeViewModeForMappingProfile(name);
+      closeViewMode(name);
     });
 }
 
@@ -232,7 +232,7 @@ function creatMappingProfilesForItem(name) {
   // needs some waiting until selection lists are populated
   cy.wait(500);
   saveProfile();
-  closeViewModeForMappingProfile(name);
+  closeViewMode(name);
 }
 
 function closeDetailView() {

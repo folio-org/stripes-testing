@@ -35,6 +35,7 @@ import InventoryViewSource from '../../../support/fragments/inventory/inventoryV
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
@@ -147,7 +148,7 @@ describe('data-import', () => {
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       collectionOfProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
@@ -170,8 +171,8 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillSummaryInMappingProfile(instanceMappingProfile);
       NewFieldMappingProfile.fillCatalogedDate('###TODAY###');
       NewFieldMappingProfile.fillInstanceStatusTerm();
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfile.name);
+      NewFieldMappingProfile.save();
+      FieldMappingProfileView.closeViewMode(instanceMappingProfile.name);
     };
 
     const createHoldingsMappingProfile = (holdingsMappingProfile) => {
@@ -181,8 +182,8 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillPermanentLocation('980$a');
       NewFieldMappingProfile.fillCallNumberType(holdingsMappingProfile.callNumberType);
       NewFieldMappingProfile.fillCallNumber('980$b " " 980$c');
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
+      NewFieldMappingProfile.save();
+      FieldMappingProfileView.closeViewMode(holdingsMappingProfile.name);
     };
 
     const createItemMappingProfile = (itemMappingProfile) => {
@@ -193,20 +194,8 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillStatus(itemMappingProfile.status);
       NewFieldMappingProfile.fillPermanentLoanType(itemMappingProfile.permanentLoanType);
       NewFieldMappingProfile.fillMaterialType(itemMappingProfile.materialType);
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfile.name);
-    };
-
-    const addPolToOrder = (title, method, format, price, quantity, inventory, type) => {
-      OrderLines.addPOLine();
-      OrderLines.fillPolByLinkTitle(title);
-      OrderLines.addAcquisitionMethod(method);
-      OrderLines.addOrderFormat(format);
-      OrderLines.fillPhysicalUnitPrice(price);
-      OrderLines.fillPhysicalUnitQuantity(quantity);
-      OrderLines.addCreateInventory(inventory);
-      OrderLines.addMaterialType(type);
-      OrderLines.savePol();
+      NewFieldMappingProfile.save();
+      FieldMappingProfileView.closeViewMode(itemMappingProfile.name);
     };
 
     it(
@@ -276,15 +265,15 @@ describe('data-import', () => {
           Orders.getOrdersApi({ limit: 1, query: `"id"=="${orderId}"` }).then((res) => {
             orderNumber = res[0].poNumber;
             Orders.checkIsOrderCreated(orderNumber);
-            addPolToOrder(
-              pol.title,
-              pol.acquisitionMethod,
-              pol.orderFormat,
-              pol.price,
-              pol.quantity,
-              pol.createInventory,
-              pol.materialType,
-            );
+            OrderLines.addPolToOrder({
+              title: pol.title,
+              method: pol.acquisitionMethod,
+              format: pol.orderFormat,
+              price: pol.price,
+              quantity: pol.quantity,
+              inventory: pol.createInventory,
+              materialType: pol.materialType,
+            });
             OrderLines.backToEditingOrder();
             Orders.openOrder();
 
@@ -310,7 +299,7 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile();
         Logs.openFileDetails(marcFileName);
         FileDetails.checkItemsStatusesInResultList(0, [
-          FileDetails.status.created,
+          FileDetails.status.updated,
           FileDetails.status.updated,
           FileDetails.status.created,
           FileDetails.status.created,

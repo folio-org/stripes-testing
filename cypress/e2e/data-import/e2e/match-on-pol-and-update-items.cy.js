@@ -42,6 +42,7 @@ import NewLocation from '../../../support/fragments/settings/tenant/locations/ne
 import FileManager from '../../../support/utils/fileManager';
 import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
@@ -230,7 +231,7 @@ describe('data-import', () => {
       });
       collectionOfProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(firstItem.barcode);
       cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${secondItem.title}"` }).then(
@@ -284,21 +285,21 @@ describe('data-import', () => {
         // create the first PO with POL
         Orders.createOrderWithOrderLineViaApi(
           NewOrder.getDefaultOrder(vendorId),
-          BasicOrderLine.getDefaultOrderLine(
-            firstItem.quantity,
-            firstItem.title,
-            location.id,
-            materialTypeId,
-            acquisitionMethodId,
-            firstItem.price,
-            firstItem.price,
-            [
+          BasicOrderLine.getDefaultOrderLine({
+            quantity: firstItem.quantity,
+            title: firstItem.title,
+            spesialLocationId: location.id,
+            specialMaterialTypeId: materialTypeId,
+            acquisitionMethod: acquisitionMethodId,
+            listUnitPrice: firstItem.price,
+            poLineEstimatedPrice: firstItem.price,
+            productIds: [
               {
                 productId: firstItem.productId,
                 productIdType: productIdTypeId,
               },
             ],
-          ),
+          }),
         ).then((res) => {
           firstOrderNumber = res;
 
@@ -313,21 +314,21 @@ describe('data-import', () => {
           // create second PO with POL
           Orders.createOrderWithOrderLineViaApi(
             NewOrder.getDefaultOrder(vendorId),
-            BasicOrderLine.getDefaultOrderLine(
-              secondItem.quantity,
-              secondItem.title,
-              location.id,
-              materialTypeId,
-              acquisitionMethodId,
-              secondItem.price,
-              secondItem.price,
-              [
+            BasicOrderLine.getDefaultOrderLine({
+              quantity: secondItem.quantity,
+              title: secondItem.title,
+              spesialLocationId: location.id,
+              specialMaterialTypeId: materialTypeId,
+              acquisitionMethod: acquisitionMethodId,
+              listUnitPrice: secondItem.price,
+              poLineEstimatedPrice: secondItem.price,
+              productIds: [
                 {
                   productId: secondItem.productId,
                   productIdType: productIdTypeId,
                 },
               ],
-            ),
+            }),
           ).then((respo) => {
             secondOrderNumber = respo;
 

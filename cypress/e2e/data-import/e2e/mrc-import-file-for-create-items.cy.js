@@ -19,6 +19,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
@@ -83,16 +84,16 @@ describe('data-import', () => {
     const createInstanceMappingProfile = (instanceMappingProfile) => {
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(instanceMappingProfile);
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfile.name);
+      NewFieldMappingProfile.save();
+      FieldMappingProfileView.closeViewMode(instanceMappingProfile.name);
     };
 
     const createHoldingsMappingProfile = (holdingsMappingProfile) => {
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
       NewFieldMappingProfile.fillPermanentLocation(holdingsMappingProfile.permanentLocation);
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
+      NewFieldMappingProfile.save();
+      FieldMappingProfileView.closeViewMode(holdingsMappingProfile.name);
     };
 
     const createItemMappingProfile = (itemMappingProfile) => {
@@ -101,8 +102,8 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillMaterialType(itemMappingProfile.materialType);
       NewFieldMappingProfile.fillPermanentLoanType(itemMappingProfile.permanentLoanType);
       NewFieldMappingProfile.fillStatus(itemMappingProfile.status);
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfile.name);
+      NewFieldMappingProfile.save();
+      FieldMappingProfileView.closeViewMode(itemMappingProfile.name);
     };
 
     after('delete test data', () => {
@@ -111,7 +112,7 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(specialJobProfile.profileName);
       collectionOfProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
     });
 

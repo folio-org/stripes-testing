@@ -3,7 +3,10 @@ import { including } from '@interactors/html';
 import { Button, Form, TextField, Accordion } from '../../../../../interactors';
 
 export default {
-  save: () => cy.do(Button('Save as profile & Close').click()),
+  save: () => {
+    cy.wait(1500);
+    cy.do(Button('Save as profile & Close').click());
+  },
 
   markFieldForProtection: (field) => {
     cy.get('div[class^="mclRow--"]')

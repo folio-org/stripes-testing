@@ -740,6 +740,10 @@ export default {
     internal: 'ui - tenant - settings.settings.location.view',
     gui: 'Settings (Tenant): View locations',
   },
+  settingsTenantEditLanguageLocationAndCurrency: {
+    internal: 'ui-tenant-settings.settings.locale',
+    gui: 'Settings (tenant): Can edit language, localization, and currency',
+  },
   settingsUsersCRUD: {
     internal: 'ui-users.settings.transfers.all',
     gui: 'Settings (Users): Can create, edit and remove transfer accounts',
@@ -754,7 +758,10 @@ export default {
     internal: 'ui-eholdings.settings.all',
     gui: 'Settings (eholdings): Can create, edit, view, and delete custom labels',
   },
-
+  uiSettingsDeveloperSessionLocale: {
+    internal: 'ui-developer.settings.locale',
+    gui: 'Settings (Developer): set session locale',
+  },
   // Timers
   okapiTimersPatch: {
     internal: 'okapi.proxy.self.timers.patch',

@@ -12,6 +12,7 @@ import {
   PaneSet,
   KeyValue,
   TextField,
+  Form,
 } from '../../../../../../interactors';
 
 const actionsButton = Button('Actions');
@@ -23,6 +24,9 @@ const sections = {
   section2: Section({ id: 'editRequestNotices' }),
   section3: Section({ id: 'editFeeFineNotices' }),
 };
+
+const noticePolicyForm = Form({ testId: 'form' });
+const saveButton = noticePolicyForm.find(Button('Save & close'));
 const activeCheckbox = Checkbox({ id: 'notice_policy_active' });
 
 export const actionsButtons = {
@@ -45,7 +49,6 @@ export default {
   openToSide(patronNoticePolicy) {
     cy.do(Link(patronNoticePolicy.name).click());
   },
-
   fillGeneralInformation: (patronNoticePolicy) => {
     cy.do([
       nameField.fillIn(patronNoticePolicy.name),
@@ -138,14 +141,25 @@ export default {
     ]);
   },
 
-  save: () => {
-    cy.do([Button({ id: 'footer-save-entity' }).click()]);
+  save() {
+    cy.expect(saveButton.has({ disabled: false }));
+    cy.do(saveButton.click());
   },
 
   choosePolicy: (patronNoticePolicy) => {
     cy.do(NavListItem(patronNoticePolicy.name).click());
   },
 
+  createPolicy({ noticePolicy, noticeTemplates = [] }) {
+    this.startAdding();
+    this.checkInitialState();
+    this.fillGeneralInformation(noticePolicy);
+    noticeTemplates.forEach((template, index) => {
+      this.addNotice(template.notice, index);
+    });
+    this.save();
+    cy.expect(noticePolicyForm.absent());
+  },
   editPolicy(patronNoticePolicy) {
     cy.do([
       NavListItem(patronNoticePolicy.name).click(),
@@ -154,14 +168,13 @@ export default {
     ]);
     this.fillGeneralInformation(patronNoticePolicy);
   },
-
   duplicatePolicy: () => {
     cy.do([
       actionsButton.click(),
       Button({ id: 'dropdown-clickable-duplicate-item' }).click(),
       nameField.fillIn(`DUPLICATETest_notice_${getRandomPostfix()}`),
-      Button({ id: 'footer-save-entity' }).click(),
     ]);
+    this.save();
   },
 
   deletePolicy: () => {

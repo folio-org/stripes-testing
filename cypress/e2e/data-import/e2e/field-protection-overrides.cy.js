@@ -186,10 +186,10 @@ describe('data-import', () => {
       ActionProfiles.deleteActionProfile(instanceActionProfile.name);
       ActionProfiles.deleteActionProfile(marcBibActionProfileOverride.name);
       ActionProfiles.deleteActionProfile(instanceActionProfileOverride.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(marcBibMappingProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(marcBibMappingProfileOverride.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileOverride.name);
+      FieldMappingProfileView.deleteViaApi(marcBibMappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(instanceMappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(marcBibMappingProfileOverride.name);
+      FieldMappingProfileView.deleteViaApi(instanceMappingProfileOverride.name);
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev1}`);
       FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);

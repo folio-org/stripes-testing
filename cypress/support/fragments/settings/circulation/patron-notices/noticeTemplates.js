@@ -2,10 +2,11 @@ import uuid from 'uuid';
 import CirculationPane from '../baseCirculationPane';
 import getRandomPostfix from '../../../../utils/stringTools';
 import { Button, Modal, including } from '../../../../../../interactors';
+import { NOTICE_CATEGORIES } from './noticePolicies';
 
-const getDefaultTemplate = ({ id = uuid(), category = 'Loan' } = {}) => ({
+const getDefaultTemplate = ({ id = uuid(), category = NOTICE_CATEGORIES.loan } = {}) => ({
   id,
-  category,
+  category: category.requestId,
   active: true,
   description: 'Notice policy template description',
   localizedTemplates: {
