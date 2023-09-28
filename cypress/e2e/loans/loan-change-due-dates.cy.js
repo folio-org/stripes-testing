@@ -2,7 +2,6 @@ import TopMenu from '../../support/fragments/topMenu';
 import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
-import LoansPage from '../../support/fragments/loans/loansPage';
 import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import DateTools from '../../support/utils/dateTools';
@@ -17,7 +16,6 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
 import Loans from '../../support/fragments/users/userDefaultObjects/loans';
-import userLoans from '../../support/fragments/users/loans/userLoans';
 
 const folioInstances = InventoryInstances.generateFolioInstances({
   properties: { missingPieces: '3', numberOfMissingPieces: '3' },
@@ -111,10 +109,28 @@ describe('change loan due dates', () => {
 
       const loanDueDateAfterChanged = DateTools.getCurrentEndOfDay().add(1, 'day');
       UserLoans.openLoanDetails(itemBarcode);
-      userLoans.openChangeDueDatePane();
+      UserLoans.openChangeDueDatePane();
       ChangeDueDateForm.fillDate(loanDueDateAfterChanged.format('MM/DD/YYYY'));
       ChangeDueDateForm.saveAndClose();
       LoanDetails.checkActionDueDate(FIRST_ACTION_ROW_INDEX, loanDueDateAfterChanged);
+      LoanDetails.checkStatusInList(FIRST_ACTION_ROW_INDEX, 'Checked out');
+      UsersCard.getApi(checkOutUser.userId).then((user) => {
+        Loans.getApi(checkOutUser.userId).then(([foundByLibraryLoan]) => {
+          cy.getLoanHistory(foundByLibraryLoan.id).then(([loanHistoryFirstAction]) => {
+            LoanDetails.checkAction(FIRST_ACTION_ROW_INDEX, 'Due date changed');
+            LoanDetails.checkSource(FIRST_ACTION_ROW_INDEX, user);
+            LoanDetails.checkActionDate(
+              FIRST_ACTION_ROW_INDEX,
+              loanHistoryFirstAction.loan.metadata.updatedDate,
+            );
+          });
+        });
+      });
+      const loanDueDateAfterChangedAgain = DateTools.getCurrentEndOfDay().add(6, 'day');
+      UserLoans.openChangeDueDatePane();
+      ChangeDueDateForm.fillDate(loanDueDateAfterChangedAgain.format('MM/DD/YYYY'));
+      ChangeDueDateForm.saveAndClose();
+      LoanDetails.checkActionDueDate(FIRST_ACTION_ROW_INDEX, loanDueDateAfterChangedAgain);
       LoanDetails.checkStatusInList(FIRST_ACTION_ROW_INDEX, 'Checked out');
       UsersCard.getApi(checkOutUser.userId).then((user) => {
         Loans.getApi(checkOutUser.userId).then(([foundByLibraryLoan]) => {
