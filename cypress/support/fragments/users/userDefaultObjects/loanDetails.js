@@ -29,7 +29,7 @@ const NewFeeFineButton = Button('New fee/fine');
 const DeclareLostModal = Modal(DECLARE_LOST_MODAL_TITLE);
 const AnonymizeAllLoansModal = Modal('Anonymize all loans?');
 const AnonymizeModal = Modal('Anonymization prevented');
-const LoanActionsList = MultiColumnList({ id: 'list-loanactions' });// MultiColumnList(LOAN_ACTIONS_LIST_ID);
+const LoanActionsList = MultiColumnList({ id: 'list-loanactions' });
 
 const checkDeclareLostButtonActivity = (disabled) => {
   cy.expect(DeclareLostButton.has({ disabled }));

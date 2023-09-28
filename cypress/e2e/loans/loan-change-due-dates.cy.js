@@ -97,8 +97,8 @@ describe('change loan due dates', () => {
     Users.deleteViaApi(checkOutUser.userId);
   });
   it(
-    'C581 Loan Details: Test change due date (TaaS)',
-    { tags: [TestTypes.smoke, DevTeams.volaris] },
+    'C581 Loan Details: Test change due date (Vega) (TaaS)',
+    { tags: [TestTypes.extendedPath, DevTeams.vega] },
     () => {
       const itemBarcode = folioInstances[0].barcodes[0];
       cy.visit(TopMenu.usersPath);
