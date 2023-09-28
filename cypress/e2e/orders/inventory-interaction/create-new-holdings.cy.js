@@ -61,7 +61,7 @@ describe('Orders: Inventory interaction', () => {
                 quantity: testData.instance.quantity,
                 title: testData.instance.instanceTitle,
                 instanceId: testData.instance.instanceId,
-                spesialLocationId: testData.locations[0].id,
+                specialLocationId: testData.locations[0].id,
                 listUnitPrice: testData.instance.listUnitPrice,
                 poLineEstimatedPrice: testData.instance.poLineEstimatedPrice,
                 eresource: testData.instance.eresource,
