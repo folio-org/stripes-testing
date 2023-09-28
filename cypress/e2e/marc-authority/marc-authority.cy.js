@@ -231,7 +231,7 @@ describe('Importing MARC Authority files', () => {
 
   it(
     'C350572 Edit an Authority record (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.parallel] },
     () => {
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
       MarcAuthorities.selectFirst(testData.authority.title);
