@@ -1360,4 +1360,24 @@ export default {
       cy.expect(box.has({ value: expectedValues[index] }));
     });
   },
+
+  saveAndKeepEditingUpdatedLinkedBibField() {
+    cy.do(saveAndKeepEditingBtn.click());
+    cy.expect([updateLinkedBibFieldsModal.exists(), saveButton.exists()]);
+  },
+
+  confirmUpdateLinkedBibsKeepEditing(linkedRecordsNumber) {
+    cy.do(saveButton.click());
+    cy.expect([
+      Callout(
+        `This record has successfully saved and is in process. ${linkedRecordsNumber} linked bibliographic record(s) updates have begun.`,
+      ).exists(),
+      updateLinkedBibFieldsModal.absent(),
+      rootSection.exists(),
+    ]);
+  },
+
+  checkAfterSaveAndCloseAuthority() {
+    cy.expect([calloutAfterSaveAndClose.exists(), viewMarcSection.exists()]);
+  },
 };

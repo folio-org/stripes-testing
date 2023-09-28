@@ -144,7 +144,7 @@ describe('data-import', () => {
 
     it(
       'C368009 Verify that no created SRS is present when job profile does not have create instance action: Case 2: Create holdings and item (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.parallel] },
       () => {
         // create mapping profiles
         cy.visit(SettingsMenu.mappingProfilePath);
