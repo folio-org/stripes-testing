@@ -94,6 +94,9 @@ const specRetInputNamesHoldings008 = [
   'records[3].content.Spec ret[2]',
 ];
 
+const paneHeader = PaneHeader({ id: 'paneHeaderquick-marc-editor-pane' });
+const linkHeadingsButton = Button('Link headings');
+
 const tag008HoldingsBytesProperties = {
   acqStatus: {
     interactor: TextField('AcqStatus'),
@@ -389,6 +392,10 @@ export default {
 
   clickLinkIconInTagField(rowIndex) {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).click());
+  },
+
+  checkAbsenceOfLinkHeadingsButton() {
+    cy.expect(paneHeader.find(linkHeadingsButton).absent());
   },
 
   clickUnlinkIconInTagField(rowIndex) {
