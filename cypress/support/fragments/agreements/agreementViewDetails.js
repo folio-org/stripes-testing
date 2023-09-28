@@ -41,6 +41,7 @@ const deleteButtonInConfirmation = Button('Delete', {
 const showMoreLink = Button('Show more');
 const notesAccordion = rootSection.find(Accordion({ id: 'notes' }));
 const organizationsAccordion = rootSection.find(Accordion({ id: 'organizations' }));
+const internalContactsAccordion = rootSection.find(Accordion({ id: 'internalContacts' }));
 const cancelButton = Button('Cancel');
 const calloutSuccess = Callout({ type: 'success' });
 const notesSection = Section({ id: 'notes' });
@@ -104,6 +105,15 @@ export default {
     cy.expect(rootSection.find(newNoteButton).exists());
   },
 
+  openInternalContactsSection() {
+    cy.do(
+      internalContactsAccordion
+        .find(Button({ id: 'accordion-toggle-button-internalContacts' }))
+        .click(),
+    );
+    cy.expect(internalContactsAccordion.has({ open: true }));
+  },
+
   openOrganizationsSection() {
     cy.do(organizationsAccordion.click());
     cy.expect(organizationsAccordion.has({ open: true }));
@@ -156,6 +166,10 @@ export default {
 
   verifyOrganizationsCount(itemCount) {
     cy.expect(organizationsAccordion.find(Badge()).has({ text: itemCount }));
+  },
+
+  verifyInternalContactsCount(itemCount) {
+    cy.expect(internalContactsAccordion.find(Badge()).has({ text: itemCount }));
   },
 
   verifyOrganizationCardIsShown(organizationName) {
@@ -290,6 +304,13 @@ export default {
         .find(MultiColumnListCell({ column: 'Title and details', content: including(details) }))
         .exists(),
       notesList.find(MultiColumnListCell({ column: 'Type', content: including(type) })).exists(),
+    ]);
+  },
+
+  verifyInternalContactsRow({ username, email }) {
+    cy.expect([
+      internalContactsAccordion.find(Card(including(username))),
+      internalContactsAccordion.find(KeyValue(including(email))).exists(),
     ]);
   },
 
