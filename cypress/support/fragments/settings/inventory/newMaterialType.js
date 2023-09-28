@@ -3,15 +3,11 @@ import uuid from 'uuid';
 import { Button, TextField } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
-export const defaultMaterialType = {
+const getDefaultMaterialType = () => ({
   source: 'local',
   name: `autotest_material_type_${getRandomPostfix()}`,
   id: uuid(),
-};
-
-const getDefaultMaterialType = () => {
-  return defaultMaterialType;
-};
+});
 
 export default {
   getDefaultMaterialType,
@@ -33,11 +29,5 @@ export default {
       .then(({ response }) => {
         return response;
       });
-  },
-
-  defaultMaterialType: {
-    id: uuid(),
-    name: '',
-    source: 'local',
   },
 };
