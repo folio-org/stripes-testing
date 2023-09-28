@@ -17,6 +17,7 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
 import Loans from '../../support/fragments/users/userDefaultObjects/loans';
+import userLoans from '../../support/fragments/users/loans/userLoans';
 
 const folioInstances = InventoryInstances.generateFolioInstances({
   properties: { missingPieces: '3', numberOfMissingPieces: '3' },
@@ -109,10 +110,10 @@ describe('change loan due dates', () => {
       UsersCard.viewCurrentLoans();
 
       const loanDueDateAfterChanged = DateTools.getCurrentEndOfDay().add(1, 'day');
-      LoansPage.openChangeDueDateForm();
+      UserLoans.openLoanDetails(itemBarcode);
+      userLoans.openChangeDueDatePane();
       ChangeDueDateForm.fillDate(loanDueDateAfterChanged.format('MM/DD/YYYY'));
       ChangeDueDateForm.saveAndClose();
-      UserLoans.openLoanDetails(itemBarcode);
       LoanDetails.checkActionDueDate(FIRST_ACTION_ROW_INDEX, loanDueDateAfterChanged);
       LoanDetails.checkStatusInList(FIRST_ACTION_ROW_INDEX, 'Checked out');
       UsersCard.getApi(checkOutUser.userId).then((user) => {
