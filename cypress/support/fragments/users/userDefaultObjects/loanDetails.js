@@ -22,7 +22,6 @@ import FeeFinesDetails from '../feeFineDetails';
 import PayFeeFaine from '../payFeeFaine';
 
 const DECLARE_LOST_MODAL_TITLE = 'Confirm item status: Declared lost';
-const LOAN_ACTIONS_LIST_ID = 'list-loanactions';
 const DeclareLostButton = Button('Declare lost');
 const AnonymizeAllButton = Button('Anonymize all loans');
 const ActionButton = Button({ ariaLabel: 'Action' });
@@ -30,7 +29,7 @@ const NewFeeFineButton = Button('New fee/fine');
 const DeclareLostModal = Modal(DECLARE_LOST_MODAL_TITLE);
 const AnonymizeAllLoansModal = Modal('Anonymize all loans?');
 const AnonymizeModal = Modal('Anonymization prevented');
-const LoanActionsList = MultiColumnList(LOAN_ACTIONS_LIST_ID);
+const LoanActionsList = MultiColumnList({ id: 'list-loanactions' });// MultiColumnList(LOAN_ACTIONS_LIST_ID);
 
 const checkDeclareLostButtonActivity = (disabled) => {
   cy.expect(DeclareLostButton.has({ disabled }));
@@ -130,6 +129,20 @@ export default {
     cy.then(() => MultiColumnListHeader({ id: 'list-column-action' }).index()).then(
       (columnIndex) => {
         cy.expect(LoanActionsList.find(MultiColumnListCell(action, { row, columnIndex })).exists());
+      },
+    );
+  },
+  checkActionDueDate(row, actionDueDate) {
+    cy.then(() => MultiColumnListHeader({ id: 'list-column-duedate' }).index()).then(
+      (columnIndex) => {
+        cy.expect(
+          LoanActionsList.find(
+            MultiColumnListCell(DateTools.getFormattedEndDateWithTime(actionDueDate), {
+              row,
+              columnIndex,
+            }),
+          ).exists(),
+        );
       },
     );
   },
