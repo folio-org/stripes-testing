@@ -12,7 +12,7 @@ import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import { QuickMarcEditor } from '../../../../interactors';
+import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 
 describe('MARC › MARC Holdings', () => {
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();

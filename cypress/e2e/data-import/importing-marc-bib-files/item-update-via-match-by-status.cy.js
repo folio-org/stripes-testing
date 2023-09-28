@@ -30,6 +30,7 @@ import ExportFile from '../../../support/fragments/data-export/exportFile';
 import FileManager from '../../../support/utils/fileManager';
 import StatisticalCodes from '../../../support/fragments/settings/inventory/instance-holdings-item/statisticalCodes';
 import Users from '../../../support/fragments/users/users';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -163,7 +164,7 @@ describe('data-import', () => {
       MatchProfiles.deleteMatchProfile(matchProfileItemStatus.profileName);
       collectionOfMappingAndActionProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpdate}`);
@@ -175,8 +176,8 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
       NewFieldMappingProfile.addStatisticalCode(statisticalCode, 4);
       NewFieldMappingProfile.fillPermanentLocation(`"${holdingsMappingProfile.permanentLocation}"`);
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
+      NewFieldMappingProfile.save();
+      FieldMappingProfileView.closeViewMode(holdingsMappingProfile.name);
     };
 
     const mappingProfileForCreateItem = (itemMappingProfile) => {
@@ -186,8 +187,8 @@ describe('data-import', () => {
       NewFieldMappingProfile.addStatisticalCode(statisticalCode, 6);
       NewFieldMappingProfile.fillPermanentLoanType(itemMappingProfile.permanentLoanType);
       NewFieldMappingProfile.fillStatus(itemMappingProfile.status);
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfile.name);
+      NewFieldMappingProfile.save();
+      FieldMappingProfileView.closeViewMode(itemMappingProfile.name);
     };
 
     const mappingProfileForUpdateItem = (itemMappingProfile) => {
@@ -198,8 +199,8 @@ describe('data-import', () => {
         `"${itemNote}"`,
         'Mark for all affected records',
       );
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfile.name);
+      NewFieldMappingProfile.save();
+      FieldMappingProfileView.closeViewMode(itemMappingProfile.name);
     };
 
     it(

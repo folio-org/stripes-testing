@@ -33,6 +33,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import SettingsJobProfiles from '../../../support/fragments/settings/dataImport/settingsJobProfiles';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
@@ -359,17 +360,17 @@ describe('data-import', () => {
       });
       collectionOfMappingAndActionProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       JobProfiles.deleteJobProfile(jobProfileNameCreate);
       ActionProfiles.deleteActionProfile(nameMarcBibActionProfile);
       ActionProfiles.deleteActionProfile(nameInstanceActionProfile);
       ActionProfiles.deleteActionProfile(nameHoldingsActionProfile);
       ActionProfiles.deleteActionProfile(nameItemActionProfile);
-      FieldMappingProfiles.deleteFieldMappingProfile(nameMarcBibMappingProfile);
-      FieldMappingProfiles.deleteFieldMappingProfile(nameInstanceMappingProfile);
-      FieldMappingProfiles.deleteFieldMappingProfile(nameHoldingsMappingProfile);
-      FieldMappingProfiles.deleteFieldMappingProfile(nameItemMappingProfile);
+      FieldMappingProfileView.deleteViaApi(nameMarcBibMappingProfile);
+      FieldMappingProfileView.deleteViaApi(nameInstanceMappingProfile);
+      FieldMappingProfileView.deleteViaApi(nameHoldingsMappingProfile);
+      FieldMappingProfileView.deleteViaApi(nameItemMappingProfile);
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
@@ -387,8 +388,8 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
       NewFieldMappingProfile.fillCatalogedDate('###TODAY###');
       NewFieldMappingProfile.fillInstanceStatusTerm();
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
+      NewFieldMappingProfile.save();
+      FieldMappingProfileView.closeViewMode(profile.name);
     };
 
     const createHoldingsMappingProfile = (profile) => {
@@ -399,8 +400,8 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillCallNumberType(profile.callNumberType);
       NewFieldMappingProfile.fillCallNumber('050$a " " 050$b');
       NewFieldMappingProfile.addElectronicAccess('"Resource"', '856$u');
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
+      NewFieldMappingProfile.save();
+      FieldMappingProfileView.closeViewMode(profile.name);
     };
 
     const createItemMappingProfile = (profile) => {
@@ -414,8 +415,8 @@ describe('data-import', () => {
       );
       NewFieldMappingProfile.fillPermanentLoanType(profile.permanentLoanType);
       NewFieldMappingProfile.fillStatus(profile.status);
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
+      NewFieldMappingProfile.save();
+      FieldMappingProfileView.closeViewMode(profile.name);
     };
 
     it(

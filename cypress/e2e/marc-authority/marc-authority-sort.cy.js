@@ -149,7 +149,7 @@ describe('MARC Authority Sort', () => {
 
   it(
     'C350579 Sorting and displaying results of search authority records by "Actions" dropdown menu (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.parallel] },
     () => {
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
       MarcAuthorities.chooseTypeOfHeading(headingTypes);

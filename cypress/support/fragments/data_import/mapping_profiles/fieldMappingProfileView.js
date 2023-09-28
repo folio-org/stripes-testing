@@ -21,7 +21,7 @@ const fullScreenView = Pane({ id: 'full-screen-view' });
 const associatedList = MultiColumnList({ id: 'associated-actionProfiles-list' });
 const overrideProtectedSectionAccordoin = Accordion({ id: 'override-protected-section' });
 
-const closeViewModeForMappingProfile = (profileName) => {
+const closeViewMode = (profileName) => {
   cy.do(
     Pane({ title: profileName })
       .find(Button({ icon: 'times' }))
@@ -52,11 +52,35 @@ const checkOverrideSectionOfMappingProfile = (field, status) => {
     }),
   );
 };
+const deleteViaApi = (profileName) => {
+  // get all mapping profiles
+  cy.okapiRequest({
+    path: 'data-import-profiles/mappingProfiles',
+    searchParams: {
+      query: '(cql.allRecords=1) sortby name',
+      limit: 1000,
+    },
+  })
+    .then(({ body: { mappingProfiles } }) => {
+      // find profile to delete
+      const profileToDelete = mappingProfiles.find((profile) => profile.name === profileName);
+
+      // delete profile with its id
+      cy.okapiRequest({
+        method: 'DELETE',
+        path: `data-import-profiles/mappingProfiles/${profileToDelete.id}`,
+      });
+    })
+    .then(({ status }) => {
+      if (status === 204) cy.log('###DELETED MAPPING PROFILE###');
+    });
+};
 
 export default {
   checkUpdatesSectionOfMappingProfile,
   checkOverrideSectionOfMappingProfile,
-  closeViewModeForMappingProfile,
+  closeViewMode,
+  deleteViaApi,
 
   checkCreatedMappingProfile: (
     profileName,
@@ -69,20 +93,20 @@ export default {
     cy.do(overrideProtectedSectionAccordoin.clickHeader());
     checkOverrideSectionOfMappingProfile(firstField, firstFieldStatus);
     checkOverrideSectionOfMappingProfile(secondField, secondFieldStatus);
-    closeViewModeForMappingProfile(profileName);
+    closeViewMode(profileName);
   },
 
   checkOverrideProtectedSection: (profileName) => {
     cy.do(overrideProtectedSectionAccordoin.clickHeader());
     cy.expect(overrideProtectedSectionAccordoin.find(HTML({ text: matching(/[-]|\d*/) })).exists());
-    closeViewModeForMappingProfile(profileName);
+    closeViewMode(profileName);
   },
 
-  editMappingProfile: () => {
+  edit: () => {
     cy.do([fullScreenView.find(actionsButton).click(), Button('Edit').click()]);
   },
 
-  deleteMappingProfile: (name) => {
+  delete: (name) => {
     cy.do([
       fullScreenView.find(actionsButton).click(),
       deleteButton.click(),
@@ -142,4 +166,5 @@ export default {
   verifyInstanceStatusTerm: (status) => cy.expect(KeyValue('Instance status term').has({ value: status })),
   verifyActionMenuAbsent: () => cy.expect(fullScreenView.find(actionsButton).absent()),
   verifyMappingProfileOpened: () => cy.expect(fullScreenView.exists()),
+  verifyVendorName: (vendorName) => cy.expect(KeyValue('Vendor name').has({ value: vendorName })),
 };
