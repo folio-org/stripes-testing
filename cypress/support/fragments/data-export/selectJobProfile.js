@@ -14,6 +14,7 @@ const searchIcon = TextFieldIcon();
 const jobProfilescSearchId = '#input-search-field';
 const xIconSelector = '[class^="endControls"]>div>div';
 let profilesCount;
+const searchButton = Button('Search');
 
 export default {
   verifySelectJobPane() {
@@ -37,13 +38,13 @@ export default {
   },
 
   verifySearchButton(isDisabled) {
-    cy.expect(Button('Search', { disabled: isDisabled }).exists());
+    cy.expect(searchButton.has({ disabled: isDisabled }));
   },
 
   searchForAJobProfile(profile) {
     cy.get(jobProfilescSearchId).type(profile);
     cy.get(xIconSelector).should('exist');
-    cy.do([Button('Search', { disabled: false }).click()]);
+    cy.do([searchButton.click()]);
   },
 
   verifySearchResult(filter, shouldBeEmpty = false) {
@@ -78,6 +79,6 @@ export default {
       });
     });
     cy.get(jobProfilescSearchId).invoke('val').should('equal', '');
-    expect(Button('Search').has({ disabled: true }));
+    expect(searchButton.has({ disabled: true }));
   },
 };
