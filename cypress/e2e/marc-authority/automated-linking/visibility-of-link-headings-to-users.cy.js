@@ -17,7 +17,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
     },
 
     fieldContents: {
-      tag100Content: 'Author, Person',
+      tag100Content: 'Author, Person $0 id001',
       tag245Content: 'New title',
       tagLDRContent: '00000naa\\a2200000uu\\4500',
     },
