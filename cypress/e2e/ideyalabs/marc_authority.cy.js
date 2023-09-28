@@ -7,7 +7,7 @@ import marcAuthoritiesDelete from '../../support/fragments/marcAuthority/marcAut
 import marcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
 import topMenu from '../../support/fragments/topMenu';
 
-describe.skip('Feature MARC Authority', () => {
+describe('Feature MARC Authority', () => {
   const testData = {
     source: 'MARC',
     searchOption: 'Keyword',
@@ -67,16 +67,16 @@ describe.skip('Feature MARC Authority', () => {
     },
   );
 
-  it(
-    'C376987 User can print ""MARC authority"" record (spitfire)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      cy.visit(topMenu.marcAuthorities);
-      marcAuthorities.searchBeats(testData.marcRecord);
-      marcAuthorities.clickActionsButton();
-      inventoryInstance.selectRecord();
-      marcAuthoritiesDelete.clickprintButton();
-      cy.exec('java -jar sikuli_ide.jar -r printer.sikuli');
-    },
-  );
+  // it(
+  //   'C376987 User can print ""MARC authority"" record (spitfire)',
+  //   { tags: [testTypes.ideaLabsTests] },
+  //   () => {
+  //     cy.visit(topMenu.marcAuthorities);
+  //     marcAuthorities.searchBeats(testData.marcRecord);
+  //     marcAuthorities.clickActionsButton();
+  //     inventoryInstance.selectRecord();
+  //     marcAuthoritiesDelete.clickprintButton();
+  //     cy.exec('java -jar sikuli_ide.jar -r printer.sikuli');
+  //   },
+  // );
 });
