@@ -50,6 +50,8 @@ const cancelButton = Button('Cancel');
 const calloutSuccess = Callout({ type: 'success' });
 const notesSection = Section({ id: 'notes' });
 const viewAgreementPane = Pane({ id: 'pane-view-agreement' });
+const newAgreementLineButton = Button({ id: 'add-agreement-line-button' });
+const viewInAgreementLineSearchButton = Button({ id: 'agreement-line-search' });
 
 function openAgreementLineAccordion() {
   cy.do(agreementLine.click());
@@ -427,5 +429,14 @@ export default {
     cy.wait('@downloadFile').then((res) => {
       expect(res.response.statusCode).to.eq(200);
     });
+  },
+
+  clickActionsForAgreementLines() {
+    cy.do([agreementLinesAccordion.find(actionsButton).click()]);
+    cy.expect([newAgreementLineButton.exists(), viewInAgreementLineSearchButton.exists()]);
+  },
+
+  clickNewAgreementLine() {
+    cy.do(newAgreementLineButton.click());
   },
 };
