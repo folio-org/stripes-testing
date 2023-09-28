@@ -4,7 +4,7 @@ import { randomFourDigitNumber } from '../../utils/stringTools';
 const defaultAgreementLine = (agreementId) => {
   return {
     type: 'detached',
-    description: `Agreement Lone Description ${randomFourDigitNumber()}`,
+    description: `Agreement Line Description ${randomFourDigitNumber()}`,
     owner: agreementId,
   };
 };
