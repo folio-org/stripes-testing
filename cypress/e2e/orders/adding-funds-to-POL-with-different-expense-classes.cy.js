@@ -1,7 +1,6 @@
 import permissions from '../../support/dictionary/permissions';
 import testType from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
-import getRandomPostfix from '../../support/utils/stringTools';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import TopMenu from '../../support/fragments/topMenu';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
@@ -13,8 +12,6 @@ import Orders from '../../support/fragments/orders/orders';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import NewInvoice from '../../support/fragments/invoices/newInvoice';
-import Invoices from '../../support/fragments/invoices/invoices';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 
@@ -30,9 +27,6 @@ describe('Orders', () => {
     reEncumber: true,
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
-  const invoice = { ...NewInvoice.defaultUiInvoice };
-  const errorToastMessage =
-    'The purchase order line fund distribution can not be changed because the order line is linked to an invoice line that currently has the "approved" status';
   const allocatedQuantity = '100';
   let user;
   let orderNumber;
@@ -70,7 +64,6 @@ describe('Orders', () => {
 
     Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
       organization.id = responseOrganizations;
-      invoice.accountingCode = organization.erpCode;
     });
     firstOrder.vendor = organization.name;
     cy.visit(TopMenu.ordersPath);
