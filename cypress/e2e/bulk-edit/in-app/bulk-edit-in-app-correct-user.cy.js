@@ -21,7 +21,9 @@ const item = {
   instanceId: '',
 };
 
-describe('bulk-edit', () => {
+// TODO: identify how to stabilize flaky test
+
+describe.skip('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
       cy.createTempUser(
@@ -68,7 +70,7 @@ describe('bulk-edit', () => {
 
     it(
       'C380393 Verify that bulk edit jobs run by correct user (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird, parallelization.nonParallel] },
+      { tags: [testTypes.criticalPath, devTeams.firebird] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');

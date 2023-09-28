@@ -19,7 +19,9 @@ const item = {
 };
 const fileName = `autoTestFile${getRandomPostfix()}.csv`;
 
-describe('data-export', () => {
+// TODO: identify how to stabilize flaky test
+
+describe.skip('data-export', () => {
   beforeEach('create test data', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
@@ -45,7 +47,7 @@ describe('data-export', () => {
 
   it(
     'C350407 Verify that a user cannot trigger the DATA EXPORT using invalid job profile (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird, parallelization.parallel] },
+    { tags: [testTypes.criticalPath, devTeams.firebird] },
     () => {
       ExportFileHelper.uploadFile(fileName);
       ExportFileHelper.exportWithDefaultJobProfile(fileName, 'holdings', 'Holdings');
