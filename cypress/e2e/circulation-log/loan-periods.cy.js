@@ -2,7 +2,6 @@ import uuid from 'uuid';
 
 import TopMenu from '../../support/fragments/topMenu';
 import { getTestEntityValue } from '../../support/utils/stringTools';
-import permissions from '../../support/dictionary/permissions';
 import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -10,13 +9,11 @@ import { LIBRARY_DUE_DATE_MANAGMENT, LOAN_PROFILE } from '../../support/constant
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import DateTools from '../../support/utils/dateTools';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
 import LoanPolicy from '../../support/fragments/circulation/loan-policy';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import { Parallelization } from '../../support/dictionary';
+import { Parallelization, TestTypes, DevTeams, Permissions } from '../../support/dictionary';
 import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
 
 let materialTypes;
@@ -88,9 +85,9 @@ const loanPolicies = [
 describe('circulation-log loan period', () => {
   before('create inventory instance', () => {
     cy.createTempUser([
-      permissions.circulationLogAll.gui,
-      permissions.checkoutAll.gui,
-      permissions.checkinAll.gui,
+      Permissions.circulationLogAll.gui,
+      Permissions.checkoutAll.gui,
+      Permissions.checkinAll.gui,
     ]).then((userProperties) => {
       userData = userProperties;
       cy.getAdminToken().then(() => {
@@ -139,6 +136,7 @@ describe('circulation-log loan period', () => {
                 rulesAsText: `${originalCirculationRules}${addedCirculationRule}`,
               });
             });
+            cy.login(userData.username, userData.password);
           });
       });
     });
@@ -196,6 +194,23 @@ describe('circulation-log loan period', () => {
       // Enter patron and item that meet the criteria of the circulation rule
       CheckOutActions.checkOutItemUser(userData.barcode, ITEM_BARCODE);
       const itemDueDate = new Date(DateTools.getFutureWeekDateObj());
+      // Check due date/time
+      CheckOutActions.checkItemDueDate(
+        DateTools.getFormattedDateWithSlashes({ date: itemDueDate }),
+      );
+    },
+  );
+
+  it(
+    'C647: Test "Months" loan period (vega) (TaaS)',
+    { tags: [TestTypes.criticalPath, DevTeams.vega, Parallelization.nonParallel] },
+    () => {
+      const ITEM_BARCODE = testData.folioInstances[2].barcodes[0];
+      // Navigate to checkout page
+      cy.visit(TopMenu.checkOutPath);
+      // Enter patron and item that meet the criteria of the circulation rule
+      CheckOutActions.checkOutItemUser(userData.barcode, ITEM_BARCODE);
+      const itemDueDate = new Date(DateTools.getAfterThreeMonthsDateObj());
       // Check due date/time
       CheckOutActions.checkItemDueDate(
         DateTools.getFormattedDateWithSlashes({ date: itemDueDate }),
