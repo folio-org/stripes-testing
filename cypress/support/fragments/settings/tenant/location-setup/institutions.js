@@ -1,13 +1,13 @@
-import TenantPane, { getDefaultTenant as getDefaultInstitutions } from '../baseTenantPane';
+import TenantPane, { getDefaultTenant as getDefaultInstitution } from '../baseTenantPane';
 
 export default {
   ...TenantPane,
   waitLoading() {
     TenantPane.waitLoading('Institutions');
   },
-  getDefaultInstitutions,
+  getDefaultInstitution,
   defaultUiInstitutions: {
-    body: getDefaultInstitutions(),
+    body: getDefaultInstitution(),
   },
   checkResultsTableContent(records) {
     TenantPane.checkResultsTableColumns([
@@ -25,7 +25,7 @@ export default {
   getViaApi() {
     return TenantPane.getViaApi({ path: 'location-units/institutions' });
   },
-  createViaApi(institutionsProperties = getDefaultInstitutions()) {
+  createViaApi(institutionsProperties = getDefaultInstitution()) {
     return TenantPane.createViaApi({
       path: 'location-units/institutions',
       body: institutionsProperties,
