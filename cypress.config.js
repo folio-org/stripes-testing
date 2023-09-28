@@ -19,7 +19,7 @@ module.exports = defineConfig({
   defaultCommandTimeout: 101000,
   pageLoadTimeout: 120000,
   env: {
-    OKAPI_HOST: 'https://folio-testing-cypress-diku.ci.folio.org',
+    OKAPI_HOST: 'https://folio-testing-cypress-okapi.ci.folio.org',
     OKAPI_TENANT: 'diku',
     diku_login: 'diku_admin',
     diku_password: 'admin',
@@ -91,6 +91,6 @@ module.exports = defineConfig({
 
       return config;
     },
-    baseUrl: 'https://folio-snapshot-2.dev.folio.org/',
+    baseUrl: 'https://folio-testing-cypress-diku.ci.folio.org',
   },
 });
