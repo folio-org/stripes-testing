@@ -169,7 +169,7 @@ describe('data-import', () => {
 
     it(
       'C350591 Match on VRN and update related Instance, Holdings, Item (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.parallel] },
       () => {
         // create order with POL
         Orders.createOrderWithOrderLineViaApi(
