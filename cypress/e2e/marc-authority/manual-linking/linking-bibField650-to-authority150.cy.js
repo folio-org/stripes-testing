@@ -22,6 +22,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
     tag650: '650',
     authorityMarkedValue: 'C375070 Speaking Oratory',
     subjectValue: 'C375070 Speaking Oratory--debating',
+    linkedIconText: 'Linked to MARC authority',
     accordion: 'Subject',
   };
 
@@ -118,14 +119,20 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
       );
       InventoryInstance.clickLinkButton();
       QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag650);
-      QuickMarcEditor.verifyTagFieldAfterLinking(bib650LinkedFieldValues);
+      QuickMarcEditor.verifyTagFieldAfterLinking(...bib650LinkedFieldValues);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndClose();
-      InventoryInstance.verifyInstanceSubject(2, 0, testData.subjectValue);
+      InventoryInstance.verifyInstanceSubject(
+        2,
+        0,
+        `${testData.linkedIconText}${testData.subjectValue}`,
+      );
       InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(testData.accordion);
       InventoryInstance.clickViewAuthorityIconDisplayedInInstanceDetailsPane(testData.accordion);
-      MarcAuthorities.checkRecordDetailPageMarkedValue(marcFiles[1].authorityHeading);
+      MarcAuthorities.checkDetailViewIncludesText(testData.authorityMarkedValue);
       InventoryInstance.goToPreviousPage();
+      cy.wait(6000);
+      InventoryInstance.viewSource();
 
       // InventoryInstance.clickViewAuthorityIconDisplayedInInstanceDetailsPane(testData.accordion);
       // MarcAuthorities.checkRecordDetailPageMarkedValue(testData.authorityMarkedValue);
