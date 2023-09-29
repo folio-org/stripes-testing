@@ -34,7 +34,6 @@ describe('change loan due dates', () => {
     cy.createTempUser([
       Permissions.loansAll.gui,
       Permissions.checkoutAll.gui,
-      Permissions.requestsAll.gui,
     ]).then((userProperties) => {
       checkOutUser = userProperties;
       cy.getAdminToken()
