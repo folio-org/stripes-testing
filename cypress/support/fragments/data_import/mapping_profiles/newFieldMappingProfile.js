@@ -20,7 +20,7 @@ import {
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
   EXISTING_RECORDS_NAMES,
-  ACQUISITION_METHOD_NAMES,
+  ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES,
 } from '../../../constants';
 
 const saveButton = Button('Save as profile & Close');
@@ -985,7 +985,7 @@ export default {
       text: including('Acquisition method'),
     });
     cy.do(acquisitionMethodSection.find(Dropdown()).open());
-    Object.values(ACQUISITION_METHOD_NAMES).forEach((method) => {
+    Object.values(ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES).forEach((method) => {
       cy.expect(DropdownMenu().find(Button(method)).exists());
     });
   },

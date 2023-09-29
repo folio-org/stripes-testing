@@ -172,10 +172,10 @@ export const RECEIVING_WORKFLOW_NAMES = {
 };
 
 export const ACQUISITION_METHOD_NAMES = {
-  APPROVAL_PLAN: 'Approval Plan',
-  DDA: 'Demand Driven Acquisitions (DDA)',
+  APPROVAL_PLAN: 'Approval plan',
+  DDA: 'Demand driven acquisitions (DDA)',
   DEPOSITORY: 'Depository',
-  EBA: 'Evidence Based Acquisitions (EBA)',
+  EBA: 'Evidence based acquisitions (EBA)',
   EXCHANGE: 'Exchange',
   FREE: 'Free',
   GIFT: 'Gift',
@@ -260,4 +260,20 @@ export const VENDOR_NAMES = {
 export const HOLDINGS_TYPE_NAMES = {
   ELECTRONIC: 'Electronic',
   MONOGRAPH: 'Monograph',
+};
+
+export const ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES = {
+  APPROVAL_PLAN: 'Approval Plan',
+  DDA: 'Demand Driven Acquisitions (DDA)',
+  DEPOSITORY: 'Depository',
+  EBA: 'Evidence Based Acquisitions (EBA)',
+  EXCHANGE: 'Exchange',
+  FREE: 'Free',
+  GIFT: 'Gift',
+  INTERNAL_TRANSFER: 'Internal transfer',
+  MEMBERSHIP: 'Membership',
+  OTHER: 'Other',
+  PURCHASE: 'Purchase',
+  PURCHASE_AT_VENDOR_SYSTEM: 'Purchase At Vendor System',
+  TECHNICAL: 'Technical',
 };
