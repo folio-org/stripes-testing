@@ -98,7 +98,13 @@ export default {
   },
 
   clickCirculationRulesHintItem(name) {
+    cy.expect(CodeMirrorHint().exists());
     cy.do(CodeMirrorHint().clickItem(kebabCase(name)));
+  },
+
+  clickCirculationRulesHintItemForPolicyType(name) {
+    cy.expect(CodeMirrorHint().exists());
+    cy.do(CodeMirrorHint().clickItem(name));
   },
 
   saveCirculationRules() {

@@ -1,6 +1,4 @@
-import devTeams from '../../../../support/dictionary/devTeams';
-import TestType from '../../../../support/dictionary/testTypes';
-import Parallelization from '../../../../support/dictionary/parallelization';
+import { TestTypes, DevTeams, Parallelization, Permissions } from '../../../../support/dictionary';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import CirculationRules from '../../../../support/fragments/circulation/circulation-rules';
 import OverdueFinePolicy, {
@@ -19,7 +17,6 @@ import NoticePolicy, {
   defaultNoticePolicy,
 } from '../../../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 import MaterialTypes from '../../../../support/fragments/settings/inventory/materialTypes';
-import permissions from '../../../../support/dictionary/permissions';
 import Users from '../../../../support/fragments/users/users';
 import NewMaterialType, {
   defaultMaterialType,
@@ -37,7 +34,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
   let newUserId;
 
   before(() => {
-    cy.createTempUser([permissions.uiCirculationViewCreateEditDelete.gui]).then(
+    cy.createTempUser([Permissions.uiCirculationViewCreateEditDelete.gui]).then(
       ({ username, password, userId }) => {
         newUserId = userId;
 
@@ -72,27 +69,48 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
 
   it(
     'C650: Test adding fallback policies (loan, request, notice, overdue, lost item) (vega) (TaaS)',
-    { tags: [TestType.criticalPath, devTeams.vega, Parallelization.nonParallel] },
+    { tags: [TestTypes.criticalPath, DevTeams.vega] },
     () => {
       // Delete Circulation Rules
       CirculationRules.clearCirculationRules();
       // Fill in priority
       CirculationRules.fillInPriority();
 
-      // Enter fallback-policy: and Choose each policy in turn and choose a value for each policy
-      CirculationRules.fillInFallbackPolicy({
-        loanPolicyName: LOAN_POLICY_NAMES.EXAMPLE_LOAN,
-        overdueFinePolicyName: OVERDUE_FINE_POLICY_NAMES.OVERDUE_FINE_POLICY,
-        lostItemFeePolicyName: LOST_ITEM_FEES_POLICY_NAMES.LOST_ITEM_FEES_POLICY,
-        requestPolicyName: REQUEST_POLICY_NAMES.ALLOW_ALL,
-        noticePolicyName: NOTICE_POLICY_NAMES.SEND_NO_NOTICES,
-      });
+      // Enter fallback-policy:
+      CirculationRules.fillInCirculationRules('fallback-policy: ');
+      CirculationRules.moveCursorFocusToTheEnd();
+
+      // A dropdown list of policy types is displayed
+      // Choose Lost item fee policies and choose a value for that policy
+      CirculationRules.clickCirculationRulesHintItemForPolicyType('Lost item fee policies');
+      CirculationRules.clickCirculationRulesHintItem(
+        LOST_ITEM_FEES_POLICY_NAMES.LOST_ITEM_FEES_POLICY,
+      );
+
+      // Choose Loan policies and choose a value for that policy
+      CirculationRules.clickCirculationRulesHintItemForPolicyType('Loan policies');
+      CirculationRules.clickCirculationRulesHintItem(LOAN_POLICY_NAMES.EXAMPLE_LOAN);
+
+      // Choose Overdue fine policies and choose a value for that policy
+      CirculationRules.clickCirculationRulesHintItemForPolicyType('Overdue fine policies');
+      CirculationRules.clickCirculationRulesHintItem(OVERDUE_FINE_POLICY_NAMES.OVERDUE_FINE_POLICY);
+
+      // Choose Request policies and choose a value for that policy
+      CirculationRules.clickCirculationRulesHintItemForPolicyType('Request policies');
+      CirculationRules.clickCirculationRulesHintItem(REQUEST_POLICY_NAMES.ALLOW_ALL);
+
+      // Choose Patron notice policies and choose a value for that policy
+      CirculationRules.clickCirculationRulesHintItemForPolicyType('Patron notice policies');
+      CirculationRules.clickCirculationRulesHintItem(NOTICE_POLICY_NAMES.SEND_NO_NOTICES);
+
+      // Navigate away without saving
+      cy.visit(SettingsMenu.circulationRulesPath);
     },
   );
 
   it(
     'C2268: Add notice policy to circulation rules (vega)',
-    { tags: [TestType.smoke, devTeams.vega, Parallelization.nonParallel] },
+    { tags: [TestTypes.smoke, DevTeams.vega, Parallelization.nonParallel] },
     () => {
       CirculationRules.clearCirculationRules();
       CirculationRules.fillInPriority();
@@ -137,7 +155,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
 
   it(
     'C654: Test behavior for incomplete vs complete circulation rules (i.e., all policy types must be present; else error)',
-    { tags: [TestType.smoke, devTeams.vega, Parallelization.nonParallel] },
+    { tags: [TestTypes.smoke, DevTeams.vega, Parallelization.nonParallel] },
     () => {
       CirculationRules.clearCirculationRules();
       CirculationRules.fillInPriority();
@@ -166,7 +184,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
 
   it(
     'C656: Ensure interface alerts user of syntax errors in rules',
-    { tags: [TestType.smoke, devTeams.vega, Parallelization.nonParallel] },
+    { tags: [TestTypes.smoke, DevTeams.vega, Parallelization.nonParallel] },
     () => {
       CirculationRules.clearCirculationRules();
       CirculationRules.fillInPriority();
