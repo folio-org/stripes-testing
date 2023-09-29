@@ -168,7 +168,7 @@ export default {
     ]);
     this.fillGeneralInformation(patronNoticePolicy);
   },
-  duplicatePolicy: () => {
+  duplicatePolicy() {
     cy.do([
       actionsButton.click(),
       Button({ id: 'dropdown-clickable-duplicate-item' }).click(),
@@ -177,7 +177,7 @@ export default {
     this.save();
   },
 
-  deletePolicy: () => {
+  deletePolicy() {
     cy.do([
       actionsButton.click(),
       Button({ id: 'dropdown-clickable-delete-item' }).click(),

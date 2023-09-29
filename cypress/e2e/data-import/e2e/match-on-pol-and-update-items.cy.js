@@ -288,7 +288,7 @@ describe('data-import', () => {
           BasicOrderLine.getDefaultOrderLine({
             quantity: firstItem.quantity,
             title: firstItem.title,
-            spesialLocationId: location.id,
+            specialLocationId: location.id,
             specialMaterialTypeId: materialTypeId,
             acquisitionMethod: acquisitionMethodId,
             listUnitPrice: firstItem.price,
@@ -317,7 +317,7 @@ describe('data-import', () => {
             BasicOrderLine.getDefaultOrderLine({
               quantity: secondItem.quantity,
               title: secondItem.title,
-              spesialLocationId: location.id,
+              specialLocationId: location.id,
               specialMaterialTypeId: materialTypeId,
               acquisitionMethod: acquisitionMethodId,
               listUnitPrice: secondItem.price,
