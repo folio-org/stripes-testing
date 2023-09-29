@@ -177,7 +177,7 @@ describe('data-import', () => {
           BasicOrderLine.getDefaultOrderLine({
             quantity: item.quantityPhysical,
             title: item.title,
-            spesialLocationId: locationId,
+            specialLocationId: locationId,
             specialMaterialTypeId: materialTypeId,
             acquisitionMethod: acquisitionMethodId,
             listUnitPrice: item.physicalUnitPrice,

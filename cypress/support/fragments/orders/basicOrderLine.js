@@ -3,14 +3,15 @@ import getRandomPostfix from '../../utils/stringTools';
 import NewMaterialType from '../settings/inventory/newMaterialType';
 
 const getDefaultOrderLine = ({
-  quantity,
-  title,
+  quantity = '1',
+  title = `autotest_po_line_name-${getRandomPostfix()}`,
   instanceId,
-  spesialLocationId,
+  specialLocationId,
   specialMaterialTypeId,
   acquisitionMethod = '',
   listUnitPrice = '1.0',
   poLineEstimatedPrice = '1.0',
+  fundDistribution = [],
   productIds = [],
   referenceNumbers = [],
   vendorAccount = '1234',
@@ -34,11 +35,11 @@ const getDefaultOrderLine = ({
       productIds,
       subscriptionInterval: 0,
     },
-    fundDistribution: [],
+    fundDistribution,
     isPackage: false,
     locations: [
       {
-        locationId: spesialLocationId,
+        locationId: specialLocationId,
         quantity,
         quantityPhysical: quantity,
       },
