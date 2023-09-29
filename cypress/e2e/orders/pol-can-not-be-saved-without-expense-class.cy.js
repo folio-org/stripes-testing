@@ -27,7 +27,6 @@ describe('Orders', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const allocatedQuantity = '100';
   let user;
-  let orderNumber;
   let servicePointId;
   let location;
 
@@ -78,6 +77,7 @@ describe('Orders', () => {
   });
 
   after(() => {
+    Orders.deleteOrderViaApi(order.id);
     Users.deleteViaApi(user.userId);
   });
 
@@ -87,8 +87,6 @@ describe('Orders', () => {
     () => {
       Orders.createOrderForRollover(order).then((firstOrderResponse) => {
         order.id = firstOrderResponse.id;
-        orderNumber = firstOrderResponse.poNumber;
-
         OrderLines.addPOLine();
         OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
         OrderLines.fillInPOLineInfoforPhysicalMaterialWithFundWithoutECAndCheckRequiredField(
