@@ -111,7 +111,7 @@ describe('data-import', () => {
         FileExtensions.verifyActionMenuOnViewPaneAbsent();
 
         cy.visit(SettingsMenu.marcFieldProtectionPath);
-        MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed()();
+        MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
         MarcFieldProtection.verifyNewButtonAbsent();
       },
     );
