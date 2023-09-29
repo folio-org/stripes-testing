@@ -2,6 +2,7 @@ import uuid from 'uuid';
 import moment from 'moment';
 import TestTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
+import parallelization from '../../support/dictionary/parallelization';
 import TopMenu from '../../support/fragments/topMenu';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
@@ -199,29 +200,33 @@ describe('Check In - Actions', () => {
     );
     cy.deleteLoanType(testData.loanTypeId);
   });
-  it('C347898 Hold slip (vega)', { tags: [TestTypes.criticalPath, devTeams.vega] }, () => {
-    cy.visit(TopMenu.checkOutPath);
-    Checkout.waitLoading();
-    // without this waiter, the user will not be found
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(3000);
-    CheckOutActions.checkOutUser(userData.barcode, userData.username);
-    CheckOutActions.checkOutItem(itemData.barcode);
-    CheckOutActions.endCheckOutSession();
+  it(
+    'C347898 Hold slip (vega)',
+    { tags: [TestTypes.criticalPath, devTeams.vega, parallelization.nonParallel] },
+    () => {
+      cy.visit(TopMenu.checkOutPath);
+      Checkout.waitLoading();
+      // without this waiter, the user will not be found
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(3000);
+      CheckOutActions.checkOutUser(userData.barcode, userData.username);
+      CheckOutActions.checkOutItem(itemData.barcode);
+      CheckOutActions.endCheckOutSession();
 
-    cy.visit(TopMenu.requestsPath);
-    NewRequest.createNewRequest({
-      requesterBarcode: requestUserData.barcode,
-      itemBarcode: itemData.barcode,
-      pickupServicePoint: testData.userServicePoint.name,
-      requestType: REQUEST_TYPES.HOLD,
-    });
+      cy.visit(TopMenu.requestsPath);
+      NewRequest.createNewRequest({
+        requesterBarcode: requestUserData.barcode,
+        itemBarcode: itemData.barcode,
+        pickupServicePoint: testData.userServicePoint.name,
+        requestType: REQUEST_TYPES.HOLD,
+      });
 
-    cy.visit(TopMenu.checkInPath);
-    CheckInActions.checkInItemGui(itemData.barcode);
-    AwaitingPickupForARequest.verifyModalTitle();
-    AwaitingPickupForARequest.unselectCheckboxPrintSlip();
-    AwaitingPickupForARequest.checkModalMessage(itemData);
-    AwaitingPickupForARequest.closeModal();
-  });
+      cy.visit(TopMenu.checkInPath);
+      CheckInActions.checkInItemGui(itemData.barcode);
+      AwaitingPickupForARequest.verifyModalTitle();
+      AwaitingPickupForARequest.unselectCheckboxPrintSlip();
+      AwaitingPickupForARequest.checkModalMessage(itemData);
+      AwaitingPickupForARequest.closeModal();
+    },
+  );
 });
