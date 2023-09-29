@@ -59,7 +59,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      fieldsForDeleteIds.forEach((fieldId) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(fieldId));
+      fieldsForDeleteIds.forEach((fieldId) => MarcFieldProtection.deleteViaApi(fieldId));
       // delete profiles
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
@@ -77,7 +77,7 @@ describe('data-import', () => {
       { tags: [TestTypes.criticalPath, DevTeams.folijet] },
       () => {
         // create protection fields
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
+        MarcFieldProtection.createViaApi({
           field: '*',
           indicator1: '*',
           indicator2: '*',
@@ -88,7 +88,7 @@ describe('data-import', () => {
           const id = resp.id;
           fieldsForDeleteIds.push(id);
         });
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
+        MarcFieldProtection.createViaApi({
           field: fieldsForDelete[2],
           indicator1: '*',
           indicator2: '*',

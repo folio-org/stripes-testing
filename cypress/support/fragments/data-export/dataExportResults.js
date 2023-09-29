@@ -102,7 +102,7 @@ export default {
           cy.do([
             resultRow.status.is({ content: 'Fail' }),
             resultRow.total.is({ content: recordsCount.toString() }),
-            resultRow.exported.is({ content: 0 }),
+            resultRow.exported.is({ content: '0' }),
             resultRow.jobProfile.is({ content: `Default ${jobType} export job profile` }),
             resultRow.runBy.is({ content: userNameToVerify }),
             resultRow.id.is({ content: jobId.toString() }),

@@ -7,6 +7,7 @@ const getDefaultOrganization = ({ id = uuid(), accounts = 0 } = {}) => {
     name: `autotest_name_${getRandomPostfix()}`,
     status: 'Active',
     code: `autotest_code_${getRandomPostfix()}`,
+    erpCode: getRandomPostfix(),
     isVendor: true,
     accounts: [...Array(accounts)].map(() => ({
       accountNo: getRandomPostfix(),

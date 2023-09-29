@@ -94,7 +94,7 @@ describe.skip('inventory', () => {
                   BasicOrderLine.getDefaultOrderLine({
                     quantity: itemQuantity,
                     title: instanceTitle,
-                    spesialLocationId: effectiveLocation.id,
+                    specialLocationId: effectiveLocation.id,
                   }),
                 ).then((order) => {
                   orderNumber = order;
