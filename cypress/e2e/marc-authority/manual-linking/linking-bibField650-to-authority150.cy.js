@@ -12,7 +12,6 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import Parallelization from '../../../support/dictionary/parallelization';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 
