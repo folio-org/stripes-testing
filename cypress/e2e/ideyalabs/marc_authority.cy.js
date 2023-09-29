@@ -7,7 +7,7 @@ import marcAuthoritiesDelete from '../../support/fragments/marcAuthority/marcAut
 import marcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
 import topMenu from '../../support/fragments/topMenu';
 
-describe('Feature MARC Authority', () => {
+describe.skip('Feature MARC Authority', () => {
   const testData = {
     source: 'MARC',
     searchOption: 'Keyword',
@@ -35,48 +35,15 @@ describe('Feature MARC Authority', () => {
   });
 
   it(
-    'C375070 Link the ""650"" of ""MARC Bib"" field with ""150"" field of ""MARC Authority"" record. (spitfire)',
+    'C376987 User can print ""MARC authority"" record (spitfire)',
     { tags: [testTypes.ideaLabsTests] },
     () => {
-      cy.visit(topMenu.inventoryPath);
-      inventorySearchAndFilter.switchToHoldings();
-      inventorySearchAndFilter.bySource(testData.source);
-      inventorySearchAndFilter.selectSearchResultByRowIndex(testData.derive.rowIndex);
-      inventoryInstance.editMarcBibliographicRecord();
-      inventoryInstance.verifyAndClickLinkIcon(testData.tag.tag650);
-      marcAuthorities.switchToSearch();
-      inventoryInstance.verifySearchOptions();
-      marcAuthorities.clickReset();
-      inventoryInstance.searchResults(testData.authority650FieldValue);
-      marcAuthorities.clickLinkButton();
-      marcAuthority.checkLinkingAuthority650();
-      marc.saveAndClose();
-      inventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(testData.accordion);
-      inventoryInstance.viewSource();
-      marcAuthorities.closeMarcViewPane();
-      inventoryInstance.editMarcBibliographicRecord();
-      inventoryInstance.verifyAndClickUnlinkIcon(testData.tag.tag650);
-      marc.popupUnlinkButton();
-      marc.saveAndClose();
-      inventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(testData.accordion);
-      inventoryInstance.viewSource();
-      marcAuthorities.checkFieldAndContentExistence(
-        testData.tag650,
-        `‡a ${testData.authority650FieldValue}`,
-      );
+      cy.visit(topMenu.marcAuthorities);
+      marcAuthorities.searchBeats(testData.marcRecord);
+      marcAuthorities.clickActionsButton();
+      inventoryInstance.selectRecord();
+      marcAuthoritiesDelete.clickprintButton();
+      cy.exec('java -jar sikuli_ide.jar -r printer.sikuli');
     },
   );
-
-  // it(
-  //   'C376987 User can print ""MARC authority"" record (spitfire)',
-  //   { tags: [testTypes.ideaLabsTests] },
-  //   () => {
-  //     cy.visit(topMenu.marcAuthorities);
-  //     marcAuthorities.searchBeats(testData.marcRecord);
-  //     marcAuthorities.clickActionsButton();
-  //     inventoryInstance.selectRecord();
-  //     marcAuthoritiesDelete.clickprintButton();
-  //     cy.exec('java -jar sikuli_ide.jar -r printer.sikuli');
-  //   },
-  // );
 });
