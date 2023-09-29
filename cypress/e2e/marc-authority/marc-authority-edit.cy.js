@@ -142,7 +142,7 @@ describe('MARC Authority -> Edit Authority record', () => {
     });
     Users.deleteViaApi(testData.userProperties.userId);
     marcFieldProtectionRules.forEach((ruleID) => {
-      if (ruleID) MarcFieldProtection.deleteMarcFieldProtectionViaApi(ruleID);
+      if (ruleID) MarcFieldProtection.deleteViaApi(ruleID);
     });
   });
 
@@ -215,7 +215,7 @@ describe('MARC Authority -> Edit Authority record', () => {
       QuickMarcEditor.pressSaveAndClose();
 
       protectedMARCFields.forEach((marcFieldProtectionRule) => {
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
+        MarcFieldProtection.createViaApi({
           indicator1: marcFieldProtectionRule[1],
           indicator2: marcFieldProtectionRule[2],
           subfield: marcFieldProtectionRule[3],

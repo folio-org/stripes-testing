@@ -23,6 +23,7 @@ const itemDetailsButton = Button('Item details');
 const markAsMissingButton = Button('Mark as missing');
 const newFeeFineButton = Button('New fee/fine');
 const renewButton = Button('Renew');
+const chageDueDateButton = Button('Change due date');
 const ellipsisButton = Button({ icon: 'ellipsis' });
 const rowInList = MultiColumnListRow({ indexRow: 'row-0' });
 
@@ -68,6 +69,9 @@ export default {
   openLoanDetails: (itemBarcode) => {
     cy.do(MultiColumnListRow({ text: matching(itemBarcode), isContainer: false }).click());
     return LoansPage;
+  },
+  openChangeDueDatePane: () => {
+    cy.do(chageDueDateButton.click());
   },
   closeLoansHistory() {
     cy.do(loansHistoryPane.find(Button({ ariaLabel: 'Close ' })).click());
