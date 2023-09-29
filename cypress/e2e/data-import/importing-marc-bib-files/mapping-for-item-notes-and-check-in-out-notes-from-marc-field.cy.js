@@ -124,7 +124,7 @@ describe('data-import', () => {
 
     it(
       'C368005 Verify the mapping for item record notes and check in/out notes from MARC field (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.parallel] },
       () => {
         // create Field mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();

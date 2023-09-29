@@ -131,7 +131,7 @@ describe('data-import', () => {
 
     it(
       'C11109 Update an instance based on an OCLC number match (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.parallel] },
       () => {
         // create mapping profile for creating instance
         cy.visit(SettingsMenu.mappingProfilePath);

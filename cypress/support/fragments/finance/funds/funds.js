@@ -60,6 +60,7 @@ const FinancialActivityAndOveragesMCList = MultiColumnList({ ariaRowCount: 5 });
 const resetButton = Button({ id: 'reset-funds-filters' });
 const addTransferModal = Modal({ id: 'add-transfer-modal' });
 const closeWithoutSavingButton = Button('Close without saving');
+const addExpenseClassButton = Button({ id: 'budget-status-expense-classes-add-button' });
 
 export default {
   defaultUiFund: {
@@ -708,7 +709,7 @@ export default {
 
   addExpensesClass: (firstExpenseClassName) => {
     cy.do([
-      Button({ id: 'budget-status-expense-classes-add-button' }).click(),
+      addExpenseClassButton.click(),
       Button({ name: 'statusExpenseClasses[0].expenseClassId' }).click(),
       SelectionOption(firstExpenseClassName).click(),
     ]);
@@ -718,6 +719,23 @@ export default {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
   },
+
+  addTwoExpensesClass: (firstExpenseClassName, secondExpenseClassName) => {
+    cy.do([
+      addExpenseClassButton.click(),
+      Button({ name: 'statusExpenseClasses[0].expenseClassId' }).click(),
+      SelectionOption(firstExpenseClassName).click(),
+      addExpenseClassButton.click(),
+      Button({ name: 'statusExpenseClasses[1].expenseClassId' }).click(),
+      SelectionOption(secondExpenseClassName).click(),
+    ]);
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000);
+    cy.do(saveAndCloseButton.click());
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000);
+  },
+
   deleteExpensesClass: () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
