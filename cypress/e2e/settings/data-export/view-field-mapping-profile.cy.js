@@ -16,7 +16,7 @@ const profileDetails = {
   recordType: 'Source record storage (entire record)',
   outputFormat: 'MARC',
   description: 'No value set-',
-  source: 'ADMINISTRATOR, DIKU',
+  source: 'ADMINISTRATOR, Diku_admin',
 };
 
 describe('setting: data-export', () => {

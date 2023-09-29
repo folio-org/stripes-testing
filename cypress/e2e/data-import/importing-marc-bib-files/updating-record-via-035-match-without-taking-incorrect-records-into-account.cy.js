@@ -76,7 +76,7 @@ describe('data-import', () => {
 
     before('create user and login', () => {
       cy.getAdminToken().then(() => {
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
+        MarcFieldProtection.createViaApi({
           indicator1: '*',
           indicator2: '*',
           subfield: '*',
@@ -86,7 +86,7 @@ describe('data-import', () => {
         }).then((firstResp) => {
           protectedFieldIds.push(firstResp.id);
         });
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
+        MarcFieldProtection.createViaApi({
           indicator1: '*',
           indicator2: '*',
           subfield: '*',
@@ -119,7 +119,7 @@ describe('data-import', () => {
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       Users.deleteViaApi(user.userId);
-      protectedFieldIds.forEach((fieldId) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(fieldId));
+      protectedFieldIds.forEach((fieldId) => MarcFieldProtection.deleteViaApi(fieldId));
       InventorySearchAndFilter.getInstancesByIdentifierViaApi(
         `${randomIdentifierCode}00999523`,
       ).then((instances) => {

@@ -93,7 +93,7 @@ describe('data-import', () => {
       cy.loginAsAdmin();
       cy.getAdminToken().then(() => {
         marcFieldProtected.forEach((field) => {
-          MarcFieldProtection.createMarcFieldProtectionViaApi({
+          MarcFieldProtection.createViaApi({
             indicator1: '*',
             indicator2: '*',
             subfield: '*',
@@ -109,7 +109,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      marcFieldProtectionId.forEach((field) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(field));
+      marcFieldProtectionId.forEach((field) => MarcFieldProtection.deleteViaApi(field));
       // delete profiles
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       JobProfiles.deleteJobProfile(jobProfileUpdate.profileName);
