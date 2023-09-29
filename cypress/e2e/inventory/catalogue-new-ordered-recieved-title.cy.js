@@ -84,7 +84,7 @@ describe('inventory', () => {
             BasicOrderLine.getDefaultOrderLine({
               quantity: itemQuantity,
               title: instanceTitle,
-              spesialLocationId: effectiveLocation.id,
+              specialLocationId: effectiveLocation.id,
               specialMaterialTypeId: materialTypeId,
             }),
           ).then((order) => {

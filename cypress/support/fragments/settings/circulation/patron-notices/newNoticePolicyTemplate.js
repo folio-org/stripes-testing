@@ -217,16 +217,12 @@ export default {
         }),
     ]);
   },
-
   checkAfterSaving(noticePolicyTemplate) {
-    const { name, description, category, subject, body } = noticePolicyTemplate;
-    Object.values({ name, description, category, subject, body }).forEach((prop) => {
-      cy.expect(
-        Pane(name)
-          .find(KeyValue({ value: prop }))
-          .exists(),
-      );
-    });
+    Object.values(noticePolicyTemplate).forEach((prop) => cy.expect(
+      Pane(noticePolicyTemplate.name)
+        .find(KeyValue({ value: prop }))
+        .exists(),
+    ));
   },
 
   delete: () => {

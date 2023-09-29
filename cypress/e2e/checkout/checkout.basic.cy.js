@@ -86,6 +86,7 @@ describe('Check Out - Actions ', () => {
     cy.createTempUser(
       [
         permissions.uiCirculationSettingsOtherSettings.gui,
+        permissions.uiUsersView.gui,
         permissions.uiUsersCreate.gui,
         permissions.inventoryAll.gui,
         permissions.checkoutCirculatingItems.gui,
