@@ -30,7 +30,6 @@ describe('data-import', () => {
   describe('Settings', () => {
     let user;
     let instanceHrid = null;
-    const marcFieldProtectionId = [];
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const quantityOfItems = '1';
     // unique file names
@@ -93,7 +92,16 @@ describe('data-import', () => {
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       Users.deleteViaApi(user.userId);
-      marcFieldProtectionId.forEach((field) => MarcFieldProtection.deleteViaApi(field));
+      MarcFieldProtection.getListViaApi({
+        query: `"field"=="${protectedFields.firstField}"`,
+      }).then((list) => {
+        list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+      });
+      MarcFieldProtection.getListViaApi({
+        query: `"field"=="${protectedFields.secondField}"`,
+      }).then((list) => {
+        list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+      });
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
         (instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);
@@ -112,9 +120,6 @@ describe('data-import', () => {
           data: 'amb',
           source: 'USER',
           field: protectedFields.firstField,
-        }).then((resp) => {
-          const id = resp.id;
-          marcFieldProtectionId.push = id;
         });
         MarcFieldProtection.createViaApi({
           indicator1: '*',
@@ -123,9 +128,6 @@ describe('data-import', () => {
           data: '*',
           source: 'USER',
           field: protectedFields.secondField,
-        }).then((resp) => {
-          const id = resp.id;
-          marcFieldProtectionId.push = id;
         });
 
         // create match profile

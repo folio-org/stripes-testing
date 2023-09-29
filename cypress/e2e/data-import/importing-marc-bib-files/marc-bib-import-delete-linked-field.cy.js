@@ -26,7 +26,6 @@ import {
   EXISTING_RECORDS_NAMES,
 } from '../../../support/constants';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {

@@ -21,7 +21,14 @@ describe('data-import', () => {
     let user = null;
     let instanceHrid = null;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-    const protectedField = '856';
+    const protectedFieldData = {
+      protectedField: '856',
+      in1: '*',
+      in2: '*',
+      subfield: '*',
+      data: '*',
+      source: 'User',
+    };
     const OCLCAuthentication = '100481406/PAOLF';
     const oclcForChanging = '466478385';
     const imported856Field =
@@ -77,7 +84,7 @@ describe('data-import', () => {
 
     after('delete test data', () => {
       MarcFieldProtection.getListViaApi({
-        query: `"field"=="${protectedField}"`,
+        query: `"field"=="${protectedFieldData.protectedField}"`,
       }).then((list) => {
         list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
       });
@@ -96,8 +103,8 @@ describe('data-import', () => {
       () => {
         cy.visit(SettingsMenu.marcFieldProtectionPath);
         MarcFieldProtection.verifyListOfExistingProfilesIsDisplayed();
-        MarcFieldProtection.create(protectedField);
-        MarcFieldProtection.verifyFieldProtectionIsCreated(protectedField);
+        MarcFieldProtection.create(protectedFieldData);
+        MarcFieldProtection.verifyFieldProtectionIsCreated(protectedFieldData.protectedField);
 
         cy.visit(SettingsMenu.targetProfilesPath);
         Z3950TargetProfiles.openTargetProfile();
@@ -123,7 +130,7 @@ describe('data-import', () => {
           `Record ${oclcForChanging} updated. Results may take a few moments to become visible in Inventory`,
         );
         InventoryInstance.viewSource();
-        InventoryViewSource.contains(`${protectedField}\t`);
+        InventoryViewSource.contains(`${protectedFieldData.protectedField}\t`);
         InventoryViewSource.contains(imported856Field);
       },
     );

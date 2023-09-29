@@ -35,7 +35,6 @@ describe('data-import', () => {
   describe('Settings', () => {
     let user = null;
     let instanceHrid;
-    const marcFieldProtectionId = [];
     const OCLCAuthentication = '100481406/PAOLF';
     const protectedFields = {
       firstField: '*',
@@ -91,7 +90,16 @@ describe('data-import', () => {
 
     after('delete test data', () => {
       FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-      marcFieldProtectionId.forEach((field) => MarcFieldProtection.deleteViaApi(field));
+      MarcFieldProtection.getListViaApi({
+        query: `"field"=="${protectedFields.firstField}"`,
+      }).then((list) => {
+        list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+      });
+      MarcFieldProtection.getListViaApi({
+        query: `"field"=="${protectedFields.secondField}"`,
+      }).then((list) => {
+        list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+      });
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
         (instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);
@@ -124,9 +132,6 @@ describe('data-import', () => {
           data: 'amb',
           source: 'USER',
           field: protectedFields.firstField,
-        }).then((resp) => {
-          const id = resp.id;
-          marcFieldProtectionId.push = id;
         });
         MarcFieldProtection.createViaApi({
           indicator1: '*',
@@ -135,9 +140,6 @@ describe('data-import', () => {
           data: '*',
           source: 'USER',
           field: protectedFields.secondField,
-        }).then((resp) => {
-          const id = resp.id;
-          marcFieldProtectionId.push = id;
         });
 
         // create match profile
