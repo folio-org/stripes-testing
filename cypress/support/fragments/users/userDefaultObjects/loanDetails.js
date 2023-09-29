@@ -22,7 +22,6 @@ import FeeFinesDetails from '../feeFineDetails';
 import PayFeeFaine from '../payFeeFaine';
 
 const DECLARE_LOST_MODAL_TITLE = 'Confirm item status: Declared lost';
-const LOAN_ACTIONS_LIST_ID = 'list-loanactions';
 const DeclareLostButton = Button('Declare lost');
 const AnonymizeAllButton = Button('Anonymize all loans');
 const ActionButton = Button({ ariaLabel: 'Action' });
@@ -30,7 +29,7 @@ const NewFeeFineButton = Button('New fee/fine');
 const DeclareLostModal = Modal(DECLARE_LOST_MODAL_TITLE);
 const AnonymizeAllLoansModal = Modal('Anonymize all loans?');
 const AnonymizeModal = Modal('Anonymization prevented');
-const LoanActionsList = MultiColumnList(LOAN_ACTIONS_LIST_ID);
+const LoanActionsList = MultiColumnList({ id: 'list-loanactions' });
 
 const checkDeclareLostButtonActivity = (disabled) => {
   cy.expect(DeclareLostButton.has({ disabled }));
@@ -133,6 +132,20 @@ export default {
       },
     );
   },
+  checkActionDueDate(row, actionDueDate) {
+    cy.then(() => MultiColumnListHeader({ id: 'list-column-duedate' }).index()).then(
+      (columnIndex) => {
+        cy.expect(
+          LoanActionsList.find(
+            MultiColumnListCell(DateTools.getFormattedEndDateWithTime(actionDueDate), {
+              row,
+              columnIndex,
+            }),
+          ).exists(),
+        );
+      },
+    );
+  },
   checkDateValid(date) {
     // TODO: clarify the reason of eslint warning
     // eslint-disable-next-line no-unused-expressions
@@ -156,6 +169,26 @@ export default {
   },
   checkActionDeclaredLost(row) {
     this.checkAction(row, ITEM_STATUS_NAMES.DECLARED_LOST);
+  },
+  checkDueDate(row, dueDate) {
+    this.checkDateValid(dueDate);
+
+    const expectedDueDate = DateTools.getFormattedDateWithTime(dueDate);
+
+    cy.then(() => MultiColumnListHeader({ id: 'list-column-duedate' }).index()).then(
+      (columnIndex) => {
+        cy.expect(
+          LoanActionsList.find(MultiColumnListCell(expectedDueDate, { row, columnIndex })).exists(),
+        );
+      },
+    );
+  },
+  checkLoanDetails({ action, dueDate, status, source, comment }) {
+    this.checkAction(0, action);
+    this.checkDueDate(0, dueDate);
+    this.checkStatusInList(0, status);
+    this.checkSource(0, source);
+    this.checkComments(0, comment);
   },
   checkLoansActionsHaveSameDueDate(firstRow, secondRow, dueDate) {
     this.checkDateValid(dueDate);
