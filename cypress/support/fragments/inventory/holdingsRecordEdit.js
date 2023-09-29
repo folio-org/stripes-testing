@@ -6,7 +6,10 @@ import {
   Select,
   SelectionList,
   Accordion,
-  TextArea, Callout, calloutTypes, Spinner,
+  TextArea,
+  Callout,
+  calloutTypes,
+  Spinner,
 } from '../../../../interactors';
 
 const rootForm = HTML({ className: including('holdingsForm-') });

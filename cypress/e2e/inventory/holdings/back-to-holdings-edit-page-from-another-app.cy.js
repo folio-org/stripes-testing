@@ -16,7 +16,7 @@ describe('Holdings', () => {
   let user;
   const instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
   const testData = {
-    instanceTitle
+    instanceTitle,
   };
 
   beforeEach(() => {
@@ -48,10 +48,15 @@ describe('Holdings', () => {
         });
       });
 
-    cy.createTempUser([permissions.inventoryAll.gui, permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
-      user = userProperties;
-      cy.login(user.username, user.password, { path: TopMenu.inventoryPath, waiter: InventorySearchAndFilter.waitLoading });
-    });
+    cy.createTempUser([permissions.inventoryAll.gui, permissions.moduleDataImportEnabled.gui]).then(
+      (userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventorySearchAndFilter.waitLoading,
+        });
+      },
+    );
   });
 
   afterEach(() => {
@@ -65,7 +70,7 @@ describe('Holdings', () => {
   });
 
   it(
-    '397327 Verify that no error appears after switch from Holdings Edit screen to another app and back',
+    'C397327 Verify that no error appears after switch from Holdings Edit screen to another app and back (folijet) (TaaS)',
     { tags: [testTypes.extendedPath, DevTeams.folijet] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.instanceTitle);
