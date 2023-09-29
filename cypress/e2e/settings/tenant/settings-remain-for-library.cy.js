@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Inventory from '../../../support/fragments/inventory/inventoryInstances';
@@ -11,6 +12,7 @@ import {
   Locations,
 } from '../../../support/fragments/settings/tenant';
 import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Settings: Tenant', () => {
   const testData = {
@@ -22,34 +24,38 @@ describe('Settings: Tenant', () => {
     locations: [],
   };
 
-  const createLocations = ({ institutions, campuses, service }) => {
+  const createLocations = () => {
+    const service = ServicePoints.getDefaultServicePoint();
     ServicePoints.createViaApi(service).then(({ body: servicePoint }) => {
       testData.servicePoint = servicePoint;
 
-      institutions.forEach(() => {
-        Institutions.createViaApi().then((institution) => {
-          testData.institutions.push(institution);
+      [...Array(2)].forEach(() => {
+        const institution = Institutions.getDefaultInstitution();
 
-          campuses.forEach(() => {
-            Campuses.createViaApi({
-              ...Campuses.getDefaultCampuse(),
-              institutionId: institution.id,
-            }).then((campus) => {
-              testData.campuses.push(campus);
+        Institutions.createViaApi(institution).then((locinst) => {
+          testData.institutions.push(locinst);
 
-              Libraries.createViaApi({
-                ...Libraries.getDefaultLibrary(),
-                campusId: campus.id,
-              }).then((library) => {
-                testData.libraries.push(library);
+          [...Array(2)].forEach(() => {
+            const campus = Campuses.getDefaultCampuse({ institutionId: locinst.id });
+
+            Campuses.createViaApi(campus).then((loccamp) => {
+              testData.campuses.push(loccamp);
+              const library = Libraries.getDefaultLibrary({ campusId: loccamp.id });
+
+              Libraries.createViaApi(library).then((loclib) => {
+                testData.libraries.push(loclib);
 
                 Locations.createViaApi({
-                  ...Locations.getDefaultLocation({
-                    institutionId: institution.id,
-                    campusId: campus.id,
-                    libraryId: library.id,
-                    servicePointId: servicePoint.id,
-                  }),
+                  id: uuid(),
+                  code: `autotest_location_code-${getRandomPostfix()}`,
+                  name: `autotest_location_name-${getRandomPostfix()}`,
+                  isActive: true,
+                  institutionId: locinst.id,
+                  campusId: loccamp.id,
+                  libraryId: loclib.id,
+                  discoveryDisplayName: `autotest_location_discovery-${getRandomPostfix()}`,
+                  servicePointIds: [servicePoint.id],
+                  primaryServicePoint: servicePoint.id,
                 }).then((location) => {
                   testData.locations.push(location);
                 });
@@ -63,12 +69,9 @@ describe('Settings: Tenant', () => {
 
   before('Create test data', () => {
     cy.getAdminToken().then(() => {
-      createLocations({
-        institutions: ['Institution AB', 'Institution CD'],
-        campuses: ['Campus A', 'Campus B'],
-        service: ServicePoints.getDefaultServicePointWithPickUpLocation(),
-      });
+      createLocations();
     });
+
     cy.createTempUser([
       Permissions.uiTenantSettingsSettingsLocation.gui,
       Permissions.inventoryAll.gui,
@@ -93,66 +96,70 @@ describe('Settings: Tenant', () => {
   });
 
   it(
-    'C399077 Verify that selected settings remain for "Libraries" (firebird)',
+    'C399077 Verify that selected settings remain for "Libraries" (firebird) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.firebird] },
     () => {
-      // #1 Step
+      // Select "Institution AB" in "Institution" dropdown on "Libraries" pane
       let pane = TenantPane.selectTenant(TENANTS.LIBRARIES);
       pane.checkEmptyTableContent();
       pane.selectOption('Institution', testData.institutions[0]);
       pane.checkEmptyTableContent();
 
-      // #2 Step
+      // Select "Institution AB" in "Institution" dropdown on "Campuses" pane
       pane = TenantPane.selectTenant(TENANTS.CAMPUSES);
       pane.checkEmptyTableContent();
       pane.selectOption('Institution', testData.institutions[0]);
       pane.checkResultsTableContent([testData.campuses[0], testData.campuses[1]]);
 
-      // #3 Step
+      // Navigate back to the "Libraries" option on the "Tenant" pane
       pane = TenantPane.selectTenant(TENANTS.LIBRARIES);
       pane.checkOptionSelected('Institution', testData.institutions[0]);
       pane.checkEmptyTableContent();
 
-      // #4 Step
+      // Select "Campus A" in the "Campus" dropdown
       pane.selectOption('Campus', testData.campuses[0]);
       pane.checkResultsTableContent([testData.libraries[0]]);
 
-      // #5 Step
+      // Select "Locations" option on the "Tenant" pane
       pane = TenantPane.selectTenant(TENANTS.LOCATIONS);
+      // Select "Institution AB" in "Institution" dropdown on "Locations" pane
       pane.selectOption('Institution', testData.institutions[0]);
+      // Select "Campus A" in the "Campus" dropdown
       pane.selectOption('Campus', testData.campuses[0]);
+      // Select "Library A" in the "Library" dropdown
       pane.selectOption('Library', testData.libraries[0]);
       pane.checkResultsTableContent([testData.locations[0]]);
 
-      // #6 Step
+      // Navigate back to the "Libraries" option on the "Tenant" pane
       pane = TenantPane.selectTenant(TENANTS.LIBRARIES);
       pane.checkOptionSelected('Institution', testData.institutions[0]);
       pane.checkOptionSelected('Campus', testData.campuses[0]);
       pane.checkResultsTableContent([testData.libraries[0]]);
 
-      // #7 Step
+      // Select "Campus B" in the "Campus" dropdown
       pane.selectOption('Campus', testData.campuses[1]);
       pane.checkResultsTableContent([testData.libraries[1]]);
 
-      // #8 Step
+      // Select "Inventory" app => Navigate back to the "Settings" - "Tenant" -> "Libraries" option on the "Tenant" pane
       cy.visit(TopMenu.inventoryPath);
       Inventory.waitContentLoading();
       cy.visit(SettingsMenu.tenantLibrariesPath);
       Libraries.waitLoading();
       pane.checkResultsTableContent([testData.libraries[1]]);
 
-      // #9 Step
+      // Select "Institution CD" in "Institution" dropdown on "Libraries" pane
       pane.selectOption('Institution', testData.institutions[1]);
+      // Select "Campus C" from Preconditions #3 in the "Campus" dropdown
       pane.selectOption('Campus', testData.campuses[2]);
       pane.checkResultsTableContent([testData.libraries[2]]);
 
-      // #10 Step
+      // Select "Institutions" option on the "Tenant" pane => Navigate back to the "Libraries" option on the "Tenant" pane
       pane = TenantPane.selectTenant(TENANTS.INSTITUTIONS);
       pane = TenantPane.selectTenant(TENANTS.LIBRARIES);
       pane.checkOptionSelected('Campus', testData.campuses[2]);
       pane.checkResultsTableContent([testData.libraries[2]]);
 
-      // #11 Step
+      // Select "Campus D" in the "Campus" dropdown
       pane.selectOption('Campus', testData.campuses[3]);
       pane.checkResultsTableContent([testData.libraries[3]]);
     },
