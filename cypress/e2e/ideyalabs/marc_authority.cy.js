@@ -1,10 +1,7 @@
-import marc from '../../support/ideyaLabs/marc';
 import testTypes from '../../support/dictionary/testTypes';
 import inventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import inventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import marcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import marcAuthoritiesDelete from '../../support/fragments/marcAuthority/marcAuthoritiesDelete';
-import marcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
 import topMenu from '../../support/fragments/topMenu';
 
 describe.skip('Feature MARC Authority', () => {
