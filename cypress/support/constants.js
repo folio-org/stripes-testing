@@ -261,3 +261,9 @@ export const HOLDINGS_TYPE_NAMES = {
   ELECTRONIC: 'Electronic',
   MONOGRAPH: 'Monograph',
 };
+
+export const REMOTE_STORAGE_PROVIDER_NAMES = {
+  Dematic_EMS: 'Dematic EMS (API)',
+  DDEMATIC_STAGING_DIRECTOR: 'Dematic StagingDirector (TCP/IP)',
+  CAIA_SOFT: 'CaiaSoft',
+};
