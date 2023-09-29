@@ -19,12 +19,10 @@ describe('Orders', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
-  const firstOrder = {
+  const order = {
     ...NewOrder.defaultOneTimeOrder,
-    orderType: 'Ongoing',
-    ongoing: { isSubscription: false, manualRenewal: false },
     approved: true,
-    reEncumber: true,
+    orderType: 'One-time',
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const allocatedQuantity = '100';
@@ -65,29 +63,18 @@ describe('Orders', () => {
     Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
       organization.id = responseOrganizations;
     });
-    firstOrder.vendor = organization.name;
+    order.vendor = organization.name;
     cy.visit(TopMenu.ordersPath);
-    Orders.createOrderForRollover(firstOrder).then((firstOrderResponse) => {
-      firstOrder.id = firstOrderResponse.id;
-      orderNumber = firstOrderResponse.poNumber;
-      Orders.checkCreatedOrder(firstOrder);
 
-      OrderLines.backToEditingOrder();
-      Orders.openOrder();
-    });
-
-    cy.createTempUser([
-      permissions.uiOrdersUnopenpurchaseorders.gui,
-      permissions.uiOrdersApprovePurchaseOrders.gui,
-      permissions.uiOrdersEdit.gui,
-      permissions.uiFinanceViewFundAndBudget.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      });
-    });
+    cy.createTempUser([permissions.uiOrdersCreate.gui, permissions.uiOrdersEdit.gui]).then(
+      (userProperties) => {
+        user = userProperties;
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
+      },
+    );
   });
 
   after(() => {
@@ -98,18 +85,20 @@ describe('Orders', () => {
     'C402773 PO line for "One-time" order can not be saved when "Expense class" field is empty (thunderjet)',
     { tags: [testType.criticalPath, devTeams.thunderjet] },
     () => {
-      Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList(orderNumber);
-      OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
-      OrderLines.fillInPOLineInfoforPhysicalMaterialWithFundAndEC(
-        defaultFund,
-        '20',
-        '1',
-        'Electronic',
-        '20',
-        location.institutionId,
-      );
+      Orders.createOrderForRollover(order).then((firstOrderResponse) => {
+        order.id = firstOrderResponse.id;
+        orderNumber = firstOrderResponse.poNumber;
+
+        OrderLines.addPOLine();
+        OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
+        OrderLines.fillInPOLineInfoforPhysicalMaterialWithFundWithoutECAndCheckRequiredField(
+          defaultFund,
+          '20',
+          '1',
+          '20',
+          location.institutionId,
+        );
+      });
     },
   );
 });
