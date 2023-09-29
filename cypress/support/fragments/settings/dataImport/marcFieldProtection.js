@@ -150,7 +150,7 @@ export default {
   },
 
   // checks
-  verifyListOfExistingProfilesIsDisplayed: () => cy.expect(fieldProtectionList.exists()),
+  verifyListOfExistingSettingsIsDisplayed: () => cy.expect(fieldProtectionList.exists()),
   verifyFieldProtectionIsCreated: (data) => cy.expect(fieldProtectionList.find(MultiColumnListCell({ content: data })).exists()),
   verifyNewButtonAbsent: () => cy.expect(Pane({ id: 'controlled-vocab-pane' }).find(newButton).absent()),
   verifyNewRow(rowNumber = 0) {

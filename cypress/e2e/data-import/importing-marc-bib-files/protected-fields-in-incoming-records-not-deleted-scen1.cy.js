@@ -102,7 +102,7 @@ describe('data-import', () => {
       { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.parallel] },
       () => {
         cy.visit(SettingsMenu.marcFieldProtectionPath);
-        MarcFieldProtection.verifyListOfExistingProfilesIsDisplayed();
+        MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed()();
         MarcFieldProtection.create(protectedFieldData);
         MarcFieldProtection.verifyFieldProtectionIsCreated(protectedFieldData.protectedField);
 

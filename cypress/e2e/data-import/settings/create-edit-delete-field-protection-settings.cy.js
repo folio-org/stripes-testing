@@ -51,7 +51,7 @@ describe('data-import', () => {
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
         cy.visit(SettingsMenu.marcFieldProtectionPath);
-        MarcFieldProtection.verifyListOfExistingProfilesIsDisplayed();
+        MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed()();
         MarcFieldProtection.clickNewButton();
         MarcFieldProtection.verifyNewRow();
         MarcFieldProtection.fillMarcFieldProtection(protectedFieldData);

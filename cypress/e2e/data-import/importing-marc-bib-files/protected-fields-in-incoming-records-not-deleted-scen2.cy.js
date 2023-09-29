@@ -95,7 +95,7 @@ describe('data-import', () => {
       { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         cy.visit(SettingsMenu.marcFieldProtectionPath);
-        MarcFieldProtection.verifyListOfExistingProfilesIsDisplayed();
+        MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed()();
         MarcFieldProtection.create('*', '5', 'NcD');
         MarcFieldProtection.verifyFieldProtectionIsCreated('NcD');
 
