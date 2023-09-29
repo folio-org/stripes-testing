@@ -725,7 +725,7 @@ export default {
     return newContent;
   },
 
-  updateExistingTagName({ currentTagName = validRecord.existingTag, newTagName }) {
+  updateExistingTagName(currentTagName = validRecord.existingTag, newTagName) {
     cy.then(() => QuickMarcEditorRow({ tagValue: currentTagName }).index()).then((index) => {
       cy.do(
         QuickMarcEditorRow({ index })
@@ -1379,5 +1379,9 @@ export default {
 
   checkAfterSaveAndCloseAuthority() {
     cy.expect([calloutAfterSaveAndClose.exists(), viewMarcSection.exists()]);
+  },
+
+  checkNoDeletePlaceholder() {
+    cy.expect(rootSection.find(HTML(including('class="deletedRowPlaceholder'))).absent());
   },
 };

@@ -14,6 +14,7 @@ import Permissions from '../../../support/dictionary/permissions';
 import InventorySteps from '../../../support/fragments/inventory/inventorySteps';
 import DateTools from '../../../support/utils/dateTools';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 
 describe('Create holding records with MARC source', () => {
   const testData = {
@@ -21,6 +22,8 @@ describe('Create holding records with MARC source', () => {
     tag001: '001',
     tag004: '004',
     tag005: '005',
+    tag151: '151',
+    tag400: '400',
     tag852: '852',
     tag866: '866',
     tag999: '999',
@@ -49,6 +52,7 @@ describe('Create holding records with MARC source', () => {
       '0',
       '\\\\\\\\\\\\',
     ],
+    sourceMARC: 'MARC',
   };
   const marcFiles = [
     {
@@ -240,6 +244,38 @@ describe('Create holding records with MARC source', () => {
           testData.tagLDRValueInSourceMask,
         );
       });
+    },
+  );
+
+  it(
+    'C359242 Create MARC Holdings | Displaying of placeholder message when user deletes a row (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      InventoryInstances.searchBySource(testData.sourceMARC);
+      InventoryInstances.selectInstance();
+      InventoryInstance.goToMarcHoldingRecordAdding();
+      QuickMarcEditor.waitLoading();
+      MarcAuthority.addNewField(5, '', '');
+      MarcAuthority.addNewField(6, testData.tag151, '');
+      MarcAuthority.addNewField(7, '', '$a');
+      MarcAuthority.addNewField(8, testData.tag400, '$a value');
+      QuickMarcEditor.deleteField(6);
+      // here and below: wait for deleted field to disappear
+      cy.wait(1000);
+      QuickMarcEditor.deleteField(6);
+      cy.wait(1000);
+      QuickMarcEditor.deleteField(6);
+      cy.wait(1000);
+      QuickMarcEditor.deleteField(6);
+      cy.wait(1000);
+      QuickMarcEditor.checkNoDeletePlaceholder();
+      QuickMarcEditor.updateExistingTagName(testData.tag852, '85');
+      QuickMarcEditor.deleteFieldAndCheck(5, testData.tag852);
+      QuickMarcEditor.checkNoDeletePlaceholder();
+      QuickMarcEditor.afterDeleteNotification('85');
+      QuickMarcEditor.undoDelete();
+      QuickMarcEditor.verifyTagValue(5, '85');
+      QuickMarcEditor.checkContent('', 5);
     },
   );
 });
