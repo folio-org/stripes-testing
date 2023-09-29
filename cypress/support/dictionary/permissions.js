@@ -289,8 +289,7 @@ export default {
     internal: 'ui-users.viewperms',
     gui: 'Users: Can view permissions assigned to users',
   },
-  uiUserCreate: { internal: 'ui-users.create', gui: 'Users: Create users' },
-  uiUsersCreate: { internal: 'ui-users.create', gui: 'Users: Can create new user' },
+  uiUsersCreate: { internal: 'ui-users.create', gui: 'Users: Can create and edit users' },
   uiUserEdit: { internal: 'ui-users.edit', gui: 'Users: Can edit user profile' },
   uiUsersDelete: {
     internal: 'ui-users.delete',
