@@ -26,6 +26,7 @@ import InteractorsTools from '../../utils/interactorsTools';
 import { randomFourDigitNumber } from '../../utils/stringTools';
 import FinanceHelper from '../finance/financeHelper';
 import InvoiceEditForm from './invoiceEditForm';
+import { INVOICE_STATUSES } from '../../constants';
 
 const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
 const invoiceDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-invoiceDetails' });
@@ -140,11 +141,13 @@ export default {
   },
   changeInvoiceStatusViaApi({ invoice, status }) {
     return this.approveInvoiceViaApi({ invoice }).then(() => {
-      this.getInvoiceViaApi({ query: `vendorInvoiceNo="${invoice.vendorInvoiceNo}"` }).then(
-        ({ invoices }) => {
-          this.updateInvoiceViaApi({ ...invoices[0], status });
-        },
-      );
+      if (status !== INVOICE_STATUSES.APPROVED) {
+        this.getInvoiceViaApi({ query: `vendorInvoiceNo="${invoice.vendorInvoiceNo}"` }).then(
+          ({ invoices }) => {
+            this.updateInvoiceViaApi({ ...invoices[0], status });
+          },
+        );
+      }
     });
   },
   createInviceLineViaApi(invoiceLineProperties) {

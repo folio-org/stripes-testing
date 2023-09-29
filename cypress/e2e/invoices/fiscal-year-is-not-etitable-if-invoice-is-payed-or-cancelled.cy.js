@@ -12,6 +12,7 @@ import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import InteractorsTools from '../../support/utils/interactorsTools';
+import { INVOICE_STATUSES } from '../../support/constants';
 
 describe('Invoices', () => {
   const createInvoiceWithStatus = (testData, status) => {
@@ -73,12 +74,17 @@ describe('Invoices', () => {
 
   [
     {
-      status: 'Paid',
+      status: INVOICE_STATUSES.APPROVED,
+      description:
+        'C387534 "Fiscal year" field is not editable for approved invoice (thunderjet) (TaaS)',
+    },
+    {
+      status: INVOICE_STATUSES.PAID,
       description:
         'C387536 "Fiscal year" field is not editable for paid invoice (thunderjet) (TaaS)',
     },
     {
-      status: 'Cancelled',
+      status: INVOICE_STATUSES.CANCELLED,
       description:
         'C387537 "Fiscal year" field is not editable for cancelled invoice (thunderjet) (TaaS)',
     },
