@@ -83,11 +83,9 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      MarcFieldProtection.getListOfMarcFieldProtectionViaApi({ query: 'data==NcD' }).then(
-        (response) => {
-          MarcFieldProtection.deleteMarcFieldProtectionViaApi(response[0].id);
-        },
-      );
+      MarcFieldProtection.getListViaApi({ query: 'data==NcD' }).then((response) => {
+        MarcFieldProtection.deleteViaApi(response[0].id);
+      });
       Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
       Users.deleteViaApi(user.userId);
     });
@@ -97,10 +95,9 @@ describe('data-import', () => {
       { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         cy.visit(SettingsMenu.marcFieldProtectionPath);
-        MarcFieldProtection.checkListOfExistingProfilesIsDisplayed();
-        MarcFieldProtection.createNewMarcFieldProtection();
-        MarcFieldProtection.fillMarcFieldProtection('*', '5', 'NcD');
-        MarcFieldProtection.checkFieldProtectionIsCreated('NcD');
+        MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
+        MarcFieldProtection.create('*', '5', 'NcD');
+        MarcFieldProtection.verifyFieldProtectionIsCreated('NcD');
 
         cy.visit(SettingsMenu.targetProfilesPath);
         Z3950TargetProfiles.openTargetProfile();

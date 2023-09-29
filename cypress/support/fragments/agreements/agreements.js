@@ -63,10 +63,29 @@ const defaultAgreementWithOrg = ({ organizationId, organizationName }) => {
   };
 };
 
+const agreementWithLinkedUser = (userId) => {
+  return {
+    periods: [
+      {
+        startDate: DateTools.getCurrentDateForFiscalYear(),
+      },
+    ],
+    name: `AutotestAgreement' ${randomFourDigitNumber()}`,
+    agreementStatus: 'active',
+    contacts: [
+      {
+        user: userId,
+        role: 'subject_specialist',
+      },
+    ],
+  };
+};
+
 export default {
   waitLoading,
   defaultAgreement,
   defaultAgreementWithOrg,
+  agreementWithLinkedUser,
 
   create: (specialAgreement) => {
     cy.do(newButton.click());

@@ -1380,4 +1380,12 @@ export default {
   checkAfterSaveAndCloseAuthority() {
     cy.expect([calloutAfterSaveAndClose.exists(), viewMarcSection.exists()]);
   },
+
+  verifyIconsAfterUnlinking(rowIndex) {
+    cy.expect([
+      QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).absent(),
+      QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorutyIconButton).absent(),
+      QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).exists(),
+    ]);
+  },
 };

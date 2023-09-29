@@ -262,6 +262,22 @@ export const HOLDINGS_TYPE_NAMES = {
   MONOGRAPH: 'Monograph',
 };
 
+export const ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES = {
+  APPROVAL_PLAN: 'Approval Plan',
+  DDA: 'Demand Driven Acquisitions (DDA)',
+  DEPOSITORY: 'Depository',
+  EBA: 'Evidence Based Acquisitions (EBA)',
+  EXCHANGE: 'Exchange',
+  FREE: 'Free',
+  GIFT: 'Gift',
+  INTERNAL_TRANSFER: 'Internal transfer',
+  MEMBERSHIP: 'Membership',
+  OTHER: 'Other',
+  PURCHASE: 'Purchase',
+  PURCHASE_AT_VENDOR_SYSTEM: 'Purchase At Vendor System',
+  TECHNICAL: 'Technical',
+};
+
 export const REMOTE_STORAGE_PROVIDER_NAMES = {
   Dematic_EMS: 'Dematic EMS (API)',
   DDEMATIC_STAGING_DIRECTOR: 'Dematic StagingDirector (TCP/IP)',
