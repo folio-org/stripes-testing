@@ -472,6 +472,10 @@ export default {
   },
   uiInvoicesApproveInvoices: { internal: 'ui-invoice.approve', gui: 'Invoice: Approve invoices' },
   uiInvoicesPayInvoices: { internal: 'ui-invoice.pay', gui: 'Invoice: Pay invoices' },
+  uiInvoicesPayInvoicesInDifferentFiscalYear: {
+    internal: 'ui-invoice.payDifferentFY',
+    gui: 'Invoice: Pay invoices in a different fiscal year',
+  },
   invoiceSettingsAll: {
     internal: 'ui-invoice.settings.all',
     gui: 'Settings (Invoices): Can view and edit settings',
@@ -485,6 +489,7 @@ export default {
     internal: 'ui-invoice.invoice.view',
     gui: 'Invoice: Can view Invoices and Invoice lines',
   },
+
   uiInvoicesDownloadBatchFileFromInvoiceRecord: {
     internal: 'ui-invoice.batchVoucher.download',
     gui: 'Invoice: Download batch file from invoice record',
