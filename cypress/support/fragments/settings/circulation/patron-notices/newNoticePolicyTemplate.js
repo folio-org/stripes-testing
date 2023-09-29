@@ -1,6 +1,5 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import moment from 'moment';
-import { getLongDelay } from '../../../../utils/cypressTools';
 import getRandomPostfix from '../../../../utils/stringTools';
 import {
   Accordion,

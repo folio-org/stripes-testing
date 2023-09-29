@@ -41,9 +41,9 @@ describe('remote-storage-configuration', () => {
         Configurations.closeWithoutSaving();
         Configurations.verifyCreatedConfiguration(name, configuration);
         Configurations.deleteRemoteStorage(name);
-      },
-      );
-    });
+      });
+    }
+  );
 
   it(
     'C163920 Edit remote storage configuration  (firebird)',
