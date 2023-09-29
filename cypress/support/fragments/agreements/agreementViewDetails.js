@@ -54,6 +54,7 @@ const viewAgreementPane = Pane({ id: 'pane-view-agreement' });
 const newAgreementLineButton = Button({ id: 'add-agreement-line-button' });
 const viewInAgreementLineSearchButton = Button({ id: 'agreement-line-search' });
 const noteTypeDropdown = Select({ name: 'type' });
+const agreementLineFilter = Button({ id: 'clickable-nav-agreementLines' });
 
 function openAgreementLineAccordion() {
   cy.do(agreementLine.click());
@@ -445,5 +446,9 @@ export default {
 
   clickNewAgreementLine() {
     cy.do(newAgreementLineButton.click());
+  },
+
+  openAgreementLineFilter() {
+    cy.do(agreementLineFilter.click());
   },
 };
