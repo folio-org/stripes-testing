@@ -14,6 +14,7 @@ import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthor
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import Parallelization from '../../../support/dictionary/parallelization';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
+import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 
 describe('Manual Linking Bib field to Authority 1XX', () => {
   const testData = {
@@ -52,6 +53,14 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
     '',
     `$0 id.loc.gov/authorities/subjects/${marcFiles[1].authority010FieldValue}`,
     '$2 fast',
+  ];
+
+  const bib650UnlinkedFieldValues = [
+    15,
+    testData.tag650,
+    '\\',
+    '7',
+    `$a C375070 Speaking Oratory $b debating $0 id.loc.gov/authorities/subjects/${marcFiles[1].authority010FieldValue} $2 fast`,
   ];
 
   before('Creating user', () => {
@@ -131,38 +140,28 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
       InventoryInstance.clickViewAuthorityIconDisplayedInInstanceDetailsPane(testData.accordion);
       MarcAuthorities.checkDetailViewIncludesText(testData.authorityMarkedValue);
       InventoryInstance.goToPreviousPage();
+      // Wait for the content to be loaded.
       cy.wait(6000);
+      InventoryInstance.waitLoading();
       InventoryInstance.viewSource();
-
-      // InventoryInstance.clickViewAuthorityIconDisplayedInInstanceDetailsPane(testData.accordion);
-      // MarcAuthorities.checkRecordDetailPageMarkedValue(testData.authorityMarkedValue);
-      // InventoryInstance.goToPreviousPage();
-
-      // // Wait for the content to be loaded.
-      // cy.wait(6000);
-      // InventoryInstance.viewSource();
-      // InventoryInstance.clickViewAuthorityIconDisplayedInMarcViewPane();
-      // MarcAuthorities.checkRecordDetailPageMarkedValue(testData.authorityMarkedValue);
-      // InventoryInstance.goToPreviousPage();
-      // MarcAuthorities.closeMarcViewPane();
-
-      // InventoryInstance.editMarcBibliographicRecord();
-      // QuickMarcEditor.clickUnlinkIconInTagField(18);
-      // QuickMarcEditor.verifyTagFieldAfterUnlinking(
-      //   18,
-      //   '240',
-      //   '1',
-      //   '0',
-      //   '$a Variations, $m piano, violin, cello, $n op. 44, $r E♭ major $0 id.loc.gov/authorities/names/n83130832',
-      // );
-      // QuickMarcEditor.checkLinkButtonExist(testData.tag240);
-      // QuickMarcEditor.pressSaveAndClose();
-      // QuickMarcEditor.checkAfterSaveAndClose();
-
-      // InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(testData.accordion);
-
-      // InventoryInstance.viewSource();
-      // InventoryInstance.checkAbsenceOfAuthorityIconInMarcViewPane();
+      InventoryInstance.checkExistanceOfAuthorityIconInMarcViewPane();
+      InventoryInstance.clickViewAuthorityIconDisplayedInMarcViewPane();
+      MarcAuthorities.checkDetailViewIncludesText(testData.authorityMarkedValue);
+      InventoryInstance.goToPreviousPage();
+      // Wait for the content to be loaded.
+      cy.wait(6000);
+      InventoryViewSource.waitLoading();
+      InventoryViewSource.close();
+      InventoryInstance.waitLoading();
+      InventoryInstance.editMarcBibliographicRecord();
+      QuickMarcEditor.clickUnlinkIconInTagField(bib650UnlinkedFieldValues[0]);
+      QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib650UnlinkedFieldValues);
+      QuickMarcEditor.verifyIconsAfterUnlinking(bib650UnlinkedFieldValues[0]);
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.checkAfterSaveAndClose();
+      InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(testData.accordion);
+      InventoryInstance.viewSource();
+      InventoryInstance.checkAbsenceOfAuthorityIconInMarcViewPane();
     },
   );
 });
