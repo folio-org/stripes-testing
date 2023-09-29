@@ -66,11 +66,6 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
 
         BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckbox(
-          'Administrative notes',
-          'Notes',
-          'Circulation Notes',
-        );
         BulkEditActions.openInAppStartBulkEditFrom();
 
         BulkEditActions.verifyItemOptions();
@@ -87,6 +82,11 @@ describe('bulk-edit', () => {
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
+        BulkEditSearchPane.changeShowColumnCheckbox(
+          'Administrative notes',
+          'Note',
+          'Circulation Notes',
+        );
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
           firstNote.bulkEdit,
@@ -96,7 +96,7 @@ describe('bulk-edit', () => {
 
         BulkEditSearchPane.verifyChangesUnderColumns('Administrative notes', firstNote.bulkEdit);
         BulkEditSearchPane.verifyChangesUnderColumns('Circulation Notes', secondNote);
-        BulkEditSearchPane.verifyChangesUnderColumns('Notes', thirdNote);
+        BulkEditSearchPane.verifyChangesUnderColumns('Note', thirdNote);
 
         TopMenuNavigation.navigateToApp('Inventory');
         InventorySearchAndFilter.switchToItem();

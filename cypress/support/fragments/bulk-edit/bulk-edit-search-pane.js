@@ -835,9 +835,6 @@ export default {
         .find(Checkbox({ name: 'Administrative notes', checked: false }))
         .exists(),
       DropdownMenu()
-        .find(Checkbox({ name: 'Notes', checked: false }))
-        .exists(),
-      DropdownMenu()
         .find(Checkbox({ name: 'Circulation Notes', checked: false }))
         .exists(),
       DropdownMenu()

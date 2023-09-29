@@ -78,23 +78,29 @@ export default {
   },
 
   createOrderViaApi(order) {
-    cy.createOrderApi(order).then((response) => {
-      cy.wrap(response.body.poNumber).as('orderNumber');
+    cy.createOrderApi(order).then(({ body }) => {
+      cy.wrap(body).as('order');
     });
-    return cy.get('@orderNumber');
+    return cy.get('@order');
   },
   createOrderWithOrderLineViaApi(order, orderLine) {
     cy.createOrderApi(order).then((response) => {
-      cy.wrap(response.body.poNumber).as('orderNumber');
+      cy.wrap(response.body).as('order');
       cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then(({ body }) => {
         orderLine.acquisitionMethod = body.acquisitionMethods[0].id;
         orderLine.purchaseOrderId = order.id;
         cy.createOrderLineApi(orderLine);
       });
     });
-    return cy.get('@orderNumber');
+    return cy.get('@order');
   },
-
+  updateOrderViaApi(order) {
+    return cy.okapiRequest({
+      method: 'PUT',
+      path: `orders/composite-orders/${order.id}`,
+      body: order,
+    });
+  },
   openOrder() {
     cy.do([
       orderDetailsPane

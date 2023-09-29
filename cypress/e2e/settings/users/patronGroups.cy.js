@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import TopMenu from '../../../support/fragments/topMenu';
 import TestType from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import Features from '../../../support/dictionary/features';
@@ -8,11 +9,11 @@ import Users from '../../../support/fragments/users/users';
 import Conditions from '../../../support/fragments/settings/users/conditions';
 import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
 import ManualCharges from '../../../support/fragments/settings/users/manualCharges';
-import AppPaths from '../../../support/fragments/app-paths';
 import UserCharge from '../../../support/fragments/users/userCharge';
 import UsersCard from '../../../support/fragments/users/usersCard';
 import Limits from '../../../support/fragments/settings/users/limits';
 import UserAllFeesFines from '../../../support/fragments/users/userAllFeesFines';
+import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 
 describe('Patron blocks relations with users, conditions', () => {
   const testData = {};
@@ -30,7 +31,6 @@ describe('Patron blocks relations with users, conditions', () => {
           (userProperties) => {
             testData.userId = userProperties.id;
             testData.username = userProperties.username;
-
             Conditions.getConditionsViaApi().then((patronBlockConditions) => {
               const testCondition =
                 Conditions.defaultConditions.defaultMaximumOustandingFeeFineBalance;
@@ -53,12 +53,9 @@ describe('Patron blocks relations with users, conditions', () => {
                   defaultAmount: testData.chargeAmount,
                 }).then((manualCharge) => {
                   testData.manualChargeId = manualCharge.id;
-                  cy.loginAsAdmin({
-                    path: AppPaths.getUserPreviewPath(userProperties.id),
-                    waiter: UsersCard.waitLoading,
-                  });
-                  // TODO: clarify the reason of extra reloading
-                  cy.reload();
+                  cy.loginAsAdmin();
+                  cy.visit(TopMenu.usersPath);
+                  UsersSearchPane.searchByLastName(testData.username);
                   UsersCard.startFeeFine();
                   UserCharge.fillRequiredFields(owner, manualCharge.feeFineType);
                   UserCharge.chargeOnly();

@@ -13,6 +13,7 @@ export default HTML.extend('button')
     button: (el) => el.tagName === 'BUTTON',
     anchor: (el) => el.tagName === 'A',
     default: (el) => el.classList.contains('default'),
+    singleValue: (el) => el.querySelector('[class^=singleValue-]').textContent,
     ariaLabel: (el) => el.ariaLabel,
     ariaExpanded: (el) => el.getAttribute('aria-expanded'),
     dataId: (el) => el.getAttribute('data-id'),
