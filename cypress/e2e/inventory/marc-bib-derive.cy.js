@@ -14,6 +14,8 @@ import DateTools from '../../support/utils/dateTools';
 
 describe('MARC -› MARC Bibliographic -› Derive MARC bib', () => {
   const testData = {
+    tag245: '245',
+    newTitle: `Derived_Bib_${getRandomPostfix()}`,
     marcFile: {
       marc: 'marcBibFileC396356.mrc',
       fileName: `testMarcFileC396356.${getRandomPostfix()}.mrc`,
@@ -40,11 +42,11 @@ describe('MARC -› MARC Bibliographic -› Derive MARC bib', () => {
         Logs.openFileDetails(testData.marcFile.fileName);
         Logs.getCreatedItemsID().then((link) => {
           createdRecordIDs.push(link.split('/')[5]);
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: `${TopMenu.inventoryPath}/view/${createdRecordIDs[0]}`,
+            waiter: InventoryInstances.waitContentLoading,
+          });
         });
-      });
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
       });
     });
   });
@@ -60,12 +62,12 @@ describe('MARC -› MARC Bibliographic -› Derive MARC bib', () => {
     'C396356 "Entered" value in "008" field updated when deriving new "MARC Bib" record (spitfire)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
-      InventoryInstance.searchByTitle(createdRecordIDs[0]);
-      InventoryInstances.selectInstance();
       InventoryInstance.deriveNewMarcBib();
       QuickMarcEditor.checkSubfieldsPresenceInTag008();
+      QuickMarcEditor.updateExistingField(testData.tag245, testData.newTitle);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndCloseDerive();
+      InventoryInstance.checkInstanceTitle(testData.newTitle);
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.checkSubfieldsPresenceInTag008();
       QuickMarcEditor.saveInstanceIdToArrayInQuickMarc(createdRecordIDs).then(() => {

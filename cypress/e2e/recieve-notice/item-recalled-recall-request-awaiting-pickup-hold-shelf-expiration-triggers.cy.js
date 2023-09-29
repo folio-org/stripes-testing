@@ -14,10 +14,14 @@ import Location from '../../support/fragments/settings/tenant/locations/newLocat
 import Users from '../../support/fragments/users/users';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import NoticePolicyApi from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
+import NoticePolicyApi, {
+  NOTICE_CATEGORIES,
+} from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
 import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
-import NewNoticePolicyTemplate from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
+import NewNoticePolicyTemplate, {
+  createNoticeTemplate,
+} from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 import RequestPolicy from '../../support/fragments/circulation/request-policy';
@@ -50,23 +54,28 @@ describe('Request notice triggers', () => {
     },
     ruleProps: {},
   };
-  const createNoticeTemplate = (noticeName) => {
-    return {
-      name: getTestEntityValue(noticeName),
-      description: 'Created by autotest team',
-      category: 'Request',
-      subject: getTestEntityValue(noticeName),
-      body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
-      previewText: `Test email body The Wines of Italy ${moment().format('ll')}`,
-    };
-  };
   const noticeTemplates = {
-    itemRecaled: { ...createNoticeTemplate('Item_recalled_template'), category: 'Loan' },
-    recallRequest: createNoticeTemplate('Recall_request_template'),
-    awaitingPickUp: createNoticeTemplate('Awaiting_pick_up_template'),
-    holdShelfBeforeOnce: createNoticeTemplate('Hold_shelf_expiration_before_once_template'),
-    holdShelfBeforeRecurring: createNoticeTemplate('Hold_shelf_expiration_before_recurring'),
-    holdShelfUponAt: createNoticeTemplate('Hold_shelf_expiration_upon_at'),
+    itemRecaled: { ...createNoticeTemplate('Item_recalled_template') },
+    recallRequest: createNoticeTemplate({
+      name: 'Recall_request_template',
+      category: NOTICE_CATEGORIES.request,
+    }),
+    awaitingPickUp: createNoticeTemplate({
+      name: 'Awaiting_pick_up_template',
+      category: NOTICE_CATEGORIES.request,
+    }),
+    holdShelfBeforeOnce: createNoticeTemplate({
+      name: 'Hold_shelf_expiration_before_once_template',
+      category: NOTICE_CATEGORIES.request,
+    }),
+    holdShelfBeforeRecurring: createNoticeTemplate({
+      name: 'Hold_shelf_expiration_before_recurring',
+      category: NOTICE_CATEGORIES.request,
+    }),
+    holdShelfUponAt: createNoticeTemplate({
+      name: 'Hold_shelf_expiration_upon_at',
+      category: NOTICE_CATEGORIES.request,
+    }),
   };
   const selectOptions = (template) => {
     const generalOptions = {
@@ -319,24 +328,27 @@ describe('Request notice triggers', () => {
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.itemRecaled);
-      delete noticeTemplates.itemRecaled.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.itemRecaled);
-      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.recallRequest);
-      delete noticeTemplates.recallRequest.previewText;
+
+      const dublicate = true;
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.recallRequest, dublicate);
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.recallRequest);
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.awaitingPickUp);
-      delete noticeTemplates.awaitingPickUp.previewText;
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.awaitingPickUp, dublicate);
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.awaitingPickUp);
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.holdShelfBeforeOnce);
-      delete noticeTemplates.holdShelfBeforeOnce.previewText;
-      NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.holdShelfBeforeOnce);
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(
-        noticeTemplates.holdShelfBeforeRecurring,
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(
+        noticeTemplates.holdShelfBeforeOnce,
+        dublicate,
       );
-      delete noticeTemplates.holdShelfBeforeRecurring.previewText;
+      NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.holdShelfBeforeOnce);
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(
+        noticeTemplates.holdShelfBeforeRecurring,
+        dublicate,
+      );
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.holdShelfBeforeRecurring);
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.holdShelfUponAt);
-      delete noticeTemplates.holdShelfUponAt.previewText;
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(
+        noticeTemplates.holdShelfUponAt,
+        dublicate,
+      );
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.holdShelfUponAt);
 
       cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);

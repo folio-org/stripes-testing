@@ -189,7 +189,6 @@ describe('Title Level Request. Request Detail', () => {
     'C350385 Check that user can change type from "Item" level to "Title" and save the request (vega)',
     { tags: [testTypes.criticalPath, devTeams.vega] },
     () => {
-      RequestsSearchResultsPane.verifyOptionsInActionsMenu();
       NewRequest.openNewRequestPane();
       NewRequest.waitLoadingNewRequestPage(tlrCheckboxExists);
       NewRequest.verifyTitleLevelRequestsCheckbox(unchecked);
@@ -203,11 +202,10 @@ describe('Title Level Request. Request Detail', () => {
       NewRequest.verifyRequestInformation(ITEM_STATUS_NAMES.AVAILABLE);
       NewRequest.enableTitleLevelRequest();
       NewRequest.verifyItemInformation(['0', instanceData.title]);
-      NewRequest.enterRequesterInfo({
+      NewRequest.enterRequesterInfoWithRequestType({
         requesterBarcode: userData.barcode,
         pickupServicePoint: testData.userServicePoint.name,
       });
-      NewRequest.chooseRequestType(REQUEST_TYPES.PAGE);
       NewRequest.saveRequestAndClose();
       RequestDetail.waitLoading();
       cy.wait('@createRequest').then((intercept) => {
@@ -220,7 +218,6 @@ describe('Title Level Request. Request Detail', () => {
     'C350386 Check that user can change type from "Title" level to "Item" and save the request (vega)',
     { tags: [testTypes.criticalPath, devTeams.vega] },
     () => {
-      RequestsSearchResultsPane.verifyOptionsInActionsMenu();
       NewRequest.openNewRequestPane();
       NewRequest.waitLoadingNewRequestPage(tlrCheckboxExists);
       NewRequest.verifyTitleLevelRequestsCheckbox(unchecked);
@@ -237,11 +234,10 @@ describe('Title Level Request. Request Detail', () => {
       ]);
       NewRequest.verifyRequestInformation(ITEM_STATUS_NAMES.AVAILABLE);
 
-      NewRequest.enterRequesterInfo({
+      NewRequest.enterRequesterInfoWithRequestType({
         requesterBarcode: userData.barcode,
         pickupServicePoint: testData.userServicePoint.name,
       });
-      NewRequest.chooseRequestType(REQUEST_TYPES.PAGE);
       NewRequest.saveRequestAndClose();
       RequestDetail.waitLoading();
       cy.wait('@createRequest').then((intercept) => {

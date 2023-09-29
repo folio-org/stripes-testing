@@ -94,13 +94,13 @@ export default {
       displayLabel(labelNumber).fillIn(labelName),
       saveButton.click(),
     ]);
-    // wait for setting to apply
-    cy.wait(1500);
     cy.expect([
       calloutEditLabelSettings.exists(),
       displayLabel(labelNumber).has({ value: labelName }),
       saveButton.has({ disabled: true }),
     ]);
+    // wait for setting to apply
+    cy.wait(2000);
   },
 
   setFullTextFinderForLabel(labelIndex) {

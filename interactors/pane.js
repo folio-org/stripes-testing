@@ -21,6 +21,7 @@ export const PaneContent = HTML.extend('pane content')
   .selector('[class^=paneContent-]')
   .filters({
     id: (el) => el.getAttribute('id'),
+    empty: (el) => !!el.querySelector('[class^=noResultsMessage]'),
   });
 
 export default HTML.extend('pane')

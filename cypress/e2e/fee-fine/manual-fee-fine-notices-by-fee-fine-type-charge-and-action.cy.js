@@ -9,7 +9,9 @@ import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import Users from '../../support/fragments/users/users';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
-import NewNoticePolicyTemplate from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
+import NewNoticePolicyTemplate, {
+  createNoticeTemplate,
+} from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import getRandomPostfix from '../../support/utils/stringTools';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
@@ -36,22 +38,15 @@ describe('Overdue fine', () => {
   const testData = {
     userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
-  const createNoticeTemplate = (noticeName, noticeCategory) => {
-    return {
-      name: `${noticeName}_${getRandomPostfix()}`,
-      description: 'Created by autotest team',
-      category: noticeCategory,
-      subject: `${noticeName}_${getRandomPostfix()}`,
-      body: '{{item.title}}',
-      previewText: 'The Wines of Italy',
-    };
-  };
   const noticeTemplates = {
-    manualFeeFineCharge: createNoticeTemplate('Manual_fee_fine_charge', 'Manual fee/fine charge'),
-    manualFeeFineAction: createNoticeTemplate(
-      'Manual_fee_fine_action',
-      'Manual fee/fine action (pay, waive, refund, transfer or cancel/error)',
-    ),
+    manualFeeFineCharge: createNoticeTemplate({
+      name: 'Manual_fee_fine_charge',
+      category: { name: 'Manual fee/fine charge' },
+    }),
+    manualFeeFineAction: createNoticeTemplate({
+      name: 'Manual_fee_fine_action',
+      category: { name: 'Manual fee/fine action (pay, waive, refund, transfer or cancel/error)' },
+    }),
   };
   const openUserFeeFine = (userId, feeFineId) => {
     cy.visit(AppPaths.getFeeFineDetailsPath(userId, feeFineId));
@@ -186,13 +181,11 @@ describe('Overdue fine', () => {
       };
 
       NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.manualFeeFineCharge);
-      delete noticeTemplates.manualFeeFineCharge.previewText;
       NewNoticePolicyTemplate.checkAfterSaving({
         ...noticeTemplates.manualFeeFineCharge,
         category: 'FeeFineCharge',
       });
       NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.manualFeeFineAction);
-      delete noticeTemplates.manualFeeFineAction.previewText;
       NewNoticePolicyTemplate.checkAfterSaving({
         ...noticeTemplates.manualFeeFineAction,
         category: 'FeeFineAction',

@@ -20,6 +20,7 @@ import {
   Link,
   Section,
   Card,
+  PaneContent,
 } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -30,14 +31,19 @@ import FileManager from '../../utils/fileManager';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderorders-results-pane-subtitle"]/span';
 const zeroResultsFoundText = '0 records found';
 const actionsButton = Button('Actions');
+
+const ordersResults = PaneContent({ id: 'orders-results-pane-content' });
+const ordersList = MultiColumnList({ id: 'orders-list' });
+const orderLineList = MultiColumnList({ id: 'order-line-list' });
 const orderDetailsPane = Pane({ id: 'order-details' });
-const searhInputId = 'input-record-search';
-const searchButton = Button('Search');
+
 const newButton = Button('New');
 const saveAndClose = Button('Save & close');
 const orderDetailsAccordion = Accordion({ id: 'purchaseOrder' });
 const createdByAdmin = 'ADMINISTRATOR, Diku_admin ';
 const searchField = SearchField({ id: 'input-record-search' });
+const searchButton = Button('Search');
+
 const admin = 'administrator';
 const buttonLocationFilter = Button({ id: 'accordion-toggle-button-pol-location-filter' });
 const buttonFundCodeFilter = Button({ id: 'accordion-toggle-button-fundCode' });
@@ -45,7 +51,7 @@ const buttonOrderFormatFilter = Button({ id: 'accordion-toggle-button-orderForma
 const buttonFVendorFilter = Button({ id: 'accordion-toggle-button-purchaseOrder.vendor' });
 const buttonRushFilter = Button({ id: 'accordion-toggle-button-rush' });
 const buttonSubscriptionFromFilter = Button({ id: 'accordion-toggle-button-subscriptionFrom' });
-const searchForm = SearchField({ id: 'input-record-search' });
+
 const ordersFiltersPane = Pane({ id: 'orders-filters-pane' });
 const ordersResultsPane = Pane({ id: 'orders-results-pane' });
 const buttonAcquisitionMethodFilter = Button({ id: 'accordion-toggle-button-acquisitionMethod' });
@@ -55,10 +61,10 @@ const resetButton = Button('Reset all');
 
 export default {
   searchByParameter(parameter, value) {
-    cy.wait(4000);
-    cy.do([searchForm.selectIndex(parameter), searchForm.fillIn(value)]);
-    cy.wait(2000);
-    cy.do(Button('Search').click());
+    cy.wait(1000);
+    cy.do([searchField.selectIndex(parameter), searchField.fillIn(value)]);
+    cy.expect(searchButton.has({ disabled: false }));
+    cy.do(searchButton.click());
   },
   waitLoading() {
     cy.expect([ordersFiltersPane.exists(), ordersResultsPane.exists()]);
@@ -71,6 +77,12 @@ export default {
     ]);
   },
 
+  createOrderViaApi(order) {
+    cy.createOrderApi(order).then((response) => {
+      cy.wrap(response.body.poNumber).as('orderNumber');
+    });
+    return cy.get('@orderNumber');
+  },
   createOrderWithOrderLineViaApi(order, orderLine) {
     cy.createOrderApi(order).then((response) => {
       cy.wrap(response.body.poNumber).as('orderNumber');
@@ -313,26 +325,31 @@ export default {
   selectVendorOnUi: (organizationName) => {
     cy.do([
       Button('Organization look-up').click(),
-      SearchField({ id: searhInputId }).fillIn(organizationName),
+      searchField.fillIn(organizationName),
       searchButton.click(),
     ]);
     SearchHelper.selectFromResultsList();
   },
 
+  selectOrderByPONumber(orderNumber) {
+    this.searchByParameter('PO number', orderNumber);
+    this.selectFromResultsList(orderNumber);
+  },
+
   checkCreatedOrder: (order) => {
-    cy.expect(Pane({ id: 'order-details' }).exists());
-    cy.expect(orderDetailsAccordion.find(KeyValue({ value: order.vendor })).exists());
-    cy.expect(orderDetailsAccordion.find(KeyValue({ value: createdByAdmin })).exists());
+    cy.expect(orderDetailsPane.exists());
+    cy.expect(purchaseOrderSection.find(KeyValue({ value: order.vendor })).exists());
+    cy.expect(purchaseOrderSection.find(KeyValue({ value: createdByAdmin })).exists());
   },
 
   checkCreatedOngoingOrder: (order) => {
-    cy.expect(Pane({ id: 'order-details' }).exists());
-    cy.expect(orderDetailsAccordion.find(KeyValue({ value: order.vendor })).exists());
-    cy.expect(orderDetailsAccordion.find(KeyValue({ value: order.orderType })).exists());
+    cy.expect(orderDetailsPane.exists());
+    cy.expect(purchaseOrderSection.find(KeyValue({ value: order.vendor })).exists());
+    cy.expect(purchaseOrderSection.find(KeyValue({ value: order.orderType })).exists());
   },
 
   checkDuplicatedOrder: (organization, user) => {
-    cy.expect(Pane({ id: 'order-details' }).exists());
+    cy.expect(orderDetailsPane.exists());
     cy.expect(
       Section({ id: 'POSummary' })
         .find(KeyValue({ value: 'Pending' }))
@@ -343,21 +360,21 @@ export default {
   },
 
   checkCreatedOrderFromTemplate: (organization) => {
-    cy.expect(Pane({ id: 'order-details' }).exists());
-    cy.expect(orderDetailsAccordion.find(KeyValue({ value: organization })).exists());
+    cy.expect(orderDetailsPane.exists());
+    cy.expect(purchaseOrderSection.find(KeyValue({ value: organization })).exists());
   },
 
   checkCreatedOrderWithOrderNumber: (organization, orderNumber) => {
-    cy.expect(Pane({ id: 'order-details' }).exists());
+    cy.expect(orderDetailsPane.exists());
     cy.expect([
-      orderDetailsAccordion.find(KeyValue({ value: organization })).exists(),
-      orderDetailsAccordion.find(KeyValue({ value: orderNumber })).exists(),
+      purchaseOrderSection.find(KeyValue({ value: organization })).exists(),
+      purchaseOrderSection.find(KeyValue({ value: orderNumber })).exists(),
     ]);
   },
 
   selectFromResultsList(number) {
-    cy.wait(4000);
-    cy.do(MultiColumnList({ id: 'orders-list' }).find(Link(number)).click());
+    cy.expect(ordersResults.is({ empty: false }));
+    cy.do(ordersList.find(Link(number)).click());
   },
 
   deleteOrderViaActions: () => {
@@ -367,6 +384,12 @@ export default {
       Button('Delete').click(),
       Button({ id: 'clickable-delete-order-confirmation-confirm' }).click(),
     ]);
+  },
+
+  checkDeletedErrorMassage: () => {
+    InteractorsTools.checkCalloutErrorMessage(
+      'This order or order line is linked to Invoice(s) and can not be deleted',
+    );
   },
 
   resetFilters: () => {
@@ -392,11 +415,11 @@ export default {
   },
 
   checkSearchResults: (orderNumber) => {
-    cy.expect(MultiColumnList({ id: 'orders-list' }).find(Link(orderNumber)).exists());
+    cy.expect(ordersList.find(Link(orderNumber)).exists());
   },
   checkSearchResultsWithClosedOrder: (orderNumber) => {
     cy.expect(
-      MultiColumnList({ id: 'orders-list' })
+      ordersList
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 0 }))
         .has({ content: `${orderNumber}\u00a0Canceled` }),
@@ -404,14 +427,14 @@ export default {
   },
   checkOrderlineSearchResults: (orderLineNumber) => {
     cy.expect(
-      MultiColumnList({ id: 'order-line-list' })
+      orderLineList
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 0 }))
         .has({ content: orderLineNumber }),
     );
   },
   checkOrderlineFilterInList: (orderLineNumber) => {
-    cy.expect(MultiColumnList({ id: 'order-line-list' }).has(Link(orderLineNumber)));
+    cy.expect(orderLineList.has(Link(orderLineNumber)));
   },
   closeThirdPane: () => {
     cy.do([
@@ -433,7 +456,7 @@ export default {
   },
   checkPoSearch(searchParamsMap, orderNumber) {
     for (const [key, value] of searchParamsMap.entries()) {
-      cy.do([searchField.selectIndex(key), searchField.fillIn(value), Button('Search').click()]);
+      cy.do([searchField.selectIndex(key), searchField.fillIn(value), searchButton.click()]);
       // verify that first row in the result list contains related order line title
       this.checkSearchResults(orderNumber);
       this.resetFilters();
@@ -479,9 +502,7 @@ export default {
     cy.do([
       Button({ id: 'accordion-toggle-button-filter-vendor' }).click(),
       Button('Organization look-up').click(),
-      Modal('Select Organization')
-        .find(SearchField({ id: searhInputId }))
-        .fillIn(invoice.vendorName),
+      Modal('Select Organization').find(searchField).fillIn(invoice.vendorName),
       searchButton.click(),
     ]);
     SearchHelper.selectFromResultsList();
@@ -572,9 +593,7 @@ export default {
     cy.do([
       buttonFVendorFilter.click(),
       Button({ id: 'purchaseOrder.vendor-button' }).click(),
-      Modal('Select Organization')
-        .find(SearchField({ id: searhInputId }))
-        .fillIn(invoice.vendorName),
+      Modal('Select Organization').find(searchField).fillIn(invoice.vendorName),
       searchButton.click(),
     ]);
     SearchHelper.selectFromResultsList();
@@ -614,13 +633,15 @@ export default {
     isDefaultSearchParamsRequired: false,
   }),
 
+  deleteOrderByOrderNumberViaApi(orderNumber) {
+    this.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((order) => {
+      this.deleteOrderViaApi(order[0].id);
+    });
+  },
+
   checkIsOrderCreated: (orderNumber) => {
     cy.do(Checkbox({ id: 'clickable-filter-workflowStatus-pending' }).click());
-    cy.expect(
-      MultiColumnList({ id: 'orders-list' })
-        .find(HTML(including(orderNumber)))
-        .exists(),
-    );
+    cy.expect(ordersList.find(HTML(including(orderNumber))).exists());
   },
 
   exportResoultsCSV: () => {
@@ -660,10 +681,10 @@ export default {
   },
 
   checkEditedOngoingOrder: (orderNumber, organizationName) => {
-    cy.expect(Pane({ id: 'order-details' }).exists());
-    cy.expect(orderDetailsAccordion.find(KeyValue({ value: orderNumber })).exists());
-    cy.expect(orderDetailsAccordion.find(KeyValue({ value: organizationName })).exists());
-    cy.expect(orderDetailsAccordion.find(KeyValue({ value: 'Ongoing' })).exists());
+    cy.expect(orderDetailsPane.exists());
+    cy.expect(purchaseOrderSection.find(KeyValue({ value: orderNumber })).exists());
+    cy.expect(purchaseOrderSection.find(KeyValue({ value: organizationName })).exists());
+    cy.expect(purchaseOrderSection.find(KeyValue({ value: 'Ongoing' })).exists());
   },
 
   errorMessage: (modalName, errorContent) => {

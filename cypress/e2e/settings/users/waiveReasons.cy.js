@@ -17,7 +17,7 @@ describe('Management of waive reasons', () => {
     () => {
       WaiveReasons.startAdding();
       WaiveReasons.checkSaveButtonState({ isDisabled: true });
-      let testReason = { reason: '', description: 'test description' };
+      let testReason = { name: '', description: 'test description' };
       WaiveReasons.fillReasonParameters(testReason);
       WaiveReasons.checkSaveButtonState({ isDisabled: true });
       WaiveReasons.checkReasonValidatorMessage();

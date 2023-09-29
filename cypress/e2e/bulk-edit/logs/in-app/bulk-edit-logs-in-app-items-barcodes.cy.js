@@ -10,11 +10,9 @@ import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-a
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 
 let user;
+const invalidItemBrcode = getRandomPostfix();
 const itemBarcodesFileName = `invalidItemBarcodes_${getRandomPostfix()}.csv`;
 const errorsFromMatchingFileName = `*-Matching-Records-Errors-${itemBarcodesFileName}*`;
-const otherError = `*-Errors-${itemBarcodesFileName}`;
-
-const invalidItemBrcode = getRandomPostfix();
 
 describe('Bulk Edit - Logs', () => {
   before('create test data', () => {
@@ -36,11 +34,7 @@ describe('Bulk Edit - Logs', () => {
   after('delete test data', () => {
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
-    FileManager.deleteFileFromDownloadsByMask(
-      errorsFromMatchingFileName,
-      itemBarcodesFileName,
-      otherError,
-    );
+    FileManager.deleteFileFromDownloadsByMask(errorsFromMatchingFileName, itemBarcodesFileName);
   });
 
   it(

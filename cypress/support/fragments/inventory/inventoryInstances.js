@@ -98,11 +98,15 @@ const createInstanceViaAPI = (instanceWithSpecifiedNewId) => cy.okapiRequest({
   body: instanceWithSpecifiedNewId,
 });
 
-const createHoldingViaAPI = (holdingWithIds) => cy.okapiRequest({
-  method: 'POST',
-  path: 'holdings-storage/holdings',
-  body: holdingWithIds,
-});
+const createHoldingViaAPI = (holdingWithIds) => {
+  return cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'holdings-storage/holdings',
+      body: holdingWithIds,
+    })
+    .then(({ body }) => body);
+};
 
 const createItemViaAPI = (itemWithIds) => cy.okapiRequest({
   method: 'POST',
@@ -429,11 +433,12 @@ export default {
     status = ITEM_STATUS_NAMES.AVAILABLE,
     properties = {},
   } = {}) {
-    return [...Array(count)].map((index) => ({
+    return [...Array(count).keys()].map((index) => ({
+      instanceId: uuid(),
       instanceTitle: `Instance-${getRandomPostfix()}`,
       barcodes: [generateUniqueItemBarcodeWithShift(index)],
       status,
-      properties,
+      properties: Array.isArray(properties) ? properties[index] : properties,
     }));
   },
   createFolioInstancesViaApi({ folioInstances = [], location = {}, sourceId } = {}) {
@@ -463,6 +468,7 @@ export default {
           instance: {
             instanceTypeId: types.instanceTypeId,
             title: item.instanceTitle,
+            id: item.instanceId,
           },
           holdings: [
             {
@@ -475,7 +481,9 @@ export default {
             barcode,
             status: { name: item.status },
             permanentLoanType: { id: types.loanTypeId },
-            materialType: { id: types.materialTypeId },
+            materialType: {
+              id: types.materialTypeId,
+            },
             ...item.properties,
           })),
         };
@@ -532,7 +540,7 @@ export default {
     });
     return cy.get('@ids');
   },
-
+  createHoldingViaAPI,
   getInstanceIdApi: (searchParams) => {
     return cy
       .okapiRequest({

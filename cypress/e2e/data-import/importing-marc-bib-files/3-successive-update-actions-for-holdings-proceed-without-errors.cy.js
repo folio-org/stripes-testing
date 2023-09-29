@@ -24,6 +24,7 @@ import Users from '../../../support/fragments/users/users';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import FileManager from '../../../support/utils/fileManager';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -139,11 +140,11 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
       ActionProfiles.deleteActionProfile(holdingsActionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(holdingsMappingProfile.name);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       collectionOfMappingAndActionProfilesForUpdate.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
@@ -163,8 +164,8 @@ describe('data-import', () => {
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
         NewFieldMappingProfile.fillPermanentLocation(holdingsMappingProfile.permanentLocation);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(holdingsMappingProfile.name);
 
         // create action profile
         cy.visit(SettingsMenu.actionProfilePath);
@@ -224,8 +225,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillHoldingsType(
           collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.holdingsType,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(
@@ -248,8 +249,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillcallNumberSuffix(
           collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.callNumberSuffix,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(
@@ -267,8 +268,8 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfilesForUpdate[2].mappingProfile.materialsSpecified,
           collectionOfMappingAndActionProfilesForUpdate[2].mappingProfile.urlPublicNote,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfilesForUpdate[2].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(

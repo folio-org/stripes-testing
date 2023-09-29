@@ -35,8 +35,7 @@ export default {
       Button(userBarcode).exists(),
     ]);
   },
-
-  async checkUserInfo({ barcode, personal }, patronGroup = '0') {
+  checkUserInfo({ barcode, personal }, patronGroup = '0') {
     return cy.expect([
       userPane.find(KeyValue({ value: 'Active' })).exists(),
       userPane.find(KeyValue({ value: patronGroup })).exists(),
@@ -44,7 +43,10 @@ export default {
       userPane.find(Link(barcode)).exists(),
     ]);
   },
-
+  checkOutUserByBarcode({ barcode, lastName: lastname, patronGroup }) {
+    this.checkOutUser(barcode);
+    this.checkUserInfo({ barcode, personal: { lastname } }, patronGroup.name);
+  },
   checkOutItem(itemBarcode) {
     return cy.do([
       TextField('Item ID').fillIn(itemBarcode),

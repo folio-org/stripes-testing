@@ -23,7 +23,6 @@ const errorsFromMatchingFileName = `*-Matching-Records-Errors-${validAndInvalidI
 const previewOfProposedChangesFileName = `*-Updates-Preview-${validAndInvalidInstanceHRIDsFileName}`;
 const updatedRecordsFileName = `*-Changed-Records*-${validAndInvalidInstanceHRIDsFileName}`;
 const errorsFromCommittingFileName = `*-Committing-changes-Errors-${validAndInvalidInstanceHRIDsFileName}`;
-const otherErrors = `*-Errors-${validAndInvalidInstanceHRIDsFileName}`;
 
 const item = {
   barcode: `456-${getRandomPostfix()}`,
@@ -186,7 +185,6 @@ describe('Bulk Edit - Logs', () => {
       updatedRecordsFileName,
       errorsFromCommittingFileName,
       errorsFromMatchingFileName,
-      otherErrors,
     );
   });
 

@@ -84,8 +84,11 @@ export default {
     cy.expect(deliveryTypeAddressTypeSelect.has({ disabled: false }));
     cy.do(fulfillmentPreferenceSelect.choose(FULFILMENT_PREFERENCES.HOLD_SHELF));
     cy.do(requestExpirationDateInput.fillIn(this.expirationDates[isTransit].formValue));
+    cy.wait(500);
     cy.do(pickupServicePointSelect.choose(this.servicePoint));
+    cy.wait(500);
     this.saveAndClose();
+    cy.wait(2000);
     cy.expect(
       requestExpirationDateKeyValue.has({ value: this.expirationDates[isTransit].uiValue }),
     );

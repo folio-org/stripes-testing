@@ -1,4 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
+import moment from 'moment';
+import { getLongDelay } from '../../../../utils/cypressTools';
 import getRandomPostfix from '../../../../utils/stringTools';
 import {
   Accordion,
@@ -17,6 +19,7 @@ import {
   RichEditor,
   including,
   MetaSection,
+  Form,
 } from '../../../../../../interactors';
 import richTextEditor from '../../../../../../interactors/rich-text-editor';
 import { NOTICE_CATEGORIES } from './noticePolicies';
@@ -28,7 +31,8 @@ const titles = {
   templates: 'Patron notice templates',
 };
 const patronNoticeTemplatePaneContent = PaneContent({ id: 'patron-notice-template-pane-content' });
-const saveButton = Button({ id: 'footer-save-entity' });
+const patronNoticeForm = Form({ testId: 'patronNoticeForm' });
+const saveButton = patronNoticeForm.find(Button('Save & close'));
 const newButton = Button({ id: 'clickable-create-entry' });
 const activeCheckbox = Checkbox({ id: 'input-patron-notice-active' });
 const categorySelect = Select({ name: 'category' });
@@ -39,12 +43,38 @@ const nameField = TextField({ id: 'input-patron-notice-name' });
 const subjectField = TextField({ id: 'input-patron-notice-subject' });
 const descriptionField = TextArea({ id: 'input-patron-notice-description' });
 const bodyField = richTextEditor();
+const previewModal = Modal({ id: 'preview-modal' });
+
 const defaultUi = {
   name: `Test_template_${getRandomPostfix()}`,
   active: 'Yes',
   description: 'Template created by autotest team',
   subject: 'Subject_Test',
   body: 'Test_email_body',
+};
+export const createNoticeTemplate = ({
+  name = 'autotest_template_name',
+  category = NOTICE_CATEGORIES.loan,
+  noticeOptions = {},
+}) => {
+  const templateName = `${name}-${getRandomPostfix()}`;
+  return {
+    name: templateName,
+    category: category.requestId,
+    description: 'Created by autotest team',
+    subject: `autotest_template_subject_${getRandomPostfix()}`,
+    body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
+    previewText: `Test email body The Wines of Italy ${moment().format('ll')}`,
+    // notice option
+    notice: {
+      templateName,
+      noticeName: category.name,
+      noticeId: category.id,
+      format: 'Email',
+      action: 'Item aged to lost',
+      ...noticeOptions,
+    },
+  };
 };
 
 export default {
@@ -59,32 +89,38 @@ export default {
     return cy.do(Link(noticePolicyTemplate.name).click());
   },
 
-  create: (noticePolicyTemplate, autoSave = true) => {
-    cy.get('#input-patron-notice-name').type(noticePolicyTemplate.name);
-    cy.do([
-      bodyField.fillIn(noticePolicyTemplate.body),
-      descriptionField.fillIn(noticePolicyTemplate.description),
-      subjectField.fillIn(noticePolicyTemplate.subject),
-      bodyField.has({ value: noticePolicyTemplate.body }),
-      descriptionField.has({ value: noticePolicyTemplate.description }),
-      subjectField.has({ value: noticePolicyTemplate.subject }),
-    ]);
+  create(noticePolicyTemplate, autoSave = true) {
+    // need to wait for validation to complete
+    cy.wait(300);
+    cy.do(nameField.fillIn(noticePolicyTemplate.name));
+    cy.expect(nameField.has({ value: noticePolicyTemplate.name }));
+
+    cy.do(descriptionField.fillIn(noticePolicyTemplate.description));
+    cy.expect(descriptionField.has({ value: noticePolicyTemplate.description }));
+
+    cy.do(subjectField.fillIn(noticePolicyTemplate.subject));
+    cy.expect(subjectField.has({ value: noticePolicyTemplate.subject }));
+
+    cy.do(bodyField.fillIn(noticePolicyTemplate.body));
+    cy.expect(bodyField.has({ value: noticePolicyTemplate.body }));
+
     if (autoSave) {
-      cy.get('#footer-save-entity').click();
+      cy.do(saveButton.click());
     }
   },
 
-  chooseCategory: (category) => {
+  chooseCategory(category) {
     cy.do(categorySelect.choose(category));
   },
 
-  checkPreview: (previewText) => {
+  checkPreview(message) {
     cy.do(patronNoticeTemplatePaneContent.find(Button('Preview')).click());
     cy.expect([
-      Modal(including('Preview of patron notice template')).exists(),
-      Modal({ content: including(previewText) }).exists(),
+      previewModal.has({ header: 'Preview of patron notice template' }),
+      previewModal.has({ message: including(message) }),
     ]);
-    cy.do(Button('Close').click());
+    cy.do(previewModal.find(Button('Close')).click());
+    cy.expect(previewModal.absent());
   },
 
   verifyMetadataObjectIsVisible: (creator = 'Unknown user') => {
@@ -127,7 +163,7 @@ export default {
       cy.wait(1000),
       addTokenButton.click(),
     ]);
-    cy.do(bodyField.has({ value: `{{${noticePolicyTemplateToken}}}` }));
+    cy.expect(bodyField.has({ value: `{{${noticePolicyTemplateToken}}}` }));
     return cy.wrap(noticePolicyTemplateToken);
   },
 
@@ -136,7 +172,8 @@ export default {
   },
 
   saveAndClose() {
-    return cy.do([saveButton.has({ disabled: false }), saveButton.click()]);
+    cy.expect(saveButton.has({ disabled: false }));
+    return cy.do(saveButton.click());
   },
 
   checkNewButton() {
@@ -182,12 +219,15 @@ export default {
     ]);
   },
 
-  checkAfterSaving: (noticePolicyTemplate) => {
-    Object.values(noticePolicyTemplate).forEach((prop) => cy.expect(
-      Pane(noticePolicyTemplate.name)
-        .find(KeyValue({ value: prop }))
-        .exists(),
-    ));
+  checkAfterSaving(noticePolicyTemplate) {
+    const { name, description, category, subject, body } = noticePolicyTemplate;
+    Object.values({ name, description, category, subject, body }).forEach((prop) => {
+      cy.expect(
+        Pane(name)
+          .find(KeyValue({ value: prop }))
+          .exists(),
+      );
+    });
   },
 
   delete: () => {
@@ -198,7 +238,7 @@ export default {
     ]);
   },
 
-  duplicateTemplate: () => {
+  duplicateTemplate() {
     cy.do([actionsButton.click(), actionsButtons.duplicate.click()]);
   },
 
@@ -206,31 +246,37 @@ export default {
     cy.do([NavListItem(name).click(), actionsButton.click(), actionsButtons.edit.click()]);
   },
 
-  typeTemplateName: (noticePolicytemplateName) => {
+  typeTemplateName(noticePolicytemplateName) {
     cy.do(nameField.fillIn(noticePolicytemplateName));
   },
 
-  typeTemplateSubject: (noticePolicytemplateSubject) => {
+  typeTemplateSubject(noticePolicytemplateSubject) {
     cy.do(subjectField.fillIn(noticePolicytemplateSubject));
   },
 
-  createPatronNoticeTemplate(template) {
-    this.startAdding();
-    this.checkInitialState();
-    this.addToken('item.title');
-    this.create(template, false);
-    this.chooseCategory(template.category);
-    this.checkPreview(template.previewText);
-    this.saveAndClose();
-    this.waitLoading();
-  },
+  createPatronNoticeTemplate(template, dublicate = false) {
+    cy.intercept('GET', `/templates?query=(name==%22${template.name}%22)`, {
+      statusCode: 201,
+      body: {
+        templates: [],
+        totalRecords: 0,
+      },
+    });
 
-  duplicatePatronNoticeTemplate(template) {
-    this.duplicateTemplate();
-    this.typeTemplateName(template.name);
-    this.typeTemplateSubject(template.subject);
+    if (dublicate) {
+      this.duplicateTemplate();
+      this.typeTemplateName(template.name);
+      this.typeTemplateSubject(template.subject);
+    } else {
+      this.startAdding();
+      this.checkInitialState();
+      this.addToken('item.title');
+      this.create(template, false);
+      this.chooseCategory(template.category);
+    }
+
     this.checkPreview(template.previewText);
     this.saveAndClose();
-    this.waitLoading();
+    cy.expect(patronNoticeForm.absent());
   },
 };

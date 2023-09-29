@@ -63,6 +63,7 @@ const buttonClose = Button({ icon: 'times' });
 const checkBoxAllRecords = Checkbox({ ariaLabel: 'Select all records on this page' });
 const openAuthSourceMenuButton = Button({ ariaLabel: 'open menu' });
 const sourceFileAccordion = Section({ id: 'sourceFileId' });
+const cancelButton = Button('Cancel');
 
 export default {
   waitLoading() {
@@ -71,6 +72,9 @@ export default {
   clickActionsAndReportsButtons() {
     cy.do([actionsButton.click(), marcAuthUpdatesCsvBtn.click()]);
     cy.expect([authReportModal.exists(), exportButton.has({ disabled: true })]);
+  },
+  clickHeadingsUpdatesButton() {
+    cy.do([actionsButton.click(), marcAuthUpdatesCsvBtn.click()]);
   },
   fillReportModal(today, tomorrow) {
     cy.do([
@@ -90,6 +94,9 @@ export default {
   clickExportButton() {
     cy.do(exportButton.click());
   },
+  clickCancelButtonOfReportModal() {
+    cy.do(authReportModal.find(cancelButton).click());
+  },
   checkValidationError({ name, error }) {
     cy.expect([
       authReportModal.find(TextField({ name })).has({ error }),
@@ -101,6 +108,9 @@ export default {
       // authReportModal.find(TextField({ name })).has({ error }),
       exportButton.has({ disabled: false }),
     ]);
+  },
+  closeAuthReportModalUsingESC() {
+    cy.get('#authorities-report-modal').type('{esc}');
   },
   switchToSearch() {
     cy.do(searchNav.click());
@@ -601,6 +611,56 @@ export default {
         expectedProperties.forEach((expectedProperty) => {
           cy.expect(authority).to.have.property(expectedProperty);
         });
+      });
+    });
+  },
+
+  verifyHeadingsUpdatesDataViaAPI(startDate, endDate, expectedDataObject) {
+    cy.getAuthorityHeadingsUpdatesViaAPI(startDate, endDate).then((updatesData) => {
+      const selectedUpdate = updatesData.filter(
+        (update) => update.headingNew === expectedDataObject.headingNew,
+      );
+      cy.expect(selectedUpdate[0].naturalIdOld).to.equal(expectedDataObject.naturalIdOld);
+      cy.expect(selectedUpdate[0].naturalIdNew).to.equal(expectedDataObject.naturalIdNew);
+      cy.expect(selectedUpdate[0].headingNew).to.equal(expectedDataObject.headingNew);
+      cy.expect(selectedUpdate[0].headingOld).to.equal(expectedDataObject.headingOld);
+      cy.expect(selectedUpdate[0].sourceFileNew).to.equal(expectedDataObject.sourceFileNew);
+      cy.expect(selectedUpdate[0].sourceFileOld).to.equal(expectedDataObject.sourceFileOld);
+      cy.expect(selectedUpdate[0].lbTotal).to.equal(expectedDataObject.lbTotal);
+      cy.expect(selectedUpdate[0].lbUpdated).to.equal(expectedDataObject.lbUpdated);
+      cy.expect(selectedUpdate[0].metadata.startedAt).to.have.string(expectedDataObject.startedAt);
+      cy.expect(selectedUpdate[0].metadata.startedByUserFirstName).to.equal(
+        expectedDataObject.startedByUserFirstName,
+      );
+      cy.expect(selectedUpdate[0].metadata.startedByUserLastName).to.equal(
+        expectedDataObject.startedByUserLastName,
+      );
+    });
+  },
+
+  verifyHeadingsUpdateExistsViaAPI(startDate, endDate, newHeading, matchesCounter = 1) {
+    cy.getAuthorityHeadingsUpdatesViaAPI(startDate, endDate).then((updatesData) => {
+      const selectedUpdate = updatesData.filter((update) => update.headingNew === newHeading);
+      cy.expect(selectedUpdate.length).to.be.at.least(matchesCounter);
+    });
+  },
+
+  verifyHeadingsUpdatesCountAndStructureViaAPI(startDate, endDate, limit) {
+    cy.getAuthorityHeadingsUpdatesViaAPI(startDate, endDate, limit).then((updatesData) => {
+      cy.expect(updatesData.length).to.equal(Number(limit));
+      updatesData.forEach((update) => {
+        cy.expect(update).to.have.property('naturalIdOld');
+        cy.expect(update).to.have.property('naturalIdNew');
+        cy.expect(update).to.have.property('headingNew');
+        cy.expect(update).to.have.property('headingOld');
+        cy.expect(update).to.have.property('sourceFileNew');
+        cy.expect(update).to.have.property('sourceFileOld');
+        cy.expect(update).to.have.property('lbTotal');
+        cy.expect(update).to.have.property('lbUpdated');
+        cy.expect(update).to.have.property('metadata');
+        cy.expect(update.metadata).to.have.property('startedAt');
+        cy.expect(update.metadata).to.have.property('startedByUserFirstName');
+        cy.expect(update.metadata).to.have.property('startedByUserLastName');
       });
     });
   },

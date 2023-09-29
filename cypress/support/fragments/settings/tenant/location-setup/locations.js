@@ -3,6 +3,8 @@ import TenantPane from '../baseTenantPane';
 import Libraries from './libraries';
 import Campuses from './campuses';
 import Institutions from './institutions';
+import LocationDetails from '../locations/locationDetails';
+import LocationEditForm from '../locations/locationEditForm';
 import getRandomPostfix from '../../../../utils/stringTools';
 import {
   Button,
@@ -15,23 +17,56 @@ import {
   including,
 } from '../../../../../../interactors';
 
+const getDefaultLocation = ({
+  servicePointId,
+  institutionId = uuid(),
+  campusId = uuid(),
+  libraryId = uuid(),
+} = {}) => {
+  const location = {
+    id: uuid(),
+    isActive: true,
+    institutionId,
+    institutionName: `autotest_institution_${getRandomPostfix()}`,
+    campusId,
+    campusName: `autotest_campuse_${getRandomPostfix()}`,
+    libraryId,
+    libraryName: `autotest_library_${getRandomPostfix()}`,
+    name: `autotest_location_name_${getRandomPostfix()}`,
+    code: `autotest_location_code_${getRandomPostfix()}`,
+    discoveryDisplayName: `autotest_name_${getRandomPostfix()}`,
+    // servicePointIds must have real Servi point id
+    servicePointIds: [servicePointId],
+    primaryServicePoint: servicePointId,
+  };
+
+  Institutions.createViaApi(
+    Institutions.getDefaultInstitution({
+      id: location.institutionId,
+      name: location.institutionName,
+    }),
+  ).then(() => {
+    Campuses.createViaApi(
+      Campuses.getDefaultCampuse({
+        id: location.campusId,
+        name: location.campusName,
+        institutionId: location.institutionId,
+      }),
+    ).then(() => {
+      Libraries.createViaApi(
+        Libraries.getDefaultLibrary({
+          id: location.libraryId,
+          name: location.libraryName,
+          campusId: location.campusId,
+        }),
+      );
+    });
+  });
+  return location;
+};
+
 const addButton = Button('New');
 const table = MultiColumnList({ id: 'locations-list' });
-const detailsPane = Pane({ id: 'location-details' });
-const actionsBtn = detailsPane.find(Button('Actions'));
-
-const getDefaultLocation = ({ institutionId, campusId, libraryId, servicePointId } = {}) => ({
-  id: uuid(),
-  isActive: true,
-  institutionId,
-  campusId,
-  libraryId,
-  servicePointIds: [servicePointId],
-  name: `autotest_location_name_${getRandomPostfix()}`,
-  code: `autotest_location_code_${getRandomPostfix()}`,
-  discoveryDisplayName: `autotest_name_${getRandomPostfix()}`,
-  primaryServicePoint: servicePointId,
-});
 
 export default {
   ...TenantPane,
@@ -42,8 +77,8 @@ export default {
     cy.expect(addButton.absent());
 
     cy.do(table.click({ row: 0 }));
-    cy.expect(detailsPane.exists());
-    cy.expect(actionsBtn.absent());
+    LocationDetails.waitLoading();
+    LocationDetails.checkActionButtonAbsent();
   },
   selectInstitution() {
     cy.do(Select('Institution').choose(including('KU')));
@@ -54,9 +89,31 @@ export default {
   selectLibrary() {
     cy.do(Select('Library').choose(including('E)')));
   },
+  viewLocations(location) {
+    TenantPane.selectOptions([
+      {
+        label: 'Institution',
+        option: { name: location.institutionName, id: location.institutionId },
+      },
+      { label: 'Campus', option: { name: location.campusName, id: location.campusId } },
+      { label: 'Library', option: { name: location.libraryName, id: location.libraryId } },
+    ]);
+  },
+  openLocationDetails(location) {
+    cy.do(table.find(MultiColumnListCell(location)).click());
+    LocationDetails.waitLoading();
+
+    return LocationDetails;
+  },
+  editLocation(location, values) {
+    this.openLocationDetails(location);
+    LocationDetails.openEditLocationForm();
+    LocationEditForm.fillLocationForm(values);
+  },
   createNewLocation() {
     cy.do(addButton.click());
   },
+
   getDefaultLocation,
   verifyRemoteStorageValue(value = 'RS1') {
     cy.expect(KeyValue('Remote storage').has({ value }));
@@ -104,8 +161,33 @@ export default {
   getViaApi() {
     return TenantPane.getViaApi({ path: 'locations' });
   },
-  createViaApi(locationProperties) {
-    return TenantPane.createViaApi({ path: 'locations', body: locationProperties });
+  createViaApi: ({
+    id,
+    code,
+    name,
+    isActive,
+    institutionId,
+    campusId,
+    libraryId,
+    discoveryDisplayName,
+    servicePointIds,
+    primaryServicePoint,
+  }) => {
+    return TenantPane.createViaApi({
+      path: 'locations',
+      body: {
+        id,
+        code,
+        name,
+        isActive,
+        institutionId,
+        campusId,
+        libraryId,
+        discoveryDisplayName,
+        servicePointIds,
+        primaryServicePoint,
+      },
+    });
   },
   deleteViaApi({ id, libraryId, campusId, institutionId }) {
     return TenantPane.deleteViaApi({ path: `locations/${id}` }).then(() => {

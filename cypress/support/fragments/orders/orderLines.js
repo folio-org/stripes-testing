@@ -30,13 +30,14 @@ import {
   ORDER_PAYMENT_STATUS,
 } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
+import selectLocationModal from './selectLocationModal';
 
 const path = require('path');
 
 const receivedtitleDetails = PaneContent({ id: 'receiving-results-pane-content' });
-const saveAndClose = Button('Save & close');
+const saveAndCloseButton = Button('Save & close');
+const cancelButton = Button('Cancel');
 const actionsButton = Button('Actions');
-const searhInputId = 'input-record-search';
 const searchButton = Button('Search');
 const saveButton = Button('Save and close');
 const searchField = SearchField({ id: 'input-record-search' });
@@ -66,12 +67,12 @@ const receivingWorkflowSelect = Select({ name: 'checkinItems' });
 const materialTypeSelect = Select({ name: 'physical.materialType' });
 const addLocationButton = Button({ text: 'Add location' });
 const locationSelect = Button({ id: 'field-locations[0].locationId' });
+const holdingSelect = Button({ id: 'field-locations[0].holdingId' });
 const onlineLocationOption = SelectionOption('Online (E)');
 const quantityPhysicalLocationField = TextField({ name: 'locations[0].quantityPhysical' });
 const addFundDistributionButton = Button({ id: 'fundDistribution-add-button' });
 const fundDistributionSelect = Button({ id: 'fundDistribution[0].fundId' });
 const fundDistributionField = TextField({ name: 'fundDistribution[0].value' });
-const orderLineInfoPage = Section({ id: 'order-lines-details' });
 const itemDetailsSection = Section({ id: 'ItemDetails' });
 const poLineInfoSection = Section({ id: 'poLine' });
 const fundDistributionSection = Section({ id: 'FundDistribution' });
@@ -110,6 +111,9 @@ const checkQuantityPhysical = (quantity) => {
 export default {
   submitOrderLine,
   checkQuantityPhysical,
+  checkTitle(title) {
+    cy.expect(Link(title).exists());
+  },
   searchByParameter: (parameter, value) => {
     cy.do([searchForm.selectIndex(parameter), searchForm.fillIn(value), searchButton.click()]);
   },
@@ -141,46 +145,35 @@ export default {
     );
   },
 
-  checkCreatedPOLinePhysicalResource: (orderLineTitleName, fund) => {
+  checkCreatedPOLineResource(orderLineTitleName, recourceName, fund) {
     cy.expect([
-      orderLineInfoPage.exists(),
+      orderLineDetailsPane.exists(),
       itemDetailsSection.find(KeyValue({ value: orderLineTitleName })).exists(),
-      poLineInfoSection
-        .find(KeyValue({ value: ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE_Check }))
-        .exists(),
-      fundDistributionSection
-        .find(MultiColumnListRow({ index: 0 }))
-        .find(MultiColumnListCell({ columnIndex: 0 }))
-        .has({ content: `${fund.name}(${fund.code})` }),
-      locationSection.find(KeyValue({ value: quantityPhysical })).exists(),
-    ]);
-  },
-
-  checkCreatedPOLineOtherResource: (orderLineTitleName, fund) => {
-    cy.expect([
-      orderLineInfoPage.exists(),
-      itemDetailsSection.find(KeyValue({ value: orderLineTitleName })).exists(),
-      poLineInfoSection.find(KeyValue({ value: ORDER_FORMAT_NAMES.OTHER })).exists(),
+      poLineInfoSection.find(KeyValue({ value: recourceName })).exists(),
       fundDistributionSection
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 0 }))
         .has({ content: `${fund.name}(${fund.code})` }),
     ]);
   },
-
-  checkCreatedPOLineElectronicResource: (orderLineTitleName, fund) => {
-    cy.expect([
-      orderLineInfoPage.exists(),
-      itemDetailsSection.find(KeyValue({ value: orderLineTitleName })).exists(),
-      poLineInfoSection
-        .find(KeyValue({ value: ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE_Check }))
-        .exists(),
-      fundDistributionSection
-        .find(MultiColumnListRow({ index: 0 }))
-        .find(MultiColumnListCell({ columnIndex: 0 }))
-        .has({ content: `${fund.name}(${fund.code})` }),
-      locationSection.find(KeyValue({ value: quantityElectronic })).exists(),
-    ]);
+  checkCreatedPOLineOtherResource(orderLineTitleName, fund) {
+    this.checkCreatedPOLineResource(orderLineTitleName, ORDER_FORMAT_NAMES.OTHER, fund);
+  },
+  checkCreatedPOLinePhysicalResource(orderLineTitleName, fund) {
+    this.checkCreatedPOLineResource(
+      orderLineTitleName,
+      ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE_Check,
+      fund,
+    );
+    cy.expect(locationSection.find(KeyValue({ value: quantityPhysical })).exists());
+  },
+  checkCreatedPOLineElectronicResource(orderLineTitleName, fund) {
+    this.checkCreatedPOLineResource(
+      orderLineTitleName,
+      ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE_Check,
+      fund,
+    );
+    cy.expect(locationSection.find(KeyValue({ value: quantityElectronic })).exists());
   },
 
   closeThirdPane: () => {
@@ -222,11 +215,7 @@ export default {
   },
 
   openVersionHistory() {
-    cy.do(
-      Section({ id: 'order-lines-details' })
-        .find(Button({ icon: 'clock' }))
-        .click(),
-    );
+    cy.do(orderLineDetailsPane.find(Button({ icon: 'clock' })).click());
     cy.wait(2000);
     cy.expect([
       agreementLinesSection.absent(),
@@ -286,7 +275,7 @@ export default {
       locationSelect.click(),
       onlineLocationOption.click(),
       quantityPhysicalLocationField.fillIn(quantityPhysical),
-      saveAndClose.click(),
+      saveAndCloseButton.click(),
     ]);
   },
 
@@ -306,7 +295,7 @@ export default {
       locationSelect.click(),
       onlineLocationOption.click(),
       quantityPhysicalLocationField.fillIn('1'),
-      saveAndClose.click(),
+      saveAndCloseButton.click(),
     ]);
   },
   POLineInfodorPhysicalMaterialWithLocation: (orderLineTitleName, institutionId) => {
@@ -328,7 +317,7 @@ export default {
     cy.do([
       selectPermanentLocationModal.find(saveButton).click(),
       quantityPhysicalLocationField.fillIn(quantityPhysical),
-      saveAndClose.click(),
+      saveAndCloseButton.click(),
     ]);
   },
 
@@ -352,7 +341,7 @@ export default {
       locationSelect.click(),
       onlineLocationOption.click(),
       quantityPhysicalLocationField.fillIn(quantityPhysical),
-      saveAndClose.click(),
+      saveAndCloseButton.click(),
     ]);
   },
 
@@ -376,7 +365,7 @@ export default {
       locationSelect.click(),
       onlineLocationOption.click(),
       quantityPhysicalLocationField.fillIn(quantityPhysical),
-      saveAndClose.click(),
+      saveAndCloseButton.click(),
     ]);
   },
 
@@ -406,7 +395,48 @@ export default {
     cy.do([
       selectPermanentLocationModal.find(saveButton).click(),
       quantityPhysicalLocationField.fillIn(quantity),
-      saveAndClose.click(),
+      saveAndCloseButton.click(),
+    ]);
+    cy.wait(4000);
+    submitOrderLine();
+  },
+
+  fillInPOLineInfoforPhysicalMaterialWithFundAndEC(
+    fund,
+    unitPrice,
+    quantity,
+    expenseClass,
+    value,
+    institutionId,
+  ) {
+    cy.do([
+      orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
+      acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
+      ),
+      physicalUnitPriceTextField.fillIn(unitPrice),
+      quantityPhysicalTextField.fillIn(quantity),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      Button({ id: 'fundDistribution[0].expenseClassId' }).click(),
+      SelectionOption(`${expenseClass}`).click(),
+      Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
+      fundDistributionField.fillIn(value),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
+      addLocationButton.click(),
+      createNewLocationButton.click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+    cy.do([
+      selectPermanentLocationModal.find(saveButton).click(),
+      quantityPhysicalLocationField.fillIn(quantity),
+      saveAndCloseButton.click(),
     ]);
     cy.wait(4000);
     submitOrderLine();
@@ -418,7 +448,7 @@ export default {
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
       fundDistributionField.fillIn(value),
-      saveAndClose.click(),
+      saveAndCloseButton.click(),
     ]);
     cy.wait(6000);
     submitOrderLine();
@@ -438,8 +468,42 @@ export default {
       SelectionOption(`${fund.name} (${fund.code})`).click(),
       Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
       fundDistributionField.fillIn(value),
-      saveAndClose.click(),
+      saveAndCloseButton.click(),
     ]);
+    cy.wait(6000);
+    submitOrderLine();
+  },
+
+  addTwoFundsToPOLinPercent(
+    fund,
+    firstPercentValue,
+    firstExpenseClass,
+    secondExpenseClass,
+    secondPercentValue,
+  ) {
+    cy.do([
+      Section({ id: 'fundDistributionAccordion' }).find(trashButton).click(),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      Button({ id: 'fundDistribution[0].expenseClassId' }).click(),
+      SelectionOption(`${firstExpenseClass}`).click(),
+      fundDistributionField.fillIn(firstPercentValue),
+      addFundDistributionButton.click(),
+      Button({ id: 'fundDistribution[1].fundId' }).click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      Button({ id: 'fundDistribution[1].expenseClassId' }).click(),
+      SelectionOption(`${secondExpenseClass}`).click(),
+      TextField({ name: 'fundDistribution[1].value' }).fillIn(secondPercentValue),
+    ]);
+    cy.wait(2000);
+    cy.do([saveAndCloseButton.click()]);
     cy.wait(6000);
     submitOrderLine();
   },
@@ -470,7 +534,7 @@ export default {
       locationSelect.click(),
       onlineLocationOption.click(),
       quantityElectronicField.fillIn(quantity),
-      saveAndClose.click(),
+      saveAndCloseButton.click(),
     ]);
   },
 
@@ -493,7 +557,7 @@ export default {
       locationSelect.click(),
       onlineLocationOption.click(),
       quantityElectronicField.fillIn(quantityElectronic),
-      saveAndClose.click(),
+      saveAndCloseButton.click(),
     ]);
   },
 
@@ -514,7 +578,7 @@ export default {
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
       fundDistributionField.fillIn('100'),
-      saveAndClose.click(),
+      saveAndCloseButton.click(),
     ]);
   },
 
@@ -545,7 +609,7 @@ export default {
     cy.do([
       selectPermanentLocationModal.find(saveButton).click(),
       quantityPhysicalLocationField.fillIn(quantity),
-      saveAndClose.click(),
+      saveAndCloseButton.click(),
     ]);
     cy.wait(4000);
     submitOrderLine();
@@ -578,7 +642,7 @@ export default {
     cy.do([
       selectPermanentLocationModal.find(saveButton).click(),
       quantityPhysicalLocationField.fillIn(quantity),
-      saveAndClose.click(),
+      saveAndCloseButton.click(),
     ]);
     cy.wait(4000);
     submitOrderLine();
@@ -611,7 +675,7 @@ export default {
       electronicUnitPriceTextField.has({ value: electronicUnitPrice }),
       quantityElectronicTextField.has({ value: quantityElectronic }),
     ]);
-    cy.do(saveAndClose.click());
+    cy.do(saveAndCloseButton.click());
   },
 
   fillInPOLineInfoForExport(accountNumber, AUMethod) {
@@ -644,7 +708,7 @@ export default {
       electronicUnitPriceTextField.has({ value: electronicUnitPrice }),
       quantityElectronicTextField.has({ value: quantityElectronic }),
     ]);
-    cy.do(saveAndClose.click());
+    cy.do(saveAndCloseButton.click());
   },
 
   fillInPOLineInfoForExportWithLocation(accountNumber, AUMethod, institutionId) {
@@ -672,7 +736,7 @@ export default {
       electronicUnitPriceTextField.has({ value: electronicUnitPrice }),
       quantityElectronicTextField.has({ value: quantityElectronic }),
     ]);
-    cy.do(saveAndClose.click());
+    cy.do(saveAndCloseButton.click());
     // If purchase order line will be dublicate, Modal with button 'Submit' will be activated
     cy.wait(2000);
     submitOrderLine();
@@ -707,7 +771,7 @@ export default {
       physicalUnitPriceTextField.has({ value: physicalUnitPrice }),
       quantityPhysicalLocationField.has({ value: quantity }),
     ]);
-    cy.do(saveAndClose.click());
+    cy.do(saveAndCloseButton.click());
     // If purchase order line will be dublicate, Modal with button 'Submit' will be activated
     cy.wait(2000);
     submitOrderLine();
@@ -746,13 +810,13 @@ export default {
     cy.do([
       selectPermanentLocationModal.find(saveButton).click(),
       quantityPhysicalLocationField.fillIn(quantity),
-      saveAndClose.click(),
+      saveAndCloseButton.click(),
     ]);
     cy.wait(4000);
     submitOrderLine();
   },
 
-  edeiPOLineInfoAndChangeLocation(accountNumber, AUMethod, institutionName, quantity) {
+  editPOLineInfoAndChangeLocation(accountNumber, AUMethod, institutionName, quantity) {
     cy.do([
       locationSection.find(trashButton).click(),
       addLocationButton.click(),
@@ -767,7 +831,7 @@ export default {
       physicalUnitPriceTextField.has({ value: physicalUnitPrice }),
       quantityPhysicalLocationField.has({ value: quantity }),
     ]);
-    cy.do(saveAndClose.click());
+    cy.do(saveAndCloseButton.click());
     // If purchase order line will be dublicate, Modal with button 'Submit' will be activated
     cy.wait(2000);
     submitOrderLine();
@@ -805,7 +869,7 @@ export default {
       eResourcesDetails
         .find(Select({ name: 'eresource.createInventory' }))
         .choose('Instance, holdings'),
-      saveAndClose.click(),
+      saveAndCloseButton.click(),
     ]);
     // If purchase order line will be dublicate, Modal with button 'Submit' will be activated
     cy.wait(2000);
@@ -845,9 +909,7 @@ export default {
     cy.do([
       buttonFVendorFilter.click(),
       Button({ id: 'purchaseOrder.vendor-button' }).click(),
-      Modal('Select Organization')
-        .find(SearchField({ id: searhInputId }))
-        .fillIn(invoice.vendorName),
+      Modal('Select Organization').find(searchField).fillIn(invoice.vendorName),
       searchButton.click(),
     ]);
     SearchHelper.selectFromResultsList();
@@ -885,6 +947,25 @@ export default {
     );
   },
 
+  addPolToOrder(
+    { title, method, format, price, quantity, inventory, location, materialType },
+    shouldSave = true,
+  ) {
+    this.addPOLine();
+    this.fillPolByLinkTitle(title);
+    this.addAcquisitionMethod(method);
+    this.addOrderFormat(format);
+    this.fillPhysicalUnitPrice(price);
+    this.fillPhysicalUnitQuantity(quantity);
+    this.addCreateInventory(inventory);
+    this.addHolding(location, quantity);
+    this.addMaterialType(materialType);
+
+    if (shouldSave) {
+      this.savePol();
+    }
+  },
+
   editPOLInOrder: () => {
     cy.do([
       orderLineDetailsPane.find(paneHeaderOrderLinesDetailes.find(actionsButton)).click(),
@@ -896,7 +977,7 @@ export default {
   deleteFundInPOL() {
     cy.do([
       Section({ id: 'fundDistributionAccordion' }).find(trashButton).click(),
-      saveAndClose.click(),
+      saveAndCloseButton.click(),
     ]);
     cy.wait(6000);
     submitOrderLine();
@@ -959,10 +1040,30 @@ export default {
     // need to wait upload product types
     cy.wait(1000);
   },
-
+  addHolding(location, quantity = quantityPhysical) {
+    if (location) {
+      cy.do(addLocationButton.click());
+      this.selectLocation(location, quantity);
+    }
+  },
+  selectLocation(location, quantity) {
+    cy.do([
+      holdingSelect.click(),
+      SelectionOption(including(location)).click(),
+      quantityPhysicalLocationField.fillIn(quantity),
+    ]);
+  },
+  setPhysicalQuantity(quantity) {
+    cy.do(quantityPhysicalLocationField.fillIn(quantity));
+    cy.expect(quantityPhysicalLocationField.has({ value: quantity }));
+  },
+  openCreateHoldingForLocation() {
+    cy.do([addLocationButton.click(), createNewLocationButton.click()]);
+    return selectLocationModal;
+  },
   savePol: () => {
-    cy.do(saveAndClose.click());
-    cy.do(Pane({ id: 'pane-poLineForm' }).absent());
+    cy.do(saveAndCloseButton.click());
+    cy.expect(Pane({ id: 'pane-poLineForm' }).absent());
   },
 
   fillPOLWithTitleLookUp: () => {
@@ -980,7 +1081,7 @@ export default {
       locationSelect.click(),
       onlineLocationOption.click(),
       quantityPhysicalLocationField.fillIn(quantityPhysical),
-      saveAndClose.click(),
+      saveAndCloseButton.click(),
     ]);
   },
 
@@ -1019,7 +1120,7 @@ export default {
   cancelPOL: () => {
     cy.do([
       orderLineDetailsPane.find(paneHeaderOrderLinesDetailes.find(actionsButton)).click(),
-      Button('Cancel').click(),
+      cancelButton.click(),
       Button('Cancel order line').click(),
     ]);
   },
@@ -1028,7 +1129,7 @@ export default {
     cy.do([
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
-      saveAndClose.click(),
+      saveAndCloseButton.click(),
     ]);
   },
 
@@ -1105,7 +1206,7 @@ export default {
         .find(Button({ id: 'note-create-button' }))
         .click(),
       TextField({ name: 'title' }).fillIn(noteTitle),
-      saveAndClose.click(),
+      saveAndCloseButton.click(),
     ]);
     cy.wait(4000);
   },

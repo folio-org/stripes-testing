@@ -17,13 +17,16 @@ import {
   SelectionOption,
   SearchField,
   Link,
+  Card,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import NewNote from '../notes/newNote';
 import { getLongDelay } from '../../utils/cypressTools';
+import EditAgreement from './editAgreement';
 
 const rootSection = Section({ id: 'pane-view-agreement' });
 const deleteButton = Button('Delete');
+const editButton = Button('Edit');
 const agreementLine = Section({ id: 'lines' }).find(Button('Agreement lines'));
 const agreementLinesBadge = Section({ id: 'lines' }).find(Badge());
 const actionsButton = Button('Actions');
@@ -37,6 +40,8 @@ const deleteButtonInConfirmation = Button('Delete', {
 });
 const showMoreLink = Button('Show more');
 const notesAccordion = rootSection.find(Accordion({ id: 'notes' }));
+const organizationsAccordion = rootSection.find(Accordion({ id: 'organizations' }));
+const internalContactsAccordion = rootSection.find(Accordion({ id: 'internalContacts' }));
 const cancelButton = Button('Cancel');
 const calloutSuccess = Callout({ type: 'success' });
 const notesSection = Section({ id: 'notes' });
@@ -100,6 +105,20 @@ export default {
     cy.expect(rootSection.find(newNoteButton).exists());
   },
 
+  openInternalContactsSection() {
+    cy.do(
+      internalContactsAccordion
+        .find(Button({ id: 'accordion-toggle-button-internalContacts' }))
+        .click(),
+    );
+    cy.expect(internalContactsAccordion.has({ open: true }));
+  },
+
+  openOrganizationsSection() {
+    cy.do(organizationsAccordion.click());
+    cy.expect(organizationsAccordion.has({ open: true }));
+  },
+
   createNote(specialNote = NewNote.defaultNote) {
     addNewNote();
     NewNote.fill(specialNote);
@@ -134,6 +153,28 @@ export default {
       rootSection
         .find(Section({ id: 'notes' }).find(Badge()))
         .has({ value: notesCount.toString() }),
+    );
+  },
+
+  gotoEdit() {
+    cy.do(actionsButton.click());
+    cy.expect(editButton.exists());
+
+    cy.do(editButton.click());
+    EditAgreement.waitLoading();
+  },
+
+  verifyOrganizationsCount(itemCount) {
+    cy.expect(organizationsAccordion.find(Badge()).has({ text: itemCount }));
+  },
+
+  verifyInternalContactsCount(itemCount) {
+    cy.expect(internalContactsAccordion.find(Badge()).has({ text: itemCount }));
+  },
+
+  verifyOrganizationCardIsShown(organizationName) {
+    cy.expect(
+      organizationsAccordion.find(Card({ headerStart: including(organizationName) })).exists(),
     );
   },
 
@@ -264,6 +305,19 @@ export default {
         .exists(),
       notesList.find(MultiColumnListCell({ column: 'Type', content: including(type) })).exists(),
     ]);
+  },
+
+  verifyInternalContactsRow({ username, email }) {
+    cy.expect([
+      internalContactsAccordion.find(Card(including(username))),
+      internalContactsAccordion.find(KeyValue(including(email))).exists(),
+    ]);
+  },
+
+  verifyOrganizationsAccordion(exists) {
+    if (exists) {
+      cy.expect(organizationsAccordion.exists());
+    } else cy.expect(organizationsAccordion.absent());
   },
 
   verifyAgreementDetails(defaultAgreement) {

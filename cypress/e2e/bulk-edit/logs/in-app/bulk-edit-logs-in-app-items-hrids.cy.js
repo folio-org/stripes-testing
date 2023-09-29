@@ -23,7 +23,6 @@ const errorsFromMatchingFileName = `*-Matching-Records-Errors-${itemHRIDsFileNam
 const previewOfProposedChangesFileName = `*-Updates-Preview-${itemHRIDsFileName}`;
 const updatedRecordsFileName = `*-Changed-Records*-${itemHRIDsFileName}`;
 const errorsFromCommittingFileName = `*-Committing-changes-Errors-${itemHRIDsFileName}`;
-const otherError = `*-Errors-${itemHRIDsFileName}`;
 
 const invalidItemHRID = getRandomPostfix();
 const instance = {
@@ -146,7 +145,6 @@ describe('Bulk Edit - Logs', () => {
       updatedRecordsFileName,
       errorsFromCommittingFileName,
       errorsFromMatchingFileName,
-      otherError,
     );
   });
 

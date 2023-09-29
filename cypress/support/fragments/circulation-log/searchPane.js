@@ -172,6 +172,13 @@ export default {
     });
   },
 
+  checkSearchResultByBarcode({ barcode, searchResults }) {
+    this.searchByUserBarcode(barcode);
+    this.findResultRowIndexByContent(searchResults.desc).then((rowIndex) => {
+      this.checkResultSearch(searchResults, rowIndex);
+    });
+  },
+
   // TODO check if we can use it using MultiColumnRow
   findResultRowIndexByContent(content) {
     return cy

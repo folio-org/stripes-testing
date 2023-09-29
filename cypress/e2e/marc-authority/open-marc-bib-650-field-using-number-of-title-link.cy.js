@@ -13,6 +13,7 @@ import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
+import Parallelization from '../../support/dictionary/parallelization';
 
 describe('MARC -> MARC Authority', () => {
   const testData = {
@@ -100,7 +101,7 @@ describe('MARC -> MARC Authority', () => {
 
   it(
     'C375271 "Number of titles" link in "MARC authority" app opens linked "MARC bib" record with controlled "650" field (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       MarcAuthorities.searchByParameter(testData.searchOption, testData.marcValue);
       MarcAuthorities.checkRow(testData.marcValue);

@@ -3,10 +3,10 @@ import SettingsPane, { rootPane } from '../settingsPane';
 import { Select, including } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
-export const getDefaultTenant = (props = {}) => ({
-  code: `autotest_code_${getRandomPostfix()}`,
-  id: uuid(),
-  name: `autotest_name_${getRandomPostfix()}`,
+export const getDefaultTenant = ({ id, name, code, ...props } = {}) => ({
+  id: id || uuid(),
+  name: name || `autotest_name_${getRandomPostfix()}`,
+  code: code || `autotest_code_${getRandomPostfix()}`,
   ...props,
 });
 
@@ -16,6 +16,11 @@ export default {
   checkNoActionButtons() {
     SettingsPane.checkAddNewBtnAbsent();
     SettingsPane.checkColumnAbsent('Actions');
+  },
+  selectOptions(options = []) {
+    options.forEach(({ label, option }) => {
+      this.selectOption(label, option);
+    });
   },
   selectOption(label, option) {
     cy.do(Select(label).choose(including(option.name)));

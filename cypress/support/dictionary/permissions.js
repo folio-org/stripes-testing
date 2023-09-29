@@ -383,6 +383,10 @@ export default {
     internal: 'ui-users.loans.change-due-date',
     gui: 'Users: User loans change due date',
   },
+  uiUserFinancialTransactionReport: {
+    internal: 'ui-users.financialTransactionReport',
+    gui: 'Users: Create and download Financial transaction detail report',
+  },
   // Remote Storage
   remoteStorageCRUD: {
     internal: 'ui-remote-storage.settings.remote-storages.edit',
@@ -736,6 +740,10 @@ export default {
     internal: 'ui - tenant - settings.settings.location.view',
     gui: 'Settings (Tenant): View locations',
   },
+  settingsTenantEditLanguageLocationAndCurrency: {
+    internal: 'ui-tenant-settings.settings.locale',
+    gui: 'Settings (tenant): Can edit language, localization, and currency',
+  },
   settingsUsersCRUD: {
     internal: 'ui-users.settings.transfers.all',
     gui: 'Settings (Users): Can create, edit and remove transfer accounts',
@@ -750,7 +758,10 @@ export default {
     internal: 'ui-eholdings.settings.all',
     gui: 'Settings (eholdings): Can create, edit, view, and delete custom labels',
   },
-
+  uiSettingsDeveloperSessionLocale: {
+    internal: 'ui-developer.settings.locale',
+    gui: 'Settings (Developer): set session locale',
+  },
   // Timers
   okapiTimersPatch: {
     internal: 'okapi.proxy.self.timers.patch',
@@ -773,5 +784,17 @@ export default {
   oaipmhSettingsEdit: {
     internal: 'ui-oai-pmh.edit',
     gui: 'Settings (OAI-PMH): Can view and edit settings',
+  },
+  uiCirculationSettingsOverdueFinesPolicies: {
+    internal: 'ui-circulation.settings.overdue-fines-policies',
+    gui: 'Settings (Circ): Can create, edit and remove overdue fine policies',
+  },
+  uiCirculationSettingsLostItemFeesPolicies: {
+    internal: 'ui-circulation.settings.lost-item-fees-policies',
+    gui: 'Settings (Circ): Can create, edit and remove lost item fee policies',
+  },
+  settingsLoanPoliciesAll: {
+    internal: 'settings.loan-policies.all',
+    gui: 'Settings (Circ): Can create, edit and remove loan policies [LEGACY]',
   },
 };

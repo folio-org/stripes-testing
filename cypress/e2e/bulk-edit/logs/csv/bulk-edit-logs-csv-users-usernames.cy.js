@@ -13,7 +13,6 @@ let user;
 const invalidUsername = `username${getRandomPostfix()}`;
 const invalidUsernamesFileName = `invalidUserUUIDs_${getRandomPostfix()}.csv`;
 const errorsFromMatchingFileName = `*-Matching-Records-Errors-${invalidUsernamesFileName}*`;
-const otherError = `*-Errors-${invalidUsernamesFileName}`;
 
 describe('Bulk Edit - Logs', () => {
   before('create test data', () => {
@@ -35,11 +34,7 @@ describe('Bulk Edit - Logs', () => {
   after('delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${invalidUsernamesFileName}`);
     Users.deleteViaApi(user.userId);
-    FileManager.deleteFileFromDownloadsByMask(
-      invalidUsernamesFileName,
-      errorsFromMatchingFileName,
-      otherError,
-    );
+    FileManager.deleteFileFromDownloadsByMask(invalidUsernamesFileName, errorsFromMatchingFileName);
   });
 
   it(
