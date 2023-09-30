@@ -1,4 +1,3 @@
-import moment from 'moment';
 import uuid from 'uuid';
 import TestTypes from '../../support/dictionary/testTypes';
 import { REQUEST_TYPES } from '../../support/constants';

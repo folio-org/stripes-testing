@@ -184,8 +184,17 @@ export default {
     return new Date(today.getFullYear(), today.getMonth() + 3, today.getDate());
   },
 
+  getFormattedEndDateWithTime(date) {
+    const momentObj = moment(date);
+    return momentObj.format('M/D/YYYY, h:mm A');
+  },
+
   getFormattedDateWithTime(date) {
     return moment.utc(date).format('M/D/YYYY, h:mm A');
+  },
+
+  getCurrentEndOfDay() {
+    return moment.utc().endOf('day');
   },
 
   getUTCDateForScheduling() {
