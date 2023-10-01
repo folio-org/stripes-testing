@@ -6,7 +6,7 @@ import {
   Funds,
   Budgets,
   Ledgers,
-  FinanceHelp,
+  FinanceHelper,
 } from '../../../support/fragments/finance';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -81,7 +81,7 @@ describe('Finance: Transactions', () => {
     'C375175 Moving allocation is NOT successful if money was moved from fund having NO current budget (thunderjet)',
     { tags: [testType.criticalPath, devTeams.thunderjet] },
     () => {
-      FinanceHelp.searchByName(toFund.name);
+      FinanceHelper.searchByName(toFund.name);
       Funds.selectFund(toFund.name);
       Funds.selectBudgetDetails();
 
