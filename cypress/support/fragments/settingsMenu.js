@@ -1,3 +1,5 @@
+import { Link, including } from '@interactors/html';
+
 export default {
   // direct paths to folio apps to use in cy.visit() into initial steps of our scenarios
   // TODO: add separated scenarios related with SettingsMenu implementation
@@ -103,4 +105,8 @@ export default {
   organizationCategoryPath: 'settings/organizations/category',
   // Tags
   tagsGeneralPath: 'settings/tags/general',
+
+  openRemoteStorageSettings: () => {
+    cy.do(Link({ href: including('settings/remote-storage') }).click());
+  },
 };

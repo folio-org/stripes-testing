@@ -3,19 +3,22 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import { Configurations } from '../../../support/fragments/settings/remote-storage';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenu from '../../../support/fragments/topMenu';
+import SettingsPane from '../../../support/fragments/settings/settingsPane';
+import RemoteStorage from '../../../support/fragments/settings/remote-storage/remoteStorage';
 
 let user;
 const name = `AutotestConfigurationName${getRandomPostfix()}`;
 const caiaSoft = Configurations.configurations.CaiaSoft;
 const dematicStagingDirector = Configurations.configurations.DematicStagingDirector;
 
-describe('Remote Storage', () => {
+describe('remote-storage-configuration', () => {
   before('create test data', () => {
     cy.createTempUser([Permissions.remoteStorageCRUD.gui]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password, {
-        path: SettingsMenu.remoteStorageConfigurationPath,
-        waiter: Configurations.waitLoading,
+        path: TopMenu.settingsPath,
+        waiter: SettingsPane.waitLoading,
       });
     });
   });
@@ -28,6 +31,9 @@ describe('Remote Storage', () => {
     'C367964 Verify text of success toast when creating remote storage configurations (firebird) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.firebird] },
     () => {
+      SettingsMenu.openRemoteStorageSettings();
+      RemoteStorage.checkSettingItems();
+      RemoteStorage.goToConfigurations();
       Configurations.openCreateConfigurationForm();
       Configurations.checkProviderNameDropdownValues();
       dematicStagingDirector.fillRequiredFields(name);

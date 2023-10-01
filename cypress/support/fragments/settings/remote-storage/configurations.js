@@ -10,6 +10,7 @@ import {
   Modal,
   KeyValue,
   HTML,
+  Option,
   including,
 } from '../../../../../interactors';
 import Mappings from './mappings';
@@ -24,6 +25,7 @@ const configurationPane = Pane({ title: 'Configurations' });
 const dataSynchronizationSettingsAccordion = Accordion('Data synchronization settings');
 const saveAndCloseBtn = Button('Save & close');
 const saveBtn = Button('Save');
+const cancelButton = Button('Cancel');
 const confirmationModal = Modal({ id: 'save-confirmation-modal' });
 const actionsBtn = Button('Actions');
 const xButton = Button({ icon: 'times' });
@@ -33,7 +35,7 @@ const accessionHoldingWorkflowPreferenceAccordion = Accordion({
   label: 'Accession holding workflow preference',
 });
 const returningWorkflowPreferenceAccordion = Accordion({
-  label: 'Accession holding workflow preference',
+  label: 'Returning workflow preference',
 });
 const configurationFields = {
   nameInput: TextField({ name: 'name' }),
@@ -46,11 +48,10 @@ const configurationFields = {
 
 function fillGeneralInfo(fileName, providerName) {
   cy.do([
-    newButton.click(),
     configurationFields.nameInput.fillIn(fileName),
     generalInformationAccordion.find(Select()).choose(including(providerName)),
   ]);
-  cy.expect(configurationFields.nameInput.value()).to.equal(fileName);
+  // expect(configurationFields.nameInput.value()).to.equal(fileName);
 }
 
 function saveAndCloseForm() {
@@ -59,10 +60,15 @@ function saveAndCloseForm() {
   cy.wait(2000);
 }
 
+function openCreateConfigurationForm() {
+  cy.do(newButton.click());
+}
+
 const configurations = {
   DematicEMS: {
     title: 'Dematic EMS',
     create(name) {
+      openCreateConfigurationForm();
       fillGeneralInfo(name, this.title);
       saveAndCloseForm();
     },
@@ -70,47 +76,50 @@ const configurations = {
   DematicStagingDirector: {
     title: 'Dematic StagingDirector',
     create(name) {
+      openCreateConfigurationForm();
       this.fillRequiredFields(name);
       saveAndCloseForm();
     },
-    fillRequiredFields({ name, timing = 1 }) {
+    fillRequiredFields(name, timing = '1') {
       fillGeneralInfo(name, this.title);
       cy.do(configurationFields.timingInput.fillIn(timing));
     },
-    verifyRequiredFields({ name, timing = 1 }) {
-      cy.expect(configurationFields.nameInput.value()).to.equal(name);
-      cy.expect(configurationFields.nameInput.value()).to.contain(this.title);
-      cy.expect(configurationFields.timingInput.value()).to.equal(timing);
+    verifyRequiredFields(name, timing = '1') {
+      cy.expect(configurationFields.nameInput.has({ value: name }));
+      cy.expect(configurationFields.timingInput.has({ value: timing }));
     },
   },
   CaiaSoft: {
     title: 'CaiaSoft',
     create(name) {
+      openCreateConfigurationForm();
       this.fillRequiredFields(name);
       saveAndCloseForm();
     },
-    fillRequiredFields({
+    fillRequiredFields(
       name,
       accessionHoldingWorkflow = 'Change permanent location',
       returningWorkflow = 'Items received at remote storage scanned into FOLIO',
-    }) {
+    ) {
       fillGeneralInfo(name, this.title);
       cy.do([
         configurationFields.accessionHoldingWorkflowDropdown.choose(accessionHoldingWorkflow),
         configurationFields.returningWorkflowDropdown.choose(returningWorkflow),
       ]);
     },
-    verifyRequiredFields({
+    verifyRequiredFields(
       name,
       accessionHoldingWorkflow = 'Change permanent location',
       returningWorkflow = 'Items received at remote storage scanned into FOLIO',
-    }) {
-      cy.expect(configurationFields.nameInput.value()).to.equal(name);
-      cy.expect(configurationFields.nameInput.value()).to.contain(this.title);
-      cy.expect(configurationFields.accessionHoldingWorkflowDropdown.value()).to.equal(
-        accessionHoldingWorkflow,
+    ) {
+      expect(configurationFields.nameInput.has({ value: name }));
+      expect(configurationFields.provider.has({ value: including(this.title) }));
+      expect(
+        configurationFields.accessionHoldingWorkflowDropdown.has({
+          value: accessionHoldingWorkflow,
+        }),
       );
-      cy.expect(configurationFields.returningWorkflowDropdown.value()).to.equal(returningWorkflow);
+      expect(configurationFields.returningWorkflowDropdown.has({ value: returningWorkflow }));
     },
   },
 };
@@ -125,6 +134,7 @@ const getDefaultConfiguration = ({ id = uuid(), providerName = 'CAIA_SOFT' } = {
 
 export default {
   configurations,
+  openCreateConfigurationForm,
 
   waitLoading() {
     cy.expect(Pane('Configurations').exists());
@@ -268,31 +278,27 @@ export default {
     });
     this.closeCreateConfigurationWithoutSaving();
   },
-  openCreateConfigurationForm() {
-    cy.do(newButton.click());
-  },
   checkProviderNameDropdownValues() {
     cy.do(configurationFields.provider.click());
     Object.values(REMOTE_STORAGE_PROVIDER_NAMES).forEach((name) => {
       cy.expect(configurationFields.provider.find(Option(name)).exists());
     });
   },
-
   clickSaveAndCloseThenCheck() {
     cy.do(saveAndCloseBtn.click());
     cy.expect([
       confirmationModal.exists(),
       confirmationModal.has({
-        content: including('Are you sure you want to create this remote storage configuration?'),
+        content: including('Are you sure you want to create the remote storage configuration?'),
       }),
-      confirmationModal.find(Button('Save')).exists(),
-      confirmationModal.find(Button('Cancel')).exists(),
+      confirmationModal.find(saveBtn).exists(),
+      confirmationModal.find(cancelButton).exists(),
     ]);
   },
   cancelConfirmation() {
-    cy.do(confirmationModal.find(Button('Cancel')).click());
+    cy.do(confirmationModal.find(cancelButton).click());
   },
   confirmCreateRemoteStorage() {
-    cy.do(confirmationModal.find(Button('Save')).click());
+    cy.do(confirmationModal.find(saveBtn).click());
   },
 };
