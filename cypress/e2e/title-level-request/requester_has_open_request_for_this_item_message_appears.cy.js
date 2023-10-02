@@ -1,5 +1,4 @@
-import { TestTypes, DevTeams } from '../../support/dictionary';
-import permissions from '../../support/dictionary/permissions';
+import { TestTypes, DevTeams, Permissions } from '../../support/dictionary';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
@@ -85,10 +84,10 @@ describe('Title Level Request. Create Item or Title level request', () => {
 
     cy.createTempUser(
       [
-        permissions.uiRequestsCreate.gui,
-        permissions.uiRequestsView.gui,
-        permissions.uiRequestsEdit.gui,
-        permissions.requestsAll.gui,
+        Permissions.uiRequestsCreate.gui,
+        Permissions.uiRequestsView.gui,
+        Permissions.uiRequestsEdit.gui,
+        Permissions.requestsAll.gui,
       ],
       patronGroup.name,
     ).then((userProperties) => {

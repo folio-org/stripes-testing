@@ -34,6 +34,7 @@ export default {
   },
 
   changeTitleLevelRequestsStatus(status) {
+    cy.wait(2000);
     cy.get('input[name="titleLevelRequestsFeatureEnabled"]')
       .invoke('is', ':checked')
       .then((checked) => {
@@ -46,7 +47,7 @@ export default {
           this.checkUpdateTLRCalloutAppeared();
         } else if (checked && status === 'allow') {
           // If checkbox is already checked - to prevent test failing during parallel run
-
+          cy.log('TLR checkbox is already checked');
         } else if (checked && status === 'forbid') {
           cy.expect(
             Checkbox({ name: 'titleLevelRequestsFeatureEnabled', disabled: false }).exists(),
