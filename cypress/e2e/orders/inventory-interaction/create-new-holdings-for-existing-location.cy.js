@@ -24,7 +24,7 @@ describe('Orders: Inventory interaction', () => {
     servicePoint: ServicePoints.defaultServicePoint,
     instance: {},
     location: {},
-    orderNumber: '',
+    order: {},
     user: {},
   };
 
@@ -45,8 +45,8 @@ describe('Orders: Inventory interaction', () => {
 
           Locations.createViaApi(testData.location).then(() => {
             Orders.createOrderViaApi(NewOrder.getDefaultOrder(testData.organization.id)).then(
-              (number) => {
-                testData.orderNumber = number;
+              (order) => {
+                testData.order = order;
 
                 InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
                   InventoryInstances.createHoldingViaAPI({
@@ -80,7 +80,7 @@ describe('Orders: Inventory interaction', () => {
   after('Delete test data', () => {
     InventoryHoldings.deleteHoldingRecordViaApi(testData.instance.holdingId);
     Organizations.deleteOrganizationViaApi(testData.organization.id);
-    Orders.deleteOrderByOrderNumberViaApi(testData.orderNumber);
+    Orders.deleteOrderViaApi(testData.order.id);
     InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
     Locations.deleteViaApi(testData.location);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
@@ -92,7 +92,7 @@ describe('Orders: Inventory interaction', () => {
     { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
     () => {
       // Click on "PO number" link on "Orders" pane
-      Orders.selectOrderByPONumber(testData.orderNumber);
+      Orders.selectOrderByPONumber(testData.order.poNumber);
 
       // Select "Add PO line" option & fill the fields
       OrderLines.addPolToOrder(
