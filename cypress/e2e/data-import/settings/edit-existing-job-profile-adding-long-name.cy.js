@@ -16,6 +16,7 @@ describe('data-import', () => {
       profileName: `C2332 autotest job profile ${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
+    const calloutMessage = `The job profile "${jobProfileLongName}" was successfully updated`;
 
     before('create test data', () => {
       cy.loginAsAdmin();
@@ -45,7 +46,7 @@ describe('data-import', () => {
         JobProfileEdit.saveAndClose();
         JobProfileView.verifyJobProfileOpened();
         JobProfileView.verifyJobProfileName(jobProfileLongName);
-        JobProfiles.checkCalloutMessage(jobProfileLongName);
+        JobProfiles.checkCalloutMessage(calloutMessage);
       },
     );
   });
