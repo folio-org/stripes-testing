@@ -62,8 +62,8 @@ describe('ui-invoices: test POL search plugin', () => {
     });
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
 
-    Orders.createOrderWithOrderLineViaApi(order, orderLine).then((orderNumber) => {
-      createdOrderNumber = orderNumber;
+    Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
+      createdOrderNumber = poNumber;
     });
 
     cy.visit(TopMenu.invoicesPath);

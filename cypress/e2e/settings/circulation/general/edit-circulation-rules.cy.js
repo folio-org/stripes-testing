@@ -21,9 +21,7 @@ import NoticePolicy, {
 import MaterialTypes from '../../../../support/fragments/settings/inventory/materialTypes';
 import permissions from '../../../../support/dictionary/permissions';
 import Users from '../../../../support/fragments/users/users';
-import NewMaterialType, {
-  defaultMaterialType,
-} from '../../../../support/fragments/settings/inventory/newMaterialType';
+import NewMaterialType from '../../../../support/fragments/settings/inventory/newMaterialType';
 import {
   LOAN_POLICY_NAMES,
   OVERDUE_FINE_POLICY_NAMES,
@@ -33,6 +31,8 @@ import {
 } from '../../../../support/constants';
 
 describe('ui-circulation-settings: Edit circulation rules', () => {
+  const defaultMaterialType = NewMaterialType.getDefaultMaterialType();
+
   let addedCirculationRule;
   let newUserId;
 
@@ -43,7 +43,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
 
         cy.getAdminToken();
 
-        NewMaterialType.createViaApi(NewMaterialType.getDefaultMaterialType());
+        NewMaterialType.createViaApi(defaultMaterialType);
         NoticePolicy.createApi();
         LoanPolicy.createLoanableNotRenewableLoanPolicyApi(defaultLoanPolicy);
         RequestPolicy.createViaApi(defaultRequestPolicy);
