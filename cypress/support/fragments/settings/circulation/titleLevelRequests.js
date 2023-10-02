@@ -44,6 +44,9 @@ export default {
           cy.do(TLRCheckbox.click());
           cy.do(saveButton.click());
           this.checkUpdateTLRCalloutAppeared();
+        } else if (checked && status === 'allow') {
+          // If checkbox is already checked - to prevent test failing during parallel run
+
         } else if (checked && status === 'forbid') {
           cy.expect(
             Checkbox({ name: 'titleLevelRequestsFeatureEnabled', disabled: false }).exists(),
