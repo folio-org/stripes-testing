@@ -195,8 +195,8 @@ describe('data-import', () => {
               },
             ],
           }),
-        ).then((res) => {
-          orderNumber = res;
+        ).then((order) => {
+          orderNumber = order.poNumber;
 
           Orders.checkIsOrderCreated(orderNumber);
           // open the first PO with POL

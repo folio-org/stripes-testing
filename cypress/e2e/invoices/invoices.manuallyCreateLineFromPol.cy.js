@@ -75,15 +75,15 @@ describe('ui-invoices: Invoice Line creation - based on POL', () => {
     'C2327 Create invoice line based on purchase order line (thunderjet)',
     { tags: [testType.smoke, devTeams.thunderjet] },
     () => {
-      Orders.createOrderWithOrderLineViaApi(order, orderLine).then((orderNumber) => {
+      Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
         cy.visit(TopMenu.invoicesPath);
         Invoices.createSpecialInvoice(invoice, vendorPrimaryAddress);
         Invoices.checkInvoiceCurrency(orderLine.cost.currency);
-        Invoices.createInvoiceLineFromPol(orderNumber);
+        Invoices.createInvoiceLineFromPol(poNumber);
         Invoices.checkInvoiceLine(invoiceLine);
         // check different currency case
         Invoices.updateCurrency(euroCurrency);
-        Invoices.createInvoiceLineFromPol(orderNumber);
+        Invoices.createInvoiceLineFromPol(poNumber);
         Invoices.checkConfirmationalPopup();
         Invoices.applyConfirmationalPopup();
         Invoices.checkInvoiceLine(invoiceLine, euroSign);
