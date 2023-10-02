@@ -12,7 +12,7 @@ export const AdvancedSearchRow = HTML.extend('advanced search row')
     option: (el) => el.querySelectorAll('select')[1].value,
   })
   .actions({
-    fillQuery: ({ find }, value) => find(TextArea({ label: 'Search for' })).fillIn(value),
+    fillQuery: ({ find }, value) => find(TextArea({ ariaLabel: 'Search for' })).fillIn(value),
     selectBoolean: ({ find }, rowIndex, value) => find(Select({ id: `advanced-search-bool-${rowIndex}` })).choose(value),
     selectSearchOption: ({ find }, rowIndex, value) => find(Select({ id: `advanced-search-option-${rowIndex}` })).choose(value),
   });
