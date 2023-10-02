@@ -42,8 +42,8 @@ describe('orders: Test PO search', () => {
     'C6717 Test the PO searches (thunderjet)',
     { tags: [TestType.smoke, devTeams.thunderjet] },
     () => {
-      Orders.createOrderWithOrderLineViaApi(order, orderLine).then((number) => {
-        orderNumber = number;
+      Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
+        orderNumber = poNumber;
         const today = new Date();
         cy.visit(TopMenu.ordersPath);
         Orders.checkPoSearch(
