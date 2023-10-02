@@ -51,7 +51,6 @@ function fillGeneralInfo(fileName, providerName) {
     configurationFields.nameInput.fillIn(fileName),
     generalInformationAccordion.find(Select()).choose(including(providerName)),
   ]);
-  // expect(configurationFields.nameInput.value()).to.equal(fileName);
 }
 
 function saveAndCloseForm() {
