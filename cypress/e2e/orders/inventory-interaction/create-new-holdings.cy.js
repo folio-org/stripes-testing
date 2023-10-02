@@ -67,8 +67,8 @@ describe('Orders: Inventory interaction', () => {
                 eresource: testData.instance.eresource,
                 vendorAccount: testData.instance.vendorAccount,
               }),
-            ).then((number) => {
-              testData.orderNumber = number;
+            ).then((order) => {
+              testData.orderNumber = order.poNumber;
 
               InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
                 InventoryInstances.createHoldingViaAPI({
