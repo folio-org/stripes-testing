@@ -1470,7 +1470,7 @@ export default {
         holdingsLocationSaveButton.has({ disabled: false }),
       ]);
       cy.do(holdingsLocationSaveButton.click());
-      cy.expect([holdingsLocationModal.absent()]);
+      cy.expect(holdingsLocationModal.absent());
     });
   },
 };
