@@ -82,7 +82,7 @@ describe('Orders', () => {
   });
 
   describe(RECEIVING_WORKFLOWS.SYNCHRONIZED, () => {
-    before('Create test data', () => {
+    beforeEach('Create test data', () => {
       createOrder({ workflow: RECEIVING_WORKFLOWS.SYNCHRONIZED });
 
       cy.createTempUser([
@@ -99,6 +99,32 @@ describe('Orders', () => {
         });
       });
     });
+
+    it(
+      'C377037 Select "Delete Holdings and items" option when unopening an order with receiving workflow of "Synchronized order and receipt quantity" (thunderjet) (TaaS)',
+      { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+      () => {
+        // Click on "PO number" link on "Orders" pane
+        Orders.selectOrderByPONumber(testData.order.poNumber);
+        Orders.checkOrderStatus('Open');
+
+        // Click "Actions" button, Select "Unopen" option
+        Orders.unOpenOrder({
+          orderNumber: testData.order.poNumber,
+          checkinItems: testData.instance.checkinItems,
+          confirm: false,
+        });
+
+        // Click "Keep Holdings" button
+        UnopenConfirmationModal.confirm({ keepHoldings: false });
+        Orders.checkOrderStatus('Pending');
+
+        // Click on PO line record in "PO lines" accordion
+        OrderLines.selectPOLInOrder();
+        OrderLines.openInstance();
+        InventoryInstance.verifyInstanceTitle(testData.instance.instanceTitle);
+      },
+    );
 
     it(
       'C377040 Select "Delete items" option when unopening an order with receiving workflow of "Synchronized order and receipt quantity" (thunderjet) (TaaS)',
