@@ -93,7 +93,7 @@ describe('Invoices', () => {
       const organization = NewOrganization.getDefaultOrganization();
       const testData = {
         organization,
-        order: { ...NewOrder.getDefaultOrder(organization.id), reEncumber: true },
+        order: { ...NewOrder.getDefaultOrder({ vendorId: organization.id }), reEncumber: true },
         servicePoint: ServicePoints.defaultServicePoint,
         location: {},
         user: {},
