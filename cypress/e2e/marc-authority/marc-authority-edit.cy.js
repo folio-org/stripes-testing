@@ -237,6 +237,22 @@ describe('MARC Authority -> Edit Authority record', () => {
   );
 
   it(
+    'C353583 Verify LDR validation rules with valid data (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    () => {
+      MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
+      MarcAuthorities.selectTitle(testData.authority.title);
+      changedLDRs.forEach((changeLDR) => {
+        MarcAuthority.edit();
+        QuickMarcEditor.updateExistingField('LDR', changeLDR.newContent);
+        QuickMarcEditor.pressSaveAndClose();
+        if (changeLDR.newContent === String.raw`04112az\\a2200589n\\4500`) MarcAuthorities.verifyFirstValueSaveSuccess(changesSavedCallout, changeLDR.newContent);
+        else MarcAuthorities.verifySaveSuccess(changesSavedCallout, changeLDR.newContent);
+      });
+    },
+  );
+
+  it(
     'C353585 Verify LDR validation rules with invalid data (spitfire)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
@@ -268,22 +284,6 @@ describe('MARC Authority -> Edit Authority record', () => {
         QuickMarcEditor.updateExistingField('LDR', changeLDR.newContent);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkCallout(changeLDR.errorMessage);
-      });
-    },
-  );
-
-  it(
-    'C353583 Verify LDR validation rules with valid data (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
-    () => {
-      MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
-      MarcAuthorities.selectTitle(testData.authority.title);
-      changedLDRs.forEach((changeLDR) => {
-        MarcAuthority.edit();
-        QuickMarcEditor.updateExistingField('LDR', changeLDR.newContent);
-        QuickMarcEditor.pressSaveAndClose();
-        if (changeLDR.newContent === String.raw`04112az\\a2200589n\\4500`) MarcAuthorities.verifyFirstValueSaveSuccess(changesSavedCallout, changeLDR.newContent);
-        else MarcAuthorities.verifySaveSuccess(changesSavedCallout, changeLDR.newContent);
       });
     },
   );

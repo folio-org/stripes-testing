@@ -70,7 +70,7 @@ const calloutUpdatedRecord = Callout(
 const calloutOnDeriveFirst = Callout('Creating record may take several seconds.');
 const calloutOnDeriveSecond = Callout('Record created.');
 const calloutUpdatedLinkedBibRecord = Callout(
-  'Record has been updated. 2 linked bibliographic record(s) updates have begun.',
+  'This record has successfully saved and is in process. 2 linked bibliographic record(s) updates have begun.',
 );
 const calloutNonEditableLdrBib = Callout(
   'Record cannot be saved. Please check the Leader. Only positions 5, 6, 7, 8, 17, 18 and/or 19 can be edited in the Leader.',
@@ -96,6 +96,7 @@ const specRetInputNamesHoldings008 = [
 
 const paneHeader = PaneHeader({ id: 'paneHeaderquick-marc-editor-pane' });
 const linkHeadingsButton = Button('Link headings');
+const arrowDownButton = Button({ icon: 'arrow-down' });
 
 const tag008HoldingsBytesProperties = {
   acqStatus: {
@@ -392,6 +393,34 @@ export default {
 
   clickLinkIconInTagField(rowIndex) {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).click());
+  },
+  
+  clickLinkHeadingsButton() {
+    cy.do(paneHeader.find(linkHeadingsButton).click());
+  },
+
+  checkLinkHeadingsButton() {
+    cy.expect(paneHeader.find(linkHeadingsButton).exists());
+  },
+
+  clickArrowDownButton(rowIndex) {
+    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(arrowDownButton).click());
+  },
+
+  setRulesForField(tag, isEnabled) {
+    cy.getAllRulesViaApi()
+      .then((body) => {
+        const ruleIds = [];
+        body.filter((rule) => {
+          rule.bibField == `${tag}` && ruleIds.push(rule.id);
+        });
+        return ruleIds;
+      })
+      .then((ruleIds) => {
+        ruleIds.forEach(ruleId => {
+          cy.setRulesForFieldViaApi(ruleId, isEnabled);
+        });
+      });
   },
 
   checkAbsenceOfLinkHeadingsButton() {
@@ -1119,6 +1148,17 @@ export default {
 
   verifyNoFieldWithContent(content) {
     cy.expect(TextArea({ ariaLabel: 'Subfield', textContent: including(content) }).absent());
+  },
+
+  verifyTagWithNaturalIdExistance(rowIndex, tag, naturalId, nameLocator = `records[${rowIndex}].subfieldGroups.zeroSubfield`) {
+    cy.expect([
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextField({ name: `records[${rowIndex}].tag` }))
+        .has({ value: tag }),
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextArea({ name: nameLocator }))
+        .has({ value: including(naturalId) }),
+    ]);
   },
 
   updateTagNameToLockedTag(rowIndex, newTagName) {
