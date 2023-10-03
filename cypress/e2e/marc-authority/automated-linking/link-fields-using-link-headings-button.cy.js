@@ -247,13 +247,13 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
       }
       QuickMarcEditor.deleteField(83);
       QuickMarcEditor.deleteField(82);
-      QuickMarcEditor.afterDeleteNotification('700')
+      QuickMarcEditor.afterDeleteNotification('700');
 
       QuickMarcEditor.clickLinkHeadingsButton();
       QuickMarcEditor.checkCallout('Field 100, 240, 600, 630, 655, 700, 710, 711, 800, and 830 has been linked to MARC authority record(s).');
       QuickMarcEditor.checkCallout('Field 110, 111, 130, 610, 611, 650, 651, 700, 730, 810, and 811 must be set manually by selecting the link icon.');
       QuickMarcEditor.checkLinkHeadingsButton();
-      QuickMarcEditor.afterDeleteNotification('700')
+      QuickMarcEditor.afterDeleteNotification('700');
       QuickMarcEditor.verifyTagFieldAfterLinking(87, '700', '1', '\\', '$a Stelfreeze, Brian', '$e artist.', '$0 id.loc.gov/authorities/names/n91065740', '');
       matchingNaturalIds.forEach(matchs => {
         QuickMarcEditor.verifyTagWithNaturalIdExistance(
@@ -293,7 +293,8 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
       QuickMarcEditor.clickSaveAndKeepEditingButton();
       QuickMarcEditor.verifyTagFieldAfterLinking(82, '700', '1', '\\', '$a Sprouse, Chris', '$e artist.', '$0 id.loc.gov/authorities/names/nb98017694', '');
       QuickMarcEditor.verifyTagFieldAfterLinking(87, '700', '1', '\\', '$a Stelfreeze, Brian', '$e artist.', '$0 id.loc.gov/authorities/names/n91065740', '');
-      //Wait for requests to be finished.
+      // Wait for requests to be finished.
       cy.wait(3000);
-  });
+    }
+  );
 });
