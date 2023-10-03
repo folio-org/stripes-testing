@@ -111,7 +111,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     },
   ];
 
-  const NotMatchingNaturalIds = [
+  const notMatchingNaturalIds = [
     {
       rowIndex: 34,
       tag: '110',
@@ -262,7 +262,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
           matchs.naturalId,
         );
       });
-      NotMatchingNaturalIds.forEach(matchs => {
+      notMatchingNaturalIds.forEach(matchs => {
         QuickMarcEditor.verifyTagWithNaturalIdExistance(
           matchs.rowIndex,
           matchs.tag,
@@ -280,7 +280,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
       QuickMarcEditor.checkCallout('Field 700 has been linked to MARC authority record(s).');
       QuickMarcEditor.checkCallout('Field 110, 111, 130, 610, 611, 650, 651, 700, 730, 810, and 811 must be set manually by selecting the link icon.');
       QuickMarcEditor.verifyTagWithNaturalIdExistance(83, '700', 'n2014052262');
-      NotMatchingNaturalIds.forEach(matchs => {
+      notMatchingNaturalIds.forEach(matchs => {
         QuickMarcEditor.verifyTagWithNaturalIdExistance(
           matchs.rowIndex,
           matchs.tag,
