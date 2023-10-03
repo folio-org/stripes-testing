@@ -40,36 +40,25 @@ describe('bulk-edit', () => {
       'C366073 Verify Bulk edit elements in the left pane --In app (firebird)',
       { tags: [testTypes.criticalPath, devTeams.firebird] },
       () => {
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
-        BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
+        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
+        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Query');
         BulkEditSearchPane.verifyRecordTypesEmpty();
         BulkEditSearchPane.verifyRecordIdentifierEmpty();
         BulkEditSearchPane.isDragAndDropAreaDisabled(true);
 
-        BulkEditSearchPane.openQuerySearch();
-        BulkEditSearchPane.verifySpecificTabHighlighted('Query');
-        BulkEditSearchPane.verifyRecordTypesEmpty();
-        BulkEditSearchPane.isBuildQueryButtonDisabled(true);
-
+        // Without waiter, user is not logging in
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(500);
         cy.login(userWithInventoryView.username, userWithInventoryView.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
         });
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
-        BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
+        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
+        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Query');
         BulkEditSearchPane.itemsRadioIsDisabled(false);
         BulkEditSearchPane.isItemsRadioChecked(false);
         BulkEditSearchPane.holdingsRadioIsDisabled(false);
         BulkEditSearchPane.isDragAndDropAreaDisabled(true);
-
-        BulkEditSearchPane.openQuerySearch();
-        BulkEditSearchPane.verifySpecificTabHighlighted('Query');
-        BulkEditSearchPane.itemsRadioIsDisabled(false);
-        BulkEditSearchPane.isItemsRadioChecked(false);
-        BulkEditSearchPane.holdingsRadioIsDisabled(false);
-        BulkEditSearchPane.isBuildQueryButtonDisabled(false);
-        BulkEditSearchPane.clickBuildQueryButton();
-        BulkEditSearchPane.verifyBuildQueryModal();
       },
     );
   });
