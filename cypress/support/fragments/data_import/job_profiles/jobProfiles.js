@@ -147,10 +147,10 @@ export default {
 
   checkListOfExistingProfilesIsDisplayed: () => cy.expect(paneResults.exists()),
 
-  checkCalloutMessage: (profileName) => {
+  checkCalloutMessage: (message) => {
     cy.expect(
       Callout({
-        textContent: including(`The job profile "${profileName}" was successfully updated`),
+        textContent: including(message),
       }).exists(),
     );
   },
