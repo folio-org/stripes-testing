@@ -40,7 +40,6 @@ export default {
         body: loanPolicy,
       })
       .then(({ body }) => {
-        Cypress.env('loanPolicy', body);
         return body;
       });
   },

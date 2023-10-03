@@ -244,6 +244,16 @@ export default {
     );
   },
 
+  updateDataByRowIndex: (rowIndex, content) => {
+    // wait until all the saved and updated values will be loaded.
+    cy.wait(2000);
+    cy.do(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextArea({ name: `records[${rowIndex}].content` }))
+        .fillIn(content),
+    );
+  },
+
   checkTagInRowDoesntExist: (rowIndex, tag) => {
     cy.expect(
       QuickMarcEditorRow({ index: rowIndex })

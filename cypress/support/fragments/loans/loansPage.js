@@ -33,6 +33,9 @@ export default {
   checkAll() {
     cy.do(CheckboxInTable({ name: 'check-all' }).click());
   },
+  checkOneLoan() {
+    cy.do(MultiColumnListRow({ index: 0 }).find(CheckboxInTable()).click());
+  },
   exportLoansToCSV() {
     cy.do(Button('Export to CSV').click());
   },
@@ -41,6 +44,9 @@ export default {
   },
   openChangeDueDate() {
     cy.do(changeDueDateButton.click());
+  },
+  verifyChangeDueDateButtonIsActive() {
+    cy.expect(changeDueDateButton.is({ disabled: false }));
   },
   claimReturnedAndConfirm(reasonWhyItemChangesStatus) {
     this.claimReturned();

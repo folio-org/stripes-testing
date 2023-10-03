@@ -8,7 +8,6 @@ import {
   Checkbox,
   MultiColumnListCell,
   Modal,
-  TextField,
   MultiColumnList,
   Link,
   Callout,
@@ -124,13 +123,6 @@ export default {
     cy.do(
       Accordion({ id: 'edit-field-mappings-for-marc-updates' }).find(Button('Add field')).click(),
     );
-  },
-
-  checkErrorMessageIsPresented: (textFieldName) => {
-    const fieldName = TextField(textFieldName);
-
-    cy.do(fieldName.click());
-    cy.expect(fieldName.has({ error: 'Please enter a value' }));
   },
 
   verifyLinkedActionProfile: (profileName) => {

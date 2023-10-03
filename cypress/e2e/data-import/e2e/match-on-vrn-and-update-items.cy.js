@@ -13,7 +13,7 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import Organizations from '../../../support/fragments/organizations/organizations';
-import OrderView from '../../../support/fragments/orders/orderView';
+import OrderDetails from '../../../support/fragments/orders/orderDetails';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Receiving from '../../../support/fragments/receiving/receiving';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -173,7 +173,7 @@ describe('data-import', () => {
       () => {
         // create order with POL
         Orders.createOrderWithOrderLineViaApi(
-          NewOrder.getDefaultOrder(vendorId),
+          NewOrder.getDefaultOrder({ vendorId }),
           BasicOrderLine.getDefaultOrderLine({
             quantity: item.quantityPhysical,
             title: item.title,
@@ -195,22 +195,22 @@ describe('data-import', () => {
               },
             ],
           }),
-        ).then((res) => {
-          orderNumber = res;
+        ).then((order) => {
+          orderNumber = order.poNumber;
 
           Orders.checkIsOrderCreated(orderNumber);
           // open the first PO with POL
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
           Orders.openOrder();
-          OrderView.checkIsOrderOpened(ORDER_STATUSES.OPEN);
-          OrderView.checkIsItemsInInventoryCreated(item.title, 'Main Library');
+          OrderDetails.checkIsOrderOpened(ORDER_STATUSES.OPEN);
+          OrderDetails.checkIsItemsInInventoryCreated(item.title, 'Main Library');
           // check receiving pieces are created
           cy.visit(TopMenu.ordersPath);
           Orders.resetFilters();
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
-          OrderView.openPolDetails(item.title);
+          OrderDetails.openPolDetails(item.title);
           OrderLines.openReceiving();
           Receiving.checkIsPiecesCreated(item.title);
         });

@@ -31,7 +31,7 @@ describe('data-import', () => {
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.createMatchProfile(matchProfile);
         InteractorsTools.closeCalloutMessage();
-        MatchProfileView.closeViewModeForMatchProfile();
+        MatchProfileView.closeViewMode();
       });
     });
 

@@ -261,7 +261,7 @@ describe('data-import', () => {
           ].forEach((columnName) => {
             FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
           });
-          FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
+          FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems, 1);
           FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 1);
 
           cy.visit(TopMenu.inventoryPath);
