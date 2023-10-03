@@ -4,7 +4,6 @@ import { Configurations } from '../../../support/fragments/settings/remote-stora
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenu from '../../../support/fragments/topMenu';
-import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import RemoteStorage from '../../../support/fragments/settings/remote-storage/remoteStorage';
 
 let user;
@@ -16,10 +15,7 @@ describe('remote-storage-configuration', () => {
   before('create test data', () => {
     cy.createTempUser([Permissions.remoteStorageCRUD.gui]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.settingsPath,
-        waiter: SettingsPane.waitLoading,
-      });
+      cy.login(user.username, user.password);
     });
   });
 
@@ -31,19 +27,47 @@ describe('remote-storage-configuration', () => {
     'C367964 Verify text of success toast when creating remote storage configurations (firebird) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.firebird] },
     () => {
+      // #1 Go to the "Settings" app
+      cy.visit(TopMenu.settingsPath);
+      // #2 Select "Remote storage" by clicking on it
       SettingsMenu.openRemoteStorageSettings();
+
+      // The "Remote storage" pane  is appears and contains of: "Configurations", "Accession tables"
       RemoteStorage.checkSettingItems();
+
+      // #3 Select "Configurations" on the "Remote storage" pane by clicking on it
       RemoteStorage.goToConfigurations();
+
+      // #4 Select the "New" button
       Configurations.openCreateConfigurationForm();
+
+      // #6 "Provider name" dropdown expands and consists of the options: "Dematic EMS (API)", "Dematic StagingDirector (TCP/IP)", "CaiaSoft"
       Configurations.checkProviderNameDropdownValues();
+
+      // #5 Fill in "Remote storage name"
+      // #7 Select  the "Dematic StagingDirector (TCP/IP)" from the "Provider name" dropdown
+      // #8 Fill into "Data synchronization schedule Runs every" input field with "1" minute value
       dematicStagingDirector.fillRequiredFields(name);
+      // Check that the entered values is shown in the input fields
       dematicStagingDirector.verifyRequiredFields(name);
+
+      // #9 Select "Save & close" button
       Configurations.clickSaveAndCloseThenCheck();
+      // #10 Click "Cancel" button
       Configurations.cancelConfirmation();
+
+      // #11 Click on the "Provider name" dropdown and select another configuration -- "CaiaSoft"
+      // #12 Select "Change permanent location" from the dropdown on the "Accession holding workflow preference" accordion
+      // #13 Select "Items received at remote storage scanned into FOLIO" from the dropdown on the "Returning workflow preference" accordion
       caiaSoft.fillRequiredFields(name);
+      // Check that the entered values is shown in the input fields
       caiaSoft.verifyRequiredFields(name);
+
+      // #14 Select "Save & close" button
       Configurations.clickSaveAndCloseThenCheck();
+      // #15 Select "Save" button
       Configurations.confirmCreateRemoteStorage();
+      // Success toast at the bottom of the "Configurations" pane reads: "Remote storage configuration was successfully created"
       Configurations.verifyCreatedConfiguration(name, caiaSoft);
       Configurations.deleteRemoteStorage(name);
     },
