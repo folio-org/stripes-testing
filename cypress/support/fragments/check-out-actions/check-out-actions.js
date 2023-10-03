@@ -214,7 +214,13 @@ export default {
         .exists(),
     );
   },
+  checkNoteModalNotDisplayed: () => {
+    cy.expect(Modal({ id: 'popup-note-modal' }).absent());
+  },
   deleteNote: () => {
     cy.do(Button('Delete note').click());
+  },
+  closeNote: () => {
+    cy.do(Button('Close').click());
   },
 };
