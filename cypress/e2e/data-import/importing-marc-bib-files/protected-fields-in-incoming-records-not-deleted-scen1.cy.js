@@ -21,7 +21,14 @@ describe('data-import', () => {
     let user = null;
     let instanceHrid = null;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-    const protectedField = '856';
+    const protectedFieldData = {
+      protectedField: '856',
+      in1: '*',
+      in2: '*',
+      subfield: '*',
+      data: '*',
+      source: 'User',
+    };
     const OCLCAuthentication = '100481406/PAOLF';
     const oclcForChanging = '466478385';
     const imported856Field =
@@ -76,10 +83,10 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      MarcFieldProtection.getListOfMarcFieldProtectionViaApi({
-        query: `"field"=="${protectedField}"`,
+      MarcFieldProtection.getListViaApi({
+        query: `"field"=="${protectedFieldData.protectedField}"`,
       }).then((list) => {
-        list.forEach(({ id }) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(id));
+        list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
       });
       Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
       Users.deleteViaApi(user.userId);
@@ -95,10 +102,9 @@ describe('data-import', () => {
       { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.parallel] },
       () => {
         cy.visit(SettingsMenu.marcFieldProtectionPath);
-        MarcFieldProtection.checkListOfExistingProfilesIsDisplayed();
-        MarcFieldProtection.createNewMarcFieldProtection();
-        MarcFieldProtection.fillMarcFieldProtection(protectedField);
-        MarcFieldProtection.checkFieldProtectionIsCreated(protectedField);
+        MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
+        MarcFieldProtection.create(protectedFieldData);
+        MarcFieldProtection.verifyFieldProtectionIsCreated(protectedFieldData.protectedField);
 
         cy.visit(SettingsMenu.targetProfilesPath);
         Z3950TargetProfiles.openTargetProfile();
@@ -124,7 +130,7 @@ describe('data-import', () => {
           `Record ${oclcForChanging} updated. Results may take a few moments to become visible in Inventory`,
         );
         InventoryInstance.viewSource();
-        InventoryViewSource.contains(`${protectedField}\t`);
+        InventoryViewSource.contains(`${protectedFieldData.protectedField}\t`);
         InventoryViewSource.contains(imported856Field);
       },
     );

@@ -27,6 +27,7 @@ import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRec
 import Helper from '../../../support/fragments/finance/financeHelper';
 import FileManager from '../../../support/utils/fileManager';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -136,9 +137,9 @@ describe('data-import', () => {
       ActionProfiles.deleteActionProfile(instanceActionProfileForCreate.name);
       ActionProfiles.deleteActionProfile(holdingsActionProfileForCreate.name);
       ActionProfiles.deleteActionProfile(holdingsActionProfileForUpdate.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileForCreate.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileForCreate.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileForUpdate.name);
+      FieldMappingProfileView.deleteViaApi(instanceMappingProfileForCreate.name);
+      FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForCreate.name);
+      FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForUpdate.name);
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
@@ -170,8 +171,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.addNatureOfContentTerms(
           instanceMappingProfileForCreate.natureOfContent,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfileForCreate.name);
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(instanceMappingProfileForCreate.name);
         FieldMappingProfiles.checkMappingProfilePresented(instanceMappingProfileForCreate.name);
 
         FieldMappingProfiles.openNewMappingProfileForm();
@@ -202,8 +203,8 @@ describe('data-import', () => {
           holdingsMappingProfileForCreate.holdingsNote,
           holdingsMappingProfileForCreate.staffOnly,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfileForCreate.name);
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(holdingsMappingProfileForCreate.name);
         FieldMappingProfiles.checkMappingProfilePresented(holdingsMappingProfileForCreate.name);
 
         // create action profiles
@@ -306,8 +307,8 @@ describe('data-import', () => {
             NewFieldMappingProfile.actions.deleteAllExistingAndAddThese,
           );
           NewFieldMappingProfile.fillIllPolicy(holdingsMappingProfileForUpdate.illPolicy);
-          FieldMappingProfiles.saveProfile();
-          FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfileForUpdate.name);
+          NewFieldMappingProfile.save();
+          FieldMappingProfileView.closeViewMode(holdingsMappingProfileForUpdate.name);
           FieldMappingProfiles.checkMappingProfilePresented(holdingsMappingProfileForUpdate.name);
 
           // create action profile

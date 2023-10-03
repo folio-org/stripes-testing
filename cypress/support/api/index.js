@@ -17,3 +17,5 @@ import './request-preference-storage';
 import './invoice';
 import './instance';
 import './loan-history';
+import './authority';
+import './auto-linking';

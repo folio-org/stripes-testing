@@ -1,4 +1,4 @@
-import { Button, Modal, Select, including } from '../../../../interactors';
+import { Button, Modal, Select, including } from '../../../../../interactors';
 
 const selectLocationModal = Modal(including('Select'));
 const cancelButton = selectLocationModal.find(Button('Cancel'));

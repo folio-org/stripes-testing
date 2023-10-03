@@ -29,12 +29,12 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Settings', () => {
     let user = null;
     let instanceHrid;
-    const marcFieldProtectionId = [];
     const OCLCAuthentication = '100481406/PAOLF';
     const protectedFields = {
       firstField: '*',
@@ -90,7 +90,16 @@ describe('data-import', () => {
 
     after('delete test data', () => {
       FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-      marcFieldProtectionId.forEach((field) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(field));
+      MarcFieldProtection.getListViaApi({
+        query: `"field"=="${protectedFields.firstField}"`,
+      }).then((list) => {
+        list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+      });
+      MarcFieldProtection.getListViaApi({
+        query: `"field"=="${protectedFields.secondField}"`,
+      }).then((list) => {
+        list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+      });
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
         (instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);
@@ -100,7 +109,7 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
       Users.deleteViaApi(user.userId);
     });
 
@@ -116,27 +125,21 @@ describe('data-import', () => {
         );
         Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(OCLCAuthentication);
 
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
+        MarcFieldProtection.createViaApi({
           indicator1: '*',
           indicator2: '*',
           subfield: '5',
           data: 'amb',
           source: 'USER',
           field: protectedFields.firstField,
-        }).then((resp) => {
-          const id = resp.id;
-          marcFieldProtectionId.push = id;
         });
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
+        MarcFieldProtection.createViaApi({
           indicator1: '*',
           indicator2: '*',
           subfield: '*',
           data: '*',
           source: 'USER',
           field: protectedFields.secondField,
-        }).then((resp) => {
-          const id = resp.id;
-          marcFieldProtectionId.push = id;
         });
 
         // create match profile
@@ -150,8 +153,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
         NewFieldMappingProfile.fillCatalogedDate(mappingProfile.catalogedDate);
         NewFieldMappingProfile.fillInstanceStatusTerm(mappingProfile.statusTerm);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         // create action profile
@@ -172,10 +175,7 @@ describe('data-import', () => {
         [18, 19, 20, 21, 22, 23, 24, 25, 26].forEach((fieldNumber) => {
           InventoryEditMarcRecord.deleteField(fieldNumber);
         });
-        InventoryEditMarcRecord.editField(
-          '$a Louisiana. $2 fast $0 (OCoLC)fst01207035',
-          '$a Louisiana. $2 fast $0 (OCoLC)fst01207035 $5 amb',
-        );
+        InventoryEditMarcRecord.editField('$a Louisiana $2 fast', '$a Louisiana $2 fast $5 amb');
         InventoryEditMarcRecord.addField('920', 'This should be a protected field', 28);
         InventoryEditMarcRecord.saveAndClose();
         InventoryEditMarcRecord.confirmDeletingField();
@@ -184,7 +184,7 @@ describe('data-import', () => {
 
           InventoryInstance.viewSource();
           InventoryViewSource.contains('651\t');
-          InventoryViewSource.contains('‡a Louisiana. ‡2 fast ‡0 (OCoLC)fst01207035 ‡5 amb');
+          InventoryViewSource.contains('‡a Louisiana ‡2 fast ‡5 amb');
           InventoryViewSource.contains('920\t');
           InventoryViewSource.contains('‡a This should be a protected field');
           // The prepared file without fields 651 and 920 is used because it is very difficult
@@ -230,7 +230,7 @@ describe('data-import', () => {
         InventoryInstance.checkIsInstanceUpdated();
         InventoryInstance.viewSource();
         InventoryViewSource.contains('651\t');
-        InventoryViewSource.contains('‡a Louisiana. ‡2 fast ‡0 (OCoLC)fst01207035 ‡5 amb');
+        InventoryViewSource.contains('‡a Louisiana ‡2 fast ‡5 amb');
         InventoryViewSource.contains('920\t');
         InventoryViewSource.contains('‡a This should be a protected field');
       },

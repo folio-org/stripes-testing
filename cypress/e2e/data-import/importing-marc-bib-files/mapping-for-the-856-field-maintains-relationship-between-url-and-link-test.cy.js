@@ -24,6 +24,7 @@ import Users from '../../../support/fragments/users/users';
 import InstanceStatusTypes from '../../../support/fragments/settings/inventory/instances/instanceStatusTypes/instanceStatusTypes';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -114,7 +115,7 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       collectionOfMappingAndActionProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       Users.deleteViaApi(user.userId);
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
@@ -138,8 +139,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillInstanceStatusTerm(
           collectionOfMappingAndActionProfiles[0].mappingProfile.instanceStatusTerm,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfiles[0].mappingProfile.name,
         );
 
@@ -160,8 +161,8 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[1].mappingProfile.materialsSpecified,
           collectionOfMappingAndActionProfiles[1].mappingProfile.urlPublicNote,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfiles[1].mappingProfile.name,
         );
 

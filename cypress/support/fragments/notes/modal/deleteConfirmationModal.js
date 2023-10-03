@@ -2,7 +2,6 @@ import { Button, Modal } from '../../../../../interactors';
 
 const deleteConfirmationModal = Modal('Delete note');
 const deleteButton = Button('Delete');
-const cancelButton = Button('Cancel');
 
 export default {
   waitLoading: () => {

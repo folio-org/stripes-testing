@@ -28,7 +28,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import OrderView from '../../../support/fragments/orders/orderView';
+import OrderDetails from '../../../support/fragments/orders/orderDetails';
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import Receiving from '../../../support/fragments/receiving/receiving';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
@@ -42,6 +42,7 @@ import NewLocation from '../../../support/fragments/settings/tenant/locations/ne
 import FileManager from '../../../support/utils/fileManager';
 import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
@@ -230,7 +231,7 @@ describe('data-import', () => {
       });
       collectionOfProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(firstItem.barcode);
       cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${secondItem.title}"` }).then(
@@ -272,7 +273,7 @@ describe('data-import', () => {
       Orders.resetFilters();
       Orders.searchByParameter('PO number', number);
       Orders.selectFromResultsList(number);
-      OrderView.openPolDetails(title);
+      OrderDetails.openPolDetails(title);
       OrderLines.openReceiving();
       Receiving.checkIsPiecesCreated(title);
     };
@@ -283,11 +284,11 @@ describe('data-import', () => {
       () => {
         // create the first PO with POL
         Orders.createOrderWithOrderLineViaApi(
-          NewOrder.getDefaultOrder(vendorId),
+          NewOrder.getDefaultOrder({ vendorId }),
           BasicOrderLine.getDefaultOrderLine({
             quantity: firstItem.quantity,
             title: firstItem.title,
-            spesialLocationId: location.id,
+            specialLocationId: location.id,
             specialMaterialTypeId: materialTypeId,
             acquisitionMethod: acquisitionMethodId,
             listUnitPrice: firstItem.price,
@@ -299,24 +300,24 @@ describe('data-import', () => {
               },
             ],
           }),
-        ).then((res) => {
-          firstOrderNumber = res;
+        ).then((firstOrder) => {
+          firstOrderNumber = firstOrder.poNumber;
 
           Orders.checkIsOrderCreated(firstOrderNumber);
           // open the first PO with POL
           openOrder(firstOrderNumber);
-          OrderView.checkIsOrderOpened(ORDER_STATUSES.OPEN);
-          OrderView.checkIsItemsInInventoryCreated(firstItem.title, location.name);
+          OrderDetails.checkIsOrderOpened(ORDER_STATUSES.OPEN);
+          OrderDetails.checkIsItemsInInventoryCreated(firstItem.title, location.name);
           // check receiving pieces are created
           checkReceivedPiece(firstOrderNumber, firstItem.title);
 
           // create second PO with POL
           Orders.createOrderWithOrderLineViaApi(
-            NewOrder.getDefaultOrder(vendorId),
+            NewOrder.getDefaultOrder({ vendorId }),
             BasicOrderLine.getDefaultOrderLine({
               quantity: secondItem.quantity,
               title: secondItem.title,
-              spesialLocationId: location.id,
+              specialLocationId: location.id,
               specialMaterialTypeId: materialTypeId,
               acquisitionMethod: acquisitionMethodId,
               listUnitPrice: secondItem.price,
@@ -328,16 +329,16 @@ describe('data-import', () => {
                 },
               ],
             }),
-          ).then((respo) => {
-            secondOrderNumber = respo;
+          ).then((secondOrder) => {
+            secondOrderNumber = secondOrder.poNumber;
 
             cy.visit(TopMenu.ordersPath);
             Orders.resetFilters();
             Orders.checkIsOrderCreated(secondOrderNumber);
             // open the second PO
             openOrder(secondOrderNumber);
-            OrderView.checkIsOrderOpened(ORDER_STATUSES.OPEN);
-            OrderView.checkIsItemsInInventoryCreated(secondItem.title, location.name);
+            OrderDetails.checkIsOrderOpened(ORDER_STATUSES.OPEN);
+            OrderDetails.checkIsItemsInInventoryCreated(secondItem.title, location.name);
             // check receiving pieces are created
             checkReceivedPiece(secondOrderNumber, secondItem.title);
           });

@@ -7,6 +7,7 @@ import {
   Link,
   PaneHeader,
   Button,
+  Pane,
 } from '../../../../../interactors';
 import LogsViewAll from './logsViewAll';
 import arrays from '../../../utils/arrays';
@@ -468,5 +469,9 @@ export default {
           .invoke('text')
           .should('eq', invoiceStatus);
       });
+  },
+
+  verifyLogDetailsPageIsOpened: (fileName) => {
+    cy.expect(Pane(fileName).exists());
   },
 };

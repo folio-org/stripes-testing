@@ -1,3 +1,5 @@
+import uuid from 'uuid';
+import moment from 'moment';
 import {
   Accordion,
   Button,
@@ -21,7 +23,15 @@ import {
   TextField,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
-import Helper from '../finance/financeHelper';
+import { randomFourDigitNumber } from '../../utils/stringTools';
+import FinanceHelper from '../finance/financeHelper';
+import InvoiceEditForm from './invoiceEditForm';
+import { INVOICE_STATUSES } from '../../constants';
+
+const invoiceResultsPane = Pane({ id: 'invoice-results-pane' });
+const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
+const invoiceDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-invoiceDetails' });
+const informationSection = invoiceDetailsPane.find(Section({ id: 'information' }));
 
 const buttonNew = Button('New');
 const saveAndClose = Button('Save & close');
@@ -37,7 +47,6 @@ const invoiceLinesAccordionId = 'invoiceLines';
 const actionsButton = Button('Actions');
 const submitButton = Button('Submit');
 const searchButton = Button('Search');
-const invoiceDetailsPaneId = 'paneHeaderpane-invoiceDetails';
 const searchInputId = 'input-record-search';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderinvoice-results-pane-subtitle"]/span';
 const zeroResultsFoundText = '0 records found';
@@ -59,7 +68,126 @@ const selectOrderLinesModal = Modal('Select order lines');
 const fundInInvoiceSection = Section({ id: 'invoiceLineForm-fundDistribution' });
 const searhInputId = 'input-record-search';
 
+const getDefaultInvoice = ({
+  batchGroupId,
+  batchGroupName,
+  vendorId,
+  vendorName,
+  accountingCode,
+  invoiceDate = moment.utc().format(),
+}) => ({
+  chkSubscriptionOverlap: true,
+  currency: 'USD',
+  source: 'User',
+  batchGroupId,
+  batchGroupName,
+  status: 'Open',
+  exportToAccounting: true,
+  vendorId,
+  vendorName,
+  invoiceDate,
+  vendorInvoiceNo: FinanceHelper.getRandomInvoiceNumber(),
+  accountingCode,
+  paymentMethod: 'Cash',
+  id: uuid(),
+});
+
+const getDefaultInvoiceLine = ({
+  invoiceId,
+  invoiceLineStatus,
+  poLineId,
+  fundDistributions,
+  accountingCode,
+}) => ({
+  invoiceId,
+  poLineId,
+  invoiceLineStatus,
+  description: `autotest inLine description ${randomFourDigitNumber()}`,
+  fundDistributions,
+  quantity: 1,
+  subTotal: 0,
+  accountingCode,
+  id: uuid(),
+});
+
 export default {
+  getDefaultInvoice,
+  getInvoiceViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        path: 'invoice/invoices',
+        searchParams,
+      })
+      .then(({ body }) => body);
+  },
+  createInvoiceViaApi(invoiceProperties) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'invoice/invoices',
+        body: invoiceProperties,
+      })
+      .then(({ body }) => body);
+  },
+  updateInvoiceViaApi(invoiceProperties) {
+    return cy.okapiRequest({
+      method: 'PUT',
+      path: `invoice/invoices/${invoiceProperties.id}`,
+      body: invoiceProperties,
+    });
+  },
+  deleteInvoiceViaApi(invoiceId) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `invoice/invoices/${invoiceId}`,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+  approveInvoiceViaApi({ invoice }) {
+    return this.getInvoiceViaApi({ query: `vendorInvoiceNo="${invoice.vendorInvoiceNo}"` }).then(
+      ({ invoices }) => {
+        this.updateInvoiceViaApi({ ...invoices[0], status: 'Approved' });
+      },
+    );
+  },
+  changeInvoiceStatusViaApi({ invoice, status }) {
+    return this.approveInvoiceViaApi({ invoice }).then(() => {
+      if (status !== INVOICE_STATUSES.APPROVED) {
+        this.getInvoiceViaApi({ query: `vendorInvoiceNo="${invoice.vendorInvoiceNo}"` }).then(
+          ({ invoices }) => {
+            this.updateInvoiceViaApi({ ...invoices[0], status });
+          },
+        );
+      }
+    });
+  },
+  createInviceLineViaApi(invoiceLineProperties) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'invoice/invoice-lines',
+        body: invoiceLineProperties,
+      })
+      .then(({ body }) => body);
+  },
+  createInvoiceWithInvoiceLineViaApi({ vendorId, poLineId, fundDistributions, accountingCode }) {
+    cy.getBatchGroups().then(({ id: batchGroupId }) => {
+      const invoice = getDefaultInvoice({ batchGroupId, vendorId, accountingCode });
+      this.createInvoiceViaApi(invoice).then((resp) => {
+        cy.wrap(resp).as('invoice');
+        const { id: invoiceId, status: invoiceLineStatus } = resp;
+        const invoiceLine = getDefaultInvoiceLine({
+          invoiceId,
+          invoiceLineStatus,
+          poLineId,
+          fundDistributions,
+          accountingCode,
+        });
+        this.createInviceLineViaApi(invoiceLine);
+      });
+    });
+    return cy.get('@invoice');
+  },
   selectFolio() {
     cy.do([
       Button({ id: 'accordion-toggle-button-status' }).click(),
@@ -81,7 +209,7 @@ export default {
       selectOrderLinesModal.find(SearchField({ id: searhInputId })).fillIn(orderNumber),
       searchButton.click(),
     ]);
-    Helper.selectFromResultsList();
+    FinanceHelper.selectFromResultsList();
     cy.get('input[name="subTotal"]').clear().type(total);
     cy.do([fundInInvoiceSection.find(Button('%')).click(), saveAndClose.click()]);
     InteractorsTools.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage);
@@ -169,7 +297,7 @@ export default {
       SearchField({ id: searchInputId }).fillIn(organizationName),
       searchButton.click(),
     ]);
-    Helper.selectFromResultsList();
+    FinanceHelper.selectFromResultsList();
   },
 
   checkVendorPrimaryAddress: (vendorPrimaryAddress) => {
@@ -186,30 +314,38 @@ export default {
   },
 
   checkCreatedInvoice(invoice, vendorPrimaryAddress) {
-    this.checkVendorPrimaryAddress(vendorPrimaryAddress);
-    cy.expect(Pane({ id: 'pane-invoiceDetails' }).exists());
-    cy.expect(
+    cy.expect(invoiceDetailsPane.exists());
+
+    if (vendorPrimaryAddress) {
+      this.checkVendorPrimaryAddress(vendorPrimaryAddress);
+    }
+
+    if (invoice.information) {
+      cy.expect([
+        informationSection
+          .find(KeyValue('Fiscal year'))
+          .has({ value: including(invoice.information.fiscalYear) }),
+        informationSection
+          .find(KeyValue('Status'))
+          .has({ value: including(invoice.information.status) }),
+      ]);
+    }
+
+    cy.expect([
       Accordion({ id: vendorDetailsAccordionId })
         .find(KeyValue({ value: invoice.invoiceNumber }))
         .exists(),
-    );
-    cy.expect(
       Accordion({ id: vendorDetailsAccordionId })
-        .find(KeyValue({ value: invoice.vendorName }))
-        .exists(),
-    );
-    cy.expect(
+        .find(KeyValue('Vendor name'))
+        .has({ value: invoice.vendorName }),
       Accordion({ id: vendorDetailsAccordionId })
-        .find(KeyValue({ value: invoice.accountingCode }))
-        .exists(),
-    );
+        .find(KeyValue('Accounting code'))
+        .has({ value: invoice.accountingCode }),
+    ]);
   },
 
   deleteInvoiceViaActions() {
-    cy.do([
-      PaneHeader({ id: invoiceDetailsPaneId }).find(actionsButton).click(),
-      deleteButton.click(),
-    ]);
+    cy.do([invoiceDetailsPaneHeader.find(actionsButton).click(), deleteButton.click()]);
   },
 
   deleteInvoiceLineViaActions() {
@@ -252,22 +388,12 @@ export default {
         .fillIn(orderNumber),
       searchButton.click(),
     ]);
-    Helper.selectFromResultsList();
+    FinanceHelper.selectFromResultsList();
     cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage);
   },
 
-  addLineFromPol: (orderNumber) => {
-    cy.do([
-      Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click(),
-      Button('Add line from POL').click(),
-      Modal('Select order lines').find(SearchField()).fillIn(orderNumber),
-      // eslint-disable-next-line no-undef
-      MultiColumnListRow({ index: (rowNumber = 0) }).click(),
-    ]);
-  },
-
-  createInvoiceLineFromPol: (orderNumber, rowNumber = 0) => {
+  createInvoiceLineFromPol(orderNumber, rowNumber = 0) {
     cy.do([
       Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click(),
       Button('Add line from POL').click(),
@@ -307,6 +433,17 @@ export default {
     );
   },
 
+  openInvoiceEditForm({ createNew = false } = {}) {
+    if (createNew) {
+      cy.do([invoiceResultsPane.find(actionsButton).click(), Button('New').click()]);
+    } else {
+      cy.do([invoiceDetailsPaneHeader.find(actionsButton).click(), Button('Edit').click()]);
+    }
+    InvoiceEditForm.waitLoading();
+
+    return InvoiceEditForm;
+  },
+
   addFundDistributionToLine: (invoiceLine, fund) => {
     cy.do([
       Accordion({ id: invoiceLinesAccordionId })
@@ -344,7 +481,7 @@ export default {
 
   approveInvoice: () => {
     cy.do([
-      PaneHeader({ id: invoiceDetailsPaneId }).find(actionsButton).click(),
+      invoiceDetailsPaneHeader.find(actionsButton).click(),
       Button('Approve').click(),
       submitButton.click(),
     ]);
@@ -365,7 +502,7 @@ export default {
 
   payInvoice: () => {
     cy.do([
-      PaneHeader({ id: invoiceDetailsPaneId }).find(actionsButton).click(),
+      invoiceDetailsPaneHeader.find(actionsButton).click(),
       Button('Pay').click(),
       submitButton.click(),
     ]);
@@ -374,7 +511,7 @@ export default {
 
   updateCurrency: (currency) => {
     cy.do([
-      PaneHeader({ id: invoiceDetailsPaneId }).find(actionsButton).click(),
+      invoiceDetailsPaneHeader.find(actionsButton).click(),
       Button('Edit').click(),
       Selection('Currency*').open(),
       SelectionList().select(currency),
@@ -391,6 +528,13 @@ export default {
     cy.do(Button('Confirm').click());
   },
 
+  checkInvoiceDetails(invoice) {
+    cy.expect([
+      invoiceDetailsPane.has({ title: `Vendor invoice number - ${invoice.vendorInvoiceNo}` }),
+      informationSection.find(KeyValue('Status')).has({ value: invoice.status }),
+      informationSection.find(KeyValue('Fiscal year')).has({ value: invoice.fiscalYear }),
+    ]);
+  },
   checkInvoiceCurrency: (currencyShortName) => {
     switch (currencyShortName) {
       // TODO: add other currencies if needed
@@ -519,7 +663,7 @@ export default {
   },
 
   waitLoading: () => {
-    cy.expect(Pane({ id: 'invoice-results-pane' }).exists());
+    cy.expect(invoiceResultsPane.exists());
   },
 
   selectInvoiceLine: () => {
@@ -528,6 +672,14 @@ export default {
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 0 }))
         .click(),
+    );
+  },
+
+  checkFundInInvoiceLine: (fund) => {
+    cy.expect(
+      Section({ id: 'invoiceLineFundDistribution' })
+        .find(Link(`${fund.name}(${fund.code})`))
+        .exists(),
     );
   },
 
@@ -541,22 +693,18 @@ export default {
 
   cancelInvoice: () => {
     cy.do([
-      PaneHeader({ id: invoiceDetailsPaneId }).find(actionsButton).click(),
+      invoiceDetailsPaneHeader.find(actionsButton).click(),
       Button('Cancel').click(),
       submitButton.click(),
     ]);
   },
 
   selectInvoice: (invoiceNumber) => {
-    cy.do(Pane({ id: 'invoice-results-pane' }).find(Link(invoiceNumber)).click());
+    cy.do(invoiceResultsPane.find(Link(invoiceNumber)).click());
   },
 
   closeInvoiceDetailsPane: () => {
-    cy.do(
-      Pane({ id: 'pane-invoiceDetails' })
-        .find(Button({ icon: 'times' }))
-        .click(),
-    );
+    cy.do(invoiceDetailsPane.find(Button({ icon: 'times' })).click());
   },
 
   resetFilters: () => {
@@ -582,14 +730,6 @@ export default {
     ]);
   },
 
-  checkFundInInvoiceLine: (fund) => {
-    cy.expect(
-      Section({ id: 'invoiceLineFundDistribution' })
-        .find(Link(`${fund.name}(${fund.code})`))
-        .exists(),
-    );
-  },
-
   selectStatusFilter: (status) => {
     cy.do([
       invoiceFiltersSection
@@ -612,7 +752,7 @@ export default {
         .fillIn(organization.name),
       searchButton.click(),
     ]);
-    Helper.selectFromResultsList();
+    FinanceHelper.selectFromResultsList();
   },
 
   selectApprovalDateFilter: (dateFrom, dateTo) => {

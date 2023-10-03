@@ -17,13 +17,17 @@ import {
   SelectionOption,
   SearchField,
   Link,
+  Card,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import NewNote from '../notes/newNote';
 import { getLongDelay } from '../../utils/cypressTools';
+import EditAgreement from './editAgreement';
+import { ListRow } from '../../../../interactors/multi-column-list';
 
 const rootSection = Section({ id: 'pane-view-agreement' });
 const deleteButton = Button('Delete');
+const editButton = Button('Edit');
 const agreementLine = Section({ id: 'lines' }).find(Button('Agreement lines'));
 const agreementLinesBadge = Section({ id: 'lines' }).find(Badge());
 const actionsButton = Button('Actions');
@@ -37,6 +41,9 @@ const deleteButtonInConfirmation = Button('Delete', {
 });
 const showMoreLink = Button('Show more');
 const notesAccordion = rootSection.find(Accordion({ id: 'notes' }));
+const organizationsAccordion = rootSection.find(Accordion({ id: 'organizations' }));
+const internalContactsAccordion = rootSection.find(Accordion({ id: 'internalContacts' }));
+const supplementaryDocumentsAccordion = rootSection.find(Accordion({ id: 'supplementaryDocs' }));
 const cancelButton = Button('Cancel');
 const calloutSuccess = Callout({ type: 'success' });
 const notesSection = Section({ id: 'notes' });
@@ -100,6 +107,29 @@ export default {
     cy.expect(rootSection.find(newNoteButton).exists());
   },
 
+  openInternalContactsSection() {
+    cy.do(
+      internalContactsAccordion
+        .find(Button({ id: 'accordion-toggle-button-internalContacts' }))
+        .click(),
+    );
+    cy.expect(internalContactsAccordion.has({ open: true }));
+  },
+
+  openOrganizationsSection() {
+    cy.do(organizationsAccordion.click());
+    cy.expect(organizationsAccordion.has({ open: true }));
+  },
+
+  openSupplementaryDocumentsSection() {
+    cy.do(
+      supplementaryDocumentsAccordion
+        .find(Button({ id: 'accordion-toggle-button-supplementaryDocs' }))
+        .click(),
+    );
+    cy.expect(supplementaryDocumentsAccordion.has({ open: true }));
+  },
+
   createNote(specialNote = NewNote.defaultNote) {
     addNewNote();
     NewNote.fill(specialNote);
@@ -134,6 +164,32 @@ export default {
       rootSection
         .find(Section({ id: 'notes' }).find(Badge()))
         .has({ value: notesCount.toString() }),
+    );
+  },
+
+  gotoEdit() {
+    cy.do(actionsButton.click());
+    cy.expect(editButton.exists());
+
+    cy.do(editButton.click());
+    EditAgreement.waitLoading();
+  },
+
+  verifyOrganizationsCount(itemCount) {
+    cy.expect(organizationsAccordion.find(Badge()).has({ text: itemCount }));
+  },
+
+  verifyInternalContactsCount(itemCount) {
+    cy.expect(internalContactsAccordion.find(Badge()).has({ text: itemCount }));
+  },
+
+  verifySupplementaryDocumentsCount(itemCount) {
+    cy.expect(supplementaryDocumentsAccordion.find(Badge()).has({ text: itemCount }));
+  },
+
+  verifyOrganizationCardIsShown(organizationName) {
+    cy.expect(
+      organizationsAccordion.find(Card({ headerStart: including(organizationName) })).exists(),
     );
   },
 
@@ -266,6 +322,36 @@ export default {
     ]);
   },
 
+  verifyInternalContactsRow({ username, email }) {
+    cy.expect([
+      internalContactsAccordion.find(Card(including(username))),
+      internalContactsAccordion.find(KeyValue(including(email))).exists(),
+    ]);
+  },
+
+  verifySupplementaryDocumentsRow({ name, category, note, location, url }) {
+    const document = supplementaryDocumentsAccordion.find(Card({ headerStart: name }));
+    cy.expect([
+      document.exists(),
+      document.find(KeyValue({ value: including(note) })).exists(),
+      document.find(KeyValue({ value: including(category) })).exists(),
+      document
+        .find(ListRow(including('Physical location')))
+        .find(MultiColumnListCell({ content: including(location) }))
+        .exists(),
+      document
+        .find(ListRow(including('URL')))
+        .find(MultiColumnListCell(including(url)))
+        .exists(),
+    ]);
+  },
+
+  verifyOrganizationsAccordion(exists) {
+    if (exists) {
+      cy.expect(organizationsAccordion.exists());
+    } else cy.expect(organizationsAccordion.absent());
+  },
+
   verifyAgreementDetails(defaultAgreement) {
     cy.expect([
       viewAgreementPane.find(HTML(including(defaultAgreement.name))).exists(),
@@ -291,5 +377,25 @@ export default {
 
   verifyAgreementLinePresented(name) {
     cy.expect(viewAgreementPane.find(MultiColumnListCell({ content: name, row: 0 })).exists());
+  },
+
+  openLinkFromSupplementaryDocument(documentName) {
+    const urlLink = supplementaryDocumentsAccordion
+      .find(Card({ headerStart: documentName }))
+      .find(ListRow(including('URL')))
+      .find(Link());
+    cy.do([urlLink.perform((el) => el.removeAttribute('target')), urlLink.click()]);
+  },
+
+  downloadFileFromSupplementaryDocument(documentName) {
+    const fileLink = supplementaryDocumentsAccordion
+      .find(Card({ headerStart: documentName }))
+      .find(ListRow(including('File')))
+      .find(Link());
+    cy.do(fileLink.click());
+    cy.intercept('GET', '/erm/files/**').as('downloadFile');
+    cy.wait('@downloadFile').then((res) => {
+      expect(res.response.statusCode).to.eq(200);
+    });
   },
 };

@@ -97,8 +97,10 @@ describe('inventory', () => {
           user.userId,
           firstServicePoint.id,
         );
-        cy.login(userProperties.username, userProperties.password);
-        cy.visit(TopMenu.inventoryPath);
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
       });
     });
 
@@ -119,17 +121,16 @@ describe('inventory', () => {
       () => {
         InventorySearchAndFilter.waitLoading();
         InventorySearchAndFilter.switchToItem();
+        cy.wait(1000);
         FilterItems.toggleItemStatusAccordion();
         FilterItems.toggleStatus(itemStatus);
-        InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
-        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ONLINE_UI} >`);
 
         cy.visit(TopMenu.checkInPath);
         CheckInActions.waitLoading();
         CheckInActions.checkInItemGui(itemData.barcode);
         ConfirmItemInModal.confirmInTransitModal();
-        cy.go('back');
-        InventoryInstance.waitInstanceRecordViewOpened(itemData.instanceTitle);
+        cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
         InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ONLINE_UI} >`);
         InventoryInstance.openItemByBarcode(itemData.barcode);
         ItemRecordView.waitLoading();
@@ -144,7 +145,11 @@ describe('inventory', () => {
         SwitchServicePoint.switchServicePoint(secondServicePoint.name);
         CheckInActions.checkInItemGui(itemData.barcode);
         ConfirmItemInModal.confirmInTransitModal();
-        cy.go('back');
+        cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.waitLoading();
+        InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
+        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ONLINE_UI} >`);
+        InventoryInstance.openItemByBarcode(itemData.barcode);
         ItemRecordView.waitLoading();
         ItemRecordView.checkItemCirculationHistory(
           todayDate,

@@ -90,7 +90,15 @@ export default {
     cy.do(Button({ icon: 'times' }).click());
   },
 
-  deleteItemViaApi: (itemId) => {
+  getItemViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        path: 'inventory/items',
+        searchParams,
+      })
+      .then(({ body }) => body.items);
+  },
+  deleteItemViaApi(itemId) {
     cy.okapiRequest({
       method: 'DELETE',
       path: `inventory/items/${itemId}`,

@@ -24,12 +24,12 @@ import FileManager from '../../../support/utils/fileManager';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import Users from '../../../support/fragments/users/users';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Settings', () => {
     let user;
     let instanceHrid = null;
-    const marcFieldProtectionId = [];
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const quantityOfItems = '1';
     // unique file names
@@ -88,11 +88,20 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       Users.deleteViaApi(user.userId);
-      marcFieldProtectionId.forEach((field) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(field));
+      MarcFieldProtection.getListViaApi({
+        query: `"field"=="${protectedFields.firstField}"`,
+      }).then((list) => {
+        list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+      });
+      MarcFieldProtection.getListViaApi({
+        query: `"field"=="${protectedFields.secondField}"`,
+      }).then((list) => {
+        list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+      });
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
         (instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);
@@ -104,27 +113,21 @@ describe('data-import', () => {
       'C356830 Test field protections when importing to update instance, after editing the MARC Bib outside of FOLIO (folijet)',
       { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
+        MarcFieldProtection.createViaApi({
           indicator1: '*',
           indicator2: '*',
           subfield: '5',
           data: 'amb',
           source: 'USER',
           field: protectedFields.firstField,
-        }).then((resp) => {
-          const id = resp.id;
-          marcFieldProtectionId.push = id;
         });
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
+        MarcFieldProtection.createViaApi({
           indicator1: '*',
           indicator2: '*',
           subfield: '*',
           data: '*',
           source: 'USER',
           field: protectedFields.secondField,
-        }).then((resp) => {
-          const id = resp.id;
-          marcFieldProtectionId.push = id;
         });
 
         // create match profile
@@ -138,8 +141,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
         NewFieldMappingProfile.fillCatalogedDate(mappingProfile.catalogedDate);
         NewFieldMappingProfile.fillInstanceStatusTerm(mappingProfile.statusTerm);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         // create action profile

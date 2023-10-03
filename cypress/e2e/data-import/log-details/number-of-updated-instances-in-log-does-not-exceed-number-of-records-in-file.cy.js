@@ -20,6 +20,7 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -96,13 +97,13 @@ describe('data-import', () => {
 
     after('delete test data', () => {
       cy.wrap(fieldProtectionIds).each((id) => {
-        MarcFieldProtection.deleteMarcFieldProtectionViaApi(id);
+        MarcFieldProtection.deleteViaApi(id);
       });
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       collectionOfMappingAndActionProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       // delete created file in fixtures
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
@@ -117,7 +118,7 @@ describe('data-import', () => {
       'C367966 Confirm the number of updated instances in the import log does not exceed the number of records in the file (folijet)',
       { tags: [TestTypes.criticalPath, DevTeams.folijet] },
       () => {
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
+        MarcFieldProtection.createViaApi({
           indicator1: '*',
           indicator2: '*',
           subfield: 'a',
@@ -127,7 +128,7 @@ describe('data-import', () => {
         }).then((resp) => {
           fieldProtectionIds.push(resp.id);
         });
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
+        MarcFieldProtection.createViaApi({
           indicator1: '*',
           indicator2: '*',
           subfield: '*',
@@ -142,7 +143,7 @@ describe('data-import', () => {
         FieldMappingProfiles.createMappingProfileForUpdatesMarc(
           collectionOfMappingAndActionProfiles[0].mappingProfile,
         );
-        FieldMappingProfiles.closeViewModeForMappingProfile(
+        FieldMappingProfileView.closeViewMode(
           collectionOfMappingAndActionProfiles[0].mappingProfile.name,
         );
         FieldMappingProfiles.checkMappingProfilePresented(

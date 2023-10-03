@@ -22,6 +22,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import Users from '../../../support/fragments/users/users';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -108,7 +109,7 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       collectionOfProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       instanceHrids.forEach((hrid) => {
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` }).then(
@@ -123,7 +124,7 @@ describe('data-import', () => {
 
     it(
       'C368005 Verify the mapping for item record notes and check in/out notes from MARC field (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.parallel] },
       () => {
         // create Field mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();
@@ -145,10 +146,8 @@ describe('data-import', () => {
           collectionOfProfiles[2].mappingProfile.permanentLoanType,
         );
         NewFieldMappingProfile.fillStatus(collectionOfProfiles[2].mappingProfile.status);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
-          collectionOfProfiles[2].mappingProfile.name,
-        );
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(collectionOfProfiles[2].mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(
           collectionOfProfiles[2].mappingProfile.name,
         );
@@ -158,10 +157,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillPermanentLocation(
           collectionOfProfiles[1].mappingProfile.permanetLocation,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
-          collectionOfProfiles[1].mappingProfile.name,
-        );
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(collectionOfProfiles[1].mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(
           collectionOfProfiles[1].mappingProfile.name,
         );
@@ -171,10 +168,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillCatalogedDate(
           collectionOfProfiles[0].mappingProfile.catalogingDate,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(
-          collectionOfProfiles[0].mappingProfile.name,
-        );
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(collectionOfProfiles[0].mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(
           collectionOfProfiles[0].mappingProfile.name,
         );
@@ -229,6 +224,7 @@ describe('data-import', () => {
         FileDetails.openItemInInventory('Created');
         ItemRecordView.checkItemNote(itemNotes.note, itemNotes.staffOnly);
         ItemRecordView.checkCheckInNote(itemNotes.checkInNoteForFirstItem);
+        cy.wait(2000);
         cy.go('back');
         FileDetails.openItemInInventory('Created', 1);
         ItemRecordView.checkBindingNote(itemNotes.blindingNote);

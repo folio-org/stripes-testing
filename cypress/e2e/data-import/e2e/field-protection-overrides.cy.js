@@ -138,21 +138,21 @@ describe('data-import', () => {
     beforeEach('create test data', () => {
       cy.loginAsAdmin();
       cy.getAdminToken().then(() => {
-        MarcFieldProtection.getListOfMarcFieldProtectionViaApi({
+        MarcFieldProtection.getListViaApi({
           query: `"field"=="${protectedFields.firstField}"`,
         }).then((list) => {
           if (list) {
-            list.forEach(({ id }) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(id));
+            list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
           }
         });
-        MarcFieldProtection.getListOfMarcFieldProtectionViaApi({
+        MarcFieldProtection.getListViaApi({
           query: `"field"=="${protectedFields.secondField}"`,
         }).then((list) => {
           if (list) {
-            list.forEach(({ id }) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(id));
+            list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
           }
         });
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
+        MarcFieldProtection.createViaApi({
           indicator1: '*',
           indicator2: '*',
           subfield: 'a',
@@ -162,7 +162,7 @@ describe('data-import', () => {
         }).then((resp) => {
           firstFieldId = resp.id;
         });
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
+        MarcFieldProtection.createViaApi({
           indicator1: '*',
           indicator2: '*',
           subfield: '*',
@@ -176,8 +176,8 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      MarcFieldProtection.deleteMarcFieldProtectionViaApi(firstFieldId);
-      MarcFieldProtection.deleteMarcFieldProtectionViaApi(secondFieldId);
+      MarcFieldProtection.deleteViaApi(firstFieldId);
+      MarcFieldProtection.deleteViaApi(secondFieldId);
       // delete profiles
       JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
       JobProfiles.deleteJobProfile(jobProfileForOverride.profileName);
@@ -186,10 +186,10 @@ describe('data-import', () => {
       ActionProfiles.deleteActionProfile(instanceActionProfile.name);
       ActionProfiles.deleteActionProfile(marcBibActionProfileOverride.name);
       ActionProfiles.deleteActionProfile(instanceActionProfileOverride.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(marcBibMappingProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(marcBibMappingProfileOverride.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileOverride.name);
+      FieldMappingProfileView.deleteViaApi(marcBibMappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(instanceMappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(marcBibMappingProfileOverride.name);
+      FieldMappingProfileView.deleteViaApi(instanceMappingProfileOverride.name);
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev1}`);
       FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);

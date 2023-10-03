@@ -415,6 +415,15 @@ export default {
     ]);
   },
 
+  removeMarkAsStaffOnly(type, rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.action)
+        .choose('Remove mark as staff only'),
+    ]);
+  },
+
   checkApplyToItemsRecordsCheckbox() {
     cy.do(Checkbox('Apply to items records').click());
   },

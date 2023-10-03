@@ -29,7 +29,7 @@ const getDefaultLocation = (
   };
 
   Institutions.createViaApi(
-    Institutions.getDefaultInstitutions({
+    Institutions.getDefaultInstitution({
       id: location.institutionId,
       name: location.institutionName,
     }),

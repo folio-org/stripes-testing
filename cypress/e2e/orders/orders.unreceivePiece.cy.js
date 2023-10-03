@@ -47,13 +47,13 @@ describe('orders: Unreceive piece from Order', () => {
     () => {
       const barcode = Helper.getRandomBarcode();
       const caption = 'autotestCaption';
-      Orders.createOrderWithOrderLineViaApi(order, orderLine).then((orderNumber) => {
+      Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
         cy.visit(TopMenu.ordersPath);
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList(orderNumber);
+        Orders.searchByParameter('PO number', poNumber);
+        Orders.selectFromResultsList(poNumber);
         Orders.openOrder();
         InteractorsTools.checkCalloutMessage(
-          `The Purchase order - ${orderNumber} has been successfully opened`,
+          `The Purchase order - ${poNumber} has been successfully opened`,
         );
         Orders.receiveOrderViaActions();
         // Receive piece

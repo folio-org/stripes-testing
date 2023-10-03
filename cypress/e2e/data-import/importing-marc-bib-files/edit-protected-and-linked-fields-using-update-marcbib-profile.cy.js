@@ -26,6 +26,7 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
 } from '../../../support/constants';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -158,7 +159,7 @@ describe('data-import', () => {
           // create Field mapping profile
           cy.visit(SettingsMenu.mappingProfilePath);
           FieldMappingProfiles.createMappingProfileForUpdatesMarc(mappingProfile);
-          FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+          FieldMappingProfileView.closeViewMode(mappingProfile.name);
           FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
           // create Action profile and link it to Field mapping profile
           cy.visit(SettingsMenu.actionProfilePath);
@@ -179,7 +180,7 @@ describe('data-import', () => {
 
         cy.loginAsAdmin();
         cy.getAdminToken().then(() => {
-          MarcFieldProtection.createMarcFieldProtectionViaApi({
+          MarcFieldProtection.createViaApi({
             indicator1: '*',
             indicator2: '*',
             subfield: '0',
@@ -189,7 +190,7 @@ describe('data-import', () => {
           }).then((resp) => {
             firstFieldId = resp.id;
           });
-          MarcFieldProtection.createMarcFieldProtectionViaApi({
+          MarcFieldProtection.createViaApi({
             indicator1: '*',
             indicator2: '*',
             subfield: '0',
@@ -199,7 +200,7 @@ describe('data-import', () => {
           }).then((resp) => {
             secondFieldId = resp.id;
           });
-          MarcFieldProtection.createMarcFieldProtectionViaApi({
+          MarcFieldProtection.createViaApi({
             indicator1: '*',
             indicator2: '*',
             subfield: '9',
@@ -224,14 +225,14 @@ describe('data-import', () => {
       createdAuthorityIDs.forEach((id, index) => {
         if (index) MarcAuthority.deleteViaAPI(id);
       });
-      MarcFieldProtection.deleteMarcFieldProtectionViaApi(firstFieldId);
-      MarcFieldProtection.deleteMarcFieldProtectionViaApi(secondFieldId);
-      MarcFieldProtection.deleteMarcFieldProtectionViaApi(thirdFieldId);
+      MarcFieldProtection.deleteViaApi(firstFieldId);
+      MarcFieldProtection.deleteViaApi(secondFieldId);
+      MarcFieldProtection.deleteViaApi(thirdFieldId);
       // clean up generated profiles
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);

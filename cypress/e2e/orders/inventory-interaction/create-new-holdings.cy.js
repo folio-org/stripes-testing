@@ -4,17 +4,16 @@ import Orders from '../../../support/fragments/orders/orders';
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import TopMenu from '../../../support/fragments/topMenu';
 import Helper from '../../../support/fragments/finance/financeHelper';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import Organizations from '../../../support/fragments/organizations/organizations';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
 import Users from '../../../support/fragments/users/users';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import ItemRecordEdit from '../../../support/fragments/inventory/item/itemRecordEdit';
@@ -35,7 +34,7 @@ describe('Orders: Inventory interaction', () => {
   before('Create test data', () => {
     cy.getAdminToken()
       .then(() => {
-        InventorySearchAndFilter.createInstanceViaApi().then(({ instanceData }) => {
+        InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
           testData.instance = {
             ...instanceData,
             quantity: '2',
@@ -56,19 +55,19 @@ describe('Orders: Inventory interaction', () => {
 
             // create the first PO with POL
             Orders.createOrderWithOrderLineViaApi(
-              NewOrder.getDefaultOrder(testData.organization.id),
+              NewOrder.getDefaultOrder({ vendorId: testData.organization.id }),
               BasicOrderLine.getDefaultOrderLine({
                 quantity: testData.instance.quantity,
                 title: testData.instance.instanceTitle,
                 instanceId: testData.instance.instanceId,
-                spesialLocationId: testData.locations[0].id,
+                specialLocationId: testData.locations[0].id,
                 listUnitPrice: testData.instance.listUnitPrice,
                 poLineEstimatedPrice: testData.instance.poLineEstimatedPrice,
                 eresource: testData.instance.eresource,
                 vendorAccount: testData.instance.vendorAccount,
               }),
-            ).then((number) => {
-              testData.orderNumber = number;
+            ).then((order) => {
+              testData.orderNumber = order.poNumber;
 
               InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
                 InventoryInstances.createHoldingViaAPI({

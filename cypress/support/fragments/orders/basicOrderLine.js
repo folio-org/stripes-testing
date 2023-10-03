@@ -2,22 +2,29 @@ import uuid from 'uuid';
 import getRandomPostfix from '../../utils/stringTools';
 import NewMaterialType from '../settings/inventory/newMaterialType';
 
+export const RECEIVING_WORKFLOWS = {
+  SYNCHRONIZED: 'Synchronized order and receipt quantity',
+  INDEPENDENT: 'Independent order and receipt quantity',
+};
+
 const getDefaultOrderLine = ({
-  quantity,
-  title,
+  quantity = '1',
+  title = `autotest_po_line_name-${getRandomPostfix()}`,
   instanceId,
-  spesialLocationId,
+  checkinItems = false,
+  specialLocationId,
   specialMaterialTypeId,
   acquisitionMethod = '',
   listUnitPrice = '1.0',
   poLineEstimatedPrice = '1.0',
+  fundDistribution = [],
   productIds = [],
   referenceNumbers = [],
   vendorAccount = '1234',
 }) => {
   const defaultOrderLine = {
     id: uuid(),
-    checkinItems: false,
+    checkinItems,
     instanceId,
     acquisitionMethod,
     alerts: [],
@@ -34,11 +41,11 @@ const getDefaultOrderLine = ({
       productIds,
       subscriptionInterval: 0,
     },
-    fundDistribution: [],
+    fundDistribution,
     isPackage: false,
     locations: [
       {
-        locationId: spesialLocationId,
+        locationId: specialLocationId,
         quantity,
         quantityPhysical: quantity,
       },

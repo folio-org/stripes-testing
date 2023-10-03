@@ -1,7 +1,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import uuid from 'uuid';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import MatchOnVRN from '../../../support/fragments/data_import/matchOnVRN';
@@ -13,7 +13,7 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import Organizations from '../../../support/fragments/organizations/organizations';
-import OrderView from '../../../support/fragments/orders/orderView';
+import OrderDetails from '../../../support/fragments/orders/orderDetails';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Receiving from '../../../support/fragments/receiving/receiving';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -21,7 +21,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import {
   ACCEPTED_DATA_TYPE_NAMES,
@@ -161,23 +161,23 @@ describe('data-import', () => {
       ActionProfiles.deleteActionProfile(instanceActionProfileName);
       ActionProfiles.deleteActionProfile(holdingsActionProfileName);
       ActionProfiles.deleteActionProfile(itemActionProfileName);
-      FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileName);
-      FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileName);
-      FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileName);
+      FieldMappingProfileView.deleteViaApi(instanceMappingProfileName);
+      FieldMappingProfileView.deleteViaApi(holdingsMappingProfileName);
+      FieldMappingProfileView.deleteViaApi(itemMappingProfileName);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
     });
 
     it(
       'C350591 Match on VRN and update related Instance, Holdings, Item (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.parallel] },
       () => {
         // create order with POL
         Orders.createOrderWithOrderLineViaApi(
-          NewOrder.getDefaultOrder(vendorId),
+          NewOrder.getDefaultOrder({ vendorId }),
           BasicOrderLine.getDefaultOrderLine({
             quantity: item.quantityPhysical,
             title: item.title,
-            spesialLocationId: locationId,
+            specialLocationId: locationId,
             specialMaterialTypeId: materialTypeId,
             acquisitionMethod: acquisitionMethodId,
             listUnitPrice: item.physicalUnitPrice,
@@ -195,22 +195,22 @@ describe('data-import', () => {
               },
             ],
           }),
-        ).then((res) => {
-          orderNumber = res;
+        ).then((order) => {
+          orderNumber = order.poNumber;
 
           Orders.checkIsOrderCreated(orderNumber);
           // open the first PO with POL
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
           Orders.openOrder();
-          OrderView.checkIsOrderOpened(ORDER_STATUSES.OPEN);
-          OrderView.checkIsItemsInInventoryCreated(item.title, 'Main Library');
+          OrderDetails.checkIsOrderOpened(ORDER_STATUSES.OPEN);
+          OrderDetails.checkIsItemsInInventoryCreated(item.title, 'Main Library');
           // check receiving pieces are created
           cy.visit(TopMenu.ordersPath);
           Orders.resetFilters();
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
-          OrderView.openPolDetails(item.title);
+          OrderDetails.openPolDetails(item.title);
           OrderLines.openReceiving();
           Receiving.checkIsPiecesCreated(item.title);
         });
@@ -266,6 +266,7 @@ describe('data-import', () => {
         JobProfiles.searchJobProfileForImport(jobProfilesData.name);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(editedMarcFileName);
+        cy.wait(10000);
         Logs.checkStatusOfJobProfile();
         Logs.openFileDetails(editedMarcFileName);
         FileDetails.checkItemsStatusesInResultList(0, [

@@ -23,6 +23,7 @@ import NewFieldMappingProfile from '../../../support/fragments/data_import/mappi
 import GenerateIdentifierCode from '../../../support/utils/generateIdentifierCode';
 import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -75,7 +76,7 @@ describe('data-import', () => {
 
     before('create user and login', () => {
       cy.getAdminToken().then(() => {
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
+        MarcFieldProtection.createViaApi({
           indicator1: '*',
           indicator2: '*',
           subfield: '*',
@@ -85,7 +86,7 @@ describe('data-import', () => {
         }).then((firstResp) => {
           protectedFieldIds.push(firstResp.id);
         });
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
+        MarcFieldProtection.createViaApi({
           indicator1: '*',
           indicator2: '*',
           subfield: '*',
@@ -114,11 +115,11 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       Users.deleteViaApi(user.userId);
-      protectedFieldIds.forEach((fieldId) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(fieldId));
+      protectedFieldIds.forEach((fieldId) => MarcFieldProtection.deleteViaApi(fieldId));
       InventorySearchAndFilter.getInstancesByIdentifierViaApi(
         `${randomIdentifierCode}00999523`,
       ).then((instances) => {
@@ -190,8 +191,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillMappingProfileForUpdatesMarc(mappingProfile);
         NewFieldMappingProfile.markFieldForProtection(protectedFields.firstField);
         NewFieldMappingProfile.markFieldForProtection(protectedFields.secondField);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         // create action profile

@@ -64,7 +64,7 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfileName);
       MatchProfiles.deleteMatchProfile(matchProfileName);
       ActionProfiles.deleteActionProfile(actionProfileName);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+      FieldMappingProfileView.deleteViaApi(mappingProfileName);
       Users.deleteViaApi(user.userId);
     });
 
@@ -111,7 +111,7 @@ describe('data-import', () => {
         FileExtensions.verifyActionMenuOnViewPaneAbsent();
 
         cy.visit(SettingsMenu.marcFieldProtectionPath);
-        MarcFieldProtection.checkListOfExistingProfilesIsDisplayed();
+        MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
         MarcFieldProtection.verifyNewButtonAbsent();
       },
     );

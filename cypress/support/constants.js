@@ -128,6 +128,12 @@ export const BATCH_GROUP = {
   AMHERST: '"Amherst (AC)"',
 };
 
+export const INVOICE_STATUSES = {
+  APPROVED: 'Approved',
+  CANCELLED: 'Cancelled',
+  PAID: 'Paid',
+};
+
 export const ORDER_STATUSES = {
   OPEN: 'Open',
   PENDING: 'Pending',
@@ -260,4 +266,20 @@ export const VENDOR_NAMES = {
 export const HOLDINGS_TYPE_NAMES = {
   ELECTRONIC: 'Electronic',
   MONOGRAPH: 'Monograph',
+};
+
+export const ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES = {
+  APPROVAL_PLAN: 'Approval Plan',
+  DDA: 'Demand Driven Acquisitions (DDA)',
+  DEPOSITORY: 'Depository',
+  EBA: 'Evidence Based Acquisitions (EBA)',
+  EXCHANGE: 'Exchange',
+  FREE: 'Free',
+  GIFT: 'Gift',
+  INTERNAL_TRANSFER: 'Internal transfer',
+  MEMBERSHIP: 'Membership',
+  OTHER: 'Other',
+  PURCHASE: 'Purchase',
+  PURCHASE_AT_VENDOR_SYSTEM: 'Purchase At Vendor System',
+  TECHNICAL: 'Technical',
 };

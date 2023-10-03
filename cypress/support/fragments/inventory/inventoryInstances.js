@@ -501,6 +501,7 @@ export default {
       const instanceWithSpecifiedNewId = {
         ...instance,
         id: instance.id || uuid(),
+        title: instance.title || `Instance-${getRandomPostfix()}`,
         source: folioSource.name,
       };
       const ids = {

@@ -2,6 +2,7 @@ import uuid from 'uuid';
 import moment from 'moment';
 import TestTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
+import parallelization from '../../support/dictionary/parallelization';
 import permissions from '../../support/dictionary/permissions';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -265,7 +266,7 @@ describe('TLR: Item renew', () => {
 
   it(
     'C360533: TLR: Check that Item assigned to hold is renewable/non renewable depends Loan policy (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    { tags: [TestTypes.criticalPath, devTeams.vega, parallelization.nonParallel] },
     () => {
       cy.visit(TopMenu.requestsPath);
       Requests.waitLoading();
@@ -297,7 +298,7 @@ describe('TLR: Item renew', () => {
 
   it(
     'C360534 TLR: Check that Item assigned to recall is not renewable (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    { tags: [TestTypes.criticalPath, devTeams.vega, parallelization.nonParallel] },
     () => {
       cy.visit(TopMenu.requestsPath);
       Requests.waitLoading();

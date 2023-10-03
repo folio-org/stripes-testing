@@ -122,7 +122,7 @@ describe('data-import', () => {
       Users.deleteViaApi(user.userId);
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
       cy.wrap(orderNumbers).each((number) => {
         Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` }).then((orderId) => {
           Orders.deleteOrderViaApi(orderId[0].id);
@@ -181,7 +181,7 @@ describe('data-import', () => {
 
         cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.search(mappingProfile.name);
-        FieldMappingProfileView.editMappingProfile();
+        FieldMappingProfileView.edit();
         FieldMappingProfileEdit.fillFundDistriction(dataForChangeFundAndExpenseClass[0]);
         FieldMappingProfileEdit.save();
 
@@ -216,7 +216,7 @@ describe('data-import', () => {
 
         cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.search(mappingProfile.name);
-        FieldMappingProfileView.editMappingProfile();
+        FieldMappingProfileView.edit();
         FieldMappingProfileEdit.fillFundDistriction(dataForChangeFundAndExpenseClass[1]);
         FieldMappingProfileEdit.save();
 
@@ -260,7 +260,7 @@ describe('data-import', () => {
 
         cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.search(mappingProfile.name);
-        FieldMappingProfileView.editMappingProfile();
+        FieldMappingProfileView.edit();
         FieldMappingProfileEdit.fillFundDistriction(dataForChangeFundAndExpenseClass[2]);
         FieldMappingProfileEdit.save();
 
