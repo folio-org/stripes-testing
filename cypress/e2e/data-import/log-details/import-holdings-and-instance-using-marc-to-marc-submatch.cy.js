@@ -89,7 +89,7 @@ describe('data-import', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
+        MarcFieldProtection.createViaApi({
           indicator1: '*',
           indicator2: '*',
           subfield: '*',
@@ -164,7 +164,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      MarcFieldProtection.deleteMarcFieldProtectionViaApi(testData.protectedFieldId);
+      MarcFieldProtection.deleteViaApi(testData.protectedFieldId);
       InstanceStatusTypes.deleteViaApi(testData.instanceStatusTypeId);
       JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
       collectionOfMappingAndActionProfilesForCreate.forEach((profile) => {

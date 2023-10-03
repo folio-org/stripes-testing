@@ -142,7 +142,7 @@ describe('MARC Authority -> Edit Authority record', () => {
     });
     Users.deleteViaApi(testData.userProperties.userId);
     marcFieldProtectionRules.forEach((ruleID) => {
-      if (ruleID) MarcFieldProtection.deleteMarcFieldProtectionViaApi(ruleID);
+      if (ruleID) MarcFieldProtection.deleteViaApi(ruleID);
     });
   });
 
@@ -215,7 +215,7 @@ describe('MARC Authority -> Edit Authority record', () => {
       QuickMarcEditor.pressSaveAndClose();
 
       protectedMARCFields.forEach((marcFieldProtectionRule) => {
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
+        MarcFieldProtection.createViaApi({
           indicator1: marcFieldProtectionRule[1],
           indicator2: marcFieldProtectionRule[2],
           subfield: marcFieldProtectionRule[3],
@@ -233,6 +233,22 @@ describe('MARC Authority -> Edit Authority record', () => {
       MarcAuthority.checkInfoButton('245');
       MarcAuthority.checkInfoButton('520');
       MarcAuthority.checkInfoButton('999');
+    },
+  );
+
+  it(
+    'C353583 Verify LDR validation rules with valid data (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    () => {
+      MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
+      MarcAuthorities.selectTitle(testData.authority.title);
+      changedLDRs.forEach((changeLDR) => {
+        MarcAuthority.edit();
+        QuickMarcEditor.updateExistingField('LDR', changeLDR.newContent);
+        QuickMarcEditor.pressSaveAndClose();
+        if (changeLDR.newContent === String.raw`04112az\\a2200589n\\4500`) MarcAuthorities.verifyFirstValueSaveSuccess(changesSavedCallout, changeLDR.newContent);
+        else MarcAuthorities.verifySaveSuccess(changesSavedCallout, changeLDR.newContent);
+      });
     },
   );
 
@@ -268,22 +284,6 @@ describe('MARC Authority -> Edit Authority record', () => {
         QuickMarcEditor.updateExistingField('LDR', changeLDR.newContent);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkCallout(changeLDR.errorMessage);
-      });
-    },
-  );
-
-  it(
-    'C353583 Verify LDR validation rules with valid data (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
-    () => {
-      MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
-      MarcAuthorities.selectTitle(testData.authority.title);
-      changedLDRs.forEach((changeLDR) => {
-        MarcAuthority.edit();
-        QuickMarcEditor.updateExistingField('LDR', changeLDR.newContent);
-        QuickMarcEditor.pressSaveAndClose();
-        if (changeLDR.newContent === String.raw`04112az\\a2200589n\\4500`) MarcAuthorities.verifyFirstValueSaveSuccess(changesSavedCallout, changeLDR.newContent);
-        else MarcAuthorities.verifySaveSuccess(changesSavedCallout, changeLDR.newContent);
       });
     },
   );

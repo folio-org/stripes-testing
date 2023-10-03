@@ -1,3 +1,4 @@
+import { MultiSelect } from 'bigtest';
 import {
   Button,
   SearchField,
@@ -15,13 +16,14 @@ import {
   PaneContent,
   Link,
   including,
+  matching,
   Section,
   KeyValue,
   Card,
 } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import getRandomPostfix from '../../utils/stringTools';
-import SelectInstanceModal from './selectInstanceModal';
+import SelectInstanceModal from './modals/selectInstanceModal';
 import {
   ORDER_FORMAT_NAMES,
   ACQUISITION_METHOD_NAMES,
@@ -30,7 +32,7 @@ import {
   ORDER_PAYMENT_STATUS,
 } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
-import selectLocationModal from './selectLocationModal';
+import selectLocationModal from './modals/selectLocationModal';
 
 const path = require('path');
 
@@ -93,6 +95,14 @@ const agreementLinesSection = Section({ id: 'relatedAgreementLines' });
 const invoiceLinesSection = Section({ id: 'relatedInvoiceLines' });
 const notesSection = Section({ id: 'notes' });
 const trashButton = Button({ icon: 'trash' });
+
+// Edit form
+// PO Line details section
+const lineDetails = Section({ id: 'lineDetails' });
+const poLineDetails = {
+  receiptStatus: lineDetails.find(Select('Receipt status')),
+};
+
 const submitOrderLine = () => {
   const submitButton = Button('Submit');
   cy.get('body').then(($body) => {
@@ -440,6 +450,44 @@ export default {
     ]);
     cy.wait(4000);
     submitOrderLine();
+  },
+
+  fillInPOLineInfoforPhysicalMaterialWithFundWithoutECAndCheckRequiredField(
+    fund,
+    unitPrice,
+    quantity,
+    value,
+    institutionId,
+  ) {
+    cy.do([
+      orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
+      acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
+      ),
+      physicalUnitPriceTextField.fillIn(unitPrice),
+      quantityPhysicalTextField.fillIn(quantity),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      Button({ id: 'fundDistribution[0].expenseClassId' }).click(),
+      Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
+      fundDistributionField.fillIn(value),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
+      addLocationButton.click(),
+      createNewLocationButton.click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+    cy.do([
+      selectPermanentLocationModal.find(saveButton).click(),
+      quantityPhysicalLocationField.fillIn(quantity),
+      saveAndCloseButton.click(),
+    ]);
+    cy.expect(Section({ id: 'fundDistributionAccordion' }).has({ error: 'Required!' }));
   },
 
   editFundInPOL(fund, unitPrice, value) {
@@ -938,10 +986,10 @@ export default {
     ]);
   },
 
-  selectPOLInOrder: (indexNumber) => {
+  selectPOLInOrder: (index = 0) => {
     cy.do(
       polListingAccordion
-        .find(MultiColumnListRow({ index: indexNumber }))
+        .find(MultiColumnListRow({ index }))
         .find(MultiColumnListCell({ columnIndex: 0 }))
         .click(),
     );
@@ -974,6 +1022,16 @@ export default {
     cy.wait(4000);
   },
 
+  fillPOLineDetails({ receiptStatus }) {
+    if (receiptStatus) {
+      cy.do(poLineDetails.receiptStatus.focus());
+      cy.do(poLineDetails.receiptStatus.choose(receiptStatus));
+      cy.expect(
+        poLineDetails.receiptStatus.has({ value: matching(new RegExp(receiptStatus, 'i')) }),
+      );
+    }
+  },
+
   deleteFundInPOL() {
     cy.do([
       Section({ id: 'fundDistributionAccordion' }).find(trashButton).click(),
@@ -993,7 +1051,8 @@ export default {
   },
 
   saveOrderLine: () => {
-    cy.do(Button({ id: 'clickable-updatePoLine' }).click());
+    cy.expect(saveAndCloseButton.has({ disabled: false }));
+    cy.do(saveAndCloseButton.click());
   },
 
   openInstance: () => {

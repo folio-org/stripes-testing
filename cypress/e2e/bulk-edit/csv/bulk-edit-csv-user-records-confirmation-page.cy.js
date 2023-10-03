@@ -13,7 +13,7 @@ let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `Matched-Records-${userUUIDsFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
-const changedRecordsFileName = `*-Changed-Records-${editedFileName}`;
+const changedRecordsFileName = `*-Changed-Records-${userUUIDsFileName}`;
 
 describe('bulk-edit', () => {
   describe('csv approach', () => {

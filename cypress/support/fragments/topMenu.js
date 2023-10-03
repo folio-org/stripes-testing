@@ -1,5 +1,4 @@
-import { including } from '@interactors/html';
-import { Link } from '../../../interactors';
+import { Link, including } from '@interactors/html';
 
 const agreementsPath = '/erm/agreements';
 const inventoryPath = '/inventory';
@@ -71,5 +70,11 @@ export default {
   },
   openCheckOutApp: () => {
     cy.do(Link({ href: including('/checkout') }).click());
+  },
+  openDataImportApp: () => {
+    cy.do(Link({ href: including(dataImportPath) }).click());
+  },
+  openInventoryApp: () => {
+    cy.do(Link({ href: including(inventoryPath) }).click());
   },
 };

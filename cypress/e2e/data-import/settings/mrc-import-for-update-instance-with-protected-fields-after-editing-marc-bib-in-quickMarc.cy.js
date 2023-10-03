@@ -35,7 +35,6 @@ describe('data-import', () => {
   describe('Settings', () => {
     let user = null;
     let instanceHrid;
-    const marcFieldProtectionId = [];
     const OCLCAuthentication = '100481406/PAOLF';
     const protectedFields = {
       firstField: '*',
@@ -91,7 +90,16 @@ describe('data-import', () => {
 
     after('delete test data', () => {
       FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-      marcFieldProtectionId.forEach((field) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(field));
+      MarcFieldProtection.getListViaApi({
+        query: `"field"=="${protectedFields.firstField}"`,
+      }).then((list) => {
+        list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+      });
+      MarcFieldProtection.getListViaApi({
+        query: `"field"=="${protectedFields.secondField}"`,
+      }).then((list) => {
+        list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+      });
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
         (instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);
@@ -117,27 +125,21 @@ describe('data-import', () => {
         );
         Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(OCLCAuthentication);
 
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
+        MarcFieldProtection.createViaApi({
           indicator1: '*',
           indicator2: '*',
           subfield: '5',
           data: 'amb',
           source: 'USER',
           field: protectedFields.firstField,
-        }).then((resp) => {
-          const id = resp.id;
-          marcFieldProtectionId.push = id;
         });
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
+        MarcFieldProtection.createViaApi({
           indicator1: '*',
           indicator2: '*',
           subfield: '*',
           data: '*',
           source: 'USER',
           field: protectedFields.secondField,
-        }).then((resp) => {
-          const id = resp.id;
-          marcFieldProtectionId.push = id;
         });
 
         // create match profile

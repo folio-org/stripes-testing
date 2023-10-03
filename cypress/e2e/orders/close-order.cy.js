@@ -39,16 +39,16 @@ describe('orders: Close Order', () => {
     'C667 Close an existing order (thunderjet)',
     { tags: [TestType.smoke, devTeams.thunderjet] },
     () => {
-      Orders.createOrderWithOrderLineViaApi(order, orderLine).then((orderNumber) => {
+      Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
         cy.visit(TopMenu.ordersPath);
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList(orderNumber);
+        Orders.searchByParameter('PO number', poNumber);
+        Orders.selectFromResultsList(poNumber);
         Orders.openOrder();
         Orders.closeOrder('Cancelled');
         Orders.closeThirdPane();
         Orders.resetFilters();
         Orders.selectStatusInSearch('Closed');
-        Orders.checkSearchResultsWithClosedOrder(orderNumber);
+        Orders.checkSearchResultsWithClosedOrder(poNumber);
       });
     },
   );
