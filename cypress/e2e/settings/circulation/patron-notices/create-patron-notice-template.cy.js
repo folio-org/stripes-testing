@@ -2,9 +2,13 @@ import devTeams from '../../../../support/dictionary/devTeams';
 import TestType from '../../../../support/dictionary/testTypes';
 import NewNoticePolicyTemplate from '../../../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
+import { NOTICE_CATEGORIES } from '../../../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 
 describe('ui-circulation-settings: create patron notice template', () => {
-  const patronNoticeTemplate = { ...NewNoticePolicyTemplate.defaultUi };
+  const patronNoticeTemplate = {
+    ...NewNoticePolicyTemplate.defaultUi,
+    category: NOTICE_CATEGORIES.loan.name,
+  };
   beforeEach('login', () => {
     cy.loginAsAdmin({
       path: SettingsMenu.circulationPatronNoticeTemplatesPath,

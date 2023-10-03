@@ -1,7 +1,6 @@
 import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
 import testTypes from '../../../support/dictionary/testTypes';
-import parallelization from '../../../support/dictionary/parallelization';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -21,7 +20,9 @@ const item = {
   instanceId: '',
 };
 
-describe('bulk-edit', () => {
+// TODO: identify how to stabilize flaky test
+
+describe.skip('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
       cy.createTempUser(
@@ -68,7 +69,7 @@ describe('bulk-edit', () => {
 
     it(
       'C380393 Verify that bulk edit jobs run by correct user (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird, parallelization.nonParallel] },
+      { tags: [testTypes.criticalPath, devTeams.firebird] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');

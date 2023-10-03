@@ -28,7 +28,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 
-describe('Recieving notice: Checkout', () => {
+describe('Receiving notice: Checkout', () => {
   let addedCirculationRule;
   const noticePolicyTemplate = {
     ...NewNoticePolicyTemplate.defaultUi,

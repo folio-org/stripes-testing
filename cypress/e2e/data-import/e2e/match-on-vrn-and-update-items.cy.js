@@ -177,7 +177,7 @@ describe('data-import', () => {
           BasicOrderLine.getDefaultOrderLine({
             quantity: item.quantityPhysical,
             title: item.title,
-            spesialLocationId: locationId,
+            specialLocationId: locationId,
             specialMaterialTypeId: materialTypeId,
             acquisitionMethod: acquisitionMethodId,
             listUnitPrice: item.physicalUnitPrice,
@@ -195,8 +195,8 @@ describe('data-import', () => {
               },
             ],
           }),
-        ).then((res) => {
-          orderNumber = res;
+        ).then((order) => {
+          orderNumber = order.poNumber;
 
           Orders.checkIsOrderCreated(orderNumber);
           // open the first PO with POL

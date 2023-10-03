@@ -661,4 +661,8 @@ export default {
       });
     });
   },
+
+  checkDetailViewIncludesText(text) {
+    cy.expect(marcViewSection.find(HTML(including(text))).exists());
+  },
 };

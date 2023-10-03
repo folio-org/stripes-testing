@@ -1,5 +1,4 @@
 import uuid from 'uuid';
-import moment from 'moment';
 import TestTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';

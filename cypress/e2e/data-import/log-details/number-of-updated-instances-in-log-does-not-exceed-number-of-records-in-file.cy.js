@@ -21,7 +21,6 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -98,7 +97,7 @@ describe('data-import', () => {
 
     after('delete test data', () => {
       cy.wrap(fieldProtectionIds).each((id) => {
-        MarcFieldProtection.deleteMarcFieldProtectionViaApi(id);
+        MarcFieldProtection.deleteViaApi(id);
       });
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
@@ -119,7 +118,7 @@ describe('data-import', () => {
       'C367966 Confirm the number of updated instances in the import log does not exceed the number of records in the file (folijet)',
       { tags: [TestTypes.criticalPath, DevTeams.folijet] },
       () => {
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
+        MarcFieldProtection.createViaApi({
           indicator1: '*',
           indicator2: '*',
           subfield: 'a',
@@ -129,7 +128,7 @@ describe('data-import', () => {
         }).then((resp) => {
           fieldProtectionIds.push(resp.id);
         });
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
+        MarcFieldProtection.createViaApi({
           indicator1: '*',
           indicator2: '*',
           subfield: '*',

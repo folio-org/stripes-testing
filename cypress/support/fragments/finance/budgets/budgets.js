@@ -1,5 +1,8 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../../utils/stringTools';
+import FiscalYears from '../fiscalYears/fiscalYears';
+import Ledgers from '../ledgers/ledgers';
+import Funds from '../funds/funds';
 
 export default {
   getDefaultBudget() {
@@ -30,5 +33,45 @@ export default {
       path: `finance/budgets/${budgetId}`,
       isDefaultSearchParamsRequired: false,
     });
+  },
+  createBudgetWithFundLedgerAndFYViaApi({
+    fiscalYear: fiscalYearProps,
+    ledger: ledgerProps,
+    fund: fundProps,
+    budget: budgetProps,
+  } = {}) {
+    const fiscalYear = {
+      ...FiscalYears.getDefaultFiscalYear(),
+      ...fiscalYearProps,
+    };
+    const ledger = { ...Ledgers.getDefaultLedger(), ...ledgerProps };
+    const fund = { ...Funds.getDefaultFund(), ...fundProps };
+    const budget = {
+      fiscalYearId: fiscalYear.id,
+      fundId: fund.id,
+      ...this.getDefaultBudget(),
+      ...budgetProps,
+    };
+
+    FiscalYears.createViaApi(fiscalYear);
+    Ledgers.createViaApi({ ...ledger, fiscalYearOneId: fiscalYear.id });
+    Funds.createViaApi({ ...fund, ledgerId: ledger.id });
+    this.createViaApi(budget);
+
+    return {
+      fiscalYear,
+      ledger,
+      fund,
+      budget: {
+        ...budget,
+        ledgerId: ledger.id,
+      },
+    };
+  },
+  deleteBudgetWithFundLedgerAndFYViaApi({ id: budgetId, fundId, ledgerId, fiscalYearId }) {
+    this.deleteViaApi(budgetId);
+    Funds.deleteFundViaApi(fundId);
+    Ledgers.deleteledgerViaApi(ledgerId);
+    FiscalYears.deleteFiscalYearViaApi(fiscalYearId);
   },
 };

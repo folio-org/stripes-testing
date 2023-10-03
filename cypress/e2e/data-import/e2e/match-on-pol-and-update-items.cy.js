@@ -288,7 +288,7 @@ describe('data-import', () => {
           BasicOrderLine.getDefaultOrderLine({
             quantity: firstItem.quantity,
             title: firstItem.title,
-            spesialLocationId: location.id,
+            specialLocationId: location.id,
             specialMaterialTypeId: materialTypeId,
             acquisitionMethod: acquisitionMethodId,
             listUnitPrice: firstItem.price,
@@ -300,8 +300,8 @@ describe('data-import', () => {
               },
             ],
           }),
-        ).then((res) => {
-          firstOrderNumber = res;
+        ).then((firstOrder) => {
+          firstOrderNumber = firstOrder.poNumber;
 
           Orders.checkIsOrderCreated(firstOrderNumber);
           // open the first PO with POL
@@ -317,7 +317,7 @@ describe('data-import', () => {
             BasicOrderLine.getDefaultOrderLine({
               quantity: secondItem.quantity,
               title: secondItem.title,
-              spesialLocationId: location.id,
+              specialLocationId: location.id,
               specialMaterialTypeId: materialTypeId,
               acquisitionMethod: acquisitionMethodId,
               listUnitPrice: secondItem.price,
@@ -329,8 +329,8 @@ describe('data-import', () => {
                 },
               ],
             }),
-          ).then((respo) => {
-            secondOrderNumber = respo;
+          ).then((secondOrder) => {
+            secondOrderNumber = secondOrder.poNumber;
 
             cy.visit(TopMenu.ordersPath);
             Orders.resetFilters();

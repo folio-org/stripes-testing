@@ -56,6 +56,10 @@ export default {
     internal: 'ui-plugin-find-agreement.search',
     gui: 'Find Agreement Plugin: Search agreements',
   },
+  uiAgreementsFileDownload: {
+    internal: 'ui-agreements.agreements.edit',
+    gui: 'Agreements: File download',
+  },
   // QuickMarc
   uiQuickMarcQuickMarcHoldingsEditorCreate: {
     internal: 'ui-quick-marc.quick-marc-holdings-editor.create',
@@ -289,8 +293,7 @@ export default {
     internal: 'ui-users.viewperms',
     gui: 'Users: Can view permissions assigned to users',
   },
-  uiUserCreate: { internal: 'ui-users.create', gui: 'Users: Create users' },
-  uiUsersCreate: { internal: 'ui-users.create', gui: 'Users: Can create new user' },
+  uiUsersCreate: { internal: 'ui-users.create', gui: 'Users: Can create and edit users' },
   uiUserEdit: { internal: 'ui-users.edit', gui: 'Users: Can edit user profile' },
   uiUsersDelete: {
     internal: 'ui-users.delete',
@@ -472,6 +475,10 @@ export default {
   },
   uiInvoicesApproveInvoices: { internal: 'ui-invoice.approve', gui: 'Invoice: Approve invoices' },
   uiInvoicesPayInvoices: { internal: 'ui-invoice.pay', gui: 'Invoice: Pay invoices' },
+  uiInvoicesPayInvoicesInDifferentFiscalYear: {
+    internal: 'ui-invoice.payDifferentFY',
+    gui: 'Invoice: Pay invoices in a different fiscal year',
+  },
   invoiceSettingsAll: {
     internal: 'ui-invoice.settings.all',
     gui: 'Settings (Invoices): Can view and edit settings',
@@ -485,6 +492,7 @@ export default {
     internal: 'ui-invoice.invoice.view',
     gui: 'Invoice: Can view Invoices and Invoice lines',
   },
+
   uiInvoicesDownloadBatchFileFromInvoiceRecord: {
     internal: 'ui-invoice.batchVoucher.download',
     gui: 'Invoice: Download batch file from invoice record',
