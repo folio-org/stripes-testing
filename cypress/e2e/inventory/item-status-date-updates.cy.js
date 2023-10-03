@@ -97,7 +97,7 @@ describe.skip('inventory', () => {
                     specialLocationId: effectiveLocation.id,
                   }),
                 ).then((order) => {
-                  orderNumber = order;
+                  orderNumber = order.poNumber;
                 });
               });
             },

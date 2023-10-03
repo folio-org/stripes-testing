@@ -300,8 +300,8 @@ describe('data-import', () => {
               },
             ],
           }),
-        ).then((res) => {
-          firstOrderNumber = res;
+        ).then((firstOrder) => {
+          firstOrderNumber = firstOrder.poNumber;
 
           Orders.checkIsOrderCreated(firstOrderNumber);
           // open the first PO with POL
@@ -329,8 +329,8 @@ describe('data-import', () => {
                 },
               ],
             }),
-          ).then((respo) => {
-            secondOrderNumber = respo;
+          ).then((secondOrder) => {
+            secondOrderNumber = secondOrder.poNumber;
 
             cy.visit(TopMenu.ordersPath);
             Orders.resetFilters();

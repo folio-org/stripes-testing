@@ -56,6 +56,10 @@ export default {
     internal: 'ui-plugin-find-agreement.search',
     gui: 'Find Agreement Plugin: Search agreements',
   },
+  uiAgreementsFileDownload: {
+    internal: 'ui-agreements.agreements.edit',
+    gui: 'Agreements: File download',
+  },
   // QuickMarc
   uiQuickMarcQuickMarcHoldingsEditorCreate: {
     internal: 'ui-quick-marc.quick-marc-holdings-editor.create',
