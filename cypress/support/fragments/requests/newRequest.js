@@ -14,6 +14,7 @@ import {
   TextField,
   Option,
   including,
+  Modal,
 } from '../../../../interactors';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../constants';
 import dateTools from '../../utils/dateTools';
@@ -244,5 +245,13 @@ export default {
     cy.expect(selectServicePoint.exists());
     cy.wait('@getUsers');
     this.choosepickupServicePoint(newRequest.pickupServicePoint);
+  },
+
+  checkRequestIsNotAllowedModal() {
+    cy.expect(
+      Modal('Request not allowed').has({
+        message: 'This requester already has an open request for this item',
+      }),
+    );
   },
 };

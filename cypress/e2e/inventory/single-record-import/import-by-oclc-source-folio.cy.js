@@ -34,7 +34,7 @@ describe('inventory', () => {
     before('create test data', () => {
       cy.getAdminToken().then(() => {
         Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
-        InventorySearchAndFilter.createInstanceViaApi().then(({ instanceData }) => {
+        InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
           instanceRecord = instanceData;
         });
       });

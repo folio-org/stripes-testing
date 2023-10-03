@@ -9,9 +9,7 @@ let user;
 
 describe('remote-storage-configuration', () => {
   before('create user', () => {
-    cy.createTempUser([
-      permissions.uiTenantSettingsSettingsLocation.gui,
-    ]).then(userProperties => {
+    cy.createTempUser([permissions.uiTenantSettingsSettingsLocation.gui]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password);
       cy.visit(settingsMenu.tenantLocationsPath);

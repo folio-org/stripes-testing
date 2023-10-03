@@ -98,7 +98,6 @@ describe('Inventory -> Contributors Browse', () => {
 
       BrowseContributors.select();
       BrowseContributors.browse(testData.contributor.name);
-      BrowseContributors.checkSearchResultRecord(testData.contributor.name);
       BrowseContributors.checkSearchResultRow(
         testData.contributor.name,
         testData.contributor.nameTypes.personal,

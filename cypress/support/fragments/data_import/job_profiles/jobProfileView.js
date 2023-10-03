@@ -6,10 +6,12 @@ import {
   MultiSelect,
   ValueChipRoot,
   MultiColumnList,
+  MultiColumnListRow,
   MultiColumnListCell,
   MultiSelectOption,
   Callout,
   Modal,
+  Link,
 } from '../../../../../interactors';
 
 const viewPane = Pane({ id: 'view-job-profile-pane' });
@@ -143,5 +145,32 @@ export default {
         }
         expect(numberOfProfiles).to.equal(profileNames.length);
       });
+  },
+
+  verifyJobsUsingThisProfileSection(fileName) {
+    cy.do(
+      Accordion('Jobs using this profile')
+        .find(MultiColumnListCell({ content: fileName }))
+        .perform((element) => {
+          const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+
+          cy.expect(
+            viewPane
+              .find(MultiColumnListRow({ rowIndexInParent: rowNumber }))
+              .find(MultiColumnListCell({ columnIndex: 0 }))
+              .find(Link({ href: including('/data-import/job-summary/') }))
+              .exists(),
+          );
+        }),
+    );
+  },
+
+  // open the new tab in the current tab
+  openLogDetailsPageView(fileName) {
+    cy.get('#view-job-profile-pane')
+      .find('*[class^="mclCell"]')
+      .contains(fileName)
+      .invoke('removeAttr', 'target')
+      .click();
   },
 };
