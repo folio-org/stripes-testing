@@ -285,6 +285,9 @@ const getDefaultItemMappingProfile = (name) => {
   };
   return defaultItemMappingProfile;
 };
+const fillInvoiceLineDescription = (description) => {
+  cy.do(Accordion('Invoice line information').find(TextField('Description*')).fillIn(description));
+};
 
 export default {
   getDefaultInstanceMappingProfile,
@@ -307,6 +310,7 @@ export default {
   selectFromResultsList,
   waitLoading,
   fillSummaryInMappingProfile,
+  fillInvoiceLineDescription,
   selectOrganizationByName,
   save,
 
@@ -410,11 +414,7 @@ export default {
     }
     // Invoice line information section
     if (profile.invoiceLinePOlDescription) {
-      cy.do(
-        Accordion('Invoice line information')
-          .find(TextField('Description*'))
-          .fillIn(profile.invoiceLinePOlDescription),
-      );
+      fillInvoiceLineDescription(profile.invoiceLinePOlDescription);
     }
     if (profile.polNumber) {
       cy.do(TextField('PO line number').fillIn(profile.polNumber));
@@ -988,5 +988,12 @@ export default {
     Object.values(ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES).forEach((method) => {
       cy.expect(DropdownMenu().find(Button(method)).exists());
     });
+  },
+
+  checkErrorMessageIsPresented: (textFieldName) => {
+    const fieldName = TextField(textFieldName);
+
+    cy.do(fieldName.click());
+    cy.expect(fieldName.has({ error: 'Please enter a value' }));
   },
 };
