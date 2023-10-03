@@ -19,17 +19,17 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
   const marcFiles = [
     {
       marc: 'marcBibFileForC388536.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`, 
+      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       numOfRecords: 1,
-    }, 
+    },
     {
       marc: 'marcAuthFileForC388536.mrc',
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numOfRecords: 25,
     },
-  ]
+  ];
 
   const linkingTagAndValues = [
     {
@@ -200,7 +200,6 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
         InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
-        console.log(createdAuthorityIDs);
 
         linkableFields.forEach((tag) => {
           QuickMarcEditor.setRulesForField(tag, true);
@@ -236,65 +235,65 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     'C388536 Some of linkable fields are linked (and some are not) after clicking on the "Link headings" button when edit "MARC bib" except already linked fields (spitfire)',
     { tags: [TestTypes.smoke, DevTeams.spitfire] },
     () => {
-    InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
-    InventoryInstances.selectInstance();
-    InventoryInstance.editMarcBibliographicRecord();
-    QuickMarcEditor.verifyTagFieldAfterLinking(82, '700', '1', '\\', '$a Stelfreeze, Brian', '$e artist.', '$0 id.loc.gov/authorities/names/n91065740', '');
-    QuickMarcEditor.verifyTagFieldAfterLinking(83, '700', '1', '\\', '$a Sprouse, Chris', '$e artist.', '$0 id.loc.gov/authorities/names/nb98017694', '');
-    QuickMarcEditor.checkLinkHeadingsButton();
+      InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+      InventoryInstances.selectInstance();
+      InventoryInstance.editMarcBibliographicRecord();
+      QuickMarcEditor.verifyTagFieldAfterLinking(82, '700', '1', '\\', '$a Stelfreeze, Brian', '$e artist.', '$0 id.loc.gov/authorities/names/n91065740', '');
+      QuickMarcEditor.verifyTagFieldAfterLinking(83, '700', '1', '\\', '$a Sprouse, Chris', '$e artist.', '$0 id.loc.gov/authorities/names/nb98017694', '');
+      QuickMarcEditor.checkLinkHeadingsButton();
 
-    for (let i = 82; i < 87; i++) {
-      QuickMarcEditor.clickArrowDownButton(i);
-    }
-    QuickMarcEditor.deleteField(83);
-    QuickMarcEditor.deleteField(82);
-    QuickMarcEditor.afterDeleteNotification('700')
+      for (let i = 82; i < 87; i++) {
+        QuickMarcEditor.clickArrowDownButton(i);
+      }
+      QuickMarcEditor.deleteField(83);
+      QuickMarcEditor.deleteField(82);
+      QuickMarcEditor.afterDeleteNotification('700')
 
-    QuickMarcEditor.clickLinkHeadingsButton();
-    QuickMarcEditor.checkCallout('Field 100, 240, 600, 630, 655, 700, 710, 711, 800, and 830 has been linked to MARC authority record(s).');
-    QuickMarcEditor.checkCallout('Field 110, 111, 130, 610, 611, 650, 651, 700, 730, 810, and 811 must be set manually by selecting the link icon.');
-    QuickMarcEditor.checkLinkHeadingsButton();
-    QuickMarcEditor.afterDeleteNotification('700')
-    QuickMarcEditor.verifyTagFieldAfterLinking(87, '700', '1', '\\', '$a Stelfreeze, Brian', '$e artist.', '$0 id.loc.gov/authorities/names/n91065740', '');
-    matchingNaturalIds.forEach(matchs => {
-      QuickMarcEditor.verifyTagWithNaturalIdExistance(
-        matchs.rowIndex,
-        matchs.tag,
-        matchs.naturalId,
-      );
-    });
-    NotMatchingNaturalIds.forEach(matchs => {
-      QuickMarcEditor.verifyTagWithNaturalIdExistance(
-        matchs.rowIndex,
-        matchs.tag,
-        matchs.naturalId,
-        `records[${matchs.rowIndex}].content`
-      );
-    });
-      
-    QuickMarcEditor.clickSaveAndKeepEditingButton();
-    QuickMarcEditor.clickRestoreDeletedField();
-    QuickMarcEditor.verifyTagFieldAfterLinking(82, '700', '1', '\\', '$a Sprouse, Chris', '$e artist.', '$0 id.loc.gov/authorities/names/nb98017694', '');
-    QuickMarcEditor.verifyTagFieldAfterUnlinking(83, '700', '1', '\\', '$a Martin, Laura $c (Comic book artist), $e colorist. $0 n2014052262');
+      QuickMarcEditor.clickLinkHeadingsButton();
+      QuickMarcEditor.checkCallout('Field 100, 240, 600, 630, 655, 700, 710, 711, 800, and 830 has been linked to MARC authority record(s).');
+      QuickMarcEditor.checkCallout('Field 110, 111, 130, 610, 611, 650, 651, 700, 730, 810, and 811 must be set manually by selecting the link icon.');
+      QuickMarcEditor.checkLinkHeadingsButton();
+      QuickMarcEditor.afterDeleteNotification('700')
+      QuickMarcEditor.verifyTagFieldAfterLinking(87, '700', '1', '\\', '$a Stelfreeze, Brian', '$e artist.', '$0 id.loc.gov/authorities/names/n91065740', '');
+      matchingNaturalIds.forEach(matchs => {
+        QuickMarcEditor.verifyTagWithNaturalIdExistance(
+          matchs.rowIndex,
+          matchs.tag,
+          matchs.naturalId,
+        );
+      });
+      NotMatchingNaturalIds.forEach(matchs => {
+        QuickMarcEditor.verifyTagWithNaturalIdExistance(
+          matchs.rowIndex,
+          matchs.tag,
+          matchs.naturalId,
+          `records[${matchs.rowIndex}].content`
+        );
+      });
 
-    QuickMarcEditor.clickLinkHeadingsButton();
-    QuickMarcEditor.checkCallout('Field 700 has been linked to MARC authority record(s).');
-    QuickMarcEditor.checkCallout('Field 110, 111, 130, 610, 611, 650, 651, 700, 730, 810, and 811 must be set manually by selecting the link icon.');
-    QuickMarcEditor.verifyTagWithNaturalIdExistance(83, '700', 'n2014052262');
-    NotMatchingNaturalIds.forEach(matchs => {
-      QuickMarcEditor.verifyTagWithNaturalIdExistance(
-        matchs.rowIndex,
-        matchs.tag,
-        matchs.naturalId,
-        `records[${matchs.rowIndex}].content`
-      );
-    });
-    QuickMarcEditor.checkLinkHeadingsButton();
+      QuickMarcEditor.clickSaveAndKeepEditingButton();
+      QuickMarcEditor.clickRestoreDeletedField();
+      QuickMarcEditor.verifyTagFieldAfterLinking(82, '700', '1', '\\', '$a Sprouse, Chris', '$e artist.', '$0 id.loc.gov/authorities/names/nb98017694', '');
+      QuickMarcEditor.verifyTagFieldAfterUnlinking(83, '700', '1', '\\', '$a Martin, Laura $c (Comic book artist), $e colorist. $0 n2014052262');
 
-    QuickMarcEditor.clickSaveAndKeepEditingButton();
-    QuickMarcEditor.verifyTagFieldAfterLinking(82, '700', '1', '\\', '$a Sprouse, Chris', '$e artist.', '$0 id.loc.gov/authorities/names/nb98017694', '');
-    QuickMarcEditor.verifyTagFieldAfterLinking(87, '700', '1', '\\', '$a Stelfreeze, Brian', '$e artist.', '$0 id.loc.gov/authorities/names/n91065740', '');
-    //Wait for requests to be finished.
-    cy.wait(3000);
+      QuickMarcEditor.clickLinkHeadingsButton();
+      QuickMarcEditor.checkCallout('Field 700 has been linked to MARC authority record(s).');
+      QuickMarcEditor.checkCallout('Field 110, 111, 130, 610, 611, 650, 651, 700, 730, 810, and 811 must be set manually by selecting the link icon.');
+      QuickMarcEditor.verifyTagWithNaturalIdExistance(83, '700', 'n2014052262');
+      NotMatchingNaturalIds.forEach(matchs => {
+        QuickMarcEditor.verifyTagWithNaturalIdExistance(
+          matchs.rowIndex,
+          matchs.tag,
+          matchs.naturalId,
+          `records[${matchs.rowIndex}].content`
+        );
+      });
+      QuickMarcEditor.checkLinkHeadingsButton();
+
+      QuickMarcEditor.clickSaveAndKeepEditingButton();
+      QuickMarcEditor.verifyTagFieldAfterLinking(82, '700', '1', '\\', '$a Sprouse, Chris', '$e artist.', '$0 id.loc.gov/authorities/names/nb98017694', '');
+      QuickMarcEditor.verifyTagFieldAfterLinking(87, '700', '1', '\\', '$a Stelfreeze, Brian', '$e artist.', '$0 id.loc.gov/authorities/names/n91065740', '');
+      //Wait for requests to be finished.
+      cy.wait(3000);
   });
 });
