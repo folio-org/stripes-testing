@@ -564,6 +564,11 @@ export default {
     cy.do(Button(including(`${callNumber} ${suffix}`)).click());
   },
 
+  selectFoundItemFromBrowseResultList(value) {
+    cy.do(Button(including(value)).click());
+    cy.expect(instanceDetailsSection.exists());
+  },
+
   verifyInstanceDisplayed(instanceTitle) {
     cy.expect(MultiColumnListCell({ content: instanceTitle }).exists());
   },
