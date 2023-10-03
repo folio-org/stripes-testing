@@ -109,7 +109,7 @@ export default {
   verifySetCriteriaPaneItems() {
     cy.expect([
       setCriteriaPane.find(identifierToggle).exists(),
-      setCriteriaPane.find(queryToggle).exists(),
+      setCriteriaPane.find(queryToggle).absent(),
       setCriteriaPane.find(logsToggle).exists(),
       setCriteriaPane.find(recordIdentifierDropdown).exists(),
       setCriteriaPane.find(recordTypesAccordion).has({ open: true }),
