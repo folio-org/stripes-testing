@@ -13,8 +13,6 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 
-// TODO: Update autotest after UIBULKED-329 gets done
-
 let user;
 const checkInNote = `checkIn-${getRandomPostfix()}`;
 const checkOutNote = `checkOut-${getRandomPostfix()}`;
