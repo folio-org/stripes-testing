@@ -153,7 +153,7 @@ describe('MARC -> MARC Bibliographic', () => {
   );
 
   it(
-    'C353526 Protection of specified fields when editing "MARC Bibliographic" record. (spitfire) (TaaS)',
+    'C353526 Protection of specified fields when editing "MARC Bibliographic" record (spitfire) (TaaS)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
       InventoryInstance.editMarcBibliographicRecord();
