@@ -394,7 +394,7 @@ export default {
   clickLinkIconInTagField(rowIndex) {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).click());
   },
-  
+
   clickLinkHeadingsButton() {
     cy.do(paneHeader.find(linkHeadingsButton).click());
   },
