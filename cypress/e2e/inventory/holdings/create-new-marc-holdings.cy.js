@@ -15,6 +15,8 @@ import InventorySteps from '../../../support/fragments/inventory/inventorySteps'
 import DateTools from '../../../support/utils/dateTools';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 
 describe('Create holding records with MARC source', () => {
   const testData = {
@@ -53,7 +55,9 @@ describe('Create holding records with MARC source', () => {
       '\\\\\\\\\\\\',
     ],
     sourceMARC: 'MARC',
+    tag852callout: 'Record cannot be saved. An 852 is required.',
   };
+
   const marcFiles = [
     {
       marc: 'oneMarcBib.mrc',
@@ -74,6 +78,8 @@ describe('Create holding records with MARC source', () => {
 
   let user;
   const recordIDs = [];
+  let location;
+  let servicePointId;
 
   before(() => {
     cy.createTempUser([
@@ -82,6 +88,13 @@ describe('Create holding records with MARC source', () => {
       Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
     ]).then((createdUserProperties) => {
       user = createdUserProperties;
+
+      ServicePoints.getViaApi().then((servicePoint) => {
+        servicePointId = servicePoint[0].id;
+        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+          location = res;
+        });
+      });
 
       marcFiles.forEach((marcFile) => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
@@ -118,6 +131,12 @@ describe('Create holding records with MARC source', () => {
     InventoryInstance.deleteInstanceViaApi(recordIDs[0]);
     InventoryInstance.deleteInstanceViaApi(recordIDs[1]);
     InventoryInstance.deleteInstanceViaApi(recordIDs[2]);
+    NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+      location.institutionId,
+      location.campusId,
+      location.libraryId,
+      location.id,
+    );
   });
 
   it(
@@ -270,12 +289,24 @@ describe('Create holding records with MARC source', () => {
       cy.wait(1000);
       QuickMarcEditor.checkNoDeletePlaceholder();
       QuickMarcEditor.updateExistingTagName(testData.tag852, '85');
-      QuickMarcEditor.deleteFieldAndCheck(5, testData.tag852);
-      QuickMarcEditor.checkNoDeletePlaceholder();
+      QuickMarcEditor.deleteFieldAndCheck(5, '85');
       QuickMarcEditor.afterDeleteNotification('85');
       QuickMarcEditor.undoDelete();
       QuickMarcEditor.verifyTagValue(5, '85');
       QuickMarcEditor.checkContent('', 5);
+      QuickMarcEditor.updateExistingTagName('85', testData.tag852);
+      QuickMarcEditor.selectExistingHoldingsLocation(location);
+      QuickMarcEditor.checkContent(`$b ${location.code} `, 5);
+      QuickMarcEditor.updateExistingTagName(testData.tag852, '85');
+      QuickMarcEditor.deleteFieldAndCheck(5, testData.tag852);
+      QuickMarcEditor.afterDeleteNotification('85');
+      QuickMarcEditor.undoDelete();
+      QuickMarcEditor.verifyTagValue(5, '85');
+      QuickMarcEditor.checkContent('', 5);
+      QuickMarcEditor.deleteFieldAndCheck(5, '85');
+      QuickMarcEditor.afterDeleteNotification('85');
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.checkCallout(testData.tag852callout);
     },
   );
 });

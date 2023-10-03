@@ -15,10 +15,12 @@ import {
   PaneContent,
   PaneHeader,
   Tooltip,
+  Select,
 } from '../../../interactors';
 import dateTools from '../utils/dateTools';
 import getRandomPostfix from '../utils/stringTools';
 import InventoryInstance from './inventory/inventoryInstance';
+import Institutions from './settings/tenant/location-setup/institutions';
 
 const rootSection = Section({ id: 'quick-marc-editor-pane' });
 const viewMarcSection = Section({ id: 'marc-view-pane' });
@@ -309,6 +311,16 @@ const default008BoxesHoldings = [
   TextField('Sep/comp'),
   TextField('Rept date'),
 ];
+
+const holdingsLocationLink = Button('Permanent location look-up');
+const holdingsLocationModal = Modal('Select permanent location');
+const holdingsLocationInstitutionSelect = holdingsLocationModal.find(Select('Institution'));
+const holdingsLocationCampusSelect = holdingsLocationModal.find(Select('Campus'));
+const holdingsLocationLibrarySelect = holdingsLocationModal.find(Select('Library'));
+const holdingsLocationSelectDisabled = holdingsLocationModal.find(
+  Button({ name: 'locationId', disabled: true }),
+);
+const holdingsLocationSaveButton = holdingsLocationModal.find(Button('Save and close'));
 
 export default {
   getInitialRowsCount() {
@@ -1427,7 +1439,9 @@ export default {
   },
 
   checkNoDeletePlaceholder() {
-    cy.expect(rootSection.find(HTML(including('class="deletedRowPlaceholder'))).absent());
+    cy.expect(
+      rootSection.find(HTML(including('has been deleted from this MARC record.'))).absent(),
+    );
   },
 
   verifyIconsAfterUnlinking(rowIndex) {
@@ -1436,5 +1450,27 @@ export default {
       QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorutyIconButton).absent(),
       QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).exists(),
     ]);
+  },
+
+  selectExistingHoldingsLocation(locationObject) {
+    Institutions.getInstitutionByIdViaApi(locationObject.institutionId).then((institution) => {
+      const institutionName = institution.name;
+      cy.do(holdingsLocationLink.click());
+      cy.expect(holdingsLocationModal.exists());
+      cy.do(holdingsLocationInstitutionSelect.choose(institutionName));
+      // wait until values applied in dropdowns
+      cy.wait(3000);
+      cy.expect([
+        holdingsLocationInstitutionSelect.has({ value: locationObject.institutionId }),
+        holdingsLocationCampusSelect.has({ value: locationObject.campusId }),
+        holdingsLocationLibrarySelect.has({ value: locationObject.libraryId }),
+        holdingsLocationSelectDisabled
+          .find(HTML(including(`${locationObject.name} (${locationObject.code})`)))
+          .exists(),
+        holdingsLocationSaveButton.has({ disabled: false }),
+      ]);
+      cy.do(holdingsLocationSaveButton.click());
+      cy.expect([holdingsLocationModal.absent()]);
+    });
   },
 };
