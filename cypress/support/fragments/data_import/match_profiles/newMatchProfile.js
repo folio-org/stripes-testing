@@ -152,6 +152,8 @@ export default {
   fillOnlyComparePartOfTheValue,
   fillQualifierInExistingComparisonPart,
 
+  saveAndClose: () => cy.do(Button('Save as profile & Close').click()),
+
   fillMatchProfileForm: ({
     profileName,
     incomingRecordFields,

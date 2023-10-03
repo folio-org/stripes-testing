@@ -211,8 +211,8 @@ describe('data-import', () => {
         ].forEach((columnName) => {
           FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
         });
-        FileDetails.checkSrsRecordQuantityInSummaryTable('1');
-        FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
+        FileDetails.checkSrsRecordQuantityInSummaryTable('1', 1);
+        FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
 
         FileDetails.openInstanceInInventory('Updated');
         InstanceRecordView.verifyAdministrativeNote(note);
@@ -265,16 +265,14 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(fileForUpdateSecondName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileForUpdateSecondName);
-        FileDetails.checkStatusInColumn(
-          FileDetails.status.created,
+        [
           FileDetails.columnNameInResultList.srsMarc,
-        );
-        FileDetails.checkStatusInColumn(
-          FileDetails.status.updated,
           FileDetails.columnNameInResultList.instance,
-        );
-        FileDetails.checkSrsRecordQuantityInSummaryTable('1');
-        FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+        });
+        FileDetails.checkSrsRecordQuantityInSummaryTable('1', 1);
+        FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
 
         FileDetails.openInstanceInInventory('Updated');
         InstanceRecordView.verifyAdministrativeNote(note);

@@ -1,10 +1,10 @@
 import uuid from 'uuid';
 import NewOrganization from '../organizations/newOrganization';
 
-const getDefaultOrder = (vendorId, number) => {
+const getDefaultOrder = ({ vendorId, poNumber } = {}) => {
   const defaultOrder = {
     id: uuid(),
-    poNumber: number,
+    poNumber,
     vendor: vendorId,
     orderType: 'One-Time',
   };

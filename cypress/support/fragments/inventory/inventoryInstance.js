@@ -1,4 +1,4 @@
-/* eslint-disable cypress/no-unnecessary-waiting */
+import uuid from 'uuid';
 import {
   MultiColumnList,
   Select,
@@ -36,6 +36,7 @@ import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstan
 import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovement';
 import ItemRecordView from './item/itemRecordView';
 import DateTools from '../../utils/dateTools';
+import getRandomPostfix from '../../utils/stringTools';
 
 const section = Section({ id: 'pane-instancedetails' });
 const actionsButton = section.find(Button('Actions'));
@@ -777,6 +778,29 @@ export default {
     cy.expect(instanceDetailsPane.find(MultiColumnListCell(content)).exists());
   },
 
+  createInstanceViaApi() {
+    const instanceData = {
+      instanceTitle: `Instance ${getRandomPostfix()}`,
+      instanceId: uuid(),
+      instanceTypeId: null,
+    };
+
+    return cy
+      .getInstanceTypes({ limit: 1 })
+      .then((instanceTypes) => {
+        instanceData.instanceTypeId = instanceTypes[0].id;
+      })
+      .then(() => {
+        cy.createInstance({
+          instance: {
+            instanceId: instanceData.instanceId,
+            instanceTypeId: instanceData.instanceTypeId,
+            title: instanceData.instanceTitle,
+          },
+        });
+      })
+      .then(() => ({ instanceData }));
+  },
   deleteInstanceViaApi: (id) => {
     cy.okapiRequest({
       method: 'DELETE',

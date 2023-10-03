@@ -88,7 +88,7 @@ describe('inventory', () => {
               specialMaterialTypeId: materialTypeId,
             }),
           ).then((order) => {
-            orderNumber = order;
+            orderNumber = order.poNumber;
           });
         },
       );
