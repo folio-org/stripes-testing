@@ -41,6 +41,10 @@ describe('bulk-edit', () => {
     'C350929 Verify Bulk Edit app - landing page (firebird)',
     { tags: [testTypes.smoke, devTeams.firebird] },
     () => {
+      BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Logs');
+      BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
+      BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Query');
+
       // verify panes
       BulkEditSearchPane.verifyPanesBeforeImport();
       BulkEditSearchPane.verifyBulkEditPaneItems();
@@ -70,14 +74,6 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyDragNDropHoldingsHRIDsArea();
       BulkEditSearchPane.verifyDragNDropInstanceHRIDsArea();
       BulkEditSearchPane.verifyDragNDropHoldingsItemBarcodesArea();
-
-      // verify query items
-      BulkEditSearchPane.openQuerySearch();
-      BulkEditSearchPane.verifyQueryPane('Holdings');
-      BulkEditSearchPane.clickRecordTypesAccordion();
-      BulkEditSearchPane.verifyRecordTypesAccordionCollapsed();
-      BulkEditSearchPane.clickRecordTypesAccordion();
-      BulkEditSearchPane.verifyQueryPane('Holdings');
 
       // verify logs items
       BulkEditSearchPane.openLogsSearch();

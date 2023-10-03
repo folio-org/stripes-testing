@@ -5,7 +5,7 @@ import {
   HTML,
   including,
   MultiColumnListRow,
-} from '../../../../interactors';
+} from '../../../../../interactors';
 
 const modalSelectProfile = Modal('Select instance');
 

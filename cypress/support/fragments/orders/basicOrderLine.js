@@ -2,10 +2,16 @@ import uuid from 'uuid';
 import getRandomPostfix from '../../utils/stringTools';
 import NewMaterialType from '../settings/inventory/newMaterialType';
 
+export const RECEIVING_WORKFLOWS = {
+  SYNCHRONIZED: 'Synchronized order and receipt quantity',
+  INDEPENDENT: 'Independent order and receipt quantity',
+};
+
 const getDefaultOrderLine = ({
   quantity = '1',
   title = `autotest_po_line_name-${getRandomPostfix()}`,
   instanceId,
+  checkinItems = false,
   specialLocationId,
   specialMaterialTypeId,
   acquisitionMethod = '',
@@ -18,7 +24,7 @@ const getDefaultOrderLine = ({
 }) => {
   const defaultOrderLine = {
     id: uuid(),
-    checkinItems: false,
+    checkinItems,
     instanceId,
     acquisitionMethod,
     alerts: [],

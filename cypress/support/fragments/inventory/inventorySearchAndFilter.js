@@ -1,5 +1,4 @@
 import { HTML, including } from '@interactors/html';
-import uuid from 'uuid';
 import {
   Accordion,
   Button,
@@ -22,7 +21,6 @@ import {
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import logsViewAll from '../data_import/logs/logsViewAll';
-import Helper from '../finance/financeHelper';
 import InventoryActions from './inventoryActions';
 import InventoryInstances from './inventoryInstances';
 
@@ -564,6 +562,11 @@ export default {
     cy.do(Button(including(`${callNumber} ${suffix}`)).click());
   },
 
+  selectFoundItemFromBrowseResultList(value) {
+    cy.do(Button(including(value)).click());
+    cy.expect(instanceDetailsSection.exists());
+  },
+
   verifyInstanceDisplayed(instanceTitle) {
     cy.expect(MultiColumnListCell({ content: instanceTitle }).exists());
   },
@@ -578,30 +581,6 @@ export default {
   verifyPanesExist() {
     cy.expect(paneFilterSection.exists());
     cy.expect(paneResultsSection.exists());
-  },
-
-  createInstanceViaApi() {
-    const instanceData = {
-      instanceTitle: `instanceTitle ${Helper.getRandomBarcode()}`,
-      instanceId: uuid(),
-      instanceTypeId: null,
-    };
-
-    return cy
-      .getInstanceTypes({ limit: 1 })
-      .then((instanceTypes) => {
-        instanceData.instanceTypeId = instanceTypes[0].id;
-      })
-      .then(() => {
-        cy.createInstance({
-          instance: {
-            instanceId: instanceData.instanceId,
-            instanceTypeId: instanceData.instanceTypeId,
-            title: instanceData.instanceTitle,
-          },
-        });
-      })
-      .then(() => ({ instanceData }));
   },
 
   selectViewHoldings: () => cy.do(viewHoldingButton.click()),

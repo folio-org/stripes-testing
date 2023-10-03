@@ -8,18 +8,17 @@ let user;
 
 describe('remote-storage-configuration', () => {
   before('create user', () => {
-    cy.createTempUser([
-      permissions.remoteStorageCRUD.gui,
-      permissions.inventoryAll.gui,
-    ]).then(userProperties => {
-      user = userProperties;
-    });
+    cy.createTempUser([permissions.remoteStorageCRUD.gui, permissions.inventoryAll.gui]).then(
+      (userProperties) => {
+        user = userProperties;
+      },
+    );
   });
 
   beforeEach('login', () => {
     cy.login(user.username, user.password, {
       path: TopMenu.remoteStorageConfigurationPath,
-      waiter: Configurations.waitLoading
+      waiter: Configurations.waitLoading,
     });
   });
 
@@ -42,7 +41,7 @@ describe('remote-storage-configuration', () => {
         Configurations.verifyCreatedConfiguration(name, configuration);
         Configurations.deleteRemoteStorage(name);
       });
-    }
+    },
   );
 
   it(

@@ -89,7 +89,7 @@ describe('orders: duplicate', () => {
     cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList();
-    Orders.unOpenOrder(orderNumber);
+    Orders.unOpenOrder();
     // Need to wait until the order is opened before deleting it
     cy.wait(2000);
     Orders.deleteOrderViaApi(order.id);
