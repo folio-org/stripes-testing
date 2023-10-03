@@ -52,59 +52,56 @@ const search = (profileName) => {
   cy.do(Pane('Match profiles').find(Button('Search')).click());
 };
 
-const saveAndClose = () => cy.do(Button('Save as profile & Close').click());
-
 export default {
   openNewMatchProfileForm,
   deleteMatchProfile,
   search,
-  saveAndClose,
 
   createMatchProfile(profile) {
     openNewMatchProfileForm();
     NewMatchProfile.fillMatchProfileForm(profile);
-    saveAndClose();
+    NewMatchProfile.saveAndClose();
     waitCreatingMatchProfile();
-  },
-
-  checkMatchProfilePresented: (profileName) => {
-    search(profileName);
-    cy.expect(MultiColumnListCell(profileName).exists());
   },
 
   createMatchProfileWithExistingPart: (profile) => {
     openNewMatchProfileForm();
     NewMatchProfile.fillMatchProfileWithExistingPart(profile);
-    saveAndClose();
+    NewMatchProfile.saveAndClose();
     waitCreatingMatchProfile();
   },
 
   createMatchProfileWithQualifier: (profile) => {
     openNewMatchProfileForm();
     NewMatchProfile.fillMatchProfileWithQualifierInIncomingAndExistingRecords(profile);
-    saveAndClose();
+    NewMatchProfile.saveAndClose();
     waitCreatingMatchProfile();
   },
 
   createMatchProfileWithQualifierAndComparePart: (profile) => {
     openNewMatchProfileForm();
     NewMatchProfile.fillMatchProfileWithStaticValueAndComparePartValue(profile);
-    saveAndClose();
+    NewMatchProfile.saveAndClose();
     waitCreatingMatchProfile();
   },
 
   createMatchProfileWithQualifierAndExistingRecordField: (profile) => {
     openNewMatchProfileForm();
     NewMatchProfile.fillMatchProfileWithQualifierInIncomingRecordsAndValueInExistingRecord(profile);
-    saveAndClose();
+    NewMatchProfile.saveAndClose();
     waitCreatingMatchProfile();
   },
 
   createMatchProfileWithStaticValue: (profile) => {
     openNewMatchProfileForm();
     NewMatchProfile.fillMatchProfileWithStaticValue(profile);
-    saveAndClose();
+    NewMatchProfile.saveAndClose();
     waitCreatingMatchProfile();
+  },
+
+  checkMatchProfilePresented: (profileName) => {
+    search(profileName);
+    cy.expect(MultiColumnListCell(profileName).exists());
   },
 
   checkCalloutMessage: (profileName) => {
