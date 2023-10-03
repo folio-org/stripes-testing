@@ -128,6 +128,12 @@ export const BATCH_GROUP = {
   AMHERST: '"Amherst (AC)"',
 };
 
+export const INVOICE_STATUSES = {
+  APPROVED: 'Approved',
+  CANCELLED: 'Cancelled',
+  PAID: 'Paid',
+};
+
 export const ORDER_STATUSES = {
   OPEN: 'Open',
   PENDING: 'Pending',

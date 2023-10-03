@@ -15,8 +15,12 @@ export default {
     cy.wait(1000);
     cy.expect(Accordion('Match criterion').exists());
   },
+  duplicate() {
+    cy.do(viewPane.find(actionsButton).click());
+    cy.do(Button('Duplicate').click());
+  },
 
-  closeViewModeForMatchProfile: () => cy.do(viewPane.find(Button({ icon: 'times' })).click()),
+  closeViewMode: () => cy.do(viewPane.find(Button({ icon: 'times' })).click()),
 
   verifyExistingInstanceRecordField: () => {
     cy.expect(viewPane.find(HTML(including('Admin data: Instance UUID'))).exists());

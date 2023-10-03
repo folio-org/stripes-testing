@@ -16,13 +16,14 @@ import {
   PaneContent,
   Link,
   including,
+  matching,
   Section,
   KeyValue,
   Card,
 } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import getRandomPostfix from '../../utils/stringTools';
-import SelectInstanceModal from './selectInstanceModal';
+import SelectInstanceModal from './modals/selectInstanceModal';
 import {
   ORDER_FORMAT_NAMES,
   ACQUISITION_METHOD_NAMES,
@@ -31,7 +32,7 @@ import {
   ORDER_PAYMENT_STATUS,
 } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
-import selectLocationModal from './selectLocationModal';
+import selectLocationModal from './modals/selectLocationModal';
 
 const path = require('path');
 
@@ -94,6 +95,14 @@ const agreementLinesSection = Section({ id: 'relatedAgreementLines' });
 const invoiceLinesSection = Section({ id: 'relatedInvoiceLines' });
 const notesSection = Section({ id: 'notes' });
 const trashButton = Button({ icon: 'trash' });
+
+// Edit form
+// PO Line details section
+const lineDetails = Section({ id: 'lineDetails' });
+const poLineDetails = {
+  receiptStatus: lineDetails.find(Select('Receipt status')),
+};
+
 const submitOrderLine = () => {
   const submitButton = Button('Submit');
   cy.get('body').then(($body) => {
@@ -977,10 +986,10 @@ export default {
     ]);
   },
 
-  selectPOLInOrder: (indexNumber) => {
+  selectPOLInOrder: (index = 0) => {
     cy.do(
       polListingAccordion
-        .find(MultiColumnListRow({ index: indexNumber }))
+        .find(MultiColumnListRow({ index }))
         .find(MultiColumnListCell({ columnIndex: 0 }))
         .click(),
     );
@@ -1013,6 +1022,16 @@ export default {
     cy.wait(4000);
   },
 
+  fillPOLineDetails({ receiptStatus }) {
+    if (receiptStatus) {
+      cy.do(poLineDetails.receiptStatus.focus());
+      cy.do(poLineDetails.receiptStatus.choose(receiptStatus));
+      cy.expect(
+        poLineDetails.receiptStatus.has({ value: matching(new RegExp(receiptStatus, 'i')) }),
+      );
+    }
+  },
+
   deleteFundInPOL() {
     cy.do([
       Section({ id: 'fundDistributionAccordion' }).find(trashButton).click(),
@@ -1032,7 +1051,8 @@ export default {
   },
 
   saveOrderLine: () => {
-    cy.do(Button({ id: 'clickable-updatePoLine' }).click());
+    cy.expect(saveAndCloseButton.has({ disabled: false }));
+    cy.do(saveAndCloseButton.click());
   },
 
   openInstance: () => {

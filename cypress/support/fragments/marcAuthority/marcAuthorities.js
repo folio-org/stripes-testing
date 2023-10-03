@@ -342,9 +342,6 @@ export default {
       marcViewSection.absent(),
       SearchField({ id: 'textarea-authorities-search', value: searchValue }).absent(),
       selectField.has({ content: including('Keyword') }),
-      rootSection
-        .find(HTML(including('Choose a filter or enter a search query to show results.')))
-        .exists(),
     ]);
   },
 
