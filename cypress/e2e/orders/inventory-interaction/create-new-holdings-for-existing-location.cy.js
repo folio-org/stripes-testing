@@ -2,7 +2,6 @@ import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import Orders from '../../../support/fragments/orders/orders';
 import TopMenu from '../../../support/fragments/topMenu';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import Organizations from '../../../support/fragments/organizations/organizations';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import OrderLines from '../../../support/fragments/orders/orderLines';
@@ -31,7 +30,7 @@ describe('Orders: Inventory interaction', () => {
   before('Create test data', () => {
     cy.getAdminToken()
       .then(() => {
-        InventorySearchAndFilter.createInstanceViaApi().then(({ instanceData }) => {
+        InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
           testData.instance = instanceData;
 
           Organizations.createOrganizationViaApi(testData.organization);
@@ -44,21 +43,21 @@ describe('Orders: Inventory interaction', () => {
           });
 
           Locations.createViaApi(testData.location).then(() => {
-            Orders.createOrderViaApi(NewOrder.getDefaultOrder(testData.organization.id)).then(
-              (order) => {
-                testData.order = order;
+            Orders.createOrderViaApi(
+              NewOrder.getDefaultOrder({ vendorId: testData.organization.id }),
+            ).then((order) => {
+              testData.order = order;
 
-                InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
-                  InventoryInstances.createHoldingViaAPI({
-                    instanceId: testData.instance.instanceId,
-                    permanentLocationId: testData.location.id,
-                    sourceId: folioSource.id,
-                  }).then(({ id: holdingId }) => {
-                    testData.instance.holdingId = holdingId;
-                  });
+              InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
+                InventoryInstances.createHoldingViaAPI({
+                  instanceId: testData.instance.instanceId,
+                  permanentLocationId: testData.location.id,
+                  sourceId: folioSource.id,
+                }).then(({ id: holdingId }) => {
+                  testData.instance.holdingId = holdingId;
                 });
-              },
-            );
+              });
+            });
           });
         });
       });
