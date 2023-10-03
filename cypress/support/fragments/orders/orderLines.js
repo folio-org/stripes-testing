@@ -16,6 +16,7 @@ import {
   PaneContent,
   Link,
   including,
+  matching,
   Section,
   KeyValue,
   Card,
@@ -94,6 +95,14 @@ const agreementLinesSection = Section({ id: 'relatedAgreementLines' });
 const invoiceLinesSection = Section({ id: 'relatedInvoiceLines' });
 const notesSection = Section({ id: 'notes' });
 const trashButton = Button({ icon: 'trash' });
+
+// Edit form
+// PO Line details section
+const lineDetails = Section({ id: 'lineDetails' });
+const poLineDetails = {
+  receiptStatus: lineDetails.find(Select('Receipt status')),
+};
+
 const submitOrderLine = () => {
   const submitButton = Button('Submit');
   cy.get('body').then(($body) => {
@@ -1013,6 +1022,16 @@ export default {
     cy.wait(4000);
   },
 
+  fillPOLineDetails({ receiptStatus }) {
+    if (receiptStatus) {
+      cy.do(poLineDetails.receiptStatus.focus());
+      cy.do(poLineDetails.receiptStatus.choose(receiptStatus));
+      cy.expect(
+        poLineDetails.receiptStatus.has({ value: matching(new RegExp(receiptStatus, 'i')) }),
+      );
+    }
+  },
+
   deleteFundInPOL() {
     cy.do([
       Section({ id: 'fundDistributionAccordion' }).find(trashButton).click(),
@@ -1032,7 +1051,8 @@ export default {
   },
 
   saveOrderLine: () => {
-    cy.do(Button({ id: 'clickable-updatePoLine' }).click());
+    cy.expect(saveAndCloseButton.has({ disabled: false }));
+    cy.do(saveAndCloseButton.click());
   },
 
   openInstance: () => {
