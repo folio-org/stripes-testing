@@ -1,6 +1,6 @@
 import add from 'date-fns/add';
 import { including } from '@interactors/html';
-import { Button, KeyValue, Section, Select, TextField } from '../../../../interactors';
+import { Button, KeyValue, Section, Select, TextField, TextArea } from '../../../../interactors';
 import { FULFILMENT_PREFERENCES } from '../../constants';
 import Requests from './requests';
 import DateTools from '../../utils/dateTools';
@@ -163,5 +163,9 @@ export default {
     // after updating request via API, reloading page is necessary
     cy.reload();
     cy.expect(paneResultsSection.exists());
+  },
+
+  verifyPatronCommentsFieldIsNotEditable: () => {
+    cy.expect(TextArea({ id: 'patronComments' }).absent());
   },
 };
