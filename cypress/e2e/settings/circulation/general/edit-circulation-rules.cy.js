@@ -69,7 +69,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
 
   it(
     'C650: Test adding fallback policies (loan, request, notice, overdue, lost item) (vega) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega] },
+    { tags: [TestTypes.criticalPath, DevTeams.vega, Parallelization.nonParallel] },
     () => {
       // Delete Circulation Rules
       CirculationRules.clearCirculationRules();
