@@ -6,6 +6,7 @@ const getDefaultOrderLine = ({
   quantity = '1',
   title = `autotest_po_line_name-${getRandomPostfix()}`,
   instanceId,
+  checkinItems = false,
   specialLocationId,
   specialMaterialTypeId,
   acquisitionMethod = '',
@@ -18,7 +19,7 @@ const getDefaultOrderLine = ({
 }) => {
   const defaultOrderLine = {
     id: uuid(),
-    checkinItems: false,
+    checkinItems,
     instanceId,
     acquisitionMethod,
     alerts: [],
