@@ -3,7 +3,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
 import OrderLines from '../../support/fragments/orders/orderLines';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import BasicOrderLine, { RECEIVING_WORKFLOWS } from '../../support/fragments/orders/basicOrderLine';
 import UnopenConfirmationModal from '../../support/fragments/orders/modals/unopenConfirmationModal';
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
@@ -15,22 +15,29 @@ import Users from '../../support/fragments/users/users';
 
 describe('Orders', () => {
   const testData = {
-    organization: NewOrganization.getDefaultOrganization({ accounts: 1 }),
-    servicePoint: ServicePoints.defaultServicePoint,
+    organization: {},
+    servicePoint: {},
     instance: {},
     location: {},
     order: {},
     user: {},
   };
 
-  before('Create test data', () => {
+  const createOrder = ({ workflow }) => {
+    testData.organization = NewOrganization.getDefaultOrganization({ accounts: 1 });
+    testData.servicePoint = ServicePoints.getDefaultServicePoint();
+
     cy.getAdminToken()
       .then(() => {
+        const checkinItems = {
+          [RECEIVING_WORKFLOWS.SYNCHRONIZED]: false,
+          [RECEIVING_WORKFLOWS.INDEPENDENT]: true,
+        };
         InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
           testData.instance = {
             ...instanceData,
             quantity: '2',
-            checkinItems: true,
+            checkinItems: checkinItems[workflow],
             vendorAccount: testData.organization.accounts[0].accountNo,
           };
           Organizations.createOrganizationViaApi(testData.organization);
@@ -62,22 +69,9 @@ describe('Orders', () => {
           });
         });
       });
+  };
 
-    cy.createTempUser([
-      Permissions.uiInventoryViewInstances.gui,
-      Permissions.uiOrdersView.gui,
-      Permissions.uiOrdersUnopenpurchaseorders.gui,
-    ]).then((userProperties) => {
-      testData.user = userProperties;
-
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      });
-    });
-  });
-
-  after('Delete test data', () => {
+  afterEach('Delete test data', () => {
     Organizations.deleteOrganizationViaApi(testData.organization.id);
     Orders.deleteOrderViaApi(testData.order.id);
     InventoryHoldings.deleteHoldingsByInstanceId(testData.instance.instanceId);
@@ -87,31 +81,129 @@ describe('Orders', () => {
     Users.deleteViaApi(testData.user.userId);
   });
 
-  it(
-    'C377041 Select "Keep Holdings" option when unopening an order with receiving workflow of "Independent order and receipt quantity" (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
-    () => {
-      // Click on "PO number" link on "Orders" pane
-      Orders.selectOrderByPONumber(testData.order.poNumber);
-      Orders.checkOrderStatus('Open');
+  describe(RECEIVING_WORKFLOWS.SYNCHRONIZED, () => {
+    before('Create test data', () => {
+      createOrder({ workflow: RECEIVING_WORKFLOWS.SYNCHRONIZED });
 
-      // Click "Actions" button, Select "Unopen" option
-      Orders.unOpenOrder({ orderNumber: testData.order.poNumber, confirm: false });
+      cy.createTempUser([
+        Permissions.uiInventoryViewInstances.gui,
+        Permissions.uiOrdersEdit.gui,
+        Permissions.uiOrdersView.gui,
+        Permissions.uiOrdersUnopenpurchaseorders.gui,
+      ]).then((userProperties) => {
+        testData.user = userProperties;
 
-      // Click "Cancel" button
-      UnopenConfirmationModal.closeModal();
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
+      });
+    });
 
-      // Click "Actions" button, Select "Unopen" option
-      Orders.unOpenOrder({ orderNumber: testData.order.poNumber, confirm: false });
+    it(
+      'C377040 Select "Delete items" option when unopening an order with receiving workflow of "Synchronized order and receipt quantity" (thunderjet) (TaaS)',
+      { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+      () => {
+        // Click on "PO number" link on "Orders" pane
+        Orders.selectOrderByPONumber(testData.order.poNumber);
+        Orders.checkOrderStatus('Open');
 
-      // Click "Keep Holdings" button
-      UnopenConfirmationModal.confirm({ keepHoldings: true });
-      Orders.checkOrderStatus('Pending');
+        // Click on PO line record in "PO lines" accordion
+        OrderLines.selectPOLInOrder();
 
-      // Click on PO line record in "PO lines" accordion
-      OrderLines.selectPOLInOrder();
-      OrderLines.openInstance();
-      InventoryInstance.verifyInstanceTitle(testData.instance.instanceTitle);
-    },
-  );
+        // Click "Actions" button, Select "Edit" option
+        OrderLines.editPOLInOrder();
+
+        // Change "Receipt status" to "Receipt not required" in "PO line details" accordion
+        OrderLines.fillPOLineDetails({ receiptStatus: 'Receipt not required' });
+
+        // Click "Save & close" button
+        OrderLines.saveOrderLine();
+
+        // Click back arrow button on the top left
+        OrderLines.backToEditingOrder();
+
+        // Click "Actions" button, Select "Unopen" option
+        Orders.unOpenOrder({
+          orderNumber: testData.order.poNumber,
+          checkinItems: testData.instance.checkinItems,
+          confirm: false,
+        });
+
+        // Click "Cancel" button
+        UnopenConfirmationModal.closeModal();
+
+        // Click "Actions" button, Select "Unopen" option
+        Orders.unOpenOrder({
+          orderNumber: testData.order.poNumber,
+          checkinItems: testData.instance.checkinItems,
+          confirm: false,
+        });
+
+        // Click "Delete items" button
+        UnopenConfirmationModal.confirm({ keepHoldings: true });
+        Orders.checkOrderStatus('Pending');
+
+        // Click on PO line record in "PO lines" accordion
+        OrderLines.selectPOLInOrder();
+        OrderLines.openInstance();
+        InventoryInstance.verifyInstanceTitle(testData.instance.instanceTitle);
+      },
+    );
+  });
+
+  describe(RECEIVING_WORKFLOWS.INDEPENDENT, () => {
+    before('Create test data', () => {
+      createOrder({ workflow: RECEIVING_WORKFLOWS.INDEPENDENT });
+
+      cy.createTempUser([
+        Permissions.uiInventoryViewInstances.gui,
+        Permissions.uiOrdersView.gui,
+        Permissions.uiOrdersUnopenpurchaseorders.gui,
+      ]).then((userProperties) => {
+        testData.user = userProperties;
+
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
+      });
+    });
+
+    it(
+      'C377041 Select "Keep Holdings" option when unopening an order with receiving workflow of "Independent order and receipt quantity" (thunderjet) (TaaS)',
+      { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+      () => {
+        // Click on "PO number" link on "Orders" pane
+        Orders.selectOrderByPONumber(testData.order.poNumber);
+        Orders.checkOrderStatus('Open');
+
+        // Click "Actions" button, Select "Unopen" option
+        Orders.unOpenOrder({
+          orderNumber: testData.order.poNumber,
+          checkinItems: testData.instance.checkinItems,
+          confirm: false,
+        });
+
+        // Click "Cancel" button
+        UnopenConfirmationModal.closeModal();
+
+        // Click "Actions" button, Select "Unopen" option
+        Orders.unOpenOrder({
+          orderNumber: testData.order.poNumber,
+          checkinItems: testData.instance.checkinItems,
+          confirm: false,
+        });
+
+        // Click "Keep Holdings" button
+        UnopenConfirmationModal.confirm({ keepHoldings: true });
+        Orders.checkOrderStatus('Pending');
+
+        // Click on PO line record in "PO lines" accordion
+        OrderLines.selectPOLInOrder();
+        OrderLines.openInstance();
+        InventoryInstance.verifyInstanceTitle(testData.instance.instanceTitle);
+      },
+    );
+  });
 });

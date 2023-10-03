@@ -8,8 +8,21 @@ const deleteHoldingsButton = unopenConfirmationModal.find(
 const keepHoldingsButton = unopenConfirmationModal.find(
   Button({ id: 'clickable-order-unopen-confirmation-confirm-keep-holdings' }),
 );
-const content =
-  'This order has at least one order line with related Holdings record(s) that do not reference any pieces or items. Holdings with no other related items can be deleted from inventory if desired. How would you like to proceed?';
+
+const values = {
+  [true]: {
+    content:
+      'This order has at least one order line with related Holdings record(s) that do not reference any pieces or items. Holdings with no other related items can be deleted from inventory if desired. How would you like to proceed?',
+    deleteHoldingsValue: 'Delete Holdings',
+    keepHoldingsValue: 'Keep Holdings',
+  },
+  [false]: {
+    content:
+      'This order has at least one order line with receiving workflow "Synchronized order and receipt quantity". Such POLs with related receiving records will have any unreceived pieces deleted, and any "On order" Item records related to those pieces will also be deleted from inventory. Holdings linked to those items that have no other related items can also be deleted from inventory. How would you like to proceed?',
+    deleteHoldingsValue: 'Delete Holdings and items',
+    keepHoldingsValue: 'Delete items',
+  },
+};
 
 export default {
   confirm({ keepHoldings = false } = {}) {
@@ -20,13 +33,23 @@ export default {
     }
     cy.expect(unopenConfirmationModal.absent());
   },
-  verifyModalView(poNumber) {
+  verifyModalView({ orderNumber, checkinItems }) {
     cy.expect([
-      unopenConfirmationModal.has({ header: including(`Unopen - purchase order - ${poNumber}`) }),
-      unopenConfirmationModal.has({ message: including(content) }),
+      unopenConfirmationModal.has({
+        header: including(`Unopen - purchase order - ${orderNumber}`),
+      }),
+      unopenConfirmationModal.has({ message: including(values[checkinItems].content) }),
       cancelButton.has({ disabled: false, visible: true }),
-      deleteHoldingsButton.has({ disabled: false, visible: true }),
-      keepHoldingsButton.has({ disabled: false, visible: true }),
+      deleteHoldingsButton.has({
+        disabled: false,
+        visible: true,
+        text: values[checkinItems].deleteHoldingsValue,
+      }),
+      keepHoldingsButton.has({
+        disabled: false,
+        visible: true,
+        text: values[checkinItems].keepHoldingsValue,
+      }),
     ]);
   },
   closeModal() {
