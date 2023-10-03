@@ -153,7 +153,7 @@ describe('Orders', () => {
   });
 
   describe(RECEIVING_WORKFLOWS.INDEPENDENT, () => {
-    before('Create test data', () => {
+    beforeEach('Create test data', () => {
       createOrder({ workflow: RECEIVING_WORKFLOWS.INDEPENDENT });
 
       cy.createTempUser([
@@ -197,6 +197,32 @@ describe('Orders', () => {
 
         // Click "Keep Holdings" button
         UnopenConfirmationModal.confirm({ keepHoldings: true });
+        Orders.checkOrderStatus('Pending');
+
+        // Click on PO line record in "PO lines" accordion
+        OrderLines.selectPOLInOrder();
+        OrderLines.openInstance();
+        InventoryInstance.verifyInstanceTitle(testData.instance.instanceTitle);
+      },
+    );
+
+    it(
+      'C377042 Select "Delete Holdings" option when unopening an order with receiving workflow of "Independent order and receipt quantity" (thunderjet) (TaaS)',
+      { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+      () => {
+        // Click on "PO number" link on "Orders" pane
+        Orders.selectOrderByPONumber(testData.order.poNumber);
+        Orders.checkOrderStatus('Open');
+
+        // Click "Actions" button, Select "Unopen" option
+        Orders.unOpenOrder({
+          orderNumber: testData.order.poNumber,
+          checkinItems: testData.instance.checkinItems,
+          confirm: false,
+        });
+
+        // Click "Delete Holdings" button
+        UnopenConfirmationModal.confirm({ keepHoldings: false });
         Orders.checkOrderStatus('Pending');
 
         // Click on PO line record in "PO lines" accordion
