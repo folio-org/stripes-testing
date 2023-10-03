@@ -4,6 +4,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import Users from '../../../support/fragments/users/users';
 
 describe('data-import', () => {
@@ -25,9 +27,9 @@ describe('data-import', () => {
       });
     });
 
-    // after('delete test data', () => {
-    //   Users.deleteViaApi(user.userId);
-    // });
+    after('delete test data', () => {
+      Users.deleteViaApi(user.userId);
+    });
 
     it(
       'C492 Data Import permissions (folijet)',
@@ -40,6 +42,10 @@ describe('data-import', () => {
           FileDetails.status.created,
           FileDetails.columnNameInResultList.instance,
         );
+        cy.visit(SettingsMenu.marcFieldProtectionPath);
+        MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
+        MarcFieldProtection.clickNewButton();
+        MarcFieldProtection.cancel();
       },
     );
   });
