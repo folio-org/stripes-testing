@@ -31,52 +31,51 @@ describe('change loan due dates', () => {
   before('create inventory instance', () => {
     let source;
 
-    cy.createTempUser([
-      Permissions.loansAll.gui,
-      Permissions.checkoutAll.gui,
-    ]).then((userProperties) => {
-      checkOutUser = userProperties;
-      cy.getAdminToken()
-        .then(() => {
-          cy.getLocations({ limit: 1 });
-          source = InventoryHoldings.getHoldingSources({ limit: 1 });
-          ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' }).then((res) => {
-            servicePointId = res[0].id;
+    cy.createTempUser([Permissions.loansAll.gui, Permissions.checkoutAll.gui]).then(
+      (userProperties) => {
+        checkOutUser = userProperties;
+        cy.getAdminToken()
+          .then(() => {
+            cy.getLocations({ limit: 1 });
+            source = InventoryHoldings.getHoldingSources({ limit: 1 });
+            ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' }).then((res) => {
+              servicePointId = res[0].id;
+            });
+            cy.getUsers({
+              limit: 1,
+              query: `"personal.lastName"="${userProperties.username}" and "active"="true"`,
+            });
+          })
+          .then(() => {
+            UserEdit.addServicePointViaApi(servicePointId, userProperties.userId);
+            cy.getUserServicePoints(Cypress.env('users')[0].id);
+            InventoryInstances.createFolioInstancesViaApi({
+              folioInstances,
+              location: { id: Cypress.env('locations')[0].id },
+              sourceId: source.id,
+            });
+          })
+          .then(() => {
+            cy.login(userProperties.username, userProperties.password);
+            cy.visit(TopMenu.checkOutPath);
+            CheckOutActions.checkOutItemUser(
+              Cypress.env('users')[0].barcode,
+              folioInstances[0].barcodes[0],
+            );
+            MultipieceCheckOut.confirmMultipleCheckOut(folioInstances[0].barcodes[0]);
+            CheckOutActions.endCheckOutSession();
+            cy.updateUser({
+              ...Cypress.env('users')[0],
+              expirationDate: DateTools.getFormattedDate({ date: expirationUserDate }),
+            });
+          })
+          .then(() => {
+            cy.getUsers({ limit: 1, query: '"barcode"="" and "active"="true"' }).then((users) => {
+              checkInUser.barcode = users[0].barcode;
+            });
           });
-          cy.getUsers({
-            limit: 1,
-            query: `"personal.lastName"="${userProperties.username}" and "active"="true"`,
-          });
-        })
-        .then(() => {
-          UserEdit.addServicePointViaApi(servicePointId, userProperties.userId);
-          cy.getUserServicePoints(Cypress.env('users')[0].id);
-          InventoryInstances.createFolioInstancesViaApi({
-            folioInstances,
-            location: { id: Cypress.env('locations')[0].id },
-            sourceId: source.id,
-          });
-        })
-        .then(() => {
-          cy.login(userProperties.username, userProperties.password);
-          cy.visit(TopMenu.checkOutPath);
-          CheckOutActions.checkOutItemUser(
-            Cypress.env('users')[0].barcode,
-            folioInstances[0].barcodes[0],
-          );
-          MultipieceCheckOut.confirmMultipleCheckOut(folioInstances[0].barcodes[0]);
-          CheckOutActions.endCheckOutSession();
-          cy.updateUser({
-            ...Cypress.env('users')[0],
-            expirationDate: DateTools.getFormattedDate({ date: expirationUserDate }),
-          });
-        })
-        .then(() => {
-          cy.getUsers({ limit: 1, query: '"barcode"="" and "active"="true"' }).then((users) => {
-            checkInUser.barcode = users[0].barcode;
-          });
-        });
-    });
+      },
+    );
   });
 
   after('Delete all data', () => {
