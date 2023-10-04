@@ -19,7 +19,4 @@ export default {
   checkSource: (expectedSource = sourceValues.folio) => {
     cy.expect(Select('Source').has({ value: expectedSource }));
   },
-  checkPermanentLocation: (expectedLocation) => {
-    cy.expect(Selection('Permanent*').has({ singleValue: including(expectedLocation) }));
-  },
 };

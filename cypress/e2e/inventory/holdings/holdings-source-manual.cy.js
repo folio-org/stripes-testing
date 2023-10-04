@@ -7,6 +7,8 @@ import Users from '../../../support/fragments/users/users';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
+import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 
 const testData = {
   user: {},
@@ -21,9 +23,8 @@ const testData = {
 describe('Holdings', () => {
   before('Create test data', () => {
     cy.createTempUser([
-      Permissions.uiInventoryViewCreateEditInstances.gui,
+      Permissions.uiInventoryViewInstances.gui,
       Permissions.uiInventoryViewCreateEditHoldings.gui,
-      Permissions.uiInventoryViewCreateEditItems.gui,
     ]).then((createdUserProperties) => {
       testData.user = createdUserProperties;
       testData.item.instanceId = InventoryInstances.createInstanceViaApi(
@@ -38,6 +39,7 @@ describe('Holdings', () => {
   });
 
   after('Delete test data', () => {
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.item.itemBarcode);
     Users.deleteViaApi(testData.user.userId);
   });
 
@@ -50,16 +52,16 @@ describe('Holdings', () => {
       InventorySearchAndFilter.checkRowsCount(1);
 
       InventoryInstances.selectInstance();
-      InventoryInstance.waitLoading();
+      InventoryInstance.verifyInstanceTitle(testData.item.instanceName);
 
       InventoryInstance.pressAddHoldingsButton();
-      InventoryNewHoldings.fillRequiredFields(including(testData.permanentLocation));
-      InventoryNewHoldings.checkPermanentLocation(testData.permanentLocation);
+      HoldingsRecordEdit.changePermanentLocation(testData.permanentLocation);
 
       InventoryNewHoldings.saveAndClose();
-      InventoryInstance.waitLoading();
       InventoryInstance.checkCalloutMessage(including(testData.calloutMessage));
-      InventoryInstance.checkSourceValue('FOLIO');
+
+      InventoryInstance.openHoldingView();
+      HoldingsRecordView.checkSource('FOLIO');
     },
   );
 });
