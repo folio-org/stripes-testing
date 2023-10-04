@@ -43,7 +43,7 @@ describe('bulk-edit', () => {
     );
 
     it(
-      'C376993 Verify Query tab permissions without Inventory and Users permissions (firebird)',
+      'C413372 Verify Query tab permissions without Inventory and Users permissions (firebird)',
       { tags: [testTypes.extendedPath, devTeams.firebird] },
       () => {
         cy.login(userWithQueryView.username, userWithQueryView.password, {
@@ -51,11 +51,8 @@ describe('bulk-edit', () => {
           waiter: BulkEditSearchPane.waitLoading,
         });
 
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
-        BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Logs');
-        BulkEditSearchPane.openQuerySearch();
-        BulkEditSearchPane.verifyRecordTypesEmpty();
+        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
+        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Query', 'Logs');
       },
     );
   });
