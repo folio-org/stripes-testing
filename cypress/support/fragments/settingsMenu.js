@@ -1,5 +1,3 @@
-import { Link, including } from '@interactors/html';
-
 export default {
   // direct paths to folio apps to use in cy.visit() into initial steps of our scenarios
   // TODO: add separated scenarios related with SettingsMenu implementation
