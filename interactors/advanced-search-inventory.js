@@ -1,6 +1,5 @@
 import Button from './button';
 import Select from './select';
-import TextField from './text-field';
 import TextArea from './textarea';
 import HTML from './baseHTML';
 
