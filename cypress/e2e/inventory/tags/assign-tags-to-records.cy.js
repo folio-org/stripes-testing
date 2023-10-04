@@ -29,7 +29,6 @@ describe('Tags', () => {
   const instanceData = {
     title: getTestEntityValue('InstanceTags'),
   };
-  const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
 
   before('Preconditions', () => {
     cy.getAdminToken()
@@ -91,10 +90,12 @@ describe('Tags', () => {
             testData.userServicePoint.id,
           );
         });
-      })
-      .then(() => {
-        cy.login(userData.username, userData.password);
       });
+  });
+
+  beforeEach('Login', () => {
+    cy.login(userData.username, userData.password);
+    cy.visit(TopMenu.inventoryPath);
   });
 
   after('Deleting created entities', () => {
@@ -115,7 +116,7 @@ describe('Tags', () => {
     'C196770 Assign tags to a Holdings record (volaris)',
     { tags: [TestTypes.extendedPath, devTeams.volaris] },
     () => {
-      cy.visit(TopMenu.inventoryPath);
+      const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
       InventorySearchAndFilter.switchToHoldings();
       InventorySearchAndFilter.byKeywords(instanceData.title);
       InventoryInstance.openHoldingView();
@@ -131,6 +132,31 @@ describe('Tags', () => {
 
       cy.visit(TopMenu.inventoryPath);
       InventorySearchAndFilter.switchToHoldings();
+      InventorySearchAndFilter.resetAll();
+      InventorySearchAndFilter.verifyTagIsAbsent(tagName);
+    },
+  );
+
+  it(
+    'C196771 Assign tags to an Item record (volaris)',
+    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    () => {
+      const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
+      InventorySearchAndFilter.switchToItem();
+      InventorySearchAndFilter.searchByParameter('Barcode', testData.itemBarcode);
+      cy.wait(3000);
+      HoldingsRecordEdit.addTag(tagName);
+
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.switchToItem();
+      InventorySearchAndFilter.filterByTag(tagName);
+      InventoryInstance.openHoldings(['']);
+      InventoryInstance.openItemByBarcode(testData.itemBarcode);
+      HoldingsRecordEdit.openTags();
+      JobProfileView.removeTag(tagName);
+
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.resetAll();
       InventorySearchAndFilter.verifyTagIsAbsent(tagName);
     },
