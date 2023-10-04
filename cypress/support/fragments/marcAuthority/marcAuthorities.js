@@ -22,6 +22,7 @@ import {
   Section,
   Select,
   TextField,
+  TextArea,
   including,
 } from '../../../../interactors';
 
@@ -455,7 +456,7 @@ export default {
       modalAdvancedSearch.exists(),
       AdvancedSearchRow({ index: 0 }).has({ text: including('Search for') }),
       AdvancedSearchRow({ index: row })
-        .find(TextField())
+        .find(TextArea())
         .has({ value: including(value) }),
       AdvancedSearchRow({ index: row }).has({ text: including('in') }),
       AdvancedSearchRow({ index: row })
