@@ -34,7 +34,7 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C376992 Verify Query tab permissions (In app holdings) (firebird)',
+      'C413373 Verify Query tab permissions (In app holdings) (firebird)',
       { tags: [testTypes.extendedPath, devTeams.firebird] },
       () => {
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
@@ -62,12 +62,8 @@ describe('bulk-edit', () => {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
         });
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
-        BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Logs');
-        BulkEditSearchPane.openQuerySearch();
-        BulkEditSearchPane.itemsRadioIsDisabled(false);
-        BulkEditSearchPane.holdingsRadioIsDisabled(false);
+        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
+        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Query', 'Logs');
       },
     );
   });
