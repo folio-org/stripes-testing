@@ -18,12 +18,12 @@ import {
   SearchField,
   Link,
   Card,
+  ListRow,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import NewNote from '../notes/newNote';
 import { getLongDelay } from '../../utils/cypressTools';
 import EditAgreement from './editAgreement';
-import { ListRow } from '../../../../interactors/multi-column-list';
 
 const rootSection = Section({ id: 'pane-view-agreement' });
 const deleteButton = Button('Delete');
@@ -36,6 +36,7 @@ const agreementLineDeleteModel = Modal({ id: 'delete-agreement-line-confirmation
 const newNoteButton = Button('New', { id: 'note-create-button' });
 const assignUnassignButton = Button('Assign / Unassign', { id: 'note-assign-button' });
 const notesList = MultiColumnList({ id: 'notes-list' });
+const agreementLinesList = MultiColumnList({ id: 'agreement-lines' });
 const deleteButtonInConfirmation = Button('Delete', {
   id: 'clickable-delete-agreement-confirmation-confirm',
 });
@@ -44,6 +45,7 @@ const notesAccordion = rootSection.find(Accordion({ id: 'notes' }));
 const organizationsAccordion = rootSection.find(Accordion({ id: 'organizations' }));
 const internalContactsAccordion = rootSection.find(Accordion({ id: 'internalContacts' }));
 const supplementaryDocumentsAccordion = rootSection.find(Accordion({ id: 'supplementaryDocs' }));
+const agreementLinesAccordion = rootSection.find(Accordion({ id: 'lines' }));
 const cancelButton = Button('Cancel');
 const calloutSuccess = Callout({ type: 'success' });
 const notesSection = Section({ id: 'notes' });
@@ -114,6 +116,11 @@ export default {
         .click(),
     );
     cy.expect(internalContactsAccordion.has({ open: true }));
+  },
+
+  openAgreementLineSection() {
+    cy.do(agreementLinesAccordion.find(Button({ id: 'accordion-toggle-button-lines' })).click());
+    cy.expect(agreementLinesAccordion.has({ open: true }));
   },
 
   openOrganizationsSection() {
@@ -305,6 +312,10 @@ export default {
     );
   },
 
+  verifyAgreementLinesCount(itemCount) {
+    cy.expect(agreementLinesAccordion.find(Badge()).has({ text: itemCount }));
+  },
+
   verifyAgreementDetailsIsDisplayedByTitle(agreementTitle) {
     cy.expect(Pane(agreementTitle).exists());
   },
@@ -342,6 +353,17 @@ export default {
       document
         .find(ListRow(including('URL')))
         .find(MultiColumnListCell(including(url)))
+        .exists(),
+    ]);
+  },
+
+  verifySpecialAgreementLineRow({ description }) {
+    cy.expect([
+      agreementLinesList.exists(),
+      agreementLinesList
+        .find(
+          MultiColumnListCell({ column: 'Name / Description', content: including(description) }),
+        )
         .exists(),
     ]);
   },
