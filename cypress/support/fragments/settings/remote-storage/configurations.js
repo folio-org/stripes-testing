@@ -65,11 +65,14 @@ function openCreateConfigurationForm() {
 
 const configurations = {
   DematicEMS: {
-    title: 'Dematic EMS',
+    title: REMOTE_STORAGE_PROVIDER_NAMES.Dematic_EMS,
     create(name) {
       openCreateConfigurationForm();
       fillGeneralInfo(name, this.title);
       saveAndCloseForm();
+    },
+    fillRequiredFields(name) {
+      fillGeneralInfo(name, this.title);
     },
   },
   DematicStagingDirector: {
@@ -307,5 +310,19 @@ export default {
   },
   confirmCreateRemoteStorage() {
     cy.do(confirmationModal.find(saveBtn).click());
+  },
+  opentEditConfigurationForm(name) {
+    cy.do([
+      MultiColumnListCell({ content: name }).click(),
+      Pane({ title: name }).find(actionsBtn).click(),
+      Button({ id: 'clickable-edit-storage' }).click(),
+    ]);
+  },
+  closeEditConfigurationWithoutSaving() {
+    return cy.do([
+      Pane({ title: including('Edit ') })
+        .find(xButton)
+        .click(),
+    ]);
   },
 };
