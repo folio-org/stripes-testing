@@ -36,4 +36,14 @@ export default {
       path: `location-units/institutions/${institutionId}`,
     });
   },
+  getInstitutionByIdViaApi(id) {
+    return cy
+      .okapiRequest({
+        path: `location-units/institutions/${id}`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body;
+      });
+  },
 };
