@@ -56,7 +56,7 @@ const transactionList = MultiColumnList({ id: 'transactions-list' });
 const budgetSummaryAcordion = Accordion('Budget summary');
 const budgetInformationAcordion = Accordion('Budget information');
 const fundingInformationMCList = MultiColumnList({ ariaRowCount: '7' });
-const FinancialActivityAndOveragesMCList = MultiColumnList({ ariaRowCount: '5' });
+const financialActivityAndOveragesMCList = MultiColumnList({ ariaRowCount: '5' });
 const resetButton = Button({ id: 'reset-funds-filters' });
 const addTransferModal = Modal({ id: 'add-transfer-modal' });
 const closeWithoutSavingButton = Button('Close without saving');
@@ -459,28 +459,36 @@ export default {
     cy.expect(budgetSummaryAcordion.exists());
     cy.expect(budgetInformationAcordion.exists());
     cy.expect([
-      FinancialActivityAndOveragesMCList.find(MultiColumnListRow({ indexRow: 'row-0' }))
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-0' }))
         .find(MultiColumnListCell({ content: 'Encumbered' }))
         .exists(),
-      FinancialActivityAndOveragesMCList.find(MultiColumnListRow({ indexRow: 'row-0' }))
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-0' }))
         .find(MultiColumnListCell({ content: amountEncumbered }))
         .exists(),
-      FinancialActivityAndOveragesMCList.find(MultiColumnListRow({ indexRow: 'row-1' }))
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-1' }))
         .find(MultiColumnListCell({ content: 'Awaiting payment' }))
         .exists(),
-      FinancialActivityAndOveragesMCList.find(MultiColumnListRow({ indexRow: 'row-1' }))
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-1' }))
         .find(MultiColumnListCell({ content: amountAwaitingPayment }))
         .exists(),
-      FinancialActivityAndOveragesMCList.find(MultiColumnListRow({ indexRow: 'row-2' }))
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-2' }))
         .find(MultiColumnListCell({ content: 'Expended' }))
         .exists(),
-      FinancialActivityAndOveragesMCList.find(MultiColumnListRow({ indexRow: 'row-2' }))
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-2' }))
         .find(MultiColumnListCell({ content: amountExpended }))
         .exists(),
-      FinancialActivityAndOveragesMCList.find(MultiColumnListRow({ indexRow: 'row-3' }))
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-3' }))
         .find(MultiColumnListCell({ content: 'Unavailable' }))
         .exists(),
-      FinancialActivityAndOveragesMCList.find(MultiColumnListRow({ indexRow: 'row-3' }))
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-3' }))
         .find(MultiColumnListCell({ content: amountUnavailable }))
         .exists(),
     ]);
