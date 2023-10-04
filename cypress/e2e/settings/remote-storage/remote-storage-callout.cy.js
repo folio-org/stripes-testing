@@ -3,7 +3,6 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import { Configurations } from '../../../support/fragments/settings/remote-storage';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TopMenu from '../../../support/fragments/topMenu';
 import RemoteStorage from '../../../support/fragments/settings/remote-storage/remoteStorage';
 
 let user;
