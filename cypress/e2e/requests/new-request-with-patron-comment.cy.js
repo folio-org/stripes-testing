@@ -31,7 +31,7 @@ describe('ui-requests: Request: Create a New Request with Patron Comment.', () =
   });
 
   it(
-    'C199704 Request: Patron comments field is not editable after request is created (vega)',
+    'C199704 Request: Patron comments field is not editable after request is created (vega) (TaaS)',
     { tags: [TestTypes.criticalPath, DevTeams.vega] },
     () => {
       cy.visit(TopMenu.requestsPath);
