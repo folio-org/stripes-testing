@@ -105,8 +105,4 @@ export default {
   organizationCategoryPath: 'settings/organizations/category',
   // Tags
   tagsGeneralPath: 'settings/tags/general',
-
-  openRemoteStorageSettings: () => {
-    cy.do(Link({ href: including('settings/remote-storage') }).click());
-  },
 };
