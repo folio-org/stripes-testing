@@ -74,7 +74,7 @@ describe('Orders', () => {
   afterEach('Delete test data', () => {
     Organizations.deleteOrganizationViaApi(testData.organization.id);
     Orders.deleteOrderViaApi(testData.order.id);
-    InventoryHoldings.deleteHoldingsByInstanceId(testData.instance.instanceId);
+    InventoryHoldings.deleteHoldingRecordByInstanceIdViaApi(testData.instance.instanceId);
     InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
     Locations.deleteViaApi(testData.location);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
