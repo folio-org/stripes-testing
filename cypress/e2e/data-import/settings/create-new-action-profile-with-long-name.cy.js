@@ -29,7 +29,7 @@ describe('data-import: Settings: Create a new action profile with a long name', 
   });
 
   it(
-    'C2343 Create a new action profile with name longer than 160 symbols',
+    'C2343 Create a new action profile with name longer than 160 symbols (folijet)',
     { tags: [TestTypes.extendedPath, DevTeams.folijet] },
     () => {
       ActionProfiles.createWithoutLinkedMappingProfile(actionProfile);
