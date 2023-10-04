@@ -128,6 +128,7 @@ const detailsPaneContent = PaneContent({ id: 'pane-instancedetails-content' });
 const administrativeDataAccordion = Accordion('Administrative data');
 const unlinkIconButton = Button({ icon: 'unlink' });
 const itemBarcodeField = TextField({ name: 'barcode' });
+const itemStatusKeyValue = KeyValue('Item status');
 const viewHoldingsButtonByID = (holdingsID) => Section({ id: holdingsID }).find(viewHoldingsButton);
 
 const validOCLC = {
@@ -976,5 +977,9 @@ export default {
   openHoldingViewByID: (holdingsID) => {
     cy.do(viewHoldingsButtonByID(holdingsID).click());
     cy.expect(Button('Actions').exists());
+  },
+
+  verifyCheckedOutDate: (date) => {
+    cy.expect(itemStatusKeyValue.has({ subValue: including(date) }));
   },
 };
