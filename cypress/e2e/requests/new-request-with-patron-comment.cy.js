@@ -1,5 +1,6 @@
 import TopMenu from '../../support/fragments/topMenu';
 import NewRequest from '../../support/fragments/requests/newRequest';
+import { DevTeams, TestTypes } from '../../support/dictionary';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import EditRequest from '../../support/fragments/requests/edit-request';
 
@@ -29,19 +30,23 @@ describe('ui-requests: Request: Create a New Request with Patron Comment.', () =
       });
   });
 
-  it('199704 Request: Patron comments field is not editable after request is created', () => {
-    cy.visit(TopMenu.requestsPath);
-    NewRequest.openNewRequestPane();
-    NewRequest.verifyRequestInformation();
-    NewRequest.enterItemInfo(folioInstances[0].barcodes[0]);
-    NewRequest.enterRequestAndPatron('Test patron comment');
-    NewRequest.enterRequesterInfoWithRequestType({
-      requesterBarcode: user.barcode,
-      pickupServicePoint: 'Circ Desk 1',
-    });
-    NewRequest.saveRequestAndClose();
-    EditRequest.openRequestEditForm();
-    EditRequest.verifyPatronCommentsFieldIsNotEditable();
-    EditRequest.closeRequestPreview();
-  });
+  it(
+    'C199704 Request: Patron comments field is not editable after request is created (vega)',
+    { tags: [TestTypes.criticalPath, DevTeams.vega] },
+    () => {
+      cy.visit(TopMenu.requestsPath);
+      NewRequest.openNewRequestPane();
+      NewRequest.verifyRequestInformation();
+      NewRequest.enterItemInfo(folioInstances[0].barcodes[0]);
+      NewRequest.enterRequestAndPatron('Test patron comment');
+      NewRequest.enterRequesterInfoWithRequestType({
+        requesterBarcode: user.barcode,
+        pickupServicePoint: 'Circ Desk 1',
+      });
+      NewRequest.saveRequestAndClose();
+      EditRequest.openRequestEditForm();
+      EditRequest.verifyPatronCommentsFieldIsNotEditable();
+      EditRequest.closeRequestPreview();
+    },
+  );
 });
