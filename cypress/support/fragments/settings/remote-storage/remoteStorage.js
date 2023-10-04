@@ -6,8 +6,10 @@ const accessionTablesItem = NavListItem('Accession tables');
 
 export default {
   checkSettingItems() {
-    cy.expect(remoteStorageNavigationPane.find(configurationsItem).exists());
-    cy.expect(remoteStorageNavigationPane.find(accessionTablesItem).exists());
+    cy.expect([
+      remoteStorageNavigationPane.find(configurationsItem).exists(),
+      remoteStorageNavigationPane.find(accessionTablesItem).exists(),
+    ]);
   },
   goToConfigurations() {
     cy.do(configurationsItem.click());

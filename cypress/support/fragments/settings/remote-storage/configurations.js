@@ -84,12 +84,19 @@ const configurations = {
       cy.do(configurationFields.timingInput.fillIn(timing));
     },
     verifyRequiredFields(name, timing = '1') {
-      cy.expect(configurationFields.nameInput.has({ value: name }));
-      cy.expect(configurationFields.timingInput.has({ value: timing }));
+      cy.expect([
+        configurationFields.nameInput.has({ value: name }),
+        configurationFields.timingInput.has({ value: timing }),
+      ]);
     },
   },
   CaiaSoft: {
     title: 'CaiaSoft',
+    // values of options to check selected item
+    returningWorkflowValues: {
+      'Items received at remote storage scanned into FOLIO': 'Scanned to folio',
+      'Items received at remote storage scanned into CaiaSoft': 'Scanned to CaiaSoft',
+    },
     create(name) {
       openCreateConfigurationForm();
       this.fillRequiredFields(name);
@@ -111,14 +118,15 @@ const configurations = {
       accessionHoldingWorkflow = 'Change permanent location',
       returningWorkflow = 'Items received at remote storage scanned into FOLIO',
     ) {
-      expect(configurationFields.nameInput.has({ value: name }));
-      expect(configurationFields.provider.has({ value: including(this.title) }));
-      expect(
+      cy.expect([
+        configurationFields.nameInput.has({ value: name }),
         configurationFields.accessionHoldingWorkflowDropdown.has({
           value: accessionHoldingWorkflow,
         }),
-      );
-      expect(configurationFields.returningWorkflowDropdown.has({ value: returningWorkflow }));
+        configurationFields.returningWorkflowDropdown.has({
+          value: this.returningWorkflowValues[returningWorkflow],
+        }),
+      ]);
     },
   },
 };

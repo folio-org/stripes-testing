@@ -28,10 +28,8 @@ describe('remote-storage-configuration', () => {
     { tags: [TestTypes.extendedPath, DevTeams.firebird] },
     () => {
       // #1 Go to the "Settings" app
-      cy.visit(TopMenu.settingsPath);
-      // #2 Select "Remote storage" by clicking on it
-      SettingsMenu.openRemoteStorageSettings();
-
+      // #2 Select "Remote storage"
+      cy.visit(SettingsMenu.remoteStoragePath);
       // The "Remote storage" pane  is appears and contains of: "Configurations", "Accession tables"
       RemoteStorage.checkSettingItems();
 
