@@ -124,7 +124,7 @@ describe('Invoices', () => {
     cy.visit(TopMenu.ordersPath);
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList();
-    Orders.unOpenOrder(orderNumber);
+    Orders.unOpenOrder();
     OrderLines.selectPOLInOrder(0);
     OrderLines.deleteOrderLine();
     Orders.deleteOrderViaApi(order.id);
