@@ -21,6 +21,7 @@ import {
   SearchField,
   Section,
   Select,
+  TextArea,
   TextField,
   TextArea,
   including,

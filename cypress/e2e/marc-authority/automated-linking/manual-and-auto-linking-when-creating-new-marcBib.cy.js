@@ -90,21 +90,23 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     ]).then((createdUserProperties) => {
       userData = createdUserProperties;
 
-      marcFiles.forEach(marcFile => {
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-          JobProfiles.waitLoadingList();
-          JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(marcFile.fileName);
-          Logs.checkStatusOfJobProfile('Completed');
-          Logs.openFileDetails(marcFile.fileName);
-          for (let i = 0; i < marcFile.numOfRecords; i++) {
-            Logs.getCreatedItemsID(i).then(link => {
-              createdAuthorityIDs.push(link.split('/')[5]);
-            });
-          }
-        });
+      marcFiles.forEach((marcFile) => {
+        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
+          () => {
+            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+            JobProfiles.waitLoadingList();
+            JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
+            JobProfiles.runImportFile();
+            JobProfiles.waitFileIsImported(marcFile.fileName);
+            Logs.checkStatusOfJobProfile('Completed');
+            Logs.openFileDetails(marcFile.fileName);
+            for (let i = 0; i < marcFile.numOfRecords; i++) {
+              Logs.getCreatedItemsID(i).then((link) => {
+                createdAuthorityIDs.push(link.split('/')[5]);
+              });
+            }
+          },
+        );
       });
     });
   });
@@ -136,39 +138,86 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
         testData.tags.tagLDR,
         testData.fieldContents.tagLDRContent,
       );
-      newFields.forEach(newField => {
-        MarcAuthority.addNewField(
-          newField.rowIndex,
-          newField.tag,
-          newField.content,
-        );
+      newFields.forEach((newField) => {
+        MarcAuthority.addNewField(newField.rowIndex, newField.tag, newField.content);
       });
 
       QuickMarcEditor.clickLinkIconInTagField(newFields[0].rowIndex + 1);
       MarcAuthorities.switchToSearch();
       InventoryInstance.verifySelectMarcAuthorityModal();
-      InventoryInstance.searchResultsWithOption(testData.searchOptions.identifierAll, testData.naturalIds.tag100);
+      InventoryInstance.searchResultsWithOption(
+        testData.searchOptions.identifierAll,
+        testData.naturalIds.tag100,
+      );
       InventoryInstance.clickLinkButton();
       QuickMarcEditor.verifyAfterLinkingUsingRowIndex(newFields[0].tag, newFields[0].rowIndex + 1);
-      QuickMarcEditor.verifyTagFieldAfterLinking(5, '100', '\\', '\\', '$a Jackson, Peter, $c Inspector Banks series ; $d 1950-2022', '', '$0 3052044', '');
-
+      QuickMarcEditor.verifyTagFieldAfterLinking(
+        5,
+        '100',
+        '\\',
+        '\\',
+        '$a Jackson, Peter, $c Inspector Banks series ; $d 1950-2022',
+        '',
+        '$0 3052044',
+        '',
+      );
       QuickMarcEditor.clickLinkIconInTagField(newFields[1].rowIndex + 1);
       MarcAuthorities.switchToSearch();
       InventoryInstance.verifySelectMarcAuthorityModal();
-      InventoryInstance.searchResultsWithOption(testData.searchOptions.identifierAll, testData.naturalIds.tag240);
+      InventoryInstance.searchResultsWithOption(
+        testData.searchOptions.identifierAll,
+        testData.naturalIds.tag240,
+      );
       InventoryInstance.clickLinkButton();
       QuickMarcEditor.verifyAfterLinkingUsingRowIndex(newFields[1].tag, newFields[1].rowIndex + 1);
-      QuickMarcEditor.verifyTagFieldAfterLinking(6, '240', '\\', '\\', '$a Hosanna Bible', '', '$0 id.loc.gov/authorities/names/n99036055', '');
+      QuickMarcEditor.verifyTagFieldAfterLinking(
+        6,
+        '240',
+        '\\',
+        '\\',
+        '$a Hosanna Bible',
+        '',
+        '$0 id.loc.gov/authorities/names/n99036055',
+        '',
+      );
 
       linkableFields.forEach((tag) => {
         QuickMarcEditor.setRulesForField(tag, true);
       });
       QuickMarcEditor.clickLinkHeadingsButton();
-      QuickMarcEditor.verifyTagWithNaturalIdExistance(newFields[2].rowIndex + 1, newFields[2].tag, testData.naturalIds.tag600);
-      QuickMarcEditor.verifyTagWithNaturalIdExistance(newFields[3].rowIndex + 1, newFields[3].tag, testData.naturalIds.tag711);
-      QuickMarcEditor.checkCallout('Field 610 and 711 has been linked to MARC authority record(s).');
-      QuickMarcEditor.verifyTagFieldAfterLinking(5, '100', '\\', '\\', '$a Jackson, Peter, $c Inspector Banks series ; $d 1950-2022', '', '$0 3052044', '');
-      QuickMarcEditor.verifyTagFieldAfterLinking(6, '240', '\\', '\\', '$a Hosanna Bible', '', '$0 id.loc.gov/authorities/names/n99036055', '');
+      QuickMarcEditor.verifyTagWithNaturalIdExistance(
+        newFields[2].rowIndex + 1,
+        newFields[2].tag,
+        testData.naturalIds.tag600,
+      );
+      QuickMarcEditor.verifyTagWithNaturalIdExistance(
+        newFields[3].rowIndex + 1,
+        newFields[3].tag,
+        testData.naturalIds.tag711,
+      );
+      QuickMarcEditor.checkCallout(
+        'Field 610 and 711 has been linked to MARC authority record(s).',
+      );
+      QuickMarcEditor.verifyTagFieldAfterLinking(
+        5,
+        '100',
+        '\\',
+        '\\',
+        '$a Jackson, Peter, $c Inspector Banks series ; $d 1950-2022',
+        '',
+        '$0 3052044',
+        '',
+      );
+      QuickMarcEditor.verifyTagFieldAfterLinking(
+        6,
+        '240',
+        '\\',
+        '\\',
+        '$a Hosanna Bible',
+        '',
+        '$0 id.loc.gov/authorities/names/n99036055',
+        '',
+      );
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndClose();
 
