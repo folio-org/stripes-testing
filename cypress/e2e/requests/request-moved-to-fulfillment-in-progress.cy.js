@@ -7,6 +7,7 @@ import {
 } from '../../support/constants';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
@@ -25,34 +26,73 @@ describe('Title Level Request. Request queue. TLR', () => {
   let userData = {};
   let requestId;
   const testData = {
-    folioInstances: InventoryInstances.generateFolioInstances({ count: 1 }),
     servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     servicePoint2: ServicePoints.getDefaultServicePointWithPickUpLocation(),
+    barcode: generateItemBarcode(),
+    title: `Instance_C350425_${getRandomPostfix()}`,
   };
-
   const patronGroup = {
     name: 'groupTLR' + getRandomPostfix(),
   };
 
   before('Preconditions:', () => {
-    cy.getAdminToken();
-    ServicePoints.createViaApi(testData.servicePoint);
-    ServicePoints.createViaApi(testData.servicePoint2);
-    cy.loginAsAdmin({
-      path: SettingsMenu.circulationTitleLevelRequestsPath,
-      waiter: TitleLevelRequests.waitLoading,
-    });
-    TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
-    testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
-    Location.createViaApi(testData.defaultLocation).then((location) => {
-      InventoryInstances.createFolioInstancesViaApi({
-        folioInstances: testData.folioInstances,
-        location,
+    cy.getAdminToken()
+      .then(() => {
+        ServicePoints.createViaApi(testData.servicePoint);
+        ServicePoints.createViaApi(testData.servicePoint2);
+        cy.loginAsAdmin({
+          path: SettingsMenu.circulationTitleLevelRequestsPath,
+          waiter: TitleLevelRequests.waitLoading,
+        });
+        TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+        testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
+        Location.createViaApi(testData.defaultLocation);
+        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+          testData.instanceTypeId = instanceTypes[0].id;
+        });
+        cy.getHoldingTypes({ limit: 1 }).then((holdingTypes) => {
+          testData.holdingTypeId = holdingTypes[0].id;
+        });
+        cy.createLoanType({
+          name: `type_${getRandomPostfix()}`,
+        }).then((loanType) => {
+          testData.loanTypeId = loanType.id;
+        });
+        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
+          testData.materialTypeId = materialTypes.id;
+          testData.materialType = materialTypes.name;
+        });
+      })
+      .then(() => {
+        InventoryInstances.createFolioInstanceViaApi({
+          instance: {
+            instanceTypeId: testData.instanceTypeId,
+            title: testData.title,
+          },
+          holdings: [
+            {
+              holdingsTypeId: testData.holdingTypeId,
+              permanentLocationId: testData.defaultLocation.id,
+            },
+          ],
+          items: [
+            {
+              barcode: testData.barcode,
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+              permanentLoanType: { id: testData.loanTypeId },
+              materialType: { id: testData.materialTypeId },
+            },
+          ],
+        }).then((specialInstanceIds) => {
+          testData.instanceId = specialInstanceIds.instanceId;
+          testData.holdingId = specialInstanceIds.holdingIds[0].id;
+          testData.itemId = specialInstanceIds.holdingIds[0].itemIds;
+        });
       });
-    });
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
+
     cy.createTempUser(
       [
         Permissions.uiRequestsCreate.gui,
@@ -71,7 +111,7 @@ describe('Title Level Request. Request queue. TLR', () => {
       );
       Requests.createNewRequestViaApi({
         fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
-        instanceId: testData.folioInstances[0].instanceId,
+        instanceId: testData.instanceId,
         pickupServicePointId: testData.servicePoint.id,
         requestDate: new Date(),
         requestLevel: REQUEST_LEVELS.TITLE,
@@ -92,11 +132,9 @@ describe('Title Level Request. Request queue. TLR', () => {
     ]);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
     ServicePoints.deleteViaApi(testData.servicePoint2.id);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.barcode);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
-      testData.folioInstances[0].barcodes[0],
-    );
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
@@ -113,17 +151,17 @@ describe('Title Level Request. Request queue. TLR', () => {
       SwitchServicePoint.checkIsServicePointSwitched(testData.servicePoint2.name);
       cy.visit(TopMenu.checkInPath);
       CheckInActions.waitLoading();
-      CheckInActions.checkInItem(testData.folioInstances[0].barcodes[0]);
+      CheckInActions.checkInItem(testData.barcode);
       InTransit.verifyModalTitle();
       InTransit.unselectCheckboxPrintSlip();
       InTransit.closeModal();
       CheckInActions.endCheckInSessionAndCheckDetailsOfCheckInAreCleared();
       cy.visit(TopMenu.requestsPath);
-      Requests.findCreatedRequest(testData.folioInstances[0].barcodes[0]);
-      Requests.selectFirstRequest(testData.folioInstances[0].barcodes[0]);
+      Requests.findCreatedRequest(testData.barcode);
+      Requests.selectFirstRequest(testData.barcode);
       RequestDetail.checkItemInformation({
-        itemBarcode: testData.folioInstances[0].barcodes[0],
-        title: testData.folioInstances[0].instanceTitle,
+        itemBarcode: testData.barcode,
+        title: testData.title,
         effectiveLocation: testData.defaultLocation.name,
         itemStatus: ITEM_STATUS_NAMES.IN_TRANSIT,
         requestsOnItem: '1',
@@ -133,10 +171,8 @@ describe('Title Level Request. Request queue. TLR', () => {
         status: 'Open - In transit',
         level: REQUEST_LEVELS.TITLE,
       });
-      RequestDetail.requestQueueOnInstance(testData.folioInstances[0].instanceTitle);
-      RequestDetail.checkRequestMovedToFulfillmentInProgress(
-        testData.folioInstances[0].barcodes[0],
-      );
+      RequestDetail.requestQueueOnInstance(testData.title);
+      RequestDetail.checkRequestMovedToFulfillmentInProgress(testData.barcode);
     },
   );
 });
