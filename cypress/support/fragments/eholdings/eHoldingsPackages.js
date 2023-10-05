@@ -29,7 +29,7 @@ const searchIcon = Button({ icon: 'search' });
 const searchField = TextField({ id: 'eholdings-search' });
 const chooseParameterField = Select('Select a field to search');
 const subjectKeyValue = KeyValue('Subjects');
-const availableProxies = ['chalmers', 'Inherited - ezproxY-T', 'None', 'MJProxy'];
+const availableProxies = ['chalmers', 'ezproxY-T', 'Inherited - None', 'MJProxy'];
 const proxySelect = Select('Proxy');
 
 const defaultPackage = {

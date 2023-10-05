@@ -21,6 +21,7 @@ import {
   SearchField,
   Section,
   Select,
+  TextArea,
   TextField,
   including,
 } from '../../../../interactors';
@@ -207,9 +208,6 @@ export default {
       marcViewSection.absent(),
       SearchField({ id: 'textarea-authorities-search', value: searchValue }).absent(),
       selectField.has({ content: including('Select a browse option') }),
-      rootSection
-        .find(HTML(including('Choose a filter or enter a search query to show results.')))
-        .exists(),
     ]);
   },
 
@@ -458,7 +456,7 @@ export default {
       modalAdvancedSearch.exists(),
       AdvancedSearchRow({ index: 0 }).has({ text: including('Search for') }),
       AdvancedSearchRow({ index: row })
-        .find(TextField())
+        .find(TextArea())
         .has({ value: including(value) }),
       AdvancedSearchRow({ index: row }).has({ text: including('in') }),
       AdvancedSearchRow({ index: row })
