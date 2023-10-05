@@ -119,6 +119,7 @@ describe('Tags', () => {
       InventorySearchAndFilter.switchToHoldings();
       InventorySearchAndFilter.byKeywords(instanceData.title);
       InventoryInstance.openHoldingView();
+      HoldingsRecordEdit.openTags();
       HoldingsRecordEdit.addTag(tagName);
 
       cy.visit(TopMenu.inventoryPath);
