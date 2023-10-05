@@ -1426,4 +1426,22 @@ export default {
         expect(quantity).to.equal(arrayOfQuantityRows.length);
       });
   },
+  getOrderLineViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        path: 'orders/order-lines',
+        searchParams,
+      })
+      .then(({ body }) => body.poLines);
+  },
+  createOrderLineViaApi(orderLine) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'orders/order-lines',
+        body: orderLine,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body);
+  },
 };
