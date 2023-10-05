@@ -15,12 +15,33 @@ export default {
       budgetStatus: 'Active',
     };
   },
+  getBudgetViaApi(budgetId) {
+    return cy
+      .okapiRequest({
+        path: `finance/budgets/${budgetId}`,
+      })
+      .then((response) => {
+        return response.body;
+      });
+  },
   createViaApi(budgetProperties) {
     return cy
       .okapiRequest({
         path: 'finance/budgets',
         body: budgetProperties,
         method: 'POST',
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body;
+      });
+  },
+  updateBudgetViaApi(budget) {
+    return cy
+      .okapiRequest({
+        method: 'PUT',
+        path: `finance/budgets/${budget.id}`,
+        body: budget,
         isDefaultSearchParamsRequired: false,
       })
       .then((response) => {
@@ -39,13 +60,18 @@ export default {
     ledger: ledgerProps,
     fund: fundProps,
     budget: budgetProps,
+    expenceClasses = [],
   } = {}) {
     const fiscalYear = {
       ...FiscalYears.getDefaultFiscalYear(),
       ...fiscalYearProps,
     };
-    const ledger = { ...Ledgers.getDefaultLedger(), ...ledgerProps };
-    const fund = { ...Funds.getDefaultFund(), ...fundProps };
+    const ledger = {
+      ...Ledgers.getDefaultLedger(),
+      fiscalYearOneId: fiscalYear.id,
+      ...ledgerProps,
+    };
+    const fund = { ...Funds.getDefaultFund(), ledgerId: ledger.id, ...fundProps };
     const budget = {
       fiscalYearId: fiscalYear.id,
       fundId: fund.id,
@@ -57,6 +83,20 @@ export default {
     Ledgers.createViaApi({ ...ledger, fiscalYearOneId: fiscalYear.id });
     Funds.createViaApi({ ...fund, ledgerId: ledger.id });
     this.createViaApi(budget);
+
+    if (expenceClasses.length) {
+      this.getBudgetViaApi(budget.id).then((resp) => {
+        this.updateBudgetViaApi({
+          ...resp,
+          statusExpenseClasses: [
+            {
+              status: 'Active',
+              expenseClassId: expenceClasses[0].id,
+            },
+          ],
+        });
+      });
+    }
 
     return {
       fiscalYear,

@@ -129,6 +129,7 @@ export const BATCH_GROUP = {
 };
 
 export const INVOICE_STATUSES = {
+  OPEN: 'Open',
   APPROVED: 'Approved',
   CANCELLED: 'Cancelled',
   PAID: 'Paid',
