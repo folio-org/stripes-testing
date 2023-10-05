@@ -87,6 +87,8 @@ describe('MARC -> MARC Authority', () => {
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.updateExistingField(testData.tag245, `$a ${testData.updatedTag245Value}`);
+      // wait for updates to apply
+      cy.wait(1000);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndClose();
 
