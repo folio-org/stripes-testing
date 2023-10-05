@@ -1,5 +1,4 @@
 import { HTML, including } from '@interactors/html';
-import uuid from 'uuid';
 import {
   Accordion,
   Button,
@@ -22,7 +21,6 @@ import {
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import logsViewAll from '../data_import/logs/logsViewAll';
-import Helper from '../finance/financeHelper';
 import InventoryActions from './inventoryActions';
 import InventoryInstances from './inventoryInstances';
 
@@ -47,7 +45,7 @@ const navigationInstancesButton = Button({
 const paneFilterSection = Section({ id: 'pane-filter' });
 const paneResultsSection = Section({ id: 'pane-results' });
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
-const instancesTagsSection = Section({ id: 'instancesTags' });
+const instancesTagsSection = Section({ id: including('Tags') });
 const tagsPane = Pane('Tags');
 const tagsButton = Button({ id: 'clickable-show-tags' });
 const tagsAccordionButton = instancesTagsSection.find(Button('Tags'));
@@ -507,12 +505,18 @@ export default {
     cy.expect(MultiColumnList({ id: 'list-inventory' }).has({ rowCount: 1 }));
   },
 
+  searchTag(tag) {
+    cy.do([tagsAccordionButton.click(), instancesTagsSection.find(TextField()).fillIn(tag)]);
+  },
+
   filterByTag(tag) {
-    cy.do([
-      tagsAccordionButton.click(),
-      instancesTagsSection.find(TextField()).fillIn(tag),
-      instancesTagsSection.find(Checkbox(tag)).click(),
-    ]);
+    this.searchTag(tag);
+    cy.do(instancesTagsSection.find(Checkbox(tag)).click());
+  },
+
+  verifyTagIsAbsent(tag) {
+    this.searchTag(tag);
+    cy.expect(HTML('No matching options').exists());
   },
 
   resetAllAndVerifyNoResultsAppear() {
@@ -564,6 +568,11 @@ export default {
     cy.do(Button(including(`${callNumber} ${suffix}`)).click());
   },
 
+  selectFoundItemFromBrowseResultList(value) {
+    cy.do(Button(including(value)).click());
+    cy.expect(instanceDetailsSection.exists());
+  },
+
   verifyInstanceDisplayed(instanceTitle) {
     cy.expect(MultiColumnListCell({ content: instanceTitle }).exists());
   },
@@ -578,30 +587,6 @@ export default {
   verifyPanesExist() {
     cy.expect(paneFilterSection.exists());
     cy.expect(paneResultsSection.exists());
-  },
-
-  createInstanceViaApi() {
-    const instanceData = {
-      instanceTitle: `instanceTitle ${Helper.getRandomBarcode()}`,
-      instanceId: uuid(),
-      instanceTypeId: null,
-    };
-
-    return cy
-      .getInstanceTypes({ limit: 1 })
-      .then((instanceTypes) => {
-        instanceData.instanceTypeId = instanceTypes[0].id;
-      })
-      .then(() => {
-        cy.createInstance({
-          instance: {
-            instanceId: instanceData.instanceId,
-            instanceTypeId: instanceData.instanceTypeId,
-            title: instanceData.instanceTitle,
-          },
-        });
-      })
-      .then(() => ({ instanceData }));
   },
 
   selectViewHoldings: () => cy.do(viewHoldingButton.click()),

@@ -12,6 +12,7 @@ import {
   Modal,
   Select,
   TextInput,
+  TextArea,
 } from '../../../../interactors';
 import CheckinActions from '../check-in-actions/checkInActions';
 import InventoryHoldings from './holdings/inventoryHoldings';
@@ -501,6 +502,7 @@ export default {
       const instanceWithSpecifiedNewId = {
         ...instance,
         id: instance.id || uuid(),
+        title: instance.title || `Instance-${getRandomPostfix()}`,
         source: folioSource.name,
       };
       const ids = {
@@ -615,7 +617,7 @@ export default {
       );
     }
     cy.expect([
-      AdvancedSearchRowInventory({ index: rowIndex }).find(TextField()).exists(),
+      AdvancedSearchRowInventory({ index: rowIndex }).find(TextArea()).exists(),
       AdvancedSearchRowInventory({ index: rowIndex }).find(advSearchModifierSelect).exists(),
       AdvancedSearchRowInventory({ index: rowIndex }).find(advSearchOptionSelect).exists(),
     ]);
@@ -652,7 +654,7 @@ export default {
     cy.expect([
       advSearchModal.exists(),
       AdvancedSearchRowInventory({ index: rowIndex })
-        .find(TextField())
+        .find(TextArea())
         .has({ value: including(query) }),
       AdvancedSearchRowInventory({ index: rowIndex })
         .find(advSearchModifierSelect)

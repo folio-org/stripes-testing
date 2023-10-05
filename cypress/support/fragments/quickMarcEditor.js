@@ -15,10 +15,12 @@ import {
   PaneContent,
   PaneHeader,
   Tooltip,
+  Select,
 } from '../../../interactors';
 import dateTools from '../utils/dateTools';
 import getRandomPostfix from '../utils/stringTools';
 import InventoryInstance from './inventory/inventoryInstance';
+import Institutions from './settings/tenant/location-setup/institutions';
 
 const rootSection = Section({ id: 'quick-marc-editor-pane' });
 const viewMarcSection = Section({ id: 'marc-view-pane' });
@@ -70,7 +72,7 @@ const calloutUpdatedRecord = Callout(
 const calloutOnDeriveFirst = Callout('Creating record may take several seconds.');
 const calloutOnDeriveSecond = Callout('Record created.');
 const calloutUpdatedLinkedBibRecord = Callout(
-  'Record has been updated. 2 linked bibliographic record(s) updates have begun.',
+  'This record has successfully saved and is in process. 2 linked bibliographic record(s) updates have begun.',
 );
 const calloutNonEditableLdrBib = Callout(
   'Record cannot be saved. Please check the Leader. Only positions 5, 6, 7, 8, 17, 18 and/or 19 can be edited in the Leader.',
@@ -96,6 +98,7 @@ const specRetInputNamesHoldings008 = [
 
 const paneHeader = PaneHeader({ id: 'paneHeaderquick-marc-editor-pane' });
 const linkHeadingsButton = Button('Link headings');
+const arrowDownButton = Button({ icon: 'arrow-down' });
 
 const tag008HoldingsBytesProperties = {
   acqStatus: {
@@ -309,6 +312,16 @@ const default008BoxesHoldings = [
   TextField('Rept date'),
 ];
 
+const holdingsLocationLink = Button('Permanent location look-up');
+const holdingsLocationModal = Modal('Select permanent location');
+const holdingsLocationInstitutionSelect = holdingsLocationModal.find(Select('Institution'));
+const holdingsLocationCampusSelect = holdingsLocationModal.find(Select('Campus'));
+const holdingsLocationLibrarySelect = holdingsLocationModal.find(Select('Library'));
+const holdingsLocationSelectDisabled = holdingsLocationModal.find(
+  Button({ name: 'locationId', disabled: true }),
+);
+const holdingsLocationSaveButton = holdingsLocationModal.find(Button('Save and close'));
+
 export default {
   getInitialRowsCount() {
     return validRecord.lastRowNumber;
@@ -392,6 +405,34 @@ export default {
 
   clickLinkIconInTagField(rowIndex) {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).click());
+  },
+
+  clickLinkHeadingsButton() {
+    cy.do(paneHeader.find(linkHeadingsButton).click());
+  },
+
+  checkLinkHeadingsButton() {
+    cy.expect(paneHeader.find(linkHeadingsButton).exists());
+  },
+
+  clickArrowDownButton(rowIndex) {
+    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(arrowDownButton).click());
+  },
+
+  setRulesForField(tag, isEnabled) {
+    cy.getAllRulesViaApi()
+      .then((body) => {
+        const ruleIds = [];
+        body.filter((rule) => {
+          return rule.bibField === `${tag}` && ruleIds.push(rule.id);
+        });
+        return ruleIds;
+      })
+      .then((ruleIds) => {
+        ruleIds.forEach((ruleId) => {
+          cy.setRulesForFieldViaApi(ruleId, isEnabled);
+        });
+      });
   },
 
   checkAbsenceOfLinkHeadingsButton() {
@@ -725,7 +766,7 @@ export default {
     return newContent;
   },
 
-  updateExistingTagName({ currentTagName = validRecord.existingTag, newTagName }) {
+  updateExistingTagName(currentTagName = validRecord.existingTag, newTagName) {
     cy.then(() => QuickMarcEditorRow({ tagValue: currentTagName }).index()).then((index) => {
       cy.do(
         QuickMarcEditorRow({ index })
@@ -1121,6 +1162,22 @@ export default {
     cy.expect(TextArea({ ariaLabel: 'Subfield', textContent: including(content) }).absent());
   },
 
+  verifyTagWithNaturalIdExistance(
+    rowIndex,
+    tag,
+    naturalId,
+    nameLocator = `records[${rowIndex}].subfieldGroups.zeroSubfield`,
+  ) {
+    cy.expect([
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextField({ name: `records[${rowIndex}].tag` }))
+        .has({ value: tag }),
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextArea({ name: nameLocator }))
+        .has({ value: including(naturalId) }),
+    ]);
+  },
+
   updateTagNameToLockedTag(rowIndex, newTagName) {
     cy.get(`input[name="records[${rowIndex}].tag"`).type(newTagName, { delay: 200 });
   },
@@ -1381,11 +1438,39 @@ export default {
     cy.expect([calloutAfterSaveAndClose.exists(), viewMarcSection.exists()]);
   },
 
+  checkNoDeletePlaceholder() {
+    cy.expect(
+      rootSection.find(HTML(including('has been deleted from this MARC record.'))).absent(),
+    );
+  },
+
   verifyIconsAfterUnlinking(rowIndex) {
     cy.expect([
       QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).absent(),
       QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorutyIconButton).absent(),
       QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).exists(),
     ]);
+  },
+
+  selectExistingHoldingsLocation(locationObject) {
+    Institutions.getInstitutionByIdViaApi(locationObject.institutionId).then((institution) => {
+      const institutionName = institution.name;
+      cy.do(holdingsLocationLink.click());
+      cy.expect(holdingsLocationModal.exists());
+      cy.do(holdingsLocationInstitutionSelect.choose(institutionName));
+      // wait until values applied in dropdowns
+      cy.wait(3000);
+      cy.expect([
+        holdingsLocationInstitutionSelect.has({ value: locationObject.institutionId }),
+        holdingsLocationCampusSelect.has({ value: locationObject.campusId }),
+        holdingsLocationLibrarySelect.has({ value: locationObject.libraryId }),
+        holdingsLocationSelectDisabled
+          .find(HTML(including(`${locationObject.name} (${locationObject.code})`)))
+          .exists(),
+        holdingsLocationSaveButton.has({ disabled: false }),
+      ]);
+      cy.do(holdingsLocationSaveButton.click());
+      cy.expect(holdingsLocationModal.absent());
+    });
   },
 };

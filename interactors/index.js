@@ -47,6 +47,7 @@ export {
   MultiColumnListRow,
   MultiColumnListCell,
   MultiColumnListHeader,
+  ListRow,
 } from './multi-column-list';
 export {
   default as MultiSelect,

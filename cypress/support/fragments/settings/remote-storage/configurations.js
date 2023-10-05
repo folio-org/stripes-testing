@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import { REMOTE_STORAGE_PROVIDER_NAMES } from '../../../constants';
 import {
   Accordion,
   Button,
@@ -9,6 +10,7 @@ import {
   Modal,
   KeyValue,
   HTML,
+  Option,
   including,
 } from '../../../../../interactors';
 import Mappings from './mappings';
@@ -20,23 +22,34 @@ const successfulCreateCalloutMessage = 'Remote storage configuration was success
 const successfulChangeCalloutMessage = 'Remote storage configuration was successfully changed.';
 const successfulDeleteCalloutMessage = 'Remote storage configuration was successfully deleted.';
 const configurationPane = Pane({ title: 'Configurations' });
+const editConfigurationPane = Pane({ title: including('Edit ') });
 const dataSynchronizationSettingsAccordion = Accordion('Data synchronization settings');
 const saveAndCloseBtn = Button('Save & close');
 const saveBtn = Button('Save');
+const cancelButton = Button('Cancel');
+const confirmationModal = Modal({ id: 'save-confirmation-modal' });
 const actionsBtn = Button('Actions');
 const xButton = Button({ icon: 'times' });
 const newButton = Button('+ New');
+const editConfigurationButton = Button({ id: 'clickable-edit-storage' });
 const generalInformationAccordion = Accordion({ label: 'General information' });
+const accessionHoldingWorkflowPreferenceAccordion = Accordion({
+  label: 'Accession holding workflow preference',
+});
+const returningWorkflowPreferenceAccordion = Accordion({
+  label: 'Returning workflow preference',
+});
 const configurationFields = {
   nameInput: TextField({ name: 'name' }),
   urlInput: TextField({ name: 'url' }),
   timingInput: TextField({ name: 'accessionDelay' }),
   provider: Select({ name: 'providerName' }),
+  accessionHoldingWorkflowDropdown: accessionHoldingWorkflowPreferenceAccordion.find(Select()),
+  returningWorkflowDropdown: returningWorkflowPreferenceAccordion.find(Select()),
 };
 
 function fillGeneralInfo(fileName, providerName) {
-  return cy.do([
-    newButton.click(),
+  cy.do([
     configurationFields.nameInput.fillIn(fileName),
     generalInformationAccordion.find(Select()).choose(including(providerName)),
   ]);
@@ -48,35 +61,77 @@ function saveAndCloseForm() {
   cy.wait(2000);
 }
 
+function openCreateConfigurationForm() {
+  cy.do(newButton.click());
+}
+
 const configurations = {
   DematicEMS: {
-    title: 'Dematic EMS',
+    title: REMOTE_STORAGE_PROVIDER_NAMES.Dematic_EMS,
     create(name) {
+      openCreateConfigurationForm();
       fillGeneralInfo(name, this.title);
       saveAndCloseForm();
+    },
+    fillRequiredFields(name) {
+      fillGeneralInfo(name, this.title);
     },
   },
   DematicStagingDirector: {
-    title: 'Dematic StagingDirector',
+    title: REMOTE_STORAGE_PROVIDER_NAMES.DDEMATIC_STAGING_DIRECTOR,
     create(name) {
-      fillGeneralInfo(name, this.title);
-      cy.do(configurationFields.timingInput.fillIn('1'));
+      openCreateConfigurationForm();
+      this.fillRequiredFields(name);
       saveAndCloseForm();
+    },
+    fillRequiredFields(name, timing = '1') {
+      fillGeneralInfo(name, this.title);
+      cy.do(configurationFields.timingInput.fillIn(timing));
+    },
+    verifyRequiredFields(name, timing = '1') {
+      cy.expect([
+        configurationFields.nameInput.has({ value: name }),
+        configurationFields.timingInput.has({ value: timing }),
+      ]);
     },
   },
   CaiaSoft: {
-    title: 'CaiaSoft',
+    title: REMOTE_STORAGE_PROVIDER_NAMES.CAIA_SOFT,
+    // values of options to check selected item
+    returningWorkflowValues: {
+      'Items received at remote storage scanned into FOLIO': 'Scanned to folio',
+      'Items received at remote storage scanned into CaiaSoft': 'Scanned to CaiaSoft',
+    },
     create(name) {
+      openCreateConfigurationForm();
+      this.fillRequiredFields(name);
+      saveAndCloseForm();
+    },
+    fillRequiredFields(
+      name,
+      accessionHoldingWorkflow = 'Change permanent location',
+      returningWorkflow = 'Items received at remote storage scanned into FOLIO',
+    ) {
       fillGeneralInfo(name, this.title);
       cy.do([
-        Accordion({ label: 'Accession holding workflow preference' })
-          .find(Select())
-          .choose('Change permanent location'),
-        Accordion({ label: 'Returning workflow preference' })
-          .find(Select())
-          .choose('Items received at remote storage scanned into FOLIO'),
+        configurationFields.accessionHoldingWorkflowDropdown.choose(accessionHoldingWorkflow),
+        configurationFields.returningWorkflowDropdown.choose(returningWorkflow),
       ]);
-      saveAndCloseForm();
+    },
+    verifyRequiredFields(
+      name,
+      accessionHoldingWorkflow = 'Change permanent location',
+      returningWorkflow = 'Items received at remote storage scanned into FOLIO',
+    ) {
+      cy.expect([
+        configurationFields.nameInput.has({ value: name }),
+        configurationFields.accessionHoldingWorkflowDropdown.has({
+          value: accessionHoldingWorkflow,
+        }),
+        configurationFields.returningWorkflowDropdown.has({
+          value: this.returningWorkflowValues[returningWorkflow],
+        }),
+      ]);
     },
   },
 };
@@ -91,6 +146,7 @@ const getDefaultConfiguration = ({ id = uuid(), providerName = 'CAIA_SOFT' } = {
 
 export default {
   configurations,
+  openCreateConfigurationForm,
 
   waitLoading() {
     cy.expect(Pane('Configurations').exists());
@@ -152,11 +208,7 @@ export default {
   editConfiguration(name, configuration) {
     // configuration keys must equals configurationFields keys
     // example { nameInput: 'test', urlInput: 'test', timingInput: '1' }
-    cy.do([
-      MultiColumnListCell({ content: name }).click(),
-      Pane({ title: name }).find(actionsBtn).click(),
-      Button({ id: 'clickable-edit-storage' }).click(),
-    ]);
+    this.opentEditConfigurationForm(name);
 
     for (const param in configuration) {
       if (param === 'provider') {
@@ -193,9 +245,7 @@ export default {
   closeWithoutSaving() {
     return cy.do([
       Modal().find(Button('Cancel')).click(),
-      Pane({ title: including('Edit ') })
-        .find(xButton)
-        .click(),
+      editConfigurationPane.find(xButton).click(),
     ]);
   },
 
@@ -233,5 +283,38 @@ export default {
       else this.verifyDataSynchronizationSettingsAccordion(false);
     });
     this.closeCreateConfigurationWithoutSaving();
+  },
+  checkProviderNameDropdownValues() {
+    cy.do(configurationFields.provider.click());
+    Object.values(REMOTE_STORAGE_PROVIDER_NAMES).forEach((name) => {
+      cy.expect(configurationFields.provider.find(Option(name)).exists());
+    });
+  },
+  clickSaveAndCloseThenCheck() {
+    cy.do(saveAndCloseBtn.click());
+    cy.expect([
+      confirmationModal.exists(),
+      confirmationModal.has({
+        content: including('Are you sure you want to create the remote storage configuration?'),
+      }),
+      confirmationModal.find(saveBtn).exists(),
+      confirmationModal.find(cancelButton).exists(),
+    ]);
+  },
+  cancelConfirmation() {
+    cy.do(confirmationModal.find(cancelButton).click());
+  },
+  confirmCreateRemoteStorage() {
+    cy.do(confirmationModal.find(saveBtn).click());
+  },
+  opentEditConfigurationForm(name) {
+    cy.do([
+      MultiColumnListCell({ content: name }).click(),
+      Pane({ title: name }).find(actionsBtn).click(),
+      editConfigurationButton.click(),
+    ]);
+  },
+  closeEditConfiguration() {
+    cy.do([editConfigurationPane.find(xButton).click()]);
   },
 };

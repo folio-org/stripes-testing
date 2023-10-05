@@ -21,7 +21,7 @@ describe('inventory', () => {
           cy.login(username, password);
         })
         .then(() => {
-          InventorySearchAndFilter.createInstanceViaApi().then(({ instanceData }) => {
+          InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
             instanceRecord = instanceData;
           });
         });
