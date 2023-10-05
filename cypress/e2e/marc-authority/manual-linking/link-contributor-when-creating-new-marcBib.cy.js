@@ -92,7 +92,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     });
   });
 
-  after('Deleting created users, Instances', () => {
+  after('Deleting created user and data', () => {
     Users.deleteViaApi(userData.userId);
     MarcAuthority.deleteViaAPI(createdAuthorityIDs[0]);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[1]);
