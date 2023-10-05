@@ -88,29 +88,14 @@ describe('remote-storage-configuration', () => {
       // #3 Select "Configurations" on the "Remote storage" pane by clicking on it
       RemoteStorage.goToConfigurations();
 
-      // #4 Select the "New" button
-      Configurations.openCreateConfigurationForm();
-
-      // #5 Fill in "Remote storage name" field with any title (for e.g. "Test")
-      // #7 Select "Dematic EMS (API)" option => Fill into "Remote storage name" field with a title
-      dematicEMS.fillRequiredFields(name);
-      // #8 Select "Save & close" button
-      Configurations.clickSaveAndCloseThenCheck();
-
-      // #9 Select "Save" button
-      Configurations.confirmCreateRemoteStorage();
-      // Success toast at the bottom of the "Configurations" pane reads: "Remote storage configuration was successfully created"
+      // #4 - 9 Create "Dematic EMS (API)" configuration
+      dematicEMS.create(name);
       Configurations.verifyCreatedConfiguration(name, dematicEMS);
-      // #10 Click on the row with recently created configuration
-      // #11 Click "Actions" => Select "Edit" option
-      // #12 Click on the "Provider name" dropdown and select another provider name -- "CaiaSoft"
-      // #13 Select "Change permanent location" from the dropdown on the "Accession holding workflow preference" accordion
-      // #14 Select "Items received at remote storage scanned into FOLIO" from the dropdown on the "Returning workflow preference" accordion
-      // #15 Select "Save & close" button
+
+      // #10 - 15 Edit Configuration
       Configurations.editConfiguration(name, editedConfiguration);
       // #16 Select "Save" button
       Configurations.closeWithSaving();
-
       // Success toast at the bottom of the "Configurations" pane reads: "Remote storage configuration was successfully changed."
       Configurations.verifyEditedConfiguration(name);
 
