@@ -1,11 +1,11 @@
 import TopMenu from '../../support/fragments/topMenu';
 import NewRequest from '../../support/fragments/requests/newRequest';
-import { DevTeams, TestTypes } from '../../support/dictionary';
+import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import EditRequest from '../../support/fragments/requests/edit-request';
 import getRandomPostfix from '../../support/utils/stringTools';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import permissions from '../../support/dictionary/permissions';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
@@ -49,7 +49,7 @@ describe('ui-requests: Request: Create a New Request with Patron Comment.', () =
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
-    cy.createTempUser([permissions.requestsAll.gui], patronGroup.name).then((userProperties) => {
+    cy.createTempUser([Permissions.requestsAll.gui], patronGroup.name).then((userProperties) => {
       requestUserData = userProperties;
       UserEdit.addServicePointViaApi(
         testData.servicePoint.id,
@@ -60,8 +60,20 @@ describe('ui-requests: Request: Create a New Request with Patron Comment.', () =
     });
   });
 
-  after('Deleting created user', () => {
+  after('Deleting created entities', () => {
+    UserEdit.changeServicePointPreferenceViaApi(requestUserData.userId, [testData.servicePoint.id]);
+    ServicePoints.deleteViaApi(testData.servicePoint.id);
+    cy.deleteItemViaApi(folioInstances[0].itemIds);
+    cy.deleteHoldingRecordViaApi(folioInstances[0].holdingId);
+    InventoryInstance.deleteInstanceViaApi(folioInstances[0].instanceId);
+    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+      testData.defaultLocation.institutionId,
+      testData.defaultLocation.campusId,
+      testData.defaultLocation.libraryId,
+      testData.defaultLocation.id,
+    );
     Users.deleteViaApi(requestUserData.userId);
+    PatronGroups.deleteViaApi(patronGroup.id);
   });
 
   it(

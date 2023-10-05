@@ -19,6 +19,7 @@ const deliveryTypeAddressTypeSelect = Select({ name: 'deliveryAddressTypeId' });
 const requestExpirationDateKeyValue = KeyValue('Request expiration date');
 const holdShelfExpirationDateKeyValue = KeyValue('Hold shelf expiration date');
 const pickupServicePointKeyValue = KeyValue('Pickup service point');
+const patronComment = TextArea({ id: 'patronComments' });
 
 const expirationDates = [...new Array(5)].map((_, i) => {
   const date = add(new Date(), { years: 1, days: i + 1 });
@@ -166,6 +167,6 @@ export default {
   },
 
   verifyPatronCommentsFieldIsNotEditable: () => {
-    cy.expect(TextArea({ id: 'patronComments' }).absent());
+    cy.expect(patronComment.absent());
   },
 };
