@@ -16,7 +16,7 @@ import ItemRecordView from '../../../support/fragments/inventory/item/itemRecord
 let user;
 const notes = {
   adminOne: 'adminNote',
-  adminTwo: "AdminNote",
+  adminTwo: 'AdminNote',
   actionOne: 'actionNote',
   actionTwo: 'ActionNote',
   checkInOne: 'checkInNote',
