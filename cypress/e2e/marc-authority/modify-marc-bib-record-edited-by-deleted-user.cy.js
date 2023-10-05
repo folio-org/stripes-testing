@@ -16,9 +16,9 @@ import { JOB_STATUS_NAMES } from '../../support/constants';
 describe('MARC -> MARC Authority', () => {
   const testData = {
     source: 'MARC',
-    tag100: '100',
-    updatedTag100Value: 'C358964 Title (Updated by User A)',
-    updatedTag100Value2: 'C358964 Title (Updated by User B)',
+    tag245: '245',
+    updatedTag245Value: 'C358964 Title (Updated by User A)',
+    updatedTag245Value2: 'C358964 Title (Updated by User B)',
   };
 
   const users = {};
@@ -86,7 +86,7 @@ describe('MARC -> MARC Authority', () => {
       InventoryInstance.searchByTitle(createdRecordID);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
-      QuickMarcEditor.updateExistingField(testData.tag100, `$a ${testData.updatedTag100Value}`);
+      QuickMarcEditor.updateExistingField(testData.tag245, `$a ${testData.updatedTag245Value}`);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndClose();
 
@@ -103,13 +103,13 @@ describe('MARC -> MARC Authority', () => {
       );
 
       cy.visit(TopMenu.inventoryPath);
-      InventoryInstance.searchByTitle(testData.updatedTag100Value);
+      InventoryInstance.searchByTitle(testData.updatedTag245Value);
       InventoryInstances.selectInstance();
       InventoryInstance.deriveNewMarcBibRecord();
       QuickMarcEditor.closeWithoutSaving();
       InventoryInstances.verifyInstanceDetailsView();
       InventoryInstance.editMarcBibliographicRecord();
-      QuickMarcEditor.updateExistingField(testData.tag100, `$a ${testData.updatedTag100Value2}`);
+      QuickMarcEditor.updateExistingField(testData.tag245, `$a ${testData.updatedTag245Value2}`);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndClose();
     },
