@@ -69,7 +69,7 @@ describe('circulation-log', () => {
         object: 'Loan',
         circAction: 'Closed loan',
         servicePoint: testData.userServicePoint.name,
-        source: 'ADMINISTRATOR, DIKU',
+        source: 'ADMINISTRATOR, Diku_admin',
       };
       SearchPane.setFilterOptionFromAccordion('loan', 'Closed loan');
       SearchPane.verifyResultCells();
