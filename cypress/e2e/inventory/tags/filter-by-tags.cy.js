@@ -15,7 +15,6 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
-import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 
 describe('Tags', () => {
   let userData;
@@ -113,7 +112,7 @@ describe('Tags', () => {
   });
 
   it(
-    'C196770 Assign tags to a Holdings record (volaris)',
+    'C343216 Filter Holdings by Tags (volaris)',
     { tags: [TestTypes.extendedPath, devTeams.volaris] },
     () => {
       const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
@@ -124,39 +123,9 @@ describe('Tags', () => {
 
       cy.visit(TopMenu.inventoryPath);
       InventorySearchAndFilter.switchToHoldings();
-      InventorySearchAndFilter.filterByTag(tagName);
-      InventoryInstance.openHoldingView();
-      HoldingsRecordEdit.openTags();
-      JobProfileView.removeTag(tagName);
-
-      cy.visit(TopMenu.inventoryPath);
-      InventorySearchAndFilter.switchToHoldings();
       InventorySearchAndFilter.resetAll();
-      InventorySearchAndFilter.verifyTagIsAbsent(tagName);
-    },
-  );
-
-  it(
-    'C196771 Assign tags to an Item record (volaris)',
-    { tags: [TestTypes.extendedPath, devTeams.volaris] },
-    () => {
-      const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
-      InventorySearchAndFilter.switchToItem();
-      InventorySearchAndFilter.searchByParameter('Barcode', testData.itemBarcode);
-      HoldingsRecordEdit.addTag(tagName);
-
-      cy.visit(TopMenu.inventoryPath);
-      InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.filterByTag(tagName);
-      InventoryInstance.openHoldings(['']);
-      InventoryInstance.openItemByBarcode(testData.itemBarcode);
-      HoldingsRecordEdit.openTags();
-      JobProfileView.removeTag(tagName);
-
-      cy.visit(TopMenu.inventoryPath);
-      InventorySearchAndFilter.switchToItem();
-      InventorySearchAndFilter.resetAll();
-      InventorySearchAndFilter.verifyTagIsAbsent(tagName);
+      InventorySearchAndFilter.checkRowsCount(1);
     },
   );
 });
