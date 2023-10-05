@@ -22,6 +22,7 @@ const getDefaultLocation = ({
   institutionId = uuid(),
   campusId = uuid(),
   libraryId = uuid(),
+  secondaryServicePointId,
 } = {}) => {
   const location = {
     id: uuid(),
@@ -36,7 +37,9 @@ const getDefaultLocation = ({
     code: `autotest_location_code_${getRandomPostfix()}`,
     discoveryDisplayName: `autotest_name_${getRandomPostfix()}`,
     // servicePointIds must have real Servi point id
-    servicePointIds: [servicePointId],
+    servicePointIds: secondaryServicePointId
+      ? [servicePointId, secondaryServicePointId]
+      : [servicePointId],
     primaryServicePoint: servicePointId,
   };
 
