@@ -92,17 +92,14 @@ describe('circulation-log', () => {
       });
   });
 
-  after(
-    'Delete owner, transfer account, feeFineType, paymentMethod, waiveReason, refundReason, user',
-    () => {
-      transferAccounts.deleteViaApi(transferAccount.id);
-      manualCharges.deleteViaApi(feeFineType.id);
-      paymentMethods.deleteViaApi(paymentMethods.id);
-      newFeeFine.deleteFeeFineAccountViaApi(feeFineAccount.id);
-      usersOwners.deleteViaApi(ownerData.id);
-      users.deleteViaApi(userData.userId);
-    },
-  );
+  after('Delete owner, transfer account, feeFineType, paymentMethod, user', () => {
+    transferAccounts.deleteViaApi(transferAccount.id);
+    manualCharges.deleteViaApi(feeFineType.id);
+    paymentMethods.deleteViaApi(paymentMethods.id);
+    newFeeFine.deleteFeeFineAccountViaApi(feeFineAccount.id);
+    usersOwners.deleteViaApi(ownerData.id);
+    users.deleteViaApi(userData.userId);
+  });
 
   it(
     'C350712 Check date and time --fee/fines (Firebird)',
