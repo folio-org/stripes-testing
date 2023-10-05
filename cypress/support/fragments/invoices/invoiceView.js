@@ -4,6 +4,7 @@ import {
   Section,
   including,
   KeyValue,
+  PaneHeader,
   Pane,
   HTML,
   MultiColumnList,
@@ -13,16 +14,20 @@ import {
 import invoices from './invoices';
 import TopMenu from '../topMenu';
 import InvoiceLineEditForm from './invoiceLineEditForm';
+import ApproveInvoiceModal from './modal/approveInvoiceModal';
 
 const vendorInvoiceNumber = '94999';
 const expectedInvoiceDate = '11/24/2021';
 const expectedInvoiceStatus = 'Open';
 const expectedInvoiceSource = 'EDI';
 
-const invoiceLinesSection = Section({ id: 'invoiceLines' });
-
+// header section
+const invoiceDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-invoiceDetails' });
 const actionsButton = Button('Actions');
 const newBlankLineButton = Button('New blank line');
+
+// invoice lines section
+const invoiceLinesSection = Section({ id: 'invoiceLines' });
 
 export default {
   selectFirstInvoice() {
@@ -61,7 +66,6 @@ export default {
       ]);
     });
   },
-
   checkInvoiceDetails(invoiceNumber) {
     cy.do(
       Section()
@@ -88,7 +92,12 @@ export default {
         }),
     );
   },
+  approveInvoice() {
+    cy.do([invoiceDetailsPaneHeader.find(actionsButton).click(), Button('Approve').click()]);
 
+    ApproveInvoiceModal.verifyModalView();
+    ApproveInvoiceModal.clickSubmitButton();
+  },
   checkQuantityInvoiceLinesInRecord(quantity) {
     cy.expect(
       Pane({ id: 'pane-results' })

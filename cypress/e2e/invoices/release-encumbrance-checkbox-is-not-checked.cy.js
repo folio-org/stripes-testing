@@ -1,5 +1,5 @@
 import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import { Invoices, InvoiceView, InvoiceLines } from '../../support/fragments/invoices';
+import { Invoices, InvoiceView, InvoiceLineDetails } from '../../support/fragments/invoices';
 import { Budgets } from '../../support/fragments/finance';
 import TopMenu from '../../support/fragments/topMenu';
 import Organizations from '../../support/fragments/organizations/organizations';
@@ -132,7 +132,7 @@ describe('Invoices', () => {
 
       // Click on created invoice line
       InvoiceView.selectInvoiceLine();
-      InvoiceLines.checkInvoiceLineDetails({
+      InvoiceLineDetails.checkInvoiceLineDetails({
         description: testData.orderLine.titleOrPackage,
         status: INVOICE_STATUSES.OPEN,
       });
