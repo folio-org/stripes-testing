@@ -72,7 +72,7 @@ describe('remote-storage-configuration', () => {
   );
 
   it(
-    'C367965 Verify text of success toast when editing remote storage configurations (firebird) (null)',
+    'C367965 Verify text of success toast when editing remote storage configurations (firebird) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.firebird] },
     () => {
       const name = `AutotestConfigurationName${getRandomPostfix()}`;
