@@ -22,6 +22,7 @@ const successfulCreateCalloutMessage = 'Remote storage configuration was success
 const successfulChangeCalloutMessage = 'Remote storage configuration was successfully changed.';
 const successfulDeleteCalloutMessage = 'Remote storage configuration was successfully deleted.';
 const configurationPane = Pane({ title: 'Configurations' });
+const editConfigurationPane = Pane({ title: including('Edit ') });
 const dataSynchronizationSettingsAccordion = Accordion('Data synchronization settings');
 const saveAndCloseBtn = Button('Save & close');
 const saveBtn = Button('Save');
@@ -30,6 +31,7 @@ const confirmationModal = Modal({ id: 'save-confirmation-modal' });
 const actionsBtn = Button('Actions');
 const xButton = Button({ icon: 'times' });
 const newButton = Button('+ New');
+const editConfigurationButton = Button({ id: 'clickable-edit-storage' });
 const generalInformationAccordion = Accordion({ label: 'General information' });
 const accessionHoldingWorkflowPreferenceAccordion = Accordion({
   label: 'Accession holding workflow preference',
@@ -76,7 +78,7 @@ const configurations = {
     },
   },
   DematicStagingDirector: {
-    title: 'Dematic StagingDirector',
+    title: REMOTE_STORAGE_PROVIDER_NAMES.DDEMATIC_STAGING_DIRECTOR,
     create(name) {
       openCreateConfigurationForm();
       this.fillRequiredFields(name);
@@ -94,7 +96,7 @@ const configurations = {
     },
   },
   CaiaSoft: {
-    title: 'CaiaSoft',
+    title: REMOTE_STORAGE_PROVIDER_NAMES.CAIA_SOFT,
     // values of options to check selected item
     returningWorkflowValues: {
       'Items received at remote storage scanned into FOLIO': 'Scanned to folio',
@@ -206,11 +208,7 @@ export default {
   editConfiguration(name, configuration) {
     // configuration keys must equals configurationFields keys
     // example { nameInput: 'test', urlInput: 'test', timingInput: '1' }
-    cy.do([
-      MultiColumnListCell({ content: name }).click(),
-      Pane({ title: name }).find(actionsBtn).click(),
-      Button({ id: 'clickable-edit-storage' }).click(),
-    ]);
+    this.opentEditConfigurationForm(name);
 
     for (const param in configuration) {
       if (param === 'provider') {
@@ -247,9 +245,7 @@ export default {
   closeWithoutSaving() {
     return cy.do([
       Modal().find(Button('Cancel')).click(),
-      Pane({ title: including('Edit ') })
-        .find(xButton)
-        .click(),
+      editConfigurationPane.find(xButton).click(),
     ]);
   },
 
@@ -315,14 +311,10 @@ export default {
     cy.do([
       MultiColumnListCell({ content: name }).click(),
       Pane({ title: name }).find(actionsBtn).click(),
-      Button({ id: 'clickable-edit-storage' }).click(),
+      editConfigurationButton.click(),
     ]);
   },
-  closeEditConfigurationWithoutSaving() {
-    return cy.do([
-      Pane({ title: including('Edit ') })
-        .find(xButton)
-        .click(),
-    ]);
+  closeEditConfiguration() {
+    cy.do([editConfigurationPane.find(xButton).click()]);
   },
 };

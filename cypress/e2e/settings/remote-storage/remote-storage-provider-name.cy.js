@@ -58,7 +58,7 @@ describe('remote-storage-configuration', () => {
       Configurations.checkProviderNameDropdownValues();
 
       // delete created configuration
-      Configurations.closeEditConfigurationWithoutSaving();
+      Configurations.closeEditConfiguration();
       Configurations.deleteRemoteStorage(name);
     },
   );
