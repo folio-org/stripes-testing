@@ -128,4 +128,20 @@ describe('Tags', () => {
       InventorySearchAndFilter.checkRowsCount(1);
     },
   );
+
+  it(
+    'C343217 Filter Items by Tags (volaris)',
+    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    () => {
+      const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
+      InventorySearchAndFilter.switchToItem();
+      InventorySearchAndFilter.searchByParameter('Barcode', testData.itemBarcode);
+      HoldingsRecordEdit.addTag(tagName);
+
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.switchToItem();
+      InventorySearchAndFilter.filterByTag(tagName);
+      InventorySearchAndFilter.checkRowsCount(1);
+    },
+  );
 });
