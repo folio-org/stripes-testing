@@ -329,7 +329,7 @@ export default {
     ]);
   },
 
-  editItemsSuppressFromDiscovery(value, rowIndex = 0) {
+  editSuppressFromDiscovery(value, rowIndex = 0, holdings = false) {
     cy.do([
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.valueType)
@@ -338,18 +338,7 @@ export default {
         .find(Select({ content: including('Set') }))
         .choose(`Set ${value}`),
     ]);
-  },
-
-  editHoldingsSuppressFromDiscovery(value, rowIndex = 0) {
-    cy.do([
-      RepeatableFieldItem({ index: rowIndex })
-        .find(bulkPageSelections.valueType)
-        .choose('Suppress from discovery'),
-      RepeatableFieldItem({ index: rowIndex })
-        .find(Select({ content: including('Set') }))
-        .choose(`Set ${value}`),
-    ]);
-    cy.expect(Checkbox('Apply to items records').has({ checked: value }));
+    if (holdings) cy.expect(Checkbox('Apply to items records').has({ checked: value }));
   },
 
   verifyItemAdminstrativeNoteActions(rowIndex = 0) {
@@ -361,6 +350,27 @@ export default {
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).click(),
     ]);
     this.verifyPossibleActions(options);
+  },
+
+  noteReplaceWith(noteType, oldNote, newNote, rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.valueType)
+        .choose(noteType),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.action)
+        .choose('Find'),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(TextArea())
+        .fillIn(oldNote),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ value: '' }))
+        .choose('Replace with')
+    ]);
+    // TODO: redesign with interactors
+    cy.xpath(
+      `//*[@data-testid="row-${rowIndex}"]/div[5]//textarea`,
+    ).type(newNote);
   },
 
   addItemNote(type, value, rowIndex = 0) {
@@ -519,8 +529,6 @@ export default {
       DropdownMenu().find(Checkbox('Preferred contact type id')).has({ disabled: true }),
       DropdownMenu().find(Checkbox('Date enrolled')).has({ disabled: true }),
       DropdownMenu().find(Checkbox('Expiration date')).has({ disabled: true }),
-      DropdownMenu().find(Checkbox('Record created')).has({ disabled: true }),
-      DropdownMenu().find(Checkbox('Record updated')).has({ disabled: true }),
       DropdownMenu().find(Checkbox('Tags')).has({ disabled: true }),
       DropdownMenu().find(Checkbox('Custom fields')).has({ disabled: true }),
     ]);
