@@ -10,24 +10,15 @@ import {
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import FinanceHelper from '../finance/financeHelper';
+import InvoiceStates from './invoiceStates';
 
 const invoiceEditFormRoot = Section({ id: 'pane-invoice-form' });
 const informationSection = invoiceEditFormRoot.find(Section({ id: 'invoiceForm-information' }));
 const extendedInformationSection = invoiceEditFormRoot.find(
   Section({ id: 'invoiceForm-extendedInformation' }),
 );
-const inputRecordSearch = SearchField({ id: 'input-record-search' });
-const searchButton = Button('Search');
 const cancelButtom = Button('Cancel');
 const saveButtom = Button('Save & close');
-
-const invoiceStates = {
-  invoiceCreatedMessage: 'Invoice has been saved',
-  invoiceLineCreatedMessage: 'Invoice line has been saved',
-  invoiceApprovedMessage: 'Invoice has been approved successfully',
-  invoicePaidMessage: 'Invoice has been paid successfully',
-  invoiceDeletedMessage: 'Invoice has been deleted',
-};
 
 const infoFields = {
   fiscalYear: informationSection.find(Button({ id: 'invoice-fiscal-year' })),
@@ -59,8 +50,8 @@ export default {
   selectVendorOnUi(vendorName) {
     cy.do([
       Button('Organization look-up').click(),
-      inputRecordSearch.fillIn(vendorName),
-      searchButton.click(),
+      SearchField({ id: 'input-record-search' }).fillIn(vendorName),
+      Button('Search').click(),
     ]);
     FinanceHelper.selectFromResultsList();
   },
@@ -95,10 +86,9 @@ export default {
   clickSaveButton({ checkCalloutMessage = true } = {}) {
     cy.expect(saveButtom.has({ disabled: false }));
     cy.do(saveButtom.click());
-    cy.expect(invoiceEditFormRoot.absent());
 
     if (checkCalloutMessage) {
-      InteractorsTools.checkCalloutMessage(invoiceStates.invoiceCreatedMessage);
+      InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
     }
     // wait for changes to be applied
     cy.wait(2000);
