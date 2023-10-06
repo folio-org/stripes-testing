@@ -315,7 +315,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
         QuickMarcEditor.updateExistingField(testData.tags.tagLDR, updatedLDRvalue);
         QuickMarcEditor.check008FieldLabels(testData.expected008BoxesSets[index]);
         QuickMarcEditor.check008BoxesCount(testData.expected008BoxesSets[index].length);
-        QuickMarcEditor.checkOnlyBackslashesIn008Boxes(testData.expected008BoxesSets[index]);
+        QuickMarcEditor.checkOnlyBackslashesIn008Boxes();
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
         InventoryInstance.checkInstanceTitle(title);
@@ -323,7 +323,6 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
           createdInstanceIDs.push(id);
         });
       });
-
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.check008FieldLabels(testData.expected008BoxesSets[5]);
       QuickMarcEditor.check008BoxesCount(testData.expected008BoxesSets[5].length);
