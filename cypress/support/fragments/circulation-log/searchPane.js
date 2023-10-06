@@ -235,11 +235,4 @@ export default {
     SearchResults.clickOnCell(barcode, 0);
     ItemRecordView.waitLoading();
   },
-
-  searchByBilled() {
-    cy.do([
-      Accordion({ id: 'fee' }).clickHeader(),
-      Checkbox({ id: 'clickable-filter-fee-billed' }).click(),
-    ]);
-  },
 };

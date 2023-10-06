@@ -94,7 +94,7 @@ describe('circulation-log', () => {
     { tags: [TestTypes.extendedPath, DevTeams.firebird] },
     () => {
       cy.visit(TopMenu.circulationLogPath);
-      SearchPane.searchByBilled();
+      SearchPane.setFilterOptionFromAccordion('fee', 'Billed');
       // Get Billed Date value for the first row
       SearchResults.getBilledDate(0).then((expectedBilledDate) => {
         SearchResults.chooseActionByRow(0, 'Fee/fine details');

@@ -19,7 +19,6 @@ export default {
     cy.do([TextArea({ name: 'comment' }).fillIn(comment), Button({ type: 'submit' }).click()]);
   },
   verifyBilledDateValue: (expectedBilledDateValue) => {
-    const billedDateLabel = 'Billed date';
-    cy.expect(KeyValue(billedDateLabel).has({ value: expectedBilledDateValue }));
+    cy.expect(KeyValue('Billed date').has({ value: expectedBilledDateValue }));
   },
 };
