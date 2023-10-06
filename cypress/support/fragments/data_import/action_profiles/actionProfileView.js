@@ -6,6 +6,7 @@ import {
   MultiColumnListCell,
   Link,
   KeyValue,
+  Callout,
 } from '../../../../../interactors';
 
 const viewPane = Pane({ id: 'view-action-profile-pane' });
@@ -48,4 +49,7 @@ export default {
   verifyAction: () => cy.expect(KeyValue('Action').has({ value: 'Update' })),
   closeViewModeForMatchProfile: () => cy.do(viewPane.find(Button({ icon: 'times' })).click()),
   verifyActionMenuAbsent: () => cy.expect(resultsPane.find(actionsButton).absent()),
+  checkCalloutMessage: (message) => {
+    cy.expect(Callout({ textContent: including(message) }).exists());
+  },
 };

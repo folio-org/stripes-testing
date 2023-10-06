@@ -4,6 +4,7 @@ import {
   Section,
   including,
   KeyValue,
+  PaneHeader,
   Pane,
   HTML,
   MultiColumnList,
@@ -12,14 +13,24 @@ import {
 } from '../../../../interactors';
 import invoices from './invoices';
 import TopMenu from '../topMenu';
+import InvoiceLineEditForm from './invoiceLineEditForm';
+import ApproveInvoiceModal from './modal/approveInvoiceModal';
 
 const vendorInvoiceNumber = '94999';
 const expectedInvoiceDate = '11/24/2021';
 const expectedInvoiceStatus = 'Open';
 const expectedInvoiceSource = 'EDI';
 
+// header section
+const invoiceDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-invoiceDetails' });
+const actionsButton = Button('Actions');
+const newBlankLineButton = Button('New blank line');
+
+// invoice lines section
+const invoiceLinesSection = Section({ id: 'invoiceLines' });
+
 export default {
-  selectFirstInvoice: () => {
+  selectFirstInvoice() {
     cy.do(
       MultiColumnList({ id: 'invoices-list' })
         .find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
@@ -27,16 +38,35 @@ export default {
         .click(),
     );
   },
-  selectInvoiceLine: () => {
+  selectInvoiceLine() {
     cy.do(
-      Section({ id: 'invoiceLines' })
+      invoiceLinesSection
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 0 }))
         .click(),
     );
   },
+  openInvoiceLineEditForm() {
+    cy.do([invoiceLinesSection.find(actionsButton).click(), newBlankLineButton.click()]);
+    InvoiceLineEditForm.waitLoading();
 
-  checkInvoiceDetails: (invoiceNumber) => {
+    return InvoiceLineEditForm;
+  },
+  checkTableContent(records = []) {
+    records.forEach((record, index) => {
+      cy.expect([
+        invoiceLinesSection
+          .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+          .find(MultiColumnListCell({ columnIndex: 1 }))
+          .has({ content: including(record.poNumber) }),
+        invoiceLinesSection
+          .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+          .find(MultiColumnListCell({ columnIndex: 2 }))
+          .has({ content: including(record.description) }),
+      ]);
+    });
+  },
+  checkInvoiceDetails(invoiceNumber) {
     cy.do(
       Section()
         .find(MultiColumnListCell(including(invoiceNumber)))
@@ -62,8 +92,13 @@ export default {
         }),
     );
   },
+  approveInvoice() {
+    cy.do([invoiceDetailsPaneHeader.find(actionsButton).click(), Button('Approve').click()]);
 
-  checkQuantityInvoiceLinesInRecord: (quantity) => {
+    ApproveInvoiceModal.verifyModalView();
+    ApproveInvoiceModal.clickSubmitButton();
+  },
+  checkQuantityInvoiceLinesInRecord(quantity) {
     cy.expect(
       Pane({ id: 'pane-results' })
         .find(HTML(including(`${quantity} records found`)))

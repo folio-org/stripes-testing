@@ -80,7 +80,7 @@ describe('Bulk Edit - Logs', () => {
 
       BulkEditActions.downloadMatchedResults();
       BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.editItemsSuppressFromDiscovery(false);
+      BulkEditActions.editSuppressFromDiscovery(false);
       BulkEditActions.addNewBulkEditFilterString();
       BulkEditActions.fillPermanentLoanType('Selected', 1);
       BulkEditActions.confirmChanges();

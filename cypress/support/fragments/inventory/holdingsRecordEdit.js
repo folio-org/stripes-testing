@@ -10,7 +10,11 @@ import {
   Callout,
   calloutTypes,
   Spinner,
+  MultiSelect,
+  MultiSelectOption,
+  TextInput,
 } from '../../../../interactors';
+import InteractorsTools from '../../utils/interactorsTools';
 
 const rootForm = HTML({ className: including('holdingsForm-') });
 const holdingsHrId = rootForm.find(TextField({ name: 'hrid' }));
@@ -42,6 +46,18 @@ export default {
       Button({ id: 'additem_temporarylocation' }).click(),
       SelectionList().select('Select location'),
     ]);
+  },
+  openTags() {
+    cy.do(Button({ id: 'accordion-toggle-button-tag-accordion' }).click());
+  },
+  addTag(tag) {
+    this.openTags();
+    cy.do([
+      TextInput({ id: 'multiselect-input-input-tag' }).fillIn(tag),
+      MultiSelect().open(),
+      MultiSelectOption(including(tag)).click(),
+    ]);
+    InteractorsTools.checkCalloutMessage('New tag created');
   },
   addHoldingsNotes: (text, type = 'Action note') => {
     cy.do([

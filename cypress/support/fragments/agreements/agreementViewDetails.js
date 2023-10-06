@@ -36,7 +36,6 @@ const agreementLineDeleteModel = Modal({ id: 'delete-agreement-line-confirmation
 const newNoteButton = Button('New', { id: 'note-create-button' });
 const assignUnassignButton = Button('Assign / Unassign', { id: 'note-assign-button' });
 const notesList = MultiColumnList({ id: 'notes-list' });
-const agreementLinesList = MultiColumnList({ id: 'agreement-lines' });
 const deleteButtonInConfirmation = Button('Delete', {
   id: 'clickable-delete-agreement-confirmation-confirm',
 });
@@ -46,10 +45,13 @@ const organizationsAccordion = rootSection.find(Accordion({ id: 'organizations' 
 const internalContactsAccordion = rootSection.find(Accordion({ id: 'internalContacts' }));
 const supplementaryDocumentsAccordion = rootSection.find(Accordion({ id: 'supplementaryDocs' }));
 const agreementLinesAccordion = rootSection.find(Accordion({ id: 'lines' }));
+const agreementLinesList = agreementLinesAccordion.find(MultiColumnList());
 const cancelButton = Button('Cancel');
 const calloutSuccess = Callout({ type: 'success' });
 const notesSection = Section({ id: 'notes' });
 const viewAgreementPane = Pane({ id: 'pane-view-agreement' });
+const newAgreementLineButton = Button({ id: 'add-agreement-line-button' });
+const viewInAgreementLineSearchButton = Button({ id: 'agreement-line-search' });
 
 function openAgreementLineAccordion() {
   cy.do(agreementLine.click());
@@ -152,6 +154,14 @@ export default {
     cy.do(
       notesList
         .find(MultiColumnListCell({ column: 'Title and details', content: including(title) }))
+        .click(),
+    );
+  },
+
+  clickAgreementLineRecordByTitle(title) {
+    cy.do(
+      agreementLinesList
+        .find(MultiColumnListCell({ column: 'Name / Description', content: including(title) }))
         .click(),
     );
   },
@@ -419,5 +429,14 @@ export default {
     cy.wait('@downloadFile').then((res) => {
       expect(res.response.statusCode).to.eq(200);
     });
+  },
+
+  clickActionsForAgreementLines() {
+    cy.do([agreementLinesAccordion.find(actionsButton).click()]);
+    cy.expect([newAgreementLineButton.exists(), viewInAgreementLineSearchButton.exists()]);
+  },
+
+  clickNewAgreementLine() {
+    cy.do(newAgreementLineButton.click());
   },
 };
