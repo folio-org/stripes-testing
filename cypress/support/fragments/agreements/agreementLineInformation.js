@@ -1,10 +1,12 @@
 import { Keyboard } from '@interactors/keyboard';
 import { Button, KeyValue, Section, Pane, MultiSelect, Badge } from '../../../../interactors';
+import AgreementViewDetails from './agreementViewDetails';
 
 const rootSection = Section({ id: 'pane-view-agreement-line' });
 const tagsButton = Button({ id: 'clickable-show-tags' });
 const tagsPane = Pane('Tags');
 const addTagsField = MultiSelect({ label: 'Tag text area' });
+const closeButton = rootSection.find(Button({ icon: 'times' }));
 
 export default {
   waitLoadingWithExistingLine(title) {
@@ -33,5 +35,15 @@ export default {
 
   verifyTagsCount(itemCount) {
     cy.expect(tagsButton.find(Badge()).has({ text: itemCount }));
+  },
+
+  verifyDescription(description) {
+    cy.expect(rootSection.find(KeyValue('Description')).has({ value: description }));
+  },
+
+  close() {
+    cy.do(closeButton.click());
+    cy.expect(rootSection.absent());
+    AgreementViewDetails.waitLoading();
   },
 };
