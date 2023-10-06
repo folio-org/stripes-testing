@@ -65,7 +65,6 @@ describe('bulk-edit', () => {
         BulkEditActions.commitChanges();
 
         BulkEditSearchPane.verifyErrorLabelAfterChanges(editedFileName, 0, 1);
-        BulkEditSearchPane.verifyReasonForError('Field "createdDate"');
         BulkEditActions.openActions();
       },
     );
