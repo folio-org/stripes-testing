@@ -93,10 +93,12 @@ describe('Invoices', () => {
       // Open invoice by clicking on its "Vendor invoice number" link on "Invoices" pane
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
       Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);
-      Invoices.checkInvoiceDetails({
-        ...testData.invoice,
-        status: INVOICE_STATUSES.OPEN,
-        fiscalYear: 'No value set',
+      InvoiceView.checkInvoiceDetails({
+        title: testData.invoice.vendorInvoiceNo,
+        invoiceInformation: [
+          { key: 'Status', value: INVOICE_STATUSES.OPEN },
+          { key: 'Fiscal year', value: 'No value set' },
+        ],
       });
 
       // Click "Actions" button in "Invoice lines" accordion, Select "New blank line" option
