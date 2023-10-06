@@ -29,10 +29,7 @@ describe('data-import', () => {
         // createt not linked mapping profile
         NewFieldMappingProfile.createMappingProfileViaApi(notLinkedMappingProfile);
       });
-      cy.createTempUser([
-        Permissions.settingsDataImportEnabled.gui,
-        Permissions.uiInventorySettingsConfigureSingleRecordImport.gui,
-      ]).then((userProperties) => {
+      cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
 
         cy.login(user.username, user.password);
