@@ -37,7 +37,7 @@ describe('Loan date and time', () => {
       Permissions.circulationLogAll.gui,
       Permissions.uiInventoryViewInstances.gui,
       Permissions.uiUsersViewLoans.gui,
-      Permissions.inventoryAll.gui,
+      Permissions.uiInventoryViewCreateEditDeleteItems.gui,
     ])
       .then((userProperties) => {
         userData = userProperties;
