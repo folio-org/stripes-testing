@@ -13,39 +13,20 @@ describe('Invoices', () => {
   const organization = NewOrganization.getDefaultOrganization();
   const testData = {
     organization,
-    order: NewOrder.getDefaultOrder({ vendorId: organization.id }),
+    order: {},
     invoice: {},
     user: {},
   };
 
   before('Create test data', () => {
     cy.getAdminToken().then(() => {
-      const isApprovePayEnabled = true;
-      Approvals.setApprovePayValue(isApprovePayEnabled);
-
       const { fiscalYear, fund, budget } = Budgets.createBudgetWithFundLedgerAndFYViaApi();
 
       testData.fiscalYear = fiscalYear;
       testData.fund = fund;
       testData.budget = budget;
 
-      Organizations.createOrganizationViaApi(testData.organization).then(() => {
-        testData.orderLine = BasicOrderLine.getDefaultOrderLine({
-          listUnitPrice: 98,
-          fundDistribution: [{ code: fund.code, fundId: fund.id, value: 100 }],
-        });
-
-        Orders.createOrderWithOrderLineViaApi(testData.order, testData.orderLine).then((order) => {
-          testData.order = order;
-
-          Invoices.createInvoiceViaApi({
-            vendorId: testData.organization.id,
-            accountingCode: testData.organization.erpCode,
-          }).then((invoice) => {
-            testData.invoice = invoice;
-          });
-        });
-      });
+      Organizations.createOrganizationViaApi(testData.organization);
     });
 
     cy.createTempUser([
@@ -55,12 +36,36 @@ describe('Invoices', () => {
       Permissions.uiInvoicesPayInvoices.gui,
     ]).then((userProperties) => {
       testData.user = userProperties;
+    });
+  });
 
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.invoicesPath,
-        waiter: Invoices.waitLoading,
+  beforeEach(() => {
+    testData.order = NewOrder.getDefaultOrder({ vendorId: organization.id });
+    testData.orderLine = BasicOrderLine.getDefaultOrderLine({
+      listUnitPrice: 98,
+      fundDistribution: [{ code: testData.fund.code, fundId: testData.fund.id, value: 100 }],
+    });
+
+    Orders.createOrderWithOrderLineViaApi(testData.order, testData.orderLine).then((order) => {
+      testData.order = order;
+
+      Invoices.createInvoiceViaApi({
+        vendorId: testData.organization.id,
+        accountingCode: testData.organization.erpCode,
+      }).then((invoice) => {
+        testData.invoice = invoice;
       });
     });
+
+    cy.login(testData.user.username, testData.user.password, {
+      path: TopMenu.invoicesPath,
+      waiter: Invoices.waitLoading,
+    });
+  });
+
+  afterEach(() => {
+    Invoices.deleteInvoiceViaApi(testData.invoice.id);
+    Orders.deleteOrderViaApi(testData.order.id);
   });
 
   after('Delete test data', () => {
@@ -68,10 +73,21 @@ describe('Invoices', () => {
     Users.deleteViaApi(testData.user.userId);
   });
 
-  it(
-    'C397321 User is not able to approve and pay invoice with linked order in "Pending" status ("Approve and pay in one click" setting is enabled) (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
-    () => {
+  [
+    {
+      description:
+        'C397321 User is not able to approve and pay invoice with linked order in "Pending" status ("Approve and pay in one click" setting is enabled) (thunderjet) (TaaS)',
+      isApprovePayEnabled: true,
+    },
+    {
+      description:
+        'C397326 User is not able to approve and pay invoice with linked order in "Pending" status ("Approve and pay in one click" setting is disabled) (thunderjet) (TaaS)',
+      isApprovePayEnabled: false,
+    },
+  ].forEach(({ description, isApprovePayEnabled }) => {
+    it(description, { tags: [TestTypes.criticalPath, DevTeams.thunderjet] }, () => {
+      Approvals.setApprovePayValue(isApprovePayEnabled);
+
       // Click on "Vendor invoice number" link
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
       Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);
@@ -100,9 +116,12 @@ describe('Invoices', () => {
       InvoiceView.expandActionsDropdown();
       InvoiceView.checkActionButtonsConditions([
         { label: 'Edit', conditions: { disabled: false } },
-        { label: 'Approve & pay', conditions: { disabled: true } },
+        {
+          label: isApprovePayEnabled ? 'Approve & pay' : 'Approve',
+          conditions: { disabled: true },
+        },
         { label: 'Delete', conditions: { disabled: false } },
       ]);
-    },
-  );
+    });
+  });
 });
