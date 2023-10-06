@@ -7,8 +7,8 @@ import NewFieldMappingProfile from '../../../support/fragments/data_import/mappi
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
-describe('data-import:', () => {
-  describe('Settings: Create a new field mapping profile with a long name', () => {
+describe('data-import', () => {
+  describe('Settings', () => {
     let user;
     const mappingProfile = {
       name: `C2349 autotest field mapping profile ${getRandomStringCode(160)}`,

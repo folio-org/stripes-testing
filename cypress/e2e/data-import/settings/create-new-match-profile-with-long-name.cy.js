@@ -6,8 +6,8 @@ import Users from '../../../support/fragments/users/users';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import MatchProfileView from '../../../support/fragments/data_import/match_profiles/matchProfileView';
 
-describe('data-import:', () => {
-  describe('Settings: Create a new match profile with a long name', () => {
+describe('data-import', () => {
+  describe('Settings', () => {
     let user;
     const matchProfile = {
       profileName: `C2343 autotest match profile ${getRandomStringCode(160)}`,
