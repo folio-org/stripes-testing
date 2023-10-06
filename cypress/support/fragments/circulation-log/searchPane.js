@@ -11,7 +11,6 @@ import {
   Pane,
   TextField,
   including,
-  Link,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import SearchResults from './searchResults';
@@ -210,10 +209,6 @@ export default {
 
   goToUserDetails() {
     cy.do([dropdownButton.click(), DropdownMenu().find(Button()).click()]);
-  },
-
-  goToItemDetails(barcode) {
-    cy.do(Link(including(barcode)).click());
   },
 
   userDetailIsOpen() {

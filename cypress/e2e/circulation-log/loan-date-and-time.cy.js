@@ -94,7 +94,7 @@ describe('Loan date and time', () => {
       SearchPane.verifyResultCells(true);
       cy.wrap(MultiColumnListCell({ row: 0, columnIndex: 4 }).text()).as('date');
       // Click to "Item barcode" on the row with Circ Action "Checked out" => View "Checked Out" date and time displayed on Items view page
-      SearchPane.goToItemDetails(ITEM_BARCODE);
+      SearchResults.clickOnCell(ITEM_BARCODE, 0);
       cy.get('@date').then((date) => {
         InventoryInstance.verifyCheckedOutDate(date);
         // Go to the result list with items again
