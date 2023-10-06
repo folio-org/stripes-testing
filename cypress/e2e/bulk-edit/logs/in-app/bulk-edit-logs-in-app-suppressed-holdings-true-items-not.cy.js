@@ -99,7 +99,7 @@ describe('Bulk Edit - Logs', () => {
       BulkEditActions.openActions();
       BulkEditSearchPane.changeShowColumnCheckbox('Suppress from discovery');
       BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.editHoldingsSuppressFromDiscovery(suppressFromDiscovery);
+      BulkEditActions.editSuppressFromDiscovery(suppressFromDiscovery, 0, true);
       BulkEditActions.addNewBulkEditFilterString();
       BulkEditActions.replacePermanentLocation(newLocation, 'holdings', 1);
       BulkEditActions.addNewBulkEditFilterString();

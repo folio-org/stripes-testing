@@ -21,8 +21,8 @@ import {
   SearchField,
   Section,
   Select,
-  TextField,
   TextArea,
+  TextField,
   including,
 } from '../../../../interactors';
 

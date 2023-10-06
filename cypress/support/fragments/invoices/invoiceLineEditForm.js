@@ -1,56 +1,47 @@
 import {
   Button,
+  Checkbox,
   SearchField,
   Section,
-  Select,
   Selection,
   SelectionList,
-  TextArea,
   TextField,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import FinanceHelper from '../finance/financeHelper';
 import InvoiceStates from './invoiceStates';
 
-const invoiceEditFormRoot = Section({ id: 'pane-invoice-form' });
-const informationSection = invoiceEditFormRoot.find(Section({ id: 'invoiceForm-information' }));
-const extendedInformationSection = invoiceEditFormRoot.find(
-  Section({ id: 'invoiceForm-extendedInformation' }),
+const invoiceLineEditFormRoot = Section({ id: 'pane-invoice-line-form' });
+const informationSection = invoiceLineEditFormRoot.find(
+  Section({ id: 'invoiceLineForm-information' }),
 );
+
 const cancelButtom = Button('Cancel');
 const saveButtom = Button('Save & close');
 
 const infoFields = {
-  fiscalYear: informationSection.find(Button({ id: 'invoice-fiscal-year' })),
-  note: informationSection.find(TextArea({ id: 'note' })),
-};
-
-const extendedInfoFields = {
-  paymentMethod: extendedInformationSection.find(Select({ id: 'invoice-payment-method' })),
+  releaseEncumbrance: informationSection.find(Checkbox({ name: 'releaseEncumbrance' })),
 };
 
 const buttons = {
-  'Fiscal year': infoFields.fiscalYear,
+  'Release encumbrance': infoFields.releaseEncumbrance,
   Cancel: cancelButtom,
   'Save & close': saveButtom,
 };
 
 export default {
   waitLoading() {
-    cy.expect(invoiceEditFormRoot.exists());
+    cy.expect(invoiceLineEditFormRoot.exists());
   },
   checkButtonsConditions(fields = []) {
     fields.forEach(({ label, conditions }) => {
       cy.expect(buttons[label].has(conditions));
     });
   },
-  checkFiscalYearIsAbsent() {
-    cy.do(infoFields.fiscalYear.absent());
-  },
-  selectVendorOnUi(vendorName) {
+  selectOrderLines(orderLine) {
     cy.do([
-      Button('Organization look-up').click(),
-      SearchField({ id: 'input-record-search' }).fillIn(vendorName),
+      Button('POL look-up').click(),
+      SearchField({ id: 'input-record-search' }).fillIn(orderLine),
       Button('Search').click(),
     ]);
     FinanceHelper.selectFromResultsList();
@@ -71,9 +62,6 @@ export default {
     if (invoice.batchGroupName) {
       cy.do([Selection('Batch group*').open(), SelectionList().select(invoice.batchGroupName)]);
     }
-    if (invoice.paymentMethod) {
-      cy.do(extendedInfoFields.paymentMethod.choose(invoice.paymentMethod));
-    }
     if (invoice.note) {
       cy.do(infoFields.note.fillIn(invoice.note));
       cy.expect(infoFields.note.has({ value: invoice.note }));
@@ -81,16 +69,16 @@ export default {
   },
   clickCancelButton() {
     cy.do(cancelButtom.click());
-    cy.expect(invoiceEditFormRoot.absent());
+    cy.expect(invoiceLineEditFormRoot.absent());
   },
   clickSaveButton({ checkCalloutMessage = true } = {}) {
     cy.expect(saveButtom.has({ disabled: false }));
     cy.do(saveButtom.click());
 
     if (checkCalloutMessage) {
-      InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
+      InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
     }
     // wait for changes to be applied
-    cy.wait(2000);
+    cy.wait(1000);
   },
 };
