@@ -45,7 +45,7 @@ const navigationInstancesButton = Button({
 const paneFilterSection = Section({ id: 'pane-filter' });
 const paneResultsSection = Section({ id: 'pane-results' });
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
-const instancesTagsSection = Section({ id: 'instancesTags' });
+const instancesTagsSection = Section({ id: including('Tags') });
 const tagsPane = Pane('Tags');
 const tagsButton = Button({ id: 'clickable-show-tags' });
 const tagsAccordionButton = instancesTagsSection.find(Button('Tags'));
@@ -505,12 +505,18 @@ export default {
     cy.expect(MultiColumnList({ id: 'list-inventory' }).has({ rowCount: 1 }));
   },
 
+  searchTag(tag) {
+    cy.do([tagsAccordionButton.click(), instancesTagsSection.find(TextField()).fillIn(tag)]);
+  },
+
   filterByTag(tag) {
-    cy.do([
-      tagsAccordionButton.click(),
-      instancesTagsSection.find(TextField()).fillIn(tag),
-      instancesTagsSection.find(Checkbox(tag)).click(),
-    ]);
+    this.searchTag(tag);
+    cy.do(instancesTagsSection.find(Checkbox(tag)).click());
+  },
+
+  verifyTagIsAbsent(tag) {
+    this.searchTag(tag);
+    cy.expect(HTML('No matching options').exists());
   },
 
   resetAllAndVerifyNoResultsAppear() {
@@ -560,6 +566,11 @@ export default {
 
   selectFoundItem(callNumber, suffix) {
     cy.do(Button(including(`${callNumber} ${suffix}`)).click());
+  },
+
+  selectFoundItemFromBrowseResultList(value) {
+    cy.do(Button(including(value)).click());
+    cy.expect(instanceDetailsSection.exists());
   },
 
   verifyInstanceDisplayed(instanceTitle) {
@@ -632,5 +643,9 @@ export default {
       paneResultsSection.find(HTML(including('No results found for'))).exists(),
       instancesList.absent(),
     ]);
+  },
+
+  verifyInstanceDetailsViewAbsent() {
+    cy.expect(instanceDetailsSection.absent());
   },
 };

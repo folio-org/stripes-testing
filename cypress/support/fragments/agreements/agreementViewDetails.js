@@ -18,12 +18,12 @@ import {
   SearchField,
   Link,
   Card,
+  ListRow,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import NewNote from '../notes/newNote';
 import { getLongDelay } from '../../utils/cypressTools';
 import EditAgreement from './editAgreement';
-import { ListRow } from '../../../../interactors/multi-column-list';
 
 const rootSection = Section({ id: 'pane-view-agreement' });
 const deleteButton = Button('Delete');
@@ -44,10 +44,14 @@ const notesAccordion = rootSection.find(Accordion({ id: 'notes' }));
 const organizationsAccordion = rootSection.find(Accordion({ id: 'organizations' }));
 const internalContactsAccordion = rootSection.find(Accordion({ id: 'internalContacts' }));
 const supplementaryDocumentsAccordion = rootSection.find(Accordion({ id: 'supplementaryDocs' }));
+const agreementLinesAccordion = rootSection.find(Accordion({ id: 'lines' }));
+const agreementLinesList = agreementLinesAccordion.find(MultiColumnList());
 const cancelButton = Button('Cancel');
 const calloutSuccess = Callout({ type: 'success' });
 const notesSection = Section({ id: 'notes' });
 const viewAgreementPane = Pane({ id: 'pane-view-agreement' });
+const newAgreementLineButton = Button({ id: 'add-agreement-line-button' });
+const viewInAgreementLineSearchButton = Button({ id: 'agreement-line-search' });
 
 function openAgreementLineAccordion() {
   cy.do(agreementLine.click());
@@ -116,6 +120,11 @@ export default {
     cy.expect(internalContactsAccordion.has({ open: true }));
   },
 
+  openAgreementLineSection() {
+    cy.do(agreementLinesAccordion.find(Button({ id: 'accordion-toggle-button-lines' })).click());
+    cy.expect(agreementLinesAccordion.has({ open: true }));
+  },
+
   openOrganizationsSection() {
     cy.do(organizationsAccordion.click());
     cy.expect(organizationsAccordion.has({ open: true }));
@@ -145,6 +154,14 @@ export default {
     cy.do(
       notesList
         .find(MultiColumnListCell({ column: 'Title and details', content: including(title) }))
+        .click(),
+    );
+  },
+
+  clickAgreementLineRecordByTitle(title) {
+    cy.do(
+      agreementLinesList
+        .find(MultiColumnListCell({ column: 'Name / Description', content: including(title) }))
         .click(),
     );
   },
@@ -305,6 +322,10 @@ export default {
     );
   },
 
+  verifyAgreementLinesCount(itemCount) {
+    cy.expect(agreementLinesAccordion.find(Badge()).has({ text: itemCount }));
+  },
+
   verifyAgreementDetailsIsDisplayedByTitle(agreementTitle) {
     cy.expect(Pane(agreementTitle).exists());
   },
@@ -342,6 +363,17 @@ export default {
       document
         .find(ListRow(including('URL')))
         .find(MultiColumnListCell(including(url)))
+        .exists(),
+    ]);
+  },
+
+  verifySpecialAgreementLineRow({ description }) {
+    cy.expect([
+      agreementLinesList.exists(),
+      agreementLinesList
+        .find(
+          MultiColumnListCell({ column: 'Name / Description', content: including(description) }),
+        )
         .exists(),
     ]);
   },
@@ -397,5 +429,14 @@ export default {
     cy.wait('@downloadFile').then((res) => {
       expect(res.response.statusCode).to.eq(200);
     });
+  },
+
+  clickActionsForAgreementLines() {
+    cy.do([agreementLinesAccordion.find(actionsButton).click()]);
+    cy.expect([newAgreementLineButton.exists(), viewInAgreementLineSearchButton.exists()]);
+  },
+
+  clickNewAgreementLine() {
+    cy.do(newAgreementLineButton.click());
   },
 };
