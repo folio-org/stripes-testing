@@ -216,6 +216,7 @@ describe('Loan Details', () => {
       PayFeeFine.setAmount(200);
       PayFeeFine.checkRestOfPay(200);
       PayFeeFine.submitAndConfirm();
+      PayFeeFine.checkConfirmModalClosed();
 
       // Click on linked value for overdue policy
       cy.visit(AppPaths.getOpenLoansPath(userData.userId));
