@@ -1,7 +1,5 @@
 import testTypes from '../../../support/dictionary/testTypes';
 import eHoldingsNewCustomPackage from '../../../support/fragments/eholdings/eHoldingsNewCustomPackage';
-import eHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
-import eHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
 import eHoldingsProviderEdit from '../../../support/fragments/eholdings/eHoldingsProviderEdit';
 import eHoldingsProviders from '../../../support/fragments/eholdings/eHoldingsProviders';
 import eHoldingsProvidersSearch from '../../../support/fragments/eholdings/eHoldingsProvidersSearch';
@@ -66,7 +64,6 @@ describe.skip('Create a custom package', () => {
       cy.visit(topMenu.eholdingsPath);
       eHoldingsSearch.switchToPackages();
       eHoldingsProvidersSearch.byProvider('Edinburgh Scholarship Online');
-      eHoldingsPackagesSearch.bySelectionStatus('Selected');
       eHoldingsProviders.viewPackage();
       eHolding.editActions();
       eHolding.patronRadioButton();
@@ -103,7 +100,6 @@ describe.skip('Create a custom package', () => {
       cy.visit(topMenu.eholdingsPath);
       eHoldingsSearch.switchToPackages();
       eHoldingsProvidersSearch.byProvider('Gale Academic OneFile');
-      eHoldingsPackagesSearch.bySelectionStatus('Selected');
       eHoldingsProviders.viewPackage();
       eHolding.editActions();
       eHolding.providerToken();
@@ -116,7 +112,6 @@ describe.skip('Create a custom package', () => {
     () => {
       cy.visit(topMenu.eholdingsPath);
       eHolding.switchToPackage();
-      eHoldingsPackages.openPackage();
       organizations.editOrganization();
       eHolding.generateRandomDates();
       eHolding.verifyAlternativeDates();

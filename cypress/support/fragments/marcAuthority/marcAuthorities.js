@@ -23,7 +23,6 @@ import {
   Select,
   TextArea,
   TextField,
-  TextArea,
   including,
 } from '../../../../interactors';
 

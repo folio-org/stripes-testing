@@ -27,6 +27,7 @@ import { randomFourDigitNumber } from '../../utils/stringTools';
 import FinanceHelper from '../finance/financeHelper';
 import InvoiceEditForm from './invoiceEditForm';
 import { INVOICE_STATUSES } from '../../constants';
+import InvoiceStates from './invoiceStates';
 
 const invoiceResultsPane = Pane({ id: 'invoice-results-pane' });
 const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
@@ -35,13 +36,7 @@ const informationSection = invoiceDetailsPane.find(Section({ id: 'information' }
 
 const buttonNew = Button('New');
 const saveAndClose = Button('Save & close');
-const invoiceStates = {
-  invoiceCreatedMessage: 'Invoice has been saved',
-  invoiceLineCreatedMessage: 'Invoice line has been saved',
-  invoiceApprovedMessage: 'Invoice has been approved successfully',
-  invoicePaidMessage: 'Invoice has been paid successfully',
-  invoiceDeletedMessage: 'Invoice has been deleted',
-};
+
 const vendorDetailsAccordionId = 'vendorDetails';
 const invoiceLinesAccordionId = 'invoiceLines';
 const actionsButton = Button('Actions');
@@ -120,14 +115,18 @@ export default {
       })
       .then(({ body }) => body);
   },
-  createInvoiceViaApi(invoiceProperties) {
-    return cy
-      .okapiRequest({
+  createInvoiceViaApi({ vendorId, accountingCode }) {
+    cy.getBatchGroups().then(({ id: batchGroupId }) => {
+      const invoice = getDefaultInvoice({ batchGroupId, vendorId, accountingCode });
+      cy.okapiRequest({
         method: 'POST',
         path: 'invoice/invoices',
-        body: invoiceProperties,
-      })
-      .then(({ body }) => body);
+        body: invoice,
+      }).then(({ body }) => {
+        cy.wrap(body).as('invoice');
+      });
+    });
+    return cy.get('@invoice');
   },
   updateInvoiceViaApi(invoiceProperties) {
     return cy.okapiRequest({
@@ -171,20 +170,17 @@ export default {
       .then(({ body }) => body);
   },
   createInvoiceWithInvoiceLineViaApi({ vendorId, poLineId, fundDistributions, accountingCode }) {
-    cy.getBatchGroups().then(({ id: batchGroupId }) => {
-      const invoice = getDefaultInvoice({ batchGroupId, vendorId, accountingCode });
-      this.createInvoiceViaApi(invoice).then((resp) => {
-        cy.wrap(resp).as('invoice');
-        const { id: invoiceId, status: invoiceLineStatus } = resp;
-        const invoiceLine = getDefaultInvoiceLine({
-          invoiceId,
-          invoiceLineStatus,
-          poLineId,
-          fundDistributions,
-          accountingCode,
-        });
-        this.createInviceLineViaApi(invoiceLine);
+    this.createInvoiceViaApi({ vendorId, accountingCode }).then((resp) => {
+      cy.wrap(resp).as('invoice');
+      const { id: invoiceId, status: invoiceLineStatus } = resp;
+      const invoiceLine = getDefaultInvoiceLine({
+        invoiceId,
+        invoiceLineStatus,
+        poLineId,
+        fundDistributions,
+        accountingCode,
       });
+      this.createInviceLineViaApi(invoiceLine);
     });
     return cy.get('@invoice');
   },
@@ -212,7 +208,7 @@ export default {
     FinanceHelper.selectFromResultsList();
     cy.get('input[name="subTotal"]').clear().type(total);
     cy.do([fundInInvoiceSection.find(Button('%')).click(), saveAndClose.click()]);
-    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage);
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
     cy.wait(4000);
   },
 
@@ -244,7 +240,7 @@ export default {
     ]);
     this.checkVendorPrimaryAddress(vendorPrimaryAddress);
     cy.do(saveAndClose.click());
-    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceCreatedMessage);
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
   },
 
   createRolloverInvoice(invoice, organization) {
@@ -265,7 +261,7 @@ export default {
       Checkbox('Export to accounting').checked(false),
     ]);
     cy.do(saveAndClose.click());
-    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceCreatedMessage);
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
   },
 
   createSpecialInvoice(invoice) {
@@ -288,7 +284,7 @@ export default {
       Checkbox('Export to accounting').click(),
     ]);
     cy.do(saveAndClose.click());
-    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceCreatedMessage);
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
   },
 
   selectVendorOnUi: (organizationName) => {
@@ -362,12 +358,12 @@ export default {
         id: 'clickable-delete-invoice-confirmation-confirm',
       }).click(),
     );
-    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceDeletedMessage);
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceDeletedMessage);
   },
 
   createInvoiceLine: (invoiceLine) => {
     cy.do(Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click());
-    cy.do(Button('New blank line').click());
+    cy.do(newBlankLineButton.click());
     // TODO: update using interactors once we will be able to pass negative value into text field
     cy.xpath('//*[@id="subTotal"]').type(invoiceLine.subTotal);
     cy.do([
@@ -375,12 +371,12 @@ export default {
       TextField('Quantity*').fillIn(invoiceLine.quantity.toString()),
       saveAndClose.click(),
     ]);
-    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage);
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
   },
 
   createInvoiceLinePOLLookUp: (orderNumber) => {
     cy.do(Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click());
-    cy.do(Button('New blank line').click());
+    cy.do(newBlankLineButton.click());
     cy.do([
       Button('POL look-up').click(),
       Modal('Select order lines')
@@ -390,7 +386,7 @@ export default {
     ]);
     FinanceHelper.selectFromResultsList();
     cy.do(saveAndClose.click());
-    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage);
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
   },
 
   createInvoiceLineFromPol(orderNumber, rowNumber = 0) {
@@ -456,7 +452,7 @@ export default {
       SelectionList().select(fund.name.concat(' ', '(', fund.code, ')')),
       saveAndClose.click(),
     ]);
-    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage);
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
   },
 
   addFundToLine: (fund) => {
@@ -466,7 +462,7 @@ export default {
       SelectionList().select(fund.name.concat(' ', '(', fund.code, ')')),
       saveAndClose.click(),
     ]);
-    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage);
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
   },
 
   deleteFundInInvoiceLine: () => {
@@ -476,7 +472,7 @@ export default {
         .click(),
       saveAndClose.click(),
     ]);
-    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage);
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
   },
 
   approveInvoice: () => {
@@ -485,7 +481,7 @@ export default {
       Button('Approve').click(),
       submitButton.click(),
     ]);
-    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceApprovedMessage);
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceApprovedMessage);
   },
 
   searchByNumber: (invoiceNumber) => {
@@ -506,7 +502,7 @@ export default {
       Button('Pay').click(),
       submitButton.click(),
     ]);
-    InteractorsTools.checkCalloutMessage(invoiceStates.invoicePaidMessage);
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoicePaidMessage);
   },
 
   updateCurrency: (currency) => {
@@ -517,7 +513,7 @@ export default {
       SelectionList().select(currency),
       saveAndClose.click(),
     ]);
-    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceCreatedMessage);
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
   },
 
   checkConfirmationalPopup: () => {
@@ -532,7 +528,9 @@ export default {
     cy.expect([
       invoiceDetailsPane.has({ title: `Vendor invoice number - ${invoice.vendorInvoiceNo}` }),
       informationSection.find(KeyValue('Status')).has({ value: invoice.status }),
-      informationSection.find(KeyValue('Fiscal year')).has({ value: invoice.fiscalYear }),
+      informationSection
+        .find(KeyValue('Fiscal year'))
+        .has({ value: including(invoice.fiscalYear) }),
     ]);
   },
   checkInvoiceCurrency: (currencyShortName) => {

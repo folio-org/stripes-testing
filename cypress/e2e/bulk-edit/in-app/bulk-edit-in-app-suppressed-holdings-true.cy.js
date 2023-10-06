@@ -62,7 +62,7 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckbox('Suppress from discovery');
         BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditActions.editHoldingsSuppressFromDiscovery(suppressFromDiscovery);
+        BulkEditActions.editSuppressFromDiscovery(suppressFromDiscovery, 0, true);
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();
 
