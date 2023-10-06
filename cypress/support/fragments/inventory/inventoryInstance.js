@@ -273,10 +273,12 @@ export default {
     cy.expect(section.find(HTML(including('MARC'))).exists());
     cy.expect(section.find(HTML(including('FOLIO'))).absent());
   },
+
   verifyUnlinkIcon(tag) {
     // Waiter needed for the link to be loaded properly.
     cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(unlinkIconButton).exists());
   },
+
   verifyLinkIcon(tag) {
     // Waiter needed for the link to be loaded properly.
     cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(linkIconButton).exists());
