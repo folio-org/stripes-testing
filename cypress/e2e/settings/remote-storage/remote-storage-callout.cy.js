@@ -6,9 +6,9 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import RemoteStorage from '../../../support/fragments/settings/remote-storage/remoteStorage';
 
 let user;
-const name = `AutotestConfigurationName${getRandomPostfix()}`;
 const caiaSoft = Configurations.configurations.CaiaSoft;
 const dematicStagingDirector = Configurations.configurations.DematicStagingDirector;
+const dematicEMS = Configurations.configurations.DematicEMS;
 
 describe('remote-storage-configuration', () => {
   before('create test data', () => {
@@ -26,6 +26,7 @@ describe('remote-storage-configuration', () => {
     'C367964 Verify text of success toast when creating remote storage configurations (firebird) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.firebird] },
     () => {
+      const name = `AutotestConfigurationName${getRandomPostfix()}`;
       // #1 Go to the "Settings" app
       // #2 Select "Remote storage"
       cy.visit(SettingsMenu.remoteStoragePath);
@@ -66,6 +67,38 @@ describe('remote-storage-configuration', () => {
       Configurations.confirmCreateRemoteStorage();
       // Success toast at the bottom of the "Configurations" pane reads: "Remote storage configuration was successfully created"
       Configurations.verifyCreatedConfiguration(name, caiaSoft);
+      Configurations.deleteRemoteStorage(name);
+    },
+  );
+
+  it(
+    'C367965 Verify text of success toast when editing remote storage configurations (firebird) (TaaS)',
+    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    () => {
+      const name = `AutotestConfigurationName${getRandomPostfix()}`;
+      const editedConfiguration = {
+        provider: 'CaiaSoft',
+        accessionHoldingWorkflow: 'Change permanent location',
+        returningWorkflow: 'Items received at remote storage scanned into FOLIO',
+      };
+      // #1 Go to the "Settings" app
+      // #2 Select "Remote storage"
+      cy.visit(SettingsMenu.remoteStoragePath);
+
+      // #3 Select "Configurations" on the "Remote storage" pane by clicking on it
+      RemoteStorage.goToConfigurations();
+
+      // #4 - 9 Create "Dematic EMS (API)" configuration
+      dematicEMS.create(name);
+      Configurations.verifyCreatedConfiguration(name, dematicEMS);
+
+      // #10 - 15 Edit Configuration
+      Configurations.editConfiguration(name, editedConfiguration);
+      // #16 Select "Save" button
+      Configurations.closeWithSaving();
+      // Success toast at the bottom of the "Configurations" pane reads: "Remote storage configuration was successfully changed."
+      Configurations.verifyEditedConfiguration(name);
+
       Configurations.deleteRemoteStorage(name);
     },
   );

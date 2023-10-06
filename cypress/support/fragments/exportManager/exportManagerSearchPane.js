@@ -1,4 +1,4 @@
-import { including } from 'bigtest';
+import { HTML, including } from '@interactors/html';
 import {
   Pane,
   Button,
@@ -11,7 +11,6 @@ import {
   MultiColumnList,
   PaneHeader,
   KeyValue,
-  HTML,
   MultiColumnListRow,
 } from '../../../../interactors';
 
@@ -34,9 +33,14 @@ const jobDetailsPane = Pane('Export job ');
 const waitClick = () => {
   cy.wait(1000);
 };
+const exportJob = (jobId) => {
+  // TODO: redesign to interactors
+  cy.get(`a:contains(${jobId})`).first().click();
+};
 
 export default {
   getSearchResult,
+  exportJob,
   waitLoading() {
     cy.expect([
       Pane('Export jobs').exists(),
@@ -207,6 +211,11 @@ export default {
     );
   },
 
+  searchByEHoldings() {
+    waitClick();
+    cy.do(jobTypeAccordion.find(Checkbox({ id: 'clickable-filter-type-e-holdings' })).click());
+  },
+
   downloadLastCreatedJob(jobId) {
     // TODO: redesign to interactors
     cy.get(`a:contains(${jobId})`).first().click();
@@ -276,5 +285,16 @@ export default {
         .find(KeyValue('End time'))
         .has({ value: including(expectedValuesObject.startDate) }),
     ]);
+  },
+
+  verifyExportedFileName(actualName) {
+    // valid name example: 2023-10-05_10-34-45_1166_123355-3551879_package
+    expect(actualName).to.match(
+      /^cypress\/downloads\/\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}_\d+_\d+-\d+_package\.csv$/,
+    );
+  },
+
+  verifyContentOfExportFile(actual, ...expectedArray) {
+    expectedArray.forEach((expectedItem) => expect(actual).to.include(expectedItem));
   },
 };
