@@ -81,6 +81,14 @@ export default {
     );
   },
 
+  checkCreateProfileCalloutMessage: (profileName) => {
+    cy.expect(
+      Callout({
+        textContent: including(`The action profile "${profileName}" was successfully created`),
+      }).exists(),
+    );
+  },
+
   createWithoutLinkedMappingProfile: (actionProfile) => {
     openNewActionProfileForm();
     NewActionProfile.fill(actionProfile);
