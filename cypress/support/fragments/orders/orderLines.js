@@ -29,6 +29,7 @@ import {
   RECEIVING_WORKFLOW_NAMES,
   MATERIAL_TYPE_NAMES,
   ORDER_PAYMENT_STATUS,
+  RECEIPT_STATUS_SELECTED,
 } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import selectLocationModal from './modals/selectLocationModal';
@@ -163,6 +164,18 @@ export default {
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 0 }))
         .has({ content: `${fund.name}(${fund.code})` }),
+    ]);
+  },
+  checkPOLReceiptStatus(receiptStatus) {
+    cy.expect([
+      orderLineDetailsPane.exists(),
+      poLineInfoSection.find(KeyValue({ value: receiptStatus })).exists(),
+    ]);
+  },
+  checkPOLReceivingWorkflow(receivingWorkflow) {
+    cy.expect([
+      orderLineDetailsPane.exists(),
+      poLineInfoSection.find(KeyValue({ value: receivingWorkflow })).exists(),
     ]);
   },
   checkCreatedPOLineOtherResource(orderLineTitleName, fund) {
@@ -328,6 +341,51 @@ export default {
       quantityPhysicalLocationField.fillIn(quantityPhysical),
       saveAndCloseButton.click(),
     ]);
+  },
+
+  POLineInfoWithReceiptNotRequiredStatus: (institutionId) => {
+    cy.do([
+      orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
+      acquisitionMethodButton.click(),
+      SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
+      Select({ name: 'receiptStatus' }).choose(RECEIPT_STATUS_SELECTED.RECEIPT_NOT_REQUIRED),
+    ]);
+    cy.expect(receivingWorkflowSelect.disabled());
+    cy.do([
+      physicalUnitPriceTextField.fillIn(physicalUnitPrice),
+      quantityPhysicalTextField.fillIn(quantityPhysical),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
+      addLocationButton.click(),
+      createNewLocationButton.click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+    cy.do([
+      selectPermanentLocationModal.find(saveButton).click(),
+      quantityPhysicalLocationField.fillIn(quantityPhysical),
+      saveAndCloseButton.click(),
+    ]);
+  },
+
+  POLineInfoEditWithReceiptNotRequiredStatus: () => {
+    cy.do(Select({ name: 'receiptStatus' }).choose(RECEIPT_STATUS_SELECTED.RECEIPT_NOT_REQUIRED));
+    cy.expect(receivingWorkflowSelect.disabled());
+    cy.do(saveAndCloseButton.click());
+  },
+
+  POLineInfoEditWithPendingReceiptStatus: () => {
+    cy.do([
+      Select({ name: 'receiptStatus' }).choose(RECEIPT_STATUS_SELECTED.PENDING),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
+      ),
+      saveAndCloseButton.click(),
+    ]);
+  },
+
+  checkCalloutMessageInEditedPOL: (orderNumber, numberOfPOL) => {
+    InteractorsTools.checkCalloutMessage(
+      `The purchase order line ${orderNumber}-${numberOfPOL} was successfully updated`,
+    );
   },
 
   POLineInfodorPhysicalMaterialWithFund: (orderLineTitleName, fund) => {
