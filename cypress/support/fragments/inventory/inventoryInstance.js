@@ -129,6 +129,7 @@ const administrativeDataAccordion = Accordion('Administrative data');
 const unlinkIconButton = Button({ icon: 'unlink' });
 const itemBarcodeField = TextField({ name: 'barcode' });
 const viewHoldingsButtonByID = (holdingsID) => Section({ id: holdingsID }).find(viewHoldingsButton);
+const marcAuthorityAppIcon = Link({ href: including('/marc-authorities/authorities/') });
 
 const validOCLC = {
   id: '176116217',
@@ -218,6 +219,16 @@ const verifyContributor = (indexRow, indexColumn, value) => {
   );
 };
 
+const verifyContributorWithMarcAppLink = (indexRow, indexColumn, value) => {
+  cy.expect(
+    contributorAccordion
+      .find(MultiColumnList({ id: 'list-contributors' }))
+      .find(MultiColumnListRow({ index: indexRow }))
+      .find(MultiColumnListCell({ columnIndex: indexColumn }))
+      .has({ content: including(value) }),
+  );
+};
+
 const verifyInstanceSubject = (indexRow, indexColumn, value) => {
   cy.expect(
     Accordion('Subject')
@@ -264,6 +275,7 @@ export default {
   openItemByBarcode,
   verifyAlternativeTitle,
   verifyContributor,
+  verifyContributorWithMarcAppLink,
 
   checkExpectedOCLCPresence: (OCLCNumber = validOCLC.id) => {
     cy.expect(identifiers.find(HTML(including(OCLCNumber))).exists());
@@ -976,5 +988,25 @@ export default {
   openHoldingViewByID: (holdingsID) => {
     cy.do(viewHoldingsButtonByID(holdingsID).click());
     cy.expect(Button('Actions').exists());
+  },
+
+  checkMarcAppIconExist: (indexRow) => {
+    cy.expect(
+      contributorAccordion
+        .find(MultiColumnList({ id: 'list-contributors' }))
+        .find(MultiColumnListRow({ index: indexRow }))
+        .find(marcAuthorityAppIcon)
+        .exists(),
+    );
+  },
+
+  checkMarcAppIconAbsent: (indexRow) => {
+    cy.expect(
+      contributorAccordion
+        .find(MultiColumnList({ id: 'list-contributors' }))
+        .find(MultiColumnListRow({ index: indexRow }))
+        .find(marcAuthorityAppIcon)
+        .absent(),
+    );
   },
 };

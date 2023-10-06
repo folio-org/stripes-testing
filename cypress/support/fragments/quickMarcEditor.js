@@ -63,6 +63,9 @@ const removeLinkingButton = Button({
   id: 'clickable-quick-marc-remove-authority-linking-confirm-modal-confirm',
 });
 const unlinkButtonInsideModal = Button({ id: 'clickable-quick-marc-confirm-unlink-modal-confirm' });
+const cancelUnlinkButtonInsideModal = Button({
+  id: 'clickable-quick-marc-confirm-unlink-modal-cancel',
+});
 const calloutAfterSaveAndClose = Callout(
   'This record has successfully saved and is in process. Changes may not appear immediately.',
 );
@@ -442,6 +445,15 @@ export default {
   clickUnlinkIconInTagField(rowIndex) {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).click());
     cy.expect(unlinkModal.exists());
+    cy.do(unlinkModal.find(unlinkButtonInsideModal).click());
+  },
+
+  checkUnlinkModal(rowIndex, text) {
+    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).click());
+    cy.expect(unlinkModal.exists());
+    cy.expect(unlinkButtonInsideModal.exists());
+    cy.expect(cancelUnlinkButtonInsideModal.exists());
+    cy.expect(unlinkModal.has({ content: including(text) }));
     cy.do(unlinkModal.find(unlinkButtonInsideModal).click());
   },
 
@@ -1060,6 +1072,10 @@ export default {
 
   checkLinkButtonToolTipText(text) {
     cy.do(getRowInteractorByTagName('100').find(linkToMarcRecordButton).hoverMouse());
+    cy.expect(Tooltip().has({ text }));
+  },
+  checkUnlinkTooltipText(tag, text) {
+    cy.do(getRowInteractorByTagName(tag).find(unlinkIconButton).hoverMouse());
     cy.expect(Tooltip().has({ text }));
   },
 
