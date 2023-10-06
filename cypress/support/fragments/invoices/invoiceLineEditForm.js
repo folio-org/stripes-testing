@@ -1,12 +1,4 @@
-import {
-  Button,
-  Checkbox,
-  SearchField,
-  Section,
-  Selection,
-  SelectionList,
-  TextField,
-} from '../../../../interactors';
+import { Button, Checkbox, SearchField, Section, TextField } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import FinanceHelper from '../finance/financeHelper';
 import InvoiceStates from './invoiceStates';
@@ -21,6 +13,7 @@ const saveButtom = Button('Save & close');
 
 const infoFields = {
   releaseEncumbrance: informationSection.find(Checkbox({ name: 'releaseEncumbrance' })),
+  subTotal: informationSection.find(TextField({ id: 'subTotal' })),
 };
 
 const buttons = {
@@ -46,25 +39,10 @@ export default {
     ]);
     FinanceHelper.selectFromResultsList();
   },
-  fillInvoiceFields(invoice) {
-    if (invoice.status) {
-      cy.do([Selection('Status*').open(), SelectionList().select(invoice.status)]);
-    }
-    if (invoice.invoiceDate) {
-      cy.do(TextField('Invoice date*').fillIn(invoice.invoiceDate));
-    }
-    if (invoice.vendorInvoiceNo) {
-      cy.do(TextField('Vendor invoice number*').fillIn(invoice.vendorInvoiceNo));
-    }
-    if (invoice.vendorName) {
-      this.selectVendorOnUi(invoice.vendorName);
-    }
-    if (invoice.batchGroupName) {
-      cy.do([Selection('Batch group*').open(), SelectionList().select(invoice.batchGroupName)]);
-    }
-    if (invoice.note) {
-      cy.do(infoFields.note.fillIn(invoice.note));
-      cy.expect(infoFields.note.has({ value: invoice.note }));
+  fillInvoiceFields(invoiceLine) {
+    if (invoiceLine.subTotal) {
+      cy.do(infoFields.subTotal.fillIn(invoiceLine.subTotal));
+      cy.do(infoFields.subTotal.has({ value: invoiceLine.subTotal }));
     }
   },
   clickCancelButton() {
