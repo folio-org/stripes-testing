@@ -1,4 +1,20 @@
+import { Checkbox, KeyValue, Pane, Section, including } from '../../../../interactors';
+
+// invoice lines details
+const invoiceLineDetailsPane = Pane({ id: 'pane-invoiceLineDetails' });
+const informationSection = invoiceLineDetailsPane.find(Section({ id: 'invoiceLineInformation' }));
+
 export default {
+  checkInvoiceLineDetails(invoiceLine) {
+    cy.expect([
+      invoiceLineDetailsPane.exists(),
+      informationSection
+        .find(KeyValue('Description'))
+        .has({ value: including(invoiceLine.description) }),
+      informationSection.find(KeyValue('Status')).has({ value: including(invoiceLine.status) }),
+      informationSection.find(Checkbox({ disabled: true, text: 'Release encumbrance' })).exists(),
+    ]);
+  },
   getInvoiceLinesViaApi(searchParams) {
     return cy
       .okapiRequest({
