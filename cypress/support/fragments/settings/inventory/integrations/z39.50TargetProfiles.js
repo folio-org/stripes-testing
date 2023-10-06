@@ -43,8 +43,9 @@ function create() {
 function addJobProfileForCreate(profile = defaultCreateInstanceJobProfileName) {
   // wait until elements will be displayed on page
   cy.wait(1000);
+  cy.do(Button('Add job profile for import/create').click());
+  cy.wait(1000);
   cy.do([
-    Button('Add job profile for import/create').click(),
     Selection({ singleValue: 'Select job profile for import/create' }).open(),
     SelectionList().select(profile),
   ]);

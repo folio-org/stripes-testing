@@ -127,7 +127,7 @@ describe('data-import', () => {
 
     it(
       'C347831 MODDICORE-231 "Match on Instance identifier match meets both the Identifier type and Data requirements" Scenario 4 (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.parallel] },
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         // change files for create and update instance using random identifier code
         DataImport.editMarcFile(
