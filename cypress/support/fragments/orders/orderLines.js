@@ -1,4 +1,3 @@
-import { MultiSelect } from 'bigtest';
 import {
   Button,
   SearchField,

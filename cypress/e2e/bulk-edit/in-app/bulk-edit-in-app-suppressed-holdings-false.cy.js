@@ -43,11 +43,14 @@ describe('bulk-edit', () => {
         );
         cy.getHoldings({ query: `"instanceId"="${inventoryEntity.instanceId}"` }).then(
           (holdings) => {
-            inventoryEntity.holdingHRID = holdings[0].hrid;
             FileManager.createFile(
               `cypress/fixtures/${holdingHRIDsFileName}`,
-              inventoryEntity.holdingHRID,
+              holdings[0].hrid,
             );
+            cy.updateHoldingRecord(holdings[0].id, {
+              ...holdings[0],
+              discoverySuppress: true,
+            });
           },
         );
 
@@ -77,7 +80,8 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckbox('Suppress from discovery');
         BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditActions.editHoldingsSuppressFromDiscovery(suppressFromDiscovery);
+        BulkEditActions.editSuppressFromDiscovery(suppressFromDiscovery, 0, true);
+        // cy.pause();
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();
 
