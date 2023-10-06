@@ -63,9 +63,11 @@ describe('ui-requests: Request: Create a New Request with Patron Comment.', () =
   after('Deleting created entities', () => {
     UserEdit.changeServicePointPreferenceViaApi(requestUserData.userId, [testData.servicePoint.id]);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
-    cy.deleteItemViaApi(folioInstances[0].itemIds);
-    cy.deleteHoldingRecordViaApi(folioInstances[0].holdingId);
-    InventoryInstance.deleteInstanceViaApi(folioInstances[0].instanceId);
+    InventoryInstances.deleteInstanceViaApi({
+      instance: folioInstances[0],
+      servicePoint: testData.servicePoint,
+      shouldCheckIn: true,
+    });
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
