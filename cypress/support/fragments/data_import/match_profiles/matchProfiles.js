@@ -112,6 +112,14 @@ export default {
     );
   },
 
+  checkCreateProfileCalloutMessage: (profileName) => {
+    cy.expect(
+      Callout({
+        textContent: including(`The match profile "${profileName}" was successfully created`),
+      }).exists(),
+    );
+  },
+
   checkListOfExistingProfilesIsDisplayed: () => cy.expect(resultsPane.exists()),
   selectMatchProfileFromList: (profileName) => cy.do(MultiColumnListCell(profileName).click()),
   verifyActionMenuAbsent: () => cy.expect(resultsPane.find(actionsButton).absent()),

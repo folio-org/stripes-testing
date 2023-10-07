@@ -173,6 +173,16 @@ export const ACQUISITION_METHOD_NAMES_IN_PROFILE = {
   PURCHASE_AT_VENDOR_SYSTEM: 'Purchase at vendor system',
 };
 
+export const RECEIPT_STATUS_SELECTED = {
+  PENDING: 'Pending',
+  RECEIPT_NOT_REQUIRED: 'Receipt not required',
+};
+
+export const RECEIPT_STATUS_VIEW = {
+  PENDING: 'Pending',
+  RECEIPT_NOT_REQUIRED: 'Receipt Not Required',
+};
+
 export const RECEIVING_WORKFLOW_NAMES = {
   SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY: 'Synchronized order and receipt quantity',
   INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY: 'Independent order and receipt quantity',
