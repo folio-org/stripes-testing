@@ -107,6 +107,7 @@ export default {
     });
     return cy.get('@order');
   },
+
   updateOrderViaApi(order) {
     return cy.okapiRequest({
       method: 'PUT',
@@ -114,6 +115,7 @@ export default {
       body: order,
     });
   },
+
   openOrder() {
     expandActionsDropdown();
     cy.do([Button('Open').click(), Button('Submit').click()]);
