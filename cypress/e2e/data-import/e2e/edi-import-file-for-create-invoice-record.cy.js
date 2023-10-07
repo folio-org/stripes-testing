@@ -3,6 +3,7 @@ import permissions from '../../../support/dictionary/permissions';
 import { DevTeams, TestTypes } from '../../../support/dictionary';
 import {
   FOLIO_RECORD_TYPE,
+  INVOICE_STATUSES,
   PAYMENT_METHOD,
   BATCH_GROUP,
   ACCEPTED_DATA_TYPE_NAMES,
@@ -18,7 +19,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import InvoiceView from '../../../support/fragments/invoices/invoiceView';
+import { Invoices, InvoiceView } from '../../../support/fragments/invoices';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import Users from '../../../support/fragments/users/users';
 
@@ -47,6 +48,7 @@ describe('data-import', () => {
       profileName: `C343338 autoTestJobProf.${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.EDIFACT,
     };
+    const vendorInvoiceNumber = '94999';
 
     before('login', () => {
       cy.createTempUser([
@@ -113,7 +115,19 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.invoice,
         );
         FileDetails.checkInvoiceInSummaryTable(quantityOfItems);
-        InvoiceView.checkInvoiceDetails(InvoiceView.vendorInvoiceNumber);
+        FileDetails.getInvoiceNumber(vendorInvoiceNumber).then((invoiceNumber) => {
+          cy.visit(TopMenu.invoicesPath);
+          Invoices.searchByNumber(invoiceNumber);
+          Invoices.selectInvoice(invoiceNumber);
+
+          InvoiceView.checkInvoiceDetails({
+            invoiceInformation: [
+              { key: 'Invoice date', value: '11/24/2021' },
+              { key: 'Status', value: INVOICE_STATUSES.OPEN },
+              { key: 'Source', value: 'EDI' },
+            ],
+          });
+        });
       },
     );
   });

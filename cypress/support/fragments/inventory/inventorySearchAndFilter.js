@@ -644,4 +644,8 @@ export default {
       instancesList.absent(),
     ]);
   },
+
+  verifyInstanceDetailsViewAbsent() {
+    cy.expect(instanceDetailsSection.absent());
+  },
 };

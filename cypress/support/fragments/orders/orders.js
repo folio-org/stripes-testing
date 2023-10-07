@@ -28,6 +28,7 @@ import { getLongDelay } from '../../utils/cypressTools';
 import DateTools from '../../utils/dateTools';
 import FileManager from '../../utils/fileManager';
 import UnopenConfirmationModal from './modals/unopenConfirmationModal';
+import OrderLines from './orderLines';
 
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderorders-results-pane-subtitle"]/span';
 const zeroResultsFoundText = '0 records found';
@@ -87,22 +88,26 @@ export default {
   },
 
   createOrderViaApi(order) {
-    cy.createOrderApi(order).then(({ body }) => {
-      cy.wrap(body).as('order');
-    });
-    return cy.get('@order');
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'orders/composite-orders',
+        body: order,
+      })
+      .then(({ body }) => body);
   },
   createOrderWithOrderLineViaApi(order, orderLine) {
-    cy.createOrderApi(order).then((response) => {
-      cy.wrap(response.body).as('order');
+    this.createOrderViaApi(order).then((response) => {
+      cy.wrap(response).as('order');
       cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then(({ body }) => {
         orderLine.acquisitionMethod = body.acquisitionMethods[0].id;
         orderLine.purchaseOrderId = order.id;
-        cy.createOrderLineApi(orderLine);
+        OrderLines.createOrderLineViaApi(orderLine);
       });
     });
     return cy.get('@order');
   },
+
   updateOrderViaApi(order) {
     return cy.okapiRequest({
       method: 'PUT',
@@ -110,6 +115,7 @@ export default {
       body: order,
     });
   },
+
   openOrder() {
     expandActionsDropdown();
     cy.do([Button('Open').click(), Button('Submit').click()]);
