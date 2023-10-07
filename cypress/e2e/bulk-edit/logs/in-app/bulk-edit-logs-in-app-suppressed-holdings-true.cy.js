@@ -61,7 +61,8 @@ describe('bulk-edit', () => {
           (instance) => {
             item.instanceHRID = instance.hrid;
             FileManager.createFile(`cypress/fixtures/${instanceHRIDFileName}`, item.instanceHRID);
-          });
+          }
+        );
       });
     });
 
