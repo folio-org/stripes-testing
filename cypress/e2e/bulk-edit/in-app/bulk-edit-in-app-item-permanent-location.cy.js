@@ -45,7 +45,7 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C353634 Verify the in-app bulk edit permanent location form (firebird) (taas)',
+      'C353634 Verify the in-app bulk edit permanent location form (firebird) (TaaS)',
       { tags: [testTypes.extendedPath, devTeams.firebird] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
