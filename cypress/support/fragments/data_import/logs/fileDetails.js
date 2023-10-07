@@ -274,6 +274,14 @@ export default {
     );
   },
 
+  openJsonScreen: (title) => {
+    cy.get('#search-results-list')
+      .find('*[class^="mclCell"]')
+      .contains(title)
+      .invoke('removeAttr', 'target')
+      .click();
+  },
+
   filterRecordsWithError: (quantity) => {
     cy.do(
       jobSummaryTable
