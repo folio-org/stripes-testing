@@ -25,136 +25,134 @@ const matchedRecordsFileName = `Matched-Records-${instanceHRIDFileName}`;
 const previewOfProposedChangesFileName = `*-Updates-Preview-${instanceHRIDFileName}`;
 const updatedRecordsFileName = `*-Changed-Records*-${instanceHRIDFileName}`;
 
-describe('bulk-edit', () => {
-  describe('in-app approach', () => {
-    before('create test data', () => {
-      cy.createTempUser([
-        permissions.bulkEditView.gui,
-        permissions.bulkEditEdit.gui,
-        permissions.inventoryAll.gui,
-        permissions.bulkEditLogsView.gui,
-      ]).then((userProperties) => {
-        user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
-
-        item.instanceId = InventoryInstances.createInstanceViaApi(
-          item.instanceName,
-          item.itemBarcode,
-        );
-        cy.getHoldings({
-          limit: 1,
-          expandAll: true,
-          query: `"instanceId"="${item.instanceId}"`,
-        }).then((holdings) => {
-          item.holdingsHRID = holdings[0].hrid;
-          cy.updateHoldingRecord(holdings[0].id, {
-            ...holdings[0],
-            discoverySuppress: true,
-            permanentLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
-            temporaryLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
-          });
-        });
-        cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${item.instanceId}"` }).then(
-          (instance) => {
-            item.instanceHRID = instance.hrid;
-            FileManager.createFile(`cypress/fixtures/${instanceHRIDFileName}`, item.instanceHRID);
-          }
-        );
+describe('Bulk Edit - Logs', () => {
+  before('create test data', () => {
+    cy.createTempUser([
+      permissions.bulkEditView.gui,
+      permissions.bulkEditEdit.gui,
+      permissions.inventoryAll.gui,
+      permissions.bulkEditLogsView.gui,
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.bulkEditPath,
+        waiter: BulkEditSearchPane.waitLoading,
       });
-    });
 
-    after('delete test data', () => {
-      Users.deleteViaApi(user.userId);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-      FileManager.deleteFile(`cypress/fixtures/${instanceHRIDFileName}`);
-      FileManager.deleteFileFromDownloadsByMask(
-        instanceHRIDFileName,
-        `*${matchedRecordsFileName}`,
-        previewOfProposedChangesFileName,
-        updatedRecordsFileName,
+      item.instanceId = InventoryInstances.createInstanceViaApi(
+        item.instanceName,
+        item.itemBarcode,
+      );
+      cy.getHoldings({
+        limit: 1,
+        expandAll: true,
+        query: `"instanceId"="${item.instanceId}"`,
+      }).then((holdings) => {
+        item.holdingsHRID = holdings[0].hrid;
+        cy.updateHoldingRecord(holdings[0].id, {
+          ...holdings[0],
+          discoverySuppress: true,
+          permanentLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
+          temporaryLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
+        });
+      });
+      cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${item.instanceId}"` }).then(
+        (instance) => {
+          item.instanceHRID = instance.hrid;
+          FileManager.createFile(`cypress/fixtures/${instanceHRIDFileName}`, item.instanceHRID);
+        }
       );
     });
+  });
 
-    it(
-      'C399062 Verify generated Logs files for Holdings suppressed from discovery (Set true) (firebird) (taas)',
-      { tags: [testTypes.extendedPath, devTeams.firebird] },
-      () => {
-        BulkEditSearchPane.checkHoldingsRadio();
-        BulkEditSearchPane.selectRecordIdentifier('Instance HRIDs');
-        BulkEditSearchPane.uploadFile(instanceHRIDFileName);
-        BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID);
-
-        const suppressFromDiscovery = true;
-        const newLocation = 'Main Library';
-        BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckbox('Suppress from discovery');
-        BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditActions.editSuppressFromDiscovery(suppressFromDiscovery, 0, true);
-        BulkEditActions.checkApplyToItemsRecordsCheckbox();
-        BulkEditActions.addNewBulkEditFilterString();
-        BulkEditActions.replacePermanentLocation(newLocation, 'holdings', 1);
-        BulkEditActions.addNewBulkEditFilterString();
-        BulkEditActions.replaceTemporaryLocation(newLocation, 'holdings', 2);
-        BulkEditActions.confirmChanges();
-        BulkEditActions.commitChanges();
-
-        BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyChangesUnderColumns(
-          'Suppress from discovery',
-          suppressFromDiscovery,
-        );
-
-        BulkEditSearchPane.openLogsSearch();
-        BulkEditSearchPane.checkHoldingsCheckbox();
-        BulkEditSearchPane.clickActionsRunBy(user.username);
-
-        BulkEditSearchPane.downloadFileUsedToTrigger();
-        BulkEditFiles.verifyCSVFileRows(instanceHRIDFileName, [item.instanceHRID]);
-
-        BulkEditSearchPane.downloadFileWithMatchingRecords();
-        BulkEditFiles.verifyMatchedResultFileContent(
-          `*${matchedRecordsFileName}`,
-          [item.instanceHRID],
-          'instanceHrid',
-          true,
-        );
-
-        BulkEditSearchPane.downloadFileWithProposedChanges();
-        BulkEditFiles.verifyMatchedResultFileContent(
-          previewOfProposedChangesFileName,
-          [item.instanceHRID],
-          'instanceHrid',
-          true,
-        );
-
-        BulkEditSearchPane.downloadFileWithUpdatedRecords();
-        BulkEditFiles.verifyMatchedResultFileContent(
-          updatedRecordsFileName,
-          [item.instanceHRID],
-          'instanceHrid',
-          true,
-        );
-
-        TopMenuNavigation.navigateToApp('Inventory');
-        InventorySearchAndFilter.switchToItem();
-        InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
-        ItemRecordView.waitLoading();
-        ItemRecordView.closeDetailView();
-        InventorySearchAndFilter.selectViewHoldings();
-        InventoryInstance.verifyHoldingsPermanentLocation(newLocation);
-        InventoryInstance.verifyHoldingsTemporaryLocation(newLocation);
-        HoldingsRecordView.checkMarkAsSuppressedFromDiscovery();
-
-        TopMenuNavigation.navigateToApp('Inventory');
-        InventorySearchAndFilter.switchToItem();
-        InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
-        ItemRecordView.waitLoading();
-        ItemRecordView.suppressedAsDiscoveryIsAbsent();
-      },
+  after('delete test data', () => {
+    Users.deleteViaApi(user.userId);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
+    FileManager.deleteFile(`cypress/fixtures/${instanceHRIDFileName}`);
+    FileManager.deleteFileFromDownloadsByMask(
+      instanceHRIDFileName,
+      `*${matchedRecordsFileName}`,
+      previewOfProposedChangesFileName,
+      updatedRecordsFileName,
     );
   });
+
+  it(
+    'C399062 Verify generated Logs files for Holdings suppressed from discovery (Set true) (firebird) (taas)',
+    { tags: [testTypes.extendedPath, devTeams.firebird] },
+    () => {
+      BulkEditSearchPane.checkHoldingsRadio();
+      BulkEditSearchPane.selectRecordIdentifier('Instance HRIDs');
+      BulkEditSearchPane.uploadFile(instanceHRIDFileName);
+      BulkEditSearchPane.waitFileUploading();
+      BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID);
+
+      const suppressFromDiscovery = true;
+      const newLocation = 'Main Library';
+      BulkEditActions.openActions();
+      BulkEditSearchPane.changeShowColumnCheckbox('Suppress from discovery');
+      BulkEditActions.openInAppStartBulkEditFrom();
+      BulkEditActions.editSuppressFromDiscovery(suppressFromDiscovery, 0, true);
+      BulkEditActions.checkApplyToItemsRecordsCheckbox();
+      BulkEditActions.addNewBulkEditFilterString();
+      BulkEditActions.replacePermanentLocation(newLocation, 'holdings', 1);
+      BulkEditActions.addNewBulkEditFilterString();
+      BulkEditActions.replaceTemporaryLocation(newLocation, 'holdings', 2);
+      BulkEditActions.confirmChanges();
+      BulkEditActions.commitChanges();
+
+      BulkEditSearchPane.waitFileUploading();
+      BulkEditSearchPane.verifyChangesUnderColumns(
+        'Suppress from discovery',
+        suppressFromDiscovery,
+      );
+
+      BulkEditSearchPane.openLogsSearch();
+      BulkEditSearchPane.checkHoldingsCheckbox();
+      BulkEditSearchPane.clickActionsRunBy(user.username);
+
+      BulkEditSearchPane.downloadFileUsedToTrigger();
+      BulkEditFiles.verifyCSVFileRows(instanceHRIDFileName, [item.instanceHRID]);
+
+      BulkEditSearchPane.downloadFileWithMatchingRecords();
+      BulkEditFiles.verifyMatchedResultFileContent(
+        `*${matchedRecordsFileName}`,
+        [item.instanceHRID],
+        'instanceHrid',
+        true,
+      );
+
+      BulkEditSearchPane.downloadFileWithProposedChanges();
+      BulkEditFiles.verifyMatchedResultFileContent(
+        previewOfProposedChangesFileName,
+        [item.instanceHRID],
+        'instanceHrid',
+        true,
+      );
+
+      BulkEditSearchPane.downloadFileWithUpdatedRecords();
+      BulkEditFiles.verifyMatchedResultFileContent(
+        updatedRecordsFileName,
+        [item.instanceHRID],
+        'instanceHrid',
+        true,
+      );
+
+      TopMenuNavigation.navigateToApp('Inventory');
+      InventorySearchAndFilter.switchToItem();
+      InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
+      ItemRecordView.waitLoading();
+      ItemRecordView.closeDetailView();
+      InventorySearchAndFilter.selectViewHoldings();
+      InventoryInstance.verifyHoldingsPermanentLocation(newLocation);
+      InventoryInstance.verifyHoldingsTemporaryLocation(newLocation);
+      HoldingsRecordView.checkMarkAsSuppressedFromDiscovery();
+
+      TopMenuNavigation.navigateToApp('Inventory');
+      InventorySearchAndFilter.switchToItem();
+      InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
+      ItemRecordView.waitLoading();
+      ItemRecordView.suppressedAsDiscoveryIsAbsent();
+    },
+  );
 });
