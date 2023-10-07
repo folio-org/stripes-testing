@@ -1,6 +1,6 @@
 import add from 'date-fns/add';
 import { including } from '@interactors/html';
-import { Button, KeyValue, Section, Select, TextField } from '../../../../interactors';
+import { Button, KeyValue, Section, Select, TextField, TextArea } from '../../../../interactors';
 import { FULFILMENT_PREFERENCES } from '../../constants';
 import Requests from './requests';
 import DateTools from '../../utils/dateTools';
@@ -19,6 +19,7 @@ const deliveryTypeAddressTypeSelect = Select({ name: 'deliveryAddressTypeId' });
 const requestExpirationDateKeyValue = KeyValue('Request expiration date');
 const holdShelfExpirationDateKeyValue = KeyValue('Hold shelf expiration date');
 const pickupServicePointKeyValue = KeyValue('Pickup service point');
+const patronComment = TextArea({ id: 'patronComments' });
 
 const expirationDates = [...new Array(5)].map((_, i) => {
   const date = add(new Date(), { years: 1, days: i + 1 });
@@ -163,5 +164,9 @@ export default {
     // after updating request via API, reloading page is necessary
     cy.reload();
     cy.expect(paneResultsSection.exists());
+  },
+
+  verifyPatronCommentsFieldIsNotEditable: () => {
+    cy.expect(patronComment.absent());
   },
 };

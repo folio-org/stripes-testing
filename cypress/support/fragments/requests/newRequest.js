@@ -191,12 +191,12 @@ export default {
     cy.expect(requestInfoSection.find(HTML(patronGroupName)).exists());
   },
 
-  enterRequestAndPatron: (patron) => {
+  enterRequestAndPatron(patron) {
     cy.do([
       TextField({ id: 'requestExpirationDate' }).fillIn(dateTools.getCurrentDate()),
       TextArea({ id: 'patronComments' }).fillIn(patron),
-      Checkbox({ name: 'createTitleLevelRequest' }).click(),
     ]);
+    this.enableTitleLevelRequest();
     cy.expect(Spinner().absent());
   },
 
