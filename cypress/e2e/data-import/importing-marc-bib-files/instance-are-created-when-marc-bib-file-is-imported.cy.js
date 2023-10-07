@@ -42,7 +42,7 @@ describe('data-import', () => {
     });
 
     it(
-      'C2359 Check that instances are created when a MARC bibliographic file is imported (folijet)',
+      'C2359 Check that instances are created when a MARC bibliographic file is imported (folijet) (TaaS)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
         Logs.openFileDetails(fileName);
