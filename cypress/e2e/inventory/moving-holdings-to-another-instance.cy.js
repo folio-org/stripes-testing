@@ -34,7 +34,7 @@ describe('inventory', () => {
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.inventoryPath,
         waiter: InventorySearchAndFilter.waitLoading,
-      })
+      });
       item.instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
       InventoryInstances.createInstanceViaApi(secondItem.instanceName, secondItem.barcode);
 
