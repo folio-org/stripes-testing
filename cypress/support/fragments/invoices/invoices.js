@@ -534,16 +534,6 @@ export default {
   applyConfirmationalPopup: () => {
     cy.do(Button('Confirm').click());
   },
-
-  checkInvoiceDetails(invoice) {
-    cy.expect([
-      invoiceDetailsPane.has({ title: `Vendor invoice number - ${invoice.vendorInvoiceNo}` }),
-      informationSection.find(KeyValue('Status')).has({ value: invoice.status }),
-      informationSection
-        .find(KeyValue('Fiscal year'))
-        .has({ value: including(invoice.fiscalYear) }),
-    ]);
-  },
   checkInvoiceCurrency: (currencyShortName) => {
     switch (currencyShortName) {
       // TODO: add other currencies if needed

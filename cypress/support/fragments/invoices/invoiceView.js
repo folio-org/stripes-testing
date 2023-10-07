@@ -11,25 +11,28 @@ import {
   Link,
   Button,
 } from '../../../../interactors';
-import invoices from './invoices';
-import TopMenu from '../topMenu';
 import InvoiceLineEditForm from './invoiceLineEditForm';
 import ApproveInvoiceModal from './modal/approveInvoiceModal';
+import SelectOrderLinesModal from './modal/selectOrderLinesModal';
+import InvoiceStates from './invoiceStates';
 
-const vendorInvoiceNumber = '94999';
-const expectedInvoiceDate = '11/24/2021';
-const expectedInvoiceStatus = 'Open';
-const expectedInvoiceSource = 'EDI';
+const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
 
 // header section
 const invoiceDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-invoiceDetails' });
 const actionsButton = Button('Actions');
 const newBlankLineButton = Button('New blank line');
 
+// information section
+const informationSection = invoiceDetailsPane.find(Section({ id: 'information' }));
+
 // invoice lines section
 const invoiceLinesSection = Section({ id: 'invoiceLines' });
 
 export default {
+  expandActionsDropdown() {
+    cy.do(invoiceDetailsPaneHeader.find(actionsButton).click());
+  },
   selectFirstInvoice() {
     cy.do(
       MultiColumnList({ id: 'invoices-list' })
@@ -66,37 +69,44 @@ export default {
       ]);
     });
   },
-  checkInvoiceDetails(invoiceNumber) {
-    cy.do(
-      Section()
-        .find(MultiColumnListCell(including(invoiceNumber)))
-        .perform((element) => {
-          const invoiceOfNumber = element.innerText.split('-')[0];
+  checkInvoiceDetails({ title, invoiceInformation = [], invoiceLines } = {}) {
+    if (title) {
+      cy.expect(invoiceDetailsPane.has({ title: `Vendor invoice number - ${title}` }));
+    }
 
-          cy.visit(TopMenu.invoicesPath);
-          invoices.searchByNumber(invoiceOfNumber);
-          cy.do(
-            MultiColumnList({ id: 'invoices-list' })
-              .find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
-              .find(Link(invoiceNumber))
-              .click(),
-          );
+    if (invoiceInformation.length) {
+      invoiceInformation.forEach(({ key, value }) => {
+        cy.expect(informationSection.find(KeyValue(key)).has({ value: including(value) }));
+      });
+    }
 
-          const invoiceDate = KeyValue('Invoice date');
-          const invoiceStatus = KeyValue('Status');
-          const invoiceSource = KeyValue('Source');
-
-          cy.expect(invoiceDate.has({ value: expectedInvoiceDate }));
-          cy.expect(invoiceStatus.has({ value: expectedInvoiceStatus }));
-          cy.expect(invoiceSource.has({ value: expectedInvoiceSource }));
+    if (invoiceLines) {
+      cy.expect(
+        invoiceLinesSection.has({
+          text: including(`Total number of invoice lines: ${invoiceLines.length}`),
         }),
-    );
+      );
+    }
   },
   approveInvoice() {
     cy.do([invoiceDetailsPaneHeader.find(actionsButton).click(), Button('Approve').click()]);
 
     ApproveInvoiceModal.verifyModalView();
     ApproveInvoiceModal.clickSubmitButton();
+  },
+  openSelectOrderLineModal() {
+    cy.do([invoiceLinesSection.find(actionsButton).click(), Button('Add line from POL').click()]);
+    SelectOrderLinesModal.verifyModalView();
+
+    return SelectOrderLinesModal;
+  },
+  checkActionButtonsConditions(buttons = []) {
+    buttons.forEach(({ label, conditions }) => {
+      cy.expect(Button(label).has(conditions));
+    });
+  },
+  checkInvoiceCanNotBeApprovedWarning() {
+    cy.expect(invoiceDetailsPane.has({ text: including(InvoiceStates.invoiceCanNotBeApproved) }));
   },
   checkQuantityInvoiceLinesInRecord(quantity) {
     cy.expect(
@@ -139,6 +149,4 @@ export default {
         .has({ value: acquisitionUnitName }),
     );
   },
-
-  vendorInvoiceNumber,
 };
