@@ -68,6 +68,7 @@ const getDefaultInvoice = ({
   batchGroupName,
   vendorId,
   vendorName,
+  fiscalYearId,
   accountingCode,
   invoiceDate = moment.utc().format(),
 }) => ({
@@ -80,6 +81,7 @@ const getDefaultInvoice = ({
   exportToAccounting: true,
   vendorId,
   vendorName,
+  fiscalYearId,
   invoiceDate,
   vendorInvoiceNo: FinanceHelper.getRandomInvoiceNumber(),
   accountingCode,
@@ -93,6 +95,7 @@ const getDefaultInvoiceLine = ({
   poLineId,
   fundDistributions,
   accountingCode,
+  releaseEncumbrance,
 }) => ({
   invoiceId,
   poLineId,
@@ -102,6 +105,7 @@ const getDefaultInvoiceLine = ({
   quantity: 1,
   subTotal: 0,
   accountingCode,
+  releaseEncumbrance,
   id: uuid(),
 });
 
@@ -169,7 +173,13 @@ export default {
       })
       .then(({ body }) => body);
   },
-  createInvoiceWithInvoiceLineViaApi({ vendorId, poLineId, fundDistributions, accountingCode }) {
+  createInvoiceWithInvoiceLineViaApi({
+    vendorId,
+    poLineId,
+    fundDistributions,
+    accountingCode,
+    releaseEncumbrance,
+  }) {
     this.createInvoiceViaApi({ vendorId, accountingCode }).then((resp) => {
       cy.wrap(resp).as('invoice');
       const { id: invoiceId, status: invoiceLineStatus } = resp;
@@ -179,6 +189,7 @@ export default {
         poLineId,
         fundDistributions,
         accountingCode,
+        releaseEncumbrance,
       });
       this.createInviceLineViaApi(invoiceLine);
     });
@@ -522,16 +533,6 @@ export default {
 
   applyConfirmationalPopup: () => {
     cy.do(Button('Confirm').click());
-  },
-
-  checkInvoiceDetails(invoice) {
-    cy.expect([
-      invoiceDetailsPane.has({ title: `Vendor invoice number - ${invoice.vendorInvoiceNo}` }),
-      informationSection.find(KeyValue('Status')).has({ value: invoice.status }),
-      informationSection
-        .find(KeyValue('Fiscal year'))
-        .has({ value: including(invoice.fiscalYear) }),
-    ]);
   },
   checkInvoiceCurrency: (currencyShortName) => {
     switch (currencyShortName) {

@@ -5,8 +5,7 @@ const { rmdir, unlink } = require('fs');
 const { downloadFile } = require('cypress-downloadfile/lib/addPlugin');
 const fs = require('fs');
 const allureWriter = require('@shelex/cypress-allure-plugin/writer');
-// eslint-disable-next-line import/no-extraneous-dependencies, spaced-comment
-//const { cloudPlugin } = require('cypress-cloud/plugin');
+const { cloudPlugin } = require('cypress-cloud/plugin');
 
 module.exports = defineConfig({
   retries: {
@@ -83,13 +82,17 @@ module.exports = defineConfig({
         },
       });
 
+      // fix for cypress-testrail-simple plugin
+      if ('TESTRAIL_PROJECTID' in process.env && process.env.TESTRAIL_PROJECTID === '') {
+        delete process.env.TESTRAIL_PROJECTID;
+      }
+
+      const configCloud = await cloudPlugin(on, config);
+
       // eslint-disable-next-line global-require
-      await require('cypress-testrail-simple/src/plugin')(on, config);
+      const result = await require('cypress-testrail-simple/src/plugin')(on, configCloud);
 
-      // eslint-disable-next-line spaced-comment
-      //await cloudPlugin(on, config);
-
-      return config;
+      return result;
     },
     baseUrl: 'https://folio-testing-cypress-diku.ci.folio.org',
   },
