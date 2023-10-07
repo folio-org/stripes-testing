@@ -78,7 +78,7 @@ describe('Bulk Edit - Logs', () => {
   });
 
   it(
-    'C399062 Verify generated Logs files for Holdings suppressed from discovery (Set true) (firebird) (taas)',
+    'C399062 Verify generated Logs files for Holdings suppressed from discovery (Set true) (firebird) (TaaS)',
     { tags: [testTypes.extendedPath, devTeams.firebird] },
     () => {
       BulkEditSearchPane.checkHoldingsRadio();
