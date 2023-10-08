@@ -783,8 +783,8 @@ export default {
   fillEmptyTextAreaOfField(rowIndex, fieldName, content) {
     cy.do(
       QuickMarcEditorRow({ index: rowIndex })
-       .find(TextArea({ name: fieldName }))
-       .fillIn(content),
+        .find(TextArea({ name: fieldName }))
+        .fillIn(content),
     );
   },
 
