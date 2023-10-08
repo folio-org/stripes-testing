@@ -340,7 +340,7 @@ describe.skip('data-import', () => {
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.uploadFile(filePathForCreateInstance, fileNameForCreateInstance);
-        JobProfiles.searchJobProfileForImport(jobProfileForCreate.profileName);
+        JobProfiles.search(jobProfileForCreate.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForCreateInstance);
         Logs.openFileDetails(fileNameForCreateInstance);
@@ -481,7 +481,7 @@ describe.skip('data-import', () => {
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.uploadFile(fileNameWithUpdatedContent, fileNameForUpdateInstance);
-        JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
+        JobProfiles.search(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForUpdateInstance);
         Logs.openFileDetails(fileNameForUpdateInstance);

@@ -75,7 +75,7 @@ describe('data-import', () => {
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.checkListOfExistingProfilesIsDisplayed();
         JobProfiles.verifyActionMenuAbsent();
-        JobProfiles.searchJobProfileForImport(jobProfileName);
+        JobProfiles.search(jobProfileName);
         JobProfiles.selectJobProfile(jobProfileName);
         JobProfileView.verifyJobProfileOpened();
         JobProfileView.verifyActionMenuAbsent();

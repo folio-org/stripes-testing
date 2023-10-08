@@ -147,7 +147,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileNameForCreate, fileNameForCreateInstance);
-        JobProfiles.searchJobProfileForImport(jobProfileToRun);
+        JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForCreateInstance);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
@@ -206,7 +206,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileNameForUpdate, fileNameForUpdateInstance);
-        JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+        JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForUpdateInstance);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);

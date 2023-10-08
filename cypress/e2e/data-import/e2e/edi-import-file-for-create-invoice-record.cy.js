@@ -103,7 +103,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('ediFileForC343338.edi', fileName);
-        JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+        JobProfiles.search(jobProfile.profileName);
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);

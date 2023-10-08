@@ -59,7 +59,7 @@ describe('Search in Inventory', () => {
 
       DataImport.uploadFile('Sauguet_Henri_5_Bib_records.mrc', fileNameForC360548);
       JobProfiles.waitLoadingList();
-      JobProfiles.searchJobProfileForImport(jobProfileToRun);
+      JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileNameForC360548);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
@@ -98,7 +98,7 @@ describe('Search in Inventory', () => {
 
       DataImport.uploadFile('two_bib_records_with_isbn_search_by_keyword.mrc', fileNameForC360555);
       JobProfiles.waitLoadingList();
-      JobProfiles.searchJobProfileForImport(jobProfileToRun);
+      JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileNameForC360555);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);

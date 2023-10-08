@@ -20,6 +20,7 @@ describe('data-import:', () => {
       matchCriterion: 'Exactly matches',
       existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
     };
+    const calloutMessage = `The match profile "${matchProfile.profileName}" was successfully created`;
 
     before('create user', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
@@ -42,7 +43,7 @@ describe('data-import:', () => {
         MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
         MatchProfileView.verifyMatchProfileOpened();
         MatchProfileView.verifyMatchProfileTitleName(matchProfile.profileName);
-        MatchProfiles.checkCreateProfileCalloutMessage(matchProfile.profileName);
+        MatchProfiles.checkCalloutMessage(calloutMessage);
       },
     );
   });

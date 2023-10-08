@@ -189,7 +189,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathToUpload, marcFileNameForCreate);
-        JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
+        JobProfiles.search(testData.jobProfileForCreate.profile.name);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileNameForCreate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
@@ -322,7 +322,7 @@ describe('data-import', () => {
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadExportedFile(exportedFileName);
-          JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
+          JobProfiles.search(jobProfileForUpdate.profileName);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(exportedFileName);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);

@@ -303,7 +303,7 @@ describe.skip('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('oneMarcBib.mrc', marcFileForCreateFirstRecord);
-        JobProfiles.searchJobProfileForImport(firstTestData.jobProfileForCreate.profile.name);
+        JobProfiles.search(firstTestData.jobProfileForCreate.profile.name);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileForCreateFirstRecord);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
@@ -338,7 +338,7 @@ describe.skip('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('oneMarcBib.mrc', marcFileForCreateSecondRecord);
-        JobProfiles.searchJobProfileForImport(secondTestData.jobProfileForCreate.profile.name);
+        JobProfiles.search(secondTestData.jobProfileForCreate.profile.name);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileForCreateSecondRecord);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
@@ -531,7 +531,7 @@ describe.skip('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadExportedFile(marcFileNameForUpdateFirstRecord);
-        JobProfiles.searchJobProfileForImport(jobProfileWithMatch.profileName);
+        JobProfiles.search(jobProfileWithMatch.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileNameForUpdateFirstRecord);
         Logs.openFileDetails(marcFileNameForUpdateFirstRecord);
@@ -582,7 +582,7 @@ describe.skip('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadExportedFile(marcFileNameForUpdateSecondRecord);
-        JobProfiles.searchJobProfileForImport(jobProfileWithoutMatch.profileName);
+        JobProfiles.search(jobProfileWithoutMatch.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileNameForUpdateSecondRecord);
         Logs.openFileDetails(marcFileNameForUpdateSecondRecord);
