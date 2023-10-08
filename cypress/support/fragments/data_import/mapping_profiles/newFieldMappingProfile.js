@@ -926,6 +926,10 @@ export default {
     waitLoading();
   },
 
+  addExpenceClass: () => {
+    cy.do([Button('Add fund distribution').click(), TextField('Expense class').click()]);
+  },
+
   markFieldForProtection: (field) => {
     cy.get('div[class^="mclRow--"]')
       .contains('div[class^="mclCell-"]', field)
