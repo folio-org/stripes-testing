@@ -5,6 +5,7 @@ import NewFieldMappingProfile from '../../../support/fragments/data_import/mappi
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewExpenseClass from '../../../support/fragments/settings/finance/newExpenseClass';
+import SettingsFinance from '../../../support/fragments/settings/finance/settingsFinance';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -52,30 +53,36 @@ describe('data-import', () => {
     const mappingProfile = {
       name: `C365106 Expense classes testing_${getRandomPostfix()}`,
       incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
-      existingRecordType: FOLIO_RECORD_TYPE.INVOICE,
+      typeValue: FOLIO_RECORD_TYPE.INVOICE,
+      fundDistributionSource: 'Use fund distribution field mappings',
     };
 
     before('create test data', () => {
-      // cy.getAdminToken()
-      //   .then(() => {
-      //     cy.wrap([
-      //       firstExpencseClassData,
-      //       secondExpencseClassData,
-      //       thirdExpencseClassData,
-      //       forthExpencseClassData,
-      //       fifthExpencseClassData,
-      //       sixthExpencseClassData,
-      //       seventhExpencseClassData,
-      //       eighthExpencseClassData,
-      //       ninethExpencseClassData,
-      //       tenthExpencseClassData]).each((expenseClass) => {
-      //       NewExpenseClass.createViaApi(expenseClass)
-      //         .then((response) => expenseClassIds.push(response));
-      //     });
-      //   });
+      cy.getAdminToken().then(() => {
+        cy.wrap([
+          firstExpencseClassData,
+          secondExpencseClassData,
+          thirdExpencseClassData,
+          forthExpencseClassData,
+          fifthExpencseClassData,
+          sixthExpencseClassData,
+          seventhExpencseClassData,
+          eighthExpencseClassData,
+          ninethExpencseClassData,
+          tenthExpencseClassData,
+        ]).each((expenseClass) => {
+          NewExpenseClass.createViaApi(expenseClass).then((response) => expenseClassIds.push(response));
+        });
+      });
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
+      });
+    });
+
+    after('delete test data', () => {
+      expenseClassIds.forEach((id) => {
+        SettingsFinance.deleteViaApi(id);
       });
     });
 
@@ -85,8 +92,22 @@ describe('data-import', () => {
       () => {
         cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.openNewMappingProfileForm();
-        cy.wait(2000);
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
+        NewFieldMappingProfile.addExpenceClass(mappingProfile.fundDistributionSource);
+        cy.wrap([
+          firstExpencseClassData.name,
+          secondExpencseClassData.name,
+          thirdExpencseClassData.name,
+          forthExpencseClassData.name,
+          fifthExpencseClassData.name,
+          sixthExpencseClassData.name,
+          seventhExpencseClassData.name,
+          eighthExpencseClassData.name,
+          ninethExpencseClassData.name,
+          tenthExpencseClassData.name,
+        ]).each((expenseClassName) => {
+          NewFieldMappingProfile.verifyExpenseClassesIsPresentedInDropdown(expenseClassName);
+        });
       },
     );
   });

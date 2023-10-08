@@ -21,12 +21,4 @@ export default {
       })
       .then((response) => response.body.id);
   },
-
-  deleteViaApi: (id) => {
-    return cy.okapiRequest({
-      method: REQUEST_METHOD.DELETE,
-      path: `finance/expense-classes/${id}`,
-      isDefaultSearchParamsRequired: false,
-    });
-  },
 };

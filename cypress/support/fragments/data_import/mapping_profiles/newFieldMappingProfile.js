@@ -926,8 +926,29 @@ export default {
     waitLoading();
   },
 
-  addExpenceClass: () => {
-    cy.do([Button('Add fund distribution').click(), TextField('Expense class').click()]);
+  addExpenceClass: (fundDistributionSource) => {
+    cy.do([
+      Select({
+        name: 'profile.mappingDetails.mappingFields[26].subfields.0.fields.14.value',
+      }).focus(),
+      Select({
+        name: 'profile.mappingDetails.mappingFields[26].subfields.0.fields.14.value',
+      }).choose(fundDistributionSource),
+    ]);
+    cy.expect(
+      Select({ name: 'profile.mappingDetails.mappingFields[26].subfields.0.fields.14.value' }).has({
+        error: 'One or more values must be added before the profile can be saved.',
+      }),
+    );
+    cy.do(Button('Add fund distribution').click());
+    cy.wait(3000);
+    cy.get('#invoice-line-fund-distribution [class*=repeatableFieldItem]')
+      .find('button:contains("Accepted values"):last')
+      .click();
+  },
+
+  verifyExpenseClassesIsPresentedInDropdown: (value) => {
+    cy.expect(DropdownMenu({ visible: true }).find(HTML(value)).exists());
   },
 
   markFieldForProtection: (field) => {
