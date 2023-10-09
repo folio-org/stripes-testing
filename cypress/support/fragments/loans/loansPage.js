@@ -20,6 +20,7 @@ const MARK_AS_MISSING_ACTION_NAME = 'Mark as missing';
 const claimReturnedButton = Button('Claim returned');
 const changeDueDateButton = Button('Change due date');
 const resolveClaimButton = Dropdown('Resolve claim');
+const LoanDateKeyValue = KeyValue('Loan date');
 
 export default {
   waitLoading: () => {
@@ -122,6 +123,9 @@ export default {
         .find(MultiColumnListCell({ content: including(contentToCheck) }))
         .exists(),
     ));
+  },
+  checkLoanDate(date) {
+    cy.expect(LoanDateKeyValue.has({ value: including(date) }));
   },
   verifyButtonRedirectsToCorrectPage({ title = '', expectedPage }) {
     cy.do(Button(including(title)).click());
