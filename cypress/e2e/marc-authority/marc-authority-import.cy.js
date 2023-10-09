@@ -60,7 +60,7 @@ describe('Data Import - Importing MARC Authority files', () => {
     () => {
       DataImport.uploadFile('marcFileForC360520.mrc', fileName);
       JobProfiles.waitLoadingList();
-      JobProfiles.searchJobProfileForImport(jobProfileToRun);
+      JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileName);
       Logs.checkStatusOfJobProfile('Completed');
@@ -86,7 +86,7 @@ describe('Data Import - Importing MARC Authority files', () => {
     () => {
       DataImport.uploadFile('corporate_name(prefix_in_010Sa)sc_02.mrc', fileName);
       JobProfiles.waitLoadingList();
-      JobProfiles.searchJobProfileForImport(jobProfileToRun);
+      JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileName);
       Logs.checkStatusOfJobProfile('Completed');
@@ -112,7 +112,7 @@ describe('Data Import - Importing MARC Authority files', () => {
     () => {
       DataImport.uploadFile('D_genre(prefixes_in_001_010Sa)sc_03.mrc', fileName);
       JobProfiles.waitLoadingList();
-      JobProfiles.searchJobProfileForImport(jobProfileToRun);
+      JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileName);
       Logs.checkStatusOfJobProfile('Completed');
@@ -138,7 +138,7 @@ describe('Data Import - Importing MARC Authority files', () => {
     () => {
       DataImport.uploadFile('marcFileForC353997.mrc', fileName);
       JobProfiles.waitLoadingList();
-      JobProfiles.searchJobProfileForImport(jobProfileToRun);
+      JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileName);
       Logs.checkStatusOfJobProfile('Completed');
@@ -181,7 +181,7 @@ describe('Data Import - Importing MARC Authority files', () => {
     () => {
       DataImport.uploadFile('marcFileForC356766.mrc', fileName);
       JobProfiles.waitLoadingList();
-      JobProfiles.searchJobProfileForImport(jobProfileToRun);
+      JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileName);
       Logs.checkStatusOfJobProfile('Completed');
@@ -209,7 +209,7 @@ describe('Data Import - Importing MARC Authority files', () => {
     () => {
       DataImport.uploadFile('marcFileForC356765.mrc', fileName);
       JobProfiles.waitLoadingList();
-      JobProfiles.searchJobProfileForImport(jobProfileToRun);
+      JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileName);
       Logs.checkStatusOfJobProfile('Completed');
@@ -243,7 +243,7 @@ describe('Data Import - Importing MARC Authority files', () => {
     () => {
       DataImport.uploadFile('marcFileForC353995.mrc', fileName);
       JobProfiles.waitLoadingList();
-      JobProfiles.searchJobProfileForImport(jobProfileToRun);
+      JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileName);
       Logs.checkStatusOfJobProfile('Completed');

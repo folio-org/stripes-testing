@@ -30,7 +30,7 @@ describe('data-import', () => {
       'C2334 Delete an existing job profile (folijet)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
-        JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+        JobProfiles.search(jobProfile.profileName);
         JobProfileView.delete();
         NewJobProfile.checkCalloutMessage(calloutMessage);
         JobProfiles.verifyJobProfileAbsent();

@@ -108,7 +108,7 @@ describe('Data Import - Update MARC Authority files', () => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         DataImport.uploadFile(marcFile.marc, marcFile.fileName);
         JobProfiles.waitLoadingList();
-        JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
+        JobProfiles.search(marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFile.fileName);
         Logs.checkStatusOfJobProfile('Completed');
@@ -209,8 +209,8 @@ describe('Data Import - Update MARC Authority files', () => {
       cy.visit(TopMenu.dataImportPath);
       DataImport.uploadFile(testData.modifiedMarcFile, testData.uploadModifiedMarcFile);
       JobProfiles.waitLoadingList();
-      JobProfiles.searchJobProfileForImport(testData.jobProfileName);
-      JobProfiles.searchJobProfileForImport('test111');
+      JobProfiles.search(testData.jobProfileName);
+      JobProfiles.search('test111');
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(testData.uploadModifiedMarcFile);
       Logs.checkStatusOfJobProfile('Completed');
