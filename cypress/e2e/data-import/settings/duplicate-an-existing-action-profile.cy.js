@@ -16,7 +16,8 @@ describe('data-import', () => {
       action: 'Create (all record types except MARC Authority or MARC Holdings)',
     };
 
-    const calloutMessage = `Action profile '${actionProfile.name}' already exists`;
+    const calloutErrorMessage = `Action profile '${actionProfile.name}' already exists`;
+    const calloutMessage = `The action profile "${actionProfile.name}" was successfully created`;
 
     const duplicatedActionProfile = {
       name: `C2345 autotest duplicate action profile ${getRandomStringCode(8)}`,
@@ -48,10 +49,10 @@ describe('data-import', () => {
         newActionProfile.verifyPreviouslyCreatedDataIsDisplayed(actionProfile);
         newActionProfile.chooseAction(duplicatedActionProfile.action);
         newActionProfile.saveProfile();
-        newActionProfile.checkCalloutMessage(calloutMessage);
+        newActionProfile.checkCalloutMessage(calloutErrorMessage);
         newActionProfile.fillName(duplicatedActionProfile.name);
         newActionProfile.saveProfile();
-        ActionProfiles.checkCreateProfileCalloutMessage(duplicatedActionProfile.name);
+        ActionProfiles.checkCalloutMessage(calloutMessage);
         ActionProfiles.checkActionProfilePresented(duplicatedActionProfile.name);
       },
     );
