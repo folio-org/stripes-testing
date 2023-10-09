@@ -816,14 +816,13 @@ export default {
     cy.do(saveAndCloseButton.click());
   },
 
-  fillInPOLineInfoForExportWithLocation(accountNumber, AUMethod, institutionId) {
+  fillInPOLineInfoForExportWithLocation(AUMethod, institutionId) {
     cy.wait(4000);
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE),
       acquisitionMethodButton.click(),
       acquisitionMethodButton.click(),
       SelectionOption(AUMethod).click(),
-      Select({ name: 'vendorDetail.vendorAccount' }).choose(accountNumber),
     ]);
     cy.do([
       electronicUnitPriceTextField.fillIn(electronicUnitPrice),

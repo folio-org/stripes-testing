@@ -55,6 +55,9 @@ export default {
       findUserButton.click(),
       userSearchModal.find(searchTextField).fillIn(userName),
       searchButton.click(),
+    ]);
+    cy.wait(4000);
+    cy.do([
       userSearchModal.find(firstSearchResult).find(checkboxAll).click(),
       userSearchModal.find(saveButton).click(),
     ]);
