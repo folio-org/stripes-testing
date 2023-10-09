@@ -29,6 +29,7 @@ describe('data-import', () => {
       profileName: `C367994 autotest job profile${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
+    const calloutMessage = `The action profile "${actionProfile.name}" was successfully updated`;
 
     before('create user', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
@@ -82,7 +83,7 @@ describe('data-import', () => {
         ActionProfileEdit.save();
         ConfirmChanges.confirmChanges();
         ActionProfiles.checkListOfExistingProfilesIsDisplayed();
-        ActionProfiles.checkCalloutMessage(actionProfile.name);
+        ActionProfiles.checkCalloutMessage(calloutMessage);
         ActionProfileView.verifyAction();
       },
     );

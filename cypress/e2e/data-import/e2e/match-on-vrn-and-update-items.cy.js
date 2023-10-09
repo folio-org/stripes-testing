@@ -263,7 +263,7 @@ describe('data-import', () => {
         DataImport.verifyUploadState();
         DataImport.checkIsLandingPageOpened();
         DataImport.uploadFile(editedMarcFileName);
-        JobProfiles.searchJobProfileForImport(jobProfilesData.name);
+        JobProfiles.search(jobProfilesData.name);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(editedMarcFileName);
         cy.wait(10000);

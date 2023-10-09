@@ -30,6 +30,13 @@ export default {
     )}`;
   },
 
+  getCurrentDateForFiscalYearOnUIEdit: () => {
+    const currentDate = new Date();
+    return `${padWithZero(currentDate.getDate())}/${padWithZero(
+      currentDate.getMonth() + 1,
+    )}/${currentDate.getFullYear()}`;
+  },
+
   getRandomFiscalYearCodeForRollover: (min, max) => {
     // returns random 4 digit code for the Fiscal Year
     return (
@@ -82,11 +89,53 @@ export default {
     )}`;
   },
 
+  getDayTomorrowDateForFiscalYearOnUIEdit: () => {
+    const currentDate = new Date();
+    return `${padWithZero(currentDate.getDate() + 1)}/${padWithZero(
+      currentDate.getMonth() + 1,
+    )}/${currentDate.getFullYear()}`;
+  },
+
   getPreviousDayDateForFiscalYear: () => {
     const currentDate = new Date();
     return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
       currentDate.getDate() - 1,
     )}`;
+  },
+
+  getPreviousDayDateForFiscalYearOnUIEdit: () => {
+    const currentDate = new Date();
+    return `${padWithZero(currentDate.getDate() - 1)}/${padWithZero(
+      currentDate.getMonth() + 1,
+    )}/${currentDate.getFullYear()}`;
+  },
+
+  getTwoPreviousDaysDateForFiscalYear: () => {
+    const currentDate = new Date();
+    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
+      currentDate.getDate() - 2,
+    )}`;
+  },
+
+  getTwoPreviousDaysDateForFiscalYearOnUIEdit: () => {
+    const currentDate = new Date();
+    return `${padWithZero(currentDate.getDate() - 2)}/${padWithZero(
+      currentDate.getMonth() + 1,
+    )}/${currentDate.getFullYear()}`;
+  },
+
+  getThreePreviousDaysDateForFiscalYear: () => {
+    const currentDate = new Date();
+    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
+      currentDate.getDate() - 3,
+    )}`;
+  },
+
+  getThreePreviousDaysDateForFiscalYearOnUIEdit: () => {
+    const currentDate = new Date();
+    return `${padWithZero(currentDate.getDate() - 3)}/${padWithZero(
+      currentDate.getMonth() + 1,
+    )}/${currentDate.getFullYear()}`;
   },
 
   getPreviousFiscalYearCode: () => {

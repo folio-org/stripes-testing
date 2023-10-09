@@ -35,7 +35,7 @@ describe('MARC -› MARC Bibliographic -› Derive MARC bib', () => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(testData.marcFile.marc, testData.marcFile.fileName);
-        JobProfiles.searchJobProfileForImport(testData.marcFile.jobProfileToRun);
+        JobProfiles.search(testData.marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(testData.marcFile.fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
