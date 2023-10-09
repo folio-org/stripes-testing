@@ -155,8 +155,19 @@ export default {
     );
   },
 
+  checkCreateProfileCalloutMessage: (profileName) => {
+    cy.expect(
+      Callout({
+        textContent: including(
+          `The field mapping profile "${profileName}" was successfully created`,
+        ),
+      }).exists(),
+    );
+  },
+
   verifyInstanceStatusTerm: (status) => cy.expect(KeyValue('Instance status term').has({ value: status })),
   verifyActionMenuAbsent: () => cy.expect(fullScreenView.find(actionsButton).absent()),
   verifyMappingProfileOpened: () => cy.expect(fullScreenView.exists()),
   verifyVendorName: (vendorName) => cy.expect(KeyValue('Vendor name').has({ value: vendorName })),
+  verifyMappingProfileTitleName: (profileName) => cy.get('#full-screen-view-content h2').should('have.text', profileName),
 };

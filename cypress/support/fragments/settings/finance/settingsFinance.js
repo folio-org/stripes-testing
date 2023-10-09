@@ -7,6 +7,7 @@ import {
 } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 import DateTools from '../../../utils/dateTools';
+import { REQUEST_METHOD } from '../../../constants';
 
 const saveButton = Button('Save');
 const deleteButton = Button('Delete');
@@ -83,5 +84,13 @@ export default {
     InteractorsTools.checkCalloutMessage(
       `The expense class ${expenseClass.name} was successfully deleted`,
     );
+  },
+
+  deleteViaApi: (id) => {
+    return cy.okapiRequest({
+      method: REQUEST_METHOD.DELETE,
+      path: `finance/expense-classes/${id}`,
+      isDefaultSearchParamsRequired: false,
+    });
   },
 };
