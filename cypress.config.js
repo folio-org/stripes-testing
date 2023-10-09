@@ -30,8 +30,6 @@ module.exports = defineConfig({
   },
   e2e: {
     async setupNodeEvents(on, config) {
-      allureWriter(on, config);
-
       on('task', {
         async findFiles(mask) {
           if (!mask) {
@@ -82,12 +80,14 @@ module.exports = defineConfig({
         },
       });
 
+      const configAllure = allureWriter(on, config);
+
       // fix for cypress-testrail-simple plugin
       if ('TESTRAIL_PROJECTID' in process.env && process.env.TESTRAIL_PROJECTID === '') {
         delete process.env.TESTRAIL_PROJECTID;
       }
 
-      const configCloud = await cloudPlugin(on, config);
+      const configCloud = await cloudPlugin(on, configAllure);
 
       // eslint-disable-next-line global-require
       const result = await require('cypress-testrail-simple/src/plugin')(on, configCloud);
