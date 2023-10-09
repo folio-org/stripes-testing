@@ -427,7 +427,7 @@ describe('data-import', () => {
         DataImport.verifyUploadState();
         // upload a marc file for creating of the new instance, holding and item
         DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);
-        JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
+        JobProfiles.search(testData.jobProfileForCreate.profile.name);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFileForImportCreate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
@@ -520,7 +520,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadExportedFile(nameMarcFileForImportUpdate);
-        JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
+        JobProfiles.search(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFileForImportUpdate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);

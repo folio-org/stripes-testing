@@ -83,7 +83,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('oneMarcBib.mrc', fileName);
-        JobProfiles.searchJobProfileForImport(jobProfileToRun);
+        JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);
         Logs.openFileDetails(fileName);
@@ -127,7 +127,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFilrForC17039.mrc', nameMarcFileForCreate);
-        JobProfiles.searchJobProfileForImport(jobProfileToRun);
+        JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFileForCreate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
@@ -209,7 +209,7 @@ describe('data-import', () => {
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadFile(editedMarcFileName, fileNameAfterUpload);
-          JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+          JobProfiles.search(jobProfile.profileName);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(fileNameAfterUpload);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
@@ -256,7 +256,7 @@ describe('data-import', () => {
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadExportedFile(exportedFileName);
-          JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+          JobProfiles.search(jobProfile.profileName);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(exportedFileName);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);

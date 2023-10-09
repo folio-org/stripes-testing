@@ -38,7 +38,7 @@ describe('data-import', () => {
         DataImport.verifyUploadState();
         // upload the first .mrc file
         DataImport.uploadFile('marcAuthFileC359207.mrc', fileName);
-        JobProfiles.searchJobProfileForImport(jobProfileToRun);
+        JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);
         Logs.checkStatusOfJobProfile('Completed with errors');

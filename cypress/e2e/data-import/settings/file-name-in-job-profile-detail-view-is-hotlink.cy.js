@@ -25,7 +25,7 @@ describe('data-import', () => {
       DataImport.verifyUploadState();
       DataImport.waitLoading();
       DataImport.uploadFile(filePathToUpload, fileNameToUpload);
-      JobProfiles.searchJobProfileForImport(jobProfileToRun);
+      JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileNameToUpload);
       cy.logout();
@@ -49,7 +49,7 @@ describe('data-import', () => {
       () => {
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.checkListOfExistingProfilesIsDisplayed();
-        JobProfiles.searchJobProfileForImport(jobProfileToRun);
+        JobProfiles.search(jobProfileToRun);
         JobProfileView.verifyJobProfileOpened();
         JobProfileView.verifyJobsUsingThisProfileSection(fileNameToUpload);
         JobProfileView.openLogDetailsPageView(fileNameToUpload);

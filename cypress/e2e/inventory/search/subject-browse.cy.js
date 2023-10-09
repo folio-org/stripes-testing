@@ -29,7 +29,7 @@ describe('Inventory > Subject Browse', () => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         DataImport.uploadFile('marcFileForC350387.mrc', fileName);
         JobProfiles.waitLoadingList();
-        JobProfiles.searchJobProfileForImport(jobProfileToRun);
+        JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);
         Logs.checkStatusOfJobProfile('Completed');

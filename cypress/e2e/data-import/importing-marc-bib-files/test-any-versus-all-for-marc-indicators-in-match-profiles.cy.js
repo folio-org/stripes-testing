@@ -244,7 +244,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName);
-        JobProfiles.searchJobProfileForImport(jobProfileForCreate.profileName);
+        JobProfiles.search(jobProfileForCreate.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(editedMarcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
@@ -320,7 +320,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, marcFileNameForFirstUpdate);
-        JobProfiles.searchJobProfileForImport(jobProfileForUpdateWithFail.profileName);
+        JobProfiles.search(jobProfileForUpdateWithFail.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileNameForFirstUpdate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
@@ -340,7 +340,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, marcFileNameForSecondUpdate);
-        JobProfiles.searchJobProfileForImport(jobProfileForUpdateWithSucceed.profileName);
+        JobProfiles.search(jobProfileForUpdateWithSucceed.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileNameForSecondUpdate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);

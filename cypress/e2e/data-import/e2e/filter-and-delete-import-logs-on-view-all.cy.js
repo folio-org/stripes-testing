@@ -62,7 +62,7 @@ describe('data-import', () => {
           DataImport.uploadFile('oneMarcAuthority.mrc', nameMarcFileForCreate);
           // need to wait until file will be uploaded in loop
           cy.wait(8000);
-          JobProfiles.searchJobProfileForImport('Default - Create SRS MARC Authority');
+          JobProfiles.search('Default - Create SRS MARC Authority');
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(nameMarcFileForCreate);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
