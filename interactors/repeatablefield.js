@@ -16,7 +16,7 @@ const FieldList = HTML.extend('repeatable field list')
 // find by legend
 export const RepeatableField = HTML.extend('repeatable field')
   .selector('fieldset[data-test-repeatable-field]')
-  .locator((el) => el.querySelector('legend').textContent)
+  .locator((el) => el.querySelector('legend')?.textContent || '')
   .filters({
     id: (el) => el.id,
     emptyMessage: (el) => el.querySelector('[class^=emptyMessage]').textContent,
@@ -29,7 +29,7 @@ export const RepeatableField = HTML.extend('repeatable field')
       default: false,
     },
     removeDisabled: (el) => el.querySelector('[data-test-repeatable-field-remove-item-button]').disabled,
-    itemCount: (el) => el.querySelectorAll('li').length,
+    itemCount: (el) => el.querySelectorAll('[class^=repeatableFieldItem-]').length,
   })
   .actions({
     clickAdd: ({ find }) => find(RepeatableFieldAddButton()).click(),
@@ -48,4 +48,5 @@ export const RepeatableFieldItem = HTML.extend('repeatable field item')
   .selector('[class^=repeatableFieldItem-]')
   .filters({
     index: (el) => [...el.parentElement.children].indexOf(el),
+    singleValue: (el) => el.querySelector('button [class^=singleValue-]').textContent,
   });
