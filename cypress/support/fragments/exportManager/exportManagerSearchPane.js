@@ -287,6 +287,18 @@ export default {
     ]);
   },
 
+  verifyJobStatusInDetailView(status) {
+    cy.expect(jobDetailsPane.find(KeyValue('Status')).has({ value: status }));
+  },
+
+  verifyJobOrganizationInDetailView(organization) {
+    cy.expect(jobDetailsPane.find(KeyValue('Organization')).has({ value: organization.name }));
+  },
+
+  verifyJobExportMethodInDetailView(integrationName) {
+    cy.expect(jobDetailsPane.find(KeyValue('Export method')).has({ value: integrationName }));
+  },
+
   verifyExportedFileName(actualName) {
     // valid name example: 2023-10-05_10-34-45_1166_123355-3551879_package
     expect(actualName).to.match(

@@ -113,10 +113,12 @@ describe('Invoices', () => {
       InvoiceView.approveInvoice();
 
       // Invoice status is changed to "Approved"
-      Invoices.checkInvoiceDetails({
-        ...testData.invoice,
-        status: INVOICE_STATUSES.APPROVED,
-        fiscalYear: testData.fiscalYear.code,
+      InvoiceView.checkInvoiceDetails({
+        title: testData.invoice.vendorInvoiceNo,
+        invoiceInformation: [
+          { key: 'Status', value: INVOICE_STATUSES.APPROVED },
+          { key: 'Fiscal year', value: testData.fiscalYear.code },
+        ],
       });
 
       // Click invoice line record on invoice

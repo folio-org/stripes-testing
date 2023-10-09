@@ -254,6 +254,24 @@ export default {
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
   },
 
+  createInvoiceFromOrder(invoice, fiscalYear) {
+    cy.wait(4000);
+    cy.do(Button({ id: 'invoice-fiscal-year' }).click());
+    cy.wait(4000);
+    cy.do([
+      SelectionOption(fiscalYear).click(),
+      TextField('Invoice date*').fillIn(invoice.invoiceDate),
+      TextField('Vendor invoice number*').fillIn(invoice.invoiceNumber),
+    ]);
+    cy.do([
+      Selection('Batch group*').open(),
+      SelectionList().select(invoice.batchGroup),
+      Select({ id: 'invoice-payment-method' }).choose('EFT'),
+    ]);
+    cy.do(saveAndClose.click());
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
+  },
+
   createRolloverInvoice(invoice, organization) {
     cy.do(actionsButton.click());
     cy.expect(buttonNew.exists());
@@ -533,16 +551,6 @@ export default {
 
   applyConfirmationalPopup: () => {
     cy.do(Button('Confirm').click());
-  },
-
-  checkInvoiceDetails(invoice) {
-    cy.expect([
-      invoiceDetailsPane.has({ title: `Vendor invoice number - ${invoice.vendorInvoiceNo}` }),
-      informationSection.find(KeyValue('Status')).has({ value: invoice.status }),
-      informationSection
-        .find(KeyValue('Fiscal year'))
-        .has({ value: including(invoice.fiscalYear) }),
-    ]);
   },
   checkInvoiceCurrency: (currencyShortName) => {
     switch (currencyShortName) {
