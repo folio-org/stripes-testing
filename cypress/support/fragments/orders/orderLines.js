@@ -155,7 +155,7 @@ export default {
     );
   },
 
-  checkCreatedPOLineResource(orderLineTitleName, recourceName, fund) {
+  checkCreatedPOLineResource: (orderLineTitleName, recourceName, fund) => {
     cy.expect([
       orderLineDetailsPane.exists(),
       itemDetailsSection.find(KeyValue({ value: orderLineTitleName })).exists(),
@@ -181,7 +181,7 @@ export default {
   checkCreatedPOLineOtherResource(orderLineTitleName, fund) {
     this.checkCreatedPOLineResource(orderLineTitleName, ORDER_FORMAT_NAMES.OTHER, fund);
   },
-  checkCreatedPOLinePhysicalResource: (orderLineTitleName, fund) => {
+  checkCreatedPOLinePhysicalResource(orderLineTitleName, fund) {
     this.checkCreatedPOLineResource(
       orderLineTitleName,
       ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE_Check,
@@ -783,7 +783,7 @@ export default {
     cy.do(saveAndCloseButton.click());
   },
 
-  fillInPOLineInfoForExport(accountNumber, AUMethod) {
+  fillInPOLineInfoForExport(AUMethod) {
     cy.do([
       orderLineTitleField.fillIn(orderLineTitle),
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PE_MIX),
@@ -793,7 +793,6 @@ export default {
       receivingWorkflowSelect.choose(
         RECEIVING_WORKFLOW_NAMES.INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY,
       ),
-      Select({ name: 'vendorDetail.vendorAccount' }).choose(accountNumber),
     ]);
     cy.do([
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
@@ -846,18 +845,12 @@ export default {
     submitOrderLine();
   },
 
-  fillInPOLineInfoForExportWithLocationForPhysicalResource(
-    accountNumber,
-    AUMethod,
-    institutionName,
-    quantity,
-  ) {
+  fillInPOLineInfoForExportWithLocationForPhysicalResource(AUMethod, institutionName, quantity) {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
       acquisitionMethodButton.click(),
       SelectionOption(AUMethod).click(),
-      Select({ name: 'vendorDetail.vendorAccount' }).choose(accountNumber),
     ]);
     cy.do([
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
