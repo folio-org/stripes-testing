@@ -51,7 +51,6 @@ export default {
     cy.do(Button({ id: 'accordion-toggle-button-tag-accordion' }).click());
   },
   addTag(tag) {
-    // this.openTags();
     cy.do([
       TextInput({ id: 'multiselect-input-input-tag' }).fillIn(tag),
       MultiSelect().open(),
