@@ -71,7 +71,7 @@ describe('data-import', () => {
         // upload a marc file for creating of the new instance
         cy.visit(TopMenu.dataImportPath);
         DataImport.uploadFile('marcFileForC6709.mrc', nameMarcFileForCreate);
-        JobProfiles.searchJobProfileForImport(jobProfileToRun);
+        JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFileForCreate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);

@@ -263,7 +263,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC357552.mrc', nameMarcFileForImportCreate);
-        JobProfiles.searchJobProfileForImport(createJobProfile.profileName);
+        JobProfiles.search(createJobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFileForImportCreate);
         Logs.openFileDetails(nameMarcFileForImportCreate);
@@ -319,7 +319,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadExportedFile(nameMarcFileForUpdate);
-        JobProfiles.searchJobProfileForImport(updateJobProfile.profileName);
+        JobProfiles.search(updateJobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFileForUpdate);
         Logs.openFileDetails(nameMarcFileForUpdate);

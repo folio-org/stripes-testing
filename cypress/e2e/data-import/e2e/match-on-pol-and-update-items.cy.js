@@ -393,7 +393,7 @@ describe('data-import', () => {
         DataImport.verifyUploadState();
         DataImport.checkIsLandingPageOpened();
         DataImport.uploadFile(editedMarcFileName);
-        JobProfiles.searchJobProfileForImport(specialJobProfile.profileName);
+        JobProfiles.search(specialJobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(editedMarcFileName);
         Logs.checkStatusOfJobProfile();

@@ -6,8 +6,8 @@ import Users from '../../../support/fragments/users/users';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import MatchProfileView from '../../../support/fragments/data_import/match_profiles/matchProfileView';
 
-describe('data-import:', () => {
-  describe('Settings: Create a new match profile with a long name', () => {
+describe('data-import', () => {
+  describe('Settings', () => {
     let user;
     const matchProfile = {
       profileName: `C2343 autotest match profile ${getRandomStringCode(160)}`,
@@ -20,6 +20,7 @@ describe('data-import:', () => {
       matchCriterion: 'Exactly matches',
       existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
     };
+    const calloutMessage = `The match profile "${matchProfile.profileName}" was successfully created`;
 
     before('create user', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
@@ -42,7 +43,7 @@ describe('data-import:', () => {
         MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
         MatchProfileView.verifyMatchProfileOpened();
         MatchProfileView.verifyMatchProfileTitleName(matchProfile.profileName);
-        MatchProfiles.checkCreateProfileCalloutMessage(matchProfile.profileName);
+        MatchProfiles.checkCalloutMessage(calloutMessage);
       },
     );
   });

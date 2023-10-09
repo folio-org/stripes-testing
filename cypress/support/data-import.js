@@ -15,7 +15,7 @@ Cypress.Commands.add(
     );
     cy.expect(Button({ icon: 'trash' }).exists());
 
-    JobProfiles.searchJobProfileForImport(jobProfileToRun);
+    JobProfiles.search(jobProfileToRun);
     // run file with given jobProfile
     cy.do(MultiColumnListCell(jobProfileToRun).click());
     cy.do([Button('Actions').click(), Button('Run').click()]);

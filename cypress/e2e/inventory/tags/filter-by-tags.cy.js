@@ -119,6 +119,7 @@ describe('Tags', () => {
       InventorySearchAndFilter.switchToHoldings();
       InventorySearchAndFilter.byKeywords(instanceData.title);
       InventoryInstance.openHoldingView();
+      HoldingsRecordEdit.openTags();
       HoldingsRecordEdit.addTag(tagName);
 
       cy.visit(TopMenu.inventoryPath);
@@ -136,6 +137,7 @@ describe('Tags', () => {
       const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.searchByParameter('Barcode', testData.itemBarcode);
+      HoldingsRecordEdit.openTags();
       HoldingsRecordEdit.addTag(tagName);
 
       cy.visit(TopMenu.inventoryPath);

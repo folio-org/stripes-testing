@@ -97,7 +97,6 @@ export default {
         .find(Button({ icon: 'trash' }))
         .click(),
     );
-    // cy.do(RepeatableField({ itemCount: '2' }).find(Button({ icon:'trash' })).click());
     cy.expect(HTML(including(content)).absent());
   },
 

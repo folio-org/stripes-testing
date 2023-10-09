@@ -780,6 +780,14 @@ export default {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(TextArea()).fillIn(newContent));
   },
 
+  fillEmptyTextAreaOfField(rowIndex, fieldName, content) {
+    cy.do(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextArea({ name: fieldName }))
+        .fillIn(content),
+    );
+  },
+
   updateExistingTagValue(rowIndex, newTagValue) {
     cy.do(
       QuickMarcEditorRow({ index: rowIndex })

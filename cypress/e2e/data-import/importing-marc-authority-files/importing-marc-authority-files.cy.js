@@ -65,7 +65,7 @@ describe('data-import', () => {
       () => {
         DataImport.uploadFile('test-auth-file.mrc', fileName);
         JobProfiles.waitLoadingList();
-        JobProfiles.searchJobProfileForImport(jobProfileToRun);
+        JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
@@ -84,7 +84,7 @@ describe('data-import', () => {
       () => {
         DataImport.uploadFile('test-auth-file.mrc', fileName);
         JobProfiles.waitLoadingList();
-        JobProfiles.searchJobProfileForImport(createdJobProfile.profileName);
+        JobProfiles.search(createdJobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);

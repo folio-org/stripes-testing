@@ -2,7 +2,6 @@ import TopMenu from '../../support/fragments/topMenu';
 import NewRequest from '../../support/fragments/requests/newRequest';
 import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import EditRequest from '../../support/fragments/requests/edit-request';
 import getRandomPostfix from '../../support/utils/stringTools';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
