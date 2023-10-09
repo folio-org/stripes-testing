@@ -4,7 +4,7 @@ import { randomFourDigitNumber } from '../../utils/stringTools';
 const defaultAgreementLine = (agreementId) => {
   return {
     type: 'detached',
-    description: `Agreement Lone Description ${randomFourDigitNumber()}`,
+    description: `Agreement Line Description ${randomFourDigitNumber()}`,
     owner: agreementId,
   };
 };
@@ -38,5 +38,18 @@ export default {
       },
       isDefaultSearchParamsRequired: false,
     });
+  },
+
+  getIdViaApi: (searchParams) => {
+    return cy
+      .okapiRequest({
+        method: REQUEST_METHOD.GET,
+        path: 'erm/entitlements',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body[0].id;
+      });
   },
 };

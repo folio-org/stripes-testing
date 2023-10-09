@@ -615,6 +615,11 @@ export default {
     cy.expect([Button('New').exists(), DropdownMenu().find(HTML('Show columns')).exists()]);
   },
 
+  verifyNoExportJsonOption() {
+    paneResultsSection.find(actionsButton);
+    cy.expect(Button('Export instances (JSON)').absent());
+  },
+
   filterHoldingsByPermanentLocation: (location) => {
     cy.do(Button({ id: 'accordion-toggle-button-holdingsPermanentLocation' }).click());
     // need to wait until data will be loaded
@@ -643,5 +648,9 @@ export default {
       paneResultsSection.find(HTML(including('No results found for'))).exists(),
       instancesList.absent(),
     ]);
+  },
+
+  verifyInstanceDetailsViewAbsent() {
+    cy.expect(instanceDetailsSection.absent());
   },
 };

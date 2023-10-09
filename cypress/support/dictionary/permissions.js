@@ -169,6 +169,10 @@ export default {
     internal: 'ui-inventory.item.edit',
     gui: 'Inventory: View, create, edit items',
   },
+  uiInventoryViewCreateEditDeleteItems: {
+    internal: 'ui-inventory.item.delete',
+    gui: 'Inventory: View, create, edit, delete items',
+  },
   uiInventoryMarcItemInProcess: {
     internal: 'ui-inventory.items.mark-in-process-non-requestable',
     gui: 'Inventory: Mark items in process (non-requestable)',

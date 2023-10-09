@@ -44,8 +44,8 @@ const configurationFields = {
   urlInput: TextField({ name: 'url' }),
   timingInput: TextField({ name: 'accessionDelay' }),
   provider: Select({ name: 'providerName' }),
-  accessionHoldingWorkflowDropdown: accessionHoldingWorkflowPreferenceAccordion.find(Select()),
-  returningWorkflowDropdown: returningWorkflowPreferenceAccordion.find(Select()),
+  accessionHoldingWorkflow: accessionHoldingWorkflowPreferenceAccordion.find(Select()),
+  returningWorkflow: returningWorkflowPreferenceAccordion.find(Select()),
 };
 
 function fillGeneralInfo(fileName, providerName) {
@@ -114,8 +114,8 @@ const configurations = {
     ) {
       fillGeneralInfo(name, this.title);
       cy.do([
-        configurationFields.accessionHoldingWorkflowDropdown.choose(accessionHoldingWorkflow),
-        configurationFields.returningWorkflowDropdown.choose(returningWorkflow),
+        configurationFields.accessionHoldingWorkflow.choose(accessionHoldingWorkflow),
+        configurationFields.returningWorkflow.choose(returningWorkflow),
       ]);
     },
     verifyRequiredFields(
@@ -125,10 +125,10 @@ const configurations = {
     ) {
       cy.expect([
         configurationFields.nameInput.has({ value: name }),
-        configurationFields.accessionHoldingWorkflowDropdown.has({
+        configurationFields.accessionHoldingWorkflow.has({
           value: accessionHoldingWorkflow,
         }),
-        configurationFields.returningWorkflowDropdown.has({
+        configurationFields.returningWorkflow.has({
           value: this.returningWorkflowValues[returningWorkflow],
         }),
       ]);
@@ -211,7 +211,11 @@ export default {
     this.opentEditConfigurationForm(name);
 
     for (const param in configuration) {
-      if (param === 'provider') {
+      if (
+        param === 'provider' ||
+        param === 'accessionHoldingWorkflow' ||
+        param === 'returningWorkflow'
+      ) {
         cy.do(configurationFields[param].choose(including(configuration[param])));
       } else {
         cy.do(configurationFields[param].fillIn(configuration[param]));
