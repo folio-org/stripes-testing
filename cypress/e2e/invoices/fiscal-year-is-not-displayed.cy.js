@@ -3,14 +3,11 @@ import { Invoices } from '../../support/fragments/invoices';
 import { Budgets, FinanceHelper } from '../../support/fragments/finance';
 import TopMenu from '../../support/fragments/topMenu';
 import Organizations from '../../support/fragments/organizations/organizations';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
 import Users from '../../support/fragments/users/users';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import DateTools from '../../support/utils/dateTools';
 
 describe('Invoices', () => {
@@ -18,8 +15,6 @@ describe('Invoices', () => {
   const testData = {
     organization,
     order: { ...NewOrder.getDefaultOrder({ vendorId: organization.id }), reEncumber: true },
-    servicePoint: ServicePoints.getDefaultServicePoint(),
-    location: {},
     invoice: {},
     user: {},
   };
@@ -31,36 +26,26 @@ describe('Invoices', () => {
     testData.budget = budget;
     testData.fiscalYear = fiscalYear;
 
-    ServicePoints.createViaApi(testData.servicePoint).then(() => {
-      testData.location = Locations.getDefaultLocation({
-        servicePointId: testData.servicePoint.id,
+    Organizations.createOrganizationViaApi(testData.organization).then(() => {
+      cy.getBatchGroups().then(({ id: batchGroupId, name: batchGroupName }) => {
+        testData.invoice = Invoices.getDefaultInvoice({
+          batchGroupId,
+          batchGroupName,
+          vendorId: testData.organization.id,
+          vendorName: testData.organization.name,
+          accountingCode: testData.organization.erpCode,
+          invoiceDate: DateTools.getCurrentDate(),
+        });
       });
 
-      Locations.createViaApi(testData.location).then(() => {
-        Organizations.createOrganizationViaApi(testData.organization).then(() => {
-          cy.getBatchGroups().then(({ id: batchGroupId, name: batchGroupName }) => {
-            testData.invoice = Invoices.getDefaultInvoice({
-              batchGroupId,
-              batchGroupName,
-              vendorId: testData.organization.id,
-              vendorName: testData.organization.name,
-              accountingCode: testData.organization.erpCode,
-              invoiceDate: DateTools.getCurrentDate(),
-            });
-          });
+      const orderLine = BasicOrderLine.getDefaultOrderLine({
+        fundDistribution: [{ fundId: fund.id, value: budget.allowableEncumbrance }],
+      });
 
-          const orderLine = BasicOrderLine.getDefaultOrderLine({
-            fundDistribution: [{ fundId: fund.id, value: budget.allowableEncumbrance }],
-            specialLocationId: testData.location.id,
-            vendorAccount: testData.organization.name,
-          });
+      Orders.createOrderWithOrderLineViaApi(testData.order, orderLine).then((order) => {
+        testData.order = order;
 
-          Orders.createOrderWithOrderLineViaApi(testData.order, orderLine).then((order) => {
-            testData.order = order;
-
-            Orders.updateOrderViaApi({ ...order, workflowStatus: 'Open' });
-          });
-        });
+        Orders.updateOrderViaApi({ ...order, workflowStatus: 'Open' });
       });
     });
 
@@ -76,7 +61,6 @@ describe('Invoices', () => {
 
   after('Delete test data', () => {
     Organizations.deleteOrganizationViaApi(testData.organization.id);
-    ServicePoints.deleteViaApi(testData.servicePoint.id);
     Invoices.getInvoiceViaApi({
       query: `vendorInvoiceNo="${testData.invoice.vendorInvoiceNo}"`,
     }).then(({ invoices }) => {
@@ -84,8 +68,6 @@ describe('Invoices', () => {
     });
     Orders.deleteOrderViaApi(testData.order.id);
     Budgets.deleteBudgetWithFundLedgerAndFYViaApi(testData.budget);
-    InventoryHoldings.deleteHoldingRecordByLocationIdViaApi(testData.location.id);
-    Locations.deleteViaApi(testData.location);
     Users.deleteViaApi(testData.user.userId);
   });
 
