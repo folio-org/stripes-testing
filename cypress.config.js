@@ -30,6 +30,8 @@ module.exports = defineConfig({
   },
   e2e: {
     async setupNodeEvents(on, config) {
+      allureWriter(on, config);
+
       on('task', {
         async findFiles(mask) {
           if (!mask) {
@@ -88,9 +90,7 @@ module.exports = defineConfig({
       const configCloud = await cloudPlugin(on, config);
 
       // eslint-disable-next-line global-require
-      const testRailConfig = await require('cypress-testrail-simple/src/plugin')(on, configCloud);
-
-      const result = allureWriter(on, testRailConfig);
+      const result = await require('cypress-testrail-simple/src/plugin')(on, configCloud);
 
       return result;
     },
