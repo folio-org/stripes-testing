@@ -50,7 +50,7 @@
     "@cypress/request": "2.88.7",
     "@folio/eslint-config-stripes": "^6.4.0",
     "@interactors/with-cypress": "^1.0.0-rc1.3",
-    "@shelex/cypress-allure-plugin": "^2.23.0",
+    "@shelex/cypress-allure-plugin": "^2.40.0",
     "bigtest": "^0.14.0",
     "cypress-downloadfile": "^1.2.1",
     "cypress-file-upload": "^5.0.8",
