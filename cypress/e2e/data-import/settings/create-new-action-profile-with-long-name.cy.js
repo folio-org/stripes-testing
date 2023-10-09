@@ -6,8 +6,8 @@ import ActionProfiles from '../../../support/fragments/data_import/action_profil
 import Users from '../../../support/fragments/users/users';
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
 
-describe('data-import:', () => {
-  describe('Settings: Create a new action profile with a long name', () => {
+describe('data-import', () => {
+  describe('Settings', () => {
     let user;
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
