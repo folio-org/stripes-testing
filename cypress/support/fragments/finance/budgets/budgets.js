@@ -60,7 +60,7 @@ export default {
     ledger: ledgerProps,
     fund: fundProps,
     budget: budgetProps,
-    expenceClasses = [],
+    expenseClasses = [],
   } = {}) {
     const fiscalYear = {
       ...FiscalYears.getDefaultFiscalYear(),
@@ -80,23 +80,21 @@ export default {
     };
 
     FiscalYears.createViaApi(fiscalYear);
-    Ledgers.createViaApi({ ...ledger, fiscalYearOneId: fiscalYear.id });
-    Funds.createViaApi({ ...fund, ledgerId: ledger.id });
-    this.createViaApi(budget);
+    Ledgers.createViaApi(ledger);
+    Funds.createViaApi(fund);
 
-    if (expenceClasses.length) {
-      this.getBudgetViaApi(budget.id).then((resp) => {
+    this.createViaApi(budget).then((resp) => {
+      if (expenseClasses.length) {
         this.updateBudgetViaApi({
           ...resp,
-          statusExpenseClasses: [
-            {
-              status: 'Active',
-              expenseClassId: expenceClasses[0].id,
-            },
-          ],
+          _version: resp._version + 1,
+          statusExpenseClasses: expenseClasses.map(({ id }) => ({
+            status: 'Active',
+            expenseClassId: id,
+          })),
         });
-      });
-    }
+      }
+    });
 
     return {
       fiscalYear,

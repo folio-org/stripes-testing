@@ -1,12 +1,12 @@
 import uuid from 'uuid';
 import NewOrganization from '../organizations/newOrganization';
 
-const getDefaultOrder = ({ vendorId, poNumber } = {}) => {
+const getDefaultOrder = ({ vendorId, poNumber, orderType = 'One-Time' } = {}) => {
   const defaultOrder = {
     id: uuid(),
     poNumber,
     vendor: vendorId,
-    orderType: 'One-Time',
+    orderType,
   };
   if (!vendorId) {
     NewOrganization.createViaApi(NewOrganization.getDefaultOrganization()).then(
