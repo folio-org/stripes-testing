@@ -54,6 +54,7 @@ export default {
 
   saveNoteType: (noteType) => {
     cy.do(saveNoteTypeButton.click());
+    // need to wait for note type to appear after creation
     cy.wait(2000);
     cy.expect(MultiColumnListRow({ content: including(noteType) }).exists());
   },
