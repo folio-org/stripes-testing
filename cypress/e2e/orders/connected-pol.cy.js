@@ -16,20 +16,19 @@ describe('orders: create an order', () => {
 
   before(() => {
     cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-      });
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+    });
     order.vendor = organization.name;
     order.orderType = 'One-time';
 
-    cy.createTempUser([
-      permissions.uiOrdersCreate.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    cy.createTempUser([permissions.uiOrdersCreate.gui]).then((userProperties) => {
+      user = userProperties;
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
       });
+    });
   });
 
   afterEach(() => {
@@ -37,12 +36,16 @@ describe('orders: create an order', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C10926 Populate POL details from Inventory instance (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
-    Orders.createOrder(order).then(orderId => {
-      order.id = orderId;
-      Orders.createPOLineViaActions();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
-      OrderLines.checkConnectedInstance();
-    });
-  });
+  it(
+    'C10926 Populate POL details from Inventory instance (thunderjet)',
+    { tags: [TestType.smoke, devTeams.thunderjet] },
+    () => {
+      Orders.createOrder(order).then((orderId) => {
+        order.id = orderId;
+        Orders.createPOLineViaActions();
+        OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
+        OrderLines.checkConnectedInstance();
+      });
+    },
+  );
 });

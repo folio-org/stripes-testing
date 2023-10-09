@@ -1,13 +1,9 @@
-import {
-  NavListItem,
-  Pane,
-} from "../../../../interactors"
+import { NavListItem, Pane } from '../../../../interactors';
 
 const oaipmhPane = Pane('OAI-PMH');
 const generalListItem = NavListItem('General');
 const technicalListItem = NavListItem('Technical');
 const behaviorListItem = NavListItem('Behavior');
-
 
 export default {
   waitLoading() {
@@ -26,4 +22,4 @@ export default {
   clickBehaviorItem() {
     cy.do(behaviorListItem.click());
   },
-}
+};

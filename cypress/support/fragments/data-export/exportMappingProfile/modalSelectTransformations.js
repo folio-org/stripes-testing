@@ -7,7 +7,7 @@ import {
   MultiColumnListRow,
   MultiColumnListCell,
   Pane,
-  MultiColumnListHeader
+  MultiColumnListHeader,
 } from '../../../../../interactors';
 
 const ModalTransformation = Modal('Select transformations');
@@ -26,29 +26,36 @@ export default {
   },
 
   selectTransformations: (marcField, subfield) => {
-    const cellInteractor = ModalTransformation
-      .find(MultiColumnListRow())
-      .find(MultiColumnListCell({ columnIndex: 2 }));
+    const cellInteractor = ModalTransformation.find(MultiColumnListRow()).find(
+      MultiColumnListCell({ columnIndex: 2 }),
+    );
 
     cy.do(Checkbox({ ariaLabel: 'Select field' }).click());
-    cy.then(() => cellInteractor.inputTextFieldNames())
-      .then(inputFieldNames => {
-        cy.do(cellInteractor.find(TextField({ name: inputFieldNames[0] })).fillIn(marcField));
-        cy.do(cellInteractor.find(TextField({ name: inputFieldNames[3] })).fillIn(subfield));
-        cy.do(ModalTransformation.find(Button('Save & close')).click());
-      });
+    cy.then(() => cellInteractor.inputTextFieldNames()).then((inputFieldNames) => {
+      cy.do(cellInteractor.find(TextField({ name: inputFieldNames[0] })).fillIn(marcField));
+      cy.do(cellInteractor.find(TextField({ name: inputFieldNames[3] })).fillIn(subfield));
+      cy.do(ModalTransformation.find(Button('Save & close')).click());
+    });
   },
 
-  getSearchResult: (row = 0, col = 0) => MultiColumnListCell({ 'row': row, 'columnIndex': col }),
+  getSearchResult: (row = 0, col = 0) => MultiColumnListCell({ row, columnIndex: col }),
   clickNthCheckbox(checkBoxNumber = 1) {
     // TODO: redesign with interactors
     cy.get(`div[class^="mclRow--"]:nth-child(${checkBoxNumber}) input[type="checkbox"]`).click();
   },
   verifySearchResultIncludes(allContentToCheck) {
-    return allContentToCheck.forEach(contentToCheck => cy.expect(Pane('Transformations').find(MultiColumnListCell({ content: including(contentToCheck) })).exists()));
+    return allContentToCheck.forEach((contentToCheck) => cy.expect(
+      Pane('Transformations')
+        .find(MultiColumnListCell({ content: including(contentToCheck) }))
+        .exists(),
+    ));
   },
   verifySearchResultDoesNotInclude(allContentToCheck) {
-    return allContentToCheck.forEach(contentToCheck => cy.expect(Pane('Transformations').find(MultiColumnListCell({ content: including(contentToCheck) })).absent()));
+    return allContentToCheck.forEach((contentToCheck) => cy.expect(
+      Pane('Transformations')
+        .find(MultiColumnListCell({ content: including(contentToCheck) }))
+        .absent(),
+    ));
   },
   verifyAllSearchAndFilterCheckboxesChecked() {
     cy.expect([
@@ -121,14 +128,26 @@ export default {
     cy.expect(Checkbox(name).has({ disabled: true }));
   },
   verifyTotalSelected(expectedTotalSelected) {
-    cy.expect(Modal('Select transformations').has({ content: including(`Total selected: ${expectedTotalSelected}`) }));
+    cy.expect(
+      Modal('Select transformations').has({
+        content: including(`Total selected: ${expectedTotalSelected}`),
+      }),
+    );
   },
   fillInTransformationsTextfields(textfield1, textfield2, textfield3, textfield4, rowIndex = 0) {
     // TODO: redesign with interactors
-    cy.xpath(`//div[contains(@class, "mclRow--")][${rowIndex + 1}]//input[contains(@name, "marcField")]`).type(textfield1);
-    cy.xpath(`//div[contains(@class, "mclRow--")][${rowIndex + 1}]//input[contains(@name, "indicator1")]`).type(textfield2);
-    cy.xpath(`//div[contains(@class, "mclRow--")][${rowIndex + 1}]//input[contains(@name, "indicator2")]`).type(textfield3);
-    cy.xpath(`//div[contains(@class, "mclRow--")][${rowIndex + 1}]//input[contains(@name, "subfield")]`).type(textfield4);
+    cy.xpath(
+      `//div[contains(@class, "mclRow--")][${rowIndex + 1}]//input[contains(@name, "marcField")]`,
+    ).type(textfield1);
+    cy.xpath(
+      `//div[contains(@class, "mclRow--")][${rowIndex + 1}]//input[contains(@name, "indicator1")]`,
+    ).type(textfield2);
+    cy.xpath(
+      `//div[contains(@class, "mclRow--")][${rowIndex + 1}]//input[contains(@name, "indicator2")]`,
+    ).type(textfield3);
+    cy.xpath(
+      `//div[contains(@class, "mclRow--")][${rowIndex + 1}]//input[contains(@name, "subfield")]`,
+    ).type(textfield4);
   },
   clickTransformationsSaveAndCloseButton() {
     cy.do(transformationsSaveAndCloseButton.click());

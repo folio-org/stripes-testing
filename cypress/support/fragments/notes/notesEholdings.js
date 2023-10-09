@@ -1,4 +1,12 @@
-import { Section, including, Button, MultiColumnListCell, TextField, RichEditor, HTML } from '../../../../interactors';
+import {
+  Section,
+  including,
+  Button,
+  MultiColumnListCell,
+  TextField,
+  RichEditor,
+  HTML,
+} from '../../../../interactors';
 
 const notesSection = Section({ id: 'providerShowNotes' });
 const createButton = Button({ id: 'note-create-button' });
@@ -25,29 +33,36 @@ export default {
   verifyNoteTitle: (title) => cy.expect(notesSection.find(HTML(including(title))).exists()),
   openNoteView: (title) => cy.do(MultiColumnListCell(including(title)).click()),
   deleteNote: () => {
-    cy.do([
-      actionsButton.click(),
-      deleteButton.click(),
-      deleteButtonInConfirmation.click(),
-    ]);
+    cy.do([actionsButton.click(), deleteButton.click(), deleteButtonInConfirmation.click()]);
   },
   verifyNoteDeletion: (title, details) => cy.expect(MultiColumnListCell({ content: `Title: ${title}Details: ${details}Edit` }).absent()),
   verifyNoteVisibilityWithViewPermission: (title, details) => cy.expect(MultiColumnListCell({ content: `Title: ${title}Details: ${details}` }).exists()),
-  verifyActionButtonVisibilityWithViewPermission: () => { cy.expect(actionsButton.absent()); },
-  verifyDefaultSort: (firstTitle, secondTitle, details) => { 
+  verifyActionButtonVisibilityWithViewPermission: () => {
+    cy.expect(actionsButton.absent());
+  },
+  verifyDefaultSort: (firstTitle, secondTitle, details) => {
     cy.expect([
-      MultiColumnListCell({ content: `Title: ${secondTitle}Details: ${details}Edit`, row: 0 }).exists(),
-      MultiColumnListCell({ content: `Title: ${firstTitle}Details: ${details}Edit`, row: 1 }).exists(),
+      MultiColumnListCell({
+        content: `Title: ${secondTitle}Details: ${details}Edit`,
+        row: 0,
+      }).exists(),
+      MultiColumnListCell({
+        content: `Title: ${firstTitle}Details: ${details}Edit`,
+        row: 1,
+      }).exists(),
     ]);
   },
   verifySortingByTitle: (firstTitle, secondTitle, details) => {
-    cy.do([
-      sortByTitleButton.click(),
-      sortByTitleButton.click(),
-    ]);
+    cy.do([sortByTitleButton.click(), sortByTitleButton.click()]);
     cy.expect([
-      MultiColumnListCell({ content: `Title: ${firstTitle}Details: ${details}Edit`, row: 0 }).exists(),
-      MultiColumnListCell({ content: `Title: ${secondTitle}Details: ${details}Edit`, row: 1 }).exists(),
+      MultiColumnListCell({
+        content: `Title: ${firstTitle}Details: ${details}Edit`,
+        row: 0,
+      }).exists(),
+      MultiColumnListCell({
+        content: `Title: ${secondTitle}Details: ${details}Edit`,
+        row: 1,
+      }).exists(),
     ]);
   },
   editNote: (title, newTitle, newDetails) => {

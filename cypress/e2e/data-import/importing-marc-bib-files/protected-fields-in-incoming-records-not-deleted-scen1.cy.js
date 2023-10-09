@@ -1,7 +1,6 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import Parallelization from '../../../support/dictionary/parallelization';
 import TopMenu from '../../../support/fragments/topMenu';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -22,79 +21,97 @@ describe('data-import', () => {
     let user = null;
     let instanceHrid = null;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-    const protectedField = '856';
+    const protectedFieldData = {
+      protectedField: '856',
+      in1: '*',
+      in2: '*',
+      subfield: '*',
+      data: '*',
+      source: 'User',
+    };
     const OCLCAuthentication = '100481406/PAOLF';
     const oclcForChanging = '466478385';
-    const imported856Field = 'Notice et cote du catalogue de la Bibliothèque nationale de France ‡u http://catalogue.bnf.fr/ark:/12148/cb371881758';
+    const imported856Field =
+      'Notice et cote du catalogue de la Bibliothèque nationale de France ‡u http://catalogue.bnf.fr/ark:/12148/cb371881758';
 
     before('create test data', () => {
       cy.createTempUser([
-        permissions.moduleDataImportEnabled.gui,
-        permissions.settingsDataImportEnabled.gui,
-        permissions.uiInventorySettingsConfigureSingleRecordImport.gui,
-        permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        permissions.inventoryAll.gui,
-        permissions.uiInventorySingleRecordImport.gui,
-        permissions.uiInventoryViewCreateEditInstances.gui,
-        permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-        permissions.remoteStorageView.gui,
-        permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.uiInventorySettingsConfigureSingleRecordImport.gui,
+        Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiInventorySingleRecordImport.gui,
+        Permissions.uiInventoryViewCreateEditInstances.gui,
+        Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+        Permissions.remoteStorageView.gui,
+        Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          cy.login(user.username, user.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-
-          const fileName = `C358968autotestFile.${getRandomPostfix()}.mrc`;
-
-          Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
-          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-          DataImport.verifyUploadState();
-          DataImport.uploadFile('marcFileForC358968.mrc', fileName);
-          JobProfiles.searchJobProfileForImport(jobProfileToRun);
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(fileName);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-          Logs.openFileDetails(fileName);
-          [FileDetails.columnNameInResultList.srsMarc,
-            FileDetails.columnNameInResultList.instance].forEach(columnName => {
-            FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
-          });
-          FileDetails.checkSrsRecordQuantityInSummaryTable('1');
-          FileDetails.checkInstanceQuantityInSummaryTable('1');
-
-          // open Instance for getting hrid
-          FileDetails.openInstanceInInventory('Created');
-          InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
-            instanceHrid = initialInstanceHrId;
-          });
+        cy.login(user.username, user.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
         });
+
+        const fileName = `C358968autotestFile.${getRandomPostfix()}.mrc`;
+
+        Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
+        DataImport.uploadFile('marcFileForC358968.mrc', fileName);
+        JobProfiles.searchJobProfileForImport(jobProfileToRun);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(fileName);
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(fileName);
+        [
+          FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.instance,
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+        });
+        FileDetails.checkSrsRecordQuantityInSummaryTable('1');
+        FileDetails.checkInstanceQuantityInSummaryTable('1');
+
+        // open Instance for getting hrid
+        FileDetails.openInstanceInInventory('Created');
+        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
+          instanceHrid = initialInstanceHrId;
+        });
+      });
     });
 
     after('delete test data', () => {
-      MarcFieldProtection.getListOfMarcFieldProtectionViaApi({ query: `"field"=="${protectedField}"` })
-        .then(list => {
-          list.forEach(({ id }) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(id));
-        });
+      MarcFieldProtection.getListViaApi({
+        query: `"field"=="${protectedFieldData.protectedField}"`,
+      }).then((list) => {
+        list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+      });
       Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
       Users.deleteViaApi(user.userId);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-        .then((instance) => {
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+        (instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
+        },
+      );
     });
 
-    it('C358968 Check that protected fields in incoming records are not deleted during import: Scenario 1 (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+    it(
+      'C358968 Check that protected fields in incoming records are not deleted during import: Scenario 1 (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.parallel] },
+      () => {
         cy.visit(SettingsMenu.marcFieldProtectionPath);
-        MarcFieldProtection.checkListOfExistingProfilesIsDisplayed();
-        MarcFieldProtection.createNewMarcFieldProtection();
-        MarcFieldProtection.fillMarcFieldProtection(protectedField);
-        MarcFieldProtection.checkFieldProtectionIsCreated(protectedField);
+        MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
+        MarcFieldProtection.create(protectedFieldData);
+        MarcFieldProtection.verifyFieldProtectionIsCreated(protectedFieldData.protectedField);
 
         cy.visit(SettingsMenu.targetProfilesPath);
         Z3950TargetProfiles.openTargetProfile();
-        Z3950TargetProfiles.editOclcWorldCat(OCLCAuthentication, TARGET_PROFILE_NAMES.OCLC_WORLDCAT);
+        Z3950TargetProfiles.editOclcWorldCat(
+          OCLCAuthentication,
+          TARGET_PROFILE_NAMES.OCLC_WORLDCAT,
+        );
         Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(OCLCAuthentication);
 
         cy.visit(TopMenu.inventoryPath);
@@ -109,10 +126,13 @@ describe('data-import', () => {
         InventoryInstance.startOverlaySourceBibRecord();
         InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();
         InventoryInstance.overlayWithOclc(oclcForChanging);
-        InventoryInstance.checkCalloutMessage(`Record ${oclcForChanging} updated. Results may take a few moments to become visible in Inventory`);
+        InventoryInstance.checkCalloutMessage(
+          `Record ${oclcForChanging} updated. Results may take a few moments to become visible in Inventory`,
+        );
         InventoryInstance.viewSource();
-        InventoryViewSource.contains(`${protectedField}\t`);
+        InventoryViewSource.contains(`${protectedFieldData.protectedField}\t`);
         InventoryViewSource.contains(imported856Field);
-      });
+      },
+    );
   });
 });

@@ -1,6 +1,4 @@
-import DevTeams from '../../../support/dictionary/devTeams';
-import TestTypes from '../../../support/dictionary/testTypes';
-import permissions from '../../../support/dictionary/permissions';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import MarkItemAsMissing from '../../../support/fragments/inventory/markItemAsMissing';
 import Requests from '../../../support/fragments/requests/requests';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -27,7 +25,7 @@ describe('inventory', () => {
     before(() => {
       let materialBookId;
       cy.getAdminToken();
-      cy.getMaterialTypes({ query: 'name="video recording"' }).then(type => {
+      cy.getMaterialTypes({ query: 'name="video recording"' }).then((type) => {
         materialBookId = type.id;
       });
       CirculationRules.getViaApi().then((circulationRule) => {
@@ -35,25 +33,26 @@ describe('inventory', () => {
         const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
         const defaultProps = ` i ${ruleProps.i} r ${ruleProps.r} o ${ruleProps.o} n ${ruleProps.n} l ${ruleProps.l}`;
         addedCirculationRule = ` \nm ${materialBookId}: ${defaultProps}`;
-        cy.updateCirculationRules({ rulesAsText: `${originalCirculationRules}${addedCirculationRule}` });
+        cy.updateCirculationRules({
+          rulesAsText: `${originalCirculationRules}${addedCirculationRule}`,
+        });
       });
     });
 
     beforeEach(() => {
       cy.getAdminToken()
         .then(() => {
-          ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' })
-            .then((res) => {
-              defaultServicePointId = res[0].id;
-            });
+          ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' }).then((res) => {
+            defaultServicePointId = res[0].id;
+          });
         })
         .then(() => {
           cy.createTempUser([
-            permissions.uiInventoryMarkAsMissing.gui,
-            permissions.uiRequestsView.gui,
+            Permissions.uiInventoryMarkAsMissing.gui,
+            Permissions.uiRequestsView.gui,
           ]);
         })
-        .then(userProperties => {
+        .then((userProperties) => {
           user = userProperties;
           UserEdit.addServicePointViaApi(defaultServicePointId, user.userId);
         })
@@ -61,22 +60,24 @@ describe('inventory', () => {
           cy.login(user.username, user.password);
         })
         .then(() => {
-          MarkItemAsMissing
-            .createItemsForGivenStatusesApi()
-            .then(({ items, instanceRecordData, materialTypeValue }) => {
+          MarkItemAsMissing.createItemsForGivenStatusesApi().then(
+            ({ items, instanceRecordData, materialTypeValue }) => {
               createdItems = items;
               instanceData = instanceRecordData;
               materialType = materialTypeValue;
-              MarkItemAsMissing.getItemsToCreateRequests(createdItems).forEach(item => {
+              MarkItemAsMissing.getItemsToCreateRequests(createdItems).forEach((item) => {
                 const requestStatus = MarkItemAsMissing.itemToRequestMap[item.status.name];
-                MarkItemAsMissing
-                  .createRequestForGivenItemApi(item, instanceRecordData, requestStatus)
-                  .then(({ createdUserId, createdRequestId }) => {
-                    createdRequestsIds.push(createdRequestId);
-                    requesterIds.push(createdUserId);
-                  });
+                MarkItemAsMissing.createRequestForGivenItemApi(
+                  item,
+                  instanceRecordData,
+                  requestStatus,
+                ).then(({ createdUserId, createdRequestId }) => {
+                  createdRequestsIds.push(createdRequestId);
+                  requesterIds.push(createdUserId);
+                });
               });
-            });
+            },
+          );
         });
     });
 
@@ -85,51 +86,60 @@ describe('inventory', () => {
     });
 
     afterEach(() => {
-      createdItems.forEach(item => {
+      createdItems.forEach((item) => {
         cy.deleteItemViaApi(item.itemId);
       });
       cy.deleteHoldingRecordViaApi(instanceData.holdingId);
       InventoryInstance.deleteInstanceViaApi(instanceData.instanceId);
-      createdRequestsIds.forEach(id => {
+      createdRequestsIds.forEach((id) => {
         Requests.deleteRequestViaApi(id);
       });
       Users.deleteViaApi(user.userId);
-      requesterIds.forEach(id => Users.deleteViaApi(id));
+      requesterIds.forEach((id) => Users.deleteViaApi(id));
     });
 
-    it('C714 Mark an item as Missing (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-      cy.visit(TopMenu.inventoryPath);
-      MarkItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
-      MarkItemAsMissing.getItemsToMarkAsMissing(createdItems).forEach(item => {
-        MarkItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
-        MarkItemAsMissing.openItem(item.barcode);
-        MarkItemAsMissing.checkIsMarkAsMissingExist(true);
-        ItemActions.markAsMissing();
-        MarkItemAsMissing.checkIsConfirmItemMissingModalExist(instanceData.instanceTitle, item.barcode, materialType);
-        ItemActions.cancelMarkAsMissing();
-        ItemRecordView.verifyItemStatusInPane(item.status.name);
-        ItemActions.markAsMissing();
-        ItemActions.confirmMarkAsMissing();
-        ItemRecordView.verifyItemStatusInPane('Missing');
-        MarkItemAsMissing.verifyItemStatusUpdatedDate();
-        ItemRecordView.closeDetailView();
-      });
+    it(
+      'C714 Mark an item as Missing (folijet) (prokopovych)',
 
-      cy.visit(TopMenu.requestsPath);
-      MarkItemAsMissing.getItemsToCreateRequests(createdItems).forEach(item => {
-        Requests.findCreatedRequest(item.barcode);
-        Requests.selectFirstRequest(item.barcode);
-        MarkItemAsMissing.verifyRequestStatus('Open - Not yet filled');
-      });
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
+      () => {
+        cy.visit(TopMenu.inventoryPath);
+        MarkItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
+        MarkItemAsMissing.getItemsToMarkAsMissing(createdItems).forEach((item) => {
+          MarkItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
+          MarkItemAsMissing.openItem(item.barcode);
+          MarkItemAsMissing.checkIsMarkAsMissingExist(true);
+          ItemActions.markAsMissing();
+          MarkItemAsMissing.checkIsConfirmItemMissingModalExist(
+            instanceData.instanceTitle,
+            item.barcode,
+            materialType,
+          );
+          ItemActions.cancelMarkAsMissing();
+          ItemRecordView.verifyItemStatusInPane(item.status.name);
+          ItemActions.markAsMissing();
+          ItemActions.confirmMarkAsMissing();
+          ItemRecordView.verifyItemStatusInPane('Missing');
+          MarkItemAsMissing.verifyItemStatusUpdatedDate();
+          ItemRecordView.closeDetailView();
+        });
 
-      cy.visit(TopMenu.inventoryPath);
-      MarkItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
-      MarkItemAsMissing.getItemsNotToMarkAsMissing(createdItems).forEach(item => {
-        MarkItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
-        MarkItemAsMissing.openItem(item.barcode);
-        MarkItemAsMissing.checkIsMarkAsMissingExist(false);
-        ItemRecordView.closeDetailView();
-      });
-    });
+        cy.visit(TopMenu.requestsPath);
+        MarkItemAsMissing.getItemsToCreateRequests(createdItems).forEach((item) => {
+          Requests.findCreatedRequest(item.barcode);
+          Requests.selectFirstRequest(item.barcode);
+          MarkItemAsMissing.verifyRequestStatus('Open - Not yet filled');
+        });
+
+        cy.visit(TopMenu.inventoryPath);
+        MarkItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
+        MarkItemAsMissing.getItemsNotToMarkAsMissing(createdItems).forEach((item) => {
+          MarkItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
+          MarkItemAsMissing.openItem(item.barcode);
+          MarkItemAsMissing.checkIsMarkAsMissingExist(false);
+          ItemRecordView.closeDetailView();
+        });
+      },
+    );
   });
 });

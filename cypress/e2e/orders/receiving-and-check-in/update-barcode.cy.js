@@ -38,8 +38,8 @@ describe('Orders: Receiving and Check-in', () => {
         name: 'TestAccout1',
         notes: '',
         paymentMethod: 'Cash',
-      }
-    ]
+      },
+    ],
   };
   const barcodeForFirstItem = Helper.getRandomBarcode();
   const barcodeForSecondItem = Helper.getRandomBarcode();
@@ -53,31 +53,34 @@ describe('Orders: Receiving and Check-in', () => {
   before(() => {
     cy.getAdminToken();
 
-    ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' })
-      .then((servicePoints) => {
-        effectiveLocationServicePoint = servicePoints[0];
-        NewLocation.createViaApi(NewLocation.getDefaultLocation(effectiveLocationServicePoint.id))
-          .then((locationResponse) => {
-            location = locationResponse;
-            Organizations.createOrganizationViaApi(organization)
-              .then(organizationsResponse => {
-                organization.id = organizationsResponse;
-                order.vendor = organizationsResponse;
-              });
+    ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
+      effectiveLocationServicePoint = servicePoints[0];
+      NewLocation.createViaApi(
+        NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
+      ).then((locationResponse) => {
+        location = locationResponse;
+        Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
+          organization.id = organizationsResponse;
+          order.vendor = organizationsResponse;
+        });
 
-            cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-            cy.createOrderApi(order)
-              .then((response) => {
-                orderNumber = response.body.poNumber;
-                Orders.searchByParameter('PO number', orderNumber);
-                Orders.selectFromResultsList(orderNumber);
-                Orders.createPOLineViaActions();
-                OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
-                OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', locationResponse.institutionId, '2');
-                OrderLines.backToEditingOrder();
-              });
-          });
+        cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+        cy.createOrderApi(order).then((response) => {
+          orderNumber = response.body.poNumber;
+          Orders.searchByParameter('PO number', orderNumber);
+          Orders.selectFromResultsList(orderNumber);
+          Orders.createPOLineViaActions();
+          OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
+          OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
+            `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
+            'Purchase',
+            locationResponse.institutionId,
+            '2',
+          );
+          OrderLines.backToEditingOrder();
+        });
       });
+    });
 
     cy.createTempUser([
       permissions.uiInventoryViewInstances.gui,
@@ -85,22 +88,24 @@ describe('Orders: Receiving and Check-in', () => {
       permissions.uiOrdersView.gui,
       permissions.uiReceivingViewEditCreate.gui,
       permissions.uiInventoryViewCreateEditItems.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
       });
+    });
   });
 
   after(() => {
-    cy.loginAsAdmin({ path:TopMenu.receivingPath, waiter: Receiving.waitLoading });
+    cy.loginAsAdmin({ path: TopMenu.receivingPath, waiter: Receiving.waitLoading });
     Orders.searchByParameter('PO number', orderNumber);
     Receiving.selectLinkFromResultsList();
     Receiving.unreceiveFromReceivedSection();
     cy.visit(TopMenu.ordersPath);
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList();
-    Orders.unOpenOrder(orderNumber);
+    Orders.unOpenOrder();
     OrderLines.selectPOLInOrder(0);
     OrderLines.deleteOrderLine();
     // Need to wait until the order is opened before deleting it
@@ -109,27 +114,39 @@ describe('Orders: Receiving and Check-in', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C736 Update Barcode and call number information when receiving (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList(orderNumber);
-    Orders.openOrder();
-    Orders.receiveOrderViaActions();
-    Receiving.selectLinkFromResultsList();
-    Receiving.receiveFromExpectedSection();
-    Receiving.receiveAllPhysicalItemsWithBarcodes(barcodeForFirstItem, barcodeForSecondItem);
-    Receiving.clickOnInstance();
-    InventoryInstance.openHoldingsAccordion(location.name);
-    InventorySearchAndFilter.switchToItem();
-    InventorySearchAndFilter.searchByParameter('Barcode', barcodeForFirstItem);
-    ItemRecordView.checkItemDetails(location.name, barcodeForFirstItem, ITEM_STATUS_NAMES.IN_PROCESS);
-    ItemActions.edit();
-    ItemRecordView.changeItemBarcode(changedBarcode);
-    ItemRecordView.checkItemDetails(location.name, changedBarcode, ITEM_STATUS_NAMES.IN_PROCESS);
-    ItemActions.closeItem();
-    InventorySearchAndFilter.switchToItem();
-    InventorySearchAndFilter.searchByParameter('Barcode', barcodeForSecondItem);
-    ItemRecordView.checkItemDetails(location.name, barcodeForSecondItem, ITEM_STATUS_NAMES.IN_PROCESS);
-    ItemActions.closeItem();
-    InventorySearchAndFilter.switchToItem();
-  });
+  it(
+    'C736 Update Barcode and call number information when receiving (thunderjet)',
+    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    () => {
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList(orderNumber);
+      Orders.openOrder();
+      Orders.receiveOrderViaActions();
+      Receiving.selectLinkFromResultsList();
+      Receiving.receiveFromExpectedSection();
+      Receiving.receiveAllPhysicalItemsWithBarcodes(barcodeForFirstItem, barcodeForSecondItem);
+      Receiving.clickOnInstance();
+      InventoryInstance.openHoldingsAccordion(location.name);
+      InventorySearchAndFilter.switchToItem();
+      InventorySearchAndFilter.searchByParameter('Barcode', barcodeForFirstItem);
+      ItemRecordView.checkItemDetails(
+        location.name,
+        barcodeForFirstItem,
+        ITEM_STATUS_NAMES.IN_PROCESS,
+      );
+      ItemActions.edit();
+      ItemRecordView.changeItemBarcode(changedBarcode);
+      ItemRecordView.checkItemDetails(location.name, changedBarcode, ITEM_STATUS_NAMES.IN_PROCESS);
+      ItemActions.closeItem();
+      InventorySearchAndFilter.switchToItem();
+      InventorySearchAndFilter.searchByParameter('Barcode', barcodeForSecondItem);
+      ItemRecordView.checkItemDetails(
+        location.name,
+        barcodeForSecondItem,
+        ITEM_STATUS_NAMES.IN_PROCESS,
+      );
+      ItemActions.closeItem();
+      InventorySearchAndFilter.switchToItem();
+    },
+  );
 });

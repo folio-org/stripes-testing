@@ -5,8 +5,7 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InstanceRecordEdit from '../../support/fragments/inventory/instanceRecordEdit';
 import Helper from '../../support/fragments/finance/financeHelper';
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
+import { DevTeams, TestTypes } from '../../support/dictionary';
 import { INSTANCE_SOURCE_NAMES } from '../../support/constants';
 
 describe('inventory', () => {
@@ -31,12 +30,15 @@ describe('inventory', () => {
               instanceTypeId: Cypress.env('instanceTypes')[0].id,
               title: instanceTitle,
               source: INSTANCE_SOURCE_NAMES.FOLIO,
-            }, {
+            },
+            {
               instanceTypeId: Cypress.env('instanceTypes')[0].id,
               title: instanceTitle2,
               source: INSTANCE_SOURCE_NAMES.FOLIO,
-            }
-          ]).each((instance, i) => cy.createInstance({ instance }).then(specialInstanceId => { instanceIds[i] = specialInstanceId; }));
+            },
+          ]).each((instance, i) => cy.createInstance({ instance }).then((specialInstanceId) => {
+            instanceIds[i] = specialInstanceId;
+          }));
         });
 
       cy.visit(TopMenu.inventoryPath);
@@ -44,7 +46,7 @@ describe('inventory', () => {
 
     after(() => {
       cy.getInstanceById(instanceIds[0])
-        .then(body => {
+        .then((body) => {
           const requestBody = body;
           requestBody.precedingTitles = [];
 
@@ -52,21 +54,25 @@ describe('inventory', () => {
           cy.updateInstance(requestBody);
         })
         .then(() => {
-          instanceIds.forEach(instanceId => InventoryInstance.deleteInstanceViaApi(instanceId));
+          instanceIds.forEach((instanceId) => InventoryInstance.deleteInstanceViaApi(instanceId));
         });
     });
 
-    it('C9215 In Accordion Title --> Test assigning a Preceding title (folijet) (prokopovych)', { tags:  [TestTypes.smoke, DevTeams.folijet] }, () => {
-      InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
-      InventoryInstances.selectInstance();
-      InventoryInstance.editInstance();
-      InstanceRecordEdit.addPrecedingTitle(0, precedingTitleValue, isbnValue, issnValue);
-      InstanceRecordEdit.saveAndClose();
-      InventoryInstance.checkPrecedingTitle(0, precedingTitleValue, isbnValue, issnValue);
-      InventoryInstance.editInstance();
-      InstanceRecordEdit.addExistingPrecedingTitle(instanceTitle2);
-      InstanceRecordEdit.saveAndClose();
-      InventoryInstance.checkPrecedingTitle(0, instanceTitle2, '', '');
-    });
+    it(
+      'C9215 In Accordion Title --> Test assigning a Preceding title (folijet) (prokopovych)',
+      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      () => {
+        InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
+        InventoryInstances.selectInstance();
+        InventoryInstance.editInstance();
+        InstanceRecordEdit.addPrecedingTitle(0, precedingTitleValue, isbnValue, issnValue);
+        InstanceRecordEdit.saveAndClose();
+        InventoryInstance.checkPrecedingTitle(0, precedingTitleValue, isbnValue, issnValue);
+        InventoryInstance.editInstance();
+        InstanceRecordEdit.addExistingPrecedingTitle(instanceTitle2);
+        InstanceRecordEdit.saveAndClose();
+        InventoryInstance.checkPrecedingTitle(0, instanceTitle2, '', '');
+      },
+    );
   });
 });

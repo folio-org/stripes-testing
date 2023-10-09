@@ -33,8 +33,8 @@ describe('orders: Settings', () => {
         name: 'TestAccout1',
         notes: '',
         paymentMethod: 'Cash',
-      }
-    ]
+      },
+    ],
   };
 
   let orderNumber;
@@ -45,38 +45,41 @@ describe('orders: Settings', () => {
   before(() => {
     cy.getAdminToken();
 
-    ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' })
-      .then((servicePoints) => {
-        effectiveLocationServicePoint = servicePoints[0];
-        NewLocation.createViaApi(NewLocation.getDefaultLocation(effectiveLocationServicePoint.id))
-          .then((locationResponse) => {
-            location = locationResponse;
-            Organizations.createOrganizationViaApi(organization)
-              .then(organizationsResponse => {
-                organization.id = organizationsResponse;
-                order.vendor = organizationsResponse;
-              });
+    ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
+      effectiveLocationServicePoint = servicePoints[0];
+      NewLocation.createViaApi(
+        NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
+      ).then((locationResponse) => {
+        location = locationResponse;
+        Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
+          organization.id = organizationsResponse;
+          order.vendor = organizationsResponse;
+        });
 
-            cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-            cy.createOrderApi(order)
-              .then((response) => {
-                orderNumber = response.body.poNumber;
-              });
-          });
+        cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+        cy.createOrderApi(order).then((response) => {
+          orderNumber = response.body.poNumber;
+        });
       });
+    });
 
     cy.createTempUser([
       permissions.uiOrdersCreate.gui,
-      permissions.uiSettingsOrdersCanViewAndEditAllSettings.gui
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path:SettingsMenu.ordersPurchaseOrderLinesLimit, waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit });
+      permissions.uiSettingsOrdersCanViewAndEditAllSettings.gui,
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(userProperties.username, userProperties.password, {
+        path: SettingsMenu.ordersPurchaseOrderLinesLimit,
+        waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit,
       });
+    });
   });
 
   after(() => {
-    cy.loginAsAdmin({ path:SettingsMenu.ordersPurchaseOrderLinesLimit, waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit });
+    cy.loginAsAdmin({
+      path: SettingsMenu.ordersPurchaseOrderLinesLimit,
+      waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit,
+    });
     SettingsOrders.setPurchaseOrderLinesLimit(1);
     Orders.deleteOrderViaApi(order.id);
 
@@ -85,26 +88,40 @@ describe('orders: Settings', () => {
       location.institutionId,
       location.campusId,
       location.libraryId,
-      location.id
+      location.id,
     );
 
     Users.deleteViaApi(user.userId);
   });
 
-  it('C668 Change the purchase order lines limit, then create POs with PO Lines of (PO Line limit + 1), to see how the order app behaves (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
-    SettingsOrders.setPurchaseOrderLinesLimit(2);
-    cy.visit(TopMenu.ordersPath);
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList();
-    Orders.createPOLineViaActions();
-    OrderLines.selectRandomInstanceInTitleLookUP('*', 20);
-    OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId, '4');
-    OrderLines.backToEditingOrder();
-    Orders.createPOLineViaActions();
-    OrderLines.selectRandomInstanceInTitleLookUP('*', 40);
-    OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId, '4');
-    OrderLines.backToEditingOrder();
-    Orders.createPOLineViaActions();
-    Orders.checkPurchaseOrderLineLimitReachedModal();
-  });
+  it(
+    'C668 Change the purchase order lines limit, then create POs with PO Lines of (PO Line limit + 1), to see how the order app behaves (thunderjet)',
+    { tags: [testType.smoke, devTeams.thunderjet] },
+    () => {
+      SettingsOrders.setPurchaseOrderLinesLimit(2);
+      cy.visit(TopMenu.ordersPath);
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList();
+      Orders.createPOLineViaActions();
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 20);
+      OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
+        `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
+        'Purchase',
+        location.institutionId,
+        '4',
+      );
+      OrderLines.backToEditingOrder();
+      Orders.createPOLineViaActions();
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 40);
+      OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
+        `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
+        'Purchase',
+        location.institutionId,
+        '4',
+      );
+      OrderLines.backToEditingOrder();
+      Orders.createPOLineViaActions();
+      Orders.checkPurchaseOrderLineLimitReachedModal();
+    },
+  );
 });

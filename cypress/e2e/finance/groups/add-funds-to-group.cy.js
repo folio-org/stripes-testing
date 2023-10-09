@@ -25,70 +25,66 @@ describe('ui-finance: Groups', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstGroup = { ...Groups.defaultUiGroup };
-  const secondGroup = { 
+  const secondGroup = {
     name: `autotest_group_2_${getRandomPostfix()}`,
     code: getRandomPostfix(),
-    status: 'Active'
-   };
+    status: 'Active',
+  };
   const allocatedQuantity = '50';
   let user;
 
   before(() => {
     cy.getAdminToken();
-    FiscalYears.createViaApi(defaultFiscalYear)
-      .then(response => {
-        defaultFiscalYear.id = response.id;
-        defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+    FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
+      defaultFiscalYear.id = response.id;
+      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
 
-        Ledgers.createViaApi(defaultLedger)
-          .then(ledgerResponse => {
-            defaultLedger.id = ledgerResponse.id;
-            firstFund.ledgerId = defaultLedger.id;
-            secondFund.ledgerId = defaultLedger.id;
+      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+        defaultLedger.id = ledgerResponse.id;
+        firstFund.ledgerId = defaultLedger.id;
+        secondFund.ledgerId = defaultLedger.id;
 
-            Groups.createViaApi(firstGroup)
-              .then(firstGroupResponse => {
-                firstGroup.id = firstGroupResponse.id;
-              });
+        Groups.createViaApi(firstGroup).then((firstGroupResponse) => {
+          firstGroup.id = firstGroupResponse.id;
+        });
 
-              Groups.createViaApi(secondGroup)
-              .then(secondGroupResponse => {
-                secondGroup.id = secondGroupResponse.id;
-              });
+        Groups.createViaApi(secondGroup).then((secondGroupResponse) => {
+          secondGroup.id = secondGroupResponse.id;
+        });
 
-            Funds.createViaApi(firstFund)
-              .then(firstFundResponse => {
-                firstFund.id = firstFundResponse.fund.id;
+        Funds.createViaApi(firstFund).then((firstFundResponse) => {
+          firstFund.id = firstFundResponse.fund.id;
 
-                cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
-                FinanceHelp.searchByName(firstFund.name);
-                Funds.selectFund(firstFund.name);
-                Funds.addBudget(allocatedQuantity);
-              });
+          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+          FinanceHelp.searchByName(firstFund.name);
+          Funds.selectFund(firstFund.name);
+          Funds.addBudget(allocatedQuantity);
+        });
 
-            Funds.createViaApi(secondFund)
-              .then(secondFundResponse => {
-                secondFund.id = secondFundResponse.fund.id;
+        Funds.createViaApi(secondFund).then((secondFundResponse) => {
+          secondFund.id = secondFundResponse.fund.id;
 
-                cy.visit(TopMenu.fundPath);
-                FinanceHelp.searchByName(secondFund.name);
-                Funds.selectFund(secondFund.name);
-                Funds.addBudget(allocatedQuantity);
-              });
-          });
+          cy.visit(TopMenu.fundPath);
+          FinanceHelp.searchByName(secondFund.name);
+          Funds.selectFund(secondFund.name);
+          Funds.addBudget(allocatedQuantity);
+        });
       });
+    });
     cy.createTempUser([
       permissions.uiFinanceViewEditDeletFundBudget.gui,
       permissions.uiFinanceViewGroups.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.fundPath,
+        waiter: Funds.waitLoading,
       });
+    });
   });
 
   after(() => {
-    cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
+    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
     FinanceHelp.searchByName(firstFund.name);
     Funds.selectFund(firstFund.name);
     Funds.selectBudgetDetails();
@@ -115,24 +111,28 @@ describe('ui-finance: Groups', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C4056 Add funds to a group (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    FinanceHelp.searchByName(firstFund.name);
-    Funds.selectFund(firstFund.name);
-    Funds.addGroupToFund(firstGroup.name);
-    InteractorsTools.checkCalloutMessage('Fund has been saved');
-    Funds.checkAddGroupToFund(firstGroup.name);
-    Funds.addGroupToFund(secondGroup.name);
-    InteractorsTools.checkCalloutMessage('Fund has been saved');
-    Funds.checkAddGroupToFund(`${firstGroup.name}, ${secondGroup.name}`);
-    cy.visit(TopMenu.groupsPath);
-    FinanceHelp.searchByName(firstGroup.name);
-    Groups.selectGroup(firstGroup.name);
-    Groups.addFundToGroup(secondFund.name);
-    InteractorsTools.checkCalloutMessage('Fund(s) have been added to group');
-    Groups.checkAddingMultiplyFunds(secondFund.name, firstFund.name);
-    FinanceHelp.searchByName(secondGroup.name);
-    Groups.selectGroup(secondGroup.name);
-    Groups.addFundToGroup(firstFund.name);
-    InteractorsTools.checkCalloutMessage('Fund(s) have been added to group');
-  });
+  it(
+    'C4056 Add funds to a group (thunderjet)',
+    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    () => {
+      FinanceHelp.searchByName(firstFund.name);
+      Funds.selectFund(firstFund.name);
+      Funds.addGroupToFund(firstGroup.name);
+      InteractorsTools.checkCalloutMessage('Fund has been saved');
+      Funds.checkAddGroupToFund(firstGroup.name);
+      Funds.addGroupToFund(secondGroup.name);
+      InteractorsTools.checkCalloutMessage('Fund has been saved');
+      Funds.checkAddGroupToFund(`${firstGroup.name}, ${secondGroup.name}`);
+      cy.visit(TopMenu.groupsPath);
+      FinanceHelp.searchByName(firstGroup.name);
+      Groups.selectGroup(firstGroup.name);
+      Groups.addFundToGroup(secondFund.name);
+      InteractorsTools.checkCalloutMessage('Fund(s) have been added to group');
+      Groups.checkAddingMultiplyFunds(secondFund.name, firstFund.name);
+      FinanceHelp.searchByName(secondGroup.name);
+      Groups.selectGroup(secondGroup.name);
+      Groups.addFundToGroup(firstFund.name);
+      InteractorsTools.checkCalloutMessage('Fund(s) have been added to group');
+    },
+  );
 });

@@ -20,6 +20,7 @@ const date = '2023-07-21';
 
 export default {
   clickOnItem() {
+    // eslint-disable-next-line no-undef
     cy.do(items).click();
   },
 
@@ -70,9 +71,7 @@ export default {
   declaredItem() {
     cy.do(Button({ id: 'accordion-toggle-button-loan' }).click());
     cy.do([Checkbox({ id: 'clickable-filter-loan-declared-lost' }).click()]);
-    cy.wrap(MultiColumnListCell({ row: 0, columnIndex: 1 }).text()).as(
-      'barcode'
-    );
+    cy.wrap(MultiColumnListCell({ row: 0, columnIndex: 1 }).text()).as('barcode');
     cy.get('@barcode').then((val) => {
       cy.visit(topMenu.checkInPath);
       checkInActions.checkInItem(val);
@@ -84,10 +83,7 @@ export default {
     inventorySearchAndFilter.switchToItem();
     cy.do(Button({ id: 'accordion-toggle-button-itemStatus' }).click());
     cy.expect([Spinner().exists(), Checkbox('Available').exists()]);
-    cy.do([
-      itemStatusSearchField.click(),
-      itemStatusSearchField.fillIn('withdrawn'),
-    ]);
+    cy.do([itemStatusSearchField.click(), itemStatusSearchField.fillIn('withdrawn')]);
     cy.do([Checkbox({ id: 'clickable-filter-itemStatus-withdrawn' }).click()]);
     inventorySearchAndFilter.clickSearchResultItem();
     cy.visit(topMenu.checkInPath);
@@ -100,13 +96,8 @@ export default {
     cy.do(Button({ id: 'accordion-toggle-button-itemStatus' }).click());
     cy.expect([Spinner().exists(), Checkbox('Available').exists()]);
     cy.expect(Checkbox('Available').exists());
-    cy.do([
-      itemStatusSearchField.click(),
-      itemStatusSearchField.fillIn('lost and'),
-    ]);
-    cy.do([
-      Checkbox({ id: 'clickable-filter-itemStatus-lost-and-paid' }).click(),
-    ]);
+    cy.do([itemStatusSearchField.click(), itemStatusSearchField.fillIn('lost and')]);
+    cy.do([Checkbox({ id: 'clickable-filter-itemStatus-lost-and-paid' }).click()]);
     inventorySearchAndFilter.selectSearchResultItem();
     cy.visit(topMenu.checkInPath);
     checkInActions.checkInItem(itemBarcode);

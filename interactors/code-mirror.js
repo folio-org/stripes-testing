@@ -1,10 +1,8 @@
 import HTML from './baseHTML';
 
-const content = el => el.textContent;
+const content = (el) => el.textContent;
 
-const HintItem = HTML.extend('code mirror hint item')
-  .selector('.CodeMirror-hint')
-  .locator(content);
+const HintItem = HTML.extend('code mirror hint item').selector('.CodeMirror-hint').locator(content);
 
 export const CodeMirrorHint = HTML.extend('code mirror hint')
   .selector('.CodeMirror-hints')

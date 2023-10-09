@@ -1,14 +1,14 @@
-import permissions from '../../../support/dictionary/permissions';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import DateTools from '../../../support/utils/dateTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import { INSTANCE_STATUS_TERM_NAMES,
+import {
+  INSTANCE_STATUS_TERM_NAMES,
   FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
-  JOB_STATUS_NAMES } from '../../../support/constants';
+  JOB_STATUS_NAMES,
+} from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -21,51 +21,54 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Log details', () => {
     let user;
     const filePathForUpload = 'oneMarcBib.mrc';
     const fileName = `C400665 autotestFileName.${getRandomPostfix()}`;
-    const title = 'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)';
+    const title =
+      'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)';
     const matchProfile = {
       profileName: `C400665 982a to Instance HRID.${getRandomPostfix()}`,
       incomingRecordFields: {
         field: '035',
         in1: '*',
         in2: '*',
-        subfield: 'a'
+        subfield: 'a',
       },
       matchCriterion: 'Exactly matches',
       existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
-      instanceOption: NewMatchProfile.optionsList.instanceHrid
+      instanceOption: NewMatchProfile.optionsList.instanceHrid,
     };
     const mappingProfile = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       name: `C400665 Update Instance - no match.${getRandomPostfix()}`,
       catalogingDate: '###TODAY###',
       catalogedDateUi: DateTools.getFormattedDate({ date: new Date() }),
-      statusTerm: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED
+      statusTerm: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
     };
-    const actionProfile = { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+    const actionProfile = {
+      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       name: `C400665 Update Instance - no match.${getRandomPostfix()}`,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' };
+      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+    };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
       profileName: `C400665 Update Instance - no match.${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
     before('login', () => {
       cy.createTempUser([
-        permissions.settingsDataImportEnabled.gui,
-        permissions.moduleDataImportEnabled.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.moduleDataImportEnabled.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          cy.login(user.username, user.password);
-        });
+        cy.login(user.username, user.password);
+      });
     });
 
     after('delete test data', () => {
@@ -73,12 +76,14 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
     });
 
-    it('C400665 Verify that title appeared in log details when Instance is not updated due to non-match (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      // create match profile
+    it(
+      'C400665 Verify that title appeared in log details when Instance is not updated due to non-match (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
+        // create match profile
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.createMatchProfile(matchProfile);
 
@@ -88,8 +93,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
         NewFieldMappingProfile.fillCatalogedDate(mappingProfile.catalogingDate);
         NewFieldMappingProfile.fillInstanceStatusTerm(mappingProfile.instanceStatusTerm);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         // create action profile
@@ -115,9 +120,16 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileName);
         FileDetails.verifyTitle(title, FileDetails.columnNameInResultList.title);
-        FileDetails.checkStatusInColumn(FileDetails.status.dash, FileDetails.columnNameInResultList.srsMarc);
-        FileDetails.checkStatusInColumn(FileDetails.status.noAction, FileDetails.columnNameInResultList.instance);
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.dash,
+          FileDetails.columnNameInResultList.srsMarc,
+        );
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.noAction,
+          FileDetails.columnNameInResultList.instance,
+        );
         // the last step can't be automated because cypress can't work whit 2 tabs
-      });
+      },
+    );
   });
 });

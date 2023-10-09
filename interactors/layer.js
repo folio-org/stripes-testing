@@ -8,6 +8,6 @@ export default HTML.extend('layer')
     ariaLabel: (el) => el.ariaLabel,
     visible: {
       apply: (el) => isVisible(el) || (el.labels && Array.from(el.labels).some(isVisible)),
-      default: true
-    }
+      default: true,
+    },
   });

@@ -30,41 +30,35 @@ describe('orders: create an order', () => {
 
   before(() => {
     cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-      });
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+    });
     order.vendor = organization.name;
     order.orderType = 'One-time';
-    FiscalYears.createViaApi(defaultFiscalYear)
-      .then(response => {
-        defaultFiscalYear.id = response.id;
-        defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+    FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
+      defaultFiscalYear.id = response.id;
+      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
 
-        Ledgers.createViaApi(defaultLedger)
-          .then(ledgerResponse => {
-            defaultLedger.id = ledgerResponse.id;
-            defaultFund.ledgerId = defaultLedger.id;
+      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+        defaultLedger.id = ledgerResponse.id;
+        defaultFund.ledgerId = defaultLedger.id;
 
-            Funds.createViaApi(defaultFund)
-              .then(fundResponse => {
-                defaultFund.id = fundResponse.fund.id;
+        Funds.createViaApi(defaultFund).then((fundResponse) => {
+          defaultFund.id = fundResponse.fund.id;
 
-                cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
-                FinanceHelp.searchByName(defaultFund.name);
-                Funds.selectFund(defaultFund.name);
-                Funds.addBudget(allocatedQuantity);
-              });
-          });
+          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+          FinanceHelp.searchByName(defaultFund.name);
+          Funds.selectFund(defaultFund.name);
+          Funds.addBudget(allocatedQuantity);
+        });
       });
-    ServicePoints.getViaApi()
-      .then((servicePoint) => {
-        servicePointId = servicePoint[0].id;
-        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
-          .then(res => {
-            location = res;
-          });
+    });
+    ServicePoints.getViaApi().then((servicePoint) => {
+      servicePointId = servicePoint[0].id;
+      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+        location = res;
       });
+    });
     cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
     SettingsOrders.setPurchaseOrderLinesLimit(2);
     cy.createTempUser([
@@ -72,11 +66,13 @@ describe('orders: create an order', () => {
       permissions.uiOrdersEdit.gui,
       permissions.uiOrdersApprovePurchaseOrders.gui,
       permissions.uiOrdersReopenPurchaseOrders.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
       });
+    });
   });
 
   afterEach(() => {
@@ -86,23 +82,27 @@ describe('orders: create an order', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C8357 Create purchase order in foreign currency (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
-    Orders.createOrder(order).then(orderId => {
-      order.id = orderId;
-      Orders.createPOLineViaActions();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
-      OrderLines.fillPolWithEuroCurrency(defaultFund, '100', '1', location.institutionId);
-      OrderLines.backToEditingOrder();
-      Orders.createPOLineViaActions();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
-      OrderLines.fillPolWithPLNCurrency(defaultFund, '100', '1', location.institutionId);
-      OrderLines.backToEditingOrder();
-      Orders.openOrder();
-      OrderLines.selectPOLInOrder(0);
-      OrderLines.checkCurrencyInPOL();
-      OrderLines.backToEditingOrder();
-      OrderLines.selectPOLInOrder(1);
-      OrderLines.checkCurrencyInPOL();
-    });
-  });
+  it(
+    'C8357 Create purchase order in foreign currency (thunderjet)',
+    { tags: [TestType.smoke, devTeams.thunderjet] },
+    () => {
+      Orders.createOrder(order).then((orderId) => {
+        order.id = orderId;
+        Orders.createPOLineViaActions();
+        OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
+        OrderLines.fillPolWithEuroCurrency(defaultFund, '100', '1', location.institutionId);
+        OrderLines.backToEditingOrder();
+        Orders.createPOLineViaActions();
+        OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
+        OrderLines.fillPolWithPLNCurrency(defaultFund, '100', '1', location.institutionId);
+        OrderLines.backToEditingOrder();
+        Orders.openOrder();
+        OrderLines.selectPOLInOrder(0);
+        OrderLines.checkCurrencyInPOL();
+        OrderLines.backToEditingOrder();
+        OrderLines.selectPOLInOrder(1);
+        OrderLines.checkCurrencyInPOL();
+      });
+    },
+  );
 });

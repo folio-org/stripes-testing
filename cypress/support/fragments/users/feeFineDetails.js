@@ -1,4 +1,4 @@
-import { Pane, including, HTML, Button, TextArea } from '../../../../interactors';
+import { Pane, including, HTML, Button, TextArea, KeyValue } from '../../../../interactors';
 
 const rootPane = Pane({ id: 'pane-account-action-history' });
 
@@ -16,9 +16,9 @@ export default {
   checkNewStaffInfo: (info) => cy.expect(HTML('STAFF : ' + info).exists()),
   openActions: () => cy.do(Button('Actions').click()),
   confirmFeeFineCancellation: (comment) => {
-    cy.do([
-      TextArea({ name: 'comment' }).fillIn(comment),
-      Button({ type: 'submit' }).click(),
-    ]);
+    cy.do([TextArea({ name: 'comment' }).fillIn(comment), Button({ type: 'submit' }).click()]);
+  },
+  verifyBilledDateValue: (expectedBilledDateValue) => {
+    cy.expect(KeyValue('Billed date').has({ value: expectedBilledDateValue }));
   },
 };

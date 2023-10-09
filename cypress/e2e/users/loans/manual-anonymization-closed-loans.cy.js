@@ -16,7 +16,7 @@ import checkInActions from '../../../support/fragments/check-in-actions/checkInA
 import RequestPolicy from '../../../support/fragments/circulation/request-policy';
 import OverdueFinePolicy from '../../../support/fragments/circulation/overdue-fine-policy';
 import LostItemFeePolicy from '../../../support/fragments/circulation/lost-item-fee-policy';
-import NoticePolicy from '../../../support/fragments/circulation/notice-policy';
+import NoticePolicy from '../../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import DevTeams from '../../../support/dictionary/devTeams';
 import CirculationRules from '../../../support/fragments/circulation/circulation-rules';
@@ -25,7 +25,7 @@ import NewFeeFine from '../../../support/fragments/users/newFeeFine';
 import Users from '../../../support/fragments/users/users';
 
 describe('ui-users-loans: Manual anonymization in closed loans', () => {
-  const newOwnerData = UsersOwners.getDefaultNewOwner(uuid());
+  const newOwnerData = UsersOwners.getDefaultNewOwner();
   const newFirstItemData = getNewItem();
   const newSecondItemData = getNewItem();
   const feeFineType = uuid();
@@ -98,8 +98,25 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
             ruleProps.r = policyIds.request;
             ruleProps.o = policyIds.overdueFine;
             ruleProps.n = policyIds.notice;
-            addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + ruleProps.i + ' l ' + ruleProps.l + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
-            CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
+            addedCirculationRule =
+              't ' +
+              testData.loanTypeId +
+              ': i ' +
+              ruleProps.i +
+              ' l ' +
+              ruleProps.l +
+              ' r ' +
+              ruleProps.r +
+              ' o ' +
+              ruleProps.o +
+              ' n ' +
+              ruleProps.n;
+            CirculationRules.addRuleViaApi(
+              originalCirculationRules,
+              ruleProps,
+              't ',
+              testData.loanTypeId,
+            );
           });
         });
         source = InventoryHoldings.getHoldingSources({ limit: 1 });
@@ -150,21 +167,25 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
                 testData.itemIds = specialInstanceIds.holdingIds[0].itemIds;
               })
               .then(() => {
-                cy.wrap([newFirstItemData.barcode, newSecondItemData.barcode]).each((itemBarcode) => {
-                  Checkout.checkoutItemViaApi({
-                    itemBarcode,
-                    userBarcode,
-                    servicePointId,
-                  });
-                });
+                cy.wrap([newFirstItemData.barcode, newSecondItemData.barcode]).each(
+                  (itemBarcode) => {
+                    Checkout.checkoutItemViaApi({
+                      itemBarcode,
+                      userBarcode,
+                      servicePointId,
+                    });
+                  },
+                );
 
-                cy.wrap([newFirstItemData.barcode, newSecondItemData.barcode]).each((itemBarcode) => {
-                  checkInActions.checkinItemViaApi({
-                    itemBarcode,
-                    servicePointId,
-                    checkInDate: moment.utc().format(),
-                  });
-                });
+                cy.wrap([newFirstItemData.barcode, newSecondItemData.barcode]).each(
+                  (itemBarcode) => {
+                    checkInActions.checkinItemViaApi({
+                      itemBarcode,
+                      servicePointId,
+                      checkInDate: moment.utc().format(),
+                    });
+                  },
+                );
 
                 cy.login(username, password, {
                   path: AppPaths.getClosedLoansPath(userId),
@@ -222,6 +243,6 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
       LoanDetails.checkAnonymizeModalOpen();
       LoanDetails.closeAnonymizeModal();
       LoanDetails.checkLoanAbsent(newFirstItemData.barcode);
-    }
+    },
   );
 });

@@ -1,6 +1,6 @@
 import add from 'date-fns/add';
 import { including } from '@interactors/html';
-import { Button, KeyValue, Section, Select, TextField } from '../../../../interactors';
+import { Button, KeyValue, Section, Select, TextField, TextArea } from '../../../../interactors';
 import { FULFILMENT_PREFERENCES } from '../../constants';
 import Requests from './requests';
 import DateTools from '../../utils/dateTools';
@@ -19,12 +19,13 @@ const deliveryTypeAddressTypeSelect = Select({ name: 'deliveryAddressTypeId' });
 const requestExpirationDateKeyValue = KeyValue('Request expiration date');
 const holdShelfExpirationDateKeyValue = KeyValue('Hold shelf expiration date');
 const pickupServicePointKeyValue = KeyValue('Pickup service point');
+const patronComment = TextArea({ id: 'patronComments' });
 
 const expirationDates = [...new Array(5)].map((_, i) => {
   const date = add(new Date(), { years: 1, days: i + 1 });
   return {
     formValue: DateTools.getFormattedDate({ date }),
-    uiValue: DateTools.getFormattedDateWithSlashes({ date })
+    uiValue: DateTools.getFormattedDateWithSlashes({ date }),
   };
 });
 
@@ -84,9 +85,14 @@ export default {
     cy.expect(deliveryTypeAddressTypeSelect.has({ disabled: false }));
     cy.do(fulfillmentPreferenceSelect.choose(FULFILMENT_PREFERENCES.HOLD_SHELF));
     cy.do(requestExpirationDateInput.fillIn(this.expirationDates[isTransit].formValue));
+    cy.wait(500);
     cy.do(pickupServicePointSelect.choose(this.servicePoint));
+    cy.wait(500);
     this.saveAndClose();
-    cy.expect(requestExpirationDateKeyValue.has({ value: this.expirationDates[isTransit].uiValue }));
+    cy.wait(2000);
+    cy.expect(
+      requestExpirationDateKeyValue.has({ value: this.expirationDates[isTransit].uiValue }),
+    );
     cy.expect(pickupServicePointKeyValue.has({ value: this.servicePoint }));
   },
 
@@ -103,7 +109,9 @@ export default {
     this.saveAndClose();
     cy.expect(pickupServicePointKeyValue.has({ value: this.servicePoint }));
     cy.expect(requestExpirationDateKeyValue.has({ value: this.expirationDates[2].uiValue }));
-    cy.expect(holdShelfExpirationDateKeyValue.has({ value: including(this.expirationDates[3].uiValue) }));
+    cy.expect(
+      holdShelfExpirationDateKeyValue.has({ value: including(this.expirationDates[3].uiValue) }),
+    );
   },
 
   editAndCheckAwaitingDeliveryRequest(instanceRecordData, request) {
@@ -156,5 +164,9 @@ export default {
     // after updating request via API, reloading page is necessary
     cy.reload();
     cy.expect(paneResultsSection.exists());
-  }
+  },
+
+  verifyPatronCommentsFieldIsNotEditable: () => {
+    cy.expect(patronComment.absent());
+  },
 };

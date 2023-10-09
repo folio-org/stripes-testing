@@ -1,4 +1,3 @@
-import moment from 'moment';
 import uuid from 'uuid';
 import TestTypes from '../../support/dictionary/testTypes';
 import { REQUEST_TYPES } from '../../support/constants';
@@ -14,10 +13,14 @@ import Location from '../../support/fragments/settings/tenant/locations/newLocat
 import Users from '../../support/fragments/users/users';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import NoticePolicyApi from '../../support/fragments/circulation/notice-policy';
-import NoticePolicyTemplateApi from '../../support/fragments/circulation/notice-policy-template';
-import NewNoticePolicy from '../../support/fragments/circulation/newNoticePolicy';
-import NewNoticePolicyTemplate from '../../support/fragments/circulation/newNoticePolicyTemplate';
+import NoticePolicyApi, {
+  NOTICE_CATEGORIES,
+} from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
+import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
+import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
+import NewNoticePolicyTemplate, {
+  createNoticeTemplate,
+} from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 import RequestPolicy from '../../support/fragments/circulation/request-policy';
@@ -45,28 +48,33 @@ describe('Request notice triggers', () => {
   };
   const testData = {
     userServicePoint: {
-      ...ServicePoints.getDefaultServicePointWithPickUpLocation('autotestReceiveNotice', uuid()),
+      ...ServicePoints.getDefaultServicePointWithPickUpLocation(),
       holdShelfExpiryPeriod: { intervalId: 'Minutes', duration: '1' },
     },
     ruleProps: {},
   };
-  const createNoticeTemplate = (noticeName) => {
-    return {
-      name: getTestEntityValue(noticeName),
-      description: 'Created by autotest team',
-      category: 'Request',
-      subject: getTestEntityValue(noticeName),
-      body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
-      previewText: `Test email body The Wines of Italy ${moment().format('ll')}`,
-    };
-  };
   const noticeTemplates = {
-    itemRecaled: { ...createNoticeTemplate('Item_recalled_template'), category: 'Loan' },
-    recallRequest: createNoticeTemplate('Recall_request_template'),
-    awaitingPickUp: createNoticeTemplate('Awaiting_pick_up_template'),
-    holdShelfBeforeOnce: createNoticeTemplate('Hold_shelf_expiration_before_once_template'),
-    holdShelfBeforeRecurring: createNoticeTemplate('Hold_shelf_expiration_before_recurring'),
-    holdShelfUponAt: createNoticeTemplate('Hold_shelf_expiration_upon_at'),
+    itemRecaled: { ...createNoticeTemplate('Item_recalled_template') },
+    recallRequest: createNoticeTemplate({
+      name: 'Recall_request_template',
+      category: NOTICE_CATEGORIES.request,
+    }),
+    awaitingPickUp: createNoticeTemplate({
+      name: 'Awaiting_pick_up_template',
+      category: NOTICE_CATEGORIES.request,
+    }),
+    holdShelfBeforeOnce: createNoticeTemplate({
+      name: 'Hold_shelf_expiration_before_once_template',
+      category: NOTICE_CATEGORIES.request,
+    }),
+    holdShelfBeforeRecurring: createNoticeTemplate({
+      name: 'Hold_shelf_expiration_before_recurring',
+      category: NOTICE_CATEGORIES.request,
+    }),
+    holdShelfUponAt: createNoticeTemplate({
+      name: 'Hold_shelf_expiration_upon_at',
+      category: NOTICE_CATEGORIES.request,
+    }),
   };
   const selectOptions = (template) => {
     const generalOptions = {
@@ -213,13 +221,19 @@ describe('Request notice triggers', () => {
     RequestPolicy.createViaApi(requestPolicyBody);
     PatronGroups.createViaApi(patronGroup.name).then((res) => {
       patronGroup.id = res;
-      cy.createTempUser([permissions.checkoutAll.gui], patronGroup.name).then((userProperties) => {
-        userForCheckOut.userId = userProperties.userId;
-        userForCheckOut.barcode = userProperties.barcode;
-        userForCheckOut.personal.lastname = userProperties.lastName;
-      }).then(() => {
-        UserEdit.addServicePointViaApi(testData.userServicePoint.id, userForCheckOut.userId, testData.userServicePoint.id);
-      });
+      cy.createTempUser([permissions.checkoutAll.gui], patronGroup.name)
+        .then((userProperties) => {
+          userForCheckOut.userId = userProperties.userId;
+          userForCheckOut.barcode = userProperties.barcode;
+          userForCheckOut.personal.lastname = userProperties.lastName;
+        })
+        .then(() => {
+          UserEdit.addServicePointViaApi(
+            testData.userServicePoint.id,
+            userForCheckOut.userId,
+            testData.userServicePoint.id,
+          );
+        });
       cy.createTempUser(
         [
           permissions.requestsAll.gui,
@@ -230,7 +244,7 @@ describe('Request notice triggers', () => {
           permissions.okapiTimersPatch.gui,
           permissions.checkinAll.gui,
         ],
-        patronGroup.name
+        patronGroup.name,
       )
         .then((userProperties) => {
           userForRequest = userProperties;
@@ -239,7 +253,7 @@ describe('Request notice triggers', () => {
           UserEdit.addServicePointViaApi(
             testData.userServicePoint.id,
             userForRequest.userId,
-            testData.userServicePoint.id
+            testData.userServicePoint.id,
           );
           cy.login(userForRequest.username, userForRequest.password, {
             path: SettingsMenu.circulationPatronNoticeTemplatesPath,
@@ -251,11 +265,17 @@ describe('Request notice triggers', () => {
 
   after('Deleting created entities', () => {
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
-    Requests.getRequestApi({ query: `(item.barcode=="${instanceData.itemBarcode}")` }).then((requestResponse) => {
-      Requests.deleteRequestViaApi(requestResponse[0].id);
-    });
-    UserEdit.changeServicePointPreferenceViaApi(userForRequest.userId, [testData.userServicePoint.id]);
-    UserEdit.changeServicePointPreferenceViaApi(userForCheckOut.userId, [testData.userServicePoint.id]);
+    Requests.getRequestApi({ query: `(item.barcode=="${instanceData.itemBarcode}")` }).then(
+      (requestResponse) => {
+        Requests.deleteRequestViaApi(requestResponse[0].id);
+      },
+    );
+    UserEdit.changeServicePointPreferenceViaApi(userForRequest.userId, [
+      testData.userServicePoint.id,
+    ]);
+    UserEdit.changeServicePointPreferenceViaApi(userForCheckOut.userId, [
+      testData.userServicePoint.id,
+    ]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Users.deleteViaApi(userForRequest.userId);
     Users.deleteViaApi(userForCheckOut.userId);
@@ -267,36 +287,38 @@ describe('Request notice triggers', () => {
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
+      testData.defaultLocation.id,
     );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.itemRecaled.name}` }).then((templateId) => {
-      NoticePolicyTemplateApi.deleteViaApi(templateId);
-    });
+    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.itemRecaled.name}` }).then(
+      (templateId) => {
+        NoticePolicyTemplateApi.deleteViaApi(templateId);
+      },
+    );
     NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.recallRequest.name}` }).then(
       (templateId) => {
         NoticePolicyTemplateApi.deleteViaApi(templateId);
-      }
+      },
     );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.awaitingPickUp.name}` }).then(
-      (templateId) => {
-        NoticePolicyTemplateApi.deleteViaApi(templateId);
-      }
-    );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.holdShelfBeforeOnce.name}` }).then(
-      (templateId) => {
-        NoticePolicyTemplateApi.deleteViaApi(templateId);
-      }
-    );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.holdShelfBeforeRecurring.name}` }).then(
-      (templateId) => {
-        NoticePolicyTemplateApi.deleteViaApi(templateId);
-      }
-    );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.holdShelfUponAt.name}` }).then(
-      (templateId) => {
-        NoticePolicyTemplateApi.deleteViaApi(templateId);
-      }
-    );
+    NoticePolicyTemplateApi.getViaApi({
+      query: `name=${noticeTemplates.awaitingPickUp.name}`,
+    }).then((templateId) => {
+      NoticePolicyTemplateApi.deleteViaApi(templateId);
+    });
+    NoticePolicyTemplateApi.getViaApi({
+      query: `name=${noticeTemplates.holdShelfBeforeOnce.name}`,
+    }).then((templateId) => {
+      NoticePolicyTemplateApi.deleteViaApi(templateId);
+    });
+    NoticePolicyTemplateApi.getViaApi({
+      query: `name=${noticeTemplates.holdShelfBeforeRecurring.name}`,
+    }).then((templateId) => {
+      NoticePolicyTemplateApi.deleteViaApi(templateId);
+    });
+    NoticePolicyTemplateApi.getViaApi({
+      query: `name=${noticeTemplates.holdShelfUponAt.name}`,
+    }).then((templateId) => {
+      NoticePolicyTemplateApi.deleteViaApi(templateId);
+    });
     cy.deleteLoanType(testData.loanTypeId);
   });
 
@@ -305,22 +327,27 @@ describe('Request notice triggers', () => {
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.itemRecaled);
-      delete noticeTemplates.itemRecaled.previewText;
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.itemRecaled);
-      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.recallRequest);
-      delete noticeTemplates.recallRequest.previewText;
+
+      const dublicate = true;
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.recallRequest, dublicate);
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.recallRequest);
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.awaitingPickUp);
-      delete noticeTemplates.awaitingPickUp.previewText;
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.awaitingPickUp, dublicate);
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.awaitingPickUp);
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.holdShelfBeforeOnce);
-      delete noticeTemplates.holdShelfBeforeOnce.previewText;
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(
+        noticeTemplates.holdShelfBeforeOnce,
+        dublicate,
+      );
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.holdShelfBeforeOnce);
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.holdShelfBeforeRecurring);
-      delete noticeTemplates.holdShelfBeforeRecurring.previewText;
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(
+        noticeTemplates.holdShelfBeforeRecurring,
+        dublicate,
+      );
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.holdShelfBeforeRecurring);
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.holdShelfUponAt);
-      delete noticeTemplates.holdShelfUponAt.previewText;
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(
+        noticeTemplates.holdShelfUponAt,
+        dublicate,
+      );
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.holdShelfUponAt);
 
       cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
@@ -344,8 +371,25 @@ describe('Request notice triggers', () => {
         cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
           testData.ruleProps.n = noticePolicyRes[0].id;
           testData.ruleProps.r = requestPolicyBody.id;
-          addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + testData.ruleProps.i + ' l ' + testData.ruleProps.l + ' r ' + testData.ruleProps.r + ' o ' + testData.ruleProps.o + ' n ' + testData.ruleProps.n;
-          CirculationRules.addRuleViaApi(testData.baseRules, testData.ruleProps, 't ', testData.loanTypeId);
+          addedCirculationRule =
+            't ' +
+            testData.loanTypeId +
+            ': i ' +
+            testData.ruleProps.i +
+            ' l ' +
+            testData.ruleProps.l +
+            ' r ' +
+            testData.ruleProps.r +
+            ' o ' +
+            testData.ruleProps.o +
+            ' n ' +
+            testData.ruleProps.n;
+          CirculationRules.addRuleViaApi(
+            testData.baseRules,
+            testData.ruleProps,
+            't ',
+            testData.loanTypeId,
+          );
         });
       });
 
@@ -395,6 +439,6 @@ describe('Request notice triggers', () => {
       checkNoticeIsSent(searchResultsData(noticeTemplates.holdShelfBeforeOnce.name));
       checkNoticeIsSent(searchResultsData(noticeTemplates.holdShelfBeforeRecurring.name));
       checkNoticeIsSent(searchResultsData(noticeTemplates.holdShelfUponAt.name));
-    }
+    },
   );
 });

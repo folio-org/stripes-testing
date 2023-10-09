@@ -31,12 +31,9 @@ describe.skip('ui-organizations: Organizations creation', () => {
     'C674 Delete existing organization record (thunderjet)',
     { tags: [testTypes.ideaLabsTests] },
     () => {
-      organizations.searchByParameters(
-        searchByCode.dropdown,
-        searchByCode.code
-      );
+      organizations.searchByParameters(searchByCode.dropdown, searchByCode.code);
       organizations.selectOrganization(newOrganization.name);
       organizations.deleteOrganization();
-    }
+    },
   );
 });

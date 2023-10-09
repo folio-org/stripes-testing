@@ -38,6 +38,6 @@ describe.skip('ui-organizations: Organizations creation', () => {
       organizations.verifyVendorExists();
       organizations.closeDetailsPane();
       organizations.resetFilters();
-    }
+    },
   );
 });

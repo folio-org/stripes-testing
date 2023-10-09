@@ -40,22 +40,21 @@ describe('bulk-edit', () => {
         permissions.uiUsersPermissionsView.gui,
         permissions.uiUsersCustomField.gui,
         permissions.uiUserEdit.gui,
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password, {
-            path: SettingsMenu.customFieldsPath,
-            waiter: CustomFields.waitLoading
-          });
-          cy.getUsers({ limit: 1, query: `username=${user.username}` }).then((users) => {
-            cy.updateUser({ ...users[0], patronGroup: '503a81cd-6c26-400f-b620-14c08943697c' });
-          });
-          FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
-          CustomFields.addMultiSelectCustomField(customFieldData);
-          cy.visit(TopMenu.usersPath);
-          UsersSearchPane.searchByUsername(user.username);
-          UserEdit.addMultiSelectCustomField(customFieldData);
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: SettingsMenu.customFieldsPath,
+          waiter: CustomFields.waitLoading,
         });
+        cy.getUsers({ limit: 1, query: `username=${user.username}` }).then((users) => {
+          cy.updateUser({ ...users[0], patronGroup: '503a81cd-6c26-400f-b620-14c08943697c' });
+        });
+        FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
+        CustomFields.addMultiSelectCustomField(customFieldData);
+        cy.visit(TopMenu.usersPath);
+        UsersSearchPane.searchByUsername(user.username);
+        UserEdit.addMultiSelectCustomField(customFieldData);
+      });
     });
 
     after('delete test data', () => {
@@ -64,55 +63,75 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it('C389570 In app | Verify bulk edit Users records with recently updated Custom fields (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird, parallelization.nonParallel] }, () => {
-      cy.visit(TopMenu.bulkEditPath);
-      BulkEditSearchPane.checkUsersRadio();
-      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
+    it(
+      'C389570 In app | Verify bulk edit Users records with recently updated Custom fields (firebird)',
+      { tags: [testTypes.criticalPath, devTeams.firebird, parallelization.nonParallel] },
+      () => {
+        cy.visit(TopMenu.bulkEditPath);
+        BulkEditSearchPane.checkUsersRadio();
+        BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
 
-      BulkEditSearchPane.uploadFile(userBarcodesFileName);
-      BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.uploadFile(userBarcodesFileName);
+        BulkEditSearchPane.waitFileUploading();
 
-      BulkEditActions.openActions();
-      BulkEditSearchPane.changeShowColumnCheckbox('Custom fields');
+        BulkEditActions.openActions();
+        BulkEditSearchPane.changeShowColumnCheckbox('Custom fields');
 
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.fillPatronGroup('staff (Staff Member)');
-      BulkEditActions.confirmChanges();
-      BulkEditActions.downloadPreview();
-      BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName, ['staff'], 'patronGroup', true);
-      BulkEditActions.commitChanges();
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.fillPatronGroup('staff (Staff Member)');
+        BulkEditActions.confirmChanges();
+        BulkEditActions.downloadPreview();
+        BulkEditFiles.verifyMatchedResultFileContent(
+          previewOfProposedChangesFileName,
+          ['staff'],
+          'patronGroup',
+          true,
+        );
+        BulkEditActions.commitChanges();
 
-      BulkEditSearchPane.verifyChangesUnderColumns('Custom fields', `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`);
+        BulkEditSearchPane.verifyChangesUnderColumns(
+          'Custom fields',
+          `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`,
+        );
 
-      cy.visit(SettingsMenu.customFieldsPath);
-      CustomFields.editMultiSelectCustomField(customFieldData, updatedCustomFieldData);
-      cy.login(user.username, user.password, {
-        path: TopMenu.bulkEditPath,
-        waiter: BulkEditSearchPane.waitLoading
-      });
+        cy.visit(SettingsMenu.customFieldsPath);
+        CustomFields.editMultiSelectCustomField(customFieldData, updatedCustomFieldData);
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
 
-      BulkEditSearchPane.checkUsersRadio();
-      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
+        BulkEditSearchPane.checkUsersRadio();
+        BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
 
-      BulkEditSearchPane.uploadFile(userBarcodesFileName);
-      BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.uploadFile(userBarcodesFileName);
+        BulkEditSearchPane.waitFileUploading();
 
-      BulkEditActions.openActions();
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.fillPatronGroup('graduate (Graduate Student)');
-      BulkEditActions.confirmChanges();
-      BulkEditActions.downloadPreview();
-      BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName, ['graduate'], 'patronGroup', true);
-      BulkEditActions.commitChanges();
+        BulkEditActions.openActions();
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.fillPatronGroup('graduate (Graduate Student)');
+        BulkEditActions.confirmChanges();
+        BulkEditActions.downloadPreview();
+        BulkEditFiles.verifyMatchedResultFileContent(
+          previewOfProposedChangesFileName,
+          ['graduate'],
+          'patronGroup',
+          true,
+        );
+        BulkEditActions.commitChanges();
 
-      BulkEditSearchPane.verifyChangesUnderColumns('Custom fields', `${updatedCustomFieldData.fieldLabel}:${updatedCustomFieldData.label1};${updatedCustomFieldData.label2}`);
+        BulkEditSearchPane.verifyChangesUnderColumns(
+          'Custom fields',
+          `${updatedCustomFieldData.fieldLabel}:${updatedCustomFieldData.label1};${updatedCustomFieldData.label2}`,
+        );
 
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.searchByUsername(user.username);
-      Users.verifyPatronGroupOnUserDetailsPane('graduate');
+        cy.visit(TopMenu.usersPath);
+        UsersSearchPane.searchByUsername(user.username);
+        Users.verifyPatronGroupOnUserDetailsPane('graduate');
 
-      cy.visit(SettingsMenu.customFieldsPath);
-      CustomFields.deleteCustomField(updatedCustomFieldData.fieldLabel);
-    });
+        cy.visit(SettingsMenu.customFieldsPath);
+        CustomFields.deleteCustomField(updatedCustomFieldData.fieldLabel);
+      },
+    );
   });
 });

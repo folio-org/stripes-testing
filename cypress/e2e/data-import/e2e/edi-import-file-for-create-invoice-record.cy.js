@@ -1,12 +1,14 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE,
+import { DevTeams, TestTypes } from '../../../support/dictionary';
+import {
+  FOLIO_RECORD_TYPE,
+  INVOICE_STATUSES,
   PAYMENT_METHOD,
   BATCH_GROUP,
   ACCEPTED_DATA_TYPE_NAMES,
-  VENDOR_NAMES } from '../../../support/constants';
+  VENDOR_NAMES,
+} from '../../../support/constants';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -17,7 +19,8 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import InvoiceView from '../../../support/fragments/invoices/invoiceView';
+import { Invoices, InvoiceView } from '../../../support/fragments/invoices';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import Users from '../../../support/fragments/users/users';
 
 describe('data-import', () => {
@@ -28,23 +31,24 @@ describe('data-import', () => {
     let user = {};
 
     const mappingProfile = {
-      name:`C343338 autoTestMappingProf.${getRandomPostfix()}`,
-      incomingRecordType:NewFieldMappingProfile.incomingRecordType.edifact,
-      existingRecordType:FOLIO_RECORD_TYPE.INVOICE,
-      description:'',
+      name: `C343338 autoTestMappingProf.${getRandomPostfix()}`,
+      incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
+      existingRecordType: FOLIO_RECORD_TYPE.INVOICE,
+      description: '',
       batchGroup: BATCH_GROUP.FOLIO,
       organizationName: VENDOR_NAMES.GOBI,
-      paymentMethod: PAYMENT_METHOD.CASH
+      paymentMethod: PAYMENT_METHOD.CASH,
     };
     const actionProfile = {
       name: `C343338 autoTestActionProf.${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.INVOICE
+      typeValue: FOLIO_RECORD_TYPE.INVOICE,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
       profileName: `C343338 autoTestJobProf.${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.EDIFACT
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.EDIFACT,
     };
+    const vendorInvoiceNumber = '94999';
 
     before('login', () => {
       cy.createTempUser([
@@ -52,28 +56,32 @@ describe('data-import', () => {
         permissions.moduleDataImportEnabled.gui,
         permissions.settingsDataImportEnabled.gui,
         permissions.uiOrganizationsView.gui,
-        permissions.viewEditDeleteInvoiceInvoiceLine.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(userProperties.username, userProperties.password,
-            { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+        permissions.viewEditDeleteInvoiceInvoiceLine.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(userProperties.username, userProperties.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
         });
+      });
     });
 
     after('delete test data', () => {
       // clean up generated profiles
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
-      cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${FileDetails.invoiceNumberFromEdifactFile}"` })
-        .then(id => cy.deleteInvoiceFromStorageViaApi(id));
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      cy.getInvoiceIdApi({
+        query: `vendorInvoiceNo="${FileDetails.invoiceNumberFromEdifactFile}"`,
+      }).then((id) => cy.deleteInvoiceFromStorageViaApi(id));
       Users.deleteViaApi(user.userId);
     });
 
-    it('C343338 EDIFACT file import with creating of new invoice record (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-      // create Field mapping profile
+    it(
+      'C343338 EDIFACT file import with creating of new invoice record (folijet)',
+      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      () => {
+        // create Field mapping profile
         FieldMappingProfiles.waitLoading();
         FieldMappingProfiles.createInvoiceMappingProfile(mappingProfile, profileForDuplicate);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
@@ -102,9 +110,25 @@ describe('data-import', () => {
         Logs.checkImportFile(jobProfile.profileName);
         Logs.checkStatusOfJobProfile();
         Logs.openFileDetails(fileName);
-        FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.invoice);
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.created,
+          FileDetails.columnNameInResultList.invoice,
+        );
         FileDetails.checkInvoiceInSummaryTable(quantityOfItems);
-        InvoiceView.checkInvoiceDetails(InvoiceView.vendorInvoiceNumber);
-      });
+        FileDetails.getInvoiceNumber(vendorInvoiceNumber).then((invoiceNumber) => {
+          cy.visit(TopMenu.invoicesPath);
+          Invoices.searchByNumber(invoiceNumber);
+          Invoices.selectInvoice(invoiceNumber);
+
+          InvoiceView.checkInvoiceDetails({
+            invoiceInformation: [
+              { key: 'Invoice date', value: '11/24/2021' },
+              { key: 'Status', value: INVOICE_STATUSES.OPEN },
+              { key: 'Source', value: 'EDI' },
+            ],
+          });
+        });
+      },
+    );
   });
 });

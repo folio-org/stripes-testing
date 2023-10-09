@@ -14,34 +14,34 @@ describe('ui-requests: Sort requests', () => {
   const requestTypes = { PAGE: 'Page', HOLD: 'Hold', RECALL: 'Recall' };
 
   beforeEach(() => {
-    cy.getAdminToken()
-    .then(()=>{
+    cy.getAdminToken().then(() => {
       Object.values(requestTypes).forEach((requestType) => {
-        const itemStatus = requestType === REQUEST_TYPES.PAGE ? ITEM_STATUS_NAMES.AVAILABLE : ITEM_STATUS_NAMES.CHECKED_OUT;
-        Requests.createRequestApi(itemStatus, requestType).then(({
-          instanceRecordData,
-          createdRequest,
-          createdUser
-        }) => {
-          userIds.push(createdUser.id);
-          instances.push(instanceRecordData);
-          requests.push(createdRequest);
-        });
+        const itemStatus =
+          requestType === REQUEST_TYPES.PAGE
+            ? ITEM_STATUS_NAMES.AVAILABLE
+            : ITEM_STATUS_NAMES.CHECKED_OUT;
+        Requests.createRequestApi(itemStatus, requestType).then(
+          ({ instanceRecordData, createdRequest, createdUser }) => {
+            userIds.push(createdUser.id);
+            instances.push(instanceRecordData);
+            requests.push(createdRequest);
+          },
+        );
       });
     });
     cy.loginAsAdmin();
   });
 
   afterEach(() => {
-    instances.forEach(instance => {
+    instances.forEach((instance) => {
       cy.deleteItemViaApi(instance.itemId);
       cy.deleteHoldingRecordViaApi(instance.holdingId);
       InventoryInstance.deleteInstanceViaApi(instance.instanceId);
     });
-    requests.forEach(request => {
+    requests.forEach((request) => {
       Requests.deleteRequestViaApi(request.id);
     });
-    userIds.forEach(id => {
+    userIds.forEach((id) => {
       Users.deleteViaApi(id);
     });
   });
@@ -63,14 +63,20 @@ describe('ui-requests: Sort requests', () => {
     Requests.waitLoadingRequests();
     Requests.validateRequestsDateSortingOrder('descending');
 
-    Requests.sortingColumns.forEach(column => {
+    Requests.sortingColumns.forEach((column) => {
       // Validate sort
       cy.do(MultiColumnListHeader(column.title).click());
-      Requests.validateRequestsSortingOrder({ headerId: column.id, columnIndex: column.columnIndex });
+      Requests.validateRequestsSortingOrder({
+        headerId: column.id,
+        columnIndex: column.columnIndex,
+      });
 
       // Validate reverse sorting
       cy.do(MultiColumnListHeader(column.title).click());
-      Requests.validateRequestsSortingOrder({ headerId: column.id, columnIndex: column.columnIndex });
+      Requests.validateRequestsSortingOrder({
+        headerId: column.id,
+        columnIndex: column.columnIndex,
+      });
     });
   });
 });

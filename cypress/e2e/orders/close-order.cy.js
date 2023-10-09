@@ -15,17 +15,18 @@ describe('orders: Close Order', () => {
 
   before(() => {
     cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-        order.vendor = response;
-        orderLine.physical.materialSupplier = response;
-        orderLine.eresource.accessProvider = response;
-      });
-    cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` })
-      .then(location => { orderLine.locations[0].locationId = location.id; });
-    cy.getMaterialTypes({ query: 'name="book"' })
-      .then(materialType => { orderLine.physical.materialType = materialType.id; });
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+      order.vendor = response;
+      orderLine.physical.materialSupplier = response;
+      orderLine.eresource.accessProvider = response;
+    });
+    cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` }).then((location) => {
+      orderLine.locations[0].locationId = location.id;
+    });
+    cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
+      orderLine.physical.materialType = materialType.id;
+    });
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
@@ -34,18 +35,21 @@ describe('orders: Close Order', () => {
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 
-  it('C667 Close an existing order (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
-    Orders.createOrderWithOrderLineViaApi(order, orderLine)
-      .then(orderNumber => {
+  it(
+    'C667 Close an existing order (thunderjet)',
+    { tags: [TestType.smoke, devTeams.thunderjet] },
+    () => {
+      Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
         cy.visit(TopMenu.ordersPath);
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList(orderNumber);
+        Orders.searchByParameter('PO number', poNumber);
+        Orders.selectFromResultsList(poNumber);
         Orders.openOrder();
         Orders.closeOrder('Cancelled');
         Orders.closeThirdPane();
         Orders.resetFilters();
         Orders.selectStatusInSearch('Closed');
-        Orders.checkSearchResultsWithClosedOrder(orderNumber);
+        Orders.checkSearchResultsWithClosedOrder(poNumber);
       });
-  });
+    },
+  );
 });

@@ -1,6 +1,5 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import uuid from 'uuid';
-import moment from 'moment';
 import TestType from '../../support/dictionary/testTypes';
 import DevTeams from '../../support/dictionary/devTeams';
 import RenewalActions from '../../support/fragments/loans/renewals';
@@ -57,41 +56,38 @@ describe('Renewal', () => {
         cy.getInstanceTypes({ limit: 1 });
         cy.getHoldingTypes({ limit: 1 });
         cy.getLocations({ limit: 1 });
-        InventoryHoldings.getHoldingSources({ limit: 1 }).then(holdingsSources => {
+        InventoryHoldings.getHoldingSources({ limit: 1 }).then((holdingsSources) => {
           sourceId = holdingsSources[0].id;
         });
         cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` });
-        cy.getMaterialTypes({ query: `name="${MATERIAL_TYPE_NAMES.BOOK}"` })
-          .then(materilaTypes => {
+        cy.getMaterialTypes({ query: `name="${MATERIAL_TYPE_NAMES.BOOK}"` }).then(
+          (materilaTypes) => {
             materialTypeId = materilaTypes.id;
-          });
+          },
+        );
         cy.getRequestPolicy();
         cy.getNoticePolicy();
         cy.getOverdueFinePolicy();
         cy.getLostItemFeesPolicy();
-        cy.getCirculationRules()
-          .then(rules => {
-            initialCircRules = rules.rulesAsText;
-          });
-        ServicePoints.getViaApi({ pickupLocation: true })
-          .then((servicePoints) => {
-            servicePointId = servicePoints[0].id;
-          });
+        cy.getCirculationRules().then((rules) => {
+          initialCircRules = rules.rulesAsText;
+        });
+        ServicePoints.getViaApi({ pickupLocation: true }).then((servicePoints) => {
+          servicePointId = servicePoints[0].id;
+        });
       })
       .then(() => {
         // create user
-        cy.createTempUser([
-          permissions.loansView.gui,
-          permissions.loansRenew.gui,
-        ])
-          .then(userProperties => {
+        cy.createTempUser([permissions.loansView.gui, permissions.loansRenew.gui]).then(
+          (userProperties) => {
             renewUserData.lastName = userProperties.username;
             renewUserData.id = userProperties.userId;
             renewUserData.barcode = userProperties.barcode;
             userName = userProperties.username;
 
             cy.login(userProperties.username, userProperties.password);
-          });
+          },
+        );
       })
       // create instance
       .then(() => {
@@ -100,23 +96,29 @@ describe('Renewal', () => {
             instanceTypeId: Cypress.env(CY_ENV.INSTANCE_TYPES)[0].id,
             title: itemData.title,
           },
-          holdings: [{
-            holdingsTypeId: Cypress.env(CY_ENV.HOLDINGS_TYPES)[0].id,
-            permanentLocationId: Cypress.env(CY_ENV.LOCATION)[0].id,
-            sourceId,
-          }],
-          items: [[{
-            barcode: itemData.barcode,
-            status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-            permanentLoanType: { id: Cypress.env(CY_ENV.LOAN_TYPES)[0].id },
-            materialType: { id: materialTypeId },
-          },
-          {
-            barcode: secondItemBarcode,
-            status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-            permanentLoanType: { id: Cypress.env(CY_ENV.LOAN_TYPES)[0].id },
-            materialType: { id: materialTypeId },
-          }]],
+          holdings: [
+            {
+              holdingsTypeId: Cypress.env(CY_ENV.HOLDINGS_TYPES)[0].id,
+              permanentLocationId: Cypress.env(CY_ENV.LOCATION)[0].id,
+              sourceId,
+            },
+          ],
+          items: [
+            [
+              {
+                barcode: itemData.barcode,
+                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                permanentLoanType: { id: Cypress.env(CY_ENV.LOAN_TYPES)[0].id },
+                materialType: { id: materialTypeId },
+              },
+              {
+                barcode: secondItemBarcode,
+                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                permanentLoanType: { id: Cypress.env(CY_ENV.LOAN_TYPES)[0].id },
+                materialType: { id: materialTypeId },
+              },
+            ],
+          ],
         });
       })
       // create loan policy
@@ -142,12 +144,12 @@ describe('Renewal', () => {
         CheckoutActions.checkoutItemViaApi({
           servicePointId,
           itemBarcode: itemData.barcode,
-          userBarcode: renewUserData.barcode
+          userBarcode: renewUserData.barcode,
         });
         CheckoutActions.checkoutItemViaApi({
           servicePointId,
           itemBarcode: secondItemBarcode,
-          userBarcode: renewUserData.barcode
+          userBarcode: renewUserData.barcode,
         });
       });
   });
@@ -156,39 +158,42 @@ describe('Renewal', () => {
     CheckinActions.checkinItemViaApi({
       itemBarcode: itemData.barcode,
       servicePointId,
-      checkInDate: moment.utc().format(),
     });
     CheckinActions.checkinItemViaApi({
       itemBarcode: secondItemBarcode,
       servicePointId,
-      checkInDate: moment.utc().format(),
-    })
-      .then(() => {
-        users.deleteViaApi(renewUserData.id);
-        cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemData.barcode}"` })
-          .then((instance) => {
-            cy.deleteItemViaApi(instance.items[0].id);
-            cy.deleteItemViaApi(instance.items[1].id);
-            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          });
-        cy.updateCirculationRules({
-          rulesAsText: initialCircRules,
-        });
-        cy.deleteLoanPolicy(loanPolicyId);
+    }).then(() => {
+      users.deleteViaApi(renewUserData.id);
+      cy.getInstance({
+        limit: 1,
+        expandAll: true,
+        query: `"items.barcode"=="${itemData.barcode}"`,
+      }).then((instance) => {
+        cy.deleteItemViaApi(instance.items[0].id);
+        cy.deleteItemViaApi(instance.items[1].id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
       });
+      cy.updateCirculationRules({
+        rulesAsText: initialCircRules,
+      });
+      cy.deleteLoanPolicy(loanPolicyId);
+    });
   });
 
-  it('C567: Renewal: success, from open loans (multiple items) (vega)', { tags: [TestType.smoke, DevTeams.vega] }, () => {
-    cy.visit(TopMenu.usersPath);
-    cy.intercept('GET', '/configurations/entries?*').as('getEntries');
-    UsersSearchPane.searchByKeywords(userName);
-    cy.wait('@getEntries');
-    // wait few seconds, that the user will be displayed
-    cy.wait(2000);
-    UsersCard.openLoans();
-    UsersCard.showOpenedLoans();
-    RenewalActions.renewAllLoans();
-    RenewalActions.confirmRenewalsSuccess();
-  });
+  it(
+    'C567: Renewal: success, from open loans (multiple items) (vega)',
+    { tags: [TestType.smoke, DevTeams.vega] },
+    () => {
+      cy.visit(TopMenu.usersPath);
+      cy.intercept('GET', '/configurations/entries?*').as('getEntries');
+      UsersSearchPane.searchByKeywords(userName);
+      cy.wait('@getEntries');
+      // wait few seconds, that the user will be displayed
+      cy.wait(2000);
+      UsersCard.viewCurrentLoans();
+      RenewalActions.renewAllLoans();
+      RenewalActions.confirmRenewalsSuccess();
+    },
+  );
 });

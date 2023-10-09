@@ -27,20 +27,20 @@ describe('bulk-edit', () => {
         permissions.bulkEditView.gui,
         permissions.bulkEditEdit.gui,
         permissions.inventoryAll.gui,
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading
-          });
-          InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-          cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` })
-            .then((res) => {
-              item.id = res.id;
-              FileManager.createFile(`cypress/fixtures/${itemUUIDsFileName}`, item.id);
-            });
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
+        InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
+        cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
+          (res) => {
+            item.id = res.id;
+            FileManager.createFile(`cypress/fixtures/${itemUUIDsFileName}`, item.id);
+          },
+        );
+      });
     });
 
     after('delete test data', () => {
@@ -49,28 +49,32 @@ describe('bulk-edit', () => {
       FileManager.deleteFile(`cypress/fixtures/${itemUUIDsFileName}`);
     });
 
-    it('C380641 Verify "Suppress from discovery" behaviour in Bulk Editing Items (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.checkItemsRadio();
-      BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');
+    it(
+      'C380641 Verify "Suppress from discovery" behaviour in Bulk Editing Items (firebird)',
+      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.checkItemsRadio();
+        BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');
 
-      BulkEditSearchPane.uploadFile(itemUUIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.uploadFile(itemUUIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
 
-      BulkEditActions.downloadMatchedResults();
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.editItemsSuppressFromDiscovery(true);
-      BulkEditActions.confirmChanges();
-      BulkEditActions.downloadPreview();
-      BulkEditActions.commitChanges();
-      BulkEditActions.openActions();
-      BulkEditActions.downloadChangedCSV();
-      BulkEditSearchPane.waitFileUploading();
+        BulkEditActions.downloadMatchedResults();
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.editSuppressFromDiscovery(true);
+        BulkEditActions.confirmChanges();
+        BulkEditActions.downloadPreview();
+        BulkEditActions.commitChanges();
+        BulkEditActions.openActions();
+        BulkEditActions.downloadChangedCSV();
+        BulkEditSearchPane.waitFileUploading();
 
-      cy.visit(TopMenu.inventoryPath);
-      InventorySearchAndFilter.switchToItem();
-      InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
-      ItemRecordView.waitLoading();
-      ItemRecordView.suppressedAsDiscoveryIsPresent();
-    });
+        cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.switchToItem();
+        InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
+        ItemRecordView.waitLoading();
+        ItemRecordView.suppressedAsDiscoveryIsPresent();
+      },
+    );
   });
 });

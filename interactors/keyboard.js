@@ -2,7 +2,6 @@
 
 import { createInteractor, Select } from '@interactors/html';
 
-
 export default createInteractor('keyboard (requires window to have focus)')
   .selector(':focus')
   .actions({
@@ -17,29 +16,41 @@ export default createInteractor('keyboard (requires window to have focus)')
     // but it doesn't trigger the built-in browser functions
     nextOption: ({ perform }) => perform(async (el) => {
       const options = el.querySelectorAll('option');
-      const nextValue = parseInt(el.value, 10) === options.length - 1
-        ? '0'
-        : `${parseInt(el.value, 10) + 1}`;
+      const nextValue =
+          parseInt(el.value, 10) === options.length - 1 ? '0' : `${parseInt(el.value, 10) + 1}`;
       await Select().choose(options.item(nextValue).textContent);
     }),
     prevOption: ({ perform }) => perform(async (el) => {
       const options = el.querySelectorAll('option');
-      const nextValue = parseInt(el.value, 10) === 0
-        ? `${options.length() - 1}`
-        : `${parseInt(el.value, 10) - 1}`;
+      const nextValue =
+          parseInt(el.value, 10) === 0
+            ? `${options.length() - 1}`
+            : `${parseInt(el.value, 10) - 1}`;
       await Select().choose(options.item(nextValue).textContent);
     }),
     incrementNumber: ({ perform }) => perform(async (el) => {
       const value = `${parseInt(el.value, 10) + 1}`;
       const property = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value');
       property.set.call(el, value);
-      el.dispatchEvent(new InputEvent('input', { inputType: 'insertFromPaste', bubbles: true, cancelable: false }));
+      el.dispatchEvent(
+        new InputEvent('input', {
+          inputType: 'insertFromPaste',
+          bubbles: true,
+          cancelable: false,
+        }),
+      );
     }),
     decrementNumber: ({ perform }) => perform(async (el) => {
       const value = `${parseInt(el.value, 10) - 1}`;
       const property = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value');
       property.set.call(el, value);
-      el.dispatchEvent(new InputEvent('input', { inputType: 'insertFromPaste', bubbles: true, cancelable: false }));
+      el.dispatchEvent(
+        new InputEvent('input', {
+          inputType: 'insertFromPaste',
+          bubbles: true,
+          cancelable: false,
+        }),
+      );
     }),
     pageUp: press('PageUp'),
     pageDown: press('PageDown'),
@@ -51,7 +62,7 @@ export default createInteractor('keyboard (requires window to have focus)')
     altLeft: press('AltLeft'),
     tab: press('Tab'),
     space: press('Space'),
-    pressKey: (interactor, value, options) => press(value)(interactor, options)
+    pressKey: (interactor, value, options) => press(value)(interactor, options),
   })();
 
 const KEY_CODES = {
@@ -68,9 +79,8 @@ const KEY_CODES = {
   Escape: 27,
   AltLeft: 18,
   Space: 32,
-  Tab: 9
+  Tab: 9,
 };
-
 
 function press(code) {
   return (interactor, options) => {
@@ -81,7 +91,6 @@ function press(code) {
     });
   };
 }
-
 
 function dispatch(element, eventType, code, options) {
   return new Promise((resolve, reject) => {
@@ -94,7 +103,7 @@ function dispatch(element, eventType, code, options) {
         ctrlKey: (options && options.ctrlKey) || false,
         key: code,
         bubbles: true,
-        cancelable: true
+        cancelable: true,
       });
       resolve(element.dispatchEvent(event));
     } catch (error) {

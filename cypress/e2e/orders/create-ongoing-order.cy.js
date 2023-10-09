@@ -11,30 +11,33 @@ import InteractorsTools from '../../support/utils/interactorsTools';
 import Users from '../../support/fragments/users/users';
 
 describe('orders: create an order', () => {
-  const order = { ...NewOrder.defaultOneTimeOrder,
+  const order = {
+    ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',
     ongoing: { isSubscription: false, manualRenewal: false },
     approved: true,
-    reEncumber: true };
+    reEncumber: true,
+  };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   let user;
 
   before(() => {
     cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-      });
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+    });
     order.vendor = organization.name;
     cy.createTempUser([
       permissions.uiOrdersView.gui,
       permissions.uiOrdersCreate.gui,
       permissions.uiOrdersApprovePurchaseOrders.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
       });
+    });
   });
 
   afterEach(() => {
@@ -43,14 +46,18 @@ describe('orders: create an order', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C663 Create an order and at least one order line for an ongoing order (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
-    Orders.createOrder(order, true, false).then(orderId => {
-      order.id = orderId;
-      OrderLines.addPOLine();
-      OrderLines.fillInPOLineInfoViaUi();
-      InteractorsTools.checkCalloutMessage('The purchase order line was successfully created');
-      OrderLines.backToEditingOrder();
-      Orders.checkCreatedOngoingOrder(order);
-    });
-  });
+  it(
+    'C663 Create an order and at least one order line for an ongoing order (thunderjet)',
+    { tags: [TestType.smoke, devTeams.thunderjet] },
+    () => {
+      Orders.createOrder(order, true, false).then((orderId) => {
+        order.id = orderId;
+        OrderLines.addPOLine();
+        OrderLines.fillInPOLineInfoViaUi();
+        InteractorsTools.checkCalloutMessage('The purchase order line was successfully created');
+        OrderLines.backToEditingOrder();
+        Orders.checkCreatedOngoingOrder(order);
+      });
+    },
+  );
 });

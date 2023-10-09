@@ -1,4 +1,15 @@
-import { Button, DropdownMenu, Modal, NavListItem, Pane, PaneContent, SearchField, Select, SelectionOption, TextField } from '../../../../../interactors';
+import {
+  Button,
+  DropdownMenu,
+  Modal,
+  NavListItem,
+  Pane,
+  PaneContent,
+  SearchField,
+  Select,
+  SelectionOption,
+  TextField,
+} from '../../../../../interactors';
 import SearchHelper from '../../finance/financeHelper';
 import InteractorsTools from '../../../utils/interactorsTools';
 
@@ -7,7 +18,6 @@ const actionsButton = Button('Actions');
 const templateNameField = TextField({ name: 'templateName' });
 
 export default {
-
   waitLoading() {
     cy.expect(Pane({ id: 'order-settings-order-templates-list' }).exists());
   },
@@ -21,7 +31,9 @@ export default {
       templateNameField.fillIn(templateName),
       Button('PO information').click(),
       Button({ id: 'vendor-plugin' }).click(),
-      Modal('Select Organization').find(SearchField({ id: 'input-record-search' })).fillIn(organizationName),
+      Modal('Select Organization')
+        .find(SearchField({ id: 'input-record-search' }))
+        .fillIn(organizationName),
       Button('Search').click(),
     ]);
     SearchHelper.selectFromResultsList();
@@ -29,7 +41,7 @@ export default {
       Button({ id: 'accordion-toggle-button-lineDetails' }).click(),
       Button({ id: 'acquisition-method' }).click(),
       SelectionOption(acquisitionMethod).click(),
-      Select({ name: 'orderType' }).choose('One-time')
+      Select({ name: 'orderType' }).choose('One-time'),
     ]);
   },
 
@@ -38,7 +50,11 @@ export default {
   },
 
   checkTemplateCreated(templateName) {
-    cy.expect(PaneContent({ id: 'order-settings-order-templates-list-content' }).find(NavListItem(templateName)).exists());
+    cy.expect(
+      PaneContent({ id: 'order-settings-order-templates-list-content' })
+        .find(NavListItem(templateName))
+        .exists(),
+    );
   },
 
   deleteTemplate(templateName) {
@@ -53,9 +69,7 @@ export default {
 
   selectTemplate(templateName) {
     cy.wait(6000);
-    cy.do([
-      NavListItem(templateName).click(),
-    ]);
+    cy.do([NavListItem(templateName).click()]);
   },
 
   closeTemplate() {
@@ -65,9 +79,7 @@ export default {
 
   editTemplate(templateName) {
     cy.wait(6000);
-    cy.do([
-      actionsButton.click(),
-    ]);
+    cy.do([actionsButton.click()]);
     cy.wait(6000);
     cy.do([
       DropdownMenu().find(Button('Edit')).click(),

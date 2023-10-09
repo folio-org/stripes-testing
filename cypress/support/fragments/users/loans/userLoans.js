@@ -1,25 +1,38 @@
+import moment from 'moment';
 import { matching } from 'bigtest';
 import {
   Pane,
   MultiColumnListRow,
   MultiColumnListCell,
+  Select,
   HTML,
   including,
   Button,
   KeyValue,
+  PaneHeader,
 } from '../../../../../interactors';
 import ItemRecordView from '../../inventory/item/itemRecordView';
 import { REQUEST_METHOD } from '../../../constants';
+import LoansPage from '../../loans/loansPage';
+import ConfirmItemStatusModal from './confirmItemStatusModal';
 
+const loansHistoryPane = PaneHeader({ id: 'paneHeaderpane-loanshistory' });
 const claimReturnedButton = Button('Claim returned');
 const declaredLostButton = Button('Declare lost');
 const itemDetailsButton = Button('Item details');
+const markAsMissingButton = Button('Mark as missing');
+const newFeeFineButton = Button('New fee/fine');
 const renewButton = Button('Renew');
-const ellipsisButton = Button({ icon:'ellipsis' });
+const chageDueDateButton = Button('Change due date');
+const ellipsisButton = Button({ icon: 'ellipsis' });
 const rowInList = MultiColumnListRow({ indexRow: 'row-0' });
 
 function openActionsMenuOfLoanByBarcode(itemBarcode) {
-  cy.do(MultiColumnListRow({ text: matching(itemBarcode), isContainer: false }).find(ellipsisButton).click());
+  cy.do(
+    MultiColumnListRow({ text: matching(itemBarcode), isContainer: false })
+      .find(ellipsisButton)
+      .click(),
+  );
 }
 
 function updateTimer(moduleId, routingEntry) {
@@ -41,48 +54,108 @@ export default {
   verifyClaimReturnedButtonIsVisible() {
     return cy.expect(claimReturnedButton.exists());
   },
-  claimItemReturnedViaApi:(apiBody, loanId) => cy.okapiRequest({
-    method: 'POST',
-    path: `circulation/loans/${loanId}/claim-item-returned`,
-    body: apiBody,
-    isDefaultSearchParamsRequired: false
-  }),
   checkOffLoanByBarcode: (itemBarcode) => {
     // interactors don't allow to find element inside the cell column
-    return cy.contains(itemBarcode).parent('*[class^="mclRow--"]').within(() => {
-      cy.get('div input[type=checkbox]').click();
-    });
+    return cy
+      .contains(itemBarcode)
+      .parent('*[class^="mclRow--"]')
+      .within(() => {
+        cy.get('div input[type=checkbox]').click();
+      });
   },
-  selectLoan:(barcode) => {
+  selectLoan: (barcode) => {
     cy.do(rowInList.find(HTML(including(barcode))).click());
   },
-  openLoan:(itemBarcode) => {
-    return cy.do(MultiColumnListRow({ text: matching(itemBarcode), isContainer: false }).click());
+  openLoanDetails: (itemBarcode) => {
+    cy.do(MultiColumnListRow({ text: matching(itemBarcode), isContainer: false }).click());
+    return LoansPage;
   },
-  declareLoanLost:(barcode) => {
-    cy.get('div[class^="mclRow--"]').contains('div[class^="mclCell-"]', barcode).then(elem => {
-      elem.parent()[0].querySelector('button[icon="ellipsis"]').click();
-    });
+  openChangeDueDatePane: () => {
+    cy.do(chageDueDateButton.click());
+  },
+  closeLoansHistory() {
+    cy.do(loansHistoryPane.find(Button({ ariaLabel: 'Close ' })).click());
+  },
+  expandActionsMenu(barcode) {
+    cy.get('div[class^="mclRow--"]')
+      .contains('div[class^="mclCell-"]', barcode)
+      .then((elem) => {
+        elem.parent()[0].querySelector('button[icon="ellipsis"]').click();
+      });
+  },
+  declareLoanLost(barcode) {
+    this.expandActionsMenu(barcode);
     cy.expect(declaredLostButton.exists());
-    return cy.do(declaredLostButton.click());
+    cy.do(declaredLostButton.click());
+
+    return ConfirmItemStatusModal;
   },
-  declareLoanLostViaApi:(apiBody, loanId) => cy.okapiRequest({
+  markAsMissing(barcode) {
+    this.expandActionsMenu(barcode);
+    cy.expect(markAsMissingButton.exists());
+    cy.do(markAsMissingButton.click());
+
+    return ConfirmItemStatusModal;
+  },
+  createNewFeeFine(barcode, ownerId, feeFineType) {
+    this.expandActionsMenu(barcode);
+    cy.do([
+      newFeeFineButton.click(),
+      Select({ id: 'ownerId' }).choose(ownerId),
+      Select({ id: 'feeFineType' }).choose(feeFineType),
+    ]);
+    cy.expect(Button('Charge only').has({ disabled: false }));
+    cy.wait(2000);
+    cy.do(Button('Charge only').click());
+    cy.wait(1000);
+  },
+  declareLoanLostViaApi: (
+    {
+      comment = 'Reason why the item is declared lost',
+      declaredLostDateTime = moment.utc().format(),
+      id,
+      servicePointId,
+    } = {},
+    loanId,
+  ) => cy.okapiRequest({
     method: 'POST',
     path: `circulation/loans/${loanId}/declare-item-lost`,
-    body: apiBody,
-    isDefaultSearchParamsRequired: false
+    body: {
+      comment,
+      declaredLostDateTime,
+      id,
+      servicePointId,
+    },
+    isDefaultSearchParamsRequired: false,
   }),
-  renewItemViaApi:(apiBody) => cy.okapiRequest({
+  claimItemReturnedViaApi: (
+    {
+      comment = 'Reason why the item is claime returned',
+      itemClaimedReturnedDateTime = moment.utc().format(),
+      id,
+    },
+    loanId,
+  ) => cy.okapiRequest({
     method: 'POST',
-    path: `circulation/renew-by-barcode`,
+    path: `circulation/loans/${loanId}/claim-item-returned`,
+    body: {
+      comment,
+      itemClaimedReturnedDateTime,
+      id,
+    },
+    isDefaultSearchParamsRequired: false,
+  }),
+  renewItemViaApi: (apiBody) => cy.okapiRequest({
+    method: 'POST',
+    path: 'circulation/renew-by-barcode',
     body: apiBody,
-    isDefaultSearchParamsRequired: false
+    isDefaultSearchParamsRequired: false,
   }),
   changeDueDateViaApi: (apiBody, loanId) => cy.okapiRequest({
     method: 'PUT',
     path: `circulation/loans/${loanId}`,
     body: apiBody,
-    isDefaultSearchParamsRequired: false
+    isDefaultSearchParamsRequired: false,
   }),
   changeDueDateForAllOpenPatronLoans(userId, day) {
     this.getUserLoansIdViaApi(userId).then((userLoans) => {
@@ -90,43 +163,50 @@ export default {
       const newDueDate = new Date(loansData[0].loanDate);
       newDueDate.setDate(newDueDate.getDate() + day);
       loansData.forEach((loan) => {
-        this.changeDueDateViaApi({
-          ...loan,
-          dueDate: newDueDate,
-          action: 'dueDateChanged',
-        }, loan.id);
+        this.changeDueDateViaApi(
+          {
+            ...loan,
+            dueDate: newDueDate,
+            action: 'dueDateChanged',
+          },
+          loan.id,
+        );
       });
     });
   },
   openActionsMenuOfLoanByBarcode,
-  declareLoanLostByBarcode:(itemBarcode) => {
-    openActionsMenuOfLoanByBarcode(itemBarcode);
-    return cy.do(declaredLostButton.click());
-  },
-  openItemRecordInInventory:(barcode) => {
-    cy.get('div[class^="mclRow--"]').contains('div[class^="mclCell-"]', barcode).then(elem => {
-      elem.parent()[0].querySelector('button[icon="ellipsis"]').click();
-    });
+  openItemRecordInInventory: (barcode) => {
+    cy.get('div[class^="mclRow--"]')
+      .contains('div[class^="mclCell-"]', barcode)
+      .then((elem) => {
+        elem.parent()[0].querySelector('button[icon="ellipsis"]').click();
+      });
     cy.expect(itemDetailsButton.exists());
     cy.do(itemDetailsButton.click());
     ItemRecordView.waitLoading();
   },
-  renewItem:(barcode, isLoanOpened = false) => {
+  renewItem: (barcode, isLoanOpened = false) => {
     if (isLoanOpened) {
       cy.expect(KeyValue({ value: barcode }).exists());
       cy.expect(renewButton.exists());
       cy.do(renewButton.click());
     } else {
       cy.wait(1500);
-      cy.get('div[class^="mclRow--"]').contains('div[class^="mclCell-"]', barcode).then(elem => {
-        elem.parent()[0].querySelector('button[icon="ellipsis"]').click();
-      });
+      cy.get('div[class^="mclRow--"]')
+        .contains('div[class^="mclCell-"]', barcode)
+        .then((elem) => {
+          elem.parent()[0].querySelector('button[icon="ellipsis"]').click();
+        });
       cy.expect(renewButton.exists());
       cy.do(renewButton.click());
     }
   },
   checkResultsInTheRowByBarcode: (allContentToCheck, itemBarcode) => {
-    return allContentToCheck.forEach(contentToCheck => cy.expect(MultiColumnListRow({ text: matching(itemBarcode), isContainer: false }).find(MultiColumnListCell({ content: including(contentToCheck) })).exists()));
+    return allContentToCheck.forEach((contentToCheck) => cy.expect(
+      MultiColumnListRow({ text: matching(itemBarcode), isContainer: false })
+        .find(MultiColumnListCell({ content: including(contentToCheck) }))
+        .exists(),
+    ));
   },
   verifyNumberOfLoans: (number) => {
     // verify every string in result table
@@ -135,23 +215,33 @@ export default {
     }
   },
   verifyQuantityOpenAndClaimedReturnedLoans: (numberOfOpenLoans, numberOfClaimedReturnedLoans) => {
-    return cy.expect(Pane(including('Loans -')).find(HTML(including(`${numberOfOpenLoans} records found (${numberOfClaimedReturnedLoans} claimed returned)`))).exists());
+    return cy.expect(
+      Pane(including('Loans -'))
+        .find(
+          HTML(
+            including(
+              `${numberOfOpenLoans} records found (${numberOfClaimedReturnedLoans} claimed returned)`,
+            ),
+          ),
+        )
+        .exists(),
+    );
   },
-  getUserLoansIdViaApi:(userId, loanStatus = 'open') => (
-    cy.okapiRequest({
+  getUserLoansIdViaApi: (userId, loanStatus = 'open') => cy
+    .okapiRequest({
       method: 'GET',
       path: `circulation/loans?query=(userId==${userId} and status.name==${loanStatus})`,
       isDefaultSearchParamsRequired: false,
     })
-      .then((({ body }) => body))),
+    .then(({ body }) => body),
 
-  getListTimersForTenant: () => (
-    cy.okapiRequest({
+  getListTimersForTenant: () => cy
+    .okapiRequest({
       method: 'GET',
       path: '_/proxy/tenants/diku/timers',
       isDefaultSearchParamsRequired: false,
     })
-      .then(({ body }) => body)),
+    .then(({ body }) => body),
 
   updateTimerForAgedToLost(mode) {
     if (typeof mode !== 'string') {
@@ -166,7 +256,9 @@ export default {
     }
 
     this.getListTimersForTenant().then((timers) => {
-      const scheduledAgeToLostModuleId = timers.find((t) => t.routingEntry.pathPattern === '/circulation/scheduled-age-to-lost').id;
+      const scheduledAgeToLostModuleId = timers.find(
+        (t) => t.routingEntry.pathPattern === '/circulation/scheduled-age-to-lost',
+      ).id;
       const scheduledAgeToLostRoutingEntry = {
         methods: ['POST'],
         pathPattern: '/circulation/scheduled-age-to-lost',
@@ -189,7 +281,9 @@ export default {
           'scheduled-notice-storage.scheduled-notices.item.post',
         ],
       };
-      const scheduledAgeToLostFeeChargingModuleId = timers.find((t) => t.routingEntry.pathPattern === '/circulation/scheduled-age-to-lost-fee-charging').id;
+      const scheduledAgeToLostFeeChargingModuleId = timers.find(
+        (t) => t.routingEntry.pathPattern === '/circulation/scheduled-age-to-lost-fee-charging',
+      ).id;
       const scheduledAgeToLostFeeChargingRoutingEntry = {
         methods: ['POST'],
         pathPattern: '/circulation/scheduled-age-to-lost-fee-charging',

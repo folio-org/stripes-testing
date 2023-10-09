@@ -26,18 +26,20 @@ describe('permissions: inventory', () => {
 
   before(() => {
     cy.getAdminToken();
-    InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode, item.publisher, item.holdingCallNumber, item.itemCallNumber);
+    InventoryInstances.createInstanceViaApi(
+      item.instanceName,
+      item.itemBarcode,
+      item.publisher,
+      item.holdingCallNumber,
+      item.itemCallNumber,
+    );
 
-    cy.createTempUser([
-        permissions.uiInventoryViewInstances.gui,
-      ]).then(userProperties => {
-        userWithOnlyViewPermissions = userProperties;
-      });
-    cy.createTempUser([
-        permissions.inventoryAll.gui,
-      ]).then(userProperties => {
-        userWithAllPermissions = userProperties;
-      });
+    cy.createTempUser([permissions.uiInventoryViewInstances.gui]).then((userProperties) => {
+      userWithOnlyViewPermissions = userProperties;
+    });
+    cy.createTempUser([permissions.inventoryAll.gui]).then((userProperties) => {
+      userWithAllPermissions = userProperties;
+    });
   });
 
   after('Deleting data', () => {
@@ -46,31 +48,39 @@ describe('permissions: inventory', () => {
     Users.deleteViaApi(userWithAllPermissions.userId);
   });
 
-  it('C375072 User with "Inventory: View instances, holdings, and items" permission can see browse call numbers and subjects without assigning specific browse permissions (Orchid+) (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
-    cy.login(userWithOnlyViewPermissions.username, userWithOnlyViewPermissions.password);
-    cy.visit(TopMenu.inventoryPath);
-    InventorySearchAndFilter.switchToBrowseTab();
-    InventorySearchAndFilter.selectBrowseCallNumbers();
-    InventorySearchAndFilter.browseSearch(item.itemCallNumber);
-    InventorySearchAndFilter.verifyCallNumbersResultsInBrowsePane(item.itemCallNumber);
-    cy.visit(TopMenu.inventoryPath);
-    InventorySearchAndFilter.switchToBrowseTab();
-    InventorySearchAndFilter.selectBrowseSubjects();
-    InventorySearchAndFilter.browseSearch('art');
-    InventorySearchAndFilter.verifySubjectsResultsInBrowsePane();
-  });
+  it(
+    'C375072 User with "Inventory: View instances, holdings, and items" permission can see browse call numbers and subjects without assigning specific browse permissions (Orchid+) (thunderjet)',
+    { tags: [TestTypes.smoke, devTeams.thunderjet] },
+    () => {
+      cy.login(userWithOnlyViewPermissions.username, userWithOnlyViewPermissions.password);
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.switchToBrowseTab();
+      InventorySearchAndFilter.selectBrowseCallNumbers();
+      InventorySearchAndFilter.browseSearch(item.itemCallNumber);
+      InventorySearchAndFilter.verifyCallNumbersResultsInBrowsePane(item.itemCallNumber);
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.switchToBrowseTab();
+      InventorySearchAndFilter.selectBrowseSubjects();
+      InventorySearchAndFilter.browseSearch('art');
+      InventorySearchAndFilter.verifySubjectsResultsInBrowsePane();
+    },
+  );
 
-  it('C375077 User with "Inventory: All permissions" permission can see browse call numbers and subjects without assigning specific browse permissions (Orchid+) (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
-    cy.login(userWithAllPermissions.username, userWithAllPermissions.password);
-    cy.visit(TopMenu.inventoryPath);
-    InventorySearchAndFilter.switchToBrowseTab();
-    InventorySearchAndFilter.selectBrowseCallNumbers();
-    InventorySearchAndFilter.browseSearch(item.itemCallNumber);
-    InventorySearchAndFilter.verifyCallNumbersResultsInBrowsePane(item.itemCallNumber);
-    cy.visit(TopMenu.inventoryPath);
-    InventorySearchAndFilter.switchToBrowseTab();
-    InventorySearchAndFilter.selectBrowseSubjects();
-    InventorySearchAndFilter.browseSearch('art');
-    InventorySearchAndFilter.verifySubjectsResultsInBrowsePane();
-  });
+  it(
+    'C375077 User with "Inventory: All permissions" permission can see browse call numbers and subjects without assigning specific browse permissions (Orchid+) (thunderjet)',
+    { tags: [TestTypes.smoke, devTeams.thunderjet] },
+    () => {
+      cy.login(userWithAllPermissions.username, userWithAllPermissions.password);
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.switchToBrowseTab();
+      InventorySearchAndFilter.selectBrowseCallNumbers();
+      InventorySearchAndFilter.browseSearch(item.itemCallNumber);
+      InventorySearchAndFilter.verifyCallNumbersResultsInBrowsePane(item.itemCallNumber);
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.switchToBrowseTab();
+      InventorySearchAndFilter.selectBrowseSubjects();
+      InventorySearchAndFilter.browseSearch('art');
+      InventorySearchAndFilter.verifySubjectsResultsInBrowsePane();
+    },
+  );
 });

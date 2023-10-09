@@ -56,7 +56,9 @@ export default {
     });
   },
   checkAfterSaving(values) {
-    InteractorsTools.checkCalloutMessage(`The permission set ${values.name} was successfully created.`);
+    InteractorsTools.checkCalloutMessage(
+      `The permission set ${values.name} was successfully created.`,
+    );
     this.checkPermissionSet(values);
   },
   checkNewButtonNotAvailable() {

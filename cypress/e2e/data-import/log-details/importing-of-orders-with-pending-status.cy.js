@@ -1,7 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import DevTeams from '../../../support/dictionary/devTeams';
-import TestTypes from '../../../support/dictionary/testTypes';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import {
@@ -11,7 +9,7 @@ import {
   ORDER_FORMAT_NAMES_IN_PROFILE,
   ACQUISITION_METHOD_NAMES,
   JOB_STATUS_NAMES,
-  VENDOR_NAMES
+  VENDOR_NAMES,
 } from '../../../support/constants';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -23,6 +21,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Users from '../../../support/fragments/users/users';
 import Orders from '../../../support/fragments/orders/orders';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -34,7 +33,7 @@ describe('data-import', () => {
     const ordersData = [
       { title: 'ROALD DAHL : TELLER OF THE UNEXPECTED : A BIOGRAPHY.', rowNumber: 0 },
       { title: 'CULTURAL HISTORY OF IDEAS', rowNumber: 1 },
-      { title: 'BOAT PEOPLE; TRANS. BY VANESSA PERE-ROSARIO.', rowNumber: 2 }
+      { title: 'BOAT PEOPLE; TRANS. BY VANESSA PERE-ROSARIO.', rowNumber: 2 },
     ];
     const mappingProfile = {
       name: `C375178 Test Order ${getRandomPostfix()}`,
@@ -77,11 +76,11 @@ describe('data-import', () => {
       type: '%',
       locationName: '049$a',
       locationQuantityPhysical: '980$g',
-      volume: '993$a'
+      volume: '993$a',
     };
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.ORDER,
-      name: `C375178 Test Order ${getRandomPostfix()}`
+      name: `C375178 Test Order ${getRandomPostfix()}`,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
@@ -108,33 +107,35 @@ describe('data-import', () => {
       JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
       cy.createTempUser([
-        permissions.settingsDataImportEnabled.gui,
-        permissions.moduleDataImportEnabled.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.moduleDataImportEnabled.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          cy.login(userProperties.username, userProperties.password,
-            { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
         });
+      });
     });
 
     after('delete test data', () => {
       Users.deleteViaApi(user.userId);
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
-      cy.wrap(orderNumbers).each(number => {
-        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` })
-          .then(orderId => {
-            Orders.deleteOrderViaApi(orderId[0].id);
-          });
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      cy.wrap(orderNumbers).each((number) => {
+        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` }).then((orderId) => {
+          Orders.deleteOrderViaApi(orderId[0].id);
+        });
       });
     });
 
-    it('C375178 Verify the importing of orders with pending status (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+    it(
+      'C375178 Verify the importing of orders with pending status (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateOrder, marcFileName);
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
@@ -144,21 +145,29 @@ describe('data-import', () => {
         Logs.openFileDetails(marcFileName);
         FileDetails.checkOrderQuantityInSummaryTable(quantityOfOrders);
         FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfOrders);
-        cy.wrap(ordersData).each(order => {
-          FileDetails.verifyTitle(order.title, FileDetails.columnNameInResultList.title, order.rowNumber);
-          FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.order, order.rowNumber);
+        cy.wrap(ordersData).each((order) => {
+          FileDetails.verifyTitle(
+            order.title,
+            FileDetails.columnNameInResultList.title,
+            order.rowNumber,
+          );
+          FileDetails.checkStatusInColumn(
+            FileDetails.status.created,
+            FileDetails.columnNameInResultList.order,
+            order.rowNumber,
+          );
           FileDetails.verifyStatusHasLinkToOrder(order.rowNumber);
           FileDetails.openOrder('Created', order.rowNumber);
           OrderLines.waitLoading();
           OrderLines.verifyOrderTitle(order.title);
-          OrderLines.getAssignedPOLNumber()
-            .then(initialNumber => {
-              const orderNumber = initialNumber.replace('-1', '');
+          OrderLines.getAssignedPOLNumber().then((initialNumber) => {
+            const orderNumber = initialNumber.replace('-1', '');
 
-              orderNumbers.push(orderNumber);
-            });
+            orderNumbers.push(orderNumber);
+          });
           cy.go('back');
         });
-      });
+      },
+    );
   });
 });

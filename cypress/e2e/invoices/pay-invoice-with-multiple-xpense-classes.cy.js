@@ -24,9 +24,7 @@ describe('Invoices', () => {
   const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
-  const firstOrder = { ...NewOrder.defaultOneTimeOrder,
-    approved: true,
-    reEncumber: true };
+  const firstOrder = { ...NewOrder.defaultOneTimeOrder, approved: true, reEncumber: true };
   const firstExpenseClass = { ...NewExpenceClass.defaultUiBatchGroup };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -42,81 +40,84 @@ describe('Invoices', () => {
     cy.visit(SettingsMenu.expenseClassesPath);
     SettingsFinance.createNewExpenseClass(firstExpenseClass);
 
-    FiscalYears.createViaApi(firstFiscalYear)
-      .then(firstFiscalYearResponse => {
-        firstFiscalYear.id = firstFiscalYearResponse.id;
-        defaultLedger.fiscalYearOneId = firstFiscalYear.id;
-        Ledgers.createViaApi(defaultLedger)
-          .then(ledgerResponse => {
-            defaultLedger.id = ledgerResponse.id;
-            defaultFund.ledgerId = defaultLedger.id;
+    FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
+      firstFiscalYear.id = firstFiscalYearResponse.id;
+      defaultLedger.fiscalYearOneId = firstFiscalYear.id;
+      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+        defaultLedger.id = ledgerResponse.id;
+        defaultFund.ledgerId = defaultLedger.id;
 
-            Funds.createViaApi(defaultFund)
-              .then(fundResponse => {
-                defaultFund.id = fundResponse.fund.id;
+        Funds.createViaApi(defaultFund).then((fundResponse) => {
+          defaultFund.id = fundResponse.fund.id;
 
-                cy.visit(TopMenu.fundPath);
-                FinanceHelp.searchByName(defaultFund.name);
-                Funds.selectFund(defaultFund.name);
-                Funds.addBudget(allocatedQuantity);
-                Funds.editBudget();
-                Funds.addExpensesClass(firstExpenseClass.name);
-              });
-          });
-      });
-
-    ServicePoints.getViaApi()
-      .then((servicePoint) => {
-        servicePointId = servicePoint[0].id;
-        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
-          .then(res => {
-            location = res;
-          });
-      });
-
-    Organizations.createOrganizationViaApi(organization)
-      .then(responseOrganizations => {
-        organization.id = responseOrganizations;
-        invoice.accountingCode = organization.erpCode;
-        firstOrder.orderType = 'One-time';
-        firstOrder.vendor = organization.name;
-        cy.visit(TopMenu.ordersPath);
-        Orders.createOrderForRollover(firstOrder, true).then(secondOrderResponse => {
-          firstOrder.id = secondOrderResponse.id;
-          firstOrderNumber = secondOrderResponse.poNumber;
-          Orders.checkCreatedOrder(firstOrder);
-          OrderLines.addPOLine();
-          OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
-          OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(defaultFund, '40', '1', '40', location.institutionId);
-          OrderLines.backToEditingOrder();
-          Orders.openOrder();
+          cy.visit(TopMenu.fundPath);
+          FinanceHelp.searchByName(defaultFund.name);
+          Funds.selectFund(defaultFund.name);
+          Funds.addBudget(allocatedQuantity);
+          Funds.editBudget();
+          Funds.addExpensesClass(firstExpenseClass.name);
         });
-        // Need to wait, while data will be loaded
-        cy.visit(TopMenu.ordersPath);
       });
+    });
+
+    ServicePoints.getViaApi().then((servicePoint) => {
+      servicePointId = servicePoint[0].id;
+      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+        location = res;
+      });
+    });
+
+    Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
+      organization.id = responseOrganizations;
+      invoice.accountingCode = organization.erpCode;
+      firstOrder.orderType = 'One-time';
+      firstOrder.vendor = organization.name;
+      cy.visit(TopMenu.ordersPath);
+      Orders.createOrderForRollover(firstOrder, true).then((secondOrderResponse) => {
+        firstOrder.id = secondOrderResponse.id;
+        firstOrderNumber = secondOrderResponse.poNumber;
+        Orders.checkCreatedOrder(firstOrder);
+        OrderLines.addPOLine();
+        OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
+        OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
+          defaultFund,
+          '40',
+          '1',
+          '40',
+          location.institutionId,
+        );
+        OrderLines.backToEditingOrder();
+        Orders.openOrder();
+      });
+    });
 
     cy.createTempUser([
-      permissions.uiFinanceExecuteFiscalYearRollover.gui,
-      permissions.uiFinanceViewFiscalYear.gui,
+      permissions.uiInvoicesApproveInvoices.gui,
+      permissions.viewEditCreateInvoiceInvoiceLine.gui,
       permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiFinanceViewLedger.gui,
-      permissions.uiOrdersView.gui
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path:TopMenu.ledgerPath, waiter: Ledgers.waitForLedgerDetailsLoading });
+      permissions.uiInvoicesPayInvoices.gui,
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.invoicesPath,
+        waiter: Invoices.waitLoading,
       });
+    });
   });
 
   after(() => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C15859 Pay an invoice with multiple "Expense classes" assigned to it (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    cy.visit(TopMenu.invoicesPath);
-    Invoices.createRolloverInvoice(invoice, organization.name);
-    Invoices.createInvoiceLineFromPol(firstOrderNumber);
-    Invoices.approveInvoice();
-    Invoices.payInvoice();
-  });
+  it(
+    'C15859 Pay an invoice with multiple "Expense classes" assigned to it (thunderjet)',
+    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    () => {
+      cy.visit(TopMenu.invoicesPath);
+      Invoices.createRolloverInvoice(invoice, organization.name);
+      Invoices.createInvoiceLineFromPol(firstOrderNumber);
+      Invoices.approveInvoice();
+      Invoices.payInvoice();
+    },
+  );
 });

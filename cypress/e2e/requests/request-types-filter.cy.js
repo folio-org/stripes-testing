@@ -18,14 +18,14 @@ describe('ui-requests: Make sure that request type filters are working properly'
   const requestTypes = { PAGE: 'Page', HOLD: 'Hold', RECALL: 'Recall' };
   const resetFiltersMessage = 'Choose a filter or enter a search query to show results.';
   const doesNotExistRequest = `notExist-${uuid()}`;
-  const getNoResultMessage = term => `No results found for "${term}". Please check your spelling and filters.`;
+  const getNoResultMessage = (term) => `No results found for "${term}". Please check your spelling and filters.`;
   let addedCirculationRule;
   let originalCirculationRules;
   let loanTypeId;
   const requestPolicyBody = {
     requestTypes: [REQUEST_TYPES.HOLD, REQUEST_TYPES.PAGE, REQUEST_TYPES.RECALL],
     name: `autotestPolicy${getRandomPostfix()}`,
-    id: uuid()
+    id: uuid(),
   };
 
   beforeEach(() => {
@@ -42,34 +42,48 @@ describe('ui-requests: Make sure that request type filters are working properly'
         originalCirculationRules = circulationRule.rulesAsText;
         const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
         ruleProps.r = requestPolicyBody.id;
-        addedCirculationRule = 't ' + loanTypeId + ': i ' + ruleProps.i + ' l ' + ruleProps.l + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
+        addedCirculationRule =
+          't ' +
+          loanTypeId +
+          ': i ' +
+          ruleProps.i +
+          ' l ' +
+          ruleProps.l +
+          ' r ' +
+          ruleProps.r +
+          ' o ' +
+          ruleProps.o +
+          ' n ' +
+          ruleProps.n;
         CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', loanTypeId);
       });
     });
 
-
-    Object.values(requestTypes).forEach(requestType => {
-      const itemStatus = requestType === REQUEST_TYPES.PAGE ? ITEM_STATUS_NAMES.AVAILABLE : ITEM_STATUS_NAMES.CHECKED_OUT;
-      Requests
-        .createRequestApi(itemStatus, requestType)
-        .then(({ instanceRecordData, createdRequest, createdUser }) => {
+    Object.values(requestTypes).forEach((requestType) => {
+      const itemStatus =
+        requestType === REQUEST_TYPES.PAGE
+          ? ITEM_STATUS_NAMES.AVAILABLE
+          : ITEM_STATUS_NAMES.CHECKED_OUT;
+      Requests.createRequestApi(itemStatus, requestType).then(
+        ({ instanceRecordData, createdRequest, createdUser }) => {
           requests.push(createdRequest);
           instances.push(instanceRecordData);
           userIds.push(createdUser.id);
-        });
+        },
+      );
     });
   });
 
   afterEach(() => {
-    instances.forEach(instance => {
+    instances.forEach((instance) => {
       cy.deleteItemViaApi(instance.itemId);
       cy.deleteHoldingRecordViaApi(instance.holdingId);
       InventoryInstance.deleteInstanceViaApi(instance.instanceId);
     });
-    requests.forEach(request => {
+    requests.forEach((request) => {
       Requests.deleteRequestViaApi(request.id);
     });
-    userIds.forEach(id => {
+    userIds.forEach((id) => {
       Users.deleteViaApi(id);
     });
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
@@ -77,8 +91,10 @@ describe('ui-requests: Make sure that request type filters are working properly'
     cy.deleteLoanType(loanTypeId);
   });
 
-  it('C540 Make sure that request type filters are working properly (vega)',
-    { tags: [TestTypes.smoke, DevTeams.vega] }, () => {
+  it(
+    'C540 Make sure that request type filters are working properly (vega)',
+    { tags: [TestTypes.smoke, DevTeams.vega] },
+    () => {
       cy.visit(TopMenu.requestsPath);
       // Apply filters and test that the appropriate results display
       requests.forEach(({ requestType }) => {
@@ -124,5 +140,6 @@ describe('ui-requests: Make sure that request type filters are working properly'
         Requests.verifyCreatedRequest(title);
         Requests.resetAllFilters();
       });
-    });
+    },
+  );
 });

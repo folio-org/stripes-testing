@@ -6,7 +6,8 @@ import {
   TextField,
   MultiColumnListHeader,
   MultiColumnListRow,
-  MultiColumnListCell, Modal
+  MultiColumnListCell,
+  Modal,
 } from '../../../../../interactors';
 import exportNewFieldMappingProfile from './exportNewFieldMappingProfile';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -40,9 +41,11 @@ export default {
       MultiColumnListCell(mappingProfileName).click(),
       actionsButton.click(),
       deleteButton.click(),
-      Modal().find(deleteButton).click()
+      Modal().find(deleteButton).click(),
     ]);
-    InteractorsTools.checkCalloutMessage(`Mapping profile ${mappingProfileName} has been successfully deleted`);
+    InteractorsTools.checkCalloutMessage(
+      `Mapping profile ${mappingProfileName} has been successfully deleted`,
+    );
     cy.expect(MultiColumnListCell(mappingProfileName).absent());
   },
 
@@ -64,7 +67,7 @@ export default {
       .okapiRequest({
         path: 'data-export/mapping-profiles',
         searchParams,
-        isDefaultSearchParamsRequired: false
+        isDefaultSearchParamsRequired: false,
       })
       .then((response) => {
         return response.body.mappingProfiles[0];
@@ -84,19 +87,19 @@ export default {
   },
 
   verifyFieldMappingProfilesCount() {
-    cy.do(cy.get('#search-results-list').then(elem => {
-      cy.expect(cy.get('#paneHeaderpane-results-subtitle').should('have.text', `${elem.attr('data-total-count')} field mapping profiles`));
-    }));
+    cy.do(
+      cy.get('#search-results-list').then((elem) => {
+        cy.expect(
+          cy
+            .get('#paneHeaderpane-results-subtitle')
+            .should('have.text', `${elem.attr('data-total-count')} field mapping profiles`),
+        );
+      }),
+    );
   },
 
   verifyColumnTitles() {
-    [
-      'Name',
-      'FOLIO record type',
-      'Format',
-      'Updated',
-      'Updated by'
-    ].forEach(title => {
+    ['Name', 'FOLIO record type', 'Format', 'Updated', 'Updated by'].forEach((title) => {
       cy.expect(fieldMappingProfilesPane.find(MultiColumnListHeader(title)).exists());
     });
   },
@@ -110,8 +113,6 @@ export default {
   },
 
   verifyProfileNameOnTheList(name) {
-    cy.expect([
-      MultiColumnListRow(including(name)).exists()
-    ]);
-  }
+    cy.expect([MultiColumnListRow(including(name)).exists()]);
+  },
 };

@@ -15,10 +15,9 @@ const newName = `testName_${getRandomPostfix()}`;
 const userUUIDsFileName = `userUUIDs-${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `Matched-Records-${userUUIDsFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
-const changedRecordsFileName = `*-Changed-Records*-${editedFileName}`;
 const previewOfProposedChangesFileName = {
   first: `*-Updates-Preview-${userUUIDsFileName}`,
-  second: `*-Updates-Preview-${editedFileName}`
+  second: `*-Updates-Preview-${editedFileName}`,
 };
 const updatedRecordsFileName = `*-Changed-Records*-${userUUIDsFileName}`;
 
@@ -29,62 +28,91 @@ describe('Bulk Edit - Logs', () => {
       permissions.bulkEditCsvView.gui,
       permissions.bulkEditCsvEdit.gui,
       permissions.uiUserEdit.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
-        FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, `${user.userId}`);
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.bulkEditPath,
+        waiter: BulkEditSearchPane.waitLoading,
       });
+      FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, `${user.userId}`);
+    });
   });
 
   after('delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
     FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
     Users.deleteViaApi(user.userId);
-    FileManager.deleteFileFromDownloadsByMask(userUUIDsFileName, `*${matchedRecordsFileName}`, changedRecordsFileName, previewOfProposedChangesFileName.first, previewOfProposedChangesFileName.second, updatedRecordsFileName);
+    FileManager.deleteFileFromDownloadsByMask(
+      userUUIDsFileName,
+      `*${matchedRecordsFileName}`,
+      previewOfProposedChangesFileName.first,
+      previewOfProposedChangesFileName.second,
+      updatedRecordsFileName,
+    );
   });
 
-  it('C375214 Verify generated Logs files for Users CSV -- only valid (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
-    BulkEditSearchPane.uploadFile(userUUIDsFileName);
-    BulkEditSearchPane.waitFileUploading();
+  it(
+    'C375214 Verify generated Logs files for Users CSV -- only valid (firebird)',
+    { tags: [testTypes.smoke, devTeams.firebird] },
+    () => {
+      BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
+      BulkEditSearchPane.uploadFile(userUUIDsFileName);
+      BulkEditSearchPane.waitFileUploading();
 
-    BulkEditActions.downloadMatchedResults();
-    BulkEditActions.prepareValidBulkEditFile(matchedRecordsFileName, editedFileName, 'testPermFirst', newName);
+      BulkEditActions.downloadMatchedResults();
+      BulkEditActions.prepareValidBulkEditFile(
+        matchedRecordsFileName,
+        editedFileName,
+        'testPermFirst',
+        newName,
+      );
 
-    BulkEditActions.openStartBulkEditForm();
-    BulkEditSearchPane.uploadFile(editedFileName);
-    BulkEditSearchPane.waitFileUploading();
-    BulkEditActions.clickNext();
-    BulkEditActions.commitChanges();
-    BulkEditSearchPane.verifyChangedResults(newName);
+      BulkEditActions.openStartBulkEditForm();
+      BulkEditSearchPane.uploadFile(editedFileName);
+      BulkEditSearchPane.waitFileUploading();
+      BulkEditActions.clickNext();
+      BulkEditActions.commitChanges();
+      BulkEditSearchPane.verifyChangedResults(newName);
 
-    BulkEditActions.openActions();
-    BulkEditActions.downloadChangedCSV();
-    BulkEditSearchPane.openLogsSearch();
-    BulkEditSearchPane.verifyLogsPane();
-    BulkEditSearchPane.checkUsersCheckbox();
-    BulkEditSearchPane.clickActionsRunBy(user.username);
-    BulkEditSearchPane.verifyLogsRowActionWhenCompleted();
+      BulkEditActions.openActions();
+      BulkEditActions.downloadChangedCSV();
+      BulkEditSearchPane.openLogsSearch();
+      BulkEditSearchPane.verifyLogsPane();
+      BulkEditSearchPane.checkUsersCheckbox();
+      BulkEditSearchPane.clickActionsRunBy(user.username);
+      BulkEditSearchPane.verifyLogsRowActionWhenCompleted();
 
-    BulkEditSearchPane.downloadFileUsedToTrigger();
-    BulkEditFiles.verifyCSVFileRows(userUUIDsFileName, [user.userId]);
+      BulkEditSearchPane.downloadFileUsedToTrigger();
+      BulkEditFiles.verifyCSVFileRows(userUUIDsFileName, [user.userId]);
 
-    BulkEditSearchPane.downloadFileWithMatchingRecords();
-    BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileName}`, [user.userId], 'userId', true);
+      BulkEditSearchPane.downloadFileWithMatchingRecords();
+      BulkEditFiles.verifyMatchedResultFileContent(
+        `*${matchedRecordsFileName}`,
+        [user.userId],
+        'userId',
+        true,
+      );
 
-    BulkEditSearchPane.downloadFileWithProposedChanges();
-    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, [newName], 'firstName', true);
+      BulkEditSearchPane.downloadFileWithProposedChanges();
+      BulkEditFiles.verifyMatchedResultFileContent(
+        previewOfProposedChangesFileName.first,
+        [newName],
+        'firstName',
+        true,
+      );
 
-    BulkEditSearchPane.downloadFileWithUpdatedRecords();
-    BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, [newName], 'firstName', true);
+      BulkEditSearchPane.downloadFileWithUpdatedRecords();
+      BulkEditFiles.verifyMatchedResultFileContent(
+        updatedRecordsFileName,
+        [newName],
+        'firstName',
+        true,
+      );
 
-    // Go to users app and verify changes
-    cy.visit(TopMenu.usersPath);
-    UsersSearchPane.searchByUsername(user.username);
-    Users.verifyFirstNameOnUserDetailsPane(newName);
-  });
+      // Go to users app and verify changes
+      cy.visit(TopMenu.usersPath);
+      UsersSearchPane.searchByUsername(user.username);
+      Users.verifyFirstNameOnUserDetailsPane(newName);
+    },
+  );
 });

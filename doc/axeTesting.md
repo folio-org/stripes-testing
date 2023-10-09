@@ -15,7 +15,7 @@ describe('render component', () => {
       <Datepicker />
     );
   });
-  
+
   // defaults can be used as a standalone callback to 'it()' calls.
   it('render with no axe errors', runAxeTest);
 });
@@ -48,13 +48,17 @@ it('render with no axe errors', () => runAxeTest({
 ```
 
 ## Options
+
 ### config
+
 A custom axe configuration. See [axe documentation](https://www.deque.com/axe/core-documentation/api-documentation/#options-parameter) for more detail on what to include in a configuration.
 
 ### rootNode
+
 defaults to `div#root` - can be set to any element for focused testing.
 
 ## Error feedback
+
 ![image](https://user-images.githubusercontent.com/20704067/139138969-c30f185a-f56d-49a7-9f2c-ccbae38d5f75.png)
 Row/Field | Description
 -- | --
@@ -64,4 +68,4 @@ helpUrl | links to additional documentation on the axe website for the rule as w
 sample issue, issue count | The first issue of the list. Many issues are repeated over multiple elements, so its possible that resolving the issue in a single place resolves multiple detections.
 html | Provided for DOM inspection to locate the offending element.
 target | A selector for the offending element.
-Failure Summary  | A list of simply stated solutions to the issue. More prescriptive solutions are available at the helpUrl field.
+Failure Summary | A list of simply stated solutions to the issue. More prescriptive solutions are available at the helpUrl field.

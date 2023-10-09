@@ -27,16 +27,15 @@ describe('bulk-edit', () => {
         permissions.bulkEditView.gui,
         permissions.bulkEditEdit.gui,
         permissions.inventoryAll.gui,
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading
-          });
-          InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-          FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
+        InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
+        FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
+      });
     });
 
     after('delete test data', () => {
@@ -46,26 +45,35 @@ describe('bulk-edit', () => {
       FileManager.deleteFileFromDownloadsByMask(changedRecordsFileName);
     });
 
-    it('C367922 Verify that User can update item status with "Intellectual item" (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.checkItemsRadio();
-      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-      BulkEditSearchPane.uploadFile(itemBarcodesFileName);
-      BulkEditSearchPane.waitFileUploading();
+    it(
+      'C367922 Verify that User can update item status with "Intellectual item" (firebird)',
+      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.checkItemsRadio();
+        BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+        BulkEditSearchPane.uploadFile(itemBarcodesFileName);
+        BulkEditSearchPane.waitFileUploading();
 
-      BulkEditActions.openActions();
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.replaceItemStatus('Intellectual item');
-      BulkEditActions.confirmChanges();
-      BulkEditActions.commitChanges();
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditActions.openActions();
-      BulkEditActions.downloadChangedCSV();
-      BulkEditFiles.verifyMatchedResultFileContent(changedRecordsFileName, ['Intellectual item'], 'itemStatus', true);
+        BulkEditActions.openActions();
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.replaceItemStatus('Intellectual item');
+        BulkEditActions.confirmChanges();
+        BulkEditActions.commitChanges();
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditActions.openActions();
+        BulkEditActions.downloadChangedCSV();
+        BulkEditFiles.verifyMatchedResultFileContent(
+          changedRecordsFileName,
+          ['Intellectual item'],
+          'itemStatus',
+          true,
+        );
 
-      cy.visit(TopMenu.inventoryPath);
-      InventorySearchAndFilter.switchToItem();
-      InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
-      ItemRecordView.checkStatus('Intellectual item');
-    });
+        cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.switchToItem();
+        InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
+        ItemRecordView.checkStatus('Intellectual item');
+      },
+    );
   });
 });

@@ -9,45 +9,42 @@ import FileManager from '../../../../support/utils/fileManager';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 
-// TODO: Update test after MODBULKOPS-123 is done
-
 let user;
 let userWithoutPermissions;
 const newFirstName = `testNewFirstName_${getRandomPostfix()}`;
 const invalidUserBarcode = getRandomPostfix();
 const invalidAndValidUserBarcodesFileName = `invalidAndValidUserBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `Matched-Records-${invalidAndValidUserBarcodesFileName}`;
-// const errorsFromMatchingFileName = `*Errors-${invalidAndValidUserBarcodesFileName}`;
+const errorsFromMatchingFileName = `*-Matching-Records-Errors-${invalidAndValidUserBarcodesFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
-const changedRecordsFileName = `*-Changed-Records-${editedFileName}`;
-// const errorsInChangedRecordsFileName = `*-Errors-${editedFileName}`;
 const previewOfProposedChangesFileName = {
   first: `*-Updates-Preview-${invalidAndValidUserBarcodesFileName}`,
-  second: `*-Updates-Preview-${editedFileName}`
+  second: `*-Updates-Preview-${editedFileName}`,
 };
 const updatedRecordsFileName = `*-Changed-Records*-${invalidAndValidUserBarcodesFileName}`;
-// const errorsFromCommittingFileName = `*Errors-*-${matchedRecordsFileName}`;
+const errorsFromCommittingFileName = `*-Committing-changes-Errors-${invalidAndValidUserBarcodesFileName}`;
 
 describe('Bulk Edit - Logs', () => {
   before('create test data', () => {
-    cy.createTempUser([])
-      .then(userProperties => {
-        userWithoutPermissions = userProperties;
-      });
+    cy.createTempUser([]).then((userProperties) => {
+      userWithoutPermissions = userProperties;
+    });
     cy.createTempUser([
       permissions.bulkEditLogsView.gui,
       permissions.bulkEditCsvView.gui,
       permissions.bulkEditCsvEdit.gui,
       permissions.uiUserEdit.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
-        FileManager.createFile(`cypress/fixtures/${invalidAndValidUserBarcodesFileName}`, `${user.barcode}\n${userWithoutPermissions.barcode}\n${invalidUserBarcode}`);
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.bulkEditPath,
+        waiter: BulkEditSearchPane.waitLoading,
       });
+      FileManager.createFile(
+        `cypress/fixtures/${invalidAndValidUserBarcodesFileName}`,
+        `${user.barcode}\n${userWithoutPermissions.barcode}\n${invalidUserBarcode}`,
+      );
+    });
   });
 
   after('delete test data', () => {
@@ -55,53 +52,98 @@ describe('Bulk Edit - Logs', () => {
     FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
     Users.deleteViaApi(user.userId);
     Users.deleteViaApi(userWithoutPermissions.userId);
-    FileManager.deleteFileFromDownloadsByMask(invalidAndValidUserBarcodesFileName, `*${matchedRecordsFileName}`, changedRecordsFileName, previewOfProposedChangesFileName.first, previewOfProposedChangesFileName.second, updatedRecordsFileName);
-    // FileManager.deleteFileFromDownloadsByMask(errorsFromCommittingFileName, errorsInChangedRecordsFileName, errorsFromMatchingFileName);
+    FileManager.deleteFileFromDownloadsByMask(
+      invalidAndValidUserBarcodesFileName,
+      `*${matchedRecordsFileName}`,
+      previewOfProposedChangesFileName.first,
+      previewOfProposedChangesFileName.second,
+      updatedRecordsFileName,
+      errorsFromCommittingFileName,
+      errorsFromMatchingFileName,
+    );
   });
 
-  it('C375215 Verify generated Logs files for Users CSV - with errors (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
-    BulkEditSearchPane.uploadFile(invalidAndValidUserBarcodesFileName);
-    BulkEditSearchPane.waitFileUploading();
+  it(
+    'C375215 Verify generated Logs files for Users CSV - with errors (firebird)',
+    { tags: [testTypes.smoke, devTeams.firebird] },
+    () => {
+      BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
+      BulkEditSearchPane.uploadFile(invalidAndValidUserBarcodesFileName);
+      BulkEditSearchPane.waitFileUploading();
 
-    BulkEditActions.downloadMatchedResults();
-    // BulkEditActions.downloadErrors();
+      BulkEditActions.downloadMatchedResults();
+      BulkEditActions.downloadErrors();
 
-    BulkEditActions.prepareValidBulkEditFile(matchedRecordsFileName, editedFileName, user.firstName, newFirstName);
+      BulkEditActions.prepareValidBulkEditFile(
+        matchedRecordsFileName,
+        editedFileName,
+        user.firstName,
+        newFirstName,
+      );
 
-    BulkEditActions.openStartBulkEditForm();
-    BulkEditSearchPane.uploadFile(editedFileName);
-    BulkEditSearchPane.waitFileUploading();
-    BulkEditActions.clickNext();
-    BulkEditActions.commitChanges();
+      BulkEditActions.openStartBulkEditForm();
+      BulkEditSearchPane.uploadFile(editedFileName);
+      BulkEditSearchPane.waitFileUploading();
+      BulkEditActions.clickNext();
+      BulkEditActions.commitChanges();
 
-    BulkEditSearchPane.verifyChangedResults(newFirstName);
-    BulkEditActions.openActions();
-    BulkEditActions.downloadChangedCSV();
-    // BulkEditActions.downloadErrors();
+      BulkEditSearchPane.verifyChangedResults(newFirstName);
+      BulkEditActions.openActions();
+      BulkEditActions.downloadChangedCSV();
+      BulkEditActions.downloadErrors();
 
-    BulkEditSearchPane.openLogsSearch();
-    BulkEditSearchPane.verifyLogsPane();
-    BulkEditSearchPane.checkUsersCheckbox();
-    BulkEditSearchPane.clickActionsRunBy(user.username);
-    BulkEditSearchPane.verifyLogsRowActionWhenCompletedWithErrors();
+      BulkEditSearchPane.openLogsSearch();
+      BulkEditSearchPane.verifyLogsPane();
+      BulkEditSearchPane.checkUsersCheckbox();
+      BulkEditSearchPane.clickActionsRunBy(user.username);
+      BulkEditSearchPane.verifyLogsRowActionWhenCompletedWithErrors();
 
-    BulkEditSearchPane.downloadFileUsedToTrigger();
-    BulkEditFiles.verifyCSVFileRows(invalidAndValidUserBarcodesFileName, [user.barcode, userWithoutPermissions.barcode, invalidUserBarcode]);
+      BulkEditSearchPane.downloadFileUsedToTrigger();
+      BulkEditFiles.verifyCSVFileRows(invalidAndValidUserBarcodesFileName, [
+        user.barcode,
+        userWithoutPermissions.barcode,
+        invalidUserBarcode,
+      ]);
 
-    BulkEditSearchPane.downloadFileWithMatchingRecords();
-    BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileName}`, [user.barcode, userWithoutPermissions.barcode], 'userBarcode', true);
+      BulkEditSearchPane.downloadFileWithMatchingRecords();
+      BulkEditFiles.verifyMatchedResultFileContent(
+        `*${matchedRecordsFileName}`,
+        [user.barcode, userWithoutPermissions.barcode],
+        'userBarcode',
+        true,
+      );
 
-    // BulkEditSearchPane.downloadFileWithErrorsEncountered();
-    // BulkEditFiles.verifyMatchedResultFileContent(errorsFromMatchingFileName, [invalidUserBarcode], 'firstElement', false);
+      BulkEditSearchPane.downloadFileWithErrorsEncountered();
+      BulkEditFiles.verifyMatchedResultFileContent(
+        errorsFromMatchingFileName,
+        [invalidUserBarcode],
+        'firstElement',
+        false,
+      );
 
-    BulkEditSearchPane.downloadFileWithProposedChanges();
-    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName.first, [newFirstName, userWithoutPermissions.firstName], 'firstName', true);
+      BulkEditSearchPane.downloadFileWithProposedChanges();
+      BulkEditFiles.verifyMatchedResultFileContent(
+        previewOfProposedChangesFileName.first,
+        [newFirstName, userWithoutPermissions.firstName],
+        'firstName',
+        true,
+      );
 
-    BulkEditSearchPane.downloadFileWithUpdatedRecords();
-    BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, [newFirstName, userWithoutPermissions.firstName], 'firstName', true);
+      BulkEditSearchPane.downloadFileWithUpdatedRecords();
+      BulkEditFiles.verifyMatchedResultFileContent(
+        updatedRecordsFileName,
+        [newFirstName, userWithoutPermissions.firstName],
+        'firstName',
+        true,
+      );
 
-    // BulkEditSearchPane.downloadFileWithCommitErrors();
-    // BulkEditFiles.verifyMatchedResultFileContent(errorsFromCommittingFileName, [userWithoutPermissions.barcode], 'firstElement', false);
-  });
+      BulkEditSearchPane.downloadFileWithCommitErrors();
+      BulkEditFiles.verifyMatchedResultFileContent(
+        errorsFromCommittingFileName,
+        [userWithoutPermissions.barcode],
+        'firstElement',
+        false,
+      );
+    },
+  );
 });

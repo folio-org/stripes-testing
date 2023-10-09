@@ -1,6 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { DevTeams, TestTypes, Parallelization } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -16,22 +15,24 @@ describe('data-import', () => {
       cy.loginAsAdmin();
     });
 
-    it('C6707 Import a bunch of MARC files at once (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+    it(
+      'C6707 Import a bunch of MARC files at once (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      () => {
         [
           {
             fileName: `C6707autotestFiles${getRandomPostfix()}`,
-            quantityOfFiles: '2'
+            quantityOfFiles: '2',
           },
           {
             fileName: `C6707autotestFiles${getRandomPostfix()}`,
-            quantityOfFiles: '4'
+            quantityOfFiles: '4',
           },
           {
             fileName: `C6707autotestFiles${getRandomPostfix()}`,
-            quantityOfFiles: '15'
-          }
-        ].forEach(upload => {
+            quantityOfFiles: '15',
+          },
+        ].forEach((upload) => {
           cy.visit(TopMenu.dataImportPath);
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
@@ -49,6 +50,7 @@ describe('data-import', () => {
           cy.wait(2000);
           LogsViewAll.verifyQuantityOfLogs(upload.quantityOfFiles);
         });
-      });
+      },
+    );
   });
 });

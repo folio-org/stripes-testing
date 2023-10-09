@@ -19,11 +19,11 @@ export default HTML.extend('radio button')
     hasError: (el) => !!el.className.match(/hasError/),
     disabled: {
       apply: (el) => el.querySelector('input').disabled,
-      default: false
+      default: false,
     },
   })
   .actions({
     click: ({ find }) => find(RadioButton()).choose(),
-    focus: ({ find }) => find(RadioButton()).perform(el => el.focus()),
+    focus: ({ find }) => find(RadioButton()).perform((el) => el.focus()),
     blur: ({ find }) => find(RadioButton()).perform(dispatchFocusout),
   });

@@ -79,9 +79,7 @@ export default {
 
   createAnotherOrder: (orderTypes, templateNames) => {
     cy.do([
-      PaneHeader({ id: 'paneHeaderorders-results-pane' })
-        .find(Button('Actions'))
-        .click(),
+      PaneHeader({ id: 'paneHeaderorders-results-pane' }).find(Button('Actions')).click(),
       newButton.click(),
       orderType.choose(orderTypes),
       Button({ id: 'order-template' }).click(),
@@ -119,21 +117,13 @@ export default {
   },
 
   purchaseOrder: () => {
-    cy.do([
-      orderDetails.find(Button('Actions')).click(),
-      openButton.click(),
-      submitButton.click(),
-    ]);
+    cy.do([orderDetails.find(Button('Actions')).click(), openButton.click(), submitButton.click()]);
     cy.expect(closeButton.exists());
     cy.do(closeButton.click());
   },
 
   purchaseAnotherOrder: () => {
-    cy.do([
-      orderDetails.find(Button('Actions')).click(),
-      openButton.click(),
-      submitButton.click(),
-    ]);
+    cy.do([orderDetails.find(Button('Actions')).click(), openButton.click(), submitButton.click()]);
   },
 
   closeOrder: () => {
@@ -157,9 +147,7 @@ export default {
   },
 
   selectInvoice: (invoiceNumber) => {
-    cy.do(
-      Pane({ id: 'invoice-results-pane' }).find(Link(invoiceNumber)).click()
-    );
+    cy.do(Pane({ id: 'invoice-results-pane' }).find(Link(invoiceNumber)).click());
   },
 
   addFundDistributionToLine2: (id) => {
@@ -203,11 +191,7 @@ export default {
   },
 
   searchByParameter: (parameter, value) => {
-    cy.do([
-      searchForm.selectIndex(parameter),
-      searchForm.fillIn(value),
-      searchButton.click(),
-    ]);
+    cy.do([searchForm.selectIndex(parameter), searchForm.fillIn(value), searchButton.click()]);
   },
 
   orderList: (POLnumber) => {
@@ -222,9 +206,7 @@ export default {
     cy.do([
       orderLineDetails.find(Button('Actions')).click(),
       Button('Edit').click(),
-      fundDistribution
-        .find(Button({ id: 'fundDistribution[0].fundId' }))
-        .click(),
+      fundDistribution.find(Button({ id: 'fundDistribution[0].fundId' })).click(),
       SelectionOption(id).click(),
       saveAndCloseButton.click(),
     ]);
@@ -268,7 +250,7 @@ export default {
     cy.expect(
       Section({ id: 'transaction-results-pane' })
         .find(MultiColumnListRow({ index: 0 }))
-        .exists()
+        .exists(),
     );
   },
 };

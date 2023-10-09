@@ -21,17 +21,18 @@ describe('orders: Unreceive piece from Order', () => {
 
   before(() => {
     cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-        order.vendor = response;
-        orderLine.physical.materialSupplier = response;
-        orderLine.eresource.accessProvider = response;
-      });
-    cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` })
-      .then(location => { orderLine.locations[0].locationId = location.id; });
-    cy.getMaterialTypes({ query: 'name="book"' })
-      .then(materialType => { orderLine.physical.materialType = materialType.id; });
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+      order.vendor = response;
+      orderLine.physical.materialSupplier = response;
+      orderLine.eresource.accessProvider = response;
+    });
+    cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` }).then((location) => {
+      orderLine.locations[0].locationId = location.id;
+    });
+    cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
+      orderLine.physical.materialType = materialType.id;
+    });
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
@@ -40,16 +41,20 @@ describe('orders: Unreceive piece from Order', () => {
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 
-  it('C10925 Unreceive piece (thunderjet)', { tags: [TestType.smoke, DevTeams.thunderjet, Parallelization.nonParallel] }, () => {
-    const barcode = Helper.getRandomBarcode();
-    const caption = 'autotestCaption';
-    Orders.createOrderWithOrderLineViaApi(order, orderLine)
-      .then(orderNumber => {
+  it(
+    'C10925 Unreceive piece (thunderjet)',
+    { tags: [TestType.smoke, DevTeams.thunderjet, Parallelization.nonParallel] },
+    () => {
+      const barcode = Helper.getRandomBarcode();
+      const caption = 'autotestCaption';
+      Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
         cy.visit(TopMenu.ordersPath);
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList(orderNumber);
+        Orders.searchByParameter('PO number', poNumber);
+        Orders.selectFromResultsList(poNumber);
         Orders.openOrder();
-        InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully opened`);
+        InteractorsTools.checkCalloutMessage(
+          `The Purchase order - ${poNumber} has been successfully opened`,
+        );
         Orders.receiveOrderViaActions();
         // Receive piece
         Receiving.selectPOLInReceive(orderLine.titleOrPackage);
@@ -64,5 +69,6 @@ describe('orders: Unreceive piece from Order', () => {
         InventorySearchAndFilter.searchByParameter('Barcode', barcode);
         ItemRecordView.verifyItemStatus('On order');
       });
-  });
+    },
+  );
 });

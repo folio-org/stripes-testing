@@ -1,4 +1,4 @@
-import TestTypes from '../../support/dictionary/testTypes';
+import { DevTeams, TestTypes } from '../../support/dictionary';
 import getRandomPostfix from '../../support/utils/stringTools';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -6,7 +6,6 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import InstanceRecordEdit from '../../support/fragments/inventory/instanceRecordEdit';
 import Helper from '../../support/fragments/finance/financeHelper';
 import TopMenu from '../../support/fragments/topMenu';
-import DevTeams from '../../support/dictionary/devTeams';
 import { INSTANCE_SOURCE_NAMES } from '../../support/constants';
 
 describe('inventory', () => {
@@ -28,9 +27,11 @@ describe('inventory', () => {
             instance: {
               instanceTypeId: Cypress.env('instanceTypes')[0].id,
               title: instanceTitle,
-              source: INSTANCE_SOURCE_NAMES.FOLIO
+              source: INSTANCE_SOURCE_NAMES.FOLIO,
             },
-          }).then(specialInstanceId => { instanceId = specialInstanceId; });
+          }).then((specialInstanceId) => {
+            instanceId = specialInstanceId;
+          });
         });
     });
 
@@ -44,20 +45,23 @@ describe('inventory', () => {
       InventoryInstances.selectInstance();
     };
 
-    [
-      'ASIN',
-      'BNB'
-    ].forEach((identifier) => {
-      it('C609 In Accordion Identifiers --> enter different type of identifiers (folijet) (prokopovych)',
-        { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+    ['ASIN', 'BNB'].forEach((identifier) => {
+      it(
+        'C609 In Accordion Identifiers --> enter different type of identifiers (folijet) (prokopovych)',
+        { tags: [TestTypes.smoke, DevTeams.folijet] },
+        () => {
           resourceIdentifier = `testResourceIdentifier.${getRandomPostfix()}`;
 
           searchAndOpenInstance('Title (all)', instanceTitle);
           InventoryInstance.editInstance();
           InstanceRecordEdit.addIdentifier(identifier, resourceIdentifier);
-          searchAndOpenInstance('Keyword (title, contributor, identifier, HRID, UUID)', resourceIdentifier);
+          searchAndOpenInstance(
+            'Keyword (title, contributor, identifier, HRID, UUID)',
+            resourceIdentifier,
+          );
           InventoryInstance.checkInstanceIdentifier(resourceIdentifier);
-        });
+        },
+      );
     });
   });
 });

@@ -8,8 +8,10 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import Users from '../../support/fragments/users/users';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
-import NoticePolicyTemplateApi from '../../support/fragments/circulation/notice-policy-template';
-import NewNoticePolicyTemplate from '../../support/fragments/circulation/newNoticePolicyTemplate';
+import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
+import NewNoticePolicyTemplate, {
+  createNoticeTemplate,
+} from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import getRandomPostfix from '../../support/utils/stringTools';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
@@ -34,24 +36,17 @@ describe('Overdue fine', () => {
   };
   const userData = {};
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestReceiveNotice', uuid()),
-  };
-  const createNoticeTemplate = (noticeName, noticeCategory) => {
-    return {
-      name: `${noticeName}_${getRandomPostfix()}`,
-      description: 'Created by autotest team',
-      category: noticeCategory,
-      subject: `${noticeName}_${getRandomPostfix()}`,
-      body: '{{item.title}}',
-      previewText: 'The Wines of Italy',
-    };
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const noticeTemplates = {
-    manualFeeFineCharge: createNoticeTemplate('Manual_fee_fine_charge', 'Manual fee/fine charge'),
-    manualFeeFineAction: createNoticeTemplate(
-      'Manual_fee_fine_action',
-      'Manual fee/fine action (pay, waive, refund, transfer or cancel/error)'
-    ),
+    manualFeeFineCharge: createNoticeTemplate({
+      name: 'Manual_fee_fine_charge',
+      category: { name: 'Manual fee/fine charge' },
+    }),
+    manualFeeFineAction: createNoticeTemplate({
+      name: 'Manual_fee_fine_action',
+      category: { name: 'Manual fee/fine action (pay, waive, refund, transfer or cancel/error)' },
+    }),
   };
   const openUserFeeFine = (userId, feeFineId) => {
     cy.visit(AppPaths.getFeeFineDetailsPath(userId, feeFineId));
@@ -81,9 +76,10 @@ describe('Overdue fine', () => {
   const refundReason = RefundReasons.getDefaultNewRefundReason(uuid());
   const waiveReason = WaiveReasons.getDefaultNewWaiveReason(uuid());
   const manualCharge = {
-    feeFineOwnerName: userOwnerBody.owner,
+    owner: userOwnerBody.owner,
+    id: userOwnerBody.id,
     feeFineType: 'Charge' + getRandomPostfix(),
-    defaultAmount: '10.00',
+    amount: '10.00',
     chargeNoticeId: noticeTemplates.manualFeeFineCharge.name,
     actionNoticeId: noticeTemplates.manualFeeFineAction.name,
   };
@@ -112,7 +108,7 @@ describe('Overdue fine', () => {
           permissions.uiUsersfeefinesCRUD.gui,
           permissions.uiUserAccounts.gui,
         ],
-        patronGroup.name
+        patronGroup.name,
       )
         .then((userProperties) => {
           userData.username = userProperties.username;
@@ -124,7 +120,7 @@ describe('Overdue fine', () => {
           UserEdit.addServicePointViaApi(
             testData.userServicePoint.id,
             userData.userId,
-            testData.userServicePoint.id
+            testData.userServicePoint.id,
           );
 
           cy.login(userData.username, userData.password, {
@@ -150,16 +146,16 @@ describe('Overdue fine', () => {
     PaymentMethods.deleteViaApi(testData.paymentMethodId);
     UsersOwners.deleteViaApi(userOwnerBody.id);
 
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.manualFeeFineCharge.name}` }).then(
-      (templateId) => {
-        NoticePolicyTemplateApi.deleteViaApi(templateId);
-      }
-    );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.manualFeeFineAction.name}` }).then(
-      (templateId) => {
-        NoticePolicyTemplateApi.deleteViaApi(templateId);
-      }
-    );
+    NoticePolicyTemplateApi.getViaApi({
+      query: `name=${noticeTemplates.manualFeeFineCharge.name}`,
+    }).then((templateId) => {
+      NoticePolicyTemplateApi.deleteViaApi(templateId);
+    });
+    NoticePolicyTemplateApi.getViaApi({
+      query: `name=${noticeTemplates.manualFeeFineAction.name}`,
+    }).then((templateId) => {
+      NoticePolicyTemplateApi.deleteViaApi(templateId);
+    });
   });
 
   it(
@@ -185,13 +181,11 @@ describe('Overdue fine', () => {
       };
 
       NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.manualFeeFineCharge);
-      delete noticeTemplates.manualFeeFineCharge.previewText;
       NewNoticePolicyTemplate.checkAfterSaving({
         ...noticeTemplates.manualFeeFineCharge,
         category: 'FeeFineCharge',
       });
       NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.manualFeeFineAction);
-      delete noticeTemplates.manualFeeFineAction.previewText;
       NewNoticePolicyTemplate.checkAfterSaving({
         ...noticeTemplates.manualFeeFineAction,
         category: 'FeeFineAction',
@@ -200,6 +194,7 @@ describe('Overdue fine', () => {
       cy.visit(SettingsMenu.manualCharges);
       ManualCharges.waitLoading();
       cy.intercept('POST', '/feefines').as('manualChargeCreate');
+      ManualCharges.selectOwner(userOwnerBody);
       ManualCharges.createViaUi(manualCharge);
       cy.wait('@manualChargeCreate').then((intercept) => {
         cy.wrap(intercept.response.body.id).as('manualChargeId');
@@ -304,6 +299,6 @@ describe('Overdue fine', () => {
           },
         ]);
       });
-    }
+    },
   );
 });

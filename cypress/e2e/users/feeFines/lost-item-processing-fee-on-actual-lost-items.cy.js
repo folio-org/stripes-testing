@@ -27,11 +27,11 @@ import PaymentMethods from '../../../support/fragments/settings/users/paymentMet
 describe('ui-users-loans: Loans', () => {
   let addedCirculationRule;
   const paymentMethod = {};
-  const newOwnerData = UsersOwners.getDefaultNewOwner(uuid());
+  const newOwnerData = UsersOwners.getDefaultNewOwner();
   const newFirstItemData = getNewItem();
   const declareLostComments = getTestEntityValue('Some additional information');
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestActualCostFeeFine', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const itemsData = {};
   let originalCirculationRules;
@@ -101,7 +101,7 @@ describe('ui-users-loans: Loans', () => {
               ...newFirstItemData,
               permanentLoanType: { id: testData.loanTypeId },
               materialType: { id: Cypress.env('materialTypes')[0].id },
-            }
+            },
           ],
         }).then((specialInstanceIds) => {
           itemsData.instanceId = specialInstanceIds.instanceId;
@@ -130,34 +130,50 @@ describe('ui-users-loans: Loans', () => {
       originalCirculationRules = circulationRule.rulesAsText;
       const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
       ruleProps.i = lostItemFeePolicyBody.id;
-      addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + ruleProps.i + ' l ' + ruleProps.l + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
-      CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
+      addedCirculationRule =
+        't ' +
+        testData.loanTypeId +
+        ': i ' +
+        ruleProps.i +
+        ' l ' +
+        ruleProps.l +
+        ' r ' +
+        ruleProps.r +
+        ' o ' +
+        ruleProps.o +
+        ' n ' +
+        ruleProps.n;
+      CirculationRules.addRuleViaApi(
+        originalCirculationRules,
+        ruleProps,
+        't ',
+        testData.loanTypeId,
+      );
     });
 
-    cy.createTempUser([permissions.checkoutAll.gui,
+    cy.createTempUser([
+      permissions.checkoutAll.gui,
       permissions.uiUsersfeefinesView.gui,
       permissions.uiUsersView.gui,
       permissions.uiUsersDeclareItemLost.gui,
-    ]).then(
-      ({ username, password, userId, barcode }) => {
-        testData.userId = userId;
-        UserEdit.addServicePointViaApi(
-          testData.userServicePoint.id,
-          userId,
-          testData.userServicePoint.id
-        ).then(() => {
-          Checkout.checkoutItemViaApi({
-            itemBarcode: newFirstItemData.barcode,
-            userBarcode: barcode,
-            servicePointId: testData.userServicePoint.id,
-          });
-          //there are three steps to visit users application because in this case we are getting all needed requests and responses.
-          cy.login(username, password);
-          cy.visit(TopMenu.usersPath);
-          UsersSearchResultsPane.waitLoading();
+    ]).then(({ username, password, userId, barcode }) => {
+      testData.userId = userId;
+      UserEdit.addServicePointViaApi(
+        testData.userServicePoint.id,
+        userId,
+        testData.userServicePoint.id,
+      ).then(() => {
+        Checkout.checkoutItemViaApi({
+          itemBarcode: newFirstItemData.barcode,
+          userBarcode: barcode,
+          servicePointId: testData.userServicePoint.id,
         });
-      }
-    );
+        // there are three steps to visit users application because in this case we are getting all needed requests and responses.
+        cy.login(username, password);
+        cy.visit(TopMenu.usersPath);
+        UsersSearchResultsPane.waitLoading();
+      });
+    });
   });
 
   after('Deleting created entities', () => {
@@ -187,7 +203,7 @@ describe('ui-users-loans: Loans', () => {
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
+      testData.defaultLocation.id,
     );
   });
 
@@ -198,17 +214,15 @@ describe('ui-users-loans: Loans', () => {
       UsersSearchPane.searchByKeywords(testData.userId);
       UsersSearchPane.openUser(testData.userId);
       UsersCard.waitLoading();
-      UsersCard.openLoans();
-      UsersCard.showOpenedLoans();
+      UsersCard.viewCurrentLoans();
 
-      UserLoans.openLoan(newFirstItemData.barcode);
+      UserLoans.openLoanDetails(newFirstItemData.barcode);
 
       LoanDetails.checkAction(0, 'Checked out');
       LoanDetails.startDeclareLost();
       LoanDetails.finishDeclareLost(declareLostComments);
       LoanDetails.checkAction(0, 'Declared lost');
       LoanDetails.checkKeyValue('Fees/fines incurred', '25.00');
-    }
+    },
   );
 });
-

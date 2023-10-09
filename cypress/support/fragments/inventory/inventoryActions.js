@@ -9,7 +9,9 @@ const importButtonInModal = Button('Import');
 const OCLWorldCatIdentifierTextField = TextField({ name: 'externalIdentifier' });
 const importTypeSelect = Select({ name: 'externalIdentifierType' });
 
-function open() { cy.do(Section({ id: 'pane-results' }).find(Button('Actions')).click()); }
+function open() {
+  cy.do(Section({ id: 'pane-results' }).find(Button('Actions')).click());
+}
 
 // TODO: merge inventoryActions and InventoryInstances
 export default {
@@ -26,7 +28,7 @@ export default {
   openNewFastAddRecordForm() {
     cy.do([
       Section({ id: 'pane-results' }).find(Button('Actions')).click(),
-      Button({ id: 'new-fast-add-record' }).click()
+      Button({ id: 'new-fast-add-record' }).click(),
     ]);
   },
   optionsIsDisabled: (array) => {
@@ -68,7 +70,7 @@ export default {
     if (Cypress.env('is_kiwi_release')) {
       const oclcWorldCat = {
         text: 'OCLC WorldCat',
-        value: '6f171ee7-7a0a-4dd4-8959-bd67ec07cc88'
+        value: '6f171ee7-7a0a-4dd4-8959-bd67ec07cc88',
       };
 
       cy.do(importTypeSelect.choose(oclcWorldCat.text));
@@ -84,10 +86,13 @@ export default {
   },
   verifySaveUUIDsFileName(actualName) {
     // valid name example: SearchInstanceUUIDs2021-11-18T16_39_59+03_00.csv
-    const expectedFileNameMask = /SearchInstanceUUIDs\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}\+\d{2}_\d{2}\.csv/gm;
+    const expectedFileNameMask =
+      /SearchInstanceUUIDs\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}\+\d{2}_\d{2}\.csv/gm;
     expect(actualName).to.match(expectedFileNameMask);
 
-    const actualDate = DateTools.parseDateFromFilename(FileManager.getFileNameFromFilePath(actualName));
+    const actualDate = DateTools.parseDateFromFilename(
+      FileManager.getFileNameFromFilePath(actualName),
+    );
     DateTools.verifyDate(actualDate);
   },
 
@@ -98,10 +103,13 @@ export default {
 
   verifySaveCQLQueryFileName(actualName) {
     // valid name example: SearchInstanceCQLQuery2021-12-09T14_45_54+03_00.cql
-    const expectedFileNameMask = /SearchInstanceCQLQuery\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}\+\d{2}_\d{2}\.cql/gm;
+    const expectedFileNameMask =
+      /SearchInstanceCQLQuery\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}\+\d{2}_\d{2}\.cql/gm;
     expect(actualName).to.match(expectedFileNameMask);
 
-    const actualDate = DateTools.parseDateFromFilename(FileManager.getFileNameFromFilePath(actualName));
+    const actualDate = DateTools.parseDateFromFilename(
+      FileManager.getFileNameFromFilePath(actualName),
+    );
     DateTools.verifyDate(actualDate);
   },
 
@@ -121,10 +129,13 @@ export default {
 
   verifyInstancesMARCFileName(actualName) {
     // valid name example: QuickInstanceExport2021-12-24T14_05_53+03_00.csv
-    const expectedFileNameMask = /QuickInstanceExport\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}\+\d{2}_\d{2}\.csv/gm;
+    const expectedFileNameMask =
+      /QuickInstanceExport\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}\+\d{2}_\d{2}\.csv/gm;
     expect(actualName).to.match(expectedFileNameMask);
 
-    const actualDate = DateTools.parseDateFromFilename(FileManager.getFileNameFromFilePath(actualName));
+    const actualDate = DateTools.parseDateFromFilename(
+      FileManager.getFileNameFromFilePath(actualName),
+    );
     DateTools.verifyDate(actualDate);
   },
 

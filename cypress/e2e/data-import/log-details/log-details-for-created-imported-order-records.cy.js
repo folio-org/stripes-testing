@@ -1,16 +1,16 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import DevTeams from '../../../support/dictionary/devTeams';
-import TestTypes from '../../../support/dictionary/testTypes';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import { FOLIO_RECORD_TYPE,
+import {
+  FOLIO_RECORD_TYPE,
   ORDER_STATUSES,
   MATERIAL_TYPE_NAMES,
   ORDER_FORMAT_NAMES_IN_PROFILE,
   ACQUISITION_METHOD_NAMES,
   JOB_STATUS_NAMES,
-  VENDOR_NAMES } from '../../../support/constants';
+  VENDOR_NAMES,
+} from '../../../support/constants';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -21,6 +21,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
 import Users from '../../../support/fragments/users/users';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -70,11 +71,11 @@ describe('data-import', () => {
       type: '%',
       locationName: '049$a',
       locationQuantityPhysical: '980$g',
-      volume: '993$a'
+      volume: '993$a',
     };
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.ORDER,
-      name: `C376973 action profile ${getRandomPostfix()}`
+      name: `C376973 action profile ${getRandomPostfix()}`,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
@@ -82,7 +83,10 @@ describe('data-import', () => {
     };
 
     before('login', () => {
-      cy.loginAsAdmin({ path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+      cy.loginAsAdmin({
+        path: SettingsMenu.mappingProfilePath,
+        waiter: FieldMappingProfiles.waitLoading,
+      });
       // create mapping profile
       FieldMappingProfiles.createOrderMappingProfile(mappingProfile);
       FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
@@ -101,32 +105,34 @@ describe('data-import', () => {
       cy.logout();
 
       cy.createTempUser([
-        permissions.settingsDataImportEnabled.gui,
-        permissions.moduleDataImportEnabled.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.moduleDataImportEnabled.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          cy.login(userProperties.username, userProperties.password,
-            { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+        cy.login(userProperties.username, userProperties.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
         });
+      });
     });
 
     after('delete test data', () => {
       Users.deleteViaApi(user.userId);
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
-      cy.wrap(orderNumbers).each(number => {
-        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` })
-          .then(orderId => {
-            Orders.deleteOrderViaApi(orderId[0].id);
-          });
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      cy.wrap(orderNumbers).each((number) => {
+        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` }).then((orderId) => {
+          Orders.deleteOrderViaApi(orderId[0].id);
+        });
       });
     });
 
-    it('C376973 Verify the log details for created imported order records (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+    it(
+      'C376973 Verify the log details for created imported order records (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
@@ -138,20 +144,24 @@ describe('data-import', () => {
         Logs.openFileDetails(marcFileName);
         FileDetails.checkOrderQuantityInSummaryTable(quantityOfOrders);
         FileDetails.verifyRecordColumnHasStandardSequentialNumberingForRecords();
-        [0, 1, 2, 3, 4, 5, 6].forEach(rowNumber => {
+        [0, 1, 2, 3, 4, 5, 6].forEach((rowNumber) => {
           FileDetails.verifyTitleHasLinkToJsonFile(rowNumber);
           FileDetails.verifyStatusHasLinkToOrder(rowNumber);
-          FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnNameInResultList.order, rowNumber);
+          FileDetails.checkStatusInColumn(
+            FileDetails.status.created,
+            FileDetails.columnNameInResultList.order,
+            rowNumber,
+          );
           FileDetails.openOrder('Created', rowNumber);
           OrderLines.waitLoading();
-          OrderLines.getAssignedPOLNumber()
-            .then(initialNumber => {
-              const orderNumber = initialNumber.replace('-1', '');
+          OrderLines.getAssignedPOLNumber().then((initialNumber) => {
+            const orderNumber = initialNumber.replace('-1', '');
 
-              orderNumbers.push(orderNumber);
-            });
+            orderNumbers.push(orderNumber);
+          });
           cy.go('back');
         });
-      });
+      },
+    );
   });
 });

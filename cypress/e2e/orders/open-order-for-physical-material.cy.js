@@ -14,16 +14,14 @@ describe('orders: create an order', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLineTitle = basicOrderLine.defaultOrderLine.titleOrPackage;
 
-
   before(() => {
     cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-      });
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+    });
     order.vendor = organization.name;
     order.orderType = 'One-time';
-    cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
   });
 
   after(() => {
@@ -32,19 +30,23 @@ describe('orders: create an order', () => {
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 
-  it('C734 Open order for physical material set to create Instance, Holding, Item (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet, TestType.broken] }, () => {
-    Orders.createOrder(order).then(orderId => {
-      order.id = orderId;
-      Orders.checkCreatedOrder(order);
+  it(
+    'C734 Open order for physical material set to create Instance, Holding, Item (thunderjet)',
+    { tags: [TestType.smoke, devTeams.thunderjet, TestType.broken] },
+    () => {
+      Orders.createOrder(order).then((orderId) => {
+        order.id = orderId;
+        Orders.checkCreatedOrder(order);
 
-      OrderLines.addPOLine();
-      OrderLines.POLineInfodorPhysicalMaterial(orderLineTitle);
-      OrderLines.backToEditingOrder();
-      Orders.openOrder();
+        OrderLines.addPOLine();
+        OrderLines.POLineInfodorPhysicalMaterial(orderLineTitle);
+        OrderLines.backToEditingOrder();
+        Orders.openOrder();
 
-      cy.visit(TopMenu.inventoryPath);
-      InventorySearchAndFilter.searchByParameter('Title (all)', orderLineTitle);
-      InventorySearchAndFilter.verifySearchResult(orderLineTitle);
-    });
-  });
+        cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.searchByParameter('Title (all)', orderLineTitle);
+        InventorySearchAndFilter.verifySearchResult(orderLineTitle);
+      });
+    },
+  );
 });

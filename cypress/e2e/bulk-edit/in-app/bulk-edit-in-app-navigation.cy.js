@@ -22,15 +22,14 @@ describe('bulk-edit', () => {
         permissions.bulkEditEdit.gui,
         permissions.bulkEditUpdateRecords.gui,
         permissions.uiUserEdit.gui,
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading
-          });
-          FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
+        FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
+      });
     });
 
     after('delete test data', () => {
@@ -38,29 +37,33 @@ describe('bulk-edit', () => {
       FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
     });
 
-    it('C374149 Verify Bulk edit state when navigating to another app and back -- In app approach (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.checkUsersRadio();
-      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
+    it(
+      'C374149 Verify Bulk edit state when navigating to another app and back -- In app approach (firebird)',
+      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.checkUsersRadio();
+        BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
 
-      BulkEditSearchPane.uploadFile(userBarcodesFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.verifyMatchedResults(user.barcode);
+        BulkEditSearchPane.uploadFile(userBarcodesFileName);
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyMatchedResults(user.barcode);
 
-      TopMenuNavigation.navigateToApp('Users');
-      UsersSearchPane.waitLoading();
-      UsersSearchPane.searchByUsername(user.username);
+        TopMenuNavigation.navigateToApp('Users');
+        UsersSearchPane.waitLoading();
+        UsersSearchPane.searchByUsername(user.username);
 
-      TopMenuNavigation.navigateToApp('Bulk edit');
-      BulkEditSearchPane.verifyMatchedResults(user.barcode);
-      cy.reload();
-      BulkEditSearchPane.verifyMatchedResults(user.barcode);
-      BulkEditActions.openActions();
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.fillExpirationDate(todayDate);
-      BulkEditActions.confirmChanges();
-      BulkEditActions.commitChanges();
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditActions.verifySuccessBanner(1);
-    });
+        TopMenuNavigation.navigateToApp('Bulk edit');
+        BulkEditSearchPane.verifyMatchedResults(user.barcode);
+        cy.reload();
+        BulkEditSearchPane.verifyMatchedResults(user.barcode);
+        BulkEditActions.openActions();
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.fillExpirationDate(todayDate);
+        BulkEditActions.confirmChanges();
+        BulkEditActions.commitChanges();
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditActions.verifySuccessBanner(1);
+      },
+    );
   });
 });

@@ -1,8 +1,5 @@
 import uuid from 'uuid';
-import moment from 'moment';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-import permissions from '../../support/dictionary/permissions';
+import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
 import SettingsMenu from '../../support/fragments/settingsMenu';
@@ -13,11 +10,15 @@ import Location from '../../support/fragments/settings/tenant/locations/newLocat
 import Users from '../../support/fragments/users/users';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import NoticePolicyApi from '../../support/fragments/circulation/notice-policy';
-import NoticePolicyTemplateApi from '../../support/fragments/circulation/notice-policy-template';
+import NoticePolicyApi, {
+  NOTICE_CATEGORIES,
+} from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
+import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import NewNoticePolicy from '../../support/fragments/circulation/newNoticePolicy';
-import NewNoticePolicyTemplate from '../../support/fragments/circulation/newNoticePolicyTemplate';
+import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
+import NewNoticePolicyTemplate, {
+  createNoticeTemplate,
+} from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../support/fragments/checkout/checkout';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -52,51 +53,35 @@ describe('Overdue fine', () => {
     title: `Instance ${getRandomPostfix()}`,
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestReceiveNotice', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     ruleProps: {},
   };
-  const createNoticeTemplate = (noticeName) => {
-    return {
-      name: `Autotest_${getRandomPostfix()}_${noticeName}`,
-      description: 'Created by autotest team',
-      category: 'Automated fee/fine charge',
-      subject: `Autotest_${getRandomPostfix()}_${noticeName}`,
-      body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
-      previewText: `Test email body The Wines of Italy ${moment().format('ll')}`,
-    };
-  };
-  const noticeTemplates = {
-    returnedUponAt: createNoticeTemplate('Overdue_fine_renewed_upon_at'),
-    returnedAfterOnce: createNoticeTemplate('Overdue_fine_renewed_after_once'),
-    returnedAfterRecurring: createNoticeTemplate(
-      `Autotest_${getRandomPostfix()}_Overdue_fine_renewed_after_recurring`
-    ),
-  };
-  const selectOptions = (template) => {
-    const generalOptions = {
-      noticeName: 'FeeFine',
-      noticeId: 'feeFine',
-      format: 'Email',
-      action: 'Overdue fine, renewed',
-      templateName: template.name,
-    };
-    if (template.name === noticeTemplates.returnedUponAt.name) {
-      return {
-        send: 'Upon/At',
-        ...generalOptions,
-      };
-    } else if (template.name === noticeTemplates.returnedAfterOnce.name) {
-      return {
+  const noticeTemplates = [
+    createNoticeTemplate({
+      name: 'Overdue_fine_renewed_upon_at',
+      category: NOTICE_CATEGORIES.AutomatedFeeFineCharge,
+      noticeOptions: { noticeName: 'FeeFine', noticeId: 'feeFine', send: 'Upon/At' },
+    }),
+    createNoticeTemplate({
+      name: 'Overdue_fine_renewed_after_once',
+      category: NOTICE_CATEGORIES.AutomatedFeeFineCharge,
+      noticeOptions: {
+        noticeName: 'FeeFine',
+        noticeId: 'feeFine',
         send: 'After',
         sendBy: {
           duration: '1',
           interval: 'Minute(s)',
         },
         frequency: 'One Time',
-        ...generalOptions,
-      };
-    } else if (template.name === noticeTemplates.returnedAfterRecurring.name) {
-      return {
+      },
+    }),
+    createNoticeTemplate({
+      name: `Autotest_${getRandomPostfix()}_Overdue_fine_renewed_after_recurring`,
+      category: NOTICE_CATEGORIES.AutomatedFeeFineCharge,
+      noticeOptions: {
+        noticeName: 'FeeFine',
+        noticeId: 'feeFine',
         send: 'After',
         sendBy: {
           duration: '1',
@@ -107,11 +92,9 @@ describe('Overdue fine', () => {
           duration: '1',
           interval: 'Minute(s)',
         },
-        ...generalOptions,
-      };
-    }
-    return generalOptions;
-  };
+      },
+    }),
+  ];
   const searchResultsData = (templateName) => {
     return {
       userBarcode: userData.barcode,
@@ -231,16 +214,16 @@ describe('Overdue fine', () => {
       patronGroup.id = res;
       cy.createTempUser(
         [
-          permissions.loansRenew.gui,
-          permissions.checkinAll.gui,
-          permissions.checkoutAll.gui,
-          permissions.circulationLogAll.gui,
-          permissions.uiCirculationSettingsNoticeTemplates.gui,
-          permissions.uiCirculationSettingsNoticePolicies.gui,
-          permissions.uiUsersfeefinesCRUD.gui,
-          permissions.uiUserAccounts.gui,
+          Permissions.loansRenew.gui,
+          Permissions.checkinAll.gui,
+          Permissions.checkoutAll.gui,
+          Permissions.circulationLogAll.gui,
+          Permissions.uiCirculationSettingsNoticeTemplates.gui,
+          Permissions.uiCirculationSettingsNoticePolicies.gui,
+          Permissions.uiUsersfeefinesCRUD.gui,
+          Permissions.uiUserAccounts.gui,
         ],
-        patronGroup.name
+        patronGroup.name,
       )
         .then((userProperties) => {
           userData.username = userProperties.username;
@@ -253,7 +236,7 @@ describe('Overdue fine', () => {
           UserEdit.addServicePointViaApi(
             testData.userServicePoint.id,
             userData.userId,
-            testData.userServicePoint.id
+            testData.userServicePoint.id,
           );
 
           cy.getCirculationRules().then((response) => {
@@ -298,67 +281,59 @@ describe('Overdue fine', () => {
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
+      testData.defaultLocation.id,
     );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.returnedUponAt.name}` }).then(
-      (templateId) => {
+    noticeTemplates.forEach((template) => {
+      NoticePolicyTemplateApi.getViaApi({
+        query: `name=${template.name}`,
+      }).then((templateId) => {
         NoticePolicyTemplateApi.deleteViaApi(templateId);
-      }
-    );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.returnedAfterOnce.name}` }).then(
-      (templateId) => {
-        NoticePolicyTemplateApi.deleteViaApi(templateId);
-      }
-    );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.returnedAfterRecurring.name}` }).then(
-      (templateId) => {
-        NoticePolicyTemplateApi.deleteViaApi(templateId);
-      }
-    );
+      });
+    });
     cy.deleteLoanType(testData.loanTypeId);
   });
 
   it(
     'C347875 Overdue fine, renewed triggers (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: [TestTypes.criticalPath, DevTeams.volaris] },
     () => {
-      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.returnedUponAt);
-      delete noticeTemplates.returnedUponAt.previewText;
-      NewNoticePolicyTemplate.checkAfterSaving({
-        ...noticeTemplates.returnedUponAt,
-        category: 'AutomatedFeeFineCharge',
-      });
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.returnedAfterOnce);
-      delete noticeTemplates.returnedAfterOnce.previewText;
-      NewNoticePolicyTemplate.checkAfterSaving({
-        ...noticeTemplates.returnedAfterOnce,
-        category: 'AutomatedFeeFineCharge',
-      });
-      NewNoticePolicyTemplate.duplicatePatronNoticeTemplate(noticeTemplates.returnedAfterRecurring);
-      delete noticeTemplates.returnedAfterRecurring.previewText;
-      NewNoticePolicyTemplate.checkAfterSaving({
-        ...noticeTemplates.returnedAfterRecurring,
-        category: 'AutomatedFeeFineCharge',
+      noticeTemplates.forEach((template, index) => {
+        NewNoticePolicyTemplate.createPatronNoticeTemplate(template, !!index);
+        NewNoticePolicyTemplate.checkAfterSaving({
+          ...template,
+          category: 'AutomatedFeeFineCharge',
+        });
       });
 
       cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
       NewNoticePolicy.waitLoading();
-      NewNoticePolicy.startAdding();
-      NewNoticePolicy.checkInitialState();
-      NewNoticePolicy.fillGeneralInformation(noticePolicy);
-      NewNoticePolicy.addNotice(selectOptions(noticeTemplates.returnedUponAt));
-      NewNoticePolicy.addNotice(selectOptions(noticeTemplates.returnedAfterOnce), 1);
-      NewNoticePolicy.addNotice(selectOptions(noticeTemplates.returnedAfterRecurring), 2);
-      NewNoticePolicy.save();
-      NewNoticePolicy.waitLoading();
+
+      NewNoticePolicy.createPolicy({ noticePolicy, noticeTemplates });
       NewNoticePolicy.checkPolicyName(noticePolicy);
 
       cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
         testData.ruleProps.n = noticePolicyRes[0].id;
         testData.ruleProps.l = loanPolicyBody.id;
         testData.ruleProps.o = overdueFinePolicyBody.id;
-        addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + testData.ruleProps.i + ' l ' + testData.ruleProps.l + ' r ' + testData.ruleProps.r + ' o ' + testData.ruleProps.o + ' n ' + testData.ruleProps.n;
-        CirculationRules.addRuleViaApi(testData.baseRules, testData.ruleProps, 't ', testData.loanTypeId);
+        addedCirculationRule =
+          't ' +
+          testData.loanTypeId +
+          ': i ' +
+          testData.ruleProps.i +
+          ' l ' +
+          testData.ruleProps.l +
+          ' r ' +
+          testData.ruleProps.r +
+          ' o ' +
+          testData.ruleProps.o +
+          ' n ' +
+          testData.ruleProps.n;
+        CirculationRules.addRuleViaApi(
+          testData.baseRules,
+          testData.ruleProps,
+          't ',
+          testData.loanTypeId,
+        );
       });
 
       cy.visit(TopMenu.checkOutPath);
@@ -374,9 +349,8 @@ describe('Overdue fine', () => {
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userData.barcode);
       UsersCard.waitLoading();
-      UsersCard.openLoans();
-      UsersCard.showOpenedLoans();
-      UserLoans.openLoan(itemData.barcode);
+      UsersCard.viewCurrentLoans();
+      UserLoans.openLoanDetails(itemData.barcode);
       UserLoans.renewItem(itemData.barcode, true);
       LoanDetails.checkAction(0, 'Renewed');
 
@@ -385,9 +359,10 @@ describe('Overdue fine', () => {
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(200000);
       cy.reload();
-      checkNoticeIsSent(searchResultsData(noticeTemplates.returnedAfterRecurring.name));
-      checkNoticeIsSent(searchResultsData(noticeTemplates.returnedAfterOnce.name));
-      checkNoticeIsSent(searchResultsData(noticeTemplates.returnedUponAt.name));
+
+      noticeTemplates.forEach((template) => {
+        checkNoticeIsSent(searchResultsData(template.name));
+      });
 
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();
@@ -406,6 +381,6 @@ describe('Overdue fine', () => {
       cy.wait(100000);
       SearchPane.searchByUserBarcode(userData.barcode);
       SearchPane.checkResultSearch({ object: 'Fee/fine', circAction: 'Paid fully' }, 0);
-    }
+    },
   );
 });

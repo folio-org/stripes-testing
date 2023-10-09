@@ -2,6 +2,7 @@ import uuid from 'uuid';
 import moment from 'moment';
 import TestTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
+import parallelization from '../../support/dictionary/parallelization';
 import permissions from '../../support/dictionary/permissions';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -41,7 +42,7 @@ describe('TLR: Item renew', () => {
     title: `Instance ${getRandomPostfix()}`,
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestRenew', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const loanPolicyBody = {
     renewable: {
@@ -154,7 +155,9 @@ describe('TLR: Item renew', () => {
       const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
       const defaultProps = ` i ${ruleProps.i} r ${ruleProps.r} o ${ruleProps.o} n ${ruleProps.n}`;
       addedCirculationRule = ` \nm ${testData.materialBookId} + g ${patronGroup.id}: l ${loanPolicyBody.renewable.id} ${defaultProps} \nm ${testData.materialDvdId} + g ${patronGroup.id}: l ${loanPolicyBody.nonRenewable.id} ${defaultProps}`;
-      cy.updateCirculationRules({ rulesAsText: `${originalCirculationRules}${addedCirculationRule}` });
+      cy.updateCirculationRules({
+        rulesAsText: `${originalCirculationRules}${addedCirculationRule}`,
+      });
     });
 
     cy.createTempUser(
@@ -164,13 +167,13 @@ describe('TLR: Item renew', () => {
         permissions.loansRenew.gui,
         permissions.requestsAll.gui,
       ],
-      patronGroup.name
+      patronGroup.name,
     ).then((userProperties) => {
       userForRenew = userProperties;
       UserEdit.addServicePointViaApi(
         testData.userServicePoint.id,
         userForRenew.userId,
-        testData.userServicePoint.id
+        testData.userServicePoint.id,
       );
     });
 
@@ -180,7 +183,7 @@ describe('TLR: Item renew', () => {
         UserEdit.addServicePointViaApi(
           testData.userServicePoint.id,
           userForCheckOut.userId,
-          testData.userServicePoint.id
+          testData.userServicePoint.id,
         );
       })
       .then(() => {
@@ -193,7 +196,7 @@ describe('TLR: Item renew', () => {
     cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceData.instanceId}"` }).then(
       (instance) => {
         instanceHRID = instance.hrid;
-      }
+      },
     );
     cy.wrap(instanceData.itemsData).as('items');
     cy.get('@items').each((item) => {
@@ -220,8 +223,12 @@ describe('TLR: Item renew', () => {
     InventoryInstance.deleteInstanceViaApi(instanceData.instanceId);
     cy.deleteLoanPolicy(loanPolicyBody.renewable.id);
     cy.deleteLoanPolicy(loanPolicyBody.nonRenewable.id);
-    UserEdit.changeServicePointPreferenceViaApi(userForRenew.userId, [testData.userServicePoint.id]);
-    UserEdit.changeServicePointPreferenceViaApi(userForCheckOut.userId, [testData.userServicePoint.id]);
+    UserEdit.changeServicePointPreferenceViaApi(userForRenew.userId, [
+      testData.userServicePoint.id,
+    ]);
+    UserEdit.changeServicePointPreferenceViaApi(userForCheckOut.userId, [
+      testData.userServicePoint.id,
+    ]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Users.deleteViaApi(userForRenew.userId);
     Users.deleteViaApi(userForCheckOut.userId);
@@ -230,7 +237,7 @@ describe('TLR: Item renew', () => {
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
+      testData.defaultLocation.id,
     );
     TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
@@ -259,7 +266,7 @@ describe('TLR: Item renew', () => {
 
   it(
     'C360533: TLR: Check that Item assigned to hold is renewable/non renewable depends Loan policy (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    { tags: [TestTypes.criticalPath, devTeams.vega, parallelization.nonParallel] },
     () => {
       cy.visit(TopMenu.requestsPath);
       Requests.waitLoading();
@@ -274,9 +281,8 @@ describe('TLR: Item renew', () => {
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userForCheckOut.barcode);
       UsersCard.waitLoading();
-      UsersCard.openLoans();
-      UsersCard.showOpenedLoans();
-      UserLoans.openLoan(instanceData.itemsData[0].barcode);
+      UsersCard.viewCurrentLoans();
+      UserLoans.openLoanDetails(instanceData.itemsData[0].barcode);
       UserLoans.renewItem(instanceData.itemsData[0].barcode, true);
       LoanDetails.checkAction(0, 'Renewed');
 
@@ -284,16 +290,15 @@ describe('TLR: Item renew', () => {
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userForCheckOut.barcode);
       UsersCard.waitLoading();
-      UsersCard.openLoans();
-      UsersCard.showOpenedLoans();
-      UserLoans.openLoan(instanceData.itemsData[1].barcode);
+      UsersCard.viewCurrentLoans();
+      UserLoans.openLoanDetails(instanceData.itemsData[1].barcode);
       Renewals.checkLoansPage();
-    }
+    },
   );
 
   it(
     'C360534 TLR: Check that Item assigned to recall is not renewable (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    { tags: [TestTypes.criticalPath, devTeams.vega, parallelization.nonParallel] },
     () => {
       cy.visit(TopMenu.requestsPath);
       Requests.waitLoading();
@@ -312,12 +317,11 @@ describe('TLR: Item renew', () => {
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userForCheckOut.barcode);
       UsersCard.waitLoading();
-      UsersCard.openLoans();
-      UsersCard.showOpenedLoans();
+      UsersCard.viewCurrentLoans();
       cy.get('@itemBarcode').then((barcode) => {
-        UserLoans.openLoan(barcode);
+        UserLoans.openLoanDetails(barcode);
       });
       Renewals.checkLoansPage();
-    }
+    },
   );
 });

@@ -18,12 +18,17 @@ describe('bulk-edit', () => {
         permissions.bulkEditCsvView.gui,
         permissions.bulkEditCsvEdit.gui,
         permissions.uiUsersView.gui,
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
-          FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, `${user.userId}\r\n${invalidUserUUID}`);
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
+        FileManager.createFile(
+          `cypress/fixtures/${userUUIDsFileName}`,
+          `${user.userId}\r\n${invalidUserUUID}`,
+        );
+      });
     });
 
     after('delete test data', () => {
@@ -31,23 +36,27 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it('C350928 Verify error accordion during matching (Local approach) (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.checkUsersRadio();
-      BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+    it(
+      'C350928 Verify error accordion during matching (Local approach) (firebird)',
+      { tags: [testTypes.smoke, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.checkUsersRadio();
+        BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
-      BulkEditSearchPane.uploadFile(userUUIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.uploadFile(userUUIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
 
-      BulkEditSearchPane.verifyMatchedResults(user.username);
-      BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
+        BulkEditSearchPane.verifyMatchedResults(user.username);
+        BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
 
-      BulkEditSearchPane.verifyActionsAfterConductedCSVUploading();
-      BulkEditSearchPane.verifyUsersActionShowColumns();
+        BulkEditSearchPane.verifyActionsAfterConductedCSVUploading();
+        BulkEditSearchPane.verifyUsersActionShowColumns();
 
-      BulkEditSearchPane.changeShowColumnCheckbox('Email');
-      BulkEditSearchPane.verifyResultColumTitles('Email');
+        BulkEditSearchPane.changeShowColumnCheckbox('Email');
+        BulkEditSearchPane.verifyResultColumTitles('Email');
 
-      BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
-    });
+        BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
+      },
+    );
   });
 });

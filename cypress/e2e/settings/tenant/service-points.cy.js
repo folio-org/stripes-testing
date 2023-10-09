@@ -17,30 +17,45 @@ const newServicePoint = {
 
 describe('settings: service-points', () => {
   before('create test data', () => {
-    cy.createTempUser([
-      permissions.uiTenantSettingsServicePointsCRUD.gui
-    ])
-      .then(userProperties => {
+    cy.createTempUser([permissions.uiTenantSettingsServicePointsCRUD.gui]).then(
+      (userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, { path: TopMenu.settingsPath, waiter: SettingsPane.waitLoading });
+        cy.login(user.username, user.password, {
+          path: TopMenu.settingsPath,
+          waiter: SettingsPane.waitLoading,
+        });
         ServicePoints.goToServicePointsTab();
-      });
+      },
+    );
   });
 
   after('delete test data', () => {
-    ServicePoints.getViaApi({ query: `("name"=="${newServicePoint.newNameForEdit}")` }).then(servicePoints => {
-      ServicePoints.deleteViaApi(servicePoints[0].id);
-    });
+    ServicePoints.getViaApi({ query: `("name"=="${newServicePoint.newNameForEdit}")` }).then(
+      (servicePoints) => {
+        ServicePoints.deleteViaApi(servicePoints[0].id);
+      },
+    );
     Users.deleteViaApi(user.userId);
   });
 
-  it('C375150 Verify that user can save new Service point (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    ServicePoints.createNewServicePoint(newServicePoint);
-    ServicePoints.servicePointExists(newServicePoint.name);
-  });
+  it(
+    'C375150 Verify that user can save new Service point (firebird)',
+    { tags: [testTypes.smoke, devTeams.firebird] },
+    () => {
+      ServicePoints.createNewServicePoint(newServicePoint);
+      ServicePoints.servicePointExists(newServicePoint.name);
+    },
+  );
 
-  it('C375151 Verify that user can edit existing Service point (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    ServicePoints.editServicePoint({ name: newServicePoint.name, newName: newServicePoint.newNameForEdit });
-    ServicePoints.servicePointExists(newServicePoint.newNameForEdit);
-  });
+  it(
+    'C375151 Verify that user can edit existing Service point (firebird)',
+    { tags: [testTypes.smoke, devTeams.firebird] },
+    () => {
+      ServicePoints.editServicePoint({
+        name: newServicePoint.name,
+        newName: newServicePoint.newNameForEdit,
+      });
+      ServicePoints.servicePointExists(newServicePoint.newNameForEdit);
+    },
+  );
 });

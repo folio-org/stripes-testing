@@ -1,4 +1,14 @@
-import { Button, TextField, MultiColumnListHeader, EditableListRow, MultiColumnListCell, Selection, SelectionList, PaneHeader, Checkbox } from '../../../../interactors';
+import {
+  Button,
+  TextField,
+  MultiColumnListHeader,
+  EditableListRow,
+  MultiColumnListCell,
+  Selection,
+  SelectionList,
+  PaneHeader,
+  Checkbox,
+} from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import DateTools from '../../utils/dateTools';
 
@@ -6,7 +16,9 @@ const saveButton = Button('Save');
 const deleteButton = Button('Delete');
 const trashIconButton = Button({ icon: 'trash' });
 const editIconButton = Button({ icon: 'edit' });
-function getEditableListRow(rowNumber) { return EditableListRow({ index: +rowNumber.split('-')[1] }); }
+function getEditableListRow(rowNumber) {
+  return EditableListRow({ index: +rowNumber.split('-')[1] });
+}
 
 export default {
   // TODO: redesign to SettingsMenu
@@ -15,7 +27,7 @@ export default {
     adjustments: '/adjustments',
     batchGroups: '/batch-groups',
     batchGroupConfiguration: '/batch-group-configuration',
-    voucherNumber: '/invoice/voucher-number'
+    voucherNumber: '/invoice/voucher-number',
   },
 
   waitBatchGroupsLoading: () => {
@@ -26,7 +38,7 @@ export default {
     cy.do([
       TextField({ placeholder: 'name' }).fillIn(batchGroup.name),
       TextField({ placeholder: 'description' }).fillIn(batchGroup.description),
-      saveButton.click()
+      saveButton.click(),
     ]);
   },
 
@@ -36,54 +48,60 @@ export default {
   },
 
   editBatchGroup(batchGroup, oldBatchGroupName) {
-    cy.do(MultiColumnListCell({ content: oldBatchGroupName }).perform(
-      element => {
+    cy.do(
+      MultiColumnListCell({ content: oldBatchGroupName }).perform((element) => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
         cy.do(getEditableListRow(rowNumber).find(editIconButton).click());
         this.fillRequiredFields(batchGroup);
-      }
-    ));
+      }),
+    );
   },
 
   checkBatchGroup: (batchGroup) => {
-    cy.do(MultiColumnListCell({ content: batchGroup.name }).perform(
-      element => {
+    cy.do(
+      MultiColumnListCell({ content: batchGroup.name }).perform((element) => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
-        const createdByAdmin = `${DateTools.getFormattedDateWithSlashes({ date: new Date() })} by ADMINISTRATOR, DIKU`;
-        cy.expect(getEditableListRow(rowNumber)
-          .find(MultiColumnListCell({ columnIndex: 0 }))
-          .has({ content: batchGroup.name }));
-        cy.expect(getEditableListRow(rowNumber)
-          .find(MultiColumnListCell({ columnIndex: 1 }))
-          .has({ content: batchGroup.description }));
-        cy.expect(getEditableListRow(rowNumber)
-          .find(MultiColumnListCell({ columnIndex: 2 }))
-          .has({ content: createdByAdmin }));
-      }
-    ));
+        const createdByAdmin = `${DateTools.getFormattedDateWithSlashes({
+          date: new Date(),
+        })} by ADMINISTRATOR, Diku_admin`;
+        cy.expect(
+          getEditableListRow(rowNumber)
+            .find(MultiColumnListCell({ columnIndex: 0 }))
+            .has({ content: batchGroup.name }),
+        );
+        cy.expect(
+          getEditableListRow(rowNumber)
+            .find(MultiColumnListCell({ columnIndex: 1 }))
+            .has({ content: batchGroup.description }),
+        );
+        cy.expect(
+          getEditableListRow(rowNumber)
+            .find(MultiColumnListCell({ columnIndex: 2 }))
+            .has({ content: createdByAdmin }),
+        );
+      }),
+    );
   },
 
   deleteBatchGroup: (batchGroup) => {
-    cy.do(MultiColumnListCell({ content: batchGroup.name }).perform(
-      element => {
+    cy.do(
+      MultiColumnListCell({ content: batchGroup.name }).perform((element) => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
-        cy.do([
-          getEditableListRow(rowNumber)
-            .find(trashIconButton).click(),
-          deleteButton.click()
-        ]);
-      }
-    ));
-    InteractorsTools.checkCalloutMessage(`The batch group ${batchGroup.name} was successfully deleted`);
+        cy.do([getEditableListRow(rowNumber).find(trashIconButton).click(), deleteButton.click()]);
+      }),
+    );
+    InteractorsTools.checkCalloutMessage(
+      `The batch group ${batchGroup.name} was successfully deleted`,
+    );
   },
 
   checkNotDeletingGroup: (batchGroupName) => {
-    cy.do(MultiColumnListCell({ content: batchGroupName }).perform(
-      element => {
+    cy.do(
+      MultiColumnListCell({ content: batchGroupName }).perform((element) => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
         expect(getEditableListRow(rowNumber).find(trashIconButton).absent());
-      }
-    ));
+      }),
+    );
   },
   selectJsonFormatForVaucher: () => {
     cy.do([
@@ -94,10 +112,10 @@ export default {
     ]);
   },
 
-  setConfigurationBatchGroup: body => cy.okapiRequest({
+  setConfigurationBatchGroup: (body) => cy.okapiRequest({
     method: 'POST',
     path: 'batch-voucher/export-configurations',
-    body
+    body,
   }),
 
   waitApprovalsLoading: () => {

@@ -6,7 +6,7 @@ import {
   Modal,
   MultiColumnListRow,
   Pane,
-  TextField
+  TextField,
 } from '../../../../../interactors';
 
 const customFieldsPane = Pane('Custom fields');
@@ -45,19 +45,12 @@ export default {
     cy.wait(15000);
   },
 
-  addTextAreaCustomField(text) {
-    cy.do([
-      editNewButton.click(),
-      addCustomFieldDropdown.choose('Text area'),
-      TextField('Field label*').fillIn(text),
-      saveAndCloseButton.click(),
-    ]);
-  },
-
   deleteCustomField(name) {
     cy.do([
       editNewButton.click(),
-      Accordion(including(name)).find(Button({ icon: 'trash' })).click(),
+      Accordion(including(name))
+        .find(Button({ icon: 'trash' }))
+        .click(),
       saveAndCloseButton.click(),
       saveLoseDataButton.click(),
     ]);
@@ -87,6 +80,15 @@ export default {
     cy.expect(Accordion(`${data.fieldLabel} · Text area`).exists());
   },
 
+  addTextAreaCustomField(text) {
+    cy.do([
+      editNewButton.click(),
+      addCustomFieldDropdown.choose('Text area'),
+      TextField('Field label*').fillIn(text),
+      saveAndCloseButton.click(),
+    ]);
+  },
+
   addCustomCheckBox(data) {
     cy.do([
       editNewButton.click(),
@@ -105,12 +107,8 @@ export default {
       addCustomFieldDropdown.choose('Radio button set'),
       fieldLabel.fillIn(data.fieldLabel),
       helpText.fillIn(data.helpText),
-      MultiColumnListRow({ indexRow: 'row-1' })
-        .find(TextField())
-        .fillIn(data.label1),
-      MultiColumnListRow({ indexRow: 'row-2' })
-        .find(TextField())
-        .fillIn(data.label2),
+      MultiColumnListRow({ indexRow: 'row-1' }).find(TextField()).fillIn(data.label1),
+      MultiColumnListRow({ indexRow: 'row-2' }).find(TextField()).fillIn(data.label2),
       saveAndCloseButton.click(),
     ]);
     cy.expect(saveAndCloseButton.absent());
@@ -123,12 +121,8 @@ export default {
       addCustomFieldDropdown.choose('Single select'),
       fieldLabel.fillIn(data.fieldLabel),
       helpText.fillIn(data.helpText),
-      MultiColumnListRow({ indexRow: 'row-1' })
-        .find(TextField())
-        .fillIn(data.label1),
-      MultiColumnListRow({ indexRow: 'row-2' })
-        .find(TextField())
-        .fillIn(data.label2),
+      MultiColumnListRow({ indexRow: 'row-1' }).find(TextField()).fillIn(data.firstLabel),
+      MultiColumnListRow({ indexRow: 'row-2' }).find(TextField()).fillIn(data.secondLabel),
       saveAndCloseButton.click(),
     ]);
     cy.expect(saveAndCloseButton.absent());

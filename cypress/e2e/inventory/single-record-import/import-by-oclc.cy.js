@@ -1,13 +1,11 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
-import testTypes from '../../../support/dictionary/testTypes';
-import permissions from '../../../support/dictionary/permissions';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import DevTeams from '../../../support/dictionary/devTeams';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
 let user;
@@ -18,17 +16,16 @@ describe('inventory', () => {
   describe('Single record import', () => {
     before('create user', () => {
       cy.createTempUser([
-        permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        permissions.inventoryAll.gui,
-        permissions.uiInventorySingleRecordImport.gui,
-        permissions.settingsDataImportEnabled.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password);
+        Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiInventorySingleRecordImport.gui,
+        Permissions.settingsDataImportEnabled.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password);
 
-          Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
-        });
+        Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
+      });
     });
 
     beforeEach('navigate to inventory', () => {
@@ -36,25 +33,32 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
-      cy.getInstance({ limit: 1, expandAll: true, query: `"oclc"=="${oclc}"` })
-        .then(instance => {
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
+      cy.getInstance({ limit: 1, expandAll: true, query: `"oclc"=="${oclc}"` }).then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
       Users.deleteViaApi(user.userId);
     });
 
-    it('C193953 Overlay existing Source = MARC Instance by import of single MARC Bib record from OCLC (folijet) (prokopovych))', { tags: [testTypes.smoke, DevTeams.folijet] }, () => {
-      InventoryActions.import(oclc);
-      InstanceRecordView.waitLoading();
-      InventoryInstance.viewSource();
-      InventoryViewSource.contains('999\tf f\t‡s');
-    });
+    it(
+      'C193953 Overlay existing Source = MARC Instance by import of single MARC Bib record from OCLC (folijet) (prokopovych))',
+      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      () => {
+        InventoryActions.import(oclc);
+        InstanceRecordView.waitLoading();
+        InventoryInstance.viewSource();
+        InventoryViewSource.contains('999\tf f\t‡s');
+      },
+    );
 
-    it('C193952 Create Instance by import of single MARC Bib record from OCLC (folijet) (prokopovych)', { tags: [testTypes.smoke, DevTeams.folijet] }, () => {
-      InventorySearchAndFilter.searchByParameter('OCLC number, normalized', oclc);
-      InventorySearchAndFilter.selectSearchResultItem();
-      InventoryInstance.viewSource();
-      InventoryViewSource.contains('999\tf f\t‡s');
-    });
+    it(
+      'C193952 Create Instance by import of single MARC Bib record from OCLC (folijet) (prokopovych)',
+      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      () => {
+        InventorySearchAndFilter.searchByParameter('OCLC number, normalized', oclc);
+        InventorySearchAndFilter.selectSearchResultItem();
+        InventoryInstance.viewSource();
+        InventoryViewSource.contains('999\tf f\t‡s');
+      },
+    );
   });
 });

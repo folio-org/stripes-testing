@@ -1,5 +1,8 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../../utils/stringTools';
+import FiscalYears from '../fiscalYears/fiscalYears';
+import Ledgers from '../ledgers/ledgers';
+import Funds from '../funds/funds';
 
 export default {
   getDefaultBudget() {
@@ -11,6 +14,15 @@ export default {
       allowableExpenditure: 100,
       budgetStatus: 'Active',
     };
+  },
+  getBudgetViaApi(budgetId) {
+    return cy
+      .okapiRequest({
+        path: `finance/budgets/${budgetId}`,
+      })
+      .then((response) => {
+        return response.body;
+      });
   },
   createViaApi(budgetProperties) {
     return cy
@@ -24,11 +36,82 @@ export default {
         return response.body;
       });
   },
+  updateBudgetViaApi(budget) {
+    return cy
+      .okapiRequest({
+        method: 'PUT',
+        path: `finance/budgets/${budget.id}`,
+        body: budget,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body;
+      });
+  },
   deleteViaApi(budgetId) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `finance/budgets/${budgetId}`,
       isDefaultSearchParamsRequired: false,
     });
+  },
+  createBudgetWithFundLedgerAndFYViaApi({
+    fiscalYear: fiscalYearProps,
+    ledger: ledgerProps,
+    fund: fundProps,
+    budget: budgetProps,
+    expenceClasses = [],
+  } = {}) {
+    const fiscalYear = {
+      ...FiscalYears.getDefaultFiscalYear(),
+      ...fiscalYearProps,
+    };
+    const ledger = {
+      ...Ledgers.getDefaultLedger(),
+      fiscalYearOneId: fiscalYear.id,
+      ...ledgerProps,
+    };
+    const fund = { ...Funds.getDefaultFund(), ledgerId: ledger.id, ...fundProps };
+    const budget = {
+      fiscalYearId: fiscalYear.id,
+      fundId: fund.id,
+      ...this.getDefaultBudget(),
+      ...budgetProps,
+    };
+
+    FiscalYears.createViaApi(fiscalYear);
+    Ledgers.createViaApi({ ...ledger, fiscalYearOneId: fiscalYear.id });
+    Funds.createViaApi({ ...fund, ledgerId: ledger.id });
+    this.createViaApi(budget);
+
+    if (expenceClasses.length) {
+      this.getBudgetViaApi(budget.id).then((resp) => {
+        this.updateBudgetViaApi({
+          ...resp,
+          statusExpenseClasses: [
+            {
+              status: 'Active',
+              expenseClassId: expenceClasses[0].id,
+            },
+          ],
+        });
+      });
+    }
+
+    return {
+      fiscalYear,
+      ledger,
+      fund,
+      budget: {
+        ...budget,
+        ledgerId: ledger.id,
+      },
+    };
+  },
+  deleteBudgetWithFundLedgerAndFYViaApi({ id: budgetId, fundId, ledgerId, fiscalYearId }) {
+    this.deleteViaApi(budgetId);
+    Funds.deleteFundViaApi(fundId);
+    Ledgers.deleteledgerViaApi(ledgerId);
+    FiscalYears.deleteFiscalYearViaApi(fiscalYearId);
   },
 };

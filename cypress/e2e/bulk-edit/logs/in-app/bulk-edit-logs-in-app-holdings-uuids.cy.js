@@ -29,82 +29,117 @@ describe('Bulk Edit - Logs', () => {
       permissions.bulkEditLogsView.gui,
       permissions.bulkEditView.gui,
       permissions.bulkEditEdit.gui,
-      permissions.inventoryAll.gui
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading
-        });
-
-        const instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-        cy.getHoldings({
-          limit: 1,
-          query: `"instanceId"="${instanceId}"`
-        })
-          .then(holdings => {
-            uuid = holdings[0].id;
-            FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, uuid);
-          });
+      permissions.inventoryAll.gui,
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.bulkEditPath,
+        waiter: BulkEditSearchPane.waitLoading,
       });
+
+      const instanceId = InventoryInstances.createInstanceViaApi(
+        item.instanceName,
+        item.itemBarcode,
+      );
+      cy.getHoldings({
+        limit: 1,
+        query: `"instanceId"="${instanceId}"`,
+      }).then((holdings) => {
+        uuid = holdings[0].id;
+        FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, uuid);
+      });
+    });
   });
 
   after('delete test data', () => {
     Users.deleteViaApi(user.userId);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     FileManager.deleteFile(`cypress/fixtures/${validHoldingUUIDsFileName}`);
-    FileManager.deleteFileFromDownloadsByMask(validHoldingUUIDsFileName, `*${matchedRecordsFileNameValid}`, previewOfProposedChangesFileName, updatedRecordsFileName);
+    FileManager.deleteFileFromDownloadsByMask(
+      validHoldingUUIDsFileName,
+      `*${matchedRecordsFileNameValid}`,
+      previewOfProposedChangesFileName,
+      updatedRecordsFileName,
+    );
   });
 
-  it('C375289 Verify generated Logs files for Holdings In app -- only valid Holdings UUIDs (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    BulkEditSearchPane.verifyDragNDropHoldingsUUIDsArea();
-    BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
-    BulkEditSearchPane.waitFileUploading();
+  it(
+    'C375289 Verify generated Logs files for Holdings In app -- only valid Holdings UUIDs (firebird)',
+    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    () => {
+      BulkEditSearchPane.verifyDragNDropHoldingsUUIDsArea();
+      BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
+      BulkEditSearchPane.waitFileUploading();
 
-    BulkEditActions.downloadMatchedResults();
-    BulkEditActions.openInAppStartBulkEditFrom();
+      BulkEditActions.downloadMatchedResults();
+      BulkEditActions.openInAppStartBulkEditFrom();
 
-    const tempLocation = 'Annex';
-    const permLocation = 'Main Library';
+      const tempLocation = 'Annex';
+      const permLocation = 'Main Library';
 
-    BulkEditActions.replaceTemporaryLocation(tempLocation, 'holdings', 0);
-    BulkEditActions.addNewBulkEditFilterString();
-    BulkEditActions.replacePermanentLocation(permLocation, 'holdings', 1);
+      BulkEditActions.replaceTemporaryLocation(tempLocation, 'holdings', 0);
+      BulkEditActions.addNewBulkEditFilterString();
+      BulkEditActions.replacePermanentLocation(permLocation, 'holdings', 1);
 
-    BulkEditActions.confirmChanges();
-    BulkEditActions.downloadPreview();
-    BulkEditActions.commitChanges();
-    BulkEditSearchPane.waitFileUploading();
-    BulkEditActions.openActions();
-    BulkEditActions.downloadChangedCSV();
+      BulkEditActions.confirmChanges();
+      BulkEditActions.downloadPreview();
+      BulkEditActions.commitChanges();
+      BulkEditSearchPane.waitFileUploading();
+      BulkEditActions.openActions();
+      BulkEditActions.downloadChangedCSV();
 
-    BulkEditSearchPane.openLogsSearch();
-    BulkEditSearchPane.verifyLogsPane();
-    BulkEditSearchPane.checkHoldingsCheckbox();
-    BulkEditSearchPane.clickActionsRunBy(user.username);
-    BulkEditSearchPane.verifyLogsRowActionWhenCompleted();
+      BulkEditSearchPane.openLogsSearch();
+      BulkEditSearchPane.verifyLogsPane();
+      BulkEditSearchPane.checkHoldingsCheckbox();
+      BulkEditSearchPane.clickActionsRunBy(user.username);
+      BulkEditSearchPane.verifyLogsRowActionWhenCompleted();
 
-    BulkEditSearchPane.downloadFileUsedToTrigger();
-    BulkEditFiles.verifyCSVFileRows(validHoldingUUIDsFileName, [uuid]);
+      BulkEditSearchPane.downloadFileUsedToTrigger();
+      BulkEditFiles.verifyCSVFileRows(validHoldingUUIDsFileName, [uuid]);
 
-    BulkEditSearchPane.downloadFileWithMatchingRecords();
-    BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileNameValid}`, [uuid], 'firstElement', true);
+      BulkEditSearchPane.downloadFileWithMatchingRecords();
+      BulkEditFiles.verifyMatchedResultFileContent(
+        `*${matchedRecordsFileNameValid}`,
+        [uuid],
+        'firstElement',
+        true,
+      );
 
-    BulkEditSearchPane.downloadFileWithProposedChanges();
-    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName, [tempLocation], 'temporaryLocation', true);
-    BulkEditFiles.verifyMatchedResultFileContent(previewOfProposedChangesFileName, [permLocation], 'permanentLocation', true);
+      BulkEditSearchPane.downloadFileWithProposedChanges();
+      BulkEditFiles.verifyMatchedResultFileContent(
+        previewOfProposedChangesFileName,
+        [tempLocation],
+        'temporaryLocation',
+        true,
+      );
+      BulkEditFiles.verifyMatchedResultFileContent(
+        previewOfProposedChangesFileName,
+        [permLocation],
+        'permanentLocation',
+        true,
+      );
 
-    BulkEditSearchPane.downloadFileWithUpdatedRecords();
-    BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, [tempLocation], 'temporaryLocation', true);
-    BulkEditFiles.verifyMatchedResultFileContent(updatedRecordsFileName, [permLocation], 'permanentLocation', true);
+      BulkEditSearchPane.downloadFileWithUpdatedRecords();
+      BulkEditFiles.verifyMatchedResultFileContent(
+        updatedRecordsFileName,
+        [tempLocation],
+        'temporaryLocation',
+        true,
+      );
+      BulkEditFiles.verifyMatchedResultFileContent(
+        updatedRecordsFileName,
+        [permLocation],
+        'permanentLocation',
+        true,
+      );
 
-    cy.visit(TopMenu.inventoryPath);
-    InventorySearchAndFilter.switchToHoldings();
-    InventorySearchAndFilter.searchByParameter('Holdings UUID', uuid);
-    InventorySearchAndFilter.selectSearchResultItem();
-    InventorySearchAndFilter.selectViewHoldings();
-    InventoryInstance.verifyHoldingsPermanentLocation(permLocation);
-    InventoryInstance.verifyHoldingsTemporaryLocation(tempLocation);
-  });
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.switchToHoldings();
+      InventorySearchAndFilter.searchByParameter('Holdings UUID', uuid);
+      InventorySearchAndFilter.selectSearchResultItem();
+      InventorySearchAndFilter.selectViewHoldings();
+      InventoryInstance.verifyHoldingsPermanentLocation(permLocation);
+      InventoryInstance.verifyHoldingsTemporaryLocation(tempLocation);
+    },
+  );
 });

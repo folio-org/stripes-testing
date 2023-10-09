@@ -55,11 +55,12 @@ const transactionDetailSection = Section({ id: 'pane-transaction-details' });
 const transactionList = MultiColumnList({ id: 'transactions-list' });
 const budgetSummaryAcordion = Accordion('Budget summary');
 const budgetInformationAcordion = Accordion('Budget information');
-const fundingInformationMCList = MultiColumnList({ ariaRowCount: 7 });
-const FinancialActivityAndOveragesMCList = MultiColumnList({ ariaRowCount: 5 });
+const fundingInformationMCList = MultiColumnList({ ariaRowCount: '7' });
+const financialActivityAndOveragesMCList = MultiColumnList({ ariaRowCount: '5' });
 const resetButton = Button({ id: 'reset-funds-filters' });
 const addTransferModal = Modal({ id: 'add-transfer-modal' });
 const closeWithoutSavingButton = Button('Close without saving');
+const addExpenseClassButton = Button({ id: 'budget-status-expense-classes-add-button' });
 
 export default {
   defaultUiFund: {
@@ -89,6 +90,23 @@ export default {
 
   checkSearch() {
     cy.expect(MultiColumnList({ id: 'funds-list' }).has({ rowCount: 1 }));
+  },
+
+  checkInvoiceInTransactionList: (indexnumber, type, amount, source) => {
+    cy.expect([
+      transactionList
+        .find(MultiColumnListRow({ index: indexnumber }))
+        .find(MultiColumnListCell({ columnIndex: 1 }))
+        .has({ content: type }),
+      transactionList
+        .find(MultiColumnListRow({ index: indexnumber }))
+        .find(MultiColumnListCell({ columnIndex: 2 }))
+        .has({ content: `${amount}` }),
+      transactionList
+        .find(MultiColumnListRow({ index: indexnumber }))
+        .find(MultiColumnListCell({ columnIndex: 5 }))
+        .has({ content: source }),
+    ]);
   },
 
   waitForFundDetailsLoading: () => {
@@ -331,7 +349,7 @@ export default {
     cy.do(addTransferModal.find(confirmButton).click());
   },
 
-  transfer: (toFund, fromFund) => {
+  transfer(toFund, fromFund) {
     cy.do([actionsButton.click(), transferButton.click()]);
     this.fillAllocationFields({ toFund, fromFund, amount: '10' });
   },
@@ -441,28 +459,36 @@ export default {
     cy.expect(budgetSummaryAcordion.exists());
     cy.expect(budgetInformationAcordion.exists());
     cy.expect([
-      FinancialActivityAndOveragesMCList.find(MultiColumnListRow({ indexRow: 'row-0' }))
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-0' }))
         .find(MultiColumnListCell({ content: 'Encumbered' }))
         .exists(),
-      FinancialActivityAndOveragesMCList.find(MultiColumnListRow({ indexRow: 'row-0' }))
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-0' }))
         .find(MultiColumnListCell({ content: amountEncumbered }))
         .exists(),
-      FinancialActivityAndOveragesMCList.find(MultiColumnListRow({ indexRow: 'row-1' }))
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-1' }))
         .find(MultiColumnListCell({ content: 'Awaiting payment' }))
         .exists(),
-      FinancialActivityAndOveragesMCList.find(MultiColumnListRow({ indexRow: 'row-1' }))
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-1' }))
         .find(MultiColumnListCell({ content: amountAwaitingPayment }))
         .exists(),
-      FinancialActivityAndOveragesMCList.find(MultiColumnListRow({ indexRow: 'row-2' }))
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-2' }))
         .find(MultiColumnListCell({ content: 'Expended' }))
         .exists(),
-      FinancialActivityAndOveragesMCList.find(MultiColumnListRow({ indexRow: 'row-2' }))
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-2' }))
         .find(MultiColumnListCell({ content: amountExpended }))
         .exists(),
-      FinancialActivityAndOveragesMCList.find(MultiColumnListRow({ indexRow: 'row-3' }))
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-3' }))
         .find(MultiColumnListCell({ content: 'Unavailable' }))
         .exists(),
-      FinancialActivityAndOveragesMCList.find(MultiColumnListRow({ indexRow: 'row-3' }))
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-3' }))
         .find(MultiColumnListCell({ content: amountUnavailable }))
         .exists(),
     ]);
@@ -483,6 +509,16 @@ export default {
           .exists(),
       );
     });
+  },
+
+  checkAbsentTransaction: (transaction) => {
+    cy.wait(4000);
+    cy.expect(
+      Pane({ id: transactionResultPaneId })
+        // .find(MultiColumnListRow({ index: rowNumber }))
+        .find(MultiColumnListCell({ content: transaction }))
+        .absent(),
+    );
   },
 
   transferAmount: (amount, fundFrom, fundTo) => {
@@ -675,12 +711,13 @@ export default {
   },
 
   editBudget: () => {
+    cy.wait(4000);
     cy.do([actionsButton.click(), Button('Edit').click()]);
   },
 
   addExpensesClass: (firstExpenseClassName) => {
     cy.do([
-      Button({ id: 'budget-status-expense-classes-add-button' }).click(),
+      addExpenseClassButton.click(),
       Button({ name: 'statusExpenseClasses[0].expenseClassId' }).click(),
       SelectionOption(firstExpenseClassName).click(),
     ]);
@@ -690,6 +727,23 @@ export default {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
   },
+
+  addTwoExpensesClass: (firstExpenseClassName, secondExpenseClassName) => {
+    cy.do([
+      addExpenseClassButton.click(),
+      Button({ name: 'statusExpenseClasses[0].expenseClassId' }).click(),
+      SelectionOption(firstExpenseClassName).click(),
+      addExpenseClassButton.click(),
+      Button({ name: 'statusExpenseClasses[1].expenseClassId' }).click(),
+      SelectionOption(secondExpenseClassName).click(),
+    ]);
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000);
+    cy.do(saveAndCloseButton.click());
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000);
+  },
+
   deleteExpensesClass: () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);

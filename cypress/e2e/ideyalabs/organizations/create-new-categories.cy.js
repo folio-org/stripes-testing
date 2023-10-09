@@ -11,19 +11,15 @@ describe.skip('Settings', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
-  it(
-    'C731 Create new categories (thunderjet)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      cy.visit(SettingsMenu.organizationsPath);
-      Organizations.addNewCategory(categoryName);
-      cy.visit(TopMenu.organizationsPath);
-      Organizations.searchByParameters('All', 'organization');
-      Organizations.selectOrganization('New organization');
-      Organizations.editOrganization();
-      Organizations.verifyNewCategory(categoryName);
-      cy.visit(SettingsMenu.organizationCategoryPath);
-      Organizations.deleteCreatedCategory(categoryName);
-    }
-  );
+  it('C731 Create new categories (thunderjet)', { tags: [testTypes.ideaLabsTests] }, () => {
+    cy.visit(SettingsMenu.organizationsPath);
+    Organizations.addNewCategory(categoryName);
+    cy.visit(TopMenu.organizationsPath);
+    Organizations.searchByParameters('All', 'organization');
+    Organizations.selectOrganization('New organization');
+    Organizations.editOrganization();
+    Organizations.verifyNewCategory(categoryName);
+    cy.visit(SettingsMenu.organizationCategoryPath);
+    Organizations.deleteCreatedCategory(categoryName);
+  });
 });

@@ -12,7 +12,7 @@ import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-fil
 let user;
 const invalidUsername = `invalidUsername_${getRandomPostfix()}`;
 const invalidUsernamesFilename = `invalidUsername_${getRandomPostfix()}.csv`;
-const errorsFromMatchingFileName = `*Errors-${invalidUsernamesFilename}`;
+const errorsFromMatchingFileName = `*-Matching-Records-Errors-${invalidUsernamesFilename}*`;
 
 describe('Bulk Edit - Logs', () => {
   before('create test data', () => {
@@ -20,15 +20,14 @@ describe('Bulk Edit - Logs', () => {
       permissions.bulkEditLogsView.gui,
       permissions.bulkEditUpdateRecords.gui,
       permissions.uiUsersView.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
-        FileManager.createFile(`cypress/fixtures/${invalidUsernamesFilename}`, invalidUsername);
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.bulkEditPath,
+        waiter: BulkEditSearchPane.waitLoading,
       });
+      FileManager.createFile(`cypress/fixtures/${invalidUsernamesFilename}`, invalidUsername);
+    });
   });
 
   after('delete test data', () => {
@@ -37,25 +36,34 @@ describe('Bulk Edit - Logs', () => {
     FileManager.deleteFileFromDownloadsByMask(invalidUsernamesFilename, errorsFromMatchingFileName);
   });
 
-  it('C375246 Verify generated Logs files for Users In app -- only invalid records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    BulkEditSearchPane.verifyDragNDropUsernamesArea();
-    BulkEditSearchPane.uploadFile(invalidUsernamesFilename);
-    BulkEditSearchPane.waitFileUploading();
-    BulkEditSearchPane.verifyErrorLabel(invalidUsernamesFilename, 0, 1);
-    BulkEditSearchPane.verifyNonMatchedResults(invalidUsername);
-    BulkEditActions.openActions();
-    BulkEditActions.downloadErrors();
+  it(
+    'C375246 Verify generated Logs files for Users In app -- only invalid records (firebird)',
+    { tags: [testTypes.smoke, devTeams.firebird] },
+    () => {
+      BulkEditSearchPane.verifyDragNDropUsernamesArea();
+      BulkEditSearchPane.uploadFile(invalidUsernamesFilename);
+      BulkEditSearchPane.waitFileUploading();
+      BulkEditSearchPane.verifyErrorLabel(invalidUsernamesFilename, 0, 1);
+      BulkEditSearchPane.verifyNonMatchedResults(invalidUsername);
+      BulkEditActions.openActions();
+      BulkEditActions.downloadErrors();
 
-    BulkEditSearchPane.openLogsSearch();
-    BulkEditSearchPane.verifyLogsPane();
-    BulkEditSearchPane.checkUsersCheckbox();
-    BulkEditSearchPane.clickActionsRunBy(user.username);
-    BulkEditSearchPane.verifyLogsRowActionWhenCompletedWithErrorsWithoutModification();
+      BulkEditSearchPane.openLogsSearch();
+      BulkEditSearchPane.verifyLogsPane();
+      BulkEditSearchPane.checkUsersCheckbox();
+      BulkEditSearchPane.clickActionsRunBy(user.username);
+      BulkEditSearchPane.verifyLogsRowActionWhenCompletedWithErrorsWithoutModification();
 
-    BulkEditSearchPane.downloadFileUsedToTrigger();
-    BulkEditFiles.verifyCSVFileRows(invalidUsernamesFilename, [invalidUsername]);
+      BulkEditSearchPane.downloadFileUsedToTrigger();
+      BulkEditFiles.verifyCSVFileRows(invalidUsernamesFilename, [invalidUsername]);
 
-    BulkEditSearchPane.downloadFileWithErrorsEncountered();
-    BulkEditFiles.verifyMatchedResultFileContent(errorsFromMatchingFileName, [invalidUsername], 'firstElement', false);
-  });
+      BulkEditSearchPane.downloadFileWithErrorsEncountered();
+      BulkEditFiles.verifyMatchedResultFileContent(
+        errorsFromMatchingFileName,
+        [invalidUsername],
+        'firstElement',
+        false,
+      );
+    },
+  );
 });

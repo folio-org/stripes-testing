@@ -1,13 +1,13 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import DevTeams from '../../../support/dictionary/devTeams';
-import TestTypes from '../../../support/dictionary/testTypes';
-import { FOLIO_RECORD_TYPE,
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import {
+  FOLIO_RECORD_TYPE,
   PAYMENT_METHOD,
   BATCH_GROUP,
   ACCEPTED_DATA_TYPE_NAMES,
   JOB_STATUS_NAMES,
-  VENDOR_NAMES } from '../../../support/constants';
+  VENDOR_NAMES,
+} from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -19,6 +19,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -28,13 +29,13 @@ describe('data-import', () => {
     const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.ebsco;
     const marcFileName = `C357018 autotest file ${getRandomPostfix()}`;
     const mappingProfile = {
-      name:`C357018 Test invoice log table Create EBSCO invoice ${getRandomPostfix()}`,
-      incomingRecordType:NewFieldMappingProfile.incomingRecordType.edifact,
-      existingRecordType:FOLIO_RECORD_TYPE.INVOICE,
-      description:'',
+      name: `C357018 Test invoice log table Create EBSCO invoice ${getRandomPostfix()}`,
+      incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
+      existingRecordType: FOLIO_RECORD_TYPE.INVOICE,
+      description: '',
       batchGroup: BATCH_GROUP.AMHERST,
       organizationName: VENDOR_NAMES.EBSCO,
-      paymentMethod: PAYMENT_METHOD.CREDIT_CARD
+      paymentMethod: PAYMENT_METHOD.CREDIT_CARD,
     };
     const actionProfile = {
       name: `C357018 Test invoice log table ${getRandomPostfix()}`,
@@ -43,35 +44,37 @@ describe('data-import', () => {
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
       profileName: `C357018 autoTestJobProf.${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.EDIFACT
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.EDIFACT,
     };
 
     before(() => {
       cy.createTempUser([
-        permissions.moduleDataImportEnabled.gui,
-        permissions.settingsDataImportEnabled.gui,
-        permissions.uiOrganizationsViewEditCreate.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.uiOrganizationsViewEditCreate.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          cy.login(userProperties.username, userProperties.password,
-            { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+        cy.login(userProperties.username, userProperties.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
         });
+      });
     });
 
     after('delete test data', () => {
       Users.deleteViaApi(user.userId);
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
-      cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${invoiceNumber}"` })
-        .then(id => cy.deleteInvoiceFromStorageViaApi(id));
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${invoiceNumber}"` }).then((id) => cy.deleteInvoiceFromStorageViaApi(id));
     });
 
-    it('C357018 Check the filter in summary table with "create + discarded + error" actions for the Invoice column (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      // create Field mapping profile
+    it(
+      'C357018 Check the filter in summary table with "create + discarded + error" actions for the Invoice column (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
+        // create Field mapping profile
         FieldMappingProfiles.waitLoading();
         FieldMappingProfiles.createInvoiceMappingProfile(mappingProfile, profileForDuplicate);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
@@ -108,6 +111,7 @@ describe('data-import', () => {
         FileDetails.verifyQuantityOfRecordsWithError(3);
         FileDetails.verifyLogSummaryTableIsHidden();
         FileDetails.verifyRecordsSortingOrder();
-      });
+      },
+    );
   });
 });

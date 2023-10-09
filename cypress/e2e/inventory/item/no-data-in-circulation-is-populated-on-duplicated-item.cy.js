@@ -1,9 +1,7 @@
 import uuid from 'uuid';
 import moment from 'moment';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import DevTeams from '../../../support/dictionary/devTeams';
-import TestTypes from '../../../support/dictionary/testTypes';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -29,57 +27,69 @@ describe('inventory', () => {
       instanceTitle: `autotestInstance ${getRandomPostfix()}`,
     };
     const holdingsPermanentLocation = LOCATION_NAMES.ONLINE_UI;
-    const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation('servicePoint', uuid());
-    const testData = [
-      ITEM_STATUS_NAMES.IN_TRANSIT,
-      itemData.barcode,
-    ];
+    const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
+    const testData = [ITEM_STATUS_NAMES.IN_TRANSIT, itemData.barcode];
     const newItemBarcode = uuid();
     const todayDate = moment(new Date()).format('M/D/YYYY');
 
     before('create test data and login', () => {
       cy.getAdminToken()
         .then(() => {
-          cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => { itemData.instanceTypeId = instanceTypes[0].id; });
-          cy.getHoldingTypes({ limit: 1 }).then((res) => { itemData.holdingTypeId = res[0].id; });
+          cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+            itemData.instanceTypeId = instanceTypes[0].id;
+          });
+          cy.getHoldingTypes({ limit: 1 }).then((res) => {
+            itemData.holdingTypeId = res[0].id;
+          });
           ServicePoints.createViaApi(servicePoint);
           cy.getLocations({ query: `name="${holdingsPermanentLocation}"` }).then((locations) => {
             testData.locationsId = locations.id;
           });
-          cy.getLoanTypes({ limit: 1 }).then((res) => { itemData.loanTypeId = res[0].id; });
-          cy.getMaterialTypes({ limit: 1 }).then((res) => { itemData.materialTypeId = res.id; });
-        }).then(() => {
-          InventoryInstances.createFolioInstanceViaApi({ instance: {
-            instanceTypeId: itemData.instanceTypeId,
-            title: itemData.instanceTitle,
-          },
-          holdings: [{
-            holdingsTypeId: itemData.holdingTypeId,
-            permanentLocationId: testData.locationsId,
-          }],
-          items:[{
-            barcode: itemData.barcode,
-            status:  { name: ITEM_STATUS_NAMES.AVAILABLE },
-            permanentLoanType: { id: itemData.loanTypeId },
-            materialType: { id: itemData.materialTypeId },
-          }] });
-        }).then(specialInstanceIds => {
+          cy.getLoanTypes({ limit: 1 }).then((res) => {
+            itemData.loanTypeId = res[0].id;
+          });
+          cy.getMaterialTypes({ limit: 1 }).then((res) => {
+            itemData.materialTypeId = res.id;
+          });
+        })
+        .then(() => {
+          InventoryInstances.createFolioInstanceViaApi({
+            instance: {
+              instanceTypeId: itemData.instanceTypeId,
+              title: itemData.instanceTitle,
+            },
+            holdings: [
+              {
+                holdingsTypeId: itemData.holdingTypeId,
+                permanentLocationId: testData.locationsId,
+              },
+            ],
+            items: [
+              {
+                barcode: itemData.barcode,
+                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                permanentLoanType: { id: itemData.loanTypeId },
+                materialType: { id: itemData.materialTypeId },
+              },
+            ],
+          });
+        })
+        .then((specialInstanceIds) => {
           itemData.testInstanceIds = specialInstanceIds;
         });
 
       cy.createTempUser([
-        permissions.inventoryAll.gui,
-        permissions.checkinAll.gui,
-        permissions.checkoutAll.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+        Permissions.inventoryAll.gui,
+        Permissions.checkinAll.gui,
+        Permissions.checkoutAll.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          UserEdit.addServicePointsViaApi([servicePoint.id], user.userId, servicePoint.id);
-          cy.login(userProperties.username, userProperties.password);
-          cy.visit(TopMenu.checkInPath);
-          CheckInActions.waitLoading();
-        });
+        UserEdit.addServicePointsViaApi([servicePoint.id], user.userId, servicePoint.id);
+        cy.login(userProperties.username, userProperties.password);
+        cy.visit(TopMenu.checkInPath);
+        CheckInActions.waitLoading();
+      });
     });
 
     after('delete test data', () => {
@@ -94,8 +104,10 @@ describe('inventory', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
     });
 
-    it('C397325 Verify that no data in circulation is populated on duplicated Item (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+    it(
+      'C397325 Verify that no data in circulation is populated on duplicated Item (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
         CheckInActions.checkInItemGui(itemData.barcode);
         ConfirmItemInModal.confirmInTransitModal();
         CheckInPane.checkResultsInTheRow(testData);
@@ -104,6 +116,7 @@ describe('inventory', () => {
         cy.visit(TopMenu.checkOutPath);
         Checkout.waitLoading();
         // without this waiter, the user will not be found by username
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(4000);
         CheckOutActions.checkOutUser(user.barcode, user.username);
         CheckOutActions.checkOutItem(itemData.barcode);
@@ -128,6 +141,7 @@ describe('inventory', () => {
         InventoryInstance.openHoldingsAccordion(`${holdingsPermanentLocation} >`);
         InventoryInstance.openItemByBarcode(newItemBarcode);
         ItemRecordView.checkItemCirculationHistory('-', '-', '-');
-      });
+      },
+    );
   });
 });

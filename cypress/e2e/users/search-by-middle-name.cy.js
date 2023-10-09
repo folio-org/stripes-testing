@@ -31,7 +31,10 @@ describe('Users', () => {
         patronGroup.id = patronGroupResponse;
       });
       cy.getPermissionsApi({
-        query: `(${'displayName'}=="${[permissions.checkoutAll.gui, permissions.uiUsersView.gui].join(`")or(${'displayName'}=="`)}"))"`,
+        query: `(${'displayName'}=="${[
+          permissions.checkoutAll.gui,
+          permissions.uiUsersView.gui,
+        ].join(`")or(${'displayName'}=="`)}"))"`,
       }).then((permissionsResponse) => {
         Users.createViaApi({
           active: true,
@@ -51,11 +54,17 @@ describe('Users', () => {
           cy.addPermissionsToNewUserApi({
             userId: userData.id,
             permissions: [
-              ...permissionsResponse.body.permissions.map((permission) => permission.permissionName),
+              ...permissionsResponse.body.permissions.map(
+                (permission) => permission.permissionName,
+              ),
             ],
           });
           cy.overrideLocalSettings(userData.id);
-          UserEdit.addServicePointViaApi(testData.servicePointId, userData.id, testData.servicePointId);
+          UserEdit.addServicePointViaApi(
+            testData.servicePointId,
+            userData.id,
+            testData.servicePointId,
+          );
         });
         cy.login(userData.username, userData.password, {
           path: TopMenu.usersPath,
@@ -71,11 +80,15 @@ describe('Users', () => {
     PatronGroups.deleteViaApi(patronGroup.id);
   });
 
-  it('C389464 Search by middle name (volaris)', { tags: [TestTypes.criticalPath, devTeams.volaris] }, () => {
-    UsersSearchPane.searchByKeywords(userData.middleName);
-    Users.verifyMiddleNameOnUserDetailsPane(userData.middleName);
-    cy.visit(TopMenu.checkOutPath);
-    Checkout.waitLoading();
-    CheckOutActions.addPatron(userData.middleName);
-  });
+  it(
+    'C389464 Search by middle name (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      UsersSearchPane.searchByKeywords(userData.middleName);
+      Users.verifyMiddleNameOnUserDetailsPane(userData.middleName);
+      cy.visit(TopMenu.checkOutPath);
+      Checkout.waitLoading();
+      CheckOutActions.addPatron(userData.middleName);
+    },
+  );
 });

@@ -1,12 +1,26 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../utils/stringTools';
 
-const getDefaultOrganization = () => {
+const getDefaultOrganization = ({ id = uuid(), accounts = 0 } = {}) => {
   const defaultUiOrganizations = {
+    id,
     name: `autotest_name_${getRandomPostfix()}`,
     status: 'Active',
     code: `autotest_code_${getRandomPostfix()}`,
+    erpCode: getRandomPostfix(),
     isVendor: true,
+    accounts: [...Array(accounts)].map(() => ({
+      accountNo: getRandomPostfix(),
+      accountStatus: 'Active',
+      acqUnitIds: [],
+      appSystemNo: '',
+      description: 'Main library account',
+      libraryCode: 'COB',
+      libraryEdiCode: getRandomPostfix(),
+      name: 'TestAccout1',
+      notes: '',
+      paymentMethod: 'Cash',
+    })),
   };
   return defaultUiOrganizations;
 };
@@ -27,7 +41,7 @@ export default {
       .okapiRequest({
         path: 'organizations/organizations',
         body: organizationProperties,
-        method: 'POST'
+        method: 'POST',
       })
       .then((response) => {
         return response.body;
@@ -44,21 +58,25 @@ export default {
     description: `autotest_description_${getRandomPostfix()}`,
     erpCode: getRandomPostfix(),
     language: 'eng',
-    aliases: [{
-      description: 'alias_description',
-      value: 'alias'
-    }],
-    addresses: [{
-      country: 'USA'
-    }],
+    aliases: [
+      {
+        description: 'alias_description',
+        value: 'alias',
+      },
+    ],
+    addresses: [
+      {
+        country: 'USA',
+      },
+    ],
   },
 
-  defaultContact:{
-    firstName:`AT_FN_${getRandomPostfix()}`,
-    lastName:`AT_LN_${getRandomPostfix()}`,
+  defaultContact: {
+    firstName: `AT_FN_${getRandomPostfix()}`,
+    lastName: `AT_LN_${getRandomPostfix()}`,
   },
 
-  defaultInterface:{
-    name:`AIN_${getRandomPostfix()}`,
-  }
+  defaultInterface: {
+    name: `AIN_${getRandomPostfix()}`,
+  },
 };

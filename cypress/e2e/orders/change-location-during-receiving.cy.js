@@ -15,8 +15,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 
 describe('orders: Receive piece from Order', () => {
-  const order = { ...NewOrder.defaultOneTimeOrder,
-    approved: true };
+  const order = { ...NewOrder.defaultOneTimeOrder, approved: true };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const item = {
     instanceName: `testBulkEdit_${getRandomPostfix()}`,
@@ -31,47 +30,45 @@ describe('orders: Receive piece from Order', () => {
   before(() => {
     cy.getAdminToken();
 
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-        order.vendor = response;
-      });
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+      order.vendor = response;
+    });
     InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-    ServicePoints.getViaApi()
-    .then((servicePoint) => {
+    ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
-        .then(res => {
-          location = res;
-        });
+      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+        location = res;
+      });
     });
 
-    cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
 
-    cy.createOrderApi(order)
-      .then((response) => {
-        orderNumber = response.body.poNumber;
-        orderID = response.body.id;
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList(orderNumber);
-        OrderLines.addPOLine();
-        OrderLines.selectRandomInstanceInTitleLookUP(item.instanceName);
-        OrderLines.fillPOLWithTitleLookUp();
-        OrderLines.backToEditingOrder();
-        Orders.openOrder();
-      });
+    cy.createOrderApi(order).then((response) => {
+      orderNumber = response.body.poNumber;
+      orderID = response.body.id;
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList(orderNumber);
+      OrderLines.addPOLine();
+      OrderLines.selectRandomInstanceInTitleLookUP(item.instanceName);
+      OrderLines.fillPOLWithTitleLookUp();
+      OrderLines.backToEditingOrder();
+      Orders.openOrder();
+    });
 
     cy.createTempUser([
       permissions.uiOrdersView.gui,
       permissions.uiOrdersEdit.gui,
       permissions.uiInventoryViewInstances.gui,
-      permissions.uiReceivingViewEditCreate.gui
-    ])
-      .then(userProperties => {
-        user = userProperties;
+      permissions.uiReceivingViewEditCreate.gui,
+    ]).then((userProperties) => {
+      user = userProperties;
 
-        cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+      cy.login(user.username, user.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
       });
+    });
   });
 
   after(() => {
@@ -82,21 +79,25 @@ describe('orders: Receive piece from Order', () => {
       location.institutionId,
       location.campusId,
       location.libraryId,
-      location.id
+      location.id,
     );
     Users.deleteViaApi(user.userId);
   });
 
-  it('C9177 Change location during receiving (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
-    const caption = 'autotestCaption';
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList(orderNumber);
-    // Receiving part
-    Orders.receiveOrderViaActions();
-    Receiving.selectFromResultsList(item.instanceName);
-    Receiving.receiveAndChangeLocation(0, caption, location.institutionId);
+  it(
+    'C9177 Change location during receiving (thunderjet)',
+    { tags: [testType.smoke, devTeams.thunderjet] },
+    () => {
+      const caption = 'autotestCaption';
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList(orderNumber);
+      // Receiving part
+      Orders.receiveOrderViaActions();
+      Receiving.selectFromResultsList(item.instanceName);
+      Receiving.receiveAndChangeLocation(0, caption, location.institutionId);
 
-    Receiving.checkReceived(0, caption);
-    Receiving.selectInstanceInReceive(item.instanceName);
-  });
+      Receiving.checkReceived(0, caption);
+      Receiving.selectInstanceInReceive(item.instanceName);
+    },
+  );
 });

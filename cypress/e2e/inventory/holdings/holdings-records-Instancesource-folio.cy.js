@@ -14,18 +14,22 @@ describe('Manage holding records with FOLIO source', { retries: 2 }, () => {
     cy.visit(TopMenu.inventoryPath);
     InventoryInstances.add();
   });
-  it('C345406 FOLIO instance record + FOLIO holdings record (Regression) (spitfire)', { tags: [testTypes.smoke, DevTeams.spitfire, features.holdingsRecord] }, () => {
-    InventoryInstance.createHoldingsRecord();
-    InventoryInstance.openHoldingView();
-    HoldingsRecordView.checkSource('FOLIO');
-    HoldingsRecordView.checkActionsMenuOptionsInFolioSource();
-    HoldingsRecordView.edit();
-    HoldingsRecordEdit.waitLoading();
-    HoldingsRecordEdit.checkReadOnlyFields();
-    HoldingsRecordEdit.closeWithoutSave();
-    HoldingsRecordView.tryToDelete();
-    HoldingsRecordView.duplicate();
-    InventoryNewHoldings.checkSource();
-    // TODO: clarify what is "Verify that you are able to add or access an item" and "Behavior is no different than what FOLIO currently supports" in TestRail
-  });
+  it(
+    'C345406 FOLIO instance record + FOLIO holdings record (Regression) (spitfire)',
+    { tags: [testTypes.smoke, DevTeams.spitfire, features.holdingsRecord] },
+    () => {
+      InventoryInstance.createHoldingsRecord();
+      InventoryInstance.openHoldingView();
+      HoldingsRecordView.checkSource('FOLIO');
+      HoldingsRecordView.checkActionsMenuOptionsInFolioSource();
+      HoldingsRecordView.edit();
+      HoldingsRecordEdit.waitLoading();
+      HoldingsRecordEdit.checkReadOnlyFields();
+      HoldingsRecordEdit.closeWithoutSave();
+      HoldingsRecordView.tryToDelete();
+      HoldingsRecordView.duplicate();
+      InventoryNewHoldings.checkSource();
+      // TODO: clarify what is "Verify that you are able to add or access an item" and "Behavior is no different than what FOLIO currently supports" in TestRail
+    },
+  );
 });

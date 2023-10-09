@@ -1,7 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -33,37 +31,47 @@ describe('data-import', () => {
 
     before('create test data', () => {
       cy.getAdminToken();
-      NewFieldMappingProfile.createMappingProfileViaApi(mappingProfileName)
-        .then((mappingProfileResponse) => {
-          NewActionProfile.createActionProfileViaApi(actionProfileName, mappingProfileResponse.body.id)
-            .then((actionProfileResponse) => {
-              NewMatchProfile.createMatchProfileViaApi(matchProfileName)
-                .then((matchProfileResponse) => {
-                  NewJobProfile.createJobProfileViaApi(jobProfileName, matchProfileResponse.body.id, actionProfileResponse.body.id);
-                });
-            });
-        });
+      NewFieldMappingProfile.createMappingProfileViaApi(mappingProfileName).then(
+        (mappingProfileResponse) => {
+          NewActionProfile.createActionProfileViaApi(
+            actionProfileName,
+            mappingProfileResponse.body.id,
+          ).then((actionProfileResponse) => {
+            NewMatchProfile.createMatchProfileViaApi(matchProfileName).then(
+              (matchProfileResponse) => {
+                NewJobProfile.createJobProfileViaApi(
+                  jobProfileName,
+                  matchProfileResponse.body.id,
+                  actionProfileResponse.body.id,
+                );
+              },
+            );
+          });
+        },
+      );
 
-      cy.createTempUser([
-        permissions.settingsDataImportCanViewOnly.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password, { path: TopMenu.settingsPath, waiter: SettingsPane.waitLoading });
+      cy.createTempUser([Permissions.settingsDataImportCanViewOnly.gui]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.settingsPath,
+          waiter: SettingsPane.waitLoading,
         });
+      });
     });
 
     after('delete test data', () => {
-    // delete generated profiles
+      // delete generated profiles
       JobProfiles.deleteJobProfile(jobProfileName);
       MatchProfiles.deleteMatchProfile(matchProfileName);
       ActionProfiles.deleteActionProfile(actionProfileName);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+      FieldMappingProfileView.deleteViaApi(mappingProfileName);
       Users.deleteViaApi(user.userId);
     });
 
-    it('C353645 Checking the Data import UI permission for only viewing settings (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+    it(
+      'C353645 Checking the Data import UI permission for only viewing settings (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.checkListOfExistingProfilesIsDisplayed();
         JobProfiles.verifyActionMenuAbsent();
@@ -103,8 +111,9 @@ describe('data-import', () => {
         FileExtensions.verifyActionMenuOnViewPaneAbsent();
 
         cy.visit(SettingsMenu.marcFieldProtectionPath);
-        MarcFieldProtection.checkListOfExistingProfilesIsDisplayed();
+        MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
         MarcFieldProtection.verifyNewButtonAbsent();
-      });
+      },
+    );
   });
 });

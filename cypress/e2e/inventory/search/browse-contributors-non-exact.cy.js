@@ -32,18 +32,14 @@ describe('Inventory -> Contributors Browse', () => {
     BrowseContributors.createInstanceWithContributorViaApi(instanceA);
     BrowseContributors.createInstanceWithContributorViaApi(instanceZ);
 
-    cy.getInstanceById(instanceA.id)
-      .then((res) => {
-        testData.instanceAProps = res;
-      });
-    cy.getInstanceById(instanceZ.id)
-      .then((res) => {
-        testData.instanceZProps = res;
-      });
+    cy.getInstanceById(instanceA.id).then((res) => {
+      testData.instanceAProps = res;
+    });
+    cy.getInstanceById(instanceZ.id).then((res) => {
+      testData.instanceZProps = res;
+    });
 
-    cy.createTempUser([
-      Permissions.uiInventoryViewInstances.gui,
-    ]).then((resUserProperties) => {
+    cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((resUserProperties) => {
       testData.user = resUserProperties;
       cy.login(resUserProperties.username, resUserProperties.password);
       cy.visit(TopMenu.inventoryPath);
@@ -56,16 +52,23 @@ describe('Inventory -> Contributors Browse', () => {
     InventoryInstance.deleteInstanceViaApi(instanceZ.id);
   });
 
-  it('C353640 Browse contributors with non exact match query (spitfire)', { tags: [testType.smoke, devTeams.spitfire] }, () => {
-    BrowseContributors.clickBrowseBtn();
-    InventorySearchAndFilter.verifyKeywordsAsDefault();
-    InventorySearchAndFilter.verifyBrowseOptions();
-    BrowseContributors.select();
-    BrowseContributors.checkSearch();
-    BrowseContributors.browse(instanceA.contributors[0].name.substring(0, 21));
-    BrowseContributors.checkSearchResultsTable();
-    BrowseContributors.checkNonExactSearchResult(instanceA.contributors[0], instanceZ.contributors[0]);
-    BrowseContributors.resetAllInSearchPane();
-    InventorySearchAndFilter.verifyKeywordsAsDefault();
-  });
+  it(
+    'C353640 Browse contributors with non exact match query (spitfire)',
+    { tags: [testType.smoke, devTeams.spitfire] },
+    () => {
+      BrowseContributors.clickBrowseBtn();
+      InventorySearchAndFilter.verifyKeywordsAsDefault();
+      InventorySearchAndFilter.verifyBrowseOptions();
+      BrowseContributors.select();
+      BrowseContributors.checkSearch();
+      BrowseContributors.browse(instanceA.contributors[0].name.substring(0, 21));
+      BrowseContributors.checkSearchResultsTable();
+      BrowseContributors.checkNonExactSearchResult(
+        instanceA.contributors[0],
+        instanceZ.contributors[0],
+      );
+      BrowseContributors.resetAllInSearchPane();
+      InventorySearchAndFilter.verifyKeywordsAsDefault();
+    },
+  );
 });

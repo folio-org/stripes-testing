@@ -10,24 +10,21 @@ import {
   MultiColumnList,
   Pane,
   MultiColumnListRow,
-  Callout
+  Callout,
 } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import newJobProfile from './newJobProfile';
 
 const actionsButton = Button('Actions');
 const runButton = Button('Run');
-const waitSelector = Pane({ id:'view-job-profile-pane' });
+const waitSelector = Pane({ id: 'view-job-profile-pane' });
 const closeButton = Button({ icon: 'times' });
-const paneResults = Pane({ id:'pane-results' });
+const paneResults = Pane({ id: 'pane-results' });
 const searchButton = Button('Search');
 
 const openNewJobProfileForm = () => {
-  cy.do([
-    paneResults.find(actionsButton).click(),
-    Button('New job profile').click(),
-  ]);
-  cy.expect(HTML({ className: including('form-'), id:'job-profiles-form' }).exists());
+  cy.do([paneResults.find(actionsButton).click(), Button('New job profile').click()]);
+  cy.expect(HTML({ className: including('form-'), id: 'job-profiles-form' }).exists());
 };
 
 const closeJobProfile = (profileName) => {
@@ -35,39 +32,34 @@ const closeJobProfile = (profileName) => {
 };
 
 const waitLoadingList = () => {
-  cy.get('[id="job-profiles-list"]', getLongDelay())
-    .should('be.visible');
+  cy.get('[id="job-profiles-list"]', getLongDelay()).should('be.visible');
 };
 const waitLoading = (selector) => cy.expect(selector.exists());
 const deleteJobProfile = (profileName) => {
   // get all job profiles
-  cy
-    .okapiRequest({
-      path: 'data-import-profiles/jobProfiles',
-      searchParams: {
-        query:'cql.allRecords=1   ',
-        limit: 1000
-      },
-      isDefaultSearchParamsRequired: false
-    })
-    .then(({ body: { jobProfiles } }) => {
-      // find profile to delete
-      const profileToDelete = jobProfiles.find(profile => profile.name === profileName);
+  cy.okapiRequest({
+    path: 'data-import-profiles/jobProfiles',
+    searchParams: {
+      query: 'cql.allRecords=1   ',
+      limit: 1000,
+    },
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body: { jobProfiles } }) => {
+    // find profile to delete
+    const profileToDelete = jobProfiles.find((profile) => profile.name === profileName);
 
-      // delete profile with its id
-      cy
-        .okapiRequest({
-          method: 'DELETE',
-          path: `data-import-profiles/jobProfiles/${profileToDelete.id}`,
-          searchParams: {
-            query:'cql.allRecords=1   sortBy name',
-          },
-          isDefaultSearchParamsRequired: false
-        })
-        .then(({ status }) => {
-          if (status === 204) cy.log('###DELETED JOB PROFILE###');
-        });
+    // delete profile with its id
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `data-import-profiles/jobProfiles/${profileToDelete.id}`,
+      searchParams: {
+        query: 'cql.allRecords=1   sortBy name',
+      },
+      isDefaultSearchParamsRequired: false,
+    }).then(({ status }) => {
+      if (status === 204) cy.log('###DELETED JOB PROFILE###');
     });
+  });
 };
 
 const createJobProfile = (jobProfile) => {
@@ -78,17 +70,16 @@ const createJobProfile = (jobProfile) => {
 const searchJobProfileForImport = (jobProfileTitle) => {
   // TODO: clarify with developers what should be waited
   cy.wait(1500);
-  cy.do(paneResults.find(TextField({ id:'input-search-job-profiles-field' })).fillIn(jobProfileTitle));
+  cy.do(
+    paneResults.find(TextField({ id: 'input-search-job-profiles-field' })).fillIn(jobProfileTitle),
+  );
   cy.do(searchButton.click());
 };
 
 export default {
-  defaultInstanceAndSRSMarcBib:'Default - Create instance and SRS MARC Bib',
+  defaultInstanceAndSRSMarcBib: 'Default - Create instance and SRS MARC Bib',
   openNewJobProfileForm: () => {
-    cy.do([
-      actionsButton.click(),
-      Button('New job profile').click(),
-    ]);
+    cy.do([actionsButton.click(), Button('New job profile').click()]);
   },
 
   waitLoadingList,
@@ -98,21 +89,19 @@ export default {
   createJobProfile,
   closeJobProfile,
 
-  checkJobProfilePresented:(jobProfileTitle) => {
+  checkJobProfilePresented: (jobProfileTitle) => {
     searchJobProfileForImport(jobProfileTitle);
     cy.expect(MultiColumnListCell(jobProfileTitle).exists());
   },
 
-  selectJobProfile:() => {
+  selectJobProfile: () => {
     // need to wait until file upload
     cy.wait(1000);
     cy.expect(paneResults.find(MultiColumnListRow({ index: 0 })).exists());
-    cy.do(paneResults
-      .find(MultiColumnListRow({ index: 0 }))
-      .click());
+    cy.do(paneResults.find(MultiColumnListRow({ index: 0 })).click());
   },
 
-  runImportFile:() => {
+  runImportFile: () => {
     waitLoading(waitSelector);
     cy.do([
       actionsButton.click(),
@@ -121,9 +110,13 @@ export default {
     ]);
   },
 
-  waitFileIsImported:(fileName) => {
+  waitFileIsImported: (fileName) => {
     // wait until uploaded file is displayed in the list
-    cy.expect(MultiColumnList({ id:'job-logs-list' }).find(Button(including(fileName))).exists());
+    cy.expect(
+      MultiColumnList({ id: 'job-logs-list' })
+        .find(Button(including(fileName)))
+        .exists(),
+    );
   },
 
   createJobProfileWithLinkingProfiles: (jobProfile, actionProfileName, matchProfileName) => {
@@ -142,23 +135,26 @@ export default {
     openNewJobProfileForm();
     newJobProfile.fillJobProfile(jobProfile);
   },
-  select:(jobProfileTitle) => {
+  select: (jobProfileTitle) => {
     searchJobProfileForImport(jobProfileTitle);
     cy.do(MultiColumnListCell(jobProfileTitle).click());
   },
-  openFileRecords:(fileName) => {
+  openFileRecords: (fileName) => {
     cy.do(Button(fileName).click());
-    cy.expect(Section({ id:'pane-results' }).exists());
+    cy.expect(Section({ id: 'pane-results' }).exists());
     cy.expect(PaneHeader(fileName).exists());
   },
 
-  checkListOfExistingProfilesIsDisplayed:() => cy.expect(paneResults.exists()),
+  checkListOfExistingProfilesIsDisplayed: () => cy.expect(paneResults.exists()),
 
-  checkCalloutMessage: (profileName) => {
-    cy.expect(Callout({ textContent: including(`The job profile "${profileName}" was successfully updated`) })
-      .exists());
+  checkCalloutMessage: (message) => {
+    cy.expect(
+      Callout({
+        textContent: including(message),
+      }).exists(),
+    );
   },
 
-  verifyActionMenuAbsent:() => cy.expect(paneResults.find(actionsButton).absent()),
-  verifyJobProfileAbsent:() => cy.expect(paneResults.find(HTML(including('The list contains no items'))).exists())
+  verifyActionMenuAbsent: () => cy.expect(paneResults.find(actionsButton).absent()),
+  verifyJobProfileAbsent: () => cy.expect(paneResults.find(HTML(including('The list contains no items'))).exists()),
 };

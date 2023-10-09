@@ -30,7 +30,7 @@ describe('Create Item or Title level request', () => {
     title: `Instance ${getRandomPostfix()}`,
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestRenew', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     itemBarcode: generateItemBarcode(),
   };
   const requestPolicyBody = {
@@ -93,8 +93,25 @@ describe('Create Item or Title level request', () => {
       originalCirculationRules = circulationRule.rulesAsText;
       const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
       ruleProps.r = requestPolicyBody.id;
-      addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + ruleProps.i + ' l ' + ruleProps.l + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
-      CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
+      addedCirculationRule =
+        't ' +
+        testData.loanTypeId +
+        ': i ' +
+        ruleProps.i +
+        ' l ' +
+        ruleProps.l +
+        ' r ' +
+        ruleProps.r +
+        ' o ' +
+        ruleProps.o +
+        ' n ' +
+        ruleProps.n;
+      CirculationRules.addRuleViaApi(
+        originalCirculationRules,
+        ruleProps,
+        't ',
+        testData.loanTypeId,
+      );
     });
 
     cy.createTempUser(
@@ -103,13 +120,13 @@ describe('Create Item or Title level request', () => {
         permissions.uiUsersfeefinesView.gui,
         permissions.requestsAll.gui,
       ],
-      patronGroup.name
+      patronGroup.name,
     ).then((userProperties) => {
       userData = userProperties;
       UserEdit.addServicePointViaApi(
         testData.userServicePoint.id,
         userData.userId,
-        testData.userServicePoint.id
+        testData.userServicePoint.id,
       );
       TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
       cy.login(userData.username, userData.password, {
@@ -139,7 +156,7 @@ describe('Create Item or Title level request', () => {
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
+      testData.defaultLocation.id,
     );
     TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
@@ -155,16 +172,15 @@ describe('Create Item or Title level request', () => {
       NewRequest.enterItemInfo(testData.itemBarcode);
       NewRequest.verifyItemInformation([testData.itemBarcode, instanceData.title]);
       NewRequest.verifyRequestInformation(ITEM_STATUS_NAMES.AVAILABLE);
-      NewRequest.enterRequesterInfo({
+      NewRequest.enterRequesterInfoWithRequestType({
         requesterBarcode: userData.barcode,
         pickupServicePoint: testData.userServicePoint.name,
       });
-      NewRequest.chooseRequestType(REQUEST_TYPES.PAGE);
       NewRequest.saveRequestAndClose();
       NewRequest.waitLoading();
       cy.wait('@createRequest').then((intercept) => {
         cy.wrap(intercept.response.body.id).as('requestId');
       });
-    }
+    },
   );
 });

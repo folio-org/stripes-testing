@@ -8,7 +8,7 @@ import {
   KeyValue,
   Section,
   PaneHeader,
-  Pane
+  Pane,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 
@@ -57,16 +57,19 @@ const waitLoading = () => {
 };
 
 const openRecordDetails = (row = 0) => {
-  cy.do(Pane({ id:'pane-results' }).find(MultiColumnListCell({ row, columnIndex: 1 })).click());
+  cy.do(
+    Pane({ id: 'pane-results' })
+      .find(MultiColumnListCell({ row, columnIndex: 1 }))
+      .click(),
+  );
 
   cy.expect(Section({ id: 'pane-instancedetails' }).exists());
 };
 
 const verifyRecordCreatedDate = ({ start, end }) => {
-  cy
-    .get('[class^="metaHeaderLabel"]')
+  cy.get('[class^="metaHeaderLabel"]')
     .invoke('text')
-    .then(dateText => {
+    .then((dateText) => {
       const createdAt = new Date(dateText);
 
       const startedDate = new Date(start.getTime());
@@ -90,12 +93,16 @@ const viewHoldings = () => {
   cy.expect(Section({ id: 'ui-inventory.holdingsRecordView' }).exists());
 };
 
-const verifyPermanentLocation = value => {
+const verifyPermanentLocation = (value) => {
   cy.expect(KeyValue('Permanent').has({ value }));
 };
 
 const closeHoldingsRecordView = () => {
-  cy.do(Section({ id: 'ui-inventory.holdingsRecordView' }).find(Button({ icon: 'times' })).click());
+  cy.do(
+    Section({ id: 'ui-inventory.holdingsRecordView' })
+      .find(Button({ icon: 'times' }))
+      .click(),
+  );
 };
 
 export default {

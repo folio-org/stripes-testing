@@ -20,36 +20,38 @@ describe('inventory', () => {
       instanceTitle,
       permanentLocationOption: 'Online (E) ',
       permanentLocationValue: LOCATION_NAMES.ONLINE_UI,
-      source: INSTANCE_SOURCE_NAMES.FOLIO
+      source: INSTANCE_SOURCE_NAMES.FOLIO,
     };
 
     beforeEach(() => {
-      cy
-        .createTempUser([permissions.inventoryAll.gui])
-        .then((userProperties) => {
-          firstUser = userProperties;
-        });
+      cy.createTempUser([permissions.inventoryAll.gui]).then((userProperties) => {
+        firstUser = userProperties;
+      });
 
-      cy
-        .createTempUser([permissions.inventoryAll.gui])
-        .then(userProperties => {
-          secondUser = userProperties;
-          cy.login(secondUser.username, secondUser.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+      cy.createTempUser([permissions.inventoryAll.gui]).then((userProperties) => {
+        secondUser = userProperties;
+        cy.login(secondUser.username, secondUser.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
         });
+      });
     });
 
     afterEach(() => {
-      cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` })
-        .then((instance) => {
+      cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` }).then(
+        (instance) => {
           cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
           InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
+        },
+      );
       Users.deleteViaApi(firstUser.userId);
       Users.deleteViaApi(secondUser.userId);
     });
 
-    it('C1294: Create a Holdings record as another user than the one that created the Instance (folijet) (prokopovych)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+    it(
+      'C1294: Create a Holdings record as another user than the one that created the Instance (folijet) (prokopovych)',
+      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      () => {
         InventoryInstances.add(recordsData.instanceTitle);
         InventorySearchAndFilter.searchInstanceByTitle(recordsData.instanceTitle);
         cy.expect(MultiColumnListCell({ row: 0, content: recordsData.instanceTitle }).exists());
@@ -67,6 +69,7 @@ describe('inventory', () => {
         InventoryInstance.openHoldingView();
         HoldingsRecordView.checkSource(recordsData.source);
         HoldingsRecordView.checkPermanentLocation(recordsData.permanentLocationValue);
-      });
+      },
+    );
   });
 });

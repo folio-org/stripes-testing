@@ -22,7 +22,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 
 describe('ui-users-loans: Loans', () => {
   let addedCirculationRule;
-  const newOwnerData = UsersOwners.getDefaultNewOwner(uuid());
+  const newOwnerData = UsersOwners.getDefaultNewOwner();
   const newFirstItemData = getNewItem();
   const newSecondItemData = getNewItem();
   const DECLARE_LOST_ADDITIONAL_INFORMATION = getTestEntityValue('Some additional information');
@@ -30,7 +30,7 @@ describe('ui-users-loans: Loans', () => {
   const FIRST_ACTION_ROW_INDEX = 0;
   const SECOND_ACTION_ROW_INDEX = 1;
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestDeclareLost', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const itemsData = {};
   let originalCirculationRules;
@@ -118,34 +118,52 @@ describe('ui-users-loans: Loans', () => {
       originalCirculationRules = circulationRule.rulesAsText;
       const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
       ruleProps.i = lostItemFeePolicyBody.id;
-      addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + ruleProps.i + ' l ' + ruleProps.l + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
-      CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
+      addedCirculationRule =
+        't ' +
+        testData.loanTypeId +
+        ': i ' +
+        ruleProps.i +
+        ' l ' +
+        ruleProps.l +
+        ' r ' +
+        ruleProps.r +
+        ' o ' +
+        ruleProps.o +
+        ' n ' +
+        ruleProps.n;
+      CirculationRules.addRuleViaApi(
+        originalCirculationRules,
+        ruleProps,
+        't ',
+        testData.loanTypeId,
+      );
     });
 
-    cy.createTempUser([permissions.uiUsersViewLoans.gui, permissions.uiUsersDeclareItemLost.gui]).then(
-      ({ username, password, userId, barcode: userBarcode }) => {
-        testData.userId = userId;
-        UserEdit.addServicePointViaApi(
-          testData.userServicePoint.id,
-          userId,
-          testData.userServicePoint.id
-        ).then(() => {
-          const date = new Date();
-          // We need this wait because "testLoanDetails" has time-based checks
-          // so "сheck out" and "declare lost" are expected to be done in the same minutes.
-          cy.wait((60 - date.getSeconds()) * 1000);
-          [newFirstItemData.barcode, newSecondItemData.barcode].forEach((itemBarcode) => {
-            Checkout.checkoutItemViaApi({
-              itemBarcode,
-              userBarcode,
-              servicePointId: testData.userServicePoint.id,
-            });
+    cy.createTempUser([
+      permissions.uiUsersViewLoans.gui,
+      permissions.uiUsersDeclareItemLost.gui,
+    ]).then(({ username, password, userId, barcode: userBarcode }) => {
+      testData.userId = userId;
+      UserEdit.addServicePointViaApi(
+        testData.userServicePoint.id,
+        userId,
+        testData.userServicePoint.id,
+      ).then(() => {
+        const date = new Date();
+        // We need this wait because "testLoanDetails" has time-based checks
+        // so "сheck out" and "declare lost" are expected to be done in the same minutes.
+        cy.wait((60 - date.getSeconds()) * 1000);
+        [newFirstItemData.barcode, newSecondItemData.barcode].forEach((itemBarcode) => {
+          Checkout.checkoutItemViaApi({
+            itemBarcode,
+            userBarcode,
+            servicePointId: testData.userServicePoint.id,
           });
-          cy.login(username, password);
-          cy.visit(AppPaths.getOpenLoansPath(userId));
         });
-      }
-    );
+        cy.login(username, password);
+        cy.visit(AppPaths.getOpenLoansPath(userId));
+      });
+    });
   });
 
   after('Deleting created entities', () => {
@@ -170,7 +188,7 @@ describe('ui-users-loans: Loans', () => {
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
+      testData.defaultLocation.id,
     );
   });
 
@@ -202,14 +220,14 @@ describe('ui-users-loans: Loans', () => {
           LoanDetails.checkLostDate(loanHistoryFirstAction.loan.metadata.updatedDate);
           LoanDetails.checkActionDate(
             FIRST_ACTION_ROW_INDEX,
-            loanHistoryFirstAction.loan.metadata.updatedDate
+            loanHistoryFirstAction.loan.metadata.updatedDate,
           );
 
           LoanDetails.checkActionDeclaredLost(FIRST_ACTION_ROW_INDEX);
           LoanDetails.checkLoansActionsHaveSameDueDate(
             FIRST_ACTION_ROW_INDEX,
             SECOND_ACTION_ROW_INDEX,
-            loanHistoryFirstAction.loan.dueDate
+            loanHistoryFirstAction.loan.dueDate,
           );
           LoanDetails.checkStatusDeclaredLostInList(FIRST_ACTION_ROW_INDEX);
           LoanDetails.checkSource(FIRST_ACTION_ROW_INDEX, user);
@@ -226,6 +244,6 @@ describe('ui-users-loans: Loans', () => {
           });
         });
       });
-    }
+    },
   );
 });

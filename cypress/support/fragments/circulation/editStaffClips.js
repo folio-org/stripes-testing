@@ -1,5 +1,13 @@
 import { including } from 'bigtest';
-import { Button, TextArea, NavListItem, Checkbox, Modal, RichEditor, Pane } from '../../../../interactors';
+import {
+  Button,
+  TextArea,
+  NavListItem,
+  Checkbox,
+  Modal,
+  RichEditor,
+  Pane,
+} from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 
 const editButton = Button({ id: 'clickable-edit-item' });
@@ -9,32 +17,26 @@ const saveButton = Button('Save & close');
 const staffClipsEditor = RichEditor();
 
 export default {
-  defaultUiEditStaffClips : {
+  defaultUiEditStaffClips: {
     description: 'Created by autotest team',
   },
+  chooseStaffClip(name) {
+    cy.do(NavListItem(name).click());
+  },
+  openLastUpdateInfo() {
+    cy.do(Button(including('Record last updated')).click());
+  },
   editHold() {
-    cy.do([
-      NavListItem('Hold').click(),
-      editButton.click(),
-    ]);
+    cy.do([NavListItem('Hold').click(), editButton.click()]);
   },
   editPickslip() {
-    cy.do([
-      NavListItem('Pick slip').click(),
-      editButton.click(),
-    ]);
+    cy.do([NavListItem('Pick slip').click(), editButton.click()]);
   },
   editRequestDelivery() {
-    cy.do([
-      NavListItem('Request delivery').click(),
-      editButton.click(),
-    ]);
+    cy.do([NavListItem('Request delivery').click(), editButton.click()]);
   },
   editTransit() {
-    cy.do([
-      NavListItem('Transit').click(),
-      editButton.click(),
-    ]);
+    cy.do([NavListItem('Transit').click(), editButton.click()]);
   },
   addToken: (tokens) => {
     cy.do(Button({ className: 'ql-token' }).click());
@@ -50,21 +52,18 @@ export default {
       Checkbox('item.title').click(),
       Checkbox('item.copy').click(),
       Button('Add token').click(),
-      saveButton.click()
+      saveButton.click(),
     ]);
   },
   previewStaffClips: () => {
-    cy.do([
-      Button('Preview').click(),
-      Button('Close').click(),
-    ]);
+    cy.do([Button('Preview').click(), Button('Close').click()]);
     cy.expect(Modal({ id: 'preview-modal' }).exists(textCheck));
   },
   checkPreview: (staffSlipType, displayText) => {
     cy.do(Button('Preview').click());
     cy.expect([
       Modal(`Preview of staff slip - ${staffSlipType}`).exists(),
-      Modal({ content: including(displayText) }).exists()
+      Modal({ content: including(displayText) }).exists(),
     ]);
     cy.do(Button('Close').click());
   },
@@ -81,7 +80,9 @@ export default {
     cy.do(saveButton.click());
   },
   checkAfterUpdate(staffSlipType) {
-    InteractorsTools.checkCalloutMessage(`The Staff slip ${staffSlipType} was successfully updated.`);
+    InteractorsTools.checkCalloutMessage(
+      `The Staff slip ${staffSlipType} was successfully updated.`,
+    );
     cy.expect(Pane(staffSlipType).exists());
   },
   editAndClearHold() {
@@ -102,5 +103,17 @@ export default {
     cy.do(Button({ icon: 'times' }).click());
     this.editTransit();
     this.clearStaffClips();
+  },
+  collapseAll() {
+    cy.do(Button('Collapse all').click());
+    cy.wrap(['General information', 'Template content']).each((accordion) => {
+      cy.expect(Button(accordion).has({ ariaExpanded: 'false' }));
+    });
+  },
+  expandAll() {
+    cy.do(Button('Expand all').click());
+    cy.wrap(['General information', 'Template content']).each((accordion) => {
+      cy.expect(Button(accordion).has({ ariaExpanded: 'true' }));
+    });
   },
 };

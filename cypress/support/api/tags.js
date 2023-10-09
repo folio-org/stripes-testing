@@ -1,9 +1,8 @@
 Cypress.Commands.add('getTagsApi', (searchParams) => {
-  return cy
-    .okapiRequest({
-      path: 'tags',
-      searchParams,
-    });
+  return cy.okapiRequest({
+    path: 'tags',
+    searchParams,
+  });
 });
 
 Cypress.Commands.add('createTagApi', (tag) => {
@@ -12,11 +11,10 @@ Cypress.Commands.add('createTagApi', (tag) => {
     path: 'tags',
     body: {
       ...tag,
-    }
-  })
-    .then(response => {
-      return response.body.id;
-    });
+    },
+  }).then((response) => {
+    return response.body.id;
+  });
 });
 
 Cypress.Commands.add('deleteTagApi', (tagId) => {

@@ -1,10 +1,11 @@
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE,
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
+import {
+  FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
-  JOB_STATUS_NAMES } from '../../../support/constants';
+  JOB_STATUS_NAMES,
+} from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -18,9 +19,9 @@ import NewFieldMappingProfile from '../../../support/fragments/data_import/mappi
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import permissions from '../../../support/dictionary/permissions';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
@@ -41,7 +42,7 @@ describe('data-import', () => {
         field: '024',
         in1: '1',
         in2: '*',
-        subfield: 'a'
+        subfield: 'a',
       },
       matchCriterion: 'Exactly matches',
       existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
@@ -58,38 +59,38 @@ describe('data-import', () => {
     const actionProfile = {
       name: `autotestActionProf${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
     };
     const jobProfile = {
       profileName: `autotestJobProf${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
     before('create test data', () => {
       cy.createTempUser([
-        permissions.moduleDataImportEnabled.gui,
-        permissions.dataImportDeleteLogs.gui,
-        permissions.inventoryAll.gui,
-        permissions.settingsDataImportEnabled.gui,
-        permissions.viewEditDeleteInvoiceInvoiceLine.gui,
-        permissions.viewEditCreateInvoiceInvoiceLine.gui,
-        permissions.assignAcqUnitsToNewInvoice.gui,
-        permissions.invoiceSettingsAll.gui,
-      ])
-        .then(userProperties => {
-          userId = userProperties.userId;
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.dataImportPath,
-            waiter: DataImport.waitLoading
-          });
-
-          InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value)
-            .then(instances => {
-              instances.forEach(({ id }) => {
-                InventoryInstance.deleteInstanceViaApi(id);
-              });
-            });
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.dataImportDeleteLogs.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.viewEditDeleteInvoiceInvoiceLine.gui,
+        Permissions.viewEditCreateInvoiceInvoiceLine.gui,
+        Permissions.assignAcqUnitsToNewInvoice.gui,
+        Permissions.invoiceSettingsAll.gui,
+      ]).then((userProperties) => {
+        userId = userProperties.userId;
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
         });
+
+        InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value).then(
+          (instances) => {
+            instances.forEach(({ id }) => {
+              InventoryInstance.deleteInstanceViaApi(id);
+            });
+          },
+        );
+      });
     });
 
     after('delete test data', () => {
@@ -98,26 +99,47 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
     });
 
-    it('C347828 MODDICORE-231 "Match on Instance identifier match meets both the Identifier type and Data requirements" Scenario 1 (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+    it(
+      'C347828 MODDICORE-231 "Match on Instance identifier match meets both the Identifier type and Data requirements" Scenario 1 (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        DataImport.uploadFile('marcFileForMatchOnIdentifierForCreate.mrc', fileNameForCreateInstance);
+        DataImport.uploadFile(
+          'marcFileForMatchOnIdentifierForCreate.mrc',
+          fileNameForCreateInstance,
+        );
         JobProfiles.searchJobProfileForImport(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForCreateInstance);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForCreateInstance);
         Logs.clickOnHotLink(0, 3, 'Created');
-        InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[0].type, resourceIdentifiers[0].value, 6);
-        InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[1].type, resourceIdentifiers[1].value, 4);
+        InventoryInstance.verifyResourceIdentifier(
+          resourceIdentifiers[0].type,
+          resourceIdentifiers[0].value,
+          6,
+        );
+        InventoryInstance.verifyResourceIdentifier(
+          resourceIdentifiers[1].type,
+          resourceIdentifiers[1].value,
+          4,
+        );
         cy.go('back');
         Logs.clickOnHotLink(1, 3, 'Created');
-        InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[2].type, resourceIdentifiers[2].value, 0);
-        InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[3].type, resourceIdentifiers[3].value, 3);
+        InventoryInstance.verifyResourceIdentifier(
+          resourceIdentifiers[2].type,
+          resourceIdentifiers[2].value,
+          0,
+        );
+        InventoryInstance.verifyResourceIdentifier(
+          resourceIdentifiers[3].type,
+          resourceIdentifiers[3].value,
+          3,
+        );
 
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.createMatchProfile(matchProfile);
@@ -129,8 +151,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.addSuppressFromDiscovery(mappingProfile.suppressFromDiscavery);
         NewFieldMappingProfile.fillCatalogedDate(mappingProfile.catalogedDate);
         NewFieldMappingProfile.fillInstanceStatusTerm(mappingProfile.instanceStatus);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         cy.visit(SettingsMenu.actionProfilePath);
@@ -138,13 +160,20 @@ describe('data-import', () => {
         ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
         cy.visit(SettingsMenu.jobProfilePath);
-        JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfile.name, matchProfile.profileName);
+        JobProfiles.createJobProfileWithLinkingProfiles(
+          jobProfile,
+          actionProfile.name,
+          matchProfile.profileName,
+        );
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        DataImport.uploadFile('marcFileForMatchOnIdentifierForUpdate_1.mrc', fileNameForUpdateInstance);
+        DataImport.uploadFile(
+          'marcFileForMatchOnIdentifierForUpdate_1.mrc',
+          fileNameForUpdateInstance,
+        );
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForUpdateInstance);
@@ -157,6 +186,7 @@ describe('data-import', () => {
         InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
         InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);
         InstanceRecordView.verifyGeneralNoteContent(instanceGeneralNote);
-      });
+      },
+    );
   });
 });

@@ -41,7 +41,6 @@ const bulkPageSelections = {
   patronGroup: Select({ content: including('Select patron group') }),
 };
 
-
 export default {
   openStartBulkEditForm() {
     cy.do(startBulkEditLocalButton.click());
@@ -51,7 +50,9 @@ export default {
     cy.wait(1000);
   },
   verifyBulkEditForm(rowIndex = 0) {
-    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'));
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'),
+    );
     cy.expect([
       Button({ icon: 'plus-sign' }).exists(),
       Button({ icon: 'trash', disabled: true }).exists(),
@@ -64,7 +65,7 @@ export default {
       areYouSureForm.find(keepEditingBtn).exists(),
       areYouSureForm.find(downloadPreviewBtn).exists(),
       areYouSureForm.find(Button('Commit changes')).exists(),
-      areYouSureForm.find(MultiColumnListCell(cellContent)).exists()
+      areYouSureForm.find(MultiColumnListCell(cellContent)).exists(),
     ]);
   },
 
@@ -80,7 +81,11 @@ export default {
   },
 
   clickX() {
-    cy.do(Modal().find(Button({ icon: 'times' })).click());
+    cy.do(
+      Modal()
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
     cy.wait(1000);
   },
 
@@ -117,31 +122,53 @@ export default {
   },
 
   replaceWithIsDisabled() {
-    cy.xpath('(//div[contains(@class, "select--")]//select[contains(@class, "selectControl--")])[3]').should('be.disabled');
+    cy.xpath(
+      '(//div[contains(@class, "select--")]//select[contains(@class, "selectControl--")])[3]',
+    ).should('be.disabled');
   },
 
   replaceEmail(oldEmailDomain, newEmailDomain, rowIndex = 0) {
-    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'));
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'),
+    );
     getEmailField().first().type(oldEmailDomain);
     getEmailField().eq(2).type(newEmailDomain);
   },
 
   replaceTemporaryLocation(location = 'Annex', type = 'item', rowIndex = 0) {
-    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(`Temporary ${type} location`));
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.valueType)
+        .choose(`Temporary ${type} location`),
+    );
     if (type === 'item') {
-      cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Replace with'));
+      cy.do(
+        RepeatableFieldItem({ index: rowIndex })
+          .find(bulkPageSelections.action)
+          .choose('Replace with'),
+      );
     }
     cy.do([
-      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Replace with'),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.action)
+        .choose('Replace with'),
       Button('Select control\nSelect location').click(),
       SelectionOption(including(location)).click(),
     ]);
   },
 
   replacePermanentLocation(location, type = 'item', rowIndex = 0) {
-    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(`Permanent ${type} location`));
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.valueType)
+        .choose(`Permanent ${type} location`),
+    );
     if (type === 'item') {
-      cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Replace with'));
+      cy.do(
+        RepeatableFieldItem({ index: rowIndex })
+          .find(bulkPageSelections.action)
+          .choose('Replace with'),
+      );
     }
     cy.do([
       Button('Select control\nSelect location').click(),
@@ -150,26 +177,52 @@ export default {
   },
 
   clearPermanentLocation(type = 'item', rowIndex = 0) {
-    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(`Permanent ${type} location`));
-    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Clear field'));
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.valueType)
+        .choose(`Permanent ${type} location`),
+    );
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.action)
+        .choose('Clear field'),
+    );
   },
 
   clearTemporaryLocation(type = 'item', rowIndex = 0) {
-    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(`Temporary ${type} location`));
-    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Clear field'));
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.valueType)
+        .choose(`Temporary ${type} location`),
+    );
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.action)
+        .choose('Clear field'),
+    );
   },
 
   replaceItemStatus(status, rowIndex = 0) {
     cy.do([
-      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Item status'),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.valueType)
+        .choose('Item status'),
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.itemStatus).choose(status),
     ]);
   },
 
   typeInTemporaryLocationFilter(location = 'Annex', type = 'item', rowIndex = 0) {
-    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(`Temporary ${type} location`));
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.valueType)
+        .choose(`Temporary ${type} location`),
+    );
     if (type === 'item') {
-      cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Replace with'));
+      cy.do(
+        RepeatableFieldItem({ index: rowIndex })
+          .find(bulkPageSelections.action)
+          .choose('Replace with'),
+      );
     }
     cy.do(Button('Select control\nSelect location').click());
     cy.get('[class^=selectionFilter-]').type(location);
@@ -182,7 +235,9 @@ export default {
 
   fillPatronGroup(group = 'staff (Staff Member)', rowIndex = 0) {
     cy.do([
-      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Patron group'),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.valueType)
+        .choose('Patron group'),
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.patronGroup).choose(group),
     ]);
   },
@@ -191,7 +246,9 @@ export default {
     // js date object
     const formattedDate = DateTools.getFormattedDate({ date }, 'MM/DD/YYYY');
     cy.do([
-      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Expiration date'),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.valueType)
+        .choose('Expiration date'),
       calendarButton.click(),
       TextField().fillIn(formattedDate),
     ]);
@@ -204,19 +261,31 @@ export default {
     // there is no aria-expanded attr when collapsed
     cy.expect([
       calendarButton.has({ ariaExpanded: null }),
-      RepeatableFieldItem({ index: rowIndex }).find(TextField({ value: formattedDate })).exists()
+      RepeatableFieldItem({ index: rowIndex })
+        .find(TextField({ value: formattedDate }))
+        .exists(),
     ]);
   },
 
   clearPickedDate(rowIndex = 0) {
-    cy.do(RepeatableFieldItem({ index: rowIndex }).find(Button({ ariaLabel: 'Clear field value' })).click());
-    cy.expect(RepeatableFieldItem({ index: rowIndex }).find(TextField({ value: '' })).exists());
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Button({ ariaLabel: 'Clear field value' }))
+        .click(),
+    );
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(TextField({ value: '' }))
+        .exists(),
+    );
   },
 
   verifyCalendarItem(rowIndex = 0) {
     cy.do([
-      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Expiration date'),
-      calendarButton.click()
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.valueType)
+        .choose('Expiration date'),
+      calendarButton.click(),
     ]);
     // TODO: bulk edit calendar is not common datepicker like our interactor
     cy.get('[id^="datepicker-calendar-container"]').should('be.visible');
@@ -224,62 +293,83 @@ export default {
 
   fillPermanentLoanType(type = 'Selected', rowIndex = 0) {
     cy.do([
-      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Permanent loan type'),
-      RepeatableFieldItem({ index: rowIndex }).find(Button({ id: 'loanType' })).click(),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.valueType)
+        .choose('Permanent loan type'),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Button({ id: 'loanType' }))
+        .click(),
       SelectionOption(including(type)).click(),
     ]);
   },
 
   fillTemporaryLoanType(type = 'Selected', rowIndex = 0) {
     cy.do([
-      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Temporary loan type'),
-      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Replace with'),
-      RepeatableFieldItem({ index: rowIndex }).find(Button({ id: 'loanType' })).click(),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.valueType)
+        .choose('Temporary loan type'),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.action)
+        .choose('Replace with'),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Button({ id: 'loanType' }))
+        .click(),
       SelectionOption(including(type)).click(),
     ]);
   },
 
   clearTemporaryLoanType(rowIndex = 0) {
     cy.do([
-      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Temporary loan type'),
-      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Clear field'),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.valueType)
+        .choose('Temporary loan type'),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.action)
+        .choose('Clear field'),
     ]);
   },
 
-  editItemsSuppressFromDiscovery(value, rowIndex = 0) {
+  editSuppressFromDiscovery(value, rowIndex = 0, holdings = false) {
     cy.do([
-      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Suppress from discovery'),
-      RepeatableFieldItem({ index: rowIndex }).find(Select({ content: including('Set') })).choose(`Set ${value}`),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.valueType)
+        .choose('Suppress from discovery'),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ content: including('Set') }))
+        .choose(`Set ${value}`),
     ]);
-  },
-
-  editHoldingsSuppressFromDiscovery(value, rowIndex = 0) {
-    cy.do([
-      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Suppress from discovery'),
-      RepeatableFieldItem({ index: rowIndex }).find(Select({ content: including('Set') })).choose(`Set ${value}`),
-    ]);
-    cy.expect(Checkbox('Apply to items records').has({ checked: value }));
+    if (holdings) cy.expect(Checkbox('Apply to items records').has({ checked: value }));
   },
 
   verifyItemAdminstrativeNoteActions(rowIndex = 0) {
-    const options = [
-      'Add note',
-      'Remove all',
-      'Find',
-      'Change note type'
-    ];
+    const options = ['Add note', 'Remove all', 'Find', 'Change note type'];
     cy.do([
-      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Administrative note'),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.valueType)
+        .choose('Administrative note'),
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).click(),
     ]);
     this.verifyPossibleActions(options);
+  },
+
+  noteReplaceWith(noteType, oldNote, newNote, rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(noteType),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Find'),
+      RepeatableFieldItem({ index: rowIndex }).find(TextArea()).fillIn(oldNote),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ value: '' }))
+        .choose('Replace with'),
+    ]);
+    // TODO: redesign with interactors
+    cy.xpath(`//*[@data-testid="row-${rowIndex}"]/div[5]//textarea`).type(newNote);
   },
 
   addItemNote(type, value, rowIndex = 0) {
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Add note'),
-      RepeatableFieldItem({ index: rowIndex }).find(TextArea()).fillIn(value)
+      RepeatableFieldItem({ index: rowIndex }).find(TextArea()).fillIn(value),
     ]);
   },
 
@@ -291,10 +381,12 @@ export default {
       'Remove all',
       'Find',
       'Change note type',
-      'Duplicate to'
+      'Duplicate to',
     ];
     cy.do([
-      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Check in note'),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.valueType)
+        .choose('Check in note'),
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).click(),
     ]);
     this.verifyPossibleActions(options);
@@ -319,7 +411,18 @@ export default {
   markAsStaffOnly(type, rowIndex = 0) {
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
-      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Mark as staff only'),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.action)
+        .choose('Mark as staff only'),
+    ]);
+  },
+
+  removeMarkAsStaffOnly(type, rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.action)
+        .choose('Remove mark as staff only'),
     ]);
   },
 
@@ -364,37 +467,31 @@ export default {
     FileManager.findDownloadedFilesByMask(`*${fileMask}*`).then((downloadedFilenames) => {
       const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
 
-      FileManager.readFile(lastDownloadedFilename)
-        .then((actualContent) => {
-          const content = actualContent.split('\n');
-          content[2] = content[1].slice().replace(stringToBeReplaced, replaceString);
-          FileManager.createFile(`cypress/fixtures/${finalFileName}`, content.join('\n'));
-        });
+      FileManager.readFile(lastDownloadedFilename).then((actualContent) => {
+        const content = actualContent.split('\n');
+        content[2] = content[1].slice().replace(stringToBeReplaced, replaceString);
+        FileManager.createFile(`cypress/fixtures/${finalFileName}`, content.join('\n'));
+      });
     });
   },
 
   prepareValidBulkEditFile(fileMask, finalFileName, stringToBeReplaced, replaceString) {
     FileManager.findDownloadedFilesByMask(`*${fileMask}*`).then((downloadedFilenames) => {
       const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
-      FileManager.readFile(lastDownloadedFilename)
-        .then((actualContent) => {
-          const content = actualContent.split('\n');
-          content[1] = content[1].slice().replace(stringToBeReplaced, replaceString);
-          FileManager.createFile(`cypress/fixtures/${finalFileName}`, content.join('\n'));
-        });
+      FileManager.readFile(lastDownloadedFilename).then((actualContent) => {
+        const content = actualContent.split('\n');
+        content[1] = content[1].slice().replace(stringToBeReplaced, replaceString);
+        FileManager.createFile(`cypress/fixtures/${finalFileName}`, content.join('\n'));
+      });
     });
   },
 
   commitChanges() {
-    cy.do([
-      Modal().find(Button('Commit changes')).click()
-    ]);
+    cy.do([Modal().find(Button('Commit changes')).click()]);
   },
 
   clickNext() {
-    cy.do([
-      Modal().find(Button('Next')).click(),
-    ]);
+    cy.do([Modal().find(Button('Next')).click()]);
   },
 
   verifyNoNewBulkEditButton() {
@@ -424,8 +521,6 @@ export default {
       DropdownMenu().find(Checkbox('Preferred contact type id')).has({ disabled: true }),
       DropdownMenu().find(Checkbox('Date enrolled')).has({ disabled: true }),
       DropdownMenu().find(Checkbox('Expiration date')).has({ disabled: true }),
-      DropdownMenu().find(Checkbox('Record created')).has({ disabled: true }),
-      DropdownMenu().find(Checkbox('Record updated')).has({ disabled: true }),
       DropdownMenu().find(Checkbox('Tags')).has({ disabled: true }),
       DropdownMenu().find(Checkbox('Custom fields')).has({ disabled: true }),
     ]);
@@ -433,23 +528,55 @@ export default {
 
   verifyItemActionDropdownItems(isDisabled = false) {
     cy.expect([
-      dropdownMenu.find(Checkbox({ name: 'Barcode', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu
+        .find(Checkbox({ name: 'Barcode', checked: true, disabled: isDisabled }))
+        .exists(),
       dropdownMenu.find(Checkbox({ name: 'Status', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'Item effective location', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'Call number', checked: false, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'Item HRID', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'Material type', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'Permanent loan type', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'Temporary loan type', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'Item ID', checked: false, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'Former identifiers', checked: false, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'Accession number', checked: false, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'Item permanent location', checked: false, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'Item temporary location', checked: false, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'Copy number', checked: false, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'Enumeration', checked: false, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'Chronology', checked: false, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'Volume', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu
+        .find(Checkbox({ name: 'Item effective location', checked: true, disabled: isDisabled }))
+        .exists(),
+      dropdownMenu
+        .find(Checkbox({ name: 'Call number', checked: false, disabled: isDisabled }))
+        .exists(),
+      dropdownMenu
+        .find(Checkbox({ name: 'Item HRID', checked: true, disabled: isDisabled }))
+        .exists(),
+      dropdownMenu
+        .find(Checkbox({ name: 'Material type', checked: true, disabled: isDisabled }))
+        .exists(),
+      dropdownMenu
+        .find(Checkbox({ name: 'Permanent loan type', checked: true, disabled: isDisabled }))
+        .exists(),
+      dropdownMenu
+        .find(Checkbox({ name: 'Temporary loan type', checked: true, disabled: isDisabled }))
+        .exists(),
+      dropdownMenu
+        .find(Checkbox({ name: 'Item ID', checked: false, disabled: isDisabled }))
+        .exists(),
+      dropdownMenu
+        .find(Checkbox({ name: 'Former identifiers', checked: false, disabled: isDisabled }))
+        .exists(),
+      dropdownMenu
+        .find(Checkbox({ name: 'Accession number', checked: false, disabled: isDisabled }))
+        .exists(),
+      dropdownMenu
+        .find(Checkbox({ name: 'Item permanent location', checked: false, disabled: isDisabled }))
+        .exists(),
+      dropdownMenu
+        .find(Checkbox({ name: 'Item temporary location', checked: false, disabled: isDisabled }))
+        .exists(),
+      dropdownMenu
+        .find(Checkbox({ name: 'Copy number', checked: false, disabled: isDisabled }))
+        .exists(),
+      dropdownMenu
+        .find(Checkbox({ name: 'Enumeration', checked: false, disabled: isDisabled }))
+        .exists(),
+      dropdownMenu
+        .find(Checkbox({ name: 'Chronology', checked: false, disabled: isDisabled }))
+        .exists(),
+      dropdownMenu
+        .find(Checkbox({ name: 'Volume', checked: false, disabled: isDisabled }))
+        .exists(),
     ]);
   },
 
@@ -491,7 +618,7 @@ export default {
   },
 
   verifyPossibleActions(actions) {
-    actions.forEach(action => {
+    actions.forEach((action) => {
       cy.expect(HTML(action).exists());
     });
   },
@@ -513,7 +640,8 @@ export default {
       'Temporary loan type',
       'Permanent item location',
       'Temporary item location',
-      'Suppress from discovery'];
+      'Suppress from discovery',
+    ];
 
     cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).click());
     this.verifyPossibleActions(options);

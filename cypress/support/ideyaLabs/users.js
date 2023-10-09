@@ -75,11 +75,19 @@ export default {
   },
 
   verifyNoteExist: () => {
-    cy.expect(Section({ id: 'notesAccordion' }).find(MultiColumnListRow({ index: 0, content: title })).exists());
+    cy.expect(
+      Section({ id: 'notesAccordion' })
+        .find(MultiColumnListRow({ index: 0, content: title }))
+        .exists(),
+    );
   },
 
   verifyNoteAbsent: () => {
-    cy.expect(Section({ id: 'notesAccordion' }).find(MultiColumnListRow({ index: 0, content: title })).absent());
+    cy.expect(
+      Section({ id: 'notesAccordion' })
+        .find(MultiColumnListRow({ index: 0, content: title }))
+        .absent(),
+    );
   },
 
   openNote: () => {
@@ -141,29 +149,23 @@ export default {
     cy.do(Modal('Patron blocked from borrowing').find(Button('Close')).click());
   },
 
-  cancelButton:() => {
+  cancelButton: () => {
     cy.expect(Modal('Override patron block').find(Button('Cancel')).exists());
     cy.do(Modal('Override patron block').find(Button('Cancel')).click());
   },
 
-  saveAndCloseButton:() => {
-    cy.expect(TextArea({ type:'text' }).exists());
-    cy.do([
-      TextArea({ type:'text' }).fillIn('test'),
-      Button('Save & close').click()]);
+  saveAndCloseButton: () => {
+    cy.expect(TextArea({ type: 'text' }).exists());
+    cy.do([TextArea({ type: 'text' }).fillIn('test'), Button('Save & close').click()]);
   },
 
   patronOverride: () => {
     cy.expect(Modal('Patron blocked from borrowing').find(Button('Override')).exists());
-    cy.do([
-      Modal('Patron blocked from borrowing').find(Button('Override')).click(),
-    ]);
+    cy.do([Modal('Patron blocked from borrowing').find(Button('Override')).click()]);
   },
 
   dueDate: (rowIndex = 0) => {
-    cy.wrap(MultiColumnListCell({ row: rowIndex, columnIndex: 3 }).text()).as(
-      'date'
-    );
+    cy.wrap(MultiColumnListCell({ row: rowIndex, columnIndex: 3 }).text()).as('date');
     cy.get('@date').then((val) => {
       // here log is used to print the due date
       cy.log(val);
@@ -175,12 +177,7 @@ export default {
   clickOpenLoansCount() {
     this.getOpenLoans().then((val) => {
       cy.expect(Section({ id: 'patron-details' }).find(KeyValue('Open loans')).exists());
-      cy.do(
-        Section({ id: 'patron-details' })
-          .find(KeyValue('Open loans'))
-          .find(Link(val))
-          .click()
-      );
+      cy.do(Section({ id: 'patron-details' }).find(KeyValue('Open loans')).find(Link(val)).click());
     });
   },
 
@@ -193,7 +190,11 @@ export default {
     cy.expect(Modal({ id: 'bulk-renewal-modal-label' }).exists());
   },
 
-  verifyItemBarcode:(barcode) => {
-    cy.expect(MultiColumnList({ id: 'list-loanshistory' }).find(HTML(including(barcode))).exists());
+  verifyItemBarcode: (barcode) => {
+    cy.expect(
+      MultiColumnList({ id: 'list-loanshistory' })
+        .find(HTML(including(barcode)))
+        .exists(),
+    );
   },
 };

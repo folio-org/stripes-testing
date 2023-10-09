@@ -1,9 +1,9 @@
 import getRandomPostfix from '../../utils/stringTools';
 
 export default {
-  defaultUiInvoiceLine : {
+  defaultUiInvoiceLine: {
     description: `autotest description ${getRandomPostfix()}`,
     quantity: 5,
-    subTotal: 2
-  }
+    subTotal: 2,
+  },
 };

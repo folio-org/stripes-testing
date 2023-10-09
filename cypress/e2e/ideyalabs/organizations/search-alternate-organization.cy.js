@@ -34,11 +34,8 @@ describe.skip('ui-organizations: Organizations creation', () => {
     () => {
       cy.visit(topMenu.organizationsPath);
       organizations.createOrganizationViaUi(newOrganization);
-      organizations.searchByParameters(
-        searchByCode.dropdown,
-        searchByCode.code
-      );
+      organizations.searchByParameters(searchByCode.dropdown, searchByCode.code);
       organizations.checkOrganizationNameSearchResults(newOrganization.code);
-    }
+    },
   );
 });

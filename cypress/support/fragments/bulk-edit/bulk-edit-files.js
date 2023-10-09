@@ -1,54 +1,82 @@
 import FileManager from '../../utils/fileManager';
 
 export default {
-  verifyMatchedResultFileContent(fileName, expectedResult, resultType = 'barcode', validFile = true) {
+  verifyMatchedResultFileContent(
+    fileName,
+    expectedResult,
+    resultType = 'barcode',
+    validFile = true,
+  ) {
     let verifyFunc;
     switch (resultType) {
-      case 'barcode': verifyFunc = this.verifyMatchedResultByItemBarcode; break;
-      case 'holdingsItemBarcode': verifyFunc = this.verifyMatchedResultByHoldingsItemBarcode; break;
-      case 'firstName': verifyFunc = this.verifyMatchedResultByFirstName; break;
-      case 'userId': verifyFunc = this.verifyMatchedResultByUserId; break;
-      case 'userBarcode': verifyFunc = this.verifyMatchedResultByUserBarcode; break;
-      case 'patronGroup': verifyFunc = this.verifyMatchedResultPatronGroup; break;
-      case 'expirationDate': verifyFunc = this.verifyMatchedResultExpirationDate; break;
-      case 'firstElement': verifyFunc = this.verifyMatchedResultFirstElement; break;
-      case 'emailDomain': verifyFunc = this.verifyMatchedResultByEmailDomain; break;
-      case 'permanentLocation': verifyFunc = this.verifyMatchedResultByPermanentLocation; break;
-      case 'temporaryLocation': verifyFunc = this.verifyMatchedResultByTemporaryLocation; break;
-      case 'instanceHrid': verifyFunc = this.verifyMatchedResultByInstanceHrid; break;
-      case 'itemStatus': verifyFunc = this.verifyMatchedResultByItemStatus; break;
-      default: verifyFunc = this.verifyMatchedResultByHRID;
+      case 'barcode':
+        verifyFunc = this.verifyMatchedResultByItemBarcode;
+        break;
+      case 'holdingsItemBarcode':
+        verifyFunc = this.verifyMatchedResultByHoldingsItemBarcode;
+        break;
+      case 'firstName':
+        verifyFunc = this.verifyMatchedResultByFirstName;
+        break;
+      case 'userId':
+        verifyFunc = this.verifyMatchedResultByUserId;
+        break;
+      case 'userBarcode':
+        verifyFunc = this.verifyMatchedResultByUserBarcode;
+        break;
+      case 'patronGroup':
+        verifyFunc = this.verifyMatchedResultPatronGroup;
+        break;
+      case 'expirationDate':
+        verifyFunc = this.verifyMatchedResultExpirationDate;
+        break;
+      case 'firstElement':
+        verifyFunc = this.verifyMatchedResultFirstElement;
+        break;
+      case 'emailDomain':
+        verifyFunc = this.verifyMatchedResultByEmailDomain;
+        break;
+      case 'permanentLocation':
+        verifyFunc = this.verifyMatchedResultByPermanentLocation;
+        break;
+      case 'temporaryLocation':
+        verifyFunc = this.verifyMatchedResultByTemporaryLocation;
+        break;
+      case 'instanceHrid':
+        verifyFunc = this.verifyMatchedResultByInstanceHrid;
+        break;
+      case 'itemStatus':
+        verifyFunc = this.verifyMatchedResultByItemStatus;
+        break;
+      default:
+        verifyFunc = this.verifyMatchedResultByHRID;
     }
 
-    const getValuesFromCSVFile = validFile === true ? this.getValuesFromValidCSVFile
-      : this.getValuesFromInvalidCSVFile;
+    const getValuesFromCSVFile =
+      validFile === true ? this.getValuesFromValidCSVFile : this.getValuesFromInvalidCSVFile;
     // expectedResult is list of expected values
-    FileManager.findDownloadedFilesByMask(fileName)
-      .then((downloadedFilenames) => {
-        FileManager.readFile(downloadedFilenames[0])
-          .then((actualContent) => {
-            const values = getValuesFromCSVFile(actualContent);
-            // verify each row in csv file
-            values.forEach((elem, index) => {
-              verifyFunc(elem, expectedResult[index]);
-            });
-          });
+    FileManager.findDownloadedFilesByMask(fileName).then((downloadedFilenames) => {
+      FileManager.readFile(downloadedFilenames[0]).then((actualContent) => {
+        const values = getValuesFromCSVFile(actualContent);
+        // verify each row in csv file
+        values.forEach((elem, index) => {
+          verifyFunc(elem, expectedResult[index]);
+        });
       });
+    });
   },
 
   verifyCSVFileRows(fileName, expectedResult) {
     // expectedResult is list of expected values
-    FileManager.findDownloadedFilesByMask(fileName)
-      .then((downloadedFilenames) => {
-        FileManager.readFile(downloadedFilenames[0])
-          .then((actualContent) => {
-            const values = this.getValuesFromCSVFile(actualContent);
-            // verify each row in csv file
-            values.forEach((elem, index) => {
-              expect(elem).to.include(expectedResult[index]);
-            });
-          });
+    FileManager.findDownloadedFilesByMask(fileName).then((downloadedFilenames) => {
+      FileManager.readFile(downloadedFilenames[0]).then((actualContent) => {
+        const values = this.getValuesFromCSVFile(actualContent);
+        // verify each row in csv file
+        values.forEach((elem, index) => {
+          expect(elem).to.include(expectedResult[index]);
+        });
       });
+    });
   },
 
   getValuesFromCSVFile(content) {
@@ -118,7 +146,7 @@ export default {
     const actualExpirationDate = actualResult.split(',')[20];
     expect(actualExpirationDate).to.include(expectedResult);
   },
-  
+
   verifyMatchedResultByEmailDomain(actualResult, expectedResult) {
     const actualEmailDomain = actualResult.split(',')[13];
     expect(actualEmailDomain).to.include('@' + expectedResult);

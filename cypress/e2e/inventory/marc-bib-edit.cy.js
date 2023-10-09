@@ -22,20 +22,20 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
     tag504SecondUpdatedTag: '45e',
     instanceNotesAccordion: 'Instance notes',
     instanceTitle: 'C360098 Narysy z historyi belaruskaha mastatstva / Mikola Shchakatsikhin.',
-    instanceBibliographyNote: 'Includes bibliographical references and index'
+    instanceBibliographyNote: 'Includes bibliographical references and index',
   };
   const marcFile = {
     marc: 'marcBibFileC360098.mrc',
     fileName: `testMarcFileC360098.${getRandomPostfix()}.mrc`,
-    jobProfileToRun: 'Default - Create instance and SRS MARC Bib'
+    jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
   };
   const createdInstanceIDs = [];
 
   before(() => {
     cy.createTempUser([
       Permissions.inventoryAll.gui,
-      Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui
-    ]).then(createdUserProperties => {
+      Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+    ]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         DataImport.verifyUploadState();
@@ -45,11 +45,14 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         JobProfiles.waitFileIsImported(marcFile.fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFile.fileName);
-        Logs.getCreatedItemsID().then(link => {
+        Logs.getCreatedItemsID().then((link) => {
           createdInstanceIDs.push(link.split('/')[5]);
         });
       });
-      cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading }).then(() => {
+      cy.login(testData.userProperties.username, testData.userProperties.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      }).then(() => {
         InventoryInstances.waitContentLoading();
         InventoryInstance.searchByTitle(createdInstanceIDs[0]);
         InventoryInstances.selectInstance();
@@ -63,40 +66,47 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
     InventoryInstance.deleteInstanceViaApi(createdInstanceIDs[0]);
   });
 
-  it('C360098 MARC Bib | MARC tag validation checks when clicks on the "Save & keep editing" button (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
-    QuickMarcEditor.updateExistingTagValue(20, '');
-    QuickMarcEditor.checkButtonsEnabled();
-    QuickMarcEditor.clickSaveAndKeepEditingButton();
-    QuickMarcEditor.verifyAndDismissWrongTagLengthCallout();
-    QuickMarcEditor.verifyTagValue(20, '');
-    QuickMarcEditor.updateExistingTagValue(20, testData.tag504FirstUpdatedTag);
-    QuickMarcEditor.clickSaveAndKeepEditingButton();
-    QuickMarcEditor.verifyAndDismissWrongTagLengthCallout();
-    QuickMarcEditor.verifyTagValue(20, testData.tag504FirstUpdatedTag);
-    QuickMarcEditor.updateExistingTagValue(20, testData.tag504SecondUpdatedTag);
-    QuickMarcEditor.clickSaveAndKeepEditingButton();
-    QuickMarcEditor.verifyInvalidTagCallout();
-    QuickMarcEditor.verifyTagValue(20, testData.tag504SecondUpdatedTag);
-    QuickMarcEditor.updateExistingTagValue(20, testData.tag245);
-    QuickMarcEditor.clickSaveAndKeepEditingButton();
-    QuickMarcEditor.verifyMultiple245TagCallout();
-    QuickMarcEditor.verifyTagValue(20, testData.tag245);
-    QuickMarcEditor.updateExistingTagValue(20, testData.tag504);
-    QuickMarcEditor.updateExistingTagValue(14, testData.tag555);
-    QuickMarcEditor.clickSaveAndKeepEditingButton();
-    QuickMarcEditor.verifyNo245TagCallout();
-    QuickMarcEditor.verifyTagValue(14, testData.tag555);
-    QuickMarcEditor.updateExistingTagValue(14, testData.tag245);
-    QuickMarcEditor.updateExistingTagValue(16, '');
-    QuickMarcEditor.updateTagNameToLockedTag(16, testData.tag001);
-    QuickMarcEditor.checkFourthBoxDisabled(16);
-    QuickMarcEditor.clickSaveAndKeepEditingButton();
-    QuickMarcEditor.verifyMultiple001TagCallout();
-    QuickMarcEditor.verifyTagValue(16, testData.tag001);
-    QuickMarcEditor.checkFourthBoxDisabled(16);
-    QuickMarcEditor.closeWithoutSavingAfterChange();
-    InventoryInstance.waitLoading();
-    InventoryInstance.checkInstanceTitle(testData.instanceTitle);
-    InventoryInstance.checkDetailViewOfInstance(testData.instanceNotesAccordion, testData.instanceBibliographyNote);
-  });
+  it(
+    'C360098 MARC Bib | MARC tag validation checks when clicks on the "Save & keep editing" button (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      QuickMarcEditor.updateExistingTagValue(20, '');
+      QuickMarcEditor.checkButtonsEnabled();
+      QuickMarcEditor.clickSaveAndKeepEditingButton();
+      QuickMarcEditor.verifyAndDismissWrongTagLengthCallout();
+      QuickMarcEditor.verifyTagValue(20, '');
+      QuickMarcEditor.updateExistingTagValue(20, testData.tag504FirstUpdatedTag);
+      QuickMarcEditor.clickSaveAndKeepEditingButton();
+      QuickMarcEditor.verifyAndDismissWrongTagLengthCallout();
+      QuickMarcEditor.verifyTagValue(20, testData.tag504FirstUpdatedTag);
+      QuickMarcEditor.updateExistingTagValue(20, testData.tag504SecondUpdatedTag);
+      QuickMarcEditor.clickSaveAndKeepEditingButton();
+      QuickMarcEditor.verifyInvalidTagCallout();
+      QuickMarcEditor.verifyTagValue(20, testData.tag504SecondUpdatedTag);
+      QuickMarcEditor.updateExistingTagValue(20, testData.tag245);
+      QuickMarcEditor.clickSaveAndKeepEditingButton();
+      QuickMarcEditor.verifyMultiple245TagCallout();
+      QuickMarcEditor.verifyTagValue(20, testData.tag245);
+      QuickMarcEditor.updateExistingTagValue(20, testData.tag504);
+      QuickMarcEditor.updateExistingTagValue(14, testData.tag555);
+      QuickMarcEditor.clickSaveAndKeepEditingButton();
+      QuickMarcEditor.verifyNo245TagCallout();
+      QuickMarcEditor.verifyTagValue(14, testData.tag555);
+      QuickMarcEditor.updateExistingTagValue(14, testData.tag245);
+      QuickMarcEditor.updateExistingTagValue(16, '');
+      QuickMarcEditor.updateTagNameToLockedTag(16, testData.tag001);
+      QuickMarcEditor.checkFourthBoxDisabled(16);
+      QuickMarcEditor.clickSaveAndKeepEditingButton();
+      QuickMarcEditor.verifyMultiple001TagCallout();
+      QuickMarcEditor.verifyTagValue(16, testData.tag001);
+      QuickMarcEditor.checkFourthBoxDisabled(16);
+      QuickMarcEditor.closeWithoutSavingAfterChange();
+      InventoryInstance.waitLoading();
+      InventoryInstance.checkInstanceTitle(testData.instanceTitle);
+      InventoryInstance.checkDetailViewOfInstance(
+        testData.instanceNotesAccordion,
+        testData.instanceBibliographyNote,
+      );
+    },
+  );
 });

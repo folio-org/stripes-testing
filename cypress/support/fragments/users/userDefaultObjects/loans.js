@@ -17,24 +17,22 @@ const DeclareLostModal = Modal(DECLARE_LOST_MODAL_TITLE);
 
 export default {
   getApi(userId) {
-    return cy.okapiRequest({
-      method: 'GET',
-      path: 'circulation/loans',
-      searchParams: {
-        query: `userId==${userId}`
-      },
-    }).then(({ body }) => body.loans);
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'circulation/loans',
+        searchParams: {
+          query: `userId==${userId}`,
+        },
+      })
+      .then(({ body }) => body.loans);
   },
   checkStatus(row, status) {
-    cy.then(() => MultiColumnListHeader({ id: 'list-column-itemstatus' }).index()).then((columnIndex) => {
-      cy.expect(
-        LoanHistoryList
-          .find(
-            MultiColumnListCell(status, { row, columnIndex })
-          )
-          .exists()
-      );
-    });
+    cy.then(() => MultiColumnListHeader({ id: 'list-column-itemstatus' }).index()).then(
+      (columnIndex) => {
+        cy.expect(LoanHistoryList.find(MultiColumnListCell(status, { row, columnIndex })).exists());
+      },
+    );
   },
   checkStatusCheckedOut(row) {
     this.checkStatus(row, ITEM_STATUS_NAMES.CHECKED_OUT);
@@ -45,21 +43,14 @@ export default {
   startDeclareLost(row) {
     cy.then(() => MultiColumnListHeader({ id: 'list-column-10' }).index()).then((columnIndex) => {
       cy.do(
-        LoanHistoryList
-          .find(
-            MultiColumnListCell({ row, columnIndex })
-          )
+        LoanHistoryList.find(MultiColumnListCell({ row, columnIndex }))
           .find(Dropdown('Action'))
-          .choose(DECLARE_LOST_ACTION_NAME)
+          .choose(DECLARE_LOST_ACTION_NAME),
       );
     });
   },
   cancelDeclareLost() {
-    cy.do(
-      DeclareLostModal
-        .find(Button('Cancel'))
-        .click()
-    );
+    cy.do(DeclareLostModal.find(Button('Cancel')).click());
 
     this.checkDeclareLostModalAbsent();
   },
@@ -68,17 +59,13 @@ export default {
   },
   finishDeclareLost(additionalInformation) {
     cy.do([
-      DeclareLostModal
-        .find(TextArea('Additional information*'))
-        .fillIn(additionalInformation),
-      DeclareLostModal
-        .find(Button('Confirm'))
-        .click(),
+      DeclareLostModal.find(TextArea('Additional information*')).fillIn(additionalInformation),
+      DeclareLostModal.find(Button('Confirm')).click(),
     ]);
 
     this.checkDeclareLostModalAbsent();
   },
   getLoanDetails(title) {
     cy.do(LoanHistoryList.find(MultiColumnListCell(title)).click());
-  }
+  },
 };

@@ -1,8 +1,7 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE,
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
+import {
+  FOLIO_RECORD_TYPE,
   ORDER_STATUSES,
   MATERIAL_TYPE_NAMES,
   ORDER_FORMAT_NAMES_IN_PROFILE,
@@ -12,7 +11,8 @@ import { FOLIO_RECORD_TYPE,
   LOAN_TYPE_NAMES,
   ITEM_STATUS_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
-  VENDOR_NAMES } from '../../../support/constants';
+  VENDOR_NAMES,
+} from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -30,6 +30,7 @@ import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRec
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Orders from '../../../support/fragments/orders/orders';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -41,7 +42,8 @@ describe('data-import', () => {
     const marcFileName = `C380474 autotestFileName ${getRandomPostfix()}`;
     const collectionOfMappingAndActionProfiles = [
       {
-        mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ORDER,
+        mappingProfile: {
+          typeValue: FOLIO_RECORD_TYPE.ORDER,
           name: `C380474 Test Physical resource open order with instance, holdings, item ${getRandomPostfix()}`,
           orderStatus: ORDER_STATUSES.OPEN,
           approved: true,
@@ -54,91 +56,129 @@ describe('data-import', () => {
           quantityPhysical: '"1"',
           currency: 'USD',
           locationName: `"${LOCATION_NAMES.ANNEX}"`,
-          locationQuantityPhysical: '"1"' },
-        actionProfile: { typeValue: FOLIO_RECORD_TYPE.ORDER,
-          name: `C380474 Test Physical resource open order with instance, holdings, item ${getRandomPostfix()}` }
+          locationQuantityPhysical: '"1"',
+        },
+        actionProfile: {
+          typeValue: FOLIO_RECORD_TYPE.ORDER,
+          name: `C380474 Test Physical resource open order with instance, holdings, item ${getRandomPostfix()}`,
+        },
       },
       {
-        mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        mappingProfile: {
+          typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C380474 Create simple holdings for open order ${getRandomPostfix()}`,
-          permanentLocation: `"${LOCATION_NAMES.ANNEX}"` },
-        actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-          name: `C380474 Create simple holdings for open order ${getRandomPostfix()}` }
+          permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
+        },
+        actionProfile: {
+          typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+          name: `C380474 Create simple holdings for open order ${getRandomPostfix()}`,
+        },
       },
       {
-        mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
+        mappingProfile: {
+          typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C380474 Create simple item for open order ${getRandomPostfix()}`,
           materialType: `"${MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE}"`,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: ITEM_STATUS_NAMES.AVAILABLE },
-        actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-          name: `C380474 Create simple item for open order${getRandomPostfix()}` }
+          status: ITEM_STATUS_NAMES.AVAILABLE,
+        },
+        actionProfile: {
+          typeValue: FOLIO_RECORD_TYPE.ITEM,
+          name: `C380474 Create simple item for open order${getRandomPostfix()}`,
+        },
       },
     ];
     const jobProfile = {
       profileName: `C380474 Test Physical resource open order with instance, holdings, item ${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
     before('login', () => {
       cy.createTempUser([
-        permissions.settingsDataImportEnabled.gui,
-        permissions.moduleDataImportEnabled.gui,
-        permissions.uiOrganizationsView.gui,
-        permissions.inventoryAll.gui,
-        permissions.uiOrdersView.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.uiOrganizationsView.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiOrdersView.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          cy.login(userProperties.username, userProperties.password,
-            { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+        cy.login(userProperties.username, userProperties.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
         });
+      });
     });
 
     after('delete test data', () => {
       Users.deleteViaApi(user.userId);
       JobProfiles.deleteJobProfile(jobProfile.profileName);
-      collectionOfMappingAndActionProfiles.forEach(profile => {
+      collectionOfMappingAndActionProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
-      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
-        .then(orderId => {
-          Orders.deleteOrderViaApi(orderId[0].id);
-        });
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-        .then((instance) => {
+      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
+        Orders.deleteOrderViaApi(orderId[0].id);
+      });
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+        (instance) => {
           cy.deleteItemViaApi(instance.items[0].id);
           cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
           InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
+        },
+      );
     });
 
-    it('C380474 Import to create open orders: Physical resource with Instances, Holdings, Items (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      // create mapping profiles
-        FieldMappingProfiles.createOrderMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
-        FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
+    it(
+      'C380474 Import to create open orders: Physical resource with Instances, Holdings, Items (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      () => {
+        // create mapping profiles
+        FieldMappingProfiles.createOrderMappingProfile(
+          collectionOfMappingAndActionProfiles[0].mappingProfile,
+        );
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfMappingAndActionProfiles[0].mappingProfile.name,
+        );
 
         FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
-        NewFieldMappingProfile.fillPermanentLocation(collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocation);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile.name);
-        FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[1].mappingProfile.name);
+        NewFieldMappingProfile.fillSummaryInMappingProfile(
+          collectionOfMappingAndActionProfiles[1].mappingProfile,
+        );
+        NewFieldMappingProfile.fillPermanentLocation(
+          collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocation,
+        );
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(
+          collectionOfMappingAndActionProfiles[1].mappingProfile.name,
+        );
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfMappingAndActionProfiles[1].mappingProfile.name,
+        );
 
         FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile);
-        NewFieldMappingProfile.fillMaterialType(collectionOfMappingAndActionProfiles[2].mappingProfile.materialType);
-        NewFieldMappingProfile.fillPermanentLoanType(collectionOfMappingAndActionProfiles[2].mappingProfile.permanentLoanType);
-        NewFieldMappingProfile.fillStatus(collectionOfMappingAndActionProfiles[2].mappingProfile.status);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile.name);
-        FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[2].mappingProfile.name);
+        NewFieldMappingProfile.fillSummaryInMappingProfile(
+          collectionOfMappingAndActionProfiles[2].mappingProfile,
+        );
+        NewFieldMappingProfile.fillMaterialType(
+          collectionOfMappingAndActionProfiles[2].mappingProfile.materialType,
+        );
+        NewFieldMappingProfile.fillPermanentLoanType(
+          collectionOfMappingAndActionProfiles[2].mappingProfile.permanentLoanType,
+        );
+        NewFieldMappingProfile.fillStatus(
+          collectionOfMappingAndActionProfiles[2].mappingProfile.status,
+        );
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(
+          collectionOfMappingAndActionProfiles[2].mappingProfile.name,
+        );
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfMappingAndActionProfiles[2].mappingProfile.name,
+        );
 
         // create action profiles
-        collectionOfMappingAndActionProfiles.forEach(profile => {
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
           cy.visit(SettingsMenu.actionProfilePath);
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
@@ -163,24 +203,27 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(marcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
-        [FileDetails.columnNameInResultList.srsMarc,
+        [
+          FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
           FileDetails.columnNameInResultList.holdings,
           FileDetails.columnNameInResultList.item,
-          FileDetails.columnNameInResultList.order
-        ].forEach(columnName => {
+          FileDetails.columnNameInResultList.order,
+        ].forEach((columnName) => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
         });
         FileDetails.openOrder('Created');
         OrderLines.waitLoading();
-        OrderLines.getAssignedPOLNumber().then(initialNumber => {
+        OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           const polNumber = initialNumber;
           orderNumber = polNumber.replace('-1', '');
 
           OrderLines.checkCreatedInventoryInPhysicalRecourceDetails('Instance, Holding, Item');
           OrderLines.openLinkedInstance();
           InstanceRecordView.verifyIsInstanceOpened(instanceTitle);
-          InstanceRecordView.getAssignedHRID().then(initialInstanceHrId => { instanceHrid = initialInstanceHrId; });
+          InstanceRecordView.getAssignedHRID().then((initialInstanceHrId) => {
+            instanceHrid = initialInstanceHrId;
+          });
           InstanceRecordView.verifyHotlinkToPOL(polNumber);
           InstanceRecordView.verifyIsHoldingsCreated([`${LOCATION_NAMES.ANNEX_UI} >`]);
           InstanceRecordView.openHoldingView();
@@ -191,6 +234,7 @@ describe('data-import', () => {
           ItemRecordView.waitLoading();
           ItemRecordView.checkHotlinksToCreatedPOL(polNumber);
         });
-      });
+      },
+    );
   });
 });

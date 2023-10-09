@@ -11,13 +11,10 @@ let userWithQueryView;
 describe('bulk-edit', () => {
   describe('permissions', () => {
     before('create test data', () => {
-      cy.createTempUser([
-        permissions.inventoryAll.gui,
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password);
-        });
+      cy.createTempUser([permissions.inventoryAll.gui]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password);
+      });
 
       cy.createTempUser([
         permissions.bulkEditEdit.gui,
@@ -26,10 +23,9 @@ describe('bulk-edit', () => {
         permissions.bulkEditCsvView.gui,
         permissions.bulkEditUpdateRecords.gui,
         permissions.bulkEditQueryView.gui,
-      ])
-        .then(userProperties => {
-          userWithQueryView = userProperties;
-        });
+      ]).then((userProperties) => {
+        userWithQueryView = userProperties;
+      });
     });
 
     after('delete test data', () => {
@@ -37,19 +33,27 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(userWithQueryView.userId);
     });
 
-    it('C347868 Verify that user without Bulk Edit: View permissions cannot access Bulk Edit app (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
-      cy.visit(TopMenu.bulkEditPath);
-      BulkEditSearchPane.verifyNoPermissionWarning();
-    });
+    it(
+      'C347868 Verify that user without Bulk Edit: View permissions cannot access Bulk Edit app (firebird)',
+      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      () => {
+        cy.visit(TopMenu.bulkEditPath);
+        BulkEditSearchPane.verifyNoPermissionWarning();
+      },
+    );
 
-    it('C376993 Verify Query tab permissions without Inventory and Users permissions (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
-      cy.login(userWithQueryView.username, userWithQueryView.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
+    it(
+      'C413372 Verify Query tab permissions without Inventory and Users permissions (firebird)',
+      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      () => {
+        cy.login(userWithQueryView.username, userWithQueryView.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
 
-      BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
-      BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
-      BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Logs');
-      BulkEditSearchPane.openQuerySearch();
-      BulkEditSearchPane.verifyRecordTypesEmpty();
-    });
+        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
+        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Query', 'Logs');
+      },
+    );
   });
 });

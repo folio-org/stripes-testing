@@ -37,7 +37,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
         notes: '',
         paymentMethod: 'Internal Transfer',
       },
-    ]
+    ],
   };
   const integrationName1 = `FirstIntegrationName${getRandomPostfix()}`;
   const integrationName2 = `SecondIntegrationName${getRandomPostfix()}`;
@@ -49,15 +49,13 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
   const libraryEDICodeFor2Integration = getRandomPostfix();
 
   before(() => {
-    cy.createTempUser([permissions.uiOrganizationsViewEditCreate.gui])
-      .then(userProperties => {
-        userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password);
-      });
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-      });
+    cy.createTempUser([permissions.uiOrganizationsViewEditCreate.gui]).then((userProperties) => {
+      userId = userProperties.userId;
+      cy.login(userProperties.username, userProperties.password);
+    });
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+    });
     cy.visit(TopMenu.organizationsPath);
   });
 
@@ -66,21 +64,44 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 
-  it('C350762: User can Create and Edit Integrations for an Organization-Vendor (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
-    // Found and edit created organization
-    Organizations.searchByParameters('Name', organization.name);
-    Organizations.checkSearchResults(organization);
-    Organizations.selectOrganization(organization.name);
-    // Add first integration and check this
-    Organizations.addIntegration();
-    Organizations.fillIntegrationInformationWithoutScheduling(integrationName1, integartionDescription1, vendorEDICodeFor1Integration, libraryEDICodeFor1Integration, organization.accounts[0].accountNo, 'Purchase');
-    InteractorsTools.checkCalloutMessage('Integration was saved');
-    Organizations.checkIntegrationsAdd(integrationName1, integartionDescription1);
-    // Add second inegration and check all
-    Organizations.addIntegration();
-    cy.wait(2000);
-    Organizations.fillIntegrationInformationWithoutScheduling(integrationName2, integartionDescription2, vendorEDICodeFor2Integration, libraryEDICodeFor2Integration, organization.accounts[1].accountNo, 'Purchase At Vendor System');
-    InteractorsTools.checkCalloutMessage('Integration was saved');
-    Organizations.checkTwoIntegationsAdd(integrationName1, integartionDescription1, integrationName2, integartionDescription2);
-  });
+  it(
+    'C350762: User can Create and Edit Integrations for an Organization-Vendor (thunderjet)',
+    { tags: [TestTypes.smoke, devTeams.thunderjet] },
+    () => {
+      // Found and edit created organization
+      Organizations.searchByParameters('Name', organization.name);
+      Organizations.checkSearchResults(organization);
+      Organizations.selectOrganization(organization.name);
+      // Add first integration and check this
+      Organizations.addIntegration();
+      Organizations.fillIntegrationInformationWithoutScheduling(
+        integrationName1,
+        integartionDescription1,
+        vendorEDICodeFor1Integration,
+        libraryEDICodeFor1Integration,
+        organization.accounts[0].accountNo,
+        'Purchase',
+      );
+      InteractorsTools.checkCalloutMessage('Integration was saved');
+      Organizations.checkIntegrationsAdd(integrationName1, integartionDescription1);
+      // Add second inegration and check all
+      Organizations.addIntegration();
+      cy.wait(2000);
+      Organizations.fillIntegrationInformationWithoutScheduling(
+        integrationName2,
+        integartionDescription2,
+        vendorEDICodeFor2Integration,
+        libraryEDICodeFor2Integration,
+        organization.accounts[1].accountNo,
+        'Purchase At Vendor System',
+      );
+      InteractorsTools.checkCalloutMessage('Integration was saved');
+      Organizations.checkTwoIntegationsAdd(
+        integrationName1,
+        integartionDescription1,
+        integrationName2,
+        integartionDescription2,
+      );
+    },
+  );
 });

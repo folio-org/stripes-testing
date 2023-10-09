@@ -17,7 +17,8 @@ export default {
     return `${this.getLoansPath(userId)}/view/${loanId}`;
   },
   getChargePath: (userId) => `${getUserPath(userId)}/charge`,
-  getUserPreviewPath:(userId) => `${topMenu.usersPath}/preview/${userId}`,
+  getUserPreviewPath: (userId) => `${topMenu.usersPath}/preview/${userId}`,
+  getUserPreviewPathWithQuery: (userId) => `${topMenu.usersPath}/preview/${userId}?query=${userId}`,
   getFeeFineDetailsPath: (userId, accountId) => `${getUserPath(userId)}/accounts/view/${accountId}`,
   getOpenFeeFinePath: (userId) => `${getUserPath(userId)}/accounts/open`,
 };

@@ -1,14 +1,21 @@
-import {
-  Button,
-  PaneHeader,
-  Pane,
-  Checkbox
-} from '../../../../interactors';
+import { Button, PaneHeader, Pane, Checkbox } from '../../../../interactors';
 
-const newRequestButton = Button({ id: 'clickable-newrequest' }).has({ visible: true, disabled: false });
-const exportToCSVButton = Button({ id: 'exportToCsvPaneHeaderBtn' }).has({ visible: true, disabled: true });
-const exportExpiredHoldsToCSVButton = Button({ id: 'exportExpiredHoldsToCsvPaneHeaderBtn' }).has({ visible: true, disabled: true });
-const printPickSlipsButton = Button({ id: 'printPickSlipsBtn' }).has({ visible: true, disabled: true });
+const newRequestButton = Button({ id: 'clickable-newrequest' }).has({
+  visible: true,
+  disabled: false,
+});
+const exportToCSVButton = Button({ id: 'exportToCsvPaneHeaderBtn' }).has({
+  visible: true,
+  disabled: true,
+});
+const exportExpiredHoldsToCSVButton = Button({ id: 'exportExpiredHoldsToCsvPaneHeaderBtn' }).has({
+  visible: true,
+  disabled: true,
+});
+const printPickSlipsButton = Button({ id: 'printPickSlipsBtn' }).has({
+  visible: true,
+  disabled: true,
+});
 const requestDateCheckbox = Checkbox({ name: 'requestDate' });
 const yearCheckbox = Checkbox({ name: 'year' });
 const itemBarcodeCheckbox = Checkbox({ name: 'itemBarcode' });
@@ -40,8 +47,26 @@ const actionsOptionsCheckboxes = {
 };
 
 export default {
-  waitLoading:() => cy.expect(PaneHeader('Requests').exists()),
-  verifyOptionsInActionsMenu: (optionsButtons = ['newRequest', 'exportResultsToCSV', 'exportExpiredHoldsToCSV', 'printPickSlips'], optionsCheckboxes = ['requestDate', 'year', 'itemBarcode', 'type', 'requestStatus', 'queuePosition', 'requester', 'requesterBarcode', 'proxy']) => {
+  waitLoading: () => cy.expect(PaneHeader('Requests').exists()),
+  verifyOptionsInActionsMenu: (
+    optionsButtons = [
+      'newRequest',
+      'exportResultsToCSV',
+      'exportExpiredHoldsToCSV',
+      'printPickSlips',
+    ],
+    optionsCheckboxes = [
+      'requestDate',
+      'year',
+      'itemBarcode',
+      'type',
+      'requestStatus',
+      'queuePosition',
+      'requester',
+      'requesterBarcode',
+      'proxy',
+    ],
+  ) => {
     cy.expect(actionsButtonInSearchResultsPane.exists());
     cy.do(actionsButtonInSearchResultsPane.click());
     optionsButtons.forEach((option) => {

@@ -15,19 +15,26 @@ import getRandomPostfix from '../../support/utils/stringTools';
 let user;
 const item = {
   instanceTitle: `Instance ${getRandomPostfix()}`,
-  barcode: `item-${getRandomPostfix()}`
+  barcode: `item-${getRandomPostfix()}`,
 };
 const testData = {
-  userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest receive notice check in', uuid()),
+  userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
+    'autotest receive notice check in',
+    uuid(),
+  ),
 };
 
 describe('circulation-log', () => {
   before('create test data', () => {
-    cy.createTempUser([]).then(userProperties => {
+    cy.createTempUser([]).then((userProperties) => {
       user = userProperties;
 
       ServicePoints.createViaApi(testData.userServicePoint);
-      UserEdit.addServicePointViaApi(testData.userServicePoint.id, user.userId, testData.userServicePoint.id);
+      UserEdit.addServicePointViaApi(
+        testData.userServicePoint.id,
+        user.userId,
+        testData.userServicePoint.id,
+      );
 
       InventoryInstances.createInstanceViaApi(item.instanceTitle, item.barcode);
       Checkout.checkoutItemViaApi({
@@ -52,21 +59,25 @@ describe('circulation-log', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C16999 Filter circulation log by Closed loan(firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    const searchResultsData = {
-      userBarcode: user.barcode,
-      itemBarcode: item.barcode,
-      object: 'Loan',
-      circAction: 'Closed loan',
-      servicePoint: testData.userServicePoint.name,
-      source: 'ADMINISTRATOR, DIKU',
-    };
-    SearchPane.setFilterOptionFromAccordion('loan', 'Closed loan');
-    SearchPane.verifyResultCells();
-    SearchPane.checkResultSearch(searchResultsData);
+  it(
+    'C16999 Filter circulation log by Closed loan(firebird)',
+    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    () => {
+      const searchResultsData = {
+        userBarcode: user.barcode,
+        itemBarcode: item.barcode,
+        object: 'Loan',
+        circAction: 'Closed loan',
+        servicePoint: testData.userServicePoint.name,
+        source: 'ADMINISTRATOR, Diku_admin',
+      };
+      SearchPane.setFilterOptionFromAccordion('loan', 'Closed loan');
+      SearchPane.verifyResultCells();
+      SearchPane.checkResultSearch(searchResultsData);
 
-    SearchPane.searchByItemBarcode(item.barcode);
-    SearchPane.verifyResultCells();
-    SearchPane.checkResultSearch(searchResultsData);
-  });
+      SearchPane.searchByItemBarcode(item.barcode);
+      SearchPane.verifyResultCells();
+      SearchPane.checkResultSearch(searchResultsData);
+    },
+  );
 });

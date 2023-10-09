@@ -1,7 +1,7 @@
 export default {
-  deleteViaApi:(id) => cy.okapiRequest({
+  deleteViaApi: (id) => cy.okapiRequest({
     method: 'DELETE',
     path: `instance-statuses/${id}`,
-    isDefaultSearchParamsRequired : false
-  })
+    isDefaultSearchParamsRequired: false,
+  }),
 };

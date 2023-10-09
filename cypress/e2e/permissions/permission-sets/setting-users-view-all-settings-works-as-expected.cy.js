@@ -25,7 +25,7 @@ describe('Permission Sets', () => {
     name: getTestEntityValue('GroupPermissionSets'),
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestPermissionSets', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const departmentBody = {
     code: getRandomPostfix(),
@@ -33,7 +33,7 @@ describe('Permission Sets', () => {
     name: getTestEntityValue('PSDepartment'),
   };
   const ownerBody = {
-    ...UsersOwners.getDefaultNewOwner(uuid()),
+    ...UsersOwners.getDefaultNewOwner(),
     servicePointOwner: [
       {
         value: testData.userServicePoint.id,
@@ -69,15 +69,17 @@ describe('Permission Sets', () => {
         patronGroup.id = patronGroupResponse;
       });
       PermissionSets.createPermissionSetViaApi(permissionSetBody);
-      cy.createTempUser([permissions.uiUsersViewAllSettings.gui], patronGroup.name).then((userProperties) => {
-        userData = userProperties;
-        UserEdit.addServicePointViaApi(
-          testData.userServicePoint.id,
-          userData.userId,
-          testData.userServicePoint.id
-        );
-        cy.login(userData.username, userData.password);
-      });
+      cy.createTempUser([permissions.uiUsersViewAllSettings.gui], patronGroup.name).then(
+        (userProperties) => {
+          userData = userProperties;
+          UserEdit.addServicePointViaApi(
+            testData.userServicePoint.id,
+            userData.userId,
+            testData.userServicePoint.id,
+          );
+          cy.login(userData.username, userData.password);
+        },
+      );
     });
   });
 
@@ -105,10 +107,13 @@ describe('Permission Sets', () => {
       PermissionSets.checkPermissionSet({
         name: permissionSetBody.displayName,
         description: permissionSetBody.description,
-        permissions: [permissions.uiUsersViewPermissionSets.gui, permissions.uiUsersViewAllSettings.gui],
+        permissions: [
+          permissions.uiUsersViewPermissionSets.gui,
+          permissions.uiUsersViewAllSettings.gui,
+        ],
       });
       PermissionSets.checkEditButtonNotAvailable();
-    }
+    },
   );
 
   it(
@@ -116,11 +121,17 @@ describe('Permission Sets', () => {
     { tags: [TestTypes.extendedPath, devTeams.volaris] },
     () => {
       cy.visit(SettingsMenu.usersOwnersPath);
-      UsersSettingsGeneral.checkEntityInTable({ reason: ownerBody.owner, description: ownerBody.desc });
+      UsersSettingsGeneral.checkEntityInTable({
+        name: ownerBody.owner,
+        description: ownerBody.desc,
+      });
       UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
 
       cy.visit(SettingsMenu.waiveReasons);
-      UsersSettingsGeneral.checkEntityInTable({ reason: waiveReason.nameReason, description: waiveReason.description });
+      UsersSettingsGeneral.checkEntityInTable({
+        name: waiveReason.nameReason,
+        description: waiveReason.description,
+      });
       UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
 
       cy.visit(SettingsMenu.paymentsPath);
@@ -128,9 +139,12 @@ describe('Permission Sets', () => {
       UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
 
       cy.visit(SettingsMenu.refundReasons);
-      UsersSettingsGeneral.checkEntityInTable({ reason: refundReason.nameReason, description: refundReason.description });
+      UsersSettingsGeneral.checkEntityInTable({
+        name: refundReason.nameReason,
+        description: refundReason.description,
+      });
       UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
-    }
+    },
   );
 
   it(
@@ -140,7 +154,7 @@ describe('Permission Sets', () => {
       cy.visit(SettingsMenu.limitsPath);
       Limits.selectGroup('undergrad');
       Limits.verifyLimitsCantBeChanged();
-    }
+    },
   );
 
   it(
@@ -151,7 +165,7 @@ describe('Permission Sets', () => {
       Conditions.waitLoading();
       Conditions.select(Arrays.getRandomElement(Conditions.conditionsValues));
       Conditions.verifyConditionsCantBeChanged();
-    }
+    },
   );
 
   it(
@@ -159,16 +173,19 @@ describe('Permission Sets', () => {
     { tags: [TestTypes.extendedPath, devTeams.volaris] },
     () => {
       cy.visit(SettingsMenu.patronGroups);
-      UsersSettingsGeneral.checkEntityInTable({ reason: 'undergrad', description: 'Undergraduate Student' });
+      UsersSettingsGeneral.checkEntityInTable({
+        name: 'undergrad',
+        description: 'Undergraduate Student',
+      });
       UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
 
       cy.visit(SettingsMenu.addressTypes);
-      UsersSettingsGeneral.checkEntityInTable({ reason: 'Work', description: 'Work Address' });
+      UsersSettingsGeneral.checkEntityInTable({ name: 'Work', description: 'Work Address' });
       UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
 
       cy.visit(SettingsMenu.departments);
       Departments.waitLoading();
       UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
-    }
+    },
   );
 });

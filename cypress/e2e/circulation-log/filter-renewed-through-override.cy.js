@@ -12,52 +12,76 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import getRandomPostfix from '../../support/utils/stringTools';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 
 let user;
 const item = {
-  instanceTitle: `Instance ${getRandomPostfix()}`,
-  barcode: `item-${getRandomPostfix()}`
+  instanceName: `instance-name-${getRandomPostfix()}`,
+  barcode: `barcode-${getRandomPostfix()}`,
 };
 const testData = {
-  userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest receive notice check in', uuid()),
+  userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
+    'autotest lost items',
+    uuid(),
+  ),
+};
+const ownerBody = {
+  owner: 'AutotestOwner' + getRandomPostfix(),
+  servicePointOwner: [
+    {
+      value: testData.userServicePoint.id,
+      label: testData.userServicePoint.name,
+    },
+  ],
 };
 
 describe('circulation-log', () => {
   before('create test data', () => {
-    cy.createTempUser([]).then(userProperties => {
+    cy.createTempUser([]).then((userProperties) => {
       user = userProperties;
-
       ServicePoints.createViaApi(testData.userServicePoint);
-      UserEdit.addServicePointViaApi(testData.userServicePoint.id, user.userId, testData.userServicePoint.id);
+      testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
+      Location.createViaApi(testData.defaultLocation);
+      UserEdit.addServicePointViaApi(testData.userServicePoint.id, user.userId);
 
-      InventoryInstances.createInstanceViaApi(item.instanceTitle, item.barcode);
-      Checkout.checkoutItemViaApi({
-        id: uuid(),
-        itemBarcode: item.barcode,
-        loanDate: moment.utc().format(),
-        servicePointId: testData.userServicePoint.id,
-        userBarcode: user.barcode,
+      item.instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
+      cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then((holdings) => {
+        cy.updateHoldingRecord(holdings[0].id, {
+          ...holdings[0],
+          permanentLocationId: testData.defaultLocation.id,
+        });
       });
+
+      Checkout.checkoutItemViaApi({
+        itemBarcode: item.barcode,
+        userBarcode: user.barcode,
+        servicePointId: testData.userServicePoint.id,
+      });
+
+      UsersOwners.createViaApi(ownerBody);
 
       const renewBody = {
         id: uuid(),
         itemBarcode: item.barcode,
         overrideBlocks: {
           comment: `override-message-${getRandomPostfix()}`,
-          renewalBlock: {}
+          renewalBlock: {},
         },
         servicePointId: testData.userServicePoint.id,
         userBarcode: user.barcode,
       };
 
       UserLoans.getUserLoansIdViaApi(user.userId).then((userLoans) => {
-        UserLoans.declareLoanLostViaApi({
-          servicePointId: testData.userServicePoint.id,
-          declaredLostDateTime: moment.utc().format(),
-        }, userLoans.loans[0].id)
-          .then(() => {
-            UserLoans.renewItemViaApi(renewBody);
-          });
+        UserLoans.declareLoanLostViaApi(
+          {
+            servicePointId: testData.userServicePoint.id,
+            declaredLostDateTime: moment.utc().format(),
+          },
+          userLoans.loans[0].id,
+        ).then(() => {
+          UserLoans.renewItemViaApi(renewBody);
+        });
       });
     });
     cy.loginAsAdmin({ path: TopMenu.circulationLogPath, waiter: SearchPane.waitLoading });
@@ -75,21 +99,25 @@ describe('circulation-log', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C17137 Filter circulation log by renewed through override (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    const searchResultsData = {
-      userBarcode: user.barcode,
-      itemBarcode: item.barcode,
-      object: 'Loan',
-      circAction: 'Renewed through override',
-      servicePoint: testData.userServicePoint.name,
-      source: 'ADMINISTRATOR, DIKU',
-    };
-    SearchPane.setFilterOptionFromAccordion('loan', 'Renewed through override');
-    SearchPane.verifyResultCells();
-    SearchPane.checkResultSearch(searchResultsData);
+  it(
+    'C17137 Filter circulation log by renewed through override (firebird)',
+    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    () => {
+      const searchResultsData = {
+        userBarcode: user.barcode,
+        itemBarcode: item.barcode,
+        object: 'Loan',
+        circAction: 'Renewed through override',
+        servicePoint: testData.userServicePoint.name,
+        source: 'ADMINISTRATOR, Diku_admin',
+      };
+      SearchPane.setFilterOptionFromAccordion('loan', 'Renewed through override');
+      SearchPane.verifyResultCells();
+      SearchPane.checkResultSearch(searchResultsData);
 
-    SearchPane.searchByItemBarcode(item.barcode);
-    SearchPane.verifyResultCells();
-    SearchPane.checkResultSearch(searchResultsData);
-  });
+      SearchPane.searchByItemBarcode(item.barcode);
+      SearchPane.verifyResultCells();
+      SearchPane.checkResultSearch(searchResultsData);
+    },
+  );
 });

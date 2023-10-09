@@ -33,21 +33,22 @@ describe('bulk-edit', () => {
         permissions.bulkEditEdit.gui,
         permissions.inventoryAll.gui,
         permissions.uiCreateEditDeleteURL.gui,
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password, {
-            path: SettingsMenu.urlRelationshipPath,
-            waiter: UrlRelationship.waitloading
-          });
-
-          const instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-          cy.getHoldings({ limit: 1, query: `"instanceId"="${instanceId}"` })
-            .then(holdings => {
-              holdingsHRID = holdings[0].hrid;
-              FileManager.createFile(`cypress/fixtures/${holdingsHRIDFileName}`, holdingsHRID);
-            });
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: SettingsMenu.urlRelationshipPath,
+          waiter: UrlRelationship.waitloading,
         });
+
+        const instanceId = InventoryInstances.createInstanceViaApi(
+          item.instanceName,
+          item.itemBarcode,
+        );
+        cy.getHoldings({ limit: 1, query: `"instanceId"="${instanceId}"` }).then((holdings) => {
+          holdingsHRID = holdings[0].hrid;
+          FileManager.createFile(`cypress/fixtures/${holdingsHRIDFileName}`, holdingsHRID);
+        });
+      });
     });
 
     after('delete test data', () => {
@@ -56,46 +57,50 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it('C367977 Verify Bulk edit Holdings records with non-existent Electronic access Relationship type ID (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-      UrlRelationship.createNewRelationship(newRelationshipName);
-      UrlRelationship.verifyElectronicAccessNameOnTable(newRelationshipName);
+    it(
+      'C367977 Verify Bulk edit Holdings records with non-existent Electronic access Relationship type ID (firebird)',
+      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      () => {
+        UrlRelationship.createNewRelationship(newRelationshipName);
+        UrlRelationship.verifyElectronicAccessNameOnTable(newRelationshipName);
 
-      cy.visit(TopMenu.inventoryPath);
-      InventorySearchAndFilter.switchToHoldings();
-      InventorySearchAndFilter.bySource('FOLIO');
-      InventorySearchAndFilter.searchHoldingsByHRID(holdingsHRID);
-      InventorySearchAndFilter.selectViewHoldings();
-      HoldingsRecordView.edit();
-      HoldingsRecordView.addElectronicAccess(newRelationshipName);
+        cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.switchToHoldings();
+        InventorySearchAndFilter.bySource('FOLIO');
+        InventorySearchAndFilter.searchHoldingsByHRID(holdingsHRID);
+        InventorySearchAndFilter.selectViewHoldings();
+        HoldingsRecordView.edit();
+        HoldingsRecordView.addElectronicAccess(newRelationshipName);
 
-      cy.visit(SettingsMenu.urlRelationshipPath);
-      UrlRelationship.deleteUrlRelationship(newRelationshipName);
-      InteractorsTools.checkCalloutMessage(calloutMessage);
+        cy.visit(SettingsMenu.urlRelationshipPath);
+        UrlRelationship.deleteUrlRelationship(newRelationshipName);
+        InteractorsTools.checkCalloutMessage(calloutMessage);
 
-      cy.visit(TopMenu.bulkEditPath);
-      BulkEditSearchPane.checkHoldingsRadio();
-      BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
-      BulkEditSearchPane.uploadFile(holdingsHRIDFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.verifyMatchedResults(holdingsHRID);
-      BulkEditSearchPane.verifyReasonForError('Electronic access relationship not found by id=');
+        cy.visit(TopMenu.bulkEditPath);
+        BulkEditSearchPane.checkHoldingsRadio();
+        BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
+        BulkEditSearchPane.uploadFile(holdingsHRIDFileName);
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyMatchedResults(holdingsHRID);
+        BulkEditSearchPane.verifyReasonForError('Electronic access relationship not found by id=');
 
-      const tempLocation = 'Online (E)';
+        const tempLocation = 'Online (E)';
 
-      BulkEditActions.openActions();
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.replaceTemporaryLocation(tempLocation, 'holdings');
-      BulkEditActions.confirmChanges();
-      BulkEditActions.commitChanges();
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.verifyChangedResults(holdingsHRID);
+        BulkEditActions.openActions();
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.replaceTemporaryLocation(tempLocation, 'holdings');
+        BulkEditActions.confirmChanges();
+        BulkEditActions.commitChanges();
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyChangedResults(holdingsHRID);
 
-      cy.visit(TopMenu.inventoryPath);
-      InventorySearchAndFilter.switchToHoldings();
-      InventorySearchAndFilter.searchByParameter('Holdings HRID', holdingsHRID);
-      InventorySearchAndFilter.selectSearchResultItem();
-      InventorySearchAndFilter.selectViewHoldings();
-      InventoryInstance.verifyHoldingsTemporaryLocation('Online');
-    });
+        cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.switchToHoldings();
+        InventorySearchAndFilter.searchByParameter('Holdings HRID', holdingsHRID);
+        InventorySearchAndFilter.selectSearchResultItem();
+        InventorySearchAndFilter.selectViewHoldings();
+        InventoryInstance.verifyHoldingsTemporaryLocation('Online');
+      },
+    );
   });
 });

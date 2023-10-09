@@ -35,15 +35,13 @@ describe('ui-finance: Orders', () => {
       permissions.uiOrdersReopenPurchaseOrders.gui,
       permissions.uiOrdersShowAllHiddenFields.gui,
       permissions.uiOrdersUnopenpurchaseorders.gui,
-      permissions.uiOrdersUpdateEncumbrances.gui
-    ])
-      .then(userProperties => {
-        user = userProperties;
-      });
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-      });
+      permissions.uiOrdersUpdateEncumbrances.gui,
+    ]).then((userProperties) => {
+      user = userProperties;
+    });
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+    });
     order.vendor = organization.name;
     order.orderType = 'One-time';
   });
@@ -51,7 +49,10 @@ describe('ui-finance: Orders', () => {
   after(() => {
     Orders.deleteOrderViaApi(orderId);
     Organizations.deleteOrganizationViaApi(organization.id);
-    cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
+    cy.loginAsAdmin({
+      path: SettingsMenu.acquisitionUnitsPath,
+      waiter: AcquisitionUnits.waitLoading,
+    });
 
     AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
     AcquisitionUnits.delete(defaultAcquisitionUnit.name);
@@ -59,34 +60,58 @@ describe('ui-finance: Orders', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C163929 Test acquisition unit restrictions for Order records (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
-    AcquisitionUnits.newAcquisitionUnit();
-    AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name);
-    // Need to wait,while data is load
-    cy.wait(2000);
-    AcquisitionUnits.assignUser(user.username);
+  it(
+    'C163929 Test acquisition unit restrictions for Order records (thunderjet)',
+    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    () => {
+      cy.loginAsAdmin({
+        path: SettingsMenu.acquisitionUnitsPath,
+        waiter: AcquisitionUnits.waitLoading,
+      });
+      AcquisitionUnits.newAcquisitionUnit();
+      AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name);
+      // Need to wait,while data is load
+      cy.wait(2000);
+      AcquisitionUnits.assignUser(user.username);
 
-    cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-    Orders.createOrderWithAU(order, defaultAcquisitionUnit.name).then(({ response }) => {
-      orderId = response.body.id;
-      orderNumber = response.body.poNumber;
-      InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully saved`);
+      cy.login(user.username, user.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
+      });
+      Orders.createOrderWithAU(order, defaultAcquisitionUnit.name).then(({ response }) => {
+        orderId = response.body.id;
+        orderNumber = response.body.poNumber;
+        InteractorsTools.checkCalloutMessage(
+          `The Purchase order - ${orderNumber} has been successfully saved`,
+        );
 
-      cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
-      AcquisitionUnits.unAssignUser(defaultAcquisitionUnit.name);
+        cy.loginAsAdmin({
+          path: SettingsMenu.acquisitionUnitsPath,
+          waiter: AcquisitionUnits.waitLoading,
+        });
+        AcquisitionUnits.unAssignUser(defaultAcquisitionUnit.name);
 
-      cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-      Orders.searchByParameter('PO number', orderNumber);
-      Orders.checkZeroSearchResultsHeader();
+        cy.login(user.username, user.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
+        Orders.searchByParameter('PO number', orderNumber);
+        Orders.checkZeroSearchResultsHeader();
 
-      cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
-      AcquisitionUnits.edit(defaultAcquisitionUnit.name);
-      AcquisitionUnits.selectViewCheckbox();
+        cy.loginAsAdmin({
+          path: SettingsMenu.acquisitionUnitsPath,
+          waiter: AcquisitionUnits.waitLoading,
+        });
+        AcquisitionUnits.edit(defaultAcquisitionUnit.name);
+        AcquisitionUnits.selectViewCheckbox();
 
-      cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-      Orders.searchByParameter('PO number', orderNumber);
-      FinanceHelp.selectFromResultsList();
-    });
-  });
+        cy.login(user.username, user.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
+        Orders.searchByParameter('PO number', orderNumber);
+        FinanceHelp.selectFromResultsList();
+      });
+    },
+  );
 });

@@ -12,23 +12,20 @@ describe('ui-finance: Funds', () => {
 
   before(() => {
     cy.getAdminToken();
-    FiscalYears.createViaApi(defaultFiscalYear)
-      .then(response => {
-        defaultFiscalYear.id = response.id;
-        defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+    FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
+      defaultFiscalYear.id = response.id;
+      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
 
-        Ledgers.createViaApi(defaultLedger)
-          .then(ledgerResponse => {
-            defaultLedger.id = ledgerResponse.id;
-            defaultFund.ledgerId = defaultLedger.id;
+      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+        defaultLedger.id = ledgerResponse.id;
+        defaultFund.ledgerId = defaultLedger.id;
 
-            Funds.createViaApi(defaultFund)
-              .then(fundResponse => {
-                defaultFund.id = fundResponse.fund.id;
-              });
-          });
+        Funds.createViaApi(defaultFund).then((fundResponse) => {
+          defaultFund.id = fundResponse.fund.id;
+        });
       });
-    cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
+    });
+    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
   });
 
   after(() => {
@@ -37,8 +34,12 @@ describe('ui-finance: Funds', () => {
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
   });
 
-  it('C357528 Warning message for already existing field appears when after filling duplicated field user clicks on the dropdown with filter options list (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    Funds.createFundForWarningMessage(defaultFund);
-    Funds.checkWarningMessageFundCodeUsed();
-  });
+  it(
+    'C357528 Warning message for already existing field appears when after filling duplicated field user clicks on the dropdown with filter options list (thunderjet)',
+    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    () => {
+      Funds.createFundForWarningMessage(defaultFund);
+      Funds.checkWarningMessageFundCodeUsed();
+    },
+  );
 });

@@ -1,7 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -16,7 +14,7 @@ describe('data-import', () => {
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
       profileName: `C2333 autotest job profile ${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
     const description = `Description for job profile.${getRandomPostfix()}`;
     const jobProfileName = `C2333 newJobProfileName.${getRandomPostfix()}`;
@@ -24,19 +22,16 @@ describe('data-import', () => {
     const succsessCalloutMessage = `The job profile "${jobProfileName}" was successfully created`;
 
     before('create test data', () => {
-      cy.createTempUser([
-        permissions.settingsDataImportEnabled.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(userProperties.username, userProperties.password);
-          // create Job profile
-          cy.visit(SettingsMenu.jobProfilePath);
-          JobProfiles.createJobProfile(jobProfile);
-          NewJobProfile.saveAndClose();
-          InteractorsTools.closeCalloutMessage();
-          JobProfiles.closeJobProfile(jobProfile.profileName);
-        });
+      cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
+        user = userProperties;
+        cy.login(userProperties.username, userProperties.password);
+        // create Job profile
+        cy.visit(SettingsMenu.jobProfilePath);
+        JobProfiles.createJobProfile(jobProfile);
+        NewJobProfile.saveAndClose();
+        InteractorsTools.closeCalloutMessage();
+        JobProfiles.closeJobProfile(jobProfile.profileName);
+      });
     });
 
     after('delete test data', () => {
@@ -45,8 +40,10 @@ describe('data-import', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it('C2333 Duplicate an existing job profile (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] }, () => {
+    it(
+      'C2333 Duplicate an existing job profile (folijet)',
+      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      () => {
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
         JobProfileView.duplicate();
         NewJobProfile.fillDescription(description);
@@ -56,6 +53,7 @@ describe('data-import', () => {
         NewJobProfile.saveAndClose();
         NewJobProfile.checkCalloutMessage(succsessCalloutMessage);
         JobProfileView.verifyJobProfileOpened();
-      });
+      },
+    );
   });
 });

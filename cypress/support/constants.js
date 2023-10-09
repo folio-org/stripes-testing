@@ -30,7 +30,7 @@ export const LOST_ITEM_FEES_POLICY_NAMES = {
 
 export const LOAN_TYPE_NAMES = {
   CAN_CIRCULATE: 'Can circulate',
-  COURSE_RESERVES: 'Course reserves'
+  COURSE_RESERVES: 'Course reserves',
 };
 
 export const MATERIAL_TYPE_NAMES = {
@@ -53,8 +53,10 @@ export const ITEM_STATUS_NAMES = {
   PAGED: 'Paged',
   AWAITING_PICKUP: 'Awaiting pickup',
   CHECKED_OUT: 'Checked out',
+  CLAIMED_RETURNED: 'Claimed returned',
   DECLARED_LOST: 'Declared lost',
-  AWAITING_DELIVERY: 'Awaiting delivery'
+  MARKED_AS_MISSING: 'Marked as missing',
+  AWAITING_DELIVERY: 'Awaiting delivery',
 };
 
 export const CY_ENV = {
@@ -92,7 +94,7 @@ export const LOAN_PROFILE = {
 
 export const FULFILMENT_PREFERENCES = {
   HOLD_SHELF: 'Hold Shelf',
-  DELIVERY: 'Delivery'
+  DELIVERY: 'Delivery',
 };
 
 export const REQUEST_LEVELS = {
@@ -107,34 +109,41 @@ export const REQUEST_TYPES = {
 };
 
 export const FOLIO_RECORD_TYPE = {
-  INSTANCE:'Instance',
-  HOLDINGS:'Holdings',
-  ITEM:'Item',
-  ORDER:'Order',
-  INVOICE:'Invoice',
-  MARCBIBLIOGRAPHIC:'MARC Bibliographic',
-  MARCAUTHORITY: 'MARC Authority'
+  INSTANCE: 'Instance',
+  HOLDINGS: 'Holdings',
+  ITEM: 'Item',
+  ORDER: 'Order',
+  INVOICE: 'Invoice',
+  MARCBIBLIOGRAPHIC: 'MARC Bibliographic',
+  MARCAUTHORITY: 'MARC Authority',
 };
 
 export const PAYMENT_METHOD = {
-  CASH:'"Cash"',
-  CREDIT_CARD:'"Credit Card"'
+  CASH: '"Cash"',
+  CREDIT_CARD: '"Credit Card"',
 };
 
 export const BATCH_GROUP = {
-  FOLIO:'"FOLIO"',
-  AMHERST:'"Amherst (AC)"'
+  FOLIO: '"FOLIO"',
+  AMHERST: '"Amherst (AC)"',
+};
+
+export const INVOICE_STATUSES = {
+  OPEN: 'Open',
+  APPROVED: 'Approved',
+  CANCELLED: 'Cancelled',
+  PAID: 'Paid',
 };
 
 export const ORDER_STATUSES = {
   OPEN: 'Open',
   PENDING: 'Pending',
-  CLOSED: 'Closed'
+  CLOSED: 'Closed',
 };
 
 export const ORDER_TYPES = {
   ONE_TIME: 'One-Time',
-  ONGOING: 'Ongoing'
+  ONGOING: 'Ongoing',
 };
 
 export const ORDER_FORMAT_NAMES = {
@@ -147,6 +156,11 @@ export const ORDER_FORMAT_NAMES = {
   PHYSICAL_RESOURCE_Check: 'Physical Resource',
 };
 
+export const ORDER_PAYMENT_STATUS = {
+  PENDING: 'Pending',
+  PAYMENT_NOT_REQUIRED: 'Payment not required',
+};
+
 export const ORDER_FORMAT_NAMES_IN_PROFILE = {
   ELECTRONIC_RESOURCE: 'Electronic Resource',
   PE_MIX: 'P/E Mix',
@@ -156,7 +170,17 @@ export const ORDER_FORMAT_NAMES_IN_PROFILE = {
 
 export const ACQUISITION_METHOD_NAMES_IN_PROFILE = {
   APPROVAL_PLAN: 'Approval plan',
-  PURCHASE_AT_VENDOR_SYSTEM: 'Purchase at vendor system'
+  PURCHASE_AT_VENDOR_SYSTEM: 'Purchase at vendor system',
+};
+
+export const RECEIPT_STATUS_SELECTED = {
+  PENDING: 'Pending',
+  RECEIPT_NOT_REQUIRED: 'Receipt not required',
+};
+
+export const RECEIPT_STATUS_VIEW = {
+  PENDING: 'Pending',
+  RECEIPT_NOT_REQUIRED: 'Receipt Not Required',
 };
 
 export const RECEIVING_WORKFLOW_NAMES = {
@@ -168,7 +192,7 @@ export const ACQUISITION_METHOD_NAMES = {
   APPROVAL_PLAN: 'Approval plan',
   DDA: 'Demand driven acquisitions (DDA)',
   DEPOSITORY: 'Depository',
-  EBA:'Evidence based acquisitions (EBA)',
+  EBA: 'Evidence based acquisitions (EBA)',
   EXCHANGE: 'Exchange',
   FREE: 'Free',
   GIFT: 'Gift',
@@ -177,7 +201,7 @@ export const ACQUISITION_METHOD_NAMES = {
   OTHER: 'Other',
   PURCHASE: 'Purchase',
   PURCHASE_AT_VENDOR_SYSTEM: 'Purchase At Vendor System',
-  TECHNICAL: 'Technical'
+  TECHNICAL: 'Technical',
 };
 
 export const LOCATION_NAMES = {
@@ -186,7 +210,7 @@ export const LOCATION_NAMES = {
   ONLINE: 'Online (E)',
   ONLINE_UI: 'Online',
   MAIN_LIBRARY: 'Main Library (KU/CC/DI/M)',
-  MAIN_LIBRARY_UI: 'Main Library'
+  MAIN_LIBRARY_UI: 'Main Library',
 };
 
 export const INSTANCE_STATUS_TERM_NAMES = {
@@ -195,39 +219,39 @@ export const INSTANCE_STATUS_TERM_NAMES = {
   UNCATALOGED: 'Uncataloged',
   OTHER: 'Other',
   NOTYETASSIGNED: 'Not yet assigned',
-  ELECTRONIC_RESOURCE: 'Electronic Resource'
+  ELECTRONIC_RESOURCE: 'Electronic Resource',
 };
 
 export const CALL_NUMBER_TYPE_NAMES = {
   OTHER_SCHEME: 'Other scheme',
   LIBRARY_OF_CONGRESS: 'Library of Congress classification',
-  LIBRARY_OF_MEDICINE: 'National Library of Medicine classification'
+  LIBRARY_OF_MEDICINE: 'National Library of Medicine classification',
 };
 
 export const EXPORT_TRANSFORMATION_NAMES = {
   ITEM_HRID: 'Item - HRID',
-  HOLDINGS_HRID: 'Holdings - HRID'
+  HOLDINGS_HRID: 'Holdings - HRID',
 };
 
 export const TARGET_PROFILE_NAMES = {
-  OCLC_WORLDCAT: '✓ OCLC WorldCat'
+  OCLC_WORLDCAT: '✓ OCLC WorldCat',
 };
 
 export const ACCEPTED_DATA_TYPE_NAMES = {
   MARC: 'MARC',
-  EDIFACT: 'EDIFACT'
+  EDIFACT: 'EDIFACT',
 };
 
 export const INSTANCE_SOURCE_NAMES = {
   MARC: 'MARC',
-  FOLIO: 'FOLIO'
+  FOLIO: 'FOLIO',
 };
 
 export const PROFILE_TYPE_NAMES = {
   JOB_PROFILE: 'JOB_PROFILE',
   MATCH_PROFILE: 'MATCH_PROFILE',
   ACTION_PROFILE: 'ACTION_PROFILE',
-  MAPPING_PROFILE: 'MAPPING_PROFILE'
+  MAPPING_PROFILE: 'MAPPING_PROFILE',
 };
 
 export const EXISTING_RECORDS_NAMES = {
@@ -235,22 +259,44 @@ export const EXISTING_RECORDS_NAMES = {
   HOLDINGS: 'HOLDINGS',
   ITEM: 'ITEM',
   MARC_BIBLIOGRAPHIC: 'MARC_BIBLIOGRAPHIC',
-  MARC_AUTHORITY: 'MARC_AUTHORITY'
+  MARC_AUTHORITY: 'MARC_AUTHORITY',
 };
 
 export const JOB_STATUS_NAMES = {
   COMPLETED: 'Completed',
   COMPLETED_WITH_ERRORS: 'Completed with errors',
-  FAILED: 'Failed'
+  FAILED: 'Failed',
 };
 
 export const VENDOR_NAMES = {
   GOBI: 'GOBI Library Solutions',
   HARRASSOWITZ: 'Otto Harrassowitz GmbH & Co. KG',
-  EBSCO:'EBSCO SUBSCRIPTION SERVICES'
+  EBSCO: 'EBSCO SUBSCRIPTION SERVICES',
 };
 
 export const HOLDINGS_TYPE_NAMES = {
   ELECTRONIC: 'Electronic',
-  MONOGRAPH: 'Monograph'
+  MONOGRAPH: 'Monograph',
+};
+
+export const ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES = {
+  APPROVAL_PLAN: 'Approval Plan',
+  DDA: 'Demand Driven Acquisitions (DDA)',
+  DEPOSITORY: 'Depository',
+  EBA: 'Evidence Based Acquisitions (EBA)',
+  EXCHANGE: 'Exchange',
+  FREE: 'Free',
+  GIFT: 'Gift',
+  INTERNAL_TRANSFER: 'Internal transfer',
+  MEMBERSHIP: 'Membership',
+  OTHER: 'Other',
+  PURCHASE: 'Purchase',
+  PURCHASE_AT_VENDOR_SYSTEM: 'Purchase At Vendor System',
+  TECHNICAL: 'Technical',
+};
+
+export const REMOTE_STORAGE_PROVIDER_NAMES = {
+  Dematic_EMS: 'Dematic EMS (API)',
+  DDEMATIC_STAGING_DIRECTOR: 'Dematic StagingDirector (TCP/IP)',
+  CAIA_SOFT: 'CaiaSoft',
 };

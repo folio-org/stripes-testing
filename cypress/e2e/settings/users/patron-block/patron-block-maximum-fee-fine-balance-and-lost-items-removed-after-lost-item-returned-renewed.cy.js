@@ -2,6 +2,7 @@ import uuid from 'uuid';
 import moment from 'moment';
 import TestTypes from '../../../../support/dictionary/testTypes';
 import devTeams from '../../../../support/dictionary/devTeams';
+import parallelization from '../../../../support/dictionary/parallelization';
 import permissions from '../../../../support/dictionary/permissions';
 import UserEdit from '../../../../support/fragments/users/userEdit';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -50,7 +51,7 @@ describe('Patron Block: Lost items', () => {
     ],
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest lost items', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const ownerBody = {
     owner: 'AutotestOwner' + getRandomPostfix(),
@@ -128,7 +129,7 @@ describe('Patron Block: Lost items', () => {
   };
 
   before('Preconditions', () => {
-    itemsData.itemsWithSeparateInstance.forEach(function (item, index) {
+    itemsData.itemsWithSeparateInstance.forEach((item, index) => {
       item.barcode = generateUniqueItemBarcodeWithShift(index);
     });
 
@@ -175,14 +176,16 @@ describe('Patron Block: Lost items', () => {
             ],
           }).then((specialInstanceIds) => {
             itemsData.itemsWithSeparateInstance[index].instanceId = specialInstanceIds.instanceId;
-            itemsData.itemsWithSeparateInstance[index].holdingId = specialInstanceIds.holdingIds[0].id;
-            itemsData.itemsWithSeparateInstance[index].itemId = specialInstanceIds.holdingIds[0].itemIds;
+            itemsData.itemsWithSeparateInstance[index].holdingId =
+              specialInstanceIds.holdingIds[0].id;
+            itemsData.itemsWithSeparateInstance[index].itemId =
+              specialInstanceIds.holdingIds[0].itemIds;
           });
         });
       });
 
-    UsersOwners.createViaApi(ownerBody).then((ownerResponse) => {
-      testData.ownerId = ownerResponse.id;
+    UsersOwners.createViaApi(ownerBody).then(({ id }) => {
+      testData.ownerId = id;
       PaymentMethods.createViaApi(testData.ownerId).then((paymentMethod) => {
         testData.paymentMethodId = paymentMethod.id;
       });
@@ -197,8 +200,25 @@ describe('Patron Block: Lost items', () => {
       const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
       ruleProps.l = loanPolicyBody.id;
       ruleProps.i = lostItemFeePolicyBody.id;
-      addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + ruleProps.i + ' l ' + ruleProps.l + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
-      CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
+      addedCirculationRule =
+        't ' +
+        testData.loanTypeId +
+        ': i ' +
+        ruleProps.i +
+        ' l ' +
+        ruleProps.l +
+        ' r ' +
+        ruleProps.r +
+        ' o ' +
+        ruleProps.o +
+        ' n ' +
+        ruleProps.n;
+      CirculationRules.addRuleViaApi(
+        originalCirculationRules,
+        ruleProps,
+        't ',
+        testData.loanTypeId,
+      );
     });
 
     cy.createTempUser(
@@ -215,14 +235,18 @@ describe('Patron Block: Lost items', () => {
         permissions.uiUsersView.gui,
         permissions.okapiTimersPatch.gui,
       ],
-      patronGroup.name
+      patronGroup.name,
     )
       .then((userProperties) => {
         userData.username = userProperties.username;
         userData.password = userProperties.password;
         userData.userId = userProperties.userId;
         userData.barcode = userProperties.barcode;
-        UserEdit.addServicePointViaApi(testData.userServicePoint.id, userData.userId, testData.userServicePoint.id);
+        UserEdit.addServicePointViaApi(
+          testData.userServicePoint.id,
+          userData.userId,
+          testData.userServicePoint.id,
+        );
         cy.getToken(userData.username, userData.password);
         UserLoans.updateTimerForAgedToLost('minute');
         cy.getAdminToken();
@@ -250,14 +274,22 @@ describe('Patron Block: Lost items', () => {
       newDueDate.setDate(newDueDate.getDate() - 1);
       loansData.forEach((loan) => {
         if (loan.item.title.includes('InstanceForDeclareLost')) {
-          UserLoans.declareLoanLostViaApi({
-            servicePointId: testData.userServicePoint.id,
-            declaredLostDateTime: moment.utc().format(),
-          }, loan.id);
+          UserLoans.declareLoanLostViaApi(
+            {
+              servicePointId: testData.userServicePoint.id,
+              declaredLostDateTime: moment.utc().format(),
+            },
+            loan.id,
+          );
         } else if (loan.item.title.includes('InstanceForAgedToLost')) {
-          UserLoans.changeDueDateViaApi({
-            ...loan, dueDate: newDueDate, action: 'dueDateChanged'
-          }, loan.id);
+          UserLoans.changeDueDateViaApi(
+            {
+              ...loan,
+              dueDate: newDueDate,
+              action: 'dueDateChanged',
+            },
+            loan.id,
+          );
         }
       });
     });
@@ -302,19 +334,25 @@ describe('Patron Block: Lost items', () => {
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    Conditions.resetConditionViaApi('cf7a0d5f-a327-4ca1-aa9e-dc55ec006b8a', 'Maximum outstanding fee/fine balance');
-    Conditions.resetConditionViaApi('72b67965-5b73-4840-bc0b-be8f3f6e047e', 'Maximum number of lost items');
+    Conditions.resetConditionViaApi(
+      'cf7a0d5f-a327-4ca1-aa9e-dc55ec006b8a',
+      'Maximum outstanding fee/fine balance',
+    );
+    Conditions.resetConditionViaApi(
+      '72b67965-5b73-4840-bc0b-be8f3f6e047e',
+      'Maximum number of lost items',
+    );
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
+      testData.defaultLocation.id,
     );
   });
 
   it(
     'C350655 Verify automated patron block "Maximum outstanding fee/fine balance" removed after lost item renewed (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    { tags: [TestTypes.criticalPath, devTeams.vega, parallelization.nonParallel] },
     () => {
       const blockMessage = `You have reached maximum outstanding fee/fine balance as set by patron group${getRandomPostfix()}`;
       setConditionAndLimit(blockMessage, 'Maximum outstanding fee/fine balance', '624');
@@ -323,9 +361,8 @@ describe('Patron Block: Lost items', () => {
       Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
 
       const itemForRenew = itemsData.itemsWithSeparateInstance[Math.floor(Math.random() * 5)];
-      UsersCard.openLoans();
-      UsersCard.showOpenedLoans();
-      UserLoans.openLoan(itemForRenew.barcode);
+      UsersCard.viewCurrentLoans();
+      UserLoans.openLoanDetails(itemForRenew.barcode);
       UserLoans.renewItem(itemForRenew.barcode, true);
       Renewals.renewBlockedPatron(renewComment);
       RenewConfirmationModal.waitLoading();
@@ -334,12 +371,12 @@ describe('Patron Block: Lost items', () => {
 
       findPatron();
       Users.checkPatronIsNotBlocked(userData.userId);
-    }
+    },
   );
 
   it(
     'C350651 Verify automated patron block "Maximum outstanding fee/fine balance" removed after lost item returned (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    { tags: [TestTypes.criticalPath, devTeams.vega, parallelization.nonParallel] },
     () => {
       const blockMessage = `You have reached maximum outstanding fee/fine balance as set by patron group${getRandomPostfix()}`;
       setConditionAndLimit(blockMessage, 'Maximum outstanding fee/fine balance', '624');
@@ -355,12 +392,12 @@ describe('Patron Block: Lost items', () => {
 
       findPatron();
       Users.checkPatronIsNotBlocked(userData.userId);
-    }
+    },
   );
 
   it(
     'C350653 Verify automated patron block "Maximum number of lost items" removed after lost item renewed (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    { tags: [TestTypes.criticalPath, devTeams.vega, parallelization.nonParallel] },
     () => {
       const blockMessage = `You have reached maximum number of lost items as set by patron group${getRandomPostfix()}`;
       setConditionAndLimit(blockMessage, 'Maximum number of lost items', '4');
@@ -369,9 +406,8 @@ describe('Patron Block: Lost items', () => {
       Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
 
       const itemForRenew = itemsData.itemsWithSeparateInstance[Math.floor(Math.random() * 5)];
-      UsersCard.openLoans();
-      UsersCard.showOpenedLoans();
-      UserLoans.openLoan(itemForRenew.barcode);
+      UsersCard.viewCurrentLoans();
+      UserLoans.openLoanDetails(itemForRenew.barcode);
       UserLoans.renewItem(itemForRenew.barcode, true);
       Renewals.renewBlockedPatron(renewComment);
       RenewConfirmationModal.waitLoading();
@@ -380,12 +416,12 @@ describe('Patron Block: Lost items', () => {
 
       findPatron();
       Users.checkPatronIsNotBlocked(userData.userId);
-    }
+    },
   );
 
   it(
     'C350648 Verify automated patron block "Maximum number of lost items" removed after lost item returned (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    { tags: [TestTypes.criticalPath, devTeams.vega, parallelization.nonParallel] },
     () => {
       const blockMessage = `You have reached maximum number of lost items as set by patron group${getRandomPostfix()}`;
       setConditionAndLimit(blockMessage, 'Maximum number of lost items', '4');
@@ -401,6 +437,6 @@ describe('Patron Block: Lost items', () => {
 
       findPatron();
       Users.checkPatronIsNotBlocked(userData.userId);
-    }
+    },
   );
 });

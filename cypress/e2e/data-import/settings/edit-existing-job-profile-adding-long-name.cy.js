@@ -1,6 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { DevTeams, TestTypes } from '../../../support/dictionary';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -15,8 +14,9 @@ describe('data-import', () => {
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
       profileName: `C2332 autotest job profile ${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
+    const calloutMessage = `The job profile "${jobProfileLongName}" was successfully updated`;
 
     before('create test data', () => {
       cy.loginAsAdmin();
@@ -34,16 +34,20 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfileLongName);
     });
 
-    it('C2332 Edit an existing job profile by adding a long name (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      JobProfiles.checkListOfExistingProfilesIsDisplayed();
-      JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-      JobProfileView.edit();
-      JobProfileEdit.verifyScreenName(jobProfile.profileName);
-      JobProfileEdit.changeProfileName(jobProfileLongName);
-      JobProfileEdit.saveAndClose();
-      JobProfileView.verifyJobProfileOpened();
-      JobProfileView.verifyJobProfileName(jobProfileLongName);
-      JobProfiles.checkCalloutMessage(jobProfileLongName);
-    });
+    it(
+      'C2332 Edit an existing job profile by adding a long name (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
+        JobProfiles.checkListOfExistingProfilesIsDisplayed();
+        JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+        JobProfileView.edit();
+        JobProfileEdit.verifyScreenName(jobProfile.profileName);
+        JobProfileEdit.changeProfileName(jobProfileLongName);
+        JobProfileEdit.saveAndClose();
+        JobProfileView.verifyJobProfileOpened();
+        JobProfileView.verifyJobProfileName(jobProfileLongName);
+        JobProfiles.checkCalloutMessage(calloutMessage);
+      },
+    );
   });
 });

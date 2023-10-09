@@ -36,43 +36,50 @@ describe('MARC Authority Sort', () => {
     },
 
     prefixValues: {
+      // eslint-disable-next-line no-tabs
       prefixValA: '010	   	‡a tgm',
+      // eslint-disable-next-line no-tabs
       prefixValB: '010	   	‡a gsafd',
+      // eslint-disable-next-line no-tabs
       prefixValC: '010	   	‡a ',
-    }
+    },
   };
   const marcFiles = [
     {
-      marc: 'marcFileForC350579.mrc', 
+      marc: 'marcFileForC350579.mrc',
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numOfRecords: 2,
     },
     {
-      marc: 'marcFileForC365113.mrc', 
+      marc: 'marcFileForC365113.mrc',
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numOfRecords: 19,
-    }
-  ]
+    },
+  ];
 
-  let createdAuthorityIDs = [];
+  const createdAuthorityIDs = [];
 
   const headingTypes = ['Corporate Name', 'Personal Name'];
   const marcAuthorities = {
     authorizedReferences: ['Authorized', 'Authorized', 'Reference'],
-    headingReferences: ['Type of heading test a', 'Type of heading test b', 'Type of heading test c'],
+    headingReferences: [
+      'Type of heading test a',
+      'Type of heading test b',
+      'Type of heading test c',
+    ],
     typeOfHeadings: ['Corporate Name', 'Corporate Name', 'Personal Name'],
-  }
+  };
 
   before(() => {
-    cy.createTempUser([
-      Permissions.uiMarcAuthoritiesAuthorityRecordView.gui
-    ]).then(createdUserProperties => {
-      testData.userProperties = createdUserProperties;
-    });
+    cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
+      (createdUserProperties) => {
+        testData.userProperties = createdUserProperties;
+      },
+    );
 
-    marcFiles.forEach(marcFile => {
+    marcFiles.forEach((marcFile) => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         DataImport.uploadFile(marcFile.marc, marcFile.fileName);
         JobProfiles.waitLoadingList();
@@ -82,7 +89,7 @@ describe('MARC Authority Sort', () => {
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(marcFile.fileName);
         for (let i = 0; i < marcFile.numOfRecords; i++) {
-          Logs.getCreatedItemsID(i).then(link => {
+          Logs.getCreatedItemsID(i).then((link) => {
             createdAuthorityIDs.push(link.split('/')[5]);
           });
         }
@@ -91,66 +98,85 @@ describe('MARC Authority Sort', () => {
   });
 
   beforeEach(() => {
-    cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.marcAuthorities, waiter: MarcAuthorities.waitLoading });
+    cy.login(testData.userProperties.username, testData.userProperties.password, {
+      path: TopMenu.marcAuthorities,
+      waiter: MarcAuthorities.waitLoading,
+    });
   });
 
   after(() => {
-    createdAuthorityIDs.forEach(id => { MarcAuthority.deleteViaAPI(id); });
+    createdAuthorityIDs.forEach((id) => {
+      MarcAuthority.deleteViaAPI(id);
+    });
     Users.deleteViaApi(testData.userProperties.userId);
   });
 
-  it('C365113 Apply "Authority source" facet to the search result list (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] }, () => {
-    MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.all);
-    MarcAuthorities.checkResultsListRecordsCountGreaterThan(0);
-    MarcAuthorities.checkAuthoritySourceOptions();
-    MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.oprtionA);
-    MarcAuthorities.checkSelectedAuthoritySource(testData.facetOptions.oprtionA);
-    MarcAuthorities.clickAccordionAndCheckResultList('Authority source', testData.facetValues.valueA)
-    MarcAuthorities.clickAccordionAndCheckResultList('Authority source', testData.facetValues.valueA)
-    MarcAuthorities.checkSelectedAuthoritySource(testData.facetOptions.oprtionA);
-    MarcAuthorities.selectTitle(testData.facetValues.valueA);
-    MarcAuthority.contains(testData.prefixValues.prefixValA);
-    MarcAuthorities.closeAuthoritySourceOption();
+  it(
+    'C365113 Apply "Authority source" facet to the search result list (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    () => {
+      MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.all);
+      MarcAuthorities.checkResultsListRecordsCountGreaterThan(0);
+      MarcAuthorities.checkAuthoritySourceOptions();
+      MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.oprtionA);
+      MarcAuthorities.checkSelectedAuthoritySource(testData.facetOptions.oprtionA);
+      MarcAuthorities.clickAccordionAndCheckResultList(
+        'Authority source',
+        testData.facetValues.valueA,
+      );
+      MarcAuthorities.clickAccordionAndCheckResultList(
+        'Authority source',
+        testData.facetValues.valueA,
+      );
+      MarcAuthorities.checkSelectedAuthoritySource(testData.facetOptions.oprtionA);
+      MarcAuthorities.selectTitle(testData.facetValues.valueA);
+      MarcAuthority.contains(testData.prefixValues.prefixValA);
+      MarcAuthorities.closeAuthoritySourceOption();
 
-    MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.oprtionB);
-    MarcAuthorities.selectTitle(testData.facetValues.valueB);
-    MarcAuthority.contains(testData.prefixValues.prefixValB);
-    MarcAuthorities.closeAuthoritySourceOption();
+      MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.oprtionB);
+      MarcAuthorities.selectTitle(testData.facetValues.valueB);
+      MarcAuthority.contains(testData.prefixValues.prefixValB);
+      MarcAuthorities.closeAuthoritySourceOption();
 
-    MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.oprtionC);
-    MarcAuthorities.selectTitle(testData.facetValues.valueC);
-    MarcAuthority.contains(testData.prefixValues.prefixValC);
-    InventoryInstance.closeAuthoritySource();
-    MarcAuthorities.checkSearchOption('keyword');
-    MarcAuthorities.checkSearchInput(testData.authority.all);
-  });
+      MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.oprtionC);
+      MarcAuthorities.selectTitle(testData.facetValues.valueC);
+      MarcAuthority.contains(testData.prefixValues.prefixValC);
+      InventoryInstance.closeAuthoritySource();
+      MarcAuthorities.checkSearchOption('keyword');
+      MarcAuthorities.checkSearchInput(testData.authority.all);
+    },
+  );
 
-  it('C350579 Sorting and displaying results of search authority records by "Actions" dropdown menu (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
-    MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
-    MarcAuthorities.chooseTypeOfHeading(headingTypes);
+  it(
+    'C350579 Sorting and displaying results of search authority records by "Actions" dropdown menu (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.parallel] },
+    () => {
+      MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
+      MarcAuthorities.chooseTypeOfHeading(headingTypes);
 
-    MarcAuthorities.clickActionsButton();
-    MarcAuthorities.actionsSortBy('Authorized/Reference');
-    MarcAuthorities.checkRowsContent(marcAuthorities.authorizedReferences);
-    MarcAuthorities.actionsSortBy('Heading/Reference');
-    MarcAuthorities.checkRowsContent(marcAuthorities.headingReferences);
-    MarcAuthorities.actionsSortBy('Type of heading');
-    MarcAuthorities.checkRowsContent(marcAuthorities.typeOfHeadings);
+      MarcAuthorities.clickActionsButton();
+      MarcAuthorities.actionsSortBy('Authorized/Reference');
+      MarcAuthorities.checkRowsContent(marcAuthorities.authorizedReferences);
+      MarcAuthorities.actionsSortBy('Heading/Reference');
+      MarcAuthorities.checkRowsContent(marcAuthorities.headingReferences);
+      MarcAuthorities.actionsSortBy('Type of heading');
+      MarcAuthorities.checkRowsContent(marcAuthorities.typeOfHeadings);
 
-    MarcAuthorities.actionsSelectCheckbox('Authorized/Reference');
-    MarcAuthorities.checkColumnAbsent('Authorized/Reference');
-    MarcAuthorities.actionsSelectCheckbox('Type of heading');
-    MarcAuthorities.checkColumnAbsent('Type of heading');
-    MarcAuthorities.actionsSelectCheckbox('Number of titles');
-    MarcAuthorities.checkColumnAbsent('Number of titles');
+      MarcAuthorities.actionsSelectCheckbox('Authorized/Reference');
+      MarcAuthorities.checkColumnAbsent('Authorized/Reference');
+      MarcAuthorities.actionsSelectCheckbox('Type of heading');
+      MarcAuthorities.checkColumnAbsent('Type of heading');
+      MarcAuthorities.actionsSelectCheckbox('Number of titles');
+      MarcAuthorities.checkColumnAbsent('Number of titles');
 
-    MarcAuthorities.actionsSelectCheckbox('Authorized/Reference');
-    MarcAuthorities.actionsSelectCheckbox('Type of heading');
-    MarcAuthorities.actionsSelectCheckbox('Number of titles');
-    MarcAuthorities.checkColumnExists('Authorized/Reference');
-    MarcAuthorities.checkColumnExists('Type of heading');
-    MarcAuthorities.checkColumnExists('Number of titles');
+      MarcAuthorities.actionsSelectCheckbox('Authorized/Reference');
+      MarcAuthorities.actionsSelectCheckbox('Type of heading');
+      MarcAuthorities.actionsSelectCheckbox('Number of titles');
+      MarcAuthorities.checkColumnExists('Authorized/Reference');
+      MarcAuthorities.checkColumnExists('Type of heading');
+      MarcAuthorities.checkColumnExists('Number of titles');
 
-    MarcAuthorities.clickResetAndCheck(testData.authority.searchOption);
-  });
+      MarcAuthorities.clickResetAndCheck(testData.authority.searchOption);
+    },
+  );
 });

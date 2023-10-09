@@ -21,10 +21,12 @@ import DateTools from '../../support/utils/dateTools';
 import { ORDER_TYPES } from '../../support/constants';
 
 describe('Invoices', () => {
-  const order = { ...NewOrder.defaultOneTimeOrder,
+  const order = {
+    ...NewOrder.defaultOneTimeOrder,
     orderType: ORDER_TYPES.ONGOING,
     ongoing: { isSubscription: false, manualRenewal: false },
-    approved: true };
+    approved: true,
+  };
   const organization = {
     ...NewOrganization.defaultUiOrganizations,
     accounts: [
@@ -40,7 +42,7 @@ describe('Invoices', () => {
         notes: '',
         paymentMethod: 'Cash',
       },
-    ]
+    ],
   };
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
@@ -55,65 +57,66 @@ describe('Invoices', () => {
 
   before(() => {
     cy.getAdminToken();
-    FiscalYears.createViaApi(defaultFiscalYear)
-      .then(firstFiscalYearResponse => {
-        defaultFiscalYear.id = firstFiscalYearResponse.id;
-        defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-        Ledgers.createViaApi(defaultLedger)
-          .then(ledgerResponse => {
-            defaultLedger.id = ledgerResponse.id;
-            defaultFund.ledgerId = defaultLedger.id;
+    FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
+      defaultFiscalYear.id = firstFiscalYearResponse.id;
+      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+        defaultLedger.id = ledgerResponse.id;
+        defaultFund.ledgerId = defaultLedger.id;
 
-            Funds.createViaApi(defaultFund)
-              .then(fundResponse => {
-                defaultFund.id = fundResponse.fund.id;
+        Funds.createViaApi(defaultFund).then((fundResponse) => {
+          defaultFund.id = fundResponse.fund.id;
 
-                cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
-                FinanceHelp.searchByName(defaultFund.name);
-                Funds.selectFund(defaultFund.name);
-                Funds.addBudget(allocatedQuantity);
-              });
-          });
+          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+          FinanceHelp.searchByName(defaultFund.name);
+          Funds.selectFund(defaultFund.name);
+          Funds.addBudget(allocatedQuantity);
+        });
       });
-    ServicePoints.getViaApi()
-      .then((servicePoint) => {
-        servicePointId = servicePoint[0].id;
-        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
-          .then(res => {
-            location = res;
-          });
+    });
+    ServicePoints.getViaApi().then((servicePoint) => {
+      servicePointId = servicePoint[0].id;
+      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+        location = res;
       });
-    Organizations.createOrganizationViaApi(organization)
-      .then(organizationsResponse => {
-        organization.id = organizationsResponse;
-        order.vendor = organizationsResponse;
-      });
-    cy.createOrderApi(order)
-      .then((response) => {
-        orderNumber = response.body.poNumber;
-        cy.visit(TopMenu.ordersPath);
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList();
-        Orders.createPOLineViaActions();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
-        OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(defaultFund, '40', '1', '40', location.institutionId);
-        OrderLines.backToEditingOrder();
-        Orders.openOrder();
-        cy.visit(TopMenu.invoicesPath);
-        Invoices.createRolloverInvoice(invoice, organization.name);
-        Invoices.createInvoiceLineFromPol(orderNumber);
-        // Need to wait, while data will be loaded
-        cy.wait(6000);
-        Invoices.approveInvoice();
-      });
+    });
+    Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
+      organization.id = organizationsResponse;
+      order.vendor = organizationsResponse;
+    });
+    cy.createOrderApi(order).then((response) => {
+      orderNumber = response.body.poNumber;
+      cy.visit(TopMenu.ordersPath);
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList();
+      Orders.createPOLineViaActions();
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
+      OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
+        defaultFund,
+        '40',
+        '1',
+        '40',
+        location.institutionId,
+      );
+      OrderLines.backToEditingOrder();
+      Orders.openOrder();
+      cy.visit(TopMenu.invoicesPath);
+      Invoices.createRolloverInvoice(invoice, organization.name);
+      Invoices.createInvoiceLineFromPol(orderNumber);
+      // Need to wait, while data will be loaded
+      cy.wait(6000);
+      Invoices.approveInvoice();
+    });
     cy.createTempUser([
       permissions.uiOrdersView.gui,
       permissions.uiInvoicesCanViewAndEditInvoicesAndInvoiceLines.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(user.username, user.password, { path:TopMenu.invoicesPath, waiter: Invoices.waitLoading });
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.invoicesPath,
+        waiter: Invoices.waitLoading,
       });
+    });
   });
 
   after(() => {
@@ -121,20 +124,51 @@ describe('Invoices', () => {
   });
 
   [
-    { filterActions: () => { Invoices.selectStatusFilter('Approved'); } },
-    { filterActions: () => { Invoices.selectVendorFilter(organization); } },
-    { filterActions: () => { Invoices.selectInvoiceDateFilter(todayDate, todayDate); } },
-    { filterActions: () => { Invoices.selectApprovalDateFilter(todayDate, todayDate); } },
-    { filterActions: () => { Invoices.selectFundCodeFilter(defaultFund.code); } },
-    { filterActions: () => { Invoices.selectButchGroupFilter('FOLIO'); } },
-    { filterActions: () => { Invoices.selectFiscalYearFilter(defaultFiscalYear.code); } },
-
+    {
+      filterActions: () => {
+        Invoices.selectStatusFilter('Approved');
+      },
+    },
+    {
+      filterActions: () => {
+        Invoices.selectVendorFilter(organization);
+      },
+    },
+    {
+      filterActions: () => {
+        Invoices.selectInvoiceDateFilter(todayDate, todayDate);
+      },
+    },
+    {
+      filterActions: () => {
+        Invoices.selectApprovalDateFilter(todayDate, todayDate);
+      },
+    },
+    {
+      filterActions: () => {
+        Invoices.selectFundCodeFilter(defaultFund.code);
+      },
+    },
+    {
+      filterActions: () => {
+        Invoices.selectButchGroupFilter('FOLIO');
+      },
+    },
+    {
+      filterActions: () => {
+        Invoices.selectFiscalYearFilter(defaultFiscalYear.code);
+      },
+    },
   ].forEach((filter) => {
-    it('C6724: Test the invoice filters (thunderjet)', { tags: [TestTypes.criticalPath, devTeams.thunderjet] }, () => {
-      filter.filterActions();
-      Invoices.selectInvoice(invoice.invoiceNumber);
-      Invoices.closeInvoiceDetailsPane();
-      Invoices.resetFilters();
-    });
+    it(
+      'C6724: Test the invoice filters (thunderjet)',
+      { tags: [TestTypes.criticalPath, devTeams.thunderjet] },
+      () => {
+        filter.filterActions();
+        Invoices.selectInvoice(invoice.invoiceNumber);
+        Invoices.closeInvoiceDetailsPane();
+        Invoices.resetFilters();
+      },
+    );
   });
 });

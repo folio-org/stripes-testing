@@ -1,7 +1,29 @@
-import { Checkbox, Button, Accordion, MultiColumnListCell, MultiColumnList, TextField } from '../../../../interactors';
+import {
+  Checkbox,
+  Button,
+  Accordion,
+  MultiColumnListCell,
+  MultiColumnList,
+  TextField,
+} from '../../../../interactors';
 
 export default {
-  itemStatuses: ['Available', 'Checked out', 'On order', 'In process', 'Awaiting pickup', 'Awaiting delivery', 'In transit', 'Missing', 'Withdrawn', 'Claimed returned', 'Declared lost', 'Lost and paid', 'Paged', 'Order closed'],
+  itemStatuses: [
+    'Available',
+    'Checked out',
+    'On order',
+    'In process',
+    'Awaiting pickup',
+    'Awaiting delivery',
+    'In transit',
+    'Missing',
+    'Withdrawn',
+    'Claimed returned',
+    'Declared lost',
+    'Lost and paid',
+    'Paged',
+    'Order closed',
+  ],
 
   toggleStatus(statusName) {
     cy.do(TextField({ label: 'itemStatus-field' }).fillIn(statusName));
@@ -24,12 +46,14 @@ export default {
   },
 
   verifyItemWithStatusExists(holdingId, status) {
-    cy.expect(MultiColumnList({ id: `list-items-${holdingId}` }).find(MultiColumnListCell(status)).exists());
+    cy.expect(
+      MultiColumnList({ id: `list-items-${holdingId}` })
+        .find(MultiColumnListCell(status))
+        .exists(),
+    );
   },
 
   waitItemsLoading() {
     cy.wait(['@getItems', '@getHoldings']);
   },
 };
-
-

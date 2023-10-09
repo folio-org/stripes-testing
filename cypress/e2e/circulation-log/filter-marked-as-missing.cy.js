@@ -10,7 +10,6 @@ import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Checkout from '../../support/fragments/checkout/checkout';
-import LoansPage from '../../support/fragments/loans/loansPage';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
 
@@ -23,7 +22,7 @@ const item = {
 
 describe('circulation-log', () => {
   before('creating user and checking out item', () => {
-    cy.createTempUser([]).then(userProperties => {
+    cy.createTempUser([]).then((userProperties) => {
       user = userProperties;
       ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' })
         .then((res) => {
@@ -43,7 +42,10 @@ describe('circulation-log', () => {
         .then(() => {
           UserLoans.getUserLoansIdViaApi(user.userId).then((userLoans) => {
             userLoans.loans.forEach(({ id }) => {
-              UserLoans.claimItemReturnedViaApi({ itemClaimedReturnedDateTime: moment.utc().format() }, id);
+              UserLoans.claimItemReturnedViaApi(
+                { itemClaimedReturnedDateTime: moment.utc().format() },
+                id,
+              );
             });
           });
         });
@@ -56,31 +58,39 @@ describe('circulation-log', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C17001 Filter circulation log by marked as missing (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    UsersSearchPane.searchByKeywords(user.userId);
-    UsersSearchPane.openUser(user.userId);
-    UsersCard.openLoans();
-    UsersCard.showOpenedLoans();
-    LoansPage.markItemAsMissing(item.barcode, 'this is a test');
+  it(
+    'C17001 Filter circulation log by marked as missing (firebird)',
+    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    () => {
+      UsersSearchPane.searchByKeywords(user.userId);
+      UsersSearchPane.openUser(user.userId);
+      UsersCard.viewCurrentLoans();
+      const ConfirmItemStatusModal = UserLoans.markAsMissing(item.barcode);
+      ConfirmItemStatusModal.confirmItemStatus('this is a test');
 
-    cy.visit(TopMenu.circulationLogPath);
-    SearchPane.searchByMarkedAsMissing();
-    SearchPane.verifyResultCells();
-    SearchPane.checkResultSearch({
-      itemBarcode: item.barcode,
-      circAction: 'Marked as missing',
-    });
-    SearchPane.resetResults();
+      cy.visit(TopMenu.circulationLogPath);
+      SearchPane.searchByMarkedAsMissing();
+      SearchPane.verifyResultCells();
+      SearchPane.checkResultSearch({
+        itemBarcode: item.barcode,
+        circAction: 'Marked as missing',
+      });
+      SearchPane.resetResults();
 
-    SearchPane.searchByItemBarcode(item.barcode);
-    SearchPane.checkResultSearch({
-      itemBarcode: item.barcode,
-      circAction: 'Marked as missing',
-    });
-  });
+      SearchPane.searchByItemBarcode(item.barcode);
+      SearchPane.checkResultSearch({
+        itemBarcode: item.barcode,
+        circAction: 'Marked as missing',
+      });
+    },
+  );
 
-  it('C45934 Check the Actions button from filtering Circulation log by marked as missing (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    SearchPane.searchByMarkedAsMissing();
-    SearchPane.checkActionButtonAfterFiltering(user.firstName, item.barcode);
-  });
+  it(
+    'C17002 Check the Actions button from filtering Circulation log by marked as missing (firebird)',
+    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    () => {
+      SearchPane.searchByMarkedAsMissing();
+      SearchPane.checkActionButtonAfterFiltering(user.firstName, item.barcode);
+    },
+  );
 });

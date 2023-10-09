@@ -4,7 +4,6 @@ import {
   FieldSet,
   KeyValue,
   Modal,
-  MultiSelect,
   NavListItem,
   PaneContent,
   RadioButton,
@@ -15,8 +14,6 @@ import {
   TextField,
 } from '../../../../interactors';
 import eHoldingsNewCustomPackage from '../../../support/fragments/eholdings/eHoldingsNewCustomPackage';
-import eHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
-import eholdingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
 import eHoldingsProvidersSearch from '../../../support/fragments/eholdings/eHoldingsProvidersSearch';
 import eHoldingsSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
 import topMenu from '../../../support/fragments/topMenu';
@@ -28,14 +25,9 @@ import getRandomPostfix, {
 
 const editButton = Button('Edit');
 const actionsButton = Button('Actions');
-const searchButton = Button('Search');
 const description = TextArea({ name: 'description' });
 const SaveAndClose = Button('Save & close');
 const availableProxies = ['Inherited - None', 'FOLIO-Bugfest', 'EZProxy'];
-const SearchButton = Section({ id: 'providerShowProviderList' }).find(
-  Button({ ariaLabel: 'Toggle filters pane' })
-);
-const iconSearch = Button({ icon: 'search' });
 const proxySelect = Select({ id: 'eholdings-proxy-id' });
 const selectionStatusAccordion = Accordion({
   id: 'accordion-toggle-button-filter-packages-selected',
@@ -45,7 +37,7 @@ const accordionClick = Button({
   id: 'accordion-toggle-button-providerShowProviderList',
 });
 const patronRadioButton = FieldSet('Show titles in package to patrons').find(
-  RadioButton({ checked: false })
+  RadioButton({ checked: false }),
 );
 const tagsClick = Button({ id: 'accordion-toggle-button-providerShowTags' });
 const providerClick = Button({
@@ -89,32 +81,13 @@ export default {
     cy.visit(topMenu.eholdingsPath);
     eHoldingsSearch.switchToPackages();
     eHoldingsProvidersSearch.byProvider(packageName);
-    eHoldingsPackages.openPackage();
     cy.do(actionsButton.click());
     cy.do(deletePackage.click());
     cy.do(confirmModal.find(Button('Yes, delete')).click());
   },
 
-  switchToPackage() {
-    eHoldingsSearch.switchToPackages();
-    eHoldingsProvidersSearch.byProvider('JSTOR');
-    eholdingsPackagesSearch.bySelectionStatus('Selected');
-  },
-
   verifyPackage() {
     cy.expect(PaneContent({ id: 'search-results-content' }).exists());
-  },
-
-  switchToPackages() {
-    cy.visit(topMenu.eholdingsPath);
-    eHoldingsProvidersSearch.byProvider('Gale Cengage');
-  },
-
-  switchToPackageAndSearch() {
-    cy.visit(topMenu.eholdingsPath);
-    eHoldingsSearch.switchToPackages();
-    eHoldingsProvidersSearch.byProvider('Wiley Online Library');
-    eholdingsPackagesSearch.bySelectionStatus('Selected');
   },
 
   editActions: () => {
@@ -132,15 +105,6 @@ export default {
     });
   },
 
-  searchActions() {
-    cy.expect(searchButton.exists());
-    cy.do(searchButton.click());
-  },
-
-  verifyFilterPackages() {
-    cy.expect(Section({ id: 'titleShowPackages' }).exists());
-  },
-
   patronRadioButton: () => {
     cy.expect(patronRadioButton.exists());
     cy.do(patronRadioButton.click());
@@ -155,11 +119,6 @@ export default {
       });
   },
 
-  dropdownValuesSelect(names) {
-    cy.expect(MultiSelect().exists());
-    cy.do(MultiSelect().select(names));
-  },
-
   bySelectionStatus(selectionStatus) {
     cy.expect(selectionStatusAccordion.exists());
     cy.do(selectionStatusAccordion.clickHeader());
@@ -172,12 +131,6 @@ export default {
     cy.do(selectionStatusSection.find(RadioButton(selectionStatus)).click());
   },
 
-  bySelectionStatusOpen(selectionStatus) {
-    cy.do(selectionStatusSection.find(Button('Selection status')).click());
-    cy.do(selectionStatusSection.find(RadioButton(selectionStatus)).click());
-    cy.do(Button('Search').click());
-  },
-
   editSchedule({ data }) {
     cy.do([
       NavListItem(data.name).click(),
@@ -188,44 +141,14 @@ export default {
     ]);
   },
 
-  packageSearch() {
-    cy.visit(topMenu.eholdingsPath);
-    eHoldingsSearch.switchToPackages();
-    eHoldingsProvidersSearch.byProvider('VLeBooks');
-    eholdingsPackagesSearch.bySelectionStatus('Selected');
-  },
-
-  packageButton: () => {
-    cy.expect(SearchButton.exists());
-    cy.do(SearchButton.click());
-  },
-
-  searchButton() {
-    cy.expect(iconSearch.exists());
-    cy.do(iconSearch.click());
-  },
-
   modelSearch() {
     cy.do(Modal({ id: 'package-filter-modal' }).find(Button('Search').click()));
   },
 
   providerToken() {
-    cy.do(
-      TextArea({ name: 'providerTokenValue' }).fillIn(
-        `Test${randomFourDigitNumber()}`
-      )
-    );
+    cy.do(TextArea({ name: 'providerTokenValue' }).fillIn(`Test${randomFourDigitNumber()}`));
     cy.expect(SaveAndClose.exists());
     cy.do(SaveAndClose.click());
-  },
-
-  getProxyValue: () => cy.then(() => KeyValue('Proxy').value()),
-
-  verifyProxy() {
-    this.getProxyValue().then((val) => {
-      // eslint-disable-next-line no-unused-expressions
-      expect(val).to.be.exist;
-    });
   },
 
   getToken: () => cy.then(() => KeyValue('Provider token').value()),

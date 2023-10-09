@@ -1,14 +1,12 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import {
   LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
   JOB_STATUS_NAMES,
-  HOLDINGS_TYPE_NAMES
+  HOLDINGS_TYPE_NAMES,
 } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -26,95 +24,115 @@ import Users from '../../../support/fragments/users/users';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import FileManager from '../../../support/utils/fileManager';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     let instanceHrid;
     const holdingsElectronicAccessData = {
-      urlRelationship:  'Resource',
+      urlRelationship: 'Resource',
       uri: 'http://silk.library.umass.edu/login?url=https://search.ebscohost.com/login.aspx?direct=true&scope=site&db=nlebk&db=nlabk&AN=10241',
       linkTextUMass: 'UMass: Link to resource',
-      urlPublicNote: 'EBSCO'
+      urlPublicNote: 'EBSCO',
     };
     const callNumberData = {
       callNumberType: 'LC Modified',
       callNumberPrefix: 'TestPref',
       callNumber: '322',
-      callNumberSuffix: 'TestSuf'
+      callNumberSuffix: 'TestSuf',
     };
     const filePathForCreate = 'marcFileForC401727.mrc';
     const marcFileNameForCreate = `C401727 autotestFileName ${getRandomPostfix()}`;
     const marcFileNameForUpdate = `C401727 autotestFileName ${getRandomPostfix()}`;
     const editedMarcFileName = `C401727 editedAutotestFileName ${getRandomPostfix()}`;
-    const holdingsMappingProfile = { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+    const holdingsMappingProfile = {
+      typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
       name: `C401727 Create simple Holdings ${getRandomPostfix()}}`,
-      permanentLocation: `"${LOCATION_NAMES.ANNEX}"` };
-    const holdingsActionProfile = { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-      name: `C401727 Create simple Holdings ${getRandomPostfix()}` };
+      permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
+    };
+    const holdingsActionProfile = {
+      typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+      name: `C401727 Create simple Holdings ${getRandomPostfix()}`,
+    };
     const jobProfile = {
       profileName: `C401727 Create simple Instance and Holdings ${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
     const collectionOfMappingAndActionProfilesForUpdate = [
       {
-        mappingProfile: { name: `C401727 Update ER holdings ${getRandomPostfix()}`,
-          typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-          holdingsType: HOLDINGS_TYPE_NAMES.ELECTRONIC },
-        actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        mappingProfile: {
           name: `C401727 Update ER holdings ${getRandomPostfix()}`,
-          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
+          typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+          holdingsType: HOLDINGS_TYPE_NAMES.ELECTRONIC,
+        },
+        actionProfile: {
+          typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+          name: `C401727 Update ER holdings ${getRandomPostfix()}`,
+          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+        },
       },
       {
-        mappingProfile: { name: `C401727 Update Call number holdings ${getRandomPostfix()}`,
+        mappingProfile: {
+          name: `C401727 Update Call number holdings ${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           callNumberType: '852$t',
           callNumberPrefix: '852$p',
           callNumber: '852$h',
-          callNumberSuffix: '852$s' },
-        actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+          callNumberSuffix: '852$s',
+        },
+        actionProfile: {
+          typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C401727 Update Call number holdings ${getRandomPostfix()}`,
-          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
+          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+        },
       },
       {
-        mappingProfile: { name: `C401727 Update Electronic access holdings ${getRandomPostfix()}`,
+        mappingProfile: {
+          name: `C401727 Update Electronic access holdings ${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           relationship: '856$f',
           uri: '856$u',
           linkText: '856$y',
           materialsSpecified: '856$3',
-          urlPublicNote: '856$z' },
-        actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+          urlPublicNote: '856$z',
+        },
+        actionProfile: {
+          typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C401727 Update Electronic access holdings ${getRandomPostfix()}`,
-          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
-      }
+          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+        },
+      },
     ];
-    const matchProfile = { profileName: `C401727 901 to Holdings HRID match ${getRandomPostfix()}`,
+    const matchProfile = {
+      profileName: `C401727 901 to Holdings HRID match ${getRandomPostfix()}`,
       incomingRecordFields: {
         field: '901',
-        subfield: 'a'
+        subfield: 'a',
       },
       matchCriterion: 'Exactly matches',
       existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
-      holdingsOption: NewMatchProfile.optionsList.holdingsHrid };
+      holdingsOption: NewMatchProfile.optionsList.holdingsHrid,
+    };
     const jobProfileForUpdate = {
       ...NewJobProfile.defaultJobProfile,
       profileName: `C401727 Update holdings with 901 match ${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
     before('create test data', () => {
       cy.createTempUser([
-        permissions.settingsDataImportEnabled.gui,
-        permissions.moduleDataImportEnabled.gui,
-        permissions.inventoryAll.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.inventoryAll.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          cy.login(user.username, user.password,
-            { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+        cy.login(user.username, user.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
         });
+      });
     });
 
     after('delete test data', () => {
@@ -122,29 +140,32 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
       ActionProfiles.deleteActionProfile(holdingsActionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(holdingsMappingProfile.name);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      collectionOfMappingAndActionProfilesForUpdate.forEach(profile => {
+      collectionOfMappingAndActionProfilesForUpdate.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-        .then((instance) => {
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+        (instance) => {
           cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
           InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
+        },
+      );
     });
 
-    it('C401727 Verify that 3 successive update actions for Holdings proceed without errors (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      // create field mapping profile
+    it(
+      'C401727 Verify that 3 successive update actions for Holdings proceed without errors (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
+        // create field mapping profile
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
         NewFieldMappingProfile.fillPermanentLocation(holdingsMappingProfile.permanentLocation);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(holdingsMappingProfile.name);
 
         // create action profile
         cy.visit(SettingsMenu.actionProfilePath);
@@ -169,58 +190,94 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(marcFileNameForCreate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileNameForCreate);
-        [FileDetails.columnNameInResultList.srsMarc,
+        [
+          FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
           FileDetails.columnNameInResultList.holdings,
-        ].forEach(columnName => {
+        ].forEach((columnName) => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
         });
         // get Instance hrid for deleting
         FileDetails.openInstanceInInventory('Created');
-        InventoryInstance.getAssignedHRID().then(hrId => { instanceHrid = hrId; });
+        InventoryInstance.getAssignedHRID().then((hrId) => {
+          instanceHrid = hrId;
+        });
         cy.go('back');
         FileDetails.openHoldingsInInventory('Created');
-        HoldingsRecordView.getHoldingsHrId().then(initialHrId => {
+        HoldingsRecordView.getHoldingsHrId().then((initialHrId) => {
           const holdingsHrId = initialHrId;
 
           // edit file with the copied value in the 901 field
-          DataImport.editMarcFile(filePathForCreate, editedMarcFileName, ['ho00004554073'], [holdingsHrId]);
+          DataImport.editMarcFile(
+            filePathForCreate,
+            editedMarcFileName,
+            ['ho00004554073'],
+            [holdingsHrId],
+          );
         });
 
         // create field mapping profiles for updating
         cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile);
-        NewFieldMappingProfile.fillHoldingsType(collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.holdingsType);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.name);
-        FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.name);
+        NewFieldMappingProfile.fillSummaryInMappingProfile(
+          collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile,
+        );
+        NewFieldMappingProfile.fillHoldingsType(
+          collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.holdingsType,
+        );
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(
+          collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.name,
+        );
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.name,
+        );
 
         FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile);
-        NewFieldMappingProfile.fillCallNumberType(collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.callNumberType);
-        NewFieldMappingProfile.fillCallNumberPrefix(collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.callNumberPrefix);
-        NewFieldMappingProfile.fillCallNumber(collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.callNumber);
-        NewFieldMappingProfile.fillcallNumberSuffix(collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.callNumberSuffix);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.name);
-        FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.name);
+        NewFieldMappingProfile.fillSummaryInMappingProfile(
+          collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile,
+        );
+        NewFieldMappingProfile.fillCallNumberType(
+          collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.callNumberType,
+        );
+        NewFieldMappingProfile.fillCallNumberPrefix(
+          collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.callNumberPrefix,
+        );
+        NewFieldMappingProfile.fillCallNumber(
+          collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.callNumber,
+        );
+        NewFieldMappingProfile.fillcallNumberSuffix(
+          collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.callNumberSuffix,
+        );
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(
+          collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.name,
+        );
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfMappingAndActionProfilesForUpdate[1].mappingProfile.name,
+        );
 
         FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfilesForUpdate[2].mappingProfile);
+        NewFieldMappingProfile.fillSummaryInMappingProfile(
+          collectionOfMappingAndActionProfilesForUpdate[2].mappingProfile,
+        );
         NewFieldMappingProfile.addElectronicAccess(
           collectionOfMappingAndActionProfilesForUpdate[2].mappingProfile.relationship,
           collectionOfMappingAndActionProfilesForUpdate[2].mappingProfile.uri,
           collectionOfMappingAndActionProfilesForUpdate[2].mappingProfile.linkText,
           collectionOfMappingAndActionProfilesForUpdate[2].mappingProfile.materialsSpecified,
-          collectionOfMappingAndActionProfilesForUpdate[2].mappingProfile.urlPublicNote
+          collectionOfMappingAndActionProfilesForUpdate[2].mappingProfile.urlPublicNote,
         );
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfilesForUpdate[2].mappingProfile.name);
-        FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfilesForUpdate[2].mappingProfile.name);
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(
+          collectionOfMappingAndActionProfilesForUpdate[2].mappingProfile.name,
+        );
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfMappingAndActionProfilesForUpdate[2].mappingProfile.name,
+        );
 
         // create action profiles for updating
-        collectionOfMappingAndActionProfilesForUpdate.forEach(profile => {
+        collectionOfMappingAndActionProfilesForUpdate.forEach((profile) => {
           cy.visit(SettingsMenu.actionProfilePath);
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
@@ -238,7 +295,7 @@ describe('data-import', () => {
           matchProfile.profileName,
           collectionOfMappingAndActionProfilesForUpdate[0].actionProfile.name,
           collectionOfMappingAndActionProfilesForUpdate[1].actionProfile.name,
-          collectionOfMappingAndActionProfilesForUpdate[2].actionProfile.name
+          collectionOfMappingAndActionProfilesForUpdate[2].actionProfile.name,
         );
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
@@ -253,10 +310,15 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(marcFileNameForUpdate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileNameForUpdate);
-        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnNameInResultList.holdings);
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.updated,
+          FileDetails.columnNameInResultList.holdings,
+        );
         FileDetails.openHoldingsInInventory('Updated');
 
-        HoldingsRecordView.checkHoldingsType(collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.holdingsType);
+        HoldingsRecordView.checkHoldingsType(
+          collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.holdingsType,
+        );
         HoldingsRecordView.checkCallNumberType(callNumberData.callNumberType);
         HoldingsRecordView.checkCallNumberPrefix(callNumberData.callNumberPrefix);
         HoldingsRecordView.checkCallNumber(callNumberData.callNumber);
@@ -265,8 +327,9 @@ describe('data-import', () => {
           holdingsElectronicAccessData.urlRelationship,
           holdingsElectronicAccessData.uri,
           holdingsElectronicAccessData.linkTextUMass,
-          holdingsElectronicAccessData.urlPublicNote
+          holdingsElectronicAccessData.urlPublicNote,
         );
-      });
+      },
+    );
   });
 });

@@ -2,6 +2,7 @@ import uuid from 'uuid';
 import moment from 'moment';
 import TestTypes from '../../../../support/dictionary/testTypes';
 import devTeams from '../../../../support/dictionary/devTeams';
+import parallelization from '../../../../support/dictionary/parallelization';
 import permissions from '../../../../support/dictionary/permissions';
 import UserEdit from '../../../../support/fragments/users/userEdit';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -47,7 +48,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
     ],
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest fee/fine limit', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const owner = {
     body: {
@@ -87,7 +88,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
   };
 
   before('Preconditions', () => {
-    itemsData.itemsWithSeparateInstance.forEach(function (item, index) {
+    itemsData.itemsWithSeparateInstance.forEach((item, index) => {
       item.barcode = generateUniqueItemBarcodeWithShift(index);
     });
 
@@ -134,15 +135,17 @@ describe('Patron Block: Maximum number of overdue items', () => {
             ],
           }).then((specialInstanceIds) => {
             itemsData.itemsWithSeparateInstance[index].instanceId = specialInstanceIds.instanceId;
-            itemsData.itemsWithSeparateInstance[index].holdingId = specialInstanceIds.holdingIds[0].id;
-            itemsData.itemsWithSeparateInstance[index].itemId = specialInstanceIds.holdingIds[0].itemIds;
+            itemsData.itemsWithSeparateInstance[index].holdingId =
+              specialInstanceIds.holdingIds[0].id;
+            itemsData.itemsWithSeparateInstance[index].itemId =
+              specialInstanceIds.holdingIds[0].itemIds;
           });
         });
       });
 
     UsersOwners.createViaApi(owner.body).then((response) => {
       owner.data = response;
-      PaymentMethods.createViaApi(response.id).then(resp => {
+      PaymentMethods.createViaApi(response.id).then((resp) => {
         testData.paymentMethodId = resp.id;
       });
     });
@@ -154,8 +157,25 @@ describe('Patron Block: Maximum number of overdue items', () => {
       originalCirculationRules = response.rulesAsText;
       const ruleProps = CirculationRules.getRuleProps(response.rulesAsText);
       ruleProps.l = loanPolicyBody.id;
-      addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + ruleProps.i + ' l ' + ruleProps.l + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
-      CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
+      addedCirculationRule =
+        't ' +
+        testData.loanTypeId +
+        ': i ' +
+        ruleProps.i +
+        ' l ' +
+        ruleProps.l +
+        ' r ' +
+        ruleProps.r +
+        ' o ' +
+        ruleProps.o +
+        ' n ' +
+        ruleProps.n;
+      CirculationRules.addRuleViaApi(
+        originalCirculationRules,
+        ruleProps,
+        't ',
+        testData.loanTypeId,
+      );
     });
 
     cy.createTempUser(
@@ -169,7 +189,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
         permissions.checkoutAll.gui,
         permissions.uiUsersView.gui,
       ],
-      patronGroup.name
+      patronGroup.name,
     )
       .then((userProperties) => {
         userData.username = userProperties.username;
@@ -178,7 +198,11 @@ describe('Patron Block: Maximum number of overdue items', () => {
         userData.barcode = userProperties.barcode;
       })
       .then(() => {
-        UserEdit.addServicePointViaApi(testData.userServicePoint.id, userData.userId, testData.userServicePoint.id);
+        UserEdit.addServicePointViaApi(
+          testData.userServicePoint.id,
+          userData.userId,
+          testData.userServicePoint.id,
+        );
         cy.login(userData.username, userData.password);
         cy.visit(SettingsMenu.conditionsPath);
         Conditions.waitLoading();
@@ -228,39 +252,41 @@ describe('Patron Block: Maximum number of overdue items', () => {
       cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
       InventoryInstance.deleteInstanceViaApi(itemsData.itemsWithSeparateInstance[index].instanceId);
     });
-    Conditions.resetConditionViaApi('584fbd4f-6a34-4730-a6ca-73a6a6a9d845', 'Maximum number of overdue items');
+    Conditions.resetConditionViaApi(
+      '584fbd4f-6a34-4730-a6ca-73a6a6a9d845',
+      'Maximum number of overdue items',
+    );
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
+      testData.defaultLocation.id,
     );
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
     cy.deleteLoanType(testData.loanTypeId);
   });
   it(
     'C350654 Verify automated patron block "Maximum number of overdue items" removed after overdue item renewed (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    { tags: [TestTypes.criticalPath, devTeams.vega, parallelization.nonParallel] },
     () => {
       findPatron();
       UsersCard.waitLoading();
       Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
 
       const itemForRenew = itemsData.itemsWithSeparateInstance[0];
-      UsersCard.openLoans();
-      UsersCard.showOpenedLoans();
-      UserLoans.openLoan(itemForRenew.barcode);
+      UsersCard.viewCurrentLoans();
+      UserLoans.openLoanDetails(itemForRenew.barcode);
       UserLoans.renewItem(itemForRenew.barcode, true);
       Renewals.renewBlockedPatron(renewComment);
 
       findPatron();
       Users.checkPatronIsNotBlocked(userData.userId);
-    }
+    },
   );
 
   it(
     'C350649 Verify automated patron block "Maximum number of overdue items" removed after overdue item returned (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    { tags: [TestTypes.criticalPath, devTeams.vega, parallelization.nonParallel] },
     () => {
       findPatron();
       UsersCard.waitLoading();
@@ -273,6 +299,6 @@ describe('Patron Block: Maximum number of overdue items', () => {
 
       findPatron();
       Users.checkPatronIsNotBlocked(userData.userId);
-    }
+    },
   );
 });

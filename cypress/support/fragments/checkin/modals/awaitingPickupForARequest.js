@@ -4,11 +4,10 @@ const modalTitle = 'Awaiting pickup for a request';
 const modalCheckbox = Modal(modalTitle).find(Checkbox('Print slip'));
 
 export default {
-  verifyModalTitle:() => {
-    cy.expect(Modal(modalTitle)
-      .exists());
+  verifyModalTitle: () => {
+    cy.expect(Modal(modalTitle).exists());
   },
-  closeModal:() => {
+  closeModal: () => {
     cy.do(Button('Close').click());
   },
   verifyUnSelectedCheckboxPrintSlip: () => {
@@ -23,5 +22,5 @@ export default {
   checkModalMessage: (item) => {
     const message = `Place ${item.title} (${item.materialType}) (Barcode: ${item.barcode}) on Hold Shelf at ${item.servicePoint} for request`;
     cy.expect(Modal({ content: including(message) }).exists());
-  }
+  },
 };

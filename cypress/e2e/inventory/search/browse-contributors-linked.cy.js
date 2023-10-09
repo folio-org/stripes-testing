@@ -51,32 +51,32 @@ describe('Inventory: Contributors Browse', () => {
     {
       rowIndex: 13,
       authNaturalId: 'n831692600011182',
-    }
+    },
   ];
 
   const createdRecordIDs = [];
 
   before('Creating data', () => {
-    cy.createTempUser([
-      Permissions.inventoryAll.gui,
-    ]).then(createdUserProperties => {
+    cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
 
-      marcFiles.forEach(marcFile => {
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-          JobProfiles.waitLoadingList();
-          JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(marcFile.fileName);
-          Logs.checkStatusOfJobProfile('Completed');
-          Logs.openFileDetails(marcFile.fileName);
-          for (let i = 0; i < marcFile.numOfRecords; i++) {
-            Logs.getCreatedItemsID(i).then(link => {
-              createdRecordIDs.push(link.split('/')[5]);
-            });
-          }
-        });
+      marcFiles.forEach((marcFile) => {
+        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
+          () => {
+            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+            JobProfiles.waitLoadingList();
+            JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
+            JobProfiles.runImportFile();
+            JobProfiles.waitFileIsImported(marcFile.fileName);
+            Logs.checkStatusOfJobProfile('Completed');
+            Logs.openFileDetails(marcFile.fileName);
+            for (let i = 0; i < marcFile.numOfRecords; i++) {
+              Logs.getCreatedItemsID(i).then((link) => {
+                createdRecordIDs.push(link.split('/')[5]);
+              });
+            }
+          },
+        );
       });
 
       cy.visit(TopMenu.inventoryPath).then(() => {
@@ -84,7 +84,7 @@ describe('Inventory: Contributors Browse', () => {
         InventoryInstance.searchByTitle(createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
-        tagInfo.forEach(tag => {
+        tagInfo.forEach((tag) => {
           QuickMarcEditor.clickLinkIconInTagField(tag.rowIndex);
           MarcAuthorities.switchToSearch();
           InventoryInstance.verifySelectMarcAuthorityModal();
@@ -100,7 +100,10 @@ describe('Inventory: Contributors Browse', () => {
         InventoryInstance.waitLoading();
       });
 
-      cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+      cy.login(testData.userProperties.username, testData.userProperties.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
     });
   });
 
@@ -112,11 +115,18 @@ describe('Inventory: Contributors Browse', () => {
     });
   });
 
-  it('C359596 Verify that contributors with the same "Name", "Name type" and different "authorityID" will display in different rows in the response (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire], retries: 1 }, () => {
-    InventorySearchAndFilter.switchToBrowseTab();
-    InventorySearchAndFilter.verifyKeywordsAsDefault();
-    BrowseContributors.select();
-    BrowseContributors.browse(testData.contributorName);
-    BrowseContributors.checkAuthorityIconAndValueDisplayedForMultipleRows(2, testData.contributorName);
-  });
+  it(
+    'C359596 Verify that contributors with the same "Name", "Name type" and different "authorityID" will display in different rows in the response (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire], retries: 1 },
+    () => {
+      InventorySearchAndFilter.switchToBrowseTab();
+      InventorySearchAndFilter.verifyKeywordsAsDefault();
+      BrowseContributors.select();
+      BrowseContributors.browse(testData.contributorName);
+      BrowseContributors.checkAuthorityIconAndValueDisplayedForMultipleRows(
+        2,
+        testData.contributorName,
+      );
+    },
+  );
 });

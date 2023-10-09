@@ -23,31 +23,28 @@ describe('ui-finance: Funds', () => {
     cy.visit(SettingsMenu.expenseClassesPath);
     SettingsFinance.createNewExpenseClass(firstExpenseClass);
 
-    FiscalYears.createViaApi(defaultFiscalYear)
-      .then(response => {
-        defaultFiscalYear.id = response.id;
-        defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+    FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
+      defaultFiscalYear.id = response.id;
+      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
 
-        Ledgers.createViaApi(defaultLedger)
-          .then(ledgerResponse => {
-            defaultLedger.id = ledgerResponse.id;
-            defaultfund.ledgerId = defaultLedger.id;
+      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+        defaultLedger.id = ledgerResponse.id;
+        defaultfund.ledgerId = defaultLedger.id;
 
-            Funds.createViaApi(defaultfund)
-              .then(fundResponse => {
-                defaultfund.id = fundResponse.fund.id;
+        Funds.createViaApi(defaultfund).then((fundResponse) => {
+          defaultfund.id = fundResponse.fund.id;
 
-                cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
-                FinanceHelp.searchByName(defaultfund.name);
-                Funds.selectFund(defaultfund.name);
-                Funds.addBudget(allocatedQuantity);
-              });
-          });
+          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+          FinanceHelp.searchByName(defaultfund.name);
+          Funds.selectFund(defaultfund.name);
+          Funds.addBudget(allocatedQuantity);
+        });
       });
+    });
   });
 
   after(() => {
-    cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
+    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
     FinanceHelp.searchByName(defaultfund.name);
     Funds.selectFund(defaultfund.name);
     Funds.selectBudgetDetails();
@@ -67,13 +64,19 @@ describe('ui-finance: Funds', () => {
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
   });
 
-  it('C15858 Add expense class to budget (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    cy.visit(TopMenu.fundPath);
-    FinanceHelp.searchByName(defaultfund.name);
-    Funds.selectFund(defaultfund.name);
-    Funds.selectBudgetDetails();
-    Funds.editBudget();
-    Funds.addExpensesClass(firstExpenseClass.name);
-    InteractorsTools.checkCalloutMessage(`Budget ${defaultfund.code}-${defaultFiscalYear.code} has been saved`);
-  });
+  it(
+    'C15858 Add expense class to budget (thunderjet)',
+    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    () => {
+      cy.visit(TopMenu.fundPath);
+      FinanceHelp.searchByName(defaultfund.name);
+      Funds.selectFund(defaultfund.name);
+      Funds.selectBudgetDetails();
+      Funds.editBudget();
+      Funds.addExpensesClass(firstExpenseClass.name);
+      InteractorsTools.checkCalloutMessage(
+        `Budget ${defaultfund.code}-${defaultFiscalYear.code} has been saved`,
+      );
+    },
+  );
 });

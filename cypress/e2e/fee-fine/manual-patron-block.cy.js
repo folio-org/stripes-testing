@@ -25,17 +25,16 @@ describe('ui-patrons: Verify that library staff can create/edit/delete a manual 
       permissions.uiUsersCreatePatronConditions.gui,
       permissions.uiUsersCreatePatronGroups.gui,
       permissions.uiUsersCreatePatronLimits.gui,
-      permissions.uiUsersCreatePatronTamplate.gui
-    ])
-      .then(userProperties => {
-        userId = userProperties.userId;
-        userName = userProperties.username;
-        userProperties.expirationDate = expirationUserDate;
-        cy.login(userProperties.username, userProperties.password);
-        cy.visit(SettingsMenu.patronBlockTemplates);
-        PatronBlockTemplates.newPatronTemlate();
-        PatronBlockTemplates.fillInPatronTemlateInformation(templateName, testDescription);
-      });
+      permissions.uiUsersCreatePatronTamplate.gui,
+    ]).then((userProperties) => {
+      userId = userProperties.userId;
+      userName = userProperties.username;
+      userProperties.expirationDate = expirationUserDate;
+      cy.login(userProperties.username, userProperties.password);
+      cy.visit(SettingsMenu.patronBlockTemplates);
+      PatronBlockTemplates.newPatronTemlate();
+      PatronBlockTemplates.fillInPatronTemlateInformation(templateName, testDescription);
+    });
     cy.visit(TopMenu.usersPath);
   });
 
@@ -87,24 +86,28 @@ describe('ui-patrons: Verify that library staff can create/edit/delete a manual 
     // scenario#9
     UsersCard.deletePatronBlock();
   });
-  it('C476: Scenario#10,11,12,13,14,15,16 (vega)', { tags: [TestTypes.smoke, devTeams.vega] }, () => {
-    UsersSearchPane.searchByKeywords(userName);
-    UsersCard.patronBlocksAccordionCovered();
+  it(
+    'C476: Scenario#10,11,12,13,14,15,16 (vega)',
+    { tags: [TestTypes.smoke, devTeams.vega] },
+    () => {
+      UsersSearchPane.searchByKeywords(userName);
+      UsersCard.patronBlocksAccordionCovered();
 
-    UsersSearchPane.searchByKeywords(userName);
-    // scenario#10
-    UsersCard.createNewPatronBlock(testDescription);
-    // scenario#11
-    UsersCard.selectTodayExpirationDate();
-    UsersCard.submitWrongExpirationDate();
-    UsersCard.selectTomorrowExpirationDate();
-    // scenario#12
-    UsersCard.saveAndClose();
-    UsersCard.submitPatronInformation(testDescription);
-    // scenario#13,14,15,16
-    UsersCard.selectPatronBlock(testDescription);
-    UsersCard.deletePatronBlock();
-  });
+      UsersSearchPane.searchByKeywords(userName);
+      // scenario#10
+      UsersCard.createNewPatronBlock(testDescription);
+      // scenario#11
+      UsersCard.selectTodayExpirationDate();
+      UsersCard.submitWrongExpirationDate();
+      UsersCard.selectTomorrowExpirationDate();
+      // scenario#12
+      UsersCard.saveAndClose();
+      UsersCard.submitPatronInformation(testDescription);
+      // scenario#13,14,15,16
+      UsersCard.selectPatronBlock(testDescription);
+      UsersCard.deletePatronBlock();
+    },
+  );
   it('C476: Scenario#17,18 (vega)', { tags: [TestTypes.smoke, devTeams.vega] }, () => {
     UsersSearchPane.searchByKeywords(userName);
     UsersCard.openPatronBlocks();

@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import TopMenu from '../../../support/fragments/topMenu';
 import UsersSearchResultsPane from '../../../support/fragments/users/usersSearchResultsPane';
 import FinancialTransactionDetailReportModal from '../../../support/fragments/users/financialTransactionDetailReportModal';
@@ -9,14 +8,8 @@ import ServicePoints from '../../../support/fragments/settings/tenant/servicePoi
 
 describe('Financial Transactions Detail Report', () => {
   const ownerData = {};
-  const servicePoint1 = ServicePoints.getDefaultServicePointWithPickUpLocation(
-    'autotest transaction',
-    uuid(),
-  );
-  const servicePoint2 = ServicePoints.getDefaultServicePointWithPickUpLocation(
-    'autotest transaction',
-    uuid(),
-  );
+  const servicePoint1 = ServicePoints.getDefaultServicePointWithPickUpLocation();
+  const servicePoint2 = ServicePoints.getDefaultServicePointWithPickUpLocation();
 
   before('UserOwner is created', () => {
     // the login with admin, visiting the path and the waiter are separated to get the fetch request to get owners
@@ -24,9 +17,9 @@ describe('Financial Transactions Detail Report', () => {
       ServicePoints.createViaApi(servicePoint1);
       ServicePoints.createViaApi(servicePoint2);
 
-      UsersOwners.createViaApi(UsersOwners.getDefaultNewOwner(uuid(), 'owner'))
-        .then(({ id, ownerName }) => {
-          ownerData.name = ownerName;
+      UsersOwners.createViaApi(UsersOwners.getDefaultNewOwner())
+        .then(({ id, owner }) => {
+          ownerData.name = owner;
           ownerData.id = id;
         })
         .then(() => {

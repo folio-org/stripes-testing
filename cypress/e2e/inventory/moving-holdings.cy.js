@@ -36,43 +36,60 @@ describe('inventory', () => {
       permissions.uiInventoryMoveItems.gui,
       permissions.uiInventoryHoldingsMove.gui,
       permissions.inventoryViewCreateEditInstances.gui,
-    ])
-      .then(userProperties => {
-        cy.getLocations({ limit: 3 });
-        cy.getHoldingTypes({ limit: 3 });
-        InventoryHoldings.getHoldingSources({ limit: 2 })
-          .then(holdingsSourcesResponse => {
-            holdingSources = holdingsSourcesResponse;
-          });
-        userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password, { path: TopMenu.inventoryPath, waiter: InventorySearchAndFilter.waitLoading })
-          .then(() => {
-            item.holdings = [
-              {
-                holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
-                permanentLocationId: Cypress.env('locations')[0].id,
-                sourceId: holdingSources[0].id,
-              },
-              {
-                holdingsTypeId: Cypress.env('holdingsTypes')[1].id,
-                permanentLocationId: Cypress.env('locations')[1].id,
-                sourceId: holdingSources[1].id,
-              }];
-            secondItem.holdings = [
-              {
-                holdingsTypeId: Cypress.env('holdingsTypes')[2].id,
-                permanentLocationId: Cypress.env('locations')[2].id,
-                sourceId: holdingSources[0].id,
-              }];
-            InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode, null, '1', '2', 'test_number_1', item.holdings);
-            InventoryInstances.createInstanceViaApi(secondItem.instanceName, secondItem.barcode, null, '1', '2', 'test_number_1', secondItem.holdings);
-
-            cy.getItems({ query: `"barcode"=="${item.barcode}"` })
-              .then(response => {
-                item.firstHoldingName = response.effectiveLocation.name;
-              });
-          });
+    ]).then((userProperties) => {
+      cy.getLocations({ limit: 3 });
+      cy.getHoldingTypes({ limit: 3 });
+      InventoryHoldings.getHoldingSources({ limit: 2 }).then((holdingsSourcesResponse) => {
+        holdingSources = holdingsSourcesResponse;
       });
+      userId = userProperties.userId;
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventorySearchAndFilter.waitLoading,
+      }).then(() => {
+        item.holdings = [
+          {
+            holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
+            permanentLocationId: Cypress.env('locations')[0].id,
+            sourceId: holdingSources[0].id,
+          },
+          {
+            holdingsTypeId: Cypress.env('holdingsTypes')[1].id,
+            permanentLocationId: Cypress.env('locations')[1].id,
+            sourceId: holdingSources[1].id,
+          },
+        ];
+        secondItem.holdings = [
+          {
+            holdingsTypeId: Cypress.env('holdingsTypes')[2].id,
+            permanentLocationId: Cypress.env('locations')[2].id,
+            sourceId: holdingSources[0].id,
+          },
+        ];
+        InventoryInstances.createInstanceViaApi(
+          item.instanceName,
+          item.barcode,
+          null,
+          '1',
+          '2',
+          'test_number_1',
+          item.holdings,
+        );
+        InventoryInstances.createInstanceViaApi(
+          secondItem.instanceName,
+          secondItem.barcode,
+          null,
+          '1',
+          '2',
+          'test_number_1',
+          secondItem.holdings,
+        );
+
+        cy.getItems({ query: `"barcode"=="${item.barcode}"` }).then((response) => {
+          item.firstHoldingName = response.effectiveLocation.name;
+        });
+      });
+    });
   });
 
   after('delete test data', () => {
@@ -81,18 +98,25 @@ describe('inventory', () => {
     Users.deleteViaApi(userId);
   });
 
-  it('C15187 Move some items with in a holdings record to another holdings associated with another instance (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    InventorySearchAndFilter.switchToItem();
-    InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
-    InventorySearchAndFilter.selectSearchResultItem();
-    ItemRecordView.closeDetailView();
+  it(
+    'C15187 Move some items with in a holdings record to another holdings associated with another instance (firebird)',
+    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    () => {
+      InventorySearchAndFilter.switchToItem();
+      InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
+      InventorySearchAndFilter.selectSearchResultItem();
+      ItemRecordView.closeDetailView();
 
-    InventoryInstance.moveHoldingsToAnotherInstanceByItemTitle(item.firstHoldingName, secondItem.instanceName);
-    InteractorsTools.checkCalloutMessage(successCalloutMessage);
-    InventoryInstancesMovement.verifyHoldingsMoved(item.firstHoldingName, '2');
+      InventoryInstance.moveHoldingsToAnotherInstanceByItemTitle(
+        item.firstHoldingName,
+        secondItem.instanceName,
+      );
+      InteractorsTools.checkCalloutMessage(successCalloutMessage);
+      InventoryInstancesMovement.verifyHoldingsMoved(item.firstHoldingName, '2');
 
-    InventoryInstancesMovement.moveFromMultiple(item.firstHoldingName, item.instanceName);
-    InteractorsTools.checkCalloutMessage(successCalloutMessage);
-    InventoryInstancesMovement.verifyHoldingsMoved(item.firstHoldingName, '2');
-  });
+      InventoryInstancesMovement.moveFromMultiple(item.firstHoldingName, item.instanceName);
+      InteractorsTools.checkCalloutMessage(successCalloutMessage);
+      InventoryInstancesMovement.verifyHoldingsMoved(item.firstHoldingName, '2');
+    },
+  );
 });

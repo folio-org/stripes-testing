@@ -9,14 +9,12 @@ export default {
     cy.expect(HTML(including(itemBarcode)).exists());
   },
   confirm: () => {
-    cy.do([confirmButton.exists(),
-      confirmButton.click()]);
+    cy.do([confirmButton.exists(), confirmButton.click()]);
   },
   cancel: () => {
-    cy.do([cancelButton.exists(),
-      cancelButton.click()]);
+    cy.do([cancelButton.exists(), cancelButton.click()]);
   },
   verifyModalIsClosed() {
     cy.expect(checkInModal.absent());
-  }
+  },
 };

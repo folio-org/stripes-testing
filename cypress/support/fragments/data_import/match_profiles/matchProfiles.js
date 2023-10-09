@@ -1,5 +1,13 @@
 import { including } from '@interactors/html';
-import { Button, MultiColumnListCell, Section, Pane, DropdownMenu, HTML, Callout } from '../../../../../interactors';
+import {
+  Button,
+  MultiColumnListCell,
+  Section,
+  Pane,
+  DropdownMenu,
+  HTML,
+  Callout,
+} from '../../../../../interactors';
 import NewMatchProfile from './newMatchProfile';
 
 const actionsButton = Button('Actions');
@@ -15,27 +23,23 @@ const openNewMatchProfileForm = () => {
 
 const deleteMatchProfile = (profileName) => {
   // get all match profiles
-  cy
-    .okapiRequest({
-      path: 'data-import-profiles/matchProfiles',
-      searchParams: {
-        query: '(cql.allRecords=1) sortby name',
-        limit: 1000
-      },
-    })
-    .then(({ body: { matchProfiles } }) => {
-      // find profile to delete
-      const profileToDelete = matchProfiles.find(profile => profile.name === profileName);
-      // delete profile with its id
-      cy
-        .okapiRequest({
-          method: 'DELETE',
-          path: `data-import-profiles/matchProfiles/${profileToDelete.id}`,
-        })
-        .then(({ status }) => {
-          if (status === 204) cy.log('###DELETED MATCH PROFILE###');
-        });
+  cy.okapiRequest({
+    path: 'data-import-profiles/matchProfiles',
+    searchParams: {
+      query: '(cql.allRecords=1) sortby name',
+      limit: 1000,
+    },
+  }).then(({ body: { matchProfiles } }) => {
+    // find profile to delete
+    const profileToDelete = matchProfiles.find((profile) => profile.name === profileName);
+    // delete profile with its id
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `data-import-profiles/matchProfiles/${profileToDelete.id}`,
+    }).then(({ status }) => {
+      if (status === 204) cy.log('###DELETED MATCH PROFILE###');
     });
+  });
 };
 
 const waitCreatingMatchProfile = () => {
@@ -48,67 +52,76 @@ const search = (profileName) => {
   cy.do(Pane('Match profiles').find(Button('Search')).click());
 };
 
-const saveAndClose = () => cy.do(Button('Save as profile & Close').click());
-
 export default {
   openNewMatchProfileForm,
   deleteMatchProfile,
   search,
-  saveAndClose,
 
   createMatchProfile(profile) {
     openNewMatchProfileForm();
     NewMatchProfile.fillMatchProfileForm(profile);
-    saveAndClose();
+    NewMatchProfile.saveAndClose();
     waitCreatingMatchProfile();
   },
 
-  checkMatchProfilePresented:(profileName) => {
+  createMatchProfileWithExistingPart: (profile) => {
+    openNewMatchProfileForm();
+    NewMatchProfile.fillMatchProfileWithExistingPart(profile);
+    NewMatchProfile.saveAndClose();
+    waitCreatingMatchProfile();
+  },
+
+  createMatchProfileWithQualifier: (profile) => {
+    openNewMatchProfileForm();
+    NewMatchProfile.fillMatchProfileWithQualifierInIncomingAndExistingRecords(profile);
+    NewMatchProfile.saveAndClose();
+    waitCreatingMatchProfile();
+  },
+
+  createMatchProfileWithQualifierAndComparePart: (profile) => {
+    openNewMatchProfileForm();
+    NewMatchProfile.fillMatchProfileWithStaticValueAndComparePartValue(profile);
+    NewMatchProfile.saveAndClose();
+    waitCreatingMatchProfile();
+  },
+
+  createMatchProfileWithQualifierAndExistingRecordField: (profile) => {
+    openNewMatchProfileForm();
+    NewMatchProfile.fillMatchProfileWithQualifierInIncomingRecordsAndValueInExistingRecord(profile);
+    NewMatchProfile.saveAndClose();
+    waitCreatingMatchProfile();
+  },
+
+  createMatchProfileWithStaticValue: (profile) => {
+    openNewMatchProfileForm();
+    NewMatchProfile.fillMatchProfileWithStaticValue(profile);
+    NewMatchProfile.saveAndClose();
+    waitCreatingMatchProfile();
+  },
+
+  checkMatchProfilePresented: (profileName) => {
     search(profileName);
     cy.expect(MultiColumnListCell(profileName).exists());
   },
 
-  createMatchProfileWithExistingPart:(profile) => {
-    openNewMatchProfileForm();
-    NewMatchProfile.fillMatchProfileWithExistingPart(profile);
-    saveAndClose();
-    waitCreatingMatchProfile();
-  },
-
-  createMatchProfileWithQualifier:(profile) => {
-    openNewMatchProfileForm();
-    NewMatchProfile.fillMatchProfileWithQualifierInIncomingAndExistingRecords(profile);
-    saveAndClose();
-    waitCreatingMatchProfile();
-  },
-
-  createMatchProfileWithQualifierAndComparePart:(profile) => {
-    openNewMatchProfileForm();
-    NewMatchProfile.fillMatchProfileWithStaticValueAndComparePartValue(profile);
-    saveAndClose();
-    waitCreatingMatchProfile();
-  },
-
-  createMatchProfileWithQualifierAndExistingRecordField:(profile) => {
-    openNewMatchProfileForm();
-    NewMatchProfile.fillMatchProfileWithQualifierInIncomingRecordsAndValueInExistingRecord(profile);
-    saveAndClose();
-    waitCreatingMatchProfile();
-  },
-
-  createMatchProfileWithStaticValue:(profile) => {
-    openNewMatchProfileForm();
-    NewMatchProfile.fillMatchProfileWithStaticValue(profile);
-    saveAndClose();
-    waitCreatingMatchProfile();
-  },
-
   checkCalloutMessage: (profileName) => {
-    cy.expect(Callout({ textContent: including(`The match profile "${profileName}" was successfully updated`) })
-      .exists());
+    cy.expect(
+      Callout({
+        textContent: including(`The match profile "${profileName}" was successfully updated`),
+      }).exists(),
+    );
   },
 
-  checkListOfExistingProfilesIsDisplayed:() => cy.expect(resultsPane.exists()),
-  selectMatchProfileFromList:(profileName) => cy.do(MultiColumnListCell(profileName).click()),
-  verifyActionMenuAbsent:() => cy.expect(resultsPane.find(actionsButton).absent())
+  checkCreateProfileCalloutMessage: (profileName) => {
+    cy.expect(
+      Callout({
+        textContent: including(`The match profile "${profileName}" was successfully created`),
+      }).exists(),
+    );
+  },
+
+  checkListOfExistingProfilesIsDisplayed: () => cy.expect(resultsPane.exists()),
+  selectMatchProfileFromList: (profileName) => cy.do(MultiColumnListCell(profileName).click()),
+  verifyActionMenuAbsent: () => cy.expect(resultsPane.find(actionsButton).absent()),
+  verifyMatchProfileAbsent: () => cy.expect(resultsPane.find(HTML(including('The list contains no items'))).exists()),
 };

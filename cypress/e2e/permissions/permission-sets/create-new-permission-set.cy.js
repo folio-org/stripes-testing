@@ -33,6 +33,6 @@ describe('Permission Sets', () => {
         cy.wrap(intercept.response.body.id).as('permSetId');
       });
       PermissionSets.checkAfterSaving(newPermissionSet);
-    }
+    },
   );
 });

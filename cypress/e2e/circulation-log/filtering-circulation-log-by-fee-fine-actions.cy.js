@@ -42,7 +42,7 @@ describe('Circulation log', () => {
   const refundReason = RefundReasons.getDefaultNewRefundReason(uuid());
   const transferAccount = TransferAccounts.getDefaultNewTransferAccount(uuid());
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestCircLog', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     manualChargeName: null,
   };
   const waiveBody = (amount) => ({
@@ -207,21 +207,20 @@ describe('Circulation log', () => {
     });
     RefundReasons.createViaApi(refundReason);
 
-    PatronGroups.createViaApi(patronGroup.name)
-      .then((group) => {
-        patronGroup.id = group;
-        cy.createTempUser([permissions.circulationLogAll.gui], patronGroup.name)
-          .then((userProperties) => {
-            userData = userProperties;
-          })
-          .then(() => {
-            UserEdit.addServicePointViaApi(
-              testData.userServicePoint.id,
-              userData.userId,
-              testData.userServicePoint.id
-            );
-          });
-      });
+    PatronGroups.createViaApi(patronGroup.name).then((group) => {
+      patronGroup.id = group;
+      cy.createTempUser([permissions.circulationLogAll.gui], patronGroup.name)
+        .then((userProperties) => {
+          userData = userProperties;
+        })
+        .then(() => {
+          UserEdit.addServicePointViaApi(
+            testData.userServicePoint.id,
+            userData.userId,
+            testData.userServicePoint.id,
+          );
+        });
+    });
   });
 
   beforeEach('Login', () => {
@@ -244,7 +243,7 @@ describe('Circulation log', () => {
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
+      testData.defaultLocation.id,
     );
   });
 
@@ -259,7 +258,7 @@ describe('Circulation log', () => {
         filterByAction('Transferred fully');
         NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
       });
-    }
+    },
   );
 
   it(
@@ -271,7 +270,7 @@ describe('Circulation log', () => {
         PayFeeFaine.payFeeFineViaApi(payBody('2.00'), testData.feeFineId);
         checkActionsButton('Paid partially');
       });
-    }
+    },
   );
 
   it(
@@ -280,7 +279,7 @@ describe('Circulation log', () => {
     () => {
       filterByAction('Paid partially');
       NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
-    }
+    },
   );
 
   it(
@@ -292,7 +291,7 @@ describe('Circulation log', () => {
         PayFeeFaine.payFeeFineViaApi(payBody('4.00'), testData.feeFineId);
         checkActionsButton('Paid fully');
       });
-    }
+    },
   );
 
   it(
@@ -301,7 +300,7 @@ describe('Circulation log', () => {
     () => {
       filterByAction('Paid fully');
       NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
-    }
+    },
   );
 
   it(
@@ -314,7 +313,7 @@ describe('Circulation log', () => {
         RefundFeeFine.refundFeeFineViaApi(refundBody('2.00'), testData.feeFineId);
         checkActionsButton('Refunded partially');
       });
-    }
+    },
   );
 
   it(
@@ -323,7 +322,7 @@ describe('Circulation log', () => {
     () => {
       filterByAction('Refunded partially');
       NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
-    }
+    },
   );
 
   it(
@@ -336,7 +335,7 @@ describe('Circulation log', () => {
         RefundFeeFine.refundFeeFineViaApi(refundBody('4.00'), testData.feeFineId);
         checkActionsButton('Refunded fully');
       });
-    }
+    },
   );
 
   it(
@@ -345,7 +344,7 @@ describe('Circulation log', () => {
     () => {
       filterByAction('Refunded fully');
       NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
-    }
+    },
   );
 
   it(
@@ -357,7 +356,7 @@ describe('Circulation log', () => {
         WaiveFeeFineModal.waiveFeeFineViaApi(waiveBody('2.00'), testData.feeFineId);
         checkActionsButton('Waived partially');
       });
-    }
+    },
   );
 
   it(
@@ -366,7 +365,7 @@ describe('Circulation log', () => {
     () => {
       filterByAction('Waived partially');
       NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
-    }
+    },
   );
 
   it(
@@ -378,7 +377,7 @@ describe('Circulation log', () => {
         WaiveFeeFineModal.waiveFeeFineViaApi(waiveBody('4.00'), testData.feeFineId);
         checkActionsButton('Waived fully');
       });
-    }
+    },
   );
 
   it(
@@ -387,6 +386,6 @@ describe('Circulation log', () => {
     () => {
       filterByAction('Waived fully');
       NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
-    }
+    },
   );
 });

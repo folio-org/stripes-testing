@@ -26,7 +26,6 @@ const actionsButton = Button('Actions');
 const servicePointField = MultiSelect({
   ariaLabelledby: 'accordion-toggle-button-servicePointId',
 });
-const data = '4502015';
 
 export default {
   // TODO: will rework to interactor when we get section id
@@ -40,7 +39,7 @@ export default {
   searchByCheckedOut() {
     cy.do([
       Accordion({ id: 'loan' }).clickHeader(),
-      Checkbox({ id: 'clickable-filter-loan-checked-out' }).click()
+      Checkbox({ id: 'clickable-filter-loan-checked-out' }).click(),
     ]);
   },
 
@@ -71,10 +70,7 @@ export default {
   },
 
   searchByServicePoint(servicePoint) {
-    cy.do([
-      servicePointField.fillIn(servicePoint),
-      servicePointField.choose(servicePoint),
-    ]);
+    cy.do([servicePointField.fillIn(servicePoint), servicePointField.choose(servicePoint)]);
   },
 
   searchByClaimedReturned() {
@@ -93,10 +89,7 @@ export default {
 
   setFilterOptionFromAccordion(accordion, checkboxOption) {
     // accordion = 'loan', 'notice', 'fee', 'request'
-    cy.do([
-      Accordion({ id: accordion }).clickHeader(),
-      Checkbox(checkboxOption).click(),
-    ]);
+    cy.do([Accordion({ id: accordion }).clickHeader(), Checkbox(checkboxOption).click()]);
   },
 
   resetFilters() {
@@ -105,23 +98,45 @@ export default {
 
   verifyResultCells(verifyDate = false) {
     const dateRegEx = /\d{1,2}\/\d{1,2}\/\d{4},\s\d{1,2}:\d{2}\s\w{2}/gm;
+
     function getResultRowByRowNumber(rowNumber) {
       return {
-        userBarcode: MultiColumnListCell({ row: rowNumber, columnIndex: 0, content: matching(/\d|/) }),
-        itemBarcode: MultiColumnListCell({ row: rowNumber, columnIndex: 1, content: matching(/\d|/) }),
+        userBarcode: MultiColumnListCell({
+          row: rowNumber,
+          columnIndex: 0,
+          content: matching(/\d|/),
+        }),
+        itemBarcode: MultiColumnListCell({
+          row: rowNumber,
+          columnIndex: 1,
+          content: matching(/\d|/),
+        }),
         object: MultiColumnListCell({ row: rowNumber, columnIndex: 2, content: matching(/\w|-/) }),
-        circAction: MultiColumnListCell({ row: rowNumber, columnIndex: 3, content: matching(/\w/) }),
+        circAction: MultiColumnListCell({
+          row: rowNumber,
+          columnIndex: 3,
+          content: matching(/\w/),
+        }),
         date: MultiColumnListCell({ row: rowNumber, columnIndex: 4, content: matching(dateRegEx) }),
-        servicePoint: MultiColumnListCell({ row: rowNumber, columnIndex: 5, content: matching(/\w|/) }),
+        servicePoint: MultiColumnListCell({
+          row: rowNumber,
+          columnIndex: 5,
+          content: matching(/\w|/),
+        }),
         source: MultiColumnListCell({ row: rowNumber, columnIndex: 6, content: matching(/\w|/) }),
-        description: MultiColumnListCell({ row: rowNumber, columnIndex: 7, content: matching(/\w|/) })
+        description: MultiColumnListCell({
+          row: rowNumber,
+          columnIndex: 7,
+          content: matching(/\w|/),
+        }),
       };
     }
 
     // TODO: rework with interactor (now we don't have interactor for this)
     return cy.get('#circulation-log-list').then((element) => {
       // only 30 records shows on every page
-      const resultCount = element.attr('data-total-count') > 29 ? 29 : element.attr('data-total-count');
+      const resultCount =
+        element.attr('data-total-count') > 29 ? 29 : element.attr('data-total-count');
       // verify every string in result table
       for (let i = 0; i < resultCount; i++) {
         const resultRow = getResultRowByRowNumber(i);
@@ -141,7 +156,7 @@ export default {
               const isActualDateCorrect = lastWeek <= actualDate <= today;
               // eslint-disable-next-line no-unused-expressions
               expect(isActualDateCorrect).to.be.true;
-            })
+            }),
           );
         }
       }
@@ -149,14 +164,29 @@ export default {
   },
 
   checkResultSearch(searchResults, rowIndex = 0) {
-    return cy.wrap(Object.values(searchResults)).each(contentToCheck => {
-      cy.expect(MultiColumnListRow({ indexRow: `row-${rowIndex}` }).find(MultiColumnListCell({ content: including(contentToCheck) })).exists());
+    return cy.wrap(Object.values(searchResults)).each((contentToCheck) => {
+      cy.expect(
+        MultiColumnListRow({ indexRow: `row-${rowIndex}` })
+          .find(MultiColumnListCell({ content: including(contentToCheck) }))
+          .exists(),
+      );
+    });
+  },
+
+  checkSearchResultByBarcode({ barcode, searchResults }) {
+    this.searchByUserBarcode(barcode);
+    this.findResultRowIndexByContent(searchResults.desc).then((rowIndex) => {
+      this.checkResultSearch(searchResults, rowIndex);
     });
   },
 
   // TODO check if we can use it using MultiColumnRow
   findResultRowIndexByContent(content) {
-    return cy.get('*[class^="mclCell"]').contains(content).parent().invoke('attr', 'data-row-inner');
+    return cy
+      .get('*[class^="mclCell"]')
+      .contains(content)
+      .parent()
+      .invoke('attr', 'data-row-inner');
   },
 
   filterByLastWeek() {
@@ -164,9 +194,13 @@ export default {
     const today = new Date();
 
     return cy.do([
-      TextField({ name: 'endDate' }).fillIn(DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY')),
-      TextField({ name: 'startDate' }).fillIn(DateTools.getFormattedDate({ date: lastWeek }, 'MM/DD/YYYY')),
-      Accordion({ id: 'date' }).find(Button('Apply')).click()
+      TextField({ name: 'endDate' }).fillIn(
+        DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY'),
+      ),
+      TextField({ name: 'startDate' }).fillIn(
+        DateTools.getFormattedDate({ date: lastWeek }, 'MM/DD/YYYY'),
+      ),
+      Accordion({ id: 'date' }).find(Button('Apply')).click(),
     ]);
   },
   resetResults() {

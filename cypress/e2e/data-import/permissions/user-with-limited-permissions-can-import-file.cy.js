@@ -1,13 +1,13 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
-import { LOAN_TYPE_NAMES,
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
+import {
+  LOAN_TYPE_NAMES,
   ITEM_STATUS_NAMES,
   FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
-  JOB_STATUS_NAMES } from '../../../support/constants';
+  JOB_STATUS_NAMES,
+} from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -21,6 +21,7 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Permissions', () => {
@@ -30,44 +31,50 @@ describe('data-import', () => {
     const nameMarcFile = `C356841autotestFile.${getRandomPostfix()}.mrc`;
     const collectionOfMappingAndActionProfiles = [
       {
-        mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        mappingProfile: {
+          typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C356841 holdings mapping profile ${getRandomPostfix()}}`,
-          pernanentLocation: `"${LOCATION_NAMES.ONLINE}"` },
-        actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-          name: `C356841 holdings action profile ${getRandomPostfix()}` }
+          pernanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
+        },
+        actionProfile: {
+          typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+          name: `C356841 holdings action profile ${getRandomPostfix()}`,
+        },
       },
       {
-        mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
+        mappingProfile: {
+          typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C356841 item mapping profile ${getRandomPostfix()}`,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
           status: ITEM_STATUS_NAMES.AVAILABLE,
-          materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"` },
-        actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-          name: `C356841 item action profile ${getRandomPostfix()}` }
-      }
+          materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
+        },
+        actionProfile: {
+          typeValue: FOLIO_RECORD_TYPE.ITEM,
+          name: `C356841 item action profile ${getRandomPostfix()}`,
+        },
+      },
     ];
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
-      profileName: `C356841 job profile ${getRandomPostfix()}}`
+      profileName: `C356841 job profile ${getRandomPostfix()}}`,
     };
 
     before('create test data', () => {
       cy.createTempUser([
-        permissions.inventoryAll.gui,
-        permissions.moduleDataImportEnabled.gui,
-        permissions.settingsDataImportEnabled.gui
-      ])
-        .then(userProperties => {
-          firstUser = userProperties;
-        });
+        Permissions.inventoryAll.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+      ]).then((userProperties) => {
+        firstUser = userProperties;
+      });
 
       cy.createTempUser([
-        permissions.moduleDataImportEnabled.gui,
-        permissions.settingsDataImportCanViewOnly.gui
-      ])
-        .then(userProperties => {
-          secondUser = userProperties;
-        });
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportCanViewOnly.gui,
+      ]).then((userProperties) => {
+        secondUser = userProperties;
+      });
     });
 
     after('delete test data', () => {
@@ -75,32 +82,53 @@ describe('data-import', () => {
       Users.deleteViaApi(secondUser.userId);
       // delete generated profiles
       JobProfiles.deleteJobProfile(jobProfile.profileName);
-      collectionOfMappingAndActionProfiles.forEach(profile => {
+      collectionOfMappingAndActionProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
     });
 
-    it('C356841 Confirm a user with limited Data Import permissions can import a file (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-        cy.login(firstUser.username, firstUser.password, { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+    it(
+      'C356841 Confirm a user with limited Data Import permissions can import a file (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      () => {
+        cy.login(firstUser.username, firstUser.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
+        });
         // create mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
-        NewFieldMappingProfile.fillMaterialType(collectionOfMappingAndActionProfiles[1].mappingProfile.materialType);
-        NewFieldMappingProfile.fillPermanentLoanType(collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLoanType);
-        NewFieldMappingProfile.fillStatus(collectionOfMappingAndActionProfiles[1].mappingProfile.status);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile.name);
+        NewFieldMappingProfile.fillSummaryInMappingProfile(
+          collectionOfMappingAndActionProfiles[1].mappingProfile,
+        );
+        NewFieldMappingProfile.fillMaterialType(
+          collectionOfMappingAndActionProfiles[1].mappingProfile.materialType,
+        );
+        NewFieldMappingProfile.fillPermanentLoanType(
+          collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLoanType,
+        );
+        NewFieldMappingProfile.fillStatus(
+          collectionOfMappingAndActionProfiles[1].mappingProfile.status,
+        );
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(
+          collectionOfMappingAndActionProfiles[1].mappingProfile.name,
+        );
 
         FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
-        NewFieldMappingProfile.fillPermanentLocation(collectionOfMappingAndActionProfiles[0].mappingProfile.pernanentLocation);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
+        NewFieldMappingProfile.fillSummaryInMappingProfile(
+          collectionOfMappingAndActionProfiles[0].mappingProfile,
+        );
+        NewFieldMappingProfile.fillPermanentLocation(
+          collectionOfMappingAndActionProfiles[0].mappingProfile.pernanentLocation,
+        );
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(
+          collectionOfMappingAndActionProfiles[0].mappingProfile.name,
+        );
 
         // create action profiles
-        collectionOfMappingAndActionProfiles.forEach(profile => {
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
           cy.visit(SettingsMenu.actionProfilePath);
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
@@ -116,7 +144,10 @@ describe('data-import', () => {
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         cy.logout();
-        cy.login(secondUser.username, secondUser.password, { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+        cy.login(secondUser.username, secondUser.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
+        });
         FieldMappingProfiles.checkListOfExistingProfilesIsDisplayed();
         FieldMappingProfiles.verifyActionMenuAbsent();
         cy.visit(SettingsMenu.actionProfilePath);
@@ -141,14 +172,16 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(nameMarcFile);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameMarcFile);
-        [FileDetails.columnNameInResultList.srsMarc,
+        [
+          FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
           FileDetails.columnNameInResultList.holdings,
-          FileDetails.columnNameInResultList.item
-        ].forEach(columnName => {
+          FileDetails.columnNameInResultList.item,
+        ].forEach((columnName) => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
         });
         FileDetails.checkItemQuantityInSummaryTable(quantityOfItems);
-      });
+      },
+    );
   });
 });

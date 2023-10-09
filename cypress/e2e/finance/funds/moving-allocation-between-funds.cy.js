@@ -6,7 +6,7 @@ import {
   Funds,
   Budgets,
   Ledgers,
-  FinanceHelp,
+  FinanceHelper,
 } from '../../../support/fragments/finance';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -79,7 +79,7 @@ describe('Finance: Funds', () => {
     'C374166 Moving allocation between funds is NOT successful if it results in negative available amount (thunderjet)',
     { tags: [testType.criticalPath, devTeams.thunderjet] },
     () => {
-      FinanceHelp.searchByName(fromFund.name);
+      FinanceHelper.searchByName(fromFund.name);
       Funds.selectFund(fromFund.name);
 
       Funds.checkBudgetDetails([{ ...fromBudget, available: fromBudget.allocated }]);

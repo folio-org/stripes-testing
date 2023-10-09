@@ -7,6 +7,7 @@ import Users from '../../support/fragments/users/users';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import DataImport from '../../support/fragments/data_import/dataImport';
+import Parallelization from '../../support/dictionary/parallelization';
 
 describe('MARC Authority management', () => {
   const userData = {};
@@ -16,7 +17,7 @@ describe('MARC Authority management', () => {
     cy.createTempUser([
       Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
       Permissions.inventoryAll.gui,
-    ]).then(createdUserProperties => {
+    ]).then((createdUserProperties) => {
       userData.id = createdUserProperties.userId;
       userData.firstName = createdUserProperties.firstName;
       userData.name = createdUserProperties.username;
@@ -33,14 +34,23 @@ describe('MARC Authority management', () => {
     InventoryInstance.deleteInstanceViaApi(instanceID);
   });
 
-  it('C350967 quickMARC: View MARC bibliographic record (spitfire)', { tags: [TestTypes.smoke, Features.authority, DevTeams.spitfire] }, () => {
-    cy.login(userData.name, userData.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
-    InventoryInstances.searchBySource('MARC');
-    InventoryInstances.selectInstance();
-    InventoryInstance.getId().then(id => { instanceID = id; });
-    InventoryInstance.checkExpectedMARCSource();
-    //Wait for the content to be loaded.
-    cy.wait(2000);
-    InventoryInstance.checkMARCSourceAtNewPane();
-  });
+  it(
+    'C350967 quickMARC: View MARC bibliographic record (spitfire)',
+    { tags: [TestTypes.smoke, Features.authority, DevTeams.spitfire, Parallelization.nonParallel] },
+    () => {
+      cy.login(userData.name, userData.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
+      InventoryInstances.searchBySource('MARC');
+      InventoryInstances.selectInstance();
+      InventoryInstance.getId().then((id) => {
+        instanceID = id;
+      });
+      InventoryInstance.checkExpectedMARCSource();
+      // Wait for the content to be loaded.
+      cy.wait(2000);
+      InventoryInstance.checkMARCSourceAtNewPane();
+    },
+  );
 });

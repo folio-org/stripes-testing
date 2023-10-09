@@ -1,7 +1,5 @@
-import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -24,44 +22,50 @@ describe('data-import', () => {
       first006field: 'jccnn           n ',
       second006field: 'm     q  h        ',
       field007: 'sd fungnnmmned',
-      field008: '991202s2000    ctua     b    001 0 eng'
+      field008: '991202s2000    ctua     b    001 0 eng',
     };
 
     before('login', () => {
       cy.createTempUser([
-        permissions.moduleDataImportEnabled.gui,
-        permissions.inventoryAll.gui,
-        permissions.uiInventorySingleRecordImport.gui,
-        permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiInventorySingleRecordImport.gui,
+        Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
-          cy.login(user.username, user.password,
-            { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+        Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
         });
+      });
     });
 
     after('delete test data', () => {
       Users.deleteViaApi(user.userId);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-        .then((instance) => {
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+        (instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
+        },
+      );
     });
 
-    it('C347618 Overlaying with single record import creates does not duplicate control fields (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+    it(
+      'C347618 Overlaying with single record import creates does not duplicate control fields (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
         InventoryInstances.importWithOclc(oclcNumber);
-        InventoryInstance.checkCalloutMessage(`Record ${oclcNumber} created. Results may take a few moments to become visible in Inventory`);
+        InventoryInstance.checkCalloutMessage(
+          `Record ${oclcNumber} created. Results may take a few moments to become visible in Inventory`,
+        );
         cy.visit(TopMenu.dataImportPath);
         Logs.openViewAllLogs();
         LogsViewAll.openUserIdAccordion();
         LogsViewAll.filterJobsByUser(`${user.firstName} ${user.lastName}`);
         Logs.openFileDetails('No file name');
         FileDetails.openInstanceInInventory('Created');
-        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
 
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
@@ -69,14 +73,17 @@ describe('data-import', () => {
           InventorySearchAndFilter.selectSearchResultItem();
           InventoryInstance.startOverlaySourceBibRecord();
           InventoryInstance.overlayWithOclc(oclcNumber);
-          InventoryInstance.checkCalloutMessage(`Record ${oclcNumber} updated. Results may take a few moments to become visible in Inventory`);
+          InventoryInstance.checkCalloutMessage(
+            `Record ${oclcNumber} updated. Results may take a few moments to become visible in Inventory`,
+          );
           InventoryInstance.viewSource();
           InventoryViewSource.verifyRecordNotContainsDuplicatedContent(field035, 2);
           // check fields 006-008 are not duplicated
-          cy.wrap(Object.values(notDuplicatedFieldsContent)).each(content => InventoryViewSource.verifyRecordNotContainsDuplicatedContent(content));
+          cy.wrap(Object.values(notDuplicatedFieldsContent)).each((content) => InventoryViewSource.verifyRecordNotContainsDuplicatedContent(content));
           InventoryViewSource.contains('005\t');
           InventoryViewSource.notContains(field005);
         });
-      });
+      },
+    );
   });
 });

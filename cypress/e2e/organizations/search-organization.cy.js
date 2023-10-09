@@ -10,10 +10,9 @@ describe('ui-organizations: Search organization', () => {
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-      });
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+    });
   });
 
   after(() => {
@@ -29,11 +28,15 @@ describe('ui-organizations: Search organization', () => {
     { parameter: 'Accounting code', value: organization.erpCode },
     { parameter: 'Tax ID', value: organization.taxId },
   ].forEach((searcher) => {
-    it('C6712 Test the Organizations app searches (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
-      cy.visit(TopMenu.organizationsPath);
-      Organizations.searchByParameters(searcher.parameter, searcher.value);
-      Organizations.checkSearchResults(organization);
-      Organizations.resetFilters();
-    });
+    it(
+      'C6712 Test the Organizations app searches (thunderjet)',
+      { tags: [TestType.smoke, devTeams.thunderjet] },
+      () => {
+        cy.visit(TopMenu.organizationsPath);
+        Organizations.searchByParameters(searcher.parameter, searcher.value);
+        Organizations.checkSearchResults(organization);
+        Organizations.resetFilters();
+      },
+    );
   });
 });

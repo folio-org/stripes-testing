@@ -1,12 +1,10 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import {
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
-  EXISTING_RECORDS_NAMES
+  EXISTING_RECORDS_NAMES,
 } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
@@ -26,12 +24,12 @@ import FileManager from '../../../support/utils/fileManager';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import Users from '../../../support/fragments/users/users';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Settings', () => {
     let user;
     let instanceHrid = null;
-    const marcFieldProtectionId = [];
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const quantityOfItems = '1';
     // unique file names
@@ -40,91 +38,97 @@ describe('data-import', () => {
 
     const protectedFields = {
       firstField: '*',
-      secondField: '920'
+      secondField: '920',
     };
     const matchProfile = {
       profileName: `C356830 001 to Instance HRID ${getRandomPostfix()}`,
       incomingRecordFields: {
-        field: '001'
+        field: '001',
       },
       matchCriterion: 'Exactly matches',
       existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
-      instanceOption: NewMatchProfile.optionsList.instanceHrid
+      instanceOption: NewMatchProfile.optionsList.instanceHrid,
     };
     const mappingProfile = {
       name: `C356830 Update instance and check field protections ${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       catalogedDate: '###TODAY###',
-      instanceStatus: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED
+      instanceStatus: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
     };
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       name: `C356830 Update instance and check field protections ${getRandomPostfix()}`,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
     };
     const jobProfile = {
       profileName: `C356830 Update instance and check field protections ${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
     before('create test user', () => {
       cy.createTempUser([
-        permissions.moduleDataImportEnabled.gui,
-        permissions.settingsDataImportEnabled.gui,
-        permissions.inventoryAll.gui,
-        permissions.uiInventorySingleRecordImport.gui,
-        permissions.uiInventoryViewCreateEditInstances.gui,
-        permissions.uiInventorySettingsConfigureSingleRecordImport.gui,
-        permissions.dataExportEnableApp.gui,
-        permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password, { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiInventorySingleRecordImport.gui,
+        Permissions.uiInventoryViewCreateEditInstances.gui,
+        Permissions.uiInventorySettingsConfigureSingleRecordImport.gui,
+        Permissions.dataExportEnableApp.gui,
+        Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
         });
+      });
     });
 
     after('delete test data', () => {
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       Users.deleteViaApi(user.userId);
-      marcFieldProtectionId.forEach(field => MarcFieldProtection.deleteMarcFieldProtectionViaApi(field));
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-        .then((instance) => {
+      MarcFieldProtection.getListViaApi({
+        query: `"field"=="${protectedFields.firstField}"`,
+      }).then((list) => {
+        list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+      });
+      MarcFieldProtection.getListViaApi({
+        query: `"field"=="${protectedFields.secondField}"`,
+      }).then((list) => {
+        list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+      });
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+        (instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
+        },
+      );
     });
 
-    it('C356830 Test field protections when importing to update instance, after editing the MARC Bib outside of FOLIO (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
+    it(
+      'C356830 Test field protections when importing to update instance, after editing the MARC Bib outside of FOLIO (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      () => {
+        MarcFieldProtection.createViaApi({
           indicator1: '*',
           indicator2: '*',
           subfield: '5',
           data: 'amb',
           source: 'USER',
-          field: protectedFields.firstField
-        })
-          .then((resp) => {
-            const id = resp.id;
-            marcFieldProtectionId.push = id;
-          });
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
+          field: protectedFields.firstField,
+        });
+        MarcFieldProtection.createViaApi({
           indicator1: '*',
           indicator2: '*',
           subfield: '*',
           data: '*',
           source: 'USER',
-          field: protectedFields.secondField
-        })
-          .then((resp) => {
-            const id = resp.id;
-            marcFieldProtectionId.push = id;
-          });
+          field: protectedFields.secondField,
+        });
 
         // create match profile
         cy.visit(SettingsMenu.matchProfilePath);
@@ -137,8 +141,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
         NewFieldMappingProfile.fillCatalogedDate(mappingProfile.catalogedDate);
         NewFieldMappingProfile.fillInstanceStatusTerm(mappingProfile.statusTerm);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         // create action profile
@@ -162,7 +166,10 @@ describe('data-import', () => {
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFileForCreate);
         Logs.openFileDetails(nameMarcFileForCreate);
-        [FileDetails.columnNameInResultList.srsMarc, FileDetails.columnNameInResultList.instance].forEach(columnName => {
+        [
+          FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.instance,
+        ].forEach((columnName) => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems, 0);
@@ -171,20 +178,19 @@ describe('data-import', () => {
 
         // in cypress we can't delete fields in the file that's why using already created file
         // need to get instance hrid and uuids for 999 field for changing file
-        InstanceRecordView.getAssignedHRID().then(initialInstanceHrId => {
+        InstanceRecordView.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
 
-          InventoryInstance.viewSource();
-          InventoryViewSource.extructDataFrom999Field()
-            .then(uuid => {
+          InstanceRecordView.viewSource();
+          InventoryViewSource.extructDataFrom999Field().then((uuid) => {
             // change file using uuid for 999 field
-              DataImport.editMarcFile(
-                'marcFileForC356830_rev.mrc',
-                editedMarcFileName,
-                ['instanceHrid', 'srsUuid', 'instanceUuid'],
-                [instanceHrid, uuid[0], uuid[1]]
-              );
-            });
+            DataImport.editMarcFile(
+              'marcFileForC356830_rev.mrc',
+              editedMarcFileName,
+              ['instanceHrid', 'srsUuid', 'instanceUuid'],
+              [instanceHrid, uuid[0], uuid[1]],
+            );
+          });
         });
 
         // upload .mrc file
@@ -198,16 +204,23 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(editedMarcFileName);
         Logs.checkStatusOfJobProfile();
         Logs.openFileDetails(editedMarcFileName);
-        [FileDetails.columnNameInResultList.srsMarc, FileDetails.columnNameInResultList.instance].forEach(columnName => {
+        [
+          FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.instance,
+        ].forEach((columnName) => {
           FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems, 1);
         FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 1);
 
         FileDetails.openInstanceInInventory('Updated');
-        InventoryInstance.viewSource();
-        InventoryViewSource.verifyFieldInMARCBibSource('650\t', 'Drawing, Dutch ‡y 21st century ‡v Exhibitions. ‡5 amb');
+        InstanceRecordView.viewSource();
+        InventoryViewSource.verifyFieldInMARCBibSource(
+          '650\t',
+          'Drawing, Dutch ‡y 21st century ‡v Exhibitions. ‡5 amb',
+        );
         InventoryViewSource.verifyFieldInMARCBibSource('920\t', 'This field should be protected');
-      });
+      },
+    );
   });
 });

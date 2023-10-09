@@ -14,10 +14,12 @@ import NewLocation from '../../support/fragments/settings/tenant/locations/newLo
 import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('Orders', () => {
-  const order = { ...NewOrder.defaultOneTimeOrder,
+  const order = {
+    ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',
     ongoing: { isSubscription: false, manualRenewal: false },
-    approved: true };
+    approved: true,
+  };
   const organization = {
     ...NewOrganization.defaultUiOrganizations,
     accounts: [
@@ -33,7 +35,7 @@ describe('Orders', () => {
         notes: '',
         paymentMethod: 'Cash',
       },
-    ]
+    ],
   };
   let user;
   let location;
@@ -43,49 +45,54 @@ describe('Orders', () => {
   before(() => {
     cy.getAdminToken();
 
-    ServicePoints.getViaApi()
-      .then((servicePoint) => {
-        servicePointId = servicePoint[0].id;
-        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
-          .then(res => {
-            location = res;
-          });
+    ServicePoints.getViaApi().then((servicePoint) => {
+      servicePointId = servicePoint[0].id;
+      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+        location = res;
       });
-    Organizations.createOrganizationViaApi(organization)
-      .then(organizationsResponse => {
-        organization.id = organizationsResponse;
-        order.vendor = organizationsResponse;
+    });
+    Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
+      organization.id = organizationsResponse;
+      order.vendor = organizationsResponse;
+    });
+    cy.createOrderApi(order).then((response) => {
+      orderNumber = response.body.poNumber;
+      cy.loginAsAdmin({
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
       });
-    cy.createOrderApi(order)
-      .then((response) => {
-        orderNumber = response.body.poNumber;
-        cy.visit(TopMenu.ordersPath);
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList();
-        Orders.createPOLineViaActions();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
-        OrderLines.fillInPOLineInfoForExportWithLocation(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId);
-        OrderLines.backToEditingOrder();
-        Orders.openOrder();
-      });
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList();
+      Orders.createPOLineViaActions();
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
+      OrderLines.fillInPOLineInfoForExportWithLocation(
+        `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
+        'Purchase',
+        location.institutionId,
+      );
+      OrderLines.backToEditingOrder();
+      Orders.openOrder();
+    });
 
     cy.createTempUser([
       permissions.uiOrdersCreate.gui,
       permissions.uiOrdersView.gui,
       permissions.uiOrdersEdit.gui,
       permissions.uiOrdersDelete.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
       });
+    });
   });
 
   after(() => {
-    cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList();
-    Orders.unOpenOrder(orderNumber);
+    Orders.unOpenOrder();
     // Need to wait until the order is opened before deleting it
     cy.wait(2000);
     Orders.deleteOrderViaApi(order.id);
@@ -95,17 +102,24 @@ describe('Orders', () => {
       location.institutionId,
       location.campusId,
       location.libraryId,
-      location.id
+      location.id,
     );
     Users.deleteViaApi(user.userId);
   });
 
-  it('C347860: Check duplicate POL (thunderjet)', { tags: [TestTypes.criticalPath, devTeams.thunderjet] }, () => {
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList();
-    Orders.duplicateOrder();
-    InteractorsTools.checkCalloutMessage('The purchase order was successfully duplicated');
-    Orders.checkDuplicatedOrder(organization.name, `${user.username}, testPermFirst testMiddleName`);
-    Orders.deleteOrderViaActions();
-  });
+  it(
+    'C347860: Check duplicate POL (thunderjet)',
+    { tags: [TestTypes.criticalPath, devTeams.thunderjet] },
+    () => {
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList();
+      Orders.duplicateOrder();
+      InteractorsTools.checkCalloutMessage('The purchase order was successfully duplicated');
+      Orders.checkDuplicatedOrder(
+        organization.name,
+        `${user.username}, testPermFirst testMiddleName`,
+      );
+      Orders.deleteOrderViaActions();
+    },
+  );
 });

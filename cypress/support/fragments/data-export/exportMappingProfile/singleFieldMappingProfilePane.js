@@ -1,4 +1,4 @@
-import { including } from "bigtest";
+import { including } from 'bigtest';
 import {
   Accordion,
   PaneHeader,
@@ -7,8 +7,8 @@ import {
   Button,
   TextField,
   TextArea,
-  Checkbox
-} from "../../../../../interactors";
+  Checkbox,
+} from '../../../../../interactors';
 
 const actionsButton = Button('Actions');
 const editButton = Button('Edit');
@@ -33,7 +33,9 @@ export default {
       KeyValue('FOLIO record type').has({ value: profileDetails.recordType }),
       KeyValue('Output format').has({ value: profileDetails.outputFormat }),
       KeyValue('Description').has({ value: profileDetails.description }),
-      Accordion({ headline: 'Update information' }).has({ content: including(`Source: ${profileDetails.source}`) })
+      Accordion({ headline: 'Update information' }).has({
+        content: including(`Source: ${profileDetails.source}`),
+      }),
     ]);
   },
 
@@ -42,7 +44,7 @@ export default {
     cy.expect([
       editButton.has({ disabled: true }),
       duplicateButton.has({ disabled: false }),
-      deleteButton.has({ disabled: true })
+      deleteButton.has({ disabled: true }),
     ]);
   },
 
@@ -51,7 +53,7 @@ export default {
     cy.expect([
       editButton.has({ disabled: false }),
       duplicateButton.has({ disabled: false }),
-      deleteButton.has({ disabled: false })
+      deleteButton.has({ disabled: false }),
     ]);
   },
 
@@ -62,15 +64,12 @@ export default {
     cy.do([
       nameTextfield.clear(),
       nameTextfield.fillIn(newName),
-      descriptionTextarea.fillIn(newDescription)
+      descriptionTextarea.fillIn(newDescription),
     ]);
   },
 
   duplicateFieldMappingProfile() {
-    cy.do([
-      duplicateButton.click(),
-      saveAndCloseButton.click()
-    ]);
+    cy.do([duplicateButton.click(), saveAndCloseButton.click()]);
   },
 
   clickEditTransformations() {
@@ -78,6 +77,6 @@ export default {
   },
 
   checkRecordType(recordType) {
-    cy.do(Checkbox(recordType).click())
+    cy.do(Checkbox(recordType).click());
   },
 };

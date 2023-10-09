@@ -28,34 +28,29 @@ describe('ui-finance: Funds', () => {
   before(() => {
     cy.getAdminToken();
 
-    cy.getFundTypesApi({ limit: 1 })
-      .then(({ body }) => {
-        fundType = body.fundTypes[0];
-      });
-    cy.getTagsApi({ limit: 1 })
-      .then(({ body }) => {
-        tag = body.tags[0];
-      });
-    cy.getAcqUnitsApi({ limit: 1 })
-      .then(({ body }) => {
-        aUnit = body.acquisitionsUnits[0];
-      });
-    cy.getLedgersApi({ limit: 1 })
-      .then(({ body }) => {
-        ledger = body.ledgers[0];
-      });
-    cy.getGroupsApi({ limit: 1 })
-      .then(({ body }) => {
-        group = body.groups[0];
-      });
+    cy.getFundTypesApi({ limit: 1 }).then(({ body }) => {
+      fundType = body.fundTypes[0];
+    });
+    cy.getTagsApi({ limit: 1 }).then(({ body }) => {
+      tag = body.tags[0];
+    });
+    cy.getAcqUnitsApi({ limit: 1 }).then(({ body }) => {
+      aUnit = body.acquisitionsUnits[0];
+    });
+    cy.getLedgersApi({ limit: 1 }).then(({ body }) => {
+      ledger = body.ledgers[0];
+    });
+    cy.getGroupsApi({ limit: 1 }).then(({ body }) => {
+      group = body.groups[0];
+    });
 
-    cy.createTempUser([
-      permissions.uiFinanceViewFundAndBudget.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
+    cy.createTempUser([permissions.uiFinanceViewFundAndBudget.gui]).then((userProperties) => {
+      user = userProperties;
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.fundPath,
+        waiter: Funds.waitLoading,
       });
+    });
   });
 
   beforeEach(() => {
@@ -65,7 +60,7 @@ describe('ui-finance: Funds', () => {
       ledgerId: ledger.id,
       fundTypeId: fundType.id,
       tags: { tagList: [tag.label] },
-      groupIds: [group.id]
+      groupIds: [group.id],
     });
   });
 
@@ -74,33 +69,44 @@ describe('ui-finance: Funds', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C4059 Test the search and filter options for funds (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, function () {
-    FinanceHelp.checkZeroSearchResultsMessage();
+  it(
+    'C4059 Test the search and filter options for funds (thunderjet)',
+    { tags: [testType.smoke, devTeams.thunderjet] },
+    () => {
+      FinanceHelp.checkZeroSearchResultsMessage();
 
-    Funds.checkFundFilters(ledger.name, fundType.name, 'Active', aUnit.name,
-      tag.label, group.name, fund.name);
-    Funds.checkSearch();
-    // search by name
-    Funds.resetFundFilters();
-    FinanceHelp.searchByName(fund.name);
-    Funds.checkSearch();
-    // search by code
-    Funds.resetFundFilters();
-    FinanceHelp.searchByCode(fund.code);
-    Funds.checkSearch();
-    // search by external accounts
-    Funds.resetFundFilters();
-    FinanceHelp.searchByExternalAccount(fund.externalAccountNo);
-    Funds.checkSearch();
-    // search by all
-    Funds.resetFundFilters();
-    FinanceHelp.searchByAll(fund.name);
-    Funds.checkSearch();
-    Funds.resetFundFilters();
-    FinanceHelp.searchByAll(fund.code);
-    Funds.checkSearch();
-    Funds.resetFundFilters();
-    FinanceHelp.searchByAll(fund.description);
-    Funds.checkSearch();
-  });
+      Funds.checkFundFilters(
+        ledger.name,
+        fundType.name,
+        'Active',
+        aUnit.name,
+        tag.label,
+        group.name,
+        fund.name,
+      );
+      Funds.checkSearch();
+      // search by name
+      Funds.resetFundFilters();
+      FinanceHelp.searchByName(fund.name);
+      Funds.checkSearch();
+      // search by code
+      Funds.resetFundFilters();
+      FinanceHelp.searchByCode(fund.code);
+      Funds.checkSearch();
+      // search by external accounts
+      Funds.resetFundFilters();
+      FinanceHelp.searchByExternalAccount(fund.externalAccountNo);
+      Funds.checkSearch();
+      // search by all
+      Funds.resetFundFilters();
+      FinanceHelp.searchByAll(fund.name);
+      Funds.checkSearch();
+      Funds.resetFundFilters();
+      FinanceHelp.searchByAll(fund.code);
+      Funds.checkSearch();
+      Funds.resetFundFilters();
+      FinanceHelp.searchByAll(fund.description);
+      Funds.checkSearch();
+    },
+  );
 });

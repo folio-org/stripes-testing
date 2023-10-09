@@ -57,6 +57,7 @@ export default {
   remoteStorageAccTablesPath: '/settings/remote-storage/accession-tables',
   tagsPath: 'settings/tags',
   tenantPath: 'settings/tenant-settings',
+  tenantLibrariesPath: 'settings/tenant-settings/location-libraries',
   tenantLocationsPath: 'settings/tenant-settings/location-locations',
   // Orders
   approvalsPath: 'settings/orders/approvals',
@@ -81,6 +82,7 @@ export default {
   manualCharges: 'settings/users/feefinestable',
   paymentsPath: 'settings/users/payments',
   refundReasons: 'settings/users/refunds',
+  transferAccounts: 'settings/users/transfers',
   conditionsPath: 'settings/users/conditions',
   limitsPath: 'settings/users/limits',
   waiveReasons: 'settings/users/waivereasons',

@@ -28,36 +28,42 @@ describe('Fee fine amout link in checkout', () => {
   const paymentMethod = {};
   let feeFineAccount;
   const ownerData = {};
-  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation('autotest transaction', uuid());
+  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
 
   before('Users, owners, fee fines are created', () => {
     // the login with admin, visiting the path and the waiter are separated to get the fetch request to get owners
     cy.getAdminToken().then(() => {
-      cy.loginAsAdmin({ path: SettingsMenu.circulationOtherSettingsPath, waiter: OtherSettings.waitLoading }).then(() => {
+      cy.loginAsAdmin({
+        path: SettingsMenu.circulationOtherSettingsPath,
+        waiter: OtherSettings.waitLoading,
+      }).then(() => {
         OtherSettings.selectPatronIdsForCheckoutScanning(['Barcode'], '1');
       });
       ServicePoints.createViaApi(servicePoint);
 
-      UsersOwners.createViaApi(UsersOwners.getDefaultNewOwner(uuid(), 'owner')).then(({ id, ownerName }) => {
-        ownerData.name = ownerName;
-        ownerData.id = id;
-      }).then(() => {
-        UsersOwners.addServicePointsViaApi(ownerData, [servicePoint]);
-        ManualCharges.createViaApi({ ...ManualCharges.defaultFeeFineType, ownerId: ownerData.id }).then(manualCharge => {
-          feeFineType.id = manualCharge.id;
-          feeFineType.name = manualCharge.feeFineType;
-          feeFineType.amount = manualCharge.amount;
+      UsersOwners.createViaApi(UsersOwners.getDefaultNewOwner())
+        .then(({ id, owner }) => {
+          ownerData.name = owner;
+          ownerData.id = id;
+        })
+        .then(() => {
+          UsersOwners.addServicePointsViaApi(ownerData, [servicePoint]);
+          ManualCharges.createViaApi({
+            ...ManualCharges.defaultFeeFineType,
+            ownerId: ownerData.id,
+          }).then((manualCharge) => {
+            feeFineType.id = manualCharge.id;
+            feeFineType.name = manualCharge.feeFineType;
+            feeFineType.amount = manualCharge.amount;
+          });
+          PaymentMethods.createViaApi(ownerData.id).then(({ name, id }) => {
+            paymentMethod.name = name;
+            paymentMethod.id = id;
+          });
         });
-        PaymentMethods.createViaApi(ownerData.id).then(({ name, id }) => {
-          paymentMethod.name = name;
-          paymentMethod.id = id;
-        });
-      });
 
-      cy.createTempUser([
-        permissions.checkoutCirculatingItems.gui,
-      ])
-        .then(userProperties => {
+      cy.createTempUser([permissions.checkoutCirculatingItems.gui])
+        .then((userProperties) => {
           userData.username = userProperties.username;
           userData.password = userProperties.password;
           userData.userId = userProperties.userId;
@@ -76,7 +82,7 @@ describe('Fee fine amout link in checkout', () => {
             feeFineOwner: ownerData.name,
             createdAt: servicePoint.id,
             dateAction: moment.utc().format(),
-            source: 'ADMINISTRATOR, DIKU'
+            source: 'ADMINISTRATOR, DIKU',
           };
           NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
             feeFineAccount.id = feeFineAccountId;
@@ -85,12 +91,12 @@ describe('Fee fine amout link in checkout', () => {
     });
   });
 
-
   after('UserOwner is removed', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.checkOutPath);
     Checkout.waitLoading();
     // without this waiter, the user will not be found by username
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(4000);
     CheckOutActions.checkOutUser(userData.barcode);
     CheckOutActions.openFeeFineLink('9.00', userData.userId);
@@ -110,13 +116,18 @@ describe('Fee fine amout link in checkout', () => {
     Users.deleteViaApi(userData.userId);
   });
 
-  it('C388525 Check that User can not click the fine amount as a link with necessary permissions (vega)', { tags: [TestTypes.extendedPath, DevTeams.vega] }, () => {
-    cy.login(userData.username, userData.password);
-    cy.visit(TopMenu.checkOutPath);
-    Checkout.waitLoading();
-    // without this waiter, the user will not be found by username
-    cy.wait(4000);
-    CheckOutActions.checkOutUser(userData.barcode);
-    CheckOutActions.feeFineLinkIsNotClickable('9.00', userData.userId);
-  });
+  it(
+    'C388525 Check that User can not click the fine amount as a link with necessary permissions (vega)',
+    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    () => {
+      cy.login(userData.username, userData.password);
+      cy.visit(TopMenu.checkOutPath);
+      Checkout.waitLoading();
+      // without this waiter, the user will not be found by username
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(4000);
+      CheckOutActions.checkOutUser(userData.barcode);
+      CheckOutActions.feeFineLinkIsNotClickable('9.00', userData.userId);
+    },
+  );
 });

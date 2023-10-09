@@ -13,10 +13,12 @@ import Users from '../../support/fragments/users/users';
 import { ORDER_STATUSES } from '../../support/constants';
 
 describe('Orders', () => {
-  const order = { ...NewOrder.defaultOneTimeOrder,
+  const order = {
+    ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',
     ongoing: { isSubscription: false, manualRenewal: false },
-    approved: false };
+    approved: false,
+  };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const orderLineTitle = BasicOrderLine.defaultOrderLine.titleOrPackage;
   let orderNumber;
@@ -24,20 +26,18 @@ describe('Orders', () => {
 
   before(() => {
     cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-        order.vendor = response;
-      });
-    cy.createOrderApi(order)
-      .then((orderResponse) => {
-        orderNumber = orderResponse.body.poNumber;
-        cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList(orderNumber);
-        OrderLines.addPOLine();
-        OrderLines.POLineInfodorPhysicalMaterial(orderLineTitle);
-      });
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+      order.vendor = response;
+    });
+    cy.createOrderApi(order).then((orderResponse) => {
+      orderNumber = orderResponse.body.poNumber;
+      cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList(orderNumber);
+      OrderLines.addPOLine();
+      OrderLines.POLineInfodorPhysicalMaterial(orderLineTitle);
+    });
     cy.createTempUser([
       permissions.uiOrdersView.gui,
       permissions.uiOrdersApprovePurchaseOrders.gui,
@@ -53,11 +53,13 @@ describe('Orders', () => {
       permissions.uiOrdersShowAllHiddenFields.gui,
       permissions.uiOrdersUnopenpurchaseorders.gui,
       permissions.uiOrdersUpdateEncumbrances.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
       });
+    });
   });
 
   after(() => {
@@ -68,22 +70,30 @@ describe('Orders', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C353627 "Renewal date" and "Renewal interval" are not required for opening, unopening, closing, reopening ongoing order (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList(orderNumber);
-    Orders.openOrder();
-    InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully opened`);
-    Orders.checkOrderStatus(ORDER_STATUSES.OPEN);
-    Orders.checkReviewDateOnOngoingOrder();
-    Orders.unOpenOrder();
-    Orders.checkOrderStatus(ORDER_STATUSES.PENDING);
-    Orders.checkReviewDateOnOngoingOrder();
-    Orders.openOrder();
-    InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully opened`);
-    Orders.checkOrderStatus(ORDER_STATUSES.OPEN);
-    Orders.checkReviewDateOnOngoingOrder();
-    Orders.closeOrder('Cancelled');
-    Orders.checkOrderStatus(ORDER_STATUSES.CLOSED);
-    Orders.checkReviewDateOnOngoingOrder();
-  });
+  it(
+    'C353627 "Renewal date" and "Renewal interval" are not required for opening, unopening, closing, reopening ongoing order (thunderjet)',
+    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    () => {
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList(orderNumber);
+      Orders.openOrder();
+      InteractorsTools.checkCalloutMessage(
+        `The Purchase order - ${orderNumber} has been successfully opened`,
+      );
+      Orders.checkOrderStatus(ORDER_STATUSES.OPEN);
+      Orders.checkReviewDateOnOngoingOrder();
+      Orders.unOpenOrder();
+      Orders.checkOrderStatus(ORDER_STATUSES.PENDING);
+      Orders.checkReviewDateOnOngoingOrder();
+      Orders.openOrder();
+      InteractorsTools.checkCalloutMessage(
+        `The Purchase order - ${orderNumber} has been successfully opened`,
+      );
+      Orders.checkOrderStatus(ORDER_STATUSES.OPEN);
+      Orders.checkReviewDateOnOngoingOrder();
+      Orders.closeOrder('Cancelled');
+      Orders.checkOrderStatus(ORDER_STATUSES.CLOSED);
+      Orders.checkReviewDateOnOngoingOrder();
+    },
+  );
 });

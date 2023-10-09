@@ -1,7 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import DevTeams from '../../../support/dictionary/devTeams';
-import TestTypes from '../../../support/dictionary/testTypes';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import {
@@ -10,7 +8,7 @@ import {
   ORDER_FORMAT_NAMES_IN_PROFILE,
   ACQUISITION_METHOD_NAMES,
   JOB_STATUS_NAMES,
-  VENDOR_NAMES
+  VENDOR_NAMES,
 } from '../../../support/constants';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -21,6 +19,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
 import OrderLines from '../../../support/fragments/orders/orderLines';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -66,10 +65,12 @@ describe('data-import', () => {
       value: '100',
       type: '%',
       locationName: '049$a',
-      locationQuantityElectronic: '980$g'
+      locationQuantityElectronic: '980$g',
     };
-    const actionProfile = { name: `C375989 Test Order action profile ${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.ORDER };
+    const actionProfile = {
+      name: `C375989 Test Order action profile ${getRandomPostfix()}`,
+      typeValue: FOLIO_RECORD_TYPE.ORDER,
+    };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
       profileName: `C375989 Test Order ${getRandomPostfix()}`,
@@ -77,30 +78,33 @@ describe('data-import', () => {
 
     before(() => {
       cy.createTempUser([
-        permissions.settingsDataImportEnabled.gui,
-        permissions.moduleDataImportEnabled.gui,
-        permissions.uiOrganizationsView.gui,
-        permissions.inventoryAll.gui,
-        permissions.uiOrdersView.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.uiOrganizationsView.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiOrdersView.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          cy.login(userProperties.username, userProperties.password,
-            { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+        cy.login(userProperties.username, userProperties.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
         });
+      });
     });
 
     after('delete test data', () => {
       Users.deleteViaApi(user.userId);
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
     });
 
-    it('C375989 Verify the importing of eBook orders with open status (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      // create mapping profile
+    it(
+      'C375989 Verify the importing of eBook orders with open status (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
+        // create mapping profile
         FieldMappingProfiles.createOrderMappingProfile(mappingProfile);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
@@ -129,6 +133,7 @@ describe('data-import', () => {
         FileDetails.checkOrderQuantityInSummaryTable(quantityOfItems);
         FileDetails.openOrder('Created');
         OrderLines.verifyPOLDetailsIsOpened();
-      });
+      },
+    );
   });
 });

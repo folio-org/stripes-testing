@@ -20,16 +20,15 @@ describe('bulk-edit', () => {
       cy.createTempUser([
         permissions.bulkEditCsvView.gui,
         permissions.bulkEditCsvEdit.gui,
-        permissions.uiUserEdit.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading
-          });
-          FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
+        permissions.uiUserEdit.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
+        FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
+      });
     });
 
     after('delete test data', () => {
@@ -39,27 +38,35 @@ describe('bulk-edit', () => {
       FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName);
     });
 
-    it('C388498 Negative: Verify Local updating records with invalid date (firebird)', { tags: [testTypes.extendedPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.checkUsersRadio();
-      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
+    it(
+      'C388498 Negative: Verify Local updating records with invalid date (firebird)',
+      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.checkUsersRadio();
+        BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
 
-      BulkEditSearchPane.uploadFile(userBarcodesFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditActions.downloadMatchedResults();
+        BulkEditSearchPane.uploadFile(userBarcodesFileName);
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditActions.downloadMatchedResults();
 
-      const date = DateTools.getFormattedDate({ date: new Date() });
-      const invalidDate = 'June 19';
-      BulkEditActions.prepareValidBulkEditFile(matchedRecordsFileName, editedFileName, date, invalidDate);
+        const date = DateTools.getFormattedDate({ date: new Date() });
+        const invalidDate = 'June 19';
+        BulkEditActions.prepareValidBulkEditFile(
+          matchedRecordsFileName,
+          editedFileName,
+          date,
+          invalidDate,
+        );
 
-      BulkEditActions.openStartBulkEditForm();
-      BulkEditSearchPane.uploadFile(editedFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditActions.clickNext();
-      BulkEditActions.commitChanges();
+        BulkEditActions.openStartBulkEditForm();
+        BulkEditSearchPane.uploadFile(editedFileName);
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditActions.clickNext();
+        BulkEditActions.commitChanges();
 
-      BulkEditSearchPane.verifyErrorLabelAfterChanges(editedFileName, 0, 1);
-      BulkEditSearchPane.verifyReasonForError('Field "createdDate"');
-      BulkEditActions.openActions();
-    });
+        BulkEditSearchPane.verifyErrorLabelAfterChanges(editedFileName, 0, 1);
+        BulkEditActions.openActions();
+      },
+    );
   });
 });

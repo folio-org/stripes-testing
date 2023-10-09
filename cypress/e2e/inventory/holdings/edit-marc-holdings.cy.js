@@ -16,24 +16,24 @@ import Parallelization from '../../../support/dictionary/parallelization';
 describe('MARC -> MARC Holdings', () => {
   const testData = {
     tag001: '001',
-    tag001value: '$a Second 001 field'
+    tag001value: '$a Second 001 field',
   };
 
   const marcFile = {
     marc: 'marcBibFileC387461.mrc',
-    fileName: `testMarcFile.C387461.${getRandomPostfix()}.mrc`,
     jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
     numOfRecords: 1,
   };
 
   const recordIDs = [];
 
-  before('Creating user, data', () => {
+  beforeEach('Creating user, data', () => {
+    marcFile.fileName = `testMarcFile.editMarcHoldings.${getRandomPostfix()}.mrc`;
     cy.createTempUser([
       Permissions.inventoryAll.gui,
       Permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
       Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
-    ]).then(createdUserProperties => {
+    ]).then((createdUserProperties) => {
       testData.createdUserProperties = createdUserProperties;
 
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
@@ -45,7 +45,7 @@ describe('MARC -> MARC Holdings', () => {
         JobProfiles.waitFileIsImported(marcFile.fileName);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(marcFile.fileName);
-        Logs.getCreatedItemsID().then(link => {
+        Logs.getCreatedItemsID().then((link) => {
           recordIDs.push(link.split('/')[5]);
           cy.visit(TopMenu.inventoryPath).then(() => {
             InventoryInstance.searchByTitle(recordIDs[0]);
@@ -60,37 +60,69 @@ describe('MARC -> MARC Holdings', () => {
             });
           });
         });
-        cy.login(createdUserProperties.username, createdUserProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+        cy.login(createdUserProperties.username, createdUserProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
       });
     });
   });
 
-  after('Deleting created user, data', () => {
+  afterEach('Deleting created user, data', () => {
     Users.deleteViaApi(testData.createdUserProperties.userId);
     cy.deleteHoldingRecordViaApi(recordIDs[1]);
     InventoryInstance.deleteInstanceViaApi(recordIDs[0]);
+    recordIDs.length = 0;
   });
 
-  it('C387461 Add multiple 001s when editing "MARC Holdings" record', { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] }, () => {
-    InventoryInstances.searchBySource('MARC');
-    InventoryInstance.searchByTitle(recordIDs[0]);
-    InventoryInstances.selectInstance();
-    InventoryInstance.openHoldingView();
-    HoldingsRecordView.checkSource('MARC');
-    // "Edit in quickMARC" option might not be active immediately when opening MARC Holdings
-    // this option becomes active after reopening Holdings view window
-    HoldingsRecordView.close();
-    InventoryInstance.openHoldingView();
-    HoldingsRecordView.editInQuickMarc();
-    QuickMarcEditor.addEmptyFields(5);
-    QuickMarcEditor.checkEmptyFieldAdded(6);
-    QuickMarcEditor.updateExistingField('', testData.tag001value);
-    QuickMarcEditor.updateTagNameToLockedTag(6, '001');
-    QuickMarcEditor.checkFourthBoxDisabled(6);
-    QuickMarcEditor.pressSaveAndClose();
-    QuickMarcEditor.checkAfterSaveHoldings();
-    HoldingsRecordView.editInQuickMarc();
-    QuickMarcEditor.checkReadOnlyTags();
-    QuickMarcEditor.verifyNoFieldWithContent(testData.tag001value);
-  });
+  it(
+    'C358991 Verify that field which moved above "852" retains all values in the subfield text box when edit "MARC Holdings" record (Spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    () => {
+      InventoryInstances.searchBySource('MARC');
+      InventoryInstance.searchByTitle(recordIDs[0]);
+      InventoryInstances.selectInstance();
+      InventoryInstance.openHoldingView();
+      HoldingsRecordView.checkSource('MARC');
+      // "Edit in quickMARC" option might not be active immediately when opening MARC Holdings
+      // this option becomes active after reopening Holdings view window
+      HoldingsRecordView.close();
+      InventoryInstance.openHoldingView();
+      HoldingsRecordView.editInQuickMarc();
+      QuickMarcEditor.addEmptyFields(5);
+      QuickMarcEditor.checkEmptyFieldAdded(6);
+      QuickMarcEditor.updateExistingField('', testData.tag001value);
+      QuickMarcEditor.checkContent(testData.tag001value, 6);
+      QuickMarcEditor.moveFieldUp(6);
+      QuickMarcEditor.checkContent(testData.tag001value, 5);
+      QuickMarcEditor.checkContent(QuickMarcEditor.getExistingLocation(), 6);
+    },
+  );
+
+  it(
+    'C387461 Add multiple 001s when editing "MARC Holdings" record',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    () => {
+      InventoryInstances.searchBySource('MARC');
+      InventoryInstance.searchByTitle(recordIDs[0]);
+      InventoryInstances.selectInstance();
+      InventoryInstance.openHoldingView();
+      HoldingsRecordView.checkSource('MARC');
+      // "Edit in quickMARC" option might not be active immediately when opening MARC Holdings
+      // this option becomes active after reopening Holdings view window
+      HoldingsRecordView.close();
+      InventoryInstance.openHoldingView();
+      HoldingsRecordView.editInQuickMarc();
+      QuickMarcEditor.addEmptyFields(5);
+      QuickMarcEditor.checkEmptyFieldAdded(6);
+      QuickMarcEditor.updateExistingField('', testData.tag001value);
+      QuickMarcEditor.updateTagNameToLockedTag(6, '001');
+      QuickMarcEditor.checkFourthBoxDisabled(6);
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.checkAfterSaveHoldings();
+      HoldingsRecordView.editInQuickMarc();
+      QuickMarcEditor.checkReadOnlyTags();
+      QuickMarcEditor.verifyNoFieldWithContent(testData.tag001value);
+    },
+  );
 });

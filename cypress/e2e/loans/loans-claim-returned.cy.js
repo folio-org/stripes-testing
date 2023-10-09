@@ -1,4 +1,3 @@
-import moment from 'moment';
 import uuid from 'uuid';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
@@ -7,9 +6,7 @@ import TestTypes from '../../support/dictionary/testTypes';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../support/fragments/users/userEdit';
-import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
 import getRandomPostfix from '../../support/utils/stringTools';
-import AppPaths from '../../support/fragments/app-paths';
 import Loans from '../../support/fragments/loans/loansPage';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -24,7 +21,6 @@ import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ConfirmClaimReturnedModal from '../../support/fragments/users/loans/confirmClaimReturnedModal';
-import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 
@@ -38,37 +34,13 @@ function getClaimedReturnedLoansQuantity(loansArray) {
 }
 
 describe('Loans ', () => {
-  let addedCirculationRule;
-  let originalCirculationRules;
   let defaultLocation;
+  let userData;
+
   const reasonWhyItemIsClaimedOut = 'reason why the item is claimed out';
-  const reasonWhyItemIsDeclaredLost = 'reason why the item is declared lost';
-  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation('autotest loans claim returned', uuid());
-  const testData = {};
-  const userData = {};
-  const ownerData = {};
-  const itemStatuses = {
-    checkedOut: 'Checked out',
-    declaredLost: 'Declared lost',
-    claimReturned: 'Claimed returned',
-  };
-  const itemsData = {
-    itemsWithSeparateInstance: [{
-      instanceTitle: `Instance ${getRandomPostfix()}`,
-    },
-    {
-      instanceTitle: `Instance ${getRandomPostfix()}`,
-    },
-    {
-      instanceTitle: `Instance ${getRandomPostfix()}`,
-    },
-    {
-      instanceTitle: `Instance ${getRandomPostfix()}`,
-    },
-    {
-      instanceTitle: `Instance ${getRandomPostfix()}`,
-    }]
-  };
+  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
+  const folioInstances = InventoryInstances.generateFolioInstances({ count: 5 });
+  const ownerData = UsersOwners.getDefaultNewOwner();
   const lostItemFeePolicyBody = {
     name: 'claim_returned' + getRandomPostfix(),
     chargeAmountItem: {
@@ -90,98 +62,55 @@ describe('Loans ', () => {
     id: uuid(),
   };
 
-  const showOpenedUserLoansInUserCard = ({ username }) => {
-    cy.visit(TopMenu.usersPath);
-    UsersSearchPane.searchByKeywords(username);
-    UsersSearchPane.openUser(username);
-    UsersCard.openLoans();
-  };
-
-  const openOpenedUserLoans = ({ username }, quantityOpenLoans) => {
-    showOpenedUserLoansInUserCard({ username });
-    UsersCard.verifyQuantityOfOpenAndClaimReturnedLoans(quantityOpenLoans);
-    UsersCard.showOpenedLoans();
-  };
-
   before('Create user, open and closed loans', () => {
-    itemsData.itemsWithSeparateInstance.forEach(function (item, index) { item.barcode = generateUniqueItemBarcodeWithShift(index); });
-
     cy.getAdminToken().then(() => {
-      cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => { testData.instanceTypeId = instanceTypes[0].id; });
-      cy.getHoldingTypes({ limit: 1 }).then((res) => { testData.holdingTypeId = res[0].id; });
-      cy.createLoanType({ name: `type_${getRandomPostfix()}` }).then((loanType) => { testData.loanTypeId = loanType.id; });
-      cy.getMaterialTypes({ limit: 1 }).then((res) => { testData.materialTypeId = res.id; });
-      UsersOwners.createViaApi({ ...UsersOwners.getDefaultNewOwner(uuid(), 'owner'), servicePointOwner: [{ value: servicePoint.id, label: servicePoint.name }] }).then(({ id, ownerName }) => {
-        ownerData.name = ownerName;
-        ownerData.id = id;
+      UsersOwners.createViaApi({
+        ...ownerData,
+        servicePointOwner: [{ value: servicePoint.id, label: servicePoint.name }],
       });
       ServicePoints.createViaApi(servicePoint);
       defaultLocation = Location.getDefaultLocation(servicePoint.id);
-      Location.createViaApi(defaultLocation);
-    }).then(() => {
-      itemsData.itemsWithSeparateInstance.forEach((item, index) => {
-        InventoryInstances.createFolioInstanceViaApi({ instance: {
-          instanceTypeId: testData.instanceTypeId,
-          title: item.instanceTitle,
-        },
-        holdings: [{
-          holdingsTypeId: testData.holdingTypeId,
-          permanentLocationId: defaultLocation.id,
-        }],
-        items:[{
-          barcode: item.barcode,
-          status:  { name: ITEM_STATUS_NAMES.AVAILABLE },
-          permanentLoanType: { id: testData.loanTypeId },
-          materialType: { id: testData.materialTypeId },
-        }] }).then(specialInstanceIds => {
-          itemsData.itemsWithSeparateInstance[index].instanceId = specialInstanceIds.instanceId;
-          itemsData.itemsWithSeparateInstance[index].holdingId = specialInstanceIds.holdingIds[0].id;
-          itemsData.itemsWithSeparateInstance[index].itemId = specialInstanceIds.holdingIds[0].itemIds;
+      Location.createViaApi(defaultLocation).then((location) => {
+        InventoryInstances.createFolioInstancesViaApi({
+          folioInstances,
+          location,
         });
       });
     });
     LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
-    CirculationRules.getViaApi().then((circulationRule) => {
-      originalCirculationRules = circulationRule.rulesAsText;
-      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-      ruleProps.i = lostItemFeePolicyBody.id;
-      addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + ruleProps.i + ' l ' + ruleProps.l + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
-      CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
-    });
-    cy.createTempUser([permissions.checkinAll.gui,
+    cy.createTempUser([
+      permissions.checkinAll.gui,
       permissions.uiUsersViewLoans.gui,
       permissions.uiUsersView.gui,
       permissions.uiUsersDeclareItemLost.gui,
-      permissions.uiUsersLoansClaimReturned.gui
+      permissions.uiUsersLoansClaimReturned.gui,
     ])
-      .then(userProperties => {
-        userData.username = userProperties.username;
-        userData.password = userProperties.password;
-        userData.userId = userProperties.userId;
-        userData.barcode = userProperties.barcode;
-        userData.firstName = userProperties.firstName;
-        UserEdit.addServicePointViaApi(servicePoint.id,
-          userData.userId, servicePoint.id);
+      .then((userProperties) => {
+        userData = userProperties;
+        UserEdit.addServicePointViaApi(servicePoint.id, userData.userId, servicePoint.id);
       })
       .then(() => {
-        cy.loginAsAdmin();
-        itemsData.itemsWithSeparateInstance.forEach((item, index) => {
-          item.index = index;
-          Checkout.checkoutItemViaApi({
-            id: uuid(),
-            itemBarcode: item.barcode,
-            loanDate: moment.utc().format(),
-            servicePointId: servicePoint.id,
-            userBarcode: userData.barcode,
+        folioInstances.forEach((item, index) => {
+          item.barcodes.forEach((barcode) => {
+            Checkout.checkoutItemViaApi({
+              itemBarcode: barcode,
+              servicePointId: servicePoint.id,
+              userBarcode: userData.barcode,
+            }).then(({ id: loanId }) => {
+              if (index % 2 === 1) {
+                UserLoans.declareLoanLostViaApi(
+                  {
+                    id: item.itemIds[0],
+                    servicePointId: servicePoint.id,
+                  },
+                  loanId,
+                );
+                item.status = ITEM_STATUS_NAMES.DECLARED_LOST;
+              } else {
+                item.status = ITEM_STATUS_NAMES.CHECKED_OUT;
+              }
+            });
           });
-          if (index % 2 === 1) {
-            cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-            UserLoans.verifyNumberOfLoans(index + 1);
-            UserLoans.declareLoanLostByBarcode(item.barcode);
-            ConfirmItemStatusModal.confirmItemStatus(reasonWhyItemIsDeclaredLost);
-            UserLoans.checkResultsInTheRowByBarcode([itemStatuses.declaredLost], item.barcode);
-            item.status = itemStatuses.declaredLost;
-          } else item.status = itemStatuses.checkedOut;
         });
       });
   });
@@ -190,96 +119,112 @@ describe('Loans ', () => {
     UsersOwners.deleteViaApi(ownerData.id);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint.id]);
     ServicePoints.deleteViaApi(servicePoint.id);
-    Users.deleteViaApi(userData.userId)
-      .then(
-        () => itemsData.itemsWithSeparateInstance.forEach(
-          (item, index) => {
-            cy.deleteItemViaApi(item.itemId);
-            cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
-            InventoryInstance.deleteInstanceViaApi(itemsData.itemsWithSeparateInstance[index].instanceId);
-          }
-        )
-      );
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    Users.deleteViaApi(userData.userId).then(() => folioInstances.forEach((item) => {
+      item.itemIds.forEach((id) => cy.deleteItemViaApi(id));
+      cy.deleteHoldingRecordViaApi(item.holdingId);
+      InventoryInstance.deleteInstanceViaApi(item.instanceId);
+    }));
     LostItemFeePolicy.deleteViaApi(lostItemFeePolicyBody.id);
-    cy.deleteLoanType(testData.loanTypeId);
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       defaultLocation.institutionId,
       defaultLocation.campusId,
       defaultLocation.libraryId,
-      defaultLocation.id
+      defaultLocation.id,
     );
   });
 
   it('C10959 Loans: Claim returned (vega)', { tags: [TestTypes.smoke, devTeams.vega] }, () => {
     const selectedItems = [];
     let claimedReturnedLoansQuantity;
-    const claimedReturnedModalTitle = 'Claimed returned';
-    let selectedItem = itemsData.itemsWithSeparateInstance.find(item => item.status === itemStatuses.checkedOut);
+    let selectedItem = folioInstances.find((item) => item.status === ITEM_STATUS_NAMES.CHECKED_OUT);
     cy.login(userData.username, userData.password);
-    openOpenedUserLoans(userData, itemsData.itemsWithSeparateInstance.length);
-    UserLoans.openLoan(selectedItem.barcode);
+    cy.visit(TopMenu.usersPath);
+    UsersSearchPane.openUserCard(userData.username);
+    UsersCard.viewCurrentLoans({ openLoans: folioInstances.length });
+    UserLoans.openLoanDetails(selectedItem.barcodes[0]);
     Loans.claimReturnedButtonIsVisible();
     Loans.claimReturned();
-    ConfirmItemStatusModal.verifyModalView(claimedReturnedModalTitle).then(() => {
-      Loans.verifyResultsInTheRow([itemStatuses.checkedOut]);
+    ConfirmItemStatusModal.verifyModalView({ action: ITEM_STATUS_NAMES.CLAIMED_RETURNED });
+    ConfirmItemStatusModal.closeModal().then(() => {
+      Loans.verifyResultsInTheRow([ITEM_STATUS_NAMES.CHECKED_OUT]);
     });
     Loans.claimReturnedAndConfirm(reasonWhyItemIsClaimedOut).then(() => {
       Loans.resolveClaimedIsVisible();
-      itemsData.itemsWithSeparateInstance.find(function (item) {
-        if (item.barcode === selectedItem.barcode) {
-          item.status = itemStatuses.claimReturned;
+      folioInstances.find((item) => {
+        if (item.barcodes[0] === selectedItem.barcodes[0]) {
+          item.status = ITEM_STATUS_NAMES.CLAIMED_RETURNED;
           return true;
         }
         return false;
       });
-      Loans.checkItemStatus(itemStatuses.claimReturned);
+      Loans.checkItemStatus(ITEM_STATUS_NAMES.CLAIMED_RETURNED);
       Loans.checkClaimReturnedDateTime();
-      Loans.verifyResultsInTheRow([itemStatuses.claimReturned, userData.firstName, reasonWhyItemIsClaimedOut]);
+      Loans.verifyResultsInTheRow([
+        ITEM_STATUS_NAMES.CLAIMED_RETURNED,
+        userData.firstName,
+        reasonWhyItemIsClaimedOut,
+      ]);
       Loans.dismissPane().then(() => {
-        claimedReturnedLoansQuantity = getClaimedReturnedLoansQuantity(itemsData.itemsWithSeparateInstance);
-        UserLoans.verifyQuantityOpenAndClaimedReturnedLoans(itemsData.itemsWithSeparateInstance.length, claimedReturnedLoansQuantity);
-        selectedItem = itemsData.itemsWithSeparateInstance.find(item => item.status === itemStatuses.checkedOut);
-        UserLoans.openActionsMenuOfLoanByBarcode(selectedItem.barcode);
+        claimedReturnedLoansQuantity = getClaimedReturnedLoansQuantity(folioInstances);
+        UserLoans.verifyQuantityOpenAndClaimedReturnedLoans(
+          folioInstances.length,
+          claimedReturnedLoansQuantity,
+        );
+        selectedItem = folioInstances.find((item) => item.status === ITEM_STATUS_NAMES.CHECKED_OUT);
+        UserLoans.openActionsMenuOfLoanByBarcode(selectedItem.barcodes[0]);
       });
     });
     Loans.claimReturned();
-    ConfirmItemStatusModal.verifyModalView(claimedReturnedModalTitle).then(() => {
-      UserLoans.checkResultsInTheRowByBarcode([itemStatuses.checkedOut], selectedItem.barcode);
-      UserLoans.openActionsMenuOfLoanByBarcode(selectedItem.barcode);
+    ConfirmItemStatusModal.verifyModalView({ action: ITEM_STATUS_NAMES.CLAIMED_RETURNED });
+    ConfirmItemStatusModal.closeModal().then(() => {
+      UserLoans.checkResultsInTheRowByBarcode(
+        [ITEM_STATUS_NAMES.CHECKED_OUT],
+        selectedItem.barcodes[0],
+      );
+      UserLoans.openActionsMenuOfLoanByBarcode(selectedItem.barcodes[0]);
     });
     Loans.claimReturnedAndConfirm(reasonWhyItemIsClaimedOut).then(() => {
-      itemsData.itemsWithSeparateInstance.find(function (item) {
-        if (item.barcode === selectedItem.barcode) {
-          item.status = itemStatuses.claimReturned;
+      folioInstances.find((item) => {
+        if (item.barcodes[0] === selectedItem.barcodes[0]) {
+          item.status = ITEM_STATUS_NAMES.CLAIMED_RETURNED;
           return true;
         }
         return false;
       });
-      claimedReturnedLoansQuantity = getClaimedReturnedLoansQuantity(itemsData.itemsWithSeparateInstance);
-      UserLoans.verifyQuantityOpenAndClaimedReturnedLoans(itemsData.itemsWithSeparateInstance.length, claimedReturnedLoansQuantity);
-      UserLoans.checkResultsInTheRowByBarcode([itemStatuses.claimReturned], selectedItem.barcode);
+      claimedReturnedLoansQuantity = getClaimedReturnedLoansQuantity(folioInstances);
+      UserLoans.verifyQuantityOpenAndClaimedReturnedLoans(
+        folioInstances.length,
+        claimedReturnedLoansQuantity,
+      );
+      UserLoans.checkResultsInTheRowByBarcode(
+        [ITEM_STATUS_NAMES.CLAIMED_RETURNED],
+        selectedItem.barcodes[0],
+      );
     });
-    UserLoans.openLoan(selectedItem.barcode);
+    UserLoans.openLoanDetails(selectedItem.barcodes[0]);
     Loans.resolveClaimedIsVisible();
-    Loans.checkItemStatus(itemStatuses.claimReturned);
+    Loans.checkItemStatus(ITEM_STATUS_NAMES.CLAIMED_RETURNED);
     Loans.checkClaimReturnedDateTime();
-    Loans.verifyResultsInTheRow([itemStatuses.claimReturned, userData.firstName, reasonWhyItemIsClaimedOut]);
+    Loans.verifyResultsInTheRow([
+      ITEM_STATUS_NAMES.CLAIMED_RETURNED,
+      userData.firstName,
+      reasonWhyItemIsClaimedOut,
+    ]);
     Loans.dismissPane().then(() => {
       Loans.claimReturnedButtonIsDisabled();
     });
     selectedItems.push(selectedItem);
-    UserLoans.checkOffLoanByBarcode(selectedItem.barcode)
+    UserLoans.checkOffLoanByBarcode(selectedItem.barcodes[0])
       .then(() => {
         UserLoans.verifyClaimReturnedButtonIsDisabled();
-        selectedItem = itemsData.itemsWithSeparateInstance.find((item) => item.status === itemStatuses.checkedOut);
+        selectedItem = folioInstances.find((item) => item.status === ITEM_STATUS_NAMES.CHECKED_OUT);
         selectedItems.push(selectedItem);
-        UserLoans.checkOffLoanByBarcode(selectedItem.barcode);
+        UserLoans.checkOffLoanByBarcode(selectedItem.barcodes[0]);
       })
       .then(() => {
-        itemsData.itemsWithSeparateInstance.find(function (item) {
-          if (item.barcode === selectedItem.barcode) {
-            item.status = itemStatuses.claimReturned;
+        folioInstances.find((item) => {
+          if (item.barcodes[0] === selectedItem.barcodes[0]) {
+            item.status = ITEM_STATUS_NAMES.CLAIMED_RETURNED;
             return true;
           }
           return false;
@@ -287,14 +232,16 @@ describe('Loans ', () => {
       })
       .then(() => {
         UserLoans.verifyClaimReturnedButtonIsVisible();
-        selectedItem = itemsData.itemsWithSeparateInstance.find((item) => item.status === itemStatuses.declaredLost);
+        selectedItem = folioInstances.find(
+          (item) => item.status === ITEM_STATUS_NAMES.DECLARED_LOST,
+        );
         selectedItems.push(selectedItem);
-        UserLoans.checkOffLoanByBarcode(selectedItem.barcode);
+        UserLoans.checkOffLoanByBarcode(selectedItem.barcodes[0]);
       })
       .then(() => {
-        itemsData.itemsWithSeparateInstance.find(function (item) {
-          if (item.barcode === selectedItem.barcode) {
-            item.status = itemStatuses.claimReturned;
+        folioInstances.find((item) => {
+          if (item.barcodes[0] === selectedItem.barcodes[0]) {
+            item.status = ITEM_STATUS_NAMES.CLAIMED_RETURNED;
             return true;
           }
           return false;
@@ -302,46 +249,55 @@ describe('Loans ', () => {
       });
     UserLoans.openClaimReturnedPane();
     ConfirmClaimReturnedModal.verifyNumberOfItemsToBeClaimReturned(3);
-    ConfirmClaimReturnedModal.verifyModalView();
+    ConfirmClaimReturnedModal.verifyModalView({ action: ITEM_STATUS_NAMES.CLAIMED_RETURNED });
+    ConfirmClaimReturnedModal.closeModal();
     UserLoans.openClaimReturnedPane();
     ConfirmClaimReturnedModal.confirmItemStatus(reasonWhyItemIsClaimedOut).then(() => {
-      selectedItems.forEach(item => {
-        UserLoans.checkResultsInTheRowByBarcode([item.status], item.barcode);
-        UserLoans.openLoan(item.barcode);
+      selectedItems.forEach((item) => {
+        UserLoans.checkResultsInTheRowByBarcode([item.status], item.barcodes[0]);
+        UserLoans.openLoanDetails(item.barcodes[0]);
         Loans.resolveClaimedIsVisible();
-        Loans.checkItemStatus(itemStatuses.claimReturned);
+        Loans.checkItemStatus(ITEM_STATUS_NAMES.CLAIMED_RETURNED);
         Loans.checkClaimReturnedDateTime();
-        Loans.verifyResultsInTheRow([itemStatuses.claimReturned, userData.firstName, reasonWhyItemIsClaimedOut]);
+        Loans.verifyResultsInTheRow([
+          ITEM_STATUS_NAMES.CLAIMED_RETURNED,
+          userData.firstName,
+          reasonWhyItemIsClaimedOut,
+        ]);
         Loans.dismissPane();
       });
       cy.visit(TopMenu.checkInPath);
     });
-    cy.wrap(selectedItems).each(item => {
-      CheckInActions.checkInItemGui(item.barcode).then(() => {
-        if (item.status !== itemStatuses.declaredLost) {
+    cy.wrap(selectedItems).each((item) => {
+      CheckInActions.checkInItemGui(item.barcodes[0]).then(() => {
+        if (item.status !== ITEM_STATUS_NAMES.DECLARED_LOST) {
           CheckInClaimedReturnedItemModal.chooseItemReturnedByPatron();
           CheckInClaimedReturnedItemModal.verifyModalIsClosed();
-          CheckInActions.verifyLastCheckInItem(item.barcode);
+          CheckInActions.verifyLastCheckInItem(item.barcodes[0]);
         } else {
           CheckInDeclareLostItemModal.confirm();
-          CheckInActions.verifyLastCheckInItem(item.barcode);
+          CheckInActions.verifyLastCheckInItem(item.barcodes[0]);
         }
       });
     });
-    showOpenedUserLoansInUserCard(userData);
-    UsersCard.verifyQuantityOfOpenAndClaimReturnedLoans(2, 1);
+    cy.visit(TopMenu.usersPath);
+    UsersSearchPane.openUserCard(userData.username);
+    UsersCard.expandLoansSection(2, 1);
     cy.visit(TopMenu.checkInPath).then(() => {
-      cy.wrap(itemsData.itemsWithSeparateInstance).each(item => {
-        if (item.barcode !== selectedItems[0].barcode && item.barcode !== selectedItems[1].barcode &&
-          item.barcode !== selectedItems[2].barcode) {
-          CheckInActions.checkInItemGui(item.barcode).then(() => {
-            if (item.status !== itemStatuses.declaredLost) {
+      cy.wrap(folioInstances).each((item) => {
+        if (
+          item.barcodes[0] !== selectedItems[0].barcodes[0] &&
+          item.barcodes[0] !== selectedItems[1].barcodes[0] &&
+          item.barcodes[0] !== selectedItems[2].barcodes[0]
+        ) {
+          CheckInActions.checkInItemGui(item.barcodes[0]).then(() => {
+            if (item.status !== ITEM_STATUS_NAMES.DECLARED_LOST) {
               CheckInClaimedReturnedItemModal.chooseItemReturnedByPatron();
               CheckInClaimedReturnedItemModal.verifyModalIsClosed();
-              CheckInActions.verifyLastCheckInItem(item.barcode);
+              CheckInActions.verifyLastCheckInItem(item.barcodes[0]);
             } else {
               CheckInDeclareLostItemModal.confirm();
-              CheckInActions.verifyLastCheckInItem(item.barcode);
+              CheckInActions.verifyLastCheckInItem(item.barcodes[0]);
             }
           });
         }

@@ -38,73 +38,86 @@ describe('bulk-edit', () => {
         permissions.bulkEditView.gui,
         permissions.bulkEditEdit.gui,
         permissions.inventoryAll.gui,
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading
-          });
-
-          items.forEach(item => {
-            item.secondBarcode = 'secondBarcode_' + item.itemBarcode;
-            itemBarcodes.push(item.itemBarcode, item.secondBarcode);
-            FileManager.appendFile(`cypress/fixtures/${itemBarcodesFileName}`, `${item.itemBarcode}\n${item.secondBarcode}\n`);
-            InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-          });
-          InventorySearchAndFilter.byKeywords(items[0].instanceName);
-          InventoryInstance.openHoldings(['']);
-          InventoryInstance.openItemByBarcode(`secondBarcode_${items[0].itemBarcode}`);
-          ItemRecordView.waitLoading();
-          ItemActions.edit();
-          ItemRecordEdit.addAdministrativeNote(note);
-          ItemRecordEdit.save();
-          ItemRecordView.checkCalloutMessage();
-          cy.visit(TopMenu.bulkEditPath);
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
         });
+
+        items.forEach((item) => {
+          item.secondBarcode = 'secondBarcode_' + item.itemBarcode;
+          itemBarcodes.push(item.itemBarcode, item.secondBarcode);
+          FileManager.appendFile(
+            `cypress/fixtures/${itemBarcodesFileName}`,
+            `${item.itemBarcode}\n${item.secondBarcode}\n`,
+          );
+          InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+        });
+        InventorySearchAndFilter.byKeywords(items[0].instanceName);
+        InventoryInstance.openHoldings(['']);
+        InventoryInstance.openItemByBarcode(`secondBarcode_${items[0].itemBarcode}`);
+        ItemRecordView.waitLoading();
+        ItemActions.edit();
+        ItemRecordEdit.addAdministrativeNote(note);
+        ItemRecordEdit.save();
+        ItemRecordView.checkCalloutMessage();
+        cy.visit(TopMenu.bulkEditPath);
+      });
     });
 
     after('delete test data', () => {
-      items.forEach(item => {
+      items.forEach((item) => {
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       });
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
-      FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName, changedRecordsFileName, previewFileName);
+      FileManager.deleteFileFromDownloadsByMask(
+        matchedRecordsFileName,
+        changedRecordsFileName,
+        previewFileName,
+      );
     });
 
-    it('C399086 Verify Previews for the number of Items records if the record has a field with line breaks (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.verifyDragNDropItemBarcodeArea();
-      BulkEditSearchPane.uploadFile(itemBarcodesFileName);
-      BulkEditSearchPane.waitFileUploading();
+    it(
+      'C399086 Verify Previews for the number of Items records if the record has a field with line breaks (firebird)',
+      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.verifyDragNDropItemBarcodeArea();
+        BulkEditSearchPane.uploadFile(itemBarcodesFileName);
+        BulkEditSearchPane.waitFileUploading();
 
-      BulkEditSearchPane.verifyMatchedResults(...itemBarcodes);
-      BulkEditActions.downloadMatchedResults();
-      ExportFile.verifyFileIncludes(matchedRecordsFileName, [note]);
-      BulkEditSearchPane.changeShowColumnCheckbox('Administrative notes');
-      BulkEditSearchPane.verifySpecificItemsMatched(note);
+        BulkEditSearchPane.verifyMatchedResults(...itemBarcodes);
+        BulkEditActions.downloadMatchedResults();
+        ExportFile.verifyFileIncludes(matchedRecordsFileName, [note]);
+        BulkEditSearchPane.changeShowColumnCheckbox('Administrative notes');
+        BulkEditSearchPane.verifySpecificItemsMatched(note);
 
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.verifyModifyLandingPageBeforeModifying();
-      const location = 'Annex';
-      BulkEditActions.replaceTemporaryLocation(location);
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.verifyModifyLandingPageBeforeModifying();
+        const location = 'Annex';
+        BulkEditActions.replaceTemporaryLocation(location);
 
-      BulkEditActions.confirmChanges();
-      BulkEditActions.verifyAreYouSureForm(itemBarcodes.length, location);
-      BulkEditActions.downloadPreview();
-      ExportFile.verifyFileIncludes(previewFileName, [note]);
-      BulkEditActions.commitChanges();
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditActions.openActions();
-      BulkEditActions.downloadChangedCSV();
-      ExportFile.verifyFileIncludes(changedRecordsFileName, [note]);
+        BulkEditActions.confirmChanges();
+        BulkEditActions.verifyAreYouSureForm(itemBarcodes.length, location);
+        BulkEditActions.downloadPreview();
+        ExportFile.verifyFileIncludes(previewFileName, [note]);
+        BulkEditActions.commitChanges();
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditActions.openActions();
+        BulkEditActions.downloadChangedCSV();
+        ExportFile.verifyFileIncludes(changedRecordsFileName, [note]);
 
-      cy.visit(TopMenu.inventoryPath);
-      InventorySearchAndFilter.switchToItem();
-      InventorySearchAndFilter.searchByParameter('Barcode', `secondBarcode_${items[0].itemBarcode}`);
-      ItemRecordView.waitLoading();
-      ItemRecordView.verifyTemporaryLocation(location);
-      InstanceRecordView.verifyAdministrativeNote(note);
-    });
+        cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.switchToItem();
+        InventorySearchAndFilter.searchByParameter(
+          'Barcode',
+          `secondBarcode_${items[0].itemBarcode}`,
+        );
+        ItemRecordView.waitLoading();
+        ItemRecordView.verifyTemporaryLocation(location);
+        InstanceRecordView.verifyAdministrativeNote(note);
+      },
+    );
   });
 });

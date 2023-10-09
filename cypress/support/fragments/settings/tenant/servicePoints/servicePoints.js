@@ -1,48 +1,58 @@
-import { getTestEntityValue } from '../../../../utils/stringTools';
+import uuid from 'uuid';
+import getRandomPostfix from '../../../../utils/stringTools';
 import { NavListItem, Pane, Button, TextField } from '../../../../../../interactors';
 
 const servicePointsPane = Pane('Service points');
 
 const defaultServicePoint = {
-  // required parameter
-  code: undefined,
-  discoveryDisplayName: getTestEntityValue('discovery_display_name'),
-  // required parameter
-  id: undefined,
-  // required parameter
-  name: undefined,
+  code: `autotest_code_${getRandomPostfix()}`,
+  id: uuid(),
+  discoveryDisplayName: `autotest_discovery_display_name_${getRandomPostfix()}`,
+  name: `autotest_service_point_name_${getRandomPostfix()}`,
 };
 
-const getDefaultServicePointWithPickUpLocation = (servicePointName, id) => {
+const getDefaultServicePoint = ({
+  name = `autotest_service_point_name_${getRandomPostfix()}`,
+  id = uuid(),
+} = {}) => {
   return {
-    ...defaultServicePoint,
-    code: getTestEntityValue(servicePointName),
     id,
-    name: getTestEntityValue(servicePointName),
+    name,
+    code: `autotest_code_${getRandomPostfix()}`,
+    discoveryDisplayName: `autotest_discovery_display_name_${getRandomPostfix()}`,
+  };
+};
+
+const getDefaultServicePointWithPickUpLocation = ({ name, id } = {}) => {
+  return {
+    ...getDefaultServicePoint({ name, id }),
     pickupLocation: true,
-    holdShelfExpiryPeriod:{ intervalId:'Hours', 'duration':1 }
+    holdShelfExpiryPeriod: { intervalId: 'Hours', duration: 1 },
   };
 };
 
 export default {
   defaultServicePoint,
+  getDefaultServicePoint,
   getDefaultServicePointWithPickUpLocation,
-  getViaApi: (searchParams) => cy.okapiRequest({
-    path: 'service-points',
-    searchParams,
-  }).then(({ body }) => body.servicepoints),
+  getViaApi: (searchParams) => cy
+    .okapiRequest({
+      path: 'service-points',
+      searchParams,
+    })
+    .then(({ body }) => body.servicepoints),
 
-  createViaApi : (servicePointParameters) => cy.okapiRequest({
+  createViaApi: (servicePointParameters = defaultServicePoint) => cy.okapiRequest({
     path: 'service-points',
     body: servicePointParameters,
     method: 'POST',
-    isDefaultSearchParamsRequired: false
+    isDefaultSearchParamsRequired: false,
   }),
 
-  deleteViaApi : (servicePointId) => cy.okapiRequest({
+  deleteViaApi: (servicePointId) => cy.okapiRequest({
     path: `service-points/${servicePointId}`,
     method: 'DELETE',
-    isDefaultSearchParamsRequired: false
+    isDefaultSearchParamsRequired: false,
   }),
 
   goToServicePointsTab() {
@@ -55,6 +65,7 @@ export default {
   createNewServicePoint({ name, code, displayName }) {
     cy.do(Button('+ New').click());
     // UI renders 2 times. There is no way to create good waiter
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
     cy.do([
       TextField({ name: 'name' }).fillIn(name),

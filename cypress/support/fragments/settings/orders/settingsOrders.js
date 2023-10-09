@@ -1,14 +1,25 @@
-import { Button, Checkbox, EditableListRow, MultiColumnListCell, NavListItem, PaneHeader, Section, Select, TextField } from '../../../../../interactors';
+import {
+  Button,
+  Checkbox,
+  EditableListRow,
+  MultiColumnListCell,
+  NavListItem,
+  PaneHeader,
+  Section,
+  Select,
+  TextField,
+} from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 
 const editPoNumberCheckbox = Checkbox('User can edit');
 const saveButton = Button('Save');
 const trashIconButton = Button({ icon: 'trash' });
 const deleteButton = Button('Delete');
-function getEditableListRow(rowNumber) { return EditableListRow({ index: +rowNumber.split('-')[1] }); }
+function getEditableListRow(rowNumber) {
+  return EditableListRow({ index: +rowNumber.split('-')[1] });
+}
 
 export default {
-
   waitLoadingOrderSettings: () => {
     cy.expect(Section({ id: 'settings-nav-pane' }).exists());
   },
@@ -17,7 +28,7 @@ export default {
     cy.expect(PaneHeader('Edit').exists());
   },
 
-  waitLoadingOpeningPurchaseOrders : () => {
+  waitLoadingOpeningPurchaseOrders: () => {
     cy.expect(PaneHeader('Opening purchase orders').exists());
   },
 
@@ -25,30 +36,30 @@ export default {
     cy.expect(Checkbox({ name: 'isOpenOrderEnabled' }).disabled());
   },
 
-  waitLoadingPurchaseOrderLinesLimit : () => {
+  waitLoadingPurchaseOrderLinesLimit: () => {
     cy.expect(PaneHeader('Purchase order lines limit').exists());
   },
 
-  waitLoadingInstanceStatus : () => {
+  waitLoadingInstanceStatus: () => {
     cy.expect(PaneHeader('Instance status').exists());
   },
 
-  waitLoadingInstanceType : () => {
+  waitLoadingInstanceType: () => {
     cy.expect(PaneHeader('Instance type').exists());
   },
 
-  waitLoadingLoanType : () => {
+  waitLoadingLoanType: () => {
     cy.expect(PaneHeader('Loan type').exists());
   },
 
-  userCanEditPONumber : () => {
+  userCanEditPONumber: () => {
     cy.wait(4000);
     cy.do(editPoNumberCheckbox.click());
     cy.wait(4000);
     cy.do(saveButton.click());
   },
 
-  userCanNotEditPONumber : () => {
+  userCanNotEditPONumber: () => {
     cy.wait(4000);
     cy.do(editPoNumberCheckbox.click());
     cy.wait(4000);
@@ -63,7 +74,9 @@ export default {
     cy.get('input[name=value]').click().type(`{selectall}{backspace}${polNumbers}`);
     cy.wait(4000);
     cy.do(Button({ id: 'set-polines-limit-submit-btn' }).click());
-    InteractorsTools.checkCalloutMessage('The limit of purchase order lines has been successfully saved');
+    InteractorsTools.checkCalloutMessage(
+      'The limit of purchase order lines has been successfully saved',
+    );
   },
 
   fillRequiredFields: (info) => {
@@ -71,7 +84,7 @@ export default {
     cy.do([
       TextField({ placeholder: 'name' }).fillIn(info.name),
       TextField({ placeholder: 'description' }).fillIn(info.description),
-      saveButton.click()
+      saveButton.click(),
     ]);
   },
 
@@ -89,31 +102,23 @@ export default {
 
   deletePrefix: (preffixInfo) => {
     cy.wait(6000);
-    cy.do(MultiColumnListCell({ content: preffixInfo.name }).perform(
-      element => {
+    cy.do(
+      MultiColumnListCell({ content: preffixInfo.name }).perform((element) => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
-        cy.do([
-          getEditableListRow(rowNumber)
-            .find(trashIconButton).click(),
-          deleteButton.click()
-        ]);
-      }
-    ));
+        cy.do([getEditableListRow(rowNumber).find(trashIconButton).click(), deleteButton.click()]);
+      }),
+    );
     InteractorsTools.checkCalloutMessage(`The prefix ${preffixInfo.name} was successfully deleted`);
   },
 
   deleteSuffix: (suffixInfo) => {
     cy.wait(6000);
-    cy.do(MultiColumnListCell({ content: suffixInfo.name }).perform(
-      element => {
+    cy.do(
+      MultiColumnListCell({ content: suffixInfo.name }).perform((element) => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
-        cy.do([
-          getEditableListRow(rowNumber)
-            .find(trashIconButton).click(),
-          deleteButton.click()
-        ]);
-      }
-    ));
+        cy.do([getEditableListRow(rowNumber).find(trashIconButton).click(), deleteButton.click()]);
+      }),
+    );
     InteractorsTools.checkCalloutMessage(`The suffix ${suffixInfo.name} was successfully deleted`);
   },
 
@@ -149,8 +154,6 @@ export default {
   },
 
   selectApprovalRequired() {
-    cy.do([
-      Checkbox({ name: 'isApprovalRequired' }).click(),
-      saveButton.click()]);
+    cy.do([Checkbox({ name: 'isApprovalRequired' }).click(), saveButton.click()]);
   },
 };

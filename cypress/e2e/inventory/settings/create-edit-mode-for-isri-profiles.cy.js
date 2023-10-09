@@ -1,7 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
-import permissions from '../../../support/dictionary/permissions';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import NewTargetProfile from '../../../support/fragments/settings/inventory/integrations/newTargetProfile';
@@ -13,35 +11,40 @@ describe('inventory', () => {
     let user;
     const targetProfileName = `C374178 autotest targetProfileName ${getRandomPostfix()}`;
     const newTargetProfileName = `C374178 autotest targetProfileName ${getRandomPostfix()}`;
-    const firstCreateProfileName = 'Inventory Single Record - Default Create Instance (d0ebb7b0-2f0f-11eb-adc1-0242ac120002)';
-    const secondCreateProfileName = 'Default - Create instance and SRS MARC Bib (e34d7b92-9b83-11eb-a8b3-0242ac130003)';
+    const firstCreateProfileName =
+      'Inventory Single Record - Default Create Instance (d0ebb7b0-2f0f-11eb-adc1-0242ac120002)';
+    const secondCreateProfileName =
+      'Default - Create instance and SRS MARC Bib (e34d7b92-9b83-11eb-a8b3-0242ac130003)';
     const firstRow = 1;
     const secondRow = 2;
-    const firstUpdateProfileName = 'Inventory Single Record - Default Update Instance (91f9b8d6-d80e-4727-9783-73fb53e3c786)';
+    const firstUpdateProfileName =
+      'Inventory Single Record - Default Update Instance (91f9b8d6-d80e-4727-9783-73fb53e3c786)';
 
     before('create test data', () => {
       cy.createTempUser([
-        permissions.uiInventorySingleRecordImport.gui,
-        permissions.settingsDataImportEnabled.gui,
-        permissions.uiInventorySettingsConfigureSingleRecordImport.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+        Permissions.uiInventorySingleRecordImport.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.uiInventorySettingsConfigureSingleRecordImport.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          cy.login(user.username, user.password);
-        });
+        cy.login(user.username, user.password);
+      });
     });
 
     after('delete test data', () => {
       Users.deleteViaApi(user.userId);
-      Z3950TargetProfiles.getTargetProfileIdViaApi({ query: `name="${newTargetProfileName}"` })
-        .then(profileId => {
-          Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);
-        });
+      Z3950TargetProfiles.getTargetProfileIdViaApi({
+        query: `name="${newTargetProfileName}"`,
+      }).then((profileId) => {
+        Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);
+      });
     });
 
-    it('C374178 Verify the create/edit mode for ISRI profiles (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+    it(
+      'C374178 Verify the create/edit mode for ISRI profiles (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
         cy.visit(SettingsMenu.targetProfilesPath);
         Z3950TargetProfiles.create();
         NewTargetProfile.newFormContains();
@@ -73,6 +76,7 @@ describe('inventory', () => {
         EditTargetProfile.fillName(newTargetProfileName);
         EditTargetProfile.save(targetProfileName);
         Z3950TargetProfiles.verifyTargetProfileIsUpdated(targetProfileName, newTargetProfileName);
-      });
+      },
+    );
   });
 });

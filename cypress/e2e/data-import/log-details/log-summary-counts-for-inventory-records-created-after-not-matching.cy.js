@@ -1,7 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import DevTeams from '../../../support/dictionary/devTeams';
-import TestTypes from '../../../support/dictionary/testTypes';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import {
@@ -11,7 +9,7 @@ import {
   LOAN_TYPE_NAMES,
   ITEM_STATUS_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
-  EXISTING_RECORDS_NAMES
+  EXISTING_RECORDS_NAMES,
 } from '../../../support/constants';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -28,24 +26,31 @@ import Users from '../../../support/fragments/users/users';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Log details', () => {
     let user;
     const marcFileName = `C378901autotestFile.${getRandomPostfix()}.mrc`;
     const barcodes = ['B(UMLLTTEST3)LLTAMGUT8UGUT_-UM', 'B(UMLLTTEST3)LLTAALIVIAUCO_-UM'];
-    const firstInstanceTitle = '<In lacu> Guillelmus de Sancto Theodorico (dubium) [electronic resource]';
+    const firstInstanceTitle =
+      '<In lacu> Guillelmus de Sancto Theodorico (dubium) [electronic resource]';
     const collectionOfMappingAndActionProfiles = [
       {
-        mappingProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+        mappingProfile: {
+          typeValue: FOLIO_RECORD_TYPE.INSTANCE,
           name: `C378901 instance mapping profile ${getRandomPostfix()}`,
           catalogedDate: '###TODAY###',
-          instanceStatusTerm: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED },
-        actionProfile: { typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-          name: `C378901 instance action profile ${getRandomPostfix()}` }
+          instanceStatusTerm: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
+        },
+        actionProfile: {
+          typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+          name: `C378901 instance action profile ${getRandomPostfix()}`,
+        },
       },
       {
-        mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        mappingProfile: {
+          typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C378901 holdings mapping profile ${getRandomPostfix()}`,
           permanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
           permanentLocationUI: LOCATION_NAMES.ONLINE_UI,
@@ -53,20 +58,27 @@ describe('data-import', () => {
           callNumber: '852$h',
           relationship: '"Resource"',
           uri: '856$u',
-          link: '856$y' },
-        actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-          name: `C378901 holdings action profile${getRandomPostfix()}` }
+          link: '856$y',
+        },
+        actionProfile: {
+          typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+          name: `C378901 holdings action profile${getRandomPostfix()}`,
+        },
       },
       {
-        mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
+        mappingProfile: {
+          typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C378901 item mapping profile ${getRandomPostfix()}`,
           barcode: '876$a',
           materialType: '877$m',
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: ITEM_STATUS_NAMES.AVAILABLE },
-        actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-          name: `C378901 item action profile${getRandomPostfix()}` }
-      }
+          status: ITEM_STATUS_NAMES.AVAILABLE,
+        },
+        actionProfile: {
+          typeValue: FOLIO_RECORD_TYPE.ITEM,
+          name: `C378901 item action profile${getRandomPostfix()}`,
+        },
+      },
     ];
     const matchProfile = {
       profileName: `C378901 match profile ${getRandomPostfix()}`,
@@ -74,37 +86,40 @@ describe('data-import', () => {
         field: '034',
         in1: '9',
         in2: ' ',
-        subfield: 'a'
+        subfield: 'a',
       },
       matchCriterion: 'Exactly matches',
       existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
-      instanceOption: NewMatchProfile.optionsList.systemControlNumber
+      instanceOption: NewMatchProfile.optionsList.systemControlNumber,
     };
-    const jobProfile = { ...NewJobProfile.defaultJobProfile,
+    const jobProfile = {
+      ...NewJobProfile.defaultJobProfile,
       profileName: `C378901 job profile ${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC };
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
+    };
 
     before('login', () => {
       cy.createTempUser([
-        permissions.settingsDataImportEnabled.gui,
-        permissions.moduleDataImportEnabled.gui,
-        permissions.uiInventoryViewInstances.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.uiInventoryViewInstances.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          cy.login(userProperties.username, userProperties.password,
-            { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+        cy.login(userProperties.username, userProperties.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
         });
+      });
     });
 
     after('delete test data', () => {
       Users.deleteViaApi(user.userId);
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      collectionOfMappingAndActionProfiles.forEach(profile => {
+      collectionOfMappingAndActionProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(barcodes[0]);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(barcodes[1]);
@@ -115,8 +130,8 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
       NewFieldMappingProfile.fillCatalogedDate(profile.catalogedDate);
       NewFieldMappingProfile.fillInstanceStatusTerm();
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
+      NewFieldMappingProfile.save();
+      FieldMappingProfileView.closeViewMode(profile.name);
     };
     const createHoldingsMappingProfile = (profile) => {
       FieldMappingProfiles.openNewMappingProfileForm();
@@ -125,8 +140,8 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillCallNumberType(profile.callNumberType);
       NewFieldMappingProfile.fillCallNumber(profile.callNumber);
       NewFieldMappingProfile.addElectronicAccess(profile.relationship, profile.uri, profile.link);
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
+      NewFieldMappingProfile.save();
+      FieldMappingProfileView.closeViewMode(profile.name);
     };
     const createItemMappingProfile = (profile) => {
       FieldMappingProfiles.openNewMappingProfileForm();
@@ -135,22 +150,30 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillMaterialType(profile.materialType);
       NewFieldMappingProfile.fillPermanentLoanType(profile.permanentLoanType);
       NewFieldMappingProfile.fillStatus(profile.status);
-      FieldMappingProfiles.saveProfile();
-      FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
+      NewFieldMappingProfile.save();
+      FieldMappingProfileView.closeViewMode(profile.name);
     };
 
-    it('C378901 Check log summary counts for inventory records created after NOT matching (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      // create mapping profiles
+    it(
+      'C378901 Check log summary counts for inventory records created after NOT matching (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      () => {
+        // create mapping profiles
         createInstanceMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
-        FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfMappingAndActionProfiles[0].mappingProfile.name,
+        );
         createHoldingsMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
-        FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[1].mappingProfile.name);
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfMappingAndActionProfiles[1].mappingProfile.name,
+        );
         createItemMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile);
-        FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[2].mappingProfile.name);
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfMappingAndActionProfiles[2].mappingProfile.name,
+        );
 
         // create action profiles
-        collectionOfMappingAndActionProfiles.forEach(profile => {
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
           cy.visit(SettingsMenu.actionProfilePath);
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
@@ -169,7 +192,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[0].actionProfile.name,
           collectionOfMappingAndActionProfiles[1].actionProfile.name,
           collectionOfMappingAndActionProfiles[2].actionProfile.name,
-          1
+          1,
         );
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
@@ -185,10 +208,12 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(marcFileName);
         Logs.checkStatusOfJobProfile();
         Logs.openFileDetails(marcFileName);
-        [FileDetails.columnNameInResultList.srsMarc,
+        [
+          FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
           FileDetails.columnNameInResultList.holdings,
-          FileDetails.columnNameInResultList.item].forEach(columnName => {
+          FileDetails.columnNameInResultList.item,
+        ].forEach((columnName) => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
         });
         // check created counter in the Summary table
@@ -202,12 +227,19 @@ describe('data-import', () => {
 
         FileDetails.openInstanceInInventory('Created');
         InstanceRecordView.verifyIsInstanceOpened(firstInstanceTitle);
+        cy.wait(2000);
         cy.go('back');
         FileDetails.openHoldingsInInventory('Created');
-        HoldingsRecordView.checkPermanentLocation(collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocationUI);
+        HoldingsRecordView.checkPermanentLocation(
+          collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocationUI,
+        );
+        cy.wait(2000);
         cy.go('back');
         FileDetails.openItemInInventory('Created');
-        ItemRecordView.verifyItemStatus(collectionOfMappingAndActionProfiles[2].mappingProfile.status);
-      });
+        ItemRecordView.verifyItemStatus(
+          collectionOfMappingAndActionProfiles[2].mappingProfile.status,
+        );
+      },
+    );
   });
 });

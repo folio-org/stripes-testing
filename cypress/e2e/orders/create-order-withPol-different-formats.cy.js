@@ -27,45 +27,42 @@ describe('ui-orders: Orders and Order lines', () => {
 
   beforeEach(() => {
     cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-      });
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+    });
     order.vendor = organization.name;
     order.orderType = 'One-time';
-    FiscalYears.createViaApi(defaultFiscalYear)
-      .then(response => {
-        defaultFiscalYear.id = response.id;
-        defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+    FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
+      defaultFiscalYear.id = response.id;
+      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
 
-        Ledgers.createViaApi(defaultLedger)
-          .then(ledgerResponse => {
-            defaultLedger.id = ledgerResponse.id;
-            defaultFund.ledgerId = defaultLedger.id;
+      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+        defaultLedger.id = ledgerResponse.id;
+        defaultFund.ledgerId = defaultLedger.id;
 
-            Funds.createViaApi(defaultFund)
-              .then(fundResponse => {
-                defaultFund.id = fundResponse.fund.id;
+        Funds.createViaApi(defaultFund).then((fundResponse) => {
+          defaultFund.id = fundResponse.fund.id;
 
-                cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
-                FinanceHelp.searchByName(defaultFund.name);
-                Funds.selectFund(defaultFund.name);
-                Funds.addBudget(allocatedQuantity);
-              });
-          });
+          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+          FinanceHelp.searchByName(defaultFund.name);
+          Funds.selectFund(defaultFund.name);
+          Funds.addBudget(allocatedQuantity);
+        });
       });
-    cy.createTempUser([
-      permissions.uiOrdersCreate.gui,
-      permissions.uiOrdersEdit.gui,
-    ])
-      .then(userProperties => {
+    });
+    cy.createTempUser([permissions.uiOrdersCreate.gui, permissions.uiOrdersEdit.gui]).then(
+      (userProperties) => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-      });
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
+      },
+    );
   });
 
   afterEach(() => {
-    cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
+    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
     Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
     FinanceHelp.searchByName(defaultFund.name);
@@ -82,36 +79,48 @@ describe('ui-orders: Orders and Order lines', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C658 Create an order and at least one order line for format = electronic resource  (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    Orders.createOrder(order).then(orderId => {
-      order.id = orderId;
-      OrderLines.addPOLine();
-      OrderLines.POLineInfoforElectronicResource(orderLineTitle, defaultFund);
-      InteractorsTools.checkCalloutMessage('The purchase order line was successfully created');
-      OrderLines.checkCreatedPOLineElectronicResource(orderLineTitle, defaultFund);
-      OrderLines.backToEditingOrder();
-    });
-  });
+  it(
+    'C658 Create an order and at least one order line for format = electronic resource  (thunderjet)',
+    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    () => {
+      Orders.createOrder(order).then((orderId) => {
+        order.id = orderId;
+        OrderLines.addPOLine();
+        OrderLines.POLineInfoforElectronicResource(orderLineTitle, defaultFund);
+        InteractorsTools.checkCalloutMessage('The purchase order line was successfully created');
+        OrderLines.checkCreatedPOLineElectronicResource(orderLineTitle, defaultFund);
+        OrderLines.backToEditingOrder();
+      });
+    },
+  );
 
-  it('C659 Create an order and at least one order line for format = physical resource with multiple copies  (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    Orders.createOrder(order).then(orderId => {
-      order.id = orderId;
-      OrderLines.addPOLine();
-      OrderLines.POLineInfodorPhysicalMaterialWithFund(orderLineTitle, defaultFund);
-      InteractorsTools.checkCalloutMessage('The purchase order line was successfully created');
-      OrderLines.checkCreatedPOLinePhysicalResource(orderLineTitle, defaultFund);
-      OrderLines.backToEditingOrder();
-    });
-  });
+  it(
+    'C659 Create an order and at least one order line for format = physical resource with multiple copies  (thunderjet)',
+    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    () => {
+      Orders.createOrder(order).then((orderId) => {
+        order.id = orderId;
+        OrderLines.addPOLine();
+        OrderLines.POLineInfodorPhysicalMaterialWithFund(orderLineTitle, defaultFund);
+        InteractorsTools.checkCalloutMessage('The purchase order line was successfully created');
+        OrderLines.checkCreatedPOLinePhysicalResource(orderLineTitle, defaultFund);
+        OrderLines.backToEditingOrder();
+      });
+    },
+  );
 
-  it('C661 Create an order and at least one order line for format = other  (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    Orders.createOrder(order).then(orderId => {
-      order.id = orderId;
-      OrderLines.addPOLine();
-      OrderLines.POLineInfodorOtherMaterialWithFund(orderLineTitle, defaultFund);
-      InteractorsTools.checkCalloutMessage('The purchase order line was successfully created');
-      OrderLines.checkCreatedPOLineOtherResource(orderLineTitle, defaultFund);
-      OrderLines.backToEditingOrder();
-    });
-  });
+  it(
+    'C661 Create an order and at least one order line for format = other  (thunderjet)',
+    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    () => {
+      Orders.createOrder(order).then((orderId) => {
+        order.id = orderId;
+        OrderLines.addPOLine();
+        OrderLines.POLineInfodorOtherMaterialWithFund(orderLineTitle, defaultFund);
+        InteractorsTools.checkCalloutMessage('The purchase order line was successfully created');
+        OrderLines.checkCreatedPOLineOtherResource(orderLineTitle, defaultFund);
+        OrderLines.backToEditingOrder();
+      });
+    },
+  );
 });

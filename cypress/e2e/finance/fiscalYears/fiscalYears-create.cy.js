@@ -12,16 +12,20 @@ describe('ui-finance: Fiscal Year', () => {
     cy.visit(TopMenu.fiscalYearPath);
   });
 
-  it('C4051 Create a new fiscal year (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
-    const defaultFiscalYear = { ...NewFiscalYear.defaultFiscalYear };
-    FiscalYears.createDefaultFiscalYear(defaultFiscalYear);
-    FiscalYears.checkCreatedFiscalYear(defaultFiscalYear.name);
-    FiscalYears.deleteFiscalYearViaActions();
+  it(
+    'C4051 Create a new fiscal year (thunderjet)',
+    { tags: [testType.smoke, devTeams.thunderjet] },
+    () => {
+      const defaultFiscalYear = { ...NewFiscalYear.defaultFiscalYear };
+      FiscalYears.createDefaultFiscalYear(defaultFiscalYear);
+      FiscalYears.checkCreatedFiscalYear(defaultFiscalYear.name);
+      FiscalYears.deleteFiscalYearViaActions();
 
-    // should not create fund without mandatory fields
-    const testFiscalYearName = `autotest_year_${getRandomPostfix()}`;
-    FiscalYears.tryToCreateFiscalYearWithoutMandatoryFields(testFiscalYearName);
-    FinanceHelp.searchByName(testFiscalYearName);
-    FiscalYears.checkZeroSearchResultsHeader();
-  });
+      // should not create fund without mandatory fields
+      const testFiscalYearName = `autotest_year_${getRandomPostfix()}`;
+      FiscalYears.tryToCreateFiscalYearWithoutMandatoryFields(testFiscalYearName);
+      FinanceHelp.searchByName(testFiscalYearName);
+      FiscalYears.checkZeroSearchResultsHeader();
+    },
+  );
 });

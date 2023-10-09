@@ -20,35 +20,42 @@ describe('Job profile - setup', () => {
     cy.createTempUser([
       permissions.dataExportEnableSettings.gui,
       permissions.dataExportEnableApp.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(user.username, user.password, { path: TopMenu.settingsPath, waiter: SettingsPane.waitLoading });
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.settingsPath,
+        waiter: SettingsPane.waitLoading,
       });
+    });
 
-    ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(fieldMappingProfileName)
-      .then((response) => {
+    ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(fieldMappingProfileName).then(
+      (response) => {
         fieldMappingProfileId = response.body.id;
         ExportNewJobProfile.createNewJobProfileViaApi(newJobProfileName, response.body.id);
-      });
+      },
+    );
   });
 
   after('delete test data', () => {
-    ExportJobProfiles.getJobProfile({ query: `"name"=="${newJobProfileName}"` })
-      .then(response => {
+    ExportJobProfiles.getJobProfile({ query: `"name"=="${newJobProfileName}"` }).then(
+      (response) => {
         ExportJobProfiles.deleteJobProfileViaApi(response.id);
-      });
+      },
+    );
     DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(fieldMappingProfileId);
     Users.deleteViaApi(user.userId);
   });
 
-  it('C345411 Search job profiles (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    ExportJobProfiles.goToJobProfilesTab();
+  it(
+    'C345411 Search job profiles (firebird)',
+    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    () => {
+      ExportJobProfiles.goToJobProfilesTab();
 
-    [newJobProfileName, 'random-string', 'Default', getRandomPostfix()]
-      .forEach(element => {
+      [newJobProfileName, 'random-string', 'Default', getRandomPostfix()].forEach((element) => {
         ExportJobProfiles.searchJobProfile(element);
         ExportJobProfiles.verifyJobProfileSearchResult(element);
       });
-  });
+    },
+  );
 });

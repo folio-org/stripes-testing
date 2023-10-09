@@ -1,8 +1,15 @@
+import { including } from '@interactors/html';
 import { TextField, Button, Select, Section, Pane } from '../../../../../interactors';
 import SelectMappingProfile from './modals/selectMappingProfile';
 import { FOLIO_RECORD_TYPE, PROFILE_TYPE_NAMES } from '../../../constants';
 
 const action = 'Create (all record types except MARC Authority or MARC Holdings)';
+
+const nameField = TextField({ name: 'profile.name' });
+const actionSelect = Select({ name: 'profile.action' });
+const recordTypeselect = Select({ name: 'profile.folioRecord' });
+const profileLinkSection = Section({ id: 'actionProfileFormAssociatedMappingProfileAccordion' });
+const profileLinkButton = Button('Link Profile');
 
 const defaultActionProfile = {
   name: 'autotest action profile',
@@ -13,17 +20,17 @@ const getDefaultInstanceActionProfile = (name) => {
     profile: {
       name,
       action: 'CREATE',
-      folioRecord: 'INSTANCE'
+      folioRecord: 'INSTANCE',
     },
     addedRelations: [
       {
         masterProfileId: null,
         masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
         detailProfileId: '',
-        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
-      }
+        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE,
+      },
     ],
-    deletedRelations: []
+    deletedRelations: [],
   };
   return defaultInstanceActionProfile;
 };
@@ -32,17 +39,17 @@ const getDefaultHoldingsActionProfile = (name) => {
     profile: {
       name,
       action: 'CREATE',
-      folioRecord: 'HOLDINGS'
+      folioRecord: 'HOLDINGS',
     },
     addedRelations: [
       {
         masterProfileId: null,
         masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
         detailProfileId: '',
-        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
-      }
+        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE,
+      },
     ],
-    deletedRelations: []
+    deletedRelations: [],
   };
   return defaultHoldingsActionProfile;
 };
@@ -51,17 +58,17 @@ const getDefaultItemActionProfile = (name) => {
     profile: {
       name,
       action: 'CREATE',
-      folioRecord: 'ITEM'
+      folioRecord: 'ITEM',
     },
     addedRelations: [
       {
         masterProfileId: null,
         masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
         detailProfileId: '',
-        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
-      }
+        detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE,
+      },
     ],
-    deletedRelations: []
+    deletedRelations: [],
   };
   return defaultItemActionProfile;
 };
@@ -72,22 +79,24 @@ export default {
   getDefaultItemActionProfile,
   fill: (specialActionProfile = defaultActionProfile) => {
     cy.do([
-      TextField({ name:'profile.name' }).fillIn(specialActionProfile.name),
-      Select({ name:'profile.action' }).choose(specialActionProfile.action || action),
-      Select({ name:'profile.folioRecord' }).choose(specialActionProfile.typeValue || FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC),
+      nameField.fillIn(specialActionProfile.name),
+      actionSelect.choose(specialActionProfile.action || action),
+      recordTypeselect.choose(
+        specialActionProfile.typeValue || FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+      ),
     ]);
   },
 
   linkMappingProfile: (specialMappingProfileName) => {
-    cy.do(Button('Link Profile').click());
+    cy.do(profileLinkButton.click());
     SelectMappingProfile.searchMappingProfileByName(specialMappingProfileName);
     SelectMappingProfile.selectMappingProfile(specialMappingProfileName);
-    cy.expect(Section({ id:'actionProfileFormAssociatedMappingProfileAccordion' }).find(Button('Link Profile')).has({ disabled : true }));
+    cy.expect(profileLinkSection.find(profileLinkButton).has({ disabled: true }));
     cy.do(Button('Save as profile & Close').click());
     cy.expect(Pane('Action profiles').find(Button('Actions')).exists());
   },
 
-  createActionProfileViaApi:(nameMapProfile, mapProfileId, profileAction = 'CREATE') => {
+  createActionProfileViaApi: (nameMapProfile, mapProfileId, profileAction = 'CREATE') => {
     return cy
       .okapiRequest({
         method: 'POST',
@@ -96,17 +105,17 @@ export default {
           profile: {
             name: nameMapProfile,
             action: profileAction,
-            folioRecord: 'INSTANCE'
+            folioRecord: 'INSTANCE',
           },
           addedRelations: [
             {
               masterProfileId: null,
               masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
               detailProfileId: mapProfileId,
-              detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
-            }
+              detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE,
+            },
           ],
-          deletedRelations: []
+          deletedRelations: [],
         },
         isDefaultSearchParamsRequired: false,
       })
@@ -115,27 +124,41 @@ export default {
       });
   },
 
-  createActionProfileViaApiMarc: (name, action, folioRecordType, mapProfileId) => {
-    return cy.okapiRequest({
-      method: 'POST',
-      path: 'data-import-profiles/actionProfiles',
-      body: {
-        profile: {
-          name,
-          action,
-          folioRecord: folioRecordType
+  createActionProfileViaApiMarc: (name, actionToCreate, folioRecordType, mapProfileId) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/actionProfiles',
+        body: {
+          profile: {
+            name,
+            actionToCreate,
+            folioRecord: folioRecordType,
+          },
+          addedRelations: [
+            {
+              masterProfileId: null,
+              masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
+              detailProfileId: mapProfileId,
+              detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE,
+            },
+          ],
+          deletedRelations: [],
         },
-        addedRelations: [{
-          masterProfileId: null,
-          masterProfileType: PROFILE_TYPE_NAMES.ACTION_PROFILE,
-          detailProfileId: mapProfileId,
-          detailProfileType: PROFILE_TYPE_NAMES.MAPPING_PROFILE
-        }],
-        deletedRelations: []
-      },
-      isDefaultSearchParamsRequired: false,
-    }).then(({ response }) => {
-      return response;
-    });
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+
+  verifyPreviouslyPopulatedDataIsDisplayed: (profile) => {
+    cy.expect([
+      Pane('New action profile').exists(),
+      nameField.has({ value: profile.name }),
+      actionSelect.has({ content: including(profile.action) }),
+      recordTypeselect.has({ content: including(profile.typeValue) }),
+      profileLinkSection.find(profileLinkButton).has({ disabled: true }),
+    ]);
   },
 };

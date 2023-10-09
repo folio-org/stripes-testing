@@ -68,6 +68,18 @@ export default {
     isDefaultSearchParamsRequired: false,
   }),
 
+  getUsers: (searchParams) => {
+    return cy
+      .okapiRequest({
+        path: 'users',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => {
+        return body.users;
+      });
+  },
+
   createViaUi: (userData) => {
     return cy
       .do([
@@ -212,5 +224,9 @@ export default {
     cy.xpath(numberOfSearchResultsHeader)
       .should('be.visible')
       .and('have.text', zeroResultsFoundText);
+  },
+
+  verifyUserDetailsPane() {
+    cy.expect(userDetailsPane.exists());
   },
 };

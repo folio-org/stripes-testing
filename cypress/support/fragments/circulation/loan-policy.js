@@ -10,11 +10,11 @@ const getDefaultRollingLoanPolicy = (limit = '') => {
       closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE_TIME',
       itemLimit: limit,
       period: { duration: 3, intervalId: 'Hours' },
-      profileId: 'Rolling'
+      profileId: 'Rolling',
     },
     name: getTestEntityValue(),
     renewable: true,
-    renewalsPolicy: { numberAllowed: '2', renewFromId: 'SYSTEM_DATE' }
+    renewalsPolicy: { numberAllowed: '2', renewFromId: 'SYSTEM_DATE' },
   };
   return defaultLoanPolicy;
 };
@@ -40,7 +40,6 @@ export default {
         body: loanPolicy,
       })
       .then(({ body }) => {
-        Cypress.env('loanPolicy', body);
         return body;
       });
   },
@@ -91,7 +90,7 @@ export default {
       renewable: true,
       renewalsPolicy: {
         numberAllowed: 5,
-        renewFromId: 'CURRENT_DUE_DATE'
+        renewFromId: 'CURRENT_DUE_DATE',
       },
     });
   },

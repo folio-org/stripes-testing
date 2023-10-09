@@ -1,7 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
@@ -16,40 +14,44 @@ describe('data-import', () => {
     let user;
     const mappingProfile = {
       name: `C2351 autotest mapping profile ${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.INSTANCE
+      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     };
     const instanceStatusTerm = '"Batch Loaded"';
 
     before('create test data', () => {
-      cy.createTempUser([
-        permissions.settingsDataImportEnabled.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password, { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
-
-          // create field mapping profile
-          FieldMappingProfiles.openNewMappingProfileForm();
-          NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
-          FieldMappingProfiles.saveProfile();
-          InteractorsTools.closeCalloutMessage();
-          FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+      cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
         });
+
+        // create field mapping profile
+        FieldMappingProfiles.openNewMappingProfileForm();
+        NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
+        NewFieldMappingProfile.save();
+        InteractorsTools.closeCalloutMessage();
+        FieldMappingProfileView.closeViewMode(mappingProfile.name);
+      });
     });
 
     after('delete test data', () => {
       Users.deleteViaApi(user.userId);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
     });
 
-    it('C2351 Edit an existing field mapping profile (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      FieldMappingProfiles.search(mappingProfile.name);
-      FieldMappingProfileView.editMappingProfile();
-      FieldMappingProfileEdit.verifyScreenName(mappingProfile.name);
-      FieldMappingProfileEdit.fillInstanceStatusTerm(instanceStatusTerm);
-      FieldMappingProfileEdit.save();
-      FieldMappingProfileView.checkCalloutMessage(mappingProfile.name);
-      FieldMappingProfileView.verifyInstanceStatusTerm(instanceStatusTerm);
-    });
+    it(
+      'C2351 Edit an existing field mapping profile (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
+        FieldMappingProfiles.search(mappingProfile.name);
+        FieldMappingProfileView.edit();
+        FieldMappingProfileEdit.verifyScreenName(mappingProfile.name);
+        FieldMappingProfileEdit.fillInstanceStatusTerm(instanceStatusTerm);
+        FieldMappingProfileEdit.save();
+        FieldMappingProfileView.checkCalloutMessage(mappingProfile.name);
+        FieldMappingProfileView.verifyInstanceStatusTerm(instanceStatusTerm);
+      },
+    );
   });
 });

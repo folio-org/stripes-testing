@@ -16,71 +16,87 @@ import { ITEM_STATUS_NAMES } from '../../support/constants';
 import { getNewItem } from '../../support/fragments/inventory/item';
 
 describe('Check In - Actions ', () => {
-  const userData = [{
-    permissions: [permissions.checkinAll.gui,
-      permissions.checkoutAll.gui],
-  },
-  {
-    permissions: [permissions.checkinAll.gui],
-  }];
+  const userData = [
+    {
+      permissions: [permissions.checkinAll.gui, permissions.checkoutAll.gui],
+    },
+    {
+      permissions: [permissions.checkinAll.gui],
+    },
+  ];
   const itemData = {
     items: [getNewItem(), getNewItem(), getNewItem(), getNewItem()],
     instanceTitle: `Instance ${getRandomPostfix()}`,
   };
   let defaultLocation;
-  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation('autotest basic checkin', uuid());
+  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
   let sessionId;
   before('Create New Item, New User and Check out item', () => {
-    cy.getAdminToken().then(() => {
-      cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => { itemData.instanceTypeId = instanceTypes[0].id; });
-      cy.getHoldingTypes({ limit: 1 }).then((res) => { itemData.holdingTypeId = res[0].id; });
-      ServicePoints.createViaApi(servicePoint);
-      defaultLocation = Location.getDefaultLocation(servicePoint.id);
-      Location.createViaApi(defaultLocation);
-      cy.getLoanTypes({ limit: 1 }).then((res) => { itemData.loanTypeId = res[0].id; });
-      cy.getMaterialTypes({ limit: 1 }).then((res) => {
-        itemData.materialTypeId = res.id;
-        itemData.materialTypeName = res.name;
+    cy.getAdminToken()
+      .then(() => {
+        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+          itemData.instanceTypeId = instanceTypes[0].id;
+        });
+        cy.getHoldingTypes({ limit: 1 }).then((res) => {
+          itemData.holdingTypeId = res[0].id;
+        });
+        ServicePoints.createViaApi(servicePoint);
+        defaultLocation = Location.getDefaultLocation(servicePoint.id);
+        Location.createViaApi(defaultLocation);
+        cy.getLoanTypes({ limit: 1 }).then((res) => {
+          itemData.loanTypeId = res[0].id;
+        });
+        cy.getMaterialTypes({ limit: 1 }).then((res) => {
+          itemData.materialTypeId = res.id;
+          itemData.materialTypeName = res.name;
+        });
+      })
+      .then(() => {
+        InventoryInstances.createFolioInstanceViaApi({
+          instance: {
+            instanceTypeId: itemData.instanceTypeId,
+            title: itemData.instanceTitle,
+          },
+          holdings: [
+            {
+              holdingsTypeId: itemData.holdingTypeId,
+              permanentLocationId: defaultLocation.id,
+            },
+          ],
+          items: [
+            {
+              barcode: itemData.items[0].barcode,
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+              permanentLoanType: { id: itemData.loanTypeId },
+              materialType: { id: itemData.materialTypeId },
+            },
+            {
+              barcode: itemData.items[1].barcode,
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+              permanentLoanType: { id: itemData.loanTypeId },
+              materialType: { id: itemData.materialTypeId },
+            },
+            {
+              barcode: itemData.items[2].barcode,
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+              permanentLoanType: { id: itemData.loanTypeId },
+              materialType: { id: itemData.materialTypeId },
+            },
+            {
+              barcode: itemData.items[3].barcode,
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+              permanentLoanType: { id: itemData.loanTypeId },
+              materialType: { id: itemData.materialTypeId },
+            },
+          ],
+        });
+      })
+      .then((specialInstanceIds) => {
+        itemData.testInstanceIds = specialInstanceIds;
       });
-    }).then(() => {
-      InventoryInstances.createFolioInstanceViaApi({ instance: {
-        instanceTypeId: itemData.instanceTypeId,
-        title: itemData.instanceTitle,
-      },
-      holdings: [{
-        holdingsTypeId: itemData.holdingTypeId,
-        permanentLocationId: defaultLocation.id,
-      }],
-      items: [{
-        barcode: itemData.items[0].barcode,
-        status:  { name: ITEM_STATUS_NAMES.AVAILABLE },
-        permanentLoanType: { id: itemData.loanTypeId },
-        materialType: { id: itemData.materialTypeId },
-      },
-      {
-        barcode: itemData.items[1].barcode,
-        status:  { name: ITEM_STATUS_NAMES.AVAILABLE },
-        permanentLoanType: { id: itemData.loanTypeId },
-        materialType: { id: itemData.materialTypeId },
-      },
-      {
-        barcode: itemData.items[2].barcode,
-        status:  { name: ITEM_STATUS_NAMES.AVAILABLE },
-        permanentLoanType: { id: itemData.loanTypeId },
-        materialType: { id: itemData.materialTypeId },
-      },
-      {
-        barcode: itemData.items[3].barcode,
-        status:  { name: ITEM_STATUS_NAMES.AVAILABLE },
-        permanentLoanType: { id: itemData.loanTypeId },
-        materialType: { id: itemData.materialTypeId },
-      }] });
-    }).then(specialInstanceIds => {
-      itemData.testInstanceIds = specialInstanceIds;
-    });
 
     cy.createTempUser(userData[0].permissions)
-      .then(userProperties => {
+      .then((userProperties) => {
         userData[0].username = userProperties.username;
         userData[0].password = userProperties.password;
         userData[0].userId = userProperties.userId;
@@ -88,8 +104,7 @@ describe('Check In - Actions ', () => {
         userData[0].firstName = userProperties.firstName;
       })
       .then(() => {
-        UserEdit.addServicePointViaApi(servicePoint.id,
-          userData[0].userId, servicePoint.id);
+        UserEdit.addServicePointViaApi(servicePoint.id, userData[0].userId, servicePoint.id);
 
         Checkout.checkoutItemViaApi({
           id: uuid(),
@@ -106,7 +121,7 @@ describe('Check In - Actions ', () => {
           userBarcode: userData[0].barcode,
         });
         cy.createTempUser(userData[1].permissions)
-          .then(userProperties => {
+          .then((userProperties) => {
             userData[1].username = userProperties.username;
             userData[1].password = userProperties.password;
             userData[1].userId = userProperties.userId;
@@ -114,8 +129,7 @@ describe('Check In - Actions ', () => {
             userData[1].firstName = userProperties.firstName;
           })
           .then(() => {
-            UserEdit.addServicePointViaApi(servicePoint.id,
-              userData[1].userId, servicePoint.id);
+            UserEdit.addServicePointViaApi(servicePoint.id, userData[1].userId, servicePoint.id);
             Checkout.checkoutItemViaApi({
               id: uuid(),
               itemBarcode: itemData.items[2].barcode,
@@ -144,39 +158,55 @@ describe('Check In - Actions ', () => {
       defaultLocation.institutionId,
       defaultLocation.campusId,
       defaultLocation.libraryId,
-      defaultLocation.id
+      defaultLocation.id,
     );
     ServicePoints.deleteViaApi(servicePoint.id);
   });
 
-  it('C398022 Check sessionId does not change when switching to other applications in scope of one check-in session (vega)', { tags: [TestTypes.extendedPath, devTeams.vega] }, () => {
-    cy.login(userData[0].username, userData[0].password);
-    cy.visit(TopMenu.checkInPath);
-    CheckInActions.waitLoading();
-    CheckInActions.getSessionIdAfterCheckInItem(itemData.items[0].barcode).then(responseSessionId => {
-      sessionId = responseSessionId;
-    });
-    TopMenu.openCheckOutApp();
-    Checkout.waitLoading();
-    TopMenu.openCheckInApp();
-    CheckInActions.waitLoading();
-    CheckInActions.getSessionIdAfterCheckInItem(itemData.items[1].barcode).then(responseSessionId => {
-      cy.wrap(responseSessionId).should('equal', sessionId);
-    });
-  });
+  it(
+    'C398022 Check sessionId does not change when switching to other applications in scope of one check-in session (vega)',
+    { tags: [TestTypes.extendedPath, devTeams.vega] },
+    () => {
+      cy.login(userData[0].username, userData[0].password);
+      cy.visit(TopMenu.checkInPath);
+      CheckInActions.waitLoading();
+      CheckInActions.getSessionIdAfterCheckInItem(itemData.items[0].barcode).then(
+        (responseSessionId) => {
+          sessionId = responseSessionId;
+        },
+      );
+      TopMenu.openCheckOutApp();
+      Checkout.waitLoading();
+      TopMenu.openCheckInApp();
+      CheckInActions.waitLoading();
+      CheckInActions.getSessionIdAfterCheckInItem(itemData.items[1].barcode).then(
+        (responseSessionId) => {
+          cy.wrap(responseSessionId).should('equal', sessionId);
+        },
+      );
+    },
+  );
 
-  it('C398005 Check sessionId field while check-in (vega)', { tags: [TestTypes.extendedPath, devTeams.vega] }, () => {
-    cy.login(userData[1].username, userData[1].password);
-    cy.visit(TopMenu.checkInPath);
-    CheckInActions.waitLoading();
-    CheckInActions.getSessionIdAfterCheckInItem(itemData.items[2].barcode).then(responseSessionId => {
-      sessionId = responseSessionId;
-    }).then(() => {
-      // needed to synchronize with textfield to enter data
-      cy.wait(1000);
-      CheckInActions.getSessionIdAfterCheckInItem(itemData.items[3].barcode).then(responseSessionId2 => {
-        cy.wrap(responseSessionId2).should('equal', sessionId);
-      });
-    });
-  });
+  it(
+    'C398005 Check sessionId field while check-in (vega)',
+    { tags: [TestTypes.extendedPath, devTeams.vega] },
+    () => {
+      cy.login(userData[1].username, userData[1].password);
+      cy.visit(TopMenu.checkInPath);
+      CheckInActions.waitLoading();
+      CheckInActions.getSessionIdAfterCheckInItem(itemData.items[2].barcode)
+        .then((responseSessionId) => {
+          sessionId = responseSessionId;
+        })
+        .then(() => {
+          // needed to synchronize with textfield to enter data
+          cy.wait(1000);
+          CheckInActions.getSessionIdAfterCheckInItem(itemData.items[3].barcode).then(
+            (responseSessionId2) => {
+              cy.wrap(responseSessionId2).should('equal', sessionId);
+            },
+          );
+        });
+    },
+  );
 });

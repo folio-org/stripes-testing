@@ -1,6 +1,11 @@
 import uuid from 'uuid';
 import moment from 'moment';
-import { FULFILMENT_PREFERENCES, ITEM_STATUS_NAMES, REQUEST_LEVELS, REQUEST_TYPES } from '../../../../support/constants';
+import {
+  FULFILMENT_PREFERENCES,
+  ITEM_STATUS_NAMES,
+  REQUEST_LEVELS,
+  REQUEST_TYPES,
+} from '../../../../support/constants';
 import TestTypes from '../../../../support/dictionary/testTypes';
 import devTeams from '../../../../support/dictionary/devTeams';
 import permissions from '../../../../support/dictionary/permissions';
@@ -47,7 +52,7 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
   };
   const testData = {
     requestsId: [],
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest overdue recalls limit', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const loanPolicyBody = {
     id: uuid(),
@@ -80,7 +85,7 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
   };
 
   before('Preconditions', () => {
-    itemsData.itemsWithSeparateInstance.forEach(function (item, index) {
+    itemsData.itemsWithSeparateInstance.forEach((item, index) => {
       item.barcode = generateUniqueItemBarcodeWithShift(index);
     });
 
@@ -127,8 +132,10 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
             ],
           }).then((specialInstanceIds) => {
             itemsData.itemsWithSeparateInstance[index].instanceId = specialInstanceIds.instanceId;
-            itemsData.itemsWithSeparateInstance[index].holdingId = specialInstanceIds.holdingIds[0].id;
-            itemsData.itemsWithSeparateInstance[index].itemId = specialInstanceIds.holdingIds[0].itemIds;
+            itemsData.itemsWithSeparateInstance[index].holdingId =
+              specialInstanceIds.holdingIds[0].id;
+            itemsData.itemsWithSeparateInstance[index].itemId =
+              specialInstanceIds.holdingIds[0].itemIds;
           });
         });
         cy.wrap(itemsData.itemsWithSeparateInstance).as('items');
@@ -144,8 +151,25 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
       const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
       ruleProps.l = loanPolicyBody.id;
       ruleProps.r = requestPolicyBody.id;
-      addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + ruleProps.i + ' l ' + ruleProps.l + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
-      CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
+      addedCirculationRule =
+        't ' +
+        testData.loanTypeId +
+        ': i ' +
+        ruleProps.i +
+        ' l ' +
+        ruleProps.l +
+        ' r ' +
+        ruleProps.r +
+        ' o ' +
+        ruleProps.o +
+        ' n ' +
+        ruleProps.n;
+      CirculationRules.addRuleViaApi(
+        originalCirculationRules,
+        ruleProps,
+        't ',
+        testData.loanTypeId,
+      );
     });
 
     cy.createTempUser(
@@ -157,7 +181,7 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
         permissions.checkoutAll.gui,
         permissions.uiUsersView.gui,
       ],
-      patronGroup.name
+      patronGroup.name,
     )
       .then((userProperties) => {
         userData.username = userProperties.username;
@@ -166,18 +190,24 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
         userData.barcode = userProperties.barcode;
       })
       .then(() => {
-        UserEdit.addServicePointViaApi(testData.userServicePoint.id, userData.userId, testData.userServicePoint.id);
+        UserEdit.addServicePointViaApi(
+          testData.userServicePoint.id,
+          userData.userId,
+          testData.userServicePoint.id,
+        );
 
-        cy.createTempUser([permissions.requestsAll.gui], patronGroup.name).then((userProperties) => {
-          recallUserData.username = userProperties.username;
-          recallUserData.userId = userProperties.userId;
-          recallUserData.barcode = userProperties.barcode;
-          UserEdit.addServicePointViaApi(
-            testData.userServicePoint.id,
-            recallUserData.userId,
-            testData.userServicePoint.id
-          );
-        });
+        cy.createTempUser([permissions.requestsAll.gui], patronGroup.name).then(
+          (userProperties) => {
+            recallUserData.username = userProperties.username;
+            recallUserData.userId = userProperties.userId;
+            recallUserData.barcode = userProperties.barcode;
+            UserEdit.addServicePointViaApi(
+              testData.userServicePoint.id,
+              recallUserData.userId,
+              testData.userServicePoint.id,
+            );
+          },
+        );
 
         cy.get('@items').each((item) => {
           Checkout.checkoutItemViaApi({
@@ -222,7 +252,9 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
     cy.deleteLoanPolicy(loanPolicyBody.id);
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
-    UserEdit.changeServicePointPreferenceViaApi(recallUserData.userId, [testData.userServicePoint.id]);
+    UserEdit.changeServicePointPreferenceViaApi(recallUserData.userId, [
+      testData.userServicePoint.id,
+    ]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     cy.wrap(testData.requestsId).each((id) => {
       Requests.deleteRequestViaApi(id);
@@ -235,12 +267,15 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
       cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
       InventoryInstance.deleteInstanceViaApi(itemsData.itemsWithSeparateInstance[index].instanceId);
     });
-    Conditions.resetConditionViaApi('e5b45031-a202-4abb-917b-e1df9346fe2c', 'Maximum number of overdue recalls');
+    Conditions.resetConditionViaApi(
+      'e5b45031-a202-4abb-917b-e1df9346fe2c',
+      'Maximum number of overdue recalls',
+    );
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
+      testData.defaultLocation.id,
     );
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
     cy.deleteLoanType(testData.loanTypeId);
@@ -268,6 +303,6 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
 
       findPatron();
       Users.checkPatronIsNotBlocked(userData.userId);
-    }
+    },
   );
 });

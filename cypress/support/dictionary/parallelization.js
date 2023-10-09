@@ -1,2 +1,1 @@
-export default { parallel:'parallel',
-  nonParallel: 'nonParallel' };
+export default { parallel: 'parallel', nonParallel: 'nonParallel' };

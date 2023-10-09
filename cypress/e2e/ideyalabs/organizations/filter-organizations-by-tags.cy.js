@@ -21,13 +21,9 @@ describe.skip('ui-organizations: Organizations creation', () => {
     organizations.checkZeroSearchResultsHeader();
   });
 
-  it(
-    'C6711 Filter Organizations by tags (thunderjet)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      organizations.tagFilter(tags);
-      organizations.checkOrganizationFilter();
-      organizations.resetFilters();
-    }
-  );
+  it('C6711 Filter Organizations by tags (thunderjet)', { tags: [testTypes.ideaLabsTests] }, () => {
+    organizations.tagFilter(tags);
+    organizations.checkOrganizationFilter();
+    organizations.resetFilters();
+  });
 });

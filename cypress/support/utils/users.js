@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/prefer-default-export
 export const getFullName = (user) => {
   let fullName = user?.personal?.lastName ?? '';
   let givenName = user?.personal?.preferredFirstName ?? user?.personal?.firstName ?? '';
@@ -11,4 +12,4 @@ export const getFullName = (user) => {
   }
 
   return fullName;
-}
+};

@@ -21,50 +21,61 @@ describe('ui-invoices: Credit Invoice creation', () => {
 
   before(() => {
     cy.getAdminToken();
-    Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` })
-      .then(organization => {
+    Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` }).then(
+      (organization) => {
         invoice.accountingCode = organization.erpCode;
-        Object.assign(vendorPrimaryAddress,
-          organization.addresses.find(address => address.isPrimary === true));
-      });
-    cy.getBatchGroups()
-      .then(batchGroup => { invoice.batchGroup = batchGroup.name; });
-    Funds.createFundViaUI(fund)
-      .then(
-        () => {
-          Funds.addBudget(100);
-          Funds.checkCreatedBudget(fund.code, DateTools.getCurrentFiscalYearCode());
-        }
-      );
+        Object.assign(
+          vendorPrimaryAddress,
+          organization.addresses.find((address) => address.isPrimary === true),
+        );
+      },
+    );
+    cy.getBatchGroups().then((batchGroup) => {
+      invoice.batchGroup = batchGroup.name;
+    });
+    Funds.createFundViaUI(fund).then(() => {
+      Funds.addBudget(100);
+      Funds.checkCreatedBudget(fund.code, DateTools.getCurrentFiscalYearCode());
+    });
     invoiceLine.subTotal = -subtotalValue;
     cy.visit(TopMenu.invoicesPath);
   });
 
-  it('C343209 Create a credit invoice (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
-    const transactionFactory = new Transaction();
-    Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
-    Invoices.createInvoiceLine(invoiceLine);
-    Invoices.addFundDistributionToLine(invoiceLine, fund);
-    Invoices.approveInvoice();
-    // check transactions after approve
-    cy.visit(TopMenu.fundPath);
-    Helper.searchByName(fund.name);
-    Funds.selectFund(fund.name);
-    Funds.openBudgetDetails(fund.code, DateTools.getCurrentFiscalYearCode());
-    Funds.openTransactions();
-    const valueInTransactionTable = `$${subtotalValue.toFixed(2)}`;
-    Funds.checkTransaction(1, transactionFactory.create('pending', valueInTransactionTable, fund.code, '', 'Invoice', ''));
-    // pay invoice
-    cy.visit(TopMenu.invoicesPath);
-    Invoices.searchByNumber(invoice.invoiceNumber);
-    Invoices.selectInvoice(invoice.invoiceNumber);
-    Invoices.payInvoice();
-    // check transactions after payment
-    cy.visit(TopMenu.fundPath);
-    Helper.searchByName(fund.name);
-    Funds.selectFund(fund.name);
-    Funds.openBudgetDetails(fund.code, DateTools.getCurrentFiscalYearCode());
-    Funds.openTransactions();
-    Funds.checkTransaction(1, transactionFactory.create('credit', valueInTransactionTable, fund.code, '', 'Invoice', ''));
-  });
+  it(
+    'C343209 Create a credit invoice (thunderjet)',
+    { tags: [TestType.smoke, devTeams.thunderjet] },
+    () => {
+      const transactionFactory = new Transaction();
+      Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
+      Invoices.createInvoiceLine(invoiceLine);
+      Invoices.addFundDistributionToLine(invoiceLine, fund);
+      Invoices.approveInvoice();
+      // check transactions after approve
+      cy.visit(TopMenu.fundPath);
+      Helper.searchByName(fund.name);
+      Funds.selectFund(fund.name);
+      Funds.openBudgetDetails(fund.code, DateTools.getCurrentFiscalYearCode());
+      Funds.openTransactions();
+      const valueInTransactionTable = `$${subtotalValue.toFixed(2)}`;
+      Funds.checkTransaction(
+        1,
+        transactionFactory.create('pending', valueInTransactionTable, fund.code, '', 'Invoice', ''),
+      );
+      // pay invoice
+      cy.visit(TopMenu.invoicesPath);
+      Invoices.searchByNumber(invoice.invoiceNumber);
+      Invoices.selectInvoice(invoice.invoiceNumber);
+      Invoices.payInvoice();
+      // check transactions after payment
+      cy.visit(TopMenu.fundPath);
+      Helper.searchByName(fund.name);
+      Funds.selectFund(fund.name);
+      Funds.openBudgetDetails(fund.code, DateTools.getCurrentFiscalYearCode());
+      Funds.openTransactions();
+      Funds.checkTransaction(
+        1,
+        transactionFactory.create('credit', valueInTransactionTable, fund.code, '', 'Invoice', ''),
+      );
+    },
+  );
 });

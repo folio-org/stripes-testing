@@ -1,4 +1,20 @@
-import { Accordion, Button, Checkbox, HTML, KeyValue, Modal, RadioButton, MultiSelect, MultiSelectOption, Section, Select, Spinner, TextField, ValueChipRoot, including } from '../../../../interactors';
+import {
+  Accordion,
+  Button,
+  Checkbox,
+  HTML,
+  KeyValue,
+  Modal,
+  RadioButton,
+  MultiSelect,
+  MultiSelectOption,
+  Section,
+  Select,
+  Spinner,
+  TextField,
+  ValueChipRoot,
+  including,
+} from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 import getRandomPostfix, { randomTwoDigitNumber } from '../../utils/stringTools';
 
@@ -12,7 +28,7 @@ const confirmButton = Button('Yes, remove');
 const filterStatuses = {
   all: 'All',
   selected: 'Selected',
-  notSelected: 'Not selected'
+  notSelected: 'Not selected',
 };
 const packageHoldingStatusSection = Section({ id: 'packageShowHoldingStatus' });
 const titlesSection = Section({ id: 'packageShowTitles' });
@@ -20,13 +36,12 @@ const confirmationModal = Modal({ id: 'eholdings-confirmation-modal' });
 const availableProxies = ['Inherited - None', 'FOLIO-Bugfest', 'EZProxy'];
 const proxySelect = Select({ id: 'eholdings-proxy-id' });
 const customLabelButton = Button('Custom labels');
-const displayLabel = TextField({ name: 'customLabel1.displayLabel' });
-const displayLabel1 = TextField({ name: 'customLabel2.displayLabel' });
-const fullTextFinderCheckbox = Checkbox({ name: 'customLabel2.displayOnFullTextFinder' });
+const displayLabel = (number) => TextField({ name: `customLabel${number}.displayLabel` });
+const fullTextFinderCheckbox = (number) => Checkbox({ name: `customLabel${number}.displayOnFullTextFinder` });
 const saveButton = Button('Save');
-const verifyCustomLabel = Section({ id: 'resourceShowCustomLabels' });
+const calloutEditLabelSettings = HTML(including('Custom labels have been updated'));
 const getElementIdByName = (packageName) => packageName.replaceAll(' ', '-').toLowerCase();
-const waitTitlesLoading = () => cy.url().then(url => {
+const waitTitlesLoading = () => cy.url().then((url) => {
   const packageId = url.split('?')[0].split('/').at(-1);
   cy.intercept(`eholdings/packages/${packageId}/resources?**`).as('getTitles');
   cy.wait('@getTitles', getLongDelay());
@@ -42,8 +57,12 @@ export default {
   filterTitles: (selectionStatus = filterStatuses.notSelected) => {
     cy.do(titlesSection.find(Button({ icon: 'search' })).click());
     cy.expect(titlesFilterModal.exists());
-    const selectionStatusAccordion = titlesFilterModal.find(Accordion({ id: 'filter-titles-selected' }));
-    const selectionStatusButton = selectionStatusAccordion.find(Button({ id: 'accordion-toggle-button-filter-titles-selected' }));
+    const selectionStatusAccordion = titlesFilterModal.find(
+      Accordion({ id: 'filter-titles-selected' }),
+    );
+    const selectionStatusButton = selectionStatusAccordion.find(
+      Button({ id: 'accordion-toggle-button-filter-titles-selected' }),
+    );
     cy.do(selectionStatusButton.click());
     cy.do(selectionStatusAccordion.find(RadioButton(selectionStatus)).click());
     cy.do(titlesFilterModal.find(Button('Search')).click());
@@ -60,7 +79,7 @@ export default {
     // Temporarily added a wait so that the titles have time to change their state
     cy.wait(10000);
     cy.reload();
-    cy.url().then(url => {
+    cy.url().then((url) => {
       const packageId = url.split('?')[0].split('/').at(-1);
       cy.intercept(`eholdings/packages/${packageId}/resources?**`).as('getTitles');
       cy.wait('@getTitles', getLongDelay()).then(() => {
@@ -69,15 +88,26 @@ export default {
     });
   },
 
-  customLabel(name) {
-    cy.do([(customLabelButton).click(),
-      displayLabel.fillIn(name.label1),
-      displayLabel1.fillIn(name.label2),
-      fullTextFinderCheckbox.click(),
-      saveButton.click()
+  updateCustomLabelInSettings(labelName, labelNumber) {
+    cy.do([
+      customLabelButton.click(),
+      displayLabel(labelNumber).fillIn(labelName),
+      saveButton.click(),
     ]);
-    cy.visit('/eholdings/resources/58-473-185972');
-    cy.expect(verifyCustomLabel.exists());
+    cy.expect([
+      calloutEditLabelSettings.exists(),
+      displayLabel(labelNumber).has({ value: labelName }),
+      saveButton.has({ disabled: true }),
+    ]);
+    // wait for setting to apply
+    cy.wait(2000);
+  },
+
+  setFullTextFinderForLabel(labelIndex) {
+    cy.do([fullTextFinderCheckbox(labelIndex).click(), saveButton.click()]);
+    // wait for setting to apply
+    cy.wait(1500);
+    cy.expect(calloutEditLabelSettings.exists());
   },
 
   checkEmptyTitlesList: () => {
@@ -95,12 +125,13 @@ export default {
 
   addTag: () => {
     const newTag = `tag${getRandomPostfix()}`;
-    cy.then(() => tagsSection.find(MultiSelect()).selected())
-      .then(selectedTags => {
-        cy.do(tagsSection.find(MultiSelect()).fillIn(newTag));
-        cy.do(MultiSelectOption(`Add tag for: ${newTag}`).click());
-        cy.expect(tagsSection.find(MultiSelect({ selected: [...selectedTags, newTag].sort() })).exists());
-      });
+    cy.then(() => tagsSection.find(MultiSelect()).selected()).then((selectedTags) => {
+      cy.do(tagsSection.find(MultiSelect()).fillIn(newTag));
+      cy.do(MultiSelectOption(`Add tag for: ${newTag}`).click());
+      cy.expect(
+        tagsSection.find(MultiSelect({ selected: [...selectedTags, newTag].sort() })).exists(),
+      );
+    });
     return newTag;
   },
 
@@ -112,24 +143,23 @@ export default {
   },
 
   verifyExistingTags: (...expectedTags) => {
-    expectedTags.forEach(tag => {
+    expectedTags.forEach((tag) => {
       cy.expect(tagsSection.find(HTML(including(tag))).exists());
     });
   },
 
   removeExistingTags: () => {
-    cy.then(() => tagsSection.find(MultiSelect()).selected())
-      .then(selectedTags => {
-        selectedTags.forEach(selectedTag => {
-          const specialTagElement = tagsSection.find(ValueChipRoot(selectedTag));
-          cy.do(specialTagElement.find(closeButton).click());
-          cy.expect(specialTagElement.absent());
-        });
+    cy.then(() => tagsSection.find(MultiSelect()).selected()).then((selectedTags) => {
+      selectedTags.forEach((selectedTag) => {
+        const specialTagElement = tagsSection.find(ValueChipRoot(selectedTag));
+        cy.do(specialTagElement.find(closeButton).click());
+        cy.expect(specialTagElement.absent());
       });
+    });
   },
 
   verifyDeletedTags: (...expectedTags) => {
-    expectedTags.forEach(tag => {
+    expectedTags.forEach((tag) => {
       cy.expect(tagsSection.find(HTML(including(tag))).absent());
     });
   },

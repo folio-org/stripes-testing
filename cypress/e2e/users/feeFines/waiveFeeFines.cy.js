@@ -12,7 +12,7 @@ import UserAllFeesFines from '../../../support/fragments/users/userAllFeesFines'
 import WaiveFeeFinesModal from '../../../support/fragments/users/waiveFeeFineModal';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-const waiveSelectedFeeFines = waiveReason => {
+const waiveSelectedFeeFines = (waiveReason) => {
   UserAllFeesFines.clickWaive();
   WaiveFeeFinesModal.waitLoading();
   WaiveFeeFinesModal.selectWaiveReason(waiveReason);
@@ -27,7 +27,7 @@ describe('ui-users: C465 Verify that library staff can fully and partially waive
   const waiveReason = `testWaiveReason${getRandomPostfix()}`;
   const chargeAmount = ManualCharges.defaultFeeFineType.defaultAmount;
 
-  const createFeeFine = i => {
+  const createFeeFine = (i) => {
     UsersCard.openFeeFines();
     UsersCard.startFeeFineAdding();
 
@@ -42,36 +42,40 @@ describe('ui-users: C465 Verify that library staff can fully and partially waive
   before(() => {
     cy.loginAsAdmin();
     cy.getAdminToken().then(() => {
-      PatronGroups.createViaApi()
-        .then(id => {
-          patronGroupId = id;
-          Users.createViaApi({
-            patronGroup: id,
-            ...Users.defaultUser,
-          }).then((createdUser) => {
-            user = createdUser;
+      PatronGroups.createViaApi().then((id) => {
+        patronGroupId = id;
+        Users.createViaApi({
+          patronGroup: id,
+          ...Users.defaultUser,
+        }).then((createdUser) => {
+          user = createdUser;
 
-            for (let i = 0; i < feeFinesNumber; i++) {
-              const item = {};
-              UsersOwners.createViaApi({ owner: uuid() })
-                .then(owner => {
-                  item.owner = { id : owner.id, name : owner.ownerName };
+          for (let i = 0; i < feeFinesNumber; i++) {
+            const item = {};
+            UsersOwners.createViaApi({ owner: uuid() }).then((response) => {
+              item.owner = { id: response.id, name: response.owner };
 
-                  ManualCharges.createViaApi({ ...ManualCharges.defaultFeeFineType, ownerId: owner.id })
-                    .then(manualCharge => {
-                      item.feeFineType = { id:  manualCharge.id, feeFineTypeName: manualCharge.feeFineType };
+              ManualCharges.createViaApi({
+                ...ManualCharges.defaultFeeFineType,
+                ownerId: response.id,
+              }).then((manualCharge) => {
+                item.feeFineType = {
+                  id: manualCharge.id,
+                  feeFineTypeName: manualCharge.feeFineType,
+                };
 
-                      WaiveReasons.createViaApi({ id: uuid(), nameReason: waiveReason })
-                        .then(waiveReason => {
-                          item.waiveReason = { id:  waiveReason.id, nameReason: waiveReason.nameReason };
-                        });
-                    });
-                });
+                WaiveReasons.createViaApi({ id: uuid(), nameReason: waiveReason }).then(
+                  (reason) => {
+                    item.waiveReason = { id: reason.id, nameReason: reason.nameReason };
+                  },
+                );
+              });
+            });
 
-              testData.push(item);
-            }
-          });
+            testData.push(item);
+          }
         });
+      });
 
       cy.visit(TopMenu.usersPath);
     });
@@ -101,7 +105,7 @@ describe('ui-users: C465 Verify that library staff can fully and partially waive
   });
 
   after(() => {
-    cy.wrap(testData).each(item => {
+    cy.wrap(testData).each((item) => {
       WaiveReasons.deleteViaApi(item.waiveReason.id);
       ManualCharges.deleteViaApi(item.feeFineType.id);
       UsersOwners.deleteViaApi(item.owner.id);
@@ -149,7 +153,7 @@ describe('ui-users: C465 Verify that library staff can fully and partially waive
     UserAllFeesFines.checkWaiveButtonActive(true);
     UserAllFeesFines.clickWaive();
     WaiveFeeFinesModal.waitLoading();
-    WaiveFeeFinesModal.checkWaiveMessage(2, chargeAmount*2);
+    WaiveFeeFinesModal.checkWaiveMessage(2, chargeAmount * 2);
     WaiveFeeFinesModal.cancel();
   });
 
@@ -160,7 +164,7 @@ describe('ui-users: C465 Verify that library staff can fully and partially waive
     UserAllFeesFines.checkWaiveButtonActive(true);
     UserAllFeesFines.clickWaive();
     WaiveFeeFinesModal.waitLoading();
-    WaiveFeeFinesModal.checkWaiveMessage(2, chargeAmount*2);
+    WaiveFeeFinesModal.checkWaiveMessage(2, chargeAmount * 2);
     WaiveFeeFinesModal.cancel();
   });
 

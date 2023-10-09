@@ -11,16 +11,18 @@ describe('Management of waive reasons', () => {
     cy.loginAsAdmin({ path: SettingsMenu.waiveReasons, waiter: WaiveReasons.waitLoading });
   });
 
-  it('C446 Verify that you can create/edit/delete waive reasons (volaris)',
-    { tags: [TestType.smoke, Features.waiveReasons, DevTeams.volaris] }, () => {
+  it(
+    'C446 Verify that you can create/edit/delete waive reasons (volaris)',
+    { tags: [TestType.smoke, Features.waiveReasons, DevTeams.volaris] },
+    () => {
       WaiveReasons.startAdding();
       WaiveReasons.checkSaveButtonState({ isDisabled: true });
-      let testReason = { reason:'', description: 'test description' };
+      let testReason = { name: '', description: 'test description' };
       WaiveReasons.fillReasonParameters(testReason);
       WaiveReasons.checkSaveButtonState({ isDisabled: true });
       WaiveReasons.checkReasonValidatorMessage();
       // create
-      testReason = { reason:`testReason${getRandomPostfix()}`, description: '' };
+      testReason = { reason: `testReason${getRandomPostfix()}`, description: '' };
       WaiveReasons.fillReasonParameters(testReason);
       WaiveReasons.checkSaveButtonState({ isDisabled: false });
       WaiveReasons.trySave();
@@ -34,5 +36,6 @@ describe('Management of waive reasons', () => {
       UsersSettingsGeneral.checkEntityInTable(testReason);
       // delete
       WaiveReasons.delete(testReason.reason);
-    });
+    },
+  );
 });

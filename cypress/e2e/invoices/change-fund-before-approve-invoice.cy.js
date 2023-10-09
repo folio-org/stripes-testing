@@ -20,21 +20,23 @@ import SettingsOrders from '../../support/fragments/settings/orders/settingsOrde
 import SettingsMenu from '../../support/fragments/settingsMenu';
 
 describe('Invoices', () => {
-  const order = { ...NewOrder.defaultOngoingTimeOrder,
-    approved: false,
-    reEncumber: true };
-  const organization = { ...NewOrganization.defaultUiOrganizations,
-    addresses:[{
-      addressLine1: '1 Centerpiece Blvd.',
-      addressLine2: 'P.O. Box 15550',
-      city: 'New Castle',
-      stateRegion: 'DE',
-      zipCode: '19720-5550',
-      country: 'USA',
-      isPrimary: true,
-      categories: [],
-      language: 'English'
-    }] };
+  const order = { ...NewOrder.defaultOngoingTimeOrder, approved: false, reEncumber: true };
+  const organization = {
+    ...NewOrganization.defaultUiOrganizations,
+    addresses: [
+      {
+        addressLine1: '1 Centerpiece Blvd.',
+        addressLine2: 'P.O. Box 15550',
+        city: 'New Castle',
+        stateRegion: 'DE',
+        zipCode: '19720-5550',
+        country: 'USA',
+        isPrimary: true,
+        categories: [],
+        language: 'English',
+      },
+    ],
+  };
   const firstFund = { ...Funds.defaultUiFund };
   const secondFund = {
     name: `autotest_fund2_${getRandomPostfix()}`,
@@ -54,45 +56,42 @@ describe('Invoices', () => {
   before(() => {
     cy.getAdminToken();
 
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-        order.vendor = organization.id;
-      });
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+      order.vendor = organization.id;
+    });
     invoice.accountingCode = organization.erpCode;
     invoice.vendorName = organization.name;
-    Object.assign(vendorPrimaryAddress,
-      organization.addresses.find(address => address.isPrimary === true));
+    Object.assign(
+      vendorPrimaryAddress,
+      organization.addresses.find((address) => address.isPrimary === true),
+    );
     invoice.batchGroup = 'FOLIO';
 
-    FiscalYears.createViaApi(defaultFiscalYear)
-      .then(response => {
-        defaultFiscalYear.id = response.id;
-        defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+    FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
+      defaultFiscalYear.id = response.id;
+      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
 
-        Ledgers.createViaApi(defaultLedger)
-          .then(ledgerResponse => {
-            defaultLedger.id = ledgerResponse.id;
-            firstFund.ledgerId = defaultLedger.id;
-            secondFund.ledgerId = defaultLedger.id;
-            Funds.createViaApi(firstFund)
-              .then(fundResponse => {
-                firstFund.id = fundResponse.fund.id;
-                cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
-                FinanceHelp.searchByName(firstFund.name);
-                Funds.selectFund(firstFund.name);
-                Funds.addBudget(allocatedQuantityForFistFund);
-              });
-            Funds.createViaApi(secondFund)
-              .then(secondFundResponse => {
-                secondFund.id = secondFundResponse.fund.id;
-                cy.visit(TopMenu.fundPath);
-                FinanceHelp.searchByName(secondFund.name);
-                Funds.selectFund(secondFund.name);
-                Funds.addBudget(allocatedQuantityForFistFund);
-              });
-          });
+      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+        defaultLedger.id = ledgerResponse.id;
+        firstFund.ledgerId = defaultLedger.id;
+        secondFund.ledgerId = defaultLedger.id;
+        Funds.createViaApi(firstFund).then((fundResponse) => {
+          firstFund.id = fundResponse.fund.id;
+          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+          FinanceHelp.searchByName(firstFund.name);
+          Funds.selectFund(firstFund.name);
+          Funds.addBudget(allocatedQuantityForFistFund);
+        });
+        Funds.createViaApi(secondFund).then((secondFundResponse) => {
+          secondFund.id = secondFundResponse.fund.id;
+          cy.visit(TopMenu.fundPath);
+          FinanceHelp.searchByName(secondFund.name);
+          Funds.selectFund(secondFund.name);
+          Funds.addBudget(allocatedQuantityForFistFund);
+        });
       });
+    });
     cy.visit(SettingsMenu.approvalsPath);
     SettingsOrders.selectApprovalRequired();
     cy.createTempUser([
@@ -103,11 +102,13 @@ describe('Invoices', () => {
       permissions.viewEditCreateInvoiceInvoiceLine.gui,
       permissions.uiInvoicesApproveInvoices.gui,
       permissions.uiInvoicesPayInvoices.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(user.username, user.password, { path:TopMenu.invoicesPath, waiter: Invoices.waitLoading });
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.invoicesPath,
+        waiter: Invoices.waitLoading,
       });
+    });
   });
 
   after(() => {
@@ -117,9 +118,11 @@ describe('Invoices', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C375998 Approve and pay invoice with added adjustment amount to invoice line (not prorated, related to total as "In addition to") (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    cy.createOrderApi(order)
-      .then((response) => {
+  it(
+    'C375998 Approve and pay invoice with added adjustment amount to invoice line (not prorated, related to total as "In addition to") (thunderjet)',
+    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    () => {
+      cy.createOrderApi(order).then((response) => {
         orderNumber = response.body.poNumber;
         cy.visit(TopMenu.ordersPath);
         Orders.searchByParameter('PO number', orderNumber);
@@ -144,5 +147,6 @@ describe('Invoices', () => {
         Invoices.approveInvoice();
         Invoices.payInvoice();
       });
-  });
+    },
+  );
 });

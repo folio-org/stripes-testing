@@ -1,7 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import DevTeams from '../../../support/dictionary/devTeams';
-import TestTypes from '../../../support/dictionary/testTypes';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import {
@@ -14,7 +12,7 @@ import {
   ORDER_STATUSES,
   VENDOR_NAMES,
   ACQUISITION_METHOD_NAMES,
-  ORDER_FORMAT_NAMES_IN_PROFILE
+  ORDER_FORMAT_NAMES_IN_PROFILE,
 } from '../../../support/constants';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -29,6 +27,7 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -41,16 +40,14 @@ describe('data-import', () => {
     const quantityOfCreatedHoldings = 3;
     const quantityOfCreatedItems = '6';
     const holdingsData = [
-      { permanentLocation: LOCATION_NAMES.MAIN_LIBRARY_UI,
-        itemsQuqntity: 3 },
-      { permanentLocation: LOCATION_NAMES.ANNEX_UI,
-        itemsQuqntity: 2 },
-      { permanentLocation: LOCATION_NAMES.ONLINE_UI,
-        itemsQuqntity: 1 }
+      { permanentLocation: LOCATION_NAMES.MAIN_LIBRARY_UI, itemsQuqntity: 3 },
+      { permanentLocation: LOCATION_NAMES.ANNEX_UI, itemsQuqntity: 2 },
+      { permanentLocation: LOCATION_NAMES.ONLINE_UI, itemsQuqntity: 1 },
     ];
     const collectionOfMappingAndActionProfiles = [
       {
-        mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ORDER,
+        mappingProfile: {
+          typeValue: FOLIO_RECORD_TYPE.ORDER,
           name: `C388570 Physical open order for multiple.${getRandomPostfix()}`,
           orderStatus: ORDER_STATUSES.OPEN,
           approved: true,
@@ -63,90 +60,128 @@ describe('data-import', () => {
           quantityPhysical: '"1"',
           currency: 'USD',
           locationName: `"${LOCATION_NAMES.ANNEX}"`,
-          locationQuantityPhysical: '"1"' },
-        actionProfile: { typeValue: FOLIO_RECORD_TYPE.ORDER,
-          name: `C388570 Physical open order for multiple.${getRandomPostfix()}` }
+          locationQuantityPhysical: '"1"',
+        },
+        actionProfile: {
+          typeValue: FOLIO_RECORD_TYPE.ORDER,
+          name: `C388570 Physical open order for multiple.${getRandomPostfix()}`,
+        },
       },
       {
-        mappingProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+        mappingProfile: {
+          typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C388570 Test multiple holdings.${getRandomPostfix()}`,
-          permanentLocation: '945$h' },
-        actionProfile: { typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-          name: `C388570 Test multiple holdings.${getRandomPostfix()}` }
+          permanentLocation: '945$h',
+        },
+        actionProfile: {
+          typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
+          name: `C388570 Test multiple holdings.${getRandomPostfix()}`,
+        },
       },
       {
-        mappingProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
+        mappingProfile: {
+          typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C388570 Test multiple items.${getRandomPostfix()}`,
           materialType: '945$a',
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: ITEM_STATUS_NAMES.ON_ORDER },
-        actionProfile: { typeValue: FOLIO_RECORD_TYPE.ITEM,
-          name: `C388570 Test multiple items.${getRandomPostfix()}` }
-      }
+          status: ITEM_STATUS_NAMES.ON_ORDER,
+        },
+        actionProfile: {
+          typeValue: FOLIO_RECORD_TYPE.ITEM,
+          name: `C388570 Test multiple items.${getRandomPostfix()}`,
+        },
+      },
     ];
     const jobProfile = {
       profileName: `C388570 Physical open order for multiple.${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
     before('login', () => {
       cy.createTempUser([
-        permissions.settingsDataImportEnabled.gui,
-        permissions.moduleDataImportEnabled.gui,
-        permissions.inventoryAll.gui,
-        permissions.uiOrdersView.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiOrdersView.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          cy.login(userProperties.username, userProperties.password,
-            { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+        cy.login(userProperties.username, userProperties.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
         });
+      });
     });
 
     after('delete test data', () => {
       Users.deleteViaApi(user.userId);
       JobProfiles.deleteJobProfile(jobProfile.profileName);
-      collectionOfMappingAndActionProfiles.forEach(profile => {
+      collectionOfMappingAndActionProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
-        .then((instance) => {
-          instance.items.forEach(item => cy.deleteItemViaApi(item.id));
-          instance.holdings.forEach(holding => cy.deleteHoldingRecordViaApi(holding.id));
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
+        (instance) => {
+          instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
+          instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
           InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
-      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
-        .then(orderId => {
-          Orders.deleteOrderViaApi(orderId[0].id);
-        });
+        },
+      );
+      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
+        Orders.deleteOrderViaApi(orderId[0].id);
+      });
     });
 
-    it('C388570 Check the log result table for imported multiple items and holdings for Physical resource open order (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+    it(
+      'C388570 Check the log result table for imported multiple items and holdings for Physical resource open order (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
         // create mapping profiles
-        FieldMappingProfiles.createOrderMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
-        FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
+        FieldMappingProfiles.createOrderMappingProfile(
+          collectionOfMappingAndActionProfiles[0].mappingProfile,
+        );
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfMappingAndActionProfiles[0].mappingProfile.name,
+        );
 
         FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
-        NewFieldMappingProfile.fillPermanentLocation(collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocation);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile.name);
-        FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[1].mappingProfile.name);
+        NewFieldMappingProfile.fillSummaryInMappingProfile(
+          collectionOfMappingAndActionProfiles[1].mappingProfile,
+        );
+        NewFieldMappingProfile.fillPermanentLocation(
+          collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocation,
+        );
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(
+          collectionOfMappingAndActionProfiles[1].mappingProfile.name,
+        );
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfMappingAndActionProfiles[1].mappingProfile.name,
+        );
 
         FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile);
-        NewFieldMappingProfile.fillMaterialType(collectionOfMappingAndActionProfiles[2].mappingProfile.materialType);
-        NewFieldMappingProfile.fillPermanentLoanType(collectionOfMappingAndActionProfiles[2].mappingProfile.permanentLoanType);
-        NewFieldMappingProfile.fillStatus(collectionOfMappingAndActionProfiles[2].mappingProfile.status);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile.name);
-        FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[2].mappingProfile.name);
+        NewFieldMappingProfile.fillSummaryInMappingProfile(
+          collectionOfMappingAndActionProfiles[2].mappingProfile,
+        );
+        NewFieldMappingProfile.fillMaterialType(
+          collectionOfMappingAndActionProfiles[2].mappingProfile.materialType,
+        );
+        NewFieldMappingProfile.fillPermanentLoanType(
+          collectionOfMappingAndActionProfiles[2].mappingProfile.permanentLoanType,
+        );
+        NewFieldMappingProfile.fillStatus(
+          collectionOfMappingAndActionProfiles[2].mappingProfile.status,
+        );
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(
+          collectionOfMappingAndActionProfiles[2].mappingProfile.name,
+        );
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfMappingAndActionProfiles[2].mappingProfile.name,
+        );
 
         // create action profiles
-        collectionOfMappingAndActionProfiles.forEach(profile => {
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
           cy.visit(SettingsMenu.actionProfilePath);
           ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
@@ -171,16 +206,21 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(marcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
-        [FileDetails.columnNameInResultList.srsMarc,
+        [
+          FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
-          FileDetails.columnNameInResultList.order].forEach(columnName => {
+          FileDetails.columnNameInResultList.order,
+        ].forEach((columnName) => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
         });
-        FileDetails.verifyMultipleHoldingsStatus(arrayOfHoldingsStatuses, quantityOfCreatedHoldings);
+        FileDetails.verifyMultipleHoldingsStatus(
+          arrayOfHoldingsStatuses,
+          quantityOfCreatedHoldings,
+        );
         FileDetails.verifyMultipleItemsStatus(Number(quantityOfCreatedItems));
         FileDetails.openOrder('Created');
         OrderLines.waitLoading();
-        OrderLines.getAssignedPOLNumber().then(initialNumber => {
+        OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           const polNumber = initialNumber;
           orderNumber = polNumber.replace('-1', '');
         });
@@ -188,14 +228,18 @@ describe('data-import', () => {
         OrderLines.checkPhysicalQuantityInLocation(quantityOfCreatedHoldings);
         cy.go('back');
         FileDetails.openInstanceInInventory('Created');
-        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHRID = initialInstanceHrId;
         });
-        holdingsData.forEach(holdings => {
+        holdingsData.forEach((holdings) => {
           InventoryInstance.checkIsHoldingsCreated([`${holdings.permanentLocation} >`]);
           InventoryInstance.openHoldingsAccordion(`${holdings.permanentLocation} >`);
-          InstanceRecordView.verifyQuantityOfItemsRelatedtoHoldings(holdings.permanentLocation, holdings.itemsQuqntity);
+          InstanceRecordView.verifyQuantityOfItemsRelatedtoHoldings(
+            holdings.permanentLocation,
+            holdings.itemsQuqntity,
+          );
         });
-      });
+      },
+    );
   });
 });

@@ -3,22 +3,22 @@ import getRandomPostfix from '../../../utils/stringTools';
 import { ITEM_STATUS_NAMES } from '../../../constants';
 
 export default {
-  defaultUiInstanceType : {
+  defaultUiInstanceType: {
     body: {
       code: `autotest_code_${getRandomPostfix()}`,
       id: uuid(),
       name: `autotest_name_${getRandomPostfix()}`,
       source: 'local',
-    }
+    },
   },
-  defaultUiHoldingsSources : {
+  defaultUiHoldingsSources: {
     body: {
       id: uuid(),
       name: `autotest_title_${getRandomPostfix()}`,
       source: 'local',
-    }
+    },
   },
-  defaultUiInstance : {
+  defaultUiInstance: {
     body: {
       childInstances: [],
       discoverySuppress: false,
@@ -31,24 +31,24 @@ export default {
       staffSuppress: false,
       succeedingTitles: [],
       title: `autotest_title_${getRandomPostfix()}`,
-    }
+    },
   },
-  defaultUiHolding : {
+  defaultUiHolding: {
     body: {
       id: uuid(),
       instanceId: uuid(),
       permanentLocationId: uuid(),
       sourceId: uuid(),
-    }
+    },
   },
-  defaultUiMaterialTypes : {
+  defaultUiMaterialTypes: {
     body: {
       id: uuid(),
       name: `autotest_name_${getRandomPostfix()}`,
       source: 'local',
-    }
+    },
   },
-  defaultUiCreateItem : {
+  defaultUiCreateItem: {
     body: {
       id: uuid(),
       barcode: `2134456_${getRandomPostfix()}`,
@@ -60,8 +60,8 @@ export default {
         id: uuid(),
       },
       status: {
-        name: ITEM_STATUS_NAMES.AVAILABLE
+        name: ITEM_STATUS_NAMES.AVAILABLE,
       },
-    }
+    },
   },
 };

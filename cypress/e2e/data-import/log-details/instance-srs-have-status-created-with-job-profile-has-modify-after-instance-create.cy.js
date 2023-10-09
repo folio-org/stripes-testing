@@ -1,11 +1,6 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
-import {
-  FOLIO_RECORD_TYPE,
-  ACCEPTED_DATA_TYPE_NAMES
-} from '../../../support/constants';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { FOLIO_RECORD_TYPE, ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -17,6 +12,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -26,52 +22,59 @@ describe('data-import', () => {
     const mappingProfile = {
       name: `C386867 Modify MARC_BIB ${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
-      modifications: { action: 'Add',
+      modifications: {
+        action: 'Add',
         field: '900',
         ind1: '',
         ind2: '',
         subfield: 'a',
-        data: `Added field.${getRandomPostfix()}` }
+        data: `Added field.${getRandomPostfix()}`,
+      },
     };
-    const actionProfile = { typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+    const actionProfile = {
+      typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
       name: `C386867 Modify MARC_BIB ${getRandomPostfix()}`,
-      action: 'Modify (MARC Bibliographic record type only)' };
+      action: 'Modify (MARC Bibliographic record type only)',
+    };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
       profileName: `C386867 Multiple status for instance ${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
     before('login', () => {
       cy.createTempUser([
-        permissions.moduleDataImportEnabled.gui,
-        permissions.settingsDataImportEnabled.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          cy.login(user.username, user.password,
-            { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+        cy.login(user.username, user.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
         });
+      });
     });
     after('delete test data', () => {
       Users.deleteViaApi(user.userId);
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
     });
 
-    it('C386867 Verify that Instance and SRS MARC have status "Created" with job profile that has MARC modify after Instance create (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      // create Field mapping profile
+    it(
+      'C386867 Verify that Instance and SRS MARC have status "Created" with job profile that has MARC modify after Instance create (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
+        // create Field mapping profile
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
         NewFieldMappingProfile.addFieldMappingsForMarc();
         NewFieldMappingProfile.fillModificationSectionWithAdd(mappingProfile.modifications);
         NewFieldMappingProfile.addNewFieldInModificationSection();
         NewFieldMappingProfile.fillModificationSectionWithDelete('Delete', '500', 1);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         // create Action profile and link it to Field mapping profile
@@ -95,15 +98,17 @@ describe('data-import', () => {
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);
         Logs.openFileDetails(fileName);
-        [FileDetails.columnNameInResultList.srsMarc,
-          FileDetails.columnNameInResultList.instance
-        ].forEach(columnName => {
+        [
+          FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.instance,
+        ].forEach((columnName) => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable('1', 0);
         FileDetails.checkInstanceQuantityInSummaryTable('1', 0);
         FileDetails.checkSrsRecordQuantityInSummaryTable('0', 1);
         FileDetails.checkInstanceQuantityInSummaryTable('0', 1);
-      });
+      },
+    );
   });
 });

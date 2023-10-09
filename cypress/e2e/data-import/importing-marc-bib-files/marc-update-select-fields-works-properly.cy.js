@@ -1,11 +1,12 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE,
+import { DevTeams, TestTypes, Parallelization } from '../../../support/dictionary';
+import {
+  FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
-  JOB_STATUS_NAMES } from '../../../support/constants';
+  JOB_STATUS_NAMES,
+} from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -36,37 +37,37 @@ describe('data-import', () => {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
       statisticalCodeUI: 'Book, print (books)',
-      instanceStatus: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED
+      instanceStatus: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
     };
     const marcBibMappingProfile = {
       name: `C17019 autotest marc bib mapping profile.${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC
+      typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
     };
     const instanceActionProfile = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       name: `C17019 autotest instance action profile.${getRandomPostfix()}`,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
     };
     const marcBibActionProfile = {
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
       name: `C17019 autotest marc bib action profile.${getRandomPostfix()}`,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
     };
     const matchProfile = {
       profileName: `C17019 autotest match profile.${getRandomPostfix()}`,
       incomingRecordFields: {
-        field: '001'
+        field: '001',
       },
       existingRecordFields: {
-        field: '001'
+        field: '001',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC
+      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
       profileName: `C17019 autotest job profile.${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
     before('login', () => {
@@ -79,28 +80,36 @@ describe('data-import', () => {
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       ActionProfiles.deleteActionProfile(instanceActionProfile.name);
       ActionProfiles.deleteActionProfile(marcBibActionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(marcBibMappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(instanceMappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(marcBibMappingProfile.name);
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-        .then((instance) => {
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+        (instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
+        },
+      );
     });
 
-    it('C17019 Check that MARC Update select fields works properly (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+    it(
+      'C17019 Check that MARC Update select fields works properly (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      () => {
         DataImport.uploadFileViaApi('oneMarcBib.mrc', marcFileForCreate);
         JobProfiles.waitFileIsImported(marcFileForCreate);
         Logs.openFileDetails(marcFileForCreate);
         // get instance hrid
         FileDetails.openInstanceInInventory('Created');
-        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
 
           // change Instance HRID in .mrc file
-          DataImport.editMarcFile('oneMarcBib.mrc', editedMarcFileName, ['ocn962073864'], [instanceHrid]);
+          DataImport.editMarcFile(
+            'oneMarcBib.mrc',
+            editedMarcFileName,
+            ['ocn962073864'],
+            [instanceHrid],
+          );
         });
 
         // create field mapping profiles
@@ -109,10 +118,10 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillSummaryInMappingProfile(instanceMappingProfile);
         NewFieldMappingProfile.addStatisticalCode(instanceMappingProfile.statisticalCode, 8);
         NewFieldMappingProfile.fillInstanceStatusTerm(instanceMappingProfile.statusTerm);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfile.name);
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(instanceMappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(instanceMappingProfile.name);
-        FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfile.name);
+        FieldMappingProfileView.closeViewMode(instanceMappingProfile.name);
 
         FieldMappingProfiles.openNewMappingProfileForm();
         FieldMappingProfiles.createMappingProfileForUpdatesMarc(marcBibMappingProfile);
@@ -136,7 +145,11 @@ describe('data-import', () => {
         // create job profiles
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.createJobProfile(jobProfile);
-        NewJobProfile.linkMatchAndTwoActionProfiles(matchProfile.profileName, marcBibActionProfile.name, instanceActionProfile.name);
+        NewJobProfile.linkMatchAndTwoActionProfiles(
+          matchProfile.profileName,
+          marcBibActionProfile.name,
+          instanceActionProfile.name,
+        );
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
@@ -150,8 +163,10 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(fileNameForUpdate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForUpdate);
-        [FileDetails.columnNameInResultList.srsMarc,
-          FileDetails.columnNameInResultList.instance].forEach(columnName => {
+        [
+          FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.instance,
+        ].forEach((columnName) => {
           FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems, 1);
@@ -161,7 +176,8 @@ describe('data-import', () => {
         FileDetails.openInstanceInInventory('Updated');
         InstanceRecordView.verifyStatisticalCode(instanceMappingProfile.statisticalCodeUI);
         InstanceRecordView.verifyInstanceStatusTerm(instanceMappingProfile.instanceStatus);
-        InventoryInstance.viewSource();
-      });
+        InstanceRecordView.viewSource();
+      },
+    );
   });
 });

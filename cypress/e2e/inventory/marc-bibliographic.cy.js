@@ -28,17 +28,25 @@ describe('MARC -> MARC Bibliographic', () => {
       Permissions.inventoryAll.gui,
       Permissions.uiInventorySingleRecordImport.gui,
       Permissions.converterStorageAll.gui,
-    ]).then(createdUserProperties => {
+    ]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
 
-      cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventorySearchAndFilter.waitLoading });
+      cy.login(testData.userProperties.username, testData.userProperties.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventorySearchAndFilter.waitLoading,
+      });
       InventoryActions.import();
-      InventoryInstance.getId().then(id => { testData.instanceID = id; });
+      InventoryInstance.getId().then((id) => {
+        testData.instanceID = id;
+      });
     });
   });
 
   beforeEach(() => {
-    cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventorySearchAndFilter.waitLoading });
+    cy.login(testData.userProperties.username, testData.userProperties.password, {
+      path: TopMenu.inventoryPath,
+      waiter: InventorySearchAndFilter.waitLoading,
+    });
   });
 
   after(() => {
@@ -46,116 +54,147 @@ describe('MARC -> MARC Bibliographic', () => {
     InventoryInstance.deleteInstanceViaApi(testData.instanceID);
   });
 
-  it('C10950 Edit and save a MARC record in quickMARC (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] }, () => {
-    InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
+  it(
+    'C10950 Edit and save a MARC record in quickMARC (spitfire)',
+    { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
+    () => {
+      InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
 
-    InventoryInstance.goToEditMARCBiblRecord();
-    QuickMarcEditor.waitLoading();
-    cy.reload();
-    const expectedInSourceRow = QuickMarcEditor.addNewField(QuickMarcEditor.getFreeTags()[0]);
-    QuickMarcEditor.deletePenaltField().then(deletedTag => {
-      const expectedInSourceRowWithSubfield = QuickMarcEditor.addNewFieldWithSubField(QuickMarcEditor.getFreeTags()[1]);
+      InventoryInstance.goToEditMARCBiblRecord();
+      QuickMarcEditor.waitLoading();
+      cy.reload();
+      const expectedInSourceRow = QuickMarcEditor.addNewField(QuickMarcEditor.getFreeTags()[0]);
+      QuickMarcEditor.deletePenaltField().then((deletedTag) => {
+        const expectedInSourceRowWithSubfield = QuickMarcEditor.addNewFieldWithSubField(
+          QuickMarcEditor.getFreeTags()[1],
+        );
+        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.deleteConfirmationPresented();
+        QuickMarcEditor.confirmDelete();
+        // Wait for the content to be loaded.
+        cy.wait(4000);
+        InventoryInstance.viewSource();
+        InventoryViewSource.contains(expectedInSourceRow);
+        InventoryViewSource.contains(expectedInSourceRowWithSubfield);
+        InventoryViewSource.notContains(deletedTag);
+      });
+    },
+  );
+
+  it(
+    'C10924 Add a field to a record using quickMARC (spitfire)',
+    { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
+    () => {
+      InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
+
+      InventoryInstance.goToEditMARCBiblRecord();
+      QuickMarcEditor.waitLoading();
+      QuickMarcEditor.addRow();
+      QuickMarcEditor.checkInitialContent();
+      const expectedInSourceRow = QuickMarcEditor.fillAllAvailableValues();
+
       QuickMarcEditor.pressSaveAndClose();
-      QuickMarcEditor.deleteConfirmationPresented();
-      QuickMarcEditor.confirmDelete();
-      //Wait for the content to be loaded.
+      InventoryInstance.waitLoading();
+      // Wait for the content to be loaded.
       cy.wait(4000);
       InventoryInstance.viewSource();
       InventoryViewSource.contains(expectedInSourceRow);
-      InventoryViewSource.contains(expectedInSourceRowWithSubfield);
-      InventoryViewSource.notContains(deletedTag);
-    });
-  });
-
-  it('C10924 Add a field to a record using quickMARC (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
-    InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
-
-    InventoryInstance.goToEditMARCBiblRecord();
-    QuickMarcEditor.waitLoading();
-    QuickMarcEditor.addRow();
-    QuickMarcEditor.checkInitialContent();
-    const expectedInSourceRow = QuickMarcEditor.fillAllAvailableValues();
-
-    QuickMarcEditor.pressSaveAndClose();
-    InventoryInstance.waitLoading();
-    //Wait for the content to be loaded.
-    cy.wait(4000);
-    InventoryInstance.viewSource();
-    InventoryViewSource.contains(expectedInSourceRow);
-    InventoryViewSource.close();
-    InventoryInstance.waitLoading();
-
-    InventoryInstance.goToEditMARCBiblRecord();
-    QuickMarcEditor.waitLoading();
-    QuickMarcEditor.checkContent();
-  });
-
-  it('C10928 Delete a field(s) from a record in quickMARC (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
-    InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
-
-    InventoryInstance.goToEditMARCBiblRecord();
-    QuickMarcEditor.waitLoading();
-    cy.reload();
-    QuickMarcEditor.deletePenaltField().then(deletedTag => {
-      QuickMarcEditor.pressSaveAndClose();
-      QuickMarcEditor.deleteConfirmationPresented();
-      QuickMarcEditor.confirmDelete();
+      InventoryViewSource.close();
       InventoryInstance.waitLoading();
-      //Wait for the content to be loaded.
+
+      InventoryInstance.goToEditMARCBiblRecord();
+      QuickMarcEditor.waitLoading();
+      QuickMarcEditor.checkContent();
+    },
+  );
+
+  it(
+    'C10928 Delete a field(s) from a record in quickMARC (spitfire)',
+    { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
+    () => {
+      InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
+
+      InventoryInstance.goToEditMARCBiblRecord();
+      QuickMarcEditor.waitLoading();
+      cy.reload();
+      QuickMarcEditor.deletePenaltField().then((deletedTag) => {
+        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.deleteConfirmationPresented();
+        QuickMarcEditor.confirmDelete();
+        InventoryInstance.waitLoading();
+        // Wait for the content to be loaded.
+        cy.wait(4000);
+        InventoryInstance.viewSource();
+        InventoryViewSource.notContains(deletedTag);
+      });
+    },
+  );
+
+  it(
+    'C10957 Attempt to delete a required field (spitfire)',
+    { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
+    () => {
+      InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
+
+      InventoryInstance.goToEditMARCBiblRecord();
+      QuickMarcEditor.waitLoading();
+      QuickMarcEditor.checkRequiredFields();
+    },
+  );
+
+  it(
+    'C10951 Add a 5XX field to a marc record in quickMARC (spitfire)',
+    { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
+    () => {
+      InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
+
+      InventoryInstance.startOverlaySourceBibRecord();
+      InventoryActions.fillImportFields(InventoryInstance.validOCLC.id);
+      InventoryActions.pressImportInModal();
+
+      InventoryInstance.checkExpectedOCLCPresence();
+      InventoryInstance.checkExpectedMARCSource();
+
+      InventoryInstance.editInstance();
+      InstanceRecordEdit.checkReadOnlyFields();
+      InstanceRecordEdit.close();
+
+      InventoryInstance.goToEditMARCBiblRecord();
+      QuickMarcEditor.waitLoading();
+      QuickMarcEditor.addRow();
+      QuickMarcEditor.checkInitialContent();
+
+      const testRecord = {
+        content: 'testContent',
+        tag: '505',
+        tagMeaning: 'Formatted Contents Note',
+      };
+      const expectedInSourceRow = QuickMarcEditor.fillAllAvailableValues(
+        testRecord.content,
+        testRecord.tag,
+      );
+      QuickMarcEditor.pressSaveAndClose();
+      // Wait for the content to be loaded.
       cy.wait(4000);
       InventoryInstance.viewSource();
-      InventoryViewSource.notContains(deletedTag);
-    });
-  });
+      InventoryViewSource.contains(expectedInSourceRow);
+      InventoryViewSource.close();
 
-  it('C10957 Attempt to delete a required field (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
-    InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
+      InventoryInstance.checkInstanceNotes(testRecord.tagMeaning, testRecord.content);
+    },
+  );
 
-    InventoryInstance.goToEditMARCBiblRecord();
-    QuickMarcEditor.waitLoading();
-    QuickMarcEditor.checkRequiredFields();
-  });
+  it(
+    'C345388 Derive a MARC bib record (spitfire)',
+    { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
+    () => {
+      InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
 
-  it('C10951 Add a 5XX field to a marc record in quickMARC (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
-    InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
-
-    InventoryInstance.startOverlaySourceBibRecord();
-    InventoryActions.fillImportFields(InventoryInstance.validOCLC.id);
-    InventoryActions.pressImportInModal();
-
-    InventoryInstance.checkExpectedOCLCPresence();
-    InventoryInstance.checkExpectedMARCSource();
-
-    InventoryInstance.editInstance();
-    InstanceRecordEdit.checkReadOnlyFields();
-    InstanceRecordEdit.close();
-
-    InventoryInstance.goToEditMARCBiblRecord();
-    QuickMarcEditor.waitLoading();
-    QuickMarcEditor.addRow();
-    QuickMarcEditor.checkInitialContent();
-
-    const testRecord = { content: 'testContent', tag: '505', tagMeaning: 'Formatted Contents Note' };
-    const expectedInSourceRow = QuickMarcEditor.fillAllAvailableValues(testRecord.content, testRecord.tag);
-    QuickMarcEditor.pressSaveAndClose();
-    //Wait for the content to be loaded.
-    cy.wait(4000);
-    InventoryInstance.viewSource();
-    InventoryViewSource.contains(expectedInSourceRow);
-    InventoryViewSource.close();
-
-    InventoryInstance.checkInstanceNotes(testRecord.tagMeaning, testRecord.content);
-  });
-
-  it('C345388 Derive a MARC bib record (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
-    InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
-
-    InventoryInstance.getAssignedHRID()
-      .then(instanceHRID => {
+      InventoryInstance.getAssignedHRID().then((instanceHRID) => {
         InventoryInstance.deriveNewMarcBib();
         const expectedCreatedValue = QuickMarcEditor.addNewField();
 
-        QuickMarcEditor.deletePenaltField().then(deletedTag => {
+        QuickMarcEditor.deletePenaltField().then((deletedTag) => {
           const expectedUpdatedValue = QuickMarcEditor.updateExistingField();
 
           QuickMarcEditor.pressSaveAndClose();
@@ -166,7 +205,7 @@ describe('MARC -> MARC Bibliographic', () => {
           InventoryInstance.checkExpectedMARCSource();
           InventoryInstance.checkPresentedText(expectedUpdatedValue);
 
-          //Wait for the content to be loaded.
+          // Wait for the content to be loaded.
           cy.wait(4000);
           InventoryInstance.viewSource();
           InventoryViewSource.contains(expectedCreatedValue);
@@ -174,5 +213,6 @@ describe('MARC -> MARC Bibliographic', () => {
           InventoryViewSource.notContains(deletedTag);
         });
       });
-  });
+    },
+  );
 });

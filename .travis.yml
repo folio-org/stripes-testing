@@ -3,14 +3,13 @@ dist: trusty
 
 node_js:
   #- "6"
-  - "7"
+  - '7'
 
 before_script:
-  - "export DISPLAY=:99"
-  - "sh -e /etc/init.d/xvfb start"
+  - 'export DISPLAY=:99'
+  - 'sh -e /etc/init.d/xvfb start'
   - sleep 1 # give xvfb some time to start
 
 script:
- - yarn install
- - FOLIO_UI_URL="http://folio-uidemo-test.indexdata.com" DEBUG= yarn test
-
+  - yarn install
+  - FOLIO_UI_URL="http://folio-uidemo-test.indexdata.com" DEBUG= yarn test

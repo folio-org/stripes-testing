@@ -1,6 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { DevTeams, TestTypes } from '../../../support/dictionary';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -13,7 +12,7 @@ describe('data-import', () => {
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
       profileName: `C2334 autotest job profile ${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
     const calloutMessage = `The job profile "${jobProfile.profileName}" was successfully deleted`;
 
@@ -27,12 +26,15 @@ describe('data-import', () => {
       JobProfiles.closeJobProfile(jobProfile.profileName);
     });
 
-    it('C2334 Delete an existing job profile (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] }, () => {
+    it(
+      'C2334 Delete an existing job profile (folijet)',
+      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      () => {
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
         JobProfileView.delete();
         NewJobProfile.checkCalloutMessage(calloutMessage);
         JobProfiles.verifyJobProfileAbsent();
-      });
+      },
+    );
   });
 });

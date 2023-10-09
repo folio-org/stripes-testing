@@ -1,9 +1,22 @@
+/* eslint-disable no-dupe-keys */
 import { including } from 'bigtest';
-import { Button, MultiColumnListCell, Pane, TextField, Link, MultiColumnListHeader, MultiColumnListRow, Section, TextInput, Select } from '../../../../../interactors';
+import {
+  Button,
+  MultiColumnListCell,
+  Pane,
+  TextField,
+  Link,
+  MultiColumnListHeader,
+  MultiColumnListRow,
+  Section,
+  TextInput,
+  Select,
+} from '../../../../../interactors';
 import InventorySearchAndFilter from '../inventorySearchAndFilter';
 
 const searchButton = Button('Search', { type: 'submit' });
 const browseInventoryPane = Pane('Browse inventory');
+const inventoryPane = Pane('Inventory');
 const searchFilterPane = Pane('Search & filter');
 const inventorySearchResultsPane = Section({ id: 'browse-inventory-results-pane' });
 const nextButton = Button({ id: 'browse-results-list-browseSubjects-next-paging-button' });
@@ -19,25 +32,40 @@ export default {
   },
 
   verifyNonExistentSearchResult(searchString) {
-    cy.expect(MultiColumnListCell({ content: including(searchString), content: including('would be here') }).exists());
+    cy.expect(
+      MultiColumnListCell({
+        content: including(searchString),
+        content: including('would be here'),
+      }).exists(),
+    );
   },
 
   verifyBrowseInventoryPane() {
-    cy.expect([
-      browseInventoryPane.exists(),
-      searchFilterPane.exists(),
-    ]);
+    cy.expect([browseInventoryPane.exists(), searchFilterPane.exists()]);
+  },
+
+  verifyInventoryPane() {
+    cy.expect(inventoryPane.exists());
   },
 
   verifyClickTakesNowhere(text) {
     this.verifyBrowseInventoryPane();
-    cy.do(MultiColumnListCell({ content: including(text), content: including('would be here') }).click());
+    cy.do(
+      MultiColumnListCell({
+        content: including(text),
+        content: including('would be here'),
+      }).click(),
+    );
     this.verifyBrowseInventoryPane();
   },
 
   verifyClickTakesToInventory(text) {
     this.verifyBrowseInventoryPane();
-    cy.do(MultiColumnListCell({ content: including(text) }).find(Link()).click());
+    cy.do(
+      MultiColumnListCell({ content: including(text) })
+        .find(Link())
+        .click(),
+    );
     InventorySearchAndFilter.waitLoading();
     InventorySearchAndFilter.verifySearchResult(text);
   },
@@ -94,27 +122,38 @@ export default {
     cy.expect([
       MultiColumnListCell({ row: rowIndex, columnIndex: 0 }).has({ content: including(value) }),
       MultiColumnListCell({ row: rowIndex, columnIndex: 0 }).has({ innerHTML: including('<img') }),
-      MultiColumnListCell({ row: rowIndex, columnIndex: 0 }).has({ innerHTML: including('alt="MARC Authorities module">') }),
+      MultiColumnListCell({ row: rowIndex, columnIndex: 0 }).has({
+        innerHTML: including('alt="MARC Authorities module">'),
+      }),
     ]);
   },
 
   checkNoAuthorityIconDisplayedForRow(rowIndex, value) {
     cy.expect([
       MultiColumnListCell({ row: rowIndex, columnIndex: 0 }).has({ content: including(value) }),
-      MultiColumnListCell({ row: rowIndex, columnIndex: 0, innerHTML: including('alt="MARC Authorities module">') }).absent(),
+      MultiColumnListCell({
+        row: rowIndex,
+        columnIndex: 0,
+        innerHTML: including('alt="MARC Authorities module">'),
+      }).absent(),
     ]);
   },
 
   checkRowValueIsBold(rowNumber, value) {
-    cy.expect(MultiColumnListCell({ row: rowNumber, columnIndex: 0 }).has({ innerHTML: including(`<strong>${value}</strong>`) }));
+    cy.expect(
+      MultiColumnListCell({ row: rowNumber, columnIndex: 0 }).has({
+        innerHTML: including(`<strong>${value}</strong>`),
+      }),
+    );
+  },
+
+  checkValueIsBold(value) {
+    cy.expect(MultiColumnListCell({ innerHTML: including(`<strong>${value}</strong>`) }).exists());
   },
 
   browse(subjectName) {
     cy.do(recordSearch.fillIn(subjectName));
-    cy.expect([
-      recordSearch.has({ value: subjectName }),
-      searchButton.has({ disabled: false })
-    ]);
+    cy.expect([recordSearch.has({ value: subjectName }), searchButton.has({ disabled: false })]);
     cy.do(searchButton.click());
   },
 
@@ -126,7 +165,9 @@ export default {
   },
 
   checkValueAbsentInRow(rowIndex, value) {
-    cy.expect(MultiColumnListCell({ row: rowIndex, columnIndex: 0, content: including(value) }).absent());
+    cy.expect(
+      MultiColumnListCell({ row: rowIndex, columnIndex: 0, content: including(value) }).absent(),
+    );
   },
 
   checkRowWithValueAndNoAuthorityIconExists(value) {
@@ -134,9 +175,11 @@ export default {
   },
 
   checkRowWithValueAndAuthorityIconExists(value) {
-    cy.expect(MultiColumnListCell({
-      columnIndex: 0,
-      content: 'Linked to MARC authority' + value
-    }).exists());
+    cy.expect(
+      MultiColumnListCell({
+        columnIndex: 0,
+        content: 'Linked to MARC authority' + value,
+      }).exists(),
+    );
   },
 };

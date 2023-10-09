@@ -12,17 +12,21 @@ describe('ui-invoices-settings: Batch Group creation', () => {
     cy.visit(`${SettingsMenu.expenseClassesPath}`);
   });
 
-  it('C15857: Create edit and delete Expense classes (thunderjet)', { tags: [TestType.criticalPath, devTeams.thunderjet] }, () => {
-    SettingsFinance.waitExpenseClassesLoading();
-    SettingsFinance.createNewExpenseClass(expenseClass);
-    SettingsFinance.checkExpenseClass(expenseClass);
+  it(
+    'C15857: Create edit and delete Expense classes (thunderjet)',
+    { tags: [TestType.criticalPath, devTeams.thunderjet] },
+    () => {
+      SettingsFinance.waitExpenseClassesLoading();
+      SettingsFinance.createNewExpenseClass(expenseClass);
+      SettingsFinance.checkExpenseClass(expenseClass);
 
-    newExpenseClass.name += 'updated';
-    newExpenseClass.code += 'updated';
+      newExpenseClass.name += 'updated';
+      newExpenseClass.code += 'updated';
 
-    SettingsFinance.editExpenseClass(newExpenseClass, expenseClass.name);
-    SettingsFinance.checkExpenseClass(newExpenseClass);
+      SettingsFinance.editExpenseClass(newExpenseClass, expenseClass.name);
+      SettingsFinance.checkExpenseClass(newExpenseClass);
 
-    SettingsFinance.deleteExpenseClass(newExpenseClass);
-  });
+      SettingsFinance.deleteExpenseClass(newExpenseClass);
+    },
+  );
 });

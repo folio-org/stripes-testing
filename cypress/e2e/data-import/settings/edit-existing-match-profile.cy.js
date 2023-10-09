@@ -1,7 +1,5 @@
-import permissions from '../../../support/dictionary/permissions';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
@@ -17,27 +15,24 @@ describe('data-import', () => {
     const matchProfile = {
       profileName: `C2339 autotest MatchProf${getRandomPostfix()}`,
       incomingRecordFields: {
-        field: '001'
+        field: '001',
       },
       matchCriterion: 'Exactly matches',
       existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
-      instanceOption: NewMatchProfile.optionsList.instanceHrid
+      instanceOption: NewMatchProfile.optionsList.instanceHrid,
     };
 
     before('create test data', () => {
-      cy.createTempUser([
-        permissions.settingsDataImportEnabled.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password);
+      cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password);
 
-          // create match profile
-          cy.visit(SettingsMenu.matchProfilePath);
-          MatchProfiles.createMatchProfile(matchProfile);
-          InteractorsTools.closeCalloutMessage();
-          MatchProfileView.closeViewModeForMatchProfile();
-        });
+        // create match profile
+        cy.visit(SettingsMenu.matchProfilePath);
+        MatchProfiles.createMatchProfile(matchProfile);
+        InteractorsTools.closeCalloutMessage();
+        MatchProfileView.closeViewMode();
+      });
     });
 
     after('delete test data', () => {
@@ -45,16 +40,20 @@ describe('data-import', () => {
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
     });
 
-    it('C2339 Edit an existing match profile (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      MatchProfiles.checkListOfExistingProfilesIsDisplayed();
-      MatchProfiles.search(matchProfile.profileName);
-      MatchProfiles.selectMatchProfileFromList(matchProfile.profileName);
-      MatchProfileView.edit();
-      MatchProfileEdit.verifyScreenName(matchProfile.profileName);
-      MatchProfileEdit.changeExistingInstanceRecordField();
-      MatchProfileEdit.save();
-      MatchProfiles.checkCalloutMessage(matchProfile.profileName);
-      MatchProfileView.verifyExistingInstanceRecordField();
-    });
+    it(
+      'C2339 Edit an existing match profile (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
+        MatchProfiles.checkListOfExistingProfilesIsDisplayed();
+        MatchProfiles.search(matchProfile.profileName);
+        MatchProfiles.selectMatchProfileFromList(matchProfile.profileName);
+        MatchProfileView.edit();
+        MatchProfileEdit.verifyScreenName(matchProfile.profileName);
+        MatchProfileEdit.changeExistingInstanceRecordField();
+        MatchProfileEdit.save();
+        MatchProfiles.checkCalloutMessage(matchProfile.profileName);
+        MatchProfileView.verifyExistingInstanceRecordField();
+      },
+    );
   });
 });

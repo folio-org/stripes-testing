@@ -3,7 +3,7 @@ import { Button, Modal, TextArea } from '../../../../interactors';
 const rootModal = Modal('Staff information');
 const commentTextArea = rootModal.find(TextArea({ name: 'comment' }));
 export default {
-  waitLoading:() => {
+  waitLoading: () => {
     cy.expect(rootModal.exists());
     cy.expect(commentTextArea.exists());
   },
@@ -11,4 +11,3 @@ export default {
   submit: () => cy.do(rootModal.find(Button('Save')).click()),
   checkStaffInfoModalClosed: () => cy.expect(rootModal.absent()),
 };
-

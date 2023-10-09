@@ -18,10 +18,13 @@ describe('MARC -> MARC Authority', () => {
       Permissions.uiInventoryViewCreateEditInstances.gui,
       Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       Permissions.exportManagerAll.gui,
-    ]).then(createdUserProperties => {
+    ]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
 
-      cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.marcAuthorities, waiter: MarcAuthorities.waitLoading });
+      cy.login(testData.userProperties.username, testData.userProperties.password, {
+        path: TopMenu.marcAuthorities,
+        waiter: MarcAuthorities.waitLoading,
+      });
     });
   });
 
@@ -29,16 +32,20 @@ describe('MARC -> MARC Authority', () => {
     Users.deleteViaApi(testData.userProperties.userId);
   });
 
-  it('C375135 User with "Export manager: Download and re-send files" permission can view report options for "MARC authority" records (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
-    const today = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
-    const tomorrow = DateTools.getTomorrowDayDateForFiscalYear();
-    MarcAuthorities.clickActionsAndReportsButtons();
-    MarcAuthorities.fillReportModal(today, tomorrow);
-    MarcAuthorities.clickExportButton();
+  it(
+    'C375135 User with "Export manager: Download and re-send files" permission can view report options for "MARC authority" records (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      const today = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
+      const tomorrow = DateTools.getTomorrowDayDateForFiscalYear();
+      MarcAuthorities.clickActionsAndReportsButtons();
+      MarcAuthorities.fillReportModal(today, tomorrow);
+      MarcAuthorities.clickExportButton();
 
-    cy.intercept('POST', '/data-export-spring/jobs').as('getId');
-    cy.wait('@getId', { timeout: 10000 }).then(item => {
-      MarcAuthorities.checkCalloutAfterExport(item.response.body.name);
-    });
-  });
+      cy.intercept('POST', '/data-export-spring/jobs').as('getId');
+      cy.wait('@getId', { timeout: 10000 }).then((item) => {
+        MarcAuthorities.checkCalloutAfterExport(item.response.body.name);
+      });
+    },
+  );
 });

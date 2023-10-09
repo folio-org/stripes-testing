@@ -14,9 +14,14 @@ import {
   Badge,
   Section,
   Heading,
-  Spinner
+  Spinner,
 } from '../../../../interactors';
-import { REQUEST_TYPES, REQUEST_LEVELS, ITEM_STATUS_NAMES, FULFILMENT_PREFERENCES } from '../../constants';
+import {
+  REQUEST_TYPES,
+  REQUEST_LEVELS,
+  ITEM_STATUS_NAMES,
+  FULFILMENT_PREFERENCES,
+} from '../../constants';
 import users from '../users/users';
 import inventoryHoldings from '../inventory/holdings/inventoryHoldings';
 import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
@@ -30,11 +35,15 @@ const recallCheckbox = Checkbox({ name: 'Recall' });
 const holdCheckbox = Checkbox({ name: 'Hold' });
 const showTagsButton = Button({ id: 'clickable-show-tags' });
 const tagsPane = Pane({ title: 'Tags' });
-const resultsPane = Pane({ id:'pane-results' });
+const resultsPane = Pane({ id: 'pane-results' });
 
 const waitContentLoading = () => {
-  cy.expect(Pane({ id:'pane-filter' }).exists());
-  cy.expect(resultsPane.find(HTML(including('Choose a filter or enter a search query to show results.'))).exists());
+  cy.expect(Pane({ id: 'pane-filter' }).exists());
+  cy.expect(
+    resultsPane
+      .find(HTML(including('Choose a filter or enter a search query to show results.')))
+      .exists(),
+  );
 };
 
 /**
@@ -57,7 +66,7 @@ function createRequestApi(
       preferredContactTypeId: '002',
       lastName: `testUser-${uuid()}`,
       email: 'test@folio.org',
-      addresses: [{ addressTypeId: null, primaryAddress: true }]
+      addresses: [{ addressTypeId: null, primaryAddress: true }],
     },
     departments: [],
     patronGroup: null,
@@ -82,7 +91,7 @@ function createRequestApi(
     permanentLocationId: null,
     sourceId: null,
     permanentLoanTypeId: null,
-    materialTypeId: null
+    materialTypeId: null,
   };
   const requestData = {
     id: uuid(),
@@ -99,42 +108,45 @@ function createRequestApi(
   let createdUser;
   let cancellationReasonId;
 
-  return cy.wrap(Promise.resolve(true))
+  return cy
+    .wrap(Promise.resolve(true))
     .then(() => {
-      ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' }).then(servicePoints => {
-        requestData.pickupServicePointId = servicePoints[0].id;
-      });
-      cy.getAddressTypesApi({ limit: 1 }).then(addressTypes => {
+      ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' }).then(
+        (servicePoints) => {
+          requestData.pickupServicePointId = servicePoints[0].id;
+        },
+      );
+      cy.getAddressTypesApi({ limit: 1 }).then((addressTypes) => {
         userData.personal.addresses[0].addressTypeId = addressTypes[0].id;
         userRequestPreferences.defaultDeliveryAddressTypeId = addressTypes[0].id;
       });
-      cy.getUserGroups({ limit: 1 }).then(patronGroup => {
+      cy.getUserGroups({ limit: 1 }).then((patronGroup) => {
         userData.patronGroup = patronGroup;
       });
-      cy.getLoanTypes({ limit: 1 }).then(loanTypes => {
+      cy.getLoanTypes({ limit: 1 }).then((loanTypes) => {
         instanceRecordData.permanentLoanTypeId = loanTypes[0].id;
       });
-      cy.getMaterialTypes({ limit: 1 }).then(materialType => {
+      cy.getMaterialTypes({ limit: 1 }).then((materialType) => {
         instanceRecordData.materialTypeId = materialType.id;
       });
-      cy.getLocations({ limit: 1 }).then(location => {
+      cy.getLocations({ limit: 1 }).then((location) => {
         instanceRecordData.permanentLocationId = location.id;
       });
-      cy.getHoldingTypes({ limit: 1 }).then(holdingsTypes => {
+      cy.getHoldingTypes({ limit: 1 }).then((holdingsTypes) => {
         instanceRecordData.holdingsTypeId = holdingsTypes[0].id;
       });
-      inventoryHoldings.getHoldingSources({ limit: 1 }).then(holdingsSources => {
+      inventoryHoldings.getHoldingSources({ limit: 1 }).then((holdingsSources) => {
         instanceRecordData.sourceId = holdingsSources[0].id;
       });
-      cy.getInstanceTypes({ limit: 1 }).then(instanceTypes => {
+      cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
         instanceRecordData.instanceTypeId = instanceTypes[0].id;
       });
-      cy.getCancellationReasonsApi({ limit: 1 }).then(cancellationReasons => {
+      cy.getCancellationReasonsApi({ limit: 1 }).then((cancellationReasons) => {
         cancellationReasonId = cancellationReasons[0].id;
       });
     })
     .then(() => {
-      users.createViaApi(userData).then(user => {
+      users.createViaApi(userData).then((user) => {
         createdUser = user;
         requestData.requesterId = user.id;
         userRequestPreferences.userId = user.id;
@@ -150,30 +162,34 @@ function createRequestApi(
           instanceTypeId: instanceRecordData.instanceTypeId,
           title: instanceRecordData.instanceTitle,
         },
-        holdings: [{
-          holdingId: instanceRecordData.holdingId,
-          holdingsTypeId: instanceRecordData.holdingsTypeId,
-          permanentLocationId: instanceRecordData.permanentLocationId,
-          sourceId: instanceRecordData.sourceId,
-        }],
+        holdings: [
+          {
+            holdingId: instanceRecordData.holdingId,
+            holdingsTypeId: instanceRecordData.holdingsTypeId,
+            permanentLocationId: instanceRecordData.permanentLocationId,
+            sourceId: instanceRecordData.sourceId,
+          },
+        ],
         items: [
-          [{
-            itemId: instanceRecordData.itemId,
-            barcode: instanceRecordData.itemBarcode,
-            status: { name: itemStatus },
-            permanentLoanType: { id: instanceRecordData.permanentLoanTypeId },
-            materialType: { id: instanceRecordData.materialTypeId },
-          }],
+          [
+            {
+              itemId: instanceRecordData.itemId,
+              barcode: instanceRecordData.itemBarcode,
+              status: { name: itemStatus },
+              permanentLoanType: { id: instanceRecordData.permanentLoanTypeId },
+              materialType: { id: instanceRecordData.materialTypeId },
+            },
+          ],
         ],
       });
     })
     .then(() => {
-      cy.createItemRequestApi(requestData).then(createdRequest => {
+      cy.createItemRequestApi(requestData).then((createdRequest) => {
         return {
           createdUser,
           createdRequest,
           instanceRecordData,
-          cancellationReasonId
+          cancellationReasonId,
         };
       });
     });
@@ -216,21 +232,21 @@ function setRequestPolicyApi(requestTypes = Object.values(REQUEST_TYPES)) {
   const regexp = /(?<=\s)r\s+[a-zA-Z0-9-]+(?=\s)/;
   let oldRulesAsText;
 
-  return cy.okapiRequest({
-    path: 'circulation/rules',
-    isDefaultSearchParamsRequired: false,
-  })
+  return cy
+    .okapiRequest({
+      path: 'circulation/rules',
+      isDefaultSearchParamsRequired: false,
+    })
     .then(({ body: rule }) => {
       oldRulesAsText = rule.rulesAsText;
       cy.okapiRequest({
         method: 'POST',
         path: 'request-policy-storage/request-policies',
         body: { id: uuid(), name: `test_all_${uuid().substring(0, 6)}`, requestTypes },
-      })
-        .then(({ body: policy }) => {
-          rule.rulesAsText = rule.rulesAsText.replace(regexp, `r ${policy.id}`);
-          updateCirculationRulesApi(rule.rulesAsText).then(() => ({ oldRulesAsText, policy }));
-        });
+      }).then(({ body: policy }) => {
+        rule.rulesAsText = rule.rulesAsText.replace(regexp, `r ${policy.id}`);
+        updateCirculationRulesApi(rule.rulesAsText).then(() => ({ oldRulesAsText, policy }));
+      });
     });
 }
 
@@ -266,24 +282,28 @@ export default {
   waitContentLoading,
   waitLoadingTags,
 
-  waitLoading:() => cy.expect(Pane({ title: 'Requests' }).exists()),
-  resetAllFilters:() => cy.do(Button('Reset all').click()),
-  selectAwaitingDeliveryRequest:() => cy.do(Checkbox({ name: 'Open - Awaiting delivery' }).click()),
-  selectAwaitingPickupRequest:() => cy.do(Checkbox({ name: 'Open - Awaiting pickup' }).click()),
-  selectInTransitRequest:() => cy.do(Checkbox({ name: 'Open - In transit' }).click()),
-  selectNotYetFilledRequest:() => cy.do(Checkbox({ name: 'Open - Not yet filled' }).click()),
-  selectClosedCancelledRequest:() => cy.do((Checkbox({ name: 'Closed - Cancelled' }).click())),
-  selectItemRequestLevel:() => selectSpecifiedRequestLevel('Item'),
-  selectTitleRequestLevel:() => selectSpecifiedRequestLevel('Title'),
-  selectFirstRequest:(title) => cy.do(requestsPane.find(MultiColumnListCell({ row: 0, content: title })).click()),
-  openTagsPane:() => cy.do(showTagsButton.click()),
-  closePane:(title) => cy.do(Pane({ title }).find(IconButton({ ariaLabel: 'Close ' })).click()),
-  selectHoldsRequestType:() => cy.do(holdCheckbox.click()),
-  selectPagesRequestType:() => cy.do(pageCheckbox.click()),
-  selectRecallsRequestType:() => cy.do(recallCheckbox.click()),
-  verifyNoResultMessage:(noResultMessage) => cy.expect(requestsResultsSection.find(HTML(including(noResultMessage))).exists()),
-  navigateToApp:(appName) => cy.do([appsButton.click(), Button(appName).click()]),
-  verifyCreatedRequest:(title) => cy.expect(requestsPane.find(MultiColumnListCell({ row: 0, content: title })).exists()),
+  waitLoading: () => cy.expect(Pane({ title: 'Requests' }).exists()),
+  resetAllFilters: () => cy.do(Button('Reset all').click()),
+  selectAwaitingDeliveryRequest: () => cy.do(Checkbox({ name: 'Open - Awaiting delivery' }).click()),
+  selectAwaitingPickupRequest: () => cy.do(Checkbox({ name: 'Open - Awaiting pickup' }).click()),
+  selectInTransitRequest: () => cy.do(Checkbox({ name: 'Open - In transit' }).click()),
+  selectNotYetFilledRequest: () => cy.do(Checkbox({ name: 'Open - Not yet filled' }).click()),
+  selectClosedCancelledRequest: () => cy.do(Checkbox({ name: 'Closed - Cancelled' }).click()),
+  selectItemRequestLevel: () => selectSpecifiedRequestLevel('Item'),
+  selectTitleRequestLevel: () => selectSpecifiedRequestLevel('Title'),
+  selectFirstRequest: (title) => cy.do(requestsPane.find(MultiColumnListCell({ row: 0, content: title })).click()),
+  openTagsPane: () => cy.do(showTagsButton.click()),
+  closePane: (title) => cy.do(
+    Pane({ title })
+      .find(IconButton({ ariaLabel: 'Close ' }))
+      .click(),
+  ),
+  selectHoldsRequestType: () => cy.do(holdCheckbox.click()),
+  selectPagesRequestType: () => cy.do(pageCheckbox.click()),
+  selectRecallsRequestType: () => cy.do(recallCheckbox.click()),
+  verifyNoResultMessage: (noResultMessage) => cy.expect(requestsResultsSection.find(HTML(including(noResultMessage))).exists()),
+  navigateToApp: (appName) => cy.do([appsButton.click(), Button(appName).click()]),
+  verifyCreatedRequest: (title) => cy.expect(requestsPane.find(MultiColumnListCell({ row: 0, content: title })).exists()),
 
   cancelRequest() {
     cy.do([
@@ -306,9 +326,17 @@ export default {
     this.selectNotYetFilledRequest();
   },
 
+  filterRequestsByTag(tag) {
+    cy.do(
+      Pane({ title: 'Search & filter' })
+        .find(MultiSelect({ ariaLabelledby: 'tags' }))
+        .select(tag),
+    );
+  },
+
   addTag(tag) {
     waitLoadingTags();
-    cy.do(tagsPane.find(MultiSelect({ ariaLabelledby:'input-tag-label' })).choose(tag));
+    cy.do(tagsPane.find(MultiSelect({ ariaLabelledby: 'input-tag-label' })).choose(tag));
     // TODO investigate what to wait
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
@@ -326,15 +354,18 @@ export default {
   REQUEST_TYPE_CELL: { columnIndex: 5 },
   verifyIsFilteredByRequestType(requestType) {
     const values = [];
-    cy.get('[data-row-index]').each($row => {
-      cy.get(`[class*="mclCell-"]:nth-child(${this.REQUEST_TYPE_CELL.columnIndex})`, { withinSubject: $row })
-        .invoke('text')
-        .then(cellValue => {
-          values.push(cellValue);
-        });
-    })
+    cy.get('[data-row-index]')
+      .each(($row) => {
+        cy.get(`[class*="mclCell-"]:nth-child(${this.REQUEST_TYPE_CELL.columnIndex})`, {
+          withinSubject: $row,
+        })
+          .invoke('text')
+          .then((cellValue) => {
+            values.push(cellValue);
+          });
+      })
       .then(() => {
-        const isFiltered = values.every(value => value === requestType);
+        const isFiltered = values.every((value) => value === requestType);
         expect(isFiltered).to.equal(true);
       });
   },
@@ -393,7 +424,7 @@ export default {
   ],
 
   checkAllRequestTypes() {
-    Object.values(REQUEST_TYPES).forEach(requestType => {
+    Object.values(REQUEST_TYPES).forEach((requestType) => {
       cy.do(Checkbox({ name: requestType }).click());
       cy.wait('@getRequests');
     });
@@ -445,28 +476,34 @@ export default {
   getMultiColumnListCellsValues(cell) {
     const cells = [];
     // get MultiColumnList rows and loop over
-    return cy.get('[data-row-index]').each($row => {
-      // from each row, choose specific cell
-      cy.get(`[class*="mclCell-"]:nth-child(${cell})`, { withinSubject: $row })
-      // extract its text content
-        .invoke('text')
-        .then(cellValue => {
-          cells.push(cellValue);
-        });
-    })
+    return cy
+      .get('[data-row-index]')
+      .each(($row) => {
+        // from each row, choose specific cell
+        cy.get(`[class*="mclCell-"]:nth-child(${cell})`, { withinSubject: $row })
+          // extract its text content
+          .invoke('text')
+          .then((cellValue) => {
+            cells.push(cellValue);
+          });
+      })
       .then(() => cells);
   },
 
   getSortOrder(headerId) {
     let order;
-    return cy.do(MultiColumnListHeader({ id: 'list-column-' + headerId }).perform(el => {
-      order = el.attributes.getNamedItem('aria-sort').value;
-    })).then(() => order);
+    return cy
+      .do(
+        MultiColumnListHeader({ id: 'list-column-' + headerId }).perform((el) => {
+          order = el.attributes.getNamedItem('aria-sort').value;
+        }),
+      )
+      .then(() => order);
   },
 
   validateRequestsDateSortingOrder(order) {
-    this.getMultiColumnListCellsValues(1).then(cells => {
-      const dates = cells.map(cell => new Date(cell));
+    this.getMultiColumnListCellsValues(1).then((cells) => {
+      const dates = cells.map((cell) => new Date(cell));
       if (order === 'ascending') this.validateNumsAscendingOrder(dates);
       else if (order === 'descending') this.validateNumsDescendingOrder(dates);
     });
@@ -475,8 +512,8 @@ export default {
   validateRequestsSortingOrder({ headerId, columnIndex }) {
     this.waitLoadingRequests();
 
-    this.getSortOrder(headerId).then(order => {
-      this.getMultiColumnListCellsValues(columnIndex).then(cells => {
+    this.getSortOrder(headerId).then((order) => {
+      this.getMultiColumnListCellsValues(columnIndex).then((cells) => {
         if (order === 'ascending') this.validateStringsAscendingOrder(cells);
         else if (order === 'descending') this.validateStringsDescendingOrder(cells);
       });
@@ -488,7 +525,12 @@ export default {
   },
 
   verifyFulfillmentPreference() {
-    cy.expect(cy.get('[name="fulfillmentPreference"]').find('option:selected').should('have.text', FULFILMENT_PREFERENCES.HOLD_SHELF));
+    cy.expect(
+      cy
+        .get('[name="fulfillmentPreference"]')
+        .find('option:selected')
+        .should('have.text', FULFILMENT_PREFERENCES.HOLD_SHELF),
+    );
   },
 
   waitLoadingRequests() {
@@ -506,19 +548,40 @@ export default {
     cy.wait(2000);
   },
 
-  getRequestIdViaApi: (searchParams) => cy.okapiRequest({
-    path: 'circulation/requests',
-    searchParams
-  }).then(res => res.body.requests[0].id),
+  getRequestIdViaApi: (searchParams) => cy
+    .okapiRequest({
+      path: 'circulation/requests',
+      searchParams,
+    })
+    .then((res) => res.body.requests[0].id),
 
-  verifyShowTagsButtonIsDisabled:() => {
+  verifyShowTagsButtonIsDisabled: () => {
     cy.expect(showTagsButton.has({ disabled: true }));
   },
 
-  createNewRequestViaApi:(requestBody) => cy.okapiRequest({
+  createNewRequestViaApi: (requestBody) => cy.okapiRequest({
     method: 'POST',
     path: 'circulation/requests',
     body: requestBody,
-    isDefaultSearchParamsRequired: false
+    isDefaultSearchParamsRequired: false,
   }),
+
+  /* for miltiselect 'Pickup service point' we have to redefine attribute 'aria-labelledby' to make it unique,
+ because there are 4 elements with same 'aria-labelledby' on the page so the function 'createInteractor()'
+  in interactors\multi-select.js takes as argument the first one and it's not we needed
+  */
+  filterRequestsByServicePoints(servicePoint) {
+    // wait untill element is visible and interactable
+    cy.wait(3000);
+    const pickupServicePointFilterSelector = '[id="req-pickup-service-point-filter"]';
+    cy.get(pickupServicePointFilterSelector).click();
+    cy.get(pickupServicePointFilterSelector)
+      .find('[aria-labelledby="accordion-toggle-button-pickupServicePoints"]')
+      .first()
+      .invoke('attr', 'aria-labelledby', 'pickupServicePoints');
+    cy.do([
+      MultiSelect({ ariaLabelledby: 'pickupServicePoints' }).focus(),
+      MultiSelect({ ariaLabelledby: 'pickupServicePoints' }).select(servicePoint),
+    ]);
+  },
 };

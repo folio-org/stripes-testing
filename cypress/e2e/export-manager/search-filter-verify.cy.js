@@ -28,22 +28,40 @@ const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const lastWeek = DateTools.getFormattedDate({ date: DateTools.getLastWeekDateObj() }, 'MM/DD/YYYY');
 const today = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
 const todayWithoutPadding = DateTools.getFormattedDateWithSlashes({ date: new Date() });
-const nextWeek = DateTools.getFormattedDate({ date: DateTools.getFutureWeekDateObj() }, 'MM/DD/YYYY');
-const exportRequestedCalloutMessage = 'Your Circulation log export has been requested. Please wait while the file is downloaded.';
+const nextWeek = DateTools.getFormattedDate(
+  { date: DateTools.getFutureWeekDateObj() },
+  'MM/DD/YYYY',
+);
+const exportRequestedCalloutMessage =
+  'Your Circulation log export has been requested. Please wait while the file is downloaded.';
 const jobCompletedCalloutMessage = 'Export job has been completed.';
 
 describe('export manager', () => {
   before('create instance, user and two jobs', () => {
-    cy.getAdminToken().then(() => {
-      cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => { testData.instanceTypeId = instanceTypes[0].id; });
-      cy.getHoldingTypes({ limit: 1 }).then((res) => { testData.holdingTypeId = res[0].id; });
-      cy.getLocations({ limit: 1 }).then((res) => { testData.locationId = res.id; });
-      cy.getLoanTypes({ limit: 1 }).then((res) => { testData.loanTypeId = res[0].id; });
-      cy.getMaterialTypes({ limit: 1 }).then((res) => { testData.materialTypeId = res.id; });
-      ServicePoints.getViaApi({ limit: 1 }).then((servicePoints) => { testData.servicepointId = servicePoints[0].id; });
-    }).then(() => {
-      InventoryInstances.createInstanceViaApi(itemData.instanceTitle, itemData.barcode);
-    });
+    cy.getAdminToken()
+      .then(() => {
+        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+          testData.instanceTypeId = instanceTypes[0].id;
+        });
+        cy.getHoldingTypes({ limit: 1 }).then((res) => {
+          testData.holdingTypeId = res[0].id;
+        });
+        cy.getLocations({ limit: 1 }).then((res) => {
+          testData.locationId = res.id;
+        });
+        cy.getLoanTypes({ limit: 1 }).then((res) => {
+          testData.loanTypeId = res[0].id;
+        });
+        cy.getMaterialTypes({ limit: 1 }).then((res) => {
+          testData.materialTypeId = res.id;
+        });
+        ServicePoints.getViaApi({ limit: 1 }).then((servicePoints) => {
+          testData.servicepointId = servicePoints[0].id;
+        });
+      })
+      .then(() => {
+        InventoryInstances.createInstanceViaApi(itemData.instanceTitle, itemData.barcode);
+      });
     cy.createTempUser([
       permissions.exportManagerAll.gui,
       permissions.circulationLogAll.gui,
@@ -51,10 +69,13 @@ describe('export manager', () => {
       permissions.bulkEditUpdateRecords.gui,
       permissions.uiUsersView.gui,
     ])
-      .then(userProperties => {
+      .then((userProperties) => {
         userData = { ...userProperties };
-        UserEdit.addServicePointViaApi(testData.servicepointId,
-          userData.userId, testData.servicepointId);
+        UserEdit.addServicePointViaApi(
+          testData.servicepointId,
+          userData.userId,
+          testData.servicepointId,
+        );
       })
       .then(() => {
         Checkout.checkoutItemViaApi({
@@ -98,39 +119,45 @@ describe('export manager', () => {
     FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
   });
 
-  it('C350727 Verify search filter options Export Manager (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    ExportManagerSearchPane.waitLoading();
-    ExportManagerSearchPane.searchBySuccessful();
-    cy.do(ExportManagerSearchPane.getSearchResult(0, 0).perform(element => {
-      ExportManagerSearchPane.searchById(element.innerText);
-    }));
-    ExportManagerSearchPane.selectSearchResultItem();
-    ExportManagerSearchPane.closeExportJobPane();
+  it(
+    'C350727 Verify search filter options Export Manager (firebird)',
+    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    () => {
+      ExportManagerSearchPane.waitLoading();
+      ExportManagerSearchPane.searchBySuccessful();
+      cy.do(
+        ExportManagerSearchPane.getSearchResult(0, 0).perform((element) => {
+          ExportManagerSearchPane.searchById(element.innerText);
+        }),
+      );
+      ExportManagerSearchPane.selectSearchResultItem();
+      ExportManagerSearchPane.closeExportJobPane();
 
-    ExportManagerSearchPane.resetAll();
+      ExportManagerSearchPane.resetAll();
 
-    ExportManagerSearchPane.searchBySuccessful();
-    ExportManagerSearchPane.verifyResult('Successful');
-    ExportManagerSearchPane.searchByInProgress();
-    ExportManagerSearchPane.searchByScheduled();
-    ExportManagerSearchPane.searchByFailed();
+      ExportManagerSearchPane.searchBySuccessful();
+      ExportManagerSearchPane.verifyResult('Successful');
+      ExportManagerSearchPane.searchByInProgress();
+      ExportManagerSearchPane.searchByScheduled();
+      ExportManagerSearchPane.searchByFailed();
 
-    ExportManagerSearchPane.searchByBulkEdit();
-    ExportManagerSearchPane.verifyResult('Bulk edit identifiers');
-    ExportManagerSearchPane.resetJobType();
-    ExportManagerSearchPane.searchByCirculationLog();
-    ExportManagerSearchPane.verifyResult('Circulation log');
+      ExportManagerSearchPane.searchByBulkEdit();
+      ExportManagerSearchPane.verifyResult('Bulk edit identifiers');
+      ExportManagerSearchPane.resetJobType();
+      ExportManagerSearchPane.searchByCirculationLog();
+      ExportManagerSearchPane.verifyResult('Circulation log');
 
-    ExportManagerSearchPane.enterStartTime(lastWeek, today);
-    ExportManagerSearchPane.verifyResult(todayWithoutPadding);
-    ExportManagerSearchPane.resetStartTime();
-    ExportManagerSearchPane.enterEndTime(today, nextWeek);
-    ExportManagerSearchPane.verifyResult(todayWithoutPadding);
-    ExportManagerSearchPane.resetEndTime();
+      ExportManagerSearchPane.enterStartTime(lastWeek, today);
+      ExportManagerSearchPane.verifyResult(todayWithoutPadding);
+      ExportManagerSearchPane.resetStartTime();
+      ExportManagerSearchPane.enterEndTime(today, nextWeek);
+      ExportManagerSearchPane.verifyResult(todayWithoutPadding);
+      ExportManagerSearchPane.resetEndTime();
 
-    ExportManagerSearchPane.searchBySystemNo();
-    ExportManagerSearchPane.resetAll();
-    ExportManagerSearchPane.searchBySourceUserName(userData.username);
-    ExportManagerSearchPane.verifyUserSearchResult(userData.username);
-  });
+      ExportManagerSearchPane.searchBySystemNo();
+      ExportManagerSearchPane.resetAll();
+      ExportManagerSearchPane.searchBySourceUserName(userData.username);
+      ExportManagerSearchPane.verifyUserSearchResult(userData.username);
+    },
+  );
 });

@@ -1,15 +1,15 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
-import { FOLIO_RECORD_TYPE,
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import {
+  FOLIO_RECORD_TYPE,
   ORDER_STATUSES,
   MATERIAL_TYPE_NAMES,
   ORDER_FORMAT_NAMES_IN_PROFILE,
   ACQUISITION_METHOD_NAMES,
   JOB_STATUS_NAMES,
   VENDOR_NAMES,
-  ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../../support/constants';
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+} from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -22,6 +22,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Users from '../../../support/fragments/users/users';
 import Orders from '../../../support/fragments/orders/orders';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -58,7 +59,7 @@ describe('data-import', () => {
       fund: 'Gifts (Non-recurring)(GIFTS-ONE-TIME)',
       value: '100%',
       locationName: 'Main Library (KU/CC/DI/M)',
-      locationQuantityPhysical: '1'
+      locationQuantityPhysical: '1',
     };
     const mappingProfile = {
       name: `C375174 Test Order ${getRandomPostfix()}`,
@@ -101,11 +102,11 @@ describe('data-import', () => {
       type: '%',
       locationName: '049$a',
       locationQuantityPhysical: '980$g',
-      volume: '993$a'
+      volume: '993$a',
     };
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.ORDER,
-      name: `C375174 Test Order ${getRandomPostfix()}`
+      name: `C375174 Test Order ${getRandomPostfix()}`,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
@@ -114,34 +115,36 @@ describe('data-import', () => {
 
     before('login', () => {
       cy.createTempUser([
-        permissions.settingsDataImportEnabled.gui,
-        permissions.moduleDataImportEnabled.gui,
-        permissions.uiOrganizationsView.gui,
-        permissions.inventoryAll.gui,
-        permissions.uiOrdersView.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.uiOrganizationsView.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiOrdersView.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          cy.login(userProperties.username, userProperties.password,
-            { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+        cy.login(userProperties.username, userProperties.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
         });
+      });
     });
 
     after('delete test data', () => {
       Users.deleteViaApi(user.userId);
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
-      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
-        .then(orderId => {
-          Orders.deleteOrderViaApi(orderId[0].id);
-        });
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
+        Orders.deleteOrderViaApi(orderId[0].id);
+      });
     });
 
-    it('C375174 Verify the importing of orders with pending status (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      // create mapping profile
+    it(
+      'C375174 Verify the importing of orders with pending status (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
+        // create mapping profile
         FieldMappingProfiles.createOrderMappingProfile(mappingProfile);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
@@ -167,10 +170,11 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
 
-        [0, 1].forEach(rowNumber => {
-          [FileDetails.columnNameInResultList.srsMarc,
-            FileDetails.columnNameInResultList.order
-          ].forEach(columnName => {
+        [0, 1].forEach((rowNumber) => {
+          [
+            FileDetails.columnNameInResultList.srsMarc,
+            FileDetails.columnNameInResultList.order,
+          ].forEach((columnName) => {
             FileDetails.checkStatusInColumn(FileDetails.status.created, columnName, rowNumber);
           });
         });
@@ -178,11 +182,11 @@ describe('data-import', () => {
         FileDetails.openOrder('Created');
         OrderLines.waitLoading();
         OrderLines.checkIsOrderCreatedWithDataFromImportedFile(orderData);
-        OrderLines.getAssignedPOLNumber()
-          .then(initialNumber => {
-            const polNumber = initialNumber;
-            orderNumber = polNumber.replace('-1', '');
-          });
-      });
+        OrderLines.getAssignedPOLNumber().then((initialNumber) => {
+          const polNumber = initialNumber;
+          orderNumber = polNumber.replace('-1', '');
+        });
+      },
+    );
   });
 });

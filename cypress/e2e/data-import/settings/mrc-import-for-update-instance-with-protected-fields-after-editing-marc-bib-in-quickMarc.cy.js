@@ -1,14 +1,12 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import permissions from '../../../support/dictionary/permissions';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import {
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
   TARGET_PROFILE_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
-  JOB_STATUS_NAMES
+  JOB_STATUS_NAMES,
 } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
@@ -31,16 +29,16 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Settings', () => {
     let user = null;
     let instanceHrid;
-    const marcFieldProtectionId = [];
     const OCLCAuthentication = '100481406/PAOLF';
     const protectedFields = {
       firstField: '*',
-      secondField: '920'
+      secondField: '920',
     };
     const quantityOfItems = '1';
     const oclcForImport = '830936944';
@@ -51,92 +49,98 @@ describe('data-import', () => {
     const matchProfile = {
       profileName: `C356829 001 to Instance HRID ${getRandomPostfix()}`,
       incomingRecordFields: {
-        field: '001'
+        field: '001',
       },
       matchCriterion: 'Exactly matches',
       existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
-      instanceOption: NewMatchProfile.optionsList.instanceHrid
+      instanceOption: NewMatchProfile.optionsList.instanceHrid,
     };
     const mappingProfile = {
       name: `C356829 Update instance and check field protections ${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       catalogedDate: '###TODAY###',
-      instanceStatus: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED
+      instanceStatus: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
     };
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       name: `C356829 Update instance and check field protections ${getRandomPostfix()}`,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
     };
     const jobProfile = {
       profileName: `C356829 Update instance and check field protections ${getRandomPostfix()}`,
-      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
     before('create test user', () => {
       cy.createTempUser([
-        permissions.moduleDataImportEnabled.gui,
-        permissions.settingsDataImportEnabled.gui,
-        permissions.inventoryAll.gui,
-        permissions.uiInventorySingleRecordImport.gui,
-        permissions.uiInventoryViewCreateEditInstances.gui,
-        permissions.uiInventorySettingsConfigureSingleRecordImport.gui,
-        permissions.dataExportEnableApp.gui,
-        permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiInventorySingleRecordImport.gui,
+        Permissions.uiInventoryViewCreateEditInstances.gui,
+        Permissions.uiInventorySettingsConfigureSingleRecordImport.gui,
+        Permissions.dataExportEnableApp.gui,
+        Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
 
-          cy.login(user.username, user.password);
-        });
+        cy.login(user.username, user.password);
+      });
     });
 
     after('delete test data', () => {
       FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-      marcFieldProtectionId.forEach(field => MarcFieldProtection.deleteMarcFieldProtectionViaApi(field));
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-        .then((instance) => {
+      MarcFieldProtection.getListViaApi({
+        query: `"field"=="${protectedFields.firstField}"`,
+      }).then((list) => {
+        list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+      });
+      MarcFieldProtection.getListViaApi({
+        query: `"field"=="${protectedFields.secondField}"`,
+      }).then((list) => {
+        list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+      });
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+        (instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
+        },
+      );
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(mappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
       Users.deleteViaApi(user.userId);
     });
 
-    it('C356829 Test field protections when importing to update instance, after editing the MARC Bib in quickMARC (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+    it(
+      'C356829 Test field protections when importing to update instance, after editing the MARC Bib in quickMARC (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      () => {
         cy.visit(SettingsMenu.targetProfilesPath);
         Z3950TargetProfiles.openTargetProfile();
-        Z3950TargetProfiles.editOclcWorldCat(OCLCAuthentication, TARGET_PROFILE_NAMES.OCLC_WORLDCAT);
+        Z3950TargetProfiles.editOclcWorldCat(
+          OCLCAuthentication,
+          TARGET_PROFILE_NAMES.OCLC_WORLDCAT,
+        );
         Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(OCLCAuthentication);
 
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
+        MarcFieldProtection.createViaApi({
           indicator1: '*',
           indicator2: '*',
           subfield: '5',
           data: 'amb',
           source: 'USER',
-          field: protectedFields.firstField
-        })
-          .then((resp) => {
-            const id = resp.id;
-            marcFieldProtectionId.push = id;
-          });
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
+          field: protectedFields.firstField,
+        });
+        MarcFieldProtection.createViaApi({
           indicator1: '*',
           indicator2: '*',
           subfield: '*',
           data: '*',
           source: 'USER',
-          field: protectedFields.secondField
-        })
-          .then((resp) => {
-            const id = resp.id;
-            marcFieldProtectionId.push = id;
-          });
+          field: protectedFields.secondField,
+        });
 
         // create match profile
         cy.visit(SettingsMenu.matchProfilePath);
@@ -149,8 +153,8 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
         NewFieldMappingProfile.fillCatalogedDate(mappingProfile.catalogedDate);
         NewFieldMappingProfile.fillInstanceStatusTerm(mappingProfile.statusTerm);
-        FieldMappingProfiles.saveProfile();
-        FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         // create action profile
@@ -168,28 +172,32 @@ describe('data-import', () => {
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.importWithOclc(oclcForImport);
         InventoryInstance.editMarcBibliographicRecord();
-        [18, 19, 20, 21, 22, 23, 24, 25, 26].forEach(fieldNumber => {
+        [18, 19, 20, 21, 22, 23, 24, 25, 26].forEach((fieldNumber) => {
           InventoryEditMarcRecord.deleteField(fieldNumber);
         });
-        InventoryEditMarcRecord.editField('$a Louisiana. $2 fast $0 (OCoLC)fst01207035', '$a Louisiana. $2 fast $0 (OCoLC)fst01207035 $5 amb');
+        InventoryEditMarcRecord.editField('$a Louisiana $2 fast', '$a Louisiana $2 fast $5 amb');
         InventoryEditMarcRecord.addField('920', 'This should be a protected field', 28);
         InventoryEditMarcRecord.saveAndClose();
         InventoryEditMarcRecord.confirmDeletingField();
-        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
 
           InventoryInstance.viewSource();
           InventoryViewSource.contains('651\t');
-          InventoryViewSource.contains('‡a Louisiana. ‡2 fast ‡0 (OCoLC)fst01207035 ‡5 amb');
+          InventoryViewSource.contains('‡a Louisiana ‡2 fast ‡5 amb');
           InventoryViewSource.contains('920\t');
           InventoryViewSource.contains('‡a This should be a protected field');
           // The prepared file without fields 651 and 920 is used because it is very difficult
           // to remove fields from the exported file along with the special characters of the .mrc file
-          InventoryViewSource.extructDataFrom999Field()
-            .then(uuid => {
-              // change file using uuid for 999 field
-              DataImport.editMarcFile('marcFileForC356829.mrc', editedMarcFileName, ['srsUuid', 'instanceUuid', 'hrid'], [uuid[0], uuid[1], instanceHrid]);
-            });
+          InventoryViewSource.extructDataFrom999Field().then((uuid) => {
+            // change file using uuid for 999 field
+            DataImport.editMarcFile(
+              'marcFileForC356829.mrc',
+              editedMarcFileName,
+              ['srsUuid', 'instanceUuid', 'hrid'],
+              [uuid[0], uuid[1], instanceHrid],
+            );
+          });
           InventoryViewSource.close();
 
           // export instance
@@ -208,7 +216,10 @@ describe('data-import', () => {
           JobProfiles.waitFileIsImported(nameMarcFileForUpload);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(nameMarcFileForUpload);
-          [FileDetails.columnNameInResultList.srsMarc, FileDetails.columnNameInResultList.instance].forEach(columnName => {
+          [
+            FileDetails.columnNameInResultList.srsMarc,
+            FileDetails.columnNameInResultList.instance,
+          ].forEach((columnName) => {
             FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
           });
           FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems, 1);
@@ -219,9 +230,10 @@ describe('data-import', () => {
         InventoryInstance.checkIsInstanceUpdated();
         InventoryInstance.viewSource();
         InventoryViewSource.contains('651\t');
-        InventoryViewSource.contains('‡a Louisiana. ‡2 fast ‡0 (OCoLC)fst01207035 ‡5 amb');
+        InventoryViewSource.contains('‡a Louisiana ‡2 fast ‡5 amb');
         InventoryViewSource.contains('920\t');
         InventoryViewSource.contains('‡a This should be a protected field');
-      });
+      },
+    );
   });
 });

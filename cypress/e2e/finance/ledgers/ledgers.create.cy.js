@@ -12,17 +12,21 @@ describe('ui-finance: Ledgers', () => {
     cy.visit(TopMenu.ledgerPath);
   });
 
-  it('C4053 Create a new ledger (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
-    const defaultLedger = NewLedger.defaultLedger;
+  it(
+    'C4053 Create a new ledger (thunderjet)',
+    { tags: [testType.smoke, devTeams.thunderjet] },
+    () => {
+      const defaultLedger = NewLedger.defaultLedger;
 
-    Ledgers.createDefaultLedger(defaultLedger);
-    Ledgers.checkCreatedLedgerName(defaultLedger);
-    Ledgers.deleteLedgerViaActions(defaultLedger);
+      Ledgers.createDefaultLedger(defaultLedger);
+      Ledgers.checkCreatedLedgerName(defaultLedger);
+      Ledgers.deleteLedgerViaActions(defaultLedger);
 
-    // should not create new ledger if mandatory fields are not filled
-    const testLedgerName = `autotest_ledger_${getRandomPostfix()}`;
-    Ledgers.tryToCreateLedgerWithoutMandatoryFields(testLedgerName);
-    FinanceHelp.searchByName(testLedgerName);
-    Ledgers.checkZeroSearchResultsHeader();
-  });
+      // should not create new ledger if mandatory fields are not filled
+      const testLedgerName = `autotest_ledger_${getRandomPostfix()}`;
+      Ledgers.tryToCreateLedgerWithoutMandatoryFields(testLedgerName);
+      FinanceHelp.searchByName(testLedgerName);
+      Ledgers.checkZeroSearchResultsHeader();
+    },
+  );
 });

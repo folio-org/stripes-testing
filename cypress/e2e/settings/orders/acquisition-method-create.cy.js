@@ -7,14 +7,21 @@ describe('orders: Settings', () => {
   const acquisitionMethod = { ...AcquisitionMethods.defaultAcquisitionMethod };
 
   before(() => {
-    cy.loginAsAdmin({ path: SettingsMenu.acquisitionMethodsPath, waiter: AcquisitionMethods.waitLoading });
+    cy.loginAsAdmin({
+      path: SettingsMenu.acquisitionMethodsPath,
+      waiter: AcquisitionMethods.waitLoading,
+    });
   });
 
-  it('C347633 Create Acquisition method (thunderjet)', { tags: [TestType.criticalPath, devTeams.thunderjet] }, () => {
-    AcquisitionMethods.newAcquisitionMethod();
-    AcquisitionMethods.fillAcquisitionMethodName(acquisitionMethod.value);
-    AcquisitionMethods.checkcreatedAM(acquisitionMethod.value);
-    AcquisitionMethods.editAcquisitionMethod(acquisitionMethod.value);
-    AcquisitionMethods.deleteAcquisitionMethod(acquisitionMethod.value);
-  });
+  it(
+    'C347633 Create Acquisition method (thunderjet)',
+    { tags: [TestType.criticalPath, devTeams.thunderjet] },
+    () => {
+      AcquisitionMethods.newAcquisitionMethod();
+      AcquisitionMethods.fillAcquisitionMethodName(acquisitionMethod.value);
+      AcquisitionMethods.checkcreatedAM(acquisitionMethod.value);
+      AcquisitionMethods.editAcquisitionMethod(acquisitionMethod.value);
+      AcquisitionMethods.deleteAcquisitionMethod(acquisitionMethod.value);
+    },
+  );
 });

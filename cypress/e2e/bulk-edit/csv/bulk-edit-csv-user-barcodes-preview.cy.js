@@ -12,7 +12,6 @@ let user;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const invalidUserBarcodesFileName = `invalidUserBarcodes_${getRandomPostfix()}.csv`;
 
-
 describe('bulk-edit', () => {
   describe('csv approach', () => {
     before('create test data', () => {
@@ -20,17 +19,19 @@ describe('bulk-edit', () => {
         permissions.bulkEditCsvView.gui,
         permissions.bulkEditCsvEdit.gui,
         permissions.uiUsersView.gui,
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading
-          });
-
-          FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
-          FileManager.createFile(`cypress/fixtures/${invalidUserBarcodesFileName}`, getRandomPostfix());
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
+
+        FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
+        FileManager.createFile(
+          `cypress/fixtures/${invalidUserBarcodesFileName}`,
+          getRandomPostfix(),
+        );
+      });
     });
 
     beforeEach('reload bulk-edit page', () => {
@@ -45,30 +46,38 @@ describe('bulk-edit', () => {
       FileManager.deleteFile(`cypress/fixtures/${invalidUserBarcodesFileName}`);
     });
 
-    it('C347872 Populating preview of matched records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.uploadFile(userBarcodesFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.verifyUserBarcodesResultAccordion();
-      BulkEditSearchPane.verifyMatchedResults(user.barcode);
+    it(
+      'C347872 Populating preview of matched records (firebird)',
+      { tags: [testTypes.smoke, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.uploadFile(userBarcodesFileName);
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyUserBarcodesResultAccordion();
+        BulkEditSearchPane.verifyMatchedResults(user.barcode);
 
-      BulkEditSearchPane.verifyActionsAfterConductedCSVUploading(false);
-      BulkEditSearchPane.verifyUsersActionShowColumns();
+        BulkEditSearchPane.verifyActionsAfterConductedCSVUploading(false);
+        BulkEditSearchPane.verifyUsersActionShowColumns();
 
-      BulkEditSearchPane.changeShowColumnCheckbox('Last name');
-      BulkEditSearchPane.verifyResultColumTitlesDoNotInclude('Last name');
+        BulkEditSearchPane.changeShowColumnCheckbox('Last name');
+        BulkEditSearchPane.verifyResultColumTitlesDoNotInclude('Last name');
 
-      BulkEditSearchPane.changeShowColumnCheckbox('Email');
-      BulkEditSearchPane.verifyResultColumTitles('Email');
-    });
+        BulkEditSearchPane.changeShowColumnCheckbox('Email');
+        BulkEditSearchPane.verifyResultColumTitles('Email');
+      },
+    );
 
-    it('C360556 Populating preview of matched records in case no matches (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.uploadFile(invalidUserBarcodesFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.matchedAccordionIsAbsent();
-      BulkEditSearchPane.verifyErrorLabel(invalidUserBarcodesFileName, 0, 1);
+    it(
+      'C360556 Populating preview of matched records in case no matches (firebird)',
+      { tags: [testTypes.smoke, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.uploadFile(invalidUserBarcodesFileName);
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.matchedAccordionIsAbsent();
+        BulkEditSearchPane.verifyErrorLabel(invalidUserBarcodesFileName, 0, 1);
 
-      BulkEditActions.openActions();
-      BulkEditActions.verifyUsersActionDropdownItemsInCaseOfError();
-    });
+        BulkEditActions.openActions();
+        BulkEditActions.verifyUsersActionDropdownItemsInCaseOfError();
+      },
+    );
   });
 });

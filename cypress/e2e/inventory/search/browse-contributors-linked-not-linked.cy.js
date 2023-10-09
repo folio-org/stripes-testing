@@ -27,37 +27,37 @@ describe('Inventory: Contributors Browse', () => {
     {
       marc: 'marcBibFileC359595.mrc',
       fileName: `testMarcFileC359595.${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib'
+      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
     },
     {
       marc: 'marcAuthFileC359595.mrc',
       fileName: `testMarcFileC359595.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
-      naturalId: 'n8316359595'
-    }
+      naturalId: 'n8316359595',
+    },
   ];
 
   const createdRecordIDs = [];
 
   before('Creating data', () => {
-    cy.createTempUser([
-      Permissions.inventoryAll.gui,
-    ]).then(createdUserProperties => {
+    cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
 
-      marcFiles.forEach(marcFile => {
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-          JobProfiles.waitLoadingList();
-          JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(marcFile.fileName);
-          Logs.checkStatusOfJobProfile('Completed');
-          Logs.openFileDetails(marcFile.fileName);
-          Logs.getCreatedItemsID().then(link => {
-            createdRecordIDs.push(link.split('/')[5]);
-          });
-        });
+      marcFiles.forEach((marcFile) => {
+        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
+          () => {
+            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+            JobProfiles.waitLoadingList();
+            JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
+            JobProfiles.runImportFile();
+            JobProfiles.waitFileIsImported(marcFile.fileName);
+            Logs.checkStatusOfJobProfile('Completed');
+            Logs.openFileDetails(marcFile.fileName);
+            Logs.getCreatedItemsID().then((link) => {
+              createdRecordIDs.push(link.split('/')[5]);
+            });
+          },
+        );
       });
 
       cy.visit(TopMenu.inventoryPath).then(() => {
@@ -69,14 +69,20 @@ describe('Inventory: Contributors Browse', () => {
         InventoryInstance.verifySelectMarcAuthorityModal();
         MarcAuthorities.switchToSearch();
         InventoryInstance.searchResults(testData.contributorName);
-        MarcAuthorities.checkFieldAndContentExistence(testData.tag010, `‡a ${marcFiles[1].naturalId}`);
+        MarcAuthorities.checkFieldAndContentExistence(
+          testData.tag010,
+          `‡a ${marcFiles[1].naturalId}`,
+        );
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(26, testData.tag700);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
       });
 
-      cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+      cy.login(testData.userProperties.username, testData.userProperties.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
     });
   });
 
@@ -88,16 +94,20 @@ describe('Inventory: Contributors Browse', () => {
     });
   });
 
-  it('C359595 Verify that contributors with the same "Name" and "Name type" and one has, and one has not "authorityID" will display in different rows in the response (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
-    InventorySearchAndFilter.switchToBrowseTab();
-    InventorySearchAndFilter.verifyKeywordsAsDefault();
-    BrowseContributors.select();
-    BrowseContributors.browse(testData.contributorName);
-    BrowseSubjects.checkRowWithValueAndAuthorityIconExists(testData.contributorName);
-    BrowseSubjects.checkRowWithValueAndNoAuthorityIconExists(testData.contributorName);
-    BrowseSubjects.checkRowValueIsBold(5, testData.contributorName);
-    BrowseSubjects.checkRowValueIsBold(6, testData.contributorName);
-    BrowseSubjects.checkValueAbsentInRow(4, testData.contributorName);
-    BrowseSubjects.checkValueAbsentInRow(7, testData.contributorName);
-  });
+  it(
+    'C359595 Verify that contributors with the same "Name" and "Name type" and one has, and one has not "authorityID" will display in different rows in the response (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      InventorySearchAndFilter.switchToBrowseTab();
+      InventorySearchAndFilter.verifyKeywordsAsDefault();
+      BrowseContributors.select();
+      BrowseContributors.browse(testData.contributorName);
+      BrowseSubjects.checkRowWithValueAndAuthorityIconExists(testData.contributorName);
+      BrowseSubjects.checkRowWithValueAndNoAuthorityIconExists(testData.contributorName);
+      BrowseSubjects.checkRowValueIsBold(5, testData.contributorName);
+      BrowseSubjects.checkRowValueIsBold(6, testData.contributorName);
+      BrowseSubjects.checkValueAbsentInRow(4, testData.contributorName);
+      BrowseSubjects.checkValueAbsentInRow(7, testData.contributorName);
+    },
+  );
 });

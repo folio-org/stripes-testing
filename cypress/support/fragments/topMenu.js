@@ -1,5 +1,4 @@
-import { including } from '@interactors/html';
-import { Link } from '../../../interactors';
+import { Link, including } from '@interactors/html';
 
 const agreementsPath = '/erm/agreements';
 const inventoryPath = '/inventory';
@@ -31,8 +30,6 @@ const exportManagerOrganizationsPath = 'export-manager/edi-jobs';
 const customFieldsPath = '/settings/users/custom-fields';
 const notesPath = '/settings/notes/general';
 const permissionSetPath = '/settings/users/perms?layer=add';
-const customLabel = '/settings/eholdings'
-
 
 export default {
   // direct paths to folio apps to use in cy.visit() into initial steps of our scenarios
@@ -65,13 +62,19 @@ export default {
   exportManagerPath,
   exportManagerOrganizationsPath,
   customFieldsPath,
-  notesPath, 
-  permissionSetPath, 
-  customLabel,
-  openCheckInApp:() => {
+  notesPath,
+  permissionSetPath,
+
+  openCheckInApp: () => {
     cy.do(Link({ href: including('/checkin') }).click());
   },
-  openCheckOutApp:() => {
+  openCheckOutApp: () => {
     cy.do(Link({ href: including('/checkout') }).click());
+  },
+  openDataImportApp: () => {
+    cy.do(Link({ href: including(dataImportPath) }).click());
+  },
+  openInventoryApp: () => {
+    cy.do(Link({ href: including(inventoryPath) }).click());
   },
 };

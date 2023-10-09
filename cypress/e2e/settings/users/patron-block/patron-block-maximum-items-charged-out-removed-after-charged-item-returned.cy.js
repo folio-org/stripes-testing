@@ -22,8 +22,7 @@ import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane
 import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 
 describe('Patron Block: Maximum number of items charged out', () => {
-  const checkedOutBlockMessage =
-    `You have reached the maximum number of items you can check out as set by patron group${getRandomPostfix()}`;
+  const checkedOutBlockMessage = `You have reached the maximum number of items you can check out as set by patron group${getRandomPostfix()}`;
   const patronGroup = {
     name: 'groupToPatronBlock' + getRandomPostfix(),
   };
@@ -38,11 +37,11 @@ describe('Patron Block: Maximum number of items charged out', () => {
     ],
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest charged out limit', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
 
   before('Preconditions', () => {
-    itemsData.itemsWithSeparateInstance.forEach(function (item, index) {
+    itemsData.itemsWithSeparateInstance.forEach((item, index) => {
       item.barcode = generateUniqueItemBarcodeWithShift(index);
     });
 
@@ -87,8 +86,10 @@ describe('Patron Block: Maximum number of items charged out', () => {
             ],
           }).then((specialInstanceIds) => {
             itemsData.itemsWithSeparateInstance[index].instanceId = specialInstanceIds.instanceId;
-            itemsData.itemsWithSeparateInstance[index].holdingId = specialInstanceIds.holdingIds[0].id;
-            itemsData.itemsWithSeparateInstance[index].itemId = specialInstanceIds.holdingIds[0].itemIds;
+            itemsData.itemsWithSeparateInstance[index].holdingId =
+              specialInstanceIds.holdingIds[0].id;
+            itemsData.itemsWithSeparateInstance[index].itemId =
+              specialInstanceIds.holdingIds[0].itemIds;
           });
         });
         cy.wrap(itemsData.itemsWithSeparateInstance).as('items');
@@ -105,7 +106,7 @@ describe('Patron Block: Maximum number of items charged out', () => {
           permissions.checkoutAll.gui,
           permissions.uiUsersView.gui,
         ],
-        patronGroup.name
+        patronGroup.name,
       )
         .then((userProperties) => {
           userData.username = userProperties.username;
@@ -114,7 +115,11 @@ describe('Patron Block: Maximum number of items charged out', () => {
           userData.barcode = userProperties.barcode;
         })
         .then(() => {
-          UserEdit.addServicePointViaApi(testData.userServicePoint.id, userData.userId, testData.userServicePoint.id);
+          UserEdit.addServicePointViaApi(
+            testData.userServicePoint.id,
+            userData.userId,
+            testData.userServicePoint.id,
+          );
 
           cy.get('@items').each((item) => {
             Checkout.checkoutItemViaApi({
@@ -152,9 +157,12 @@ describe('Patron Block: Maximum number of items charged out', () => {
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
+      testData.defaultLocation.id,
     );
-    Conditions.resetConditionViaApi('3d7c52dc-c732-4223-8bf8-e5917801386f', 'Maximum number of items charged out');
+    Conditions.resetConditionViaApi(
+      '3d7c52dc-c732-4223-8bf8-e5917801386f',
+      'Maximum number of items charged out',
+    );
   });
 
   it(
@@ -192,6 +200,6 @@ describe('Patron Block: Maximum number of items charged out', () => {
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userData.barcode);
       Users.checkPatronIsNotBlocked(userData.userId);
-    }
+    },
   );
 });

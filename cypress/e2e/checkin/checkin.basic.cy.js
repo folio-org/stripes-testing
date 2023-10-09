@@ -18,58 +18,72 @@ import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('Check In - Actions ', () => {
   const userData = {
-    permissions: [permissions.checkinAll.gui,
+    permissions: [
+      permissions.checkinAll.gui,
       permissions.uiUsersViewLoans.gui,
       permissions.uiUsersView.gui,
       permissions.uiInventoryViewInstances.gui,
-      permissions.uiUsersfeefinesCRUD.gui],
+      permissions.uiUsersfeefinesCRUD.gui,
+    ],
   };
   const itemData = {
     barcode: generateItemBarcode(),
     instanceTitle: `Instance ${getRandomPostfix()}`,
   };
   let defaultLocation;
-  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation('autotest basic checkin', uuid());
-  const checkInResultsData = [
-    ITEM_STATUS_NAMES.AVAILABLE,
-    itemData.barcode,
-  ];
+  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
+  const checkInResultsData = [ITEM_STATUS_NAMES.AVAILABLE, itemData.barcode];
 
   before('Create New Item, New User and Check out item', () => {
-    cy.getAdminToken().then(() => {
-      cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => { itemData.instanceTypeId = instanceTypes[0].id; });
-      cy.getHoldingTypes({ limit: 1 }).then((res) => { itemData.holdingTypeId = res[0].id; });
-      ServicePoints.createViaApi(servicePoint);
-      defaultLocation = Location.getDefaultLocation(servicePoint.id);
-      checkInResultsData.push(defaultLocation.name);
-      Location.createViaApi(defaultLocation);
-      cy.getLoanTypes({ limit: 1 }).then((res) => { itemData.loanTypeId = res[0].id; });
-      cy.getMaterialTypes({ limit: 1 }).then((res) => {
-        itemData.materialTypeId = res.id;
-        itemData.materialTypeName = res.name;
-        checkInResultsData.push(`${itemData.instanceTitle} (${itemData.materialTypeName})`);
+    cy.getAdminToken()
+      .then(() => {
+        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+          itemData.instanceTypeId = instanceTypes[0].id;
+        });
+        cy.getHoldingTypes({ limit: 1 }).then((res) => {
+          itemData.holdingTypeId = res[0].id;
+        });
+        ServicePoints.createViaApi(servicePoint);
+        defaultLocation = Location.getDefaultLocation(servicePoint.id);
+        checkInResultsData.push(defaultLocation.name);
+        Location.createViaApi(defaultLocation);
+        cy.getLoanTypes({ limit: 1 }).then((res) => {
+          itemData.loanTypeId = res[0].id;
+        });
+        cy.getMaterialTypes({ limit: 1 }).then((res) => {
+          itemData.materialTypeId = res.id;
+          itemData.materialTypeName = res.name;
+          checkInResultsData.push(`${itemData.instanceTitle} (${itemData.materialTypeName})`);
+        });
+      })
+      .then(() => {
+        InventoryInstances.createFolioInstanceViaApi({
+          instance: {
+            instanceTypeId: itemData.instanceTypeId,
+            title: itemData.instanceTitle,
+          },
+          holdings: [
+            {
+              holdingsTypeId: itemData.holdingTypeId,
+              permanentLocationId: defaultLocation.id,
+            },
+          ],
+          items: [
+            {
+              barcode: itemData.barcode,
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+              permanentLoanType: { id: itemData.loanTypeId },
+              materialType: { id: itemData.materialTypeId },
+            },
+          ],
+        });
+      })
+      .then((specialInstanceIds) => {
+        itemData.testInstanceIds = specialInstanceIds;
       });
-    }).then(() => {
-      InventoryInstances.createFolioInstanceViaApi({ instance: {
-        instanceTypeId: itemData.instanceTypeId,
-        title: itemData.instanceTitle,
-      },
-      holdings: [{
-        holdingsTypeId: itemData.holdingTypeId,
-        permanentLocationId: defaultLocation.id,
-      }],
-      items:[{
-        barcode: itemData.barcode,
-        status:  { name: ITEM_STATUS_NAMES.AVAILABLE },
-        permanentLoanType: { id: itemData.loanTypeId },
-        materialType: { id: itemData.materialTypeId },
-      }] });
-    }).then(specialInstanceIds => {
-      itemData.testInstanceIds = specialInstanceIds;
-    });
 
     cy.createTempUser(userData.permissions)
-      .then(userProperties => {
+      .then((userProperties) => {
         userData.username = userProperties.username;
         userData.password = userProperties.password;
         userData.userId = userProperties.userId;
@@ -77,8 +91,7 @@ describe('Check In - Actions ', () => {
         userData.firstName = userProperties.firstName;
       })
       .then(() => {
-        UserEdit.addServicePointViaApi(servicePoint.id,
-          userData.userId, servicePoint.id);
+        UserEdit.addServicePointViaApi(servicePoint.id, userData.userId, servicePoint.id);
 
         Checkout.checkoutItemViaApi({
           id: uuid(),
@@ -100,12 +113,13 @@ describe('Check In - Actions ', () => {
       defaultLocation.institutionId,
       defaultLocation.campusId,
       defaultLocation.libraryId,
-      defaultLocation.id
+      defaultLocation.id,
     );
     ServicePoints.deleteViaApi(servicePoint.id);
   });
 
   it('C347631 Check in: Basic check in (vega)', { tags: [TestTypes.smoke, devTeams.vega] }, () => {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(10000);
     cy.visit(TopMenu.checkInPath);
     CheckInActions.waitLoading();
@@ -123,4 +137,3 @@ describe('Check In - Actions ', () => {
     CheckInActions.openCheckInPane();
   });
 });
-

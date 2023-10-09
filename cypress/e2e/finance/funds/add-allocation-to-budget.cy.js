@@ -18,38 +18,35 @@ describe('ui-finance: Transactions', () => {
 
   before(() => {
     cy.getAdminToken();
-    FiscalYears.createViaApi(defaultFiscalYear)
-      .then(response => {
-        defaultFiscalYear.id = response.id;
-        defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+    FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
+      defaultFiscalYear.id = response.id;
+      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
 
-        Ledgers.createViaApi(defaultLedger)
-          .then(ledgerResponse => {
-            defaultLedger.id = ledgerResponse.id;
-            defaultfund.ledgerId = defaultLedger.id;
+      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+        defaultLedger.id = ledgerResponse.id;
+        defaultfund.ledgerId = defaultLedger.id;
 
-            Funds.createViaApi(defaultfund)
-              .then(fundResponse => {
-                defaultfund.id = fundResponse.fund.id;
+        Funds.createViaApi(defaultfund).then((fundResponse) => {
+          defaultfund.id = fundResponse.fund.id;
 
-                cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
-                FinanceHelp.searchByName(defaultfund.name);
-                Funds.selectFund(defaultfund.name);
-                Funds.addBudget(allocatedQuantity);
-              });
-          });
+          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+          FinanceHelp.searchByName(defaultfund.name);
+          Funds.selectFund(defaultfund.name);
+          Funds.addBudget(allocatedQuantity);
+        });
       });
-    cy.createTempUser([
-      permissions.uiFinanceCreateAllocations.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
+    });
+    cy.createTempUser([permissions.uiFinanceCreateAllocations.gui]).then((userProperties) => {
+      user = userProperties;
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.fundPath,
+        waiter: Funds.waitLoading,
       });
+    });
   });
 
   after(() => {
-    cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
+    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
     FinanceHelp.searchByName(defaultfund.name);
     Funds.selectFund(defaultfund.name);
     Funds.selectBudgetDetails();
@@ -66,13 +63,19 @@ describe('ui-finance: Transactions', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C6649 Add allocation to a budget by creating an allocation transaction (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    FinanceHelp.searchByName(defaultfund.name);
-    Funds.selectFund(defaultfund.name);
-    Funds.selectBudgetDetails();
-    Funds.increaseAllocation();
-    InteractorsTools.checkCalloutMessage(`$50.00 was successfully allocated to the budget ${defaultfund.code}-${defaultFiscalYear.code}`);
-    Funds.viewTransactions();
-    Funds.checkTransactionList(defaultfund.code);
-  });
+  it(
+    'C6649 Add allocation to a budget by creating an allocation transaction (thunderjet)',
+    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    () => {
+      FinanceHelp.searchByName(defaultfund.name);
+      Funds.selectFund(defaultfund.name);
+      Funds.selectBudgetDetails();
+      Funds.increaseAllocation();
+      InteractorsTools.checkCalloutMessage(
+        `$50.00 was successfully allocated to the budget ${defaultfund.code}-${defaultFiscalYear.code}`,
+      );
+      Funds.viewTransactions();
+      Funds.checkTransactionList(defaultfund.code);
+    },
+  );
 });

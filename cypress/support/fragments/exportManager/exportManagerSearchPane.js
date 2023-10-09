@@ -1,4 +1,4 @@
-import { including } from 'bigtest';
+import { HTML, including } from '@interactors/html';
 import {
   Pane,
   Button,
@@ -11,7 +11,6 @@ import {
   MultiColumnList,
   PaneHeader,
   KeyValue,
-  HTML,
   MultiColumnListRow,
 } from '../../../../interactors';
 
@@ -26,17 +25,26 @@ const statusAccordion = Accordion('Status');
 const startDateTextfield = TextField({ name: 'startDate' });
 const endDateTextfield = TextField({ name: 'endDate' });
 const applyButton = Button('Apply');
-const getSearchResult = (row = 0, col = 0) => MultiColumnListCell({ 'row': row, 'columnIndex': col });
+const getSearchResult = (row = 0, col = 0) => MultiColumnListCell({ row, columnIndex: col });
+const exportJobsList = MultiColumnList({ id: 'export-jobs-list' });
+const jobDetailsPane = Pane('Export job ');
 
 // Cypress clicks before the UI loads, use when there is no way to attach waiter to element
-const waitClick = () => { cy.wait(1000); };
+const waitClick = () => {
+  cy.wait(1000);
+};
+const exportJob = (jobId) => {
+  // TODO: redesign to interactors
+  cy.get(`a:contains(${jobId})`).first().click();
+};
 
 export default {
   getSearchResult,
+  exportJob,
   waitLoading() {
     cy.expect([
       Pane('Export jobs').exists(),
-      HTML('Choose a filter or enter a search query to show results.').exists()
+      HTML('Choose a filter or enter a search query to show results.').exists(),
     ]);
   },
 
@@ -45,25 +53,26 @@ export default {
   },
   verifyResultAndClick(content) {
     cy.expect(MultiColumnListCell(including(content)).exists());
-    cy.do(MultiColumnListRow({ index:0 }).click());
+    cy.do(MultiColumnListRow({ index: 0 }).click());
   },
   selectJobByIndex(content, index) {
-    cy.get('div[class*=mclRow-]').contains(content).then(element => {
-      element.prevObject[index].click();
-    });
+    cy.get('div[class*=mclRow-]')
+      .contains(content)
+      .then((element) => {
+        element.prevObject[index].click();
+      });
   },
 
   verifyJobAmount(text, amount) {
-    cy.get('div[class*=mclRow-]').contains(text).then(element => {
-      expect(element.prevObject.length).to.eq(amount);
-    });
+    cy.get('div[class*=mclRow-]')
+      .contains(text)
+      .then((element) => {
+        expect(element.prevObject.length).to.eq(amount);
+      });
   },
 
   searchById(id) {
-    cy.do([
-      TextField().fillIn(id),
-      searchButton.click(),
-    ]);
+    cy.do([TextField().fillIn(id), searchButton.click()]);
   },
 
   selectSearchResultItem(indexRow = 0) {
@@ -72,7 +81,11 @@ export default {
 
   selectJobByIntegrationInList(integrationName) {
     cy.wait(6000);
-    cy.do(MultiColumnList({ id: 'export-edi-jobs-list' }).find(MultiColumnListCell(integrationName)).click());
+    cy.do(
+      MultiColumnList({ id: 'export-edi-jobs-list' })
+        .find(MultiColumnListCell(integrationName))
+        .click(),
+    );
   },
 
   closeExportJobPane() {
@@ -150,7 +163,11 @@ export default {
   },
 
   resetStartTime() {
-    cy.do(startTimeAccordion.find(Button({ ariaLabel: 'Clear selected filters for "[object Object]"' })).click());
+    cy.do(
+      startTimeAccordion
+        .find(Button({ ariaLabel: 'Clear selected filters for "[object Object]"' }))
+        .click(),
+    );
   },
 
   enterEndTime(fromDate, toDate) {
@@ -164,15 +181,16 @@ export default {
   },
 
   resetEndTime() {
-    cy.do(endTimeAccordion.find(Button({ ariaLabel: 'Clear selected filters for "[object Object]"' })).click());
+    cy.do(
+      endTimeAccordion
+        .find(Button({ ariaLabel: 'Clear selected filters for "[object Object]"' }))
+        .click(),
+    );
   },
 
   searchBySystemNo() {
     waitClick();
-    cy.do([
-      systemAccordion.clickHeader(),
-      systemAccordion.find(Checkbox({ label: 'No' })).click(),
-    ]);
+    cy.do([systemAccordion.clickHeader(), systemAccordion.find(Checkbox({ label: 'No' })).click()]);
   },
 
   searchBySourceUserName(username) {
@@ -186,7 +204,16 @@ export default {
 
   searchByAuthorityControl() {
     waitClick();
-    cy.do(jobTypeAccordion.find(Checkbox({ id: 'clickable-filter-type-auth-headings-updates' })).click());
+    cy.do(
+      jobTypeAccordion
+        .find(Checkbox({ id: 'clickable-filter-type-auth-headings-updates' }))
+        .click(),
+    );
+  },
+
+  searchByEHoldings() {
+    waitClick();
+    cy.do(jobTypeAccordion.find(Checkbox({ id: 'clickable-filter-type-e-holdings' })).click());
   },
 
   downloadLastCreatedJob(jobId) {
@@ -230,6 +257,56 @@ export default {
   },
 
   verifyNoPermissionWarning() {
-    cy.expect(HTML('You don\'t have permission to view this app/record').exists());
+    cy.expect(HTML("You don't have permission to view this app/record").exists());
+  },
+
+  verifyJobDataInResults(expectedValuesArray) {
+    expectedValuesArray.forEach((expectedValue) => {
+      cy.expect(
+        exportJobsList
+          .find(MultiColumnListRow({ index: 0 }))
+          .has({ content: including(expectedValue) }),
+      );
+    });
+  },
+
+  verifyJobDataInDetailView(expectedValuesObject) {
+    cy.expect([
+      jobDetailsPane.find(KeyValue('Job ID')).has({ value: expectedValuesObject.jobID }),
+      jobDetailsPane.find(KeyValue('Status')).has({ value: expectedValuesObject.status }),
+      jobDetailsPane.find(KeyValue('Job type')).has({ value: expectedValuesObject.jobType }),
+      jobDetailsPane.find(KeyValue('Description')).has({ value: expectedValuesObject.description }),
+      jobDetailsPane.find(KeyValue('Output type')).has({ value: expectedValuesObject.outputType }),
+      jobDetailsPane.find(KeyValue('Source')).has({ value: expectedValuesObject.source }),
+      jobDetailsPane
+        .find(KeyValue('Start time'))
+        .has({ value: including(expectedValuesObject.startDate) }),
+      jobDetailsPane
+        .find(KeyValue('End time'))
+        .has({ value: including(expectedValuesObject.startDate) }),
+    ]);
+  },
+
+  verifyJobStatusInDetailView(status) {
+    cy.expect(jobDetailsPane.find(KeyValue('Status')).has({ value: status }));
+  },
+
+  verifyJobOrganizationInDetailView(organization) {
+    cy.expect(jobDetailsPane.find(KeyValue('Organization')).has({ value: organization.name }));
+  },
+
+  verifyJobExportMethodInDetailView(integrationName) {
+    cy.expect(jobDetailsPane.find(KeyValue('Export method')).has({ value: integrationName }));
+  },
+
+  verifyExportedFileName(actualName) {
+    // valid name example: 2023-10-05_10-34-45_1166_123355-3551879_package
+    expect(actualName).to.match(
+      /^cypress\/downloads\/\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}_\d+_\d+-\d+_package\.csv$/,
+    );
+  },
+
+  verifyContentOfExportFile(actual, ...expectedArray) {
+    expectedArray.forEach((expectedItem) => expect(actual).to.include(expectedItem));
   },
 };

@@ -36,7 +36,7 @@ describe('Permissions Tags', () => {
           permissions.uiUserCanEnableDisableTags.gui,
           permissions.uiInvoicesCanViewAndEditInvoicesAndInvoiceLines.gui,
         ],
-        patronGroup.name
+        patronGroup.name,
       ).then((userProperties) => {
         userData = userProperties;
         UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
@@ -73,6 +73,6 @@ describe('Permissions Tags', () => {
       InvoiceView.selectFirstInvoice();
       InventorySearchAndFilter.openTagsField();
       InventorySearchAndFilter.verifyTagsView();
-    }
+    },
   );
 });

@@ -1,14 +1,10 @@
-import marc from '../../support/ideyaLabs/marc';
 import testTypes from '../../support/dictionary/testTypes';
 import inventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import inventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import marcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import marcAuthoritiesDelete from '../../support/fragments/marcAuthority/marcAuthoritiesDelete';
-import marcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
 import topMenu from '../../support/fragments/topMenu';
 
 describe.skip('Feature MARC Authority', () => {
-
   const testData = {
     source: 'MARC',
     searchOption: 'Keyword',
@@ -36,45 +32,6 @@ describe.skip('Feature MARC Authority', () => {
   });
 
   it(
-    'C375070 Link the ""650"" of ""MARC Bib"" field with ""150"" field of ""MARC Authority"" record. (spitfire)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      cy.visit(topMenu.inventoryPath);
-      inventorySearchAndFilter.switchToHoldings();
-      inventorySearchAndFilter.bySource(testData.source);
-      inventorySearchAndFilter.selectSearchResultByRowIndex(
-        testData.derive.rowIndex
-      );
-      inventoryInstance.editMarcBibliographicRecord();
-      inventoryInstance.verifyAndClickLinkIcon(testData.tag.tag650);
-      marcAuthorities.switchToSearch();
-      inventoryInstance.verifySearchOptions();
-      marcAuthorities.clickReset();
-      inventoryInstance.searchResults(testData.authority650FieldValue);
-      marcAuthorities.clickLinkButton();
-      marcAuthority.checkLinkingAuthority650();
-      marc.saveAndClose();
-      inventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(
-        testData.accordion
-      );
-      inventoryInstance.viewSource();
-      marcAuthorities.closeMarcViewPane();
-      inventoryInstance.editMarcBibliographicRecord();
-      inventoryInstance.verifyAndClickUnlinkIcon(testData.tag.tag650);
-      marc.popupUnlinkButton();
-      marc.saveAndClose();
-      inventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane(
-        testData.accordion
-      );
-      inventoryInstance.viewSource();
-      marcAuthorities.checkFieldAndContentExistence(
-        testData.tag650,
-        `‡a ${testData.authority650FieldValue}`
-      );
-    }
-  );
-
-  it(
     'C376987 User can print ""MARC authority"" record (spitfire)',
     { tags: [testTypes.ideaLabsTests] },
     () => {
@@ -84,22 +41,6 @@ describe.skip('Feature MARC Authority', () => {
       inventoryInstance.selectRecord();
       marcAuthoritiesDelete.clickprintButton();
       cy.exec('java -jar sikuli_ide.jar -r printer.sikuli');
-    }
+    },
   );
-
-  it(
-    'C388651 ""008"" field updated when valid LDR 06-07 combinations entered when editing ""MARC bib"" record ( Spitfire)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      cy.visit(topMenu.inventoryPath);
-      inventorySearchAndFilter.switchToHoldings();
-      inventorySearchAndFilter.bySource(testData.source);
-      inventorySearchAndFilter.selectSearchResultByRowIndex(
-        testData.derive.rowIndex
-      );
-      inventoryInstance.editMarcBibliographicRecord();
-    }
-  );
-  
 });
-

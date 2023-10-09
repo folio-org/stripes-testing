@@ -1,6 +1,14 @@
 import uuid from 'uuid';
 import { getTestEntityValue } from '../../utils/stringTools';
-import { PaneHeader, Button, TextField, Select, KeyValue, Section, HTML } from '../../../../interactors';
+import {
+  PaneHeader,
+  Button,
+  TextField,
+  Select,
+  KeyValue,
+  Section,
+  HTML,
+} from '../../../../interactors';
 
 const actionsButton = Button('Actions');
 const lostItemFeePolicySection = Section({ id: 'viewLostItemFeeSection' });
@@ -44,10 +52,7 @@ export default {
   },
 
   startEditing() {
-    cy.do([
-      actionsButton.click(),
-      Button({ id: 'dropdown-clickable-edit-item' }).click(),
-    ]);
+    cy.do([actionsButton.click(), Button({ id: 'dropdown-clickable-edit-item' }).click()]);
   },
 
   fillName(name) {
@@ -58,10 +63,7 @@ export default {
   },
 
   fillDuration(duration, interval) {
-    cy.do([
-      durationTextfield.fillIn(duration),
-      intervalSelect.choose(interval),
-    ]);
+    cy.do([durationTextfield.fillIn(duration), intervalSelect.choose(interval)]);
   },
 
   save() {
@@ -80,11 +82,7 @@ export default {
   },
 
   delete() {
-    cy.do([
-      actionsButton.click(),
-      deleteButton.click(),
-      confirmButton.click(),
-    ]);
+    cy.do([actionsButton.click(), deleteButton.click(), confirmButton.click()]);
   },
 
   createViaApi(policy = defaultLostItemFeePolicy) {
@@ -96,7 +94,6 @@ export default {
         isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => {
-        Cypress.env('lostItemFeesPolicy', body);
         return body;
       });
   },

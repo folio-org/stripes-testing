@@ -14,12 +14,12 @@ import NewLocation from '../../support/fragments/settings/tenant/locations/newLo
 import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('orders: duplicate', () => {
-
-  const order = { ...NewOrder.defaultOneTimeOrder,
+  const order = {
+    ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',
     ongoing: { isSubscription: false, manualRenewal: false },
     approved: true,
-   };
+  };
   const organization = {
     ...NewOrganization.defaultUiOrganizations,
     accounts: [
@@ -35,7 +35,7 @@ describe('orders: duplicate', () => {
         notes: '',
         paymentMethod: 'Cash',
       },
-    ]
+    ],
   };
   let user;
   let location;
@@ -45,28 +45,28 @@ describe('orders: duplicate', () => {
   before(() => {
     cy.getAdminToken();
 
-    ServicePoints.getViaApi()
-    .then((servicePoint) => {
+    ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
-        .then(res => {
-          location = res;
-        });
-    });
-    Organizations.createOrganizationViaApi(organization)
-      .then(organizationsResponse => {
-        organization.id = organizationsResponse;
-        order.vendor = organizationsResponse;
+      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+        location = res;
       });
-    cy.createOrderApi(order)
-      .then((response) => {
+    });
+    Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
+      organization.id = organizationsResponse;
+      order.vendor = organizationsResponse;
+    });
+    cy.createOrderApi(order).then((response) => {
       orderNumber = response.body.poNumber;
-      cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+      cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList();
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
-      OrderLines.fillInPOLineInfoForExportWithLocation(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId);
+      OrderLines.fillInPOLineInfoForExportWithLocation(
+        `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
+        'Purchase',
+        location.institutionId,
+      );
       OrderLines.backToEditingOrder();
       Orders.openOrder();
     });
@@ -76,38 +76,47 @@ describe('orders: duplicate', () => {
       permissions.uiOrdersView.gui,
       permissions.uiOrdersEdit.gui,
       permissions.uiOrdersDelete.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
       });
+    });
   });
 
   after(() => {
-    cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList();
-    Orders.unOpenOrder(orderNumber);
+    Orders.unOpenOrder();
     // Need to wait until the order is opened before deleting it
     cy.wait(2000);
     Orders.deleteOrderViaApi(order.id);
 
     Organizations.deleteOrganizationViaApi(organization.id);
     NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
-        location.institutionId,
-        location.campusId,
-        location.libraryId,
-        location.id
-      );
+      location.institutionId,
+      location.campusId,
+      location.libraryId,
+      location.id,
+    );
     Users.deleteViaApi(user.userId);
   });
 
-  it('C9220: Duplicate purchase order (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList();
-    Orders.duplicateOrder();
-    InteractorsTools.checkCalloutMessage('The purchase order was successfully duplicated');
-    Orders.checkDuplicatedOrder(organization.name, `${user.username}, testPermFirst testMiddleName`);
-    Orders.deleteOrderViaActions();
-  });
+  it(
+    'C9220: Duplicate purchase order (thunderjet)',
+    { tags: [TestTypes.smoke, devTeams.thunderjet] },
+    () => {
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList();
+      Orders.duplicateOrder();
+      InteractorsTools.checkCalloutMessage('The purchase order was successfully duplicated');
+      Orders.checkDuplicatedOrder(
+        organization.name,
+        `${user.username}, testPermFirst testMiddleName`,
+      );
+      Orders.deleteOrderViaActions();
+    },
+  );
 });

@@ -34,27 +34,34 @@ describe('bulk-edit', () => {
         permissions.bulkEditView.gui,
         permissions.bulkEditEdit.gui,
         permissions.inventoryAll.gui,
-        permissions.inventoryCRUDItemNoteTypes.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading
-          });
-          InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-          cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` })
-            .then((res) => {
-              const itemData = res;
-              // Adding check in note, check out note and action note
-              itemData.notes = [{ itemNoteTypeId: '0e40884c-3523-4c6d-8187-d578e3d2794e', note: actionNote, staffOnly: false }];
-              itemData.circulationNotes = [
-                { noteType: 'Check in', note: checkInNote, staffOnly: false },
-                { noteType: 'Check out', note: checkOutNote, staffOnly: false }];
-              cy.updateItemViaApi(itemData);
-              FileManager.createFile(`cypress/fixtures/${itemUUIDsFileName}`, res.id);
-            });
+        permissions.inventoryCRUDItemNoteTypes.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
+        InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
+        cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
+          (res) => {
+            const itemData = res;
+            // Adding check in note, check out note and action note
+            itemData.notes = [
+              {
+                itemNoteTypeId: '0e40884c-3523-4c6d-8187-d578e3d2794e',
+                note: actionNote,
+                staffOnly: false,
+              },
+            ];
+            itemData.circulationNotes = [
+              { noteType: 'Check in', note: checkInNote, staffOnly: false },
+              { noteType: 'Check out', note: checkOutNote, staffOnly: false },
+            ];
+            cy.updateItemViaApi(itemData);
+            FileManager.createFile(`cypress/fixtures/${itemUUIDsFileName}`, res.id);
+          },
+        );
+      });
     });
 
     after('delete test data', () => {
@@ -64,46 +71,54 @@ describe('bulk-edit', () => {
       FileManager.deleteFileFromDownloadsByMask(changedRecordsFileName);
     });
 
-    it('C400670 Verify Bulk Edit actions for Items notes - mark Staff only (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.checkItemsRadio();
-      BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');
+    it(
+      'C400670 Verify Bulk Edit actions for Items notes - mark Staff only (firebird)',
+      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.checkItemsRadio();
+        BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');
 
-      BulkEditSearchPane.uploadFile(itemUUIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.verifyMatchedResults(item.barcode);
+        BulkEditSearchPane.uploadFile(itemUUIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyMatchedResults(item.barcode);
 
-      BulkEditActions.openActions();
-      BulkEditSearchPane.changeShowColumnCheckbox('Notes', 'Circulation Notes');
-      BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openActions();
+        BulkEditActions.openInAppStartBulkEditFrom();
 
-      BulkEditActions.verifyItemOptions();
-      BulkEditActions.verifyItemCheckInNoteActions();
-      BulkEditActions.markAsStaffOnly('Check in note');
-      BulkEditActions.addNewBulkEditFilterString();
-      BulkEditActions.verifyItemNoteActions('Action note', 1);
-      BulkEditActions.markAsStaffOnly('Action note', 1);
-      BulkEditActions.addNewBulkEditFilterString();
-      BulkEditActions.markAsStaffOnly('Check out note', 2);
+        BulkEditActions.verifyItemOptions();
+        BulkEditActions.verifyItemCheckInNoteActions();
+        BulkEditActions.markAsStaffOnly('Check in note');
+        BulkEditActions.addNewBulkEditFilterString();
+        BulkEditActions.verifyItemNoteActions('Action note', 1);
+        BulkEditActions.markAsStaffOnly('Action note', 1);
+        BulkEditActions.addNewBulkEditFilterString();
+        BulkEditActions.markAsStaffOnly('Check out note', 2);
 
-      BulkEditActions.confirmChanges();
-      BulkEditActions.commitChanges();
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.verifyChangedResults(item.barcode);
-      BulkEditActions.openActions();
-      BulkEditActions.downloadChangedCSV();
-      ExportFile.verifyFileIncludes(changedRecordsFileName, [actionNote, checkInNote, checkOutNote]);
+        BulkEditActions.confirmChanges();
+        BulkEditActions.commitChanges();
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyChangedResults(item.barcode);
+        BulkEditActions.openActions();
+        BulkEditSearchPane.changeShowColumnCheckbox('Action note', 'Circulation Notes');
+        BulkEditActions.downloadChangedCSV();
+        ExportFile.verifyFileIncludes(changedRecordsFileName, [
+          actionNote,
+          checkInNote,
+          checkOutNote,
+        ]);
 
-      BulkEditSearchPane.verifyChangesUnderColumns('Circulation Notes', checkInNote);
-      BulkEditSearchPane.verifyChangesUnderColumns('Circulation Notes', checkOutNote);
-      BulkEditSearchPane.verifyChangesUnderColumns('Notes', actionNote);
+        BulkEditSearchPane.verifyChangesUnderColumns('Circulation Notes', checkInNote);
+        BulkEditSearchPane.verifyChangesUnderColumns('Circulation Notes', checkOutNote);
+        BulkEditSearchPane.verifyChangesUnderColumns('Action note', actionNote);
 
-      TopMenuNavigation.navigateToApp('Inventory');
-      InventorySearchAndFilter.switchToItem();
-      InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
-      ItemRecordView.waitLoading();
-      ItemRecordView.checkCheckInNote(checkInNote);
-      ItemRecordView.checkCheckOutNote(checkOutNote);
-      ItemRecordView.checkItemNote(actionNote, 'Yes', 'Action note');
-    });
+        TopMenuNavigation.navigateToApp('Inventory');
+        InventorySearchAndFilter.switchToItem();
+        InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
+        ItemRecordView.waitLoading();
+        ItemRecordView.checkCheckInNote(checkInNote);
+        ItemRecordView.checkCheckOutNote(checkOutNote);
+        ItemRecordView.checkItemNote(actionNote, 'Yes', 'Action note');
+      },
+    );
   });
 });

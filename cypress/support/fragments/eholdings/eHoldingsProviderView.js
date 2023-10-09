@@ -6,6 +6,6 @@ const waitLoading = () => {
 
 export default {
   waitLoading,
-  edit:() => cy.do(Button({ id:'provider-edit-link' }).click()),
-  checkProxy:(proxyName) => cy.expect(KeyValue('Proxy', { value: proxyName }).exists())
+  edit: () => cy.do(Button({ id: 'provider-edit-link' }).click()),
+  checkProxy: (proxyName) => cy.expect(KeyValue('Proxy', { value: proxyName }).exists()),
 };

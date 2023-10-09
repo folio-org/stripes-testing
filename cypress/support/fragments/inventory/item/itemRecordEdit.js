@@ -11,17 +11,21 @@ export default {
     cy.expect(saveAndCloseBtn.has({ disabled: true }));
   },
 
-  addBarcode:(barcode) => {
-    cy.do(Accordion('Administrative data').find(TextField({ name:'barcode' })).fillIn(barcode));
+  addBarcode: (barcode) => {
+    cy.do(
+      Accordion('Administrative data')
+        .find(TextField({ name: 'barcode' }))
+        .fillIn(barcode),
+    );
     cy.expect(saveAndCloseBtn.has({ disabled: false }));
   },
 
-  save:() => cy.do(saveAndCloseBtn.click()),
+  save: () => cy.do(saveAndCloseBtn.click()),
 
   addAdministrativeNote: (note) => {
     cy.do([
       Button('Add administrative note').click(),
-      TextArea({ ariaLabel: 'Administrative note' }).fillIn(note)
+      TextArea({ ariaLabel: 'Administrative note' }).fillIn(note),
     ]);
   },
 };

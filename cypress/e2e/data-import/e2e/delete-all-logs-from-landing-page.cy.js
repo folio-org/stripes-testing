@@ -1,14 +1,12 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import TestTypes from '../../../support/dictionary/testTypes';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InteractorsTools from '../../../support/utils/interactorsTools';
-import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import DevTeams from '../../../support/dictionary/devTeams';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
@@ -19,18 +17,20 @@ describe('data-import', () => {
     const numberOfLogsToDelete = 2;
     const numberOfLogsPerPage = 25;
     const numberOfLogsToUpload = 30;
-    const getCalloutSuccessMessage = logsCount => `${logsCount} data import logs have been successfully deleted.`;
+    const getCalloutSuccessMessage = (logsCount) => `${logsCount} data import logs have been successfully deleted.`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
 
     before('create test data', () => {
       cy.createTempUser([
-        permissions.moduleDataImportEnabled.gui,
-        permissions.dataImportDeleteLogs.gui
+        Permissions.moduleDataImportEnabled.gui,
+        Permissions.dataImportDeleteLogs.gui,
       ])
-        .then(userProperties => {
+        .then((userProperties) => {
           userId = userProperties.userId;
-          cy.login(userProperties.username, userProperties.password,
-            { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.dataImportPath,
+            waiter: DataImport.waitLoading,
+          });
         })
         .then(() => {
           DataImport.checkIsLandingPageOpened();
@@ -38,7 +38,8 @@ describe('data-import', () => {
           new Array(numberOfLogsToUpload).fill(null).forEach((_, index) => {
             // as stated in preconditions we need at least 30 logs so,
             // we are uploading 29 empty files and 1 file with content to speed up uploading process
-            const filePath = numberOfLogsToUpload - 1 === index ? filePathToUpload : emptyFilePathToUpload;
+            const filePath =
+              numberOfLogsToUpload - 1 === index ? filePathToUpload : emptyFilePathToUpload;
             fileNameToUpload = `C358137autotestFile.${getRandomPostfix()}.mrc`;
             // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
             DataImport.verifyUploadState();
@@ -60,15 +61,17 @@ describe('data-import', () => {
       Users.deleteViaApi(userId);
     });
 
-    it('C358137 A user can delete import logs with "Data import: Can delete import logs" permission on Landing page (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+    it(
+      'C358137 A user can delete import logs with "Data import: Can delete import logs" permission on Landing page (folijet)',
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
+      () => {
         Logs.openFileDetails(fileNameToUpload);
         Logs.clickOnHotLink();
         cy.location('pathname').should('include', '/inventory/view');
         cy.visit(TopMenu.dataImportPath);
 
-        DataImport.getLogsHrIdsFromUI(numberOfLogsToDelete).then(logsHrIdsToBeDeleted => {
-        // verify that user can cancel deletion of logs
+        DataImport.getLogsHrIdsFromUI(numberOfLogsToDelete).then((logsHrIdsToBeDeleted) => {
+          // verify that user can cancel deletion of logs
           DataImport.selectAllLogs();
           DataImport.verifyAllLogsCheckedStatus({ logsCount: numberOfLogsPerPage, checked: true });
           DataImport.verifyLogsPaneSubtitleExist(numberOfLogsPerPage);
@@ -93,6 +96,7 @@ describe('data-import', () => {
           cy.reload();
           DataImport.checkMultiColumnListRowsCount(numberOfLogsPerPage);
         });
-      });
+      },
+    );
   });
 });

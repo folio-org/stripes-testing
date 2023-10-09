@@ -11,7 +11,7 @@ import {
   Select,
   SearchField,
   QuickMarcEditorRow,
-  Callout
+  Callout,
 } from '../../../interactors';
 import holdingsRecordView from '../fragments/inventory/holdingsRecordView';
 
@@ -41,10 +41,6 @@ const fullTextFinderCheckbox = Checkbox({
 const saveButton = Button('Save');
 const verifyCustomLabel = Section({ id: 'resourceShowCustomLabels' });
 const RandomValue = Math.floor(Math.random() * 2);
-const packageId = null;
-//cy.intercept(`eholdings/packages/${packageId}/resources?**`).as(
-//  'getTitles'
-//);
 
 export default {
   openCreatedHoldingView: () => {
@@ -52,11 +48,7 @@ export default {
   },
 
   deleteHolding: () => {
-    cy.do([
-      actionsButton.click(),
-      deleteButton.click(),
-      deleteButtonInConfirmation.click(),
-    ]);
+    cy.do([actionsButton.click(), deleteButton.click(), deleteButtonInConfirmation.click()]);
   },
 
   clickLinkHeadings: () => {
@@ -69,11 +61,7 @@ export default {
   },
 
   searchByValue: (value) => {
-    cy.do(
-      filterSection
-        .find(TextField({ id: 'input-inventory-search' }))
-        .fillIn(value)
-    );
+    cy.do(filterSection.find(TextField({ id: 'input-inventory-search' })).fillIn(value));
     searchButton.click();
   },
 
@@ -128,7 +116,7 @@ export default {
     cy.do(
       Accordion('Administrative data')
         .find(Button(including('Record last updated')))
-        .click()
+        .click(),
     );
   },
 
@@ -144,7 +132,7 @@ export default {
       cy.expect(
         PaneHeader({ id: 'paneHeaderquick-marc-editor-pane' }).has({
           text: including(`Source: ${swappedString}`),
-        })
+        }),
       );
     });
   },
@@ -165,6 +153,7 @@ export default {
   },
 
   checkEmptyTitlesList: () => {
+    // eslint-disable-next-line no-undef
     cy.expect(titlesSection.find(KeyValue('Records found', { value: '0' })));
   },
 
@@ -172,6 +161,7 @@ export default {
     cy.wait(2000);
     cy.do(actionsButton.click());
     cy.wait(2000);
+    // eslint-disable-next-line no-undef
     cy.do(editButton.click());
   },
 
@@ -184,10 +174,6 @@ export default {
       });
   },
 
-  saveAndClose: () => {
-    cy.do(Button('Save & close').click());
-  },
-
   selectSearchResultByRowIndex(indexRow) {
     cy.do(this.getSearchResult(indexRow, 0).click());
     // must wait page render
@@ -195,14 +181,11 @@ export default {
   },
 
   searchBeats(value) {
-    cy.do((SearchField({ id: 'textarea-authorities-search' })).fillIn(value));
-    cy.do((Button({ id: 'submit-authorities-search' })).click());
+    cy.do(SearchField({ id: 'textarea-authorities-search' }).fillIn(value));
+    cy.do(Button({ id: 'submit-authorities-search' }).click());
   },
   checkFieldTagExists: () => {
-    cy.expect([
-      editorSection.exists(),
-      QuickMarcEditorRow({ tagValue: '625' }).exists()
-    ]);
+    cy.expect([editorSection.exists(), QuickMarcEditorRow({ tagValue: '625' }).exists()]);
   },
 
   checkLinkingAuthority650: () => {

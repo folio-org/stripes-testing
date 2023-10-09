@@ -1,4 +1,4 @@
-import RemoteStorageHelper from '../../../support/fragments/settings/remote-storage/remote-storage-configuration';
+import { Configurations } from '../../../support/fragments/settings/remote-storage';
 import Users from '../../../support/fragments/users/users';
 import testTypes from '../../../support/dictionary/testTypes';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -8,15 +8,18 @@ import permissions from '../../../support/dictionary/permissions';
 
 let user;
 
-const dematicEMS = RemoteStorageHelper.configurations.DematicEMS;
-const caiaSoft = RemoteStorageHelper.configurations.CaiaSoft;
-const dematicStagingDirector = RemoteStorageHelper.configurations.DematicStagingDirector;
+const dematicEMS = Configurations.configurations.DematicEMS;
+const caiaSoft = Configurations.configurations.CaiaSoft;
+const dematicStagingDirector = Configurations.configurations.DematicStagingDirector;
 
 describe('remote-storage-configuration', () => {
   before('create test data', () => {
-    cy.createTempUser([permissions.remoteStorageCRUD.gui]).then(userProperties => {
+    cy.createTempUser([permissions.remoteStorageCRUD.gui]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, { path: SettingsMenu.remoteStorageConfigurationPath, waiter: RemoteStorageHelper.waitLoading });
+      cy.login(user.username, user.password, {
+        path: SettingsMenu.remoteStorageConfigurationPath,
+        waiter: Configurations.waitLoading,
+      });
     });
   });
 
@@ -24,32 +27,42 @@ describe('remote-storage-configuration', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C343219 Check “Accession tables” page without configurations with CaiaSoft provider (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    const name = `AutotestConfigurationName${getRandomPostfix()}`;
+  it(
+    'C343219 Check “Accession tables” page without configurations with CaiaSoft provider (firebird)',
+    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    () => {
+      const name = `AutotestConfigurationName${getRandomPostfix()}`;
 
-    dematicEMS.create(name);
-    RemoteStorageHelper.verifyCreatedConfiguration(name, dematicEMS);
+      dematicEMS.create(name);
+      Configurations.verifyCreatedConfiguration(name, dematicEMS);
 
-    RemoteStorageHelper.editConfiguration(name, { provider: caiaSoft.title });
-    RemoteStorageHelper.closeWithSaving();
-    RemoteStorageHelper.verifyEditedConfiguration(name, { provider: caiaSoft.title });
-    RemoteStorageHelper.verifyDataSynchronizationSettingsAccordion(false);
+      Configurations.editConfiguration(name, { provider: caiaSoft.title });
+      Configurations.closeWithSaving();
+      Configurations.verifyEditedConfiguration(name, { provider: caiaSoft.title });
+      Configurations.verifyDataSynchronizationSettingsAccordion(false);
 
-    RemoteStorageHelper.editConfiguration(name, { provider: dematicStagingDirector.title });
-    RemoteStorageHelper.closeWithSaving();
-    RemoteStorageHelper.verifyEditedConfiguration(name, { provider: `${dematicStagingDirector.title} (TCP/IP)` });
-    RemoteStorageHelper.verifyDataSynchronizationSettingsAccordion(true);
+      Configurations.editConfiguration(name, { provider: dematicStagingDirector.title });
+      Configurations.closeWithSaving();
+      Configurations.verifyEditedConfiguration(name, {
+        provider: `${dematicStagingDirector.title} (TCP/IP)`,
+      });
+      Configurations.verifyDataSynchronizationSettingsAccordion(true);
 
-    RemoteStorageHelper.deleteRemoteStorage(name);
-  });
+      Configurations.deleteRemoteStorage(name);
+    },
+  );
 
-  it('C343287 Data synchronization settings field must be undefined for any provider except Dematic StagingDirector (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    const name = `AutotestConfigurationName${getRandomPostfix()}`;
+  it(
+    'C343287 Data synchronization settings field must be undefined for any provider except Dematic StagingDirector (firebird)',
+    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    () => {
+      const name = `AutotestConfigurationName${getRandomPostfix()}`;
 
-    RemoteStorageHelper.verifyProviderDataSynchronizationSettings();
-    dematicStagingDirector.create(name);
-    RemoteStorageHelper.verifyCreatedConfiguration(name, dematicStagingDirector);
+      Configurations.verifyProviderDataSynchronizationSettings();
+      dematicStagingDirector.create(name);
+      Configurations.verifyCreatedConfiguration(name, dematicStagingDirector);
 
-    RemoteStorageHelper.deleteRemoteStorage(name);
-  });
+      Configurations.deleteRemoteStorage(name);
+    },
+  );
 });

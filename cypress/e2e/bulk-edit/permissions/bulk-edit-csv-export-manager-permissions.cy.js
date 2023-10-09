@@ -25,11 +25,11 @@ describe('bulk-edit', () => {
         permissions.uiUsersView.gui,
         permissions.exportManagerAll.gui,
       ])
-        .then(userProperties => {
+        .then((userProperties) => {
           user = userProperties;
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading
+            waiter: BulkEditSearchPane.waitLoading,
           });
         })
         .then(() => {
@@ -48,13 +48,22 @@ describe('bulk-edit', () => {
       FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName);
     });
 
-    it('C353969 Export manager -- Verify that user can view data in Export Manager based on permissions (Local approach) (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-      ExportManagerSearchPane.waitLoading();
-      ExportManagerSearchPane.searchByBulkEdit();
-      ExportManagerSearchPane.selectJob(user.username);
-      ExportManagerSearchPane.clickJobIdInThirdPane();
+    it(
+      'C353969 Export manager -- Verify that user can view data in Export Manager based on permissions (Local approach) (firebird)',
+      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      () => {
+        ExportManagerSearchPane.waitLoading();
+        ExportManagerSearchPane.searchByBulkEdit();
+        ExportManagerSearchPane.selectJob(user.username);
+        ExportManagerSearchPane.clickJobIdInThirdPane();
 
-      BulkEditFiles.verifyMatchedResultFileContent(matchedRecordsFileName, [user.userId], 'userId', true);
-    });
+        BulkEditFiles.verifyMatchedResultFileContent(
+          matchedRecordsFileName,
+          [user.userId],
+          'userId',
+          true,
+        );
+      },
+    );
   });
 });
