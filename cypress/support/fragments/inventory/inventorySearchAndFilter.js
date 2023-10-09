@@ -653,4 +653,8 @@ export default {
   verifyInstanceDetailsViewAbsent() {
     cy.expect(instanceDetailsSection.absent());
   },
+
+  searchByStatus(status) {
+    cy.do([Button({ id: 'accordion-toggle-button-itemStatus' }).click(), Checkbox(status).click()]);
+  },
 };
