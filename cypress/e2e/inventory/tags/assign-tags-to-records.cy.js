@@ -120,6 +120,7 @@ describe('Tags', () => {
       InventorySearchAndFilter.switchToHoldings();
       InventorySearchAndFilter.byKeywords(instanceData.title);
       InventoryInstance.openHoldingView();
+      HoldingsRecordEdit.openTags();
       HoldingsRecordEdit.addTag(tagName);
 
       cy.visit(TopMenu.inventoryPath);
@@ -137,12 +138,40 @@ describe('Tags', () => {
   );
 
   it(
+    'C367961 Verify that user can add more than 1 tag to "Holdings" record with source "Folio" (volaris)',
+    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    () => {
+      const tags = Array(5)
+        .fill('')
+        .map((_, index) => `tag${index + 1}${getRandomStringCode(5)}`.toLowerCase());
+      InventorySearchAndFilter.switchToHoldings();
+      InventorySearchAndFilter.byKeywords(instanceData.title);
+      InventoryInstance.openHoldingView();
+      HoldingsRecordEdit.openTags();
+      cy.wrap(tags).each((tag) => {
+        cy.wait(2000);
+        HoldingsRecordEdit.addTag(tag);
+      });
+
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.switchToHoldings();
+      InventoryInstance.openHoldingView();
+      HoldingsRecordEdit.openTags();
+      cy.wrap(tags).each((tag) => {
+        cy.wait(2000);
+        JobProfileView.removeTag(tag);
+      });
+    },
+  );
+
+  it(
     'C196771 Assign tags to an Item record (volaris)',
     { tags: [TestTypes.extendedPath, devTeams.volaris] },
     () => {
       const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.searchByParameter('Barcode', testData.itemBarcode);
+      HoldingsRecordEdit.openTags();
       HoldingsRecordEdit.addTag(tagName);
 
       cy.visit(TopMenu.inventoryPath);
