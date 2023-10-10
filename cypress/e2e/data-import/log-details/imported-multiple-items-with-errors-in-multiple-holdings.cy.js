@@ -207,9 +207,9 @@ describe('data-import', () => {
           'Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.';
         const jsonHoldingsTestData = [
           'Import Log for Record 1 (Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.)',
-          // 'KU/CC/DI/M',
-          // 'KU/CC/DI/A',
-          // 'E',
+          'KU/CC/DI/M',
+          'KU/CC/DI/A',
+          'E',
           '{"key":"permanentLocationId","value":"fake"}',
           '{"key":"permanentLocationId","value":"null"}',
         ];
