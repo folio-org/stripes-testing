@@ -28,7 +28,7 @@ describe('bulk-edit', () => {
   });
 
   it(
-    'C350670 Verify radio buttons on the Record types accordion (Vega) (TaaS)',
+    'C350670 Verify radio buttons on the Record types accordion (Firebird) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.firebird] },
     () => {
       BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
