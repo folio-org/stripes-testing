@@ -82,14 +82,14 @@ describe('circulation-log', () => {
               dateAction: moment.utc().format(),
               source: 'ADMINISTRATOR, DIKU',
               instanceId: item.instanceId,
-              itemId: item.itemId
+              itemId: item.itemId,
             };
             NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
               feeFineAccount.id = feeFineAccountId;
               AddNewStaffInfo.addNewStaffInfoViaApi(userData.userId, newStaffInfoMessage);
               cy.login(userData.username, userData.password, {
                 path: TopMenu.circulationLogPath,
-                waiter: SearchPane.waitLoading
+                waiter: SearchPane.waitLoading,
               });
             });
           });
