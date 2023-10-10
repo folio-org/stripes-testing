@@ -18,6 +18,7 @@ export const FieldSet = HTML.extend('fieldset')
     inputNames: (el) => [...el.querySelectorAll('input:not([type=checkbox])')].map((input) => input.getAttribute('name')),
     checkboxLabels: (el) => [...el.querySelectorAll('div[class^=checkbox-]>label')].map((input) => input.textContent),
     feildsCount: (el) => [...el.children].length,
+    error: (el) => el.querySelector('[class*=feedbackError-]').textContent,
   });
 
 export const FieldInFieldset = HTML.extend('fieldInfieldset')

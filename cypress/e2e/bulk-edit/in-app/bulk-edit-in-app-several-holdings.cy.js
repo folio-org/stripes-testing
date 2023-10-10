@@ -27,7 +27,7 @@ const item2 = {
   holdingId: '',
 };
 
-describe('bulk-edit', { retries: 2 }, () => {
+describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
