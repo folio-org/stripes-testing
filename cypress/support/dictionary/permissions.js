@@ -39,6 +39,14 @@ export default {
   uiNotesItemView: { internal: 'ui-notes.item.view', gui: 'Notes: Can view a note' },
   uiNotesItemEdit: { internal: 'ui-notes.item.edit', gui: 'Notes: Can edit a note' },
   uiNotesItemDelete: { internal: 'ui-notes.item.delete', gui: 'Notes: Can delete a note' },
+  uiNotesSettingsEdit: {
+    internal: 'ui-notes.settings.edit',
+    gui: 'Settings (Notes): Edit and View General settings',
+  },
+  uiNotesAssignUnassign: {
+    internal: 'ui-notes.item.assign-unassign',
+    gui: 'Notes: Can assign and unassign a note',
+  },
   // Agreements
   uiAgreementsAgreementsEdit: {
     internal: 'ui-agreements.agreements.edit',
