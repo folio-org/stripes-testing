@@ -698,6 +698,14 @@ export default {
     cy.expect(fundDetailsPane.visible());
   },
 
+  selectPreviousBudgetDetails: (rowNumber = 0) => {
+    cy.do([
+      Section({ id: 'previousBudgets' })
+        .find(MultiColumnListRow({ index: rowNumber }))
+        .click(),
+    ]);
+  },
+
   selectPlannedBudgetDetails: (rowNumber = 0) => {
     cy.do([
       Section({ id: 'plannedBudget' })
@@ -866,5 +874,15 @@ export default {
     ]);
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(4000);
+  },
+
+  varifyDetailsInTransaction: (fiscalYear, amount, source, type, fund) => {
+    cy.expect(
+      transactionDetailSection.find(KeyValue('Fiscal year')).has({ value: fiscalYear }),
+      transactionDetailSection.find(KeyValue('Amount')).has({ value: amount }),
+      transactionDetailSection.find(KeyValue('Source')).has({ value: source }),
+      transactionDetailSection.find(KeyValue('Type')).has({ value: type }),
+      transactionDetailSection.find(KeyValue('From')).has({ value: fund }),
+    );
   },
 };
