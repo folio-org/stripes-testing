@@ -583,6 +583,11 @@ export default {
     cy.expect(Section({ id: 'acc01' }).exists());
   },
 
+  clickAddItemByHoldingName(holdingName) {
+    const holdingSection = section.find(Accordion(including(holdingName)));
+    cy.do(holdingSection.find(addItemButton).click());
+  },
+
   fillItemRequiredFields() {
     cy.do(Select({ id: 'additem_materialType' }).choose('book'));
     cy.do(Select({ id: 'additem_loanTypePerm' }).choose('Can circulate'));
