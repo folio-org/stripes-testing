@@ -86,6 +86,8 @@ describe('Create holding records with MARC source', () => {
     'C357063 Verify "LDR" validation rules with valid data for positions 05, 06 ,17, 18 when editing record (spitfire)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
+      HoldingsRecordView.close();
+      InventoryInstance.openHoldingView();
       for (let i = 0; i < testData.validLDR05Values.length; i++) {
         HoldingsRecordView.editInQuickMarc();
         QuickMarcEditor.waitLoading();
