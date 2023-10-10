@@ -27,25 +27,22 @@ import InteractorsTools from '../../utils/interactorsTools';
 import { getLongDelay } from '../../utils/cypressTools';
 import DateTools from '../../utils/dateTools';
 import FileManager from '../../utils/fileManager';
+import OrderDetails from './orderDetails';
 import UnopenConfirmationModal from './modals/unopenConfirmationModal';
 import OrderLines from './orderLines';
 
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderorders-results-pane-subtitle"]/span';
 const zeroResultsFoundText = '0 records found';
 const actionsButton = Button('Actions');
-
 const ordersResults = PaneContent({ id: 'orders-results-pane-content' });
 const ordersList = MultiColumnList({ id: 'orders-list' });
 const orderLineList = MultiColumnList({ id: 'order-line-list' });
 const orderDetailsPane = Pane({ id: 'order-details' });
-
 const newButton = Button('New');
 const saveAndClose = Button('Save & close');
 const createdByAdmin = 'ADMINISTRATOR, Diku_admin ';
-
 const searchField = SearchField({ id: 'input-record-search' });
 const searchButton = Button('Search');
-
 const admin = 'administrator';
 const buttonLocationFilter = Button({ id: 'accordion-toggle-button-pol-location-filter' });
 const buttonFundCodeFilter = Button({ id: 'accordion-toggle-button-fundCode' });
@@ -53,14 +50,13 @@ const buttonOrderFormatFilter = Button({ id: 'accordion-toggle-button-orderForma
 const buttonFVendorFilter = Button({ id: 'accordion-toggle-button-purchaseOrder.vendor' });
 const buttonRushFilter = Button({ id: 'accordion-toggle-button-rush' });
 const buttonSubscriptionFromFilter = Button({ id: 'accordion-toggle-button-subscriptionFrom' });
-
 const ordersFiltersPane = Pane({ id: 'orders-filters-pane' });
 const ordersResultsPane = Pane({ id: 'orders-results-pane' });
 const buttonAcquisitionMethodFilter = Button({ id: 'accordion-toggle-button-acquisitionMethod' });
 const purchaseOrderSection = Section({ id: 'purchaseOrder' });
 const purchaseOrderLineLimitReachedModal = Modal({ id: 'data-test-lines-limit-modal' });
 const resetButton = Button('Reset all');
-
+const submitButton = Button('Submit');
 const expandActionsDropdown = () => {
   cy.do(
     orderDetailsPane
@@ -118,7 +114,7 @@ export default {
 
   openOrder() {
     expandActionsDropdown();
-    cy.do([Button('Open').click(), Button('Submit').click()]);
+    cy.do([Button('Open').click(), submitButton.click()]);
     // Need to wait,while order's data will be loaded
     cy.wait(4000);
   },
@@ -176,17 +172,13 @@ export default {
 
   closeOrder: (reason) => {
     expandActionsDropdown();
-    cy.do([
-      Button('Close order').click(),
-      Select('Reason').choose(reason),
-      Button('Submit').click(),
-    ]);
+    cy.do([Button('Close order').click(), Select('Reason').choose(reason), submitButton.click()]);
     InteractorsTools.checkCalloutMessage('Order was closed');
   },
 
   cancelOrder: () => {
     expandActionsDropdown();
-    cy.do([Button('Cancel').click(), Button('Submit').click()]);
+    cy.do([Button('Cancel').click(), submitButton.click()]);
     InteractorsTools.checkCalloutMessage('Order was closed');
   },
 
@@ -323,6 +315,8 @@ export default {
   selectOrderByPONumber(orderNumber) {
     this.searchByParameter('PO number', orderNumber);
     this.selectFromResultsList(orderNumber);
+
+    return OrderDetails;
   },
   checkOrderDetails(order) {
     cy.expect(orderDetailsPane.exists());
@@ -740,6 +734,15 @@ export default {
     cy.do([
       buttonInteractor.perform((interactor) => interactor.removeAttribute('target')),
       buttonInteractor.click(),
+    ]);
+  },
+
+  newInvoiceFromOrder() {
+    cy.wait(2000);
+    cy.do([
+      PaneHeader({ id: 'paneHeaderorder-details' }).find(actionsButton).click(),
+      Button('New invoice').click(),
+      submitButton.click(),
     ]);
   },
 };

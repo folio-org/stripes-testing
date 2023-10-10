@@ -15,7 +15,7 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import MatchProfileView from '../../../support/fragments/data_import/match_profiles/matchProfileView';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import FileExtensions from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensions';
+import FileExtensions from '../../../support/fragments/settings/dataImport/fileExtentions/fileExtensions';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import Users from '../../../support/fragments/users/users';
 import FileExtensionView from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensionView';
@@ -77,7 +77,7 @@ describe('data-import', () => {
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.checkListOfExistingProfilesIsDisplayed();
         JobProfiles.verifyActionMenuAbsent();
-        JobProfiles.searchJobProfileForImport(jobProfileName);
+        JobProfiles.search(jobProfileName);
         JobProfiles.selectJobProfile(jobProfileName);
         JobProfileView.verifyJobProfileOpened();
         JobProfileView.verifyActionMenuAbsent();

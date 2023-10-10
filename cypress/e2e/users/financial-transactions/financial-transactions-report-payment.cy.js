@@ -132,7 +132,7 @@ describe('Financial Transactions Detail Report', () => {
     },
   );
   it(
-    'C343323 Check that "Financial-transactions-detail.csv" report is available for download',
+    'C343323 Check that "Financial-transactions-detail.csv" report is available for download (vega)',
     { tags: [TestTypes.criticalPath, DevTeams.vega] },
     () => {
       UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
@@ -149,7 +149,7 @@ describe('Financial Transactions Detail Report', () => {
   );
 
   it(
-    'C343327 Check that the user can create "Financial Transactions Detail Report" for payment',
+    'C343327 Check that the user can create "Financial Transactions Detail Report" for payment (vega)',
     { tags: [TestTypes.criticalPath, DevTeams.vega] },
     () => {
       UsersSearchResultsPane.openFinancialTransactionDetailReportModal();

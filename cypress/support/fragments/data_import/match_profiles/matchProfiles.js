@@ -7,6 +7,7 @@ import {
   DropdownMenu,
   HTML,
   Callout,
+  TextField,
 } from '../../../../../interactors';
 import NewMatchProfile from './newMatchProfile';
 
@@ -104,18 +105,10 @@ export default {
     cy.expect(MultiColumnListCell(profileName).exists());
   },
 
-  checkCalloutMessage: (profileName) => {
+  checkCalloutMessage: (message) => {
     cy.expect(
       Callout({
-        textContent: including(`The match profile "${profileName}" was successfully updated`),
-      }).exists(),
-    );
-  },
-
-  checkCreateProfileCalloutMessage: (profileName) => {
-    cy.expect(
-      Callout({
-        textContent: including(`The match profile "${profileName}" was successfully created`),
+        textContent: including(message),
       }).exists(),
     );
   },
@@ -124,4 +117,8 @@ export default {
   selectMatchProfileFromList: (profileName) => cy.do(MultiColumnListCell(profileName).click()),
   verifyActionMenuAbsent: () => cy.expect(resultsPane.find(actionsButton).absent()),
   verifyMatchProfileAbsent: () => cy.expect(resultsPane.find(HTML(including('The list contains no items'))).exists()),
+  verifySearchFieldIsEmpty: () => cy.expect(TextField({ id: 'input-search-match-profiles-field' }).has({ value: '' })),
+  verifySearchResult: (profileName) => {
+    cy.expect(resultsPane.find(MultiColumnListCell({ row: 0, content: profileName })).exists());
+  },
 };

@@ -43,7 +43,7 @@ describe('MARC -> MARC Authority', () => {
       }).then(() => {
         DataImport.uploadFile('oneMarcBib.mrc', fileName);
         JobProfiles.waitLoadingList();
-        JobProfiles.searchJobProfileForImport(jobProfileToRun);
+        JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);
         Logs.checkStatusOfJobProfile('Completed');

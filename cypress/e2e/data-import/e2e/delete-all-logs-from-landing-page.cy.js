@@ -45,7 +45,7 @@ describe('data-import', () => {
             DataImport.verifyUploadState();
             DataImport.waitLoading();
             DataImport.uploadFile(filePath, fileNameToUpload);
-            JobProfiles.searchJobProfileForImport(jobProfileToRun);
+            JobProfiles.search(jobProfileToRun);
             JobProfiles.runImportFile();
             JobProfiles.waitFileIsImported(fileNameToUpload);
             cy.wait(10000);

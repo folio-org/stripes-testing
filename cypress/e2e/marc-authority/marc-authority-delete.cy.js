@@ -50,7 +50,7 @@ describe('MARC Authority Delete', () => {
     () => {
       DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName);
       JobProfiles.waitLoadingList();
-      JobProfiles.searchJobProfileForImport('Default - Create SRS MARC Authority');
+      JobProfiles.search('Default - Create SRS MARC Authority');
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(testData.fileName);
       Logs.checkStatusOfJobProfile('Completed');

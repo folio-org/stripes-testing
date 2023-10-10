@@ -79,9 +79,14 @@ describe('Loan date and time', () => {
     cy.visit(TopMenu.circulationLogPath);
     // "Loan" accordion => Expand "Loan" accordion and Select "Checked Out" and "Checked In" => Search for an item
     SearchPane.searchByCheckedOut();
-    SearchPane.checkResultSearch({
-      itemBarcode: barcode,
-      circAction: 'Checked out',
+    SearchPane.findResultRowIndexByContent(barcode).then((rowIndex) => {
+      SearchPane.checkResultSearch(
+        {
+          itemBarcode: barcode,
+          circAction: 'Checked out',
+        },
+        rowIndex,
+      );
     });
     SearchPane.searchByItemBarcode(barcode);
   };
