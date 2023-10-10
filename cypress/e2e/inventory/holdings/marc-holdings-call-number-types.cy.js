@@ -89,7 +89,7 @@ describe('MARC -> MARC Holdings', () => {
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(instanceFile.marc, instanceFile.fileName);
         JobProfiles.waitLoadingList();
-        JobProfiles.searchJobProfileForImport(instanceFile.jobProfileToRun);
+        JobProfiles.search(instanceFile.jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(instanceFile.fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
@@ -108,7 +108,7 @@ describe('MARC -> MARC Holdings', () => {
             DataImport.verifyUploadState();
             DataImport.uploadFileAndRetry(testData.editedHoldingsFileName, holdingsFile.fileName);
             JobProfiles.waitLoadingList();
-            JobProfiles.searchJobProfileForImport(holdingsFile.jobProfileToRun);
+            JobProfiles.search(holdingsFile.jobProfileToRun);
             JobProfiles.runImportFile();
             JobProfiles.waitFileIsImported(holdingsFile.fileName);
             Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);

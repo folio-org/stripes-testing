@@ -56,7 +56,7 @@ describe('data-import', () => {
       () => {
         DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
         JobProfiles.waitLoadingList();
-        JobProfiles.searchJobProfileForImport(testData.marcFile.jobProfileToRun);
+        JobProfiles.search(testData.marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(testData.marcFile.fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);

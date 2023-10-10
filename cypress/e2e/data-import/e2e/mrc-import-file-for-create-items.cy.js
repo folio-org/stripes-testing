@@ -153,7 +153,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('oneMarcBib.mrc', fileName);
-        JobProfiles.searchJobProfileForImport(specialJobProfile.profileName);
+        JobProfiles.search(specialJobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);
         Logs.checkStatusOfJobProfile();

@@ -44,7 +44,7 @@ describe('data-import', () => {
       'C2333 Duplicate an existing job profile (folijet)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
-        JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+        JobProfiles.search(jobProfile.profileName);
         JobProfileView.duplicate();
         NewJobProfile.fillDescription(description);
         NewJobProfile.saveAndClose();
