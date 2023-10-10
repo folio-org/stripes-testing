@@ -18,6 +18,7 @@ import NewRequest from '../../support/fragments/requests/newRequest';
 describe('Title Level Request. Create Item or Title level request', () => {
   const tlrCheckboxExists = true;
   let userData = {};
+  let requestId;
   const instanceData = {
     title: `Instance ${getRandomPostfix()}`,
   };
@@ -119,16 +120,15 @@ describe('Title Level Request. Create Item or Title level request', () => {
       NewRequest.choosepickupServicePoint(testData.userServicePoint.name);
       NewRequest.saveRequestAndClose();
       cy.wait('@createRequest').then((intercept) => {
-        cy.wrap(intercept.response.body.id).as('requestId');
+        requestId = intercept.response.body.id;
+        cy.location('pathname').should('eq', `/requests/view/${requestId}`);
       });
       Requests.closePane('Request Detail');
     });
   });
 
   after('Deleting created entities', () => {
-    cy.get('@requestId').then((id) => {
-      Requests.deleteRequestViaApi(id);
-    });
+    Requests.deleteRequestViaApi(requestId);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
