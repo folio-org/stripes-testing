@@ -27,6 +27,7 @@ import InteractorsTools from '../../utils/interactorsTools';
 import { getLongDelay } from '../../utils/cypressTools';
 import DateTools from '../../utils/dateTools';
 import FileManager from '../../utils/fileManager';
+import OrderDetails from './orderDetails';
 import UnopenConfirmationModal from './modals/unopenConfirmationModal';
 import OrderLines from './orderLines';
 
@@ -314,6 +315,8 @@ export default {
   selectOrderByPONumber(orderNumber) {
     this.searchByParameter('PO number', orderNumber);
     this.selectFromResultsList(orderNumber);
+
+    return OrderDetails;
   },
   checkOrderDetails(order) {
     cy.expect(orderDetailsPane.exists());

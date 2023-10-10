@@ -68,7 +68,103 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
       ]),
       validLDR07Values: randomizeArray(['a', 'c', 'd', 'i', 'm', 's']),
       invalidLDR06Value: 'b',
+      valid0607ValuesSets: [
+        [randomizeArray(['a', 't']), randomizeArray(['a', 'c', 'd', 'm'])],
+        [['m'], randomizeArray(['a', 'b', 'c', 'd', 'i', 'm', 's'])],
+        [randomizeArray(['c', 'd', 'i', 'j']), randomizeArray(['a', 'b', 'c', 'd', 'i', 'm', 's'])],
+        [['a'], randomizeArray(['b', 'i', 's'])],
+        [randomizeArray(['g', 'k', 'r']), randomizeArray(['a', 'b', 'c', 'd', 'i', 'm', 's'])],
+        [['p'], randomizeArray(['a', 'b', 'c', 'd', 'i', 'm', 's'])],
+      ],
     },
+
+    expected008BoxesSets: [
+      [
+        'DtSt',
+        'Start date',
+        'End date',
+        'Ctry',
+        'Ills',
+        'Audn',
+        'Form',
+        'Cont',
+        'GPub',
+        'Conf',
+        'Fest',
+        'Indx',
+        'LitF',
+        'Biog',
+        'Lang',
+        'MRec',
+        'Srce',
+      ],
+      [
+        'DtSt',
+        'Start date',
+        'End date',
+        'Ctry',
+        'Audn',
+        'Form',
+        'File',
+        'GPub',
+        'Lang',
+        'MRec',
+        'Srce',
+      ],
+      [
+        'DtSt',
+        'Start date',
+        'End date',
+        'Ctry',
+        'Comp',
+        'FMus',
+        'Part',
+        'Audn',
+        'Form',
+        'AccM',
+        'LTxt',
+        'TrAr',
+        'Lang',
+        'MRec',
+        'Srce',
+      ],
+      [
+        'DtSt',
+        'Start date',
+        'End date',
+        'Ctry',
+        'Freq',
+        'Regl',
+        'SrTp',
+        'Orig',
+        'Form',
+        'EntW',
+        'Cont',
+        'GPub',
+        'Conf',
+        'Alph',
+        'S/L',
+        'Lang',
+        'MRec',
+        'Srce',
+      ],
+      [
+        'DtSt',
+        'Start date',
+        'End date',
+        'Ctry',
+        'Time',
+        'Audn',
+        'GPub',
+        'Form',
+        'TMat',
+        'Tech',
+        'Lang',
+        'MRec',
+        'Srce',
+      ],
+      ['DtSt', 'Start date', 'End date', 'Ctry', 'Form', 'Lang', 'MRec', 'Srce'],
+    ],
   };
 
   const updatedLDRValuesArray = Object.values(testData.LDRValues.updatedLDRValues);
@@ -198,6 +294,39 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
       QuickMarcEditor.saveInstanceIdToArrayInQuickMarc(createdInstanceIDs);
       QuickMarcEditor.checkContent(testData.fieldContents.tag245ValueWithAllSubfields, 4);
       QuickMarcEditor.checkValuesIn008Boxes(testData.fieldContents.valid008Values);
+    },
+  );
+
+  it(
+    'C380713 "008" field updated when valid LDR 06-07 combinations entered upon creation of "MARC bib" record (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      cy.login(userData.C380704UserProperties.username, userData.C380704UserProperties.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
+      testData.LDRValues.valid0607ValuesSets.forEach((set, index) => {
+        const updatedLDRvalue = `${testData.LDRValues.validLDRvalue.substring(0, 6)}${set[0][0]}${
+          set[1][0]
+        }${testData.LDRValues.validLDRvalue.substring(8)}`;
+        const title = testData.fieldContents.tag245ContentPrefix + getRandomPostfix();
+        InventoryInstance.newMarcBibRecord();
+        QuickMarcEditor.updateExistingField(testData.tags.tag245, `$a ${title}`);
+        QuickMarcEditor.updateExistingField(testData.tags.tagLDR, updatedLDRvalue);
+        QuickMarcEditor.check008FieldLabels(testData.expected008BoxesSets[index]);
+        QuickMarcEditor.check008BoxesCount(testData.expected008BoxesSets[index].length);
+        QuickMarcEditor.checkOnlyBackslashesIn008Boxes();
+        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.checkAfterSaveAndClose();
+        QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
+        InventoryInstance.checkInstanceTitle(title);
+        InventoryInstance.getId().then((id) => {
+          createdInstanceIDs.push(id);
+        });
+      });
+      InventoryInstance.editMarcBibliographicRecord();
+      QuickMarcEditor.check008FieldLabels(testData.expected008BoxesSets[5]);
+      QuickMarcEditor.check008BoxesCount(testData.expected008BoxesSets[5].length);
     },
   );
 });

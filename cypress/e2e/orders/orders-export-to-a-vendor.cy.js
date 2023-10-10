@@ -88,10 +88,7 @@ describe('orders: export', () => {
       Orders.createOrder(order, true, false).then((orderId) => {
         order.id = orderId;
         Orders.createPOLineViaActions();
-        OrderLines.fillInPOLineInfoForExport(
-          `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
-          'Purchase',
-        );
+        OrderLines.fillInPOLineInfoForExport('Purchase');
         OrderLines.backToEditingOrder();
       });
     },
