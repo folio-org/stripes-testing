@@ -22,7 +22,7 @@ const item = {
 
 // TODO: identify how to stabilize flaky test
 
-describe.skip('bulk-edit', () => {
+describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
       cy.createTempUser(

@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../support/dictionary';
 import { Invoices, InvoiceView } from '../../support/fragments/invoices';
 import { Budgets } from '../../support/fragments/finance';
 import Approvals from '../../support/fragments/settings/invoices/approvals';
@@ -85,43 +85,47 @@ describe('Invoices', () => {
       isApprovePayEnabled: false,
     },
   ].forEach(({ description, isApprovePayEnabled }) => {
-    it(description, { tags: [TestTypes.criticalPath, DevTeams.thunderjet] }, () => {
-      Approvals.setApprovePayValue(isApprovePayEnabled);
+    it(
+      description,
+      { tags: [TestTypes.criticalPath, DevTeams.thunderjet, Parallelization.nonParallel] },
+      () => {
+        Approvals.setApprovePayValue(isApprovePayEnabled);
 
-      // Click on "Vendor invoice number" link
-      Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
-      Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);
+        // Click on "Vendor invoice number" link
+        Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
+        Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);
 
-      // * Invoice "Status" is "Open" under "Invoice information" accordion
-      // * "Total number of invoice lines: 0" text is displayed under "Invoice lines" accordion
-      InvoiceView.checkInvoiceDetails({
-        title: testData.invoice.vendorInvoiceNo,
-        invoiceInformation: [
-          { key: 'Status', value: INVOICE_STATUSES.OPEN },
-          { key: 'Fiscal year', value: 'No value set' },
-        ],
-        invoiceLines: [],
-      });
+        // * Invoice "Status" is "Open" under "Invoice information" accordion
+        // * "Total number of invoice lines: 0" text is displayed under "Invoice lines" accordion
+        InvoiceView.checkInvoiceDetails({
+          title: testData.invoice.vendorInvoiceNo,
+          invoiceInformation: [
+            { key: 'Status', value: INVOICE_STATUSES.OPEN },
+            { key: 'Fiscal year', value: 'No value set' },
+          ],
+          invoiceLines: [],
+        });
 
-      // Click "Actions" button, Select "Add line from POL" option
-      const SelectOrderLinesModal = InvoiceView.openSelectOrderLineModal();
+        // Click "Actions" button, Select "Add line from POL" option
+        const SelectOrderLinesModal = InvoiceView.openSelectOrderLineModal();
 
-      // Search for the POL, Select it by checking checkbox in "Order lines" pane, Click "Save" button
-      SelectOrderLinesModal.selectOrderLine(testData.order.poNumber);
+        // Search for the POL, Select it by checking checkbox in "Order lines" pane, Click "Save" button
+        SelectOrderLinesModal.selectOrderLine(testData.order.poNumber);
 
-      // * Warning banner is displayed at top of invoice "Invoice can not be approved."
-      InvoiceView.checkInvoiceCanNotBeApprovedWarning();
+        // * Warning banner is displayed at top of invoice "Invoice can not be approved."
+        InvoiceView.checkInvoiceCanNotBeApprovedWarning();
 
-      // Click "Actions" menu button
-      InvoiceView.expandActionsDropdown();
-      InvoiceView.checkActionButtonsConditions([
-        { label: 'Edit', conditions: { disabled: false } },
-        {
-          label: isApprovePayEnabled ? 'Approve & pay' : 'Approve',
-          conditions: { disabled: true },
-        },
-        { label: 'Delete', conditions: { disabled: false } },
-      ]);
-    });
+        // Click "Actions" menu button
+        InvoiceView.expandActionsDropdown();
+        InvoiceView.checkActionButtonsConditions([
+          { label: 'Edit', conditions: { disabled: false } },
+          {
+            label: isApprovePayEnabled ? 'Approve & pay' : 'Approve',
+            conditions: { disabled: true },
+          },
+          { label: 'Delete', conditions: { disabled: false } },
+        ]);
+      },
+    );
   });
 });
