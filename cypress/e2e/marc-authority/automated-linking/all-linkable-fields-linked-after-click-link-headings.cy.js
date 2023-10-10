@@ -16,7 +16,8 @@ import InventoryViewSource from '../../../support/fragments/inventory/inventoryV
 describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () => {
   const testData = {
     marcAuthIcon: 'Linked to MARC authority',
-    calloutAfterLinking: 'Field 100, 110, 111, 130, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810, 811, and 830 has been linked to MARC authority record(s).',
+    calloutAfterLinking:
+      'Field 100, 110, 111, 130, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810, 811, and 830 has been linked to MARC authority record(s).',
   };
 
   const marcFiles = [
@@ -144,7 +145,8 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
       rowIndex: 89,
       tag: '711',
       naturalId: 'n84745425',
-      value: 'C387538 Delaware Symposium on Language Studies. 1985 Delaware symposia on language studies',
+      value:
+        'C387538 Delaware Symposium on Language Studies. 1985 Delaware symposia on language studies',
       type: 'Contributor',
     },
     {
@@ -255,12 +257,15 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
       QuickMarcEditor.checkAbsenceOfLinkHeadingsButton();
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndClose();
-      fields.forEach(field => {
-        InventoryInstance.verifyRecordAndMarcAuthIcon(field.type, `${testData.marcAuthIcon}\n${field.value}`);
+      fields.forEach((field) => {
+        InventoryInstance.verifyRecordAndMarcAuthIcon(
+          field.type,
+          `${testData.marcAuthIcon}\n${field.value}`,
+        );
       });
 
       InventoryInstance.viewSource();
-      fields.forEach(field => {
+      fields.forEach((field) => {
         InventoryViewSource.contains(`${testData.marcAuthIcon}\n\t${field.tag}`);
       });
       InventoryInstance.checkExistanceOfAuthorityIconInMarcViewPane();
