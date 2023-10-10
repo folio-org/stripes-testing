@@ -46,6 +46,17 @@ export default {
 
     return BudgetDetails;
   },
+  openPreviousBudgetDetails() {
+    cy.do(
+      previousBudgetsSection
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .click(),
+    );
+    BudgetDetails.waitLoading();
+
+    return BudgetDetails;
+  },
   checkFundDetails({ information = [], currentBudget, previousBudgets } = {}) {
     information.forEach(({ key, value }) => {
       cy.expect(fundDetailsPane.find(KeyValue(key)).has({ value: including(value) }));
